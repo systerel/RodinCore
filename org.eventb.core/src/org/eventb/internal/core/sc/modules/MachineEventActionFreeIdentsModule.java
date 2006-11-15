@@ -19,6 +19,7 @@ import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.state.IStateRepository;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
@@ -57,7 +58,7 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 		if (isInitialisation && symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			createProblemMarker(
 					element, 
-					getAttributeId(), 
+					getAttributeType(), 
 					GraphProblem.InitialisationActionRHSError,
 					freeIdentifier.getName());
 			return null;
@@ -98,21 +99,21 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 				if (variableSymbolInfo.isForbidden()) {
 					createProblemMarker(
 							element, 
-							getAttributeId(), 
+							getAttributeType(), 
 							GraphProblem.UndeclaredFreeIdentifierError,
 							name);
 					return false;
 				} else if (variableSymbolInfo.isImported() && !variableSymbolInfo.isConcrete()) {
 					createProblemMarker(
 							element, 
-							getAttributeId(), 
+							getAttributeType(), 
 							GraphProblem.VariableHasDisappearedError,
 							name);
 					return false;
 				} else if (variableSymbolInfo.isLocal()) {
 					createProblemMarker(
 							element, 
-							getAttributeId(), 
+							getAttributeType(), 
 							GraphProblem.AssignmentToLocalVariableError,
 							name);
 					return false;
@@ -120,7 +121,7 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 			} else {
 				createProblemMarker(
 						element, 
-						getAttributeId(), 
+						getAttributeType(), 
 						GraphProblem.AssignedIdentifierNotVariableError,
 						name);
 				return false;
@@ -142,7 +143,7 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 	}
 
 	@Override
-	protected String getAttributeId() {
+	protected IAttributeType.String getAttributeType() {
 		return EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 	}
 

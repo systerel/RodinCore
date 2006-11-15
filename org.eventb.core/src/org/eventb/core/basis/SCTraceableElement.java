@@ -27,6 +27,7 @@ public abstract class SCTraceableElement extends EventBElement implements
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ITraceableElement#setSource(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	public void setSource(IRodinElement source, IProgressMonitor monitor) throws RodinDBException {
 		CommonAttributesUtil.setSource(this, source, monitor);
 	}
@@ -34,6 +35,7 @@ public abstract class SCTraceableElement extends EventBElement implements
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ITraceableElement#getSource()
 	 */
+	@Override
 	public IRodinElement getSource(IProgressMonitor monitor) throws RodinDBException {
 		return CommonAttributesUtil.getSource(this, monitor);
 	}

@@ -64,7 +64,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 	public String getParentPredicateSetName(IProgressMonitor monitor) 
 	throws RodinDBException {
 		if (hasAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor))
-			return getStringAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor);
+			return getAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor);
 		else return null;
 	}
 	
@@ -80,7 +80,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 
 	public void setParentPredicateSetName(String setName, IProgressMonitor monitor) 
 	throws RodinDBException {
-		setStringAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, setName, monitor);
+		setAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, setName, monitor);
 	}
 
 	@Deprecated

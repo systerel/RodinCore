@@ -269,21 +269,22 @@ public final class RodinMarkerUtil {
 	}
 	
 	/**
-	 * Returns the attribute identifier of the given marker. Returns
+	 * Returns the attribute type of the given marker. Returns
 	 * <code>null</code> if the marker does not exist or does not carry an
-	 * attribute id.
+	 * attribute type.
 	 * 
 	 * @param marker
 	 *            marker to read
-	 * @return the attribute of the given marker or <code>null</code> in case
+	 * @return the attribute type of the given marker or <code>null</code> in case
 	 *         of error
 	 * @throws IllegalArgumentException
 	 *             if the given marker is not a Rodin problem marker
 	 * @see #ATTRIBUTE_ID
 	 */
-	public static String getAttributeId(IMarker marker) {
+	public static IAttributeType getAttributeType(IMarker marker) {
 		checkRodinProblemMarker(marker);
-		return marker.getAttribute(ATTRIBUTE_ID, null);
+		final String attrId = marker.getAttribute(ATTRIBUTE_ID, null);
+		return RodinCore.getAttributeType(attrId);
 	}
 
 	/**

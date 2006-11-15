@@ -125,11 +125,11 @@ public class Event extends EventBElement implements IEvent {
 	}
 
 	public boolean isInherited(IProgressMonitor monitor) throws RodinDBException {
-		return getBooleanAttribute(EventBAttributes.INHERITED_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.INHERITED_ATTRIBUTE, monitor);
 	}
 
 	public void setInherited(boolean inherited, IProgressMonitor monitor) throws RodinDBException {
-		setBooleanAttribute(EventBAttributes.INHERITED_ATTRIBUTE, inherited, monitor);
+		setAttributeValue(EventBAttributes.INHERITED_ATTRIBUTE, inherited, monitor);
 	}
 
 }

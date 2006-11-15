@@ -8,6 +8,7 @@
 package org.rodinp.internal.core;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -20,13 +21,13 @@ import org.rodinp.internal.core.util.Messages;
 public class RemoveElementAttributeOperation extends RodinDBOperation{
 
 	private InternalElement element;
-	private String attrName;
+	private IAttributeType attrType;
 	
 	public RemoveElementAttributeOperation(InternalElement element,
-			String attrName) {
+			IAttributeType attrType) {
 		super(new IRodinElement[] { element });
 		this.element = element;
-		this.attrName = attrName;
+		this.attrType = attrType;
 	}
 
 	@Override
@@ -36,7 +37,7 @@ public class RemoveElementAttributeOperation extends RodinDBOperation{
 			RodinFile file = element.getRodinFile();
 			RodinFileElementInfo fileInfo = (RodinFileElementInfo)
 					file.getElementInfo(getSubProgressMonitor(1));
-			if (fileInfo.removeAttribute(element, attrName)) {
+			if (fileInfo.removeAttribute(element, attrType)) {
 				RodinElementDelta delta = newRodinElementDelta();
 				delta.changed(element, IRodinElementDelta.F_ATTRIBUTE);
 				addDelta(delta);

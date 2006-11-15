@@ -20,6 +20,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.Predicate;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 
@@ -30,7 +31,7 @@ import org.rodinp.core.IInternalParent;
 public abstract class PredicateModule extends LabeledFormulaModule {
 	
 	@Override
-	protected String getFormulaAttributeId() {
+	protected IAttributeType.String getFormulaAttributeType() {
 		return EventBAttributes.PREDICATE_ATTRIBUTE;
 	}
 
@@ -52,7 +53,7 @@ public abstract class PredicateModule extends LabeledFormulaModule {
 		IParseResult parseResult = factory.parsePredicate(predicateString);
 		
 		if (!parseResult.isSuccess()) {
-			issueASTProblemMarkers(predicateElement, getFormulaAttributeId(), parseResult);
+			issueASTProblemMarkers(predicateElement, getFormulaAttributeType(), parseResult);
 			
 			return null;
 		}
@@ -64,7 +65,7 @@ public abstract class PredicateModule extends LabeledFormulaModule {
 		IResult legibilityResult = predicate.isLegible(freeIdentifierContext);
 		
 		if (!legibilityResult.isSuccess()) {
-			issueASTProblemMarkers(predicateElement, getFormulaAttributeId(), legibilityResult);
+			issueASTProblemMarkers(predicateElement, getFormulaAttributeType(), legibilityResult);
 		}
 		
 		return predicate;

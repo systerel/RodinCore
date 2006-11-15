@@ -157,7 +157,7 @@ public class AutoProver {
 	}
 	
 	private static void setAutoProven(boolean autoProven, IPSstatus status) throws RodinDBException {
-		status.setBooleanAttribute(EventBAttributes.AUTO_PROOF_ATTRIBUTE, autoProven, null);
+		status.setAttributeValue(EventBAttributes.AUTO_PROOF_ATTRIBUTE, autoProven, null);
 	}
 
 

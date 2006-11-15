@@ -46,7 +46,7 @@ public class RefinesMachine extends InternalElement implements IRefinesMachine {
 	 * @see org.eventb.core.IRefinesMachine#getRefinedMachine()
 	 */
 	public String getAbstractMachineName(IProgressMonitor monitor) throws RodinDBException {
-		return getStringAttribute(EventBAttributes.REFINES_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.REFINES_ATTRIBUTE, monitor);
 	}
 
 	@Deprecated
@@ -100,7 +100,7 @@ public class RefinesMachine extends InternalElement implements IRefinesMachine {
 	 * @see org.eventb.core.IRefinesMachine#setAbstractMachineName(java.lang.String)
 	 */
 	public void setAbstractMachineName(String name, IProgressMonitor monitor) throws RodinDBException {
-		setStringAttribute(EventBAttributes.REFINES_ATTRIBUTE, name, monitor);
+		setAttributeValue(EventBAttributes.REFINES_ATTRIBUTE, name, monitor);
 	}
 
 	@Deprecated

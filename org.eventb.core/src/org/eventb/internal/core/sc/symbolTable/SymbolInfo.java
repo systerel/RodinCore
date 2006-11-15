@@ -13,6 +13,7 @@ import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.StaticChecker;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
@@ -134,13 +135,13 @@ public abstract class SymbolInfo implements ISymbolInfo {
 		if (isMutable())
 			markerDisplay.createProblemMarker(
 					getReferenceElement(), 
-					getSymbolAttributeId(), 
+					getSymbolAttributeType(), 
 					getConflictError(), 
 					getSymbol());
 		else
 			markerDisplay.createProblemMarker(
 					getReferenceElement(), 
-					getSymbolAttributeId(), 
+					getSymbolAttributeType(), 
 					getConflictWarning(), 
 					getSymbol());
 	}
@@ -148,6 +149,6 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	public abstract IRodinProblem getConflictWarning();
 	public abstract IRodinProblem getConflictError();
 	
-	public abstract String getSymbolAttributeId();
+	public abstract IAttributeType.String getSymbolAttributeType();
 
 }

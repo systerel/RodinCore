@@ -41,11 +41,11 @@ public class POHint extends EventBElement implements IPOHint {
 	}
 	
 	public void setHint(String value, IProgressMonitor monitor) throws RodinDBException {
-		setStringAttribute(EventBAttributes.POHINT_ATTRIBUTE, value, monitor);
+		setAttributeValue(EventBAttributes.POHINT_ATTRIBUTE, value, monitor);
 	}
 
 	public String getHint(IProgressMonitor monitor) throws RodinDBException {
-		return getStringAttribute(EventBAttributes.POHINT_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.POHINT_ATTRIBUTE, monitor);
 	}
 
 }

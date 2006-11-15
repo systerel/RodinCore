@@ -27,11 +27,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.internal.core.util.Messages;
@@ -64,7 +64,7 @@ public class CreateProblemMarkerOperation extends RodinDBOperation {
 
 	private final IRodinProblem problem;
 	private final Object[] args;
-	private final String attributeId;
+	private final IAttributeType attrType;
 	private final int charStart;
 	private final int charEnd;
 	
@@ -73,12 +73,12 @@ public class CreateProblemMarkerOperation extends RodinDBOperation {
 	 * Rodin element.
 	 */
 	public CreateProblemMarkerOperation(IRodinElement element,
-			IRodinProblem problem, Object[] args, String attributeId,
+			IRodinProblem problem, Object[] args, IAttributeType attrType,
 			int charStart, int charEnd) {
 		super(element);
 		this.problem = problem;
 		this.args = args;
-		this.attributeId = attributeId;
+		this.attrType = attrType;
 		this.charStart = charStart;
 		this.charEnd = charEnd;
 	}
@@ -106,8 +106,8 @@ public class CreateProblemMarkerOperation extends RodinDBOperation {
 			final IRodinElement element = elementsToProcess[0];
 			if (element instanceof IInternalElement) {
 				marker.setAttribute(ELEMENT, element.getHandleIdentifier());
-				if (attributeId != null) {
-					marker.setAttribute(ATTRIBUTE_ID, attributeId);
+				if (attrType != null) {
+					marker.setAttribute(ATTRIBUTE_ID, attrType.getId());
 					if (charStart >= 0) {
 						marker.setAttribute(CHAR_START, charStart);
 						marker.setAttribute(CHAR_END, charEnd);
@@ -154,7 +154,7 @@ public class CreateProblemMarkerOperation extends RodinDBOperation {
 	 * <li>NO_ELEMENTS_TO_PROCESS - the element supplied to the operation is
 	 * <code>null</code>.
 	 * <li>ELEMENT_DOES_NOT_EXIST - <code>element</code> does not exist.
-	 * <li>ATTRIBUTE_DOES_NOT_EXIST - attribute <code>attributeId</code>is
+	 * <li>ATTRIBUTE_DOES_NOT_EXIST - attribute <code>attrType</code>is
 	 * not defined for <code>element</code>
 	 * <li>INVALID_ATTRIBUTE_KIND - a location is given and the attribute is
 	 * not of kind <code>string</code>
@@ -171,7 +171,7 @@ public class CreateProblemMarkerOperation extends RodinDBOperation {
 		if (! element.exists()) {
 			return new RodinDBStatus(ELEMENT_DOES_NOT_EXIST, element);
 		}
-		if (attributeId != null) {
+		if (attrType != null) {
 			return verifyLocation(element);
 		}
 		return verifyNoLocation();
@@ -199,19 +199,21 @@ public class CreateProblemMarkerOperation extends RodinDBOperation {
 	private IRodinDBStatus verifyAttributeId(InternalElement element,
 			boolean withCharPos) {
 
+		// TODO check for null attribute type
+		
 		// Check that attribute exists
 		try {
-			if (!element.hasAttribute(attributeId, null)) {
+			if (!element.hasAttribute(attrType, null)) {
 				return new RodinDBStatus(ATTRIBUTE_DOES_NOT_EXIST, element,
-						attributeId);
+						attrType.getId());
 			}
 		} catch (RodinDBException rde) {
 			return rde.getRodinDBStatus();
 		}
 		if (withCharPos) {
 			// Check that it's an attribute of kind String
-			if (RodinCore.getStringAttrType(attributeId) == null) {
-				return new RodinDBStatus(INVALID_ATTRIBUTE_KIND, attributeId);
+			if (! (attrType instanceof IAttributeType.String)) {
+				return new RodinDBStatus(INVALID_ATTRIBUTE_KIND, attrType.getId());
 			}
 		}
 		return RodinDBStatus.VERIFIED_OK;

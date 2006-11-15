@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IAttributedElement {
 
 	/**
-	 * Returns an array of the names of all attributes currently attached to
+	 * Returns an array of the types of all attributes currently attached to
 	 * this element. If this element doesn't carry any attribute, an empty array
 	 * is returned.
 	 * <p>
@@ -38,106 +38,87 @@ public interface IAttributedElement {
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource
-	 * @return the names of all attributes of this element
+	 * @return the types of all attributes of this element
 	 */
-	String[] getAttributeNames(IProgressMonitor monitor)
+	IAttributeType[] getAttributeTypes(IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**
-	 * Returns the value of the attribute with the given name and carried by
-	 * this element.
+	 * Returns the value of the attribute with the given boolean type and
+	 * carried by this element.
 	 * <p>
 	 * The file containing this element is opened using the given progress
 	 * monitor, if it was not already open.
 	 * </p>
-	 * <p>
-	 * The attribute name must have been declared with the <code>boolean</code>
-	 * kind.
-	 * </p>
 	 * 
-	 * @param name
-	 *            name of the attribute
+	 * @param type
+	 *            type of the attribute
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
-	 *                corresponding resource or if the given attribute has
-	 *                another kind than <code>boolean</code>
-	 * @return the value of the attribute with the given name
+	 *                corresponding resource
+	 * @return the value of the attribute with the given type
 	 */
-	boolean getBooleanAttribute(String name, IProgressMonitor monitor)
-			throws RodinDBException;
+	boolean getAttributeValue(IAttributeType.Boolean type,
+			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Returns the value of the attribute with the given name and carried by
-	 * this element.
+	 * Returns the value of the attribute with the given handle type and carried
+	 * by this element.
 	 * <p>
 	 * The file containing this element is opened using the given progress
 	 * monitor, if it was not already open.
 	 * </p>
-	 * <p>
-	 * The attribute name must have been declared with the <code>handle</code>
-	 * kind.
-	 * </p>
 	 * 
-	 * @param name
-	 *            name of the attribute
+	 * @param type
+	 *            type of the attribute
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
-	 *                corresponding resource or if the given attribute has
-	 *                another kind than <code>handle</code>
-	 * @return the value of the attribute with the given name
+	 *                corresponding resource
+	 * @return the value of the attribute with the given type
 	 */
-	IRodinElement getHandleAttribute(String name, IProgressMonitor monitor)
-			throws RodinDBException;
+	IRodinElement getAttributeValue(IAttributeType.Handle type,
+			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Returns the value of the attribute with the given name and carried by
-	 * this element.
+	 * Returns the value of the attribute with the given integer type and
+	 * carried by this element.
 	 * <p>
 	 * The file containing this element is opened using the given progress
 	 * monitor, if it was not already open.
 	 * </p>
-	 * <p>
-	 * The attribute name must have been declared with the <code>integer</code>
-	 * kind.
-	 * </p>
 	 * 
-	 * @param name
-	 *            name of the attribute
+	 * @param type
+	 *            type of the attribute
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
-	 *                corresponding resource or if the given attribute has
-	 *                another kind than <code>integer</code>
-	 * @return the value of the attribute with the given name
+	 *                corresponding resource
+	 * @return the value of the attribute with the given type
 	 */
-	int getIntegerAttribute(String name, IProgressMonitor monitor)
+	int getAttributeValue(IAttributeType.Integer type, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**
-	 * Returns the value of the attribute with the given name and carried by
-	 * this element.
+	 * Returns the value of the attribute with the given long integer type and
+	 * carried by this element.
 	 * <p>
 	 * The file containing this element is opened using the given progress
 	 * monitor, if it was not already open.
 	 * </p>
-	 * <p>
-	 * The attribute name must have been declared with the <code>long</code>
-	 * kind.
-	 * </p>
 	 * 
-	 * @param name
-	 *            name of the attribute
+	 * @param type
+	 *            type of the attribute
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
@@ -146,47 +127,42 @@ public interface IAttributedElement {
 	 *                or if an exception occurs while accessing its
 	 *                corresponding resource or if the given attribute has
 	 *                another kind than <code>long</code>
-	 * @return the value of the attribute with the given name
+	 * @return the value of the attribute with the given type
 	 */
-	long getLongAttribute(String name, IProgressMonitor monitor)
+	long getAttributeValue(IAttributeType.Long type, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**
-	 * Returns the value of the attribute with the given name and carried by
-	 * this element.
+	 * Returns the value of the attribute with the given string type and carried
+	 * by this element.
 	 * <p>
 	 * The file containing this element is opened using the given progress
 	 * monitor, if it was not already open.
 	 * </p>
-	 * <p>
-	 * The attribute name must have been declared with the <code>string</code>
-	 * kind.
-	 * </p>
 	 * 
-	 * @param name
-	 *            name of the attribute
+	 * @param type
+	 *            type of the attribute
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
-	 *                corresponding resource or if the given attribute has
-	 *                another kind than <code>string</code>
-	 * @return the value of the attribute with the given name
+	 *                corresponding resource
+	 * @return the value of the attribute with the given type
 	 */
-	String getStringAttribute(String name, IProgressMonitor monitor)
-			throws RodinDBException;
+	String getAttributeValue(IAttributeType.String type,
+			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Tells whether this element carries an attribute with the given name.
+	 * Tells whether this element carries an attribute with the given type.
 	 * <p>
 	 * The file containing this element is opened using the given progress
 	 * monitor, if it was not already open.
 	 * </p>
 	 * 
-	 * @param name
-	 *            name of the attribute
+	 * @param type
+	 *            type of the attribute
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
@@ -194,13 +170,13 @@ public interface IAttributedElement {
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource
 	 * @return <code>true</code> iff this element carries an attribute with
-	 *         the given name
+	 *         the given type
 	 */
-	boolean hasAttribute(String name, IProgressMonitor monitor)
+	boolean hasAttribute(IAttributeType type, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**
-	 * Removes the attribute with the given name from this element.
+	 * Removes the attribute with the given type from this element.
 	 * <p>
 	 * If the attribute didn't exist previously, this method returns directly.
 	 * No exception is thrown.
@@ -210,8 +186,8 @@ public interface IAttributedElement {
 	 * monitor, if it was not already open.
 	 * </p>
 	 * 
-	 * @param name
-	 *            name of the attribute to test for existence
+	 * @param type
+	 *            type of the attribute to remove
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
@@ -219,23 +195,20 @@ public interface IAttributedElement {
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource
 	 */
-	void removeAttribute(String name, IProgressMonitor monitor)
+	void removeAttribute(IAttributeType type, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**
-	 * Sets the value of the attribute with the given name to the given value.
+	 * Sets the value of the attribute with the given boolean type to the given
+	 * value.
 	 * <p>
-	 * If the specified attribute didn't exist, it is created automatically. 
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
-	 * </p>
-	 * <p>
-	 * The attribute name must have been declared with the <code>boolean</code>
-	 * kind.
+	 * If the specified attribute didn't exist, it is created automatically. The
+	 * file containing this element is opened using the given progress monitor,
+	 * if it was not already open.
 	 * </p>
 	 * 
-	 * @param name
-	 *            name of the attribute
+	 * @param type
+	 *            type of the attribute
 	 * @param newValue
 	 *            value to set
 	 * @param monitor
@@ -243,26 +216,22 @@ public interface IAttributedElement {
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource or if the given
-	 *                attribute has another kind than <code>boolean</code>
+	 *                while accessing its corresponding resource
 	 */
-	void setBooleanAttribute(String name, boolean newValue,
+	void setAttributeValue(IAttributeType.Boolean type, boolean newValue,
 			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Sets the value of the attribute with the given name to the given value.
+	 * Sets the value of the attribute with the given handle type to the given
+	 * value.
 	 * <p>
-	 * If the specified attribute didn't exist, it is created automatically. 
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
-	 * </p>
-	 * <p>
-	 * The attribute name must have been declared with the <code>handle</code>
-	 * kind.
+	 * If the specified attribute didn't exist, it is created automatically. The
+	 * file containing this element is opened using the given progress monitor,
+	 * if it was not already open.
 	 * </p>
 	 * 
-	 * @param name
-	 *            name of the attribute
+	 * @param type
+	 *            type of the attribute
 	 * @param newValue
 	 *            value to set
 	 * @param monitor
@@ -270,26 +239,26 @@ public interface IAttributedElement {
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource or if the given
-	 *                attribute has another kind than <code>handle</code>
+	 *                while accessing its corresponding resource
 	 */
-	void setHandleAttribute(String name, IRodinElement newValue,
+	void setAttributeValue(IAttributeType.Handle type, IRodinElement newValue,
 			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Sets the value of the attribute with the given name to the given value.
+	 * Sets the value of the attribute with the given integer type to the given
+	 * value.
 	 * <p>
-	 * If the specified attribute didn't exist, it is created automatically. 
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
+	 * If the specified attribute didn't exist, it is created automatically. The
+	 * file containing this element is opened using the given progress monitor,
+	 * if it was not already open.
 	 * </p>
 	 * <p>
-	 * The attribute name must have been declared with the <code>integer</code>
+	 * The attribute type must have been declared with the <code>integer</code>
 	 * kind.
 	 * </p>
 	 * 
-	 * @param name
-	 *            name of the attribute
+	 * @param type
+	 *            type of the attribute
 	 * @param newValue
 	 *            value to set
 	 * @param monitor
@@ -297,26 +266,26 @@ public interface IAttributedElement {
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource or if the given
-	 *                attribute has another kind than <code>integer</code>
+	 *                while accessing its corresponding resource
 	 */
-	void setIntegerAttribute(String name, int newValue, IProgressMonitor monitor)
-			throws RodinDBException;
+	void setAttributeValue(IAttributeType.Integer type, int newValue,
+			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Sets the value of the attribute with the given name to the given value.
+	 * Sets the value of the attribute with the given long integer type to the
+	 * given value.
 	 * <p>
-	 * If the specified attribute didn't exist, it is created automatically. 
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
+	 * If the specified attribute didn't exist, it is created automatically. The
+	 * file containing this element is opened using the given progress monitor,
+	 * if it was not already open.
 	 * </p>
 	 * <p>
-	 * The attribute name must have been declared with the <code>long</code>
+	 * The attribute type must have been declared with the <code>long</code>
 	 * kind.
 	 * </p>
 	 * 
-	 * @param name
-	 *            name of the attribute
+	 * @param type
+	 *            type of the attribute
 	 * @param newValue
 	 *            value to set
 	 * @param monitor
@@ -324,26 +293,26 @@ public interface IAttributedElement {
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource or if the given
-	 *                attribute has another kind than <code>long</code>
+	 *                while accessing its corresponding resource
 	 */
-	void setLongAttribute(String name, long newValue, IProgressMonitor monitor)
-			throws RodinDBException;
+	void setAttributeValue(IAttributeType.Long type, long newValue,
+			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Sets the value of the attribute with the given name to the given value.
+	 * Sets the value of the attribute with the given string type to the given
+	 * value.
 	 * <p>
-	 * If the specified attribute didn't exist, it is created automatically. 
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
+	 * If the specified attribute didn't exist, it is created automatically. The
+	 * file containing this element is opened using the given progress monitor,
+	 * if it was not already open.
 	 * </p>
 	 * <p>
-	 * The attribute name must have been declared with the <code>string</code>
+	 * The attribute type must have been declared with the <code>string</code>
 	 * kind.
 	 * </p>
 	 * 
-	 * @param name
-	 *            name of the attribute
+	 * @param type
+	 *            type of the attribute
 	 * @param newValue
 	 *            value to set
 	 * @param monitor
@@ -351,10 +320,9 @@ public interface IAttributedElement {
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource or if the given
-	 *                attribute has another kind than <code>string</code>
+	 *                while accessing its corresponding resource
 	 */
-	void setStringAttribute(String name, String newValue,
+	void setAttributeValue(IAttributeType.String type, String newValue,
 			IProgressMonitor monitor) throws RodinDBException;
 
 }

@@ -94,7 +94,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 				for (IGuard guard : guards)
 					createProblemMarker(
 							guard, 
-							getFormulaAttributeId(), 
+							getFormulaAttributeType(), 
 							GraphProblem.InitialisationGuardError);
 				return false;
 			}
@@ -170,7 +170,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 						
 				createProblemMarker(
 						formulaElement, 
-						getFormulaAttributeId(), 
+						getFormulaAttributeType(), 
 						GraphProblem.LocalVariableChangedTypeError, 
 						name, type.toString(), identifier.getType().toString());
 			}

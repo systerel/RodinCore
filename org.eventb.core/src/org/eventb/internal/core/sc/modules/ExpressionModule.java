@@ -18,6 +18,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -27,7 +28,7 @@ import org.rodinp.core.IInternalElement;
 public abstract class ExpressionModule extends LabeledFormulaModule {
 
 	@Override
-	protected String getFormulaAttributeId() {
+	protected IAttributeType.String getFormulaAttributeType() {
 		return EventBAttributes.EXPRESSION_ATTRIBUTE;
 	}
 
@@ -49,7 +50,7 @@ public abstract class ExpressionModule extends LabeledFormulaModule {
 		IParseResult parseResult = factory.parseExpression(expressionString);
 		
 		if (!parseResult.isSuccess()) {
-			issueASTProblemMarkers(expressionElement, getFormulaAttributeId(), parseResult);
+			issueASTProblemMarkers(expressionElement, getFormulaAttributeType(), parseResult);
 			
 			return null;
 		}
@@ -61,7 +62,7 @@ public abstract class ExpressionModule extends LabeledFormulaModule {
 		IResult legibilityResult = expression.isLegible(freeIdentifierContext);
 		
 		if (!legibilityResult.isSuccess()) {
-			issueASTProblemMarkers(expressionElement, getFormulaAttributeId(), legibilityResult);
+			issueASTProblemMarkers(expressionElement, getFormulaAttributeType(), legibilityResult);
 		}
 		
 		return expression;

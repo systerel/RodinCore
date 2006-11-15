@@ -22,45 +22,45 @@ import org.rodinp.core.basis.InternalElement;
 class CommonAttributesUtil {
 	
 	public static String getLabel(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
-		return element.getStringAttribute(EventBAttributes.LABEL_ATTRIBUTE, monitor);
+		return element.getAttributeValue(EventBAttributes.LABEL_ATTRIBUTE, monitor);
 	}
 	
 	public static void setLabel(InternalElement element, String label, IProgressMonitor monitor) throws RodinDBException {
-		element.setStringAttribute(EventBAttributes.LABEL_ATTRIBUTE, label, monitor);
+		element.setAttributeValue(EventBAttributes.LABEL_ATTRIBUTE, label, monitor);
 	}
 
 	public static IRodinElement getSource(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
-		return element.getHandleAttribute(EventBAttributes.SOURCE_ATTRIBUTE, monitor);
+		return element.getAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE, monitor);
 	}
 	
 	public static void setSource(InternalElement element, IRodinElement source, IProgressMonitor monitor) throws RodinDBException {
-		element.setHandleAttribute(EventBAttributes.SOURCE_ATTRIBUTE, source, monitor);
+		element.setAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE, source, monitor);
 	}
 	
 	public static String getComment(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
-		return element.getStringAttribute(EventBAttributes.COMMENT_ATTRIBUTE, monitor);
+		return element.getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE, monitor);
 	}
 	
 	public static void setComment(InternalElement element, String label, IProgressMonitor monitor) throws RodinDBException {
-		element.setStringAttribute(EventBAttributes.COMMENT_ATTRIBUTE, label, monitor);
+		element.setAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE, label, monitor);
 	}
 	
 //	public static int getSignature(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
-//		return element.getIntegerAttribute(EventBAttributes.SIGNATURE_ATTRIBUTE, monitor);
+//		return element.getAttributeValue(EventBAttributes.SIGNATURE_ATTRIBUTE, monitor);
 //	}
 //	
 //	public static void setSignature(InternalElement element, int signature, IProgressMonitor monitor) throws RodinDBException {
-//		element.setIntegerAttribute(EventBAttributes.SIGNATURE_ATTRIBUTE, signature, monitor);
+//		element.setAttributeValue(EventBAttributes.SIGNATURE_ATTRIBUTE, signature, monitor);
 //	}
 	
 	//	Attributes related to the PR and PS files
 
 	public static int getConfidence(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
-		return element.getIntegerAttribute(EventBAttributes.CONFIDENCE_ATTRIBUTE, monitor);
+		return element.getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE, monitor);
 	}
 	
 	public static void setConfidence(InternalElement element, int confidence, IProgressMonitor monitor) throws RodinDBException {
-		element.setIntegerAttribute(EventBAttributes.CONFIDENCE_ATTRIBUTE, confidence, monitor);
+		element.setAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE, confidence, monitor);
 	}
 	
 }

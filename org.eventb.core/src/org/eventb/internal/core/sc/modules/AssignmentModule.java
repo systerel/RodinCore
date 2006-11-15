@@ -18,6 +18,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -27,7 +28,7 @@ import org.rodinp.core.IInternalElement;
 public abstract class AssignmentModule extends LabeledFormulaModule {
 
 	@Override
-	protected String getFormulaAttributeId() {
+	protected IAttributeType.String getFormulaAttributeType() {
 		return EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 	}
 

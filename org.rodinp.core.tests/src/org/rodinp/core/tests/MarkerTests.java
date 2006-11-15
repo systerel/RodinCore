@@ -10,7 +10,6 @@ package org.rodinp.core.tests;
 
 import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 import static org.rodinp.core.IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
-import static org.rodinp.core.IRodinDBStatusConstants.INVALID_ATTRIBUTE_KIND;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_MARKER_LOCATION;
 import static org.rodinp.core.tests.AttributeTests.fBool;
 import static org.rodinp.core.tests.AttributeTests.fHandle;
@@ -30,6 +29,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
@@ -51,6 +51,8 @@ public class MarkerTests extends ModifyingResourceTests {
 		void run() throws RodinDBException;
 	}
 	
+	private static final IAttributeType.String nullType = null;
+
 	IRodinProject rodinProject;
 	
 	public MarkerTests(String name) {
@@ -123,7 +125,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	}
 
 	private Map<String, Object> getAttributes(IRodinElement elem,
-			String attrId, int charStart, int charEnd, IRodinProblem pb,
+			IAttributeType attrType, int charStart, int charEnd, IRodinProblem pb,
 			Object... args) {
 
 		final Map<String, Object> attrs = new HashMap<String, Object>();
@@ -142,8 +144,8 @@ public class MarkerTests extends ModifyingResourceTests {
 			// We don't want to check the element exactly (in case of file renaming).
 			attrs.put(RodinMarkerUtil.ELEMENT, null);
 		}
-		if (attrId != null) {
-			attrs.put(RodinMarkerUtil.ATTRIBUTE_ID, attrId);
+		if (attrType != null) {
+			attrs.put(RodinMarkerUtil.ATTRIBUTE_ID, attrType.getId());
 		}
 		if (0 <= charStart) {
 			attrs.put(RodinMarkerUtil.CHAR_START, charStart);
@@ -152,7 +154,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		return attrs;
 	}
 	
-	private void assertProblemMarker(IRodinElement elem, String attrId,
+	private void assertProblemMarker(IRodinElement elem, IAttributeType attrType,
 			int charStart, int charEnd, IRodinProblem pb, Object... args)
 			throws Exception {
 		
@@ -161,7 +163,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		
 		// Check attributes directly
 		final Map<String, Object> attrs = 
-			getAttributes(elem, attrId, charStart, charEnd, pb, args);
+			getAttributes(elem, attrType, charStart, charEnd, pb, args);
 		assertMarkerAtributes(marker, attrs);
 
 		// Check attributes through enquiry methods of RodinMarkerUtil
@@ -169,7 +171,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		assertSameArgs(args, RodinMarkerUtil.getArguments(marker));
 		assertEquals(elem instanceof IInternalElement ? elem : null,
 				RodinMarkerUtil.getElement(marker));
-		assertEquals(attrId, RodinMarkerUtil.getAttributeId(marker));
+		assertEquals(attrType, RodinMarkerUtil.getAttributeType(marker));
 		// Normalize invalid position
 		if (charStart < 0) charStart = -1;
 		if (charEnd < 0) charEnd = -1;
@@ -184,19 +186,20 @@ public class MarkerTests extends ModifyingResourceTests {
 		assertProblemMarker(elem, null, -1, -1, pb, args);
 	}
 
-	private void createMarkerPositive(IInternalElement elem, String attrId,
-			IRodinProblem pb, Object... args) throws Exception {
-		
-		elem.createProblemMarker(attrId, pb, args);
-		assertProblemMarker(elem, attrId, -1, -1, pb, args);
-	}
-
-	private void createMarkerPositive(IInternalElement elem, String attrId,
-			int charStart, int charEnd, IRodinProblem pb, Object... args)
+	private void createMarkerPositive(IInternalElement elem,
+			IAttributeType attrType, IRodinProblem pb, Object... args)
 			throws Exception {
 		
-		elem.createProblemMarker(attrId, charStart, charEnd, pb, args);
-		assertProblemMarker(elem, attrId, charStart, charEnd, pb, args);
+		elem.createProblemMarker(attrType, pb, args);
+		assertProblemMarker(elem, attrType, -1, -1, pb, args);
+	}
+
+	private void createMarkerPositive(IInternalElement elem,
+			IAttributeType.String attrType, int charStart, int charEnd,
+			IRodinProblem pb, Object... args) throws Exception {
+		
+		elem.createProblemMarker(attrType, charStart, charEnd, pb, args);
+		assertProblemMarker(elem, attrType, charStart, charEnd, pb, args);
 	}
 
 	private void assertException(int code, Runnable runnable) {
@@ -221,24 +224,24 @@ public class MarkerTests extends ModifyingResourceTests {
 	}
 
 	private void createMarkerNegative(int code, final IInternalElement elem,
-			final String attrId, final IRodinProblem pb, final Object... args)
+			final IAttributeType attrType, final IRodinProblem pb, final Object... args)
 			throws Exception {
 
 		assertException(code, new Runnable() {
 			public void run() throws RodinDBException {
-				elem.createProblemMarker(attrId, pb, args);
+				elem.createProblemMarker(attrType, pb, args);
 			}
 		});
 		assertNoMarker();
 	}
 
 	private void createMarkerNegative(int code, final IInternalElement elem,
-			final String attrId, final int charStart, final int charEnd,
+			final IAttributeType.String attrType, final int charStart, final int charEnd,
 			final IRodinProblem pb, final Object... args) throws Exception {
 
 		assertException(code, new Runnable() {
 			public void run() throws RodinDBException {
-				elem.createProblemMarker(attrId, charStart, charEnd, pb, args);
+				elem.createProblemMarker(attrType, charStart, charEnd, pb, args);
 			}
 		});
 		assertNoMarker();
@@ -325,7 +328,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	public void testTopMarkerAttrInexistent() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = getNamedElement(rodinFile, "ne1");
-		createMarkerNegative(ELEMENT_DOES_NOT_EXIST, ne, "bar",
+		createMarkerNegative(ELEMENT_DOES_NOT_EXIST, ne, fString,
 				TestProblem.err0);
 	}
 
@@ -348,7 +351,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	public void testTopMarkerAttrLocInexistent() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = getNamedElement(rodinFile, "ne1");
-		createMarkerNegative(ELEMENT_DOES_NOT_EXIST, ne, "bar", 0, 3,
+		createMarkerNegative(ELEMENT_DOES_NOT_EXIST, ne, fString, 0, 3,
 				TestProblem.err0);
 	}
 	
@@ -374,7 +377,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		IInternalElement ne1 = createNEPositive(rodinFile, "ne1", null);
 		rodinFile.save(null, false);
 		IInternalElement ne11 = getNamedElement(ne1, "ne11");
-		createMarkerNegative(ELEMENT_DOES_NOT_EXIST, ne11, "baz", 0, 3,
+		createMarkerNegative(ELEMENT_DOES_NOT_EXIST, ne11, fString, 0, 3,
 				TestProblem.err0);
 	}
 	
@@ -386,8 +389,8 @@ public class MarkerTests extends ModifyingResourceTests {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
 		rodinFile.save(null, false);
-		createMarkerNegative(ATTRIBUTE_DOES_NOT_EXIST, ne, "inexistent",
-				TestProblem.err0);
+		createMarkerNegative(ATTRIBUTE_DOES_NOT_EXIST, ne,
+				fString, TestProblem.err0);
 	}
 	
 	/**
@@ -398,8 +401,8 @@ public class MarkerTests extends ModifyingResourceTests {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
 		rodinFile.save(null, false);
-		createMarkerNegative(ATTRIBUTE_DOES_NOT_EXIST, ne, "inexistent", 0, 3,
-				TestProblem.err0);
+		createMarkerNegative(ATTRIBUTE_DOES_NOT_EXIST, ne,
+				fString, 0, 3, TestProblem.err0);
 	}
 	
 	/**
@@ -415,20 +418,6 @@ public class MarkerTests extends ModifyingResourceTests {
 	}
 	
 	/**
-	 * Ensures that a problem marker cannot be set on an attribute of an
-	 * internal element, together with a location, when the attribute is of
-	 * kind "boolean".
-	 */
-	public void testMarkerAttrLocBool() throws Exception {
-		IRodinFile rodinFile = createRodinFile("P/x.test");
-		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
-		setBoolAttrPositive(ne, fBool, true);
-		rodinFile.save(null, false);
-		createMarkerNegative(INVALID_ATTRIBUTE_KIND, ne, fBool, 0, 3,
-				TestProblem.err0);
-	}
-	
-	/**
 	 * Ensures that a problem marker can be set on an attribute of an internal
 	 * element, when the attribute is of kind "handle".
 	 */
@@ -438,20 +427,6 @@ public class MarkerTests extends ModifyingResourceTests {
 		setHandleAttrPositive(ne, fHandle, rodinFile);
 		rodinFile.save(null, false);
 		createMarkerPositive(ne, fHandle, TestProblem.err0);
-	}
-	
-	/**
-	 * Ensures that a problem marker cannot be set on an attribute of an
-	 * internal element, together with a location, when the attribute is of
-	 * kind "handle".
-	 */
-	public void testMarkerAttrLocHandle() throws Exception {
-		IRodinFile rodinFile = createRodinFile("P/x.test");
-		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
-		setHandleAttrPositive(ne, fHandle, rodinFile);
-		rodinFile.save(null, false);
-		createMarkerNegative(INVALID_ATTRIBUTE_KIND, ne, fHandle, 0, 3,
-				TestProblem.err0);
 	}
 	
 	/**
@@ -467,20 +442,6 @@ public class MarkerTests extends ModifyingResourceTests {
 	}
 	
 	/**
-	 * Ensures that a problem marker cannot be set on an attribute of an
-	 * internal element, together with a location, when the attribute is of
-	 * kind "integer".
-	 */
-	public void testMarkerAttrLocInt() throws Exception {
-		IRodinFile rodinFile = createRodinFile("P/x.test");
-		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
-		setIntAttrPositive(ne, fInt, -55);
-		rodinFile.save(null, false);
-		createMarkerNegative(INVALID_ATTRIBUTE_KIND, ne, fInt, 0, 3,
-				TestProblem.err0);
-	}
-	
-	/**
 	 * Ensures that a problem marker can be set on an attribute of an internal
 	 * element, when the attribute is of kind "long".
 	 */
@@ -493,20 +454,6 @@ public class MarkerTests extends ModifyingResourceTests {
 	}
 	
 	/**
-	 * Ensures that a problem marker cannot be set on an attribute of an
-	 * internal element, together with a location, when the attribute is of
-	 * kind "long".
-	 */
-	public void testMarkerAttrLocLong() throws Exception {
-		IRodinFile rodinFile = createRodinFile("P/x.test");
-		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
-		setLongAttrPositive(ne, fLong, 12345678901L);
-		rodinFile.save(null, false);
-		createMarkerNegative(INVALID_ATTRIBUTE_KIND, ne, fLong, 0, 3,
-				TestProblem.err0);
-	}
-	
-	/**
 	 * Ensures that a problem marker cannot be set with a location but no
 	 * attribute.
 	 */
@@ -514,11 +461,11 @@ public class MarkerTests extends ModifyingResourceTests {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
 		rodinFile.save(null, false);
-		createMarkerNegative(INVALID_MARKER_LOCATION, ne, (String) null, 0, 3,
+		createMarkerNegative(INVALID_MARKER_LOCATION, ne, nullType, 0, 3,
 				TestProblem.err0);
-		createMarkerNegative(INVALID_MARKER_LOCATION, ne, (String) null, -1, 3,
+		createMarkerNegative(INVALID_MARKER_LOCATION, ne, nullType, -1, 3,
 				TestProblem.err0);
-		createMarkerNegative(INVALID_MARKER_LOCATION, ne, (String) null, 0, -1,
+		createMarkerNegative(INVALID_MARKER_LOCATION, ne, nullType, 0, -1,
 				TestProblem.err0);
 	}
 	
@@ -554,7 +501,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
 		rodinFile.save(null, false);
-		createMarkerPositive(ne, (String) null, TestProblem.err0);
+		createMarkerPositive(ne, (IAttributeType) null, TestProblem.err0);
 	}
 	
 	/**
@@ -564,7 +511,8 @@ public class MarkerTests extends ModifyingResourceTests {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
 		rodinFile.save(null, false);
-		createMarkerPositive(ne, (String) null, -5, -2, TestProblem.err0);
+		createMarkerPositive(ne, nullType, -5, -2,
+				TestProblem.err0);
 	}
 	
 	/**

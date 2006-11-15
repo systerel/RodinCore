@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -145,18 +146,20 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		buffer.deleteElement(domElement);
 	}
 
-	public synchronized String[] getAttributeNames(InternalElement element)
-			throws RodinDBException {
+	public synchronized IAttributeType[] getAttributeTypes(
+			InternalElement element) throws RodinDBException {
 		Element domElement = getDOMElementCheckExists(element);
 		String[] rawAttrNames = buffer.getAttributeNames(domElement);
 		ElementTypeManager manager = ElementTypeManager.getInstance();
-		ArrayList<String> result = new ArrayList<String>(rawAttrNames.length);
+		ArrayList<IAttributeType> result = new ArrayList<IAttributeType>(
+				rawAttrNames.length);
 		for (String attrName: rawAttrNames) {
-			if (manager.getAttributeType(attrName) != null) {
-				result.add(attrName);
+			final AttributeType type = manager.getAttributeType(attrName);
+			if (type != null) {
+				result.add(type);
 			}
 		}
-		return result.toArray(new String[result.size()]);
+		return result.toArray(new IAttributeType[result.size()]);
 	}
 
 	public synchronized String getAttributeRawValue(InternalElement element,
@@ -257,9 +260,9 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	}
 
 	public synchronized boolean hasAttribute(InternalElement element,
-			String attrName) throws RodinDBException {
+			IAttributeType type) throws RodinDBException {
 		Element domElement = getDOMElementCheckExists(element);
-		return buffer.hasAttribute(domElement, attrName);
+		return buffer.hasAttribute(domElement, type.getId());
 	}
 
 	@Override
@@ -287,9 +290,9 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	}
 	
 	public synchronized boolean removeAttribute(InternalElement element,
-			String attrName) throws RodinDBException {
+			IAttributeType attrType) throws RodinDBException {
 		Element domElement = getDOMElementCheckExists(element);
-		return buffer.removeAttribute(domElement, attrName);
+		return buffer.removeAttribute(domElement, attrType.getId());
 	}
 
 	// Removes an element and all its descendants from the cache map.

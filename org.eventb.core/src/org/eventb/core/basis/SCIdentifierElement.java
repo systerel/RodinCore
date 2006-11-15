@@ -55,7 +55,7 @@ public abstract class SCIdentifierElement extends EventBElement
 	
 	public Type getType(FormulaFactory factory, IProgressMonitor monitor) 
 	throws RodinDBException {
-		String contents = getStringAttribute(EventBAttributes.TYPE_ATTRIBUTE, monitor);
+		String contents = getAttributeValue(EventBAttributes.TYPE_ATTRIBUTE, monitor);
 		IParseResult parserResult = factory.parseType(contents);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
@@ -72,7 +72,7 @@ public abstract class SCIdentifierElement extends EventBElement
 	}
 	
 	public void setType(Type type, IProgressMonitor monitor) throws RodinDBException {
-		setStringAttribute(EventBAttributes.TYPE_ATTRIBUTE, type.toString(), monitor);
+		setAttributeValue(EventBAttributes.TYPE_ATTRIBUTE, type.toString(), monitor);
 	}
 
 	@Deprecated

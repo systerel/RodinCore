@@ -172,7 +172,7 @@ public class MachineVariantModule extends ExpressionModule {
 			if (!ok) {
 				createProblemMarker(
 						formulaElement, 
-						getFormulaAttributeId(), 
+						getFormulaAttributeType(), 
 						GraphProblem.InvalidVariantTypeError, 
 						type.toString());
 				return null;

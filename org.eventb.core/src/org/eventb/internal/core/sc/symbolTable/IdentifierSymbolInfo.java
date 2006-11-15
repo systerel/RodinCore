@@ -14,6 +14,7 @@ import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
@@ -27,7 +28,7 @@ public abstract class IdentifierSymbolInfo
 	implements IIdentifierSymbolInfo {
 
 	@Override
-	public String getSymbolAttributeId() {
+	public IAttributeType.String getSymbolAttributeType() {
 		return EventBAttributes.IDENTIFIER_ATTRIBUTE;
 	}
 
@@ -108,7 +109,7 @@ public abstract class IdentifierSymbolInfo
 		
 		markerDisplay.createProblemMarker(
 				getReferenceElement(), 
-				getSymbolAttributeId(), 
+				getSymbolAttributeType(), 
 				getUntypedError(), 
 				getSymbol());
 		

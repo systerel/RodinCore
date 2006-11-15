@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.sc.GraphProblem;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinProblem;
 
 /**
@@ -27,7 +28,7 @@ public class MachineInvariantFreeIdentsModule extends
 	}
 
 	@Override
-	protected String getAttributeId() {
+	protected IAttributeType.String getAttributeType() {
 		return EventBAttributes.PREDICATE_ATTRIBUTE;
 	}
 

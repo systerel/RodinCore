@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.RodinCore;
+
 /**
  * This class lists all attribute names used by the Event-B core plugin.
  * 
@@ -15,34 +18,78 @@ package org.eventb.core;
  */
 public final class EventBAttributes {
 
-	public static String LABEL_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".label";
-	public static String SOURCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".source";
-	public static String COMMENT_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".comment";
-	public static String INHERITED_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".inherited";
-	public static String FORBIDDEN_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".forbidden";
-	public static String PRESERVED_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".preserved";
-	public static String CONVERGENCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".convergence";
-	public static String PREDICATE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".predicate";
-	public static String EXPRESSION_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".expression";
-	public static String ASSIGNMENT_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".assignment";
-	public static String TYPE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".type";
-	public static String REFINES_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".refines";
-	public static String EXTENDS_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".extends";
-	public static String SEES_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".sees";
-	public static String IDENTIFIER_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".identifier";
+	public static IAttributeType.String LABEL_ATTRIBUTE = 
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".label");
 
-	public static String SCREFINES_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".scRefines";
+	public static IAttributeType.Handle SOURCE_ATTRIBUTE =
+		RodinCore.getHandleAttrType(EventBPlugin.PLUGIN_ID + ".source");
+
+	public static IAttributeType.String COMMENT_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".comment");
 	
-	public static String PODESC_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".poDesc";
-	public static String POROLE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".poRole";
-	public static String POSTAMP_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".poStamp";
-	public static String POHINT_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".poHint";
-	public static String PARENT_SET_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".parentSet";
+	public static IAttributeType.Boolean INHERITED_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".inherited");
+	
+	public static IAttributeType.Boolean FORBIDDEN_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".forbidden");
+	
+	public static IAttributeType.Boolean PRESERVED_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".preserved");
+	
+	public static IAttributeType.Integer CONVERGENCE_ATTRIBUTE =
+		RodinCore.getIntegerAttrType(EventBPlugin.PLUGIN_ID + ".convergence");
+	
+	public static IAttributeType.String PREDICATE_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".predicate");
+	
+	public static IAttributeType.String EXPRESSION_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".expression");
+	
+	public static IAttributeType.String ASSIGNMENT_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".assignment");
+	
+	public static IAttributeType.String TYPE_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".type");
+	
+	public static IAttributeType.String REFINES_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".refines");
+	
+	public static IAttributeType.String EXTENDS_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".extends");
+	
+	public static IAttributeType.String SEES_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".sees");
+	
+	public static IAttributeType.String IDENTIFIER_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".identifier");
+
+	public static IAttributeType.Handle SCREFINES_ATTRIBUTE =
+		RodinCore.getHandleAttrType(EventBPlugin.PLUGIN_ID + ".scRefines");
+	
+	public static IAttributeType.String PODESC_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".poDesc");
+	
+	public static IAttributeType.String POROLE_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".poRole");
+	
+	public static IAttributeType.String POSTAMP_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".poStamp");
+	
+	public static IAttributeType.String POHINT_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".poHint");
+	
+	public static IAttributeType.String PARENT_SET_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".parentSet");
 
 	// Attributes related to the PR and PS files
-	public static String CONFIDENCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".confidence";
-	public static String PROOF_VALIDITY_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".proofValid";
-	public static String AUTO_PROOF_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".autoProof";
+	public static IAttributeType.Integer CONFIDENCE_ATTRIBUTE =
+		RodinCore.getIntegerAttrType(EventBPlugin.PLUGIN_ID + ".confidence");
+
+	public static IAttributeType.Boolean PROOF_VALIDITY_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".proofValid");
+
+	public static IAttributeType.Boolean AUTO_PROOF_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".autoProof");
 	
 	private EventBAttributes() {
 		// Non-instantiable class

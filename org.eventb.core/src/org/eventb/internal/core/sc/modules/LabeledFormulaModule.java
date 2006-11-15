@@ -30,6 +30,7 @@ import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.ParsedFormula;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -75,7 +76,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 
 	protected void issueASTProblemMarkers(
 			IInternalElement element, 
-			String attributeId, 
+			IAttributeType.String attributeType, 
 			IResult result) throws RodinDBException {
 		
 		for (ASTProblem parserProblem : result.getProblems()) {
@@ -181,10 +182,10 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 			}
 			
 			if (location == null) {
-				createProblemMarker(element, attributeId, problem, objects);
+				createProblemMarker(element, attributeType, problem, objects);
 			} else {	
 				createProblemMarker(
-						element, attributeId, 
+						element, attributeType, 
 						location.getStart(), 
 						location.getEnd(), problem, objects);
 			}
@@ -218,7 +219,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 		ITypeCheckResult typeCheckResult = formula.typeCheck(typeEnvironment);
 		
 		if (!typeCheckResult.isSuccess()) {
-			issueASTProblemMarkers(formulaElement, getFormulaAttributeId(), typeCheckResult);
+			issueASTProblemMarkers(formulaElement, getFormulaAttributeType(), typeCheckResult);
 			
 			return null;
 		}
@@ -227,7 +228,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 
 	}
 	
-	protected abstract String getFormulaAttributeId();
+	protected abstract IAttributeType.String getFormulaAttributeType();
 
 	protected boolean updateIdentifierSymbolTable(
 			IInternalElement formulaElement,
@@ -242,7 +243,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 			iterator.advance();
 			createProblemMarker(
 					formulaElement, 
-					getFormulaAttributeId(), 
+					getFormulaAttributeType(), 
 					GraphProblem.UntypedIdentifierError, 
 					iterator.getName());
 		}

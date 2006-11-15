@@ -7,10 +7,12 @@
  *******************************************************************************/
 package org.eventb.core.sc;
 
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.IAttributeType.String;
 
 /**
  * @author Stefan Hallerstede
@@ -26,13 +28,13 @@ public interface IMarkerDisplay {
 	
 	void createProblemMarker(
 			IInternalElement element, 
-			String attributeId, 
+			IAttributeType attributeType, 
 			IRodinProblem problem,
 			Object... args) throws RodinDBException;
 	
 	void createProblemMarker(
 			IInternalElement element, 
-			String attributeId, 
+			String attributeType, 
 			int charStart, 
 			int charEnd,
 			IRodinProblem problem, 

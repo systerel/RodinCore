@@ -47,6 +47,7 @@ import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.TypingState;
 import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -333,23 +334,23 @@ public class MachineEventModule extends LabeledElementModule {
 			IEventSymbolInfo symbolInfo, 
 			String label, 
 			IInternalElement element,
-			String attributeId) throws CoreException {
+			IAttributeType attributeType) throws CoreException {
 		IAbstractEventInfo abstractEventInfo = abstractEventTable.getAbstractEventInfo(label);
 
 		if (abstractEventInfo == null || abstractEventInfo.isForbidden()) {
-			if (attributeId == null)
+			if (attributeType == null)
 				createProblemMarker(
 						element,
 						GraphProblem.AbstractEventNotFoundError);
 			else
 				createProblemMarker(
 						element,
-						attributeId,
+						attributeType,
 						GraphProblem.AbstractEventNotFoundError);
 			abstractEventInfo = null;
 			createProblemMarker(
 					element,
-					attributeId,
+					attributeType,
 					GraphProblem.EventRefinementError);
 			issueRefinementErrorMarker(symbolInfo);
 		}

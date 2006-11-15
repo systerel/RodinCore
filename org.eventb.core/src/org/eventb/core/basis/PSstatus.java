@@ -15,12 +15,6 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.seqprover.IConfidence;
-import org.eventb.core.seqprover.IProofDependencies;
-import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.ProverLib;
-import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -69,11 +63,11 @@ public class PSstatus extends InternalElement implements IPSstatus {
 
 
 	public boolean isProofValid(IProgressMonitor monitor) throws RodinDBException {
-		return getBooleanAttribute(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, monitor);
 	}
 
 	public void setProofValid(boolean valid, IProgressMonitor monitor) throws RodinDBException {
-		setBooleanAttribute(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, valid,monitor);
+		setAttributeValue(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, valid,monitor);
 	}
 	
 
@@ -114,7 +108,7 @@ public class PSstatus extends InternalElement implements IPSstatus {
 
 	public boolean isAutoProven(IProgressMonitor monitor) throws RodinDBException {
 		if (!autoProverAttempted(monitor)) return false;
-		return getBooleanAttribute(EventBAttributes.AUTO_PROOF_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.AUTO_PROOF_ATTRIBUTE, monitor);
 	}
 	
 }

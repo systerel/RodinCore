@@ -14,6 +14,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
 
@@ -47,7 +48,7 @@ public class MachineVariantFreeIdentsModule extends MachineFormulaFreeIdentsModu
 	}
 
 	@Override
-	protected String getAttributeId() {
+	protected IAttributeType.String getAttributeType() {
 		return EventBAttributes.EXPRESSION_ATTRIBUTE;
 	}
 

@@ -17,6 +17,7 @@ import org.eventb.core.sc.state.IParsedFormula;
 import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.state.IStateRepository;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
@@ -68,7 +69,7 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 					declaredFreeIdentifierError() :
 					GraphProblem.UndeclaredFreeIdentifierError;
 					createProblemMarker(
-							(IInternalElement) element, getAttributeId(), 
+							(IInternalElement) element, getAttributeType(), 
 							freeIdentifier.getSourceLocation().getStart(), 
 							freeIdentifier.getSourceLocation().getEnd(), 
 							problem, freeIdentifier.getName());
@@ -85,7 +86,7 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 	
 	protected abstract IRodinProblem declaredFreeIdentifierError();
 	
-	protected abstract String getAttributeId();
+	protected abstract IAttributeType.String getAttributeType();
 
 	protected IIdentifierSymbolInfo getSymbolInfo(
 			IInternalElement element, 

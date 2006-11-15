@@ -100,7 +100,7 @@ public class POSequent extends InternalElement implements IPOSequent {
 	 * @see org.eventb.core.IPODescription#getName()
 	 */
 	public String getDescription(IProgressMonitor monitor) throws RodinDBException {
-		return getStringAttribute(EventBAttributes.PODESC_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.PODESC_ATTRIBUTE, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -137,7 +137,7 @@ public class POSequent extends InternalElement implements IPOSequent {
 	 * @see org.eventb.core.IPOSequent#setDescriptionName(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void setDescription(String description, IProgressMonitor monitor) throws RodinDBException {
-		setStringAttribute(EventBAttributes.PODESC_ATTRIBUTE, description, monitor);
+		setAttributeValue(EventBAttributes.PODESC_ATTRIBUTE, description, monitor);
 	}
 
 }

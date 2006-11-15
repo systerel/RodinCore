@@ -24,8 +24,10 @@ package org.rodinp.core;
  * 
  * @author Laurent Voisin
  * @see IRodinElement#createProblemMarker(IRodinProblem, Object[])
- * @see IInternalElement#createProblemMarker(String, int, int, IRodinProblem, Object[])
- * @see IInternalElement#createProblemMarker(String, IRodinProblem, Object[])
+ * @see IInternalElement#createProblemMarker(IAttributeType.String, int, int,
+ *      IRodinProblem, Object[])
+ * @see IInternalElement#createProblemMarker(IAttributeType, IRodinProblem,
+ *      Object[])
  */
 public interface IRodinProblem {
 

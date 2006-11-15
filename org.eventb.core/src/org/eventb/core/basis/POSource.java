@@ -33,7 +33,7 @@ public class POSource extends EventBElement implements IPOSource {
 		return ELEMENT_TYPE;
 	}
 	public String getRole(IProgressMonitor monitor) throws RodinDBException {
-		return getStringAttribute(EventBAttributes.POROLE_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.POROLE_ATTRIBUTE, monitor);
 	}
 	
 	@Deprecated
@@ -42,7 +42,7 @@ public class POSource extends EventBElement implements IPOSource {
 	}
 
 	public void setRole(String role, IProgressMonitor monitor) throws RodinDBException {
-		setStringAttribute(EventBAttributes.POROLE_ATTRIBUTE, role, monitor);
+		setAttributeValue(EventBAttributes.POROLE_ATTRIBUTE, role, monitor);
 	}
 
 }

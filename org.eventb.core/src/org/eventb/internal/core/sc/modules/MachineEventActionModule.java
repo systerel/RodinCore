@@ -37,6 +37,7 @@ import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.StaticChecker;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -114,7 +115,7 @@ public class MachineEventActionModule extends AssignmentModule {
 				assignments[i] = null;
 				createProblemMarker(
 						actions[i], 
-						getFormulaAttributeId(), 
+						getFormulaAttributeType(), 
 						GraphProblem.ActionDisjointLHSError);
 				actionSymbolInfo.setError();
 			}
@@ -268,7 +269,7 @@ public class MachineEventActionModule extends AssignmentModule {
 	}
 
 	@Override
-	protected String getFormulaAttributeId() {
+	protected IAttributeType.String getFormulaAttributeType() {
 		return EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 	}
 

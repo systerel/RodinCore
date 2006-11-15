@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.state.IStateRepository;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -37,30 +38,25 @@ public abstract class Module implements IModule, IMarkerDisplay {
 		element.createProblemMarker(problem, args);
 	}
 	
-	public void createProblemMarker(
-			IInternalElement element, 
-			String attributeId, 
-			IRodinProblem problem,
+	public void createProblemMarker(IInternalElement element,
+			IAttributeType attributeType, IRodinProblem problem,
 			Object... args) throws RodinDBException {
-		createProblemMarker(element, problem, args);
-// TODO:
-//		element.createProblemMarker(attributeId, problem, args);
+
+		element.createProblemMarker(attributeType, problem, args);
+	}
+
+	public void createProblemMarker(IInternalElement element,
+			IAttributeType.String attributeType, int charStart, int charEnd,
+			IRodinProblem problem, Object... args) throws RodinDBException {
+
+		element.createProblemMarker(attributeType, charStart, charEnd, problem,
+				args);
 	}
 	
-	public void createProblemMarker(
-			IInternalElement element, 
-			String attributeId, 
-			int charStart, 
-			int charEnd,
-			IRodinProblem problem, 
-			Object... args) throws RodinDBException {
-		createProblemMarker(element, problem, args);
-// TODO:		
-//		element.createProblemMarker(attributeId, charStart, charEnd, problem, args);
-	}
-	
-//	/* (non-Javadoc)
-//	 * @see org.eventb.core.sc.IMarkerDisplay#issueMarkerWithInterval(int, org.rodinp.core.IRodinElement, java.lang.String, int, int, java.lang.Object...)
+// /* (non-Javadoc)
+// * @see org.eventb.core.sc.IMarkerDisplay#issueMarkerWithInterval(int,
+// org.rodinp.core.IRodinElement, java.lang.String, int, int,
+// java.lang.Object...)
 //	 */
 //	public void issueMarkerWithLocation(int severity, IRodinElement element, String message, int startLocation, int endLocation, Object... objects) {
 //		// TODO complete when markers are available

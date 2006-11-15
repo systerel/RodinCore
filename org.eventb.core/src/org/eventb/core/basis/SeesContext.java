@@ -60,12 +60,12 @@ public class SeesContext extends InternalElement implements ISeesContext {
 	}
 
 	public String getSeenContextName(IProgressMonitor monitor) throws RodinDBException {
-		return getStringAttribute(EventBAttributes.SEES_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.SEES_ATTRIBUTE, monitor);
 	}
 
 	public void setSeenContextName(String name, IProgressMonitor monitor) 
 	throws RodinDBException {
-		setStringAttribute(EventBAttributes.SEES_ATTRIBUTE, name, monitor);
+		setAttributeValue(EventBAttributes.SEES_ATTRIBUTE, name, monitor);
 	}
 
 	@Deprecated

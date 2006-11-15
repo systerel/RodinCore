@@ -23,8 +23,8 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 * Its marker type is {@link RodinMarkerUtil#RODIN_PROBLEM_MARKER}.
 	 * </p>
 	 * 
-	 * @param attributeId
-	 *            id of the attribute to mark, or <code>null</code> if no
+	 * @param attributeType
+	 *            type of the attribute to mark, or <code>null</code> if no
 	 *            attribute should be marked
 	 * @param problem
 	 *            problem to attach to the new marker
@@ -38,8 +38,8 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *                </ul>
 	 * @see RodinMarkerUtil
 	 */
-	void createProblemMarker(String attributeId, IRodinProblem problem,
-			Object... args) throws RodinDBException;
+	void createProblemMarker(IAttributeType attributeType,
+			IRodinProblem problem, Object... args) throws RodinDBException;
 
 	/**
 	 * Creates a new Rodin Problem marker for the given String attribute of this
@@ -49,8 +49,8 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 * Its marker type is {@link RodinMarkerUtil#RODIN_PROBLEM_MARKER}.
 	 * </p>
 	 * 
-	 * @param attributeId
-	 *            id of the attribute to mark, or <code>null</code> if no
+	 * @param attributeType
+	 *            type of the attribute to mark, or <code>null</code> if no
 	 *            attribute should be marked
 	 * @param charStart
 	 *            start position (zero-relative and inclusive), or a negative
@@ -77,8 +77,9 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *                </ul>
 	 * @see RodinMarkerUtil
 	 */
-	void createProblemMarker(String attributeId, int charStart, int charEnd,
-			IRodinProblem problem, Object... args) throws RodinDBException;
+	void createProblemMarker(IAttributeType.String attributeType, int charStart,
+			int charEnd, IRodinProblem problem, Object... args)
+			throws RodinDBException;
 
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IRodinElement#getElementType()

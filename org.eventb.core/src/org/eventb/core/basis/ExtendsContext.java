@@ -56,13 +56,13 @@ public class ExtendsContext extends InternalElement implements IExtendsContext {
 	 */
 	public String getAbstractContextName(IProgressMonitor monitor) 
 	throws RodinDBException {
-		return getStringAttribute(EventBAttributes.EXTENDS_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.EXTENDS_ATTRIBUTE, monitor);
 	}
 
 	@Deprecated
 	public String getAbstractContextName() 
 	throws RodinDBException {
-		return getStringAttribute(EventBAttributes.EXTENDS_ATTRIBUTE, null);
+		return getAttributeValue(EventBAttributes.EXTENDS_ATTRIBUTE, null);
 	}
 
 	/* (non-Javadoc)
@@ -85,7 +85,7 @@ public class ExtendsContext extends InternalElement implements IExtendsContext {
 	 */
 	public void setAbstractContextName(String name, IProgressMonitor monitor) 
 	throws RodinDBException {
-		setStringAttribute(EventBAttributes.EXTENDS_ATTRIBUTE, name, monitor);
+		setAttributeValue(EventBAttributes.EXTENDS_ATTRIBUTE, name, monitor);
 	}
 	
 	@Deprecated
