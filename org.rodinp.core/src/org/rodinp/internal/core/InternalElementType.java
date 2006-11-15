@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.internal.core.util.Util;
@@ -62,4 +63,34 @@ public class InternalElementType extends
 		return named;
 	}
 
+	/**
+	 * Creates a new internal element handle.
+	 * 
+	 * @param elementName
+	 *            the name of the element to create. Ignored for an unnamed
+	 *            element.
+	 * @param parent
+	 *            the new element's parent
+	 * @return a handle on the internal element or <code>null</code> if the
+	 *         element type is unknown
+	 */
+	public InternalElement createInstance(String elementName, IInternalParent parent) {
+		if (constructor == null) {
+			computeConstructor();
+		}
+		if (constructor == null) {
+			return null;
+		}
+		try {
+			if (isNamed()) {
+				return constructor.newInstance(elementName, parent);
+			} else {
+				return constructor.newInstance(parent);
+			}
+		} catch (Exception e) {
+			Util.log(e, "Error when creating handle of type " + getId());
+			return null;
+		}
+	}
+	
 }

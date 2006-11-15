@@ -28,6 +28,7 @@ import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.DeleteElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.InternalElementInfo;
+import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.MoveElementsOperation;
 import org.rodinp.internal.core.RemoveElementAttributeOperation;
 import org.rodinp.internal.core.RenameElementsOperation;
@@ -252,18 +253,17 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	public InternalElement getInternalElement(IInternalElementType childType,
 			String childName) {
 
-		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		return manager.createInternalElementHandle(childType, childName, this);
+		return ((InternalElementType) childType).createInstance(childName, this);
 	}
 
 	@Deprecated
-	public InternalElement getInternalElement(IInternalElementType type,
+	public InternalElement getInternalElement(IInternalElementType childType,
 			String childName, int childOccurrenceCount) {
 
 		if (childOccurrenceCount != 1) {
 			throw new IllegalArgumentException("Occurrence count must be 1.");
 		}
-		return getInternalElement(type, childName);
+		return getInternalElement(childType, childName);
 	}
 	
 	public final InternalElement getMutableCopy() {

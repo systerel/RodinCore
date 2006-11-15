@@ -64,26 +64,12 @@ public abstract class ContributedElementType<T extends RodinElement> extends
 		return (T[]) Array.newInstance(classObject, length);
 	}
 
-	public String getBundleName() {
+	protected String getBundleName() {
 		return bundleName;
 	}
 
-	public String getClassName() {
+	protected String getClassName() {
 		return className;
-	}
-
-	public Class<? extends T> getClassObject() {
-		if (classObject == null) {
-			computeConstructor();
-		}
-		return classObject;
-	}
-
-	public Constructor<? extends T> getConstructor() {
-		if (constructor == null) {
-			computeConstructor();
-		}
-		return constructor;
 	}
 
 }

@@ -40,7 +40,7 @@ public class FileElementType extends
 			Class<?> clazz = bundle.loadClass(getClassName());
 			classObject = clazz.asSubclass(RodinFile.class);
 		} catch (Exception e) {
-			Util.log(e, "Can't find constructor for element type " + getId());
+			Util.log(e, "Can't find class for element type " + getId());
 		}
 	}
 
@@ -66,6 +66,22 @@ public class FileElementType extends
 
 	public String getContentTypeId() {
 		return contentTypeId;
+	}
+
+	public RodinFile createInstance(IFile file, RodinProject project) {
+		if (constructor == null) {
+			computeConstructor();
+		}
+		if (constructor == null) {
+			return null;
+		}
+		try {
+			return constructor.newInstance(file, project);
+		} catch (Exception e) {
+			// Some error occurred while reflecting.
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

@@ -282,7 +282,7 @@ public abstract class MultiOperation extends RodinDBOperation {
 	protected void verifyRenaming(IRodinElement element) throws RodinDBException {
 		if (element instanceof RodinFile) {
 			String newName = getNewNameFor(element);
-			ElementTypeManager mgr = ElementTypeManager.getElementTypeManager();
+			ElementTypeManager mgr = ElementTypeManager.getInstance();
 			if (! mgr.isValidFileName(newName)) {
 				throw new RodinDBException(new RodinDBStatus(
 						IRodinDBStatusConstants.INVALID_NAME, element, newName));

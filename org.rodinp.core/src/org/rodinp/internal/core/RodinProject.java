@@ -12,6 +12,7 @@ package org.rodinp.internal.core;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
@@ -424,7 +425,12 @@ public class RodinProject extends Openable implements IRodinProject {
 	 */
 	public RodinFile getRodinFile(String fileName) {
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		return manager.createRodinFileHandle(this, fileName);
+		FileElementType type = manager.getFileElementTypeFor(fileName);
+		if (type == null) {
+			return null;		// Not a Rodin file.
+		}
+		IFile file = project.getProject().getFile(fileName);
+		return type.createInstance(file, this);
 	}
 
 	public RodinFile createRodinFile(String name, boolean force,

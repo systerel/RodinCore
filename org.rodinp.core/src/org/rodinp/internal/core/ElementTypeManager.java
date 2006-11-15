@@ -8,7 +8,6 @@
 
 package org.rodinp.internal.core;
 
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
@@ -19,13 +18,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
-import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.basis.InternalElement;
-import org.rodinp.core.basis.RodinFile;
-import org.rodinp.internal.core.util.Util;
 
 /**
  * Manager for Rodin element types.
@@ -43,18 +36,8 @@ public class ElementTypeManager {
 	/**
 	 * The singleton manager
 	 */
-	private static ElementTypeManager MANAGER = new ElementTypeManager();
+	private static final ElementTypeManager MANAGER = new ElementTypeManager();
 	
-	/**
-	 * Returns the singleton ElementTypeManager
-	 * 
-	 * @deprecated Use {@link #getInstance()} instead.
-	 */
-	@Deprecated
-	public final static ElementTypeManager getElementTypeManager() {
-		return MANAGER;
-	}
-
 	/**
 	 * Returns the singleton ElementTypeManager
 	 */
@@ -66,32 +49,6 @@ public class ElementTypeManager {
 		// singleton: prevent others from creating a new instance
 	}
 
-	/**
-	 * Creates a Rodin file element.
-	 * 
-	 * @param project
-	 *            the element's Rodin project
-	 * @param filename
-	 *            the name of the file element to create
-	 * @return a handle on the file element or <code>null</code> if unable to
-	 *         determine the file type.
-	 */
-	public RodinFile createRodinFileHandle(RodinProject project, String filename) {
-		FileElementType type = getFileElementTypeFromFileName(filename);
-		if (type == null) {
-			return null;		// Not a Rodin file.
-		}
-		Constructor<? extends RodinFile> constructor = type.getConstructor();
-		IFile file = project.getProject().getFile(filename);
-		try {
-			return constructor.newInstance(file, project);
-		} catch (Exception e) {
-			// Some error occurred while reflecting.
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
 	private FileElementType getFileElementType(IContentType contentType) {
 		if (fileContentTypes == null) {
 			computeFileElementTypes();
@@ -99,7 +56,7 @@ public class ElementTypeManager {
 		return fileContentTypes.get(contentType.getId());
 	}
 	
-	private FileElementType getFileElementTypeFromFileName(String fileName) {
+	public FileElementType getFileElementTypeFor(String fileName) {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		IContentType contentType = contentTypeManager.findContentTypeFor(fileName);
 		if (contentType == null) {
@@ -133,20 +90,6 @@ public class ElementTypeManager {
 		}
 	}
 
-	/**
-	 * Tells whether the given Rodin element type is a file element type.
-	 * 
-	 * @param elementType
-	 *            the element type to test
-	 * @return <code>true</code> iff it is a file element type
-	 */
-	public boolean isFileElementType(String elementType) {
-		if (fileElementTypeIds== null) {
-			computeFileElementTypes();
-		}
-		return fileElementTypeIds.containsKey(elementType);
-	}
-
 	// Local id of the fileElementTypes extension point of this plugin
 	private static final String INTERNAL_ELEMENT_TYPES_ID = "internalElementTypes";
 	
@@ -166,32 +109,6 @@ public class ElementTypeManager {
 		}
 	}
 
-	/**
-	 * Tells whether the given Rodin element type is an internal element type.
-	 * 
-	 * @param elementType
-	 *   the element type to test
-	 * @return <code>true</code> iff it is an internal element type
-	 */
-	public boolean isInternalElementType(String elementType) {
-		if (internalElementTypeIds== null) {
-			computeInternalElementTypes();
-		}
-		return internalElementTypeIds.containsKey(elementType);
-	}
-	
-	/**
-	 * Tells whether the given Rodin element type is a named internal element type.
-	 * 
-	 * @param elementType
-	 *   the element type to test
-	 * @return <code>true</code> iff it is a named internal element type
-	 */
-	public boolean isNamedInternalElementType(String elementType) {
-		InternalElementType type = getInternalElementType(elementType);
-		return type != null && type.isNamed(); 
-	}
-	
 	/**
 	 * Returns the internal element type with the given id.
 	 * 
@@ -216,7 +133,7 @@ public class ElementTypeManager {
 	 * @return the file element type associated to the file or <code>null</code>
 	 *         if it is not a Rodin file
 	 */
-	public IFileElementType getFileElementType(IFile file) {
+	public FileElementType getFileElementType(IFile file) {
 		try {
 			IContentDescription contentDescription = file.getContentDescription();
 			if (contentDescription == null) return null; // Unknown kind of file.
@@ -227,10 +144,10 @@ public class ElementTypeManager {
 			// Ignore
 		}
 		// Maybe the file doesn't exist, try with its filename
-		return getFileElementTypeFromFileName(file.getName());
+		return getFileElementTypeFor(file.getName());
 	}
 
-	public IFileElementType getFileElementType(String id) {
+	public FileElementType getFileElementType(String id) {
 		if (fileElementTypeIds == null) {
 			computeFileElementTypes();
 		}
@@ -246,43 +163,7 @@ public class ElementTypeManager {
 	 * @return <code>true</code> iff the name is valid
 	 */
 	public boolean isValidFileName(String fileName) {
-		return getFileElementTypeFromFileName(fileName) != null;
-	}
-	
-	/**
-	 * Creates a new internal element handle.
-	 * 
-	 * @param type
-	 *            the type of the element to create
-	 * @param name
-	 *            the name of the element to create. Must be <code>null</code>
-	 *            for an unnamed element.
-	 * @param parent
-	 *            the new element's parent
-	 * @return a handle on the internal element or <code>null</code> if the
-	 *         element type is unknown
-	 * @deprecated Reimplement directly in the element type.
-	 */
-	@Deprecated
-	public InternalElement createInternalElementHandle(
-			IInternalElementType type, String name, IRodinElement parent) {
-
-		assert name != null;
-		if (type == null) {
-			return null;		// Not a valid element type
-		}
-		InternalElementType lType = (InternalElementType) type;
-		Constructor<? extends InternalElement> constructor = lType.getConstructor();
-		try {
-			if (lType.isNamed()) {
-				return constructor.newInstance(name, parent);
-			} else {
-				return constructor.newInstance(parent);
-			}
-		} catch (Exception e) {
-			Util.log(e, "Error when constructing instance of type " + type);
-			return null;
-		}
+		return getFileElementTypeFor(fileName) != null;
 	}
 	
 	// Local id of the fileElementTypes extension point of this plugin
@@ -321,18 +202,6 @@ public class ElementTypeManager {
 			computeAttributeTypes();
 		}
 		return attributeTypeIds.get(name);
-	}
-
-	/**
-	 * Tells whether the given attribute name is valid (that is corresponds to a
-	 * declared attribute type).
-	 * 
-	 * @param attributeName
-	 *            the attribute name to test
-	 * @return <code>true</code> iff the name is valid
-	 */
-	public boolean isValidAttributeName(String attributeName) {
-		return getAttributeType(attributeName) != null;
 	}
 
 }

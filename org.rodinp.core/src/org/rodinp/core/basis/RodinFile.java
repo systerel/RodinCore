@@ -30,13 +30,15 @@ import org.rodinp.internal.core.Buffer;
 import org.rodinp.internal.core.CopyResourceElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.DeleteResourceElementsOperation;
-import org.rodinp.internal.core.ElementTypeManager;
+import org.rodinp.internal.core.FileElementType;
+import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.MoveResourceElementsOperation;
 import org.rodinp.internal.core.OpenableElementInfo;
 import org.rodinp.internal.core.RenameResourceElementsOperation;
 import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinFileElementInfo;
+import org.rodinp.internal.core.RodinProject;
 import org.rodinp.internal.core.SaveRodinFileOperation;
 import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 import org.rodinp.internal.core.util.MementoTokenizer;
@@ -127,9 +129,8 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	private final RodinFile createNewHandle() {
-		final ElementTypeManager etm = ElementTypeManager.getInstance();
-		return 
-			etm.createRodinFileHandle(getRodinProject(), getElementName());
+		final FileElementType type = (FileElementType) getElementType();
+		return type.createInstance(file, (RodinProject) getParent());
 	}
 
 	public final InternalElement createInternalElement(
@@ -195,8 +196,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	public final InternalElement getInternalElement(IInternalElementType type,
 			String name) {
 
-		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		return manager.createInternalElementHandle(type, name, this);
+		return ((InternalElementType) type).createInstance(name, this);
 	}
 
 	@Deprecated
