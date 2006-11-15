@@ -79,6 +79,19 @@ public interface IContextFile extends IRodinFile {
 	IPSFile getPRFile();
 
 	/**
+	 * Returns a handle to a child extends clause with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the extends clause
+	 * @return a handle to a child extends clause with the given element name
+	 */
+	IExtendsContext getExtendsClause(String elementName);
+
+	/**
 	 * Returns an array of all extends clauses of this context.
 	 * @return an array of extends clauses
 	 * @throws RodinDBException
@@ -99,6 +112,19 @@ public interface IContextFile extends IRodinFile {
 	 *             if there was a problem accessing the database
 	 */
 	IExtendsContext[] getExtendsClauses(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child carrier set with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the carrier set
+	 * @return a handle to a child carrier set with the given element name
+	 */
+	ICarrierSet getCarrierSet(String elementName);
 
 	/**
 	 * Returns an array containing all carrier sets of this context.
@@ -124,6 +150,19 @@ public interface IContextFile extends IRodinFile {
 	ICarrierSet[] getCarrierSets(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child constant with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the constant
+	 * @return a handle to a child constant with the given element name
+	 */
+	IConstant getConstant(String elementName);
+
+	/**
 	 * Returns an array containing all constants of this context.
 	 * 
 	 * @return an array of constants
@@ -147,6 +186,19 @@ public interface IContextFile extends IRodinFile {
 	IConstant[] getConstants(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child axiom with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the axiom
+	 * @return a handle to a child axiom with the given element name
+	 */
+	IAxiom getAxiom(String elementName);
+
+	/**
 	 * Returns an array containing all axioms of this context.
 	 * 
 	 * @return an array of axioms
@@ -168,6 +220,19 @@ public interface IContextFile extends IRodinFile {
 	 *             if there was a problem accessing the database
 	 */
 	IAxiom[] getAxioms(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child theorem with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the theorem
+	 * @return a handle to a child theorem with the given element name
+	 */
+	ITheorem getTheorem(String elementName);
 
 	/**
 	 * Returns an array containing all theorems of this context.

@@ -57,6 +57,11 @@ public class ContextFile extends RodinFile implements IContextFile {
 		return ELEMENT_TYPE;
 	}
 
+	public ICarrierSet getCarrierSet(String elementName) {
+		return (ICarrierSet) getInternalElement(ICarrierSet.ELEMENT_TYPE,
+				elementName);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IContextFile#getCarrierSets()
 	 */
@@ -70,6 +75,10 @@ public class ContextFile extends RodinFile implements IContextFile {
 		return getCarrierSets(null);
 	}
 	
+	public IConstant getConstant(String elementName) {
+		return (IConstant) getInternalElement(IConstant.ELEMENT_TYPE, elementName);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IContextFile#getConstants()
 	 */
@@ -83,6 +92,10 @@ public class ContextFile extends RodinFile implements IContextFile {
 		return getConstants(null); 
 	}
 	
+	public IAxiom getAxiom(String elementName) {
+		return (IAxiom) getInternalElement(IAxiom.ELEMENT_TYPE, elementName);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IContextFile#getAxioms()
 	 */
@@ -96,6 +109,10 @@ public class ContextFile extends RodinFile implements IContextFile {
 		return getAxioms(null); 
 	}
 	
+	public ITheorem getTheorem(String elementName) {
+		return (ITheorem) getInternalElement(ITheorem.ELEMENT_TYPE, elementName);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IContextFile#getTheorems()
 	 */
@@ -137,6 +154,10 @@ public class ContextFile extends RodinFile implements IContextFile {
 		final String prName = EventBPlugin.getPRFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();
 		return (IPSFile) project.getRodinFile(prName);
+	}
+
+	public IExtendsContext getExtendsClause(String elementName) {
+		return (IExtendsContext) getInternalElement(IExtendsContext.ELEMENT_TYPE, elementName);
 	}
 
 	/* (non-Javadoc)
