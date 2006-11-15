@@ -44,7 +44,7 @@ public class MachineSeesContextModule extends ContextPointerModule {
 		
 		IContextPointerArray contextPointerArray = 
 			new ContextPointerArray(
-					IContextPointerArray.SEES_POINTER, 
+					IContextPointerArray.PointerType.SEES_POINTER, 
 					seesContexts, 
 					contextFiles);
 		repository.setState(contextPointerArray);

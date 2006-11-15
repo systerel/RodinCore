@@ -32,13 +32,19 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	private boolean mutable;
 	
 	private final IInternalElement refElement;
+	private final IAttributeType.String refAttribute;
 	
 	private IInternalElement sourceElement;
 
 	protected final String component; 
 	
-	public SymbolInfo(String symbol, IInternalElement element, String component) {
+	public SymbolInfo(
+			String symbol, 
+			IInternalElement element, 
+			IAttributeType.String attribute, 
+			String component) {
 		refElement = element;
+		refAttribute = attribute;
 		sourceElement = element;
 		this.component = component;
 		mutable = true;
@@ -66,7 +72,7 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.ISymbolInfo#getSourceElement()
 	 */
-	public IInternalElement getReferenceElement() {
+	public final IInternalElement getReferenceElement() {
 		return refElement;
 	}
 	
@@ -113,7 +119,6 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	 */
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return symbol;
 	}
 
@@ -135,13 +140,13 @@ public abstract class SymbolInfo implements ISymbolInfo {
 		if (isMutable())
 			markerDisplay.createProblemMarker(
 					getReferenceElement(), 
-					getSymbolAttributeType(), 
+					getReferenceAttributeType(), 
 					getConflictError(), 
 					getSymbol());
 		else
 			markerDisplay.createProblemMarker(
 					getReferenceElement(), 
-					getSymbolAttributeType(), 
+					getReferenceAttributeType(), 
 					getConflictWarning(), 
 					getSymbol());
 	}
@@ -149,6 +154,8 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	public abstract IRodinProblem getConflictWarning();
 	public abstract IRodinProblem getConflictError();
 	
-	public abstract IAttributeType.String getSymbolAttributeType();
+	public final IAttributeType.String getReferenceAttributeType() {
+		return refAttribute;
+	}
 
 }

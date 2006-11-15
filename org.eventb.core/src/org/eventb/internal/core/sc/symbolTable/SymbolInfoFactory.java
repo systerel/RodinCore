@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
@@ -26,6 +27,7 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -43,8 +45,9 @@ public final class SymbolInfoFactory {
 			String pointer,
 			ISCCarrierSet set, 
 			IInternalElement contextPointer,
+			IAttributeType.String attribute, 
 			String component) {
-		return new CarrierSetSymbolInfo(symbol, pointer, contextPointer, component);
+		return new CarrierSetSymbolInfo(symbol, pointer, contextPointer, attribute, component);
 	}
 	
 	static private IIdentifierSymbolInfo createConstantSymbolInfo(
@@ -52,8 +55,9 @@ public final class SymbolInfoFactory {
 			String pointer,
 			ISCConstant constant, 
 			IInternalElement contextPointer,
+			IAttributeType.String attribute, 
 			String component) {
-		return new ConstantSymbolInfo(symbol, pointer, contextPointer, component);
+		return new ConstantSymbolInfo(symbol, pointer, contextPointer, attribute, component);
 	}
 
 	static private IIdentifierSymbolInfo createVariableSymbolInfo(
@@ -61,35 +65,40 @@ public final class SymbolInfoFactory {
 			String pointer,
 			ISCVariable variable, 
 			IInternalElement contextPointer,
+			IAttributeType.String attribute, 
 			String component) {
-		return new VariableSymbolInfo(symbol, pointer, contextPointer, component);
+		return new VariableSymbolInfo(symbol, pointer, contextPointer, attribute, component);
 	}
 
 	static public IIdentifierSymbolInfo createCarrierSetSymbolInfo(
 			String symbol,
 			ICarrierSet set,
 			String component) {
-		return new CarrierSetSymbolInfo(symbol, null, set, component);
+		return new CarrierSetSymbolInfo(
+				symbol, null, set, EventBAttributes.IDENTIFIER_ATTRIBUTE, component);
 	}
 	
 	static public IIdentifierSymbolInfo createConstantSymbolInfo(
 			String symbol,
 			IConstant constant,
 			String component) {
-		return new ConstantSymbolInfo(symbol, null, constant, component);
+		return new ConstantSymbolInfo(
+				symbol, null, constant, EventBAttributes.IDENTIFIER_ATTRIBUTE, component);
 	}
 	
 	static public IIdentifierSymbolInfo createVariableSymbolInfo(
 			String symbol,
 			IVariable variable,
 			String component) {
-		return new VariableSymbolInfo(symbol, null, variable, component);
+		return new VariableSymbolInfo(
+				symbol, null, variable, EventBAttributes.IDENTIFIER_ATTRIBUTE, component);
 	}
 	
 	static public IIdentifierSymbolInfo createIdentifierSymbolInfo(
 			String symbol,
 			ISCIdentifierElement element, 
 			IInternalElement pointerElement,
+			IAttributeType.String attribute, 
 			String component) {
 		
 		if (element instanceof ISCCarrierSet) {
@@ -97,13 +106,16 @@ public final class SymbolInfoFactory {
 					symbol, 
 					pointerElement.getHandleIdentifier(), 
 					(ISCCarrierSet) element, 
-					pointerElement, component);
+					pointerElement, 
+					attribute, 
+					component);
 		} else if (element instanceof ISCConstant) {
 			return createConstantSymbolInfo(
 					symbol, 
 					pointerElement.getHandleIdentifier(), 
 					(ISCConstant) element, 
 					pointerElement, 
+					attribute, 
 					component);
 		} else if (element instanceof ISCVariable) {
 			return createVariableSymbolInfo(
@@ -111,6 +123,7 @@ public final class SymbolInfoFactory {
 					pointerElement.getHandleIdentifier(), 
 					(ISCVariable) element, 
 					pointerElement, 
+					attribute, 
 					component);
 		}
 		
@@ -143,21 +156,21 @@ public final class SymbolInfoFactory {
 			String component) {
 		
 		if (element instanceof IAxiom) {
-			return new AxiomSymbolInfo(symbol, element, component);
+			return new AxiomSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 		} else if (element instanceof ITheorem) {
-			return new TheoremSymbolInfo(symbol, element, component);
+			return new TheoremSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 		} else if (element instanceof IInvariant) {
-			return new InvariantSymbolInfo(symbol, element, component);
+			return new InvariantSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 		} else if (element instanceof IEvent) {
-			return new EventSymbolInfo(symbol, element, component);
+			return new EventSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 		} else if (element instanceof ISCEvent) {
-			return new EventSymbolInfo(symbol, element, component);
+			return new EventSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 		} else if (element instanceof IWitness) {
-			return new WitnessSymbolInfo(symbol, element, component);
+			return new WitnessSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 		} else if (element instanceof IGuard) {
-			return new GuardSymbolInfo(symbol, element, component);
+			return new GuardSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 		} else if (element instanceof IAction) {
-			return new ActionSymbolInfo(symbol, element, component);
+			return new ActionSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 		}
 		
 		assert false;

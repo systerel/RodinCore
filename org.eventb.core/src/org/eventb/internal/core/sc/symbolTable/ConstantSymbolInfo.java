@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IConstantSymbolInfo;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinProblem;
@@ -34,8 +35,9 @@ public class ConstantSymbolInfo
 			String symbol, 
 			String link, 
 			IInternalElement element, 
+			IAttributeType.String attribute, 
 			String component) {
-		super(symbol, link, element, component);
+		super(symbol, link, element, attribute, component);
 	}
 
 	public void createSCElement(

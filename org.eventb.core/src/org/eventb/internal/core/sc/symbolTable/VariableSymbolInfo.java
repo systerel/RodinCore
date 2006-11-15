@@ -14,6 +14,7 @@ import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinProblem;
@@ -37,8 +38,9 @@ public class VariableSymbolInfo
 			String symbol, 
 			String link, 
 			IInternalElement element, 
+			IAttributeType.String attribute, 
 			String component) {
-		super(symbol, link, element, component);
+		super(symbol, link, element, attribute, component);
 		
 		forbidden = false;
 		

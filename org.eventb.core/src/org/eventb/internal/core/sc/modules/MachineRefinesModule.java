@@ -43,6 +43,7 @@ import org.eventb.internal.core.sc.AbstractEventInfo;
 import org.eventb.internal.core.sc.AbstractEventTable;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -168,6 +169,7 @@ public class MachineRefinesModule extends ProcessorModule {
 					fetchSymbol(
 							set, 
 							refinesMachine, 
+							EventBAttributes.REFINES_ATTRIBUTE,
 							identifierSymbolTable, 
 							factory, 
 							component);
@@ -181,6 +183,7 @@ public class MachineRefinesModule extends ProcessorModule {
 					fetchSymbol(
 							constant, 
 							refinesMachine, 
+							EventBAttributes.REFINES_ATTRIBUTE,
 							identifierSymbolTable, 
 							factory, 
 							component);
@@ -208,6 +211,7 @@ public class MachineRefinesModule extends ProcessorModule {
 				fetchSymbol(
 						variable, 
 						refinesMachine, 
+						EventBAttributes.REFINES_ATTRIBUTE,
 						identifierSymbolTable, 
 						factory, 
 						component);
@@ -221,6 +225,7 @@ public class MachineRefinesModule extends ProcessorModule {
 	protected IIdentifierSymbolInfo fetchSymbol(
 			ISCIdentifierElement identifier, 
 			IInternalElement pointerElement, 
+			IAttributeType.String pointerAttribute,
 			IIdentifierSymbolTable identifierSymbolTable,
 			FormulaFactory factory,
 			String component) throws CoreException {
@@ -234,7 +239,8 @@ public class MachineRefinesModule extends ProcessorModule {
 		Type type = identifier.getType(factory, null);
 		
 		IIdentifierSymbolInfo symbolInfo = 
-			SymbolInfoFactory.createIdentifierSymbolInfo(name, identifier, pointerElement, component);
+			SymbolInfoFactory.createIdentifierSymbolInfo(
+					name, identifier, pointerElement, pointerAttribute, component);
 		
 		symbolInfo.setType(type);
 		

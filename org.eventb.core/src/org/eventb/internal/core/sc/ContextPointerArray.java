@@ -26,7 +26,7 @@ public class ContextPointerArray implements IContextPointerArray {
 
 	private final int stateSize;
 	
-	private final int pointerType;
+	private final PointerType pointerType;
 	
 	private final IInternalElement[] contextPointers;
 	
@@ -43,13 +43,14 @@ public class ContextPointerArray implements IContextPointerArray {
 	private final List<ISCContext> validContexts;
 
 	public ContextPointerArray(
-			int pointerType,
+			PointerType pointerType,
 			IInternalElement[] contextPointers, 
 			ISCContextFile[] contextFiles) {
 		
 		assert contextPointers.length == contextFiles.length;
 		
-		assert pointerType == EXTENDS_POINTER || pointerType == SEES_POINTER;
+		assert pointerType == IContextPointerArray.PointerType.EXTENDS_POINTER
+			|| pointerType == IContextPointerArray.PointerType.SEES_POINTER;
 		
 		stateSize = contextPointers.length;
 		
@@ -126,7 +127,7 @@ public class ContextPointerArray implements IContextPointerArray {
 		return contextFiles[index];
 	}
 
-	public int getContextPointerType() {
+	public PointerType getContextPointerType() {
 		return pointerType;
 	}
 

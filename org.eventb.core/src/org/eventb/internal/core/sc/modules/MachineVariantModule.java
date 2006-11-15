@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCVariant;
@@ -83,7 +84,7 @@ public class MachineVariantModule extends ExpressionModule {
 			IInternalElement internalElement, 
 			String component, 
 			IProgressMonitor monitor) throws CoreException {
-		return new VariantSymbolInfo("VARIANT", internalElement, component);
+		return new VariantSymbolInfo("VARIANT", internalElement, EventBAttributes.LABEL_ATTRIBUTE, component);
 	}
 
 	/* (non-Javadoc)

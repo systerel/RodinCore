@@ -49,7 +49,7 @@ public abstract class Module implements IModule, IMarkerDisplay {
 			IAttributeType.String attributeType, int charStart, int charEnd,
 			IRodinProblem problem, Object... args) throws RodinDBException {
 
-		element.createProblemMarker(attributeType, charStart, charEnd, problem,
+		element.createProblemMarker(attributeType, charStart, charEnd+1, problem,
 				args);
 	}
 	

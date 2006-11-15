@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
 
@@ -20,8 +21,12 @@ import org.rodinp.core.IRodinProblem;
  */
 public class VariantSymbolInfo extends LabelSymbolInfo {
 
-	public VariantSymbolInfo(String symbol, IInternalElement element, String component) {
-		super(symbol, element, component);
+	public VariantSymbolInfo(
+			String symbol, 
+			IInternalElement element, 
+			IAttributeType.String attribute, 
+			String component) {
+		super(symbol, element, attribute, component);
 	}
 
 	@Override

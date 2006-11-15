@@ -34,9 +34,11 @@ import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -93,19 +95,22 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			
 			ISCContextFile scCF = contextPointerArray.getSCContextFile(index);
 			
+			IAttributeType.String pointerAttribute = null;
+			IRodinProblem pointerProblem = null;
+			if (contextPointerArray.getContextPointerType() == IContextPointerArray.PointerType.EXTENDS_POINTER) {
+				pointerAttribute = EventBAttributes.EXTENDS_ATTRIBUTE;
+				pointerProblem = GraphProblem.AbstractContextNotFoundError;
+			} else if (contextPointerArray.getContextPointerType() == IContextPointerArray.PointerType.SEES_POINTER) {
+				pointerAttribute = EventBAttributes.SEES_ATTRIBUTE;
+				pointerProblem = GraphProblem.SeenContextNotFoundError;
+			} else
+				assert false;
+			
 			if (!scCF.exists()) {
-				if (contextPointerArray.getContextPointerType() == IContextPointerArray.EXTENDS_POINTER)
-					createProblemMarker(
-							contextPointerArray.getContextPointer(index), 
-							EventBAttributes.EXTENDS_ATTRIBUTE,
-							GraphProblem.AbstractContextNotFoundError);
-				else if (contextPointerArray.getContextPointerType() == IContextPointerArray.SEES_POINTER)
-					createProblemMarker(
-							contextPointerArray.getContextPointer(index), 
-							EventBAttributes.SEES_ATTRIBUTE,
-							GraphProblem.SeenContextNotFoundError);
-				else
-					assert false;
+				createProblemMarker(
+						contextPointerArray.getContextPointer(index), 
+						pointerAttribute,
+						pointerProblem);
 				
 				contextPointerArray.setError(index);
 				continue;
@@ -145,6 +150,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 								symbolInfos, 
 								index,
 								contextPointerArray, 
+								pointerAttribute,
 								set);
 					}
 	
@@ -153,6 +159,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 								symbolInfos, 
 								index,
 								contextPointerArray, 
+								pointerAttribute,
 								constant);
 					}
 				}
@@ -202,6 +209,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			List<IIdentifierSymbolInfo> symbolList, 
 			int index,
 			IContextPointerArray contextPointerArray, 
+			IAttributeType.String attribute,
 			ISCIdentifierElement element) throws CoreException {
 		
 		String name = element.getIdentifierString(null);
@@ -211,6 +219,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 					name,
 					element, 
 					contextPointerArray.getContextPointer(index), 
+					attribute,
 					StaticChecker.getParentName(element));
 		
 		try {

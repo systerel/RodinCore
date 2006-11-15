@@ -23,10 +23,15 @@ public interface IContextPointerArray extends IStateSC {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".contextPointerArray";
 
-	public static int EXTENDS_POINTER = 1;
-	public static int SEES_POINTER = 2;
+	public enum PointerType {
+		EXTENDS_POINTER,
+		SEES_POINTER
+	}
 	
-	int getContextPointerType();
+//	public static int EXTENDS_POINTER = 1;
+//	public static int SEES_POINTER = 2;
+	
+	PointerType getContextPointerType();
 	
 	void setError(int index);
 	

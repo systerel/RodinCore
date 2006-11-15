@@ -8,7 +8,6 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
@@ -27,17 +26,13 @@ public abstract class IdentifierSymbolInfo
 	extends SymbolInfo 
 	implements IIdentifierSymbolInfo {
 
-	@Override
-	public IAttributeType.String getSymbolAttributeType() {
-		return EventBAttributes.IDENTIFIER_ATTRIBUTE;
-	}
-
 	public IdentifierSymbolInfo(
 			String symbol, 
 			String pointer,
 			IInternalElement element, 
+			IAttributeType.String attribute, 
 			String component) {
-		super(symbol, element, component);
+		super(symbol, element, attribute, component);
 		
 		type = null;
 		this.imported = pointer != null;
@@ -109,7 +104,7 @@ public abstract class IdentifierSymbolInfo
 		
 		markerDisplay.createProblemMarker(
 				getReferenceElement(), 
-				getSymbolAttributeType(), 
+				getReferenceAttributeType(), 
 				getUntypedError(), 
 				getSymbol());
 		

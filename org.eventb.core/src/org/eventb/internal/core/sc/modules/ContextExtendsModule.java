@@ -27,11 +27,14 @@ import org.rodinp.core.IRodinElement;
  */
 public class ContextExtendsModule extends ContextPointerModule {
 
-	public void process(
+	protected IContextPointerArray contextPointerArray;
+	
+	@Override
+	public void initModule(
 			IRodinElement element, 
-			IInternalParent target,
 			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
+		super.initModule(element, repository, monitor);
 		
 		IContextFile contextFile = (IContextFile) element;
 		
@@ -43,17 +46,33 @@ public class ContextExtendsModule extends ContextPointerModule {
 			contextFiles[i] = extendsContexts[i].getAbstractSCContext(monitor);
 		}
 		
-		IContextPointerArray contextPointerArray = 
+		contextPointerArray = 
 			new ContextPointerArray(
-					IContextPointerArray.EXTENDS_POINTER, 
+					IContextPointerArray.PointerType.EXTENDS_POINTER, 
 					extendsContexts, 
 					contextFiles);
 		repository.setState(contextPointerArray);
+	}
+
+	@Override
+	public void endModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
+		super.endModule(element, repository, monitor);
+		contextPointerArray = null;
+	}
+	
+	public void process(
+			IRodinElement element, 
+			IInternalParent target,
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		
 		// we need to do everything up to this point
 		// produce a define repository state
 		
-		if (extendsContexts.length == 0)
+		if (contextPointerArray.size() == 0)
 			return; // nothing to do
 		
 		monitor.subTask(Messages.bind(Messages.progress_ContextExtends));

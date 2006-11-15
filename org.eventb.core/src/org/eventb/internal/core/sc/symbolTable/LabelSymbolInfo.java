@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -23,13 +22,10 @@ public abstract class LabelSymbolInfo
 	public LabelSymbolInfo(
 			String symbol, 
 			IInternalElement element, 
+			IAttributeType.String attribute, 
 			String component) {
-		super(symbol, element, component);
+		super(symbol, element, attribute, component);
 		
 	}
 
-	@Override
-	public IAttributeType.String getSymbolAttributeType() {
-		return EventBAttributes.LABEL_ATTRIBUTE;
-	}
 }

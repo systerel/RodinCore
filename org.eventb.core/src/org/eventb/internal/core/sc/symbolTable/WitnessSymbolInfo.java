@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc.symbolTable;
 
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IWitnessSymbolInfo;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
 
@@ -21,8 +22,9 @@ public class WitnessSymbolInfo extends LabelSymbolInfo implements IWitnessSymbol
 	public WitnessSymbolInfo(
 			String symbol, 
 			IInternalElement element, 
+			IAttributeType.String attribute, 
 			String component) {
-		super(symbol, element, component);
+		super(symbol, element, attribute, component);
 	}
 
 	@Override
