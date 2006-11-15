@@ -74,7 +74,7 @@ public class MachineContextClosureModule extends ProcessorModule {
 				
 				createProblemMarker(
 						refinesMachine, 
-						EventBAttributes.REFINES_ATTRIBUTE, 
+						EventBAttributes.TARGET_ATTRIBUTE, 
 						GraphProblem.ContextOnlyInAbstractMachineWarning,
 						StaticChecker.getStrippedComponentName(name));
 				

@@ -246,7 +246,7 @@ public class MachineEventModule extends LabeledElementModule {
 				if (abstractLabels.contains(label)) {
 					createProblemMarker(
 							refinesEvents[i],
-							EventBAttributes.REFINES_ATTRIBUTE,
+							EventBAttributes.TARGET_ATTRIBUTE,
 							GraphProblem.AbstractEventLabelConflictWarning, 
 							label);
 					continue;
@@ -256,7 +256,7 @@ public class MachineEventModule extends LabeledElementModule {
 			if (label.equals(IEvent.INITIALISATION)) {
 				createProblemMarker(
 						refinesEvents[i],
-						EventBAttributes.REFINES_ATTRIBUTE,
+						EventBAttributes.TARGET_ATTRIBUTE,
 						GraphProblem.InitialisationRefinedError);
 				issueRefinementErrorMarker(symbolInfo);
 				continue;
@@ -267,7 +267,7 @@ public class MachineEventModule extends LabeledElementModule {
 						symbolInfo, 
 						label, 
 						refinesEvents[i], 
-						EventBAttributes.REFINES_ATTRIBUTE);
+						EventBAttributes.TARGET_ATTRIBUTE);
 			
 			if (abstractEventInfo == null)
 				continue;

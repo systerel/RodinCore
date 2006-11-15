@@ -404,10 +404,6 @@
             kind="string"
             name="%eventBParentSetAttribute"/>
       <attributeType
-            id="extends"
-            kind="string"
-            name="%eventBExtendsAttribute"/>
-      <attributeType
             id="predicate"
             kind="string"
             name="%eventBPredicateAttribute"/>
@@ -416,21 +412,17 @@
             kind="string"
             name="%eventBAssignmentAttribute"/>
       <attributeType
-            id="refines"
+            id="target"
             kind="string"
-            name="%eventBRefinesAttribute"/>
-      <attributeType
-            id="scRefines"
-            kind="handle"
-            name="%eventBRefinesAttribute"/>
-      <attributeType
-            id="sees"
-            kind="string"
-            name="%eventBSeesAttribute"/>
+            name="%eventBTargetAttribute"/>
       <attributeType
             id="expression"
             kind="string"
             name="%eventBExpressionAttribute"/>
+      <attributeType
+            id="scTarget"
+            kind="handle"
+            name="%eventBscTargetAttribute"/>
    </extension>
 
 </plugin>

@@ -48,7 +48,7 @@ public class SCRefinesEvent extends EventBElement implements ISCRefinesEvent {
 	}
 	
 	private IRodinElement getAbstractSCEventHandle(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.SCREFINES_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE, monitor);
 	}
 
 	public ISCEvent getAbstractSCEvent(IProgressMonitor monitor) throws RodinDBException {
@@ -63,7 +63,7 @@ public class SCRefinesEvent extends EventBElement implements ISCRefinesEvent {
 
 	public void setAbstractSCEvent(ISCEvent abstractSCEvent, IProgressMonitor monitor) 
 	throws RodinDBException {
-		setAttributeValue(EventBAttributes.SCREFINES_ATTRIBUTE, abstractSCEvent, monitor);
+		setAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE, abstractSCEvent, monitor);
 	}
 
 	@Deprecated

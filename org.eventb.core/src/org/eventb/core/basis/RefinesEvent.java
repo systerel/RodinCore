@@ -51,14 +51,14 @@ public class RefinesEvent extends InternalElement implements IRefinesEvent {
 	 * @see org.eventb.core.IRefinesEvent#getAbstractMachineName()
 	 */
 	public String getAbstractEventLabel(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.REFINES_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, monitor);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesEvent#setAbstractMachineName(java.lang.String)
 	 */
 	public void setAbstractEventLabel(String label, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.REFINES_ATTRIBUTE, label, monitor);
+		setAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, label, monitor);
 	}
 
 	@Deprecated

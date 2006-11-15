@@ -169,7 +169,7 @@ public class MachineRefinesModule extends ProcessorModule {
 					fetchSymbol(
 							set, 
 							refinesMachine, 
-							EventBAttributes.REFINES_ATTRIBUTE,
+							EventBAttributes.TARGET_ATTRIBUTE,
 							identifierSymbolTable, 
 							factory, 
 							component);
@@ -183,7 +183,7 @@ public class MachineRefinesModule extends ProcessorModule {
 					fetchSymbol(
 							constant, 
 							refinesMachine, 
-							EventBAttributes.REFINES_ATTRIBUTE,
+							EventBAttributes.TARGET_ATTRIBUTE,
 							identifierSymbolTable, 
 							factory, 
 							component);
@@ -211,7 +211,7 @@ public class MachineRefinesModule extends ProcessorModule {
 				fetchSymbol(
 						variable, 
 						refinesMachine, 
-						EventBAttributes.REFINES_ATTRIBUTE,
+						EventBAttributes.TARGET_ATTRIBUTE,
 						identifierSymbolTable, 
 						factory, 
 						component);
@@ -350,7 +350,7 @@ public class MachineRefinesModule extends ProcessorModule {
 		if (scMachineFile != null && !scMachineFile.exists()) {
 			createProblemMarker(
 					refinesMachine, 
-					EventBAttributes.REFINES_ATTRIBUTE, 
+					EventBAttributes.TARGET_ATTRIBUTE, 
 					GraphProblem.AbstractMachineNotFoundError);
 			
 			scMachineFile = null;

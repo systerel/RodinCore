@@ -49,7 +49,7 @@ public class SCRefinesMachine extends EventBElement implements
 	}
 
 	private IRodinElement getAbstractSCMachineHandle(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.SCREFINES_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE, monitor);
 	}
 
 	public ISCMachineFile getAbstractSCMachine(IProgressMonitor monitor) throws RodinDBException {
@@ -64,7 +64,7 @@ public class SCRefinesMachine extends EventBElement implements
 
 	public void setAbstractSCMachine(ISCMachineFile abstractSCMachine, IProgressMonitor monitor) 
 	throws RodinDBException {
-		setAttributeValue(EventBAttributes.SCREFINES_ATTRIBUTE, abstractSCMachine, monitor);
+		setAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE, abstractSCMachine, monitor);
 	}
 
 	@Deprecated

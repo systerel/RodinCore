@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISeesContext;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.state.IStateRepository;
@@ -19,6 +20,7 @@ import org.eventb.internal.core.sc.ContextPointerArray;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -67,6 +69,11 @@ public class MachineSeesContextModule extends ContextPointerModule {
 				repository, 
 				null);
 		
+	}
+
+	@Override
+	protected IRodinProblem getTargetContextNotFoundProblem() {
+		return GraphProblem.SeenContextNotFoundError;
 	}
 		
 }

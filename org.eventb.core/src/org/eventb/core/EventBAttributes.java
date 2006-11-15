@@ -51,20 +51,14 @@ public final class EventBAttributes {
 	public static IAttributeType.String TYPE_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".type");
 	
-	public static IAttributeType.String REFINES_ATTRIBUTE =
-		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".refines");
-	
-	public static IAttributeType.String EXTENDS_ATTRIBUTE =
-		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".extends");
-	
-	public static IAttributeType.String SEES_ATTRIBUTE =
-		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".sees");
-	
+	public static IAttributeType.String TARGET_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".target");
+
 	public static IAttributeType.String IDENTIFIER_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".identifier");
 
-	public static IAttributeType.Handle SCREFINES_ATTRIBUTE =
-		RodinCore.getHandleAttrType(EventBPlugin.PLUGIN_ID + ".scRefines");
+	public static IAttributeType.Handle SCTARGET_ATTRIBUTE =
+		RodinCore.getHandleAttrType(EventBPlugin.PLUGIN_ID + ".scTarget");
 	
 	public static IAttributeType.String PODESC_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".poDesc");

@@ -23,7 +23,6 @@ import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.state.IContextTable;
@@ -86,6 +85,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 		factory = null;
 	}
 
+	protected abstract IRodinProblem getTargetContextNotFoundProblem();
 
 	protected void fetchSCContexts(
 			IContextPointerArray contextPointerArray,
@@ -95,22 +95,13 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			
 			ISCContextFile scCF = contextPointerArray.getSCContextFile(index);
 			
-			IAttributeType.String pointerAttribute = null;
-			IRodinProblem pointerProblem = null;
-			if (contextPointerArray.getContextPointerType() == IContextPointerArray.PointerType.EXTENDS_POINTER) {
-				pointerAttribute = EventBAttributes.EXTENDS_ATTRIBUTE;
-				pointerProblem = GraphProblem.AbstractContextNotFoundError;
-			} else if (contextPointerArray.getContextPointerType() == IContextPointerArray.PointerType.SEES_POINTER) {
-				pointerAttribute = EventBAttributes.SEES_ATTRIBUTE;
-				pointerProblem = GraphProblem.SeenContextNotFoundError;
-			} else
-				assert false;
+			final IAttributeType.String pointerAttribute = EventBAttributes.TARGET_ATTRIBUTE;
 			
 			if (!scCF.exists()) {
 				createProblemMarker(
 						contextPointerArray.getContextPointer(index), 
 						pointerAttribute,
-						pointerProblem);
+						getTargetContextNotFoundProblem());
 				
 				contextPointerArray.setError(index);
 				continue;
