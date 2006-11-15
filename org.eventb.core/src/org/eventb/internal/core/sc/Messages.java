@@ -55,6 +55,7 @@ public final class Messages {
     // error messages of the static checker addressed to the user
 	
 	public static String scuser_InvalidIdentifierName;
+	public static String scuser_InvalidIdentifierContainsSpaces;
 	
     public static String scuser_AbstractContextNotFound;
     public static String scuser_SeenContextNotFound;

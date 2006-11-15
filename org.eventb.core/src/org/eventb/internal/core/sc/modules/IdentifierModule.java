@@ -58,6 +58,14 @@ public abstract class IdentifierModule extends ProcessorModule {
 				FreeIdentifier identifier = (FreeIdentifier) expr;
 				if (name.equals(identifier.getName()))
 					return identifier;
+				else {
+					display.createProblemMarker(
+							element, 
+							EventBAttributes.IDENTIFIER_ATTRIBUTE, 
+							GraphProblem.InvalidIdentifierSpacesError);
+					
+					return null;
+				}
 			}
 		}
 		display.createProblemMarker(
