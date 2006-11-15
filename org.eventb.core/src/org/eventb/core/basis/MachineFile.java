@@ -151,6 +151,7 @@ public class MachineFile extends EventBFile implements IMachineFile {
 		return (IPSFile) project.getRodinFile(prName);
 	}
 
+	@Deprecated
 	public IRefinesMachine getRefinesClause(IProgressMonitor monitor) throws RodinDBException {
 		return (IRefinesMachine) getSingletonChild(
 				IRefinesMachine.ELEMENT_TYPE, Messages.database_MachineMultipleRefinesFailure);
@@ -161,6 +162,7 @@ public class MachineFile extends EventBFile implements IMachineFile {
 		return getRefinesClause(null);
 	}
 
+	@Deprecated
 	public IVariant getVariant(IProgressMonitor monitor) throws RodinDBException {
 		return (IVariant) getSingletonChild(
 				IVariant.ELEMENT_TYPE, Messages.database_MachineMultipleVariantFailure);
@@ -169,6 +171,16 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	@Deprecated
 	public IVariant getVariant() throws RodinDBException {
 		return getVariant(null);
+	}
+
+	public IRefinesMachine[] getRefinesClauses(IProgressMonitor monitor) throws RodinDBException {
+		IRodinElement[] elements = getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
+		return (IRefinesMachine[]) elements; 
+	}
+
+	public IVariant[] getVariants(IProgressMonitor monitor) throws RodinDBException {
+		IRodinElement[] elements = getChildrenOfType(IVariant.ELEMENT_TYPE);
+		return (IVariant[]) elements; 
 	}
 
 }

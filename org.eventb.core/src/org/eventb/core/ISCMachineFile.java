@@ -70,7 +70,7 @@ public interface ISCMachineFile extends IRodinFile {
 	 *         <code>null</code>
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAbstractSCMachine(IProgressMonitor)</code> instead
+	 * @deprecated use <code>getAbstractSCMachines(IProgressMonitor)</code> instead
 	 */
 	@Deprecated
 	ISCMachineFile getAbstractSCMachine() throws RodinDBException;
@@ -87,9 +87,35 @@ public interface ISCMachineFile extends IRodinFile {
 	 *         <code>null</code>
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getAbstractSCMachines(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	ISCMachineFile getAbstractSCMachine(IProgressMonitor monitor) throws RodinDBException;
 
+	/**
+	 * Returns a handle to the statically checked versions of the abstractions of
+	 * this SC machine.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return a array of handles to the statically checked versions of the abstractions
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCMachineFile[] getAbstractSCMachines(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns an array of all SC refines clauses of this SC machine.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return an array of SC refines clauses
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCRefinesMachine[] getSCRefinesClauses(IProgressMonitor monitor) throws RodinDBException;
+	
 	/**
 	 * Returns the internal SC contexts that are (transitively) seen by this SC
 	 * machine.
@@ -214,7 +240,7 @@ public interface ISCMachineFile extends IRodinFile {
 	 * @return the handle of the SC variant
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getSCVariant(IProgressMonitor)</code> instead
+	 * @deprecated use <code>getSCVariants(IProgressMonitor)</code> instead
 	 */
 	@Deprecated
 	ISCVariant getSCVariant() throws RodinDBException;
@@ -228,8 +254,22 @@ public interface ISCMachineFile extends IRodinFile {
 	 * @return the handle of the SC variant
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getSCVariants(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	ISCVariant getSCVariant(IProgressMonitor monitor) throws RodinDBException;
+	
+	/**
+	 * Returns the array containing all SC variants of this SC machine.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the array of all SC variants
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCVariant[] getSCVariants(IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns the handle of the refines clause of this SC machine.
@@ -239,7 +279,9 @@ public interface ISCMachineFile extends IRodinFile {
 	 *            reporting is not desired
 	 * @return the handle of the refines clause
 	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated use <code>getSCRefinesClause(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	ISCRefinesMachine getRefinesClause(IProgressMonitor monitor) throws RodinDBException;
 
 }

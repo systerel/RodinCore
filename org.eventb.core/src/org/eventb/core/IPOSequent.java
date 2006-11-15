@@ -49,7 +49,7 @@ public interface IPOSequent extends IInternalElement {
 	 * 
 	 * @return the predicate set containing the hypothesis of this proof obligation
 	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated use <code>getHypothesis(IProgressMonitor)</code> instead
+	 * @deprecated use <code>getHypotheses(IProgressMonitor)</code> instead
 	 */
 	@Deprecated
 	IPOPredicateSet getHypothesis() throws RodinDBException;
@@ -62,15 +62,28 @@ public interface IPOSequent extends IInternalElement {
 	 * 
 	 * @return the predicate set containing the hypothesis of this proof obligation
 	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated use <code>getHypotheses(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	IPOPredicateSet getHypothesis(IProgressMonitor monitor) throws RodinDBException;
+	
+	/**
+	 * Returns the predicate sets containing the hypothesis of this proof obligation
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @return the predicate set containing the hypothesis of this proof obligation
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	IPOPredicateSet[] getHypotheses(IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns the goal predicate of this proof obligation
 	 * 
 	 * @return the goal predicate of this proof obligation
 	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated use <code>getGoal(IProgressMonitor)</code> instead
+	 * @deprecated use <code>getGoals(IProgressMonitor)</code> instead
 	 */
 	@Deprecated
 	IPOPredicate getGoal() throws RodinDBException;
@@ -83,8 +96,21 @@ public interface IPOSequent extends IInternalElement {
 	 *            reporting is not desired
 	 * @return the goal predicate of this proof obligation
 	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated use <code>getGoals(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	IPOPredicate getGoal(IProgressMonitor monitor) throws RodinDBException;
+	
+	/**
+	 * Returns the goals predicate of this proof obligation
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the goal predicate of this proof obligation
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	IPOPredicate[] getGoals(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a more descriptive name of this proof obligation.

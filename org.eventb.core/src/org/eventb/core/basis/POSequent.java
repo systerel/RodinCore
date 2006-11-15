@@ -39,10 +39,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class POSequent extends EventBElement implements IPOSequent {
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public POSequent(String name, IRodinElement parent) {
 		super(name, parent);
 	}
@@ -68,6 +64,7 @@ public class POSequent extends EventBElement implements IPOSequent {
 		return identifiers;
 	}
 	
+	@Deprecated
 	public IPOPredicateSet getHypothesis(IProgressMonitor monitor) throws RodinDBException {
 		
 		return (IPOPredicateSet) getSingletonChild(
@@ -80,6 +77,7 @@ public class POSequent extends EventBElement implements IPOSequent {
 		return getHypothesis(null);
 	}
 	
+	@Deprecated
 	public IPOPredicate getGoal(IProgressMonitor monitor) throws RodinDBException {
 		
 		return (IPOPredicate) getSingletonChild(
@@ -130,6 +128,16 @@ public class POSequent extends EventBElement implements IPOSequent {
 	 */
 	public void setDescription(String description, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.PODESC_ATTRIBUTE, description, monitor);
+	}
+
+	public IPOPredicate[] getGoals(IProgressMonitor monitor) throws RodinDBException {
+		IRodinElement[] elements = getChildrenOfType(IPOPredicate.ELEMENT_TYPE);
+		return (IPOPredicate[]) elements; 
+	}
+
+	public IPOPredicateSet[] getHypotheses(IProgressMonitor monitor) throws RodinDBException {
+		IRodinElement[] elements = getChildrenOfType(IPOPredicateSet.ELEMENT_TYPE);
+		return (IPOPredicateSet[]) elements; 
 	}
 
 }
