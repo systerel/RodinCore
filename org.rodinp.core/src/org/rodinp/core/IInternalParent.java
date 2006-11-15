@@ -84,8 +84,7 @@ public interface IInternalParent extends IParent, IRodinElement {
 	 *            type of the child element
 	 * @param childName
 	 *            name of the child element
-	 * @return the child internal element with the given type and name or
-	 *         <code>null</code> if the given element type is unknown
+	 * @return the child internal element with the given type and name
 	 */
 	IInternalElement getInternalElement(IInternalElementType childType,
 			String childName);
@@ -108,7 +107,6 @@ public interface IInternalParent extends IParent, IRodinElement {
 	 * @param occurrenceCount
 	 *            must be <code>1</code>
 	 * @return the child internal element with the given type and name
-	 *         or <code>null</code> if the given element type is unknown.
 	 * @throws IllegalArgumentException
 	 *             if the given position is not <code>1</code>.
 	 * @deprecated As there are no duplicate elements anymore, the occurrence
