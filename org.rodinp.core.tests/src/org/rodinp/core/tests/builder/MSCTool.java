@@ -75,10 +75,7 @@ public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		IMachine mch = target.getUncheckedVersion(); 
 		
 		// First clean up target
-		if (target.exists()) {
-			target.delete(true, null);
-		}
-		target = (ISCMachine) target.getRodinProject().createRodinFile(target.getElementName(), true, null);
+		target.create(true, null);
 		
 		// Populate with a copy of inputs
 		copyDataElements(mch, target);

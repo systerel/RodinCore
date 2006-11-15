@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -92,37 +91,34 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 	protected NamedElement createNEPositive(IInternalParent parent, String name,
 			IInternalElement nextSibling) throws RodinDBException {
 		
-		final IInternalElementType type = NamedElement.ELEMENT_TYPE;
-		final IInternalElement element = parent.getInternalElement(type, name);
+		NamedElement element = getNamedElement(parent, name);
 		assertExists("Parent should exist", parent);
 		assertNotExists("Element to create should not exist", element);
-		IRodinElement result = 
-				parent.createInternalElement(type, name, nextSibling, null);
+		element.create(nextSibling, null);
 		assertExists("Created element should exist", element);
-		return (NamedElement) result;
+		return (NamedElement) element;
 	}
 
 	protected void createNENegative(IInternalParent parent, String name,
 			IInternalElement nextSibling, int failureCode) throws RodinDBException {
 		
-		final IInternalElementType type = NamedElement.ELEMENT_TYPE;
+		NamedElement element = getNamedElement(parent, name);
 		if (parent.isReadOnly()) {
 			assertEquals("Wrong failure code", 
 					IRodinDBStatusConstants.READ_ONLY, failureCode);
 			try {
-				parent.createInternalElement(type, name, nextSibling, null);
+				element.create(nextSibling, null);
 				fail("Should have raised an exception");
 			} catch (RodinDBException e) {
 				assertReadOnlyErrorFor(e, parent);
 			}
 			return;
 		}
-		NamedElement element = getNamedElement(parent, name);
 		if (element.exists()) {
 			assertEquals("Wrong failure code", 
 					IRodinDBStatusConstants.NAME_COLLISION, failureCode);
 			try {
-				parent.createInternalElement(type, name, nextSibling, null);
+				element.create(nextSibling, null);
 				fail("Should have raised an exception");
 			} catch (RodinDBException e) {
 				assertNameCollisionErrorFor(e, element);

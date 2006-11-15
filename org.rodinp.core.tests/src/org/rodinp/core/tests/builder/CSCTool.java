@@ -61,13 +61,10 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		IContext ctx = target.getUncheckedVersion(); 
 		
 		// First clean up target
-		if (target.exists()) {
-			target.delete(true, null);
-		}
-		target = (ISCContext) target.getRodinProject().createRodinFile(target.getElementName(), true, null);
+		target.create(true, null);
 		
 		if (FAULTY)
-			target.createInternalElement(null, "X", null, null);
+			target.getInternalElement(null, "X");
 		
 		// Populate with a copy of inputs
 		copyDataElements(ctx, target);

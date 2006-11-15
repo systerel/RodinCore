@@ -148,7 +148,8 @@ public class TestFileCreation extends ModifyingResourceTests {
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 		
 		// Create one Rodin file handle
-		IRodinFile rodinFile = rodinProject.createRodinFile("toto.test", true, null);
+		IRodinFile rodinFile = rodinProject.getRodinFile("toto.test");
+		rodinFile.create(false, null);
 		assertExists("File should exist", rodinFile);
 		
 		// Test a memento of the file
@@ -170,11 +171,13 @@ public class TestFileCreation extends ModifyingResourceTests {
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
 		
 		// Create one Rodin file handle
-		IRodinFile rodinFile = rodinProject.createRodinFile("toto.test", true, null);
+		IRodinFile rodinFile = rodinProject.getRodinFile("toto.test");
+		rodinFile.create(false, null);
 		assertExists("File should exist", rodinFile);
 		
 		// Create the same Rodin file again
-		IRodinFile rodinFile2 = rodinProject.createRodinFile("toto.test", true, null);
+		IRodinFile rodinFile2 = rodinProject.getRodinFile("toto.test");
+		rodinFile.create(true, null);
 		assertExists("File should exist", rodinFile2);
 		assertEquals(rodinFile, rodinFile2);
 		

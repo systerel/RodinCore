@@ -33,7 +33,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		rodinProject = createRodinProject("P");
-		rodinFile = rodinProject.createRodinFile("x.test", true, null);
+		rodinFile = createRodinFile("P/x.test");
 	}
 
 	@Override
@@ -126,7 +126,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		// Cleanup
 		rodinFile.getResource().delete(true, null);
 		assertNotExists("File should not exist", rodinFile);
-		rodinFile = rodinProject.createRodinFile("x.test", true, null);
+		createRodinFile("P/x.test");
 		assertNotExists("Internal element should not exist", e0);
 		assertNotExists("Internal element should not exist", e1);
 		assertNotExists("Internal element should not exist", e11);
@@ -190,7 +190,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					rodinProject.createRodinFile(fileName, false, null);
+					rf.create(false, null);
 					IInternalElement e1 = createNEPositive(rf, "e1", null);
 					assertExists("New file should exist", rf);
 					checkEmptyChildren(rf, e1);
@@ -218,7 +218,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		assertNotExists("Target file should not exist", rf);
 		
 		try {
-			rodinProject.createRodinFile(fileName, false, null);
+			rf.create(false, null);
 			IInternalElement e1 = createNEPositive(rf, "e1", null);
 			assertExists("Internal element should exist", e1);
 			checkEmptyChildren(rf, e1);
@@ -385,7 +385,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		checkEmptyChildren(rodinFile, ne);
 		
 		// Recreate the file
-		rodinProject.createRodinFile(rodinFile.getElementName(), true, null);
+		rodinFile.create(true, null);
 		checkEmptyChildren(rodinFile);
 		createNEPositive(rodinFile, ne.getElementName(), null);
 		checkEmptyChildren(rodinFile, ne);
@@ -404,7 +404,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		// Recreate the file
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				rodinProject.createRodinFile(rodinFile.getElementName(), true, null);
+				rodinFile.create(true, null);
 				checkEmptyChildren(rodinFile);
 				createNEPositive(rodinFile, ne.getElementName(), null);
 				checkEmptyChildren(rodinFile, ne);

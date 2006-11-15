@@ -71,20 +71,16 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 	}
 
 	protected IDependency createDependency(IRodinFile parent, String target) throws RodinDBException {
-		IDependency dep = (IDependency) parent.createInternalElement(
-				IDependency.ELEMENT_TYPE,
-				target,
-				null,
-				null);
+		IDependency dep = (IDependency) parent.getInternalElement(
+				IDependency.ELEMENT_TYPE, target);
+		dep.create(null, null);
 		return dep;
 	}
 	
 	protected IReference createReference(IRodinFile parent, String target) throws RodinDBException {
-		IReference ref = (IReference) parent.createInternalElement(
-				IReference.ELEMENT_TYPE,
-				target,
-				null,
-				null);
+		IReference ref = (IReference) parent.getInternalElement(
+				IReference.ELEMENT_TYPE, target);
+		ref.create(null, null);
 		return ref;
 	}
 	

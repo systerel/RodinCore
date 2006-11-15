@@ -66,10 +66,7 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 		ISCContext ctx = target.getCheckedContext();
 		
 		// First clean up target
-		if (target.exists()) {
-			target.delete(true, null);
-		}
-		target = (IPOFile) target.getRodinProject().createRodinFile(target.getElementName(), true, null);
+		target.create(true, null);
 		
 		// Populate with a copy of inputs
 		copyDataElements(ctx, target);

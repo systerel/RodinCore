@@ -681,16 +681,13 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	 */
 	public void testMergeResourceDeltas() throws CoreException {
 		try {
-			final IRodinProject project = createRodinProject("P");
+			createRodinProject("P");
 			startDeltas();
 			ResourcesPlugin.getWorkspace().run(
 					new IWorkspaceRunnable() {
 						public void run(IProgressMonitor monitor) throws CoreException {
 							// an operation that creates a Rodin delta without firing it
-							project.createRodinFile(
-									"X.test",
-									true,
-									null);
+							createRodinFile("P/X.test");
 							
 							// an operation that generates a non Rodin resource delta
 							createFile("P/Y.txt", "");
