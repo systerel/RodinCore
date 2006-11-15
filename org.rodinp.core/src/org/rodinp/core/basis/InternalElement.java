@@ -18,7 +18,7 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.internal.core.AttributeTypeDescription;
+import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.ChangeElementAttributeOperation;
 import org.rodinp.internal.core.ChangeElementContentsOperation;
 import org.rodinp.internal.core.CopyElementsOperation;
@@ -136,12 +136,12 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return getFileInfo(monitor).getAttributeRawValue(this, attrName);
 	}
 
-	private AttributeTypeDescription getAttributeTypeDescription(String attrName)
+	private AttributeType getAttributeTypeDescription(String attrName)
 			throws RodinDBException {
 		
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		final AttributeTypeDescription attributeTypeDescription = 
-			manager.getAttributeTypeDescription(attrName);
+		final AttributeType attributeTypeDescription = 
+			manager.getAttributeType(attrName);
 		if (attributeTypeDescription == null) {
 			throw new RodinDBException(new RodinDBStatus(
 					IRodinDBStatusConstants.UNKNOWN_ATTRIBUTE, attrName));
@@ -152,7 +152,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	public boolean getBooleanAttribute(String attrName, IProgressMonitor monitor)
 			throws RodinDBException {
 		final String rawValue = getAttributeRawValue(attrName, monitor);
-		final AttributeTypeDescription attributeTypeDescription =
+		final AttributeType attributeTypeDescription =
 			getAttributeTypeDescription(attrName);
 		return attributeTypeDescription.getBoolValue(rawValue);
 	}
@@ -199,7 +199,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	public IRodinElement getHandleAttribute(String attrName,
 			IProgressMonitor monitor) throws RodinDBException {
 		final String rawValue = getAttributeRawValue(attrName, monitor);
-		final AttributeTypeDescription attributeTypeDescription =
+		final AttributeType attributeTypeDescription =
 			getAttributeTypeDescription(attrName);
 		return attributeTypeDescription.getHandleValue(rawValue);
 	}
@@ -236,7 +236,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	public int getIntegerAttribute(String attrName, IProgressMonitor monitor)
 			throws RodinDBException {
 		final String rawValue = getAttributeRawValue(attrName, monitor);
-		final AttributeTypeDescription attributeTypeDescription =
+		final AttributeType attributeTypeDescription =
 			getAttributeTypeDescription(attrName);
 		return attributeTypeDescription.getIntValue(rawValue);
 	}
@@ -262,7 +262,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 			throws RodinDBException {
 
 		final String rawValue = getAttributeRawValue(attrName, monitor);
-		final AttributeTypeDescription attributeTypeDescription =
+		final AttributeType attributeTypeDescription =
 			getAttributeTypeDescription(attrName);
 		return attributeTypeDescription.getLongValue(rawValue);
 	}
@@ -332,7 +332,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	public String getStringAttribute(String attrName, IProgressMonitor monitor)
 			throws RodinDBException {
 		final String rawValue = getAttributeRawValue(attrName, monitor);
-		final AttributeTypeDescription attributeTypeDescription =
+		final AttributeType attributeTypeDescription =
 			getAttributeTypeDescription(attrName);
 		return attributeTypeDescription.getStringValue(rawValue);
 	}
@@ -390,7 +390,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 
 	public void setBooleanAttribute(String attrName, boolean newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		final AttributeTypeDescription attributeTypeDescription =
+		final AttributeType attributeTypeDescription =
 			getAttributeTypeDescription(attrName);
 		final String newRawValue = attributeTypeDescription.toString(newValue);
 		setAttributeRawValue(attrName, newRawValue, monitor);
@@ -408,7 +408,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 
 	public void setHandleAttribute(String attrName, IRodinElement newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		final AttributeTypeDescription attributeTypeDescription =
+		final AttributeType attributeTypeDescription =
 			getAttributeTypeDescription(attrName);
 		final String newRawValue = attributeTypeDescription.toString(newValue);
 		setAttributeRawValue(attrName, newRawValue, monitor);
@@ -416,7 +416,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 
 	public void setIntegerAttribute(String attrName, int newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		final AttributeTypeDescription attributeTypeDescription =
+		final AttributeType attributeTypeDescription =
 			getAttributeTypeDescription(attrName);
 		final String newRawValue = attributeTypeDescription.toString(newValue);
 		setAttributeRawValue(attrName, newRawValue, monitor);
@@ -424,7 +424,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 
 	public void setLongAttribute(String attrName, long newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		final AttributeTypeDescription attributeTypeDescription =
+		final AttributeType attributeTypeDescription =
 			getAttributeTypeDescription(attrName);
 		final String newRawValue = attributeTypeDescription.toString(newValue);
 		setAttributeRawValue(attrName, newRawValue, monitor);
@@ -432,7 +432,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 
 	public void setStringAttribute(String attrName, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		final AttributeTypeDescription attributeTypeDescription =
+		final AttributeType attributeTypeDescription =
 			getAttributeTypeDescription(attrName);
 		final String newRawValue = attributeTypeDescription.toString(newValue);
 		setAttributeRawValue(attrName, newRawValue, monitor);

@@ -274,6 +274,110 @@ public class RodinCore extends Plugin {
 	}
 
 	/**
+	 * Returns the attribute type with the given id. If no attribute type with
+	 * the given id has been contributed, this method returns <code>null</code>.
+	 * 
+	 * @param id
+	 *            unique identifier of the attribute type
+	 * @return the attribute type with the given id, or <code>null</code> if
+	 *         unknown
+	 */
+	public static IAttributeType getAttributeType(String id) {
+		final ElementTypeManager manager = ElementTypeManager.getInstance();
+		return manager.getAttributeType(id);
+	}
+	
+	/**
+	 * Returns the attribute type of kind boolean and with the given id. If no
+	 * such attribute type has been contributed, this method returns
+	 * <code>null</code>.
+	 * 
+	 * @param id
+	 *            unique identifier of the attribute type
+	 * @return the attribute type with the given id and kind boolean, or
+	 *         <code>null</code> if unknown
+	 */
+	public static IAttributeType.Boolean getBooleanAttrType(String id) {
+		IAttributeType type = getAttributeType(id);
+		if (type instanceof IAttributeType.Boolean) {
+			return (IAttributeType.Boolean) type;
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the attribute type of kind handle and with the given id. If no
+	 * such attribute type has been contributed, this method returns
+	 * <code>null</code>.
+	 * 
+	 * @param id
+	 *            unique identifier of the attribute type
+	 * @return the attribute type with the given id and kind handle, or
+	 *         <code>null</code> if unknown
+	 */
+	public static IAttributeType.Handle getHandleAttrType(String id) {
+		IAttributeType type = getAttributeType(id);
+		if (type instanceof IAttributeType.Handle) {
+			return (IAttributeType.Handle) type;
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the attribute type of kind integer and with the given id. If no
+	 * such attribute type has been contributed, this method returns
+	 * <code>null</code>.
+	 * 
+	 * @param id
+	 *            unique identifier of the attribute type
+	 * @return the attribute type with the given id and kind integer, or
+	 *         <code>null</code> if unknown
+	 */
+	public static IAttributeType.Integer getIntegerAttrType(String id) {
+		IAttributeType type = getAttributeType(id);
+		if (type instanceof IAttributeType.Integer) {
+			return (IAttributeType.Integer) type;
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the attribute type of kind long and with the given id. If no
+	 * such attribute type has been contributed, this method returns
+	 * <code>null</code>.
+	 * 
+	 * @param id
+	 *            unique identifier of the attribute type
+	 * @return the attribute type with the given id and kind long, or
+	 *         <code>null</code> if unknown
+	 */
+	public static IAttributeType.Long getLongAttrType(String id) {
+		IAttributeType type = getAttributeType(id);
+		if (type instanceof IAttributeType.Long) {
+			return (IAttributeType.Long) type;
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the attribute type of kind string and with the given id. If no
+	 * such attribute type has been contributed, this method returns
+	 * <code>null</code>.
+	 * 
+	 * @param id
+	 *            unique identifier of the attribute type
+	 * @return the attribute type with the given id and kind string, or
+	 *         <code>null</code> if unknown
+	 */
+	public static IAttributeType.String getStringAttrType(String id) {
+		IAttributeType type = getAttributeType(id);
+		if (type instanceof IAttributeType.String) {
+			return (IAttributeType.String) type;
+		}
+		return null;
+	}
+	
+	/**
 	 * Returns the file element type with the given id. If no file element type
 	 * with the given id has been contributed, this method returns
 	 * <code>null</code>.

@@ -152,7 +152,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		ElementTypeManager manager = ElementTypeManager.getInstance();
 		ArrayList<String> result = new ArrayList<String>(rawAttrNames.length);
 		for (String attrName: rawAttrNames) {
-			if (manager.getAttributeTypeDescription(attrName) != null) {
+			if (manager.getAttributeType(attrName) != null) {
 				result.add(attrName);
 			}
 		}

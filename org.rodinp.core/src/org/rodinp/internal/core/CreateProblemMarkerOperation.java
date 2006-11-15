@@ -31,6 +31,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.internal.core.util.Messages;
@@ -209,11 +210,7 @@ public class CreateProblemMarkerOperation extends RodinDBOperation {
 		}
 		if (withCharPos) {
 			// Check that it's an attribute of kind String
-			final ElementTypeManager manager = ElementTypeManager.getInstance();
-			AttributeTypeDescription atd =
-				manager.getAttributeTypeDescription(attributeId);
-			if (atd == null
-					|| atd.getKind() != AttributeTypeDescription.KIND_STRING) {
+			if (RodinCore.getStringAttrType(attributeId) == null) {
 				return new RodinDBStatus(INVALID_ATTRIBUTE_KIND, attributeId);
 			}
 		}

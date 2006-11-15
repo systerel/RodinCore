@@ -289,18 +289,18 @@ public class ElementTypeManager {
 	private static final String ATTRIBUTE_TYPES_ID = "attributeTypes";
 	
 	// Access to attribute type descriptions using their unique id
-	private HashMap<String, AttributeTypeDescription> attributeTypeIds;
+	private HashMap<String, AttributeType> attributeTypeIds;
 
 	private void computeAttributeTypes() {
-		attributeTypeIds = new HashMap<String, AttributeTypeDescription>();
+		attributeTypeIds = new HashMap<String, AttributeType>();
 		
 		// Read the extension point extensions.
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = 
 			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, ATTRIBUTE_TYPES_ID);
 		for (IConfigurationElement element: elements) {
-			AttributeTypeDescription description =
-				AttributeTypeDescription.valueOf(element);
+			AttributeType description =
+				AttributeType.valueOf(element);
 			if (description != null) {
 				attributeTypeIds.put(description.getId(), description);
 			}
@@ -316,7 +316,7 @@ public class ElementTypeManager {
 	 * @return the attribute type description associated to the given name or
 	 *         <code>null</code> if it is not a valid attribute name
 	 */
-	public AttributeTypeDescription getAttributeTypeDescription(String name) {
+	public AttributeType getAttributeType(String name) {
 		if (attributeTypeIds == null) {
 			computeAttributeTypes();
 		}
@@ -332,7 +332,7 @@ public class ElementTypeManager {
 	 * @return <code>true</code> iff the name is valid
 	 */
 	public boolean isValidAttributeName(String attributeName) {
-		return getAttributeTypeDescription(attributeName) != null;
+		return getAttributeType(attributeName) != null;
 	}
 
 }
