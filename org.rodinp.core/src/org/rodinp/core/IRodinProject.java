@@ -205,12 +205,14 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	 * is thrown</li>
 	 * </ul>
 	 * 
-	 * @param force
-	 *            specify how to handle conflict is the same name already exists
-	 * @param monitor
-	 *            the given progress monitor
 	 * @param name
-	 *            the given name
+	 *            the name of the file to create
+	 * @param force
+	 *            specifies how to handle conflict if a file with the same name
+	 *            already exists
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if the element could not be created. Reasons include:
 	 *                <ul>
@@ -221,8 +223,12 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	 *                <li> The name is not a valid Rodin file name
 	 *                (INVALID_NAME)
 	 *                </ul>
-	 * @return a Rodin file in this project with the specified name
+	 * @return a Rodin file in this project with the given name
+	 * @deprecated Use directly the
+	 *             {@link IRodinFile#create(boolean, IProgressMonitor)} method
+	 *             of the Rodin file.
 	 */
+	@Deprecated
 	IRodinFile createRodinFile(String name, boolean force,
 			IProgressMonitor monitor) throws RodinDBException;
 	

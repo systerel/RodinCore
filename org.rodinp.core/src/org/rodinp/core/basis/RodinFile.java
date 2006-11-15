@@ -29,6 +29,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.Buffer;
 import org.rodinp.internal.core.CopyResourceElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
+import org.rodinp.internal.core.CreateRodinFileOperation;
 import org.rodinp.internal.core.DeleteResourceElementsOperation;
 import org.rodinp.internal.core.FileElementType;
 import org.rodinp.internal.core.InternalElementType;
@@ -121,6 +122,11 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		}
 		runOperation(new CopyResourceElementsOperation(this, container, replace),
 				sibling, rename, monitor);
+	}
+
+	public void create(boolean force, IProgressMonitor monitor) throws RodinDBException {
+		CreateRodinFileOperation op = new CreateRodinFileOperation(this, force);
+		op.runOperation(monitor);
 	}
 
 	@Override

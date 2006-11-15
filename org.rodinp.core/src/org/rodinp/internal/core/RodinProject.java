@@ -433,13 +433,17 @@ public class RodinProject extends Openable implements IRodinProject {
 		return type.createInstance(file, this);
 	}
 
+	@Deprecated
 	public RodinFile createRodinFile(String name, boolean force,
 			IProgressMonitor monitor) throws RodinDBException {
 
-		CreateRodinFileOperation op =
-				new CreateRodinFileOperation(this, name, force);
-		op.runOperation(monitor);
-		return getRodinFile(name);
+		final RodinFile rodinFile = getRodinFile(name);
+		if (rodinFile == null) {
+			throw newRodinDBException(new RodinDBStatus(
+					IRodinDBStatusConstants.INVALID_NAME, name));
+		}
+		rodinFile.create(force, monitor);
+		return rodinFile;
 	}
 
 	public IRodinFile[] getRodinFiles() throws RodinDBException {
