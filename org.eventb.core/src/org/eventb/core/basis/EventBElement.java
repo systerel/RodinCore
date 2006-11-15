@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -31,6 +32,12 @@ public abstract class EventBElement extends InternalElement {
 		super(name, parent);
 	}
 
+	protected IRodinElement getSingletonChild(IElementType elementType,
+			String message) throws RodinDBException {
+
+		return EventBUtil.getSingletonChild(this, elementType, message);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

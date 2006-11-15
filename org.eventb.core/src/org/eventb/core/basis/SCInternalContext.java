@@ -49,17 +49,20 @@ public class SCInternalContext extends InternalElement implements
 		return ELEMENT_TYPE;
 	}
 
-	public ISCCarrierSet[] getSCCarrierSets(IProgressMonitor monitor) throws RodinDBException {
-		return SCContextUtil.getSCCarrierSets(this, monitor);
+	public ISCCarrierSet[] getSCCarrierSets(IProgressMonitor monitor) 
+	throws RodinDBException {
+		IRodinElement[] elements = getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE);
+		return (ISCCarrierSet[]) elements; 
 	}
-
+	
 	@Deprecated
 	public ISCCarrierSet[] getSCCarrierSets() throws RodinDBException {
 		return getSCCarrierSets(null);
 	}
-
+	
 	public ISCConstant[] getSCConstants(IProgressMonitor monitor) throws RodinDBException {
-		return SCContextUtil.getSCConstants(this, monitor);
+		IRodinElement[] elements = getChildrenOfType(ISCConstant.ELEMENT_TYPE);
+		return (ISCConstant[]) elements; 
 	}
 
 	@Deprecated
@@ -68,7 +71,8 @@ public class SCInternalContext extends InternalElement implements
 	}
 
 	public ISCAxiom[] getSCAxioms(IProgressMonitor monitor) throws RodinDBException {
-		return SCContextUtil.getSCAxioms(this, monitor);
+		IRodinElement[] elements = getChildrenOfType(ISCAxiom.ELEMENT_TYPE);
+		return (ISCAxiom[]) elements; 
 	}
 
 	@Deprecated
@@ -77,7 +81,8 @@ public class SCInternalContext extends InternalElement implements
 	}
 
 	public ISCTheorem[] getSCTheorems(IProgressMonitor monitor) throws RodinDBException {
-		return SCContextUtil.getSCTheorems(this, monitor);
+		IRodinElement[] elements = getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
+		return (ISCTheorem[]) elements; 
 	}
 
 	@Deprecated

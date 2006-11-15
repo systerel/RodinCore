@@ -79,10 +79,8 @@ public class POFile extends RodinFile implements IPOFile {
 	}
 
 	public IPOSequent[] getSequents(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(POSequent.ELEMENT_TYPE);
-		POSequent[] sequents = new POSequent[list.size()];
-		list.toArray(sequents);
-		return sequents;
+		IRodinElement[] elements = getChildrenOfType(IPOSequent.ELEMENT_TYPE);
+		return (POSequent[]) elements; 
 	}
 
 	@Deprecated
@@ -125,7 +123,10 @@ public class POFile extends RodinFile implements IPOFile {
 
 	public IPOSequent getSequent(String name, IProgressMonitor monitor) throws RodinDBException {
 		IInternalElement element = getInternalElement(IPOSequent.ELEMENT_TYPE, name);
-		return (IPOSequent) element;
+		if(element.exists())
+			return (POSequent) element;
+		else
+			return null;
 	}
 
 }

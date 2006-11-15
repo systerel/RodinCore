@@ -17,10 +17,10 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
+import org.eventb.internal.core.Messages;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B PO proof obligation as an extension of the Rodin database.
@@ -37,7 +37,7 @@ import org.rodinp.core.basis.InternalElement;
  * @author Stefan Hallerstede
  *
  */
-public class POSequent extends InternalElement implements IPOSequent {
+public class POSequent extends EventBElement implements IPOSequent {
 
 	/**
 	 * @param name
@@ -69,12 +69,10 @@ public class POSequent extends InternalElement implements IPOSequent {
 	}
 	
 	public IPOPredicateSet getHypothesis(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOPredicateSet.ELEMENT_TYPE);
-			
-		assert list.size() == 1;
-			
-		IPOPredicateSet hypothesis = (IPOPredicateSet) list.get(0);
-		return hypothesis;
+		
+		return (IPOPredicateSet) getSingletonChild(
+				IPOPredicateSet.ELEMENT_TYPE, Messages.database_SequentMultipleHypothesisFailure);
+		
 	}
 	
 	@Deprecated
@@ -83,12 +81,10 @@ public class POSequent extends InternalElement implements IPOSequent {
 	}
 	
 	public IPOPredicate getGoal(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOPredicate.ELEMENT_TYPE);
-			
-		assert list.size() == 1;
-			
-		IPOPredicate goal = (IPOPredicate) list.get(0);
-		return goal;
+		
+		return (IPOPredicate) getSingletonChild(
+				IPOPredicate.ELEMENT_TYPE, Messages.database_SequentMultipleGoalFailure);
+		
 	}
 	
 	@Deprecated
@@ -107,10 +103,8 @@ public class POSequent extends InternalElement implements IPOSequent {
 	 * @see org.eventb.core.IPODescription#getSources()
 	 */
 	public IPOSource[] getSources(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOSource.ELEMENT_TYPE);
-		IPOSource[] sources = new IPOSource[list.size()];
-		list.toArray(sources);
-		return sources;
+		IRodinElement[] elements = getChildrenOfType(IPOSource.ELEMENT_TYPE);
+		return (IPOSource[]) elements; 
 	}
 
 	@Deprecated
@@ -122,10 +116,8 @@ public class POSequent extends InternalElement implements IPOSequent {
 	 * @see org.eventb.core.IPODescription#getHints()
 	 */
 	public IPOHint[] getHints(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOHint.ELEMENT_TYPE);
-		IPOHint[] hints = new IPOHint[list.size()];
-		list.toArray(hints);
-		return hints;
+		IRodinElement[] elements = getChildrenOfType(IPOHint.ELEMENT_TYPE);
+		return (IPOHint[]) elements; 
 	}
 
 	@Deprecated

@@ -29,6 +29,8 @@ public final class Messages {
 	public static String database_SCRefinesMachineTypeFailure;
 	public static String database_SCMachineMultipleVariantFailure;
 	public static String database_SCMachineMultipleRefinesFailure;
+	public static String database_SequentMultipleHypothesisFailure;
+	public static String database_SequentMultipleGoalFailure;
 
 	public static String database_MachineMultipleRefinesFailure;
 	public static String database_MachineMultipleVariantFailure;

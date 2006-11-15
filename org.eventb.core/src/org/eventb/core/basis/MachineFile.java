@@ -8,8 +8,6 @@
 
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -65,10 +63,8 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	 * @see org.eventb.core.IMachineFile#getVariables()
 	 */
 	public IVariable[] getVariables(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IVariable.ELEMENT_TYPE);
-		Variable[] variables = new Variable[list.size()];
-		list.toArray(variables);
-		return variables; 
+		IRodinElement[] elements = getChildrenOfType(IVariable.ELEMENT_TYPE);
+		return (IVariable[]) elements; 
 	}
 	
 	@Deprecated
@@ -80,10 +76,8 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	 * @see org.eventb.core.IMachineFile#getTheorems()
 	 */
 	public ITheorem[] getTheorems(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(ITheorem.ELEMENT_TYPE);
-		Theorem[] theorems = new Theorem[list.size()];
-		list.toArray(theorems);
-		return theorems; 
+		IRodinElement[] elements = getChildrenOfType(ITheorem.ELEMENT_TYPE);
+		return (ITheorem[]) elements; 
 	}
 	
 	@Deprecated
@@ -95,10 +89,8 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	 * @see org.eventb.core.IMachineFile#getInvariants()
 	 */
 	public IInvariant[] getInvariants(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IInvariant.ELEMENT_TYPE);
-		Invariant[] invariants = new Invariant[list.size()];
-		list.toArray(invariants);
-		return invariants; 
+		IRodinElement[] elements = getChildrenOfType(IInvariant.ELEMENT_TYPE);
+		return (IInvariant[]) elements; 
 	}
 	
 	@Deprecated
@@ -107,10 +99,8 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	}
 	
 	public IEvent[] getEvents(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IEvent.ELEMENT_TYPE);
-		Event[] events = new Event[list.size()];
-		list.toArray(events);
-		return events; 
+		IRodinElement[] elements = getChildrenOfType(IEvent.ELEMENT_TYPE);
+		return (IEvent[]) elements; 
 	}
 	
 	@Deprecated
@@ -122,11 +112,8 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	 * @see org.eventb.core.IMachineFile#getSees()
 	 */
 	public ISeesContext[] getSeesClauses(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(ISeesContext.ELEMENT_TYPE);
-		
-		SeesContext[] sees = new SeesContext[list.size()];
-		list.toArray(sees);
-		return sees; 
+		IRodinElement[] elements = getChildrenOfType(ISeesContext.ELEMENT_TYPE);
+		return (ISeesContext[]) elements; 
 	}
 	
 	@Deprecated
@@ -165,7 +152,8 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	}
 
 	public IRefinesMachine getRefinesClause(IProgressMonitor monitor) throws RodinDBException {
-		return (IRefinesMachine) getSingletonChild(IRefinesMachine.ELEMENT_TYPE, Messages.database_MachineMultipleRefinesFailure);
+		return (IRefinesMachine) getSingletonChild(
+				IRefinesMachine.ELEMENT_TYPE, Messages.database_MachineMultipleRefinesFailure);
 	}
 
 	@Deprecated
@@ -174,7 +162,8 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	}
 
 	public IVariant getVariant(IProgressMonitor monitor) throws RodinDBException {
-		return (IVariant) getSingletonChild(IVariant.ELEMENT_TYPE, Messages.database_MachineMultipleVariantFailure);
+		return (IVariant) getSingletonChild(
+				IVariant.ELEMENT_TYPE, Messages.database_MachineMultipleVariantFailure);
 	}
 
 	@Deprecated

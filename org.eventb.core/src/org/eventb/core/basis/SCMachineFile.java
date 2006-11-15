@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -57,11 +55,8 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 	}
 
 	public ISCVariable[] getSCVariables(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = 
-			getFilteredChildrenList(ISCVariable.ELEMENT_TYPE);
-		SCVariable[] variables = new SCVariable[list.size()];
-		list.toArray(variables);
-		return variables;
+		IRodinElement[] elements = getChildrenOfType(ISCVariable.ELEMENT_TYPE);
+		return (ISCVariable[]) elements; 
 	}
 	
 	@Deprecated
@@ -70,11 +65,8 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 	}
 	
 	public ISCEvent[] getSCEvents(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = 
-			getFilteredChildrenList(ISCEvent.ELEMENT_TYPE);
-		SCEvent[] events = new SCEvent[list.size()];
-		list.toArray(events);
-		return events;
+		IRodinElement[] elements = getChildrenOfType(ISCEvent.ELEMENT_TYPE);
+		return (ISCEvent[]) elements; 
 	}
 	
 	@Deprecated
@@ -104,10 +96,8 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 
 	public ISCInternalContext[] getSCSeenContexts(IProgressMonitor monitor) 
 	throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCInternalContext.ELEMENT_TYPE);
-		SCInternalContext[] contexts = new SCInternalContext[list.size()];
-		list.toArray(contexts);
-		return contexts; 
+		IRodinElement[] elements = getChildrenOfType(ISCInternalContext.ELEMENT_TYPE);
+		return (ISCInternalContext[]) elements; 
 	}
 
 	@Deprecated
@@ -118,11 +108,8 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 
 	public ISCInvariant[] getSCInvariants(IProgressMonitor monitor) 
 	throws RodinDBException {
-		ArrayList<IRodinElement> list =
-			getFilteredChildrenList(ISCInvariant.ELEMENT_TYPE);
-		SCInvariant[] invariants = new SCInvariant[list.size()];
-		list.toArray(invariants);
-		return invariants;
+		IRodinElement[] elements = getChildrenOfType(ISCInvariant.ELEMENT_TYPE);
+		return (ISCInvariant[]) elements; 
 	}
 
 	@Deprecated
@@ -133,11 +120,8 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 
 	public ISCTheorem[] getSCTheorems(IProgressMonitor monitor) 
 	throws RodinDBException {
-		ArrayList<IRodinElement> list = 
-			getFilteredChildrenList(ISCTheorem.ELEMENT_TYPE);
-		SCTheorem[] theorems = new SCTheorem[list.size()];
-		list.toArray(theorems);
-		return theorems;
+		IRodinElement[] elements = getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
+		return (ISCTheorem[]) elements; 
 	}
 
 	@Deprecated

@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -56,7 +54,8 @@ public class SCContextFile extends RodinFile implements ISCContextFile {
 
 	public ISCCarrierSet[] getSCCarrierSets(IProgressMonitor monitor) 
 	throws RodinDBException {
-		return SCContextUtil.getSCCarrierSets(this, monitor);
+		IRodinElement[] elements = getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE);
+		return (ISCCarrierSet[]) elements; 
 	}
 	
 	@Deprecated
@@ -65,7 +64,8 @@ public class SCContextFile extends RodinFile implements ISCContextFile {
 	}
 	
 	public ISCConstant[] getSCConstants(IProgressMonitor monitor) throws RodinDBException {
-		return SCContextUtil.getSCConstants(this, monitor);
+		IRodinElement[] elements = getChildrenOfType(ISCConstant.ELEMENT_TYPE);
+		return (ISCConstant[]) elements; 
 	}
 
 	@Deprecated
@@ -74,7 +74,8 @@ public class SCContextFile extends RodinFile implements ISCContextFile {
 	}
 
 	public ISCAxiom[] getSCAxioms(IProgressMonitor monitor) throws RodinDBException {
-		return SCContextUtil.getSCAxioms(this, monitor);
+		IRodinElement[] elements = getChildrenOfType(ISCAxiom.ELEMENT_TYPE);
+		return (ISCAxiom[]) elements; 
 	}
 
 	@Deprecated
@@ -83,7 +84,8 @@ public class SCContextFile extends RodinFile implements ISCContextFile {
 	}
 
 	public ISCTheorem[] getSCTheorems(IProgressMonitor monitor) throws RodinDBException {
-		return SCContextUtil.getSCTheorems(this, monitor);
+		IRodinElement[] elements = getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
+		return (ISCTheorem[]) elements; 
 	}
 
 	@Deprecated
@@ -99,10 +101,8 @@ public class SCContextFile extends RodinFile implements ISCContextFile {
 	}
 
 	public ISCInternalContext[] getAbstractSCContexts(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCInternalContext.ELEMENT_TYPE);
-		ISCInternalContext[] contexts = new ISCInternalContext[list.size()];
-		list.toArray(contexts);
-		return contexts; 
+		IRodinElement[] elements = getChildrenOfType(ISCInternalContext.ELEMENT_TYPE);
+		return (ISCInternalContext[]) elements; 
 	}
 	
 	@Deprecated

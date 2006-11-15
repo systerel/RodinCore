@@ -27,13 +27,12 @@ import org.rodinp.core.basis.RodinElement;
  * 
  * @author Stefan Hallerstede
  */
+@Deprecated
 abstract class SCContextUtil {
 
 	static public ISCCarrierSet[] getSCCarrierSets(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = element.getFilteredChildrenList(ISCCarrierSet.ELEMENT_TYPE);
-		SCCarrierSet[] carrierSets = new SCCarrierSet[list.size()];
-		list.toArray(carrierSets);
-		return carrierSets; 
+		IRodinElement[] elements = element.getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE);
+		return (ISCCarrierSet[]) elements; 
 	}
 
 	static public ISCConstant[] getSCConstants(RodinElement element, IProgressMonitor monitor) throws RodinDBException {

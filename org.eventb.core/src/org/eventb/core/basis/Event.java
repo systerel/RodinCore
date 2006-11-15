@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
@@ -53,10 +51,8 @@ public class Event extends EventBElement implements IEvent {
 	 * @see org.eventb.core.IEvent#getRefinesClauses()
 	 */
 	public IRefinesEvent[] getRefinesClauses(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IRefinesEvent.ELEMENT_TYPE);
-		RefinesEvent[] refines = new RefinesEvent[list.size()];
-		list.toArray(refines);
-		return refines; 
+		IRodinElement[] elements = getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
+		return (RefinesEvent[]) elements; 
 	}
 
 	@Deprecated
@@ -68,10 +64,8 @@ public class Event extends EventBElement implements IEvent {
 	 * @see org.eventb.core.IEvent#getVariables()
 	 */
 	public IVariable[] getVariables(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IVariable.ELEMENT_TYPE);
-		Variable[] variables = new Variable[list.size()];
-		list.toArray(variables);
-		return variables; 
+		IRodinElement[] elements = getChildrenOfType(IVariable.ELEMENT_TYPE);
+		return (Variable[]) elements; 
 	}
 
 	@Deprecated
@@ -83,10 +77,8 @@ public class Event extends EventBElement implements IEvent {
 	 * @see org.eventb.core.IEvent#getWitnesses()
 	 */
 	public IWitness[] getWitnesses(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IWitness.ELEMENT_TYPE);
-		Witness[] witnesses = new Witness[list.size()];
-		list.toArray(witnesses);
-		return witnesses; 
+		IRodinElement[] elements = getChildrenOfType(IWitness.ELEMENT_TYPE);
+		return (Witness[]) elements; 
 	}
 	
 	@Deprecated
@@ -98,10 +90,8 @@ public class Event extends EventBElement implements IEvent {
 	 * @see org.eventb.core.IEvent#getGuards()
 	 */
 	public IGuard[] getGuards(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IGuard.ELEMENT_TYPE);
-		Guard[] guards = new Guard[list.size()];
-		list.toArray(guards);
-		return guards; 
+		IRodinElement[] elements = getChildrenOfType(IGuard.ELEMENT_TYPE);
+		return (Guard[]) elements; 
 	}
 	
 	@Deprecated
@@ -113,10 +103,8 @@ public class Event extends EventBElement implements IEvent {
 	 * @see org.eventb.core.IEvent#getActions()
 	 */
 	public IAction[] getActions(IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IAction.ELEMENT_TYPE);
-		Action[] actions = new Action[list.size()];
-		list.toArray(actions);
-		return actions; 
+		IRodinElement[] elements = getChildrenOfType(IAction.ELEMENT_TYPE);
+		return (Action[]) elements; 
 	}
 
 	@Deprecated

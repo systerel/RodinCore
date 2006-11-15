@@ -7,26 +7,34 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import org.eclipse.core.resources.IFile;
+import org.eventb.internal.core.Util;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.RodinFile;
+import org.rodinp.core.basis.RodinElement;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class EventBFile extends RodinFile {
+public final class EventBUtil {
 
-	protected EventBFile(IFile file, IRodinElement parent) {
-		super(file, parent);
+	private EventBUtil() {
+		// no instances of this class
 	}
-
-	protected IRodinElement getSingletonChild(IElementType elementType,
+	
+	public static IRodinElement getSingletonChild(
+			RodinElement parent,
+			IElementType elementType,
 			String message) throws RodinDBException {
 
-		return EventBUtil.getSingletonChild(this, elementType, message);
+		IRodinElement[] elements = parent.getChildrenOfType(elementType);
+		if(elements.length == 1)
+			return elements[0];
+		else if (elements.length == 0)
+			return null;
+		else
+			throw Util.newRodinDBException(message, parent);
 	}
 
 }
