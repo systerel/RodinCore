@@ -247,10 +247,6 @@
             id="prPredicate"
             name="%eventBprPredicate"/>
       <internalElementType
-            class="org.eventb.core.basis.PRPredicateSet"
-            id="prPredicateSet"
-            name="%eventBprPredicateSet"/>
-      <internalElementType
             class="org.eventb.core.basis.PRReasonerInput"
             id="prReasonerInput"
             name="%eventBprReasonerInput"/>
@@ -278,6 +274,22 @@
             class="org.eventb.core.basis.PRIdentifier"
             id="prIdentifier"
             name="%eventBprIdentifier"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRProofStore"
+            id="prProofStore"
+            name="%eventBprProofStore"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRPredRef"
+            id="prPredRef"
+            name="%eventBprPredRef"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRExprRef"
+            id="prExprRef"
+            name="%eventBprExprRef"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRStringInput"
+            id="prStrInp"
+            name="%eventBprStrInp"/>            
    </extension>
    <extension
          point="org.rodinp.core.autoTools">
@@ -388,11 +400,11 @@
             kind="integer"
             name="%eventBprConfidence"/>
       <attributeType
-            id="proofValid"
+            id="psProofValid"
             kind="boolean"
             name="%eventBpsValidity"/>
       <attributeType
-            id="autoProof"
+            id="psAutoProof"
             kind="boolean"
             name="%eventBpsAutoProof"/>
       <attributeType
@@ -423,6 +435,26 @@
             id="scTarget"
             kind="handle"
             name="%eventBscTargetAttribute"/>
+      <attributeType
+            id="prGoal"
+            kind="string"
+            name="%eventBprGoalAttribute"/>
+      <attributeType
+            id="prHyps"
+            kind="string"
+            name="%eventBprHypsAttribute"/>
+      <attributeType
+            id="prRuleDisplay"
+            kind="string"
+            name="%eventBprRuleDisplay"/>
+      <attributeType
+            id="prStoreRef"
+            kind="string"
+            name="%eventBprStoreRef"/>
+      <attributeType
+            id="prStrInp"
+            kind="string"
+            name="%eventBprStrInp"/>
    </extension>
 
 </plugin>

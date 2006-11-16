@@ -7,6 +7,7 @@ import java.util.Set;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.HypothesesManagement.ActionType;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 
 public class ProverLib {
 
@@ -37,6 +38,17 @@ public class ProverLib {
 			for (int i = 0; i < pn1.getChildNodes().length; i++) {
 				if (! deepEquals(pn1.getChildNodes()[i],pn2.getChildNodes()[i])) return false;
 			}
+		}
+		return true;
+	}
+	
+	public static boolean deepEquals(IProofSkeleton pn1, IProofSkeleton pn2) {
+		if (! pn1.getComment().equals(pn2.getComment())) return false;
+		// maybe remove this check and add it to the proof tree deepEquals
+		if (! ProverLib.deepEquals(pn1.getRule(),pn2.getRule())) return false;
+		if (pn1.getChildNodes().length != pn2.getChildNodes().length) return false;
+		for (int i = 0; i < pn1.getChildNodes().length; i++) {
+			if (! deepEquals(pn1.getChildNodes()[i],pn2.getChildNodes()[i])) return false;
 		}
 		return true;
 	}

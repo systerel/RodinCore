@@ -9,21 +9,24 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.seqprover.HypothesesManagement.Action;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinCore;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Predicate;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Collects formulae for the proof store
+ * 
  * @author Farhad Mehta
  *
  */
-public interface IPRHypAction extends IInternalElement {
+public interface IProofStoreCollector {
 	
-	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prHypAction"); //$NON-NLS-1$
+	
+	String putPredicate(Predicate pred) throws RodinDBException;
+	String putExpression(Expression expr) throws RodinDBException;
+	
+	void writeOut(IPRProofStore prProofStore,IProgressMonitor monitor) throws RodinDBException;
 
-	Action getAction(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException;
-	void setAction(Action hypAction, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException;
+	
+	
 }

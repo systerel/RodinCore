@@ -87,7 +87,7 @@ public class PRReasonerInput extends InternalElement implements IPRReasonerInput
 					IPRExpression.ELEMENT_TYPE,
 					name,
 					null,null)))
-					.setExpression(expression);
+					.setExpression(expression, null);
 		} catch (RodinDBException e) {
 			throw new SerializeException(e);
 		}
@@ -97,7 +97,7 @@ public class PRReasonerInput extends InternalElement implements IPRReasonerInput
 		InternalElement prExpression = getInternalElement(IPRExpression.ELEMENT_TYPE,name);
 		if (! prExpression.exists()) return null;
 		try {
-			return ((IPRExpression)prExpression).getExpression();
+			return ((IPRExpression)prExpression).getExpression(FormulaFactory.getDefault(), null, null);
 		} catch (RodinDBException e) {
 			throw new SerializeException(e);
 		}

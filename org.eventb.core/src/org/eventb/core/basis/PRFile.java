@@ -41,7 +41,7 @@ public class PRFile extends RodinFile implements IPRFile {
 	}
 	
 	public IPRProofTree[] getProofTrees() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(PSstatus.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IPRProofTree.ELEMENT_TYPE);
 		PRProofTree[] proofTrees = new PRProofTree[list.size()];
 		list.toArray(proofTrees);
 		return proofTrees;

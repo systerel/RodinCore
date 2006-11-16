@@ -225,6 +225,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 	
 //	 lock po & pr files before calling this method
+// TODO : a version with Proof tree from seqProver
 	public static void updateStatus(IPSstatus istatus, IProgressMonitor monitor) throws RodinDBException {
 		PSstatus status = (PSstatus) istatus;
 		IProverSequent seq =  POLoader.readPO(status.getPOSequent());

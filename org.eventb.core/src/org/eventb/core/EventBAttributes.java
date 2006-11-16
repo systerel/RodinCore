@@ -9,6 +9,7 @@ package org.eventb.core;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.IAttributeType.Boolean;
 
 /**
  * This class lists all attribute names used by the Event-B core plugin.
@@ -73,14 +74,30 @@ public final class EventBAttributes {
 		RodinCore.getHandleAttrType(EventBPlugin.PLUGIN_ID + ".parentSet");
 
 	// Attributes related to the PR and PS files
+
 	public static IAttributeType.Integer CONFIDENCE_ATTRIBUTE =
 		RodinCore.getIntegerAttrType(EventBPlugin.PLUGIN_ID + ".confidence");
 
 	public static IAttributeType.Boolean PROOF_VALIDITY_ATTRIBUTE =
-		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".proofValid");
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".psProofValid");
 
 	public static IAttributeType.Boolean AUTO_PROOF_ATTRIBUTE =
-		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".autoProof");
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".psAutoProof");
+	
+	public static IAttributeType.String GOAL_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prGoal");
+
+	public static IAttributeType.String HYPS_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prHyps");
+	
+	public static IAttributeType.String RULE_DISPLAY_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prRuleDisplay");
+	
+	public static IAttributeType.String STORE_REF_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prStoreRef");
+	
+	public static IAttributeType.String STRING_INPUT_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prStrInp");
 	
 	private EventBAttributes() {
 		// Non-instantiable class

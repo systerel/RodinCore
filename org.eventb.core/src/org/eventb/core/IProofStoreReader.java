@@ -8,26 +8,22 @@
 
 package org.eventb.core;
 
-import java.util.Set;
-
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
  * @author Farhad Mehta
  *
  */
-public interface IPRPredicateSet extends IInternalElement {
+public interface IProofStoreReader {
 	
-	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prPredicateSet"); //$NON-NLS-1$
+	FormulaFactory getFormulaFactory();
+	ITypeEnvironment getBaseTypeEnv(IProgressMonitor monitor) throws RodinDBException;
+	Predicate getPredicate(String name,IProgressMonitor monitor) throws RodinDBException;
+	Expression getExpression(String ref, IProgressMonitor monitor)  throws RodinDBException;
 
-	Set<Predicate> getPredicateSet(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException;
-	void setPredicateSet(Set<Predicate> predSet, IProgressMonitor monitor) throws RodinDBException;
 }

@@ -13,13 +13,10 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRHypAction;
-import org.eventb.core.IPRPredicate;
-import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRReasonerAntecedent;
-import org.eventb.core.IPRTypeEnvironment;
-import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.IProofStoreCollector;
+import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
@@ -27,13 +24,12 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author Farhad Mehta
  *
  */
-public class PRReasonerAntecedent extends InternalElement implements IPRReasonerAntecedent {
+public class PRReasonerAntecedent extends EventBProofElement implements IPRReasonerAntecedent {
 
 	public PRReasonerAntecedent(String name, IRodinElement parent) {
 		super(name, parent);
@@ -43,76 +39,60 @@ public class PRReasonerAntecedent extends InternalElement implements IPRReasoner
 	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
-
-	private InternalElement getChild(IInternalElementType childType,
-			String childName) throws RodinDBException {
-
-		InternalElement internalElement = 
-			getInternalElement(childType,childName);
-		assert internalElement != null;
-		if (internalElement.exists()) return internalElement;
-		throw newNotPresentException();
-	}
 	
-	public IAntecedent getAnticident(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException {
+	public IAntecedent getAntecedent(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException {
 		
-		InternalElement child; 
 		
-		child = getChild(IPRPredicate.ELEMENT_TYPE,"goal");
-		Predicate goal = ((IPRPredicate)child).getPredicate(factory, typEnv, monitor);
+		Predicate goal = getGoal(store, monitor);
 		
 		// optional entries
-		FreeIdentifier[] addedFreeIdens = null;
+		FreeIdentifier[] addedFreeIdents = null;
 		Set<Predicate> addedHyps = null;
 		List<Action> hypAction = null;
+
+		addedFreeIdents = getFreeIdents(store.getFormulaFactory(), monitor);
 		
-		child = getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,"addedFreeIdents");
-		if (child.exists()) addedFreeIdens = ((IPRTypeEnvironment)child).getFreeIdentifiers(FormulaFactory.getDefault(), null);
 		
-		child = getInternalElement(IPRPredicateSet.ELEMENT_TYPE,"addedHyps");
-		if (child.exists()) addedHyps = ((IPRPredicateSet)child).getPredicateSet(factory, typEnv, null);
+		if (hasHyps(monitor))
+		addedHyps = getHyps(store, monitor);
 		
 		IRodinElement[] children = getChildrenOfType(IPRHypAction.ELEMENT_TYPE);
 		if (children.length != 0)
 		{
 			hypAction = new ArrayList<Action>(children.length);
 			for (IRodinElement action : children) {
-				hypAction.add(((IPRHypAction)action).getAction(factory, typEnv, null));				
+				hypAction.add(((IPRHypAction)action).getAction(store, null));				
 			}
 		}
 		
-		return ProverFactory.makeAntecedent(goal,addedHyps,addedFreeIdens,hypAction);
+		return ProverFactory.makeAntecedent(goal,addedHyps,addedFreeIdents,hypAction);
 	}
 
-	public void setAnticident(IAntecedent antecedent) throws RodinDBException {
-		//	delete previous children, if any.
-		if (this.getChildren().length != 0)
-			this.getRodinDB().delete(this.getChildren(),true,null);
-	
+
+public void setAntecedent(IAntecedent antecedent, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
+
 		if (antecedent.getAddedFreeIdents().length != 0){
-			((IPRTypeEnvironment)(this.createInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,
-					"addedFreeIdents",
-					null,null))).setTypeEnvironment(antecedent.getAddedFreeIdents(), null);
+			setFreeIdents(antecedent.getAddedFreeIdents(), monitor);
+//			((IPRTypeEnvironment)(this.createInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,
+//					"addedFreeIdents",
+//					null,null))).setFreeIdents(antecedent.getAddedFreeIdents(), null);
 		}
+		
 		if (! antecedent.getAddedHyps().isEmpty()){
-			((IPRPredicateSet)(this.createInternalElement(IPRPredicateSet.ELEMENT_TYPE,
-					"addedHyps",
-					null,null))).setPredicateSet(antecedent.getAddedHyps(), null);
+			setHyps(antecedent.getAddedHyps(), store, monitor);
 		}
+		
 		if (! antecedent.getHypAction().isEmpty()){
 			int count = 0;
 			for (Action action : antecedent.getHypAction()) {
 				((IPRHypAction)(this.createInternalElement(IPRHypAction.ELEMENT_TYPE,
-						"hypAction"+count,
-						null,null))).setAction(action, null);
+						action.getType().toString(),
+						null,null))).setAction(action, store, null);
 				count ++;
 			}
 		}
 		
-		((IPRPredicate)(this.createInternalElement(IPRPredicate.ELEMENT_TYPE,
-				"goal",
-				null,null))).setPredicate(antecedent.getGoal(), null);
+		setGoal(antecedent.getGoal(), store, monitor);
 		
 	}
-
 }

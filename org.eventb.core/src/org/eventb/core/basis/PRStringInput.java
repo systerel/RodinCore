@@ -1,0 +1,38 @@
+package org.eventb.core.basis;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
+import org.eventb.core.IPRPredRef;
+import org.eventb.core.IPRStringInput;
+import org.eventb.core.IProofStoreCollector;
+import org.eventb.core.IProofStoreReader;
+import org.eventb.core.ast.Predicate;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.InternalElement;
+
+public class PRStringInput extends InternalElement implements IPRStringInput{
+
+	public PRStringInput(String name, IRodinElement parent) {
+		super(name, parent);
+	}
+
+	@Override
+	public IInternalElementType getElementType() {
+		return ELEMENT_TYPE;
+	}
+
+	public String getStrInp(IProgressMonitor monitor) throws RodinDBException {
+		return getAttributeValue(EventBAttributes.STRING_INPUT_ATTRIBUTE, monitor);
+	}
+
+	public void setStrInp(String value,IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(EventBAttributes.STRING_INPUT_ATTRIBUTE, value , monitor);
+	}
+	
+
+
+
+
+}

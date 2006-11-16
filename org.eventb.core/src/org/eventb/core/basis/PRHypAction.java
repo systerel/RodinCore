@@ -11,10 +11,8 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRHypAction;
-import org.eventb.core.IPRPredicateSet;
-import org.eventb.core.IPair;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.IProofStoreCollector;
+import org.eventb.core.IProofStoreReader;
 import org.eventb.core.seqprover.HypothesesManagement;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
@@ -22,14 +20,13 @@ import org.eventb.core.seqprover.HypothesesManagement.ActionType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author Farhad Mehta
  *
  */
 
-public class PRHypAction extends InternalElement implements IPRHypAction {
+public class PRHypAction extends EventBProofElement implements IPRHypAction {
 
 	public PRHypAction(String name, IRodinElement parent) {
 		super(name, parent);
@@ -40,33 +37,20 @@ public class PRHypAction extends InternalElement implements IPRHypAction {
 		return ELEMENT_TYPE;
 	}
 
-	public Action getAction(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException {
+	public Action getAction(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException {
 	
 		// read in the action type
-		IRodinElement[] pairs = this.getChildrenOfType(IPair.ELEMENT_TYPE);
-		assert pairs.length == 1;
-		ActionType actionType = HypothesesManagement.fromString(((IPair)pairs[0]).getContents());
+		ActionType actionType = HypothesesManagement.fromString(getElementName());
 		
 		// read in the hypotheses
-		IRodinElement[] predicateSets = this.getChildrenOfType(IPRPredicateSet.ELEMENT_TYPE);
-		assert predicateSets.length == 1;
-		Set<Hypothesis> hyps = Hypothesis.Hypotheses(((IPRPredicateSet)predicateSets[0]).getPredicateSet(factory, typEnv, null));
-		
+		Set<Hypothesis> hyps = Hypothesis.Hypotheses(getHyps(store, monitor));
 		return new Action(actionType,hyps);
 	}
 
-	public void setAction(Action a, IProgressMonitor monitor) throws RodinDBException {
-		//delete previous children, if any.
-		if (this.getChildren().length != 0)
-			this.getRodinDB().delete(this.getChildren(),true,null);
-		
-		// write out the action type
-		this.createInternalElement(IPair.ELEMENT_TYPE,"ActionType",null,null)
-		.setContents(a.getType().toString());
+	public void setAction(Action a,  IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
 		
 		// write out the hypotheses
-		((IPRPredicateSet)this.createInternalElement(IPRPredicateSet.ELEMENT_TYPE,"",null,null))
-		.setPredicateSet(Hypothesis.Predicates(a.getHyps()), null);
+		setHyps(Hypothesis.Predicates(a.getHyps()), store, monitor);
 		
 		return;
 	}

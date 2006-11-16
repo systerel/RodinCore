@@ -8,24 +8,20 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRPredicate;
-import org.eventb.core.IPair;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author Farhad Mehta
  *
  */
 
-public class PRPredicate extends InternalElement implements IPRPredicate {
+public class PRPredicate extends SCPredicateElement implements IPRPredicate {
 
 	public PRPredicate(String name, IRodinElement parent) {
 		super(name, parent);
@@ -36,43 +32,24 @@ public class PRPredicate extends InternalElement implements IPRPredicate {
 		return ELEMENT_TYPE;
 	}
 	
-
-	public Predicate getPredicate(FormulaFactory factory, ITypeEnvironment typEnv1, IProgressMonitor monitor) throws RodinDBException {
-		// read in the type environment
-		
-		// TODO : refactor code with PRTypeEnv
-		ITypeEnvironment typEnv = FormulaFactory.getDefault().makeTypeEnvironment();
-		// this.getChildrenOfType(IPair.ELEMENT_TYPE);
-		IRodinElement[] pairs = this.getChildrenOfType(IPair.ELEMENT_TYPE);
-		for (IRodinElement pair : pairs) {
-			Type type = ASTLib.parseType(((IPair)pair).getContents());
-			assert type != null;
-			typEnv.addName(pair.getElementName(),type);
+	public FreeIdentifier[] getFreeIdents(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
+		IRodinElement[] children = getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
+		FreeIdentifier[] freeIdents = new FreeIdentifier[children.length];
+		for (int i = 0; i < freeIdents.length; i++) {
+			freeIdents[i] = ((IPRIdentifier)children[i]).getIdentifier(factory, monitor);			
 		}
-		Predicate pred = ASTLib.parsePredicate(this.getContents());
-		assert pred != null;
-		// attn : wellTyped does type checking!
-		boolean wellTyped = ASTLib.typeCheckClosed(pred,typEnv);
-		assert wellTyped;
-		return pred;
+		return freeIdents;
+	}
+	
+	public void setFreeIdents(FreeIdentifier[] freeIdents, IProgressMonitor monitor) throws RodinDBException {
+		
+		for (int i = 0; i < freeIdents.length; i++) {
+			IPRIdentifier prIdent = (IPRIdentifier) 
+			getInternalElement(IPRIdentifier.ELEMENT_TYPE, freeIdents[i].getName());
+			prIdent.create(null, monitor);
+			prIdent.setType(freeIdents[i].getType(), monitor);
+		}
 	}
 
-	public void setPredicate(Predicate p, IProgressMonitor monitor) throws RodinDBException {
-		//delete previous children, if any.
-		if (this.getChildren().length != 0)
-			this.getRodinDB().delete(this.getChildren(),true,null);
-		
-		// write out the type environment
-		FreeIdentifier[] freeIdents = p.getFreeIdentifiers();
-		// ITypeEnvironment typEnv = FormulaFactory.getDefault().makeTypeEnvironment();
-		for (FreeIdentifier identifier : freeIdents) {
-			this.createInternalElement(IPair.ELEMENT_TYPE,identifier.getName(),null,null)
-			.setContents(identifier.getType().toString());
-			// typEnv.addName(identifier.getName(),identifier.getType().toString());
-		}
-		// write out the predicate
-		this.setContents(p.toStringWithTypes());
-		return;
-	}
 
 }

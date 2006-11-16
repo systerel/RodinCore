@@ -21,8 +21,8 @@ public interface IPRTypeEnvironment extends IInternalElement {
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prTypeEnv"); //$NON-NLS-1$
 		
 	ITypeEnvironment getTypeEnvironment(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
-	FreeIdentifier[] getFreeIdentifiers(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
+	FreeIdentifier[] getFreeIdents(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
 
 	void setTypeEnvironment(ITypeEnvironment typeEnv, IProgressMonitor monitor) throws RodinDBException;
-	void setTypeEnvironment(FreeIdentifier[] freeIdents, IProgressMonitor monitor) throws RodinDBException;
+	void setFreeIdents(FreeIdentifier[] freeIdents, IProgressMonitor monitor) throws RodinDBException;
 }

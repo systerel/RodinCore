@@ -8,22 +8,17 @@
 
 package org.eventb.core;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Farhad Mehta
  *
  */
-public interface IPRHypAction extends IInternalElement {
+public interface IPRProofStore extends IInternalElement {
 	
 	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prHypAction"); //$NON-NLS-1$
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProofStore"); //$NON-NLS-1$
 
-	Action getAction(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException;
-	void setAction(Action hypAction, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException;
 }
