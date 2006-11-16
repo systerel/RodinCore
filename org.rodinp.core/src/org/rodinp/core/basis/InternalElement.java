@@ -14,8 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IRodinDBStatus;
-import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
@@ -26,13 +24,11 @@ import org.rodinp.internal.core.CopyElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.DeleteElementsOperation;
-import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.InternalElementInfo;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.MoveElementsOperation;
 import org.rodinp.internal.core.RemoveElementAttributeOperation;
 import org.rodinp.internal.core.RenameElementsOperation;
-import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinFileElementInfo;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Messages;
@@ -90,13 +86,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		InternalElement result = getInternalElement(type, childName);
-		if (result == null) {
-			IRodinDBStatus status = new RodinDBStatus(
-					IRodinDBStatusConstants.INVALID_INTERNAL_ELEMENT_TYPE,
-					type.toString());
-			throw new RodinDBException(status);
-		}
-		new CreateInternalElementOperation(result, nextSibling).runOperation(monitor);
+		result.create(nextSibling, monitor);
 		return result;
 	}
 
@@ -143,20 +133,6 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	private String getAttributeRawValue(String attrName,
 			IProgressMonitor monitor) throws RodinDBException {
 		return getFileInfo(monitor).getAttributeRawValue(this, attrName);
-	}
-
-	@Deprecated
-	private AttributeType getAttributeTypeDescription(String attrName)
-			throws RodinDBException {
-		
-		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		final AttributeType attributeTypeDescription = 
-			manager.getAttributeType(attrName);
-		if (attributeTypeDescription == null) {
-			throw new RodinDBException(new RodinDBStatus(
-					IRodinDBStatusConstants.UNKNOWN_ATTRIBUTE, attrName));
-		}
-		return attributeTypeDescription;
 	}
 
 	public boolean getAttributeValue(IAttributeType.Boolean attrType, IProgressMonitor monitor)
@@ -424,38 +400,6 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	@Deprecated
 	public void setContents(String contents, IProgressMonitor monitor) throws RodinDBException {
 		new ChangeElementContentsOperation(this, contents).runOperation(monitor);
-	}
-
-	public void setHandleAttribute(String attrName, IRodinElement newValue,
-			IProgressMonitor monitor) throws RodinDBException {
-		final AttributeType attributeTypeDescription =
-			getAttributeTypeDescription(attrName);
-		final String newRawValue = attributeTypeDescription.toString(newValue);
-		setAttributeRawValue(attrName, newRawValue, monitor);
-	}
-
-	public void setIntegerAttribute(String attrName, int newValue,
-			IProgressMonitor monitor) throws RodinDBException {
-		final AttributeType attributeTypeDescription =
-			getAttributeTypeDescription(attrName);
-		final String newRawValue = attributeTypeDescription.toString(newValue);
-		setAttributeRawValue(attrName, newRawValue, monitor);
-	}
-
-	public void setLongAttribute(String attrName, long newValue,
-			IProgressMonitor monitor) throws RodinDBException {
-		final AttributeType attributeTypeDescription =
-			getAttributeTypeDescription(attrName);
-		final String newRawValue = attributeTypeDescription.toString(newValue);
-		setAttributeRawValue(attrName, newRawValue, monitor);
-	}
-
-	public void setStringAttribute(String attrName, String newValue,
-			IProgressMonitor monitor) throws RodinDBException {
-		final AttributeType attributeTypeDescription =
-			getAttributeTypeDescription(attrName);
-		final String newRawValue = attributeTypeDescription.toString(newValue);
-		setAttributeRawValue(attrName, newRawValue, monitor);
 	}
 
 	@Override
