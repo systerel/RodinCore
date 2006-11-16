@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.util.Util;
 
 
@@ -284,7 +285,8 @@ public final class RodinMarkerUtil {
 	public static IAttributeType getAttributeType(IMarker marker) {
 		checkRodinProblemMarker(marker);
 		final String attrId = marker.getAttribute(ATTRIBUTE_ID, null);
-		return RodinCore.getAttributeType(attrId);
+		final ElementTypeManager manager = ElementTypeManager.getInstance();
+		return manager.getAttributeType(attrId);
 	}
 
 	/**

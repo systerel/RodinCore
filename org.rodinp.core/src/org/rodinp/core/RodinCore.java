@@ -274,107 +274,111 @@ public class RodinCore extends Plugin {
 	}
 
 	/**
-	 * Returns the attribute type with the given id. If no attribute type with
-	 * the given id has been contributed, this method returns <code>null</code>.
+	 * Returns the attribute type with the given id.
 	 * 
 	 * @param id
 	 *            unique identifier of the attribute type
-	 * @return the attribute type with the given id, or <code>null</code> if
-	 *         unknown
+	 * @return the attribute type with the given id
+	 * @throws IllegalArgumentException
+	 *             if no such attribute type has been contributed
 	 */
 	public static IAttributeType getAttributeType(String id) {
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		return manager.getAttributeType(id);
+		IAttributeType result = manager.getAttributeType(id);
+		if (result != null) {
+			return result;
+		}
+		throw new IllegalArgumentException("Unknown attribute type: " + id);
 	}
 	
 	/**
-	 * Returns the attribute type of kind boolean and with the given id. If no
-	 * such attribute type has been contributed, this method returns
-	 * <code>null</code>.
+	 * Returns the attribute type of kind boolean and with the given id.
 	 * 
 	 * @param id
 	 *            unique identifier of the attribute type
-	 * @return the attribute type with the given id and kind boolean, or
-	 *         <code>null</code> if unknown
+	 * @return the attribute type with the given id and kind boolean
+	 * @throws IllegalArgumentException
+	 *             if no such attribute type has been contributed
 	 */
 	public static IAttributeType.Boolean getBooleanAttrType(String id) {
 		IAttributeType type = getAttributeType(id);
 		if (type instanceof IAttributeType.Boolean) {
 			return (IAttributeType.Boolean) type;
 		}
-		return null;
+		throw new IllegalArgumentException(
+				"Attribute type " + type.getId() + " is not of kind boolean");
 	}
 	
 	/**
-	 * Returns the attribute type of kind handle and with the given id. If no
-	 * such attribute type has been contributed, this method returns
-	 * <code>null</code>.
+	 * Returns the attribute type of kind handle and with the given id.
 	 * 
 	 * @param id
 	 *            unique identifier of the attribute type
-	 * @return the attribute type with the given id and kind handle, or
-	 *         <code>null</code> if unknown
+	 * @return the attribute type with the given id and kind handle
+	 * @throws IllegalArgumentException
+	 *             if no such attribute type has been contributed
 	 */
 	public static IAttributeType.Handle getHandleAttrType(String id) {
 		IAttributeType type = getAttributeType(id);
 		if (type instanceof IAttributeType.Handle) {
 			return (IAttributeType.Handle) type;
 		}
-		return null;
+		throw new IllegalArgumentException(
+				"Attribute type " + type.getId() + " is not of kind handle");
 	}
 	
 	/**
-	 * Returns the attribute type of kind integer and with the given id. If no
-	 * such attribute type has been contributed, this method returns
-	 * <code>null</code>.
+	 * Returns the attribute type of kind integer and with the given id.
 	 * 
 	 * @param id
 	 *            unique identifier of the attribute type
-	 * @return the attribute type with the given id and kind integer, or
-	 *         <code>null</code> if unknown
+	 * @return the attribute type with the given id and kind integer
+	 * @throws IllegalArgumentException
+	 *             if no such attribute type has been contributed
 	 */
 	public static IAttributeType.Integer getIntegerAttrType(String id) {
 		IAttributeType type = getAttributeType(id);
 		if (type instanceof IAttributeType.Integer) {
 			return (IAttributeType.Integer) type;
 		}
-		return null;
+		throw new IllegalArgumentException(
+				"Attribute type " + type.getId() + " is not of kind integer");
 	}
 	
 	/**
-	 * Returns the attribute type of kind long and with the given id. If no
-	 * such attribute type has been contributed, this method returns
-	 * <code>null</code>.
+	 * Returns the attribute type of kind long and with the given id.
 	 * 
 	 * @param id
 	 *            unique identifier of the attribute type
-	 * @return the attribute type with the given id and kind long, or
-	 *         <code>null</code> if unknown
+	 * @return the attribute type with the given id and kind long
+	 * @throws IllegalArgumentException
+	 *             if no such attribute type has been contributed
 	 */
 	public static IAttributeType.Long getLongAttrType(String id) {
 		IAttributeType type = getAttributeType(id);
 		if (type instanceof IAttributeType.Long) {
 			return (IAttributeType.Long) type;
 		}
-		return null;
+		throw new IllegalArgumentException(
+				"Attribute type " + type.getId() + " is not of kind long");
 	}
 	
 	/**
-	 * Returns the attribute type of kind string and with the given id. If no
-	 * such attribute type has been contributed, this method returns
-	 * <code>null</code>.
+	 * Returns the attribute type of kind string and with the given id.
 	 * 
 	 * @param id
 	 *            unique identifier of the attribute type
-	 * @return the attribute type with the given id and kind string, or
-	 *         <code>null</code> if unknown
+	 * @return the attribute type with the given id and kind string
+	 * @throws IllegalArgumentException
+	 *             if no such attribute type has been contributed
 	 */
 	public static IAttributeType.String getStringAttrType(String id) {
 		IAttributeType type = getAttributeType(id);
 		if (type instanceof IAttributeType.String) {
 			return (IAttributeType.String) type;
 		}
-		return null;
+		throw new IllegalArgumentException(
+				"Attribute type " + type.getId() + " is not of kind string");
 	}
 	
 	/**
