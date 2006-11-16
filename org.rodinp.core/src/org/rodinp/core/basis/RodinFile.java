@@ -21,8 +21,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IRodinDBStatus;
-import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -36,7 +34,6 @@ import org.rodinp.internal.core.MoveResourceElementsOperation;
 import org.rodinp.internal.core.OpenableElementInfo;
 import org.rodinp.internal.core.RenameResourceElementsOperation;
 import org.rodinp.internal.core.RodinDBManager;
-import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinFileElementInfo;
 import org.rodinp.internal.core.RodinProject;
 import org.rodinp.internal.core.SaveRodinFileOperation;
@@ -145,13 +142,6 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 			throws RodinDBException {
 		
 		InternalElement result = getInternalElement(type, name);
-		if (result == null) {
-			IRodinDBStatus status = new RodinDBStatus(
-					IRodinDBStatusConstants.INVALID_INTERNAL_ELEMENT_TYPE,
-					type.toString()
-			);
-			throw new RodinDBException(status);
-		}
 		result.create(nextSibling, monitor);
 		return result;
 	}
