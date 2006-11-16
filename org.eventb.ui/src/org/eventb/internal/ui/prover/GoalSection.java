@@ -39,8 +39,8 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBImage;
@@ -120,7 +120,7 @@ public class GoalSection extends SectionPart {
 
 		IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
 				.getEditor()).getUserSupport();
-		ProofState ps = userSupport.getCurrentPO();
+		IProofState ps = userSupport.getCurrentPO();
 		if (ps != null) {
 			setGoal(ps.getCurrentNode());
 		} else

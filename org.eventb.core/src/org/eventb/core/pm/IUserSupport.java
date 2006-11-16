@@ -35,7 +35,7 @@ public interface IUserSupport {
 	 * 
 	 * @return the current ProofState (can be null).
 	 */
-	public abstract ProofState getCurrentPO();
+	public abstract IProofState getCurrentPO();
 
 	// Should be called by the UserSupportManager?
 	public abstract void setInput(IPSFile prFile, IProgressMonitor monitor)
@@ -82,13 +82,13 @@ public interface IUserSupport {
 
 	public abstract boolean hasUnsavedChanges();
 
-	public abstract ProofState[] getUnsavedPOs();
+	public abstract IProofState[] getUnsavedPOs();
 
 	public abstract void proofTreeChanged(IProofTreeDelta proofTreeDelta);
 
 	public abstract void setComment(String text, IProofTreeNode currentNode);
 
-	public abstract Collection<ProofState> getPOs();
+	public abstract Collection<IProofState> getPOs();
 
 	public abstract IPSFile getInput();
 

@@ -9,7 +9,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 public interface IProofStateDelta {
 	
 	public List<Object> getInformation();
-	public ProofState getProofState();
+	public IProofState getProofState();
 	public IProofTreeNode getNewProofTreeNode();
 	public IProofTreeDelta getProofTreeDelta();
 	public boolean getNewSearch();

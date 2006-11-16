@@ -23,7 +23,7 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eventb.core.pm.ProofState;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.HypothesisRow;
@@ -112,7 +112,7 @@ public abstract class HypothesesSection extends SectionPart {
 	}
 
 	private void updateTextClientStatus() {
-		ProofState ps = ((ProverUI) page.getEditor()).getUserSupport()
+		IProofState ps = ((ProverUI) page.getEditor()).getUserSupport()
 				.getCurrentPO();
 
 		boolean enable = false;

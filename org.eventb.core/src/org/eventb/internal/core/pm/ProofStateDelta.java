@@ -3,9 +3,9 @@ package org.eventb.internal.core.pm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 
@@ -18,7 +18,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
  */
 public class ProofStateDelta implements IProofStateDelta {
 
-	private ProofState ps;
+	private IProofState ps;
 
 	private IProofTreeDelta proofTreeDelta;
 
@@ -56,17 +56,17 @@ public class ProofStateDelta implements IProofStateDelta {
 		return information;
 	}
 
-	public void setNewProofState(ProofState ps) {
+	public void setNewProofState(IProofState ps) {
 		this.ps = ps;
 		newProofState = true;
 	}
 
-	public void setDeletedProofState(ProofState ps) {
+	public void setDeletedProofState(IProofState ps) {
 		this.ps = ps;
 		isDeleted = true;
 	}
 
-	public ProofState getProofState() {
+	public IProofState getProofState() {
 		return ps;
 	}
 

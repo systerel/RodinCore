@@ -14,10 +14,10 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupportManager;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -42,9 +42,9 @@ public class UserSupport implements IElementChangedListener,
 
 	private IPSFile prFile; // Unique for an instance of UserSupport
 
-	private LinkedList<ProofState> proofStates;
+	private LinkedList<IProofState> proofStates;
 
-	protected ProofState currentPS;
+	protected IProofState currentPS;
 
 	private boolean fireDelta;
 
@@ -64,7 +64,7 @@ public class UserSupport implements IElementChangedListener,
 		proofStateChangedListeners = new ArrayList<IProofStateChangedListener>();
 		RodinCore.addElementChangedListener(this);
 		fireDelta = true;
-		proofStates = new LinkedList<ProofState>();
+		proofStates = new LinkedList<IProofState>();
 		delta = new ThreadLocal<IProofStateDelta>(); // Clear delta
 		// outOfDate = false;
 	}
@@ -151,7 +151,7 @@ public class UserSupport implements IElementChangedListener,
 		mergedDelta.addAllInformation(oldInformation);
 		mergedDelta.addAllInformation(newInformation);
 
-		ProofState newProofState = newDelta.getProofState();
+		IProofState newProofState = newDelta.getProofState();
 		if (newDelta.isDeleted()) {
 			mergedDelta.setDeletedProofState(newProofState);
 			return mergedDelta;
@@ -159,7 +159,7 @@ public class UserSupport implements IElementChangedListener,
 			mergedDelta.setNewProofState(newProofState);
 			return mergedDelta;
 		} else {
-			ProofState oldProofState = oldDelta.getProofState();
+			IProofState oldProofState = oldDelta.getProofState();
 			if (oldDelta.isDeleted()) {
 				mergedDelta.setDeletedProofState(oldProofState);
 				return mergedDelta;
@@ -224,7 +224,7 @@ public class UserSupport implements IElementChangedListener,
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IUserSupport#getCurrentPO()
 	 */
-	public ProofState getCurrentPO() {
+	public IProofState getCurrentPO() {
 		return currentPS;
 	}
 
@@ -235,7 +235,7 @@ public class UserSupport implements IElementChangedListener,
 	public void setInput(IPSFile prFile, IProgressMonitor monitor)
 			throws RodinDBException {
 		this.prFile = prFile;
-		proofStates = new LinkedList<ProofState>();
+		proofStates = new LinkedList<IProofState>();
 		try {
 			for (int i = 0; i < prFile.getStatus().length; i++) {
 				IPSstatus prSequent = prFile.getStatus()[i];
@@ -255,7 +255,7 @@ public class UserSupport implements IElementChangedListener,
 			throws RodinDBException {
 		if (prSequent == null)
 			setProofState(null, monitor);
-		for (ProofState ps : proofStates) {
+		for (IProofState ps : proofStates) {
 			if (ps.getPRSequent().equals(prSequent)) {
 				setProofState(ps, monitor);
 				return;
@@ -275,7 +275,7 @@ public class UserSupport implements IElementChangedListener,
 			index = proofStates.indexOf(currentPS);
 		}
 		for (int i = 1; i <= proofStates.size(); i++) {
-			ProofState ps = proofStates.get((index + i) % proofStates.size());
+			IProofState ps = proofStates.get((index + i) % proofStates.size());
 			if (!ps.isClosed()) {
 				setProofState(ps, monitor);
 				return;
@@ -303,7 +303,7 @@ public class UserSupport implements IElementChangedListener,
 		}
 
 		for (int i = 1; i < proofStates.size(); i++) {
-			ProofState ps = proofStates.get((proofStates.size() + index - i)
+			IProofState ps = proofStates.get((proofStates.size() + index - i)
 					% proofStates.size());
 			if (!ps.isClosed()) {
 				setProofState(ps, monitor);
@@ -318,7 +318,7 @@ public class UserSupport implements IElementChangedListener,
 		fireProofStateDelta(newDelta);
 	}
 
-	private void setProofState(ProofState ps, IProgressMonitor monitor)
+	private void setProofState(IProofState ps, IProgressMonitor monitor)
 			throws RodinDBException {
 		// if (currentPS != ps) {
 		if (currentPS != null && !currentPS.isUninitialised())
@@ -569,7 +569,7 @@ public class UserSupport implements IElementChangedListener,
 
 	void debugProofState() {
 		UserSupportUtils.debug("******** Proof States **********");
-		for (ProofState state : proofStates) {
+		for (IProofState state : proofStates) {
 			UserSupportUtils.debug("Goal: "
 					+ state.getPRSequent().getElementName());
 		}
@@ -578,8 +578,8 @@ public class UserSupport implements IElementChangedListener,
 
 	Collection<IPSstatus> deleted;
 
-	private ProofState getProofState(int index) {
-		ProofState proofState = null;
+	private IProofState getProofState(int index) {
+		IProofState proofState = null;
 		if (index < proofStates.size())
 			proofState = proofStates.get(index);
 		return proofState;
@@ -588,13 +588,13 @@ public class UserSupport implements IElementChangedListener,
 	void reloadPRSequent() {
 		// Remove the deleted ones first
 		for (IPSstatus prSequent : deleted) {
-			ProofState state = new ProofState(prSequent);
+			IProofState state = new ProofState(prSequent);
 			proofStates.remove(state);
 		}
 
 		try {
 			int index = 0;
-			ProofState proofState = getProofState(index);
+			IProofState proofState = getProofState(index);
 			for (IPSstatus prSequent : prFile.getStatus()) {
 				UserSupportUtils.debug("Trying: " + prSequent.getElementName());
 				UserSupportUtils.debug("Index: " + index);
@@ -605,7 +605,7 @@ public class UserSupport implements IElementChangedListener,
 						continue;
 					}
 				}
-				ProofState state = new ProofState(prSequent);
+				IProofState state = new ProofState(prSequent);
 				UserSupportUtils.debug("Added at position " + index);
 				proofStates.add(index++, state);
 			}
@@ -654,7 +654,7 @@ public class UserSupport implements IElementChangedListener,
 						|| (flag & RodinElementDelta.F_REPLACED) != 0) {
 					IPSstatus prSequent = (IPSstatus) element;
 
-					ProofState state = getProofState(prSequent);
+					IProofState state = getProofState(prSequent);
 
 					UserSupportUtils.debug("Testing: "
 							+ state.getPRSequent().getElementName());
@@ -740,7 +740,7 @@ public class UserSupport implements IElementChangedListener,
 			IPSstatus status = prFile
 					.getStatusOf(proofTree.getElementName());
 
-			ProofState state = getProofState(status);
+			IProofState state = getProofState(status);
 
 			// do nothing if there is no state corresponding to this
 			if (state == null)
@@ -780,8 +780,8 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	private ProofState getProofState(IPSstatus prSequent) {
-		for (ProofState state : proofStates) {
+	private IProofState getProofState(IPSstatus prSequent) {
+		for (IProofState state : proofStates) {
 			if (state.getPRSequent().equals(prSequent))
 				return state;
 		}
@@ -803,7 +803,7 @@ public class UserSupport implements IElementChangedListener,
 	 * @see org.eventb.core.pm.IUserSupport#hasUnsavedChanges()
 	 */
 	public boolean hasUnsavedChanges() {
-		for (ProofState ps : proofStates) {
+		for (IProofState ps : proofStates) {
 			if (ps.isDirty())
 				return true;
 		}
@@ -813,13 +813,13 @@ public class UserSupport implements IElementChangedListener,
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IUserSupport#getUnsavedPOs()
 	 */
-	public ProofState[] getUnsavedPOs() {
-		Collection<ProofState> unsaved = new HashSet<ProofState>();
-		for (ProofState ps : proofStates) {
+	public IProofState[] getUnsavedPOs() {
+		Collection<IProofState> unsaved = new HashSet<IProofState>();
+		for (IProofState ps : proofStates) {
 			if (ps.isDirty())
 				unsaved.add(ps);
 		}
-		return unsaved.toArray(new ProofState[unsaved.size()]);
+		return unsaved.toArray(new IProofState[unsaved.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -849,7 +849,7 @@ public class UserSupport implements IElementChangedListener,
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IUserSupport#getPOs()
 	 */
-	public Collection<ProofState> getPOs() {
+	public Collection<IProofState> getPOs() {
 		return proofStates;
 	}
 

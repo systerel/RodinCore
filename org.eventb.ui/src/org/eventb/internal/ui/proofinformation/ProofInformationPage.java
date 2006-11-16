@@ -36,9 +36,9 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
-import org.eventb.core.pm.ProofState;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -99,7 +99,7 @@ public class ProofInformationPage extends Page implements
 
 		scrolledForm = toolkit.createScrolledForm(parent);
 
-		ProofState ps = editor.getUserSupport().getCurrentPO();
+		IProofState ps = editor.getUserSupport().getCurrentPO();
 		if (ps != null)
 			scrolledForm.setText(ps.getPRSequent().getElementName());
 
@@ -331,7 +331,7 @@ public class ProofInformationPage extends Page implements
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
-				ProofState ps = delta.getProofState();
+				IProofState ps = delta.getProofState();
 				if (delta.isNewProofState()) {
 					if (ps != null) {
 						IPSstatus prSequent = ps.getPRSequent();

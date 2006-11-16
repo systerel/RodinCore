@@ -43,10 +43,10 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -456,7 +456,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					// UIUtils.debug("Width: " + elementColumn.getWidth());
 					viewer.refresh();
 
-					ProofState currentPO = userSupport.getCurrentPO();
+					IProofState currentPO = userSupport.getCurrentPO();
 					if (currentPO != null & currentPO.getCurrentNode() != null)
 						viewer.setSelection(new StructuredSelection(currentPO
 								.getCurrentNode()));
@@ -768,7 +768,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				final ProofState ps = delta.getProofState();
+				final IProofState ps = delta.getProofState();
 				if (delta.isNewProofState()) {
 					if (ps != null) { // Change only when change the PO
 						ProofTreeUIPage page = ProofTreeUIPage.this;

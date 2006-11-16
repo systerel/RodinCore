@@ -27,10 +27,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.HypothesisRow;
@@ -124,7 +124,7 @@ public class SearchHypothesisPage extends Page implements
 	}
 
 	private void init() {
-		ProofState ps = editor.getUserSupport().getCurrentPO();
+		IProofState ps = editor.getUserSupport().getCurrentPO();
 
 		Collection<Hypothesis> selected = new ArrayList<Hypothesis>();
 		Collection<Hypothesis> cached = new ArrayList<Hypothesis>();
@@ -315,7 +315,7 @@ public class SearchHypothesisPage extends Page implements
 		final IUserSupport userSupport = editor.getUserSupport();
 		display.syncExec(new Runnable() {
 			public void run() {
-				ProofState ps = delta.getProofState();
+				IProofState ps = delta.getProofState();
 				if (delta.isDeleted()) {
 					if (ps != null) {
 						IWorkbenchPage activePage = EventBUIPlugin

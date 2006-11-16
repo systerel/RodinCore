@@ -64,10 +64,10 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupportManager;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
@@ -870,7 +870,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				else
 					setFormTextInformation("");
 
-				ProofState ps = delta.getProofState();
+				IProofState ps = delta.getProofState();
 				IProofTreeNode node = null;
 				if (delta.isNewProofState()) {
 					if (ps != null) {

@@ -64,11 +64,11 @@ import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.basis.PSstatus;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUSManagerListener;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupportManager;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
@@ -197,8 +197,8 @@ public class ObligationExplorer extends ViewPart implements
 		for (IUserSupport userSupport : userSupports) {
 			// UIUtils.debugObligationExplorer("Get US: "
 			// + userSupport);
-			Collection<ProofState> proofStates = userSupport.getPOs();
-			for (ProofState proofState : proofStates) {
+			Collection<IProofState> proofStates = userSupport.getPOs();
+			for (IProofState proofState : proofStates) {
 				if (proofState.getPRSequent().equals(status)) {
 					IProofTree tree = proofState.getProofTree();
 					if (!proofState.isDirty() || tree == null)
@@ -322,9 +322,9 @@ public class ObligationExplorer extends ViewPart implements
 					for (IUserSupport userSupport : userSupports) {
 						// UIUtils.debugObligationExplorer("Get US: "
 						// + userSupport);
-						Collection<ProofState> proofStates = userSupport
+						Collection<IProofState> proofStates = userSupport
 								.getPOs();
-						for (ProofState proofState : proofStates) {
+						for (IProofState proofState : proofStates) {
 							if (proofState.getPRSequent().equals(element)) {
 								IProofTree tree = proofState.getProofTree();
 
@@ -407,8 +407,8 @@ public class ObligationExplorer extends ViewPart implements
 				for (IUserSupport userSupport : userSupports) {
 					// UIUtils.debugObligationExplorer("Get US: " +
 					// userSupport);
-					Collection<ProofState> proofStates = userSupport.getPOs();
-					for (ProofState proofState : proofStates) {
+					Collection<IProofState> proofStates = userSupport.getPOs();
+					for (IProofState proofState : proofStates) {
 						if (proofState.getPRSequent().equals(obj)) {
 							if (proofState.isDirty())
 								return "* " + ((IPSstatus) obj).getElementName();
@@ -455,8 +455,8 @@ public class ObligationExplorer extends ViewPart implements
 				for (IUserSupport userSupport : userSupports) {
 					// UIUtils.debugObligationExplorer("Get US: " +
 					// userSupport);
-					Collection<ProofState> proofStates = userSupport.getPOs();
-					for (ProofState proofState : proofStates) {
+					Collection<IProofState> proofStates = userSupport.getPOs();
+					for (IProofState proofState : proofStates) {
 						if (proofState.getPRSequent().equals(element)) {
 							if (proofState.isDirty())
 								return yellow;
@@ -800,7 +800,7 @@ public class ObligationExplorer extends ViewPart implements
 					ObligationExplorerUtils
 							.debug("Obligation Exprlorer: Proof Changed "
 									+ delta);
-				final ProofState ps = delta.getProofState();
+				final IProofState ps = delta.getProofState();
 
 				final IUserSupport userSupport = delta.getSource();
 				if (viewer.getControl().isDisposed())
@@ -821,7 +821,7 @@ public class ObligationExplorer extends ViewPart implements
 				} else {
 					IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
 					if (proofTreeDelta != null) {
-						ProofState state = userSupport.getCurrentPO();
+						IProofState state = userSupport.getCurrentPO();
 						IPSstatus prSequent = state.getPRSequent();
 						viewer.refresh(prSequent, true);
 //						column.pack();

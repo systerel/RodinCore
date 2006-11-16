@@ -13,8 +13,8 @@
 package org.eventb.internal.ui.prover.globaltactics;
 
 import org.eclipse.swt.widgets.ToolItem;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.prover.IProofCommand;
@@ -73,7 +73,7 @@ public class GlobalTacticToolItem {
 				.getTacticProvider(tacticID);
 		if (provider != null) {
 			
-			ProofState currentPO = us.getCurrentPO();
+			IProofState currentPO = us.getCurrentPO();
 			if (currentPO == null) {
 				item.setEnabled(false);
 				return;

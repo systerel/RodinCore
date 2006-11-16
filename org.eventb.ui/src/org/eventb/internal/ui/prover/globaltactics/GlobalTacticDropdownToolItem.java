@@ -20,8 +20,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.prover.IProofCommand;
@@ -165,7 +165,7 @@ public abstract class GlobalTacticDropdownToolItem {
 		TacticUIRegistry registry = TacticUIRegistry.getDefault();
 		ITacticProvider provider = registry.getTacticProvider(active);
 		if (provider != null) {
-			ProofState currentPO = us.getCurrentPO();
+			IProofState currentPO = us.getCurrentPO();
 			if (currentPO == null) {
 				item.setEnabled(false);
 				return;

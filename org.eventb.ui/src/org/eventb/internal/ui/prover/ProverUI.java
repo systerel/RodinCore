@@ -34,10 +34,10 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupportManager;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
@@ -125,7 +125,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 *            current pr Sequent
 	 */
 	public void setCurrentPO(IPSstatus prSequent, IProgressMonitor monitor) {
-		ProofState proofState = userSupport.getCurrentPO();
+		IProofState proofState = userSupport.getCurrentPO();
 		if (proofState != null && proofState.getPRSequent().equals(prSequent))
 			return;
 		try {
@@ -266,14 +266,14 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		// }
 		// }
 		saving = true;
-		ProofState[] proofStates = userSupport.getUnsavedPOs();
+		IProofState[] proofStates = userSupport.getUnsavedPOs();
 
 		final ListSelectionDialog dlg = new ListSelectionDialog(this.getSite()
 				.getShell(), userSupport, new ProofStateContentProvider(
 				proofStates), new ProofStateLabelProvider(),
 				"Select the proof obligation(s) to save.");
 
-		ProofState[] initSelection = { userSupport.getCurrentPO() };
+		IProofState[] initSelection = { userSupport.getCurrentPO() };
 		dlg.setInitialSelections(initSelection);
 		dlg.setTitle("Save Proofs");
 		dlg.open();
@@ -289,7 +289,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 					public void run(IProgressMonitor pm)
 							throws CoreException {
 						for (Object result : results) {
-							((ProofState) result).doSave(pm);
+							((IProofState) result).doSave(pm);
 						}
 						// Save the file from the database to disk
 						localPSFile.save(pm, false);
@@ -309,9 +309,9 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	private class ProofStateContentProvider implements
 			IStructuredContentProvider {
 
-		private ProofState[] proofStates;
+		private IProofState[] proofStates;
 
-		public ProofStateContentProvider(ProofState[] proofStates) {
+		public ProofStateContentProvider(IProofState[] proofStates) {
 			this.proofStates = proofStates;
 		}
 
@@ -338,8 +338,8 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		}
 
 		public String getText(Object element) {
-			if (element instanceof ProofState) {
-				return ((ProofState) element).getPRSequent().getElementName();
+			if (element instanceof IProofState) {
+				return ((IProofState) element).getPRSequent().getElementName();
 			}
 			return element.toString();
 		}
@@ -385,7 +385,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		// if (userSupport.isOutOfDate()) {
 		// updateUserSupport();
 		// }
-		ProofState currentPO = userSupport.getCurrentPO();
+		IProofState currentPO = userSupport.getCurrentPO();
 		if (currentPO != null && currentPO.isUninitialised())
 			try {
 				userSupport.setCurrentPO(currentPO.getPRSequent(), new NullProgressMonitor());
@@ -411,7 +411,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			ObligationExplorer obligationExplorer = (ObligationExplorer) activePage
 					.findView(ObligationExplorer.VIEW_ID);
 			if (obligationExplorer != null) {
-				ProofState ps = this.getUserSupport().getCurrentPO();
+				IProofState ps = this.getUserSupport().getCurrentPO();
 				if (ps != null) {
 					IPSstatus prSequent = this.getUserSupport().getCurrentPO()
 							.getPRSequent();
@@ -451,7 +451,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * @return the current PRSequent
 	 */
 	public IPSstatus getCurrentProverSequent() {
-		ProofState ps = getUserSupport().getCurrentPO();
+		IProofState ps = getUserSupport().getCurrentPO();
 		if (ps != null)
 			return ps.getPRSequent();
 		else

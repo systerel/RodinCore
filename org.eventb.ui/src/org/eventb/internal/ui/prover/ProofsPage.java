@@ -37,10 +37,10 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.ui.EventBUIPlugin;
@@ -143,7 +143,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		// selectedSection.getSection().setLayoutData(
 		// new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		ProofState ps = userSupport.getCurrentPO();
+		IProofState ps = userSupport.getCurrentPO();
 		initHypothesisSections(ps);
 
 		goalSection = new GoalSection(this, sashForm,
@@ -219,7 +219,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 //
 //	}
 
-	void initHypothesisSections(ProofState ps) {
+	void initHypothesisSections(IProofState ps) {
 
 		Collection<Hypothesis> selected = new ArrayList<Hypothesis>();
 		Collection<Hypothesis> cached = new ArrayList<Hypothesis>();
@@ -271,7 +271,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 									.getElementName());
 		display.syncExec(new Runnable() {
 			public void run() {
-				ProofState ps = delta.getProofState();
+				IProofState ps = delta.getProofState();
 				if (delta.isDeleted()) {
 					if (ps != null) {
 
@@ -330,7 +330,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 	}
 
 	void initCacheAndSearch() {
-		ProofState ps = userSupport.getCurrentPO();
+		IProofState ps = userSupport.getCurrentPO();
 		Set<Hypothesis> selected = new HashSet<Hypothesis>();
 		ArrayList<Hypothesis> cached = new ArrayList<Hypothesis>();
 		ArrayList<Hypothesis> searched = new ArrayList<Hypothesis>();

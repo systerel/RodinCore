@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.core.pm;
+package org.eventb.internal.core.pm;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,6 +23,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -34,7 +35,6 @@ import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.internal.core.pm.UserSupportUtils;
 import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.RodinCore;
@@ -47,7 +47,7 @@ import org.rodinp.core.RodinDBException;
  *         the proof tree, the current proof node, the set of cached and
  *         searched hypotheses.
  */
-public class ProofState {
+public class ProofState implements IProofState {
 
 	// The PR sequent associated with this proof obligation.
 	IPSstatus status;
@@ -83,6 +83,9 @@ public class ProofState {
 		return ProverFactory.makeProofTree(newSeq, poSequent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#loadProofTree(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public void loadProofTree(IProgressMonitor monitor) throws RodinDBException {
 
 		// Construct the proof tree from the PO file.
@@ -112,6 +115,9 @@ public class ProofState {
 		searched = new HashSet<Hypothesis>();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#isClosed()
+	 */
 	public boolean isClosed() throws RodinDBException {
 		if (pt != null)
 			return pt.isClosed();
@@ -120,22 +126,37 @@ public class ProofState {
 		return (prProofTree != null && (prProofTree.getConfidence(null) > IConfidence.PENDING));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#getPRSequent()
+	 */
 	public IPSstatus getPRSequent() {
 		return status;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#getProofTree()
+	 */
 	public IProofTree getProofTree() {
 		return pt;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#getCurrentNode()
+	 */
 	public IProofTreeNode getCurrentNode() {
 		return current;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#setCurrentNode(org.eventb.core.seqprover.IProofTreeNode)
+	 */
 	public void setCurrentNode(IProofTreeNode newNode) {
 		current = newNode;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#getNextPendingSubgoal(org.eventb.core.seqprover.IProofTreeNode)
+	 */
 	public IProofTreeNode getNextPendingSubgoal(IProofTreeNode node) {
 		IProofTreeNode subGoal = node.getFirstOpenDescendant();
 		if (subGoal != null)
@@ -143,38 +164,65 @@ public class ProofState {
 		return pt.getRoot().getFirstOpenDescendant();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#getNextPendingSubgoal()
+	 */
 	public IProofTreeNode getNextPendingSubgoal() {
 		return pt.getRoot().getFirstOpenDescendant();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#addAllToCached(java.util.Collection)
+	 */
 	public void addAllToCached(Collection<Hypothesis> hyps) {
 		cached.addAll(hyps);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#removeAllFromCached(java.util.Collection)
+	 */
 	public void removeAllFromCached(Collection<Hypothesis> hyps) {
 		cached.removeAll(hyps);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#getCached()
+	 */
 	public Collection<Hypothesis> getCached() {
 		return cached;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#removeAllFromSearched(java.util.Collection)
+	 */
 	public void removeAllFromSearched(Collection<Hypothesis> hyps) {
 		searched.removeAll(hyps);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#getSearched()
+	 */
 	public Collection<Hypothesis> getSearched() {
 		return searched;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#setSearched(java.util.Collection)
+	 */
 	public void setSearched(Collection<Hypothesis> searched) {
 		this.searched = searched;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#isDirty()
+	 */
 	public boolean isDirty() {
 		return dirty;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public void doSave(IProgressMonitor monitor) throws CoreException {
 		UserSupportUtils.debug("Saving: " + status.getElementName());
 		
@@ -200,22 +248,31 @@ public class ProofState {
 		dirty = false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#setDirty(boolean)
+	 */
 	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ProofState))
 			return false;
 		else {
-			ProofState proofState = (ProofState) obj;
+			IProofState proofState = (IProofState) obj;
 			return proofState.getPRSequent().equals(status);
 		}
 
 	}
 
 	// Pre: Must be initalised and not currently saving.
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#proofReuse(org.eventb.core.seqprover.IProofMonitor)
+	 */
 	public void proofReuse(IProofMonitor monitor) throws RodinDBException {
 		// if (isSavingOrUninitialised()) return false;
 		// if (pt == null) return false; // No proof tree, no reusable.
@@ -236,20 +293,32 @@ public class ProofState {
 		// user
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#isUninitialised()
+	 */
 	public boolean isUninitialised() {
 		return (pt == null);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#isSequentDischarged()
+	 */
 	public boolean isSequentDischarged() throws RodinDBException {
 		final IPRProofTree prProofTree = status.getProofTree();
 		return (prProofTree != null && (prProofTree.getConfidence(null) > IConfidence.PENDING));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#isProofReusable()
+	 */
 	public boolean isProofReusable() throws RodinDBException {
 		IProverSequent seq = POLoader.readPO(status.getPOSequent());
 		return ProverLib.proofReusable(pt.getProofDependencies(), seq);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#reloadProofTree()
+	 */
 	public void reloadProofTree() throws RodinDBException {
 		
 		// Construct the proof tree from the file.
@@ -267,6 +336,9 @@ public class ProofState {
 		dirty = (! status.isProofValid(null));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#unloadProofTree()
+	 */
 	public void unloadProofTree() {
 		pt = null;
 		current = null;

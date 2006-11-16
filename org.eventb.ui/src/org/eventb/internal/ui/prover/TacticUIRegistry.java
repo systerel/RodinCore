@@ -13,8 +13,8 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
@@ -76,7 +76,7 @@ public class TacticUIRegistry {
 				loadImplementation();
 			}
 			IProofTreeNode node = null;
-			ProofState currentPO = us.getCurrentPO();
+			IProofState currentPO = us.getCurrentPO();
 			if (currentPO != null) {
 				node = currentPO.getCurrentNode();
 			}

@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.eventb.core.pm.ProofState;
+import org.eventb.core.pm.IProofState;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
@@ -296,7 +296,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						viewer.expandToLevel(proofTree,
 								AbstractTreeViewer.ALL_LEVELS);
 
-						ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI
+						IProofState ps = ProofTreeUIActionGroup.this.proofTreeUI
 								.getUserSupport().getCurrentPO();
 						// Select the next pending "subgoal"
 						IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
