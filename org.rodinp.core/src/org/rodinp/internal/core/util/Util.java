@@ -32,11 +32,21 @@ public class Util {
 		return hashCode1 * 17 + hashCode2;
 	}
 
+	/**
+	 * Logs an error message to the Rodin core plug-in log.
+	 * 
+	 * @param exc
+	 *            a low-level exception, or <code>null</code> if not
+	 *            applicable
+	 * @param message
+	 *            a message describing the error
+	 */
 	public static void log(Throwable exc, String message) {
-		Throwable nestedException;
-		if (exc instanceof RodinDBException 
-				&& (nestedException = ((RodinDBException)exc).getException()) != null) {
-			exc = nestedException;
+		if (exc instanceof RodinDBException) {
+			Throwable nestedException = ((RodinDBException)exc).getException();
+			if (nestedException != null) { 
+				exc = nestedException;
+			}
 		}
 		IStatus status= new Status(
 			IStatus.ERROR, 
