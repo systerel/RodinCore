@@ -62,7 +62,7 @@ import org.eventb.ui.EventBUIPlugin;
 public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		ISelectionChangedListener, IProofStateChangedListener {
 
-//	private static final int MAX_WIDTH = 1500;
+	// private static final int MAX_WIDTH = 1500;
 
 	// The contained tree viewer.
 	private TreeViewer viewer;
@@ -455,8 +455,11 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					// elementColumn.setWidth(MAX_WIDTH);
 					// UIUtils.debug("Width: " + elementColumn.getWidth());
 					viewer.refresh();
-					viewer.setSelection(new StructuredSelection(userSupport
-							.getCurrentPO().getCurrentNode()));
+
+					ProofState currentPO = userSupport.getCurrentPO();
+					if (currentPO != null & currentPO.getCurrentNode() != null)
+						viewer.setSelection(new StructuredSelection(currentPO
+								.getCurrentNode()));
 				}
 				control.setRedraw(true);
 			}

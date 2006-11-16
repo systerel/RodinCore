@@ -424,7 +424,7 @@ public class ElementUIRegistry {
 	 *            any object
 	 * @return the secondary label corresponding to the input object
 	 */
-	public String getLabelAtColumn(String columnID, Object obj) {
+	public synchronized String getLabelAtColumn(String columnID, Object obj) {
 		if (registry == null)
 			loadRegistry();
 
@@ -445,7 +445,7 @@ public class ElementUIRegistry {
 	 *            any object
 	 * @return the priority corresponding to the input object
 	 */
-	public int getPriority(Object obj) {
+	public synchronized int getPriority(Object obj) {
 		if (registry == null)
 			loadRegistry();
 
@@ -458,7 +458,7 @@ public class ElementUIRegistry {
 		return DEFAULT_PRIORITY;
 	}
 
-	public boolean isNotSelectable(Object obj, String columnID) {
+	public synchronized boolean isNotSelectable(Object obj, String columnID) {
 		if (registry == null)
 			loadRegistry();
 
@@ -471,7 +471,7 @@ public class ElementUIRegistry {
 		return DEFAULT_EDITABLE;
 	}
 
-	public void modify(IRodinElement element, String columnID, String text)
+	public synchronized void modify(IRodinElement element, String columnID, String text)
 			throws RodinDBException {
 		if (registry == null)
 			loadRegistry();

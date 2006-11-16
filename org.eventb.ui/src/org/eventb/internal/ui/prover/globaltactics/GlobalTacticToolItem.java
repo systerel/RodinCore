@@ -13,8 +13,12 @@
 package org.eventb.internal.ui.prover.globaltactics;
 
 import org.eclipse.swt.widgets.ToolItem;
+import org.eventb.core.pm.ProofState;
+import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.ui.prover.IGlobalTactic;
+import org.eventb.internal.ui.prover.TacticUIRegistry;
+import org.eventb.ui.prover.IProofCommand;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * @author htson
@@ -26,8 +30,8 @@ public class GlobalTacticToolItem {
 
 	ToolItem item;
 
-	IGlobalTactic tactic;
-	
+	String tacticID;
+
 	boolean interrupt;
 
 	/**
@@ -36,13 +40,13 @@ public class GlobalTacticToolItem {
 	 * 
 	 * @param item
 	 *            The Tool Item in the Proof Control Page
-	 * @param tactic
+	 * @param tacticID
 	 *            The actual Global Tactic
 	 */
-	public GlobalTacticToolItem(ToolItem item, IGlobalTactic tactic,
+	public GlobalTacticToolItem(ToolItem item, String tacticID,
 			boolean interrupt) {
 		this.item = item;
-		this.tactic = tactic;
+		this.tacticID = tacticID;
 		this.interrupt = interrupt;
 	}
 
@@ -61,13 +65,31 @@ public class GlobalTacticToolItem {
 	 * node and the optional string input.
 	 * <p>
 	 * 
-	 * @param node
-	 *            the current proof tree node
 	 * @param input
 	 *            the (optional) string input
 	 */
-	public void updateStatus(IProofTreeNode node, String input) {
-		item.setEnabled(tactic.isApplicable(node, input));
+	public void updateStatus(UserSupport us, String input) {
+		ITacticProvider provider = TacticUIRegistry.getDefault()
+				.getTacticProvider(tacticID);
+		if (provider != null) {
+			
+			ProofState currentPO = us.getCurrentPO();
+			if (currentPO == null) {
+				item.setEnabled(false);
+				return;
+			}
+			IProofTreeNode node = currentPO.getCurrentNode();
+			item.setEnabled(provider.isApplicable(node, null, input));
+			return;
+		} else {
+			IProofCommand command = TacticUIRegistry.getDefault()
+					.getProofCommand(tacticID, TacticUIRegistry.TARGET_GLOBAL);
+			if (command != null) {
+				item.setEnabled(command.isApplicable(us, null, input));
+				return;
+			}
+		}
+		item.setEnabled(false);
 	}
 
 	/**
@@ -76,12 +98,12 @@ public class GlobalTacticToolItem {
 	 * 
 	 * @return the global tactic associated with this.
 	 */
-	public IGlobalTactic getTactic() {
-		return tactic;
+	public String getTactic() {
+		return tacticID;
 	}
 
 	public boolean isInterruptable() {
 		return interrupt;
 	}
-	
+
 }

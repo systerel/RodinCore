@@ -42,9 +42,10 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.prover.goaltactics.GoalTacticUI;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * @author htson
@@ -57,9 +58,10 @@ public class GoalSection extends SectionPart {
 	private static final String SECTION_TITLE = "Goal";
 
 	private static final String SECTION_DESCRIPTION = "The current goal";
-	
-	private static final FormulaFactory formulaFactory = FormulaFactory.getDefault();
-	
+
+	private static final FormulaFactory formulaFactory = FormulaFactory
+			.getDefault();
+
 	FormPage page;
 
 	private FormToolkit toolkit;
@@ -154,12 +156,15 @@ public class GoalSection extends SectionPart {
 		goalComposite.setLayoutData(gd);
 		goalComposite.getBody().setLayout(new FillLayout());
 
+		UserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
+				.getEditor()).getUserSupport();
+
 		if (node == null)
 			createNullHyperlinks();
 		else if (node.isOpen())
-			createHyperlinks(node, true);
+			createHyperlinks(userSupport, true);
 		else
-			createHyperlinks(node, false);
+			createHyperlinks(userSupport, false);
 
 		createGoalText(node);
 
@@ -174,7 +179,8 @@ public class GoalSection extends SectionPart {
 			goalText.dispose();
 		goalText = new EventBPredicateText(toolkit, goalComposite);
 		final StyledText styledText = goalText.getMainTextWidget();
-//		styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		// styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+		// true));
 
 		// int borderWidth = styledText.getBorderWidth();
 		// styledText.setText(" ");
@@ -196,7 +202,8 @@ public class GoalSection extends SectionPart {
 		} else {
 			Predicate goal = node.getSequent().goal();
 			actualString = goal.toString();
-			IParseResult parseResult = formulaFactory.parsePredicate(actualString);
+			IParseResult parseResult = formulaFactory
+					.parsePredicate(actualString);
 			assert parseResult.isSuccess();
 			parsedPred = parseResult.getParsedPredicate();
 
@@ -227,9 +234,8 @@ public class GoalSection extends SectionPart {
 						string += ", ";
 					}
 				}
-				 String str = PredicateUtil.prettyPrint(max_length,
-				 actualString,
-				 qpred.getPredicate());
+				String str = PredicateUtil.prettyPrint(max_length,
+						actualString, qpred.getPredicate());
 				// SourceLocation loc =
 				// qpred.getPredicate().getSourceLocation();
 				// String str = actualString.substring(loc.getStart(), loc
@@ -237,7 +243,7 @@ public class GoalSection extends SectionPart {
 				string += str;
 				goalText.setText(string, indexes);
 			} else {
-				 String str = PredicateUtil.prettyPrint(max_length,
+				String str = PredicateUtil.prettyPrint(max_length,
 						actualString, parsedPred);
 				// SourceLocation loc = parsedPred.getSourceLocation();
 				// String str = actualString.substring(loc.getStart(),
@@ -376,21 +382,22 @@ public class GoalSection extends SectionPart {
 	 * <p>
 	 * 
 	 */
-	private void createHyperlinks(final IProofTreeNode node, boolean enable) {
-		Collection<GoalTacticUI> tactics = ProverUIUtils
-				.getApplicableToGoal(node);
+	private void createHyperlinks(final UserSupport us, boolean enable) {
 
-		if (tactics.size() == 0) {
+		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+		String[] tactics = tacticUIRegistry.getApplicableToGoal(us);
+
+		if (tactics.length == 0) {
 			createNullHyperlinks();
 		}
 
-		for (final GoalTacticUI tactic : tactics) {
+		for (final String tacticID : tactics) {
 			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 					SWT.CENTER);
-			hyperlink
-					.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+					false));
 			toolkit.adapt(hyperlink, true, true);
-			hyperlink.setImage(tactic.getImage());
+			hyperlink.setImage(tacticUIRegistry.getIcon(tacticID));
 
 			hyperlink.addHyperlinkListener(new IHyperlinkListener() {
 
@@ -404,12 +411,19 @@ public class GoalSection extends SectionPart {
 
 				public void linkActivated(HyperlinkEvent e) {
 					String[] inputs = goalText.getResults();
-					((ProverUI) page.getEditor()).getUserSupport().applyTactic(
-							tactic.getTactic(node, inputs), null);
+					ITacticProvider provider = tacticUIRegistry
+							.getTacticProvider(tacticID);
+
+					if (provider != null) {
+						IProofTreeNode node = us.getCurrentPO().getCurrentNode();
+						ITactic tactic = provider.getTactic(node, null, inputs);
+						us.applyTactic(tactic, null);
+					}
+
 				}
 
 			});
-			hyperlink.setToolTipText(tactic.getHint());
+			hyperlink.setToolTipText(tacticUIRegistry.getTip(tacticID));
 			hyperlink.setEnabled(enable);
 		}
 

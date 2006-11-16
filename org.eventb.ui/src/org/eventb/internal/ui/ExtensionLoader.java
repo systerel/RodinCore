@@ -198,10 +198,10 @@ public class ExtensionLoader {
 
 	}
 
-	public static ArrayList<GlobalTacticToolbarUI> getGlobalToolbar() {
-		if (toolbars == null) {
-			internalGetGlobalTactics();
-		}
-		return toolbars;
-	}
+//	public static ArrayList<GlobalTacticToolbarUI> getGlobalToolbar() {
+//		if (toolbars == null) {
+//			internalGetGlobalTactics();
+//		}
+//		return toolbars;
+//	}
 }

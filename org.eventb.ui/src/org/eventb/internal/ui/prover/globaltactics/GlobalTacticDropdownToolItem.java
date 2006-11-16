@@ -20,9 +20,12 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eventb.core.pm.ProofState;
+import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.ui.EventBUIPlugin;
-import org.eventb.ui.prover.IGlobalTactic;
+import org.eventb.internal.ui.prover.TacticUIRegistry;
+import org.eventb.ui.prover.IProofCommand;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * @author htson
@@ -38,9 +41,7 @@ public abstract class GlobalTacticDropdownToolItem {
 
 	private GlobalDropdownSelectionListener listener;
 
-	private GlobalTacticUI active = null;
-	
-	private boolean interrupt = false;
+	String active = null;
 
 	/**
 	 * @author htson
@@ -49,7 +50,7 @@ public abstract class GlobalTacticDropdownToolItem {
 	 *         dropdown tool items.
 	 */
 	class GlobalDropdownSelectionListener extends SelectionAdapter {
-		private ToolItem dropdown;
+		ToolItem dropdown;
 
 		private Menu menu;
 
@@ -67,33 +68,28 @@ public abstract class GlobalTacticDropdownToolItem {
 		/**
 		 * Adds an item (ProofTactic) to the dropdown list
 		 * 
-		 * @param item
-		 *            the item (a Proof Tactic) to add
 		 */
-		public void add(GlobalTacticUI tactic) {
+		public void add(String tacticID) {
+			final TacticUIRegistry registry = TacticUIRegistry.getDefault();
 			if (menu.getItemCount() == 0) { // First Item becomes default item
-				active = tactic;
-				dropdown.setToolTipText(active.getTips());
-				dropdown.setImage(EventBUIPlugin.getDefault()
-						.getImageRegistry().get(active.getImage()));
+				active = tacticID;
+				dropdown.setToolTipText(registry.getTip(tacticID));
+				dropdown.setImage(registry.getIcon(tacticID));
 			}
 			MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-			menuItem.setImage(EventBUIPlugin.getDefault().getImageRegistry()
-					.get(tactic.getImage()));
+			menuItem.setImage(registry.getIcon(tacticID));
 
-			menuItem.setData(tactic);
+			menuItem.setData(tacticID);
 			menuItem.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent event) {
 					MenuItem selected = (MenuItem) event.widget;
-					active = (GlobalTacticUI) selected.getData();
-					dropdown.setToolTipText(active.getTips());
-					dropdown.setImage(EventBUIPlugin.getDefault()
-							.getImageRegistry().get(active.getImage()));
+					active = (String) selected.getData();
+					dropdown.setToolTipText(registry.getTip(active));
+					dropdown.setImage(registry.getIcon(active));
 
 					dropdown.getParent().redraw();
-					interrupt = active.isInterruptAble();
-					apply((IGlobalTactic) active.getTactic());
-
+					apply(active);
 				}
 			});
 		}
@@ -104,13 +100,14 @@ public abstract class GlobalTacticDropdownToolItem {
 		 * @param event
 		 *            the event that trigged this call
 		 */
+		@Override
 		public void widgetSelected(SelectionEvent event) {
 			// If they clicked the arrow, we show the list
 			if (event.detail == SWT.ARROW) {
 				// Determine where to put the dropdown list
-				ToolItem item = (ToolItem) event.widget;
-				Rectangle rect = item.getBounds();
-				Point pt = item.getParent()
+				ToolItem item1 = (ToolItem) event.widget;
+				Rectangle rect = item1.getBounds();
+				Point pt = item1.getParent()
 						.toDisplay(new Point(rect.x, rect.y));
 				menu.setLocation(pt.x, pt.y + rect.height);
 				menu.setVisible(true);
@@ -118,7 +115,7 @@ public abstract class GlobalTacticDropdownToolItem {
 				// They pushed the button; take appropriate action
 				// UIUtils.debugProverUI("Applied: "
 				// + active.getTactic().getClass());
-				apply(active.getTactic());
+				apply(active);
 			}
 		}
 	}
@@ -143,9 +140,8 @@ public abstract class GlobalTacticDropdownToolItem {
 	 * Apply a tactic (response to a button click)
 	 * <p>
 	 * 
-	 * @param tactic
 	 */
-	public abstract void apply(IGlobalTactic tactic);
+	public abstract void apply(String tacticID);
 
 	/**
 	 * Add a tactic to the dropdown.
@@ -153,7 +149,7 @@ public abstract class GlobalTacticDropdownToolItem {
 	 * 
 	 * @param tactic
 	 */
-	public void addTactic(GlobalTacticUI tactic) {
+	public void addTactic(String tactic) {
 		listener.add(tactic);
 	}
 
@@ -162,14 +158,30 @@ public abstract class GlobalTacticDropdownToolItem {
 	 * node and the optional string input.
 	 * <p>
 	 * 
-	 * @param node
-	 *            the current proof tree node
 	 * @param input
 	 *            the (optional) string input
 	 */
-	public void updateStatus(IProofTreeNode node, String input) {
-		item.setEnabled(active.getTactic().isApplicable(node, input));
-		interrupt = active.isInterruptAble();
+	public void updateStatus(UserSupport us, String input) {
+		TacticUIRegistry registry = TacticUIRegistry.getDefault();
+		ITacticProvider provider = registry.getTacticProvider(active);
+		if (provider != null) {
+			ProofState currentPO = us.getCurrentPO();
+			if (currentPO == null) {
+				item.setEnabled(false);
+				return;
+			}
+			IProofTreeNode node = currentPO.getCurrentNode();
+			item.setEnabled(provider.isApplicable(node, null, input));
+			return;
+		}
+		
+		IProofCommand command = registry.getProofCommand(active, TacticUIRegistry.TARGET_GLOBAL);
+		if (command != null) {
+			item.setEnabled(command.isApplicable(us, null, input));
+			return;
+		}
+		
+		item.setEnabled(false);
 	}
 
 	/**
@@ -182,8 +194,4 @@ public abstract class GlobalTacticDropdownToolItem {
 		return ID;
 	}
 
-	public boolean isInterruptable() {
-		return interrupt;
-	}
-	
 }

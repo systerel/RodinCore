@@ -73,22 +73,18 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBMath;
-import org.eventb.internal.ui.ExtensionLoader;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownToolItem;
-import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolItem;
-import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolbarUI;
-import org.eventb.internal.ui.prover.globaltactics.GlobalTacticUI;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBFormText;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.prover.IGlobalExpertTactic;
-import org.eventb.ui.prover.IGlobalSimpleTactic;
-import org.eventb.ui.prover.IGlobalTactic;
+import org.eventb.ui.prover.IProofCommand;
+import org.eventb.ui.prover.ITacticProvider;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -173,134 +169,142 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		super.dispose();
 	}
 
-	CoolItem createItem(CoolBar coolBar, GlobalTacticToolbarUI toolbar) {
-		if (ProofControlUtils.DEBUG)
-			ProofControlUtils
-					.debug("------ Toolbar: -------" + toolbar.getID());
+	CoolItem createItem(CoolBar coolBar, String toolbarID) {
 		final ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
 
-		ArrayList<Object> children = toolbar.getChildren();
-		for (Object child : children) {
-			if (child instanceof GlobalTacticDropdownUI) {
-				GlobalTacticDropdownUI dropdown = (GlobalTacticDropdownUI) child;
-				if (ProofControlUtils.DEBUG)
-					ProofControlUtils.debug("Dropdown: " + dropdown.getID());
+		final TacticUIRegistry registry = TacticUIRegistry.getDefault();
+		Collection<String> dropdownIDs = registry
+				.getToolbarDropdowns(toolbarID);
 
-				ArrayList<GlobalTacticUI> tactics = dropdown.getChildren();
+		for (String dropdownID : dropdownIDs) {
+			Collection<String> tacticIDs = registry
+					.getDropdownTactics(dropdownID);
 
-				if (tactics.size() != 0) {
-					ToolItem item = new ToolItem(toolBar, SWT.DROP_DOWN);
-					// item.setText(itemCount++ + "");
-
-					final GlobalTacticDropdownToolItem dropdownItem = new GlobalTacticDropdownToolItem(
-							item, dropdown.getID()) {
-						@Override
-						public void apply(final IGlobalTactic tactic) {
-							try {
-								if (ProofControlUtils.DEBUG)
-									ProofControlUtils.debug("File "
-											+ ProofControlPage.this.editor
-													.getRodinInput()
-													.getElementName());
-								Text textWidget = textInput.getTextWidget();
-								final UserSupport userSupport = editor
-										.getUserSupport();
-								if (tactic instanceof IGlobalExpertTactic) {
-									applyGlobalExpertTactic(
-											(IGlobalExpertTactic) tactic,
-											userSupport, isInterruptable());
-								} else if (tactic instanceof IGlobalSimpleTactic) {
-									applyGlobalSimpleTactic(
-											(IGlobalSimpleTactic) tactic,
-											userSupport, isInterruptable());
-								}
-								if (!currentInput.equals("")) {
-									historyCombo.add(currentInput, 0);
-								}
-								if (textWidget.getText() != "") {
-									textWidget.setText("");
-								}
-								currentInput = "";
-							} catch (RodinDBException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					};
-
-					dropdownItems.add(dropdownItem);
-
-					for (GlobalTacticUI tactic : tactics) {
-						if (ProofControlUtils.DEBUG)
-							ProofControlUtils
-									.debug("Tactic: " + tactic.getID());
-						dropdownItem.addTactic(tactic);
-					}
-					if (ProofControlUtils.DEBUG)
-						ProofControlUtils.debug("----------------------------");
-				}
-			} else if (child instanceof GlobalTacticUI) {
-				final GlobalTacticUI tactic = (GlobalTacticUI) child;
-				if (ProofControlUtils.DEBUG)
-					ProofControlUtils.debug("Tactic: " + tactic.getID());
-
-				ToolItem item = new ToolItem(toolBar, SWT.PUSH);
+			if (tacticIDs.size() != 0) {
+				ToolItem item = new ToolItem(toolBar, SWT.DROP_DOWN);
 				// item.setText(itemCount++ + "");
-				item.setImage(EventBUIPlugin.getDefault().getImageRegistry()
-						.get(tactic.getImage()));
-				item.setToolTipText(tactic.getTips());
 
-				IGlobalTactic globalTactic = tactic.getTactic();
-
-				final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
-						item, globalTactic, tactic.isInterruptAble());
-				// items.add(globalTacticToolItem);
-
-				item.addSelectionListener(new SelectionAdapter() {
-
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-					 */
+				GlobalTacticDropdownToolItem dropdownItem = new GlobalTacticDropdownToolItem(
+						item, dropdownID) {
 					@Override
-					public void widgetSelected(SelectionEvent e) {
-						if (ProofControlUtils.DEBUG)
-							ProofControlUtils.debug("File "
-									+ ProofControlPage.this.editor
-											.getRodinInput().getElementName());
-						Text textWidget = textInput.getTextWidget();
+					public void apply(final String tacticID) {
 						try {
-
-							final IGlobalTactic tactic2 = globalTacticToolItem
-									.getTactic();
+							if (ProofControlUtils.DEBUG)
+								ProofControlUtils.debug("File "
+										+ ProofControlPage.this.editor
+												.getRodinInput()
+												.getElementName());
+							Text textWidget = textInput.getTextWidget();
 							final UserSupport userSupport = editor
 									.getUserSupport();
-							if (tactic2 instanceof IGlobalExpertTactic) {
-								applyGlobalExpertTactic(
-										(IGlobalExpertTactic) tactic2,
-										userSupport, globalTacticToolItem
-												.isInterruptable());
-							} else if (tactic2 instanceof IGlobalSimpleTactic) {
-								applyGlobalSimpleTactic(
-										(IGlobalSimpleTactic) tactic2,
-										userSupport, globalTacticToolItem
-												.isInterruptable());
+							boolean interruptable = registry.isInterruptable(
+									tacticID, TacticUIRegistry.TARGET_GLOBAL);
+							ITacticProvider provider = registry
+									.getTacticProvider(tacticID);
+							if (provider != null) {
+								applyTacticProvider(provider, userSupport,
+										interruptable);
+							} else {
+								IProofCommand command = registry
+										.getProofCommand(tacticID,
+												TacticUIRegistry.TARGET_GLOBAL);
+								if (command != null) {
+									applyGlobalExpertTactic(command,
+											userSupport, interruptable);
+								}
+								else {
+									return;
+								}
 							}
-						} catch (RodinDBException e1) {
+							if (!currentInput.equals("")) {
+								historyCombo.add(currentInput, 0);
+							}
+							if (textWidget.getText() != "") {
+								textWidget.setText("");
+							}
+							currentInput = "";
+						} catch (RodinDBException e) {
 							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						if (!currentInput.equals("")) {
-							historyCombo.add(currentInput, 0);
-						}
-						if (textWidget.getText() != "") {
-							textWidget.setText("");
+							e.printStackTrace();
 						}
 					}
-				});
-				toolItems.add(globalTacticToolItem);
+				};
+
+				dropdownItems.add(dropdownItem);
+
+				for (String tactic : tacticIDs) {
+					if (ProofControlUtils.DEBUG)
+						ProofControlUtils.debug("Tactic: " + tactic);
+					dropdownItem.addTactic(tactic);
+				}
+				if (ProofControlUtils.DEBUG)
+					ProofControlUtils.debug("----------------------------");
+
 			}
+
+		}
+
+		Collection<String> tacticIDs = registry.getToolbarTactics(toolbarID);
+
+		for (final String tacticID : tacticIDs) {
+			ToolItem item = new ToolItem(toolBar, SWT.PUSH);
+			// item.setText(itemCount++ + "");
+			item.setImage(registry.getIcon(tacticID));
+			item.setToolTipText(registry.getTip(tacticID));
+
+			final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
+					item, tacticID, registry.isInterruptable(tacticID,
+							TacticUIRegistry.TARGET_GLOBAL));
+			// items.add(globalTacticToolItem);
+
+			item.addSelectionListener(new SelectionAdapter() {
+
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+				 */
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (ProofControlUtils.DEBUG)
+						ProofControlUtils.debug("File "
+								+ ProofControlPage.this.editor.getRodinInput()
+										.getElementName());
+					Text textWidget = textInput.getTextWidget();
+					try {
+
+						final UserSupport userSupport = editor.getUserSupport();
+						boolean interruptable = registry.isInterruptable(
+								tacticID, TacticUIRegistry.TARGET_GLOBAL);
+						ITacticProvider provider = TacticUIRegistry
+								.getDefault().getTacticProvider(tacticID);
+						if (provider != null) {
+							applyTacticProvider(provider, userSupport,
+									interruptable);
+						} else {
+							IProofCommand command = TacticUIRegistry
+									.getDefault().getProofCommand(tacticID,
+											TacticUIRegistry.TARGET_GLOBAL);
+							if (command != null) {
+								applyGlobalExpertTactic(command, userSupport, interruptable);
+							}
+							else {
+								return;
+							}
+						}
+					} catch (RodinDBException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					if (!currentInput.equals("")) {
+						historyCombo.add(currentInput, 0);
+					}
+					if (textWidget.getText() != "") {
+						textWidget.setText("");
+					}
+				}
+			});
+			toolItems.add(globalTacticToolItem);
 		}
 
 		// for (int i = 0; i < count; i++) {
@@ -337,24 +341,24 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				textTransfer, fileTransfer));
 
 		return item;
-
 	}
 
 	// Applies a global tactic to the current proof tree node.
-	void applyGlobalExpertTactic(final IGlobalExpertTactic get,
+	void applyGlobalExpertTactic(final IProofCommand command,
 			final UserSupport userSupport, final boolean interruptable)
 			throws RodinDBException {
 
+		final String [] inputs = {currentInput};
 		if (interruptable) {
 			applyTacticWithProgress(new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm)
 						throws InvocationTargetException {
 					try {
 						pm.beginTask("Proving", IProgressMonitor.UNKNOWN);
-						get.apply(userSupport, currentInput, pm);
+						command.apply(userSupport, null, inputs, pm);
 					} catch (RodinDBException e) {
 						e.printStackTrace();
-						UIUtils.log(e, "Error applying " + get);
+						UIUtils.log(e, "Error applying proof command");
 					} finally {
 						pm.done();
 					}
@@ -362,31 +366,31 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			});
 
 		} else {
-			get.apply(userSupport, currentInput, null);
+			command.apply(userSupport, null, inputs, null);
 		}
 	}
 
 	// Applies a global tactic to the current proof tree node.
-	void applyGlobalSimpleTactic(final IGlobalSimpleTactic gst,
+	void applyTacticProvider(ITacticProvider provider,
 			final UserSupport userSupport, boolean interruptable) {
 
-		final IProofTreeNode proofTreeNode = userSupport.getCurrentPO()
-				.getCurrentNode();
-		final ITactic proofTactic = gst.getTactic(proofTreeNode, currentInput);
+		IProofTreeNode node = userSupport.getCurrentPO().getCurrentNode();
+		String[] inputs = { currentInput };
+		final ITactic tactic = provider.getTactic(node, null, inputs);
 		if (interruptable) {
 			applyTacticWithProgress(new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm)
 						throws InvocationTargetException {
 					try {
 						pm.beginTask("Proving", IProgressMonitor.UNKNOWN);
-						userSupport.applyTactic(proofTactic, pm);
+						userSupport.applyTactic(tactic, pm);
 					} finally {
 						pm.done();
 					}
 				}
 			});
 		} else {
-			userSupport.applyTactic(proofTactic, null);
+			userSupport.applyTactic(tactic, null);
 		}
 	}
 
@@ -533,11 +537,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		}
 
 		public void dragLeave(DropTargetEvent event) {
-			ProofState currentPO = editor.getUserSupport().getCurrentPO();
-			if (currentPO == null)
-				updateToolItems(null);
-			else
-				updateToolItems(currentPO.getCurrentNode());
+			updateToolItems(editor.getUserSupport());
 		}
 
 		public void dropAccept(DropTargetEvent event) {
@@ -579,10 +579,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		pgComp = toolkit.createComposite(parent, SWT.NULL);
 		pgComp.setLayout(new FormLayout());
 
-		if (ProofControlUtils.DEBUG)
-			ProofControlUtils.debug("Parent: "
-					+ this.editor.getRodinInput().getElementName() + " is "
-					+ parent);
+		// if (ProofControlUtils.DEBUG)
+		// ProofControlUtils.debug("Parent: "
+		// + this.editor.getRodinInput().getElementName() + " is "
+		// + parent);
 
 		// parent.setLayout(new GridLayout());
 
@@ -620,10 +620,13 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		dropdownItems = new ArrayList<GlobalTacticDropdownToolItem>();
 		toolItems = new ArrayList<GlobalTacticToolItem>();
 
-		ArrayList<GlobalTacticToolbarUI> toolbars = ExtensionLoader
-				.getGlobalToolbar();
+		// ArrayList<GlobalTacticToolbarUI> toolbars = ExtensionLoader
+		// .getGlobalToolbar();
 
-		for (GlobalTacticToolbarUI toolbar : toolbars) {
+		Collection<String> toolbars = TacticUIRegistry.getDefault()
+				.getToolbars();
+
+		for (String toolbar : toolbars) {
 			createItem(coolBar, toolbar);
 		}
 
@@ -648,11 +651,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		textInput.getTextWidget().addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				currentInput = textInput.getTextWidget().getText();
-				ProofState currentPO = editor.getUserSupport().getCurrentPO();
-				if (currentPO == null)
-					updateToolItems(null);
-				else
-					updateToolItems(currentPO.getCurrentNode());
+				updateToolItems(editor.getUserSupport());
 			}
 		});
 
@@ -672,13 +671,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		historyCombo.setLayoutData(gd);
 		history = new EventBControl(historyCombo);
 
-		ProofState proofState = editor.getUserSupport().getCurrentPO();
-		if (proofState != null) {
-			updateToolItems(proofState.getCurrentNode());
-		} else {
-			updateToolItems(null);
-		}
-
+		updateToolItems(editor.getUserSupport());
+	
 		formTextInformation = new EventBFormText(toolkit.createFormText(body,
 				true));
 		gd = new GridData();
@@ -695,11 +689,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		hookContextMenu();
 		contributeToActionBars();
 
-		ProofState currentPO = editor.getUserSupport().getCurrentPO();
-		if (currentPO == null)
-			updateToolItems(null);
-		else
-			updateToolItems(currentPO.getCurrentNode());
+		updateToolItems(editor.getUserSupport());
 		coolBar.pack();
 		// coolBar.setVisible(false);
 		// textInput.getTextWidget().setVisible(false);
@@ -836,13 +826,13 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	/**
 	 * Update the status of the toolbar items.
 	 */
-	void updateToolItems(IProofTreeNode node) {
+	void updateToolItems(UserSupport userSupport) {
 		for (GlobalTacticDropdownToolItem item : dropdownItems) {
-			item.updateStatus(node, textInput.getTextWidget().getText());
+			item.updateStatus(userSupport, textInput.getTextWidget().getText());
 		}
 
 		for (GlobalTacticToolItem item : toolItems) {
-			item.updateStatus(node, textInput.getTextWidget().getText());
+			item.updateStatus(userSupport, textInput.getTextWidget().getText());
 		}
 
 		return;
@@ -884,8 +874,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				if (delta.isNewProofState()) {
 					if (ps != null) {
 						node = ps.getCurrentNode();
-					} else
-						updateToolItems(null);
+					} else {
+						updateToolItems(editor.getUserSupport());
+					}
 				} else if (delta.isDeleted()) {
 					// Do nothing.
 				} else {
@@ -893,7 +884,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				}
 
 				if (node != null) {
-					updateToolItems(node);
+					updateToolItems(editor.getUserSupport());
 				}
 				scrolledForm.reflow(true);
 			}

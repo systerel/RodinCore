@@ -44,8 +44,11 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.prover.EventBPredicateText;
 import org.eventb.internal.ui.prover.PredicateUtil;
 import org.eventb.internal.ui.prover.ProverUIUtils;
-import org.eventb.internal.ui.prover.hypothesisTactics.HypothesisTacticUI;
+import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.prover.IProofCommand;
+import org.eventb.ui.prover.ITacticProvider;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -55,7 +58,8 @@ import org.eventb.ui.IEventBSharedImages;
  */
 public class HypothesisRow {
 
-	private static final FormulaFactory formulaFactory = FormulaFactory.getDefault();
+	private static final FormulaFactory formulaFactory = FormulaFactory
+			.getDefault();
 
 	// Set of composites and button.
 	private Button checkBox;
@@ -67,10 +71,10 @@ public class HypothesisRow {
 	EventBPredicateText hypothesisText;
 
 	// The UserSupport associated with this instance of the editor.
-	private UserSupport userSupport;
+	UserSupport userSupport;
 
 	// The hypothesis contains in this row.
-	private Hypothesis hyp;
+	Hypothesis hyp;
 
 	// This should be varied when the user resize.
 	private int max_length = 30;
@@ -94,18 +98,10 @@ public class HypothesisRow {
 	/**
 	 * Constructor.
 	 * 
-	 * @param page
-	 *            The detail page
 	 * @param toolkit
 	 *            The Form Toolkit to create this row
 	 * @param parent
 	 *            The composite parent
-	 * @param label
-	 *            The label of the input row
-	 * @param tip
-	 *            The tip for the input row
-	 * @param style
-	 *            The style
 	 */
 	public HypothesisRow(FormToolkit toolkit, Composite parent, Hypothesis hyp,
 			UserSupport userSupport, boolean odd, boolean enable) {
@@ -129,7 +125,7 @@ public class HypothesisRow {
 		buttonComposite.setBackground(background);
 		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false));
-		createImageHyperlinks(buttonComposite, background, enable);
+		createImageHyperlinks(buttonComposite);
 
 		hypothesisComposite = toolkit.createScrolledForm(parent);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -271,27 +267,28 @@ public class HypothesisRow {
 	 * Utility methods to create image hyperlinks for applicable tactics.
 	 * <p>
 	 * 
-	 * @param formText
-	 *            the formText parent of these hyperlinks
 	 */
-	private void createImageHyperlinks(Composite parent, Color background,
-			boolean enable) {
+	private void createImageHyperlinks(Composite parent) {
 		final IProofTreeNode node = userSupport.getCurrentPO().getCurrentNode();
-		Collection<HypothesisTacticUI> tactics = ProverUIUtils
-				.getApplicableToHypothesis(node, hyp);
+		// Collection<HypothesisTacticUI> tactics = ProverUIUtils
+		// .getApplicableToHypothesis(node, hyp);
 
-		if (tactics.size() == 0) {
+		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+		String[] tactics = tacticUIRegistry.getApplicableToHypothesis(
+				userSupport, hyp);
+
+		if (tactics.length == 0) {
 			createNullHyperlinks();
 			return;
 		}
 
-		for (final HypothesisTacticUI tactic : tactics) {
+		for (final String tacticID : tactics) {
 			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 					SWT.CENTER);
 			hyperlink
 					.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			toolkit.adapt(hyperlink, true, true);
-			hyperlink.setImage(tactic.getImage());
+			hyperlink.setImage(tacticUIRegistry.getIcon(tacticID));
 			hyperlink.addHyperlinkListener(new IHyperlinkListener() {
 
 				public void linkEntered(HyperlinkEvent e) {
@@ -310,13 +307,30 @@ public class HypothesisRow {
 						for (String input : inputs)
 							ProverUIUtils.debug("Input: \"" + input + "\"");
 
-					userSupport.applyTacticToHypotheses(tactic.getTactic(node,
-							hyp, inputs), hypSet, new NullProgressMonitor());
+					ITacticProvider provider = tacticUIRegistry
+							.getTacticProvider(tacticID);
+					if (provider != null)
+						userSupport.applyTacticToHypotheses(provider.getTactic(
+								node, hyp, inputs), hypSet,
+								new NullProgressMonitor());
+					else {
+						IProofCommand command = tacticUIRegistry
+								.getProofCommand(tacticID,
+										TacticUIRegistry.TARGET_HYPOTHESIS);
+						if (command != null) {
+							try {
+								command.apply(userSupport, hyp, inputs, new NullProgressMonitor());
+							} catch (RodinDBException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					}
 				}
 
 			});
 			hyperlink.setBackground(background);
-			hyperlink.setToolTipText(tactic.getHint());
+			hyperlink.setToolTipText(tacticUIRegistry.getTip(tacticID));
 			hyperlink.setEnabled(enable);
 		}
 
