@@ -147,7 +147,7 @@ public class ProverLib {
 		if (! sequent.typeEnvironment().containsAll(proofDependencies.getUsedFreeIdents())) return false;
 		if (! Collections.disjoint(
 				sequent.typeEnvironment().getNames(),
-				proofDependencies.getIntroducedFreeIdents().getNames())) return false;	
+				proofDependencies.getIntroducedFreeIdents())) return false;	
 		return true;
 	}
 

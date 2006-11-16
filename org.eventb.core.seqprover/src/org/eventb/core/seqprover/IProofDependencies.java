@@ -73,6 +73,6 @@ public interface IProofDependencies{
 	 * @return the type environment corresponding to the free
 	 *  		identifiers introduced in a proof.
 	 */
-	ITypeEnvironment getIntroducedFreeIdents();
+	Set<String> getIntroducedFreeIdents();
 
 }

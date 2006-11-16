@@ -455,6 +455,10 @@
             id="prStrInp"
             kind="string"
             name="%eventBprStrInp"/>
+      <attributeType
+            id="prIntroducedFreeIdents"
+            kind="string"
+            name="%eventBprIntroducedFreeIdents"/>
    </extension>
 
 </plugin>

@@ -99,6 +99,9 @@ public final class EventBAttributes {
 	public static IAttributeType.String STRING_INPUT_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prStrInp");
 	
+	public static IAttributeType.String INTRO_FREE_IDENTS_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prIntroducedFreeIdents");
+	
 	private EventBAttributes() {
 		// Non-instantiable class
 	}

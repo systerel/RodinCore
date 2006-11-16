@@ -362,7 +362,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("x=1")));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps("x=1")));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
-		assertTrue(proofDependencies.getIntroducedFreeIdents().equals(TestLib.genTypeEnv()));
+		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		
 		// test getUsedHypotheses
 		sequent = TestLib.genSeq("y=2 ;; x=1 |- x=1 ⇒ x=1");
@@ -376,7 +376,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		// assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps("x=1")));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
-		assertTrue(proofDependencies.getIntroducedFreeIdents().equals(TestLib.genTypeEnv()));
+		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		
 		
 		// test getUsedFreeIdents
@@ -388,7 +388,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("1=1")));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("y","ℤ")));
-		assertTrue(proofDependencies.getIntroducedFreeIdents().equals(TestLib.genTypeEnv()));
+		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		
 		//	 test getIntroducedFreeIdents
 		sequent = TestLib.genSeq("y=2 |- ∀ x· x∈ℤ");
@@ -399,7 +399,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("∀ x· x∈ℤ")));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv()));
-		assertTrue(proofDependencies.getIntroducedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
+		assertTrue(proofDependencies.getIntroducedFreeIdents().contains("x"));
 	}
 
 	/**

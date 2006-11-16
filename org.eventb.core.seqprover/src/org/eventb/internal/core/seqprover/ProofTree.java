@@ -141,14 +141,14 @@ public final class ProofTree implements IProofTree {
 		final Predicate goal;
 		final Set<Hypothesis> usedHypotheses;
 		final ITypeEnvironment usedFreeIdents;
-		final ITypeEnvironment introducedFreeIdents;
+		final HashSet<String> introducedFreeIdents;
 		
 		ProofDependencies(){
 			goal = getSequent().goal();
 			// TODO : traverse the tree only once to compute all information.
 			usedHypotheses = calculateUsedHypotheses();
 			usedFreeIdents = Lib.makeTypeEnvironment();
-			introducedFreeIdents = Lib.makeTypeEnvironment();
+			introducedFreeIdents = new HashSet<String>();
 			getFreeIdentDeps(usedFreeIdents,introducedFreeIdents);
 			// Assert that the proof of the same sequent is replayable.
 			assert ProverLib.proofReusable(this,getSequent());
@@ -172,7 +172,7 @@ public final class ProofTree implements IProofTree {
 			return usedFreeIdents;
 		}
 
-		public ITypeEnvironment getIntroducedFreeIdents() {
+		public Set<String> getIntroducedFreeIdents() {
 			return introducedFreeIdents;
 		}
 		
@@ -213,7 +213,7 @@ public final class ProofTree implements IProofTree {
 			
 		}
 		
-		private void getFreeIdentDeps(ITypeEnvironment usedIdents,ITypeEnvironment introducedIdents) {
+		private void getFreeIdentDeps(ITypeEnvironment usedIdents,Set<String> introducedIdents) {
 			ITypeEnvironment freeIdents = getFreeIdents();
 			ITypeEnvironment typeEnv = root.getSequent().typeEnvironment();
 			
@@ -229,7 +229,7 @@ public final class ProofTree implements IProofTree {
 				else 
 				{
 					// It does not contain the free Ident : it is introduced
-					introducedIdents.addName(name,type);
+					introducedIdents.add(name);
 				}
 			}
 		}

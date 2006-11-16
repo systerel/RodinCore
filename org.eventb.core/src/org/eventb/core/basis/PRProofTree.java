@@ -7,11 +7,14 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRProofStore;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
@@ -73,10 +76,12 @@ public class PRProofTree extends EventBProofElement implements IPRProofTree {
 		setHyps(Hypothesis.Predicates(proofDependencies.getUsedHypotheses()),store,null);
 
 
-		((IPRTypeEnvironment)(prProofTree.createInternalElement(
-				IPRTypeEnvironment.ELEMENT_TYPE,"introducedFreeIdentifiers",null,null))).
-				setTypeEnvironment(proofDependencies.getIntroducedFreeIdents(), null);
+//		((IPRTypeEnvironment)(prProofTree.createInternalElement(
+//				IPRTypeEnvironment.ELEMENT_TYPE,"introducedFreeIdentifiers",null,null))).
+//				setTypeEnvironment(proofDependencies.getIntroducedFreeIdents(), null);
 
+		setIntroFreeIdents(proofDependencies.getIntroducedFreeIdents(), monitor);
+		
 		// write out the proof skeleton
 		IPRProofTreeNode root = (IPRProofTreeNode)
 		createInternalElement(PRProofTreeNode.ELEMENT_TYPE,"0",null,null);
@@ -110,7 +115,7 @@ public class PRProofTree extends EventBProofElement implements IPRProofTree {
 		final Predicate goal;
 		final Set<Hypothesis> usedHypotheses;
 		final ITypeEnvironment usedFreeIdents;
-		final ITypeEnvironment introducedFreeIdents;
+		final Set<String> introducedFreeIdents;
 		final boolean hasDeps;
 		
 		public ProofDependencies(FormulaFactory factory, IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException{
@@ -129,7 +134,8 @@ public class PRProofTree extends EventBProofElement implements IPRProofTree {
 				monitor.beginTask("Reading Proof Dependencies", 4);
 				// usedFreeIdents = PRProofTree.this.getUsedTypeEnvironment(factory,new SubProgressMonitor(monitor,1));
 				usedFreeIdents = store.getBaseTypeEnv(null);
-				introducedFreeIdents = PRProofTree.this.getIntroducedTypeEnvironment(factory,new SubProgressMonitor(monitor,1));
+				//introducedFreeIdents = PRProofTree.this.getIntroducedTypeEnvironment(factory,new SubProgressMonitor(monitor,1));
+				introducedFreeIdents = PRProofTree.this.getIntroFreeIdents(monitor);
 				//goal = PRProofTree.this.getGoal(factory,usedFreeIdents,new SubProgressMonitor(monitor,1));
 				goal = PRProofTree.this.getGoal(store, new SubProgressMonitor(monitor,1));
 				// usedHypotheses = PRProofTree.this.getUsedHypotheses(factory, usedFreeIdents, new SubProgressMonitor(monitor,1));
@@ -159,7 +165,7 @@ public class PRProofTree extends EventBProofElement implements IPRProofTree {
 		/**
 		 * @return Returns the introducedFreeIdents.
 		 */
-		public ITypeEnvironment getIntroducedFreeIdents() {
+		public Set<String> getIntroducedFreeIdents() {
 			return introducedFreeIdents;
 		}
 
@@ -199,5 +205,25 @@ public class PRProofTree extends EventBProofElement implements IPRProofTree {
 		return skeleton;
 	}
 
+	public void setIntroFreeIdents(Collection<String> identNames, IProgressMonitor monitor) throws RodinDBException {
+		StringBuilder names = new StringBuilder();
+		Boolean notEmpty = false;
+		for (String name : identNames) {
+			if (notEmpty) names.append(";"); 
+			names.append(name);
+			notEmpty = true;
+		}
+		setAttributeValue(EventBAttributes.INTRO_FREE_IDENTS_ATTRIBUTE, names.toString(), monitor);
+	}
 	
+	public Set<String> getIntroFreeIdents(IProgressMonitor monitor) throws RodinDBException {
+		if (! hasAttribute(EventBAttributes.INTRO_FREE_IDENTS_ATTRIBUTE, monitor)) return new HashSet<String>();
+		String sepNames = getAttributeValue(EventBAttributes.INTRO_FREE_IDENTS_ATTRIBUTE, monitor);
+		String[] names = sepNames.split(";");
+		HashSet<String> identNames = new HashSet<String>(names.length);
+		for(String name : names){
+			if (name.length()!=0) identNames.add(name);
+		}
+		return identNames;
+	}
 }
