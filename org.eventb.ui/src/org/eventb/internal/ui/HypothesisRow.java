@@ -38,7 +38,7 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.pm.UserSupport;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.prover.EventBPredicateText;
@@ -71,7 +71,7 @@ public class HypothesisRow {
 	EventBPredicateText hypothesisText;
 
 	// The UserSupport associated with this instance of the editor.
-	UserSupport userSupport;
+	IUserSupport userSupport;
 
 	// The hypothesis contains in this row.
 	Hypothesis hyp;
@@ -104,7 +104,7 @@ public class HypothesisRow {
 	 *            The composite parent
 	 */
 	public HypothesisRow(FormToolkit toolkit, Composite parent, Hypothesis hyp,
-			UserSupport userSupport, boolean odd, boolean enable) {
+			IUserSupport userSupport, boolean odd, boolean enable) {
 		GridData gd;
 		this.hyp = hyp;
 		this.userSupport = userSupport;

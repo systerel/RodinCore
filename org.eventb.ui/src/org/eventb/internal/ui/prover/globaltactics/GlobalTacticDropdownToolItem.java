@@ -20,8 +20,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.prover.IProofCommand;
@@ -161,7 +161,7 @@ public abstract class GlobalTacticDropdownToolItem {
 	 * @param input
 	 *            the (optional) string input
 	 */
-	public void updateStatus(UserSupport us, String input) {
+	public void updateStatus(IUserSupport us, String input) {
 		TacticUIRegistry registry = TacticUIRegistry.getDefault();
 		ITacticProvider provider = registry.getTacticProvider(active);
 		if (provider != null) {

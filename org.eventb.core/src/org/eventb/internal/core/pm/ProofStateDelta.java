@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 
@@ -30,13 +30,13 @@ public class ProofStateDelta implements IProofStateDelta {
 
 	private boolean newCache;
 
-	private UserSupport userSupport;
+	private IUserSupport userSupport;
 
 	private boolean isDeleted;
 
 	private boolean newProofState;
 
-	public ProofStateDelta(UserSupport userSupport) {
+	public ProofStateDelta(IUserSupport userSupport) {
 		this.userSupport = userSupport;
 		newSearch = false;
 		newCache = false;
@@ -121,7 +121,7 @@ public class ProofStateDelta implements IProofStateDelta {
 		return newCache;
 	}
 
-	public UserSupport getSource() {
+	public IUserSupport getSource() {
 		return userSupport;
 	}
 

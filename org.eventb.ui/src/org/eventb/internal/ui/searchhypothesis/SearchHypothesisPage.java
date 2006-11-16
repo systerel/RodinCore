@@ -29,8 +29,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.HypothesisRow;
@@ -312,7 +312,7 @@ public class SearchHypothesisPage extends Page implements
 
 		Display display = Display.getDefault();
 
-		final UserSupport userSupport = editor.getUserSupport();
+		final IUserSupport userSupport = editor.getUserSupport();
 		display.syncExec(new Runnable() {
 			public void run() {
 				ProofState ps = delta.getProofState();

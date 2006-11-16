@@ -66,6 +66,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -195,7 +196,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 												.getRodinInput()
 												.getElementName());
 							Text textWidget = textInput.getTextWidget();
-							final UserSupport userSupport = editor
+							final IUserSupport userSupport = editor
 									.getUserSupport();
 							boolean interruptable = registry.isInterruptable(
 									tacticID, TacticUIRegistry.TARGET_GLOBAL);
@@ -273,7 +274,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					Text textWidget = textInput.getTextWidget();
 					try {
 
-						final UserSupport userSupport = editor.getUserSupport();
+						final IUserSupport userSupport = editor.getUserSupport();
 						boolean interruptable = registry.isInterruptable(
 								tacticID, TacticUIRegistry.TARGET_GLOBAL);
 						ITacticProvider provider = TacticUIRegistry
@@ -345,7 +346,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	// Applies a global tactic to the current proof tree node.
 	void applyGlobalExpertTactic(final IProofCommand command,
-			final UserSupport userSupport, final boolean interruptable)
+			final IUserSupport userSupport, final boolean interruptable)
 			throws RodinDBException {
 
 		final String [] inputs = {currentInput};
@@ -372,7 +373,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	// Applies a global tactic to the current proof tree node.
 	void applyTacticProvider(ITacticProvider provider,
-			final UserSupport userSupport, boolean interruptable) {
+			final IUserSupport userSupport, boolean interruptable) {
 
 		IProofTreeNode node = userSupport.getCurrentPO().getCurrentNode();
 		String[] inputs = { currentInput };
@@ -826,7 +827,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	/**
 	 * Update the status of the toolbar items.
 	 */
-	void updateToolItems(UserSupport userSupport) {
+	void updateToolItems(IUserSupport userSupport) {
 		for (GlobalTacticDropdownToolItem item : dropdownItems) {
 			item.updateStatus(userSupport, textInput.getTextWidget().getText());
 		}

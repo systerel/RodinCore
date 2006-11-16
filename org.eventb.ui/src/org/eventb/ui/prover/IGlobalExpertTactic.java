@@ -13,7 +13,7 @@
 package org.eventb.ui.prover;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.pm.UserSupport;
+import org.eventb.core.pm.IUserSupport;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -34,7 +34,7 @@ public interface IGlobalExpertTactic extends IGlobalTactic {
 	 * @throws RodinDBException
 	 *             exceptions can be throws when applying tactics.
 	 */
-	public void apply(UserSupport userSupport, String input,
+	public void apply(IUserSupport userSupport, String input,
 			IProgressMonitor monitor) throws RodinDBException;
 
 }

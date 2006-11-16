@@ -39,8 +39,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.ui.EventBUIPlugin;
@@ -77,7 +77,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 	private SashForm sashForm;
 
-	UserSupport userSupport;
+	IUserSupport userSupport;
 
 	private Composite body;
 

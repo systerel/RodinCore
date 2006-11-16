@@ -45,8 +45,8 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -84,7 +84,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	// private Combo confidentLevel;
 
-	private UserSupport userSupport;
+	private IUserSupport userSupport;
 
 	// Group of action that is used.
 	private ProofTreeUIActionGroup groupActionSet;
@@ -305,7 +305,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * @param editor
 	 *            the editor
 	 */
-	public ProofTreeUIPage(UserSupport userSupport) {
+	public ProofTreeUIPage(IUserSupport userSupport) {
 		super();
 		this.userSupport = userSupport;
 		// byUserSupport = false;
@@ -745,7 +745,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * 
 	 * @return the associated UserSupport
 	 */
-	public UserSupport getUserSupport() {
+	public IUserSupport getUserSupport() {
 		return userSupport;
 	}
 

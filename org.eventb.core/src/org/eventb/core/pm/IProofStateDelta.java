@@ -15,6 +15,6 @@ public interface IProofStateDelta {
 	public boolean getNewSearch();
 	public boolean getNewCache();
 	public boolean isDeleted();
-	public UserSupport getSource();
+	public IUserSupport getSource();
 	public boolean isNewProofState();
 }

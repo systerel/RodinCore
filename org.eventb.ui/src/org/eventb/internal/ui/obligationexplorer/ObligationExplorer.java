@@ -67,6 +67,7 @@ import org.eventb.core.basis.PSstatus;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUSManagerListener;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.pm.UserSupportManager;
@@ -194,7 +195,7 @@ public class ObligationExplorer extends ViewPart implements
 		Collection<UserSupport> userSupports = UserSupportManager
 				.getUserSupports();
 		final boolean proofBroken = (! status.isProofValid(null));
-		for (UserSupport userSupport : userSupports) {
+		for (IUserSupport userSupport : userSupports) {
 			// UIUtils.debugObligationExplorer("Get US: "
 			// + userSupport);
 			Collection<ProofState> proofStates = userSupport.getPOs();
@@ -281,7 +282,7 @@ public class ObligationExplorer extends ViewPart implements
 	private void registerUserSupports() {
 		Collection<UserSupport> userSupports = UserSupportManager
 				.getUserSupports();
-		for (UserSupport userSupport : userSupports) {
+		for (IUserSupport userSupport : userSupports) {
 			userSupport.addStateChangedListeners(this);
 		}
 	}
@@ -319,7 +320,7 @@ public class ObligationExplorer extends ViewPart implements
 					// Try to synchronize with the proof tree in memory
 					Collection<UserSupport> userSupports = UserSupportManager
 							.getUserSupports();
-					for (UserSupport userSupport : userSupports) {
+					for (IUserSupport userSupport : userSupports) {
 						// UIUtils.debugObligationExplorer("Get US: "
 						// + userSupport);
 						Collection<ProofState> proofStates = userSupport
@@ -404,7 +405,7 @@ public class ObligationExplorer extends ViewPart implements
 				// Find the label in the list of UserSupport.
 				Collection<UserSupport> userSupports = UserSupportManager
 						.getUserSupports();
-				for (UserSupport userSupport : userSupports) {
+				for (IUserSupport userSupport : userSupports) {
 					// UIUtils.debugObligationExplorer("Get US: " +
 					// userSupport);
 					Collection<ProofState> proofStates = userSupport.getPOs();
@@ -452,7 +453,7 @@ public class ObligationExplorer extends ViewPart implements
 				// Find the label in the list of UserSupport.
 				Collection<UserSupport> userSupports = UserSupportManager
 						.getUserSupports();
-				for (UserSupport userSupport : userSupports) {
+				for (IUserSupport userSupport : userSupports) {
 					// UIUtils.debugObligationExplorer("Get US: " +
 					// userSupport);
 					Collection<ProofState> proofStates = userSupport.getPOs();
@@ -766,7 +767,7 @@ public class ObligationExplorer extends ViewPart implements
 		byExternal = false;
 	}
 
-	public void USManagerChanged(final UserSupport userSupport, final int status) {
+	public void USManagerChanged(final IUserSupport userSupport, final int status) {
 
 		Control control = viewer.getControl();
 		if (control.isDisposed())
@@ -802,7 +803,7 @@ public class ObligationExplorer extends ViewPart implements
 									+ delta);
 				final ProofState ps = delta.getProofState();
 
-				final UserSupport userSupport = delta.getSource();
+				final IUserSupport userSupport = delta.getSource();
 				if (viewer.getControl().isDisposed())
 					return;
 				viewer.refresh(userSupport.getInput(), true);
@@ -838,7 +839,7 @@ public class ObligationExplorer extends ViewPart implements
 			return;
 		Collection<UserSupport> userSupports = UserSupportManager
 				.getUserSupports();
-		for (UserSupport userSupport : userSupports) {
+		for (IUserSupport userSupport : userSupports) {
 			userSupport.removeStateChangedListeners(this);
 		}
 		UserSupportManager.removeUSManagerListener(this);

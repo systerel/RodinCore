@@ -33,14 +33,14 @@ public class UserSupportManager {
 
 	public static int CHANGED = 0x4;
 
-	public static UserSupport newUserSupport() {
+	public static IUserSupport newUserSupport() {
 		UserSupport userSupport = new UserSupport();
 		userSupports.add(userSupport);
 		notifyUSManagerListener(userSupport, ADDED);
 		return userSupport;
 	}
 
-	public static void disposeUserSupport(UserSupport userSupport) {
+	public static void disposeUserSupport(IUserSupport userSupport) {
 		userSupport.dispose();
 		synchronized (userSupports) {
 			if (userSupports.contains(userSupport))
@@ -69,7 +69,7 @@ public class UserSupportManager {
 		}
 	}
 
-	private static void notifyUSManagerListener(final UserSupport userSupport,
+	private static void notifyUSManagerListener(final IUserSupport userSupport,
 			final int status) {
 		IUSManagerListener[] safeCopy;
 		synchronized (listeners) {
@@ -90,7 +90,7 @@ public class UserSupportManager {
 
 	}
 
-	public static void setInput(UserSupport userSupport, IPSFile prFile,
+	public static void setInput(IUserSupport userSupport, IPSFile prFile,
 			IProgressMonitor monitor) throws RodinDBException {
 		userSupport.setInput(prFile, monitor);
 		notifyUSManagerListener(userSupport, CHANGED);

@@ -13,8 +13,8 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
@@ -65,11 +65,11 @@ public class TacticUIRegistry {
 			tip = configuration.getAttribute("tooltip");
 		}
 
-		public boolean isApplicableToGoal(UserSupport us) {
+		public boolean isApplicableToGoal(IUserSupport us) {
 			return isApplicable(us, null, null);
 		}
 
-		public boolean isApplicable(UserSupport us, Hypothesis hyp,
+		public boolean isApplicable(IUserSupport us, Hypothesis hyp,
 				String input) {
 			
 			if (provider == null && command == null) {
@@ -164,7 +164,7 @@ public class TacticUIRegistry {
 			return tip;
 		}
 
-		public boolean isApplicableToHypothesis(UserSupport us,
+		public boolean isApplicableToHypothesis(IUserSupport us,
 				Hypothesis hyp) {
 			return isApplicable(us, hyp, null);
 		}
@@ -436,7 +436,7 @@ public class TacticUIRegistry {
 
 	}
 
-	public synchronized String[] getApplicableToGoal(UserSupport us) {
+	public synchronized String[] getApplicableToGoal(IUserSupport us) {
 		if (goalRegistry == null)
 			loadRegistry();
 
@@ -508,7 +508,7 @@ public class TacticUIRegistry {
 		return null;
 	}
 
-	public String[] getApplicableToHypothesis(UserSupport us,
+	public String[] getApplicableToHypothesis(IUserSupport us,
 			Hypothesis hyp) {
 		if (hypothesisRegistry == null)
 			loadRegistry();

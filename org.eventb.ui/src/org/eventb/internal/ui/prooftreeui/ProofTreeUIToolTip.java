@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-import org.eventb.core.pm.UserSupport;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBMath;
@@ -46,7 +46,7 @@ public class ProofTreeUIToolTip {
 
 	protected Point widgetPosition; // the position hovered over in the Widget;
 
-	private UserSupport userSupport;
+	private IUserSupport userSupport;
 
 	private Shell helpShell;
 
@@ -60,7 +60,7 @@ public class ProofTreeUIToolTip {
 	 * @param parent
 	 *            the parent Shell
 	 */
-	public ProofTreeUIToolTip(Shell parent, UserSupport US) {
+	public ProofTreeUIToolTip(Shell parent, IUserSupport US) {
 		final Display display = parent.getDisplay();
 		this.parentShell = parent;
 		this.userSupport = US;

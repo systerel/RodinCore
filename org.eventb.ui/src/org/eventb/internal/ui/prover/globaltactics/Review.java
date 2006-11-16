@@ -13,7 +13,7 @@
 package org.eventb.internal.ui.prover.globaltactics;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.pm.UserSupport;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.IGlobalExpertTactic;
@@ -37,7 +37,7 @@ public class Review implements IGlobalExpertTactic {
 		return (node != null) && node.isOpen();
 	}
 
-	public void apply(UserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
+	public void apply(IUserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
 		userSupport.applyTactic(Tactics.review(1), null);
 	}
 }

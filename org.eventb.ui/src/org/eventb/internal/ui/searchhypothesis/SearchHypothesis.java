@@ -20,6 +20,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUSManagerListener;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.pm.UserSupportManager;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -52,7 +53,7 @@ public class SearchHypothesis extends PageBookView implements
 		
 		Collection<UserSupport> userSupports = UserSupportManager
 				.getUserSupports();
-		for (UserSupport userSupport : userSupports) {
+		for (IUserSupport userSupport : userSupports) {
 			userSupport.addStateChangedListeners(this);
 		}
 		
@@ -63,7 +64,7 @@ public class SearchHypothesis extends PageBookView implements
 	public void dispose() {
 		Collection<UserSupport> userSupports = UserSupportManager
 				.getUserSupports();
-		for (UserSupport userSupport : userSupports) {
+		for (IUserSupport userSupport : userSupports) {
 			userSupport.removeStateChangedListeners(this);
 		}
 		super.dispose();
@@ -269,7 +270,7 @@ public class SearchHypothesis extends PageBookView implements
 
 	}
 
-	public void USManagerChanged(UserSupport userSupport, int status) {
+	public void USManagerChanged(IUserSupport userSupport, int status) {
 		if (status == UserSupportManager.ADDED) {
 			userSupport.addStateChangedListeners(this);
 		}

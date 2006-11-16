@@ -36,8 +36,8 @@ import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.pm.UserSupport;
 import org.eventb.core.pm.UserSupportManager;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
@@ -79,7 +79,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	private SearchHypothesisPage fSearchHypothesisPage;
 
 	// The associated UserSupport
-	private UserSupport userSupport;
+	private IUserSupport userSupport;
 
 	// The associated rodin file handle
 	private IPSFile prFile = null;
@@ -141,7 +141,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * 
 	 * @return the associated UserSupport
 	 */
-	public UserSupport getUserSupport() {
+	public IUserSupport getUserSupport() {
 		return userSupport;
 	}
 

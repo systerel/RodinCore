@@ -13,7 +13,7 @@
 package org.eventb.internal.ui.prover.globaltactics;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.pm.UserSupport;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.ui.prover.IGlobalExpertTactic;
 import org.rodinp.core.RodinDBException;
@@ -33,7 +33,7 @@ public class Previous implements IGlobalExpertTactic {
 		return true;
 	}
 
-	public void apply(UserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
+	public void apply(IUserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
 		userSupport.prevUndischargedPO(false, monitor);
 	}
 

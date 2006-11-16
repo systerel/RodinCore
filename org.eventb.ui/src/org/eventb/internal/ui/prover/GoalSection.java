@@ -39,8 +39,8 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBImage;
@@ -118,7 +118,7 @@ public class GoalSection extends SectionPart {
 		section.setClient(scrolledForm);
 		toolkit.paintBordersFor(scrolledForm);
 
-		UserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
+		IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
 				.getEditor()).getUserSupport();
 		ProofState ps = userSupport.getCurrentPO();
 		if (ps != null) {
@@ -156,7 +156,7 @@ public class GoalSection extends SectionPart {
 		goalComposite.setLayoutData(gd);
 		goalComposite.getBody().setLayout(new FillLayout());
 
-		UserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
+		IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
 				.getEditor()).getUserSupport();
 
 		if (node == null)
@@ -382,7 +382,7 @@ public class GoalSection extends SectionPart {
 	 * <p>
 	 * 
 	 */
-	private void createHyperlinks(final UserSupport us, boolean enable) {
+	private void createHyperlinks(final IUserSupport us, boolean enable) {
 
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 		String[] tactics = tacticUIRegistry.getApplicableToGoal(us);
