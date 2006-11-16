@@ -286,7 +286,7 @@ public class TacticUIRegistry {
 					if (id.equals(info.getDropdown())) {
 						tactics.add(info.getID());
 						if (ProverUIUtils.DEBUG) {
-							ProverUIUtils.debug("Attached tactic "
+							ProverUIUtils.debug("Attached tactic " + tacticID
 									+ " to dropdown " + id);
 						}
 					}

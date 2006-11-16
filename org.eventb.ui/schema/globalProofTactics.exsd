@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true" replacement="proofTactics" />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <choice minOccurs="0" maxOccurs="unbounded">

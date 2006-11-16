@@ -135,6 +135,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="priorty" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -146,6 +153,13 @@
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -170,6 +184,13 @@
             </annotation>
          </attribute>
          <attribute name="toolbar" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
                   

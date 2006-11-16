@@ -760,21 +760,12 @@
       </viewerContribution>
    </extension>
    <extension
-         point="org.eventb.ui.globalProofTactics">
-      <experttactic
-            class="org.eventb.internal.ui.prover.globaltactics.Next"
-            icon="icons/full/ctool16/next_prover.gif"
-            id="org.eventb.ui.next"
-            interruptable="false"
-            toolbar="navigation"
-            tooltip="Next undischarged PO"/>
-   </extension>
-   <extension
          point="org.eventb.ui.proofTactics">
       <tactic
             icon="icons/full/ctool16/falsify_prover.gif"
             id="org.eventb.ui.falsifyGoal"
             interrupt="false"
+            priorty="1"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ContradictGoal"
             target="goal"
             tooltip="Contradict goal"/>
@@ -782,6 +773,7 @@
             icon="icons/full/ctool16/impI_prover.gif"
             id="org.eventb.ui.impI"
             interrupt="false"
+            priorty="2"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Deduction"
             target="goal"
             tooltip="Deduction"/>
@@ -789,6 +781,7 @@
             icon="icons/full/ctool16/disjI_prover.gif"
             id="org.eventb.ui.disjI"
             interrupt="false"
+            priorty="3"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Disjunction"
             target="goal"
             tooltip="Disjunction"/>
@@ -796,6 +789,7 @@
             icon="icons/full/ctool16/conjI_prover.gif"
             id="org.eventb.ui.conjI"
             interrupt="false"
+            priorty="4"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ConjunctionIntroduction"
             target="goal"
             tooltip="Conjunction introduction"/>
@@ -803,6 +797,7 @@
             icon="icons/full/ctool16/allI_prover.gif"
             id="org.eventb.ui.allI"
             interrupt="false"
+            priorty="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ForallInstantiationGoal"
             target="goal"
             tooltip="Forall instantiation"/>
@@ -810,6 +805,7 @@
             icon="icons/full/ctool16/exI_prover.gif"
             id="org.eventb.ui.exI"
             interrupt="false"
+            priorty="6"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ExistsInstantiationGoal"
             target="goal"
             tooltip="Exists instantiation"/>
@@ -817,6 +813,7 @@
             icon="icons/full/ctool16/negI_prover.gif"
             id="org.eventb.ui.negI"
             interrupt="false"
+            priorty="7"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveNegationGoal"
             target="goal"
             tooltip="Remove negation"/>
@@ -825,6 +822,7 @@
             icon="icons/full/ctool16/rv_prover.gif"
             id="org.eventb.ui.review"
             interrupt="false"
+            priorty="4"
             proofCommand="org.eventb.internal.ui.prover.tactics.Review"
             target="global"
             tooltip="Review goal with selected hypotheses"/>
@@ -832,6 +830,7 @@
             icon="icons/full/ctool16/dc_prover.gif"
             id="org.eventb.ui.doCase"
             interrupt="false"
+            priorty="1"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DoCase"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
@@ -840,6 +839,7 @@
             icon="icons/full/ctool16/ah_prover.gif"
             id="org.eventb.ui.addHypothesis"
             interrupt="false"
+            priorty="2"
             tacticProvider="org.eventb.internal.ui.prover.tactics.AddHypothesis"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
@@ -848,6 +848,7 @@
             icon="icons/full/ctool16/auto_prover.png"
             id="org.eventb.ui.autoProver"
             interrupt="true"
+            priorty="3"
             tacticProvider="org.eventb.internal.ui.prover.tactics.AutoProver"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
@@ -856,6 +857,7 @@
             icon="icons/full/ctool16/broom_prover.gif"
             id="org.eventb.ui.norm"
             interrupt="false"
+            priorty="4"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Normalise"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
@@ -864,6 +866,7 @@
             icon="icons/full/ctool16/lasoo_prover.gif"
             id="org.eventb.ui.lasoo"
             interrupt="false"
+            priorty="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Lasoo"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
@@ -872,6 +875,7 @@
             icon="icons/full/ctool16/bk_prover.gif"
             id="org.eventb.ui.backtrack"
             interrupt="false"
+            priorty="6"
             proofCommand="org.eventb.internal.ui.prover.tactics.Backtrack"
             target="global"
             toolbar="org.eventb.ui.backtrackToolbar"
@@ -880,6 +884,7 @@
             icon="icons/full/ctool16/pn_prover.gif"
             id="org.eventb.ui.prune"
             interrupt="false"
+            priorty="7"
             proofCommand="org.eventb.internal.ui.prover.tactics.Prune"
             target="global"
             toolbar="org.eventb.ui.backtrackToolbar"
@@ -888,6 +893,7 @@
             icon="icons/full/ctool16/sh_prover.gif"
             id="org.eventb.ui.searchHyp"
             interrupt="false"
+            priorty="1"
             proofCommand="org.eventb.internal.ui.prover.tactics.SearchHypotheses"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
@@ -896,6 +902,7 @@
             icon="icons/full/ctool16/prev_prover.gif"
             id="org.eventb.ui.previous"
             interrupt="false"
+            priorty="9"
             proofCommand="org.eventb.internal.ui.prover.tactics.Previous"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
@@ -904,20 +911,29 @@
             icon="icons/full/ctool16/next_prover.gif"
             id="org.eventb.ui.next"
             interrupt="false"
+            priorty="10"
             proofCommand="org.eventb.internal.ui.prover.tactics.Next"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
             tooltip="Next undischarged PO"/>
-      <toolbar id="org.eventb.ui.backtrackToolbar"/>
-      <toolbar id="org.eventb.ui.sequentToolbar"/>
-      <toolbar id="org.eventb.ui.navigationToolbar"/>
+      <toolbar
+            id="org.eventb.ui.backtrackToolbar"
+            priority="5"/>
+      <toolbar
+            id="org.eventb.ui.sequentToolbar"
+            priority="1"/>
+      <toolbar
+            id="org.eventb.ui.navigationToolbar"
+            priority="10"/>
       <dropdown
             id="org.eventb.ui.reviewDropdown"
+            priority="5"
             toolbar="org.eventb.ui.sequentToolbar"/>
       <tactic
             icon="icons/full/ctool16/falsify_prover.gif"
             id="org.eventb.ui.falsifyHyp"
             interrupt="false"
+            priorty="1"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ContradictHyp"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.falsify.tooltip"/>
@@ -925,6 +941,7 @@
             icon="icons/full/ctool16/impE1_prover.gif"
             id="org.eventb.ui.impE1"
             interrupt="false"
+            priorty="2"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ImplicationElemination1"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.ImpE1.tooltip"/>
@@ -932,6 +949,7 @@
             icon="icons/full/ctool16/conjE_prover.gif"
             id="org.eventb.ui.conjE"
             interrupt="false"
+            priorty="3"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ConjunctionElemination"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.ConjE.tooltip"/>
@@ -939,6 +957,7 @@
             icon="icons/full/ctool16/disjE_prover.gif"
             id="org.eventb.ui.disjE"
             interrupt="false"
+            priorty="4"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DisjunctionElemination"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.DisjE.tooltip"/>
@@ -946,6 +965,7 @@
             icon="icons/full/ctool16/negE_prover.gif"
             id="org.eventb.ui.negE"
             interrupt="false"
+            priorty="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveNegationHyp"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.NegE.tooltip"/>
@@ -953,6 +973,7 @@
             icon="icons/full/ctool16/allD_prover.gif"
             id="org.eventb.ui.allE"
             interrupt="false"
+            priorty="6"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ForallInstantiationHyp"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.AllD.tooltip"/>
@@ -960,6 +981,7 @@
             icon="icons/full/ctool16/exE_prover.gif"
             id="org.eventb.ui.exE"
             interrupt="false"
+            priorty="7"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ExistsInstantiationHyp"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.ExE.tooltip"/>
@@ -967,6 +989,7 @@
             icon="icons/full/ctool16/eq1_prover.gif"
             id="org.eventb.ui.eq1"
             interrupt="false"
+            priorty="8"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Equality1"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.Eq1.tooltip"/>
