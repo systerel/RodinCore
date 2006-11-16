@@ -65,27 +65,27 @@ public abstract class Module implements IModule {
 		
 		putPOGSources(sequent, sources, monitor);
 		
-		putPOGHints(sequent, hints, monitor);
+//		putPOGHints(sequent, hints, monitor);
 	}
 	
-	private void putPOGHints(
-			IPOSequent sequent, 
-			POGHint[] hints, 
-			IProgressMonitor monitor) throws RodinDBException {
-		
-		if (hints == null)
-			return;
-		
-		for (int idx=0; idx < hints.length; idx++) {
-			
-			IPOHint hint =
-				(IPOHint) sequent.createInternalElement(
-						IPOHint.ELEMENT_TYPE, HINT_NAME_PREFIX + idx, null, monitor);
-			hint.setHint(hints[idx].getValue(), monitor);
-
-		}
-
-	}
+//	private void putPOGHints(
+//			IPOSequent sequent, 
+//			POGHint[] hints, 
+//			IProgressMonitor monitor) throws RodinDBException {
+//		
+//		if (hints == null)
+//			return;
+//		
+//		for (int idx=0; idx < hints.length; idx++) {
+//			
+//			IPOHint hint =
+//				(IPOHint) sequent.createInternalElement(
+//						IPOHint.ELEMENT_TYPE, HINT_NAME_PREFIX + idx, null, monitor);
+//			hint.setHint(hints[idx].getValue(), monitor);
+//
+//		}
+//
+//	}
 	
 	private void putPOGSources(
 			IPOSequent sequent, 

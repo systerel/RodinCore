@@ -11,7 +11,6 @@ package org.eventb.core;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 
 /**
  * A hint for a proof of a proof obligation. A hint is labeled so that hints can be
@@ -32,35 +31,35 @@ public interface IPOHint extends ILabeledElement {
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poHint"); //$NON-NLS-1$
 	
 	
-	/**
-	 * Predefined hint labels: 
-	 * <ul>
-	 * <li><code>SELECT_HYP</code> for selecting hypothesis</li>
-	 * <li><code>CHOOSE_PRV</code> for suggesting a proof strategy by way of a characterisation of 
-	 * the proof obligation
-	 * </ul>
-	 */
-	String SELECT_HYP = "select-hyp";
-	String CHOOSE_PRV = "choose-prv";
-	
-	/**
-	 * Set the value of the hint. There are no constraints on the format or contents of a hint. 
-	 * @param value the value of the hint
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @throws RodinDBException if there was a problem accessing the database
-	 */
-	void setHint(String value, IProgressMonitor monitor) throws RodinDBException;
-	
-	/**
-	 * Returns the value of this hint.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the value of this hint
-	 * @throws RodinDBException if there was a problem accessing the database
-	 */
-	String getHint(IProgressMonitor monitor) throws RodinDBException;
+//	/**
+//	 * Predefined hint labels: 
+//	 * <ul>
+//	 * <li><code>SELECT_HYP</code> for selecting hypothesis</li>
+//	 * <li><code>CHOOSE_PRV</code> for suggesting a proof strategy by way of a characterisation of 
+//	 * the proof obligation
+//	 * </ul>
+//	 */
+//	String SELECT_HYP = "select-hyp";
+//	String CHOOSE_PRV = "choose-prv";
+//	
+//	/**
+//	 * Set the value of the hint. There are no constraints on the format or contents of a hint. 
+//	 * @param value the value of the hint
+//	 * @param monitor
+//	 *            a progress monitor, or <code>null</code> if progress
+//	 *            reporting is not desired
+//	 * @throws RodinDBException if there was a problem accessing the database
+//	 */
+//	void setHint(String value, IProgressMonitor monitor) throws RodinDBException;
+//	
+//	/**
+//	 * Returns the value of this hint.
+//	 * 
+//	 * @param monitor
+//	 *            a progress monitor, or <code>null</code> if progress
+//	 *            reporting is not desired
+//	 * @return the value of this hint
+//	 * @throws RodinDBException if there was a problem accessing the database
+//	 */
+//	String getHint(IProgressMonitor monitor) throws RodinDBException;
 }
