@@ -23,6 +23,7 @@ public abstract class EventBFile extends RodinFile {
 		super(file, parent);
 	}
 
+	@Deprecated
 	protected IRodinElement getSingletonChild(IElementType elementType,
 			String message) throws RodinDBException {
 

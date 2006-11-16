@@ -86,12 +86,12 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 				repository,
 				monitor);
 		
-		saveInvariants(target, offset, invariants, predicates, monitor);
+		saveInvariants((ISCMachineFile) target, offset, invariants, predicates, monitor);
 
 	}
 	
 	private void saveInvariants(
-			IInternalParent parent, 
+			ISCMachineFile target, 
 			int offset,
 			IInvariant[] invariants, 
 			Predicate[] predicates,
@@ -102,12 +102,8 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 		for (int i=0; i<invariants.length; i++) {
 			if (predicates[i] == null)
 				continue;
-			ISCInvariant scInvariant = 
-				(ISCInvariant) parent.createInternalElement(
-						ISCInvariant.ELEMENT_TYPE, 
-						INVARIANT_NAME_PREFIX + index++, 
-						null, 
-						monitor);
+			ISCInvariant scInvariant = target.getSCInvariant(INVARIANT_NAME_PREFIX + index++);
+			scInvariant.create(null, monitor);
 			scInvariant.setLabel(invariants[i].getLabel(monitor), monitor);
 			scInvariant.setPredicate(predicates[i], null);
 			scInvariant.setSource(invariants[i], monitor);

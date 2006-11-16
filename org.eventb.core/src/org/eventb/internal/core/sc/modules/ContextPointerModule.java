@@ -296,6 +296,8 @@ public abstract class ContextPointerModule extends ProcessorModule {
 		
 	}
 	
+	protected abstract ISCInternalContext getSCInternalContext(IInternalParent target, String elementName);
+	
 	protected void createInternalContexts(
 			IInternalParent target, 
 			List<ISCContext> scContexts,
@@ -313,10 +315,8 @@ public abstract class ContextPointerModule extends ProcessorModule {
 				
 				ISCContextFile contextFile = (ISCContextFile) context;
 			
-				ISCInternalContext internalContext = 
-					(ISCInternalContext) target.createInternalElement(
-							ISCInternalContext.ELEMENT_TYPE, 
-							context.getElementName(), null, monitor);
+				ISCInternalContext internalContext = getSCInternalContext(target, context.getElementName());
+				internalContext.create(null, monitor);
 				
 				copyElements(contextFile.getChildren(), internalContext, monitor);
 				

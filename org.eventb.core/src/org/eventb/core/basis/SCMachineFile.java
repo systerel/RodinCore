@@ -147,7 +147,7 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 
 	@Deprecated
 	public ISCVariant getSCVariant() throws RodinDBException {
-		return getSCVariant(null);
+		return getSCVariant((IProgressMonitor) null);
 	}
 
 	public ISCMachineFile[] getAbstractSCMachines(IProgressMonitor monitor) throws RodinDBException {
@@ -167,6 +167,34 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 	public ISCVariant[] getSCVariants(IProgressMonitor monitor) throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCVariant.ELEMENT_TYPE);
 		return (ISCVariant[]) elements; 
+	}
+
+	public ISCEvent getSCEvent(String elementName) {
+		return (ISCEvent) getInternalElement(ISCEvent.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCInvariant getSCInvariant(String elementName) {
+		return (ISCInvariant) getInternalElement(ISCInvariant.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCRefinesMachine getSCRefinesClause(String elementName) {
+		return (ISCRefinesMachine) getInternalElement(ISCRefinesMachine.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCTheorem getSCTheorem(String elementName) {
+		return (ISCTheorem) getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCVariable getSCVariable(String elementName) {
+		return (ISCVariable) getInternalElement(ISCVariable.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCVariant getSCVariant(String elementName) {
+		return (ISCVariant) getInternalElement(ISCVariant.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCInternalContext getSCSeenContext(String elementName) {
+		return (ISCInternalContext) getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
 	}
 
 }

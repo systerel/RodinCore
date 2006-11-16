@@ -15,8 +15,10 @@ public final class Messages {
 
 	private static final String BUNDLE_NAME = "org.eventb.internal.core.pog.messages";//$NON-NLS-1$
 
-	// All messages below take one parameter: the handle to the element that
-	// caused the error
+	// internal error messages
+	
+	public static String pog_multipleRefinementError;
+	
 	// build
 	public static String build_cleaning;
 	public static String build_runningMPO;

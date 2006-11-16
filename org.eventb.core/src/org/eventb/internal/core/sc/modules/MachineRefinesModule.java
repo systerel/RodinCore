@@ -80,7 +80,7 @@ public class MachineRefinesModule extends ProcessorModule {
 		
 		monitor.subTask(Messages.bind(Messages.progress_MachineRefines));
 		
-		saveRefinesMachine(target, null);
+		saveRefinesMachine((ISCMachineFile) target, null);
 		
 		IIdentifierSymbolTable abstractIdentifierSymbolTable =
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
@@ -97,11 +97,12 @@ public class MachineRefinesModule extends ProcessorModule {
 		monitor.worked(1);
 		
 	}
+	
+	private static final String REFINES_NAME = "REF";
 
-	private void saveRefinesMachine(IInternalParent target, IProgressMonitor monitor) throws RodinDBException {
-		ISCRefinesMachine scRefinesMachine =
-			(ISCRefinesMachine) target.createInternalElement(
-					ISCRefinesMachine.ELEMENT_TYPE, "REF", null, monitor);
+	private void saveRefinesMachine(ISCMachineFile target, IProgressMonitor monitor) throws RodinDBException {
+		ISCRefinesMachine scRefinesMachine = target.getSCRefinesClause(REFINES_NAME);
+		scRefinesMachine.create(null, monitor);
 		scRefinesMachine.setAbstractSCMachine(scMachineFile, null);
 	}
 	
@@ -342,7 +343,18 @@ public class MachineRefinesModule extends ProcessorModule {
 		
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		refinesMachine = machineFile.getRefinesClause(null);
+		IRefinesMachine[] refinesMachines = machineFile.getRefinesClauses(null);
+		
+		if (refinesMachines.length > 1) {
+			for (int k=1; k<refinesMachines.length; k++) {
+				createProblemMarker(
+						refinesMachines[k], 
+						EventBAttributes.TARGET_ATTRIBUTE, 
+						GraphProblem.TooManyAbstractMachinesError);
+			}
+		}
+		
+		refinesMachine = refinesMachines.length == 0 ? null : refinesMachines[0];
 		
 		scMachineFile = 
 			(refinesMachine == null) ? null : refinesMachine.getAbstractSCMachine(null);

@@ -57,12 +57,12 @@ public class MachineEventRefinesModule extends ProcessorModule {
 		
 		IEventSymbolInfo symbolInfo = (IEventSymbolInfo) labelSymbolTable.getSymbolInfo(eventLabel);
 		
-		createRefinesClause(target, symbolInfo, monitor);
+		createRefinesClause((ISCEvent) target, symbolInfo, monitor);
 		
 	}
 	
 	private void createRefinesClause(
-			IInternalParent target, 
+			ISCEvent target, 
 			IEventSymbolInfo symbolInfo, 
 			IProgressMonitor monitor) throws RodinDBException {
 		
@@ -91,14 +91,13 @@ public class MachineEventRefinesModule extends ProcessorModule {
 	}
 
 	private int createRefinesEvent(
-			IInternalParent target, 
+			ISCEvent target, 
 			int index, 
 			IRodinElement element, 
 			ISCEvent abstractEvent, 
 			IProgressMonitor monitor) throws RodinDBException {
-		ISCRefinesEvent scRefinesEvent = (ISCRefinesEvent) target.createInternalElement(
-				ISCRefinesEvent.ELEMENT_TYPE, 
-				REFINES_NAME_PREFIX + index++, null, monitor);
+		ISCRefinesEvent scRefinesEvent = target.getSCRefinesClause(REFINES_NAME_PREFIX + index++);
+		scRefinesEvent.create(null, monitor);
 		scRefinesEvent.setAbstractSCEvent(abstractEvent, null);
 		scRefinesEvent.setSource(element, monitor);
 		return index;

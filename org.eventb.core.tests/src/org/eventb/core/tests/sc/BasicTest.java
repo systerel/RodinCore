@@ -680,16 +680,16 @@ public abstract class BasicTest extends TestCase {
 
 	protected void containsVariant(ISCMachineFile file, ITypeEnvironment environment, String... strings) throws RodinDBException {
 		assert strings.length <= 1;
-		ISCVariant variant = file.getSCVariant(null);
+		ISCVariant[] variants = file.getSCVariants(null);
 		
 		
 		
-		assertEquals("wrong number of variants", strings.length, variant == null ? 0 : 1);
+		assertEquals("wrong number of variants", strings.length, variants.length);
 		
 		if (strings.length == 0)
 			return;
 		
-		String vs = variant.getExpressionString(null);
+		String vs = variants[0].getExpressionString(null);
 		String exp = getNormalizedExpression(strings[0], environment);
 				
 		assertEquals("wrong variant", exp, vs);

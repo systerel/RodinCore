@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
+import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
@@ -81,7 +82,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 					repository,
 					monitor);
 		
-		saveGuards(target, guards, predicates, monitor);
+		saveGuards((ISCEvent) target, guards, predicates, monitor);
 
 	}
 	
@@ -102,12 +103,12 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 	}
 	
 	private void saveGuards(
-			IInternalParent parent, 
+			ISCEvent target, 
 			IGuard[] guards, 
 			Predicate[] predicates,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		if (parent == null)
+		if (target == null)
 			return;
 		
 		int index = 0;
@@ -115,12 +116,8 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 		for (int i=0; i<guards.length; i++) {
 			if (predicates[i] == null)
 				continue;
-			ISCGuard scGuard = 
-				(ISCGuard) parent.createInternalElement(
-						ISCGuard.ELEMENT_TYPE, 
-						GUARD_NAME_PREFIX + index++, 
-						null, 
-						monitor);
+			ISCGuard scGuard = target.getSCGuard(GUARD_NAME_PREFIX + index++);
+			scGuard.create(null, monitor);
 			scGuard.setLabel(guards[i].getLabel(monitor), monitor);
 			scGuard.setPredicate(predicates[i], null);
 			scGuard.setSource(guards[i], monitor);

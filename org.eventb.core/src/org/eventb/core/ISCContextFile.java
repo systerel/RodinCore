@@ -62,6 +62,19 @@ public interface ISCContextFile extends ISCContext, IRodinFile {
 	IContextFile getContextFile();
 
 	/**
+	 * Returns a handle to a child internal context with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the internal context
+	 * @return a handle to a child internal context with the given element name
+	 */
+	ISCInternalContext getSCInternalContext(String elementName);
+
+	/**
 	 * Returns the internal SC contexts that are (transitively) contained in,
 	 * i.e. extended by, this SC context.
 	 * 

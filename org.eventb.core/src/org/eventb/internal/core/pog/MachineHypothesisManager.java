@@ -8,10 +8,16 @@
 package org.eventb.internal.core.pog;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IPOFile;
+import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCPredicateElement;
+import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
+import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -33,18 +39,29 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 	
 	public MachineHypothesisManager(
 			IRodinElement parentElement, 
-			ISCPredicateElement[] predicateTable) throws CoreException {
+			ISCPredicateElement[] predicateTable,
+			IProgressMonitor monitor) throws CoreException {
 		super(parentElement, predicateTable, ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME, IDENTIFIER_TABLE_SIZE);
 		
-		abstractMachine = ((ISCMachineFile) parentElement).getAbstractSCMachine(null);
+		ISCRefinesMachine[] refinesMachines = ((ISCMachineFile) parentElement).getSCRefinesClauses(monitor);
+		
+		if (refinesMachines.length == 0)
+			abstractMachine = null;
+		else {
+			abstractMachine = refinesMachines[0].getAbstractSCMachine(monitor);
+			
+			if (refinesMachines.length > 1) {
+				throw Util.newCoreException(Messages.pog_multipleRefinementError);
+			}
+		}
 	}
 
 	public String getStateType() {
 		return STATE_TYPE;
 	}
 	
-	public String getContextHypothesisName() {
-		return CTX_HYP_NAME;
+	public IPOPredicateSet getContextHypothesis(IPOFile target) throws RodinDBException {
+		return target.getPredicateSet(CTX_HYP_NAME);
 	}
 	
 	public boolean isInitialMachine() {

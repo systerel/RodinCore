@@ -12,14 +12,12 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
-import org.eventb.core.IPOHint;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.pog.state.IStatePOG;
 import org.eventb.core.state.IStateRepository;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -40,32 +38,36 @@ public abstract class Module implements IModule {
 			IPOFile file, 
 			String name,
 			String desc,
-			String globalHypothesis,
+			IPOPredicateSet globalHypothesis,
 			List<POGPredicate> localHypothesis,
 			POGPredicate goal,
 			POGSource[] sources,
 			POGHint[] hints,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		IPOSequent sequent = 
-			(IPOSequent) file.createInternalElement(
-				IPOSequent.ELEMENT_TYPE, name, null, monitor);
+		IPOSequent sequent = file.getSequent(name);
+		sequent.create(null, monitor);
 		
-		IPOPredicateSet hypothesis = 
-			(IPOPredicateSet) sequent.createInternalElement(
-					IPOPredicateSet.ELEMENT_TYPE, SEQ_HYP_NAME, null, monitor);
-		
-		hypothesis.setParentPredicateSetName(globalHypothesis, monitor);
+		IPOPredicateSet hypothesis = sequent.getHypothesis(SEQ_HYP_NAME);
+		hypothesis.create(null, monitor);
+		hypothesis.setParentPredicateSet(globalHypothesis, monitor);
 		
 		putPOGPredicates(hypothesis, localHypothesis, monitor);
 		
-		putPOGPredicate(sequent, GOAL_NAME, goal, monitor);
+		IPOPredicate goalPredicate = sequent.getGoal(GOAL_NAME);
+		putPredicate(goalPredicate, goal, monitor);
 		
 		sequent.setDescription(desc, monitor);
 		
 		putPOGSources(sequent, sources, monitor);
 		
 //		putPOGHints(sequent, hints, monitor);
+	}
+
+	private void putPredicate(IPOPredicate predicate, POGPredicate pogPredicate, IProgressMonitor monitor) throws RodinDBException {
+		predicate.create(null, monitor);
+		predicate.setPredicate(pogPredicate.getPredicate(), monitor);
+		predicate.setSource(pogPredicate.getSource(), monitor);
 	}
 	
 //	private void putPOGHints(
@@ -78,9 +80,8 @@ public abstract class Module implements IModule {
 //		
 //		for (int idx=0; idx < hints.length; idx++) {
 //			
-//			IPOHint hint =
-//				(IPOHint) sequent.createInternalElement(
-//						IPOHint.ELEMENT_TYPE, HINT_NAME_PREFIX + idx, null, monitor);
+//			IPOHint hint = sequent.getHint(HINT_NAME_PREFIX + idx);
+//			hint.create(null, monitor);
 //			hint.setHint(hints[idx].getValue(), monitor);
 //
 //		}
@@ -97,9 +98,8 @@ public abstract class Module implements IModule {
 		
 		for (int idx=0; idx < sources.length; idx++) {
 			
-			IPOSource source =
-				(IPOSource) sequent.createInternalElement(
-						IPOSource.ELEMENT_TYPE, SRC_NAME_PREFIX + idx, null, monitor);
+			IPOSource source = sequent.getSource(SRC_NAME_PREFIX + idx);
+			source.create(null, monitor);
 			source.setSource(sources[idx].getSource().getSource(monitor), monitor);
 			source.setRole(sources[idx].getRoleKey(), monitor);
 		}
@@ -118,23 +118,12 @@ public abstract class Module implements IModule {
 		
 		for (POGPredicate predicate : localHypothesis) {
 			
-			putPOGPredicate(hypothesis, PRD_NAME_PREFIX + index++, predicate, monitor);
+			IPOPredicate poPredicate = hypothesis.getPredicate(PRD_NAME_PREFIX + index++);
+			putPredicate(poPredicate, predicate, monitor);
 		}
 
 	}
 
-	private void putPOGPredicate(
-			IInternalElement element, 
-			String name,
-			POGPredicate predicate, 
-			IProgressMonitor monitor) throws RodinDBException {
-		IPOPredicate poPredicate = 
-			(IPOPredicate) element.createInternalElement(
-					IPOPredicate.ELEMENT_TYPE, name, null, monitor);
-		poPredicate.setPredicate(predicate.getPredicate(), monitor);
-		poPredicate.setSource(predicate.getSource(), monitor);
-	}
-	
 	protected void initModules(
 			IRodinElement element,
 			IPOFile target,

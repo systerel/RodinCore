@@ -18,6 +18,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.ISCAction;
+import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
@@ -88,10 +89,12 @@ public class MachineEventActionModule extends AssignmentModule {
 					repository,
 					monitor);
 
+		ISCEvent targetEvent = (ISCEvent) target;
+		
 		HashMap<String, Integer> assignedByAction = checkLHS(actions, assignments, monitor);
-		commitActions(target, actions, assignments, null);
+		commitActions(targetEvent, actions, assignments, null);
 		if (isInitialisation)
-			repairInitialisation(target, event, assignedByAction, monitor);
+			repairInitialisation(targetEvent, event, assignedByAction, monitor);
 
 	}
 	
@@ -146,12 +149,12 @@ public class MachineEventActionModule extends AssignmentModule {
 	}
 
 	private void commitActions(
-			IInternalParent parent, 
+			ISCEvent target, 
 			IAction[] actions, 
 			Assignment[] assignments,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		if (parent == null)
+		if (target == null)
 			return;
 		
 		int index = 0;
@@ -160,7 +163,7 @@ public class MachineEventActionModule extends AssignmentModule {
 			if (assignments[i] == null)
 				continue;
 			saveAction(
-					parent, 
+					target, 
 					ACTION_NAME_PREFIX + index++, 
 					actions[i].getLabel(monitor), 
 					assignments[i], 
@@ -170,25 +173,21 @@ public class MachineEventActionModule extends AssignmentModule {
 	}
 	
 	private void saveAction(
-			IInternalParent parent, 
+			ISCEvent target, 
 			String dbName,
 			String label, 
 			Assignment assignment,
 			IRodinElement source,
 			IProgressMonitor monitor) throws RodinDBException {
-		ISCAction scAction = 
-			(ISCAction) parent.createInternalElement(
-					ISCAction.ELEMENT_TYPE, 
-					dbName, 
-					null, 
-					monitor);
+		ISCAction scAction = target.getSCAction(dbName);
+		scAction.create(null, monitor);
 		scAction.setLabel(label, monitor);
 		scAction.setAssignment(assignment, null);
 		scAction.setSource(source, monitor);
 	}
 	
 	private void repairInitialisation(
-			IInternalParent parent, 
+			ISCEvent target, 
 			IEvent event, 
 			HashMap<String, Integer> assignedByAction,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -211,14 +210,14 @@ public class MachineEventActionModule extends AssignmentModule {
 			}
 		}
 		
-		if (parent == null)
+		if (target == null)
 			return;
 		
 		if (patchLHS.size() > 0) {
 			Predicate btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
 			Assignment assignment = factory.makeBecomesSuchThat(patchLHS, patchBound, btrue, null);
 			String label = createFreshLabel();
-			saveAction(parent, ACTION_REPAIR_PREFIX, label, assignment, event, monitor);
+			saveAction(target, ACTION_REPAIR_PREFIX, label, assignment, event, monitor);
 		}
 	}
 	

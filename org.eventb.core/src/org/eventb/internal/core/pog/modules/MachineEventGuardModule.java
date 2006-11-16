@@ -75,7 +75,7 @@ public class MachineEventGuardModule extends UtilityModule {
 						target, 
 						eventLabel + "/" + guardLabel + "/WD", 
 						"Well-definedness of Guard",
-						eventHypothesisManager.getHypothesisName(guards.get(i), monitor),
+						eventHypothesisManager.getHypothesis(target, guards.get(i), monitor),
 						emptyPredicates,
 						new POGPredicate(guards.get(i), wdPredicate),
 						sources(new POGSource("guard", (ITraceableElement) guards.get(i))),

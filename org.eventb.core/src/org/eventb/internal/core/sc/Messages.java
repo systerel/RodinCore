@@ -59,6 +59,7 @@ public final class Messages {
 	
     public static String scuser_AbstractContextNotFound;
     public static String scuser_SeenContextNotFound;
+    public static String scuser_OnlyOneAbstractMachine;
     public static String scuser_AbstractMachineNotFound;
     public static String scuser_AbstractEventNotFound;
     public static String scuser_AbstractEventNotRefined;
@@ -95,6 +96,7 @@ public final class Messages {
     public static String scuser_ActionDisjointLHSError;
     public static String scuser_WitnessFreeIdentifierError;
     public static String scuser_InvalidVariantTypeError;
+    public static String scuser_TooManyVariants;
     public static String scuser_InconsistentAbstractConvergence;
     public static String scuser_ConvergentFaultyConvergence;
     public static String scuser_OrdinaryFaultyConvergence;

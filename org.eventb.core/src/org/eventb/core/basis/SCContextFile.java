@@ -110,4 +110,24 @@ public class SCContextFile extends RodinFile implements ISCContextFile {
 		return getAbstractSCContexts(null); 
 	}
 
+	public ISCInternalContext getSCInternalContext(String elementName) {
+		return (ISCInternalContext) getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCAxiom getSCAxiom(String elementName) {
+		return (ISCAxiom) getInternalElement(ISCAxiom.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCCarrierSet getSCCarrierSet(String elementName) {
+		return (ISCCarrierSet) getInternalElement(ISCCarrierSet.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCConstant getSCConstant(String elementName) {
+		return (ISCConstant) getInternalElement(ISCConstant.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCTheorem getSCTheorem(String elementName) {
+		return (ISCTheorem) getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
+	}
+
 }

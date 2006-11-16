@@ -44,14 +44,14 @@ public class MachineContextClosureModule extends ProcessorModule {
 		
 		IMachineFile machineFile = (IMachineFile) element;
 
-		IRefinesMachine refinesMachine = machineFile.getRefinesClause(null);
+		IRefinesMachine[] refinesMachines = machineFile.getRefinesClauses(monitor);
 		
-		if (refinesMachine == null)
+		if (refinesMachines.length == 0)
 			return;
 		
-		ISCMachineFile scMachineFile = refinesMachine.getAbstractSCMachine(null);
+		ISCMachineFile scMachineFile = refinesMachines[0].getAbstractSCMachine(monitor);
 		
-		ISCInternalContext[] abstractContexts = scMachineFile.getSCSeenContexts(null);
+		ISCInternalContext[] abstractContexts = scMachineFile.getSCSeenContexts(monitor);
 		
 		if (abstractContexts.length == 0)
 			return;
@@ -73,7 +73,7 @@ public class MachineContextClosureModule extends ProcessorModule {
 			else {
 				
 				createProblemMarker(
-						refinesMachine, 
+						refinesMachines[0], 
 						EventBAttributes.TARGET_ATTRIBUTE, 
 						GraphProblem.ContextOnlyInAbstractMachineWarning,
 						StaticChecker.getStrippedComponentName(name));

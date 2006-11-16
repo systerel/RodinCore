@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FreeIdentifier;
 import org.rodinp.core.IRodinElement;
@@ -51,7 +52,7 @@ public interface IHypothesisManager extends IStatePOG, Iterable<FreeIdentifier> 
 	 * @return the name of the hypothesis set
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	String getHypothesisName(ISCPredicateElement element, IProgressMonitor monitor) throws RodinDBException;
+	IPOPredicateSet getHypothesis(IPOFile file, ISCPredicateElement element, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Creates the requested hypothesis sets in the proof olgigation file.
@@ -66,14 +67,14 @@ public interface IHypothesisManager extends IStatePOG, Iterable<FreeIdentifier> 
 	 * 
 	 * @return the name of the predicate set
 	 */
-	String getFullHypothesisName();
+	IPOPredicateSet getFullHypothesis(IPOFile file) throws RodinDBException;
 	
 	/**
 	 * Returns the name of the root predicate set contained in this hypothesis set.
 	 * 
 	 * @return the name of the predicate set
 	 */
-	String getRootHypothesisName();
+	IPOPredicateSet getRootHypothesis(IPOFile file) throws RodinDBException;
 	
 	/**
 	 * Returns the list of managed predicates in the correct order.

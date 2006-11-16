@@ -13,6 +13,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextFile;
 import org.eventb.core.ISCAxiom;
+import org.eventb.core.ISCContextFile;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IModuleManager;
@@ -75,12 +76,12 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 				repository,
 				monitor);
 		
-		saveAxioms(target, axioms, predicates, null);
+		saveAxioms((ISCContextFile) target, axioms, predicates, null);
 		
 	}
 	
 	private void saveAxioms(
-			IInternalParent parent, 
+			ISCContextFile target, 
 			IAxiom[] axioms, 
 			Predicate[] predicates,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -90,12 +91,8 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 		for (int i=0; i<axioms.length; i++) {
 			if (predicates[i] == null)
 				continue;
-			ISCAxiom scAxiom = 
-				(ISCAxiom) parent.createInternalElement(
-						ISCAxiom.ELEMENT_TYPE, 
-						AXIOM_NAME_PREFIX + index++, 
-						null, 
-						monitor);
+			ISCAxiom scAxiom = target.getSCAxiom(AXIOM_NAME_PREFIX + index++);
+			scAxiom.create(null, monitor);
 			scAxiom.setLabel(axioms[i].getLabel(monitor), monitor);
 			scAxiom.setPredicate(predicates[i], null);
 			scAxiom.setSource(axioms[i], monitor);

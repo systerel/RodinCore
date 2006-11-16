@@ -94,4 +94,9 @@ public class MachineTheoremModule extends TheoremModule {
 		return (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 	}
 
+	@Override
+	protected ISCTheorem getSCTheorem(IInternalParent target, String elementName) {
+		return ((ISCMachineFile) target).getSCTheorem(elementName);
+	}
+
 }

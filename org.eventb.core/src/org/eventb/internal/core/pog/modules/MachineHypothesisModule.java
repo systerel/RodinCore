@@ -84,20 +84,11 @@ public class MachineHypothesisModule extends Module {
 		
 		ISCMachineFile scMachineFile = (ISCMachineFile) element;
 		
-		IPOPredicateSet rootSet =
-			(IPOPredicateSet) target.createInternalElement(
-					IPOPredicateSet.ELEMENT_TYPE, 
-					MachineHypothesisManager.CTX_HYP_NAME, null, monitor);
+		createContextHypSet(scMachineFile, target, monitor);
 		
-		ISCInternalContext[] contexts = scMachineFile.getSCSeenContexts(monitor);
-		
-		copyContexts(rootSet, contexts, monitor);
-		
-		rootSet =
-			(IPOPredicateSet) target.createInternalElement(
-					IPOPredicateSet.ELEMENT_TYPE, 
-					MachineHypothesisManager.ABS_HYP_NAME, null, monitor);
-		rootSet.setParentPredicateSetName(MachineHypothesisManager.CTX_HYP_NAME, monitor);
+		IPOPredicateSet rootSet = target.getPredicateSet(MachineHypothesisManager.ABS_HYP_NAME);
+		rootSet.create(null, monitor);
+		rootSet.setParentPredicateSet(target.getPredicateSet(MachineHypothesisManager.CTX_HYP_NAME), monitor);
 		
 		fetchVariables(scMachineFile.getSCVariables(monitor), rootSet, repository, monitor);
 		
@@ -122,10 +113,19 @@ public class MachineHypothesisModule extends Module {
 		predicates.toArray(predicateElements);
 		
 		hypothesisManager = 
-			new MachineHypothesisManager(scMachineFile, predicateElements);
+			new MachineHypothesisManager(scMachineFile, predicateElements, monitor);
 		
 		repository.setState(hypothesisManager);
 		
+	}
+
+	private void createContextHypSet(ISCMachineFile scMachineFile, IPOFile target, IProgressMonitor monitor) throws RodinDBException {
+		IPOPredicateSet ctxRootSet = target.getPredicateSet(MachineHypothesisManager.CTX_HYP_NAME);
+		ctxRootSet.create(null, monitor);
+		
+		ISCInternalContext[] contexts = scMachineFile.getSCSeenContexts(monitor);
+		
+		copyContexts(ctxRootSet, contexts, monitor);
 	}
 	
 	private void fetchVariables(
@@ -175,8 +175,8 @@ public class MachineHypothesisModule extends Module {
 	private void createIdentifier(IPOPredicateSet predSet, FreeIdentifier identifier, IProgressMonitor monitor) throws RodinDBException {
 		String idName = identifier.getName();
 		Type type = identifier.getType();
-		IPOIdentifier poIdentifier = (IPOIdentifier)
-			predSet.createInternalElement(IPOIdentifier.ELEMENT_TYPE, idName, null, monitor);
+		IPOIdentifier poIdentifier = predSet.getIdentifier(idName);
+		poIdentifier.create(null, monitor);
 		poIdentifier.setType(type, monitor);
 	}
 
@@ -212,9 +212,8 @@ public class MachineHypothesisModule extends Module {
 			IPOPredicateSet rootSet, 
 			ISCPredicateElement element, 
 			IProgressMonitor monitor) throws RodinDBException {
-		IPOPredicate predicate =
-			(IPOPredicate) rootSet.createInternalElement(
-					IPOPredicate.ELEMENT_TYPE, PRD_NAME_PREFIX + index++, null, monitor);
+		IPOPredicate predicate = rootSet.getPredicate(PRD_NAME_PREFIX + index++);
+		predicate.create(null, monitor);
 		predicate.setPredicateString(element.getPredicateString(null), monitor);
 		predicate.setSource(((ITraceableElement) element).getSource(monitor), monitor);
 	}

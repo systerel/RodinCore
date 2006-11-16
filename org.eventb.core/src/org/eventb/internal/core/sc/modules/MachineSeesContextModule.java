@@ -11,6 +11,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCInternalContext;
+import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.IContextPointerArray;
@@ -74,6 +76,11 @@ public class MachineSeesContextModule extends ContextPointerModule {
 	@Override
 	protected IRodinProblem getTargetContextNotFoundProblem() {
 		return GraphProblem.SeenContextNotFoundError;
+	}
+
+	@Override
+	protected ISCInternalContext getSCInternalContext(IInternalParent target, String elementName) {
+		return ((ISCMachineFile) target).getSCSeenContext(elementName);
 	}
 		
 }

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
+import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.IWitness;
 import org.eventb.core.ast.Assignment;
@@ -96,21 +97,21 @@ public class MachineEventWitnessModule extends PredicateModule {
 		
 		getWitnessNames(target, witnessNames, repository, monitor);
 		
-		checkAndSaveWitnesses(target, witnesses, predicates, witnessNames, event, monitor);
+		checkAndSaveWitnesses((ISCEvent) target, witnesses, predicates, witnessNames, event, monitor);
 		
 		repository.setState(savedLabelSymbolTable);
 
 	}
 	
 	private void checkAndSaveWitnesses(
-			IInternalParent parent, 
+			ISCEvent target, 
 			IWitness[] witnesses, 
 			Predicate[] predicates,
 			HashSet<String> witnessNames,
 			IEvent event,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		if (parent == null)
+		if (target == null)
 			return;
 		
 		int index = 0;
@@ -122,7 +123,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 			if (witnessNames.contains(label)) {
 				witnessNames.remove(label);
 				createSCWitness(
-						parent, 
+						target, 
 						WITNESS_NAME_PREFIX + index++,
 						witnesses[i].getLabel(monitor), 
 						witnesses[i],
@@ -142,7 +143,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 					GraphProblem.WitnessLabelMissingWarning,
 					name);
 			createSCWitness(
-					parent, 
+					target, 
 					WITNESS_NAME_PREFIX + index++, 
 					name, 
 					event, 
@@ -152,30 +153,26 @@ public class MachineEventWitnessModule extends PredicateModule {
 	}
 	
 	void createSCWitness(
-			IInternalParent parent, 
+			ISCEvent target, 
 			String name,
 			String label,
 			IRodinElement source,
 			Predicate predicate, 
 			IProgressMonitor monitor) throws RodinDBException {
-		ISCWitness scWitness = 
-			(ISCWitness) parent.createInternalElement(
-					ISCWitness.ELEMENT_TYPE, 
-					name, 
-					null, 
-					monitor);
+		ISCWitness scWitness = target.getSCWitness(name);
+		scWitness.create(null, monitor);
 		scWitness.setLabel(label, monitor);
 		scWitness.setPredicate(predicate, null);
 		scWitness.setSource(source, monitor);
 	}
 
 	private void getWitnessNames(
-			IInternalParent parent, 
+			IInternalParent target, 
 			HashSet<String> witnessNames,
 			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
-		if (parent == null)
+		if (target == null)
 			return;
 		
 		IEventRefinesInfo eventRefinesInfo = (IEventRefinesInfo)
@@ -187,14 +184,13 @@ public class MachineEventWitnessModule extends PredicateModule {
 		IAbstractEventInfo abstractEventInfo = 
 			eventRefinesInfo.getAbstractEventInfos().get(0);
 		
-		getLocalWitnessNames(parent, abstractEventInfo, witnessNames, monitor);
+		getLocalWitnessNames(abstractEventInfo, witnessNames, monitor);
 		
-		getGlobalWitnessNames(parent, abstractEventInfo, witnessNames, monitor);
+		getGlobalWitnessNames(abstractEventInfo, witnessNames, monitor);
 		
 	}
 
 	private void getGlobalWitnessNames(
-			IInternalParent parent, 
 			IAbstractEventInfo abstractEventInfo, 
 			HashSet<String> witnessNames,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -226,7 +222,6 @@ public class MachineEventWitnessModule extends PredicateModule {
 	}
 
 	private void getLocalWitnessNames(
-			IInternalParent parent, 
 			IAbstractEventInfo abstractEventInfo, 
 			HashSet<String> witnessNames,
 			IProgressMonitor monitor) throws RodinDBException {

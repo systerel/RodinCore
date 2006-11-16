@@ -71,17 +71,17 @@ public interface IPOFile extends IRodinFile {
 	public IPSFile getPSFile();
 
 	/**
-	 * Returns a handle to the predicate set with the given name.
+	 * Returns a handle to a child predicate set with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
 	 * 
-	 * @param name
-	 *            the element name of the predicate set
-	 * @return a handle to the predicate set or <code>null</code> there is no
-	 *         predicate set witrh given name
-	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated use <code>getPredicateSet(String,IProgressMonitor)</code> instead
+	 * @param elementName
+	 *            element name of the predicate set
+	 * @return a handle to a child predicate set with the given element name
 	 */
-	@Deprecated
-	public IPOPredicateSet getPredicateSet(String name) throws RodinDBException;
+	public IPOPredicateSet getPredicateSet(String elementName) throws RodinDBException;
 
 	/**
 	 * Returns the handles to the predicate sets of this component.
@@ -107,6 +107,7 @@ public interface IPOFile extends IRodinFile {
 	 *         predicate set witrh given name
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
+	@Deprecated
 	public IPOPredicateSet getPredicateSet(String name, IProgressMonitor monitor) throws RodinDBException;
 	
 	@Deprecated
@@ -132,6 +133,19 @@ public interface IPOFile extends IRodinFile {
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	public IPOSequent[] getSequents(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child sequent with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the sequent
+	 * @return a handle to a child sequent with the given element name
+	 */
+	public IPOSequent getSequent(String elementName) throws RodinDBException;
 	
 	/**
 	 * Returns handle to the proof obligation with the given element name,
@@ -144,5 +158,6 @@ public interface IPOFile extends IRodinFile {
 	 * @return the array of handles to the proof obligations
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
+	@Deprecated
 	public IPOSequent getSequent(String name, IProgressMonitor monitor) throws RodinDBException;
 }

@@ -106,6 +106,19 @@ public interface ISCMachineFile extends IRodinFile {
 	ISCMachineFile[] getAbstractSCMachines(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child SC refines clause with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC refines clause
+	 * @return a handle to a child SC refines clause with the given element name
+	 */
+	ISCRefinesMachine getSCRefinesClause(String elementName);
+
+	/**
 	 * Returns an array of all SC refines clauses of this SC machine.
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
@@ -115,7 +128,20 @@ public interface ISCMachineFile extends IRodinFile {
 	 *             if there was a problem accessing the database
 	 */
 	ISCRefinesMachine[] getSCRefinesClauses(IProgressMonitor monitor) throws RodinDBException;
-	
+
+	/**
+	 * Returns a handle to a child SC internal context with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC internal context
+	 * @return a handle to a child SC internal context with the given element name
+	 */
+	ISCInternalContext getSCSeenContext(String elementName);
+
 	/**
 	 * Returns the internal SC contexts that are (transitively) seen by this SC
 	 * machine.
@@ -143,6 +169,19 @@ public interface ISCMachineFile extends IRodinFile {
 	throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child SC variable with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC variable
+	 * @return a handle to a child SC variable with the given element name
+	 */
+	ISCVariable getSCVariable(String elementName);
+
+	/**
 	 * Returns an array containing all SC variables of this SC machine.
 	 * 
 	 * @return an array of all SC variables
@@ -164,6 +203,19 @@ public interface ISCMachineFile extends IRodinFile {
 	 *             if there was a problem accessing the database
 	 */
 	ISCVariable[] getSCVariables(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child SC invariant with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC invariant
+	 * @return a handle to a child SC invariant with the given element name
+	 */
+	ISCInvariant getSCInvariant(String elementName);
 
 	/**
 	 * Returns an array containing all SC invariants of this SC machine.
@@ -189,6 +241,19 @@ public interface ISCMachineFile extends IRodinFile {
 	ISCInvariant[] getSCInvariants(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child SC theorem with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC theorem
+	 * @return a handle to a child SC theorem with the given element name
+	 */
+	ISCTheorem getSCTheorem(String elementName);
+
+	/**
 	 * Returns an array containing all SC theorems of this SC machine.
 	 * 
 	 * @return an array of all SC theorems
@@ -210,7 +275,20 @@ public interface ISCMachineFile extends IRodinFile {
 	 *             if there was a problem accessing the database
 	 */
 	ISCTheorem[] getSCTheorems(IProgressMonitor monitor) throws RodinDBException;
-	
+
+	/**
+	 * Returns a handle to a child SC event with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC event
+	 * @return a handle to a child SC event with the given element name
+	 */
+	ISCEvent getSCEvent(String elementName);
+
 	/**
 	 * Returns the array containing all SC events of this SC machine.
 	 * 
@@ -233,6 +311,19 @@ public interface ISCMachineFile extends IRodinFile {
 	 *             if there was a problem accessing the database
 	 */
 	ISCEvent[] getSCEvents(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child SC variant with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC variant
+	 * @return a handle to a child SC variant with the given element name
+	 */
+	ISCVariant getSCVariant(String elementName);
 	
 	/**
 	 * Returns the handle of the SC variant of this SC machine.

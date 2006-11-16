@@ -66,11 +66,11 @@ public final class EventBAttributes {
 	public static IAttributeType.String POROLE_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".poRole");
 	
-//	public static IAttributeType.String POSTAMP_ATTRIBUTE =
-//		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".poStamp");
+	public static IAttributeType.String POSTAMP_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".poStamp");
 	
-	public static IAttributeType.String PARENT_SET_ATTRIBUTE =
-		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".parentSet");
+	public static IAttributeType.Handle PARENT_SET_ATTRIBUTE =
+		RodinCore.getHandleAttrType(EventBPlugin.PLUGIN_ID + ".parentSet");
 
 	// Attributes related to the PR and PS files
 	public static IAttributeType.Integer CONFIDENCE_ATTRIBUTE =

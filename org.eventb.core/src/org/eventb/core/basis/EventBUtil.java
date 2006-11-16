@@ -17,6 +17,7 @@ import org.rodinp.core.basis.RodinElement;
  * @author Stefan Hallerstede
  *
  */
+@Deprecated
 public final class EventBUtil {
 
 	private EventBUtil() {

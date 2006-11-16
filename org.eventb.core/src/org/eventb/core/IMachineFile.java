@@ -81,6 +81,19 @@ public interface IMachineFile extends IRodinFile {
 	IPSFile getPRFile();
 
 	/**
+	 * Returns a handle to a child refines clause with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the refines clause
+	 * @return a handle to a child refines clause with the given element name
+	 */
+	IRefinesMachine getRefinesClause(String elementName);
+
+	/**
 	 * Returns the refines clause of this machine or <code>null</code> if this
 	 * machine does not have an abstraction.
 	 * 
@@ -118,6 +131,19 @@ public interface IMachineFile extends IRodinFile {
 	IRefinesMachine[] getRefinesClauses(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child sees clause with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the sees clause
+	 * @return a handle to a child sees clause with the given element name
+	 */
+	ISeesContext getSeesClause(String elementName);
+
+	/**
 	 * Returns an array of all sees clauses of this machine.
 	 * 
 	 * @return an array of sees clauses
@@ -138,6 +164,19 @@ public interface IMachineFile extends IRodinFile {
 	 *             if there was a problem accessing the database
 	 */
 	ISeesContext[] getSeesClauses(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child variable with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the variable
+	 * @return a handle to a child variable with the given element name
+	 */
+	IVariable getVariable(String elementName);
 
 	/**
 	 * Returns an array containing all (global) variables of this machine.
@@ -162,6 +201,19 @@ public interface IMachineFile extends IRodinFile {
 	IVariable[] getVariables(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child invariant with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the invariant
+	 * @return a handle to a child invariant with the given element name
+	 */
+	IInvariant getInvariant(String elementName);
+
+	/**
 	 * Returns an array containing all invariants of this machine.
 	 * 
 	 * @return an array of invariants
@@ -182,6 +234,19 @@ public interface IMachineFile extends IRodinFile {
 	 *             if there was a problem accessing the database
 	 */
 	IInvariant[] getInvariants(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child theorem with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the theorem
+	 * @return a handle to a child theorem with the given element name
+	 */
+	ITheorem getTheorem(String elementName);
 
 	/**
 	 * Returns an array containing all theorems of this machine.
@@ -207,6 +272,19 @@ public interface IMachineFile extends IRodinFile {
 	ITheorem[] getTheorems(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child event with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the event
+	 * @return a handle to a child event with the given element name
+	 */
+	IEvent getEvent(String elementName);
+
+	/**
 	 * Returns an array containing all events of this machine.
 	 * 
 	 * @return an array of events
@@ -228,7 +306,20 @@ public interface IMachineFile extends IRodinFile {
 	 *             if there was a problem accessing the database
 	 */
 	IEvent[] getEvents(IProgressMonitor monitor) throws RodinDBException;
-	
+
+	/**
+	 * Returns a handle to a child variant with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the variant
+	 * @return a handle to a child variant with the given element name
+	 */
+	IVariant getVariant(String elementName);
+
 	/**
 	 * Returns a handle to the variant of this machine.
 	 * 

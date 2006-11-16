@@ -8,6 +8,9 @@
 package org.eventb.core.pog.state;
 
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IPOFile;
+import org.eventb.core.IPOPredicateSet;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -17,7 +20,7 @@ public interface IMachineHypothesisManager extends IHypothesisManager {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".machineHypothesisManager";
 
-	String getContextHypothesisName();
+	IPOPredicateSet getContextHypothesis(IPOFile target) throws RodinDBException;
 	
 	boolean isInitialMachine();
 }

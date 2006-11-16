@@ -43,6 +43,19 @@ public interface IPOSequent extends IInternalElement {
 	
 	@Deprecated
 	IPOIdentifier[] getIdentifiers() throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child hypothesis (predicate set) with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the hypthesis
+	 * @return a handle to a child hypthesis with the given element name
+	 */
+	IPOPredicateSet getHypothesis(String elementName);
 	
 	/**
 	 * Returns the predicate set containing the hypothesis of this proof obligation
@@ -77,7 +90,20 @@ public interface IPOSequent extends IInternalElement {
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	IPOPredicateSet[] getHypotheses(IProgressMonitor monitor) throws RodinDBException;
-	
+
+	/**
+	 * Returns a handle to a child goal (predicate) with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the goal
+	 * @return a handle to a child goal with the given element name
+	 */
+	IPOPredicate getGoal(String elementName);
+
 	/**
 	 * Returns the goal predicate of this proof obligation
 	 * 
@@ -132,7 +158,20 @@ public interface IPOSequent extends IInternalElement {
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	void setDescription(String description, IProgressMonitor monitor) throws RodinDBException;
-	
+
+	/**
+	 * Returns a handle to a child source with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the source
+	 * @return a handle to a child source with the given element name
+	 */
+	IPOSource getSource(String elementName);
+
 	/**
 	 * Returns the (most important) source elements of a proof obligation.
 	 * <p>
@@ -165,6 +204,19 @@ public interface IPOSequent extends IInternalElement {
 	 *             if there was a problem accessing the database
 	 */
 	IPOSource[] getSources(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child hint with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the hint
+	 * @return a handle to a child hint with the given element name
+	 */
+	IPOHint getHint(String elementName);
 
 	/**
 	 * Returns the hints for a proof obligation.

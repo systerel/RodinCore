@@ -32,6 +32,19 @@ public interface IPOPredicateSet extends IInternalElement {
 	
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poPredicateSet"); //$NON-NLS-1$
+
+	/**
+	 * Returns a handle to a child identifier with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the identifier
+	 * @return a handle to a child identifier with the given element name
+	 */
+	IPOIdentifier getIdentifier(String elementName);
 	
 	/**
 	 * Returns a list of typed identifiers <code>IPOIdentifier</code> that constitutes a type
@@ -45,7 +58,20 @@ public interface IPOPredicateSet extends IInternalElement {
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	IPOIdentifier[] getIdentifiers(IProgressMonitor monitor) throws RodinDBException;
-	
+
+	/**
+	 * Returns a handle to a child predicate with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the predicate
+	 * @return a handle to a child predicate with the given element name
+	 */
+	IPOPredicate getPredicate(String elementName);
+
 	/**
 	 * @return the predicates contained in this predicate set
 	 * @throws RodinDBException if there was a problem accessing the database
@@ -77,6 +103,17 @@ public interface IPOPredicateSet extends IInternalElement {
 	IPOPredicateSet getParentPredicateSet() throws RodinDBException;
 	
 	/**
+	 * Sets the parent predicate set of this predicate set.
+	 * @param predicateSet the predicate set; 
+	 * 		if it is <code>null</code> this predicate set is turned into a root predicate set
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	void setParentPredicateSet(IPOPredicateSet predicateSet, IProgressMonitor monitor) throws RodinDBException;
+	
+	/**
 	 * Returns the parent predicate set of this predicate set, 
 	 * or <code>null</code> if this is the root set.
 	 * 
@@ -97,16 +134,20 @@ public interface IPOPredicateSet extends IInternalElement {
 	 *            reporting is not desired
 	 * @return the name of the parent predicate set, or <code>null</code>
 	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated use <code>getParentPredicateSet(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	String getParentPredicateSetName(IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
-	 * Sets the parent predicate set of this predicate set. The name must be anon-empty string.
+	 * Sets the parent predicate set of this predicate set. The name must be a non-empty string.
 	 * @param name the name of the predicate set
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
 	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated use <code>setParentPredicateSet(IPOPredicateSet,IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	void setParentPredicateSetName(String name, IProgressMonitor monitor) throws RodinDBException;
 }

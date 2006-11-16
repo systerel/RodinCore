@@ -73,6 +73,19 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 * if the event has already children and it is attempted to specify it as inherited.
 	 */
 	void setInherited(boolean inherited, IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child refines clause with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the refines clause
+	 * @return a handle to a child refines clause with the given element name
+	 */
+	IRefinesEvent getRefinesClause(String elementName);
 	
 	/**
 	 * Returns an array of all refines clauses of this event.
@@ -97,6 +110,19 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	IRefinesEvent[] getRefinesClauses(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child variable with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the variable
+	 * @return a handle to a child variable with the given element name
+	 */
+	IVariable getVariable(String elementName);
+
+	/**
 	 * Returns an array containing all (local) variables of this event.
 	 * 
 	 * @return an array of all variables
@@ -117,6 +143,19 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 *             if there was a problem accessing the database
 	 */
 	IVariable[] getVariables(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child witness with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the witness
+	 * @return a handle to a child witness with the given element name
+	 */
+	IWitness getWitness(String elementName);
 
 	/**
 	 * Returns an array of all witnesses of this event.
@@ -141,6 +180,19 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	IWitness[] getWitnesses(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child guard with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the guard
+	 * @return a handle to a child guard with the given element name
+	 */
+	IGuard getGuard(String elementName);
+
+	/**
 	 * Returns an array containing all guards of this event.
 	 * 
 	 * @return an array of all guards
@@ -162,6 +214,19 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 *             if there was a problem accessing the database
 	 */
 	IGuard[] getGuards(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child action with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the action
+	 * @return a handle to a child action with the given element name
+	 */
+	IAction getAction(String elementName);
 
 	/**
 	 * Returns an array containing all actions of this event.

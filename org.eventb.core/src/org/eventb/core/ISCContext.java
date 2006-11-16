@@ -34,6 +34,19 @@ import org.rodinp.core.RodinDBException;
 public interface ISCContext extends IRodinElement {
 
 	/**
+	 * Returns a handle to a child SC carrier set with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC carrier set
+	 * @return a handle to a child SC carrier set with the given element name
+	 */
+	ISCCarrierSet getSCCarrierSet(String elementName);
+
+	/**
 	 * Returns an array containing all SC carrier sets of this SC context.
 	 * 
 	 * @return an array of all SC carrier sets
@@ -54,6 +67,19 @@ public interface ISCContext extends IRodinElement {
 	 *             if there was a problem accessing the database
 	 */
 	ISCCarrierSet[] getSCCarrierSets(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child SC constant with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC constant
+	 * @return a handle to a child SC constant with the given element name
+	 */
+	ISCConstant getSCConstant(String elementName);
 
 	/**
 	 * Returns an array containing all SC constants of this SC context.
@@ -79,6 +105,19 @@ public interface ISCContext extends IRodinElement {
 	ISCConstant[] getSCConstants(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child SC axiom with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC axiom
+	 * @return a handle to a child SC axiom with the given element name
+	 */
+	ISCAxiom getSCAxiom(String elementName);
+
+	/**
 	 * Returns an array containing all SC axioms of this SC context.
 	 * 
 	 * @return an array of all SC axioms
@@ -100,6 +139,19 @@ public interface ISCContext extends IRodinElement {
 	 *             if there was a problem accessing the database
 	 */
 	ISCAxiom[] getSCAxioms(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child SC theorem with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC theorem
+	 * @return a handle to a child SC theorem with the given element name
+	 */
+	ISCTheorem getSCTheorem(String elementName);
 
 	/**
 	 * Returns an array containing all SC theorems of this SC context.

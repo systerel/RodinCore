@@ -120,4 +120,25 @@ public class Event extends EventBElement implements IEvent {
 		setAttributeValue(EventBAttributes.INHERITED_ATTRIBUTE, inherited, monitor);
 	}
 
+	public IAction getAction(String elementName) {
+		return (IAction) getInternalElement(IAction.ELEMENT_TYPE, elementName);
+	}
+
+	public IGuard getGuard(String elementName) {
+		return (IGuard) getInternalElement(IGuard.ELEMENT_TYPE, elementName);
+	}
+
+	public IRefinesEvent getRefinesClause(String elementName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IVariable getVariable(String elementName) {
+		return (IVariable) getInternalElement(IVariable.ELEMENT_TYPE, elementName);
+	}
+
+	public IWitness getWitness(String elementName) {
+		return (IWitness) getInternalElement(IWitness.ELEMENT_TYPE, elementName);
+	}
+
 }

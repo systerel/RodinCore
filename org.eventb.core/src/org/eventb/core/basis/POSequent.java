@@ -74,7 +74,7 @@ public class POSequent extends EventBElement implements IPOSequent {
 	
 	@Deprecated
 	public IPOPredicateSet getHypothesis() throws RodinDBException {
-		return getHypothesis(null);
+		return getHypothesis((IProgressMonitor) null);
 	}
 	
 	@Deprecated
@@ -87,7 +87,7 @@ public class POSequent extends EventBElement implements IPOSequent {
 	
 	@Deprecated
 	public IPOPredicate getGoal() throws RodinDBException {
-		return getGoal(null);
+		return getGoal((IProgressMonitor) null);
 	}
 	
 	/* (non-Javadoc)
@@ -138,6 +138,22 @@ public class POSequent extends EventBElement implements IPOSequent {
 	public IPOPredicateSet[] getHypotheses(IProgressMonitor monitor) throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IPOPredicateSet.ELEMENT_TYPE);
 		return (IPOPredicateSet[]) elements; 
+	}
+
+	public IPOPredicate getGoal(String elementName) {
+		return (IPOPredicate) getInternalElement(IPOPredicate.ELEMENT_TYPE, elementName);
+	}
+
+	public IPOHint getHint(String elementName) {
+		return (IPOHint) getInternalElement(IPOHint.ELEMENT_TYPE, elementName);
+	}
+
+	public IPOPredicateSet getHypothesis(String elementName) {
+		return (IPOPredicateSet) getInternalElement(IPOPredicateSet.ELEMENT_TYPE, elementName);
+	}
+
+	public IPOSource getSource(String elementName) {
+		return (IPOSource) getInternalElement(IPOSource.ELEMENT_TYPE, elementName);
 	}
 
 }

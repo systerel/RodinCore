@@ -20,6 +20,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
+import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -109,7 +110,7 @@ public class MachineEventModule extends LabeledElementModule {
 		
 		ISCEvent[] scEvents = new ISCEvent[events.length];
 		
-		preprocessEvents(machineFile, target, scEvents, symbolInfos, monitor);
+		preprocessEvents(machineFile, (ISCMachineFile) target, scEvents, symbolInfos, monitor);
 				
 		processEvents(scEvents, repository, monitor);
 				
@@ -117,7 +118,7 @@ public class MachineEventModule extends LabeledElementModule {
 
 	private void preprocessEvents(
 			IMachineFile machineFile,
-			IInternalParent target, 
+			ISCMachineFile target, 
 			ISCEvent[] scEvents, 
 			IEventSymbolInfo[] symbolInfos, 
 			IProgressMonitor monitor) throws CoreException {
@@ -151,14 +152,6 @@ public class MachineEventModule extends LabeledElementModule {
 				
 				if (eventSymbolInfo != null)
 					if (mergeSymbolInfos.size() > 0 || splitSymbolInfos.size() > 0) {
-//						issueErrorMarkers(
-//								mergeSymbolInfos, 
-//								abstractEventInfo, 
-//								Messages.scuser_EventInheritedMergeSplitConflict);
-//						issueErrorMarkers(
-//								splitSymbolInfos, 
-//								abstractEventInfo, 
-//								Messages.scuser_EventInheritedMergeSplitConflict);
 						createProblemMarker(
 								eventSymbolInfo.getSourceElement(), 
 								GraphProblem.EventInheritedMergeSplitError, 
@@ -448,7 +441,7 @@ public class MachineEventModule extends LabeledElementModule {
 		boolean inherited = event.isInherited(monitor);
 		
 		if (isInit && !inherited) {
-			if (machineFile.getRefinesClause(null) != null)
+			if (machineFile.getRefinesClauses(monitor).length != 0)
 				makeImplicitRefinement(event, symbolInfo);
 		}
 		
@@ -485,14 +478,13 @@ public class MachineEventModule extends LabeledElementModule {
 	}
 	
 	private ISCEvent createSCEvent(
-			IInternalParent target, 
+			ISCMachineFile target, 
 			int index,
 			IEventSymbolInfo symbolInfo,
 			IEvent event,
 			IProgressMonitor monitor) throws RodinDBException {
-		ISCEvent scEvent =
-			(ISCEvent) target.createInternalElement(
-					ISCEvent.ELEMENT_TYPE, EVENT_NAME_PREFIX + index, null, monitor);
+		ISCEvent scEvent = target.getSCEvent(EVENT_NAME_PREFIX + index);
+		scEvent.create(null, monitor);
 		scEvent.setLabel(symbolInfo.getSymbol(), monitor);
 		scEvent.setSource(event, monitor);
 		scEvent.setForbidden(false, monitor);

@@ -401,7 +401,7 @@
             name="%eventBTypeAttribute"/>
       <attributeType
             id="parentSet"
-            kind="string"
+            kind="handle"
             name="%eventBParentSetAttribute"/>
       <attributeType
             id="predicate"

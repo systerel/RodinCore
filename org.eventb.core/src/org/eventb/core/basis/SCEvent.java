@@ -144,4 +144,24 @@ public class SCEvent extends EventBElement implements ISCEvent {
 		return getSCActions(null); 
 	}
 
+	public ISCAction getSCAction(String elementName) {
+		return (ISCAction) getInternalElement(ISCAction.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCGuard getSCGuard(String elementName) {
+		return (ISCGuard) getInternalElement(ISCGuard.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCRefinesEvent getSCRefinesClause(String elementName) {
+		return (ISCRefinesEvent) getInternalElement(ISCRefinesEvent.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCVariable getSCVariable(String elementName) {
+		return (ISCVariable) getInternalElement(ISCVariable.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCWitness getSCWitness(String elementName) {
+		return (ISCWitness) getInternalElement(ISCWitness.ELEMENT_TYPE, elementName);
+	}
+
 }

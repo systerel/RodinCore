@@ -50,10 +50,10 @@ public final class POLoader {
 		for (IPOSequent poSeq:poSequents){
 			String name = poSeq.getElementName();
 			ITypeEnvironment typeEnv = ASTLib.makeTypeEnvironment();
-			getTypeEnvironment(poFile, poSeq.getHypothesis(null), typeEnv);
-			Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis(null), typeEnv);
+			getTypeEnvironment(poFile, poSeq.getHypothesis(), typeEnv);
+			Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis(), typeEnv);
 			Predicate goal = 
-				poSeq.getGoal(null).getPredicate(FormulaFactory.getDefault(), typeEnv, null);
+				poSeq.getGoal().getPredicate(FormulaFactory.getDefault(), typeEnv, null);
 			IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
 			result.put(name,seq);
 		}
@@ -84,9 +84,9 @@ public final class POLoader {
 		if (! poSeq.exists()) return null;
 		IPOFile poFile = (IPOFile) poSeq.getOpenable();
 		ITypeEnvironment typeEnv = ASTLib.makeTypeEnvironment();
-		getTypeEnvironment(poFile, poSeq.getHypothesis(null), typeEnv);
-		Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis(null),typeEnv);
-		Predicate goal = poSeq.getGoal(null).getPredicate(FormulaFactory.getDefault(), typeEnv, null);
+		getTypeEnvironment(poFile, poSeq.getHypothesis(), typeEnv);
+		Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis(),typeEnv);
+		Predicate goal = poSeq.getGoal().getPredicate(FormulaFactory.getDefault(), typeEnv, null);
 		IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
 		return seq;
 	}

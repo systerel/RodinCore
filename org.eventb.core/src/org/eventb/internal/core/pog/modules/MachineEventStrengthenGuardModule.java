@@ -78,7 +78,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 					target, 
 					concreteEventLabel + "/" + guardLabel + "/REF", 
 					"Action simulation",
-					fullHypothesisName,
+					fullHypothesis,
 					hyp,
 					new POGPredicate(guards.get(i), predicate),
 					sources(

@@ -45,6 +45,19 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scEvent"); //$NON-NLS-1$
 
 	/**
+	 * Returns a handle to a child SC refines clause with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC refines clause
+	 * @return a handle to a child SC refines clause with the given element name
+	 */
+	ISCRefinesEvent getSCRefinesClause(String elementName);
+
+	/**
 	 * Returns an array of all SC refines clauses of this SC event.
 	 * 
 	 * @return an array of all SC refines clauses
@@ -99,6 +112,19 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	ISCEvent[] getAbstractSCEvents(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child SC variable with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC variable
+	 * @return a handle to a child SC variable with the given element name
+	 */
+	ISCVariable getSCVariable(String elementName);
+
+	/**
 	 * Returns an array containing all SC (local) variables of this SC event.
 	 * 
 	 * @return an array of all SC variables
@@ -120,6 +146,19 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 *             if there was a problem accessing the database
 	 */
 	ISCVariable[] getSCVariables(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child SC witness with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC witness
+	 * @return a handle to a child SC witness with the given element name
+	 */
+	ISCWitness getSCWitness(String elementName);
 
 	/**
 	 * Returns an array of all SC witnesses of this SC event.
@@ -145,6 +184,19 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	ISCWitness[] getSCWitnesses(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child SC guard with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC guard
+	 * @return a handle to a child SC guard with the given element name
+	 */
+	ISCGuard getSCGuard(String elementName);
+
+	/**
 	 * Returns an array containing all SC guards of this SC event.
 	 * 
 	 * @return an array of all SC guards
@@ -166,6 +218,19 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 *             if there was a problem accessing the database
 	 */
 	ISCGuard[] getSCGuards(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child SC action with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC action
+	 * @return a handle to a child SC action with the given element name
+	 */
+	ISCAction getSCAction(String elementName);
 
 	/**
 	 * Returns an array containing all SC actions of this SC event.

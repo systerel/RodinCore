@@ -48,6 +48,8 @@ public abstract class TheoremModule extends PredicateModule {
 		saveTheorems(target, offset, theorems, predicates, null);
 	}
 	
+	protected abstract ISCTheorem getSCTheorem(IInternalParent target, String elementName);
+	
 	private void saveTheorems(
 			IInternalParent parent, 
 			int offset,
@@ -60,12 +62,8 @@ public abstract class TheoremModule extends PredicateModule {
 		for (int i=0; i<theorems.length; i++) {
 			if (predicates[i] == null)
 				continue;
-			ISCTheorem scTheorem = 
-				(ISCTheorem) parent.createInternalElement(
-						ISCTheorem.ELEMENT_TYPE, 
-						THEOREM_NAME_PREFIX + index++, 
-						null, 
-						monitor);
+			ISCTheorem scTheorem = getSCTheorem(parent, THEOREM_NAME_PREFIX + index++);
+			scTheorem.create(null, monitor);
 			scTheorem.setLabel(theorems[i].getLabel(monitor), monitor);
 			scTheorem.setPredicate(predicates[i], null);
 			scTheorem.setSource(theorems[i], monitor);

@@ -10,6 +10,7 @@ package org.eventb.internal.core.pog.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.pog.state.IConcreteEventActionTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
@@ -29,7 +30,7 @@ public abstract class MachineEventActionModule extends UtilityModule {
 	protected ISCEvent concreteEvent;
 	protected String concreteEventLabel;
 	protected boolean isInitialisation;
-	protected String fullHypothesisName;
+	protected IPOPredicateSet fullHypothesis;
 	
 	protected IConcreteEventActionTable concreteEventActionTable;
 	
@@ -51,7 +52,7 @@ public abstract class MachineEventActionModule extends UtilityModule {
 		concreteEvent = (ISCEvent) element;
 		concreteEventLabel = concreteEvent.getLabel(monitor);
 		isInitialisation = concreteEventLabel.equals("INITIALISATION");
-		fullHypothesisName = eventHypothesisManager.getFullHypothesisName();
+		fullHypothesis = eventHypothesisManager.getFullHypothesis(target);
 		
 		concreteEventActionTable =
 			(IConcreteEventActionTable) repository.getState(IConcreteEventActionTable.STATE_TYPE);
@@ -67,7 +68,11 @@ public abstract class MachineEventActionModule extends UtilityModule {
 			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventHypothesisManager = null;
+		machineHypothesisManager = null;
 		concreteEventActionTable = null;
+		concreteEvent = null;
+		concreteEventLabel = null;
+		fullHypothesis = null;
 		super.endModule(element, target, repository, monitor);
 	}
 

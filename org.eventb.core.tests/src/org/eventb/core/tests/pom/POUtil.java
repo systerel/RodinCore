@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
@@ -49,10 +50,10 @@ public class POUtil {
 			String name = poSeq.getName();
 			ITypeEnvironment typeEnv = globalTypeEnv.clone();
 			addIdents(poSeq.getIdentifiers(),typeEnv);
-			Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis(null), typeEnv);
+			Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis((IProgressMonitor) null), typeEnv);
 //			Set<Hypothesis> hypotheses = readHypotheses(poSeq.getHypothesis(),typeEnv);
 //			Set<Hypothesis> localHypotheses = readLocalHypotheses(poSeq.getHypothesis(),typeEnv);
-			Predicate goal = readPredicate(poSeq.getGoal(null),typeEnv);
+			Predicate goal = readPredicate(poSeq.getGoal((IProgressMonitor) null),typeEnv);
 			IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
 //			seq = seq.selectHypotheses(localHypotheses);
 			// System.out.println(name+" : "+seq);

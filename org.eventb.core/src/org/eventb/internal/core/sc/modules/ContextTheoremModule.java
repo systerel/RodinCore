@@ -11,6 +11,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
+import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IModuleManager;
@@ -76,6 +78,11 @@ public class ContextTheoremModule extends TheoremModule {
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			IStateRepository<IStateSC> repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IContextLabelSymbolTable.STATE_TYPE);
+	}
+
+	@Override
+	protected ISCTheorem getSCTheorem(IInternalParent target, String elementName) {
+		return ((ISCContextFile) target).getSCTheorem(elementName);
 	}
 
 }

@@ -59,7 +59,7 @@ public class MachineEventEstablishInvariantModule extends MachineEventInvariantM
 				target, 
 				concreteEventLabel + "/" + invariantLabel + "/INV", 
 				"Invariant " + (isInitialisation ? " establishment" : " preservation"),
-				fullHypothesisName,
+				fullHypothesis,
 				hyp,
 				new POGPredicate(invariant, predicate),
 				sources(

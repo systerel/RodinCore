@@ -90,4 +90,20 @@ public class SCInternalContext extends InternalElement implements
 		return getSCTheorems(null);
 	}
 
+	public ISCAxiom getSCAxiom(String elementName) {
+		return (ISCAxiom) getInternalElement(ISCAxiom.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCCarrierSet getSCCarrierSet(String elementName) {
+		return (ISCCarrierSet) getInternalElement(ISCCarrierSet.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCConstant getSCConstant(String elementName) {
+		return (ISCConstant) getInternalElement(ISCConstant.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCTheorem getSCTheorem(String elementName) {
+		return (ISCTheorem) getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
+	}
+
 }

@@ -22,7 +22,6 @@ import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.symbolTable.MachineLabelSymbolTable;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -73,8 +72,7 @@ public class MachineStaticChecker extends StaticChecker {
 			
 			}
 		
-			IRodinProject project = (IRodinProject) scMachineFile.getParent();
-			project.createRodinFile(scMachineFile.getElementName(), true, null);
+			scMachineFile.create(true, null);
 			
 			IStateRepository<IStateSC> repository = createRepository(machineFile, monitor);
 			
@@ -112,7 +110,7 @@ public class MachineStaticChecker extends StaticChecker {
 			IMachineFile source = (IMachineFile) RodinCore.valueOf(file);
 			ISCMachineFile target = source.getSCMachineFile();
 			ISeesContext[] seen = source.getSeesClauses(null);
-			IRefinesMachine abstractMachine = source.getRefinesClause(null);
+			IRefinesMachine[] abstractMachines = source.getRefinesClauses(null);
 
 			graph.openGraph();
 			graph.addNode(target.getResource(), MACHINE_SC_TOOL_ID);
@@ -130,10 +128,10 @@ public class MachineStaticChecker extends StaticChecker {
 				}
 			}
 		
-			if (abstractMachine != null) {
+			if (abstractMachines.length != 0) {
 				graph.putUserDependency(
 						source.getResource(), 
-						abstractMachine.getAbstractSCMachine(null).getResource(), 
+						abstractMachines[0].getAbstractSCMachine(null).getResource(), 
 						target.getResource(), 
 						MACHINE_SC_REFINES_ID, true);
 			}

@@ -12,6 +12,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
@@ -91,14 +92,15 @@ public class MachineEventHypothesisModule extends Module {
 	}
 
 	private void setEventHypothesisManager(
+			IPOFile target,
 			IMachineHypothesisManager machineHypothesisManager, 
 			ISCEvent event, ISCGuard[] guards, 
 			IStateRepository<IStatePOG> repository,
 			IProgressMonitor monitor) throws CoreException {
-		String fullHypothesisName = (event.getLabel(monitor).equals("INITIALISATION")) ?
-				machineHypothesisManager.getContextHypothesisName() :
-				machineHypothesisManager.getFullHypothesisName();
-		eventHypothesisManager = new EventHypothesisManager(event, guards, fullHypothesisName);
+		IPOPredicateSet fullHypothesis = (event.getLabel(monitor).equals("INITIALISATION")) ?
+				machineHypothesisManager.getContextHypothesis(target) :
+				machineHypothesisManager.getFullHypothesis(target);
+		eventHypothesisManager = new EventHypothesisManager(event, guards, fullHypothesis.getElementName());
 		
 		eventHypothesisManager.setAbstractEvents(event.getAbstractSCEvents(null));
 		
@@ -167,7 +169,7 @@ public class MachineEventHypothesisModule extends Module {
 		ISCGuard[] guards = concreteEvent.getSCGuards(null);
 		
 		setEventHypothesisManager(
-				machineHypothesisManager, concreteEvent, guards, repository, monitor);
+				target, machineHypothesisManager, concreteEvent, guards, repository, monitor);
 		
 		fetchVariables(concreteEvent.getSCVariables(null));
 		

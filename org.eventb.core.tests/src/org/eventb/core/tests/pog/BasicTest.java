@@ -44,27 +44,28 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 	protected void getIdentifiersFromPredSets(
 			Set<String> nameSet, 
 			IPOFile file, 
-			String hypName, 
+			IPOPredicateSet predicateSet, 
 			boolean forSequent) throws RodinDBException {
-		if (forSequent && hypName.equals(ALLHYP_NAME))
+
+		assertTrue("predicate set should exist", predicateSet.exists());
+		
+		if (forSequent && predicateSet.getElementName().equals(ALLHYP_NAME))
 			return;
-		IPOPredicateSet set = (IPOPredicateSet) file.getPredicateSet(hypName, null);
-		assertNotNull("predicate set should exist", set);
-		for (IPOIdentifier identifier : set.getIdentifiers(null)) {
+		for (IPOIdentifier identifier : predicateSet.getIdentifiers(null)) {
 			nameSet.add(identifier.getIdentifierString(null));
 		}
-		String parentName = set.getParentPredicateSetName(null);
-		if (parentName == null)
+		IPOPredicateSet parentPredicateSet = predicateSet.getParentPredicateSet(null);
+		if (parentPredicateSet == null)
 			return;
 		else
-			getIdentifiersFromPredSets(nameSet, file, parentName, forSequent);
+			getIdentifiersFromPredSets(nameSet, file, parentPredicateSet, forSequent);
 	}
 	
 	protected void containsIdentifiers(IPOFile file, String... strings) throws RodinDBException {
 		
 		Set<String> nameSet = new HashSet<String>(43);
 		
-		getIdentifiersFromPredSets(nameSet, file, ALLHYP_NAME, false);
+		getIdentifiersFromPredSets(nameSet, file, file.getPredicateSet(ALLHYP_NAME), false);
 		
 		assertEquals("wrong number of identifiers", strings.length, nameSet.size());
 		if (strings.length == 0)
@@ -77,13 +78,13 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 	
 	protected void sequentHasIdentifiers(IPOSequent sequent, String... strings) throws RodinDBException {
 		
-		String hypName = sequent.getHypothesis(null).getParentPredicateSetName(null);
+		IPOPredicateSet predicateSet = sequent.getHypotheses(null)[0].getParentPredicateSet(null);
 		
 		Set<String> nameSet = new HashSet<String>(43);
 		
 		IPOFile file = (IPOFile) sequent.getOpenable();
 		
-		getIdentifiersFromPredSets(nameSet, file, hypName, true);
+		getIdentifiersFromPredSets(nameSet, file, predicateSet, true);
 		
 		assertEquals("wrong number of identifiers", strings.length, nameSet.size());
 		
@@ -123,7 +124,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 			String predicate) throws Exception {
 		String string = getNormalizedPredicate(predicate, typeEnvironment);
 		assertEquals("goal should be " + string, string, 
-				sequent.getGoal(null).getPredicateString(null));
+				sequent.getGoals(null)[0].getPredicateString(null));
 	}
 	
 	private HashSet<String> getPredicatesFromSets(IPOPredicateSet predicateSet) throws Exception {
@@ -144,7 +145,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 			ITypeEnvironment typeEnvironment, 
 			String... strings) throws Exception {
 		
-		IPOPredicateSet predicateSet = sequent.getHypothesis(null);
+		IPOPredicateSet predicateSet = sequent.getHypotheses(null)[0];
 		
 		HashSet<String> predicates = getPredicatesFromSets(predicateSet);
 		
@@ -158,7 +159,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 
 	protected void sequentHasNoHypotheses(IPOSequent sequent) throws Exception {
 		
-		IPOPredicateSet predicateSet = sequent.getHypothesis(null);
+		IPOPredicateSet predicateSet = sequent.getHypotheses(null)[0];
 		
 		HashSet<String> predicates = getPredicatesFromSets(predicateSet);
 		

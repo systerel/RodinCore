@@ -22,7 +22,6 @@ import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.symbolTable.ContextLabelSymbolTable;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -72,8 +71,7 @@ public class ContextStaticChecker extends StaticChecker {
 			
 			}
 		
-			IRodinProject project = (IRodinProject) scContextFile.getParent();
-			project.createRodinFile(scContextFile.getElementName(), true, null);
+			scContextFile.create(true, monitor);
 
 			IStateRepository<IStateSC> repository = createRepository(contextFile, monitor);
 		

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
@@ -61,26 +60,27 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 		return getPredicates(null);
 	}
 	
+	@Deprecated
 	public String getParentPredicateSetName(IProgressMonitor monitor) 
 	throws RodinDBException {
-		if (hasAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor))
-			return getAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor);
-		else return null;
+//		if (hasAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor))
+//			return getAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor);
+//		else 
+			return null;
 	}
 	
 	public IPOPredicateSet getParentPredicateSet(IProgressMonitor monitor) 
 	throws RodinDBException {
-		String parentPredicateSetName = getParentPredicateSetName(monitor);
-		if (parentPredicateSetName == null)
+		if (hasAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor))
+			return (IPOPredicateSet) getAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor);
+		else 
 			return null;
-		IPOPredicateSet parentSet = 
-			((IPOFile) getOpenable()).getPredicateSet(parentPredicateSetName, monitor);
-		return parentSet;
 	}
 
+	@Deprecated
 	public void setParentPredicateSetName(String setName, IProgressMonitor monitor) 
 	throws RodinDBException {
-		setAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, setName, monitor);
+//		setAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, setName, monitor);
 	}
 
 	@Deprecated
@@ -92,6 +92,22 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 		IPOIdentifier[] identifiers = 
 			(IPOIdentifier[]) getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
 		return identifiers;
+	}
+
+	public IPOIdentifier getIdentifier(String elementName) {
+		return (IPOIdentifier) getInternalElement(IPOIdentifier.ELEMENT_TYPE, elementName);
+	}
+
+	public IPOPredicate getPredicate(String elementName) {
+		return (IPOPredicate) getInternalElement(IPOPredicate.ELEMENT_TYPE, elementName);
+	}
+
+	public void setParentPredicateSet(IPOPredicateSet predicateSet, IProgressMonitor monitor) 
+	throws RodinDBException {
+		if (predicateSet == null)
+			removeAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor);
+		else
+			setAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, predicateSet, monitor);
 	}
 
 }

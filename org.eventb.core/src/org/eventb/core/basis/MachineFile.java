@@ -159,7 +159,7 @@ public class MachineFile extends EventBFile implements IMachineFile {
 
 	@Deprecated
 	public IRefinesMachine getRefinesClause() throws RodinDBException {
-		return getRefinesClause(null);
+		return getRefinesClause( (IProgressMonitor) null);
 	}
 
 	@Deprecated
@@ -170,7 +170,7 @@ public class MachineFile extends EventBFile implements IMachineFile {
 
 	@Deprecated
 	public IVariant getVariant() throws RodinDBException {
-		return getVariant(null);
+		return getVariant((IProgressMonitor) null);
 	}
 
 	public IRefinesMachine[] getRefinesClauses(IProgressMonitor monitor) throws RodinDBException {
@@ -181,6 +181,34 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	public IVariant[] getVariants(IProgressMonitor monitor) throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IVariant.ELEMENT_TYPE);
 		return (IVariant[]) elements; 
+	}
+
+	public IEvent getEvent(String elementName) {
+		return (IEvent) getInternalElement(IEvent.ELEMENT_TYPE, elementName);
+	}
+
+	public IInvariant getInvariant(String elementName) {
+		return (IInvariant) getInternalElement(IInvariant.ELEMENT_TYPE, elementName);
+	}
+
+	public IRefinesMachine getRefinesClause(String elementName) {
+		return (IRefinesMachine) getInternalElement(IRefinesMachine.ELEMENT_TYPE, elementName);
+	}
+
+	public ISeesContext getSeesClause(String elementName) {
+		return (ISeesContext) getInternalElement(ISeesContext.ELEMENT_TYPE, elementName);
+	}
+
+	public ITheorem getTheorem(String elementName) {
+		return (ITheorem) getInternalElement(ITheorem.ELEMENT_TYPE, elementName);
+	}
+
+	public IVariable getVariable(String elementName) {
+		return (IVariable) getInternalElement(IVariable.ELEMENT_TYPE, elementName);
+	}
+
+	public IVariant getVariant(String elementName) {
+		return (IVariant) getInternalElement(IVariant.ELEMENT_TYPE, elementName);
 	}
 
 }

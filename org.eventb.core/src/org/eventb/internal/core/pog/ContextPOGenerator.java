@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCContextFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -44,10 +43,10 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 							EventBPlugin.getComponentName(file.getName())),
 					1);
 			
-			IRodinProject project = target.getRodinProject();
-			project.createRodinFile(target.getElementName(), true, null);
+			target.create(true, monitor);
 		
 			target.save(monitor, true);
+			
 			return true;
 		} finally {
 			monitor.done();

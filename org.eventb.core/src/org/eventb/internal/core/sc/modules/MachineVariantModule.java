@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.IVariant;
 import org.eventb.core.ast.Expression;
@@ -98,14 +99,18 @@ public class MachineVariantModule extends ExpressionModule {
 		
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		IVariant variant = machineFile.getVariant(null);
+		IVariant[] variants = machineFile.getVariants(monitor);
 		
-		if (variant == null)
+		if (variants.length == 0)
 			return;
 		
-		IVariant[] variants = new IVariant[] { 
-				variant
-		};
+		if (variants.length > 1) {
+			for (int k=1; k<variants.length; k++)
+				createProblemMarker(
+						variants[k], 
+						EventBAttributes.EXPRESSION_ATTRIBUTE, 
+						GraphProblem.TooManyVariantsError);
+		}
 		
 		Expression[] expressions = new Expression[1];
 
@@ -120,12 +125,12 @@ public class MachineVariantModule extends ExpressionModule {
 				repository,
 				monitor);
 		
-		saveVariant(target, variants[0], expressions[0], null);
+		saveVariant((ISCMachineFile) target, variants[0], expressions[0], null);
 
 	}
 
 	private void saveVariant(
-			IInternalParent parent, 
+			ISCMachineFile target, 
 			IVariant variant, 
 			Expression expression,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -135,14 +140,10 @@ public class MachineVariantModule extends ExpressionModule {
 		
 		variantInfo.setExpression(expression);
 		
-		ISCVariant scAxiom = 
-			(ISCVariant) parent.createInternalElement(
-					ISCVariant.ELEMENT_TYPE, 
-					VARIANT_NAME_PREFIX, 
-					null, 
-					monitor);
-		scAxiom.setExpression(expression, null);
-		scAxiom.setSource(variant, monitor);
+		ISCVariant scVariant = target.getSCVariant(VARIANT_NAME_PREFIX);
+		scVariant.create(null, monitor);
+		scVariant.setExpression(expression, null);
+		scVariant.setSource(variant, monitor);
 	}
 	
 	@Override

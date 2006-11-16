@@ -108,7 +108,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 					target, 
 					concreteEventLabel + "/" + variable.getName() + "/EQL", 
 					"Equality " + (isInitialisation ? " establishment" : " preservation"),
-					fullHypothesisName,
+					fullHypothesis,
 					hyp,
 					new POGPredicate(source, predicate),
 					sources(

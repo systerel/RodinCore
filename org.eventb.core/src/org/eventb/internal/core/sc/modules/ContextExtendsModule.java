@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCInternalContext;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.state.IStateSC;
@@ -94,6 +95,11 @@ public class ContextExtendsModule extends ContextPointerModule {
 	@Override
 	protected IRodinProblem getTargetContextNotFoundProblem() {
 		return GraphProblem.AbstractContextNotFoundError;
+	}
+
+	@Override
+	protected ISCInternalContext getSCInternalContext(IInternalParent target, String elementName) {
+		return ((ISCContextFile) target).getSCInternalContext(elementName);
 	}
 
 }
