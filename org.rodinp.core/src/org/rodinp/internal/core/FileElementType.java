@@ -16,7 +16,6 @@ import org.osgi.framework.Bundle;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.RodinFile;
-import org.rodinp.internal.core.util.Util;
 
 public class FileElementType extends
 		ContributedElementType<RodinFile> implements IFileElementType {
@@ -40,7 +39,8 @@ public class FileElementType extends
 			Class<?> clazz = bundle.loadClass(getClassName());
 			classObject = clazz.asSubclass(RodinFile.class);
 		} catch (Exception e) {
-			Util.log(e, "Can't find class for element type " + getId());
+			throw new IllegalStateException(
+					"Can't find class for element type " + getId(), e);
 		}
 	}
 
@@ -52,7 +52,8 @@ public class FileElementType extends
 		try {
 			constructor = classObject.getConstructor(IFile.class, IRodinElement.class);
 		} catch (Exception e) {
-			Util.log(e, "Can't find constructor for element type " + getId());
+			throw new IllegalStateException(
+					"Can't find constructor for element type " + getId(), e);
 		}
 	}
 
@@ -78,9 +79,8 @@ public class FileElementType extends
 		try {
 			return constructor.newInstance(file, project);
 		} catch (Exception e) {
-			// Some error occurred while reflecting.
-			e.printStackTrace();
-			return null;
+			throw new IllegalStateException(
+					"Can't create an element of type " + getId(), e);
 		}
 	}
 

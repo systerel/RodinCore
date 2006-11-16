@@ -15,7 +15,6 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.InternalElement;
-import org.rodinp.internal.core.util.Util;
 
 /**
  * @author lvoisin
@@ -40,7 +39,8 @@ public class InternalElementType extends
 			Class<?> clazz = bundle.loadClass(getClassName());
 			classObject = clazz.asSubclass(InternalElement.class);
 		} catch (Exception e) {
-			Util.log(e, "Can't find constructor for element type " + getId());
+			throw new IllegalStateException(
+					"Can't find constructor for element type " + getId(), e);
 		}
 	}
 
@@ -55,7 +55,8 @@ public class InternalElementType extends
 			else
 				constructor = classObject.getConstructor(IRodinElement.class);
 		} catch (Exception e) {
-			Util.log(e, "Can't find constructor for element type " + getId());
+			throw new IllegalStateException(
+					"Can't find constructor for element type " + getId(), e);
 		}
 	}
 
@@ -88,8 +89,8 @@ public class InternalElementType extends
 				return constructor.newInstance(parent);
 			}
 		} catch (Exception e) {
-			Util.log(e, "Error when creating handle of type " + getId());
-			return null;
+			throw new IllegalStateException(
+					"Can't create an element of type " + getId(), e);
 		}
 	}
 	
