@@ -1,4 +1,4 @@
-package org.eventb.core.pm;
+package org.eventb.internal.core.pm;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,9 +11,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eventb.core.IPSFile;
 import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
+import org.eventb.core.pm.IProofStateChangedListener;
+import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.ProofState;
+import org.eventb.core.pm.ProvingMode;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
@@ -22,8 +27,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.ProofMonitor;
-import org.eventb.internal.core.pm.ProofStateDelta;
-import org.eventb.internal.core.pm.UserSupportUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IParent;
@@ -45,8 +48,6 @@ public class UserSupport implements IElementChangedListener,
 
 	private boolean fireDelta;
 
-	private static boolean expertMode;
-
 	/*
 	 * The delta for the current thread.
 	 */
@@ -66,8 +67,6 @@ public class UserSupport implements IElementChangedListener,
 		proofStates = new LinkedList<ProofState>();
 		delta = new ThreadLocal<IProofStateDelta>(); // Clear delta
 		// outOfDate = false;
-		// TODO Set expertMode from the Preferences?
-		expertMode = false;
 	}
 
 	IProofStateDelta getDelta() {
@@ -408,7 +407,7 @@ public class UserSupport implements IElementChangedListener,
 		IProofTreeNode currentNode = currentPS.getCurrentNode();
 		Object info = t.apply(currentNode, pm);
 		if (!t.equals(Tactics.prune())) {
-			if (expertMode) {
+			if (ProvingMode.isExpertMode()) {
 				Tactics.postProcessExpert().apply(currentNode, pm);
 			} else {
 				Tactics.postProcessBeginner().apply(currentNode, pm);
@@ -876,11 +875,4 @@ public class UserSupport implements IElementChangedListener,
 			currentPS.getProofTree().removeChangeListener(this);
 	}
 
-	public static boolean isExpertMode() {
-		return expertMode;
-	}
-
-	public static void setExpertMode(boolean mode) {
-		expertMode = mode;
-	}
 }

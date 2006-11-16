@@ -60,8 +60,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPSFile;
 import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.basis.PSstatus;
 import org.eventb.core.pm.IProofStateChangedListener;
@@ -69,7 +69,6 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUSManagerListener;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.pm.UserSupport;
 import org.eventb.core.pm.UserSupportManager;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
@@ -192,7 +191,7 @@ public class ObligationExplorer extends ViewPart implements
 
 	private int getStatus(IPSstatus status) throws RodinDBException {
 		// Try to synchronize with the proof tree in memory
-		Collection<UserSupport> userSupports = UserSupportManager
+		Collection<IUserSupport> userSupports = UserSupportManager
 				.getUserSupports();
 		final boolean proofBroken = (! status.isProofValid(null));
 		for (IUserSupport userSupport : userSupports) {
@@ -280,7 +279,7 @@ public class ObligationExplorer extends ViewPart implements
 	}
 
 	private void registerUserSupports() {
-		Collection<UserSupport> userSupports = UserSupportManager
+		Collection<IUserSupport> userSupports = UserSupportManager
 				.getUserSupports();
 		for (IUserSupport userSupport : userSupports) {
 			userSupport.addStateChangedListeners(this);
@@ -318,7 +317,7 @@ public class ObligationExplorer extends ViewPart implements
 				try {
 
 					// Try to synchronize with the proof tree in memory
-					Collection<UserSupport> userSupports = UserSupportManager
+					Collection<IUserSupport> userSupports = UserSupportManager
 							.getUserSupports();
 					for (IUserSupport userSupport : userSupports) {
 						// UIUtils.debugObligationExplorer("Get US: "
@@ -403,7 +402,7 @@ public class ObligationExplorer extends ViewPart implements
 			} else if (obj instanceof IPSstatus) {
 
 				// Find the label in the list of UserSupport.
-				Collection<UserSupport> userSupports = UserSupportManager
+				Collection<IUserSupport> userSupports = UserSupportManager
 						.getUserSupports();
 				for (IUserSupport userSupport : userSupports) {
 					// UIUtils.debugObligationExplorer("Get US: " +
@@ -451,7 +450,7 @@ public class ObligationExplorer extends ViewPart implements
 				// UIUtils.debugObligationExplorer("Label for: " + obj);
 
 				// Find the label in the list of UserSupport.
-				Collection<UserSupport> userSupports = UserSupportManager
+				Collection<IUserSupport> userSupports = UserSupportManager
 						.getUserSupports();
 				for (IUserSupport userSupport : userSupports) {
 					// UIUtils.debugObligationExplorer("Get US: " +
@@ -837,7 +836,7 @@ public class ObligationExplorer extends ViewPart implements
 	public void dispose() {
 		if (viewer == null)
 			return;
-		Collection<UserSupport> userSupports = UserSupportManager
+		Collection<IUserSupport> userSupports = UserSupportManager
 				.getUserSupports();
 		for (IUserSupport userSupport : userSupports) {
 			userSupport.removeStateChangedListeners(this);

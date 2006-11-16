@@ -19,13 +19,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eventb.core.IPSFile;
+import org.eventb.internal.core.pm.UserSupport;
 import org.rodinp.core.RodinDBException;
 
 public class UserSupportManager {
 
 	private static Collection<IUSManagerListener> listeners = new ArrayList<IUSManagerListener>();
 
-	private static Collection<UserSupport> userSupports = new ArrayList<UserSupport>();
+	private static Collection<IUserSupport> userSupports = new ArrayList<IUserSupport>();
 
 	public static int REMOVED = 0x1;
 
@@ -34,7 +35,7 @@ public class UserSupportManager {
 	public static int CHANGED = 0x4;
 
 	public static IUserSupport newUserSupport() {
-		UserSupport userSupport = new UserSupport();
+		IUserSupport userSupport = new UserSupport();
 		userSupports.add(userSupport);
 		notifyUSManagerListener(userSupport, ADDED);
 		return userSupport;
@@ -50,7 +51,7 @@ public class UserSupportManager {
 		notifyUSManagerListener(userSupport, REMOVED);
 	}
 
-	public static Collection<UserSupport> getUserSupports() {
+	public static Collection<IUserSupport> getUserSupports() {
 		return userSupports;
 	}
 

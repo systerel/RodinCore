@@ -21,7 +21,6 @@ import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUSManagerListener;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.UserSupport;
 import org.eventb.core.pm.UserSupportManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.EventBUIPlugin;
@@ -51,7 +50,7 @@ public class SearchHypothesis extends PageBookView implements
 		super();
 		fPagesToParts = new HashMap<IPage, IWorkbenchPart>();
 		
-		Collection<UserSupport> userSupports = UserSupportManager
+		Collection<IUserSupport> userSupports = UserSupportManager
 				.getUserSupports();
 		for (IUserSupport userSupport : userSupports) {
 			userSupport.addStateChangedListeners(this);
@@ -62,7 +61,7 @@ public class SearchHypothesis extends PageBookView implements
 
 	@Override
 	public void dispose() {
-		Collection<UserSupport> userSupports = UserSupportManager
+		Collection<IUserSupport> userSupports = UserSupportManager
 				.getUserSupports();
 		for (IUserSupport userSupport : userSupports) {
 			userSupport.removeStateChangedListeners(this);
