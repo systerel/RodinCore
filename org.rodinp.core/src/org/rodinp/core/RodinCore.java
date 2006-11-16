@@ -259,18 +259,21 @@ public class RodinCore extends Plugin {
 	}
 
 	/**
-	 * Returns the internal element type with the given id. If no internal
-	 * element type with the given id has been contributed, this method returns
-	 * <code>null</code>.
+	 * Returns the internal element type with the given id.
 	 * 
 	 * @param id
 	 *            unique identifier of the element type
-	 * @return the internal element type with the given id, or <code>null</code>
-	 *         if unknown
+	 * @return the internal element type with the given id
+	 * @throws IllegalArgumentException
+	 *             if no such internal element type has been contributed
 	 */
 	public static IInternalElementType getInternalElementType(String id) {
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		return manager.getInternalElementType(id);
+		final IInternalElementType result = manager.getInternalElementType(id);
+		if (result != null) {
+			return result;
+		}
+		throw new IllegalArgumentException("Unknown file element type: " + id);
 	}
 
 	/**
@@ -382,18 +385,21 @@ public class RodinCore extends Plugin {
 	}
 	
 	/**
-	 * Returns the file element type with the given id. If no file element type
-	 * with the given id has been contributed, this method returns
-	 * <code>null</code>.
+	 * Returns the file element type with the given id.
 	 * 
 	 * @param id
 	 *            unique identifier of the element type
-	 * @return the file element type with the given id, or <code>null</code>
-	 *         if unknown
+	 * @return the file element type with the given id
+	 * @throws IllegalArgumentException
+	 *             if no such file element type has been contributed
 	 */
 	public static IFileElementType getFileElementType(String id) {
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		return manager.getFileElementType(id);
+		final IFileElementType result = manager.getFileElementType(id);
+		if (result != null) {
+			return result;
+		}
+		throw new IllegalArgumentException("Unknown file element type: " + id);
 	}
 
 	/**
