@@ -38,7 +38,6 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.UserSupportManager;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.internal.ui.proofcontrol.ProofControlPage;
@@ -92,7 +91,8 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	public ProverUI() {
 		super();
 		saving = false;
-		this.userSupport = UserSupportManager.newUserSupport();
+		this.userSupport = EventBPlugin.getDefault().getUserSupportManager()
+				.newUserSupport();
 		userSupport.addStateChangedListeners(this);
 	}
 
@@ -107,7 +107,8 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			IFile inputFile = ((IFileEditorInput) input).getFile();
 			prFile = (IPSFile) RodinCore.valueOf(inputFile);
 			try {
-				UserSupportManager.setInput(userSupport, prFile, new NullProgressMonitor());
+				EventBPlugin.getDefault().getUserSupportManager().setInput(
+						userSupport, prFile, new NullProgressMonitor());
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
@@ -173,7 +174,8 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	@Override
 	public void dispose() {
 		userSupport.removeStateChangedListeners(this);
-		UserSupportManager.disposeUserSupport(userSupport);
+		EventBPlugin.getDefault().getUserSupportManager().disposeUserSupport(
+				userSupport);
 		if (fProofTreeUI != null)
 			fProofTreeUI.setInput(null);
 		super.dispose();
@@ -286,8 +288,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			try {
 				RodinCore.run(new IWorkspaceRunnable() {
 
-					public void run(IProgressMonitor pm)
-							throws CoreException {
+					public void run(IProgressMonitor pm) throws CoreException {
 						for (Object result : results) {
 							((IProofState) result).doSave(pm);
 						}
@@ -388,7 +389,8 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		IProofState currentPO = userSupport.getCurrentPO();
 		if (currentPO != null && currentPO.isUninitialised())
 			try {
-				userSupport.setCurrentPO(currentPO.getPRSequent(), new NullProgressMonitor());
+				userSupport.setCurrentPO(currentPO.getPRSequent(),
+						new NullProgressMonitor());
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -511,7 +513,8 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	// "The Proof Obligation is Out of Date and need to be reloeaded.");
 	// try {
 	// doSave(null);
-	// UserSupportManager.setInput(userSupport, this.getRodinInput());
+	// EventBPlugin.getDefault().getUserSupportManager().setInput(userSupport,
+	// this.getRodinInput());
 	// } catch (RodinDBException e) {
 	// // TODO Auto-generated catch block
 	// e.printStackTrace();

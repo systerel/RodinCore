@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
@@ -18,7 +19,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.UserSupportManager;
+import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
@@ -78,7 +79,9 @@ public class UserSupport implements IElementChangedListener,
 		return localDelta;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#addStateChangedListeners(org.eventb.core.pm.IProofStateChangedListener)
 	 */
 	public void addStateChangedListeners(IProofStateChangedListener listener) {
@@ -89,7 +92,9 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#removeStateChangedListeners(org.eventb.core.pm.IProofStateChangedListener)
 	 */
 	public void removeStateChangedListeners(IProofStateChangedListener listener) {
@@ -100,7 +105,9 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#notifyStateChangedListeners()
 	 */
 	public void notifyStateChangedListeners() {
@@ -132,7 +139,9 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#fireProofStateDelta(org.eventb.core.pm.IProofStateDelta)
 	 */
 	public void fireProofStateDelta(IProofStateDelta newDelta) {
@@ -208,7 +217,9 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#batchOperation(java.lang.Runnable)
 	 */
 	public void batchOperation(Runnable op) {
@@ -221,7 +232,9 @@ public class UserSupport implements IElementChangedListener,
 		notifyPendingDelta();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#getCurrentPO()
 	 */
 	public IProofState getCurrentPO() {
@@ -229,8 +242,11 @@ public class UserSupport implements IElementChangedListener,
 	}
 
 	// Should be called by the UserSupportManager?
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupport#setInput(org.eventb.core.IPSFile, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.pm.IUserSupport#setInput(org.eventb.core.IPSFile,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void setInput(IPSFile prFile, IProgressMonitor monitor)
 			throws RodinDBException {
@@ -248,8 +264,11 @@ public class UserSupport implements IElementChangedListener,
 		nextUndischargedPO(true, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupport#setCurrentPO(org.eventb.core.IPSstatus, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.pm.IUserSupport#setCurrentPO(org.eventb.core.IPSstatus,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void setCurrentPO(IPSstatus prSequent, IProgressMonitor monitor)
 			throws RodinDBException {
@@ -263,8 +282,11 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupport#nextUndischargedPO(boolean, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.pm.IUserSupport#nextUndischargedPO(boolean,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void nextUndischargedPO(boolean force, IProgressMonitor monitor)
 			throws RodinDBException {
@@ -290,8 +312,11 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupport#prevUndischargedPO(boolean, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.pm.IUserSupport#prevUndischargedPO(boolean,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void prevUndischargedPO(boolean force, IProgressMonitor monitor)
 			throws RodinDBException {
@@ -350,7 +375,9 @@ public class UserSupport implements IElementChangedListener,
 		return;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#selectNode(org.eventb.core.seqprover.IProofTreeNode)
 	 */
 	public void selectNode(IProofTreeNode pt) {
@@ -363,8 +390,11 @@ public class UserSupport implements IElementChangedListener,
 		return;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupport#applyTacticToHypotheses(org.eventb.core.seqprover.ITactic, java.util.Set, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.pm.IUserSupport#applyTacticToHypotheses(org.eventb.core.seqprover.ITactic,
+	 *      java.util.Set, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void applyTacticToHypotheses(final ITactic t,
 			final Set<Hypothesis> hyps, final IProgressMonitor monitor) {
@@ -384,8 +414,11 @@ public class UserSupport implements IElementChangedListener,
 		fireProofStateDelta(newDelta);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupport#applyTactic(org.eventb.core.seqprover.ITactic, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.pm.IUserSupport#applyTactic(org.eventb.core.seqprover.ITactic,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void applyTactic(final ITactic t, final IProgressMonitor monitor) {
 		batchOperation(new Runnable() {
@@ -407,7 +440,9 @@ public class UserSupport implements IElementChangedListener,
 		IProofTreeNode currentNode = currentPS.getCurrentNode();
 		Object info = t.apply(currentNode, pm);
 		if (!t.equals(Tactics.prune())) {
-			if (UserSupportManager.getProvingMode().isExpertMode()) {
+			IUserSupportManager usManager = EventBPlugin.getDefault()
+					.getUserSupportManager();
+			if (usManager.getProvingMode().isExpertMode()) {
 				Tactics.postProcessExpert().apply(currentNode, pm);
 			} else {
 				Tactics.postProcessBeginner().apply(currentNode, pm);
@@ -446,7 +481,9 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#prune(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void prune(final IProgressMonitor monitor) throws RodinDBException {
@@ -464,7 +501,9 @@ public class UserSupport implements IElementChangedListener,
 		});
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#removeCachedHypotheses(java.util.Collection)
 	 */
 	public void removeCachedHypotheses(Collection<Hypothesis> hyps) {
@@ -476,7 +515,9 @@ public class UserSupport implements IElementChangedListener,
 		return;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#removeSearchedHypotheses(java.util.Collection)
 	 */
 	public void removeSearchedHypotheses(Collection<Hypothesis> hyps) {
@@ -490,7 +531,9 @@ public class UserSupport implements IElementChangedListener,
 		return;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#searchHyps(java.lang.String)
 	 */
 	public void searchHyps(String token) {
@@ -516,7 +559,9 @@ public class UserSupport implements IElementChangedListener,
 	 * 
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(final ElementChangedEvent event) {
@@ -732,13 +777,12 @@ public class UserSupport implements IElementChangedListener,
 				}
 
 			}
-		} 
-		
+		}
+
 		else if (element instanceof IPRProofTree) {
 			IPRProofTree proofTree = (IPRProofTree) element;
 			// IPRSequent prSequent = proofTree.getSequent();
-			IPSstatus status = prFile
-					.getStatusOf(proofTree.getElementName());
+			IPSstatus status = prFile.getStatusOf(proofTree.getElementName());
 
 			IProofState state = getProofState(status);
 
@@ -748,9 +792,9 @@ public class UserSupport implements IElementChangedListener,
 
 			if (state.isUninitialised())
 				return;
-			
+
 			// TODO : Son, why is this next check done? Farhad
-			if (! status.isAutoProven(null))
+			if (!status.isAutoProven(null))
 				return;
 
 			if (state.isSequentDischarged()) {
@@ -770,8 +814,8 @@ public class UserSupport implements IElementChangedListener,
 				}
 			}
 
-		} 
-		
+		}
+
 		else if (element instanceof IParent) {
 			for (IRodinElementDelta d : elementChangedDelta
 					.getAffectedChildren()) {
@@ -788,7 +832,9 @@ public class UserSupport implements IElementChangedListener,
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#back(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void back(IProgressMonitor monitor) throws RodinDBException {
@@ -799,7 +845,9 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#hasUnsavedChanges()
 	 */
 	public boolean hasUnsavedChanges() {
@@ -810,7 +858,9 @@ public class UserSupport implements IElementChangedListener,
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#getUnsavedPOs()
 	 */
 	public IProofState[] getUnsavedPOs() {
@@ -822,7 +872,9 @@ public class UserSupport implements IElementChangedListener,
 		return unsaved.toArray(new IProofState[unsaved.size()]);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#proofTreeChanged(org.eventb.core.seqprover.IProofTreeDelta)
 	 */
 	public void proofTreeChanged(IProofTreeDelta proofTreeDelta) {
@@ -834,8 +886,11 @@ public class UserSupport implements IElementChangedListener,
 		fireProofStateDelta(newDelta);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupport#setComment(java.lang.String, org.eventb.core.seqprover.IProofTreeNode)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.pm.IUserSupport#setComment(java.lang.String,
+	 *      org.eventb.core.seqprover.IProofTreeNode)
 	 */
 	public void setComment(String text, IProofTreeNode currentNode) {
 		currentNode.setComment(text);
@@ -846,14 +901,18 @@ public class UserSupport implements IElementChangedListener,
 		fireProofStateDelta(newDelta);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#getPOs()
 	 */
 	public Collection<IProofState> getPOs() {
 		return proofStates;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#getInput()
 	 */
 	public IPSFile getInput() {
@@ -866,7 +925,9 @@ public class UserSupport implements IElementChangedListener,
 	// }
 
 	// Should be used by the UserSupportManager only
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IUserSupport#dispose()
 	 */
 	public void dispose() {

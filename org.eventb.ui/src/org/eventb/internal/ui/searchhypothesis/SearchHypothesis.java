@@ -17,11 +17,11 @@ import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUSManagerListener;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.UserSupportManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.EventBUIPlugin;
 
@@ -50,18 +50,18 @@ public class SearchHypothesis extends PageBookView implements
 		super();
 		fPagesToParts = new HashMap<IPage, IWorkbenchPart>();
 		
-		Collection<IUserSupport> userSupports = UserSupportManager
+		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
 				.getUserSupports();
 		for (IUserSupport userSupport : userSupports) {
 			userSupport.addStateChangedListeners(this);
 		}
 		
-		UserSupportManager.addUSManagerListener(this);
+		EventBPlugin.getDefault().getUserSupportManager().addUSManagerListener(this);
 	}
 
 	@Override
 	public void dispose() {
-		Collection<IUserSupport> userSupports = UserSupportManager
+		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
 				.getUserSupports();
 		for (IUserSupport userSupport : userSupports) {
 			userSupport.removeStateChangedListeners(this);
@@ -270,10 +270,10 @@ public class SearchHypothesis extends PageBookView implements
 	}
 
 	public void USManagerChanged(IUserSupport userSupport, int status) {
-		if (status == UserSupportManager.ADDED) {
+		if (status == IUSManagerListener.ADDED) {
 			userSupport.addStateChangedListeners(this);
 		}
-		else if (status == UserSupportManager.REMOVED) {
+		else if (status == IUSManagerListener.REMOVED) {
 			userSupport.removeStateChangedListeners(this);
 		}
 		return;

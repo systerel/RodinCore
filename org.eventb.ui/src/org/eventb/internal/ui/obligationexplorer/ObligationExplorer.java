@@ -69,7 +69,6 @@ import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUSManagerListener;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.UserSupportManager;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeDelta;
@@ -191,7 +190,7 @@ public class ObligationExplorer extends ViewPart implements
 
 	private int getStatus(IPSstatus status) throws RodinDBException {
 		// Try to synchronize with the proof tree in memory
-		Collection<IUserSupport> userSupports = UserSupportManager
+		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
 				.getUserSupports();
 		final boolean proofBroken = (! status.isProofValid(null));
 		for (IUserSupport userSupport : userSupports) {
@@ -279,7 +278,7 @@ public class ObligationExplorer extends ViewPart implements
 	}
 
 	private void registerUserSupports() {
-		Collection<IUserSupport> userSupports = UserSupportManager
+		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
 				.getUserSupports();
 		for (IUserSupport userSupport : userSupports) {
 			userSupport.addStateChangedListeners(this);
@@ -317,7 +316,7 @@ public class ObligationExplorer extends ViewPart implements
 				try {
 
 					// Try to synchronize with the proof tree in memory
-					Collection<IUserSupport> userSupports = UserSupportManager
+					Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
 							.getUserSupports();
 					for (IUserSupport userSupport : userSupports) {
 						// UIUtils.debugObligationExplorer("Get US: "
@@ -402,7 +401,7 @@ public class ObligationExplorer extends ViewPart implements
 			} else if (obj instanceof IPSstatus) {
 
 				// Find the label in the list of UserSupport.
-				Collection<IUserSupport> userSupports = UserSupportManager
+				Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
 						.getUserSupports();
 				for (IUserSupport userSupport : userSupports) {
 					// UIUtils.debugObligationExplorer("Get US: " +
@@ -450,7 +449,7 @@ public class ObligationExplorer extends ViewPart implements
 				// UIUtils.debugObligationExplorer("Label for: " + obj);
 
 				// Find the label in the list of UserSupport.
-				Collection<IUserSupport> userSupports = UserSupportManager
+				Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
 						.getUserSupports();
 				for (IUserSupport userSupport : userSupports) {
 					// UIUtils.debugObligationExplorer("Get US: " +
@@ -616,7 +615,7 @@ public class ObligationExplorer extends ViewPart implements
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
-		UserSupportManager.addUSManagerListener(this);
+		EventBPlugin.getDefault().getUserSupportManager().addUSManagerListener(this);
 		registerUserSupports();
 	}
 
@@ -778,11 +777,11 @@ public class ObligationExplorer extends ViewPart implements
 				if (ObligationExplorerUtils.DEBUG)
 					ObligationExplorerUtils.debug("Obligation Explorer: "
 							+ userSupport + " : " + status);
-				if (status == UserSupportManager.ADDED) {
+				if (status == IUSManagerListener.ADDED) {
 					userSupport
 							.addStateChangedListeners(ObligationExplorer.this);
 				}
-				if (status == UserSupportManager.REMOVED) {
+				if (status == IUSManagerListener.REMOVED) {
 					userSupport
 							.removeStateChangedListeners(ObligationExplorer.this);
 				}
@@ -836,12 +835,12 @@ public class ObligationExplorer extends ViewPart implements
 	public void dispose() {
 		if (viewer == null)
 			return;
-		Collection<IUserSupport> userSupports = UserSupportManager
+		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
 				.getUserSupports();
 		for (IUserSupport userSupport : userSupports) {
 			userSupport.removeStateChangedListeners(this);
 		}
-		UserSupportManager.removeUSManagerListener(this);
+		EventBPlugin.getDefault().getUserSupportManager().removeUSManagerListener(this);
 		viewer.removeSelectionChangedListener(this);
 		super.dispose();
 	}

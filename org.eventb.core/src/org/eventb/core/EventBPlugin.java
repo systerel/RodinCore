@@ -9,6 +9,8 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eventb.core.pm.IUserSupportManager;
+import org.eventb.internal.core.pm.UserSupportManager;
 import org.eventb.internal.core.pog.ProofObligationGenerator;
 import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.sc.StaticChecker;
@@ -188,4 +190,7 @@ public class EventBPlugin extends Plugin {
 		}
 	}
 
+	public IUserSupportManager getUserSupportManager() {
+		return UserSupportManager.getDefault();
+	}
 }

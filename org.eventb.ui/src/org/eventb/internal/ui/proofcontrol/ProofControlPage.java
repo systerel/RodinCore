@@ -64,11 +64,13 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.IProvingMode;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.UserSupportManager;
+import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBControl;
@@ -768,7 +770,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the toolbar manager
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
-		if (UserSupportManager.getProvingMode().isExpertMode()) {
+		IUserSupportManager usManager = EventBPlugin.getDefault().getUserSupportManager();
+		if (usManager.getProvingMode().isExpertMode()) {
 			expertMode.setChecked(true);
 		} else {
 			expertMode.setChecked(false);
@@ -783,10 +786,12 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		expertMode = new Action("Expert mode switch", SWT.CHECK) {
 			@Override
 			public void run() {
+				IUserSupportManager usManager = EventBPlugin.getDefault().getUserSupportManager();
+				IProvingMode provingMode = usManager.getProvingMode();
 				if (expertMode.isChecked())
-					UserSupportManager.getProvingMode().setExpertMode(true);
+					provingMode.setExpertMode(true);
 				else
-					UserSupportManager.getProvingMode().setExpertMode(false);
+					provingMode.setExpertMode(false);
 			}
 		};
 		expertMode.setToolTipText("Expert mode switch");
