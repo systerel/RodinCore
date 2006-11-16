@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPRProof;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.ElementChangedEvent;
@@ -126,7 +126,7 @@ public class ObligationExplorerContentProvider implements
 			}
 
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
-				if (element instanceof IPRProofTree) {
+				if (element instanceof IPRProof) {
 					toRefresh.add(element.getParent());
 				} else
 					toRefresh.add(element);

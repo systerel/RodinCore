@@ -12,7 +12,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
 import org.rodinp.core.IInternalElementType;
@@ -53,9 +53,9 @@ public class PSstatus extends InternalElement implements IPSstatus {
 //		return getElementName();
 //	}
 	
-	public IPRProofTree getProofTree(){
+	public IPRProof getProofTree(){
 		final IPRFile prFile = ((IPSFile)getOpenable()).getPRFile();
-		IPRProofTree proofTree = prFile.getProofTree(getElementName());
+		IPRProof proofTree = prFile.getProofTree(getElementName());
 		// assert proofTree != null;
 		if ( proofTree == null || (!proofTree.exists())) return null;
 		return proofTree;

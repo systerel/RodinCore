@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRProofRule;
-import org.eventb.core.IPRProofTreeNode;
+import org.eventb.core.IPRProofSkelNode;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.seqprover.IProofRule;
@@ -24,9 +24,9 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  */
-public class PRProofTreeNode extends EventBProofElement implements IPRProofTreeNode {
+public class PRProofSkelNode extends EventBProofElement implements IPRProofSkelNode {
 
-	public PRProofTreeNode(String name,IRodinElement parent) {
+	public PRProofSkelNode(String name,IRodinElement parent) {
 		super(name, parent);
 	}
 	
@@ -38,10 +38,10 @@ public class PRProofTreeNode extends EventBProofElement implements IPRProofTreeN
 	public IProofSkeleton getSkeleton(IProofStoreReader store, SubProgressMonitor monitor) throws RodinDBException {
 		final String comment = getCommentChecked(null);
 		final IProofRule proofRule = getRule(store, monitor);
-		final IRodinElement[] prChildNodes = getChildrenOfType(IPRProofTreeNode.ELEMENT_TYPE);
+		final IRodinElement[] prChildNodes = getChildrenOfType(IPRProofSkelNode.ELEMENT_TYPE);
 		final IProofSkeleton[] childNodes = new IProofSkeleton[prChildNodes.length];
 		for (int i = 0; i < childNodes.length; i++) {
-			childNodes[i] = ((IPRProofTreeNode) prChildNodes[i]).getSkeleton(store, monitor);
+			childNodes[i] = ((IPRProofSkelNode) prChildNodes[i]).getSkeleton(store, monitor);
 		}
 		
 		// if (monitor.isCanceled()) throw new OperationCanceledException();
@@ -88,8 +88,8 @@ public class PRProofTreeNode extends EventBProofElement implements IPRProofTreeN
 		
 		IProofSkeleton[] skelChildren = skel.getChildNodes();
 		for (int i = 0; i < skelChildren.length; i++) {
-			IPRProofTreeNode child = (IPRProofTreeNode)
-			createInternalElement(IPRProofTreeNode.ELEMENT_TYPE,Integer.toString(i),null,null);
+			IPRProofSkelNode child = (IPRProofSkelNode)
+			createInternalElement(IPRProofSkelNode.ELEMENT_TYPE,Integer.toString(i),null,null);
 			child.setSkeleton(skelChildren[i], store, monitor);
 		}
 	}

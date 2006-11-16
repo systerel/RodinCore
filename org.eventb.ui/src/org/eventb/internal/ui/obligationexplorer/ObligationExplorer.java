@@ -60,7 +60,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.basis.PSstatus;
@@ -233,7 +233,7 @@ public class ObligationExplorer extends ViewPart implements
 
 		// Otherwise, setting the label accordingly.
 
-		final IPRProofTree prProofTree = status.getProofTree();
+		final IPRProof prProofTree = status.getProofTree();
 
 		// TODO : confidence now expresses unattempted as well
 		if (prProofTree == null || (prProofTree.getConfidence(null) <= IConfidence.UNATTEMPTED))

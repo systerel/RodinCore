@@ -12,15 +12,13 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for Proof Trees stored in the RODIN Database.
+ * Common protocol for Proofs stored in the RODIN Database.
  * 
  * <p>
  * The class implementing this interface is responsable for serializing and 
- * de-serializing proof trees used inside the sequent prover.
+ * de-serializing proof skeletons used inside the sequent prover.
  * </p>
  * <p>
- * This interface tries to mimic ({@link org.eventb.core.seqprover.IProofTree}) 
- * as much as possible.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -30,10 +28,10 @@ import org.rodinp.core.RodinDBException;
  *
  */
 
-public interface IPRProofTree extends IInternalElement {
+public interface IPRProof extends IInternalElement {
 		
 	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProofTree"); //$NON-NLS-1$
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProof"); //$NON-NLS-1$
 
 	// TODO : find a better name
 	public void initialize(IProofMonitor monitor) throws RodinDBException;

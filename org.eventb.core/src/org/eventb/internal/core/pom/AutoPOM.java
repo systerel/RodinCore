@@ -16,7 +16,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.ast.FormulaFactory;
@@ -88,7 +88,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				final String name = pos[i].getElementName();
 				monitor.subTask("updating status for " + name);
 				
-				final IPRProofTree prProof = prFile.getProofTree(name);
+				final IPRProof prProof = prFile.getProofTree(name);
 				
 				if (prProof == null) {
 					prFile.createProofTree(name, null);
@@ -229,7 +229,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	public static void updateStatus(IPSstatus istatus, IProgressMonitor monitor) throws RodinDBException {
 		PSstatus status = (PSstatus) istatus;
 		IProverSequent seq =  POLoader.readPO(status.getPOSequent());
-		final IPRProofTree proofTree = status.getProofTree();
+		final IPRProof proofTree = status.getProofTree();
 		if (proofTree == null) {
 			status.setProofConfidence(IConfidence.UNATTEMPTED, null);
 			status.setProofValid(true, null);

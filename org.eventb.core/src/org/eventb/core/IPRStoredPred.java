@@ -9,28 +9,27 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-
 /**
  * @author Farhad Mehta
  *
  */
-public interface IPRExpression extends IInternalElement {
+public interface IPRStoredPred extends IInternalElement {
 	
 	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prExpression"); //$NON-NLS-1$
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prStoredPred"); //$NON-NLS-1$
 
-	Expression getExpression(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException;
-	void setExpression(Expression expr, IProgressMonitor monitor) throws RodinDBException;
-
+	Predicate getPredicate(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException;
+	void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException;
+	
 	// extra free idents
 	FreeIdentifier[] getFreeIdents(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
 	void setFreeIdents(FreeIdentifier[] freeIdents, IProgressMonitor monitor) throws RodinDBException;

@@ -65,8 +65,8 @@ public interface IProofDependencies{
 	ITypeEnvironment getUsedFreeIdents();
 	
 	/**
-	 * Returns the type environment corresponding to the free
-	 * identifiers introduced in a proof.
+	 * Returns the names of the free identifiers introduced in a proof.
+	 * These identifiers must remain fresh for the proof to be reused.
 	 * 
 	 * In case the proof has no dependencies the result is undefined.
 	 * 

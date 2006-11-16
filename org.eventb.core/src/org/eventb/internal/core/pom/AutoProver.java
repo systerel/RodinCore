@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.seqprover.IConfidence;
@@ -91,7 +91,7 @@ public class AutoProver {
 			pm.beginTask(status.getElementName() + ":", 3);
 			
 			pm.subTask("loading");
-			IPRProofTree prProofTree = status.getProofTree();
+			IPRProof prProofTree = status.getProofTree();
 //			if (proofTree == null)
 //				proofTree = prFile.createProofTree(status.getName());
 			pm.worked(1);

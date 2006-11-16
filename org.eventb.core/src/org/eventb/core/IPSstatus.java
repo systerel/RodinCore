@@ -47,7 +47,7 @@ public interface IPSstatus extends IInternalElement {
 	 * 
 	 * @throws RodinDBException
 	 */
-	IPRProofTree getProofTree() throws RodinDBException;
+	IPRProof getProofTree() throws RodinDBException;
 	
 	/**
 	 * Returns the IPOSequent associated to this proof obligation from the

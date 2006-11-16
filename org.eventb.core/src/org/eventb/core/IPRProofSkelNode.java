@@ -14,10 +14,10 @@ import org.rodinp.core.RodinDBException;
  *
  */
 
-public interface IPRProofTreeNode extends IInternalElement, ICommentedElement {
+public interface IPRProofSkelNode extends IInternalElement, ICommentedElement {
 		
 	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProofTreeNode"); //$NON-NLS-1$
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProofSkelNode"); //$NON-NLS-1$
 	
 	void setSkeleton(IProofSkeleton skel, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException;
 

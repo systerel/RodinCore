@@ -4,7 +4,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.ast.FormulaFactory;
@@ -127,7 +127,7 @@ public class AutoPOMTest extends BuilderTest {
 		for (IPSstatus status : statuses) {
 			if (status.getProofConfidence(null) > IConfidence.UNATTEMPTED)
 			{
-				IPRProofTree prProofTree = status.getProofTree();
+				IPRProof prProofTree = status.getProofTree();
 				String name = status.getElementName();
 				assertNotNull("Proof absent for "+name , prProofTree);
 				assertEquals("Proof confidence different for "+name, prProofTree.getConfidence(null), status.getProofConfidence(null));
@@ -160,7 +160,7 @@ public class AutoPOMTest extends BuilderTest {
 			while (poIdx < poChildren.length && prIdx < prChildren.length) {
 				final IInternalParent poChild = (IInternalParent) poChildren[poIdx];
 				final IInternalParent prChild = (IInternalParent) prChildren[prIdx];
-				if (prChild instanceof IPRProofTree) {
+				if (prChild instanceof IPRProof) {
 					++ prIdx;
 				} else {
 					checkPOsConsistent(poChild, prChild);

@@ -2,7 +2,6 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -21,8 +20,5 @@ public interface IPRTypeEnvironment extends IInternalElement {
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prTypeEnv"); //$NON-NLS-1$
 		
 	ITypeEnvironment getTypeEnvironment(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
-	FreeIdentifier[] getFreeIdents(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
-
 	void setTypeEnvironment(ITypeEnvironment typeEnv, IProgressMonitor monitor) throws RodinDBException;
-	void setFreeIdents(FreeIdentifier[] freeIdents, IProgressMonitor monitor) throws RodinDBException;
 }

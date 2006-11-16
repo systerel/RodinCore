@@ -163,9 +163,9 @@
             id="witness"
             name="%eventBWitness"/>
       <internalElementType
-            class="org.eventb.core.basis.PRProofTree"
-            id="prProofTree"
-            name="%eventBprProofTree"/>
+            class="org.eventb.core.basis.PRProof"
+            id="prProof"
+            name="%eventBprProof"/>
       <internalElementType
             class="org.eventb.core.basis.POSource"
             id="poSource"
@@ -231,21 +231,17 @@
             id="scWitness"
             name="%eventBscWitness"/>
       <internalElementType
-            class="org.eventb.core.basis.PRProofTreeNode"
-            id="prProofTreeNode"
-            name="%eventBprProofTreeNode"/>
+            class="org.eventb.core.basis.PRProofSkelNode"
+            id="prProofSkelNode"
+            name="%eventBprProofSkelNode"/>
       <internalElementType
             class="org.eventb.core.basis.PRProofRule"
             id="proofRule"
             name="%eventBprProofRule"/>
       <internalElementType
-            class="org.eventb.core.basis.Pair"
-            id="pair"
-            name="%eventBpair"/>
-      <internalElementType
-            class="org.eventb.core.basis.PRPredicate"
-            id="prPredicate"
-            name="%eventBprPredicate"/>
+            class="org.eventb.core.basis.PRStoredPred"
+            id="prStoredPred"
+            name="%eventBprStoredPred"/>
       <internalElementType
             class="org.eventb.core.basis.PRReasonerInput"
             id="prReasonerInput"
@@ -259,9 +255,9 @@
             id="prReasonerAntecedent"
             name="%eventBprReasonerAntecedent"/>
       <internalElementType
-            class="org.eventb.core.basis.PRExpression"
-            id="prExpression"
-            name="%eventBprExpression"/>
+            class="org.eventb.core.basis.PRStoredExpr"
+            id="prStoredExpr"
+            name="%eventBprStoredExpr"/>
       <internalElementType
             class="org.eventb.core.basis.PRHypAction"
             id="prHypAction"

@@ -8,7 +8,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPRProof;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
@@ -37,7 +37,7 @@ public class ProofSerializationTests extends TestCase {
 		assertTrue(prFile.exists());
 		assertEquals(0, prFile.getProofTrees().length);
 		
-		IPRProofTree proof1 = prFile.createProofTree("proof1", null);
+		IPRProof proof1 = prFile.createProofTree("proof1", null);
 		assertEquals(1, prFile.getProofTrees().length);
 		assertTrue(proof1.exists());
 		assertEquals(proof1, prFile.getProofTree("proof1"));

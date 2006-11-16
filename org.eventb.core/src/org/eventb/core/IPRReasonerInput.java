@@ -1,6 +1,5 @@
 package org.eventb.core;
 
-import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -11,7 +10,7 @@ import org.rodinp.core.RodinCore;
  *
  */
 
-public interface IPRReasonerInput extends IInternalElement, IReasonerInputSerializer {
+public interface IPRReasonerInput extends IInternalElement {
 		
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prReasonerInput"); //$NON-NLS-1$

@@ -8,9 +8,9 @@ import javax.naming.OperationNotSupportedException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRExprRef;
-import org.eventb.core.IPRExpression;
+import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRPredRef;
-import org.eventb.core.IPRPredicate;
+import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRProofStore;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPRStringInput;
@@ -87,7 +87,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		
 		for(Map.Entry<Predicate, String> entry : predicates.entrySet()){
 			// TODO : writeout extra type info
-			IPRPredicate prPred = (IPRPredicate)prProofStore.getInternalElement(IPRPredicate.ELEMENT_TYPE, entry.getValue());
+			IPRStoredPred prPred = (IPRStoredPred)prProofStore.getInternalElement(IPRStoredPred.ELEMENT_TYPE, entry.getValue());
 			prPred.create(null, monitor);
 			Predicate pred = entry.getKey();
 			prPred.setPredicate(pred, monitor);
@@ -96,7 +96,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		
 		for(Map.Entry<Expression, String> entry : expressions.entrySet()){
 			// TODO : writeout extra type info
-			IPRExpression prExpr = (IPRExpression)prProofStore.getInternalElement(IPRExpression.ELEMENT_TYPE, entry.getValue());
+			IPRStoredExpr prExpr = (IPRStoredExpr)prProofStore.getInternalElement(IPRStoredExpr.ELEMENT_TYPE, entry.getValue());
 			prExpr.create(null, monitor);
 			prExpr.setExpression(entry.getKey(), monitor);
 			Expression expr = entry.getKey();

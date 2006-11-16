@@ -8,8 +8,8 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRIdentifier;
-import org.eventb.core.IPRPredicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.rodinp.core.IInternalElementType;
@@ -21,9 +21,9 @@ import org.rodinp.core.RodinDBException;
  *
  */
 
-public class PRPredicate extends SCPredicateElement implements IPRPredicate {
+public class PRStoredExpr extends SCExpressionElement implements IPRStoredExpr {
 
-	public PRPredicate(String name, IRodinElement parent) {
+	public PRStoredExpr(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 
@@ -50,6 +50,5 @@ public class PRPredicate extends SCPredicateElement implements IPRPredicate {
 			prIdent.setType(freeIdents[i].getType(), monitor);
 		}
 	}
-
 
 }

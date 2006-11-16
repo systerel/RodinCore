@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.pm.IProofState;
@@ -779,8 +779,8 @@ public class UserSupport implements IElementChangedListener,
 			}
 		}
 
-		else if (element instanceof IPRProofTree) {
-			IPRProofTree proofTree = (IPRProofTree) element;
+		else if (element instanceof IPRProof) {
+			IPRProof proofTree = (IPRProof) element;
 			// IPRSequent prSequent = proofTree.getSequent();
 			IPSstatus status = prFile.getStatusOf(proofTree.getElementName());
 

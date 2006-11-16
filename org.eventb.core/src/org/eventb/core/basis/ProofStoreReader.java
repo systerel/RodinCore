@@ -7,9 +7,9 @@ import javax.naming.OperationNotSupportedException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRExprRef;
-import org.eventb.core.IPRExpression;
+import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRPredRef;
-import org.eventb.core.IPRPredicate;
+import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRProofStore;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPRStringInput;
@@ -63,9 +63,9 @@ public class ProofStoreReader implements IProofStoreReader {
 		Predicate pred = predicates.get(ref);
 		if (pred == null){
 			final ITypeEnvironment baseTypeEnv = getBaseTypeEnv(null);
-			final IPRPredicate prPred = ((IPRPredicate)
+			final IPRStoredPred prPred = ((IPRStoredPred)
 								prProofStore.getInternalElement(
-										IPRPredicate.ELEMENT_TYPE,
+										IPRStoredPred.ELEMENT_TYPE,
 										ref));
 			FreeIdentifier[] newFreeIdents = prPred.getFreeIdents(factory, monitor);
 			if (newFreeIdents.length == 0)
@@ -86,9 +86,9 @@ public class ProofStoreReader implements IProofStoreReader {
 		Expression expr = expressions.get(ref);
 		if (expr == null){
 			final ITypeEnvironment baseTypeEnv = getBaseTypeEnv(null);
-			final IPRExpression prExpr = ((IPRExpression)
+			final IPRStoredExpr prExpr = ((IPRStoredExpr)
 								prProofStore.getInternalElement(
-										IPRExpression.ELEMENT_TYPE,
+										IPRStoredExpr.ELEMENT_TYPE,
 										ref));
 			FreeIdentifier[] newFreeIdents = prExpr.getFreeIdents(factory, monitor);
 			if (newFreeIdents.length == 0)
