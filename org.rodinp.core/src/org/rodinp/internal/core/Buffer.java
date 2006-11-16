@@ -221,13 +221,32 @@ public class Buffer {
 		return domDocument.getDocumentElement();
 	}
 	
+	/**
+	 * Returns the Rodin element corresponding to <code>domChild</code> in the
+	 * given parent. Returns <code>null</code> in case of error building the
+	 * Rodin element.
+	 * 
+	 * @param parent
+	 * @param domChild
+	 * @return the Rodin element corresponding to the given DOM child, or
+	 *         <code>null</code> in case of error
+	 */
 	private InternalElement getElement(IInternalParent parent,
 			Element domChild) {
-		final IInternalElementType childType = getElementType(domChild);
-		final String childName = getElementName(domChild);
-		assert childName != null;
-		return (InternalElement) parent.getInternalElement(childType,
-				childName);
+		
+		try {
+			final IInternalElementType childType = getElementType(domChild);
+			final String childName = getElementName(domChild);
+			if (childName == null) {
+				Util.log(null, "internal element with no name in file " + owner);
+				return null;
+			}
+			return (InternalElement) parent.getInternalElement(childType,
+					childName);
+		} catch (Exception e) {
+			Util.log(e, "when creating an internal element from file " + owner);
+			return null;
+		}
 	}
 
 	public String getElementContents(Element domElement) {
@@ -240,7 +259,6 @@ public class Buffer {
 
 	public IInternalElementType getElementType(Element domElement) {
 		final String id = domElement.getNodeName();
-		// TODO what if unknown element type?
 		return RodinCore.getInternalElementType(id);
 	}
 	
