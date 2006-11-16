@@ -18,7 +18,7 @@ import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.pm.ProvingMode;
+import org.eventb.core.pm.UserSupportManager;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
@@ -407,7 +407,7 @@ public class UserSupport implements IElementChangedListener,
 		IProofTreeNode currentNode = currentPS.getCurrentNode();
 		Object info = t.apply(currentNode, pm);
 		if (!t.equals(Tactics.prune())) {
-			if (ProvingMode.isExpertMode()) {
+			if (UserSupportManager.getProvingMode().isExpertMode()) {
 				Tactics.postProcessExpert().apply(currentNode, pm);
 			} else {
 				Tactics.postProcessBeginner().apply(currentNode, pm);

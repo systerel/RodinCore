@@ -68,7 +68,7 @@ import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.pm.ProvingMode;
+import org.eventb.core.pm.UserSupportManager;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBControl;
@@ -768,7 +768,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the toolbar manager
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
-		if (ProvingMode.isExpertMode()) {
+		if (UserSupportManager.getProvingMode().isExpertMode()) {
 			expertMode.setChecked(true);
 		} else {
 			expertMode.setChecked(false);
@@ -784,9 +784,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			@Override
 			public void run() {
 				if (expertMode.isChecked())
-					ProvingMode.setExpertMode(true);
+					UserSupportManager.getProvingMode().setExpertMode(true);
 				else
-					ProvingMode.setExpertMode(false);
+					UserSupportManager.getProvingMode().setExpertMode(false);
 			}
 		};
 		expertMode.setToolTipText("Expert mode switch");

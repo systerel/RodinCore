@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eventb.core.IPSFile;
+import org.eventb.internal.core.pm.ProvingMode;
 import org.eventb.internal.core.pm.UserSupport;
 import org.rodinp.core.RodinDBException;
 
@@ -33,6 +34,8 @@ public class UserSupportManager {
 	public static int ADDED = 0x2;
 
 	public static int CHANGED = 0x4;
+	
+	private static IProvingMode provingMode;
 
 	public static IUserSupport newUserSupport() {
 		IUserSupport userSupport = new UserSupport();
@@ -95,5 +98,12 @@ public class UserSupportManager {
 			IProgressMonitor monitor) throws RodinDBException {
 		userSupport.setInput(prFile, monitor);
 		notifyUSManagerListener(userSupport, CHANGED);
+	}
+
+	
+	public static IProvingMode getProvingMode() {
+		if (provingMode == null)
+			provingMode = new ProvingMode();
+		return provingMode;
 	}
 }
