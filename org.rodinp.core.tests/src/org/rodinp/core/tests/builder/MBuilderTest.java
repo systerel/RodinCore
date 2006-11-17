@@ -121,18 +121,18 @@ public class MBuilderTest extends AbstractBuilderTest {
 		POTool.SHOW_RUN = true;	
 		
 		runBuilder(
-				"CSC run /P/z.csc\n" + 
-				"CPO run /P/z.po\n" + 
 				"CSC run /P/x.csc\n" + 
 				"CPO run /P/x.po\n" + 
-				"CSC run /P/y.csc\n" + 
-				"CPO run /P/y.po\n" + 
 				"MSC run /P/a.msc\n" + 
 				"MPO run /P/a.po\n" + 
+				"CSC run /P/y.csc\n" + 
+				"CPO run /P/y.po\n" + 
 				"MSC run /P/b.msc\n" + 
 				"MPO run /P/b.po\n" + 
 				"MSC run /P/c.msc\n" + 
 				"MPO run /P/c.po\n" + 
+				"CSC run /P/z.csc\n" + 
+				"CPO run /P/z.po\n" + 
 				"MSC run /P/d.msc\n" + 
 				"MPO run /P/d.po"
 		);

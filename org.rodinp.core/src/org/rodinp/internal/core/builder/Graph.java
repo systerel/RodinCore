@@ -55,12 +55,11 @@ import org.rodinp.internal.core.util.Util;
  */
 public class Graph implements Serializable, Iterable<Node> {
 	
-	private static final long serialVersionUID = -7991706927619161707L;
+	private static final long serialVersionUID = 8944017873234553160L;
 
 	public static boolean DEBUG = false;
 	
 	private HashMap<String,Node> nodes;
-	private Node active; // begin list with this node if it is a root node otherwise ignore
 	
 	transient private HashMap<IPath, Node> nodeCache;
 	transient private LinkedList<Node> nodePreList; // contains the sorted nodes
@@ -71,16 +70,6 @@ public class Graph implements Serializable, Iterable<Node> {
 	transient private boolean instable; // true if the top order must be changed during build
 	
 	transient private ToolManager toolManager; // = GraphManager.getGraphManager();
-	
-	transient private int remainingNodes;
-	
-	protected void increaseRemainingNodes() {
-		remainingNodes++;
-	}
-	
-	protected void decN() {
-		remainingNodes--;
-	}
 	
 	public Node getNode(String name) {
 		return nodes.get(name);
@@ -97,9 +86,12 @@ public class Graph implements Serializable, Iterable<Node> {
 		return node;
 	}
 
-	public void builderAddNodeToGraph(Node node) {
+	public Node builderAddNodeToGraph(IPath path) {
+		Node node = new Node();
+		node.setPath(path);
 		nodes.put(node.getName(),node);
 		nodePostList.add(node);
+		return node;
 	}
 
 	public void builderRemoveNodeFromGraph(Node node, ProgressManager manager) {
@@ -110,7 +102,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		Collection<Node> values = new ArrayList<Node>(nodes.values());
 		for(Node n : values)
 			n.done = true;
-		node.markReachable();
+		node.markReachableSuccessorsUndone();
 		
 		manager.subTask(Messages.bind(Messages.build_removing, node.getName()));
 		
@@ -201,7 +193,6 @@ public class Graph implements Serializable, Iterable<Node> {
 
 	public Graph() {
 		nodes = new HashMap<String,Node>(11);
-		active = null;
 		
 		nodeCache = new HashMap<IPath, Node>(11);
 		nodePreList = new LinkedList<Node>();
@@ -349,12 +340,28 @@ public class Graph implements Serializable, Iterable<Node> {
 		}
 	}
 
-	public void activate(String name) {
-		// make the node called name preferred
-		Node a = nodes.get(name);
-		if(a != active) {
-			active = a;
-		}
+	public void setPreferredNode(Node pNode) {
+		
+		if (pNode == null || pNode.isPreferred())
+			return;
+		
+		resetNodeLists();
+		
+		for (Node node : nodePostList)
+			node.setPreferred(false);
+		
+		pNode.markReachablePredecessorsPreferred();
+		
+		LinkedList<Node> nodeTempList = new LinkedList<Node>();
+		
+		for (Node node : nodePostList)
+			if (node.isPreferred())
+				nodePreList.add(node);
+			else
+				nodeTempList.add(node);
+		
+		nodePostList.clear();
+		nodePostList.addAll(nodeTempList);
 	}
 	
 	private void removeNode(Node node) {
@@ -412,22 +419,23 @@ public class Graph implements Serializable, Iterable<Node> {
 		// initialize
 		nodeStack = new Stack<Node>();
 		
-		nodePreList.addAll(nodePostList);
-		nodePostList = nodePreList;
-		nodePreList = new LinkedList<Node>();
+		resetNodeLists();
 		
 		for(Node node : nodePostList) {
 			node.initForSort();
 		}
-		remainingNodes = nodes.size();
-		
-		// only root nodes can be preferred
-		if(active != null && active.count == 0 && nodePostList.getFirst() != active) {
-			nodePostList.remove(active);
-			nodePostList.add(0, active);
-		}
 		
 		instable = false;
+	}
+
+	private void resetNodeLists() {
+		
+		if (nodePreList.isEmpty())
+			return;
+		
+		nodePreList.addAll(nodePostList);
+		nodePostList = nodePreList;
+		nodePreList = new LinkedList<Node>();
 	}
 
 	private void topSortNodes(LinkedList<Node> sorted, boolean toolLinks, ProgressManager manager) throws CoreException {
@@ -470,7 +478,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		nodePostList.remove(node);
 		nodeStack.push(node);
 		sorted.add(node);
-		remainingNodes--;
 		node.done = true;
 		if(manager != null) {
 			manager.decreaseSliceAdjustment(this, node);
@@ -518,7 +525,7 @@ public class Graph implements Serializable, Iterable<Node> {
 
 		}
 
-		if(remainingNodes == 0) // N == 0 means: no cycles!
+		if(nodePostList.size() == 0) // N == 0 means: no cycles!
 			return;
 		
 		// all nodes that can now be sorted into the list spurious were in a cycle
@@ -546,7 +553,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		}
 		
 		// N == 0 means there is no cycle left. So it's a bug in a plug-in.
-		if (remainingNodes == 0)
+		if (nodePostList.size() == 0)
 			Util.log(null, message + "\n" + cycle); //$NON-NLS-1$
 	}
 	

@@ -95,9 +95,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 			Node node = state.graph.getNode(resource.getFullPath());
 			
 			if(node == null) {
-				node = new Node();
-				node.setPath(resource.getFullPath());
-				state.graph.builderAddNodeToGraph(node);
+				node = state.graph.builderAddNodeToGraph(resource.getFullPath());
 			}
 			return node;
 
@@ -212,6 +210,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				node = createNode(resource);
 			}
 			if(node != null) {
+				state.graph.setPreferredNode(node);
 				try {
 					state.graph.builderExtractNode(node, manager);
 				} catch (CoreException e) {

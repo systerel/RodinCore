@@ -28,13 +28,14 @@ import org.rodinp.internal.core.util.Messages;
  */
 public class Node implements Serializable {
 
-	private static final long serialVersionUID = -4755682487326821513L;
+	private static final long serialVersionUID = 4911431681915635479L;
 	private String name; // name of the resource (full name in workspace!)
 	private LinkedList<Link> predessorLinks; // the predecessor list
 	private String toolId; // toolId to be run to produce the resource of this node
 	private boolean dated; // true if the resource of this node needs to be (re-)created
 	private boolean phantom; // a node that was created by a dependency requirement
 	private boolean cycle; // node is on a cycle
+	private boolean preferred; // node should be treated as early as possible
 	
 	// temporary data for construction of topological order
 	private ArrayList<Node> successorNodes; // successors of this node (for topological sort)
@@ -242,12 +243,12 @@ public class Node implements Serializable {
 		}
 	}
 	
-	protected void markReachable() {
+	protected void markReachableSuccessorsUndone() {
 		if(!done)
 			return;
 		done = false;
 		for(Node node : successorNodes)
-			node.markReachable();
+			node.markReachableSuccessorsUndone();
 	}
 	
 	protected void addOriginToCycle() {
@@ -331,6 +332,23 @@ public class Node implements Serializable {
 		}
 
 		return fileElementType;
+	}
+
+	public boolean isPreferred() {
+		return preferred;
+	}
+
+	public void setPreferred(boolean preferred) {
+		this.preferred = preferred;
+	}
+	
+	public void markReachablePredecessorsPreferred() {
+		if(preferred)
+			return;
+		preferred = true;
+		for(Link link : predessorLinks)
+			link.source.markReachableSuccessorsUndone();
+
 	}
 
 }
