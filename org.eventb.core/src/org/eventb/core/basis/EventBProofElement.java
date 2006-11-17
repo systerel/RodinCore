@@ -60,6 +60,10 @@ public abstract class EventBProofElement extends InternalElement {
 		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE, monitor);
 	}
 	
+	public boolean hasConfidence(IProgressMonitor monitor) throws RodinDBException {
+		return hasAttribute(EventBAttributes.CONFIDENCE_ATTRIBUTE, monitor);
+	}
+	
 	public void setGoal(Predicate goal, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
 		String ref = store.putPredicate(goal);
 		setAttributeValue(EventBAttributes.GOAL_ATTRIBUTE, ref , monitor);

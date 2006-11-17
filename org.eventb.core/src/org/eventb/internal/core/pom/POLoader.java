@@ -61,18 +61,6 @@ public final class POLoader {
 			return result;			
 	}
 	
-//	public static IProverSequent readPO(IPOFile poFile,String name) throws RodinDBException {
-//		ITypeEnvironment typeEnv = Lib.ff.makeTypeEnvironment();
-//		addIdents(poFile.getIdentifiers(), typeEnv);
-//		IPOSequent poSeq = (IPOSequent) poFile.getInternalElement(IPOSequent.ELEMENT_TYPE,name);
-//		if (! poSeq.exists()) return null;
-//		addIdents(poSeq.getIdentifiers(),typeEnv);
-//		Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis(),typeEnv);
-//		Predicate goal = readPredicate(poSeq.getGoal(),typeEnv);
-//		IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
-//		return seq;
-//	}
-	
 	private static IProverSequent readPO(IPOFile poFile,String name) throws RodinDBException {
 		if (! poFile.exists()) return null;
 		IPOSequent poSeq = (IPOSequent) poFile.getInternalElement(IPOSequent.ELEMENT_TYPE,name);
@@ -91,18 +79,7 @@ public final class POLoader {
 		return seq;
 	}
 	
-	
-//	public static IProverSequent makeSequent(IPRSequent prSeq) throws RodinDBException{
-//		ITypeEnvironment typeEnv = Lib.ff.makeTypeEnvironment();
-//		IPRFile prFile = (IPRFile) prSeq.getOpenable();
-//		addIdents(prFile.getIdentifiers(), typeEnv);
-//		addIdents(prSeq.getIdentifiers(),typeEnv);
-//		Set<Hypothesis> hypotheses = readPredicates(prSeq.getHypothesis(),typeEnv);
-//		Predicate goal = readPredicate(prSeq.getGoal(),typeEnv);
-//		IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
-//		return seq;
-//	}
-	
+		
 	// Lock the pofile before calling this method
 	@Deprecated
 	public static IProverSequent makeSequent(final IPSStatus prSeq) throws RodinDBException{
@@ -122,24 +99,5 @@ public final class POLoader {
 			result.addAll(readPredicates(poPredSet.getParentPredicateSet(null),typeEnv));
 		return result;
 	}
-
-
-//	private static Predicate readPredicate(IPOPredicate poPred, ITypeEnvironment typeEnv) throws RodinDBException {
-//			Predicate pred =  ASTLib.parsePredicate(poPred.getContents());
-//			// System.out.println("Pred : " + poPred.getContents() +" Parsed : "+ pred);
-//			assert pred != null;
-//			boolean wellTyped = ASTLib.typeCheckClosed(pred,typeEnv);
-//			assert wellTyped;
-//			return pred;
-//	}
-
-//	private static void addIdents(IPOIdentifier[] poIdents, ITypeEnvironment typeEnv) throws RodinDBException {
-//		for (IPOIdentifier poIdent: poIdents){
-//			String name = poIdent.getName();
-//			Type type =  poIdent.getType(FormulaFactory.getDefault());
-//			assert (name!=null && type !=null);
-//			typeEnv.addName(name,type);
-//		}
-//	}
 	
 }

@@ -39,7 +39,7 @@ public class ProofSerializationTests extends TestCase {
 		
 		IPRProof proof1 = prFile.getProof("proof1");
 		proof1.create(null, null);
-		proof1.initialize(null);
+		// proof1.initialize(null);
 
 		assertEquals(1, prFile.getProofs().length);
 		assertTrue(proof1.exists());

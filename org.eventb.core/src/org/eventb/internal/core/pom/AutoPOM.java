@@ -46,6 +46,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			
 			String s = EventBPlugin.getComponentName(file.getName());
 			String t = EventBPlugin.getComponentName(origin.getName());
+//			TODO : something for the PR file maybe	
 			if (s.equals(t)) {
 				RodinCore.valueOf(file).delete(true, monitor);
 			}			
@@ -90,7 +91,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				
 				if (! prProof.exists()) {
 					prProof.create(null, null);
-					prProof.initialize(null);
+					// prProof.initialize(null);
 				}
 				
 				
@@ -105,7 +106,11 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				{
 					status.create(null, monitor);					
 				}
-				updateStatus(status,monitor);
+				try {
+					updateStatus(status,monitor);
+				} catch (Exception e) {
+					Util.log(e, "Exception thrown while updating ststus for "+status.getElementName());
+				}
 				
 				monitor.worked(1);
 				checkCancellation(monitor, prFile, psFile);
@@ -151,29 +156,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 //		IPRFile prFile = psFile.getPRFile();
 //		prFile.delete(true, null);
 		
-//		TODO : something for the PR file maybe
-//		IPSFile psFile = (IPSFile) RodinCore.valueOf(file).getMutableCopy();
-//			
-//		try {
-//		
-//			final IRodinElement[] children = psFile.getChildren();
-//			
-//			monitor.beginTask("Cleaning " + file.getName(), children.length + 5);
-//			
-//			for (IRodinElement child : children){
-//				// do not delete interactive proofs !
-//				if ((! child.getElementType().equals(IPRProofTree.ELEMENT_TYPE)) ||
-//						((PRProofTree)child).isAutomaticallyGenerated())
-//					((InternalElement)child).delete(true,null);
-//				monitor.worked(1);
-//			}
-//			
-//			psFile.save(new SubProgressMonitor(monitor,5),true);
-//			
-//		} finally {
-//			monitor.done();
-//		}
-		
+//		TODO : something for the PR file maybe	
 	}
 
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {	
@@ -212,14 +195,12 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		// TODO : modify once signatures are implemented
 		if (! psFile.exists()) 
 			psFile.create(true, monitor);
-//			project.createRodinFile(psFile.getElementName(), true, monitor);
 		else
 		{
 			IPSStatus[] statuses = psFile.getStatuses();
 			for (IPSStatus status : statuses) {
 				status.delete(true, monitor);
 			}
-			// psFile.getRodinDB().delete(psFile.getChildren(),true,null);
 		}
 	}
 	

@@ -26,7 +26,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
-import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IInternalElementType;
@@ -47,49 +47,49 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
-
-	public void initialize(IProofMonitor monitor) throws RodinDBException {
-		//delete previous children, if any.
-		if (this.getChildren().length != 0)
-			this.getRodinDB().delete(this.getChildren(),true,null);
-		setConfidence(IConfidence.UNATTEMPTED,null);
+	
+	@Override
+	public int getConfidence(IProgressMonitor monitor) throws RodinDBException {
+		if (!hasConfidence(monitor)) return IConfidence.UNATTEMPTED;
+		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE, monitor);
 	}
 	
 
 	public void setProofTree(IProofTree pt, IProgressMonitor monitor) throws RodinDBException {
-		PRProof prProofTree = this;
-		if (prProofTree.hasChildren())
-			getRodinDB().delete(prProofTree.getChildren(),true,null);
-
+		
+		delete(true, monitor);
+		create(null, monitor);
+		
+		if (pt.getConfidence() <= IConfidence.UNATTEMPTED) return;
 		
 		// compute proof tree dependencies
-		IProofDependencies proofDependencies = pt.getProofDependencies();
+		IProofDependencies proofDeps = pt.getProofDependencies();
 
 		// Construct a new proof store
-		IProofStoreCollector store = new ProofStoreCollector(proofDependencies.getUsedFreeIdents());
+		IProofStoreCollector store = new ProofStoreCollector(proofDeps.getUsedFreeIdents());
 
-		
 		// Write out the proof tree dependencies		
-		setGoal(proofDependencies.getGoal(), store, null);
-		setHyps(Hypothesis.Predicates(proofDependencies.getUsedHypotheses()),store,null);
-
-		setIntroFreeIdents(proofDependencies.getIntroducedFreeIdents(), monitor);
+		setGoal(proofDeps.getGoal(), store, null);
+		setHyps(Hypothesis.Predicates(proofDeps.getUsedHypotheses()),store,null);
+		// The used free idents are stored as the base type env in the store
+		setIntroFreeIdents(proofDeps.getIntroducedFreeIdents(), monitor);
 		
 		// write out the proof skeleton
-		IPRProofSkelNode root = (IPRProofSkelNode)
-		createInternalElement(PRProofSkelNode.ELEMENT_TYPE,"0",null,null);
-		root.setSkeleton(pt.getRoot(), store, null);
+		IPRProofSkelNode skel = (IPRProofSkelNode) getInternalElement(IPRProofSkelNode.ELEMENT_TYPE, "0");
+		skel.create(null, monitor);
+		skel.setSkeleton(pt.getRoot(), store, monitor);
 
 		//	Update the status
 		int confidence = pt.getConfidence();
 		setConfidence(confidence, null);
 		
-		IPRProofStore prStore = ((IPRProofStore)(prProofTree.createInternalElement(
-				IPRProofStore.ELEMENT_TYPE,"proofStore",null,null)));
-		store.writeOut(prStore, null);
+		IPRProofStore prStore = (IPRProofStore) getInternalElement(IPRProofStore.ELEMENT_TYPE,"proofStore");
+		prStore.create(null, monitor);
+		store.writeOut(prStore, monitor);
 	}
 
 	public IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException{
+		if (getConfidence(monitor) <= IConfidence.UNATTEMPTED) return unattemptedProofDeps;
 		IPRProofStore prStore = (IPRProofStore) getInternalElement(IPRProofStore.ELEMENT_TYPE, "proofStore");
 		IProofStoreReader store = new ProofStoreReader(prStore ,factory);
 		ProofDependencies proofDependencies = new ProofDependencies(factory, store, monitor);
@@ -104,32 +104,15 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		final Set<String> introducedFreeIdents;
 		final boolean hasDeps;
 		
-		public ProofDependencies(FormulaFactory factory, IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException{
+		public ProofDependencies(FormulaFactory factory, IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException{			
 			if (monitor == null) monitor = new NullProgressMonitor();
-			final int confidence = PRProof.this.getConfidence(monitor);
-			if (confidence <= IConfidence.UNATTEMPTED){
-				hasDeps = false;
-				goal = null;
-				usedHypotheses = null;
-				usedFreeIdents = null;
-				introducedFreeIdents = null;
-				return;
-			}
-			
 			try{
 				monitor.beginTask("Reading Proof Dependencies", 4);
-				// usedFreeIdents = PRProofTree.this.getUsedTypeEnvironment(factory,new SubProgressMonitor(monitor,1));
 				usedFreeIdents = store.getBaseTypeEnv(null);
-				//introducedFreeIdents = PRProofTree.this.getIntroducedTypeEnvironment(factory,new SubProgressMonitor(monitor,1));
 				introducedFreeIdents = PRProof.this.getIntroFreeIdents(monitor);
-				//goal = PRProofTree.this.getGoal(factory,usedFreeIdents,new SubProgressMonitor(monitor,1));
 				goal = PRProof.this.getGoal(store, new SubProgressMonitor(monitor,1));
-				// usedHypotheses = PRProofTree.this.getUsedHypotheses(factory, usedFreeIdents, new SubProgressMonitor(monitor,1));
 				usedHypotheses = Hypothesis.Hypotheses(PRProof.this.getHyps(store, new SubProgressMonitor(monitor,1)));
-				hasDeps = (goal != null && 
-						usedHypotheses != null && 
-						usedFreeIdents != null &&
-						introducedFreeIdents != null);
+				hasDeps = true;
 			}
 			finally
 			{
@@ -141,30 +124,18 @@ public class PRProof extends EventBProofElement implements IPRProof {
 			return hasDeps;
 		}
 		
-		/**
-		 * @return Returns the goal.
-		 */
 		public Predicate getGoal() {
 			return goal;
 		}
 
-		/**
-		 * @return Returns the introducedFreeIdents.
-		 */
 		public Set<String> getIntroducedFreeIdents() {
 			return introducedFreeIdents;
 		}
 
-		/**
-		 * @return Returns the usedFreeIdents.
-		 */
 		public ITypeEnvironment getUsedFreeIdents() {
 			return usedFreeIdents;
 		}
 
-		/**
-		 * @return Returns the usedHypotheses.
-		 */
 		public Set<Hypothesis> getUsedHypotheses() {
 			return usedHypotheses;
 		}
@@ -173,13 +144,13 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	
 	public IProofSkeleton getSkeleton(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
 		if (monitor == null) monitor = new NullProgressMonitor();
+		
 		IPRProofSkelNode root = (IPRProofSkelNode) getInternalElement(IPRProofSkelNode.ELEMENT_TYPE, "0");
-
-		if (! root.exists()) return null;
+		if (!root.exists()) return unattemptedProofSkel;
+		
 		IProofSkeleton skeleton;
 		try{
 			monitor.beginTask("Reading Proof Skeleton", 11);
-			// final ITypeEnvironment typEnv = getUsedTypeEnvironment(factory,new SubProgressMonitor(monitor,1));
 			IPRProofStore prStore = (IPRProofStore) getInternalElement(IPRProofStore.ELEMENT_TYPE, "proofStore");
 			IProofStoreReader store = new ProofStoreReader(prStore ,factory);
 			skeleton = root.getSkeleton(store,new SubProgressMonitor(monitor,10));
@@ -212,4 +183,47 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		}
 		return identNames;
 	}
+	
+	
+	private static final IProofDependencies unattemptedProofDeps = new IProofDependencies()
+	{
+		public Predicate getGoal() {
+			return null;
+		}
+
+		public Set<String> getIntroducedFreeIdents() {
+			return null;
+		}
+
+		public ITypeEnvironment getUsedFreeIdents() {
+			return null;
+		}
+
+		public Set<Hypothesis> getUsedHypotheses() {
+			return null;
+		}
+
+		public boolean hasDeps() {
+			return false;
+		}
+	};
+	
+	static final IProofSkeleton[] NO_CHILDREN = new IProofSkeleton[0];
+	
+	private static final IProofSkeleton unattemptedProofSkel = new IProofSkeleton()
+	{
+
+		public IProofSkeleton[] getChildNodes() {
+			return NO_CHILDREN;
+		}
+
+		public String getComment() {
+			return "";
+		}
+
+		public IProofRule getRule() {
+			return null;
+		}
+	};
+		
 }

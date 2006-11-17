@@ -91,12 +91,17 @@ public class AutoProver {
 			
 			pm.subTask("loading");
 			IPRProof prProof = status.getProof();
-//			if (proofTree == null)
-//				proofTree = prFile.createProofTree(status.getName());
 			pm.worked(1);
 			
-			if ((!status.getProofValidAttribute(null)) || 
+			final boolean proofValid = status.getProofValidAttribute(null);
+			
+			if (proofValid 
+					&& status.hasAutoProofAttribute(null))
+				return false;
+			
+			if ((!proofValid) || 
 					(status.getProofConfidence(null) <= IConfidence.PENDING)) {
+				
 				final IPOSequent poSequent = status.getPOSequent();
 				IProofTree autoProofTree = ProverFactory.makeProofTree(
 						POLoader.readPO(poSequent),
@@ -131,8 +136,9 @@ public class AutoProver {
 					// in this case no need to save immediately.
 					return true;
 				}
+				
+				status.setAutoProofAttribute(false,null);
 			}
-			status.setAutoProofAttribute(false,null);
 			return false;
 		} finally {
 			pm.done();
