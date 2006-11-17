@@ -16,14 +16,6 @@ import org.eventb.core.sc.state.IEventRefinesInfo;
  */
 public interface IEventSymbolInfo extends ISymbolInfo {
 
-	boolean isForbidden();
-	
-	void setForbidden() throws CoreException;
-
-	boolean isDisappearing();
-
-	void setDisappearing() throws CoreException;
-	
 	boolean isInherited();
 	
 	void setInherited() throws CoreException;

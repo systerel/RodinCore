@@ -11,8 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
-import org.eventb.internal.core.Util;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
@@ -33,32 +31,10 @@ public class EventSymbolInfo extends LabelSymbolInfo implements
 		inherited = false;
 	}
 	
-	private boolean forbidden;
-	
-	private boolean disappearing;
-	
 	private boolean inherited;
 	
 	private IEventRefinesInfo refinesInfo;
 	
-	public boolean isForbidden() {
-		return forbidden;
-	}
-	
-	public void setForbidden() throws CoreException {
-		if (!isMutable())
-			throw Util.newCoreException(Messages.symtab_ImmutableSymbolViolation);
-		this.forbidden = true;
-	}
-
-	public boolean isDisappearing() {
-		return disappearing;
-	}
-
-	public void setDisappearing() throws CoreException {
-		this.disappearing = true;
-	}
-
 	public void setRefinesInfo(IEventRefinesInfo refinesInfo) {
 		this.refinesInfo = refinesInfo;
 	}
