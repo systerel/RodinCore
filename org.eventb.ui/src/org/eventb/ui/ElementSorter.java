@@ -14,6 +14,7 @@ package org.eventb.ui;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eventb.internal.ui.ElementUIRegistry;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 

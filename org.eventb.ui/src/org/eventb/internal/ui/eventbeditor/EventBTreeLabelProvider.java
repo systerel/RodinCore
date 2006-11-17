@@ -25,8 +25,8 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.ui.ElementUIRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinElement;
 

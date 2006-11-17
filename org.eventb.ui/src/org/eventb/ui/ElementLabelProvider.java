@@ -29,6 +29,7 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;

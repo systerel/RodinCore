@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.ui;
+package org.eventb.internal.ui;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +22,10 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IElementLabelProvider;
+import org.eventb.ui.IElementModifier;
+import org.eventb.ui.NullModifier;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;

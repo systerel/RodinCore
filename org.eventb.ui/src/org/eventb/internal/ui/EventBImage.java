@@ -21,7 +21,6 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.ui.ElementUIRegistry;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
