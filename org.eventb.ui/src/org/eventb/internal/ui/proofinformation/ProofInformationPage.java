@@ -33,7 +33,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IPOSource;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.pm.IProofState;
@@ -123,7 +123,7 @@ public class ProofInformationPage extends Page implements
 	 * @param prSequent
 	 *            the current prSequent
 	 */
-	void setFormText(IPSstatus prSequent, IProgressMonitor monitor) {
+	void setFormText(IPSStatus prSequent, IProgressMonitor monitor) {
 		try {
 			String formString = "<form>";
 
@@ -334,7 +334,7 @@ public class ProofInformationPage extends Page implements
 				IProofState ps = delta.getProofState();
 				if (delta.isNewProofState()) {
 					if (ps != null) {
-						IPSstatus prSequent = ps.getPRSequent();
+						IPSStatus prSequent = ps.getPRSequent();
 						if (prSequent.exists()) {
 							scrolledForm.setText(prSequent.getElementName());
 							setFormText(prSequent, new NullProgressMonitor());

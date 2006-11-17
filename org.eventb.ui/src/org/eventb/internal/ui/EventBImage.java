@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.ICommentedElement;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.ui.ElementUIRegistry;
@@ -279,7 +279,7 @@ public class EventBImage {
 	 *            a PRSequent
 	 * @return the image corresponding to the input sequent
 	 */
-	public static Image getPRSequentImage(IPSstatus status) {
+	public static Image getPRSequentImage(IPSStatus status) {
 		String base_path = "";
 		String auto = "0";
 

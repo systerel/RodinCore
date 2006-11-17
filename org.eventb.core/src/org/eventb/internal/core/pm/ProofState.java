@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProof;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.seqprover.Hypothesis;
@@ -50,7 +50,7 @@ import org.rodinp.core.RodinDBException;
 public class ProofState implements IProofState {
 
 	// The PR sequent associated with this proof obligation.
-	IPSstatus status;
+	IPSStatus status;
 
 	// The current proof tree, this might be different from the proof tree in
 	// the disk, can be null when it is not initialised.
@@ -69,7 +69,7 @@ public class ProofState implements IProofState {
 	// proof obligation.
 	private boolean dirty;
 
-	public ProofState(IPSstatus ps) {
+	public ProofState(IPSStatus ps) {
 		this.status = ps;
 		// loadProofTree();
 	}
@@ -92,7 +92,7 @@ public class ProofState implements IProofState {
 		pt = createProofTree();
 		
 		// If a proof exists in the PR file rebuild it.
-		final IPRProof prProofTree = status.getProofTree();
+		final IPRProof prProofTree = status.getProof();
 		if (prProofTree != null)
 		{
 			final IProofSkeleton proofSkeleton = prProofTree.getSkeleton(FormulaFactory.getDefault(), monitor);
@@ -122,14 +122,14 @@ public class ProofState implements IProofState {
 		if (pt != null)
 			return pt.isClosed();
 		
-		final IPRProof prProofTree = status.getProofTree();
+		final IPRProof prProofTree = status.getProof();
 		return (prProofTree != null && (prProofTree.getConfidence(null) > IConfidence.PENDING));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IProofState#getPRSequent()
 	 */
-	public IPSstatus getPRSequent() {
+	public IPSStatus getPRSequent() {
 		return status;
 	}
 
@@ -233,9 +233,9 @@ public class ProofState implements IProofState {
 				try
 				{
 					mon.beginTask("Saving Proof", 2);
-					((IPRProof) status.getProofTree().getMutableCopy()).setProofTree(pt, new SubProgressMonitor(mon,1));
+					((IPRProof) status.getProof().getMutableCopy()).setProofTree(pt, new SubProgressMonitor(mon,1));
 					AutoPOM.updateStatus(
-							((IPSstatus) status.getMutableCopy()),
+							((IPSStatus) status.getMutableCopy()),
 							new SubProgressMonitor(mon,1));
 				}
 				finally 
@@ -304,7 +304,7 @@ public class ProofState implements IProofState {
 	 * @see org.eventb.core.pm.IProofState#isSequentDischarged()
 	 */
 	public boolean isSequentDischarged() throws RodinDBException {
-		final IPRProof prProofTree = status.getProofTree();
+		final IPRProof prProofTree = status.getProof();
 		return (prProofTree != null && (prProofTree.getConfidence(null) > IConfidence.PENDING));
 	}
 

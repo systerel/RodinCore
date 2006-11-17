@@ -11,7 +11,7 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -105,7 +105,7 @@ public final class POLoader {
 	
 	// Lock the pofile before calling this method
 	@Deprecated
-	public static IProverSequent makeSequent(final IPSstatus prSeq) throws RodinDBException{
+	public static IProverSequent makeSequent(final IPSStatus prSeq) throws RodinDBException{
 		IPSFile prFile = (IPSFile) prSeq.getOpenable();
 		final IPOFile poFile = prFile.getPOFile();
 		IProverSequent readPO = readPO(poFile,prSeq.getElementName());

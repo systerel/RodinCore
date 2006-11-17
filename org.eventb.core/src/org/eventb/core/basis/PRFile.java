@@ -40,20 +40,20 @@ public class PRFile extends RodinFile implements IPRFile {
 		return ELEMENT_TYPE;
 	}
 	
-	public IPRProof[] getProofTrees() throws RodinDBException {
+	public IPRProof[] getProofs() throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(IPRProof.ELEMENT_TYPE);
 		PRProof[] proofTrees = new PRProof[list.size()];
 		list.toArray(proofTrees);
 		return proofTrees;
 	}
 
-	public IPRProof getProofTree(String name) {
+	public IPRProof getProof(String name) {
 		IInternalElement proofTree = getInternalElement(IPRProof.ELEMENT_TYPE,name);
 		if (proofTree.exists()) return (IPRProof) proofTree;
 		return null;
 	}
 
-	public IPRProof createProofTree(String name, IProgressMonitor monitor) throws RodinDBException {
+	public IPRProof createFreshProof(String name, IProgressMonitor monitor) throws RodinDBException {
 		IPRProof prProofTree = (IPRProof) createInternalElement(
 				IPRProof.ELEMENT_TYPE,name, null, monitor);
 		prProofTree.initialize(null);

@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -41,7 +41,7 @@ public interface IUserSupport {
 	public abstract void setInput(IPSFile prFile, IProgressMonitor monitor)
 			throws RodinDBException;
 
-	public abstract void setCurrentPO(IPSstatus prSequent,
+	public abstract void setCurrentPO(IPSStatus prSequent,
 			IProgressMonitor monitor) throws RodinDBException;
 
 	public abstract void nextUndischargedPO(boolean force,

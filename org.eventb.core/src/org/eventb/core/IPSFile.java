@@ -77,8 +77,8 @@ public interface IPSFile extends IRodinFile{
 	 */
 	IPRFile getPRFile();
 	
-	IPSstatus[] getStatus() throws RodinDBException;
+	IPSStatus[] getStatuses() throws RodinDBException;
 	
-	IPSstatus getStatusOf(String name) throws RodinDBException;
+	IPSStatus getStatus(String name) throws RodinDBException;
 		
 }

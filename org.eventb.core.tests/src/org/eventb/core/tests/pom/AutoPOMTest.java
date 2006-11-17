@@ -6,7 +6,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
@@ -89,9 +89,9 @@ public class AutoPOMTest extends BuilderTest {
 		checkProofsConsistent(prFile, psFile);
 		
 		// Checks that all POs are discharged except the last one.
-		IPSstatus[] prs = (IPSstatus[]) psFile.getStatus();
+		IPSStatus[] prs = (IPSStatus[]) psFile.getStatuses();
 		for (int i = 0; i < prs.length - 1; i++) {
-			IPSstatus prSequent = prs[i];
+			IPSStatus prSequent = prs[i];
 			assertDischarged(prSequent);
 		}
 		assertNotDischarged(prs[prs.length-1]);
@@ -104,10 +104,10 @@ public class AutoPOMTest extends BuilderTest {
 		Tactics.lemma("∀x· x∈ℤ ⇒ x=x").apply(proofTree.getRoot().getFirstOpenDescendant(), null);
 		Tactics.norm().apply(proofTree.getRoot(), null);
 		// System.out.println(proofTree.getRoot());
-		prs[prs.length-1].getProofTree().setProofTree(proofTree, null);
+		prs[prs.length-1].getProof().setProofTree(proofTree, null);
 		AutoPOM.updateStatus(prs[prs.length-1],null);
 		
-		IProofSkeleton skel = prs[prs.length-1].getProofTree().getSkeleton(FormulaFactory.getDefault(), null);
+		IProofSkeleton skel = prs[prs.length-1].getProof().getSkeleton(FormulaFactory.getDefault(), null);
 		IProofTree loadedProofTree = ProverFactory.makeProofTree(seq, null);
 		ProofBuilder.rebuild(loadedProofTree.getRoot(),skel);
 		
@@ -123,11 +123,11 @@ public class AutoPOMTest extends BuilderTest {
 	
 
 	private void checkProofsConsistent(IPRFile prFile, IPSFile psFile) throws RodinDBException {
-		IPSstatus[] statuses = psFile.getStatus();
-		for (IPSstatus status : statuses) {
+		IPSStatus[] statuses = psFile.getStatuses();
+		for (IPSStatus status : statuses) {
 			if (status.getProofConfidence(null) > IConfidence.UNATTEMPTED)
 			{
-				IPRProof prProofTree = status.getProofTree();
+				IPRProof prProofTree = status.getProof();
 				String name = status.getElementName();
 				assertNotNull("Proof absent for "+name , prProofTree);
 				assertEquals("Proof confidence different for "+name, prProofTree.getConfidence(null), status.getProofConfidence(null));
@@ -175,7 +175,7 @@ public class AutoPOMTest extends BuilderTest {
 		}
 	}
 
-	private void assertDischarged(IPSstatus status) throws RodinDBException {
+	private void assertDischarged(IPSStatus status) throws RodinDBException {
 		// IPRProofTree proofTree = status.getProofTree();
 		assertTrue("PO " + status.getElementName() + " should be closed",
 				IConfidence.PENDING <
@@ -189,7 +189,7 @@ public class AutoPOMTest extends BuilderTest {
 		
 	}
 	
-	private void assertNotDischarged(IPSstatus status) throws RodinDBException {
+	private void assertNotDischarged(IPSStatus status) throws RodinDBException {
 		// IPRProofTree proofTree = status.getProofTree();
 		assertTrue("PO " + status.getElementName() + " should not be closed",
 				IConfidence.PENDING >=

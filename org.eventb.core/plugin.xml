@@ -236,7 +236,7 @@
             name="%eventBprProofSkelNode"/>
       <internalElementType
             class="org.eventb.core.basis.PRProofRule"
-            id="proofRule"
+            id="prProofRule"
             name="%eventBprProofRule"/>
       <internalElementType
             class="org.eventb.core.basis.PRStoredPred"
@@ -251,9 +251,9 @@
             id="prTypeEnv"
             name="%eventBprTypeEnv"/>
       <internalElementType
-            class="org.eventb.core.basis.PRReasonerAntecedent"
-            id="prReasonerAntecedent"
-            name="%eventBprReasonerAntecedent"/>
+            class="org.eventb.core.basis.PRRuleAntecedent"
+            id="prRuleAntecedent"
+            name="%eventBprRuleAntecedent"/>
       <internalElementType
             class="org.eventb.core.basis.PRStoredExpr"
             id="prStoredExpr"
@@ -263,8 +263,8 @@
             id="prHypAction"
             name="%eventBprHypAction"/>
       <internalElementType
-            class="org.eventb.core.basis.PSstatus"
-            id="status"
+            class="org.eventb.core.basis.PSStatus"
+            id="psStatus"
             name="%eventBpsStatus"/>
       <internalElementType
             class="org.eventb.core.basis.PRIdentifier"

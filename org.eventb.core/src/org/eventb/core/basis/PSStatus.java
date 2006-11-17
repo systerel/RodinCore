@@ -14,7 +14,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -35,9 +35,9 @@ import org.rodinp.core.basis.InternalElement;
  * @author Farhad Mehta
  *
  */
-public class PSstatus extends InternalElement implements IPSstatus {
+public class PSStatus extends InternalElement implements IPSStatus {
 
-	public PSstatus(String name, IRodinElement parent) {
+	public PSStatus(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 
@@ -53,9 +53,9 @@ public class PSstatus extends InternalElement implements IPSstatus {
 //		return getElementName();
 //	}
 	
-	public IPRProof getProofTree(){
+	public IPRProof getProof(){
 		final IPRFile prFile = ((IPSFile)getOpenable()).getPRFile();
-		IPRProof proofTree = prFile.getProofTree(getElementName());
+		IPRProof proofTree = prFile.getProof(getElementName());
 		// assert proofTree != null;
 		if ( proofTree == null || (!proofTree.exists())) return null;
 		return proofTree;

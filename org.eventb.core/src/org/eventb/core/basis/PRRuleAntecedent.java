@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRHypAction;
-import org.eventb.core.IPRReasonerAntecedent;
+import org.eventb.core.IPRRuleAntecedent;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.FreeIdentifier;
@@ -29,9 +29,9 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  */
-public class PRReasonerAntecedent extends EventBProofElement implements IPRReasonerAntecedent {
+public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntecedent {
 
-	public PRReasonerAntecedent(String name, IRodinElement parent) {
+	public PRRuleAntecedent(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 

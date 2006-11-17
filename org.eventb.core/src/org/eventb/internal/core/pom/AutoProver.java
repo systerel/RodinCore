@@ -16,7 +16,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
@@ -58,11 +58,11 @@ public class AutoProver {
 	protected static void run(IPRFile prFile, IPSFile psFile, IProgressMonitor monitor) throws CoreException {
 		if (! enabled)
 			return;
-		final IPSstatus[] pos = psFile.getStatus();
+		final IPSStatus[] pos = psFile.getStatuses();
 		boolean dirty = false;
 		try {
 			monitor.beginTask("auto-proving", pos.length);
-			for (IPSstatus status : pos) {
+			for (IPSStatus status : pos) {
 				if (monitor.isCanceled()) {
 					prFile.makeConsistent(null);
 					psFile.makeConsistent(null);
@@ -84,14 +84,14 @@ public class AutoProver {
 		}
 	}
 
-	private static boolean processPo(IPRFile prFile, IPSstatus status,
+	private static boolean processPo(IPRFile prFile, IPSStatus status,
 			IProgressMonitor pm) throws RodinDBException {
 		
 		try {
 			pm.beginTask(status.getElementName() + ":", 3);
 			
 			pm.subTask("loading");
-			IPRProof prProofTree = status.getProofTree();
+			IPRProof prProofTree = status.getProof();
 //			if (proofTree == null)
 //				proofTree = prFile.createProofTree(status.getName());
 			pm.worked(1);
@@ -156,7 +156,7 @@ public class AutoProver {
 				);
 	}
 	
-	private static void setAutoProven(boolean autoProven, IPSstatus status) throws RodinDBException {
+	private static void setAutoProven(boolean autoProven, IPSStatus status) throws RodinDBException {
 		status.setAttributeValue(EventBAttributes.AUTO_PROOF_ATTRIBUTE, autoProven, null);
 	}
 

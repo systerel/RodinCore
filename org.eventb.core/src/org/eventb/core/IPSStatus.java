@@ -24,21 +24,13 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  */
-public interface IPSstatus extends IInternalElement {
+public interface IPSStatus extends IInternalElement {
 	
 	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".status"); //$NON-NLS-1$
-
-	/**
-	 * Returns the name of this proof obligation in the RODIN database.
-	 * 
-	 * @return the name of this proof obligation.
-	 * 
-	 */
-	// String getElementName();
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".psStatus"); //$NON-NLS-1$
 	
 	/**
-	 * Returns the proof tree associated to this proof obligation from the
+	 * Returns the proof associated to this proof obligation from the
 	 * RODIN database.
 	 * 
 	 * @return the proof tree associated to this proof obligation from the
@@ -47,7 +39,7 @@ public interface IPSstatus extends IInternalElement {
 	 * 
 	 * @throws RodinDBException
 	 */
-	IPRProof getProofTree() throws RodinDBException;
+	IPRProof getProof() throws RodinDBException;
 	
 	/**
 	 * Returns the IPOSequent associated to this proof obligation from the
@@ -106,8 +98,5 @@ public interface IPSstatus extends IInternalElement {
 	 * @throws RodinDBException
 	 */
 	boolean isAutoProven(IProgressMonitor monitor) throws RodinDBException;
-	
-	// lock po & pr files before calling this method
-	// void updateStatus(IProgressMonitor monitor) throws RodinDBException;
 	
 }

@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
@@ -253,8 +253,8 @@ public class UserSupport implements IElementChangedListener,
 		this.prFile = prFile;
 		proofStates = new LinkedList<IProofState>();
 		try {
-			for (int i = 0; i < prFile.getStatus().length; i++) {
-				IPSstatus prSequent = prFile.getStatus()[i];
+			for (int i = 0; i < prFile.getStatuses().length; i++) {
+				IPSStatus prSequent = prFile.getStatuses()[i];
 				proofStates.add(new ProofState(prSequent));
 			}
 		} catch (RodinDBException e) {
@@ -270,7 +270,7 @@ public class UserSupport implements IElementChangedListener,
 	 * @see org.eventb.core.pm.IUserSupport#setCurrentPO(org.eventb.core.IPSstatus,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void setCurrentPO(IPSstatus prSequent, IProgressMonitor monitor)
+	public void setCurrentPO(IPSStatus prSequent, IProgressMonitor monitor)
 			throws RodinDBException {
 		if (prSequent == null)
 			setProofState(null, monitor);
@@ -570,7 +570,7 @@ public class UserSupport implements IElementChangedListener,
 		UserSupportUtils.debug("Element changed " + c + " : "
 				+ event.getDelta());
 		reload = false;
-		deleted = new ArrayList<IPSstatus>();
+		deleted = new ArrayList<IPSStatus>();
 		batchOperation(new Runnable() {
 
 			public void run() {
@@ -589,7 +589,7 @@ public class UserSupport implements IElementChangedListener,
 				if (currentPS != null) {
 					UserSupportUtils.debug("CurrentPS: "
 							+ currentPS.getPRSequent().getElementName());
-					for (IPSstatus sequent : deleted) {
+					for (IPSStatus sequent : deleted) {
 						UserSupportUtils.debug("Deleted: "
 								+ sequent.getElementName());
 					}
@@ -621,7 +621,7 @@ public class UserSupport implements IElementChangedListener,
 		UserSupportUtils.debug("******************************");
 	}
 
-	Collection<IPSstatus> deleted;
+	Collection<IPSStatus> deleted;
 
 	private IProofState getProofState(int index) {
 		IProofState proofState = null;
@@ -632,7 +632,7 @@ public class UserSupport implements IElementChangedListener,
 
 	void reloadPRSequent() {
 		// Remove the deleted ones first
-		for (IPSstatus prSequent : deleted) {
+		for (IPSStatus prSequent : deleted) {
 			IProofState state = new ProofState(prSequent);
 			proofStates.remove(state);
 		}
@@ -640,7 +640,7 @@ public class UserSupport implements IElementChangedListener,
 		try {
 			int index = 0;
 			IProofState proofState = getProofState(index);
-			for (IPSstatus prSequent : prFile.getStatus()) {
+			for (IPSStatus prSequent : prFile.getStatuses()) {
 				UserSupportUtils.debug("Trying: " + prSequent.getElementName());
 				UserSupportUtils.debug("Index: " + index);
 				if (proofState != null) {
@@ -675,7 +675,7 @@ public class UserSupport implements IElementChangedListener,
 					processDelta(d, monitor);
 				}
 			}
-		} else if (element instanceof IPSstatus) {
+		} else if (element instanceof IPSStatus) {
 			int kind = elementChangedDelta.getKind();
 
 			if (kind == IRodinElementDelta.ADDED) {
@@ -686,7 +686,7 @@ public class UserSupport implements IElementChangedListener,
 			} else if (kind == IRodinElementDelta.REMOVED) {
 				UserSupportUtils.debug("IPRSequent changed: "
 						+ element.getElementName() + " is removed");
-				deleted.add((IPSstatus) element);
+				deleted.add((IPSStatus) element);
 				reload = true;
 			} else if (kind == IRodinElementDelta.CHANGED) {
 
@@ -697,7 +697,7 @@ public class UserSupport implements IElementChangedListener,
 				// changed or if the prsequent has been replaced.
 				if ((flag & RodinElementDelta.F_CHILDREN) != 0
 						|| (flag & RodinElementDelta.F_REPLACED) != 0) {
-					IPSstatus prSequent = (IPSstatus) element;
+					IPSStatus prSequent = (IPSStatus) element;
 
 					IProofState state = getProofState(prSequent);
 
@@ -782,7 +782,7 @@ public class UserSupport implements IElementChangedListener,
 		else if (element instanceof IPRProof) {
 			IPRProof proofTree = (IPRProof) element;
 			// IPRSequent prSequent = proofTree.getSequent();
-			IPSstatus status = prFile.getStatusOf(proofTree.getElementName());
+			IPSStatus status = prFile.getStatus(proofTree.getElementName());
 
 			IProofState state = getProofState(status);
 
@@ -824,7 +824,7 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	private IProofState getProofState(IPSstatus prSequent) {
+	private IProofState getProofState(IPSStatus prSequent) {
 		for (IProofState state : proofStates) {
 			if (state.getPRSequent().equals(prSequent))
 				return state;

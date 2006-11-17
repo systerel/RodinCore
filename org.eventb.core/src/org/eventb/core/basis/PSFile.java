@@ -16,7 +16,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -78,15 +78,15 @@ public class PSFile extends RodinFile implements IPSFile {
 //		return statuses;
 //	}
 	
-	public IPSstatus[] getStatus() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(PSstatus.ELEMENT_TYPE);
-		PSstatus[] statuses = new PSstatus[list.size()];
+	public IPSStatus[] getStatuses() throws RodinDBException {
+		ArrayList<IRodinElement> list = getFilteredChildrenList(PSStatus.ELEMENT_TYPE);
+		PSStatus[] statuses = new PSStatus[list.size()];
 		list.toArray(statuses);
 		return statuses;
 	}
 	
-	public IPSstatus getStatusOf(String name) {
-		IPSstatus status = (IPSstatus) getInternalElement(IPSstatus.ELEMENT_TYPE,name);
+	public IPSStatus getStatus(String name) {
+		IPSStatus status = (IPSStatus) getInternalElement(IPSStatus.ELEMENT_TYPE,name);
 		if (!status.exists()) return null;
 		return status;
 	}

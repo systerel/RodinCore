@@ -33,7 +33,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
@@ -125,7 +125,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * @param prSequent
 	 *            current pr Sequent
 	 */
-	public void setCurrentPO(IPSstatus prSequent, IProgressMonitor monitor) {
+	public void setCurrentPO(IPSStatus prSequent, IProgressMonitor monitor) {
 		IProofState proofState = userSupport.getCurrentPO();
 		if (proofState != null && proofState.getPRSequent().equals(prSequent))
 			return;
@@ -415,7 +415,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			if (obligationExplorer != null) {
 				IProofState ps = this.getUserSupport().getCurrentPO();
 				if (ps != null) {
-					IPSstatus prSequent = this.getUserSupport().getCurrentPO()
+					IPSStatus prSequent = this.getUserSupport().getCurrentPO()
 							.getPRSequent();
 					obligationExplorer.externalSetSelection(prSequent);
 					obligationExplorer.getTreeViewer().reveal(prSequent);
@@ -452,7 +452,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * 
 	 * @return the current PRSequent
 	 */
-	public IPSstatus getCurrentProverSequent() {
+	public IPSStatus getCurrentProverSequent() {
 		IProofState ps = getUserSupport().getCurrentPO();
 		if (ps != null)
 			return ps.getPRSequent();

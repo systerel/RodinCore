@@ -18,9 +18,9 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.basis.PSstatus;
+import org.eventb.core.basis.PSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
@@ -88,24 +88,24 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				final String name = pos[i].getElementName();
 				monitor.subTask("updating status for " + name);
 				
-				final IPRProof prProof = prFile.getProofTree(name);
+				final IPRProof prProof = prFile.getProof(name);
 				
 				if (prProof == null) {
-					prFile.createProofTree(name, null);
+					prFile.createFreshProof(name, null);
 				}
 				
 				
-				final IPSstatus oldStatus = ((IPSFile) psFile.getSnapshot()).getStatusOf(name);
-				IPSstatus status;
+				final IPSStatus oldStatus = ((IPSFile) psFile.getSnapshot()).getStatus(name);
+				IPSStatus status;
 				// TODO : for some reason, oldStatus is always null
 				if (oldStatus == null)
 				{
-					status = (IPSstatus) psFile.createInternalElement(IPSstatus.ELEMENT_TYPE,name,null,null);
+					status = (IPSStatus) psFile.createInternalElement(IPSStatus.ELEMENT_TYPE,name,null,null);
 				}
 				else
 				{
 					oldStatus.copy(psFile, null, null, true, null);
-					status = psFile.getStatusOf(name);
+					status = psFile.getStatus(name);
 				}
 				updateStatus(status,monitor);
 				
@@ -148,10 +148,10 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
 		
 		IPSFile psFile = (IPSFile) RodinCore.valueOf(file);
-		IPRFile prFile = psFile.getPRFile();
-		
 		psFile.delete(true, null);
-		prFile.delete(true, null);
+		
+//		IPRFile prFile = psFile.getPRFile();
+//		prFile.delete(true, null);
 		
 //		TODO : something for the PR file maybe
 //		IPSFile psFile = (IPSFile) RodinCore.valueOf(file).getMutableCopy();
@@ -215,8 +215,8 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			project.createRodinFile(psFile.getElementName(), true, monitor);
 		else
 		{
-			IPSstatus[] statuses = psFile.getStatus();
-			for (IPSstatus status : statuses) {
+			IPSStatus[] statuses = psFile.getStatuses();
+			for (IPSStatus status : statuses) {
 				status.delete(true, monitor);
 			}
 			// psFile.getRodinDB().delete(psFile.getChildren(),true,null);
@@ -226,10 +226,10 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 //	 lock po & pr files before calling this method
 // TODO : a version with Proof tree from seqProver
-	public static void updateStatus(IPSstatus istatus, IProgressMonitor monitor) throws RodinDBException {
-		PSstatus status = (PSstatus) istatus;
+	public static void updateStatus(IPSStatus istatus, IProgressMonitor monitor) throws RodinDBException {
+		PSStatus status = (PSStatus) istatus;
 		IProverSequent seq =  POLoader.readPO(status.getPOSequent());
-		final IPRProof proofTree = status.getProofTree();
+		final IPRProof proofTree = status.getProof();
 		if (proofTree == null) {
 			status.setProofConfidence(IConfidence.UNATTEMPTED, null);
 			status.setProofValid(true, null);

@@ -35,12 +35,12 @@ public class ProofSerializationTests extends TestCase {
 		IPRFile prFile = (IPRFile) rodinProject.createRodinFile("x.bpr", true, null);
 		
 		assertTrue(prFile.exists());
-		assertEquals(0, prFile.getProofTrees().length);
+		assertEquals(0, prFile.getProofs().length);
 		
-		IPRProof proof1 = prFile.createProofTree("proof1", null);
-		assertEquals(1, prFile.getProofTrees().length);
+		IPRProof proof1 = prFile.createFreshProof("proof1", null);
+		assertEquals(1, prFile.getProofs().length);
 		assertTrue(proof1.exists());
-		assertEquals(proof1, prFile.getProofTree("proof1"));
+		assertEquals(proof1, prFile.getProof("proof1"));
 		
 		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence(null));
 		assertFalse(proof1.getProofDependencies(factory , null).hasDeps());

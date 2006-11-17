@@ -62,8 +62,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSstatus;
-import org.eventb.core.basis.PSstatus;
+import org.eventb.core.IPSStatus;
+import org.eventb.core.basis.PSStatus;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
@@ -146,8 +146,8 @@ public class ObligationExplorer extends ViewPart implements
 				Object element) {
 
 			boolean selection = exclude.getSelection();
-			if (element instanceof PSstatus) {
-				PSstatus sequent = (PSstatus) element;
+			if (element instanceof PSStatus) {
+				PSStatus sequent = (PSStatus) element;
 
 				if (sequent.getElementName().indexOf(filterText.getText()) == -1)
 					return selection;
@@ -166,8 +166,8 @@ public class ObligationExplorer extends ViewPart implements
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 			boolean selection = discharge.getSelection();
-			if (element instanceof IPSstatus) {
-				IPSstatus sequent = (IPSstatus) element;
+			if (element instanceof IPSStatus) {
+				IPSStatus sequent = (IPSStatus) element;
 				int status = NULL;
 				try {
 					status = getStatus(sequent);
@@ -188,7 +188,7 @@ public class ObligationExplorer extends ViewPart implements
 
 	}
 
-	private int getStatus(IPSstatus status) throws RodinDBException {
+	private int getStatus(IPSStatus status) throws RodinDBException {
 		// Try to synchronize with the proof tree in memory
 		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
 				.getUserSupports();
@@ -233,7 +233,7 @@ public class ObligationExplorer extends ViewPart implements
 
 		// Otherwise, setting the label accordingly.
 
-		final IPRProof prProofTree = status.getProofTree();
+		final IPRProof prProofTree = status.getProof();
 
 		// TODO : confidence now expresses unattempted as well
 		if (prProofTree == null || (prProofTree.getConfidence(null) <= IConfidence.UNATTEMPTED))
@@ -311,8 +311,8 @@ public class ObligationExplorer extends ViewPart implements
 		public Image getImage(Object element) {
 			ImageRegistry registry = EventBUIPlugin.getDefault()
 					.getImageRegistry();
-			if (element instanceof IPSstatus) {
-				IPSstatus status = (IPSstatus) element;
+			if (element instanceof IPSStatus) {
+				IPSStatus status = (IPSStatus) element;
 				try {
 
 					// Try to synchronize with the proof tree in memory
@@ -398,7 +398,7 @@ public class ObligationExplorer extends ViewPart implements
 			} else if (obj instanceof IRodinFile) {
 				String name = ((IRodinFile) obj).getElementName();
 				return EventBPlugin.getComponentName(name);
-			} else if (obj instanceof IPSstatus) {
+			} else if (obj instanceof IPSStatus) {
 
 				// Find the label in the list of UserSupport.
 				Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
@@ -410,13 +410,13 @@ public class ObligationExplorer extends ViewPart implements
 					for (IProofState proofState : proofStates) {
 						if (proofState.getPRSequent().equals(obj)) {
 							if (proofState.isDirty())
-								return "* " + ((IPSstatus) obj).getElementName();
+								return "* " + ((IPSStatus) obj).getElementName();
 							else
-								return ((IPSstatus) obj).getElementName();
+								return ((IPSStatus) obj).getElementName();
 						}
 					}
 				}
-				return ((IPSstatus) obj).getElementName();
+				return ((IPSStatus) obj).getElementName();
 			}
 
 			return obj.toString();
@@ -445,7 +445,7 @@ public class ObligationExplorer extends ViewPart implements
 			if (element instanceof IRodinFile) {
 				return white;
 			}
-			if (element instanceof IPSstatus) {
+			if (element instanceof IPSStatus) {
 				// UIUtils.debugObligationExplorer("Label for: " + obj);
 
 				// Find the label in the list of UserSupport.
@@ -599,7 +599,7 @@ public class ObligationExplorer extends ViewPart implements
 		if (activePage != null) {
 			IEditorPart editor = activePage.getActiveEditor();
 			if (editor instanceof ProverUI) {
-				IPSstatus prSequent = ((ProverUI) editor)
+				IPSStatus prSequent = ((ProverUI) editor)
 						.getCurrentProverSequent();
 				if (prSequent != null) {
 					viewer.setSelection(new StructuredSelection(prSequent));
@@ -723,8 +723,8 @@ public class ObligationExplorer extends ViewPart implements
 				Object obj = ((IStructuredSelection) selection)
 						.getFirstElement();
 
-				if (obj instanceof IPSstatus) {
-					IPSstatus ps = (IPSstatus) obj;
+				if (obj instanceof IPSStatus) {
+					IPSStatus ps = (IPSStatus) obj;
 
 					selectPO(ps);
 				}
@@ -738,7 +738,7 @@ public class ObligationExplorer extends ViewPart implements
 
 	}
 
-	private void selectPO(IPSstatus ps) {
+	private void selectPO(IPSStatus ps) {
 		UIUtils.linkToProverUI(ps);
 		UIUtils.activateView(ProofControl.VIEW_ID);
 		UIUtils.activateView(ProofTreeUI.VIEW_ID);
@@ -810,7 +810,7 @@ public class ObligationExplorer extends ViewPart implements
 				if (delta.isNewProofState()) {
 
 					if (ps != null) {
-						IPSstatus prSequent = ps.getPRSequent();
+						IPSStatus prSequent = ps.getPRSequent();
 						externalSetSelection(prSequent);
 					} else { // Empty selection
 						clearSelection();
@@ -821,7 +821,7 @@ public class ObligationExplorer extends ViewPart implements
 					IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
 					if (proofTreeDelta != null) {
 						IProofState state = userSupport.getCurrentPO();
-						IPSstatus prSequent = state.getPRSequent();
+						IPSStatus prSequent = state.getPRSequent();
 						viewer.refresh(prSequent, true);
 //						column.pack();
 //						column.setWidth(MAX_WIDTH);

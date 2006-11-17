@@ -43,7 +43,7 @@ public interface IPRFile extends IRodinFile{
 	 * 
 	 * @throws RodinDBException
 	 */
-	IPRProof[] getProofTrees() throws RodinDBException;
+	IPRProof[] getProofs() throws RodinDBException;
 	
 	
 	/**
@@ -56,7 +56,7 @@ public interface IPRFile extends IRodinFile{
 	 * present.
 	 * 
 	 */
-	IPRProof getProofTree(String name);
+	IPRProof getProof(String name);
 	
 	/**
 	 * Creates and returns a new initialised proof tree with the given name.
@@ -68,6 +68,6 @@ public interface IPRFile extends IRodinFile{
 	 * @return the created proof tree
 	 * 
 	 */
-	IPRProof createProofTree(String name, IProgressMonitor monitor) throws RodinDBException;
+	IPRProof createFreshProof(String name, IProgressMonitor monitor) throws RodinDBException;
 	
 }

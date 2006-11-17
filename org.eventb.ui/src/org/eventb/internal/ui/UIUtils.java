@@ -41,7 +41,7 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.eventbeditor.ElementAttributeInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
@@ -139,7 +139,7 @@ public class UIUtils {
 			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
 					.openEditor(fileInput, editorId);
 			if (!(obj instanceof IPSFile))
-				editor.setCurrentPO((IPSstatus) obj, new NullProgressMonitor());
+				editor.setCurrentPO((IPSStatus) obj, new NullProgressMonitor());
 		} catch (PartInitException e) {
 			MessageDialog.openError(null, null, "Error open the editor");
 			e.printStackTrace();

@@ -12,7 +12,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRProofRule;
-import org.eventb.core.IPRReasonerAntecedent;
+import org.eventb.core.IPRRuleAntecedent;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
@@ -76,10 +76,10 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		Predicate goal = getGoal(store, monitor);		
 		Set<Hypothesis> neededHyps = Hypothesis.Hypotheses(getHyps(store, monitor));
 
-		IRodinElement[] rodinElements = this.getChildrenOfType(IPRReasonerAntecedent.ELEMENT_TYPE);
+		IRodinElement[] rodinElements = this.getChildrenOfType(IPRRuleAntecedent.ELEMENT_TYPE);
 		IAntecedent[] anticidents = new IAntecedent[rodinElements.length];
 		for (int i = 0; i < rodinElements.length; i++) {
-			anticidents[i] = ((IPRReasonerAntecedent)rodinElements[i]).getAntecedent(store, monitor);
+			anticidents[i] = ((IPRRuleAntecedent)rodinElements[i]).getAntecedent(store, monitor);
 		}
 
 		String display = getRuleDisplay(monitor);
@@ -98,8 +98,8 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		// write out the anticidents (next subgoals)
 		int idx = 1;
 		for (IAntecedent antecedent : proofRule.getAntecedents()){
-			((IPRReasonerAntecedent)this.createInternalElement(
-					IPRReasonerAntecedent.ELEMENT_TYPE,
+			((IPRRuleAntecedent)this.createInternalElement(
+					IPRRuleAntecedent.ELEMENT_TYPE,
 					"a" + idx++,null,null)).setAntecedent(antecedent,store,monitor);
 		}
 

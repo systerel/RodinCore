@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
@@ -18,7 +18,7 @@ public interface IProofState {
 
 	public abstract boolean isClosed() throws RodinDBException;
 
-	public abstract IPSstatus getPRSequent();
+	public abstract IPSStatus getPRSequent();
 
 	public abstract IProofTree getProofTree();
 
