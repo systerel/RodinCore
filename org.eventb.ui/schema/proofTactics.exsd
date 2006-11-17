@@ -206,7 +206,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="toolbar" type="string">
+         <attribute name="toolbar" type="string" use="required">
             <annotation>
                <documentation>
                   

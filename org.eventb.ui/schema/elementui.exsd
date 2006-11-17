@@ -58,7 +58,7 @@
                   the type of the element that is mentioned
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.rodinp.core.IRodinElement"/>
                </appInfo>
             </annotation>
          </attribute>
