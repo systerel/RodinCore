@@ -385,6 +385,24 @@ public class RodinCore extends Plugin {
 	}
 	
 	/**
+	 * Returns the element type with the given id.
+	 * 
+	 * @param id
+	 *            unique identifier of the element type
+	 * @return the element type with the given id
+	 * @throws IllegalArgumentException
+	 *             if no such element type has been contributed
+	 */
+	public static IElementType getElementType(String id) {
+		final ElementTypeManager manager = ElementTypeManager.getInstance();
+		final IElementType result = manager.getElementType(id);
+		if (result != null) {
+			return result;
+		}
+		throw new IllegalArgumentException("Unknown element type: " + id);
+	}
+
+	/**
 	 * Returns the file element type with the given id.
 	 * 
 	 * @param id

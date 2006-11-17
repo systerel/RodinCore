@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.RodinCore;
 
 /**
@@ -166,6 +167,16 @@ public class ElementTypeManager {
 		return getFileElementTypeFor(fileName) != null;
 	}
 	
+	public IElementType getElementType(String id) {
+		if (internalElementTypeIds == null) {
+			computeInternalElementTypes();
+		}
+		if (fileElementTypeIds == null) {
+			computeFileElementTypes();
+		}
+		return ElementType.getElementType(id);
+	}
+
 	// Local id of the fileElementTypes extension point of this plugin
 	private static final String ATTRIBUTE_TYPES_ID = "attributeTypes";
 	

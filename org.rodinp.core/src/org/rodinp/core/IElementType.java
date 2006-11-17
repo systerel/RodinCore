@@ -37,6 +37,7 @@ package org.rodinp.core;
  *
  * @see IRodinDB#ELEMENT_TYPE
  * @see IRodinProject#ELEMENT_TYPE
+ * @see RodinCore#getElementType(String)
  * @see RodinCore#getFileElementType(String)
  * @see RodinCore#getInternalElementType(String)
  */

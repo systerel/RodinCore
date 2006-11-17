@@ -62,6 +62,10 @@ public abstract class ElementType implements IElementType {
 		}
 	}
 	
+	public static IElementType getElementType(String id) {
+		return registry.get(id);
+	}
+	
 	// Unique identifier of this element type
 	protected final String id;
 	
@@ -88,5 +92,5 @@ public abstract class ElementType implements IElementType {
 	}
 
 	public abstract IRodinElement[] getArray(int length);
-	
+
 }
