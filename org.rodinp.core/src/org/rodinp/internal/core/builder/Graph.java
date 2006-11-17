@@ -204,6 +204,8 @@ public class Graph implements Serializable, Iterable<Node> {
 		nodeCache = new HashMap<IPath, Node>(nodes.size());
 		nodePreList = new LinkedList<Node>();
 		nodePostList = new LinkedList<Node>(nodes.values());
+		
+		reorderPreferredNodes();
 	}
 	
 	private ToolManager getManager() {
@@ -352,6 +354,10 @@ public class Graph implements Serializable, Iterable<Node> {
 		
 		pNode.markReachablePredecessorsPreferred();
 		
+		reorderPreferredNodes();
+	}
+
+	private void reorderPreferredNodes() {
 		LinkedList<Node> nodeTempList = new LinkedList<Node>();
 		
 		for (Node node : nodePostList)
