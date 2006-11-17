@@ -47,7 +47,7 @@ public class GraphModifier {
 			node.setPath(path);
 			node.setToolId(producerId);
 			graph.builderAddNodeToGraph(node);
-			graph.incN();
+			graph.increaseRemainingNodes();
 		} else if(node.isPhantom()) {
 			node.setToolId(producerId);
 			node.setDated(true);
@@ -145,15 +145,15 @@ public class GraphModifier {
 		boolean currentEqualsSource = current.equals(link.source);
 		boolean targetIsSuccessor = current.hasSuccessor(target);
 		if(currentEqualsSource || targetIsSuccessor) {
-			target.addLink(link);
+			target.addPredecessorLink(link);
 			boolean instable = false;
 			instable |= currentEqualsSource && target.done; 
 				// the new target of the present node was already processed
 			instable |= targetIsSuccessor && !link.source.done && !link.source.isPhantom();
 				// the new source in the predecessor list of target has not been processed
-			instable |= link.prio == Link.Priority.HIGH && link.source.getSuccPos() > 0; 
+			instable |= link.prio == Link.Priority.HIGH && link.source.getSuccessorPos() > 0; 
 				// child nodes already traversed partially (and the new source is first in list)
-			instable |= link.source.getSuccPos() > link.source.succSize(); 
+			instable |= link.source.getSuccessorPos() > link.source.getSuccessorCount(); 
 				// the list of child nodes was already completely traversed
 //			if(currentEqualsSource && targetNode.done)
 //				graph.setInstable();
@@ -203,7 +203,7 @@ public class GraphModifier {
 	public void removeDependencies(Collection<String> ids) { //throws CoreException {
 		for (String id : ids) {
 			for (Node node : graph) {
-				node.removeLinks(id);
+				node.removeAllLinks(id);
 				node.setDated(true);
 				if (Graph.DEBUG)
 					System.out.println(getClass().getName()

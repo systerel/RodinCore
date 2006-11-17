@@ -121,7 +121,7 @@ public class GraphTransaction implements IGraph {
 		// in the first phase all ids of links that must be removed are computed
 		HashSet<String> changedIds = new HashSet<String>(5);
 		for (Node node : targetSet) {
-			for (Link link : node.getLinks()) {
+			for (Link link : node.getPredessorLinks()) {
 				if(ids.contains(link.id)) {
 					int p = links.indexOf(link);
 					if (p == -1 || targets.get(p) != node) {

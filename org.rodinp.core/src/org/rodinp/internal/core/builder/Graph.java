@@ -55,9 +55,10 @@ import org.rodinp.internal.core.util.Util;
  */
 public class Graph implements Serializable, Iterable<Node> {
 	
+	private static final long serialVersionUID = -7991706927619161707L;
+
 	public static boolean DEBUG = false;
 	
-	private static final long serialVersionUID = 7032499313483369519L;
 	private HashMap<String,Node> nodes;
 	private Node active; // begin list with this node if it is a root node otherwise ignore
 	
@@ -71,14 +72,14 @@ public class Graph implements Serializable, Iterable<Node> {
 	
 	transient private ToolManager toolManager; // = GraphManager.getGraphManager();
 	
-	transient private int N;
+	transient private int remainingNodes;
 	
-	protected void incN() {
-		N++;
+	protected void increaseRemainingNodes() {
+		remainingNodes++;
 	}
 	
 	protected void decN() {
-		N--;
+		remainingNodes--;
 	}
 	
 	public Node getNode(String name) {
@@ -357,7 +358,7 @@ public class Graph implements Serializable, Iterable<Node> {
 	}
 	
 	private void removeNode(Node node) {
-		node.unlink();
+		node.unlinkNode();
 		nodes.remove(node.getName());
 	}
 	
@@ -366,7 +367,7 @@ public class Graph implements Serializable, Iterable<Node> {
 	 * @param node The node to be removed
 	 */
 	protected void tryRemoveNode(Node node) {
-		if (node.succSize() > 0) {
+		if (node.getSuccessorCount() > 0) {
 			node.setDated(false);
 			node.setPhantom(true);
 		} else {
@@ -382,7 +383,7 @@ public class Graph implements Serializable, Iterable<Node> {
 	private void removePhantoms() {
 		Collection<Node> values = new ArrayList<Node>(nodes.values());
 		for(Node node : values) {
-			if(node.isPhantom() && node.succSize() == 0)
+			if(node.isPhantom() && node.getSuccessorCount() == 0)
 				removeNode(node);
 		}
 	}
@@ -418,7 +419,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		for(Node node : nodePostList) {
 			node.initForSort();
 		}
-		N = nodes.size();
+		remainingNodes = nodes.size();
 		
 		// only root nodes can be preferred
 		if(active != null && active.count == 0 && nodePostList.getFirst() != active) {
@@ -448,9 +449,9 @@ public class Graph implements Serializable, Iterable<Node> {
 				topSortStep(sorted, firstNode, manager);
 			} else {
 				Node node = nodeStack.peek();
-				Node succNode = node.succNode();	
-				Link succLink = node.succLink();
-				node.nextSucc();
+				Node succNode = node.getCurrentSuccessorNode();	
+				Link succLink = node.getCurrentSuccessorLink();
+				node.advanceSuccessorPos();
 				if(succNode != null) {
 					if(toolLinks || succLink.prov == Link.Provider.USER) {
 						succNode.count--;
@@ -469,7 +470,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		nodePostList.remove(node);
 		nodeStack.push(node);
 		sorted.add(node);
-		N--;
+		remainingNodes--;
 		node.done = true;
 		if(manager != null) {
 			manager.decreaseSliceAdjustment(this, node);
@@ -517,7 +518,7 @@ public class Graph implements Serializable, Iterable<Node> {
 
 		}
 
-		if(N == 0) // N == 0 means: no cycles!
+		if(remainingNodes == 0) // N == 0 means: no cycles!
 			return;
 		
 		// all nodes that can now be sorted into the list spurious were in a cycle
@@ -545,7 +546,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		}
 		
 		// N == 0 means there is no cycle left. So it's a bug in a plug-in.
-		if (N == 0)
+		if (remainingNodes == 0)
 			Util.log(null, message + "\n" + cycle); //$NON-NLS-1$
 	}
 	

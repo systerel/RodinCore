@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -29,44 +28,36 @@ import org.rodinp.internal.core.util.Messages;
  */
 public class Node implements Serializable {
 
-	private static final long serialVersionUID = 2715764862822077579L;
+	private static final long serialVersionUID = -4755682487326821513L;
 	private String name; // name of the resource (full name in workspace!)
-	private IFileElementType fileElementType; // the extension of the resource
-	private LinkedList<Link> pred; // the predecessor list
+	private LinkedList<Link> predessorLinks; // the predecessor list
 	private String toolId; // toolId to be run to produce the resource of this node
 	private boolean dated; // true if the resource of this node needs to be (re-)created
 	private boolean phantom; // a node that was created by a dependency requirement
 	private boolean cycle; // node is on a cycle
 	
 	// temporary data for construction of topological order
-	private int totalCount; // number of predecessors of this node (for topological sort)
-	private ArrayList<Node> succNodes; // successors of this node (for topological sort)
-	private ArrayList<Link> succLinks; // successors of this node (for topological sort)
-	private HashMap<String, Node> targets; // the set of names of the successors
+	private ArrayList<Node> successorNodes; // successors of this node (for topological sort)
+	private ArrayList<Link> successorLinks; // successors of this node (for topological sort)
+	private HashMap<String, Node> successorTargets; // the set of names of the successors
 	
-	transient private int succPos; // Position in succ* during graph traversal
-	
+	transient private int successorPos; // Position in successor lists during graph traversal	
 	transient protected int count; // number of predecessors of this node remaining in the unprocessed top sort
 	transient protected boolean done; // nodes with count zero and done are already in the ordered list
 	
 	transient private IPath path; // the path corresponding to name (cache)
-	
-	/**
-	 * cache for the file resource
-	 */
-	transient private IFile file;
+	transient private IFileElementType fileElementType; // the element type of the resource (cache)
+	transient private IFile file; // the file corresponding to name (cache)
 	
 	public Node() {
 		name = null;
-		fileElementType = null;
-		pred = new LinkedList<Link>();
 		toolId = null;
 		dated = true;
-		totalCount = 0;
-		succNodes = new ArrayList<Node>(3);
-		succLinks = new ArrayList<Link>(3);
-		targets = new HashMap<String, Node>(3);
 		done = false;
+		predessorLinks = new LinkedList<Link>();
+		successorNodes = new ArrayList<Node>(3);
+		successorLinks = new ArrayList<Link>(3);
+		successorTargets = new HashMap<String, Node>(3);
 	}
 	
 	@Override
@@ -79,51 +70,49 @@ public class Node implements Serializable {
 		return name.equals(((Node) o).name);
 	}
 	
-	protected List<Link> getLinks() {
-		return pred;
+	protected List<Link> getPredessorLinks() {
+		return predessorLinks;
 	}
 	
-	protected void addLink(Link link) { 
-		if(pred.contains(link))
+	protected void addPredecessorLink(Link link) { 
+		if(predessorLinks.contains(link))
 			return;
-		link.source.targets.put(this.name, this);
-		pred.add(link);
-		totalCount++;
-		if(link.source.succPos <= link.source.succSize())
+		link.source.successorTargets.put(this.name, this);
+		predessorLinks.add(link);
+		if(link.source.successorPos <= link.source.getSuccessorCount())
 			count++;
 		
 		if(link.prio == Link.Priority.LOW) {
-			link.source.succNodes.add(this);
-			link.source.succLinks.add(link);
+			link.source.successorNodes.add(this);
+			link.source.successorLinks.add(link);
 		} else {
-			link.source.succNodes.add(0, this);
-			link.source.succLinks.add(0, link);
+			link.source.successorNodes.add(0, this);
+			link.source.successorLinks.add(0, link);
 		}
 	}
 
-	protected void addLink(Node origin, Node source, String id, Link.Provider prov, Link.Priority prio) { 
+	protected void addPredecessorLink(Node origin, Node source, String id, Link.Provider prov, Link.Priority prio) { 
 		Link link = new Link(prov, prio, id, source, origin);
-		addLink(link);
+		addPredecessorLink(link);
 	}
 	
-	protected void removeLinks(String id) {
-		LinkedList<Link> predCopy = new LinkedList<Link>(pred);
+	protected void removeAllLinks(String id) {
+		LinkedList<Link> predCopy = new LinkedList<Link>(predessorLinks);
 		for(Link link : predCopy) {
 			if(link.id.equals(id)) {
-				link.source.targets.remove(this.name);
-				pred.remove(link);
-				totalCount--;
+				link.source.successorTargets.remove(this.name);
+				predessorLinks.remove(link);
 				count--;
 				
-				link.source.succNodes.remove(this);
-				link.source.succLinks.remove(link);
+				link.source.successorNodes.remove(this);
+				link.source.successorLinks.remove(link);
 			}
 		}
 	}
 	
 	protected Collection<IPath> getSources(String id) {
-		ArrayList<IPath> sources = new  ArrayList<IPath>(pred.size());
-		for(Link link : pred) {
+		ArrayList<IPath> sources = new  ArrayList<IPath>(predessorLinks.size());
+		for(Link link : predessorLinks) {
 			if(link.id.equals(id))
 				sources.add(link.source.getPath());
 		}
@@ -143,19 +132,10 @@ public class Node implements Serializable {
 	protected void setPath(IPath path) {
 		this.path = path;
 		this.name = path.toString();
-		
-		// TODO fix code below.
-		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		this.file = workspace.getRoot().getFile(path);
-		if (file != null)
-			this.fileElementType = manager.getFileElementType(file);
-		else
-			this.fileElementType = null;
 	}
 	
-	protected int getInCount() {
-		return totalCount;
+	protected int getPredecessorCount() {
+		return predessorLinks.size();
 	}
 	
 	protected boolean isDerived() {
@@ -175,41 +155,31 @@ public class Node implements Serializable {
 	}
 	
 	// after removal of a node from the graph
-	// the successors of the node must be recreated;
-	// this requires also recreating the origin of the
-	// outgoing edges of the node! 
+	// the successors of the node must be recreated
 	protected void markSuccessorsDated() {
-		for(Node suc : succNodes) {
+		for(Node suc : successorNodes) {
 			suc.setDated(true);
-//			suc.markOriginDated(this);
 		}
 	}
-	
-//	private void markOriginDated(Node node) {
-//		for(Link link : pred) {
-//			if(link.source == node && link.origin != null)
-//				link.origin.setDated(true);
-//		}
-//	}
-	
+
 	protected boolean hasSuccessor(Node node) {
-		return succNodes.contains(node);
+		return successorNodes.contains(node);
 	}
 	
-	protected void nextSucc() {
-		succPos++;
+	protected void advanceSuccessorPos() {
+		successorPos++;
 	}
 	
-	protected int getSuccPos() {
-		return succPos;
+	protected int getSuccessorPos() {
+		return successorPos;
 	}
 
-	protected Node succNode() {
-		return (succPos < succNodes.size()) ? succNodes.get(succPos) : null;
+	protected Node getCurrentSuccessorNode() {
+		return (successorPos < successorNodes.size()) ? successorNodes.get(successorPos) : null;
 	}
 
-	protected Link succLink() {
-		return (succPos < succLinks.size()) ? succLinks.get(succPos) : null;
+	protected Link getCurrentSuccessorLink() {
+		return (successorPos < successorLinks.size()) ? successorLinks.get(successorPos) : null;
 	}
 
 	protected IFile getFile() {
@@ -228,13 +198,13 @@ public class Node implements Serializable {
 	}
 	
 	protected void initForSort() {
-		count = totalCount;
+		count = getPredecessorCount();
 		done = false;
-		succPos = 0;
+		successorPos = 0;
 	}
 	
-	protected int succSize() {
-		return succNodes.size();
+	protected int getSuccessorCount() {
+		return successorNodes.size();
 	}
 	
 	protected String printNode() {
@@ -242,33 +212,32 @@ public class Node implements Serializable {
 		res += isDated() ? "D" : "N";
 		res += isPhantom() ? "-P" : "-N";
 		res += "] :";
-		for(Node node : succNodes) {
+		for(Node node : successorNodes) {
 			res = res + " " + node.name;
 		}
 		return res;
 	}
 	
-	protected void unlink() {
-		for(Link link : pred) {
-			link.source.targets.remove(this.name);
+	protected void unlinkNode() {
+		for(Link link : predessorLinks) {
+			link.source.successorTargets.remove(this.name);
 			
-			link.source.succNodes.remove(this);
-			link.source.succLinks.remove(link);
+			link.source.successorNodes.remove(this);
+			link.source.successorLinks.remove(link);
 		}
-		int size = succNodes.size();
+		int size = successorNodes.size();
 		for(int pos = 0; pos < size; pos++) {
-			Node node = succNodes.get(pos);
+			Node node = successorNodes.get(pos);
 			node.dated = true;
-			node.pred.remove(succLinks.get(pos));
-			node.totalCount--;
+			node.predessorLinks.remove(successorLinks.get(pos));
 			node.count--;
 		}
 	}
 	
 	protected void removeSuccessorToolCount() {
-		for(int pos = 0; pos < succNodes.size(); pos++) {
-			if(succLinks.get(pos).prov == Link.Provider.TOOL) {
-				succNodes.get(pos).count--;
+		for(int pos = 0; pos < successorNodes.size(); pos++) {
+			if(successorLinks.get(pos).prov == Link.Provider.TOOL) {
+				successorNodes.get(pos).count--;
 			}
 		}
 	}
@@ -277,12 +246,12 @@ public class Node implements Serializable {
 		if(!done)
 			return;
 		done = false;
-		for(Node node : succNodes)
+		for(Node node : successorNodes)
 			node.markReachable();
 	}
 	
 	protected void addOriginToCycle() {
-		for(Link link : pred) {
+		for(Link link : predessorLinks) {
 			if(link.source.count > 0) {
 				IFile originFile = link.origin.getFile();
 				link.origin.dated = true;
@@ -299,7 +268,7 @@ public class Node implements Serializable {
 	}
 	
 	protected boolean dependsOnPhantom() {
-		for(Link link : pred) {
+		for(Link link : predessorLinks) {
 			if(link.source.isPhantom())
 				return true;
 		}
@@ -307,7 +276,7 @@ public class Node implements Serializable {
 	}
 	
 	protected void printPhantomProblem() {
-		for(Link link : pred) {
+		for(Link link : predessorLinks) {
 			if(link.source.isPhantom())
 				if(link.source.toolId == null || link.source.toolId.equals("")) {
 					IFile originFile = link.origin.getFile();
@@ -354,6 +323,13 @@ public class Node implements Serializable {
 	 * @return Returns the fileElementType.
 	 */
 	public IFileElementType getFileElementType() {
+		
+		if (fileElementType == null && getFile() != null) {
+			final ElementTypeManager manager = ElementTypeManager.getInstance();
+
+			this.fileElementType = manager.getFileElementType(getFile());
+		}
+
 		return fileElementType;
 	}
 
