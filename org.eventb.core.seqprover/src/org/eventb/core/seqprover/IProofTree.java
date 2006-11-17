@@ -48,7 +48,7 @@ public interface IProofTree {
 	/**
 	 * Returns whether or not this proof tree is closed.
 	 * <p>
-	 * This is a shortcut for <code>getConfidence() != IConfidence.PENDING</code>.
+	 * This is a shortcut for <code>getConfidence() > IConfidence.PENDING</code>.
 	 * </p>
 	 * 
 	 * @return <code>true</code> iff this proof tree is closed
@@ -58,8 +58,7 @@ public interface IProofTree {
 	/**
 	 * Returns whether or not a proof has been attempted.
 	 * <p>
-	 * A proof is said to be attempted iff the root node of the proof tree is not open,
-	 * or contains a user specified comment on it.
+	 * A proof is said to be attempted iff the root node of the proof tree is not open.
 	 * </p>
 	 * 
 	 * @return <code>true</code> iff a proof has been attempted.

@@ -101,7 +101,7 @@ public final class ProofTree implements IProofTree {
 	 * @see org.eventb.core.prover.IProofTree#isClosed()
 	 */
 	public boolean isClosed() {
-		return getConfidence() != IConfidence.PENDING;
+		return getConfidence() > IConfidence.PENDING;
 	}
 
 	/* (non-Javadoc)
