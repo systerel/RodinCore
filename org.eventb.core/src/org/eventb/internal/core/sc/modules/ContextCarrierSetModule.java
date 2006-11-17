@@ -15,7 +15,7 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
@@ -35,11 +35,11 @@ public class ContextCarrierSetModule extends IdentifierModule {
 	public static final String CONTEXT_CARRIERSET_ACCEPTOR = 
 		EventBPlugin.PLUGIN_ID + ".contextCarrierSetAcceptor";
 
-	private IAcceptorModule[] modules;
+	private IFilterModule[] modules;
 
 	public ContextCarrierSetModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		modules = manager.getAcceptorModules(CONTEXT_CARRIERSET_ACCEPTOR);
+		modules = manager.getFilterModules(CONTEXT_CARRIERSET_ACCEPTOR);
 	}
 
 	/* (non-Javadoc)

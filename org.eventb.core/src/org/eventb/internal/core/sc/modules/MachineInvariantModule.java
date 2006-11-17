@@ -17,7 +17,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
@@ -38,14 +38,14 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineInvariantModule extends PredicateWithTypingModule {
 
-	public static final String MACHINE_INVARIANT_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".machineInvariantAcceptor";
+	public static final String MACHINE_INVARIANT_FILTER = 
+		EventBPlugin.PLUGIN_ID + ".machineInvariantFilter";
 
-	private IAcceptorModule[] modules;
+	private IFilterModule[] filterModules;
 
 	public MachineInvariantModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		modules = manager.getAcceptorModules(MACHINE_INVARIANT_ACCEPTOR);
+		filterModules = manager.getFilterModules(MACHINE_INVARIANT_FILTER);
 	}
 
 	private static String INVARIANT_NAME_PREFIX = "INV";
@@ -85,7 +85,7 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 				invariants, 
 				target,
 				predicates,
-				modules,
+				filterModules,
 				machineFile.getElementName(),
 				repository,
 				monitor);

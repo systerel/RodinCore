@@ -16,7 +16,7 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
@@ -35,14 +35,14 @@ import org.rodinp.core.IRodinElement;
  */
 public class ContextTheoremModule extends TheoremModule {
 
-	public static final String CONTEXT_THEOREM_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".contextTheoremAcceptor";
+	public static final String CONTEXT_THEOREM_FILTER = 
+		EventBPlugin.PLUGIN_ID + ".contextTheoremFilter";
 
-	private IAcceptorModule[] rules;
+	private IFilterModule[] filterModules;
 
 	public ContextTheoremModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		rules = manager.getAcceptorModules(CONTEXT_THEOREM_ACCEPTOR);
+		filterModules = manager.getFilterModules(CONTEXT_THEOREM_FILTER);
 	}
 
 	public void process(
@@ -64,7 +64,7 @@ public class ContextTheoremModule extends TheoremModule {
 				target, 
 				0,
 				theorems,
-				rules,
+				filterModules,
 				repository,
 				monitor);
 		

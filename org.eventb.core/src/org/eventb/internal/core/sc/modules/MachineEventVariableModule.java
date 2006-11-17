@@ -18,7 +18,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
@@ -39,11 +39,11 @@ public class MachineEventVariableModule extends IdentifierModule {
 	public static final String MACHINE_EVENT_VARIABLE_ACCEPTOR = 
 		EventBPlugin.PLUGIN_ID + ".machineEventVariableAcceptor";
 
-	private IAcceptorModule[] modules;
+	private IFilterModule[] modules;
 
 	public MachineEventVariableModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		modules = manager.getAcceptorModules(MACHINE_EVENT_VARIABLE_ACCEPTOR);
+		modules = manager.getFilterModules(MACHINE_EVENT_VARIABLE_ACCEPTOR);
 	}
 	
 	protected IEventRefinesInfo eventRefinesInfo;

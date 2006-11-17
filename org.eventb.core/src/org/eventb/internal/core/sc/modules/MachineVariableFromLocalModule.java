@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.sc.AcceptorModule;
+import org.eventb.core.sc.FilterModule;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.IStateSC;
@@ -23,7 +23,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachineVariableFromLocalModule extends AcceptorModule {
+public class MachineVariableFromLocalModule extends FilterModule {
 
 	private IAbstractEventTable abstractEventTable;
 	

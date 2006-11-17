@@ -14,7 +14,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
@@ -34,11 +34,11 @@ public class ContextConstantModule extends IdentifierModule {
 	public static final String CONTEXT_CONSTANT_ACCEPTOR = 
 		EventBPlugin.PLUGIN_ID + ".contextConstantAcceptor";
 
-	private IAcceptorModule[] rules;
+	private IFilterModule[] rules;
 
 	public ContextConstantModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		rules = manager.getAcceptorModules(CONTEXT_CONSTANT_ACCEPTOR);
+		rules = manager.getFilterModules(CONTEXT_CONSTANT_ACCEPTOR);
 	}
 
 	/* (non-Javadoc)

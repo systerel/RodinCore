@@ -17,7 +17,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
@@ -102,13 +102,13 @@ public abstract class IdentifierModule extends ProcessorModule {
 	protected void fetchSymbols(
 			IIdentifierElement[] elements,
 			IInternalParent target,
-			IAcceptorModule[] rules,
+			IFilterModule[] rules,
 			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		final ITypeEnvironment typeEnvironment = typingState.getTypeEnvironment();
 
-		initAcceptorModules(rules, repository, null);
+		initFilterModules(rules, repository, null);
 		
 		for(IIdentifierElement element : elements) {
 			FreeIdentifier identifier = parseIdentifier(element, monitor);
@@ -124,7 +124,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 					element,
 					newSymbolInfo);
 
-			if (!ok || !acceptModules(rules, element, repository, null))
+			if (!ok || !filterModules(rules, element, repository, null))
 				continue;
 				
 			typeIdentifierSymbol(newSymbolInfo, typeEnvironment);
@@ -133,7 +133,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 				
 		}
 		
-		endAcceptorModules(rules, repository, null);
+		endFilterModules(rules, repository, null);
 	}
 	
 	protected abstract IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element);

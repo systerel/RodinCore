@@ -40,7 +40,7 @@ public class ContextStaticChecker extends StaticChecker {
 	
 	private final IModuleManager manager;
 	
-	private IProcessorModule[] contextModules = null;
+	private IProcessorModule[] contextProcessorModules = null;
 	
 	public ContextStaticChecker() {
 		manager = ModuleManager.getModuleManager();
@@ -65,9 +65,9 @@ public class ContextStaticChecker extends StaticChecker {
 							StaticChecker.getStrippedComponentName(file.getName())), 
 					size);
 
-			if (contextModules == null) {
+			if (contextProcessorModules == null) {
 			
-				contextModules = manager.getProcessorModules(CONTEXT_PROCESSOR);
+				contextProcessorModules = manager.getProcessorModules(CONTEXT_PROCESSOR);
 			
 			}
 		
@@ -81,7 +81,7 @@ public class ContextStaticChecker extends StaticChecker {
 			runProcessorModules(
 					contextFile, 
 					scContextFile,
-					contextModules, 
+					contextProcessorModules, 
 					repository,
 					monitor);
 		

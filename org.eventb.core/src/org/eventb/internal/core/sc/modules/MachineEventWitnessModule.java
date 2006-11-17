@@ -25,7 +25,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
@@ -48,14 +48,14 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineEventWitnessModule extends PredicateModule {
 
-	public static final String MACHINE_EVENT_WITNESS_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".machineEventWitnessAcceptor";
+	public static final String MACHINE_EVENT_WITNESS_FILTER = 
+		EventBPlugin.PLUGIN_ID + ".machineEventWitnessFilter";
 
-	private IAcceptorModule[] modules;
+	private IFilterModule[] filterModules;
 
 	public MachineEventWitnessModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		modules = manager.getAcceptorModules(MACHINE_EVENT_WITNESS_ACCEPTOR);
+		filterModules = manager.getFilterModules(MACHINE_EVENT_WITNESS_FILTER);
 	}
 	
 	Predicate btrue;
@@ -91,7 +91,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 				witnesses, 
 				target,
 				predicates,
-				modules,
+				filterModules,
 				event.getElementName(),
 				repository,
 				monitor);

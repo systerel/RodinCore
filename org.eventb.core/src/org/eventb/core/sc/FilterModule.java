@@ -18,7 +18,7 @@ import org.eventb.core.state.IStateRepository;
  * @author Stefan Hallerstede
  *
  */
-public abstract class AcceptorModule extends Module implements IAcceptorModule {
+public abstract class FilterModule extends Module implements IFilterModule {
 
 	/** 
 	 * Default implementation of <code>initModule()</code> does nothing.

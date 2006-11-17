@@ -27,7 +27,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IProcessorModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
@@ -67,19 +67,19 @@ public class MachineEventModule extends LabeledElementModule {
 	public static int EVENT_LABEL_SYMTAB_SIZE = 47;
 	public static int EVENT_IDENT_SYMTAB_SIZE = 29;
 
-	public static final String MACHINE_EVENT_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".machineEventAcceptor";
+	public static final String MACHINE_EVENT_FILTER = 
+		EventBPlugin.PLUGIN_ID + ".machineEventFilter";
 
 	public static final String MACHINE_EVENT_PROCESSOR = 
 		EventBPlugin.PLUGIN_ID + ".machineEventProcessor";
 
-	private IAcceptorModule[] acceptorModules;
+	private IFilterModule[] filterModules;
 	
 	private IProcessorModule[] processorModules;
 
 	public MachineEventModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		acceptorModules = manager.getAcceptorModules(MACHINE_EVENT_ACCEPTOR);
+		filterModules = manager.getFilterModules(MACHINE_EVENT_FILTER);
 		processorModules = manager.getProcessorModules(MACHINE_EVENT_PROCESSOR);
 	}
 	
@@ -394,7 +394,7 @@ public class MachineEventModule extends LabeledElementModule {
 		
 		String machineName = machineFile.getElementName();
 		
-		initAcceptorModules(acceptorModules, repository, null);
+		initFilterModules(filterModules, repository, null);
 		
 		IEventSymbolInfo[] symbolInfos = new IEventSymbolInfo[events.length];
 		
@@ -417,7 +417,7 @@ public class MachineEventModule extends LabeledElementModule {
 				fetchRefinement(machineFile, event, symbolInfos[i], false, monitor);
 			}
 			
-			if (!acceptModules(acceptorModules, event, repository, null)) {
+			if (!filterModules(filterModules, event, repository, null)) {
 				symbolInfos[i].setError();
 				continue;
 			}
@@ -430,7 +430,7 @@ public class MachineEventModule extends LabeledElementModule {
 					GraphProblem.MachineWithoutInitialisationError,
 					machineName);
 		
-		endAcceptorModules(acceptorModules, repository, null);
+		endFilterModules(filterModules, repository, null);
 		
 		return symbolInfos;
 	}

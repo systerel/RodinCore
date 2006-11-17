@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.sc.AcceptorModule;
+import org.eventb.core.sc.FilterModule;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAbstractEventTable;
@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachinePreviousEventLabelModule extends AcceptorModule {
+public class MachinePreviousEventLabelModule extends FilterModule {
 	
 	private IAbstractEventTable abstractEventTable;
 

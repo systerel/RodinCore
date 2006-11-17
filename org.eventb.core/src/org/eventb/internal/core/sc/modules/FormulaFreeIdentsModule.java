@@ -10,7 +10,7 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.sc.AcceptorModule;
+import org.eventb.core.sc.FilterModule;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.IParsedFormula;
@@ -26,7 +26,7 @@ import org.rodinp.core.IRodinProblem;
  * @author Stefan Hallerstede
  *
  */
-public abstract class FormulaFreeIdentsModule extends AcceptorModule {
+public abstract class FormulaFreeIdentsModule extends FilterModule {
 
 	protected IParsedFormula parsedFormula;
 	protected IIdentifierSymbolTable symbolTable;

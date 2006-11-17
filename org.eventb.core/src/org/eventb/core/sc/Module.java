@@ -53,78 +53,11 @@ public abstract class Module implements IModule, IMarkerDisplay {
 				args);
 	}
 	
-// /* (non-Javadoc)
-// * @see org.eventb.core.sc.IMarkerDisplay#issueMarkerWithInterval(int,
-// org.rodinp.core.IRodinElement, java.lang.String, int, int,
-// java.lang.Object...)
-//	 */
-//	public void issueMarkerWithLocation(int severity, IRodinElement element, String message, int startLocation, int endLocation, Object... objects) {
-//		// TODO complete when markers are available
-//		
-//		issueMarker(severity, element, message, objects);
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see org.eventb.core.sc.IMarkerDisplay#issueMarker(int, org.rodinp.core.IRodinElement, java.lang.String, java.lang.Object[])
-//	 */
-//	public void issueMarker(int severity, IRodinElement element, String message, Object... objects) {
-//		addMarker(
-//				(IRodinFile) element.getOpenable(), 
-//				element, 
-//				Messages.bind(message, objects), 
-//				severity);
-//	}
-//	
-//	private String printSymbol(IRodinElement element) {
-//		try {
-//			if (element instanceof ILabeledElement) {
-//				ILabeledElement labeledElement = (ILabeledElement) element;
-//				return labeledElement.getLabel(null);
-//			} else if (element instanceof IIdentifierElement) {
-//				IIdentifierElement identifierElement = (IIdentifierElement) element;
-//				return identifierElement.getIdentifierString();
-//			} else
-//				return element.getElementName();
-//		} catch (RodinDBException e) {
-//			return "";
-//		}
-//	}
-//		
-//	private String printElement(IRodinElement element) {
-//		String elementType = element.getElementType();
-//		String result = elementType.substring(elementType.lastIndexOf('.')+1);
-//		IRodinElement parent = element.getParent();
-//		if(parent instanceof IInternalElement)
-//			result = result + " " + printSymbol(element) + " in " + printElement(parent);
-//		else
-//			result = result + " " + printSymbol(element); 
-//		return result;
-//	}
-//	
-//	private void addMarker(IRodinFile rodinFile, IRodinElement element, String message, int severity) {
-//		try {
-//			IMarker marker = rodinFile.getResource().createMarker(RodinMarkerUtil.RODIN_PROBLEM_MARKER);
-//			
-//			// TODO: correctly implement marker location
-//			marker.setAttribute(IMarker.LOCATION, element.getPath().toString());
-//			marker.setAttribute(IMarker.MESSAGE, "(" + printElement(element) + ") " + message);
-//			marker.setAttribute(IMarker.SEVERITY, severity);
-//			
-//			if (StaticChecker.DEBUG) {
-//				System.out.print(element.getPath().toString() + " : ");
-//				System.out.print("(" + printElement(element) + ") " + message);
-//				System.out.println(severity == SEVERITY_ERROR ? " ERROR" : " WARNING");
-//			}
-//		} catch(CoreException e) {
-//			// can safely ignore
-//		}
-//	}
-//	
-	protected void initAcceptorModules(
-			IAcceptorModule[] modules,
+	protected void initFilterModules(
+			IFilterModule[] modules,
 			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IAcceptorModule module : modules) {
+		for (IFilterModule module : modules) {
 			module.initModule(repository, monitor);
 		}
 	}
@@ -139,13 +72,13 @@ public abstract class Module implements IModule, IMarkerDisplay {
 		}
 	}
 	
-	protected boolean acceptModules(
-			IAcceptorModule[] modules, 
+	protected boolean filterModules(
+			IFilterModule[] modules, 
 			IRodinElement element, 
 			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IAcceptorModule module : modules) {
-			IAcceptorModule acceptorModule = module;
+		for (IFilterModule module : modules) {
+			IFilterModule acceptorModule = module;
 			if (acceptorModule.accept(element, repository, monitor))
 				continue;
 			return false;
@@ -164,11 +97,11 @@ public abstract class Module implements IModule, IMarkerDisplay {
 		}
 	}
 	
-	protected void endAcceptorModules(
-			IAcceptorModule[] modules, 
+	protected void endFilterModules(
+			IFilterModule[] modules, 
 			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IAcceptorModule module : modules) {
+		for (IFilterModule module : modules) {
 			module.endModule(repository, monitor);
 		}
 	}

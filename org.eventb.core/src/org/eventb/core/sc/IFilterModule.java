@@ -14,7 +14,7 @@ import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
- * Common protocol for acceptor modules.
+ * Common protocol for filter modules.
  * The protocol has two variants:
  * <li>
  * <ul> The ONCE protocol. Method <code>run()</code> is called exactly once
@@ -51,7 +51,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public interface IAcceptorModule extends IModule {
+public interface IFilterModule extends IModule {
 
 	/**
 	 * Runs the static checker module.

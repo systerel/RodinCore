@@ -7,15 +7,15 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 
 
 /**
  * @author Stefan Hallerstede
  *
  */
-interface IAcceptorCreator extends IModuleCreator {
+interface IFilterCreator extends IModuleCreator {
 
-	IAcceptorModule[] create();
+	IFilterModule[] create();
 	
 }

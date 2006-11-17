@@ -21,7 +21,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.ParseProblem;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.IParsedFormula;
@@ -264,7 +264,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 			IInternalElement[] formulaElements,
 			IInternalParent target,
 			Formula[] formulas,
-			IAcceptorModule[] modules,
+			IFilterModule[] modules,
 			String component,
 			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException {
@@ -280,7 +280,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 		
 		createParsedState(repository);
 		
-		initAcceptorModules(modules, repository, null);
+		initFilterModules(modules, repository, null);
 		
 		for (int i=0; i<formulaElements.length; i++) {
 			
@@ -303,7 +303,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 				
 				setParsedState(formulas[i]);
 			
-				if (!acceptModules(modules, formulaElements[i], repository, null)) {
+				if (!filterModules(modules, formulaElements[i], repository, null)) {
 					// the predicate will be rejected
 					// and will not contribute to the type environment!
 					ok = false;
@@ -334,7 +334,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 			
 		}
 		
-		endAcceptorModules(modules, repository, null);
+		endFilterModules(modules, repository, null);
 		
 		removeParsedState(repository);
 	}

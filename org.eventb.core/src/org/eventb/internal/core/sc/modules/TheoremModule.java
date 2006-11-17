@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IInternalParent;
@@ -30,7 +30,7 @@ public abstract class TheoremModule extends PredicateModule {
 			IInternalParent target, 
 			int offset,
 			ITheorem[] theorems, 
-			IAcceptorModule[] rules,
+			IFilterModule[] rules,
 			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException {
 		

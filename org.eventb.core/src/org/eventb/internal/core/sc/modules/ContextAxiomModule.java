@@ -17,7 +17,7 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
@@ -37,15 +37,15 @@ import org.rodinp.core.RodinDBException;
  */
 public class ContextAxiomModule extends PredicateWithTypingModule {
 
-	public static final String CONTEXT_AXIOM_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".contextAxiomAcceptor";
+	public static final String CONTEXT_AXIOM_FILTER = 
+		EventBPlugin.PLUGIN_ID + ".contextAxiomFilter";
 
-	private final IAcceptorModule[] modules;
+	private final IFilterModule[] filterModules;
 
 	public ContextAxiomModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		modules = 
-			manager.getAcceptorModules(CONTEXT_AXIOM_ACCEPTOR);
+		filterModules = 
+			manager.getFilterModules(CONTEXT_AXIOM_FILTER);
 	}
 
 	private static String AXIOM_NAME_PREFIX = "AXM";
@@ -75,7 +75,7 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 				axioms, 
 				target,
 				predicates,
-				modules,
+				filterModules,
 				contextFile.getElementName(),
 				repository,
 				monitor);

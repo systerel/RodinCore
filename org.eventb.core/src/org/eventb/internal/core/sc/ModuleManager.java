@@ -9,7 +9,7 @@ package org.eventb.internal.core.sc;
 
 import java.util.Hashtable;
 
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IProcessorModule;
 import org.eventb.internal.core.sc.modules.ContextAxiomFreeIdentsModule;
@@ -53,18 +53,18 @@ public final class ModuleManager implements IModuleManager {
 	
 	private static IModuleManager MANAGER = new ModuleManager();
 	
-	private IAcceptorModule[] emptyAcc = new IAcceptorModule[0];
+	private IFilterModule[] emptyFlt = new IFilterModule[0];
 	private IProcessorModule[] emptyProc = new IProcessorModule[0];
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.IModuleManager#getModules(java.lang.String)
 	 */
-	public IAcceptorModule[] getAcceptorModules(String moduleType) {
-		IAcceptorCreator creator = 
-			(IAcceptorCreator) moduleTable.get(moduleType);
+	public IFilterModule[] getFilterModules(String moduleType) {
+		IFilterCreator creator = 
+			(IFilterCreator) moduleTable.get(moduleType);
 		if (creator == null)
-			return emptyAcc;
-		IAcceptorModule[] rules = creator.create();
+			return emptyFlt;
+		IFilterModule[] rules = creator.create();
 		return rules;
 	}
 	
@@ -87,20 +87,20 @@ public final class ModuleManager implements IModuleManager {
 		
 		// contexts:
 		
-		moduleTable.put(ContextAxiomModule.CONTEXT_AXIOM_ACCEPTOR,
-				new IAcceptorCreator() {
-					public IAcceptorModule[] create() {
-						return new IAcceptorModule[] {
+		moduleTable.put(ContextAxiomModule.CONTEXT_AXIOM_FILTER,
+				new IFilterCreator() {
+					public IFilterModule[] create() {
+						return new IFilterModule[] {
 								new ContextAxiomFreeIdentsModule()
 						};
 					}
 				}
 		);
 		
-		moduleTable.put(ContextTheoremModule.CONTEXT_THEOREM_ACCEPTOR,
-				new IAcceptorCreator() {
-					public IAcceptorModule[] create() {
-						return new IAcceptorModule[] {
+		moduleTable.put(ContextTheoremModule.CONTEXT_THEOREM_FILTER,
+				new IFilterCreator() {
+					public IFilterModule[] create() {
+						return new IFilterModule[] {
 								new ContextTheoremFreeIdentsModule()
 						};
 					}
@@ -126,10 +126,10 @@ public final class ModuleManager implements IModuleManager {
 		// machines:
 		
 		moduleTable.put(
-				MachineVariableModule.MACHINE_VARIABLE_ACCEPTOR, 
-				new IAcceptorCreator() {
-					public IAcceptorModule[] create() {
-						return new IAcceptorModule[] {
+				MachineVariableModule.MACHINE_VARIABLE_FILTER, 
+				new IFilterCreator() {
+					public IFilterModule[] create() {
+						return new IFilterModule[] {
 								new MachineVariableFromLocalModule()
 						};
 					}
@@ -138,10 +138,10 @@ public final class ModuleManager implements IModuleManager {
 		);
 		
 		moduleTable.put(
-				MachineInvariantModule.MACHINE_INVARIANT_ACCEPTOR, 
-				new IAcceptorCreator() {
-					public IAcceptorModule[] create() {
-						return new IAcceptorModule[] {
+				MachineInvariantModule.MACHINE_INVARIANT_FILTER, 
+				new IFilterCreator() {
+					public IFilterModule[] create() {
+						return new IFilterModule[] {
 								new MachineInvariantFreeIdentsModule(),
 								new MachinePreviousEventLabelModule()
 						};
@@ -151,10 +151,10 @@ public final class ModuleManager implements IModuleManager {
 		);
 		
 		moduleTable.put(
-				MachineTheoremModule.MACHINE_THEOREM_ACCEPTOR, 
-				new IAcceptorCreator() {
-					public IAcceptorModule[] create() {
-						return new IAcceptorModule[] {
+				MachineTheoremModule.MACHINE_THEOREM_FILTER, 
+				new IFilterCreator() {
+					public IFilterModule[] create() {
+						return new IFilterModule[] {
 								new MachineTheoremFreeIdentsModule(),
 								new MachinePreviousEventLabelModule()
 						};
@@ -164,10 +164,10 @@ public final class ModuleManager implements IModuleManager {
 		);
 		
 		moduleTable.put(
-				MachineVariantModule.MACHINE_VARIANT_ACCEPTOR, 
-				new IAcceptorCreator() {
-					public IAcceptorModule[] create() {
-						return new IAcceptorModule[] {
+				MachineVariantModule.MACHINE_VARIANT_FILTER, 
+				new IFilterCreator() {
+					public IFilterModule[] create() {
+						return new IFilterModule[] {
 								new MachineVariantFreeIdentsModule()
 						};
 					}
@@ -197,10 +197,10 @@ public final class ModuleManager implements IModuleManager {
 		// events:
 		
 		moduleTable.put(
-				MachineEventGuardModule.MACHINE_EVENT_GUARD_ACCEPTOR, 
-				new IAcceptorCreator() {
-					public IAcceptorModule[] create() {
-						return new IAcceptorModule[] {
+				MachineEventGuardModule.MACHINE_EVENT_GUARD_FILTER, 
+				new IFilterCreator() {
+					public IFilterModule[] create() {
+						return new IFilterModule[] {
 								new MachineEventGuardFreeIdentsModule()
 						};
 					}
@@ -209,10 +209,10 @@ public final class ModuleManager implements IModuleManager {
 		);	
 		
 		moduleTable.put(
-				MachineEventWitnessModule.MACHINE_EVENT_WITNESS_ACCEPTOR, 
-				new IAcceptorCreator() {
-					public IAcceptorModule[] create() {
-						return new IAcceptorModule[] {
+				MachineEventWitnessModule.MACHINE_EVENT_WITNESS_FILTER, 
+				new IFilterCreator() {
+					public IFilterModule[] create() {
+						return new IFilterModule[] {
 								new MachineEventWitnessFreeIdentsModule()
 						};
 					}
@@ -221,10 +221,10 @@ public final class ModuleManager implements IModuleManager {
 		);	
 		
 		moduleTable.put(
-				MachineEventActionModule.MACHINE_EVENT_ACTION_ACCEPTOR, 
-				new IAcceptorCreator() {
-					public IAcceptorModule[] create() {
-						return new IAcceptorModule[] {
+				MachineEventActionModule.MACHINE_EVENT_ACTION_FILTER, 
+				new IFilterCreator() {
+					public IFilterModule[] create() {
+						return new IFilterModule[] {
 								new MachineEventActionFreeIdentsModule()
 						};
 					}
@@ -233,10 +233,10 @@ public final class ModuleManager implements IModuleManager {
 		);	
 		
 		moduleTable.put(
-				MachineEventModule.MACHINE_EVENT_ACCEPTOR, 
-				new IAcceptorCreator() {
-					public IAcceptorModule[] create() {
-						return new IAcceptorModule[] {
+				MachineEventModule.MACHINE_EVENT_FILTER, 
+				new IFilterCreator() {
+					public IFilterModule[] create() {
+						return new IFilterModule[] {
 								new MachinePreviousEventLabelModule()
 						};
 					}

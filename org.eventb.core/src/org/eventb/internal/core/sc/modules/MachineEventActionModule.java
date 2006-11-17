@@ -27,7 +27,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
@@ -50,14 +50,14 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineEventActionModule extends AssignmentModule {
 
-	public static final String MACHINE_EVENT_ACTION_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".machineEventActionAcceptor";
+	public static final String MACHINE_EVENT_ACTION_FILTER = 
+		EventBPlugin.PLUGIN_ID + ".machineEventActionFilter";
 
-	private final IAcceptorModule[] modules;
+	private final IFilterModule[] filterModules;
 
 	public MachineEventActionModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		modules = manager.getAcceptorModules(MACHINE_EVENT_ACTION_ACCEPTOR);
+		filterModules = manager.getFilterModules(MACHINE_EVENT_ACTION_FILTER);
 	}
 
 	private static String ACTION_NAME_PREFIX = "ACT";
@@ -85,7 +85,7 @@ public class MachineEventActionModule extends AssignmentModule {
 					actions, 
 					target,
 					assignments,
-					modules,
+					filterModules,
 					event.getParent().getElementName(),
 					repository,
 					monitor);

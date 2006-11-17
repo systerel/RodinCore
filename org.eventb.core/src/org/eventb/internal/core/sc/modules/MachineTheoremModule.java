@@ -16,7 +16,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
@@ -36,14 +36,14 @@ import org.rodinp.core.IRodinElement;
  */
 public class MachineTheoremModule extends TheoremModule {
 	
-	public static final String MACHINE_THEOREM_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".machineTheoremAcceptor";
+	public static final String MACHINE_THEOREM_FILTER = 
+		EventBPlugin.PLUGIN_ID + ".machineTheoremFilter";
 
-	private IAcceptorModule[] rules;
+	private IFilterModule[] filterModules;
 
 	public MachineTheoremModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		rules = manager.getAcceptorModules(MACHINE_THEOREM_ACCEPTOR);
+		filterModules = manager.getFilterModules(MACHINE_THEOREM_FILTER);
 	}
 
 	public void process(
@@ -78,7 +78,7 @@ public class MachineTheoremModule extends TheoremModule {
 				target, 
 				offset,
 				theorems,
-				rules,
+				filterModules,
 				repository,
 				monitor);
 		

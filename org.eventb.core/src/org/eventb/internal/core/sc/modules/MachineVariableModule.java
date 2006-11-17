@@ -14,7 +14,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
@@ -32,14 +32,14 @@ import org.rodinp.core.IRodinElement;
  */
 public class MachineVariableModule extends IdentifierModule {
 
-	public static final String MACHINE_VARIABLE_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".machineVariableAcceptor";
+	public static final String MACHINE_VARIABLE_FILTER = 
+		EventBPlugin.PLUGIN_ID + ".machineVariableFilter";
 
-	private IAcceptorModule[] modules;
+	private IFilterModule[] filterModules;
 
 	public MachineVariableModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		modules = manager.getAcceptorModules(MACHINE_VARIABLE_ACCEPTOR);
+		filterModules = manager.getFilterModules(MACHINE_VARIABLE_FILTER);
 	}
 
 	public void process(
@@ -61,7 +61,7 @@ public class MachineVariableModule extends IdentifierModule {
 		fetchSymbols(
 				variables,
 				target,
-				modules,
+				filterModules,
 				repository, 
 				monitor);
 	}

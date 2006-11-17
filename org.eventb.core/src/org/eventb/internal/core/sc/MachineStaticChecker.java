@@ -41,7 +41,7 @@ public class MachineStaticChecker extends StaticChecker {
 	
 	private IModuleManager manager;
 	
-	private IProcessorModule[] machineModules = null;
+	private IProcessorModule[] machineProcessorModules = null;
 	
 	public MachineStaticChecker() {
 		manager = ModuleManager.getModuleManager();
@@ -66,9 +66,9 @@ public class MachineStaticChecker extends StaticChecker {
 							StaticChecker.getStrippedComponentName(file.getName())), 
 					size);
 
-			if (machineModules == null) {
+			if (machineProcessorModules == null) {
 			
-				machineModules = manager.getProcessorModules(MACHINE_PROCESSOR);
+				machineProcessorModules = manager.getProcessorModules(MACHINE_PROCESSOR);
 			
 			}
 		
@@ -82,7 +82,7 @@ public class MachineStaticChecker extends StaticChecker {
 			runProcessorModules(
 					machineFile, 
 					scMachineFile,
-					machineModules, 
+					machineProcessorModules, 
 					repository,
 					monitor);
 		

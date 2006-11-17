@@ -24,7 +24,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
@@ -48,14 +48,14 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineEventGuardModule extends PredicateWithTypingModule {
 
-	public static final String MACHINE_EVENT_GUARD_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".machineEventGuardAcceptor";
+	public static final String MACHINE_EVENT_GUARD_FILTER = 
+		EventBPlugin.PLUGIN_ID + ".machineEventGuardFilter";
 
-	private IAcceptorModule[] modules;
+	private IFilterModule[] filterModules;
 
 	public MachineEventGuardModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		modules = manager.getAcceptorModules(MACHINE_EVENT_GUARD_ACCEPTOR);
+		filterModules = manager.getFilterModules(MACHINE_EVENT_GUARD_FILTER);
 	}
 
 	private static String GUARD_NAME_PREFIX = "GRD";
@@ -81,7 +81,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 					guards, 
 					target,
 					predicates,
-					modules,
+					filterModules,
 					event.getElementName(),
 					repository,
 					monitor);

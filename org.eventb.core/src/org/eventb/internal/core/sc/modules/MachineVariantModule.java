@@ -22,7 +22,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IStateSC;
@@ -44,15 +44,15 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineVariantModule extends ExpressionModule {
 
-	public static final String MACHINE_VARIANT_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".machineVariantAcceptor";
+	public static final String MACHINE_VARIANT_FILTER = 
+		EventBPlugin.PLUGIN_ID + ".machineVariantFilter";
 
-	private final IAcceptorModule[] modules;
+	private final IFilterModule[] filterModules;
 
 	public MachineVariantModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
-		modules = 
-			manager.getAcceptorModules(MACHINE_VARIANT_ACCEPTOR);
+		filterModules = 
+			manager.getFilterModules(MACHINE_VARIANT_FILTER);
 	}
 
 	private static String VARIANT_NAME_PREFIX = "VAR";
@@ -121,7 +121,7 @@ public class MachineVariantModule extends ExpressionModule {
 				variants, 
 				target,
 				expressions,
-				modules,
+				filterModules,
 				machineFile.getElementName(),
 				repository,
 				monitor);
