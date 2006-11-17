@@ -118,7 +118,7 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 					createProblemMarker(
 							element, 
 							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
-							GraphProblem.AnticipatedFaultyConvergence);
+							GraphProblem.AnticipatedFaultyConvergenceWarning);
 				}
 				return IConvergenceElement.ORDINARY;
 			}
@@ -135,13 +135,13 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 				createProblemMarker(
 						element, 
 						EventBAttributes.CONVERGENCE_ATTRIBUTE, 
-						GraphProblem.AnticipatedEventNoVariant);
+						GraphProblem.AnticipatedEventNoVariantWarning);
 				return IConvergenceElement.ORDINARY;
 			} else if (convergence == IConvergenceElement.CONVERGENT) {
 				createProblemMarker(
 						element, 
 						EventBAttributes.CONVERGENCE_ATTRIBUTE, 
-						GraphProblem.ConvergentEventNoVariant);
+						GraphProblem.ConvergentEventNoVariantWarning);
 				return IConvergenceElement.ORDINARY;
 			}
 		return convergence;
