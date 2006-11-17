@@ -765,174 +765,197 @@
             icon="icons/full/ctool16/falsify_prover.gif"
             id="org.eventb.ui.falsifyGoal"
             interrupt="false"
+            name="%proofTactics.falsifyGoal.name"
             priorty="1"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ContradictGoal"
             target="goal"
-            tooltip="Contradict goal"/>
+            tooltip="%proofTactics.falsifyGoal.tooltip"/>
       <tactic
             icon="icons/full/ctool16/impI_prover.gif"
             id="org.eventb.ui.impI"
             interrupt="false"
+            name="%proofTactics.impI.name"
             priorty="2"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Deduction"
             target="goal"
-            tooltip="Deduction"/>
+            tooltip="%proofTactics.impI.tooltip"/>
       <tactic
             icon="icons/full/ctool16/disjI_prover.gif"
             id="org.eventb.ui.disjI"
             interrupt="false"
+            name="%proofTactics.disjI.name"
             priorty="3"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Disjunction"
             target="goal"
-            tooltip="Disjunction"/>
+            tooltip="%proofTactics.disjI.tooltip"/>
       <tactic
             icon="icons/full/ctool16/conjI_prover.gif"
             id="org.eventb.ui.conjI"
             interrupt="false"
+            name="%proofTactics.conjI.name"
             priorty="4"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ConjunctionIntroduction"
             target="goal"
-            tooltip="Conjunction introduction"/>
+            tooltip="%proofTactics.conjI.tooltip"/>
       <tactic
             icon="icons/full/ctool16/allI_prover.gif"
             id="org.eventb.ui.allI"
             interrupt="false"
+            name="%proofTactics.allI.name"
             priorty="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ForallInstantiationGoal"
             target="goal"
-            tooltip="Forall instantiation"/>
+            tooltip="%proofTactics.allI.tooltip"/>
       <tactic
             icon="icons/full/ctool16/exI_prover.gif"
             id="org.eventb.ui.exI"
             interrupt="false"
+            name="%proofTactics.exI.name"
             priorty="6"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ExistsInstantiationGoal"
             target="goal"
-            tooltip="Exists instantiation"/>
+            tooltip="%proofTactics.exI.tooltip"/>
       <tactic
             icon="icons/full/ctool16/negI_prover.gif"
             id="org.eventb.ui.negI"
             interrupt="false"
+            name="%proofTactics.negI.name"
             priorty="7"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveNegationGoal"
             target="goal"
-            tooltip="Remove negation"/>
+            tooltip="%proofTactics.negI.tooltip"/>
       <tactic
             dropdown="org.eventb.ui.reviewDropdown"
             icon="icons/full/ctool16/rv_prover.gif"
             id="org.eventb.ui.review"
             interrupt="false"
+            name="%proofTactics.review.name"
             priorty="4"
             proofCommand="org.eventb.internal.ui.prover.tactics.Review"
             target="global"
-            tooltip="Review goal with selected hypotheses"/>
+            tooltip="%proofTactics.review.tooltip"/>
       <tactic
             icon="icons/full/ctool16/dc_prover.gif"
             id="org.eventb.ui.doCase"
             interrupt="false"
+            name="%proofTactics.doCase.name"
             priorty="1"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DoCase"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
-            tooltip="Case distinction"/>
+            tooltip="%proofTactics.doCase.tooltip"/>
       <tactic
             icon="icons/full/ctool16/ah_prover.gif"
             id="org.eventb.ui.addHypothesis"
             interrupt="false"
+            name="%proofTactics.addHyp.name"
             priorty="2"
             tacticProvider="org.eventb.internal.ui.prover.tactics.AddHypothesis"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
-            tooltip="Add hypothesis"/>
+            tooltip="%proofTactics.addHyp.tooltip"/>
       <tactic
             icon="icons/full/ctool16/auto_prover.png"
             id="org.eventb.ui.autoProver"
             interrupt="true"
+            name="%proofTactics.autoProver.name"
             priorty="3"
             tacticProvider="org.eventb.internal.ui.prover.tactics.AutoProver"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
-            tooltip="Auto provers : rerun the auto provers"/>
+            tooltip="%proofTactics.autoProver.tooltip"/>
       <tactic
             icon="icons/full/ctool16/broom_prover.gif"
             id="org.eventb.ui.norm"
             interrupt="false"
+            name="%proofTactics.norm.name"
             priorty="4"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Normalise"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
-            tooltip="Normalise tactic"/>
+            tooltip="%proofTactics.norm.tooltip"/>
       <tactic
             icon="icons/full/ctool16/lasoo_prover.gif"
             id="org.eventb.ui.lasoo"
             interrupt="false"
+            name="%proofTactics.lasoo.name"
             priorty="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Lasoo"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
-            tooltip="Lasoo : Select hypotheses with free identifiers common to the goal or the selected hypotheses"/>
+            tooltip="%proofTactics.lasoo.tooltip"/>
       <tactic
             icon="icons/full/ctool16/bk_prover.gif"
             id="org.eventb.ui.backtrack"
             interrupt="false"
+            name="%proofTactics.backtrack.name"
             priorty="6"
             proofCommand="org.eventb.internal.ui.prover.tactics.Backtrack"
             target="global"
             toolbar="org.eventb.ui.backtrackToolbar"
-            tooltip="Backtrack from the current node"/>
+            tooltip="%proofTactics.backtrack.tooltip"/>
       <tactic
             icon="icons/full/ctool16/pn_prover.gif"
             id="org.eventb.ui.prune"
             interrupt="false"
+            name="%proofTactics.prune.name"
             priorty="7"
             proofCommand="org.eventb.internal.ui.prover.tactics.Prune"
             target="global"
             toolbar="org.eventb.ui.backtrackToolbar"
-            tooltip="Prune from the current node"/>
+            tooltip="%proofTactics.prune.tooltip"/>
       <tactic
             icon="icons/full/ctool16/sh_prover.gif"
             id="org.eventb.ui.searchHyp"
             interrupt="false"
+            name="%proofTactics.searchHyp.name"
             priorty="1"
             proofCommand="org.eventb.internal.ui.prover.tactics.SearchHypotheses"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
-            tooltip="Seach hypotheses"/>
+            tooltip="%proofTactics.searchHyp.tooltip"/>
       <tactic
             icon="icons/full/ctool16/prev_prover.gif"
             id="org.eventb.ui.previous"
             interrupt="false"
+            name="%proofTactics.previous.name"
             priorty="9"
             proofCommand="org.eventb.internal.ui.prover.tactics.Previous"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
-            tooltip="Previous undischarged PO"/>
+            tooltip="%proofTactics.previous.tooltip"/>
       <tactic
             icon="icons/full/ctool16/next_prover.gif"
             id="org.eventb.ui.next"
             interrupt="false"
+            name="%proofTactics.next.name"
             priorty="10"
             proofCommand="org.eventb.internal.ui.prover.tactics.Next"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
-            tooltip="Next undischarged PO"/>
+            tooltip="%proofTactics.next.tooltip"/>
       <toolbar
             id="org.eventb.ui.backtrackToolbar"
+            name="%proofToolbars.backtrack.name"
             priority="5"/>
       <toolbar
             id="org.eventb.ui.sequentToolbar"
+            name="%proofToolbars.sequent.name"
             priority="1"/>
       <toolbar
             id="org.eventb.ui.navigationToolbar"
+            name="%proofToolbars.navigation.name"
             priority="10"/>
       <dropdown
             id="org.eventb.ui.reviewDropdown"
+            name="%proofDropdowns.review.name"
             priority="5"
             toolbar="org.eventb.ui.sequentToolbar"/>
       <tactic
             icon="icons/full/ctool16/falsify_prover.gif"
             id="org.eventb.ui.falsifyHyp"
             interrupt="false"
+            name="%proofTactics.falsifyHyp.name"
             priorty="1"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ContradictHyp"
             target="hypothesis"
@@ -941,6 +964,7 @@
             icon="icons/full/ctool16/impE1_prover.gif"
             id="org.eventb.ui.impE1"
             interrupt="false"
+            name="%proofTactics.impE1.name"
             priorty="2"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ImplicationElemination1"
             target="hypothesis"
@@ -949,6 +973,7 @@
             icon="icons/full/ctool16/conjE_prover.gif"
             id="org.eventb.ui.conjE"
             interrupt="false"
+            name="%proofTactics.conjE.name"
             priorty="3"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ConjunctionElemination"
             target="hypothesis"
@@ -957,6 +982,7 @@
             icon="icons/full/ctool16/disjE_prover.gif"
             id="org.eventb.ui.disjE"
             interrupt="false"
+            name="%proofTactics.disjE.name"
             priorty="4"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DisjunctionElemination"
             target="hypothesis"
@@ -965,6 +991,7 @@
             icon="icons/full/ctool16/negE_prover.gif"
             id="org.eventb.ui.negE"
             interrupt="false"
+            name="%proofTactics.negE.name"
             priorty="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveNegationHyp"
             target="hypothesis"
@@ -973,6 +1000,7 @@
             icon="icons/full/ctool16/allD_prover.gif"
             id="org.eventb.ui.allE"
             interrupt="false"
+            name="%proofTactics.allE.name"
             priorty="6"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ForallInstantiationHyp"
             target="hypothesis"
@@ -981,6 +1009,7 @@
             icon="icons/full/ctool16/exE_prover.gif"
             id="org.eventb.ui.exE"
             interrupt="false"
+            name="%proofTactics.exE.name"
             priorty="7"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ExistsInstantiationHyp"
             target="hypothesis"
@@ -989,6 +1018,7 @@
             icon="icons/full/ctool16/eq1_prover.gif"
             id="org.eventb.ui.eq1"
             interrupt="false"
+            name="%proofTactics.eq1.name"
             priorty="8"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Equality1"
             target="hypothesis"
