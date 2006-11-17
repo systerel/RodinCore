@@ -52,14 +52,11 @@
          <sequence>
             <element ref="column" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
-         <attribute name="class" type="string" use="required">
+         <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  the type of the element that is mentioned
+                  the unique id of the element
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.rodinp.core.IRodinElement"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string" use="required">
@@ -77,16 +74,6 @@
                <documentation>
                   the priority of the element, which is used for sorting the elements in the UI (e.g. in Tree/Table Viewers)
                </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  a translatable name of the element.
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>

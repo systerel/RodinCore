@@ -430,9 +430,8 @@
    <extension
          point="org.eventb.ui.elementui">
       <element
-            class="org.rodinp.core.IRodinProject"
+            type="org.rodinp.core.project"
             icon="icons/full/obj16/prj_obj.gif"
-            name="%element.rodinProject"
             priority="0">
          <column
                id="name"
@@ -440,9 +439,8 @@
                math="false"/>
       </element>
       <element
-            class="org.eventb.core.IMachineFile"
+            type="org.eventb.core.machineFile"
             icon="icons/full/obj16/mch_obj.gif"
-            name="%element.machineFile"
             priority="2">
          <column
                id="name"
@@ -450,9 +448,8 @@
                math="false"/>
       </element>
       <element
-            class="org.eventb.core.IContextFile"
+            type="org.eventb.core.contextFile"
             icon="icons/full/obj16/ctx_obj.gif"
-            name="%element.contextFile"
             priority="1">
          <column
                id="name"
@@ -460,9 +457,8 @@
                math="false"/>
       </element>
       <element
-            class="org.eventb.core.ISeesContext"
+            type="org.eventb.core.seesContext"
             icon="icons/full/obj16/ctx_obj.gif"
-            name="%element.seesContext"
             priority="2">
          <column
                id="name"
@@ -471,9 +467,8 @@
                modifier="org.eventb.internal.ui.SeesContextModifier"/>
       </element>
       <element
-            class="org.eventb.core.IRefinesMachine"
+            type="org.eventb.core.refinesMachine"
             icon="icons/full/obj16/mch_obj.gif"
-            name="%element.refinesMachine"
             priority="3">
          <column
                id="name"
@@ -482,9 +477,8 @@
                modifier="org.eventb.internal.ui.RefinesMachineModifier"/>
       </element>
       <element
-            class="org.eventb.core.IExtendsContext"
+            type="org.eventb.core.extendsContext"
             icon="icons/full/obj16/ctx_obj.gif"
-            name="%element.extendsContext"
             priority="3">
          <column
                id="name"
@@ -493,9 +487,8 @@
                modifier="org.eventb.internal.ui.ExtendsContextModifier"/>
       </element>
       <element
-            class="org.eventb.core.IVariable"
+            type="org.eventb.core.variable"
             icon="icons/full/obj16/var_obj.gif"
-            name="%element.variable"
             priority="4">
          <column
                id="name"
@@ -504,9 +497,8 @@
                modifier="org.eventb.internal.ui.IdentifierModifier"/>
       </element>
       <element
-            class="org.eventb.core.IInvariant"
+            type="org.eventb.core.invariant"
             icon="icons/full/obj16/inv_obj.gif"
-            name="%element.invariant"
             priority="5">
          <column
                id="name"
@@ -520,9 +512,8 @@
                modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
-            class="org.eventb.core.ITheorem"
+            type="org.eventb.core.theorem"
             icon="icons/full/obj16/thm_obj.gif"
-            name="%element.theorem"
             priority="7">
          <column
                id="name"
@@ -536,9 +527,8 @@
                modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
-            class="org.eventb.core.IEvent"
+            type="org.eventb.core.event"
             icon="icons/full/obj16/evt_obj.gif"
-            name="%element.event"
             priority="9">
          <column
                id="name"
@@ -547,9 +537,8 @@
                modifier="org.eventb.internal.ui.LabelModifier"/>
       </element>
       <element
-            class="org.eventb.core.IRefinesEvent"
+            type="org.eventb.core.refinesEvent"
             icon="icons/full/obj16/evt_obj.gif"
-            name="%element.refinesEvent"
             priority="0">
          <column
                id="name"
@@ -558,9 +547,8 @@
                modifier="org.eventb.internal.ui.RefinesEventModifier"/>
       </element>
       <element
-            class="org.eventb.core.IGuard"
+            type="org.eventb.core.guard"
             icon="icons/full/obj16/grd_obj.gif"
-            name="%element.guard"
             priority="5">
          <column
                id="name"
@@ -574,9 +562,8 @@
                modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
-            class="org.eventb.core.IAction"
+            type="org.eventb.core.action"
             icon="icons/full/obj16/act_obj.gif"
-            name="%element.action"
             priority="7">
          <column
                id="name"
@@ -590,9 +577,8 @@
                modifier="org.eventb.internal.ui.AssignmentModifier"/>
       </element>
       <element
-            class="org.eventb.core.ICarrierSet"
+            type="org.eventb.core.carrierSet"
             icon="icons/full/obj16/set_obj.gif"
-            name="%element.carrierSet"
             priority="4">
          <column
                id="name"
@@ -601,9 +587,8 @@
                modifier="org.eventb.internal.ui.IdentifierModifier"/>
       </element>
       <element
-            class="org.eventb.core.IConstant"
+            type="org.eventb.core.constant"
             icon="icons/full/obj16/cst_obj.gif"
-            name="%element.constant"
             priority="5">
          <column
                id="name"
@@ -612,9 +597,8 @@
                modifier="org.eventb.internal.ui.IdentifierModifier"/>
       </element>
       <element
-            class="org.eventb.core.IAxiom"
+            type="org.eventb.core.axiom"
             icon="icons/full/obj16/axm_obj.gif"
-            name="%element.axiom"
             priority="6">
          <column
                id="name"
@@ -628,9 +612,8 @@
                modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
-            class="org.eventb.core.IWitness"
+            type="org.eventb.core.witness"
             icon="icons/unattempted.gif"
-            name="%element.witness"
             priority="6">
          <column
                id="name"
@@ -644,9 +627,8 @@
                modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
-            class="org.eventb.core.IVariant"
+            type="org.eventb.core.variant"
             icon="icons/sample.gif"
-            name="%element.variant"
             priority="8">
          <column
                id="name"

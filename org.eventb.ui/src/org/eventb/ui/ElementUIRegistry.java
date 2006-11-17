@@ -14,7 +14,6 @@ package org.eventb.ui;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -25,8 +24,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
-import org.osgi.framework.Bundle;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -55,7 +55,7 @@ public class ElementUIRegistry {
 	private static ElementUIRegistry instance;
 
 	// The registry stored Element UI information
-	private Map<Class, ElementUIInfo> registry;
+	private Map<IElementType, ElementUIInfo> registry;
 
 	/**
 	 * @author htson
@@ -67,12 +67,12 @@ public class ElementUIRegistry {
 		// Configuration information related to the element
 		private IConfigurationElement configuration;
 
-//		private IElementLabelProvider labelProvider = null;
+		// private IElementLabelProvider labelProvider = null;
 
-//		private IElementModifier modifier = null;
+		// private IElementModifier modifier = null;
 
 		private HashMap<String, IElementLabelProvider> providers;
-		
+
 		private HashMap<String, IElementModifier> modifiers;
 
 		/**
@@ -138,22 +138,19 @@ public class ElementUIRegistry {
 		 * Getting the priority for an object
 		 * <p>
 		 * 
-		 * @param obj
-		 *            any object
 		 * @return the priority corresponding to the input object
 		 */
-		public int getPriority(Object obj) {
+		public int getPriority() {
 			String priorityString = configuration.getAttribute("priority"); //$NON-NLS-1$
 			try {
 				return Integer.parseInt(priorityString);
 			} catch (NumberFormatException e) {
-				if (UIUtils.DEBUG)
-					System.out
-							.println("Priority must be a natural number, default priority assigned to "
-									+ obj);
-				UIUtils.log(e,
-						"Priority must be a natural number, default priority assigned to "
-								+ obj);
+				String message = "Priority must be a natural number, default priority assigned to "
+						+ configuration.getAttribute("type");
+				if (UIUtils.DEBUG) {
+					System.out.println(message);
+				}
+				UIUtils.log(e, message);
 				return DEFAULT_PRIORITY;
 			}
 		}
@@ -171,26 +168,25 @@ public class ElementUIRegistry {
 		 * @return the label according to the input object and the extension
 		 *         names
 		 */
-//		private String getLabel(Object obj, String provider) {
-//			if (labelProvider != null)
-//				return labelProvider.getLabel(obj);
-//
-//			try {
-//				labelProvider = (IElementLabelProvider) configuration
-//						.createExecutableExtension(provider); //$NON-NLS-1$
-//				return labelProvider.getLabel(obj);
-//			} catch (CoreException e) {
-//				String message = "Cannot instantiate the label provider class "
-//						+ configuration.getAttribute(provider);
-//				UIUtils.log(e, message);
-//				if (UIUtils.DEBUG) {
-//					System.out.println(message);
-//					e.printStackTrace();
-//				}
-//				return DEFAULT_LABEL;
-//			}
-//		}
-
+		// private String getLabel(Object obj, String provider) {
+		// if (labelProvider != null)
+		// return labelProvider.getLabel(obj);
+		//
+		// try {
+		// labelProvider = (IElementLabelProvider) configuration
+		// .createExecutableExtension(provider); //$NON-NLS-1$
+		// return labelProvider.getLabel(obj);
+		// } catch (CoreException e) {
+		// String message = "Cannot instantiate the label provider class "
+		// + configuration.getAttribute(provider);
+		// UIUtils.log(e, message);
+		// if (UIUtils.DEBUG) {
+		// System.out.println(message);
+		// e.printStackTrace();
+		// }
+		// return DEFAULT_LABEL;
+		// }
+		// }
 		/**
 		 * Get a secondary label (used for the second column in Event-B Editable
 		 * Tree Viewer)
@@ -230,7 +226,7 @@ public class ElementUIRegistry {
 			return DEFAULT_LABEL;
 		}
 
-		public boolean isNotSelectable(Object obj, String columnID) {
+		public boolean isNotSelectable(String columnID) {
 			IElementModifier modifier = modifiers.get(columnID);
 			if (modifier != null) {
 				if (modifier instanceof NullModifier)
@@ -329,7 +325,7 @@ public class ElementUIRegistry {
 			return;
 		}
 
-		registry = new HashMap<Class, ElementUIInfo>();
+		registry = new HashMap<IElementType, ElementUIInfo>();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = reg.getExtensionPoint(ELEMENTUI_ID);
@@ -337,38 +333,38 @@ public class ElementUIRegistry {
 				.getConfigurationElements();
 
 		for (IConfigurationElement configuration : configurations) {
-			String namespace = configuration.getContributor().getName();
-			Bundle bundle = Platform.getBundle(namespace);
-			String className = configuration.getAttribute("class"); //$NON-NLS-1$
-			try {
-				Class clazz = bundle.loadClass(className);
-				ElementUIInfo oldInfo = registry.put(clazz, new ElementUIInfo(
-						configuration));
-				if (oldInfo != null) {
-					registry.put(clazz, oldInfo);
-					if (UIUtils.DEBUG) {
-						System.out
-								.println("Configuration is already exists for class "
-										+ className
-										+ ", ignore configuration with id "
-										+ configuration.getAttribute("id")); // $NON-NLS-3$
-					}
-				} else {
-					if (UIUtils.DEBUG) {
-						System.out.println("Registered element UI for class "
-								+ className);
-					}
-				}
-			} catch (ClassNotFoundException e) {
-				if (UIUtils.DEBUG) {
-					System.out.println("Cannot find class " + className
-							+ " in bundle " + namespace);
-					e.printStackTrace();
-				}
-				UIUtils.log(e, "Cannot find class " + className + " in bundle "
-						+ namespace);
-			}
+			String type = configuration.getAttribute("type"); //$NON-NLS-1$
 
+			IElementType elementType;
+			try {
+				elementType = RodinCore.getElementType(type);
+			} catch (IllegalArgumentException e) {
+				String message = "Illegal element type " + type
+						+ ", ignore this configuration";
+				UIUtils.log(e, message);
+				if (UIUtils.DEBUG) {
+					System.out.println(message);
+				}
+				continue;
+			}
+			ElementUIInfo oldInfo = registry.put(elementType,
+					new ElementUIInfo(configuration));
+			if (oldInfo != null) {
+				registry.put(elementType, oldInfo);
+				if (UIUtils.DEBUG) {
+					System.out
+							.println("Configuration is already exists for element of type "
+									+ type
+									+ ", ignore configuration with id "
+									+ configuration.getAttribute("id")); // $NON-NLS-3$
+				}
+			} else {
+				if (UIUtils.DEBUG) {
+					System.out
+							.println("Registered element UI for element type "
+									+ type);
+				}
+			}
 		}
 
 	}
@@ -385,10 +381,11 @@ public class ElementUIRegistry {
 		if (registry == null)
 			loadRegistry();
 
-		Set<Class> classes = registry.keySet();
-		for (Class clazz : classes) {
-			if (clazz.isInstance(obj))
-				return registry.get(clazz).getImageDescriptor();
+		if (obj instanceof IRodinElement) {
+			ElementUIInfo info = registry.get(((IRodinElement) obj)
+					.getElementType());
+			if (info != null)
+				return info.getImageDescriptor();
 		}
 
 		return null;
@@ -406,10 +403,12 @@ public class ElementUIRegistry {
 		if (registry == null)
 			loadRegistry();
 
-		Set<Class> classes = registry.keySet();
-		for (Class clazz : classes) {
-			if (clazz.isInstance(obj))
-				return registry.get(clazz).getLabel(obj);
+		if (obj instanceof IRodinElement) {
+			IElementType elementType = ((IRodinElement) obj)
+								.getElementType();
+			ElementUIInfo info = registry.get(elementType);
+			if (info != null)
+				return info.getLabel(obj);
 		}
 
 		return DEFAULT_LABEL;
@@ -428,10 +427,11 @@ public class ElementUIRegistry {
 		if (registry == null)
 			loadRegistry();
 
-		Set<Class> classes = registry.keySet();
-		for (Class clazz : classes) {
-			if (clazz.isInstance(obj))
-				return registry.get(clazz).getLabelAtColumn(columnID, obj);
+		if (obj instanceof IRodinElement) {
+			ElementUIInfo info = registry.get(((IRodinElement) obj)
+					.getElementType());
+			if (info != null)
+				return info.getLabelAtColumn(columnID, obj);
 		}
 
 		return DEFAULT_LABEL;
@@ -449,10 +449,11 @@ public class ElementUIRegistry {
 		if (registry == null)
 			loadRegistry();
 
-		Set<Class> classes = registry.keySet();
-		for (Class clazz : classes) {
-			if (clazz.isInstance(obj))
-				return registry.get(clazz).getPriority(obj);
+		if (obj instanceof IRodinElement) {
+			ElementUIInfo info = registry.get(((IRodinElement) obj)
+					.getElementType());
+			if (info != null)
+				return info.getPriority();
 		}
 
 		return DEFAULT_PRIORITY;
@@ -462,26 +463,24 @@ public class ElementUIRegistry {
 		if (registry == null)
 			loadRegistry();
 
-		Set<Class> classes = registry.keySet();
-		for (Class clazz : classes) {
-			if (clazz.isInstance(obj))
-				return registry.get(clazz).isNotSelectable(obj, columnID);
+		if (obj instanceof IRodinElement) {
+			ElementUIInfo info = registry.get(((IRodinElement) obj)
+					.getElementType());
+			if (info != null)
+				return info.isNotSelectable(columnID);
 		}
 
 		return DEFAULT_EDITABLE;
 	}
 
-	public synchronized void modify(IRodinElement element, String columnID, String text)
-			throws RodinDBException {
+	public synchronized void modify(IRodinElement element, String columnID,
+			String text) throws RodinDBException {
 		if (registry == null)
 			loadRegistry();
 
-		Set<Class> classes = registry.keySet();
-		for (Class clazz : classes) {
-			if (clazz.isInstance(element))
-				registry.get(clazz).modify(element, columnID, text);
-		}
+		ElementUIInfo info = registry.get(element.getElementType());
+		if (info != null)
+			info.modify(element, columnID, text);
 
 	}
-
 }
