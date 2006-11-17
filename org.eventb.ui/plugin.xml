@@ -935,13 +935,13 @@
             toolbar="org.eventb.ui.navigationToolbar"
             tooltip="%proofTactics.next.tooltip"/>
       <toolbar
-            id="org.eventb.ui.backtrackToolbar"
-            name="%proofToolbars.backtrack.name"
-            priority="5"/>
-      <toolbar
             id="org.eventb.ui.sequentToolbar"
             name="%proofToolbars.sequent.name"
             priority="1"/>
+      <toolbar
+            id="org.eventb.ui.backtrackToolbar"
+            name="%proofToolbars.backtrack.name"
+            priority="5"/>
       <toolbar
             id="org.eventb.ui.navigationToolbar"
             name="%proofToolbars.navigation.name"

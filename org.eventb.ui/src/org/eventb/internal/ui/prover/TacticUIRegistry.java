@@ -2,7 +2,7 @@ package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -329,11 +329,11 @@ public class TacticUIRegistry {
 			return;
 		}
 
-		goalRegistry = new HashMap<String, TacticUIInfo>();
-		hypothesisRegistry = new HashMap<String, TacticUIInfo>();
-		globalRegistry = new HashMap<String, TacticUIInfo>();
-		toolbarRegistry = new HashMap<String, ToolbarInfo>();
-		dropdownRegistry = new HashMap<String, DropdownInfo>();
+		goalRegistry = new LinkedHashMap<String, TacticUIInfo>();
+		hypothesisRegistry = new LinkedHashMap<String, TacticUIInfo>();
+		globalRegistry = new LinkedHashMap<String, TacticUIInfo>();
+		toolbarRegistry = new LinkedHashMap<String, ToolbarInfo>();
+		dropdownRegistry = new LinkedHashMap<String, DropdownInfo>();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = reg.getExtensionPoint(PROOFTACTICS_ID);
