@@ -68,17 +68,8 @@ public class PSFile extends RodinFile implements IPSFile {
 		final IRodinProject project = (IRodinProject) getParent();
 		return (IPRFile) project.getRodinFile(prName);
 	}
-	
-//	public IPSstatus[] getStatus() throws RodinDBException {
-//		IRodinElement[] list = getChildrenOfType(IPSstatus.ELEMENT_TYPE);
-//		IPSstatus[] statuses = new PSstatus[list.length];
-//		for (int i = 0; i < statuses.length; i++) {
-//			statuses[i] = (IPSstatus) list[i];
-//		}
-//		return statuses;
-//	}
-	
-	public IPSStatus[] getStatuses() throws RodinDBException {
+		
+	public IPSStatus[] getStatuses() throws RodinDBException{
 		ArrayList<IRodinElement> list = getFilteredChildrenList(PSStatus.ELEMENT_TYPE);
 		PSStatus[] statuses = new PSStatus[list.size()];
 		list.toArray(statuses);
@@ -87,7 +78,7 @@ public class PSFile extends RodinFile implements IPSFile {
 	
 	public IPSStatus getStatus(String name) {
 		IPSStatus status = (IPSStatus) getInternalElement(IPSStatus.ELEMENT_TYPE,name);
-		if (!status.exists()) return null;
+		// if (!status.exists()) return null;
 		return status;
 	}
 

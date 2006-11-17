@@ -17,10 +17,10 @@ import org.rodinp.core.RodinDBException;
 
 
 /**
- * Common protocol for Event-B Prover (PR) files.
+ * Common protocol for Event-B Proof (PR) files.
+ * 
  * <p>
- * The structure of the PR file is identical to that if the proof obligation (PO)
- * file, but will additional proof trees included. 
+ * A PR file is composed of proof elements (IPRProof) in a particular order.
  * </p>
  * 
  * <p>
@@ -36,38 +36,31 @@ public interface IPRFile extends IRodinFile{
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".prFile"); //$NON-NLS-1$
 	
 	
+
 	/**
-	 * Returns all the proof trees contained in this PR file.
+	 * Returns handles to all proof elements in the PR file in the order in 
+	 * which they occur.
+	 * <p>
+	 * This is a handle-only method. The proof elements may or may not be
+	 * present.
+	 * </p>
 	 * 
-	 * @return an array containing all proof trees in this PR file.
-	 * 
+	 * @return an array of all proof elements in the PR file
 	 * @throws RodinDBException
 	 */
 	IPRProof[] getProofs() throws RodinDBException;
 	
-	
 	/**
-	 * Returns the proof tree with the given name from the PR file.
+	 * Returns a handle to the proof element with the given element name.
+	 * <p>
+	 * This is a handle-only method. The proof element may or may not be
+	 * present.
+	 * </p>
 	 * 
 	 * @param name
-	 * Name of the proof tree to return.
-	 * 
-	 * @return the proof tree with the correcponging name, or <code>null</code> if not
-	 * present.
-	 * 
+	 *            element name of the proof
+	 * @return a handle to a proof with the given element name
 	 */
 	IPRProof getProof(String name);
-	
-	/**
-	 * Creates and returns a new initialised proof tree with the given name.
-	 * 
-	 * @param name
-	 * 				Name of the proof tree to create.
-	 * @param monitor TODO
-	 * 
-	 * @return the created proof tree
-	 * 
-	 */
-	IPRProof createFreshProof(String name, IProgressMonitor monitor) throws RodinDBException;
 	
 }

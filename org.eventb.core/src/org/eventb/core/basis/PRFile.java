@@ -48,9 +48,9 @@ public class PRFile extends RodinFile implements IPRFile {
 	}
 
 	public IPRProof getProof(String name) {
-		IInternalElement proofTree = getInternalElement(IPRProof.ELEMENT_TYPE,name);
-		if (proofTree.exists()) return (IPRProof) proofTree;
-		return null;
+		IInternalElement proof = getInternalElement(IPRProof.ELEMENT_TYPE,name);
+		// if (proofTree.exists()) return (IPRProof) proofTree;
+		return (IPRProof) proof;
 	}
 
 	public IPRProof createFreshProof(String name, IProgressMonitor monitor) throws RodinDBException {

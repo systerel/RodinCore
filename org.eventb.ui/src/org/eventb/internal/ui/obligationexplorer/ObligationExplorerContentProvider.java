@@ -223,8 +223,8 @@ public class ObligationExplorerContentProvider implements
 
 		try {
 			if (parent instanceof IPSFile) {
-				IPSFile prFile = (IPSFile) parent;
-				return prFile.getStatuses();
+				IPSFile psFile = (IPSFile) parent;
+				if (psFile.exists()) return psFile.getStatuses();
 			}
 			if (parent instanceof IRodinDB) {
 				return ((IRodinDB) parent).getChildren();

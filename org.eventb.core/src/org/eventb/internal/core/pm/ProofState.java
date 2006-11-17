@@ -92,10 +92,10 @@ public class ProofState implements IProofState {
 		pt = createProofTree();
 		
 		// If a proof exists in the PR file rebuild it.
-		final IPRProof prProofTree = status.getProof();
-		if (prProofTree != null)
+		final IPRProof prProof = status.getProof();
+		if (prProof.exists())
 		{
-			final IProofSkeleton proofSkeleton = prProofTree.getSkeleton(FormulaFactory.getDefault(), monitor);
+			final IProofSkeleton proofSkeleton = prProof.getSkeleton(FormulaFactory.getDefault(), monitor);
 			if (proofSkeleton != null){
 				ProofBuilder.rebuild(pt.getRoot(),proofSkeleton);
 			}
@@ -110,7 +110,7 @@ public class ProofState implements IProofState {
 
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
-		dirty = ! status.isProofValid(null);
+		dirty = ! status.getProofValidAttribute(null);
 		cached = new HashSet<Hypothesis>();
 		searched = new HashSet<Hypothesis>();
 	}
@@ -122,8 +122,8 @@ public class ProofState implements IProofState {
 		if (pt != null)
 			return pt.isClosed();
 		
-		final IPRProof prProofTree = status.getProof();
-		return (prProofTree != null && (prProofTree.getConfidence(null) > IConfidence.PENDING));
+		final IPRProof prProof = status.getProof();
+		return (prProof.exists() && (prProof.getConfidence(null) > IConfidence.PENDING));
 	}
 
 	/* (non-Javadoc)
@@ -304,8 +304,8 @@ public class ProofState implements IProofState {
 	 * @see org.eventb.core.pm.IProofState#isSequentDischarged()
 	 */
 	public boolean isSequentDischarged() throws RodinDBException {
-		final IPRProof prProofTree = status.getProof();
-		return (prProofTree != null && (prProofTree.getConfidence(null) > IConfidence.PENDING));
+		final IPRProof prProof = status.getProof();
+		return (prProof.exists() && (prProof.getConfidence(null) > IConfidence.PENDING));
 	}
 
 	/* (non-Javadoc)
@@ -333,7 +333,7 @@ public class ProofState implements IProofState {
 
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
-		dirty = (! status.isProofValid(null));
+		dirty = (! status.getProofValidAttribute(null));
 	}
 
 	/* (non-Javadoc)

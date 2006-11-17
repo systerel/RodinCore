@@ -181,11 +181,11 @@ public class AutoPOMTest extends BuilderTest {
 				IConfidence.PENDING <
 				status.getProofConfidence(null));
 		assertTrue("PR " + status.getElementName() + " should be valid",
-				status.isProofValid(null));
+				status.getProofValidAttribute(null));
 		assertTrue("PR " + status.getElementName() + " should be attempted by the auto prover",
-				status.autoProverAttempted(null));
+				status.hasAutoProofAttribute(null));
 		assertTrue("PR " + status.getElementName() + " should be auto proven",
-				status.isAutoProven(null));
+				status.getAutoProofAttribute(null));
 		
 	}
 	
@@ -195,9 +195,9 @@ public class AutoPOMTest extends BuilderTest {
 				IConfidence.PENDING >=
 				status.getProofConfidence(null));
 		assertTrue("PR " + status.getElementName() + " should be valid",
-				status.isProofValid(null));
+				status.getProofValidAttribute(null));
 		assertTrue("PR " + status.getElementName() + " should be attempted by the auto prover",
-				status.autoProverAttempted(null));
+				status.hasAutoProofAttribute(null));
 //		assertFalse("PR " + status.getName() + " should not be auto proven",
 //				status.isAutoProven());
 	}

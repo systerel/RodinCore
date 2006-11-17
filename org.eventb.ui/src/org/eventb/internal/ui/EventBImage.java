@@ -305,7 +305,7 @@ public class EventBImage {
 		else {
 			boolean isAutomatic;
 			try {
-				isAutomatic = status.isAutoProven(null);
+				isAutomatic = status.hasAutoProofAttribute(null) && status.getAutoProofAttribute(null);
 			} catch (RodinDBException e) {
 				String message = "Cannot check if the proof tree of the sequent "
 					+ status.getElementName()
@@ -322,7 +322,7 @@ public class EventBImage {
 			}
 			boolean isProofBroken;
 			try {
-				isProofBroken = (! status.isProofValid(null));
+				isProofBroken = (! status.getProofValidAttribute(null));
 			} catch (RodinDBException e) {
 				String message = "Cannot check if the proof tree of the sequent "
 					+ status.getElementName() + " is brocken or not";

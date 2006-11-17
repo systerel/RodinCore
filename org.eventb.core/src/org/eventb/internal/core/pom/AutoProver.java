@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
@@ -91,12 +90,12 @@ public class AutoProver {
 			pm.beginTask(status.getElementName() + ":", 3);
 			
 			pm.subTask("loading");
-			IPRProof prProofTree = status.getProof();
+			IPRProof prProof = status.getProof();
 //			if (proofTree == null)
 //				proofTree = prFile.createProofTree(status.getName());
 			pm.worked(1);
 			
-			if ((!status.isProofValid(null)) || 
+			if ((!status.getProofValidAttribute(null)) || 
 					(status.getProofConfidence(null) <= IConfidence.PENDING)) {
 				final IPOSequent poSequent = status.getPOSequent();
 				IProofTree autoProofTree = ProverFactory.makeProofTree(
@@ -111,9 +110,9 @@ public class AutoProver {
 				pm.subTask("saving");
 				// Update the tree if it was discharged
 				if (autoProofTree.isClosed()) {
-					prProofTree.setProofTree(autoProofTree, null);
+					prProof.setProofTree(autoProofTree, null);
 					AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
-					setAutoProven(true,status);
+					status.setAutoProofAttribute(true,null);
 					prFile.save(null, false);
 					return true;
 				}
@@ -122,18 +121,18 @@ public class AutoProver {
 				if (autoProofTree.getRoot().hasChildren() && 
 						(
 								// ( status.getProofConfidence() > IConfidence.UNATTEMPTED) || 
-								(status.isAutoProven(null) && !(status.getProofConfidence(null) > IConfidence.PENDING))
+								(status.hasAutoProofAttribute(null) && status.getAutoProofAttribute(null) && !(status.getProofConfidence(null) > IConfidence.PENDING))
 						))	
 					
 				{
-					prProofTree.setProofTree(autoProofTree, null);
+					prProof.setProofTree(autoProofTree, null);
 					AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
-					setAutoProven(true,status);
+					status.setAutoProofAttribute(true,null);
 					// in this case no need to save immediately.
 					return true;
 				}
 			}
-			setAutoProven(false,status);
+			status.setAutoProofAttribute(false,null);
 			return false;
 		} finally {
 			pm.done();
@@ -154,10 +153,6 @@ public class AutoProver {
 				BasicTactics.onAllPending(
 						B4freeCore.externalPP(false, timeOutDelay)) // PP
 				);
-	}
-	
-	private static void setAutoProven(boolean autoProven, IPSStatus status) throws RodinDBException {
-		status.setAttributeValue(EventBAttributes.AUTO_PROOF_ATTRIBUTE, autoProven, null);
 	}
 
 

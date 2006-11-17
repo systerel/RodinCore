@@ -20,13 +20,11 @@ import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.basis.PSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.internal.core.Util;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.builder.IAutomaticTool;
@@ -90,22 +88,22 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				
 				final IPRProof prProof = prFile.getProof(name);
 				
-				if (prProof == null) {
-					prFile.createFreshProof(name, null);
+				if (! prProof.exists()) {
+					prProof.create(null, null);
+					prProof.initialize(null);
 				}
 				
 				
 				final IPSStatus oldStatus = ((IPSFile) psFile.getSnapshot()).getStatus(name);
-				IPSStatus status;
-				// TODO : for some reason, oldStatus is always null
-				if (oldStatus == null)
+				IPSStatus status = psFile.getStatus(name);
+				// TODO : for some reason, oldStatus never exists
+				if (oldStatus.exists())
 				{
-					status = (IPSStatus) psFile.createInternalElement(IPSStatus.ELEMENT_TYPE,name,null,null);
+					oldStatus.copy(psFile, null, null, true, null);
 				}
 				else
 				{
-					oldStatus.copy(psFile, null, null, true, null);
-					status = psFile.getStatus(name);
+					status.create(null, monitor);					
 				}
 				updateStatus(status,monitor);
 				
@@ -203,16 +201,18 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	private void makeFresh(IPRFile prFile, IPSFile psFile,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		IRodinProject project = prFile.getRodinProject();
+		// IRodinProject project = prFile.getRodinProject();
 
 		// Create a new PR file if none exists
-		if (! prFile.exists()) 	
-			project.createRodinFile(prFile.getElementName(), true, monitor);
+		if (! prFile.exists())
+			prFile.create(true, monitor);
+			//project.createRodinFile(prFile.getElementName(), true, monitor);
 		
 		// Create a fresh PS file
 		// TODO : modify once signatures are implemented
 		if (! psFile.exists()) 
-			project.createRodinFile(psFile.getElementName(), true, monitor);
+			psFile.create(true, monitor);
+//			project.createRodinFile(psFile.getElementName(), true, monitor);
 		else
 		{
 			IPSStatus[] statuses = psFile.getStatuses();
@@ -226,19 +226,18 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 //	 lock po & pr files before calling this method
 // TODO : a version with Proof tree from seqProver
-	public static void updateStatus(IPSStatus istatus, IProgressMonitor monitor) throws RodinDBException {
-		PSStatus status = (PSStatus) istatus;
+	public static void updateStatus(IPSStatus status, IProgressMonitor monitor) throws RodinDBException {
 		IProverSequent seq =  POLoader.readPO(status.getPOSequent());
-		final IPRProof proofTree = status.getProof();
-		if (proofTree == null) {
+		final IPRProof prProof = status.getProof();
+		if (!prProof.exists()) {
 			status.setProofConfidence(IConfidence.UNATTEMPTED, null);
-			status.setProofValid(true, null);
+			status.setProofValidAttribute(true, null);
 			return;
 		}
-		IProofDependencies deps = proofTree.getProofDependencies(FormulaFactory.getDefault(), null);
+		IProofDependencies deps = prProof.getProofDependencies(FormulaFactory.getDefault(), null);
 		boolean valid = ProverLib.proofReusable(deps,seq);
-		status.setProofConfidence(proofTree.getConfidence(null), null);
-		status.setProofValid(valid, null);
+		status.setProofConfidence(prProof.getConfidence(null), null);
+		status.setProofValidAttribute(valid, null);
 	}
 	
 }
