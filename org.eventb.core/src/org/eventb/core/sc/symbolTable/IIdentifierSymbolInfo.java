@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.RodinDBException;
 
 /**
  * <code>IIdentifierSymbolInfo</code> is a symbol table symbol info for identifiers, 
@@ -73,16 +72,17 @@ public interface IIdentifierSymbolInfo extends ISymbolInfo {
 	 * 
 	 * @param parent the parent of the element to create
 	 * @param monitor a progress monitor
-	 * @throws RodinDBException if there was a database problem while creating the element
+	 * @throws CoreException if there was a problem creating the element
 	 */
-	void createSCElement(IInternalParent parent, IProgressMonitor monitor) throws RodinDBException;
+	void createSCElement(IInternalParent parent, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Attaches an appropriate error message to the source element if this identifier 
 	 * could not be typed. This message only makes sense for identifiers that have not
 	 * been imported.
 	 * @param markerDisplay the marker display to use
+	 * @throws CoreException if there was a problem creating the element
 	 */
-	void createUntypedErrorMarker(IMarkerDisplay markerDisplay) throws RodinDBException;
+	void createUntypedErrorMarker(IMarkerDisplay markerDisplay) throws CoreException;
 
 }

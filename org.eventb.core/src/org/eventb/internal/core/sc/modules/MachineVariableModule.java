@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IMachineFile;
@@ -21,6 +22,7 @@ import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
+import org.eventb.internal.core.sc.symbolTable.MachineVariableSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -100,6 +102,13 @@ public class MachineVariableModule extends IdentifierModule {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element) {
+		return new MachineVariableSymbolInfo(
+				name, null, element, 
+				EventBAttributes.IDENTIFIER_ATTRIBUTE, element.getParent().getElementName());
 	}
 
 }

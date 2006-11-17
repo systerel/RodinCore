@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IIdentifierElement;
@@ -23,9 +24,9 @@ import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.ModuleManager;
+import org.eventb.internal.core.sc.symbolTable.EventVariableSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -95,8 +96,6 @@ public class MachineEventVariableModule extends IdentifierModule {
 	protected boolean insertIdentifierSymbol(
 			IIdentifierElement element,
 			IIdentifierSymbolInfo newSymbolInfo) throws CoreException {
-		IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) newSymbolInfo;
-		variableSymbolInfo.setLocal();
 		if (super.insertIdentifierSymbol(element, newSymbolInfo)) {
 			if (isInitialisation) {
 				createProblemMarker(element, GraphProblem.InitialisationVariableError);
@@ -125,6 +124,13 @@ public class MachineEventVariableModule extends IdentifierModule {
 			IProgressMonitor monitor) throws CoreException {
 		eventRefinesInfo = null;
 		super.endModule(element, repository, monitor);
+	}
+
+	@Override
+	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element) {
+		return new EventVariableSymbolInfo(
+				name, null, element, 
+				EventBAttributes.IDENTIFIER_ATTRIBUTE, element.getParent().getElementName());
 	}
 
 }

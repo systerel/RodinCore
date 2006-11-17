@@ -8,32 +8,22 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ISCVariable;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinProblem;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class VariableSymbolInfo 
+public abstract class VariableSymbolInfo 
 	extends IdentifierSymbolInfo 
 	implements IVariableSymbolInfo {
 
-	/**
-	 * Do not use this constructor.
-	 * Use the <code>SymbolInfoFactory</code> instead!
-	 * 
-	 * {@link SymbolInfoFactory}
-	 */
 	public VariableSymbolInfo(
 			String symbol, 
 			String link, 
@@ -47,8 +37,6 @@ public class VariableSymbolInfo
 		preserved = false;
 		
 		fresh = false;
-		
-		local = false;
 	}
 
 	private boolean forbidden;
@@ -56,8 +44,6 @@ public class VariableSymbolInfo
 	private boolean preserved;
 	
 	private boolean fresh;
-	
-	private boolean local;
 	
 	public boolean isForbidden() {
 		return forbidden;
@@ -77,37 +63,9 @@ public class VariableSymbolInfo
 		this.preserved = true;
 	}
 
-	public void createSCElement(
-			IInternalParent parent, 
-			IProgressMonitor monitor) throws RodinDBException {
-		
-		if (parent == null)
-			return;
-		
-		ISCVariable variable = 
-			(ISCVariable) parent.createInternalElement(
-					ISCVariable.ELEMENT_TYPE, getSymbol(), null, monitor);
-		variable.setType(getType(), null);
-		if (!isLocal()) {
-			variable.setForbidden(isForbidden() || !isConcrete(), monitor);
-			variable.setPreserved(isConcrete() && !isFresh(), monitor);
-		}
-		variable.setSource(getSourceElement(), monitor);
-	}
-
 	@Override
 	public IRodinProblem getUntypedError() {
 		return GraphProblem.UntypedVariableError;
-	}
-
-	public void setLocal() throws CoreException {
-		if (!isMutable())
-			throw Util.newCoreException(Messages.symtab_ImmutableSymbolViolation);
-		local = true;
-	}
-
-	public boolean isLocal() {
-		return local;
 	}
 
 	public void setFresh() throws CoreException {

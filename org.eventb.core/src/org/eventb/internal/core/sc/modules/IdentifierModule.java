@@ -25,8 +25,6 @@ import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.state.IStateRepository;
-import org.eventb.internal.core.sc.StaticChecker;
-import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -119,11 +117,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 				continue;
 			String name = identifier.getName();
 			
-			IIdentifierSymbolInfo newSymbolInfo = 
-				SymbolInfoFactory.createIdentifierSymbolInfo(
-						name, 
-						element, 
-						StaticChecker.getParentName(element));
+			IIdentifierSymbolInfo newSymbolInfo = createIdentifierSymbolInfo(name, element);
 			
 			boolean ok = 
 				insertIdentifierSymbol(
@@ -141,6 +135,8 @@ public abstract class IdentifierModule extends ProcessorModule {
 		
 		endAcceptorModules(rules, repository, null);
 	}
+	
+	protected abstract IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element);
 
 	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo, final ITypeEnvironment typeEnvironment) throws CoreException {
 		// by default no type information for the identifier is generated 	

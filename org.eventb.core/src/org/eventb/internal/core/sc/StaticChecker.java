@@ -104,6 +104,7 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 			return component.substring(0, dotPos - 1);
 	}
 	
+	@Deprecated
 	public static String getParentName(IRodinElement element) {
 		return element.getParent().getElementName();
 	}

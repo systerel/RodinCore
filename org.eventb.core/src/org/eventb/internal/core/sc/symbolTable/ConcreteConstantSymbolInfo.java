@@ -7,21 +7,21 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
-import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.symbolTable.ICarrierSetSymbolInfo;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ISCConstant;
+import org.eventb.core.ISCContextFile;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.IInternalParent;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class CarrierSetSymbolInfo 
-	extends IdentifierSymbolInfo
-	implements ICarrierSetSymbolInfo {
+public class ConcreteConstantSymbolInfo extends ConstantSymbolInfo {
 
-	public CarrierSetSymbolInfo(
+	public ConcreteConstantSymbolInfo(
 			String symbol, 
 			String link, 
 			IInternalElement element, 
@@ -29,26 +29,14 @@ public abstract class CarrierSetSymbolInfo
 			String component) {
 		super(symbol, link, element, attribute, component);
 	}
-
-	@Override
-	public IRodinProblem getConflictWarning() {
-		if (isImported())
-			return GraphProblem.CarrierSetNameImportConflictWarning;
-		else
-			return GraphProblem.CarrierSetNameConflictWarning;
-	}
-
-	@Override
-	public IRodinProblem getConflictError() {
-		if (isImported())
-			return GraphProblem.CarrierSetNameImportConflictError;
-		else
-			return GraphProblem.CarrierSetNameConflictError;
-	}
-
-	@Override
-	public IRodinProblem getUntypedError() {
-		return GraphProblem.UntypedCarrierSetError;
+	
+	public void createSCElement(
+			IInternalParent parent, 
+			IProgressMonitor monitor) throws CoreException {
+		ISCConstant constant = ((ISCContextFile) parent).getSCConstant(getSymbol());
+		constant.create(null, monitor);
+		constant.setType(getType(), null);
+		constant.setSource(getReferenceElement(), monitor);
 	}
 
 }

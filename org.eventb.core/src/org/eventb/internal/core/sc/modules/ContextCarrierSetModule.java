@@ -9,9 +9,11 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContextFile;
+import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IModuleManager;
@@ -20,6 +22,7 @@ import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
+import org.eventb.internal.core.sc.symbolTable.ConcreteCarrierSetSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -72,6 +75,13 @@ public class ContextCarrierSetModule extends IdentifierModule {
 		typeEnvironment.addGivenSet(newSymbolInfo.getSymbol());				
 			
 		newSymbolInfo.setType(typeEnvironment.getType(newSymbolInfo.getSymbol()));
+	}
+
+	@Override
+	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element) {
+		return new ConcreteCarrierSetSymbolInfo(
+				name, null, element, 
+				EventBAttributes.IDENTIFIER_ATTRIBUTE, element.getParent().getElementName());
 	}
 
 }

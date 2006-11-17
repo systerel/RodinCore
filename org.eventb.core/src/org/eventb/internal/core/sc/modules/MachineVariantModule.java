@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCVariant;
@@ -181,6 +182,12 @@ public class MachineVariantModule extends ExpressionModule {
 			} else
 				return inferredEnvironment;
 		}
+	}
+
+	@Override
+	protected ILabelSymbolInfo createLabelSymbolInfo(
+			String symbol, ILabeledElement element, String component) throws CoreException {
+		return new VariantSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 	}
 
 }

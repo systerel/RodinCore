@@ -9,8 +9,10 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IInvariant;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineFile;
@@ -21,9 +23,11 @@ import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
+import org.eventb.internal.core.sc.symbolTable.InvariantSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -122,6 +126,12 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			IStateRepository<IStateSC> repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
+	}
+
+	@Override
+	protected ILabelSymbolInfo createLabelSymbolInfo(
+			String symbol, ILabeledElement element, String component) throws CoreException {
+		return new InvariantSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 	}
 
 }

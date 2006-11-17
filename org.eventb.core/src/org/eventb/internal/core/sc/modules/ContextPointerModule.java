@@ -23,7 +23,6 @@ import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
@@ -31,9 +30,6 @@ import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.state.IStateRepository;
-import org.eventb.internal.core.sc.StaticChecker;
-import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -44,7 +40,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class ContextPointerModule extends ProcessorModule {
+public abstract class ContextPointerModule extends IdentifierCreatorModule {
 
 	protected IContextTable contextTable;
 	protected IIdentifierSymbolTable identifierSymbolTable;
@@ -95,12 +91,10 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			
 			ISCContextFile scCF = contextPointerArray.getSCContextFile(index);
 			
-			final IAttributeType.String pointerAttribute = EventBAttributes.TARGET_ATTRIBUTE;
-			
 			if (!scCF.exists()) {
 				createProblemMarker(
 						contextPointerArray.getContextPointer(index), 
-						pointerAttribute,
+						EventBAttributes.TARGET_ATTRIBUTE,
 						getTargetContextNotFoundProblem());
 				
 				contextPointerArray.setError(index);
@@ -141,8 +135,8 @@ public abstract class ContextPointerModule extends ProcessorModule {
 								symbolInfos, 
 								index,
 								contextPointerArray, 
-								pointerAttribute,
-								set);
+								set,
+								abstractCarrierSetCreator);
 					}
 	
 					for (ISCConstant constant : scConstants) {
@@ -150,8 +144,8 @@ public abstract class ContextPointerModule extends ProcessorModule {
 								symbolInfos, 
 								index,
 								contextPointerArray, 
-								pointerAttribute,
-								constant);
+								constant,
+								abstractConstantCreator);
 					}
 				}
 				
@@ -164,12 +158,6 @@ public abstract class ContextPointerModule extends ProcessorModule {
 		
 	}
 
-
-	/**
-	 * @param scCF
-	 * @param upContexts
-	 * @throws RodinDBException
-	 */
 	private void createUpContexts(ISCContextFile scCF, List<ISCContext> upContexts) 
 	throws RodinDBException {
 		ISCInternalContext[] iscic = scCF.getAbstractSCContexts(null);
@@ -200,18 +188,13 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			List<IIdentifierSymbolInfo> symbolList, 
 			int index,
 			IContextPointerArray contextPointerArray, 
-			IAttributeType.String attribute,
-			ISCIdentifierElement element) throws CoreException {
+			ISCIdentifierElement element,
+			IIdentifierSymbolInfoCreator creator) throws CoreException {
 		
 		String name = element.getIdentifierString(null);
 		
 		IIdentifierSymbolInfo newSymbolInfo = 
-			SymbolInfoFactory.createIdentifierSymbolInfo(
-					name,
-					element, 
-					contextPointerArray.getContextPointer(index), 
-					attribute,
-					StaticChecker.getParentName(element));
+			creator.createIdentifierSymbolInfo(name, element, contextPointerArray.getContextPointer(index));
 		
 		try {
 			identifierSymbolTable.putSymbolInfo(newSymbolInfo);

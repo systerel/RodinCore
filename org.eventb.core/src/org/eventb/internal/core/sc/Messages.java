@@ -31,6 +31,9 @@ public final class Messages {
 	public static String symtab_ImmutableSymbolViolation;
 	public static String symtab_StackUnderflow;
 	
+	public static String symtab_cannotCreateAbstractConstant;
+	public static String symtab_cannotCreateAbstractCarrierSet;
+	
 	// build
 	public static String build_cleaning;
 	public static String build_runningMSC;

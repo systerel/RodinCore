@@ -9,7 +9,6 @@ package org.eventb.core;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.IAttributeType.Boolean;
 
 /**
  * This class lists all attribute names used by the Event-B core plugin.

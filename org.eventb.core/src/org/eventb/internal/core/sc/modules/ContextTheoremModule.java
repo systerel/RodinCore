@@ -9,8 +9,10 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
@@ -19,9 +21,11 @@ import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
+import org.eventb.internal.core.sc.symbolTable.TheoremSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -83,6 +87,12 @@ public class ContextTheoremModule extends TheoremModule {
 	@Override
 	protected ISCTheorem getSCTheorem(IInternalParent target, String elementName) {
 		return ((ISCContextFile) target).getSCTheorem(elementName);
+	}
+
+	@Override
+	protected ILabelSymbolInfo createLabelSymbolInfo(
+			String symbol, ILabeledElement element, String component) throws CoreException {
+		return new TheoremSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 	}
 
 }

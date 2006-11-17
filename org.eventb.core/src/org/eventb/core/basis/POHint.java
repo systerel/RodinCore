@@ -29,13 +29,6 @@ public class POHint extends EventBElement implements IPOHint {
 	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IPOHint#getName()
-	 */
-	public String getName() {
-		return getElementName();
-	}
 	
 //	public void setHint(String value, IProgressMonitor monitor) throws RodinDBException {
 //		setAttributeValue(EventBAttributes.POHINT_ATTRIBUTE, value, monitor);

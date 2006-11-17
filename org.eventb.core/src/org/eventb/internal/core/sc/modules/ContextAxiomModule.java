@@ -9,9 +9,11 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextFile;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ast.Predicate;
@@ -20,9 +22,11 @@ import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
+import org.eventb.internal.core.sc.symbolTable.AxiomSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -110,6 +114,12 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			IStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IContextLabelSymbolTable.STATE_TYPE);
+	}
+
+	@Override
+	protected ILabelSymbolInfo createLabelSymbolInfo(
+			String symbol, ILabeledElement element, String component) throws CoreException {
+		return new AxiomSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 	}
 
 }

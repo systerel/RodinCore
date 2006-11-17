@@ -11,9 +11,11 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ast.Formula;
@@ -29,10 +31,12 @@ import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.ModuleManager;
+import org.eventb.internal.core.sc.symbolTable.GuardSymbolInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -245,6 +249,12 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 		else
 			return false;
 
+	}
+
+	@Override
+	protected ILabelSymbolInfo createLabelSymbolInfo(
+			String symbol, ILabeledElement element, String component) throws CoreException {
+		return new GuardSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 	}
 
 }

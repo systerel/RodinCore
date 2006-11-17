@@ -16,7 +16,6 @@ import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -100,7 +99,7 @@ public abstract class IdentifierSymbolInfo
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IIdentifierSymbolInfo#issueUntypedErrorMarker(org.eventb.core.sc.IMarkerDisplay)
 	 */
-	public void createUntypedErrorMarker(IMarkerDisplay markerDisplay) throws RodinDBException {
+	public void createUntypedErrorMarker(IMarkerDisplay markerDisplay) throws CoreException {
 		
 		markerDisplay.createProblemMarker(
 				getReferenceElement(), 

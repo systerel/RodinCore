@@ -7,21 +7,21 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
-import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.symbolTable.ICarrierSetSymbolInfo;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ISCEvent;
+import org.eventb.core.ISCVariable;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.IInternalParent;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class CarrierSetSymbolInfo 
-	extends IdentifierSymbolInfo
-	implements ICarrierSetSymbolInfo {
+public class EventVariableSymbolInfo extends VariableSymbolInfo {
 
-	public CarrierSetSymbolInfo(
+	public EventVariableSymbolInfo(
 			String symbol, 
 			String link, 
 			IInternalElement element, 
@@ -29,26 +29,22 @@ public abstract class CarrierSetSymbolInfo
 			String component) {
 		super(symbol, link, element, attribute, component);
 	}
-
-	@Override
-	public IRodinProblem getConflictWarning() {
-		if (isImported())
-			return GraphProblem.CarrierSetNameImportConflictWarning;
-		else
-			return GraphProblem.CarrierSetNameConflictWarning;
+	
+	public void createSCElement(
+			IInternalParent parent, 
+			IProgressMonitor monitor) throws CoreException {
+		
+		if (parent == null)
+			return;
+		
+		ISCVariable variable = ((ISCEvent) parent).getSCVariable(getSymbol());
+		variable.create(null, monitor);
+		variable.setType(getType(), null);
+		variable.setSource(getSourceElement(), monitor);
 	}
 
-	@Override
-	public IRodinProblem getConflictError() {
-		if (isImported())
-			return GraphProblem.CarrierSetNameImportConflictError;
-		else
-			return GraphProblem.CarrierSetNameConflictError;
-	}
-
-	@Override
-	public IRodinProblem getUntypedError() {
-		return GraphProblem.UntypedCarrierSetError;
+	public boolean isLocal() {
+		return true;
 	}
 
 }

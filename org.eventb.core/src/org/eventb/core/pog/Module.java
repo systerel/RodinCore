@@ -31,7 +31,7 @@ public abstract class Module implements IModule {
 	private static final String SEQ_HYP_NAME = "SEQHYP";
 	private static final String PRD_NAME_PREFIX = "PRD";
 	private static final String SRC_NAME_PREFIX = "SRC";
-	private static final String HINT_NAME_PREFIX = "HINT";
+//	private static final String HINT_NAME_PREFIX = "HINT";
 	private static final String GOAL_NAME = "GOAL";
 	
 	public void createPO(

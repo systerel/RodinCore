@@ -29,7 +29,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.IContextTable;
@@ -42,8 +41,6 @@ import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.AbstractEventInfo;
 import org.eventb.internal.core.sc.AbstractEventTable;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -53,7 +50,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineRefinesModule extends ProcessorModule {
+public class MachineRefinesModule extends IdentifierCreatorModule {
 	
 	private static int ABSEVT_SYMTAB_SIZE = 1013;
 	
@@ -170,10 +167,9 @@ public class MachineRefinesModule extends ProcessorModule {
 					fetchSymbol(
 							set, 
 							refinesMachine, 
-							EventBAttributes.TARGET_ATTRIBUTE,
 							identifierSymbolTable, 
 							factory, 
-							component);
+							abstractCarrierSetCreator);
 				symbolInfo.setImmutable();
 			}
 			
@@ -184,10 +180,9 @@ public class MachineRefinesModule extends ProcessorModule {
 					fetchSymbol(
 							constant, 
 							refinesMachine, 
-							EventBAttributes.TARGET_ATTRIBUTE,
 							identifierSymbolTable, 
 							factory, 
-							component);
+							abstractConstantCreator);
 				symbolInfo.setImmutable();
 			}
 						
@@ -205,17 +200,14 @@ public class MachineRefinesModule extends ProcessorModule {
 		if (variables.length == 0)
 			return;
 		
-		String component = scMachineFile.getElementName();
-		
 		for (ISCVariable variable : variables) {
 			IVariableSymbolInfo symbolInfo = (IVariableSymbolInfo)
 				fetchSymbol(
 						variable, 
 						refinesMachine, 
-						EventBAttributes.TARGET_ATTRIBUTE,
 						identifierSymbolTable, 
 						factory, 
-						component);
+						abstractVariableCreator);
 			if (variable.isForbidden(monitor))
 				symbolInfo.setForbidden();
 			symbolInfo.setImmutable();
@@ -226,22 +218,16 @@ public class MachineRefinesModule extends ProcessorModule {
 	protected IIdentifierSymbolInfo fetchSymbol(
 			ISCIdentifierElement identifier, 
 			IInternalElement pointerElement, 
-			IAttributeType.String pointerAttribute,
 			IIdentifierSymbolTable identifierSymbolTable,
 			FormulaFactory factory,
-			String component) throws CoreException {
+			IIdentifierSymbolInfoCreator creator) throws CoreException {
 		
 		String name = identifier.getIdentifierString(null);
 		
-//		this condition cannot be true:
-//		if (identifierSymbolTable.containsKey(name))
-//			return;
-
 		Type type = identifier.getType(factory, null);
 		
 		IIdentifierSymbolInfo symbolInfo = 
-			SymbolInfoFactory.createIdentifierSymbolInfo(
-					name, identifier, pointerElement, pointerAttribute, component);
+			creator.createIdentifierSymbolInfo(name, identifier, pointerElement);
 		
 		symbolInfo.setType(type);
 		

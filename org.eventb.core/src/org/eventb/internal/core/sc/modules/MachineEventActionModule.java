@@ -17,6 +17,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
@@ -37,7 +38,7 @@ import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.ModuleManager;
-import org.eventb.internal.core.sc.StaticChecker;
+import org.eventb.internal.core.sc.symbolTable.ActionSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -85,7 +86,7 @@ public class MachineEventActionModule extends AssignmentModule {
 					target,
 					assignments,
 					modules,
-					StaticChecker.getParentName(event),
+					event.getParent().getElementName(),
 					repository,
 					monitor);
 
@@ -270,6 +271,11 @@ public class MachineEventActionModule extends AssignmentModule {
 	@Override
 	protected IAttributeType.String getFormulaAttributeType() {
 		return EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+	}
+
+	@Override
+	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol, ILabeledElement element, String component) throws CoreException {
+		return new ActionSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 	}
 
 }

@@ -46,13 +46,6 @@ public interface IVariableSymbolInfo extends IIdentifierSymbolInfo {
 	boolean isConcrete();
 	
 	/**
-	 * Mark this the variable as "local", i.e. it is a local variable
-	 * of an event.
-	 * @throws CoreException if this symbol is not mutable
-	 */
-	void setLocal() throws CoreException;
-	
-	/**
 	 * Returns whether the variable symbol is "local".
 	 * @return whether the variable symbol is "local"
 	 */

@@ -15,7 +15,6 @@ import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.state.IStateRepository;
-import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -64,8 +63,7 @@ public abstract class LabeledElementModule extends ProcessorModule {
 		
 		String label = labeledElement.getLabel(monitor);
 		
-		ILabelSymbolInfo newSymbolInfo = 
-			SymbolInfoFactory.createLabelSymbolInfo(label, labeledElement, component);
+		ILabelSymbolInfo newSymbolInfo = createLabelSymbolInfo(label, labeledElement, component);
 		
 		try {
 			
@@ -92,5 +90,10 @@ public abstract class LabeledElementModule extends ProcessorModule {
 	
 		return newSymbolInfo;
 	}
+	
+	protected abstract ILabelSymbolInfo createLabelSymbolInfo(
+			String symbol, 
+			ILabeledElement element, 
+			String component) throws CoreException;
 
 }

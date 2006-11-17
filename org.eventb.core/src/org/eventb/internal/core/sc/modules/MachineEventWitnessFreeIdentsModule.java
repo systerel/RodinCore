@@ -20,7 +20,7 @@ import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.state.IStateRepository;
-import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
+import org.eventb.internal.core.sc.symbolTable.EventVariableSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
@@ -77,10 +77,10 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 				return null;
 			}
 		}
-		if (symbolInfo == null) { // abstract local variables are not contained in the symbol table
+		if (symbolInfo == null) { // abstract local variables are not contained in the symbol table; fake them!
 			String label = ((IWitness) element).getLabel(monitor);
 			if (label.equals(freeIdentifier.getName()))
-				return SymbolInfoFactory.createVariableSymbolInfo(label, null, null);
+				return new EventVariableSymbolInfo(label, null, null, null, null);
 		}
 		return symbolInfo;
 	}

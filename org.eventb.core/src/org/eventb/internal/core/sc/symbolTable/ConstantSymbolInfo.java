@@ -7,30 +7,20 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ISCConstant;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IConstantSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinProblem;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class ConstantSymbolInfo 
+public abstract class ConstantSymbolInfo 
 	extends IdentifierSymbolInfo 
 	implements IConstantSymbolInfo {
 
-	/**
-	 * Do not use this constructor.
-	 * Use the <code>SymbolInfoFactory</code> instead!
-	 * 
-	 * {@link SymbolInfoFactory}
-	 */
 	public ConstantSymbolInfo(
 			String symbol, 
 			String link, 
@@ -38,16 +28,6 @@ public class ConstantSymbolInfo
 			IAttributeType.String attribute, 
 			String component) {
 		super(symbol, link, element, attribute, component);
-	}
-
-	public void createSCElement(
-			IInternalParent parent, 
-			IProgressMonitor monitor) throws RodinDBException {
-		ISCConstant constant = 
-			(ISCConstant) parent.createInternalElement(
-					ISCConstant.ELEMENT_TYPE, getSymbol(), null, monitor);
-		constant.setType(getType(), null);
-		constant.setSource(getReferenceElement(), monitor);
 	}
 
 	@Override

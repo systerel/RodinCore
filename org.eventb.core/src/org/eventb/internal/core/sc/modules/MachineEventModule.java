@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCAction;
@@ -38,6 +39,7 @@ import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.state.IStateRepository;
@@ -47,6 +49,7 @@ import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.TypingState;
 import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
+import org.eventb.internal.core.sc.symbolTable.EventSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -559,5 +562,11 @@ public class MachineEventModule extends LabeledElementModule {
 			IStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 	}
-	
+
+	@Override
+	protected ILabelSymbolInfo createLabelSymbolInfo(
+			String symbol, ILabeledElement element, String component) throws CoreException {
+		return new EventSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	}
+
 }
