@@ -41,7 +41,7 @@ public abstract class SCIdentifierElement extends EventBElement
 	 * @see org.eventb.core.ISCIdentifierElement#getIdentifierString()
 	 */
 	@Override
-	public String getIdentifierString(IProgressMonitor monitor) throws RodinDBException {
+	public String getIdentifierString() throws RodinDBException {
 		return getElementName();
 	}
 
@@ -53,9 +53,9 @@ public abstract class SCIdentifierElement extends EventBElement
 		super(name, parent);
 	}
 	
-	public Type getType(FormulaFactory factory, IProgressMonitor monitor) 
+	public Type getType(FormulaFactory factory) 
 	throws RodinDBException {
-		String contents = getAttributeValue(EventBAttributes.TYPE_ATTRIBUTE, monitor);
+		String contents = getAttributeValue(EventBAttributes.TYPE_ATTRIBUTE);
 		IParseResult parserResult = factory.parseType(contents);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
@@ -66,11 +66,6 @@ public abstract class SCIdentifierElement extends EventBElement
 		return parserResult.getParsedType();
 	}
 
-	@Deprecated
-	public Type getType(FormulaFactory factory) throws RodinDBException {
-		return getType(factory, null);
-	}
-	
 	public void setType(Type type, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.TYPE_ATTRIBUTE, type.toString(), monitor);
 	}
@@ -80,10 +75,10 @@ public abstract class SCIdentifierElement extends EventBElement
 		setType(type, null);
 	}
 
-	public FreeIdentifier getIdentifier(FormulaFactory factory, IProgressMonitor monitor)
+	public FreeIdentifier getIdentifier(FormulaFactory factory)
 			throws RodinDBException {
 
-		final Type type = getType(factory, null);
+		final Type type = getType(factory);
 		final String myName = getElementName();
 		if (! factory.isValidIdentifierName(myName)) {
 			throw Util.newRodinDBException(
@@ -95,9 +90,4 @@ public abstract class SCIdentifierElement extends EventBElement
 		return factory.makeFreeIdentifier(getElementName(), null, type);
 	}
 	
-	@Deprecated
-	public FreeIdentifier getIdentifier(FormulaFactory factory) throws RodinDBException {
-		return getIdentifier(factory, null);
-	}
-
 }

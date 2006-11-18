@@ -48,7 +48,7 @@ public class MachineEventActionBasicModule extends MachineEventActionModule {
 			IProgressMonitor monitor) throws RodinDBException, CoreException {
 		for (int i=0; i<actions.length; i++) {
 			
-			String actionLabel = actions[i].getLabel(monitor);
+			String actionLabel = actions[i].getLabel();
 			
 			createWDPO(
 					target, 

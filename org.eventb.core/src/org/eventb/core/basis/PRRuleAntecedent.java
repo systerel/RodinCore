@@ -40,28 +40,28 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 		return ELEMENT_TYPE;
 	}
 	
-	public IAntecedent getAntecedent(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException {
+	public IAntecedent getAntecedent(IProofStoreReader store) throws RodinDBException {
 		
 		
-		Predicate goal = getGoal(store, monitor);
+		Predicate goal = getGoal(store);
 		
 		// optional entries
 		FreeIdentifier[] addedFreeIdents = null;
 		Set<Predicate> addedHyps = null;
 		List<Action> hypAction = null;
 
-		addedFreeIdents = getFreeIdents(store.getFormulaFactory(), monitor);
+		addedFreeIdents = getFreeIdents(store.getFormulaFactory());
 		
 		
-		if (hasHyps(monitor))
-		addedHyps = getHyps(store, monitor);
+		if (hasHyps())
+		addedHyps = getHyps(store);
 		
 		IRodinElement[] children = getChildrenOfType(IPRHypAction.ELEMENT_TYPE);
 		if (children.length != 0)
 		{
 			hypAction = new ArrayList<Action>(children.length);
 			for (IRodinElement action : children) {
-				hypAction.add(((IPRHypAction)action).getAction(store, null));				
+				hypAction.add(((IPRHypAction)action).getAction(store));				
 			}
 		}
 		
@@ -85,9 +85,10 @@ public void setAntecedent(IAntecedent antecedent, IProofStoreCollector store, IP
 		if (! antecedent.getHypAction().isEmpty()){
 			int count = 0;
 			for (Action action : antecedent.getHypAction()) {
-				((IPRHypAction)(this.createInternalElement(IPRHypAction.ELEMENT_TYPE,
-						action.getType().toString(),
-						null,null))).setAction(action, store, null);
+				IPRHypAction child = (IPRHypAction) getInternalElement(
+						IPRHypAction.ELEMENT_TYPE, action.getType().toString());
+				child.create(null, null);
+				child.setAction(action, store, null);
 				count ++;
 			}
 		}

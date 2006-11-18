@@ -65,7 +65,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		ArrayList<POGPredicate> hyp = makeActionHypothesis();
 		hyp.addAll(makeWitnessHypothesis());
 		for (int i=0; i<guards.size(); i++) {
-			String guardLabel = ((ISCGuard) guards.get(i)).getLabel(monitor);
+			String guardLabel = ((ISCGuard) guards.get(i)).getLabel();
 			Predicate predicate = grdPredicates.get(i);
 			predicate = predicate.applyAssignments(witnessTable.getEventDetAssignments(), factory);
 			LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();

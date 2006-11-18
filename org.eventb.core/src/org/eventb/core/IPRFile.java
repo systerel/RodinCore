@@ -8,13 +8,10 @@
 
 package org.eventb.core;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-
-
 
 /**
  * Common protocol for Event-B Proof (PR) files.

@@ -62,7 +62,7 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 		
 		IContextFile contextFile = (IContextFile) element;
 		
-		IAxiom[] axioms = contextFile.getAxioms(null);
+		IAxiom[] axioms = contextFile.getAxioms();
 		
 		Predicate[] predicates = new Predicate[axioms.length];
 		
@@ -97,7 +97,7 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 				continue;
 			ISCAxiom scAxiom = target.getSCAxiom(AXIOM_NAME_PREFIX + index++);
 			scAxiom.create(null, monitor);
-			scAxiom.setLabel(axioms[i].getLabel(monitor), monitor);
+			scAxiom.setLabel(axioms[i].getLabel(), monitor);
 			scAxiom.setPredicate(predicates[i], null);
 			scAxiom.setSource(axioms[i], monitor);
 		}

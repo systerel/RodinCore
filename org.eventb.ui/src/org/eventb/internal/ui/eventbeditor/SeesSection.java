@@ -385,7 +385,7 @@ public class SeesSection extends SectionPart implements
 					if (EventBPlugin.getComponentName(context.getElementName())
 							.equals(
 									((ISeesContext) seenContext)
-											.getSeenContextName(null))) {
+											.getSeenContextName())) {
 						found = true;
 						break;
 					}
@@ -414,7 +414,7 @@ public class SeesSection extends SectionPart implements
 				seenContexts = rodinFile
 						.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
 				for (IRodinElement seenContext : seenContexts) {
-					if (((ISeesContext) seenContext).getSeenContextName(null)
+					if (((ISeesContext) seenContext).getSeenContextName()
 							.equals(text)) {
 						addButton.setEnabled(false);
 						return;

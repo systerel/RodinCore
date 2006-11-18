@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IExpressionElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -36,7 +35,7 @@ public abstract class ExpressionElement extends InternalElement
 		super(name, parent);
 	}
 	
-	public String getExpressionString(IProgressMonitor monitor) throws RodinDBException {
+	public String getExpressionString() throws RodinDBException {
 		return getContents();
 	}
 

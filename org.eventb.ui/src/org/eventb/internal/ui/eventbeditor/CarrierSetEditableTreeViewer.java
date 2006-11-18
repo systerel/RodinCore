@@ -164,8 +164,8 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 			try {
 				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Commit : "
-							+ set.getIdentifierString(monitor) + " to be : " + text);
-				if (!set.getIdentifierString(monitor).equals(text)) {
+							+ set.getIdentifierString() + " to be : " + text);
+				if (!set.getIdentifierString().equals(text)) {
 					set.setIdentifierString(text, monitor);
 				}
 			} catch (RodinDBException e) {

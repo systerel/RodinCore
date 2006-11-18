@@ -53,7 +53,7 @@ public class ContextCarrierSetModule extends IdentifierModule {
 		
 		IContextFile contextFile = (IContextFile) element;
 		
-		ICarrierSet[] carrierSets = contextFile.getCarrierSets(null);
+		ICarrierSet[] carrierSets = contextFile.getCarrierSets();
 		
 		if(carrierSets.length == 0)
 			return;

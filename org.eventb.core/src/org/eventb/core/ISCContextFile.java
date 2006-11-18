@@ -8,7 +8,6 @@
 
 package org.eventb.core;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -81,22 +80,7 @@ public interface ISCContextFile extends ISCContext, IRodinFile {
 	 * @return an array of all internal contexts
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAbstractSCContexts(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ISCInternalContext[] getAbstractSCContexts() throws RodinDBException;
-
-	/**
-	 * Returns the internal SC contexts that are (transitively) contained in,
-	 * i.e. extended by, this SC context.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return an array of all internal contexts
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ISCInternalContext[] getAbstractSCContexts(IProgressMonitor monitor) throws RodinDBException;
 
 }

@@ -163,7 +163,7 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 		switch (col) {
 		case 0: // Commit name
 			try {
-				if (!thm.getLabel(null).equals(text)) {
+				if (!thm.getLabel().equals(text)) {
 					thm.setLabel(text, null);
 				}
 			} catch (RodinDBException e) {
@@ -174,7 +174,7 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 
 		case 1: // Commit content
 			try {
-				if (!thm.getPredicateString(null).equals(text)) {
+				if (!thm.getPredicateString().equals(text)) {
 					thm.setPredicateString(text, null);
 				}
 			} catch (RodinDBException e) {

@@ -41,12 +41,12 @@ public class ContextExtendsModule extends ContextPointerModule {
 		
 		IContextFile contextFile = (IContextFile) element;
 		
-		IExtendsContext[] extendsContexts = contextFile.getExtendsClauses(null);
+		IExtendsContext[] extendsContexts = contextFile.getExtendsClauses();
 		
 		ISCContextFile[] contextFiles = new ISCContextFile[extendsContexts.length];
 		
 		for(int i=0; i<extendsContexts.length; i++) {
-			contextFiles[i] = extendsContexts[i].getAbstractSCContext(monitor);
+			contextFiles[i] = extendsContexts[i].getAbstractSCContext();
 		}
 		
 		contextPointerArray = 

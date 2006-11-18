@@ -13,7 +13,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRProofSkelNode;
@@ -49,9 +48,9 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	}
 	
 	@Override
-	public int getConfidence(IProgressMonitor monitor) throws RodinDBException {
-		if (!hasConfidence(monitor)) return IConfidence.UNATTEMPTED;
-		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE, monitor);
+	public int getConfidence() throws RodinDBException {
+		if (!hasConfidence()) return IConfidence.UNATTEMPTED;
+		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE);
 	}
 	
 
@@ -89,7 +88,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	}
 
 	public IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException{
-		if (getConfidence(monitor) <= IConfidence.UNATTEMPTED) return unattemptedProofDeps;
+		if (getConfidence() <= IConfidence.UNATTEMPTED) return unattemptedProofDeps;
 		IPRProofStore prStore = (IPRProofStore) getInternalElement(IPRProofStore.ELEMENT_TYPE, "proofStore");
 		IProofStoreReader store = new ProofStoreReader(prStore ,factory);
 		ProofDependencies proofDependencies = new ProofDependencies(factory, store, monitor);
@@ -108,10 +107,10 @@ public class PRProof extends EventBProofElement implements IPRProof {
 			if (monitor == null) monitor = new NullProgressMonitor();
 			try{
 				monitor.beginTask("Reading Proof Dependencies", 4);
-				usedFreeIdents = store.getBaseTypeEnv(null);
+				usedFreeIdents = store.getBaseTypeEnv();
 				introducedFreeIdents = PRProof.this.getIntroFreeIdents(monitor);
-				goal = PRProof.this.getGoal(store, new SubProgressMonitor(monitor,1));
-				usedHypotheses = Hypothesis.Hypotheses(PRProof.this.getHyps(store, new SubProgressMonitor(monitor,1)));
+				goal = PRProof.this.getGoal(store);
+				usedHypotheses = Hypothesis.Hypotheses(PRProof.this.getHyps(store));
 				hasDeps = true;
 			}
 			finally
@@ -153,7 +152,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 			monitor.beginTask("Reading Proof Skeleton", 11);
 			IPRProofStore prStore = (IPRProofStore) getInternalElement(IPRProofStore.ELEMENT_TYPE, "proofStore");
 			IProofStoreReader store = new ProofStoreReader(prStore ,factory);
-			skeleton = root.getSkeleton(store,new SubProgressMonitor(monitor,10));
+			skeleton = root.getSkeleton(store);
 		}
 		finally
 		{
@@ -174,8 +173,8 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	}
 	
 	public Set<String> getIntroFreeIdents(IProgressMonitor monitor) throws RodinDBException {
-		if (! hasAttribute(EventBAttributes.INTRO_FREE_IDENTS_ATTRIBUTE, monitor)) return new HashSet<String>();
-		String sepNames = getAttributeValue(EventBAttributes.INTRO_FREE_IDENTS_ATTRIBUTE, monitor);
+		if (! hasAttribute(EventBAttributes.INTRO_FREE_IDENTS_ATTRIBUTE)) return new HashSet<String>();
+		String sepNames = getAttributeValue(EventBAttributes.INTRO_FREE_IDENTS_ATTRIBUTE);
 		String[] names = sepNames.split(";");
 		HashSet<String> identNames = new HashSet<String>(names.length);
 		for(String name : names){

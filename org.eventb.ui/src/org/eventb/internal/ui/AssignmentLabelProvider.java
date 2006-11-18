@@ -1,6 +1,5 @@
 package org.eventb.internal.ui;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.ui.IElementLabelProvider;
 import org.rodinp.core.RodinDBException;
@@ -11,7 +10,7 @@ public class AssignmentLabelProvider implements IElementLabelProvider {
 		if (obj instanceof IAssignmentElement) {
 			try {
 				return ((IAssignmentElement) obj)
-						.getAssignmentString(new NullProgressMonitor());
+						.getAssignmentString();
 			} catch (RodinDBException e) {
 				if (UIUtils.DEBUG)
 					e.printStackTrace();

@@ -64,7 +64,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		final String componentName = 
 			EventBPlugin.getComponentName(prFile.getElementName());
 		
-		final IPOSequent[] pos = poFile.getSequents(monitor);
+		final IPOSequent[] pos = poFile.getSequents();
 		final int noOfPOs = pos.length;
 		final int workUnits = 3 + 2 + noOfPOs * 2;
 		// 3 : creating fresh PR file
@@ -215,9 +215,9 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			status.setProofValidAttribute(true, null);
 			return;
 		}
-		IProofDependencies deps = prProof.getProofDependencies(FormulaFactory.getDefault(), null);
+		IProofDependencies deps = prProof.getProofDependencies(FormulaFactory.getDefault(), monitor);
 		boolean valid = ProverLib.proofReusable(deps,seq);
-		status.setProofConfidence(prProof.getConfidence(null), null);
+		status.setProofConfidence(prProof.getConfidence(), null);
 		status.setProofValidAttribute(valid, null);
 	}
 	

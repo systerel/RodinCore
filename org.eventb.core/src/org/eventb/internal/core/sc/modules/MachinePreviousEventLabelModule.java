@@ -44,7 +44,7 @@ public class MachinePreviousEventLabelModule extends FilterModule {
 			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException {
 		ILabeledElement labeledElement = (ILabeledElement) element;
-		String label = labeledElement.getLabel(monitor);
+		String label = labeledElement.getLabel();
 		IAbstractEventInfo abstractEventInfo = 
 			abstractEventTable.getAbstractEventInfo(label);
 		if (abstractEventInfo != null) {

@@ -76,7 +76,7 @@ public class MachineEventRefinesModule extends ProcessorModule {
 			
 			for (IRefinesEvent refinesEvent : refines) {
 				
-				String label = refinesEvent.getAbstractEventLabel(null);
+				String label = refinesEvent.getAbstractEventLabel();
 				
 				ISCEvent abstractEvent = abstractEventTable.getAbstractEventInfo(label).getEvent();
 		
@@ -115,7 +115,7 @@ public class MachineEventRefinesModule extends ProcessorModule {
 		
 		IEvent event = (IEvent) element;
 		
-		eventLabel = event.getLabel(monitor);
+		eventLabel = event.getLabel();
 		
 		labelSymbolTable = (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 		

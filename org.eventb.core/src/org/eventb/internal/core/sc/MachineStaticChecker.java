@@ -109,8 +109,8 @@ public class MachineStaticChecker extends StaticChecker {
 		
 			IMachineFile source = (IMachineFile) RodinCore.valueOf(file);
 			ISCMachineFile target = source.getSCMachineFile();
-			ISeesContext[] seen = source.getSeesClauses(null);
-			IRefinesMachine[] abstractMachines = source.getRefinesClauses(null);
+			ISeesContext[] seen = source.getSeesClauses();
+			IRefinesMachine[] abstractMachines = source.getRefinesClauses();
 
 			graph.openGraph();
 			graph.addNode(target.getResource(), MACHINE_SC_TOOL_ID);
@@ -122,7 +122,7 @@ public class MachineStaticChecker extends StaticChecker {
 				for (ISeesContext seesContext : seen) {
 					graph.putUserDependency(
 							source.getResource(), 
-							seesContext.getSeenSCContext(null).getResource(), 
+							seesContext.getSeenSCContext().getResource(), 
 							target.getResource(), 
 							MACHINE_SC_SEES_ID, true);
 				}
@@ -131,7 +131,7 @@ public class MachineStaticChecker extends StaticChecker {
 			if (abstractMachines.length != 0) {
 				graph.putUserDependency(
 						source.getResource(), 
-						abstractMachines[0].getAbstractSCMachine(null).getResource(), 
+						abstractMachines[0].getAbstractSCMachine().getResource(), 
 						target.getResource(), 
 						MACHINE_SC_REFINES_ID, true);
 			}

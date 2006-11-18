@@ -30,7 +30,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * 
  * @see org.rodinp.core.IRodinElement#getElementName()
- * @see org.eventb.core.ISCIdentifierElement#getType(FormulaFactory, IProgressMonitor)
+ * @see org.eventb.core.ISCIdentifierElement#getType(FormulaFactory)
  * @see org.eventb.core.ISCIdentifierElement#setType(Type, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
@@ -57,14 +57,11 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	/**
 	 * Returns whether the variable name is forbidden or not.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return whether the variable name is forbidden or not
 	 * 
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	boolean isForbidden(IProgressMonitor monitor) throws RodinDBException;
+	boolean isForbidden() throws RodinDBException;
 	/**
 	 * A variable name that has been used in the abstraction and the refinement
 	 * are called "preserved". A forbidden variable must not be preserved.
@@ -81,13 +78,10 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	/**
 	 * Returns whether the variable name is preserved or not.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return whether the variable name is preserved or not
 	 * 
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	boolean isPreserved(IProgressMonitor monitor) throws RodinDBException;
+	boolean isPreserved() throws RodinDBException;
 
 }

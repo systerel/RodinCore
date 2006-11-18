@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -184,7 +183,7 @@ public class EventBImage {
 			ICommentedElement commentedElement = (ICommentedElement) element;
 			try {
 				String comment = commentedElement
-						.getComment(new NullProgressMonitor());
+						.getComment();
 				if (!comment.equals(""))
 					overlay = "1";
 			} catch (RodinDBException e) {
@@ -285,7 +284,7 @@ public class EventBImage {
 		
 		int confidence;
 		try {
-			confidence = status.getProofConfidence(null);
+			confidence = status.getProofConfidence();
 		} catch (RodinDBException e) {
 			String message = "Cannot get the confidence from the status of"
 				+ status.getElementName();
@@ -304,7 +303,7 @@ public class EventBImage {
 		else {
 			boolean isAutomatic;
 			try {
-				isAutomatic = status.hasAutoProofAttribute(null) && status.getAutoProofAttribute(null);
+				isAutomatic = status.hasAutoProofAttribute() && status.getAutoProofAttribute();
 			} catch (RodinDBException e) {
 				String message = "Cannot check if the proof tree of the sequent "
 					+ status.getElementName()
@@ -321,7 +320,7 @@ public class EventBImage {
 			}
 			boolean isProofBroken;
 			try {
-				isProofBroken = (! status.getProofValidAttribute(null));
+				isProofBroken = (! status.getProofValidAttribute());
 			} catch (RodinDBException e) {
 				String message = "Cannot check if the proof tree of the sequent "
 					+ status.getElementName() + " is brocken or not";

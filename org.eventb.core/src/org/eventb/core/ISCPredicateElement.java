@@ -34,9 +34,7 @@ public interface ISCPredicateElement extends IPredicateElement {
 	 * @return the string representation of the predicate of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getPredicateString(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	String getPredicateString()
 			throws RodinDBException;
 
@@ -45,63 +43,27 @@ public interface ISCPredicateElement extends IPredicateElement {
 	 * 
 	 * @param factory
 	 *            the formula factory to use for building the result
-	 * 
 	 * @return the predicate of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getPredicate(FormulaFactory,IProgressMonitor)</code> instead
+	 * @deprecated Use the version with a type environment
 	 */
 	@Deprecated
 	Predicate getPredicate(FormulaFactory factory)
 			throws RodinDBException;
 
 	/**
-	 * Returns the untyped predicate contained in this element.
-	 * 
-	 * @param factory
-	 *            the formula factory to use for building the result
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the predicate of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	Predicate getPredicate(FormulaFactory factory, IProgressMonitor monitor)
-			throws RodinDBException;
-
-	/**
 	 * Returns the typed predicate contained in this element.
 	 * 
 	 * @param factory
 	 *            the formula factory to use for building the result
 	 * @param typenv
 	 *            the type environment to use for building the result
-	 * 
 	 * @return the predicate of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getPredicate(FormulaFactory,ITypeEnvironment,IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	Predicate getPredicate(FormulaFactory factory, ITypeEnvironment typenv)
-			throws RodinDBException;
-
-	/**
-	 * Returns the typed predicate contained in this element.
-	 * 
-	 * @param factory
-	 *            the formula factory to use for building the result
-	 * @param typenv
-	 *            the type environment to use for building the result
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the predicate of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	Predicate getPredicate(FormulaFactory factory, ITypeEnvironment typenv, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**

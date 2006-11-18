@@ -127,9 +127,9 @@ public class ProofInformationPage extends Page implements
 		try {
 			String formString = "<form>";
 
-			IPOSource[] sources = prSequent.getPOSequent().getSources(monitor);
+			IPOSource[] sources = prSequent.getPOSequent().getSources();
 			for (IPOSource source : sources) {
-				IRodinElement element = source.getSource(monitor);
+				IRodinElement element = source.getSource();
 				String id = element.getHandleIdentifier();
 				if (ProofInformationUtils.DEBUG) {
 					ProofInformationUtils.debug("id: " + id);
@@ -145,10 +145,10 @@ public class ProofInformationPage extends Page implements
 					formString = formString
 							+ "<li style=\"text\" value=\"\">"
 							+ UIUtils.makeHyperlink(id, thm
-									.getLabel(new NullProgressMonitor()))
+									.getLabel())
 							+ ": ";
 					formString = formString
-							+ UIUtils.XMLWrapUp(thm.getPredicateString(monitor));
+							+ UIUtils.XMLWrapUp(thm.getPredicateString());
 					formString = formString + "</li>";
 				}
 				if (element instanceof IAxiom) {
@@ -161,10 +161,10 @@ public class ProofInformationPage extends Page implements
 					formString = formString
 							+ "<li style=\"text\" value=\"\">"
 							+ UIUtils.makeHyperlink(id, axm
-									.getLabel(new NullProgressMonitor()))
+									.getLabel())
 							+ ": ";
 					formString = formString
-							+ UIUtils.XMLWrapUp(axm.getPredicateString(monitor));
+							+ UIUtils.XMLWrapUp(axm.getPredicateString());
 					formString = formString + "</li>";
 				} else if (element instanceof IInvariant) {
 					IInvariant inv = (IInvariant) element;
@@ -176,10 +176,10 @@ public class ProofInformationPage extends Page implements
 					formString = formString
 							+ "<li style=\"text\" value=\"\">"
 							+ UIUtils.makeHyperlink(id, inv
-									.getLabel(new NullProgressMonitor()))
+									.getLabel())
 							+ ": ";
 					formString = formString
-							+ UIUtils.XMLWrapUp(inv.getPredicateString(monitor));
+							+ UIUtils.XMLWrapUp(inv.getPredicateString());
 					formString = formString + "</li>";
 				} else if (element instanceof IEvent) {
 					IEvent evt = (IEvent) element;
@@ -191,7 +191,7 @@ public class ProofInformationPage extends Page implements
 					formString = formString
 							+ "<li style=\"text\" value=\"\">"
 							+ UIUtils.makeHyperlink(id, evt
-									.getLabel(new NullProgressMonitor()))
+									.getLabel())
 							+ ":</li>";
 					IRodinElement[] lvars = evt
 							.getChildrenOfType(IVariable.ELEMENT_TYPE);
@@ -210,13 +210,13 @@ public class ProofInformationPage extends Page implements
 								formString = formString
 										+ UIUtils.makeHyperlink(var
 												.getHandleIdentifier(), var
-												.getIdentifierString(monitor));
+												.getIdentifierString());
 							} else
 								formString = formString
 										+ ", "
 										+ UIUtils.makeHyperlink(var
 												.getHandleIdentifier(), var
-												.getIdentifierString(monitor));
+												.getIdentifierString());
 						}
 						formString = formString + " <b>WHERE</b>";
 						formString = formString + "</li>";
@@ -240,9 +240,9 @@ public class ProofInformationPage extends Page implements
 						formString = formString
 								+ UIUtils.makeHyperlink(guard
 										.getHandleIdentifier(), guard
-										.getLabel(new NullProgressMonitor()))
+										.getLabel())
 								+ ": "
-								+ UIUtils.XMLWrapUp(guard.getPredicateString(monitor));
+								+ UIUtils.XMLWrapUp(guard.getPredicateString());
 						formString = formString + "</li>";
 					}
 
@@ -259,10 +259,10 @@ public class ProofInformationPage extends Page implements
 						formString = formString
 								+ UIUtils.makeHyperlink(action
 										.getHandleIdentifier(), action
-										.getLabel(new NullProgressMonitor()))
+										.getLabel())
 								+ ": "
 								+ UIUtils.XMLWrapUp(action
-										.getAssignmentString(monitor));
+										.getAssignmentString());
 						formString = formString + "</li>";
 					}
 					formString = formString

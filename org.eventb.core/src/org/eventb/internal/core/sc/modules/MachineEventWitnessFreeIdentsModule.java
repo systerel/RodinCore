@@ -46,7 +46,7 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 		factory = repository.getFormulaFactory();
 		ICurrentEvent currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
 		isInitialisation = 
-			currentEvent.getCurrentEvent().getLabel(monitor).equals(IEvent.INITIALISATION);
+			currentEvent.getCurrentEvent().getLabel().equals(IEvent.INITIALISATION);
 	}
 
 	/* (non-Javadoc)
@@ -65,7 +65,7 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
 			if (!variableSymbolInfo.isLocal() && !variableSymbolInfo.isConcrete()) {
-				String label = ((IWitness) element).getLabel(monitor);
+				String label = ((IWitness) element).getLabel();
 				if (primed && !label.equals(freeIdentifier.getName())) {
 					// error: only the primed abstract disappearing variable
 					// of the label may appear in the witness predicate
@@ -78,7 +78,7 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 			}
 		}
 		if (symbolInfo == null) { // abstract local variables are not contained in the symbol table; fake them!
-			String label = ((IWitness) element).getLabel(monitor);
+			String label = ((IWitness) element).getLabel();
 			if (label.equals(freeIdentifier.getName()))
 				return new EventVariableSymbolInfo(label, null, null, null, null);
 		}

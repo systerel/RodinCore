@@ -32,11 +32,11 @@ public class PRStoredPred extends SCPredicateElement implements IPRStoredPred {
 		return ELEMENT_TYPE;
 	}
 	
-	public FreeIdentifier[] getFreeIdents(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
+	public FreeIdentifier[] getFreeIdents(FormulaFactory factory) throws RodinDBException {
 		IRodinElement[] children = getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
 		FreeIdentifier[] freeIdents = new FreeIdentifier[children.length];
 		for (int i = 0; i < freeIdents.length; i++) {
-			freeIdents[i] = ((IPRIdentifier)children[i]).getIdentifier(factory, monitor);			
+			freeIdents[i] = ((IPRIdentifier)children[i]).getIdentifier(factory);			
 		}
 		return freeIdents;
 	}

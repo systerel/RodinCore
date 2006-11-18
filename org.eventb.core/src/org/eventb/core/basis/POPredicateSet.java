@@ -48,7 +48,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 		return ELEMENT_TYPE;
 	}
 	
-	public IPOPredicate[] getPredicates(IProgressMonitor monitor) throws RodinDBException {
+	public IPOPredicate[] getPredicates() throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOPredicate.ELEMENT_TYPE);
 		IPOPredicate[] predicates = new IPOPredicate[list.size()];
 		list.toArray(predicates);
@@ -56,12 +56,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 	}
 	
 	@Deprecated
-	public IPOPredicate[] getPredicates() throws RodinDBException {
-		return getPredicates(null);
-	}
-	
-	@Deprecated
-	public String getParentPredicateSetName(IProgressMonitor monitor) 
+	public String getParentPredicateSetName() 
 	throws RodinDBException {
 //		if (hasAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor))
 //			return getAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor);
@@ -69,10 +64,10 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 			return null;
 	}
 	
-	public IPOPredicateSet getParentPredicateSet(IProgressMonitor monitor) 
+	public IPOPredicateSet getParentPredicateSet() 
 	throws RodinDBException {
-		if (hasAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor))
-			return (IPOPredicateSet) getAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor);
+		if (hasAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE))
+			return (IPOPredicateSet) getAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE);
 		else 
 			return null;
 	}
@@ -83,12 +78,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 //		setAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, setName, monitor);
 	}
 
-	@Deprecated
-	public IPOPredicateSet getParentPredicateSet() throws RodinDBException {
-		return getParentPredicateSet(null);
-	}
-
-	public IPOIdentifier[] getIdentifiers(IProgressMonitor monitor) throws RodinDBException {
+	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
 		IPOIdentifier[] identifiers = 
 			(IPOIdentifier[]) getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
 		return identifiers;

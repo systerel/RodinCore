@@ -8,7 +8,6 @@
 
 package org.eventb.core.basis;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
@@ -49,45 +48,25 @@ public class SCInternalContext extends InternalElement implements
 		return ELEMENT_TYPE;
 	}
 
-	public ISCCarrierSet[] getSCCarrierSets(IProgressMonitor monitor) 
+	public ISCCarrierSet[] getSCCarrierSets() 
 	throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE);
 		return (ISCCarrierSet[]) elements; 
 	}
 	
-	@Deprecated
-	public ISCCarrierSet[] getSCCarrierSets() throws RodinDBException {
-		return getSCCarrierSets(null);
-	}
-	
-	public ISCConstant[] getSCConstants(IProgressMonitor monitor) throws RodinDBException {
+	public ISCConstant[] getSCConstants() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCConstant.ELEMENT_TYPE);
 		return (ISCConstant[]) elements; 
 	}
 
-	@Deprecated
-	public ISCConstant[] getSCConstants() throws RodinDBException {
-		return getSCConstants(null);
-	}
-
-	public ISCAxiom[] getSCAxioms(IProgressMonitor monitor) throws RodinDBException {
+	public ISCAxiom[] getSCAxioms() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCAxiom.ELEMENT_TYPE);
 		return (ISCAxiom[]) elements; 
 	}
 
-	@Deprecated
-	public ISCAxiom[] getSCAxioms() throws RodinDBException {
-		return getSCAxioms(null);
-	}
-
-	public ISCTheorem[] getSCTheorems(IProgressMonitor monitor) throws RodinDBException {
+	public ISCTheorem[] getSCTheorems() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
 		return (ISCTheorem[]) elements; 
-	}
-
-	@Deprecated
-	public ISCTheorem[] getSCTheorems() throws RodinDBException {
-		return getSCTheorems(null);
 	}
 
 	public ISCAxiom getSCAxiom(String elementName) {

@@ -48,7 +48,7 @@ public class MachineVariableFromLocalModule extends FilterModule {
 		
 		IIdentifierElement identifierElement = (IIdentifierElement) element;
 		
-		String variableName = identifierElement.getIdentifierString(monitor);
+		String variableName = identifierElement.getIdentifierString();
 		
 		if (abstractEventTable.isLocalVariable(variableName)) {
 			

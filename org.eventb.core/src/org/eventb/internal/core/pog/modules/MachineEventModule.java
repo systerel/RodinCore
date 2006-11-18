@@ -54,7 +54,7 @@ public class MachineEventModule extends Module {
 		
 		ISCMachineFile scMachineFile =  (ISCMachineFile) element;
 		
-		ISCEvent[] events = scMachineFile.getSCEvents(null);
+		ISCEvent[] events = scMachineFile.getSCEvents();
 		
 		if (events.length == 0)
 			return;

@@ -28,10 +28,10 @@ public interface IPRStoredExpr extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prStoredExpr"); //$NON-NLS-1$
 
-	Expression getExpression(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException;
+	Expression getExpression(FormulaFactory factory, ITypeEnvironment typEnv) throws RodinDBException;
 	void setExpression(Expression expr, IProgressMonitor monitor) throws RodinDBException;
 
 	// extra free idents
-	FreeIdentifier[] getFreeIdents(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
+	FreeIdentifier[] getFreeIdents(FormulaFactory factory) throws RodinDBException;
 	void setFreeIdents(FreeIdentifier[] freeIdents, IProgressMonitor monitor) throws RodinDBException;
 }

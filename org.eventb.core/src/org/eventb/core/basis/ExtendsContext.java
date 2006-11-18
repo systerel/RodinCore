@@ -54,30 +54,19 @@ public class ExtendsContext extends InternalElement implements IExtendsContext {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IExtendsContext#getAbstractContextName()
 	 */
-	public String getAbstractContextName(IProgressMonitor monitor) 
-	throws RodinDBException {
-		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, monitor);
-	}
-
-	@Deprecated
 	public String getAbstractContextName() 
 	throws RodinDBException {
-		return getAbstractContextName(null); 
+		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IExtendsContext#getAbstractSCContext()
 	 */
-	public ISCContextFile getAbstractSCContext(IProgressMonitor monitor) throws RodinDBException {
-		final String bareName = getAbstractContextName(monitor);
+	public ISCContextFile getAbstractSCContext() throws RodinDBException {
+		final String bareName = getAbstractContextName();
 		final String scName = EventBPlugin.getSCContextFileName(bareName);
 		final IRodinProject project = getRodinProject();
 		return (ISCContextFile) project.getRodinFile(scName);
-	}
-
-	@Deprecated
-	public ISCContextFile getAbstractSCContext() throws RodinDBException {
-		return getAbstractSCContext(null);
 	}
 
 	/* (non-Javadoc)

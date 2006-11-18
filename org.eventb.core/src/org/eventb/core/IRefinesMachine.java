@@ -46,23 +46,8 @@ public interface IRefinesMachine extends IInternalElement {
 	 * @return the name of the abstract machine
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAbstractMachineName(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	String getAbstractMachineName() throws RodinDBException;
-
-	/**
-	 * Returns the name of the machine that is refined by the machine that
-	 * contains this element.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the name of the abstract machine
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	String getAbstractMachineName(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the name of the machine that is refined by the machine that contains
@@ -95,46 +80,17 @@ public interface IRefinesMachine extends IInternalElement {
 	 * @return a handle to the unchecked version of the abstract machine
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAbstractMachine(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	IMachineFile getAbstractMachine() throws RodinDBException;
 
 	/**
-	 * Returns a handle to the unchecked version of the abstract machine.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return a handle to the unchecked version of the abstract machine
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	IMachineFile getAbstractMachine(IProgressMonitor monitor) throws RodinDBException;
-
-	/**
 	 * Returns a handle to the checked version of the abstract machine, that is
 	 * the file produced when statically checking that machine.
 	 * 
 	 * @return a handle to the checked version of the abstract machine
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAbstractSCMachine(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ISCMachineFile getAbstractSCMachine() throws RodinDBException;
-
-	/**
-	 * Returns a handle to the checked version of the abstract machine, that is
-	 * the file produced when statically checking that machine.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return a handle to the checked version of the abstract machine
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ISCMachineFile getAbstractSCMachine(IProgressMonitor monitor) throws RodinDBException;
 
 }

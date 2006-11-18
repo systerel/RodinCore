@@ -27,7 +27,7 @@ import org.rodinp.core.RodinCore;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see ISCExpressionElement#getExpression(FormulaFactory,ITypeEnvironment, IProgressMonitor)
+ * @see ISCExpressionElement#getExpression(FormulaFactory,ITypeEnvironment)
  * @see ISCExpressionElement#setExpression(Expression, IProgressMonitor)
  * 
  * @author Stefan Hallerstede

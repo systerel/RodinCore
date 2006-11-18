@@ -8,24 +8,10 @@
 
 package org.eventb.core.tests.pom;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
-import org.eventb.core.basis.ASTLib;
-import org.eventb.core.seqprover.Hypothesis;
-import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.ProverFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinFile;
@@ -37,64 +23,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class POUtil {
 
-	// Functions to read PO files
-	
-	public static Map<String, IProverSequent> readPOs(IPOFile poFile) throws RodinDBException {
-		// read in the global type environment
-		ITypeEnvironment globalTypeEnv = ASTLib.makeTypeEnvironment();
-		addIdents(poFile.getIdentifiers(), globalTypeEnv);
-		
-		Map<String, IProverSequent> result 
-		= new HashMap<String, IProverSequent>(poFile.getSequents(null).length);
-		for (IPOSequent poSeq:poFile.getSequents(null)){
-			String name = poSeq.getName();
-			ITypeEnvironment typeEnv = globalTypeEnv.clone();
-			addIdents(poSeq.getIdentifiers(),typeEnv);
-			Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis((IProgressMonitor) null), typeEnv);
-//			Set<Hypothesis> hypotheses = readHypotheses(poSeq.getHypothesis(),typeEnv);
-//			Set<Hypothesis> localHypotheses = readLocalHypotheses(poSeq.getHypothesis(),typeEnv);
-			Predicate goal = readPredicate(poSeq.getGoal((IProgressMonitor) null),typeEnv);
-			IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
-//			seq = seq.selectHypotheses(localHypotheses);
-			// System.out.println(name+" : "+seq);
-			result.put(name,seq);
-		}
-		return result;
-	}
-
-
-	private static Set<Hypothesis> readPredicates(IPOPredicateSet poPredSet, ITypeEnvironment typeEnv) throws RodinDBException {
-		Set<Hypothesis> result = new HashSet<Hypothesis>();
-		for (IPOPredicate poPred:poPredSet.getPredicates(null)){
-			result.add(new Hypothesis(readPredicate(poPred,typeEnv)));
-		}
-		if (poPredSet.getParentPredicateSet(null) != null) 
-			result.addAll(readPredicates(poPredSet.getParentPredicateSet(null),typeEnv));
-		return result;
-	}
-
-
-	private static Predicate readPredicate(IPOPredicate poPred, ITypeEnvironment typeEnv) throws RodinDBException {
-			Predicate pred =  ASTLib.parsePredicate(poPred.getContents());
-			// System.out.println("Pred : " + poPred.getContents() +" Parsed : "+ pred);
-			assert pred != null;
-			boolean wellTyped = ASTLib.typeCheckClosed(pred,typeEnv);
-			// if (!wellTyped) System.out.println("Pred : " + poPred.getContents() +" NOT WELL TYPED");
-			assert wellTyped;
-			return pred;
-	}
-
-
-	private static void addIdents(IPOIdentifier[] poIdents, ITypeEnvironment typeEnv) throws RodinDBException {
-		for (IPOIdentifier poIdent: poIdents){
-			String name = poIdent.getName();
-			Type type = ASTLib.parseType(poIdent.getType());
-			assert (name!=null && type !=null);
-			typeEnv.addName(name,type);
-		}
-	}
-	
-	
 	// Functions to write PO files
 	
 	public static void addTypes(IInternalParent parent, String[] names, String[] types) throws RodinDBException {

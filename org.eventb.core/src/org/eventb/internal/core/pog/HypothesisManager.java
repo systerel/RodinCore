@@ -139,9 +139,9 @@ public abstract class HypothesisManager implements IHypothesisManager {
 		for (int k=previous; k<current; k++) {
 			IPOPredicate predicate = set.getPredicate(PRD_NAME_PREFIX + index++);
 			predicate.create(null, monitor);
-			predicate.setPredicateString(predicateTable[k].getPredicateString(monitor), monitor);
+			predicate.setPredicateString(predicateTable[k].getPredicateString(), monitor);
 			predicate.setSource(
-					((ITraceableElement) predicateTable[k]).getSource(monitor), monitor);
+					((ITraceableElement) predicateTable[k]).getSource(), monitor);
 		}
 		return index;
 	}

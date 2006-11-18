@@ -100,7 +100,7 @@ public class MachineVariantModule extends ExpressionModule {
 		
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		IVariant[] variants = machineFile.getVariants(monitor);
+		IVariant[] variants = machineFile.getVariants();
 		
 		if (variants.length == 0)
 			return;

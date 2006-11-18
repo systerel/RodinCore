@@ -43,22 +43,8 @@ public interface ISCRefinesMachine extends ITraceableElement {
 	 * @return the abstract SC machine file
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAbstractSCMachine(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ISCMachineFile getAbstractSCMachine() throws RodinDBException;
-
-	/**
-	 * Returns the abstract SC machine file introduced by this refines clause.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the abstract SC machine file
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ISCMachineFile getAbstractSCMachine(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the abstract SC machine file introduced by this refines clause.

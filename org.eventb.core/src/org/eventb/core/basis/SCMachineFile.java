@@ -8,7 +8,6 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCEvent;
@@ -54,24 +53,14 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 		return ELEMENT_TYPE;
 	}
 
-	public ISCVariable[] getSCVariables(IProgressMonitor monitor) throws RodinDBException {
+	public ISCVariable[] getSCVariables() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCVariable.ELEMENT_TYPE);
 		return (ISCVariable[]) elements; 
 	}
 	
-	@Deprecated
-	public ISCVariable[] getSCVariables() throws RodinDBException {
-		return getSCVariables(null);
-	}
-	
-	public ISCEvent[] getSCEvents(IProgressMonitor monitor) throws RodinDBException {
+	public ISCEvent[] getSCEvents() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCEvent.ELEMENT_TYPE);
 		return (ISCEvent[]) elements; 
-	}
-	
-	@Deprecated
-	public ISCEvent[] getSCEvents() throws RodinDBException {
-		return getSCEvents(null);
 	}
 	
 	public IMachineFile getMachineFile() {
@@ -82,89 +71,61 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 	}
 
 	@Deprecated
-	public ISCMachineFile getAbstractSCMachine(IProgressMonitor monitor) throws RodinDBException {
-		ISCRefinesMachine machine = getRefinesClause(monitor);
+	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
+		ISCRefinesMachine machine = getRefinesClause();
 		if (machine == null)
 			return null;
 		else
-			return machine.getAbstractSCMachine(null);
+			return machine.getAbstractSCMachine();
 	}
 
-	@Deprecated
-	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
-		return getAbstractSCMachine(null);
-	}
-
-	public ISCInternalContext[] getSCSeenContexts(IProgressMonitor monitor) 
+	public ISCInternalContext[] getSCSeenContexts() 
 	throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCInternalContext.ELEMENT_TYPE);
 		return (ISCInternalContext[]) elements; 
 	}
 
-	@Deprecated
-	public ISCInternalContext[] getSCSeenContexts() 
-	throws RodinDBException {
-		return getSCSeenContexts(null); 
-	}
-
-	public ISCInvariant[] getSCInvariants(IProgressMonitor monitor) 
+	public ISCInvariant[] getSCInvariants() 
 	throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCInvariant.ELEMENT_TYPE);
 		return (ISCInvariant[]) elements; 
 	}
 
-	@Deprecated
-	public ISCInvariant[] getSCInvariants() 
-	throws RodinDBException {
-		return getSCInvariants(null);
-	}
-
-	public ISCTheorem[] getSCTheorems(IProgressMonitor monitor) 
+	public ISCTheorem[] getSCTheorems() 
 	throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
 		return (ISCTheorem[]) elements; 
 	}
 
 	@Deprecated
-	public ISCTheorem[] getSCTheorems() 
-	throws RodinDBException {
-		return getSCTheorems();
-	}
-
-	@Deprecated
-	public ISCRefinesMachine getRefinesClause(IProgressMonitor monitor) throws RodinDBException {
+	public ISCRefinesMachine getRefinesClause() throws RodinDBException {
 		return (ISCRefinesMachine) getSingletonChild(
 				ISCRefinesMachine.ELEMENT_TYPE, 
 				Messages.database_SCMachineMultipleRefinesFailure);
 	}
 
 	@Deprecated
-	public ISCVariant getSCVariant(IProgressMonitor monitor) throws RodinDBException {
+	public ISCVariant getSCVariant() throws RodinDBException {
 		return (ISCVariant) getSingletonChild(
 				ISCVariant.ELEMENT_TYPE, 
 				Messages.database_SCMachineMultipleVariantFailure);
 	}
 
-	@Deprecated
-	public ISCVariant getSCVariant() throws RodinDBException {
-		return getSCVariant((IProgressMonitor) null);
-	}
-
-	public ISCMachineFile[] getAbstractSCMachines(IProgressMonitor monitor) throws RodinDBException {
-		ISCRefinesMachine[] refinesMachines = getSCRefinesClauses(monitor);
+	public ISCMachineFile[] getAbstractSCMachines() throws RodinDBException {
+		ISCRefinesMachine[] refinesMachines = getSCRefinesClauses();
 		ISCMachineFile[] machineFiles = new ISCMachineFile[refinesMachines.length];
 		for (int i=0; i<refinesMachines.length; i++)
 			machineFiles[i] = 
-				refinesMachines[i].getAbstractSCMachine(null);
+				refinesMachines[i].getAbstractSCMachine();
 		return machineFiles;
 	}
 
-	public ISCRefinesMachine[] getSCRefinesClauses(IProgressMonitor monitor) throws RodinDBException {
+	public ISCRefinesMachine[] getSCRefinesClauses() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCRefinesMachine.ELEMENT_TYPE);
 		return (ISCRefinesMachine[]) elements; 
 	}
 
-	public ISCVariant[] getSCVariants(IProgressMonitor monitor) throws RodinDBException {
+	public ISCVariant[] getSCVariants() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCVariant.ELEMENT_TYPE);
 		return (ISCVariant[]) elements; 
 	}

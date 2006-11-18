@@ -44,9 +44,10 @@ public abstract class SCExpressionElement extends EventBElement
 		super(name, parent);
 	}
 
-	public Expression getExpression(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
+	@Deprecated
+	public Expression getExpression(FormulaFactory factory) throws RodinDBException {
 		
-		String contents = getExpressionString(monitor);
+		String contents = getExpressionString();
 		IParseResult parserResult = factory.parseExpression(contents);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
@@ -58,16 +59,10 @@ public abstract class SCExpressionElement extends EventBElement
 		return result;
 	}
 
-	@Deprecated
-	public Expression getExpression(FormulaFactory factory) throws RodinDBException {
-		return getExpression(factory, (IProgressMonitor) null);
-	}
-	
-	public Expression getExpression(
-			FormulaFactory factory,
-			ITypeEnvironment typenv, IProgressMonitor monitor) throws RodinDBException {
+	public Expression getExpression(FormulaFactory factory,
+			ITypeEnvironment typenv) throws RodinDBException {
 		
-		Expression result = getExpression(factory, (IProgressMonitor) null);
+		Expression result = getExpression(factory);
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw Util.newRodinDBException(
@@ -79,13 +74,6 @@ public abstract class SCExpressionElement extends EventBElement
 		return result;
 	}
 
-	@Deprecated
-	public Expression getExpression(
-			FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
-		return getExpression(factory, typenv, null);
-	}
-	
 	public void setExpression(Expression expression, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setExpressionString(expression.toStringWithTypes(), monitor);	

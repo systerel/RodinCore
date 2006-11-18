@@ -242,35 +242,35 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 			try {
 				if (element instanceof IIdentifierElement) {
 					IIdentifierElement identifierElement = (IIdentifierElement) element;
-					if (!identifierElement.getIdentifierString(monitor).equals(text)) {
+					if (!identifierElement.getIdentifierString().equals(text)) {
 						identifierElement.setIdentifierString(text, monitor);
 					}
 				} else if (element instanceof ILabeledElement) {
 					ILabeledElement labelElement = (ILabeledElement) element;
 					if (EventBEditorUtils.DEBUG)
 						EventBEditorUtils.debug("Rename label: "
-								+ labelElement.getLabel(null) + " to " + text);
-					if (!labelElement.getLabel(null).equals(text)) {
+								+ labelElement.getLabel() + " to " + text);
+					if (!labelElement.getLabel().equals(text)) {
 						labelElement.setLabel(text, null);
 					}
 				} else if (element instanceof ISeesContext) {
 					ISeesContext seesContext = (ISeesContext) element;
-					if (!seesContext.getSeenContextName(null).equals(text)) {
+					if (!seesContext.getSeenContextName().equals(text)) {
 						seesContext.setSeenContextName(text, null);
 					}
 				} else if (element instanceof IExtendsContext) {
 					IExtendsContext extendsContext = (IExtendsContext) element;
-					if (!extendsContext.getAbstractContextName(monitor).equals(text)) {
+					if (!extendsContext.getAbstractContextName().equals(text)) {
 						extendsContext.setAbstractContextName(text, monitor);
 					}
 				} else if (element instanceof IRefinesMachine) {
 					IRefinesMachine refinesMachine = (IRefinesMachine) element;
-					if (!refinesMachine.getAbstractMachineName(null).equals(text)) {
+					if (!refinesMachine.getAbstractMachineName().equals(text)) {
 						refinesMachine.setAbstractMachineName(text, null);
 					}
 				} else if (element instanceof IRefinesEvent) {
 					IRefinesEvent refinesEvent = (IRefinesEvent) element;
-					if (!refinesEvent.getAbstractEventLabel(null).equals(text)) {
+					if (!refinesEvent.getAbstractEventLabel().equals(text)) {
 						refinesEvent.setAbstractEventLabel(text, null);
 					}
 				}
@@ -285,17 +285,17 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 			try {
 				if (element instanceof IPredicateElement) {
 					IPredicateElement predicateElement = (IPredicateElement) element;
-					if (!predicateElement.getPredicateString(null).equals(text)) {
+					if (!predicateElement.getPredicateString().equals(text)) {
 						predicateElement.setPredicateString(text, null);
 					}
 				} else if (element instanceof IAssignmentElement) {
 					IAssignmentElement assignmentElement = (IAssignmentElement) element;
-					if (!assignmentElement.getAssignmentString(null).equals(text)) {
+					if (!assignmentElement.getAssignmentString().equals(text)) {
 						assignmentElement.setAssignmentString(text, monitor);
 					}
 				} else if (element instanceof IExpressionElement) {
 					IExpressionElement expressionElement = (IExpressionElement) element;
-					if (!expressionElement.getExpressionString(null).equals(text)) {
+					if (!expressionElement.getExpressionString().equals(text)) {
 						expressionElement.setExpressionString(text, monitor);
 					}
 				}

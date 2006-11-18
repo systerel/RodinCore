@@ -54,10 +54,10 @@ public class TheoremMirrorPage extends EventBMirrorPage implements
 				formString = formString
 						+ "<li style=\"bullet\">"
 						+ UIUtils.makeHyperlink(((ITheorem) theorems[i])
-								.getLabel(null)) + ": ";
+								.getLabel()) + ": ";
 				formString = formString
 						+ UIUtils.XMLWrapUp(((ITheorem) theorems[i])
-								.getPredicateString(null));
+								.getPredicateString());
 				formString = formString + "</li>";
 			}
 		} catch (RodinDBException e) {
@@ -87,7 +87,7 @@ public class TheoremMirrorPage extends EventBMirrorPage implements
 							.getChildrenOfType(ITheorem.ELEMENT_TYPE);
 					for (int i = 0; i < theorems.length; i++) {
 						if (e.getHref().equals(
-								((ITheorem) theorems[i]).getLabel(null))) {
+								((ITheorem) theorems[i]).getLabel())) {
 							editor.edit(theorems[i]);
 							return;
 						}

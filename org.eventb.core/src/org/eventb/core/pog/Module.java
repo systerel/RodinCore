@@ -100,7 +100,7 @@ public abstract class Module implements IModule {
 			
 			IPOSource source = sequent.getSource(SRC_NAME_PREFIX + idx);
 			source.create(null, monitor);
-			source.setSource(sources[idx].getSource().getSource(monitor), monitor);
+			source.setSource(sources[idx].getSource().getSource(), monitor);
 			source.setRole(sources[idx].getRoleKey(), monitor);
 		}
 

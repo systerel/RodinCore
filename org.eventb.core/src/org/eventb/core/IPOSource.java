@@ -40,13 +40,10 @@ public interface IPOSource extends IInternalElement, ITraceableElement {
 	/**
 	 * Returns the role description of this source element.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return the role description of this source element
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	String getRole(IProgressMonitor monitor) throws RodinDBException;
+	String getRole() throws RodinDBException;
 	
 	/**
 	 * Sets the role description of this soyrce element.

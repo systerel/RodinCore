@@ -2,11 +2,7 @@ package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IPRPredRef;
 import org.eventb.core.IPRStringInput;
-import org.eventb.core.IProofStoreCollector;
-import org.eventb.core.IProofStoreReader;
-import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -23,8 +19,8 @@ public class PRStringInput extends InternalElement implements IPRStringInput{
 		return ELEMENT_TYPE;
 	}
 
-	public String getStrInp(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.STRING_INPUT_ATTRIBUTE, monitor);
+	public String getStrInp() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.STRING_INPUT_ATTRIBUTE);
 	}
 
 	public void setStrInp(String value,IProgressMonitor monitor) throws RodinDBException {

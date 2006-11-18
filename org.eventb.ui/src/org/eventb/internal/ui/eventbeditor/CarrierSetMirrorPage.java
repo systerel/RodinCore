@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.ICarrierSet;
@@ -59,7 +58,7 @@ public class CarrierSetMirrorPage extends EventBMirrorPage implements
 					formString = formString + ", ";
 				formString = formString
 						+ UIUtils.makeHyperlink(((ICarrierSet) carrierSets[i])
-								.getIdentifierString(new NullProgressMonitor()));
+								.getIdentifierString());
 			}
 			formString = formString + "</li>";
 		} catch (RodinDBException e) {
@@ -84,10 +83,10 @@ public class CarrierSetMirrorPage extends EventBMirrorPage implements
 				IRodinFile rodinFile = editor.getRodinInput();
 				try {
 					ICarrierSet[] carrierSets = ((IContextFile) rodinFile)
-							.getCarrierSets(null);
+							.getCarrierSets();
 					for (int i = 0; i < carrierSets.length; i++) {
 						if (e.getHref().equals(
-								carrierSets[i].getIdentifierString(new NullProgressMonitor()))) {
+								carrierSets[i].getIdentifierString())) {
 							editor.edit(carrierSets[i]);
 						}
 					}

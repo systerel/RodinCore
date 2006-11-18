@@ -44,24 +44,24 @@ public abstract class EventBProofElement extends InternalElement {
 		setAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE, comment, monitor);
 	}
 
-	public String getComment(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE, monitor);
+	public String getComment() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE);
 	}
 	
-	public boolean hasComment(IProgressMonitor monitor) throws RodinDBException {
-		return hasAttribute(EventBAttributes.COMMENT_ATTRIBUTE, monitor);
+	public boolean hasComment() throws RodinDBException {
+		return hasAttribute(EventBAttributes.COMMENT_ATTRIBUTE);
 	}
 
 	public void setConfidence(int confidence, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE, confidence, monitor);
 	}
 	
-	public int getConfidence(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE, monitor);
+	public int getConfidence() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE);
 	}
 	
-	public boolean hasConfidence(IProgressMonitor monitor) throws RodinDBException {
-		return hasAttribute(EventBAttributes.CONFIDENCE_ATTRIBUTE, monitor);
+	public boolean hasConfidence() throws RodinDBException {
+		return hasAttribute(EventBAttributes.CONFIDENCE_ATTRIBUTE);
 	}
 	
 	public void setGoal(Predicate goal, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
@@ -69,13 +69,13 @@ public abstract class EventBProofElement extends InternalElement {
 		setAttributeValue(EventBAttributes.GOAL_ATTRIBUTE, ref , monitor);
 	}
 	
-	public Predicate getGoal(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException {
-		String ref = getAttributeValue(EventBAttributes.GOAL_ATTRIBUTE, monitor);
-		return store.getPredicate(ref, monitor);
+	public Predicate getGoal(IProofStoreReader store) throws RodinDBException {
+		String ref = getAttributeValue(EventBAttributes.GOAL_ATTRIBUTE);
+		return store.getPredicate(ref);
 	}
 	
-	public boolean hasGoal(IProgressMonitor monitor) throws RodinDBException {
-		return hasAttribute(EventBAttributes.GOAL_ATTRIBUTE, monitor);
+	public boolean hasGoal() throws RodinDBException {
+		return hasAttribute(EventBAttributes.GOAL_ATTRIBUTE);
 	}
 
 	public void setHyps(Collection<Predicate> hyps, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
@@ -89,25 +89,25 @@ public abstract class EventBProofElement extends InternalElement {
 		setAttributeValue(EventBAttributes.HYPS_ATTRIBUTE, refs.toString(), monitor);
 	}
 	
-	public Set<Predicate> getHyps(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException {
-		String sepRefs = getAttributeValue(EventBAttributes.HYPS_ATTRIBUTE, monitor);
+	public Set<Predicate> getHyps(IProofStoreReader store) throws RodinDBException {
+		String sepRefs = getAttributeValue(EventBAttributes.HYPS_ATTRIBUTE);
 		String[] refs = sepRefs.split(";");
 		HashSet<Predicate> hyps = new HashSet<Predicate>(refs.length);
 		for(String ref : refs){
-			if (ref.length()!=0) hyps.add(store.getPredicate(ref, monitor));
+			if (ref.length()!=0) hyps.add(store.getPredicate(ref));
 		}
 		return hyps;
 	}
 	
-	public boolean hasHyps(IProgressMonitor monitor) throws RodinDBException {
-		return hasAttribute(EventBAttributes.HYPS_ATTRIBUTE, monitor);
+	public boolean hasHyps() throws RodinDBException {
+		return hasAttribute(EventBAttributes.HYPS_ATTRIBUTE);
 	}
 	
-	public FreeIdentifier[] getFreeIdents(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
+	public FreeIdentifier[] getFreeIdents(FormulaFactory factory) throws RodinDBException {
 		IRodinElement[] children = getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
 		FreeIdentifier[] freeIdents = new FreeIdentifier[children.length];
 		for (int i = 0; i < freeIdents.length; i++) {
-			freeIdents[i] = ((IPRIdentifier)children[i]).getIdentifier(factory, monitor);			
+			freeIdents[i] = ((IPRIdentifier)children[i]).getIdentifier(factory);			
 		}
 		return freeIdents;
 	}

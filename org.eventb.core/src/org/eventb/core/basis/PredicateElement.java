@@ -35,7 +35,7 @@ public abstract class PredicateElement extends LabeledElement
 		super(name, parent);
 	}
 	
-	public String getPredicateString(IProgressMonitor monitor) throws RodinDBException {
+	public String getPredicateString() throws RodinDBException {
 		return getContents();
 	}
 

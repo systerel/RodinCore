@@ -1,6 +1,5 @@
 package org.eventb.internal.ui.eventbeditor.actions;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -33,7 +32,7 @@ public class ShowSeesContextContribution extends ContributionItem {
 					.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
 			for (IRodinElement element : elements) {
 				ISeesContext seesContext = (ISeesContext) element;
-				String name = seesContext.getSeenContextName(new NullProgressMonitor());
+				String name = seesContext.getSeenContextName();
 				IRodinProject prj = file.getRodinProject();
 				IRodinFile contextFile = prj.getRodinFile(EventBPlugin
 						.getContextFileName(name));

@@ -52,7 +52,7 @@ public class ContextConstantModule extends IdentifierModule {
 
 		IContextFile contextFile = (IContextFile) element;
 		
-		IConstant[] constants = contextFile.getConstants(null);
+		IConstant[] constants = contextFile.getConstants();
 		
 		if(constants.length == 0)
 			return;

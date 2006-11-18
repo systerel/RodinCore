@@ -45,13 +45,8 @@ public class RefinesMachine extends InternalElement implements IRefinesMachine {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesMachine#getRefinedMachine()
 	 */
-	public String getAbstractMachineName(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, monitor);
-	}
-
-	@Deprecated
 	public String getAbstractMachineName() throws RodinDBException {
-		return getAbstractMachineName(null);
+		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
 	/* (non-Javadoc)
@@ -65,37 +60,25 @@ public class RefinesMachine extends InternalElement implements IRefinesMachine {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesMachine#getAbstractMachine()
 	 */
-	public IMachineFile getAbstractMachine(IProgressMonitor monitor) 
+	public IMachineFile getAbstractMachine() 
 	throws RodinDBException {
-		final String bareName = getAbstractMachineName(monitor);
+		final String bareName = getAbstractMachineName();
 		final String scName = EventBPlugin.getMachineFileName(bareName);
 		final IRodinProject project = getRodinProject();
 		return (IMachineFile) project.getRodinFile(scName);
 	}
 	
-	@Deprecated
-	public IMachineFile getAbstractMachine() 
-	throws RodinDBException {
-		return getAbstractMachine(null);
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesMachine#getAbstractSCMachine()
 	 */
-	public ISCMachineFile getAbstractSCMachine(IProgressMonitor monitor) 
+	public ISCMachineFile getAbstractSCMachine() 
 	throws RodinDBException {
-		final String bareName = getAbstractMachineName(monitor);
+		final String bareName = getAbstractMachineName();
 		final String scName = EventBPlugin.getSCMachineFileName(bareName);
 		final IRodinProject project = getRodinProject();
 		return (ISCMachineFile) project.getRodinFile(scName);
 	}
 
-	@Deprecated
-	public ISCMachineFile getAbstractSCMachine() 
-	throws RodinDBException {
-		return getAbstractSCMachine(null);
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesMachine#setAbstractMachineName(java.lang.String)
 	 */

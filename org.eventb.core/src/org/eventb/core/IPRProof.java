@@ -73,15 +73,11 @@ public interface IPRProof extends IInternalElement {
 	 * </p>
 	 *
 	 * 
-	 * @param monitor
-	 * 			  a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 *            
 	 * @return the confidence of this proof tree 
 	 * 
 	 * @throws RodinDBException 
 	 */
-	int getConfidence(IProgressMonitor monitor) throws RodinDBException;
+	int getConfidence() throws RodinDBException;
 	
 	
 	/**
@@ -94,9 +90,7 @@ public interface IPRProof extends IInternalElement {
 	 * 
 	 * @param factory
 	 * 				The formula factory to be used
-	 * @param monitor
-	 * 			  a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 * @param monitor TODO
 	 * @return
 	 * 		The proof dependencies for proof tree stored in this proof element
 	 * @throws RodinDBException
@@ -110,8 +104,8 @@ public interface IPRProof extends IInternalElement {
 	 * @param factory
 	 * 			The formula factory to be used
 	 * @param monitor
-	 * 			a progress monitor, or <code>null</code> if progress
-	 *          reporting is not desired
+	 * 			  a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @return
 	 * 			the stored proof skeleton
 	 * 

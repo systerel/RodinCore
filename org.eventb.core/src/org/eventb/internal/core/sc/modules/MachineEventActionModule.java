@@ -76,7 +76,7 @@ public class MachineEventActionModule extends AssignmentModule {
 
 		IEvent event = (IEvent) element;
 		
-		IAction[] actions = event.getActions(null);
+		IAction[] actions = event.getActions();
 		
 		Assignment[] assignments = new Assignment[actions.length];
 	
@@ -114,7 +114,7 @@ public class MachineEventActionModule extends AssignmentModule {
 			if (assignments[i] == null)
 				continue;
 			IActionSymbolInfo actionSymbolInfo = 
-				(IActionSymbolInfo) labelSymbolTable.getSymbolInfo(actions[i].getLabel(monitor));
+				(IActionSymbolInfo) labelSymbolTable.getSymbolInfo(actions[i].getLabel());
 			if (error[i]) {
 				assignments[i] = null;
 				createProblemMarker(
@@ -166,7 +166,7 @@ public class MachineEventActionModule extends AssignmentModule {
 			saveAction(
 					target, 
 					ACTION_NAME_PREFIX + index++, 
-					actions[i].getLabel(monitor), 
+					actions[i].getLabel(), 
 					assignments[i], 
 					actions[i], 
 					monitor);
@@ -255,7 +255,7 @@ public class MachineEventActionModule extends AssignmentModule {
 			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
-		isInitialisation = ((IEvent) element).getLabel(monitor).equals(IEvent.INITIALISATION);
+		isInitialisation = ((IEvent) element).getLabel().equals(IEvent.INITIALISATION);
 		factory = repository.getFormulaFactory();
 	}
 

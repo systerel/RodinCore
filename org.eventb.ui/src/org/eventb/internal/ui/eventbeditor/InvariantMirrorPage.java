@@ -54,10 +54,10 @@ public class InvariantMirrorPage extends EventBMirrorPage implements
 				formString = formString
 						+ "<li style=\"bullet\">"
 						+ UIUtils.makeHyperlink(((IInvariant) invariants[i])
-								.getLabel(null)) + ": ";
+								.getLabel()) + ": ";
 				formString = formString
 						+ UIUtils.XMLWrapUp(((IInvariant) invariants[i])
-								.getPredicateString(null));
+								.getPredicateString());
 				formString = formString + "</li>";
 			}
 		} catch (RodinDBException e) {
@@ -85,7 +85,7 @@ public class InvariantMirrorPage extends EventBMirrorPage implements
 							.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 					for (int i = 0; i < invariants.length; i++) {
 						if (e.getHref().equals(
-								((IInvariant) invariants[i]).getLabel(null))) {
+								((IInvariant) invariants[i]).getLabel())) {
 							editor.edit(invariants[i]);
 							return;
 						}

@@ -44,10 +44,11 @@ public abstract class SCAssignmentElement extends EventBElement
 		super(name, parent);
 	}
 
-	public Assignment getAssignment(FormulaFactory factory, IProgressMonitor monitor) 
+	@Deprecated
+	public Assignment getAssignment(FormulaFactory factory) 
 	throws RodinDBException {
 		
-		String contents = getAssignmentString(null);
+		String contents = getAssignmentString();
 		IParseResult parserResult = factory.parseAssignment(contents);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
@@ -59,17 +60,11 @@ public abstract class SCAssignmentElement extends EventBElement
 		return result;
 	}
 
-	@Deprecated
-	public Assignment getAssignment(FormulaFactory factory) 
-	throws RodinDBException {
-		return getAssignment(factory, (IProgressMonitor) null);
-	}
-	
 	public Assignment getAssignment(
 			FormulaFactory factory,
-			ITypeEnvironment typenv, IProgressMonitor monitor) throws RodinDBException {
+			ITypeEnvironment typenv) throws RodinDBException {
 		
-		Assignment result = getAssignment(factory, (IProgressMonitor) null);
+		Assignment result = getAssignment(factory);
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw Util.newRodinDBException(
@@ -81,13 +76,6 @@ public abstract class SCAssignmentElement extends EventBElement
 		return result;
 	}
 
-	@Deprecated
-	public Assignment getAssignment(
-			FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
-		return getAssignment(factory, typenv, null);
-	}
-		
 	public void setAssignment(Assignment assignment, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAssignmentString(assignment.toStringWithTypes(), monitor);

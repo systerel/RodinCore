@@ -43,12 +43,12 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 			IProgressMonitor monitor) throws CoreException {
 		super(parentElement, predicateTable, ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME, IDENTIFIER_TABLE_SIZE);
 		
-		ISCRefinesMachine[] refinesMachines = ((ISCMachineFile) parentElement).getSCRefinesClauses(monitor);
+		ISCRefinesMachine[] refinesMachines = ((ISCMachineFile) parentElement).getSCRefinesClauses();
 		
 		if (refinesMachines.length == 0)
 			abstractMachine = null;
 		else {
-			abstractMachine = refinesMachines[0].getAbstractSCMachine(monitor);
+			abstractMachine = refinesMachines[0].getAbstractSCMachine();
 			
 			if (refinesMachines.length > 1) {
 				throw Util.newCoreException(Messages.pog_multipleRefinementError);

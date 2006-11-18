@@ -86,14 +86,11 @@ public interface IPOFile extends IRodinFile {
 	/**
 	 * Returns the handles to the predicate sets of this component.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return a handle to the predicate set or <code>null</code> there is no
 	 *         predicate set witrh given name
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	public IPOPredicateSet[] getPredicateSets(IProgressMonitor monitor) throws RodinDBException;
+	public IPOPredicateSet[] getPredicateSets() throws RodinDBException;
 
 	/**
 	 * Returns a handle to the predicate set with the given name.
@@ -118,21 +115,8 @@ public interface IPOFile extends IRodinFile {
 	 * 
 	 * @return the array of handles to the proof obligations
 	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated use <code>getSequents(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	public IPOSequent[] getSequents() throws RodinDBException;
-	
-	/**
-	 * Returns handles to the proof obligations of this component. 
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the array of handles to the proof obligations
-	 * @throws RodinDBException if there was a problem accessing the database
-	 */
-	public IPOSequent[] getSequents(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child sequent with the given element name.

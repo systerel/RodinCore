@@ -90,10 +90,10 @@ public class MachineHypothesisModule extends Module {
 		rootSet.create(null, monitor);
 		rootSet.setParentPredicateSet(target.getPredicateSet(MachineHypothesisManager.CTX_HYP_NAME), monitor);
 		
-		fetchVariables(scMachineFile.getSCVariables(monitor), rootSet, repository, monitor);
+		fetchVariables(scMachineFile.getSCVariables(), rootSet, repository, monitor);
 		
-		ISCInvariant[] invariants = scMachineFile.getSCInvariants(monitor);
-		ISCTheorem[] theorems = scMachineFile.getSCTheorems(monitor);
+		ISCInvariant[] invariants = scMachineFile.getSCInvariants();
+		ISCTheorem[] theorems = scMachineFile.getSCTheorems();
 		
 		invariantTable = new MachineInvariantTable();
 		theoremTable = new MachineTheoremTable();
@@ -123,7 +123,7 @@ public class MachineHypothesisModule extends Module {
 		IPOPredicateSet ctxRootSet = target.getPredicateSet(MachineHypothesisManager.CTX_HYP_NAME);
 		ctxRootSet.create(null, monitor);
 		
-		ISCInternalContext[] contexts = scMachineFile.getSCSeenContexts(monitor);
+		ISCInternalContext[] contexts = scMachineFile.getSCSeenContexts();
 		
 		copyContexts(ctxRootSet, contexts, monitor);
 	}
@@ -141,9 +141,9 @@ public class MachineHypothesisModule extends Module {
 		for(ISCVariable variable : variables) {
 			FreeIdentifier identifier = fetchIdentifier(variable);
 			createIdentifier(predSet, identifier, monitor);
-			if (variable.isForbidden(monitor))
+			if (variable.isForbidden())
 				continue;
-			variableTable.add(identifier, variable.isPreserved(monitor));
+			variableTable.add(identifier, variable.isPreserved());
 		}
 		variableTable.trimToSize();
 	}
@@ -154,18 +154,18 @@ public class MachineHypothesisModule extends Module {
 		
 		for (ISCInternalContext context : contexts) {
 			
-			for (ISCCarrierSet set : context.getSCCarrierSets(null)) {
+			for (ISCCarrierSet set : context.getSCCarrierSets()) {
 				FreeIdentifier identifier = fetchIdentifier(set);
 				createIdentifier(rootSet, identifier, monitor);
 			}
-			for (ISCConstant constant : context.getSCConstants(null)) {
+			for (ISCConstant constant : context.getSCConstants()) {
 				FreeIdentifier identifier = fetchIdentifier(constant);
 				createIdentifier(rootSet, identifier, monitor);
 			}
-			for (ISCAxiom axiom : context.getSCAxioms(null)) {
+			for (ISCAxiom axiom : context.getSCAxioms()) {
 				savePOPredicate(rootSet, axiom, monitor);
 			}
-			for (ISCTheorem theorem : context.getSCTheorems(null)) {
+			for (ISCTheorem theorem : context.getSCTheorems()) {
 				savePOPredicate(rootSet, theorem, monitor);
 			}
 		}
@@ -182,7 +182,7 @@ public class MachineHypothesisModule extends Module {
 
 	private FreeIdentifier fetchIdentifier(ISCIdentifierElement ident) throws RodinDBException {
 		FreeIdentifier identifier = 
-			factory.makeFreeIdentifier(ident.getIdentifierString(null), null, ident.getType(factory, null));
+			factory.makeFreeIdentifier(ident.getIdentifierString(), null, ident.getType(factory));
 		typeEnvironment.addName(identifier.getName(), identifier.getType());
 		return identifier;
 	}
@@ -198,7 +198,7 @@ public class MachineHypothesisModule extends Module {
 		for(ISCPredicateElement element : predicateElements) {
 			ITraceableElement baggedElement = (ITraceableElement) element;
 			String elementBag = 
-				((IInternalElement) baggedElement.getSource(monitor)).getRodinFile().getElementName();
+				((IInternalElement) baggedElement.getSource()).getRodinFile().getElementName();
 			if (bag.equals(elementBag)) {
 				predicates.add(element);
 				predicateTable.addElement(element, typeEnvironment, factory);
@@ -214,8 +214,8 @@ public class MachineHypothesisModule extends Module {
 			IProgressMonitor monitor) throws RodinDBException {
 		IPOPredicate predicate = rootSet.getPredicate(PRD_NAME_PREFIX + index++);
 		predicate.create(null, monitor);
-		predicate.setPredicateString(element.getPredicateString(null), monitor);
-		predicate.setSource(((ITraceableElement) element).getSource(monitor), monitor);
+		predicate.setPredicateString(element.getPredicateString(), monitor);
+		predicate.setSource(((ITraceableElement) element).getSource(), monitor);
 	}
 
 	/* (non-Javadoc)

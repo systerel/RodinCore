@@ -43,23 +43,8 @@ public interface ISeesContext extends IInternalElement {
 	 * @return the name of the seen context
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getSeenContextName(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	String getSeenContextName() throws RodinDBException;
-
-	/**
-	 * Returns the name of the context that is seen by the machine which
-	 * contains this element.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the name of the seen context
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	String getSeenContextName(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the name of the context that is seen by the machine which contains
@@ -94,21 +79,7 @@ public interface ISeesContext extends IInternalElement {
 	 * @return a handle to the checked version of the seen context
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getSeenSCContext(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ISCContextFile getSeenSCContext() throws RodinDBException;
-
-	/**
-	 * Returns a handle to the checked version of the seen context, that is the
-	 * file produced when statically checking that context.
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return a handle to the checked version of the seen context
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ISCContextFile getSeenSCContext(IProgressMonitor monitor) throws RodinDBException;
 
 }

@@ -659,7 +659,7 @@ public class UIUtils {
 		for (i = beginIndex; i < elements.length + beginIndex; i++) {
 			boolean exists = false;
 			for (IRodinElement element : elements) {
-				if (((ILabeledElement) element).getLabel(null).equals(
+				if (((ILabeledElement) element).getLabel().equals(
 						prefix + i)) {
 					exists = true;
 					break;
@@ -696,8 +696,7 @@ public class UIUtils {
 		for (i = beginIndex; i < elements.length + beginIndex; i++) {
 			boolean exists = true;
 			for (IRodinElement element : elements) {
-				if (!((IIdentifierElement) element).getIdentifierString(
-						new NullProgressMonitor()).equals(prefix + i)) {
+				if (!((IIdentifierElement) element).getIdentifierString().equals(prefix + i)) {
 					exists = false;
 					break;
 				}
@@ -713,7 +712,7 @@ public class UIUtils {
 		IRodinElement[] children = parent.getChildrenOfType(type);
 		for (IRodinElement child : children) {
 			if (child instanceof ILabeledElement) {
-				String elementLabel = ((ILabeledElement) child).getLabel(null);
+				String elementLabel = ((ILabeledElement) child).getLabel();
 				if (elementLabel.equals(label))
 					return child;
 			}

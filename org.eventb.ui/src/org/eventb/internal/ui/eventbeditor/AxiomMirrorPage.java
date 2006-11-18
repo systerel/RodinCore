@@ -52,11 +52,11 @@ public class AxiomMirrorPage extends EventBMirrorPage implements
 					IAxiom.ELEMENT_TYPE);
 			for (IRodinElement axiom : axioms) {
 				formString = formString + "<li style=\"bullet\">"
-						+ UIUtils.makeHyperlink(((IAxiom) axiom).getLabel(null))
+						+ UIUtils.makeHyperlink(((IAxiom) axiom).getLabel())
 						+ ": ";
 				formString = formString
 						+ UIUtils.XMLWrapUp(((IAxiom) axiom)
-								.getPredicateString(null));
+								.getPredicateString());
 				formString = formString + "</li>";
 			}
 		} catch (RodinDBException e) {
@@ -82,7 +82,7 @@ public class AxiomMirrorPage extends EventBMirrorPage implements
 					IRodinElement[] axioms = editor.getRodinInput()
 							.getChildrenOfType(IAxiom.ELEMENT_TYPE);
 					for (int i = 0; i < axioms.length; i++) {
-						if (e.getHref().equals(((IAxiom) axioms[i]).getLabel(null))) {
+						if (e.getHref().equals(((IAxiom) axioms[i]).getLabel())) {
 							editor.edit(axioms[i]);
 							break;
 						}

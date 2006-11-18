@@ -59,7 +59,7 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		IInvariant[] invariants = machineFile.getInvariants(null);
+		IInvariant[] invariants = machineFile.getInvariants();
 		
 		IAbstractEventTable abstractEventTable =
 			(IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
@@ -71,7 +71,7 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 		int offset = 0;
 		
 		if (scMachineFile != null) {
-			ISCInvariant[] scInvariants = scMachineFile.getSCInvariants(null);
+			ISCInvariant[] scInvariants = scMachineFile.getSCInvariants();
 			offset = scInvariants.length;
 			copySCPredicates(scInvariants, target, monitor);
 		}
@@ -108,7 +108,7 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 				continue;
 			ISCInvariant scInvariant = target.getSCInvariant(INVARIANT_NAME_PREFIX + index++);
 			scInvariant.create(null, monitor);
-			scInvariant.setLabel(invariants[i].getLabel(monitor), monitor);
+			scInvariant.setLabel(invariants[i].getLabel(), monitor);
 			scInvariant.setPredicate(predicates[i], null);
 			scInvariant.setSource(invariants[i], monitor);
 		}

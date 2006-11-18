@@ -192,7 +192,7 @@ public class ObligationExplorer extends ViewPart implements
 		// Try to synchronize with the proof tree in memory
 		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
 				.getUserSupports();
-		final boolean proofBroken = (! status.getProofValidAttribute(null));
+		final boolean proofBroken = (! status.getProofValidAttribute());
 		for (IUserSupport userSupport : userSupports) {
 			// UIUtils.debugObligationExplorer("Get US: "
 			// + userSupport);
@@ -236,10 +236,10 @@ public class ObligationExplorer extends ViewPart implements
 		final IPRProof prProof = status.getProof();
 
 		// TODO : confidence now expresses unattempted as well
-		if ((!prProof.exists()) || (prProof.getConfidence(null) <= IConfidence.UNATTEMPTED))
+		if ((!prProof.exists()) || (prProof.getConfidence() <= IConfidence.UNATTEMPTED))
 			return UNATTEMPTED;
 
-		int confidence = prProof.getConfidence(null);
+		int confidence = prProof.getConfidence();
 		if (proofBroken) {
 
 			if (confidence == IConfidence.PENDING)
@@ -334,7 +334,7 @@ public class ObligationExplorer extends ViewPart implements
 
 									int confidence = tree.getConfidence();
 
-									final boolean proofBroken = (! status.getProofValidAttribute(null));
+									final boolean proofBroken = (! status.getProofValidAttribute());
 									if (confidence == IConfidence.PENDING) {
 										if (false && proofBroken)
 											return registry

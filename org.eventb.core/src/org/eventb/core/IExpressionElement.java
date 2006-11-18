@@ -27,8 +27,6 @@ import org.rodinp.core.RodinDBException;
 public interface IExpressionElement extends IInternalElement {
 
 	/**
-	 * This method is deprecated; use <code>getExpressionString(IProgressMonitor)</code> instead.
-	 * 
 	 * Returns the string representation of the expression contained in this
 	 * element.
 	 * 
@@ -36,7 +34,6 @@ public interface IExpressionElement extends IInternalElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	@Deprecated
 	String getExpressionString() throws RodinDBException;
 
 	/**
@@ -52,19 +49,6 @@ public interface IExpressionElement extends IInternalElement {
 	 */
 	@Deprecated
 	void setExpressionString(String expression) throws RodinDBException;
-
-	/**
-	 * Returns the string representation of the expression contained in this
-	 * element.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the expression of this element as a string
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	String getExpressionString(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the string representation of the expression contained in this

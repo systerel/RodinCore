@@ -62,7 +62,7 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 		
 		for (int i=0; i<invariants.size(); i++) {
 			
-			String invariantLabel = ((ISCInvariant) invariants.get(i)).getLabel(monitor);
+			String invariantLabel = ((ISCInvariant) invariants.get(i)).getLabel();
 			
 			FreeIdentifier[] freeIdentifiers = invPredicates.get(i).getFreeIdentifiers();
 			HashSet<FreeIdentifier> freeIdents = 

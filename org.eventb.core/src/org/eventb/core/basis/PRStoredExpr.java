@@ -8,8 +8,8 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRIdentifier;
+import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.rodinp.core.IInternalElementType;
@@ -32,11 +32,11 @@ public class PRStoredExpr extends SCExpressionElement implements IPRStoredExpr {
 		return ELEMENT_TYPE;
 	}
 	
-	public FreeIdentifier[] getFreeIdents(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
+	public FreeIdentifier[] getFreeIdents(FormulaFactory factory) throws RodinDBException {
 		IRodinElement[] children = getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
 		FreeIdentifier[] freeIdents = new FreeIdentifier[children.length];
 		for (int i = 0; i < freeIdents.length; i++) {
-			freeIdents[i] = ((IPRIdentifier)children[i]).getIdentifier(factory, monitor);			
+			freeIdents[i] = ((IPRIdentifier)children[i]).getIdentifier(factory);			
 		}
 		return freeIdents;
 	}

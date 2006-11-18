@@ -86,7 +86,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 	protected FreeIdentifier parseIdentifier(
 			IIdentifierElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		return parseIdentifier(element.getIdentifierString(monitor), element, factory, this);
+		return parseIdentifier(element.getIdentifierString(), element, factory, this);
 	}
 
 	/**

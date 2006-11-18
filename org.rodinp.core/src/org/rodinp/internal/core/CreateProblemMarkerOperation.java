@@ -203,7 +203,7 @@ public class CreateProblemMarkerOperation extends RodinDBOperation {
 		
 		// Check that attribute exists
 		try {
-			if (!element.hasAttribute(attrType, null)) {
+			if (!element.hasAttribute(attrType)) {
 				return new RodinDBStatus(ATTRIBUTE_DOES_NOT_EXIST, element,
 						attrType.getId());
 			}

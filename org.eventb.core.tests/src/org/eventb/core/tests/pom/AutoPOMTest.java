@@ -27,7 +27,8 @@ import org.rodinp.core.RodinDBException;
 public class AutoPOMTest extends BuilderTest {
 
 	private IPOFile createPOFile() throws RodinDBException {
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("x.bpo", true, null);
+		IPOFile poFile = (IPOFile) rodinProject.getRodinFile("x.bpo");
+		poFile.create(true, null);
 		POUtil.addTypes(poFile, mp("x"), mp("ℤ"));
 		POUtil.addPredicateSet(poFile, "hyp0", mp("1=1","2=2","x∈ℕ"), null);
 		POUtil.addSequent(poFile, "PO1", 
@@ -125,12 +126,12 @@ public class AutoPOMTest extends BuilderTest {
 	private void checkProofsConsistent(IPRFile prFile, IPSFile psFile) throws RodinDBException {
 		IPSStatus[] statuses = psFile.getStatuses();
 		for (IPSStatus status : statuses) {
-			if (status.getProofConfidence(null) > IConfidence.UNATTEMPTED)
+			if (status.getProofConfidence() > IConfidence.UNATTEMPTED)
 			{
 				IPRProof prProofTree = status.getProof();
 				String name = status.getElementName();
 				assertNotNull("Proof absent for "+name , prProofTree);
-				assertEquals("Proof confidence different for "+name, prProofTree.getConfidence(null), status.getProofConfidence(null));
+				assertEquals("Proof confidence different for "+name, prProofTree.getConfidence(), status.getProofConfidence());
 			}
 		}
 		
@@ -179,13 +180,13 @@ public class AutoPOMTest extends BuilderTest {
 		// IPRProofTree proofTree = status.getProofTree();
 		assertTrue("PO " + status.getElementName() + " should be closed",
 				IConfidence.PENDING <
-				status.getProofConfidence(null));
+				status.getProofConfidence());
 		assertTrue("PR " + status.getElementName() + " should be valid",
-				status.getProofValidAttribute(null));
+				status.getProofValidAttribute());
 		assertTrue("PR " + status.getElementName() + " should be attempted by the auto prover",
-				status.hasAutoProofAttribute(null));
+				status.hasAutoProofAttribute());
 		assertTrue("PR " + status.getElementName() + " should be auto proven",
-				status.getAutoProofAttribute(null));
+				status.getAutoProofAttribute());
 		
 	}
 	
@@ -193,11 +194,11 @@ public class AutoPOMTest extends BuilderTest {
 		// IPRProofTree proofTree = status.getProofTree();
 		assertTrue("PO " + status.getElementName() + " should not be closed",
 				IConfidence.PENDING >=
-				status.getProofConfidence(null));
+				status.getProofConfidence());
 		assertTrue("PR " + status.getElementName() + " should be valid",
-				status.getProofValidAttribute(null));
+				status.getProofValidAttribute());
 		assertTrue("PR " + status.getElementName() + " should be attempted by the auto prover",
-				status.hasAutoProofAttribute(null));
+				status.hasAutoProofAttribute());
 //		assertFalse("PR " + status.getName() + " should not be auto proven",
 //				status.isAutoProven());
 	}

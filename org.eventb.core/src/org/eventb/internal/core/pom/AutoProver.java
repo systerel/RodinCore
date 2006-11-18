@@ -93,14 +93,14 @@ public class AutoProver {
 			IPRProof prProof = status.getProof();
 			pm.worked(1);
 			
-			final boolean proofValid = status.getProofValidAttribute(null);
+			final boolean proofValid = status.getProofValidAttribute();
 			
 			if (proofValid 
-					&& status.hasAutoProofAttribute(null))
+					&& status.hasAutoProofAttribute())
 				return false;
 			
 			if ((!proofValid) || 
-					(status.getProofConfidence(null) <= IConfidence.PENDING)) {
+					(status.getProofConfidence() <= IConfidence.PENDING)) {
 				
 				final IPOSequent poSequent = status.getPOSequent();
 				IProofTree autoProofTree = ProverFactory.makeProofTree(
@@ -126,7 +126,7 @@ public class AutoProver {
 				if (autoProofTree.getRoot().hasChildren() && 
 						(
 								// ( status.getProofConfidence() > IConfidence.UNATTEMPTED) || 
-								(status.hasAutoProofAttribute(null) && status.getAutoProofAttribute(null) && !(status.getProofConfidence(null) > IConfidence.PENDING))
+								(status.hasAutoProofAttribute() && status.getAutoProofAttribute() && !(status.getProofConfidence() > IConfidence.PENDING))
 						))	
 					
 				{

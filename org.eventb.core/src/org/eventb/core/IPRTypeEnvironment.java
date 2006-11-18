@@ -19,6 +19,6 @@ public interface IPRTypeEnvironment extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prTypeEnv"); //$NON-NLS-1$
 		
-	ITypeEnvironment getTypeEnvironment(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
+	ITypeEnvironment getTypeEnvironment(FormulaFactory factory) throws RodinDBException;
 	void setTypeEnvironment(ITypeEnvironment typeEnv, IProgressMonitor monitor) throws RodinDBException;
 }

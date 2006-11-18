@@ -5,13 +5,12 @@ import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRExprRef;
-import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRPredRef;
-import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRProofStore;
 import org.eventb.core.IPRReasonerInput;
+import org.eventb.core.IPRStoredExpr;
+import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRStringInput;
 import org.eventb.core.IPRTypeEnvironment;
 import org.eventb.core.IProofStoreReader;
@@ -45,7 +44,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		this.expressions = new HashMap<String, Expression>();
 	}
 	
-	public ITypeEnvironment getBaseTypeEnv(IProgressMonitor monitor)
+	public ITypeEnvironment getBaseTypeEnv()
 			throws RodinDBException {
 		if (baseTypEnv == null)
 		{
@@ -53,53 +52,53 @@ public class ProofStoreReader implements IProofStoreReader {
 					prProofStore.getInternalElement(
 							IPRTypeEnvironment.ELEMENT_TYPE,
 							"baseTypEnv"))
-							.getTypeEnvironment(factory, monitor);
+							.getTypeEnvironment(factory);
 		}
 		return baseTypEnv;
 	}
 
-	public Predicate getPredicate(String ref, IProgressMonitor monitor)
+	public Predicate getPredicate(String ref)
 			throws RodinDBException {
 		Predicate pred = predicates.get(ref);
 		if (pred == null){
-			final ITypeEnvironment baseTypeEnv = getBaseTypeEnv(null);
+			final ITypeEnvironment baseTypeEnv = getBaseTypeEnv();
 			final IPRStoredPred prPred = ((IPRStoredPred)
 								prProofStore.getInternalElement(
 										IPRStoredPred.ELEMENT_TYPE,
 										ref));
-			FreeIdentifier[] newFreeIdents = prPred.getFreeIdents(factory, monitor);
+			FreeIdentifier[] newFreeIdents = prPred.getFreeIdents(factory);
 			if (newFreeIdents.length == 0)
 			{
-				pred = prPred.getPredicate(factory, baseTypeEnv, null);
+				pred = prPred.getPredicate(factory, baseTypeEnv);
 			}
 			else
 			{
 				ITypeEnvironment newTypEnv = baseTypeEnv.clone();
 				newTypEnv.addAll(newFreeIdents);
-				pred = prPred.getPredicate(factory, newTypEnv, null);
+				pred = prPred.getPredicate(factory, newTypEnv);
 			}
 		}
 		return pred;
 	}
 
-	public Expression getExpression(String ref, IProgressMonitor monitor) throws RodinDBException {
+	public Expression getExpression(String ref) throws RodinDBException {
 		Expression expr = expressions.get(ref);
 		if (expr == null){
-			final ITypeEnvironment baseTypeEnv = getBaseTypeEnv(null);
+			final ITypeEnvironment baseTypeEnv = getBaseTypeEnv();
 			final IPRStoredExpr prExpr = ((IPRStoredExpr)
 								prProofStore.getInternalElement(
 										IPRStoredExpr.ELEMENT_TYPE,
 										ref));
-			FreeIdentifier[] newFreeIdents = prExpr.getFreeIdents(factory, monitor);
+			FreeIdentifier[] newFreeIdents = prExpr.getFreeIdents(factory);
 			if (newFreeIdents.length == 0)
 			{
-				expr = prExpr.getExpression(factory, baseTypeEnv, null);
+				expr = prExpr.getExpression(factory, baseTypeEnv);
 			}
 			else
 			{
 				ITypeEnvironment newTypEnv = baseTypeEnv.clone();
 				newTypEnv.addAll(newFreeIdents);
-				expr = prExpr.getExpression(factory, newTypEnv, null);
+				expr = prExpr.getExpression(factory, newTypEnv);
 			}
 		}
 		return expr;
@@ -109,18 +108,15 @@ public class ProofStoreReader implements IProofStoreReader {
 
 		private final IPRReasonerInput prReasonerInput;
 		private final IProofStoreReader store;
-		// This may not work..
-		private final IProgressMonitor monitor;
 		
-		public Bridge(IPRReasonerInput prReasonerInput,IProofStoreReader store,IProgressMonitor monitor){
+		public Bridge(IPRReasonerInput prReasonerInput,IProofStoreReader store){
 			this.prReasonerInput = prReasonerInput;
 			this.store = store;
-			this.monitor= monitor;
 		}
 		
 		public Expression getExpression(String name) throws SerializeException {
 			try{
-				return ((IPRExprRef)prReasonerInput.getInternalElement(IPRExprRef.ELEMENT_TYPE, name)).getExpression(store, monitor);
+				return ((IPRExprRef)prReasonerInput.getInternalElement(IPRExprRef.ELEMENT_TYPE, name)).getExpression(store);
 			}
 			catch (RodinDBException e) {
 				throw new SerializeException(e);
@@ -129,7 +125,7 @@ public class ProofStoreReader implements IProofStoreReader {
 
 		public Predicate getPredicate(String name) throws SerializeException {
 			try{
-				return ((IPRPredRef)prReasonerInput.getInternalElement(IPRPredRef.ELEMENT_TYPE, name)).getPredicate(store, monitor);
+				return ((IPRPredRef)prReasonerInput.getInternalElement(IPRPredRef.ELEMENT_TYPE, name)).getPredicate(store);
 			}
 			catch (RodinDBException e) {
 				throw new SerializeException(e);
@@ -138,7 +134,7 @@ public class ProofStoreReader implements IProofStoreReader {
 
 		public String getString(String name) throws SerializeException {
 			try{
-				return ((IPRStringInput)prReasonerInput.getInternalElement(IPRStringInput.ELEMENT_TYPE, name)).getStrInp(monitor);
+				return ((IPRStringInput)prReasonerInput.getInternalElement(IPRStringInput.ELEMENT_TYPE, name)).getStrInp();
 			}
 			catch (RodinDBException e) {
 				throw new SerializeException(e);
@@ -150,7 +146,7 @@ public class ProofStoreReader implements IProofStoreReader {
 				IRodinElement[] rodinElements = prReasonerInput.getChildrenOfType(IPRReasonerInput.ELEMENT_TYPE);
 				Bridge[] subInputSerializers = new Bridge[rodinElements.length];
 				for (int i = 0; i < subInputSerializers.length; i++) {
-					subInputSerializers[i] =  new Bridge((IPRReasonerInput)rodinElements[i],store,monitor);
+					subInputSerializers[i] =  new Bridge((IPRReasonerInput)rodinElements[i],store);
 				}
 				return subInputSerializers;
 			} catch (RodinDBException e) {

@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.core;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -106,29 +105,12 @@ public interface IMachineFile extends IRodinFile {
 	IRefinesMachine getRefinesClause() throws RodinDBException;
 
 	/**
-	 * Returns the refines clause of this machine or <code>null</code> if this
-	 * machine does not have an abstraction.
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the refines clause of this machine or <code>null</code>
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getRefinesClauses(IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	IRefinesMachine getRefinesClause(IProgressMonitor monitor) throws RodinDBException;
-
-	/**
 	 * Returns an array of all refines clauses of this machine.
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return an array of refines clauses
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	IRefinesMachine[] getRefinesClauses(IProgressMonitor monitor) throws RodinDBException;
+	IRefinesMachine[] getRefinesClauses() throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child sees clause with the given element name.
@@ -145,25 +127,11 @@ public interface IMachineFile extends IRodinFile {
 
 	/**
 	 * Returns an array of all sees clauses of this machine.
-	 * 
 	 * @return an array of sees clauses
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getSeesClauses(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ISeesContext[] getSeesClauses() throws RodinDBException;
-
-	/**
-	 * Returns an array of all sees clauses of this machine.
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return an array of sees clauses
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ISeesContext[] getSeesClauses(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child variable with the given element name.
@@ -180,25 +148,11 @@ public interface IMachineFile extends IRodinFile {
 
 	/**
 	 * Returns an array containing all (global) variables of this machine.
-	 * 
 	 * @return an array of variables
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getVariables(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	IVariable[] getVariables() throws RodinDBException;
-
-	/**
-	 * Returns an array containing all (global) variables of this machine.
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return an array of variables
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	IVariable[] getVariables(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child invariant with the given element name.
@@ -215,25 +169,11 @@ public interface IMachineFile extends IRodinFile {
 
 	/**
 	 * Returns an array containing all invariants of this machine.
-	 * 
 	 * @return an array of invariants
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getInvariants(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	IInvariant[] getInvariants() throws RodinDBException;
-
-	/**
-	 * Returns an array containing all invariants of this machine.
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return an array of invariants
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	IInvariant[] getInvariants(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child theorem with the given element name.
@@ -254,22 +194,8 @@ public interface IMachineFile extends IRodinFile {
 	 * @return an array of theorems
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getTheorems(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ITheorem[] getTheorems() throws RodinDBException;
-
-	/**
-	 * Returns an array containing all theorems of this machine.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return an array of theorems
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ITheorem[] getTheorems(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child event with the given element name.
@@ -290,22 +216,8 @@ public interface IMachineFile extends IRodinFile {
 	 * @return an array of events
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getEvents(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	IEvent[] getEvents() throws RodinDBException;
-
-	/**
-	 * Returns an array containing all events of this machine.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return an array of events
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	IEvent[] getEvents(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child variant with the given element name.
@@ -332,29 +244,12 @@ public interface IMachineFile extends IRodinFile {
 	IVariant getVariant() throws RodinDBException;
 
 	/**
-	 * Returns a handle to the variant of this machine.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return a handle to the variant
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getVariants(IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	IVariant getVariant(IProgressMonitor monitor) throws RodinDBException;
-
-	/**
 	 * Returns an array containing all variants of this machine.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return an array of variants
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	IVariant[] getVariants(IProgressMonitor monitor) throws RodinDBException;
+	IVariant[] getVariants() throws RodinDBException;
 
 }

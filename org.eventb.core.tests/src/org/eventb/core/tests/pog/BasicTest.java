@@ -51,10 +51,10 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 		
 		if (forSequent && predicateSet.getElementName().equals(ALLHYP_NAME))
 			return;
-		for (IPOIdentifier identifier : predicateSet.getIdentifiers(null)) {
-			nameSet.add(identifier.getIdentifierString(null));
+		for (IPOIdentifier identifier : predicateSet.getIdentifiers()) {
+			nameSet.add(identifier.getIdentifierString());
 		}
-		IPOPredicateSet parentPredicateSet = predicateSet.getParentPredicateSet(null);
+		IPOPredicateSet parentPredicateSet = predicateSet.getParentPredicateSet();
 		if (parentPredicateSet == null)
 			return;
 		else
@@ -78,7 +78,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 	
 	protected void sequentHasIdentifiers(IPOSequent sequent, String... strings) throws RodinDBException {
 		
-		IPOPredicateSet predicateSet = sequent.getHypotheses(null)[0].getParentPredicateSet(null);
+		IPOPredicateSet predicateSet = sequent.getHypotheses()[0].getParentPredicateSet();
 		
 		Set<String> nameSet = new HashSet<String>(43);
 		
@@ -124,18 +124,18 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 			String predicate) throws Exception {
 		String string = getNormalizedPredicate(predicate, typeEnvironment);
 		assertEquals("goal should be " + string, string, 
-				sequent.getGoals(null)[0].getPredicateString(null));
+				sequent.getGoals()[0].getPredicateString());
 	}
 	
 	private HashSet<String> getPredicatesFromSets(IPOPredicateSet predicateSet) throws Exception {
 		HashSet<String> result = new HashSet<String>(4047);
 		IPOPredicateSet set = predicateSet;
 		while (set != null) {
-			IPOPredicate[] predicates = set.getPredicates(null);
+			IPOPredicate[] predicates = set.getPredicates();
 			for (IPOPredicate predicate : predicates) {
-				result.add(predicate.getPredicateString(null));
+				result.add(predicate.getPredicateString());
 			}
-			set = set.getParentPredicateSet(null);
+			set = set.getParentPredicateSet();
 		}
 		return result;
 	}
@@ -145,7 +145,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 			ITypeEnvironment typeEnvironment, 
 			String... strings) throws Exception {
 		
-		IPOPredicateSet predicateSet = sequent.getHypotheses(null)[0];
+		IPOPredicateSet predicateSet = sequent.getHypotheses()[0];
 		
 		HashSet<String> predicates = getPredicatesFromSets(predicateSet);
 		
@@ -159,7 +159,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 
 	protected void sequentHasNoHypotheses(IPOSequent sequent) throws Exception {
 		
-		IPOPredicateSet predicateSet = sequent.getHypotheses(null)[0];
+		IPOPredicateSet predicateSet = sequent.getHypotheses()[0];
 		
 		HashSet<String> predicates = getPredicatesFromSets(predicateSet);
 		

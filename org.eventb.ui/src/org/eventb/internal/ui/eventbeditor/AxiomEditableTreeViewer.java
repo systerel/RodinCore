@@ -164,9 +164,9 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		case 0: // Commit label
 			try {
 				if (EventBEditorUtils.DEBUG)
-					EventBEditorUtils.debug("Commit : " + axm.getLabel(null)
+					EventBEditorUtils.debug("Commit : " + axm.getLabel()
 							+ " to be : " + text);
-				if (!axm.getLabel(null).equals(text)) {
+				if (!axm.getLabel().equals(text)) {
 					axm.setLabel(text, null);
 				}
 			} catch (RodinDBException e) {
@@ -178,9 +178,9 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		case 1: // Commit predicate
 			try {
 				if (EventBEditorUtils.DEBUG)
-					EventBEditorUtils.debug("Commit content: " + axm.getPredicateString(null)
+					EventBEditorUtils.debug("Commit content: " + axm.getPredicateString()
 							+ " to be : " + text);
-				if (!axm.getPredicateString(null).equals(text)) {
+				if (!axm.getPredicateString().equals(text)) {
 					axm.setPredicateString(text, null);
 				}
 			} catch (RodinDBException e) {

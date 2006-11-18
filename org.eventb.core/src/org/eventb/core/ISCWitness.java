@@ -27,11 +27,9 @@ import org.rodinp.core.RodinCore;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see ILabeledElement#getLabel(IProgressMonitor)
+ * @see ILabeledElement#getLabel()
  * @see ILabeledElement#setLabel(String, IProgressMonitor)
- * @see ISCPredicateElement#getPredicate(FormulaFactory, IProgressMonitor)
- * @see ISCPredicateElement#getPredicate(FormulaFactory, ITypeEnvironment, IProgressMonitor)
- * @see ISCPredicateElement#getPredicateString(IProgressMonitor)
+ * @see ISCPredicateElement#getPredicate(FormulaFactory, ITypeEnvironment)
  * @see ISCPredicateElement#setPredicate(org.eventb.core.ast.Predicate, IProgressMonitor)
  * 
  * @author Stefan Hallerstede

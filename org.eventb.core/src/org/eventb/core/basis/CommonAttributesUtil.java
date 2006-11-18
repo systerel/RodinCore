@@ -22,7 +22,7 @@ import org.rodinp.core.basis.InternalElement;
 class CommonAttributesUtil {
 	
 	public static String getLabel(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
-		return element.getAttributeValue(EventBAttributes.LABEL_ATTRIBUTE, monitor);
+		return element.getAttributeValue(EventBAttributes.LABEL_ATTRIBUTE);
 	}
 	
 	public static void setLabel(InternalElement element, String label, IProgressMonitor monitor) throws RodinDBException {
@@ -30,7 +30,7 @@ class CommonAttributesUtil {
 	}
 
 	public static IRodinElement getSource(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
-		return element.getAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE, monitor);
+		return element.getAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE);
 	}
 	
 	public static void setSource(InternalElement element, IRodinElement source, IProgressMonitor monitor) throws RodinDBException {
@@ -38,7 +38,7 @@ class CommonAttributesUtil {
 	}
 	
 	public static String getComment(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
-		return element.getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE, monitor);
+		return element.getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE);
 	}
 	
 	public static void setComment(InternalElement element, String label, IProgressMonitor monitor) throws RodinDBException {
@@ -56,7 +56,7 @@ class CommonAttributesUtil {
 	//	Attributes related to the PR and PS files
 
 	public static int getConfidence(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
-		return element.getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE, monitor);
+		return element.getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE);
 	}
 	
 	public static void setConfidence(InternalElement element, int confidence, IProgressMonitor monitor) throws RodinDBException {

@@ -8,11 +8,11 @@ import javax.naming.OperationNotSupportedException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRExprRef;
-import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRPredRef;
-import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRProofStore;
 import org.eventb.core.IPRReasonerInput;
+import org.eventb.core.IPRStoredExpr;
+import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRStringInput;
 import org.eventb.core.IPRTypeEnvironment;
 import org.eventb.core.IProofStoreCollector;

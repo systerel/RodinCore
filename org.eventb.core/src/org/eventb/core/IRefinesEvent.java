@@ -47,23 +47,8 @@ public interface IRefinesEvent extends IInternalElement {
 	 * @return the label of the abstract event
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAbstractEventLabel(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	String getAbstractEventLabel() throws RodinDBException;
-
-	/**
-	 * Returns the label of the event that is refined by the event that contains
-	 * this element.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the label of the abstract event
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	String getAbstractEventLabel(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the label of the event that is refined by the event that contains

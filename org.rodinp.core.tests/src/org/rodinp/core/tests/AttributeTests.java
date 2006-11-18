@@ -84,21 +84,21 @@ public class AttributeTests extends ModifyingResourceTests {
 			IAttributeType... expectedTypes) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
-		IAttributeType[] actualTypes = element.getAttributeTypes(null);
+		IAttributeType[] actualTypes = element.getAttributeTypes();
 		Set<IAttributeType> expected =
 			new HashSet<IAttributeType>(Arrays.asList(expectedTypes));
 		Set<IAttributeType> actual =
 			new HashSet<IAttributeType>(Arrays.asList(actualTypes));
 		assertEquals("Unexpected attribute types", expected, actual);
 		for (IAttributeType name: actualTypes) {
-			assertTrue("Returned type should exist", element.hasAttribute(name, null));
+			assertTrue("Returned type should exist", element.hasAttribute(name));
 		}
 		Set<IAttributeType> inexistent =
 			new HashSet<IAttributeType>(knownAttributeTypes);
 		inexistent.removeAll(actual);
 		for (IAttributeType type: inexistent) {
 			assertFalse("Unreturned name shoud not exist",
-					element.hasAttribute(type, null));
+					element.hasAttribute(type));
 		}
 	}
 	
@@ -108,7 +108,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		
 		assertExists("Element should exist", element);
 		assertEquals("Unexpected attribute value", expected,
-				element.getAttributeValue(type, null));
+				element.getAttributeValue(type));
 	}
 	
 	static void assertHandleValue(IInternalElement element,
@@ -117,7 +117,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		
 		assertExists("Element should exist", element);
 		assertEquals("Unexpected attribute value", expected,
-				element.getAttributeValue(type, null));
+				element.getAttributeValue(type));
 	}
 	
 	static void assertIntegerValue(IInternalElement element,
@@ -125,7 +125,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		
 		assertExists("Element should exist", element);
 		assertEquals("Unexpected attribute value", expected,
-				element.getAttributeValue(type, null));
+				element.getAttributeValue(type));
 	}
 	
 	static void assertLongValue(IInternalElement element,
@@ -133,7 +133,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		
 		assertExists("Element should exist", element);
 		assertEquals("Unexpected attribute value", expected,
-				element.getAttributeValue(type, null));
+				element.getAttributeValue(type));
 	}
 	
 	static void assertStringValue(IInternalElement element,
@@ -142,7 +142,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		
 		assertExists("Element should exist", element);
 		assertEquals("Unexpected attribute value", expected,
-				element.getAttributeValue(type, null));
+				element.getAttributeValue(type));
 	}
 	
 //	private void assertNoAttribute(IInternalElement element, IAttributeType type)
@@ -180,7 +180,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		assertExists("Element should exist", element);
 		element.removeAttribute(type, null);
 		assertFalse("Attribute should have been removed", 
-				element.hasAttribute(type, null));
+				element.hasAttribute(type));
 	}
 
 	static void removeAttrNegative(IInternalElement element, IAttributeType type,
@@ -199,9 +199,9 @@ public class AttributeTests extends ModifyingResourceTests {
 		assertExists("Element should exist", element);
 		element.setAttributeValue(type, newValue, null);
 		assertTrue("Attribute should have been created", 
-				element.hasAttribute(type, null));
+				element.hasAttribute(type));
 		assertEquals("New value should have been set",
-				newValue, element.getAttributeValue(type, null));
+				newValue, element.getAttributeValue(type));
 	}
 
 	static void setHandleAttrPositive(IInternalElement element, IAttributeType.Handle type,
@@ -209,9 +209,9 @@ public class AttributeTests extends ModifyingResourceTests {
 		assertExists("Element should exist", element);
 		element.setAttributeValue(type, newValue, null);
 		assertTrue("Attribute should have been created", 
-				element.hasAttribute(type, null));
+				element.hasAttribute(type));
 		assertEquals("New value should have been set",
-				newValue, element.getAttributeValue(type, null));
+				newValue, element.getAttributeValue(type));
 	}
 
 	static void setIntAttrPositive(IInternalElement element, IAttributeType.Integer type,
@@ -219,9 +219,9 @@ public class AttributeTests extends ModifyingResourceTests {
 		assertExists("Element should exist", element);
 		element.setAttributeValue(type, newValue, null);
 		assertTrue("Attribute should have been created", 
-				element.hasAttribute(type, null));
+				element.hasAttribute(type));
 		assertEquals("New value should have been set",
-				newValue, element.getAttributeValue(type, null));
+				newValue, element.getAttributeValue(type));
 	}
 
 	static void setLongAttrPositive(IInternalElement element, IAttributeType.Long type,
@@ -229,9 +229,9 @@ public class AttributeTests extends ModifyingResourceTests {
 		assertExists("Element should exist", element);
 		element.setAttributeValue(type, newValue, null);
 		assertTrue("Attribute should have been created", 
-				element.hasAttribute(type, null));
+				element.hasAttribute(type));
 		assertEquals("New value should have been set",
-				newValue, element.getAttributeValue(type, null));
+				newValue, element.getAttributeValue(type));
 	}
 
 	static void setStringAttrPositive(IInternalElement element, IAttributeType.String type,
@@ -239,9 +239,9 @@ public class AttributeTests extends ModifyingResourceTests {
 		assertExists("Element should exist", element);
 		element.setAttributeValue(type, newValue, null);
 		assertTrue("Attribute should have been created", 
-				element.hasAttribute(type, null));
+				element.hasAttribute(type));
 		assertEquals("New value should have been set",
-				newValue, element.getAttributeValue(type, null));
+				newValue, element.getAttributeValue(type));
 	}
 
 	static void setBoolAttrNegative(IInternalElement element,

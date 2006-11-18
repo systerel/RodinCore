@@ -61,7 +61,7 @@ public abstract class LabeledElementModule extends ProcessorModule {
 		
 		ILabeledElement labeledElement = (ILabeledElement) internalElement;
 		
-		String label = labeledElement.getLabel(monitor);
+		String label = labeledElement.getLabel();
 		
 		ILabelSymbolInfo newSymbolInfo = createLabelSymbolInfo(label, labeledElement, component);
 		

@@ -47,73 +47,28 @@ public class Event extends EventBElement implements IEvent {
 		return ELEMENT_TYPE;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IEvent#getRefinesClauses()
-	 */
-	public IRefinesEvent[] getRefinesClauses(IProgressMonitor monitor) throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
-		return (RefinesEvent[]) elements; 
-	}
-
-	@Deprecated
 	public IRefinesEvent[] getRefinesClauses() throws RodinDBException {
-		return getRefinesClauses(null); 
+		return (RefinesEvent[]) getChildrenOfType(IRefinesEvent.ELEMENT_TYPE); 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IEvent#getVariables()
-	 */
-	public IVariable[] getVariables(IProgressMonitor monitor) throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IVariable.ELEMENT_TYPE);
-		return (Variable[]) elements; 
-	}
-
-	@Deprecated
 	public IVariable[] getVariables() throws RodinDBException {
-		return getVariables(null); 
+		return (Variable[]) getChildrenOfType(IVariable.ELEMENT_TYPE); 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IEvent#getWitnesses()
-	 */
-	public IWitness[] getWitnesses(IProgressMonitor monitor) throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IWitness.ELEMENT_TYPE);
-		return (Witness[]) elements; 
-	}
-	
-	@Deprecated
 	public IWitness[] getWitnesses() throws RodinDBException {
-		return getWitnesses(null); 
+		return (Witness[]) getChildrenOfType(IWitness.ELEMENT_TYPE); 
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IEvent#getGuards()
-	 */
-	public IGuard[] getGuards(IProgressMonitor monitor) throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IGuard.ELEMENT_TYPE);
-		return (Guard[]) elements; 
-	}
-	
-	@Deprecated
 	public IGuard[] getGuards() throws RodinDBException {
-		return getGuards(null); 
+		return (Guard[]) getChildrenOfType(IGuard.ELEMENT_TYPE); 
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IEvent#getActions()
-	 */
-	public IAction[] getActions(IProgressMonitor monitor) throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IAction.ELEMENT_TYPE);
-		return (Action[]) elements; 
-	}
-
-	@Deprecated
 	public IAction[] getActions() throws RodinDBException {
-		return getActions(); 
+		return (Action[]) getChildrenOfType(IAction.ELEMENT_TYPE); 
 	}
 
-	public boolean isInherited(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.INHERITED_ATTRIBUTE, monitor);
+	public boolean isInherited() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.INHERITED_ATTRIBUTE);
 	}
 
 	public void setInherited(boolean inherited, IProgressMonitor monitor) throws RodinDBException {
@@ -129,8 +84,7 @@ public class Event extends EventBElement implements IEvent {
 	}
 
 	public IRefinesEvent getRefinesClause(String elementName) {
-		// TODO Auto-generated method stub
-		return null;
+		return (IRefinesEvent) getInternalElement(IRefinesEvent.ELEMENT_TYPE, elementName);
 	}
 
 	public IVariable getVariable(String elementName) {

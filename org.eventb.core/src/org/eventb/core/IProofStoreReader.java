@@ -8,7 +8,6 @@
 
 package org.eventb.core;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -22,8 +21,8 @@ import org.rodinp.core.RodinDBException;
 public interface IProofStoreReader {
 	
 	FormulaFactory getFormulaFactory();
-	ITypeEnvironment getBaseTypeEnv(IProgressMonitor monitor) throws RodinDBException;
-	Predicate getPredicate(String name,IProgressMonitor monitor) throws RodinDBException;
-	Expression getExpression(String ref, IProgressMonitor monitor)  throws RodinDBException;
+	ITypeEnvironment getBaseTypeEnv() throws RodinDBException;
+	Predicate getPredicate(String name) throws RodinDBException;
+	Expression getExpression(String ref)  throws RodinDBException;
 
 }

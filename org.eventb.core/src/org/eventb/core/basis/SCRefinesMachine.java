@@ -48,12 +48,12 @@ public class SCRefinesMachine extends EventBElement implements
 		return ELEMENT_TYPE;
 	}
 
-	private IRodinElement getAbstractSCMachineHandle(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE, monitor);
+	private IRodinElement getAbstractSCMachineHandle() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE);
 	}
 
-	public ISCMachineFile getAbstractSCMachine(IProgressMonitor monitor) throws RodinDBException {
-		IRodinElement target = getAbstractSCMachineHandle(monitor);
+	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
+		IRodinElement target = getAbstractSCMachineHandle();
 		if (! (target instanceof ISCMachineFile)) {
 			throw Util.newRodinDBException(
 					Messages.database_SCRefinesMachineTypeFailure,
@@ -65,11 +65,6 @@ public class SCRefinesMachine extends EventBElement implements
 	public void setAbstractSCMachine(ISCMachineFile abstractSCMachine, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE, abstractSCMachine, monitor);
-	}
-
-	@Deprecated
-	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
-		return getAbstractSCMachine(null);
 	}
 
 	@Deprecated

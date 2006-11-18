@@ -163,7 +163,7 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 		switch (col) {
 		case 0: // Commit label
 			try {
-				if (!inv.getLabel(null).equals(text)) {
+				if (!inv.getLabel().equals(text)) {
 					inv.setLabel(text, null);
 				}
 			} catch (RodinDBException e) {
@@ -174,7 +174,7 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 
 		case 1: // Commit content
 			try {
-				if (!inv.getPredicateString(null).equals(text)) {
+				if (!inv.getPredicateString().equals(text)) {
 					inv.setPredicateString(text, null);
 				}
 			} catch (RodinDBException e) {

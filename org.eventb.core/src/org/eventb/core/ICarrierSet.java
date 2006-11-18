@@ -23,7 +23,7 @@ import org.rodinp.core.RodinCore;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see IIdentifierElement#getIdentifierString(IProgressMonitor)
+ * @see IIdentifierElement#getIdentifierString()
  * @see IIdentifierElement#setIdentifierString(String,IProgressMonitor)
  * 
  * @author Laurent Voisin

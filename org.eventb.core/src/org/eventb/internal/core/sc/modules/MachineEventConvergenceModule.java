@@ -54,7 +54,7 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 		
 		IEvent event = (IEvent) element;
 		
-		int convergence = event.getConvergence(null);
+		int convergence = event.getConvergence();
 		
 		List<IAbstractEventInfo> abstractEventInfos = eventRefinesInfo.getAbstractEventInfos();
 		if (abstractEventInfos.size() != 0) { // not a new event
@@ -84,8 +84,8 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 		boolean ok = true;
 		for (IAbstractEventInfo abstractEventInfo : abstractEventInfos) {
 			if (i++ == 0)
-				abstractConvergence = abstractEventInfo.getEvent().getConvergence(monitor);
-			else if (abstractEventInfo.getEvent().getConvergence(monitor) != abstractConvergence)
+				abstractConvergence = abstractEventInfo.getEvent().getConvergence();
+			else if (abstractEventInfo.getEvent().getConvergence() != abstractConvergence)
 				ok = false;
 		}
 		if (!ok) {

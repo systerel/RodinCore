@@ -43,7 +43,7 @@ public abstract class ExpressionModule extends LabeledFormulaModule {
 		
 		IExpressionElement expressionElement = (IExpressionElement) formulaElement;
 
-		String expressionString = expressionElement.getExpressionString(null);
+		String expressionString = expressionElement.getExpressionString();
 		
 		// parse the predicate
 		

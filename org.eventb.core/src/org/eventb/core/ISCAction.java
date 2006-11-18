@@ -29,9 +29,9 @@ import org.rodinp.core.RodinCore;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see ILabeledElement#getLabel(IProgressMonitor)
+ * @see ILabeledElement#getLabel()
  * @see ILabeledElement#setLabel(String, IProgressMonitor)
- * @see ISCAssignmentElement#getAssignment(FormulaFactory,ITypeEnvironment, IProgressMonitor)
+ * @see ISCAssignmentElement#getAssignment(FormulaFactory,ITypeEnvironment)
  * @see ISCAssignmentElement#setAssignment(Assignment, IProgressMonitor)
  * 
  * @author Stefan Hallerstede

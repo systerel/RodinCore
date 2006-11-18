@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -72,20 +70,12 @@ public class POFile extends RodinFile implements IPOFile {
 	
 	@Deprecated
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(POIdentifier.ELEMENT_TYPE);
-		POIdentifier[] identifiers = new POIdentifier[list.size()];
-		list.toArray(identifiers);
-		return identifiers;
+		return (POIdentifier[]) getChildrenOfType(POIdentifier.ELEMENT_TYPE);
 	}
 
-	public IPOSequent[] getSequents(IProgressMonitor monitor) throws RodinDBException {
+	public IPOSequent[] getSequents() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IPOSequent.ELEMENT_TYPE);
 		return (POSequent[]) elements; 
-	}
-
-	@Deprecated
-	public IPOSequent[] getSequents() throws RodinDBException {
-		return getSequents(null);
 	}
 
 	public ISCContextFile getSCContext() {
@@ -116,7 +106,7 @@ public class POFile extends RodinFile implements IPOFile {
 		return (IPSFile) project.getRodinFile(psName);
 	}
 
-	public IPOPredicateSet[] getPredicateSets(IProgressMonitor monitor) throws RodinDBException {
+	public IPOPredicateSet[] getPredicateSets() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(POPredicateSet.ELEMENT_TYPE);
 		return (IPOPredicateSet[]) elements;
 	}

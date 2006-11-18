@@ -20,7 +20,7 @@ import org.rodinp.core.RodinCore;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see ILabeledElement#getLabel(IProgressMonitor)
+ * @see ILabeledElement#getLabel()
  * @see ILabeledElement#setLabel(String, IProgressMonitor)
  * 
  * @author Stefan Hallerstede

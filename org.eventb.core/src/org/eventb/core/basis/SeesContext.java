@@ -47,30 +47,20 @@ public class SeesContext extends InternalElement implements ISeesContext {
 		return ELEMENT_TYPE;
 	}
 
-	@Deprecated
 	public ISCContextFile getSeenSCContext() throws RodinDBException {
-		return getSeenSCContext(null);
-	}
-
-	public ISCContextFile getSeenSCContext(IProgressMonitor monitor) throws RodinDBException {
-		final String bareName = getSeenContextName(null);
+		final String bareName = getSeenContextName();
 		final String scName = EventBPlugin.getSCContextFileName(bareName);
 		final IRodinProject project = getRodinProject();
 		return (ISCContextFile) project.getRodinFile(scName);
 	}
 
-	public String getSeenContextName(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, monitor);
+	public String getSeenContextName() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
 	public void setSeenContextName(String name, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, name, monitor);
-	}
-
-	@Deprecated
-	public String getSeenContextName() throws RodinDBException {
-		return getSeenContextName(null);
 	}
 
 	@Deprecated

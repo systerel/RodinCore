@@ -25,9 +25,9 @@ import org.rodinp.core.RodinCore;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.eventb.core.ILabeledElement#getLabel(IProgressMonitor)
+ * @see org.eventb.core.ILabeledElement#getLabel()
  * @see org.eventb.core.ILabeledElement#setLabel(String, IProgressMonitor)
- * @see org.eventb.core.IPredicateElement#getPredicateString(IProgressMonitor)
+ * @see org.eventb.core.IPredicateElement#getPredicateString()
  * @see org.eventb.core.IPredicateElement#setPredicateString(String, IProgressMonitor)
  * 
  * @author Laurent Voisin

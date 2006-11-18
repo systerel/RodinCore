@@ -1,6 +1,5 @@
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
@@ -106,7 +105,7 @@ public class CommentToolTip {
 			this.text = text;
 			this.element = element;
 			try {
-				original = element.getComment(new NullProgressMonitor());
+				original = element.getComment();
 			} catch (RodinDBException e) {
 				original = "";
 			}
@@ -154,7 +153,7 @@ public class CommentToolTip {
 	protected String getToolTipText(ICommentedElement element) {
 		String comments;
 		try {
-			comments = element.getComment(new NullProgressMonitor());
+			comments = element.getComment();
 		} catch (RodinDBException e) {
 			comments = "";
 		}
@@ -389,7 +388,7 @@ public class CommentToolTip {
 			Text text = new Text(helpShell, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 
 			try {
-				text.setText(element.getComment(new NullProgressMonitor()));
+				text.setText(element.getComment());
 			} catch (RodinDBException e1) {
 				text.setText("");
 			}

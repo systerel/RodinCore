@@ -46,7 +46,7 @@ public abstract class PredicateModule extends LabeledFormulaModule {
 		
 		IPredicateElement predicateElement = (IPredicateElement) formulaElement;
 
-		String predicateString = predicateElement.getPredicateString(null);
+		String predicateString = predicateElement.getPredicateString();
 		
 		// parse the predicate
 		

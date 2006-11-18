@@ -45,12 +45,9 @@ public interface IConvergenceElement extends IInternalElement {
 	/**
 	 * Returns the convergence stored in this attribute.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return the convergence; one of  {@link IConvergenceElement#ORDINARY}, 
 	 * {@link IConvergenceElement#CONVERGENT}, {@link IConvergenceElement#ANTICIPATED}
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	int getConvergence(IProgressMonitor monitor) throws RodinDBException;
+	int getConvergence() throws RodinDBException;
 }

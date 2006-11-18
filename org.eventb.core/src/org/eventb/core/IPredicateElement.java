@@ -33,23 +33,8 @@ public interface IPredicateElement extends IInternalElement {
 	 * @return the predicate of this element as a string
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getPredicateString(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	String getPredicateString() throws RodinDBException;
-
-	/**
-	 * Returns the string representation of the predicate contained in this
-	 * element.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the predicate of this element as a string
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	String getPredicateString(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the string representation of the predicate contained in this

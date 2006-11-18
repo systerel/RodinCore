@@ -8,7 +8,6 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRProofSkelNode;
@@ -35,13 +34,13 @@ public class PRProofSkelNode extends EventBProofElement implements IPRProofSkelN
 		return ELEMENT_TYPE;
 	}
 	
-	public IProofSkeleton getSkeleton(IProofStoreReader store, SubProgressMonitor monitor) throws RodinDBException {
+	public IProofSkeleton getSkeleton(IProofStoreReader store) throws RodinDBException {
 		final String comment = getCommentChecked(null);
-		final IProofRule proofRule = getRule(store, monitor);
+		final IProofRule proofRule = getRule(store);
 		final IRodinElement[] prChildNodes = getChildrenOfType(IPRProofSkelNode.ELEMENT_TYPE);
 		final IProofSkeleton[] childNodes = new IProofSkeleton[prChildNodes.length];
 		for (int i = 0; i < childNodes.length; i++) {
-			childNodes[i] = ((IPRProofSkelNode) prChildNodes[i]).getSkeleton(store, monitor);
+			childNodes[i] = ((IPRProofSkelNode) prChildNodes[i]).getSkeleton(store);
 		}
 		
 		// if (monitor.isCanceled()) throw new OperationCanceledException();
@@ -66,10 +65,10 @@ public class PRProofSkelNode extends EventBProofElement implements IPRProofSkelN
 	}
 
 
-	private IProofRule getRule(IProofStoreReader store, SubProgressMonitor monitor) throws RodinDBException {
+	private IProofRule getRule(IProofStoreReader store) throws RodinDBException {
 		IRodinElement[] rules =  getChildrenOfType(IPRProofRule.ELEMENT_TYPE);
 		if (rules.length == 0) return null;
-		return ((IPRProofRule) rules[0]).getProofRule(store, monitor);
+		return ((IPRProofRule) rules[0]).getProofRule(store);
 	}
 
 	public void setSkeleton(IProofSkeleton skel, IProofStoreCollector store,IProgressMonitor monitor) throws RodinDBException {
@@ -79,17 +78,18 @@ public class PRProofSkelNode extends EventBProofElement implements IPRProofSkelN
 		if (skel.getRule() == null) return;
 				
 		IPRProofRule prRule = (IPRProofRule)
-		createInternalElement(
+		getInternalElement(
 				IPRProofRule.ELEMENT_TYPE,
-				skel.getRule().generatedBy().getReasonerID(),
-				null,null);
+				skel.getRule().generatedBy().getReasonerID());
+		prRule.create(null,null);
 		
 		prRule.setProofRule(skel.getRule(), store, monitor);
 		
 		IProofSkeleton[] skelChildren = skel.getChildNodes();
 		for (int i = 0; i < skelChildren.length; i++) {
-			IPRProofSkelNode child = (IPRProofSkelNode)
-			createInternalElement(IPRProofSkelNode.ELEMENT_TYPE,Integer.toString(i),null,null);
+			IPRProofSkelNode child = (IPRProofSkelNode) getInternalElement(
+					IPRProofSkelNode.ELEMENT_TYPE, Integer.toString(i));
+			child.create(null, null);
 			child.setSkeleton(skelChildren[i], store, monitor);
 		}
 	}
@@ -101,8 +101,8 @@ public class PRProofSkelNode extends EventBProofElement implements IPRProofSkelN
 	}
 	
 	public String getCommentChecked(IProgressMonitor monitor) throws RodinDBException {
-		if (hasComment(monitor))
-			return getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE, monitor);
+		if (hasComment())
+			return getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE);
 		else
 			return "";
 	}

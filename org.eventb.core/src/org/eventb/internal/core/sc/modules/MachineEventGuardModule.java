@@ -69,7 +69,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 
 		IEvent event = (IEvent) element;
 		
-		IGuard[] guards = event.getGuards(null);
+		IGuard[] guards = event.getGuards();
 		
 		Predicate[] predicates = new Predicate[guards.length];
 		
@@ -94,7 +94,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 			IEvent event, 
 			IGuard[] guards, 
 			IProgressMonitor monitor) throws RodinDBException {
-		if (event.getLabel(monitor).contains(IEvent.INITIALISATION))
+		if (event.getLabel().contains(IEvent.INITIALISATION))
 			if (guards.length > 0) {
 				for (IGuard guard : guards)
 					createProblemMarker(
@@ -122,7 +122,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 				continue;
 			ISCGuard scGuard = target.getSCGuard(GUARD_NAME_PREFIX + index++);
 			scGuard.create(null, monitor);
-			scGuard.setLabel(guards[i].getLabel(monitor), monitor);
+			scGuard.setLabel(guards[i].getLabel(), monitor);
 			scGuard.setPredicate(predicates[i], null);
 			scGuard.setSource(guards[i], monitor);
 		}

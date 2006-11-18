@@ -136,7 +136,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			FormulaFactory factory, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		ISCEvent[] events = scMachineFile.getSCEvents(null);
+		ISCEvent[] events = scMachineFile.getSCEvents();
 		
 		for (ISCEvent event : events) {
 			
@@ -152,7 +152,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			FormulaFactory factory, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		ISCInternalContext[] contexts = scMachineFile.getSCSeenContexts(null);
+		ISCInternalContext[] contexts = scMachineFile.getSCSeenContexts();
 		
 		for (ISCInternalContext context : contexts) {
 			
@@ -160,7 +160,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			
 			contextTable.addContext(component, context);
 			
-			ISCCarrierSet[] sets = context.getSCCarrierSets(null);
+			ISCCarrierSet[] sets = context.getSCCarrierSets();
 			
 			for (ISCCarrierSet set : sets) {
 				IIdentifierSymbolInfo symbolInfo =
@@ -173,7 +173,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 				symbolInfo.setImmutable();
 			}
 			
-			ISCConstant[] constants = context.getSCConstants(null);
+			ISCConstant[] constants = context.getSCConstants();
 			
 			for (ISCConstant constant : constants) {
 				IIdentifierSymbolInfo symbolInfo =
@@ -195,7 +195,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			FormulaFactory factory, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		ISCVariable[] variables = scMachineFile.getSCVariables(null);
+		ISCVariable[] variables = scMachineFile.getSCVariables();
 		
 		if (variables.length == 0)
 			return;
@@ -208,7 +208,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 						identifierSymbolTable, 
 						factory, 
 						abstractVariableCreator);
-			if (variable.isForbidden(monitor))
+			if (variable.isForbidden())
 				symbolInfo.setForbidden();
 			symbolInfo.setImmutable();
 		}
@@ -222,9 +222,9 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			FormulaFactory factory,
 			IIdentifierSymbolInfoCreator creator) throws CoreException {
 		
-		String name = identifier.getIdentifierString(null);
+		String name = identifier.getIdentifierString();
 		
-		Type type = identifier.getType(factory, null);
+		Type type = identifier.getType(factory);
 		
 		IIdentifierSymbolInfo symbolInfo = 
 			creator.createIdentifierSymbolInfo(name, identifier, pointerElement);
@@ -246,11 +246,11 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			FormulaFactory factory,
 			IProgressMonitor monitor) throws CoreException {
 		
-		String label = event.getLabel(monitor);
+		String label = event.getLabel();
 		
 		IAbstractEventInfo abstractEventInfo;
 		
-		boolean forbidden = event.isForbidden(monitor);
+		boolean forbidden = event.isForbidden();
 		
 		if (forbidden) {
 			abstractEventInfo =
@@ -277,11 +277,11 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	private FreeIdentifier[] fetchEventVariables(
 			ISCEvent event, 
 			FormulaFactory factory) throws CoreException {
-		ISCVariable[] variables = event.getSCVariables(null);
+		ISCVariable[] variables = event.getSCVariables();
 		FreeIdentifier[] identifiers = new FreeIdentifier[variables.length];
 		
 		for (int i=0; i<variables.length; i++) {
-			identifiers[i] = variables[i].getIdentifier(factory, null);
+			identifiers[i] = variables[i].getIdentifier(factory);
 		}
 		
 		return identifiers;
@@ -290,11 +290,11 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	private Predicate[] fetchEventGuards(
 			ISCEvent event, 
 			FormulaFactory factory) throws CoreException {
-		ISCGuard[] guards = event.getSCGuards(null);
+		ISCGuard[] guards = event.getSCGuards();
 		Predicate[] predicates = new Predicate[guards.length];
 		
 		for (int i=0; i<guards.length; i++) {
-			predicates[i] = guards[i].getPredicate(factory, (IProgressMonitor) null);
+			predicates[i] = guards[i].getPredicate(factory);
 		}
 		return predicates;
 	}
@@ -302,11 +302,11 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	private Assignment[] fetchEventActions(
 			ISCEvent event, 
 			FormulaFactory factory) throws CoreException {
-		ISCAction[] actions = event.getSCActions(null);
+		ISCAction[] actions = event.getSCActions();
 		Assignment[] assignments = new Assignment[actions.length];
 		
 		for (int i=0; i<actions.length; i++) {
-			assignments[i] = actions[i].getAssignment(factory, (IProgressMonitor) null);
+			assignments[i] = actions[i].getAssignment(factory);
 		}
 		return assignments;
 	}
@@ -329,7 +329,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		IRefinesMachine[] refinesMachines = machineFile.getRefinesClauses(null);
+		IRefinesMachine[] refinesMachines = machineFile.getRefinesClauses();
 		
 		if (refinesMachines.length > 1) {
 			for (int k=1; k<refinesMachines.length; k++) {
@@ -343,7 +343,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		refinesMachine = refinesMachines.length == 0 ? null : refinesMachines[0];
 		
 		scMachineFile = 
-			(refinesMachine == null) ? null : refinesMachine.getAbstractSCMachine(null);
+			(refinesMachine == null) ? null : refinesMachine.getAbstractSCMachine();
 		
 		if (scMachineFile != null && !scMachineFile.exists()) {
 			createProblemMarker(

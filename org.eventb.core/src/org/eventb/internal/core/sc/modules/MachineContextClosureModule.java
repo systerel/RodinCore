@@ -44,14 +44,14 @@ public class MachineContextClosureModule extends ProcessorModule {
 		
 		IMachineFile machineFile = (IMachineFile) element;
 
-		IRefinesMachine[] refinesMachines = machineFile.getRefinesClauses(monitor);
+		IRefinesMachine[] refinesMachines = machineFile.getRefinesClauses();
 		
 		if (refinesMachines.length == 0)
 			return;
 		
-		ISCMachineFile scMachineFile = refinesMachines[0].getAbstractSCMachine(monitor);
+		ISCMachineFile scMachineFile = refinesMachines[0].getAbstractSCMachine();
 		
-		ISCInternalContext[] abstractContexts = scMachineFile.getSCSeenContexts(monitor);
+		ISCInternalContext[] abstractContexts = scMachineFile.getSCSeenContexts();
 		
 		if (abstractContexts.length == 0)
 			return;

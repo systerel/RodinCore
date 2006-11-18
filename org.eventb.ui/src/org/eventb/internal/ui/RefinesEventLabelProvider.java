@@ -9,7 +9,7 @@ public class RefinesEventLabelProvider implements IElementLabelProvider {
 	public String getLabel(Object obj) {
 		if (obj instanceof IRefinesEvent) {
 			try {
-				return ((IRefinesEvent) obj).getAbstractEventLabel(null);
+				return ((IRefinesEvent) obj).getAbstractEventLabel();
 			} catch (RodinDBException e) {
 				if (UIUtils.DEBUG)
 					e.printStackTrace();

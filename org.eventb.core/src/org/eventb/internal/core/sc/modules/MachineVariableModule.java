@@ -51,7 +51,7 @@ public class MachineVariableModule extends IdentifierModule {
 
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		IVariable[] variables = machineFile.getVariables(null);
+		IVariable[] variables = machineFile.getVariables();
 		
 		if(variables.length == 0)
 			return;

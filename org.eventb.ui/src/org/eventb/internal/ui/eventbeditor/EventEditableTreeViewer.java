@@ -201,12 +201,12 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 			try {
 				if (element instanceof IPredicateElement) {
 					IPredicateElement predicateElement = (IPredicateElement) element;
-					if (!predicateElement.getPredicateString(monitor).equals(text)) {
+					if (!predicateElement.getPredicateString().equals(text)) {
 						predicateElement.setPredicateString(text, monitor);
 					}
 				} else if (element instanceof IAssignmentElement) {
 					IAssignmentElement assignmentElement = (IAssignmentElement) element;
-					if (!assignmentElement.getAssignmentString(monitor).equals(text)) {
+					if (!assignmentElement.getAssignmentString().equals(text)) {
 						assignmentElement.setAssignmentString(text, monitor);
 					}
 				}

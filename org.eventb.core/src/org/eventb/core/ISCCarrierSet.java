@@ -29,7 +29,7 @@ import org.rodinp.core.RodinCore;
  * </p>
  * 
  * @see org.rodinp.core.IRodinElement#getElementName()
- * @see ISCIdentifierElement#getType(FormulaFactory, IProgressMonitor)
+ * @see ISCIdentifierElement#getType(FormulaFactory)
  * @see ISCIdentifierElement#setType(Type, IProgressMonitor)
  * 
  * @author Stefan Hallerstede

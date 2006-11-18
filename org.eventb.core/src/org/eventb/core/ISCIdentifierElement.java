@@ -40,25 +40,8 @@ public interface ISCIdentifierElement extends IInternalElement {
 	 * @return the type of this identifier
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getType(FormulaFactory,IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	Type getType(FormulaFactory factory) throws RodinDBException;
-
-	/**
-	 * Returns the type of this identifier.
-	 * 
-	 * @param factory
-	 *            the formula factory to use for building the result
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the type of this identifier
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	Type getType(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the type of this element to a new value.
@@ -93,24 +76,8 @@ public interface ISCIdentifierElement extends IInternalElement {
 	 * @return the AST representation of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getIdentifier(FormulaFactory,IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	FreeIdentifier getIdentifier(FormulaFactory factory) throws RodinDBException;
-
-	/**
-	 * Returns the AST corresponding to this element (a free identifier).
-	 * 
-	 * @param factory
-	 *            the formula factory to use for building the result
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the AST representation of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	FreeIdentifier getIdentifier(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns the name of the identifier as a character string.
@@ -125,12 +92,9 @@ public interface ISCIdentifierElement extends IInternalElement {
 	/**
 	 * Returns the name of the identifier as a character string.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return name of the identifier as a character string
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	String getIdentifierString(IProgressMonitor monitor) throws RodinDBException;
+	String getIdentifierString() throws RodinDBException;
 
 }

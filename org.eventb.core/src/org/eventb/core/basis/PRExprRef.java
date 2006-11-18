@@ -22,9 +22,9 @@ public class PRExprRef extends InternalElement implements IPRExprRef{
 		return ELEMENT_TYPE;
 	}
 
-	public Expression getExpression(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException {
-		String ref = getAttributeValue(EventBAttributes.STORE_REF_ATTRIBUTE, monitor);
-		return store.getExpression(ref, monitor);
+	public Expression getExpression(IProofStoreReader store) throws RodinDBException {
+		String ref = getAttributeValue(EventBAttributes.STORE_REF_ATTRIBUTE);
+		return store.getExpression(ref);
 	}
 
 	public void setExpression(Expression expr, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {

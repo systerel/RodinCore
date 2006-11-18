@@ -273,7 +273,7 @@ public class EventBEditorUtils {
 										PrefixRefinesEventName.QUALIFIED_NAME,
 										PrefixRefinesEventName.DEFAULT_PREFIX);
 								String abs_name = ((IEvent) event)
-										.getLabel(monitor);
+										.getLabel();
 								newRefEvt = (IRefinesEvent) event
 										.createInternalElement(
 												IRefinesEvent.ELEMENT_TYPE,
@@ -989,7 +989,7 @@ public class EventBEditorUtils {
 							boolean newInit = true;
 							for (IRodinElement event : events) {
 								IEvent element = (IEvent) event;
-								if (element.getLabel(monitor).equals(
+								if (element.getLabel().equals(
 										"INITIALISATION")) {
 									newInit = false;
 
@@ -1146,7 +1146,7 @@ public class EventBEditorUtils {
 				.getChildrenOfType(IEvent.ELEMENT_TYPE);
 		for (IRodinElement event : events) {
 			IEvent element = (IEvent) event;
-			if (element.getLabel(null).equals("INITIALISATION")) {
+			if (element.getLabel().equals("INITIALISATION")) {
 				return element;
 			}
 		}
@@ -1361,7 +1361,7 @@ public class EventBEditorUtils {
 				.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 		if (refines.length == 1) {
 			IRefinesMachine refine = (IRefinesMachine) refines[0];
-			String name = refine.getAbstractMachineName(null);
+			String name = refine.getAbstractMachineName();
 			IRodinProject prj = concreteFile.getRodinProject();
 			return prj.getRodinFile(EventBPlugin.getMachineFileName(name));
 		}
@@ -1389,7 +1389,7 @@ public class EventBEditorUtils {
 			} else {
 				abstractElement = abstractFile.getInternalElement(
 						IEvent.ELEMENT_TYPE, ((IRefinesEvent) abs_evts[0])
-								.getAbstractEventLabel(null));
+								.getAbstractEventLabel());
 			}
 		}
 		return abstractElement;
@@ -1403,7 +1403,7 @@ public class EventBEditorUtils {
 		if (abs_evts.length != 0) {
 			abs_evt = UIUtils.getFirstChildOfTypeWithLabel(abstractFile,
 					IEvent.ELEMENT_TYPE, ((IRefinesEvent) abs_evts[0])
-							.getAbstractEventLabel(null));
+							.getAbstractEventLabel());
 		} else {
 			// Do nothing at the moment. Should try to get the event with same
 			// name?

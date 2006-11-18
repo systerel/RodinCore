@@ -32,8 +32,8 @@ public class POSource extends EventBElement implements IPOSource {
 	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
-	public String getRole(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.POROLE_ATTRIBUTE, monitor);
+	public String getRole() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.POROLE_ATTRIBUTE);
 	}
 	
 	@Deprecated

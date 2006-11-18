@@ -58,16 +58,16 @@ public class PSStatus extends InternalElement implements IPSStatus {
 	}
 
 
-	public boolean getProofValidAttribute(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, monitor);
+	public boolean getProofValidAttribute() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE);
 	}
 
 	public void setProofValidAttribute(boolean valid, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, valid,monitor);
 	}
 		
-	public int getProofConfidence(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE, monitor);
+	public int getProofConfidence() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE);
 	}
 	
 	public void setProofConfidence(int confidence, IProgressMonitor monitor) throws RodinDBException {
@@ -82,13 +82,13 @@ public class PSStatus extends InternalElement implements IPSStatus {
 		return poSeq;
 	}
 
-	public boolean hasAutoProofAttribute(IProgressMonitor monitor) throws RodinDBException {
-		return hasAttribute(EventBAttributes.AUTO_PROOF_ATTRIBUTE, monitor);
+	public boolean hasAutoProofAttribute() throws RodinDBException {
+		return hasAttribute(EventBAttributes.AUTO_PROOF_ATTRIBUTE);
 	}
 
-	public boolean getAutoProofAttribute(IProgressMonitor monitor) throws RodinDBException {
+	public boolean getAutoProofAttribute() throws RodinDBException {
 		// if (!hasAutoProofAttribute(monitor)) return false;
-		return getAttributeValue(EventBAttributes.AUTO_PROOF_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.AUTO_PROOF_ATTRIBUTE);
 	}
 	
 	public void setAutoProofAttribute(boolean autoProof, IProgressMonitor monitor) throws RodinDBException {

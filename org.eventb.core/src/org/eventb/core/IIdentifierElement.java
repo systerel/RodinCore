@@ -28,19 +28,6 @@ import org.rodinp.core.RodinDBException;
 public interface IIdentifierElement extends IInternalElement {
 
 	/**
-	 * This method is deprecated; use <code>getIdentifierString(IProgressMonitor)</code> instead.
-	 * 
-	 * Returns the string representation of the identifier contained in this
-	 * element.
-	 * 
-	 * @return the identifier of this element as a string
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	@Deprecated
-	String getIdentifierString() throws RodinDBException;
-
-	/**
 	 * This method is deprecated; use <code>setIdentifierString(String,IProgressMonitor)</code> instead.
 	 * 
 	 * Sets the string representation of the identifier contained in this
@@ -58,14 +45,11 @@ public interface IIdentifierElement extends IInternalElement {
 	 * Returns the string representation of the identifier contained in this
 	 * element.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return the identifier of this element as a string
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	String getIdentifierString(IProgressMonitor monitor) throws RodinDBException;
+	String getIdentifierString() throws RodinDBException;
 
 	/**
 	 * Sets the string representation of the identifier contained in this

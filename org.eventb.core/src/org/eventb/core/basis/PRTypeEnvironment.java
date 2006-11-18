@@ -13,12 +13,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRTypeEnvironment;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author Farhad Mehta
@@ -35,9 +33,9 @@ public class PRTypeEnvironment extends EventBProofElement implements IPRTypeEnvi
 		return ELEMENT_TYPE;
 	}
 
-	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
+	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory) throws RodinDBException {
 		ITypeEnvironment typEnv = factory.makeTypeEnvironment();
-		typEnv.addAll(getFreeIdents(factory, monitor));
+		typEnv.addAll(getFreeIdents(factory));
 		return typEnv;
 	}
 	
@@ -49,11 +47,9 @@ public class PRTypeEnvironment extends EventBProofElement implements IPRTypeEnvi
 		Set<String> names = typeEnv.getNames();
 		
 		for (String name : names) {			
-			IPRIdentifier prIdent = (IPRIdentifier) 
-			this.createInternalElement(
-					IPRIdentifier.ELEMENT_TYPE,
-					name,
-					null,monitor);
+			IPRIdentifier prIdent = (IPRIdentifier) getInternalElement(
+					IPRIdentifier.ELEMENT_TYPE, name);
+			prIdent.create(null,monitor);
 			prIdent.setType(typeEnv.getType(name), monitor);			
 		}
 		

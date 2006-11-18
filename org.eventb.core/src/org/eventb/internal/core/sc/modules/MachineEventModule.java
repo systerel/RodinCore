@@ -186,7 +186,7 @@ public class MachineEventModule extends LabeledElementModule {
 			issueRefinementErrorMarker(symbolInfo);
 			
 			for (IRefinesEvent refinesEvent : refinesInfo.getRefinesEvents())
-				if (refinesEvent.getAbstractEventLabel(null).equals(abstractEventLabel))
+				if (refinesEvent.getAbstractEventLabel().equals(abstractEventLabel))
 					createProblemMarker(
 							refinesEvent, 
 							problem,
@@ -235,7 +235,7 @@ public class MachineEventModule extends LabeledElementModule {
 				
 		for (int i=0; i<refinesEvents.length; i++) {
 			
-			String label = refinesEvents[i].getAbstractEventLabel(null);
+			String label = refinesEvents[i].getAbstractEventLabel();
 			
 			// filter duplicates
 			if (abstractLabels != null)
@@ -289,16 +289,16 @@ public class MachineEventModule extends LabeledElementModule {
 			
 			if (actions != null && !actionError)
 				if (firstAction) {
-					for (ISCAction action : abstractEventInfo.getEvent().getSCActions(null)) {
-						actions.add(action.getAssignmentString(null));
+					for (ISCAction action : abstractEventInfo.getEvent().getSCActions()) {
+						actions.add(action.getAssignmentString());
 					}
 					firstAction = false;
 				} else {
-					ISCAction[] scActions = abstractEventInfo.getEvent().getSCActions(null);
+					ISCAction[] scActions = abstractEventInfo.getEvent().getSCActions();
 					boolean ok = scActions.length == actions.size();
 					if (ok)
 						for (ISCAction action : scActions) {
-							if (actions.contains(action.getAssignmentString(null)))
+							if (actions.contains(action.getAssignmentString()))
 								continue;
 							ok = false;
 							break;
@@ -441,10 +441,10 @@ public class MachineEventModule extends LabeledElementModule {
 			IEventSymbolInfo symbolInfo, 
 			boolean isInit, 
 			IProgressMonitor monitor) throws RodinDBException, CoreException {
-		boolean inherited = event.isInherited(monitor);
+		boolean inherited = event.isInherited();
 		
 		if (isInit && !inherited) {
-			if (machineFile.getRefinesClauses(monitor).length != 0)
+			if (machineFile.getRefinesClauses().length != 0)
 				makeImplicitRefinement(event, symbolInfo);
 		}
 		
@@ -453,7 +453,7 @@ public class MachineEventModule extends LabeledElementModule {
 			
 			makeImplicitRefinement(event, symbolInfo);
 		} else {
-			boolean found = fetchRefineData(symbolInfo, event.getRefinesClauses(null), monitor);
+			boolean found = fetchRefineData(symbolInfo, event.getRefinesClauses(), monitor);
 			if (!found && !isInit) {
 				IAbstractEventInfo abstractEventInfo =
 					abstractEventTable.getAbstractEventInfo(symbolInfo.getSymbol());
@@ -521,7 +521,7 @@ public class MachineEventModule extends LabeledElementModule {
 		super.initModule(element, repository, monitor);
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		events = machineFile.getEvents(null);
+		events = machineFile.getEvents();
 		
 		abstractEventTable =
 			(IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);

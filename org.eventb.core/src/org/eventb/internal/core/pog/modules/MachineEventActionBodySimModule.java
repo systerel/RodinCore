@@ -65,7 +65,7 @@ public class MachineEventActionBodySimModule extends
 		ArrayList<Assignment> simAssignments = abstractEventActionTable.getSimAssignments();
 		ArrayList<ISCAction> simActions = abstractEventActionTable.getSimActions();
 		for (int i=0; i<simActions.size(); i++) {
-			String actionLabel = simActions.get(i).getLabel(monitor);
+			String actionLabel = simActions.get(i).getLabel();
 			Predicate predicate = simAssignments.get(i).getBAPredicate(factory);
 			LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 			substitution.addAll(witnessTable.getMachinePrimedDetAssignments());

@@ -47,12 +47,12 @@ public class SCRefinesEvent extends EventBElement implements ISCRefinesEvent {
 		return ELEMENT_TYPE;
 	}
 	
-	private IRodinElement getAbstractSCEventHandle(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE, monitor);
+	private IRodinElement getAbstractSCEventHandle() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE);
 	}
 
-	public ISCEvent getAbstractSCEvent(IProgressMonitor monitor) throws RodinDBException {
-		IRodinElement target = getAbstractSCEventHandle(monitor);
+	public ISCEvent getAbstractSCEvent() throws RodinDBException {
+		IRodinElement target = getAbstractSCEventHandle();
 		if (! (target instanceof ISCEvent)) {
 			throw Util.newRodinDBException(
 					Messages.database_SCRefinesEventTypeFailure,
@@ -64,11 +64,6 @@ public class SCRefinesEvent extends EventBElement implements ISCRefinesEvent {
 	public void setAbstractSCEvent(ISCEvent abstractSCEvent, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE, abstractSCEvent, monitor);
-	}
-
-	@Deprecated
-	public ISCEvent getAbstractSCEvent() throws RodinDBException {
-		return getAbstractSCEvent(null);
 	}
 
 	@Deprecated

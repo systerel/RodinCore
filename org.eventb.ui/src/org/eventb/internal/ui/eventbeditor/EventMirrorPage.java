@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.IAction;
@@ -106,7 +105,7 @@ public class EventMirrorPage extends EventBMirrorPage implements
 							+ UIUtils.makeHyperlink(guards[j].getElementName())
 							+ ": "
 							+ UIUtils.XMLWrapUp(((IGuard) guards[j])
-									.getPredicateString(null));
+									.getPredicateString());
 					formString = formString + "</li>";
 				}
 
@@ -121,7 +120,7 @@ public class EventMirrorPage extends EventBMirrorPage implements
 							+ "<li style=\"text\" value=\"\" bindent=\"40\">";
 					formString = formString
 							+ UIUtils.makeHyperlink(((IAction) actions[j])
-									.getAssignmentString(null));
+									.getAssignmentString());
 					formString = formString + "</li>";
 				}
 				formString = formString
@@ -151,9 +150,9 @@ public class EventMirrorPage extends EventBMirrorPage implements
 			public void linkActivated(HyperlinkEvent e) {
 				IRodinFile rodinFile = editor.getRodinInput();
 				try {
-					IEvent[] events = ((IMachineFile) rodinFile).getEvents(null);
+					IEvent[] events = ((IMachineFile) rodinFile).getEvents();
 					for (int i = 0; i < events.length; i++) {
-						if (e.getHref().equals(events[i].getLabel(null))) {
+						if (e.getHref().equals(events[i].getLabel())) {
 							editor.edit(events[i]);
 						}
 						IRodinElement[] lvars = events[i]
@@ -165,19 +164,19 @@ public class EventMirrorPage extends EventBMirrorPage implements
 						for (int j = 0; j < lvars.length; j++) {
 							if (e.getHref().equals(
 									((IVariable) lvars[j])
-											.getIdentifierString(new NullProgressMonitor()))) {
+											.getIdentifierString())) {
 								editor.edit(lvars[j]);
 							}
 						}
 						for (int j = 0; j < guards.length; j++) {
-							if (e.getHref().equals(((IGuard) guards[j]).getLabel(null))) {
+							if (e.getHref().equals(((IGuard) guards[j]).getLabel())) {
 								editor.edit(guards[j]);
 							}
 						}
 						for (int j = 0; j < actions.length; j++) {
 							if (e.getHref().equals(
 									((IAction) actions[j])
-											.getAssignmentString(null))) {
+											.getAssignmentString())) {
 								editor.edit(actions[j]);
 							}
 						}

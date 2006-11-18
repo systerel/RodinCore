@@ -22,9 +22,9 @@ public class PRPredRef extends InternalElement implements IPRPredRef{
 		return ELEMENT_TYPE;
 	}
 
-	public Predicate getPredicate(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException {
-		String ref = getAttributeValue(EventBAttributes.STORE_REF_ATTRIBUTE, monitor);
-		return store.getPredicate(ref, monitor);
+	public Predicate getPredicate(IProofStoreReader store) throws RodinDBException {
+		String ref = getAttributeValue(EventBAttributes.STORE_REF_ATTRIBUTE);
+		return store.getPredicate(ref);
 	}
 
 	public void setPredicate(Predicate pred, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {

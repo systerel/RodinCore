@@ -71,21 +71,21 @@ public class MachineEventHypothesisModule extends Module {
 		
 		IAbstractEventActionTable abstractEventActionTable = 
 			new AbstractEventActionTable(
-					(abstractEvent == null ? new ISCAction[0] : abstractEvent.getSCActions(null)), 
+					(abstractEvent == null ? new ISCAction[0] : abstractEvent.getSCActions()), 
 					eventTypeEnvironment, 
 					machineVariableTable,
 					factory);
 		repository.setState(abstractEventActionTable);
 		IConcreteEventActionTable concreteEventActionTable =
 			new ConcreteEventActionTable(
-					concreteEvent.getSCActions(null), 
+					concreteEvent.getSCActions(), 
 					eventTypeEnvironment, 
 					machineVariableTable, 
 					factory);
 		repository.setState(concreteEventActionTable);
 		
 		if (abstractEvent != null)
-			fetchVariables(abstractEvent.getSCVariables(null));
+			fetchVariables(abstractEvent.getSCVariables());
 		
 		fetchPostValueVariables(concreteEventActionTable.getAssignedVariables());
 		fetchPostValueVariables(abstractEventActionTable.getAssignedVariables());
@@ -97,12 +97,12 @@ public class MachineEventHypothesisModule extends Module {
 			ISCEvent event, ISCGuard[] guards, 
 			IStateRepository<IStatePOG> repository,
 			IProgressMonitor monitor) throws CoreException {
-		IPOPredicateSet fullHypothesis = (event.getLabel(monitor).equals("INITIALISATION")) ?
+		IPOPredicateSet fullHypothesis = (event.getLabel().equals("INITIALISATION")) ?
 				machineHypothesisManager.getContextHypothesis(target) :
 				machineHypothesisManager.getFullHypothesis(target);
 		eventHypothesisManager = new EventHypothesisManager(event, guards, fullHypothesis.getElementName());
 		
-		eventHypothesisManager.setAbstractEvents(event.getAbstractSCEvents(null));
+		eventHypothesisManager.setAbstractEvents(event.getAbstractSCEvents());
 		
 		repository.setState(eventHypothesisManager);
 	}
@@ -129,8 +129,8 @@ public class MachineEventHypothesisModule extends Module {
 		for (ISCVariable variable : variables) {
 			FreeIdentifier identifier = 
 				factory.makeFreeIdentifier(
-						variable.getIdentifierString(null), null, 
-						variable.getType(factory, null));
+						variable.getIdentifierString(), null, 
+						variable.getType(factory));
 			eventTypeEnvironment.addName(identifier.getName(), identifier.getType());
 			eventHypothesisManager.addIdentifier(identifier);
 		}
@@ -141,7 +141,7 @@ public class MachineEventHypothesisModule extends Module {
 			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException, RodinDBException {
 		IWitnessTable witnessTable = 
-			new WitnessTable(concreteEvent.getSCWitnesses(null), eventTypeEnvironment, factory, monitor);
+			new WitnessTable(concreteEvent.getSCWitnesses(), eventTypeEnvironment, factory, monitor);
 		repository.setState(witnessTable);
 	}
 
@@ -166,12 +166,12 @@ public class MachineEventHypothesisModule extends Module {
 		
 		ISCEvent concreteEvent = (ISCEvent) element;
 		
-		ISCGuard[] guards = concreteEvent.getSCGuards(null);
+		ISCGuard[] guards = concreteEvent.getSCGuards();
 		
 		setEventHypothesisManager(
 				target, machineHypothesisManager, concreteEvent, guards, repository, monitor);
 		
-		fetchVariables(concreteEvent.getSCVariables(null));
+		fetchVariables(concreteEvent.getSCVariables());
 		
 		fetchGuards(guards, repository);
 		

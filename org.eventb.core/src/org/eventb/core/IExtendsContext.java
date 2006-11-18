@@ -18,9 +18,9 @@ import org.rodinp.core.RodinDBException;
  * Common protocol for an extends clauses of a context.
  * <p>
  * An extends element refers to a context with a name that is accessed and manipulated by
- * {@link IExtendsContext#getAbstractContextName(IProgressMonitor)} and 
+ * {@link IExtendsContext#getAbstractContextName()} and 
  * {@link IExtendsContext#setAbstractContextName(String, IProgressMonitor)}. The method
- * {@link IExtendsContext#getAbstractSCContext(IProgressMonitor)} returns directly a handle
+ * {@link IExtendsContext#getAbstractSCContext()} returns directly a handle
  * to a statically checked context.
  * </p>
  * <p>
@@ -48,18 +48,6 @@ public interface IExtendsContext extends IInternalElement {
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".extendsContext"); //$NON-NLS-1$
 
 	/**
-	 * Returns the name of the context which is extended by the context which
-	 * contains this element.
-	 * 
-	 * @return the name of the abstract context
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAbstractContextName(IProgressMonitor)</code> instead.
-	 */
-	@Deprecated
-	String getAbstractContextName() throws RodinDBException;
-
-	/**
 	 * Sets the name of a context which is extended by the context which
 	 * contains this element.
 	 * 
@@ -73,32 +61,14 @@ public interface IExtendsContext extends IInternalElement {
 	void setAbstractContextName(String name) throws RodinDBException;
 
 	/**
-	 * Returns a handle to the checked version of the abstract context, that is
-	 * the file produced when statically checking that context.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
-	 * 
-	 * @return a handle to the checked version of the abstract context
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAbstractSCContext()</code> instead.
-	 */
-	@Deprecated
-	ISCContextFile getAbstractSCContext() throws RodinDBException;
-
-	/**
 	 * Returns the name of the context which is extended by the context which
 	 * contains this element.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return the name of the abstract context
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	String getAbstractContextName(IProgressMonitor monitor) throws RodinDBException;
+	String getAbstractContextName() throws RodinDBException;
 
 	/**
 	 * Sets the name of a context which is extended by the context which
@@ -121,13 +91,10 @@ public interface IExtendsContext extends IInternalElement {
 	 * This is a handle-only operation.
 	 * </p>
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return a handle to the checked version of the abstract context
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	ISCContextFile getAbstractSCContext(IProgressMonitor monitor) throws RodinDBException;
+	ISCContextFile getAbstractSCContext() throws RodinDBException;
 
 }

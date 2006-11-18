@@ -43,7 +43,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 								EventBEditorUtils
 										.debug("Rename: "
 												+ ((IIdentifierElement) element)
-														.getIdentifierString(new NullProgressMonitor())
+														.getIdentifierString()
 												+ " to " + prefix + +counter);
 							((IIdentifierElement) element)
 									.setIdentifierString(prefix + counter,
@@ -52,7 +52,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 							if (EventBEditorUtils.DEBUG)
 								EventBEditorUtils.debug("Rename: "
 										+ ((ILabeledElement) element)
-												.getLabel(monitor) + " to "
+												.getLabel() + " to "
 										+ prefix + +counter);
 							((ILabeledElement) element).setLabel(prefix
 									+ counter, monitor);

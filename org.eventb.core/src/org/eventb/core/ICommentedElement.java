@@ -43,15 +43,11 @@ public interface ICommentedElement extends IInternalElement {
 	/**
 	 * Returns the comment contained in this element.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * 
 	 * @return the identifier of this element as a string
 	 * 
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	String getComment(IProgressMonitor monitor) throws RodinDBException;
+	String getComment() throws RodinDBException;
 
 }

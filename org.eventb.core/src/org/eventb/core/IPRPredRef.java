@@ -12,6 +12,6 @@ public interface IPRPredRef extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prPredRef"); //$NON-NLS-1$
 
-	Predicate getPredicate(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException;
+	Predicate getPredicate(IProofStoreReader store) throws RodinDBException;
 	void setPredicate(Predicate pred, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException;		
 }

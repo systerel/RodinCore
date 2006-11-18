@@ -30,14 +30,11 @@ public interface IAssignmentElement extends IInternalElement {
 	 * Returns the string representation of the assignment contained in this
 	 * element.
 	 * 
-	 * @param monitor 
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return the assignment of this element as a string
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	String getAssignmentString(IProgressMonitor monitor) throws RodinDBException;
+	String getAssignmentString() throws RodinDBException;
 
 	/**
 	 * Sets the string representation of the assignment contained in this
@@ -53,18 +50,6 @@ public interface IAssignmentElement extends IInternalElement {
 	 */	
 	void setAssignmentString(String assignment, IProgressMonitor monitor) throws RodinDBException;
 	
-	/**
-	 * Returns the string representation of the assignment contained in this
-	 * element.
-	 * 
-	 * @return the assignment of this element as a string
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAssignmentString(IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	String getAssignmentString() throws RodinDBException;
-
 	/**
 	 * Sets the string representation of the assignment contained in this
 	 * element.

@@ -53,7 +53,7 @@ public class ContextTheoremModule extends TheoremModule {
 		
 		IContextFile contextFile = (IContextFile) element;
 		
-		ITheorem[] theorems = contextFile.getTheorems(null);
+		ITheorem[] theorems = contextFile.getTheorems();
 		
 		if (theorems.length == 0)
 			return;

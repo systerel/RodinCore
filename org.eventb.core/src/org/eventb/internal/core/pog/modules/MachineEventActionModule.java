@@ -50,7 +50,7 @@ public abstract class MachineEventActionModule extends UtilityModule {
 			(IEventHypothesisManager) repository.getState(IEventHypothesisManager.STATE_TYPE);
 		
 		concreteEvent = (ISCEvent) element;
-		concreteEventLabel = concreteEvent.getLabel(monitor);
+		concreteEventLabel = concreteEvent.getLabel();
 		isInitialisation = concreteEventLabel.equals("INITIALISATION");
 		fullHypothesis = eventHypothesisManager.getFullHypothesis(target);
 		

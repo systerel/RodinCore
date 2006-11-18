@@ -26,7 +26,7 @@ import org.rodinp.core.RodinCore;
  * </p>
  * 
  * @see org.rodinp.core.IRodinElement#getElementName()
- * @see org.eventb.core.IExpressionElement#getExpressionString(IProgressMonitor)
+ * @see org.eventb.core.IExpressionElement#getExpressionString()
  * @see org.eventb.core.IExpressionElement#setExpressionString(String,IProgressMonitor)
  * 
  * @author Stefan Hallerstede

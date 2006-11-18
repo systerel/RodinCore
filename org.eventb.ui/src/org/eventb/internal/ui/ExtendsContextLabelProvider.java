@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IExtendsContext;
 import org.eventb.ui.IElementLabelProvider;
 import org.rodinp.core.RodinDBException;
@@ -35,7 +34,7 @@ public class ExtendsContextLabelProvider implements IElementLabelProvider {
 		if (obj instanceof IExtendsContext) {
 			try {
 				return ((IExtendsContext) obj)
-						.getAbstractContextName(new NullProgressMonitor());
+						.getAbstractContextName();
 			} catch (RodinDBException e) {
 				if (UIUtils.DEBUG)
 					e.printStackTrace();

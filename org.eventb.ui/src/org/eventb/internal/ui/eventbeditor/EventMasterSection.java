@@ -183,7 +183,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 					event = null;
 				}
 				try {
-					initSelected = (event.getLabel(null).equals("INITIALISATION")) ? true
+					initSelected = (event.getLabel().equals("INITIALISATION")) ? true
 							: false;
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block

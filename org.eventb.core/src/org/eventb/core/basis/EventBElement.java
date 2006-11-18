@@ -44,13 +44,8 @@ public abstract class EventBElement extends InternalElement {
 	 * 
 	 * @see org.eventb.core.IAssignmentElement#getAssignment()
 	 */
-	public String getAssignmentString(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.ASSIGNMENT_ATTRIBUTE, monitor);
-	}
-
-	@Deprecated
 	public String getAssignmentString() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.ASSIGNMENT_ATTRIBUTE, null);
+		return getAttributeValue(EventBAttributes.ASSIGNMENT_ATTRIBUTE);
 	}
 
 	/*
@@ -84,8 +79,8 @@ public abstract class EventBElement extends InternalElement {
 	 * 
 	 * @see org.eventb.core.ILabeledElement#getLabel()
 	 */
-	public String getLabel(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.LABEL_ATTRIBUTE, monitor);
+	public String getLabel() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.LABEL_ATTRIBUTE);
 	}
 
 	/*
@@ -104,8 +99,8 @@ public abstract class EventBElement extends InternalElement {
 	 * 
 	 * @see org.eventb.core.ICommentedElement#getComment(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public String getComment(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE, monitor);
+	public String getComment() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE);
 	}
 
 	/*
@@ -113,13 +108,8 @@ public abstract class EventBElement extends InternalElement {
 	 * 
 	 * @see org.eventb.core.IPredicateElement#getPredicateString()
 	 */
-	public String getPredicateString(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.PREDICATE_ATTRIBUTE, monitor);
-	}
-
-	@Deprecated
 	public String getPredicateString() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.PREDICATE_ATTRIBUTE, null);
+		return getAttributeValue(EventBAttributes.PREDICATE_ATTRIBUTE);
 	}
 
 	/*
@@ -141,13 +131,8 @@ public abstract class EventBElement extends InternalElement {
 	 * 
 	 * @see org.eventb.core.IExpressionElement#getExpressionString()
 	 */
-	public String getExpressionString(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.EXPRESSION_ATTRIBUTE, monitor);
-	}
-
-	@Deprecated
 	public String getExpressionString() throws RodinDBException {
-		return getExpressionString(null);
+		return getAttributeValue(EventBAttributes.EXPRESSION_ATTRIBUTE);
 	}
 
 	/*
@@ -171,13 +156,8 @@ public abstract class EventBElement extends InternalElement {
 	 * 
 	 * @see org.eventb.core.IIdentifierElement#getIdentifierString()
 	 */
-	public String getIdentifierString(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.IDENTIFIER_ATTRIBUTE, monitor);
-	}
-
-	@Deprecated
 	public String getIdentifierString() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.IDENTIFIER_ATTRIBUTE, null);
+		return getAttributeValue(EventBAttributes.IDENTIFIER_ATTRIBUTE);
 	}
 
 	/*
@@ -215,8 +195,8 @@ public abstract class EventBElement extends InternalElement {
 	 * 
 	 * @see org.eventb.core.IConvergenceElement#getConvergence(IProgressMonitor)
 	 */
-	public int getConvergence(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.CONVERGENCE_ATTRIBUTE, monitor);
+	public int getConvergence() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.CONVERGENCE_ATTRIBUTE);
 	}
 
 	public void setSource(IRodinElement source, IProgressMonitor monitor) 
@@ -224,35 +204,29 @@ public abstract class EventBElement extends InternalElement {
 		setAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE, source, monitor);
 	}
 
-	public IRodinElement getSource(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE, monitor);
+	public IRodinElement getSource() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE);
 	}
 
 	public void setForbidden(boolean value, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.FORBIDDEN_ATTRIBUTE, value, monitor);
 	}
 
-	public boolean isForbidden(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.FORBIDDEN_ATTRIBUTE, monitor);
+	public boolean isForbidden() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.FORBIDDEN_ATTRIBUTE);
 	}
 
 	public void setPreserved(boolean value, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.PRESERVED_ATTRIBUTE, value, monitor);
 	}
 
-	public boolean isPreserved(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.PRESERVED_ATTRIBUTE, monitor);
+	public boolean isPreserved() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.PRESERVED_ATTRIBUTE);
 	}
 
 	@Deprecated
 	public void setForbidden(boolean value) throws RodinDBException {
 		setForbidden(value, null);
 	}
-
-	@Deprecated
-	public boolean isForbidden() throws RodinDBException {
-		return isForbidden(null);
-	}
-
 
 }

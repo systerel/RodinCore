@@ -108,7 +108,7 @@ public class Refines implements IObjectActionDelegate {
 								String name = ((IEvent) element)
 										.getElementName();
 								String label = ((IEvent) element)
-										.getLabel(monitor);
+										.getLabel();
 								IInternalElement newElement = newFile
 										.getInternalElement(
 												IEvent.ELEMENT_TYPE, name);

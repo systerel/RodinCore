@@ -346,7 +346,7 @@ public class ExtendsSection extends SectionPart implements
 							.getComponentName(context.getElementName())
 							.equals(
 									((IExtendsContext) extendContext)
-											.getAbstractContextName(new NullProgressMonitor()))) {
+											.getAbstractContextName())) {
 						found = true;
 						break;
 					}
@@ -376,7 +376,7 @@ public class ExtendsSection extends SectionPart implements
 						.getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
 				for (IRodinElement extendedContext : extendedContexts) {
 					if (((IExtendsContext) extendedContext)
-							.getAbstractContextName(new NullProgressMonitor())
+							.getAbstractContextName()
 							.equals(text)) {
 						addButton.setEnabled(false);
 						return;

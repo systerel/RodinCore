@@ -18,7 +18,7 @@ public interface IPRProofRule extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProofRule"); //$NON-NLS-1$
 
-	IProofRule getProofRule(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException;
+	IProofRule getProofRule(IProofStoreReader store) throws RodinDBException;
 
 	void setProofRule(IProofRule rule, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException;	
 }

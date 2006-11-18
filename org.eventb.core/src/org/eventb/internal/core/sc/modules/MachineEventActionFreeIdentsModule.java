@@ -39,7 +39,7 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 		super.initModule(repository, monitor);
 		ICurrentEvent currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
 		isInitialisation = 
-			currentEvent.getCurrentEvent().getLabel(monitor).equals(IEvent.INITIALISATION);
+			currentEvent.getCurrentEvent().getLabel().equals(IEvent.INITIALISATION);
 	}
 
 	@Override

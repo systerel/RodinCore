@@ -165,8 +165,8 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 			try {
 				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Commit : "
-							+ cst.getIdentifierString(monitor) + " to be : " + text);
-				if (!cst.getIdentifierString(monitor).equals(text)) {
+							+ cst.getIdentifierString() + " to be : " + text);
+				if (!cst.getIdentifierString().equals(text)) {
 					cst.setIdentifierString(text, monitor);
 				}
 			} catch (RodinDBException e) {

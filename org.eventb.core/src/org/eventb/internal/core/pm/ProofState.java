@@ -110,7 +110,7 @@ public class ProofState implements IProofState {
 
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
-		dirty = ! status.getProofValidAttribute(null);
+		dirty = ! status.getProofValidAttribute();
 		cached = new HashSet<Hypothesis>();
 		searched = new HashSet<Hypothesis>();
 	}
@@ -123,7 +123,7 @@ public class ProofState implements IProofState {
 			return pt.isClosed();
 		
 		final IPRProof prProof = status.getProof();
-		return (prProof.exists() && (prProof.getConfidence(null) > IConfidence.PENDING));
+		return (prProof.exists() && (prProof.getConfidence() > IConfidence.PENDING));
 	}
 
 	/* (non-Javadoc)
@@ -305,7 +305,7 @@ public class ProofState implements IProofState {
 	 */
 	public boolean isSequentDischarged() throws RodinDBException {
 		final IPRProof prProof = status.getProof();
-		return (prProof.exists() && (prProof.getConfidence(null) > IConfidence.PENDING));
+		return (prProof.exists() && (prProof.getConfidence() > IConfidence.PENDING));
 	}
 
 	/* (non-Javadoc)
@@ -333,7 +333,7 @@ public class ProofState implements IProofState {
 
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
-		dirty = (! status.getProofValidAttribute(null));
+		dirty = (! status.getProofValidAttribute());
 	}
 
 	/* (non-Javadoc)

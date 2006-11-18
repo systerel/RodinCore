@@ -9,7 +9,7 @@ public class SeesContextLabelProvider implements IElementLabelProvider {
 	public String getLabel(Object obj) {
 		if (obj instanceof ISeesContext) {
 			try {
-				return ((ISeesContext) obj).getSeenContextName(null);
+				return ((ISeesContext) obj).getSeenContextName();
 			} catch (RodinDBException e) {
 				if (UIUtils.DEBUG) {
 					e.printStackTrace();

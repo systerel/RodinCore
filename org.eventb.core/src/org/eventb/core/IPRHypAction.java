@@ -24,6 +24,6 @@ public interface IPRHypAction extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prHypAction"); //$NON-NLS-1$
 
-	Action getAction(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException;
+	Action getAction(IProofStoreReader store) throws RodinDBException;
 	void setAction(Action hypAction, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException;
 }

@@ -57,7 +57,7 @@ public class MachineEventGuardModule extends UtilityModule {
 			throws CoreException {
 		
 		ISCEvent event = (ISCEvent) element;
-		String eventLabel = event.getLabel(monitor);
+		String eventLabel = event.getLabel();
 		
 		List<ISCPredicateElement> guards = eventGuardTable.getElements();
 		
@@ -67,7 +67,7 @@ public class MachineEventGuardModule extends UtilityModule {
 		List<Predicate> predicates = eventGuardTable.getPredicates();
 		
 		for (int i=0; i<guards.size(); i++) {
-			String guardLabel = ((ISCGuard) guards.get(i)).getLabel(monitor);
+			String guardLabel = ((ISCGuard) guards.get(i)).getLabel();
 			
 			Predicate wdPredicate = predicates.get(i).getWDPredicate(factory);
 			if(!wdPredicate.equals(btrue)) {
@@ -110,7 +110,7 @@ public class MachineEventGuardModule extends UtilityModule {
 		ISCEvent abstractEvent = eventHypothesisManager.getFirstAbstractEvent();
 		IAbstractEventGuardTable abstractEventGuardTable = 
 			new AbstractEventGuardTable(
-					(abstractEvent == null ? new ISCGuard[0] : abstractEvent.getSCGuards(null)),
+					(abstractEvent == null ? new ISCGuard[0] : abstractEvent.getSCGuards()),
 					eventTypeEnvironment, 
 					factory);
 		repository.setState(abstractEventGuardTable);

@@ -46,13 +46,10 @@ public interface ILabeledElement extends IInternalElement {
 	/**
 	 * Returns the label contained in this element.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the identifier of this element as a string
+	 * @return the label of this element as a string
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	String getLabel(IProgressMonitor monitor) throws RodinDBException;
+	String getLabel() throws RodinDBException;
 	
 }

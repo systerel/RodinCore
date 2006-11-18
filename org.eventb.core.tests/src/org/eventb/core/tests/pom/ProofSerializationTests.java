@@ -17,7 +17,6 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
-import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -32,7 +31,8 @@ public class ProofSerializationTests extends TestCase {
 	private FormulaFactory factory = FormulaFactory.getDefault();
 	
 	public final void test() throws RodinDBException{
-		IPRFile prFile = (IPRFile) rodinProject.createRodinFile("x.bpr", true, null);
+		IPRFile prFile = (IPRFile) rodinProject.getRodinFile("x.bpr");
+		prFile.create(true, null);
 		
 		assertTrue(prFile.exists());
 		assertEquals(0, prFile.getProofs().length);
@@ -45,27 +45,27 @@ public class ProofSerializationTests extends TestCase {
 		assertTrue(proof1.exists());
 		assertEquals(proof1, prFile.getProof("proof1"));
 		
-		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence(null));
-		assertFalse(proof1.getProofDependencies(factory , null).hasDeps());
+		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence());
+		assertFalse(proof1.getProofDependencies(factory, null).hasDeps());
 		
 		// Test 1
 		
 		IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
 		IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
 		proof1.setProofTree(proofTree, null);
-		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence(null));
-		assertFalse(proof1.getProofDependencies(factory , null).hasDeps());
+		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence());
+		assertFalse(proof1.getProofDependencies(factory, null).hasDeps());
 		
 		Tactics.impI().apply(proofTree.getRoot(), null);
 		proof1.setProofTree(proofTree, null);
-		assertEquals(IConfidence.PENDING, proof1.getConfidence(null));
-		assertTrue(proof1.getProofDependencies(factory , null).hasDeps());
+		assertEquals(IConfidence.PENDING, proof1.getConfidence());
+		assertTrue(proof1.getProofDependencies(factory, null).hasDeps());
 		
 		Tactics.tautology().apply(proofTree.getRoot().getFirstOpenDescendant(),null);
 		// The next check is to see if the prover is behaving itself.
 		assertTrue(proofTree.isClosed());
 		proof1.setProofTree(proofTree, null);
-		assertEquals(IConfidence.DISCHARGED_MAX, proof1.getConfidence(null));
+		assertEquals(IConfidence.DISCHARGED_MAX, proof1.getConfidence());
 		IProofSkeleton skel = proof1.getSkeleton(factory, null);
 		assertTrue(ProverLib.deepEquals(skel, proofTree.getRoot()));
 		
@@ -78,8 +78,8 @@ public class ProofSerializationTests extends TestCase {
 		proof1.setProofTree(proofTree, null);
 		// The next check is to see if the prover is behaving itself.
 		assertTrue(proofTree.isClosed());
-		assertEquals(proofTree.getConfidence(), proof1.getConfidence(null));
-		assertTrue(proof1.getProofDependencies(factory , null).hasDeps());
+		assertEquals(proofTree.getConfidence(), proof1.getConfidence());
+		assertTrue(proof1.getProofDependencies(factory, null).hasDeps());
 		skel = proof1.getSkeleton(factory, null);
 		assertTrue(ProverLib.deepEquals(skel, proofTree.getRoot()));
 		
@@ -88,13 +88,13 @@ public class ProofSerializationTests extends TestCase {
 		sequent = TestLib.genSeq("⊤ |- 0 ∈ ℕ ∧ 0 ∈ ℤ");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
 		proof1.setProofTree(proofTree, null);
-		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence(null));
-		assertFalse(proof1.getProofDependencies(factory , null).hasDeps());
+		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence());
+		assertFalse(proof1.getProofDependencies(factory, null).hasDeps());
 		
 		Tactics.norm().apply(proofTree.getRoot(), null);
 		proof1.setProofTree(proofTree, null);
-		assertEquals(proofTree.getConfidence(), proof1.getConfidence(null));
-		assertTrue(proof1.getProofDependencies(factory , null).hasDeps());
+		assertEquals(proofTree.getConfidence(), proof1.getConfidence());
+		assertTrue(proof1.getProofDependencies(factory, null).hasDeps());
 		skel = proof1.getSkeleton(factory, null);
 		assertTrue(ProverLib.deepEquals(skel, proofTree.getRoot()));
 		

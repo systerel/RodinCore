@@ -12,8 +12,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRProofRule;
-import org.eventb.core.IPRRuleAntecedent;
 import org.eventb.core.IPRReasonerInput;
+import org.eventb.core.IPRRuleAntecedent;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.Predicate;
@@ -56,7 +56,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		return reasonerRegistry.getReasonerInstance(this.getReasonerID());
 	} 
 
-	private IReasonerInput getReasonerInput(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException {
+	private IReasonerInput getReasonerInput(IProofStoreReader store) throws RodinDBException {
 
 		IRodinElement[] prReasonerInput = getChildrenOfType(IPRReasonerInput.ELEMENT_TYPE);
 		if (prReasonerInput.length == 0) return null;
@@ -64,29 +64,29 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		try {
 			// TODO : check for getReasoner() == null
 			IReasonerInputSerializer deserializer = 
-				new ProofStoreReader.Bridge((PRReasonerInput)prReasonerInput[0],store,monitor);
+				new ProofStoreReader.Bridge((PRReasonerInput)prReasonerInput[0],store);
 			return (getReasoner()).deserializeInput(deserializer);
 		} catch (SerializeException e) {
 			throw (RodinDBException) e.getNextedException();
 		}
 	}
 
-	public IProofRule getProofRule(IProofStoreReader store, IProgressMonitor monitor)throws RodinDBException {
+	public IProofRule getProofRule(IProofStoreReader store)throws RodinDBException {
 
-		Predicate goal = getGoal(store, monitor);		
-		Set<Hypothesis> neededHyps = Hypothesis.Hypotheses(getHyps(store, monitor));
+		Predicate goal = getGoal(store);		
+		Set<Hypothesis> neededHyps = Hypothesis.Hypotheses(getHyps(store));
 
 		IRodinElement[] rodinElements = this.getChildrenOfType(IPRRuleAntecedent.ELEMENT_TYPE);
 		IAntecedent[] anticidents = new IAntecedent[rodinElements.length];
 		for (int i = 0; i < rodinElements.length; i++) {
-			anticidents[i] = ((IPRRuleAntecedent)rodinElements[i]).getAntecedent(store, monitor);
+			anticidents[i] = ((IPRRuleAntecedent)rodinElements[i]).getAntecedent(store);
 		}
 
-		String display = getRuleDisplay(monitor);
-		int confidence = getConfidence(monitor);
+		String display = getRuleDisplay();
+		int confidence = getConfidence();
 
 
-		return ProverFactory.makeProofRule(this.getReasoner(),this.getReasonerInput(store,monitor), goal, neededHyps, confidence, display, anticidents);
+		return ProverFactory.makeProofRule(this.getReasoner(),this.getReasonerInput(store), goal, neededHyps, confidence, display, anticidents);
 	}
 
 	public void setProofRule(IProofRule proofRule, IProofStoreCollector store,IProgressMonitor monitor) throws RodinDBException {
@@ -98,9 +98,10 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		// write out the anticidents (next subgoals)
 		int idx = 1;
 		for (IAntecedent antecedent : proofRule.getAntecedents()){
-			((IPRRuleAntecedent)this.createInternalElement(
-					IPRRuleAntecedent.ELEMENT_TYPE,
-					"a" + idx++,null,null)).setAntecedent(antecedent,store,monitor);
+			IPRRuleAntecedent child = (IPRRuleAntecedent) getInternalElement(
+					IPRRuleAntecedent.ELEMENT_TYPE, "a" + idx++);
+			child.create(null, null);
+			child.setAntecedent(antecedent, store, monitor);
 		}
 
 		// write out display
@@ -113,12 +114,9 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		// TODO : remove this check
 		if (proofRule.generatedUsing() != null)
 		{
-			IPRReasonerInput prReasonerInput =
-				(IPRReasonerInput)
-				this.createInternalElement(
-						IPRReasonerInput.ELEMENT_TYPE,
-						"",
-						null,null);
+			IPRReasonerInput prReasonerInput = (IPRReasonerInput) getInternalElement(
+					IPRReasonerInput.ELEMENT_TYPE, "");
+			prReasonerInput.create(null, null);
 			try {
 				IReasonerInputSerializer serializer = 
 					new ProofStoreCollector.Bridge(prReasonerInput,store,monitor); 
@@ -131,8 +129,8 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 
 	}
 
-	public String getRuleDisplay(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.RULE_DISPLAY_ATTRIBUTE, monitor);
+	public String getRuleDisplay() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.RULE_DISPLAY_ATTRIBUTE);
 	}
 
 	public void setRuleDisplay(String display, IProgressMonitor monitor)

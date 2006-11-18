@@ -74,7 +74,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 
 		IEvent event = (IEvent) element;
 		
-		IWitness[] witnesses = event.getWitnesses(null);
+		IWitness[] witnesses = event.getWitnesses();
 		
 		Predicate[] predicates = new Predicate[witnesses.length];
 		
@@ -122,13 +122,13 @@ public class MachineEventWitnessModule extends PredicateModule {
 		for (int i=0; i<witnesses.length; i++) {
 			if (predicates[i] == null)
 				continue;
-			String label = witnesses[i].getLabel(monitor);
+			String label = witnesses[i].getLabel();
 			if (witnessNames.contains(label)) {
 				witnessNames.remove(label);
 				createSCWitness(
 						target, 
 						WITNESS_NAME_PREFIX + index++,
-						witnesses[i].getLabel(monitor), 
+						witnesses[i].getLabel(), 
 						witnesses[i],
 						predicates[i], 
 						monitor);

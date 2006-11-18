@@ -9,7 +9,6 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
@@ -65,14 +64,9 @@ public class ContextFile extends RodinFile implements IContextFile {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IContextFile#getCarrierSets()
 	 */
-	public ICarrierSet[] getCarrierSets(IProgressMonitor monitor) throws RodinDBException {
+	public ICarrierSet[] getCarrierSets() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
 		return (ICarrierSet[]) elements; 
-	}
-	
-	@Deprecated
-	public ICarrierSet[] getCarrierSets() throws RodinDBException {
-		return getCarrierSets(null);
 	}
 	
 	public IConstant getConstant(String elementName) {
@@ -82,14 +76,9 @@ public class ContextFile extends RodinFile implements IContextFile {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IContextFile#getConstants()
 	 */
-	public IConstant[] getConstants(IProgressMonitor monitor) throws RodinDBException {
+	public IConstant[] getConstants() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IConstant.ELEMENT_TYPE);
 		return (IConstant[]) elements; 
-	}
-	
-	@Deprecated
-	public IConstant[] getConstants() throws RodinDBException {
-		return getConstants(null); 
 	}
 	
 	public IAxiom getAxiom(String elementName) {
@@ -99,14 +88,9 @@ public class ContextFile extends RodinFile implements IContextFile {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IContextFile#getAxioms()
 	 */
-	public IAxiom[] getAxioms(IProgressMonitor monitor) throws RodinDBException {
+	public IAxiom[] getAxioms() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IAxiom.ELEMENT_TYPE);
 		return (IAxiom[]) elements; 
-	}
-	
-	@Deprecated
-	public IAxiom[] getAxioms() throws RodinDBException {
-		return getAxioms(null); 
 	}
 	
 	public ITheorem getTheorem(String elementName) {
@@ -116,14 +100,9 @@ public class ContextFile extends RodinFile implements IContextFile {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IContextFile#getTheorems()
 	 */
-	public ITheorem[] getTheorems(IProgressMonitor monitor) throws RodinDBException {
+	public ITheorem[] getTheorems() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ITheorem.ELEMENT_TYPE);
 		return (Theorem[]) elements; 
-	}
-
-	@Deprecated
-	public ITheorem[] getTheorems() throws RodinDBException {
-		return getTheorems(null);
 	}
 
 	/* (non-Javadoc)
@@ -163,14 +142,9 @@ public class ContextFile extends RodinFile implements IContextFile {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IContextFile#getExtendsClauses()
 	 */
-	public IExtendsContext[] getExtendsClauses(IProgressMonitor monitor) throws RodinDBException {
+	public IExtendsContext[] getExtendsClauses() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
 		return (IExtendsContext[]) elements; 
-	}
-
-	@Deprecated
-	public IExtendsContext[] getExtendsClauses() throws RodinDBException {
-		return getExtendsClauses(null); 
 	}
 
 }

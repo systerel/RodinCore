@@ -1,7 +1,6 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -21,5 +20,5 @@ public interface IPRProofSkelNode extends IInternalElement, ICommentedElement {
 	
 	void setSkeleton(IProofSkeleton skel, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException;
 
-	IProofSkeleton getSkeleton(IProofStoreReader store, SubProgressMonitor monitor)  throws RodinDBException;
+	IProofSkeleton getSkeleton(IProofStoreReader store)  throws RodinDBException;
 }

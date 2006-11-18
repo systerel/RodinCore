@@ -44,9 +44,9 @@ implements ISCPredicateElement {
 		super(name, parent);
 	}
 
-	public Predicate getPredicate(FormulaFactory factory, IProgressMonitor monitor) 
-	throws RodinDBException {
-		String contents = getPredicateString(null);
+	@Deprecated
+	public Predicate getPredicate(FormulaFactory factory) throws RodinDBException {
+		String contents = getPredicateString();
 		IParseResult parserResult = factory.parsePredicate(contents);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
@@ -58,17 +58,10 @@ implements ISCPredicateElement {
 		return result;
 	}
 
-	@Deprecated
-	public Predicate getPredicate(FormulaFactory factory) 
-	throws RodinDBException {
-		return getPredicate(factory, (IProgressMonitor) null);
-	}
-	
 	public Predicate getPredicate(
-			FormulaFactory factory,
-			ITypeEnvironment typenv, IProgressMonitor monitor) throws RodinDBException {
+			FormulaFactory factory, ITypeEnvironment typenv) throws RodinDBException {
 		
-		Predicate result = getPredicate(factory, monitor);
+		Predicate result = getPredicate(factory);
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw Util.newRodinDBException(
@@ -78,13 +71,6 @@ implements ISCPredicateElement {
 		}
 		assert result.isTypeChecked();
 		return result;
-	}
-	
-	@Deprecated
-	public Predicate getPredicate(
-			FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
-		return getPredicate(factory, typenv, null);
 	}
 	
 	public void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException {

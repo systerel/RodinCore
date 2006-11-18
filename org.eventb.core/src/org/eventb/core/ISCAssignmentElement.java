@@ -35,87 +35,35 @@ public interface ISCAssignmentElement extends IInternalElement {
 	 * @return the string representation of the assignment of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAssignmentString(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
-	String getAssignmentString()
-			throws RodinDBException;
-
-	/**
-	 * Returns the assignment string contained in this element.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the string representation of the assignment of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	String getAssignmentString(IProgressMonitor monitor)
-			throws RodinDBException;
+	String getAssignmentString() throws RodinDBException;
 
 	/**
 	 * Returns the untyped assignment contained in this element.
 	 * 
 	 * @param factory
 	 *            the formula factory to use for building the result
-	 * 
 	 * @return the assignment of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAssignment(FormulaFactory,IProgressMonitor)</code> instead
+	 * @deprecated Use the version with a type environment
 	 */
 	@Deprecated
 	Assignment getAssignment(FormulaFactory factory)
 			throws RodinDBException;
 
 	/**
-	 * Returns the untyped assignment contained in this element.
-	 * 
-	 * @param factory
-	 *            the formula factory to use for building the result
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the assignment of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	Assignment getAssignment(FormulaFactory factory, IProgressMonitor monitor)
-			throws RodinDBException;
-
-	/**
 	 * Returns the typed assignment contained in this element.
 	 * 
 	 * @param factory
 	 *            the formula factory to use for building the result
 	 * @param typenv
 	 *            the type environment to use for building the result
-	 * 
 	 * @return the assignment of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAssignment(FormulaFactory,ITypeEnvironment,IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	Assignment getAssignment(FormulaFactory factory, ITypeEnvironment typenv)
-			throws RodinDBException;
-
-	/**
-	 * Returns the typed assignment contained in this element.
-	 * 
-	 * @param factory
-	 *            the formula factory to use for building the result
-	 * @param typenv
-	 *            the type environment to use for building the result
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the assignment of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	Assignment getAssignment(FormulaFactory factory, ITypeEnvironment typenv, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**

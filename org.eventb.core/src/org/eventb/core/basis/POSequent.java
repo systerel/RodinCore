@@ -65,7 +65,7 @@ public class POSequent extends EventBElement implements IPOSequent {
 	}
 	
 	@Deprecated
-	public IPOPredicateSet getHypothesis(IProgressMonitor monitor) throws RodinDBException {
+	public IPOPredicateSet getHypothesis() throws RodinDBException {
 		
 		return (IPOPredicateSet) getSingletonChild(
 				IPOPredicateSet.ELEMENT_TYPE, Messages.database_SequentMultipleHypothesisFailure);
@@ -73,54 +73,34 @@ public class POSequent extends EventBElement implements IPOSequent {
 	}
 	
 	@Deprecated
-	public IPOPredicateSet getHypothesis() throws RodinDBException {
-		return getHypothesis((IProgressMonitor) null);
-	}
-	
-	@Deprecated
-	public IPOPredicate getGoal(IProgressMonitor monitor) throws RodinDBException {
+	public IPOPredicate getGoal() throws RodinDBException {
 		
 		return (IPOPredicate) getSingletonChild(
 				IPOPredicate.ELEMENT_TYPE, Messages.database_SequentMultipleGoalFailure);
 		
 	}
 	
-	@Deprecated
-	public IPOPredicate getGoal() throws RodinDBException {
-		return getGoal((IProgressMonitor) null);
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IPODescription#getName()
 	 */
 	public String getDescription(IProgressMonitor monitor) throws RodinDBException {
-		return getAttributeValue(EventBAttributes.PODESC_ATTRIBUTE, monitor);
+		return getAttributeValue(EventBAttributes.PODESC_ATTRIBUTE);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IPODescription#getSources()
 	 */
-	public IPOSource[] getSources(IProgressMonitor monitor) throws RodinDBException {
+	public IPOSource[] getSources() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IPOSource.ELEMENT_TYPE);
 		return (IPOSource[]) elements; 
-	}
-
-	@Deprecated
-	public IPOSource[] getSources() throws RodinDBException {
-		return getSources(null);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IPODescription#getHints()
 	 */
-	public IPOHint[] getHints(IProgressMonitor monitor) throws RodinDBException {
+	public IPOHint[] getHints() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IPOHint.ELEMENT_TYPE);
 		return (IPOHint[]) elements; 
-	}
-
-	@Deprecated
-	public IPOHint[] getHints() throws RodinDBException {
-		return getHints(null);
 	}
 
 	/* (non-Javadoc)
@@ -130,12 +110,12 @@ public class POSequent extends EventBElement implements IPOSequent {
 		setAttributeValue(EventBAttributes.PODESC_ATTRIBUTE, description, monitor);
 	}
 
-	public IPOPredicate[] getGoals(IProgressMonitor monitor) throws RodinDBException {
+	public IPOPredicate[] getGoals() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IPOPredicate.ELEMENT_TYPE);
 		return (IPOPredicate[]) elements; 
 	}
 
-	public IPOPredicateSet[] getHypotheses(IProgressMonitor monitor) throws RodinDBException {
+	public IPOPredicateSet[] getHypotheses() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IPOPredicateSet.ELEMENT_TYPE);
 		return (IPOPredicateSet[]) elements; 
 	}

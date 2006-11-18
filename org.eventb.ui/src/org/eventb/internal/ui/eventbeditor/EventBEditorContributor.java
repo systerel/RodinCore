@@ -127,10 +127,10 @@ public class EventBEditorContributor extends
 
 								if (element instanceof IIdentifierElement)
 									name = ((IIdentifierElement) element)
-											.getIdentifierString(new NullProgressMonitor());
+											.getIdentifierString();
 								else if (element instanceof ILabeledElement)
 									name = ((ILabeledElement) element)
-											.getLabel(null);
+											.getLabel();
 								InputDialog dialog = new InputDialog(part
 										.getSite().getShell(), "Rename",
 										"Rename element", name, null);
@@ -140,8 +140,7 @@ public class EventBEditorContributor extends
 									if (element instanceof IIdentifierElement) {
 										IIdentifierElement identifierElement = (IIdentifierElement) element;
 										if (!identifierElement
-												.getIdentifierString(
-														new NullProgressMonitor())
+												.getIdentifierString()
 												.equals(text))
 											identifierElement
 													.setIdentifierString(
@@ -149,7 +148,7 @@ public class EventBEditorContributor extends
 															new NullProgressMonitor());
 									} else if (element instanceof ILabeledElement) {
 										ILabeledElement labeledElement = (ILabeledElement) element;
-										if (!labeledElement.getLabel(null)
+										if (!labeledElement.getLabel()
 												.equals(text))
 											labeledElement.setLabel(text, null);
 									}

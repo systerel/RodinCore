@@ -109,9 +109,9 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				
 				String contextName = scIC.getElementName();
 								
-				ISCCarrierSet[] scCarrierSets = scIC.getSCCarrierSets(null);
+				ISCCarrierSet[] scCarrierSets = scIC.getSCCarrierSets();
 				
-				ISCConstant[] scConstants = scIC.getSCConstants(null); 
+				ISCConstant[] scConstants = scIC.getSCConstants(); 
 				
 				List<IIdentifierSymbolInfo> symbolInfos = 
 					contextPointerArray.getIdentifierSymbolInfos(index);
@@ -160,7 +160,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 
 	private void createUpContexts(ISCContextFile scCF, List<ISCContext> upContexts) 
 	throws RodinDBException {
-		ISCInternalContext[] iscic = scCF.getAbstractSCContexts(null);
+		ISCInternalContext[] iscic = scCF.getAbstractSCContexts();
 		
 		ISCContext[] upContextArray = new ISCContext[iscic.length + 1];
 		
@@ -177,7 +177,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			ISCIdentifierElement element) throws RodinDBException {
 		
 		IIdentifierSymbolInfo info = 
-			identifierSymbolTable.getSymbolInfo(element.getIdentifierString(null));
+			identifierSymbolTable.getSymbolInfo(element.getIdentifierString());
 		
 		assert info != null;
 		
@@ -191,7 +191,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			ISCIdentifierElement element,
 			IIdentifierSymbolInfoCreator creator) throws CoreException {
 		
-		String name = element.getIdentifierString(null);
+		String name = element.getIdentifierString();
 		
 		IIdentifierSymbolInfo newSymbolInfo = 
 			creator.createIdentifierSymbolInfo(name, element, contextPointerArray.getContextPointer(index));
@@ -228,7 +228,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		}
 		
 		// finally set the type of the identifier
-		newSymbolInfo.setType(element.getType(factory, null));
+		newSymbolInfo.setType(element.getType(factory));
 		
 		symbolList.add(newSymbolInfo);
 	}

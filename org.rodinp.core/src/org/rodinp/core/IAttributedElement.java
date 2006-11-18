@@ -28,100 +28,78 @@ public interface IAttributedElement {
 	 * this element. If this element doesn't carry any attribute, an empty array
 	 * is returned.
 	 * <p>
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource
 	 * @return the types of all attributes of this element
 	 */
-	IAttributeType[] getAttributeTypes(IProgressMonitor monitor)
-			throws RodinDBException;
+	IAttributeType[] getAttributeTypes() throws RodinDBException;
 
 	/**
 	 * Returns the value of the attribute with the given boolean type and
 	 * carried by this element.
 	 * <p>
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
 	 * @param type
 	 *            type of the attribute
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
 	 *                corresponding resource
 	 * @return the value of the attribute with the given type
 	 */
-	boolean getAttributeValue(IAttributeType.Boolean type,
-			IProgressMonitor monitor) throws RodinDBException;
+	boolean getAttributeValue(IAttributeType.Boolean type)
+			throws RodinDBException;
 
 	/**
 	 * Returns the value of the attribute with the given handle type and carried
 	 * by this element.
 	 * <p>
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
 	 * @param type
 	 *            type of the attribute
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
 	 *                corresponding resource
 	 * @return the value of the attribute with the given type
 	 */
-	IRodinElement getAttributeValue(IAttributeType.Handle type,
-			IProgressMonitor monitor) throws RodinDBException;
+	IRodinElement getAttributeValue(IAttributeType.Handle type)
+			throws RodinDBException;
 
 	/**
 	 * Returns the value of the attribute with the given integer type and
 	 * carried by this element.
 	 * <p>
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
 	 * @param type
 	 *            type of the attribute
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
 	 *                corresponding resource
 	 * @return the value of the attribute with the given type
 	 */
-	int getAttributeValue(IAttributeType.Integer type, IProgressMonitor monitor)
-			throws RodinDBException;
+	int getAttributeValue(IAttributeType.Integer type) throws RodinDBException;
 
 	/**
 	 * Returns the value of the attribute with the given long integer type and
 	 * carried by this element.
 	 * <p>
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
 	 * @param type
 	 *            type of the attribute
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
@@ -129,61 +107,48 @@ public interface IAttributedElement {
 	 *                another kind than <code>long</code>
 	 * @return the value of the attribute with the given type
 	 */
-	long getAttributeValue(IAttributeType.Long type, IProgressMonitor monitor)
-			throws RodinDBException;
+	long getAttributeValue(IAttributeType.Long type) throws RodinDBException;
 
 	/**
 	 * Returns the value of the attribute with the given string type and carried
 	 * by this element.
 	 * <p>
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
 	 * @param type
 	 *            type of the attribute
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
 	 *                corresponding resource
 	 * @return the value of the attribute with the given type
 	 */
-	String getAttributeValue(IAttributeType.String type,
-			IProgressMonitor monitor) throws RodinDBException;
+	String getAttributeValue(IAttributeType.String type)
+			throws RodinDBException;
 
 	/**
 	 * Tells whether this element carries an attribute with the given type.
 	 * <p>
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
 	 * @param type
 	 *            type of the attribute
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource
 	 * @return <code>true</code> iff this element carries an attribute with
 	 *         the given type
 	 */
-	boolean hasAttribute(IAttributeType type, IProgressMonitor monitor)
-			throws RodinDBException;
+	boolean hasAttribute(IAttributeType type) throws RodinDBException;
 
 	/**
-	 * Removes the attribute with the given type from this element.
+	 * Removes the attribute with the given type from this element. If the
+	 * attribute didn't exist previously, this method returns directly, no
+	 * exception is thrown.
 	 * <p>
-	 * If the attribute didn't exist previously, this method returns directly.
-	 * No exception is thrown.
-	 * </p>
-	 * <p>
-	 * The file containing this element is opened using the given progress
-	 * monitor, if it was not already open.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
 	 * @param type
@@ -200,11 +165,9 @@ public interface IAttributedElement {
 
 	/**
 	 * Sets the value of the attribute with the given boolean type to the given
-	 * value.
+	 * value. If the specified attribute didn't exist, it is created.
 	 * <p>
-	 * If the specified attribute didn't exist, it is created automatically. The
-	 * file containing this element is opened using the given progress monitor,
-	 * if it was not already open.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
 	 * @param type
@@ -223,11 +186,9 @@ public interface IAttributedElement {
 
 	/**
 	 * Sets the value of the attribute with the given handle type to the given
-	 * value.
+	 * value. If the specified attribute didn't exist, it is created.
 	 * <p>
-	 * If the specified attribute didn't exist, it is created automatically. The
-	 * file containing this element is opened using the given progress monitor,
-	 * if it was not already open.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
 	 * @param type
@@ -246,15 +207,9 @@ public interface IAttributedElement {
 
 	/**
 	 * Sets the value of the attribute with the given integer type to the given
-	 * value.
+	 * value. If the specified attribute didn't exist, it is created.
 	 * <p>
-	 * If the specified attribute didn't exist, it is created automatically. The
-	 * file containing this element is opened using the given progress monitor,
-	 * if it was not already open.
-	 * </p>
-	 * <p>
-	 * The attribute type must have been declared with the <code>integer</code>
-	 * kind.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
 	 * @param type
@@ -273,15 +228,9 @@ public interface IAttributedElement {
 
 	/**
 	 * Sets the value of the attribute with the given long integer type to the
-	 * given value.
+	 * given value. If the specified attribute didn't exist, it is created.
 	 * <p>
-	 * If the specified attribute didn't exist, it is created automatically. The
-	 * file containing this element is opened using the given progress monitor,
-	 * if it was not already open.
-	 * </p>
-	 * <p>
-	 * The attribute type must have been declared with the <code>long</code>
-	 * kind.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
 	 * @param type
@@ -300,15 +249,9 @@ public interface IAttributedElement {
 
 	/**
 	 * Sets the value of the attribute with the given string type to the given
-	 * value.
+	 * value. If the specified attribute didn't exist, it is created.
 	 * <p>
-	 * If the specified attribute didn't exist, it is created automatically. The
-	 * file containing this element is opened using the given progress monitor,
-	 * if it was not already open.
-	 * </p>
-	 * <p>
-	 * The attribute type must have been declared with the <code>string</code>
-	 * kind.
+	 * The file containing this element is opened by this operation.
 	 * </p>
 	 * 
 	 * @param type

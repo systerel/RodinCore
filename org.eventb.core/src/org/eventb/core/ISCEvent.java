@@ -34,7 +34,7 @@ import org.rodinp.core.RodinDBException;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see ILabeledElement#getLabel(IProgressMonitor)
+ * @see ILabeledElement#getLabel()
  * @see ILabeledElement#setLabel(String, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
@@ -63,24 +63,10 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 * @return an array of all SC refines clauses
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getSCRefinesClauses(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ISCRefinesEvent[] getSCRefinesClauses() throws RodinDBException;
 
 	/**
-	 * Returns an array of all SC refines clauses of this SC event.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return an array of all SC refines clauses
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ISCRefinesEvent[] getSCRefinesClauses(IProgressMonitor monitor) throws RodinDBException;
-
-	/**
 	 * Returns an array of all SC events refined by this SC event.
 	 * <p>
 	 * This is a convenience method. It fetches all refines clauses of this
@@ -90,26 +76,8 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 * @return an array of all abstract SC events
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAbstractSCEvents(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ISCEvent[] getAbstractSCEvents() throws RodinDBException;
-
-	/**
-	 * Returns an array of all SC events refined by this SC event.
-	 * <p>
-	 * This is a convenience method. It fetches all refines clauses of this
-	 * events and gets the handles of the abstract events from there.
-	 * </p>
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return an array of all abstract SC events
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ISCEvent[] getAbstractSCEvents(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child SC variable with the given element name.
@@ -130,22 +98,8 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 * @return an array of all SC variables
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getSCVariables(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ISCVariable[] getSCVariables() throws RodinDBException;
-
-	/**
-	 * Returns an array containing all SC (local) variables of this SC event.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return an array of all SC variables
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ISCVariable[] getSCVariables(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child SC witness with the given element name.
@@ -166,22 +120,8 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 * @return an array of all SC witnesses
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getSCWitnesses(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ISCWitness[] getSCWitnesses() throws RodinDBException;
-
-	/**
-	 * Returns an array of all SC witnesses of this SC event.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return an array of all SC witnesses
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ISCWitness[] getSCWitnesses(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child SC guard with the given element name.
@@ -202,22 +142,8 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 * @return an array of all SC guards
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getSCGuards(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ISCGuard[] getSCGuards() throws RodinDBException;
-
-	/**
-	 * Returns an array containing all SC guards of this SC event.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return an array of all SC guards
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ISCGuard[] getSCGuards(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child SC action with the given element name.
@@ -238,22 +164,8 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 * @return an array of all SC actions
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getSCActions(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ISCAction[] getSCActions() throws RodinDBException;
-
-	/**
-	 * Returns an array containing all SC actions of this SC event.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return an array of all SC actions
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ISCAction[] getSCActions(IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * An event label that has been used in an abstraction but not in some refinement
@@ -264,15 +176,6 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 */
 	@Deprecated
 	void setForbidden(boolean value) throws RodinDBException;
-	
-	/**
-	 * Returns whether the event label is forbidden or not.
-	 * 
-	 * @return whether the event label is forbidden or not
-	 * @deprecated use <code>isForbidden(IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	boolean isForbidden() throws RodinDBException;
 	
 	/**
 	 * An event label that has been used in an abstraction but not in some refinement
@@ -290,13 +193,10 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	/**
 	 * Returns whether the event label is forbidden or not.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return whether the event label is forbidden or not
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	boolean isForbidden(IProgressMonitor monitor) throws RodinDBException;
+	boolean isForbidden() throws RodinDBException;
 
 }

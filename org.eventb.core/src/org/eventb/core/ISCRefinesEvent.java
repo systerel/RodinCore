@@ -44,22 +44,8 @@ public interface ISCRefinesEvent extends ITraceableElement, IInternalElement {
 	 * @return the abstract SC event
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAbstractSCEvent(IProgressMonitor)</code> instead
 	 */
-	@Deprecated
 	ISCEvent getAbstractSCEvent() throws RodinDBException;
-
-	/**
-	 * Returns the abstract event introduced by this refines clause.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the abstract SC event
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	ISCEvent getAbstractSCEvent(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the abstract event introduced by this refines clause.

@@ -150,8 +150,8 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 			try {
 				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Commit : "
-							+ var.getIdentifierString(monitor) + " to be : " + text);
-				if (!var.getIdentifierString(monitor).equals(text)) {
+							+ var.getIdentifierString() + " to be : " + text);
+				if (!var.getIdentifierString().equals(text)) {
 					var.setIdentifierString(text, monitor);
 				}
 			} catch (RodinDBException e) {

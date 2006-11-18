@@ -62,63 +62,38 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IMachineFile#getVariables()
 	 */
-	public IVariable[] getVariables(IProgressMonitor monitor) throws RodinDBException {
+	public IVariable[] getVariables() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IVariable.ELEMENT_TYPE);
 		return (IVariable[]) elements; 
 	}
 	
-	@Deprecated
-	public IVariable[] getVariables() throws RodinDBException {
-		return getVariables(null); 
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IMachineFile#getTheorems()
 	 */
-	public ITheorem[] getTheorems(IProgressMonitor monitor) throws RodinDBException {
+	public ITheorem[] getTheorems() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ITheorem.ELEMENT_TYPE);
 		return (ITheorem[]) elements; 
-	}
-	
-	@Deprecated
-	public ITheorem[] getTheorems() throws RodinDBException {
-		return getTheorems(null); 
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IMachineFile#getInvariants()
 	 */
-	public IInvariant[] getInvariants(IProgressMonitor monitor) throws RodinDBException {
+	public IInvariant[] getInvariants() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IInvariant.ELEMENT_TYPE);
 		return (IInvariant[]) elements; 
 	}
 	
-	@Deprecated
-	public IInvariant[] getInvariants() throws RodinDBException {
-		return getInvariants(null); 
-	}
-	
-	public IEvent[] getEvents(IProgressMonitor monitor) throws RodinDBException {
+	public IEvent[] getEvents() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IEvent.ELEMENT_TYPE);
 		return (IEvent[]) elements; 
-	}
-	
-	@Deprecated
-	public IEvent[] getEvents() throws RodinDBException {
-		return getEvents(null); 
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IMachineFile#getSees()
 	 */
-	public ISeesContext[] getSeesClauses(IProgressMonitor monitor) throws RodinDBException {
+	public ISeesContext[] getSeesClauses() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISeesContext.ELEMENT_TYPE);
 		return (ISeesContext[]) elements; 
-	}
-	
-	@Deprecated
-	public ISeesContext[] getSeesClauses() throws RodinDBException {
-		return getSeesClauses(null); 
 	}
 	
 	/* (non-Javadoc)
@@ -163,22 +138,17 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	}
 
 	@Deprecated
-	public IVariant getVariant(IProgressMonitor monitor) throws RodinDBException {
+	public IVariant getVariant() throws RodinDBException {
 		return (IVariant) getSingletonChild(
 				IVariant.ELEMENT_TYPE, Messages.database_MachineMultipleVariantFailure);
 	}
 
-	@Deprecated
-	public IVariant getVariant() throws RodinDBException {
-		return getVariant((IProgressMonitor) null);
-	}
-
-	public IRefinesMachine[] getRefinesClauses(IProgressMonitor monitor) throws RodinDBException {
+	public IRefinesMachine[] getRefinesClauses() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 		return (IRefinesMachine[]) elements; 
 	}
 
-	public IVariant[] getVariants(IProgressMonitor monitor) throws RodinDBException {
+	public IVariant[] getVariants() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IVariant.ELEMENT_TYPE);
 		return (IVariant[]) elements; 
 	}

@@ -37,13 +37,13 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 		return ELEMENT_TYPE;
 	}
 
-	public Action getAction(IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException {
+	public Action getAction(IProofStoreReader store) throws RodinDBException {
 	
 		// read in the action type
 		ActionType actionType = HypothesesManagement.fromString(getElementName());
 		
 		// read in the hypotheses
-		Set<Hypothesis> hyps = Hypothesis.Hypotheses(getHyps(store, monitor));
+		Set<Hypothesis> hyps = Hypothesis.Hypotheses(getHyps(store));
 		return new Action(actionType,hyps);
 	}
 

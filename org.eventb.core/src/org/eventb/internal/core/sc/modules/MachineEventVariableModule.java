@@ -58,7 +58,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 
 		IEvent event = (IEvent) element;
 		
-		IVariable[] variables = event.getVariables(null);
+		IVariable[] variables = event.getVariables();
 		
 		if(variables.length != 0)
 			fetchSymbols(
@@ -114,7 +114,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		eventRefinesInfo = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
-		isInitialisation = ((IEvent) element).getLabel(monitor).contains(IEvent.INITIALISATION);
+		isInitialisation = ((IEvent) element).getLabel().contains(IEvent.INITIALISATION);
 	}
 
 	@Override

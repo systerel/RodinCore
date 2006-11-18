@@ -38,7 +38,7 @@ implements IPredicateTable {
 	 */
 	public void addElement(ISCPredicateElement element, ITypeEnvironment typeEnvironment, FormulaFactory factory) throws RodinDBException {
 		predicateElements.add(element);
-		predicateTable.add(element.getPredicate(factory, typeEnvironment, null));
+		predicateTable.add(element.getPredicate(factory, typeEnvironment));
 	}
 
 	/* (non-Javadoc)
