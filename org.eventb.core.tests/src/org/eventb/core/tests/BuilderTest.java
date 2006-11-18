@@ -56,27 +56,37 @@ public abstract class BuilderTest extends TestCase {
 	
 	protected IContextFile createContext(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getContextFileName(bareName);
-		return (IContextFile) rodinProject.createRodinFile(fileName, true, null);
+		IContextFile result = (IContextFile) rodinProject.getRodinFile(fileName);
+		result.create(true, null);
+		return result;
 	}
 
 	protected IMachineFile createMachine(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
-		return (IMachineFile) rodinProject.createRodinFile(fileName, true, null);
+		IMachineFile result = (IMachineFile) rodinProject.getRodinFile(fileName);
+		result.create(true, null);
+		return result;
 	}
 
 	protected IPOFile createPOFile(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getPOFileName(bareName);
-		return (IPOFile) rodinProject.createRodinFile(fileName, true, null);
+		IPOFile result = (IPOFile) rodinProject.getRodinFile(fileName);
+		result.create(true, null);
+		return result;
 	}
 
 	protected ISCContextFile createSCContext(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getSCContextFileName(bareName);
-		return (ISCContextFile) rodinProject.createRodinFile(fileName, true, null);
+		ISCContextFile result = (ISCContextFile) rodinProject.getRodinFile(fileName);
+		result.create(true, null);
+		return result;
 	}
 
 	protected ISCMachineFile createSCMachine(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getSCMachineFileName(bareName);
-		return (ISCMachineFile) rodinProject.createRodinFile(fileName, true, null);
+		ISCMachineFile result = (ISCMachineFile) rodinProject.getRodinFile(fileName);
+		result.create(true, null);
+		return result;
 	}
 	
 	protected void runBuilder() throws CoreException {

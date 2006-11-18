@@ -135,63 +135,64 @@ public abstract class BasicTest extends TestCase {
 
 	protected IContextFile createContext(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getContextFileName(bareName);
-		return (IContextFile) rodinProject.createRodinFile(fileName, true, null);
+		final IContextFile result = (IContextFile) rodinProject.getRodinFile(fileName);
+		result.create(true, null);
+		return result;
 	}
 
 	protected IMachineFile createMachine(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
-		return (IMachineFile) rodinProject.createRodinFile(fileName, true, null);
+		final IMachineFile result = (IMachineFile) rodinProject.getRodinFile(fileName);
+		result.create(true, null);
+		return result;
 	}
 
 	public static void addAxioms(
-			IRodinFile rodinFile, 
+			IContextFile rodinFile, 
 			String[] names, 
 			String[] axioms) throws RodinDBException {
 		for(int i=0; i<names.length; i++) {
-			IAxiom axiom = 
-				(IAxiom) rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, 
-					getUniqueName(), null, null);
+			IAxiom axiom = rodinFile.getAxiom(getUniqueName());
+			axiom.create(null, null);
 			axiom.setPredicateString(axioms[i], null);
 			axiom.setLabel(names[i], null);
 		}
 	}
 		
-	public static void addCarrierSets(IRodinFile rodinFile, String... names) throws RodinDBException {
+	public static void addCarrierSets(IContextFile rodinFile, String... names) throws RodinDBException {
 		for(String name : names) {
-			ICarrierSet set = 
-				(ICarrierSet) rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
+			ICarrierSet set = rodinFile.getCarrierSet(getUniqueName());
+			set.create(null, null);
 			set.setIdentifierString(name, null);
 		}
 			
 	}
 	
-	public static void addConstants(IRodinFile rodinFile, String... names) throws RodinDBException {
+	public static void addConstants(IContextFile rodinFile, String... names) throws RodinDBException {
 		for(String name : names) {
-			IConstant constant = 
-				(IConstant) rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
+			IConstant constant = rodinFile.getConstant(getUniqueName());
+			constant.create(null, null);
 			constant.setIdentifierString(name, null);
 		}
 	}
 
 	public static void addEventRefines(IEvent event, String name) throws RodinDBException {
-		IRefinesEvent refines = 
-			(IRefinesEvent) event.createInternalElement(IRefinesEvent.ELEMENT_TYPE, 
-					getUniqueName(), null, null);
+		IRefinesEvent refines = event.getRefinesClause(getUniqueName());
+		refines.create(null, null);
 		refines.setAbstractEventLabel(name, null);
 	}
 
 	public static void addEventWitnesses(IEvent event, String[] labels, String[] predicates) throws RodinDBException {
 		assert labels.length == predicates.length;
 		for (int i=0; i<labels.length; i++) {
-			IWitness witness = (IWitness) event.createInternalElement(IWitness.ELEMENT_TYPE, getUniqueName(), null, null);
+			IWitness witness = event.getWitness(getUniqueName());
+			witness.create(null, null);
 			witness.setLabel(labels[i], null);
 			witness.setPredicateString(predicates[i], null);
 		}
 	}
 
-	public static IEvent addEvent(IRodinFile rodinFile, 
+	public static IEvent addEvent(IMachineFile rodinFile, 
 				String name,
 				String[] vars,
 				String[] guardNames,
@@ -199,46 +200,41 @@ public abstract class BasicTest extends TestCase {
 				String[] actionNames,
 				String[] actions
 	) throws RodinDBException {
-		IEvent event = 
-			(IEvent) rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, 
-					getUniqueName(), null, null);
+		IEvent event = rodinFile.getEvent(getUniqueName());
+		event.create(null, null);
 		event.setLabel(name, null);
 		event.setInherited(false, null);
 		event.setConvergence(IConvergenceElement.ORDINARY, null);
 		for(int i=0; i<vars.length; i++) {
-			IVariable variable = 
-				(IVariable) event.createInternalElement(IVariable.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
+			IVariable variable = event.getVariable(getUniqueName());
+			variable.create(null, null);
 			variable.setIdentifierString(vars[i], null);
 			
 		}
 		for(int i=0; i<guards.length; i++) {
-			IGuard guard = 
-				(IGuard) event.createInternalElement(IGuard.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
+			IGuard guard = event.getGuard(getUniqueName());
+			guard.create(null, null);
 			guard.setPredicateString(guards[i], null);
 			guard.setLabel(guardNames[i], null);
 		}
 		for(int j=0; j<actions.length; j++) {
-			IAction action = 
-				(IAction) event.createInternalElement(IAction.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
+			IAction action = event.getAction(getUniqueName());
+			action.create(null, null);
 			action.setAssignmentString(actions[j], null);
 			action.setLabel(actionNames[j], null);
 		}
 		return event;
 	}
 	
-	public static IEvent addEvent(IRodinFile rodinFile, 
+	public static IEvent addEvent(IMachineFile rodinFile, 
 			String name) throws RodinDBException {
 		return addEvent(rodinFile, name, makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
 	}
 	
-	public static IEvent addInheritedEvent(IRodinFile rodinFile, 
+	public static IEvent addInheritedEvent(IMachineFile rodinFile, 
 			String name) throws RodinDBException {
-		IEvent event = 
-			(IEvent) rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, 
-					getUniqueName(), null, null);
+		IEvent event = rodinFile.getEvent(getUniqueName());
+		event.create(null, null);
 		event.setLabel(name, null);
 		event.setInherited(true, null);
 		event.setConvergence(IConvergenceElement.ORDINARY, null);
@@ -278,59 +274,61 @@ public abstract class BasicTest extends TestCase {
 		assertEquals("event should be convergent", IConvergenceElement.CONVERGENT, getConvergence(event));
 	}
 
-	public static void addInvariants(IRodinFile rodinFile, String[] names, String[] invariants) throws RodinDBException {
+	public static void addInvariants(IMachineFile rodinFile, String[] names, String[] invariants) throws RodinDBException {
 		for(int i=0; i<names.length; i++) {
-			IInvariant invariant = 
-				(IInvariant) rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
+			IInvariant invariant = rodinFile.getInvariant(getUniqueName());
+			invariant.create(null, null);
 			invariant.setPredicateString(invariants[i], null);
 			invariant.setLabel(names[i], null);
 		}
 	}
 
-	public static void addVariant(IRodinFile rodinFile, String variant) throws RodinDBException {
-		IVariant invariant = 
-				(IVariant) rodinFile.createInternalElement(IVariant.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
-			invariant.setExpressionString(variant, null);
+	public static void addVariant(IMachineFile rodinFile, String expression) throws RodinDBException {
+		IVariant variant = rodinFile.getVariant(getUniqueName());
+		variant.create(null, null);
+		variant.setExpressionString(expression, null);
 	}
 
-	public static void addMachineSees(IRodinFile rodinFile, String name) throws RodinDBException {
-		ISeesContext sees = 
-			(ISeesContext) rodinFile.createInternalElement(ISeesContext.ELEMENT_TYPE, 
-					getUniqueName(), null, null);
+	public static void addMachineSees(IMachineFile rodinFile, String name) throws RodinDBException {
+		ISeesContext sees = rodinFile.getSeesClause(getUniqueName());
+		sees.create(null, null);
 		sees.setSeenContextName(name, null);
 	}
 
-	public static void addMachineRefines(IRodinFile rodinFile, String name) throws RodinDBException {
-		IRefinesMachine refines = 
-			(IRefinesMachine) rodinFile.createInternalElement(IRefinesMachine.ELEMENT_TYPE, 
-					getUniqueName(), null, null);
+	public static void addMachineRefines(IMachineFile rodinFile, String name) throws RodinDBException {
+		IRefinesMachine refines = rodinFile.getRefinesClause(getUniqueName());
+		refines.create(null, null);
 		refines.setAbstractMachineName(name, null);
 	}
 
-	public static void addContextExtends(IRodinFile rodinFile, String name) throws RodinDBException {
-		IExtendsContext extendsContext = 
-			(IExtendsContext) rodinFile.createInternalElement(IExtendsContext.ELEMENT_TYPE, 
-					getUniqueName(), null, null);
+	public static void addContextExtends(IContextFile rodinFile, String name) throws RodinDBException {
+		IExtendsContext extendsContext = rodinFile.getExtendsClause(getUniqueName());
+		extendsContext.create(null, null);
 		extendsContext.setAbstractContextName(name, null);
 	}
 
-	public static void addTheorems(IRodinFile rodinFile, String[] names, String[] theorems) throws RodinDBException {
+	public static void addTheorems(IMachineFile rodinFile, String[] names, String[] theorems) throws RodinDBException {
 		for(int i=0; i<names.length; i++) {
-			ITheorem theorem = 
-				(ITheorem) rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
+			ITheorem theorem = rodinFile.getTheorem(getUniqueName());
+			theorem.create(null, null);
 			theorem.setPredicateString(theorems[i], null);
 			theorem.setLabel(names[i], null);
 		}
 	}
 
-	public static void addVariables(IRodinFile rodinFile, String... names) throws RodinDBException {
+	public static void addTheorems(IContextFile rodinFile, String[] names, String[] theorems) throws RodinDBException {
+		for(int i=0; i<names.length; i++) {
+			ITheorem theorem = rodinFile.getTheorem(getUniqueName());
+			theorem.create(null, null);
+			theorem.setPredicateString(theorems[i], null);
+			theorem.setLabel(names[i], null);
+		}
+	}
+
+	public static void addVariables(IMachineFile rodinFile, String... names) throws RodinDBException {
 		for(String name : names) {
-			IVariable variable = 
-				(IVariable) rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
+			IVariable variable = rodinFile.getVariable(getUniqueName());
+			variable.create(null, null);
 			variable.setIdentifierString(name, null);
 		}
 	}
