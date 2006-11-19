@@ -8,10 +8,8 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
-import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
@@ -19,11 +17,9 @@ import org.eventb.core.IPSFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCMachineFile;
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinFile;
 
 /**
@@ -47,30 +43,13 @@ public class POFile extends RodinFile implements IPOFile {
 		super(file, parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.RodinElement#getElementType()
-	 */
 	@Override
 	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 	
-	@Deprecated
-	public IPOPredicateSet getPredicateSet(String name, IProgressMonitor monitor) throws RodinDBException {
-		InternalElement element = getInternalElement(POPredicateSet.ELEMENT_TYPE, name);
-		if(element.exists())
-			return (POPredicateSet) element;
-		else
-			return null;
-	}
-	
 	public IPOPredicateSet getPredicateSet(String elementName) throws RodinDBException {
 		return (IPOPredicateSet) getInternalElement(IPOPredicateSet.ELEMENT_TYPE, elementName);
-	}
-	
-	@Deprecated
-	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
-		return (POIdentifier[]) getChildrenOfType(POIdentifier.ELEMENT_TYPE);
 	}
 
 	public IPOSequent[] getSequents() throws RodinDBException {
@@ -109,15 +88,6 @@ public class POFile extends RodinFile implements IPOFile {
 	public IPOPredicateSet[] getPredicateSets() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(POPredicateSet.ELEMENT_TYPE);
 		return (IPOPredicateSet[]) elements;
-	}
-
-	@Deprecated
-	public IPOSequent getSequent(String name, IProgressMonitor monitor) throws RodinDBException {
-		IInternalElement element = getInternalElement(IPOSequent.ELEMENT_TYPE, name);
-		if(element.exists())
-			return (POSequent) element;
-		else
-			return null;
 	}
 
 	public IPOSequent getSequent(String elementName) throws RodinDBException {

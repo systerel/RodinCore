@@ -78,7 +78,7 @@ public class POSequent extends EventBElement implements IPOSequent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IPODescription#getName()
 	 */
-	public String getDescription(IProgressMonitor monitor) throws RodinDBException {
+	public String getDescription() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.PODESC_ATTRIBUTE);
 	}
 

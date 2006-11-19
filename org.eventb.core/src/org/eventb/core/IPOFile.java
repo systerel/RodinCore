@@ -8,7 +8,6 @@
 
 package org.eventb.core;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -93,24 +92,6 @@ public interface IPOFile extends IRodinFile {
 	public IPOPredicateSet[] getPredicateSets() throws RodinDBException;
 
 	/**
-	 * Returns a handle to the predicate set with the given name.
-	 * 
-	 * @param name
-	 *            the element name of the predicate set
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return a handle to the predicate set or <code>null</code> there is no
-	 *         predicate set witrh given name
-	 * @throws RodinDBException if there was a problem accessing the database
-	 */
-	@Deprecated
-	public IPOPredicateSet getPredicateSet(String name, IProgressMonitor monitor) throws RodinDBException;
-	
-	@Deprecated
-	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
-	
-	/**
 	 * Returns handles to the proof obligations of this component. 
 	 * 
 	 * @return the array of handles to the proof obligations
@@ -131,17 +112,4 @@ public interface IPOFile extends IRodinFile {
 	 */
 	public IPOSequent getSequent(String elementName) throws RodinDBException;
 	
-	/**
-	 * Returns handle to the proof obligation with the given element name,
-	 * and <code>null</code> if no such proof obligation exists in this component
-	 * 
-	 * @param name the element of the proof obligation
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the array of handles to the proof obligations
-	 * @throws RodinDBException if there was a problem accessing the database
-	 */
-	@Deprecated
-	public IPOSequent getSequent(String name, IProgressMonitor monitor) throws RodinDBException;
 }

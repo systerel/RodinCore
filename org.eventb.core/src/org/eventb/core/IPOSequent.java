@@ -107,12 +107,9 @@ public interface IPOSequent extends IInternalElement {
 	/**
 	 * Returns a more descriptive name of this proof obligation.
 	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
 	 * @return a descriptive proof obligation name
 	 */
-	String getDescription(IProgressMonitor monitor) throws RodinDBException;
+	String getDescription() throws RodinDBException;
 
 	/**
 	 * Sets the descriptive name of this proof obligation.
