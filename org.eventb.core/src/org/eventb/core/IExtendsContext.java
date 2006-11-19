@@ -87,9 +87,6 @@ public interface IExtendsContext extends IInternalElement {
 	/**
 	 * Returns a handle to the checked version of the abstract context, that is
 	 * the file produced when statically checking that context.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
 	 * 
 	 * @return a handle to the checked version of the abstract context
 	 * @throws RodinDBException
