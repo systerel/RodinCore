@@ -216,19 +216,6 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#isNotSelectable(java.lang.Object,
-	 *      int)
-	 */
-	@Override
-	protected boolean isNotSelectable(Object object, int column) {
-		if (!(object instanceof IAxiom))
-			return true;
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
 	 */
 	@Override

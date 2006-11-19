@@ -21,10 +21,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eventb.core.IAssignmentElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.IPredicateElement;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
@@ -164,56 +162,10 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	@Override
 	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
 
-		switch (col) {
-		case 0:
-			try {
-				ElementUIRegistry.getDefault().modify(element, this.getColumnID(col), text);
-				// Commit label / identifier
-				// if (element instanceof IIdentifierElement) {
-				// IIdentifierElement identifierElement = (IIdentifierElement)
-				// element;
-				// if (!identifierElement.getIdentifierString().equals(text)) {
-				// identifierElement.setIdentifierString(text);
-				// }
-				// } else if (element instanceof ILabeledElement) {
-				// ILabeledElement labelElement = (ILabeledElement) element;
-				// if (EventBEditorUtils.DEBUG)
-				// EventBEditorUtils.debug("Rename label: "
-				// + labelElement.getLabel(null) + " to " + text);
-				// if (!labelElement.getLabel(null).equals(text)) {
-				// labelElement.setLabel(text, null);
-				// }
-				//
-				// } else if (element instanceof IRefinesEvent) {
-				// IRefinesEvent refinesEvent = (IRefinesEvent) element;
-				// if (!refinesEvent.getAbstractEventLabel().equals(text)) {
-				// refinesEvent.setAbstractEventLabel(text);
-				// }
-				// }
-
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-
-			break;
-
-		case 1: // Commit predicate/assignment
-			try {
-				if (element instanceof IPredicateElement) {
-					IPredicateElement predicateElement = (IPredicateElement) element;
-					if (!predicateElement.getPredicateString().equals(text)) {
-						predicateElement.setPredicateString(text, monitor);
-					}
-				} else if (element instanceof IAssignmentElement) {
-					IAssignmentElement assignmentElement = (IAssignmentElement) element;
-					if (!assignmentElement.getAssignmentString().equals(text)) {
-						assignmentElement.setAssignmentString(text, monitor);
-					}
-				}
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-			break;
+		try {
+			ElementUIRegistry.getDefault().modify(element, this.getColumnID(col), text);
+		} catch (RodinDBException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -238,36 +190,6 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		predicateColumn.setWidth(250);
 
 		tree.setHeaderVisible(true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#isNotSelectable(java.lang.Object,
-	 *      int)
-	 */
-	@Override
-	protected boolean isNotSelectable(Object object, int column) {
-		return ElementUIRegistry.getDefault().isNotSelectable(object, this.getColumnID(column));
-
-//		if (column == 0) {
-//			return ElementUIRegistry.getDefault().isNotSelectable(object, this.getColumnID(column));
-			// if (object instanceof ILabeledElement
-			// || object instanceof IIdentifierElement
-			// || object instanceof IRefinesEvent)
-			// return false;
-			// else
-			// return true;
-		// }
-		// if (column == 1) {
-		// if (object instanceof IAssignmentElement
-		// || object instanceof IPredicateElement
-		// || object instanceof IExpressionElement)
-		// return false;
-		// else
-		// return true;
-		//		}
-		//		return false;
 	}
 
 	/*

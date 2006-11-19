@@ -176,13 +176,6 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 	}
 
 	@Override
-	protected boolean isNotSelectable(Object object, int column) {
-		if (!(object instanceof IRodinElement))
-			return true;
-		return false;
-	}
-
-	@Override
 	protected void edit(IRodinElement element) {
 		this.reveal(element);
 		TreeItem item = TreeSupports.findItem(this.getTree(), element);

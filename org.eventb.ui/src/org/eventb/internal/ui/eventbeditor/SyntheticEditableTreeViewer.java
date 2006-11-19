@@ -309,36 +309,6 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#isNotSelectable(java.lang.Object,
-	 *      int)
-	 */
-	@Override
-	protected boolean isNotSelectable(Object object, int column) {
-		if (column == 0) {
-			if (object instanceof ILabeledElement
-					|| object instanceof IIdentifierElement
-					|| object instanceof ISeesContext
-					|| object instanceof IRefinesMachine
-					|| object instanceof IExtendsContext
-					|| object instanceof IRefinesEvent)
-				return false;
-			else
-				return true;
-		}
-		if (column == 1) {
-			if (object instanceof IAssignmentElement
-					|| object instanceof IPredicateElement
-					|| object instanceof IExpressionElement)
-				return false;
-			else
-				return true;
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
 	 */
 	@Override

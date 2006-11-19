@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -126,7 +127,9 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @return <code>true</code> if the object is editable at the current
 	 *         column
 	 */
-	protected abstract boolean isNotSelectable(Object object, int column);
+	protected boolean isNotSelectable(Object object, int column) {
+		return ElementUIRegistry.getDefault().isNotSelectable(object, this.getColumnID(column));
+	}
 
 	/**
 	 * Commit the change for an element at the column with the new information
