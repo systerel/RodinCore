@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -26,7 +25,6 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
-import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
@@ -153,21 +151,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		this.setSorter(new ElementSorter());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
-	 *      int, java.lang.String)
-	 */
-	@Override
-	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
 
-		try {
-			ElementUIRegistry.getDefault().modify(element, this.getColumnID(col), text);
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-	}
 
 	/*
 	 * (non-Javadoc)

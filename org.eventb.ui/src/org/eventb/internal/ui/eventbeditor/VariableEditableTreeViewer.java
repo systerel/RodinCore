@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -141,26 +140,26 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		this.setLabelProvider(new EventBTreeLabelProvider(editor, this));
 		this.setSorter(new ElementSorter());
 	}
-
-	@Override
-	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
-		IVariable var = (IVariable) element;
-		switch (col) {
-		case 0: // Commit name
-			try {
-				if (EventBEditorUtils.DEBUG)
-					EventBEditorUtils.debug("Commit : "
-							+ var.getIdentifierString() + " to be : " + text);
-				if (!var.getIdentifierString().equals(text)) {
-					var.setIdentifierString(text, monitor);
-				}
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-
-			break;
-		}
-	}
+//
+//	@Override
+//	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
+//		IVariable var = (IVariable) element;
+//		switch (col) {
+//		case 0: // Commit name
+//			try {
+//				if (EventBEditorUtils.DEBUG)
+//					EventBEditorUtils.debug("Commit : "
+//							+ var.getIdentifierString() + " to be : " + text);
+//				if (!var.getIdentifierString().equals(text)) {
+//					var.setIdentifierString(text, monitor);
+//				}
+//			} catch (RodinDBException e) {
+//				e.printStackTrace();
+//			}
+//
+//			break;
+//		}
+//	}
 
 	@Override
 	protected void createTreeColumns() {

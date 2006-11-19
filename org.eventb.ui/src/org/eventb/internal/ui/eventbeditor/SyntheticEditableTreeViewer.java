@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -26,18 +25,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionContext;
-import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IEvent;
-import org.eventb.core.IExpressionElement;
-import org.eventb.core.IExtendsContext;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
-import org.eventb.core.IPredicateElement;
-import org.eventb.core.IRefinesEvent;
-import org.eventb.core.IRefinesMachine;
-import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -234,77 +224,77 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
 	 *      int, java.lang.String)
 	 */
-	@Override
-	protected void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
-
-		switch (col) {
-		case 0: // Commit label / identifier
-			try {
-				if (element instanceof IIdentifierElement) {
-					IIdentifierElement identifierElement = (IIdentifierElement) element;
-					if (!identifierElement.getIdentifierString().equals(text)) {
-						identifierElement.setIdentifierString(text, monitor);
-					}
-				} else if (element instanceof ILabeledElement) {
-					ILabeledElement labelElement = (ILabeledElement) element;
-					if (EventBEditorUtils.DEBUG)
-						EventBEditorUtils.debug("Rename label: "
-								+ labelElement.getLabel() + " to " + text);
-					if (!labelElement.getLabel().equals(text)) {
-						labelElement.setLabel(text, null);
-					}
-				} else if (element instanceof ISeesContext) {
-					ISeesContext seesContext = (ISeesContext) element;
-					if (!seesContext.getSeenContextName().equals(text)) {
-						seesContext.setSeenContextName(text, null);
-					}
-				} else if (element instanceof IExtendsContext) {
-					IExtendsContext extendsContext = (IExtendsContext) element;
-					if (!extendsContext.getAbstractContextName().equals(text)) {
-						extendsContext.setAbstractContextName(text, monitor);
-					}
-				} else if (element instanceof IRefinesMachine) {
-					IRefinesMachine refinesMachine = (IRefinesMachine) element;
-					if (!refinesMachine.getAbstractMachineName().equals(text)) {
-						refinesMachine.setAbstractMachineName(text, null);
-					}
-				} else if (element instanceof IRefinesEvent) {
-					IRefinesEvent refinesEvent = (IRefinesEvent) element;
-					if (!refinesEvent.getAbstractEventLabel().equals(text)) {
-						refinesEvent.setAbstractEventLabel(text, null);
-					}
-				}
-
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-
-			break;
-
-		case 1: // Commit predicate/assignment
-			try {
-				if (element instanceof IPredicateElement) {
-					IPredicateElement predicateElement = (IPredicateElement) element;
-					if (!predicateElement.getPredicateString().equals(text)) {
-						predicateElement.setPredicateString(text, null);
-					}
-				} else if (element instanceof IAssignmentElement) {
-					IAssignmentElement assignmentElement = (IAssignmentElement) element;
-					if (!assignmentElement.getAssignmentString().equals(text)) {
-						assignmentElement.setAssignmentString(text, monitor);
-					}
-				} else if (element instanceof IExpressionElement) {
-					IExpressionElement expressionElement = (IExpressionElement) element;
-					if (!expressionElement.getExpressionString().equals(text)) {
-						expressionElement.setExpressionString(text, monitor);
-					}
-				}
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-			break;
-		}
-	}
+//	@Override
+//	protected void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
+//
+//		switch (col) {
+//		case 0: // Commit label / identifier
+//			try {
+//				if (element instanceof IIdentifierElement) {
+//					IIdentifierElement identifierElement = (IIdentifierElement) element;
+//					if (!identifierElement.getIdentifierString().equals(text)) {
+//						identifierElement.setIdentifierString(text, monitor);
+//					}
+//				} else if (element instanceof ILabeledElement) {
+//					ILabeledElement labelElement = (ILabeledElement) element;
+//					if (EventBEditorUtils.DEBUG)
+//						EventBEditorUtils.debug("Rename label: "
+//								+ labelElement.getLabel() + " to " + text);
+//					if (!labelElement.getLabel().equals(text)) {
+//						labelElement.setLabel(text, null);
+//					}
+//				} else if (element instanceof ISeesContext) {
+//					ISeesContext seesContext = (ISeesContext) element;
+//					if (!seesContext.getSeenContextName().equals(text)) {
+//						seesContext.setSeenContextName(text, null);
+//					}
+//				} else if (element instanceof IExtendsContext) {
+//					IExtendsContext extendsContext = (IExtendsContext) element;
+//					if (!extendsContext.getAbstractContextName().equals(text)) {
+//						extendsContext.setAbstractContextName(text, monitor);
+//					}
+//				} else if (element instanceof IRefinesMachine) {
+//					IRefinesMachine refinesMachine = (IRefinesMachine) element;
+//					if (!refinesMachine.getAbstractMachineName().equals(text)) {
+//						refinesMachine.setAbstractMachineName(text, null);
+//					}
+//				} else if (element instanceof IRefinesEvent) {
+//					IRefinesEvent refinesEvent = (IRefinesEvent) element;
+//					if (!refinesEvent.getAbstractEventLabel().equals(text)) {
+//						refinesEvent.setAbstractEventLabel(text, null);
+//					}
+//				}
+//
+//			} catch (RodinDBException e) {
+//				e.printStackTrace();
+//			}
+//
+//			break;
+//
+//		case 1: // Commit predicate/assignment
+//			try {
+//				if (element instanceof IPredicateElement) {
+//					IPredicateElement predicateElement = (IPredicateElement) element;
+//					if (!predicateElement.getPredicateString().equals(text)) {
+//						predicateElement.setPredicateString(text, null);
+//					}
+//				} else if (element instanceof IAssignmentElement) {
+//					IAssignmentElement assignmentElement = (IAssignmentElement) element;
+//					if (!assignmentElement.getAssignmentString().equals(text)) {
+//						assignmentElement.setAssignmentString(text, monitor);
+//					}
+//				} else if (element instanceof IExpressionElement) {
+//					IExpressionElement expressionElement = (IExpressionElement) element;
+//					if (!expressionElement.getExpressionString().equals(text)) {
+//						expressionElement.setExpressionString(text, monitor);
+//					}
+//				}
+//			} catch (RodinDBException e) {
+//				e.printStackTrace();
+//			}
+//			break;
+//		}
+//	}
 
 	/*
 	 * (non-Javadoc)

@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -156,26 +155,26 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
 	 *      int, java.lang.String)
 	 */
-	@Override
-	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
-		IConstant cst = (IConstant) element;
-
-		switch (col) {
-		case 0: // Commit name
-			try {
-				if (EventBEditorUtils.DEBUG)
-					EventBEditorUtils.debug("Commit : "
-							+ cst.getIdentifierString() + " to be : " + text);
-				if (!cst.getIdentifierString().equals(text)) {
-					cst.setIdentifierString(text, monitor);
-				}
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-
-			break;
-		}
-	}
+//	@Override
+//	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
+//		IConstant cst = (IConstant) element;
+//
+//		switch (col) {
+//		case 0: // Commit name
+//			try {
+//				if (EventBEditorUtils.DEBUG)
+//					EventBEditorUtils.debug("Commit : "
+//							+ cst.getIdentifierString() + " to be : " + text);
+//				if (!cst.getIdentifierString().equals(text)) {
+//					cst.setIdentifierString(text, monitor);
+//				}
+//			} catch (RodinDBException e) {
+//				e.printStackTrace();
+//			}
+//
+//			break;
+//		}
+//	}
 
 	@Override
 	protected void createTreeColumns() {

@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -157,32 +156,32 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
 	 *      int, java.lang.String)
 	 */
-	@Override
-	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
-		ITheorem thm = (ITheorem) element;
-		switch (col) {
-		case 0: // Commit name
-			try {
-				if (!thm.getLabel().equals(text)) {
-					thm.setLabel(text, null);
-				}
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-
-			break;
-
-		case 1: // Commit content
-			try {
-				if (!thm.getPredicateString().equals(text)) {
-					thm.setPredicateString(text, null);
-				}
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-			break;
-		}
-	}
+//	@Override
+//	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
+//		ITheorem thm = (ITheorem) element;
+//		switch (col) {
+//		case 0: // Commit name
+//			try {
+//				if (!thm.getLabel().equals(text)) {
+//					thm.setLabel(text, null);
+//				}
+//			} catch (RodinDBException e) {
+//				e.printStackTrace();
+//			}
+//
+//			break;
+//
+//		case 1: // Commit content
+//			try {
+//				if (!thm.getPredicateString().equals(text)) {
+//					thm.setPredicateString(text, null);
+//				}
+//			} catch (RodinDBException e) {
+//				e.printStackTrace();
+//			}
+//			break;
+//		}
+//	}
 
 	/*
 	 * (non-Javadoc)

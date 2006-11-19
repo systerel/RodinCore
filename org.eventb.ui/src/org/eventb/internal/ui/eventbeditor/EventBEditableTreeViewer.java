@@ -45,6 +45,7 @@ import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -143,9 +144,15 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @param text
 	 *            The new information
 	 */
-	protected abstract void commit(IRodinElement element, int col, String text,
-			IProgressMonitor monitor);
+	protected void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
 
+		try {
+			ElementUIRegistry.getDefault().modify(element, this.getColumnID(col), text);
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Select and edit the element in this Viewer.
 	 * <p>
