@@ -93,7 +93,7 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 		
 		graph.openGraph();
 		graph.addNode(target.getResource(), MACHINE_POG_TOOL_ID);
-		graph.putToolDependency(
+		graph.addToolDependency(
 				source.getResource(), 
 				target.getResource(), MACHINE_POG_TOOL_ID, true);
 		graph.closeGraph();

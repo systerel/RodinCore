@@ -46,7 +46,7 @@ public class GraphTransaction implements IGraph {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#putUserDependency(IFile, IFile, IFile, String, boolean)
 	 */
-	public void putUserDependency(
+	public void addUserDependency(
 			IFile origin, 
 			IFile source, 
 			IFile target,
@@ -73,7 +73,7 @@ public class GraphTransaction implements IGraph {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#putToolDependency(IFile, IFile, String, boolean)
 	 */
-	public void putToolDependency(
+	public void addToolDependency(
 			IFile source, 
 			IFile target, 
 			String id,

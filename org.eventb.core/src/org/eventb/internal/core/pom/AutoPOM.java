@@ -171,7 +171,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		
 			graph.openGraph();
 			graph.addNode(target.getResource(), POMCore.AUTO_POM_TOOL_ID);
-			graph.putToolDependency(
+			graph.addToolDependency(
 					source.getResource(), 
 					target.getResource(), POMCore.AUTO_POM_TOOL_ID, true);
 			graph.closeGraph();

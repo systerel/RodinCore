@@ -35,7 +35,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public interface IExtractor {
 	
-	// dependency extractor handler
+	/**
+	 * Extracts dependency information from a file.
+	 * @param file the file to be extracted
+	 * @param graph the dependency graph to update
+	 * @param monitor a progress monitor
+	 * @throws CoreException if there was a problem
+	 */
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException;
 
 }

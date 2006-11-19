@@ -114,13 +114,13 @@ public class MachineStaticChecker extends StaticChecker {
 
 			graph.openGraph();
 			graph.addNode(target.getResource(), MACHINE_SC_TOOL_ID);
-			graph.putToolDependency(
+			graph.addToolDependency(
 					source.getResource(), 
 					target.getResource(), MACHINE_SC_TOOL_ID, true);	
 		
 			if (seen.length != 0) {
 				for (ISeesContext seesContext : seen) {
-					graph.putUserDependency(
+					graph.addUserDependency(
 							source.getResource(), 
 							seesContext.getSeenSCContext().getResource(), 
 							target.getResource(), 
@@ -129,7 +129,7 @@ public class MachineStaticChecker extends StaticChecker {
 			}
 		
 			if (abstractMachines.length != 0) {
-				graph.putUserDependency(
+				graph.addUserDependency(
 						source.getResource(), 
 						abstractMachines[0].getAbstractSCMachine().getResource(), 
 						target.getResource(), 

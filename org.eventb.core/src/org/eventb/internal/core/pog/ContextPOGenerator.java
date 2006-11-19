@@ -62,7 +62,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 				
 		graph.openGraph();
 		graph.addNode(target.getResource(), CONTEXT_POG_TOOL_ID);
-		graph.putToolDependency(
+		graph.addToolDependency(
 				source.getResource(), 
 				target.getResource(), CONTEXT_POG_TOOL_ID, true);
 		graph.closeGraph();

@@ -108,13 +108,13 @@ public class ContextStaticChecker extends StaticChecker {
 		
 			graph.openGraph();
 			graph.addNode(target.getResource(), CONTEXT_SC_TOOL_ID);
-			graph.putToolDependency(
+			graph.addToolDependency(
 					source.getResource(), 
 					target.getResource(), CONTEXT_SC_TOOL_ID, true);
 		
 			IExtendsContext[] extendsContexts = source.getExtendsClauses();
 			for(IExtendsContext extendsContext : extendsContexts) {
-				graph.putUserDependency(
+				graph.addUserDependency(
 						source.getResource(), 
 						extendsContext.getAbstractSCContext().getResource(), 
 						target.getResource(), 

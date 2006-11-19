@@ -47,15 +47,6 @@ public interface IGraph {
 	 */
 	public void addNode(IFile file, String toolId) throws CoreException;
 	
-//	/**
-//	 * Remove the node "path" from the graph. If the node does not exist,
-//	 * nothing happens. All dependencies are removed with the node.
-//	 * 
-//	 * @param path
-//	 *            The path of the node to be removed.
-//	 */
-//	public void removeNode(IPath path);
-	
 	/**
 	 * Adds a dependency controlled by the user to the graph.
 	 * 
@@ -74,7 +65,7 @@ public interface IGraph {
 	 *            topological order derived from the graph.
 	 * @throws CoreException TODO
 	 */
-	public void putUserDependency(
+	public void addUserDependency(
 			IFile origin, 
 			IFile source, 
 			IFile target,
@@ -94,7 +85,7 @@ public interface IGraph {
 	 *            topological order derived from the graph.
 	 * @throws CoreException TODO
 	 */
-	public void putToolDependency(
+	public void addToolDependency(
 			IFile source, 
 			IFile target, 
 			String id,

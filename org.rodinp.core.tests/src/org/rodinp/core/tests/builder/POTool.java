@@ -53,7 +53,7 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 		
 		IPOFile po = prv.getPOFile();
 		graph.addNode(po.getResource(), ID);
-		graph.putToolDependency(prv.getResource(), po.getResource(), ID, true);
+		graph.addToolDependency(prv.getResource(), po.getResource(), ID, true);
 				
 		graph.closeGraph();
 	}
