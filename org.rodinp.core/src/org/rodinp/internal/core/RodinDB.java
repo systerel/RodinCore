@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -250,9 +248,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	 * @see IRodinDB
 	 */
 	public IRodinProject[] getRodinProjects() throws RodinDBException {
-		ArrayList<IRodinElement> list = 
-			getFilteredChildrenList(IRodinProject.ELEMENT_TYPE);
-		return list.toArray(new IRodinProject[list.size()]);
+		return (IRodinProject[]) getChildrenOfType(IRodinProject.ELEMENT_TYPE);
 
 	}
 

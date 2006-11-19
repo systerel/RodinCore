@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOIdentifier;
@@ -49,10 +47,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 	}
 	
 	public IPOPredicate[] getPredicates() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOPredicate.ELEMENT_TYPE);
-		IPOPredicate[] predicates = new IPOPredicate[list.size()];
-		list.toArray(predicates);
-		return predicates;
+		return (IPOPredicate[]) getChildrenOfType(IPOPredicate.ELEMENT_TYPE);
 	}
 	
 	@Deprecated
@@ -79,9 +74,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 	}
 
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
-		IPOIdentifier[] identifiers = 
-			(IPOIdentifier[]) getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
-		return identifiers;
+		return (IPOIdentifier[]) getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
 	}
 
 	public IPOIdentifier getIdentifier(String elementName) {

@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
@@ -40,10 +38,7 @@ public class PRFile extends RodinFile implements IPRFile {
 	}
 	
 	public IPRProof[] getProofs() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPRProof.ELEMENT_TYPE);
-		PRProof[] proofTrees = new PRProof[list.size()];
-		list.toArray(proofTrees);
-		return proofTrees;
+		return (PRProof[]) getChildrenOfType(IPRProof.ELEMENT_TYPE);
 	}
 
 	public IPRProof getProof(String name) {

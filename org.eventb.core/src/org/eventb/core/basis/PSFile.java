@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
@@ -70,10 +68,7 @@ public class PSFile extends RodinFile implements IPSFile {
 	}
 		
 	public IPSStatus[] getStatuses() throws RodinDBException{
-		ArrayList<IRodinElement> list = getFilteredChildrenList(PSStatus.ELEMENT_TYPE);
-		PSStatus[] statuses = new PSStatus[list.size()];
-		list.toArray(statuses);
-		return statuses;
+		return (IPSStatus[]) getChildrenOfType(PSStatus.ELEMENT_TYPE);
 	}
 	
 	public IPSStatus getStatus(String name) {

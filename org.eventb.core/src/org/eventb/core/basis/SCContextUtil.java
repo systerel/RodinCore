@@ -7,15 +7,12 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCTheorem;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinElement;
 
@@ -31,29 +28,19 @@ import org.rodinp.core.basis.RodinElement;
 abstract class SCContextUtil {
 
 	static public ISCCarrierSet[] getSCCarrierSets(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
-		IRodinElement[] elements = element.getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE);
-		return (ISCCarrierSet[]) elements; 
+		return (ISCCarrierSet[]) element.getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE); 
 	}
 
 	static public ISCConstant[] getSCConstants(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = element.getFilteredChildrenList(ISCConstant.ELEMENT_TYPE);
-		SCConstant[] constants = new SCConstant[list.size()];
-		list.toArray(constants);
-		return constants; 
+		return (ISCConstant[]) element.getChildrenOfType(ISCConstant.ELEMENT_TYPE); 
 	}
 
 	static public ISCAxiom[] getSCAxioms(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = element.getFilteredChildrenList(ISCAxiom.ELEMENT_TYPE);
-		SCAxiom[] axioms = new SCAxiom[list.size()];
-		list.toArray(axioms);
-		return axioms; 
+		return (ISCAxiom[]) element.getChildrenOfType(ISCAxiom.ELEMENT_TYPE);
 	}
 
 	static public ISCTheorem[] getSCTheorems(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
-		ArrayList<IRodinElement> list = element.getFilteredChildrenList(ISCTheorem.ELEMENT_TYPE);
-		SCTheorem[] theorems = new SCTheorem[list.size()];
-		list.toArray(theorems);
-		return theorems; 
+		return (ISCTheorem[]) element.getChildrenOfType(ISCTheorem.ELEMENT_TYPE); 
 	}
 
 }

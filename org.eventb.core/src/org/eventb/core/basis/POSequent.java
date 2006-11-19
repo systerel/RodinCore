@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOHint;
@@ -58,10 +56,7 @@ public class POSequent extends EventBElement implements IPOSequent {
 	
 	@Deprecated
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOIdentifier.ELEMENT_TYPE);
-		IPOIdentifier[] identifiers = new IPOIdentifier[list.size()];
-		list.toArray(identifiers);
-		return identifiers;
+		return (IPOIdentifier[]) getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
 	}
 	
 	@Deprecated
@@ -91,16 +86,14 @@ public class POSequent extends EventBElement implements IPOSequent {
 	 * @see org.eventb.core.IPODescription#getSources()
 	 */
 	public IPOSource[] getSources() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IPOSource.ELEMENT_TYPE);
-		return (IPOSource[]) elements; 
+		return (IPOSource[]) getChildrenOfType(IPOSource.ELEMENT_TYPE); 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IPODescription#getHints()
 	 */
 	public IPOHint[] getHints() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IPOHint.ELEMENT_TYPE);
-		return (IPOHint[]) elements; 
+		return (IPOHint[]) getChildrenOfType(IPOHint.ELEMENT_TYPE); 
 	}
 
 	/* (non-Javadoc)
@@ -111,13 +104,11 @@ public class POSequent extends EventBElement implements IPOSequent {
 	}
 
 	public IPOPredicate[] getGoals() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IPOPredicate.ELEMENT_TYPE);
-		return (IPOPredicate[]) elements; 
+		return (IPOPredicate[]) getChildrenOfType(IPOPredicate.ELEMENT_TYPE); 
 	}
 
 	public IPOPredicateSet[] getHypotheses() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IPOPredicateSet.ELEMENT_TYPE);
-		return (IPOPredicateSet[]) elements; 
+		return (IPOPredicateSet[]) getChildrenOfType(IPOPredicateSet.ELEMENT_TYPE); 
 	}
 
 	public IPOPredicate getGoal(String elementName) {

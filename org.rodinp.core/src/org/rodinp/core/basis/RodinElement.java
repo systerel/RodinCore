@@ -11,7 +11,6 @@
 package org.rodinp.core.basis;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -220,17 +219,16 @@ public abstract class RodinElement extends PlatformObject implements
 	 * @see IParent
 	 */
 	public RodinElement[] getChildren() throws RodinDBException {
-		RodinElementInfo elementInfo = getElementInfo();
-		if (elementInfo != null) {
-			final RodinElement[] children = elementInfo.getChildren();
-			// Must make a copy as we don't want to expose the internal array
-			final int length = children.length;
-			final RodinElement[] result = new RodinElement[length];
-			System.arraycopy(children, 0, result, 0, length);
-			return result;
-		} else {
+		final RodinElementInfo elementInfo = getElementInfo();
+		final RodinElement[] children = elementInfo.getChildren();
+		// Must make a copy as we don't want to expose the internal array
+		final int length = children.length;
+		if (length == 0) {
 			return NO_ELEMENTS;
 		}
+		final RodinElement[] result = new RodinElement[length];
+		System.arraycopy(children, 0, result, 0, length);
+		return result;
 	}
 
 	/**
@@ -239,17 +237,18 @@ public abstract class RodinElement extends PlatformObject implements
 	 * 
 	 * @param type
 	 *            the given type
+	 * @deprecated Please use {@link #getChildrenOfType(IElementType)} instead.
 	 */
-	public ArrayList<IRodinElement> getFilteredChildrenList(IElementType type)
-			throws RodinDBException {
+	@Deprecated
+	public ArrayList<? extends IRodinElement> getFilteredChildrenList(
+			IElementType type) throws RodinDBException {
 
-		IRodinElement[] children = getChildren();
-		int size = children.length;
-		ArrayList<IRodinElement> list = new ArrayList<IRodinElement>(size);
-		for (int i = 0; i < size; ++i) {
-			RodinElement elt = (RodinElement) children[i];
-			if (elt.getElementType() == type) {
-				list.add(elt);
+		final RodinElement[] children = getElementInfo().getChildren();
+		final ArrayList<RodinElement> list = new ArrayList<RodinElement>(
+				children.length);
+		for (RodinElement child : children) {
+			if (child.getElementType() == type) {
+				list.add(child);
 			}
 		}
 		return list;
@@ -258,8 +257,17 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * @see IParent
 	 */
-	public IRodinElement[] getChildrenOfType(IElementType type) throws RodinDBException {
-		List<IRodinElement> list = getFilteredChildrenList(type);
+	public IRodinElement[] getChildrenOfType(IElementType type)
+			throws RodinDBException {
+
+		final RodinElement[] children = getElementInfo().getChildren();
+		final ArrayList<RodinElement> list = new ArrayList<RodinElement>(
+				children.length);
+		for (RodinElement child : children) {
+			if (child.getElementType() == type) {
+				list.add(child);
+			}
+		}
 		return list.toArray(((ElementType) type).getArray(list.size()));
 	}
 
