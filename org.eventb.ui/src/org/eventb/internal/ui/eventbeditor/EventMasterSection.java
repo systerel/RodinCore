@@ -28,9 +28,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
-import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
-import org.eventb.core.IWitness;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
@@ -289,19 +287,19 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 */
 	@Override
 	protected void edit(IRodinElement element) {
-		TreeViewer viewer = (TreeViewer) this.getViewer();
-		viewer.reveal(element);
-		TreeItem item = TreeSupports.findItem(viewer.getTree(), element);
-		if (element instanceof IVariable)
-			selectItem(item, 0);
-		else if (element instanceof IEvent)
-			selectItem(item, 0);
-		else if (element instanceof IRefinesEvent)
-			selectItem(item, 0);
-		else if (element instanceof IWitness)
-			selectItem(item, 0);
-		else
-			selectItem(item, 1);
+		EventBEditableTreeViewer viewer = (EventBEditableTreeViewer) this.getViewer();
+		viewer.edit(element);
+//		TreeItem item = TreeSupports.findItem(viewer.getTree(), element);
+//		if (element instanceof IVariable)
+//			selectItem(item, 0);
+//		else if (element instanceof IEvent)
+//			selectItem(item, 0);
+//		else if (element instanceof IRefinesEvent)
+//			selectItem(item, 0);
+//		else if (element instanceof IWitness)
+//			selectItem(item, 0);
+//		else
+//			selectItem(item, 1);
 	}
 
 	/*

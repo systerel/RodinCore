@@ -19,7 +19,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
 import org.eventb.core.basis.MachineFile;
@@ -174,12 +173,12 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		tree.setHeaderVisible(true);
 	}
 
-	@Override
-	protected void edit(IRodinElement element) {
-		this.reveal(element);
-		TreeItem item = TreeSupports.findItem(this.getTree(), element);
-		selectItem(item, 0);
-	}
+//	@Override
+//	protected void edit(IRodinElement element) {
+//		this.reveal(element);
+//		TreeItem item = TreeSupports.findItem(this.getTree(), element);
+//		selectItem(item, 0);
+//	}
 
 	// public void selectionChanged(SelectionChangedEvent event) {
 	// UIUtils.debugEventBEditor("Selection changed: ");

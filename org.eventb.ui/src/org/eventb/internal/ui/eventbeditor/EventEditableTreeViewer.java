@@ -19,12 +19,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.IRefinesEvent;
-import org.eventb.core.IVariable;
-import org.eventb.core.IWitness;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
@@ -151,8 +147,6 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		this.setSorter(new ElementSorter());
 	}
 
-
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -174,27 +168,6 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		predicateColumn.setWidth(250);
 
 		tree.setHeaderVisible(true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
-	 */
-	@Override
-	protected void edit(IRodinElement element) {
-		this.reveal(element);
-		TreeItem item = TreeSupports.findItem(this.getTree(), element);
-		if (element instanceof IVariable)
-			selectItem(item, 0);
-		else if (element instanceof IEvent)
-			selectItem(item, 0);
-		else if (element instanceof IWitness)
-			selectItem(item, 0);
-		else if (element instanceof IRefinesEvent)
-			selectItem(item, 0);
-		else
-			selectItem(item, 1);
 	}
 
 }

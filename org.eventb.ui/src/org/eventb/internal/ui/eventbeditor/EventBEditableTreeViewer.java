@@ -71,6 +71,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 
 	private KeyListener keyListener;
 
+	private static final int DEFAULT_COLUMN = 0;
+
 	// private Collection<StatusObject> newStatus;
 
 	/**
@@ -160,7 +162,14 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @param element
 	 *            a Rodin element
 	 */
-	protected abstract void edit(IRodinElement element);
+	protected final void edit(IRodinElement element) {
+		this.reveal(element);
+		TreeItem item = TreeSupports.findItem(this.getTree(), element);
+
+		int column = getColumnNumber(ElementUIRegistry.getDefault()
+				.getDefaultColumn(element));
+		selectItem(item, column);
+	}
 
 	/**
 	 * Add new listener to element moving.
@@ -628,7 +637,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 		}, this.getControl());
 	}
 
-	public String getColumnID(int columnIndex) {
+	protected String getColumnID(int columnIndex) {
 		// TODO Should be implemented dynamically
 		if (columnIndex == 1)
 			return "content";
@@ -636,6 +645,16 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			return "name";
 		else
 			return "";
+	}
+
+	protected int getColumnNumber(String defaultColumn) {
+		if (defaultColumn == null)
+			return DEFAULT_COLUMN;
+		else if (defaultColumn.equals("name"))
+			return 0;
+		else if (defaultColumn.equals("content"))
+			return 1;
+		return DEFAULT_COLUMN;
 	}
 
 }

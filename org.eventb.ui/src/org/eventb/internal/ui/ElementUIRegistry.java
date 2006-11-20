@@ -83,6 +83,7 @@ public class ElementUIRegistry {
 		 */
 		private ImageDescriptor imageDesc;
 
+		private String defaultColumn;
 		/**
 		 * Constructor: Stored the configuration element in order to implement
 		 * lazy loading
@@ -95,6 +96,7 @@ public class ElementUIRegistry {
 			this.configuration = configuration;
 			providers = new HashMap<String, IElementLabelProvider>();
 			modifiers = new HashMap<String, IElementModifier>();
+			defaultColumn = configuration.getAttribute("defaultColumn");
 		}
 
 		/**
@@ -294,6 +296,10 @@ public class ElementUIRegistry {
 			}
 		}
 
+		public String getDefaultColumn(IRodinElement element) {
+			return defaultColumn;
+		}
+
 	}
 
 	/**
@@ -484,5 +490,16 @@ public class ElementUIRegistry {
 		if (info != null)
 			info.modify(element, columnID, text);
 
+	}
+
+	public String getDefaultColumn(IRodinElement element) {
+		if (registry == null)
+			loadRegistry();
+
+		ElementUIInfo info = registry.get(element.getElementType());
+		if (info != null)
+			return info.getDefaultColumn(element);
+
+		return null;
 	}
 }

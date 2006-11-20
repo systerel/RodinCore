@@ -19,7 +19,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextFile;
 import org.eventb.ui.ElementSorter;
@@ -217,11 +216,11 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
 	 */
-	@Override
-	protected void edit(IRodinElement element) {
-		this.reveal(element);
-		TreeItem item = TreeSupports.findItem(this.getTree(), element);
-		selectItem(item, 1);
-	}
+//	@Override
+//	protected void edit(IRodinElement element) {
+//		this.reveal(element);
+//		TreeItem item = TreeSupports.findItem(this.getTree(), element);
+//		selectItem(item, 1);
+//	}
 
 }

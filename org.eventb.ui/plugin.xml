@@ -457,9 +457,10 @@
                math="false"/>
       </element>
       <element
-            type="org.eventb.core.seesContext"
+            defaultColumn="name"
             icon="icons/full/obj16/ctx_obj.gif"
-            priority="2">
+            priority="2"
+            type="org.eventb.core.seesContext">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.SeesContextLabelProvider"
@@ -467,9 +468,10 @@
                modifier="org.eventb.internal.ui.SeesContextModifier"/>
       </element>
       <element
-            type="org.eventb.core.refinesMachine"
+            defaultColumn="name"
             icon="icons/full/obj16/mch_obj.gif"
-            priority="3">
+            priority="3"
+            type="org.eventb.core.refinesMachine">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.RefinesMachineLabelProvider"
@@ -477,9 +479,10 @@
                modifier="org.eventb.internal.ui.RefinesMachineModifier"/>
       </element>
       <element
-            type="org.eventb.core.extendsContext"
+            defaultColumn="name"
             icon="icons/full/obj16/ctx_obj.gif"
-            priority="3">
+            priority="3"
+            type="org.eventb.core.extendsContext">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.ExtendsContextLabelProvider"
@@ -487,9 +490,10 @@
                modifier="org.eventb.internal.ui.ExtendsContextModifier"/>
       </element>
       <element
-            type="org.eventb.core.variable"
+            defaultColumn="name"
             icon="icons/full/obj16/var_obj.gif"
-            priority="4">
+            priority="4"
+            type="org.eventb.core.variable">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
@@ -497,9 +501,10 @@
                modifier="org.eventb.internal.ui.IdentifierModifier"/>
       </element>
       <element
-            type="org.eventb.core.invariant"
+            defaultColumn="content"
             icon="icons/full/obj16/inv_obj.gif"
-            priority="5">
+            priority="5"
+            type="org.eventb.core.invariant">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.LabelLabelProvider"
@@ -512,9 +517,10 @@
                modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
-            type="org.eventb.core.theorem"
+            defaultColumn="content"
             icon="icons/full/obj16/thm_obj.gif"
-            priority="7">
+            priority="7"
+            type="org.eventb.core.theorem">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.LabelLabelProvider"
@@ -527,9 +533,10 @@
                modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
-            type="org.eventb.core.event"
+            defaultColumn="name"
             icon="icons/full/obj16/evt_obj.gif"
-            priority="9">
+            priority="9"
+            type="org.eventb.core.event">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.LabelLabelProvider"
@@ -537,9 +544,10 @@
                modifier="org.eventb.internal.ui.LabelModifier"/>
       </element>
       <element
-            type="org.eventb.core.refinesEvent"
+            defaultColumn="name"
             icon="icons/full/obj16/evt_obj.gif"
-            priority="0">
+            priority="0"
+            type="org.eventb.core.refinesEvent">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.RefinesEventLabelProvider"
@@ -547,9 +555,10 @@
                modifier="org.eventb.internal.ui.RefinesEventModifier"/>
       </element>
       <element
-            type="org.eventb.core.guard"
+            defaultColumn="content"
             icon="icons/full/obj16/grd_obj.gif"
-            priority="5">
+            priority="5"
+            type="org.eventb.core.guard">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.LabelLabelProvider"
@@ -562,9 +571,10 @@
                modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
-            type="org.eventb.core.action"
+            defaultColumn="content"
             icon="icons/full/obj16/act_obj.gif"
-            priority="7">
+            priority="7"
+            type="org.eventb.core.action">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.LabelLabelProvider"
@@ -577,9 +587,10 @@
                modifier="org.eventb.internal.ui.AssignmentModifier"/>
       </element>
       <element
-            type="org.eventb.core.carrierSet"
+            defaultColumn="name"
             icon="icons/full/obj16/set_obj.gif"
-            priority="4">
+            priority="4"
+            type="org.eventb.core.carrierSet">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
@@ -587,9 +598,10 @@
                modifier="org.eventb.internal.ui.IdentifierModifier"/>
       </element>
       <element
-            type="org.eventb.core.constant"
+            defaultColumn="name"
             icon="icons/full/obj16/cst_obj.gif"
-            priority="5">
+            priority="5"
+            type="org.eventb.core.constant">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
@@ -597,9 +609,10 @@
                modifier="org.eventb.internal.ui.IdentifierModifier"/>
       </element>
       <element
-            type="org.eventb.core.axiom"
+            defaultColumn="content"
             icon="icons/full/obj16/axm_obj.gif"
-            priority="6">
+            priority="6"
+            type="org.eventb.core.axiom">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.LabelLabelProvider"
@@ -612,9 +625,10 @@
                modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
-            type="org.eventb.core.witness"
+            defaultColumn="content"
             icon="icons/unattempted.gif"
-            priority="6">
+            priority="6"
+            type="org.eventb.core.witness">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.LabelLabelProvider"
@@ -627,9 +641,10 @@
                modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
-            type="org.eventb.core.variant"
+            defaultColumn="content"
             icon="icons/sample.gif"
-            priority="8">
+            priority="8"
+            type="org.eventb.core.variant">
          <column
                id="name"
                labelProvider="org.eventb.internal.ui.VariantLabelProvider"

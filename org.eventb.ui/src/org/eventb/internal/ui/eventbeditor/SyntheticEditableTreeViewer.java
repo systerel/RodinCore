@@ -23,12 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionContext;
-import org.eventb.core.ICarrierSet;
-import org.eventb.core.IConstant;
-import org.eventb.core.IEvent;
-import org.eventb.core.IVariable;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
@@ -301,20 +296,20 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
 	 */
-	@Override
-	protected void edit(IRodinElement element) {
-		this.reveal(element);
-		TreeItem item = TreeSupports.findItem(this.getTree(), element);
-		if (element instanceof IVariable)
-			selectItem(item, 0);
-		else if (element instanceof IEvent)
-			selectItem(item, 0);
-		else if (element instanceof ICarrierSet)
-			selectItem(item, 0);
-		else if (element instanceof IConstant)
-			selectItem(item, 0);
-		else
-			selectItem(item, 1);
-	}
+//	@Override
+//	protected void edit(IRodinElement element) {
+//		this.reveal(element);
+//		TreeItem item = TreeSupports.findItem(this.getTree(), element);
+//		if (element instanceof IVariable)
+//			selectItem(item, 0);
+//		else if (element instanceof IEvent)
+//			selectItem(item, 0);
+//		else if (element instanceof ICarrierSet)
+//			selectItem(item, 0);
+//		else if (element instanceof IConstant)
+//			selectItem(item, 0);
+//		else
+//			selectItem(item, 1);
+//	}
 
 }
