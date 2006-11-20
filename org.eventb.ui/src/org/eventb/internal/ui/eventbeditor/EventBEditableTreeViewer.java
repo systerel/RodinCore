@@ -130,7 +130,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @return <code>true</code> if the object is editable at the current
 	 *         column
 	 */
-	protected boolean isNotSelectable(Object object, int column) {
+	protected final boolean isNotSelectable(Object object, int column) {
 		return ElementUIRegistry.getDefault().isNotSelectable(object, this.getColumnID(column));
 	}
 
@@ -146,7 +146,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @param text
 	 *            The new information
 	 */
-	protected void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
+	protected final void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
 
 		try {
 			ElementUIRegistry.getDefault().modify(element, this.getColumnID(col), text);

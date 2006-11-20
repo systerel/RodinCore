@@ -5,18 +5,6 @@
       id="editorPages" 
       name="%point.editorPagesName" 
       schema="schema/editorPages.exsd"/>
-   <extension-point
-      id="globalProofTactics" 
-      name="%point.globalProofTacticsName" 
-      schema="schema/globalProofTactics.exsd"/>
-   <extension-point
-      id="hypothesisProofTactics" 
-      name="%point.hypothesisProofTacticsName" 
-      schema="schema/hypothesisProofTactics.exsd"/>
-   <extension-point
-      id="goalProofTactics" 
-      name="%point.goalProofTacticsName" 
-      schema="schema/goalProofTactics.exsd"/>
    <extension-point 
       id="elementui" 
       name="%point.elementUIName" 
