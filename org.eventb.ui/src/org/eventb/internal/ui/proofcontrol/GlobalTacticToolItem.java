@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui.prover.globaltactics;
+package org.eventb.internal.ui.proofcontrol;
 
 import org.eclipse.swt.widgets.ToolItem;
 import org.eventb.core.pm.IProofState;

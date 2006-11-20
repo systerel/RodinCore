@@ -80,8 +80,6 @@ import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
-import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownToolItem;
-import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolItem;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBFormText;
