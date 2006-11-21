@@ -67,8 +67,8 @@ public interface IPOSequent extends IInternalElement {
 	IPOPredicateSet getHypothesis() throws RodinDBException;
 	
 	/**
-	 * Returns the predicate sets containing the hypothesis of this proof obligation
-	 * @return the predicate set containing the hypothesis of this proof obligation
+	 * Returns the predicate sets containing the hypothesrs of this proof obligation
+	 * @return the predicate set containing the hypotheses of this proof obligation
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	IPOPredicateSet[] getHypotheses() throws RodinDBException;
