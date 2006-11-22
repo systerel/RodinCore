@@ -8,7 +8,9 @@
 
 package org.rodinp.internal.core;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -33,6 +35,9 @@ import org.rodinp.core.RodinCore;
  * @author Laurent Voisin
  */
 public class ElementTypeManager {
+	
+	// Debug flag set from tracing options 
+	public static boolean VERBOSE = false;
 
 	/**
 	 * The singleton manager
@@ -89,6 +94,19 @@ public class ElementTypeManager {
 			fileElementTypeIds.put(type.getId(), type);
 			fileContentTypes.put(type.getContentTypeId(), type);
 		}
+
+		if (VERBOSE) {
+			System.out.println("-----------------------------------------------");
+			System.out.println("File element types known to the Rodin database:");
+			for (String id: getSortedIds(fileElementTypeIds)) {
+				FileElementType type = fileElementTypeIds.get(id);
+				System.out.println("  " + type.getId());
+				System.out.println("    name: " + type.getName());
+				System.out.println("    content-type: " + type.getContentTypeId());
+				System.out.println("    class: " + type.getClassName());
+			}
+			System.out.println("-----------------------------------------------");
+		}
 	}
 
 	// Local id of the fileElementTypes extension point of this plugin
@@ -107,6 +125,18 @@ public class ElementTypeManager {
 		for (IConfigurationElement element: elements) {
 			InternalElementType type = new InternalElementType(element);
 			internalElementTypeIds.put(type.getId(), type);
+		}
+
+		if (VERBOSE) {
+			System.out.println("---------------------------------------------------");
+			System.out.println("Internal element types known to the Rodin database:");
+			for (String id: getSortedIds(internalElementTypeIds)) {
+				InternalElementType type = internalElementTypeIds.get(id);
+				System.out.println("  " + type.getId());
+				System.out.println("    name: " + type.getName());
+				System.out.println("    class: " + type.getClassName());
+			}
+			System.out.println("---------------------------------------------------");
 		}
 	}
 
@@ -197,6 +227,19 @@ public class ElementTypeManager {
 				attributeTypeIds.put(description.getId(), description);
 			}
 		}
+
+		if (VERBOSE) {
+			System.out.println("--------------------------------------------");
+			System.out.println("Attribute types known to the Rodin database:");
+			for (String id: getSortedIds(attributeTypeIds)) {
+				AttributeType type = attributeTypeIds.get(id);
+				System.out.println("  " + type.getId());
+				System.out.println("    name:  " + type.getName());
+				System.out.println("    kind:  " + type.getKind());
+				System.out.println("    class: " + type.getClass());
+			}
+			System.out.println("--------------------------------------------");
+		}
 	}
 
 	/**
@@ -215,4 +258,11 @@ public class ElementTypeManager {
 		return attributeTypeIds.get(name);
 	}
 
+	private <V> String[] getSortedIds(HashMap<String, V> map) {
+		Set<String> idSet = map.keySet();
+		String[] ids = idSet.toArray(new String[idSet.size()]);
+		Arrays.sort(ids);
+		return ids;
+	}
+	
 }

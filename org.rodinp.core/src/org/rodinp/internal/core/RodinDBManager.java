@@ -97,6 +97,7 @@ public class RodinDBManager implements ISaveParticipant {
 //	private static final String RESOLUTION_DEBUG = RodinCore.PLUGIN_ID + "/debug/resolution" ; //$NON-NLS-1$
 //	private static final String SELECTION_DEBUG = RodinCore.PLUGIN_ID + "/debug/selection" ; //$NON-NLS-1$
 //	private static final String SEARCH_DEBUG = RodinCore.PLUGIN_ID + "/debug/search" ; //$NON-NLS-1$
+	private static final String RODINTYPES_VERBOSE = RodinCore.PLUGIN_ID + "/debug/rodintypes/verbose" ; //$NON-NLS-1$
 
 //	public static final String COMPLETION_PERF = RodinCore.PLUGIN_ID + "/perf/completion" ; //$NON-NLS-1$
 //	public static final String SELECTION_PERF = RodinCore.PLUGIN_ID + "/perf/selection" ; //$NON-NLS-1$
@@ -296,6 +297,10 @@ public class RodinDBManager implements ISaveParticipant {
 //			
 //			option = Platform.getDebugOption(SOURCE_MAPPER_DEBUG_VERBOSE);
 //			if(option != null) SourceMapper.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+
+			option = Platform.getDebugOption(RODINTYPES_VERBOSE);
+			if(option != null) ElementTypeManager.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+
 		}
 		
 		// configure performance options
