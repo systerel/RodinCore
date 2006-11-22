@@ -12,18 +12,22 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eventb.core.IContextFile;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
-import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.RodinCore;
 
 /**
  * @author htson
  *         <p>
  *         Event-B specific form editor for machines.
  */
-public class EventBContextEditor extends EventBEditor implements IEventBEditor {
+public class EventBContextEditor extends EventBEditor<IContextFile> {
 
 	/**
 	 * The plug-in identifier of the Event-B Context Editor (value
@@ -120,6 +124,13 @@ public class EventBContextEditor extends EventBEditor implements IEventBEditor {
 		if (constantMirrorPage != null)
 			constantMirrorPage.dispose();
 		super.dispose();
+	}
+
+	@Override
+	protected IContextFile getRodinFile(IEditorInput input) {
+		FileEditorInput editorInput = (FileEditorInput) input;
+		IFile inputFile = editorInput.getFile();
+		return (IContextFile) RodinCore.valueOf(inputFile);
 	}
 
 }

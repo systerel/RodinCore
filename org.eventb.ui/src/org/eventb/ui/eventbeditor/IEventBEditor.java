@@ -7,7 +7,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 
-public interface IEventBEditor extends IEditorPart {
+public interface IEventBEditor<F extends IRodinFile> extends IEditorPart {
 
 	/**
 	 * Add an element to be new.
@@ -78,7 +78,12 @@ public interface IEventBEditor extends IEditorPart {
 
 	public abstract void setSelection(IInternalElement element);
 
-	public abstract IRodinFile getRodinInput();
-
+	/**
+	 * Returns the Rodin file associated with this editor. Must be called after
+	 * the editor has been initialized.
+	 * 
+	 * @return the Rodin file for this editor
+	 */
+	public abstract F getRodinInput();
 
 }

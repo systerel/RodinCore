@@ -12,18 +12,22 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
-import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.RodinCore;
 
 /**
  * @author htson
  *         <p>
  *         A subclass of Event-B Editor for editting Event-B machines.
  */
-public class EventBMachineEditor extends EventBEditor implements IEventBEditor {
+public class EventBMachineEditor extends EventBEditor<IMachineFile> {
 
 	// Set of mirror pages.
 	private EventBMirrorPage invariantMirrorPage;
@@ -94,6 +98,13 @@ public class EventBMachineEditor extends EventBEditor implements IEventBEditor {
 			}
 		}
 		return super.getAdapter(required);
+	}
+
+	@Override
+	protected IMachineFile getRodinFile(IEditorInput input) {
+		FileEditorInput editorInput = (FileEditorInput) input;
+		IFile inputFile = editorInput.getFile();
+		return (IMachineFile) RodinCore.valueOf(inputFile);
 	}
 
 	/*

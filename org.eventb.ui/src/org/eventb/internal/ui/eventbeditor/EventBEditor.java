@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,7 +37,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IGotoMarker;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
@@ -75,8 +73,8 @@ import org.rodinp.core.RodinMarkerUtil;
  *         <p>
  *         Abstract Event-B specific form editor for machines, contexts.
  */
-public abstract class EventBEditor extends FormEditor implements
-		IElementChangedListener, IGotoMarker, IEventBEditor {
+public abstract class EventBEditor<F extends IRodinFile> extends FormEditor implements
+		IElementChangedListener, IGotoMarker, IEventBEditor<F> {
 
 	private String lastActivePageID = null;
 
@@ -194,7 +192,7 @@ public abstract class EventBEditor extends FormEditor implements
 	private EventBContentOutlinePage fOutlinePage;
 
 	// The associated rodin file handle
-	private IRodinFile rodinFile = null;
+	private F rodinFile;
 
 	// List of Element Changed listeners for the editor.
 	private Collection<IElementChangedListener> listeners;
@@ -319,16 +317,17 @@ public abstract class EventBEditor extends FormEditor implements
 	 *      org.eclipse.ui.IEditorInput)
 	 */
 	@Override
-	public void init(IEditorSite site, IEditorInput input)
-			throws PartInitException {
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
-		RodinCore.addElementChangedListener(this);
 		site.setSelectionProvider(new FormEditorSelectionProvider(this));
-		final String fileName = getRodinInput().getElementName();
-		this.setPartName(EventBPlugin.getComponentName(fileName));
+		RodinCore.addElementChangedListener(this);
+		rodinFile = getRodinFile(input);
+		setPartName(EventBPlugin.getComponentName(rodinFile.getElementName()));
 	}
 
+	protected abstract F getRodinFile(IEditorInput input);
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -690,21 +689,9 @@ public abstract class EventBEditor extends FormEditor implements
 
 	}
 
-	/**
-	 * Getting the RodinFile associated with this editor.
-	 * <p>
-	 * 
-	 * @return a handle to a Rodin file
-	 */
-	public IRodinFile getRodinInput() {
-		if (rodinFile == null) {
-			FileEditorInput editorInput = (FileEditorInput) this
-					.getEditorInput();
-
-			IFile inputFile = editorInput.getFile();
-
-			rodinFile = RodinCore.valueOf(inputFile);
-		}
+	public F getRodinInput() {
+		if (rodinFile == null)
+			throw new IllegalStateException("Editor hasn't been initialized yet");
 		return rodinFile;
 	}
 
