@@ -31,18 +31,12 @@ public interface IPRFile extends IRodinFile{
 
 	IFileElementType ELEMENT_TYPE = 
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".prFile"); //$NON-NLS-1$
-	
-	
 
 	/**
-	 * Returns handles to all proof elements in the PR file in the order in 
+	 * Returns handles to all proof elements in this PR file in the order in 
 	 * which they occur.
-	 * <p>
-	 * This is a handle-only method. The proof elements may or may not be
-	 * present.
-	 * </p>
 	 * 
-	 * @return an array of all proof elements in the PR file
+	 * @return an array of all proof elements in this PR file
 	 * @throws RodinDBException
 	 */
 	IPRProof[] getProofs() throws RodinDBException;
