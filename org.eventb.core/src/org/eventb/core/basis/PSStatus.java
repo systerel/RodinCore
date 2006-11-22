@@ -51,10 +51,9 @@ public class PSStatus extends InternalElement implements IPSStatus {
 	
 	
 	public IPRProof getProof(){
-		final IPRFile prFile = ((IPSFile)getOpenable()).getPRFile();
-		IPRProof proofTree = prFile.getProof(getElementName());
-		// if ( proofTree == null || (!proofTree.exists())) return null;
-		return proofTree;
+		final IPSFile psFile = (IPSFile) getRodinFile();
+		final IPRFile prFile = psFile.getPRFile();
+		return prFile.getProof(getElementName());
 	}
 
 
@@ -75,11 +74,9 @@ public class PSStatus extends InternalElement implements IPSStatus {
 	}
 	
 	public IPOSequent getPOSequent() {
-		IPSFile psFile = (IPSFile) getOpenable();
-		IPOFile poFile = psFile.getPOFile();
-		IPOSequent poSeq = (IPOSequent) poFile.getInternalElement(IPOSequent.ELEMENT_TYPE,getElementName());
-		if (! poSeq.exists()) return null;
-		return poSeq;
+		final IPSFile psFile = (IPSFile) getRodinFile();
+		final IPOFile poFile = psFile.getPOFile();
+		return poFile.getSequent(getElementName());
 	}
 
 	public boolean hasAutoProofAttribute() throws RodinDBException {
