@@ -30,8 +30,7 @@ import org.eventb.internal.ui.IEventBInputText;
  * @author htson
  *         <p>
  *         This class extends the Dialog class and provides an input dialog for
- *         creating a new variable along with its type invariant and
- *         initilisation.
+ *         creating a new enumerated set.
  */
 public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 
@@ -54,9 +53,7 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 	 * @param title
 	 *            the title of the dialog
 	 * @param defaultName
-	 *            the default variable name
-	 * @param defaultInvariantName
-	 *            the default invariant name
+	 *            the default set name
 	 */
 	public NewEnumeratedSetInputDialog(Shell parentShell,
 			String title, String defaultName) {
@@ -65,11 +62,7 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 		elementTexts = new ArrayList<IEventBInputText>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.YES_ID, "&More Element", true);
 
@@ -80,11 +73,7 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 				IDialogConstants.CANCEL_LABEL, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected void createContents() {
 		Composite body = scrolledForm.getBody();
 
@@ -123,11 +112,7 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 		scrolledForm.reflow(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
-	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CANCEL_ID) {
 			name = null;
@@ -165,10 +150,10 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 	}
 
 	/**
-	 * Get the variable name.
+	 * Get the set name.
 	 * <p>
 	 * 
-	 * @return the variable name as input by the user
+	 * @return the set name entered by the user
 	 */
 	public String getName() {
 		return name;
