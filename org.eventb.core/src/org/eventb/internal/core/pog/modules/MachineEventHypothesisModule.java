@@ -127,11 +127,8 @@ public class MachineEventHypothesisModule extends Module {
 
 	private void fetchVariables(ISCVariable[] variables) throws RodinDBException {
 		for (ISCVariable variable : variables) {
-			FreeIdentifier identifier = 
-				factory.makeFreeIdentifier(
-						variable.getIdentifierString(), null, 
-						variable.getType(factory));
-			eventTypeEnvironment.addName(identifier.getName(), identifier.getType());
+			FreeIdentifier identifier = variable.getIdentifier(factory);
+			eventTypeEnvironment.add(identifier);
 			eventHypothesisManager.addIdentifier(identifier);
 		}
 	}

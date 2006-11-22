@@ -181,9 +181,8 @@ public class MachineHypothesisModule extends Module {
 	}
 
 	private FreeIdentifier fetchIdentifier(ISCIdentifierElement ident) throws RodinDBException {
-		FreeIdentifier identifier = 
-			factory.makeFreeIdentifier(ident.getIdentifierString(), null, ident.getType(factory));
-		typeEnvironment.addName(identifier.getName(), identifier.getType());
+		FreeIdentifier identifier = ident.getIdentifier(factory);
+		typeEnvironment.add(identifier);
 		return identifier;
 	}
 	
