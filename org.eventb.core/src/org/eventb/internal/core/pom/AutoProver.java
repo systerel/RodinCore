@@ -89,30 +89,28 @@ public class AutoProver {
 		try {
 			pm.beginTask(status.getElementName() + ":", 3);
 			
-			pm.subTask("loading");
-			IPRProof prProof = status.getProof();
-			pm.worked(1);
-			
 			final boolean proofValid = status.getProofValidAttribute();
 			
-			if (proofValid 
-					&& status.hasAutoProofAttribute())
+			if (proofValid && status.hasAutoProofAttribute())
 				return false;
 			
 			if ((!proofValid) || 
 					(status.getProofConfidence() <= IConfidence.PENDING)) {
 				
+				pm.subTask("loading");
 				final IPOSequent poSequent = status.getPOSequent();
 				IProofTree autoProofTree = ProverFactory.makeProofTree(
 						POLoader.readPO(poSequent),
 						poSequent
 				);
+				pm.worked(1);
 
 				pm.subTask("proving");
 				autoTactic().apply(autoProofTree.getRoot(), new ProofMonitor(pm));
 				pm.worked(1);
 				
 				pm.subTask("saving");
+				IPRProof prProof = status.getProof();
 				// Update the tree if it was discharged
 				if (autoProofTree.isClosed()) {
 					prProof.setProofTree(autoProofTree, null);
