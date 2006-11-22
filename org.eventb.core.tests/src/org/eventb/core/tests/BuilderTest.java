@@ -26,8 +26,10 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
 import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -137,6 +139,30 @@ public abstract class BuilderTest extends TestCase {
 		goalass1.typeCheck(typeEnv);
 		goal1 = goal1.applyAssignment((BecomesEqualTo) goalass1, factory);
 		return goal1;
+	}
+
+	/**
+	 * Creates a new type environment from the given strings. The given strings
+	 * are alternatively an identifier name and its type.
+	 * 
+	 * @param strings
+	 *            an even number of strings
+	 * @return a new type environment
+	 */
+	public ITypeEnvironment mTypeEnvironment(String... strings) {
+		// even number of strings
+		assert (strings.length & 1) == 0;
+		final ITypeEnvironment result = factory.makeTypeEnvironment();
+		for (int i = 0; i < strings.length; i += 2) {
+			final String name = strings[i];
+			final String typeString = strings[i+1];
+			final IParseResult pResult = factory.parseType(typeString);
+			assertTrue("Parsing type failed for " + typeString,
+					pResult.isSuccess());
+			final Type type = pResult.getParsedType(); 
+			result.addName(name, type);
+		}
+		return result;
 	}
 
 	protected void setUp() throws Exception {
