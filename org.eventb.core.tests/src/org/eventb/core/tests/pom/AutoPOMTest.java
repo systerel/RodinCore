@@ -142,7 +142,7 @@ public class AutoPOMTest extends BuilderTest {
 			{
 				IPRProof prProofTree = status.getProof();
 				String name = status.getElementName();
-				assertNotNull("Proof absent for "+name , prProofTree);
+				assertTrue("Proof absent for "+name , prProofTree.exists());
 				assertEquals("Proof confidence different for "+name, prProofTree.getConfidence(), status.getProofConfidence());
 			}
 		}
