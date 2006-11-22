@@ -91,12 +91,10 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 		ISCMachineFile source = (ISCMachineFile) RodinCore.valueOf(file);
 		IPOFile target = source.getMachineFile().getPOFile();
 		
-		graph.openGraph();
 		graph.addNode(target.getResource(), MACHINE_POG_TOOL_ID);
 		graph.addToolDependency(
 				source.getResource(), 
 				target.getResource(), MACHINE_POG_TOOL_ID, true);
-		graph.closeGraph();
 
 	}
 

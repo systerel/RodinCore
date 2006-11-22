@@ -47,15 +47,12 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 		if (SHOW_EXTRACT)
 			ToolTrace.addTrace(name, "extract", file);
 		
-		graph.openGraph();
-		
 		ISCProvable prv = (ISCProvable) RodinCore.valueOf(file);
 		
 		IPOFile po = prv.getPOFile();
 		graph.addNode(po.getResource(), ID);
 		graph.addToolDependency(prv.getResource(), po.getResource(), ID, true);
 				
-		graph.closeGraph();
 	}
 
 	protected void run(IFile file, IProgressMonitor monitor, String name) throws RodinDBException {

@@ -112,7 +112,6 @@ public class MachineStaticChecker extends StaticChecker {
 			ISeesContext[] seen = source.getSeesClauses();
 			IRefinesMachine[] abstractMachines = source.getRefinesClauses();
 
-			graph.openGraph();
 			graph.addNode(target.getResource(), MACHINE_SC_TOOL_ID);
 			graph.addToolDependency(
 					source.getResource(), 
@@ -136,8 +135,6 @@ public class MachineStaticChecker extends StaticChecker {
 						MACHINE_SC_REFINES_ID, true);
 			}
 		
-			graph.closeGraph();
-			
 		} finally {
 			monitor.done();
 		}

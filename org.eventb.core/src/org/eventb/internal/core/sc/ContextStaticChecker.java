@@ -106,7 +106,6 @@ public class ContextStaticChecker extends StaticChecker {
 			IContextFile source = (IContextFile) RodinCore.valueOf(file);
 			ISCContextFile target = source.getSCContextFile();
 		
-			graph.openGraph();
 			graph.addNode(target.getResource(), CONTEXT_SC_TOOL_ID);
 			graph.addToolDependency(
 					source.getResource(), 
@@ -122,8 +121,6 @@ public class ContextStaticChecker extends StaticChecker {
 						false);
 			}
 		
-			graph.closeGraph();
-			
 		} finally {
 			monitor.done();
 		}

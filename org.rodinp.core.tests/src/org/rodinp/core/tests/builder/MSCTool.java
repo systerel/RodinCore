@@ -41,8 +41,6 @@ public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		if (SCTool.SHOW_EXTRACT)
 			ToolTrace.addTrace(MSC, "extract", file);
 		
-		graph.openGraph();
-		
 		IMachine mch = (IMachine) RodinCore.valueOf(file);
 		
 		ISCMachine smch = mch.getCheckedVersion();
@@ -64,7 +62,6 @@ public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		for (IFile newSrc : newSources)
 			graph.addUserDependency(mch.getResource(), newSrc, scFile, SC_ID, false);
 		
-		graph.closeGraph();
 	}
 	
 	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {

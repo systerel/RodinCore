@@ -33,8 +33,6 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		if (SCTool.SHOW_EXTRACT)
 			ToolTrace.addTrace(CSC, "extract", file);
 		
-		graph.openGraph();
-		
 		IContext ctx = (IContext) RodinCore.valueOf(file);
 		
 		ISCContext sctx = ctx.getCheckedVersion();
@@ -50,7 +48,6 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		for (IFile newFile : newSources)
 			graph.addUserDependency(ctx.getResource(), newFile, scFile, SC_ID, false);
 		
-		graph.closeGraph();
 	}
 	
 	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {

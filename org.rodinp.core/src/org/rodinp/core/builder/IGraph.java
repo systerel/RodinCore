@@ -23,18 +23,18 @@ import org.eclipse.core.runtime.CoreException;
  * Some information is cached in the corresponding object so the contents
  * of the facade must be synchronised with the graph at the end of an extraction.
  * </p><p>
- * Requests to add and remove nodes to resp. from the graph must be made
- * explicitly by methods <code>addNode()</code> and <code>removeNode()</code>.
+ * Requests to add nodes to the graph must be made
+ * explicitly by methods <code>addNode()</code>.
  * Dependencies are managed by the facade. This saves clients from having 
- * to compute dependency graph deltas themselves.
+ * to compute dependency graph deltas themselves. Dependency graph manipulation
+ * uses a transaction mechanism behind the scenes. If the was any problem a
+ * <code>CoreException</code> is thrown.
  * </p>
  * @see org.rodinp.core.builder.IExtractor
  *
  */
 public interface IGraph {
 
-	public void openGraph() throws CoreException;
-	
 	/**
 	 * Adds a a node "path" with associated tool into the graph. If a node with
 	 * this path exists already only the tool is reassigned.
@@ -43,7 +43,7 @@ public interface IGraph {
 	 *            The file of the node
 	 * @param toolId
 	 *            The unique identifier of the tool
-	 * @throws CoreException TODO
+	 * @throws CoreException if the graph could not be modified
 	 */
 	public void addNode(IFile file, String toolId) throws CoreException;
 	
@@ -63,7 +63,7 @@ public interface IGraph {
 	 * @param prioritize
 	 *            True if this dependency should be prioritized in the
 	 *            topological order derived from the graph.
-	 * @throws CoreException TODO
+	 * @throws CoreException if the graph could not be modified
 	 */
 	public void addUserDependency(
 			IFile origin, 
@@ -83,18 +83,12 @@ public interface IGraph {
 	 * @param prioritize
 	 *            True if this dependency should be prioritized in the
 	 *            topological order derived from the graph.
-	 * @throws CoreException TODO
+	 * @throws CoreException if the graph could not be modified
 	 */
 	public void addToolDependency(
 			IFile source, 
 			IFile target, 
 			String id,
 			boolean prioritize) throws CoreException;
-
-	/**
-	 * When all manipulations have been done method <code>updateGraph()</code>
-	 * must be called to synchronise the state of the graph.
-	 * @throws CoreException TODO
-	 */
-	public void closeGraph() throws CoreException;
+	
 }
