@@ -61,15 +61,21 @@ public interface IPOSequent extends IInternalElement {
 	 * Returns the predicate set containing the hypothesis of this proof obligation
 	 * @return the predicate set containing the hypothesis of this proof obligation
 	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated use <code>getHypotheses(IProgressMonitor)</code> instead
+	 * @deprecated use <code>getHypotheses()</code> instead
 	 */
 	@Deprecated
 	IPOPredicateSet getHypothesis() throws RodinDBException;
 	
 	/**
-	 * Returns the predicate sets containing the hypotheses of this proof obligation
-	 * @return the predicate set containing the hypotheses of this proof obligation
-	 * @throws RodinDBException if there was a problem accessing the database
+	 * Returns the predicate sets containing the hypotheses of this proof
+	 * obligation. In the current version, only one predicate set is stored by
+	 * the POG. Tools can then consider it as an error if the returned array has
+	 * a length different from 1.
+	 * 
+	 * @return an array of predicate sets containing the hypotheses of this
+	 *         proof obligation
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
 	 */
 	IPOPredicateSet[] getHypotheses() throws RodinDBException;
 
@@ -90,17 +96,22 @@ public interface IPOSequent extends IInternalElement {
 	 * Returns the goal predicate of this proof obligation
 	 * 
 	 * @return the goal predicate of this proof obligation
-	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated use <code>getGoals(IProgressMonitor)</code> instead
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getGoals()</code> instead
 	 */
 	@Deprecated
 	IPOPredicate getGoal() throws RodinDBException;
 	
 	/**
-	 * Returns the goals predicate of this proof obligation
+	 * Returns the goal predicates of this proof obligation. In the current
+	 * version, only one goal predicate is stored by the POG. Tools can then
+	 * consider it as an error if the returned array has a length different from
+	 * 1.
 	 * 
-	 * @return the goal predicate of this proof obligation
-	 * @throws RodinDBException if there was a problem accessing the database
+	 * @return an array of goal predicates of this proof obligation
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
 	 */
 	IPOPredicate[] getGoals() throws RodinDBException;
 
