@@ -308,45 +308,42 @@ public class UIUtils {
 	 * 
 	 * @param editor
 	 *            the editor that made the call to this method.
-	 * @param rodinFile
-	 *            the Rodin file that the event will be created in
 	 */
-	public static void newEvent(final IEventBEditor editor,
-			final IRodinFile rodinFile, IProgressMonitor monitor) {
+	public static void newEvent(final EventBMachineEditor editor,
+			IProgressMonitor monitor) {
+		
+		final IMachineFile mchFile = editor.getRodinInput();
 		try {
-			String evtName = getFreeElementLabel(editor, rodinFile,
+			String evtLabel = getFreeElementLabel(editor, mchFile,
 					IEvent.ELEMENT_TYPE, PrefixEvtName.QUALIFIED_NAME,
 					PrefixEvtName.DEFAULT_PREFIX);
 
 			final NewEventInputDialog dialog = new NewEventInputDialog(Display
-					.getCurrent().getActiveShell(), "New Events", evtName);
+					.getCurrent().getActiveShell(), "New Events", evtLabel);
 
 			dialog.open();
 			final String name = dialog.getName();
 			if (name != null) {
-
+				final String[] varNames = dialog.getVariables();
+				final String[] grdNames = dialog.getGrdNames();
+				final String[] grdPredicates = dialog.getGrdPredicates();
+				final String[] actNames = dialog.getActNames();
+				final String[] actSubstitutions = dialog.getActSubstitutions();
+				
 				RodinCore.run(new IWorkspaceRunnable() {
 
 					public void run(IProgressMonitor pm) throws CoreException {
-						String[] varNames = dialog.getVariables();
-						String[] grdNames = dialog.getGrdNames();
-						String[] grdPredicates = dialog.getGrdPredicates();
-						String[] actNames = dialog.getActNames();
-						String[] actSubstitutions = dialog
-								.getActSubstitutions();
 
-						IEvent evt = (IEvent) rodinFile
-								.createInternalElement(IEvent.ELEMENT_TYPE,
-										getFreeElementName(editor, rodinFile,
-												IEvent.ELEMENT_TYPE,
-												PrefixEvtName.QUALIFIED_NAME,
-												PrefixEvtName.DEFAULT_PREFIX),
-										null, pm);
+						final String evtName = getFreeElementName(editor,
+								mchFile, IEvent.ELEMENT_TYPE,
+								PrefixEvtName.QUALIFIED_NAME,
+								PrefixEvtName.DEFAULT_PREFIX);
+						final IEvent evt = mchFile.getEvent(evtName); 
+						evt.create(null, pm);
 						evt.setLabel(name, pm);
-						editor.addNewElement(evt);
-
 						evt.setConvergence(IEvent.ORDINARY, pm);
 						evt.setInherited(false, pm);
+						editor.addNewElement(evt);
 
 						String varPrefix = getNamePrefix(editor,
 								PrefixVarName.QUALIFIED_NAME,
@@ -355,10 +352,8 @@ public class UIUtils {
 						int varIndex = getFreeElementNameIndex(editor, evt,
 								IVariable.ELEMENT_TYPE, varPrefix);
 						for (String varName : varNames) {
-							IVariable var = (IVariable) evt
-									.createInternalElement(
-											IVariable.ELEMENT_TYPE, varPrefix
-													+ varIndex, null, pm);
+							IVariable var = evt.getVariable(varPrefix + varIndex);
+							var.create(null, pm);
 							var.setIdentifierString(varName, pm);
 							editor.addNewElement(var);
 							varIndex = getFreeElementNameIndex(evt,
@@ -372,9 +367,8 @@ public class UIUtils {
 						int grdIndex = getFreeElementNameIndex(editor, evt,
 								IGuard.ELEMENT_TYPE, grdPrefix);
 						for (int i = 0; i < grdNames.length; i++) {
-							IGuard grd = (IGuard) evt.createInternalElement(
-									IGuard.ELEMENT_TYPE, grdPrefix + grdIndex,
-									null, pm);
+							IGuard grd = evt.getGuard(grdPrefix + grdIndex);
+							grd.create(null, pm);
 							grd.setLabel(grdNames[i], pm);
 							grd.setPredicateString(grdPredicates[i], null);
 							editor.addNewElement(grd);
@@ -389,14 +383,13 @@ public class UIUtils {
 						int actIndex = getFreeElementNameIndex(editor, evt,
 								IAction.ELEMENT_TYPE, actPrefix);
 						for (int i = 0; i < actNames.length; i++) {
-							IAction act = (IAction) evt.createInternalElement(
-									IAction.ELEMENT_TYPE, actPrefix + actIndex,
-									null, pm);
+							IAction act = evt.getAction(actPrefix + actIndex);
+							act.create(null, pm);
 							act.setLabel(actNames[i], pm);
 							act.setAssignmentString(actSubstitutions[i], pm);
 							editor.addNewElement(act);
 							actIndex = getFreeElementNameIndex(evt,
-									IAction.ELEMENT_TYPE, actPrefix, grdIndex);
+									IAction.ELEMENT_TYPE, actPrefix, actIndex);
 						}
 					}
 
@@ -413,13 +406,13 @@ public class UIUtils {
 	 * 
 	 * @param editor
 	 *            the editor that made the call to this method.
-	 * @param rodinFile
-	 *            the Rodin file that the new carrier sets will be created in
 	 */
-	public static void newCarrierSets(final IEventBEditor editor,
-			final IRodinFile rodinFile, IProgressMonitor monitor) {
+	public static void newCarrierSets(final EventBContextEditor editor,
+			IProgressMonitor monitor) {
+
+		final IContextFile ctxFile = editor.getRodinInput();
 		try {
-			String identifier = getFreeElementIdentifier(editor, rodinFile,
+			String identifier = getFreeElementIdentifier(editor, ctxFile,
 					ICarrierSet.ELEMENT_TYPE, PrefixSetName.QUALIFIED_NAME,
 					PrefixSetName.DEFAULT_PREFIX);
 			ElementAttributeInputDialog dialog = new ElementAttributeInputDialog(
@@ -434,16 +427,15 @@ public class UIUtils {
 					String setPrefix = getNamePrefix(editor,
 							PrefixCstName.QUALIFIED_NAME,
 							PrefixCstName.DEFAULT_PREFIX);
-					int setIndex = getFreeElementNameIndex(editor, rodinFile,
+					int setIndex = getFreeElementNameIndex(editor, ctxFile,
 							ICarrierSet.ELEMENT_TYPE, setPrefix);
 					for (String name : names) {
-						ICarrierSet set = (ICarrierSet) rodinFile
-								.createInternalElement(
-										ICarrierSet.ELEMENT_TYPE, setPrefix
-												+ setIndex, null, pm);
+						ICarrierSet set = ctxFile.getCarrierSet(setPrefix
+												+ setIndex);
+						set.create(null, pm);
 						set.setIdentifierString(name, pm);
 						editor.addNewElement(set);
-						setIndex = getFreeElementNameIndex(rodinFile,
+						setIndex = getFreeElementNameIndex(ctxFile,
 								ICarrierSet.ELEMENT_TYPE, setPrefix,
 								setIndex + 1);
 					}
@@ -461,14 +453,13 @@ public class UIUtils {
 	 * 
 	 * @param editor
 	 *            the editor that made the call to this method.
-	 * @param rodinFile
-	 *            the Rodin file that the new carrier sets will be created in
 	 */
-	public static void newEnumeratedSet(final IEventBEditor editor,
-			final IRodinFile rodinFile, IProgressMonitor monitor) {
+	public static void newEnumeratedSet(final EventBContextEditor editor,
+			IProgressMonitor monitor) {
 
+		final IContextFile ctxFile = editor.getRodinInput();
 		try {
-			String identifier = getFreeElementIdentifier(editor, rodinFile,
+			String identifier = getFreeElementIdentifier(editor, ctxFile,
 					ICarrierSet.ELEMENT_TYPE, PrefixSetName.QUALIFIED_NAME,
 					PrefixSetName.DEFAULT_PREFIX);
 			final NewEnumeratedSetInputDialog dialog = new NewEnumeratedSetInputDialog(
@@ -482,95 +473,79 @@ public class UIUtils {
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor monitor) throws CoreException {
-					Collection<String> elements = dialog.getElements();
+				public void run(IProgressMonitor pm) throws CoreException {
+					String[] elements = dialog.getElements();
 
-					ICarrierSet set = (ICarrierSet) rodinFile
-							.createInternalElement(ICarrierSet.ELEMENT_TYPE,
-									getFreeElementName(editor, rodinFile,
-											ICarrierSet.ELEMENT_TYPE,
-											PrefixSetName.QUALIFIED_NAME,
-											PrefixSetName.DEFAULT_PREFIX),
-									null, monitor);
-					set.setIdentifierString(name, monitor);
+					final String setName = getFreeElementName(editor, ctxFile,
+							ICarrierSet.ELEMENT_TYPE,
+							PrefixSetName.QUALIFIED_NAME,
+							PrefixSetName.DEFAULT_PREFIX);
+					final ICarrierSet set = ctxFile.getCarrierSet(setName);
+					set.create(null, pm);
+					set.setIdentifierString(name, pm);
 					editor.addNewElement(set);
 
-					if (elements.size() == 0)
+					final int nbElements = elements.length;
+					if (nbElements == 0)
 						return;
 
 					String namePrefix = getNamePrefix(editor,
 							PrefixAxmName.QUALIFIED_NAME,
 							PrefixAxmName.DEFAULT_PREFIX);
-					int nameIndex = getFreeElementNameIndex(editor, rodinFile,
+					int nameIndex = getFreeElementNameIndex(editor, ctxFile,
 							IAxiom.ELEMENT_TYPE, namePrefix);
 
 					String labelPrefix = getPrefix(editor,
 							PrefixAxmName.QUALIFIED_NAME,
 							PrefixAxmName.DEFAULT_PREFIX);
 					int labelIndex = getFreeElementLabelIndex(editor,
-							rodinFile, IAxiom.ELEMENT_TYPE, labelPrefix);
+							ctxFile, IAxiom.ELEMENT_TYPE, labelPrefix);
 					// String axmName = namePrefix + nameIndex;
 
-					IAxiom newAxm = (IAxiom) rodinFile.createInternalElement(
-							IAxiom.ELEMENT_TYPE, namePrefix + nameIndex, null,
-							null);
-					newAxm.setLabel(labelPrefix + labelIndex, monitor);
-					String axmPred = name + " = {";
+					IAxiom newAxm = ctxFile.getAxiom(namePrefix + nameIndex);
+					newAxm.create(null, null);
+					newAxm.setLabel(labelPrefix + labelIndex, pm);
+					StringBuilder axmPred = new StringBuilder(name);
+					axmPred.append(" = {");
 
 					String cstPrefix = getNamePrefix(editor,
 							PrefixCstName.QUALIFIED_NAME,
 							PrefixCstName.DEFAULT_PREFIX);
-					int cstIndex = getFreeElementNameIndex(editor, rodinFile,
+					int cstIndex = getFreeElementNameIndex(editor, ctxFile,
 							IConstant.ELEMENT_TYPE, cstPrefix);
-					int counter = 0;
+					String axmSep = "";
 					for (String element : elements) {
-						IConstant cst = (IConstant) rodinFile
-								.createInternalElement(IConstant.ELEMENT_TYPE,
-										cstPrefix + cstIndex, null, monitor);
-						cst.setIdentifierString(element, monitor);
+						IConstant cst = ctxFile.getConstant(cstPrefix + cstIndex);
+						cst.create(null, pm);
+						cst.setIdentifierString(element, pm);
 						editor.addNewElement(cst);
-						cstIndex = getFreeElementNameIndex(rodinFile,
+						cstIndex = getFreeElementNameIndex(ctxFile,
 								IConstant.ELEMENT_TYPE, cstPrefix, cstIndex + 1);
 
-						nameIndex = getFreeElementNameIndex(rodinFile,
+						nameIndex = getFreeElementNameIndex(ctxFile,
 								IAxiom.ELEMENT_TYPE, namePrefix, nameIndex);
 						labelIndex = getFreeElementLabelIndex(editor,
-								rodinFile, IAxiom.ELEMENT_TYPE, labelPrefix,
+								ctxFile, IAxiom.ELEMENT_TYPE, labelPrefix,
 								labelIndex);
-						IAxiom axm = (IAxiom) rodinFile.createInternalElement(
-								IAxiom.ELEMENT_TYPE, namePrefix + nameIndex,
-								null, monitor);
-						axm.setLabel(labelPrefix + labelIndex, monitor);
-
-						axm.setPredicateString(element + " \u2208 " + name,
-								null);
-						axmPred += element;
-						counter++;
-						if (counter != elements.size())
-							axmPred += ", ";
+						axmPred.append(axmSep);
+						axmSep = ", ";
+						axmPred.append(element);
 					}
-					axmPred += "}";
-					newAxm.setPredicateString(axmPred, null);
+					axmPred.append("}");
+					newAxm.setPredicateString(axmPred.toString(), null);
 
-					counter = 0;
-					String[] elementsArray = elements
-							.toArray(new String[elements.size()]);
-					for (String element : elements) {
-						counter++;
-						for (int i = counter; i < elements.size(); i++) {
-							String element2 = elementsArray[i];
-							nameIndex = getFreeElementNameIndex(rodinFile,
+					for (int i = 0; i < nbElements; ++ i) {
+						for (int j = i; j < nbElements; j++) {
+							nameIndex = getFreeElementNameIndex(ctxFile,
 									IAxiom.ELEMENT_TYPE, namePrefix, nameIndex);
 							labelIndex = getFreeElementLabelIndex(editor,
-									rodinFile, IAxiom.ELEMENT_TYPE,
+									ctxFile, IAxiom.ELEMENT_TYPE,
 									labelPrefix, labelIndex);
-							IAxiom axm = (IAxiom) rodinFile
-									.createInternalElement(IAxiom.ELEMENT_TYPE,
-											namePrefix + nameIndex, null,
-											monitor);
-							axm.setLabel(labelPrefix + labelIndex, monitor);
-							axm.setPredicateString(element + " \u2260 "
-									+ element2, null);
+							IAxiom axm = ctxFile.getAxiom(namePrefix + nameIndex);
+							axm.create(null, pm);
+							axm.setLabel(labelPrefix + labelIndex, pm);
+							axm.setPredicateString(elements[i] + " \u2260 "
+									+ elements[j], null);
 						}
 					}
 
