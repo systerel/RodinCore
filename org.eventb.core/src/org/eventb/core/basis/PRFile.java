@@ -11,14 +11,12 @@ import org.eclipse.core.resources.IFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinFile;
 
 /**
  * @author Farhad Mehta
- *
  */
 public class PRFile extends RodinFile implements IPRFile {
 
@@ -29,9 +27,6 @@ public class PRFile extends RodinFile implements IPRFile {
 		super(file, parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.RodinElement#getElementType()
-	 */
 	@Override
 	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
@@ -42,8 +37,7 @@ public class PRFile extends RodinFile implements IPRFile {
 	}
 
 	public IPRProof getProof(String name) {
-		IInternalElement proof = getInternalElement(IPRProof.ELEMENT_TYPE,name);
-		return (IPRProof) proof;
+		return (IPRProof) getInternalElement(IPRProof.ELEMENT_TYPE,name);
 	}
 
 }
