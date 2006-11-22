@@ -5,21 +5,19 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IRodinFile;
+import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
 
 public class NewEvent implements IEditorActionDelegate {
 
-	IEventBEditor editor;
+	EventBMachineEditor editor;
 	
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		if (targetEditor instanceof IEventBEditor)
-			editor = (IEventBEditor) targetEditor;
+		if (targetEditor instanceof EventBMachineEditor)
+			editor = (EventBMachineEditor) targetEditor;
 	}
 
 	public void run(IAction action) {
-		IRodinFile rodinFile = editor.getRodinInput();
-		UIUtils.newEvent(editor, rodinFile, null);
+		UIUtils.newEvent(editor, null);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

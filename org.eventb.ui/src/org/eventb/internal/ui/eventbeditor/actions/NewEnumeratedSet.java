@@ -5,21 +5,19 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IRodinFile;
+import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 
 public class NewEnumeratedSet implements IEditorActionDelegate {
 
-	IEventBEditor editor;
+	EventBContextEditor editor;
 	
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		if (targetEditor instanceof IEventBEditor)
-			editor = (IEventBEditor) targetEditor;
+		if (targetEditor instanceof EventBContextEditor)
+			editor = (EventBContextEditor) targetEditor;
 	}
 
 	public void run(IAction action) {
-		IRodinFile rodinFile = editor.getRodinInput();
-		UIUtils.newEnumeratedSet(editor, rodinFile, null);
+		UIUtils.newEnumeratedSet(editor, null);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
