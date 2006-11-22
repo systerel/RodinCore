@@ -233,7 +233,7 @@ public class ProofState implements IProofState {
 				try
 				{
 					mon.beginTask("Saving Proof", 2);
-					((IPRProof) status.getProof().getMutableCopy()).setProofTree(pt, new SubProgressMonitor(mon,1));
+					status.getProof().setProofTree(pt, new SubProgressMonitor(mon,1));
 					AutoPOM.updateStatus(
 							((IPSStatus) status.getMutableCopy()),
 							new SubProgressMonitor(mon,1));
