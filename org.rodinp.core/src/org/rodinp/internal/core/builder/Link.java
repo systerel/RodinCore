@@ -33,9 +33,11 @@ public class Link implements Serializable {
 	@Override
 	public boolean equals(Object o) {
 		Link link = (Link) o;
-		return source.equals(link.source) && 
-			id.equals(link.id) && 
+		return 
 			prov.equals(link.prov) && 
+			prio.equals(link.prio) && 
+			id.equals(link.id) && 
+			source.equals(link.source) && 
 			origin == link.origin;
 	}
 	

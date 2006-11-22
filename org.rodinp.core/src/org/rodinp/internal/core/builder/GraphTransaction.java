@@ -5,6 +5,7 @@ package org.rodinp.internal.core.builder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -101,6 +102,8 @@ public class GraphTransaction implements IGraph {
 		
 		handler.addNode(file.getFullPath(), toolId);
 	}
+	
+	
 
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#closeGraph()
@@ -112,33 +115,25 @@ public class GraphTransaction implements IGraph {
 		} else
 			throw makeGraphTransactionError();
 		
-		boolean[] found = new boolean[targets.size()];
-		for(int i=0; i<found.length; i++) found[i] = false;
-		
-		// in the first phase all ids of links that must be removed are computed
-		HashSet<String> changedIds = new HashSet<String>(5);
-		for (Node node : targetSet) {
-			for (Link link : node.getPredessorLinks()) {
-				if(toolId.equals(link.id)) {
-					int p = links.indexOf(link);
-					if (p == -1 || targets.get(p) != node) {
-						changedIds.add(link.id);
-					} else
-						found[p] = true;
+		// first we compute if there is any change
+		boolean remove = false;
+		for (int i=0; i<links.size(); i++) {
+			Node target = targets.get(i);
+			List<Link> targetLinkList = target.getPredessorLinks();
+			for (Link link : targetLinkList)
+				if (link.id.equals(toolId) && !links.contains(link)) {
+					remove = true;
+					break;
 				}
-			}
 		}
 		
-		// next all links with these ids are removed
-		handler.removeDependencies(changedIds);
+		if (remove)
+			// all links with toolId are removed
+			handler.removeDependencies(toolId);
 		
 		// add all links
-		for (int i=0; i<found.length; i++) {
-			Link link = links.get(i);
-			if (!found[i] || changedIds.contains(link.id)) {
-				handler.addDependency(link, targets.get(i));
-//				targets.get(i).addLink(links.get(i));
-			}
+		for (int i=0; i<links.size(); i++) {
+			handler.addDependency(links.get(i), targets.get(i));
 		}
 	}
 

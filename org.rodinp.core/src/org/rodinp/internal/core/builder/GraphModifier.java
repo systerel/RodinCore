@@ -8,8 +8,6 @@
 
 package org.rodinp.internal.core.builder;
 
-import java.util.Collection;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -36,38 +34,30 @@ public class GraphModifier {
 		this.manager = manager;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.builder.IGraph#addNode(org.eclipse.core.runtime.IPath, java.lang.String)
-	 */
-	public void addNode(IPath path, String producerId) { //throws CoreException {
+	public void addNode(IPath path, String toolId) { //throws CoreException {
 		Node node = graph.getNode(path);
 
 		if(node == null) {
 			node = graph.builderAddNodeToGraph(path);
-			node.setToolId(producerId);
+			node.setToolId(toolId);
 		} else if(node.isPhantom()) {
-			node.setToolId(producerId);
+			node.setToolId(toolId);
 			node.setDated(true);
 			node.setPhantom(false);
 			if (node.done)
 				graph.setInstable(); // nodes depending on this phantom may already have been processed
 		} else {
-			node.setToolId(producerId);
+			node.setToolId(toolId);
 			node.setDated(true);
 		}
 		
+		// set symbolic link to the current node
+		node.getCreator().setPath(current.getTarget().getPath());
+		
 		manager.anticipateSlice(node);
 		
-		if(Graph.DEBUG)
-			System.out.println(getClass().getName() + ": Node added: " + node.getName()); //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.builder.IGraph#containsNode(org.eclipse.core.runtime.IPath)
-	 */
-	public boolean containsNode(IPath path) {
-		Node node = graph.getNode(path);
-		return node != null && !node.isPhantom();
+		if(RodinBuilder.DEBUG_GRAPH)
+			System.out.println(getClass().getName() + ": Node added: " + node.getTarget().getName()); //$NON-NLS-1$
 	}
 
 	protected Node getNodeOrPhantom(IPath path) {
@@ -81,7 +71,7 @@ public class GraphModifier {
 	}
 
 	protected void addDependency(Link link, Node target) { //throws CoreException {
-		if(current == null && Graph.DEBUG)
+		if(current == null && RodinBuilder.DEBUG_GRAPH)
 			System.out.println("No current node"); //$NON-NLS-1$
 		boolean currentEqualsSource = current.equals(link.source);
 		boolean targetIsSuccessor = current.hasSuccessor(target);
@@ -105,42 +95,26 @@ public class GraphModifier {
 					RodinCore.PLUGIN_ID, 
 					Platform.PLUGIN_ERROR, 
 					"Dependency [" + link.source.toString() + " / " + target.toString() + "] from " +  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					current.getName() + " not permitted", null)), " while modifying dependency graph"); //$NON-NLS-1$
-		if(Graph.DEBUG)
+					current.getTarget().getName() + " not permitted", null)), " while modifying dependency graph"); //$NON-NLS-1$
+		if(RodinBuilder.DEBUG_GRAPH)
 			System.out.println(getClass().getName() + ": Added dependency: " +  //$NON-NLS-1$
-					target.getName() + " => " + link.source.getName() + " instable = " + graph.isInstable()); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.builder.IGraph#getDependencies(org.eclipse.core.runtime.IPath, java.lang.String)
-	 */
-	public IPath[] getDependencies(IPath target, String id) {
-		Node node = graph.getNode(target);
-		if(node == null || node.isPhantom())
-			return null;
-		Collection<IPath> deps = node.getSources(id);
-		IPath[] paths = new IPath[deps.size()];
-		deps.toArray(paths);
-		return paths;
+					target.getTarget().getName() + " => " + link.source.getTarget().getName() + " instable = " + graph.isInstable()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#removeDependencies(org.eclipse.core.runtime.IPath, java.lang.String)
 	 */
-	public void removeDependencies(Collection<String> ids) {
-		for (String id : ids) {
-			for (Node node : graph) {
-				node.removeAllLinks(id);
-				node.setDated(true);
-				if (Graph.DEBUG)
-					System.out.println(getClass().getName()
-							+ ": removed dependencies: " + //$NON-NLS-1$
-							node.getName());
+	public void removeDependencies(String toolId) {
+		for (Node node : graph) {
+			node.removeAllLinks(toolId);
+			node.setDated(true);
+			if (RodinBuilder.DEBUG_GRAPH)
+				System.out.println(getClass().getName()
+						+ ": removed dependencies: " + //$NON-NLS-1$
+						node.getTarget().getName());
 			}
-		}
-		if (!ids.isEmpty())
-			graph.setInstable();
-		if (Graph.DEBUG)
+		graph.setInstable();
+		if (RodinBuilder.DEBUG_GRAPH)
 			System.out.println(getClass().getName()
 					+ " instable = " + graph.isInstable()); //$NON-NLS-1$
 	}

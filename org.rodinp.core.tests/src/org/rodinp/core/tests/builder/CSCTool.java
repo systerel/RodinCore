@@ -16,8 +16,6 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 	public static boolean FAULTY = false;
 	
 	private static final String CSC = "CSC";
-	// Id of this tool
-	private static String SC_ID = "org.rodinp.core.tests.testCSC";
 	
 	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
 		if (SCTool.SHOW_CLEAN)

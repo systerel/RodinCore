@@ -24,8 +24,6 @@ import org.rodinp.core.builder.IGraph;
 public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 	
 	private static final String MSC = "MSC";
-	// Id of this tool
-	private static String SC_ID = "org.rodinp.core.tests.testMSC";
 	
 	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
 		if (SCTool.SHOW_CLEAN)

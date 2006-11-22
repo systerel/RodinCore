@@ -48,7 +48,7 @@ public class ProgressManager {
 	
 	public void anticipateSlice(Node node) {
 		if (node.isDated()) {
-			nodes.add(node.getName());
+			nodes.add(node.getTarget().getName());
 		}
 	}
 	
@@ -84,7 +84,7 @@ public class ProgressManager {
 		int nodeEffort = div == 0 ? 0 : remainingEffort / div;
 		remainingEffort = remainingEffort - nodeEffort;
 		if (nodeCount > 0)
-			nodes.remove(node.getName());
+			nodes.remove(node.getTarget().getName());
 		cnt += nodeEffort;
 		cntL.add(nodeEffort);
 		return new SubProgressMonitor(monitor, nodeEffort);

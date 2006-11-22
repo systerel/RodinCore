@@ -10,7 +10,6 @@ package org.rodinp.internal.core.builder;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,9 +26,43 @@ import org.rodinp.internal.core.util.Messages;
  *
  */
 public class Node implements Serializable {
+	
+	public static class File implements Serializable {
+		
+		private static final long serialVersionUID = -5374536727511878483L;
+		private String name;
+		private transient IPath path;
+		private transient IFile file;
+		
+		protected IPath getPath() {
+			if (path == null && name != null)
+				path = new Path(name);
+			return path;
+		}
+
+		protected String getName() {
+			return name;
+		}
+
+		protected IFile getFile() {
+			if (file == null) {
+				IPath p = getPath();
+				if (p != null)
+					file = ResourcesPlugin.getWorkspace().getRoot().getFile(getPath());
+			}
+			return file;
+		}
+
+		protected void setPath(IPath path) {
+			this.path = path;
+			name = path.toString();
+		}
+				
+	}
 
 	private static final long serialVersionUID = 4911431681915635479L;
-	private String name; // name of the resource (full name in workspace!)
+	private File target; // name of the resource (full name in workspace!)
+	private File creator; // name of the resource whose extractor created this node
 	private LinkedList<Link> predessorLinks; // the predecessor list
 	private String toolId; // toolId to be run to produce the resource of this node
 	private boolean dated; // true if the resource of this node needs to be (re-)created
@@ -37,28 +70,28 @@ public class Node implements Serializable {
 	private boolean cycle; // node is on a cycle
 	private boolean preferred; // node should be treated as early as possible
 	
-	// temporary data for construction of topological order
 	private ArrayList<Node> successorNodes; // successors of this node (for topological sort)
 	private ArrayList<Link> successorLinks; // successors of this node (for topological sort)
-	private HashMap<String, Node> successorTargets; // the set of names of the successors
 	
-	transient private int successorPos; // Position in successor lists during graph traversal	
-	transient protected int count; // number of predecessors of this node remaining in the unprocessed top sort
-	transient protected boolean done; // nodes with count zero and done are already in the ordered list
+	// temporary data for construction of topological order
+	private transient int successorPos; // Position in successor lists during graph traversal	
+	protected transient int count; // number of predecessors of this node remaining in the unprocessed top sort
+	protected transient boolean done; // nodes with count zero and done are already in the ordered list
 	
-	transient private IPath path; // the path corresponding to name (cache)
-	transient private IFileElementType fileElementType; // the element type of the resource (cache)
-	transient private IFile file; // the file corresponding to name (cache)
+//	transient private IPath targetPath; // the path corresponding to target name (cache)
+//	transient private IPath sourcePath; // the path corresponding to source name (cache)
+	private transient IFileElementType fileElementType; // the element type of the resource (cache)
+//	transient private IFile file; // the file corresponding to name (cache)
 	
 	public Node() {
-		name = null;
+		creator = new File();
+		target = new File();
 		toolId = null;
 		dated = true;
 		done = false;
 		predessorLinks = new LinkedList<Link>();
 		successorNodes = new ArrayList<Node>(3);
 		successorLinks = new ArrayList<Link>(3);
-		successorTargets = new HashMap<String, Node>(3);
 	}
 	
 	@Override
@@ -68,7 +101,7 @@ public class Node implements Serializable {
 	
 	@Override
 	public boolean equals(Object o) {
-		return name.equals(((Node) o).name);
+		return target.getName().equals(((Node) o).target.getName());
 	}
 	
 	protected List<Link> getPredessorLinks() {
@@ -78,7 +111,6 @@ public class Node implements Serializable {
 	protected void addPredecessorLink(Link link) { 
 		if(predessorLinks.contains(link))
 			return;
-		link.source.successorTargets.put(this.name, this);
 		predessorLinks.add(link);
 		if(link.source.successorPos <= link.source.getSuccessorCount())
 			count++;
@@ -101,7 +133,6 @@ public class Node implements Serializable {
 		LinkedList<Link> predCopy = new LinkedList<Link>(predessorLinks);
 		for(Link link : predCopy) {
 			if(link.id.equals(id)) {
-				link.source.successorTargets.remove(this.name);
 				predessorLinks.remove(link);
 				count--;
 				
@@ -115,24 +146,17 @@ public class Node implements Serializable {
 		ArrayList<IPath> sources = new  ArrayList<IPath>(predessorLinks.size());
 		for(Link link : predessorLinks) {
 			if(link.id.equals(id))
-				sources.add(link.source.getPath());
+				sources.add(link.source.getTarget().getPath());
 		}
 		return sources;
 	}
 	
-	protected IPath getPath() {
-		if(path == null)
-			path = new Path(name);
-		return path;
+	protected File getCreator() {
+		return creator;
 	}
-
-	protected String getName() {
-		return name;
-	}
-
-	protected void setPath(IPath path) {
-		this.path = path;
-		this.name = path.toString();
+	
+	protected File getTarget() {
+		return target;
 	}
 	
 	protected int getPredecessorCount() {
@@ -141,10 +165,6 @@ public class Node implements Serializable {
 	
 	protected boolean isDerived() {
 		return toolId != null && !toolId.equals("");
-	}
-
-	protected boolean isNotDerived() {
-		return toolId == null || toolId.equals("");
 	}
 
 	protected void setToolId(String tool) {
@@ -183,13 +203,6 @@ public class Node implements Serializable {
 		return (successorPos < successorLinks.size()) ? successorLinks.get(successorPos) : null;
 	}
 
-	protected IFile getFile() {
-		if (file != null)
-			return file;
-		file = ResourcesPlugin.getWorkspace().getRoot().getFile(getPath());
-		return file;
-	}
-	
 	protected void setDated(boolean value) {
 		dated = value;
 	}
@@ -209,19 +222,18 @@ public class Node implements Serializable {
 	}
 	
 	protected String printNode() {
-		String res = name  + "[";
+		String res = target.getName()  + "[";
 		res += isDated() ? "D" : "N";
 		res += isPhantom() ? "-P" : "-N";
 		res += "] :";
 		for(Node node : successorNodes) {
-			res = res + " " + node.name;
+			res = res + " " + node.target.getName();
 		}
 		return res;
 	}
 	
 	protected void unlinkNode() {
 		for(Link link : predessorLinks) {
-			link.source.successorTargets.remove(this.name);
 			
 			link.source.successorNodes.remove(this);
 			link.source.successorLinks.remove(link);
@@ -254,7 +266,7 @@ public class Node implements Serializable {
 	protected void addOriginToCycle() {
 		for(Link link : predessorLinks) {
 			if(link.source.count > 0) {
-				IFile originFile = link.origin.getFile();
+				IFile originFile = link.origin.target.getFile();
 				link.origin.dated = true;
 				if(originFile != null)
 					MarkerHelper.addMarker(
@@ -262,8 +274,8 @@ public class Node implements Serializable {
 							true,
 							Messages.build_resourceInCycle
 					);
-				else if(Graph.DEBUG)
-					System.out.println(getClass().getName() + ": File not found: " + link.origin.getName()); //$NON-NLS-1$
+				else if(RodinBuilder.DEBUG_GRAPH)
+					System.out.println(getClass().getName() + ": File not found: " + link.origin.target.getName()); //$NON-NLS-1$
 			}
 		}
 	}
@@ -280,13 +292,13 @@ public class Node implements Serializable {
 		for(Link link : predessorLinks) {
 			if(link.source.isPhantom())
 				if(link.source.toolId == null || link.source.toolId.equals("")) {
-					IFile originFile = link.origin.getFile();
+					IFile originFile = link.origin.target.getFile();
 					if(originFile != null)
 						MarkerHelper.addMarker(
 								originFile, 
 								false,
 								Messages.build_resourceDoesNotExist,
-								link.source.getName()
+								link.source.target.getName()
 						);
 				}
 		}
@@ -325,10 +337,11 @@ public class Node implements Serializable {
 	 */
 	public IFileElementType getFileElementType() {
 		
-		if (fileElementType == null && getFile() != null) {
+		final IFile targetFile = target.getFile();
+		if (fileElementType == null && targetFile != null) {
 			final ElementTypeManager manager = ElementTypeManager.getInstance();
 
-			this.fileElementType = manager.getFileElementType(getFile());
+			this.fileElementType = manager.getFileElementType(targetFile);
 		}
 
 		return fileElementType;

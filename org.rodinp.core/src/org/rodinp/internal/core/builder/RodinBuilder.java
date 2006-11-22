@@ -33,6 +33,10 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	
 	public static boolean DEBUG = false;
 	
+	public static boolean DEBUG_RUN = false;
+	
+	public static boolean DEBUG_GRAPH = false;
+	
 	BuildState state;
 	
 	ElementTypeManager elementTypeManager;

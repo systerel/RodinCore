@@ -22,8 +22,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * that the entire work of the tool will be discarded.
  * A producer supplies to operations:
  * <ul>
- * <li> "run": the tool produces some target file "file" </li>
- * <li> "clean": the tool deletes some target file "file" </li>
+ * <li> <code>run()</code>: the tool produces some target file "file" </li>
+ * <li> <code>clean()</code>: the tool deletes some target file "file" </li>
  * </ul>
  * 
  * @see org.rodinp.core.builder.IExtractor
