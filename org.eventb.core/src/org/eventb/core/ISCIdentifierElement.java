@@ -69,7 +69,7 @@ public interface ISCIdentifierElement extends IInternalElement {
 	void setType(Type type, IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Returns the AST corresponding to this element (a free identifier).
+	 * Returns the AST corresponding to this element (a typed free identifier).
 	 * 
 	 * @param factory
 	 *            the formula factory to use for building the result
