@@ -112,10 +112,10 @@ public class MachineStaticChecker extends StaticChecker {
 			ISeesContext[] seen = source.getSeesClauses();
 			IRefinesMachine[] abstractMachines = source.getRefinesClauses();
 
-			graph.addNode(target.getResource(), MACHINE_SC_TOOL_ID);
+			graph.addNode(target.getResource());
 			graph.addToolDependency(
 					source.getResource(), 
-					target.getResource(), MACHINE_SC_TOOL_ID, true);	
+					target.getResource(), true);	
 		
 			if (seen.length != 0) {
 				for (ISeesContext seesContext : seen) {
@@ -123,7 +123,7 @@ public class MachineStaticChecker extends StaticChecker {
 							source.getResource(), 
 							seesContext.getSeenSCContext().getResource(), 
 							target.getResource(), 
-							MACHINE_SC_SEES_ID, true);
+							true);
 				}
 			}
 		
@@ -132,7 +132,7 @@ public class MachineStaticChecker extends StaticChecker {
 						source.getResource(), 
 						abstractMachines[0].getAbstractSCMachine().getResource(), 
 						target.getResource(), 
-						MACHINE_SC_REFINES_ID, true);
+						true);
 			}
 		
 		} finally {

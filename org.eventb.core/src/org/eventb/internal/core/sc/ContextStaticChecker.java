@@ -106,10 +106,10 @@ public class ContextStaticChecker extends StaticChecker {
 			IContextFile source = (IContextFile) RodinCore.valueOf(file);
 			ISCContextFile target = source.getSCContextFile();
 		
-			graph.addNode(target.getResource(), CONTEXT_SC_TOOL_ID);
+			graph.addNode(target.getResource());
 			graph.addToolDependency(
 					source.getResource(), 
-					target.getResource(), CONTEXT_SC_TOOL_ID, true);
+					target.getResource(), true);
 		
 			IExtendsContext[] extendsContexts = source.getExtendsClauses();
 			for(IExtendsContext extendsContext : extendsContexts) {
@@ -117,7 +117,6 @@ public class ContextStaticChecker extends StaticChecker {
 						source.getResource(), 
 						extendsContext.getAbstractSCContext().getResource(), 
 						target.getResource(), 
-						CONTEXT_SC_EXTENDS_ID, 
 						false);
 			}
 		

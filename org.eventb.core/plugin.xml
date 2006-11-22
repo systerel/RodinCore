@@ -295,7 +295,6 @@
             name="%contextSCTool">
          <extractor
                class="org.eventb.internal.core.sc.ContextStaticChecker"
-               id="contextSC"
                name="%contextSCExtractor">
             <inputType id="org.eventb.core.contextFile"/>
          </extractor>
@@ -306,7 +305,6 @@
             name="%machineSCTool">
          <extractor
                class="org.eventb.internal.core.sc.MachineStaticChecker"
-               id="machineSC"
                name="%machineSCExtractor">
             <inputType id="org.eventb.core.machineFile"/>
          </extractor>
@@ -317,7 +315,6 @@
             name="%contextPOG">
          <extractor
                class="org.eventb.internal.core.pog.ContextPOGenerator"
-               id="contextPOG"
                name="%contextPOGExtractor">
             <inputType id="org.eventb.core.scContextFile"/>
          </extractor>
@@ -328,7 +325,6 @@
             name="%machinePOG">
          <extractor
                class="org.eventb.internal.core.pog.MachinePOGenerator"
-               id="machinePOG"
                name="%machinePOGExtractor">
             <inputType id="org.eventb.core.scMachineFile"/>
          </extractor>
@@ -339,7 +335,6 @@
             name="%autoPOM">
          <extractor
                class="org.eventb.internal.core.pom.AutoPOM"
-               id="autoPOM"
                name="%autoPOMExtractor">
             <inputType id="org.eventb.core.poFile"/>
          </extractor>

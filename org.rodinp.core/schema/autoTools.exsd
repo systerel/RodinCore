@@ -100,15 +100,6 @@ for element types within the extension namespace). The token cannot contain dot
          <sequence>
             <element ref="inputType" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the identifier for this extractor (simple id token, unique
-for element types within the extension namespace). The token cannot contain dot
-(.) or whitespace.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>

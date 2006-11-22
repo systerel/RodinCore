@@ -21,6 +21,9 @@ import org.rodinp.core.builder.IAutomaticTool;
  */
 public class ToolDescription extends ExecutableExtensionDesc {
 
+	// Unique identifier of this executable extension
+	private final String id;
+
 	/**
 	 * Creates a new tool decription.
 	 * 
@@ -29,6 +32,12 @@ public class ToolDescription extends ExecutableExtensionDesc {
 	 */
 	public ToolDescription(IConfigurationElement configElement) {
 		super(configElement);
+		this.id = this.bundleName + "." + configElement.getAttribute("id");
+	}
+
+	@Override
+	public String getId() {
+		return id;
 	}
 
 	/**
@@ -38,6 +47,11 @@ public class ToolDescription extends ExecutableExtensionDesc {
 	 */
 	public IAutomaticTool getTool() {
 		return (IAutomaticTool) super.getExecutableExtension();
+	}
+
+	@Override
+	public String toString() {
+		return name + "(id=" + id + ", class=" + className + ")";
 	}
 
 }

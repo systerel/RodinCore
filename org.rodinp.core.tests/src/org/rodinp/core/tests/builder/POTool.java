@@ -50,8 +50,8 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 		ISCProvable prv = (ISCProvable) RodinCore.valueOf(file);
 		
 		IPOFile po = prv.getPOFile();
-		graph.addNode(po.getResource(), ID);
-		graph.addToolDependency(prv.getResource(), po.getResource(), ID, true);
+		graph.addNode(po.getResource());
+		graph.addToolDependency(prv.getResource(), po.getResource(), true);
 				
 	}
 

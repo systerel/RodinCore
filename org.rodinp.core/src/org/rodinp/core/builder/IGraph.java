@@ -41,11 +41,9 @@ public interface IGraph {
 	 * 
 	 * @param file
 	 *            The file of the node
-	 * @param toolId
-	 *            The unique identifier of the tool
 	 * @throws CoreException if the graph could not be modified
 	 */
-	public void addNode(IFile file, String toolId) throws CoreException;
+	public void addNode(IFile file) throws CoreException;
 	
 	/**
 	 * Adds a dependency controlled by the user to the graph.
@@ -58,8 +56,6 @@ public interface IGraph {
 	 *            The source of the dependency.
 	 * @param target
 	 *            The target of the dependency.
-	 * @param id
-	 *            The kind identifier of the dependency.
 	 * @param prioritize
 	 *            True if this dependency should be prioritized in the
 	 *            topological order derived from the graph.
@@ -69,7 +65,6 @@ public interface IGraph {
 			IFile origin, 
 			IFile source, 
 			IFile target,
-			String id, 
 			boolean prioritize) throws CoreException;
 	
 	/**
@@ -78,8 +73,6 @@ public interface IGraph {
 	 *            The source of the dependency.
 	 * @param target
 	 *            The target of the dependency.
-	 * @param id
-	 *            The kind identifier of the dependency.
 	 * @param prioritize
 	 *            True if this dependency should be prioritized in the
 	 *            topological order derived from the graph.
@@ -88,7 +81,6 @@ public interface IGraph {
 	public void addToolDependency(
 			IFile source, 
 			IFile target, 
-			String id,
 			boolean prioritize) throws CoreException;
 	
 }

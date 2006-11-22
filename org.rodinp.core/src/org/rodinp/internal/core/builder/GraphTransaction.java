@@ -24,23 +24,24 @@ public class GraphTransaction implements IGraph {
 	private boolean opened;
 	private boolean closed;
 	
-	private ArrayList<Link> links;
-	private ArrayList<Node> targets;
-	private GraphModifier handler;
+	private final ArrayList<Link> links;
+	private final ArrayList<Node> targets;
+	private final GraphModifier handler;
 	
-	private HashSet<Node> targetSet; // all target nodes
-	private HashSet<String> ids; // all tool ids used
+	private final HashSet<Node> targetSet; // all target nodes
+	private final String toolId;
 	
-	public GraphTransaction(GraphModifier handler) {
+	public GraphTransaction(GraphModifier handler, String toolId) {
 		
 		opened = false;
 		closed = false;
 		
+		this.handler = handler;
+		this.toolId = toolId;
+		
 		links = new ArrayList<Link>(7);
 		targets = new ArrayList<Node>(7);
-		this.handler = handler;
 		targetSet = new HashSet<Node>(7);
-		ids = new HashSet<String>(5);
 	}
 	
 	/* (non-Javadoc)
@@ -50,7 +51,6 @@ public class GraphTransaction implements IGraph {
 			IFile origin, 
 			IFile source, 
 			IFile target,
-			String id, 
 			boolean prioritize) throws CoreException {
 		if (!opened)
 			throw makeGraphTransactionError();
@@ -61,13 +61,12 @@ public class GraphTransaction implements IGraph {
 		
 		links.add(new Link(Link.Provider.USER, 
 						prioritize ? Link.Priority.HIGH : Link.Priority.LOW, 
-						id, 
+						toolId, 
 						handler.getNodeOrPhantom(sourcePath), 
 						handler.getNodeOrPhantom(originPath)));
 		Node node = handler.getNodeOrPhantom(targetPath);
 		targets.add(node);
 		targetSet.add(node);
-		ids.add(id);
 	}
 
 	/* (non-Javadoc)
@@ -76,7 +75,6 @@ public class GraphTransaction implements IGraph {
 	public void addToolDependency(
 			IFile source, 
 			IFile target, 
-			String id,
 			boolean prioritize) throws CoreException {
 		if (!opened)
 			throw makeGraphTransactionError();
@@ -86,23 +84,22 @@ public class GraphTransaction implements IGraph {
 		
 		links.add(new Link(Link.Provider.TOOL, 
 				prioritize ? Link.Priority.HIGH : Link.Priority.LOW, 
-				id, 
+				toolId, 
 				handler.getNodeOrPhantom(sourcePath), 
 				null));
 		Node node = handler.getNodeOrPhantom(targetPath);
 		targets.add(node);
 		targetSet.add(node);
-		ids.add(id);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#addNode(org.eclipse.core.resources.IFile, java.lang.String)
 	 */
-	public void addNode(IFile file, String producerId) throws CoreException {
+	public void addNode(IFile file) throws CoreException {
 		if (!opened)
 			throw makeGraphTransactionError();
 		
-		handler.addNode(file.getFullPath(), producerId);
+		handler.addNode(file.getFullPath(), toolId);
 	}
 
 	/* (non-Javadoc)
@@ -122,7 +119,7 @@ public class GraphTransaction implements IGraph {
 		HashSet<String> changedIds = new HashSet<String>(5);
 		for (Node node : targetSet) {
 			for (Link link : node.getPredessorLinks()) {
-				if(ids.contains(link.id)) {
+				if(toolId.equals(link.id)) {
 					int p = links.indexOf(link);
 					if (p == -1 || targets.get(p) != node) {
 						changedIds.add(link.id);

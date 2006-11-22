@@ -332,7 +332,8 @@ public class Graph implements Serializable, Iterable<Node> {
 		for(int j = 0; j < descriptions.length; j++) {
 			IFile file = node.getFile();
 			try {
-				GraphTransaction transaction = new GraphTransaction(handler);
+				String toolId = descriptions[j].getId();
+				GraphTransaction transaction = new GraphTransaction(handler, toolId);
 				transaction.openGraph();
 				descriptions[j].getExtractor().extract(
 						file, 

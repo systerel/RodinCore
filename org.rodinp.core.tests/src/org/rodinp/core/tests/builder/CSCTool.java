@@ -37,8 +37,8 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		
 		ISCContext sctx = ctx.getCheckedVersion();
 		IFile scFile = sctx.getResource();
-		graph.addNode(scFile, SC_ID);
-		graph.addToolDependency(ctx.getResource(), scFile, SC_ID, true);
+		graph.addNode(scFile);
+		graph.addToolDependency(ctx.getResource(), scFile, true);
 		
 		HashSet<IFile> newSources = new HashSet<IFile>(ctx.getUsedContexts().length * 4 / 3 + 1);
 		for (IContext usedContext: ctx.getUsedContexts()) {
@@ -46,7 +46,7 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 			newSources.add(source);
 		}
 		for (IFile newFile : newSources)
-			graph.addUserDependency(ctx.getResource(), newFile, scFile, SC_ID, false);
+			graph.addUserDependency(ctx.getResource(), newFile, scFile, false);
 		
 	}
 	

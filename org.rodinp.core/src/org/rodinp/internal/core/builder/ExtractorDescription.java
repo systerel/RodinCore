@@ -79,4 +79,9 @@ public class ExtractorDescription extends ExecutableExtensionDesc {
 		return inputTypes;
 	}
 
+	@Override
+	public String getId() {
+		return toolDescription.getId();
+	}
+
 }

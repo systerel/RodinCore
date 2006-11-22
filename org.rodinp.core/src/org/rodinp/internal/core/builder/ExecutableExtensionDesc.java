@@ -22,22 +22,19 @@ import org.rodinp.internal.core.util.Util;
  * 
  * @author Laurent Voisin
  */
-public class ExecutableExtensionDesc {
+public abstract class ExecutableExtensionDesc {
 
 	// Fully qualified name of the plugin that provides this executable extension
-	private final String bundleName;
+	protected final String bundleName;
 
 	// Fully qualified name of the class implementing this executable extension
-	private final String className;
+	protected final String className;
 
 	// Configuration element describing this executable extension
 	private final IConfigurationElement configElement;
 
-	// Unique identifier of this executable extension
-	private final String id;
-
 	// Human-readable name of this executable extension
-	private final String name;
+	protected final String name;
 
 	// Instance of the executable extension (lazily loaded)
 	private Object instance;
@@ -51,7 +48,6 @@ public class ExecutableExtensionDesc {
 	public ExecutableExtensionDesc(IConfigurationElement configElement) {
 		this.bundleName = configElement.getNamespaceIdentifier();
 		this.configElement = configElement;
-		this.id = this.bundleName + "." + configElement.getAttribute("id");
 		this.name = configElement.getAttribute("name");
 		this.className = configElement.getAttribute("class");
 	}
@@ -70,9 +66,7 @@ public class ExecutableExtensionDesc {
 	 * 
 	 * @return Returns the id of this executable extension.
 	 */
-	public String getId() {
-		return id;
-	}
+	public abstract String getId();
 
 	/**
 	 * Returns the human-readable name of this executable extension.
@@ -101,11 +95,6 @@ public class ExecutableExtensionDesc {
 			}
 		}
 		return instance;
-	}
-
-	@Override
-	public String toString() {
-		return name + "(id=" + id + ", class=" + className + ")";
 	}
 
 }
