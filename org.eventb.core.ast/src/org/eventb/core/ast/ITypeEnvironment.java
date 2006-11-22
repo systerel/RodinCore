@@ -92,9 +92,21 @@ public interface ITypeEnvironment {
 	void addAll(ITypeEnvironment other);
 
 	/**
+	 * Adds the given free identifier to this environment.
+	 * <p>
+	 * This is a convenience method, fully equivalent to
+	 * <code>addName(freeIdent.getName(), freeIdent.getType())</code>.
+	 * </p>
+	 * 
+	 * @param freeIdent
+	 *            a free identifier
+	 */
+	void add(FreeIdentifier freeIdent);
+	
+	/**
 	 * Adds all given free identifiers to this environment.
 	 * <p>
-	 * All given free identifiers must already be typed checked.
+	 * All given free identifiers must already be type-checked.
 	 * All names that are common to this type environment and the given free identifiers
 	 * must be associated with the same type.
 	 * </p>

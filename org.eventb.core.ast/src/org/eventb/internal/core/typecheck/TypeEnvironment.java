@@ -81,6 +81,10 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		this.map = new HashMap<String, Type>(typenv.map);
 	}
 
+	public void add(FreeIdentifier freeIdent) {
+		addName(freeIdent.getName(), freeIdent.getType());
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeEnvironment#addAll(org.eventb.core.ast.ITypeEnvironment)
 	 */
@@ -97,9 +101,8 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	 * @see org.eventb.core.ast.ITypeEnvironment#addAll(org.eventb.core.ast.FreeIdentifier[])
 	 */
 	public void addAll(FreeIdentifier[] freeIdents) {
-		// Use addName() to check for duplicates.
 		for (FreeIdentifier freeIdent: freeIdents) {
-			addName(freeIdent.getName(), freeIdent.getType());
+			add(freeIdent);
 		}
 	}
 
