@@ -24,16 +24,19 @@ import org.rodinp.internal.core.util.Util;
 public abstract class AttributeType implements IAttributeType {
 
 	private static final java.lang.String KIND_BOOLEAN = "boolean";
+
 	private static final java.lang.String KIND_HANDLE = "handle";
+
 	private static final java.lang.String KIND_INTEGER = "integer";
+
 	private static final java.lang.String KIND_LONG = "long";
+
 	private static final java.lang.String KIND_STRING = "string";
 
-	private static class BoolAttributeTypeDescr extends AttributeType implements
-			Boolean {
+	private static class Boolean extends AttributeType implements
+			IAttributeType.Boolean {
 
-		protected BoolAttributeTypeDescr(java.lang.String id,
-				java.lang.String name) {
+		protected Boolean(java.lang.String id, java.lang.String name) {
 			super(id, name);
 		}
 
@@ -43,21 +46,27 @@ public abstract class AttributeType implements IAttributeType {
 		}
 
 		@Override
+		public java.lang.String getKind() {
+			return KIND_BOOLEAN;
+		}
+
+		@Override
 		public java.lang.String toString(boolean value) throws RodinDBException {
 			return java.lang.Boolean.toString(value);
 		}
-		
-	}
-	
-	private static class HandleAttributeTypeDescr extends AttributeType
-			implements Handle {
 
-		protected HandleAttributeTypeDescr(java.lang.String id, java.lang.String name) {
+	}
+
+	private static class Handle extends AttributeType implements
+			IAttributeType.Handle {
+
+		protected Handle(java.lang.String id, java.lang.String name) {
 			super(id, name);
 		}
 
 		@Override
-		public IRodinElement getHandleValue(java.lang.String rawValue) throws RodinDBException {
+		public IRodinElement getHandleValue(java.lang.String rawValue)
+				throws RodinDBException {
 			IRodinElement result = RodinCore.valueOf(rawValue);
 			if (result == null) {
 				Util.log(null, "Can't parse handle value for attribute " + id);
@@ -67,21 +76,28 @@ public abstract class AttributeType implements IAttributeType {
 		}
 
 		@Override
-		public java.lang.String toString(IRodinElement value) throws RodinDBException {
+		public java.lang.String getKind() {
+			return KIND_HANDLE;
+		}
+
+		@Override
+		public java.lang.String toString(IRodinElement value)
+				throws RodinDBException {
 			return value.getHandleIdentifier();
 		}
 
 	}
 
-	private static class IntAttributeTypeDescr extends AttributeType implements
-			Integer {
+	private static class Integer extends AttributeType implements
+			IAttributeType.Integer {
 
-		protected IntAttributeTypeDescr(java.lang.String id, java.lang.String name) {
+		protected Integer(java.lang.String id, java.lang.String name) {
 			super(id, name);
 		}
 
 		@Override
-		public int getIntValue(java.lang.String rawValue) throws RodinDBException {
+		public int getIntValue(java.lang.String rawValue)
+				throws RodinDBException {
 			try {
 				return java.lang.Integer.valueOf(rawValue);
 			} catch (NumberFormatException e) {
@@ -90,21 +106,32 @@ public abstract class AttributeType implements IAttributeType {
 		}
 
 		@Override
+		public java.lang.String getKind() {
+			return KIND_INTEGER;
+		}
+
+		@Override
 		public java.lang.String toString(int value) throws RodinDBException {
 			return java.lang.Integer.toString(value);
 		}
-		
+
 	}
 
-	private static class LongAttributeTypeDescr extends AttributeType implements
-			Long {
+	private static class Long extends AttributeType implements
+			IAttributeType.Long {
 
-		protected LongAttributeTypeDescr(java.lang.String id, java.lang.String name) {
+		protected Long(java.lang.String id, java.lang.String name) {
 			super(id, name);
 		}
 
 		@Override
-		public long getLongValue(java.lang.String rawValue) throws RodinDBException {
+		public java.lang.String getKind() {
+			return KIND_LONG;
+		}
+
+		@Override
+		public long getLongValue(java.lang.String rawValue)
+				throws RodinDBException {
 			try {
 				return java.lang.Long.valueOf(rawValue);
 			} catch (NumberFormatException e) {
@@ -116,14 +143,19 @@ public abstract class AttributeType implements IAttributeType {
 		public java.lang.String toString(long value) throws RodinDBException {
 			return java.lang.Long.toString(value);
 		}
-		
+
 	}
 
-	private static class StringAttributeTypeDescr extends AttributeType
-			implements String {
+	private static class String extends AttributeType implements
+			IAttributeType.String {
 
-		protected StringAttributeTypeDescr(java.lang.String id, java.lang.String name) {
+		protected String(java.lang.String id, java.lang.String name) {
 			super(id, name);
+		}
+
+		@Override
+		public java.lang.String getKind() {
+			return KIND_STRING;
 		}
 
 		@Override
@@ -132,10 +164,11 @@ public abstract class AttributeType implements IAttributeType {
 		}
 
 		@Override
-		public java.lang.String toString(java.lang.String value) throws RodinDBException {
+		public java.lang.String toString(java.lang.String value)
+				throws RodinDBException {
 			return value;
 		}
-		
+
 	}
 
 	public static AttributeType valueOf(IConfigurationElement ice) {
@@ -144,53 +177,56 @@ public abstract class AttributeType implements IAttributeType {
 		final java.lang.String name = ice.getAttribute("name");
 		final java.lang.String kind = ice.getAttribute("kind");
 		if (KIND_BOOLEAN.equals(kind)) {
-			return new BoolAttributeTypeDescr(id, name);
+			return new Boolean(id, name);
 		}
 		if (KIND_HANDLE.equals(kind)) {
-			return new HandleAttributeTypeDescr(id, name);
+			return new Handle(id, name);
 		}
 		if (KIND_INTEGER.equals(kind)) {
-			return new IntAttributeTypeDescr(id, name);
+			return new Integer(id, name);
 		}
 		if (KIND_LONG.equals(kind)) {
-			return new LongAttributeTypeDescr(id, name);
+			return new Long(id, name);
 		}
 		if (KIND_STRING.equals(kind)) {
-			return new StringAttributeTypeDescr(id, name);
+			return new String(id, name);
 		}
-		Util.log(null,
-				"Unknown attribute kind " + kind +
-				" when parsing configuration element " + id);
+		Util.log(null, "Unknown attribute kind " + kind
+				+ " when parsing configuration element " + id);
 		return null;
 	}
 
 	protected final java.lang.String id;
-	
+
 	protected final java.lang.String name;
-	
+
 	protected AttributeType(java.lang.String id, java.lang.String name) {
 		this.id = id;
 		this.name = name;
 	}
-	
-	public boolean getBoolValue(java.lang.String rawValue) throws RodinDBException {
+
+	public boolean getBoolValue(java.lang.String rawValue)
+			throws RodinDBException {
 		throw newInvalidKindException();
 	}
-	
-	public IRodinElement getHandleValue(java.lang.String rawValue) throws RodinDBException {
+
+	public IRodinElement getHandleValue(java.lang.String rawValue)
+			throws RodinDBException {
 		throw newInvalidKindException();
 	}
-	
+
 	/**
 	 * @return Returns the id.
 	 */
 	public final java.lang.String getId() {
 		return id;
 	}
-	
+
 	public int getIntValue(java.lang.String rawValue) throws RodinDBException {
 		throw newInvalidKindException();
 	}
+
+	public abstract java.lang.String getKind();
 
 	public long getLongValue(java.lang.String rawValue) throws RodinDBException {
 		throw newInvalidKindException();
@@ -202,46 +238,41 @@ public abstract class AttributeType implements IAttributeType {
 	public final java.lang.String getName() {
 		return name;
 	}
-	
-	public java.lang.String getStringValue(java.lang.String rawValue) throws RodinDBException {
+
+	public java.lang.String getStringValue(java.lang.String rawValue)
+			throws RodinDBException {
 		throw newInvalidKindException();
 	}
-	
+
 	protected RodinDBException newInvalidValueException() {
-		return new RodinDBException(
-				new RodinDBStatus(
-						IRodinDBStatusConstants.INVALID_ATTRIBUTE_VALUE,
-						id
-				)
-		);
+		return new RodinDBException(new RodinDBStatus(
+				IRodinDBStatusConstants.INVALID_ATTRIBUTE_VALUE, id));
 	}
-	
+
 	private RodinDBException newInvalidKindException() {
-		return new RodinDBException(
-				new RodinDBStatus(
-						IRodinDBStatusConstants.INVALID_ATTRIBUTE_KIND,
-						id
-				)
-		);
+		return new RodinDBException(new RodinDBStatus(
+				IRodinDBStatusConstants.INVALID_ATTRIBUTE_KIND, id));
 	}
-	
+
 	public java.lang.String toString(boolean value) throws RodinDBException {
 		throw newInvalidKindException();
 	}
-	
+
 	public java.lang.String toString(int value) throws RodinDBException {
 		throw newInvalidKindException();
 	}
-	
-	public java.lang.String toString(IRodinElement value) throws RodinDBException {
+
+	public java.lang.String toString(IRodinElement value)
+			throws RodinDBException {
 		throw newInvalidKindException();
 	}
-	
+
 	public java.lang.String toString(long value) throws RodinDBException {
 		throw newInvalidKindException();
 	}
-	
-	public java.lang.String toString(java.lang.String value) throws RodinDBException {
+
+	public java.lang.String toString(java.lang.String value)
+			throws RodinDBException {
 		throw newInvalidKindException();
 	}
 
