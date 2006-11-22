@@ -8,69 +8,116 @@
 
 package org.eventb.core.tests.pom;
 
+import java.util.NoSuchElementException;
+
+import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IRodinFile;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Utility methods for writing a PO file.
+ * 
  * @author halstefa
- *
+ * @author Laurent Voisin
  */
 public class POUtil {
 
-	// Functions to write PO files
-	
-	public static void addTypes(IInternalParent parent, String[] names, String[] types) throws RodinDBException {
-		for(int i=0; i<names.length; i++) {
-			IInternalElement element = parent.createInternalElement(IPOIdentifier.ELEMENT_TYPE, names[i], null, null);
-			element.setContents(types[i]);
-		}
-	}
-	
-	public static void addPredicateSet(IRodinFile file, String name, String[] predicates, String parentSet) throws RodinDBException {
-		IPOPredicateSet parent = (IPOPredicateSet) file.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, name, null, null);
-		if(parentSet != null)
-			parent.setContents(parentSet);
-		int idx = 1;
-		for(int i=0; i<predicates.length; i++) {
-			name = "p" + idx++;
-			IInternalElement element = parent.createInternalElement(IPOPredicate.ELEMENT_TYPE, name, null, null);
-			element.setContents(predicates[i]);
-		}
-	}
-	
-	public static void addSequent(IRodinFile file, 
-			String poName,
-			String globalHypothesis, 
-			String[] localNames,
-			String[] localTypes,
-			String[] localHypothesis,
-			String goal) throws RodinDBException {
-		IPOSequent sequent = (IPOSequent) file.createInternalElement(IPOSequent.ELEMENT_TYPE, poName, null, null);
-		addTypes(sequent, localNames, localTypes);
-		addHypothesis(sequent, globalHypothesis, localHypothesis);
-		addPredicate("goal", sequent,goal);
-	}
-	
-	private static void addHypothesis(IPOSequent sequent, 
-			String globalHypothesis, 
-			String[] localHypothesis) throws RodinDBException {
-		IPOPredicateSet hypothesis = (IPOPredicateSet) sequent.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, "glob-hyp", null, null);
-		hypothesis.setContents(globalHypothesis);
-		int idx = 1;
-		for(int i=0; i<localHypothesis.length; i++) {
-			addPredicate("p" + idx++, hypothesis, localHypothesis[i]);
-		}
-	}
-	
-	private static void addPredicate(String name, IInternalParent internalParent, String predicate) throws RodinDBException {
-		IInternalElement element = internalParent.createInternalElement(IPOPredicate.ELEMENT_TYPE, name, null, null);
-		element.setContents(predicate);
+	/**
+	 * Adds a predicate set to the given PO file, using the given contents.
+	 * 
+	 * @param poFile
+	 *            file in which to add the predicate set
+	 * @param setName
+	 *            name of the set
+	 * @param parentSet
+	 *            parent set (may be <code>null</code>)
+	 * @param typEnv
+	 *            type environment for the set
+	 * @param predStrings
+	 *            predicates of the set as strings
+	 * @return a handle to the created set
+	 * @throws RodinDBException
+	 */
+	public static IPOPredicateSet addPredicateSet(IPOFile poFile, String setName,
+			IPOPredicateSet parentSet, ITypeEnvironment typEnv,
+			String... predStrings) throws RodinDBException {
+
+		IPOPredicateSet poSet = poFile.getPredicateSet(setName);
+		createPredicateSet(poSet, parentSet, typEnv, predStrings);
+		return poSet;
 	}
 
+	/**
+	 * Adds a PO to the given PO file with the supplied information.
+	 * 
+	 * @param poFile
+	 *            file where to create the PO
+	 * @param poName
+	 *            name of the PO
+	 * @param goalString
+	 *            goal of the PO
+	 * @param globalSet
+	 *            handle to the set of global hypotheses
+	 * @param typEnv
+	 *            local type environment
+	 * @param localHypStrings
+	 *            local hypotheses as strings
+	 * @throws RodinDBException
+	 */
+	public static void addSequent(IPOFile poFile, String poName, String goalString,
+			IPOPredicateSet globalSet, ITypeEnvironment typEnv,
+			String... localHypStrings) throws RodinDBException {
+		
+		IPOSequent poSeq = poFile.getSequent(poName);
+		poSeq.create(null, null);
+		
+		IPOPredicate poGoal = poSeq.getGoal("goal");
+		poGoal.create(null, null);
+		poGoal.setPredicateString(goalString, null);
+		
+		IPOPredicateSet poSet = poSeq.getHypothesis("local");
+		createPredicateSet(poSet, globalSet, typEnv, localHypStrings);
+	}
+
+	/**
+	 * Creates and populates the given predicate set with the supplied information.
+	 * 
+	 * @param poSet
+	 *            predicate set to create and populate
+	 * @param parentSet
+	 *            parent set (may be <code>null</code>)
+	 * @param typEnv
+	 *            type environment for the set
+	 * @param predStrings
+	 *            predicates of the set as strings
+	 * @throws RodinDBException
+	 */
+	private static void createPredicateSet(IPOPredicateSet poSet,
+			IPOPredicateSet parentSet, ITypeEnvironment typEnv,
+			String... predStrings) throws RodinDBException,
+			NoSuchElementException {
+
+		poSet.create(null, null);
+		if (parentSet != null) {
+			poSet.setParentPredicateSet(parentSet, null);
+		}
+		ITypeEnvironment.IIterator iter = typEnv.getIterator();
+		while (iter.hasNext()) {
+			iter.advance();
+			IPOIdentifier poIdent = poSet.getIdentifier(iter.getName());
+			poIdent.create(null, null);
+			poIdent.setType(iter.getType(), null);
+		}
+		int idx = 1;
+		for (String predString: predStrings) {
+			IPOPredicate poPred = poSet.getPredicate("p" + idx++);
+			poPred.create(null, null);
+			poPred.setPredicateString(predString, null);
+		}
+	}
+	
 }

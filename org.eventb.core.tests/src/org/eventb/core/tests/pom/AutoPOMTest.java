@@ -2,6 +2,7 @@ package org.eventb.core.tests.pom;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
@@ -29,43 +30,54 @@ public class AutoPOMTest extends BuilderTest {
 	private IPOFile createPOFile() throws RodinDBException {
 		IPOFile poFile = (IPOFile) rodinProject.getRodinFile("x.bpo");
 		poFile.create(true, null);
-		POUtil.addTypes(poFile, mp("x"), mp("ℤ"));
-		POUtil.addPredicateSet(poFile, "hyp0", mp("1=1","2=2","x∈ℕ"), null);
+		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poFile, "hyp0", null,
+				mTypeEnvironment("x", "ℤ"),
+				"1=1", "2=2", "x∈ℕ"
+		);
 		POUtil.addSequent(poFile, "PO1", 
-				"hyp0", 
-				mp(), mp(), 
-				mh(), 
-				"1=1 ∧2=2 ∧x ∈ℕ");
+				"1=1 ∧2=2 ∧x ∈ℕ",
+				hyp0, 
+				mTypeEnvironment()
+		);
 		POUtil.addSequent(poFile, "PO2", 
-				"hyp0", 
-				mp("y"), mp("ℤ"), 
-				mh("y∈ℕ"), 
-				"1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ");
+				"1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ",
+				hyp0, 
+				mTypeEnvironment("y", "ℤ"), 
+				"y∈ℕ" 
+		);
 		POUtil.addSequent(poFile, "PO3", 
-				"hyp0", 
-				mp(), mp(), 
-				mh("3=3"), 
-				"∃x·x=3");
+				"∃x·x=3", 
+				hyp0, 
+				mTypeEnvironment(),
+				"3=3"
+		);
 		POUtil.addSequent(poFile, "PO4", 
-				"hyp0", 
-				mp(), mp(), 
-				mh("3=3"), 
-				"1=1 ∧2=2 ∧x ∈ℕ∧(∃x·(x=3))");
+				"1=1 ∧2=2 ∧x ∈ℕ∧(∃x·(x=3))", 
+				hyp0, 
+				mTypeEnvironment(),
+				"3=3"
+		);
 		POUtil.addSequent(poFile, "PO5", 
-				"hyp0", 
-				mp("y"), mp("ℤ"), 
-				mh("y∈ℕ"), 
-				"1=1 ∧2=2 ∧y ∈ℕ∧y ∈ℕ");
+				"1=1 ∧2=2 ∧y ∈ℕ∧y ∈ℕ", 
+				hyp0, 
+				mTypeEnvironment("y", "ℤ"), 
+				"y∈ℕ"
+		);
 		POUtil.addSequent(poFile, "PO6", 
-				"hyp0", 
-				mp("y","x'"), mp("ℤ","ℤ"), 
-				mh("y∈ℕ"), 
-				"1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ");
+				"1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ", 
+				hyp0, 
+				mTypeEnvironment(
+						"y", "ℤ",
+						"x'", "ℤ"
+				), 
+				"y∈ℕ"
+		);
 		POUtil.addSequent(poFile, "PO7", 
-				"hyp0", 
-				mp("y"), mp("ℤ"), 
-				mh("x=x"), 
-				"y∈ℕ");
+				"y∈ℕ", 
+				hyp0, 
+				mTypeEnvironment("y", "ℤ"), 
+				"x=x"
+		);
 		poFile.save(null, true);
 		return poFile;
 	}
