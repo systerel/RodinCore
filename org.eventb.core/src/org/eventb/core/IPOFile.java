@@ -16,17 +16,23 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for Event-B Proof Obligation (PO) files.
  * <p>
+ * A proof obligation file contains two kinds of elements:
+ * <ul>
+ * <li>Predicate sets contain hypotheses that are common to several
+ * proof obligations.</li>
+ * <li>Sequents are the proof obligations themselves.</li>
+ * </ul>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- *
+ * 
  * @author Stefan Hallerstede
- *
  */
 public interface IPOFile extends IRodinFile {
 
-	public IFileElementType ELEMENT_TYPE =
-		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".poFile"); //$NON-NLS-1$
-	
+	public IFileElementType ELEMENT_TYPE = RodinCore
+			.getFileElementType(EventBPlugin.PLUGIN_ID + ".poFile"); //$NON-NLS-1$
+
 	/**
 	 * Returns a handle to the checked version of the context for which this
 	 * proof obligation file has been generated.
@@ -58,7 +64,7 @@ public interface IPOFile extends IRodinFile {
 	 * @return a handle to the proof file of this component
 	 */
 	public IPRFile getPRFile();
-	
+
 	/**
 	 * Returns a handle to the file containing proof status for this component.
 	 * <p>
@@ -80,22 +86,23 @@ public interface IPOFile extends IRodinFile {
 	 *            element name of the predicate set
 	 * @return a handle to a child predicate set with the given element name
 	 */
-	public IPOPredicateSet getPredicateSet(String elementName) throws RodinDBException;
+	public IPOPredicateSet getPredicateSet(String elementName);
 
 	/**
-	 * Returns the handles to the predicate sets of this component.
+	 * Returns the predicate sets of this file.
 	 * 
-	 * @return a handle to the predicate set or <code>null</code> there is no
-	 *         predicate set witrh given name
-	 * @throws RodinDBException if there was a problem accessing the database
+	 * @return an array of all predicate sets in this file
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
 	 */
 	public IPOPredicateSet[] getPredicateSets() throws RodinDBException;
 
 	/**
-	 * Returns handles to the proof obligations of this component. 
+	 * Returns handles to the proof obligations of this component.
 	 * 
-	 * @return the array of handles to the proof obligations
-	 * @throws RodinDBException if there was a problem accessing the database
+	 * @return an array of all proof obligations in this file
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
 	 */
 	public IPOSequent[] getSequents() throws RodinDBException;
 
@@ -111,5 +118,5 @@ public interface IPOFile extends IRodinFile {
 	 * @return a handle to a child sequent with the given element name
 	 */
 	public IPOSequent getSequent(String elementName) throws RodinDBException;
-	
+
 }
