@@ -48,13 +48,12 @@ public class POFile extends RodinFile implements IPOFile {
 		return ELEMENT_TYPE;
 	}
 	
-	public IPOPredicateSet getPredicateSet(String elementName) throws RodinDBException {
+	public IPOPredicateSet getPredicateSet(String elementName) {
 		return (IPOPredicateSet) getInternalElement(IPOPredicateSet.ELEMENT_TYPE, elementName);
 	}
 
 	public IPOSequent[] getSequents() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IPOSequent.ELEMENT_TYPE);
-		return (POSequent[]) elements; 
+		return (POSequent[]) getChildrenOfType(IPOSequent.ELEMENT_TYPE); 
 	}
 
 	public ISCContextFile getSCContext() {
@@ -86,11 +85,10 @@ public class POFile extends RodinFile implements IPOFile {
 	}
 
 	public IPOPredicateSet[] getPredicateSets() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(POPredicateSet.ELEMENT_TYPE);
-		return (IPOPredicateSet[]) elements;
+		return (IPOPredicateSet[]) getChildrenOfType(POPredicateSet.ELEMENT_TYPE);
 	}
 
-	public IPOSequent getSequent(String elementName) throws RodinDBException {
+	public IPOSequent getSequent(String elementName) {
 		return (IPOSequent) getInternalElement(IPOSequent.ELEMENT_TYPE, elementName);
 	}
 
