@@ -117,6 +117,6 @@ public interface IPOFile extends IRodinFile {
 	 *            element name of the sequent
 	 * @return a handle to a child sequent with the given element name
 	 */
-	public IPOSequent getSequent(String elementName) throws RodinDBException;
+	public IPOSequent getSequent(String elementName);
 
 }
