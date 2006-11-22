@@ -175,13 +175,12 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 	}
 
 	/**
-	 * Get the invariant name.
-	 * <p>
+	 * Returns the elements of the enumerated set.
 	 * 
-	 * @return the invariant name as input by the user
+	 * @return the elements entered by the user
 	 */
-	public Collection<String> getElements() {
-		return elements;
+	public String[] getElements() {
+		return elements.toArray(new String[elements.size()]);
 	}
 
 	@Override
