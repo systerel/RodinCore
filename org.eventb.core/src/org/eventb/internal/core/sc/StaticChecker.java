@@ -66,7 +66,7 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IAutomaticTool#clean(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void clean(IFile file, IProgressMonitor monitor)
+	public void clean(IFile source, IFile file, IProgressMonitor monitor)
 			throws CoreException {
 		
 		try {

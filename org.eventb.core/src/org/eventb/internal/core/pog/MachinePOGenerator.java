@@ -41,7 +41,7 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IAutomaticTool#run(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean run(IFile file, IProgressMonitor monitor)
+	public boolean run(IFile source, IFile file, IProgressMonitor monitor)
 			throws CoreException {
 
 		IPOFile poFile = (IPOFile) RodinCore.valueOf(file).getMutableCopy();

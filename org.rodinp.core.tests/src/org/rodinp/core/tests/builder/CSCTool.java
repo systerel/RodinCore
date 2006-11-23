@@ -15,7 +15,7 @@ public class CSCTool extends SCTool {
 	
 	private static final String CSC = "CSC";
 	
-	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
+	public void clean(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
 		if (SCTool.SHOW_CLEAN)
 			ToolTrace.addTrace(CSC, "clean", file);
 
@@ -46,7 +46,7 @@ public class CSCTool extends SCTool {
 		
 	}
 	
-	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
+	public boolean run(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
 		if (SCTool.SHOW_RUN)
 			ToolTrace.addTrace(CSC, "run", file);
 

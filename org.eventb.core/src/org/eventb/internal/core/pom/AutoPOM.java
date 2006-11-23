@@ -39,7 +39,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 
 	public static boolean DEBUG = false;
 
-	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
+	public boolean run(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
 		
 		IPSFile psFile = (IPSFile) RodinCore.valueOf(file).getMutableCopy();
 		IPRFile prFile = (IPRFile) psFile.getPRFile().getMutableCopy();
@@ -132,7 +132,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 	
-	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
+	public void clean(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
 		
 		IPSFile psFile = (IPSFile) RodinCore.valueOf(file);
 		psFile.delete(true, null);

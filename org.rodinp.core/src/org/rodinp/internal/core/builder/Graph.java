@@ -233,11 +233,12 @@ public class Graph implements Serializable, Iterable<Node> {
 			node.printPhantomProblem();
 			return;
 		}
-		IFile file = node.getTarget().getFile();
-		if (file == null) {// resource is not a file
-			Util.log(null, "Builder resource not a file" + file.getName()); //$NON-NLS-1$
+		if (node.getTarget().getFile() == null) {// resource is not a file
+			Util.log(null, "Builder resource not a file" + 
+					node.getTarget().getName()); //$NON-NLS-1$
 			if (RodinBuilder.DEBUG_RUN)
-				System.out.println(getClass().getName() + ": Builder resource not a file!"); //$NON-NLS-1$
+				System.out.println(getClass().getName() + 
+						": Builder resource not a file!"); //$NON-NLS-1$
 			return;
 		}
 		
@@ -245,33 +246,37 @@ public class Graph implements Serializable, Iterable<Node> {
 		
 		if (!node.isDerived()) {
 			if(RodinBuilder.DEBUG_GRAPH)
-				System.out.println(getClass().getName() + ": Root node changed: " + node.getTarget().getName());
+				System.out.println(getClass().getName() + ": Root node changed: " + 
+						node.getTarget().getName());
 			
 			changed = true;
 			
 		} else {
 			if(RodinBuilder.DEBUG_RUN)
 				System.out.println(getClass().getName() + 
-					 ": Running tool: " + node.getToolId() + " on node: " + node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
+					 ": Running tool: " + node.getToolId() + " on node: " + 
+					 node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 			ToolDescription toolDescription = getManager().getToolDescription(node.getToolId());
 			IAutomaticTool tool = toolDescription.getTool();
 			if(tool == null) {
-				Util.log(null, "Unknown tool: " + node.getToolId() + " for node " + node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
+				Util.log(null, "Unknown tool: " + node.getToolId() + " for node " + 
+						node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 			try {
 				
-				FileRunnable runnable = new FileRunnable(tool, file);
+				FileRunnable runnable = 
+					new FileRunnable(tool, node.getCreator().getFile(), node.getTarget().getFile());
 				RodinCore.run(runnable, manager.getProgressMonitorForNode(node));
 				changed = runnable.targetHasChanged();
 				
 			} catch (OperationCanceledException e) {
 				throw e;
 			} catch (CoreException e) {
-				issueToolError(node, file, toolDescription, node.getToolId(), e);
+				issueToolError(node, toolDescription, e);
 				return;
 			} catch (Throwable e) {
-				issueToolError(node, file, toolDescription, node.getToolId(), e);
+				issueToolError(node, toolDescription, e);
 				return;
 			}
 		}
@@ -289,14 +294,13 @@ public class Graph implements Serializable, Iterable<Node> {
 
 	private void issueToolError(
 			Node node, 
-			IFile file, 
 			ToolDescription toolDescription, 
-			String toolName, 
 			Throwable e) {
-		Util.log(e, " while running tool " + toolName + " on " + file.getName()); //$NON-NLS-1$
-		MarkerHelper.deleteAllProblemMarkers(file);
+		Util.log(e, " while running tool " + node.getToolId() + " on " + 
+				node.getTarget().getName()); //$NON-NLS-1$
+		MarkerHelper.deleteAllProblemMarkers(node.getTarget().getFile());
 		MarkerHelper.addMarker(
-				file, 
+				node.getTarget().getFile(), 
 				false,
 				Messages.build_ToolError, 
 				toolDescription.getName()
@@ -411,7 +415,7 @@ public class Graph implements Serializable, Iterable<Node> {
 			return;
 		IAutomaticTool tool = getManager().getToolDescription(node.getToolId()).getTool(); 
 		if (tool != null)
-			tool.clean(node.getTarget().getFile(), monitor);
+			tool.clean(node.getCreator().getFile(), node.getTarget().getFile(), monitor);
 	}
 	
 	private void topSortInit() {

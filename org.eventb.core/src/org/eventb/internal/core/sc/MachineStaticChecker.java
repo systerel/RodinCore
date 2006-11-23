@@ -50,7 +50,7 @@ public class MachineStaticChecker extends StaticChecker {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IAutomaticTool#run(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean run(IFile file, IProgressMonitor monitor)
+	public boolean run(IFile source, IFile file, IProgressMonitor monitor)
 			throws CoreException {
 		
 		ISCMachineFile scMachineFile = (ISCMachineFile) RodinCore.valueOf(file).getMutableCopy();

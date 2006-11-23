@@ -21,7 +21,8 @@ public class FileRunnable implements IWorkspaceRunnable {
 
 	private final IAutomaticTool tool;
 	
-	private final IFile file;
+	private final IFile source;
+	private final IFile target;
 	
 	private boolean changed;
 	
@@ -29,12 +30,13 @@ public class FileRunnable implements IWorkspaceRunnable {
 	 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
-		changed = tool.run(file, monitor);
+		changed = tool.run(source, target, monitor);
 	}
 
-	public FileRunnable(IAutomaticTool tool, IFile file) {
+	public FileRunnable(IAutomaticTool tool, IFile source, IFile target) {
 		this.tool = tool;
-		this.file = file;
+		this.source = source;
+		this.target = target;
 	}
 	
 	public boolean targetHasChanged() {

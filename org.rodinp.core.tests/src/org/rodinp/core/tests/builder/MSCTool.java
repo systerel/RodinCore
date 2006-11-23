@@ -23,7 +23,7 @@ public class MSCTool extends SCTool {
 	
 	private static final String MSC = "MSC";
 	
-	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
+	public void clean(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
 		if (SCTool.SHOW_CLEAN)
 			ToolTrace.addTrace(MSC, "clean", file);
 
@@ -60,7 +60,7 @@ public class MSCTool extends SCTool {
 		
 	}
 	
-	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
+	public boolean run(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
 		if (SCTool.SHOW_RUN)
 			ToolTrace.addTrace(MSC, "run", file);
 

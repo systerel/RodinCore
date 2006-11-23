@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
+import java.util.HashSet;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -40,6 +41,12 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	BuildState state;
 	
 	ElementTypeManager elementTypeManager;
+	
+	private static final HashSet<String> ignoredFiles;
+	static { 
+		ignoredFiles = new HashSet<String>(3);
+		ignoredFiles.add(".project");
+	}
 	
 	@Override
 	protected void startupOnInitialize() {
@@ -207,6 +214,8 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	
 	void markNodeDated(IResource resource, ProgressManager manager) {
 		if (resource instanceof IFile) {
+			if (ignoredFiles.contains(resource.getName()))
+				return;
 			Node node = state.graph.getNode(resource.getFullPath());
 			if(node == null) {
 				if(DEBUG)
@@ -215,6 +224,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 			}
 			if(node != null) {
 				state.graph.setPreferredNode(node);
+				node.setToolId(null);
 				try {
 					state.graph.builderExtractNode(node, manager);
 				} catch (CoreException e) {

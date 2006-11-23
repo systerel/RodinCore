@@ -22,7 +22,7 @@ public class MPOTool extends POTool {
 	// Id of this tool
 	private static String SC_ID = "org.rodinp.core.tests.testMPO";
 	
-	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
+	public void clean(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
 		clean(file, monitor, MPO);
 	}
 
@@ -30,7 +30,7 @@ public class MPOTool extends POTool {
 		extract(file, graph, MPO, SC_ID, monitor);
 	}
 
-	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
+	public boolean run(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
 		run(file, monitor, MPO);
 		return true;
 	}

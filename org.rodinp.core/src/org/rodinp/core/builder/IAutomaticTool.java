@@ -34,12 +34,14 @@ public interface IAutomaticTool {
 	 * Runs the tool that updates a file (or a set of files).
 	 * The tool must delete all markers from the input file(s) from which
 	 * <code>file</code> is (directly) derived.
-	 * @param file The file to be updated
+	 * @param source The source node from which the target node was created by an extractor,
+	 * 				or <code>null</code> if this is unknown
+	 * @param target The file to be updated
 	 * @param monitor The progress monitor
 	 * @return True if file has changed, false otherwise
 	 * @throws CoreException If some internal problem occured
 	 */
-	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException;
+	public boolean run(IFile source, IFile target, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * A tool responsible for creating a file is also responsible for cleaning it.
@@ -48,10 +50,12 @@ public interface IAutomaticTool {
 	 * <li> when a project is explicitly selected for cleaning (e.g. in the Eclpise project menu)</li>
 	 * <li> when a file was deleted all files that can be reached by tool dependencies are cleaned</li>
 	 * </ul>
-	 * @param file to be cleaned
+	 * @param source The source node from which the target node was created by an extractor,
+	 * 				or <code>null</code> if this is unknown
+	 * @param target to be cleaned
 	 * @param monitor The progress monitor
 	 * @throws CoreException If some internal problem occured
 	 */
-	public void clean(IFile file, IProgressMonitor monitor) throws CoreException;
+	public void clean(IFile source, IFile target, IProgressMonitor monitor) throws CoreException;
 
 }

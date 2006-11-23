@@ -37,11 +37,11 @@ public interface IExtractor {
 	
 	/**
 	 * Extracts dependency information from a file.
-	 * @param file the file to be extracted
+	 * @param source the file to be extracted
 	 * @param graph the dependency graph to update
 	 * @param monitor a progress monitor
 	 * @throws CoreException if there was a problem
 	 */
-	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException;
+	public void extract(IFile source, IGraph graph, IProgressMonitor monitor) throws CoreException;
 
 }
