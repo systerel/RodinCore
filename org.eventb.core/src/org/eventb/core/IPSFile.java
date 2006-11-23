@@ -92,10 +92,6 @@ public interface IPSFile extends IRodinFile{
 	/**
 	 * Returns handles to all proof status elements in the PS file in the 
 	 * order in which they occur.
-	 * <p>
-	 * This is a handle-only method. The status elements may or may not be
-	 * present.
-	 * </p>
 	 * 
 	 * @return an array of all status elements in the PS file
 	 * @throws RodinDBException 
