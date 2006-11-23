@@ -395,9 +395,9 @@
             kind="boolean"
             name="%eventBpsValidity"/>
       <attributeType
-            id="psAutoProof"
+            id="psManual"
             kind="boolean"
-            name="%eventBpsAutoProof"/>
+            name="%eventBpsManual"/>
       <attributeType
             id="type"
             kind="string"

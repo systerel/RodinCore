@@ -303,7 +303,7 @@ public class EventBImage {
 		else {
 			boolean isAutomatic;
 			try {
-				isAutomatic = status.hasAutoProofAttribute() && status.getAutoProofAttribute();
+				isAutomatic = ! status.hasManualProof();
 			} catch (RodinDBException e) {
 				String message = "Cannot check if the proof tree of the sequent "
 					+ status.getElementName()

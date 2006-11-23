@@ -80,8 +80,8 @@ public final class EventBAttributes {
 	public static IAttributeType.Boolean PROOF_VALIDITY_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".psProofValid");
 
-	public static IAttributeType.Boolean AUTO_PROOF_ATTRIBUTE =
-		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".psAutoProof");
+	public static IAttributeType.Boolean MANUAL_PROOF_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".psManual");
 	
 	public static IAttributeType.String GOAL_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prGoal");

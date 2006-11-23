@@ -15,6 +15,7 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -79,17 +80,18 @@ public class PSStatus extends InternalElement implements IPSStatus {
 		return poFile.getSequent(getElementName());
 	}
 
-	public boolean hasAutoProofAttribute() throws RodinDBException {
-		return hasAttribute(EventBAttributes.AUTO_PROOF_ATTRIBUTE);
-	}
-
-	public boolean getAutoProofAttribute() throws RodinDBException {
-		// if (!hasAutoProofAttribute(monitor)) return false;
-		return getAttributeValue(EventBAttributes.AUTO_PROOF_ATTRIBUTE);
+	public boolean hasManualProof() throws RodinDBException {
+		final IAttributeType.Boolean attribute = EventBAttributes.MANUAL_PROOF_ATTRIBUTE;
+		return hasAttribute(attribute) && getAttributeValue(attribute);
 	}
 	
-	public void setAutoProofAttribute(boolean autoProof, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.AUTO_PROOF_ATTRIBUTE, autoProof, monitor);
+	public void setHasManualProof(boolean value, IProgressMonitor monitor) throws RodinDBException {
+		final IAttributeType.Boolean attribute = EventBAttributes.MANUAL_PROOF_ATTRIBUTE;
+		if (value) {
+			setAttributeValue(attribute, true, monitor);
+		} else {
+			removeAttribute(attribute, monitor);
+		}
 	}
 	
 }
