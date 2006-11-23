@@ -261,13 +261,15 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 						emptyPredicateList,
 						emptyAssignmentList);
 		} else {
+			ITypeEnvironment eventTypeEnvironment = factory.makeTypeEnvironment();
+			eventTypeEnvironment.addAll(typeEnvironment);
 			abstractEventInfo =
 				new AbstractEventInfo(
 						event,
 						label, 
-						fetchEventVariables(event, factory),
-						fetchEventGuards(event, factory),
-						fetchEventActions(event, factory));
+						fetchEventVariables(event, eventTypeEnvironment, factory),
+						fetchEventGuards(event, eventTypeEnvironment, factory),
+						fetchEventActions(event, eventTypeEnvironment, factory));
 		}
 		abstractEventInfo.setForbidden(forbidden);
 		
@@ -276,12 +278,14 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	
 	private FreeIdentifier[] fetchEventVariables(
 			ISCEvent event, 
+			ITypeEnvironment eventTypeEnvironment,
 			FormulaFactory factory) throws CoreException {
 		ISCVariable[] variables = event.getSCVariables();
 		FreeIdentifier[] identifiers = new FreeIdentifier[variables.length];
 		
 		for (int i=0; i<variables.length; i++) {
 			identifiers[i] = variables[i].getIdentifier(factory);
+			eventTypeEnvironment.add(identifiers[i]);
 		}
 		
 		return identifiers;
@@ -289,24 +293,26 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	
 	private Predicate[] fetchEventGuards(
 			ISCEvent event, 
+			ITypeEnvironment eventTypeEnvironment,
 			FormulaFactory factory) throws CoreException {
 		ISCGuard[] guards = event.getSCGuards();
 		Predicate[] predicates = new Predicate[guards.length];
 		
 		for (int i=0; i<guards.length; i++) {
-			predicates[i] = guards[i].getPredicate(factory);
+			predicates[i] = guards[i].getPredicate(factory, eventTypeEnvironment);
 		}
 		return predicates;
 	}
 	
 	private Assignment[] fetchEventActions(
 			ISCEvent event, 
+			ITypeEnvironment eventTypeEnvironment,
 			FormulaFactory factory) throws CoreException {
 		ISCAction[] actions = event.getSCActions();
 		Assignment[] assignments = new Assignment[actions.length];
 		
 		for (int i=0; i<actions.length; i++) {
-			assignments[i] = actions[i].getAssignment(factory);
+			assignments[i] = actions[i].getAssignment(factory, eventTypeEnvironment);
 		}
 		return assignments;
 	}

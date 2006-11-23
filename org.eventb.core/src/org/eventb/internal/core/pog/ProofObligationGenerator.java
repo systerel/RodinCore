@@ -10,7 +10,6 @@ package org.eventb.internal.core.pog;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pog.IModule;
@@ -18,7 +17,6 @@ import org.eventb.core.pog.state.IStatePOG;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.state.StateRepository;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 
