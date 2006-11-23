@@ -99,18 +99,4 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 		}		
 	}
 
-	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
-		try {
-			monitor.beginTask(Messages.bind(Messages.build_cleaning, file.getName()), 1);
-			
-			String s = EventBPlugin.getComponentName(file.getName());
-			String t = EventBPlugin.getComponentName(origin.getName());
-			if (s.equals(t)) {
-				RodinCore.valueOf(file).delete(true, monitor);
-			}
-		} finally {
-			monitor.done();
-		}
-	}
-
 }

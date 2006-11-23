@@ -34,9 +34,5 @@ public class CPOTool extends POTool {
 		run(file, monitor, CPO);
 		return true;
 	}
-	
-	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
-		remove(file, origin, monitor, CPO);
-	}
 
 }

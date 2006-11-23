@@ -43,21 +43,15 @@ public interface IAutomaticTool {
 	
 	/**
 	 * A tool responsible for creating a file is also responsible for cleaning it.
+	 * Cleaning occurs on two occasions:
+	 * <ul>
+	 * <li> when a project is explicitly selected for cleaning (e.g. in the Eclpise project menu)</li>
+	 * <li> when a file was deleted all files that can be reached by tool dependencies are cleaned</li>
+	 * </ul>
 	 * @param file to be cleaned
 	 * @param monitor The progress monitor
 	 * @throws CoreException If some internal problem occured
 	 */
 	public void clean(IFile file, IProgressMonitor monitor) throws CoreException;
-	
-	/**
-	 * A tool responsible for creating a file is also responsible for removing it.
-	 * This method is called when a user has has removed a file <code>origin</code> from
-	 * the workspace.
-	 * @param file to be removed
-	 * @param origin file that was removed by the user
-	 * @param monitor The progress monitor
-	 * @throws CoreException If some internal problem occured
-	 */
-	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException;
 
 }

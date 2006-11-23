@@ -35,8 +35,4 @@ public class MPOTool extends POTool {
 		return true;
 	}
 
-	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
-		remove(file, origin, monitor, MPO);
-	}
-
 }

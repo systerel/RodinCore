@@ -164,11 +164,12 @@ public class Node implements Serializable {
 	}
 	
 	protected boolean isDerived() {
-		return toolId != null && !toolId.equals("");
+		return toolId != null;
 	}
 
-	protected void setToolId(String tool) {
-		this.toolId = tool;
+	protected void setToolId(String toolId) {
+		assert !toolId.equalsIgnoreCase("");
+		this.toolId = toolId;
 	}
 	
 	protected String getToolId() {
@@ -248,19 +249,20 @@ public class Node implements Serializable {
 	}
 	
 	protected void removeSuccessorToolCount() {
-		for(int pos = 0; pos < successorNodes.size(); pos++) {
+		for(int pos = 0; pos < successorNodes.size(); pos++)
 			if(successorLinks.get(pos).prov == Link.Provider.TOOL) {
 				successorNodes.get(pos).count--;
 			}
-		}
 	}
 	
-	protected void markReachableSuccessorsUndone() {
+	protected void markReachableToolSuccessorsUndone() {
 		if(!done)
 			return;
 		done = false;
-		for(Node node : successorNodes)
-			node.markReachableSuccessorsUndone();
+		for(int pos = 0; pos < successorNodes.size(); pos++)
+			if(successorLinks.get(pos).prov == Link.Provider.TOOL) {
+				successorNodes.get(pos).markReachableToolSuccessorsUndone();
+			}
 	}
 	
 	protected void addOriginToCycle() {
@@ -360,7 +362,7 @@ public class Node implements Serializable {
 			return;
 		preferred = true;
 		for(Link link : predessorLinks)
-			link.source.markReachableSuccessorsUndone();
+			link.source.markReachablePredecessorsPreferred();
 
 	}
 

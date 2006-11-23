@@ -39,22 +39,6 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 
 	public static boolean DEBUG = false;
 
-	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
-		try {
-			
-			monitor.beginTask("Removing " + file.getName(), 1);
-			
-			String s = EventBPlugin.getComponentName(file.getName());
-			String t = EventBPlugin.getComponentName(origin.getName());
-//			TODO : something for the PR file maybe	
-			if (s.equals(t)) {
-				RodinCore.valueOf(file).delete(true, monitor);
-			}			
-		} finally {
-			monitor.done();
-		}
-	}
-
 	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
 		
 		IPSFile psFile = (IPSFile) RodinCore.valueOf(file).getMutableCopy();

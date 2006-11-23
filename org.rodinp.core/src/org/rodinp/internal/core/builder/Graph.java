@@ -100,7 +100,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		Collection<Node> values = new ArrayList<Node>(nodes.values());
 		for(Node n : values)
 			n.done = true;
-		node.markReachableSuccessorsUndone();
+		node.markReachableToolSuccessorsUndone();
 		
 		manager.subTask(Messages.bind(Messages.build_removing, node.getTarget().getName()));
 		
@@ -108,7 +108,7 @@ public class Graph implements Serializable, Iterable<Node> {
 			if(!n.done) {
 				removeNode(n);
 				try {
-					removeNode(n, node, manager.getZeroProgressMonitor());
+					cleanNode(n, manager.getZeroProgressMonitor());
 				} catch(CoreException e) {
 					if(RodinBuilder.DEBUG_RUN)
 						System.out.println(getClass().getName() + ": Error during remove&clean"); //$NON-NLS-1$
@@ -185,7 +185,7 @@ public class Graph implements Serializable, Iterable<Node> {
 
 	public void builderExtractNode(Node node, ProgressManager manager) throws CoreException {
 			extract(node, new GraphModifier(this, node, manager), manager);
-			if (node.getToolId() == null || node.getToolId() == "")
+			if (!node.isDerived())
 				node.setDated(false);
 		}
 
@@ -233,7 +233,6 @@ public class Graph implements Serializable, Iterable<Node> {
 			node.printPhantomProblem();
 			return;
 		}
-		String toolId = node.getToolId();
 		IFile file = node.getTarget().getFile();
 		if (file == null) {// resource is not a file
 			Util.log(null, "Builder resource not a file" + file.getName()); //$NON-NLS-1$
@@ -244,7 +243,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		
 		boolean changed = false;
 		
-		if (toolId == null || toolId.equals("")) {
+		if (!node.isDerived()) {
 			if(RodinBuilder.DEBUG_GRAPH)
 				System.out.println(getClass().getName() + ": Root node changed: " + node.getTarget().getName());
 			
@@ -253,11 +252,11 @@ public class Graph implements Serializable, Iterable<Node> {
 		} else {
 			if(RodinBuilder.DEBUG_RUN)
 				System.out.println(getClass().getName() + 
-					 ": Running tool: " + toolId + " on node: " + node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
-			ToolDescription toolDescription = getManager().getToolDescription(toolId);
+					 ": Running tool: " + node.getToolId() + " on node: " + node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
+			ToolDescription toolDescription = getManager().getToolDescription(node.getToolId());
 			IAutomaticTool tool = toolDescription.getTool();
 			if(tool == null) {
-				Util.log(null, "Unknown tool: " + toolId + " for node " + node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
+				Util.log(null, "Unknown tool: " + node.getToolId() + " for node " + node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 			try {
@@ -269,10 +268,10 @@ public class Graph implements Serializable, Iterable<Node> {
 			} catch (OperationCanceledException e) {
 				throw e;
 			} catch (CoreException e) {
-				issueToolError(node, file, toolDescription, toolId, e);
+				issueToolError(node, file, toolDescription, node.getToolId(), e);
 				return;
 			} catch (Throwable e) {
-				issueToolError(node, file, toolDescription, toolId, e);
+				issueToolError(node, file, toolDescription, node.getToolId(), e);
 				return;
 			}
 		}
@@ -413,15 +412,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		IAutomaticTool tool = getManager().getToolDescription(node.getToolId()).getTool(); 
 		if (tool != null)
 			tool.clean(node.getTarget().getFile(), monitor);
-	}
-	
-	private void removeNode(Node node, Node origin, IProgressMonitor monitor) throws CoreException {
-		node.setDated(true);
-		if(!node.isDerived())
-			return;
-		IAutomaticTool tool = getManager().getToolDescription(node.getToolId()).getTool(); 
-		if (tool != null)
-			tool.remove(node.getTarget().getFile(), origin.getTarget().getFile(), monitor);
 	}
 	
 	private void topSortInit() {

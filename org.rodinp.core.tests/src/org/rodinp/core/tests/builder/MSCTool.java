@@ -13,15 +13,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.builder.IAutomaticTool;
-import org.rodinp.core.builder.IExtractor;
 import org.rodinp.core.builder.IGraph;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
+public class MSCTool extends SCTool {
 	
 	private static final String MSC = "MSC";
 	
@@ -84,10 +82,6 @@ public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		
 		target.save(null, true);
 		return true;
-	}
-	
-	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
-		remove(file, origin, monitor, MSC);
 	}
 
 }

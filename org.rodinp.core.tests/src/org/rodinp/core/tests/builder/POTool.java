@@ -12,20 +12,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.builder.IAutomaticTool;
-import org.rodinp.core.builder.IExtractor;
 import org.rodinp.core.builder.IGraph;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class POTool extends SCTool implements IExtractor, IAutomaticTool {
+public abstract class POTool extends SCTool {
 	
 	public static boolean SHOW_CLEAN = false;
 	public static boolean SHOW_RUN = false;
 	public static boolean SHOW_EXTRACT = false;
-	public static boolean SHOW_REMOVE = false;
 	
 	public static boolean RUN_PO = false;
 
@@ -69,14 +66,6 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 		copyDataElements(ctx, target);
 		
 		target.save(null, true);
-	}
-
-	public void remove(IFile file, IFile origin, IProgressMonitor monitor, String name) throws CoreException {
-		if (SHOW_REMOVE)
-			ToolTrace.addTrace(name, "remove", file);
-	
-		if (AbstractBuilderTest.getComponentName(file.getName()).equals(AbstractBuilderTest.getComponentName(origin.getName())))
-			RodinCore.valueOf(file).delete(true, monitor);
 	}
 
 }
