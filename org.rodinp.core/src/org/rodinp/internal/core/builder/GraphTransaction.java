@@ -4,8 +4,6 @@
 package org.rodinp.internal.core.builder;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -29,7 +27,6 @@ public class GraphTransaction implements IGraph {
 	private final ArrayList<Node> targets;
 	private final GraphModifier handler;
 	
-	private final HashSet<Node> targetSet; // all target nodes
 	private final String toolId;
 	
 	public GraphTransaction(GraphModifier handler, String toolId) {
@@ -42,7 +39,6 @@ public class GraphTransaction implements IGraph {
 		
 		links = new ArrayList<Link>(7);
 		targets = new ArrayList<Node>(7);
-		targetSet = new HashSet<Node>(7);
 	}
 	
 	/* (non-Javadoc)
@@ -67,7 +63,6 @@ public class GraphTransaction implements IGraph {
 						handler.getNodeOrPhantom(originPath)));
 		Node node = handler.getNodeOrPhantom(targetPath);
 		targets.add(node);
-		targetSet.add(node);
 	}
 
 	/* (non-Javadoc)
@@ -90,7 +85,6 @@ public class GraphTransaction implements IGraph {
 				null));
 		Node node = handler.getNodeOrPhantom(targetPath);
 		targets.add(node);
-		targetSet.add(node);
 	}
 
 	/* (non-Javadoc)
@@ -102,8 +96,6 @@ public class GraphTransaction implements IGraph {
 		
 		handler.addNode(file.getFullPath(), toolId);
 	}
-	
-	
 
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#closeGraph()
@@ -116,16 +108,18 @@ public class GraphTransaction implements IGraph {
 			throw makeGraphTransactionError();
 		
 		// first we compute if there is any change
-		boolean remove = false;
-		for (int i=0; i<links.size(); i++) {
-			Node target = targets.get(i);
-			List<Link> targetLinkList = target.getPredessorLinks();
-			for (Link link : targetLinkList)
-				if (link.id.equals(toolId) && !links.contains(link)) {
-					remove = true;
-					break;
-				}
-		}
+//		boolean remove = false;
+//		for (int i=0; i<links.size(); i++) {
+//			Node target = targets.get(i);
+//			List<Link> targetLinkList = target.getPredessorLinks();
+//			for (Link link : targetLinkList)
+//				if (link.id.equals(toolId) && !links.contains(link)) {
+//					remove = true;
+//					break;
+//				}
+//		}
+		
+		boolean remove = handler.hasRemoveDelta(links, targets, toolId);
 		
 		if (remove)
 			// all links with toolId are removed

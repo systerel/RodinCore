@@ -8,6 +8,9 @@
 
 package org.rodinp.internal.core.builder;
 
+import java.util.HashSet;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -34,7 +37,7 @@ public class GraphModifier {
 		this.manager = manager;
 	}
 	
-	public void addNode(IPath path, String toolId) { //throws CoreException {
+	protected void addNode(IPath path, String toolId) { //throws CoreException {
 		Node node = graph.getNode(path);
 
 		if(node == null) {
@@ -74,7 +77,7 @@ public class GraphModifier {
 		if(current == null && RodinBuilder.DEBUG_GRAPH)
 			System.out.println("No current node"); //$NON-NLS-1$
 		boolean currentEqualsSource = current.equals(link.source);
-		boolean targetIsSuccessor = current.hasSuccessor(target);
+		boolean targetIsSuccessor = current.hasSuccessorNode(target);
 		if(currentEqualsSource || targetIsSuccessor) {
 			target.addPredecessorLink(link);
 			boolean instable = false;
@@ -101,10 +104,34 @@ public class GraphModifier {
 					target.getTarget().getName() + " => " + link.source.getTarget().getName() + " instable = " + graph.isInstable()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	protected boolean hasRemoveDelta(final List<Link> links, final List<Node> targets, String toolId) {
+		
+		// check if a target node has disappeared
+		final HashSet<String> targetNames = new HashSet<String>(targets.size() * 4 / 3 + 1);
+		for (Node target : targets)
+			targetNames.add(target.getTarget().getName());
+		for (Node node : current.getSuccessorNodes(toolId))
+			if (!targetNames.contains(node.getTarget().getName()))
+				return true;
+		
+		// check if a link has disappeared
+		final HashSet<Node> targetSet = new HashSet<Node>(targets.size() * 4 / 3 + 1);
+		targetSet.addAll(targets);
+		for (Node target : targetSet) {
+			List<Link> targetLinkList = target.getPredessorLinks();
+			for (Link arc : targetLinkList)
+				if (arc.id.equals(toolId) && !links.contains(arc)) {
+					return true;
+				}
+		}
+		
+		return false;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#removeDependencies(org.eclipse.core.runtime.IPath, java.lang.String)
 	 */
-	public void removeDependencies(String toolId) {
+	protected void removeDependencies(String toolId) {
 		for (Node node : graph) {
 			node.removeAllLinks(toolId);
 			node.setDated(true);

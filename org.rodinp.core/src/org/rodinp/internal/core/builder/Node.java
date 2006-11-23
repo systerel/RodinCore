@@ -10,6 +10,7 @@ package org.rodinp.internal.core.builder;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,6 +28,11 @@ import org.rodinp.internal.core.util.Messages;
  */
 public class Node implements Serializable {
 	
+	@Override
+	public int hashCode() {
+		return getTarget().getName().hashCode();
+	}
+
 	public static class File implements Serializable {
 		
 		private static final long serialVersionUID = -5374536727511878483L;
@@ -183,8 +189,17 @@ public class Node implements Serializable {
 			suc.setDated(true);
 		}
 	}
+	
+	protected HashSet<Node> getSuccessorNodes(final String id) {
+		HashSet<Node> nodes = new HashSet<Node>(successorNodes.size() * 4 / 3 + 1);
+		for (int i=0; i< successorLinks.size(); i++) {
+			if (successorLinks.get(i).id.equals(id))
+				nodes.add(successorNodes.get(i));
+		}
+		return nodes;
+	}
 
-	protected boolean hasSuccessor(Node node) {
+	protected boolean hasSuccessorNode(Node node) {
 		return successorNodes.contains(node);
 	}
 	
@@ -204,6 +219,17 @@ public class Node implements Serializable {
 		return (successorPos < successorLinks.size()) ? successorLinks.get(successorPos) : null;
 	}
 
+	protected int getSuccessorCount() {
+		return successorNodes.size();
+	}
+
+	protected void removeSuccessorToolCount() {
+		for(int pos = 0; pos < successorNodes.size(); pos++)
+			if(successorLinks.get(pos).prov == Link.Provider.TOOL) {
+				successorNodes.get(pos).count--;
+			}
+	}
+
 	protected void setDated(boolean value) {
 		dated = value;
 	}
@@ -216,10 +242,6 @@ public class Node implements Serializable {
 		count = getPredecessorCount();
 		done = false;
 		successorPos = 0;
-	}
-	
-	protected int getSuccessorCount() {
-		return successorNodes.size();
 	}
 	
 	protected String printNode() {
@@ -246,13 +268,6 @@ public class Node implements Serializable {
 			node.predessorLinks.remove(successorLinks.get(pos));
 			node.count--;
 		}
-	}
-	
-	protected void removeSuccessorToolCount() {
-		for(int pos = 0; pos < successorNodes.size(); pos++)
-			if(successorLinks.get(pos).prov == Link.Provider.TOOL) {
-				successorNodes.get(pos).count--;
-			}
 	}
 	
 	protected void markReachableToolSuccessorsUndone() {
