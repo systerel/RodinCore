@@ -10,6 +10,7 @@ package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IConvergenceElement;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IElementType;
@@ -176,18 +177,24 @@ public abstract class EventBElement extends InternalElement {
 		setAttributeValue(EventBAttributes.IDENTIFIER_ATTRIBUTE, identifier, null);
 	}
 	
+	private final int ORDINARY = 0;
+	private final int CONVERGENT = 1; 
+	private final int ANTICIPATED = 2;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eventb.core.IConvergenceElement#setConvergence(int, IProgressMonitor)
 	 */
-	public void setConvergence(int value, IProgressMonitor monitor) throws RodinDBException {
-		if (value < 0 || value > 2)
-			throw Util.newRodinDBException(
-					Messages.database_EventSetInvalidConvergenceFailure,
-					this
-			);
-		setAttributeValue(EventBAttributes.CONVERGENCE_ATTRIBUTE, value, monitor);
+	public void setConvergence(IConvergenceElement.Convergence value, IProgressMonitor monitor) throws RodinDBException {
+		int intValue = -1;
+		if (value == IConvergenceElement.Convergence.ORDINARY)
+			intValue = ORDINARY;
+		else if (value == IConvergenceElement.Convergence.CONVERGENT)
+			intValue = CONVERGENT;
+		else if (value == IConvergenceElement.Convergence.ANTICIPATED)
+			intValue = ANTICIPATED;
+		setAttributeValue(EventBAttributes.CONVERGENCE_ATTRIBUTE, intValue, monitor);
 	}
 	
 	/*
@@ -195,8 +202,19 @@ public abstract class EventBElement extends InternalElement {
 	 * 
 	 * @see org.eventb.core.IConvergenceElement#getConvergence(IProgressMonitor)
 	 */
-	public int getConvergence() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.CONVERGENCE_ATTRIBUTE);
+	public IConvergenceElement.Convergence getConvergence() throws RodinDBException {
+		int intValue = getAttributeValue(EventBAttributes.CONVERGENCE_ATTRIBUTE);
+		switch (intValue) {
+		case ORDINARY:
+			return IConvergenceElement.Convergence.ORDINARY;
+		case CONVERGENT:
+			return IConvergenceElement.Convergence.CONVERGENT;
+		case ANTICIPATED:
+			return IConvergenceElement.Convergence.ANTICIPATED;
+		default:
+			throw Util.newRodinDBException(
+					Messages.database_EventInvalidConvergenceFailure, this);
+		}
 	}
 
 	public void setSource(IRodinElement source, IProgressMonitor monitor) 

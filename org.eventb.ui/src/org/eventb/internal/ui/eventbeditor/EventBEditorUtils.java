@@ -31,6 +31,7 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
+import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
@@ -632,7 +633,7 @@ public class EventBEditorUtils {
 							newEvt.setLabel(evtLabel, monitor);
 							editor.addNewElement(newEvt);
 
-							newEvt.setConvergence(IEvent.ORDINARY, monitor);
+							newEvt.setConvergence(IConvergenceElement.Convergence.ORDINARY, monitor);
 							newEvt.setInherited(false, monitor);
 
 							String namePrefix = UIUtils.getNamePrefix(editor,

@@ -204,7 +204,7 @@ public abstract class BasicTest extends TestCase {
 		event.create(null, null);
 		event.setLabel(name, null);
 		event.setInherited(false, null);
-		event.setConvergence(IConvergenceElement.ORDINARY, null);
+		event.setConvergence(IConvergenceElement.Convergence.ORDINARY, null);
 		for(int i=0; i<vars.length; i++) {
 			IVariable variable = event.getVariable(getUniqueName());
 			variable.create(null, null);
@@ -237,41 +237,45 @@ public abstract class BasicTest extends TestCase {
 		event.create(null, null);
 		event.setLabel(name, null);
 		event.setInherited(true, null);
-		event.setConvergence(IConvergenceElement.ORDINARY, null);
+		event.setConvergence(IConvergenceElement.Convergence.ORDINARY, null);
 		return event;
 		
 	}
 	
-	private static void setConvergence(IEvent event, int convergence) throws RodinDBException {
+	private static void setConvergence(IEvent event, 
+			IConvergenceElement.Convergence convergence) throws RodinDBException {
 		event.setConvergence(convergence, null);
 	}
 	
-	private static int getConvergence(ISCEvent event) throws RodinDBException {
+	private static IConvergenceElement.Convergence getConvergence(ISCEvent event) throws RodinDBException {
 		return event.getConvergence();
 	}
 	
 	public static void setOrdinary(IEvent event) throws RodinDBException {
-		setConvergence(event, IConvergenceElement.ORDINARY);
+		setConvergence(event, IConvergenceElement.Convergence.ORDINARY);
 	}
 
 	public static void setAnticipated(IEvent event) throws RodinDBException {
-		setConvergence(event, IConvergenceElement.ANTICIPATED);
+		setConvergence(event, IConvergenceElement.Convergence.ANTICIPATED);
 	}
 
 	public static void setConvergent(IEvent event) throws RodinDBException {
-		setConvergence(event, IConvergenceElement.CONVERGENT);
+		setConvergence(event, IConvergenceElement.Convergence.CONVERGENT);
 	}
 
 	public static void isOrdinary(ISCEvent event) throws RodinDBException {
-		assertEquals("event should be ordinary", IConvergenceElement.ORDINARY, getConvergence(event));
+		assertEquals("event should be ordinary", 
+				IConvergenceElement.Convergence.ORDINARY, getConvergence(event));
 	}
 
 	public static void isAnticipated(ISCEvent event) throws RodinDBException {
-		assertEquals("event should be anticipated", IConvergenceElement.ANTICIPATED, getConvergence(event));
+		assertEquals("event should be anticipated", 
+				IConvergenceElement.Convergence.ANTICIPATED, getConvergence(event));
 	}
 
 	public static void isConvergent(ISCEvent event) throws RodinDBException {
-		assertEquals("event should be convergent", IConvergenceElement.CONVERGENT, getConvergence(event));
+		assertEquals("event should be convergent", 
+				IConvergenceElement.Convergence.CONVERGENT, getConvergence(event));
 	}
 
 	public static void addInvariants(IMachineFile rodinFile, String[] names, String[] invariants) throws RodinDBException {

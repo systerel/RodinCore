@@ -35,6 +35,7 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
+import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IIdentifierElement;
@@ -341,7 +342,7 @@ public class UIUtils {
 						final IEvent evt = mchFile.getEvent(evtName); 
 						evt.create(null, pm);
 						evt.setLabel(name, pm);
-						evt.setConvergence(IEvent.ORDINARY, pm);
+						evt.setConvergence(IConvergenceElement.Convergence.ORDINARY, pm);
 						evt.setInherited(false, pm);
 						editor.addNewElement(evt);
 

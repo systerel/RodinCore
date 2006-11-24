@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.UIUtils;
@@ -161,7 +162,7 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 					IEvent init = (IEvent) rodinFile.createInternalElement(IEvent.ELEMENT_TYPE,
 							"internal_" + PrefixEvtName.DEFAULT_PREFIX + 1, null, pMonitor);
 					init.setLabel(IEvent.INITIALISATION, pMonitor);
-					init.setConvergence(IEvent.ORDINARY, pMonitor);
+					init.setConvergence(IConvergenceElement.Convergence.ORDINARY, pMonitor);
 					init.setInherited(false, pMonitor);
 				}
 				rodinFile.save(null, true);

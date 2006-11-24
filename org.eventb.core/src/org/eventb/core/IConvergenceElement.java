@@ -15,8 +15,8 @@ import org.rodinp.core.RodinDBException;
  * Common protocol for Event-B convergence properties of an event.
  * <p>
  * A convergence is represented by an integer constant. Only the specified values
- * {@link IConvergenceElement#ORDINARY}, {@link IConvergenceElement#CONVERGENT}, and
- * {@link IConvergenceElement#ANTICIPATED} are permitted.
+ * {@link Convergence#ORDINARY}, {@link Convergence#CONVERGENT}, and
+ * {@link Convergence#ANTICIPATED} are permitted.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -27,27 +27,29 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IConvergenceElement extends IInternalElement {
 
-	int ORDINARY = 0;
-	int CONVERGENT = 1; 
-	int ANTICIPATED = 2;
+	enum Convergence {
+		ORDINARY,
+		CONVERGENT,
+		ANTICIPATED
+	}
 	
 	/**
-	 * Sets the convergence to one of the values {@link IConvergenceElement#ORDINARY}, 
-	 * {@link IConvergenceElement#CONVERGENT}, or {@link IConvergenceElement#ANTICIPATED}.
+	 * Sets the convergence to one of the values {@link Convergence#ORDINARY}, 
+	 * {@link Convergence#CONVERGENT}, or {@link Convergence#ANTICIPATED}.
 	 * @param value the convergence to be set
 	 * @param monitor 
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	void setConvergence(int value, IProgressMonitor monitor) throws RodinDBException;
+	void setConvergence(Convergence value, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns the convergence stored in this attribute.
 	 * 
-	 * @return the convergence; one of  {@link IConvergenceElement#ORDINARY}, 
-	 * {@link IConvergenceElement#CONVERGENT}, {@link IConvergenceElement#ANTICIPATED}
+	 * @return the convergence; one of  {@link Convergence#ORDINARY}, 
+	 * {@link Convergence#CONVERGENT}, {@link Convergence#ANTICIPATED}
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	int getConvergence() throws RodinDBException;
+	Convergence getConvergence() throws RodinDBException;
 }
