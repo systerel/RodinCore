@@ -174,7 +174,7 @@ public class Node implements Serializable {
 	}
 
 	protected void setToolId(String toolId) {
-		assert !toolId.equalsIgnoreCase("");
+		assert toolId == null || ! toolId.equals("");
 		this.toolId = toolId;
 	}
 	
