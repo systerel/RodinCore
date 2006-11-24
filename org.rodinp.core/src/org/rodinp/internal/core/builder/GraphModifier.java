@@ -37,7 +37,7 @@ public class GraphModifier {
 		this.manager = manager;
 	}
 	
-	protected void addNode(IPath path, String toolId) { //throws CoreException {
+	protected void addNode(IPath path, String toolId) {
 		Node node = graph.getNode(path);
 
 		if(node == null) {
@@ -48,7 +48,9 @@ public class GraphModifier {
 			node.setDated(true);
 			node.setPhantom(false);
 			if (node.done)
-				graph.setInstable(); // nodes depending on this phantom may already have been processed
+				// nodes depending on this phantom may already have been processed
+				// (... by being ignored)
+				graph.setInstable();
 		} else {
 			node.setToolId(toolId);
 			node.setDated(true);
@@ -62,6 +64,11 @@ public class GraphModifier {
 		if(RodinBuilder.DEBUG_GRAPH)
 			System.out.println(getClass().getName() + ": Node added: " + node.getTarget().getName()); //$NON-NLS-1$
 	}
+	
+	protected boolean isPermissibleTarget(Node target) {
+		String creatorName = target.getCreator().getName();
+		return creatorName != null && creatorName.equals(current.getTarget().getName());
+	}
 
 	protected Node getNodeOrPhantom(IPath path) {
 		Node node = graph.getNode(path);
@@ -73,9 +80,15 @@ public class GraphModifier {
 		return node;
 	}
 
-	protected void addDependency(Link link, Node target) { //throws CoreException {
+	protected void addDependency(Link link, Node target) {
 		if(current == null && RodinBuilder.DEBUG_GRAPH)
 			System.out.println("No current node"); //$NON-NLS-1$
+		if (!isPermissibleTarget(target))
+			Util.log(new CoreException(new Status(IStatus.ERROR,
+					RodinCore.PLUGIN_ID, 
+					Platform.PLUGIN_ERROR, 
+					"Target [" + target.toString() +  //$NON-NLS-1$
+					" not permitted", null)), " while modifying dependency graph"); //$NON-NLS-1$
 		boolean currentEqualsSource = current.equals(link.source);
 		boolean targetIsSuccessor = current.hasSuccessorNode(target);
 		if(currentEqualsSource || targetIsSuccessor) {
@@ -98,7 +111,7 @@ public class GraphModifier {
 					RodinCore.PLUGIN_ID, 
 					Platform.PLUGIN_ERROR, 
 					"Dependency [" + link.source.toString() + " / " + target.toString() + "] from " +  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					current.getTarget().getName() + " not permitted", null)), " while modifying dependency graph"); //$NON-NLS-1$
+					current.getTarget().getName() + " not permitted", null)), " while modifying dependency graph"); //$NON-NLS-1$ //$NON-NLS-2$
 		if(RodinBuilder.DEBUG_GRAPH)
 			System.out.println(getClass().getName() + ": Added dependency: " +  //$NON-NLS-1$
 					target.getTarget().getName() + " => " + link.source.getTarget().getName() + " instable = " + graph.isInstable()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -110,9 +123,13 @@ public class GraphModifier {
 		final HashSet<String> targetNames = new HashSet<String>(targets.size() * 4 / 3 + 1);
 		for (Node target : targets)
 			targetNames.add(target.getTarget().getName());
-		for (Node node : current.getSuccessorNodes(toolId))
-			if (!targetNames.contains(node.getTarget().getName()))
+		for (Node node : current.getSuccessorNodes(toolId)) {
+			String creatorName = node.getCreator().getName();
+			if (creatorName != null 
+					&& creatorName.equals(current.getTarget().getName()) 
+					&& !targetNames.contains(node.getTarget().getName()))
 				return true;
+		}
 		
 		// check if a link has disappeared
 		final HashSet<Node> targetSet = new HashSet<Node>(targets.size() * 4 / 3 + 1);
@@ -132,7 +149,8 @@ public class GraphModifier {
 	 * @see org.rodinp.core.builder.IGraph#removeDependencies(org.eclipse.core.runtime.IPath, java.lang.String)
 	 */
 	protected void removeDependencies(String toolId) {
-		for (Node node : graph) {
+		HashSet<Node> targets = current.getSuccessorNodes(toolId);
+		for (Node node : targets) {
 			node.removeAllLinks(toolId);
 			node.setDated(true);
 			if (RodinBuilder.DEBUG_GRAPH)

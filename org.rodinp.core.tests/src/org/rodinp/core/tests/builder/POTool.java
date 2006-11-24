@@ -47,7 +47,7 @@ public abstract class POTool extends SCTool {
 		ISCProvable prv = (ISCProvable) RodinCore.valueOf(file);
 		
 		IPOFile po = prv.getPOFile();
-		graph.addNode(po.getResource());
+		graph.addTarget(po.getResource());
 		graph.addToolDependency(prv.getResource(), po.getResource(), true);
 				
 	}

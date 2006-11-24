@@ -153,7 +153,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			// IPRFile target = source.getPRFile();
 			IPSFile target = source.getPSFile();
 		
-			graph.addNode(target.getResource());
+			graph.addTarget(target.getResource());
 			graph.addToolDependency(
 					source.getResource(), 
 					target.getResource(), true);

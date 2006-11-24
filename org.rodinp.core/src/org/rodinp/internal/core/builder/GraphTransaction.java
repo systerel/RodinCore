@@ -90,7 +90,7 @@ public class GraphTransaction implements IGraph {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#addNode(org.eclipse.core.resources.IFile, java.lang.String)
 	 */
-	public void addNode(IFile file) throws CoreException {
+	public void addTarget(IFile file) throws CoreException {
 		if (!opened)
 			throw makeGraphTransactionError();
 		

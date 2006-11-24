@@ -41,7 +41,7 @@ public class MSCTool extends SCTool {
 		
 		ISCMachine smch = mch.getCheckedVersion();
 		IFile scFile = smch.getResource();
-		graph.addNode(scFile);
+		graph.addTarget(scFile);
 		graph.addToolDependency(mch.getResource(), scFile, true);
 		
 		ISCMachine machine = mch.getReferencedMachine();

@@ -60,7 +60,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 		ISCContextFile source = (ISCContextFile) RodinCore.valueOf(file);
 		IPOFile target = source.getContextFile().getPOFile();
 				
-		graph.addNode(target.getResource());
+		graph.addTarget(target.getResource());
 		graph.addToolDependency(
 				source.getResource(), 
 				target.getResource(), true);

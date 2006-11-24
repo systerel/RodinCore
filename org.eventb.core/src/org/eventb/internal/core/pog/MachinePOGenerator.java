@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.pog.IModule;
 import org.eventb.core.pog.IModuleManager;
 import org.eventb.core.pog.state.IStatePOG;
@@ -91,10 +92,18 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 		ISCMachineFile source = (ISCMachineFile) RodinCore.valueOf(file);
 		IPOFile target = source.getMachineFile().getPOFile();
 		
-		graph.addNode(target.getResource());
+		graph.addTarget(target.getResource());
 		graph.addToolDependency(
 				source.getResource(), 
 				target.getResource(), true);
+		
+		ISCRefinesMachine[] refinesMachines = source.getSCRefinesClauses();
+		if (refinesMachines.length != 0) {
+			graph.addUserDependency(
+					source.getMachineFile().getResource(), 
+					refinesMachines[0].getAbstractSCMachine().getResource(), 
+					target.getResource(), false);
+		}
 
 	}
 

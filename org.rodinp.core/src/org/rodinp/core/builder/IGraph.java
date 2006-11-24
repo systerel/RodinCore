@@ -39,14 +39,15 @@ public interface IGraph {
 	 * Adds a a node "path" with associated tool into the graph. If a node with
 	 * this path exists already only the tool is reassigned.
 	 * 
-	 * @param file
-	 *            The file of the node
+	 * @param target
+	 *            The file of the target node
 	 * @throws CoreException if the graph could not be modified
 	 */
-	public void addNode(IFile file) throws CoreException;
+	public void addTarget(IFile target) throws CoreException;
 	
 	/**
 	 * Adds a dependency controlled by the user to the graph.
+	 * Target must be a node added during the same extraction.
 	 * 
 	 * @param origin
 	 *            The origin of this dependency.
@@ -69,6 +70,7 @@ public interface IGraph {
 	
 	/**
 	 * Adds a dependency controlled by a tool to the graph.
+	 * Target must be a node added during the same extraction.
 	 * @param source
 	 *            The source of the dependency.
 	 * @param target

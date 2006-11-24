@@ -33,7 +33,7 @@ public class CSCTool extends SCTool {
 		
 		ISCContext sctx = ctx.getCheckedVersion();
 		IFile scFile = sctx.getResource();
-		graph.addNode(scFile);
+		graph.addTarget(scFile);
 		graph.addToolDependency(ctx.getResource(), scFile, true);
 		
 		HashSet<IFile> newSources = new HashSet<IFile>(ctx.getUsedContexts().length * 4 / 3 + 1);
