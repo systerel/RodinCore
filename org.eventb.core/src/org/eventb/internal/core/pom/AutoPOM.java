@@ -20,7 +20,6 @@ import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverLib;
@@ -38,6 +37,8 @@ import org.rodinp.core.builder.IGraph;
 public class AutoPOM implements IAutomaticTool, IExtractor {
 
 	public static boolean DEBUG = false;
+	
+	private static FormulaFactory ff = FormulaFactory.getDefault();
 
 	public boolean run(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
 		
@@ -189,17 +190,19 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 //	 lock po & pr files before calling this method
 // TODO : a version with Proof tree from seqProver
-	public static void updateStatus(IPSStatus status, IProgressMonitor monitor) throws RodinDBException {
+	public static void updateStatus(IPSStatus status, IProgressMonitor monitor)
+			throws RodinDBException {
+
 		IProverSequent seq =  POLoader.readPO(status.getPOSequent());
 		final IPRProof prProof = status.getProof();
-		if (!prProof.exists()) {
-			status.setProofConfidence(IConfidence.UNATTEMPTED, null);
-			status.setBroken(false, null);
-			return;
+		final boolean broken;
+		if (prProof.exists()) {
+			IProofDependencies deps = prProof.getProofDependencies(ff, monitor);
+			broken = ! ProverLib.proofReusable(deps,seq);
+		} else {
+			broken = false;
 		}
-		IProofDependencies deps = prProof.getProofDependencies(FormulaFactory.getDefault(), monitor);
-		boolean broken = ! ProverLib.proofReusable(deps,seq);
-		status.setProofConfidence(prProof.getConfidence(), null);
+		status.setProofConfidence(null);
 		status.setBroken(broken, null);
 	}
 	
