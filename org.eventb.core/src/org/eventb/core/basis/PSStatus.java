@@ -18,6 +18,7 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.seqprover.IConfidence;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -72,11 +73,19 @@ public class PSStatus extends InternalElement implements IPSStatus {
 	}
 		
 	public int getProofConfidence() throws RodinDBException {
-		return getAttributeValue(CONFIDENCE_ATTRIBUTE);
+		if (hasAttribute(CONFIDENCE_ATTRIBUTE)) {
+			return getAttributeValue(CONFIDENCE_ATTRIBUTE);
+		}
+		return IConfidence.UNATTEMPTED;
 	}
 	
-	public void setProofConfidence(int confidence, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(CONFIDENCE_ATTRIBUTE, confidence, monitor);
+	public void setProofConfidence(IProgressMonitor monitor) throws RodinDBException {
+		IPRProof proof = getProof();
+		if (proof.exists()) {
+			setAttributeValue(CONFIDENCE_ATTRIBUTE, proof.getConfidence(), monitor);
+		} else {
+			removeAttribute(CONFIDENCE_ATTRIBUTE, monitor);
+		}
 	}
 	
 	public IPOSequent getPOSequent() {

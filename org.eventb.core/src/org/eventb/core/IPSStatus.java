@@ -9,6 +9,7 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.seqprover.IConfidence;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -94,41 +95,36 @@ public interface IPSStatus extends IInternalElement {
 			throws RodinDBException;
 
 	/**
-	 * Returns the value stored in the confidence attribute of this proof status
-	 * element.
-	 * <p>
-	 * When consistent, the confidence attribute is identical to the confidence
-	 * attribute stored in the associated proof element.
-	 * </p>
+	 * Returns the confidence associated to this proof obligation. The
+	 * confidence is stored in an attribute which contains a local copy of the
+	 * confidence attribute of the associated proof. If there is no associated
+	 * proof yet, then the confidence attribute is not set and this method
+	 * returns {@link IConfidence#UNATTEMPTED}.
 	 * 
-	 * @return The value stored in the confidence attribute of this proof status
-	 *         element.
+	 * @return the confidence associated to this proof obligation
 	 * 
 	 * @throws RodinDBException
-	 * @see #setProofConfidence(int, IProgressMonitor)
+	 * @see #getProof()
+	 * @see #setProofConfidence(IProgressMonitor)
 	 */
 	int getProofConfidence() throws RodinDBException;
 
 	/**
-	 * Sets value stored in the confidence attribute of this proof status
-	 * element.
+	 * Sets the confidence associated to this proof obligation.
 	 * <p>
-	 * When consistent, the confidence attribute is identical to the confidence
-	 * attribute stored in the associated proof element.
+	 * The confidence is copied from the associated proof. If the latter doesn't
+	 * exist, then the confidence attribute is removed from this element.
 	 * </p>
-	 * 
-	 * @param confidence
-	 *            The confidence value to set
 	 * 
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
 	 * 
 	 * @throws RodinDBException
+	 * @see #getProof()
 	 * @see #getProofConfidence()
 	 */
-	void setProofConfidence(int confidence, IProgressMonitor monitor)
-			throws RodinDBException;
+	void setProofConfidence(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns whether this proof obligation has been discharged manually. A
