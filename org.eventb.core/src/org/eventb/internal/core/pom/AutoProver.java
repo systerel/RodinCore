@@ -89,7 +89,7 @@ public class AutoProver {
 		try {
 			pm.beginTask(status.getElementName() + ":", 3);
 			
-			final boolean proofValid = status.getProofValidAttribute();
+			final boolean proofValid = ! status.isBroken();
 			final int proofConfidence = status.getProofConfidence();
 			
 			// TODO: should also test for attempts

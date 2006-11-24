@@ -194,13 +194,13 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		final IPRProof prProof = status.getProof();
 		if (!prProof.exists()) {
 			status.setProofConfidence(IConfidence.UNATTEMPTED, null);
-			status.setProofValidAttribute(true, null);
+			status.setBroken(false, null);
 			return;
 		}
 		IProofDependencies deps = prProof.getProofDependencies(FormulaFactory.getDefault(), monitor);
-		boolean valid = ProverLib.proofReusable(deps,seq);
+		boolean broken = ! ProverLib.proofReusable(deps,seq);
 		status.setProofConfidence(prProof.getConfidence(), null);
-		status.setProofValidAttribute(valid, null);
+		status.setBroken(broken, null);
 	}
 	
 }

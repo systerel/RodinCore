@@ -320,7 +320,7 @@ public class EventBImage {
 			}
 			boolean isProofBroken;
 			try {
-				isProofBroken = (! status.getProofValidAttribute());
+				isProofBroken = status.isBroken();
 			} catch (RodinDBException e) {
 				String message = "Cannot check if the proof tree of the sequent "
 					+ status.getElementName() + " is brocken or not";

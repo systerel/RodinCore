@@ -77,8 +77,8 @@ public final class EventBAttributes {
 	public static IAttributeType.Integer CONFIDENCE_ATTRIBUTE =
 		RodinCore.getIntegerAttrType(EventBPlugin.PLUGIN_ID + ".confidence");
 
-	public static IAttributeType.Boolean PROOF_VALIDITY_ATTRIBUTE =
-		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".psProofValid");
+	public static IAttributeType.Boolean PROOF_BROKEN_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".psBroken");
 
 	public static IAttributeType.Boolean MANUAL_PROOF_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".psManual");

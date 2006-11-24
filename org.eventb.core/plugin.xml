@@ -391,9 +391,9 @@
             kind="integer"
             name="%eventBprConfidence"/>
       <attributeType
-            id="psProofValid"
+            id="psBroken"
             kind="boolean"
-            name="%eventBpsValidity"/>
+            name="%eventBpsBroken"/>
       <attributeType
             id="psManual"
             kind="boolean"

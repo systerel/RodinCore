@@ -110,7 +110,7 @@ public class ProofState implements IProofState {
 
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
-		dirty = ! status.getProofValidAttribute();
+		dirty = status.isBroken();
 		cached = new HashSet<Hypothesis>();
 		searched = new HashSet<Hypothesis>();
 	}
@@ -333,7 +333,7 @@ public class ProofState implements IProofState {
 
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
-		dirty = (! status.getProofValidAttribute());
+		dirty = status.isBroken();
 	}
 
 	/* (non-Javadoc)

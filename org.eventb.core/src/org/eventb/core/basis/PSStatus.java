@@ -7,8 +7,11 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.core.EventBAttributes.CONFIDENCE_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.MANUAL_PROOF_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.PROOF_BROKEN_ATTRIBUTE;
+
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
@@ -58,20 +61,22 @@ public class PSStatus extends InternalElement implements IPSStatus {
 	}
 
 
-	public boolean getProofValidAttribute() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE);
+	public boolean isBroken() throws RodinDBException {
+		return isAttributeTrue(PROOF_BROKEN_ATTRIBUTE);
 	}
 
-	public void setProofValidAttribute(boolean valid, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, valid,monitor);
+	public void setBroken(boolean value, IProgressMonitor monitor)
+			throws RodinDBException {
+
+		setAttributeTrue(PROOF_BROKEN_ATTRIBUTE, value, monitor);
 	}
 		
 	public int getProofConfidence() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE);
+		return getAttributeValue(CONFIDENCE_ATTRIBUTE);
 	}
 	
 	public void setProofConfidence(int confidence, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE, confidence, monitor);
+		setAttributeValue(CONFIDENCE_ATTRIBUTE, confidence, monitor);
 	}
 	
 	public IPOSequent getPOSequent() {
@@ -81,16 +86,48 @@ public class PSStatus extends InternalElement implements IPSStatus {
 	}
 
 	public boolean hasManualProof() throws RodinDBException {
-		final IAttributeType.Boolean attribute = EventBAttributes.MANUAL_PROOF_ATTRIBUTE;
-		return hasAttribute(attribute) && getAttributeValue(attribute);
+		return isAttributeTrue(MANUAL_PROOF_ATTRIBUTE);
 	}
 	
-	public void setHasManualProof(boolean value, IProgressMonitor monitor) throws RodinDBException {
-		final IAttributeType.Boolean attribute = EventBAttributes.MANUAL_PROOF_ATTRIBUTE;
+	public void setHasManualProof(boolean value, IProgressMonitor monitor)
+			throws RodinDBException {
+
+		setAttributeTrue(MANUAL_PROOF_ATTRIBUTE, value, monitor);
+	}
+
+	/**
+	 * Returns whether this attribute exists and has a <code>true</code> value.
+	 * 
+	 * @param attrType
+	 *    attribute to test
+	 * @return <code>true</code> iff both the attribute exists and is true
+	 * @throws RodinDBException
+	 */
+	private boolean isAttributeTrue(IAttributeType.Boolean attrType)
+			throws RodinDBException {
+		return hasAttribute(attrType) && getAttributeValue(attrType);
+	}
+	
+	/**
+	 * Sets the given attribute to the given value, removing the attribute if
+	 * this would result in setting it to its default value (<code>true</code>).
+	 * 
+	 * @param attrType
+	 *            attribute to set
+	 * @param value
+	 *            value to set
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException
+	 */
+	private void setAttributeTrue(final IAttributeType.Boolean attrType,
+			boolean value, IProgressMonitor monitor) throws RodinDBException {
+
 		if (value) {
-			setAttributeValue(attribute, true, monitor);
+			setAttributeValue(attrType, true, monitor);
 		} else {
-			removeAttribute(attribute, monitor);
+			removeAttribute(attrType, monitor);
 		}
 	}
 	

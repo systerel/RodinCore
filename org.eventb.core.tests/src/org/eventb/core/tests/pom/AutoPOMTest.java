@@ -189,32 +189,30 @@ public class AutoPOMTest extends BuilderTest {
 	}
 
 	private void assertDischarged(IPSStatus status) throws RodinDBException {
-		// IPRProofTree proofTree = status.getProofTree();
+		assertFalse("PR " + status.getElementName() + " should be valid",
+				status.isBroken());
 		assertTrue("PO " + status.getElementName() + " should be closed",
 				IConfidence.PENDING <
 				status.getProofConfidence());
-		assertTrue("PR " + status.getElementName() + " should be valid",
-				status.getProofValidAttribute());
+		assertFalse("PR " + status.getElementName() + " should be auto proven",
+				status.hasManualProof());
 // TODO fix assertion below with attempts attribute 
 //		assertTrue("PR " + status.getElementName() + " should be attempted by the auto prover",
 //				status.hasAutoProofAttribute());
-		assertFalse("PR " + status.getElementName() + " should be auto proven",
-				status.hasManualProof());
 		
 	}
 	
 	private void assertNotDischarged(IPSStatus status) throws RodinDBException {
-		// IPRProofTree proofTree = status.getProofTree();
+		assertFalse("PR " + status.getElementName() + " should be valid",
+				status.isBroken());
 		assertTrue("PO " + status.getElementName() + " should not be closed",
 				IConfidence.PENDING >=
 				status.getProofConfidence());
-		assertTrue("PR " + status.getElementName() + " should be valid",
-				status.getProofValidAttribute());
+		assertFalse("PR " + status.getElementName() + " should be auto proven",
+				status.hasManualProof());
 //		 TODO fix assertion below with attempts attribute 
 //		assertTrue("PR " + status.getElementName() + " should be attempted by the auto prover",
 //				status.hasAutoProofAttribute());
-//		assertFalse("PR " + status.getName() + " should not be auto proven",
-//				status.isAutoProven());
 	}
 	
 	public static String[] mp(String... strings) {

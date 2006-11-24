@@ -62,39 +62,35 @@ public interface IPSStatus extends IInternalElement {
 	IPOSequent getPOSequent();
 
 	/**
-	 * Returns the value stored in the proof validity attribute of this proof
-	 * status element.
+	 * Returns whether this proof obligation has a broken proof, that is a proof
+	 * that does not match its sequent, and thus can't be used to discharge the
+	 * proof obligation.
 	 * <p>
-	 * When consistent, the proof validity attribute is <code>true</code> iff
-	 * the proof stored in the associated proof element is valid (or applicable)
-	 * for the associated proof obligation.
+	 * The returned value is <code>true</code> iff the corresponding attribute
+	 * contains <code>true</code>. Hence, if the attribute is absent,
+	 * <code>false</code> is returned.
 	 * </p>
 	 * 
-	 * @return The value stored in the proof validity attribute of this proof
-	 *         status element.
+	 * @return <code>true</code> if the associated proof is broken
 	 * 
 	 * @throws RodinDBException
+	 * @see #setBroken(boolean, IProgressMonitor)
 	 */
-	boolean getProofValidAttribute() throws RodinDBException;
+	boolean isBroken() throws RodinDBException;
 
 	/**
-	 * Sets the value stored in the proof validity attribute of this proof
-	 * status element.
-	 * <p>
-	 * When consistent, the proof validity attribute is <code>true</code> iff
-	 * the proof stored in the associated proof element is valid (or applicable)
-	 * for the associated proof obligation.
-	 * </p>
+	 * Sets whether this proof obligation has a broken proof.
 	 * 
-	 * @param valid
+	 * @param value
 	 *            The value to set to
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
 	 * 
 	 * @throws RodinDBException
+	 * @see #isBroken()
 	 */
-	void setProofValidAttribute(boolean valid, IProgressMonitor monitor)
+	void setBroken(boolean value, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**
@@ -161,6 +157,7 @@ public interface IPSStatus extends IInternalElement {
 	 * @throws RodinDBException
 	 * @see #hasManualProof()
 	 */
+	// TODO rename to setManualProof
 	void setHasManualProof(boolean value, IProgressMonitor monitor)
 			throws RodinDBException;
 
