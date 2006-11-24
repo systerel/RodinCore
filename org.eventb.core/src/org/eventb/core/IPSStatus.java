@@ -105,6 +105,7 @@ public interface IPSStatus extends IInternalElement {
 	 *         element.
 	 * 
 	 * @throws RodinDBException
+	 * @see #setProofConfidence(int, IProgressMonitor)
 	 */
 	int getProofConfidence() throws RodinDBException;
 
@@ -124,6 +125,7 @@ public interface IPSStatus extends IInternalElement {
 	 *            reporting is not desired
 	 * 
 	 * @throws RodinDBException
+	 * @see #getProofConfidence()
 	 */
 	void setProofConfidence(int confidence, IProgressMonitor monitor)
 			throws RodinDBException;
@@ -142,6 +144,7 @@ public interface IPSStatus extends IInternalElement {
 	 *         proof obligation
 	 * 
 	 * @throws RodinDBException
+	 * @see #setManualProof(boolean, IProgressMonitor)
 	 */
 	boolean hasManualProof() throws RodinDBException;
 
@@ -157,8 +160,7 @@ public interface IPSStatus extends IInternalElement {
 	 * @throws RodinDBException
 	 * @see #hasManualProof()
 	 */
-	// TODO rename to setManualProof
-	void setHasManualProof(boolean value, IProgressMonitor monitor)
+	void setManualProof(boolean value, IProgressMonitor monitor)
 			throws RodinDBException;
 
 }

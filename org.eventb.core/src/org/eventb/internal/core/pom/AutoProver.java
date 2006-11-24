@@ -116,7 +116,7 @@ public class AutoProver {
 			if (autoProofTree.isClosed()) {
 				prProof.setProofTree(autoProofTree, null);
 				AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
-				status.setHasManualProof(false,null);
+				status.setManualProof(false,null);
 				prFile.save(null, false);
 				return true;
 			}
@@ -131,7 +131,7 @@ public class AutoProver {
 			{
 				prProof.setProofTree(autoProofTree, null);
 				AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
-				status.setHasManualProof(false,null);
+				status.setManualProof(false,null);
 				// in this case no need to save immediately.
 				return true;
 			}

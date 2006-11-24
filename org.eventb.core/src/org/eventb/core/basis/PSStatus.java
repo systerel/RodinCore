@@ -89,7 +89,7 @@ public class PSStatus extends InternalElement implements IPSStatus {
 		return isAttributeTrue(MANUAL_PROOF_ATTRIBUTE);
 	}
 	
-	public void setHasManualProof(boolean value, IProgressMonitor monitor)
+	public void setManualProof(boolean value, IProgressMonitor monitor)
 			throws RodinDBException {
 
 		setAttributeTrue(MANUAL_PROOF_ATTRIBUTE, value, monitor);
