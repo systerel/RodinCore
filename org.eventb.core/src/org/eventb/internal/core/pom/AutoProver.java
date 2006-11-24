@@ -90,52 +90,50 @@ public class AutoProver {
 			pm.beginTask(status.getElementName() + ":", 3);
 			
 			final boolean proofValid = status.getProofValidAttribute();
+			final int proofConfidence = status.getProofConfidence();
 			
-			// TODO: fix that: should test for attempts instead
-			//if (proofValid && ! status.hasManualProof())
-			if (proofValid)
+			// TODO: should also test for attempts
+			if (proofValid && proofConfidence > IConfidence.PENDING) {
+				// There is already a proof (maybe partial), skip it
 				return false;
+			}
 			
-			if ((!proofValid) || 
-					(status.getProofConfidence() <= IConfidence.PENDING)) {
-				
-				pm.subTask("loading");
-				final IPOSequent poSequent = status.getPOSequent();
-				IProofTree autoProofTree = ProverFactory.makeProofTree(
-						POLoader.readPO(poSequent),
-						poSequent
-				);
-				pm.worked(1);
+			pm.subTask("loading");
+			final IPOSequent poSequent = status.getPOSequent();
+			IProofTree autoProofTree = ProverFactory.makeProofTree(
+					POLoader.readPO(poSequent),
+					poSequent
+			);
+			pm.worked(1);
 
-				pm.subTask("proving");
-				autoTactic().apply(autoProofTree.getRoot(), new ProofMonitor(pm));
-				pm.worked(1);
-				
-				pm.subTask("saving");
-				IPRProof prProof = status.getProof();
-				// Update the tree if it was discharged
-				if (autoProofTree.isClosed()) {
-					prProof.setProofTree(autoProofTree, null);
-					AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
-					status.setHasManualProof(false,null);
-					prFile.save(null, false);
-					return true;
-				}
-				// If the auto prover made 'some' progress, and no
-				// proof was previously attempted update the proof
-				if (autoProofTree.getRoot().hasChildren() && 
-						(
-								// ( status.getProofConfidence() > IConfidence.UNATTEMPTED) || 
-								(! status.hasManualProof() && !(status.getProofConfidence() > IConfidence.PENDING))
-						))	
-					
-				{
-					prProof.setProofTree(autoProofTree, null);
-					AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
-					status.setHasManualProof(false,null);
-					// in this case no need to save immediately.
-					return true;
-				}
+			pm.subTask("proving");
+			autoTactic().apply(autoProofTree.getRoot(), new ProofMonitor(pm));
+			pm.worked(1);
+
+			pm.subTask("saving");
+			IPRProof prProof = status.getProof();
+			// Update the tree if it was discharged
+			if (autoProofTree.isClosed()) {
+				prProof.setProofTree(autoProofTree, null);
+				AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
+				status.setHasManualProof(false,null);
+				prFile.save(null, false);
+				return true;
+			}
+			// If the auto prover made 'some' progress, and no
+			// proof was previously attempted update the proof
+			if (autoProofTree.getRoot().hasChildren() && 
+					(
+							// ( status.getProofConfidence() > IConfidence.UNATTEMPTED) || 
+							(! status.hasManualProof() && !(proofConfidence > IConfidence.PENDING))
+					))	
+
+			{
+				prProof.setProofTree(autoProofTree, null);
+				AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
+				status.setHasManualProof(false,null);
+				// in this case no need to save immediately.
+				return true;
 			}
 			return false;
 		} finally {
