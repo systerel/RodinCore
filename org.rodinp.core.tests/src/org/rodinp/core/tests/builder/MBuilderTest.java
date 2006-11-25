@@ -37,6 +37,10 @@ public class MBuilderTest extends AbstractBuilderTest {
 		super.runBuilder(project, expectedTrace);
 	}
 	
+	private void cleanBuilder() throws CoreException {
+		super.runBuilderClean(project);
+	}
+	
 	/**
 	 * Ensures that extractors and tools are run when a file is created.
 	 */
@@ -154,5 +158,30 @@ public class MBuilderTest extends AbstractBuilderTest {
 				"  data: cthree",
 				scMch);
 	}	
+	
+	/**
+	 * same as <code>testGraphBuild()</code> but with subsequent cleaning
+	 */
+	public void testGraphBuildClean() throws Exception {
+		testGraphBuild();
+		cleanBuilder();
+		ToolTrace.flush();
+		runBuilder(
+				"CSC run /P/x.csc\n" + 
+				"CPO run /P/x.po\n" + 
+				"MSC run /P/a.msc\n" + 
+				"MPO run /P/a.po\n" + 
+				"CSC run /P/y.csc\n" + 
+				"CPO run /P/y.po\n" + 
+				"MSC run /P/b.msc\n" + 
+				"MPO run /P/b.po\n" + 
+				"MSC run /P/c.msc\n" + 
+				"MPO run /P/c.po\n" + 
+				"CSC run /P/z.csc\n" + 
+				"CPO run /P/z.po\n" + 
+				"MSC run /P/d.msc\n" + 
+				"MPO run /P/d.po"
+		);
+	}
 
 }

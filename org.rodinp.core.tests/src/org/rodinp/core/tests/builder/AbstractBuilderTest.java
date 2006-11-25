@@ -29,6 +29,10 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 			assertStringEquals("Unexpected tool trace", expectedTrace, ToolTrace.getTrace());
 	}
 	
+	protected void runBuilderClean(IRodinProject project) throws CoreException {
+		project.getProject().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+	}
+	
 	@SuppressWarnings("deprecation")
 	private String expandFile(IRodinFile file) throws RodinDBException {
 		StringBuilder builder = new StringBuilder(file.getElementName());
