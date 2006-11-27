@@ -17,10 +17,8 @@ import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCVariable;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.pog.Module;
 import org.eventb.core.pog.state.IAbstractEventActionTable;
 import org.eventb.core.pog.state.IConcreteEventActionTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
@@ -43,12 +41,10 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventHypothesisModule extends Module {
+public class MachineEventHypothesisModule extends UtilityModule {
 
 	IEventHypothesisManager eventHypothesisManager;
 	ITypeEnvironment eventTypeEnvironment;
-	FormulaFactory factory;
-
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */

@@ -47,12 +47,12 @@ public interface IHypothesisManager extends IStatePOG, Iterable<FreeIdentifier> 
 	 * After this method has been called the hypothesis set must be created
 	 * when <code>createHypothesis</code> is called. If this method was not called
 	 * the correspondingly named hypothesis set does not need to be created. 
-	 * 
 	 * @param element the predicate elemenent for which a hypothesis set is required
+	 * 
 	 * @return the name of the hypothesis set
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	IPOPredicateSet getHypothesis(IPOFile file, ISCPredicateElement element, IProgressMonitor monitor) throws RodinDBException;
+	IPOPredicateSet getHypothesis(IPOFile file, ISCPredicateElement element) throws RodinDBException;
 	
 	/**
 	 * Creates the requested hypothesis sets in the proof olgigation file.

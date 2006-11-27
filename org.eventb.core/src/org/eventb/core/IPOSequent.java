@@ -171,7 +171,7 @@ public interface IPOSequent extends IInternalElement {
 	 *            element name of the hint
 	 * @return a handle to a child hint with the given element name
 	 */
-	IPOHint getHint(String elementName);
+	IPOSelectionHint getSelectionHint(String elementName);
 
 	/**
 	 * Returns the hints for a proof obligation.
@@ -181,6 +181,6 @@ public interface IPOSequent extends IInternalElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	IPOHint[] getHints() throws RodinDBException;
+	IPOSelectionHint[] getSelectionHints() throws RodinDBException;
 
 }

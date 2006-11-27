@@ -27,11 +27,9 @@ import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ITraceableElement;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
-import org.eventb.core.pog.Module;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineInvariantTable;
 import org.eventb.core.pog.state.IMachineTheoremTable;
@@ -52,13 +50,12 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineHypothesisModule extends Module {
+public class MachineHypothesisModule extends UtilityModule {
 
 	public static String PRD_NAME_PREFIX = "PRD";
 	
 	IMachineHypothesisManager hypothesisManager;
 	ITypeEnvironment typeEnvironment;
-	FormulaFactory factory;
 	IMachineInvariantTable invariantTable;
 	IMachineTheoremTable theoremTable;
 	

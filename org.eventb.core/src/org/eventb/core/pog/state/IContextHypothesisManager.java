@@ -5,19 +5,16 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.pog;
+package org.eventb.core.pog.state;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPOSequent;
-import org.rodinp.core.RodinDBException;
+import org.eventb.core.EventBPlugin;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class POGHint {
+public interface IContextHypothesisManager extends IHypothesisManager {
 	
-	public abstract void create(IPOSequent sequent, String name, IProgressMonitor monitor) 
-	throws RodinDBException;
-	
+	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".contextHypothesisManager";
+
 }

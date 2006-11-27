@@ -13,11 +13,9 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineFile;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.IModule;
 import org.eventb.core.pog.IModuleManager;
-import org.eventb.core.pog.Module;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IStatePOG;
 import org.eventb.core.pog.state.ITypingState;
@@ -30,7 +28,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventModule extends Module {
+public class MachineEventModule extends UtilityModule {
 
 	public static final String MACHINE_EVENT_MODULE = 
 		EventBPlugin.PLUGIN_ID + ".machineEventModule";
@@ -78,8 +76,6 @@ public class MachineEventModule extends Module {
 	ITypingState typingState;
 	ITypeEnvironment machineTypeEnvironment;
 	IMachineHypothesisManager machineHypothesisManager;
-	FormulaFactory factory;
-	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */

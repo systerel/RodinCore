@@ -76,7 +76,7 @@ public abstract class HypothesisManager implements IHypothesisManager {
 		}
 	}
 
-	public IPOPredicateSet getHypothesis(IPOFile file, ISCPredicateElement element, IProgressMonitor monitor) throws RodinDBException {
+	public IPOPredicateSet getHypothesis(IPOFile file, ISCPredicateElement element) throws RodinDBException {
 		Integer index = predicateMap.get(element.getElementName());
 		if (index == null)
 			return null;

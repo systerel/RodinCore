@@ -31,7 +31,7 @@ public abstract class Module implements IModule {
 	private static final String SEQ_HYP_NAME = "SEQHYP";
 	private static final String PRD_NAME_PREFIX = "PRD";
 	private static final String SRC_NAME_PREFIX = "SRC";
-//	private static final String HINT_NAME_PREFIX = "HINT";
+	private static final String HINT_NAME_PREFIX = "HINT";
 	private static final String GOAL_NAME = "GOAL";
 	
 	public void createPO(
@@ -61,7 +61,7 @@ public abstract class Module implements IModule {
 		
 		putPOGSources(sequent, sources, monitor);
 		
-//		putPOGHints(sequent, hints, monitor);
+		putPOGHints(sequent, hints, monitor);
 	}
 
 	private void putPredicate(IPOPredicate predicate, POGPredicate pogPredicate, IProgressMonitor monitor) throws RodinDBException {
@@ -70,23 +70,21 @@ public abstract class Module implements IModule {
 		predicate.setSource(pogPredicate.getSource(), monitor);
 	}
 	
-//	private void putPOGHints(
-//			IPOSequent sequent, 
-//			POGHint[] hints, 
-//			IProgressMonitor monitor) throws RodinDBException {
-//		
-//		if (hints == null)
-//			return;
-//		
-//		for (int idx=0; idx < hints.length; idx++) {
-//			
-//			IPOHint hint = sequent.getHint(HINT_NAME_PREFIX + idx);
-//			hint.create(null, monitor);
-//			hint.setHint(hints[idx].getValue(), monitor);
-//
-//		}
-//
-//	}
+	private void putPOGHints(
+			IPOSequent sequent, 
+			POGHint[] hints, 
+			IProgressMonitor monitor) throws RodinDBException {
+		
+		if (hints == null)
+			return;
+		
+		for (int idx=0; idx < hints.length; idx++) {
+			
+			hints[idx].create(sequent, HINT_NAME_PREFIX + idx, monitor);
+
+		}
+
+	}
 	
 	private void putPOGSources(
 			IPOSequent sequent, 
@@ -166,7 +164,8 @@ public abstract class Module implements IModule {
 			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 
-		// by default nothing to do
+			// nothing to do
+		
 	}
 
 	/* (non-Javadoc)
@@ -177,7 +176,8 @@ public abstract class Module implements IModule {
 			IPOFile target, 
 			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
-		// by default nothing to do
+
+		// nothing to do
 		
 	}
 	

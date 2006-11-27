@@ -66,6 +66,12 @@ public final class EventBAttributes {
 	public static IAttributeType.String POROLE_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".poRole");
 	
+	public static IAttributeType.Handle POSELHINT_FST_ATTRIBUTE =
+		RodinCore.getHandleAttrType(EventBPlugin.PLUGIN_ID + ".poSelHintFst");
+	
+	public static IAttributeType.Handle POSELHINT_SND_ATTRIBUTE =
+		RodinCore.getHandleAttrType(EventBPlugin.PLUGIN_ID + ".poSelHintSnd");
+	
 //	public static IAttributeType.String POSTAMP_ATTRIBUTE =
 //		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".poStamp");
 	

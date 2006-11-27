@@ -8,6 +8,8 @@
 package org.eventb.core.pog;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IPOPredicate;
+import org.eventb.core.IPOSelectionHint;
 import org.eventb.core.IPOSequent;
 import org.rodinp.core.RodinDBException;
 
@@ -15,9 +17,24 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class POGHint {
+public class POGPredicateSelectionHint extends POGHint {
 	
-	public abstract void create(IPOSequent sequent, String name, IProgressMonitor monitor) 
-	throws RodinDBException;
+	private final IPOPredicate predicate;
 	
+	public POGPredicateSelectionHint(final IPOPredicate predicate) {
+		this.predicate = predicate;
+	}
+
+	public IPOPredicate getPredicate() {
+		return predicate;
+	}
+
+	@Override
+	public void create(IPOSequent sequent, String name, IProgressMonitor monitor) 
+	throws RodinDBException {
+		IPOSelectionHint selectionHint = sequent.getSelectionHint(name);
+		selectionHint.create(null, monitor);
+		selectionHint.setPredicate(predicate, null);
+	}
+
 }

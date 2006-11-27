@@ -13,9 +13,12 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.Type;
 import org.eventb.core.pog.Module;
 import org.eventb.core.pog.POGHint;
 import org.eventb.core.pog.POGPredicate;
@@ -29,9 +32,9 @@ import org.rodinp.core.IRodinElement;
  */
 public abstract class UtilityModule extends Module {
 
-	protected Predicate btrue;
 	protected List<POGPredicate> emptyPredicates;
 	protected POGHint[] emptyHints;
+	protected Predicate btrue;
 	protected FormulaFactory factory;
 	
 	/* (non-Javadoc)
@@ -66,6 +69,36 @@ public abstract class UtilityModule extends Module {
 		emptyPredicates = null;
 		emptyHints = null;
 		super.endModule(element, target, repository, monitor);
+	}
+	
+	private boolean goalIsNotRestricting(Predicate goal) {
+		if (goal instanceof RelationalPredicate) {
+			RelationalPredicate relGoal = (RelationalPredicate) goal;
+			switch (relGoal.getTag()) {
+			case Formula.IN:
+			case Formula.SUBSETEQ:
+				Expression expression = relGoal.getRight();
+				Type type = expression.getType();
+				Type baseType = type.getBaseType(); 
+				if (baseType == null)
+					return false;
+				Expression typeExpression = baseType.toExpression(factory);
+				if (expression.equals(typeExpression))
+					return true;
+				break;
+			default:
+				return false;
+			}
+		}
+		return false;
+	}
+
+	protected boolean goalIsTrivial(Predicate goal) {
+		return goal.equals(btrue) || goalIsNotRestricting(goal);
+	}
+
+	protected boolean goalIsTrivial(Predicate goal, Predicate hypothesis) {
+		return goalIsTrivial(goal) || goal.equals(hypothesis);
 	}
 
 }

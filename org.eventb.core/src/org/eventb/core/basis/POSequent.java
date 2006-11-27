@@ -9,10 +9,10 @@ package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IPOHint;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPOSelectionHint;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.internal.core.Messages;
@@ -92,8 +92,8 @@ public class POSequent extends EventBElement implements IPOSequent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IPODescription#getHints()
 	 */
-	public IPOHint[] getHints() throws RodinDBException {
-		return (IPOHint[]) getChildrenOfType(IPOHint.ELEMENT_TYPE); 
+	public IPOSelectionHint[] getSelectionHints() throws RodinDBException {
+		return (IPOSelectionHint[]) getChildrenOfType(IPOSelectionHint.ELEMENT_TYPE); 
 	}
 
 	/* (non-Javadoc)
@@ -115,8 +115,8 @@ public class POSequent extends EventBElement implements IPOSequent {
 		return (IPOPredicate) getInternalElement(IPOPredicate.ELEMENT_TYPE, elementName);
 	}
 
-	public IPOHint getHint(String elementName) {
-		return (IPOHint) getInternalElement(IPOHint.ELEMENT_TYPE, elementName);
+	public IPOSelectionHint getSelectionHint(String elementName) {
+		return (IPOSelectionHint) getInternalElement(IPOSelectionHint.ELEMENT_TYPE, elementName);
 	}
 
 	public IPOPredicateSet getHypothesis(String elementName) {

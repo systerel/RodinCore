@@ -9,12 +9,11 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinCore;
 
 /**
  * A hint for a proof of a proof obligation. A hint is labeled so that hints can be
- * accumulated.
+ * accumulated. This is a marker interface to permit systematic treatment of hints
+ * in implementations. All hints should extend this interface.
  * 
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -23,43 +22,11 @@ import org.rodinp.core.RodinCore;
  * @see ILabeledElement#getLabel()
  * @see ILabeledElement#setLabel(String, IProgressMonitor)
  * 
+ * @see IPOSelectionHint
+ * 
  * @author Stefan Hallerstede
  */
 public interface IPOHint extends ILabeledElement {
 	
-	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poHint"); //$NON-NLS-1$
-	
-	
-//	/**
-//	 * Predefined hint labels: 
-//	 * <ul>
-//	 * <li><code>SELECT_HYP</code> for selecting hypothesis</li>
-//	 * <li><code>CHOOSE_PRV</code> for suggesting a proof strategy by way of a characterisation of 
-//	 * the proof obligation
-//	 * </ul>
-//	 */
-//	String SELECT_HYP = "select-hyp";
-//	String CHOOSE_PRV = "choose-prv";
-//	
-//	/**
-//	 * Set the value of the hint. There are no constraints on the format or contents of a hint. 
-//	 * @param value the value of the hint
-//	 * @param monitor
-//	 *            a progress monitor, or <code>null</code> if progress
-//	 *            reporting is not desired
-//	 * @throws RodinDBException if there was a problem accessing the database
-//	 */
-//	void setHint(String value, IProgressMonitor monitor) throws RodinDBException;
-//	
-//	/**
-//	 * Returns the value of this hint.
-//	 * 
-//	 * @param monitor
-//	 *            a progress monitor, or <code>null</code> if progress
-//	 *            reporting is not desired
-//	 * @return the value of this hint
-//	 * @throws RodinDBException if there was a problem accessing the database
-//	 */
-//	String getHint(IProgressMonitor monitor) throws RodinDBException;
+	// marker interface
 }

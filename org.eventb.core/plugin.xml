@@ -171,9 +171,9 @@
             id="poSource"
             name="%eventBpoSource"/>
       <internalElementType
-            class="org.eventb.core.basis.POHint"
-            id="poHint"
-            name="%eventBpoHint"/>
+            class="org.eventb.core.basis.POSelectionHint"
+            id="poSelHint"
+            name="%eventBpoSelectionHint"/>
       <internalElementType
             class="org.eventb.core.basis.Guard"
             id="guard"
@@ -450,6 +450,14 @@
             id="prIntroducedFreeIdents"
             kind="string"
             name="%eventBprIntroducedFreeIdents"/>
+      <attributeType
+            id="poSelHintFst"
+            kind="handle"
+            name="%eventBpoSelHintFst"/>
+      <attributeType
+            id="poSelHintSnd"
+            kind="handle"
+            name="%eventBpoSelHintFst"/>
    </extension>
 
 </plugin>

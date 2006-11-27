@@ -35,6 +35,9 @@ public final class Messages {
 	public static String database_MachineMultipleRefinesFailure;
 	public static String database_MachineMultipleVariantFailure;
 	
+	public static String database_POPredicateSelectionHintFailure;
+	public static String database_POIntervalSelectionHintFailure;
+	
 	public static String database_EventInvalidConvergenceFailure;
 	
 	static {
