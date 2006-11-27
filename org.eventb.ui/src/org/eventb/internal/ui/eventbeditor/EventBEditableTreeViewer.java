@@ -17,7 +17,9 @@ import java.util.HashSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -52,7 +54,8 @@ import org.rodinp.core.RodinDBException;
  *         <p>
  *         An abstract class contains of an Editable (Table) Tree Viewer.
  */
-public abstract class EventBEditableTreeViewer extends TreeViewer {
+public abstract class EventBEditableTreeViewer extends TreeViewer implements
+		ISelectionChangedListener {
 	TreeEditor treeEditor;
 
 	protected IEventBEditor editor;
@@ -131,7 +134,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 *         column
 	 */
 	protected final boolean isNotSelectable(Object object, int column) {
-		return ElementUIRegistry.getDefault().isNotSelectable(object, this.getColumnID(column));
+		return ElementUIRegistry.getDefault().isNotSelectable(object,
+				this.getColumnID(column));
 	}
 
 	/**
@@ -146,15 +150,17 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @param text
 	 *            The new information
 	 */
-	protected final void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
+	protected final void commit(IRodinElement element, int col, String text,
+			IProgressMonitor monitor) {
 
 		try {
-			ElementUIRegistry.getDefault().modify(element, this.getColumnID(col), text);
+			ElementUIRegistry.getDefault().modify(element,
+					this.getColumnID(col), text);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Select and edit the element in this Viewer.
 	 * <p>
@@ -293,6 +299,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 
 		this.getControl().addKeyListener(keyListener);
 
+		this.addSelectionChangedListener(this);
 	}
 
 	public void selectItem(TreeItem item, int column) {
@@ -334,7 +341,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			 */
 			@Override
 			public void commit(IRodinElement element, int col, String contents) {
-				EventBEditableTreeViewer.this.commit(element, col, contents, new NullProgressMonitor());
+				EventBEditableTreeViewer.this.commit(element, col, contents,
+						new NullProgressMonitor());
 			}
 
 			/*
@@ -655,6 +663,11 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 		else if (defaultColumn.equals("content"))
 			return 1;
 		return DEFAULT_COLUMN;
+	}
+
+	public void selectionChanged(SelectionChangedEvent event) {
+		editor.getEditorSite().getSelectionProvider().setSelection(
+				event.getSelection());
 	}
 
 }

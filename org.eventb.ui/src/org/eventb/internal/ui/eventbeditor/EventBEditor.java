@@ -38,6 +38,9 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
@@ -73,8 +76,9 @@ import org.rodinp.core.RodinMarkerUtil;
  *         <p>
  *         Abstract Event-B specific form editor for machines, contexts.
  */
-public abstract class EventBEditor<F extends IRodinFile> extends FormEditor implements
-		IElementChangedListener, IGotoMarker, IEventBEditor<F> {
+public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
+		implements IElementChangedListener, IGotoMarker, IEventBEditor<F>,
+		ITabbedPropertySheetPageContributor {
 
 	private String lastActivePageID = null;
 
@@ -132,19 +136,19 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor impl
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 		 */
 		public void setSelection(ISelection selection) {
-			IFormPage activePage = formEditor.getActivePageInstance();
-			if (activePage != null) {
-				ISelectionProvider selectionProvider = activePage.getSite()
-						.getSelectionProvider();
-				if (selectionProvider != null) {
-					if (selectionProvider != this)
-						selectionProvider.setSelection(selection);
-				}
-			} else {
+//			IFormPage activePage = formEditor.getActivePageInstance();
+//			if (activePage != null) {
+//				ISelectionProvider selectionProvider = activePage.getSite()
+//						.getSelectionProvider();
+//				if (selectionProvider != null) {
+//					if (selectionProvider != this)
+//						selectionProvider.setSelection(selection);
+//				}
+//			} else {
 				this.globalSelection = selection;
 				fireSelectionChanged(new SelectionChangedEvent(this,
 						globalSelection));
-			}
+//			}
 		}
 
 		/**
@@ -317,7 +321,8 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor impl
 	 *      org.eclipse.ui.IEditorInput)
 	 */
 	@Override
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
 		setSite(site);
 		setInput(input);
 		site.setSelectionProvider(new FormEditorSelectionProvider(this));
@@ -327,7 +332,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor impl
 	}
 
 	protected abstract F getRodinFile(IEditorInput input);
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -358,7 +363,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor impl
 		saveDefaultPage();
 
 		try { // Make the associated RodinFile consistent if it is has some
-				// unsaved change
+			// unsaved change
 			IRodinFile rodinInput = this.getRodinInput();
 			if (rodinInput.hasUnsavedChanges())
 				rodinInput.makeConsistent(new NullProgressMonitor());
@@ -439,6 +444,9 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor impl
 			return fOutlinePage;
 		}
 
+		if (IPropertySheetPage.class.equals(required)) {
+			return new TabbedPropertySheetPage(this);
+		}
 		return super.getAdapter(required);
 	}
 
@@ -525,16 +533,17 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor impl
 		editorDirtyStateChanged(); // Refresh the dirty state of the editor
 	}
 
-//	/**
-//	 * Checking if a Rodin element is "original" (created automatically, but is
-//	 * not modified).
-//	 * <p>
-//	 * 
-//	 * @param element
-//	 *            a Rodin element
-//	 * @return <code>true</code> if the element has default created values.
-//	 *         <code>false</code> otherwise.
-//	 */
+	// /**
+	// * Checking if a Rodin element is "original" (created automatically, but
+	// is
+	// * not modified).
+	// * <p>
+	// *
+	// * @param element
+	// * a Rodin element
+	// * @return <code>true</code> if the element has default created values.
+	// * <code>false</code> otherwise.
+	// */
 	// private boolean isOriginal(IRodinElement element) {
 	// if (element instanceof IGuard) {
 	// try {
@@ -691,7 +700,8 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor impl
 
 	public F getRodinInput() {
 		if (rodinFile == null)
-			throw new IllegalStateException("Editor hasn't been initialized yet");
+			throw new IllegalStateException(
+					"Editor hasn't been initialized yet");
 		return rodinFile;
 	}
 
@@ -823,11 +833,11 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor impl
 		else if (element instanceof IRefinesEvent) {
 			this.setActivePage(EventPage.PAGE_ID);
 		}
-		
+
 		else if (element instanceof IWitness) {
 			this.setActivePage(EventPage.PAGE_ID);
 		}
-		
+
 		// select the element within the page
 		IFormPage page = this.getActivePageInstance();
 		if (page instanceof EventBFormPage) {
@@ -840,8 +850,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor impl
 		IInternalElement element;
 		try {
 			element = RodinMarkerUtil.getElement(marker);
-		}
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			if (EventBEditorUtils.DEBUG) {
 				EventBEditorUtils.debug("Not a Rodin Marker");
 				e.printStackTrace();
@@ -851,6 +860,10 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor impl
 		if (element != null) {
 			this.edit(element);
 		}
+	}
+
+	public String getContributorId() {
+		return this.getSite().getId(); // Return the ID of the editor
 	}
 
 }

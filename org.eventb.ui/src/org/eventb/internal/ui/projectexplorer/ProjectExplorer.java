@@ -33,6 +33,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.ElementLabelProvider;
 import org.eventb.ui.ElementSorter;
@@ -47,7 +50,8 @@ import org.rodinp.core.IRodinProject;
  *         models from the RodinDB. The view is connected to the model using a
  *         content provider.
  */
-public class ProjectExplorer extends ViewPart implements ISelectionProvider {
+public class ProjectExplorer extends ViewPart implements ISelectionProvider,
+		ITabbedPropertySheetPageContributor {
 
 	/**
 	 * The plug-in identifier of the Project Explorer (value
@@ -57,13 +61,13 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 			+ ".views.ProjectExplorer";
 
 	// The tree viewer to display the structure of projects, components, etc.
-	private TreeViewer viewer;
+	TreeViewer viewer;
 
 	// Action when double clicking.
-	private Action doubleClickAction;
+	Action doubleClickAction;
 
 	// Group of action that is used.
-	private ProjectExplorerActionGroup groupActionSet;
+	ProjectExplorerActionGroup groupActionSet;
 
 	private IRodinProject currentProject;
 
@@ -71,6 +75,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 	 * The constructor.
 	 */
 	public ProjectExplorer() {
+		// Do nothing
 	}
 
 	/**
@@ -89,6 +94,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ProjectExplorerContentProvider(this));
@@ -164,9 +170,6 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 	 * 
 	 * @param manager
 	 *            A Menu manager
-	 *            <p>
-	 * @param manager
-	 *            a menu manager
 	 */
 	private void fillLocalPullDown(IMenuManager manager) {
 		MenuManager newMenu = new MenuManager("&New");
@@ -203,6 +206,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 
 		// Double click to link with editor
 		doubleClickAction = new Action() {
+			@Override
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection)
@@ -231,6 +235,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
@@ -288,6 +293,17 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 
 	public void setSelection(ISelection selection) {
 		viewer.setSelection(selection);
+	}
+
+	public String getContributorId() {
+		return getSite().getId();
+	}
+
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == IPropertySheetPage.class)
+			return new TabbedPropertySheetPage(this);
+		return super.getAdapter(adapter);
 	}
 
 }

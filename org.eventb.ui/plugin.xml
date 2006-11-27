@@ -1009,5 +1009,107 @@
             target="hypothesis"
             tooltip="%hypothesisProofTactics.Eq1.tooltip"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor contributorId="org.eventb.ui.views.ProjectExplorer">
+         <propertyCategory category="eventB"/>
+      </propertyContributor>
+      <propertyContributor contributorId="org.eventb.ui.editors.machine">
+         <propertyCategory category="eventB"/>
+      </propertyContributor>
+      <propertyContributor contributorId="org.eventb.ui.editors.context">
+         <propertyCategory category="eventB"/>
+      </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs contributorId="org.eventb.ui.views.ProjectExplorer">
+         <propertyTab
+               category="eventB"
+               id="org.eventb.ui.basicTab"
+               label="Basic"/>
+      </propertyTabs>
+      <propertyTabs contributorId="org.eventb.ui.editors.machine">
+         <propertyTab
+               category="eventB"
+               id="org.eventb.ui.basicTab"
+               label="Basic"/>
+      </propertyTabs>
+      <propertyTabs contributorId="org.eventb.ui.editors.context">
+         <propertyTab
+               category="eventB"
+               id="org.eventb.ui.basicTab"
+               label="Basic"/>
+      </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections contributorId="org.eventb.ui.views.ProjectExplorer">
+         <propertySection
+               class="org.eventb.internal.ui.propertiesView.LabelSection"
+               id="org.eventb.ui.labelSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.rodinp.core.IInternalElement"/>
+         </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.labelSection"
+               class="org.eventb.internal.ui.propertiesView.CommentSection"
+               id="org.eventb.ui.commentSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.ICommentedElement"/>
+         </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.labelSection"
+               class="org.eventb.internal.ui.propertiesView.PredicateSection"
+               id="org.eventb.ui.predicateSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.IPredicateElement"/>
+         </propertySection>
+      </propertySections>
+      <propertySections contributorId="org.eventb.ui.editors.machine">
+         <propertySection
+               class="org.eventb.internal.ui.propertiesView.LabelSection"
+               id="org.eventb.ui.labelSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.rodinp.core.IInternalElement"/>
+         </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.labelSection"
+               class="org.eventb.internal.ui.propertiesView.CommentSection"
+               id="org.eventb.ui.commentSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.ICommentedElement"/>
+         </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.labelSection"
+               class="org.eventb.internal.ui.propertiesView.PredicateSection"
+               id="org.eventb.ui.predicateSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.IPredicateElement"/>
+         </propertySection>
+      </propertySections>
+      <propertySections contributorId="org.eventb.ui.editors.context">
+         <propertySection
+               class="org.eventb.internal.ui.propertiesView.LabelSection"
+               id="org.eventb.ui.labelSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.rodinp.core.IInternalElement"/>
+         </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.labelSection"
+               class="org.eventb.internal.ui.propertiesView.CommentSection"
+               id="org.eventb.ui.commentSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.ICommentedElement"/>
+         </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.labelSection"
+               class="org.eventb.internal.ui.propertiesView.PredicateSection"
+               id="org.eventb.ui.predicateSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.IPredicateElement"/>
+         </propertySection>
+      </propertySections>
+   </extension>
 
 </plugin>
