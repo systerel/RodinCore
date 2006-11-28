@@ -267,10 +267,6 @@
             id="prIdentifier"
             name="%eventBprIdentifier"/>
       <internalElementType
-            class="org.eventb.core.basis.PRProofStore"
-            id="prProofStore"
-            name="%eventBprProofStore"/>
-      <internalElementType
             class="org.eventb.core.basis.PRPredRef"
             id="prPredRef"
             name="%eventBprPredRef"/>

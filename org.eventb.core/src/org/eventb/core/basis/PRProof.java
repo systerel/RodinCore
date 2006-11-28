@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.core.EventBAttributes.PR_SETS_ATTRIBUTE;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,9 +16,11 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRProofSkelNode;
-import org.eventb.core.IPRProofStore;
+import org.eventb.core.IPRStoredExpr;
+import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.FormulaFactory;
@@ -37,6 +41,8 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public class PRProof extends EventBProofElement implements IPRProof {
+
+	private static final String[] NO_STRINGS = new String[0];
 
 	public PRProof(String name, IRodinElement parent) {
 		super(name, parent);
@@ -82,15 +88,12 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		int confidence = pt.getConfidence();
 		setConfidence(confidence, null);
 		
-		IPRProofStore prStore = (IPRProofStore) getInternalElement(IPRProofStore.ELEMENT_TYPE,"proofStore");
-		prStore.create(null, monitor);
-		store.writeOut(prStore, monitor);
+		store.writeOut(this, monitor);
 	}
 
 	public IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException{
 		if (getConfidence() <= IConfidence.UNATTEMPTED) return unattemptedProofDeps;
-		IPRProofStore prStore = (IPRProofStore) getInternalElement(IPRProofStore.ELEMENT_TYPE, "proofStore");
-		IProofStoreReader store = new ProofStoreReader(prStore ,factory);
+		IProofStoreReader store = new ProofStoreReader(this, factory);
 		ProofDependencies proofDependencies = new ProofDependencies(factory, store, monitor);
 		return proofDependencies;
 	}
@@ -148,14 +151,11 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		if (!root.exists()) return unattemptedProofSkel;
 		
 		IProofSkeleton skeleton;
-		try{
+		try {
 			monitor.beginTask("Reading Proof Skeleton", 11);
-			IPRProofStore prStore = (IPRProofStore) getInternalElement(IPRProofStore.ELEMENT_TYPE, "proofStore");
-			IProofStoreReader store = new ProofStoreReader(prStore ,factory);
+			IProofStoreReader store = new ProofStoreReader(this, factory);
 			skeleton = root.getSkeleton(store);
-		}
-		finally
-		{
+		} finally {
 			monitor.done();
 		}
 		return skeleton;
@@ -225,4 +225,56 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		}
 	};
 		
+	public IPRStoredExpr getExpression(String name) {
+		return (IPRStoredExpr) getInternalElement(IPRStoredExpr.ELEMENT_TYPE, name);
+	}
+
+	public IPRStoredExpr[] getExpressions() throws RodinDBException {
+		return (IPRStoredExpr[]) getChildrenOfType(IPRStoredExpr.ELEMENT_TYPE);
+	}
+
+	public IPRIdentifier getIdentifier(String name) {
+		return (IPRIdentifier) getInternalElement(IPRIdentifier.ELEMENT_TYPE, name);
+	}
+
+	public IPRIdentifier[] getIdentifiers() throws RodinDBException {
+		return (IPRIdentifier[]) getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
+	}
+
+	public IPRStoredPred getPredicate(String name) {
+		return (IPRStoredPred) getInternalElement(IPRStoredPred.ELEMENT_TYPE, name);
+	}
+
+	public IPRStoredPred[] getPredicates() throws RodinDBException {
+		return (IPRStoredPred[]) getChildrenOfType(IPRStoredPred.ELEMENT_TYPE);
+	}
+
+	public String[] getSets() throws RodinDBException {
+		if (hasAttribute(PR_SETS_ATTRIBUTE)) {
+			String value = getAttributeValue(PR_SETS_ATTRIBUTE);
+			return value.split(",");
+		}
+		return NO_STRINGS;
+	}
+
+	public void setSets(String[] sets, IProgressMonitor monitor) throws RodinDBException {
+		final int length = sets.length;
+		if (length == 0) {
+			removeAttribute(PR_SETS_ATTRIBUTE, monitor);
+			return;
+		}
+		if (length == 1) {
+			setAttributeValue(PR_SETS_ATTRIBUTE, sets[0], monitor);
+			return;
+		}
+		final StringBuilder builder = new StringBuilder();
+		String sep = "";
+		for (String name: sets) {
+			builder.append(sep);
+			sep = ",";
+			builder.append(name);
+		}
+		setAttributeValue(PR_SETS_ATTRIBUTE, builder.toString(), monitor);
+	}
+
 }

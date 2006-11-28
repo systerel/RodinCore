@@ -8,7 +8,7 @@ import javax.naming.OperationNotSupportedException;
 import org.eventb.core.IPRExprRef;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRPredRef;
-import org.eventb.core.IPRProofStore;
+import org.eventb.core.IPRProof;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRStoredPred;
@@ -25,7 +25,7 @@ import org.rodinp.core.RodinDBException;
 
 public class ProofStoreReader implements IProofStoreReader {
 
-	private final IPRProofStore prProofStore;
+	private final IPRProof prProof;
 	private final FormulaFactory factory;
 	
 	private ITypeEnvironment baseTypEnv;
@@ -36,8 +36,8 @@ public class ProofStoreReader implements IProofStoreReader {
 		return factory;
 	}
 	
-	public ProofStoreReader(IPRProofStore prProofStore,FormulaFactory factory){
-		this.prProofStore = prProofStore;
+	public ProofStoreReader(IPRProof prProof, FormulaFactory factory){
+		this.prProof = prProof;
 		this.factory = factory;
 		this.baseTypEnv = null;
 		this.predicates = new HashMap<String, Predicate>();
@@ -47,10 +47,10 @@ public class ProofStoreReader implements IProofStoreReader {
 	public ITypeEnvironment getBaseTypeEnv() throws RodinDBException {
 		if (baseTypEnv == null) {
 			baseTypEnv = factory.makeTypeEnvironment();
-			for (String set: prProofStore.getSets()) {
+			for (String set: prProof.getSets()) {
 				baseTypEnv.addGivenSet(set);
 			}
-			for (IPRIdentifier ident: prProofStore.getIdentifiers()) {
+			for (IPRIdentifier ident: prProof.getIdentifiers()) {
 				baseTypEnv.addName(ident.getElementName(), ident.getType(factory));
 			}
 		}
@@ -62,10 +62,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		Predicate pred = predicates.get(ref);
 		if (pred == null){
 			final ITypeEnvironment baseTypeEnv = getBaseTypeEnv();
-			final IPRStoredPred prPred = ((IPRStoredPred)
-								prProofStore.getInternalElement(
-										IPRStoredPred.ELEMENT_TYPE,
-										ref));
+			final IPRStoredPred prPred = prProof.getPredicate(ref);
 			FreeIdentifier[] newFreeIdents = prPred.getFreeIdents(factory);
 			if (newFreeIdents.length == 0)
 			{
@@ -85,10 +82,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		Expression expr = expressions.get(ref);
 		if (expr == null){
 			final ITypeEnvironment baseTypeEnv = getBaseTypeEnv();
-			final IPRStoredExpr prExpr = ((IPRStoredExpr)
-								prProofStore.getInternalElement(
-										IPRStoredExpr.ELEMENT_TYPE,
-										ref));
+			final IPRStoredExpr prExpr = prProof.getExpression(ref);
 			FreeIdentifier[] newFreeIdents = prExpr.getFreeIdents(factory);
 			if (newFreeIdents.length == 0)
 			{

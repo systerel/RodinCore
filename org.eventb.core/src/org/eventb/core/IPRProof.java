@@ -15,103 +15,215 @@ import org.rodinp.core.RodinDBException;
  * Common protocol for Event-B Proof elements stored in the RODIN Database.
  * 
  * <p>
- * This is intended to be the top-most interface
- * for serializing and deserializing proof data structures. This means that
- * it is not intended that database elements beyond this point be seen or
- * manipulated. Note also that this interface provides a more abstract view
- * of the database by hiding the internal database representation.
+ * This is intended to be the top-most interface for serializing and
+ * deserializing proof data structures. This means that it is not intended that
+ * database elements beyond this point be seen or manipulated. Note also that
+ * this interface provides a more abstract view of the database by hiding the
+ * internal database representation.
  * </p>
  * <p>
- * This interface is meant to be used as follows. An instance of IProofTree
- * may be serialised into the database using the {@link #setProofTree(IProofTree, IProgressMonitor)}
- * method. This serializes the proof skeleton ({@link IProofSkeleton}) and proof 
- * dependencies {@link IProofDependencies} of this proof tree which may later be
- * deserialized using the {@link #getSkeleton(FormulaFactory, IProgressMonitor)} and
- * {@link #getProofDependencies(FormulaFactory, IProgressMonitor)} methods. 
+ * This interface is meant to be used as follows. An instance of IProofTree may
+ * be serialised into the database using the
+ * {@link #setProofTree(IProofTree, IProgressMonitor)} method. This serializes
+ * the proof skeleton ({@link IProofSkeleton}) and proof dependencies
+ * {@link IProofDependencies} of this proof tree which may later be deserialized
+ * using the {@link #getSkeleton(FormulaFactory, IProgressMonitor)} and
+ * {@link #getProofDependencies(FormulaFactory, IProgressMonitor)} methods.
  * </p>
  * <p>
- * The proof dependencies are used to check if the proof is applicable to any proof 
- * obligation. The proof skeleton can be used to rebuild the proof tree.
+ * The proof dependencies are used to check if the proof is applicable to any
+ * proof obligation. The proof skeleton can be used to rebuild the proof tree.
+ * </p>
+ * <p>
+ * All predicates and expressions used in a proof are gathered in this element.
+ * Hence this element contains also the following children:
+ * <ul>
+ * <li>Identifiers occurring free in a predicate or expression in the proof.</li>
+ * <li>Predicates used in the proof.</li>
+ * <li>Expressions used in the proof.</li>
+ * </ul>
+ * Moreover, the proof also carries an attribute called
+ * <code>org.eventb.core.prSets</code> which contains a list of all carrier
+ * sets used in the proof (set names separated by commas).
  * </p>
  * 
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- *
+ * 
  * @see IProofTree
  * @see IProofDependencies
  * @see IProofSkeleton
  * @see ProofBuilder
- *
+ * 
  * @author Farhad Mehta
- *
+ * 
  */
 public interface IPRProof extends IInternalElement {
-		
-	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProof"); //$NON-NLS-1$
+
+	IInternalElementType ELEMENT_TYPE = RodinCore
+			.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProof"); //$NON-NLS-1$
 
 	/**
-	 * Sets the proof tree of this proof element by serializing the given proof tree
-	 * into the database.
+	 * Sets the proof tree of this proof element by serializing the given proof
+	 * tree into the database.
 	 * 
 	 * @param proofTree
-	 * 			The proof tree to set
+	 *            The proof tree to set
 	 * @param monitor
-	 * 			  a progress monitor, or <code>null</code> if progress
+	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
 	 * @throws RodinDBException
 	 */
-	public void setProofTree(IProofTree proofTree, IProgressMonitor monitor) throws RodinDBException;
-	
+	public void setProofTree(IProofTree proofTree, IProgressMonitor monitor)
+			throws RodinDBException;
+
 	/**
 	 * Returns the confidence of proof tree stored in this proof element.
 	 * <p>
-	 * Note that this method returns <code>IConfidence.UNATTEMPTED</code>
-	 * if no proof is currently stored in this proof element. 
+	 * Note that this method returns <code>IConfidence.UNATTEMPTED</code> if
+	 * no proof is currently stored in this proof element.
 	 * </p>
-	 *
 	 * 
-	 * @return the confidence of this proof tree 
+	 * @return the confidence of this proof tree
 	 * 
-	 * @throws RodinDBException 
+	 * @throws RodinDBException
 	 */
 	int getConfidence() throws RodinDBException;
-	
-	
+
 	/**
-	 * Returns the proof dependencies for proof tree stored in this proof element.
+	 * Returns the proof dependencies for proof tree stored in this proof
+	 * element.
 	 * 
 	 * <p>
-	 * In case no proof tree is stored in this proof element, this method returns the
-	 * broadest result (i.e. with no dependencies)
+	 * In case no proof tree is stored in this proof element, this method
+	 * returns the broadest result (i.e. with no dependencies)
 	 * </p>
 	 * 
 	 * @param factory
-	 * 				The formula factory to be used
+	 *            The formula factory to be used
 	 * @param monitor
-	 * 			  a progress monitor, or <code>null</code> if progress
+	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
-	 * @return
-	 * 		The proof dependencies for proof tree stored in this proof element
+	 * @return The proof dependencies for proof tree stored in this proof
+	 *         element
 	 * @throws RodinDBException
 	 */
-	IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
+	IProofDependencies getProofDependencies(FormulaFactory factory,
+			IProgressMonitor monitor) throws RodinDBException;
 
-	
 	/**
-	 * Returns the proof skeleton of the proof tree stored in this proof element.
+	 * Returns the proof skeleton of the proof tree stored in this proof
+	 * element.
 	 * 
 	 * @param factory
-	 * 			The formula factory to be used
+	 *            The formula factory to be used
 	 * @param monitor
-	 * 			  a progress monitor, or <code>null</code> if progress
+	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
-	 * @return
-	 * 			the stored proof skeleton
+	 * @return the stored proof skeleton
 	 * 
 	 * @throws RodinDBException
 	 */
-	IProofSkeleton getSkeleton(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
+	IProofSkeleton getSkeleton(FormulaFactory factory, IProgressMonitor monitor)
+			throws RodinDBException;
 
+	/**
+	 * Returns a handle to the identifier child with the given name. That child
+	 * element describes an identifier that occurs free in the proof.
+	 * <p>
+	 * This is a handle-only method. The identifier element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param name
+	 *            name of the child
+	 * 
+	 * @return a handle to the child identifier with the given name
+	 * @see #getIdentifiers()
+	 */
+	IPRIdentifier getIdentifier(String name);
+
+	/**
+	 * Returns all children identifier elements. Those child elements describe
+	 * all identifiers that occur free in the proof (and are not introduced as
+	 * fresh identifiers by the proof itself).
+	 * 
+	 * @return an array of all chidren element of type identifier
+	 * @throws RodinDBException
+	 * @see #getIdentifier(String)
+	 */
+	IPRIdentifier[] getIdentifiers() throws RodinDBException;
+
+	/**
+	 * Returns a handle to the expression child with the given name.
+	 * <p>
+	 * This is a handle-only method. The expression element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param name
+	 *            element name of the child
+	 * 
+	 * @return a handle to the child expression with the given element name
+	 * @see #getExpressions()
+	 */
+	IPRStoredExpr getExpression(String name);
+
+	/**
+	 * Returns all children expression elements.
+	 * 
+	 * @return an array of all chidren element of type expression
+	 * @throws RodinDBException
+	 * @see #getExpression(String)
+	 */
+	IPRStoredExpr[] getExpressions() throws RodinDBException;
+
+	/**
+	 * Returns a handle to the predicate child with the given name.
+	 * <p>
+	 * This is a handle-only method. The predicate element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param name
+	 *            element name of the child
+	 * 
+	 * @return a handle to the child predicate with the given element name
+	 * @see #getPredicates()
+	 */
+	IPRStoredPred getPredicate(String name);
+
+	/**
+	 * Returns all children predicate elements.
+	 * 
+	 * @return an array of all chidren element of type predicate
+	 * @throws RodinDBException
+	 * @see #getPredicate(String)
+	 */
+	IPRStoredPred[] getPredicates() throws RodinDBException;
+
+	/**
+	 * Returns the carrier sets that are used in this proof.
+	 * 
+	 * @return an array of the carrier set names of this proof
+	 * @throws RodinDBException
+	 * @see #setSets(String[], IProgressMonitor)
+	 */
+	String[] getSets() throws RodinDBException;
+
+	/**
+	 * Sets the carrier sets that are used in this proof.
+	 * 
+	 * @param sets
+	 *            the carrier set names to set
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @throws RodinDBException
+	 * @see #getSets()
+	 */
+	void setSets(String[] sets, IProgressMonitor monitor)
+			throws RodinDBException;
 }

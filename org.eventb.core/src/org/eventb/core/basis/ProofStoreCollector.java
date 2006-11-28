@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRExprRef;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRPredRef;
-import org.eventb.core.IPRProofStore;
+import org.eventb.core.IPRProof;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRStoredPred;
@@ -80,14 +80,14 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		return absent.toArray(result);
 	}
 	
-	public void writeOut(IPRProofStore prProofStore, IProgressMonitor monitor)
+	public void writeOut(IPRProof prProof, IProgressMonitor monitor)
 			throws RodinDBException {
 
-		writeTypeEnv(prProofStore);
+		writeTypeEnv(prProof);
 		
 		for(Map.Entry<Predicate, String> entry : predicates.entrySet()){
 			// TODO : writeout extra type info
-			IPRStoredPred prPred = (IPRStoredPred)prProofStore.getInternalElement(IPRStoredPred.ELEMENT_TYPE, entry.getValue());
+			IPRStoredPred prPred = prProof.getPredicate(entry.getValue());
 			prPred.create(null, monitor);
 			Predicate pred = entry.getKey();
 			prPred.setPredicate(pred, monitor);
@@ -96,9 +96,8 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		
 		for(Map.Entry<Expression, String> entry : expressions.entrySet()){
 			// TODO : writeout extra type info
-			IPRStoredExpr prExpr = (IPRStoredExpr)prProofStore.getInternalElement(IPRStoredExpr.ELEMENT_TYPE, entry.getValue());
+			IPRStoredExpr prExpr = prProof.getExpression(entry.getValue());
 			prExpr.create(null, monitor);
-			prExpr.setExpression(entry.getKey(), monitor);
 			Expression expr = entry.getKey();
 			prExpr.setExpression(expr, monitor);
 			prExpr.setFreeIdents(getIdentsNotInBase(expr), monitor);
@@ -106,11 +105,11 @@ public class ProofStoreCollector implements IProofStoreCollector {
 	}
 	
 	// TODO fix monitors here ?
-	private void writeTypeEnv(IPRProofStore prProofStore) throws RodinDBException {
+	private void writeTypeEnv(IPRProof prProof) throws RodinDBException {
 		TypeEnvironmentSorter sorter = new TypeEnvironmentSorter(baseTypEnv);
-		prProofStore.setSets(sorter.givenSets, null);
+		prProof.setSets(sorter.givenSets, null);
 		for (Entry entry: sorter.variables) {
-			IPRIdentifier ident = prProofStore.getIdentifier(entry.name);
+			IPRIdentifier ident = prProof.getIdentifier(entry.name);
 			ident.create(null, null);
 			ident.setType(entry.type, null);
 		}

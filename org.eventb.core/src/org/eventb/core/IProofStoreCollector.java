@@ -25,7 +25,7 @@ public interface IProofStoreCollector {
 	String putPredicate(Predicate pred) throws RodinDBException;
 	String putExpression(Expression expr) throws RodinDBException;
 	
-	void writeOut(IPRProofStore prProofStore,IProgressMonitor monitor) throws RodinDBException;
+	void writeOut(IPRProof prProof, IProgressMonitor monitor) throws RodinDBException;
 
 	
 	
