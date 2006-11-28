@@ -15,5 +15,6 @@ Eclipse-LazyStart: true
 Export-Package: org.eventb.core,
  org.eventb.core.basis,
  org.eventb.core.pm,
+ org.eventb.internal.core.pm;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.pom;x-friends:="org.eventb.core.tests"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
