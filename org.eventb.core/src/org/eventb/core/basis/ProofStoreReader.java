@@ -6,13 +6,13 @@ import java.util.Map;
 import javax.naming.OperationNotSupportedException;
 
 import org.eventb.core.IPRExprRef;
+import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRPredRef;
 import org.eventb.core.IPRProofStore;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRStringInput;
-import org.eventb.core.IPRTypeEnvironment;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -44,15 +44,15 @@ public class ProofStoreReader implements IProofStoreReader {
 		this.expressions = new HashMap<String, Expression>();
 	}
 	
-	public ITypeEnvironment getBaseTypeEnv()
-			throws RodinDBException {
-		if (baseTypEnv == null)
-		{
-			baseTypEnv = ((IPRTypeEnvironment)
-					prProofStore.getInternalElement(
-							IPRTypeEnvironment.ELEMENT_TYPE,
-							"baseTypEnv"))
-							.getTypeEnvironment(factory);
+	public ITypeEnvironment getBaseTypeEnv() throws RodinDBException {
+		if (baseTypEnv == null) {
+			baseTypEnv = factory.makeTypeEnvironment();
+			for (String set: prProofStore.getSets()) {
+				baseTypEnv.addGivenSet(set);
+			}
+			for (IPRIdentifier ident: prProofStore.getIdentifiers()) {
+				baseTypEnv.addName(ident.getElementName(), ident.getType(factory));
+			}
 		}
 		return baseTypEnv;
 	}

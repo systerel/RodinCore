@@ -8,13 +8,13 @@ import javax.naming.OperationNotSupportedException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRExprRef;
+import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRPredRef;
 import org.eventb.core.IPRProofStore;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRStringInput;
-import org.eventb.core.IPRTypeEnvironment;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -22,6 +22,8 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
+import org.eventb.internal.core.pm.TypeEnvironmentSorter;
+import org.eventb.internal.core.pm.TypeEnvironmentSorter.Entry;
 import org.rodinp.core.RodinDBException;
 
 public class ProofStoreCollector implements IProofStoreCollector {
@@ -80,10 +82,8 @@ public class ProofStoreCollector implements IProofStoreCollector {
 	
 	public void writeOut(IPRProofStore prProofStore, IProgressMonitor monitor)
 			throws RodinDBException {
-		
-		IPRTypeEnvironment prBaseTypeEnv = (IPRTypeEnvironment) prProofStore.getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE, "baseTypEnv");
-		prBaseTypeEnv.create(null, null);
-		prBaseTypeEnv.setTypeEnvironment(baseTypEnv, null);
+
+		writeTypeEnv(prProofStore);
 		
 		for(Map.Entry<Predicate, String> entry : predicates.entrySet()){
 			// TODO : writeout extra type info
@@ -105,6 +105,18 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		}
 	}
 	
+	// TODO fix monitors here ?
+	private void writeTypeEnv(IPRProofStore prProofStore) throws RodinDBException {
+		TypeEnvironmentSorter sorter = new TypeEnvironmentSorter(baseTypEnv);
+		prProofStore.setSets(sorter.givenSets, null);
+		for (Entry entry: sorter.variables) {
+			IPRIdentifier ident = prProofStore.getIdentifier(entry.name);
+			ident.create(null, null);
+			ident.setType(entry.type, null);
+		}
+		
+	}
+
 	public static class Bridge implements IReasonerInputSerializer{
 
 		private final IPRReasonerInput prReasonerInput;
