@@ -15,7 +15,7 @@ import org.rodinp.core.RodinDBException;
  * Common protocol for Event-B Proof elements stored in the RODIN Database.
  * 
  * <p>
- * This is intended (at least for the moment) to be the top-most interface
+ * This is intended to be the top-most interface
  * for serializing and deserializing proof data structures. This means that
  * it is not intended that database elements beyond this point be seen or
  * manipulated. Note also that this interface provides a more abstract view
@@ -31,12 +31,11 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * <p>
  * The proof dependencies are used to check if the proof is applicable to any proof 
- * obligation. The proof skeleton can be used to rebuild the broof tree.
+ * obligation. The proof skeleton can be used to rebuild the proof tree.
  * </p>
  * 
  * <p>
- * This interface is not intended to be implemented by clients under any 
- * circumstances.
+ * This interface is not intended to be implemented by clients.
  * </p>
  *
  * @see IProofTree
@@ -90,7 +89,9 @@ public interface IPRProof extends IInternalElement {
 	 * 
 	 * @param factory
 	 * 				The formula factory to be used
-	 * @param monitor TODO
+	 * @param monitor
+	 * 			  a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @return
 	 * 		The proof dependencies for proof tree stored in this proof element
 	 * @throws RodinDBException
