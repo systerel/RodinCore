@@ -77,6 +77,22 @@ public interface ITypeEnvironment {
 		 *             if <code>advance</code> hasn't been called before
 		 */
 		Type getType() throws NoSuchElementException;
+
+		/**
+		 * Returns whether the current mapping denotes a given set. Given set
+		 * are recognized by the fact that they associate a name <code>S</code>
+		 * to the type <code>ℙ(S)</code>.
+		 * <p>
+		 * The method {@link #advance()} must have been called at least once
+		 * since the creation of the iterator, before calling this method.
+		 * </p>
+		 * 
+		 * @return <code>true</code> iff the current mapping denotes a given
+		 *         set
+		 * @throws NoSuchElementException
+		 *             if <code>advance</code> hasn't been called before
+		 */
+		boolean isGivenSet() throws NoSuchElementException;
 	}
 
 	/**

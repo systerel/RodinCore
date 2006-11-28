@@ -16,6 +16,7 @@ public class TestTypeEnvironment extends TestCase {
 	static FormulaFactory ff = FormulaFactory.getDefault();
 	
 	private static Type t_S = ff.makeGivenType("S"); 
+	private static Type t_T = ff.makeGivenType("T"); 
 	private static Type INT = ff.makeIntegerType();
 	private static Type BOOL = ff.makeBooleanType();
 	
@@ -298,6 +299,25 @@ public class TestTypeEnvironment extends TestCase {
 		te = ff.makeTypeEnvironment();
 		te.addName("x", ff.makeIntegerType());
 		assertFalse("Environment with one variable is not empty", te.isEmpty());
+	}
+
+	
+	public void testIsGivenSet() {
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+		te.addGivenSet("S");
+		te.addName("T", POW(t_T));
+		te.addName("x", INT);
+		te.addName("y", POW(t_S));
+		te.addName("z", POW(INT));
+		
+		ITypeEnvironment.IIterator iter = te.getIterator();
+		while (iter.hasNext()) {
+			iter.advance();
+			final String name = iter.getName();
+			final Type givenSetType = POW(ff.makeGivenType(name));
+			final Type type = iter.getType();
+			assertEquals(givenSetType.equals(type), iter.isGivenSet());
+		}
 	}
 
 }

@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 
@@ -23,7 +24,7 @@ import org.eventb.core.ast.Type;
  */
 public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	
-	static class InternalIterator implements IIterator {
+	static final class InternalIterator implements IIterator {
 		
 		Iterator<Map.Entry<String, Type>> iterator;
 		
@@ -54,6 +55,15 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 				throw new NoSuchElementException();
 			}
 			return current.getValue();
+		}
+
+		public boolean isGivenSet() throws NoSuchElementException {
+			final Type baseType = getType().getBaseType();
+			if (baseType instanceof GivenType) {
+				GivenType givenType = (GivenType) baseType;
+				return givenType.getName().equals(getName());
+			}
+			return false;
 		}
 	}
 
