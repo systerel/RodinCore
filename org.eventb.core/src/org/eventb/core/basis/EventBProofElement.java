@@ -27,7 +27,8 @@ import org.rodinp.core.basis.InternalElement;
 /**
  * Common implementation for Event-B Proof elements.
  * <p>
- * This implementation is intended to be sub-classed by clients.
+ * This implementation is intended to be sub-classed by clients that contribute
+ * new proof elements.
  * </p>
  * 
  * @author Farhad Mehta
