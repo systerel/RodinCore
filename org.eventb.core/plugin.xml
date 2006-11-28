@@ -247,10 +247,6 @@
             id="prReasonerInput"
             name="%eventBprReasonerInput"/>
       <internalElementType
-            class="org.eventb.core.basis.PRTypeEnvironment"
-            id="prTypeEnv"
-            name="%eventBprTypeEnv"/>
-      <internalElementType
             class="org.eventb.core.basis.PRRuleAntecedent"
             id="prRuleAntecedent"
             name="%eventBprRuleAntecedent"/>
@@ -285,7 +281,7 @@
       <internalElementType
             class="org.eventb.core.basis.PRStringInput"
             id="prStrInp"
-            name="%eventBprStrInp"/>            
+            name="%eventBprStrInp"/>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">
@@ -451,13 +447,17 @@
             kind="string"
             name="%eventBprIntroducedFreeIdents"/>
       <attributeType
+            id="prSets"
+            kind="string"
+            name="%eventBprSets"/>
+      <attributeType
             id="poSelHintFst"
             kind="handle"
             name="%eventBpoSelHintFst"/>
       <attributeType
             id="poSelHintSnd"
             kind="handle"
-            name="%eventBpoSelHintFst"/>
+            name="%eventBpoSelHintSnd"/>
    </extension>
 
 </plugin>
