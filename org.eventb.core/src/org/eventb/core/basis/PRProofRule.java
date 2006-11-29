@@ -27,6 +27,7 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -71,38 +72,58 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		}
 	}
 
-	public IProofRule getProofRule(IProofStoreReader store)throws RodinDBException {
+	public IProofSkeleton getProofSkeleton(IProofStoreReader store,
+			final String comment) throws RodinDBException {
 
-		Predicate goal = getGoal(store);		
-		Set<Hypothesis> neededHyps = Hypothesis.Hypotheses(getHyps(store));
+		final Predicate goal = getGoal(store);		
+		final Set<Hypothesis> neededHyps = Hypothesis.Hypotheses(getHyps(store));
 
-		IRodinElement[] rodinElements = this.getChildrenOfType(IPRRuleAntecedent.ELEMENT_TYPE);
-		IAntecedent[] anticidents = new IAntecedent[rodinElements.length];
-		for (int i = 0; i < rodinElements.length; i++) {
-			anticidents[i] = ((IPRRuleAntecedent)rodinElements[i]).getAntecedent(store);
+		final IPRRuleAntecedent[] prAntecedents = getAntecedents();
+		final int length = prAntecedents.length;
+		final IAntecedent[] anticidents = new IAntecedent[length];
+		final IProofSkeleton[] children = new IProofSkeleton[length];
+		for (int i = 0; i < length; i++) {
+			anticidents[i] = prAntecedents[i].getAntecedent(store);
+			children[i] = ((EventBProofElement) prAntecedents[i]).getSkeleton(store);
 		}
 
-		String display = getRuleDisplay();
-		int confidence = getConfidence();
+		final String display = getRuleDisplay();
+		final int confidence = getConfidence();
 
+		final IProofRule proofRule = ProverFactory.makeProofRule(
+				getReasoner(),
+				getReasonerInput(store), 
+				goal, 
+				neededHyps, 
+				confidence, 
+				display, 
+				anticidents);
+		
+		IProofSkeleton skeleton = new IProofSkeleton() {
 
-		return ProverFactory.makeProofRule(this.getReasoner(),this.getReasonerInput(store), goal, neededHyps, confidence, display, anticidents);
+				public IProofSkeleton[] getChildNodes() {
+					return children;
+				}
+
+				public IProofRule getRule() {
+					return proofRule;
+				}
+
+				public String getComment() {
+					return comment;
+				}
+			
+		};
+		return skeleton;
 	}
 
-	public void setProofRule(IProofRule proofRule, IProofStoreCollector store,IProgressMonitor monitor) throws RodinDBException {
+	public void setProofRule(IProofSkeleton skel, IProofStoreCollector store,IProgressMonitor monitor) throws RodinDBException {
 
+		final IProofRule proofRule = skel.getRule();
+		
 		// write out the current goal and needed hypotheses		
 		setGoal(proofRule.getGoal(), store, monitor);
 		setHyps(Hypothesis.Predicates(proofRule.getNeededHyps()), store, monitor);
-
-		// write out the anticidents (next subgoals)
-		int idx = 1;
-		for (IAntecedent antecedent : proofRule.getAntecedents()){
-			IPRRuleAntecedent child = (IPRRuleAntecedent) getInternalElement(
-					IPRRuleAntecedent.ELEMENT_TYPE, "a" + idx++);
-			child.create(null, null);
-			child.setAntecedent(antecedent, store, monitor);
-		}
 
 		// write out display
 		setRuleDisplay(proofRule.getDisplayName(), monitor);
@@ -127,6 +148,16 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 
 		}
 
+		// write out the anticidents (next subgoals)
+		final IAntecedent[] antecedents = proofRule.getAntecedents();
+		final IProofSkeleton[] children = skel.getChildNodes();
+		assert antecedents.length == children.length;
+		for (int i = 0; i < antecedents.length; i++) {
+			PRRuleAntecedent child = (PRRuleAntecedent) getAntecedent(Integer.toString(i));
+			child.create(null, null);
+			child.setAntecedent(antecedents[i], store, monitor);
+			child.setSkeleton(children[i], store, monitor);
+		}
 	}
 
 	public String getRuleDisplay() throws RodinDBException {
@@ -137,4 +168,13 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 	throws RodinDBException {
 		setAttributeValue(EventBAttributes.RULE_DISPLAY_ATTRIBUTE, display, monitor);
 	}
+
+	public IPRRuleAntecedent getAntecedent(String name) {
+		return (IPRRuleAntecedent) getInternalElement(IPRRuleAntecedent.ELEMENT_TYPE, name);
+	}
+
+	public IPRRuleAntecedent[] getAntecedents() throws RodinDBException {
+		return (IPRRuleAntecedent[]) getChildrenOfType(IPRRuleAntecedent.ELEMENT_TYPE);
+	}
+
 }

@@ -8,18 +8,26 @@
 
 package org.eventb.core.basis;
 
+import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.CONFIDENCE_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.GOAL_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRIdentifier;
+import org.eventb.core.IPRProofRule;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
+import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -42,41 +50,44 @@ public abstract class EventBProofElement extends InternalElement {
 
 	public void setComment(String comment, IProgressMonitor monitor)
 			throws RodinDBException {
-		setAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE, comment, monitor);
+		if (comment == null || comment.length() == 0) {
+			removeAttribute(COMMENT_ATTRIBUTE, monitor);
+		} else {
+			setAttributeValue(COMMENT_ATTRIBUTE, comment, monitor);
+		}
 	}
 
 	public String getComment() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE);
-	}
-	
-	public boolean hasComment() throws RodinDBException {
-		return hasAttribute(EventBAttributes.COMMENT_ATTRIBUTE);
+		if (hasAttribute(COMMENT_ATTRIBUTE)) {
+			return getAttributeValue(COMMENT_ATTRIBUTE);
+		}
+		return "";
 	}
 
 	public void setConfidence(int confidence, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE, confidence, monitor);
+		setAttributeValue(CONFIDENCE_ATTRIBUTE, confidence, monitor);
 	}
 	
 	public int getConfidence() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE);
+		return getAttributeValue(CONFIDENCE_ATTRIBUTE);
 	}
 	
 	public boolean hasConfidence() throws RodinDBException {
-		return hasAttribute(EventBAttributes.CONFIDENCE_ATTRIBUTE);
+		return hasAttribute(CONFIDENCE_ATTRIBUTE);
 	}
 	
 	public void setGoal(Predicate goal, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
 		String ref = store.putPredicate(goal);
-		setAttributeValue(EventBAttributes.GOAL_ATTRIBUTE, ref , monitor);
+		setAttributeValue(GOAL_ATTRIBUTE, ref , monitor);
 	}
 	
 	public Predicate getGoal(IProofStoreReader store) throws RodinDBException {
-		String ref = getAttributeValue(EventBAttributes.GOAL_ATTRIBUTE);
+		String ref = getAttributeValue(GOAL_ATTRIBUTE);
 		return store.getPredicate(ref);
 	}
 	
 	public boolean hasGoal() throws RodinDBException {
-		return hasAttribute(EventBAttributes.GOAL_ATTRIBUTE);
+		return hasAttribute(GOAL_ATTRIBUTE);
 	}
 
 	public void setHyps(Collection<Predicate> hyps, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
@@ -87,11 +98,11 @@ public abstract class EventBProofElement extends InternalElement {
 			refs.append(store.putPredicate(pred));
 			notEmpty = true;
 		}
-		setAttributeValue(EventBAttributes.HYPS_ATTRIBUTE, refs.toString(), monitor);
+		setAttributeValue(HYPS_ATTRIBUTE, refs.toString(), monitor);
 	}
 	
 	public Set<Predicate> getHyps(IProofStoreReader store) throws RodinDBException {
-		String sepRefs = getAttributeValue(EventBAttributes.HYPS_ATTRIBUTE);
+		String sepRefs = getAttributeValue(HYPS_ATTRIBUTE);
 		String[] refs = sepRefs.split(";");
 		HashSet<Predicate> hyps = new HashSet<Predicate>(refs.length);
 		for(String ref : refs){
@@ -101,7 +112,7 @@ public abstract class EventBProofElement extends InternalElement {
 	}
 	
 	public boolean hasHyps() throws RodinDBException {
-		return hasAttribute(EventBAttributes.HYPS_ATTRIBUTE);
+		return hasAttribute(HYPS_ATTRIBUTE);
 	}
 	
 	public FreeIdentifier[] getFreeIdents(FormulaFactory factory) throws RodinDBException {
@@ -121,5 +132,53 @@ public abstract class EventBProofElement extends InternalElement {
 			prIdent.create(null, monitor);
 			prIdent.setType(freeIdents[i].getType(), monitor);
 		}
+	}
+
+	public void setSkeleton(IProofSkeleton skel, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
+		
+		// write out the comment of the root node
+		final String comment = skel.getComment();
+		setComment(comment, null);
+		
+		
+		if (skel.getRule() == null) return;
+				
+		IPRProofRule prRule = getProofRule(
+				skel.getRule().generatedBy().getReasonerID());
+		prRule.create(null,null);
+		
+		prRule.setProofRule(skel, store, monitor);
+	}
+
+	public IProofSkeleton getSkeleton(IProofStoreReader store) throws RodinDBException {
+		final String comment = getComment();
+
+		IPRProofRule[] rules = getProofRules();
+		if (rules.length == 0) {
+			return new IProofSkeleton() {
+				public IProofSkeleton[] getChildNodes() {
+					return new IProofSkeleton[0];
+				}
+				public String getComment() {
+					return comment;
+				}
+				public IProofRule getRule() {
+					return null;
+				}
+			};
+		}
+		if (rules.length != 1) {
+			Util.log(null, "More than one rule in proof skeleton node " + this);
+		}
+		return rules[0].getProofSkeleton(store, comment);
+	}
+
+
+	public IPRProofRule getProofRule(String name) {
+		return (IPRProofRule) getInternalElement(IPRProofRule.ELEMENT_TYPE, name);
+	}
+
+	public IPRProofRule[] getProofRules() throws RodinDBException {
+		return (IPRProofRule[]) getChildrenOfType(IPRProofRule.ELEMENT_TYPE);
 	}
 }

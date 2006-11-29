@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRProof;
-import org.eventb.core.IPRProofSkelNode;
 import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IProofStoreCollector;
@@ -59,10 +58,10 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE);
 	}
 	
-
+	// TODO fix usage of monitor.
 	public void setProofTree(IProofTree pt, IProgressMonitor monitor) throws RodinDBException {
 		
-		delete(true, monitor);
+		delete(false, monitor);
 		create(null, monitor);
 		
 		if (pt.getConfidence() <= IConfidence.UNATTEMPTED) return;
@@ -80,9 +79,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		setIntroFreeIdents(proofDeps.getIntroducedFreeIdents(), monitor);
 		
 		// write out the proof skeleton
-		IPRProofSkelNode skel = (IPRProofSkelNode) getInternalElement(IPRProofSkelNode.ELEMENT_TYPE, "0");
-		skel.create(null, monitor);
-		skel.setSkeleton(pt.getRoot(), store, monitor);
+		setSkeleton(pt.getRoot(), store, monitor);
 
 		//	Update the status
 		int confidence = pt.getConfidence();
@@ -144,21 +141,23 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		
 	}
 	
-	public IProofSkeleton getSkeleton(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
-		if (monitor == null) monitor = new NullProgressMonitor();
+	public IProofSkeleton getSkeleton(FormulaFactory factory,
+			IProgressMonitor monitor) throws RodinDBException {
 		
-		IPRProofSkelNode root = (IPRProofSkelNode) getInternalElement(IPRProofSkelNode.ELEMENT_TYPE, "0");
-		if (!root.exists()) return unattemptedProofSkel;
+		if (getConfidence() == IConfidence.UNATTEMPTED) {
+			return unattemptedProofSkel;
+		}
 		
-		IProofSkeleton skeleton;
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
 		try {
 			monitor.beginTask("Reading Proof Skeleton", 11);
 			IProofStoreReader store = new ProofStoreReader(this, factory);
-			skeleton = root.getSkeleton(store);
+			return getSkeleton(store);
 		} finally {
 			monitor.done();
 		}
-		return skeleton;
 	}
 
 	public void setIntroFreeIdents(Collection<String> identNames, IProgressMonitor monitor) throws RodinDBException {
