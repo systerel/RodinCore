@@ -41,7 +41,7 @@ import org.rodinp.internal.core.RodinElementDelta;
 public class UserSupport implements IElementChangedListener,
 		IProofTreeChangedListener, IUserSupport {
 
-	private IPSFile prFile; // Unique for an instance of UserSupport
+	private IPSFile psFile; // Unique for an instance of UserSupport
 
 	private LinkedList<IProofState> proofStates;
 
@@ -110,7 +110,7 @@ public class UserSupport implements IElementChangedListener,
 	 * 
 	 * @see org.eventb.core.pm.IUserSupport#notifyStateChangedListeners()
 	 */
-	public void notifyStateChangedListeners() {
+	private void notifyStateChangedListeners() {
 		IProofStateChangedListener[] safeCopy;
 		synchronized (proofStateChangedListeners) {
 			safeCopy = proofStateChangedListeners
@@ -144,8 +144,7 @@ public class UserSupport implements IElementChangedListener,
 	 * 
 	 * @see org.eventb.core.pm.IUserSupport#fireProofStateDelta(org.eventb.core.pm.IProofStateDelta)
 	 */
-	public void fireProofStateDelta(IProofStateDelta newDelta) {
-		// UserSupportUtils.debug("Fire Delta: " + newDelta);
+	void fireProofStateDelta(IProofStateDelta newDelta) {
 		delta.set(mergeDelta(getDelta(), newDelta));
 		notifyPendingDelta();
 	}
@@ -248,13 +247,13 @@ public class UserSupport implements IElementChangedListener,
 	 * @see org.eventb.core.pm.IUserSupport#setInput(org.eventb.core.IPSFile,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void setInput(IPSFile prFile, IProgressMonitor monitor)
+	public void setInput(IPSFile psFile, IProgressMonitor monitor)
 			throws RodinDBException {
-		this.prFile = prFile;
+		this.psFile = psFile;
 		proofStates = new LinkedList<IProofState>();
 		try {
-			for (int i = 0; i < prFile.getStatuses().length; i++) {
-				IPSStatus prSequent = prFile.getStatuses()[i];
+			for (int i = 0; i < psFile.getStatuses().length; i++) {
+				IPSStatus prSequent = psFile.getStatuses()[i];
 				proofStates.add(new ProofState(prSequent));
 			}
 		} catch (RodinDBException e) {
@@ -270,12 +269,12 @@ public class UserSupport implements IElementChangedListener,
 	 * @see org.eventb.core.pm.IUserSupport#setCurrentPO(org.eventb.core.IPSstatus,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void setCurrentPO(IPSStatus prSequent, IProgressMonitor monitor)
+	public void setCurrentPO(IPSStatus psStatus, IProgressMonitor monitor)
 			throws RodinDBException {
-		if (prSequent == null)
+		if (psStatus == null)
 			setProofState(null, monitor);
 		for (IProofState ps : proofStates) {
-			if (ps.getPRSequent().equals(prSequent)) {
+			if (ps.getPRSequent().equals(psStatus)) {
 				setProofState(ps, monitor);
 				return;
 			}
@@ -640,7 +639,7 @@ public class UserSupport implements IElementChangedListener,
 		try {
 			int index = 0;
 			IProofState proofState = getProofState(index);
-			for (IPSStatus prSequent : prFile.getStatuses()) {
+			for (IPSStatus prSequent : psFile.getStatuses()) {
 				UserSupportUtils.debug("Trying: " + prSequent.getElementName());
 				UserSupportUtils.debug("Index: " + index);
 				if (proofState != null) {
@@ -669,7 +668,7 @@ public class UserSupport implements IElementChangedListener,
 				processDelta(d, monitor);
 			}
 		} else if (element instanceof IPSFile) {
-			if (prFile.equals(element)) {
+			if (psFile.equals(element)) {
 				for (IRodinElementDelta d : elementChangedDelta
 						.getAffectedChildren()) {
 					processDelta(d, monitor);
@@ -782,7 +781,7 @@ public class UserSupport implements IElementChangedListener,
 		else if (element instanceof IPRProof) {
 			IPRProof proofTree = (IPRProof) element;
 			// IPRSequent prSequent = proofTree.getSequent();
-			IPSStatus status = prFile.getStatus(proofTree.getElementName());
+			IPSStatus status = psFile.getStatus(proofTree.getElementName());
 
 			IProofState state = getProofState(status);
 
@@ -892,8 +891,8 @@ public class UserSupport implements IElementChangedListener,
 	 * @see org.eventb.core.pm.IUserSupport#setComment(java.lang.String,
 	 *      org.eventb.core.seqprover.IProofTreeNode)
 	 */
-	public void setComment(String text, IProofTreeNode currentNode) {
-		currentNode.setComment(text);
+	public void setComment(String text, IProofTreeNode node) {
+		node.setComment(text);
 		currentPS.setDirty(true);
 		ProofStateDelta newDelta = new ProofStateDelta(this);
 		newDelta.setNewCurrentNode(currentPS.getCurrentNode());
@@ -916,7 +915,7 @@ public class UserSupport implements IElementChangedListener,
 	 * @see org.eventb.core.pm.IUserSupport#getInput()
 	 */
 	public IPSFile getInput() {
-		return prFile;
+		return psFile;
 	}
 
 	//
