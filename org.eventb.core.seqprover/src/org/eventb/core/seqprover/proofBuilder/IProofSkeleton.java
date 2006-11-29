@@ -23,7 +23,6 @@ public interface IProofSkeleton {
 	 * </p>
 	 * 
 	 * @return an array of the children of this node
-	 * @see #hasChildren()
 	 */
 	IProofSkeleton[] getChildNodes();
 
@@ -36,10 +35,9 @@ public interface IProofSkeleton {
 	IProofRule getRule();
 
 	/**
-	 * Returns the comment field of the current proof tree node.
+	 * Returns the comment field of this node.
 	 * 
-	 * @return The comment field of the current proof tree node.
-	 * @see #setComment()
+	 * @return the comment associated to this node
 	 */
 	String getComment();
 	
