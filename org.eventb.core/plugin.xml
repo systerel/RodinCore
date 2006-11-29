@@ -231,10 +231,6 @@
             id="scWitness"
             name="%eventBscWitness"/>
       <internalElementType
-            class="org.eventb.core.basis.PRProofSkelNode"
-            id="prProofSkelNode"
-            name="%eventBprProofSkelNode"/>
-      <internalElementType
             class="org.eventb.core.basis.PRProofRule"
             id="prProofRule"
             name="%eventBprProofRule"/>
