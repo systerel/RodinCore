@@ -44,6 +44,9 @@ import org.rodinp.core.basis.InternalElement;
  */
 public abstract class EventBProofElement extends InternalElement {
 
+	protected static final String[] NO_STRINGS = new String[0];
+	protected static final IProofSkeleton[] NO_CHILDREN = new IProofSkeleton[0];
+
 	public EventBProofElement(String name, IRodinElement parent) {
 		super(name, parent);
 	}
@@ -157,7 +160,7 @@ public abstract class EventBProofElement extends InternalElement {
 		if (rules.length == 0) {
 			return new IProofSkeleton() {
 				public IProofSkeleton[] getChildNodes() {
-					return new IProofSkeleton[0];
+					return NO_CHILDREN;
 				}
 				public String getComment() {
 					return comment;

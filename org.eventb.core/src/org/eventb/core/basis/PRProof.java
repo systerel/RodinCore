@@ -41,8 +41,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class PRProof extends EventBProofElement implements IPRProof {
 
-	private static final String[] NO_STRINGS = new String[0];
-
 	public PRProof(String name, IRodinElement parent) {
 		super(name, parent);
 	}
@@ -205,8 +203,6 @@ public class PRProof extends EventBProofElement implements IPRProof {
 			return false;
 		}
 	};
-	
-	static final IProofSkeleton[] NO_CHILDREN = new IProofSkeleton[0];
 	
 	private static final IProofSkeleton unattemptedProofSkel = new IProofSkeleton()
 	{
