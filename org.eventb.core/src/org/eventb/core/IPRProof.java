@@ -226,4 +226,59 @@ public interface IPRProof extends IInternalElement {
 	 */
 	void setSets(String[] sets, IProgressMonitor monitor)
 			throws RodinDBException;
+
+	/**
+	 * Returns a handle to the proof rule child with the given name.
+	 * <p>
+	 * This is a handle-only method. The proof rule element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param name
+	 *            element name of the child
+	 * 
+	 * @return a handle to the child proof rule with the given element name
+	 * @see #getProofRules()
+	 */
+	IPRProofRule getProofRule(String name);
+
+	/**
+	 * Returns all children proof rule elements.  In a well-formed file, this
+	 * array should contain only one element.
+	 * 
+	 * @return an array of all chidren element of type proof rule
+	 * @throws RodinDBException
+	 * @see #getProofRule(String)
+	 */
+	IPRProofRule[] getProofRules() throws RodinDBException;
+
+	/**
+	 * Returns the comment associated to the root node of this proof. This
+	 * comment is stored in the <code>org.eventb.core.comment</code> attribute
+	 * of this element. If the attribute is not present an empty string is
+	 * returned.
+	 * 
+	 * @return the comment associated to the root node of this proof
+	 * @throws RodinDBException
+	 * @see #setComment(String, IProgressMonitor)
+	 */
+	String getComment() throws RodinDBException;
+
+	/**
+	 * Sets the comment attribute of this proof. If the given comment is
+	 * <code>null</code> or has a length of zero, then the corresponding
+	 * attribute is removed from this element.
+	 * 
+	 * @param comment
+	 *            the comment to set (might be <code>null</code>)
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @throws RodinDBException
+	 * @see #getComment()
+	 */
+	void setComment(String comment, IProgressMonitor monitor)
+			throws RodinDBException;
+
 }
