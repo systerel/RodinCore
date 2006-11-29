@@ -54,7 +54,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	}
 		
 	/**
-	 * Ensures that generated files are cleaned up when there source is deleted.
+	 * Ensures that generated files are cleaned up when their source is deleted.
 	 */
 	public void testOneDelete() throws Exception {
 		IRodinFile ctx = createRodinFile("P/x.ctx");
@@ -229,4 +229,27 @@ public class CBuilderTest extends AbstractBuilderTest {
 		);
 	}
 		
+	/**
+	 * Ensures that deleting a derived files have it rebuilt in the next
+	 * cycle.
+	 * 
+	 * See Bug #1605247.
+	 */
+	public void testDeleteDerivedRebuild() throws Exception {
+		IRodinFile ctx = createRodinFile("P/x.ctx");
+		createData(ctx, "one");
+		ctx.save(null, true);
+		runBuilder(
+				"CSC extract /P/x.ctx\n" + 
+				"CSC run /P/x.csc"
+		);
+		ToolTrace.flush();
+
+		IRodinFile csc = getRodinFile("P/x.csc");
+		csc.delete(true, null);
+		runBuilder(
+				"CSC run /P/x.csc"
+		);
+	}
+	
 }
