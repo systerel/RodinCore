@@ -9,6 +9,7 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IInternalElement;
 
 /**
  * A hint for a proof of a proof obligation. A hint is labeled so that hints can be
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @author Stefan Hallerstede
  */
-public interface IPOHint extends ILabeledElement {
+public interface IPOHint extends IInternalElement {
 	
 	// marker interface
 }
