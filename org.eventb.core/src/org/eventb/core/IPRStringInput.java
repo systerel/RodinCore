@@ -11,6 +11,6 @@ public interface IPRStringInput extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prStrInp"); //$NON-NLS-1$
 
-	String getStrInp() throws RodinDBException;
-	void setStrInp(String value,IProgressMonitor monitor) throws RodinDBException;		
+	String getString() throws RodinDBException;
+	void setString(String value,IProgressMonitor monitor) throws RodinDBException;		
 }

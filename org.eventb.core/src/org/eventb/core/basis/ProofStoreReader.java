@@ -108,29 +108,32 @@ public class ProofStoreReader implements IProofStoreReader {
 			this.store = store;
 		}
 		
-		public Expression getExpression(String name) throws SerializeException {
-			try{
-				return ((IPRExprRef)prReasonerInput.getInternalElement(IPRExprRef.ELEMENT_TYPE, name)).getExpression(store);
-			}
-			catch (RodinDBException e) {
+		public Expression[] getExpressions(String key) throws SerializeException {
+			try {
+				final IPRExprRef prExprRef = (IPRExprRef) prReasonerInput
+						.getInternalElement(IPRExprRef.ELEMENT_TYPE, key);
+				return prExprRef.getExpressions(store);
+			} catch (RodinDBException e) {
 				throw new SerializeException(e);
 			}
 		}
 
-		public Predicate getPredicate(String name) throws SerializeException {
-			try{
-				return ((IPRPredRef)prReasonerInput.getInternalElement(IPRPredRef.ELEMENT_TYPE, name)).getPredicate(store);
-			}
-			catch (RodinDBException e) {
+		public Predicate[] getPredicates(String key) throws SerializeException {
+			try {
+				final IPRPredRef prPredRef = (IPRPredRef) prReasonerInput
+						.getInternalElement(IPRPredRef.ELEMENT_TYPE, key);
+				return prPredRef.getPredicates(store);
+			} catch (RodinDBException e) {
 				throw new SerializeException(e);
 			}
 		}
 
-		public String getString(String name) throws SerializeException {
-			try{
-				return ((IPRStringInput)prReasonerInput.getInternalElement(IPRStringInput.ELEMENT_TYPE, name)).getStrInp();
-			}
-			catch (RodinDBException e) {
+		public String getString(String key) throws SerializeException {
+			try {
+				final IPRStringInput prStringInput = (IPRStringInput) prReasonerInput
+						.getInternalElement(IPRStringInput.ELEMENT_TYPE, key);
+				return prStringInput.getString();
+			} catch (RodinDBException e) {
 				throw new SerializeException(e);
 			}
 		}
@@ -152,15 +155,15 @@ public class ProofStoreReader implements IProofStoreReader {
 			throw new SerializeException(new OperationNotSupportedException());
 		}
 
-		public void putExpression(String name, Expression expression) throws SerializeException {
+		public void putExpressions(String key, Expression... expression) throws SerializeException {
 			throw new SerializeException(new OperationNotSupportedException());
 		}
 
-		public void putPredicate(String name, Predicate predicate) throws SerializeException {
+		public void putPredicates(String key, Predicate... predicate) throws SerializeException {
 			throw new SerializeException(new OperationNotSupportedException());
 		}
 
-		public void putString(String name, String string) throws SerializeException {
+		public void putString(String key, String string) throws SerializeException {
 			throw new SerializeException(new OperationNotSupportedException());
 		}
 		

@@ -16,8 +16,13 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for hypothesis management action in a persisted proof. The
+ * predefined name attribute contains the hypothesis action type (select,
+ * deselect, hide, show). The <code>org.eventb.core.prHyps</code> attribute
+ * contains references to the predicates of the hypotheses manipulated by this
+ * action.
+ * 
  * @author Farhad Mehta
- *
  */
 public interface IPRHypAction extends IInternalElement {
 	

@@ -1,7 +1,8 @@
 package org.eventb.core.basis;
 
+import static org.eventb.core.EventBAttributes.STORE_REF_ATTRIBUTE;
+
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRExprRef;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
@@ -22,19 +23,30 @@ public class PRExprRef extends InternalElement implements IPRExprRef{
 		return ELEMENT_TYPE;
 	}
 
-	public Expression getExpression(IProofStoreReader store) throws RodinDBException {
-		String ref = getAttributeValue(EventBAttributes.STORE_REF_ATTRIBUTE);
-		return store.getExpression(ref);
+	public Expression[] getExpressions(IProofStoreReader store)
+			throws RodinDBException {
+
+		final String value = getAttributeValue(STORE_REF_ATTRIBUTE);
+		final String[] refs = value.split(",");
+		final int length = refs.length;
+		final Expression[] exprs = new Expression[length];
+		for (int i = 0; i < exprs.length; i++) {
+			exprs[i] = store.getExpression(refs[i]);
+		}
+		return exprs;
 	}
 
-	public void setExpression(Expression expr, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
-		String ref = store.putExpression(expr);
-		setAttributeValue(EventBAttributes.STORE_REF_ATTRIBUTE, ref , monitor);
+	public void setExpressions(Expression[] exprs, IProofStoreCollector store,
+			IProgressMonitor monitor) throws RodinDBException {
+		
+		final StringBuilder builder = new StringBuilder();
+		String sep = "";
+		for (Expression expr: exprs) {
+			builder.append(sep);
+			sep = ",";
+			builder.append(store.putExpression(expr));
+		}
+		setAttributeValue(STORE_REF_ATTRIBUTE, builder.toString(), monitor);
 	}
-
-	
-
-
-
 
 }

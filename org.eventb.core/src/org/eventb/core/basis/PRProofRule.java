@@ -68,7 +68,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 				new ProofStoreReader.Bridge((PRReasonerInput)prReasonerInput[0],store);
 			return (getReasoner()).deserializeInput(deserializer);
 		} catch (SerializeException e) {
-			throw (RodinDBException) e.getNextedException();
+			throw (RodinDBException) e.getCause();
 		}
 	}
 
@@ -143,7 +143,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 					new ProofStoreCollector.Bridge(prReasonerInput,store,monitor); 
 				proofRule.generatedUsing().serialize(serializer);
 			} catch (SerializeException e) {
-				throw (RodinDBException)e.getNextedException();
+				throw (RodinDBException)e.getCause();
 			}
 
 		}

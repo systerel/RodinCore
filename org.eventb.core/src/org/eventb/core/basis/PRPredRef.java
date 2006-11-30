@@ -1,7 +1,8 @@
 package org.eventb.core.basis;
 
+import static org.eventb.core.EventBAttributes.STORE_REF_ATTRIBUTE;
+
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRPredRef;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
@@ -22,18 +23,30 @@ public class PRPredRef extends InternalElement implements IPRPredRef{
 		return ELEMENT_TYPE;
 	}
 
-	public Predicate getPredicate(IProofStoreReader store) throws RodinDBException {
-		String ref = getAttributeValue(EventBAttributes.STORE_REF_ATTRIBUTE);
-		return store.getPredicate(ref);
+	public Predicate[] getPredicates(IProofStoreReader store)
+			throws RodinDBException {
+
+		final String value = getAttributeValue(STORE_REF_ATTRIBUTE);
+		final String[] refs = value.split(",");
+		final int length = refs.length;
+		final Predicate[] preds = new Predicate[length];
+		for (int i = 0; i < preds.length; i++) {
+			preds[i] = store.getPredicate(refs[i]);
+		}
+		return preds;
 	}
 
-	public void setPredicate(Predicate pred, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
-		String ref = store.putPredicate(pred);
-		setAttributeValue(EventBAttributes.STORE_REF_ATTRIBUTE, ref , monitor);
+	public void setPredicates(Predicate[] preds, IProofStoreCollector store,
+			IProgressMonitor monitor) throws RodinDBException {
+
+		final StringBuilder builder = new StringBuilder();
+		String sep = "";
+		for (Predicate pred: preds) {
+			builder.append(sep);
+			sep = ",";
+			builder.append(store.putPredicate(pred));
+		}
+		setAttributeValue(STORE_REF_ATTRIBUTE, builder.toString(), monitor);
 	}
-	
-
-
-
 
 }

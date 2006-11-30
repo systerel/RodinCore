@@ -129,15 +129,15 @@ public class ProofStoreCollector implements IProofStoreCollector {
 			this.monitor= monitor;
 		}
 		
-		public Expression getExpression(String name) throws SerializeException {
+		public Expression[] getExpressions(String key) throws SerializeException {
 			throw new SerializeException(new OperationNotSupportedException());
 		}
 
-		public Predicate getPredicate(String name) throws SerializeException {
+		public Predicate[] getPredicates(String key) throws SerializeException {
 			throw new SerializeException(new OperationNotSupportedException());
 		}
 
-		public String getString(String name) throws SerializeException {
+		public String getString(String key) throws SerializeException {
 			throw new SerializeException(new OperationNotSupportedException());
 		}
 
@@ -161,31 +161,31 @@ public class ProofStoreCollector implements IProofStoreCollector {
 			return subInputSerializers;
 		}
 
-		public void putExpression(String name, Expression expr) throws SerializeException {
+		public void putExpressions(String key, Expression... exprs) throws SerializeException {
 			try {
-				IPRExprRef prRef = (IPRExprRef)prReasonerInput.getInternalElement(IPRExprRef.ELEMENT_TYPE, name);
+				IPRExprRef prRef = (IPRExprRef)prReasonerInput.getInternalElement(IPRExprRef.ELEMENT_TYPE, key);
 				prRef.create(null, monitor);
-				prRef.setExpression(expr, store, monitor);
+				prRef.setExpressions(exprs, store, monitor);
 			} catch (RodinDBException e) {
 				throw new SerializeException(e);
 			}
 		}
 
-		public void putPredicate(String name, Predicate pred) throws SerializeException {
+		public void putPredicates(String key, Predicate... preds) throws SerializeException {
 			try {
-				IPRPredRef prRef = (IPRPredRef)prReasonerInput.getInternalElement(IPRPredRef.ELEMENT_TYPE, name);
+				IPRPredRef prRef = (IPRPredRef)prReasonerInput.getInternalElement(IPRPredRef.ELEMENT_TYPE, key);
 				prRef.create(null, monitor);
-				prRef.setPredicate(pred, store, monitor);
+				prRef.setPredicates(preds, store, monitor);
 			} catch (RodinDBException e) {
 				throw new SerializeException(e);
 			}
 		}
 
-		public void putString(String name, String string) throws SerializeException {
+		public void putString(String key, String string) throws SerializeException {
 			try {
-				IPRStringInput prStrInp = (IPRStringInput)prReasonerInput.getInternalElement(IPRStringInput.ELEMENT_TYPE, name);
+				IPRStringInput prStrInp = (IPRStringInput)prReasonerInput.getInternalElement(IPRStringInput.ELEMENT_TYPE, key);
 				prStrInp.create(null, monitor);
-				prStrInp.setStrInp(string, monitor);
+				prStrInp.setString(string, monitor);
 			} catch (RodinDBException e) {
 				throw new SerializeException(e);
 			}

@@ -12,6 +12,6 @@ public interface IPRExprRef extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prExprRef"); //$NON-NLS-1$
 
-	Expression getExpression(IProofStoreReader store) throws RodinDBException;
-	void setExpression(Expression expr, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException;		
+	Expression[] getExpressions(IProofStoreReader store) throws RodinDBException;
+	void setExpressions(Expression[] expr, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException;		
 }

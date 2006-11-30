@@ -19,11 +19,11 @@ public class PRStringInput extends InternalElement implements IPRStringInput{
 		return ELEMENT_TYPE;
 	}
 
-	public String getStrInp() throws RodinDBException {
+	public String getString() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.STRING_INPUT_ATTRIBUTE);
 	}
 
-	public void setStrInp(String value,IProgressMonitor monitor) throws RodinDBException {
+	public void setString(String value,IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.STRING_INPUT_ATTRIBUTE, value , monitor);
 	}
 	
