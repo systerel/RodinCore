@@ -11,6 +11,8 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class SinglePredInput implements IReasonerInput{
 	
+	private static final String SERIALIZATION_KEY = "pred";
+
 	private Predicate predicate;
 	private String error;
 	
@@ -62,11 +64,16 @@ public class SinglePredInput implements IReasonerInput{
 	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
 		assert ! hasError();
 		assert predicate != null;
-		reasonerInputSerializer.putPredicate("singlePredicate",predicate);
+		reasonerInputSerializer.putPredicates(SERIALIZATION_KEY, predicate);
 	}
 	
 	public SinglePredInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-			this(reasonerInputSerializer.getPredicate("singlePredicate"));
+		final Predicate[] preds =
+			reasonerInputSerializer.getPredicates(SERIALIZATION_KEY);
+		if (preds.length != 1) {
+			throw new SerializeException(new IllegalStateException("Expected exactly one predicate"));
+		}
+		predicate = preds[0];
 	}
 
 	public void applyHints(ReplayHints hints) {

@@ -10,6 +10,8 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class MultiplePredInput implements IReasonerInput{
 	
+	private static final String SERIALIZATION_KEY = "preds";
+
 	private Predicate[] predicates;
 	private String error;
 		
@@ -46,20 +48,11 @@ public class MultiplePredInput implements IReasonerInput{
 	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
 		assert ! hasError();
 		assert predicates != null;
-		reasonerInputSerializer.putString("length",String.valueOf(predicates.length));
-		for (int i = 0; i < predicates.length; i++) {
-			// null value taken care of in putExpression.
-			reasonerInputSerializer.putPredicate(String.valueOf(i),predicates[i]);
-		}
+		reasonerInputSerializer.putPredicates(SERIALIZATION_KEY, predicates);
 	}
 
 	public MultiplePredInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		int length = Integer.parseInt(reasonerInputSerializer.getString("length"));
-		predicates = new Predicate[length];
-		for (int i = 0; i < length; i++) {
-			// null value taken care of in getExpression.
-			predicates[i] = reasonerInputSerializer.getPredicate(String.valueOf(i));
-		}
+		predicates = reasonerInputSerializer.getPredicates(SERIALIZATION_KEY);
 		error = null;
 	}
 

@@ -11,6 +11,7 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class MultipleExprInput implements IReasonerInput{
 	
+	private static final String SERIALIZATION_KEY = "exprs";
 	private Expression[] expressions;
 	private String error;
 	
@@ -121,20 +122,11 @@ public class MultipleExprInput implements IReasonerInput{
 	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
 		assert ! hasError();
 		assert expressions != null;
-		reasonerInputSerializer.putString("length",String.valueOf(expressions.length));
-		for (int i = 0; i < expressions.length; i++) {
-			// null value taken care of in putExpression.
-			reasonerInputSerializer.putExpression(String.valueOf(i),expressions[i]);
-		}
+		reasonerInputSerializer.putExpressions(SERIALIZATION_KEY, expressions);
 	}
 
 	public MultipleExprInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		int length = Integer.parseInt(reasonerInputSerializer.getString("length"));
-		expressions = new Expression[length];
-		for (int i = 0; i < length; i++) {
-			// null value taken care of in getExpression.
-			expressions[i] = reasonerInputSerializer.getExpression(String.valueOf(i));
-		}
+		expressions = reasonerInputSerializer.getExpressions(SERIALIZATION_KEY);
 		error = null;
 	}
 
