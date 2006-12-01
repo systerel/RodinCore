@@ -20,7 +20,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 public class ProofStoreReader implements IProofStoreReader {
@@ -136,23 +135,6 @@ public class ProofStoreReader implements IProofStoreReader {
 			} catch (RodinDBException e) {
 				throw new SerializeException(e);
 			}
-		}
-
-		public IReasonerInputSerializer[] getSubInputSerializers() throws SerializeException {
-			try {
-				IRodinElement[] rodinElements = prReasonerInput.getChildrenOfType(IPRReasonerInput.ELEMENT_TYPE);
-				Bridge[] subInputSerializers = new Bridge[rodinElements.length];
-				for (int i = 0; i < subInputSerializers.length; i++) {
-					subInputSerializers[i] =  new Bridge((IPRReasonerInput)rodinElements[i],store);
-				}
-				return subInputSerializers;
-			} catch (RodinDBException e) {
-				throw new SerializeException(e);
-			}
-		}
-
-		public IReasonerInputSerializer[] makeSubInputSerializers(int length) throws SerializeException {
-			throw new SerializeException(new OperationNotSupportedException());
 		}
 
 		public void putExpressions(String key, Expression... expression) throws SerializeException {

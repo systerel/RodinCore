@@ -43,9 +43,8 @@ public class CombiInput implements IReasonerInput{
 	}
 
 	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		IReasonerInputSerializer[] children = reasonerInputSerializer.makeSubInputSerializers(reasonerInputs.length);
 		for (int i = 0; i < reasonerInputs.length; i++) {
-			reasonerInputs[i].serialize(children[i]);
+			reasonerInputs[i].serialize(reasonerInputSerializer);
 		}
 	}
 

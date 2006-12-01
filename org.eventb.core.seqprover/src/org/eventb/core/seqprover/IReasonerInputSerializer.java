@@ -92,10 +92,5 @@ public interface IReasonerInputSerializer {
 	 * @throws SerializeException
 	 */
 	String getString(String key) throws SerializeException;
-	
-
-	IReasonerInputSerializer[] getSubInputSerializers() throws SerializeException;
-
-	IReasonerInputSerializer[] makeSubInputSerializers(int length) throws SerializeException;
 
 }

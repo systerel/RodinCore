@@ -29,10 +29,9 @@ public class MngHyp implements IReasoner{
 	}
 	
 	public IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		IReasonerInputSerializer[] reasonerInputSerializers = reasonerInputSerializer.getSubInputSerializers();		
 		return new CombiInput(
-				new SingleStringInput(reasonerInputSerializers[0]),
-				new MultiplePredInput(reasonerInputSerializers[1])
+				new SingleStringInput(reasonerInputSerializer),
+				new MultiplePredInput(reasonerInputSerializer)
 		);
 	}
 	

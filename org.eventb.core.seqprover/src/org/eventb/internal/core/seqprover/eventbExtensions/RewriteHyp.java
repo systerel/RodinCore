@@ -31,10 +31,9 @@ public class RewriteHyp implements IReasoner{
 	}
 	
 	public IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		IReasonerInputSerializer[] reasonerInputSerializers = reasonerInputSerializer.getSubInputSerializers();		
 		return new CombiInput(
-				new SinglePredInput(reasonerInputSerializers[0]),
-				new SingleStringInput(reasonerInputSerializers[1])
+				new SinglePredInput(reasonerInputSerializer),
+				new SingleStringInput(reasonerInputSerializer)
 		);
 	}
 	

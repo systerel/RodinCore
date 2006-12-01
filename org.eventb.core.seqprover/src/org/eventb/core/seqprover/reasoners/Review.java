@@ -30,11 +30,10 @@ public class Review implements IReasoner{
 	}
 	
 	public IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		IReasonerInputSerializer[] reasonerInputSerializers = reasonerInputSerializer.getSubInputSerializers();		
 		return new CombiInput(
-				new MultiplePredInput(reasonerInputSerializers[0]),
-				new SinglePredInput(reasonerInputSerializers[1]),
-				new SingleStringInput(reasonerInputSerializers[2])
+				new MultiplePredInput(reasonerInputSerializer),
+				new SinglePredInput(reasonerInputSerializer),
+				new SingleStringInput(reasonerInputSerializer)
 		);
 	}
 	

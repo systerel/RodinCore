@@ -141,26 +141,6 @@ public class ProofStoreCollector implements IProofStoreCollector {
 			throw new SerializeException(new OperationNotSupportedException());
 		}
 
-		public IReasonerInputSerializer[] getSubInputSerializers() throws SerializeException {
-			throw new SerializeException(new OperationNotSupportedException());
-		}
-
-		public IReasonerInputSerializer[] makeSubInputSerializers(int length) throws SerializeException {
-			Bridge[] subInputSerializers = 
-				new Bridge[length];
-			try {
-				for (int i = 0; i < length; i++) {
-					IPRReasonerInput prChild = (IPRReasonerInput) 
-					prReasonerInput.getInternalElement(IPRReasonerInput.ELEMENT_TYPE,Integer.toString(i));
-					prChild.create(null, monitor);
-					subInputSerializers[i]=new Bridge(prChild,store,monitor);
-				}
-			} catch (RodinDBException e) {
-				throw new SerializeException(e);
-			}
-			return subInputSerializers;
-		}
-
 		public void putExpressions(String key, Expression... exprs) throws SerializeException {
 			try {
 				IPRExprRef prRef = (IPRExprRef)prReasonerInput.getInternalElement(IPRExprRef.ELEMENT_TYPE, key);

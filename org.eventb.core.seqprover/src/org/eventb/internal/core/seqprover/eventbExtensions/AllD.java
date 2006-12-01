@@ -30,13 +30,10 @@ public class AllD implements IReasoner{
 	}
 	
 	public IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		IReasonerInputSerializer[] reasonerInputSerializers = reasonerInputSerializer.getSubInputSerializers();		
-		final MultipleExprInput multipleExprInput = new MultipleExprInput(reasonerInputSerializers[0]);
-		final SinglePredInput singlePredInput = new SinglePredInput(reasonerInputSerializers[1]);
-		final CombiInput combiInput = new CombiInput(
-				multipleExprInput,
+		final SinglePredInput singlePredInput = new SinglePredInput(reasonerInputSerializer);
+		return new CombiInput(
+				new MultipleExprInput(reasonerInputSerializer),
 				singlePredInput);
-		return combiInput;
 	}
 	
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm){
