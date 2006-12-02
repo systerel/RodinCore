@@ -418,7 +418,7 @@ public abstract class Formula<T extends Formula<T>> {
 	public final static int LIMP = FIRST_BINARY_PREDICATE + 0;
 
 	/**
-	 * <code>LIMP</code> represents \u21d4
+	 * <code>LEQV</code> represents \u21d4
 	 * 
 	 * @see BinaryPredicate
 	 */
