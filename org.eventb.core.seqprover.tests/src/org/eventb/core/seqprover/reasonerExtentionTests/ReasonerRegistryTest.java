@@ -9,6 +9,7 @@ import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tests.TestLib;
 
 /**

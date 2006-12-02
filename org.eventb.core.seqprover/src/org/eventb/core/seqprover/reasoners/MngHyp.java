@@ -8,14 +8,14 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerInputSerializer;
+import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.HypothesesManagement.ActionType;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
@@ -28,10 +28,10 @@ public class MngHyp implements IReasoner{
 		return REASONER_ID;
 	}
 	
-	public IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+	public IReasonerInput deserializeInput(IReasonerInputReader reasonerInputReader) throws SerializeException {
 		return new CombiInput(
-				new SingleStringInput(reasonerInputSerializer),
-				new MultiplePredInput(reasonerInputSerializer)
+				new SingleStringInput(reasonerInputReader),
+				new MultiplePredInput(reasonerInputReader)
 		);
 	}
 	

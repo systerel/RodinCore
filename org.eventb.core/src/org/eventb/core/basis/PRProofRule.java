@@ -21,12 +21,13 @@ import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerInputSerializer;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -64,7 +65,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 
 		try {
 			// TODO : check for getReasoner() == null
-			IReasonerInputSerializer deserializer = 
+			IReasonerInputReader deserializer = 
 				new ProofStoreReader.Bridge((PRReasonerInput)prReasonerInput[0],store);
 			return (getReasoner()).deserializeInput(deserializer);
 		} catch (SerializeException e) {
@@ -139,7 +140,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 					IPRReasonerInput.ELEMENT_TYPE, "");
 			prReasonerInput.create(null, null);
 			try {
-				IReasonerInputSerializer serializer = 
+				IReasonerInputWriter serializer = 
 					new ProofStoreCollector.Bridge(prReasonerInput,store,monitor); 
 				proofRule.generatedUsing().serialize(serializer);
 			} catch (SerializeException e) {

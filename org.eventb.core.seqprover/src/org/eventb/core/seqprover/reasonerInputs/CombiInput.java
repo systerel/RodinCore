@@ -4,8 +4,8 @@
 package org.eventb.core.seqprover.reasonerInputs;
 
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerInputSerializer;
-import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class CombiInput implements IReasonerInput{
@@ -42,9 +42,9 @@ public class CombiInput implements IReasonerInput{
 		return str.toString();
 	}
 
-	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+	public void serialize(IReasonerInputWriter writer) throws SerializeException {
 		for (int i = 0; i < reasonerInputs.length; i++) {
-			reasonerInputs[i].serialize(reasonerInputSerializer);
+			reasonerInputs[i].serialize(writer);
 		}
 	}
 

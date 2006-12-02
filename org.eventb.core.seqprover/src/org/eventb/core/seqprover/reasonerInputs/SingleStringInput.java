@@ -1,8 +1,9 @@
 package org.eventb.core.seqprover.reasonerInputs;
 
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerInputSerializer;
-import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class SingleStringInput implements IReasonerInput{
@@ -34,14 +35,16 @@ public class SingleStringInput implements IReasonerInput{
 		return string;
 	}
 
-	public SingleStringInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		this(reasonerInputSerializer.getString("singleString"));
+	public SingleStringInput(IReasonerInputReader reader)
+			throws SerializeException {
+
+		this(reader.getString("singleString"));
 	}
 	
-	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+	public void serialize(IReasonerInputWriter writer) throws SerializeException {
 		assert ! hasError();
 		assert string != null;
-		reasonerInputSerializer.putString("singleString",string);
+		writer.putString("singleString",string);
 	}
 
 	public void applyHints(ReplayHints hints) {	

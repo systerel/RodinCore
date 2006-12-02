@@ -4,8 +4,9 @@ import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerInputSerializer;
-import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class MultiplePredInput implements IReasonerInput{
@@ -45,14 +46,14 @@ public class MultiplePredInput implements IReasonerInput{
 		return predicates;
 	}
 	
-	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+	public void serialize(IReasonerInputWriter writer) throws SerializeException {
 		assert ! hasError();
 		assert predicates != null;
-		reasonerInputSerializer.putPredicates(SERIALIZATION_KEY, predicates);
+		writer.putPredicates(SERIALIZATION_KEY, predicates);
 	}
 
-	public MultiplePredInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		predicates = reasonerInputSerializer.getPredicates(SERIALIZATION_KEY);
+	public MultiplePredInput(IReasonerInputReader reader) throws SerializeException {
+		predicates = reader.getPredicates(SERIALIZATION_KEY);
 		error = null;
 	}
 

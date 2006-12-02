@@ -9,13 +9,13 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerInputSerializer;
+import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
@@ -29,10 +29,10 @@ public class AllD implements IReasoner{
 		return REASONER_ID;
 	}
 	
-	public IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		final SinglePredInput singlePredInput = new SinglePredInput(reasonerInputSerializer);
+	public IReasonerInput deserializeInput(IReasonerInputReader reasonerInputReader) throws SerializeException {
+		final SinglePredInput singlePredInput = new SinglePredInput(reasonerInputReader);
 		return new CombiInput(
-				new MultipleExprInput(reasonerInputSerializer),
+				new MultipleExprInput(reasonerInputReader),
 				singlePredInput);
 	}
 	

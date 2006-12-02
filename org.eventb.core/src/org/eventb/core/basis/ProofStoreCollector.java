@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.naming.OperationNotSupportedException;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRExprRef;
 import org.eventb.core.IPRIdentifier;
@@ -21,7 +19,8 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IReasonerInputSerializer;
+import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.internal.core.pm.TypeEnvironmentSorter;
 import org.eventb.internal.core.pm.TypeEnvironmentSorter.Entry;
 import org.rodinp.core.RodinDBException;
@@ -116,7 +115,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		
 	}
 
-	public static class Bridge implements IReasonerInputSerializer{
+	public static class Bridge implements IReasonerInputWriter {
 
 		private final IPRReasonerInput prReasonerInput;
 		private final IProofStoreCollector store;
@@ -129,18 +128,6 @@ public class ProofStoreCollector implements IProofStoreCollector {
 			this.monitor= monitor;
 		}
 		
-		public Expression[] getExpressions(String key) throws SerializeException {
-			throw new SerializeException(new OperationNotSupportedException());
-		}
-
-		public Predicate[] getPredicates(String key) throws SerializeException {
-			throw new SerializeException(new OperationNotSupportedException());
-		}
-
-		public String getString(String key) throws SerializeException {
-			throw new SerializeException(new OperationNotSupportedException());
-		}
-
 		public void putExpressions(String key, Expression... exprs) throws SerializeException {
 			try {
 				IPRExprRef prRef = (IPRExprRef)prReasonerInput.getInternalElement(IPRExprRef.ELEMENT_TYPE, key);

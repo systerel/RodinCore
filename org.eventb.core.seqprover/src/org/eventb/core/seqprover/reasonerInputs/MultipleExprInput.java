@@ -4,8 +4,9 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerInputSerializer;
-import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
@@ -119,14 +120,14 @@ public class MultipleExprInput implements IReasonerInput{
 		error = null;
 	}
 
-	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+	public void serialize(IReasonerInputWriter writer) throws SerializeException {
 		assert ! hasError();
 		assert expressions != null;
-		reasonerInputSerializer.putExpressions(SERIALIZATION_KEY, expressions);
+		writer.putExpressions(SERIALIZATION_KEY, expressions);
 	}
 
-	public MultipleExprInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		expressions = reasonerInputSerializer.getExpressions(SERIALIZATION_KEY);
+	public MultipleExprInput(IReasonerInputReader reader) throws SerializeException {
+		expressions = reader.getExpressions(SERIALIZATION_KEY);
 		error = null;
 	}
 

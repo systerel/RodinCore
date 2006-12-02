@@ -4,8 +4,9 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerInputSerializer;
-import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
@@ -61,17 +62,18 @@ public class SinglePredInput implements IReasonerInput{
 		return predicate;
 	}
 
-	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+	public void serialize(IReasonerInputWriter writer) throws SerializeException {
 		assert ! hasError();
 		assert predicate != null;
-		reasonerInputSerializer.putPredicates(SERIALIZATION_KEY, predicate);
+		writer.putPredicates(SERIALIZATION_KEY, predicate);
 	}
 	
-	public SinglePredInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		final Predicate[] preds =
-			reasonerInputSerializer.getPredicates(SERIALIZATION_KEY);
+	public SinglePredInput(IReasonerInputReader reader) throws SerializeException {
+		final Predicate[] preds = reader.getPredicates(SERIALIZATION_KEY);
 		if (preds.length != 1) {
-			throw new SerializeException(new IllegalStateException("Expected exactly one predicate"));
+			throw new SerializeException(
+					new IllegalStateException("Expected exactly one predicate")
+			);
 		}
 		predicate = preds[0];
 	}

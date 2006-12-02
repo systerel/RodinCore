@@ -9,10 +9,12 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.core.seqprover.tests.SequentProverTests;
 
-public class TrueGoal extends EmptyInputReasoner{
+public class TrueGoal extends EmptyInputReasoner {
 	
 	public static String REASONER_ID = SequentProverTests.PLUGIN_ID + ".trueGoal";
 	

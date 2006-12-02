@@ -1,13 +1,13 @@
 package org.eventb.core.seqprover.reasonerInputs;
 
 import org.eventb.core.seqprover.IReasoner;
-import org.eventb.core.seqprover.IReasonerInputSerializer;
-import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.SerializeException;
 
 public abstract class SingleStringInputReasoner implements IReasoner {
 	
-	public SingleStringInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException{
-		return new SingleStringInput(reasonerInputSerializer);
+	public SingleStringInput deserializeInput(IReasonerInputReader reasonerInputReader) throws SerializeException{
+		return new SingleStringInput(reasonerInputReader);
 	}
 
 }

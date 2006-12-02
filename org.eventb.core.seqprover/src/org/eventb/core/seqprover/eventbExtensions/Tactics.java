@@ -28,6 +28,7 @@ import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
 import org.eventb.core.seqprover.reasoners.Hyp;
 import org.eventb.core.seqprover.reasoners.MngHyp;
 import org.eventb.core.seqprover.reasoners.Review;
+import org.eventb.core.seqprover.reasoners.Review.ReviewInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
@@ -60,13 +61,10 @@ public class Tactics {
 		return new ITactic(){
 			
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
-				return (BasicTactics.reasonerTac(
+				final ITactic tactic = BasicTactics.reasonerTac(
 						new Review(),
-						new CombiInput(
-								new MultiplePredInput(Hypothesis.Predicates(pt.getSequent().selectedHypotheses())),
-								new SinglePredInput(pt.getSequent().goal()),
-								new SingleStringInput(Integer.toString(reviewerConfidence)))))
-								.apply(pt, pm);
+						new ReviewInput(pt.getSequent(), reviewerConfidence));
+				return tactic.apply(pt, pm);
 			}		
 		};
 	}

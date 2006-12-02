@@ -3,8 +3,6 @@ package org.eventb.core.basis;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.naming.OperationNotSupportedException;
-
 import org.eventb.core.IPRExprRef;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRPredRef;
@@ -19,7 +17,8 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IReasonerInputSerializer;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.SerializeException;
 import org.rodinp.core.RodinDBException;
 
 public class ProofStoreReader implements IProofStoreReader {
@@ -97,7 +96,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		return expr;
 	}
 
-	public static class Bridge implements IReasonerInputSerializer{
+	public static class Bridge implements IReasonerInputReader{
 
 		private final IPRReasonerInput prReasonerInput;
 		private final IProofStoreReader store;
@@ -137,18 +136,6 @@ public class ProofStoreReader implements IProofStoreReader {
 			}
 		}
 
-		public void putExpressions(String key, Expression... expression) throws SerializeException {
-			throw new SerializeException(new OperationNotSupportedException());
-		}
-
-		public void putPredicates(String key, Predicate... predicate) throws SerializeException {
-			throw new SerializeException(new OperationNotSupportedException());
-		}
-
-		public void putString(String key, String string) throws SerializeException {
-			throw new SerializeException(new OperationNotSupportedException());
-		}
-		
 	}
 
 }
