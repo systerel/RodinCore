@@ -22,13 +22,11 @@ import org.eventb.core.seqprover.HypothesesManagement.ActionType;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
-import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
 import org.eventb.core.seqprover.reasoners.Hyp;
 import org.eventb.core.seqprover.reasoners.MngHyp;
 import org.eventb.core.seqprover.reasoners.Review;
-import org.eventb.core.seqprover.reasoners.Review.ReviewInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
@@ -63,7 +61,7 @@ public class Tactics {
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				final ITactic tactic = BasicTactics.reasonerTac(
 						new Review(),
-						new ReviewInput(pt.getSequent(), reviewerConfidence));
+						new Review.Input(pt.getSequent(), reviewerConfidence));
 				return tactic.apply(pt, pm);
 			}		
 		};
@@ -226,20 +224,21 @@ public class Tactics {
 	
 	// TODO : change order of input in one of the two places
 	public static ITactic allD(final Hypothesis univHyp, final String... instantiations){
+		final Predicate pred = univHyp.getPredicate();
 		return new ITactic(){
 
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
-				BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(univHyp.getPredicate());
+				BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(pred);
 				return (
 						BasicTactics.reasonerTac(
 								new AllD(),
-								new CombiInput(
+								new AllD.Input(
 										new MultipleExprInput(
 												instantiations,
 												boundIdentDecls,
 												typeEnv),
-										new SinglePredInput(univHyp))
+										pred)
 						)).apply(pt, pm);
 			}
 			
@@ -346,16 +345,14 @@ public class Tactics {
 		return BasicTactics.prune();
 	}
 	
-	public static ITactic mngHyp(ActionType type,Set<Hypothesis> hypotheses){
+	public static ITactic mngHyp(ActionType type, Set<Hypothesis> hypotheses) {
 		return BasicTactics.reasonerTac(
 				new MngHyp(),
-				new CombiInput(
-						new SingleStringInput(type.toString()),
-						new MultiplePredInput(Hypothesis.Predicates(hypotheses))));
+				new MngHyp.Input(type, hypotheses));
 	}
 
-	public static ITactic mngHyp(ActionType type,Hypothesis hypothesis){
-		return mngHyp(type,Collections.singleton(hypothesis));
+	public static ITactic mngHyp(ActionType type, Hypothesis hypothesis){
+		return mngHyp(type, Collections.singleton(hypothesis));
 	}
 	
 	public static ITactic postProcessBeginner() {
