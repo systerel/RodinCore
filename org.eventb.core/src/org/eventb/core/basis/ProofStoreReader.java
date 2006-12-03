@@ -2,6 +2,7 @@ package org.eventb.core.basis;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.eventb.core.IPRExprRef;
 import org.eventb.core.IPRIdentifier;
@@ -17,8 +18,10 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.SerializeException;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.rodinp.core.RodinDBException;
 
 public class ProofStoreReader implements IProofStoreReader {
@@ -96,16 +99,31 @@ public class ProofStoreReader implements IProofStoreReader {
 		return expr;
 	}
 
-	public static class Bridge implements IReasonerInputReader{
+	public static class Bridge implements IReasonerInputReader {
 
 		private final IPRReasonerInput prReasonerInput;
 		private final IProofStoreReader store;
+		private final int confidence;
+		private final String displayName;
+		private final Predicate goal;
+		private final Set<Hypothesis> neededHyps;
+		private final IAntecedent[] antecedents;
 		
-		public Bridge(IPRReasonerInput prReasonerInput,IProofStoreReader store){
+		public Bridge(final IPRReasonerInput prReasonerInput,
+				final IProofStoreReader store, final int confidence,
+				final String displayName, final Predicate goal,
+				final Set<Hypothesis> neededHyps,
+				final IAntecedent[] antecedents) {
+
 			this.prReasonerInput = prReasonerInput;
 			this.store = store;
+			this.confidence = confidence;
+			this.displayName = displayName;
+			this.goal = goal;
+			this.neededHyps = neededHyps;
+			this.antecedents = antecedents;
 		}
-		
+
 		public Expression[] getExpressions(String key) throws SerializeException {
 			try {
 				final IPRExprRef prExprRef = (IPRExprRef) prReasonerInput
@@ -134,6 +152,26 @@ public class ProofStoreReader implements IProofStoreReader {
 			} catch (RodinDBException e) {
 				throw new SerializeException(e);
 			}
+		}
+
+		public IAntecedent[] getAntecedents() {
+			return antecedents;
+		}
+
+		public int getConfidence() {
+			return confidence;
+		}
+
+		public String getDisplayName() {
+			return displayName;
+		}
+
+		public Predicate getGoal() {
+			return goal;
+		}
+
+		public Set<Hypothesis> getNeededHyps() {
+			return neededHyps;
 		}
 
 	}
