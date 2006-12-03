@@ -21,7 +21,6 @@ import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.core.pm.TypeEnvironmentSorter;
 import org.rodinp.core.RodinDBException;
 
@@ -50,11 +49,9 @@ public class TestUserSupports extends BasicTest {
 	public void testUserSupport1() throws RodinDBException, CoreException {
 		IMachineFile machine = createMachine("m0");
 		addVariables(machine, "v0");
-		addInvariants(machine, makeSList("inv0"),
-				makeSList(Text2EventBMathTranslator.translate("v0 : NAT")));
+		addInvariants(machine, makeSList("inv0"), makeSList("v0 ∈ ℕ"));
 		addEvent(machine, "INITIALISATION", makeSList(), makeSList(),
-				makeSList(), makeSList("act1"),
-				makeSList(Text2EventBMathTranslator.translate("v0 := 0")));
+				makeSList(), makeSList("act1"), makeSList("v0 ≔ 0"));
 		machine.save(null, true);
 
 		runBuilder();
@@ -93,8 +90,7 @@ public class TestUserSupports extends BasicTest {
 
 		// Test apply ah, there will be 3 children, the first one close and the
 		// last 2 is open
-		ITactic ah = Tactics
-				.lemma(Text2EventBMathTranslator.translate("1 = 1"));
+		ITactic ah = Tactics.lemma("1 = 1");
 		userSupport.applyTactic(ah, new NullProgressMonitor());
 
 		// Node now has a rule applied to it
@@ -134,7 +130,7 @@ public class TestUserSupports extends BasicTest {
 		final int forces = B4freeCore.ML_FORCE_0 | B4freeCore.ML_FORCE_1
 				| B4freeCore.ML_FORCE_2 | B4freeCore.ML_FORCE_3;
 		ITactic ml = B4freeCore.externalML(forces);
-		
+
 		userSupport.applyTactic(ml, new NullProgressMonitor());
 
 		// ml should be successful
@@ -149,20 +145,18 @@ public class TestUserSupports extends BasicTest {
 
 		// Proof is done
 		assertEquals("Proof is done ", true, currentPO.isClosed());
-		
+
 		// Dispose the user Support
 		manager.disposeUserSupport(userSupport);
 	}
 
-	
-	public void testUserSupportListener() throws RodinDBException, CoreException {
+	public void testUserSupportListener() throws RodinDBException,
+			CoreException {
 		IMachineFile machine = createMachine("m0");
 		addVariables(machine, "v0");
-		addInvariants(machine, makeSList("inv0"),
-				makeSList(Text2EventBMathTranslator.translate("v0 : NAT")));
+		addInvariants(machine, makeSList("inv0"), makeSList("v0 ∈ ℕ"));
 		addEvent(machine, "INITIALISATION", makeSList(), makeSList(),
-				makeSList(), makeSList("act1"),
-				makeSList(Text2EventBMathTranslator.translate("v0 := 0")));
+				makeSList(), makeSList("act1"), makeSList("v0 ≔ 0"));
 		machine.save(null, true);
 
 		runBuilder();
@@ -177,20 +171,25 @@ public class TestUserSupports extends BasicTest {
 
 		// Test apply ah, there will be 3 children, the first one close and the
 		// last 2 is open
-		ITactic ah = Tactics
-				.lemma(Text2EventBMathTranslator.translate("1 = 1"));
+		ITactic ah = Tactics.lemma("1 = 1");
 		userSupport.applyTactic(ah, new NullProgressMonitor());
-		
+
 	}
-	
+
 	IProofState actualState;
+
 	IUserSupport actualUserSupport;
+
 	IProofTreeDelta actualProofTreeDelta;
+
 	List<Object> actualInformation;
+
 	IProofTreeNode actualProofTreeNode;
+
 	boolean actualCache;
+
 	boolean actualSearch;
-	
+
 	private class UserSupportListener implements IProofStateChangedListener {
 
 		public void proofStateChanged(IProofStateDelta delta) {
@@ -202,6 +201,6 @@ public class TestUserSupports extends BasicTest {
 			actualCache = delta.getNewCache();
 			actualSearch = delta.getNewSearch();
 		}
-		
+
 	}
 }

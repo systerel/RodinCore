@@ -13,7 +13,6 @@ import org.eventb.core.IPSFile;
 import org.eventb.core.pm.IUSManagerListener;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
-import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -44,10 +43,10 @@ public class TestUserSupportManagers extends BasicTest {
 		IMachineFile machine1 = createMachine("m0");
 		addVariables(machine1, "v0");
 		addInvariants(machine1, makeSList("inv0"),
-				makeSList(Text2EventBMathTranslator.translate("v0 : NAT")));
+				makeSList("v0 ∈ ℕ"));
 		addEvent(machine1, "INITIALISATION", makeSList(), makeSList(),
 				makeSList(), makeSList("act1"),
-				makeSList(Text2EventBMathTranslator.translate("v0 := 0")));
+				makeSList("v0 ≔ 0"));
 		machine1.save(null, true);
 
 		runBuilder();
@@ -65,10 +64,10 @@ public class TestUserSupportManagers extends BasicTest {
 		IMachineFile machine2 = createMachine("m0");
 		addVariables(machine2, "v0");
 		addInvariants(machine2, makeSList("inv0"),
-				makeSList(Text2EventBMathTranslator.translate("v0 : NAT")));
+				makeSList("v0 ∈ ℕ"));
 		addEvent(machine2, "INITIALISATION", makeSList(), makeSList(),
 				makeSList(), makeSList("act1"),
-				makeSList(Text2EventBMathTranslator.translate("v0 := 0")));
+				makeSList("v0 ≔ 0"));
 		machine2.save(null, true);
 
 		runBuilder();
@@ -106,10 +105,10 @@ public class TestUserSupportManagers extends BasicTest {
 		IMachineFile machine = createMachine("m0");
 		addVariables(machine, "v0");
 		addInvariants(machine, makeSList("inv0"),
-				makeSList(Text2EventBMathTranslator.translate("v0 : NAT")));
+				makeSList("v0 ∈ ℕ"));
 		addEvent(machine, "INITIALISATION", makeSList(), makeSList(),
 				makeSList(), makeSList("act1"),
-				makeSList(Text2EventBMathTranslator.translate("v0 := 0")));
+				makeSList("v0 ≔ 0"));
 		machine.save(null, true);
 
 		runBuilder();
