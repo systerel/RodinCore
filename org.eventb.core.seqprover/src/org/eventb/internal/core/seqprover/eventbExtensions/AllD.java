@@ -1,5 +1,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.Set;
+
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
@@ -10,6 +12,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
@@ -17,34 +20,74 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.core.seqprover.reasonerInputs.CombiInput;
+import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
-import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 
-public class AllD implements IReasoner{
+public class AllD implements IReasoner {
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".allD";
+	
+	public static class Input implements IReasonerInput {
+		MultipleExprInput exprsInput;
+		Predicate pred;
+
+		public Input(MultipleExprInput exprsInput, Predicate pred) {
+			this.exprsInput = exprsInput;
+			this.pred = pred;
+		}
+
+		public void applyHints(ReplayHints hints) {
+			exprsInput.applyHints(hints);
+			pred = hints.applyHints(pred);
+		}
+
+		public String getError() {
+			return exprsInput.getError();
+		}
+
+		public boolean hasError() {
+			return exprsInput.hasError();
+		}
+
+	}
 	
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
-	
-	public IReasonerInput deserializeInput(IReasonerInputReader reasonerInputReader) throws SerializeException {
-		final SinglePredInput singlePredInput = new SinglePredInput(reasonerInputReader);
-		return new CombiInput(
-				new MultipleExprInput(reasonerInputReader),
-				singlePredInput);
+
+	public void serializeInput(IReasonerInput rInput, IReasonerInputWriter writer)
+			throws SerializeException {
+		Input input = (Input) rInput;
+		input.exprsInput.serialize(writer);
+		// The predicate is accessible from the associated rule
+	}
+
+	public IReasonerInput deserializeInput(IReasonerInputReader reader)
+			throws SerializeException {
+
+		Set<Hypothesis> neededHyps = reader.getNeededHyps();
+		if (neededHyps.size() != 1) {
+			throw new SerializeException(new IllegalStateException(
+					"Expected exactly one needed hypothesis!"));
+		}
+		Predicate pred = null;
+		for (Hypothesis hyp: neededHyps) {
+			pred = hyp.getPredicate();
+		}
+		return new Input(
+				new MultipleExprInput(reader),
+				pred);
 	}
 	
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm){
 	
 		// Organize Input
-		CombiInput input = (CombiInput) reasonerInput;
+		Input input = (Input) reasonerInput;
 
 		if (input.hasError())
 			return ProverFactory.reasonerFailure(this,reasonerInput,input.getError());
 		
-		Predicate univHypPred = ((SinglePredInput)input.getReasonerInputs()[1]).getPredicate();
+		Predicate univHypPred = input.pred;
 		Hypothesis univHyp = new Hypothesis(univHypPred);
 		
 		if (! seq.hypotheses().contains(univHyp))
@@ -57,7 +100,7 @@ public class AllD implements IReasoner{
 		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(univHypPred);
 		
 		
-		MultipleExprInput multipleExprInput = (MultipleExprInput) input.getReasonerInputs()[0];
+		MultipleExprInput multipleExprInput = input.exprsInput;
 
 		// compute instantiations from the input: 
 		// it can be that the number of bound variables have increased 
