@@ -9,6 +9,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
@@ -17,12 +18,17 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 
-public class ExI implements IReasoner{
+public class ExI implements IReasoner {
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".exI";
 	
 	public String getReasonerID() {
 		return REASONER_ID;
+	}
+	
+	public void serializeInput(IReasonerInput rInput, IReasonerInputWriter writer) throws SerializeException {
+		MultipleExprInput input = (MultipleExprInput) rInput;
+		input.serialize(writer);
 	}
 	
 	public IReasonerInput deserializeInput(IReasonerInputReader reasonerInputReader) throws SerializeException {

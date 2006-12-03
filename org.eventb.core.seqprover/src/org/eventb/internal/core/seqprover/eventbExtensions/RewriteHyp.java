@@ -10,6 +10,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
@@ -22,18 +23,26 @@ import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Rewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RewriterRegistry;
 
-public class RewriteHyp implements IReasoner{
+public class RewriteHyp implements IReasoner {
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".rewriteHyp";
 	
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
-	
-	public IReasonerInput deserializeInput(IReasonerInputReader reasonerInputReader) throws SerializeException {
+
+	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer) throws SerializeException {
+		IReasonerInput[] inputs = ((CombiInput) input).getReasonerInputs();
+		Predicate pred = ((SinglePredInput) inputs[0]).getPredicate();
+		writer.putPredicates("pred", pred);
+		String rewriterId = ((SingleStringInput) inputs[1]).getString();
+		writer.putString("id", rewriterId);
+	}
+
+	public IReasonerInput deserializeInput(IReasonerInputReader reader) throws SerializeException {
 		return new CombiInput(
-				new SinglePredInput(reasonerInputReader),
-				new SingleStringInput(reasonerInputReader)
+				new SinglePredInput(reader.getPredicates("pred")[0]),
+				new SingleStringInput(reader.getString("id"))
 		);
 	}
 	
