@@ -1,7 +1,9 @@
 package org.eventb.core.seqprover.reasoners;
 
+import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -9,6 +11,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
@@ -16,64 +19,80 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.HypothesesManagement.ActionType;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.reasonerInputs.CombiInput;
-import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
-import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
+import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
-public class MngHyp implements IReasoner{
-	
+public class MngHyp implements IReasoner {
+
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".mngHyp";
-	
+
+	public static class Input implements IReasonerInput {
+
+		Action action;
+
+		public Input(ActionType type, Set<Hypothesis> hyps) {
+			this.action = new Action(type, hyps);
+		}
+
+		public Input(Action action) {
+			this.action = action;
+		}
+
+		// TODO share this with Review reasoner input
+		public void applyHints(ReplayHints hints) {
+
+			final ActionType type = action.getType();
+			final Set<Hypothesis> hyps = action.getHyps();
+			Predicate[] newPreds = new Predicate[hyps.size()];
+			int i = 0;
+			for (Hypothesis hyp : hyps) {
+				newPreds[i++] = hints.applyHints(hyp.getPredicate());
+			}
+			action = new Action(type, Hypothesis.Hypotheses(newPreds));
+		}
+
+		public String getError() {
+			return null;
+		}
+
+		public boolean hasError() {
+			return false;
+		}
+
+	}
+
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
-	
-	public IReasonerInput deserializeInput(IReasonerInputReader reasonerInputReader) throws SerializeException {
-		return new CombiInput(
-				new SingleStringInput(reasonerInputReader),
-				new MultiplePredInput(reasonerInputReader)
-		);
+
+	public void serializeInput(IReasonerInput rInput, IReasonerInputWriter writer) throws SerializeException {
+		// Nothing to serialize, all is in the rule
 	}
 	
-	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProofMonitor pm){
-		
-		//	 Organize Input
-		CombiInput input = (CombiInput) reasonerInput;
-		
-		ActionType actionType = 
-			ActionType.valueOf(((SingleStringInput)input.getReasonerInputs()[0]).getString());
-		assert actionType != null;
-		Set<Hypothesis> hyps = Hypothesis.Hypotheses(
-				((MultiplePredInput)input.getReasonerInputs()[1]).getPredicates());
-		Action action = new Action(actionType,hyps);
-		
-		// TODO : maybe remove absent hyps - useful for later replay
-		// input.action.getHyps().retainAll(seq.hypotheses());
-		
-		
-		IAntecedent[] anticidents = new IAntecedent[1];
-		
-		anticidents[0] = ProverFactory.makeAntecedent(
-				seq.goal(),
-				null,
+	public IReasonerInput deserializeInput(IReasonerInputReader reader)
+			throws SerializeException {
+
+		final IAntecedent[] antecedents = reader.getAntecedents();
+		if (antecedents.length != 1) {
+			throw new SerializeException(new IllegalStateException(
+					"Two many antecedents in the rule"));
+		}
+		final List<Action> actions = antecedents[0].getHypAction();
+		if (actions.size() != 1) {
+			throw new SerializeException(new IllegalStateException(
+					"Two many actions in the rule antecedent"));
+		}
+		return new Input(actions.get(0));
+	}
+
+	public IReasonerOutput apply(IProverSequent seq,
+			IReasonerInput reasonerInput, IProofMonitor pm) {
+
+		Input input = (Input) reasonerInput;
+		Action action = input.action;
+		IAntecedent antecedent = ProverFactory.makeAntecedent(seq.goal(), null,
 				action);
-		
-		IProofRule reasonerOutput = ProverFactory.makeProofRule(
-				this,input,
-				seq.goal(),
-				"sl/ds",
-				anticidents);
-		
-		
-//		ProofRule reasonerOutput = new ProofRule(this,input);
-//		reasonerOutput.goal = seq.goal();
-//		reasonerOutput.display = "sl/ds";
-//		reasonerOutput.anticidents = new Antecedent[1];
-//		
-//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent();
-//		reasonerOutput.anticidents[0].hypAction.add(action);
-//		reasonerOutput.anticidents[0].goal = seq.goal();
-				
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(this, input,
+				seq.goal(), "sl/ds", antecedent);
 		return reasonerOutput;
 	}
 
