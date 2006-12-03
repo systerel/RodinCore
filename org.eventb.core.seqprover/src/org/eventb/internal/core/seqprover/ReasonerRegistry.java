@@ -12,11 +12,11 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 
 /**
@@ -233,9 +233,12 @@ public class ReasonerRegistry implements IReasonerRegistry {
 			return reasonerID;
 		}
 
-		public IReasonerInput deserializeInput(
-				IReasonerInputReader reasonerInputReader)
-				throws SerializeException {
+		public void serializeInput(IReasonerInput input,
+				IReasonerInputWriter writer) {
+			// Nothing to do
+		}
+		
+		public IReasonerInput deserializeInput(IReasonerInputReader reader) {
 
 			return new EmptyInput();
 		}
