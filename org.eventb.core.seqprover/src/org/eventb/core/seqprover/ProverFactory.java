@@ -42,7 +42,7 @@ public final class ProverFactory {
 			Set<Hypothesis> neededHyps,
 			Integer confidence,
 			String display,
-			IAntecedent[] anticidents) {
+			IAntecedent... anticidents) {
 		
 		assert goal != null;
 		assert anticidents != null;
@@ -58,7 +58,7 @@ public final class ProverFactory {
 			Predicate goal,
 			Hypothesis neededHyp,
 			String display,
-			IAntecedent[] anticidents) {
+			IAntecedent... anticidents) {
 		return makeProofRule(generatedBy,generatedUsing,goal,Collections.singleton(neededHyp),null, display,anticidents);
 	}
 	
@@ -67,7 +67,7 @@ public final class ProverFactory {
 			IReasonerInput generatedUsing,
 			Predicate goal,
 			String display,
-			IAntecedent[] anticidents) {
+			IAntecedent... anticidents) {
 		return makeProofRule(generatedBy,generatedUsing,goal,null,null,display,anticidents);
 	}
 	
