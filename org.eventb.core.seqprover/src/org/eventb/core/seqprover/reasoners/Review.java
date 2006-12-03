@@ -23,26 +23,23 @@ public class Review implements IReasoner{
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".review";
 	
-	public static class ReviewInput implements IReasonerInput {
+	public static class Input implements IReasonerInput {
 
 		Set<Hypothesis> hyps;
 		Predicate goal;
 		int confidence;
 
 		// TODO add check on confidence parameter
-		public ReviewInput(IProverSequent sequent, int confidence) {
+		public Input(IProverSequent sequent, int confidence) {
 			this.hyps = sequent.selectedHypotheses();
 			this.goal = sequent.goal();
 			this.confidence = confidence;
 		}
 		
-		// TODO add checks or remove this method.
-		public ReviewInput(Predicate[] hyps, Predicate[] goals,
-				String confidence) {
-
-			this.hyps = Hypothesis.Hypotheses(hyps);
-			this.goal = goals[0];
-			this.confidence = Integer.parseInt(confidence);
+		public Input(Set<Hypothesis> hyps, Predicate goal, int confidence) {
+			this.hyps = hyps;
+			this.goal = goal;
+			this.confidence = confidence;
 		}
 
 		public void applyHints(ReplayHints hints) {
@@ -63,19 +60,6 @@ public class Review implements IReasoner{
 			return false;
 		}
 
-		public void serialize(IReasonerInputWriter writer)
-				throws SerializeException {
-
-			Predicate[] preds = new Predicate[hyps.size()];
-			int i = 0;
-			for (Hypothesis hyp: hyps) {
-				preds[i++] = hyp.getPredicate();
-			}
-			writer.putPredicates("hyps", preds);
-			writer.putPredicates("goal", goal);
-			writer.putString("conf", Integer.toString(confidence));
-		}
-		
 	}
 	
 	
@@ -83,13 +67,17 @@ public class Review implements IReasoner{
 		return REASONER_ID;
 	}
 	
+	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer) {
+		// Nothing to serialize, all is in the rule.
+	}
+	
 	public IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		
-		return new ReviewInput(
-				reader.getPredicates("hyps"),
-				reader.getPredicates("goal"),
-				reader.getString("conf")
+		return new Input(
+				reader.getNeededHyps(),
+				reader.getGoal(),
+				reader.getConfidence()
 		);
 	}
 	
@@ -97,7 +85,7 @@ public class Review implements IReasoner{
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 	
 		// Organize Input
-		ReviewInput input = (ReviewInput) reasonerInput;
+		Input input = (Input) reasonerInput;
 		
 		Set<Hypothesis> hyps = input.hyps;
 		Predicate goal = input.goal;
