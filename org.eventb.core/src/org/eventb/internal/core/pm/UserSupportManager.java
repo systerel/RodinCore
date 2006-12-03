@@ -114,9 +114,9 @@ public class UserSupportManager implements IUserSupportManager {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IUserSupportManager#setInput(org.eventb.core.pm.IUserSupport, org.eventb.core.IPSFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void setInput(IUserSupport userSupport, IPSFile prFile,
+	public void setInput(IUserSupport userSupport, IPSFile psFile,
 			IProgressMonitor monitor) throws RodinDBException {
-		userSupport.setInput(prFile, monitor);
+		userSupport.setInput(psFile, monitor);
 		notifyUSManagerListener(userSupport, IUSManagerListener.CHANGED);
 	}
 
