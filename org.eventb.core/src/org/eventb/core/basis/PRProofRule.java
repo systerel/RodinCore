@@ -58,21 +58,6 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		return reasonerRegistry.getReasonerInstance(this.getReasonerID());
 	} 
 
-	private IReasonerInput getReasonerInput(IProofStoreReader store) throws RodinDBException {
-
-		IRodinElement[] prReasonerInput = getChildrenOfType(IPRReasonerInput.ELEMENT_TYPE);
-		if (prReasonerInput.length == 0) return null;
-
-		try {
-			// TODO : check for getReasoner() == null
-			IReasonerInputReader deserializer = 
-				new ProofStoreReader.Bridge((PRReasonerInput)prReasonerInput[0],store);
-			return (getReasoner()).deserializeInput(deserializer);
-		} catch (SerializeException e) {
-			throw (RodinDBException) e.getCause();
-		}
-	}
-
 	public IProofSkeleton getProofSkeleton(IProofStoreReader store,
 			final String comment) throws RodinDBException {
 
@@ -81,24 +66,39 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 
 		final IPRRuleAntecedent[] prAntecedents = getAntecedents();
 		final int length = prAntecedents.length;
-		final IAntecedent[] anticidents = new IAntecedent[length];
+		final IAntecedent[] antecedents = new IAntecedent[length];
 		final IProofSkeleton[] children = new IProofSkeleton[length];
 		for (int i = 0; i < length; i++) {
-			anticidents[i] = prAntecedents[i].getAntecedent(store);
+			antecedents[i] = prAntecedents[i].getAntecedent(store);
 			children[i] = ((EventBProofElement) prAntecedents[i]).getSkeleton(store);
 		}
 
 		final String display = getRuleDisplay();
 		final int confidence = getConfidence();
 
+		final IReasonerInput input;
+		IPRReasonerInput[] prReasonerInput = 
+			(IPRReasonerInput[]) getChildrenOfType(IPRReasonerInput.ELEMENT_TYPE);
+		if (prReasonerInput.length == 0) {
+			return null;
+		}
+		try {
+			IReasonerInputReader deserializer = 
+				new ProofStoreReader.Bridge(prReasonerInput[0], store, confidence,
+						display, goal, neededHyps, antecedents);
+				
+			input = getReasoner().deserializeInput(deserializer);
+		} catch (SerializeException e) {
+			throw (RodinDBException) e.getCause();
+		}
 		final IProofRule proofRule = ProverFactory.makeProofRule(
 				getReasoner(),
-				getReasonerInput(store), 
+				input, 
 				goal, 
 				neededHyps, 
 				confidence, 
 				display, 
-				anticidents);
+				antecedents);
 		
 		IProofSkeleton skeleton = new IProofSkeleton() {
 
@@ -133,20 +133,18 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		setConfidence(proofRule.getConfidence(), monitor);
 
 		// write out the reasoner input
-		// TODO : remove this check
-		if (proofRule.generatedUsing() != null)
-		{
-			IPRReasonerInput prReasonerInput = (IPRReasonerInput) getInternalElement(
-					IPRReasonerInput.ELEMENT_TYPE, "");
-			prReasonerInput.create(null, null);
-			try {
-				IReasonerInputWriter serializer = 
-					new ProofStoreCollector.Bridge(prReasonerInput,store,monitor); 
-				proofRule.generatedUsing().serialize(serializer);
-			} catch (SerializeException e) {
-				throw (RodinDBException)e.getCause();
-			}
-
+		IReasoner reasoner = proofRule.generatedBy();
+		IReasonerInput input = proofRule.generatedUsing();
+		IPRReasonerInput prReasonerInput = (IPRReasonerInput) getInternalElement(
+				IPRReasonerInput.ELEMENT_TYPE, "");
+		prReasonerInput.create(null, null);
+		try {
+			IReasonerInputWriter writer = 
+				new ProofStoreCollector.Bridge(prReasonerInput,store,monitor); 
+			reasoner.serializeInput(input, writer);
+		} catch (SerializeException e) {
+			// TODO check before casting
+			throw (RodinDBException)e.getCause();
 		}
 
 		// write out the anticidents (next subgoals)
