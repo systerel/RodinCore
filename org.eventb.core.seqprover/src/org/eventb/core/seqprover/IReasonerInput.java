@@ -15,10 +15,6 @@ public interface IReasonerInput {
 	// TODO document this method
 	public String getError();
 	
-	// TODO document this method
-	public void serialize(IReasonerInputWriter reasonerInputWriter)
-			throws SerializeException;
-
 	// TODO change return type to IReasonerInput!
 	public void applyHints(ReplayHints hints);
 
