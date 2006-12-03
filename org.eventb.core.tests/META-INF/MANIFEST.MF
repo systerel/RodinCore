@@ -8,6 +8,8 @@ Bundle-Localization: plugin
 Require-Bundle: org.eventb.core,
  org.eclipse.core.runtime,
  org.eventb.core.seqprover,
- org.junit
+ org.junit,
+ org.eventb.eventBKeyboard,
+ com.b4free.rodin
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
