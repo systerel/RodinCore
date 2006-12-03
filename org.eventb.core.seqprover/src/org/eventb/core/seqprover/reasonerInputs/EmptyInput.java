@@ -1,8 +1,6 @@
 package org.eventb.core.seqprover.reasonerInputs;
 
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerInputWriter;
-import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class EmptyInput implements IReasonerInput {
@@ -17,11 +15,6 @@ public class EmptyInput implements IReasonerInput {
 
 	public String getError() {
 		return null;
-	}
-
-	public void serialize(IReasonerInputWriter writer)
-			throws SerializeException {
-		// Nothing to do.
 	}
 
 	public void applyHints(ReplayHints hints) {	
