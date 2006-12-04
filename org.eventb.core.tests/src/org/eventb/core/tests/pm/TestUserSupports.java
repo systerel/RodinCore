@@ -49,7 +49,7 @@ public class TestUserSupports extends BasicTest {
 		super.tearDown();
 	}
 
-	public void testUserSupport1() throws RodinDBException, CoreException {
+	public void testUserSupportFullProve() throws RodinDBException, CoreException {
 		IMachineFile machine = createMachine("m0");
 		addVariables(machine, "v0");
 		addInvariants(machine, makeSList("inv0"), makeSList("v0 ∈ ℕ"));
@@ -274,7 +274,55 @@ public class TestUserSupports extends BasicTest {
 		assertEquals("New cache ", true, actualCache);
 		assertEquals("Hypothesis is added to cache ", true, currentPO
 				.getCached().contains(hypothesis));
+
+		assertEquals("No new search ", false, actualSearch);
+		assertNull("No new proof state ", actualState);
+		assertNotSame("Information is not empty ", 0, actualInformation.size());
+	}
+
+	public void testUserSupportBackTrack() throws RodinDBException,
+			CoreException {
+		IMachineFile machine = createMachine("m0");
+		addVariables(machine, "v0");
+		addInvariants(machine, makeSList("inv0"), makeSList("v0 ∈ ℕ"));
+		addEvent(machine, "INITIALISATION", makeSList(), makeSList(),
+				makeSList(), makeSList("act1"), makeSList("v0 ≔ 0"));
+		machine.save(null, true);
+
+		runBuilder();
+		IPSFile psFile = (IPSFile) rodinProject.getRodinFile(EventBPlugin
+				.getPSFileName("m0"));
+
+		IUserSupport userSupport = manager.newUserSupport();
+		manager.setInput(userSupport, psFile, new NullProgressMonitor());
+
+		IProofStateChangedListener listener = new UserSupportListener();
+		userSupport.addStateChangedListeners(listener);
+
+		// Test apply ah, there will be 3 children, the first one close and the
+		// last 2 is open
+		ITactic ah = Tactics.lemma("1 = 1");
+		userSupport.applyTactic(ah, new NullProgressMonitor());
+
+		IProofState currentPO = userSupport.getCurrentPO();
+
+		IProofTreeNode currentNode = currentPO.getCurrentNode();
 		
+		IProofTreeNode parent = currentNode.getParent();
+
+		userSupport.back(new NullProgressMonitor());
+		
+		// Check delta
+
+		assertEquals("Source is the current User Support ", userSupport,
+				actualUserSupport);
+		assertNotNull("ProofTree is changed ", actualProofTreeDelta);
+		assertNotNull("Proof Tree Node changed", actualProofTreeNode);
+		// The node now is the parent of the last node
+		assertEquals("New Proof Tree Node", parent,
+				actualProofTreeNode);
+		// The hypothesis is added to cache
+		assertEquals("New cache ", false, actualCache);
 		assertEquals("No new search ", false, actualSearch);
 		assertNull("No new proof state ", actualState);
 		assertNotSame("Information is not empty ", 0, actualInformation.size());
