@@ -12,7 +12,6 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class MultipleExprInput implements IReasonerInput{
 	
-	private static final String SERIALIZATION_KEY = "exprs";
 	private Expression[] expressions;
 	private String error;
 	
@@ -120,14 +119,17 @@ public class MultipleExprInput implements IReasonerInput{
 		error = null;
 	}
 
-	public void serialize(IReasonerInputWriter writer) throws SerializeException {
+	public void serialize(IReasonerInputWriter writer, String key)
+			throws SerializeException {
 		assert ! hasError();
 		assert expressions != null;
-		writer.putExpressions(SERIALIZATION_KEY, expressions);
+		writer.putExpressions(key, expressions);
 	}
 
-	public MultipleExprInput(IReasonerInputReader reader) throws SerializeException {
-		expressions = reader.getExpressions(SERIALIZATION_KEY);
+	public MultipleExprInput(IReasonerInputReader reader, String key)
+			throws SerializeException {
+
+		expressions = reader.getExpressions(key);
 		error = null;
 	}
 

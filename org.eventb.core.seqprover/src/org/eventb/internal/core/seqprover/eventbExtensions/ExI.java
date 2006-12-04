@@ -20,19 +20,25 @@ import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 
 public class ExI implements IReasoner {
 	
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".exI";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".exI";
+	
+	private static final String EXPRS_KEY = "exprs"; 
 	
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 	
-	public void serializeInput(IReasonerInput rInput, IReasonerInputWriter writer) throws SerializeException {
+	public void serializeInput(IReasonerInput rInput,
+			IReasonerInputWriter writer) throws SerializeException {
+
 		MultipleExprInput input = (MultipleExprInput) rInput;
-		input.serialize(writer);
+		input.serialize(writer, EXPRS_KEY);
 	}
 	
-	public IReasonerInput deserializeInput(IReasonerInputReader reasonerInputReader) throws SerializeException {
-		return new MultipleExprInput(reasonerInputReader);
+	public IReasonerInput deserializeInput(IReasonerInputReader reader)
+			throws SerializeException {
+
+		return new MultipleExprInput(reader, EXPRS_KEY);
 	}
 	
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm){
