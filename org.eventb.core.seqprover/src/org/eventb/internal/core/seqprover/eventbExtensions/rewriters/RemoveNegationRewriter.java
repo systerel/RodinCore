@@ -4,7 +4,7 @@ import org.eventb.core.ast.Predicate;
 
 import static org.eventb.core.seqprover.eventbExtensions.Lib.*;
 
-public class RemoveNegation implements Rewriter{
+public class RemoveNegationRewriter implements Rewriter {
 
 	public String getRewriterID() {
 		return "removeNegation";

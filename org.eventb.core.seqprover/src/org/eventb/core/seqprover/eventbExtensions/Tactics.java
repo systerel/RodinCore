@@ -19,19 +19,16 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.HypothesesManagement.ActionType;
-import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
-import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
 import org.eventb.core.seqprover.reasoners.Hyp;
 import org.eventb.core.seqprover.reasoners.MngHyp;
 import org.eventb.core.seqprover.reasoners.Review;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
-import org.eventb.internal.core.seqprover.eventbExtensions.ConjE;
-import org.eventb.internal.core.seqprover.eventbExtensions.ConjI;
+import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.Contr;
 import org.eventb.internal.core.seqprover.eventbExtensions.Cut;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
@@ -42,13 +39,11 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
-import org.eventb.internal.core.seqprover.eventbExtensions.RewriteGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.RewriteHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjToImpl;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TrivialRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeExpRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.DisjToImpl;
+import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.RemoveNegation;
+import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivial;
+import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 
 
 public class Tactics {
@@ -165,7 +160,10 @@ public class Tactics {
 	}
 	
 	public static ITactic conjI() {
-		return BasicTactics.reasonerTac(new ConjI(),new EmptyInput());
+		return BasicTactics.reasonerTac(
+				new Conj(), 
+				new Conj.Input(null)
+		);
 	}
 	
 	public static boolean conjI_applicable(Predicate goal){
@@ -204,7 +202,10 @@ public class Tactics {
 	}
 	
 	public static ITactic removeNegGoal(){
-		return BasicTactics.reasonerTac(new RewriteGoal(),new SingleStringInput(new RemoveNegation().getRewriterID()));
+		return BasicTactics.reasonerTac(
+				new RemoveNegation(),
+				new RemoveNegation.Input(null)
+		);
 	}
 	
 	public static boolean removeNegGoal_applicable(Predicate goal){
@@ -212,7 +213,10 @@ public class Tactics {
 	}
 	
 	public static ITactic disjToImpGoal(){
-		return BasicTactics.reasonerTac(new RewriteGoal(),new SingleStringInput(new DisjToImpl().getRewriterID()));
+		return BasicTactics.reasonerTac(
+				new DisjToImpl(),
+				new DisjToImpl.Input(null) 
+		);
 	}
 	
 	public static boolean disjToImpGoal_applicable(Predicate goal){
@@ -243,8 +247,11 @@ public class Tactics {
 		return Lib.isUnivQuant(hyp.getPredicate());
 	}
 	
-	public static ITactic conjD(Hypothesis conjHyp){
-		return BasicTactics.reasonerTac(new ConjE(),new SinglePredInput(conjHyp));
+	public static ITactic conjD(Hypothesis conjHyp) {
+		return BasicTactics.reasonerTac(
+				new Conj(), 
+				new Conj.Input(conjHyp.getPredicate())
+		);
 	}
 	
 	
@@ -276,7 +283,6 @@ public class Tactics {
 		return Lib.isEq(hyp.getPredicate());
 	}
 	
-	// TODO : rename to exE
 	public static ITactic exE(Hypothesis exHyp){
 		return BasicTactics.reasonerTac(new ExE(),new SinglePredInput(exHyp));
 	}
@@ -287,10 +293,10 @@ public class Tactics {
 	
 
 	public static ITactic removeNegHyp(Hypothesis hyp){
-		return  BasicTactics.reasonerTac(new RewriteHyp(),
-				new CombiInput(
-						new SinglePredInput(hyp),
-						new SingleStringInput(new RemoveNegation().getRewriterID())));
+		return BasicTactics.reasonerTac(
+				new RemoveNegation(),
+				new RemoveNegation.Input(hyp.getPredicate())
+		);
 	}
 	
 	public static boolean removeNegHyp_applicable(Hypothesis hyp){
@@ -330,8 +336,12 @@ public class Tactics {
 	
 	public static ITactic trivialGoalRewrite() {
 		return compose(
-				BasicTactics.reasonerTac(new RewriteGoal(),new SingleStringInput(new TrivialRewrites().getRewriterID())),
-				BasicTactics.reasonerTac(new RewriteGoal(),new SingleStringInput(new TypeExpRewrites().getRewriterID()))
+				BasicTactics.reasonerTac(
+						new Trivial(),
+						new Trivial.Input(null)),
+				BasicTactics.reasonerTac(
+						new TypePred(),
+						new TypePred.Input(null))
 		);
 	}
 	

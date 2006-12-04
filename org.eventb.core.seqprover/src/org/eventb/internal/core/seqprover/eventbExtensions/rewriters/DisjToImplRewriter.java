@@ -8,7 +8,7 @@ import static org.eventb.core.seqprover.eventbExtensions.Lib.makeNeg;
 
 import org.eventb.core.ast.Predicate;
 
-public class DisjToImpl implements Rewriter{
+public class DisjToImplRewriter implements Rewriter{
 	
 	public String getRewriterID() {
 		return "disjToImpl";

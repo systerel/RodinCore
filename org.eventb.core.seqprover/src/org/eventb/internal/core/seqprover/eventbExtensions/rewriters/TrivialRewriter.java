@@ -9,14 +9,14 @@ import org.eventb.core.ast.Type;
 
 import static org.eventb.core.seqprover.eventbExtensions.Lib.*;
 
-public class TrivialRewrites implements Rewriter{
+public class TrivialRewriter implements Rewriter{
 
 	public String getRewriterID() {
-		return "trivialRewrites";
+		return "trivialRewriter";
 	}
 	
 	public String getName() {
-		return "trivial rewrite";
+		return "trivial";
 	}
 	
 	public boolean isApplicable(Predicate p) {

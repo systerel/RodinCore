@@ -15,14 +15,14 @@ import static org.eventb.core.seqprover.eventbExtensions.Lib.notEqRight;
 
 import org.eventb.core.ast.Predicate;
 
-public class TypeExpRewrites implements Rewriter{
+public class TypePredRewriter implements Rewriter{
 
 	public String getRewriterID() {
-		return "typeExpRewrites";
+		return "typePredRewriter";
 	}
 	
 	public String getName() {
-		return "type properties in";
+		return "type predicate";
 	}
 	
 	public boolean isApplicable(Predicate p) {
@@ -73,11 +73,9 @@ public class TypeExpRewrites implements Rewriter{
 		}
 			
 		if (isInclusion(p) && getSet(p).isATypeExpression())
-			//	&& typeToExpression(te,getElement(p).getType()).equals(getSet(p)))
 			return True;
 		
 		if (isNotInclusion(p) && getSet(p).isATypeExpression())
-			//	&& typeToExpression(te,getElement(p).getType()).equals(getSet(p)))
 			return False;
 		
 		
