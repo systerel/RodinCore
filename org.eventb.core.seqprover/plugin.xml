@@ -16,13 +16,9 @@
             id="allI"
             name="%allIName"/>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.ConjE"
-            id="conjE"
-            name="%conjEName"/>
-      <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.ConjI"
-            id="conjI"
-            name="%conjIName"/>
+            class="org.eventb.internal.core.seqprover.eventbExtensions.Conj"
+            id="conj"
+            name="%conjName"/>
        <reasoner
              class="org.eventb.internal.core.seqprover.eventbExtensions.Contr"
              id="contr"
@@ -76,13 +72,21 @@
             id="review"
             name="%reviewName"/>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.RewriteGoal"
-            id="rewriteGoal"
-            name="%rewriteGoalName"/>
+            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.RemoveNegation"
+            id="removeNegation"
+            name="%removeNegationName"/>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.RewriteHyp"
-            id="rewriteHyp"
-            name="%rewriteHypName"/>
+            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.DisjToImpl"
+            id="disjToImpl"
+            name="%disjToImplName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivial"
+            id="trivial"
+            name="%trivialName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred"
+            id="typePred"
+            name="%typePredName"/>
        <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal"
             id="trueGoal"
