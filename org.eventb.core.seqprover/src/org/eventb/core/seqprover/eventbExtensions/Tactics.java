@@ -132,7 +132,10 @@ public class Tactics {
 	
 
 	public static ITactic contradictGoal(){
-		return BasicTactics.reasonerTac(new Contr(),new SinglePredInput(Lib.True));
+		return BasicTactics.reasonerTac(
+				new Contr(),
+				new Contr.Input(null)
+		);
 	}
 	
 //	public static boolean contradictGoal_applicable(Predicate goal){
@@ -260,7 +263,10 @@ public class Tactics {
 	}
 	
 	public static ITactic impE(Hypothesis impHyp){
-		return BasicTactics.reasonerTac(new ImpE(),new SinglePredInput(impHyp));
+		return BasicTactics.reasonerTac(
+				new ImpE(),
+				new ImpE.Input(impHyp.getPredicate())
+		);
 	}
 	
 	public static boolean impE_applicable(Hypothesis hyp){
@@ -268,7 +274,10 @@ public class Tactics {
 	}
 	
 	public static ITactic disjE(Hypothesis disjHyp){
-		return BasicTactics.reasonerTac(new DisjE(),new SinglePredInput(disjHyp));
+		return BasicTactics.reasonerTac(
+				new DisjE(),
+				new DisjE.Input(disjHyp.getPredicate())
+		);
 	}
 	
 	public static boolean disjE_applicable(Hypothesis hyp){
@@ -284,7 +293,10 @@ public class Tactics {
 	}
 	
 	public static ITactic exE(Hypothesis exHyp){
-		return BasicTactics.reasonerTac(new ExE(),new SinglePredInput(exHyp));
+		return BasicTactics.reasonerTac(
+				new ExE(),
+				new ExE.Input(exHyp.getPredicate())
+		);
 	}
 	
 	public static boolean exE_applicable(Hypothesis hyp){
@@ -304,7 +316,10 @@ public class Tactics {
 	}
 	
 	public static ITactic falsifyHyp(Hypothesis hyp){
-		return BasicTactics.reasonerTac(new Contr(),new SinglePredInput(hyp));
+		return BasicTactics.reasonerTac(
+				new Contr(),
+				new Contr.Input(hyp.getPredicate())
+		);
 	}
 	
 	public static boolean falsifyHyp_applicable(Hypothesis hyp, IProverSequent seq){
