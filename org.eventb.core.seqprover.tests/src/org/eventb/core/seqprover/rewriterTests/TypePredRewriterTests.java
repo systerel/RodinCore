@@ -5,11 +5,11 @@ import junit.framework.TestCase;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Rewriter;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeExpRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypePredRewriter;
 
-public class TypeExpRewritesTest extends TestCase {
+public class TypePredRewriterTests extends TestCase {
 
-	private Rewriter r = new TypeExpRewrites();
+	private Rewriter r = new TypePredRewriter();
 	// private ITypeEnvironment te = Lib.makeTypeEnvironment();
 	
 	public void testApply(){
