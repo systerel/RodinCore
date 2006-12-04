@@ -4,7 +4,9 @@
 package org.eventb.core.tests.pm;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -16,6 +18,7 @@ import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
+import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -150,7 +153,7 @@ public class TestUserSupports extends BasicTest {
 		manager.disposeUserSupport(userSupport);
 	}
 
-	public void testUserSupportListener() throws RodinDBException,
+	public void testUserSupportApplyTactic() throws RodinDBException,
 			CoreException {
 		IMachineFile machine = createMachine("m0");
 		addVariables(machine, "v0");
@@ -174,6 +177,107 @@ public class TestUserSupports extends BasicTest {
 		ITactic ah = Tactics.lemma("1 = 1");
 		userSupport.applyTactic(ah, new NullProgressMonitor());
 
+		IProofState currentPO = userSupport.getCurrentPO();
+		// Check delta
+
+		assertEquals("Source is the current User Support ", userSupport,
+				actualUserSupport);
+		assertNotNull("ProofTree is changed ", actualProofTreeDelta);
+		assertNotNull("Proof Tree Node is changed ", actualProofTreeNode);
+		assertEquals("New Proof Tree Node", currentPO.getCurrentNode(),
+				actualProofTreeNode);
+		assertEquals("No new cache ", false, actualCache);
+		assertEquals("No new search ", false, actualSearch);
+		assertNull("No new proof state ", actualState);
+		assertNotSame("Information is not empty ", 0, actualInformation.size());
+	}
+
+	public void testUserSupportSearchHypothesis() throws RodinDBException,
+			CoreException {
+		IMachineFile machine = createMachine("m0");
+		addVariables(machine, "v0");
+		addInvariants(machine, makeSList("inv0"), makeSList("v0 ∈ ℕ"));
+		addEvent(machine, "INITIALISATION", makeSList(), makeSList(),
+				makeSList(), makeSList("act1"), makeSList("v0 ≔ 0"));
+		machine.save(null, true);
+
+		runBuilder();
+		IPSFile psFile = (IPSFile) rodinProject.getRodinFile(EventBPlugin
+				.getPSFileName("m0"));
+
+		IUserSupport userSupport = manager.newUserSupport();
+		manager.setInput(userSupport, psFile, new NullProgressMonitor());
+
+		IProofStateChangedListener listener = new UserSupportListener();
+		userSupport.addStateChangedListeners(listener);
+
+		userSupport.searchHyps("");
+
+		// Check delta
+
+		assertEquals("Source is the current User Support ", userSupport,
+				actualUserSupport);
+		assertNull("ProofTree is unchanged ", actualProofTreeDelta);
+		assertNull("Proof Tree Node unchanged", actualProofTreeNode);
+		assertEquals("No new cache ", false, actualCache);
+		assertEquals("New search ", true, actualSearch);
+		assertNull("No new proof state ", actualState);
+		assertNotSame("Information is not empty ", 0, actualInformation.size());
+
+	}
+
+	public void testUserSupportApplyToHypothesis() throws RodinDBException,
+			CoreException {
+		IMachineFile machine = createMachine("m0");
+		addVariables(machine, "v0");
+		addInvariants(machine, makeSList("inv0"), makeSList("v0 ∈ ℕ"));
+		addEvent(machine, "INITIALISATION", makeSList(), makeSList(),
+				makeSList(), makeSList("act1"), makeSList("v0 ≔ 0"));
+		machine.save(null, true);
+
+		runBuilder();
+		IPSFile psFile = (IPSFile) rodinProject.getRodinFile(EventBPlugin
+				.getPSFileName("m0"));
+
+		IUserSupport userSupport = manager.newUserSupport();
+		manager.setInput(userSupport, psFile, new NullProgressMonitor());
+
+		IProofStateChangedListener listener = new UserSupportListener();
+		userSupport.addStateChangedListeners(listener);
+
+		userSupport.searchHyps("");
+		// Check delta
+
+		Collection<Hypothesis> hypotheses = userSupport.getCurrentPO()
+				.getSearched();
+
+		if (hypotheses.size() == 0)
+			return;
+
+		ITactic contradictHyp = Tactics.contradiction();
+		Set<Hypothesis> hyps = new HashSet<Hypothesis>();
+		Hypothesis hypothesis = (Hypothesis) hypotheses.toArray()[0];
+		hyps.add(hypothesis);
+
+		userSupport.applyTacticToHypotheses(contradictHyp, hyps,
+				new NullProgressMonitor());
+
+		IProofState currentPO = userSupport.getCurrentPO();
+
+		assertEquals("Source is the current User Support ", userSupport,
+				actualUserSupport);
+		assertNotNull("ProofTree is changed ", actualProofTreeDelta);
+		assertNotNull("Proof Tree Node changed", actualProofTreeNode);
+		assertEquals("New Proof Tree Node", currentPO.getCurrentNode(),
+				actualProofTreeNode);
+		// The hypothesis is added to cache
+		assertEquals("New cache ", true, actualCache);
+		assertEquals("Hypothesis is added to cache ", true, currentPO
+				.getCached().contains(hypothesis));
+		
+		assertEquals("No new search ", false, actualSearch);
+		assertNull("No new proof state ", actualState);
+		assertNotSame("Information is not empty ", 0, actualInformation.size());
 	}
 
 	IProofState actualState;
