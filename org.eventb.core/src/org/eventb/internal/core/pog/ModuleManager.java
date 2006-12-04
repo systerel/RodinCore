@@ -11,6 +11,9 @@ import java.util.Hashtable;
 
 import org.eventb.core.pog.IModule;
 import org.eventb.core.pog.IModuleManager;
+import org.eventb.internal.core.pog.modules.ContextAxiomModule;
+import org.eventb.internal.core.pog.modules.ContextHypothesisModule;
+import org.eventb.internal.core.pog.modules.ContextTheoremModule;
 import org.eventb.internal.core.pog.modules.MachineEventActionBasicModule;
 import org.eventb.internal.core.pog.modules.MachineEventActionBodySimModule;
 import org.eventb.internal.core.pog.modules.MachineEventActionFrameSimModule;
@@ -20,7 +23,11 @@ import org.eventb.internal.core.pog.modules.MachineEventHypothesisModule;
 import org.eventb.internal.core.pog.modules.MachineEventModule;
 import org.eventb.internal.core.pog.modules.MachineEventPreserveInvariantModule;
 import org.eventb.internal.core.pog.modules.MachineEventStrengthenGuardModule;
+import org.eventb.internal.core.pog.modules.MachineEventVariantModule;
 import org.eventb.internal.core.pog.modules.MachineHypothesisModule;
+import org.eventb.internal.core.pog.modules.MachineInvariantModule;
+import org.eventb.internal.core.pog.modules.MachineTheoremModule;
+import org.eventb.internal.core.pog.modules.MachineVariantModule;
 
 
 /**
@@ -54,6 +61,9 @@ public class ModuleManager implements IModuleManager {
 					public IModule[] create() {
 						return new IModule[] {
 								new MachineHypothesisModule(),
+								new MachineTheoremModule(),
+								new MachineInvariantModule(),
+								new MachineVariantModule(),
 								new MachineEventModule()
 						};
 					}
@@ -71,7 +81,20 @@ public class ModuleManager implements IModuleManager {
 								new MachineEventPreserveInvariantModule(),
 								new MachineEventActionBodySimModule(),
 								new MachineEventActionFrameSimModule(),
-								new MachineEventStrengthenGuardModule()
+								new MachineEventStrengthenGuardModule(),
+								new MachineEventVariantModule()
+						};
+					}
+
+		});
+		moduleTable.put(ContextPOGenerator.CONTEXT_MODULE,
+				new IModuleCreator() {
+
+					public IModule[] create() {
+						return new IModule[] {
+								new ContextHypothesisModule(),
+								new ContextTheoremModule(),
+								new ContextAxiomModule()
 						};
 					}
 

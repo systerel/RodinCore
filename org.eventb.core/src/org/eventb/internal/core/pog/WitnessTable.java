@@ -150,7 +150,7 @@ public class WitnessTable implements IWitnessTable {
 	}
 
 	public ArrayList<ISCWitness> getMachineDetWitnesses() {
-		return null;
+		return machineDetWitnesses;
 	}
 
 	public ArrayList<BecomesEqualTo> getMachineDetAssignments() {

@@ -10,70 +10,82 @@ package org.eventb.internal.core.pog.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
-import org.eventb.core.IPOPredicateSet;
-import org.eventb.core.ISCEvent;
-import org.eventb.core.pog.state.IConcreteEventActionTable;
-import org.eventb.core.pog.state.IEventHypothesisManager;
-import org.eventb.core.pog.state.IMachineHypothesisManager;
+import org.eventb.core.IPOSource;
+import org.eventb.core.ISCAction;
+import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.POGHint;
+import org.eventb.core.pog.POGIntervalSelectionHint;
+import org.eventb.core.pog.POGPredicate;
+import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IStatePOG;
 import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class MachineEventActionModule extends UtilityModule {
+public class MachineEventActionModule extends MachineEventActionUtilityModule {
 
-	protected IMachineHypothesisManager machineHypothesisManager;
-	protected IEventHypothesisManager eventHypothesisManager;
-	protected ISCEvent concreteEvent;
-	protected String concreteEventLabel;
-	protected boolean isInitialisation;
-	protected IPOPredicateSet fullHypothesis;
-	
-	protected IConcreteEventActionTable concreteEventActionTable;
-	
 	/* (non-Javadoc)
-	 * @see org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	@Override
-	public void initModule(
+	public void process(
 			IRodinElement element, 
-			IPOFile target, 
+			IPOFile target,
 			IStateRepository<IStatePOG> repository, 
-			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
-		machineHypothesisManager =
-			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
-		eventHypothesisManager = 
-			(IEventHypothesisManager) repository.getState(IEventHypothesisManager.STATE_TYPE);
+			IProgressMonitor monitor)
+			throws CoreException {
 		
-		concreteEvent = (ISCEvent) element;
-		concreteEventLabel = concreteEvent.getLabel();
-		isInitialisation = concreteEventLabel.equals("INITIALISATION");
-		fullHypothesis = eventHypothesisManager.getFullHypothesis(target);
+		int actionsLength = concreteEventActionTable.getActions().length;
+		if (actionsLength == 0)
+			return;
 		
-		concreteEventActionTable =
-			(IConcreteEventActionTable) repository.getState(IConcreteEventActionTable.STATE_TYPE);
+		for (int k=0; k<actionsLength; k++) {
+			ISCAction action = concreteEventActionTable.getActions()[k];
+			Assignment assignment = concreteEventActionTable.getAssignments()[k];
+			
+			POGSource[] sources = sources(new POGSource(IPOSource.DEFAULT_ROLE, action));
+			POGHint[] hints = hints(
+					new POGIntervalSelectionHint(
+							eventHypothesisManager.getRootHypothesis(target), 
+							eventHypothesisManager.getFullHypothesis(target)));
+			
+			Predicate wdPredicate = assignment.getWDPredicate(factory);
+			createProofObligation(target, 
+					wdPredicate, action, sources, hints, 
+					"WD", "Well-definedness of action", monitor);
+			
+			Predicate fisPredicate = assignment.getFISPredicate(factory);
+			createProofObligation(target, 
+					fisPredicate, action, sources, hints, 
+					"FIS", "Feasibility of action", monitor);
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pog.ProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public void endModule(
-			IRodinElement element, 
+	private void createProofObligation(
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
-			IProgressMonitor monitor) throws CoreException {
-		eventHypothesisManager = null;
-		machineHypothesisManager = null;
-		concreteEventActionTable = null;
-		concreteEvent = null;
-		concreteEventLabel = null;
-		fullHypothesis = null;
-		super.endModule(element, target, repository, monitor);
+			Predicate predicate, 
+			ISCAction action, 
+			POGSource[] sources, 
+			POGHint[] hints, 
+			String suffix,
+			String desc,
+			IProgressMonitor monitor) throws RodinDBException {
+		if (!goalIsTrivial(predicate)) {
+			createPO(
+					target, 
+					concreteEventLabel + "/" + action.getLabel() + "/" + suffix, 
+					desc, 
+					fullHypothesis, 
+					emptyPredicates, 
+					new POGPredicate(action, predicate), 
+					sources, 
+					hints, 
+					monitor);
+		}
 	}
 
 }

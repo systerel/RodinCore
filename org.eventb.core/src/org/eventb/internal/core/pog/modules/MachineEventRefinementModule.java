@@ -29,7 +29,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public abstract class MachineEventRefinementModule extends MachineEventActionModule {
+public abstract class MachineEventRefinementModule extends MachineEventActionUtilityModule {
 	
 	protected IAbstractEventActionTable abstractEventActionTable;
 	protected IWitnessTable witnessTable;
@@ -77,7 +77,6 @@ public abstract class MachineEventRefinementModule extends MachineEventActionMod
 	protected ArrayList<POGPredicate> makeWitnessHypothesis() {
 		// create local hypothesis for nondeterministic assignments
 		ArrayList<ISCWitness> nondetWitnesses = witnessTable.getNondetWitnesses();
-//		ArrayList<FreeIdentifier> nondetAssignedVariables = witnessTable.getNondetAssignedVariables();
 		ArrayList<Predicate> nondetPredicates = witnessTable.getNondetPredicates();
 		
 		ArrayList<POGPredicate> hyp = 

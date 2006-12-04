@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestSeesContext extends BasicTest {
+public class TestSeesContext extends BasicSCTest {
 	
 	public void testSeesContext_0() throws Exception {
 		IContextFile con = createContext("con");
@@ -31,7 +31,7 @@ public class TestSeesContext extends BasicTest {
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 		
@@ -42,7 +42,7 @@ public class TestSeesContext extends BasicTest {
 
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		

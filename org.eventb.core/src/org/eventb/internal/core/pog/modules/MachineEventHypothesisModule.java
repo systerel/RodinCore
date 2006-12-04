@@ -96,7 +96,8 @@ public class MachineEventHypothesisModule extends UtilityModule {
 		IPOPredicateSet fullHypothesis = (event.getLabel().equals("INITIALISATION")) ?
 				machineHypothesisManager.getContextHypothesis(target) :
 				machineHypothesisManager.getFullHypothesis(target);
-		eventHypothesisManager = new EventHypothesisManager(event, guards, fullHypothesis.getElementName());
+		eventHypothesisManager = 
+			new EventHypothesisManager(event, guards, fullHypothesis.getElementName());
 		
 		eventHypothesisManager.setAbstractEvents(event.getAbstractSCEvents());
 		

@@ -27,10 +27,27 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IConvergenceElement extends IInternalElement {
 
+	/**
+	 * The enumerated type <code>Convergence</code> specifies the different convergence
+	 * types of events. Each convergence type is associated with an integer code used to
+	 * represent the corresponding type in the database. The codes are public and can be
+	 * used when it is necessary to access the database without this interface.
+	 *
+	 */
 	enum Convergence {
-		ORDINARY,
-		CONVERGENT,
-		ANTICIPATED
+		ORDINARY(0),
+		CONVERGENT(1),
+		ANTICIPATED(2);
+		
+		private final int code;
+
+		Convergence(int code) {
+			this.code = code;
+		}
+		
+		public int getCode() {
+			return code;
+		}
 	}
 	
 	/**

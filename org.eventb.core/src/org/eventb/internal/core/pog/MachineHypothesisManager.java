@@ -8,7 +8,6 @@
 package org.eventb.internal.core.pog;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCMachineFile;
@@ -39,8 +38,7 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 	
 	public MachineHypothesisManager(
 			IRodinElement parentElement, 
-			ISCPredicateElement[] predicateTable,
-			IProgressMonitor monitor) throws CoreException {
+			ISCPredicateElement[] predicateTable) throws CoreException {
 		super(parentElement, predicateTable, ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME, IDENTIFIER_TABLE_SIZE);
 		
 		ISCRefinesMachine[] refinesMachines = ((ISCMachineFile) parentElement).getSCRefinesClauses();

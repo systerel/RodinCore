@@ -84,5 +84,5 @@ public interface IHypothesisManager extends IStatePOG, Iterable<FreeIdentifier> 
 	 * @return the list of managed predicates
 	 */
 	List<ISCPredicateElement> getManagedPredicates();
-
+	
 }

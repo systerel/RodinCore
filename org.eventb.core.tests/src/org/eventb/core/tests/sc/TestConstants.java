@@ -17,58 +17,11 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestConstants extends BasicTest {
+public class TestConstants extends GenericIdentTest<IContextFile, ISCContextFile> {
 
-	public void testConstants_00_createConstantNoType() throws Exception {
-		IContextFile con = createContext("con");
-
-		addConstants(con, makeSList("C1"));
-		
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsConstants(file);
-		
-	}
-
-	public void testConstants_01_createConstantWithType() throws Exception {
-		IContextFile con = createContext("con");
-
-		addConstants(con, makeSList("C1"));
-		addAxioms(con, makeSList("A1"), makeSList("C1∈ℤ"));
-		
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsConstants(file, "C1");
-		
-		numberOfAxioms(file, 1);
-
-	}
-
-	public void testConstants_02_createAndReferConstantNoType() throws Exception {
-		IContextFile con = createContext("con");
-
-		addConstants(con, makeSList("C1"));
-		addAxioms(con, makeSList("A1"), makeSList("C2∈ℤ"));
-		
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsConstants(file);
-		
-		numberOfAxioms(file, 0);
-	}
-	
+	/**
+	 * create constant with carrier set type
+	 */
 	public void testConstants_03_constantWithCarrierSetType() throws Exception {
 		IContextFile con = createContext("con");
 
@@ -78,17 +31,24 @@ public class TestConstants extends BasicTest {
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addGivenSet("S1");
+		environment.addName("C1", factory.makeGivenType("S1"));
+
 		ISCContextFile file = con.getSCContextFile();
 		
 		containsCarrierSets(file, "S1");
 		
 		containsConstants(file, "C1");
 		
-		numberOfAxioms(file, 1);
+		containsAxioms(file, environment, makeSList("A1"), makeSList("C1∈S1"));
 	}
 	
+	/**
+	 * copy constant from abstraction
+	 */
 	public void testConstants_04_constantFromAbstraction() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addConstants(abs1, makeSList("C1"));
@@ -96,7 +56,7 @@ public class TestConstants extends BasicTest {
 		
 		abs1.save(null, true);
 		
-		runSC(abs1);
+		runBuilder();
 		
 		IContextFile con = createContext("con");
 		addContextExtends(con, "abs1");
@@ -106,7 +66,7 @@ public class TestConstants extends BasicTest {
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 
 		ISCContextFile file = con.getSCContextFile();
 		
@@ -118,6 +78,9 @@ public class TestConstants extends BasicTest {
 
 	}
 	
+	/**
+	 * name conflict with constant from abstraction
+	 */
 	public void testConstants_05_constantFromAbstractionNameConflict() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addConstants(abs1, makeSList("C1"));
@@ -125,7 +88,7 @@ public class TestConstants extends BasicTest {
 		
 		abs1.save(null, true);
 		
-		runSC(abs1);
+		runBuilder();
 		
 		IContextFile con = createContext("con");
 		addContextExtends(con, "abs1");
@@ -135,7 +98,7 @@ public class TestConstants extends BasicTest {
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 
 		ISCContextFile file = con.getSCContextFile();
 		
@@ -147,6 +110,9 @@ public class TestConstants extends BasicTest {
 
 	}
 
+	/**
+	 * constant type across axioms
+	 */
 	public void testConstants_06_constantTypingOK() throws Exception {
 		IContextFile con = createContext("con");
 
@@ -158,7 +124,7 @@ public class TestConstants extends BasicTest {
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
 		ISCContextFile file = con.getSCContextFile();
 		

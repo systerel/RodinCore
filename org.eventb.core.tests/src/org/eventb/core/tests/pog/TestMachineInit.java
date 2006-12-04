@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestInit extends BasicTest {
+public class TestMachineInit extends BasicPOTest {
 	
 	private static String init = IEvent.INITIALISATION;
 
@@ -36,7 +36,7 @@ public class TestInit extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -65,7 +65,7 @@ public class TestInit extends BasicTest {
 		
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 
@@ -78,7 +78,7 @@ public class TestInit extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -107,7 +107,7 @@ public class TestInit extends BasicTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		abs.save(null, true);
-		runSC(abs);
+		runBuilder();
 		
 		IMachineFile con = createMachine("con");
 		addMachineRefines(con, "abs");
@@ -118,7 +118,7 @@ public class TestInit extends BasicTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("y ≔ 1"));
 		con.save(null, true);
-		runSC(con);
+		runBuilder();
 		
 		IPOFile po = con.getPOFile();
 		IPOSequent sequent = getSequent(po, init + "/I1/INV");

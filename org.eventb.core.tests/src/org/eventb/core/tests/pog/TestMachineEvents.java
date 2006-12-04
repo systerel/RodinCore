@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestEvents extends BasicTest {
+public class TestMachineEvents extends BasicPOTest {
 	
 	public void testEvents_00() throws Exception {
 		IMachineFile mac = createMachine("mac");
@@ -34,7 +34,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -64,7 +64,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -94,7 +94,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -124,7 +124,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -159,7 +159,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -202,7 +202,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -243,7 +243,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -279,7 +279,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -316,7 +316,7 @@ public class TestEvents extends BasicTest {
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 
@@ -336,7 +336,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -362,7 +362,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		

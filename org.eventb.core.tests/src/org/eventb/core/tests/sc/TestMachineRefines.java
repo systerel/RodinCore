@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestMachineRefines extends BasicTest {
+public class TestMachineRefines extends BasicSCTest {
 	
 	public void testMachineRefines_0() throws Exception {
 		IContextFile con =  createContext("con");
@@ -25,7 +25,7 @@ public class TestMachineRefines extends BasicTest {
 	
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 
 		IMachineFile abs = createMachine("abs");
 		
@@ -34,7 +34,7 @@ public class TestMachineRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		
@@ -46,7 +46,7 @@ public class TestMachineRefines extends BasicTest {
 
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 				
@@ -68,7 +68,7 @@ public class TestMachineRefines extends BasicTest {
 	
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 
 		IMachineFile abs = createMachine("abs");
 		
@@ -76,7 +76,7 @@ public class TestMachineRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		
@@ -85,7 +85,7 @@ public class TestMachineRefines extends BasicTest {
 
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 				
@@ -102,7 +102,7 @@ public class TestMachineRefines extends BasicTest {
 	
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 
 		IMachineFile abs = createMachine("abs");
 		
@@ -110,7 +110,7 @@ public class TestMachineRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		
@@ -119,7 +119,7 @@ public class TestMachineRefines extends BasicTest {
 
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 				
@@ -136,7 +136,7 @@ public class TestMachineRefines extends BasicTest {
 	
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 
 		IMachineFile abs = createMachine("abs");
 		
@@ -146,7 +146,7 @@ public class TestMachineRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		
@@ -157,7 +157,7 @@ public class TestMachineRefines extends BasicTest {
 
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 				
@@ -175,7 +175,7 @@ public class TestMachineRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		
@@ -185,7 +185,7 @@ public class TestMachineRefines extends BasicTest {
 
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", factory.makeIntegerType());

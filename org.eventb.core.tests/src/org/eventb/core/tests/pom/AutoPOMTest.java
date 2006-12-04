@@ -9,6 +9,9 @@ import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
@@ -26,6 +29,30 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 public class AutoPOMTest extends BuilderTest {
+
+	/**
+	 * Creates a new type environment from the given strings. The given strings
+	 * are alternatively an identifier name and its type.
+	 * 
+	 * @param strings
+	 *            an even number of strings
+	 * @return a new type environment
+	 */
+	public ITypeEnvironment mTypeEnvironment(String... strings) {
+		// even number of strings
+		assert (strings.length & 1) == 0;
+		final ITypeEnvironment result = factory.makeTypeEnvironment();
+		for (int i = 0; i < strings.length; i += 2) {
+			final String name = strings[i];
+			final String typeString = strings[i+1];
+			final IParseResult pResult = factory.parseType(typeString);
+			assertTrue("Parsing type failed for " + typeString,
+					pResult.isSuccess());
+			final Type type = pResult.getParsedType(); 
+			result.addName(name, type);
+		}
+		return result;
+	}
 
 	private IPOFile createPOFile() throws RodinDBException {
 		IPOFile poFile = (IPOFile) rodinProject.getRodinFile("x.bpo");

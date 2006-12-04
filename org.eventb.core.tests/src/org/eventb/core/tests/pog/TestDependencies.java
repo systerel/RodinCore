@@ -16,7 +16,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestDependencies extends BasicTest {
+public class TestDependencies extends BasicPOTest {
 
 	public void testDependencies_00_MachineRefinement() throws Exception {
 		IMachineFile abs = createMachine("abs");

@@ -16,7 +16,7 @@ import org.eventb.core.ISCInternalContext;
  * @author Stefan Hallerstede
  *
  */
-public class TestExtendsContext extends BasicTest {
+public class TestExtendsContext extends BasicSCTest {
 
 	public void testFetchCarrierSet_01_createCarrierSet() throws Exception {
 		IContextFile abs = createContext("abs");
@@ -24,14 +24,14 @@ public class TestExtendsContext extends BasicTest {
 		
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 		
 		IContextFile con = createContext("con");
 		addContextExtends(con, "abs");
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
 		ISCContextFile file = con.getSCContextFile();
 		
@@ -46,14 +46,14 @@ public class TestExtendsContext extends BasicTest {
 		
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 		
 		IContextFile con = createContext("con");
 		addContextExtends(con, "abs");
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
 		ISCContextFile file = con.getSCContextFile();
 		
@@ -68,14 +68,14 @@ public class TestExtendsContext extends BasicTest {
 		
 		abs1.save(null, true);
 		
-		runSC(abs1);
+		runBuilder();
 		
 		IContextFile abs2 = createContext("abs2");
 		addCarrierSets(abs2, makeSList("S11", "S22"));
 		
 		abs2.save(null, true);
 		
-		runSC(abs2);
+		runBuilder();
 		
 		IContextFile con = createContext("con");
 		addContextExtends(con, "abs1");
@@ -83,7 +83,7 @@ public class TestExtendsContext extends BasicTest {
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
 		ISCContextFile file = con.getSCContextFile();
 		
@@ -97,14 +97,14 @@ public class TestExtendsContext extends BasicTest {
 		
 		abs1.save(null, true);
 		
-		runSC(abs1);
+		runBuilder();
 		
 		IContextFile abs2 = createContext("abs2");
 		addCarrierSets(abs2, makeSList("S21", "S22"));
 		
 		abs2.save(null, true);
 		
-		runSC(abs2);
+		runBuilder();
 		
 		IContextFile con = createContext("con");
 		addContextExtends(con, "abs1");
@@ -112,7 +112,7 @@ public class TestExtendsContext extends BasicTest {
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
 		ISCContextFile file = con.getSCContextFile();
 		
@@ -129,7 +129,7 @@ public class TestExtendsContext extends BasicTest {
 		
 		abs1.save(null, true);
 		
-		runSC(abs1);
+		runBuilder();
 		
 		IContextFile abs2 = createContext("abs2");
 		addCarrierSets(abs2, makeSList("S11", "S22"));
@@ -141,7 +141,7 @@ public class TestExtendsContext extends BasicTest {
 		
 		abs3.save(null, true);
 		
-		runSC(abs3);
+		runBuilder();
 		
 		IContextFile con = createContext("con");
 		addContextExtends(con, "abs1");
@@ -150,7 +150,7 @@ public class TestExtendsContext extends BasicTest {
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
 		ISCContextFile file = con.getSCContextFile();
 		

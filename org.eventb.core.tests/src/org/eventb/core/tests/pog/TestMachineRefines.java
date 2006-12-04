@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestRefines extends BasicTest {
+public class TestMachineRefines extends BasicPOTest {
 	
 	public void testEvents_00() throws Exception {
 		IMachineFile abs = createMachine("abs");
@@ -34,7 +34,7 @@ public class TestRefines extends BasicTest {
 		
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 
@@ -48,7 +48,7 @@ public class TestRefines extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -77,7 +77,7 @@ public class TestRefines extends BasicTest {
 		
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 
@@ -91,7 +91,7 @@ public class TestRefines extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -120,7 +120,7 @@ public class TestRefines extends BasicTest {
 		
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 
@@ -136,7 +136,7 @@ public class TestRefines extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
@@ -174,7 +174,7 @@ public class TestRefines extends BasicTest {
 		
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 
@@ -190,7 +190,7 @@ public class TestRefines extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		

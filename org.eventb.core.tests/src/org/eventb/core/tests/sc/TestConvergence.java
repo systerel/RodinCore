@@ -16,7 +16,7 @@ import org.eventb.core.ISCMachineFile;
  * @author Stefan Hallerstede
  *
  */
-public class TestConvergence extends BasicTest {
+public class TestConvergence extends BasicSCTest {
 	
 	public void testCvg_00_AllThreeKindsOK() throws Exception {
 		IMachineFile mac = createMachine("mac");
@@ -30,7 +30,7 @@ public class TestConvergence extends BasicTest {
 		setConvergent(gvt);
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -51,7 +51,7 @@ public class TestConvergence extends BasicTest {
 		setConvergent(gvt);
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -73,7 +73,7 @@ public class TestConvergence extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -90,7 +90,7 @@ public class TestConvergence extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -113,7 +113,7 @@ public class TestConvergence extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -130,7 +130,7 @@ public class TestConvergence extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -153,7 +153,7 @@ public class TestConvergence extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -170,7 +170,7 @@ public class TestConvergence extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -193,7 +193,7 @@ public class TestConvergence extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -206,7 +206,7 @@ public class TestConvergence extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		

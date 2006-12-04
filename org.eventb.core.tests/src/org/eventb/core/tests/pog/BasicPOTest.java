@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
@@ -19,6 +21,7 @@ import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
+import org.eventb.core.tests.EventBTest;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -26,11 +29,11 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
+public abstract class BasicPOTest extends EventBTest {
 
-	protected Type intType = factory.makeIntegerType();
-	protected Type boolType = factory.makeBooleanType();
-	protected Type powIntType = factory.makePowerSetType(intType);
+	public final Type intType = factory.makeIntegerType();
+	public final Type boolType = factory.makeBooleanType();
+	public final Type powIntType = factory.makePowerSetType(intType);
 
 	public Set<String> getElementNameSet(IRodinElement[] elements) throws RodinDBException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
@@ -41,7 +44,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 
 	public static final String ALLHYP_NAME = "ALLHYP";
 	
-	protected void getIdentifiersFromPredSets(
+	public void getIdentifiersFromPredSets(
 			Set<String> nameSet, 
 			IPOFile file, 
 			IPOPredicateSet predicateSet, 
@@ -61,7 +64,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 			getIdentifiersFromPredSets(nameSet, file, parentPredicateSet, forSequent);
 	}
 	
-	protected void containsIdentifiers(IPOFile file, String... strings) throws RodinDBException {
+	public void containsIdentifiers(IPOFile file, String... strings) throws RodinDBException {
 		
 		Set<String> nameSet = new HashSet<String>(43);
 		
@@ -76,7 +79,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
 	
-	protected void sequentHasIdentifiers(IPOSequent sequent, String... strings) throws RodinDBException {
+	public void sequentHasIdentifiers(IPOSequent sequent, String... strings) throws RodinDBException {
 		
 		IPOPredicateSet predicateSet = sequent.getHypotheses()[0].getParentPredicateSet();
 		
@@ -95,7 +98,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
 
-	protected List<IPOSequent> getSequents(IPOFile file, String... strings) {
+	public List<IPOSequent> getSequents(IPOFile file, String... strings) {
 		LinkedList<IPOSequent> sequents = new LinkedList<IPOSequent>();
 		
 		for (String string : strings)
@@ -104,7 +107,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 		return sequents;
 	}
 	
-	protected IPOSequent getSequent(IPOFile file, String name) {
+	public IPOSequent getSequent(IPOFile file, String name) {
 		IPOSequent sequent = (IPOSequent) file.getInternalElement(IPOSequent.ELEMENT_TYPE, name);
 		
 		assertTrue("sequent should exist: " + name, sequent.exists());
@@ -112,13 +115,13 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 		return sequent;
 	}
 	
-	protected void noSequent(IPOFile file, String name) {
+	public void noSequent(IPOFile file, String name) {
 		IPOSequent sequent = (IPOSequent) file.getInternalElement(IPOSequent.ELEMENT_TYPE, name);
 		
 		assertFalse("sequent should not exist", sequent.exists());
 	}
 	
-	protected void sequentHasGoal(
+	public void sequentHasGoal(
 			IPOSequent sequent, 
 			ITypeEnvironment typeEnvironment, 
 			String predicate) throws Exception {
@@ -140,7 +143,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 		return result;
 	}
 	
-	protected void sequentHasHypotheses(
+	public void sequentHasHypotheses(
 			IPOSequent sequent, 
 			ITypeEnvironment typeEnvironment, 
 			String... strings) throws Exception {
@@ -157,7 +160,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 		}
 	}
 
-	protected void sequentHasNoHypotheses(IPOSequent sequent) throws Exception {
+	public void sequentHasNoHypotheses(IPOSequent sequent) throws Exception {
 		
 		IPOPredicateSet predicateSet = sequent.getHypotheses()[0];
 		
@@ -167,7 +170,15 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 		
 	}
 
-	protected Type given(String s) {
+	public IPOFile getPOFile(IContextFile rodinFile) throws RodinDBException {
+		return rodinFile.getPOFile();
+	}
+	
+	public IPOFile getPOFile(IMachineFile rodinFile) throws RodinDBException {
+		return rodinFile.getPOFile();
+	}
+
+	public Type given(String s) {
 		return factory.makeGivenType(s);
 	}
 	

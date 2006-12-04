@@ -15,85 +15,12 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestAxiomsAndTheorems extends BasicTest {
+public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextFile, ISCContextFile> {
 	
-	public void testAxiomsAndTheorems_00_createAxiom() throws Exception {
-		IContextFile con = createContext("con");
-
-		addAxioms(con, makeSList("A1"), makeSList("ℕ≠∅"));
-		
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsAxioms(file, emptyEnv, makeSList("A1"), makeSList("ℕ≠∅"));
-		
-	}
 	
-	public void testAxiomsAndTheorems_01_twoAxiomsLableConflict() throws Exception {
-		IContextFile con = createContext("con");
-
-		addAxioms(con, makeSList("A1"), makeSList("ℕ≠∅"));
-		addAxioms(con, makeSList("A1"), makeSList("ℕ=∅"));
-	
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsAxioms(file, emptyEnv, makeSList("A1"), makeSList("ℕ≠∅"));
-		
-	}
-	
-	public void testAxiomsAndTheorems_02_axiomTypeConflict() throws Exception {
-		IContextFile con = createContext("con");
-
-		addAxioms(con, makeSList("A1"), makeSList("ℕ≠BOOL"));
-	
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsAxioms(file, emptyEnv, makeSList(), makeSList());
-		
-	}
-	
-	public void testAxiomsAndTheorems_03_axiomUsesConstantOK() throws Exception {
-		IContextFile con = createContext("con");
-
-		addConstants(con, "C1");
-		addAxioms(con, makeSList("A1"), makeSList("C1∈1‥0"));
-	
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsAxioms(file, emptyEnv, makeSList("A1"), makeSList("C1∈1‥0"));
-		
-	}
-	
-	public void testAxiomsAndTheorems_04_axiomUndeclaredConstant() throws Exception {
-		IContextFile con = createContext("con");
-
-		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
-	
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsAxioms(file, emptyEnv, makeSList(), makeSList());
-		
-	}
-	
+	/**
+	 * check partial typing
+	 */
 	public void testAxiomsAndTheorems_05_axiomPartialTyping() throws Exception {
 		IContextFile con = createContext("con");
 		
@@ -106,7 +33,7 @@ public class TestAxiomsAndTheorems extends BasicTest {
 	
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
 		ISCContextFile file = con.getSCContextFile();
 		
@@ -114,6 +41,9 @@ public class TestAxiomsAndTheorems extends BasicTest {
 		
 	}
 	
+	/**
+	 * more on partial typing (more complex)
+	 */
 	public void testAxiomsAndTheorems_06_axiomPartialTyping() throws Exception {
 		IContextFile con = createContext("con");
 		
@@ -127,7 +57,7 @@ public class TestAxiomsAndTheorems extends BasicTest {
 	
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
 		ISCContextFile file = con.getSCContextFile();
 		
@@ -135,67 +65,4 @@ public class TestAxiomsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testAxiomsAndTheorems_07_createTheorem() throws Exception {
-		IContextFile con = createContext("con");
-
-		addTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
-		
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
-		
-	}
-	
-	public void testAxiomsAndTheorems_08_twoTheorems() throws Exception {
-		IContextFile con = createContext("con");
-
-		addTheorems(con, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"));
-		
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsTheorems(file, emptyEnv, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"));
-		
-	}
-	
-	public void testAxiomsAndTheorems_09_twoTheoremsNameConflict() throws Exception {
-		IContextFile con = createContext("con");
-
-		addTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
-		addTheorems(con, makeSList("T1"), makeSList("ℕ=∅"));
-		
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
-		
-	}
-	
-	public void testAxiomsAndTheorems_10_axiomTheoremNameConflict() throws Exception {
-		IContextFile con = createContext("con");
-
-		addAxioms(con, makeSList("T1"), makeSList("ℕ≠∅"));
-		addTheorems(con, makeSList("T1"), makeSList("ℕ=∅"));
-		
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsAxioms(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
-		containsTheorems(file, emptyEnv, makeSList(), makeSList());
-		
-	}
-
 }

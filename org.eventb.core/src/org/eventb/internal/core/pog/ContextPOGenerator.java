@@ -13,6 +13,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCContextFile;
+import org.eventb.core.pog.IModule;
+import org.eventb.core.pog.IModuleManager;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -22,30 +26,53 @@ import org.rodinp.core.builder.IGraph;
  */
 public class ContextPOGenerator extends ProofObligationGenerator {
 
-	public static final String CONTEXT_POG_TOOL_ID = EventBPlugin.PLUGIN_ID + ".contextPOG"; //$NON-NLS-1$
+	public static final String CONTEXT_MODULE = EventBPlugin.PLUGIN_ID + ".contextModule"; //$NON-NLS-1$
+	
+	private IModuleManager manager;
+	
+	private IModule[] machineModules = null;
+	
+	public ContextPOGenerator() {
+		manager = ModuleManager.getModuleManager();
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IAutomaticTool#run(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean run(IFile source, IFile file, IProgressMonitor monitor)
+	public boolean run(IFile source, IFile target, IProgressMonitor monitor)
 			throws CoreException {
 		
 		// TODO implement context static checker
 		
-		IPOFile target = (IPOFile) RodinCore.valueOf(file).getMutableCopy();
-//		ISCContextFile source = (ISCContextFile) target.getSCContext().getSnapshot();
+		IPOFile poFile = (IPOFile) RodinCore.valueOf(target).getMutableCopy();
+		ISCContextFile scContextFile = (ISCContextFile) poFile.getSCContext().getSnapshot();
 
 		try {
 		
 			monitor.beginTask(
 					Messages.bind(
 							Messages.build_runningCPO, 
-							EventBPlugin.getComponentName(file.getName())),
+							EventBPlugin.getComponentName(target.getName())),
 					1);
 			
-			target.create(true, monitor);
+			if (machineModules == null) {
+				
+				machineModules = manager.getProcessorModules(CONTEXT_MODULE);
+			
+			}
 		
-			target.save(monitor, true);
+			poFile.create(true, monitor);
+		
+			IStateRepository<IStatePOG> repository = createRepository(scContextFile, monitor);
+			
+			runModules(
+					scContextFile, 
+					poFile,
+					machineModules, 
+					repository,
+					monitor);
+		
+			poFile.save(monitor, true);
 			
 			return true;
 		} finally {

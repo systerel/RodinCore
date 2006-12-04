@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestEventRefines extends BasicTest {
+public class TestEventRefines extends BasicSCTest {
 	
 	public void testEvents_00_refines() throws Exception {
 		IMachineFile abs = createMachine("abs");
@@ -26,7 +26,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -35,7 +35,7 @@ public class TestEventRefines extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -51,7 +51,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -62,7 +62,7 @@ public class TestEventRefines extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -79,7 +79,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -88,7 +88,7 @@ public class TestEventRefines extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -105,7 +105,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -114,7 +114,7 @@ public class TestEventRefines extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -132,7 +132,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -142,7 +142,7 @@ public class TestEventRefines extends BasicTest {
 		addEventWitnesses(evt, makeSList("L1"), makeSList("L1∈L2"));
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("L1", factory.makeIntegerType());
@@ -169,7 +169,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -179,7 +179,7 @@ public class TestEventRefines extends BasicTest {
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("V1'=L2"));
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", factory.makeIntegerType());
@@ -207,7 +207,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -219,7 +219,7 @@ public class TestEventRefines extends BasicTest {
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("V1'∈V2'"));
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", factory.makeIntegerType());
@@ -245,7 +245,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -254,7 +254,7 @@ public class TestEventRefines extends BasicTest {
 		addEventRefines(evt, "evt");
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("L1", factory.makeIntegerType());
@@ -278,7 +278,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -290,7 +290,7 @@ public class TestEventRefines extends BasicTest {
 		addEventRefines(gvt, "evt");
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -308,7 +308,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -317,7 +317,7 @@ public class TestEventRefines extends BasicTest {
 		addEventRefines(evt, "fvt");
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -332,14 +332,14 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInheritedEvent(mac, "evt");
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -354,7 +354,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -364,7 +364,7 @@ public class TestEventRefines extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -381,7 +381,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -392,7 +392,7 @@ public class TestEventRefines extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -410,7 +410,7 @@ public class TestEventRefines extends BasicTest {
 		
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -423,7 +423,7 @@ public class TestEventRefines extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -441,7 +441,7 @@ public class TestEventRefines extends BasicTest {
 		
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -455,7 +455,7 @@ public class TestEventRefines extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -471,7 +471,7 @@ public class TestEventRefines extends BasicTest {
 		
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -485,7 +485,7 @@ public class TestEventRefines extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -499,7 +499,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -507,7 +507,7 @@ public class TestEventRefines extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -523,7 +523,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -532,7 +532,7 @@ public class TestEventRefines extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -547,7 +547,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -555,7 +555,7 @@ public class TestEventRefines extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -571,7 +571,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -581,7 +581,7 @@ public class TestEventRefines extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -599,7 +599,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -615,7 +615,7 @@ public class TestEventRefines extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -632,7 +632,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -644,7 +644,7 @@ public class TestEventRefines extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -661,7 +661,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -673,7 +673,7 @@ public class TestEventRefines extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -701,7 +701,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -713,7 +713,7 @@ public class TestEventRefines extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -741,7 +741,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -753,7 +753,7 @@ public class TestEventRefines extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -773,7 +773,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -787,7 +787,7 @@ public class TestEventRefines extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -811,7 +811,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -830,7 +830,7 @@ public class TestEventRefines extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -853,7 +853,7 @@ public class TestEventRefines extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -865,7 +865,7 @@ public class TestEventRefines extends BasicTest {
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("V1'=V2'+V3"));
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1'", factory.makeIntegerType());

@@ -16,7 +16,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestVariant extends BasicTest {
+public class TestVariant extends BasicSCTest {
 	
 	public void testVariant_00() throws Exception {
 		IMachineFile mac = createMachine("mac");
@@ -25,7 +25,7 @@ public class TestVariant extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -40,7 +40,7 @@ public class TestVariant extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -57,7 +57,7 @@ public class TestVariant extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -75,7 +75,7 @@ public class TestVariant extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -90,7 +90,7 @@ public class TestVariant extends BasicTest {
 
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 		addMachineSees(mac, "con");
@@ -100,7 +100,7 @@ public class TestVariant extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -119,7 +119,7 @@ public class TestVariant extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -129,7 +129,7 @@ public class TestVariant extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		

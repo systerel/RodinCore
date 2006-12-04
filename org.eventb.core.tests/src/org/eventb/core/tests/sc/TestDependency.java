@@ -14,7 +14,7 @@ import org.eventb.core.IMachineFile;
  * @author Stefan Hallerstede
  *
  */
-public class TestDependency extends BasicTest {
+public class TestDependency extends BasicSCTest {
 
 	public void testDep_01_checkMarkersDeleted() throws Exception {
 		IContextFile con = createContext("con");

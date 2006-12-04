@@ -180,11 +180,19 @@ public abstract class Module implements IModule {
 		// nothing to do
 		
 	}
-	
+
+	protected IPOPredicateSet getSequentHypothesis(IPOSequent sequent) 
+	throws RodinDBException {
+		return sequent.getHypothesis(SEQ_HYP_NAME);
+	}
+
 	protected POGSource[] sources(POGSource... sources) {
 		return sources;
 	}
 	
+	protected POGHint[] hints(POGHint... hints) {
+		return hints;
+	}
 	protected POGPredicate[] hypotheses(POGPredicate... predicates) {
 		return predicates;
 	}

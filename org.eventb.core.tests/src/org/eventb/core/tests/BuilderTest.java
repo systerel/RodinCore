@@ -10,8 +10,10 @@ package org.eventb.core.tests;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -23,17 +25,12 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCMachineFile;
-import org.eventb.core.ast.Assignment;
-import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.RodinMarkerUtil;
 
 /**
  * Abstract class for builder tests.
@@ -92,77 +89,20 @@ public abstract class BuilderTest extends TestCase {
 	}
 	
 	protected void runBuilder() throws CoreException {
-		rodinProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
-	}
-	
-	protected IPOFile runPOG(ISCContextFile context) throws CoreException {
-		runBuilder();
-		return context.getContextFile().getPOFile();
-	}
-
-	protected IPOFile runPOG(ISCMachineFile machine) throws CoreException {
-		runBuilder();
-		return machine.getMachineFile().getPOFile();
-	}
-	
-	protected ISCContextFile runSC(IContextFile context) throws CoreException {
-		runBuilder();
-		return context.getSCContextFile();
-	}
-	
-	protected ISCMachineFile runSC(IMachineFile machine) throws CoreException {
-		runBuilder();
-		return machine.getSCMachineFile();
-	}
-	
-	protected Predicate predicateFromString(String predicate) {
-		Predicate pp = factory.parsePredicate(predicate).getParsedPredicate();
-		return pp;
-	}
-	
-	protected String getNormalizedPredicate(String input) {
-		Predicate pred = factory.parsePredicate(input).getParsedPredicate();
-		pred.typeCheck(factory.makeTypeEnvironment());
-		assertTrue(pred.isTypeChecked());
-		return pred.toStringWithTypes();
-	}
-	
-	protected Assignment assignmentFromString(String assignment) {
-		Assignment aa = factory.parseAssignment(assignment).getParsedAssignment();
-		return aa;
-	}
-	
-	protected Predicate rewriteGoal(ITypeEnvironment typeEnv, String predicate, String substitution) {
-		Predicate goal1 = predicateFromString(predicate);
-		goal1.typeCheck(typeEnv);
-		Assignment goalass1 = assignmentFromString(substitution);
-		goalass1.typeCheck(typeEnv);
-		goal1 = goal1.applyAssignment((BecomesEqualTo) goalass1, factory);
-		return goal1;
-	}
-
-	/**
-	 * Creates a new type environment from the given strings. The given strings
-	 * are alternatively an identifier name and its type.
-	 * 
-	 * @param strings
-	 *            an even number of strings
-	 * @return a new type environment
-	 */
-	public ITypeEnvironment mTypeEnvironment(String... strings) {
-		// even number of strings
-		assert (strings.length & 1) == 0;
-		final ITypeEnvironment result = factory.makeTypeEnvironment();
-		for (int i = 0; i < strings.length; i += 2) {
-			final String name = strings[i];
-			final String typeString = strings[i+1];
-			final IParseResult pResult = factory.parseType(typeString);
-			assertTrue("Parsing type failed for " + typeString,
-					pResult.isSuccess());
-			final Type type = pResult.getParsedType(); 
-			result.addName(name, type);
+		final IProject project = rodinProject.getProject();
+		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+		IMarker[] buildPbs= project.findMarkers(
+				RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER,
+				true,
+				IResource.DEPTH_INFINITE
+		);
+		if (buildPbs.length != 0) {
+			for (IMarker marker: buildPbs) {
+				System.out.println("Build problem for " + marker.getResource());
+				System.out.println("  " + marker.getAttribute(IMarker.MESSAGE));
+			}
+			fail("Build produced build problems, see console");
 		}
-		return result;
 	}
 
 	protected void setUp() throws Exception {

@@ -11,71 +11,27 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ast.ITypeEnvironment;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class TestVariables extends BasicTest {
+public class TestVariables extends GenericIdentTest<IMachineFile, ISCMachineFile> {
 	
-	public void testVariables_0() throws Exception {
-		IMachineFile mac = createMachine("mac");
-
-		addVariables(mac, makeSList("V1"));
-		
-		mac.save(null, true);
-		
-		runSC(mac);
-		
-		ISCMachineFile file = mac.getSCMachineFile();
-		
-		containsVariables(file);
-		
-	}
-
-	public void testVariables_1() throws Exception {
-		IMachineFile mac = createMachine("mac");
-
-		addVariables(mac, makeSList("V1"));
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℤ"));
-		
-		mac.save(null, true);
-		
-		runSC(mac);
-		
-		ISCMachineFile file = mac.getSCMachineFile();
-		
-		containsVariables(file, "V1");
-		
-		numberOfInvariants(file, 1);
-
-	}
 	
-	public void testVariables_2() throws Exception {
-		IMachineFile mac = createMachine("mac");
-
-		addVariables(mac, makeSList("V1"));
-		addInvariants(mac, makeSList("I1"), makeSList("V2∈ℤ"));
-
-		mac.save(null, true);
-		
-		runSC(mac);
-		
-		ISCMachineFile file = mac.getSCMachineFile();
-		
-		containsVariables(file);
-		
-		numberOfInvariants(file, 0);
-	}
 	
-	public void testVariables_3() throws Exception {
+	/**
+	 * check type propagation of carrier sets in seeing machine
+	 */
+	public void testVariables_01() throws Exception {
 		IContextFile con = createContext("con");
 
 		addCarrierSets(con, makeSList("S1"));
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 		
 		IMachineFile mac = createMachine("mac");
 		
@@ -86,7 +42,11 @@ public class TestVariables extends BasicTest {
 
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addGivenSet("S1");
+		environment.addName("V1", factory.makeGivenType("S1"));
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -96,30 +56,36 @@ public class TestVariables extends BasicTest {
 		
 		containsVariables(file, "V1");
 		
-		numberOfInvariants(file, 1);
+		containsInvariants(file, environment, makeSList("I1"), makeSList("V1∈S1"));
 
 	}
 	
-	public void testVariables_4() throws Exception {
+	/**
+	 * name conflict of variable and seen constant: variable removed!
+	 */
+	public void testVariables_02() throws Exception {
 		IContextFile con = createContext("con");
 
 		addConstants(con, makeSList("C1"));
-		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
+		addAxioms(con, makeSList("A1"), makeSList("C1∈BOOL"));
 		
 		con.save(null, true);
 		
-		runSC(con);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		
 		addMachineSees(mac, "con");
 
 		addVariables(mac, makeSList("C1"));
-		addInvariants(mac, makeSList("I1"), makeSList("C1∈ℕ"));
+		addInvariants(mac, makeSList("I1", "I2"), makeSList("C1∈ℕ", "C1=TRUE"));
 
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("C1", factory.makeBooleanType());
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -129,11 +95,14 @@ public class TestVariables extends BasicTest {
 		
 		containsVariables(file);
 		
-		numberOfInvariants(file, 1);
+		containsInvariants(file, environment, makeSList("I2"), makeSList("C1=TRUE"));
 
 	}
 	
-	public void testVariables_5() throws Exception {
+	/**
+	 * variables and invariants are preserved in refinements
+	 */
+	public void testVariables_03() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, makeSList("V1"));
@@ -141,7 +110,7 @@ public class TestVariables extends BasicTest {
 
 		abs.save(null, true);
 		
-		runSC(abs);
+		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
 		
@@ -151,13 +120,16 @@ public class TestVariables extends BasicTest {
 
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("V1", factory.makeIntegerType());
+
 		ISCMachineFile file = mac.getSCMachineFile();
 				
 		containsVariables(file, "V1");
 		
-		numberOfInvariants(file, 1);
+		containsInvariants(file, environment, makeSList("I1"), makeSList("V1∈ℕ"));
 
 	}
 

@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestEvents extends BasicTest {
+public class TestEvents extends BasicSCTest {
 	
 	public void testEvents_00_createEvent() throws Exception {
 		IMachineFile mac = createMachine("mac");
@@ -26,7 +26,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -42,7 +42,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -58,7 +58,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -73,7 +73,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -90,7 +90,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -107,7 +107,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -127,7 +127,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -150,7 +150,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -175,7 +175,7 @@ public class TestEvents extends BasicTest {
 		
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -201,7 +201,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -229,7 +229,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -254,7 +254,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -279,7 +279,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -308,7 +308,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -338,7 +338,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -369,7 +369,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -401,7 +401,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -422,7 +422,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -447,7 +447,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -471,7 +471,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -495,7 +495,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -519,7 +519,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -543,7 +543,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -582,7 +582,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -622,7 +622,7 @@ public class TestEvents extends BasicTest {
 	
 		mac.save(null, true);
 		
-		runSC(mac);
+		runBuilder();
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		

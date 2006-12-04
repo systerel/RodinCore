@@ -27,8 +27,6 @@ import org.rodinp.core.builder.IGraph;
  */
 public class MachinePOGenerator extends ProofObligationGenerator {
 
-	public static final String MACHINE_POG_TOOL_ID = EventBPlugin.PLUGIN_ID + ".machinePOG"; //$NON-NLS-1$
-
 	public static final String MACHINE_MODULE = EventBPlugin.PLUGIN_ID + ".machineModule"; //$NON-NLS-1$
 	
 	private IModuleManager manager;
@@ -42,10 +40,10 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IAutomaticTool#run(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean run(IFile source, IFile file, IProgressMonitor monitor)
+	public boolean run(IFile source, IFile target, IProgressMonitor monitor)
 			throws CoreException {
 
-		IPOFile poFile = (IPOFile) RodinCore.valueOf(file).getMutableCopy();
+		IPOFile poFile = (IPOFile) RodinCore.valueOf(target).getMutableCopy();
 		ISCMachineFile scMachineFile = (ISCMachineFile) poFile.getSCMachine().getSnapshot();
 		
 		try {
@@ -53,7 +51,7 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 			monitor.beginTask(
 					Messages.bind(
 							Messages.build_runningMPO, 
-							EventBPlugin.getComponentName(file.getName())),
+							EventBPlugin.getComponentName(target.getName())),
 					10);
 			
 			if (machineModules == null) {
