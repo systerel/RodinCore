@@ -72,19 +72,19 @@
             id="review"
             name="%reviewName"/>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.RemoveNegation"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter$RemoveNegation"
             id="removeNegation"
             name="%removeNegationName"/>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.DisjToImpl"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter$DisjToImpl"
             id="disjToImpl"
             name="%disjToImplName"/>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivial"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter$Trivial"
             id="trivial"
             name="%trivialName"/>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter$TypePred"
             id="typePred"
             name="%typePredName"/>
        <reasoner
