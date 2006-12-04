@@ -230,16 +230,10 @@ public class Tactics {
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
 				BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(pred);
-				return (
-						BasicTactics.reasonerTac(
-								new AllD(),
-								new AllD.Input(
-										new MultipleExprInput(
-												instantiations,
-												boundIdentDecls,
-												typeEnv),
-										pred)
-						)).apply(pt, pm);
+				final AllD.Input input = new AllD.Input(instantiations,
+						boundIdentDecls, typeEnv, pred);
+				return (BasicTactics.reasonerTac(new AllD(), input)).apply(pt,
+						pm);
 			}
 			
 		};

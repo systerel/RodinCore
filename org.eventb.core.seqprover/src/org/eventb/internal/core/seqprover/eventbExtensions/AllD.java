@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -25,17 +26,35 @@ import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 
 public class AllD implements IReasoner {
 	
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".allD";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".allD";
+	
 	
 	public static class Input implements IReasonerInput {
+
+		private static final String EXPRS_KEY = "exprs";
+		
 		MultipleExprInput exprsInput;
 		Predicate pred;
 
-		public Input(MultipleExprInput exprsInput, Predicate pred) {
-			this.exprsInput = exprsInput;
+		public Input(String[] instantiations, BoundIdentDecl[] decls,
+				ITypeEnvironment typeEnv, Predicate pred) {
+
+			this.exprsInput = new MultipleExprInput(instantiations, decls,
+					typeEnv);
 			this.pred = pred;
 		}
 
+		public Input(IReasonerInputReader reader, Predicate pred)
+				throws SerializeException {
+
+			this.exprsInput = new MultipleExprInput(reader, EXPRS_KEY);
+			this.pred = pred;
+		}
+
+		public void serialize(IReasonerInputWriter writer) throws SerializeException {
+			exprsInput.serialize(writer, EXPRS_KEY);
+		}
+		
 		public void applyHints(ReplayHints hints) {
 			exprsInput.applyHints(hints);
 			pred = hints.applyHints(pred);
@@ -49,6 +68,10 @@ public class AllD implements IReasoner {
 			return exprsInput.hasError();
 		}
 
+		public Expression[] computeInstantiations(BoundIdentDecl[] boundIdentDecls) {
+			return exprsInput.computeInstantiations(boundIdentDecls);
+		}
+
 	}
 	
 	public String getReasonerID() {
@@ -57,8 +80,7 @@ public class AllD implements IReasoner {
 
 	public void serializeInput(IReasonerInput rInput, IReasonerInputWriter writer)
 			throws SerializeException {
-		Input input = (Input) rInput;
-		input.exprsInput.serialize(writer);
+		((Input) rInput).serialize(writer);
 		// The predicate is accessible from the associated rule
 	}
 
@@ -74,9 +96,7 @@ public class AllD implements IReasoner {
 		for (Hypothesis hyp: neededHyps) {
 			pred = hyp.getPredicate();
 		}
-		return new Input(
-				new MultipleExprInput(reader),
-				pred);
+		return new Input(reader, pred);
 	}
 	
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm){
@@ -100,13 +120,11 @@ public class AllD implements IReasoner {
 		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(univHypPred);
 		
 		
-		MultipleExprInput multipleExprInput = input.exprsInput;
-
 		// compute instantiations from the input: 
 		// it can be that the number of bound variables have increased 
 	    // or decreased, or their types have changed.
 		// Not sure if reasoner should actually modify its input to reflect this.
-		Expression[] instantiations = multipleExprInput.computeInstantiations(boundIdentDecls);
+		Expression[] instantiations = input.computeInstantiations(boundIdentDecls);
 		
 		if (instantiations == null)
 			return ProverFactory.reasonerFailure(
