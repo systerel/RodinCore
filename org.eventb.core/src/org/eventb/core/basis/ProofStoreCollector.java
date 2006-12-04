@@ -9,7 +9,7 @@ import org.eventb.core.IPRExprRef;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRPredRef;
 import org.eventb.core.IPRProof;
-import org.eventb.core.IPRReasonerInput;
+import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRStringInput;
@@ -117,20 +117,20 @@ public class ProofStoreCollector implements IProofStoreCollector {
 
 	public static class Bridge implements IReasonerInputWriter {
 
-		private final IPRReasonerInput prReasonerInput;
+		private final IPRProofRule prProofRule;
 		private final IProofStoreCollector store;
 		// This may not work..
 		private final IProgressMonitor monitor;
 		
-		public Bridge(IPRReasonerInput prReasonerInput,IProofStoreCollector store,IProgressMonitor monitor){
-			this.prReasonerInput = prReasonerInput;
+		public Bridge(IPRProofRule prProofRule,IProofStoreCollector store,IProgressMonitor monitor){
+			this.prProofRule = prProofRule;
 			this.store = store;
 			this.monitor= monitor;
 		}
 		
 		public void putExpressions(String key, Expression... exprs) throws SerializeException {
 			try {
-				IPRExprRef prRef = (IPRExprRef)prReasonerInput.getInternalElement(IPRExprRef.ELEMENT_TYPE, key);
+				IPRExprRef prRef = (IPRExprRef)prProofRule.getInternalElement(IPRExprRef.ELEMENT_TYPE, key);
 				prRef.create(null, monitor);
 				prRef.setExpressions(exprs, store, monitor);
 			} catch (RodinDBException e) {
@@ -140,7 +140,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 
 		public void putPredicates(String key, Predicate... preds) throws SerializeException {
 			try {
-				IPRPredRef prRef = (IPRPredRef)prReasonerInput.getInternalElement(IPRPredRef.ELEMENT_TYPE, key);
+				IPRPredRef prRef = (IPRPredRef)prProofRule.getInternalElement(IPRPredRef.ELEMENT_TYPE, key);
 				prRef.create(null, monitor);
 				prRef.setPredicates(preds, store, monitor);
 			} catch (RodinDBException e) {
@@ -150,7 +150,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 
 		public void putString(String key, String string) throws SerializeException {
 			try {
-				IPRStringInput prStrInp = (IPRStringInput)prReasonerInput.getInternalElement(IPRStringInput.ELEMENT_TYPE, key);
+				IPRStringInput prStrInp = (IPRStringInput)prProofRule.getInternalElement(IPRStringInput.ELEMENT_TYPE, key);
 				prStrInp.create(null, monitor);
 				prStrInp.setString(string, monitor);
 			} catch (RodinDBException e) {

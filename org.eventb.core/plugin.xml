@@ -239,10 +239,6 @@
             id="prStoredPred"
             name="%eventBprStoredPred"/>
       <internalElementType
-            class="org.eventb.core.basis.PRReasonerInput"
-            id="prReasonerInput"
-            name="%eventBprReasonerInput"/>
-      <internalElementType
             class="org.eventb.core.basis.PRRuleAntecedent"
             id="prRuleAntecedent"
             name="%eventBprRuleAntecedent"/>

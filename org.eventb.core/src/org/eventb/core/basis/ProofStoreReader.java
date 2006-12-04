@@ -8,7 +8,7 @@ import org.eventb.core.IPRExprRef;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRPredRef;
 import org.eventb.core.IPRProof;
-import org.eventb.core.IPRReasonerInput;
+import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRStringInput;
@@ -101,7 +101,7 @@ public class ProofStoreReader implements IProofStoreReader {
 
 	public static class Bridge implements IReasonerInputReader {
 
-		private final IPRReasonerInput prReasonerInput;
+		private final IPRProofRule prProofRule;
 		private final IProofStoreReader store;
 		private final int confidence;
 		private final String displayName;
@@ -109,13 +109,11 @@ public class ProofStoreReader implements IProofStoreReader {
 		private final Set<Hypothesis> neededHyps;
 		private final IAntecedent[] antecedents;
 		
-		public Bridge(final IPRReasonerInput prReasonerInput,
-				final IProofStoreReader store, final int confidence,
-				final String displayName, final Predicate goal,
-				final Set<Hypothesis> neededHyps,
-				final IAntecedent[] antecedents) {
+		public Bridge(IPRProofRule prProofRule, IProofStoreReader store,
+				int confidence, String displayName, Predicate goal,
+				Set<Hypothesis> neededHyps, IAntecedent[] antecedents) {
 
-			this.prReasonerInput = prReasonerInput;
+			this.prProofRule = prProofRule;
 			this.store = store;
 			this.confidence = confidence;
 			this.displayName = displayName;
@@ -126,7 +124,7 @@ public class ProofStoreReader implements IProofStoreReader {
 
 		public Expression[] getExpressions(String key) throws SerializeException {
 			try {
-				final IPRExprRef prExprRef = (IPRExprRef) prReasonerInput
+				final IPRExprRef prExprRef = (IPRExprRef) prProofRule
 						.getInternalElement(IPRExprRef.ELEMENT_TYPE, key);
 				return prExprRef.getExpressions(store);
 			} catch (RodinDBException e) {
@@ -136,7 +134,7 @@ public class ProofStoreReader implements IProofStoreReader {
 
 		public Predicate[] getPredicates(String key) throws SerializeException {
 			try {
-				final IPRPredRef prPredRef = (IPRPredRef) prReasonerInput
+				final IPRPredRef prPredRef = (IPRPredRef) prProofRule
 						.getInternalElement(IPRPredRef.ELEMENT_TYPE, key);
 				return prPredRef.getPredicates(store);
 			} catch (RodinDBException e) {
@@ -146,7 +144,7 @@ public class ProofStoreReader implements IProofStoreReader {
 
 		public String getString(String key) throws SerializeException {
 			try {
-				final IPRStringInput prStringInput = (IPRStringInput) prReasonerInput
+				final IPRStringInput prStringInput = (IPRStringInput) prProofRule
 						.getInternalElement(IPRStringInput.ELEMENT_TYPE, key);
 				return prStringInput.getString();
 			} catch (RodinDBException e) {
