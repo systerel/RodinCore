@@ -75,7 +75,7 @@ public interface IContextFile extends IRodinFile {
 	 * 
 	 * @return a handle to the proof file of this context
 	 */
-	IPSFile getPRFile();
+	IPSFile getPSFile();
 
 	/**
 	 * Returns a handle to a child extends clause with the given element name.

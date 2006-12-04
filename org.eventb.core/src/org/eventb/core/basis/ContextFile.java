@@ -15,15 +15,12 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPSFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.RodinFile;
 
 /**
  * Implementation of Event-B (unchecked) contexts as an extension of the Rodin database.
@@ -39,7 +36,7 @@ import org.rodinp.core.basis.RodinFile;
  *
  * @author Laurent Voisin
  */
-public class ContextFile extends RodinFile implements IContextFile {
+public class ContextFile extends EventBFile implements IContextFile {
 	
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -113,26 +110,6 @@ public class ContextFile extends RodinFile implements IContextFile {
 		final String scName = EventBPlugin.getSCContextFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();
 		return (ISCContextFile) project.getRodinFile(scName);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IContextFile#getPOFile()
-	 */
-	public IPOFile getPOFile() {
-		final String bareName = EventBPlugin.getComponentName(getElementName());
-		final String poName = EventBPlugin.getPOFileName(bareName);
-		final IRodinProject project = (IRodinProject) getParent();
-		return (IPOFile) project.getRodinFile(poName);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IContextFile#getPRFile()
-	 */
-	public IPSFile getPRFile() {
-		final String bareName = EventBPlugin.getComponentName(getElementName());
-		final String prName = EventBPlugin.getPRFileName(bareName);
-		final IRodinProject project = (IRodinProject) getParent();
-		return (IPSFile) project.getRodinFile(prName);
 	}
 
 	public IExtendsContext getExtendsClause(String elementName) {

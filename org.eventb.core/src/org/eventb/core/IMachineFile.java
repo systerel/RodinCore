@@ -77,7 +77,7 @@ public interface IMachineFile extends IRodinFile {
 	 * 
 	 * @return a handle to the proof file of this machine
 	 */
-	IPSFile getPRFile();
+	IPSFile getPSFile();
 
 	/**
 	 * Returns a handle to a child refines clause with the given element name.

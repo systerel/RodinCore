@@ -14,8 +14,6 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPSFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISeesContext;
@@ -104,26 +102,6 @@ public class MachineFile extends EventBFile implements IMachineFile {
 		final String scName = EventBPlugin.getSCMachineFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();
 		return (ISCMachineFile) project.getRodinFile(scName);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IMachineFile#getPOFile()
-	 */
-	public IPOFile getPOFile() {
-		final String bareName = EventBPlugin.getComponentName(getElementName());
-		final String poName = EventBPlugin.getPOFileName(bareName);
-		final IRodinProject project = (IRodinProject) getParent();
-		return (IPOFile) project.getRodinFile(poName);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IMachineFile#getPRFile()
-	 */
-	public IPSFile getPRFile() {
-		final String bareName = EventBPlugin.getComponentName(getElementName());
-		final String prName = EventBPlugin.getPRFileName(bareName);
-		final IRodinProject project = (IRodinProject) getParent();
-		return (IPSFile) project.getRodinFile(prName);
 	}
 
 	@Deprecated
