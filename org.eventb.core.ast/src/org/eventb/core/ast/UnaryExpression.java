@@ -536,7 +536,7 @@ public class UnaryExpression extends Expression {
 		Predicate impl = ff.makeBinaryPredicate(LIMP,
 				ff.makeRelationalPredicate(IN,
 						ff.makeBoundIdentifier(0, null, INT),
-						child,
+						child.shiftBoundIdentifiers(2, ff),
 						null),
 				ff.makeRelationalPredicate(
 						(getTag() == KMIN ? LE : GE),

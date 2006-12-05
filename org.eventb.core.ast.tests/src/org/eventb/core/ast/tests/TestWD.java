@@ -223,6 +223,24 @@ public class TestWD extends TestCase {
 			), new TestPredicate(
 					"T ⊆ S ∧ g ∈ ℤ → T ⇒ (∃S·g(S) ∈ T)",
 					"T ⊆ S ∧ g ∈ ℤ → T ⇒ (∀S0·S0 ∈ dom(g) ∧ g∼;({S0} ◁ g) ⊆ id(S))"
+			// Example from the Mobile model
+			), new TestPredicate(
+					"   a ∈ S ↔ S" +
+					" ∧ b ∈ S ↔ (ℤ ↔ S)" +
+					" ∧ (∀s·s ∈ dom(a) ⇒ a(s) = b(s)(max(dom(b(s)))))",
+					//---------------------------
+					"  a∈S ↔ S ∧ b∈S ↔ (ℤ ↔ S)" +
+					"⇒ (∀s·s∈dom(a)" +
+					"    ⇒ s∈dom(a) ∧ a∼;({s} ◁ a)⊆id(S)" +
+					"    ∧ s∈dom(b) ∧ b∼;({s} ◁ b)⊆id(ℙ(ℤ × S))" +
+					"    ∧ s∈dom(b) ∧ b∼;({s} ◁ b)⊆id(ℙ(ℤ × S))" +
+					"    ∧ dom(b(s))≠∅ ∧ (∃b0·∀x·x∈dom(b(s))⇒b0≥x)" +
+					"    ∧ max(dom(b(s)))∈dom(b(s))" +
+					"    ∧ (b(s))∼;({max(dom(b(s)))} ◁ b(s))⊆id(S))"
+			// Reduced example extracted from the preceding one
+			), new TestPredicate(
+					"∀s·max(s) ∈ s",
+					"∀s·s≠∅ ∧ (∃b·∀x·x ∈ s  ⇒  b ≥ x)"
 			),
 	};
 	
