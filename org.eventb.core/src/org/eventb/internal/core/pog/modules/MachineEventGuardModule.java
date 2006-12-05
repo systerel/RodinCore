@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -95,13 +97,33 @@ public class MachineEventGuardModule extends PredicateModule {
 			String elementLabel, 
 			ISCPredicateElement predicateElement, 
 			Predicate predicate, 
+			int index,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		if (abstractEventGuardTable.contains(predicate)) // already proved in abstraction
+		if (isRedundantWDProofObligation(predicate, index))
 			return;
 		
 		super.createWDProofObligation(target, elementLabel, predicateElement,
-				predicate, monitor);
+				predicate, index, monitor);
+	}
+	
+	private boolean isRedundantWDProofObligation(Predicate predicate, int index) {
+		
+		List<Predicate> absPredicates = abstractEventGuardTable.getPredicates();
+		
+		int absIndex = absPredicates.indexOf(predicate);
+		
+		if (absIndex == -1)
+			return false;
+		
+		List<Predicate> conPredicates = predicateTable.getPredicates();
+		
+		for (int k=0; k<absIndex; k++) {
+			if (conPredicates.indexOf(absPredicates.get(k)) < index)
+				continue;
+			return false;
+		}
+		return true;
 	}
 
 	@Override

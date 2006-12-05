@@ -240,15 +240,14 @@ public class TestMachineRefines extends BasicPOTest {
 	}
 
 	/*
-	 * POG attempts to store twice the predicate set "ALLHYP", once for the
-	 * well-definedness PO of the guard, and then once at the end of the
-	 * machine.
+	 * PO filter: the POG should not generate WD POs for guards when these
+	 * conditions have already been proved for the abstract event
 	 */
 	public void testEvents_05() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addEvent(abs, "evt", 
 				makeSList("x"), 
-				makeSList("G1", "G2"), makeSList("x ÷ x > x", "1 ÷ x > 1"), 
+				makeSList("G1", "G2", "G3"), makeSList("x ÷ x > x", "1 ÷ x > 1", "2÷x = x"), 
 				makeSList(), makeSList());
 		abs.save(null, true);
 		
@@ -256,7 +255,7 @@ public class TestMachineRefines extends BasicPOTest {
 		addMachineRefines(ref, "abs");
 		IEvent event = addEvent(ref, "evt", 
 				makeSList("x"), 
-				makeSList("G1", "G2"), makeSList("5 ÷ (x+x) = −1", "x ÷ x > x"), 
+				makeSList("G1", "G2", "G3", "G4"), makeSList("5 ÷ (x+x) = −1", "1 ÷ x > 1", "x ÷ x > x", "2÷x = x"), 
 				makeSList(), makeSList());
 		addEventRefines(event, "evt");
 		ref.save(null, true);
@@ -268,10 +267,17 @@ public class TestMachineRefines extends BasicPOTest {
 		IPOFile po = ref.getPOFile();
 		containsIdentifiers(po);
 		
-		IPOSequent sequent = getSequent(po, "evt/G1/WD");
+		IPOSequent sequent;
+		
+		sequent= getSequent(po, "evt/G1/WD");
 		sequentHasGoal(sequent, environment, "(x+x)≠0");
 		
-		noSequent(po, "evt/G2/WD");
+		sequent= getSequent(po, "evt/G2/WD");
+		sequentHasGoal(sequent, environment, "x≠0");
+		
+		noSequent(po, "evt/G3/WD");
+		
+		noSequent(po, "evt/G4/WD");
 	}
 
 }

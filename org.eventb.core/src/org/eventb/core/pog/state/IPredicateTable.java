@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.eventb.core.ISCPredicateElement;
@@ -30,10 +29,6 @@ public interface IPredicateTable extends IStatePOG {
 			ISCPredicateElement element, 
 			ITypeEnvironment typeEnvironment, 
 			FormulaFactory factory) throws RodinDBException;
-	
-	boolean contains(Predicate predicate);
-	
-	boolean containsAll(Collection<Predicate> predicates);
 	
 	void trim();
 	

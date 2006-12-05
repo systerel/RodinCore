@@ -84,7 +84,7 @@ public abstract class PredicateModule extends UtilityModule {
 			
 			Predicate predicate = predicates.get(i);
 			
-			createWDProofObligation(target, elementLabel, predicateElement, predicate, monitor);
+			createWDProofObligation(target, elementLabel, predicateElement, predicate, i, monitor);
 			
 			createProofObligation(target, elementLabel, predicateElement, predicate, monitor);
 
@@ -106,6 +106,7 @@ public abstract class PredicateModule extends UtilityModule {
 			String elementLabel, 
 			ISCPredicateElement predicateElement, 
 			Predicate predicate, 
+			int index,
 			IProgressMonitor monitor) throws RodinDBException {
 		Predicate wdPredicate = predicate.getWDPredicate(factory);
 		if(!goalIsTrivial(wdPredicate)) {
