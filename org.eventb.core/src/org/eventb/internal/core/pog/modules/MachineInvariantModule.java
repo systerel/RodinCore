@@ -32,11 +32,6 @@ public class MachineInvariantModule extends PredicateModule {
 	throws CoreException {
 		return (IMachineInvariantTable) repository.getState(IMachineInvariantTable.STATE_TYPE);
 	}
-	
-	@Override
-	protected String getWDProofObligationSourceRole() {
-		return "invariant";
-	}
 
 	@Override
 	protected String getWDProofObligationDescription() {

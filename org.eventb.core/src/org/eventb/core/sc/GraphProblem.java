@@ -92,7 +92,6 @@ public enum GraphProblem implements IRodinProblem {
 	WitnessLabelNeedLessError(IMarker.SEVERITY_ERROR, Messages.scuser_WitnessLabelNeedLess),
 	ContextOnlyInAbstractMachineWarning(IMarker.SEVERITY_WARNING, Messages.scuser_ContextOnlyPresentInAbstractMachine),
 	WasAbstractEventLabelWarning(IMarker.SEVERITY_WARNING, Messages.scuser_WasAbstractEventLabelProblem),
-	ObsoleteEventLabelWarning(IMarker.SEVERITY_WARNING, Messages.scuser_ObsoleteEventLabelProblem),
 	InconsistentEventLabelWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InconsistentEventLabelProblem),
 	VariableHasDisappearedError(IMarker.SEVERITY_ERROR, Messages.scuser_VariableHasDisappearedError),
 	VariableIsLocalInAbstractMachineError(IMarker.SEVERITY_ERROR, Messages.scuser_VariableIsLocalInAbstractMachine),

@@ -121,7 +121,6 @@ public final class Messages {
     public static String scuser_ContextOnlyPresentInAbstractMachine;
     
     public static String scuser_WasAbstractEventLabelProblem;
-    public static String scuser_ObsoleteEventLabelProblem;
     public static String scuser_InconsistentEventLabelProblem;
     public static String scuser_VariableHasDisappearedError;
     public static String scuser_VariableIsLocalInAbstractMachine;

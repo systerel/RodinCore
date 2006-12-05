@@ -10,6 +10,7 @@ package org.eventb.internal.core.pog.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOSource;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Predicate;
@@ -84,7 +85,7 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 					fullHypothesis,
 					emptyPredicates,
 					new POGPredicate(action, wdPredicate),
-					sources(new POGSource("assignment", action)),
+					sources(new POGSource(IPOSource.DEFAULT_ROLE, action)),
 					emptyHints,
 					monitor);
 		}
@@ -105,7 +106,7 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 					fullHypothesis,
 					emptyPredicates,
 					new POGPredicate(action, fisPredicate),
-					sources(new POGSource("assignment", action)),
+					sources(new POGSource(IPOSource.DEFAULT_ROLE, action)),
 					emptyHints,
 					monitor);
 		}

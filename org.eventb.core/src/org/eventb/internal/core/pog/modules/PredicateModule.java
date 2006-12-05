@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPOSource;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Predicate;
@@ -116,9 +117,7 @@ public abstract class PredicateModule extends UtilityModule {
 					hypothesis,
 					emptyPredicates,
 					new POGPredicate(predicateElement, wdPredicate),
-					sources(new POGSource(
-							getWDProofObligationSourceRole(), 
-							(ITraceableElement) predicateElement)),
+					sources(new POGSource(IPOSource.DEFAULT_ROLE, (ITraceableElement) predicateElement)),
 					new POGHint[] {
 						new POGIntervalSelectionHint(
 								hypothesisManager.getRootHypothesis(target), 
@@ -127,8 +126,6 @@ public abstract class PredicateModule extends UtilityModule {
 					monitor);
 		}
 	}
-
-	protected abstract String getWDProofObligationSourceRole();
 
 	protected abstract String getWDProofObligationDescription();
 

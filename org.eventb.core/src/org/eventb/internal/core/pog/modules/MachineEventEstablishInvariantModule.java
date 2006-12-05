@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOSource;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
@@ -63,8 +64,8 @@ public class MachineEventEstablishInvariantModule extends MachineEventInvariantM
 				hyp,
 				new POGPredicate(invariant, predicate),
 				sources(
-						new POGSource("event", concreteEvent), 
-						new POGSource("invariant", invariant)),
+						new POGSource(IPOSource.DEFAULT_ROLE, concreteEvent), 
+						new POGSource(IPOSource.DEFAULT_ROLE, invariant)),
 				emptyHints,
 				monitor);
 	}

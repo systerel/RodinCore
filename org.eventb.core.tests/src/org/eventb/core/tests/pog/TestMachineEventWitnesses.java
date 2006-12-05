@@ -123,7 +123,6 @@ public class TestMachineEventWitnesses extends BasicPOTest {
 		sequent = getSequent(po, "evt/ax'/WWD");
 		sequentHasIdentifiers(sequent, "ax'", "ay'", "cx'", "pp", "qq");
 		sequentHasHypotheses(sequent, environment, "ax>0", "ay≥6", "qq∈ℕ");
-
 		sequentHasGoal(sequent, environment, "ay≠0");
 		
 	}
@@ -132,10 +131,88 @@ public class TestMachineEventWitnesses extends BasicPOTest {
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
 		environment.addName("ax", intType);
 		environment.addName("ay", intType);
+		environment.addName("az", intType);
 		environment.addName("cx", intType);
+		environment.addName("cy", intType);
+		environment.addName("cz", intType);
+		environment.addName("ax'", intType);
+		environment.addName("ay'", intType);
+		environment.addName("az'", intType);
+		environment.addName("cx'", intType);
+		environment.addName("cy'", intType);
+		environment.addName("cz'", intType);
 		environment.addName("pp", powIntType);
 		environment.addName("qq", intType);
 		return environment;
+	}
+	
+	/**
+	 * categorisation of witnesses: deterministic or nondeterministic
+	 */
+	public void test_02() throws Exception {
+		IMachineFile abs = createMachine("abs");
+
+		addVariables(abs, "ax", "ay", "az");
+		addInvariants(abs, makeSList("I1", "I2", "I3"), makeSList("ax>0", "ay>0", "az>0"));
+		addEvent(abs, "evt", 
+				makeSList("pp"), 
+				makeSList("G1"), makeSList("pp⊆ℕ"), 
+				makeSList("A1", "A2"), makeSList("ax:∈pp", "ay,az :∣ ay'=az'"));
+		
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		IMachineFile mac = createMachine("mac");
+
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "cx", "cy", "cz");
+		addInvariants(mac, makeSList("I1", "I2", "I3"), makeSList("cx>ax", "cy+ax>ay", "cz+ay+ax>az"));
+		IEvent event = addEvent(mac, "evt", 
+				makeSList("qq"), 
+				makeSList("G1"), makeSList("qq∈ℕ"), 
+				makeSList("A1", "A2"), makeSList("cx≔qq", "cy,cz :∣ {cy',cz'} ⊆ {qq}"));
+		addEventRefines(event, "evt");
+		addEventWitnesses(event, 
+				makeSList("pp", "ax'", "ay'", "az'"), 
+				makeSList("qq∈pp", "ax'=cx'", "ay'=cx'+ay'", "cz'=az'"));
+		
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = makeTypeEnvironment();
+		
+		IPOFile po = mac.getPOFile();
+		
+		containsIdentifiers(po, "ax", "ay", "az", "cx", "cy", "cz");
+		
+		IPOSequent sequent;
+		
+		sequent = getSequent(po, "evt/A1/SIM");
+		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
+		sequentHasHypotheses(sequent, environment, "qq∈pp");
+		sequentHasGoal(sequent, environment, "qq∈pp");
+		
+		sequent = getSequent(po, "evt/A2/SIM");
+		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
+		sequentHasHypotheses(sequent, environment, "qq∈pp", "ay'=cx'+ay'", "cz'=az'");
+		sequentHasGoal(sequent, environment, "ay'=az'");
+
+		sequent = getSequent(po, "evt/I1/INV");
+		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
+		sequentHasHypotheses(sequent, environment);
+		sequentHasGoal(sequent, environment, "qq>qq");
+
+		sequent = getSequent(po, "evt/I2/INV");
+		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
+		sequentHasHypotheses(sequent, environment, "{cy',cz'} ⊆ {qq}", "ay'=cx'+ay'");
+		sequentHasGoal(sequent, environment, "cy'+qq>ay'");
+
+		sequent = getSequent(po, "evt/I3/INV");
+		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
+		sequentHasHypotheses(sequent, environment, "{cy',cz'} ⊆ {qq}", "ay'=cx'+ay'", "cz'=az'");
+		sequentHasGoal(sequent, environment, "cz'+ay'+qq>az'");
 	}
 
 }

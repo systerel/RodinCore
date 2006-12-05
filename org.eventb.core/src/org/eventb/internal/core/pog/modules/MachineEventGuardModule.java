@@ -101,9 +101,4 @@ public class MachineEventGuardModule extends PredicateModule {
 		return eventLabel + "/" + elementLabel + "/WD";
 	}
 
-	@Override
-	protected String getWDProofObligationSourceRole() {
-		return "guard";
-	}
-
 }

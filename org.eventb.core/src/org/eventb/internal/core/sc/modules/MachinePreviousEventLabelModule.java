@@ -10,7 +10,6 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IEvent;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.sc.FilterModule;
 import org.eventb.core.sc.GraphProblem;
@@ -48,21 +47,11 @@ public class MachinePreviousEventLabelModule extends FilterModule {
 		IAbstractEventInfo abstractEventInfo = 
 			abstractEventTable.getAbstractEventInfo(label);
 		if (abstractEventInfo != null) {
-			if (element instanceof IEvent) {
-				if (abstractEventInfo.isForbidden()) {
-					createProblemMarker(
-							labeledElement,
-							EventBAttributes.LABEL_ATTRIBUTE,
-							GraphProblem.ObsoleteEventLabelWarning,
-							label);
-				}
-			} else {
-				createProblemMarker(
-						labeledElement,
-						EventBAttributes.LABEL_ATTRIBUTE,
-						GraphProblem.WasAbstractEventLabelWarning,
-						label);
-			}
+			createProblemMarker(
+					labeledElement,
+					EventBAttributes.LABEL_ATTRIBUTE,
+					GraphProblem.WasAbstractEventLabelWarning,
+					label);
 		}
 		
 		return true;

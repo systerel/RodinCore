@@ -55,12 +55,4 @@ public class ContextAxiomModule extends PredicateModule {
 		return elementLabel + "/WD";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.pog.modules.PredicateModule#getWDProofObligationSourceRole()
-	 */
-	@Override
-	protected String getWDProofObligationSourceRole() {
-		return "axiom";
-	}
-
 }

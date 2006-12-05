@@ -14,6 +14,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOSource;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCPredicateElement;
@@ -82,9 +83,9 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 					hyp,
 					new POGPredicate(guards.get(i), predicate),
 					sources(
-							new POGSource("abstract event", abstractEvent),
-							new POGSource("abstract guard", (ITraceableElement) guards.get(i)),
-							new POGSource("concrete event", concreteEvent)),
+							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
+							new POGSource(IPOSource.ABSTRACT_ROLE, (ITraceableElement) guards.get(i)),
+							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
 					emptyHints,
 					monitor);
 	

@@ -25,11 +25,6 @@ public abstract class TheoremModule extends PredicateToProveModule {
 	}
 
 	@Override
-	protected String getProofObligationSourceRole() {
-		return "theorem";
-	}
-
-	@Override
 	protected String getWDProofObligationDescription() {
 		return "Well-definedness of Theorem";
 	}
@@ -37,11 +32,6 @@ public abstract class TheoremModule extends PredicateToProveModule {
 	@Override
 	protected String getWDProofObligationName(String elementLabel) {
 		return elementLabel + "/WD";
-	}
-
-	@Override
-	protected String getWDProofObligationSourceRole() {
-		return "theorem";
 	}
 
 }

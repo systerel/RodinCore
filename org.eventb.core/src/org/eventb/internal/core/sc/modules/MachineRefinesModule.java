@@ -54,10 +54,6 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	
 	private static int ABSEVT_SYMTAB_SIZE = 1013;
 	
-	private FreeIdentifier[] emptyVariableList;
-	private Predicate[] emptyPredicateList;
-	private Assignment[] emptyAssignmentList;
-	
 	ISCMachineFile scMachineFile;
 	IRefinesMachine refinesMachine;
 	IAbstractEventTable abstractEventTable;
@@ -250,28 +246,15 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		
 		IAbstractEventInfo abstractEventInfo;
 		
-		boolean forbidden = event.isForbidden();
-		
-		if (forbidden) {
-			abstractEventInfo =
-				new AbstractEventInfo(
-						event,
-						label, 
-						emptyVariableList,
-						emptyPredicateList,
-						emptyAssignmentList);
-		} else {
-			ITypeEnvironment eventTypeEnvironment = factory.makeTypeEnvironment();
-			eventTypeEnvironment.addAll(typeEnvironment);
-			abstractEventInfo =
-				new AbstractEventInfo(
-						event,
-						label, 
-						fetchEventVariables(event, eventTypeEnvironment, factory),
-						fetchEventGuards(event, eventTypeEnvironment, factory),
-						fetchEventActions(event, eventTypeEnvironment, factory));
-		}
-		abstractEventInfo.setForbidden(forbidden);
+		ITypeEnvironment eventTypeEnvironment = factory.makeTypeEnvironment();
+		eventTypeEnvironment.addAll(typeEnvironment);
+		abstractEventInfo =
+			new AbstractEventInfo(
+					event,
+					label, 
+					fetchEventVariables(event, eventTypeEnvironment, factory),
+					fetchEventGuards(event, eventTypeEnvironment, factory),
+					fetchEventActions(event, eventTypeEnvironment, factory));
 		
 		abstractEventTable.putAbstractEventInfo(abstractEventInfo);
 	}
@@ -326,10 +309,6 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 
-		emptyVariableList = new FreeIdentifier[0];
-		emptyPredicateList = new Predicate[0];
-		emptyAssignmentList = new Assignment[0];
-		
 		typeEnvironment = 
 			((ITypingState) repository.getState(ITypingState.STATE_TYPE)).getTypeEnvironment();
 		

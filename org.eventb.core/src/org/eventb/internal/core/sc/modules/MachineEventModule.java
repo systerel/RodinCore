@@ -333,7 +333,7 @@ public class MachineEventModule extends LabeledElementModule {
 			IAttributeType attributeType) throws CoreException {
 		IAbstractEventInfo abstractEventInfo = abstractEventTable.getAbstractEventInfo(label);
 
-		if (abstractEventInfo == null || abstractEventInfo.isForbidden()) {
+		if (abstractEventInfo == null) {
 			if (attributeType == null)
 				createProblemMarker(
 						element,
@@ -457,7 +457,7 @@ public class MachineEventModule extends LabeledElementModule {
 			if (!found && !isInit) {
 				IAbstractEventInfo abstractEventInfo =
 					abstractEventTable.getAbstractEventInfo(symbolInfo.getSymbol());
-				if (abstractEventInfo != null && !abstractEventInfo.isForbidden())
+				if (abstractEventInfo != null)
 					createProblemMarker(
 							machineFile,
 							GraphProblem.InconsistentEventLabelWarning,
@@ -490,7 +490,6 @@ public class MachineEventModule extends LabeledElementModule {
 		scEvent.create(null, monitor);
 		scEvent.setLabel(symbolInfo.getSymbol(), monitor);
 		scEvent.setSource(event, monitor);
-		scEvent.setForbidden(false, monitor);
 		return scEvent;
 	}
 	

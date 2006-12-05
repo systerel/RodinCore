@@ -30,9 +30,6 @@ public interface IAbstractEventInfo extends Comparable {
 	Predicate[] getGuards();
 	Assignment[] getActions();
 	
-	void setForbidden(boolean value);
-	boolean isForbidden();
-	
 	void setInherited(IEventSymbolInfo eventSymbolInfo);
 	IEventSymbolInfo getInherited();
 	

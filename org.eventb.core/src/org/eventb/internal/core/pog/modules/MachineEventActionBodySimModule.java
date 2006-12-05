@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOSource;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
@@ -87,9 +88,9 @@ public class MachineEventActionBodySimModule extends
 					hyp,
 					new POGPredicate(simActions.get(i), predicate),
 					sources(
-							new POGSource("abstract event", abstractEvent),
-							new POGSource("abstract action", simActions.get(i)),
-							new POGSource("concrete event", concreteEvent)),
+							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
+							new POGSource(IPOSource.ABSTRACT_ROLE, simActions.get(i)),
+							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
 					emptyHints,
 					monitor);
 
