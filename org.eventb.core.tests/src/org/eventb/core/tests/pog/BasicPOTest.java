@@ -160,6 +160,23 @@ public abstract class BasicPOTest extends EventBTest {
 		}
 	}
 
+	public void sequentHasNotHypotheses(
+			IPOSequent sequent, 
+			ITypeEnvironment typeEnvironment, 
+			String... strings) throws Exception {
+		
+		IPOPredicateSet predicateSet = sequent.getHypotheses()[0];
+		
+		HashSet<String> predicates = getPredicatesFromSets(predicateSet);
+		
+		for (String string : strings) {
+			
+			assertFalse("should not have hypothesis " + string, 
+					predicates.contains(getNormalizedPredicate(string, typeEnvironment)));
+			
+		}
+	}
+
 	public void sequentHasNoHypotheses(IPOSequent sequent) throws Exception {
 		
 		IPOPredicateSet predicateSet = sequent.getHypotheses()[0];
