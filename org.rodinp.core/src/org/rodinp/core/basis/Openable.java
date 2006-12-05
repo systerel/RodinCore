@@ -87,7 +87,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 		RodinDBManager manager = RodinDBManager.getRodinDBManager();
 		if (manager.getInfo(this) != null)
 			return true;
-		if (!parent.exists()) {
+		if (parent == null || !parent.exists()) {
 			return false;
 		}
 		try {
