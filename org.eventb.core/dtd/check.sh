@@ -16,6 +16,7 @@ check() {
     case "$1" in
 	(*.buc)  root="contextFile";;
 	(*.bum)  root="machineFile";;
+	(*.bpr)  root="prFile";;
 	(*)      fatal "Unknown file type for $1";;
     esac
     exec 3> "$tmpFile"
