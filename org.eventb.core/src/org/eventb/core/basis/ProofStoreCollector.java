@@ -130,7 +130,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		
 		public void putExpressions(String key, Expression... exprs) throws SerializeException {
 			try {
-				IPRExprRef prRef = (IPRExprRef)prProofRule.getInternalElement(IPRExprRef.ELEMENT_TYPE, key);
+				IPRExprRef prRef = prProofRule.getPRExprRef(key);
 				prRef.create(null, monitor);
 				prRef.setExpressions(exprs, store, monitor);
 			} catch (RodinDBException e) {
@@ -140,7 +140,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 
 		public void putPredicates(String key, Predicate... preds) throws SerializeException {
 			try {
-				IPRPredRef prRef = (IPRPredRef)prProofRule.getInternalElement(IPRPredRef.ELEMENT_TYPE, key);
+				IPRPredRef prRef = prProofRule.getPRPredRef(key);
 				prRef.create(null, monitor);
 				prRef.setPredicates(preds, store, monitor);
 			} catch (RodinDBException e) {
@@ -150,7 +150,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 
 		public void putString(String key, String string) throws SerializeException {
 			try {
-				IPRStringInput prStrInp = (IPRStringInput)prProofRule.getInternalElement(IPRStringInput.ELEMENT_TYPE, key);
+				IPRStringInput prStrInp = prProofRule.getPRStringInput(key);
 				prStrInp.create(null, monitor);
 				prStrInp.setString(string, monitor);
 			} catch (RodinDBException e) {

@@ -124,8 +124,7 @@ public class ProofStoreReader implements IProofStoreReader {
 
 		public Expression[] getExpressions(String key) throws SerializeException {
 			try {
-				final IPRExprRef prExprRef = (IPRExprRef) prProofRule
-						.getInternalElement(IPRExprRef.ELEMENT_TYPE, key);
+				final IPRExprRef prExprRef = prProofRule.getPRExprRef(key);
 				return prExprRef.getExpressions(store);
 			} catch (RodinDBException e) {
 				throw new SerializeException(e);
@@ -134,8 +133,7 @@ public class ProofStoreReader implements IProofStoreReader {
 
 		public Predicate[] getPredicates(String key) throws SerializeException {
 			try {
-				final IPRPredRef prPredRef = (IPRPredRef) prProofRule
-						.getInternalElement(IPRPredRef.ELEMENT_TYPE, key);
+				final IPRPredRef prPredRef = prProofRule.getPRPredRef(key);
 				return prPredRef.getPredicates(store);
 			} catch (RodinDBException e) {
 				throw new SerializeException(e);
@@ -144,8 +142,8 @@ public class ProofStoreReader implements IProofStoreReader {
 
 		public String getString(String key) throws SerializeException {
 			try {
-				final IPRStringInput prStringInput = (IPRStringInput) prProofRule
-						.getInternalElement(IPRStringInput.ELEMENT_TYPE, key);
+				final IPRStringInput prStringInput =
+					prProofRule.getPRStringInput(key);
 				return prStringInput.getString();
 			} catch (RodinDBException e) {
 				throw new SerializeException(e);

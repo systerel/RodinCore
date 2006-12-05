@@ -45,5 +45,54 @@ public interface IPRProofRule extends IInternalElement {
 	 * @see #getAntecedent(String)
 	 */
 	IPRRuleAntecedent[] getAntecedents() throws RodinDBException;
+	
+	
+	/**
+	 * Returns a handle to a child element that can be used to store a list of
+	 * expressions used by a reasoner input. The key gets automatically prefixed
+	 * with a dot to prevent name collision with proper rule children.
+	 * <p>
+	 * This is a handle-only method. The antecedent element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param key
+	 *            key used to register the list of expressions
+	 * @return a handle to a child element carrying a list of expressions
+	 *         registered by the rule reasoner with the given key
+	 */
+	IPRExprRef getPRExprRef(String key);
+
+	/**
+	 * Returns a handle to a child element that can be used to store a list of
+	 * predicates used by a reasoner input. The key gets automatically prefixed
+	 * with a dot to prevent name collision with proper rule children.
+	 * <p>
+	 * This is a handle-only method. The antecedent element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param key
+	 *            key used to register the list of predicates
+	 * @return a handle to a child element carrying a list of predicates
+	 *         registered by the rule reasoner with the given key
+	 */
+	IPRPredRef getPRPredRef(String key);
+
+	/**
+	 * Returns a handle to a child element that can be used to store a string
+	 * used by a reasoner input. The key gets automatically prefixed with a dot
+	 * to prevent name collision with proper rule children.
+	 * <p>
+	 * This is a handle-only method. The antecedent element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param key
+	 *            key used to register the string
+	 * @return a handle to a child element carrying a string registered by the
+	 *         rule reasoner with the given key
+	 */
+	IPRStringInput getPRStringInput(String key);
 
 }

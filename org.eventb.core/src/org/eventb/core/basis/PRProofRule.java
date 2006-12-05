@@ -11,8 +11,11 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IPRExprRef;
+import org.eventb.core.IPRPredRef;
 import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRRuleAntecedent;
+import org.eventb.core.IPRStringInput;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.Predicate;
@@ -165,6 +168,21 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 
 	public IPRRuleAntecedent[] getAntecedents() throws RodinDBException {
 		return (IPRRuleAntecedent[]) getChildrenOfType(IPRRuleAntecedent.ELEMENT_TYPE);
+	}
+
+	public IPRExprRef getPRExprRef(String key) {
+		return (IPRExprRef) getInternalElement(IPRExprRef.ELEMENT_TYPE,
+				"." + key);
+	}
+
+	public IPRPredRef getPRPredRef(String key) {
+		return (IPRPredRef) getInternalElement(IPRPredRef.ELEMENT_TYPE,
+				"." + key);
+	}
+
+	public IPRStringInput getPRStringInput(String key) {
+		return (IPRStringInput) getInternalElement(IPRStringInput.ELEMENT_TYPE,
+				"." + key);
 	}
 
 }
