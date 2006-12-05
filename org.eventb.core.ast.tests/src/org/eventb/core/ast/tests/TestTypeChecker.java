@@ -2,8 +2,12 @@ package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+
+import java.util.List;
+
 import junit.framework.TestCase;
 
+import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
@@ -14,6 +18,7 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 
 /**
@@ -1425,11 +1430,31 @@ public class TestTypeChecker extends TestCase {
 	private void doTest(TestItem item, Formula formula) {
 		ITypeCheckResult result = formula.typeCheck(item.initialEnv);
 		
-		assertEquals("\nTest failed on: " + item.formula
+		if (item.result && ! result.isSuccess()) {
+			StringBuilder builder = new StringBuilder(
+					"Type-checker unexpectedly failed for " + item.formula
+					+ "\nParser result: " + formula.toString()
+					+ "\nInitial type environment:\n"
+					+ result.getInitialTypeEnvironment() + "\n");
+			final List<ASTProblem> problems = result.getProblems();
+			for (ASTProblem problem: problems) {
+				builder.append(problem);
+				final SourceLocation loc = problem.getSourceLocation();
+				if (loc != null) {
+					builder.append(", where location is: ");
+					builder.append(item.formula.substring(loc.getStart(),
+							loc.getEnd() + 1));
+				}
+				builder.append("\n");
+			}
+			fail(builder.toString());
+		}
+		if (! item.result && result.isSuccess()) {
+			fail("Type checking should have failed for: " + item.formula
 				+ "\nParser result: " + formula.toString()
 				+ "\nType check results:\n" + result.toString()
-				+ "\nInitial type environment:\n" + result.getInitialTypeEnvironment() + "\n",
-				item.result, result.isSuccess());
+				+ "\nInitial type environment:\n" + result.getInitialTypeEnvironment() + "\n");
+		}
 		assertEquals("\nResult typenv differ for: " + item.formula + "\n",
 					item.inferredEnv, result.getInferredEnvironment());
 		
