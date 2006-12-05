@@ -163,10 +163,6 @@
             id="witness"
             name="%eventBWitness"/>
       <internalElementType
-            class="org.eventb.core.basis.PRProof"
-            id="prProof"
-            name="%eventBprProof"/>
-      <internalElementType
             class="org.eventb.core.basis.POSource"
             id="poSource"
             name="%eventBpoSource"/>
@@ -231,45 +227,49 @@
             id="scWitness"
             name="%eventBscWitness"/>
       <internalElementType
+            class="org.eventb.core.basis.PRProof"
+            id="prProof"
+            name="%eventBprProof"/>
+      <internalElementType
             class="org.eventb.core.basis.PRProofRule"
-            id="prProofRule"
-            name="%eventBprProofRule"/>
+            id="prRule"
+            name="%eventBprRule"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRIdentifier"
+            id="prIdent"
+            name="%eventBprIdent"/>
       <internalElementType
             class="org.eventb.core.basis.PRStoredPred"
-            id="prStoredPred"
-            name="%eventBprStoredPred"/>
-      <internalElementType
-            class="org.eventb.core.basis.PRRuleAntecedent"
-            id="prRuleAntecedent"
-            name="%eventBprRuleAntecedent"/>
+            id="prPred"
+            name="%eventBprPred"/>
       <internalElementType
             class="org.eventb.core.basis.PRStoredExpr"
-            id="prStoredExpr"
-            name="%eventBprStoredExpr"/>
+            id="prExpr"
+            name="%eventBprExpr"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRRuleAntecedent"
+            id="prAnte"
+            name="%eventBprAnte"/>
       <internalElementType
             class="org.eventb.core.basis.PRHypAction"
             id="prHypAction"
             name="%eventBprHypAction"/>
       <internalElementType
-            class="org.eventb.core.basis.PSStatus"
-            id="psStatus"
-            name="%eventBpsStatus"/>
-      <internalElementType
-            class="org.eventb.core.basis.PRIdentifier"
-            id="prIdentifier"
-            name="%eventBprIdentifier"/>
-      <internalElementType
             class="org.eventb.core.basis.PRPredRef"
             id="prPredRef"
             name="%eventBprPredRef"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRStringInput"
+            id="prString"
+            name="%eventBprString"/>
       <internalElementType
             class="org.eventb.core.basis.PRExprRef"
             id="prExprRef"
             name="%eventBprExprRef"/>
       <internalElementType
-            class="org.eventb.core.basis.PRStringInput"
-            id="prStrInp"
-            name="%eventBprStrInp"/>
+            class="org.eventb.core.basis.PSStatus"
+            id="psStatus"
+            name="%eventBpsStatus"/>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">
@@ -413,27 +413,27 @@
       <attributeType
             id="prGoal"
             kind="string"
-            name="%eventBprGoalAttribute"/>
+            name="%eventBprGoal"/>
       <attributeType
             id="prHyps"
             kind="string"
-            name="%eventBprHypsAttribute"/>
+            name="%eventBprHyps"/>
       <attributeType
-            id="prRuleDisplay"
+            id="prDisplay"
             kind="string"
-            name="%eventBprRuleDisplay"/>
+            name="%eventBprDisplay"/>
       <attributeType
-            id="prStoreRef"
+            id="prRef"
             kind="string"
-            name="%eventBprStoreRef"/>
+            name="%eventBprRef"/>
       <attributeType
-            id="prStrInp"
+            id="prSValue"
             kind="string"
-            name="%eventBprStrInp"/>
+            name="%eventBprSValue"/>
       <attributeType
-            id="prIntroducedFreeIdents"
+            id="prFresh"
             kind="string"
-            name="%eventBprIntroducedFreeIdents"/>
+            name="%eventBprFresh"/>
       <attributeType
             id="prSets"
             kind="string"

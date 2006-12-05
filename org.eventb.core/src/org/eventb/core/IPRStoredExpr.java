@@ -26,7 +26,7 @@ import org.rodinp.core.RodinDBException;
 public interface IPRStoredExpr extends IInternalElement {
 	
 	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prStoredExpr"); //$NON-NLS-1$
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prExpr"); //$NON-NLS-1$
 
 	Expression getExpression(FormulaFactory factory, ITypeEnvironment typEnv) throws RodinDBException;
 	void setExpression(Expression expr, IProgressMonitor monitor) throws RodinDBException;

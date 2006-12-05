@@ -23,6 +23,6 @@ import org.rodinp.core.RodinCore;
 public interface IPRIdentifier extends ISCIdentifierElement {
 	
 	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prIdentifier"); //$NON-NLS-1$
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prIdent"); //$NON-NLS-1$
 
 }

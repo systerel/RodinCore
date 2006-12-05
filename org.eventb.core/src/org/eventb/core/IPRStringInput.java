@@ -9,7 +9,7 @@ import org.rodinp.core.RodinDBException;
 public interface IPRStringInput extends IInternalElement {
 
 	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prStrInp"); //$NON-NLS-1$
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prString"); //$NON-NLS-1$
 
 	String getString() throws RodinDBException;
 	void setString(String value,IProgressMonitor monitor) throws RodinDBException;		

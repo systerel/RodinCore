@@ -16,7 +16,7 @@ import org.rodinp.core.RodinDBException;
 public interface IPRRuleAntecedent extends IInternalElement {
 		
 	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prRuleAntecedent"); //$NON-NLS-1$
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prAnte"); //$NON-NLS-1$
 		
 	IAntecedent getAntecedent(IProofStoreReader store) throws RodinDBException;
 	void setAntecedent(IAntecedent antecedent, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException;
