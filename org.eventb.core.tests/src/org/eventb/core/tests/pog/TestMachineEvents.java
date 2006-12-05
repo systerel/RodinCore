@@ -442,4 +442,140 @@ public class TestMachineEvents extends BasicPOTest {
 		sequentHasGoal(sequent, typeEnvironment, "ℤ⊆ℤ");
 	}
 	
+	/**
+	 * An event with a local variable and whose first guards produces a
+	 * well-definedness PO.  That PO should declare the local variable, although
+	 * no predicate involving that variable occurs in hypothesis. 
+	 */
+	public void testEvents_11() throws Exception {
+
+		final String i1 = "x ∈ {0}";
+		final String g1 = "v = min({0})";
+		
+		IMachineFile mac = createMachine("mac");
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("i1"), makeSList(i1));
+		addEvent(mac, "evt1", 
+				makeSList("v"), 
+				makeSList("g1"), makeSList(g1), 
+				makeSList("a1"), makeSList("x ≔ x + v"));
+		mac.save(null, true);
+	
+		runBuilder();
+
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", intType);
+		
+		IPOFile po = mac.getPOFile();
+		containsIdentifiers(po, "x");
+		
+		IPOSequent sequent;
+		
+		sequent = getSequent(po, "evt1/g1/WD");
+		sequentHasIdentifiers(sequent, "v");
+		sequentHasHypotheses(sequent, typeEnvironment, i1);
+		sequentHasNotHypotheses(sequent, typeEnvironment, g1);
+		sequentHasGoal(sequent, typeEnvironment, "{0}≠∅ ∧ (∃b·∀x·x∈{0} ⇒ b≤x)");
+		
+		sequent = getSequent(po, "evt1/i1/INV");
+		sequentHasIdentifiers(sequent, "v");
+		sequentHasHypotheses(sequent, typeEnvironment, i1, g1);
+		sequentHasGoal(sequent, typeEnvironment, "x+v ∈ {0}");
+	}
+
+	/**
+	 * An event with two guards that produce a well-definedness PO.
+	 */
+	public void testEvents_12() throws Exception {
+		
+		final String i1 = "x ∈ {0,1}";
+		final String g1 = "x = min({0})";
+		final String g2 = "x = min({0,1})";
+		
+		IMachineFile mac = createMachine("mac");
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("i1"), makeSList(i1));
+		addEvent(mac, "evt1", 
+				makeSList(), 
+				makeSList("g1", "g2"), makeSList(g1, g2), 
+				makeSList("a1"), makeSList("x ≔ x + 1"));
+		mac.save(null, true);
+	
+		runBuilder();
+
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", intType);
+		
+		IPOFile po = mac.getPOFile();
+		containsIdentifiers(po, "x");
+		
+		IPOSequent sequent;
+		
+		sequent = getSequent(po, "evt1/g1/WD");
+		sequentHasIdentifiers(sequent);
+		sequentHasHypotheses(sequent, typeEnvironment, i1);
+		sequentHasNotHypotheses(sequent, typeEnvironment, g1, g2);
+		sequentHasGoal(sequent, typeEnvironment, "{0}≠∅ ∧ (∃b·∀x·x∈{0} ⇒ b≤x)");
+		
+		sequent = getSequent(po, "evt1/g2/WD");
+		sequentHasIdentifiers(sequent);
+		sequentHasHypotheses(sequent, typeEnvironment, i1, g1);
+		sequentHasNotHypotheses(sequent, typeEnvironment, g2);
+		sequentHasGoal(sequent, typeEnvironment,
+				"{0,1}≠∅ ∧ (∃b·∀x·x∈{0,1} ⇒ b≤x)");
+		
+		sequent = getSequent(po, "evt1/i1/INV");
+		sequentHasIdentifiers(sequent);
+		sequentHasHypotheses(sequent, typeEnvironment, i1, g1, g2);
+		sequentHasGoal(sequent, typeEnvironment, "x+1 ∈ {0,1}");
+	}
+
+	/**
+	 * An event with three guards, the last two producing a well-definedness PO.
+	 */
+	public void testEvents_13() throws Exception {
+		
+		final String i1 = "x ∈ {0,1}";
+		final String g1 = "x ∈ ℤ";
+		final String g2 = "x = min({0})";
+		final String g3 = "x = min({0,1})";
+		
+		IMachineFile mac = createMachine("mac");
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("i1"), makeSList(i1));
+		addEvent(mac, "evt1", 
+				makeSList(), 
+				makeSList("g1", "g2", "g3"), makeSList(g1, g2, g3), 
+				makeSList("a1"), makeSList("x ≔ x + 1"));
+		mac.save(null, true);
+	
+		runBuilder();
+
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", intType);
+		
+		IPOFile po = mac.getPOFile();
+		containsIdentifiers(po, "x");
+		
+		IPOSequent sequent;
+		
+		sequent = getSequent(po, "evt1/g2/WD");
+		sequentHasIdentifiers(sequent);
+		sequentHasHypotheses(sequent, typeEnvironment, i1, g1);
+		sequentHasNotHypotheses(sequent, typeEnvironment, g2, g3);
+		sequentHasGoal(sequent, typeEnvironment, "{0}≠∅ ∧ (∃b·∀x·x∈{0} ⇒ b≤x)");
+		
+		sequent = getSequent(po, "evt1/g3/WD");
+		sequentHasIdentifiers(sequent);
+		sequentHasHypotheses(sequent, typeEnvironment, i1, g1, g2);
+		sequentHasNotHypotheses(sequent, typeEnvironment, g3);
+		sequentHasGoal(sequent, typeEnvironment,
+				"{0,1}≠∅ ∧ (∃b·∀x·x∈{0,1} ⇒ b≤x)");
+		
+		sequent = getSequent(po, "evt1/i1/INV");
+		sequentHasIdentifiers(sequent);
+		sequentHasHypotheses(sequent, typeEnvironment, i1, g1, g2, g3);
+		sequentHasGoal(sequent, typeEnvironment, "x+1 ∈ {0,1}");
+	}
+
 }
