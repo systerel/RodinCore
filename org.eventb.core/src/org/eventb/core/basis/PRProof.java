@@ -160,19 +160,19 @@ public class PRProof extends EventBProofElement implements IPRProof {
 
 	public void setIntroFreeIdents(Collection<String> identNames, IProgressMonitor monitor) throws RodinDBException {
 		StringBuilder names = new StringBuilder();
-		Boolean notEmpty = false;
+		String sep = "";
 		for (String name : identNames) {
-			if (notEmpty) names.append(";"); 
+			names.append(sep);
+			sep = ",";
 			names.append(name);
-			notEmpty = true;
 		}
-		setAttributeValue(EventBAttributes.INTRO_FREE_IDENTS_ATTRIBUTE, names.toString(), monitor);
+		setAttributeValue(EventBAttributes.FRESH_IDENTIFIERS_ATTRIBUTE, names.toString(), monitor);
 	}
 	
 	public Set<String> getIntroFreeIdents(IProgressMonitor monitor) throws RodinDBException {
-		if (! hasAttribute(EventBAttributes.INTRO_FREE_IDENTS_ATTRIBUTE)) return new HashSet<String>();
-		String sepNames = getAttributeValue(EventBAttributes.INTRO_FREE_IDENTS_ATTRIBUTE);
-		String[] names = sepNames.split(";");
+		if (! hasAttribute(EventBAttributes.FRESH_IDENTIFIERS_ATTRIBUTE)) return new HashSet<String>();
+		String sepNames = getAttributeValue(EventBAttributes.FRESH_IDENTIFIERS_ATTRIBUTE);
+		String[] names = sepNames.split(",");
 		HashSet<String> identNames = new HashSet<String>(names.length);
 		for(String name : names){
 			if (name.length()!=0) identNames.add(name);
