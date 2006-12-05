@@ -19,7 +19,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class AbstractEventGuardTable extends EventGuardTable 
 implements IAbstractEventGuardTable {
-
+	
 	public AbstractEventGuardTable(
 			ISCPredicateElement[] guards, 
 			ITypeEnvironment typeEnvironment, 

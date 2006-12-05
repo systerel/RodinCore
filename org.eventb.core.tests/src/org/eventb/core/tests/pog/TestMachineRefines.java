@@ -209,18 +209,6 @@ public class TestMachineRefines extends BasicPOTest {
 		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2≥6", "V1X=V1+1");
 		sequentHasGoal(sequent, typeEnvironment, "L2=(L2−1)+1");
 
-//		sequent = getSequent(po, "evt/I2/INV");
-//		
-//		sequentHasIdentifiers(sequent, "V1'", "V2'");
-//		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2∈0‥5", "V2≥V1", "V1'≥V2'");
-//		sequentHasGoal(sequent, typeEnvironment, "V2+2≥V1'");
-//		
-//		sequent = getSequent(po, "evt/A1/SIM");
-//		
-//		sequentHasIdentifiers(sequent, "V1'", "V2'");
-//		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2∈0‥5", "V2≥V1", "V1'≥V2'");
-//		sequentHasGoal(sequent, typeEnvironment, "V1'∈ℕ");
-		
 	}
 
 	/*
@@ -250,4 +238,40 @@ public class TestMachineRefines extends BasicPOTest {
 		containsIdentifiers(po);
 		getSequent(po, "evt/G/WD");
 	}
+
+	/*
+	 * POG attempts to store twice the predicate set "ALLHYP", once for the
+	 * well-definedness PO of the guard, and then once at the end of the
+	 * machine.
+	 */
+	public void testEvents_05() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G1", "G2"), makeSList("x ÷ x > x", "1 ÷ x > 1"), 
+				makeSList(), makeSList());
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		IEvent event = addEvent(ref, "evt", 
+				makeSList("x"), 
+				makeSList("G1", "G2"), makeSList("5 ÷ (x+x) = −1", "x ÷ x > x"), 
+				makeSList(), makeSList());
+		addEventRefines(event, "evt");
+		ref.save(null, true);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po);
+		
+		IPOSequent sequent = getSequent(po, "evt/G1/WD");
+		sequentHasGoal(sequent, environment, "(x+x)≠0");
+		
+		noSequent(po, "evt/G2/WD");
+	}
+
 }

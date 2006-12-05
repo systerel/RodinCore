@@ -13,7 +13,9 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
+import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
@@ -24,6 +26,7 @@ import org.eventb.core.pog.state.ITypingState;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.pog.AbstractEventGuardTable;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -34,14 +37,8 @@ public class MachineEventGuardModule extends PredicateModule {
 	public static final String MACHINE_EVENT_GUARD_MODULE = 
 		EventBPlugin.PLUGIN_ID + ".machineEventGuardModule";
 
-//	private IModule[] modules;
-//
-//	public MachineEventGuardModule() {
-//		IModuleManager manager = ModuleManager.getModuleManager();
-//		modules = manager.getProcessorModules(MACHINE_EVENT_GUARD_MODULE);
-//	}
-	
 	String eventLabel;
+	IAbstractEventGuardTable abstractEventGuardTable;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -60,7 +57,7 @@ public class MachineEventGuardModule extends PredicateModule {
 
 		ISCEvent abstractEvent = 
 			((IEventHypothesisManager) hypothesisManager).getFirstAbstractEvent();
-		IAbstractEventGuardTable abstractEventGuardTable = 
+		abstractEventGuardTable = 
 			new AbstractEventGuardTable(
 					(abstractEvent == null ? new ISCGuard[0] : abstractEvent.getSCGuards()),
 					eventTypeEnvironment, 
@@ -78,6 +75,7 @@ public class MachineEventGuardModule extends PredicateModule {
 			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventLabel = null;
+		abstractEventGuardTable = null;
 		super.endModule(element, target, repository, monitor);
 	}
 
@@ -89,6 +87,21 @@ public class MachineEventGuardModule extends PredicateModule {
 	@Override
 	protected IPredicateTable getPredicateTable(IStateRepository<IStatePOG> repository) throws CoreException {
 		return (IConcreteEventGuardTable) repository.getState(IConcreteEventGuardTable.STATE_TYPE);
+	}
+
+	@Override
+	protected void createWDProofObligation(
+			IPOFile target, 
+			String elementLabel, 
+			ISCPredicateElement predicateElement, 
+			Predicate predicate, 
+			IProgressMonitor monitor) throws RodinDBException {
+		
+		if (abstractEventGuardTable.contains(predicate)) // already proved in abstraction
+			return;
+		
+		super.createWDProofObligation(target, elementLabel, predicateElement,
+				predicate, monitor);
 	}
 
 	@Override

@@ -77,7 +77,7 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 			IProgressMonitor monitor) throws CoreException {
 		
 		Predicate wdPredicate = assignment.getWDPredicate(factory);
-		if(!wdPredicate.equals(btrue)) {
+		if( !goalIsTrivial(wdPredicate)) {
 			createPO(
 					target, 
 					concreteEventLabel + "/" + actionLabel + "/WD", 
@@ -98,7 +98,7 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 			Assignment assignment,
 			IProgressMonitor monitor) throws CoreException {
 		Predicate fisPredicate = assignment.getFISPredicate(factory);
-		if(!fisPredicate.equals(btrue)) {
+		if(!goalIsTrivial(fisPredicate)) {
 			createPO(
 					target, 
 					concreteEventLabel + "/" + actionLabel + "/FIS", 

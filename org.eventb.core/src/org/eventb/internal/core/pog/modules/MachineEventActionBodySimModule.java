@@ -68,6 +68,10 @@ public class MachineEventActionBodySimModule extends
 		for (int i=0; i<simActions.size(); i++) {
 			String actionLabel = simActions.get(i).getLabel();
 			Predicate predicate = simAssignments.get(i).getBAPredicate(factory);
+			
+			if (goalIsTrivial(predicate))
+				continue;
+			
 			LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 			substitution.addAll(witnessTable.getMachinePrimedDetAssignments());
 			if (witnessTable.getPrimeSubstitution() != null)

@@ -68,6 +68,10 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		for (int i=0; i<guards.size(); i++) {
 			String guardLabel = ((ISCGuard) guards.get(i)).getLabel();
 			Predicate predicate = grdPredicates.get(i);
+			
+			if (goalIsTrivial(predicate))
+				continue;
+			
 			predicate = predicate.applyAssignments(witnessTable.getEventDetAssignments(), factory);
 			LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 			if (concreteEventActionTable.getXiUnprime() != null)
