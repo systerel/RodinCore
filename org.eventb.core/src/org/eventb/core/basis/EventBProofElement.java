@@ -95,18 +95,18 @@ public abstract class EventBProofElement extends InternalElement {
 
 	public void setHyps(Collection<Predicate> hyps, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
 		StringBuilder refs = new StringBuilder();
-		Boolean notEmpty = false;
+		String sep = "";
 		for (Predicate pred : hyps) {
-			if (notEmpty) refs.append(";"); 
+			refs.append(sep);
+			sep = ",";
 			refs.append(store.putPredicate(pred));
-			notEmpty = true;
 		}
 		setAttributeValue(HYPS_ATTRIBUTE, refs.toString(), monitor);
 	}
 	
 	public Set<Predicate> getHyps(IProofStoreReader store) throws RodinDBException {
 		String sepRefs = getAttributeValue(HYPS_ATTRIBUTE);
-		String[] refs = sepRefs.split(";");
+		String[] refs = sepRefs.split(",");
 		HashSet<Predicate> hyps = new HashSet<Predicate>(refs.length);
 		for(String ref : refs){
 			if (ref.length()!=0) hyps.add(store.getPredicate(ref));
