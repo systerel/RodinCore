@@ -96,16 +96,16 @@ public final class EventBAttributes {
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prHyps");
 	
 	public static IAttributeType.String RULE_DISPLAY_ATTRIBUTE =
-		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prRuleDisplay");
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prDisplay");
 	
 	public static IAttributeType.String STORE_REF_ATTRIBUTE =
-		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prStoreRef");
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prRef");
 	
-	public static IAttributeType.String STRING_INPUT_ATTRIBUTE =
-		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prStrInp");
+	public static IAttributeType.String STRING_VALUE_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prSValue");
 	
-	public static IAttributeType.String INTRO_FREE_IDENTS_ATTRIBUTE =
-		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prIntroducedFreeIdents");
+	public static IAttributeType.String FRESH_IDENTIFIERS_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prFresh");
 	
 	public static IAttributeType.String PR_SETS_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prSets");
