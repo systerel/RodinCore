@@ -136,12 +136,11 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	public void clean(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
 		
 		IPSFile psFile = (IPSFile) RodinCore.valueOf(file);
-		psFile.delete(true, null);
-		
-//		IPRFile prFile = psFile.getPRFile();
-//		prFile.delete(true, null);
-		
-//		TODO : something for the PR file maybe	
+		if (psFile.exists()) {
+			psFile.delete(true, null);
+		}
+
+		// Don't delete the PR file, it contains user proofs.
 	}
 
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {	
