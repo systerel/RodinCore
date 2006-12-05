@@ -9,6 +9,7 @@ package org.eventb.core.tests.pog;
 
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -18,20 +19,6 @@ import org.rodinp.core.IRodinFile;
 public abstract class GenericPredicateTest <IRF extends IRodinFile> 
 extends BasicPOTest 
 implements IGenericPOTest<IRF>{
-
-//	public abstract void addTheorems(IRodinFile rodinFile, String[] names, String[] theorems) 
-//	throws RodinDBException;
-//	
-//	public abstract void addNonTheorems(IRodinFile rodinFile, String[] names, String[] nonTheorems) 
-//	throws RodinDBException;
-//	
-//	public abstract void addRefinesExtends(IRodinFile rodinFile, String name) throws RodinDBException;
-//	
-//	public abstract void addIdents(IRodinFile rodinFile, String... names) throws RodinDBException;
-//	
-//	public abstract IPOFile getPOFile(IRodinFile rodinFile) throws RodinDBException;
-//	
-//	public abstract IRodinFile createComponent(String name) throws RodinDBException;
 
 	/*
 	 * proper creation of theorem PO
@@ -274,6 +261,62 @@ implements IGenericPOTest<IRF>{
 		
 		sequentHasHypotheses(sequent, emptyEnv, "5>9", "2>9", "7<1");
 		sequentHasGoal(sequent, emptyEnv, "1<0");
+	
+	}
+
+	/*
+	 * proper creation of identifiers and hypotheses of non-theorem well-definedness PO
+	 */
+	public void testNonTheorems_10_identAndHyp() throws Exception {
+		IRF cmp = createComponent("cmp", (IRF) null);
+
+		addIdents(cmp, "x");
+		addNonTheorems(cmp, makeSList("N1"), makeSList("x÷x ∈ ℕ"));
+		
+		cmp.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		
+		IPOFile po = getPOFile(cmp);
+		
+		IPOSequent sequent = getSequent(po, "N1/WD");
+		
+		sequentHasIdentifiers(sequent, "x");
+		sequentHasGoal(sequent, emptyEnv, "x≠0");
+	
+	}
+
+
+	/*
+	 * proper creation of identifiers and hypotheses of theorem well-definedness PO
+	 */
+	public void testTheorems_11_identAndHyp() throws Exception {
+		IRF abs = createComponent("abs", (IRF) null);
+
+		addIdents(abs, "x");
+		addNonTheorems(abs, makeSList("N1"), makeSList("x ∈ ℕ"));
+		
+		abs.save(null, true);
+		
+		IRF cmp = createComponent("cmp", (IRF) null);
+		addSuper(cmp, "abs");
+		addTheorems(cmp, makeSList("N2"), makeSList("x÷x ∈ ℕ"));
+		
+		cmp.save(null, true);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		
+		IPOFile po = getPOFile(cmp);
+		
+		IPOSequent sequent = getSequent(po, "N2/WD");
+		
+		sequentHasIdentifiers(sequent, "x");
+		sequentHasGoal(sequent, emptyEnv, "x≠0");
 	
 	}
 

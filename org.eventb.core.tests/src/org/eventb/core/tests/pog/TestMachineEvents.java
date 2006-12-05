@@ -472,13 +472,13 @@ public class TestMachineEvents extends BasicPOTest {
 		IPOSequent sequent;
 		
 		sequent = getSequent(po, "evt1/g1/WD");
-		sequentHasIdentifiers(sequent, "v");
+		sequentHasIdentifiers(sequent, "x'", "v");
 		sequentHasHypotheses(sequent, typeEnvironment, i1);
 		sequentHasNotHypotheses(sequent, typeEnvironment, g1);
 		sequentHasGoal(sequent, typeEnvironment, "{0}≠∅ ∧ (∃b·∀x·x∈{0} ⇒ b≤x)");
 		
 		sequent = getSequent(po, "evt1/i1/INV");
-		sequentHasIdentifiers(sequent, "v");
+		sequentHasIdentifiers(sequent, "x'", "v");
 		sequentHasHypotheses(sequent, typeEnvironment, i1, g1);
 		sequentHasGoal(sequent, typeEnvironment, "x+v ∈ {0}");
 	}
@@ -512,20 +512,20 @@ public class TestMachineEvents extends BasicPOTest {
 		IPOSequent sequent;
 		
 		sequent = getSequent(po, "evt1/g1/WD");
-		sequentHasIdentifiers(sequent);
+		sequentHasIdentifiers(sequent, "x'");
 		sequentHasHypotheses(sequent, typeEnvironment, i1);
 		sequentHasNotHypotheses(sequent, typeEnvironment, g1, g2);
 		sequentHasGoal(sequent, typeEnvironment, "{0}≠∅ ∧ (∃b·∀x·x∈{0} ⇒ b≤x)");
 		
 		sequent = getSequent(po, "evt1/g2/WD");
-		sequentHasIdentifiers(sequent);
+		sequentHasIdentifiers(sequent, "x'");
 		sequentHasHypotheses(sequent, typeEnvironment, i1, g1);
 		sequentHasNotHypotheses(sequent, typeEnvironment, g2);
 		sequentHasGoal(sequent, typeEnvironment,
 				"{0,1}≠∅ ∧ (∃b·∀x·x∈{0,1} ⇒ b≤x)");
 		
 		sequent = getSequent(po, "evt1/i1/INV");
-		sequentHasIdentifiers(sequent);
+		sequentHasIdentifiers(sequent, "x'");
 		sequentHasHypotheses(sequent, typeEnvironment, i1, g1, g2);
 		sequentHasGoal(sequent, typeEnvironment, "x+1 ∈ {0,1}");
 	}
@@ -560,20 +560,20 @@ public class TestMachineEvents extends BasicPOTest {
 		IPOSequent sequent;
 		
 		sequent = getSequent(po, "evt1/g2/WD");
-		sequentHasIdentifiers(sequent);
+		sequentHasIdentifiers(sequent, "x'");
 		sequentHasHypotheses(sequent, typeEnvironment, i1, g1);
 		sequentHasNotHypotheses(sequent, typeEnvironment, g2, g3);
 		sequentHasGoal(sequent, typeEnvironment, "{0}≠∅ ∧ (∃b·∀x·x∈{0} ⇒ b≤x)");
 		
 		sequent = getSequent(po, "evt1/g3/WD");
-		sequentHasIdentifiers(sequent);
+		sequentHasIdentifiers(sequent, "x'");
 		sequentHasHypotheses(sequent, typeEnvironment, i1, g1, g2);
 		sequentHasNotHypotheses(sequent, typeEnvironment, g3);
 		sequentHasGoal(sequent, typeEnvironment,
 				"{0,1}≠∅ ∧ (∃b·∀x·x∈{0,1} ⇒ b≤x)");
 		
 		sequent = getSequent(po, "evt1/i1/INV");
-		sequentHasIdentifiers(sequent);
+		sequentHasIdentifiers(sequent, "x'");
 		sequentHasHypotheses(sequent, typeEnvironment, i1, g1, g2, g3);
 		sequentHasGoal(sequent, typeEnvironment, "x+1 ∈ {0,1}");
 	}

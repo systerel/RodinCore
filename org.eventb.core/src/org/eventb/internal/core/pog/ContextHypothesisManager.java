@@ -24,12 +24,15 @@ public class ContextHypothesisManager extends HypothesisManager implements
 	
 	public static final String ALLHYP_NAME = "ALLHYP";
 	
+	public static final String IDENT_HYP_NAME = "IDENT";
+	
 	private static final int IDENTIFIER_TABLE_SIZE = 213;
 
 	public ContextHypothesisManager(
 			IRodinElement parentElement, 
 			ISCPredicateElement[] predicateTable) {
-		super(parentElement, predicateTable, ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME,
+		super(parentElement, predicateTable, 
+				ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME, IDENT_HYP_NAME,
 				IDENTIFIER_TABLE_SIZE);
 	}
 

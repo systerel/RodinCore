@@ -32,6 +32,8 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 	
 	public static final String ALLHYP_NAME = "ALLHYP";
 	
+	public static final String IDENT_HYP_NAME = "IDENT";
+	
 	private static final int IDENTIFIER_TABLE_SIZE = 213;
 	
 	private final ISCMachineFile abstractMachine;
@@ -39,7 +41,9 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 	public MachineHypothesisManager(
 			IRodinElement parentElement, 
 			ISCPredicateElement[] predicateTable) throws CoreException {
-		super(parentElement, predicateTable, ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME, IDENTIFIER_TABLE_SIZE);
+		super(parentElement, predicateTable, 
+				ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME, IDENT_HYP_NAME, 
+				IDENTIFIER_TABLE_SIZE);
 		
 		ISCRefinesMachine[] refinesMachines = ((ISCMachineFile) parentElement).getSCRefinesClauses();
 		

@@ -49,6 +49,7 @@ public abstract class HypothesisManager implements IHypothesisManager {
 	private final String rootHypName;
 	private final String hypPrefix;
 	private final String allHypName;
+	private final String identHypName;
 	private final HashSet<FreeIdentifier> identifiers;
 
 	public IRodinElement getParentElement() {
@@ -61,11 +62,13 @@ public abstract class HypothesisManager implements IHypothesisManager {
 			String rootHypName, 
 			String hypPrefix,
 			String allHypName,
+			String identHypName,
 			int identifierHashSize) {
 		this.parentElement = parentElement;
 		this.rootHypName = rootHypName;
 		this.hypPrefix = hypPrefix;
 		this.allHypName = allHypName;
+		this.identHypName = identHypName;
 		this.predicateTable = predicateTable;
 		hypothesisNames = new String[predicateTable.length];
 		predicateMap = new Hashtable<String, Integer>(predicateTable.length * 4 / 3 + 1);
@@ -75,24 +78,35 @@ public abstract class HypothesisManager implements IHypothesisManager {
 			predicateMap.put(predicateTable[i].getElementName(), i);
 		}
 	}
+	
+	private String getFirstHypothesisName() {
+		return (identifiers.size() > 0) ? identHypName : rootHypName;
+	}
+	
+	private String getHypothesisName(int index) {
+		if (hypothesisNames[index] == null)
+			if (index == 0)
+				hypothesisNames[index] = getFirstHypothesisName();
+			else
+				hypothesisNames[index] = hypPrefix + predicateTable[index-1].getElementName();
+		return hypothesisNames[index];
+	}
 
 	public IPOPredicateSet getHypothesis(IPOFile file, ISCPredicateElement element) throws RodinDBException {
 		Integer index = predicateMap.get(element.getElementName());
 		if (index == null)
 			return null;
-		if (hypothesisNames[index] == null)
-			if (index == 0)
-				hypothesisNames[index] = rootHypName;
-			else
-				hypothesisNames[index] = hypPrefix + predicateTable[index-1].getElementName();
-		return file.getPredicateSet(hypothesisNames[index]);
+		return file.getPredicateSet(getHypothesisName(index));
 	}
 
 	public void createHypotheses(IPOFile file, IProgressMonitor monitor) throws RodinDBException {
 		
-		int previous = 0;
-		String previousName = rootHypName;
+		if (identifiers.size() > 0)
+			addIdentifiers(file, monitor);
 		
+		int previous = 0;
+		String previousName = getFirstHypothesisName();
+
 		int index = 0;
 		
 		// we start at index 1 because the root hypothesis set is created
@@ -114,6 +128,17 @@ public abstract class HypothesisManager implements IHypothesisManager {
 				allHypName, previous, previousName, index, predicateTable.length, monitor);
 	
 	}
+	
+	private void addIdentifiers(IPOFile file, IProgressMonitor monitor) throws RodinDBException {
+		IPOPredicateSet set = createPredicateSet(file, identHypName, rootHypName, monitor);
+		for (FreeIdentifier identifier : identifiers) {
+			String idName = identifier.getName();
+			Type type = identifier.getType();
+			IPOIdentifier poIdentifier = set.getIdentifier(idName);
+			poIdentifier.create(null, monitor);
+			poIdentifier.setType(type, monitor);
+		}
+	}
 
 	private int addPredicateSet(
 			IPOFile file, 
@@ -123,19 +148,7 @@ public abstract class HypothesisManager implements IHypothesisManager {
 			int index, 
 			int current, 
 			IProgressMonitor monitor) throws RodinDBException {
-		IPOPredicateSet set = file.getPredicateSet(name);
-		set.create(null, monitor);
-		set.setParentPredicateSet(file.getPredicateSet(previousName), monitor);
-		if (index == 0)
-		{
-			for (FreeIdentifier identifier : identifiers) {
-				String idName = identifier.getName();
-				Type type = identifier.getType();
-				IPOIdentifier poIdentifier = set.getIdentifier(idName);
-				poIdentifier.create(null, monitor);
-				poIdentifier.setType(type, monitor);
-			}
-		}
+		IPOPredicateSet set = createPredicateSet(file, name, previousName, monitor);
 		for (int k=previous; k<current; k++) {
 			IPOPredicate predicate = set.getPredicate(PRD_NAME_PREFIX + index++);
 			predicate.create(null, monitor);
@@ -144,6 +157,13 @@ public abstract class HypothesisManager implements IHypothesisManager {
 					((ITraceableElement) predicateTable[k]).getSource(), monitor);
 		}
 		return index;
+	}
+
+	private IPOPredicateSet createPredicateSet(IPOFile file, String name, String previousName, IProgressMonitor monitor) throws RodinDBException {
+		IPOPredicateSet set = file.getPredicateSet(name);
+		set.create(null, monitor);
+		set.setParentPredicateSet(file.getPredicateSet(previousName), monitor);
+		return set;
 	}
 	
 	public IPOPredicateSet getFullHypothesis(IPOFile file) throws RodinDBException {

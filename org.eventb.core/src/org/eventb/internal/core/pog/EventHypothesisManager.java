@@ -22,6 +22,8 @@ public class EventHypothesisManager extends HypothesisManager implements IEventH
 	
 	public static final String ALLHYP_NAME = "EVTALLHYP";
 	
+	public static final String IDENT_HYP_NAME = "EVTIDENT";
+	
 	private ISCEvent[] abstractEvents;
 	
 	private static final int IDENTIFIER_TABLE_SIZE = 43;
@@ -33,6 +35,7 @@ public class EventHypothesisManager extends HypothesisManager implements IEventH
 		super(parentElement, predicateTable, rootHypName, 
 				HYP_PREFIX + parentElement.getElementName(), 
 				ALLHYP_NAME + parentElement.getElementName(),
+				IDENT_HYP_NAME + parentElement.getElementName(),
 				IDENTIFIER_TABLE_SIZE);
 	}
 
