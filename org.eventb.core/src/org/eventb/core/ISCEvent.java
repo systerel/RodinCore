@@ -172,7 +172,7 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 * cannot be used again. It is "forbidden".
 	 * 
 	 * @param value the "forbidden" status of the event label
-	 * @deprecated use <code>setForbidden(boolean,IProgressMonitor)</code> instead
+	 * @deprecated no longer supported
 	 */
 	@Deprecated
 	void setForbidden(boolean value) throws RodinDBException;
@@ -187,7 +187,9 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 *            reporting is not desired
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated no longer supported
 	 */
+	@Deprecated
 	void setForbidden(boolean value, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
@@ -196,7 +198,9 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 * @return whether the event label is forbidden or not
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated no longer supported
 	 */
+	@Deprecated
 	boolean isForbidden() throws RodinDBException;
 
 }

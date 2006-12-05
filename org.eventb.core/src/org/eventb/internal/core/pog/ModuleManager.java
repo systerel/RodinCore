@@ -24,6 +24,7 @@ import org.eventb.internal.core.pog.modules.MachineEventModule;
 import org.eventb.internal.core.pog.modules.MachineEventPreserveInvariantModule;
 import org.eventb.internal.core.pog.modules.MachineEventStrengthenGuardModule;
 import org.eventb.internal.core.pog.modules.MachineEventVariantModule;
+import org.eventb.internal.core.pog.modules.MachineEventWitnessModule;
 import org.eventb.internal.core.pog.modules.MachineHypothesisModule;
 import org.eventb.internal.core.pog.modules.MachineInvariantModule;
 import org.eventb.internal.core.pog.modules.MachineTheoremModule;
@@ -82,6 +83,7 @@ public class ModuleManager implements IModuleManager {
 								new MachineEventActionBodySimModule(),
 								new MachineEventActionFrameSimModule(),
 								new MachineEventStrengthenGuardModule(),
+								new MachineEventWitnessModule(),
 								new MachineEventVariantModule()
 						};
 					}

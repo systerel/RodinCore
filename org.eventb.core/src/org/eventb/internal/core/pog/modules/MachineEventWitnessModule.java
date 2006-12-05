@@ -99,7 +99,7 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 						fisPredicate, 
 						witnessLabel, 
 						witnessIdentifier, 
-						"FIS",
+						"WFIS",
 						"Feasibility of witness",
 						monitor);			
 			}

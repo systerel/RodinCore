@@ -19,6 +19,9 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestMachineEvents extends BasicPOTest {
 	
+	/**
+	 * simple case of invariant preservation
+	 */
 	public void testEvents_00() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
@@ -48,6 +51,9 @@ public class TestMachineEvents extends BasicPOTest {
 		
 	}
 	
+	/**
+	 * invariant preservation with local variable
+	 */
 	public void testEvents_01() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
@@ -78,6 +84,9 @@ public class TestMachineEvents extends BasicPOTest {
 		
 	}
 	
+	/**
+	 * invariant preservation with non-determinitic assignment
+	 */
 	public void testEvents_03() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
@@ -108,11 +117,14 @@ public class TestMachineEvents extends BasicPOTest {
 		
 	}
 	
+	/**
+	 * no PO for invariants outside frame
+	 */
 	public void testEvents_04() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariables(mac, "V1", "V2");
-		addInvariants(mac, makeSList("I1", "I2"), makeSList("V1∈0‥4", "V2∈BOOL"));
+		addInvariants(mac, makeSList("I1", "I2"), makeSList("V1∈0‥4", "V2∈{TRUE}"));
 		addEvent(mac, "evt", 
 				makeSList("L1"), 
 				makeSList("G1"), makeSList("L1⊆ℕ"), 
@@ -135,11 +147,14 @@ public class TestMachineEvents extends BasicPOTest {
 		noSequent(po, "evt/I2/INV");
 		
 		sequentHasIdentifiers(sequent, "L1", "V1'");
-		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2∈BOOL", "L1⊆ℕ", "V1'∈L1");
+		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2∈{TRUE}", "L1⊆ℕ", "V1'∈L1");
 		sequentHasGoal(sequent, typeEnvironment, "V1'∈0‥4");
 		
 	}
 	
+	/**
+	 * invariant preservation for simultaneous non-deterministic assignment
+	 */
 	public void testEvents_05() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
@@ -181,6 +196,9 @@ public class TestMachineEvents extends BasicPOTest {
 		
 	}
 	
+	/**
+	 * invariant preservation for simultaneous assignment containing local variables
+	 */
 	public void testEvents_06() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
@@ -224,6 +242,9 @@ public class TestMachineEvents extends BasicPOTest {
 		
 	}
 
+	/**
+	 * two invariant preservation POs
+	 */
 	public void testEvents_07() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
@@ -263,6 +284,9 @@ public class TestMachineEvents extends BasicPOTest {
 		
 	}
 	
+	/**
+	 * two invariant preservation POs whith differently typed local variables
+	 */
 	public void testEvents_08() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
@@ -307,6 +331,9 @@ public class TestMachineEvents extends BasicPOTest {
 		
 	}
 	
+	/**
+	 * invariant preservation: context in hypothesis
+	 */
 	public void testEvents_09() throws Exception {
 		IContextFile con = createContext("con");
 
@@ -350,30 +377,69 @@ public class TestMachineEvents extends BasicPOTest {
 		
 	}
 	
+	/**
+	 * no PO for NOT generated trivial invariants
+	 */
 	public void testEvents_10() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
+		addVariables(mac, "V1", "V2", "V3");
+		addInvariants(mac, 
+				makeSList("I1", "I2", "I3", "I4", "I5", "I6"), 
+				makeSList("V1>0", "V2∈BOOL", "V1∈ℤ", "V1∈V3", "V3⊆V3", "V3⊆ℤ"));
+		addEvent(mac, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1", "A2"), makeSList("V1≔V1+1", "V2≔TRUE"));
+		addEvent(mac, "fvt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("V3≔ℤ"));
+		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", factory.makeIntegerType());
-
-		addVariables(mac, "L1");
-		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"));
-		addEvent(mac, "evt", makeSList(), makeSList(), makeSList(), makeSList("A1"), makeSList("L1≔1"));
-	
+		typeEnvironment.addName("V1", intType);
+		typeEnvironment.addName("V2", boolType);
+		typeEnvironment.addName("V3", powIntType);
+		
 		mac.save(null, true);
 		
 		runBuilder();
 		
 		IPOFile po = mac.getPOFile();
 		
-		containsIdentifiers(po, "L1");
+		containsIdentifiers(po, "V1", "V2", "V3");
 		
-		IPOSequent sequent = getSequent(po, "evt/I1/INV");
+		IPOSequent sequent;
 		
-		sequentHasIdentifiers(sequent, "L1'");
-		sequentHasHypotheses(sequent, typeEnvironment, "L1∈ℕ");
-		sequentHasGoal(sequent, typeEnvironment, "1∈ℕ");
+		noSequent(po, "evt/I2/INV");
+		noSequent(po, "evt/I3/INV");
+		noSequent(po, "evt/I5/INV");
+		noSequent(po, "evt/I6/INV");
 		
+		sequent = getSequent(po, "evt/I1/INV");
+		sequentHasIdentifiers(sequent, "V1'", "V2'");
+		sequentHasHypotheses(sequent, typeEnvironment, "V1>0", "V2∈BOOL", "V1∈ℤ", "V1∈V3", "V3⊆V3", "V3⊆ℤ");
+		sequentHasGoal(sequent, typeEnvironment, "V1+1>0");
+		
+		sequent = getSequent(po, "evt/I4/INV");
+		sequentHasIdentifiers(sequent, "V1'", "V2'");
+		sequentHasHypotheses(sequent, typeEnvironment, "V1>0", "V2∈BOOL", "V1∈ℤ", "V1∈V3", "V3⊆V3", "V3⊆ℤ");
+		sequentHasGoal(sequent, typeEnvironment, "V1+1∈V3");
+		
+		noSequent(po, "fvt/I1/INV");
+		noSequent(po, "fvt/I2/INV");
+		noSequent(po, "fvt/I3/INV");
+		noSequent(po, "fvt/I6/INV");	
+		
+		sequent = getSequent(po, "fvt/I4/INV");
+		sequentHasIdentifiers(sequent, "V3'");
+		sequentHasHypotheses(sequent, typeEnvironment, "V1>0", "V2∈BOOL", "V1∈ℤ", "V1∈V3", "V3⊆V3", "V3⊆ℤ");
+		sequentHasGoal(sequent, typeEnvironment, "V1∈ℤ");
+		
+		sequent = getSequent(po, "fvt/I5/INV");
+		sequentHasIdentifiers(sequent, "V3'");
+		sequentHasHypotheses(sequent, typeEnvironment, "V1>0", "V2∈BOOL", "V1∈ℤ", "V1∈V3", "V3⊆V3", "V3⊆ℤ");
+		sequentHasGoal(sequent, typeEnvironment, "ℤ⊆ℤ");
 	}
 	
 }

@@ -64,7 +64,12 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 			
 			String invariantLabel = ((ISCInvariant) invariants.get(i)).getLabel();
 			
-			FreeIdentifier[] freeIdentifiers = invPredicates.get(i).getFreeIdentifiers();
+			Predicate predicate = invPredicates.get(i);
+			
+			if (goalIsTrivial(predicate))
+				continue;
+			
+			FreeIdentifier[] freeIdentifiers = predicate.getFreeIdentifiers();
 			HashSet<FreeIdentifier> freeIdents = 
 				new HashSet<FreeIdentifier>(freeIdentifiers.length * 4 / 3 + 1);
 			boolean commonIdents = false; // common identifiers?
@@ -82,7 +87,7 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 						target, 
 						(ISCInvariant) invariants.get(i), 
 						invariantLabel, 
-						invPredicates.get(i), 
+						predicate, 
 						hyp, 
 						freeIdents,
 						monitor);

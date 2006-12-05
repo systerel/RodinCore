@@ -8,6 +8,7 @@
 package org.eventb.internal.core.pog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -62,8 +63,8 @@ public class WitnessTable implements IWitnessTable {
 		nondetPredicates = new ArrayList<Predicate>(witnesses.length);
 		witnessedVars = new HashSet<FreeIdentifier>(witnesses.length * 4 / 3 + 1);
 	
-		LinkedList<FreeIdentifier> left = new LinkedList<FreeIdentifier>();
-		LinkedList<Expression> right = new LinkedList<Expression>();
+		final LinkedList<FreeIdentifier> left = new LinkedList<FreeIdentifier>();
+		final LinkedList<Expression> right = new LinkedList<Expression>();
 	
 		for (int i=0; i<witnesses.length; i++) {
 			final Predicate predicate = witnesses[i].getPredicate(factory, typeEnvironment);
@@ -75,8 +76,8 @@ public class WitnessTable implements IWitnessTable {
 						identifier.withoutPrime(factory) : 
 						identifier;
 			witnessedVars.add(identifier);
-			categorize(identifier, unprimed, predicate, witnesses[i], factory);
-			if (identifier != unprimed) {
+			boolean nondet = categorize(identifier, unprimed, predicate, witnesses[i], factory);
+			if (nondet && identifier != unprimed) {
 				left.add(unprimed);
 				right.add(identifier);
 			}	
@@ -99,7 +100,7 @@ public class WitnessTable implements IWitnessTable {
 		nondetPredicates.trimToSize();
 	}
 	
-	private void categorize(
+	private boolean categorize(
 			FreeIdentifier identifier, 
 			FreeIdentifier unprimed, 
 			Predicate predicate,
@@ -110,7 +111,8 @@ public class WitnessTable implements IWitnessTable {
 		if (predicate instanceof RelationalPredicate) {
 			RelationalPredicate relationalPredicate = (RelationalPredicate) predicate;
 			if (relationalPredicate.getTag() == Formula.EQUAL)
-				if (relationalPredicate.getLeft().equals(identifier)) {
+				if (relationalPredicate.getLeft().equals(identifier) 
+						&& !Arrays.asList(relationalPredicate.getRight().getFreeIdentifiers()).contains(identifier)) {
 					final BecomesEqualTo becomesEqualTo =
 						factory.makeBecomesEqualTo(unprimed, relationalPredicate.getRight(), null);
 					if (identifier == unprimed) {
@@ -124,7 +126,8 @@ public class WitnessTable implements IWitnessTable {
 										identifier, 
 										relationalPredicate.getRight(), null));
 					}
-					return;
+					// it's deterministic
+					return false;
 				}
 		}
 
@@ -132,6 +135,9 @@ public class WitnessTable implements IWitnessTable {
 		nondetWitnesses.add(witness);
 		nondetAssignedVariables.add(identifier);
 		nondetPredicates.add(predicate);
+		
+		// it's nondeterministic
+		return true;
 	}
 	
 	/* (non-Javadoc)

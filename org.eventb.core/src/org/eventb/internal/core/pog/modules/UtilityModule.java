@@ -97,8 +97,4 @@ public abstract class UtilityModule extends Module {
 		return goal.equals(btrue) || goalIsNotRestricting(goal);
 	}
 
-	protected boolean goalIsTrivial(Predicate goal, Predicate hypothesis) {
-		return goalIsTrivial(goal) || goal.equals(hypothesis);
-	}
-
 }
