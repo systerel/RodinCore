@@ -273,7 +273,7 @@ public class RodinCore extends Plugin {
 		if (result != null) {
 			return result;
 		}
-		throw new IllegalArgumentException("Unknown file element type: " + id);
+		throw new IllegalArgumentException("Unknown internal element type: " + id);
 	}
 
 	/**
