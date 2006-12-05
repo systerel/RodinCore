@@ -102,6 +102,13 @@ public class Graph implements Serializable, Iterable<Node> {
 			n.done = true;
 		node.markReachableToolSuccessorsUndone();
 		
+		// if the node is maintained by a tool the corresponding file must be recreated;
+		// otherwise the file should be cleaned
+		if (node.getToolId() != null) {
+			node.done = true;
+			node.setDated(true);
+		}
+		
 		manager.subTask(Messages.bind(Messages.build_removing, node.getTarget().getName()));
 		
 		for(Node n : values) {
