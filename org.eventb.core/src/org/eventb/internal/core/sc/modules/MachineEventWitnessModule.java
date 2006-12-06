@@ -185,15 +185,10 @@ public class MachineEventWitnessModule extends PredicateModule {
 		IAbstractEventInfo abstractEventInfo = 
 			eventRefinesInfo.getAbstractEventInfos().get(0);
 		
-		if (!inherited())
-			getLocalWitnessNames(abstractEventInfo, witnessNames);
+		getLocalWitnessNames(abstractEventInfo, witnessNames);
 		
 		getGlobalWitnessNames(abstractEventInfo, witnessNames);
 		
-	}
-
-	private boolean inherited() {
-		return currentEvent.getCurrentEventSymbolInfo().isInherited();
 	}
 
 	private void getGlobalWitnessNames(
