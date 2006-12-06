@@ -28,6 +28,7 @@ import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IAbstractEventInfo;
+import org.eventb.core.sc.state.ICurrentEvent;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
@@ -60,6 +61,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 	
 	Predicate btrue;
 	FormulaFactory factory;
+	ICurrentEvent currentEvent;
 	
 	private static String WITNESS_NAME_PREFIX = "WIT";
 	
@@ -98,7 +100,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 		
 		HashSet<String> witnessNames = new HashSet<String>(WITNESS_HASH_TABLE_SIZE);
 		
-		getWitnessNames(target, witnessNames, repository, monitor);
+		getWitnessNames(witnessNames, repository);
 		
 		checkAndSaveWitnesses((ISCEvent) target, witnesses, predicates, witnessNames, event, monitor);
 		
@@ -113,9 +115,6 @@ public class MachineEventWitnessModule extends PredicateModule {
 			HashSet<String> witnessNames,
 			IEvent event,
 			IProgressMonitor monitor) throws RodinDBException {
-		
-		if (target == null)
-			return;
 		
 		int index = 0;
 		
@@ -162,6 +161,10 @@ public class MachineEventWitnessModule extends PredicateModule {
 			IRodinElement source,
 			Predicate predicate, 
 			IProgressMonitor monitor) throws RodinDBException {
+		
+		if (target == null)
+			return;
+		
 		ISCWitness scWitness = target.getSCWitness(name);
 		scWitness.create(null, monitor);
 		scWitness.setLabel(label, monitor);
@@ -170,13 +173,8 @@ public class MachineEventWitnessModule extends PredicateModule {
 	}
 
 	private void getWitnessNames(
-			IInternalParent target, 
 			HashSet<String> witnessNames,
-			IStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
-		
-		if (target == null)
-			return;
+			IStateRepository repository) throws CoreException {
 		
 		IEventRefinesInfo eventRefinesInfo = (IEventRefinesInfo)
 			repository.getState(IEventRefinesInfo.STATE_TYPE);
@@ -187,16 +185,20 @@ public class MachineEventWitnessModule extends PredicateModule {
 		IAbstractEventInfo abstractEventInfo = 
 			eventRefinesInfo.getAbstractEventInfos().get(0);
 		
-		getLocalWitnessNames(abstractEventInfo, witnessNames, monitor);
+		if (!inherited())
+			getLocalWitnessNames(abstractEventInfo, witnessNames);
 		
-		getGlobalWitnessNames(abstractEventInfo, witnessNames, monitor);
+		getGlobalWitnessNames(abstractEventInfo, witnessNames);
 		
+	}
+
+	private boolean inherited() {
+		return currentEvent.getCurrentEventSymbolInfo().isInherited();
 	}
 
 	private void getGlobalWitnessNames(
 			IAbstractEventInfo abstractEventInfo, 
-			HashSet<String> witnessNames,
-			IProgressMonitor monitor) throws RodinDBException {
+			HashSet<String> witnessNames) throws RodinDBException {
 		Assignment[] assignments = abstractEventInfo.getActions();
 		
 		for (Assignment assignment : assignments) {
@@ -226,8 +228,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 
 	private void getLocalWitnessNames(
 			IAbstractEventInfo abstractEventInfo, 
-			HashSet<String> witnessNames,
-			IProgressMonitor monitor) throws RodinDBException {
+			HashSet<String> witnessNames) throws RodinDBException {
 		FreeIdentifier[] identifiers = abstractEventInfo.getIdentifiers();
 		
 		for (FreeIdentifier identifier : identifiers) {
@@ -251,6 +252,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
 		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
+		currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
 	}
 
 	/* (non-Javadoc)
@@ -264,6 +266,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 		super.endModule(element, repository, monitor);
 		btrue = null;
 		factory = null;
+		currentEvent = null;
 	}
 
 	@Override

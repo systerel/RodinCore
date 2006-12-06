@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc;
 
 import org.eventb.core.IEvent;
 import org.eventb.core.sc.state.ICurrentEvent;
+import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 
 /**
  * @author Stefan Hallerstede
@@ -17,9 +18,11 @@ import org.eventb.core.sc.state.ICurrentEvent;
 public class CurrentEvent implements ICurrentEvent {
 
 	private final IEvent event;
+	private final IEventSymbolInfo eventSymbolInfo;
 	
-	public CurrentEvent(IEvent event) {
+	public CurrentEvent(IEvent event, IEventSymbolInfo eventSymbolInfo) {
 		this.event = event;
+		this.eventSymbolInfo = eventSymbolInfo;
 	}
 	
 	/* (non-Javadoc)
@@ -34,6 +37,10 @@ public class CurrentEvent implements ICurrentEvent {
 	 */
 	public String getStateType() {
 		return STATE_TYPE;
+	}
+
+	public IEventSymbolInfo getCurrentEventSymbolInfo() {
+		return eventSymbolInfo;
 	}
 
 }

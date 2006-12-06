@@ -145,8 +145,8 @@ public class TestEventRefines extends BasicSCTest {
 		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", factory.makeIntegerType());
-		typeEnvironment.addName("L2", factory.makePowerSetType(factory.makeIntegerType()));
+		typeEnvironment.addName("L1", intType);
+		typeEnvironment.addName("L2", powIntType);
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -182,9 +182,9 @@ public class TestEventRefines extends BasicSCTest {
 		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", factory.makeIntegerType());
-		typeEnvironment.addName("V1'", factory.makeIntegerType());
-		typeEnvironment.addName("L2", factory.makeIntegerType());
+		typeEnvironment.addName("V1", intType);
+		typeEnvironment.addName("V1'", intType);
+		typeEnvironment.addName("L2", intType);
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -222,10 +222,10 @@ public class TestEventRefines extends BasicSCTest {
 		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", factory.makeIntegerType());
-		typeEnvironment.addName("V1'", factory.makeIntegerType());
-		typeEnvironment.addName("V2", factory.makePowerSetType(factory.makeIntegerType()));
-		typeEnvironment.addName("V2'", factory.makePowerSetType(factory.makeIntegerType()));
+		typeEnvironment.addName("V1", intType);
+		typeEnvironment.addName("V1'", intType);
+		typeEnvironment.addName("V2", powIntType);
+		typeEnvironment.addName("V2'", powIntType);
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -257,9 +257,9 @@ public class TestEventRefines extends BasicSCTest {
 		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", factory.makeIntegerType());
-		typeEnvironment.addName("L2", factory.makePowerSetType(factory.makeIntegerType()));
-		typeEnvironment.addName("L3", factory.makeIntegerType());
+		typeEnvironment.addName("L1", intType);
+		typeEnvironment.addName("L2", powIntType);
+		typeEnvironment.addName("L3", intType);
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -626,9 +626,18 @@ public class TestEventRefines extends BasicSCTest {
 	public void testEvents_21_mergeLocalAbstractTypesCorrespond() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
-		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"), makeSList(), makeSList());
-		addEvent(abs, "gvt", makeSList("x", "y"), makeSList("G1", "G2"), makeSList("x∈ℕ","y∈BOOL"), makeSList(), makeSList());
-		addEvent(abs, "hvt", makeSList("y"), makeSList("G1"), makeSList("y∈BOOL"), makeSList(), makeSList());
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G1"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+		addEvent(abs, "gvt", 
+				makeSList("x", "y"), makeSList("G1", "G2"), 
+				makeSList("x∈ℕ","y∈BOOL"), 
+				makeSList(), makeSList());
+		addEvent(abs, "hvt", 
+				makeSList("y"), 
+				makeSList("G1"), makeSList("y∈BOOL"), 
+				makeSList(), makeSList());
 
 		abs.save(null, true);
 		
@@ -655,9 +664,19 @@ public class TestEventRefines extends BasicSCTest {
 	public void testEvents_22_mergeLocalAbstractTypesConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
-		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"), makeSList(), makeSList());
-		addEvent(abs, "gvt", makeSList("x", "y"), makeSList("G1", "G2"), makeSList("x⊆ℕ","y∈BOOL"), makeSList(), makeSList());
-		addEvent(abs, "hvt", makeSList("y"), makeSList("G1"), makeSList("y∈BOOL"), makeSList(), makeSList());
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G1"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+		addEvent(abs, "gvt", 
+				makeSList("x", "y"), 
+				makeSList("G1", "G2"), 
+				makeSList("x⊆ℕ","y∈BOOL"), 
+				makeSList(), makeSList());
+		addEvent(abs, "hvt", 
+				makeSList("y"), 
+				makeSList("G1"), makeSList("y∈BOOL"), 
+				makeSList(), makeSList());
 
 		abs.save(null, true);
 		
@@ -792,8 +811,8 @@ public class TestEventRefines extends BasicSCTest {
 		ISCMachineFile file = mac.getSCMachineFile();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", factory.makeIntegerType());
-		typeEnvironment.addName("y", factory.makeIntegerType());
+		typeEnvironment.addName("x", intType);
+		typeEnvironment.addName("y", intType);
 		
 		ISCEvent[] events = getSCEvents(file, "fvt");
 		containsWitnesses(events[0], typeEnvironment, makeSList("x"), makeSList("x=p"));
@@ -835,8 +854,8 @@ public class TestEventRefines extends BasicSCTest {
 		ISCMachineFile file = mac.getSCMachineFile();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", factory.makeIntegerType());
-		typeEnvironment.addName("y", factory.makeIntegerType());
+		typeEnvironment.addName("x", intType);
+		typeEnvironment.addName("y", intType);
 		
 		ISCEvent[] events = getSCEvents(file, "evt", "fvt");
 		containsWitnesses(events[1], typeEnvironment, makeSList("x"), makeSList("x=p"));
@@ -868,8 +887,8 @@ public class TestEventRefines extends BasicSCTest {
 		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1'", factory.makeIntegerType());
-		typeEnvironment.addName("V2'", factory.makeIntegerType());
+		typeEnvironment.addName("V1'", intType);
+		typeEnvironment.addName("V2'", intType);
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
@@ -878,6 +897,93 @@ public class TestEventRefines extends BasicSCTest {
 		
 		containsWitnesses(events[0], typeEnvironment, makeSList("V1'", "V2'"), makeSList("⊤", "⊤"));
 		
+	}
+	
+	/*
+	 * Inherited events should not have witnesses for local variables
+	 */
+	public void testEvents_28_inheritedNoWitnesses() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addInheritedEvent(ref, "evt");
+		ref.save(null, true);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		
+		ISCMachineFile file = ref.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt");
+		
+		containsWitnesses(events[0], emptyEnv, makeSList(), makeSList());
+	}
+	
+	/*
+	 * Inherited events should not refer to variables that exist no longer
+	 */
+	public void testEvents_29_inheritedAndDisappearingVariables() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "A");
+		addInvariants(abs, makeSList("I"), makeSList("A∈ℤ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G"), makeSList("x∈ℕ"), 
+				makeSList("S"), makeSList("A≔A+1"));
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(abs, "B");
+		addInvariants(abs, makeSList("J"), makeSList("A=B"));
+		addInheritedEvent(ref, "evt");
+		ref.save(null, true);
+		runBuilder();
+		
+		ISCMachineFile file = ref.getSCMachineFile();
+		
+		getSCEvents(file);
+	}
+	
+	/*
+	 * Inherited events should not refer to variables that exist no longer
+	 */
+	public void testEvents_30_inheritedCopyEvent() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "A", "B");
+		addInvariants(abs, makeSList("I", "J"), makeSList("A∈ℤ", "B∈ℤ"));
+		addEvent(abs, "evt", 
+				makeSList("x", "y"), 
+				makeSList("G", "H"), makeSList("x∈ℕ", "y∈ℕ"), 
+				makeSList("S", "T"), makeSList("A≔A+1", "B≔B+1"));
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "A", "B");
+		addInheritedEvent(ref, "evt");
+		ref.save(null, true);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("A", intType);
+		environment.addName("B", intType);
+		environment.addName("x", intType);
+		environment.addName("y", intType);
+		
+		ISCMachineFile file = ref.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt");
+		containsVariables(events[0], "x", "y");
+		containsGuards(events[0], environment, makeSList("G", "H"), makeSList("x∈ℕ", "y∈ℕ"));
+		containsActions(events[0], environment, makeSList("S", "T"), makeSList("A≔A+1", "B≔B+1"));
 	}
 
 }

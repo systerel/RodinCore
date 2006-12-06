@@ -26,6 +26,7 @@ import org.eventb.internal.core.sc.modules.MachineEventActionModule;
 import org.eventb.internal.core.sc.modules.MachineEventConvergenceModule;
 import org.eventb.internal.core.sc.modules.MachineEventGuardFreeIdentsModule;
 import org.eventb.internal.core.sc.modules.MachineEventGuardModule;
+import org.eventb.internal.core.sc.modules.MachineEventInheritedModule;
 import org.eventb.internal.core.sc.modules.MachineEventModule;
 import org.eventb.internal.core.sc.modules.MachineEventRefinesModule;
 import org.eventb.internal.core.sc.modules.MachineEventSaveIdentifiersModule;
@@ -237,6 +238,7 @@ public final class ModuleManager implements IModuleManager {
 				new IFilterCreator() {
 					public IFilterModule[] create() {
 						return new IFilterModule[] {
+								new MachineEventInheritedModule(),
 								new MachinePreviousEventLabelModule()
 						};
 					}

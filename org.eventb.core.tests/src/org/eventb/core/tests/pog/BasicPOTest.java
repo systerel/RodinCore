@@ -31,10 +31,6 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class BasicPOTest extends EventBTest {
 
-	public final Type intType = factory.makeIntegerType();
-	public final Type boolType = factory.makeBooleanType();
-	public final Type powIntType = factory.makePowerSetType(intType);
-
 	public Set<String> getElementNameSet(IRodinElement[] elements) throws RodinDBException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(IRodinElement element : elements)

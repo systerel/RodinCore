@@ -29,6 +29,7 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -38,6 +39,9 @@ import org.rodinp.core.RodinDBException;
 public abstract class EventBTest extends BuilderTest {
 	
 	public ITypeEnvironment emptyEnv = factory.makeTypeEnvironment();
+	public final Type intType = factory.makeIntegerType();
+	public final Type boolType = factory.makeBooleanType();
+	public final Type powIntType = factory.makePowerSetType(intType);
 
 	public EventBTest() {
 		super();

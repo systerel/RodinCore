@@ -82,7 +82,7 @@ public class MachineEventRefinesModule extends ProcessorModule {
 		
 				index = createRefinesEvent(target, index, refinesEvent, abstractEvent, monitor);
 			}
-		} else if (refinesInfo.getAbstractEventInfos().size() > 0) { // inherited event or initialisation
+		} else if (refinesInfo.getAbstractEventInfos().size() > 0) { // implicit refinement
 			IAbstractEventInfo abstractEventInfo = refinesInfo.getAbstractEventInfos().get(0);
 			
 			createRefinesEvent(target, 0, 

@@ -25,8 +25,7 @@ import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 public class AbstractEventInfo implements IAbstractEventInfo {
 
 	private final String label;
-	private boolean forbidden;
-	private IEventSymbolInfo inheritedEvent;
+	private IEventSymbolInfo implicitRefinedInfo;
 	private boolean refineError;
 	private final LinkedList<IEventSymbolInfo> splitInfos;
 	private final LinkedList<IEventSymbolInfo> mergeInfos;
@@ -89,14 +88,13 @@ public class AbstractEventInfo implements IAbstractEventInfo {
 		this.guards = guards;
 		this.actions = actions;
 		refineError = false;
-		inheritedEvent = null;
-		forbidden = false;
+		implicitRefinedInfo = null;
 		splitInfos = new LinkedList<IEventSymbolInfo>();
 		mergeInfos = new LinkedList<IEventSymbolInfo>();
 	}
 
 	public boolean isRefined() {
-		return inheritedEvent != null || splitInfos.size() != 0 || mergeInfos.size() != 0;
+		return implicitRefinedInfo != null || splitInfos.size() != 0 || mergeInfos.size() != 0;
 	}
 	
 	/* (non-Javadoc)
@@ -110,14 +108,6 @@ public class AbstractEventInfo implements IAbstractEventInfo {
 	public int compareTo(Object o) {
 		IAbstractEventInfo info = (IAbstractEventInfo) o;
 		return label.compareTo(info.getEventLabel());
-	}
-
-	public void setForbidden(boolean value) {
-		forbidden = value;
-	}
-
-	public boolean isForbidden() {
-		return forbidden;
 	}
 
 	public ISCEvent getEvent() {
@@ -148,12 +138,12 @@ public class AbstractEventInfo implements IAbstractEventInfo {
 		return splitInfos;
 	}
 
-	public void setInherited(IEventSymbolInfo eventSymbolInfo) {
-		inheritedEvent = eventSymbolInfo;
+	public void setImplicit(IEventSymbolInfo eventSymbolInfo) {
+		implicitRefinedInfo = eventSymbolInfo;
 	}
 
-	public IEventSymbolInfo getInherited() {
-		return inheritedEvent;
+	public IEventSymbolInfo getImplicit() {
+		return implicitRefinedInfo;
 	}
 
 }

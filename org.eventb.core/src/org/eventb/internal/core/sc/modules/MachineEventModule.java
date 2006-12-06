@@ -22,6 +22,7 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCRefinesEvent;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -115,7 +116,7 @@ public class MachineEventModule extends LabeledElementModule {
 		
 		preprocessEvents(machineFile, (ISCMachineFile) target, scEvents, symbolInfos, monitor);
 				
-		processEvents(scEvents, repository, monitor);
+		processEvents(scEvents, repository, symbolInfos, monitor);
 				
 	}
 
@@ -151,7 +152,7 @@ public class MachineEventModule extends LabeledElementModule {
 							GraphProblem.EventMergeMergeError);
 				}
 				
-				IEventSymbolInfo eventSymbolInfo = abstractEventInfo.getInherited();
+				IEventSymbolInfo eventSymbolInfo = abstractEventInfo.getImplicit();
 				
 				if (eventSymbolInfo != null)
 					if (mergeSymbolInfos.size() > 0 || splitSymbolInfos.size() > 0) {
@@ -168,11 +169,55 @@ public class MachineEventModule extends LabeledElementModule {
 		
 		for (int i=0; i < events.length; i++) {
 			if (symbolInfos[i] != null && !symbolInfos[i].hasError()) {
-				scEvents[i] = createSCEvent(target, index++, symbolInfos[i], events[i], monitor);
+				if (symbolInfos[i].isInherited()) {
+					scEvents[i] = copyAndPatchSCEvent(target, index++, symbolInfos[i], events[i], monitor);
+				} else
+					scEvents[i] = createSCEvent(target, index++, symbolInfos[i], events[i], monitor);
 			} else
 				scEvents[i] = null;
 		}
 		
+	}
+
+	private static String INHERITED_REFINES_NAME = "IREF";
+	
+	private ISCEvent copyAndPatchSCEvent(
+			ISCMachineFile target, 
+			int index, 
+			IEventSymbolInfo info, 
+			IEvent event, 
+			IProgressMonitor monitor) throws RodinDBException {
+
+		ISCEvent abstractSCEvent = 
+			info.getRefinesInfo().getAbstractEventInfos().get(0).getEvent();
+		
+		String eventName = EVENT_NAME_PREFIX + index;
+
+		abstractSCEvent.copy(target, null, eventName, false, monitor);
+		ISCEvent scEvent = target.getSCEvent(eventName);
+		scEvent.setSource(event, monitor);
+		
+		for (ISCRefinesEvent refinesEvent : scEvent.getSCRefinesClauses())
+			refinesEvent.delete(true, monitor);
+		
+		ISCRefinesEvent refinesEvent = scEvent.getSCRefinesClause(INHERITED_REFINES_NAME);
+		refinesEvent.create(null, monitor);
+		refinesEvent.setAbstractSCEvent(abstractSCEvent, monitor);
+		
+		return scEvent;
+	}
+
+	private ISCEvent createSCEvent(
+			ISCMachineFile target, 
+			int index,
+			IEventSymbolInfo symbolInfo,
+			IEvent event,
+			IProgressMonitor monitor) throws RodinDBException {
+		ISCEvent scEvent = target.getSCEvent(EVENT_NAME_PREFIX + index);
+		scEvent.create(null, monitor);
+		scEvent.setLabel(symbolInfo.getSymbol(), monitor);
+		scEvent.setSource(event, monitor);
+		return scEvent;
 	}
 
 	void issueErrorMarkers(
@@ -356,31 +401,35 @@ public class MachineEventModule extends LabeledElementModule {
 	private void processEvents(
 			ISCEvent[] scEvents, 
 			IStateRepository<IStateSC> repository, 
+			IEventSymbolInfo[] symbolInfos, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		for (int i=0; i < events.length; i++) {
 			
-			repository.setState(new CurrentEvent(events[i]));
+			if (symbolInfos[i] != null && !symbolInfos[i].isInherited()) { // inherited events are only copied, not processed!
+				
+				repository.setState(new CurrentEvent(events[i], symbolInfos[i]));
 			
-			repository.setState(
-					new StackedIdentifierSymbolTable(
-							identifierSymbolTable, 
-							EVENT_IDENT_SYMTAB_SIZE, 
-							factory));
+				repository.setState(
+						new StackedIdentifierSymbolTable(
+								identifierSymbolTable, 
+								EVENT_IDENT_SYMTAB_SIZE, 
+								factory));
 			
-			repository.setState(
-					new EventLabelSymbolTable(EVENT_LABEL_SYMTAB_SIZE));
+				repository.setState(
+						new EventLabelSymbolTable(EVENT_LABEL_SYMTAB_SIZE));
 			
-			ITypeEnvironment eventTypeEnvironment = factory.makeTypeEnvironment();
-			eventTypeEnvironment.addAll(typingState.getTypeEnvironment());
-			addPostValues(eventTypeEnvironment);
-			repository.setState(new TypingState(eventTypeEnvironment));
+				ITypeEnvironment eventTypeEnvironment = factory.makeTypeEnvironment();
+				eventTypeEnvironment.addAll(typingState.getTypeEnvironment());
+				addPostValues(eventTypeEnvironment);
+				repository.setState(new TypingState(eventTypeEnvironment));
 			
-			initProcessorModules(events[i], processorModules, repository, null);
+				initProcessorModules(events[i], processorModules, repository, null);
 			
-			processModules(processorModules, events[i], scEvents[i], repository, monitor);
+				processModules(processorModules, events[i], scEvents[i], repository, monitor);
 			
-			endProcessorModules(events[i], processorModules, repository, null);
+				endProcessorModules(events[i], processorModules, repository, null);
+			}
 			
 			monitor.worked(1);
 		}
@@ -473,24 +522,11 @@ public class MachineEventModule extends LabeledElementModule {
 		if (eventInfo == null)
 			symbolInfo.setError();
 		else {
-			eventInfo.setInherited(symbolInfo);
+			eventInfo.setImplicit(symbolInfo);
 			IEventRefinesInfo refinesInfo = new EventRefinesInfo(symbolInfo, 1);
 			symbolInfo.setRefinesInfo(refinesInfo);
 			refinesInfo.addAbstractEventInfo(eventInfo);
 		}
-	}
-	
-	private ISCEvent createSCEvent(
-			ISCMachineFile target, 
-			int index,
-			IEventSymbolInfo symbolInfo,
-			IEvent event,
-			IProgressMonitor monitor) throws RodinDBException {
-		ISCEvent scEvent = target.getSCEvent(EVENT_NAME_PREFIX + index);
-		scEvent.create(null, monitor);
-		scEvent.setLabel(symbolInfo.getSymbol(), monitor);
-		scEvent.setSource(event, monitor);
-		return scEvent;
 	}
 	
 	private void addPostValues(ITypeEnvironment typeEnvironment) {

@@ -61,23 +61,27 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 			IPOFile target, 
 			ISCEvent abstractEvent, 
 			IProgressMonitor monitor) throws RodinDBException {
+		
 		List<ISCPredicateElement> guards = abstractEventGuardTable.getElements();
-		List<Predicate> grdPredicates = abstractEventGuardTable.getPredicates();
+		List<Predicate> absGuards = abstractEventGuardTable.getPredicates();
+		
+		List<Predicate> conGuards = concreteEventGuardTable.getPredicates();
+
 		ArrayList<POGPredicate> hyp = makeActionHypothesis();
 		hyp.addAll(makeWitnessHypothesis());
 		for (int i=0; i<guards.size(); i++) {
 			String guardLabel = ((ISCGuard) guards.get(i)).getLabel();
-			Predicate predicate = grdPredicates.get(i);
+			Predicate absGuard = absGuards.get(i);
 			
-			if (goalIsTrivial(predicate))
+			if (goalIsTrivial(absGuard) || conGuards.contains(absGuard))
 				continue;
 			
-			predicate = predicate.applyAssignments(witnessTable.getEventDetAssignments(), factory);
+			absGuard = absGuard.applyAssignments(witnessTable.getEventDetAssignments(), factory);
 			LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 			if (concreteEventActionTable.getXiUnprime() != null)
 				substitution.add(concreteEventActionTable.getXiUnprime());
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
-			predicate = predicate.applyAssignments(substitution, factory);
+			absGuard = absGuard.applyAssignments(substitution, factory);
 			
 			createPO(
 					target, 
@@ -85,7 +89,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 					"Action simulation",
 					fullHypothesis,
 					hyp,
-					new POGPredicate(guards.get(i), predicate),
+					new POGPredicate(guards.get(i), absGuard),
 					sources(
 							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
 							new POGSource(IPOSource.ABSTRACT_ROLE, (ITraceableElement) guards.get(i)),

@@ -8,7 +8,9 @@
 package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -63,13 +65,22 @@ public class MachineEventActionBodySimModule extends
 
 		ArrayList<POGPredicate> hyp = makeActionHypothesis();
 		hyp.addAll(makeWitnessHypothesis());
+		
 		ArrayList<Assignment> simAssignments = abstractEventActionTable.getSimAssignments();
 		ArrayList<ISCAction> simActions = abstractEventActionTable.getSimActions();
+		
+		List<Assignment> conAssignments = Arrays.asList(concreteEventActionTable.getAssignments());
+		
 		for (int i=0; i<simActions.size(); i++) {
 			String actionLabel = simActions.get(i).getLabel();
-			Predicate predicate = simAssignments.get(i).getBAPredicate(factory);
+			Assignment simAssignment = simAssignments.get(i);
 			
-			if (goalIsTrivial(predicate))
+			if (conAssignments.contains(simAssignment))
+				continue;
+			
+			Predicate simPredicate = simAssignment.getBAPredicate(factory);
+			
+			if (goalIsTrivial(simPredicate))
 				continue;
 			
 			LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
@@ -77,12 +88,12 @@ public class MachineEventActionBodySimModule extends
 			if (witnessTable.getPrimeSubstitution() != null)
 				substitution.add(witnessTable.getPrimeSubstitution());
 			substitution.addAll(witnessTable.getEventDetAssignments());
-			predicate = predicate.applyAssignments(substitution, factory);
+			simPredicate = simPredicate.applyAssignments(substitution, factory);
 			substitution.clear();
 			if (concreteEventActionTable.getXiUnprime() != null)
 				substitution.add(concreteEventActionTable.getXiUnprime());
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
-			predicate = predicate.applyAssignments(substitution, factory);
+			simPredicate = simPredicate.applyAssignments(substitution, factory);
 			
 			createPO(
 					target, 
@@ -90,7 +101,7 @@ public class MachineEventActionBodySimModule extends
 					"Action simulation",
 					fullHypothesis,
 					hyp,
-					new POGPredicate(simActions.get(i), predicate),
+					new POGPredicate(simActions.get(i), simPredicate),
 					sources(
 							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
 							new POGSource(IPOSource.ABSTRACT_ROLE, simActions.get(i)),

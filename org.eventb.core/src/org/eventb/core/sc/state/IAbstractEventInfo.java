@@ -30,8 +30,8 @@ public interface IAbstractEventInfo extends Comparable {
 	Predicate[] getGuards();
 	Assignment[] getActions();
 	
-	void setInherited(IEventSymbolInfo eventSymbolInfo);
-	IEventSymbolInfo getInherited();
+	void setImplicit(IEventSymbolInfo eventSymbolInfo);
+	IEventSymbolInfo getImplicit();
 	
 	boolean isRefined();
 	

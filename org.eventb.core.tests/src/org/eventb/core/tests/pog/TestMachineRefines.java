@@ -19,7 +19,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestMachineRefines extends BasicPOTest {
 	
-	public void testEvents_00() throws Exception {
+	public void testRefines_00() throws Exception {
 		IMachineFile abs = createMachine("abs");
 
 		addVariables(abs, "V1");
@@ -62,7 +62,7 @@ public class TestMachineRefines extends BasicPOTest {
 		
 	}
 	
-	public void testEvents_01() throws Exception {
+	public void testRefines_01() throws Exception {
 		IMachineFile abs = createMachine("abs");
 
 		addVariables(abs, "V1");
@@ -105,7 +105,7 @@ public class TestMachineRefines extends BasicPOTest {
 		
 	}
 	
-	public void testEvents_02() throws Exception {
+	public void testRefines_02() throws Exception {
 		IMachineFile abs = createMachine("abs");
 
 		addVariables(abs, "V1");
@@ -162,7 +162,7 @@ public class TestMachineRefines extends BasicPOTest {
 		
 	}
 	
-	public void testEvents_03() throws Exception {
+	public void testRefines_03() throws Exception {
 		IMachineFile abs = createMachine("abs");
 
 		addVariables(abs, "V1", "V2");
@@ -216,7 +216,7 @@ public class TestMachineRefines extends BasicPOTest {
 	 * well-definedness PO of the guard, and then once at the end of the
 	 * machine.
 	 */
-	public void testEvents_04() throws Exception {
+	public void testRefines_04() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addEvent(abs, "evt", 
 				makeSList(), 
@@ -243,7 +243,7 @@ public class TestMachineRefines extends BasicPOTest {
 	 * PO filter: the POG should not generate WD POs for guards when these
 	 * conditions have already been proved for the abstract event
 	 */
-	public void testEvents_05() throws Exception {
+	public void testRefines_05() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addEvent(abs, "evt", 
 				makeSList("x"), 
@@ -278,6 +278,85 @@ public class TestMachineRefines extends BasicPOTest {
 		noSequent(po, "evt/G3/WD");
 		
 		noSequent(po, "evt/G4/WD");
+	}
+
+	/*
+	 * PO filter: the POG should not generate guard strengthening POs if
+	 * all abstract guards are syntactically (but normalised) contained
+	 * in the concrete guards
+	 */
+	public void testRefines_06() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("GA1", "GA2", "GA3"), makeSList("x > x", "1 > 1", "x−1∈ℕ"), 
+				makeSList(), makeSList());
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		IEvent event = addEvent(ref, "evt", 
+				makeSList("x"), 
+				makeSList("G1", "G2", "G3"), makeSList("1 > 1", "x > x", "x = x"), 
+				makeSList(), makeSList());
+		addEventRefines(event, "evt");
+		ref.save(null, true);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po);
+		
+		IPOSequent sequent;
+		
+		noSequent(po, "evt/GA1/REF");
+		
+		noSequent(po, "evt/GA2/REF");
+
+		sequent= getSequent(po, "evt/GA3/REF");
+		sequentHasGoal(sequent, environment, "x−1∈ℕ");
+	}
+
+	/*
+	 * PO filter: inherited events should only produce invariant preservation POs
+	 */
+	public void testRefines_07() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "A");
+		addInvariants(abs, makeSList("I"), makeSList("A∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G1", "G2"), makeSList("1 > x", "x−1∈ℕ"), 
+				makeSList("S"), makeSList("A≔A+1"));
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "A", "B");
+		addInvariants(ref, makeSList("J"), makeSList("A=B"));
+		addInheritedEvent(ref, "evt");
+		ref.save(null, true);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("A", intType);
+		environment.addName("B", intType);
+		environment.addName("x", intType);
+		
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "A", "B");
+		
+		IPOSequent sequent;
+		
+		noSequent(po, "evt/G1/REF");
+		noSequent(po, "evt/G2/REF");
+		noSequent(po, "evt/S/SIM");
+		
+		sequent= getSequent(po, "evt/J/INV");
+		sequentHasHypotheses(sequent, environment, "A∈ℕ", "1 > x", "x−1∈ℕ");
+		sequentHasGoal(sequent, environment, "A+1=B");
 	}
 
 }
