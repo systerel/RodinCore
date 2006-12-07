@@ -9,6 +9,7 @@ package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,8 +38,8 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	protected ArrayList<POGPredicate> makeActionHypothesis(HashSet<FreeIdentifier> freeIdents) {
 		// create local hypothesis for nondeterministic assignments
 		
-		ArrayList<Assignment> nondetAssignments = concreteEventActionTable.getNondetAssignments();
-		ArrayList<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
+		List<Assignment> nondetAssignments = concreteEventActionTable.getNondetAssignments();
+		List<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
 		
 		ArrayList<POGPredicate> hyp = 
 			new ArrayList<POGPredicate>(nondetAssignments.size());
@@ -60,8 +61,8 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	protected ArrayList<POGPredicate> makeActionHypothesis() {
 		// create local hypothesis for nondeterministic assignments
 		
-		ArrayList<Assignment> nondetAssignments = concreteEventActionTable.getNondetAssignments();
-		ArrayList<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
+		List<Assignment> nondetAssignments = concreteEventActionTable.getNondetAssignments();
+		List<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
 		
 		ArrayList<POGPredicate> hyp = 
 			new ArrayList<POGPredicate>(nondetAssignments.size());
@@ -76,8 +77,8 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	
 	protected ArrayList<POGPredicate> makeWitnessHypothesis() {
 		// create local hypothesis for nondeterministic assignments
-		ArrayList<ISCWitness> nondetWitnesses = witnessTable.getNondetWitnesses();
-		ArrayList<Predicate> nondetPredicates = witnessTable.getNondetPredicates();
+		List<ISCWitness> nondetWitnesses = witnessTable.getNondetWitnesses();
+		List<Predicate> nondetPredicates = witnessTable.getNondetPredicates();
 		
 		ArrayList<POGPredicate> hyp = 
 			new ArrayList<POGPredicate>(nondetWitnesses.size());

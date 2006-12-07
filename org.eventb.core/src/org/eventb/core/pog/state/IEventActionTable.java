@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ISCAction;
@@ -21,15 +21,15 @@ import org.eventb.core.ast.FreeIdentifier;
  */
 public interface IEventActionTable extends IStatePOG {
 
-	ISCAction[] getActions();
-	Assignment[] getAssignments();
+	List<ISCAction> getActions();
+	List<Assignment> getAssignments();
 	
-	ArrayList<Assignment> getNondetAssignments();
-	ArrayList<BecomesEqualTo> getDetAssignments();
-	ArrayList<BecomesEqualTo> getPrimedDetAssignments();
+	List<Assignment> getNondetAssignments();
+	List<BecomesEqualTo> getDetAssignments();
+	List<BecomesEqualTo> getPrimedDetAssignments();
 	
 	Set<FreeIdentifier> getAssignedVariables();
 	
-	ArrayList<ISCAction> getNondetActions();
-	ArrayList<ISCAction> getDetActions();
+	List<ISCAction> getNondetActions();
+	List<ISCAction> getDetActions();
 }

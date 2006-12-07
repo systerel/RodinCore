@@ -18,6 +18,7 @@ import org.eventb.core.pog.POGHint;
 import org.eventb.core.pog.POGIntervalSelectionHint;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
+import org.eventb.core.pog.state.IAbstractEventActionTable;
 import org.eventb.core.pog.state.IStatePOG;
 import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
@@ -29,6 +30,8 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineEventActionModule extends MachineEventActionUtilityModule {
 
+	protected IAbstractEventActionTable abstractEventActionTable;
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -39,13 +42,13 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		int actionsLength = concreteEventActionTable.getActions().length;
+		int actionsLength = concreteEventActionTable.getActions().size();
 		if (actionsLength == 0)
 			return;
 		
 		for (int k=0; k<actionsLength; k++) {
-			ISCAction action = concreteEventActionTable.getActions()[k];
-			Assignment assignment = concreteEventActionTable.getAssignments()[k];
+			ISCAction action = concreteEventActionTable.getActions().get(k);
+			Assignment assignment = concreteEventActionTable.getAssignments().get(k);
 			
 			POGSource[] sources = sources(new POGSource(IPOSource.DEFAULT_ROLE, action));
 			POGHint[] hints = hints(
@@ -53,15 +56,19 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 							eventHypothesisManager.getRootHypothesis(target), 
 							eventHypothesisManager.getFullHypothesis(target)));
 			
-			Predicate wdPredicate = assignment.getWDPredicate(factory);
-			createProofObligation(target, 
-					wdPredicate, action, sources, hints, 
-					"WD", "Well-definedness of action", monitor);
-			
-			Predicate fisPredicate = assignment.getFISPredicate(factory);
-			createProofObligation(target, 
-					fisPredicate, action, sources, hints, 
-					"FIS", "Feasibility of action", monitor);
+			if (abstractEventActionTable.getIndexOfCorrespondingAbstract(k) == -1) {
+				
+				Predicate wdPredicate = assignment.getWDPredicate(factory);
+				createProofObligation(target, 
+						wdPredicate, action, sources, hints, 
+						"WD", "Well-definedness of action", monitor);
+				
+				Predicate fisPredicate = assignment.getFISPredicate(factory);
+				createProofObligation(target, 
+						fisPredicate, action, sources, hints, 
+						"FIS", "Feasibility of action", monitor);
+				
+			}
 		}
 	}
 
@@ -86,6 +93,27 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 					hints, 
 					monitor);
 		}
+	}
+	
+	@Override
+	public void initModule(
+			IRodinElement element, 
+			IPOFile target, 
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor) throws CoreException {
+		super.initModule(element, target, repository, monitor);
+		abstractEventActionTable = 
+			(IAbstractEventActionTable) repository.getState(IAbstractEventActionTable.STATE_TYPE);
+	}
+
+	@Override
+	public void endModule(
+			IRodinElement element, 
+			IPOFile target, 
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor) throws CoreException {
+		abstractEventActionTable = null;
+		super.endModule(element, target, repository, monitor);
 	}
 
 }

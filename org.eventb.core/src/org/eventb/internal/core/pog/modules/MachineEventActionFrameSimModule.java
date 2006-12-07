@@ -8,6 +8,7 @@
 package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -60,15 +61,15 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 		ArrayList<POGPredicate> hyp = 
 			new ArrayList<POGPredicate>(1);
 		
-		ArrayList<Assignment> nondetAssignments = 
+		List<Assignment> nondetAssignments = 
 			concreteEventActionTable.getNondetAssignments();
-		ArrayList<ISCAction> nondetActions = 
+		List<ISCAction> nondetActions = 
 			concreteEventActionTable.getNondetActions();
-		ArrayList<BecomesEqualTo> detAssignments = 
+		List<BecomesEqualTo> detAssignments = 
 			concreteEventActionTable.getDetAssignments();
-		ArrayList<BecomesEqualTo> primedDetAssignments = 
+		List<BecomesEqualTo> primedDetAssignments = 
 			concreteEventActionTable.getPrimedDetAssignments();
-		ArrayList<ISCAction> detActions = 
+		List<ISCAction> detActions = 
 			concreteEventActionTable.getDetActions();
 		
 		Set<FreeIdentifier> abstractAssignedVariables = 
@@ -121,7 +122,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 		}
 	}
 
-	private int findIndex(FreeIdentifier variable, ArrayList assignments) {
+	private int findIndex(FreeIdentifier variable, List assignments) {
 		int pos = -1;
 		
 		for (int i=0; i<assignments.size(); i++) {

@@ -85,7 +85,7 @@ public class TestMachineEvents extends BasicPOTest {
 	}
 	
 	/**
-	 * invariant preservation with non-determinitic assignment
+	 * invariant preservation with non-deterministic assignment
 	 */
 	public void testEvents_03() throws Exception {
 		IMachineFile mac = createMachine("mac");

@@ -8,7 +8,9 @@
 package org.eventb.internal.core.pog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -24,10 +26,10 @@ import org.eventb.core.pog.state.IEventActionTable;
  * @author Stefan Hallerstede
  *
  */
-public abstract class EventActionInfo implements IEventActionTable {
+public abstract class EventActionTable implements IEventActionTable {
 	
-	protected final ISCAction[] actions;
-	protected final Assignment[] assignments;
+	protected final List<ISCAction> actions;
+	protected final ArrayList<Assignment> assignments;
 	protected final ArrayList<Assignment> nondeterm;
 	protected final ArrayList<BecomesEqualTo> determist;
 	protected final ArrayList<BecomesEqualTo> primedDetermist;
@@ -37,7 +39,7 @@ public abstract class EventActionInfo implements IEventActionTable {
 	
 	protected final HashSet<FreeIdentifier> assignedVars;
 
-	public EventActionInfo(
+	public EventActionTable(
 			ISCAction[] actions, 
 			ITypeEnvironment typeEnvironment, 
 			FormulaFactory factory) throws CoreException {
@@ -45,27 +47,29 @@ public abstract class EventActionInfo implements IEventActionTable {
 			new ArrayList<Assignment>(actions.length);
 		assignedVars = 
 			new HashSet<FreeIdentifier>(actions.length * 15);
-		assignments = new Assignment[actions.length];		
+		assignments = new ArrayList<Assignment>(actions.length);		
 		determist = 
 			new ArrayList<BecomesEqualTo>(actions.length);
 		primedDetermist =
 			new ArrayList<BecomesEqualTo>(actions.length);
-		this.actions = actions;
+		this.actions = Arrays.asList(actions);
 		nondetActions = new ArrayList<ISCAction>(actions.length);
 		detActions = new ArrayList<ISCAction>(actions.length);
 		
-		for (int i=0; i<actions.length; i++) {
+		for (ISCAction action : actions) {
 			
-			assignments[i] = actions[i].getAssignment(factory, typeEnvironment);
+			Assignment assignment = action.getAssignment(factory, typeEnvironment);
 			
-			fetchAssignedIdentifiers(assignedVars, assignments[i]);
+			assignments.add(assignment);
 			
-			if (assignments[i] instanceof BecomesEqualTo) {
-				determist.add((BecomesEqualTo) assignments[i]);
-				detActions.add(actions[i]);
+			fetchAssignedIdentifiers(assignedVars, assignment);
+			
+			if (assignment instanceof BecomesEqualTo) {
+				determist.add((BecomesEqualTo) assignment);
+				detActions.add(action);
 			} else {
-				nondeterm.add(assignments[i]);
-				nondetActions.add(actions[i]);
+				nondeterm.add(assignment);
+				nondetActions.add(action);
 			}
 		}
 		makePrimedDetermist(factory);
@@ -80,11 +84,11 @@ public abstract class EventActionInfo implements IEventActionTable {
 		return assignedVars;
 	}
 
-	public Assignment[] getAssignments() {
+	public List<Assignment> getAssignments() {
 		return assignments;
 	}
 
-	public ArrayList<BecomesEqualTo> getDetAssignments() {
+	public List<BecomesEqualTo> getDetAssignments() {
 		return determist;
 	}
 
@@ -103,7 +107,7 @@ public abstract class EventActionInfo implements IEventActionTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IAssignmentTable#getPrimedDetAssignments()
 	 */
-	public ArrayList<BecomesEqualTo> getPrimedDetAssignments() {
+	public List<BecomesEqualTo> getPrimedDetAssignments() {
 		return primedDetermist;
 	}
 	
@@ -115,22 +119,22 @@ public abstract class EventActionInfo implements IEventActionTable {
 			assignedIdents.add(identifier);
 	}
 
-	public ArrayList<Assignment> getNondetAssignments() {
+	public List<Assignment> getNondetAssignments() {
 		return nondeterm;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IEventActionTable#getActions()
 	 */
-	public ISCAction[] getActions() {
+	public List<ISCAction> getActions() {
 		return actions;
 	}
 	
-	public ArrayList<ISCAction> getNondetActions() {
+	public List<ISCAction> getNondetActions() {
 		return nondetActions;
 	}
 	
-	public ArrayList<ISCAction> getDetActions() {
+	public List<ISCAction> getDetActions() {
 		return detActions;
 	}
 

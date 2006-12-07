@@ -9,6 +9,7 @@ package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -53,17 +54,17 @@ public class MachineEventPreserveInvariantModule extends MachineEventInvariantMo
 		LinkedList<POGPredicate> bighyp = new LinkedList<POGPredicate>();
 		bighyp.addAll(hyp);
 		
-		ArrayList<Assignment> nondet = concreteEventActionTable.getNondetAssignments();
-		ArrayList<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
+		List<Assignment> nondet = concreteEventActionTable.getNondetAssignments();
+		List<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
 		for (int k=0; k<nondet.size(); k++) {
 			bighyp.add(
 					new POGPredicate(
 							nondetActions.get(k), 
 							nondet.get(k).getBAPredicate(factory)));
 		}
-		ArrayList<Predicate> nondetWitPrds = witnessTable.getNondetPredicates();
-		ArrayList<FreeIdentifier> witnessedVars = witnessTable.getNondetAssignedVariables();
-		ArrayList<ISCWitness> nondetWits = witnessTable.getNondetWitnesses();
+		List<Predicate> nondetWitPrds = witnessTable.getNondetPredicates();
+		List<FreeIdentifier> witnessedVars = witnessTable.getNondetAssignedVariables();
+		List<ISCWitness> nondetWits = witnessTable.getNondetWitnesses();
 		for (int i=0; i<nondetWits.size(); i++) {
 			FreeIdentifier ident = witnessedVars.get(i).isPrimed() ?
 					witnessedVars.get(i).withoutPrime(factory) :

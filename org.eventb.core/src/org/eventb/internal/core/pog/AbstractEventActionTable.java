@@ -8,6 +8,7 @@
 package org.eventb.internal.core.pog;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCAction;
@@ -17,37 +18,44 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.IAbstractEventActionTable;
+import org.eventb.core.pog.state.IConcreteEventActionTable;
 import org.eventb.core.pog.state.IMachineVariableTable;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class AbstractEventActionTable extends EventActionInfo implements
+public class AbstractEventActionTable extends EventActionTable implements
 		IAbstractEventActionTable {
 	
-	ArrayList<BecomesEqualTo> disappearingWitnesses;
-	ArrayList<Assignment> simAssignments;
-	ArrayList<ISCAction> simActions;
+	private ArrayList<BecomesEqualTo> disappearingWitnesses;
+	private ArrayList<Assignment> simAssignments;
+	private ArrayList<ISCAction> simActions;
+	
+	private final Correspondence<Assignment> correspondence;
 
 	public AbstractEventActionTable(
-			ISCAction[] actions, 
+			ISCAction[] abstractActions, 
 			ITypeEnvironment typeEnvironment, 
 			IMachineVariableTable variables,
+			IConcreteEventActionTable concreteTable,
 			FormulaFactory factory) throws CoreException {
-		super(actions, typeEnvironment, factory);
+		super(abstractActions, typeEnvironment, factory);
 		
-		disappearingWitnesses = new ArrayList<BecomesEqualTo>(actions.length);
-		simAssignments = new ArrayList<Assignment>(actions.length);
-		simActions = new ArrayList<ISCAction>(actions.length);
+		correspondence = new Correspondence<Assignment>(concreteTable.getAssignments(), assignments);
 		
-		for (int i=0; i<assignments.length; i++) {
-			if (isDisappearing(assignments[i], variables) 
-					&& assignments[i] instanceof BecomesEqualTo) {
-				disappearingWitnesses.add((BecomesEqualTo) assignments[i]);
+		disappearingWitnesses = new ArrayList<BecomesEqualTo>(abstractActions.length);
+		simAssignments = new ArrayList<Assignment>(abstractActions.length);
+		simActions = new ArrayList<ISCAction>(abstractActions.length);
+		
+		for (int i=0; i<assignments.size(); i++) {
+			Assignment assignment = assignments.get(i);
+			if (isDisappearing(assignment, variables) 
+					&& assignment instanceof BecomesEqualTo) {
+				disappearingWitnesses.add((BecomesEqualTo) assignment);
 			} else {
-				simAssignments.add(assignments[i]);
-				simActions.add(actions[i]);
+				simAssignments.add(assignment);
+				simActions.add(abstractActions[i]);
 			}
 					
 		}
@@ -73,16 +81,24 @@ public class AbstractEventActionTable extends EventActionInfo implements
 		return STATE_TYPE;
 	}
 
-	public ArrayList<BecomesEqualTo> getDisappearingWitnesses() {
+	public List<BecomesEqualTo> getDisappearingWitnesses() {
 		return disappearingWitnesses;
 	}
 
-	public ArrayList<Assignment> getSimAssignments() {
+	public List<Assignment> getSimAssignments() {
 		return simAssignments;
 	}
 
-	public ArrayList<ISCAction> getSimActions() {
+	public List<ISCAction> getSimActions() {
 		return simActions;
+	}
+
+	public int getIndexOfCorrespondingAbstract(int index) {
+		return correspondence.getIndexOfCorrespondingAbstract(index);
+	}
+
+	public int getIndexOfCorrespondingConcrete(int index) {
+		return correspondence.getIndexOfCorrespondingConcrete(index);
 	}
 
 }

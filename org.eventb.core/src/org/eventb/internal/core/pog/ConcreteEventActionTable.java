@@ -24,7 +24,7 @@ import org.eventb.core.pog.state.IMachineVariableTable;
  * @author Stefan Hallerstede
  *
  */
-public class ConcreteEventActionTable extends EventActionInfo implements
+public class ConcreteEventActionTable extends EventActionTable implements
 		IConcreteEventActionTable {
 
 	private final BecomesEqualTo xiUnprime;

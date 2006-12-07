@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.pog.state.IEventHypothesisManager;
@@ -24,7 +27,7 @@ public class EventHypothesisManager extends HypothesisManager implements IEventH
 	
 	public static final String IDENT_HYP_NAME = "EVTIDENT";
 	
-	private ISCEvent[] abstractEvents;
+	private List<ISCEvent> abstractEvents;
 	
 	private static final int IDENTIFIER_TABLE_SIZE = 43;
 	
@@ -44,18 +47,18 @@ public class EventHypothesisManager extends HypothesisManager implements IEventH
 	}
 
 	public void setAbstractEvents(ISCEvent[] events) {
-		abstractEvents = events;
+		abstractEvents = Arrays.asList(events);
 	}
 
-	public ISCEvent[] getAbstractEvents() {
+	public List<ISCEvent> getAbstractEvents() {
 		return abstractEvents;
 	}
 
 	public ISCEvent getFirstAbstractEvent() {
-		if (abstractEvents.length == 0)
+		if (abstractEvents.size() == 0)
 			return null;
 		
-		return abstractEvents[0];
+		return abstractEvents.get(0);
 	}
 
 }

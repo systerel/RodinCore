@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -32,7 +33,7 @@ import org.eventb.core.pog.state.IWitnessTable;
  */
 public class WitnessTable implements IWitnessTable {
 
-	private final ISCWitness[] witnesses;
+	private final List<ISCWitness> witnesses;
 	private final BecomesEqualTo primeSubstitution;
 	
 	private final ArrayList<ISCWitness> machineDetWitnesses;
@@ -52,7 +53,7 @@ public class WitnessTable implements IWitnessTable {
 			ITypeEnvironment typeEnvironment, 
 			FormulaFactory factory, 
 			IProgressMonitor monitor) throws CoreException {
-		this.witnesses = witnesses;
+		this.witnesses = Arrays.asList(witnesses);
 		machineDetWitnesses = new ArrayList<ISCWitness>(witnesses.length);
 		machineDetermist = new ArrayList<BecomesEqualTo>(witnesses.length);
 		machinePrimedDetermist = new ArrayList<BecomesEqualTo>(witnesses.length);
@@ -151,7 +152,7 @@ public class WitnessTable implements IWitnessTable {
 		return primeSubstitution;
 	}
 
-	public ISCWitness[] getWitnesses() {
+	public List<ISCWitness> getWitnesses() {
 		return witnesses;
 	}
 

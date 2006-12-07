@@ -8,7 +8,6 @@
 package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,16 +65,14 @@ public class MachineEventActionBodySimModule extends
 		ArrayList<POGPredicate> hyp = makeActionHypothesis();
 		hyp.addAll(makeWitnessHypothesis());
 		
-		ArrayList<Assignment> simAssignments = abstractEventActionTable.getSimAssignments();
-		ArrayList<ISCAction> simActions = abstractEventActionTable.getSimActions();
-		
-		List<Assignment> conAssignments = Arrays.asList(concreteEventActionTable.getAssignments());
+		List<Assignment> simAssignments = abstractEventActionTable.getSimAssignments();
+		List<ISCAction> simActions = abstractEventActionTable.getSimActions();
 		
 		for (int i=0; i<simActions.size(); i++) {
 			String actionLabel = simActions.get(i).getLabel();
 			Assignment simAssignment = simAssignments.get(i);
 			
-			if (conAssignments.contains(simAssignment))
+			if (abstractEventActionTable.getIndexOfCorrespondingConcrete(i) != -1)
 				continue;
 			
 			Predicate simPredicate = simAssignment.getBAPredicate(factory);

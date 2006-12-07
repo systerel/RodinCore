@@ -14,9 +14,9 @@ import org.eventb.core.pog.IModuleManager;
 import org.eventb.internal.core.pog.modules.ContextAxiomModule;
 import org.eventb.internal.core.pog.modules.ContextHypothesisModule;
 import org.eventb.internal.core.pog.modules.ContextTheoremModule;
-import org.eventb.internal.core.pog.modules.MachineEventActionBasicModule;
 import org.eventb.internal.core.pog.modules.MachineEventActionBodySimModule;
 import org.eventb.internal.core.pog.modules.MachineEventActionFrameSimModule;
+import org.eventb.internal.core.pog.modules.MachineEventActionModule;
 import org.eventb.internal.core.pog.modules.MachineEventEstablishInvariantModule;
 import org.eventb.internal.core.pog.modules.MachineEventGuardModule;
 import org.eventb.internal.core.pog.modules.MachineEventHypothesisModule;
@@ -77,7 +77,7 @@ public class ModuleManager implements IModuleManager {
 						return new IModule[] {
 								new MachineEventHypothesisModule(),
 								new MachineEventGuardModule(),
-								new MachineEventActionBasicModule(),
+								new MachineEventActionModule(),
 								new MachineEventEstablishInvariantModule(),
 								new MachineEventPreserveInvariantModule(),
 								new MachineEventActionBodySimModule(),

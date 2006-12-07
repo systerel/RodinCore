@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.EventBPlugin;
@@ -24,18 +24,18 @@ public interface IWitnessTable extends IStatePOG {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".witnessTable";
 
-	ISCWitness[] getWitnesses();
+	List<ISCWitness> getWitnesses();
 
-	ArrayList<ISCWitness> getMachineDetWitnesses();
-	ArrayList<BecomesEqualTo> getMachineDetAssignments();
-	ArrayList<BecomesEqualTo> getMachinePrimedDetAssignments();
+	List<ISCWitness> getMachineDetWitnesses();
+	List<BecomesEqualTo> getMachineDetAssignments();
+	List<BecomesEqualTo> getMachinePrimedDetAssignments();
 	
-	ArrayList<ISCWitness> getEventDetWitnesses();
-	ArrayList<BecomesEqualTo> getEventDetAssignments();
+	List<ISCWitness> getEventDetWitnesses();
+	List<BecomesEqualTo> getEventDetAssignments();
 
-	ArrayList<ISCWitness> getNondetWitnesses();
-	ArrayList<FreeIdentifier> getNondetAssignedVariables();
-	ArrayList<Predicate> getNondetPredicates();
+	List<ISCWitness> getNondetWitnesses();
+	List<FreeIdentifier> getNondetAssignedVariables();
+	List<Predicate> getNondetPredicates();
 
 	/**
 	 * Returns all witnesses variables. Machine variable witnesses have a prime.

@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FreeIdentifier;
@@ -24,7 +24,7 @@ public interface IMachineVariableTable extends IStatePOG, Iterable<FreeIdentifie
 	
 	void add(FreeIdentifier variable, boolean preserved);
 	
-	ArrayList<FreeIdentifier> getPreservedVariables();
+	List<FreeIdentifier> getPreservedVariables();
 	
 	void trimToSize();
 		

@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
@@ -25,6 +27,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
+@Deprecated
 public class MachineEventActionBasicModule extends MachineEventActionUtilityModule {
 
 	/* (non-Javadoc)
@@ -44,25 +47,27 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 	
 	private void processConcreteActions(
 			IPOFile target, 
-			ISCAction[] actions, 
-			Assignment[] assignments, 
+			List<ISCAction> actions, 
+			List<Assignment> assignments, 
 			IProgressMonitor monitor) throws RodinDBException, CoreException {
-		for (int i=0; i<actions.length; i++) {
+		for (int i=0; i<actions.size(); i++) {
 			
-			String actionLabel = actions[i].getLabel();
-			
+			ISCAction action = actions.get(i);
+			String actionLabel = action.getLabel();
+			Assignment assignment = assignments.get(i);
+
 			createWDPO(
 					target, 
-					actions[i], 
+					action, 
 					actionLabel, 
-					assignments[i], 
+					assignment, 
 					monitor);
 			
 			createFISPO(
 					target, 
-					actions[i], 
+					action, 
 					actionLabel, 
-					assignments[i], 
+					assignment, 
 					monitor);
 			
 		}

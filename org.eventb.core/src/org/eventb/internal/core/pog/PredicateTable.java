@@ -25,12 +25,12 @@ import org.rodinp.core.RodinDBException;
 public abstract class PredicateTable 
 implements IPredicateTable {
 
-	private List<ISCPredicateElement> predicateElements;
-	private List<Predicate> predicateTable;
+	protected List<ISCPredicateElement> predicateElements;
+	protected List<Predicate> predicates;
 
 	public PredicateTable() {
 		predicateElements = new LinkedList<ISCPredicateElement>();
-		predicateTable = new LinkedList<Predicate>();
+		predicates = new LinkedList<Predicate>();
 	}
 
 	/* (non-Javadoc)
@@ -38,7 +38,7 @@ implements IPredicateTable {
 	 */
 	public void addElement(ISCPredicateElement element, ITypeEnvironment typeEnvironment, FormulaFactory factory) throws RodinDBException {
 		predicateElements.add(element);
-		predicateTable.add(element.getPredicate(factory, typeEnvironment));
+		predicates.add(element.getPredicate(factory, typeEnvironment));
 	}
 
 	/* (non-Javadoc)
@@ -52,7 +52,7 @@ implements IPredicateTable {
 	 * @see org.eventb.core.pog.IPredicateTable#getPredicates()
 	 */
 	public List<Predicate> getPredicates() {
-		return predicateTable;
+		return predicates;
 	}
 
 	/* (non-Javadoc)
@@ -60,7 +60,7 @@ implements IPredicateTable {
 	 */
 	public void trim() {
 		predicateElements = new ArrayList<ISCPredicateElement>(predicateElements);
-		predicateTable = new ArrayList<Predicate>(predicateTable);
+		predicates = new ArrayList<Predicate>(predicates);
 	}
 	
 }

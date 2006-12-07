@@ -65,15 +65,13 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		List<ISCPredicateElement> guards = abstractEventGuardTable.getElements();
 		List<Predicate> absGuards = abstractEventGuardTable.getPredicates();
 		
-		List<Predicate> conGuards = concreteEventGuardTable.getPredicates();
-
 		ArrayList<POGPredicate> hyp = makeActionHypothesis();
 		hyp.addAll(makeWitnessHypothesis());
 		for (int i=0; i<guards.size(); i++) {
 			String guardLabel = ((ISCGuard) guards.get(i)).getLabel();
 			Predicate absGuard = absGuards.get(i);
 			
-			if (goalIsTrivial(absGuard) || conGuards.contains(absGuard))
+			if (goalIsTrivial(absGuard) || abstractEventGuardTable.getIndexOfCorrespondingConcrete(i) != -1)
 				continue;
 			
 			absGuard = absGuard.applyAssignments(witnessTable.getEventDetAssignments(), factory);

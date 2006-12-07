@@ -13,7 +13,7 @@ import org.eventb.core.EventBPlugin;
  * @author Stefan Hallerstede
  *
  */
-public interface IAbstractEventGuardTable extends IPredicateTable {
+public interface IAbstractEventGuardTable extends IPredicateTable, ICorrespondence {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventGuardTable";
 

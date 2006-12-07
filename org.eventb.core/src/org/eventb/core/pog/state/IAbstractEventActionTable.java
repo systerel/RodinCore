@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCAction;
@@ -18,12 +18,12 @@ import org.eventb.core.ast.BecomesEqualTo;
  * @author Stefan Hallerstede
  *
  */
-public interface IAbstractEventActionTable extends IEventActionTable {
+public interface IAbstractEventActionTable extends IEventActionTable, ICorrespondence {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventActionInfo";
 	
-	ArrayList<BecomesEqualTo> getDisappearingWitnesses();
-	ArrayList<Assignment> getSimAssignments();
-	ArrayList<ISCAction> getSimActions();
-
+	List<BecomesEqualTo> getDisappearingWitnesses();
+	List<Assignment> getSimAssignments();
+	List<ISCAction> getSimActions();
+	
 }

@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
+import java.util.List;
+
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCEvent;
 
@@ -20,7 +22,7 @@ public interface IEventHypothesisManager extends IHypothesisManager {
 
 	void setAbstractEvents(ISCEvent[] events);
 	
-	ISCEvent[] getAbstractEvents();
+	List<ISCEvent> getAbstractEvents();
 	
 	ISCEvent getFirstAbstractEvent();
 	

@@ -19,6 +19,9 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestMachineRefines extends BasicPOTest {
 	
+	/**
+	 * rewriting of deterministic action simulation POs
+	 */
 	public void testRefines_00() throws Exception {
 		IMachineFile abs = createMachine("abs");
 
@@ -62,6 +65,9 @@ public class TestMachineRefines extends BasicPOTest {
 		
 	}
 	
+	/**
+	 * rewriting of action frame simulation POs
+	 */
 	public void testRefines_01() throws Exception {
 		IMachineFile abs = createMachine("abs");
 
@@ -105,6 +111,9 @@ public class TestMachineRefines extends BasicPOTest {
 		
 	}
 	
+	/**
+	 * simulation and invariant preservation using global witnesses
+	 */
 	public void testRefines_02() throws Exception {
 		IMachineFile abs = createMachine("abs");
 
@@ -162,6 +171,9 @@ public class TestMachineRefines extends BasicPOTest {
 		
 	}
 	
+	/**
+	 * simulation and invariant preservation using local witnesses
+	 */
 	public void testRefines_03() throws Exception {
 		IMachineFile abs = createMachine("abs");
 
@@ -357,6 +369,60 @@ public class TestMachineRefines extends BasicPOTest {
 		sequent= getSequent(po, "evt/J/INV");
 		sequentHasHypotheses(sequent, environment, "A∈ℕ", "1 > x", "x−1∈ℕ");
 		sequentHasGoal(sequent, environment, "A+1=B");
+	}
+
+	/*
+	 * PO filter: do not produce WD and FIS POs for repeated actions
+	 */
+	public void testRefines_08() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "A", "B");
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("GA"), makeSList("x−1∈ℕ"), 
+				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x÷x"));
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "A", "B", "C");
+		addInvariants(ref, makeSList("J"), makeSList("C=B"));
+		IEvent event = addEvent(ref, "evt", 
+				makeSList("x"), 
+				makeSList("GC"), makeSList("x>0"), 
+				makeSList("SC1", "SC2", "SC3"), makeSList("A :∣ A'>x", "B ≔ x÷x", "C :∈ {1÷x}"));
+		addEventRefines(event, "evt");
+		ref.save(null, true);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("A", intType);
+		environment.addName("B", intType);
+		environment.addName("C", intType);
+		environment.addName("x", intType);
+		
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "A", "B", "C");
+		
+		IPOSequent sequent;
+		
+		noSequent(po, "evt/SA1/SIM");
+		noSequent(po, "evt/SA2/SIM");
+		noSequent(po, "evt/SC1/FIS");
+		noSequent(po, "evt/SC2/WD");
+		
+		sequent= getSequent(po, "evt/GA/REF");
+		sequentHasHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0");
+		sequentHasGoal(sequent, environment, "x−1∈ℕ");
+		
+		sequent= getSequent(po, "evt/SC3/WD");
+		sequentHasHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0");
+		sequentHasGoal(sequent, environment, "x≠0");
+		
+		sequent= getSequent(po, "evt/SC3/FIS");
+		sequentHasHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0");
+		sequentHasGoal(sequent, environment, "{1÷x}≠∅");
 	}
 
 }
