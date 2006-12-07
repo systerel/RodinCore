@@ -38,6 +38,9 @@ public class DeltaProcessor {
 	// Proof tree for which we process deltas
 	ProofTree tree;
 
+	// Only fire delta if this flag is set
+	boolean fireEnable;
+	
 	/**
 	 * Creates a new delta processor for the given proof tree.
 	 */
@@ -46,6 +49,7 @@ public class DeltaProcessor {
 		this.rootDelta = null;
 		this.listeners = new ArrayList<IProofTreeChangedListener>();
 		this.firing = false;
+		this.fireEnable = true;
 	}
 
 	public void addChangeListener(IProofTreeChangedListener listener) {
@@ -62,6 +66,11 @@ public class DeltaProcessor {
 		}
 		if (firing) {
 			// Don't fire again deltas while already doing it.
+			return;
+		}
+		
+		if (!fireEnable) {
+			// Don't fire deltas if the flag is not set
 			return;
 		}
 		// Save the delta tree
@@ -145,4 +154,12 @@ public class DeltaProcessor {
 		listeners.remove(listener);
 	}
 	
+	public void setEnable(boolean fireEnable) {
+		this.fireEnable = fireEnable;
+	}
+
+	public boolean isEable() {
+		return fireEnable;
+	}
+
 }

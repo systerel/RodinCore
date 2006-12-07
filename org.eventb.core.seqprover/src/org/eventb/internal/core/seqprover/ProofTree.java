@@ -111,6 +111,19 @@ public final class ProofTree implements IProofTree {
 		deltaProcessor.removeChangeListener(listener);
 	}
 
+	public void run(Runnable op) {
+		boolean wasEnable = deltaProcessor.isEable();
+		try {
+			if (wasEnable)
+				deltaProcessor.setEnable(false);
+			op.run();
+		}
+		finally {
+			if (wasEnable)
+				deltaProcessor.setEnable(true);
+		}
+		deltaProcessor.fireDeltas();
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTree#getConfidence()

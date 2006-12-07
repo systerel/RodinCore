@@ -166,4 +166,59 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		assertDeltas("⊤⇒⊤ [COMMENT]");
 	}	
 
+	/**
+	 * Ensures that batching a job at a node produces a combined DELTA
+	 */
+	public void testBatchRunNode() {
+		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
+		final IProofTreeNode root = tree.getRoot();
+
+		startDeltas(tree);
+		tree.run(new Runnable() {
+
+			public void run() {
+				Tactics.impI().apply(root, null);
+				root.setComment("Test Comment");
+			}
+			
+		});
+		assertDeltas("⊤⇒⊤ [RULE|CHILDREN|COMMENT]");
+	}
+	
+	/**
+	 * Ensures that batching a job at different set of nodes in a proof tree 
+	 * produces a combined DELTA
+	 */
+	public void testBatchRunTree() {
+		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
+		IProofTreeNode root = tree.getRoot();
+
+		Tactics.impI().apply(root, null);
+		assertNotEmpty(root.getChildNodes());
+		IProofTreeNode imp = root.getChildNodes()[0];
+		Tactics.conjI().apply(imp, null);
+		assertEquals(2, imp.getChildNodes().length);
+		final IProofTreeNode left = imp.getChildNodes()[0];
+		final IProofTreeNode right = imp.getChildNodes()[1];
+		startDeltas(tree);
+		
+		tree.run(new Runnable() {
+
+			public void run() {
+				left.setComment("Test Left Comment");
+				Tactics.hyp().apply(left, null);
+				right.setComment("Test Right Comment");
+			}
+			
+		});
+		
+		assertDeltas(
+				"⊤⇒⊤∧⊥ []\n" + 
+				"  ⊤∧⊥ []\n" + 
+				"    ⊤ [RULE|CHILDREN|CONFIDENCE|COMMENT]\n" + 
+				"    ⊥ [COMMENT]");
+	}
+
 }

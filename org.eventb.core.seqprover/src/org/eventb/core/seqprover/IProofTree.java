@@ -128,4 +128,15 @@ public interface IProofTree {
 	 * @return the confidence of this proof tree (see {@see IConfidence})
 	 */
 	int getConfidence();
+	
+	
+	/**
+	 * Run a batch operation as an atomic operation. There will be only one 
+     * delta sent after the modification of the proof tree.
+	 * <p>
+	 * 
+	 * @param op
+	 *            a Runnable
+	 */
+	void run(Runnable op);
 }
