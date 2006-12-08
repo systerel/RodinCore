@@ -238,8 +238,7 @@ public final class ModuleManager implements IModuleManager {
 				new IFilterCreator() {
 					public IFilterModule[] create() {
 						return new IFilterModule[] {
-								new MachineEventInheritedModule(),
-								new MachinePreviousEventLabelModule()
+								new MachineEventInheritedModule()
 						};
 					}
 			

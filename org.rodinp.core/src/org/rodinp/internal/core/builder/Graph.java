@@ -55,7 +55,7 @@ import org.rodinp.internal.core.util.Util;
  */
 public class Graph implements Serializable, Iterable<Node> {
 	
-	private static final long serialVersionUID = 8944017873234553160L;
+	private static final long serialVersionUID = -2582281523890155270L;
 
 	private HashMap<String,Node> nodes;
 	

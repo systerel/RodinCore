@@ -28,13 +28,15 @@ import org.rodinp.internal.core.util.Messages;
  */
 public class Node implements Serializable {
 	
+	private static final long serialVersionUID = -710145997192071089L;
+
 	@Override
 	public int hashCode() {
 		return getTarget().getName().hashCode();
 	}
 
 	public static class File implements Serializable {
-		
+
 		private static final long serialVersionUID = -5374536727511878483L;
 		private String name;
 		private transient IPath path;
@@ -66,7 +68,6 @@ public class Node implements Serializable {
 				
 	}
 
-	private static final long serialVersionUID = 4911431681915635479L;
 	private File target; // name of the resource (full name in workspace!)
 	private File creator; // name of the resource whose extractor created this node
 	private LinkedList<Link> predessorLinks; // the predecessor list

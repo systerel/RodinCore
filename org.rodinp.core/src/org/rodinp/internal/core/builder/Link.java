@@ -14,10 +14,8 @@ import java.io.Serializable;
  *
  */
 public class Link implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1766147884630723075L;
+
+	private static final long serialVersionUID = 7775979088227183917L;
 
 	public enum Provider { USER, TOOL }
 	public enum Priority { LOW, HIGH }
