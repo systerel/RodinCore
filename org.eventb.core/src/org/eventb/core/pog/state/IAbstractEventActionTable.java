@@ -20,7 +20,7 @@ import org.eventb.core.ast.BecomesEqualTo;
  */
 public interface IAbstractEventActionTable extends IEventActionTable, ICorrespondence {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventActionInfo";
+	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventActionTable";
 	
 	List<BecomesEqualTo> getDisappearingWitnesses();
 	List<Assignment> getSimAssignments();

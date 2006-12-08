@@ -113,7 +113,7 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
-		abstractEvent = eventHypothesisManager.getFirstAbstractEvent();	
+		abstractEvent = abstractEventGuardList.getFirstAbstractEvent();	
 		invariantTable =
 			(IMachineInvariantTable) repository.getState(IMachineInvariantTable.STATE_TYPE);
 	}

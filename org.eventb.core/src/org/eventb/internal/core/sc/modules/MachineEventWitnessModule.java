@@ -98,11 +98,18 @@ public class MachineEventWitnessModule extends PredicateModule {
 				repository,
 				monitor);
 		
+		// the hash set provides a fast way to treat duplicates
 		HashSet<String> witnessNames = new HashSet<String>(WITNESS_HASH_TABLE_SIZE);
 		
 		getWitnessNames(witnessNames, repository);
 		
-		checkAndSaveWitnesses((ISCEvent) target, witnesses, predicates, witnessNames, event, monitor);
+		checkAndSaveWitnesses(
+				(ISCEvent) target, 
+				witnesses, 
+				predicates, 
+				witnessNames, 
+				event, 
+				monitor);
 		
 		repository.setState(savedLabelSymbolTable);
 
@@ -182,10 +189,12 @@ public class MachineEventWitnessModule extends PredicateModule {
 		if (eventRefinesInfo.isEmpty())
 			return;
 		
+		getLocalWitnessNames(eventRefinesInfo, witnessNames);
+		
+		
+		// all actions must be identical; so we choose one arbitrarily
 		IAbstractEventInfo abstractEventInfo = 
 			eventRefinesInfo.getAbstractEventInfos().get(0);
-		
-		getLocalWitnessNames(abstractEventInfo, witnessNames);
 		
 		getGlobalWitnessNames(abstractEventInfo, witnessNames);
 		
@@ -222,17 +231,21 @@ public class MachineEventWitnessModule extends PredicateModule {
 	}
 
 	private void getLocalWitnessNames(
-			IAbstractEventInfo abstractEventInfo, 
+			IEventRefinesInfo eventRefinesInfo, 
 			HashSet<String> witnessNames) throws RodinDBException {
-		FreeIdentifier[] identifiers = abstractEventInfo.getIdentifiers();
 		
-		for (FreeIdentifier identifier : identifiers) {
-			// if a symbol with the same name is found it can only be
-			// a local variable of the concrete event.
-			if (identifierSymbolTable.getSymbolInfo(identifier.getName()) != null)
-				continue;
+		for (IAbstractEventInfo abstractEventInfo : eventRefinesInfo.getAbstractEventInfos()) {
 			
-			witnessNames.add(identifier.getName());
+			FreeIdentifier[] identifiers = abstractEventInfo.getIdentifiers();
+		
+			for (FreeIdentifier identifier : identifiers) {
+				// if a symbol with the same name is found it can only be
+				// a local variable of the concrete event.
+				if (identifierSymbolTable.getSymbolInfo(identifier.getName()) != null)
+					continue;
+			
+				witnessNames.add(identifier.getName());
+			}
 		}
 	}
 

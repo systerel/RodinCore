@@ -145,7 +145,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
-		abstractEvent = eventHypothesisManager.getFirstAbstractEvent();
+		abstractEvent = abstractEventGuardList.getFirstAbstractEvent();
 		machineVariableTable =
 			(IMachineVariableTable) repository.getState(IMachineVariableTable.STATE_TYPE);
 	}

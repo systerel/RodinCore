@@ -16,7 +16,7 @@ import org.eventb.core.ast.BecomesEqualTo;
  */
 public interface IConcreteEventActionTable extends IEventActionTable {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".concreteEventActionInfo";
+	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".concreteEventActionTable";
 
 	BecomesEqualTo getXiUnprime();
 	BecomesEqualTo getDeltaPrime();

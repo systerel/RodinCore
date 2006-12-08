@@ -305,6 +305,8 @@ public class Graph implements Serializable, Iterable<Node> {
 			Throwable e) {
 		Util.log(e, " while running tool " + node.getToolId() + " on " + 
 				node.getTarget().getName()); //$NON-NLS-1$
+		if (RodinBuilder.DEBUG_RUN)
+			System.out.println("Error running tool:\n" + e);
 		MarkerHelper.deleteAllProblemMarkers(node.getTarget().getFile());
 		MarkerHelper.addMarker(
 				node.getTarget().getFile(), 

@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -261,8 +262,8 @@ public class MachineEventModule extends LabeledElementModule {
 		
 		boolean found = false;
 		
-		HashSet<String> abstractLabels = (refinesEvents.length > 1) ? 
-				new HashSet<String>(refinesEvents.length * 4 / 3 + 1) : 
+		ArrayList<String> abstractLabels = (refinesEvents.length > 1) ? 
+				new ArrayList<String>(refinesEvents.length) : 
 				null;
 		
 		HashSet<String> typeErrors = (refinesEvents.length > 1) ?
@@ -274,8 +275,8 @@ public class MachineEventModule extends LabeledElementModule {
 				
 		boolean firstAction = true;
 		boolean actionError = false;
-		HashSet<String> actions = (refinesEvents.length > 1) ?
-				new HashSet<String>(43) :
+		Hashtable<String, String> actions = (refinesEvents.length > 1) ?
+				new Hashtable<String, String>(43) :
 				null;
 				
 		for (int i=0; i<refinesEvents.length; i++) {
@@ -316,45 +317,24 @@ public class MachineEventModule extends LabeledElementModule {
 			if (symbolInfo.getSymbol().equals(abstractEventInfo.getEventLabel()))
 				found = true;
 			
-			if (types != null)
-				for (FreeIdentifier identifier : abstractEventInfo.getIdentifiers()) {
-					String name = identifier.getName();
-					Type newType = identifier.getType();
-					Type type = types.put(name, newType);
-					if (type == null || type.equals(newType))
-						continue;
-					if (typeErrors.add(name)) {
-						createProblemMarker(
-								symbolInfo.getSourceElement(),
-								GraphProblem.EventMergeVariableTypeError,
-								name);
-						symbolInfo.setError();
-					}
-				}
+			checkForLocalVariableTypeErrors(
+					symbolInfo, 
+					typeErrors, 
+					types, 
+					abstractEventInfo);
 			
 			if (actions != null && !actionError)
 				if (firstAction) {
 					for (ISCAction action : abstractEventInfo.getEvent().getSCActions()) {
-						actions.add(action.getAssignmentString());
+						actions.put(action.getLabel(), action.getAssignmentString());
 					}
 					firstAction = false;
 				} else {
-					ISCAction[] scActions = abstractEventInfo.getEvent().getSCActions();
-					boolean ok = scActions.length == actions.size();
-					if (ok)
-						for (ISCAction action : scActions) {
-							if (actions.contains(action.getAssignmentString()))
-								continue;
-							ok = false;
-							break;
-						}
-					if (!ok) {
-						createProblemMarker(
-								symbolInfo.getSourceElement(),
-								GraphProblem.EventMergeActionError);
-						actionError = true;
-						symbolInfo.setError();
-					}
+					actionError = checkAbstractActionAccordance(
+							symbolInfo, 
+							actions, 
+							actionError, 
+							abstractEventInfo);
 				}
 			
 			refinesInfo.addAbstractEventInfo(abstractEventInfo);
@@ -369,6 +349,46 @@ public class MachineEventModule extends LabeledElementModule {
 		}
 		
 		return found;
+	}
+
+	private boolean checkAbstractActionAccordance(IEventSymbolInfo symbolInfo, Hashtable<String, String> actions, boolean actionError, IAbstractEventInfo abstractEventInfo) throws RodinDBException, CoreException {
+		ISCAction[] scActions = abstractEventInfo.getEvent().getSCActions();
+		boolean ok = scActions.length == actions.size();
+		if (ok)
+			for (ISCAction action : scActions) {
+				String assignment = actions.get(action.getLabel());
+				if (assignment != null 
+						&& assignment.equals(action.getAssignmentString()))
+					continue;
+				ok = false;
+				break;
+			}
+		if (!ok) {
+			createProblemMarker(
+					symbolInfo.getSourceElement(),
+					GraphProblem.EventMergeActionError);
+			actionError = true;
+			symbolInfo.setError();
+		}
+		return actionError;
+	}
+
+	private void checkForLocalVariableTypeErrors(IEventSymbolInfo symbolInfo, HashSet<String> typeErrors, Hashtable<String, Type> types, IAbstractEventInfo abstractEventInfo) throws RodinDBException, CoreException {
+		if (types != null)
+			for (FreeIdentifier identifier : abstractEventInfo.getIdentifiers()) {
+				String name = identifier.getName();
+				Type newType = identifier.getType();
+				Type type = types.put(name, newType);
+				if (type == null || type.equals(newType))
+					continue;
+				if (typeErrors.add(name)) {
+					createProblemMarker(
+							symbolInfo.getSourceElement(),
+							GraphProblem.EventMergeVariableTypeError,
+							name);
+					symbolInfo.setError();
+				}
+			}
 	}
 
 	private IAbstractEventInfo getAbstractEventInfoForLabel(

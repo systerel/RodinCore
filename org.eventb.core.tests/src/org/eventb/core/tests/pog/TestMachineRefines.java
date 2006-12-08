@@ -423,6 +423,234 @@ public class TestMachineRefines extends BasicPOTest {
 		sequent= getSequent(po, "evt/SC3/FIS");
 		sequentHasHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0");
 		sequentHasGoal(sequent, environment, "{1÷x}≠∅");
+	}	
+	
+	/*
+	 * create event merge POs (simple)
+	 */
+	public void testRefines_09() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("GA"), makeSList("x−1∈ℕ"), 
+				makeSList(), makeSList());
+		addEvent(abs, "fvt", 
+				makeSList("x"), 
+				makeSList("HA"), makeSList("x+1∈ℕ"), 
+				makeSList(), makeSList());
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		IEvent event = addEvent(ref, "evt", 
+				makeSList("x"), 
+				makeSList("GC"), makeSList("x>0"), 
+				makeSList(), makeSList());
+		addEventRefines(event, "evt");
+		addEventRefines(event, "fvt");
+		ref.save(null, true);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po);
+		
+		IPOSequent sequent;
+		
+		sequent= getSequent(po, "evt/MRG");
+		sequentHasHypotheses(sequent, environment, "x>0");
+		sequentHasGoal(sequent, environment, "x−1∈ℕ ∨ x+1∈ℕ");
+	}
+
+	/*
+	 * create event merge POs (complicated)
+	 */
+	public void testRefines_10() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "A", "B");
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("GA"), makeSList("x−1∈ℕ"), 
+				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x"));
+		addEvent(abs, "fvt", 
+				makeSList("x", "y"), 
+				makeSList("HA1", "HA2"), makeSList("x+1∈ℕ", "x=y+y"), 
+				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x"));
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "A", "B", "C");
+		addInvariants(ref, makeSList("J"), makeSList("C=B"));
+		IEvent event = addEvent(ref, "evt", 
+				makeSList("x"), 
+				makeSList("GC"), makeSList("x>0"), 
+				makeSList("SC1", "SC2", "SC3"), makeSList("A :∣ A'>x", "B ≔ x+1", "C :∈ {x+1}"));
+		addEventRefines(event, "evt");
+		addEventRefines(event, "fvt");
+		ref.save(null, true);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("A", intType);
+		environment.addName("B", intType);
+		environment.addName("C", intType);
+		environment.addName("x", intType);
+		environment.addName("y", intType);
+		
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "A", "B", "C");
+		
+		IPOSequent sequent;
+		
+		sequent= getSequent(po, "evt/MRG");
+		sequentHasHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0");
+		sequentHasGoal(sequent, environment, "x−1∈ℕ ∨ (x+1∈ℕ ∧ x=y+y)");
+		
+		sequent= getSequent(po, "evt/SA2/SIM");
+		sequentHasHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0");
+		sequentHasGoal(sequent, environment, "x+1=x");
+	}
+
+	/*
+	 * filter repeated guards from event merge POs
+	 */
+	public void testRefines_11() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "A", "B");
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("GA1", "GA2"), makeSList("x−1∈ℕ", "x=y+y"), 
+				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x"));
+		addEvent(abs, "fvt", 
+				makeSList("x", "y"), 
+				makeSList("HA1", "HA2"), makeSList("x+1∈ℕ", "x=y+y"), 
+				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x"));
+		addEvent(abs, "gvt", 
+				makeSList("x", "y"), 
+				makeSList("IA1", "IA2"), makeSList("x=y+y", "A>1"), 
+				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x"));
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "A", "B");
+		IEvent event = addEvent(ref, "evt", 
+				makeSList("x", "y"), 
+				makeSList("GC"), makeSList("x=y+y"), 
+				makeSList("SC1"), makeSList("A :∣ A'>x"));
+		addEventRefines(event, "evt");
+		addEventRefines(event, "fvt");
+		addEventRefines(event, "gvt");
+		ref.save(null, true);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("A", intType);
+		environment.addName("B", intType);
+		environment.addName("C", intType);
+		environment.addName("x", intType);
+		environment.addName("y", intType);
+		
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "A", "B");
+		
+		IPOSequent sequent;
+		
+		sequent= getSequent(po, "evt/MRG");
+		sequentHasHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "x=y+y");
+		sequentHasGoal(sequent, environment, "x−1∈ℕ ∨ x+1∈ℕ ∨ A>1");
+		
+		sequent= getSequent(po, "evt/SA2/SIM");
+		sequentHasHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "x=y+y");
+		sequentHasGoal(sequent, environment, "B=x");
+	}
+
+	/*
+	 * filter event merge POs entirely if one of the dijuncts is true
+	 */
+	public void testRefines_12() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "A", "B");
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("GA1", "GA2"), makeSList("x−1∈ℕ", "x=y+y"), 
+				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x"));
+		addEvent(abs, "fvt", 
+				makeSList("x", "y"), 
+				makeSList("HA1", "HA2"), makeSList("x=y+y"), 
+				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x"));
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "A", "B");
+		IEvent event = addEvent(ref, "evt", 
+				makeSList("x", "y"), 
+				makeSList("GC"), makeSList("x=y+y"), 
+				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x"));
+		addEventRefines(event, "evt");
+		addEventRefines(event, "fvt");
+		addEventRefines(event, "gvt");
+		ref.save(null, true);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("A", intType);
+		environment.addName("B", intType);
+		environment.addName("C", intType);
+		environment.addName("x", intType);
+		environment.addName("y", intType);
+		
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "A", "B");
+		
+		noSequent(po, "evt/MRG");
+		
+		noSequent(po, "evt/SA1/SIM");
+		noSequent(po, "evt/SA2/SIM");
+	}
+
+	/*
+	 * PO filter: do not produce any POs in identical refinements
+	 */
+	public void testRefines_13() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "A", "B");
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("GA", "HA"), makeSList("x>0", "B÷x>0"), 
+				makeSList("SA", "TA"), makeSList("A :∣ A'>x", "B ≔ x÷x"));
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "A", "B");
+		addInheritedEvent(ref, "evt");
+		ref.save(null, true);
+		runBuilder();
+		
+		IPOFile apo = abs.getPOFile();
+		containsIdentifiers(apo, "A", "B");
+		
+		getSequent(apo, "evt/HA/WD");
+		getSequent(apo, "evt/SA/FIS");
+		getSequent(apo, "evt/TA/WD");
+		getSequent(apo, "evt/I1/INV");
+		getSequent(apo, "evt/I2/INV");
+		
+		IPOFile cpo = ref.getPOFile();
+		containsIdentifiers(cpo, "A", "B");
+		
+		// no sequents!
+		
+		getSequents(cpo);
 	}
 
 }

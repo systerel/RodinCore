@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -20,6 +22,7 @@ import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.IAbstractEventActionTable;
+import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventActionTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
@@ -31,6 +34,7 @@ import org.eventb.core.pog.state.ITypingState;
 import org.eventb.core.pog.state.IWitnessTable;
 import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.pog.AbstractEventActionTable;
+import org.eventb.internal.core.pog.AbstractEventGuardList;
 import org.eventb.internal.core.pog.AbstractEventGuardTable;
 import org.eventb.internal.core.pog.ConcreteEventActionTable;
 import org.eventb.internal.core.pog.ConcreteEventGuardTable;
@@ -47,6 +51,8 @@ public class MachineEventHypothesisModule extends UtilityModule {
 
 	IEventHypothesisManager eventHypothesisManager;
 	ITypeEnvironment eventTypeEnvironment;
+	IAbstractEventGuardList abstractEventGuardList;
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -62,8 +68,8 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	
 	private void fetchActionsAndVariables(
 			ISCEvent concreteEvent, 
-			ISCEvent abstractEvent, 
 			IStateRepository<IStatePOG> repository) throws CoreException {
+		
 		IMachineVariableTable machineVariableTable =
 			(IMachineVariableTable) repository.getState(IMachineVariableTable.STATE_TYPE);
 		
@@ -74,6 +80,22 @@ public class MachineEventHypothesisModule extends UtilityModule {
 					machineVariableTable, 
 					factory);
 		repository.setState(concreteEventActionTable);
+		
+		IAbstractEventActionTable abstractEventActionTable = 
+			fetchAbstractActions(
+					concreteEventActionTable, 
+					machineVariableTable, 
+					repository);
+		
+		fetchPostValueVariables(concreteEventActionTable.getAssignedVariables());
+		fetchPostValueVariables(abstractEventActionTable.getAssignedVariables());
+	}
+
+	private IAbstractEventActionTable fetchAbstractActions(
+			IConcreteEventActionTable concreteEventActionTable, 
+			IMachineVariableTable machineVariableTable, 
+			IStateRepository<IStatePOG> repository) throws RodinDBException, CoreException {
+		ISCEvent abstractEvent = abstractEventGuardList.getFirstAbstractEvent();
 		
 		if (abstractEvent != null)
 			fetchVariables(abstractEvent.getSCVariables());
@@ -86,17 +108,11 @@ public class MachineEventHypothesisModule extends UtilityModule {
 					concreteEventActionTable,
 					factory);
 		repository.setState(abstractEventActionTable);
-		
-		fetchPostValueVariables(concreteEventActionTable.getAssignedVariables());
-		fetchPostValueVariables(abstractEventActionTable.getAssignedVariables());
+		return abstractEventActionTable;
 	}
 
 	private ISCAction[] getAbstractSCActions(ISCEvent abstractEvent) throws RodinDBException {
 		return (abstractEvent == null ? new ISCAction[0] : abstractEvent.getSCActions());
-	}
-
-	private ISCGuard[] getAbstractSCGuards(ISCEvent abstractEvent) throws RodinDBException {
-		return abstractEvent == null ? new ISCGuard[0] : abstractEvent.getSCGuards();
 	}
 
 	private void setEventHypothesisManager(
@@ -111,30 +127,48 @@ public class MachineEventHypothesisModule extends UtilityModule {
 		eventHypothesisManager = 
 			new EventHypothesisManager(event, guards, fullHypothesis.getElementName());
 		
-		eventHypothesisManager.setAbstractEvents(event.getAbstractSCEvents());
-		
 		repository.setState(eventHypothesisManager);
 	}
 
 	private void fetchGuards(
+			ISCEvent concreteEvent,
 			ISCGuard[] concreteGuards, 
-			ISCGuard[] abstractGuards, 
 			IStateRepository<IStatePOG> repository) throws CoreException {
 		
+		IConcreteEventGuardTable concreteEventGuardTable = 
+			fetchConcreteGuards(concreteGuards, repository);
+		
+		ISCEvent[] abstractEvents = concreteEvent.getAbstractSCEvents();
+		
+		List<IAbstractEventGuardTable> abstractGuardTables = 
+			new ArrayList<IAbstractEventGuardTable>(abstractEvents.length);
+		
+		for (ISCEvent abstractEvent : abstractEvents) {
+		
+			IAbstractEventGuardTable abstractEventGuardTable = 
+				new AbstractEventGuardTable(
+						abstractEvent.getSCGuards(),
+						eventTypeEnvironment, 
+						concreteEventGuardTable,
+						factory);
+			
+			abstractGuardTables.add(abstractEventGuardTable);
+		}
+		
+		abstractEventGuardList =
+			new AbstractEventGuardList(abstractEvents, abstractGuardTables);
+		
+		repository.setState(abstractEventGuardList);
+	}
+
+	private IConcreteEventGuardTable fetchConcreteGuards(ISCGuard[] concreteGuards, IStateRepository<IStatePOG> repository) throws RodinDBException, CoreException {
 		IConcreteEventGuardTable concreteEventGuardTable = 
 			new ConcreteEventGuardTable(
 					concreteGuards, 
 					eventTypeEnvironment, 
 					factory);
 		repository.setState(concreteEventGuardTable);
-		
-		IAbstractEventGuardTable abstractEventGuardTable = 
-			new AbstractEventGuardTable(
-					abstractGuards,
-					eventTypeEnvironment, 
-					concreteEventGuardTable,
-					factory);
-		repository.setState(abstractEventGuardTable);
+		return concreteEventGuardTable;
 	}
 
 	private void fetchPostValueVariables(Set<FreeIdentifier> identifiers) {
@@ -192,14 +226,12 @@ public class MachineEventHypothesisModule extends UtilityModule {
 		
 		fetchVariables(concreteEvent.getSCVariables());
 		
-		ISCEvent abstractEvent = eventHypothesisManager.getFirstAbstractEvent();
-		
 		fetchGuards(
+				concreteEvent,
 				guards, 
-				getAbstractSCGuards(abstractEvent), 
 				repository);
 		
-		fetchActionsAndVariables(concreteEvent, abstractEvent, repository);
+		fetchActionsAndVariables(concreteEvent, repository);
 		
 		fetchWitnesses(concreteEvent, repository, monitor);
 	
@@ -214,12 +246,15 @@ public class MachineEventHypothesisModule extends UtilityModule {
 			IPOFile target, 
 			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.endModule(element, target, repository, monitor);
 		
 		eventHypothesisManager.createHypotheses(target, monitor);
 
+		eventHypothesisManager = null;
+		abstractEventGuardList = null;
 		eventTypeEnvironment = null;
 		factory = null;
+		
+		super.endModule(element, target, repository, monitor);
 	}
 
 }

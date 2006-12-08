@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -14,6 +16,7 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
@@ -34,7 +37,7 @@ public class MachineEventGuardModule extends PredicateModule {
 		EventBPlugin.PLUGIN_ID + ".machineEventGuardModule";
 
 	String eventLabel;
-	IAbstractEventGuardTable abstractEventGuardTable;
+	IAbstractEventGuardList abstractEventGuardList;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -48,7 +51,8 @@ public class MachineEventGuardModule extends PredicateModule {
 		super.initModule(element, target, repository, monitor);
 		ISCEvent event = (ISCEvent) element;
 		eventLabel = event.getLabel();
-		abstractEventGuardTable = (IAbstractEventGuardTable) repository.getState(IAbstractEventGuardTable.STATE_TYPE);
+		abstractEventGuardList = 
+			(IAbstractEventGuardList) repository.getState(IAbstractEventGuardList.STATE_TYPE);
 	}
 	
 	/* (non-Javadoc)
@@ -61,7 +65,7 @@ public class MachineEventGuardModule extends PredicateModule {
 			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventLabel = null;
-		abstractEventGuardTable = null;
+		abstractEventGuardList = null;
 		super.endModule(element, target, repository, monitor);
 	}
 
@@ -93,21 +97,35 @@ public class MachineEventGuardModule extends PredicateModule {
 	
 	private boolean isRedundantWDProofObligation(Predicate predicate, int index) {
 		
-		int absIndex = abstractEventGuardTable.getPredicates().indexOf(predicate);
+		List<IAbstractEventGuardTable> abstractEventGuardTables = 
+			abstractEventGuardList.getAbstractEventGuardTables();
 		
-		if (absIndex == -1)
-			return false;
+		for (IAbstractEventGuardTable abstractEventGuardTable : abstractEventGuardTables) {
 		
-		for (int k=0; k<absIndex; k++) {
-			
-			int indexOfConcrete = abstractEventGuardTable.getIndexOfCorrespondingConcrete(k);
-			
-			if (indexOfConcrete != -1 && indexOfConcrete < index)
+			if (isFreshPOForAbstractGuard(predicate, index, abstractEventGuardTable))
 				continue;
 			
-			return false;
+			return true;
 		}
-		return true;
+		return false;
+	}
+
+	private boolean isFreshPOForAbstractGuard(Predicate predicate, int index, IAbstractEventGuardTable abstractEventGuardTable) {
+		int absIndex = abstractEventGuardTable.getPredicates().indexOf(predicate);
+
+		if (absIndex == -1)
+			return true;
+
+		for (int k=0; k<absIndex; k++) {
+		
+			int indexOfConcrete = abstractEventGuardTable.getIndexOfCorrespondingConcrete(k);
+		
+			if (indexOfConcrete != -1 && indexOfConcrete < index)
+				continue;
+		
+			return true;
+		}
+		return false;
 	}
 
 	@Override

@@ -44,7 +44,7 @@ public class MachineEventActionBodySimModule extends
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		ISCEvent abstractEvent = eventHypothesisManager.getFirstAbstractEvent();
+		ISCEvent abstractEvent = abstractEventGuardList.getFirstAbstractEvent();
 		
 		// this POG module applies to refined events
 		if (abstractEvent == null)

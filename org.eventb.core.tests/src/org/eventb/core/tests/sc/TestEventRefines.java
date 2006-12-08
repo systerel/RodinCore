@@ -716,7 +716,7 @@ public class TestEventRefines extends BasicSCTest {
 		addEvent(abs, "hvt", 
 				makeSList("y"), 
 				makeSList("G1"), makeSList("y∈BOOL"), 
-				makeSList("A1", "A2"), makeSList("q:∈ℕ", "p≔TRUE"));
+				makeSList("A2", "A1"), makeSList("q:∈ℕ", "p≔TRUE"));
 
 		abs.save(null, true);
 		
@@ -984,6 +984,84 @@ public class TestEventRefines extends BasicSCTest {
 		containsVariables(events[0], "x", "y");
 		containsGuards(events[0], environment, makeSList("G", "H"), makeSList("x∈ℕ", "y∈ℕ"));
 		containsActions(events[0], environment, makeSList("S", "T"), makeSList("A≔A+1", "B≔B+1"));
+	}
+	
+	public void testEvents_31_mergeAbstractActionLabelsDiffer() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, "p", "q");
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G1"), makeSList("x∈ℕ"), 
+				makeSList("A1", "A3"), makeSList("p≔TRUE", "q:∈ℕ"));
+		addEvent(abs, "gvt", 
+				makeSList("y"), 
+				makeSList("G1"), makeSList("y∈BOOL"), 
+				makeSList("A1", "A2"), makeSList("p≔TRUE", "q:∈ℕ"));
+
+		abs.save(null, true);
+		
+		runBuilder();
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		addEventRefines(evt, "gvt");
+		addEvent(mac, "fvt");
+	
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		getSCEvents(file, "fvt");
+		
+	}
+	
+	public void testEvents_32_mergeAbstractActionCreateDefaultWitnesses() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, "p", "q");
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G1"), makeSList("x∈ℕ"), 
+				makeSList("A1", "A2"), makeSList("p≔TRUE", "q:∈ℕ"));
+		addEvent(abs, "gvt", 
+				makeSList("y"), 
+				makeSList("G1"), makeSList("y∈BOOL"), 
+				makeSList("A1", "A2"), makeSList("p≔TRUE", "q:∈ℕ"));
+
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("p", boolType);
+		environment.addName("q", intType);
+		environment.addName("x", intType);
+		environment.addName("y", boolType);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		addEventRefines(evt, "gvt");
+		addEvent(mac, "fvt");
+	
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt", "fvt");
+		containsWitnesses(events[0], environment, 
+				makeSList("q", "x", "y"), 
+				makeSList("⊤", "⊤", "⊤"));
 	}
 
 }
