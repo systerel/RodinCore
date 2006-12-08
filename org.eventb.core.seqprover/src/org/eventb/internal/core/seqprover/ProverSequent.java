@@ -75,6 +75,21 @@ public class ProverSequent implements IProverSequent{
 		// assert this.invariant();
 	}
 	
+	public ProverSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> globalHypotheses, Set<Hypothesis> selectedHypotheses,Predicate goal){
+		this.typeEnvironment = typeEnvironment.clone();
+		this.globalHypotheses = Collections.unmodifiableSet(new HashSet<Hypothesis>(globalHypotheses));
+		this.localHypotheses = Collections.unmodifiableSet(new HashSet<Hypothesis>());
+		this.hiddenHypotheses = Collections.unmodifiableSet(new HashSet<Hypothesis>());
+		this.selectedHypotheses = Collections.unmodifiableSet(new HashSet<Hypothesis>(selectedHypotheses));
+		assert goal.isTypeChecked();
+		assert goal.isWellFormed();
+		this.goal = goal;
+		
+		// assert this.invariant();
+	}
+	
+	
+	
 //	/**
 //	* Copy constructor
 //	* 

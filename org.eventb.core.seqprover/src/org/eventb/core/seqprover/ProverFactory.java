@@ -105,6 +105,10 @@ public final class ProverFactory {
 	public static IProverSequent makeSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> hyps,Predicate goal){
 		return new ProverSequent(typeEnvironment,hyps,goal);
 	}
+	
+	public static IProverSequent makeSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> hyps,Set<Hypothesis> selHyps,Predicate goal){
+		return new ProverSequent(typeEnvironment,hyps,selHyps,goal);
+	}
 
 	/**
 	 * Creates a new proof tree for the given sequent.
