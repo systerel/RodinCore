@@ -35,13 +35,17 @@ import org.eventb.core.ast.UnaryPredicate;
  * to the sequent prover.
  * <p>
  * Note that they are public but not published and are subject to change. They are to be
- * used at one own's risk.
+ * used at one own's risk. Making referencs to the static functions inside it is highly 
+ * discouraged since their implementation may change without notice, leaving your code in an uncompilable state.
  * </p>
- * @author fmehta
+ * 
+ * <p>
+ * This does not however prevent you from having your own local copies of
+ * the functions that you need, assuming that they do the intended job. 
+ * </p>
+ * 
  *
- */
-/**
- * @author fmehta
+ * @author Farhad Mehta
  *
  */
 public final class Lib {
