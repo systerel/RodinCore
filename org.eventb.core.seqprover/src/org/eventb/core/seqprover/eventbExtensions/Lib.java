@@ -230,14 +230,9 @@ public final class Lib {
 		return ((RelationalPredicate)P).getLeft();
 	}
 	
-	
-	// TODO : Remove this function after type synthesis is implemented.
+
 	private static void postConstructionCheck(Formula f){
-//		ITypeCheckResult tcr = f.typeCheck(te);
-//		assert tcr.isSuccess();
-//		assert tcr.getInferredEnvironment().isEmpty();
 		assert f.isTypeChecked();
-		// assert f.isWellFormed();
 	}
 	
 	public static Predicate makeNeg(Predicate P){
@@ -441,7 +436,7 @@ public final class Lib {
 	
 	public static boolean isWellTypedInstantiation(Expression e, Type expT,ITypeEnvironment te) {
 		ITypeCheckResult tcr = e.typeCheck(te,expT);
-		// new free variables introduced
+		// new free variables introduced?
 		if (tcr.isSuccess()) {
 			return tcr.getInferredEnvironment().isEmpty();
 		}
@@ -463,6 +458,10 @@ public final class Lib {
 		return tcr.getInferredEnvironment();
 	}
 	
+	
+	public static ITypeEnvironment makeTypeEnvironment() {
+		return ff.makeTypeEnvironment();
+	}
 	
 //	/**
 //	 * Typechecks a formula assuming an initial type environment
@@ -496,20 +495,13 @@ public final class Lib {
 //	}
 	
 	
-	public static ITypeEnvironment makeTypeEnvironment() {
-		return ff.makeTypeEnvironment();
-	}
-	
-	
-	
-	
-	public Predicate trueCase(Map<FreeIdentifier,Expression> counterExample){
-		List<Predicate> predicates = new ArrayList<Predicate>(counterExample.size());
-		for (Map.Entry<FreeIdentifier, Expression> assignment : counterExample.entrySet())
-		{
-			predicates.add(makeEq(assignment.getKey(), assignment.getValue()));
-		}
-		return makeConj(predicates);
-	}
+//	public Predicate disprovedCase(Map<FreeIdentifier,Expression> counterExample){
+//		List<Predicate> predicates = new ArrayList<Predicate>(counterExample.size());
+//		for (Map.Entry<FreeIdentifier, Expression> assignment : counterExample.entrySet())
+//		{
+//			predicates.add(makeEq(assignment.getKey(), assignment.getValue()));
+//		}
+//		return makeConj(predicates);
+//	}
 	
 }
