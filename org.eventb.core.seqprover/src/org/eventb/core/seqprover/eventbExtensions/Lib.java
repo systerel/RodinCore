@@ -1,9 +1,11 @@
 package org.eventb.core.seqprover.eventbExtensions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,6 +37,10 @@ import org.eventb.core.ast.UnaryPredicate;
  * Note that they are public but not published and are subject to change. They are to be
  * used at one own's risk.
  * </p>
+ * @author fmehta
+ *
+ */
+/**
  * @author fmehta
  *
  */
@@ -407,9 +413,22 @@ public final class Lib {
 	}
 	
 	
-	public static boolean typeCheckClosed(Formula f, ITypeEnvironment t) {
-		ITypeCheckResult tcr = f.typeCheck(t);
-		// new free variables introduced
+	/**
+	 * Type checks a formula and returns <code>true</code> iff no new type information
+	 * was infreed from this type check (i.e. the formula contains only free identifiers
+	 * present in the type environment provided).
+	 * 
+	 * @param formula
+	 * 		The formula to type check
+	 * @param typEnv
+	 * 		The type environemnt to use for this check
+	 * @return
+	 * 		<code>true</code> iff the type check was successful and no new type 
+	 * 		information was infered from this type check
+	 */
+	public static boolean typeCheckClosed(Formula formula, ITypeEnvironment typEnv) {
+		ITypeCheckResult tcr = formula.typeCheck(typEnv);
+		// new free variables introduced?
 		if (tcr.isSuccess()) {
 			return tcr.getInferredEnvironment().isEmpty();
 		}
@@ -425,33 +444,68 @@ public final class Lib {
 		return false;
 	}
 	
-	public static ITypeEnvironment typeCheck(Formula f) {
-		ITypeCheckResult tcr = f.typeCheck(ff.makeTypeEnvironment());
+	
+	/**
+	 * Type checks a formula assuming all typing information can be infered from
+	 * the formula itself.
+	 * 
+	 * @param formula
+	 * 		The formula to type check
+	 * @return
+	 */
+	public static ITypeEnvironment typeCheck(Formula formula) {
+		ITypeCheckResult tcr = formula.typeCheck(ff.makeTypeEnvironment());
 		if (! tcr.isSuccess()) return null;
 		return tcr.getInferredEnvironment();
 	}
 	
-	public static ITypeEnvironment typeCheck(Formula f,ITypeEnvironment initialTypeEnvironment) {
-		ITypeCheckResult tcr = f.typeCheck(initialTypeEnvironment);
-		if (! tcr.isSuccess()) return null;
-		if (tcr.getInferredEnvironment().isEmpty()) return tcr.getInitialTypeEnvironment();
-		ITypeEnvironment result = initialTypeEnvironment.clone();
-		result.addAll(tcr.getInferredEnvironment());
-		return result;
-	}
 	
-	public static ITypeEnvironment typeCheck(Formula... formulae) {
-		ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
-		for (Formula f:formulae)
-		{
-			typeEnvironment = typeCheck(f,typeEnvironment);
-			if (typeEnvironment == null) return null;
-		}
-		return typeEnvironment;
-	}
+//	/**
+//	 * Typechecks a formula assuming an initial type environment
+//	 * 
+//	 * @param f
+//	 * 		The formula to type check
+//	 * @param initialTypeEnvironment
+//	 * 		The initial type environment to use while type checking the formula.
+//	 * 		This type environment is not modified
+//	 * @return The type environment enriched with the extra type information inferred
+//	 * 		from the input formula
+//	 */
+//	private static ITypeEnvironment typeCheck(Formula f,ITypeEnvironment initialTypeEnvironment) {
+//		ITypeCheckResult tcr = f.typeCheck(initialTypeEnvironment);
+//		if (! tcr.isSuccess()) return null;
+//		if (tcr.getInferredEnvironment().isEmpty()) return tcr.getInitialTypeEnvironment();
+//		ITypeEnvironment result = initialTypeEnvironment.clone();
+//		result.addAll(tcr.getInferredEnvironment());
+//		return result;
+//	}
+	
+
+//	public static ITypeEnvironment typeCheck(Formula... formulae) {
+//		ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
+//		for (Formula f:formulae)
+//		{
+//			typeEnvironment = typeCheck(f,typeEnvironment);
+//			if (typeEnvironment == null) return null;
+//		}
+//		return typeEnvironment;
+//	}
+	
 	
 	public static ITypeEnvironment makeTypeEnvironment() {
 		return ff.makeTypeEnvironment();
+	}
+	
+	
+	
+	
+	public Predicate trueCase(Map<FreeIdentifier,Expression> counterExample){
+		List<Predicate> predicates = new ArrayList<Predicate>(counterExample.size());
+		for (Map.Entry<FreeIdentifier, Expression> assignment : counterExample.entrySet())
+		{
+			predicates.add(makeEq(assignment.getKey(), assignment.getValue()));
+		}
+		return makeConj(predicates);
 	}
 	
 }
