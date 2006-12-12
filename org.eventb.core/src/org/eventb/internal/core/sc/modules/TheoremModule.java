@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.state.IStateRepository;
@@ -22,30 +21,25 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class TheoremModule extends PredicateModule {
+public abstract class TheoremModule extends PredicateModule<ITheorem> {
 
 	private static String THEOREM_NAME_PREFIX = "THM";
 	
 	protected void checkAndSaveTheorems(
 			IInternalParent target, 
 			int offset,
-			ITheorem[] theorems, 
-			IFilterModule[] rules,
+			IFilterModule[] rules, 
 			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException {
 		
-		Predicate[] predicates = new Predicate[theorems.length];
-
 		checkAndType(
-				theorems, 
-				target,
-				predicates,
+				target, 
 				rules,
 				target.getElementName(),
 				repository,
 				monitor);
 		
-		saveTheorems(target, offset, theorems, predicates, null);
+		saveTheorems(target, offset, null);
 	}
 	
 	protected abstract ISCTheorem getSCTheorem(IInternalParent target, String elementName);
@@ -53,20 +47,18 @@ public abstract class TheoremModule extends PredicateModule {
 	private void saveTheorems(
 			IInternalParent parent, 
 			int offset,
-			ITheorem[] theorems, 
-			Predicate[] predicates,
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		int index = offset;
 		
-		for (int i=0; i<theorems.length; i++) {
-			if (predicates[i] == null)
+		for (int i=0; i<formulaElements.size(); i++) {
+			if (formulas.get(i) == null)
 				continue;
 			ISCTheorem scTheorem = getSCTheorem(parent, THEOREM_NAME_PREFIX + index++);
 			scTheorem.create(null, monitor);
-			scTheorem.setLabel(theorems[i].getLabel(), monitor);
-			scTheorem.setPredicate(predicates[i], null);
-			scTheorem.setSource(theorems[i], monitor);
+			scTheorem.setLabel(formulaElements.get(i).getLabel(), monitor);
+			scTheorem.setPredicate(formulas.get(i), null);
+			scTheorem.setSource(formulaElements.get(i), monitor);
 		}
 	}
 	

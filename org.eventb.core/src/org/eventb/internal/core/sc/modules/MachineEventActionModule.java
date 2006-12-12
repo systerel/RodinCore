@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +49,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventActionModule extends AssignmentModule {
+public class MachineEventActionModule extends AssignmentModule<IAction> {
 
 	public static final String MACHINE_EVENT_ACTION_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineEventActionFilter";
@@ -74,51 +75,40 @@ public class MachineEventActionModule extends AssignmentModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 
-		IEvent event = (IEvent) element;
-		
-		IAction[] actions = event.getActions();
-		
-		Assignment[] assignments = new Assignment[actions.length];
-	
-		if (actions.length > 0)
+		if (formulaElements.size() > 0)
 			checkAndType(
-					actions, 
-					target,
-					assignments,
+					target, 
 					filterModules,
-					event.getParent().getElementName(),
+					element.getParent().getElementName(),
 					repository,
 					monitor);
 
 		ISCEvent targetEvent = (ISCEvent) target;
 		
-		HashMap<String, Integer> assignedByAction = checkLHS(actions, assignments, monitor);
-		commitActions(targetEvent, actions, assignments, null);
+		HashMap<String, Integer> assignedByAction = checkLHS(monitor);
+		commitActions(targetEvent, null);
 		if (isInitialisation)
-			repairInitialisation(targetEvent, event, assignedByAction, monitor);
+			repairInitialisation(targetEvent, element, assignedByAction, monitor);
 
 	}
 	
-	private HashMap<String, Integer> checkLHS(
-			IAction[] actions, 
-			Assignment[] assignments, 
-			IProgressMonitor monitor) throws CoreException {
+	private HashMap<String, Integer> checkLHS(IProgressMonitor monitor) throws CoreException {
 		HashMap<String, Integer> assignedByAction = new HashMap<String, Integer>(43);
-		boolean[] error = getAssignedByActionMap(actions, assignments, assignedByAction);
-		issueLHSProblemMarkers(actions, assignments, error, monitor);
+		boolean[] error = getAssignedByActionMap(assignedByAction);
+		issueLHSProblemMarkers(error, monitor);
 		return assignedByAction;
 	}
 
-	private void issueLHSProblemMarkers(IAction[] actions, Assignment[] assignments, boolean[] error, IProgressMonitor monitor) throws RodinDBException, CoreException {
-		for (int i=0; i<actions.length; i++) {
-			if (assignments[i] == null)
+	private void issueLHSProblemMarkers(boolean[] error, IProgressMonitor monitor) throws RodinDBException, CoreException {
+		for (int i=0; i<formulaElements.size(); i++) {
+			if (formulas.get(i) == null)
 				continue;
 			IActionSymbolInfo actionSymbolInfo = 
-				(IActionSymbolInfo) labelSymbolTable.getSymbolInfo(actions[i].getLabel());
+				(IActionSymbolInfo) labelSymbolTable.getSymbolInfo(formulaElements.get(i).getLabel());
 			if (error[i]) {
-				assignments[i] = null;
+				formulas.set(i, null);
 				createProblemMarker(
-						actions[i], 
+						formulaElements.get(i), 
 						getFormulaAttributeType(), 
 						GraphProblem.ActionDisjointLHSError);
 				actionSymbolInfo.setError();
@@ -127,12 +117,12 @@ public class MachineEventActionModule extends AssignmentModule {
 		}
 	}
 
-	private boolean[] getAssignedByActionMap(IAction[] actions, Assignment[] assignments, HashMap<String, Integer> assignedByAction) {
-		boolean[] error = new boolean[actions.length];
-		for (int i=0; i< actions.length; i++) {
-			if (assignments[i] == null)
+	private boolean[] getAssignedByActionMap(HashMap<String, Integer> assignedByAction) {
+		boolean[] error = new boolean[formulaElements.size()];
+		for (int i=0; i< formulaElements.size(); i++) {
+			if (formulas.get(i) == null)
 				continue;
-			for (FreeIdentifier identifier : assignments[i].getAssignedIdentifiers()) {
+			for (FreeIdentifier identifier : formulas.get(i).getAssignedIdentifiers()) {
 				String name = identifier.getName();
 				Integer conflict = assignedByAction.get(name);
 				if (conflict == null)
@@ -151,8 +141,6 @@ public class MachineEventActionModule extends AssignmentModule {
 
 	private void commitActions(
 			ISCEvent target, 
-			IAction[] actions, 
-			Assignment[] assignments,
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		if (target == null)
@@ -160,15 +148,15 @@ public class MachineEventActionModule extends AssignmentModule {
 		
 		int index = 0;
 		
-		for (int i=0; i<actions.length; i++) {
-			if (assignments[i] == null)
+		for (int i=0; i<formulaElements.size(); i++) {
+			if (formulas.get(i) == null)
 				continue;
 			saveAction(
 					target, 
 					ACTION_NAME_PREFIX + index++, 
-					actions[i].getLabel(), 
-					assignments[i], 
-					actions[i], 
+					formulaElements.get(i).getLabel(), 
+					formulas.get(i), 
+					formulaElements.get(i), 
 					monitor);
 		}
 	}
@@ -189,7 +177,7 @@ public class MachineEventActionModule extends AssignmentModule {
 	
 	private void repairInitialisation(
 			ISCEvent target, 
-			IEvent event, 
+			IRodinElement event, 
 			HashMap<String, Integer> assignedByAction,
 			IProgressMonitor monitor) throws RodinDBException {
 		List<FreeIdentifier> patchLHS = new LinkedList<FreeIdentifier>();
@@ -276,6 +264,13 @@ public class MachineEventActionModule extends AssignmentModule {
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol, ILabeledElement element, String component) throws CoreException {
 		return new ActionSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	}
+
+	@Override
+	protected List<IAction> getFormulaElements(IRodinElement element) throws CoreException {
+		IEvent event = (IEvent) element;
+		IAction[] actions = event.getActions();
+		return Arrays.asList(actions);
 	}
 
 }

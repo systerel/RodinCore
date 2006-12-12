@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -16,7 +19,6 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCContextFile;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
@@ -35,7 +37,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class ContextAxiomModule extends PredicateWithTypingModule {
+public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 
 	public static final String CONTEXT_AXIOM_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".contextAxiomFilter";
@@ -60,46 +62,36 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		IContextFile contextFile = (IContextFile) element;
-		
-		IAxiom[] axioms = contextFile.getAxioms();
-		
-		Predicate[] predicates = new Predicate[axioms.length];
-		
-		if (axioms.length == 0)
-			return;
-		
 		monitor.subTask(Messages.bind(Messages.progress_ContextAxioms));
 		
+		if (formulaElements.size() == 0)
+			return;
+		
 		checkAndType(
-				axioms, 
-				target,
-				predicates,
+				target, 
 				filterModules,
-				contextFile.getElementName(),
+				element.getElementName(),
 				repository,
 				monitor);
 		
-		saveAxioms((ISCContextFile) target, axioms, predicates, null);
+		saveAxioms((ISCContextFile) target, null);
 		
 	}
 	
 	private void saveAxioms(
 			ISCContextFile target, 
-			IAxiom[] axioms, 
-			Predicate[] predicates,
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		int index = 0;
 		
-		for (int i=0; i<axioms.length; i++) {
-			if (predicates[i] == null)
+		for (int i=0; i<formulaElements.size(); i++) {
+			if (formulas.get(i) == null)
 				continue;
 			ISCAxiom scAxiom = target.getSCAxiom(AXIOM_NAME_PREFIX + index++);
 			scAxiom.create(null, monitor);
-			scAxiom.setLabel(axioms[i].getLabel(), monitor);
-			scAxiom.setPredicate(predicates[i], null);
-			scAxiom.setSource(axioms[i], monitor);
+			scAxiom.setLabel(formulaElements.get(i).getLabel(), monitor);
+			scAxiom.setPredicate(formulas.get(i), null);
+			scAxiom.setSource(formulaElements.get(i), monitor);
 		}
 	}
 
@@ -120,6 +112,13 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 	protected ILabelSymbolInfo createLabelSymbolInfo(
 			String symbol, ILabeledElement element, String component) throws CoreException {
 		return new AxiomSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	}
+
+	@Override
+	protected List<IAxiom> getFormulaElements(IRodinElement element) throws CoreException {
+		IContextFile contextFile = (IContextFile) element;
+		IAxiom[] axioms = contextFile.getAxioms();
+		return Arrays.asList(axioms);
 	}
 
 }

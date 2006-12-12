@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -16,7 +19,6 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineFile;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IAbstractEventTable;
@@ -36,7 +38,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineInvariantModule extends PredicateWithTypingModule {
+public class MachineInvariantModule extends PredicateWithTypingModule<IInvariant> {
 
 	public static final String MACHINE_INVARIANT_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineInvariantFilter";
@@ -57,10 +59,6 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 
-		IMachineFile machineFile = (IMachineFile) element;
-		
-		IInvariant[] invariants = machineFile.getInvariants();
-		
 		IAbstractEventTable abstractEventTable =
 			(IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
 		
@@ -76,41 +74,35 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 			copySCPredicates(scInvariants, target, monitor);
 		}
 		
-		if (invariants.length == 0)
+		if (formulaElements.size() == 0)
 			return;
 		
-		Predicate[] predicates = new Predicate[invariants.length];
-	
 		checkAndType(
-				invariants, 
-				target,
-				predicates,
+				target, 
 				filterModules,
-				machineFile.getElementName(),
+				element.getElementName(),
 				repository,
 				monitor);
 		
-		saveInvariants((ISCMachineFile) target, offset, invariants, predicates, monitor);
+		saveInvariants((ISCMachineFile) target, offset, monitor);
 
 	}
 	
 	private void saveInvariants(
 			ISCMachineFile target, 
 			int offset,
-			IInvariant[] invariants, 
-			Predicate[] predicates,
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		int index = offset;
 		
-		for (int i=0; i<invariants.length; i++) {
-			if (predicates[i] == null)
+		for (int i=0; i<formulaElements.size(); i++) {
+			if (formulas.get(i) == null)
 				continue;
 			ISCInvariant scInvariant = target.getSCInvariant(INVARIANT_NAME_PREFIX + index++);
 			scInvariant.create(null, monitor);
-			scInvariant.setLabel(invariants[i].getLabel(), monitor);
-			scInvariant.setPredicate(predicates[i], null);
-			scInvariant.setSource(invariants[i], monitor);
+			scInvariant.setLabel(formulaElements.get(i).getLabel(), monitor);
+			scInvariant.setPredicate(formulas.get(i), null);
+			scInvariant.setSource(formulaElements.get(i), monitor);
 		}
 	}
 
@@ -132,6 +124,13 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 	protected ILabelSymbolInfo createLabelSymbolInfo(
 			String symbol, ILabeledElement element, String component) throws CoreException {
 		return new InvariantSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	}
+
+	@Override
+	protected List<IInvariant> getFormulaElements(IRodinElement element) throws CoreException {
+		IMachineFile machineFile = (IMachineFile) element;
+		IInvariant[] invariants = machineFile.getInvariants();
+		return Arrays.asList(invariants);
 	}
 
 }

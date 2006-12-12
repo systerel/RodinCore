@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ast.Assignment;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
@@ -25,7 +24,8 @@ import org.rodinp.core.IInternalElement;
  * @author Stefan Hallerstede
  *
  */
-public abstract class AssignmentModule extends LabeledFormulaModule {
+public abstract class AssignmentModule<I extends IInternalElement> 
+extends LabeledFormulaModule<Assignment, I> {
 
 	@Override
 	protected IAttributeType.String getFormulaAttributeType() {
@@ -36,8 +36,8 @@ public abstract class AssignmentModule extends LabeledFormulaModule {
 	 * @see org.eventb.internal.core.sc.modules.LabeledFormulaModule#parseFormula(int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[], java.util.Collection, org.eventb.core.ast.FormulaFactory)
 	 */
 	@Override
-	protected Formula parseFormula(
-			IInternalElement formulaElement, 
+	protected Assignment parseFormula(
+			I formulaElement, 
 			Collection<FreeIdentifier> freeIdentifierContext, 
 			FormulaFactory factory) throws CoreException {
 		

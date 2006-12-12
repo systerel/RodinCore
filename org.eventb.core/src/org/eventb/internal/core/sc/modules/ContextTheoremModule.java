@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -51,19 +54,14 @@ public class ContextTheoremModule extends TheoremModule {
 			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		IContextFile contextFile = (IContextFile) element;
-		
-		ITheorem[] theorems = contextFile.getTheorems();
-		
-		if (theorems.length == 0)
-			return;
-		
 		monitor.subTask(Messages.bind(Messages.progress_ContextTheorems));
+		
+		if (formulaElements.size() == 0)
+			return;
 		
 		checkAndSaveTheorems(
 				target, 
 				0,
-				theorems,
 				filterModules,
 				repository,
 				monitor);
@@ -93,6 +91,13 @@ public class ContextTheoremModule extends TheoremModule {
 	protected ILabelSymbolInfo createLabelSymbolInfo(
 			String symbol, ILabeledElement element, String component) throws CoreException {
 		return new TheoremSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	}
+
+	@Override
+	protected List<ITheorem> getFormulaElements(IRodinElement element) throws CoreException {
+		IContextFile contextFile = (IContextFile) element;
+		ITheorem[] theorems = contextFile.getTheorems();
+		return Arrays.asList(theorems);
 	}
 
 }

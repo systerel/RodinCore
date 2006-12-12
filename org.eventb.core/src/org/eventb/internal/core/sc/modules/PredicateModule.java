@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.ISCPredicateElement;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
@@ -28,7 +27,8 @@ import org.rodinp.core.IInternalParent;
  * @author Stefan Hallerstede
  *
  */
-public abstract class PredicateModule extends LabeledFormulaModule {
+public abstract class PredicateModule<I extends IInternalElement> 
+extends LabeledFormulaModule<Predicate, I> {
 	
 	@Override
 	protected IAttributeType.String getFormulaAttributeType() {
@@ -39,8 +39,8 @@ public abstract class PredicateModule extends LabeledFormulaModule {
 	 * @see org.eventb.internal.core.sc.modules.LabeledFormulaModule#parseFormula(int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[], java.util.Collection, org.eventb.core.ast.FormulaFactory)
 	 */
 	@Override
-	protected Formula parseFormula(
-			IInternalElement formulaElement, 
+	protected Predicate parseFormula(
+			I formulaElement, 
 			Collection<FreeIdentifier> freeIdentifierContext, 
 			FormulaFactory factory) throws CoreException {
 		

@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -52,10 +55,6 @@ public class MachineTheoremModule extends TheoremModule {
 			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		IMachineFile machineFile = (IMachineFile) element;
-		
-		ITheorem[] theorems = machineFile.getTheorems();
-		
 		IAbstractEventTable abstractEventTable =
 			(IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
 		
@@ -71,13 +70,12 @@ public class MachineTheoremModule extends TheoremModule {
 			copySCPredicates(scTheorems, target, monitor);
 		}
 		
-		if (theorems.length == 0)
+		if (formulaElements.size() == 0)
 			return;
-				
+		
 		checkAndSaveTheorems(
 				target, 
 				offset,
-				theorems,
 				filterModules,
 				repository,
 				monitor);
@@ -107,6 +105,13 @@ public class MachineTheoremModule extends TheoremModule {
 	protected ILabelSymbolInfo createLabelSymbolInfo(
 			String symbol, ILabeledElement element, String component) throws CoreException {
 		return new TheoremSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	}
+
+	@Override
+	protected List<ITheorem> getFormulaElements(IRodinElement element) throws CoreException {
+		IMachineFile machineFile = (IMachineFile) element;
+		ITheorem[] theorems = machineFile.getTheorems();
+		return Arrays.asList(theorems);
 	}
 
 }

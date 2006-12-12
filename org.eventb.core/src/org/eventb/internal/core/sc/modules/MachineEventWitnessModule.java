@@ -7,7 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -47,7 +49,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventWitnessModule extends PredicateModule {
+public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 
 	public static final String MACHINE_EVENT_WITNESS_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineEventWitnessFilter";
@@ -74,29 +76,22 @@ public class MachineEventWitnessModule extends PredicateModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 
-		IEvent event = (IEvent) element;
-		
-		IWitness[] witnesses = event.getWitnesses();
-		
-		Predicate[] predicates = new Predicate[witnesses.length];
-		
 		// the name space of witness label is distinct from the name space of
 		// other labels. Witness labels are variable names.
 		
 		ILabelSymbolTable savedLabelSymbolTable = labelSymbolTable;
 		
-		labelSymbolTable = new EventLabelSymbolTable(witnesses.length * 4 / 3 + 1);
+		labelSymbolTable = new EventLabelSymbolTable(formulaElements.size() * 4 / 3 + 1);
 		
 		repository.setState(labelSymbolTable);
 		
-		checkAndType(
-				witnesses, 
-				target,
-				predicates,
-				filterModules,
-				event.getElementName(),
-				repository,
-				monitor);
+		if (formulaElements.size() > 0)
+			checkAndType(
+					target, 
+					filterModules,
+					element.getElementName(),
+					repository,
+					monitor);
 		
 		// the hash set provides a fast way to treat duplicates
 		HashSet<String> witnessNames = new HashSet<String>(WITNESS_HASH_TABLE_SIZE);
@@ -105,10 +100,8 @@ public class MachineEventWitnessModule extends PredicateModule {
 		
 		checkAndSaveWitnesses(
 				(ISCEvent) target, 
-				witnesses, 
-				predicates, 
 				witnessNames, 
-				event, 
+				element, 
 				monitor);
 		
 		repository.setState(savedLabelSymbolTable);
@@ -117,30 +110,28 @@ public class MachineEventWitnessModule extends PredicateModule {
 	
 	private void checkAndSaveWitnesses(
 			ISCEvent target, 
-			IWitness[] witnesses, 
-			Predicate[] predicates,
 			HashSet<String> witnessNames,
-			IEvent event,
+			IRodinElement event,
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		int index = 0;
 		
-		for (int i=0; i<witnesses.length; i++) {
-			if (predicates[i] == null)
+		for (int i=0; i<formulaElements.size(); i++) {
+			if (formulas.get(i) == null)
 				continue;
-			String label = witnesses[i].getLabel();
+			String label = formulaElements.get(i).getLabel();
 			if (witnessNames.contains(label)) {
 				witnessNames.remove(label);
 				createSCWitness(
 						target, 
 						WITNESS_NAME_PREFIX + index++,
-						witnesses[i].getLabel(), 
-						witnesses[i],
-						predicates[i], 
+						formulaElements.get(i).getLabel(), 
+						formulaElements.get(i),
+						formulas.get(i), 
 						monitor);
 			} else {
 				createProblemMarker(
-						witnesses[i], 
+						formulaElements.get(i), 
 						EventBAttributes.LABEL_ATTRIBUTE, 
 						GraphProblem.WitnessLabelNeedLessError);
 			}
@@ -295,6 +286,13 @@ public class MachineEventWitnessModule extends PredicateModule {
 	protected ILabelSymbolInfo createLabelSymbolInfo(
 			String symbol, ILabeledElement element, String component) throws CoreException {
 		return new WitnessSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	}
+
+	@Override
+	protected List<IWitness> getFormulaElements(IRodinElement element) throws CoreException {
+		IEvent event = (IEvent) element;
+		IWitness[] witnesses = event.getWitnesses();
+		return Arrays.asList(witnesses);
 	}
 
 }

@@ -17,7 +17,7 @@ import org.rodinp.core.IInternalElement;
  * @author Stefan Hallerstede
  *
  */
-public abstract class PredicateWithTypingModule extends PredicateModule {
+public abstract class PredicateWithTypingModule<I extends IInternalElement> extends PredicateModule<I> {
 
 	@Override
 	protected boolean updateIdentifierSymbolTable(

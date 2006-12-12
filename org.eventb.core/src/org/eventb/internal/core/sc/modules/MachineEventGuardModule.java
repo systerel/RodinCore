@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -18,7 +19,6 @@ import org.eventb.core.IGuard;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -46,7 +46,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventGuardModule extends PredicateWithTypingModule {
+public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 
 	public static final String MACHINE_EVENT_GUARD_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineEventGuardFilter";
@@ -66,37 +66,28 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor)
 			throws CoreException {
-
-		IEvent event = (IEvent) element;
 		
-		IGuard[] guards = event.getGuards();
-		
-		Predicate[] predicates = new Predicate[guards.length];
-		
-		if (guards.length == 0)
+		if (formulaElements.size() == 0)
 			return;
-		
-		if (checkInitialisation(event, guards, monitor))
+
+		if (checkInitialisation(element, monitor))
 			checkAndType(
-					guards, 
-					target,
-					predicates,
+					target, 
 					filterModules,
-					event.getElementName(),
+					element.getElementName(),
 					repository,
 					monitor);
 		
-		saveGuards((ISCEvent) target, guards, predicates, monitor);
+		saveGuards((ISCEvent) target, monitor);
 
 	}
 	
 	private boolean checkInitialisation(
-			IEvent event, 
-			IGuard[] guards, 
+			IRodinElement event, 
 			IProgressMonitor monitor) throws RodinDBException {
-		if (event.getLabel().contains(IEvent.INITIALISATION))
-			if (guards.length > 0) {
-				for (IGuard guard : guards)
+		if (((ILabeledElement) event).getLabel().equals(IEvent.INITIALISATION))
+			if (formulaElements.size() > 0) {
+				for (IGuard guard : formulaElements)
 					createProblemMarker(
 							guard, 
 							getFormulaAttributeType(), 
@@ -108,8 +99,6 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 	
 	private void saveGuards(
 			ISCEvent target, 
-			IGuard[] guards, 
-			Predicate[] predicates,
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		if (target == null)
@@ -117,14 +106,14 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 		
 		int index = 0;
 		
-		for (int i=0; i<guards.length; i++) {
-			if (predicates[i] == null)
+		for (int i=0; i<formulaElements.size(); i++) {
+			if (formulas.get(i) == null)
 				continue;
 			ISCGuard scGuard = target.getSCGuard(GUARD_NAME_PREFIX + index++);
 			scGuard.create(null, monitor);
-			scGuard.setLabel(guards[i].getLabel(), monitor);
-			scGuard.setPredicate(predicates[i], null);
-			scGuard.setSource(guards[i], monitor);
+			scGuard.setLabel(formulaElements.get(i).getLabel(), monitor);
+			scGuard.setPredicate(formulas.get(i), null);
+			scGuard.setSource(formulaElements.get(i), monitor);
 		}
 	}
 
@@ -135,8 +124,8 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 	 */
 	@Override
 	protected ITypeEnvironment typeCheckFormula(
-			IInternalElement formulaElement, 
-			Formula formula, 
+			IGuard formulaElement, 
+			Predicate formula, 
 			ITypeEnvironment typeEnvironment) throws CoreException {
 		
 		// local variables must not change their type from an abstract machine
@@ -255,6 +244,13 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 	protected ILabelSymbolInfo createLabelSymbolInfo(
 			String symbol, ILabeledElement element, String component) throws CoreException {
 		return new GuardSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	}
+
+	@Override
+	protected List<IGuard> getFormulaElements(IRodinElement element) throws CoreException {
+		IEvent event = (IEvent) element;
+		IGuard[] guards = event.getGuards();
+		return Arrays.asList(guards);
 	}
 
 }

@@ -7,7 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,10 +43,14 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class LabeledFormulaModule extends LabeledElementModule {
+public abstract class LabeledFormulaModule<F extends Formula, I extends IInternalElement> 
+extends LabeledElementModule {
 
 	protected IIdentifierSymbolTable identifierSymbolTable;
 	protected ITypingState typingState;
+	
+	protected List<I> formulaElements;
+	protected List<F> formulas;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.Module#initModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -59,7 +65,16 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
 		typingState = 
 			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
+		
+		formulaElements = getFormulaElements(element);
+		formulas = new ArrayList<F>(formulaElements.size());
+		
+		for (int i=0; i<formulaElements.size(); i++)
+			formulas.add(null);
+		
 	}
+
+	protected abstract List<I> getFormulaElements(IRodinElement element) throws CoreException;
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.Module#endModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -200,8 +215,8 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 	 * @return parsed formula, iff the formula was successfully parsed, <code>null</code> otherwise
 	 * @throws CoreException if there was a problem accessing the database or the symbol table
 	 */
-	protected abstract Formula parseFormula(
-			IInternalElement formulaElement,
+	protected abstract F parseFormula(
+			I formulaElement,
 			Collection<FreeIdentifier> freeIdentifierContext,
 			FormulaFactory factory) throws CoreException;
 	
@@ -212,8 +227,8 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 	 * @throws CoreException if there was a problem accessing the database or the symbol table
 	 */
 	protected ITypeEnvironment typeCheckFormula(
-			IInternalElement formulaElement,
-			Formula formula,
+			I formulaElement,
+			F formula,
 			ITypeEnvironment typeEnvironment) throws CoreException {
 		
 		ITypeCheckResult typeCheckResult = formula.typeCheck(typeEnvironment);
@@ -251,25 +266,18 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 	}
 
 		/**
-	 * @param formulaElements the formula elements
 	 * @param target the target static checked container
-	 * @param formulas the array of successfully parsed formulas. The array must be of the length
-	 * as <code>predicateElements</code> and all fields initialised to <code>null</code>.
-	 * @param modules additional rules for the predicate elements
-	 * @param component the name of the component that contains the predicate elements
-	 * @param repository the state repository
-	 * @throws CoreException if there was a problem accessing the database or the symbol table
+		 * @param modules additional rules for the predicate elements
+		 * @param component the name of the component that contains the predicate elements
+		 * @param repository the state repository
+		 * @throws CoreException if there was a problem accessing the database or the symbol table
 	 */
 	protected void checkAndType(
-			IInternalElement[] formulaElements,
 			IInternalParent target,
-			Formula[] formulas,
 			IFilterModule[] modules,
 			String component,
 			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException {
-		
-		assert formulaElements.length == formulas.length;
 		
 		final FormulaFactory factory = repository.getFormulaFactory();
 		
@@ -282,41 +290,45 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 		
 		initFilterModules(modules, repository, null);
 		
-		for (int i=0; i<formulaElements.length; i++) {
+		for (int i=0; i<formulaElements.size(); i++) {
+			
+			I formulaElement = formulaElements.get(i);
 			
 			ILabelSymbolInfo symbolInfo = 
 				fetchLabel(
-					formulaElements[i], 
+					formulaElement, 
 					component,
 					null);
 			
-			formulas[i] = parseFormula(
-					formulaElements[i],
+			F formula = parseFormula(
+					formulaElement,
 					freeIdentifiers,
 					factory);
 			
-			boolean ok = formulas[i] != null;
+			formulas.set(i, formula);
+			
+			boolean ok = formula != null;
 			
 			if (ok) {
 				
 				ok = symbolInfo != null;
 				
-				setParsedState(formulas[i]);
+				setParsedState(formula);
 			
-				if (!filterModules(modules, formulaElements[i], repository, null)) {
+				if (!filterModules(modules, formulaElement, repository, null)) {
 					// the predicate will be rejected
 					// and will not contribute to the type environment!
 					ok = false;
 				}
 				
 				ITypeEnvironment inferredEnvironment = 
-					typeCheckFormula(formulaElements[i], formulas[i], typeEnvironment);
+					typeCheckFormula(formulaElement, formula, typeEnvironment);
 				
 				ok &= inferredEnvironment != null;
 			
 				if (ok && !inferredEnvironment.isEmpty()) {
 					ok = updateIdentifierSymbolTable(
-							formulaElements[i],
+							formulaElement,
 							inferredEnvironment, 
 							typeEnvironment);
 				}
@@ -325,7 +337,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 			if (!ok) {
 				if (symbolInfo != null)
 					symbolInfo.setError();
-				formulas[i] = null;
+				formulas.set(i, null);
 			}
 			
 			setImmutable(symbolInfo);

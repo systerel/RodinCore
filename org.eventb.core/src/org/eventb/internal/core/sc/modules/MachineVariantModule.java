@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -17,7 +20,6 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.IVariant;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
@@ -42,7 +44,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineVariantModule extends ExpressionModule {
+public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 	public static final String MACHINE_VARIANT_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineVariantFilter";
@@ -98,35 +100,27 @@ public class MachineVariantModule extends ExpressionModule {
 			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		IMachineFile machineFile = (IMachineFile) element;
-		
-		IVariant[] variants = machineFile.getVariants();
-		
-		if (variants.length == 0)
+		if (formulaElements.size() == 0)
 			return;
 		
-		if (variants.length > 1) {
-			for (int k=1; k<variants.length; k++)
+		if (formulaElements.size() > 1) {
+			for (int k=1; k<formulaElements.size(); k++)
 				createProblemMarker(
-						variants[k], 
+						formulaElements.get(k), 
 						EventBAttributes.EXPRESSION_ATTRIBUTE, 
 						GraphProblem.TooManyVariantsError);
 		}
 		
-		Expression[] expressions = new Expression[1];
-
 		monitor.subTask(Messages.bind(Messages.progress_MachineVariant));
 		
 		checkAndType(
-				variants, 
-				target,
-				expressions,
+				target, 
 				filterModules,
-				machineFile.getElementName(),
+				element.getElementName(),
 				repository,
 				monitor);
 		
-		saveVariant((ISCMachineFile) target, variants[0], expressions[0], null);
+		saveVariant((ISCMachineFile) target, formulaElements.get(0), formulas.get(0), null);
 
 	}
 
@@ -161,15 +155,15 @@ public class MachineVariantModule extends ExpressionModule {
 
 	@Override
 	protected ITypeEnvironment typeCheckFormula(
-			IInternalElement formulaElement, 
-			Formula formula, 
+			IVariant formulaElement, 
+			Expression formula, 
 			ITypeEnvironment typeEnvironment) throws CoreException {
 		ITypeEnvironment inferredEnvironment =
 			super.typeCheckFormula(formulaElement, formula, typeEnvironment);
 		if (inferredEnvironment == null)
 			return null;
 		else {
-			Expression expression = (Expression) formula;
+			Expression expression = formula;
 			Type type = expression.getType();
 			boolean ok = type.equals(factory.makeIntegerType()) || type.getBaseType() != null;
 			if (!ok) {
@@ -188,6 +182,13 @@ public class MachineVariantModule extends ExpressionModule {
 	protected ILabelSymbolInfo createLabelSymbolInfo(
 			String symbol, ILabeledElement element, String component) throws CoreException {
 		return new VariantSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	}
+
+	@Override
+	protected List<IVariant> getFormulaElements(IRodinElement element) throws CoreException {
+		IMachineFile machineFile = (IMachineFile) element;
+		IVariant[] variants = machineFile.getVariants();
+		return Arrays.asList(variants);
 	}
 
 }

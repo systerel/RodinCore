@@ -122,11 +122,11 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 		}
 	}
 
-	private int findIndex(FreeIdentifier variable, List assignments) {
+	private <A extends Assignment> int findIndex(FreeIdentifier variable, List<A> assignments) {
 		int pos = -1;
 		
 		for (int i=0; i<assignments.size(); i++) {
-			Assignment assignment = (Assignment) assignments.get(i);
+			A assignment = assignments.get(i);
 			for (FreeIdentifier ident : assignment.getAssignedIdentifiers()) {
 				if (variable.equals(ident)) {
 					pos = i;
