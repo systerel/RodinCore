@@ -67,11 +67,12 @@ extends LabeledElementModule {
 			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
 		
 		formulaElements = getFormulaElements(element);
-		formulas = new ArrayList<F>(formulaElements.size());
-		
-		for (int i=0; i<formulaElements.size(); i++)
+
+		final int size = formulaElements.size();
+		formulas = new ArrayList<F>(size);
+		for (int i=0; i<size; i++) {
 			formulas.add(null);
-		
+		}
 	}
 
 	protected abstract List<I> getFormulaElements(IRodinElement element) throws CoreException;
