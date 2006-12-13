@@ -146,12 +146,12 @@ public class AutoProver {
 			B4freeCore.ML_FORCE_0 |
 			B4freeCore.ML_FORCE_1;
 		return BasicTactics.compose(
-				Tactics.lasoo(),
+				// Tactics.lasoo(),
 				BasicTactics.onAllPending(Tactics.norm()),
 				BasicTactics.onAllPending(
 						B4freeCore.externalML(MLforces, timeOutDelay)), // ML
 				BasicTactics.onAllPending(
-						B4freeCore.externalPP(true, timeOutDelay)), // P1
+						B4freeCore.externalP1(timeOutDelay)), // P1
 				BasicTactics.onAllPending(
 						B4freeCore.externalPP(false, timeOutDelay)) // PP
 				);
