@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -72,7 +73,7 @@ public class SeesSection extends SectionPart implements
 	private static final String SECTION_DESCRIPTION = "Select the seen contexts of this machine";
 
 	// The Event B editor contains this section.
-	private IEventBEditor editor;
+	IEventBEditor editor;
 
 	// Buttons.
 	private Button removeButton;
@@ -100,7 +101,8 @@ public class SeesSection extends SectionPart implements
 	 * @param parent
 	 *            The composite parent
 	 */
-	public SeesSection(IEventBEditor editor, FormToolkit toolkit, Composite parent) {
+	public SeesSection(IEventBEditor editor, FormToolkit toolkit,
+			Composite parent) {
 		super(parent, toolkit, ExpandableComposite.TITLE_BAR
 				| Section.DESCRIPTION);
 		this.editor = editor;
@@ -110,8 +112,7 @@ public class SeesSection extends SectionPart implements
 		RodinCore.addElementChangedListener(this);
 	}
 
-	class SeenContextContentProvider implements
-			IStructuredContentProvider {
+	class SeenContextContentProvider implements IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
 			try {
@@ -126,7 +127,8 @@ public class SeesSection extends SectionPart implements
 			// TODO To check
 		}
 
-		public void inputChanged(Viewer viewer1, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer viewer1, Object oldInput,
+				Object newInput) {
 			// TODO To check
 		}
 
@@ -279,18 +281,29 @@ public class SeesSection extends SectionPart implements
 	 * @param context
 	 *            name of the context
 	 */
-	void addSeenContext(String context) {
+	void addSeenContext(final String context) {
 		try {
-			ISeesContext seen = (ISeesContext) rodinFile.createInternalElement(
-					ISeesContext.ELEMENT_TYPE, UIUtils.getFreeElementName(
-							editor, rodinFile,
-							ISeesContext.ELEMENT_TYPE,
-							PrefixSeesContextName.QUALIFIED_NAME,
-							PrefixSeesContextName.DEFAULT_PREFIX), null, null);
-			seen.setSeenContextName(context, null);
-			// markDirty();
-		} catch (RodinDBException exception) {
-			exception.printStackTrace();
+			RodinCore.run(new IWorkspaceRunnable() {
+
+				public void run(IProgressMonitor monitor) throws CoreException {
+					ISeesContext seen = (ISeesContext) rodinFile
+							.createInternalElement(
+									ISeesContext.ELEMENT_TYPE,
+									UIUtils
+											.getFreeElementName(
+													editor,
+													rodinFile,
+													ISeesContext.ELEMENT_TYPE,
+													PrefixSeesContextName.QUALIFIED_NAME,
+													PrefixSeesContextName.DEFAULT_PREFIX),
+									null, null);
+					seen.setSeenContextName(context, monitor);
+				}
+
+			}, new NullProgressMonitor());
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -298,16 +311,27 @@ public class SeesSection extends SectionPart implements
 	 * Handle the Add/Create action when the corresponding button is clicked.
 	 */
 	public void handleAdd() {
-		String context = contextCombo.getText();
+		final String context = contextCombo.getText();
 		try {
-			ISeesContext seen = (ISeesContext) rodinFile.createInternalElement(
-					ISeesContext.ELEMENT_TYPE, UIUtils.getFreeElementName(
-							editor, rodinFile,
-							ISeesContext.ELEMENT_TYPE,
-							PrefixSeesContextName.QUALIFIED_NAME,
-							PrefixSeesContextName.DEFAULT_PREFIX), null, null);
-			seen.setSeenContextName(context, null);
-		} catch (RodinDBException e) {
+			RodinCore.run(new IWorkspaceRunnable() {
+
+				public void run(IProgressMonitor monitor) throws CoreException {
+					ISeesContext seen = (ISeesContext) rodinFile
+							.createInternalElement(
+									ISeesContext.ELEMENT_TYPE,
+									UIUtils
+											.getFreeElementName(
+													editor,
+													rodinFile,
+													ISeesContext.ELEMENT_TYPE,
+													PrefixSeesContextName.QUALIFIED_NAME,
+													PrefixSeesContextName.DEFAULT_PREFIX),
+									null, null);
+					seen.setSeenContextName(context, null);
+				}
+				
+			}, new NullProgressMonitor());
+		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
