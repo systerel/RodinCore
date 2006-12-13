@@ -24,7 +24,7 @@ public class Renames implements IObjectActionDelegate {
 	private IWorkbenchPart part;
 
 	/**
-	 * Constructor for Action1.
+	 * Constructor.
 	 */
 	public Renames() {
 		super();
@@ -58,8 +58,12 @@ public class Renames implements IObjectActionDelegate {
 				dialog.open();
 
 				final String bareName = dialog.getValue();
-				if (bareName == null)
-					return;
+				
+				if (dialog.getReturnCode() == InputDialog.CANCEL)
+					return; // Cancel
+				
+				assert bareName != null;
+				
 				try {
 					RodinCore.run(new IWorkspaceRunnable() {
 
@@ -91,7 +95,7 @@ public class Renames implements IObjectActionDelegate {
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		this.selection = selection;
+	public void selectionChanged(IAction action, ISelection sel) {
+		this.selection = sel;
 	}
 }
