@@ -535,8 +535,8 @@ public class UIUtils {
 					axmPred.append("}");
 					newAxm.setPredicateString(axmPred.toString(), null);
 
-					for (int i = 0; i < nbElements; ++ i) {
-						for (int j = i; j < nbElements; j++) {
+					for (int i = 0; i < nbElements; ++i) {
+						for (int j = i+1; j < nbElements; ++j) {
 							nameIndex = getFreeElementNameIndex(ctxFile,
 									IAxiom.ELEMENT_TYPE, namePrefix, nameIndex);
 							labelIndex = getFreeElementLabelIndex(editor,
