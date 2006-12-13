@@ -273,8 +273,7 @@ public class EventBEditorUtils {
 										IRefinesEvent.ELEMENT_TYPE,
 										PrefixRefinesEventName.QUALIFIED_NAME,
 										PrefixRefinesEventName.DEFAULT_PREFIX);
-								String abs_name = ((IEvent) event)
-										.getLabel();
+								String abs_name = ((IEvent) event).getLabel();
 								newRefEvt = (IRefinesEvent) event
 										.createInternalElement(
 												IRefinesEvent.ELEMENT_TYPE,
@@ -633,7 +632,9 @@ public class EventBEditorUtils {
 							newEvt.setLabel(evtLabel, monitor);
 							editor.addNewElement(newEvt);
 
-							newEvt.setConvergence(IConvergenceElement.Convergence.ORDINARY, monitor);
+							newEvt.setConvergence(
+									IConvergenceElement.Convergence.ORDINARY,
+									monitor);
 							newEvt.setInherited(false, monitor);
 
 							String namePrefix = UIUtils.getNamePrefix(editor,
@@ -990,8 +991,7 @@ public class EventBEditorUtils {
 							boolean newInit = true;
 							for (IRodinElement event : events) {
 								IEvent element = (IEvent) event;
-								if (element.getLabel().equals(
-										"INITIALISATION")) {
+								if (element.getLabel().equals("INITIALISATION")) {
 									newInit = false;
 
 									String actLabel = UIUtils
@@ -1229,7 +1229,11 @@ public class EventBEditorUtils {
 					"Expression", variantPrefix);
 
 			dialog.open();
-			final String expression = dialog.getAttributes();
+			final String expression = dialog.getExpression();
+
+			if (expression == null)
+				return; // Cancel
+
 			RodinCore.run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					String prefix = UIUtils.getNamePrefix(editor,
@@ -1237,13 +1241,11 @@ public class EventBEditorUtils {
 							PrefixVariantName.DEFAULT_PREFIX);
 					int index = UIUtils.getFreeElementNameIndex(editor,
 							rodinFile, IVariant.ELEMENT_TYPE, prefix);
-					newVariant = (IVariant) rodinFile.createInternalElement(
-							IVariant.ELEMENT_TYPE, prefix + index, null,
-							monitor);
-					index = UIUtils.getFreeElementNameIndex(rodinFile,
-							IVariant.ELEMENT_TYPE, prefix, index + 1);
-					newVariant.setExpressionString(expression,
-							new NullProgressMonitor());
+					newVariant = (IVariant) rodinFile.getInternalElement(
+							IVariant.ELEMENT_TYPE, prefix + index);
+					assert !newVariant.exists();
+					newVariant.create(null, monitor);
+					newVariant.setExpressionString(expression, monitor);
 					editor.addNewElement(newVariant);
 				}
 			}, null);

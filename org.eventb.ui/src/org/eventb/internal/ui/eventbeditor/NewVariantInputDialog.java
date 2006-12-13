@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBInputText;
 
@@ -35,7 +36,7 @@ public class NewVariantInputDialog extends EventBInputDialog {
 
 	private String expression;
 
-	private IEventBInputText text;
+	private IEventBInputText expressionText;
 
 	private String message;
 
@@ -57,7 +58,7 @@ public class NewVariantInputDialog extends EventBInputDialog {
 		super(parentShell, title);
 		this.message = message;
 		this.defaultPrefix = defaultPrefix;
-		text = null;
+		expressionText = null;
 		expression = null;
 	}
 
@@ -66,6 +67,7 @@ public class NewVariantInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
 				true);
@@ -79,6 +81,7 @@ public class NewVariantInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createContents() {
 		Composite body = scrolledForm.getBody();
 
@@ -93,11 +96,11 @@ public class NewVariantInputDialog extends EventBInputDialog {
 		Label label = toolkit.createLabel(body, message);
 		label.setLayoutData(new GridData());
 
-		text = new EventBMath(toolkit.createText(body, defaultPrefix));
+		expressionText = new EventBMath(toolkit.createText(body, defaultPrefix));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
-		text.getTextWidget().setLayoutData(gd);
-		text.getTextWidget().addModifyListener(new DirtyStateListener());
+		expressionText.getTextWidget().setLayoutData(gd);
+		expressionText.getTextWidget().addModifyListener(new DirtyStateListener());
 
 	}
 
@@ -106,11 +109,15 @@ public class NewVariantInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CANCEL_ID) {
 			expression = null;
 		} else if (buttonId == IDialogConstants.OK_ID) {
-			expression = text.getTextWidget().getText();
+			Text widget = expressionText.getTextWidget();
+			if (dirtyTexts.contains(widget)) {
+				expression = widget.getText();
+			}
 		}
 		super.buttonPressed(buttonId);
 	}
@@ -121,14 +128,14 @@ public class NewVariantInputDialog extends EventBInputDialog {
 	 * 
 	 * @return The list of the text attributes that the user entered
 	 */
-	public String getAttributes() {
+	public String getExpression() {
 		return expression;
 	}
 
 	@Override
 	public boolean close() {
-		if (text != null)
-			text.dispose();
+		if (expressionText != null)
+			expressionText.dispose();
 		return super.close();
 	}
 
