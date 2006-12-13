@@ -286,18 +286,16 @@ public class SeesSection extends SectionPart implements
 			RodinCore.run(new IWorkspaceRunnable() {
 
 				public void run(IProgressMonitor monitor) throws CoreException {
-					ISeesContext seen = (ISeesContext) rodinFile
-							.createInternalElement(
+					ISeesContext seen = (ISeesContext) rodinFile.getInternalElement(ISeesContext.ELEMENT_TYPE, UIUtils
+							.getFreeElementName(
+									editor,
+									rodinFile,
 									ISeesContext.ELEMENT_TYPE,
-									UIUtils
-											.getFreeElementName(
-													editor,
-													rodinFile,
-													ISeesContext.ELEMENT_TYPE,
-													PrefixSeesContextName.QUALIFIED_NAME,
-													PrefixSeesContextName.DEFAULT_PREFIX),
-									null, null);
-					seen.setSeenContextName(context, monitor);
+									PrefixSeesContextName.QUALIFIED_NAME,
+									PrefixSeesContextName.DEFAULT_PREFIX));
+					assert !seen.exists();
+					seen.create(null, monitor);
+					seen.setSeenContextName(context, null);
 				}
 
 			}, new NullProgressMonitor());
@@ -316,17 +314,15 @@ public class SeesSection extends SectionPart implements
 			RodinCore.run(new IWorkspaceRunnable() {
 
 				public void run(IProgressMonitor monitor) throws CoreException {
-					ISeesContext seen = (ISeesContext) rodinFile
-							.createInternalElement(
+					ISeesContext seen = (ISeesContext) rodinFile.getInternalElement(ISeesContext.ELEMENT_TYPE, UIUtils
+							.getFreeElementName(
+									editor,
+									rodinFile,
 									ISeesContext.ELEMENT_TYPE,
-									UIUtils
-											.getFreeElementName(
-													editor,
-													rodinFile,
-													ISeesContext.ELEMENT_TYPE,
-													PrefixSeesContextName.QUALIFIED_NAME,
-													PrefixSeesContextName.DEFAULT_PREFIX),
-									null, null);
+									PrefixSeesContextName.QUALIFIED_NAME,
+									PrefixSeesContextName.DEFAULT_PREFIX));
+					assert !seen.exists();
+					seen.create(null, monitor);
 					seen.setSeenContextName(context, null);
 				}
 				
