@@ -59,7 +59,7 @@ public class TheoremPage extends EventBFormPage {
 			IEventBEditor editor) {
 		TheoremMasterSection part = new TheoremMasterSection(managedForm,
 				parent, managedForm.getToolkit(), Section.NO_TITLE,
-				(IEventBEditor) this.getEditor());
+				editor);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

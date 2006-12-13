@@ -57,14 +57,14 @@ public class SyntheticViewPage extends EventBFormPage {
 			IManagedForm managedForm, Composite parent, int style,
 			IEventBEditor editor) {
 		EventBPartWithButtons part;
-		if (((IEventBEditor) this.getEditor()).getRodinInput() instanceof IMachineFile)
+		if (editor.getRodinInput() instanceof IMachineFile)
 			part = new SyntheticMachineViewSection(managedForm, parent,
 					managedForm.getToolkit(), Section.NO_TITLE,
-					(IEventBEditor) this.getEditor());
+					editor);
 		else
 			part = new SyntheticContextViewSection(managedForm, parent,
 					managedForm.getToolkit(), Section.NO_TITLE,
-					(IEventBEditor) this.getEditor());
+					editor);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

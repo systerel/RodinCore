@@ -129,8 +129,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 	 *            a progress monitor
 	 */
 	void setFormText(IProgressMonitor monitor) {
-		IRodinFile rodinFile = ((IEventBEditor) this.getEditor())
-		.getRodinInput();
+		IRodinFile rodinFile = getEventBEditor().getRodinInput();
 		String text = astConverter.getText(monitor, rodinFile);
 		formText.getFormText().setText(text, true, true);
 		form.reflow(true);
@@ -147,7 +146,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 	public void dispose() {
 		if (formText != null)
 			formText.dispose();
-		((IEventBEditor) this.getEditor()).removeElementChangedListener(this);
+		getEventBEditor().removeElementChangedListener(this);
 		super.dispose();
 	}
 	

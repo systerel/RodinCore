@@ -57,7 +57,7 @@ public class ConstantPage extends EventBFormPage {
 			IEventBEditor editor) {
 		ConstantMasterSection part = new ConstantMasterSection(managedForm,
 				parent, managedForm.getToolkit(), Section.NO_TITLE,
-				(IEventBEditor) this.getEditor());
+				editor);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

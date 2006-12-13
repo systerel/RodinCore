@@ -21,5 +21,14 @@ public abstract class EventBEditorPage extends FormPage {
 
 		form.setText(pageTitle);
 	}
+
+	/**
+	 * Returns the parent event-B editor.
+	 * 
+	 * @return parent editor instance
+	 */
+	protected IEventBEditor getEventBEditor() {
+		return (IEventBEditor) this.getEditor();
+	}
 	
 }

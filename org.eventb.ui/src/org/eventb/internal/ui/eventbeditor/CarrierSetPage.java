@@ -57,7 +57,7 @@ public class CarrierSetPage extends EventBFormPage {
 			IEventBEditor editor) {
 		CarrierSetMasterSection part = new CarrierSetMasterSection(managedForm,
 				parent, managedForm.getToolkit(), Section.NO_TITLE,
-				(IEventBEditor) this.getEditor());
+				editor);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

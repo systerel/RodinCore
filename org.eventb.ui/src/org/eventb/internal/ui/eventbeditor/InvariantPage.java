@@ -58,8 +58,7 @@ public class InvariantPage extends EventBFormPage {
 			IManagedForm managedForm, Composite parent, int style,
 			IEventBEditor editor) {
 		InvariantMasterSection part = new InvariantMasterSection(managedForm,
-				parent, managedForm.getToolkit(), Section.NO_TITLE,
-				(IEventBEditor) this.getEditor());
+				parent, managedForm.getToolkit(), Section.NO_TITLE, editor);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

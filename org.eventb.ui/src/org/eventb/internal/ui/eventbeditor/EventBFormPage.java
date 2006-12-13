@@ -38,8 +38,6 @@ public abstract class EventBFormPage extends EventBEditorPage {
 	 * Constructor.
 	 * <p>
 	 * 
-	 * @param editor
-	 *            The editor contains this page
 	 * @param pageID
 	 *            The ID of the page
 	 * @param pageTitle
@@ -58,6 +56,7 @@ public abstract class EventBFormPage extends EventBEditorPage {
 	 * 
 	 * @see org.eclipse.ui.forms.editor.FormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -71,7 +70,7 @@ public abstract class EventBFormPage extends EventBEditorPage {
 		body.setLayout(layout);
 
 		part = createMasterSection(managedForm, body, Section.TITLE_BAR
-				| Section.DESCRIPTION, (IEventBEditor) this.getEditor());
+				| Section.DESCRIPTION, getEventBEditor());
 		managedForm.addPart(part);
 
 		// createMirrorSections(body, managedForm);

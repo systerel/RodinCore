@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.SectionPart;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
@@ -67,20 +68,17 @@ public class DependenciesPage extends EventBEditorPage {
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
-		IEventBEditor eventBEditor = (IEventBEditor) this.getEditor();
-		IRodinFile rodinFile = eventBEditor
-				.getRodinInput();
-
+		final IEventBEditor eventBEditor = getEventBEditor();
+		final IRodinFile rodinFile = eventBEditor.getRodinInput();
+		final FormToolkit toolkit = getManagedForm().getToolkit();
 		if (rodinFile instanceof IMachineFile) {
-			SectionPart part = new RefinesSection(eventBEditor, this
-					.getManagedForm().getToolkit(), body);
+			SectionPart part = new RefinesSection(eventBEditor, toolkit, body);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 150;
 			part.getSection().setLayoutData(gd);
 			managedForm.addPart(part);
 
-			part = new SeesSection(eventBEditor, this.getManagedForm()
-					.getToolkit(), body);
+			part = new SeesSection(eventBEditor, toolkit, body);
 			gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 250;
 
@@ -88,8 +86,7 @@ public class DependenciesPage extends EventBEditorPage {
 			managedForm.addPart(part);
 
 		} else if (rodinFile instanceof IContextFile) {
-			SectionPart part = new ExtendsSection(eventBEditor, this
-					.getManagedForm().getToolkit(), body);
+			SectionPart part = new ExtendsSection(eventBEditor, toolkit, body);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 250;
 

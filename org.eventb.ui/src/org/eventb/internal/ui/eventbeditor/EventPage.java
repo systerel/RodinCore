@@ -56,8 +56,7 @@ public class EventPage extends EventBFormPage {
 			IManagedForm managedForm, Composite parent, int style,
 			IEventBEditor editor) {
 		EventMasterSection part = new EventMasterSection(managedForm, parent,
-				managedForm.getToolkit(), Section.NO_TITLE, (IEventBEditor) this
-						.getEditor());
+				managedForm.getToolkit(), Section.NO_TITLE, editor);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

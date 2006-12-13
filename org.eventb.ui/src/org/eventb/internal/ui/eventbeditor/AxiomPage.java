@@ -56,8 +56,7 @@ public class AxiomPage extends EventBFormPage {
 			IManagedForm managedForm, Composite parent, int style,
 			IEventBEditor editor) {
 		AxiomMasterSection part = new AxiomMasterSection(managedForm, parent,
-				managedForm.getToolkit(), Section.NO_TITLE, (IEventBEditor) this
-						.getEditor());
+				managedForm.getToolkit(), Section.NO_TITLE, getEventBEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;
