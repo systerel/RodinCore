@@ -29,7 +29,7 @@ import org.eventb.core.ast.UnaryPredicate;
 
 
 /**
- * This is a collection of static constante and methods that are used often in relation
+ * This is a collection of static constants and methods that are used often in relation
  * to the sequent prover.
  * <p>
  * Note that they are public but not published and are subject to change. They are to be
