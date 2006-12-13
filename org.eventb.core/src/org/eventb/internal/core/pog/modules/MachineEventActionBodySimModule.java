@@ -92,9 +92,10 @@ public class MachineEventActionBodySimModule extends
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 			simPredicate = simPredicate.applyAssignments(substitution, factory);
 			
+			String sequentName = concreteEventLabel + "/" + actionLabel + "/SIM";
 			createPO(
 					target, 
-					concreteEventLabel + "/" + actionLabel + "/SIM", 
+					sequentName, 
 					"Action simulation",
 					fullHypothesis,
 					hyp,
@@ -103,11 +104,10 @@ public class MachineEventActionBodySimModule extends
 							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
 							new POGSource(IPOSource.ABSTRACT_ROLE, simActions.get(i)),
 							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
-					emptyHints,
+					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);
 
 		}
 	}	
-		
 
 }

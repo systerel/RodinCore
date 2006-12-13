@@ -26,12 +26,13 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.pog.state.IWitnessTable;
+import org.eventb.internal.core.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class WitnessTable implements IWitnessTable {
+public class WitnessTable extends State implements IWitnessTable {
 
 	private final List<ISCWitness> witnesses;
 	private final BecomesEqualTo primeSubstitution;

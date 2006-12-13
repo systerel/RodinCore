@@ -354,7 +354,7 @@ extends LabeledElementModule {
 
 	protected void setImmutable(ILabelSymbolInfo symbolInfo) {
 		if (symbolInfo != null)
-			symbolInfo.setImmutable();
+			symbolInfo.makeImmutable();
 	}
 	
 	private IParsedFormula parsedFormula;

@@ -113,7 +113,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 						GraphProblem.ActionDisjointLHSError);
 				actionSymbolInfo.setError();
 			}
-			actionSymbolInfo.setImmutable();
+			actionSymbolInfo.makeImmutable();
 		}
 	}
 

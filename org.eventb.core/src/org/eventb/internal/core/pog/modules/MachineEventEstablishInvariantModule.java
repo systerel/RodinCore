@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSource;
@@ -20,7 +21,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -43,9 +43,10 @@ public class MachineEventEstablishInvariantModule extends MachineEventInvariantM
 			ISCInvariant invariant, 
 			String invariantLabel, 
 			Predicate invPredicate, 
-			ArrayList<POGPredicate> hyp, 
 			Set<FreeIdentifier> freeIdents,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
+		
+		ArrayList<POGPredicate> hyp = makeActionHypothesis();
 		
 		LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		
@@ -56,9 +57,10 @@ public class MachineEventEstablishInvariantModule extends MachineEventInvariantM
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());	
 		predicate = predicate.applyAssignments(substitution, factory);
 		
+		String sequentName = concreteEventLabel + "/" + invariantLabel + "/INV";
 		createPO(
 				target, 
-				concreteEventLabel + "/" + invariantLabel + "/INV", 
+				sequentName, 
 				"Invariant " + (isInitialisation ? " establishment" : " preservation"),
 				fullHypothesis,
 				hyp,
@@ -66,7 +68,9 @@ public class MachineEventEstablishInvariantModule extends MachineEventInvariantM
 				sources(
 						new POGSource(IPOSource.DEFAULT_ROLE, concreteEvent), 
 						new POGSource(IPOSource.DEFAULT_ROLE, invariant)),
-				emptyHints,
+				hints(
+						getLocalHypothesisSelectionHint(target, sequentName),
+						getInvariantPredicateSelectionHint(target, invariant)),
 				monitor);
 	}
 

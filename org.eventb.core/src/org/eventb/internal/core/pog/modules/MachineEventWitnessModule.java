@@ -139,7 +139,7 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 					hints(
 							new POGIntervalSelectionHint(
 									eventHypothesisManager.getRootHypothesis(target),
-									getSequentHypothesis(target.getSequent(sequentName))
+									getSequentHypothesis(target, sequentName)
 							)
 					),
 					monitor);

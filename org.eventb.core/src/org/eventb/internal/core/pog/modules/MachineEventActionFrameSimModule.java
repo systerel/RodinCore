@@ -106,9 +106,10 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 					continue;
 			}
 			
+			String sequentName = concreteEventLabel + "/" + variable.getName() + "/EQL";
 			createPO(
 					target, 
-					concreteEventLabel + "/" + variable.getName() + "/EQL", 
+					sequentName, 
 					"Equality " + (isInitialisation ? " establishment" : " preservation"),
 					fullHypothesis,
 					hyp,
@@ -116,7 +117,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 					sources(
 							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
 							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
-					emptyHints,
+					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);
 
 		}

@@ -16,13 +16,14 @@ import org.eventb.core.ISCContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.internal.core.state.State;
 import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class ContextPointerArray implements IContextPointerArray {
+public class ContextPointerArray extends State implements IContextPointerArray {
 
 	private final int stateSize;
 	

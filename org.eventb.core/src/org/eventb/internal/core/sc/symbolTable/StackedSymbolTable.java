@@ -17,7 +17,7 @@ import org.eventb.internal.core.sc.Messages;
  * @author Stefan Hallerstede
  *
  */
-public class StackedSymbolTable<I extends ISymbolInfo> extends SymbolTable<I> {
+public abstract class StackedSymbolTable<I extends ISymbolInfo> extends SymbolTable<I> {
 
 	protected final ISymbolTable<I> parentTable;
 	

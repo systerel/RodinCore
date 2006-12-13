@@ -9,12 +9,13 @@ package org.eventb.internal.core.pog;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.ITypingState;
+import org.eventb.internal.core.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class TypingState implements ITypingState {
+public class TypingState extends State implements ITypingState {
 	
 	private ITypeEnvironment typeEnvironment;
 

@@ -9,8 +9,10 @@ package org.eventb.core.pog.state;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FreeIdentifier;
@@ -32,8 +34,9 @@ public interface IHypothesisManager extends IStatePOG, Iterable<FreeIdentifier> 
 	 * of this manager can be accessed via the <code>Iterable</code> interface it implements.
 	 * 
 	 * @param identifier the free identifier to be added
+	 * @throws CoreException TODO
 	 */
-	void addIdentifier(FreeIdentifier identifier);
+	void addIdentifier(FreeIdentifier identifier) throws CoreException;
 	
 	/**
 	 * Returns the parent element from which the hypothesis are taken
@@ -43,16 +46,30 @@ public interface IHypothesisManager extends IStatePOG, Iterable<FreeIdentifier> 
 	IRodinElement getParentElement();
 	
 	/**
-	 * Return the name for the hypothesis set of a predicate element.
+	 * Returns the name for the hypothesis set of a predicate element.
 	 * After this method has been called the hypothesis set must be created
 	 * when <code>createHypothesis</code> is called. If this method was not called
 	 * the correspondingly named hypothesis set does not need to be created. 
 	 * @param element the predicate elemenent for which a hypothesis set is required
 	 * 
 	 * @return the name of the hypothesis set
-	 * @throws RodinDBException if there was a problem accessing the database
+	 * @throws CoreException TODO
+	 * 
+	 * TODO rename to makeHypothesis()
 	 */
-	IPOPredicateSet getHypothesis(IPOFile file, ISCPredicateElement element) throws RodinDBException;
+	IPOPredicateSet getHypothesis(IPOFile file, ISCPredicateElement element) throws CoreException;
+	
+	/**
+	 * Returns a handle to a predicate of this hypothesis manager. 
+	 * This requires that the hypothesis is immutable. 
+	 * 
+	 * @param file the target PO file
+	 * @param element the predicate element corresponding to the predicate
+	 * @return a handle to the predicate in the PO file corresponding to 
+	 * 		the predicate element passed as the parameter
+	 * @throws CoreException TODO
+	 */
+	IPOPredicate getPredicate(IPOFile file, ISCPredicateElement element) throws CoreException;
 	
 	/**
 	 * Creates the requested hypothesis sets in the proof olgigation file.

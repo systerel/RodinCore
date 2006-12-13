@@ -9,12 +9,13 @@ package org.eventb.internal.core.sc;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.sc.state.IParsedFormula;
+import org.eventb.internal.core.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class ParsedFormula implements IParsedFormula {
+public class ParsedFormula extends State implements IParsedFormula {
 
 	private Formula formula;
 	

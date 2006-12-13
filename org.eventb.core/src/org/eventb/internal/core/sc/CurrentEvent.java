@@ -10,12 +10,13 @@ package org.eventb.internal.core.sc;
 import org.eventb.core.IEvent;
 import org.eventb.core.sc.state.ICurrentEvent;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
+import org.eventb.internal.core.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class CurrentEvent implements ICurrentEvent {
+public class CurrentEvent extends State implements ICurrentEvent {
 
 	private final IEvent event;
 	private final IEventSymbolInfo eventSymbolInfo;

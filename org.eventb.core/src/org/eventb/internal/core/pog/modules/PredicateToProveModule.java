@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
@@ -18,7 +19,6 @@ import org.eventb.core.pog.POGHint;
 import org.eventb.core.pog.POGIntervalSelectionHint;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -32,7 +32,7 @@ public abstract class PredicateToProveModule extends PredicateModule {
 			String elementLabel, 
 			ISCPredicateElement predicateElement, 
 			Predicate predicate, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		if(!goalIsTrivial(predicate)) {
 			IPOPredicateSet hypothesis = hypothesisManager.getHypothesis(target, predicateElement);
 			createPO(

@@ -26,6 +26,23 @@ import org.rodinp.core.RodinDBException;
  * in the interval and <code>getStart()</code> denotes the predecessor of the first predicate set
  * contained in the interval.
  * </p>
+ * The following Java template shows how a selection can be read:
+ * <pre>
+ *	IPOPredicateSet endP = selectionHint.getEnd();
+ *	if (endP == null) {
+ *		IPOPredicate pred = selectionHint.getPredicate();
+ *		... // do something with pred
+ *	} else {
+ *		IPOPredicateSet startP = selectionHint.getStart();
+ *		while (!endP.equals(startP)) {
+ *			IPOPredicate[] preds = endP.getPredicates();
+ *			for (IPOPredicate pred : preds) {
+ *				... // do something with pred
+ *			}
+ *			endP = endP.getParentPredicateSet();
+ *		}
+ *	}
+ *</pre>
  * 
  * @author Stefan Hallerstede
  *

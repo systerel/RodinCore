@@ -7,24 +7,19 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSource;
-import org.eventb.core.ISCAction;
 import org.eventb.core.ISCInvariant;
-import org.eventb.core.ISCWitness;
-import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -47,34 +42,12 @@ public class MachineEventPreserveInvariantModule extends MachineEventInvariantMo
 			ISCInvariant invariant, 
 			String invariantLabel, 
 			Predicate invPredicate, 
-			ArrayList<POGPredicate> hyp, 
 			Set<FreeIdentifier> freeIdents,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		
 		LinkedList<POGPredicate> bighyp = new LinkedList<POGPredicate>();
-		bighyp.addAll(hyp);
-		
-		List<Assignment> nondet = concreteEventActionTable.getNondetAssignments();
-		List<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
-		for (int k=0; k<nondet.size(); k++) {
-			bighyp.add(
-					new POGPredicate(
-							nondetActions.get(k), 
-							nondet.get(k).getBAPredicate(factory)));
-		}
-		List<Predicate> nondetWitPrds = witnessTable.getNondetPredicates();
-		List<FreeIdentifier> witnessedVars = witnessTable.getNondetAssignedVariables();
-		List<ISCWitness> nondetWits = witnessTable.getNondetWitnesses();
-		for (int i=0; i<nondetWits.size(); i++) {
-			FreeIdentifier ident = witnessedVars.get(i).isPrimed() ?
-					witnessedVars.get(i).withoutPrime(factory) :
-					witnessedVars.get(i);
-			if (freeIdents.contains(ident))
-				bighyp.add(
-						new POGPredicate(
-								nondetWits.get(i),
-								nondetWitPrds.get(i)));
-		}
+		bighyp.addAll(makeActionHypothesis());
+		bighyp.addAll(makeWitnessHypothesis());
 		
 		LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		if (concreteEventActionTable.getDeltaPrime() != null)
@@ -93,9 +66,10 @@ public class MachineEventPreserveInvariantModule extends MachineEventInvariantMo
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 		predicate = predicate.applyAssignments(substitution, factory);
 		
+		String sequentName = concreteEventLabel + "/" + invariantLabel + "/INV";
 		createPO(
 				target, 
-				concreteEventLabel + "/" + invariantLabel + "/INV", 
+				sequentName, 
 				"Invariant " + (isInitialisation ? " establishment" : " preservation"),
 				fullHypothesis,
 				bighyp,
@@ -104,7 +78,9 @@ public class MachineEventPreserveInvariantModule extends MachineEventInvariantMo
 						new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
 						new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent), 
 						new POGSource(IPOSource.DEFAULT_ROLE, invariant)),
-				emptyHints,
+				hints(
+						getLocalHypothesisSelectionHint(target, sequentName),
+						getInvariantPredicateSelectionHint(target, invariant)),
 				monitor);
 	}
 

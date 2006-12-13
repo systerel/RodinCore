@@ -87,7 +87,7 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	 * Make this symbol info immutable.
 	 * It cannot be made mutable again.
 	 */
-	public void setImmutable() {
+	public void makeImmutable() {
 		mutable = false;
 	}
 

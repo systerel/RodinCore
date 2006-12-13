@@ -11,12 +11,13 @@ import java.util.Hashtable;
 
 import org.eventb.core.ISCContext;
 import org.eventb.core.sc.state.IContextTable;
+import org.eventb.internal.core.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class ContextTable implements IContextTable {
+public class ContextTable extends State implements IContextTable {
 
 	private final Hashtable<String, ISCContext> contexts;
 	

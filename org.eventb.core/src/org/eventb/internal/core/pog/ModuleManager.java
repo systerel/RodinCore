@@ -12,8 +12,10 @@ import java.util.Hashtable;
 import org.eventb.core.pog.IModule;
 import org.eventb.core.pog.IModuleManager;
 import org.eventb.internal.core.pog.modules.ContextAxiomModule;
+import org.eventb.internal.core.pog.modules.ContextCommitHypothesesModule;
 import org.eventb.internal.core.pog.modules.ContextHypothesisModule;
 import org.eventb.internal.core.pog.modules.ContextTheoremModule;
+import org.eventb.internal.core.pog.modules.MachineCommitHypothesesModule;
 import org.eventb.internal.core.pog.modules.MachineEventActionBodySimModule;
 import org.eventb.internal.core.pog.modules.MachineEventActionFrameSimModule;
 import org.eventb.internal.core.pog.modules.MachineEventActionModule;
@@ -64,6 +66,7 @@ public class ModuleManager implements IModuleManager {
 								new MachineHypothesisModule(),
 								new MachineTheoremModule(),
 								new MachineInvariantModule(),
+								new MachineCommitHypothesesModule(),
 								new MachineVariantModule(),
 								new MachineEventModule()
 						};
@@ -96,7 +99,8 @@ public class ModuleManager implements IModuleManager {
 						return new IModule[] {
 								new ContextHypothesisModule(),
 								new ContextTheoremModule(),
-								new ContextAxiomModule()
+								new ContextAxiomModule(),
+								new ContextCommitHypothesesModule()
 						};
 					}
 

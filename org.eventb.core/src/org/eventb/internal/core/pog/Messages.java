@@ -18,6 +18,9 @@ public final class Messages {
 	// internal error messages
 	
 	public static String pog_multipleRefinementError;
+	public static String pog_immutableHypothesisViolation;
+	public static String pog_mutableHypothesisViolation;
+	
 	
 	// build
 	public static String build_cleaning;

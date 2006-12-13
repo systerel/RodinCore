@@ -21,12 +21,13 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.IEventActionTable;
+import org.eventb.internal.core.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class EventActionTable implements IEventActionTable {
+public abstract class EventActionTable extends State implements IEventActionTable {
 	
 	protected final List<ISCAction> actions;
 	protected final ArrayList<Assignment> assignments;

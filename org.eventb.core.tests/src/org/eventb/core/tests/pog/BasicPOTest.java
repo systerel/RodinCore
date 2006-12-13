@@ -18,6 +18,7 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPOSelectionHint;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
@@ -126,6 +127,52 @@ public abstract class BasicPOTest extends EventBTest {
 				sequent.getGoals()[0].getPredicateString());
 	}
 	
+	public void sequentHasSelectionHints(
+			IPOSequent sequent, 
+			ITypeEnvironment typeEnvironment, 
+			String... predicates) throws Exception {
+		HashSet<String> selected = getSelectionHints(sequent);
+		
+		for (String predicate : predicates) {
+			String string = getNormalizedPredicate(predicate, typeEnvironment);
+			assertTrue("hints should contain " + string, selected.contains(string));
+		}
+	}
+	
+	public void sequentHasNotSelectionHints(
+			IPOSequent sequent, 
+			ITypeEnvironment typeEnvironment, 
+			String... predicates) throws Exception {
+		HashSet<String> selected = getSelectionHints(sequent);
+		
+		for (String predicate : predicates) {
+			String string = getNormalizedPredicate(predicate, typeEnvironment);
+			assertFalse("hints should not contain " + string, selected.contains(string));
+		}
+	}
+	
+	private HashSet<String> getSelectionHints(IPOSequent sequent) throws Exception {
+		IPOSelectionHint[] selectionHints = sequent.getSelectionHints();
+		HashSet<String> set = new HashSet<String>(selectionHints.length * 17 / 3 + 1);
+		for (IPOSelectionHint selectionHint : selectionHints) {
+			IPOPredicateSet endP = selectionHint.getEnd();
+			if (endP == null) {
+				IPOPredicate pred = selectionHint.getPredicate();
+				set.add(pred.getPredicateString());
+			} else {
+				IPOPredicateSet startP = selectionHint.getStart();
+				while (!endP.equals(startP)) {
+					IPOPredicate[] preds = endP.getPredicates();
+					for (IPOPredicate predicate : preds) {
+						set.add(predicate.getPredicateString());
+					}
+					endP = endP.getParentPredicateSet();
+				}
+			}
+		}
+		return set;
+	}
+
 	private HashSet<String> getPredicatesFromSets(IPOPredicateSet predicateSet) throws Exception {
 		HashSet<String> result = new HashSet<String>(4047);
 		IPOPredicateSet set = predicateSet;

@@ -81,7 +81,7 @@ public interface ISymbolInfo extends Comparable {
 	/**
 	 * Turns the symbol immutable
 	 */
-	void setImmutable();
+	void makeImmutable();
 	
 	/**
 	 * Creates a suitable marker for collisions in the symbol table.

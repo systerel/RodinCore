@@ -166,7 +166,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 							identifierSymbolTable, 
 							factory, 
 							abstractCarrierSetCreator);
-				symbolInfo.setImmutable();
+				symbolInfo.makeImmutable();
 			}
 			
 			ISCConstant[] constants = context.getSCConstants();
@@ -179,7 +179,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 							identifierSymbolTable, 
 							factory, 
 							abstractConstantCreator);
-				symbolInfo.setImmutable();
+				symbolInfo.makeImmutable();
 			}
 						
 		}
@@ -206,7 +206,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 						abstractVariableCreator);
 			if (variable.isForbidden())
 				symbolInfo.setForbidden();
-			symbolInfo.setImmutable();
+			symbolInfo.makeImmutable();
 		}
 		
 	}

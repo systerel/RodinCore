@@ -46,15 +46,16 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 		if (actionsLength == 0)
 			return;
 		
+		POGHint[] hints = hints(
+				new POGIntervalSelectionHint(
+						eventHypothesisManager.getRootHypothesis(target), 
+						eventHypothesisManager.getFullHypothesis(target)));
+		
 		for (int k=0; k<actionsLength; k++) {
 			ISCAction action = concreteEventActionTable.getActions().get(k);
 			Assignment assignment = concreteEventActionTable.getAssignments().get(k);
 			
 			POGSource[] sources = sources(new POGSource(IPOSource.DEFAULT_ROLE, action));
-			POGHint[] hints = hints(
-					new POGIntervalSelectionHint(
-							eventHypothesisManager.getRootHypothesis(target), 
-							eventHypothesisManager.getFullHypothesis(target)));
 			
 			if (abstractEventActionTable.getIndexOfCorrespondingAbstract(k) == -1) {
 				

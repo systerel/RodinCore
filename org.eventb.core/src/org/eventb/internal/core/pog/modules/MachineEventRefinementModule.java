@@ -37,6 +37,7 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	protected IAbstractEventActionTable abstractEventActionTable;
 	protected IWitnessTable witnessTable;
 
+	@Deprecated
 	protected ArrayList<POGPredicate> makeActionHypothesis(HashSet<FreeIdentifier> freeIdents) {
 		// create local hypothesis for nondeterministic assignments
 		
@@ -71,7 +72,8 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 		
 		for (int i=0; i<nondetAssignments.size(); i++) {
 			hyp.add(
-					new POGPredicate(nondetActions.get(i),
+					new POGPredicate(
+							nondetActions.get(i),
 							nondetAssignments.get(i).getBAPredicate(factory)));
 		}
 		return hyp;		

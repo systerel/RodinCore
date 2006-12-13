@@ -14,6 +14,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
@@ -24,6 +25,8 @@ import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Type;
 import org.eventb.core.pog.state.IHypothesisManager;
+import org.eventb.internal.core.Util;
+import org.eventb.internal.core.state.State;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -31,13 +34,15 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class HypothesisManager implements IHypothesisManager {
+public abstract class HypothesisManager extends State implements IHypothesisManager {
 
 	public Iterator<FreeIdentifier> iterator() {
 		return identifiers.iterator();
 	}
 
-	public void addIdentifier(FreeIdentifier identifier) {
+	public void addIdentifier(FreeIdentifier identifier) throws CoreException {
+		if (isImmutable())
+			throw Util.newCoreException(Messages.pog_immutableHypothesisViolation);
 		identifiers.add(identifier);
 	}
 
@@ -92,11 +97,28 @@ public abstract class HypothesisManager implements IHypothesisManager {
 		return hypothesisNames[index];
 	}
 
-	public IPOPredicateSet getHypothesis(IPOFile file, ISCPredicateElement element) throws RodinDBException {
+	public IPOPredicateSet getHypothesis(IPOFile file, ISCPredicateElement element) throws CoreException {
+		if (isImmutable())
+			throw Util.newCoreException(Messages.pog_immutableHypothesisViolation);
 		Integer index = predicateMap.get(element.getElementName());
 		if (index == null)
 			return null;
 		return file.getPredicateSet(getHypothesisName(index));
+	}
+
+	// anticipate the predicate set in which the predicate will be located
+	public IPOPredicate getPredicate(IPOFile file, ISCPredicateElement element) throws CoreException {
+		if (!isImmutable())
+			throw Util.newCoreException(Messages.pog_mutableHypothesisViolation);
+		Integer index = predicateMap.get(element.getElementName());
+		if (index == null)
+			return null;
+		for (int i=index+1; i< hypothesisNames.length; i++) {
+			if (hypothesisNames[i] != null) {
+				return file.getPredicateSet(hypothesisNames[i]).getPredicate(PRD_NAME_PREFIX + index);
+			}
+		}
+		return file.getPredicateSet(allHypName).getPredicate(PRD_NAME_PREFIX + index);
 	}
 
 	public void createHypotheses(IPOFile file, IProgressMonitor monitor) throws RodinDBException {

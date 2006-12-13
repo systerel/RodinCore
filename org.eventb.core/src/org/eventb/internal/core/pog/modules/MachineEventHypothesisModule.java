@@ -171,7 +171,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 		return concreteEventGuardTable;
 	}
 
-	private void fetchPostValueVariables(Set<FreeIdentifier> identifiers) {
+	private void fetchPostValueVariables(Set<FreeIdentifier> identifiers) throws CoreException {
 		for (FreeIdentifier identifier : identifiers) {
 			FreeIdentifier primedIdentifier = identifier.withPrime(factory);
 			if (eventTypeEnvironment.contains(primedIdentifier.getName()))
@@ -181,7 +181,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 		}
 	}
 
-	private void fetchVariables(ISCVariable[] variables) throws RodinDBException {
+	private void fetchVariables(ISCVariable[] variables) throws CoreException {
 		for (ISCVariable variable : variables) {
 			FreeIdentifier identifier = variable.getIdentifier(factory);
 			eventTypeEnvironment.add(identifier);

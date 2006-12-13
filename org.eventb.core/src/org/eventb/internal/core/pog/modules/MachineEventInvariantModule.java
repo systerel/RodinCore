@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,12 +19,12 @@ import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.POGPredicate;
+import org.eventb.core.pog.POGHint;
+import org.eventb.core.pog.POGPredicateSelectionHint;
 import org.eventb.core.pog.state.IMachineInvariantTable;
 import org.eventb.core.pog.state.IStatePOG;
 import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -56,7 +55,7 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 	
 	private void processInvariants(
 			IPOFile target, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		List<ISCPredicateElement> invariants = invariantTable.getElements();
 		List<Predicate> invPredicates = invariantTable.getPredicates();
 		
@@ -81,14 +80,11 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 				
 			if (commonIdents || isInitialisation) {
 				
-				ArrayList<POGPredicate> hyp = makeActionHypothesis(freeIdents);
-				
 				createInvariantProofObligation(
 						target, 
 						(ISCInvariant) invariants.get(i), 
 						invariantLabel, 
 						predicate, 
-						hyp, 
 						freeIdents,
 						monitor);
 		
@@ -97,14 +93,18 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 		}
 	}
 	
+	protected POGHint getInvariantPredicateSelectionHint(
+			IPOFile file, ISCInvariant invariant) throws CoreException {
+		return new POGPredicateSelectionHint(machineHypothesisManager.getPredicate(file, invariant));
+	}
+	
 	protected abstract void createInvariantProofObligation(
 			IPOFile target, 
 			ISCInvariant invariant, 
 			String invariantLabel, 
 			Predicate invPredicate, 
-			ArrayList<POGPredicate> hyp, 
 			Set<FreeIdentifier> freeIdents,
-			IProgressMonitor monitor) throws RodinDBException;
+			IProgressMonitor monitor) throws CoreException;
 
 	@Override
 	public void initModule(

@@ -58,7 +58,7 @@ public class MachineEventSaveIdentifiersModule extends ProcessorModule {
 					identifierSymbolInfo.createSCElement(target, null);
 				}
 				
-				identifierSymbolInfo.setImmutable();
+				identifierSymbolInfo.makeImmutable();
 			}
 		}
 	}

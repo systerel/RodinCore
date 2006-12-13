@@ -16,6 +16,7 @@ import org.eventb.core.IPOIdentifier;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Type;
 import org.eventb.core.pog.state.IIdentifierTable;
+import org.eventb.internal.core.state.State;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinDBException;
 
@@ -24,7 +25,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 @Deprecated
-public class IdentifierTable implements IIdentifierTable {
+public class IdentifierTable extends State implements IIdentifierTable {
 
 	final private TreeSet<FreeIdentifier> identifiers;
 	

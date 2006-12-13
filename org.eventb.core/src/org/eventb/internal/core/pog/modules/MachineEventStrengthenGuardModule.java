@@ -139,15 +139,16 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		POGSource[] sources = new POGSource[sourceList.size()];
 		sourceList.toArray(sources);
 	
+		String sequentName = concreteEventLabel + "/MRG";
 		createPO(
 				target, 
-				concreteEventLabel + "/MRG", 
+				sequentName, 
 				"Guard strengthening (merge)",
 				fullHypothesis,
 				hyp,
 				new POGPredicate(concreteEvent, disjPredicate),
 				sources,
-				emptyHints,
+				hints(getLocalHypothesisSelectionHint(target, sequentName)),
 				monitor);
 	}
 
@@ -177,9 +178,10 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 			absGuard = absGuard.applyAssignments(substitution, factory);
 			
+			String sequentName = concreteEventLabel + "/" + guardLabel + "/REF";
 			createPO(
 					target, 
-					concreteEventLabel + "/" + guardLabel + "/REF", 
+					sequentName, 
 					"Guard strengthening (split)",
 					fullHypothesis,
 					hyp,
@@ -188,7 +190,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
 							new POGSource(IPOSource.ABSTRACT_ROLE, (ITraceableElement) guards.get(i)),
 							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
-					emptyHints,
+					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);
 	
 		}

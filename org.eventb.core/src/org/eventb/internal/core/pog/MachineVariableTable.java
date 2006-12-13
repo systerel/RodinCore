@@ -13,12 +13,13 @@ import java.util.Iterator;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.pog.state.IMachineVariableTable;
+import org.eventb.internal.core.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachineVariableTable implements IMachineVariableTable {
+public class MachineVariableTable extends State implements IMachineVariableTable {
 	
 	final private ArrayList<FreeIdentifier> variables;
 	final private ArrayList<FreeIdentifier> preservedVariables;

@@ -25,7 +25,6 @@ import org.eventb.core.pog.state.IPredicateTable;
 import org.eventb.core.pog.state.IStatePOG;
 import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -86,7 +85,7 @@ public class MachineEventGuardModule extends PredicateModule {
 			ISCPredicateElement predicateElement, 
 			Predicate predicate, 
 			int index,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		
 		if (isRedundantWDProofObligation(predicate, index))
 			return;

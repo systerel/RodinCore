@@ -181,9 +181,15 @@ public abstract class Module implements IModule {
 		
 	}
 
+	@Deprecated
 	protected IPOPredicateSet getSequentHypothesis(IPOSequent sequent) 
 	throws RodinDBException {
 		return sequent.getHypothesis(SEQ_HYP_NAME);
+	}
+
+	protected IPOPredicateSet getSequentHypothesis(IPOFile file, String sequentName) 
+	throws RodinDBException {
+		return file.getSequent(sequentName).getHypothesis(SEQ_HYP_NAME);
 	}
 
 	protected POGSource[] sources(POGSource... sources) {

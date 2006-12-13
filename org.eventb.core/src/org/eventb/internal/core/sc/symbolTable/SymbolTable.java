@@ -17,12 +17,13 @@ import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolTable;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
+import org.eventb.internal.core.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class SymbolTable<I extends ISymbolInfo> implements ISymbolTable<I> {
+public abstract class SymbolTable<I extends ISymbolInfo> extends State implements ISymbolTable<I> {
 
 	private final Hashtable<String, I> table;
 	
@@ -59,10 +60,12 @@ public class SymbolTable<I extends ISymbolInfo> implements ISymbolTable<I> {
 		return tableValues.iterator();
 	}
 
-	public void setImmutable() {
+	@Override
+	public void makeImmutable() {
 		for(I info : tableValues) {
-			info.setImmutable();
+			info.makeImmutable();
 		}
+		super.makeImmutable();
 	}
 
 	public int size() {

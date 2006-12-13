@@ -65,7 +65,7 @@ public interface ISymbolTable<I extends ISymbolInfo> extends Iterable<I> {
 	/**
 	 * Turns all symbols of the symbol table immutable
 	 */
-	void setImmutable();
+	void makeImmutable();
 	
 	/**
 	 * Returns the number of symbols in this symbol table

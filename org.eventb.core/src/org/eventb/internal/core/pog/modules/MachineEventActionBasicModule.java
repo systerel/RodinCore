@@ -16,6 +16,8 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.POGHint;
+import org.eventb.core.pog.POGIntervalSelectionHint;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IStatePOG;
@@ -50,6 +52,12 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 			List<ISCAction> actions, 
 			List<Assignment> assignments, 
 			IProgressMonitor monitor) throws RodinDBException, CoreException {
+		
+		POGHint[] hints = hints(
+				new POGIntervalSelectionHint(
+						eventHypothesisManager.getRootHypothesis(target), 
+						eventHypothesisManager.getFullHypothesis(target)));
+		
 		for (int i=0; i<actions.size(); i++) {
 			
 			ISCAction action = actions.get(i);
@@ -61,6 +69,7 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 					action, 
 					actionLabel, 
 					assignment, 
+					hints,
 					monitor);
 			
 			createFISPO(
@@ -68,6 +77,7 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 					action, 
 					actionLabel, 
 					assignment, 
+					hints,
 					monitor);
 			
 		}
@@ -79,6 +89,7 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 			ISCAction action, 
 			String actionLabel, 
 			Assignment assignment,
+			POGHint[] hints,
 			IProgressMonitor monitor) throws CoreException {
 		
 		Predicate wdPredicate = assignment.getWDPredicate(factory);
@@ -91,7 +102,7 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 					emptyPredicates,
 					new POGPredicate(action, wdPredicate),
 					sources(new POGSource(IPOSource.DEFAULT_ROLE, action)),
-					emptyHints,
+					hints,
 					monitor);
 		}
 	}
@@ -101,6 +112,7 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 			ISCAction action, 
 			String actionLabel, 
 			Assignment assignment,
+			POGHint[] hints,
 			IProgressMonitor monitor) throws CoreException {
 		Predicate fisPredicate = assignment.getFISPredicate(factory);
 		if(!goalIsTrivial(fisPredicate)) {
@@ -112,7 +124,7 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 					emptyPredicates,
 					new POGPredicate(action, fisPredicate),
 					sources(new POGSource(IPOSource.DEFAULT_ROLE, action)),
-					emptyHints,
+					hints,
 					monitor);
 		}
 	}

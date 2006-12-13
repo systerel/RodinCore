@@ -250,7 +250,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 
 			if (contextPointerArray.hasError(index)) {
 				for (IIdentifierSymbolInfo symbolInfo : symbolList) {
-					symbolInfo.setImmutable();
+					symbolInfo.makeImmutable();
 				}
 				continue;
 			}
@@ -258,7 +258,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			for (IIdentifierSymbolInfo symbolInfo : symbolList) {
 				if (symbolInfo.isMutable()) {
 					symbolInfo.setVisible();
-					symbolInfo.setImmutable();
+					symbolInfo.makeImmutable();
 				}
 				typeEnvironment.addName(symbolInfo.getSymbol(), symbolInfo.getType());
 			}
