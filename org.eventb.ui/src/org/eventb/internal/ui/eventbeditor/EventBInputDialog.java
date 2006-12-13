@@ -54,8 +54,6 @@ public abstract class EventBInputDialog extends Dialog {
 	 *            the parent shell of the dialog
 	 * @param title
 	 *            the title of the dialog
-	 * @param defaultName
-	 *            the default name for the event
 	 */
 	public EventBInputDialog(Shell parentShell, String title) {
 		super(parentShell);
@@ -69,6 +67,7 @@ public abstract class EventBInputDialog extends Dialog {
 	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(title);
@@ -79,6 +78,7 @@ public abstract class EventBInputDialog extends Dialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 
