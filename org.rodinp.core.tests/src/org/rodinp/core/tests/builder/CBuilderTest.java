@@ -1,8 +1,12 @@
 package org.rodinp.core.tests.builder;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinMarkerUtil;
 
 /**
  * @author lvoisin
@@ -214,6 +218,9 @@ public class CBuilderTest extends AbstractBuilderTest {
 			cty.save(null, true);		
 			runBuilder(null);
 			ToolTrace.flush();
+			
+			hasMarkers("P/x.csc");
+			
 		} finally {
 			CSCTool.FAULTY = false;
 		}
@@ -222,11 +229,35 @@ public class CBuilderTest extends AbstractBuilderTest {
 		ctx.save(null, true);
 		runBuilder(null);
 		
+		hasNotMarkers("P/x.csc");
+		
 		runBuilder(
 				"CSC extract /P/x.ctx\n" + 
 				"CSC run /P/x.csc\n" + 
 				"CSC run /P/y.csc"
 		);
+		
+		
+	}
+
+	private void hasMarkers(String name) throws CoreException {
+		IRodinFile csc = RodinCore.valueOf(getFile(name));
+		IMarker[] markers = 
+			csc.getResource().findMarkers(
+					RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER, 
+					false, 
+					IResource.DEPTH_ZERO);
+		assertNotSame("has markers", markers.length, 0);
+	}
+		
+	private void hasNotMarkers(String name) throws CoreException {
+		IRodinFile csc = RodinCore.valueOf(getFile(name));
+		IMarker[] markers = 
+			csc.getResource().findMarkers(
+					RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER, 
+					false, 
+					IResource.DEPTH_ZERO);
+		assertSame("has markers", markers.length, 0);
 	}
 		
 	/**

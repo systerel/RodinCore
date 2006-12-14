@@ -95,6 +95,7 @@ public class MachineStaticChecker extends StaticChecker {
 			
 		} finally {
 			monitor.done();
+			scMachineFile.makeConsistent(null);
 		}
 	}
 

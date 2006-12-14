@@ -17,6 +17,7 @@ import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
@@ -207,6 +209,21 @@ public class Graph implements Serializable, Iterable<Node> {
 		
 	}
 
+	public void builderSetPreferredNode(Node pNode) {
+		
+		if (pNode == null || pNode.isPreferred())
+			return;
+		
+		resetNodeLists();
+		
+		for (Node node : nodePostList)
+			node.setPreferred(false);
+		
+		pNode.markReachablePredecessorsPreferred();
+		
+		reorderPreferredNodes();
+	}
+
 	public Graph() {
 		nodes = new HashMap<String,Node>(11);
 		
@@ -282,6 +299,12 @@ public class Graph implements Serializable, Iterable<Node> {
 				return;
 			}
 			try {
+				
+				if (node.getTarget().getFile().exists())
+					node.getTarget().getFile().deleteMarkers(
+							RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER, 
+							true, 
+							IResource.DEPTH_INFINITE);
 				
 				FileRunnable runnable = 
 					new FileRunnable(tool, node.getCreator().getFile(), node.getTarget().getFile());
@@ -370,21 +393,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		}
 	}
 
-	public void setPreferredNode(Node pNode) {
-		
-		if (pNode == null || pNode.isPreferred())
-			return;
-		
-		resetNodeLists();
-		
-		for (Node node : nodePostList)
-			node.setPreferred(false);
-		
-		pNode.markReachablePredecessorsPreferred();
-		
-		reorderPreferredNodes();
-	}
-
 	private void reorderPreferredNodes() {
 		LinkedList<Node> nodeTempList = new LinkedList<Node>();
 		
@@ -407,7 +415,7 @@ public class Graph implements Serializable, Iterable<Node> {
 	 * This is an optimized version for node removal during sorting without cache invalidation
 	 * @param node The node to be removed
 	 */
-	protected void tryRemoveNode(Node node) {
+	private void tryRemoveNode(Node node) {
 		if (node.getSuccessorCount() > 0) {
 			node.setDated(false);
 			node.setPhantom(true);
@@ -537,7 +545,7 @@ public class Graph implements Serializable, Iterable<Node> {
 				// remove all tool edges from the graph (virtually!)
 				node.removeSuccessorToolCount();
 				
-				// the must must be updated as soon as the cycle disappears!
+				// the node must must be updated as soon as the cycle disappears!
 				node.setDated(true);
 				node.setCycle(true);
 				

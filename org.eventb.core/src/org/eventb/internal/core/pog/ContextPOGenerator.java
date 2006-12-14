@@ -77,6 +77,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 			return true;
 		} finally {
 			monitor.done();
+			poFile.makeConsistent(null);
 		}
 	}
 

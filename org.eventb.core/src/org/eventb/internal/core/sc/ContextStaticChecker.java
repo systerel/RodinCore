@@ -94,6 +94,7 @@ public class ContextStaticChecker extends StaticChecker {
 			
 		} finally {
 			monitor.done();
+			scContextFile.makeConsistent(null);
 		}
 	}
 
