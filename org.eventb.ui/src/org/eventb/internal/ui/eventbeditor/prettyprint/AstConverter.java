@@ -98,18 +98,17 @@ public abstract class AstConverter {
 	 */
 	private void addComponentName(IRodinFile rodinFile) {
 		// Print the Machine/Context name
-		String componentName = EventBPlugin.getComponentName(rodinFile
-				.getElementName());
+		beginLevel0();
 		if (rodinFile instanceof IMachineFile) {
-			beginLevel0();
 			bold("MACHINE");
-			append(SPACE);
 		} else if (rodinFile instanceof IContextFile) {
 			bold("CONTEXT");
-			append(SPACE);
 		}
-		append(makeHyperlink(rodinFile.getHandleIdentifier(),
-				componentName));
+		append(SPACE);
+		final String handle = rodinFile.getHandleIdentifier();
+		final String fileName = rodinFile.getElementName();
+		final String bareName = EventBPlugin.getComponentName(fileName);
+		append(makeHyperlink(handle, bareName));
 		endLevel();
 		return;
 	}
@@ -367,7 +366,7 @@ public abstract class AstConverter {
 	private void addConstants(IRodinFile rodinFile, IProgressMonitor monitor) {
 		IRodinElement[] csts;
 		try {
-			csts = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE);
+			csts = rodinFile.getChildrenOfType(IConstant.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			EventBEditorUtils.debugAndLogError(e, "Cannot get constants for "
 					+ rodinFile.getElementName());
