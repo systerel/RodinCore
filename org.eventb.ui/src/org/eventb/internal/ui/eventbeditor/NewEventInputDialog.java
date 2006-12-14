@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
@@ -448,7 +449,8 @@ public class NewEventInputDialog extends EventBInputDialog {
 					Text text = ((IEventBInputText) grdNameList[i])
 							.getTextWidget();
 					grdNames.add(text.getText());
-					grdPredicates.add(predicateText.getText());
+					grdPredicates.add(Text2EventBMathTranslator
+							.translate(predicateText.getText()));
 				}
 			}
 
@@ -463,7 +465,8 @@ public class NewEventInputDialog extends EventBInputDialog {
 					Text text = ((IEventBInputText) actNameList[i])
 							.getTextWidget();
 					actNames.add(text.getText());
-					actSubstitutions.add(actSubstitutionText.getText());
+					actSubstitutions.add(Text2EventBMathTranslator
+							.translate(actSubstitutionText.getText()));
 				}
 			}
 		}

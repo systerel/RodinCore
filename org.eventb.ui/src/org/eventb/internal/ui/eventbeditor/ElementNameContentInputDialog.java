@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
@@ -204,7 +205,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 				if (dirtyTexts.contains(textWidget)) {
 					IEventBInputText nameText = (IEventBInputText) namesList[i];
 					names.add(nameText.getTextWidget().getText());
-					contents.add(text);
+					contents.add(Text2EventBMathTranslator.translate(text));
 				}
 			}
 		}

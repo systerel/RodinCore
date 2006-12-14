@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBInputText;
 
@@ -115,7 +116,7 @@ public class NewVariantInputDialog extends EventBInputDialog {
 			expression = null;
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			Text widget = expressionText.getTextWidget();
-			expression = widget.getText();
+			expression = Text2EventBMathTranslator.translate(widget.getText());
 		}
 		super.buttonPressed(buttonId);
 	}

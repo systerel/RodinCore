@@ -71,6 +71,7 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.YES_ID, "&More", false);
 
@@ -86,6 +87,7 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createContents() {
 		Composite body = scrolledForm.getBody();
 
@@ -135,6 +137,7 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CANCEL_ID) {
 			attributes = new HashSet<String>();

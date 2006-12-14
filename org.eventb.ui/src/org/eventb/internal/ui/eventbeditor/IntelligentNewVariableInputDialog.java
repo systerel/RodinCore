@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.IInvariant;
+import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
@@ -140,7 +141,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = 50;
 		initNameText.getTextWidget().setLayoutData(gd);
-		initNameText.getTextWidget().addModifyListener(new DirtyStateListener());
+		initNameText.getTextWidget()
+				.addModifyListener(new DirtyStateListener());
 
 		initSubstitutionText = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
@@ -236,14 +238,18 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 				IEventBInputText invariantNameText = (IEventBInputText) pair
 						.getFirst();
 				if (dirtyTexts.contains(invariantPredicateText.getTextWidget())) {
-					String invName = invariantNameText.getTextWidget().getText();
-					String pred = invariantPredicateText.getTextWidget().getText();
+					String invName = invariantNameText.getTextWidget()
+							.getText();
+					String pred = Text2EventBMathTranslator
+							.translate(invariantPredicateText.getTextWidget()
+									.getText());
 					invariants.add(new Pair(invName, pred));
 				}
 			}
 			if (dirtyTexts.contains(initSubstitutionText.getTextWidget())) {
 				initName = initNameText.getTextWidget().getText();
-				initSubstitution = initSubstitutionText.getTextWidget().getText();
+				initSubstitution = initSubstitutionText.getTextWidget()
+						.getText();
 			} else {
 				initName = null;
 				initSubstitution = null;
