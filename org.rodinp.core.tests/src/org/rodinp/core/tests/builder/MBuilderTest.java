@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -30,7 +31,11 @@ public class MBuilderTest extends AbstractBuilderTest {
 	}
 	
 	protected void tearDown() throws Exception {
-		project.getProject().delete(true, true, null);
+		for (IProject project: getWorkspaceRoot().getProjects()) {
+			project.delete(true, true, null);
+		}
+		super.tearDown();
+//		project.getProject().delete(true, true, null);
 	}
 
 	private void runBuilder(String expectedTrace) throws CoreException {
@@ -125,21 +130,20 @@ public class MBuilderTest extends AbstractBuilderTest {
 		POTool.SHOW_RUN = true;	
 		
 		runBuilder(
+				"CSC run /P/z.csc\n" + 
+				"CPO run /P/z.po\n" + 
 				"CSC run /P/x.csc\n" + 
 				"CPO run /P/x.po\n" + 
-				"MSC run /P/a.msc\n" + 
-				"MPO run /P/a.po\n" + 
 				"CSC run /P/y.csc\n" + 
 				"CPO run /P/y.po\n" + 
+				"MSC run /P/a.msc\n" + 
+				"MPO run /P/a.po\n" + 
 				"MSC run /P/b.msc\n" + 
 				"MPO run /P/b.po\n" + 
 				"MSC run /P/c.msc\n" + 
 				"MPO run /P/c.po\n" + 
-				"CSC run /P/z.csc\n" + 
-				"CPO run /P/z.po\n" + 
 				"MSC run /P/d.msc\n" + 
-				"MPO run /P/d.po"
-		);
+				"MPO run /P/d.po"		);
 		
 		IRodinFile scMch = getRodinFile("P/d.msc");
 		assertContents("Invalid contents of checked machine",
@@ -167,21 +171,48 @@ public class MBuilderTest extends AbstractBuilderTest {
 		cleanBuilder();
 		ToolTrace.flush();
 		runBuilder(
+				"CSC run /P/z.csc\n" + 
+				"CPO run /P/z.po\n" + 
 				"CSC run /P/x.csc\n" + 
 				"CPO run /P/x.po\n" + 
-				"MSC run /P/a.msc\n" + 
-				"MPO run /P/a.po\n" + 
 				"CSC run /P/y.csc\n" + 
 				"CPO run /P/y.po\n" + 
+				"MSC run /P/a.msc\n" + 
+				"MPO run /P/a.po\n" + 
 				"MSC run /P/b.msc\n" + 
 				"MPO run /P/b.po\n" + 
 				"MSC run /P/c.msc\n" + 
 				"MPO run /P/c.po\n" + 
-				"CSC run /P/z.csc\n" + 
-				"CPO run /P/z.po\n" + 
 				"MSC run /P/d.msc\n" + 
 				"MPO run /P/d.po"
 		);
+	}
+	
+	/**
+	 * check that when importing a project it is subsequently built, i.e.
+	 * the graph is properly created on import
+	 */
+	public void testProjectImport() throws Exception {
+		importProject("Q");
+		
+		IRodinProject qProject = getRodinProject("Q");
+		
+		SCTool.RUN_SC = true;
+		SCTool.SHOW_CLEAN = true;
+		SCTool.SHOW_EXTRACT = true;
+		SCTool.SHOW_RUN = true;
+		
+		POTool.RUN_PO = false;
+		POTool.SHOW_CLEAN = false;
+		POTool.SHOW_EXTRACT = false;
+		POTool.SHOW_RUN = false;	
+		
+		runBuilder(qProject,
+				"CSC extract /Q/x.ctx\n" + 
+				"MSC extract /Q/a.mch\n" + 
+				"CSC run /Q/x.csc\n" + 
+				"MSC run /Q/a.msc"
+			);
 	}
 
 }

@@ -309,7 +309,7 @@ public class Node implements Serializable {
 	protected void printPhantomProblem() {
 		for(Link link : predessorLinks) {
 			if(link.source.isPhantom())
-				if(link.source.toolId == null || link.source.toolId.equals("")) {
+				if(link.source.toolId == null) {
 					IFile originFile = link.origin.target.getFile();
 					if(originFile != null)
 						MarkerHelper.addMarker(

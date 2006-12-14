@@ -59,7 +59,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	
 	class RodinBuilderDeltaVisitor implements IResourceDeltaVisitor {
 
-		final ProgressManager manager;
+		private final ProgressManager manager;
 		
 		/*
 		 * (non-Javadoc)
@@ -72,11 +72,22 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 			case IResourceDelta.ADDED:
 				// handle added resource
 				
-				if(createNode(resource) != null)
-					markNodeDated(resource, manager);
+				if (resource instanceof IFile) {
+				
+					markNodeDated(resource, true, manager);
+					
+				}
+				else if (resource instanceof IProject) {
+					if (delta.getAffectedChildren().length == 0) {
+						
+						createGraph(manager);
+						
+					}
+				}
 				break;
 			case IResourceDelta.REMOVED:
 				// handle removed resource
+				
 				Node node = state.graph.getNode(resource.getFullPath());
 				if(node == null)
 					break;
@@ -84,34 +95,42 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				break;
 			case IResourceDelta.CHANGED:
 				// handle changed resource
-				markNodeDated(resource, manager);
+				if (resource instanceof IFile) {
+					
+					markNodeDated(resource, true, manager);
+					
+				}
+				else if (resource instanceof IProject) {
+					if (delta.getAffectedChildren().length == 0) {
+					
+						createGraph(manager);
+						
+					}
+				}
 				break;
 			}
 			//return true to continue visiting children.
 			return true;
 		}
-
+		
 		public RodinBuilderDeltaVisitor(ProgressManager manager) {
 			this.manager = manager;
 		}
 	}
 	
 	Node createNode(IResource resource) {
-		if(resource instanceof IFile) {
-			IFile file = (IFile) resource;
-			IFileElementType elementType = 
-				elementTypeManager.getFileElementType(file);
-			if(elementType == null)
-				return null;
-			Node node = state.graph.getNode(resource.getFullPath());
-			
-			if(node == null) {
-				node = state.graph.builderAddNodeToGraph(resource.getFullPath());
-			}
-			return node;
-
+		assert resource instanceof IFile;
+		IFile file = (IFile) resource;
+		IFileElementType elementType = 
+			elementTypeManager.getFileElementType(file);
+		if(elementType == null)
+			return null;
+		Node node = state.graph.getNode(resource.getFullPath());
+		
+		if(node == null) {
+			node = state.graph.builderAddNodeToGraph(resource.getFullPath());
 		}
-		return null;
+		return node;
 	}
 
 	class RodinBuilderResourceVisitor implements IResourceVisitor {
@@ -119,7 +138,9 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		final ProgressManager manager;
 		
 		public boolean visit(IResource resource) {
-			markNodeDated(resource, manager);
+			if (resource instanceof IFile) {
+				markNodeDated(resource, false, manager);
+			}
 			//return true to continue visiting children.
 			return true;
 		}
@@ -212,42 +233,54 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		state.graph = new Graph();
 	}
 	
-	void markNodeDated(IResource resource, ProgressManager manager) {
-		if (resource instanceof IFile) {
-			if (ignoredFiles.contains(resource.getName()))
-				return;
-			Node node = state.graph.getNode(resource.getFullPath());
-			if(node == null) {
-				if(DEBUG)
-					System.out.println(getClass().getName() + ": Node not in dependency graph " + resource.getName()); //$NON-NLS-1$
-				node = createNode(resource);
-			}
-			if(node != null) {
+	void markNodeDated(IResource resource, boolean userOp, ProgressManager manager) {
+		assert resource instanceof IFile;
+		if (ignoredFiles.contains(resource.getName()))
+			return;
+		Node node = state.graph.getNode(resource.getFullPath());
+		if(node == null) {
+			if(DEBUG)
+				System.out.println(getClass().getName() + ": Node not in dependency graph " + resource.getName()); //$NON-NLS-1$
+			node = createNode(resource);
+		}
+		if(node != null) {
+			if (userOp) {
 				state.graph.setPreferredNode(node);
 				node.setToolId(null);
-				try {
-					state.graph.builderExtractNode(node, manager);
-				} catch (CoreException e) {
-					Util.log(e, "during extraction after change");
-				}
-			} else if(DEBUG)
-				System.out.println(getClass().getName() + ": Cannot create node " + resource.getName()); //$NON-NLS-1$
-		}
+			}
+			try {
+				state.graph.builderExtractNode(node, manager);
+			} catch (CoreException e) {
+				Util.log(e, "during extraction after change");
+			}
+		} else if(DEBUG)
+			System.out.println(getClass().getName() + ": Cannot create node " + resource.getName()); //$NON-NLS-1$
 	}
 
 	protected void fullBuild(final ProgressManager manager) throws CoreException {
-		try {
-			cleanGraph(manager, 5);
-			getProject().accept(new RodinBuilderResourceVisitor(manager));
-		} catch (CoreException e) {
-			Util.log(e, "during builder full build");
-		}
+		createGraph(manager);
 		try {
 			buildGraph(manager);
 		} catch (OperationCanceledException e) {
 			if(isInterrupted())
 				return;
 			else throw e;
+		} catch (CoreException e) {
+			Util.log(e, "during builder full build");
+		}
+	}
+
+	protected void createGraph(final ProgressManager manager) {
+		try {
+			cleanGraph(manager, 5);
+			getProject().accept(new RodinBuilderResourceVisitor(manager));
+			state.graph.builderMarkDerivedNodesDated();
+		} catch (OperationCanceledException e) {
+			if(isInterrupted())
+				return;
+			else throw e;
+		} catch (CoreException e) {
+			Util.log(e, "during builder graph creation");
 		}
 	}
 	
@@ -289,14 +322,18 @@ public class RodinBuilder extends IncrementalProjectBuilder {
      }
 
 	protected void incrementalBuild(IResourceDelta delta, ProgressManager manager) throws CoreException {
+
 		// the visitor does the work.
 		delta.accept(new RodinBuilderDeltaVisitor(manager));
+		
 		try {
 			buildGraph(manager);
 		} catch (OperationCanceledException e) {
 			if(isInterrupted())
 				return;
 			else throw e;
+		} catch (CoreException e) {
+			Util.log(e, "during builder incremental build");
 		}
 	}
 

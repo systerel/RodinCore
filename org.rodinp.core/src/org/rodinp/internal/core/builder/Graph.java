@@ -196,6 +196,17 @@ public class Graph implements Serializable, Iterable<Node> {
 				node.setDated(false);
 		}
 
+	public void builderMarkDerivedNodesDated() {
+		
+		resetNodeLists();
+		
+		for(Node node : nodePostList) {
+			if (node.isDerived())
+				node.setDated(true);
+		}
+		
+	}
+
 	public Graph() {
 		nodes = new HashMap<String,Node>(11);
 		
