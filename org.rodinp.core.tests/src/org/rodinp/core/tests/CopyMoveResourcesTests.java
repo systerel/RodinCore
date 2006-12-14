@@ -81,9 +81,14 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/X.test");
+		createNEPositive(rfDest, "bar", null);
+		// Destination file is left unsaved
 		
 		copyPositive(rfSource, rfDest.getParent(), null, null, true);
-		assertEquals("Internal element not copied with its container", 1, rfDest.getChildren().length);
+		assertElementDescendants("Internal element not copied with its container",
+				"X.test\n" + 
+				"  foo[org.rodinp.core.tests.namedElement]",
+				rfDest);
 	}
 	
 	/**
@@ -152,9 +157,14 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/Y.test");
+		createNEPositive(rfDest, "bar", null);
+		// Destination file is left unsaved
 		
 		copyPositive(rfSource, rfDest.getParent(), null, "Y.test", true);
-		assertEquals("Internal element not copied with its container", rfDest.getChildren().length, 1);
+		assertElementDescendants("Internal element not copied with its container",
+				"Y.test\n" + 
+				"  foo[org.rodinp.core.tests.namedElement]",
+				rfDest);
 	}
 
 	/**
@@ -167,9 +177,14 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/X.test");
+		createNEPositive(rfDest, "bar", null);
+		// Destination file is left unsaved
 		
 		copyNegative(rfSource, rfDest.getParent(), null, null, false, IRodinDBStatusConstants.NAME_COLLISION);
-		assertEquals("Internal element copied but not its container", rfDest.getChildren().length, 0);
+		assertElementDescendants("Destination file should not have changed",
+				"X.test\n" + 
+				"  bar[org.rodinp.core.tests.namedElement]",
+				rfDest);
 	}
 	
 	/**
@@ -414,9 +429,14 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/X.test");
+		createNEPositive(rfDest, "bar", null);
+		// Destination file is left unsaved
 		
 		movePositive(rfSource, rfDest.getParent(), null, null, true);
-		assertEquals("Internal element not moved with its container", 1, rfDest.getChildren().length);
+		assertElementDescendants("Internal element not copied with its container",
+				"X.test\n" + 
+				"  foo[org.rodinp.core.tests.namedElement]",
+				rfDest);
 	}
 
 	/**
@@ -450,9 +470,14 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/Y.test");
+		createNEPositive(rfDest, "bar", null);
+		// Destination file is left unsaved
 		
 		movePositive(rfSource, rfDest.getParent(), null, "Y.test", true);
-		assertEquals("Internal element not moved with its container", rfDest.getChildren().length, 1);
+		assertElementDescendants("Internal element not copied with its container",
+				"Y.test\n" + 
+				"  foo[org.rodinp.core.tests.namedElement]",
+				rfDest);
 	}
 
 	/**
@@ -465,9 +490,14 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/X.test");
+		createNEPositive(rfDest, "bar", null);
+		// Destination file is left unsaved
 		
 		moveNegative(rfSource, rfDest.getParent(), null, null, false, IRodinDBStatusConstants.NAME_COLLISION);
-		assertEquals("Internal element moved but not its container", rfDest.getChildren().length, 0);
+		assertElementDescendants("Destination file should not have changed",
+				"X.test\n" + 
+				"  bar[org.rodinp.core.tests.namedElement]",
+				rfDest);
 	}
 	
 	/**
@@ -578,9 +608,14 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P/Y.test");
+		createNEPositive(rfDest, "bar", null);
+		// Destination file is left unsaved
 		
 		renamePositive(rfSource, rfDest.getElementName(), true);
-		assertEquals("Internal element not renamed with its container", 1, rfDest.getChildren().length);
+		assertElementDescendants("Internal element not copied with its container",
+				"Y.test\n" + 
+				"  foo[org.rodinp.core.tests.namedElement]",
+				rfDest);
 	}
 
 	/**
@@ -602,9 +637,14 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P/Y.test");
+		createNEPositive(rfDest, "bar", null);
+		// Destination file is left unsaved
 		
 		renameNegative(rfSource, rfDest.getElementName(), false, IRodinDBStatusConstants.NAME_COLLISION);
-		assertEquals("Internal element renamed but not its container", rfDest.getChildren().length, 0);
+		assertElementDescendants("Destination file should not have changed",
+				"Y.test\n" + 
+				"  bar[org.rodinp.core.tests.namedElement]",
+				rfDest);
 	}
 	
 	/**

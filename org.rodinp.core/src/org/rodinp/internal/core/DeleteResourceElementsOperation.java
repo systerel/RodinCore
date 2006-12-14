@@ -74,7 +74,7 @@ public class DeleteResourceElementsOperation extends MultiOperation {
 		}
 		// ensure the element is closed and all buffers removed
 		final RodinFile rodinFile = (RodinFile) element;
-		rodinFile.close();
+		rodinFile.revert();
 		final RodinDBManager rodinDBManager = RodinDBManager.getRodinDBManager();
 		rodinDBManager.removeBuffer(rodinFile.getMutableCopy(), true);
 		// Also remove the element from its parent, if open

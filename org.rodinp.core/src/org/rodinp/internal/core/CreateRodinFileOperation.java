@@ -69,6 +69,7 @@ public class CreateRodinFileOperation extends RodinDBOperation {
 			if (file.exists()) {
 				// update the contents of the existing file if force is true
 				if (force) {
+					rodinFile.revert();
 					InputStream stream = getInitialInputStream(rodinFile);
 					createFile(file, stream, force);
 					resultElements = new IRodinElement[] { rodinFile };

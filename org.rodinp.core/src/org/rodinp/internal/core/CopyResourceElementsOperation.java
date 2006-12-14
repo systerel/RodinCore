@@ -161,7 +161,7 @@ public class CopyResourceElementsOperation extends MultiOperation  {
 						// we can remove it
 						deleteResource(destFile, IResource.KEEP_HISTORY);
 						getDeltaFor(destRF.getRodinProject()).removed(destRF);
-						destRF.close(); // ensure the in-memory buffer for the dest RF is closed
+						destRF.revert(); // ensure the in-memory buffer for the dest RF is closed
 					} else {
 						// abort
 						throw new RodinDBException(new RodinDBStatus(

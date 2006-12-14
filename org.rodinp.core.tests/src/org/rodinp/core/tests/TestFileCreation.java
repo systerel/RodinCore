@@ -188,6 +188,26 @@ public class TestFileCreation extends ModifyingResourceTests {
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 	}
 
+	// Test creation of a Rodin file through the Rodin API, when the file exists
+	// already and has unsaved changes
+	public void testCreateUnsavedRodinFile() throws CoreException, RodinDBException{
+		// Check project is empty
+		assertEquals("Empty project", 0, rodinProject.getChildren().length);
+		
+		// Create a Rodin file and modify it
+		IRodinFile rodinFile = rodinProject.getRodinFile("toto.test");
+		rodinFile.create(false, null);
+		createNEPositive(rodinFile, "foo", null);
+		
+		// Create the same Rodin file again
+		rodinFile.create(true, null);
+		assertEquals("File should be empty", 0, rodinFile.getChildren().length);
+		
+		// Then delete it
+		rodinFile.getResource().delete(true, null);
+		assertNotExists("File should not exist", rodinFile);
+	}
+
 	// Test creation of a non-Rodin file
 	public void testCreateNonRodinFile() throws CoreException, RodinDBException{
 		// Check project is empty
