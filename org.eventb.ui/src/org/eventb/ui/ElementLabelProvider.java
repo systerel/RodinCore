@@ -56,6 +56,7 @@ public class ElementLabelProvider extends LabelProvider implements
 	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object obj) {
 		if (obj instanceof TreeNode)
 			return obj.toString();
@@ -67,6 +68,7 @@ public class ElementLabelProvider extends LabelProvider implements
 	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object obj) {
 		if (obj instanceof TreeNode)
 			return getTreeNodeImage((TreeNode) obj);
