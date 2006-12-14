@@ -23,13 +23,13 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.forms.IManagedForm;
@@ -73,15 +73,19 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 	private HypothesesSection cachedSection;
 
+	Action layoutAction;
+
 	HypothesesSection searchedSection;
 
 	private SashForm sashForm;
 
 	IUserSupport userSupport;
 
-	private Composite body;
+	Composite body;
 
 	private Composite comp;
+
+	boolean layouting;
 
 	/**
 	 * Constructor.
@@ -94,6 +98,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		super(editor, PAGE_ID, PAGE_TAB_TITLE); //$NON-NLS-1$
 		userSupport = editor.getUserSupport();
 		userSupport.addStateChangedListeners(this);
+		layouting = false;
 	}
 
 	@Override
@@ -119,7 +124,6 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 		FillLayout flayout = new FillLayout(SWT.VERTICAL);
 		sashForm.setLayout(flayout);
-		// sashForm.setLayout(new GridLayout());
 
 		comp = new Composite(sashForm, SWT.NULL);
 		comp.setBackground(form.getBackground());
@@ -149,24 +153,50 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		goalSection = new GoalSection(this, sashForm,
 				ExpandableComposite.TITLE_BAR);
 		managedForm.addPart(goalSection);
-		// goalSection.getSection().setLayoutData(
-		// new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		// body.setLayout(new ProofPageLayout());
 
-		body.addControlListener(new ControlAdapter() {
-
-			@Override
-			public void controlResized(ControlEvent e) {
-				internalLayout();
-				super.controlResized(e);
-			}
-
-		});
-		
+		body.setLayout(new ProofsPageLayout());
 		createToolBarActions(managedForm);
-		// Try auto layout in the beginning 
-		autoLayout();
+	}
+
+	/**
+	 * @author htson
+	 *         <p>
+	 *         A special layout class for the Proofs Page to fit the sections
+	 *         into the client area of the page. Depending on the state of the
+	 *         auto layout button, the sections are resize to the best display
+	 *         or not
+	 * 
+	 */
+	protected class ProofsPageLayout extends Layout {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
+		 */
+		@Override
+		protected Point computeSize(Composite composite, int wHint, int hHint,
+				boolean flushCache) {
+			ScrolledForm form = ProofsPage.this.getManagedForm().getForm();
+			Rectangle bounds = form.getBody().getBounds();
+
+			return new Point(bounds.x, bounds.y);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
+		 */
+		@Override
+		protected void layout(Composite composite, boolean flushCache) {
+			if (layouting == true) // Do nothing if already layouting (avoid loop)
+				return;
+			layouting = true;
+			if (layoutAction.isChecked())
+				autoLayout();
+			else
+				scaleLayout();
+			layouting = false;
+		}
+
 	}
 
 	/**
@@ -177,13 +207,15 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 	 *            The managed form contains the Toolbar.
 	 */
 	protected void createToolBarActions(IManagedForm managedForm) {
-		final Action layoutAction = new Action("auto", Action.AS_PUSH_BUTTON) {
+		layoutAction = new Action("auto", Action.AS_CHECK_BOX) {
 			@Override
 			public void run() {
-				autoLayout();
+				if (this.isChecked()) {
+					ProofsPage.this.body.layout();
+				}
 			}
 		};
-		layoutAction.setChecked(false);
+		layoutAction.setChecked(true); // TODO Set from preference page
 		layoutAction.setToolTipText("Automatically layout");
 
 		ScrolledForm form = managedForm.getForm();
@@ -192,32 +224,32 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		form.updateToolBar();
 	}
 
-//	private updateButtons() {
-//		
-//	}
-	
-//	private class ProofPageLayout extends Layout {
-//
-//		@Override
-//		protected Point computeSize(Composite composite, int wHint, int hHint,
-//				boolean flushCache) {
-//			Point pt = sashForm.getSize();
-//			if (sashForm != null)
-//				return new Point(pt.x, pt.y);
-//
-//			Rectangle rect = ProofsPage.this.getManagedForm().getForm()
-//					.getClientArea();
-//
-//			Point size = new Point(rect.width, rect.height);
-//			return size;
-//		}
-//
-//		@Override
-//		protected void layout(Composite composite, boolean flushCache) {
-//			ProofsPage.this.autoLayout();
-//		}
-//
-//	}
+	// private updateButtons() {
+	//		
+	// }
+
+	// private class ProofPageLayout extends Layout {
+	//
+	// @Override
+	// protected Point computeSize(Composite composite, int wHint, int hHint,
+	// boolean flushCache) {
+	// Point pt = sashForm.getSize();
+	// if (sashForm != null)
+	// return new Point(pt.x, pt.y);
+	//
+	// Rectangle rect = ProofsPage.this.getManagedForm().getForm()
+	// .getClientArea();
+	//
+	// Point size = new Point(rect.width, rect.height);
+	// return size;
+	// }
+	//
+	// @Override
+	// protected void layout(Composite composite, boolean flushCache) {
+	// ProofsPage.this.autoLayout();
+	// }
+	//
+	// }
 
 	void initHypothesisSections(IProofState ps) {
 
@@ -368,14 +400,14 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 	}
 
-	private boolean flag;
+//	private boolean flag;
 
 	int[] weights = new int[5];
 
-	public void autoLayout() {
-		if (flag)
-			return;
-		flag = true;
+	void autoLayout() {
+//		if (flag)
+//			return;
+//		flag = true;
 		weights[0] = 0;
 
 		ScrolledForm form = this.getManagedForm().getForm();
@@ -436,106 +468,104 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			totalHeight = DEFAULT_HEIGHT;
 			totalWidth = DEFAULT_WIDTH;
 		}
-//		if (totalHeight < 1) { // Not initialised yet
-//			weights[0] = 0;
-//			// UIUtils.debugProverUI("Client area: " +
-//			// sashForm.getClientArea());
-//			sashForm.setWeights(weights);
-//			form.reflow(true);
-//		} else {
-			int sum = 0;
-			// Do not resize the goalSection
+		// if (totalHeight < 1) { // Not initialised yet
+		// weights[0] = 0;
+		// // UIUtils.debugProverUI("Client area: " +
+		// // sashForm.getClientArea());
+		// sashForm.setWeights(weights);
+		// form.reflow(true);
+		// } else {
+		int sum = 0;
+		// Do not resize the goalSection
+		for (int i = 1; i < 4; i++) {
+			sum += weights[i];
+		}
+
+		if (sum < totalHeight - weights[4]) {
+			weights[0] = totalHeight - sum - weights[4];
+			Rectangle rect = sashForm
+					.computeTrim(0, 0, totalWidth, totalHeight);
+			if (ProverUIUtils.DEBUG) {
+				ProverUIUtils.debug("Total Width " + totalWidth);
+				ProverUIUtils.debug("Total Height " + totalHeight);
+				for (int i = 0; i < 5; i++) {
+					ProverUIUtils.debug("weights[" + i + "] is " + weights[i]);
+				}
+				ProverUIUtils.debug("Rect: " + rect);
+			}
+			// ProverUIUtils.debugProverUI("Client area: "
+			// + sashForm.getClientArea());
+			sashForm.setBounds(rect);
+			sashForm.setWeights(weights);
+			form.reflow(true);
+		} else {
+			weights[0] = 0;
 			for (int i = 1; i < 4; i++) {
-				sum += weights[i];
+				weights[i] = weights[i] * (totalHeight - weights[4]) / sum;
 			}
 
-			if (sum < totalHeight - weights[4]) {
-				weights[0] = totalHeight - sum - weights[4];
-				Rectangle rect = sashForm.computeTrim(0, 0, totalWidth,
-						totalHeight);
-				if (ProverUIUtils.DEBUG) {
-					ProverUIUtils.debug("Total Width " + totalWidth);
-					ProverUIUtils.debug("Total Height " + totalHeight);
-					for (int i = 0; i < 5; i++) {
-						ProverUIUtils.debug("weights[" + i + "] is "
-								+ weights[i]);
-					}
-					ProverUIUtils.debug("Rect: " + rect);
-				}
-				// ProverUIUtils.debugProverUI("Client area: "
-				// + sashForm.getClientArea());
-				sashForm.setBounds(rect);
-				sashForm.setWeights(weights);
-				form.reflow(true);
-			} else {
-				weights[0] = 0;
+			// re-adjust according to MINIMUM_SECTION_HEIGHT
+			Collection<Integer> fix = new ArrayList<Integer>();
+			if (totalHeight - weights[4] - MIN_SECTION_HEIGHT * 3 <= 0) {
 				for (int i = 1; i < 4; i++) {
-					weights[i] = weights[i] * (totalHeight - weights[4]) / sum;
+					weights[i] = MIN_SECTION_HEIGHT;
 				}
-
-				// re-adjust according to MINIMUM_SECTION_HEIGHT
-				Collection<Integer> fix = new ArrayList<Integer>();
-				if (totalHeight - weights[4] - MIN_SECTION_HEIGHT * 3 <= 0) {
-					for (int i = 1; i < 4; i++) {
-						weights[i] = MIN_SECTION_HEIGHT;
+			} else {
+				int i = checkWeight();
+				while (i != 0 && fix.size() != 3) {
+					weights[i] = MIN_SECTION_HEIGHT;
+					fix.add(new Integer(i));
+					// readjust
+					sum = 0;
+					for (int j = 1; j < 4; j++) {
+						if (!fix.contains(new Integer(j)))
+							sum += weights[j];
 					}
-				} else {
-					int i = checkWeight();
-					while (i != 0 && fix.size() != 3) {
-						weights[i] = MIN_SECTION_HEIGHT;
-						fix.add(new Integer(i));
-						// readjust
-						sum = 0;
-						for (int j = 1; j < 4; j++) {
-							if (!fix.contains(new Integer(j)))
-								sum += weights[j];
-						}
 
-						for (int j = 1; j < 4; j++) {
-							if (!fix.contains(new Integer(j)))
-								weights[j] = weights[j]
-										* (totalHeight - weights[4] - MIN_SECTION_HEIGHT
-												* fix.size()) / sum;
-						}
-
-						i = checkWeight();
+					for (int j = 1; j < 4; j++) {
+						if (!fix.contains(new Integer(j)))
+							weights[j] = weights[j]
+									* (totalHeight - weights[4] - MIN_SECTION_HEIGHT
+											* fix.size()) / sum;
 					}
+
+					i = checkWeight();
 				}
-				Rectangle rect = sashForm.computeTrim(0, 0, totalWidth,
-						totalHeight);
-				if (ProverUIUtils.DEBUG) {
-					ProverUIUtils.debug("Total Width " + totalWidth);
-					ProverUIUtils.debug("Total Height " + totalHeight);
-					for (int i = 0; i < 5; i++) {
-						ProverUIUtils.debug("weights[" + i + "] is "
-								+ weights[i]);
-					}
-					ProverUIUtils.debug("Rect: " + rect);
-				}
-
-				sashForm.setBounds(rect);
-
-				// ProverUIUtils.debugProverUI("Client area: "
-				// + sashForm.getClientArea());
-				selectedSection.getSection().layout();
-				searchedSection.getSection().layout();
-				cachedSection.getSection().layout();
-				goalSection.getSection().layout();
-				sashForm.setWeights(weights);
-				
-				// ProverUIUtils.debugProverUI("form Client area "
-				// + form.getClientArea());
-				form.reflow(true);
 			}
-//		}
+			Rectangle rect = sashForm
+					.computeTrim(0, 0, totalWidth, totalHeight);
+			if (ProverUIUtils.DEBUG) {
+				ProverUIUtils.debug("Total Width " + totalWidth);
+				ProverUIUtils.debug("Total Height " + totalHeight);
+				for (int i = 0; i < 5; i++) {
+					ProverUIUtils.debug("weights[" + i + "] is " + weights[i]);
+				}
+				ProverUIUtils.debug("Rect: " + rect);
+			}
 
-		flag = false;
+			sashForm.setBounds(rect);
+
+			// ProverUIUtils.debugProverUI("Client area: "
+			// + sashForm.getClientArea());
+			selectedSection.getSection().layout();
+			searchedSection.getSection().layout();
+			cachedSection.getSection().layout();
+			goalSection.getSection().layout();
+			sashForm.setWeights(weights);
+
+			// ProverUIUtils.debugProverUI("form Client area "
+			// + form.getClientArea());
+			// form.reflow(true);
+		}
+		// }
+
+//		flag = false;
 		// for (HypothesisRow row : selectedSection.getRows()) {
 		// row.createHypothesisText();
 		// }
 	}
 
-	void internalLayout() {
+	void scaleLayout() {
 		ScrolledForm form = this.getManagedForm().getForm();
 		Rectangle original = form.getBody().getBounds();
 		// ProverUIUtils.debugProverUI("Original bound " + original);
@@ -558,18 +588,17 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			// ProverUIUtils.debugProverUI("Vertical " + vertical.getSize());
 		}
 
-		Rectangle rect = sashForm.computeTrim(0, 0, totalWidth,
-		 totalHeight);
-		 sashForm.setBounds(rect);
-		
-		 // ProverUIUtils.debugProverUI("Client area: "
-		 // + sashForm.getClientArea());
-		 sashForm.setWeights(weights);
-		
-		 // ProverUIUtils.debugProverUI("form Client area "
-		 // + form.getClientArea());
-		 form.reflow(true);
-				
+		Rectangle rect = sashForm.computeTrim(0, 0, totalWidth, totalHeight);
+		sashForm.setBounds(rect);
+
+		// ProverUIUtils.debugProverUI("Client area: "
+		// + sashForm.getClientArea());
+		// sashForm.setWeights(weights);
+
+		// ProverUIUtils.debugProverUI("form Client area "
+		// + form.getClientArea());
+		// form.reflow(true);
+
 	}
 
 	private int checkWeight() {
