@@ -227,10 +227,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 			updateSize();
 		} else if (buttonId == IDialogConstants.OK_ID) {
-			if (dirtyTexts.contains(nameText.getTextWidget()))
-				name = nameText.getTextWidget().getText();
-			else
-				name = null;
+			name = nameText.getTextWidget().getText();
+
 			invariants = new ArrayList<Pair>();
 			for (Pair pair : invariantPairTexts) {
 				IEventBInputText invariantPredicateText = (IEventBInputText) pair

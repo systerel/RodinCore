@@ -15,9 +15,7 @@ package org.eventb.internal.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
@@ -25,37 +23,18 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eventb.core.IAction;
-import org.eventb.core.IAxiom;
-import org.eventb.core.ICarrierSet;
-import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
-import org.eventb.core.IConvergenceElement;
-import org.eventb.core.IEvent;
-import org.eventb.core.IGuard;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.IVariable;
-import org.eventb.internal.ui.eventbeditor.ElementAttributeInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
-import org.eventb.internal.ui.eventbeditor.NewEnumeratedSetInputDialog;
-import org.eventb.internal.ui.eventbeditor.NewEventInputDialog;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixActName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixAxmName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixCstName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixGrdName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixSetName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixVarName;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.EventBUIPlugin;
@@ -68,7 +47,6 @@ import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -299,263 +277,6 @@ public class UIUtils {
 			} catch (Error e) {
 				throw e;
 			}
-		}
-	}
-
-	/**
-	 * Utility method to create a event with its local variables, guards and
-	 * actions using a modal dialog.
-	 * <p>
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method.
-	 */
-	public static void newEvent(final EventBMachineEditor editor,
-			IProgressMonitor monitor) {
-		
-		final IMachineFile mchFile = editor.getRodinInput();
-		try {
-			String evtLabel = getFreeElementLabel(editor, mchFile,
-					IEvent.ELEMENT_TYPE, PrefixEvtName.QUALIFIED_NAME,
-					PrefixEvtName.DEFAULT_PREFIX);
-
-			final NewEventInputDialog dialog = new NewEventInputDialog(Display
-					.getCurrent().getActiveShell(), "New Events", evtLabel);
-
-			dialog.open();
-			final String name = dialog.getName();
-			if (name != null) {
-				final String[] varNames = dialog.getVariables();
-				final String[] grdNames = dialog.getGrdNames();
-				final String[] grdPredicates = dialog.getGrdPredicates();
-				final String[] actNames = dialog.getActNames();
-				final String[] actSubstitutions = dialog.getActSubstitutions();
-				
-				RodinCore.run(new IWorkspaceRunnable() {
-
-					public void run(IProgressMonitor pm) throws CoreException {
-
-						final String evtName = getFreeElementName(editor,
-								mchFile, IEvent.ELEMENT_TYPE,
-								PrefixEvtName.QUALIFIED_NAME,
-								PrefixEvtName.DEFAULT_PREFIX);
-						final IEvent evt = mchFile.getEvent(evtName); 
-						evt.create(null, pm);
-						evt.setLabel(name, pm);
-						evt.setConvergence(IConvergenceElement.Convergence.ORDINARY, pm);
-						evt.setInherited(false, pm);
-						editor.addNewElement(evt);
-
-						String varPrefix = getNamePrefix(editor,
-								PrefixVarName.QUALIFIED_NAME,
-								PrefixVarName.DEFAULT_PREFIX);
-
-						int varIndex = getFreeElementNameIndex(editor, evt,
-								IVariable.ELEMENT_TYPE, varPrefix);
-						for (String varName : varNames) {
-							IVariable var = evt.getVariable(varPrefix + varIndex);
-							var.create(null, pm);
-							var.setIdentifierString(varName, pm);
-							editor.addNewElement(var);
-							varIndex = getFreeElementNameIndex(evt,
-									IVariable.ELEMENT_TYPE, varPrefix,
-									varIndex + 1);
-						}
-
-						String grdPrefix = getNamePrefix(editor,
-								PrefixGrdName.QUALIFIED_NAME,
-								PrefixGrdName.DEFAULT_PREFIX);
-						int grdIndex = getFreeElementNameIndex(editor, evt,
-								IGuard.ELEMENT_TYPE, grdPrefix);
-						for (int i = 0; i < grdNames.length; i++) {
-							IGuard grd = evt.getGuard(grdPrefix + grdIndex);
-							grd.create(null, pm);
-							grd.setLabel(grdNames[i], pm);
-							grd.setPredicateString(grdPredicates[i], null);
-							editor.addNewElement(grd);
-							grdIndex = getFreeElementNameIndex(evt,
-									IGuard.ELEMENT_TYPE, grdPrefix,
-									grdIndex + 1);
-						}
-
-						String actPrefix = getNamePrefix(editor,
-								PrefixActName.QUALIFIED_NAME,
-								PrefixActName.DEFAULT_PREFIX);
-						int actIndex = getFreeElementNameIndex(editor, evt,
-								IAction.ELEMENT_TYPE, actPrefix);
-						for (int i = 0; i < actNames.length; i++) {
-							IAction act = evt.getAction(actPrefix + actIndex);
-							act.create(null, pm);
-							act.setLabel(actNames[i], pm);
-							act.setAssignmentString(actSubstitutions[i], pm);
-							editor.addNewElement(act);
-							actIndex = getFreeElementNameIndex(evt,
-									IAction.ELEMENT_TYPE, actPrefix, actIndex);
-						}
-					}
-
-				}, monitor);
-			}
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Utility method to create new carrier sets using a modal dialog.
-	 * <p>
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method.
-	 */
-	public static void newCarrierSets(final EventBContextEditor editor,
-			IProgressMonitor monitor) {
-
-		final IContextFile ctxFile = editor.getRodinInput();
-		try {
-			String identifier = getFreeElementIdentifier(editor, ctxFile,
-					ICarrierSet.ELEMENT_TYPE, PrefixSetName.QUALIFIED_NAME,
-					PrefixSetName.DEFAULT_PREFIX);
-			ElementAttributeInputDialog dialog = new ElementAttributeInputDialog(
-					Display.getCurrent().getActiveShell(), "New Carrier Sets",
-					"Name", identifier);
-
-			dialog.open();
-			final Collection<String> names = dialog.getAttributes();
-			RodinCore.run(new IWorkspaceRunnable() {
-
-				public void run(IProgressMonitor pm) throws CoreException {
-					String setPrefix = getNamePrefix(editor,
-							PrefixCstName.QUALIFIED_NAME,
-							PrefixCstName.DEFAULT_PREFIX);
-					int setIndex = getFreeElementNameIndex(editor, ctxFile,
-							ICarrierSet.ELEMENT_TYPE, setPrefix);
-					for (String name : names) {
-						ICarrierSet set = ctxFile.getCarrierSet(setPrefix
-												+ setIndex);
-						set.create(null, pm);
-						set.setIdentifierString(name, pm);
-						editor.addNewElement(set);
-						setIndex = getFreeElementNameIndex(ctxFile,
-								ICarrierSet.ELEMENT_TYPE, setPrefix,
-								setIndex + 1);
-					}
-				}
-
-			}, monitor);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Utility method to create new carrier sets using a modal dialog.
-	 * <p>
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method.
-	 */
-	public static void newEnumeratedSet(final EventBContextEditor editor,
-			IProgressMonitor monitor) {
-
-		final IContextFile ctxFile = editor.getRodinInput();
-		try {
-			String identifier = getFreeElementIdentifier(editor, ctxFile,
-					ICarrierSet.ELEMENT_TYPE, PrefixSetName.QUALIFIED_NAME,
-					PrefixSetName.DEFAULT_PREFIX);
-			final NewEnumeratedSetInputDialog dialog = new NewEnumeratedSetInputDialog(
-					Display.getCurrent().getActiveShell(),
-					"New Enumerated Set", identifier);
-
-			dialog.open();
-			final String name = dialog.getName();
-			if (name == null)
-				return;
-
-			RodinCore.run(new IWorkspaceRunnable() {
-
-				public void run(IProgressMonitor pm) throws CoreException {
-					String[] elements = dialog.getElements();
-
-					final String setName = getFreeElementName(editor, ctxFile,
-							ICarrierSet.ELEMENT_TYPE,
-							PrefixSetName.QUALIFIED_NAME,
-							PrefixSetName.DEFAULT_PREFIX);
-					final ICarrierSet set = ctxFile.getCarrierSet(setName);
-					set.create(null, pm);
-					set.setIdentifierString(name, pm);
-					editor.addNewElement(set);
-
-					final int nbElements = elements.length;
-					if (nbElements == 0)
-						return;
-
-					String namePrefix = getNamePrefix(editor,
-							PrefixAxmName.QUALIFIED_NAME,
-							PrefixAxmName.DEFAULT_PREFIX);
-					int nameIndex = getFreeElementNameIndex(editor, ctxFile,
-							IAxiom.ELEMENT_TYPE, namePrefix);
-
-					String labelPrefix = getPrefix(editor,
-							PrefixAxmName.QUALIFIED_NAME,
-							PrefixAxmName.DEFAULT_PREFIX);
-					int labelIndex = getFreeElementLabelIndex(editor,
-							ctxFile, IAxiom.ELEMENT_TYPE, labelPrefix);
-					// String axmName = namePrefix + nameIndex;
-
-					IAxiom newAxm = ctxFile.getAxiom(namePrefix + nameIndex);
-					newAxm.create(null, null);
-					newAxm.setLabel(labelPrefix + labelIndex, pm);
-					StringBuilder axmPred = new StringBuilder(name);
-					axmPred.append(" = {");
-
-					String cstPrefix = getNamePrefix(editor,
-							PrefixCstName.QUALIFIED_NAME,
-							PrefixCstName.DEFAULT_PREFIX);
-					int cstIndex = getFreeElementNameIndex(editor, ctxFile,
-							IConstant.ELEMENT_TYPE, cstPrefix);
-					String axmSep = "";
-					for (String element : elements) {
-						IConstant cst = ctxFile.getConstant(cstPrefix + cstIndex);
-						cst.create(null, pm);
-						cst.setIdentifierString(element, pm);
-						editor.addNewElement(cst);
-						cstIndex = getFreeElementNameIndex(ctxFile,
-								IConstant.ELEMENT_TYPE, cstPrefix, cstIndex + 1);
-
-						nameIndex = getFreeElementNameIndex(ctxFile,
-								IAxiom.ELEMENT_TYPE, namePrefix, nameIndex);
-						labelIndex = getFreeElementLabelIndex(editor,
-								ctxFile, IAxiom.ELEMENT_TYPE, labelPrefix,
-								labelIndex);
-						axmPred.append(axmSep);
-						axmSep = ", ";
-						axmPred.append(element);
-					}
-					axmPred.append("}");
-					newAxm.setPredicateString(axmPred.toString(), null);
-
-					for (int i = 0; i < nbElements; ++i) {
-						for (int j = i+1; j < nbElements; ++j) {
-							nameIndex = getFreeElementNameIndex(ctxFile,
-									IAxiom.ELEMENT_TYPE, namePrefix, nameIndex);
-							labelIndex = getFreeElementLabelIndex(editor,
-									ctxFile, IAxiom.ELEMENT_TYPE,
-									labelPrefix, labelIndex);
-							IAxiom axm = ctxFile.getAxiom(namePrefix + nameIndex);
-							axm.create(null, pm);
-							axm.setLabel(labelPrefix + labelIndex, pm);
-							axm.setPredicateString(elements[i] + " \u2260 "
-									+ elements[j], null);
-						}
-					}
-
-				}
-
-			}, monitor);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 

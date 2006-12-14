@@ -134,10 +134,7 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 
 			updateSize();
 		} else if (buttonId == IDialogConstants.OK_ID) {
-			if (dirtyTexts.contains(nameText.getTextWidget()))
-				name = nameText.getTextWidget().getText();
-			else
-				name = null;
+			name = nameText.getTextWidget().getText();
 			elements = new ArrayList<String>();
 			for (IEventBInputText text : elementTexts) {
 				if (dirtyTexts.contains(text.getTextWidget())) {

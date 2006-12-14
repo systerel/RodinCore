@@ -110,6 +110,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.YES_ID, "More &Var.", false);
 
@@ -125,6 +126,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 				IDialogConstants.CANCEL_LABEL, false);
 	}
 
+	@Override
 	protected void createContents() {
 		Composite body = scrolledForm.getBody();
 
@@ -164,7 +166,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		nameText.getTextWidget().setLayoutData(gd);
 		nameText.getTextWidget().addModifyListener(new DirtyStateListener());
-		
+
 		separator = toolkit.createComposite(body);
 		gd = new GridData(SWT.NONE, SWT.NONE, false, false);
 		gd.widthHint = 30;
@@ -324,6 +326,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		Composite body = scrolledForm.getBody();
 		if (buttonId == IDialogConstants.CANCEL_ID) {
@@ -374,7 +377,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 			gd = (GridData) varComposite.getLayoutData();
 			gd.widthHint = 50 * varCount + 10 * (varCount - 1);
 			updateSize();
-			
+
 		} else if (buttonId == IDialogConstants.NO_ID) {
 			IEventBInputText text = new EventBText(toolkit.createText(
 					grdNameComposite, "grd" + ++grdCount));
@@ -428,10 +431,9 @@ public class NewEventInputDialog extends EventBInputDialog {
 			varNames = new ArrayList<String>();
 			Object[] varNameList = varNameTexts.toArray();
 			for (int i = 0; i < varNameList.length; i++) {
-				Text nameText = ((IEventBInputText) varNameList[i])
-						.getTextWidget();
-				if (!nameText.getText().equals("")) {
-					varNames.add(nameText.getText());
+				Text text = ((IEventBInputText) varNameList[i]).getTextWidget();
+				if (!text.getText().equals("")) {
+					varNames.add(text.getText());
 				}
 			}
 
@@ -443,9 +445,9 @@ public class NewEventInputDialog extends EventBInputDialog {
 				Text predicateText = ((IEventBInputText) grdPredicateList[i])
 						.getTextWidget();
 				if (dirtyTexts.contains(predicateText)) {
-					Text nameText = ((IEventBInputText) grdNameList[i])
+					Text text = ((IEventBInputText) grdNameList[i])
 							.getTextWidget();
-					grdNames.add(nameText.getText());
+					grdNames.add(text.getText());
 					grdPredicates.add(predicateText.getText());
 				}
 			}
@@ -458,9 +460,9 @@ public class NewEventInputDialog extends EventBInputDialog {
 				Text actSubstitutionText = ((IEventBInputText) actSubtitutionList[i])
 						.getTextWidget();
 				if (dirtyTexts.contains(actSubstitutionText)) {
-					Text nameText = ((IEventBInputText) actNameList[i])
+					Text text = ((IEventBInputText) actNameList[i])
 							.getTextWidget();
-					actNames.add(nameText.getText());
+					actNames.add(text.getText());
 					actSubstitutions.add(actSubstitutionText.getText());
 				}
 			}
@@ -485,7 +487,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 	 * @return the list of new local variables as input by user
 	 */
 	public String[] getVariables() {
-		return (String[]) varNames.toArray(new String[varNames.size()]);
+		return varNames.toArray(new String[varNames.size()]);
 	}
 
 	/**
@@ -495,7 +497,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 	 * @return the list of the guard names as input by user
 	 */
 	public String[] getGrdNames() {
-		return (String[]) grdNames.toArray(new String[grdNames.size()]);
+		return grdNames.toArray(new String[grdNames.size()]);
 	}
 
 	/**
@@ -505,8 +507,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 	 * @return the list of the guard predicates as input by user
 	 */
 	public String[] getGrdPredicates() {
-		return (String[]) grdPredicates
-				.toArray(new String[grdPredicates.size()]);
+		return grdPredicates.toArray(new String[grdPredicates.size()]);
 	}
 
 	/**
@@ -516,7 +517,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 	 * @return the list of the guard names as input by user
 	 */
 	public String[] getActNames() {
-		return (String[]) actNames.toArray(new String[actNames.size()]);
+		return actNames.toArray(new String[actNames.size()]);
 	}
 
 	/**
@@ -526,8 +527,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 	 * @return the list the actSubstitutions as input by user
 	 */
 	public String[] getActSubstitutions() {
-		return (String[]) actSubstitutions.toArray(new String[actSubstitutions
-				.size()]);
+		return actSubstitutions.toArray(new String[actSubstitutions.size()]);
 	}
 
 	@Override

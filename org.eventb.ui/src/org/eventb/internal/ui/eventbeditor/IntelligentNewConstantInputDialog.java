@@ -188,10 +188,8 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
 			updateSize();
 		} else if (buttonId == IDialogConstants.OK_ID) {
-			if (dirtyTexts.contains(nameText.getTextWidget()))
-				name = nameText.getTextWidget().getText();
-			else
-				name = null;
+			name = nameText.getTextWidget().getText();
+
 			axioms = new ArrayList<Pair>();
 			for (Pair pair : axiomPairTexts) {
 				IEventBInputText axiomPredicateText = (IEventBInputText) pair

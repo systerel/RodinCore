@@ -115,9 +115,7 @@ public class NewVariantInputDialog extends EventBInputDialog {
 			expression = null;
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			Text widget = expressionText.getTextWidget();
-			if (dirtyTexts.contains(widget)) {
-				expression = widget.getText();
-			}
+			expression = widget.getText();
 		}
 		super.buttonPressed(buttonId);
 	}
