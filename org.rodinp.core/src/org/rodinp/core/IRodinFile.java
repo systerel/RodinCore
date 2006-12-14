@@ -85,4 +85,13 @@ public interface IRodinFile extends IOpenable, IInternalParent,
 	 */
 	IRodinFile getMutableCopy();
 
+	/**
+	 * Reverts this file. Reverting a file has the effect of forgetting any
+	 * unsaved change and closing the file.
+	 * 
+	 * @exception RodinDBException
+	 *                if an error occurs closing this element
+	 */
+	void revert() throws RodinDBException;
+
 }

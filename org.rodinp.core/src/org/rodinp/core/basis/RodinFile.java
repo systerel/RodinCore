@@ -259,8 +259,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	
 	@Override
 	public void makeConsistent(IProgressMonitor monitor) throws RodinDBException {
-		RodinDBManager.getRodinDBManager().removeBuffer(this, true);
-		close();
+		revert();
 		super.makeConsistent(monitor);
 	}
 
@@ -277,6 +276,11 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 
 	public final void rename(String name, boolean replace, IProgressMonitor monitor) throws RodinDBException {
 		new RenameResourceElementsOperation(this, name, replace).runOperation(monitor);
+	}
+
+	public final void revert() throws RodinDBException {
+		RodinDBManager.getRodinDBManager().removeBuffer(this, true);
+		close();
 	}
 
 	@Override
