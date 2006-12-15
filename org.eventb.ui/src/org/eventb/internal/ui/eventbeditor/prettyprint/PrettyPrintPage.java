@@ -59,11 +59,10 @@ public class PrettyPrintPage extends EventBEditorPage implements
 
 	// The form text
 	private IEventBFormText formText;
-	
-	private boolean needsUpdate;
-	
-	private AstConverter astConverter;
 
+	private boolean needsUpdate;
+
+	private AstConverter astConverter;
 
 	/**
 	 * Constructor: This default constructor will be used to create the page
@@ -135,8 +134,6 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		form.reflow(true);
 	}
 
-	
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -149,7 +146,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		getEventBEditor().removeElementChangedListener(this);
 		super.dispose();
 	}
-	
+
 	@Override
 	public void setActive(boolean active) {
 		super.setActive(active);
@@ -178,6 +175,13 @@ public class PrettyPrintPage extends EventBEditorPage implements
 	 */
 	public void elementChanged(ElementChangedEvent event) {
 		needsUpdate = true;
+	}
+
+	@Override
+	public void setFocus() {
+		// Super method try to focus on the first children which is the first
+		// link, that cause the page to scroll automatic to the top.
+		// Do nothing here
 	}
 
 }
