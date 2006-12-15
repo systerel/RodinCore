@@ -21,6 +21,9 @@ import java.util.Set;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Point;
@@ -43,6 +46,7 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.RodinDBException;
 
@@ -51,7 +55,8 @@ import org.rodinp.core.RodinDBException;
  *         <p>
  *         This is the implementation of the Proof Page in the Prover UI Editor.
  */
-public class ProofsPage extends FormPage implements IProofStateChangedListener {
+public class ProofsPage extends FormPage implements IProofStateChangedListener,
+		IPropertyChangeListener {
 
 	// ID, title and the tab-title
 	public static final String PAGE_ID = "Proof State"; //$NON-NLS-1$
@@ -99,11 +104,18 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		userSupport = editor.getUserSupport();
 		userSupport.addStateChangedListeners(this);
 		layouting = false;
+		IPreferenceStore store = EventBUIPlugin.getDefault()
+				.getPreferenceStore();
+		store.addPropertyChangeListener(this);
+
 	}
 
 	@Override
 	public void dispose() {
 		userSupport.removeStateChangedListeners(this);
+		IPreferenceStore store = EventBUIPlugin.getDefault()
+				.getPreferenceStore();
+		store.removePropertyChangeListener(this);
 		super.dispose();
 	}
 
@@ -154,7 +166,6 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 				ExpandableComposite.TITLE_BAR);
 		managedForm.addPart(goalSection);
 
-
 		body.setLayout(new ProofsPageLayout());
 		createToolBarActions(managedForm);
 	}
@@ -170,8 +181,11 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 	 */
 	protected class ProofsPageLayout extends Layout {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite,
+		 *      int, int, boolean)
 		 */
 		@Override
 		protected Point computeSize(Composite composite, int wHint, int hHint,
@@ -182,12 +196,16 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			return new Point(bounds.x, bounds.y);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
+		 *      boolean)
 		 */
 		@Override
 		protected void layout(Composite composite, boolean flushCache) {
-			if (layouting == true) // Do nothing if already layouting (avoid loop)
+			if (layouting == true) // Do nothing if already layouting (avoid
+				// loop)
 				return;
 			layouting = true;
 			if (layoutAction.isChecked())
@@ -207,15 +225,27 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 	 *            The managed form contains the Toolbar.
 	 */
 	protected void createToolBarActions(IManagedForm managedForm) {
+		final IPreferenceStore store = EventBUIPlugin.getDefault()
+				.getPreferenceStore();
+
 		layoutAction = new Action("auto", Action.AS_CHECK_BOX) {
 			@Override
 			public void run() {
-				if (this.isChecked()) {
+				boolean checked = this.isChecked();
+				store.setValue(PreferenceConstants.P_PROOFPAGE_AUTOLAYOUT,
+						checked);
+				if (checked) {
 					ProofsPage.this.body.layout();
 				}
 			}
 		};
-		layoutAction.setChecked(true); // TODO Set from preference page
+
+		layoutAction.setChecked(store
+				.getBoolean(PreferenceConstants.P_PROOFPAGE_AUTOLAYOUT)); // TODO
+		// Set
+		// from
+		// preference
+		// page
 		layoutAction.setToolTipText("Automatically layout");
 
 		ScrolledForm form = managedForm.getForm();
@@ -400,14 +430,14 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 	}
 
-//	private boolean flag;
+	// private boolean flag;
 
 	int[] weights = new int[5];
 
 	void autoLayout() {
-//		if (flag)
-//			return;
-//		flag = true;
+		// if (flag)
+		// return;
+		// flag = true;
 		weights[0] = 0;
 
 		ScrolledForm form = this.getManagedForm().getForm();
@@ -559,7 +589,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		}
 		// }
 
-//		flag = false;
+		// flag = false;
 		// for (HypothesisRow row : selectedSection.getRows()) {
 		// row.createHypothesisText();
 		// }
@@ -607,5 +637,22 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 				return i;
 		}
 		return 0;
+	}
+
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(
+				PreferenceConstants.P_PROOFPAGE_AUTOLAYOUT)) {
+			Object newValue = event.getNewValue();
+			assert newValue instanceof Boolean || newValue instanceof String;
+			if (newValue instanceof String)
+				layoutAction.setChecked(((String) newValue)
+						.compareToIgnoreCase("true") == 0);
+			else {
+				layoutAction.setChecked((Boolean) newValue);
+			}
+			// Run layout action
+			layoutAction.run();
+		}
+
 	}
 }

@@ -1080,5 +1080,21 @@
          </propertySection>
       </propertySections>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eventb.ui.preferences.eventBCategory"
+            class="org.eventb.internal.ui.preferences.ProverUIPreferencePage"
+            id="org.eventb.ui.preferences.proverUI"
+            name="%preferencePage.proverUIPage.name"/>
+      <page
+            class="org.eventb.internal.ui.preferences.PreferencePage"
+            id="org.eventb.ui.preferences.eventBCategory"
+            name="%preferencePage.eventBCategory.name"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eventb.internal.ui.preferences.PreferenceInitializer"/>
+   </extension>
 
 </plugin>
