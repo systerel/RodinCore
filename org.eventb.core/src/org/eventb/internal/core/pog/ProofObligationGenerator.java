@@ -54,6 +54,8 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 			if (file.exists())
 				file.delete(true, monitor);
 			
+			monitor.worked(1);
+			
 		} finally {
 			monitor.done();
 		}

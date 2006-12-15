@@ -74,6 +74,8 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 			if (file.exists())
 				file.delete(true, monitor);
 			
+			monitor.worked(1);
+			
 		} finally {
 			monitor.done();
 		}
