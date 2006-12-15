@@ -29,12 +29,9 @@ public class GraphModifier {
 	
 	private final Graph graph;
 	
-	private final ProgressManager manager;
-	
-	public GraphModifier(Graph graph, Node current, ProgressManager manager) {
+	public GraphModifier(Graph graph, Node current) {
 		this.graph = graph;
 		this.current = current;
-		this.manager = manager;
 	}
 	
 	protected void addNode(IPath path, String toolId) {
@@ -58,8 +55,6 @@ public class GraphModifier {
 		
 		// set symbolic link to the current node
 		node.getCreator().setPath(current.getTarget().getPath());
-		
-		manager.anticipateSlice(node);
 		
 		if(RodinBuilder.DEBUG_GRAPH)
 			System.out.println(getClass().getName() + ": Node added: " + node.getTarget().getName()); //$NON-NLS-1$

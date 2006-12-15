@@ -178,8 +178,6 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 						getProject(), 
 						progressManager.getZeroProgressMonitor());
 			
-			progressManager.anticipateSlices(state.graph);
-			
 			if (kind == FULL_BUILD) {
 				fullBuild(progressManager);
 			} else {
@@ -228,8 +226,8 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		// build is about to start
 	}
 
-	private void cleanGraph(ProgressManager manager, int percent) throws CoreException {
-		state.graph.builderCleanGraph(getProject(), percent, manager);
+	private void cleanGraph(ProgressManager manager, boolean onlyClean) throws CoreException {
+		state.graph.builderCleanGraph(getProject(), onlyClean, manager);
 		state.graph = new Graph();
 	}
 	
@@ -259,6 +257,9 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 
 	protected void fullBuild(final ProgressManager manager) throws CoreException {
 		createGraph(manager);
+		
+		manager.makeSlices(state.graph);
+		
 		try {
 			buildGraph(manager);
 		} catch (OperationCanceledException e) {
@@ -272,7 +273,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 
 	protected void createGraph(final ProgressManager manager) {
 		try {
-			cleanGraph(manager, 5);
+			cleanGraph(manager, false);
 			getProject().accept(new RodinBuilderResourceVisitor(manager));
 			state.graph.builderMarkDerivedNodesDated();
 		} catch (OperationCanceledException e) {
@@ -299,13 +300,13 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 					getProject(), 
 					progressManager.getZeroProgressMonitor());
 		
-		progressManager.anticipateSlices(state.graph);
+		progressManager.makeSlices(state.graph);
 		
       try {
 			if (DEBUG) {
 				System.out.println("BUILDER: Starting cleaning");
 			}
-        	cleanGraph(progressManager, 100);
+        	cleanGraph(progressManager, true);
         	MarkerHelper.deleteAllProblemMarkers(getProject());
         } catch (CoreException e) {
 			Util.log(e, "during builder clean");
@@ -325,6 +326,8 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 
 		// the visitor does the work.
 		delta.accept(new RodinBuilderDeltaVisitor(manager));
+		
+		manager.makeSlices(state.graph);
 		
 		try {
 			buildGraph(manager);

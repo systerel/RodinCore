@@ -35,7 +35,6 @@ public class MBuilderTest extends AbstractBuilderTest {
 			project.delete(true, true, null);
 		}
 		super.tearDown();
-//		project.getProject().delete(true, true, null);
 	}
 
 	private void runBuilder(String expectedTrace) throws CoreException {

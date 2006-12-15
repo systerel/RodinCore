@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,11 +27,9 @@ public class ProgressManager {
 	
 	private int remainingEffort;
 	
-	private int cnt;
-	private List<Integer> cntL;
+	private int slices;
 	
-	private HashSet<String> nodes;
-	private int expected;
+	private List<Integer> sList;
 	
 	public ProgressManager(IProgressMonitor monitor, IncrementalProjectBuilder builder) {
 		this.monitor = new BuilderProgressMonitor(monitor, builder);
@@ -40,54 +37,42 @@ public class ProgressManager {
 				Messages.bind(Messages.build_building, builder.getProject().getName()), 
 				MAX_EFFORT);
 		remainingEffort = MAX_EFFORT;
-		nodes = null;
-		expected = 0;
-		cnt = 0;
-		cntL = new LinkedList<Integer>();
+		sList = new LinkedList<Integer>();
 	}
 	
-	public void anticipateSlice(Node node) {
-		if (node.isDated()) {
-			nodes.add(node.getTarget().getName());
-		}
-	}
-	
-	public void decreaseSliceAdjustment(Graph graph, Node node) {
-		if (expected > 0)
-			expected--;
-	}
-	
-	public void anticipateSlices(Graph graph) {
-		nodes = new HashSet<String>(graph.size() * 4 / 3 + 1);
-		expected = 0;
+	public void makeSlices(Graph graph) {
+		slices = 0;
 		for (Node node : graph) {
-			if (node.getToolId() == null || node.getToolId() == "")
-				expected++;
-			else
-				anticipateSlice(node);
+			if (!node.isDerived())
+				slices++;
 		}
+		slices *= 1;
+		
+		if (graph.size() > slices)
+			slices = graph.size();
 	}
 	
 	IProgressMonitor getZeroProgressMonitor() {
 		return new SubProgressMonitor(monitor, 0);
 	}
 	
-	IProgressMonitor getProgressMonitor(int percent) {
-		int slice = MAX_EFFORT * (percent / 100);
-		remainingEffort = slice > remainingEffort ? 0 : remainingEffort - slice;
-		return new SubProgressMonitor(monitor, slice);
+	IProgressMonitor getSliceProgressMonitor() {
+		if (slices > 0) {
+			int newSlice = remainingEffort / slices--;
+			remainingEffort -= newSlice;
+			sList.add(remainingEffort);
+			return new SubProgressMonitor(monitor, newSlice);
+		} else
+			return getZeroProgressMonitor();
 	}
 	
-	IProgressMonitor getProgressMonitorForNode(Node node) {
-		int nodeCount = nodes == null ? 0 : nodes.size();
-		int div = nodeCount + expected;
-		int nodeEffort = div == 0 ? 0 : remainingEffort / div;
-		remainingEffort = remainingEffort - nodeEffort;
-		if (nodeCount > 0)
-			nodes.remove(node.getTarget().getName());
-		cnt += nodeEffort;
-		cntL.add(nodeEffort);
-		return new SubProgressMonitor(monitor, nodeEffort);
+	IProgressMonitor getStepProgressMonitor() {
+		if (remainingEffort > 0) {
+			remainingEffort--;
+			sList.add(remainingEffort);
+			return new SubProgressMonitor(monitor, 1);
+		} else
+			return getZeroProgressMonitor();
 	}
 	
 	void subTask(String name) {

@@ -127,7 +127,8 @@ public class Graph implements Serializable, Iterable<Node> {
 		initCaches();
 	}
 
-	public void builderCleanGraph(IProject project, int percent, ProgressManager manager) throws CoreException {
+	public void builderCleanGraph(IProject project, boolean onlyClean, ProgressManager manager) 
+	throws CoreException {
 			
 			if (nodes.size() == 0)
 				return;
@@ -135,13 +136,14 @@ public class Graph implements Serializable, Iterable<Node> {
 			ArrayList<IStatus> vStats = null; // lazy initialized
 			Collection<Node> values = new ArrayList<Node>(nodes.values());
 			
-			int slice = percent / values.size();
-			
 			manager.subTask(Messages.bind(Messages.build_cleaning, project.getName()));
 			
 			for(Node node : values) {
 				try {
-					cleanNode(node, manager.getProgressMonitor(slice));
+					IProgressMonitor monitor = onlyClean ?
+							manager.getSliceProgressMonitor() :
+							manager.getStepProgressMonitor();
+					cleanNode(node, monitor);
 					if(node.isDerived()) 
 						tryRemoveNode(node);
 					
@@ -193,7 +195,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		}
 
 	public void builderExtractNode(Node node, ProgressManager manager) throws CoreException {
-			extract(node, new GraphModifier(this, node, manager), manager);
+			extract(node, new GraphModifier(this, node), manager);
 			if (!node.isDerived())
 				node.setDated(false);
 		}
@@ -308,7 +310,7 @@ public class Graph implements Serializable, Iterable<Node> {
 				
 				FileRunnable runnable = 
 					new FileRunnable(tool, node.getCreator().getFile(), node.getTarget().getFile());
-				RodinCore.run(runnable, manager.getProgressMonitorForNode(node));
+				RodinCore.run(runnable, manager.getSliceProgressMonitor());
 				changed = runnable.targetHasChanged();
 				
 			} catch (OperationCanceledException e) {
@@ -329,7 +331,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		
 		if(changed) {
 			node.markSuccessorsDated();
-			extract(node, new GraphModifier(this, node, manager), manager);
+			extract(node, new GraphModifier(this, node), manager);
 		}
 	}
 
@@ -513,7 +515,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		sorted.add(node);
 		node.done = true;
 		if(manager != null) {
-			manager.decreaseSliceAdjustment(this, node);
 			if(node.isDated())
 				runTool(node, manager);
 		}
