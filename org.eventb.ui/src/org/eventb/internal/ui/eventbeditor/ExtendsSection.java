@@ -12,12 +12,13 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -52,9 +53,8 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -90,7 +90,7 @@ public class ExtendsSection extends SectionPart implements
 	// The seen internal element.
 	// private IInternalElement seen;
 
-	IRodinFile rodinFile;
+	IContextFile rodinFile;
 
 	/**
 	 * Constructor.
@@ -101,8 +101,9 @@ public class ExtendsSection extends SectionPart implements
 	 * @param parent
 	 *            The composite parent
 	 */
-	public ExtendsSection(IEventBEditor editor, FormToolkit toolkit,
+	public ExtendsSection(IEventBEditor<IContextFile> editor, FormToolkit toolkit,
 			Composite parent) {
+
 		super(parent, toolkit, ExpandableComposite.TITLE_BAR
 				| Section.DESCRIPTION);
 		this.editor = editor;
@@ -245,22 +246,20 @@ public class ExtendsSection extends SectionPart implements
 	 * Set the seen context with the given name.
 	 * <p>
 	 * 
-	 * @param context
+	 * @param contextName
 	 *            name of the context
 	 */
-	void addExtendedContext(String context) {
+	void addExtendedContext(String contextName) {
 		try {
-			IExtendsContext extended = (IExtendsContext) rodinFile
-					.createInternalElement(IExtendsContext.ELEMENT_TYPE,
-							UIUtils.getFreeElementName(editor, rodinFile,
-									IExtendsContext.ELEMENT_TYPE,
-									PrefixExtendsContextName.QUALIFIED_NAME,
-									PrefixExtendsContextName.DEFAULT_PREFIX),
-							null, null);
-			extended.setAbstractContextName(context, new NullProgressMonitor());
-			// markDirty();
-		} catch (RodinDBException exception) {
-			exception.printStackTrace();
+			final String elementName = UIUtils.getFreeElementName(editor,
+					rodinFile, IExtendsContext.ELEMENT_TYPE,
+					PrefixExtendsContextName.QUALIFIED_NAME,
+					PrefixExtendsContextName.DEFAULT_PREFIX);
+			IExtendsContext extended = rodinFile.getExtendsClause(elementName);
+			extended.create(null, null);
+			extended.setAbstractContextName(contextName, null);
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "when adding an extends clause.");
 		}
 	}
 
@@ -268,48 +267,8 @@ public class ExtendsSection extends SectionPart implements
 	 * Handle the Add/Create action when the corresponding button is clicked.
 	 */
 	public void handleAdd() {
-		String context = contextCombo.getText();
-		try {
-			IExtendsContext extended = (IExtendsContext) rodinFile
-					.createInternalElement(IExtendsContext.ELEMENT_TYPE,
-							UIUtils.getFreeElementName(editor, rodinFile,
-									IExtendsContext.ELEMENT_TYPE,
-									PrefixExtendsContextName.QUALIFIED_NAME,
-									PrefixExtendsContextName.DEFAULT_PREFIX),
-							null, null);
-			extended.setAbstractContextName(context, new NullProgressMonitor());
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		// IRodinProject project = (IRodinProject) rodinFile.getParent();
-		// String contextFileName = EventBPlugin.getContextFileName(context);
-		// IRodinFile contextFile = project.getRodinFile(contextFileName);
-		// if (!contextFile.exists()) {
-		// boolean answer = MessageDialog
-		// .openQuestion(
-		// this.getSection().getShell(),
-		// "Create Context",
-		// "Context "
-		// + contextFileName
-		// + " does not exist. Do you want to create new extended context?");
-		//
-		// if (!answer)
-		// return;
-		//
-		// try {
-		// contextFile = project.createRodinFile(contextFileName, true,
-		// null);
-		// } catch (RodinDBException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		//
-		// UIUtils.linkToEventBEditor(contextFile);
-
-		return;
+		String contextName = contextCombo.getText();
+		addExtendedContext(contextName);
 	}
 
 	public void elementChanged(ElementChangedEvent event) {
@@ -330,38 +289,52 @@ public class ExtendsSection extends SectionPart implements
 
 	void initContextCombo() {
 		contextCombo.removeAll();
+		final IRodinProject project = rodinFile.getRodinProject();
+		final IContextFile[] contexts;
 		try {
-			IRodinElement[] contexts = ((IParent) rodinFile.getParent())
+			contexts = (IContextFile[]) project
 					.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-			IRodinElement[] extendedContexts = rodinFile
-					.getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
-
-			for (IRodinElement context : contexts) {
-
-				if (context.equals(rodinFile))
-					continue;
-				boolean found = false;
-				for (IRodinElement extendContext : extendedContexts) {
-					if (EventBPlugin
-							.getComponentName(context.getElementName())
-							.equals(
-									((IExtendsContext) extendContext)
-											.getAbstractContextName())) {
-						found = true;
-						break;
-					}
-				}
-
-				if (!found)
-					contextCombo.add(EventBPlugin.getComponentName(context
-							.getElementName()));
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "when listing the contexts of " + project);
+			return;
+		}
+		final Set<String> usedNames = getUsedContextNames();
+		for (IContextFile context : contexts) {
+			final String elementName = context.getElementName();
+			final String bareName = EventBPlugin.getComponentName(elementName);
+			if (!usedNames.contains(bareName)) {
+				contextCombo.add(bareName);
 			}
-		} catch (RodinDBException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
 	}
 
+	private Set<String> getUsedContextNames() {
+		Set<String> usedNames = new HashSet<String>();
+
+		// First add myself
+		final String elementName = rodinFile.getElementName();
+		final String bareName = EventBPlugin.getComponentName(elementName);
+		usedNames.add(bareName);
+
+		// Then, all contexts already extended
+		final IExtendsContext[] extendsClauses;
+		try {
+			extendsClauses = rodinFile.getExtendsClauses();
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "when listing the extends clause of " + rodinFile);
+			return usedNames;
+		}
+		for (IExtendsContext extend : extendsClauses) {
+			try {
+				usedNames.add(extend.getAbstractContextName());
+			} catch (RodinDBException e) {
+				UIUtils.log(e, "when reading the extends clause " + extend);
+			}
+		}
+		return usedNames;
+	}
+	
+	
 	void updateButtons() {
 		removeButton.setEnabled(!viewer.getSelection().isEmpty());
 		String text = contextCombo.getText();
