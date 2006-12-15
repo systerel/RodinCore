@@ -283,4 +283,45 @@ public class CBuilderTest extends AbstractBuilderTest {
 		);
 	}
 	
+	/**
+	 * Ensures dependency is followed if source of dependency is deleted, and recreated
+	 */
+	public void testOneTwoDelete() throws Exception {
+		
+		IRodinFile ctx = createRodinFile("P/x.ctx");
+		createData(ctx, "one");
+		ctx.save(null, true);
+		
+		IRodinFile cty = createRodinFile("P/y.ctx");
+		createDependency(cty, "x");
+		createData(cty, "two");
+		cty.save(null, true);		
+		
+		runBuilder(null);
+		ToolTrace.flush();
+		
+		ctx.delete(true, null);
+		
+		runBuilder(
+				"CSC clean /P/x.csc"
+				);
+		
+		hasMarkers("P/y.ctx");
+		
+		ctx = createRodinFile("P/x.ctx");
+		createData(ctx, "one");
+		ctx.save(null, true);
+		ToolTrace.flush();
+		
+		runBuilder(
+				"CSC extract /P/x.ctx\n" + 
+				"CSC run /P/x.csc\n" + 
+				"CSC run /P/y.csc"
+		);
+		
+		hasNotMarkers("P/y.ctx");
+	
+	}
+
+
 }

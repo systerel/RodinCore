@@ -31,7 +31,7 @@ public class MPOTool extends POTool {
 	}
 
 	public boolean run(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
-		run(file, monitor, MPO);
+		run(source, file, monitor, MPO);
 		return true;
 	}
 

@@ -17,7 +17,6 @@ import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,7 +24,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
@@ -115,7 +113,11 @@ public class Graph implements Serializable, Iterable<Node> {
 		
 		for(Node n : values) {
 			if(!n.done) {
-				removeNode(n);
+				n.markSuccessorsDated();
+				if (n.getSuccessorCount() > 0) {
+					n.setDated(false);
+					n.setPhantom(true);
+				}
 				try {
 					cleanNode(n, manager.getZeroProgressMonitor());
 				} catch(CoreException e) {
@@ -301,12 +303,6 @@ public class Graph implements Serializable, Iterable<Node> {
 				return;
 			}
 			try {
-				
-				if (node.getTarget().getFile().exists())
-					node.getTarget().getFile().deleteMarkers(
-							RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER, 
-							true, 
-							IResource.DEPTH_INFINITE);
 				
 				FileRunnable runnable = 
 					new FileRunnable(tool, node.getCreator().getFile(), node.getTarget().getFile());
@@ -510,9 +506,13 @@ public class Graph implements Serializable, Iterable<Node> {
 	}
 
 	private void topSortStep(LinkedList<Node> sorted, Node node, ProgressManager manager) {
+		
 		nodePostList.remove(node);
 		nodeStack.push(node);
 		sorted.add(node);
+		
+		MarkerHelper.deleteBuilderProblemMarkers(node.getTarget().getFile());
+		
 		node.done = true;
 		if(manager != null) {
 			if(node.isDated())

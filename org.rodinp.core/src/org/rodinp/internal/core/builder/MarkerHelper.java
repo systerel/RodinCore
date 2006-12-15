@@ -84,4 +84,24 @@ public class MarkerHelper {
 		}
 	}
 
+	/**
+	 * Deletes builder problem markers on the given resource,
+	 * and all contained resources.
+	 * 
+	 * @param resource
+	 *            resource to clean up recursively
+	 */
+	public static void deleteBuilderProblemMarkers(IResource resource) {
+		try {
+			if (resource.exists()) {
+				resource.deleteMarkers(
+						BUILDPATH_PROBLEM_MARKER,
+						false,
+						DEPTH_INFINITE);
+			}
+		} catch (CoreException e) {
+			Util.log(e, "when deleting markers in builder");
+		}
+	}
+
 }

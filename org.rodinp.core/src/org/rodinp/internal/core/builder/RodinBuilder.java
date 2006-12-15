@@ -245,6 +245,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 			if (userOp) {
 				state.graph.builderSetPreferredNode(node);
 				node.setToolId(null);
+				node.setPhantom(false);
 			}
 			try {
 				state.graph.builderExtractNode(node, manager);

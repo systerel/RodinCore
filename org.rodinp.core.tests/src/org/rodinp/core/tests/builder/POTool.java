@@ -10,6 +10,7 @@ package org.rodinp.core.tests.builder;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.builder.IGraph;
@@ -52,18 +53,18 @@ public abstract class POTool extends SCTool {
 				
 	}
 
-	protected void run(IFile file, IProgressMonitor monitor, String name) throws RodinDBException {
+	protected void run(IFile source, IFile file, IProgressMonitor monitor, String name) throws RodinDBException {
 		if (SHOW_RUN)
 			ToolTrace.addTrace(name, "run", file);
 	
 		IPOFile target = (IPOFile) RodinCore.valueOf(file);
-		ISCContext ctx = target.getCheckedContext();
+		IRodinFile src = RodinCore.valueOf(source);
 		
 		// First clean up target
 		target.create(true, null);
 		
 		// Populate with a copy of inputs
-		copyDataElements(ctx, target);
+		copyDataElements(src, target);
 		
 		target.save(null, true);
 	}

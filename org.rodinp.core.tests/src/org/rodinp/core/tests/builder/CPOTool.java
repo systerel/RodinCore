@@ -31,7 +31,7 @@ public class CPOTool extends POTool {
 	}
 
 	public boolean run(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
-		run(file, monitor, CPO);
+		run(source, file, monitor, CPO);
 		return true;
 	}
 
