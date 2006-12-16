@@ -80,6 +80,7 @@ public class AxiomMasterSection extends EventBTreePartWithButtons {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit,
 	 *      org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected EventBEditableTreeViewer createTreeViewer(
 			IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
 		return new AxiomEditableTreeViewer(editor, parent, SWT.MULTI
@@ -91,6 +92,7 @@ public class AxiomMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#updateButtons()
 	 */
+	@Override
 	protected void updateButtons() {
 		Tree tree = ((TreeViewer) getViewer()).getTree();
 		TreeItem[] items = tree.getSelection();
@@ -129,6 +131,7 @@ public class AxiomMasterSection extends EventBTreePartWithButtons {
 	 * @param index
 	 *            The index of selected button
 	 */
+	@Override
 	protected void buttonSelected(int index) {
 		AxiomMasterSectionActionGroup groupActionSet = (AxiomMasterSectionActionGroup) this
 				.getActionGroup();
@@ -171,6 +174,7 @@ public class AxiomMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#edit(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	protected void edit(IRodinElement element) {
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
@@ -183,6 +187,7 @@ public class AxiomMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
 	 */
+	@Override
 	protected ActionGroup createActionGroup() {
 		return new AxiomMasterSectionActionGroup(editor, (TreeViewer) this
 				.getViewer());
