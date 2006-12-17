@@ -61,8 +61,7 @@ public class Extends implements IObjectActionDelegate {
 
 				dialog.open();
 
-				final String abstractContextName = EventBPlugin
-						.getComponentName(context.getElementName());
+				final String abstractContextName = context.getComponentName();
 				final String bareName = dialog.getValue();
 				if (bareName == null)
 					return;

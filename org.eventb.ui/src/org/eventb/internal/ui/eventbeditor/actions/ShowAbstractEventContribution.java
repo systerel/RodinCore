@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
@@ -52,8 +51,7 @@ public class ShowAbstractEventContribution extends ContributionItem {
 	private void createMenuItem(Menu menu, final IRodinFile abstractFile,
 			final IEvent abs_evt) {
 		final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
-		menuItem.setText(EventBPlugin.getComponentName(abstractFile
-				.getElementName()));
+		menuItem.setText(abstractFile.getBareName());
 		menuItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REFINES));
 
 		Listener listener = new Listener() {

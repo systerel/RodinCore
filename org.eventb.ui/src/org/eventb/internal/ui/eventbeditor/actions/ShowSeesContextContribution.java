@@ -49,8 +49,7 @@ public class ShowSeesContextContribution extends ContributionItem {
 
 	private void createMenuItem(Menu menu, final IRodinFile contextFile) {
 		final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
-		menuItem.setText(EventBPlugin.getComponentName(contextFile
-				.getElementName()));
+		menuItem.setText(contextFile.getBareName());
 		menuItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_CONTEXT));
 
 		Listener listener = new Listener() {

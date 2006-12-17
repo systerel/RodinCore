@@ -1,7 +1,6 @@
 package org.eventb.internal.ui.eventbeditor.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IInvariant;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
@@ -15,13 +14,13 @@ public class ShowAbstractInvariant extends Action {
 
 	public ShowAbstractInvariant(IRodinFile abstractFile) {
 		this.abstractFile = abstractFile;
-		this.setText(EventBPlugin.getComponentName(abstractFile
-				.getElementName()));
+		this.setText(abstractFile.getBareName());
 		this.setToolTipText("Show the abstract invariant");
 		this.setImageDescriptor(EventBImage
 				.getImageDescriptor(IEventBSharedImages.IMG_REFINES_PATH));
 	}
 
+	@Override
 	public void run() {
 		try {
 			IRodinElement[] elements = abstractFile

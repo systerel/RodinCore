@@ -384,9 +384,7 @@ public class ObligationExplorer extends ViewPart implements
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
+		@Override
 		public String getText(Object obj) {
 			if (ObligationExplorerUtils.DEBUG)
 				ObligationExplorerUtils.debug("Label for: " + obj);
@@ -396,8 +394,7 @@ public class ObligationExplorer extends ViewPart implements
 							+ ((IRodinProject) obj).getElementName());
 				return ((IRodinProject) obj).getElementName();
 			} else if (obj instanceof IRodinFile) {
-				String name = ((IRodinFile) obj).getElementName();
-				return EventBPlugin.getComponentName(name);
+				return ((IRodinFile) obj).getBareName();
 			} else if (obj instanceof IPSStatus) {
 
 				// Find the label in the list of UserSupport.

@@ -13,7 +13,7 @@
 package org.eventb.internal.ui.wizards;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ISelection;
@@ -32,8 +32,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
@@ -41,7 +39,7 @@ import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinDBException;
+import org.rodinp.core.RodinCore;
 
 /**
  * @author htson
@@ -64,6 +62,9 @@ public class NewComponentWizardPage extends WizardPage {
 
 	// The selection when the wizard is launched.
 	private ISelection selection;
+
+	private static final IWorkspaceRoot wsRoot =
+		ResourcesPlugin.getWorkspace().getRoot();
 
 	/**
 	 * Constructor for NewComponentWizardPage.
@@ -275,51 +276,54 @@ public class NewComponentWizardPage extends WizardPage {
 	 * Ensures that both text fields are set correctly.
 	 */
 	void dialogChanged() {
-		IResource container = ResourcesPlugin.getWorkspace().getRoot()
-				.findMember(new Path(getContainerName()));
-		String componentName = getComponentName();
-
-		if (getContainerName().length() == 0) {
+		final String containerName = getContainerName();
+		final String componentName = getComponentName();
+		
+		if (containerName.length() == 0) {
 			updateStatus("Project must be specified");
 			return;
 		}
+		if (! wsRoot.getLocation().isValidSegment(containerName)) {
+			updateStatus("Project name must be valid");
+			return;
+		}
 
-		if (container == null
-				|| (container.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0) {
+		final IProject project = wsRoot.getProject(containerName);
+		final IRodinProject rodinProject = RodinCore.valueOf(project);
+		if (! project.exists()) {
 			updateStatus("Project must exist");
 			return;
 		}
-		if (!container.isAccessible()) {
+		if (! rodinProject.exists()) {
+			updateStatus("Project must be a Rodin project");
+			return;
+		}
+		if (!project.isAccessible()) {
 			updateStatus("Project must be writable");
 			return;
 		}
+
 		if (componentName.length() == 0) {
 			updateStatus("Component name must be specified");
 			return;
 		}
-		if (componentName.replace('\\', '/').indexOf('/', 1) > 0) {
+		
+		final String machineName = EventBPlugin.getMachineFileName(componentName);
+		final String contextName = EventBPlugin.getContextFileName(componentName);
+		final IRodinFile machineFile = rodinProject.getRodinFile(machineName);
+		final IRodinFile contextFile = rodinProject.getRodinFile(contextName);
+		if (machineFile == null || contextFile == null) {
 			updateStatus("Component name must be valid");
 			return;
 		}
-		IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase()
-				.getRodinProject(getContainerName());
-		try {
-			IRodinElement[] elements = rodinProject.getChildren();
-			for (IRodinElement elem : elements) {
-				if (elem instanceof IMachineFile
-						|| elem instanceof IContextFile) {
-					if (EventBPlugin.getComponentName(
-							((IRodinFile) elem).getElementName()).equals(
-							componentName)) {
-						updateStatus("Component name already exists");
-						return;
-					}
-				}
-			}
-		} catch (RodinDBException e) {
-			e.printStackTrace();
+		if (machineFile.exists()) {
+			updateStatus("There is already a machine with this name");
+			return;
 		}
-
+		if (contextFile.exists()) {
+			updateStatus("There is already a context with this name");
+			return;
+		}
 		updateStatus(null);
 	}
 

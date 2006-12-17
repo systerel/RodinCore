@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IInvariant;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
@@ -43,8 +42,7 @@ public class ShowAbstractInvariantContribution extends ContributionItem {
 
 	private void createMenuItem(Menu menu, final IRodinFile abstractFile) throws RodinDBException {
 		final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
-		menuItem.setText(EventBPlugin.getComponentName(abstractFile
-				.getElementName()));
+		menuItem.setText(abstractFile.getBareName());
 		menuItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REFINES));
 
 		final IRodinElement inv;

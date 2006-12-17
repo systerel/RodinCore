@@ -52,7 +52,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 			monitor.beginTask(
 					Messages.bind(
 							Messages.build_runningCPO, 
-							EventBPlugin.getComponentName(target.getName())),
+							poFile.getComponentName()),
 					1);
 			
 			if (machineModules == null) {

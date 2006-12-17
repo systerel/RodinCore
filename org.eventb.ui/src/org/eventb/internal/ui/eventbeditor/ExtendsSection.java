@@ -90,9 +90,7 @@ public class ExtendsSection extends AbstractContextsSection<IContextFile> {
 		Set<String> usedNames = new HashSet<String>();
 
 		// First add myself
-		final String elementName = rodinFile.getElementName();
-		final String bareName = EventBPlugin.getComponentName(elementName);
-		usedNames.add(bareName);
+		usedNames.add(rodinFile.getBareName());
 
 		// Then, all contexts already extended
 		for (IExtendsContext clause : getClauses()) {

@@ -40,8 +40,7 @@ public class Proves implements IObjectActionDelegate {
 					return;
 				IRodinFile component = (IRodinFile) obj;
 				IRodinProject prj = component.getRodinProject();
-				String bareName = EventBPlugin.getComponentName(component
-						.getElementName());
+				String bareName = component.getBareName();
 				IRodinFile prFile = prj.getRodinFile(EventBPlugin
 						.getPRFileName(bareName));
 				UIUtils.linkToProverUI(prFile);

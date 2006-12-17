@@ -51,7 +51,7 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 			monitor.beginTask(
 					Messages.bind(
 							Messages.build_runningMPO, 
-							EventBPlugin.getComponentName(target.getName())),
+							poFile.getComponentName()),
 					10);
 			
 			if (machineModules == null) {

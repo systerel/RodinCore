@@ -46,8 +46,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		IPRFile prFile = (IPRFile) psFile.getPRFile().getMutableCopy();
 		IPOFile poFile = (IPOFile) psFile.getPOFile().getSnapshot();
 		
-		final String componentName = 
-			EventBPlugin.getComponentName(prFile.getElementName());
+		final String componentName = prFile.getComponentName();
 		
 		final IPOSequent[] pos = poFile.getSequents();
 		final int noOfPOs = pos.length;

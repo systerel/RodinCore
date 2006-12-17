@@ -328,7 +328,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		site.setSelectionProvider(new FormEditorSelectionProvider(this));
 		RodinCore.addElementChangedListener(this);
 		rodinFile = getRodinFile(input);
-		setPartName(EventBPlugin.getComponentName(rodinFile.getElementName()));
+		setPartName(rodinFile.getBareName());
 	}
 
 	protected abstract F getRodinFile(IEditorInput input);

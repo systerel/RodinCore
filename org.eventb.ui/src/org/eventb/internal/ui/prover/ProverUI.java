@@ -112,8 +112,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
-			this.setPartName(EventBPlugin.getComponentName(prFile
-					.getElementName()));
+			this.setPartName(prFile.getComponentName());
 		}
 		super.setInput(input);
 	}

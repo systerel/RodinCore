@@ -42,7 +42,6 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.ElementLabelProvider;
@@ -311,8 +310,7 @@ public abstract class AbstractContextsSection<F extends IRodinFile> extends
 		}
 		final Set<String> usedNames = getUsedContextNames();
 		for (IContextFile context : contexts) {
-			final String elementName = context.getElementName();
-			final String bareName = EventBPlugin.getComponentName(elementName);
+			final String bareName = context.getComponentName();
 			if (!usedNames.contains(bareName)) {
 				contextCombo.add(bareName);
 			}

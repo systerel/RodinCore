@@ -408,19 +408,18 @@ public class RefinesSection extends SectionPart implements
 	}
 
 	private void initCombo() {
-		IRodinFile rodinFile = editor.getRodinInput();
+		final IRodinFile rodinFile = editor.getRodinInput();
+		final IRodinProject rodinProject = rodinFile.getRodinProject();
 		machineCombo.add(NULL_VALUE);
 		try {
-			IRodinElement[] machines = ((IParent) rodinFile.getParent())
+			final IMachineFile[] machines = (IMachineFile[]) rodinProject
 					.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-
-			for (IRodinElement machine : machines) {
+			for (IMachineFile machine : machines) {
 				if (!rodinFile.equals(machine)) {
 					if (EventBEditorUtils.DEBUG)
 						EventBEditorUtils.debug("Add to Combo: "
 								+ machine.getElementName());
-					machineCombo.add(EventBPlugin.getComponentName(machine
-							.getElementName()));
+					machineCombo.add(machine.getComponentName());
 				}
 			}
 		} catch (RodinDBException e1) {

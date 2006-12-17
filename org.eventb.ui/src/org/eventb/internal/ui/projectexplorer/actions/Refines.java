@@ -71,8 +71,7 @@ public class Refines implements IObjectActionDelegate {
 
 				dialog.open();
 
-				final String abstractMachineName = EventBPlugin
-						.getComponentName(machine.getElementName());
+				final String abstractMachineName = machine.getComponentName();
 				final String bareName = dialog.getValue();
 				if (bareName == null)
 					return;

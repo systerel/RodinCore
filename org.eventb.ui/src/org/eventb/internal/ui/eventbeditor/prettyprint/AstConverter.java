@@ -106,8 +106,7 @@ public abstract class AstConverter {
 		}
 		append(SPACE);
 		final String handle = rodinFile.getHandleIdentifier();
-		final String fileName = rodinFile.getElementName();
-		final String bareName = EventBPlugin.getComponentName(fileName);
+		final String bareName = rodinFile.getBareName();
 		append(makeHyperlink(handle, bareName));
 		endLevel();
 		return;
