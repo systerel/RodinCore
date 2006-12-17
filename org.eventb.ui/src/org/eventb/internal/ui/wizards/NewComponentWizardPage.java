@@ -31,13 +31,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import org.eventb.core.EventBPlugin;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IEventBProject;
+import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 
@@ -308,10 +309,10 @@ public class NewComponentWizardPage extends WizardPage {
 			return;
 		}
 		
-		final String machineName = EventBPlugin.getMachineFileName(componentName);
-		final String contextName = EventBPlugin.getContextFileName(componentName);
-		final IRodinFile machineFile = rodinProject.getRodinFile(machineName);
-		final IRodinFile contextFile = rodinProject.getRodinFile(contextName);
+		final IEventBProject evbProject = (IEventBProject) rodinProject
+				.getAdapter(IEventBProject.class);
+		final IMachineFile machineFile = evbProject.getMachineFile(componentName);
+		final IContextFile contextFile = evbProject.getContextFile(componentName);
 		if (machineFile == null || contextFile == null) {
 			updateStatus("Component name must be valid");
 			return;

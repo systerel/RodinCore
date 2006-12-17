@@ -1,27 +1,26 @@
 package org.eventb.internal.ui.projectexplorer.actions;
 
 import org.eclipse.jface.dialogs.IInputValidator;
-import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEventBProject;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
 public class RodinFileInputValidator implements IInputValidator {
 
-	IRodinProject prj;
+	IEventBProject prj;
 
 	RodinFileInputValidator(IRodinProject prj) {
-		this.prj = prj;
+		this.prj = (IEventBProject) prj.getAdapter(IEventBProject.class);
 	}
 
 	public String isValid(String newText) {
 		if (newText.equals(""))
 			return "Name must not be empty.";
-		IRodinFile file = prj.getRodinFile(EventBPlugin
-				.getMachineFileName(newText));
-		if (file.exists())
+		IRodinFile file = prj.getMachineFile(newText);
+		if (file != null && file.exists())
 			return "File name " + newText + " already exists.";
-		file = prj.getRodinFile(EventBPlugin.getContextFileName(newText));
-		if (file.exists())
+		file = prj.getContextFile(newText);
+		if (file != null && file.exists())
 			return "File name " + newText + " already exists.";
 		return null;
 	}

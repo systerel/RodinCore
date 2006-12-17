@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEventBProject;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
@@ -20,8 +20,12 @@ public class ShowSeesContextContribution extends ContributionItem {
 
 	private IRodinFile file;
 
+	private IEventBProject evbProject;
+
 	public ShowSeesContextContribution(IRodinFile file) {
 		this.file = file;
+		IRodinProject rp = file.getRodinProject();
+		evbProject = (IEventBProject) rp.getAdapter(IEventBProject.class);
 	}
 
 	@Override
@@ -33,9 +37,7 @@ public class ShowSeesContextContribution extends ContributionItem {
 			for (IRodinElement element : elements) {
 				ISeesContext seesContext = (ISeesContext) element;
 				String name = seesContext.getSeenContextName();
-				IRodinProject prj = file.getRodinProject();
-				IRodinFile contextFile = prj.getRodinFile(EventBPlugin
-						.getContextFileName(name));
+				IRodinFile contextFile = evbProject.getContextFile(name);
 				if (contextFile != null & contextFile.exists()) {
 					createMenuItem(menu, contextFile);
 					// submenu.add(new ShowSeesContext(contextFile));

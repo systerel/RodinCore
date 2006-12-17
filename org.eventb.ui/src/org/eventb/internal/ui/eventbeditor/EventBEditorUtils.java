@@ -27,7 +27,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
@@ -35,6 +34,7 @@ import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBProject;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
@@ -62,7 +62,6 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -1644,8 +1643,9 @@ public class EventBEditorUtils {
 		if (refines.length == 1) {
 			IRefinesMachine refine = (IRefinesMachine) refines[0];
 			String name = refine.getAbstractMachineName();
-			IRodinProject prj = concreteFile.getRodinProject();
-			return prj.getRodinFile(EventBPlugin.getMachineFileName(name));
+			IEventBProject prj = (IEventBProject) concreteFile
+					.getRodinProject().getAdapter(IEventBProject.class);
+			return prj.getMachineFile(name);
 		}
 		return null;
 
