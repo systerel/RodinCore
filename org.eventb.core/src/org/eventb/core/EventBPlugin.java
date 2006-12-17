@@ -45,9 +45,12 @@ public class EventBPlugin extends Plugin {
 	 * @return the name of the component corresponding to the given file
 	 */
 	public static String getComponentName(String fileName) {
-		final int length = fileName.length() - 4;
-		assert 0 < length;
-		return fileName.substring(0, length);
+		int lastDot = fileName.lastIndexOf('.');
+		if (lastDot == -1) {
+			return fileName;
+		} else {
+			return fileName.substring(0, lastDot);
+		}
 	}
 
 	/**
