@@ -1,6 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.rodinp.core;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -65,6 +73,19 @@ public interface IRodinFile extends IOpenable, IInternalParent,
 	 */
 	IRodinElement[] findElements(IRodinElement element);
 
+	/**
+	 * Returns the bare name of this Rodin file.  The bare name of a Rodin file
+	 * is its element name with the possible file extension removed.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @return the bare name of this Rodin file
+	 * @see IResource#getFileExtension()
+	 */
+	String getBareName();
+	
+	
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */

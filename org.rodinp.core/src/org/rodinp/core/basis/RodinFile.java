@@ -167,6 +167,16 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return super.exists();
 	}
 
+	public String getBareName() {
+		String name = getElementName();
+		int lastDot = name.lastIndexOf('.');
+		if (lastDot == -1) {
+			return name;
+		} else {
+			return name.substring(0, lastDot);
+		}
+	}
+
 	@Override
 	public final String getElementName() {
 		return file.getName();
