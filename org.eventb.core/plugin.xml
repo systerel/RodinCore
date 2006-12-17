@@ -447,5 +447,18 @@
             kind="handle"
             name="%eventBpoSelHintSnd"/>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.rodinp.core.IRodinProject"
+            class="org.eventb.internal.core.EventBProjectAdapterFactory">
+         <adapter type="org.eventb.core.IEventBProject"/>
+      </factory>
+      <factory
+            adaptableType="org.eventb.core.IEventBProject"
+            class="org.eventb.internal.core.RodinProjectAdapterFactory">
+         <adapter type="org.rodinp.core.IRodinProject"/>
+      </factory>
+   </extension>
 
 </plugin>

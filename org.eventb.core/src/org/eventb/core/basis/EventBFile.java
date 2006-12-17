@@ -11,12 +11,14 @@ import org.eclipse.core.resources.IFile;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEventBFile;
+import org.eventb.core.IEventBProject;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCMachineFile;
+import org.eventb.internal.core.EventBProject;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -36,6 +38,10 @@ public abstract class EventBFile extends RodinFile implements IEventBFile {
 
 	public final String getComponentName() {
 		return getBareName();
+	}
+
+	public IEventBProject getEventBProject() {
+		return new EventBProject(getRodinProject());
 	}
 
 	public final IContextFile getContextFile() {

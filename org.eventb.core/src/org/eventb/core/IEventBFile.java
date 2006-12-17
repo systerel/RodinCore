@@ -12,7 +12,7 @@ import org.rodinp.core.IRodinFile;
 
 /**
  * Common protocol for Event-B files. This interface groups together various
- * methods for accesing to all the files associated to an event-B component.
+ * methods for accessing to all the files associated to an event-B component.
  * <p>
  * The information associated to an event-B context is stored in the following
  * files:
@@ -52,6 +52,16 @@ public interface IEventBFile extends IRodinFile {
 	 * @return the name of the event-B component
 	 */
 	String getComponentName();
+
+	/**
+	 * Returns a handle to the event-B project containing this file.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the event-B project of this file
+	 */
+	IEventBProject getEventBProject();
 
 	/**
 	 * Returns a handle to the unchecked version of this component seen as an
