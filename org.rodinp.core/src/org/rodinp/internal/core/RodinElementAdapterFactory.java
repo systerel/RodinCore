@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.rodinp.core.IRodinElement;
 
 /**
- * Adapter from IRodinElement to IResource.
+ * Adapter from IOpenable to IResource.
  * 
  * @author Laurent Voisin
  */
