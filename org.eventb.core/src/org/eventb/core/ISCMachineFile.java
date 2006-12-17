@@ -9,7 +9,6 @@
 package org.eventb.core;
 
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -45,20 +44,10 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCMachineFile extends IRodinFile {
+public interface ISCMachineFile extends IEventBFile {
 
 	IFileElementType ELEMENT_TYPE = 
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".scMachineFile"); //$NON-NLS-1$
-
-	/**
-	 * Returns a handle to the unchecked version of this machine.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
-	 * 
-	 * @return a handle to the unchecked version of this machine
-	 */
-	IMachineFile getMachineFile();
 
 	/**
 	 * Returns a handle to the statically checked version of the abstraction of

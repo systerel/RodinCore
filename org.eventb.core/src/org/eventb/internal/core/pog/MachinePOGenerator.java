@@ -44,7 +44,7 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 			throws CoreException {
 
 		IPOFile poFile = (IPOFile) RodinCore.valueOf(target).getMutableCopy();
-		ISCMachineFile scMachineFile = (ISCMachineFile) poFile.getSCMachine().getSnapshot();
+		ISCMachineFile scMachineFile = (ISCMachineFile) poFile.getSCMachineFile().getSnapshot();
 		
 		try {
 			

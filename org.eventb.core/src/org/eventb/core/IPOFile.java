@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
 package org.eventb.core;
 
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -28,52 +27,10 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
-public interface IPOFile extends IRodinFile {
+public interface IPOFile extends IEventBFile {
 
 	public IFileElementType ELEMENT_TYPE = RodinCore
 			.getFileElementType(EventBPlugin.PLUGIN_ID + ".poFile"); //$NON-NLS-1$
-
-	/**
-	 * Returns a handle to the checked version of the context for which this
-	 * proof obligation file has been generated.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
-	 * 
-	 * @return a handle to the checked version of the corresponding context
-	 */
-	public ISCContextFile getSCContext();
-
-	/**
-	 * Returns a handle to the checked version of the machine for which this
-	 * proof obligation file has been generated.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
-	 * 
-	 * @return a handle to the checked version of the corresponding machine
-	 */
-	public ISCMachineFile getSCMachine();
-
-	/**
-	 * Returns a handle to the file containing proofs for this component.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
-	 * 
-	 * @return a handle to the proof file of this component
-	 */
-	public IPRFile getPRFile();
-
-	/**
-	 * Returns a handle to the file containing proof status for this component.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
-	 * 
-	 * @return a handle to the proof file of this component
-	 */
-	public IPSFile getPSFile();
 
 	/**
 	 * Returns a handle to a child predicate set with the given element name.

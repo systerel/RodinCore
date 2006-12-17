@@ -374,9 +374,9 @@ public class ObligationExplorer extends ViewPart implements
 			}
 			if (element instanceof IPSFile) {
 				IPSFile prFile = (IPSFile) element;
-				if (prFile.getMachine().exists())
+				if (prFile.getMachineFile().exists())
 					return registry.get(IEventBSharedImages.IMG_MACHINE);
-				else if (prFile.getContext().exists())
+				else if (prFile.getContextFile().exists())
 					return registry.get(IEventBSharedImages.IMG_CONTEXT);
 			}
 			if (element instanceof IRodinElement)

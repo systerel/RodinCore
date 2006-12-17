@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,18 @@ import org.eventb.core.IPRProof;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.RodinFile;
 
 /**
+ * Implementation of Event-B proof files as an extension of the Rodin database.
+ * <p>
+ * This class should not be used directly by any client except the Rodin
+ * database. In particular, clients should not use it, but rather use its
+ * associated interface <code>IPRFile</code>.
+ * </p>
+ * 
  * @author Farhad Mehta
  */
-public class PRFile extends RodinFile implements IPRFile {
+public class PRFile extends EventBFile implements IPRFile {
 
 	/**
 	 *  Constructor used by the Rodin database. 

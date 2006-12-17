@@ -8,8 +8,6 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
-import org.eventb.core.EventBPlugin;
-import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCInvariant;
@@ -21,23 +19,19 @@ import org.eventb.core.ISCVariant;
 import org.eventb.internal.core.Messages;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Implementation of Event-B SC machines as an extension of the Rodin database.
+ * Implementation of Event-B statically checked machines as an extension of the
+ * Rodin database.
  * <p>
- * This class is intended to be subclassed by clients that want to extend this
- * internal element type.
+ * This class should not be used directly by any client except the Rodin
+ * database. In particular, clients should not use it, but rather use its
+ * associated interface <code>IContextFile</code>.
  * </p>
- * <p>
- * This class should not be used in any other way than subclassing it
- * in a database extension. In particular, clients should not use it,
- * but rather use its associated interface <code>ISCMachineFile</code>.
- * </p>
- *
+ * 
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class SCMachineFile extends EventBFile implements ISCMachineFile {
 
@@ -63,13 +57,6 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 		return (ISCEvent[]) elements; 
 	}
 	
-	public IMachineFile getMachineFile() {
-		final String bareName = EventBPlugin.getComponentName(getElementName());
-		final String uName = EventBPlugin.getMachineFileName(bareName);
-		final IRodinProject project = (IRodinProject) getParent();
-		return (IMachineFile) project.getRodinFile(uName);
-	}
-
 	@Deprecated
 	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
 		ISCRefinesMachine machine = getRefinesClause();
@@ -79,22 +66,19 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 			return machine.getAbstractSCMachine();
 	}
 
-	public ISCInternalContext[] getSCSeenContexts() 
-	throws RodinDBException {
+	public ISCInternalContext[] getSCSeenContexts() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCInternalContext.ELEMENT_TYPE);
-		return (ISCInternalContext[]) elements; 
+		return (ISCInternalContext[]) elements;
 	}
 
-	public ISCInvariant[] getSCInvariants() 
-	throws RodinDBException {
+	public ISCInvariant[] getSCInvariants() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCInvariant.ELEMENT_TYPE);
-		return (ISCInvariant[]) elements; 
+		return (ISCInvariant[]) elements;
 	}
 
-	public ISCTheorem[] getSCTheorems() 
-	throws RodinDBException {
+	public ISCTheorem[] getSCTheorems() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
-		return (ISCTheorem[]) elements; 
+		return (ISCTheorem[]) elements;
 	}
 
 	@Deprecated

@@ -8,7 +8,6 @@
 package org.eventb.core;
 
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -42,42 +41,10 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  */
-public interface IMachineFile extends IRodinFile {
+public interface IMachineFile extends IEventBFile {
 
 	IFileElementType ELEMENT_TYPE =
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".machineFile"); //$NON-NLS-1$
-
-	/**
-	 * Returns a handle to the checked version of this machine, that is the file
-	 * produced when statically checking this machine.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
-	 * 
-	 * @return a handle to the checked version of this machine
-	 */
-	ISCMachineFile getSCMachineFile();
-
-	/**
-	 * Returns a handle to the file containing proof obligations for this
-	 * machine.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
-	 * 
-	 * @return a handle to the PO file of this machine
-	 */
-	IPOFile getPOFile();
-
-	/**
-	 * Returns a handle to the file containing proofs for this machine.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
-	 * 
-	 * @return a handle to the proof file of this machine
-	 */
-	IPSFile getPSFile();
 
 	/**
 	 * Returns a handle to a child refines clause with the given element name.

@@ -8,7 +8,6 @@
 package org.eventb.core;
 
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -40,42 +39,10 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  */
-public interface IContextFile extends IRodinFile {
+public interface IContextFile extends IEventBFile {
 
 	IFileElementType ELEMENT_TYPE = 
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".contextFile"); //$NON-NLS-1$
-
-	/**
-	 * Returns a handle to the checked version of this context, that is the file
-	 * produced when statically checking this context.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
-	 * 
-	 * @return a handle to the checked version of this context
-	 */
-	ISCContextFile getSCContextFile();
-
-	/**
-	 * Returns a handle to the file containing proof obligations for this
-	 * context.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
-	 * 
-	 * @return a handle to the PO file of this context
-	 */
-	IPOFile getPOFile();
-
-	/**
-	 * Returns a handle to the file containing proofs for this context.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
-	 * 
-	 * @return a handle to the proof file of this context
-	 */
-	IPSFile getPSFile();
 
 	/**
 	 * Returns a handle to a child extends clause with the given element name.

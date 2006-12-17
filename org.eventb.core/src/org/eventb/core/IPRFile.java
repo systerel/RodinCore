@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
 package org.eventb.core;
 
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -27,7 +26,7 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  */
-public interface IPRFile extends IRodinFile{
+public interface IPRFile extends IEventBFile{
 
 	IFileElementType ELEMENT_TYPE = 
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".prFile"); //$NON-NLS-1$

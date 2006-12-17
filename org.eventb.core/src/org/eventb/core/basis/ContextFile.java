@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,29 +9,22 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
-import org.eventb.core.ISCContextFile;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
  * Implementation of Event-B (unchecked) contexts as an extension of the Rodin database.
  * <p>
- * This class is intended to be subclassed by clients that want to extend this
- * file element type.
- * </p>
- * <p>
- * This class should not be used in any other way than subclassing it
- * in a database extension. In particular, clients should not use it,
- * but rather use its associated interface <code>IContextFile</code>.
+ * This class should not be used directly by any client except the Rodin
+ * database. In particular, clients should not use it, but rather use its
+ * associated interface <code>IContextFile</code>.
  * </p>
  *
  * @author Laurent Voisin
@@ -45,9 +38,6 @@ public class ContextFile extends EventBFile implements IContextFile {
 		super(file, parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IRodinElement#getElementType()
-	 */
 	@Override
 	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
@@ -58,9 +48,6 @@ public class ContextFile extends EventBFile implements IContextFile {
 				elementName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IContextFile#getCarrierSets()
-	 */
 	public ICarrierSet[] getCarrierSets() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
 		return (ICarrierSet[]) elements; 
@@ -70,9 +57,6 @@ public class ContextFile extends EventBFile implements IContextFile {
 		return (IConstant) getInternalElement(IConstant.ELEMENT_TYPE, elementName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IContextFile#getConstants()
-	 */
 	public IConstant[] getConstants() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IConstant.ELEMENT_TYPE);
 		return (IConstant[]) elements; 
@@ -82,9 +66,6 @@ public class ContextFile extends EventBFile implements IContextFile {
 		return (IAxiom) getInternalElement(IAxiom.ELEMENT_TYPE, elementName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IContextFile#getAxioms()
-	 */
 	public IAxiom[] getAxioms() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IAxiom.ELEMENT_TYPE);
 		return (IAxiom[]) elements; 
@@ -94,31 +75,15 @@ public class ContextFile extends EventBFile implements IContextFile {
 		return (ITheorem) getInternalElement(ITheorem.ELEMENT_TYPE, elementName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IContextFile#getTheorems()
-	 */
 	public ITheorem[] getTheorems() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(ITheorem.ELEMENT_TYPE);
 		return (Theorem[]) elements; 
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IContextFile#getSCContext()
-	 */
-	public ISCContextFile getSCContextFile() {
-		final String bareName = EventBPlugin.getComponentName(getElementName());
-		final String scName = EventBPlugin.getSCContextFileName(bareName);
-		final IRodinProject project = (IRodinProject) getParent();
-		return (ISCContextFile) project.getRodinFile(scName);
 	}
 
 	public IExtendsContext getExtendsClause(String elementName) {
 		return (IExtendsContext) getInternalElement(IExtendsContext.ELEMENT_TYPE, elementName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IContextFile#getExtendsClauses()
-	 */
 	public IExtendsContext[] getExtendsClauses() throws RodinDBException {
 		IRodinElement[] elements = getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
 		return (IExtendsContext[]) elements; 

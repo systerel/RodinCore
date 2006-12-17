@@ -45,7 +45,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 		// TODO implement context static checker
 		
 		IPOFile poFile = (IPOFile) RodinCore.valueOf(target).getMutableCopy();
-		ISCContextFile scContextFile = (ISCContextFile) poFile.getSCContext().getSnapshot();
+		ISCContextFile scContextFile = (ISCContextFile) poFile.getSCContextFile().getSnapshot();
 
 		try {
 		
