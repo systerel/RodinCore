@@ -26,10 +26,10 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBFile;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IPOSource;
@@ -123,9 +123,10 @@ public class ProofInformationPage extends Page implements
 	 * @param prSequent
 	 *            the current prSequent
 	 */
+	// TODO share code with ASTConverter
 	void setFormText(IPSStatus prSequent, IProgressMonitor monitor) {
 		try {
-			String formString = "<form>";
+			StringBuilder formBuilder = new StringBuilder("<form>");
 
 			IPOSource[] sources = prSequent.getPOSequent().getSources();
 			for (IPOSource source : sources) {
@@ -135,143 +136,96 @@ public class ProofInformationPage extends Page implements
 					ProofInformationUtils.debug("id: " + id);
 					ProofInformationUtils.debug("Find: " + element);
 				}
+				final IEventBFile file = (IEventBFile) element.getParent();
 				if (element instanceof ITheorem) {
-					ITheorem thm = (ITheorem) element;
-					formString = formString
-							+ "<li style=\"bullet\">"
-							+ "Theorem in "
-							+ EventBPlugin.getComponentName(thm.getParent()
-									.getElementName()) + "</li>";
-					formString = formString
-							+ "<li style=\"text\" value=\"\">"
-							+ UIUtils.makeHyperlink(id, thm
-									.getLabel())
-							+ ": ";
-					formString = formString
-							+ UIUtils.XMLWrapUp(thm.getPredicateString());
-					formString = formString + "</li>";
+					final ITheorem thm = (ITheorem) element;
+					formBuilder.append("<li style=\"bullet\">Theorem in ");
+					formBuilder.append(file.getComponentName());
+					formBuilder.append("</li><li style=\"text\" value=\"\">");
+					formBuilder.append(UIUtils.makeHyperlink(id, thm.getLabel()));
+					formBuilder.append(": ");
+					formBuilder.append(UIUtils.XMLWrapUp(thm.getPredicateString()));
+					formBuilder.append("</li>");
 				}
 				if (element instanceof IAxiom) {
 					IAxiom axm = (IAxiom) element;
-					formString = formString
-							+ "<li style=\"bullet\">"
-							+ "Axiom in "
-							+ EventBPlugin.getComponentName(axm.getParent()
-									.getElementName()) + "</li>";
-					formString = formString
-							+ "<li style=\"text\" value=\"\">"
-							+ UIUtils.makeHyperlink(id, axm
-									.getLabel())
-							+ ": ";
-					formString = formString
-							+ UIUtils.XMLWrapUp(axm.getPredicateString());
-					formString = formString + "</li>";
+					formBuilder.append("<li style=\"bullet\">Axiom in ");
+					formBuilder.append(file.getComponentName());
+					formBuilder.append("</li><li style=\"text\" value=\"\">");
+					formBuilder.append(UIUtils.makeHyperlink(id, axm.getLabel()));
+					formBuilder.append(": ");
+					formBuilder.append(UIUtils.XMLWrapUp(axm.getPredicateString()));
+					formBuilder.append("</li>");
 				} else if (element instanceof IInvariant) {
 					IInvariant inv = (IInvariant) element;
-					formString = formString
-							+ "<li style=\"bullet\">"
-							+ "Invariant in "
-							+ EventBPlugin.getComponentName(inv.getParent()
-									.getElementName()) + "</li>";
-					formString = formString
-							+ "<li style=\"text\" value=\"\">"
-							+ UIUtils.makeHyperlink(id, inv
-									.getLabel())
-							+ ": ";
-					formString = formString
-							+ UIUtils.XMLWrapUp(inv.getPredicateString());
-					formString = formString + "</li>";
+					formBuilder.append("<li style=\"bullet\">Invariant in ");
+					formBuilder.append(file.getComponentName());
+					formBuilder.append("</li><li style=\"text\" value=\"\">");
+					formBuilder.append(UIUtils.makeHyperlink(id, inv.getLabel()));
+					formBuilder.append(": ");
+					formBuilder.append(UIUtils.XMLWrapUp(inv.getPredicateString()));
+					formBuilder.append("</li>");
 				} else if (element instanceof IEvent) {
 					IEvent evt = (IEvent) element;
-					formString = formString
-							+ "<li style=\"bullet\">"
-							+ "Event in "
-							+ EventBPlugin.getComponentName(evt.getParent()
-									.getElementName()) + "</li>";
-					formString = formString
-							+ "<li style=\"text\" value=\"\">"
-							+ UIUtils.makeHyperlink(id, evt
-									.getLabel())
-							+ ":</li>";
-					IRodinElement[] lvars = evt
-							.getChildrenOfType(IVariable.ELEMENT_TYPE);
-					IRodinElement[] guards = evt
-							.getChildrenOfType(IGuard.ELEMENT_TYPE);
-					IRodinElement[] actions = evt
-							.getChildrenOfType(IAction.ELEMENT_TYPE);
+					formBuilder.append("<li style=\"bullet\">Event in ");
+					formBuilder.append(file.getComponentName());
+					formBuilder.append("</li><li style=\"text\" value=\"\">");
+					formBuilder.append(UIUtils.makeHyperlink(id, evt.getLabel()));
+					formBuilder.append(":</li>");
+					IVariable[] lvars = evt.getVariables();
+					IGuard[] guards = evt.getGuards();
+					IAction[] actions = evt.getActions();
 
 					if (lvars.length != 0) {
-						formString = formString
-								+ "<li style=\"text\" value=\"\" bindent = \"20\">";
-						formString = formString + "<b>ANY</b> ";
-						for (int j = 0; j < lvars.length; j++) {
-							IVariable var = (IVariable) lvars[j];
-							if (j == 0) {
-								formString = formString
-										+ UIUtils.makeHyperlink(var
-												.getHandleIdentifier(), var
-												.getIdentifierString());
-							} else
-								formString = formString
-										+ ", "
-										+ UIUtils.makeHyperlink(var
-												.getHandleIdentifier(), var
-												.getIdentifierString());
+						formBuilder.append("<li style=\"text\" value=\"\" bindent = \"20\">");
+						formBuilder.append("<b>ANY</b> ");
+						String sep = "";
+						for (IVariable var : lvars) {
+							formBuilder.append(sep);
+							sep = ", ";
+							formBuilder.append(UIUtils.makeHyperlink(var
+									.getHandleIdentifier(), var
+									.getIdentifierString()));
 						}
-						formString = formString + " <b>WHERE</b>";
-						formString = formString + "</li>";
+						formBuilder.append(" <b>WHERE</b></li>");
+					} else if (guards.length != 0) {
+						formBuilder.append("<li style=\"text\" value=\"\" bindent = \"20\">");
+						formBuilder.append("<b>WHEN</b></li>");
 					} else {
-						if (guards.length != 0) {
-							formString = formString
-									+ "<li style=\"text\" value=\"\" bindent = \"20\">";
-							formString = formString + "<b>WHEN</b></li>";
-						} else {
-							formString = formString
-									+ "<li style=\"text\" value=\"\" bindent = \"20\">";
-							formString = formString + "<b>BEGIN</b></li>";
-						}
-
+						formBuilder.append("<li style=\"text\" value=\"\" bindent = \"20\">");
+						formBuilder.append("<b>BEGIN</b></li>");
 					}
 
-					for (IRodinElement child : guards) {
-						IGuard guard = (IGuard) child;
-						formString = formString
-								+ "<li style=\"text\" value=\"\" bindent=\"40\">";
-						formString = formString
-								+ UIUtils.makeHyperlink(guard
+					for (IGuard guard : guards) {
+						formBuilder.append("<li style=\"text\" value=\"\" bindent=\"40\">");
+						formBuilder.append(UIUtils.makeHyperlink(guard
 										.getHandleIdentifier(), guard
-										.getLabel())
-								+ ": "
-								+ UIUtils.XMLWrapUp(guard.getPredicateString());
-						formString = formString + "</li>";
+										.getLabel()));
+						formBuilder.append(": ");
+						formBuilder.append(UIUtils.XMLWrapUp(guard.getPredicateString()));
+						formBuilder.append("</li>");
 					}
 
 					if (guards.length != 0) {
-						formString = formString
-								+ "<li style=\"text\" value=\"\" bindent=\"20\">";
-						formString = formString + "<b>THEN</b></li>";
+						formBuilder.append("<li style=\"text\" value=\"\" bindent=\"20\">");
+						formBuilder.append("<b>THEN</b></li>");
 					}
 
-					for (IRodinElement child : actions) {
-						IAction action = (IAction) child;
-						formString = formString
-								+ "<li style=\"text\" value=\"\" bindent=\"40\">";
-						formString = formString
-								+ UIUtils.makeHyperlink(action
+					for (IAction action : actions) {
+						formBuilder.append("<li style=\"text\" value=\"\" bindent=\"40\">");
+						formBuilder.append(UIUtils.makeHyperlink(action
 										.getHandleIdentifier(), action
-										.getLabel())
-								+ ": "
-								+ UIUtils.XMLWrapUp(action
-										.getAssignmentString());
-						formString = formString + "</li>";
+										.getLabel()));
+						formBuilder.append(": ");
+						formBuilder.append(UIUtils.XMLWrapUp(action.getAssignmentString()));
+						formBuilder.append("</li>");
 					}
-					formString = formString
-							+ "<li style=\"text\" value=\"\" bindent=\"20\">";
-					formString = formString + "<b>END</b></li>";
+					formBuilder.append("<li style=\"text\" value=\"\" bindent=\"20\">");
+					formBuilder.append("<b>END</b></li>");
 				}
 			}
-			formString = formString + "</form>";
-			formText.getFormText().setText(formString, true, false);
+			formBuilder.append("</form>");
+			formText.getFormText().setText(formBuilder.toString(), true, false);
 
 			formText.getFormText().addHyperlinkListener(new HyperlinkAdapter() {
 
