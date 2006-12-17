@@ -57,8 +57,8 @@ public class ShowAbstractEventContribution extends ContributionItem {
 		menuItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REFINES));
 
 		Listener listener = new Listener() {
-			public void handleEvent(Event event) {
-				switch (event.type) {
+			public void handleEvent(Event ev) {
+				switch (ev.type) {
 				case SWT.Selection:
 					UIUtils.linkToEventBEditor(abs_evt);
 					break;
