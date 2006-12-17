@@ -35,7 +35,7 @@ public abstract class EventBFile extends RodinFile implements IEventBFile {
 	}
 
 	public final String getComponentName() {
-		return EventBPlugin.getComponentName(getElementName());
+		return getBareName();
 	}
 
 	public final IContextFile getContextFile() {
