@@ -112,7 +112,7 @@ public final class ProofTree implements IProofTree {
 	}
 
 	public void run(Runnable op) {
-		boolean wasEnable = deltaProcessor.isEable();
+		boolean wasEnable = deltaProcessor.isEnable();
 		try {
 			if (wasEnable)
 				deltaProcessor.setEnable(false);
