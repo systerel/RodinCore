@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.BoundIdentSubstitution;
+import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -382,6 +383,34 @@ public class QuantifiedPredicate extends Predicate {
 			decl.addGivenTypes(set);
 		}
 		pred.addGivenTypes(set);
+	}
+
+	@Override
+	protected void getPositions(IFormulaFilter filter, IntStack indexes,
+			List<Position> positions) {
+		
+		if (filter.retainQuantifiedPredicate(this)) {
+			positions.add(new Position(indexes));
+		}
+
+		indexes.push(0);
+		for (BoundIdentDecl decl: quantifiedIdentifiers) {
+			decl.getPositions(filter, indexes, positions);
+			indexes.incrementTop();
+		}
+		pred.getPositions(filter, indexes, positions);
+		indexes.pop();
+	}
+
+	@Override
+	protected Formula getChild(int index) {
+		if (index < quantifiedIdentifiers.length) {
+			return quantifiedIdentifiers[index];
+		}
+		if (index == quantifiedIdentifiers.length) {
+			return pred;
+		}
+		return null;
 	}
 
 }

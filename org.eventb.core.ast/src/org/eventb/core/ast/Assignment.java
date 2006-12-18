@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -197,5 +198,17 @@ public abstract class Assignment extends Formula<Assignment> {
 	public abstract FreeIdentifier[] getUsedIdentifiers();
 	
 	protected abstract void synthesizeType(FormulaFactory ff);
+
+	@Override
+	protected void getPositions(IFormulaFilter filter,
+			IntStack indexes, List<Position> positions) {
+		assert false;
+	}
+
+	@Override
+	protected Formula getChild(int index) {
+		assert false;
+		return null;
+	}
 
 }

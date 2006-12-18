@@ -5,10 +5,12 @@
 package org.eventb.core.ast;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.IdentListMerger;
+import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -341,6 +343,33 @@ public class RelationalPredicate extends Predicate {
 	protected void addGivenTypes(Set<GivenType> set) {
 		left.addGivenTypes(set);
 		right.addGivenTypes(set);
+	}
+
+	@Override
+	protected void getPositions(IFormulaFilter filter, IntStack indexes,
+			List<Position> positions) {
+		
+		if (filter.retainRelationalPredicate(this)) {
+			positions.add(new Position(indexes));
+		}
+
+		indexes.push(0);
+		left.getPositions(filter, indexes, positions);
+		indexes.incrementTop();
+		right.getPositions(filter, indexes, positions);
+		indexes.pop();
+	}
+
+	@Override
+	protected Formula getChild(int index) {
+		switch (index) {
+		case 0:
+			return left;
+		case 1:
+			return right;
+		default:
+			return null;
+		}
 	}
 
 }

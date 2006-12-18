@@ -5,9 +5,11 @@
 package org.eventb.core.ast;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -278,6 +280,15 @@ public class FreeIdentifier extends Identifier {
 	@Override
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
 		return factory.makeGivenType(getName());
+	}
+
+	@Override
+	protected void getPositions(IFormulaFilter filter, IntStack indexes,
+			List<Position> positions) {
+
+		if (filter.retainFreeIdentifier(this)) {
+			positions.add(new Position(indexes));
+		}
 	}
 
 }

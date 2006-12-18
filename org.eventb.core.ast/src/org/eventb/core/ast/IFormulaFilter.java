@@ -1,0 +1,188 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.eventb.core.ast;
+
+/**
+ * Common protocol for formula filters. A formula filter tells whether a given
+ * formula satisifies some criterion.
+ * <p>
+ * This interface contains one method for each of the sub-classes of
+ * <code>Formula</code>, except assignments which are not covered by
+ * sub-formula positions.
+ * </p>
+ * 
+ * @author Laurent Voisin
+ * @see Formula#getPositions(IFormulaFilter)
+ */
+public interface IFormulaFilter {
+
+	/**
+	 * Tells whether the given expression passes this filter criterion.
+	 * 
+	 * @param expression
+	 *            expression to test
+	 * @return <code>true</code> iff the given expression passes the criterion
+	 */
+	boolean retainAssociativeExpression(AssociativeExpression expression);
+
+	/**
+	 * Tells whether the given predicate passes this filter criterion.
+	 * 
+	 * @param predicate
+	 *            predicate to test
+	 * @return <code>true</code> iff the given predicate passes the criterion
+	 */
+	boolean retainAssociativePredicate(AssociativePredicate predicate);
+
+	/**
+	 * Tells whether the given expression passes this filter criterion.
+	 * 
+	 * @param expression
+	 *            expression to test
+	 * @return <code>true</code> iff the given expression passes the criterion
+	 */
+	boolean retainAtomicExpression(AtomicExpression expression);
+
+	/**
+	 * Tells whether the given expression passes this filter criterion.
+	 * 
+	 * @param expression
+	 *            expression to test
+	 * @return <code>true</code> iff the given expression passes the criterion
+	 */
+	boolean retainBinaryExpression(BinaryExpression expression);
+
+	/**
+	 * Tells whether the given predicate passes this filter criterion.
+	 * 
+	 * @param predicate
+	 *            predicate to test
+	 * @return <code>true</code> iff the given predicate passes the criterion
+	 */
+	boolean retainBinaryPredicate(BinaryPredicate predicate);
+
+	/**
+	 * Tells whether the given expression passes this filter criterion.
+	 * 
+	 * @param expression
+	 *            expression to test
+	 * @return <code>true</code> iff the given expression passes the criterion
+	 */
+	boolean retainBoolExpression(BoolExpression expression);
+
+	/**
+	 * Tells whether the given bound identifier declaration passes this filter
+	 * criterion.
+	 * 
+	 * @param decl
+	 *            declaration to test
+	 * @return <code>true</code> iff the given declaration passes the
+	 *         criterion
+	 */
+	boolean retainBoundIdentDecl(BoundIdentDecl decl);
+
+	/**
+	 * Tells whether the given identifier passes this filter criterion.
+	 * 
+	 * @param identifier
+	 *            identifier to test
+	 * @return <code>true</code> iff the given identifier passes the criterion
+	 */
+	boolean retainBoundIdentifier(BoundIdentifier identifier);
+
+	/**
+	 * Tells whether the given identifier passes this filter criterion.
+	 * 
+	 * @param identifier
+	 *            identifier to test
+	 * @return <code>true</code> iff the given identifier passes the criterion
+	 */
+	boolean retainFreeIdentifier(FreeIdentifier identifier);
+
+	/**
+	 * Tells whether the given literal passes this filter criterion.
+	 * 
+	 * @param literal
+	 *            literal to test
+	 * @return <code>true</code> iff the given literal passes the criterion
+	 */
+	boolean retainIntegerLiteral(IntegerLiteral literal);
+
+	/**
+	 * Tells whether the given predicate passes this filter criterion.
+	 * 
+	 * @param predicate
+	 *            predicate to test
+	 * @return <code>true</code> iff the given predicate passes the criterion
+	 */
+	boolean retainLiteralPredicate(LiteralPredicate predicate);
+
+	/**
+	 * Tells whether the given expression passes this filter criterion.
+	 * 
+	 * @param expression
+	 *            expression to test
+	 * @return <code>true</code> iff the given expression passes the criterion
+	 */
+	boolean retainQuantifiedExpression(QuantifiedExpression expression);
+
+	/**
+	 * Tells whether the given predicate passes this filter criterion.
+	 * 
+	 * @param predicate
+	 *            predicate to test
+	 * @return <code>true</code> iff the given predicate passes the criterion
+	 */
+	boolean retainQuantifiedPredicate(QuantifiedPredicate predicate);
+
+	/**
+	 * Tells whether the given predicate passes this filter criterion.
+	 * 
+	 * @param predicate
+	 *            predicate to test
+	 * @return <code>true</code> iff the given predicate passes the criterion
+	 */
+	boolean retainRelationalPredicate(RelationalPredicate predicate);
+
+	/**
+	 * Tells whether the given expression passes this filter criterion.
+	 * 
+	 * @param expression
+	 *            expression to test
+	 * @return <code>true</code> iff the given expression passes the criterion
+	 */
+	boolean retainSetExtension(SetExtension expression);
+
+	/**
+	 * Tells whether the given predicate passes this filter criterion.
+	 * 
+	 * @param predicate
+	 *            predicate to test
+	 * @return <code>true</code> iff the given predicate passes the criterion
+	 */
+	boolean retainSimplePredicate(SimplePredicate predicate);
+
+	/**
+	 * Tells whether the given expression passes this filter criterion.
+	 * 
+	 * @param expression
+	 *            expression to test
+	 * @return <code>true</code> iff the given expression passes the criterion
+	 */
+	boolean retainUnaryExpression(UnaryExpression expression);
+
+	/**
+	 * Tells whether the given predicate passes this filter criterion.
+	 * 
+	 * @param predicate
+	 *            predicate to test
+	 * @return <code>true</code> iff the given predicate passes the criterion
+	 */
+	boolean retainUnaryPredicate(UnaryPredicate predicate);
+
+}

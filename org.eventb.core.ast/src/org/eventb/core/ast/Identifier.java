@@ -26,4 +26,9 @@ public abstract class Identifier extends Expression {
 		// Already done at the global level, nothing to do locally
 	}
 
+	@Override
+	protected Formula getChild(int index) {
+		return null;
+	}
+
 }

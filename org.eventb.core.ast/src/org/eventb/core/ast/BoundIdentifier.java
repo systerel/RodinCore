@@ -5,9 +5,11 @@
 package org.eventb.core.ast;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -192,6 +194,15 @@ public class BoundIdentifier extends Identifier {
 	@Override
 	public Expression applySubstitution(Substitution subst) {
 		return subst.getReplacement(this);
+	}
+
+	@Override
+	protected void getPositions(IFormulaFilter filter, IntStack indexes,
+			List<Position> positions) {
+
+		if (filter.retainBoundIdentifier(this)) {
+			positions.add(new Position(indexes));
+		}
 	}
 
 }

@@ -5,9 +5,11 @@
 package org.eventb.core.ast;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -237,6 +239,20 @@ public class AtomicExpression extends Expression {
 	@Override
 	protected void addGivenTypes(Set<GivenType> set) {
 		getType().addGivenTypes(set);
+	}
+
+	@Override
+	protected void getPositions(IFormulaFilter filter, IntStack indexes,
+			List<Position> positions) {
+		
+		if (filter.retainAtomicExpression(this)) {
+			positions.add(new Position(indexes));
+		}
+	}
+
+	@Override
+	protected Formula getChild(int index) {
+		return null;
 	}
 
 }

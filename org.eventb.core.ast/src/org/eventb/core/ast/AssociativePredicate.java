@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.IdentListMerger;
+import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -314,6 +315,30 @@ public class AssociativePredicate extends Predicate {
 		for (Predicate child: children) {
 			child.addGivenTypes(set);
 		}
+	}
+
+	@Override
+	protected void getPositions(IFormulaFilter filter, IntStack indexes,
+			List<Position> positions) {
+		
+		if (filter.retainAssociativePredicate(this)) {
+			positions.add(new Position(indexes));
+		}
+
+		indexes.push(0);
+		for (Predicate child: children) {
+			child.getPositions(filter, indexes, positions);
+			indexes.incrementTop();
+		}
+		indexes.pop();
+	}
+
+	@Override
+	protected Formula getChild(int index) {
+		if (index <= children.length) {
+			return children[index];
+		}
+		return null;
 	}
 
 }

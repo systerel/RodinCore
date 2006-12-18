@@ -10,7 +10,7 @@ package org.eventb.internal.core.ast;
 import java.util.Arrays;
 
 /**
- * A stack of integers.
+ * A stack of non-negative integers.
  *
  * @author Laurent Voisin
  */
@@ -34,6 +34,7 @@ public class IntStack {
 	}
 	
 	public void push(int i) {
+		if (i < 0) throw new IllegalArgumentException("Negative index " + i);
 		if (++ index >= array.length) {
 			int[] newArray = new int[array.length + DEFAULT_SIZE];
 			System.arraycopy(array, 0, newArray, 0, array.length);
@@ -53,12 +54,10 @@ public class IntStack {
 		return array[index];
 	}
 	
+	// In general, we should check that we don't go beyond Integer.MAX_VALUE,
+	// but in practice, that can't happen in the AST library.
 	public void incrementTop() {
 		++ array[index];
-	}
-	
-	public void replaceTop(int i) {
-		array[index] = i;
 	}
 	
 	public int[] toArray() {

@@ -83,14 +83,6 @@ public class TestIntStack extends TestCase {
 		assertStack(stack, 2);
 	}
 
-	public final void testReplaceTop() {
-		IntStack stack = new IntStack();
-		stack.push(1);
-		assertStack(stack, 1);
-		stack.replaceTop(5);
-		assertStack(stack, 5);
-	}
-
 	public final void testToString() {
 		IntStack stack = new IntStack();
 		stack.push(1);
@@ -99,6 +91,18 @@ public class TestIntStack extends TestCase {
 		assertEquals("[1, 2]", stack.toString());
 		stack.pop();
 		assertEquals("[1]", stack.toString());
+	}
+
+	public final void testInvalidIndex() {
+		IntStack stack = new IntStack();
+		try {
+			stack.push(-1);
+			fail("Should have raised an exception");
+		} catch (IllegalArgumentException iae) {
+			// success
+		} catch (Exception e) {
+			fail("Wrong exception raised");
+		}
 	}
 
 }

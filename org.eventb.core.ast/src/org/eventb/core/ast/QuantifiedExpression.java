@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.IdentListMerger;
+import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -736,5 +737,40 @@ public class QuantifiedExpression extends Expression {
 	// TODO add instantiation of condition
 
 	// TODO add instantiation of subexpression
+
+	@Override
+	protected void getPositions(IFormulaFilter filter, IntStack indexes,
+			List<Position> positions) {
+		
+		if (filter.retainQuantifiedExpression(this)) {
+			positions.add(new Position(indexes));
+		}
+
+		indexes.push(0);
+		for (BoundIdentDecl decl: quantifiedIdentifiers) {
+			decl.getPositions(filter, indexes, positions);
+			indexes.incrementTop();
+		}
+		pred.getPositions(filter, indexes, positions);
+		indexes.incrementTop();
+		expr.getPositions(filter, indexes, positions);
+		indexes.pop();
+	}
+	
+	@Override
+	protected Formula getChild(int index) {
+		if (index < quantifiedIdentifiers.length) {
+			return quantifiedIdentifiers[index];
+		}
+		index = index - quantifiedIdentifiers.length;
+		switch (index) {
+		case 0:
+			return pred;
+		case 1:
+			return expr;
+		default:
+			return null;
+		}
+	}
 
 }

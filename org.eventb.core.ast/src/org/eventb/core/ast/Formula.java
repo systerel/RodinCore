@@ -20,6 +20,7 @@ import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.BoundIdentDeclRemover;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
 import org.eventb.internal.core.ast.IdentListMerger;
+import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Substitution;
@@ -1855,5 +1856,57 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 
 	protected abstract void addGivenTypes(Set<GivenType> set);
+
+	/**
+	 * Returns the sub-formula at the given position in this formula, or
+	 * <code>null</code> if the given position does not correspond to any
+	 * sub-formula of this formula.
+	 * 
+	 * @param position
+	 *            the position of the sub-formula to retrieve
+	 * @return the sub-formula at the given position in this formula, or
+	 *         <code>null</code> if there is none
+	 */
+	public final Formula getSubFormula(Position position) {
+		Formula formula = this;
+		for (int index: position.indexes) {
+			formula = formula.getChild(index);
+			if (formula == null) {
+				return null;
+			}
+		}
+		return formula;
+	}
+	
+	// Return the child of this formula at the given index, or <code>null</code>
+	// if none
+	protected abstract Formula getChild(int index);
+
+	/**
+	 * Returns the positions of all sub-formulas of this formula that satisfy
+	 * the given criterion.
+	 * <p>
+	 * The positions are computed by calling the filter on each node of the
+	 * formula tree, traversed in pre-order. Consequently, the returned list is
+	 * always sorted lexicographically.
+	 * <p>
+	 * This method is not applicable to assignments.
+	 * </p>
+	 * 
+	 * @param filter
+	 *            filter implementing the criterion to test for
+	 * 
+	 * @return a list of the positions of all sub-formulas that satisfy the
+	 *         given criterion
+	 */
+	public final List<Position> getPositions(IFormulaFilter filter) {
+		assert !(this instanceof Assignment);
+		List<Position> positions = new ArrayList<Position>();
+		getPositions(filter, new IntStack(), positions);
+		return positions;
+	}
+	
+	protected abstract void getPositions(IFormulaFilter filter,
+			IntStack indexes, List<Position> positions);
 	
 }
