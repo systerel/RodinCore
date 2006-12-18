@@ -158,7 +158,7 @@ public class DeltaProcessor {
 		this.fireEnable = fireEnable;
 	}
 
-	public boolean isEable() {
+	public boolean isEnable() {
 		return fireEnable;
 	}
 
