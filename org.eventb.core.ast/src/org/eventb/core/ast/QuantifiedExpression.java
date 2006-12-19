@@ -773,4 +773,43 @@ public class QuantifiedExpression extends Expression {
 		}
 	}
 
+	@Override
+	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		Position pos;
+		if (form == Form.Explicit) {
+			indexes.push(0);
+			for (BoundIdentDecl decl: quantifiedIdentifiers) {
+				pos = decl.getPosition(sloc, indexes);
+				if (pos != null)
+					return pos;
+				indexes.incrementTop();
+			}
+		} else {
+			indexes.push(quantifiedIdentifiers.length);
+		}
+		pos = pred.getPosition(sloc, indexes);
+		if (pos != null)
+			return pos;
+		indexes.incrementTop();
+		if (form != Form.Lambda) {
+			pos = expr.getPosition(sloc, indexes);
+			if (pos != null)
+				return pos;
+		} else {
+			// For a lambda expression, we have to skip over the maplet expression
+			BinaryExpression maplet = (BinaryExpression) expr;
+			indexes.push(0);
+			pos = maplet.getLeft().getPosition(sloc, indexes);
+			if (pos != null)
+				return pos;
+			indexes.incrementTop();
+			pos = maplet.getRight().getPosition(sloc, indexes);
+			if (pos != null)
+				return pos;
+			indexes.pop();
+		}
+		indexes.pop();
+		return new Position(indexes);
+	}
+
 }

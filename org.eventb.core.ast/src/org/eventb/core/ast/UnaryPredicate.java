@@ -198,4 +198,14 @@ public class UnaryPredicate extends Predicate {
 		return null;
 	}
 
+	@Override
+	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		indexes.push(0);
+		Position pos = child.getPosition(sloc, indexes);
+		if (pos != null)
+			return pos;
+		indexes.pop();
+		return new Position(indexes);
+	}
+
 }

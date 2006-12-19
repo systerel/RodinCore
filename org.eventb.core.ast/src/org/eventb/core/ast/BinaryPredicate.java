@@ -296,4 +296,19 @@ public class BinaryPredicate extends Predicate {
 		}
 	}
 
+	@Override
+	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		Position pos;
+		indexes.push(0);
+		pos = left.getPosition(sloc, indexes);
+		if (pos != null)
+			return pos;
+		indexes.incrementTop();
+		pos = right.getPosition(sloc, indexes);
+		if (pos != null)
+			return pos;
+		indexes.pop();
+		return new Position(indexes);
+	}
+
 }

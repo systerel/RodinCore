@@ -147,4 +147,9 @@ public class LiteralPredicate extends Predicate {
 		return null;
 	}
 
+	@Override
+	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		return new Position(indexes);
+	}
+
 }

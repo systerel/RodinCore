@@ -6,6 +6,8 @@ package org.eventb.core.ast;
 
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IntStack;
+
 
 
 
@@ -27,8 +29,15 @@ public abstract class Identifier extends Expression {
 	}
 
 	@Override
-	protected Formula getChild(int index) {
+	protected final Formula getChild(int index) {
 		return null;
+	}
+
+	@Override
+	protected final Position getDescendantPos(SourceLocation sloc,
+			IntStack indexes) {
+
+		return new Position(indexes);
 	}
 
 }

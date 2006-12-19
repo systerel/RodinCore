@@ -341,4 +341,17 @@ public class AssociativePredicate extends Predicate {
 		return null;
 	}
 
+	@Override
+	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		indexes.push(0);
+		for (Predicate child: children) {
+			Position pos = child.getPosition(sloc, indexes);
+			if (pos != null)
+				return pos;
+			indexes.incrementTop();
+		}
+		indexes.pop();
+		return new Position(indexes);
+	}
+
 }

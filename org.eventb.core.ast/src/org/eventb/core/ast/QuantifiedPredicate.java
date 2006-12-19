@@ -4,10 +4,10 @@
  */
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.QuantifiedHelper.appendBoundIdentifiersString;
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
-import static org.eventb.core.ast.QuantifiedHelper.appendBoundIdentifiersString;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.core.ast.QuantifiedUtil.resolveIdents;
@@ -411,6 +411,23 @@ public class QuantifiedPredicate extends Predicate {
 			return pred;
 		}
 		return null;
+	}
+
+	@Override
+	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		Position pos;
+		indexes.push(0);
+		for (BoundIdentDecl decl: quantifiedIdentifiers) {
+			pos = decl.getPosition(sloc, indexes);
+			if (pos != null)
+				return pos;
+			indexes.incrementTop();
+		}
+		pos = pred.getPosition(sloc, indexes);
+		if (pos != null)
+			return pos;
+		indexes.pop();
+		return new Position(indexes);
 	}
 
 }

@@ -211,4 +211,10 @@ public abstract class Assignment extends Formula<Assignment> {
 		return null;
 	}
 
+	@Override
+	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		assert false;
+		return null;
+	}
+
 }

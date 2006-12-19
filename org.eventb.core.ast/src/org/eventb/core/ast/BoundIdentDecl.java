@@ -214,4 +214,9 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		return null;
 	}
 
+	@Override
+	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		return new Position(indexes);
+	}
+
 }

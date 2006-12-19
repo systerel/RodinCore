@@ -1909,4 +1909,51 @@ public abstract class Formula<T extends Formula<T>> {
 	protected abstract void getPositions(IFormulaFilter filter,
 			IntStack indexes, List<Position> positions);
 	
+	/**
+	 * Returns the position of the deepest sub-formula of this formula that
+	 * contains the given source location.
+	 * <p>
+	 * In case there are several sub-formulas that contain the given source
+	 * location, and if they are not in a ancester-descendant relationship (that
+	 * case being tackled with by picking up the descendant), the position
+	 * returned is that of the sub-formulas which is encountered first in a
+	 * top-down traversal of this formula.
+	 * <p>
+	 * This method is not applicable to assignments.
+	 * </p>
+	 * 
+	 * @param sloc
+	 *            source location to search
+	 * 
+	 * @return the position of the deepest sub-formula that contains the given
+	 *         source location, or <code>null</code> if there is none
+	 */
+	public final Position getPosition(SourceLocation sloc) {
+		return getPosition(sloc, new IntStack());
+	}
+	
+	protected final Position getPosition(SourceLocation sloc, IntStack indexes) {
+		if (contains(sloc)) {
+			return getDescendantPos(sloc, indexes);
+		}
+		return null;
+	}
+
+	protected abstract Position getDescendantPos(SourceLocation sloc, IntStack indexes);
+
+	/**
+	 * Tells whether this formula spans the given source location. In other
+	 * words, returns <code>true</code> if the source location associated to
+	 * this formula is not <code>null</code> and contains the given source
+	 * location, <code>false</code> otherwise.
+	 * 
+	 * @param sloc
+	 *            another source location
+	 * @return <code>true</code> iff this formula spans the given location
+	 * @see SourceLocation#contains(SourceLocation)
+	 */
+	public final boolean contains(SourceLocation sloc) {
+		return this.location != null && this.location.contains(sloc);
+	}
+
 }

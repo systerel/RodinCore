@@ -568,4 +568,17 @@ public class AssociativeExpression extends Expression {
 		return null;
 	}
 
+	@Override
+	public Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		indexes.push(0);
+		for (Expression child: children) {
+			Position pos = child.getPosition(sloc, indexes);
+			if (pos != null)
+				return pos;
+			indexes.incrementTop();
+		}
+		indexes.pop();
+		return new Position(indexes);
+	}
+
 }

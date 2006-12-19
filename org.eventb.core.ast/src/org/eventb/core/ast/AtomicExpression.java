@@ -255,4 +255,9 @@ public class AtomicExpression extends Expression {
 		return null;
 	}
 
+	@Override
+	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		return new Position(indexes);
+	}
+
 }

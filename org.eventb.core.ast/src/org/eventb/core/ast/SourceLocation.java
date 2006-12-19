@@ -61,10 +61,18 @@ public class SourceLocation {
 	}
 
 	@Override
+	public int hashCode() {
+		return (1 << 16) * start + end;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof SourceLocation) {
-			SourceLocation temp = (SourceLocation) obj;
-			return temp.end == end && temp.start == start;
+			final SourceLocation other = (SourceLocation) obj;
+			return this.start == other.start && this.end == other.end;
 		}
 		return false;
 	}
