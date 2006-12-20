@@ -71,8 +71,7 @@ public class BecomesSuchThat extends Assignment {
 		
 		super(Formula.BECOMES_SUCH_THAT, location, condition.hashCode(), assignedIdents);
 		this.condition = condition;
-		this.primedIdents = new BoundIdentDecl[primedIdents.length];
-		System.arraycopy(primedIdents, 0, this.primedIdents, 0, primedIdents.length);
+		this.primedIdents = primedIdents.clone();
 		checkPreconditions();
 		synthesizeType(ff);
 	}
@@ -133,10 +132,7 @@ public class BecomesSuchThat extends Assignment {
 	 * @return an array of bound identifier declaration
 	 */
 	public BoundIdentDecl[] getPrimedIdents() {
-		final int length = this.primedIdents.length;
-		final BoundIdentDecl[] result = new BoundIdentDecl[length];
-		System.arraycopy(this.primedIdents, 0, result, 0, length);
-		return result;
+		return primedIdents.clone();
 	}
 
 	/**

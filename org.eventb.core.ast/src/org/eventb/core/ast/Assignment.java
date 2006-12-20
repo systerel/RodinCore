@@ -62,8 +62,7 @@ public abstract class Assignment extends Formula<Assignment> {
 			FreeIdentifier[] assignedIdents) {
 		
 		super(tag, location, combineHashCodes(combineHashCodes(assignedIdents), hashCode));
-		this.assignedIdents = new FreeIdentifier[assignedIdents.length];
-		System.arraycopy(assignedIdents, 0, this.assignedIdents, 0, assignedIdents.length);
+		this.assignedIdents = assignedIdents.clone();
 	}
 
 	/**
@@ -126,9 +125,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	 *         of this assignment
 	 */
 	public final FreeIdentifier[] getAssignedIdentifiers() {
-		FreeIdentifier[] result = new FreeIdentifier[this.assignedIdents.length];
-		System.arraycopy(assignedIdents, 0, result, 0, assignedIdents.length);
-		return result;
+		return assignedIdents.clone();
 	}
 	
 	protected final String getSyntaxTreeLHS(String[] boundNames, String tabs) {

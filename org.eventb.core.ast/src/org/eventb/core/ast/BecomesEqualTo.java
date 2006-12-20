@@ -38,8 +38,7 @@ public class BecomesEqualTo extends Assignment {
 	protected BecomesEqualTo(FreeIdentifier[] assignedIdents, Expression[] values,
 			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
-		this.values = new Expression[values.length];
-		System.arraycopy(values, 0, this.values, 0, values.length);
+		this.values = values.clone();
 		checkPreconditions();
 		synthesizeType(ff);
 	}
@@ -93,9 +92,7 @@ public class BecomesEqualTo extends Assignment {
 	 *         this assignment
 	 */
 	public Expression[] getExpressions() {
-		Expression[] result = new Expression[values.length];
-		System.arraycopy(values, 0, result, 0, values.length);
-		return result;
+		return values.clone();
 	}
 	
 	@Override
@@ -290,11 +287,9 @@ public class BecomesEqualTo extends Assignment {
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(values);
 		FreeIdentifier[] idents = freeIdentMerger.getFreeMergedArray();
 
-		// Need to copy the array, as it can be maximal for one child (and then
+		// Need to clone the array, as it can be maximal for one child (and then
 		// we would expose an internal array to clients)
-		FreeIdentifier[] result = new FreeIdentifier[idents.length];
-		System.arraycopy(idents, 0, result, 0, idents.length);
-		return result;
+		return idents.clone();
 	}
 
 	@Override

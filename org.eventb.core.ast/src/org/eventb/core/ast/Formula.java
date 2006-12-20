@@ -1124,9 +1124,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @see #getSyntacticallyFreeIdentifiers()
 	 */
 	public final FreeIdentifier[] getFreeIdentifiers() {
-		FreeIdentifier[] result = new FreeIdentifier[freeIdents.length];
-		System.arraycopy(freeIdents, 0, result, 0, freeIdents.length);
-		return result;
+		return freeIdents.clone();
 	}
 
 	/**
@@ -1147,9 +1145,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 *         within this formula
 	 */
 	public final BoundIdentifier[] getBoundIdentifiers() {
-		BoundIdentifier[] result = new BoundIdentifier[boundIdents.length];
-		System.arraycopy(boundIdents, 0, result, 0, boundIdents.length);
-		return result;
+		return boundIdents.clone();
 	}
 
 	/**

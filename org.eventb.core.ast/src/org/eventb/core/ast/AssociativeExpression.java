@@ -61,8 +61,7 @@ public class AssociativeExpression extends Expression {
 			SourceLocation location, FormulaFactory factory) {
 
 		super(tag, location, combineHashCodes(children));
-		this.children = new Expression[children.length];
-		System.arraycopy(children, 0, this.children, 0, children.length);
+		this.children = children.clone();
 		checkPreconditions();
 		synthesizeType(factory, null);
 	}
@@ -307,9 +306,7 @@ public class AssociativeExpression extends Expression {
 	 *         empty.
 	 */
 	public Expression[] getChildren() {
-		Expression[] temp = new Expression[children.length];
-		System.arraycopy(children, 0, temp, 0, children.length);
-		return temp;
+		return children.clone();
 	}
 
 	@Override

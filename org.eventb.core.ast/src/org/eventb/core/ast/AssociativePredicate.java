@@ -54,8 +54,7 @@ public class AssociativePredicate extends Predicate {
 			SourceLocation location, FormulaFactory ff) {
 		
 		super(tag, location, combineHashCodes(children));
-		this.children = new Predicate[children.length];
-		System.arraycopy(children, 0, this.children, 0, children.length);
+		this.children = children.clone();
 		
 		checkPreconditions();
 		synthesizeType(ff);
@@ -121,9 +120,7 @@ public class AssociativePredicate extends Predicate {
 	 *         empty.
 	 */
 	public Predicate[] getChildren() {
-		Predicate[] temp = new Predicate[children.length];
-		System.arraycopy(children, 0, temp, 0, children.length);
-		return temp;
+		return children.clone();
 	}
 	
 	@Override

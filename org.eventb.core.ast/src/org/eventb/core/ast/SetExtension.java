@@ -46,8 +46,7 @@ public class SetExtension extends Expression {
 	protected SetExtension(Expression[] expressions, SourceLocation location,
 			FormulaFactory factory) {
 		super(SETEXT, location, combineHashCodes(expressions));
-		this.members = new Expression[expressions.length];
-		System.arraycopy(expressions, 0, this.members, 0, expressions.length);
+		this.members = expressions.clone();
 
 		checkPreconditions();
 		synthesizeType(factory, null);
@@ -112,9 +111,7 @@ public class SetExtension extends Expression {
 	 * @return an array of expressions. It can be empty but not <code>null</code>.
 	 */
 	public Expression[] getMembers() {
-		Expression[] temp = new Expression[members.length];
-		System.arraycopy(members, 0, temp, 0, members.length);
-		return temp;
+		return members.clone();
 	}
 
 	@Override

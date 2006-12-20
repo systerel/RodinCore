@@ -57,8 +57,7 @@ public class QuantifiedPredicate extends Predicate {
 		super(tag, location,
 				combineHashCodes(boundIdentifiers.length, pred.hashCode()));
 
-		this.quantifiedIdentifiers = new BoundIdentDecl[boundIdentifiers.length];
-		System.arraycopy(boundIdentifiers, 0, this.quantifiedIdentifiers, 0, boundIdentifiers.length);
+		this.quantifiedIdentifiers = boundIdentifiers.clone();
 		this.pred = pred;
 		
 		checkPreconditions();
@@ -120,9 +119,7 @@ public class QuantifiedPredicate extends Predicate {
 	 * @return list of bound identifiers
 	 */
 	public BoundIdentDecl[] getBoundIdentDecls() {
-		BoundIdentDecl[] idents = new BoundIdentDecl[quantifiedIdentifiers.length];
-		System.arraycopy(quantifiedIdentifiers, 0, idents, 0, quantifiedIdentifiers.length);
-		return idents;
+		return quantifiedIdentifiers.clone();
 	}
 	
 	/**
