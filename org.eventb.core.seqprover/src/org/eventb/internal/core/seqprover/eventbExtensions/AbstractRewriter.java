@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
@@ -15,7 +15,6 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
@@ -84,13 +83,13 @@ public abstract class AbstractRewriter implements IReasoner {
 					getDisplayName(pred), antecedents);
 		} else {
 			// Hypothesis rewriting
-			final Hypothesis hyp = new Hypothesis(pred);
-			if (! seq.hypotheses().contains(hyp)) {
+			final Predicate hyp = pred;
+			if (! seq.containsHypothesis(hyp)) {
 				return ProverFactory.reasonerFailure(this, input,
 						"Nonexistent hypothesis: " + hyp);
 			}
 			
-			final Predicate[] newHyps = rewrite(hyp.getPredicate());
+			final Predicate[] newHyps = rewrite(hyp);
 			if (newHyps == null) {
 				return ProverFactory.reasonerFailure(this, input, "Rewriter "
 						+ getReasonerID() + " inapplicable for hypothesis "
@@ -109,7 +108,7 @@ public abstract class AbstractRewriter implements IReasoner {
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		
-		Set<Hypothesis> neededHyps = reader.getNeededHyps();
+		Set<Predicate> neededHyps = reader.getNeededHyps();
 		final int length = neededHyps.size();
 		if (length == 0) {
 			// Goal rewriting
@@ -121,8 +120,8 @@ public abstract class AbstractRewriter implements IReasoner {
 					"Expected exactly one needed hypothesis!"));
 		}
 		Predicate pred = null;
-		for (Hypothesis hyp: neededHyps) {
-			pred = hyp.getPredicate();
+		for (Predicate hyp: neededHyps) {
+			pred = hyp;
 		}
 		return new Input(pred);
 	}
@@ -169,6 +168,6 @@ public abstract class AbstractRewriter implements IReasoner {
 	 *            the hypothesis predicate that gets rewritten
 	 * @return the action to perform on hypotheses.
 	 */
-	protected abstract Action getHypAction(Predicate pred);
+	protected abstract IHypAction getHypAction(Predicate pred);
 
 }

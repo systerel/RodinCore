@@ -18,7 +18,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -106,12 +105,12 @@ public class ProofStoreReader implements IProofStoreReader {
 		private final int confidence;
 		private final String displayName;
 		private final Predicate goal;
-		private final Set<Hypothesis> neededHyps;
+		private final Set<Predicate> neededHyps;
 		private final IAntecedent[] antecedents;
 		
 		public Bridge(IPRProofRule prProofRule, IProofStoreReader store,
 				int confidence, String displayName, Predicate goal,
-				Set<Hypothesis> neededHyps, IAntecedent[] antecedents) {
+				Set<Predicate> neededHyps, IAntecedent[] antecedents) {
 
 			this.prProofRule = prProofRule;
 			this.store = store;
@@ -166,7 +165,7 @@ public class ProofStoreReader implements IProofStoreReader {
 			return goal;
 		}
 
-		public Set<Hypothesis> getNeededHyps() {
+		public Set<Predicate> getNeededHyps() {
 			return neededHyps;
 		}
 

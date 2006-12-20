@@ -3,7 +3,6 @@ package org.eventb.core.seqprover.reasonerInputs;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
@@ -56,7 +55,7 @@ public abstract class HypothesisReasoner implements IReasoner {
 	public final Input deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 
-		Set<Hypothesis> neededHyps = reader.getNeededHyps();
+		Set<Predicate> neededHyps = reader.getNeededHyps();
 		final int length = neededHyps.size();
 		if (length == 0) {
 			return new Input(null);
@@ -65,8 +64,8 @@ public abstract class HypothesisReasoner implements IReasoner {
 			throw new SerializeException(new IllegalStateException(
 					"Expected at most one needed hypothesis!"));
 		}
-		for (Hypothesis hyp: neededHyps) {
-			return new Input(hyp.getPredicate());
+		for (Predicate hyp: neededHyps) {
+			return new Input(hyp);
 		}
 		assert false;
 		return null;
@@ -78,12 +77,12 @@ public abstract class HypothesisReasoner implements IReasoner {
 		final Input input = (Input) rInput;
 		final Predicate pred = input.pred;
 		
-		final Hypothesis hyp;
+		final Predicate hyp;
 		if (pred == null) {
 			hyp = null;
 		} else {
-			hyp = new Hypothesis(pred);
-			if (!seq.hypotheses().contains(hyp)) {
+			hyp = pred;
+			if (!seq.containsHypothesis(hyp)) {
 				return ProverFactory.reasonerFailure(this, input,
 						"Nonexistent hypothesis: " + hyp);
 			}

@@ -2,7 +2,6 @@ package org.eventb.core.seqprover.reasonerInputs;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
@@ -37,11 +36,6 @@ public class SinglePredInput implements IReasonerInput{
 		assert predicate != null;
 		this.predicate = predicate;
 		this.error = null;
-	}
-
-	public SinglePredInput(Hypothesis hypothesis) {
-		predicate = hypothesis.getPredicate();
-		error = null;
 	}
 	
 	public final boolean hasError(){

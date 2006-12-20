@@ -11,7 +11,6 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.internal.core.Util;
@@ -48,8 +47,8 @@ public final class POLoader {
 	 */
 	public static IProverSequent readPO(IPOSequent poSeq) throws RodinDBException {
 		final ITypeEnvironment typeEnv = factory.makeTypeEnvironment();
-		final Set<Hypothesis> hypotheses = new HashSet<Hypothesis>();
-		final Set<Hypothesis> selHyps = new HashSet<Hypothesis>();
+		final Set<Predicate> hypotheses = new HashSet<Predicate>();
+		final Set<Predicate> selHyps = new HashSet<Predicate>();
 		final SelectionHints selHints = new SelectionHints(poSeq);
 		loadHypotheses(poSeq, selHints, hypotheses, selHyps, typeEnv);
 		final Predicate goal = readGoal(poSeq, typeEnv);
@@ -74,7 +73,7 @@ public final class POLoader {
 	 * @throws RodinDBException
 	 */
 	private static void loadHypotheses(IPOSequent poSeq,
-			SelectionHints selHints, Set<Hypothesis> hypotheses, Set<Hypothesis> selHyps, ITypeEnvironment typeEnv)
+			SelectionHints selHints, Set<Predicate> hypotheses, Set<Predicate> selHyps, ITypeEnvironment typeEnv)
 			throws RodinDBException {
 
 		IPOPredicateSet[] dbHyps = poSeq.getHypotheses();
@@ -89,7 +88,7 @@ public final class POLoader {
 	}
 	
 	private static void loadPredicateSet(IPOPredicateSet poPredSet,
-			SelectionHints selHints, Set<Hypothesis> hypotheses, Set<Hypothesis> selHyps, ITypeEnvironment typeEnv)
+			SelectionHints selHints, Set<Predicate> hypotheses, Set<Predicate> selHyps, ITypeEnvironment typeEnv)
 			throws RodinDBException {
 
 		final IPOPredicateSet parentSet = poPredSet.getParentPredicateSet();
@@ -103,7 +102,7 @@ public final class POLoader {
 		boolean selected = selHints.contains(poPredSet);
 		for (final IPOPredicate poPred : poPredSet.getPredicates()) {
 			final Predicate predicate = poPred.getPredicate(factory, typeEnv);
-			final Hypothesis hypothesis = new Hypothesis(predicate);
+			final Predicate hypothesis = predicate;
 			if (!selected && selHints.contains(poPred)) selHyps.add(hypothesis);
 			hypotheses.add(hypothesis);
 		}

@@ -1,12 +1,12 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
@@ -16,7 +16,6 @@ import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -87,14 +86,14 @@ public class AllD implements IReasoner {
 	public IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 
-		Set<Hypothesis> neededHyps = reader.getNeededHyps();
+		Set<Predicate> neededHyps = reader.getNeededHyps();
 		if (neededHyps.size() != 1) {
 			throw new SerializeException(new IllegalStateException(
 					"Expected exactly one needed hypothesis!"));
 		}
 		Predicate pred = null;
-		for (Hypothesis hyp: neededHyps) {
-			pred = hyp.getPredicate();
+		for (Predicate hyp: neededHyps) {
+			pred = hyp;
 		}
 		return new Input(reader, pred);
 	}
@@ -108,9 +107,9 @@ public class AllD implements IReasoner {
 			return ProverFactory.reasonerFailure(this,reasonerInput,input.getError());
 		
 		Predicate univHypPred = input.pred;
-		Hypothesis univHyp = new Hypothesis(univHypPred);
+		Predicate univHyp = univHypPred;
 		
-		if (! seq.hypotheses().contains(univHyp))
+		if (! seq.containsHypothesis(univHyp))
 			return ProverFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+univHyp);
 		if (! Lib.isUnivQuant(univHypPred))
@@ -151,7 +150,7 @@ public class AllD implements IReasoner {
 		anticidents[1] = ProverFactory.makeAntecedent(
 				seq.goal(),
 				Lib.breakPossibleConjunct(instantiatedPred),
-				ProverLib.deselect(univHyp)
+				ProverFactory.makeDeselectHypAction(Arrays.asList(univHyp))
 				);
 		
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(

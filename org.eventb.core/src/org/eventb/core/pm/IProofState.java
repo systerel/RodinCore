@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -30,17 +30,17 @@ public interface IProofState {
 
 	public abstract IProofTreeNode getNextPendingSubgoal();
 
-	public abstract void addAllToCached(Collection<Hypothesis> hyps);
+	public abstract void addAllToCached(Collection<Predicate> hyps);
 
-	public abstract void removeAllFromCached(Collection<Hypothesis> hyps);
+	public abstract void removeAllFromCached(Collection<Predicate> hyps);
 
-	public abstract Collection<Hypothesis> getCached();
+	public abstract Collection<Predicate> getCached();
 
-	public abstract void removeAllFromSearched(Collection<Hypothesis> hyps);
+	public abstract void removeAllFromSearched(Collection<Predicate> hyps);
 
-	public abstract Collection<Hypothesis> getSearched();
+	public abstract Collection<Predicate> getSearched();
 
-	public abstract void setSearched(Collection<Hypothesis> searched);
+	public abstract void setSearched(Collection<Predicate> searched);
 
 	public abstract boolean isDirty();
 

@@ -1,6 +1,8 @@
 package org.eventb.core.seqprover.tests;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -10,10 +12,10 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class TestLib {
@@ -56,7 +58,7 @@ public class TestLib {
 		}
 		
 		// constructing sequent
-		Set<Hypothesis> Hyps = Hypothesis.Hypotheses(hyps);
+		Set<Predicate> Hyps = new LinkedHashSet<Predicate>(Arrays.asList(hyps));
 			// new HashSet<Predicate>(Arrays.asList(hyps));
 		
 		// return new SimpleProverSequent(typeEnvironment,Hyps,goal);
@@ -69,14 +71,14 @@ public class TestLib {
 		// return (new ProofTree(genSeq(str))).getRoot();
 	}
 	
-	public static Hypothesis genHyp(String s){
+	public static Predicate genHyp(String s){
 		Predicate hypPred = Lib.parsePredicate(s);
 		Lib.typeCheck(hypPred);
-		return new Hypothesis(hypPred);
+		return hypPred;
 	}
 	
-	public static Set<Hypothesis> genHyps(String... strs){
-		Set<Hypothesis> hyps = new HashSet<Hypothesis>(strs.length);
+	public static Set<Predicate> genHyps(String... strs){
+		Set<Predicate> hyps = new HashSet<Predicate>(strs.length);
 		for (String s : strs) 
 			hyps.add(genHyp(s));
 		return hyps;

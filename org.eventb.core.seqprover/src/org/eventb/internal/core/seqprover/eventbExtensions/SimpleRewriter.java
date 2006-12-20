@@ -1,10 +1,11 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.Arrays;
+
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
-import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjToImplRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegationRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Rewriter;
@@ -82,8 +83,8 @@ public abstract class SimpleRewriter extends AbstractRewriter {
 	}
 
 	@Override
-	protected Action getHypAction(Predicate pred) {
-		return ProverLib.deselect(new Hypothesis(pred));
+	protected IHypAction getHypAction(Predicate pred) {
+		return ProverFactory.makeDeselectHypAction(Arrays.asList(pred));
 	}
 
 	@Override

@@ -7,16 +7,13 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.Set;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRHypAction;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
-import org.eventb.core.seqprover.HypothesesManagement;
-import org.eventb.core.seqprover.Hypothesis;
-import org.eventb.core.seqprover.HypothesesManagement.Action;
-import org.eventb.core.seqprover.HypothesesManagement.ActionType;
+import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -37,21 +34,35 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 		return ELEMENT_TYPE;
 	}
 
-	public Action getAction(IProofStoreReader store) throws RodinDBException {
+	public IHypAction getAction(IProofStoreReader store) throws RodinDBException {
 	
 		// read in the action type
-		ActionType actionType = HypothesesManagement.fromString(getElementName());
+		String actionType = getElementName();
 		
-		// read in the hypotheses
-		Set<Hypothesis> hyps = Hypothesis.Hypotheses(getHyps(store));
-		return new Action(actionType,hyps);
+		if (actionType.equals(ISelectionHypAction.SELECT_ACTION_TYPE))
+			return ProverFactory.makeSelectHypAction(getHyps(store));
+		if (actionType.equals(ISelectionHypAction.DESELECT_ACTION_TYPE))
+			return ProverFactory.makeDeselectHypAction(getHyps(store));
+		if (actionType.equals(ISelectionHypAction.HIDE_ACTION_TYPE))
+			return ProverFactory.makeHideHypAction(getHyps(store));
+		if (actionType.equals(ISelectionHypAction.SHOW_ACTION_TYPE))
+			return ProverFactory.makeShowHypAction(getHyps(store));
+
+		// TODO : forward inferences
+		
+		return null;
 	}
 
-	public void setAction(Action a,  IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
+	public void setAction(IHypAction a,  IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
 		
-		// write out the hypotheses
-		setHyps(Hypothesis.Predicates(a.getHyps()), store, monitor);
-		
+		String actionType = getElementName();
+
+		if (actionType.equals(ISelectionHypAction.SELECT_ACTION_TYPE) || 
+				actionType.equals(ISelectionHypAction.DESELECT_ACTION_TYPE) ||
+				actionType.equals(ISelectionHypAction.HIDE_ACTION_TYPE) ||
+				actionType.equals(ISelectionHypAction.SHOW_ACTION_TYPE))
+			setHyps(((ISelectionHypAction)a).getHyps(), store, monitor);
+//		 TODO : forward inferences
 		return;
 	}
 

@@ -25,7 +25,6 @@ import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofRule;
@@ -72,7 +71,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 
 		// Write out the proof tree dependencies		
 		setGoal(proofDeps.getGoal(), store, null);
-		setHyps(Hypothesis.Predicates(proofDeps.getUsedHypotheses()),store,null);
+		setHyps(proofDeps.getUsedHypotheses(),store,null);
 		// The used free idents are stored as the base type env in the store
 		setIntroFreeIdents(proofDeps.getIntroducedFreeIdents(), monitor);
 		
@@ -96,7 +95,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	private class ProofDependencies implements IProofDependencies{
 
 		final Predicate goal;
-		final Set<Hypothesis> usedHypotheses;
+		final Set<Predicate> usedHypotheses;
 		final ITypeEnvironment usedFreeIdents;
 		final Set<String> introducedFreeIdents;
 		final boolean hasDeps;
@@ -108,7 +107,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 				usedFreeIdents = store.getBaseTypeEnv();
 				introducedFreeIdents = PRProof.this.getIntroFreeIdents(monitor);
 				goal = PRProof.this.getGoal(store);
-				usedHypotheses = Hypothesis.Hypotheses(PRProof.this.getHyps(store));
+				usedHypotheses = PRProof.this.getHyps(store);
 				hasDeps = true;
 			}
 			finally
@@ -133,7 +132,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 			return usedFreeIdents;
 		}
 
-		public Set<Hypothesis> getUsedHypotheses() {
+		public Set<Predicate> getUsedHypotheses() {
 			return usedHypotheses;
 		}
 		
@@ -195,7 +194,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 			return null;
 		}
 
-		public Set<Hypothesis> getUsedHypotheses() {
+		public Set<Predicate> getUsedHypotheses() {
 			return null;
 		}
 

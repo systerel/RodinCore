@@ -39,7 +39,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.prover.EventBPredicateText;
 import org.eventb.internal.ui.prover.PredicateUtil;
@@ -74,7 +73,7 @@ public class HypothesisRow {
 	IUserSupport userSupport;
 
 	// The hypothesis contains in this row.
-	Hypothesis hyp;
+	Predicate hyp;
 
 	// This should be varied when the user resize.
 	private int max_length = 30;
@@ -103,7 +102,7 @@ public class HypothesisRow {
 	 * @param parent
 	 *            The composite parent
 	 */
-	public HypothesisRow(FormToolkit toolkit, Composite parent, Hypothesis hyp,
+	public HypothesisRow(FormToolkit toolkit, Composite parent, Predicate hyp,
 			IUserSupport userSupport, boolean odd, boolean enable) {
 		GridData gd;
 		this.hyp = hyp;
@@ -133,7 +132,7 @@ public class HypothesisRow {
 		hypothesisComposite.getBody().setBackground(background);
 		hypothesisComposite.getBody().setLayout(new GridLayout());
 
-		Predicate pred = hyp.getPredicate();
+		Predicate pred = hyp;
 		actualString = pred.toString();
 		IParseResult parseResult = formulaFactory.parsePredicate(actualString);
 		assert parseResult.isSuccess();
@@ -300,7 +299,7 @@ public class HypothesisRow {
 				}
 
 				public void linkActivated(HyperlinkEvent e) {
-					Set<Hypothesis> hypSet = new HashSet<Hypothesis>();
+					Set<Predicate> hypSet = new HashSet<Predicate>();
 					hypSet.add(hyp);
 					String[] inputs = hypothesisText.getResults();
 					if (ProverUIUtils.DEBUG)
@@ -366,7 +365,7 @@ public class HypothesisRow {
 	 * 
 	 * @return the hypothesis corresponding to this row
 	 */
-	public Hypothesis getHypothesis() {
+	public Predicate getHypothesis() {
 		return hyp;
 	}
 

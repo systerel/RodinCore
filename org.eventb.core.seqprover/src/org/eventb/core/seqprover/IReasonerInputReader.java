@@ -63,7 +63,7 @@ public interface IReasonerInputReader {
 	 * 
 	 * @return the needed hypotheses of the corresponding proof rule
 	 */
-	Set<Hypothesis> getNeededHyps();
+	Set<Predicate> getNeededHyps();
 
 	/**
 	 * Returns the confidence of the corresponding proof rule.

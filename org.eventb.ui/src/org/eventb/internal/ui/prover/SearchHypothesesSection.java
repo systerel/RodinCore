@@ -27,9 +27,9 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.HypothesesManagement.ActionType;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.ui.EventBUIPlugin;
@@ -68,7 +68,7 @@ public class SearchHypothesesSection extends HypothesesSection {
 		public void linkActivated(HyperlinkEvent e) {
 			Widget widget = e.widget;
 			if (widget.equals(sl)) {
-				Set<Hypothesis> selected = new HashSet<Hypothesis>();
+				Set<Predicate> selected = new HashSet<Predicate>();
 				for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
 					HypothesisRow hr = it.next();
 					if (hr.isSelected()) {
@@ -79,7 +79,7 @@ public class SearchHypothesesSection extends HypothesesSection {
 					return;
 
 				ProverUI editor = (ProverUI) page.getEditor();
-				ITactic t = Tactics.mngHyp(ActionType.SELECT, selected);
+				ITactic t = Tactics.mngHyp(ProverFactory.makeSelectHypAction(selected));
 				editor.getUserSupport().applyTacticToHypotheses(t, selected, new NullProgressMonitor());
 				// TreeViewer viewer = editor.getProofTreeUI().getViewer();
 				// ISelection selection = viewer.getSelection();
@@ -100,7 +100,7 @@ public class SearchHypothesesSection extends HypothesesSection {
 			}
 
 			else if (widget.equals(sl)) {
-				Set<Hypothesis> deselected = new HashSet<Hypothesis>();
+				Set<Predicate> deselected = new HashSet<Predicate>();
 				for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
 					HypothesisRow hr = it.next();
 					if (hr.isSelected()) {

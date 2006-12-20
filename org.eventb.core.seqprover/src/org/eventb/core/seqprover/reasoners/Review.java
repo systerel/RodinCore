@@ -1,9 +1,10 @@
 package org.eventb.core.seqprover.reasoners;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -25,7 +26,7 @@ public class Review implements IReasoner{
 	
 	public static class Input implements IReasonerInput {
 
-		Set<Hypothesis> hyps;
+		Set<Predicate> hyps;
 		Predicate goal;
 		int confidence;
 
@@ -36,7 +37,7 @@ public class Review implements IReasoner{
 			this.confidence = confidence;
 		}
 		
-		public Input(Set<Hypothesis> hyps, Predicate goal, int confidence) {
+		public Input(Set<Predicate> hyps, Predicate goal, int confidence) {
 			this.hyps = hyps;
 			this.goal = goal;
 			this.confidence = confidence;
@@ -45,10 +46,10 @@ public class Review implements IReasoner{
 		public void applyHints(ReplayHints hints) {
 			Predicate[] newPreds = new Predicate[hyps.size()];
 			int i = 0;
-			for (Hypothesis hyp: hyps) {
-				newPreds[i++] = hints.applyHints(hyp.getPredicate());
+			for (Predicate hyp: hyps) {
+				newPreds[i++] = hints.applyHints(hyp);
 			}
-			hyps = Hypothesis.Hypotheses(newPreds);
+			hyps = new LinkedHashSet<Predicate>(Arrays.asList(newPreds));
 			goal = hints.applyHints(goal);
 		}
 
@@ -87,12 +88,12 @@ public class Review implements IReasoner{
 		// Organize Input
 		Input input = (Input) reasonerInput;
 		
-		Set<Hypothesis> hyps = input.hyps;
+		Set<Predicate> hyps = input.hyps;
 		Predicate goal = input.goal;
 		int reviewerConfidence = input.confidence;
 		
 		if ((! (seq.goal().equals(goal))) ||
-		   (! (seq.hypotheses().containsAll(hyps)))) {
+		   (! (seq.containsHypotheses(hyps)))) {
 			return ProverFactory.reasonerFailure(this, input,
 					"Reviewed sequent does not match");
 		}

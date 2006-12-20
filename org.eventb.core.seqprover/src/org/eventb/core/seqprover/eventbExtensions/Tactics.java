@@ -5,7 +5,6 @@ import static org.eventb.core.seqprover.tactics.BasicTactics.onAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,12 +12,13 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.HypothesesManagement.ActionType;
+import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -113,15 +113,15 @@ public class Tactics {
 				IProverSequent seq = pt.getSequent();
 				Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
 				freeIdents.addAll(Arrays.asList(seq.goal().getFreeIdentifiers()));
-				for (Hypothesis hyp : seq.selectedHypotheses()){
-					freeIdents.addAll(Arrays.asList(hyp.getPredicate().getFreeIdentifiers()));
+				for (Predicate hyp : seq.selectedHypIterable()){
+					freeIdents.addAll(Arrays.asList(hyp.getFreeIdentifiers()));
 				}
 				
-				Set<Hypothesis> hypsToSelect = Hypothesis.freeIdentsSearch(seq.hypotheses(),freeIdents);
+				Set<Predicate> hypsToSelect = ProverLib.hypsFreeIdentsSearch(seq,freeIdents);
 				hypsToSelect.removeAll(seq.selectedHypotheses());
 				if (hypsToSelect.isEmpty())
 					return "No more hypotheses found";
-				return (mngHyp(ActionType.SELECT,hypsToSelect)).apply(pt, pm);
+				return (mngHyp(ProverFactory.makeSelectHypAction(hypsToSelect))).apply(pt, pm);
 			}
 			
 		};
@@ -147,10 +147,11 @@ public class Tactics {
 		if (goal.equals(Lib.False)) return false;
 		Predicate negGoal = Lib.makeNeg(goal);
 		if (negGoal.equals(Lib.True)) return false;
-		if (Hypothesis.containsPredicate(
-				node.getSequent().selectedHypotheses(),
-				negGoal));
+//		if (Predicate.containsPredicate(
+//				node.getSequent().selectedHypotheses(),
+//				negGoal));
 		return true;
+		
 	}
 	
 	
@@ -230,8 +231,8 @@ public class Tactics {
 	// Tactics applicable on a hypothesis
 	
 	// TODO : change order of input in one of the two places
-	public static ITactic allD(final Hypothesis univHyp, final String... instantiations){
-		final Predicate pred = univHyp.getPredicate();
+	public static ITactic allD(final Predicate univHyp, final String... instantiations){
+		final Predicate pred = univHyp;
 		return new ITactic(){
 
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
@@ -246,84 +247,84 @@ public class Tactics {
 		};
 	}
 	
-	public static boolean allD_applicable(Hypothesis hyp){
-		return Lib.isUnivQuant(hyp.getPredicate());
+	public static boolean allD_applicable(Predicate hyp){
+		return Lib.isUnivQuant(hyp);
 	}
 	
-	public static ITactic conjD(Hypothesis conjHyp) {
+	public static ITactic conjD(Predicate conjHyp) {
 		return BasicTactics.reasonerTac(
 				new Conj(), 
-				new Conj.Input(conjHyp.getPredicate())
+				new Conj.Input(conjHyp)
 		);
 	}
 	
 	
-	public static boolean conjD_applicable(Hypothesis hyp){
-		return Lib.isConj(hyp.getPredicate());
+	public static boolean conjD_applicable(Predicate hyp){
+		return Lib.isConj(hyp);
 	}
 	
-	public static ITactic impE(Hypothesis impHyp){
+	public static ITactic impE(Predicate impHyp){
 		return BasicTactics.reasonerTac(
 				new ImpE(),
-				new ImpE.Input(impHyp.getPredicate())
+				new ImpE.Input(impHyp)
 		);
 	}
 	
-	public static boolean impE_applicable(Hypothesis hyp){
-		return Lib.isImp(hyp.getPredicate());
+	public static boolean impE_applicable(Predicate hyp){
+		return Lib.isImp(hyp);
 	}
 	
-	public static ITactic disjE(Hypothesis disjHyp){
+	public static ITactic disjE(Predicate disjHyp){
 		return BasicTactics.reasonerTac(
 				new DisjE(),
-				new DisjE.Input(disjHyp.getPredicate())
+				new DisjE.Input(disjHyp)
 		);
 	}
 	
-	public static boolean disjE_applicable(Hypothesis hyp){
-		return Lib.isDisj(hyp.getPredicate());
+	public static boolean disjE_applicable(Predicate hyp){
+		return Lib.isDisj(hyp);
 	}
 
-	public static ITactic eqE(Hypothesis eqHyp){
+	public static ITactic eqE(Predicate eqHyp){
 		return BasicTactics.reasonerTac(new Eq(),new SinglePredInput(eqHyp));
 	}
 	
-	public static boolean eqE_applicable(Hypothesis hyp){
-		return Lib.isEq(hyp.getPredicate());
+	public static boolean eqE_applicable(Predicate hyp){
+		return Lib.isEq(hyp);
 	}
 	
-	public static ITactic exE(Hypothesis exHyp){
+	public static ITactic exE(Predicate exHyp){
 		return BasicTactics.reasonerTac(
 				new ExE(),
-				new ExE.Input(exHyp.getPredicate())
+				new ExE.Input(exHyp)
 		);
 	}
 	
-	public static boolean exE_applicable(Hypothesis hyp){
-		return Lib.isExQuant(hyp.getPredicate());
+	public static boolean exE_applicable(Predicate hyp){
+		return Lib.isExQuant(hyp);
 	}
 	
 
-	public static ITactic removeNegHyp(Hypothesis hyp){
+	public static ITactic removeNegHyp(Predicate hyp){
 		return BasicTactics.reasonerTac(
 				new RemoveNegation(),
-				new RemoveNegation.Input(hyp.getPredicate())
+				new RemoveNegation.Input(hyp)
 		);
 	}
 	
-	public static boolean removeNegHyp_applicable(Hypothesis hyp){
-		return (new RemoveNegation()).isApplicable(hyp.getPredicate());
+	public static boolean removeNegHyp_applicable(Predicate hyp){
+		return (new RemoveNegation()).isApplicable(hyp);
 	}
 	
-	public static ITactic falsifyHyp(Hypothesis hyp){
+	public static ITactic falsifyHyp(Predicate hyp){
 		return BasicTactics.reasonerTac(
 				new Contr(),
-				new Contr.Input(hyp.getPredicate())
+				new Contr.Input(hyp)
 		);
 	}
 	
-	public static boolean falsifyHyp_applicable(Hypothesis hyp, IProverSequent seq){
-		return (!seq.goal().equals(Lib.makeNeg(hyp.getPredicate())));
+	public static boolean falsifyHyp_applicable(Predicate hyp, IProverSequent seq){
+		return (!seq.goal().equals(Lib.makeNeg(hyp)));
 	}
 	
 	// Misc tactics
@@ -364,15 +365,21 @@ public class Tactics {
 		return BasicTactics.prune();
 	}
 	
-	public static ITactic mngHyp(ActionType type, Set<Hypothesis> hypotheses) {
+//	public static ITactic mngHyp(ActionType type, Set<Predicate> hypotheses) {
+//		return BasicTactics.reasonerTac(
+//				new MngHyp(),
+//				new MngHyp.Input(type, hypotheses));
+//	}
+	
+	public static ITactic mngHyp(IHypAction hypAction) {
 		return BasicTactics.reasonerTac(
 				new MngHyp(),
-				new MngHyp.Input(type, hypotheses));
+				new MngHyp.Input(hypAction));
 	}
 
-	public static ITactic mngHyp(ActionType type, Hypothesis hypothesis){
-		return mngHyp(type, Collections.singleton(hypothesis));
-	}
+//	public static ITactic mngHyp(ActionType type, Predicate hypothesis){
+//		return mngHyp(type, Collections.singleton(hypothesis));
+//	}
 	
 	public static ITactic postProcessBeginner() {
 		// System.out.println("* Beginner Mode *");

@@ -1,12 +1,11 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -41,7 +40,7 @@ public class ImpE extends HypothesisReasoner {
 				ProverFactory.makeAntecedent(
 						sequent.goal(),
 						addedHyps,
-						ProverLib.deselect(new Hypothesis(pred)))
+						ProverFactory.makeDeselectHypAction(Arrays.asList(pred)))
 		};
 	}
 

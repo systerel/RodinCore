@@ -23,8 +23,8 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
@@ -60,10 +60,10 @@ public class ProofState implements IProofState {
 	private IProofTreeNode current;
 
 	// The set of cached hypotheses.
-	private Collection<Hypothesis> cached;
+	private Collection<Predicate> cached;
 
 	// The set of searched hypotheses.
-	private Collection<Hypothesis> searched;
+	private Collection<Predicate> searched;
 
 	// The dirty flag to indicate if there are some unsaved changes with this
 	// proof obligation.
@@ -111,8 +111,8 @@ public class ProofState implements IProofState {
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
 		dirty = status.isBroken();
-		cached = new HashSet<Hypothesis>();
-		searched = new HashSet<Hypothesis>();
+		cached = new HashSet<Predicate>();
+		searched = new HashSet<Predicate>();
 	}
 
 	/* (non-Javadoc)
@@ -174,42 +174,42 @@ public class ProofState implements IProofState {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IProofState#addAllToCached(java.util.Collection)
 	 */
-	public void addAllToCached(Collection<Hypothesis> hyps) {
+	public void addAllToCached(Collection<Predicate> hyps) {
 		cached.addAll(hyps);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IProofState#removeAllFromCached(java.util.Collection)
 	 */
-	public void removeAllFromCached(Collection<Hypothesis> hyps) {
+	public void removeAllFromCached(Collection<Predicate> hyps) {
 		cached.removeAll(hyps);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IProofState#getCached()
 	 */
-	public Collection<Hypothesis> getCached() {
+	public Collection<Predicate> getCached() {
 		return cached;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IProofState#removeAllFromSearched(java.util.Collection)
 	 */
-	public void removeAllFromSearched(Collection<Hypothesis> hyps) {
+	public void removeAllFromSearched(Collection<Predicate> hyps) {
 		searched.removeAll(hyps);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IProofState#getSearched()
 	 */
-	public Collection<Hypothesis> getSearched() {
+	public Collection<Predicate> getSearched() {
 		return searched;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IProofState#setSearched(java.util.Collection)
 	 */
-	public void setSearched(Collection<Hypothesis> searched) {
+	public void setSearched(Collection<Predicate> searched) {
 		this.searched = searched;
 	}
 

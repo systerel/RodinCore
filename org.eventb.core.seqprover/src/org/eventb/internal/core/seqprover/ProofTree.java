@@ -14,7 +14,6 @@ import java.util.Set;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofTree;
@@ -152,7 +151,7 @@ public final class ProofTree implements IProofTree {
 	public class ProofDependencies implements IProofDependencies{
 		
 		final Predicate goal;
-		final Set<Hypothesis> usedHypotheses;
+		final Set<Predicate> usedHypotheses;
 		final ITypeEnvironment usedFreeIdents;
 		final HashSet<String> introducedFreeIdents;
 		
@@ -177,7 +176,7 @@ public final class ProofTree implements IProofTree {
 			return goal;
 		}
 		
-		public Set<Hypothesis> getUsedHypotheses() {
+		public Set<Predicate> getUsedHypotheses() {
 			return usedHypotheses;
 		}
 
@@ -191,15 +190,20 @@ public final class ProofTree implements IProofTree {
 		
 		//	TODO : Replace with a more sophisticated implementation
 		//  once Rule and ReasoningStep have been merged.
-		private Set<Hypothesis> calculateUsedHypotheses() {
-			Set<Hypothesis> usedHyps = new HashSet<Hypothesis>();
+		private Set<Predicate> calculateUsedHypotheses() {
+			Set<Predicate> usedHyps = new HashSet<Predicate>();
 			collectNeededHypotheses(usedHyps,root);
-			usedHyps.retainAll(getSequent().hypotheses());
-			return usedHyps;
+			// usedHyps.retainAll(getSequent().hypotheses());
+			Set<Predicate> result = new HashSet<Predicate>(usedHyps.size());
+			for(Predicate usedHyp : usedHyps){
+				if (getSequent().containsHypothesis(usedHyp))
+					result.add(usedHyp);
+			}
+			return result;
 		}
 		
 		// actually static
-		private void collectNeededHypotheses(Set<Hypothesis> neededHyps,ProofTreeNode node){
+		private void collectNeededHypotheses(Set<Predicate> neededHyps,ProofTreeNode node){
 			neededHyps.addAll(node.getNeededHypotheses());
 			IProofTreeNode[] children = node.getChildNodes();
 			for (int i = 0; i < children.length; i++) {

@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.HypothesesManagement.Action;
 
 
 /**
@@ -40,7 +39,7 @@ public interface IProofRule extends IReasonerOutput{
 	 * 
 	 * @return the needed hypotheses of this proof rule
 	 */
-	Set<Hypothesis> getNeededHyps();
+	Set<Predicate> getNeededHyps();
 
 	/**
 	 * Returns the confidence of this proof rule as returned by the reasoner.
@@ -116,7 +115,7 @@ public interface IProofRule extends IReasonerOutput{
 		 * </p>
 		 * @return the hypotheses selection information for this anticident
 		 */
-		List<Action> getHypAction();
+		List<IHypAction> getHypAction();
 	}	
 
 }

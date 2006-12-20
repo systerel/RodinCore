@@ -40,11 +40,11 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
@@ -283,9 +283,9 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener,
 
 	void initHypothesisSections(IProofState ps) {
 
-		Collection<Hypothesis> selected = new ArrayList<Hypothesis>();
-		Collection<Hypothesis> cached = new ArrayList<Hypothesis>();
-		Collection<Hypothesis> searched = new ArrayList<Hypothesis>();
+		Collection<Predicate> selected = new ArrayList<Predicate>();
+		Collection<Predicate> cached = new ArrayList<Predicate>();
+		Collection<Predicate> searched = new ArrayList<Predicate>();
 
 		boolean enable = false;
 		if (ps != null) {
@@ -295,21 +295,21 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener,
 				if (node.isOpen())
 					enable = true;
 			}
-			Collection<Hypothesis> currentCached = ps.getCached();
-			for (Iterator<Hypothesis> i = currentCached.iterator(); i.hasNext();) {
-				Hypothesis hyp = i.next();
+			Collection<Predicate> currentCached = ps.getCached();
+			for (Iterator<Predicate> i = currentCached.iterator(); i.hasNext();) {
+				Predicate hyp = i.next();
 				if (node != null)
-					if (!node.getSequent().hypotheses().contains(hyp))
+					if (!node.getSequent().containsHypothesis(hyp))
 						continue;
 				if (!selected.contains(hyp))
 					cached.add(hyp);
 			}
-			Collection<Hypothesis> currentSearched = ps.getSearched();
-			for (Iterator<Hypothesis> i = currentSearched.iterator(); i
+			Collection<Predicate> currentSearched = ps.getSearched();
+			for (Iterator<Predicate> i = currentSearched.iterator(); i
 					.hasNext();) {
-				Hypothesis hyp = i.next();
+				Predicate hyp = i.next();
 				if (node != null)
-					if (!node.getSequent().hypotheses().contains(hyp))
+					if (!node.getSequent().containsHypothesis(hyp))
 						continue;
 				if (!selected.contains(hyp) && !cached.contains(hyp))
 					searched.add(hyp);
@@ -393,9 +393,9 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener,
 
 	void initCacheAndSearch() {
 		IProofState ps = userSupport.getCurrentPO();
-		Set<Hypothesis> selected = new HashSet<Hypothesis>();
-		ArrayList<Hypothesis> cached = new ArrayList<Hypothesis>();
-		ArrayList<Hypothesis> searched = new ArrayList<Hypothesis>();
+		Set<Predicate> selected = new HashSet<Predicate>();
+		ArrayList<Predicate> cached = new ArrayList<Predicate>();
+		ArrayList<Predicate> searched = new ArrayList<Predicate>();
 		boolean enable = false;
 		if (ps != null) {
 			IProofTreeNode node = ps.getCurrentNode();
@@ -404,22 +404,22 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener,
 				if (node.isOpen())
 					enable = true;
 			}
-			Collection<Hypothesis> currentCached = ps.getCached();
-			for (Iterator<Hypothesis> i = currentCached.iterator(); i.hasNext();) {
-				Hypothesis hyp = i.next();
+			Collection<Predicate> currentCached = ps.getCached();
+			for (Iterator<Predicate> i = currentCached.iterator(); i.hasNext();) {
+				Predicate hyp = i.next();
 				if (node != null)
-					if (!node.getSequent().hypotheses().contains(hyp))
+					if (!node.getSequent().containsHypothesis(hyp))
 						continue;
 				if (!selected.contains(hyp))
 					cached.add(hyp);
 			}
 
-			Collection<Hypothesis> currentSearched = ps.getSearched();
-			for (Iterator<Hypothesis> i = currentSearched.iterator(); i
+			Collection<Predicate> currentSearched = ps.getSearched();
+			for (Iterator<Predicate> i = currentSearched.iterator(); i
 					.hasNext();) {
-				Hypothesis hyp = i.next();
+				Predicate hyp = i.next();
 				if (node != null)
-					if (!node.getSequent().hypotheses().contains(hyp))
+					if (!node.getSequent().containsHypothesis(hyp))
 						continue;
 				if (!selected.contains(hyp) && !cached.contains(hyp))
 					searched.add(hyp);

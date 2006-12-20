@@ -1,10 +1,12 @@
 package org.eventb.core.seqprover.reasoners;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
@@ -16,10 +18,10 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.HypothesesManagement.Action;
-import org.eventb.core.seqprover.HypothesesManagement.ActionType;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
+import org.eventb.internal.core.seqprover.SelectionHypAction;
 
 public class MngHyp implements IReasoner {
 
@@ -27,27 +29,27 @@ public class MngHyp implements IReasoner {
 
 	public static class Input implements IReasonerInput {
 
-		Action action;
+		IHypAction action;
 
-		public Input(ActionType type, Set<Hypothesis> hyps) {
-			this.action = new Action(type, hyps);
-		}
+//		public Input(ActionType type, Set<Predicate> hyps) {
+//			this.action = new Action(type, hyps);
+//		}
 
-		public Input(Action action) {
+		public Input(IHypAction action) {
 			this.action = action;
 		}
 
 		// TODO share this with Review reasoner input
 		public void applyHints(ReplayHints hints) {
 
-			final ActionType type = action.getType();
-			final Set<Hypothesis> hyps = action.getHyps();
+			final String type = action.getActionType();
+			final Collection<Predicate> hyps = ((ISelectionHypAction) action).getHyps();
 			Predicate[] newPreds = new Predicate[hyps.size()];
 			int i = 0;
-			for (Hypothesis hyp : hyps) {
-				newPreds[i++] = hints.applyHints(hyp.getPredicate());
+			for (Predicate hyp : hyps) {
+				newPreds[i++] = hints.applyHints(hyp);
 			}
-			action = new Action(type, Hypothesis.Hypotheses(newPreds));
+			action = new SelectionHypAction(type, new LinkedHashSet<Predicate>(Arrays.asList(newPreds)));
 		}
 
 		public String getError() {
@@ -76,7 +78,7 @@ public class MngHyp implements IReasoner {
 			throw new SerializeException(new IllegalStateException(
 					"Two many antecedents in the rule"));
 		}
-		final List<Action> actions = antecedents[0].getHypAction();
+		final List<IHypAction> actions = antecedents[0].getHypAction();
 		if (actions.size() != 1) {
 			throw new SerializeException(new IllegalStateException(
 					"Two many actions in the rule antecedent"));
@@ -88,7 +90,7 @@ public class MngHyp implements IReasoner {
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 
 		Input input = (Input) reasonerInput;
-		Action action = input.action;
+		IHypAction action = input.action;
 		IAntecedent antecedent = ProverFactory.makeAntecedent(seq.goal(), null,
 				action);
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(this, input,

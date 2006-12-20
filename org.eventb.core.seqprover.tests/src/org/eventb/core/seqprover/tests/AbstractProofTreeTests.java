@@ -18,7 +18,6 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
@@ -273,7 +272,7 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 		assertTrue("Can't typecheck predicate" + goalPredicate, goalPredicate
 				.isTypeChecked());
 		return ProverFactory.makeSequent(tr.getInferredEnvironment(),
-				new HashSet<Hypothesis>(), goalPredicate);
+				new HashSet<Predicate>(), goalPredicate);
 	}
 
 	/**

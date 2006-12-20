@@ -13,7 +13,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
@@ -166,7 +166,7 @@ public interface IUserSupport extends IElementChangedListener,
 	 *            a progress monitor
 	 */
 	public abstract void applyTacticToHypotheses(final ITactic t,
-			final Set<Hypothesis> hyps, final IProgressMonitor monitor);
+			final Set<Predicate> hyps, final IProgressMonitor monitor);
 
 	/**
 	 * Apply a tactic to the current proof obligation
@@ -200,7 +200,7 @@ public interface IUserSupport extends IElementChangedListener,
 	 * @param hyps
 	 *            a collection of hypotheses
 	 */
-	public abstract void removeCachedHypotheses(Collection<Hypothesis> hyps);
+	public abstract void removeCachedHypotheses(Collection<Predicate> hyps);
 
 	/**
 	 * Remove a collection of hypothesis from the searched hypothesis set
@@ -209,7 +209,7 @@ public interface IUserSupport extends IElementChangedListener,
 	 * @param hyps
 	 *            a collection of hypotheses
 	 */
-	public abstract void removeSearchedHypotheses(Collection<Hypothesis> hyps);
+	public abstract void removeSearchedHypotheses(Collection<Predicate> hyps);
 
 	/**
 	 * Search the hypothesis set for a string token. In particular, if token is

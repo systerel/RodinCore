@@ -23,8 +23,8 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.ui.IEventBFormText;
@@ -130,7 +130,7 @@ public abstract class HypothesesSection extends SectionPart {
 	protected abstract void createTextClient(Section section,
 			FormToolkit toolkit);
 
-	public void init(Collection<Hypothesis> hyps, boolean enable) {
+	public void init(Collection<Predicate> hyps, boolean enable) {
 		// Remove everything
 		for (HypothesisRow row : rows) {
 			row.dispose();
@@ -139,10 +139,10 @@ public abstract class HypothesesSection extends SectionPart {
 
 		// Add new hyps
 		int i = 0;
-		for (Hypothesis hyp : hyps) {
+		for (Predicate hyp : hyps) {
 			if (ProverUIUtils.DEBUG)
 				ProverUIUtils.debug("Add to " + this.title + " hyp: "
-						+ hyp.getPredicate());
+						+ hyp);
 			HypothesisRow row = new HypothesisRow(this.getManagedForm()
 					.getToolkit(), comp, hyp, ((ProverUI) page.getEditor())
 					.getUserSupport(), (i % 2) == 0, enable);

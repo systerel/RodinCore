@@ -13,12 +13,12 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPSFile;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -248,15 +248,15 @@ public class TestUserSupports extends BasicTest {
 		userSupport.searchHyps("");
 		// Check delta
 
-		Collection<Hypothesis> hypotheses = userSupport.getCurrentPO()
+		Collection<Predicate> hypotheses = userSupport.getCurrentPO()
 				.getSearched();
 
 		if (hypotheses.size() == 0)
 			return;
 
 		ITactic contradictHyp = Tactics.contradiction();
-		Set<Hypothesis> hyps = new HashSet<Hypothesis>();
-		Hypothesis hypothesis = (Hypothesis) hypotheses.toArray()[0];
+		Set<Predicate> hyps = new HashSet<Predicate>();
+		Predicate hypothesis = (Predicate) hypotheses.toArray()[0];
 		hyps.add(hypothesis);
 
 		userSupport.applyTacticToHypotheses(contradictHyp, hyps,

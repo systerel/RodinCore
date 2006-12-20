@@ -1,6 +1,5 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
@@ -22,22 +21,15 @@ public class FalseHyp extends EmptyInputReasoner{
 	
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm){
 	
-		if (! (Hypothesis.containsPredicate(seq.hypotheses(),Lib.False)))
+		if (! seq.containsHypothesis(Lib.False))
 			return ProverFactory.reasonerFailure(this,input,"no false hypothesis");
 		
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
-				new Hypothesis(Lib.False),
+				Lib.False,
 				"⊥ hyp",
 				new IAntecedent[0]);
-		
-//		ProofRule reasonerOutput = new ProofRule(this,input);
-//		reasonerOutput.goal = seq.goal();
-//		reasonerOutput.neededHypotheses.add(new Hypothesis(Lib.False));
-//		reasonerOutput.display = "⊥ hyp";
-//		
-//		reasonerOutput.anticidents = new Antecedent[0];
 		
 		return reasonerOutput;
 	}

@@ -1,5 +1,6 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.eventb.core.ast.BoundIdentDecl;
@@ -7,12 +8,10 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
@@ -51,7 +50,7 @@ public class ExE extends HypothesisReasoner{
 		Predicate instantiatedEx = ExQ.instantiate(freeIdents, Lib.ff);
 		assert instantiatedEx.isTypeChecked();
 		
-		final Action action = ProverLib.deselect(new Hypothesis(pred));
+		final IHypAction action = ProverFactory.makeDeselectHypAction(Arrays.asList(pred));
 		return new IAntecedent[] {
 				ProverFactory.makeAntecedent(
 				sequent.goal(),

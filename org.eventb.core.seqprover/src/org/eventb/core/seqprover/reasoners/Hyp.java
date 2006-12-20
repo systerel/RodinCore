@@ -1,6 +1,5 @@
 package org.eventb.core.seqprover.reasoners;
 
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
@@ -21,7 +20,7 @@ public class Hyp extends EmptyInputReasoner{
 	
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm){
 	
-		if (! (Hypothesis.containsPredicate(seq.hypotheses(),seq.goal())))
+		if (! seq.containsHypothesis(seq.goal()))
 			return ProverFactory.reasonerFailure(
 					this,input,
 					"Goal not in hypotheses");
@@ -29,16 +28,9 @@ public class Hyp extends EmptyInputReasoner{
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
-				new Hypothesis(seq.goal()),
+				seq.goal(),
 				"hyp",
 				new IAntecedent[0]);
-		
-//		ProofRule reasonerOutput = new ProofRule(this,input);
-//		reasonerOutput.neededHypotheses.add(new Hypothesis(seq.goal()));
-//		reasonerOutput.goal = seq.goal();
-//		reasonerOutput.display = "hyp";
-//		
-//		reasonerOutput.anticidents = new Antecedent[0];
 		
 		return reasonerOutput;
 	}

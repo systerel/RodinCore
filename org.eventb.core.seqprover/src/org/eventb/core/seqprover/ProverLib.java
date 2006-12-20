@@ -2,10 +2,11 @@ package org.eventb.core.seqprover;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.eventb.core.seqprover.HypothesesManagement.Action;
-import org.eventb.core.seqprover.HypothesesManagement.ActionType;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 
@@ -88,36 +89,14 @@ public class ProverLib {
 		if (! S1.goal().equals(S2.goal())) return false;
 		if (! S1.selectedHypotheses().equals(S2.selectedHypotheses())) return false;
 		if (! S1.hiddenHypotheses().equals(S2.hiddenHypotheses())) return false;
-		if (! S1.visibleHypotheses().equals(S2.visibleHypotheses())) return false;
-		if (! S1.hypotheses().equals(S2.hypotheses())) return false;
+		// if (! S1.visibleHypotheses().equals(S2.visibleHypotheses())) return false;
+		// if (! S1.hypotheses().equals(S2.hypotheses())) return false;
+		if (! collectPreds(S1.hypIterable()).equals(collectPreds(S2.hypIterable()))) return false;
 		if (! S1.typeEnvironment().equals(S2.typeEnvironment())) return false;
 		return true;
 	}
 
-	public static Action deselect(Set<Hypothesis> toDeselect){
-		return new Action(ActionType.DESELECT,toDeselect);
-	}
-
-	public static Action select(Set<Hypothesis> toSelect){
-		return new Action(ActionType.SELECT,toSelect);
-	}
-
-	public static Action hide(Set<Hypothesis> toHide){
-		return new Action(ActionType.HIDE,toHide);
-	}
-
-	public static Action show(Set<Hypothesis> toShow){
-		return new Action(ActionType.SHOW,toShow);
-	}
-
-	public static Action deselect(Hypothesis toDeselect){
-		return new Action(ActionType.DESELECT,toDeselect);
-	}
-
-	public static Action hide(Hypothesis toHide){
-		return new Action(ActionType.HIDE,toHide);
-	}
-
+	
 	public static boolean isValid(int confidence){
 		return 
 		(confidence >= IConfidence.PENDING) && 
@@ -143,7 +122,7 @@ public class ProverLib {
 	public static boolean proofReusable(IProofDependencies proofDependencies,IProverSequent sequent){
 		if (! proofDependencies.hasDeps()) return true;
 		if (! sequent.goal().equals(proofDependencies.getGoal())) return false;
-		if (! sequent.hypotheses().containsAll(proofDependencies.getUsedHypotheses())) return false;
+		if (! sequent.containsHypotheses(proofDependencies.getUsedHypotheses())) return false;
 		if (! sequent.typeEnvironment().containsAll(proofDependencies.getUsedFreeIdents())) return false;
 		if (! Collections.disjoint(
 				sequent.typeEnvironment().getNames(),
@@ -151,4 +130,30 @@ public class ProverLib {
 		return true;
 	}
 
+	public static Set<Predicate> hypsTextSearch(IProverSequent sequent, String token) {
+		Set<Predicate> result = new LinkedHashSet<Predicate>();
+		for (Predicate hypothesis : sequent.hypIterable()){
+			if (hypothesis.toString().contains(token)) result.add(hypothesis);
+		}
+		return result;
+	}
+
+	public static Set<Predicate> hypsFreeIdentsSearch(IProverSequent seq, Set<FreeIdentifier> freeIdents) {
+		Set<Predicate> result = new LinkedHashSet<Predicate>();
+		for (Predicate hypothesis: seq.hypIterable()){
+			if (! Collections.disjoint(
+					Arrays.asList(hypothesis.getFreeIdentifiers()),
+					freeIdents))				
+				result.add(hypothesis);
+		}
+		return result;
+	}
+	
+	public static Set<Predicate> collectPreds(Iterable<Predicate> predIterator){
+		LinkedHashSet<Predicate> preds = new LinkedHashSet<Predicate>();
+		for (Predicate pred : preds) {
+			preds.add(pred);
+		}
+		return preds;
+	}
 }

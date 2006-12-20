@@ -19,7 +19,6 @@ import org.eventb.core.IPRStringInput;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -64,7 +63,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 			final String comment) throws RodinDBException {
 
 		final Predicate goal = getGoal(store);		
-		final Set<Hypothesis> neededHyps = Hypothesis.Hypotheses(getHyps(store));
+		final Set<Predicate> neededHyps = getHyps(store);
 
 		final IPRRuleAntecedent[] prAntecedents = getAntecedents();
 		final int length = prAntecedents.length;
@@ -121,7 +120,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		
 		// write out the current goal and needed hypotheses		
 		setGoal(proofRule.getGoal(), store, monitor);
-		setHyps(Hypothesis.Predicates(proofRule.getNeededHyps()), store, monitor);
+		setHyps(proofRule.getNeededHyps(), store, monitor);
 
 		// write out display
 		setRuleDisplay(proofRule.getDisplayName(), monitor);

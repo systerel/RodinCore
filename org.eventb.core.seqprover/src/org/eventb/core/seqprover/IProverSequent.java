@@ -8,25 +8,29 @@ import org.eventb.core.ast.Predicate;
 
 public interface IProverSequent{
 	
-	// TODO : rename getTypeEnv,getHyps ..
 	ITypeEnvironment typeEnvironment();
-	Set<Hypothesis> hypotheses();
+
+	Iterable<Predicate> hypIterable();
+	boolean containsHypothesis(Predicate pred);
+	boolean containsHypotheses(Collection<Predicate> preds);
+	
 	Predicate goal();
 	
-	Set<Hypothesis> selectedHypotheses();
-	Set<Hypothesis> visibleHypotheses();
-	Set<Hypothesis> hiddenHypotheses();
+	@Deprecated
+	Set<Predicate> selectedHypotheses();
+	Iterable<Predicate> selectedHypIterable();
 	
-	// ProverSequent InitialSequent(ITypeEnvironment typeEnvironment,Set<Predicate> hyps,Predicate goal);
-	IProverSequent addHyps(Set<Hypothesis> hyps,ITypeEnvironment typeEnvironment);
-	IProverSequent addHyp(Hypothesis hyp,ITypeEnvironment typeEnvironment);
-	IProverSequent replaceGoal(Predicate goal,ITypeEnvironment typeEnvironment);
-	// IProverSequent buildOn(ITypeEnvironment addedTypeEnvironment,Set<Predicate> addedHyps,Predicate newGoal);
+	@Deprecated
+	Set<Predicate> hiddenHypotheses();
+	Iterable<Predicate> hiddenHypIterable();
 	
+	// Only used within the sequent prover
+	IProverSequent addHyps(Set<Predicate> hyps,ITypeEnvironment typeEnvironment);
+	IProverSequent replaceGoal(Predicate goal,ITypeEnvironment typeEnvironment);	
 	
-	IProverSequent hideHypotheses(Set<Hypothesis> toHide);
-	IProverSequent showHypotheses(Set<Hypothesis> toShow);
-	IProverSequent selectHypotheses(Collection<Hypothesis> toSelect);
-	IProverSequent deselectHypotheses(Set<Hypothesis> toDeselect);
+	IProverSequent hideHypotheses(Collection<Predicate> toHide);
+	IProverSequent showHypotheses(Collection<Predicate> toShow);
+	IProverSequent selectHypotheses(Collection<Predicate> toSelect);
+	IProverSequent deselectHypotheses(Collection<Predicate> toDeselect);
 	
 }

@@ -13,9 +13,9 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.EventBUIPlugin;
@@ -69,7 +69,7 @@ public class TacticUIRegistry {
 			return isApplicable(us, null, null);
 		}
 
-		public boolean isApplicable(IUserSupport us, Hypothesis hyp,
+		public boolean isApplicable(IUserSupport us, Predicate hyp,
 				String input) {
 			
 			if (provider == null && command == null) {
@@ -165,7 +165,7 @@ public class TacticUIRegistry {
 		}
 
 		public boolean isApplicableToHypothesis(IUserSupport us,
-				Hypothesis hyp) {
+				Predicate hyp) {
 			return isApplicable(us, hyp, null);
 		}
 
@@ -509,7 +509,7 @@ public class TacticUIRegistry {
 	}
 
 	public String[] getApplicableToHypothesis(IUserSupport us,
-			Hypothesis hyp) {
+			Predicate hyp) {
 		if (hypothesisRegistry == null)
 			loadRegistry();
 

@@ -8,7 +8,6 @@
 package org.eventb.core.basis;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,8 +17,8 @@ import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -48,7 +47,7 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 		// optional entries
 		FreeIdentifier[] addedFreeIdents = null;
 		Set<Predicate> addedHyps = null;
-		List<Action> hypAction = null;
+		ArrayList<IHypAction> hypAction = null;
 
 		addedFreeIdents = getFreeIdents(store.getFormulaFactory());
 		
@@ -59,7 +58,7 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 		IRodinElement[] children = getChildrenOfType(IPRHypAction.ELEMENT_TYPE);
 		if (children.length != 0)
 		{
-			hypAction = new ArrayList<Action>(children.length);
+			hypAction = new ArrayList<IHypAction>(children.length);
 			for (IRodinElement action : children) {
 				hypAction.add(((IPRHypAction)action).getAction(store));				
 			}
@@ -84,9 +83,9 @@ public void setAntecedent(IAntecedent antecedent, IProofStoreCollector store, IP
 		
 		if (! antecedent.getHypAction().isEmpty()){
 			int count = 0;
-			for (Action action : antecedent.getHypAction()) {
+			for (IHypAction action : antecedent.getHypAction()) {
 				IPRHypAction child = (IPRHypAction) getInternalElement(
-						IPRHypAction.ELEMENT_TYPE, action.getType().toString());
+						IPRHypAction.ELEMENT_TYPE, action.getActionType().toString());
 				child.create(null, null);
 				child.setAction(action, store, null);
 				count ++;

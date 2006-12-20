@@ -1,12 +1,13 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.Arrays;
+
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
-import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class Conj extends AbstractRewriter {
@@ -26,11 +27,11 @@ public class Conj extends AbstractRewriter {
 	}
 
 	@Override
-	protected Action getHypAction(Predicate pred) {
+	protected IHypAction getHypAction(Predicate pred) {
 		if (pred == null) {
 			return null;
 		}
-		return ProverLib.hide(new Hypothesis(pred));
+		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
 	}
 
 	@Override

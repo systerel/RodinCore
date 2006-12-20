@@ -27,11 +27,11 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -126,9 +126,9 @@ public class SearchHypothesisPage extends Page implements
 	private void init() {
 		IProofState ps = editor.getUserSupport().getCurrentPO();
 
-		Collection<Hypothesis> selected = new ArrayList<Hypothesis>();
-		Collection<Hypothesis> cached = new ArrayList<Hypothesis>();
-		Collection<Hypothesis> searched = new ArrayList<Hypothesis>();
+		Collection<Predicate> selected = new ArrayList<Predicate>();
+		Collection<Predicate> cached = new ArrayList<Predicate>();
+		Collection<Predicate> searched = new ArrayList<Predicate>();
 
 		boolean enable = false;
 		if (ps != null) {
@@ -149,8 +149,8 @@ public class SearchHypothesisPage extends Page implements
 		// searchedSection.init(searched, enable);
 	}
 
-	private void init(Collection<Hypothesis> hyps,
-			Collection<Hypothesis> selected, Collection<Hypothesis> cached,
+	private void init(Collection<Predicate> hyps,
+			Collection<Predicate> selected, Collection<Predicate> cached,
 			boolean enable) {
 		// Remove everything
 		for (HypothesisRow row : rows) {
@@ -160,7 +160,7 @@ public class SearchHypothesisPage extends Page implements
 
 		// Add new hyps
 		int i = 0;
-		for (Hypothesis hyp : hyps) {
+		for (Predicate hyp : hyps) {
 			// UIUtils.debugEventBEditor("Add to " + this.title + " hyp: "
 			// + hyp.getPredicate());
 			HypothesisRow row = new HypothesisRow(toolkit, scrolledForm

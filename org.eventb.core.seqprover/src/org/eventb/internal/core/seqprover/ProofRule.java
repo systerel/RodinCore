@@ -10,14 +10,12 @@ import java.util.Set;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.HypothesesManagement;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.HypothesesManagement.Action;
 
 public class ProofRule extends ReasonerOutput implements IProofRule{
 	
@@ -25,22 +23,22 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		
 		private FreeIdentifier[] addedFreeIdentifiers;
 		private Set <Predicate> addedHypotheses;
-		private List <Action> hypAction;
+		private List <IHypAction> hypAction;
 		private Predicate goal;
 		
 		public Antecedent(Predicate goal){
 			addedFreeIdentifiers = new FreeIdentifier[0];
 			addedHypotheses = new HashSet<Predicate>();
-			hypAction = new ArrayList<Action>();
+			hypAction = new ArrayList<IHypAction>();
 			this.goal = goal;
 		}
 		
-		public Antecedent(Predicate goal, Set<Predicate> addedHyps, FreeIdentifier[] addedFreeIdents, List<Action> hypAction) {
+		public Antecedent(Predicate goal, Set<Predicate> addedHyps, FreeIdentifier[] addedFreeIdents, List<IHypAction> hypAction) {
 			assert goal != null;
 			this.goal = goal;
 			this.addedHypotheses = addedHyps == null ? new HashSet<Predicate>() : addedHyps;
 			this.addedFreeIdentifiers = addedFreeIdents == null ? new FreeIdentifier[0] : addedFreeIdents;
-			this.hypAction = hypAction == null ? new ArrayList<Action>() : hypAction;
+			this.hypAction = hypAction == null ? new ArrayList<IHypAction>() : hypAction;
 		}
 		
 		public void addToAddedHyps(Predicate pred){
@@ -69,11 +67,11 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		/**
 		 * @return Returns the hypAction.
 		 */
-		public final List<Action> getHypAction() {
+		public final List<IHypAction> getHypAction() {
 			return hypAction;
 		}
 
-		public final void addHypAction(Action hypAction) {
+		public final void addHypAction(IHypAction hypAction) {
 			this.hypAction.add(hypAction);
 		}
 
@@ -120,11 +118,11 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 			}
 			IProverSequent result = seq.replaceGoal(goal,newTypeEnv);
 			if (result == null) return null;
-			Set<Hypothesis> hypsToAdd = Hypothesis.Hypotheses(addedHypotheses);
-			result = result.addHyps(hypsToAdd,null);
+//			Set<Predicate> hypsToAdd = HashSet<Predicate>(addedHypotheses);
+			result = result.addHyps(addedHypotheses,null);
 			if (result == null) return null;
-			result = result.selectHypotheses(hypsToAdd);
-			result = HypothesesManagement.perform(hypAction,result);
+			result = result.selectHypotheses(addedHypotheses);
+			result = ProofRule.perform(hypAction,result);
 			return result;
 		}
 
@@ -155,7 +153,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 	
 	private String display;
 	private IAntecedent[] antecedents;
-	private Set<Hypothesis> neededHypotheses;
+	private Set<Predicate> neededHypotheses;
 	private Predicate goal;
 	private int reasonerConfidence;
 	
@@ -163,7 +161,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		super(generatedBy,generatedUsing);
 		display = generatedBy.getReasonerID();
 		antecedents = null;
-		neededHypotheses = new HashSet<Hypothesis>();
+		neededHypotheses = new HashSet<Predicate>();
 		goal = null;
 		reasonerConfidence = IConfidence.DISCHARGED_MAX;
 	}
@@ -172,12 +170,12 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		super(generatedBy,generatedUsing);
 		display = generatedBy.getReasonerID();
 		this.antecedents = anticidents;
-		neededHypotheses = new HashSet<Hypothesis>();
+		neededHypotheses = new HashSet<Predicate>();
 		this.goal = goal;
 		reasonerConfidence = IConfidence.DISCHARGED_MAX;
 	}
 
-	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing, Predicate goal, Set<Hypothesis> neededHyps, Integer confidence, String display, IAntecedent[] anticidents) {
+	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing, Predicate goal, Set<Predicate> neededHyps, Integer confidence, String display, IAntecedent[] anticidents) {
 		super(generatedBy,generatedUsing);
 		
 		assert goal != null;
@@ -185,7 +183,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		
 		this.goal = goal;
 		this.antecedents = anticidents;
-		this.neededHypotheses = neededHyps == null ? new HashSet<Hypothesis>() : neededHyps;
+		this.neededHypotheses = neededHyps == null ? new HashSet<Predicate>() : neededHyps;
 		this.reasonerConfidence = confidence == null ? IConfidence.DISCHARGED_MAX : confidence;
 		this.display = display == null ? generatedBy.getReasonerID() : display;		
 	}
@@ -196,9 +194,9 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		}
 		
 		typeEnv.addAll(goal.getFreeIdentifiers());
-		for(Hypothesis hyp: neededHypotheses){
+		for(Predicate hyp: neededHypotheses){
 			typeEnv.addAll(
-					hyp.getPredicate().getFreeIdentifiers());
+					hyp.getFreeIdentifiers());
 		}
 	}
 
@@ -217,7 +215,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 	protected IProverSequent[] apply(IProverSequent seq) {
 		ProofRule reasonerOutput = this;
 		// Check if all the needed hyps are there
-		if (! seq.hypotheses().containsAll(reasonerOutput.neededHypotheses))
+		if (! seq.containsHypotheses(reasonerOutput.neededHypotheses))
 			return null;
 		// Check if the goal is the same
 		if (! reasonerOutput.goal.equals(seq.goal())) return null;
@@ -238,7 +236,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		return anticidents;
 	}
 
-	public Set<Hypothesis> getNeededHyps() {
+	public Set<Predicate> getNeededHyps() {
 		return neededHypotheses;
 	}
 
@@ -248,6 +246,16 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 
 	public IAntecedent[] getAntecedents() {
 		return antecedents;
+	}
+
+	
+	public static IProverSequent perform(List<IHypAction> hypActions,IProverSequent seq){
+		if (hypActions == null) return seq;
+		IProverSequent result = seq;
+		for(IHypAction action : hypActions){
+			result = ((IInternalHypAction) action).perform(result);
+		}
+		return result;
 	}
 
 }

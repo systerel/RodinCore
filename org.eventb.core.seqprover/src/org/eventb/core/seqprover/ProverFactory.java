@@ -1,6 +1,7 @@
 package org.eventb.core.seqprover;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -8,12 +9,13 @@ import java.util.Set;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.HypothesesManagement.Action;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.internal.core.seqprover.ProofRule;
 import org.eventb.internal.core.seqprover.ProofTree;
 import org.eventb.internal.core.seqprover.ProverSequent;
 import org.eventb.internal.core.seqprover.ReasonerFailure;
+import org.eventb.internal.core.seqprover.SelectionHypAction;
 import org.eventb.internal.core.seqprover.ProofRule.Antecedent;
 
 /**
@@ -39,7 +41,7 @@ public final class ProverFactory {
 			IReasoner generatedBy,
 			IReasonerInput generatedUsing,
 			Predicate goal,
-			Set<Hypothesis> neededHyps,
+			Set<Predicate> neededHyps,
 			Integer confidence,
 			String display,
 			IAntecedent... anticidents) {
@@ -56,7 +58,7 @@ public final class ProverFactory {
 			IReasoner generatedBy,
 			IReasonerInput generatedUsing,
 			Predicate goal,
-			Hypothesis neededHyp,
+			Predicate neededHyp,
 			String display,
 			IAntecedent... anticidents) {
 		return makeProofRule(generatedBy,generatedUsing,goal,Collections.singleton(neededHyp),null, display,anticidents);
@@ -75,7 +77,7 @@ public final class ProverFactory {
 			Predicate goal,
 			Set<Predicate> addedHyps,
 			FreeIdentifier[] addedFreeIdents,
-			List<Action> hypAction){
+			List<IHypAction> hypAction){
 		
 		assert goal != null;
 		
@@ -88,10 +90,10 @@ public final class ProverFactory {
 	public static IAntecedent makeAntecedent(
 			Predicate goal,
 			Set<Predicate> addedHyps,
-			Action hypAction) {
+			IHypAction hypAction) {
 		
 		if (hypAction != null){
-			ArrayList<Action> hypActions = new ArrayList<Action>(1);
+			ArrayList<IHypAction> hypActions = new ArrayList<IHypAction>(1);
 			hypActions.add(hypAction);
 			return makeAntecedent(goal,addedHyps,null,hypActions);
 		}
@@ -102,11 +104,11 @@ public final class ProverFactory {
 		return makeAntecedent(goal,null,null,null);
 	}
 
-	public static IProverSequent makeSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> hyps,Predicate goal){
+	public static IProverSequent makeSequent(ITypeEnvironment typeEnvironment,Set<Predicate> hyps,Predicate goal){
 		return new ProverSequent(typeEnvironment,hyps,goal);
 	}
 	
-	public static IProverSequent makeSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> hyps,Set<Hypothesis> selHyps,Predicate goal){
+	public static IProverSequent makeSequent(ITypeEnvironment typeEnvironment,Set<Predicate> hyps,Set<Predicate> selHyps,Predicate goal){
 		return new ProverSequent(typeEnvironment,hyps,selHyps,goal);
 	}
 
@@ -122,6 +124,23 @@ public final class ProverFactory {
 	 */
 	public static IProofTree makeProofTree(IProverSequent sequent, Object origin) {
 		return new ProofTree(sequent, origin);
+	}
+
+	
+	public static IHypAction makeSelectHypAction(Collection<Predicate> toSelect){
+		return new SelectionHypAction(ISelectionHypAction.SELECT_ACTION_TYPE,toSelect);
+	}
+	
+	public static IHypAction makeDeselectHypAction(Collection<Predicate> toDeselect){
+		return new SelectionHypAction(ISelectionHypAction.DESELECT_ACTION_TYPE,toDeselect);
+	}
+
+	public static IHypAction makeHideHypAction(Collection<Predicate> toHide){
+		return new SelectionHypAction(ISelectionHypAction.HIDE_ACTION_TYPE,toHide);
+	}
+
+	public static IHypAction makeShowHypAction(Collection<Predicate> toShow){
+		return new SelectionHypAction(ISelectionHypAction.SHOW_ACTION_TYPE,toShow);
 	}
 
 }

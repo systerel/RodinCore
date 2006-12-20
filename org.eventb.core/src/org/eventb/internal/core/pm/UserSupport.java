@@ -15,17 +15,18 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.ElementChangedEvent;
@@ -396,7 +397,7 @@ public class UserSupport implements IElementChangedListener,
 	 *      java.util.Set, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void applyTacticToHypotheses(final ITactic t,
-			final Set<Hypothesis> hyps, final IProgressMonitor monitor) {
+			final Set<Predicate> hyps, final IProgressMonitor monitor) {
 		batchOperation(new Runnable() {
 			public void run() {
 				addAllToCached(hyps);
@@ -406,7 +407,7 @@ public class UserSupport implements IElementChangedListener,
 
 	}
 
-	protected void addAllToCached(Set<Hypothesis> hyps) {
+	protected void addAllToCached(Set<Predicate> hyps) {
 		currentPS.addAllToCached(hyps);
 		ProofStateDelta newDelta = new ProofStateDelta(this);
 		newDelta.setNewCache();
@@ -505,7 +506,7 @@ public class UserSupport implements IElementChangedListener,
 	 * 
 	 * @see org.eventb.core.pm.IUserSupport#removeCachedHypotheses(java.util.Collection)
 	 */
-	public void removeCachedHypotheses(Collection<Hypothesis> hyps) {
+	public void removeCachedHypotheses(Collection<Predicate> hyps) {
 		currentPS.removeAllFromCached(hyps);
 		ProofStateDelta newDelta = new ProofStateDelta(this);
 		newDelta.setNewCache();
@@ -519,7 +520,7 @@ public class UserSupport implements IElementChangedListener,
 	 * 
 	 * @see org.eventb.core.pm.IUserSupport#removeSearchedHypotheses(java.util.Collection)
 	 */
-	public void removeSearchedHypotheses(Collection<Hypothesis> hyps) {
+	public void removeSearchedHypotheses(Collection<Predicate> hyps) {
 		currentPS.removeAllFromSearched(hyps);
 		Object info = "Hypotheses removed from searched";
 
@@ -539,8 +540,8 @@ public class UserSupport implements IElementChangedListener,
 		// Trim off white space from token.
 		token = token.trim();
 
-		Set<Hypothesis> hyps = Hypothesis.textSearch(currentPS.getCurrentNode()
-				.getSequent().hypotheses(), token);
+		Set<Predicate> hyps = ProverLib.hypsTextSearch(currentPS.getCurrentNode()
+				.getSequent(), token);
 
 		currentPS.setSearched(hyps);
 

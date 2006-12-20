@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
@@ -516,8 +516,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#getUsedHypotheses()
 	 */
-	public Set<Hypothesis> getNeededHypotheses(){
-		if (this.rule == null) return new HashSet<Hypothesis>();
+	public Set<Predicate> getNeededHypotheses(){
+		if (this.rule == null) return new HashSet<Predicate>();
 		return rule.getNeededHyps();
 	}
 	
