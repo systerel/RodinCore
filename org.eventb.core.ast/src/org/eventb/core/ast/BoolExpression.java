@@ -175,7 +175,7 @@ public class BoolExpression extends Expression {
 	protected void getPositions(IFormulaFilter filter, IntStack indexes,
 			List<IPosition> positions) {
 		
-		if (filter.retainBoolExpression(this)) {
+		if (filter.select(this)) {
 			positions.add(new Position(indexes));
 		}
 

@@ -350,7 +350,7 @@ public class RelationalPredicate extends Predicate {
 	protected void getPositions(IFormulaFilter filter, IntStack indexes,
 			List<IPosition> positions) {
 		
-		if (filter.retainRelationalPredicate(this)) {
+		if (filter.select(this)) {
 			positions.add(new Position(indexes));
 		}
 

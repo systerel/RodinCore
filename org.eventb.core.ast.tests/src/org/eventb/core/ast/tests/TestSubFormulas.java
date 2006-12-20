@@ -79,75 +79,75 @@ public class TestSubFormulas extends TestCase {
 			this.replacement = replacement;
 		}
 
-		public boolean retainAssociativeExpression(AssociativeExpression expression) {
+		public boolean select(AssociativeExpression expression) {
 			return searched.equals(expression);
 		}
 
-		public boolean retainAssociativePredicate(AssociativePredicate predicate) {
+		public boolean select(AssociativePredicate predicate) {
 			return searched.equals(predicate);
 		}
 
-		public boolean retainAtomicExpression(AtomicExpression expression) {
+		public boolean select(AtomicExpression expression) {
 			return searched.equals(expression);
 		}
 
-		public boolean retainBinaryExpression(BinaryExpression expression) {
+		public boolean select(BinaryExpression expression) {
 			return searched.equals(expression);
 		}
 
-		public boolean retainBinaryPredicate(BinaryPredicate predicate) {
+		public boolean select(BinaryPredicate predicate) {
 			return searched.equals(predicate);
 		}
 
-		public boolean retainBoolExpression(BoolExpression expression) {
+		public boolean select(BoolExpression expression) {
 			return searched.equals(expression);
 		}
 
-		public boolean retainBoundIdentDecl(BoundIdentDecl decl) {
+		public boolean select(BoundIdentDecl decl) {
 			return searched.equals(decl);
 		}
 
-		public boolean retainBoundIdentifier(BoundIdentifier identifier) {
+		public boolean select(BoundIdentifier identifier) {
 			return searched.equals(identifier);
 		}
 
-		public boolean retainFreeIdentifier(FreeIdentifier identifier) {
+		public boolean select(FreeIdentifier identifier) {
 			return searched.equals(identifier);
 		}
 
-		public boolean retainIntegerLiteral(IntegerLiteral literal) {
+		public boolean select(IntegerLiteral literal) {
 			return searched.equals(literal);
 		}
 
-		public boolean retainLiteralPredicate(LiteralPredicate predicate) {
+		public boolean select(LiteralPredicate predicate) {
 			return searched.equals(predicate);
 		}
 
-		public boolean retainQuantifiedExpression(QuantifiedExpression expression) {
+		public boolean select(QuantifiedExpression expression) {
 			return searched.equals(expression);
 		}
 
-		public boolean retainQuantifiedPredicate(QuantifiedPredicate predicate) {
+		public boolean select(QuantifiedPredicate predicate) {
 			return searched.equals(predicate);
 		}
 
-		public boolean retainRelationalPredicate(RelationalPredicate predicate) {
+		public boolean select(RelationalPredicate predicate) {
 			return searched.equals(predicate);
 		}
 
-		public boolean retainSetExtension(SetExtension expression) {
+		public boolean select(SetExtension expression) {
 			return searched.equals(expression);
 		}
 
-		public boolean retainSimplePredicate(SimplePredicate predicate) {
+		public boolean select(SimplePredicate predicate) {
 			return searched.equals(predicate);
 		}
 
-		public boolean retainUnaryExpression(UnaryExpression expression) {
+		public boolean select(UnaryExpression expression) {
 			return searched.equals(expression);
 		}
 
-		public boolean retainUnaryPredicate(UnaryPredicate predicate) {
+		public boolean select(UnaryPredicate predicate) {
 			return searched.equals(predicate);
 		}
 		

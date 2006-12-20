@@ -743,7 +743,7 @@ public class QuantifiedExpression extends Expression {
 	protected void getPositions(IFormulaFilter filter, IntStack indexes,
 			List<IPosition> positions) {
 		
-		if (filter.retainQuantifiedExpression(this)) {
+		if (filter.select(this)) {
 			positions.add(new Position(indexes));
 		}
 

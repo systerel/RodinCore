@@ -201,7 +201,7 @@ public class BoundIdentifier extends Identifier {
 	protected void getPositions(IFormulaFilter filter, IntStack indexes,
 			List<IPosition> positions) {
 
-		if (filter.retainBoundIdentifier(this)) {
+		if (filter.select(this)) {
 			positions.add(new Position(indexes));
 		}
 	}

@@ -158,7 +158,7 @@ public class IntegerLiteral extends Expression {
 	protected void getPositions(IFormulaFilter filter, IntStack indexes,
 			List<IPosition> positions) {
 
-		if (filter.retainIntegerLiteral(this)) {
+		if (filter.select(this)) {
 			positions.add(new Position(indexes));
 		}
 	}

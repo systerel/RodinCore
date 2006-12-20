@@ -28,7 +28,7 @@ public interface IFormulaFilter {
 	 *            expression to test
 	 * @return <code>true</code> iff the given expression passes the criterion
 	 */
-	boolean retainAssociativeExpression(AssociativeExpression expression);
+	boolean select(AssociativeExpression expression);
 
 	/**
 	 * Tells whether the given predicate passes this filter criterion.
@@ -37,7 +37,7 @@ public interface IFormulaFilter {
 	 *            predicate to test
 	 * @return <code>true</code> iff the given predicate passes the criterion
 	 */
-	boolean retainAssociativePredicate(AssociativePredicate predicate);
+	boolean select(AssociativePredicate predicate);
 
 	/**
 	 * Tells whether the given expression passes this filter criterion.
@@ -46,7 +46,7 @@ public interface IFormulaFilter {
 	 *            expression to test
 	 * @return <code>true</code> iff the given expression passes the criterion
 	 */
-	boolean retainAtomicExpression(AtomicExpression expression);
+	boolean select(AtomicExpression expression);
 
 	/**
 	 * Tells whether the given expression passes this filter criterion.
@@ -55,7 +55,7 @@ public interface IFormulaFilter {
 	 *            expression to test
 	 * @return <code>true</code> iff the given expression passes the criterion
 	 */
-	boolean retainBinaryExpression(BinaryExpression expression);
+	boolean select(BinaryExpression expression);
 
 	/**
 	 * Tells whether the given predicate passes this filter criterion.
@@ -64,7 +64,7 @@ public interface IFormulaFilter {
 	 *            predicate to test
 	 * @return <code>true</code> iff the given predicate passes the criterion
 	 */
-	boolean retainBinaryPredicate(BinaryPredicate predicate);
+	boolean select(BinaryPredicate predicate);
 
 	/**
 	 * Tells whether the given expression passes this filter criterion.
@@ -73,7 +73,7 @@ public interface IFormulaFilter {
 	 *            expression to test
 	 * @return <code>true</code> iff the given expression passes the criterion
 	 */
-	boolean retainBoolExpression(BoolExpression expression);
+	boolean select(BoolExpression expression);
 
 	/**
 	 * Tells whether the given bound identifier declaration passes this filter
@@ -84,7 +84,7 @@ public interface IFormulaFilter {
 	 * @return <code>true</code> iff the given declaration passes the
 	 *         criterion
 	 */
-	boolean retainBoundIdentDecl(BoundIdentDecl decl);
+	boolean select(BoundIdentDecl decl);
 
 	/**
 	 * Tells whether the given identifier passes this filter criterion.
@@ -93,7 +93,7 @@ public interface IFormulaFilter {
 	 *            identifier to test
 	 * @return <code>true</code> iff the given identifier passes the criterion
 	 */
-	boolean retainBoundIdentifier(BoundIdentifier identifier);
+	boolean select(BoundIdentifier identifier);
 
 	/**
 	 * Tells whether the given identifier passes this filter criterion.
@@ -102,7 +102,7 @@ public interface IFormulaFilter {
 	 *            identifier to test
 	 * @return <code>true</code> iff the given identifier passes the criterion
 	 */
-	boolean retainFreeIdentifier(FreeIdentifier identifier);
+	boolean select(FreeIdentifier identifier);
 
 	/**
 	 * Tells whether the given literal passes this filter criterion.
@@ -111,7 +111,7 @@ public interface IFormulaFilter {
 	 *            literal to test
 	 * @return <code>true</code> iff the given literal passes the criterion
 	 */
-	boolean retainIntegerLiteral(IntegerLiteral literal);
+	boolean select(IntegerLiteral literal);
 
 	/**
 	 * Tells whether the given predicate passes this filter criterion.
@@ -120,7 +120,7 @@ public interface IFormulaFilter {
 	 *            predicate to test
 	 * @return <code>true</code> iff the given predicate passes the criterion
 	 */
-	boolean retainLiteralPredicate(LiteralPredicate predicate);
+	boolean select(LiteralPredicate predicate);
 
 	/**
 	 * Tells whether the given expression passes this filter criterion.
@@ -129,7 +129,7 @@ public interface IFormulaFilter {
 	 *            expression to test
 	 * @return <code>true</code> iff the given expression passes the criterion
 	 */
-	boolean retainQuantifiedExpression(QuantifiedExpression expression);
+	boolean select(QuantifiedExpression expression);
 
 	/**
 	 * Tells whether the given predicate passes this filter criterion.
@@ -138,7 +138,7 @@ public interface IFormulaFilter {
 	 *            predicate to test
 	 * @return <code>true</code> iff the given predicate passes the criterion
 	 */
-	boolean retainQuantifiedPredicate(QuantifiedPredicate predicate);
+	boolean select(QuantifiedPredicate predicate);
 
 	/**
 	 * Tells whether the given predicate passes this filter criterion.
@@ -147,7 +147,7 @@ public interface IFormulaFilter {
 	 *            predicate to test
 	 * @return <code>true</code> iff the given predicate passes the criterion
 	 */
-	boolean retainRelationalPredicate(RelationalPredicate predicate);
+	boolean select(RelationalPredicate predicate);
 
 	/**
 	 * Tells whether the given expression passes this filter criterion.
@@ -156,7 +156,7 @@ public interface IFormulaFilter {
 	 *            expression to test
 	 * @return <code>true</code> iff the given expression passes the criterion
 	 */
-	boolean retainSetExtension(SetExtension expression);
+	boolean select(SetExtension expression);
 
 	/**
 	 * Tells whether the given predicate passes this filter criterion.
@@ -165,7 +165,7 @@ public interface IFormulaFilter {
 	 *            predicate to test
 	 * @return <code>true</code> iff the given predicate passes the criterion
 	 */
-	boolean retainSimplePredicate(SimplePredicate predicate);
+	boolean select(SimplePredicate predicate);
 
 	/**
 	 * Tells whether the given expression passes this filter criterion.
@@ -174,7 +174,7 @@ public interface IFormulaFilter {
 	 *            expression to test
 	 * @return <code>true</code> iff the given expression passes the criterion
 	 */
-	boolean retainUnaryExpression(UnaryExpression expression);
+	boolean select(UnaryExpression expression);
 
 	/**
 	 * Tells whether the given predicate passes this filter criterion.
@@ -183,6 +183,6 @@ public interface IFormulaFilter {
 	 *            predicate to test
 	 * @return <code>true</code> iff the given predicate passes the criterion
 	 */
-	boolean retainUnaryPredicate(UnaryPredicate predicate);
+	boolean select(UnaryPredicate predicate);
 
 }
