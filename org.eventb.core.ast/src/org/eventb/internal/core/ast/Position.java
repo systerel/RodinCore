@@ -5,11 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.ast;
+package org.eventb.internal.core.ast;
 
 import java.util.Arrays;
 
-import org.eventb.internal.core.ast.IntStack;
+import org.eventb.core.ast.IPosition;
 
 /**
  * Implementation of a position in a formula. A position denotes a node in a
@@ -18,34 +18,28 @@ import org.eventb.internal.core.ast.IntStack;
  * 
  * @author Laurent Voisin
  */
-public final class Position implements Comparable<Position> {
+public final class Position implements IPosition {
 	
-	private static int[] NO_INTS = new int[0]; 
-	
-	/**
-	 * The position of the root node of a formula.
-	 */
-	public static final Position ROOT = new Position(NO_INTS);
+	public static IPosition getRoot() {
+		return new Position();
+	}
 
-	// Package restricted, so that the array is not modified by clients
-	final int[] indexes;
+	public final int[] indexes;
+	
+	private Position() {
+		this.indexes = new int[0];
+	}
 	
 	private Position(int[] indexes) {
 		this.indexes = indexes;
 	}
-	
-	Position(IntStack stack) {
+
+	public Position(IntStack stack) {
 		this.indexes = stack.toArray();
 	}
 
-	/**
-	 * Compares this position with the given position, using the lexicographical
-	 * order.
-	 * 
-	 * @return a negative integer, zero, or a positive integer as this position
-	 *         is less than, equal to, or greater than the specified position.
-	 */
-	public int compareTo(Position other) {
+	public int compareTo(IPosition position) {
+		final Position other = (Position) position;
 		final int leftLen = this.indexes.length;
 		final int rightLen = other.indexes.length;
 		final int minLen = Math.min(leftLen, rightLen);
@@ -69,18 +63,8 @@ public final class Position implements Comparable<Position> {
 		final Position other = (Position) obj;
 		return Arrays.equals(indexes, other.indexes);
 	}
-
-	/**
-	 * Returns the position of the parent node of the node designated by this
-	 * position.
-	 * <p>
-	 * This position must not be a root position.
-	 * </p>
-	 * 
-	 * @return the position of the parent
-	 * @see #isRoot()
-	 */
-	public Position getParent() {
+	
+	public IPosition getParent() {
 		final int parentLength = indexes.length - 1;
 		final int[] parentIndexes = new int[parentLength];
 		System.arraycopy(indexes, 0, parentIndexes, 0, parentLength);
@@ -91,13 +75,7 @@ public final class Position implements Comparable<Position> {
 	public int hashCode() {
 		return Arrays.hashCode(indexes);
 	}
-	
-	/**
-	 * Tells whether this position denotes the root of a formula.
-	 * 
-	 * @return <code>true</code> iff this position denotes the root of a
-	 *         formula
-	 */
+
 	public boolean isRoot() {
 		return indexes.length == 0;
 	}
