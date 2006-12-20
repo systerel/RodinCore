@@ -51,7 +51,7 @@ public interface IProofDependencies{
 	 * @return the hypotheses used in a proof.
 	 * 
 	 */
-	Set<Hypothesis> getUsedHypotheses();
+	Set<Predicate> getUsedHypotheses();
 	
 	/**
 	 * Returns the type environment corresponding to the used free
