@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -284,7 +285,7 @@ public class FreeIdentifier extends Identifier {
 
 	@Override
 	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<Position> positions) {
+			List<IPosition> positions) {
 
 		if (filter.retainFreeIdentifier(this)) {
 			positions.add(new Position(indexes));

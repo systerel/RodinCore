@@ -157,5 +157,13 @@ public abstract class Expression extends Formula<Expression> {
 	// Calls recursively solveType on each child of this node and
 	// returns true if all calls where successful.
 	protected abstract boolean solveChildrenTypes(TypeUnifier unifier);
+
+	@Override
+	protected Expression getCheckedReplacement(SingleRewriter rewriter) {
+		Expression replacement = rewriter.getExpression();
+		if (!getType().equals(replacement.getType()))
+			throw new IllegalArgumentException("Incompatible types in rewrite");
+		return replacement;
+	}
 	
 }

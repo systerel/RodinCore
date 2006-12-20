@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -616,7 +617,7 @@ public class UnaryExpression extends Expression {
 
 	@Override
 	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<Position> positions) {
+			List<IPosition> positions) {
 		
 		if (filter.retainUnaryExpression(this)) {
 			positions.add(new Position(indexes));
@@ -636,13 +637,22 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
+	protected IPosition getDescendantPos(SourceLocation sloc, IntStack indexes) {
 		indexes.push(0);
-		Position pos = child.getPosition(sloc, indexes);
+		IPosition pos = child.getPosition(sloc, indexes);
 		if (pos != null)
 			return pos;
 		indexes.pop();
 		return new Position(indexes);
+	}
+
+	@Override
+	protected Expression rewriteChild(int index, SingleRewriter rewriter) {
+		if (index != 0) 
+			throw new IllegalArgumentException("Position is outside the formula");
+		Expression newChild = rewriter.rewrite(child);
+		return rewriter.factory.makeUnaryExpression(getTag(), newChild,
+				getSourceLocation());
 	}
 
 }

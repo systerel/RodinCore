@@ -22,6 +22,7 @@ import org.eventb.internal.core.ast.BoundIdentifierShifter;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -1867,9 +1868,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return the sub-formula at the given position in this formula, or
 	 *         <code>null</code> if there is none
 	 */
-	public final Formula getSubFormula(Position position) {
+	public final Formula getSubFormula(IPosition position) {
 		Formula formula = this;
-		for (int index: position.indexes) {
+		for (int index: ((Position) position).indexes) {
 			formula = formula.getChild(index);
 			if (formula == null) {
 				return null;
@@ -1899,15 +1900,15 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return a list of the positions of all sub-formulas that satisfy the
 	 *         given criterion
 	 */
-	public final List<Position> getPositions(IFormulaFilter filter) {
+	public final List<IPosition> getPositions(IFormulaFilter filter) {
 		assert !(this instanceof Assignment);
-		List<Position> positions = new ArrayList<Position>();
+		List<IPosition> positions = new ArrayList<IPosition>();
 		getPositions(filter, new IntStack(), positions);
 		return positions;
 	}
 	
 	protected abstract void getPositions(IFormulaFilter filter,
-			IntStack indexes, List<Position> positions);
+			IntStack indexes, List<IPosition> positions);
 	
 	/**
 	 * Returns the position of the deepest sub-formula of this formula that
@@ -1928,18 +1929,18 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return the position of the deepest sub-formula that contains the given
 	 *         source location, or <code>null</code> if there is none
 	 */
-	public final Position getPosition(SourceLocation sloc) {
+	public final IPosition getPosition(SourceLocation sloc) {
 		return getPosition(sloc, new IntStack());
 	}
 	
-	protected final Position getPosition(SourceLocation sloc, IntStack indexes) {
+	protected final IPosition getPosition(SourceLocation sloc, IntStack indexes) {
 		if (contains(sloc)) {
 			return getDescendantPos(sloc, indexes);
 		}
 		return null;
 	}
 
-	protected abstract Position getDescendantPos(SourceLocation sloc, IntStack indexes);
+	protected abstract IPosition getDescendantPos(SourceLocation sloc, IntStack indexes);
 
 	/**
 	 * Tells whether this formula spans the given source location. In other
@@ -1955,5 +1956,64 @@ public abstract class Formula<T extends Formula<T>> {
 	public final boolean contains(SourceLocation sloc) {
 		return this.location != null && this.location.contains(sloc);
 	}
+
+	/**
+	 * Returns a new formula obtained from this formula by replacing the
+	 * sub-formula at the given position by the given new formula.
+	 * <p>
+	 * The given position must designate a sub-formula. The replaced and new
+	 * sub-formula must be of the same kind (bound identifier declaration,
+	 * expression or predicate), and be both type-checked. Moreover, the must
+	 * bear the same time (except for predicates which do not bear a type).
+	 * <p>
+	 * </p>
+	 * This operation is not supported for assignments, nor untyped formulas.
+	 * The returned formula is type-checked.
+	 * </p>
+	 * 
+	 * @param position
+	 *            the position of the sub-formula to rewrite
+	 * @param newFormula
+	 *            the new sub-formula to replace with
+	 * @param factory
+	 *            factory to use for building the result
+	 * @return a copy of this formula where the sub-formula at the given
+	 *         position has been replaced by the given new sub-formula
+	 * @throws UnsupportedOperationException
+	 *             if this formula is an assignment.
+	 * @throws IllegalStateException
+	 *             if this formula is not type-checked.
+	 * @throws IllegalArgumentException
+	 *             in the following cases:
+	 *             <ul>
+	 *             <li>the position does not lie inside this formula,</li>
+	 *             <li>the replaced and new sub-formulas are incompatible
+	 *             (different kind or different type).</li>
+	 *             </ul>
+	 */
+	public final T rewriteSubFormula(IPosition position, Formula newFormula,
+			FormulaFactory factory) {
+
+		if (! isTypeChecked())
+			throw new IllegalStateException("Formula is not type-checked.");
+		if (position == null)
+			throw new NullPointerException("Null position");
+		if (! newFormula.isTypeChecked())
+			throw new IllegalArgumentException("New sub-formula is not type-checked.");
+		if (factory == null)
+			throw new NullPointerException("Null factory");
+		final SingleRewriter rewriter =
+			new SingleRewriter(position, newFormula, factory);
+		T result = rewriter.rewrite(this);
+		assert result.isTypeChecked();
+		return result;
+	}
+	
+	/*
+	 * Rewrite the child at the given index.
+	 */
+	protected abstract T rewriteChild(int index, SingleRewriter rewriter);
+
+	protected abstract T getCheckedReplacement(SingleRewriter rewriter);
 
 }

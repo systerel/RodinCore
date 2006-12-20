@@ -201,20 +201,28 @@ public abstract class Assignment extends Formula<Assignment> {
 
 	@Override
 	protected void getPositions(IFormulaFilter filter,
-			IntStack indexes, List<Position> positions) {
-		assert false;
+			IntStack indexes, List<IPosition> positions) {
+		throw new UnsupportedOperationException("Assignments cannot be rewritten");
 	}
 
 	@Override
 	protected Formula getChild(int index) {
-		assert false;
-		return null;
+		throw new UnsupportedOperationException("Assignments cannot be rewritten");
 	}
 
 	@Override
-	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
-		assert false;
-		return null;
+	protected IPosition getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		throw new UnsupportedOperationException("Assignments cannot be rewritten");
+	}
+
+	@Override
+	protected Assignment rewriteChild(int index, SingleRewriter rewriter) {
+		throw new UnsupportedOperationException("Assignments cannot be rewritten");
+	}
+
+	@Override
+	protected Assignment getCheckedReplacement(SingleRewriter rewriter) {
+		throw new UnsupportedOperationException("Assignments cannot be rewritten");
 	}
 
 }

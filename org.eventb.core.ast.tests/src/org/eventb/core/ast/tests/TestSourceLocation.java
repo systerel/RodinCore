@@ -1,9 +1,19 @@
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.Formula.BFALSE;
+import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.INTEGER;
+import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.tests.FastFactory.ff;
+import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
+import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
-import static org.eventb.core.ast.tests.FastFactory.*;
-import static org.eventb.core.ast.Formula.*;
+import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
+import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 
 import java.util.HashMap;
 
@@ -13,7 +23,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.Position;
+import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 
@@ -95,7 +105,7 @@ public class TestSourceLocation extends TestCase {
 		for (int i = 0; i < max; ++i) {
 			for (int j = i; j < max; ++j) {
 				final SourceLocation sloc = new SourceLocation(i, j);
-				final Position pos = formula.getPosition(sloc);
+				final IPosition pos = formula.getPosition(sloc);
 				assertNotNull(pos);
 				final Formula actual = formula.getSubFormula(pos);
 				assertTrue(actual.getSourceLocation().contains(sloc));

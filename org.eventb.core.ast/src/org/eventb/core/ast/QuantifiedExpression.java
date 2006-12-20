@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -740,7 +741,7 @@ public class QuantifiedExpression extends Expression {
 
 	@Override
 	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<Position> positions) {
+			List<IPosition> positions) {
 		
 		if (filter.retainQuantifiedExpression(this)) {
 			positions.add(new Position(indexes));
@@ -774,8 +775,8 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	@Override
-	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
-		Position pos;
+	protected IPosition getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		IPosition pos;
 		if (form == Form.Explicit) {
 			indexes.push(0);
 			for (BoundIdentDecl decl: quantifiedIdentifiers) {
@@ -810,6 +811,26 @@ public class QuantifiedExpression extends Expression {
 		}
 		indexes.pop();
 		return new Position(indexes);
+	}
+
+	@Override
+	protected Expression rewriteChild(int index, SingleRewriter rewriter) {
+		BoundIdentDecl[] newDecls = quantifiedIdentifiers;
+		Predicate newPred = pred;
+		Expression newExpr = expr;
+		final int length = quantifiedIdentifiers.length;
+		if (index < length) {
+			newDecls = quantifiedIdentifiers.clone();
+			newDecls[index] = rewriter.rewrite(quantifiedIdentifiers[index]);
+		} else if (index == length) {
+			newPred = rewriter.rewrite(pred);
+		} else if (index == length + 1) {
+			newExpr = rewriter.rewrite(expr);
+		} else {
+			throw new IllegalArgumentException("Position is outside the formula");
+		}
+		return rewriter.factory.makeQuantifiedExpression(getTag(),
+				newDecls, newPred, newExpr, getSourceLocation(), form);
 	}
 
 }

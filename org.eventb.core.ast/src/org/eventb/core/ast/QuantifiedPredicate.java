@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eventb.internal.core.ast.BoundIdentSubstitution;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -387,7 +388,7 @@ public class QuantifiedPredicate extends Predicate {
 
 	@Override
 	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<Position> positions) {
+			List<IPosition> positions) {
 		
 		if (filter.retainQuantifiedPredicate(this)) {
 			positions.add(new Position(indexes));
@@ -414,8 +415,8 @@ public class QuantifiedPredicate extends Predicate {
 	}
 
 	@Override
-	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
-		Position pos;
+	protected IPosition getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		IPosition pos;
 		indexes.push(0);
 		for (BoundIdentDecl decl: quantifiedIdentifiers) {
 			pos = decl.getPosition(sloc, indexes);
@@ -428,6 +429,23 @@ public class QuantifiedPredicate extends Predicate {
 			return pos;
 		indexes.pop();
 		return new Position(indexes);
+	}
+
+	@Override
+	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
+		BoundIdentDecl[] newDecls = quantifiedIdentifiers;
+		Predicate newPred = pred;
+		final int length = quantifiedIdentifiers.length;
+		if (index < length) {
+			newDecls = quantifiedIdentifiers.clone();
+			newDecls[index] = rewriter.rewrite(quantifiedIdentifiers[index]);
+		} else if (index == length) {
+			newPred = rewriter.rewrite(pred);
+		} else {
+			throw new IllegalArgumentException("Position is outside the formula");
+		}
+		return rewriter.factory.makeQuantifiedPredicate(getTag(),
+				newDecls, newPred, getSourceLocation());
 	}
 
 }

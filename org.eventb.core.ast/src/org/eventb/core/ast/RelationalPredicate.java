@@ -12,6 +12,7 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -347,7 +348,7 @@ public class RelationalPredicate extends Predicate {
 
 	@Override
 	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<Position> positions) {
+			List<IPosition> positions) {
 		
 		if (filter.retainRelationalPredicate(this)) {
 			positions.add(new Position(indexes));
@@ -373,8 +374,8 @@ public class RelationalPredicate extends Predicate {
 	}
 
 	@Override
-	protected Position getDescendantPos(SourceLocation sloc, IntStack indexes) {
-		Position pos;
+	protected IPosition getDescendantPos(SourceLocation sloc, IntStack indexes) {
+		IPosition pos;
 		indexes.push(0);
 		pos = left.getPosition(sloc, indexes);
 		if (pos != null)
@@ -385,6 +386,24 @@ public class RelationalPredicate extends Predicate {
 			return pos;
 		indexes.pop();
 		return new Position(indexes);
+	}
+
+	@Override
+	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
+		Expression newLeft = left;
+		Expression newRight = right;
+		switch (index) {
+		case 0:
+			newLeft = rewriter.rewrite(left);
+			break;
+		case 1:
+			newRight = rewriter.rewrite(right);
+			break;
+		default:
+			throw new IllegalArgumentException("Position is outside the formula");
+		}
+		return rewriter.factory.makeRelationalPredicate(getTag(), newLeft,
+				newRight, getSourceLocation());
 	}
 
 }

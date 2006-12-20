@@ -47,4 +47,10 @@ public abstract class Predicate extends Formula<Predicate> {
 	// returns true if all calls where successful.
 	protected abstract boolean solveChildrenTypes(TypeUnifier unifier);
 	
+	@Override
+	protected Predicate getCheckedReplacement(SingleRewriter rewriter) {
+		Predicate replacement = rewriter.getPredicate();
+		return replacement;
+	}
+	
 }

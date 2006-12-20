@@ -7,6 +7,7 @@ package org.eventb.core.ast;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.IntStack;
+import org.eventb.internal.core.ast.Position;
 
 
 
@@ -34,10 +35,15 @@ public abstract class Identifier extends Expression {
 	}
 
 	@Override
-	protected final Position getDescendantPos(SourceLocation sloc,
+	protected final IPosition getDescendantPos(SourceLocation sloc,
 			IntStack indexes) {
 
 		return new Position(indexes);
+	}
+
+	@Override
+	protected Identifier rewriteChild(int index, SingleRewriter rewriter) {
+		throw new IllegalArgumentException("Position is outside the formula");
 	}
 
 }
