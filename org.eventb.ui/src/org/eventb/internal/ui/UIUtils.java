@@ -101,26 +101,38 @@ public class UIUtils {
 		IPSFile component = null;
 		if (obj instanceof IRodinProject)
 			return;
-		if (obj instanceof IPSFile)
-			component = (IPSFile) obj;
-		else if (obj instanceof IRodinElement)
-			component = (IPSFile) ((IRodinElement) obj).getParent();
+
+		if (!(obj instanceof IRodinElement))
+			return;
+
+		IRodinElement element = (IRodinElement) obj;
+
+		IOpenable file = element.getOpenable();
+
+		if (file instanceof IPSFile) {
+			component = (IPSFile) file;
+		} else if (file instanceof IMachineFile) {
+			component = ((IMachineFile) file).getPSFile();
+		} else if (file instanceof IContextFile) {
+			component = ((IContextFile) file).getPSFile();
+		} else {
+			return; // Not recorgnised
+		}
+
 		Assert
 				.isTrue(component != null,
-						"component must be initialised by now");
+						"Component must be initialised by now");
 		try {
-			// if (ObligationExplorer.DEBUG)
-			// ("Link to : " + obj);
-
 			IEditorInput fileInput = new FileEditorInput(component
 					.getResource());
 
 			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
 					.openEditor(fileInput, editorId);
-			if (!(obj instanceof IPSFile))
+			if (obj instanceof IPSStatus)
 				editor.setCurrentPO((IPSStatus) obj, new NullProgressMonitor());
 		} catch (PartInitException e) {
-			MessageDialog.openError(null, null, "Error open the editor");
+			MessageDialog
+					.openError(null, null, "Error open the proving editor");
 			e.printStackTrace();
 			// TODO EventBImage.logException(e);
 		}
@@ -356,8 +368,7 @@ public class UIUtils {
 		for (i = beginIndex; i < elements.length + beginIndex; i++) {
 			boolean exists = false;
 			for (IRodinElement element : elements) {
-				if (((ILabeledElement) element).getLabel().equals(
-						prefix + i)) {
+				if (((ILabeledElement) element).getLabel().equals(prefix + i)) {
 					exists = true;
 					break;
 				}
@@ -393,7 +404,8 @@ public class UIUtils {
 		for (i = beginIndex; i < elements.length + beginIndex; i++) {
 			boolean exists = true;
 			for (IRodinElement element : elements) {
-				if (!((IIdentifierElement) element).getIdentifierString().equals(prefix + i)) {
+				if (!((IIdentifierElement) element).getIdentifierString()
+						.equals(prefix + i)) {
 					exists = false;
 					break;
 				}
