@@ -4,8 +4,9 @@
  */
 package org.eventb.core.ast;
 
+import java.util.ArrayList;
+
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Substitution;
 
 
 /**
@@ -31,17 +32,16 @@ import org.eventb.internal.core.ast.Substitution;
 		return true;
 	}
 
-	protected static boolean getSubstitutedList(Formula[] list,
-			Substitution subst, Formula[] newList, FormulaFactory ff) {
+	protected static <T extends Formula<T>> boolean getSubstitutedList(
+			T[] list, IFormulaRewriter rewriter, ArrayList<T> newList) {
 
-		assert list.length == newList.length;
-		boolean equal = true;
-		for (int i = 0; i < list.length; i++) {
-			newList[i] = list[i].applySubstitution(subst);
-			if (newList[i] != list[i])
-				equal = false;
+		boolean changed = false;
+		for (T formula: list) {
+			T newFormula = formula.rewrite(rewriter);
+			newList.add(newFormula);
+			changed |= newFormula != formula;
 		}
-		return equal;
+		return changed;
 	}
 	
 	/*

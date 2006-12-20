@@ -311,7 +311,7 @@ public class BecomesSuchThat extends Assignment {
 			ff.makeFreshIdentifiers(primedIdents, typeEnvironment);
 		Substitution subst = 
 			new BoundIdentSubstitution(primedIdents, freshIdents, ff);
-		return condition.applySubstitution(subst);
+		return condition.rewrite(subst);
 	}
 
 	@Override

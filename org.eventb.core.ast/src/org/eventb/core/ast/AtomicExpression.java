@@ -12,7 +12,6 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -215,8 +214,8 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
-	public AtomicExpression applySubstitution(Substitution subst) {
-		return this;
+	public Expression rewrite(IFormulaRewriter rewriter) {
+		return checkReplacement(rewriter.rewrite(this));
 	}
 
 	@Override

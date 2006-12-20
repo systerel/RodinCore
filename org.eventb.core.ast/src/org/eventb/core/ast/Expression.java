@@ -160,10 +160,16 @@ public abstract class Expression extends Formula<Expression> {
 
 	@Override
 	protected Expression getCheckedReplacement(SingleRewriter rewriter) {
-		Expression replacement = rewriter.getExpression();
-		if (!getType().equals(replacement.getType()))
+		return checkReplacement(rewriter.getExpression());
+	}
+	
+	@Override
+	protected Expression checkReplacement(Expression replacement)  {
+		if (this == replacement)
+			return this;
+		if (type != null && ! type.equals(replacement.getType()))
 			throw new IllegalArgumentException("Incompatible types in rewrite");
 		return replacement;
 	}
-	
+
 }

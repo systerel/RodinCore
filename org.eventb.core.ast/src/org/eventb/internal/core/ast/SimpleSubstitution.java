@@ -50,16 +50,14 @@ public class SimpleSubstitution extends Substitution {
 		return map.toString();
 	}
 
-	@Override
-	public Expression getReplacement(FreeIdentifier ident) {
+	public Expression rewrite(FreeIdentifier ident) {
 		Substitute repl = map.get(ident);
 		if (repl == null)
 			return ident;
 		return repl.getSubstitute(ident, nbOfInternallyBound);
 	}
 
-	@Override
-	public Expression getReplacement(BoundIdentifier ident) {
+	public Expression rewrite(BoundIdentifier ident) {
 		return ident;
 	}
 

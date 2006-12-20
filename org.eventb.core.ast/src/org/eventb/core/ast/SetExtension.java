@@ -7,6 +7,7 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSubstitutedList;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -270,13 +270,18 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	public SetExtension applySubstitution(Substitution subst) {
-		final FormulaFactory ff = subst.getFactory();
-		Expression[] newMembers = new Expression[members.length];
-		boolean equal = getSubstitutedList(members, subst, newMembers, ff);
-		if (equal)
-			return this;
-		return ff.makeSetExtension(newMembers, getSourceLocation());
+	public Expression rewrite(IFormulaRewriter rewriter) {
+		final ArrayList<Expression> newChildren =
+			new ArrayList<Expression>(members.length); 
+		final boolean changed = getSubstitutedList(members, rewriter, newChildren);
+		final SetExtension before;
+		if (! changed) {
+			before = this;
+		} else {
+			before = rewriter.getFactory().makeSetExtension(newChildren,
+					getSourceLocation());
+		}
+		return checkReplacement(rewriter.rewrite(before));
 	}
 
 	@Override

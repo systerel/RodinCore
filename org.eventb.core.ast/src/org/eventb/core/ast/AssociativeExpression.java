@@ -22,7 +22,6 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -524,15 +523,18 @@ public class AssociativeExpression extends Expression {
 	}
 
 	@Override
-	public AssociativeExpression applySubstitution(Substitution subst) {
-		final FormulaFactory ff = subst.getFactory();
-		Expression[] newChildren = new Expression[children.length]; 
-		boolean equal = getSubstitutedList(children, subst, newChildren, ff);
-		if (equal) {
-			return this;
+	public Expression rewrite(IFormulaRewriter rewriter) {
+		final ArrayList<Expression> newChildren =
+			new ArrayList<Expression>(children.length); 
+		final boolean changed = getSubstitutedList(children, rewriter, newChildren);
+		final AssociativeExpression before;
+		if (! changed) {
+			before = this;
 		} else {
-			return ff.makeAssociativeExpression(getTag(), newChildren, getSourceLocation());
+			before = rewriter.getFactory().makeAssociativeExpression(getTag(),
+					newChildren, getSourceLocation());
 		}
+		return checkReplacement(rewriter.rewrite(before));
 	}
 
 	@Override

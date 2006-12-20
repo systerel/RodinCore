@@ -160,5 +160,5 @@ abstract class QuantifiedHelper {
 		}
 		return true;
 	}
-		
+
 }

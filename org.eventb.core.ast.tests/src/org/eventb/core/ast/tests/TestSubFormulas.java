@@ -11,6 +11,7 @@ import static org.eventb.core.ast.Formula.MINUS;
 import static org.eventb.core.ast.Formula.NOT;
 import static org.eventb.core.ast.Formula.PLUS;
 import static org.eventb.core.ast.Formula.QUNION;
+import static org.eventb.core.ast.Formula.SETMINUS;
 import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
@@ -24,6 +25,7 @@ import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
@@ -51,8 +53,10 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaFilter;
+import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
@@ -153,6 +157,103 @@ public class TestSubFormulas extends TestCase {
 		
 	}
 
+	private static class FixedRewriter implements IFormulaRewriter {
+		final Formula from;
+		final Formula to;
+		
+		public FixedRewriter(Formula from, Formula to) {
+			this.from = from;
+			this.to = to;
+		}
+
+		public void enteringQuantifier(int nbOfDeclarations) {
+			// Do nothing
+		}
+
+		public FormulaFactory getFactory() {
+			return ff;
+		}
+
+		public void leavingQuantifier(int nbOfDeclarations) {
+			// Do nothing
+		}
+
+		private Formula doRewrite(Formula expr) {
+			if (expr.equals(from)) {
+				return to;
+			}
+			return expr;
+		}
+		
+		public Expression rewrite(AssociativeExpression expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		public Predicate rewrite(AssociativePredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+
+		public Expression rewrite(AtomicExpression expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		public Expression rewrite(BinaryExpression expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		public Predicate rewrite(BinaryPredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+
+		public Expression rewrite(BoolExpression expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		public Expression rewrite(BoundIdentifier identifier) {
+			return (Expression) doRewrite(identifier);
+		}
+
+		public Expression rewrite(FreeIdentifier identifier) {
+			return (Expression) doRewrite(identifier);
+		}
+
+		public Expression rewrite(IntegerLiteral literal) {
+			return (Expression) doRewrite(literal);
+		}
+
+		public Predicate rewrite(LiteralPredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+
+		public Expression rewrite(QuantifiedExpression expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		public Predicate rewrite(QuantifiedPredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+
+		public Predicate rewrite(RelationalPredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+
+		public Expression rewrite(SetExtension expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		public Predicate rewrite(SimplePredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+
+		public Expression rewrite(UnaryExpression expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		public Predicate rewrite(UnaryPredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+	}
+	
 	private Type INT = ff.makeIntegerType();
 	
 	private Type POW(Type base) {
@@ -531,7 +632,7 @@ public class TestSubFormulas extends TestCase {
 	 * Ensures that filtering is implemented for all kinds of formulas.  Also
 	 * ensures that one can rewrite the root of any formula.
 	 */
-	public void testAllClasses() throws Exception {
+	public void testPositionAllClasses() throws Exception {
 		checkRootPosition(
 				mAssociativeExpression(PLUS, id_x, id_x),
 				mAssociativeExpression(PLUS, id_x, id_y)
@@ -606,7 +707,7 @@ public class TestSubFormulas extends TestCase {
 	 * Ensures that a sub-expression that occurs deeply in a formula can be
 	 * retrieved.
 	 */
-	public void testDeep() {
+	public void testDeepPositions() {
 		checkPositions(idFilter,
 				mAssociativePredicate(
 						mRelationalPredicate(EQUAL, id_x, id_y),
@@ -626,7 +727,264 @@ public class TestSubFormulas extends TestCase {
 								mBinaryExpression(MINUS, id_X, id_y))
 				)
 		);
-		
 	}
 	
+	private void checkRewriting(Formula from, Formula to,
+			Formula before, Formula after) {
+
+		FixedRewriter rewriter = new FixedRewriter(from, to);
+		Formula actual = before.rewrite(rewriter);
+		assertEquals("Unexpected rewritten formula", after, actual);
+	}
+
+	private void checkRootRewriting(Formula from, Formula to) {
+
+		FixedRewriter rewriter = new FixedRewriter(from, to);
+		Formula actual = from.rewrite(rewriter);
+		assertEquals("Unexpected rewritten formula", to, actual);
+	}
+
+	/**
+	 * Ensures that multiple expression rewriting can be performed in all places
+	 * where a rewritable sub-expression can occur.
+	 */
+	public void testExpressionRewriting() {
+		final Expression zero = mIntegerLiteral(0);
+		final Expression i1 = mBinaryExpression(MINUS, id_x, zero);
+		final Expression i2 = zero;
+
+		final Expression empty = mEmptySet(POW(INT));
+		final Expression s1 = mBinaryExpression(SETMINUS, id_S, empty);
+		final Expression s2 = id_S;
+		
+		checkRewriting(i1, i2,
+				mAssociativeExpression(PLUS, i1, id_y),
+				mAssociativeExpression(PLUS, i2, id_y)
+		);
+		checkRewriting(i1, i2,
+				mAssociativeExpression(PLUS, id_y, i1),
+				mAssociativeExpression(PLUS, id_y, i2));
+		checkRewriting(i1, i2,
+				mAssociativeExpression(PLUS, i1, id_y, i1),
+				mAssociativeExpression(PLUS, i2, id_y, i2));
+
+		checkRewriting(i1, i2,
+				mAtomicExpression(),
+				mAtomicExpression());
+
+		checkRewriting(i1, i2,
+				mBinaryExpression(MINUS, i1, i1),
+				mBinaryExpression(MINUS, i2, i2));
+		checkRewriting(i1, i2,
+				mBinaryExpression(MINUS, i1, id_y),
+				mBinaryExpression(MINUS, i2, id_y));
+		checkRewriting(i1, i2,
+				mBinaryExpression(MINUS, id_y, i1),
+				mBinaryExpression(MINUS, id_y, i2));
+		checkRewriting(i1, i2,
+				mBinaryExpression(MINUS, id_y, id_y),
+				mBinaryExpression(MINUS, id_y, id_y));
+
+		checkRewriting(i1, i2, b0, b0);
+
+		checkRewriting(i1, i2, id_x, id_x);
+
+		checkRewriting(i1, i2, zero, zero);
+
+		checkRewriting(i1, i2,
+				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_y),
+				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_y));
+		checkRewriting(i1, i2,
+				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, i1),
+				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, i2));
+		checkRewriting(i1, i2,
+				mQuantifiedExpression(CSET, Explicit, mList(bd_x), btrue, id_y),
+				mQuantifiedExpression(CSET, Explicit, mList(bd_x), btrue, id_y));
+		checkRewriting(i1, i2,
+				mQuantifiedExpression(CSET, Explicit, mList(bd_x), btrue, i1),
+				mQuantifiedExpression(CSET, Explicit, mList(bd_x), btrue, i2));
+		checkRewriting(i1, i2,
+				mQuantifiedExpression(CSET, Lambda, mList(bd_x), btrue,
+						mMaplet(b0, i1)
+				),
+				mQuantifiedExpression(CSET, Lambda, mList(bd_x), btrue,
+						mMaplet(b0, i2)
+				));
+		checkRewriting(i1, i2,
+				mQuantifiedExpression(CSET, Lambda, mList(bd_x, bd_y), btrue,
+						mMaplet(mMaplet(b0, b1), i1)
+				),
+				mQuantifiedExpression(CSET, Lambda, mList(bd_x, bd_y), btrue,
+						mMaplet(mMaplet(b0, b1), i2)
+				));
+		checkRewriting(i1, i2,
+				mRelationalPredicate(EQUAL, i1, i1),
+				mRelationalPredicate(EQUAL, i2, i2));
+		checkRewriting(i1, i2,
+				mRelationalPredicate(EQUAL, i1, id_y),
+				mRelationalPredicate(EQUAL, i2, id_y));
+		checkRewriting(i1, i2,
+				mRelationalPredicate(EQUAL, id_y, i1),
+				mRelationalPredicate(EQUAL, id_y, i2));
+		checkRewriting(i1, i2,
+				mRelationalPredicate(EQUAL, id_y, id_y),
+				mRelationalPredicate(EQUAL, id_y, id_y));
+
+		checkRewriting(i1, i2,
+				mSetExtension(i1, id_y),
+				mSetExtension(i2, id_y));
+		checkRewriting(i1, i2,
+				mSetExtension(id_y, i1),
+				mSetExtension(id_y, i2));
+		checkRewriting(i1, i2,
+				mSetExtension(i1, id_y, i1),
+				mSetExtension(i2, id_y, i2));
+
+		checkRewriting(s1, s2,
+				mSimplePredicate(s1),
+				mSimplePredicate(s2));
+
+		checkRewriting(i1, i2,
+				mUnaryExpression(UNMINUS, i1),
+				mUnaryExpression(UNMINUS, i2));	
+	}
+
+	/**
+	 * Ensures that a predicate can be rewritten in all contexts.
+	 */
+	public void testPredicateRewriting() throws Exception {
+		Predicate p1 = equals;
+		Predicate p2 = btrue;
+		
+		checkRewriting(p1, p2,
+				mAssociativePredicate(LAND, p1, btrue),
+				mAssociativePredicate(LAND, p2, btrue));
+		checkRewriting(p1, p2,
+				mAssociativePredicate(LAND, btrue, p1),
+				mAssociativePredicate(LAND, btrue, p2));
+		checkRewriting(p1, p2, 
+				mAssociativePredicate(LAND, p1, btrue, p1),
+				mAssociativePredicate(LAND, p2, btrue, p2));
+		
+		checkRewriting(p1, p2,
+				mBinaryPredicate(LIMP, p1, btrue),
+				mBinaryPredicate(LIMP, p2, btrue));
+		checkRewriting(p1, p2,
+				mBinaryPredicate(LIMP, btrue, p1),
+				mBinaryPredicate(LIMP, btrue, p2));
+		checkRewriting(p1, p2,
+				mBinaryPredicate(LIMP, p1, p1),
+				mBinaryPredicate(LIMP, p2, p2));
+		
+		checkRewriting(p1, p2,
+				mBoolExpression(btrue),
+				mBoolExpression(btrue));
+		checkRewriting(p1, p2,
+				mBoolExpression(p1),
+				mBoolExpression(p2));
+		
+		checkRewriting(p1, p2,
+				mLiteralPredicate(),
+				mLiteralPredicate());
+
+		checkRewriting(p1, p2,
+				mQuantifiedExpression(CSET, Implicit, mList(bd_x), p1, id_x),
+				mQuantifiedExpression(CSET, Implicit, mList(bd_x), p2, id_x));
+		checkRewriting(p1, p2,
+				mQuantifiedExpression(CSET, Implicit, mList(bd_x, bd_y), p1, id_x),
+				mQuantifiedExpression(CSET, Implicit, mList(bd_x, bd_y), p2, id_x));
+		checkRewriting(p1, p2,
+				mQuantifiedExpression(CSET, Explicit, mList(bd_x), p1, id_x),
+				mQuantifiedExpression(CSET, Explicit, mList(bd_x), p2, id_x));
+		checkRewriting(p1, p2,
+				mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), p1, id_x),
+				mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), p2, id_x));
+		checkRewriting(p1, p2,
+				mQuantifiedExpression(CSET, Lambda, mList(bd_x), p1, m0x),
+				mQuantifiedExpression(CSET, Lambda, mList(bd_x), p2, m0x));
+		checkRewriting(p1, p2,
+				mQuantifiedExpression(CSET, Lambda, mList(bd_x, bd_y), p1, m01x),
+				mQuantifiedExpression(CSET, Lambda, mList(bd_x, bd_y), p2, m01x));
+		
+		checkRewriting(p1, p2,
+				mQuantifiedPredicate(FORALL, mList(bd_x), p1),
+				mQuantifiedPredicate(FORALL, mList(bd_x), p2));
+		checkRewriting(p1, p2,
+				mQuantifiedPredicate(FORALL, mList(bd_x, bd_y), p1),
+				mQuantifiedPredicate(FORALL, mList(bd_x, bd_y), p2));
+		
+		checkRewriting(p1, p2,
+				mUnaryPredicate(NOT, p1),
+				mUnaryPredicate(NOT, p2));
+	}
+
+	/**
+	 * Ensures that rewriting is implemented for all kinds of formulas.
+	 */
+	public void testRewritingAllClasses() throws Exception {
+		checkRootRewriting(
+				mAssociativeExpression(PLUS, id_x, id_x),
+				mAssociativeExpression(PLUS, id_x, id_y)
+		);
+		checkRootRewriting(
+				mAssociativePredicate(LAND, btrue, equals),
+				mAssociativePredicate(LAND, btrue, btrue)
+		);
+		checkRootRewriting(
+				mBinaryExpression(MINUS, id_x, id_x),
+				mBinaryExpression(MINUS, id_x, id_y)
+		);
+		checkRootRewriting(
+				mBinaryPredicate(LIMP, btrue, equals),
+				mBinaryPredicate(LIMP, btrue, btrue)
+		);
+		checkRootRewriting(
+				mBoolExpression(equals),
+				mBoolExpression(btrue)
+		);
+		checkRootRewriting(
+				mBoundIdentifier(0, INT),
+				mBoundIdentifier(1, INT)
+		);
+		checkRootRewriting(
+				mFreeIdentifier("x", INT),
+				mFreeIdentifier("y", INT)
+		);
+		checkRootRewriting(
+				mIntegerLiteral(0),
+				mIntegerLiteral(1)
+		);
+		checkRootRewriting(
+				mLiteralPredicate(BTRUE),
+				mLiteralPredicate(BFALSE)
+		);
+		checkRootRewriting(
+				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_x),
+				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_y)
+		);
+		checkRootRewriting(
+				mQuantifiedPredicate(FORALL, mList(bd_x), equals),
+				mQuantifiedPredicate(FORALL, mList(bd_x), btrue)
+		);
+		checkRootRewriting(
+				mRelationalPredicate(EQUAL, id_x, id_x),
+				mRelationalPredicate(EQUAL, id_x, id_y)
+		);
+		checkRootRewriting(
+				mSetExtension(id_x),
+				mSetExtension(id_y)
+		);
+		checkRootRewriting(
+				mSimplePredicate(id_S),
+				mSimplePredicate(id_T)
+		);
+		checkRootRewriting(
+				mUnaryExpression(UNMINUS, id_x),
+				mUnaryExpression(UNMINUS, id_y)
+		);
+		checkRootRewriting(
+				mUnaryPredicate(NOT, equals),
+				mUnaryPredicate(NOT, btrue)
+		);
+	}
 }

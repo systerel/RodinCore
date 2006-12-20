@@ -32,8 +32,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * Formula is the abstract base class for all nodes of an event-B formula AST
  * (Abstract Syntax Tree).
  * <p>
- * To instantiate sub-classes of this class, use
- * {@link org.eventb.core.ast.FormulaFactory}.
+ * To instantiate sub-classes of this class, use {@link FormulaFactory}.
  * <p>
  * <b>Important Remark</b>: All AST nodes are immutable. Once a node has been
  * constructed, its contents can't be changed anymore. Except for its type. The
@@ -41,7 +40,8 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @author Laurent Voisin
  * 
- * @param <T> TODO comment type parameter
+ * @param <T>
+ *            TODO comment type parameter
  */
 public abstract class Formula<T extends Formula<T>> {
 
@@ -1408,7 +1408,7 @@ public abstract class Formula<T extends Formula<T>> {
 		}
 		
 		Substitution subst = new BindingSubstitution(identsToBind, factory);
-		return applySubstitution(subst);
+		return rewrite(subst);
 	}
 
 	// Needed by the restricted genericity of Java 5
@@ -1516,16 +1516,41 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 	
 	/**
-	 * Applies the given substitution to this formula.
+	 * Rewrites this formula using the given rewriter. The rewriting operation
+	 * is performed in a depth-first, post-order traversal. This means that the
+	 * formula tree is traversed depth-first and the rewriter is called for each
+	 * node of the formula. The calls to the rewriter are done in post-order:
+	 * children are rewritten before their parent.
 	 * <p>
-	 * This operation is made public for technical reasons.  It is not part
-	 * of the published API of the AST library and must not be used by clients.
+	 * Additionaly, each time a quantified formula is traversed, method
+	 * {@link IFormulaRewriter#enteringQuantifier(int)} (resp.
+	 * {@link IFormulaRewriter#leavingQuantifier(int)}) is called just before
+	 * (resp. after) processing the children of the quantified formula.
 	 * </p>
-	 * @param subst
-	 *            the substitution to apply
-	 * @return this formula with the given substitution applied to it
+	 * </p>
+	 * This operation is not supported for assignments and bound identifier
+	 * declarations. The returned formula is type-checked if this formula is
+	 * type-checked.
+	 * </p>
+	 * 
+	 * @param rewriter
+	 *            the rewriter to apply
+	 * @return this formula with the given rewriter applied to it
+	 * @throws UnsupportedOperationException
+	 *             if this formula is an assignment or a bound identifier
+	 *             declaration.
+	 * @throws IllegalArgumentException
+	 *             if, at any point, the sub-formula returned by the rewriter is
+	 *             incompatible with the original sub-formula:
+	 *             <ul>
+	 *             <li>the original sub-formula was type-checked and the new
+	 *             sub-formula is not type-checked.</li>
+	 *             <li>the new subformula bears a different type from the
+	 *             original sub-formula.</li>
+	 *             </ul>
+	 * @see IFormulaRewriter
 	 */
-	public abstract T applySubstitution(Substitution subst);
+	public abstract T rewrite(IFormulaRewriter rewriter);
 	
 	/**
 	 * Substitutes all occurrences of some free identifiers by their
@@ -1545,7 +1570,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public T substituteFreeIdents(Map<FreeIdentifier, Expression> map, FormulaFactory ff) {
 		SimpleSubstitution subst = new SimpleSubstitution(map, ff);
-		return applySubstitution(subst);
+		return rewrite(subst);
 	}
 	
 	/**
@@ -1710,7 +1735,7 @@ public abstract class Formula<T extends Formula<T>> {
 			}
 			return formulaFactory.makeQuantifiedPredicate(quant,
 					newDecls,
-					pred.applySubstitution(subst),
+					pred.rewrite(subst),
 					loc);
 		}
 		return formulaFactory.makeQuantifiedPredicate(quant, decls, pred, loc);
@@ -1751,7 +1776,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 *            atomic expressions.
 	 * 
 	 * @see java.lang.Object#toString()
-	 * @see org.eventb.core.ast.Formula#toStringFullyParenthesized()
+	 * @see #toStringFullyParenthesized()
 	 */
 	protected abstract void toString(StringBuilder builder, boolean isRightChild, int parentTag,
 			String[] boundNames, boolean withTypes);
@@ -1770,7 +1795,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 *            to the current node. Should not be null, can be an empty
 	 *            array.
 	 * 
-	 * @see org.eventb.core.ast.Formula#toStringFullyParenthesized()
+	 * @see #toStringFullyParenthesized()
 	 */
 	protected abstract void toStringFullyParenthesized(
 			StringBuilder builder, String[] boundNames);
@@ -1819,7 +1844,7 @@ public abstract class Formula<T extends Formula<T>> {
 			return getTypedThis();
 		}
 		final Substitution subst = new BoundIdentifierShifter(offset, factory);
-		return applySubstitution(subst);
+		return rewrite(subst);
 	}
 	
 	/**
@@ -1990,8 +2015,7 @@ public abstract class Formula<T extends Formula<T>> {
 	public final T rewriteSubFormula(IPosition position, Formula newFormula,
 			FormulaFactory factory) {
 
-		if (! isTypeChecked())
-			throw new IllegalStateException("Formula is not type-checked.");
+		ensureTypeChecked();
 		if (position == null)
 			throw new NullPointerException("Null position");
 		if (! newFormula.isTypeChecked())
@@ -2011,5 +2035,12 @@ public abstract class Formula<T extends Formula<T>> {
 	protected abstract T rewriteChild(int index, SingleRewriter rewriter);
 
 	protected abstract T getCheckedReplacement(SingleRewriter rewriter);
+
+	protected abstract T checkReplacement(T replacement);
+
+	protected final void ensureTypeChecked() {
+		if (!this.isTypeChecked())
+			throw new IllegalStateException("Formula should be type-checked");
+	}
 
 }

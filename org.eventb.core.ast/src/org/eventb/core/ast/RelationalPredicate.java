@@ -13,7 +13,6 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -331,13 +330,17 @@ public class RelationalPredicate extends Predicate {
 	}
 
 	@Override
-	public RelationalPredicate applySubstitution(Substitution subst) {
-		final FormulaFactory ff = subst.getFactory();
-		Expression newLeft = left.applySubstitution(subst);
-		Expression newRight = right.applySubstitution(subst);
-		if(newLeft == left && newRight == right)
-			return this;
-		return ff.makeRelationalPredicate(getTag(), newLeft, newRight, getSourceLocation());
+	public Predicate rewrite(IFormulaRewriter rewriter) {
+		final Expression newLeft = left.rewrite(rewriter);
+		final Expression newRight = right.rewrite(rewriter);
+		final RelationalPredicate before;
+		if (newLeft == left && newRight == right) {
+			before = this;
+		} else {
+			before = rewriter.getFactory().makeRelationalPredicate(getTag(),
+					newLeft, newRight, getSourceLocation());
+		}
+		return checkReplacement(rewriter.rewrite(before));
 	}
 
 	@Override

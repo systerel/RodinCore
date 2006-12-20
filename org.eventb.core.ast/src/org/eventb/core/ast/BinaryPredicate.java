@@ -14,7 +14,6 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -255,13 +254,17 @@ public class BinaryPredicate extends Predicate {
 	}
 
 	@Override
-	public BinaryPredicate applySubstitution(Substitution subst) {
-		final FormulaFactory ff = subst.getFactory();
-		Predicate newLeft = left.applySubstitution(subst);
-		Predicate newRight = right.applySubstitution(subst);
-		if(newLeft == left && newRight == right)
-			return this;
-		return ff.makeBinaryPredicate(getTag(), newLeft, newRight, getSourceLocation());
+	public Predicate rewrite(IFormulaRewriter rewriter) {
+		final Predicate newLeft = left.rewrite(rewriter);
+		final Predicate newRight = right.rewrite(rewriter);
+		final BinaryPredicate before;
+		if (newLeft == left && newRight == right) {
+			before = this;
+		} else {
+			before = rewriter.getFactory().makeBinaryPredicate(getTag(),
+					newLeft, newRight, getSourceLocation());
+		}
+		return checkReplacement(rewriter.rewrite(before));
 	}
 
 	@Override

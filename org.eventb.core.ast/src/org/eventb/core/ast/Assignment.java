@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eventb.internal.core.ast.IntStack;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
 /**
@@ -146,10 +145,8 @@ public abstract class Assignment extends Formula<Assignment> {
 	}
 
 	@Override
-	public final Assignment applySubstitution(Substitution subst) {
-		// Should never happen
-		assert false;
-		return null;
+	public final Assignment rewrite(IFormulaRewriter rewriter) {
+		throw new UnsupportedOperationException("Assignments cannot be rewritten");
 	}
 	
 	/**
@@ -219,6 +216,11 @@ public abstract class Assignment extends Formula<Assignment> {
 
 	@Override
 	protected Assignment getCheckedReplacement(SingleRewriter rewriter) {
+		throw new UnsupportedOperationException("Assignments cannot be rewritten");
+	}
+
+	@Override
+	protected Assignment checkReplacement(Assignment replacement)  {
 		throw new UnsupportedOperationException("Assignments cannot be rewritten");
 	}
 

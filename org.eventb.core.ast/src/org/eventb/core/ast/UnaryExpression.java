@@ -13,7 +13,6 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -589,12 +588,16 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	public UnaryExpression applySubstitution(Substitution subst) {
-		final FormulaFactory ff = subst.getFactory();
-		Expression newChild = child.applySubstitution(subst);
-		if (newChild == child)
-			return this;
-		return ff.makeUnaryExpression(getTag(), newChild, getSourceLocation());
+	public Expression rewrite(IFormulaRewriter rewriter) {
+		final Expression newChild = child.rewrite(rewriter);
+		final UnaryExpression before;
+		if (newChild == child) {
+			before = this;
+		} else {
+			before = rewriter.getFactory().makeUnaryExpression(getTag(),
+					newChild, getSourceLocation());
+		}
+		return checkReplacement(rewriter.rewrite(before));
 	}
 
 	@Override

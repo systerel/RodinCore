@@ -9,11 +9,14 @@ package org.eventb.core.ast;
 
 /**
  * Common protocol for formula filters. A formula filter tells whether a given
- * formula satisifies some criterion.
+ * formula satisfies some criterion.
  * <p>
  * This interface contains one method for each of the sub-classes of
  * <code>Formula</code>, except assignments which are not covered by
  * sub-formula positions.
+ * </p>
+ * <p>
+ * Clients may implement this interface.
  * </p>
  * 
  * @author Laurent Voisin

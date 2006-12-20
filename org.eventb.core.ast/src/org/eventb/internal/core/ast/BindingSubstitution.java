@@ -47,7 +47,7 @@ public class BindingSubstitution extends SimpleSubstitution {
 	}
 
 	@Override
-	public Expression getReplacement(BoundIdentifier ident) {
+	public Expression rewrite(BoundIdentifier ident) {
 		final int index = ident.getBoundIndex();
 		if (index < nbOfInternallyBound || offset == 0)
 			return ident;

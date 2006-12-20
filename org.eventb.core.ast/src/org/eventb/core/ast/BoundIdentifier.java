@@ -12,7 +12,6 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -193,8 +192,8 @@ public class BoundIdentifier extends Identifier {
 	}
 
 	@Override
-	public Expression applySubstitution(Substitution subst) {
-		return subst.getReplacement(this);
+	public Expression rewrite(IFormulaRewriter rewriter) {
+		return checkReplacement(rewriter.rewrite(this));
 	}
 
 	@Override

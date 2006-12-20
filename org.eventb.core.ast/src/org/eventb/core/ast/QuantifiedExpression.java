@@ -4,9 +4,9 @@
  */
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.QuantifiedHelper.appendBoundIdentifiersString;
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
-import static org.eventb.core.ast.QuantifiedHelper.appendBoundIdentifiersString;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
@@ -23,7 +23,6 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -711,16 +710,23 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	@Override
-	public QuantifiedExpression applySubstitution(Substitution subst) {
-		final FormulaFactory ff = subst.getFactory();
+	public Expression rewrite(IFormulaRewriter rewriter) {
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
-		subst.enter(nbOfBoundIdentDecls);
-		Predicate newPred = pred.applySubstitution(subst);
-		Expression newExpr = expr.applySubstitution(subst);
-		subst.exit(nbOfBoundIdentDecls);
-		if (newPred == pred && newExpr == expr)
-			return this;
-		return ff.makeQuantifiedExpression(getTag(), quantifiedIdentifiers, newPred, newExpr, getSourceLocation(), form);
+		
+		rewriter.enteringQuantifier(nbOfBoundIdentDecls);
+		final Predicate newPred = pred.rewrite(rewriter);
+		final Expression newExpr = expr.rewrite(rewriter);
+		rewriter.leavingQuantifier(nbOfBoundIdentDecls);
+
+		final QuantifiedExpression before;
+		if (newPred == pred && newExpr == expr) {
+			before = this;
+		} else {
+			before = rewriter.getFactory().makeQuantifiedExpression(getTag(),
+					quantifiedIdentifiers, newPred, newExpr,
+					getSourceLocation(), form);
+		}
+		return checkReplacement(rewriter.rewrite(before));
 	}
 
 	@Override

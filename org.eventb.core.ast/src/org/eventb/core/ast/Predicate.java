@@ -49,8 +49,17 @@ public abstract class Predicate extends Formula<Predicate> {
 	
 	@Override
 	protected Predicate getCheckedReplacement(SingleRewriter rewriter) {
-		Predicate replacement = rewriter.getPredicate();
-		return replacement;
+		return checkReplacement(rewriter.getPredicate());
 	}
 	
+	@Override
+	protected Predicate checkReplacement(Predicate replacement)  {
+		if (this == replacement)
+			return this;
+		if (isTypeChecked() && ! replacement.isTypeChecked())
+			throw new IllegalStateException(
+					"Rewritten formula should be type-checked");
+		return replacement;
+	}
+
 }

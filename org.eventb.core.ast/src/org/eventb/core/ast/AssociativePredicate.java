@@ -21,7 +21,6 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -299,13 +298,18 @@ public class AssociativePredicate extends Predicate {
 	}
 
 	@Override
-	public AssociativePredicate applySubstitution(Substitution subst) {
-		final FormulaFactory ff = subst.getFactory();
-		Predicate[] newChildren = new Predicate[children.length]; 
-		boolean equal = getSubstitutedList(children, subst, newChildren, ff);
-		if (equal)
-			return this;
-		return ff.makeAssociativePredicate(getTag(), newChildren, getSourceLocation());
+	public Predicate rewrite(IFormulaRewriter rewriter) {
+		final ArrayList<Predicate> newChildren =
+			new ArrayList<Predicate>(children.length); 
+		final boolean changed = getSubstitutedList(children, rewriter, newChildren);
+		final AssociativePredicate before;
+		if (! changed) {
+			before = this;
+		} else {
+			before = rewriter.getFactory().makeAssociativePredicate(getTag(),
+					newChildren, getSourceLocation());
+		}
+		return checkReplacement(rewriter.rewrite(before));
 	}
 
 	@Override

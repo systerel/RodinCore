@@ -12,7 +12,6 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -165,12 +164,16 @@ public class UnaryPredicate extends Predicate {
 	}
 
 	@Override
-	public UnaryPredicate applySubstitution(Substitution subst) {
-		final FormulaFactory ff = subst.getFactory();
-		Predicate newChild = child.applySubstitution(subst);
-		if (newChild == child)
-			return this;
-		return ff.makeUnaryPredicate(getTag(), newChild, getSourceLocation());
+	public Predicate rewrite(IFormulaRewriter rewriter) {
+		final Predicate newChild = child.rewrite(rewriter);
+		final UnaryPredicate before;
+		if (newChild == child) {
+			before = this;
+		} else {
+			before = rewriter.getFactory().makeUnaryPredicate(getTag(),
+					newChild, getSourceLocation());
+		}
+		return checkReplacement(rewriter.rewrite(before));
 	}
 
 	@Override

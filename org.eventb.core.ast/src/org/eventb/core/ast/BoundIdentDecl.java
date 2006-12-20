@@ -12,7 +12,6 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -190,10 +189,9 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	@Override
-	public BoundIdentDecl applySubstitution(Substitution subst) {
-		// this method should never be called
-		assert false;
-		return this;
+	public BoundIdentDecl rewrite(IFormulaRewriter rewriter) {
+		throw new UnsupportedOperationException(
+				"Bound identifier declarations cannot be rewritten");
 	}
 
 	@Override
@@ -227,8 +225,14 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 
 	@Override
 	protected BoundIdentDecl getCheckedReplacement(SingleRewriter rewriter) {
-		BoundIdentDecl replacement = rewriter.getBoundIdentDecl();
-		if (!getType().equals(replacement.getType()))
+		return checkReplacement(rewriter.getBoundIdentDecl());
+	}
+	
+	@Override
+	protected BoundIdentDecl checkReplacement(BoundIdentDecl replacement)  {
+		if (this == replacement)
+			return this;
+		if (type != null && ! type.equals(replacement.getType()))
 			throw new IllegalArgumentException("Incompatible types in rewrite");
 		return replacement;
 	}

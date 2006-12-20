@@ -12,7 +12,6 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -158,12 +157,16 @@ public class BoolExpression extends Expression {
 	}
 
 	@Override
-	public BoolExpression applySubstitution(Substitution subst) {
-		final FormulaFactory ff = subst.getFactory();
-		Predicate newChild = child.applySubstitution(subst);
-		if (newChild == child)
-			return this;
-		return ff.makeBoolExpression(newChild, getSourceLocation());
+	public Expression rewrite(IFormulaRewriter rewriter) {
+		final Predicate newChild = child.rewrite(rewriter);
+		final BoolExpression before;
+		if (newChild == child) {
+			before = this;
+		} else {
+			before = rewriter.getFactory().makeBoolExpression(newChild,
+					getSourceLocation());
+		}
+		return checkReplacement(rewriter.rewrite(before));
 	}
 
 	@Override

@@ -23,7 +23,6 @@ import org.eventb.internal.core.ast.BoundIdentSubstitution;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -356,7 +355,7 @@ public class QuantifiedPredicate extends Predicate {
 	public Predicate instantiate(Expression[] replacements, FormulaFactory formulaFactory) {
 		BoundIdentSubstitution subst = 
 			new BoundIdentSubstitution(quantifiedIdentifiers, replacements, formulaFactory);
-		Predicate newPred = pred.applySubstitution(subst);
+		Predicate newPred = pred.rewrite(subst);
 		List<BoundIdentDecl> newBoundIdentDecls = subst.getNewDeclarations();
 		if (newBoundIdentDecls.isEmpty())
 			return newPred;
@@ -364,15 +363,21 @@ public class QuantifiedPredicate extends Predicate {
 	}
 	
 	@Override
-	public QuantifiedPredicate applySubstitution(Substitution subst) {
+	public Predicate rewrite(IFormulaRewriter rewriter) {
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
-		subst.enter(nbOfBoundIdentDecls);
-		Predicate newPred = pred.applySubstitution(subst);
-		subst.exit(nbOfBoundIdentDecls);
-		if (newPred == pred)
-			return this;
-		final FormulaFactory ff = subst.getFactory();
-		return ff.makeQuantifiedPredicate(getTag(), quantifiedIdentifiers, newPred, getSourceLocation());
+		
+		rewriter.enteringQuantifier(nbOfBoundIdentDecls);
+		final Predicate newPred = pred.rewrite(rewriter);
+		rewriter.leavingQuantifier(nbOfBoundIdentDecls);
+
+		final QuantifiedPredicate before;
+		if (newPred == pred) {
+			before = this;
+		} else {
+			before = rewriter.getFactory().makeQuantifiedPredicate(getTag(),
+					quantifiedIdentifiers, newPred, getSourceLocation());
+		}
+		return checkReplacement(rewriter.rewrite(before));
 	}
 
 	@Override
