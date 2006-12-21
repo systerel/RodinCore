@@ -156,23 +156,26 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 		RodinCore.run(new IWorkspaceRunnable() {
 
 			public void run(IProgressMonitor pMonitor) throws CoreException {
-				final IRodinFile rodinFile = rodinProject.createRodinFile(fileName,
-						false, null);
+				final IRodinFile rodinFile = rodinProject
+						.getRodinFile(fileName);
+				rodinFile.create(false, pMonitor);
 				if (rodinFile instanceof IMachineFile) {
-					IEvent init = (IEvent) rodinFile.createInternalElement(IEvent.ELEMENT_TYPE,
-							"internal_" + PrefixEvtName.DEFAULT_PREFIX + 1, null, pMonitor);
+					IEvent init = (IEvent) rodinFile.getInternalElement(
+							IEvent.ELEMENT_TYPE, "internal_"
+									+ PrefixEvtName.DEFAULT_PREFIX + 1);
+					init.create(null, pMonitor);
 					init.setLabel(IEvent.INITIALISATION, pMonitor);
-					init.setConvergence(IConvergenceElement.Convergence.ORDINARY, pMonitor);
+					init.setConvergence(
+							IConvergenceElement.Convergence.ORDINARY, pMonitor);
 					init.setInherited(false, pMonitor);
 				}
 				rodinFile.save(null, true);
 			}
-			
+
 		}, monitor);
-		
 
 		monitor.worked(1);
-		
+
 		monitor.setTaskName("Opening file for editing...");
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {

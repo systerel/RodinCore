@@ -247,8 +247,8 @@ public class NewComponentWizardPage extends WizardPage {
 			System.out.println("Project " + project);
 		
 		if (project != null) {
-			final IProject container = project.getProject();
-			containerText.setText(container.getFullPath().toString());
+//			final IProject container = project.getProject();
+			containerText.setText(project.getElementName());
 			componentText.setFocus();
 			componentText.selectAll();
 		}
