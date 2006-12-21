@@ -117,16 +117,6 @@ public class BinaryPredicate extends Predicate {
 	}
 
 	@Override
-	public Predicate flatten(FormulaFactory factory) {
-		final Predicate newLeft = left.flatten(factory);
-		final Predicate newRight = right.flatten(factory);
-		if (newLeft == left && newRight == right) {
-			return this;
-		}
-		return factory.makeBinaryPredicate(getTag(), newLeft, newRight, getSourceLocation());
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		left.typeCheck(result, quantifiedIdentifiers);
 		right.typeCheck(result, quantifiedIdentifiers);

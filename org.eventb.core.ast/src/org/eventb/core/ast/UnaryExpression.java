@@ -4,6 +4,7 @@
  */
 package org.eventb.core.ast;
 
+import java.math.BigInteger;
 import java.util.BitSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -330,19 +331,6 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	public Expression flatten(FormulaFactory factory) {
-		Expression newChild = child.flatten(factory);
-		if (getTag()==Formula.UNMINUS && newChild.getTag() == Formula.INTLIT) {
-			IntegerLiteral intLit = (IntegerLiteral) newChild;
-			return factory.makeIntegerLiteral(intLit.getValue().negate(), getSourceLocation());
-		}
-		if (newChild == child) {
-			return this;
-		}
-		return factory.makeUnaryExpression(getTag(), newChild, getSourceLocation());
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		final SourceLocation loc = getSourceLocation();
 		
@@ -590,12 +578,21 @@ public class UnaryExpression extends Expression {
 	@Override
 	public Expression rewrite(IFormulaRewriter rewriter) {
 		final Expression newChild = child.rewrite(rewriter);
+
+		final FormulaFactory ff = rewriter.getFactory();
+		final SourceLocation sloc = getSourceLocation();
+		if (getTag() == Formula.UNMINUS && newChild.getTag() == Formula.INTLIT
+				&& rewriter.autoFlatteningMode()) {
+			BigInteger value = ((IntegerLiteral) newChild).getValue();
+			IntegerLiteral before = ff.makeIntegerLiteral(value.negate(), sloc);
+			return checkReplacement(rewriter.rewrite(before));
+		}
+
 		final UnaryExpression before;
 		if (newChild == child) {
 			before = this;
 		} else {
-			before = rewriter.getFactory().makeUnaryExpression(getTag(),
-					newChild, getSourceLocation());
+			before = ff.makeUnaryExpression(getTag(), newChild, sloc);
 		}
 		return checkReplacement(rewriter.rewrite(before));
 	}

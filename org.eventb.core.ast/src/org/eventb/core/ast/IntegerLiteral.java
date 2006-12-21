@@ -97,11 +97,6 @@ public class IntegerLiteral extends Expression {
 	}
 
 	@Override
-	public Expression flatten(FormulaFactory factory) {
-		return this;
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		setTemporaryType(result.makeIntegerType(), result);
 	}

@@ -4,8 +4,6 @@
  */
 package org.eventb.core.ast;
 
-import java.util.ArrayList;
-
 import org.eventb.internal.core.ast.LegibilityResult;
 
 
@@ -32,18 +30,6 @@ import org.eventb.internal.core.ast.LegibilityResult;
 		return true;
 	}
 
-	protected static <T extends Formula<T>> boolean getSubstitutedList(
-			T[] list, IFormulaRewriter rewriter, ArrayList<T> newList) {
-
-		boolean changed = false;
-		for (T formula: list) {
-			T newFormula = formula.rewrite(rewriter);
-			newList.add(newFormula);
-			changed |= newFormula != formula;
-		}
-		return changed;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 

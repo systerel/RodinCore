@@ -5,9 +5,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
-import static org.eventb.core.ast.AssociativeHelper.getSubstitutedList;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -180,23 +178,6 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	public Expression flatten(FormulaFactory factory) {
-		if (members.length == 0) {
-			return factory.makeEmptySet(getType(), getSourceLocation());
-		}
-		Expression[] newChildren = new Expression[members.length];
-		boolean changed = false;
-		for (int i=0;i<members.length;i++) {
-			newChildren[i] = members[i].flatten(factory);
-			changed |= (newChildren[i] != members[i]);
-		}
-		if (! changed) {
-			return this;
-		}
-		return factory.makeSetExtension(newChildren, getSourceLocation());
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 
 		// Build the type variable for the elements of this set
@@ -271,15 +252,28 @@ public class SetExtension extends Expression {
 
 	@Override
 	public Expression rewrite(IFormulaRewriter rewriter) {
-		final ArrayList<Expression> newChildren =
-			new ArrayList<Expression>(members.length); 
-		final boolean changed = getSubstitutedList(members, rewriter, newChildren);
+		final int length = members.length;
+		final FormulaFactory ff = rewriter.getFactory();
+		final SourceLocation sloc = getSourceLocation();
+
+		if (length == 0 && rewriter.autoFlatteningMode()) {
+			AtomicExpression before = ff.makeEmptySet(getType(), sloc);
+			return checkReplacement(rewriter.rewrite(before));
+		}
+
+		boolean changed = false;
+		final Expression[] newMembers = new Expression[length];
+		for (int i = 0; i < length; i++) {
+			final Expression member = members[i];
+			final Expression newMember = member.rewrite(rewriter);
+			newMembers[i] = newMember;
+			changed |= newMember != member;
+		}
 		final SetExtension before;
-		if (! changed) {
+		if (!changed) {
 			before = this;
 		} else {
-			before = rewriter.getFactory().makeSetExtension(newChildren,
-					getSourceLocation());
+			before = ff.makeSetExtension(newMembers, sloc);
 		}
 		return checkReplacement(rewriter.rewrite(before));
 	}

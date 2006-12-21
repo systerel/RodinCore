@@ -1091,12 +1091,22 @@ public abstract class Formula<T extends Formula<T>> {
 	/**
 	 * Returns the flattened form of this formula.
 	 * <p>
-	 * There are several cases where a formula can be flattened:
+	 * Flattening consists in performing the following operations on the
+	 * formula:
 	 * <ul>
-	 * <li>If someone writes (x+x)+x, it is flattened to x+x+x.</li>
-	 * <li>If someone writes \u2203x\u2203y respectively \u2200x\u2200y, it is
-	 * flattened to \u2203x,y respectively \u2200x,y</li>
+	 * <li>Expand inline the children of an associative expression which are of
+	 * the same kind. For instance, "(x+x)+x" becomes "x+x+x".</li>
+	 * <li>Regroup quantifiers of quantified predicated of the same kind. For
+	 * instance "∀x·∀y·x=y" becomes "∀x,y·x=y".
+	 * <li>Replacing empty set extensions by empty sets: expression "{}"
+	 * becomes "∅".</li>
+	 * <li>Replacing an integer literal preceded by an unary minus by an
+	 * integer literal with the opposite value.</li>
 	 * </ul>
+	 * </p>
+	 * <p>
+	 * If this formula was already flattened, then a reference to this formula
+	 * is returned (rather than a copy of this formula).
 	 * </p>
 	 * <p>
 	 * Flattening is not supported for assignments.
@@ -1108,7 +1118,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @throws UnsupportedOperationException
 	 *             if this formula is an assignment.
 	 */
-	public abstract T flatten(FormulaFactory factory);
+	public final T flatten(FormulaFactory factory) {
+		IFormulaRewriter rewriter = new DefaultRewriter(true, factory);
+		return rewrite(rewriter);
+	}
 
 	/**
 	 * Returns a list of all identifiers that occur free in this formula.
@@ -1396,6 +1409,11 @@ public abstract class Formula<T extends Formula<T>> {
 	 * contain the result.
 	 * </p>
 	 * <p>
+	 * If the result formula would be the same as this formula (none of the
+	 * given identifiers occurred free in this formula), a reference to this
+	 * formula is returned (rather than a copy of this formula).
+	 * </p>
+	 * <p>
 	 * This operation is not supported by assignments.
 	 * </p>
 	 * 
@@ -1533,6 +1551,13 @@ public abstract class Formula<T extends Formula<T>> {
 	 * {@link IFormulaRewriter#leavingQuantifier(int)}) is called just before
 	 * (resp. after) processing the children of the quantified formula.
 	 * </p>
+	 * <p>
+	 * If no rewrite where performed on this formula (that is all rewrite calls
+	 * on sub-formulas returned an identical sub-formula), then a reference to
+	 * this formula is returned (rather than a copy of this formula). This
+	 * allows to test efficiently (using <code>==</code>) whether rewriting
+	 * made any change.
+	 * </p>
 	 * </p>
 	 * This operation is not supported for assignments and bound identifier
 	 * declarations. The returned formula is type-checked if this formula is
@@ -1564,7 +1589,13 @@ public abstract class Formula<T extends Formula<T>> {
 	 * <p>
 	 * For each entry of the given map, the free identifier and the replacement
 	 * expression must both be typed and bear the same type.
-	 * </p><p>
+	 * </p>
+	 * <p>
+	 * If no change where performed on this formula (none of the identifier
+	 * occurred free in this formula), then a reference to this formula is
+	 * returned (rather than a copy of this formula).
+	 * </p>
+	 * <p>
 	 * This operation is not supported by assignments.
 	 * </p>
 	 * 
@@ -1831,8 +1862,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 * Returns a copy of this formula where all externally bound identifier
 	 * indexes have been shifted by the given offset.
 	 * <p>
-	 * As a consequence, this operation returns this formula, when it's
-	 * well-defined, as there is no externally bound identifier in this case.
+	 * If no change where performed on this formula, then a reference to this
+	 * formula is returned (rather than a copy of this formula).
 	 * </p>
 	 * 
 	 * @param offset

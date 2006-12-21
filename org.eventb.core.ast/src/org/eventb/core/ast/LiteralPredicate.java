@@ -75,11 +75,6 @@ public class LiteralPredicate extends Predicate {
 	}
 
 	@Override
-	public Predicate flatten(FormulaFactory factory) {
-		return this;
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		// Nothing to do
 	}

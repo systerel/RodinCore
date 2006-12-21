@@ -138,11 +138,6 @@ public class BoundIdentifier extends Identifier {
 	}
 
 	@Override
-	public Expression flatten(FormulaFactory factory) {
-		return this;
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		final BoundIdentDecl decl = getDeclaration(quantifiedIdentifiers);
 		assert decl != null : "Bound variable without a declaration";

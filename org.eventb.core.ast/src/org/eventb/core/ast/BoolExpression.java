@@ -89,15 +89,6 @@ public class BoolExpression extends Expression {
 	}
 
 	@Override
-	public Expression flatten(FormulaFactory factory) {
-		final Predicate newChild = child.flatten(factory);
-		if (newChild == child) {
-			return this;
-		}
-		return factory.makeBoolExpression(newChild,getSourceLocation());
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		child.typeCheck(result, quantifiedIdentifiers);
 		setTemporaryType(result.makeBooleanType(), result);

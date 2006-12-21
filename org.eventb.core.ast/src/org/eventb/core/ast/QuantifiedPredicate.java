@@ -204,20 +204,6 @@ public class QuantifiedPredicate extends Predicate {
 	}
 
 	@Override
-	public Predicate flatten(FormulaFactory factory) {
-		Predicate newPred = pred.flatten(factory);
-		if (newPred.getTag() == getTag()) {
-			QuantifiedPredicate quantChild = (QuantifiedPredicate) newPred;
-			BoundIdentDecl[] idents = catenateBoundIdentLists(quantifiedIdentifiers, quantChild.quantifiedIdentifiers);
-			return factory.makeQuantifiedPredicate(getTag(), idents, quantChild.pred, getSourceLocation());
-		}
-		if (newPred == pred) {
-			return this;
-		}
-		return factory.makeQuantifiedPredicate(getTag(),quantifiedIdentifiers,newPred,getSourceLocation());
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] boundAbove) {
 		for (BoundIdentDecl ident : quantifiedIdentifiers) {
 			ident.typeCheck(result, boundAbove);
@@ -371,11 +357,19 @@ public class QuantifiedPredicate extends Predicate {
 		rewriter.leavingQuantifier(nbOfBoundIdentDecls);
 
 		final QuantifiedPredicate before;
-		if (newPred == pred) {
+		final FormulaFactory ff = rewriter.getFactory();
+		final SourceLocation sloc = getSourceLocation();
+		if (newPred.getTag() == getTag() && rewriter.autoFlatteningMode()) {
+			QuantifiedPredicate quantChild = (QuantifiedPredicate) newPred;
+			BoundIdentDecl[] idents = catenateBoundIdentLists(
+					quantifiedIdentifiers, quantChild.quantifiedIdentifiers);
+			before = ff.makeQuantifiedPredicate(getTag(), idents,
+					quantChild.pred, sloc);
+		} else if (newPred == pred) {
 			before = this;
 		} else {
-			before = rewriter.getFactory().makeQuantifiedPredicate(getTag(),
-					quantifiedIdentifiers, newPred, getSourceLocation());
+			before = ff.makeQuantifiedPredicate(getTag(),
+					quantifiedIdentifiers, newPred, sloc);
 		}
 		return checkReplacement(rewriter.rewrite(before));
 	}

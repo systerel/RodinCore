@@ -535,16 +535,6 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	@Override
-	public Expression flatten(FormulaFactory factory) {
-		final Predicate newPred = pred.flatten(factory);
-		final Expression newExpr = expr.flatten(factory);
-		if (newPred == pred && newExpr == expr) {
-			return this;
-		}
-		return factory.makeQuantifiedExpression(getTag(),quantifiedIdentifiers, newPred, newExpr, getSourceLocation(), form);
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdents) {
 		for (BoundIdentDecl decl: quantifiedIdentifiers) {
 			decl.typeCheck(result, quantifiedIdents);

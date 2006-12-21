@@ -193,16 +193,6 @@ public class RelationalPredicate extends Predicate {
 	}
 
 	@Override
-	public Predicate flatten(FormulaFactory factory) {
-		final Expression newLeft = left.flatten(factory);
-		final Expression newRight = right.flatten(factory);
-		if (newLeft == left && newRight == right) {
-			return this;
-		}
-		return factory.makeRelationalPredicate(getTag(), newLeft, newRight, getSourceLocation());
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		final SourceLocation loc = getSourceLocation();
 		left.typeCheck(result, quantifiedIdentifiers);

@@ -472,16 +472,6 @@ public class BinaryExpression extends Expression {
 	}
 
 	@Override
-	public Expression flatten(FormulaFactory factory) {
-		final Expression newLeft = left.flatten(factory);
-		final Expression newRight = right.flatten(factory);
-		if (newLeft == left && newRight == right) {
-			return this;
-		}
-		return factory.makeBinaryExpression(getTag(), newLeft, newRight, getSourceLocation());
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		final SourceLocation loc = getSourceLocation();
 		TypeVariable alpha, beta, gamma, delta;

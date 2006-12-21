@@ -211,11 +211,6 @@ public class FreeIdentifier extends Identifier {
 	}
 
 	@Override
-	public Expression flatten(FormulaFactory factory) {
-		return this;
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		setTemporaryType(result.getIdentType(this), result);
 	}

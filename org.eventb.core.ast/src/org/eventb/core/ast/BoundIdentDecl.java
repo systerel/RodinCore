@@ -128,11 +128,6 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	@Override
-	public BoundIdentDecl flatten(FormulaFactory factory) {
-		return this;
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		if (type == null) {
 			type = result.newFreshVariable(getSourceLocation());

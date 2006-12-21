@@ -5,7 +5,6 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
-import static org.eventb.core.ast.AssociativeHelper.getSubstitutedList;
 import static org.eventb.core.ast.AssociativeHelper.toStringFullyParenthesizedHelper;
 import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
 
@@ -143,28 +142,6 @@ public class AssociativePredicate extends Predicate {
 		return equalsHelper(children, ((AssociativePredicate) other).children,
 				withAlphaConversion);
 	}
-	
-	@Override
-	public Predicate flatten(FormulaFactory factory) {
-		List<Predicate> newChildren = new ArrayList<Predicate>();
-		boolean changed = false;
-		for (Predicate child: children) {
-			Predicate normChild = child.flatten(factory);
-			if (normChild.getTag() == getTag()) {
-				AssociativePredicate assocNormChild = (AssociativePredicate) normChild;
-				newChildren.addAll(Arrays.asList(assocNormChild.children));
-				changed = true;
-			}
-			else {
-				newChildren.add(normChild);
-				changed |= (child != normChild);
-			}
-		}
-		if (! changed) {
-			return this;
-		}
-		return factory.makeAssociativePredicate(getTag(), newChildren, getSourceLocation());
-	}
 
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
@@ -299,9 +276,22 @@ public class AssociativePredicate extends Predicate {
 
 	@Override
 	public Predicate rewrite(IFormulaRewriter rewriter) {
+		final boolean flatten = rewriter.autoFlatteningMode();
 		final ArrayList<Predicate> newChildren =
-			new ArrayList<Predicate>(children.length); 
-		final boolean changed = getSubstitutedList(children, rewriter, newChildren);
+			new ArrayList<Predicate>(children.length + 11); 
+		boolean changed = false;
+		for (Predicate child: children) {
+			Predicate newChild = child.rewrite(rewriter);
+			if (flatten && getTag() == newChild.getTag()) {
+				final Predicate[] grandChildren =
+					((AssociativePredicate) newChild).children;
+				newChildren.addAll(Arrays.asList(grandChildren));
+				changed = true;
+			} else {
+				newChildren.add(newChild);
+				changed |= newChild != child;
+			}
+		}
 		final AssociativePredicate before;
 		if (! changed) {
 			before = this;

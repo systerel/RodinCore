@@ -5,7 +5,6 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
-import static org.eventb.core.ast.AssociativeHelper.getSubstitutedList;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
 import static org.eventb.core.ast.AssociativeHelper.toStringFullyParenthesizedHelper;
 import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
@@ -337,28 +336,6 @@ public class AssociativeExpression extends Expression {
 	}
 
 	@Override
-	public Expression flatten(FormulaFactory factory) {
-		List<Expression> newChildren = new ArrayList<Expression>();
-		boolean changed = false;
-		for (Expression child: children) {
-			Expression normChild = child.flatten(factory);
-			if (normChild.getTag() == getTag()) {
-				AssociativeExpression assocNormChild = (AssociativeExpression) normChild;
-				newChildren.addAll(Arrays.asList(assocNormChild.children));
-				changed = true;
-			}
-			else {
-				newChildren.add(normChild);
-				changed |= (child != normChild);
-			}
-		}
-		if (! changed) {
-			return this;
-		}
-		return factory.makeAssociativeExpression(getTag(), newChildren, getSourceLocation());
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		final SourceLocation loc = getSourceLocation();
 		Type resultType;
@@ -524,9 +501,22 @@ public class AssociativeExpression extends Expression {
 
 	@Override
 	public Expression rewrite(IFormulaRewriter rewriter) {
+		final boolean flatten = rewriter.autoFlatteningMode();
 		final ArrayList<Expression> newChildren =
-			new ArrayList<Expression>(children.length); 
-		final boolean changed = getSubstitutedList(children, rewriter, newChildren);
+			new ArrayList<Expression>(children.length + 11); 
+		boolean changed = false;
+		for (Expression child: children) {
+			Expression newChild = child.rewrite(rewriter);
+			if (flatten && getTag() == newChild.getTag()) {
+				final Expression[] grandChildren =
+					((AssociativeExpression) newChild).children;
+				newChildren.addAll(Arrays.asList(grandChildren));
+				changed = true;
+			} else {
+				newChildren.add(newChild);
+				changed |= newChild != child;
+			}
+		}
 		final AssociativeExpression before;
 		if (! changed) {
 			before = this;

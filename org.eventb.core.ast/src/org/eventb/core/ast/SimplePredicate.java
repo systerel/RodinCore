@@ -103,15 +103,6 @@ public class SimplePredicate extends Predicate {
 	}
 
 	@Override
-	public Predicate flatten(FormulaFactory factory) {
-		final Expression newChild = child.flatten(factory);
-		if (newChild == child) {
-			return this;
-		}
-		return factory.makeSimplePredicate(getTag(), newChild, getSourceLocation());
-	}
-
-	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		TypeVariable alpha = result.newFreshVariable(null);
 		child.typeCheck(result, quantifiedIdentifiers);

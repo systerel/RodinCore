@@ -23,6 +23,12 @@ package org.eventb.core.ast;
  * mathematical type.
  * </p>
  * <p>
+ * Implementation note: If a rewrite method does not make any change to a
+ * sub-formula, it should return a formula identical to its input (same
+ * reference). This makes it much easier for testing whether a rewriter made any
+ * change to a formula.
+ * </p>
+ * <p>
  * Clients may implement this interface.
  * </p>
  * 
@@ -31,6 +37,29 @@ package org.eventb.core.ast;
  */
 public interface IFormulaRewriter {
 
+	/**
+	 * Tells whether rewrites should be automatically flattened. When this
+	 * method returns <code>true</code>, the result of rewriting is
+	 * automatically flattened when inserted in the new formula. The flattening
+	 * is done only at the point of insertion. No attempt is done to flatten the
+	 * sub-formulas returned by this rewriter.
+	 * <p>
+	 * If this mode is turned on and if all the sub-formulas returned by the
+	 * <code>rewrite</code> methods are flattened, then the rewritten formula
+	 * is flattened. Moreover, all sub-formulas passed as argument to the
+	 * <code>rewrite</code> methods are flattened.
+	 * </p>
+	 * <p>
+	 * To summarize, if this mode is turned on and the rewriter doesn't
+	 * introduce itself new sub-formulas which are not flattened, then the
+	 * result formula is flattened.
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff rewritten formulas should be flattened
+	 * @see Formula#flatten(FormulaFactory)
+	 */
+	boolean autoFlatteningMode();
+	
 	/**
 	 * Rewriting is entering a quantified formula. When traversing the formula
 	 * tree, this method is called when the rewriting traverses a quantifier,
