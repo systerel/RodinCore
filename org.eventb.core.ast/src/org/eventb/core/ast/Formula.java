@@ -71,10 +71,11 @@ public abstract class Formula<T extends Formula<T>> {
 	protected boolean typeChecked;
 	
 	/**
-	 * <code>STARTTAG</code> represents the tag of a node parent, when the
-	 * node is the root node of a formula.
+	 * <code>NO_TAG</code> is used as a placeholder when one needs to indicate
+	 * that a tag value is invalid or absent. It is different from all valid
+	 * tags.
 	 */
-	protected final static int STARTTAG = 0;
+	public final static int NO_TAG = 0;
 
 	/**
 	 * <code>FREE_IDENT</code> represents a free occurence of an identifer.
@@ -969,7 +970,7 @@ public abstract class Formula<T extends Formula<T>> {
 	@Override
 	public final String toString() {
 		StringBuilder builder = new StringBuilder();
-		toString(builder, false, STARTTAG, NO_STRING, false);
+		toString(builder, false, NO_TAG, NO_STRING, false);
 		return builder.toString();
 	}
 
@@ -987,7 +988,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final String toStringWithTypes() {
 		StringBuilder builder = new StringBuilder();
-		toString(builder, false, STARTTAG, NO_STRING, true);
+		toString(builder, false, NO_TAG, NO_STRING, true);
 		return builder.toString();
 	}
 

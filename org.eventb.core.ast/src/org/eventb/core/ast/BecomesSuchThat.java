@@ -246,7 +246,7 @@ public class BecomesSuchThat extends Assignment {
 		
 		final String[] newBoundNames = 
 			catenateBoundIdentLists(boundNames, getLocalNames());
-		condition.toString(builder, false, STARTTAG, newBoundNames, withTypes);
+		condition.toString(builder, false, NO_TAG, newBoundNames, withTypes);
 	}
 
 	@Override

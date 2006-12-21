@@ -157,7 +157,7 @@ public class BecomesMemberOf extends Assignment {
 
 		appendAssignedIdents(builder);
 		builder.append(" :\u2208 ");
-		setExpr.toString(builder, false, STARTTAG, boundNames, withTypes);
+		setExpr.toString(builder, false, NO_TAG, boundNames, withTypes);
 	}
 
 	@Override

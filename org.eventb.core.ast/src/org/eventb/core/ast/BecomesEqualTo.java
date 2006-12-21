@@ -209,7 +209,7 @@ public class BecomesEqualTo extends Assignment {
 		String comma = "";
 		for (Expression value: values) {
 			builder.append(comma);
-			value.toString(builder, false, STARTTAG, boundNames, withTypes);
+			value.toString(builder, false, NO_TAG, boundNames, withTypes);
 			comma = ", ";
 		}
 	}
