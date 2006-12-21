@@ -61,7 +61,14 @@ public final class ProverFactory {
 			Predicate neededHyp,
 			String display,
 			IAntecedent... anticidents) {
-		return makeProofRule(generatedBy,generatedUsing,goal,Collections.singleton(neededHyp),null, display,anticidents);
+		
+		final Set<Predicate>  neededHyps;
+		if (neededHyp == null) {
+			neededHyps = null;
+		} else {
+			neededHyps = Collections.singleton(neededHyp);
+		}
+		return makeProofRule(generatedBy,generatedUsing,goal,neededHyps,null, display,anticidents);
 	}
 	
 	public static IProofRule makeProofRule (
