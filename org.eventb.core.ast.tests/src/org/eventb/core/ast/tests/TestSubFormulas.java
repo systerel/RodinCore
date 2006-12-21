@@ -51,9 +51,9 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaFilter;
 import org.eventb.core.ast.IFormulaRewriter;
@@ -157,25 +157,14 @@ public class TestSubFormulas extends TestCase {
 		
 	}
 
-	private static class FixedRewriter implements IFormulaRewriter {
+	private static class FixedRewriter extends DefaultRewriter {
 		final Formula from;
 		final Formula to;
 		
 		public FixedRewriter(Formula from, Formula to) {
+			super(false, FastFactory.ff);
 			this.from = from;
 			this.to = to;
-		}
-
-		public void enteringQuantifier(int nbOfDeclarations) {
-			// Do nothing
-		}
-
-		public FormulaFactory getFactory() {
-			return ff;
-		}
-
-		public void leavingQuantifier(int nbOfDeclarations) {
-			// Do nothing
 		}
 
 		private Formula doRewrite(Formula expr) {
@@ -185,70 +174,87 @@ public class TestSubFormulas extends TestCase {
 			return expr;
 		}
 		
+		@Override
 		public Expression rewrite(AssociativeExpression expression) {
 			return (Expression) doRewrite(expression);
 		}
 
+		@Override
 		public Predicate rewrite(AssociativePredicate predicate) {
 			return (Predicate) doRewrite(predicate);
 		}
 
+		@Override
 		public Expression rewrite(AtomicExpression expression) {
 			return (Expression) doRewrite(expression);
 		}
 
+		@Override
 		public Expression rewrite(BinaryExpression expression) {
 			return (Expression) doRewrite(expression);
 		}
 
+		@Override
 		public Predicate rewrite(BinaryPredicate predicate) {
 			return (Predicate) doRewrite(predicate);
 		}
 
+		@Override
 		public Expression rewrite(BoolExpression expression) {
 			return (Expression) doRewrite(expression);
 		}
 
+		@Override
 		public Expression rewrite(BoundIdentifier identifier) {
 			return (Expression) doRewrite(identifier);
 		}
 
+		@Override
 		public Expression rewrite(FreeIdentifier identifier) {
 			return (Expression) doRewrite(identifier);
 		}
 
+		@Override
 		public Expression rewrite(IntegerLiteral literal) {
 			return (Expression) doRewrite(literal);
 		}
 
+		@Override
 		public Predicate rewrite(LiteralPredicate predicate) {
 			return (Predicate) doRewrite(predicate);
 		}
 
+		@Override
 		public Expression rewrite(QuantifiedExpression expression) {
 			return (Expression) doRewrite(expression);
 		}
 
+		@Override
 		public Predicate rewrite(QuantifiedPredicate predicate) {
 			return (Predicate) doRewrite(predicate);
 		}
 
+		@Override
 		public Predicate rewrite(RelationalPredicate predicate) {
 			return (Predicate) doRewrite(predicate);
 		}
 
+		@Override
 		public Expression rewrite(SetExtension expression) {
 			return (Expression) doRewrite(expression);
 		}
 
+		@Override
 		public Predicate rewrite(SimplePredicate predicate) {
 			return (Predicate) doRewrite(predicate);
 		}
 
+		@Override
 		public Expression rewrite(UnaryExpression expression) {
 			return (Expression) doRewrite(expression);
 		}
 
+		@Override
 		public Predicate rewrite(UnaryPredicate predicate) {
 			return (Predicate) doRewrite(predicate);
 		}
@@ -729,12 +735,23 @@ public class TestSubFormulas extends TestCase {
 		);
 	}
 	
+	private final IFormulaRewriter identity = new DefaultRewriter(false, ff);
+
+	private void checkIdentityRewriting(Formula formula) {
+		assertSame(formula, formula.rewrite(identity));
+	}
+
 	private void checkRewriting(Formula from, Formula to,
 			Formula before, Formula after) {
 
+		// Actual rewriting
 		FixedRewriter rewriter = new FixedRewriter(from, to);
 		Formula actual = before.rewrite(rewriter);
 		assertEquals("Unexpected rewritten formula", after, actual);
+		
+		// Identity rewriting returns an identical formula
+		checkIdentityRewriting(before);
+		checkIdentityRewriting(after);
 	}
 
 	private void checkRootRewriting(Formula from, Formula to) {
@@ -742,6 +759,10 @@ public class TestSubFormulas extends TestCase {
 		FixedRewriter rewriter = new FixedRewriter(from, to);
 		Formula actual = from.rewrite(rewriter);
 		assertEquals("Unexpected rewritten formula", to, actual);
+		
+		// Identity rewriting returns an identical formula
+		checkIdentityRewriting(from);
+		checkIdentityRewriting(to);
 	}
 
 	/**
