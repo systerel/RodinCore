@@ -42,6 +42,30 @@ public interface IPosition extends Comparable<IPosition> {
 	int compareTo(IPosition other);
 
 	/**
+	 * Returns the position of the first child node of the node designated by
+	 * this position. No attempt is made to check that this position indeed
+	 * denotes a node in some formula.
+	 * 
+	 * @return the position of the first child
+	 */
+	IPosition getFirstChild();
+
+	/**
+	 * Returns the position of the next sibling node of the node designated by
+	 * this position. No attempt is made to check that this position indeed
+	 * denotes a node in some formula.
+	 * <p>
+	 * This position must not be a root position, nor a first child position.
+	 * </p>
+	 * 
+	 * @return the position of the next sibling
+	 * @see #isRoot()
+	 * @throws IllegalStateException
+	 *             if this position is a root position.
+	 */
+	IPosition getNextSibling();
+
+	/**
 	 * Returns the position of the parent node of the node designated by this
 	 * position.
 	 * <p>
@@ -50,8 +74,33 @@ public interface IPosition extends Comparable<IPosition> {
 	 * 
 	 * @return the position of the parent
 	 * @see #isRoot()
+	 * @throws IllegalStateException
+	 *             if this position is a root position.
 	 */
 	IPosition getParent();
+
+	/**
+	 * Returns the position of the previous sibling node of the node designated
+	 * by this position.
+	 * <p>
+	 * This position must not be a root position, nor a first child position.
+	 * </p>
+	 * 
+	 * @return the position of the previous sibling
+	 * @see #isRoot()
+	 * @throws IllegalStateException
+	 *             if this position is a root position or a first child
+	 *             position.
+	 */
+	IPosition getPreviousSibling();
+
+	/**
+	 * Tells whether this position denotes the first child of a formula node.
+	 * 
+	 * @return <code>true</code> iff this position denotes the first child of
+	 *         a node of a formula
+	 */
+	boolean isFirstChild();
 
 	/**
 	 * Tells whether this position denotes the root of a formula.

@@ -66,6 +66,8 @@ public final class Position implements IPosition {
 	
 	public IPosition getParent() {
 		final int parentLength = indexes.length - 1;
+		if (parentLength < 0)
+			throw new IllegalStateException("Root position has no parent");
 		final int[] parentIndexes = new int[parentLength];
 		System.arraycopy(indexes, 0, parentIndexes, 0, parentLength);
 		return new Position(parentIndexes);
@@ -97,6 +99,42 @@ public final class Position implements IPosition {
 			result.append(index);
 		}
 		return result.toString();
+	}
+
+	public Position getFirstChild() {
+		final int length = indexes.length;
+		final int[] childIndexes = new int[length + 1];
+		System.arraycopy(indexes, 0, childIndexes, 0, length);
+		childIndexes[length] = 0;
+		return new Position(childIndexes);
+	}
+
+	public Position getNextSibling() {
+		final int lastIdx = indexes.length - 1;
+		if (lastIdx < 0)
+			throw new IllegalStateException("Root position is not a sibling");
+		final int[] newIndexes = indexes.clone();
+		++ newIndexes[lastIdx];
+		return new Position(newIndexes);
+	}
+
+	public Position getPreviousSibling() {
+		final int lastIdx = indexes.length - 1;
+		if (lastIdx < 0)
+			throw new IllegalStateException("Root position is not a sibling");
+		final int[] newIndexes = indexes.clone();
+		-- newIndexes[lastIdx];
+		if (newIndexes[lastIdx] < 0)
+			throw new IllegalStateException(
+					"First child position has no previous sibling");
+		return new Position(newIndexes);
+	}
+
+	public boolean isFirstChild() {
+		final int lastIdx = indexes.length - 1;
+		if (lastIdx < 0)
+			return false;
+		return indexes[lastIdx] == 0;
 	}
 
 }
