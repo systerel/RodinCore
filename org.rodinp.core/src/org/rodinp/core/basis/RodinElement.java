@@ -117,17 +117,32 @@ public abstract class RodinElement extends PlatformObject implements
 			return null;
 		}
 		final String childName;
-		if (childType.isNamed()) {
-			if (! memento.hasMoreTokens()) return parent;
-			childName = memento.nextToken();
+		final String lookahead;
+		if (childType.isNamed() && memento.hasMoreTokens()) {
+			String token = memento.nextToken();
+			switch (token.charAt(0)) {
+			case REM_COUNT:
+			case REM_INTERNAL:
+				lookahead = token;
+				childName = "";
+				break;
+			default:
+				lookahead = null;
+				childName = token;
+				break;
+			}
 		} else {
+			// Unnamed child or child with an empty name.
 			childName = "";
+			lookahead = null;
 		}
 		final RodinElement child =
 			(RodinElement) parent.getInternalElement(childType, childName);
 		if (child == null) {
 			return null;
 		}
+		if (lookahead != null)
+			return child.getHandleFromMemento(lookahead, memento);
 		return child.getHandleFromMemento(memento);
 	}
 	

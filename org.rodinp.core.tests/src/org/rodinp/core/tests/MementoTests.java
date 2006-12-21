@@ -130,6 +130,10 @@ public class MementoTests extends ModifyingResourceTests {
 		IRodinFile rf = getRodinFile("/P/X.test");
 		NamedElement ne = (NamedElement) rf.getInternalElement(type, "foo");
 		assertMemento("/P/X.test|" + type.getId() + "#foo", ne);
+		
+		// Element with empty name
+		ne = (NamedElement) rf.getInternalElement(type, "");
+		assertMemento("/P/X.test|" + type.getId() + "#", ne);
 	}
 
 	/**
@@ -144,6 +148,21 @@ public class MementoTests extends ModifyingResourceTests {
 		String prefix = "/P/X.test|" + nType.getId() + "#foo";
 		IInternalElement ne = top.getInternalElement(nType, "bar");
 		assertMemento(prefix + "|" + nType.getId() + "#bar", ne);
+		
+		
+		// Element with empty name
+		ne = (NamedElement) top.getInternalElement(nType, "");
+		assertMemento(prefix + "|" + nType.getId() + "#", ne);
+
+		// Top with empty name
+		top = rf.getInternalElement(nType, "");
+		prefix = "/P/X.test|" + nType.getId() + "#";
+		ne = top.getInternalElement(nType, "bar");
+		assertMemento(prefix + "|" + nType.getId() + "#bar", ne);
+
+		// Top and child with empty name
+		ne = top.getInternalElement(nType, "");
+		assertMemento(prefix + "|" + nType.getId() + "#", ne);
 	}
 
 }
