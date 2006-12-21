@@ -1,6 +1,15 @@
 package org.eventb.core.ast.tests;
 
-import static org.eventb.core.ast.tests.FastFactory.*;
+import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
+import static org.eventb.core.ast.tests.FastFactory.mList;
+import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
+import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
+import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
+import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 
 import java.math.BigInteger;
 
@@ -231,7 +240,7 @@ public class TestFlattener extends TestCase {
 					+ norms[i] + "\nTree: " + norms[i].getSyntaxTree()
 					+ "\nObtained tree:\n"
 					+ expressions[i].flatten(ff).getSyntaxTree(),
-					expressions[i].flatten(ff), norms[i]);
+					norms[i], expressions[i].flatten(ff));
 		}
 	}
 	
@@ -263,5 +272,5 @@ public class TestFlattener extends TestCase {
 			assertSame("Flattener created a copy of formula: " + formula, formula, flattened);
 		}
 	}
-	
+
 }
