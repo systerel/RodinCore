@@ -68,15 +68,6 @@ public class BecomesMemberOf extends Assignment {
 	public Expression getSet() {
 		return setExpr;
 	}
-	
-	@Override
-	public Assignment flatten(FormulaFactory factory) {
-		final Expression newSetExpr = setExpr.flatten(factory);
-		if (newSetExpr == setExpr)
-			return this;
-		return factory.makeBecomesMemberOf(assignedIdents[0],
-				newSetExpr, getSourceLocation());
-	}
 
 	@Override
 	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {

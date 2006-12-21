@@ -94,19 +94,6 @@ public class BecomesEqualTo extends Assignment {
 	public Expression[] getExpressions() {
 		return values.clone();
 	}
-	
-	@Override
-	public Assignment flatten(FormulaFactory factory) {
-		final Expression[] newValues = new Expression[values.length];
-		boolean changed = false;
-		for (int i = 0; i < values.length; i++) {
-			newValues[i] = values[i].flatten(factory);
-			changed |= newValues[i] != values[i];
-		}
-		if (! changed)
-			return this;
-		return factory.makeBecomesEqualTo(assignedIdents, values, getSourceLocation());
-	}
 
 	@Override
 	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {

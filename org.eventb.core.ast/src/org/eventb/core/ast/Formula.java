@@ -1098,10 +1098,15 @@ public abstract class Formula<T extends Formula<T>> {
 	 * flattened to \u2203x,y respectively \u2200x,y</li>
 	 * </ul>
 	 * </p>
+	 * <p>
+	 * Flattening is not supported for assignments.
+	 * </p>
 	 * 
 	 * @param factory
 	 *            a formula factory
 	 * @return the formula in its flattened form
+	 * @throws UnsupportedOperationException
+	 *             if this formula is an assignment.
 	 */
 	public abstract T flatten(FormulaFactory factory);
 

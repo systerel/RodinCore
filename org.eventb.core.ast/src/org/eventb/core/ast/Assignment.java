@@ -231,4 +231,10 @@ public abstract class Assignment extends Formula<Assignment> {
 				"Assignments cannot be rewritten");
 	}
 
+	@Override
+	public final Assignment flatten(FormulaFactory factory) {
+		throw new UnsupportedOperationException(
+				"Assignments cannot be flattened");
+	}
+
 }

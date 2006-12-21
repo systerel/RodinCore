@@ -146,15 +146,6 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	public BecomesSuchThat flatten(FormulaFactory factory) {
-		Predicate newCondition = condition.flatten(factory);
-		if (newCondition == condition)
-			return this;
-		return factory.makeBecomesSuchThat(assignedIdents, primedIdents,
-				newCondition, getSourceLocation());
-	}
-
-	@Override
 	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		for (FreeIdentifier ident: assignedIdents) {
 			ident.collectFreeIdentifiers(freeIdentSet);
