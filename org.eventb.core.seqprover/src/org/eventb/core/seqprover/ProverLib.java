@@ -151,7 +151,7 @@ public class ProverLib {
 	
 	public static Set<Predicate> collectPreds(Iterable<Predicate> predIterator){
 		LinkedHashSet<Predicate> preds = new LinkedHashSet<Predicate>();
-		for (Predicate pred : preds) {
+		for (Predicate pred : predIterator) {
 			preds.add(pred);
 		}
 		return preds;
