@@ -48,12 +48,12 @@ public abstract class Predicate extends Formula<Predicate> {
 	protected abstract boolean solveChildrenTypes(TypeUnifier unifier);
 	
 	@Override
-	protected Predicate getCheckedReplacement(SingleRewriter rewriter) {
+	protected final Predicate getCheckedReplacement(SingleRewriter rewriter) {
 		return checkReplacement(rewriter.getPredicate());
 	}
 	
 	@Override
-	protected Predicate checkReplacement(Predicate replacement)  {
+	protected final Predicate checkReplacement(Predicate replacement)  {
 		if (this == replacement)
 			return this;
 		if (isTypeChecked() && ! replacement.isTypeChecked())

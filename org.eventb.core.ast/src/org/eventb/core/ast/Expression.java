@@ -159,12 +159,12 @@ public abstract class Expression extends Formula<Expression> {
 	protected abstract boolean solveChildrenTypes(TypeUnifier unifier);
 
 	@Override
-	protected Expression getCheckedReplacement(SingleRewriter rewriter) {
+	protected final Expression getCheckedReplacement(SingleRewriter rewriter) {
 		return checkReplacement(rewriter.getExpression());
 	}
 	
 	@Override
-	protected Expression checkReplacement(Expression replacement)  {
+	protected final Expression checkReplacement(Expression replacement)  {
 		if (this == replacement)
 			return this;
 		if (type != null && ! type.equals(replacement.getType()))

@@ -194,34 +194,41 @@ public abstract class Assignment extends Formula<Assignment> {
 	protected abstract void synthesizeType(FormulaFactory ff);
 
 	@Override
-	protected void getPositions(IFormulaFilter filter,
-			IntStack indexes, List<IPosition> positions) {
-		throw new UnsupportedOperationException("Assignments cannot be rewritten");
+	protected final void getPositions(IFormulaFilter filter, IntStack indexes,
+			List<IPosition> positions) {
+		throw new UnsupportedOperationException(
+				"Assignments cannot be rewritten");
 	}
 
 	@Override
-	protected Formula getChild(int index) {
-		throw new UnsupportedOperationException("Assignments cannot be rewritten");
+	protected final Formula getChild(int index) {
+		throw new UnsupportedOperationException(
+				"Assignments cannot be rewritten");
 	}
 
 	@Override
-	protected IPosition getDescendantPos(SourceLocation sloc, IntStack indexes) {
-		throw new UnsupportedOperationException("Assignments cannot be rewritten");
+	protected final IPosition getDescendantPos(SourceLocation sloc,
+			IntStack indexes) {
+		throw new UnsupportedOperationException(
+				"Assignments cannot be rewritten");
 	}
 
 	@Override
-	protected Assignment rewriteChild(int index, SingleRewriter rewriter) {
-		throw new UnsupportedOperationException("Assignments cannot be rewritten");
+	protected final Assignment rewriteChild(int index, SingleRewriter rewriter) {
+		throw new UnsupportedOperationException(
+				"Assignments cannot be rewritten");
 	}
 
 	@Override
-	protected Assignment getCheckedReplacement(SingleRewriter rewriter) {
-		throw new UnsupportedOperationException("Assignments cannot be rewritten");
+	protected final Assignment getCheckedReplacement(SingleRewriter rewriter) {
+		throw new UnsupportedOperationException(
+				"Assignments cannot be rewritten");
 	}
 
 	@Override
-	protected Assignment checkReplacement(Assignment replacement)  {
-		throw new UnsupportedOperationException("Assignments cannot be rewritten");
+	protected final Assignment checkReplacement(Assignment replacement) {
+		throw new UnsupportedOperationException(
+				"Assignments cannot be rewritten");
 	}
 
 }
