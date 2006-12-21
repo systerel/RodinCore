@@ -74,11 +74,14 @@ public class BoundIdentDeclRemover extends Substitution {
 		Collections.reverse(newDecls);
 	}
 
+	@Override
 	public Expression rewrite(FreeIdentifier ident) {
 		return ident;
 	}
 
+	@Override
 	public Expression rewrite(BoundIdentifier ident) {
+		final int nbOfInternallyBound = getBindingDepth();
 		final int index = ident.getBoundIndex();
 		// Locally bound identifier ?
 		if (index < nbOfInternallyBound)

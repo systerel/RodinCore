@@ -35,13 +35,15 @@ public class BoundIdentifierShifter extends Substitution {
 		this.offset = offset;
 	}
 
+	@Override
 	public Expression rewrite(FreeIdentifier ident) {
 		return ident;
 	}
 
+	@Override
 	public Expression rewrite(BoundIdentifier ident) {
 		final int index = ident.getBoundIndex();
-		if (index < nbOfInternallyBound || offset == 0) {
+		if (index < getBindingDepth() || offset == 0) {
 			// Internally bound, no change
 			return ident;
 		}
