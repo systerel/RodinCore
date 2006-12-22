@@ -1,5 +1,8 @@
 package org.eventb.core.tests.pom;
 
+import java.util.Collections;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IProject;
@@ -10,7 +13,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
@@ -20,6 +25,8 @@ import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+
+import com.sun.corba.se.spi.ior.MakeImmutable;
 
 public class ProofSerializationTests extends TestCase {
 	
@@ -39,7 +46,6 @@ public class ProofSerializationTests extends TestCase {
 		
 		IPRProof proof1 = prFile.getProof("proof1");
 		proof1.create(null, null);
-		// proof1.initialize(null);
 
 		assertEquals(1, prFile.getProofs().length);
 		assertTrue(proof1.exists());
@@ -98,6 +104,35 @@ public class ProofSerializationTests extends TestCase {
 		skel = proof1.getSkeleton(factory, null);
 		assertTrue(ProverLib.deepEquals(skel, proofTree.getRoot()));
 		
+		// Test 4 ; a proof tree with no goal dependencies, open
+		sequent = TestLib.genSeq("⊥ |- ⊥");
+		proofTree = ProverFactory.makeProofTree(sequent, null);
+		proof1.setProofTree(proofTree, null);
+		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence());
+		assertFalse(proof1.getProofDependencies(factory, null).hasDeps());
+		// an identity rule that doesnt do anything.
+		Set<Predicate> noHyps = Collections.emptySet();
+		Tactics.mngHyp(ProverFactory.makeHideHypAction(noHyps)).apply(proofTree.getRoot(), null);
+		proof1.setProofTree(proofTree, null);
+		assertEquals(proofTree.getConfidence(), proof1.getConfidence());
+		proofTree.getProofDependencies();
+		assertFalse(proof1.getProofDependencies(factory, null).hasDeps());
+		skel = proof1.getSkeleton(factory, null);
+		assertTrue(ProverLib.deepEquals(skel, proofTree.getRoot()));
+		
+		
+		// Test 4 ; a proof tree with no goal dependencies, closed
+		sequent = TestLib.genSeq("⊥ |- ⊥");
+		proofTree = ProverFactory.makeProofTree(sequent, null);
+		proof1.setProofTree(proofTree, null);
+		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence());
+		assertFalse(proof1.getProofDependencies(factory, null).hasDeps());		
+		Tactics.contradiction().apply(proofTree.getRoot(), null);
+		proof1.setProofTree(proofTree, null);
+		assertEquals(proofTree.getConfidence(), proof1.getConfidence());
+		assertTrue(proof1.getProofDependencies(factory, null).hasDeps());
+		skel = proof1.getSkeleton(factory, null);
+		assertTrue(ProverLib.deepEquals(skel, proofTree.getRoot()));
 	}
 	
 	

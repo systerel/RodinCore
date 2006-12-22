@@ -14,6 +14,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 /**
@@ -372,9 +373,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("x=1 ⇒ x=1")));
-		// TODO : uncomment next line once usedHyps better implemented
-		// assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
-		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps("x=1")));
+		assertFalse(proofDependencies.getUsedHypotheses().containsAll(TestLib.genHyps("x=1")));
+		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		
@@ -385,8 +385,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		Tactics.lemma("y=2").apply(proofTree.getRoot(), null);
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
-		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("1=1")));
-		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
+		assertNull(proofDependencies.getGoal());
+		assertTrue(proofDependencies.getUsedHypotheses().isEmpty());
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("y","ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		

@@ -15,12 +15,12 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class TestLib {
 
 	public final static FormulaFactory ff = Lib.ff;
+	
 	
 	public static IProverSequent genSeq(String s){
 		String[] hypsStr = (s.split("[|]-")[0]).split(";;");
@@ -31,10 +31,8 @@ public class TestLib {
 		
 		// Parsing
 		Predicate[] hyps = new Predicate[hypsStr.length];
-		// Predicate goal = ff.parsePredicate(goalStr).getParsedPredicate();
 		Predicate goal = Lib.parsePredicate(goalStr);
 		for (int i=0;i<hypsStr.length;i++){
-			// hyps[i] = ff.parsePredicate(hypsStr[i]).getParsedPredicate();
 			hyps[i] = Lib.parsePredicate(hypsStr[i]);
 		}
 		
@@ -45,30 +43,22 @@ public class TestLib {
 			ITypeCheckResult tcResult =  hyps[i].typeCheck(typeEnvironment);
 			Assert.assertTrue(tcResult.isSuccess());
 			typeEnvironment.addAll(tcResult.getInferredEnvironment());
-			// boolean typed = (hyps[i].isCorrectlyTyped(typeEnvironment,ff)).isCorrectlyTyped();
-			// assert typed;
 		}
 		{
 			ITypeCheckResult tcResult =  goal.typeCheck(typeEnvironment);
 			Assert.assertTrue(tcResult.isSuccess());
 			typeEnvironment.addAll(tcResult.getInferredEnvironment());
-			
-			// boolean typed = (goal.isCorrectlyTyped(typeEnvironment,ff)).isCorrectlyTyped();
-			// assert typed;
 		}
 		
 		// constructing sequent
 		Set<Predicate> Hyps = new LinkedHashSet<Predicate>(Arrays.asList(hyps));
-			// new HashSet<Predicate>(Arrays.asList(hyps));
-		
-		// return new SimpleProverSequent(typeEnvironment,Hyps,goal);
-		IProverSequent Seq = ProverFactory.makeSequent(typeEnvironment,Hyps,goal);
-		return Seq.selectHypotheses(Hyps);
+
+		IProverSequent seq = ProverFactory.makeSequent(typeEnvironment,Hyps,Hyps,goal);
+		return seq;
 	}
 	
 	public static IProofTreeNode genProofTreeNode(String str){
 		return ProverFactory.makeProofTree(genSeq(str), null).getRoot();
-		// return (new ProofTree(genSeq(str))).getRoot();
 	}
 	
 	public static Predicate genHyp(String s){
