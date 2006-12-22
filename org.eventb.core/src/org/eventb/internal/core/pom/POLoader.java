@@ -103,10 +103,9 @@ public final class POLoader {
 		for (final IPOPredicate poPred : poPredSet.getPredicates()) {
 			final Predicate predicate = poPred.getPredicate(factory, typeEnv);
 			final Predicate hypothesis = predicate;
-			if (!selected && selHints.contains(poPred)) selHyps.add(hypothesis);
+			if ( selected || selHints.contains(poPred)) selHyps.add(hypothesis);
 			hypotheses.add(hypothesis);
 		}
-		if (selected) selHyps.addAll(hypotheses);
 	}
 	
 	/**
@@ -164,21 +163,34 @@ public final class POLoader {
 			preds = new HashSet<IPOPredicate>();
 			predSets = new HashSet<IPOPredicateSet>();
 			IPOSelectionHint[] dbSelHints = poSeq.getSelectionHints();
-			for (IPOSelectionHint hint : dbSelHints) {
-				IPOPredicateSet end = hint.getEnd();
-				if (end == null)
-				{
-					preds.add(hint.getPredicate());
-				}
-				else
-				{
-					IPOPredicateSet start = hint.getStart(); 
-					while (end != null && end.getParentPredicateSet() != start)
-					{
-						predSets.add(end);
-						end = end.getParentPredicateSet();
-					}
-				}
+			for (IPOSelectionHint selectionHint : dbSelHints) {
+				
+				IPOPredicateSet endP = selectionHint.getEnd();
+				 if (endP == null) {
+					 IPOPredicate pred = selectionHint.getPredicate();
+					 preds.add(pred);
+				 	} else {
+				 		IPOPredicateSet startP = selectionHint.getStart();
+				 		while (!endP.equals(startP)) {
+				 			predSets.add(endP);
+				 			endP = endP.getParentPredicateSet();
+				 		}
+				 	}
+				 
+//				IPOPredicateSet end = hint.getEnd();
+//				if (end == null)
+//				{
+//					preds.add(hint.getPredicate());
+//				}
+//				else
+//				{
+//					IPOPredicateSet start = hint.getStart(); 
+//					while (end != null && (! end.getParentPredicateSet().equals(start)))
+//					{
+//						predSets.add(end);
+//						end = end.getParentPredicateSet();
+//					}
+//				}
 			}
 		}
 		
