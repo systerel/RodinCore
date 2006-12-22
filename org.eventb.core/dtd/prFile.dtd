@@ -32,6 +32,7 @@
 <!ENTITY % confidence        "org.eventb.core.confidence">
 <!ENTITY % prGoal            "org.eventb.core.prGoal">
 <!ENTITY % prHyps            "org.eventb.core.prHyps">
+<!ENTITY % prInfHyps         "org.eventb.core.prInfHyps">
 <!ENTITY % prStoreRef	     "org.eventb.core.prRef">
 <!ENTITY % prString          "org.eventb.core.prSValue">
 <!ENTITY % prIdents          "org.eventb.core.prFresh">
@@ -128,8 +129,8 @@
 <!ATTLIST %prProofRule;
   %NameAttDecl;
   %confidence;  %int;          #REQUIRED
-  %prGoal;      %PredRef;      #REQUIRED
-  %prHyps;      %PredRefs;     #REQUIRED
+  %prGoal;      %PredRef;      #IMPLIED
+  %prHyps;      %PredRefs;     #IMPLIED
   %prDisplay;   %String;       #REQUIRED
   >
 
@@ -142,15 +143,19 @@
   >
 <!ATTLIST %prRuleAntecedent;
   %NameAttDecl;
-  %prGoal;      %PredRef;      #REQUIRED
+  %prGoal;      %PredRef;      #IMPLIED
   %prHyps;      %PredRefs;     #IMPLIED
   %CommentAttDecl;
   >
 
-<!ELEMENT %prHypAction; EMPTY>
+<!ELEMENT %prHypAction;
+ ( %prIdent;
+ )*
+ >
 <!ATTLIST %prHypAction;
   %NameAttDecl;
   %prHyps;      %PredRefs;     #REQUIRED
+  %prImpHyps;   %PredRefs;     #IMPLIED
   >
 
 <!ELEMENT %prStrInp; EMPTY>

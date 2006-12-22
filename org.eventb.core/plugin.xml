@@ -419,6 +419,10 @@
             kind="string"
             name="%eventBprHyps"/>
       <attributeType
+            id="prInfHyps"
+            kind="string"
+            name="%eventBprInfHyps"/>
+      <attributeType
             id="prDisplay"
             kind="string"
             name="%eventBprDisplay"/>

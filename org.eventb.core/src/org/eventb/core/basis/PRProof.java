@@ -29,6 +29,7 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -69,8 +70,8 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		// Construct a new proof store
 		IProofStoreCollector store = new ProofStoreCollector(proofDeps.getUsedFreeIdents());
 
-		// Write out the proof tree dependencies		
-		setGoal(proofDeps.getGoal(), store, null);
+		// Write out the proof tree dependencies
+		if (proofDeps.getGoal() !=null) setGoal(proofDeps.getGoal(), store, null);
 		setHyps(proofDeps.getUsedHypotheses(),store,null);
 		// The used free idents are stored as the base type env in the store
 		setIntroFreeIdents(proofDeps.getIntroducedFreeIdents(), monitor);
@@ -88,55 +89,37 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	public IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException{
 		if (getConfidence() <= IConfidence.UNATTEMPTED) return unattemptedProofDeps;
 		IProofStoreReader store = new ProofStoreReader(this, factory);
-		ProofDependencies proofDependencies = new ProofDependencies(factory, store, monitor);
-		return proofDependencies;
+		
+		Predicate goal;
+		Set<Predicate> usedHypotheses;
+		ITypeEnvironment usedFreeIdents;
+		Set<String> introducedFreeIdents;
+		
+		if (monitor == null) monitor = new NullProgressMonitor();
+		try{
+			monitor.beginTask("Reading Proof Dependencies", 4);
+			usedFreeIdents = store.getBaseTypeEnv();
+			introducedFreeIdents = PRProof.this.getIntroFreeIdents(monitor);
+			if (PRProof.this.hasGoal())
+				goal = PRProof.this.getGoal(store);
+			else
+				goal = null;
+			usedHypotheses = PRProof.this.getHyps(store);
+		}
+		finally
+		{
+			monitor.done();
+		}
+		
+		boolean hasDeps = (goal != null ||
+				! usedHypotheses.isEmpty() ||
+				! usedFreeIdents.isEmpty() ||
+				! introducedFreeIdents.isEmpty()); 
+		
+		return ProverFactory.makeProofDependencies(hasDeps, goal, 
+				usedHypotheses, usedFreeIdents, introducedFreeIdents);
 	}
 	
-	private class ProofDependencies implements IProofDependencies{
-
-		final Predicate goal;
-		final Set<Predicate> usedHypotheses;
-		final ITypeEnvironment usedFreeIdents;
-		final Set<String> introducedFreeIdents;
-		final boolean hasDeps;
-		
-		public ProofDependencies(FormulaFactory factory, IProofStoreReader store, IProgressMonitor monitor) throws RodinDBException{			
-			if (monitor == null) monitor = new NullProgressMonitor();
-			try{
-				monitor.beginTask("Reading Proof Dependencies", 4);
-				usedFreeIdents = store.getBaseTypeEnv();
-				introducedFreeIdents = PRProof.this.getIntroFreeIdents(monitor);
-				goal = PRProof.this.getGoal(store);
-				usedHypotheses = PRProof.this.getHyps(store);
-				hasDeps = true;
-			}
-			finally
-			{
-				monitor.done();
-			}
-		}
-
-		public boolean hasDeps() {
-			return hasDeps;
-		}
-		
-		public Predicate getGoal() {
-			return goal;
-		}
-
-		public Set<String> getIntroducedFreeIdents() {
-			return introducedFreeIdents;
-		}
-
-		public ITypeEnvironment getUsedFreeIdents() {
-			return usedFreeIdents;
-		}
-
-		public Set<Predicate> getUsedHypotheses() {
-			return usedHypotheses;
-		}
-		
-	}
 	
 	public IProofSkeleton getSkeleton(FormulaFactory factory,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -179,29 +162,8 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		return identNames;
 	}
 	
-	
-	private static final IProofDependencies unattemptedProofDeps = new IProofDependencies()
-	{
-		public Predicate getGoal() {
-			return null;
-		}
-
-		public Set<String> getIntroducedFreeIdents() {
-			return null;
-		}
-
-		public ITypeEnvironment getUsedFreeIdents() {
-			return null;
-		}
-
-		public Set<Predicate> getUsedHypotheses() {
-			return null;
-		}
-
-		public boolean hasDeps() {
-			return false;
-		}
-	};
+	private static final IProofDependencies unattemptedProofDeps =
+		ProverFactory.makeProofDependencies(false, null, null, null, null);
 	
 	private static final IProofSkeleton unattemptedProofSkel = new IProofSkeleton()
 	{

@@ -21,6 +21,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.SerializeException;
+import org.eventb.internal.core.Util;
 import org.eventb.internal.core.pm.TypeEnvironmentSorter;
 import org.eventb.internal.core.pm.TypeEnvironmentSorter.Entry;
 import org.rodinp.core.RodinDBException;
@@ -42,6 +43,8 @@ public class ProofStoreCollector implements IProofStoreCollector {
 	}
 	
 	public String putPredicate(Predicate pred) throws RodinDBException {
+		if (pred == null) 
+			Util.log(new IllegalArgumentException(), "Trying to serialise a null Predicate");
 		String ref = predicates.get(pred);
 		if (ref == null)
 		{

@@ -7,12 +7,17 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import java.util.Collection;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRHypAction;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -48,7 +53,12 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 		if (actionType.equals(ISelectionHypAction.SHOW_ACTION_TYPE))
 			return ProverFactory.makeShowHypAction(getHyps(store));
 
-		// TODO : forward inferences
+		if (actionType.equals(IForwardInfHypAction.ACTION_TYPE)){
+			Collection<Predicate> hyps = getHyps(store);
+			FreeIdentifier[] addedFreeIdents = getFreeIdents(store.getFormulaFactory());
+			Collection<Predicate> infHyps = getInfHyps(store);
+			return ProverFactory.makeForwardInfHypAction(hyps,addedFreeIdents, infHyps);
+		}
 		
 		return null;
 	}
@@ -62,8 +72,14 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 				actionType.equals(ISelectionHypAction.HIDE_ACTION_TYPE) ||
 				actionType.equals(ISelectionHypAction.SHOW_ACTION_TYPE))
 			setHyps(((ISelectionHypAction)a).getHyps(), store, monitor);
-//		 TODO : forward inferences
-		return;
+		
+		if (actionType.equals(IForwardInfHypAction.ACTION_TYPE))
+		{
+			final IForwardInfHypAction forwardInf = ((IForwardInfHypAction)a);
+			setHyps(forwardInf.getHyps(), store, monitor);
+			setFreeIdents(forwardInf.getAddedFreeIdents(), monitor);
+			setInfHyps(forwardInf.getInferredHyps(), store, monitor);
+		}
 	}
 
 

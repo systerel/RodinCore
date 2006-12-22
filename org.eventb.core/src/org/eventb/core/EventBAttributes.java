@@ -95,6 +95,9 @@ public final class EventBAttributes {
 	public static IAttributeType.String HYPS_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prHyps");
 	
+	public static IAttributeType.String INF_HYPS_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prInfHyps");
+	
 	public static IAttributeType.String RULE_DISPLAY_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prDisplay");
 	

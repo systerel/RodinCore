@@ -42,7 +42,8 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 	public IAntecedent getAntecedent(IProofStoreReader store) throws RodinDBException {
 		
 		
-		Predicate goal = getGoal(store);
+		Predicate goal = null;
+		if (hasGoal()) goal = getGoal(store);
 		
 		// optional entries
 		FreeIdentifier[] addedFreeIdents = null;
@@ -72,9 +73,6 @@ public void setAntecedent(IAntecedent antecedent, IProofStoreCollector store, IP
 
 		if (antecedent.getAddedFreeIdents().length != 0){
 			setFreeIdents(antecedent.getAddedFreeIdents(), monitor);
-//			((IPRTypeEnvironment)(this.createInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,
-//					"addedFreeIdents",
-//					null,null))).setFreeIdents(antecedent.getAddedFreeIdents(), null);
 		}
 		
 		if (! antecedent.getAddedHyps().isEmpty()){
@@ -92,7 +90,6 @@ public void setAntecedent(IAntecedent antecedent, IProofStoreCollector store, IP
 			}
 		}
 		
-		setGoal(antecedent.getGoal(), store, monitor);
-		
+		if (antecedent.getGoal() != null) setGoal(antecedent.getGoal(), store, monitor);		
 	}
 }

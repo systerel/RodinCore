@@ -62,7 +62,8 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 	public IProofSkeleton getProofSkeleton(IProofStoreReader store,
 			final String comment) throws RodinDBException {
 
-		final Predicate goal = getGoal(store);		
+		Predicate goal = null;
+		if (hasGoal()) goal = getGoal(store);		
 		final Set<Predicate> neededHyps = getHyps(store);
 
 		final IPRRuleAntecedent[] prAntecedents = getAntecedents();
@@ -119,7 +120,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		final IProofRule proofRule = skel.getRule();
 		
 		// write out the current goal and needed hypotheses		
-		setGoal(proofRule.getGoal(), store, monitor);
+		if (proofRule.getGoal()!= null) setGoal(proofRule.getGoal(), store, monitor);
 		setHyps(proofRule.getNeededHyps(), store, monitor);
 
 		// write out display

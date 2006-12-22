@@ -12,6 +12,7 @@ import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.CONFIDENCE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.GOAL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.INF_HYPS_ATTRIBUTE;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -106,6 +107,27 @@ public abstract class EventBProofElement extends InternalElement {
 	
 	public Set<Predicate> getHyps(IProofStoreReader store) throws RodinDBException {
 		String sepRefs = getAttributeValue(HYPS_ATTRIBUTE);
+		String[] refs = sepRefs.split(",");
+		HashSet<Predicate> hyps = new HashSet<Predicate>(refs.length);
+		for(String ref : refs){
+			if (ref.length()!=0) hyps.add(store.getPredicate(ref));
+		}
+		return hyps;
+	}
+	
+	public void setInfHyps(Collection<Predicate> hyps, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
+		StringBuilder refs = new StringBuilder();
+		String sep = "";
+		for (Predicate pred : hyps) {
+			refs.append(sep);
+			sep = ",";
+			refs.append(store.putPredicate(pred));
+		}
+		setAttributeValue(INF_HYPS_ATTRIBUTE, refs.toString(), monitor);
+	}
+	
+	public Set<Predicate> getInfHyps(IProofStoreReader store) throws RodinDBException {
+		String sepRefs = getAttributeValue(INF_HYPS_ATTRIBUTE);
 		String[] refs = sepRefs.split(",");
 		HashSet<Predicate> hyps = new HashSet<Predicate>(refs.length);
 		for(String ref : refs){
