@@ -59,14 +59,14 @@ public class Cut extends SinglePredInputReasoner {
 		
 		// Proving the original goal with the help of the lemma
 		anticidents[2] = ProverFactory.makeAntecedent(
-				seq.goal(),
+				null,
 				Collections.singleton(lemma),
 				null);
 		
 		// Generate the proof rule
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
-				seq.goal(),
+				null,
 				"ah ("+lemma.toString()+")",
 				anticidents);
 		

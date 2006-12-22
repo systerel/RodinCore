@@ -18,19 +18,12 @@ public interface IProverSequent{
 	
 	@Deprecated
 	Set<Predicate> selectedHypotheses();
+	boolean isSelected(Predicate hyp);
 	Iterable<Predicate> selectedHypIterable();
 	
 	@Deprecated
 	Set<Predicate> hiddenHypotheses();
+	boolean isHidden(Predicate hyp);
 	Iterable<Predicate> hiddenHypIterable();
-	
-	// Only used within the sequent prover
-	IProverSequent addHyps(Set<Predicate> hyps,ITypeEnvironment typeEnvironment);
-	IProverSequent replaceGoal(Predicate goal,ITypeEnvironment typeEnvironment);	
-	
-	IProverSequent hideHypotheses(Collection<Predicate> toHide);
-	IProverSequent showHypotheses(Collection<Predicate> toShow);
-	IProverSequent selectHypotheses(Collection<Predicate> toSelect);
-	IProverSequent deselectHypotheses(Collection<Predicate> toDeselect);
 	
 }

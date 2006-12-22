@@ -9,9 +9,8 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IProverSequent;
 
-public class ProverSequent implements IProverSequent{
+public class ProverSequent implements IInternalProverSequent{
 	
 	// TODO : optimise this class
 	
@@ -139,7 +138,7 @@ public class ProverSequent implements IProverSequent{
 	}
 	
 	
-	public ProverSequent addHyps(Set<Predicate> hyps,ITypeEnvironment typeEnvironment){
+	public ProverSequent addHyps(Collection<Predicate> hyps,ITypeEnvironment typeEnvironment){
 		assert (hyps != null);
 		if (typeEnvironment == null) typeEnvironment = this.typeEnvironment;
 		for (Predicate hyp : hyps) {
@@ -258,6 +257,18 @@ public class ProverSequent implements IProverSequent{
 
 	public Iterable<Predicate> selectedHypIterable() {
 		return selectedHypotheses();
+	}
+
+
+
+	public boolean isHidden(Predicate hyp) {
+		return hiddenHypotheses.contains(hyp);
+	}
+
+
+
+	public boolean isSelected(Predicate hyp) {
+		return selectedHypotheses.contains(hyp);
 	}
 
 

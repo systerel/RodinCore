@@ -26,7 +26,7 @@ public class FalseHyp extends EmptyInputReasoner{
 		
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
-				seq.goal(),
+				null,
 				Lib.False,
 				"⊥ hyp",
 				new IAntecedent[0]);

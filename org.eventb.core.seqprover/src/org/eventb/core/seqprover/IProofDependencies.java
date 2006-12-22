@@ -12,7 +12,7 @@ import org.eventb.core.ast.Predicate;
  * A proof is reusable for another sequent if:
  * <ul>
  * <li> It has no dependencies OR</li>
- * <li> The goal is identical to the goal of the sequent and</li>
+ * <li> The goal is <code>null</code> or is identical to the goal of the sequent and</li>
  * <li> All used hypotheses are contained in the hypotheses of the sequent and</li>
  * <li> All used free identifiers (with identical types) are contained in the 
  * type environment of the sequent and</li>
@@ -35,7 +35,8 @@ public interface IProofDependencies{
 	boolean hasDeps();
 	
 	/**
-	 * Returns the goal predicate of the proof.
+	 * Returns the goal predicate of the proof, or <code>null</code> in the case
+	 * where any goal will do.
 	 * 
 	 * In case the proof has no dependencies the result is undefined.
 	 * 

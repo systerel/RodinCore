@@ -3,7 +3,6 @@ package org.eventb.internal.core.seqprover;
 import java.util.Collection;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 
 
@@ -27,7 +26,7 @@ public class SelectionHypAction implements IInternalHypAction, ISelectionHypActi
 		return hyps;
 	}
 
-	public IProverSequent perform(IProverSequent seq) {
+	public IInternalProverSequent perform(IInternalProverSequent seq) {
 		if (actionType.equals(ISelectionHypAction.SELECT_ACTION_TYPE))
 			return seq.selectHypotheses(hyps);
 		if (actionType.equals(ISelectionHypAction.DESELECT_ACTION_TYPE))
@@ -41,6 +40,10 @@ public class SelectionHypAction implements IInternalHypAction, ISelectionHypActi
 
 	public String getActionType() {
 		return actionType;
+	}
+
+	public void processDependencies(ProofDependenciesBuilder proofDeps) {
+		// Nothing to do
 	}	
 
 }

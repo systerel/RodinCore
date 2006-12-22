@@ -60,7 +60,10 @@ public class ProverLib {
 				equals(r2.generatedBy().getReasonerID())) return false;
 		if (! r1.getDisplayName().equals(r1.getDisplayName())) return false;
 		if (r1.getConfidence() != r2.getConfidence()) return false;
-		if (! r1.getGoal().equals(r2.getGoal())) return false;
+		if (r1.getGoal() == null && r2.getGoal() != null) return false;
+		if (r1.getGoal() != null && r2.getGoal() == null) return false;
+		if (r1.getGoal() != null && r2.getGoal() != null &&
+			(! r1.getGoal().equals(r2.getGoal()))) return false;
 		if (! r1.getNeededHyps().equals(r2.getNeededHyps())) return false;
 		if (! deepEquals(r1.generatedUsing(),r2.generatedUsing())) return false;
 		if (r1.getAntecedents().length != r2.getAntecedents().length) return false;
@@ -121,7 +124,7 @@ public class ProverLib {
 
 	public static boolean proofReusable(IProofDependencies proofDependencies,IProverSequent sequent){
 		if (! proofDependencies.hasDeps()) return true;
-		if (! sequent.goal().equals(proofDependencies.getGoal())) return false;
+		if (proofDependencies.getGoal() != null && ! sequent.goal().equals(proofDependencies.getGoal())) return false;
 		if (! sequent.containsHypotheses(proofDependencies.getUsedHypotheses())) return false;
 		if (! sequent.typeEnvironment().containsAll(proofDependencies.getUsedFreeIdents())) return false;
 		if (! Collections.disjoint(

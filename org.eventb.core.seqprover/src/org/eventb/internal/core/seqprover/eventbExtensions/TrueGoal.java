@@ -29,12 +29,6 @@ public class TrueGoal extends EmptyInputReasoner{
 				seq.goal(),"⊤ goal",
 				new IAntecedent[0]);
 		
-//		ProofRule reasonerOutput = new ProofRule(this,input);
-//		reasonerOutput.goal = seq.goal();
-//		reasonerOutput.display = "⊤ goal";
-//		
-//		reasonerOutput.anticidents = new Antecedent[0];
-		
 		return reasonerOutput;
 	}
 

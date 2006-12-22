@@ -42,15 +42,6 @@ import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 public interface IProofTreeNode extends IProofSkeleton {
 
 	/**
-	 * Applies the given rule to this node.
-	 * 
-	 * @param rule
-	 *            the rule to apply to this node
-	 * @return <code>true</code> iff the application of the rule succeeded
-	 */
-	boolean applyRule(IProofRule rule);
-
-	/**
 	 * Returns the children of this node.
 	 * <p>
 	 * This method always returns an array, even if this node is a leaf node
@@ -162,27 +153,6 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * @return <code>true</code> iff this node is open (no rule applied to it)
 	 */
 	boolean isOpen();
-
-	/**
-	 * Prune the children of this node, undoing the result of applying a rule to
-	 * this node. Has no effect if no rule was currently applied to this node.
-	 * 
-	 * @return the child subtrees that have been pruned, or <code>null</code> if no rule 
-	 * was applied to this node. 
-	 */
-	IProofTree[] pruneChildren();
-	
-	
-	/**
-	 * Grafts a proof tree to this proof node if it is open, and its sequent is identical
-	 * to the root sequent of the given proof tree. 
-	 * 
-	 * A successful graft has the effect of pruning the input proof tree.
-	 * 
-	 * @return <code>true</code> iff the operation suceeded. 
-	 */
-	boolean graft(IProofTree tree);
-	
 	
 	/**
 	 * Copies the sub proof tree corresping to the current node and returns a new
@@ -200,16 +170,6 @@ public interface IProofTreeNode extends IProofSkeleton {
 	IProofSkeleton copyProofSkeleton();
 	
 	/**
-	 * Sets the comment field of the current proof tree node.
-	 * 
-	 * @param comment
-	 * 	 The new comment for the current proof tree node
-	 * 
-	 * @see #getComment()
-	 */
-	void setComment(String comment);
-	
-	/**
 	 * Returns the comment field of the current proof tree node.
 	 * 
 	 * @return The comment field of the current proof tree node.
@@ -225,4 +185,64 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 */
 	int getConfidence();
 	
+	/**
+	 * Applies the given rule to this node.
+	 * 
+	 * <p>
+	 * Note that outside the sequent prover tactics provide a more uniform way
+	 * to modify proof tree nodes and should be used instead of directly calling
+	 * this method. 
+	 * </p>
+	 * 
+	 * @param rule
+	 *            the rule to apply to this node
+	 * @return <code>true</code> iff the application of the rule succeeded
+	 */
+	boolean applyRule(IProofRule rule);
+
+	/**
+	 * Prune the children of this node, undoing the result of applying a rule to
+	 * this node. Has no effect if no rule was currently applied to this node.
+	 * 
+	 * <p>
+	 * Note that outside the sequent prover tactics provide a more uniform way
+	 * to modify proof tree nodes and should be used instead of directly calling
+	 * this method. 
+	 * </p>
+	 * 
+	 * @see ITactic
+	 * 
+	 * @return the child subtrees that have been pruned, or <code>null</code> if no rule 
+	 * was applied to this node. 
+	 */
+	IProofTree[] pruneChildren();
+	
+	/**
+	 * Sets the comment field of the current proof tree node.
+	 * 
+	 * @param comment
+	 * 	 The new comment for the current proof tree node
+	 * 
+	 * @see #getComment()
+	 */
+	void setComment(String comment);
+	
+	/**
+	 * Grafts a proof tree to this proof node if it is open, and its sequent is identical
+	 * to the root sequent of the given proof tree. 
+	 * 
+	 * A successful graft has the effect of pruning the input proof tree.
+	 * 
+	 * <p>
+	 * Note that outside the sequent prover tactics provide a more uniform way
+	 * to modify proof tree nodes and should be used instead of directly calling
+	 * this method. 
+	 * </p>
+	 * 
+	 * @see ITactic
+	 * 
+	 * @return <code>true</code> iff the operation suceeded. 
+	 */
+	@Deprecated
+	boolean graft(IProofTree tree);
 }

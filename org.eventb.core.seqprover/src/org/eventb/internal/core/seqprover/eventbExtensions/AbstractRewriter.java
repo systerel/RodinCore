@@ -1,7 +1,8 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
@@ -45,7 +46,7 @@ public abstract class AbstractRewriter implements IReasoner {
 		}
 
 		public void applyHints(ReplayHints hints) {
-			pred = hints.applyHints(pred);
+			if (pred != null) pred = hints.applyHints(pred);
 		}
 
 		public String getError() {
@@ -62,10 +63,10 @@ public abstract class AbstractRewriter implements IReasoner {
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 
 		final Input input = (Input) reasonerInput;
-		final Predicate pred = input.pred;
+		final Predicate hyp = input.pred;
 
 		final Predicate goal = seq.goal();
-		if (pred == null) {
+		if (hyp == null) {
 			// Goal rewriting
 			final Predicate[] newGoals = rewrite(goal);
 			if (newGoals == null) {
@@ -80,28 +81,48 @@ public abstract class AbstractRewriter implements IReasoner {
 				antecedents[i] = ProverFactory.makeAntecedent(newGoals[i]);
 			}
 			return ProverFactory.makeProofRule(this, input, goal,
-					getDisplayName(pred), antecedents);
+					getDisplayName(hyp), antecedents);
 		} else {
 			// Hypothesis rewriting
-			final Predicate hyp = pred;
 			if (! seq.containsHypothesis(hyp)) {
 				return ProverFactory.reasonerFailure(this, input,
 						"Nonexistent hypothesis: " + hyp);
 			}
 			
-			final Predicate[] newHyps = rewrite(hyp);
-			if (newHyps == null) {
+			final Predicate[] rewriteOutput = rewrite(hyp);
+			if (rewriteOutput == null) {
 				return ProverFactory.reasonerFailure(this, input, "Rewriter "
 						+ getReasonerID() + " inapplicable for hypothesis "
 						+ hyp);
 			}
 
-			final HashSet<Predicate> predSet = new HashSet<Predicate>(Arrays
-					.asList(newHyps));
-			final IAntecedent[] antecedents = new IAntecedent[] { ProverFactory
-					.makeAntecedent(goal, predSet, getHypAction(pred)) };
-			return ProverFactory.makeProofRule(this, input, goal, hyp,
-					getDisplayName(pred), antecedents);
+//			final HashSet<Predicate> predSet = new HashSet<Predicate>(Arrays
+//					.asList(newHyps));
+//			final IAntecedent[] antecedents = new IAntecedent[] { ProverFactory
+//					.makeAntecedent(goal, predSet, getHypAction(pred)) };
+//			return ProverFactory.makeProofRule(this, input, goal, hyp,
+//					getDisplayName(pred), antecedents);
+			
+			final List<Predicate> newHyps = Arrays.asList(rewriteOutput);
+			final IHypAction forwardInf = ProverFactory.makeForwardInfHypAction(Collections.singleton(hyp), newHyps);
+			List<IHypAction> hypActions = 
+				Arrays.asList(
+					forwardInf,
+					getHypAction(hyp),
+					ProverFactory.makeSelectHypAction(newHyps));
+			return ProverFactory.makeProofRule(this, input, getDisplayName(hyp), hypActions);
+			
+//			
+//			final IAntecedent[] antecedents = 
+//				new IAntecedent[] { ProverFactory.makeAntecedent(
+//						goal,
+//						Arrays.asList(
+//								forwardInf,
+//								getHypAction(hyp),
+//								ProverFactory.makeSelectHypAction(newHyps))) };
+//			return ProverFactory.makeProofRule(this, input, goal,
+//			getDisplayName(hyp), antecedents);
+			
 		}
 	}
 

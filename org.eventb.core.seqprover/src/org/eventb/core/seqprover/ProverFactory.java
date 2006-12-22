@@ -11,6 +11,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.internal.core.seqprover.ForwardInfHypAction;
 import org.eventb.internal.core.seqprover.ProofRule;
 import org.eventb.internal.core.seqprover.ProofTree;
 import org.eventb.internal.core.seqprover.ProverSequent;
@@ -45,10 +46,7 @@ public final class ProverFactory {
 			Integer confidence,
 			String display,
 			IAntecedent... anticidents) {
-		
-		assert goal != null;
-		assert anticidents != null;
-		
+			
 		ProofRule proofRule = new ProofRule(generatedBy,generatedUsing,goal,neededHyps,confidence,display,anticidents);
 		
 		return proofRule;
@@ -80,6 +78,19 @@ public final class ProverFactory {
 		return makeProofRule(generatedBy,generatedUsing,goal,null,null,display,anticidents);
 	}
 	
+	public static IProofRule makeProofRule (
+			IReasoner generatedBy,
+			IReasonerInput generatedUsing,
+			String display,
+			List<IHypAction> hypActions) {
+		
+		IAntecedent antecedent = makeAntecedent(null, null, null, hypActions);
+		return makeProofRule(
+				generatedBy,generatedUsing,
+				null,null,null,
+				display,new IAntecedent[]{antecedent});
+	}
+	
 	public static IAntecedent makeAntecedent(
 			Predicate goal,
 			Set<Predicate> addedHyps,
@@ -105,6 +116,10 @@ public final class ProverFactory {
 			return makeAntecedent(goal,addedHyps,null,hypActions);
 		}
 		return makeAntecedent(goal,addedHyps,null,null);
+	}
+	
+	public static IAntecedent makeAntecedent(Predicate goal, List<IHypAction> hypAction) {
+		return makeAntecedent(goal,null,null,hypAction);
 	}
 	
 	public static IAntecedent makeAntecedent(Predicate goal) {
@@ -149,5 +164,62 @@ public final class ProverFactory {
 	public static IHypAction makeShowHypAction(Collection<Predicate> toShow){
 		return new SelectionHypAction(ISelectionHypAction.SHOW_ACTION_TYPE,toShow);
 	}
+	
+	public static IHypAction makeForwardInfHypAction(Collection<Predicate> hyps, FreeIdentifier[] addedFreeIdents, Collection<Predicate> inferredHyps){
+		return new ForwardInfHypAction(hyps,addedFreeIdents,inferredHyps);
+	}
+	
+	private final static FreeIdentifier[] NO_FREE_IDENTS = new FreeIdentifier[0];
+	
+	public static IHypAction makeForwardInfHypAction(Collection<Predicate> hyps, Collection<Predicate> inferredHyps){
+		return new ForwardInfHypAction(hyps,NO_FREE_IDENTS,inferredHyps);
+	}
 
+	/**
+	 * Constructs an instance of {@link IProofDependencies} from the values given as
+	 * parameters. 
+	 * 
+	 * This is a convenience method. Clients must independently check that the data 
+	 * provided conforms to the constraints in {@link IProofDependencies}.
+	 * 
+	 * @param hasDeps
+	 * @param goal
+	 * @param usedHypotheses
+	 * @param usedFreeIdents
+	 * @param introducedFreeIdents
+	 * @return An instance of {@link IProofDependencies} with the values given as 
+	 * 	input parameters
+	 */
+	public static IProofDependencies makeProofDependencies(
+			final boolean hasDeps,
+			final Predicate goal,
+			final Set<Predicate> usedHypotheses,
+			final ITypeEnvironment usedFreeIdents,
+			final Set<String> introducedFreeIdents){
+	
+		return new IProofDependencies(){
+	
+			public Predicate getGoal() {
+				return goal;
+			}
+	
+			public Set<String> getIntroducedFreeIdents() {
+				return introducedFreeIdents;
+			}
+	
+			public ITypeEnvironment getUsedFreeIdents() {
+				return usedFreeIdents;
+			}
+	
+			public Set<Predicate> getUsedHypotheses() {
+				return usedHypotheses;
+			}
+	
+			public boolean hasDeps() {
+				return hasDeps;
+			}
+			
+		};
+	}
+	
 }

@@ -56,16 +56,11 @@ public class ProofBuilder {
 					// reasoner successfully generated something
 					replayProofRule = (IProofRule) replayReasonerOutput;
 					replaySuccessfull = node.applyRule(replayProofRule);
-					// BasicTactics.reasonerTac(replayProofRule).apply(node);
 				}
-				
-				// BasicTactics.reasonerTac(reasoner,reasonerInput).apply(node);
 			}	
 			
 			// Check if rebuild for this node was succesfull
 			if (!(reuseSuccessfull || replaySuccessfull)) return false;
-			// if (! node.hasChildren()) return;
-			// System.out.println("rebuild successful! ");
 			IProofSkeleton[] prChildren = skeleton.getChildNodes();
 			assert prChildren != null;
 			IProofTreeNode[] children = node.getChildNodes();

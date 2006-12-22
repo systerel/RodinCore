@@ -1,7 +1,7 @@
 package org.eventb.internal.core.seqprover;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -41,15 +41,6 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 			this.hypAction = hypAction == null ? new ArrayList<IHypAction>() : hypAction;
 		}
 		
-		public void addToAddedHyps(Predicate pred){
-			addedHypotheses.add(pred);
-		}
-		
-		public void addToAddedHyps(Collection<Predicate> preds){
-			addedHypotheses.addAll(preds);
-		}
-		
-		
 		/**
 		 * @return Returns the addedFreeIdentifiers.
 		 */
@@ -58,21 +49,10 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		}
 
 		/**
-		 * @param addedFreeIdentifiers The addedFreeIdentifiers to set.
-		 */
-		public final void setAddedFreeIdentifiers(FreeIdentifier[] addedFreeIdentifiers) {
-			this.addedFreeIdentifiers = addedFreeIdentifiers;
-		}
-
-		/**
 		 * @return Returns the hypAction.
 		 */
 		public final List<IHypAction> getHypAction() {
 			return hypAction;
-		}
-
-		public final void addHypAction(IHypAction hypAction) {
-			this.hypAction.add(hypAction);
 		}
 
 		/**
@@ -89,9 +69,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 			return goal;
 		}
 		
-		
-		
-		private IProverSequent genSequent(IProverSequent seq){
+		private IProverSequent genSequent(IProverSequent seq, Predicate goalInstantiation){
 			ITypeEnvironment newTypeEnv;
 			if (addedFreeIdentifiers.length == 0)
 				newTypeEnv = seq.typeEnvironment();
@@ -107,47 +85,28 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 					}
 					newTypeEnv.addName(freeIdent.getName(),freeIdent.getType());
 				}
-				// Check of variable name clashes
-//				if (! Collections.disjoint(
-//						seq.typeEnvironment().getNames(),
-//						addedFreeIdentifiers.getNames()))
-//					// This is the place to add name refactoring code.
-//					return null;
-//				newTypeEnv = seq.typeEnvironment().clone();
-//				newTypeEnv.addAll(addedFreeIdentifiers);
 			}
-			IProverSequent result = seq.replaceGoal(goal,newTypeEnv);
+			
+			Predicate newGoal;
+			if (goal == null)
+			{
+				// Check for ill formed rule
+				if (goalInstantiation == null) return null;
+				newGoal = goalInstantiation;
+			}
+			else
+			{
+				newGoal = goal;
+			}
+			
+			IInternalProverSequent result = ((IInternalProverSequent) seq).replaceGoal(newGoal,newTypeEnv);
 			if (result == null) return null;
-//			Set<Predicate> hypsToAdd = HashSet<Predicate>(addedHypotheses);
 			result = result.addHyps(addedHypotheses,null);
 			if (result == null) return null;
 			result = result.selectHypotheses(addedHypotheses);
-			result = ProofRule.perform(hypAction,result);
+			result = ProofRule.performHypActions(hypAction,result);
 			return result;
 		}
-
-		public void addFreeIdents(ITypeEnvironment typeEnv) {
-			assert goal != null;
-			typeEnv.addAll(goal.getFreeIdentifiers());
-			for(Predicate hyp: addedHypotheses){
-				typeEnv.addAll(
-						hyp.getFreeIdentifiers());
-			}
-			// This is not strictly needed. Just to be safe..
-			typeEnv.addAll(addedFreeIdentifiers);
-		}
-		
-//		public Set<FreeIdentifier> getNeededFreeIdents() {
-//			Set<FreeIdentifier> neededFreeIdents = new HashSet<FreeIdentifier>();
-//			assert subGoal != null;
-//			neededFreeIdents.addAll(Arrays.asList(subGoal.getFreeIdentifiers()));
-//			for(Predicate hyp: addedHypotheses){
-//				neededFreeIdents.addAll(
-//						Arrays.asList(hyp.getFreeIdentifiers()));
-//			}
-//			neededFreeIdents.removeAll(Arrays.asList(addedFreeIdentifiers));
-//			return neededFreeIdents;
-//		}
 		
 	}
 	
@@ -188,18 +147,6 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		this.display = display == null ? generatedBy.getReasonerID() : display;		
 	}
 
-	protected void addFreeIdents(ITypeEnvironment typeEnv) {
-		for(IAntecedent antecedent : antecedents){
-			((Antecedent) antecedent).addFreeIdents(typeEnv);
-		}
-		
-		typeEnv.addAll(goal.getFreeIdentifiers());
-		for(Predicate hyp: neededHypotheses){
-			typeEnv.addAll(
-					hyp.getFreeIdentifiers());
-		}
-	}
-
 	public String getDisplayName() {
 		return display;
 	}
@@ -212,22 +159,26 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		return reasonerConfidence;
 	}
 
-	protected IProverSequent[] apply(IProverSequent seq) {
-		ProofRule reasonerOutput = this;
+	public IProverSequent[] apply(IProverSequent seq) {
 		// Check if all the needed hyps are there
-		if (! seq.containsHypotheses(reasonerOutput.neededHypotheses))
+		if (! seq.containsHypotheses(neededHypotheses))
 			return null;
-		// Check if the goal is the same
-		if (! reasonerOutput.goal.equals(seq.goal())) return null;
+		// Check if the goal null, or identical to the sequent.
+		if ( goal!=null && ! goal.equals(seq.goal()) ) return null;
+		
+		// in case the goal is null, keep track of the sequent goal.
+		Predicate goalInstantiation = null;
+		if (goal == null)
+			goalInstantiation = seq.goal();
 		
 		// Generate new antecedents
-		// Antecedent[] antecedents = reasonerOutput.anticidents;
 		IProverSequent[] anticidents 
-			= new IProverSequent[reasonerOutput.antecedents.length];
+			= new IProverSequent[antecedents.length];
 		for (int i = 0; i < anticidents.length; i++) {
-			anticidents[i] = ((Antecedent) reasonerOutput.antecedents[i]).genSequent(seq);
+			anticidents[i] = ((Antecedent) antecedents[i]).genSequent(seq, goalInstantiation);
 			if (anticidents[i] == null)
 				// most probably a name clash occured
+				// or the rule is ill formed
 				// or an invalid type env.
 				// add renaming/refactoring code here
 				return null;
@@ -249,13 +200,77 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 	}
 
 	
-	public static IProverSequent perform(List<IHypAction> hypActions,IProverSequent seq){
+	public ProofDependenciesBuilder processDeps(ProofDependenciesBuilder[] subProofsDeps){
+		assert antecedents.length == subProofsDeps.length;
+
+		ProofDependenciesBuilder proofDeps = new ProofDependenciesBuilder();
+		
+		// the singular goal dependency
+		Predicate depGoal = null;
+		
+		// process each antecedent
+		for (int i = 0; i < antecedents.length; i++) {
+
+			final IAntecedent antecedent = antecedents[i];
+			final ProofDependenciesBuilder subProofDeps = subProofsDeps[i];
+			
+			// Process the antecedent
+			processHypActionDeps(antecedent.getHypAction(), subProofDeps);
+			
+			subProofDeps.getUsedHypotheses().removeAll(antecedent.getAddedHyps());
+			if (antecedent.getGoal()!=null)
+				subProofDeps.getUsedFreeIdents().addAll(Arrays.asList(antecedent.getGoal().getFreeIdentifiers()));
+			for (Predicate hyp : antecedent.getAddedHyps())
+				subProofDeps.getUsedFreeIdents().addAll(Arrays.asList(hyp.getFreeIdentifiers()));
+			for (FreeIdentifier freeIdent : antecedent.getAddedFreeIdents()){
+				subProofDeps.getUsedFreeIdents().remove(freeIdent);
+				subProofDeps.getIntroducedFreeIdents().add(freeIdent.getName());			
+			}
+						
+			// Combine this information
+			proofDeps.getUsedHypotheses().addAll(subProofDeps.getUsedHypotheses());
+			proofDeps.getUsedFreeIdents().addAll(subProofDeps.getUsedFreeIdents());
+			proofDeps.getIntroducedFreeIdents().addAll(subProofDeps.getIntroducedFreeIdents());
+			
+			// update depGoal
+			if (antecedent.getGoal() == null){
+				// Check for non-equal instantiations
+				assert (depGoal == null || depGoal.equals(subProofDeps.getGoal()));
+				depGoal = subProofDeps.getGoal();
+			}
+
+		}
+		
+		if (goal != null){	
+			// goal is explicitly stated
+			depGoal = goal;
+		}
+			
+		proofDeps.setGoal(depGoal);
+		proofDeps.getUsedHypotheses().addAll(neededHypotheses);	
+		if (depGoal!=null) proofDeps.getUsedFreeIdents().addAll(Arrays.asList(depGoal.getFreeIdentifiers()));
+		for (Predicate hyp : neededHypotheses)
+			proofDeps.getUsedFreeIdents().addAll(Arrays.asList(hyp.getFreeIdentifiers()));
+		
+		return proofDeps;
+	}
+	
+	
+	private static IInternalProverSequent performHypActions(List<IHypAction> hypActions,IInternalProverSequent seq){
 		if (hypActions == null) return seq;
-		IProverSequent result = seq;
+		IInternalProverSequent result = seq;
 		for(IHypAction action : hypActions){
 			result = ((IInternalHypAction) action).perform(result);
 		}
 		return result;
 	}
+	
+	private static void processHypActionDeps(List<IHypAction> hypActions,ProofDependenciesBuilder proofDeps){
+		int length = hypActions.size();
+		for (int i = length-1; i >= 0; i--) {
+			((IInternalHypAction)hypActions.get(i)).processDependencies(proofDeps);
+		}
+	}
+	
 
 }

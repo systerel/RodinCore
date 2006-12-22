@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
@@ -206,12 +205,12 @@ public final class ProofTreeNode implements IProofTreeNode {
 		// force pruning to avoid losing child proofs
 		if (this.children != null) return false;
 		if (this.rule != null) return false;
-		IProverSequent[] anticidents = rule.apply(this.sequent);
-		if (anticidents == null) return false;
-		final int length = anticidents.length;
+		IProverSequent[] antecedents = rule.apply(this.sequent);
+		if (antecedents == null) return false;
+		final int length = antecedents.length;
 		ProofTreeNode[] newChildren = new ProofTreeNode[length];
 		for (int i = 0; i < length; i++) {
-			newChildren[i] = new ProofTreeNode(this, anticidents[i]);
+			newChildren[i] = new ProofTreeNode(this, antecedents[i]);
 		}
 		setRule(rule);
 		setChildren(newChildren);
@@ -520,24 +519,15 @@ public final class ProofTreeNode implements IProofTreeNode {
 		if (this.rule == null) return new HashSet<Predicate>();
 		return rule.getNeededHyps();
 	}
-	
-	
-//	TODO : Replace getNeededHypotheses() with a more sophisticated 
-//        getUsedHypotheses() once Rule and ReasoningStep have been merged.
-	
-//	public Set<Hypothesis> getUsedHypotheses(){
-//	HashSet<Hypothesis> usedHypotheses = new HashSet<Hypothesis>();
-//		if (this.rule == null) return usedHypotheses;
-//		for (ProofTreeNode child : this.children) {
-//			usedHypotheses.addAll(child.getUsedHypotheses());
-//		}
-//		usedHypotheses.retainAll(sequent.hypotheses());
-//		usedHypotheses.addAll(rule.getNeededHypotheses());
-//		return usedHypotheses;
-//	}
 
-	protected void addFreeIdents(ITypeEnvironment typEnv) {
-		if (this.rule != null) ((ProofRule) rule).addFreeIdents(typEnv);
+	
+	public ProofDependenciesBuilder computeProofDeps(){
+		if (isOpen()) return new ProofDependenciesBuilder();
+		ProofDependenciesBuilder[] childProofDeps = new ProofDependenciesBuilder[children.length];
+		for (int i = 0; i < children.length; i++) {
+			childProofDeps[i] = children[i].computeProofDeps();
+		}
+		return ((ProofRule)rule).processDeps(childProofDeps);
 	}
 
 	/* (non-Javadoc)
