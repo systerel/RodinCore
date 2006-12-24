@@ -30,25 +30,26 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBInputText;
+import org.rodinp.core.RodinDBException;
 
 public class ProofTreeUIToolTip {
-	private Shell parentShell;
+	Shell parentShell;
 
-	private Shell tipShell;
+	Shell tipShell;
 
-	private Label tipLabel;
+	Label tipLabel;
 
 	private Label labelF2;
 
-	private Widget tipWidget; // widget this tooltip is hovering over
+	Widget tipWidget; // widget this tooltip is hovering over
 
 	protected Point tipPosition; // the position being hovered over on the
 
 	protected Point widgetPosition; // the position hovered over in the Widget;
 
-	private IUserSupport userSupport;
+	IUserSupport userSupport;
 
-	private Shell helpShell;
+	Shell helpShell;
 
 	private final static int MAX_WIDTH = 300;
 	
@@ -93,7 +94,6 @@ public class ProofTreeUIToolTip {
 					}
 					if (tipShell.isVisible()) {
 						tipShell.setVisible(false);
-						Display display = parentShell.getDisplay();
 						helpShell = new Shell(parentShell, SWT.NONE);
 						helpShell.setLayout(new FillLayout());
 						helpShell.setSize(300, 100);
@@ -166,13 +166,13 @@ public class ProofTreeUIToolTip {
 	 */
 	private class TextListener implements Listener, ModifyListener {
 
-		private IProofTreeNode node;
+		IProofTreeNode node;
 
-		private IEventBInputText text;
+		IEventBInputText text;
 
 		String original;
 
-		private int lastModify;
+		int lastModify;
 
 		/**
 		 * @author htson
@@ -195,7 +195,12 @@ public class ProofTreeUIToolTip {
 				if (lastModify == time) {
 					Text textWidget = text.getTextWidget();
 					if (!textWidget.isDisposed()) {
-						userSupport.setComment(textWidget.getText(), node);
+						try {
+							userSupport.setComment(textWidget.getText(), node);
+						} catch (RodinDBException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 			}
@@ -211,14 +216,24 @@ public class ProofTreeUIToolTip {
 			// TODO Auto-generated method stub
 			switch (event.type) {
 			case SWT.FocusOut:
-				userSupport.setComment(text.getTextWidget().getText(), node);
+				try {
+						userSupport.setComment(text.getTextWidget().getText(), node);
+					} catch (RodinDBException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				text.dispose();
 				helpShell.dispose();
 				break;
 			case SWT.Traverse:
 				switch (event.detail) {
 				case SWT.TRAVERSE_ESCAPE:
-					userSupport.setComment(original, node);
+					try {
+							userSupport.setComment(original, node);
+						} catch (RodinDBException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					text.dispose();
 					helpShell.dispose();
 					break;
@@ -276,6 +291,7 @@ public class ProofTreeUIToolTip {
 		 * the tooltip
 		 */
 		control.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDown(MouseEvent e) {
 				if (tipShell.isVisible())
 					tipShell.setVisible(false);
@@ -286,12 +302,14 @@ public class ProofTreeUIToolTip {
 		 * Trap hover events to pop-up tooltip
 		 */
 		control.addMouseTrackListener(new MouseTrackAdapter() {
+			@Override
 			public void mouseExit(MouseEvent e) {
 				if (tipShell.isVisible())
 					tipShell.setVisible(false);
 				tipWidget = null;
 			}
 
+			@Override
 			public void mouseHover(MouseEvent event) {
 				widgetPosition = new Point(event.x, event.y);
 				Widget widget = event.widget;
@@ -347,9 +365,8 @@ public class ProofTreeUIToolTip {
 	 *            the object that is to hover
 	 * @param position
 	 *            the position of a widget to hover over
-	 * @return the top-left location for a hovering box
 	 */
-	private void setHoverLocation(Shell shell, Point position) {
+	void setHoverLocation(Shell shell, Point position) {
 		Rectangle displayBounds = shell.getDisplay().getBounds();
 		Rectangle shellBounds = shell.getBounds();
 		shellBounds.x = Math.max(Math.min(position.x, displayBounds.width

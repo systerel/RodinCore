@@ -17,6 +17,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -29,6 +30,8 @@ public class LabelSection extends AbstractPropertySection implements
 	Text labelText;
 
 	IInternalElement element;
+
+	IEventBEditor editor;
 
 	public LabelSection() {
 		// TODO Auto-generated constructor stub
@@ -56,6 +59,8 @@ public class LabelSection extends AbstractPropertySection implements
 			@Override
 			protected void response() {
 				try {
+					// TODO Adding this action to the list of undo/redo of the
+					// corresponding editor
 					ElementUIRegistry.getDefault().modify(element, "name",
 							labelText.getText());
 				} catch (RodinDBException e) {
@@ -87,6 +92,8 @@ public class LabelSection extends AbstractPropertySection implements
 	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
+		Assert.isTrue(part instanceof IEventBEditor);
+		editor = (IEventBEditor) part;
 		Assert.isTrue(selection instanceof IStructuredSelection);
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 		Assert.isTrue(input instanceof IInternalElement);
@@ -95,14 +102,15 @@ public class LabelSection extends AbstractPropertySection implements
 
 	public void elementChanged(ElementChangedEvent event) {
 		// TODO Filter out the delta first
-		if (labelText.isDisposed()) return;
+		if (labelText.isDisposed())
+			return;
 		Display display = labelText.getDisplay();
 		display.asyncExec(new Runnable() {
 
 			public void run() {
 				refresh();
 			}
-			
+
 		});
 	}
 

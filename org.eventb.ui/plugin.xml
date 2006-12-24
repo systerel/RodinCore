@@ -1040,7 +1040,7 @@
                class="org.eventb.internal.ui.propertiesView.LabelSection"
                id="org.eventb.ui.labelSection"
                tab="org.eventb.ui.basicTab">
-            <input type="org.rodinp.core.IInternalElement"/>
+            <input type="org.eventb.core.ILabeledElement"/>
          </propertySection>
          <propertySection
                afterSection="org.eventb.ui.labelSection"
@@ -1062,7 +1062,7 @@
                class="org.eventb.internal.ui.propertiesView.LabelSection"
                id="org.eventb.ui.labelSection"
                tab="org.eventb.ui.basicTab">
-            <input type="org.rodinp.core.IInternalElement"/>
+            <input type="org.eventb.core.ILabeledElement"/>
          </propertySection>
          <propertySection
                afterSection="org.eventb.ui.labelSection"

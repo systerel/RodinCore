@@ -33,6 +33,7 @@ import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -55,13 +56,14 @@ public class SelectedHypothesesSection extends HypothesesSection {
 	 *         This class extends HyperlinkAdapter and provide response actions
 	 *         when a hyperlink is activated.
 	 */
-	private class SelectedHyperlinkAdapter extends HyperlinkAdapter {
+	class SelectedHyperlinkAdapter extends HyperlinkAdapter {
 
 		/*
 		 * (non-Javadoc)
 		 * 
 		 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
 		 */
+		@Override
 		public void linkActivated(HyperlinkEvent e) {
 			Set<Predicate> deselected = new HashSet<Predicate>();
 			for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
@@ -76,7 +78,12 @@ public class SelectedHypothesesSection extends HypothesesSection {
 
 			ProverUI editor = (ProverUI) page.getEditor();
 			ITactic t = Tactics.mngHyp(ProverFactory.makeDeselectHypAction(deselected));
-			editor.getUserSupport().applyTacticToHypotheses(t, deselected, new NullProgressMonitor());
+			try {
+				editor.getUserSupport().applyTacticToHypotheses(t, deselected, new NullProgressMonitor());
+			} catch (RodinDBException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			// TreeViewer viewer = editor.getProofTreeUI().getViewer();
 			//
 			// ISelection selection = viewer.getSelection();
@@ -162,6 +169,7 @@ public class SelectedHypothesesSection extends HypothesesSection {
 	// href=\"ds\">ds</a></li></form>";
 	// ft.setText(string, true, false);
 	// }
+	@Override
 	protected void createTextClient(Section section, FormToolkit toolkit) {
 		Composite composite = new Composite(section, SWT.NONE);
 

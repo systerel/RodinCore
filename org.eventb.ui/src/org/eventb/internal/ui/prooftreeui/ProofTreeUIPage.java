@@ -43,16 +43,20 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IProofState;
-import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportManagerChangedListener;
+import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTree;
-import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBUIPlugin;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -60,12 +64,12 @@ import org.eventb.ui.EventBUIPlugin;
  *         This class is an implementation of a Proof Tree UI 'page'.
  */
 public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
-		ISelectionChangedListener, IProofStateChangedListener {
+		ISelectionChangedListener, IUserSupportManagerChangedListener {
 
 	// private static final int MAX_WIDTH = 1500;
 
 	// The contained tree viewer.
-	private TreeViewer viewer;
+	TreeViewer viewer;
 
 	// private Text comments;
 
@@ -84,10 +88,10 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	// private Combo confidentLevel;
 
-	private IUserSupport userSupport;
+	IUserSupport userSupport;
 
 	// Group of action that is used.
-	private ProofTreeUIActionGroup groupActionSet;
+	ProofTreeUIActionGroup groupActionSet;
 
 	/**
 	 * @author htson
@@ -302,14 +306,14 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * change listener for the Rodin Database.
 	 * <p>
 	 * 
-	 * @param editor
-	 *            the editor
+	 * @param userSupport
+	 *            the User Support
 	 */
 	public ProofTreeUIPage(IUserSupport userSupport) {
 		super();
 		this.userSupport = userSupport;
 		// byUserSupport = false;
-		userSupport.addStateChangedListeners(this);
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(this);
 	}
 
 	/*
@@ -317,11 +321,13 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * 
 	 * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
 	 */
+	@Override
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
 		pageSite.setSelectionProvider(this);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		// Composite comp = new Composite(parent, SWT.DEFAULT);
 		// GridLayout gl = new GridLayout();
@@ -468,7 +474,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	@Override
 	public void dispose() {
-		// comments.dispose();
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(this);
 		super.dispose();
 	}
 
@@ -572,6 +578,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * 
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
@@ -590,17 +597,10 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * Set the list of filters.
 	 * <p>
 	 * 
-	 * @param filters
+	 * @param newFilters
 	 *            a list of filters
 	 */
 	protected void setFilters(Object[] newFilters) {
-		// if (filters != null)
-		// for (Object filter : filters)
-		// viewer.removeFilter((ViewerFilter) filter);
-		// for (Object filter : newFilters) {
-		// ProofTreeUI.debug("Add filter " + filter);
-		// viewer.addFilter((ViewerFilter) filter);
-		// }
 		this.filters = newFilters;
 		viewer.refresh();
 		viewer.expandAll();
@@ -684,7 +684,12 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IProofTreeNode) {
-					userSupport.selectNode((IProofTreeNode) obj);
+					try {
+						userSupport.selectNode((IProofTreeNode) obj);
+					} catch (RodinDBException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				// if (ssel.size() == 1) {
 				// IProofTreeNode node = (IProofTreeNode) ssel
@@ -756,7 +761,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		this.setSelection(new StructuredSelection(root));
 	}
 
-	public void proofStateChanged(final IProofStateDelta delta) {
+	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 		// byUserSupport = true;
 		if (ProofTreeUIUtils.DEBUG)
 			ProofTreeUIUtils.debug("Proof Tree UI for "
@@ -764,44 +769,97 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 							.getElementName() + ": State Changed: "
 					+ delta.toString());
 
+		final IUserSupportDelta affectedUserSupport = ProverUIUtils
+				.getUserSupportDelta(delta, userSupport);
+
+		if (affectedUserSupport == null)
+			return;
+
+		final int kind = affectedUserSupport.getKind();
+		if (kind == IUserSupportDelta.REMOVED) {
+			return; // Do nothing
+		}
+
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				final IProofState ps = delta.getProofState();
-				if (delta.isNewProofState()) {
+				if (kind == IUserSupportDelta.ADDED) {
+					IProofState ps = userSupport.getCurrentPO();
 					if (ps != null) { // Change only when change the PO
 						ProofTreeUIPage page = ProofTreeUIPage.this;
 						page.setInput(ps.getProofTree());
 						IProofTreeNode currentNode = ps.getCurrentNode();
 						page.getViewer().expandAll();
-						// elementColumn.pack();
-						// elementColumn.setWidth(MAX_WIDTH);
 						if (currentNode != null)
 							page.getViewer().setSelection(
 									new StructuredSelection(currentNode));
 					} else {
 						ProofTreeUIPage page = ProofTreeUIPage.this;
 						page.setInput(null);
-						// elementColumn.pack();
-						// elementColumn.setWidth(MAX_WIDTH);
 					}
-				} else if (ps != null && delta.isDeleted()) {
-					// Do nothing
-				} else {
-					IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
-					// ProofTreeUI.debug("Proof Tree UI: " + proofTreeDelta);
-					if (proofTreeDelta != null) {
-						viewer.refresh();
-						// elementColumn.pack();
-						// elementColumn.setWidth(MAX_WIDTH);
-						IProofTreeNode node = delta.getNewProofTreeNode();
-						if (node != null) {
-							viewer.setSelection(new StructuredSelection(node),
-									true);
+				} else if (kind == IUserSupportDelta.CHANGED) {
+					int flags = affectedUserSupport.getFlags();
+					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
+						IProofState ps = userSupport.getCurrentPO();
+						if (ps != null) { // Change only when change the PO
+							ProofTreeUIPage page = ProofTreeUIPage.this;
+							page.setInput(ps.getProofTree());
+							IProofTreeNode currentNode = ps.getCurrentNode();
+							page.getViewer().expandAll();
+							// elementColumn.pack();
+							// elementColumn.setWidth(MAX_WIDTH);
+							if (currentNode != null)
+								page.getViewer().setSelection(
+										new StructuredSelection(currentNode));
+						} else {
+							ProofTreeUIPage page = ProofTreeUIPage.this;
+							page.setInput(null);
+							// elementColumn.pack();
+							// elementColumn.setWidth(MAX_WIDTH);
 						}
+					} else if ((flags | IUserSupportDelta.F_STATE) != 0) {
+						IProofState proofState = userSupport.getCurrentPO();
+						IProofStateDelta affectedProofState = ProverUIUtils
+								.getProofStateDelta(affectedUserSupport,
+										proofState);
+						if (affectedProofState != null) {
+							if (affectedProofState.getKind() == IProofStateDelta.ADDED) {
+								if (proofState != null) { // Change only when change the PO
+									ProofTreeUIPage page = ProofTreeUIPage.this;
+									page.setInput(proofState.getProofTree());
+									IProofTreeNode currentNode = proofState.getCurrentNode();
+									page.getViewer().expandAll();
+									// elementColumn.pack();
+									// elementColumn.setWidth(MAX_WIDTH);
+									if (currentNode != null)
+										page.getViewer().setSelection(
+												new StructuredSelection(currentNode));
+								} else {
+									ProofTreeUIPage page = ProofTreeUIPage.this;
+									page.setInput(null);
+									// elementColumn.pack();
+									// elementColumn.setWidth(MAX_WIDTH);
+								}								
+							}
+							else if (affectedProofState.getKind() == IProofStateDelta.REMOVED) {
+								return;
+							}
+							else if (affectedProofState.getKind() == IProofStateDelta.CHANGED) {
+								if ((affectedProofState.getFlags() | IProofStateDelta.F_PROOFTREE) != 0) {
+									viewer.refresh();
+								}
+								if ((affectedProofState.getFlags() | IProofStateDelta.F_NODE) != 0) {
+									IProofTreeNode node = proofState.getCurrentNode();
+									if (node != null) {
+										viewer.setSelection(new StructuredSelection(node),
+												true);
+									}									
+								}
+							}
+						}
+						
 					}
-
 				}
 			}
 		});

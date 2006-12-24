@@ -42,7 +42,7 @@ import org.rodinp.core.RodinDBException;
 public class ProofTreeUIActionGroup extends ActionGroup {
 
 	// The associated Proof Tree UI page.
-	private final ProofTreeUIPage proofTreeUI;
+	final ProofTreeUIPage proofTreeUI;
 
 	// Different actions.
 	private Action copy;
@@ -83,6 +83,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 		drillDownAdapter = new DrillDownAdapter(proofTreeUI.getViewer());
 
 		copy = new Action() {
+			@Override
 			public void run() {
 				ISelection sel = ProofTreeUIActionGroup.this.proofTreeUI
 						.getSelection();
@@ -105,6 +106,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 				.getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
 
 		paste = new Action() {
+			@Override
 			public void run() {
 				ISelection sel = ProofTreeUIActionGroup.this.proofTreeUI
 						.getSelection();
@@ -116,9 +118,13 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						if (ProofTreeUI.buffer instanceof IProofSkeleton) {
 							IProofSkeleton copyNode = (IProofSkeleton) ProofTreeUI.buffer;
 							
-							// TODO LV: add progressMonitor here?
-							proofTreeUI.getUserSupport().applyTactic(
-									BasicTactics.rebuildTac(copyNode), null);
+							try {
+								proofTreeUI.getUserSupport().applyTactic(
+										BasicTactics.rebuildTac(copyNode), new NullProgressMonitor());
+							} catch (RodinDBException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							if (ProofTreeUIUtils.DEBUG)
 								ProofTreeUIUtils.debug("Paste: " + copyNode);
 						}
@@ -132,6 +138,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 				.getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
 
 		filterAction = new Action() {
+			@Override
 			public void run() {
 				ProofTreeUIFiltersDialog dialog = new ProofTreeUIFiltersDialog(
 						null, ProofTreeUIActionGroup.this.proofTreeUI);
@@ -151,6 +158,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						ISharedImages.IMG_OBJ_ELEMENT));
 
 		nextPOAction = new Action() {
+			@Override
 			public void run() {
 				try {
 					ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport()
@@ -167,6 +175,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						ISharedImages.IMG_TOOL_FORWARD));
 
 		prevPOAction = new Action() {
+			@Override
 			public void run() {
 				try {
 					ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport()
@@ -183,6 +192,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						ISharedImages.IMG_TOOL_BACK));
 
 		pruneAction = new Action() {
+			@Override
 			public void run() {
 				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
 						.getViewer();
@@ -207,6 +217,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						ISharedImages.IMG_OBJS_INFO_TSK));
 
 		normAction = new Action() {
+			@Override
 			public void run() {
 				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
 						.getViewer();
@@ -242,6 +253,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						ISharedImages.IMG_OBJS_INFO_TSK));
 
 		conjIAction = new Action() {
+			@Override
 			public void run() {
 				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
 						.getViewer();
@@ -278,6 +290,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						ISharedImages.IMG_OBJS_INFO_TSK));
 
 		hypAction = new Action() {
+			@Override
 			public void run() {
 				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
 						.getViewer();
@@ -314,6 +327,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						ISharedImages.IMG_OBJS_INFO_TSK));
 
 		allIAction = new Action() {
+			@Override
 			public void run() {
 				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
 						.getViewer();
@@ -350,6 +364,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						ISharedImages.IMG_OBJS_INFO_TSK));
 
 		impIAction = new Action() {
+			@Override
 			public void run() {
 				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
 						.getViewer();
@@ -386,6 +401,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						ISharedImages.IMG_OBJS_INFO_TSK));
 
 		trivialAction = new Action() {
+			@Override
 			public void run() {
 				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
 						.getViewer();
@@ -429,6 +445,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {

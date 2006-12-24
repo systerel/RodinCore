@@ -15,19 +15,12 @@ package org.eventb.internal.core.pm;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.SafeRunner;
-import org.eventb.core.IPSFile;
 import org.eventb.core.pm.IProvingMode;
-import org.eventb.core.pm.IUSManagerListener;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
-import org.rodinp.core.RodinDBException;
+import org.eventb.core.pm.IUserSupportManagerChangedListener;
 
 public class UserSupportManager implements IUserSupportManager {
-
-	private Collection<IUSManagerListener> listeners = new ArrayList<IUSManagerListener>();
 
 	private Collection<IUserSupport> userSupports = new ArrayList<IUserSupport>();
 
@@ -35,33 +28,23 @@ public class UserSupportManager implements IUserSupportManager {
 
 	private static IUserSupportManager instance;
 	
+	private DeltaProcessor deltaProcessor;
+	
 	private UserSupportManager() {
 		// Singleton: Private default constructor
+		deltaProcessor = new DeltaProcessor(this);
+	}
+
+	public static IUserSupportManager getDefault() {
+		if (instance == null)
+			instance = new UserSupportManager();
+		return instance;
+	}
+
+	public IUserSupport newUserSupport() {
+		return new UserSupport();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupportManager#newUserSupport()
-	 */
-	public IUserSupport newUserSupport() {
-		IUserSupport userSupport = new UserSupport();
-		userSupports.add(userSupport);
-		notifyUSManagerListener(userSupport, IUSManagerListener.ADDED);
-		return userSupport;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupportManager#disposeUserSupport(org.eventb.core.pm.IUserSupport)
-	 */
-	public void disposeUserSupport(IUserSupport userSupport) {
-		userSupport.dispose();
-		synchronized (userSupports) {
-			if (userSupports.contains(userSupport))
-				userSupports.remove(userSupport);
-		}
-
-		notifyUSManagerListener(userSupport, IUSManagerListener.REMOVED);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IUserSupportManager#getUserSupports()
 	 */
@@ -70,57 +53,19 @@ public class UserSupportManager implements IUserSupportManager {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupportManager#addUSManagerListener(org.eventb.core.pm.IUSManagerListener)
+	 * @see org.eventb.core.prover.IProofTree#addChangeListener(org.eventb.core.prover.IProofTreeChangedListener)
 	 */
-	public void addUSManagerListener(IUSManagerListener listener) {
-		synchronized (listeners) {
-			if (!listeners.contains(listener))
-				listeners.add(listener);
-		}
-
+	public void addChangeListener(IUserSupportManagerChangedListener listener) {
+		deltaProcessor.addChangeListener(listener);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupportManager#removeUSManagerListener(org.eventb.core.pm.IUSManagerListener)
-	 */
-	public void removeUSManagerListener(IUSManagerListener listener) {
-		synchronized (listeners) {
-			if (listeners.contains(listener))
-				listeners.remove(listener);
-		}
-	}
-
-	private void notifyUSManagerListener(final IUserSupport userSupport,
-			final int status) {
-		IUSManagerListener[] safeCopy;
-		synchronized (listeners) {
-			safeCopy = listeners.toArray(new IUSManagerListener[listeners
-					.size()]);
-		}
-		for (final IUSManagerListener listener : safeCopy) {
-			SafeRunner.run(new ISafeRunnable() {
-				public void handleException(Throwable exception) {
-					// do nothing, will be logged by the platform
-				}
-
-				public void run() throws Exception {
-					listener.USManagerChanged(userSupport, status);
-				}
-			});
-		}
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupportManager#setInput(org.eventb.core.pm.IUserSupport, org.eventb.core.IPSFile, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void setInput(IUserSupport userSupport, IPSFile psFile,
-			IProgressMonitor monitor) throws RodinDBException {
-		userSupport.setInput(psFile, monitor);
-		notifyUSManagerListener(userSupport, IUSManagerListener.CHANGED);
-	}
-
 	
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.IProofTree#addChangeListener(org.eventb.core.prover.IProofTreeChangedListener)
+	 */
+	public void removeChangeListener(IUserSupportManagerChangedListener listener) {
+		deltaProcessor.removeChangeListener(listener);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IUserSupportManager#getProvingMode()
 	 */
@@ -130,9 +75,40 @@ public class UserSupportManager implements IUserSupportManager {
 		return provingMode;
 	}
 
-	public static IUserSupportManager getDefault() {
-		if (instance == null)
-			instance = new UserSupportManager();
-		return instance;
+	public DeltaProcessor getDeltaProcessor() {
+		return deltaProcessor;
 	}
+
+	public void addUserSupport(UserSupport userSupport) {
+		synchronized (userSupports) {
+			if (!userSupports.contains(userSupport))
+				userSupports.add(userSupport);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IUserSupportManager#disposeUserSupport(org.eventb.core.pm.IUserSupport)
+	 */
+	public void removeUserSupport(IUserSupport userSupport) {
+		synchronized (userSupports) {
+			if (userSupports.contains(userSupport))
+				userSupports.remove(userSupport);
+		}
+	}
+
+	public void run(Runnable op) {
+		boolean wasEnable = deltaProcessor.isEnable();
+		try {
+			if (wasEnable)
+				deltaProcessor.setEnable(false);
+			op.run();
+		}
+		finally {
+			if (wasEnable)
+				deltaProcessor.setEnable(true);
+		}
+		deltaProcessor.fireDeltas();
+	}
+
+
 }

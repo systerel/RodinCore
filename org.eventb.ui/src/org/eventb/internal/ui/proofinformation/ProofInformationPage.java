@@ -26,6 +26,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
@@ -37,8 +38,10 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.pm.IProofState;
-import org.eventb.core.pm.IProofStateChangedListener;
-import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportManagerChangedListener;
+import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -54,7 +57,7 @@ import org.rodinp.core.RodinDBException;
  *         This class is an implementation of a Proof Control 'page'.
  */
 public class ProofInformationPage extends Page implements
-		IProofInformationPage, IProofStateChangedListener {
+		IProofInformationPage, IUserSupportManagerChangedListener {
 	ScrolledForm scrolledForm;
 
 	private ProverUI editor;
@@ -70,7 +73,8 @@ public class ProofInformationPage extends Page implements
 	 */
 	public ProofInformationPage(ProverUI editor) {
 		this.editor = editor;
-		editor.getUserSupport().addStateChangedListeners(this);
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
+				this);
 	}
 
 	/*
@@ -81,7 +85,8 @@ public class ProofInformationPage extends Page implements
 	@Override
 	public void dispose() {
 		// Deregister with the user support.
-		editor.getUserSupport().removeStateChangedListeners(this);
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
+				this);
 		formText.dispose();
 		super.dispose();
 	}
@@ -136,48 +141,56 @@ public class ProofInformationPage extends Page implements
 					ProofInformationUtils.debug("id: " + id);
 					ProofInformationUtils.debug("Find: " + element);
 				}
-				final IEventBFile file = (IEventBFile) element.getParent();
+//				final IEventBFile file = (IEventBFile) element.getParent();
 				if (element instanceof ITheorem) {
 					final ITheorem thm = (ITheorem) element;
 					formBuilder.append("<li style=\"bullet\">Theorem in ");
-					formBuilder.append(file.getComponentName());
+					formBuilder.append(((IEventBFile) thm.getParent()).getComponentName());
 					formBuilder.append("</li><li style=\"text\" value=\"\">");
-					formBuilder.append(UIUtils.makeHyperlink(id, thm.getLabel()));
+					formBuilder.append(UIUtils
+							.makeHyperlink(id, thm.getLabel()));
 					formBuilder.append(": ");
-					formBuilder.append(UIUtils.XMLWrapUp(thm.getPredicateString()));
+					formBuilder.append(UIUtils.XMLWrapUp(thm
+							.getPredicateString()));
 					formBuilder.append("</li>");
 				}
 				if (element instanceof IAxiom) {
 					IAxiom axm = (IAxiom) element;
 					formBuilder.append("<li style=\"bullet\">Axiom in ");
-					formBuilder.append(file.getComponentName());
+					formBuilder.append(((IEventBFile) axm.getParent()).getComponentName());
 					formBuilder.append("</li><li style=\"text\" value=\"\">");
-					formBuilder.append(UIUtils.makeHyperlink(id, axm.getLabel()));
+					formBuilder.append(UIUtils
+							.makeHyperlink(id, axm.getLabel()));
 					formBuilder.append(": ");
-					formBuilder.append(UIUtils.XMLWrapUp(axm.getPredicateString()));
+					formBuilder.append(UIUtils.XMLWrapUp(axm
+							.getPredicateString()));
 					formBuilder.append("</li>");
 				} else if (element instanceof IInvariant) {
 					IInvariant inv = (IInvariant) element;
 					formBuilder.append("<li style=\"bullet\">Invariant in ");
-					formBuilder.append(file.getComponentName());
+					formBuilder.append(((IEventBFile) inv.getParent()).getComponentName());
 					formBuilder.append("</li><li style=\"text\" value=\"\">");
-					formBuilder.append(UIUtils.makeHyperlink(id, inv.getLabel()));
+					formBuilder.append(UIUtils
+							.makeHyperlink(id, inv.getLabel()));
 					formBuilder.append(": ");
-					formBuilder.append(UIUtils.XMLWrapUp(inv.getPredicateString()));
+					formBuilder.append(UIUtils.XMLWrapUp(inv
+							.getPredicateString()));
 					formBuilder.append("</li>");
 				} else if (element instanceof IEvent) {
 					IEvent evt = (IEvent) element;
 					formBuilder.append("<li style=\"bullet\">Event in ");
-					formBuilder.append(file.getComponentName());
+					formBuilder.append(((IEventBFile) evt.getParent()).getComponentName());
 					formBuilder.append("</li><li style=\"text\" value=\"\">");
-					formBuilder.append(UIUtils.makeHyperlink(id, evt.getLabel()));
+					formBuilder.append(UIUtils
+							.makeHyperlink(id, evt.getLabel()));
 					formBuilder.append(":</li>");
 					IVariable[] lvars = evt.getVariables();
 					IGuard[] guards = evt.getGuards();
 					IAction[] actions = evt.getActions();
 
 					if (lvars.length != 0) {
-						formBuilder.append("<li style=\"text\" value=\"\" bindent = \"20\">");
+						formBuilder
+								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
 						formBuilder.append("<b>ANY</b> ");
 						String sep = "";
 						for (IVariable var : lvars) {
@@ -189,38 +202,44 @@ public class ProofInformationPage extends Page implements
 						}
 						formBuilder.append(" <b>WHERE</b></li>");
 					} else if (guards.length != 0) {
-						formBuilder.append("<li style=\"text\" value=\"\" bindent = \"20\">");
+						formBuilder
+								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
 						formBuilder.append("<b>WHEN</b></li>");
 					} else {
-						formBuilder.append("<li style=\"text\" value=\"\" bindent = \"20\">");
+						formBuilder
+								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
 						formBuilder.append("<b>BEGIN</b></li>");
 					}
 
 					for (IGuard guard : guards) {
-						formBuilder.append("<li style=\"text\" value=\"\" bindent=\"40\">");
+						formBuilder
+								.append("<li style=\"text\" value=\"\" bindent=\"40\">");
 						formBuilder.append(UIUtils.makeHyperlink(guard
-										.getHandleIdentifier(), guard
-										.getLabel()));
+								.getHandleIdentifier(), guard.getLabel()));
 						formBuilder.append(": ");
-						formBuilder.append(UIUtils.XMLWrapUp(guard.getPredicateString()));
+						formBuilder.append(UIUtils.XMLWrapUp(guard
+								.getPredicateString()));
 						formBuilder.append("</li>");
 					}
 
 					if (guards.length != 0) {
-						formBuilder.append("<li style=\"text\" value=\"\" bindent=\"20\">");
+						formBuilder
+								.append("<li style=\"text\" value=\"\" bindent=\"20\">");
 						formBuilder.append("<b>THEN</b></li>");
 					}
 
 					for (IAction action : actions) {
-						formBuilder.append("<li style=\"text\" value=\"\" bindent=\"40\">");
+						formBuilder
+								.append("<li style=\"text\" value=\"\" bindent=\"40\">");
 						formBuilder.append(UIUtils.makeHyperlink(action
-										.getHandleIdentifier(), action
-										.getLabel()));
+								.getHandleIdentifier(), action.getLabel()));
 						formBuilder.append(": ");
-						formBuilder.append(UIUtils.XMLWrapUp(action.getAssignmentString()));
+						formBuilder.append(UIUtils.XMLWrapUp(action
+								.getAssignmentString()));
 						formBuilder.append("</li>");
 					}
-					formBuilder.append("<li style=\"text\" value=\"\" bindent=\"20\">");
+					formBuilder
+							.append("<li style=\"text\" value=\"\" bindent=\"20\">");
 					formBuilder.append("<b>END</b></li>");
 				}
 			}
@@ -274,29 +293,42 @@ public class ProofInformationPage extends Page implements
 		return scrolledForm;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
-	 */
-	public void proofStateChanged(final IProofStateDelta delta) {
+	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 		if (scrolledForm.getContent().isDisposed())
 			return;
+
+		final IUserSupport userSupport = this.editor.getUserSupport();
+
+		IUserSupportDelta[] affectedUserSupports = delta
+				.getAffectedUserSupports();
+		IUserSupportDelta userSupportDelta = null;
+		for (IUserSupportDelta tmp : affectedUserSupports) {
+			if (tmp.getUserSupport() == userSupport) {
+				userSupportDelta = tmp;
+				break;
+			}
+		}
+		if (userSupportDelta == null)
+			return;
+		final IUserSupportDelta affectedUserSupport = userSupportDelta;
+
+		final int kind = affectedUserSupport.getKind();
+		if (kind == IUserSupportDelta.REMOVED)
+			return;
+
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
-				IProofState ps = delta.getProofState();
-				if (delta.isNewProofState()) {
-					if (ps != null) {
-						IPSStatus prSequent = ps.getPRSequent();
-						if (prSequent.exists()) {
-							scrolledForm.setText(prSequent.getElementName());
-							setFormText(prSequent, new NullProgressMonitor());
-							scrolledForm.reflow(true);
-						}
-					} else {
-						clearFormText();
+				IProofState ps = userSupport.getCurrentPO();
+				if (ps != null) {
+					IPSStatus prSequent = ps.getPRSequent();
+					if (prSequent.exists()) {
+						scrolledForm.setText(prSequent.getElementName());
+						setFormText(prSequent, new NullProgressMonitor());
+						scrolledForm.reflow(true);
 					}
+				} else {
+					clearFormText();
 				}
 			}
 		});

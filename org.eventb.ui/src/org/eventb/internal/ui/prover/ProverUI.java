@@ -35,9 +35,11 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.pm.IProofState;
-import org.eventb.core.pm.IProofStateChangedListener;
-import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportManager;
+import org.eventb.core.pm.IUserSupportManagerChangedListener;
+import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.internal.ui.proofcontrol.ProofControlPage;
@@ -56,7 +58,8 @@ import org.rodinp.core.RodinDBException;
  *         <p>
  *         This implements the Prover UI Editor by extending the FormEditor
  */
-public class ProverUI extends FormEditor implements IProofStateChangedListener {
+public class ProverUI extends FormEditor implements
+		IUserSupportManagerChangedListener {
 
 	/**
 	 * The identifier of the Prover UI editor (value
@@ -91,9 +94,11 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	public ProverUI() {
 		super();
 		saving = false;
-		this.userSupport = EventBPlugin.getDefault().getUserSupportManager()
-				.newUserSupport();
-		userSupport.addStateChangedListeners(this);
+
+		IUserSupportManager manager = EventBPlugin.getDefault()
+				.getUserSupportManager();
+		this.userSupport = manager.newUserSupport();
+		manager.addChangeListener(this);
 	}
 
 	/*
@@ -107,8 +112,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			IFile inputFile = ((IFileEditorInput) input).getFile();
 			prFile = (IPSFile) RodinCore.valueOf(inputFile);
 			try {
-				EventBPlugin.getDefault().getUserSupportManager().setInput(
-						userSupport, prFile, new NullProgressMonitor());
+				userSupport.setInput(prFile, new NullProgressMonitor());
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
@@ -172,9 +176,8 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 */
 	@Override
 	public void dispose() {
-		userSupport.removeStateChangedListeners(this);
-		EventBPlugin.getDefault().getUserSupportManager().disposeUserSupport(
-				userSupport);
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(this);
+		userSupport.dispose();
 		if (fProofTreeUI != null)
 			fProofTreeUI.setInput(null);
 		super.dispose();
@@ -325,12 +328,12 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
+			// Do nothing
 		}
 
 	}
 
-	private class ProofStateLabelProvider implements ILabelProvider {
+	class ProofStateLabelProvider implements ILabelProvider {
 
 		public Image getImage(Object element) {
 			// TODO Auto-generated method stub
@@ -482,15 +485,27 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * 
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
-	public void proofStateChanged(IProofStateDelta delta) {
+	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
+
+		if (saving)
+			return; // Ignore delta while saving
+
+		IUserSupportDelta affectedUserSupport = ProverUIUtils
+				.getUserSupportDelta(delta, userSupport);
+
+		if (affectedUserSupport == null)
+			return;
+
+		int kind = affectedUserSupport.getKind();
+
+		if (kind == IUserSupportDelta.REMOVED)
+			return;
 
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 
 		display.syncExec(new Runnable() {
 			public void run() {
-				if (saving)
-					return; // Ignore delta while saving
 				// if (userSupport.isOutOfDate()) {
 				// IWorkbenchPage activePage =
 				// EventBUIPlugin.getActivePage();

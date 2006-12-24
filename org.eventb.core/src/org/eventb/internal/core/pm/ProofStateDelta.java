@@ -1,13 +1,8 @@
 package org.eventb.internal.core.pm;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
-import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeDelta;
-import org.eventb.core.seqprover.IProofTreeNode;
 
 /**
  * @author htson
@@ -20,125 +15,188 @@ public class ProofStateDelta implements IProofStateDelta {
 
 	private IProofState ps;
 
+	/*
+	 * @see IProofStateDelta#getKind()
+	 */
+	private int kind = 0;
+
+	/*
+	 * @see IProofStateDelta#getFlags()
+	 */
+	private int flags = 0;
+
 	private IProofTreeDelta proofTreeDelta;
 
-	private IProofTreeNode node;
-
-	private List<Object> information;
-
-	private boolean newSearch;
-
-	private boolean newCache;
-
-	private IUserSupport userSupport;
-
-	private boolean isDeleted;
-
-	private boolean newProofState;
-
-	public ProofStateDelta(IUserSupport userSupport) {
-		this.userSupport = userSupport;
-		newSearch = false;
-		newCache = false;
-		ps = null;
-		node = null;
+	public ProofStateDelta(IProofState ps) {
+		this.ps = ps;
 		proofTreeDelta = null;
-		isDeleted = false;
-		newProofState = false;
-		information = new ArrayList<Object>();
 	}
 
-	public void setNewCurrentNode(IProofTreeNode node) {
-		this.node = node;
-	}
-
-	public List<Object> getInformation() {
-		return information;
-	}
-
-	public void setNewProofState(IProofState ps) {
-		this.ps = ps;
-		newProofState = true;
-	}
-
-	public void setDeletedProofState(IProofState ps) {
-		this.ps = ps;
-		isDeleted = true;
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.pm.IProofStateDelta#getProofState()
+	 */
 	public IProofState getProofState() {
 		return ps;
 	}
 
-	public IProofTreeNode getNewProofTreeNode() {
-		return node;
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofStateDelta#getKind()
+	 */
+	public int getKind() {
+		return kind;
 	}
 
-	public void setNewSearch() {
-		newSearch = true;
+	public void setKind(int type) {
+		this.kind = type;
 	}
 
-	public void setProofTreeDelta(IProofTreeDelta proofTreeDelta) {
-		this.proofTreeDelta = proofTreeDelta;
+	public int getFlags() {
+		return flags;
+	}
+
+	public void setFlags(int flags) {
+		this.flags = flags;
 	}
 
 	public IProofTreeDelta getProofTreeDelta() {
 		return proofTreeDelta;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
+	public void setProofTreeDelta(IProofTreeDelta proofTreeDelta) {
+		this.proofTreeDelta = proofTreeDelta;
+	}
+
 	@Override
 	public String toString() {
-		String result = "\n***************************";
-		result = result + "\n" + "Proof State: " + ps;
-		result = result + "\n" + "is deleted: " + isDeleted;
-		result = result + "\n" + "is new: " + newProofState;
-		result = result + "\n" + "ProofTreeDelta: " + proofTreeDelta;
-		result = result + "\n" + "Current Node: " + node;
-		result = result + "\n" + "New Cache: " + newCache;
-		result = result + "\n" + "New Search: " + newSearch;
-		result = result + "\n" + "Information:";
-		for (Object info : information) {
-			result = result + "\n   " + info;
+		StringBuilder builder = new StringBuilder();
+		toString(builder, "  ");
+		return builder.toString();
+	}
+
+	private void toString(StringBuilder builder, String indent) {
+		builder.append(indent);
+		if (kind == ADDED) builder.append("[+] ");
+		else if (kind == REMOVED) builder.append("[-] ");
+		else if (kind == CHANGED) builder.append("[*] ");
+		builder.append(ps.getPRSequent());
+		builder.append(" [");
+		boolean sep = false;
+		sep = toStringFlag(builder, F_CACHE, "CACHE", sep);
+		sep = toStringFlag(builder, F_SEARCH, "SEARCH", sep);
+		sep = toStringFlag(builder, F_NODE, "NODE", sep);
+		sep = toStringFlag(builder, F_PROOFTREE, "PROOFTREE", sep);
+		builder.append("]");
+//		String childIndent = indent + "  ";
+//		for (ProofTreeDelta child: children) {
+//			builder.append("\n");
+//			child.toString(builder, childIndent);
+//		}
+	}
+
+	private boolean toStringFlag(StringBuilder builder, int flagToTest,
+			String flagName, boolean sep) {
+		
+		if ((flags & flagToTest) != 0) {
+			if (sep) builder.append('|');
+			builder.append(flagName);
+			return true;
 		}
-		result = result + "\n***************************";
-		return result;
+		return sep;
 	}
 
-	public void setNewCache() {
-		newCache = true;
-	}
-
-	public boolean getNewSearch() {
-		return newSearch;
-	}
-
-	public boolean getNewCache() {
-		return newCache;
-	}
-
-	public IUserSupport getSource() {
-		return userSupport;
-	}
-
-	public void addInformation(Object info) {
-		this.information.add(info);
-	}
-
-	public void addAllInformation(List<Object> infos) {
-		information.addAll(infos);
-	}
-
-	public boolean isDeleted() {
-		return isDeleted;
-	}
-
-	public boolean isNewProofState() {
-		return newProofState;
-	}
+	// public void setNewCurrentNode(IProofTreeNode node) {
+	// this.node = node;
+	// }
+	//
+	// public List<Object> getInformation() {
+	// return information;
+	// }
+	//
+	// public void setNewProofState(IProofState ps) {
+	// this.ps = ps;
+	// newProofState = true;
+	// }
+	//
+	// public void setDeletedProofState(IProofState ps) {
+	// this.ps = ps;
+	// isDeleted = true;
+	// }
+	//
+	// public IProofState getProofState() {
+	// return ps;
+	// }
+	//
+	// public IProofTreeNode getNewProofTreeNode() {
+	// return node;
+	// }
+	//
+	// public void setNewSearch() {
+	// newSearch = true;
+	// }
+	//
+	// public void setProofTreeDelta(IProofTreeDelta proofTreeDelta) {
+	// this.proofTreeDelta = proofTreeDelta;
+	// }
+	//
+	// public IProofTreeDelta getProofTreeDelta() {
+	// return proofTreeDelta;
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see java.lang.Object#toString()
+	// */
+	// @Override
+	// public String toString() {
+	// String result = "\n" + DELTA_SEPARATOR + "\n";
+	// result += PROOF_STATE_PROMPT + ps + "\n";
+	// result += IS_DELETED_PROMPT + isDeleted + "\n";
+	// result += IS_NEW_PROMPT + newProofState + "\n";
+	// result += PROOF_TREE_DELTA_PROMPT + proofTreeDelta +"\n";
+	// result += CURRENT_NODE_PROMPT + node + "\n";
+	// result += NEW_CACHE_PROMPT + newCache + "\n";
+	// result += NEW_SEARCH_PROMPT + newSearch + "\n";
+	// result += INFORMATION_PROMPT + "\n";
+	// for (Object info : information) {
+	// result += " " + info + "\n";
+	// }
+	// result += DELTA_SEPARATOR + "\n";
+	// return result;
+	// }
+	//
+	// public void setNewCache() {
+	// newCache = true;
+	// }
+	//
+	// public boolean getNewSearch() {
+	// return newSearch;
+	// }
+	//
+	// public boolean getNewCache() {
+	// return newCache;
+	// }
+	//
+	// public IUserSupport getSource() {
+	// return userSupport;
+	// }
+	//
+	// public void addInformation(Object info) {
+	// this.information.add(info);
+	// }
+	//
+	// public void addAllInformation(List<Object> infos) {
+	// information.addAll(infos);
+	// }
+	//
+	// public boolean isDeleted() {
+	// return isDeleted;
+	// }
+	//
+	// public boolean isNewProofState() {
+	// return newProofState;
+	// }
 
 }

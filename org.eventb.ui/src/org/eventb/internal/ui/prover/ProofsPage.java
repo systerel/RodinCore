@@ -40,11 +40,14 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
-import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportManagerChangedListener;
+import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
@@ -55,8 +58,8 @@ import org.rodinp.core.RodinDBException;
  *         <p>
  *         This is the implementation of the Proof Page in the Prover UI Editor.
  */
-public class ProofsPage extends FormPage implements IProofStateChangedListener,
-		IPropertyChangeListener {
+public class ProofsPage extends FormPage implements
+		IUserSupportManagerChangedListener, IPropertyChangeListener {
 
 	// ID, title and the tab-title
 	public static final String PAGE_ID = "Proof State"; //$NON-NLS-1$
@@ -102,7 +105,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener,
 	public ProofsPage(ProverUI editor) {
 		super(editor, PAGE_ID, PAGE_TAB_TITLE); //$NON-NLS-1$
 		userSupport = editor.getUserSupport();
-		userSupport.addStateChangedListeners(this);
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(this);
 		layouting = false;
 		IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
@@ -112,7 +115,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener,
 
 	@Override
 	public void dispose() {
-		userSupport.removeStateChangedListeners(this);
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(this);
 		IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
 		store.removePropertyChangeListener(this);
@@ -322,10 +325,22 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener,
 
 	}
 
-	public void proofStateChanged(final IProofStateDelta delta) {
+	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
 		Display display = Display.getDefault();
 		if (this.getManagedForm().getForm().isDisposed())
 			return;
+
+		final IUserSupportDelta affectedUserSupport = ProverUIUtils
+				.getUserSupportDelta(delta, userSupport);
+		
+		if (affectedUserSupport == null)
+			return;
+		
+		final int kind = affectedUserSupport.getKind();
+		
+		if (kind == IUserSupportDelta.REMOVED)
+			return;
+		
 		if (ProverUIUtils.DEBUG)
 			ProverUIUtils
 					.debug("Proof State Change "
@@ -333,35 +348,8 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener,
 									.getElementName());
 		display.syncExec(new Runnable() {
 			public void run() {
-				IProofState ps = delta.getProofState();
-				if (delta.isDeleted()) {
-					if (ps != null) {
-
-						IWorkbenchPage activePage = EventBUIPlugin
-								.getActivePage();
-						if (activePage.isPartVisible(ProofsPage.this
-								.getEditor())) {
-							try {
-								MessageDialog.openInformation(ProofsPage.this
-										.getSite().getShell(), "Out of Date",
-										"The Proof Obligation is deleted.");
-								userSupport.nextUndischargedPO(true,
-										new NullProgressMonitor());
-							} catch (RodinDBException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						} else {
-							try {
-								userSupport.setCurrentPO(null,
-										new NullProgressMonitor());
-							} catch (RodinDBException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					}
-				} else if (delta.isNewProofState()) {
+				if (kind == IUserSupportDelta.ADDED) {
+					IProofState ps = userSupport.getCurrentPO();
 					if (ps != null) { // Reload everything
 						initHypothesisSections(ps);
 						goalSection.setGoal(ps.getCurrentNode());
@@ -370,23 +358,77 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener,
 						goalSection.setGoal(null);
 					}
 					ProofsPage.this.getManagedForm().getForm().reflow(true);
-				} else {
-					IProofTreeNode node = delta.getNewProofTreeNode();
-					if (node != null) {
-						initHypothesisSections(userSupport.getCurrentPO());
-						goalSection.setGoal(node);
-					} else if (delta.getNewCache()) {
-						initCacheAndSearch();
-					} else if (delta.getNewSearch()) {
-						initCacheAndSearch();
-						Section section = searchedSection.getSection();
-						if (!section.isExpanded()) {
-							section.setExpanded(true);
+				}
+				else if (kind == IUserSupportDelta.CHANGED) {
+					int flags = affectedUserSupport.getFlags();
+					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
+						IProofState ps = userSupport.getCurrentPO();
+						if (ps != null) { // Reload everything
+							initHypothesisSections(ps);
+							goalSection.setGoal(ps.getCurrentNode());
+						} else {
+							initHypothesisSections(null);
+							goalSection.setGoal(null);
+						}
+						ProofsPage.this.getManagedForm().getForm().reflow(true);						
+					}
+					else if ((flags | IUserSupportDelta.F_STATE) != 0) {
+						IProofState proofState = userSupport.getCurrentPO();
+						IProofStateDelta affectedProofState = ProverUIUtils.getProofStateDelta(affectedUserSupport, proofState);
+						
+						if (affectedProofState == null) return;
+						
+						if (affectedProofState.getKind() == IProofStateDelta.REMOVED) {
+							if (proofState != null) {
+
+								IWorkbenchPage activePage = EventBUIPlugin
+										.getActivePage();
+								if (activePage.isPartVisible(ProofsPage.this
+										.getEditor())) {
+									try {
+										MessageDialog.openInformation(ProofsPage.this
+												.getSite().getShell(), "Out of Date",
+												"The Proof Obligation is deleted.");
+										userSupport.nextUndischargedPO(true,
+												new NullProgressMonitor());
+									} catch (RodinDBException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								} else {
+									try {
+										userSupport.setCurrentPO(null,
+												new NullProgressMonitor());
+									} catch (RodinDBException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+							}							
+						}
+						else if (affectedProofState.getKind() == IProofStateDelta.REMOVED) {
+							return;
+						}
+						else if (affectedProofState.getKind() == IProofStateDelta.CHANGED) {
+							int psFlags = affectedProofState.getFlags();
+							if ((psFlags | IProofStateDelta.F_NODE) != 0) {
+								initHypothesisSections(proofState);
+								goalSection.setGoal(proofState.getCurrentNode());
+							}
+							if ((psFlags | IProofStateDelta.F_CACHE) != 0) {
+								initCacheAndSearch();								
+							}
+							if ((psFlags | IProofStateDelta.F_SEARCH) != 0) {
+								initCacheAndSearch();								
+								Section section = searchedSection.getSection();
+								if (!section.isExpanded()) {
+									section.setExpanded(true);
+								}
+							}
+							ProofsPage.this.getManagedForm().getForm().reflow(true);							
 						}
 					}
-					ProofsPage.this.getManagedForm().getForm().reflow(true);
 				}
-
 			}
 		});
 	}

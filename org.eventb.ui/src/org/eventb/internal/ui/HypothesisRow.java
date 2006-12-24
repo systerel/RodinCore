@@ -309,9 +309,14 @@ public class HypothesisRow {
 					ITacticProvider provider = tacticUIRegistry
 							.getTacticProvider(tacticID);
 					if (provider != null)
-						userSupport.applyTacticToHypotheses(provider.getTactic(
-								node, hyp, inputs), hypSet,
-								new NullProgressMonitor());
+						try {
+							userSupport.applyTacticToHypotheses(provider.getTactic(
+									node, hyp, inputs), hypSet,
+									new NullProgressMonitor());
+						} catch (RodinDBException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						}
 					else {
 						IProofCommand command = tacticUIRegistry
 								.getProofCommand(tacticID,

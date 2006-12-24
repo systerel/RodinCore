@@ -2,8 +2,6 @@ package org.eventb.core.pm;
 
 import java.util.Collection;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPSFile;
 import org.rodinp.core.RodinDBException;
 
 public interface IUserSupportManager {
@@ -23,7 +21,7 @@ public interface IUserSupportManager {
 	 * @param userSupport
 	 *            an existing User Support to be disposed
 	 */
-	public abstract void disposeUserSupport(IUserSupport userSupport);
+//	public abstract void disposeUserSupport(IUserSupport userSupport);
 
 	/**
 	 * Set the input for an User Support. This is normally called right after
@@ -39,8 +37,8 @@ public interface IUserSupportManager {
 	 * @throws RodinDBException
 	 *             a Rodin Exception
 	 */
-	public abstract void setInput(IUserSupport userSupport, IPSFile psFile,
-			IProgressMonitor monitor) throws RodinDBException;
+//	public abstract void setInput(IUserSupport userSupport, IPSFile psFile,
+//			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Return the list of User Support managed by the manager
@@ -57,7 +55,7 @@ public interface IUserSupportManager {
 	 * @param listener
 	 *            a USManager listener
 	 */
-	public abstract void addUSManagerListener(IUSManagerListener listener);
+	public abstract void addChangeListener(IUserSupportManagerChangedListener listener);
 
 	/**
 	 * Remove a listener from the manager
@@ -66,7 +64,7 @@ public interface IUserSupportManager {
 	 * @param listener
 	 *            an existing USManager listener
 	 */
-	public abstract void removeUSManagerListener(IUSManagerListener listener);
+	public abstract void removeChangeListener(IUserSupportManagerChangedListener listener);
 
 	/**
 	 * Return the proving mode
@@ -75,5 +73,7 @@ public interface IUserSupportManager {
 	 * @return the current proving mode
 	 */
 	public abstract IProvingMode getProvingMode();
+
+	public void run(Runnable op) throws RodinDBException;
 
 }

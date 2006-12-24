@@ -34,6 +34,7 @@ import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -50,7 +51,7 @@ public class SearchHypothesesSection extends HypothesesSection {
 
 	private ImageHyperlink ds;
 
-	private ImageHyperlink sl;
+	ImageHyperlink sl;
 
 	/**
 	 * @author htson
@@ -58,13 +59,14 @@ public class SearchHypothesesSection extends HypothesesSection {
 	 *         This class extends HyperlinkAdapter and provide response actions
 	 *         when a hyperlink is activated.
 	 */
-	private class SearchedHyperlinkAdapter extends HyperlinkAdapter {
+	class SearchedHyperlinkAdapter extends HyperlinkAdapter {
 
 		/*
 		 * (non-Javadoc)
 		 * 
 		 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
 		 */
+		@Override
 		public void linkActivated(HyperlinkEvent e) {
 			Widget widget = e.widget;
 			if (widget.equals(sl)) {
@@ -80,7 +82,12 @@ public class SearchHypothesesSection extends HypothesesSection {
 
 				ProverUI editor = (ProverUI) page.getEditor();
 				ITactic t = Tactics.mngHyp(ProverFactory.makeSelectHypAction(selected));
-				editor.getUserSupport().applyTacticToHypotheses(t, selected, new NullProgressMonitor());
+				try {
+					editor.getUserSupport().applyTacticToHypotheses(t, selected, new NullProgressMonitor());
+				} catch (RodinDBException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				// TreeViewer viewer = editor.getProofTreeUI().getViewer();
 				// ISelection selection = viewer.getSelection();
 				// Object obj = ((IStructuredSelection) selection)
@@ -132,6 +139,7 @@ public class SearchHypothesesSection extends HypothesesSection {
 		super(page, parent, style, SECTION_TITLE, SECTION_DESCRIPTION);
 	}
 
+	@Override
 	protected void createTextClient(Section section, FormToolkit toolkit) {
 		Composite composite = new Composite(section, SWT.NONE);
 

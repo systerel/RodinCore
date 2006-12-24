@@ -1,6 +1,5 @@
 package org.eventb.internal.ui.searchhypothesis;
 
-import java.util.Collection;
 import java.util.HashMap;
 
 import org.eclipse.jface.viewers.ISelection;
@@ -18,10 +17,9 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
-import org.eventb.core.pm.IUSManagerListener;
-import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportManagerChangedListener;
+import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.EventBUIPlugin;
 
@@ -32,7 +30,7 @@ import org.eventb.ui.EventBUIPlugin;
  */
 public class SearchHypothesis extends PageBookView implements
 		ISelectionProvider, ISelectionChangedListener,
-		IProofStateChangedListener, IUSManagerListener {
+		IUserSupportManagerChangedListener {
 
 	/**
 	 * The identifier of the Proof Control View (value
@@ -45,27 +43,19 @@ public class SearchHypothesis extends PageBookView implements
 	private String defaultText = "Search Hypothesis is not available";
 
 	public HashMap<IPage, IWorkbenchPart> fPagesToParts;
-	
+
 	public SearchHypothesis() {
 		super();
 		fPagesToParts = new HashMap<IPage, IWorkbenchPart>();
-		
-		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
-				.getUserSupports();
-		for (IUserSupport userSupport : userSupports) {
-			userSupport.addStateChangedListeners(this);
-		}
-		
-		EventBPlugin.getDefault().getUserSupportManager().addUSManagerListener(this);
+
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
+				this);
 	}
 
 	@Override
 	public void dispose() {
-		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
-				.getUserSupports();
-		for (IUserSupport userSupport : userSupports) {
-			userSupport.removeStateChangedListeners(this);
-		}
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
+				this);
 		super.dispose();
 	}
 
@@ -80,8 +70,8 @@ public class SearchHypothesis extends PageBookView implements
 		initPage(page);
 		page.createControl(book);
 		page.setMessage(defaultText);
-//		DummyPart part = new DummyPart();
-//		fPagesToParts.put(page, part);
+		// DummyPart part = new DummyPart();
+		// fPagesToParts.put(page, part);
 		return page;
 	}
 
@@ -197,6 +187,7 @@ public class SearchHypothesis extends PageBookView implements
 	 * (non-Javadoc) Method declared on IViewPart. Treat this the same as part
 	 * activation.
 	 */
+	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {
 		partActivated(part);
 	}
@@ -209,6 +200,7 @@ public class SearchHypothesis extends PageBookView implements
 	 * @param pageRec
 	 *            the page record containing the page to show
 	 */
+	@Override
 	protected void showPageRec(PageRec pageRec) {
 		IPageSite pageSite = getPageSite(pageRec.page);
 		ISelectionProvider provider = pageSite.getSelectionProvider();
@@ -225,57 +217,95 @@ public class SearchHypothesis extends PageBookView implements
 
 	public void proofStateChanged(IProofStateDelta delta) {
 		setContentDescription("Search " + counter++);
-		
-//		ISearchHypothesisPage page= null;
-		
-//		Object obj = part.getAdapter(ISearchHypothesisPage.class);
-//		if (obj instanceof ISearchHypothesisPage) {
-//			ISearchHypothesisPage page = (ISearchHypothesisPage) obj;
-//			if (page instanceof IPageBookViewPage)
-//				initPage((IPageBookViewPage) page);
-//			page.createControl(getPageBook());
-//			return new PageRec(part, page);
-//		}
-//		// There is no content outline
-//		return null;
-//
-//		// detach the previous page.
-//		ISearchResultPage currentPage= (ISearchResultPage) getCurrentPage();
-//		Object uiState= currentPage.getUIState();
-//		if (fCurrentSearch != null) {
-//			if (uiState != null)
-//				fSearchViewStates.put(fCurrentSearch, uiState);
-//		}
-//		currentPage.setInput(null, null);
-//		
-//		// switch to a new page
-//		if (page != null && page != currentPage) {
-//			IWorkbenchPart part= (IWorkbenchPart) fPagesToParts.get(page);
-//			if (part == null) {
-//				part= new DummyPart();
-//				fPagesToParts.put(page, part);
-//				fPartsToPages.put(part, page);
-//				page.setViewPart(this);
-//			}
-//			partActivated(part);
-//		}
-//		
-//		// connect to the new pages
-//		fCurrentSearch= search;
-//		if (page != null)
-//			page.setInput(search, fSearchViewStates.get(search));
-//		updateLabel();
-//		updateCancelAction();
+
+		// ISearchHypothesisPage page= null;
+
+		// Object obj = part.getAdapter(ISearchHypothesisPage.class);
+		// if (obj instanceof ISearchHypothesisPage) {
+		// ISearchHypothesisPage page = (ISearchHypothesisPage) obj;
+		// if (page instanceof IPageBookViewPage)
+		// initPage((IPageBookViewPage) page);
+		// page.createControl(getPageBook());
+		// return new PageRec(part, page);
+		// }
+		// // There is no content outline
+		// return null;
+		//
+		// // detach the previous page.
+		// ISearchResultPage currentPage= (ISearchResultPage) getCurrentPage();
+		// Object uiState= currentPage.getUIState();
+		// if (fCurrentSearch != null) {
+		// if (uiState != null)
+		// fSearchViewStates.put(fCurrentSearch, uiState);
+		// }
+		// currentPage.setInput(null, null);
+		//		
+		// // switch to a new page
+		// if (page != null && page != currentPage) {
+		// IWorkbenchPart part= (IWorkbenchPart) fPagesToParts.get(page);
+		// if (part == null) {
+		// part= new DummyPart();
+		// fPagesToParts.put(page, part);
+		// fPartsToPages.put(part, page);
+		// page.setViewPart(this);
+		// }
+		// partActivated(part);
+		// }
+		//		
+		// // connect to the new pages
+		// fCurrentSearch= search;
+		// if (page != null)
+		// page.setInput(search, fSearchViewStates.get(search));
+		// updateLabel();
+		// updateCancelAction();
 
 	}
 
-	public void USManagerChanged(IUserSupport userSupport, int status) {
-		if (status == IUSManagerListener.ADDED) {
-			userSupport.addStateChangedListeners(this);
-		}
-		else if (status == IUSManagerListener.REMOVED) {
-			userSupport.removeStateChangedListeners(this);
-		}
-		return;
+	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
+
+//		IUserSupportDelta affectedUserSupport = ProverUIUtils
+//				.getUserSupportDelta(delta, userSupport);
+
+		// ISearchHypothesisPage page= null;
+
+		// Object obj = part.getAdapter(ISearchHypothesisPage.class);
+		// if (obj instanceof ISearchHypothesisPage) {
+		// ISearchHypothesisPage page = (ISearchHypothesisPage) obj;
+		// if (page instanceof IPageBookViewPage)
+		// initPage((IPageBookViewPage) page);
+		// page.createControl(getPageBook());
+		// return new PageRec(part, page);
+		// }
+		// // There is no content outline
+		// return null;
+		//
+		// // detach the previous page.
+		// ISearchResultPage currentPage= (ISearchResultPage) getCurrentPage();
+		// Object uiState= currentPage.getUIState();
+		// if (fCurrentSearch != null) {
+		// if (uiState != null)
+		// fSearchViewStates.put(fCurrentSearch, uiState);
+		// }
+		// currentPage.setInput(null, null);
+		//		
+		// // switch to a new page
+		// if (page != null && page != currentPage) {
+		// IWorkbenchPart part= (IWorkbenchPart) fPagesToParts.get(page);
+		// if (part == null) {
+		// part= new DummyPart();
+		// fPagesToParts.put(page, part);
+		// fPartsToPages.put(part, page);
+		// page.setViewPart(this);
+		// }
+		// partActivated(part);
+		// }
+		//		
+		// // connect to the new pages
+		// fCurrentSearch= search;
+		// if (page != null)
+		// page.setInput(search, fSearchViewStates.get(search));
+		// updateLabel();
+		// updateCancelAction();
+
 	}
 }

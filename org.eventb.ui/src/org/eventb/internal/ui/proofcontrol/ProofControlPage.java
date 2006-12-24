@@ -15,7 +15,6 @@ package org.eventb.internal.ui.proofcontrol;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -66,11 +65,13 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IProofState;
-import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IProvingMode;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManager;
+import org.eventb.core.pm.IUserSupportManagerChangedListener;
+import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBControl;
@@ -79,6 +80,7 @@ import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.EventBUIPlugin;
@@ -94,7 +96,7 @@ import org.rodinp.core.RodinDBException;
  *         This class is an implementation of a Proof Control 'page'.
  */
 public class ProofControlPage extends Page implements IProofControlPage,
-		IProofStateChangedListener {
+		IUserSupportManagerChangedListener {
 
 	boolean share;
 
@@ -129,7 +131,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 */
 	public ProofControlPage(ProverUI editor) {
 		this.editor = editor;
-		editor.getUserSupport().addStateChangedListeners(this);
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
+				this);
 	}
 
 	/**
@@ -162,7 +165,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	@Override
 	public void dispose() {
 		// Deregister with the UserSupport
-		editor.getUserSupport().removeStateChangedListeners(this);
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
+				this);
 		formTextInformation.dispose();
 		textInput.dispose();
 		history.dispose();
@@ -212,8 +216,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 								if (command != null) {
 									applyGlobalExpertTactic(command,
 											userSupport, interruptable);
-								}
-								else {
+								} else {
 									return;
 								}
 							}
@@ -274,7 +277,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					Text textWidget = textInput.getTextWidget();
 					try {
 
-						final IUserSupport userSupport = editor.getUserSupport();
+						final IUserSupport userSupport = editor
+								.getUserSupport();
 						boolean interruptable = registry.isInterruptable(
 								tacticID, TacticUIRegistry.TARGET_GLOBAL);
 						ITacticProvider provider = TacticUIRegistry
@@ -287,9 +291,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 									.getDefault().getProofCommand(tacticID,
 											TacticUIRegistry.TARGET_GLOBAL);
 							if (command != null) {
-								applyGlobalExpertTactic(command, userSupport, interruptable);
-							}
-							else {
+								applyGlobalExpertTactic(command, userSupport,
+										interruptable);
+							} else {
 								return;
 							}
 						}
@@ -349,7 +353,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			final IUserSupport userSupport, final boolean interruptable)
 			throws RodinDBException {
 
-		final String [] inputs = {currentInput};
+		final String[] inputs = { currentInput };
 		if (interruptable) {
 			applyTacticWithProgress(new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm)
@@ -384,14 +388,24 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						throws InvocationTargetException {
 					try {
 						pm.beginTask("Proving", IProgressMonitor.UNKNOWN);
-						userSupport.applyTactic(tactic, pm);
+						try {
+							userSupport.applyTactic(tactic, pm);
+						} catch (RodinDBException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					} finally {
 						pm.done();
 					}
 				}
 			});
 		} else {
-			userSupport.applyTactic(tactic, null);
+			try {
+				userSupport.applyTactic(tactic, null);
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -673,7 +687,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		history = new EventBControl(historyCombo);
 
 		updateToolItems(editor.getUserSupport());
-	
+
 		formTextInformation = new EventBFormText(toolkit.createFormText(body,
 				true));
 		gd = new GridData();
@@ -768,7 +782,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the toolbar manager
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
-		IUserSupportManager usManager = EventBPlugin.getDefault().getUserSupportManager();
+		IUserSupportManager usManager = EventBPlugin.getDefault()
+				.getUserSupportManager();
 		if (usManager.getProvingMode().isExpertMode()) {
 			expertMode.setChecked(true);
 		} else {
@@ -784,7 +799,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		expertMode = new Action("Expert mode switch", SWT.CHECK) {
 			@Override
 			public void run() {
-				IUserSupportManager usManager = EventBPlugin.getDefault().getUserSupportManager();
+				IUserSupportManager usManager = EventBPlugin.getDefault()
+						.getUserSupportManager();
 				IProvingMode provingMode = usManager.getProvingMode();
 				if (expertMode.isChecked())
 					provingMode.setExpertMode(true);
@@ -847,7 +863,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * 
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
-	public void proofStateChanged(final IProofStateDelta delta) {
+	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
@@ -855,45 +871,71 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		if (scrolledForm.isDisposed())
 			return;
 
+		final IUserSupport userSupport = this.editor.getUserSupport();
+
+		final IUserSupportDelta affectedUserSupport = ProverUIUtils
+				.getUserSupportDelta(delta, userSupport);
+
+		if (affectedUserSupport == null)
+			return;
+		
 		display.syncExec(new Runnable() {
 			public void run() {
-				List<Object> information = delta.getInformation();
 
-				if (ProofControlUtils.DEBUG) {
-					ProofControlUtils.debug("********** MESSAGE *********");
-					for (Object info : information) {
-						ProofControlUtils.debug(info.toString());
-					}
-					ProofControlUtils.debug("****************************");
-				}
-
-				int size = information.size();
-				if (size != 0)
-					setFormTextInformation(information.get(size - 1).toString());
-				else
-					setFormTextInformation("");
-
-				IProofState ps = delta.getProofState();
-				IProofTreeNode node = null;
-				if (delta.isNewProofState()) {
-					if (ps != null) {
-						node = ps.getCurrentNode();
-					} else {
-						updateToolItems(editor.getUserSupport());
-					}
-				} else if (delta.isDeleted()) {
-					// Do nothing.
-				} else {
-					node = delta.getNewProofTreeNode();
-				}
-
-				if (node != null) {
+				int kind = affectedUserSupport.getKind();
+				if (kind == IUserSupportDelta.ADDED) {
+					setInformation(userSupport);
 					updateToolItems(editor.getUserSupport());
+				} else if (kind == IUserSupportDelta.REMOVED) {
+					// Do nothing
+				} else if (kind == IUserSupportDelta.CHANGED) {
+					int flags = affectedUserSupport.getFlags();
+
+					if ((flags | IUserSupportDelta.F_INFORMATION) != 0) {
+						setInformation(userSupport);
+					}
+
+					IProofState ps = userSupport.getCurrentPO();
+					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
+						updateToolItems(editor.getUserSupport());
+					} else {
+						IProofStateDelta[] affectedProofStates = affectedUserSupport
+								.getAffectedProofStates();
+						IProofStateDelta affectedProofState = null;
+						for (IProofStateDelta proofStateDelta : affectedProofStates) {
+							if (proofStateDelta.getProofState() == ps) {
+								affectedProofState = proofStateDelta;
+								break;
+							}
+						}
+
+						if (affectedProofState != null)
+							updateToolItems(editor.getUserSupport());
+					}
 				}
+
 				scrolledForm.reflow(true);
 			}
 		});
 
+	}
+
+	void setInformation(final IUserSupport userSupport) {
+		Collection<Object> information = userSupport.getInformation();
+
+		if (ProofControlUtils.DEBUG) {
+			ProofControlUtils.debug("********** MESSAGE *********");
+			for (Object info : information) {
+				ProofControlUtils.debug(info.toString());
+			}
+			ProofControlUtils.debug("****************************");
+		}
+
+		int size = information.size();
+		if (size != 0)
+			setFormTextInformation(information.toArray()[size - 1].toString());
+		else
+			setFormTextInformation("");
 	}
 
 }

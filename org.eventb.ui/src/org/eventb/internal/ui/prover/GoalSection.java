@@ -46,6 +46,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.ITacticProvider;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -417,7 +418,12 @@ public class GoalSection extends SectionPart {
 					if (provider != null) {
 						IProofTreeNode node = us.getCurrentPO().getCurrentNode();
 						ITactic tactic = provider.getTactic(node, null, inputs);
-						us.applyTactic(tactic, null);
+						try {
+							us.applyTactic(tactic, null);
+						} catch (RodinDBException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 
 				}

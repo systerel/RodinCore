@@ -5,6 +5,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.IProofCommand;
 import org.rodinp.core.RodinDBException;
 
@@ -12,7 +13,7 @@ public class Prune implements IProofCommand {
 
 	public void apply(IUserSupport us, Predicate hyp, String[] inputs,
 			IProgressMonitor monitor) throws RodinDBException {
-		us.prune(monitor);
+		us.applyTactic(Tactics.prune(), monitor);
 	}
 
 	public boolean isApplicable(IUserSupport us, Predicate hyp, String input) {

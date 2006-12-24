@@ -27,14 +27,18 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
-import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportManagerChangedListener;
+import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.RodinDBException;
 
@@ -44,11 +48,11 @@ import org.rodinp.core.RodinDBException;
  *         This class is an implementation of a Proof Control 'page'.
  */
 public class SearchHypothesisPage extends Page implements
-		ISearchHypothesisPage, IProofStateChangedListener {
+		ISearchHypothesisPage, IUserSupportManagerChangedListener {
 
 	private ProverUI editor;
 
-	private ScrolledForm scrolledForm;
+	ScrolledForm scrolledForm;
 
 	protected Collection<HypothesisRow> rows;
 
@@ -64,7 +68,8 @@ public class SearchHypothesisPage extends Page implements
 	public SearchHypothesisPage(ProverUI editor) {
 		this.editor = editor;
 		rows = new ArrayList<HypothesisRow>();
-		editor.getUserSupport().addStateChangedListeners(this);
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
+				this);
 	}
 
 	/*
@@ -75,7 +80,8 @@ public class SearchHypothesisPage extends Page implements
 	@Override
 	public void dispose() {
 		// Deregister with the UserSupport
-		editor.getUserSupport().removeStateChangedListeners(this);
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
+				this);
 		super.dispose();
 	}
 
@@ -105,6 +111,7 @@ public class SearchHypothesisPage extends Page implements
 	 * 
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 
@@ -123,7 +130,7 @@ public class SearchHypothesisPage extends Page implements
 
 	}
 
-	private void init() {
+	void init() {
 		IProofState ps = editor.getUserSupport().getCurrentPO();
 
 		Collection<Predicate> selected = new ArrayList<Predicate>();
@@ -139,7 +146,7 @@ public class SearchHypothesisPage extends Page implements
 					enable = true;
 			}
 			cached = ps.getCached();
-			
+
 			searched = ps.getSearched();
 		}
 
@@ -177,27 +184,25 @@ public class SearchHypothesisPage extends Page implements
 	/**
 	 * Setup the context menu.
 	 */
-//	private void hookContextMenu() {
-//		MenuManager menuMgr = new MenuManager("#PopupMenu");
-//		menuMgr.setRemoveAllWhenShown(true);
-//		menuMgr.addMenuListener(new IMenuListener() {
-//			public void menuAboutToShow(IMenuManager manager) {
-//				SearchHypothesisPage.this.fillContextMenu(manager);
-//			}
-//		});
-//		Menu menu = menuMgr.createContextMenu(this.getControl());
-//		this.getControl().setMenu(menu);
-//	}
-
+	// private void hookContextMenu() {
+	// MenuManager menuMgr = new MenuManager("#PopupMenu");
+	// menuMgr.setRemoveAllWhenShown(true);
+	// menuMgr.addMenuListener(new IMenuListener() {
+	// public void menuAboutToShow(IMenuManager manager) {
+	// SearchHypothesisPage.this.fillContextMenu(manager);
+	// }
+	// });
+	// Menu menu = menuMgr.createContextMenu(this.getControl());
+	// this.getControl().setMenu(menu);
+	// }
 	/**
 	 * Setup the action bars
 	 */
-//	private void contributeToActionBars() {
-//		IActionBars bars = getSite().getActionBars();
-//		fillLocalPullDown(bars.getMenuManager());
-//		fillLocalToolBar(bars.getToolBarManager());
-//	}
-
+	// private void contributeToActionBars() {
+	// IActionBars bars = getSite().getActionBars();
+	// fillLocalPullDown(bars.getMenuManager());
+	// fillLocalToolBar(bars.getToolBarManager());
+	// }
 	/**
 	 * Fill the local pull down.
 	 * <p>
@@ -205,11 +210,10 @@ public class SearchHypothesisPage extends Page implements
 	 * @param manager
 	 *            the menu manager
 	 */
-//	private void fillLocalPullDown(IMenuManager manager) {
-//		// manager.add(expertMode);
-//		manager.add(new Separator());
-//	}
-
+	// private void fillLocalPullDown(IMenuManager manager) {
+	// // manager.add(expertMode);
+	// manager.add(new Separator());
+	// }
 	/**
 	 * Fill the context menu.
 	 * <p>
@@ -217,12 +221,11 @@ public class SearchHypothesisPage extends Page implements
 	 * @param manager
 	 *            the menu manager
 	 */
-//	private void fillContextMenu(IMenuManager manager) {
-//		// manager.add(expertMode);
-//		// Other plug-ins can contribute there actions here
-//		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-//	}
-
+	// private void fillContextMenu(IMenuManager manager) {
+	// // manager.add(expertMode);
+	// // Other plug-ins can contribute there actions here
+	// manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	// }
 	/**
 	 * Fill the local toolbar.
 	 * <p>
@@ -230,40 +233,38 @@ public class SearchHypothesisPage extends Page implements
 	 * @param manager
 	 *            the toolbar manager
 	 */
-//	private void fillLocalToolBar(IToolBarManager manager) {
-		// if (UserSupport.isExpertMode()) {
-		// expertMode.setChecked(true);
-		// } else {
-		// expertMode.setChecked(false);
-		// }
-		// manager.add(expertMode);
-//	}
-
+	// private void fillLocalToolBar(IToolBarManager manager) {
+	// if (UserSupport.isExpertMode()) {
+	// expertMode.setChecked(true);
+	// } else {
+	// expertMode.setChecked(false);
+	// }
+	// manager.add(expertMode);
+	// }
 	/**
 	 * Creat the actions used in this page.
 	 */
-//	private void makeActions() {
-		// expertMode = new Action("Expert mode switch", SWT.CHECK) {
-		// public void run() {
-		// if (expertMode.isChecked())
-		// UserSupport.setExpertMode(true);
-		// else
-		// UserSupport.setExpertMode(false);
-		// }
-		// };
-		// expertMode.setToolTipText("Expert mode switch");
-		//
-		// expertMode.setImageDescriptor(EventBImage
-		// .getImageDescriptor(EventBImage.IMG_EXPERT_MODE_PATH));
-
-//	}
-
+	// private void makeActions() {
+	// expertMode = new Action("Expert mode switch", SWT.CHECK) {
+	// public void run() {
+	// if (expertMode.isChecked())
+	// UserSupport.setExpertMode(true);
+	// else
+	// UserSupport.setExpertMode(false);
+	// }
+	// };
+	// expertMode.setToolTipText("Expert mode switch");
+	//
+	// expertMode.setImageDescriptor(EventBImage
+	// .getImageDescriptor(EventBImage.IMG_EXPERT_MODE_PATH));
+	// }
 	/**
 	 * Passing the focus request to the button bar.
 	 * <p>
 	 * 
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		scrolledForm.setFocus();
 		// textInput.setFocus();
@@ -288,79 +289,95 @@ public class SearchHypothesisPage extends Page implements
 	/**
 	 * Update the status of the toolbar items.
 	 */
-//	private void updateToolItems(IProofTreeNode node) {
-		// for (GlobalTacticDropdownToolItem item : dropdownItems) {
-		// item.updateStatus(node, textInput.getTextWidget().getText());
-		// }
-		//
-		// for (GlobalTacticToolItem item : toolItems) {
-		// item.updateStatus(node, textInput.getTextWidget().getText());
-		// }
-
-//		return;
-//	}
-
+	// private void updateToolItems(IProofTreeNode node) {
+	// for (GlobalTacticDropdownToolItem item : dropdownItems) {
+	// item.updateStatus(node, textInput.getTextWidget().getText());
+	// }
+	//
+	// for (GlobalTacticToolItem item : toolItems) {
+	// item.updateStatus(node, textInput.getTextWidget().getText());
+	// }
+	// return;
+	// }
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
-	public void proofStateChanged(final IProofStateDelta delta) {
+	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
 
 		if (scrolledForm.isDisposed())
 			return;
 
+		final IUserSupport userSupport = editor.getUserSupport();
+
+		final IUserSupportDelta affectedUserSupport = ProverUIUtils
+				.getUserSupportDelta(delta, userSupport);
+
+		if (affectedUserSupport == null)
+			return;
+
+		final int kind = affectedUserSupport.getKind();
+		if (kind == IUserSupportDelta.REMOVED)
+			return;
+
 		Display display = Display.getDefault();
 
-		final IUserSupport userSupport = editor.getUserSupport();
 		display.syncExec(new Runnable() {
 			public void run() {
-				IProofState ps = delta.getProofState();
-				if (delta.isDeleted()) {
-					if (ps != null) {
-						IWorkbenchPage activePage = EventBUIPlugin
-								.getActivePage();
-						if (activePage.isPartVisible(editor)) {
-							try {
-								MessageDialog.openInformation(SearchHypothesisPage.this
-										.getSite().getShell(), "Out of Date",
-										"The Proof Obligation is deleted.");
-								userSupport.nextUndischargedPO(true, new NullProgressMonitor());
-							} catch (RodinDBException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						} else {
-							try {
-								userSupport.setCurrentPO(null, new NullProgressMonitor());
-							} catch (RodinDBException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+				if (kind == IUserSupportDelta.ADDED) {
+					init();
+					scrolledForm.reflow(true);
+				} else if (kind == IUserSupportDelta.CHANGED) {
+					int flags = affectedUserSupport.getFlags();
+					IProofState ps = userSupport.getCurrentPO();
+					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
+						init();
+						scrolledForm.reflow(true);
+					} else if ((flags | IUserSupportDelta.F_STATE) != 0) {
+						IProofStateDelta affectedProofState = ProverUIUtils
+								.getProofStateDelta(affectedUserSupport, ps);
+						int psKind = affectedProofState.getKind();
+						if (psKind == IProofStateDelta.ADDED) {
+							init();
+							scrolledForm.reflow(true);							
+						}
+						else if (psKind == IProofStateDelta.REMOVED) {
+							if (ps != null) {
+								IWorkbenchPage activePage = EventBUIPlugin
+										.getActivePage();
+								if (activePage.isPartVisible(editor)) {
+									try {
+										MessageDialog.openInformation(
+												SearchHypothesisPage.this.getSite()
+														.getShell(), "Out of Date",
+												"The Proof Obligation is deleted.");
+										userSupport.nextUndischargedPO(true,
+												new NullProgressMonitor());
+									} catch (RodinDBException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								} else {
+									try {
+										userSupport.setCurrentPO(null,
+												new NullProgressMonitor());
+									} catch (RodinDBException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
 							}
 						}
+						else if (psKind == IProofStateDelta.CHANGED) {
+							init();
+							scrolledForm.reflow(true);
+						}
 					}
-				} else if (delta.isNewProofState()) {
-					if (ps != null) { // Reload everything
-						init();
-					} else {
-						init();
-					}
-					scrolledForm.reflow(true);
-				} else {
-					IProofTreeNode node = delta.getNewProofTreeNode();
-					if (node != null) {
-						init();
-					} else if (delta.getNewCache()) {
-						init();
-					} else if (delta.getNewSearch()) {
-						init();
-					}
-					scrolledForm.reflow(true);
 				}
-
 			}
 		});
-		
+
 	}
 
 }

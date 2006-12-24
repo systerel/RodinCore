@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IProofTreeChangedListener;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.rodinp.core.IElementChangedListener;
@@ -28,51 +27,7 @@ import org.rodinp.core.RodinDBException;
  *         <p>
  *         This interface is not supposed to be extended or implemented.
  */
-public interface IUserSupport extends IElementChangedListener,
-		IProofTreeChangedListener {
-
-	/**
-	 * Add a listener to the changes of the proof states stored in this user
-	 * support.
-	 * <p>
-	 * 
-	 * @param listener
-	 *            a proof state change listener
-	 */
-	public abstract void addStateChangedListeners(
-			IProofStateChangedListener listener);
-
-	/**
-	 * Remove a listener to the changes of the proof states stored in this user
-	 * support.
-	 * <p>
-	 * 
-	 * @param listener
-	 *            a proof state change listener
-	 */
-	public abstract void removeStateChangedListeners(
-			IProofStateChangedListener listener);
-
-	/**
-	 * Run the operation as a batch operation hence there is only one delta is
-	 * fired after running the operation.
-	 * <p>
-	 * 
-	 * @param op
-	 *            a runnable operation to be executed
-	 */
-	public abstract void batchOperation(Runnable op);
-
-	/**
-	 * This method return the current Obligation (Proof State). This should be
-	 * called at the initialisation of a listener of the User Support. After
-	 * that the listeners will update their states by listen to the changes from
-	 * the User Support.
-	 * <p>
-	 * 
-	 * @return the current ProofState (can be null).
-	 */
-	public abstract IProofState getCurrentPO();
+public interface IUserSupport extends IElementChangedListener {
 
 	/**
 	 * Set the input file for the user support. This should be called only by
@@ -91,23 +46,18 @@ public interface IUserSupport extends IElementChangedListener,
 			throws RodinDBException;
 
 	/**
-	 * Set the current PO corresponding to a specific proof obligation. The
-	 * proof obligation is represented by a psStatus. If the psStatus is null
-	 * then the current proof obligation is set to null. Otherwise, if there is
-	 * no proof obligation found then the status of the User Support is
-	 * unchanged.
+	 * Dispose the user support. Should be used only by the User Support
+	 * Manager.
+	 */
+	public abstract void dispose();
+
+	/**
+	 * Return the current input of the User Support which is a psFile.
 	 * <p>
 	 * 
-	 * @param psStatus
-	 *            a psStatus within the file
-	 * @param monitor
-	 *            a progress monitor
-	 * 
-	 * @throws RodinDBException
-	 *             a Rodin Exception
+	 * @return the input psFile of this User Support
 	 */
-	public abstract void setCurrentPO(IPSStatus psStatus,
-			IProgressMonitor monitor) throws RodinDBException;
+	public abstract IPSFile getInput();
 
 	/**
 	 * Go to the next undischarged proof obligation. If there is no undischarged
@@ -146,93 +96,42 @@ public interface IUserSupport extends IElementChangedListener,
 			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Select a node in the current obligation's proof tree.
+	 * This method return the current Obligation (Proof State). This should be
+	 * called at the initialisation of a listener of the User Support. After
+	 * that the listeners will update their states by listen to the changes from
+	 * the User Support.
 	 * <p>
 	 * 
-	 * @param pt
-	 *            a proof tree node
+	 * @return the current ProofState (can be null).
 	 */
-	public abstract void selectNode(IProofTreeNode pt);
+	public abstract IProofState getCurrentPO();
 
 	/**
-	 * Apply a tactic to the current proof obligation to a set of hypothesis
+	 * Set the current PO corresponding to a specific proof obligation. The
+	 * proof obligation is represented by a psStatus. If the psStatus is null
+	 * then the current proof obligation is set to null. Otherwise, if there is
+	 * no proof obligation found then the status of the User Support is
+	 * unchanged.
 	 * <p>
 	 * 
-	 * @param t
-	 *            a proof tactic
-	 * @param hyps
-	 *            a set of hypothesis
+	 * @param psStatus
+	 *            a psStatus within the file
 	 * @param monitor
 	 *            a progress monitor
-	 */
-	public abstract void applyTacticToHypotheses(final ITactic t,
-			final Set<Predicate> hyps, final IProgressMonitor monitor);
-
-	/**
-	 * Apply a tactic to the current proof obligation
-	 * <p>
 	 * 
-	 * @param t
-	 *            a proof tactic
-	 * @param monitor
-	 *            a progress monitor
-	 */
-	public abstract void applyTactic(final ITactic t,
-			final IProgressMonitor monitor);
-
-	/**
-	 * Applying prune at the current proof tree node of the current proof
-	 * obligation
-	 * <p>
-	 * 
-	 * @param monitor
-	 *            a progress monitor
 	 * @throws RodinDBException
 	 *             a Rodin Exception
 	 */
-	public abstract void prune(final IProgressMonitor monitor)
-			throws RodinDBException;
+	public abstract void setCurrentPO(final IPSStatus psStatus,
+			final IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Remove a collection of hypothesis from the cache.
+	 * Return all the proof obligations which are managed by this User Support.
 	 * <p>
 	 * 
-	 * @param hyps
-	 *            a collection of hypotheses
+	 * @return a collection of proof state stored in this User Support
 	 */
-	public abstract void removeCachedHypotheses(Collection<Predicate> hyps);
-
-	/**
-	 * Remove a collection of hypothesis from the searched hypothesis set
-	 * <p>
-	 * 
-	 * @param hyps
-	 *            a collection of hypotheses
-	 */
-	public abstract void removeSearchedHypotheses(Collection<Predicate> hyps);
-
-	/**
-	 * Search the hypothesis set for a string token. In particular, if token is
-	 * an empty string, all the hypotheses will be put in the set of searched
-	 * hypotheses.
-	 * <p>
-	 * 
-	 * @param token
-	 *            a string token
-	 */
-	public abstract void searchHyps(String token);
-
-	/**
-	 * Backtracking from the current proof tree node in the current proof
-	 * obligation.
-	 * <p>
-	 * 
-	 * @param monitor
-	 *            a progress monitor
-	 * @throws RodinDBException
-	 *             a Rodin Exception
-	 */
-	public abstract void back(IProgressMonitor monitor) throws RodinDBException;
+	public abstract IProofState[] getPOs();
 
 	/**
 	 * Return <code>true</code> or <code>false</code> depending on if there
@@ -250,7 +149,89 @@ public interface IUserSupport extends IElementChangedListener,
 	 * 
 	 * @return an array of unsaved proof obligations
 	 */
-	public abstract IProofState[] getUnsavedPOs();
+	public IProofState [] getUnsavedPOs();
+
+	public abstract Collection<Object> getInformation();
+
+	/**
+	 * Remove a collection of hypothesis from the cache.
+	 * <p>
+	 * 
+	 * @param hyps
+	 *            a collection of hypotheses
+	 */
+	public abstract void removeCachedHypotheses(Collection<Predicate> hyps);
+
+	/**
+	 * Search the hypothesis set for a string token. In particular, if token is
+	 * an empty string, all the hypotheses will be put in the set of searched
+	 * hypotheses.
+	 * <p>
+	 * 
+	 * @param token
+	 *            a string token
+	 */
+	public abstract void searchHyps(String token);
+
+	/**
+	 * Remove a collection of hypothesis from the searched hypothesis set
+	 * <p>
+	 * 
+	 * @param hyps
+	 *            a collection of hypotheses
+	 */
+	public abstract void removeSearchedHypotheses(Collection<Predicate> hyps);
+
+	/**
+	 * Select a node in the current obligation's proof tree.
+	 * <p>
+	 * 
+	 * @param pt
+	 *            a proof tree node
+	 * @throws RodinDBException
+	 */
+	public abstract void selectNode(IProofTreeNode pt) throws RodinDBException;
+
+	/**
+	 * Apply a tactic to the current proof obligation to a set of hypothesis
+	 * <p>
+	 * 
+	 * @param t
+	 *            a proof tactic
+	 * @param hyps
+	 *            a set of hypothesis
+	 * @param monitor
+	 *            a progress monitor
+	 * @throws RodinDBException
+	 */
+	public abstract void applyTacticToHypotheses(final ITactic t,
+			final Set<Predicate> hyps, final IProgressMonitor monitor)
+			throws RodinDBException;
+
+	/**
+	 * Apply a tactic to the current proof obligation
+	 * <p>
+	 * 
+	 * @param t
+	 *            a proof tactic
+	 * @param monitor
+	 *            a progress monitor
+	 * @throws RodinDBException
+	 */
+	public abstract void applyTactic(final ITactic t,
+			final IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Backtracking from the current proof tree node in the current proof
+	 * obligation.
+	 * <p>
+	 * 
+	 * @param monitor
+	 *            a progress monitor
+	 * @throws RodinDBException
+	 *             a Rodin Exception
+	 */
+	public abstract void back(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Set a comment for at a proof tree node.
@@ -260,29 +241,9 @@ public interface IUserSupport extends IElementChangedListener,
 	 *            a Sring (comment)
 	 * @param node
 	 *            a proof tree node
+	 * @throws RodinDBException
 	 */
-	public abstract void setComment(String text, IProofTreeNode node);
-
-	/**
-	 * Return all the proof obligations which are managed by this User Support.
-	 * <p>
-	 * 
-	 * @return a collection of proof state stored in this User Support
-	 */
-	public abstract Collection<IProofState> getPOs();
-
-	/**
-	 * Return the current input of the User Support which is a psFile.
-	 * <p>
-	 * 
-	 * @return the input psFile of this User Support
-	 */
-	public abstract IPSFile getInput();
-
-	/**
-	 * Dispose the user support. Should be used only by the User Support
-	 * Manager.
-	 */
-	public abstract void dispose();
+	public abstract void setComment(String text, IProofTreeNode node)
+			throws RodinDBException;
 
 }

@@ -65,13 +65,12 @@ import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.basis.PSStatus;
 import org.eventb.core.pm.IProofState;
-import org.eventb.core.pm.IProofStateChangedListener;
-import org.eventb.core.pm.IProofStateDelta;
-import org.eventb.core.pm.IUSManagerListener;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportManagerChangedListener;
+import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
-import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.TimerText;
@@ -95,8 +94,7 @@ import org.rodinp.core.RodinDBException;
  *         model using a content provider.
  */
 public class ObligationExplorer extends ViewPart implements
-		ISelectionChangedListener, IUSManagerListener,
-		IProofStateChangedListener {
+		ISelectionChangedListener, IUserSupportManagerChangedListener {
 //	private TreeColumn column;
 
 	/**
@@ -109,21 +107,21 @@ public class ObligationExplorer extends ViewPart implements
 //	private static final int MAX_WIDTH = 500;
 
 	// The tree viewer to display the structure of projects, components, etc.
-	private TreeViewer viewer;
+	TreeViewer fViewer;
 
 	// Group of action that is used.
-	private ObligationExplorerActionGroup groupActionSet;
+	ObligationExplorerActionGroup groupActionSet;
 
 	// A flag to indicate if the selection is made externally.
 	private boolean byExternal;
 
-	private ToolItem exclude;
+	ToolItem exclude;
 
-	private ToolItem discharge;
+	ToolItem discharge;
 
-	private Text filterText;
+	Text filterText;
 
-	private static int NULL = 0;
+	static int NULL = 0;
 
 	private static int UNATTEMPTED = 1;
 
@@ -137,9 +135,9 @@ public class ObligationExplorer extends ViewPart implements
 
 	private static int DISCHARGED_BROKEN = 6;
 
-	private static int DISCHARGED;
+	static int DISCHARGED;
 
-	private class ObligationTextFilter extends ViewerFilter {
+	class ObligationTextFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,
@@ -160,7 +158,7 @@ public class ObligationExplorer extends ViewPart implements
 
 	}
 
-	private class DischargedFilter extends ViewerFilter {
+	class DischargedFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,
@@ -188,7 +186,7 @@ public class ObligationExplorer extends ViewPart implements
 
 	}
 
-	private int getStatus(IPSStatus status) throws RodinDBException {
+	int getStatus(IPSStatus status) throws RodinDBException {
 		// Try to synchronize with the proof tree in memory
 		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
 				.getUserSupports();
@@ -196,7 +194,7 @@ public class ObligationExplorer extends ViewPart implements
 		for (IUserSupport userSupport : userSupports) {
 			// UIUtils.debugObligationExplorer("Get US: "
 			// + userSupport);
-			Collection<IProofState> proofStates = userSupport.getPOs();
+			IProofState [] proofStates = userSupport.getPOs();
 			for (IProofState proofState : proofStates) {
 				if (proofState.getPRSequent().equals(status)) {
 					IProofTree tree = proofState.getProofTree();
@@ -277,14 +275,6 @@ public class ObligationExplorer extends ViewPart implements
 		byExternal = false;
 	}
 
-	private void registerUserSupports() {
-		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
-				.getUserSupports();
-		for (IUserSupport userSupport : userSupports) {
-			userSupport.addStateChangedListeners(this);
-		}
-	}
-
 	/**
 	 * Get the contained tree viewer
 	 * <p>
@@ -292,7 +282,7 @@ public class ObligationExplorer extends ViewPart implements
 	 * @return a tree viewer
 	 */
 	public TreeViewer getTreeViewer() {
-		return viewer;
+		return fViewer;
 	}
 
 	/**
@@ -321,7 +311,7 @@ public class ObligationExplorer extends ViewPart implements
 					for (IUserSupport userSupport : userSupports) {
 						// UIUtils.debugObligationExplorer("Get US: "
 						// + userSupport);
-						Collection<IProofState> proofStates = userSupport
+						IProofState [] proofStates = userSupport
 								.getPOs();
 						for (IProofState proofState : proofStates) {
 							if (proofState.getPRSequent().equals(element)) {
@@ -403,7 +393,7 @@ public class ObligationExplorer extends ViewPart implements
 				for (IUserSupport userSupport : userSupports) {
 					// UIUtils.debugObligationExplorer("Get US: " +
 					// userSupport);
-					Collection<IProofState> proofStates = userSupport.getPOs();
+					IProofState [] proofStates = userSupport.getPOs();
 					for (IProofState proofState : proofStates) {
 						if (proofState.getPRSequent().equals(obj)) {
 							if (proofState.isDirty())
@@ -419,6 +409,7 @@ public class ObligationExplorer extends ViewPart implements
 			return obj.toString();
 		}
 
+		@Override
 		public void dispose() {
 			JFaceResources.getFontRegistry().removeListener(this);
 			super.dispose();
@@ -451,7 +442,7 @@ public class ObligationExplorer extends ViewPart implements
 				for (IUserSupport userSupport : userSupports) {
 					// UIUtils.debugObligationExplorer("Get US: " +
 					// userSupport);
-					Collection<IProofState> proofStates = userSupport.getPOs();
+					IProofState [] proofStates = userSupport.getPOs();
 					for (IProofState proofState : proofStates) {
 						if (proofState.getPRSequent().equals(element)) {
 							if (proofState.isDirty())
@@ -472,7 +463,7 @@ public class ObligationExplorer extends ViewPart implements
 					.equals(PreferenceConstants.EVENTB_MATH_FONT)) {
 				if (event.getProperty().equals(
 						PreferenceConstants.EVENTB_MATH_FONT)) {
-					viewer.refresh();
+					fViewer.refresh();
 				}
 			}
 		}
@@ -492,7 +483,7 @@ public class ObligationExplorer extends ViewPart implements
 					ObligationExplorerUtils.debug("Status "
 							+ exclude.getSelection());
 				}
-				viewer.refresh();
+				fViewer.refresh();
 //				column.pack();
 //				column.setWidth(MAX_WIDTH);
 			}
@@ -512,7 +503,7 @@ public class ObligationExplorer extends ViewPart implements
 					ObligationExplorerUtils.debug("Status "
 							+ exclude.getSelection());
 				}
-				viewer.refresh();
+				fViewer.refresh();
 //				column.pack();
 //				column.setWidth(MAX_WIDTH);
 			}
@@ -538,7 +529,7 @@ public class ObligationExplorer extends ViewPart implements
 
 			@Override
 			protected void response() {
-				viewer.refresh();
+				fViewer.refresh();
 			}
 
 		};
@@ -558,6 +549,7 @@ public class ObligationExplorer extends ViewPart implements
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		FormLayout layout = new FormLayout();
 		parent.setLayout(layout);
@@ -571,23 +563,23 @@ public class ObligationExplorer extends ViewPart implements
 		createToolItem(coolBar);
 		createText(coolBar);
 
-		viewer = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL
+		fViewer = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL
 				| SWT.V_SCROLL);
-		viewer.setContentProvider(new ObligationExplorerContentProvider(this));
-		viewer.setLabelProvider(new ObligationLabelProvider());
-		viewer.setSorter(new ElementSorter());
-		viewer.addFilter(new ObligationTextFilter());
-		viewer.addFilter(new DischargedFilter());
+		fViewer.setContentProvider(new ObligationExplorerContentProvider(this));
+		fViewer.setLabelProvider(new ObligationLabelProvider());
+		fViewer.setSorter(new ElementSorter());
+		fViewer.addFilter(new ObligationTextFilter());
+		fViewer.addFilter(new DischargedFilter());
 		FormData textData = new FormData();
 		textData.left = new FormAttachment(0);
 		textData.right = new FormAttachment(100);
 		textData.top = new FormAttachment(coolBar);
 		textData.bottom = new FormAttachment(100);
-		viewer.getControl().setLayoutData(textData);
-		Tree tree = viewer.getTree();
+		fViewer.getControl().setLayoutData(textData);
+		Tree tree = fViewer.getTree();
 		tree.setHeaderVisible(false);
 //		column = new TreeColumn(tree, SWT.LEFT);
-		viewer.setInput(EventBUIPlugin.getRodinDatabase());
+		fViewer.setInput(EventBUIPlugin.getRodinDatabase());
 //		column.pack();
 //		column.setWidth(MAX_WIDTH);
 
@@ -599,21 +591,20 @@ public class ObligationExplorer extends ViewPart implements
 				IPSStatus prSequent = ((ProverUI) editor)
 						.getCurrentProverSequent();
 				if (prSequent != null) {
-					viewer.setSelection(new StructuredSelection(prSequent));
-					viewer.reveal(prSequent);
+					fViewer.setSelection(new StructuredSelection(prSequent));
+					fViewer.reveal(prSequent);
 				} else {
 					IRodinFile prFile = ((ProverUI) editor).getRodinInput();
-					viewer.setSelection(new StructuredSelection(prFile));
-					viewer.reveal(prFile);
+					fViewer.setSelection(new StructuredSelection(prFile));
+					fViewer.reveal(prFile);
 				}
 			}
 		}
-		viewer.addSelectionChangedListener(this);
+		fViewer.addSelectionChangedListener(this);
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
-		EventBPlugin.getDefault().getUserSupportManager().addUSManagerListener(this);
-		registerUserSupports();
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(this);
 	}
 
 	/**
@@ -624,15 +615,15 @@ public class ObligationExplorer extends ViewPart implements
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				groupActionSet.setContext(new ActionContext(viewer
+				groupActionSet.setContext(new ActionContext(fViewer
 						.getSelection()));
 				groupActionSet.fillContextMenu(manager);
 				groupActionSet.setContext(null);
 			}
 		});
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
+		Menu menu = menuMgr.createContextMenu(fViewer.getControl());
+		fViewer.getControl().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, fViewer);
 	}
 
 	/**
@@ -684,15 +675,16 @@ public class ObligationExplorer extends ViewPart implements
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
-		viewer.getControl().setFocus();
+		fViewer.getControl().setFocus();
 	}
 
 	/**
 	 * Refersh the view by refreshing the tree viewer.
 	 */
 	public void refresh() {
-		viewer.refresh();
+		fViewer.refresh();
 //		column.pack();
 //		column.setWidth(MAX_WIDTH);
 	}
@@ -716,7 +708,7 @@ public class ObligationExplorer extends ViewPart implements
 			if (!ssel.isEmpty()) {
 				// UIUtils.debugObligationExplorer("Activate UI "
 				// + ssel.toString());
-				ISelection selection = viewer.getSelection();
+				ISelection selection = fViewer.getSelection();
 				Object obj = ((IStructuredSelection) selection)
 						.getFirstElement();
 
@@ -751,77 +743,44 @@ public class ObligationExplorer extends ViewPart implements
 	 */
 	public void externalSetSelection(Object obj) {
 		byExternal = true;
-		if (!((IStructuredSelection) viewer.getSelection()).toList().contains(
+		if (!((IStructuredSelection) fViewer.getSelection()).toList().contains(
 				obj)) {
 			if (ObligationExplorerUtils.DEBUG)
 				ObligationExplorerUtils.debug("Set new Selection");
-			viewer.getControl().setRedraw(false);
-			viewer.setSelection(new StructuredSelection(obj));
-			viewer.getControl().setRedraw(true);
+			fViewer.getControl().setRedraw(false);
+			fViewer.setSelection(new StructuredSelection(obj));
+			fViewer.getControl().setRedraw(true);
 		}
 		byExternal = false;
 	}
 
-	public void USManagerChanged(final IUserSupport userSupport, final int status) {
+	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 
-		Control control = viewer.getControl();
+		Control control = fViewer.getControl();
 		if (control.isDisposed())
 			return;
 
+		
 		Display display = control.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				if (ObligationExplorerUtils.DEBUG)
-					ObligationExplorerUtils.debug("Obligation Explorer: "
-							+ userSupport + " : " + status);
-				if (status == IUSManagerListener.ADDED) {
-					userSupport
-							.addStateChangedListeners(ObligationExplorer.this);
-				}
-				if (status == IUSManagerListener.REMOVED) {
-					userSupport
-							.removeStateChangedListeners(ObligationExplorer.this);
-				}
-				viewer.refresh(userSupport.getInput());
-			}
-		});
-	}
-
-	public void proofStateChanged(final IProofStateDelta delta) {
-
-		Display display = Display.getDefault();
-		display.syncExec(new Runnable() {
-			public void run() {
-				if (ObligationExplorerUtils.DEBUG)
-					ObligationExplorerUtils
-							.debug("Obligation Exprlorer: Proof Changed "
-									+ delta);
-				final IProofState ps = delta.getProofState();
-
-				final IUserSupport userSupport = delta.getSource();
-				if (viewer.getControl().isDisposed())
-					return;
-				viewer.refresh(userSupport.getInput(), true);
-//				column.pack();
-//				column.setWidth(MAX_WIDTH);
-				if (delta.isNewProofState()) {
-
-					if (ps != null) {
-						IPSStatus prSequent = ps.getPRSequent();
-						externalSetSelection(prSequent);
-					} else { // Empty selection
-						clearSelection();
-					}
-				} else if (delta.isDeleted()) {
-					// Do nothing
-				} else {
-					IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
-					if (proofTreeDelta != null) {
-						IProofState state = userSupport.getCurrentPO();
-						IPSStatus prSequent = state.getPRSequent();
-						viewer.refresh(prSequent, true);
-//						column.pack();
-//						column.setWidth(MAX_WIDTH);
+				IUserSupportDelta[] affectedUserSupports = delta.getAffectedUserSupports();
+				for (IUserSupportDelta affectedUserSupport : affectedUserSupports) {
+					fViewer.refresh(affectedUserSupport.getUserSupport().getInput());
+					int kind = affectedUserSupport.getKind();
+					if (kind == IUserSupportDelta.CHANGED) {
+						int flags = affectedUserSupport.getFlags();
+						if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
+							IProofState ps = affectedUserSupport.getUserSupport().getCurrentPO();
+							if (ps != null) {
+								IPSStatus prSequent = ps.getPRSequent();
+								externalSetSelection(prSequent);
+							} else { // Empty selection
+								clearSelection();
+							}
+							
+						}
+								
 					}
 				}
 			}
@@ -830,22 +789,17 @@ public class ObligationExplorer extends ViewPart implements
 
 	@Override
 	public void dispose() {
-		if (viewer == null)
+		if (fViewer == null)
 			return;
-		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
-				.getUserSupports();
-		for (IUserSupport userSupport : userSupports) {
-			userSupport.removeStateChangedListeners(this);
-		}
-		EventBPlugin.getDefault().getUserSupportManager().removeUSManagerListener(this);
-		viewer.removeSelectionChangedListener(this);
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(this);
+		fViewer.removeSelectionChangedListener(this);
 		super.dispose();
 	}
 
-	private void clearSelection() {
-		viewer.getControl().setRedraw(false);
-		viewer.setSelection(new StructuredSelection());
-		viewer.getControl().setRedraw(true);
+	void clearSelection() {
+		fViewer.getControl().setRedraw(false);
+		fViewer.setSelection(new StructuredSelection());
+		fViewer.getControl().setRedraw(true);
 	}
 
 }
