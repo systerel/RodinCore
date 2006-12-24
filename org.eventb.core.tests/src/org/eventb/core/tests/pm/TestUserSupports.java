@@ -3,356 +3,738 @@
  */
 package org.eventb.core.tests.pm;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eventb.core.EventBPlugin;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IPOFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
-import org.eventb.core.pm.IProofStateChangedListener;
-import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.IUserSupportManager;
-import org.eventb.core.seqprover.IConfidence;
-import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.pm.TypeEnvironmentSorter;
+import org.eventb.internal.core.pm.UserSupport;
+import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.RodinDBException;
-
-import com.b4free.rodin.core.B4freeCore;
 
 /**
  * Unit tests for class {@link TypeEnvironmentSorter}
  * 
  * @author Laurent Voisin
  */
-public class TestUserSupports extends BasicTest {
+public class TestUserSupports extends TestPM {
 
-	IUserSupportManager manager;
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		manager = EventBPlugin.getPlugin().getUserSupportManager();
+	private void assertDischarged(IProofState state) throws RodinDBException {
+		assertTrue("PR " + state.getPRSequent().getElementName()
+				+ " should be closed", state.isClosed());
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	private void assertNotDischarged(IProofState state) throws RodinDBException {
+		assertFalse("PR " + state.getPRSequent().getElementName()
+				+ " should not be closed", state.isClosed());
 	}
 
-	public void testUserSupportFullProve() throws RodinDBException, CoreException {
-		IMachineFile machine = createMachine("m0");
-		addVariables(machine, "v0");
-		addInvariants(machine, makeSList("inv0"), makeSList("v0 ∈ ℕ"));
-		addEvent(machine, "INITIALISATION", makeSList(), makeSList(),
-				makeSList(), makeSList("act1"), makeSList("v0 ≔ 0"));
-		machine.save(null, true);
+	public void testSetInput() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
 
+		AutoProver.enable();
 		runBuilder();
-		IPSFile psFile = (IPSFile) rodinProject.getRodinFile(EventBPlugin
-				.getPSFileName("m0"));
 
-		IUserSupport userSupport = manager.newUserSupport();
-		manager.setInput(userSupport, psFile, new NullProgressMonitor());
+		IUserSupport userSupport = new UserSupport();
 
-		Collection<IProofState> proofStates = userSupport.getPOs();
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
 
-		// The number of Proof State is the same as the number of Proof Statuses
-		assertEquals("Wrong number of POs", proofStates.size(), psFile
-				.getStatuses().length);
-
-		// Initially if the proof is close then it is uninitialise
-		// Only the current PO is initialised
-		IProofState currentPO = userSupport.getCurrentPO();
-		for (IProofState state : proofStates) {
-			if (state != currentPO)
-				assertEquals("Uninitialised ", true, state.isUninitialised());
-			else
-				assertEquals("Uninitialised ", false, state.isUninitialised());
+		// Checks that all POs are discharged except the last one.
+		IProofState[] states = userSupport.getPOs();
+		for (int i = 0; i < states.length - 1; i++) {
+			IProofState state = states[i];
+			assertDischarged(state);
 		}
+		assertNotDischarged(states[states.length - 1]);
 
-		// Current PO is not closed and not discharge
-		if (currentPO != null) {
-			assertEquals("Sequent discharged: ", false, currentPO
-					.isSequentDischarged());
-			assertEquals("Proof State closed: ", false, currentPO.isClosed());
-		}
-
-		// The current node is open (no rule applied)
-		IProofTreeNode node = currentPO.getCurrentNode();
-		assertEquals("Current node is open ", true, node.isOpen());
-
-		// Test apply ah, there will be 3 children, the first one close and the
-		// last 2 is open
-		ITactic ah = Tactics.lemma("1 = 1");
-		userSupport.applyTactic(ah, new NullProgressMonitor());
-
-		// Node now has a rule applied to it
-		assertEquals("Node now is not open ", false, node.isOpen());
-		// Node is still not close
-		assertEquals("Node is not close", false, node.isClosed());
-
-		// The new node is the first open children
-		IProofTreeNode newNode = currentPO.getCurrentNode();
-		assertEquals("New current node is open ", true, newNode.isOpen());
-		assertEquals("New node is a child of old node ", node, newNode
-				.getParent());
-
-		// Try to review the node
-		ITactic review = Tactics.review(IConfidence.REVIEWED_MAX);
-		userSupport.applyTactic(review, new NullProgressMonitor());
-
-		// Node now is not open
-		assertEquals("New node now is not open ", false, newNode.isOpen());
-
-		// Node is now closed (reviewed)
-		assertEquals("New node is now close ", true, newNode.isClosed());
-
-		// Check the confidence level
-		int confidence = newNode.getConfidence();
-		assertEquals("Confident level ", IConfidence.REVIEWED_MAX, confidence);
-		// There is no children when review
-		assertEquals("New node has children ", 0,
-				newNode.getChildNodes().length);
-
-		// The current node should be the second children of the "ah" node
-		IProofTreeNode currNode = currentPO.getCurrentNode();
-		assertEquals("Current node is a children of the original node ", node,
-				currNode.getParent());
-
-		// Apply ml to prove
-		final int forces = B4freeCore.ML_FORCE_0 | B4freeCore.ML_FORCE_1
-				| B4freeCore.ML_FORCE_2 | B4freeCore.ML_FORCE_3;
-		ITactic ml = B4freeCore.externalML(forces);
-
-		userSupport.applyTactic(ml, new NullProgressMonitor());
-
-		// ml should be successful
-		assertEquals("New node now is not open ", false, currNode.isOpen());
-		assertEquals("New node is now close ", true, currNode.isClosed());
-		assertEquals("New node has children ", 0,
-				currNode.getChildNodes().length);
-
-		// No more open node, the current node must be the same
-		assertEquals("Current node is unchaged ", currNode, currentPO
-				.getCurrentNode());
-
-		// Proof is done
-		assertEquals("Proof is done ", true, currentPO.isClosed());
-
-		// Dispose the user Support
-		manager.disposeUserSupport(userSupport);
+		assertEquals("Current PO is the last PO", states[states.length - 1],
+				userSupport.getCurrentPO());
+		assertInformation("Select a new PO ", "Obligation changed", userSupport
+				.getInformation());
+		userSupport.dispose();
 	}
 
-	public void testUserSupportApplyTactic() throws RodinDBException,
-			CoreException {
-		IMachineFile machine = createMachine("m0");
-		addVariables(machine, "v0");
-		addInvariants(machine, makeSList("inv0"), makeSList("v0 ∈ ℕ"));
-		addEvent(machine, "INITIALISATION", makeSList(), makeSList(),
-				makeSList(), makeSList("act1"), makeSList("v0 ≔ 0"));
-		machine.save(null, true);
+	public void testGetInput() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
 
+		AutoProver.enable();
 		runBuilder();
-		IPSFile psFile = (IPSFile) rodinProject.getRodinFile(EventBPlugin
-				.getPSFileName("m0"));
 
-		IUserSupport userSupport = manager.newUserSupport();
-		manager.setInput(userSupport, psFile, new NullProgressMonitor());
+		IUserSupport userSupport = new UserSupport();
 
-		IProofStateChangedListener listener = new UserSupportListener();
-		userSupport.addStateChangedListeners(listener);
+		NullProgressMonitor monitor = new NullProgressMonitor();
 
-		// Test apply ah, there will be 3 children, the first one close and the
-		// last 2 is open
-		ITactic ah = Tactics.lemma("1 = 1");
-		userSupport.applyTactic(ah, new NullProgressMonitor());
+		IPSFile input = userSupport.getInput();
 
-		IProofState currentPO = userSupport.getCurrentPO();
-		// Check delta
+		assertNull("Input for user support has not been set ", input);
 
-		assertEquals("Source is the current User Support ", userSupport,
-				actualUserSupport);
-		assertNotNull("ProofTree is changed ", actualProofTreeDelta);
-		assertNotNull("Proof Tree Node is changed ", actualProofTreeNode);
-		assertEquals("New Proof Tree Node", currentPO.getCurrentNode(),
-				actualProofTreeNode);
-		assertEquals("No new cache ", false, actualCache);
-		assertEquals("No new search ", false, actualSearch);
-		assertNull("No new proof state ", actualState);
-		assertNotSame("Information is not empty ", 0, actualInformation.size());
+		userSupport.setInput(psFile, monitor);
+
+		input = userSupport.getInput();
+
+		assertEquals("Input for user support has been set ", psFile, input);
+
+		userSupport.dispose();
 	}
 
-	public void testUserSupportSearchHypothesis() throws RodinDBException,
-			CoreException {
-		IMachineFile machine = createMachine("m0");
-		addVariables(machine, "v0");
-		addInvariants(machine, makeSList("inv0"), makeSList("v0 ∈ ℕ"));
-		addEvent(machine, "INITIALISATION", makeSList(), makeSList(),
-				makeSList(), makeSList("act1"), makeSList("v0 ≔ 0"));
-		machine.save(null, true);
+	public void testNextUndischargedPOUnforce() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
 
+		AutoProver.enable();
 		runBuilder();
-		IPSFile psFile = (IPSFile) rodinProject.getRodinFile(EventBPlugin
-				.getPSFileName("m0"));
 
-		IUserSupport userSupport = manager.newUserSupport();
-		manager.setInput(userSupport, psFile, new NullProgressMonitor());
+		IUserSupport userSupport = new UserSupport();
 
-		IProofStateChangedListener listener = new UserSupportListener();
-		userSupport.addStateChangedListeners(listener);
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
 
-		userSupport.searchHyps("");
+		// Checks that all POs are discharged except the last one.
 
-		// Check delta
+		IProofState[] states = userSupport.getPOs();
 
-		assertEquals("Source is the current User Support ", userSupport,
-				actualUserSupport);
-		assertNull("ProofTree is unchanged ", actualProofTreeDelta);
-		assertNull("Proof Tree Node unchanged", actualProofTreeNode);
-		assertEquals("No new cache ", false, actualCache);
-		assertEquals("New search ", true, actualSearch);
-		assertNull("No new proof state ", actualState);
-		assertNotSame("Information is not empty ", 0, actualInformation.size());
+		userSupport.nextUndischargedPO(false, monitor);
 
+		assertEquals("Current PO is still the last PO",
+				states[states.length - 1], userSupport.getCurrentPO());
+		assertInformation("No undischarged PO ", "No new obligation",
+				userSupport.getInformation());
+
+		// Prune the first PO
+		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.applyTactic(Tactics.prune(), monitor);
+
+		userSupport.nextUndischargedPO(false, monitor);
+
+		assertEquals("Current Proof State is now the last PO",
+				states[states.length - 1], userSupport.getCurrentPO());
+		assertInformation("Select new PO (last PO) ", "Obligation changed",
+				userSupport.getInformation());
+
+		userSupport.nextUndischargedPO(false, monitor);
+
+		assertEquals("Current Proof State is now the first PO", states[0],
+				userSupport.getCurrentPO());
+		assertInformation("Select new PO (first PO) ", "Obligation changed",
+				userSupport.getInformation());
+
+		userSupport.dispose();
 	}
 
-	public void testUserSupportApplyToHypothesis() throws RodinDBException,
-			CoreException {
-		IMachineFile machine = createMachine("m0");
-		addVariables(machine, "v0");
-		addInvariants(machine, makeSList("inv0"), makeSList("v0 ∈ ℕ"));
-		addEvent(machine, "INITIALISATION", makeSList(), makeSList(),
-				makeSList(), makeSList("act1"), makeSList("v0 ≔ 0"));
-		machine.save(null, true);
+	public void testNextUndischargedPOForce() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
 
+		AutoProver.enable();
 		runBuilder();
-		IPSFile psFile = (IPSFile) rodinProject.getRodinFile(EventBPlugin
-				.getPSFileName("m0"));
 
-		IUserSupport userSupport = manager.newUserSupport();
-		manager.setInput(userSupport, psFile, new NullProgressMonitor());
+		IUserSupport userSupport = new UserSupport();
 
-		IProofStateChangedListener listener = new UserSupportListener();
-		userSupport.addStateChangedListeners(listener);
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
 
+		// Checks that all POs are discharged except the last one.
+
+		userSupport.applyTactic(Tactics.review(1), monitor);
+
+		IProofState[] states = userSupport.getPOs();
+
+		userSupport.nextUndischargedPO(true, monitor);
+
+		assertNull("Current PO is null", userSupport.getCurrentPO());
+		assertInformation("No undischarged PO ", "Obligation changed\n"
+				+ "No un-discharged proof obligation found", userSupport
+				.getInformation());
+
+		// Prune the last PO
+		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+				monitor);
+		userSupport.applyTactic(Tactics.prune(), monitor);
+
+		userSupport.nextUndischargedPO(true, monitor);
+
+		assertEquals("Current Proof State is now the last PO",
+				states[states.length - 1], userSupport.getCurrentPO());
+		assertInformation("Select new PO (last PO) ", "No new obligation",
+				userSupport.getInformation());
+
+		// Prune the first PO
+		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.applyTactic(Tactics.prune(), monitor);
+
+		userSupport.nextUndischargedPO(true, monitor);
+
+		assertEquals("Current Proof State is now the last PO",
+				states[states.length - 1], userSupport.getCurrentPO());
+		assertInformation("Select new PO (last PO) ", "Obligation changed",
+				userSupport.getInformation());
+
+		userSupport.nextUndischargedPO(true, monitor);
+
+		assertEquals("Current Proof State is now the first PO", userSupport
+				.getCurrentPO(), states[0]);
+		assertInformation("Select new PO (first PO) ", "Obligation changed",
+				userSupport.getInformation());
+
+		userSupport.dispose();
+	}
+
+	public void testPrevUndischargedPOUnforce() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
+
+		AutoProver.enable();
+		runBuilder();
+
+		IUserSupport userSupport = new UserSupport();
+
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
+
+		IProofState[] states = userSupport.getPOs();
+
+		userSupport.prevUndischargedPO(false, monitor);
+
+		assertEquals("Current PO is still the last PO",
+				states[states.length - 1], userSupport.getCurrentPO());
+		assertInformation("No undischarged PO ", "No new obligation",
+				userSupport.getInformation());
+
+		// Prune the first PO
+		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.applyTactic(Tactics.prune(), monitor);
+
+		userSupport.prevUndischargedPO(false, monitor);
+
+		assertEquals("Current Proof State is now the last PO",
+				states[states.length - 1], userSupport.getCurrentPO());
+		assertInformation("Select new PO (last PO) ", "Obligation changed",
+				userSupport.getInformation());
+
+		userSupport.prevUndischargedPO(false, monitor);
+
+		assertEquals("Current Proof State is now the first PO", states[0],
+				userSupport.getCurrentPO());
+		assertInformation("Select new PO (first PO) ", "Obligation changed",
+				userSupport.getInformation());
+
+		userSupport.dispose();
+	}
+
+	public void testPrevUndischargedPOForce() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
+
+		AutoProver.enable();
+		runBuilder();
+
+		IUserSupport userSupport = new UserSupport();
+
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
+
+		userSupport.applyTactic(Tactics.review(1), monitor);
 		userSupport.searchHyps("");
 		// Check delta
 
 		Collection<Predicate> hypotheses = userSupport.getCurrentPO()
 				.getSearched();
+		IProofState[] states = userSupport.getPOs();
+		userSupport.prevUndischargedPO(true, monitor);
 
-		if (hypotheses.size() == 0)
-			return;
+		assertNull("Current PO is null", userSupport.getCurrentPO());
+		assertInformation("No undischarged PO ", "Obligation changed\n"
+				+ "No un-discharged proof obligation found", userSupport
+				.getInformation());
 
-		ITactic contradictHyp = Tactics.contradiction();
 		Set<Predicate> hyps = new HashSet<Predicate>();
 		Predicate hypothesis = (Predicate) hypotheses.toArray()[0];
 		hyps.add(hypothesis);
 
-		userSupport.applyTacticToHypotheses(contradictHyp, hyps,
-				new NullProgressMonitor());
+		// Prune the last PO
+		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+				monitor);
+		userSupport.applyTactic(Tactics.prune(), monitor);
 
-		IProofState currentPO = userSupport.getCurrentPO();
+		userSupport.prevUndischargedPO(true, monitor);
 
-		assertEquals("Source is the current User Support ", userSupport,
-				actualUserSupport);
-		assertNotNull("ProofTree is changed ", actualProofTreeDelta);
-		assertNotNull("Proof Tree Node changed", actualProofTreeNode);
-		assertEquals("New Proof Tree Node", currentPO.getCurrentNode(),
-				actualProofTreeNode);
-		// The hypothesis is added to cache
-		assertEquals("New cache ", true, actualCache);
-		assertEquals("Hypothesis is added to cache ", true, currentPO
-				.getCached().contains(hypothesis));
+		assertEquals("Current Proof State is now the last PO",
+				states[states.length - 1], userSupport.getCurrentPO());
+		assertInformation("Select new PO (last PO) ", "No new obligation",
+				userSupport.getInformation());
 
-		assertEquals("No new search ", false, actualSearch);
-		assertNull("No new proof state ", actualState);
-		assertNotSame("Information is not empty ", 0, actualInformation.size());
+		// Prune the first PO
+		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.applyTactic(Tactics.prune(), monitor);
+
+		userSupport.prevUndischargedPO(true, monitor);
+
+		assertEquals("Current Proof State is now the last PO",
+				states[states.length - 1], userSupport.getCurrentPO());
+		assertInformation("Select new PO (last PO) ", "Obligation changed",
+				userSupport.getInformation());
+
+		userSupport.prevUndischargedPO(true, monitor);
+
+		assertEquals("Current Proof State is now the first PO", userSupport
+				.getCurrentPO(), states[0]);
+		assertInformation("Select new PO (first PO) ", "Obligation changed",
+				userSupport.getInformation());
+
+		userSupport.dispose();
 	}
 
-	public void testUserSupportBackTrack() throws RodinDBException,
-			CoreException {
-		IMachineFile machine = createMachine("m0");
-		addVariables(machine, "v0");
-		addInvariants(machine, makeSList("inv0"), makeSList("v0 ∈ ℕ"));
-		addEvent(machine, "INITIALISATION", makeSList(), makeSList(),
-				makeSList(), makeSList("act1"), makeSList("v0 ≔ 0"));
-		machine.save(null, true);
+	public void testSetAndGetCurrentPO() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
 
+		AutoProver.enable();
 		runBuilder();
-		IPSFile psFile = (IPSFile) rodinProject.getRodinFile(EventBPlugin
-				.getPSFileName("m0"));
 
-		IUserSupport userSupport = manager.newUserSupport();
-		manager.setInput(userSupport, psFile, new NullProgressMonitor());
+		IUserSupport userSupport = new UserSupport();
 
-		IProofStateChangedListener listener = new UserSupportListener();
-		userSupport.addStateChangedListeners(listener);
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
 
-		// Test apply ah, there will be 3 children, the first one close and the
-		// last 2 is open
-		ITactic ah = Tactics.lemma("1 = 1");
-		userSupport.applyTactic(ah, new NullProgressMonitor());
+		IProofState[] states = userSupport.getPOs();
 
-		IProofState currentPO = userSupport.getCurrentPO();
+		assertEquals("Current PO is the last PO ", states[states.length - 1],
+				userSupport.getCurrentPO());
 
-		IProofTreeNode currentNode = currentPO.getCurrentNode();
-		
-		IProofTreeNode parent = currentNode.getParent();
+		// Select first PO
+		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
 
-		userSupport.back(new NullProgressMonitor());
-		
-		// Check delta
+		assertEquals("Current PO is the first PO ", states[0], userSupport
+				.getCurrentPO());
+		assertInformation("Select first PO ", "Obligation changed", userSupport
+				.getInformation());
 
-		assertEquals("Source is the current User Support ", userSupport,
-				actualUserSupport);
-		assertNotNull("ProofTree is changed ", actualProofTreeDelta);
-		assertNotNull("Proof Tree Node changed", actualProofTreeNode);
-		// The node now is the parent of the last node
-		assertEquals("New Proof Tree Node", parent,
-				actualProofTreeNode);
-		// The hypothesis is added to cache
-		assertEquals("New cache ", false, actualCache);
-		assertEquals("No new search ", false, actualSearch);
-		assertNull("No new proof state ", actualState);
-		assertNotSame("Information is not empty ", 0, actualInformation.size());
+		// Select the last PO again
+		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+				monitor);
+
+		assertEquals("Current PO is the last PO again ",
+				states[states.length - 1], userSupport.getCurrentPO());
+		assertInformation("Select last PO ", "Obligation changed", userSupport
+				.getInformation());
+
+		userSupport.dispose();
 	}
 
-	IProofState actualState;
+	public void testGetPOs() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
 
-	IUserSupport actualUserSupport;
+		AutoProver.enable();
+		runBuilder();
 
-	IProofTreeDelta actualProofTreeDelta;
+		IUserSupport userSupport = new UserSupport();
 
-	List<Object> actualInformation;
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
 
-	IProofTreeNode actualProofTreeNode;
+		// Checks that all POs are consistent discharged except the last one.
+		IProofState[] states = userSupport.getPOs();
 
-	boolean actualCache;
+		assertEquals("There should be 7 POs ", 7, states.length);
 
-	boolean actualSearch;
+		userSupport.dispose();
+	}
 
-	private class UserSupportListener implements IProofStateChangedListener {
+	public void testHasUnsavedChanges() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
 
-		public void proofStateChanged(IProofStateDelta delta) {
-			actualState = delta.getProofState();
-			actualUserSupport = delta.getSource();
-			actualProofTreeDelta = delta.getProofTreeDelta();
-			actualInformation = delta.getInformation();
-			actualProofTreeNode = delta.getNewProofTreeNode();
-			actualCache = delta.getNewCache();
-			actualSearch = delta.getNewSearch();
+		AutoProver.enable();
+		runBuilder();
+
+		IUserSupport userSupport = new UserSupport();
+
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
+
+		assertFalse("Initially, there are no unsaved changes ", userSupport
+				.hasUnsavedChanges());
+
+		// Checks that all POs are discharged except the last one.
+
+		userSupport.applyTactic(Tactics.review(1), monitor);
+
+		assertTrue("There are unsaved changes after applying a tactic ",
+				userSupport.hasUnsavedChanges());
+
+		IProofState[] states = userSupport.getPOs();
+
+		userSupport.getCurrentPO().doSave(monitor);
+
+		assertFalse("After saving, there are no unsaved changes ", userSupport
+				.hasUnsavedChanges());
+
+		// Prune the last PO
+		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+				monitor);
+		userSupport.applyTactic(Tactics.prune(), monitor);
+
+		assertTrue("There are unsaved changes after pruning a proof ",
+				userSupport.hasUnsavedChanges());
+
+		userSupport.dispose();
+	}
+
+	public void testGetUnsavedPOs() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
+
+		AutoProver.enable();
+		runBuilder();
+
+		IUserSupport userSupport = new UserSupport();
+
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
+
+		IProofState[] unsavedPOs = userSupport.getUnsavedPOs();
+		assertEquals("Initially, there are no unsaved PO ", 0,
+				unsavedPOs.length);
+
+		userSupport.applyTactic(Tactics.review(1), monitor);
+		unsavedPOs = userSupport.getUnsavedPOs();
+		assertEquals("There are 1 unsaved changes after applying a tactic ", 1,
+				unsavedPOs.length);
+		IProofState[] states = userSupport.getPOs();
+
+		assertEquals("The unsavedPO is the last one ",
+				states[states.length - 1], unsavedPOs[0]);
+
+		userSupport.getCurrentPO().doSave(monitor);
+		unsavedPOs = userSupport.getUnsavedPOs();
+		assertEquals("After saving, there are no unsaved changes ", 0,
+				unsavedPOs.length);
+
+		// Prune the last PO
+		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+				monitor);
+		userSupport.applyTactic(Tactics.prune(), monitor);
+
+		// Prune the first PO
+		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.applyTactic(Tactics.prune(), monitor);
+
+		unsavedPOs = userSupport.getUnsavedPOs();
+		assertEquals("there are 2 unsaved PO ", 2, unsavedPOs.length);
+
+		assertContain("The first PO is unsaved ", unsavedPOs, states[0]);
+		assertContain("The last PO is unsaved ", unsavedPOs,
+				states[states.length - 1]);
+
+		userSupport.dispose();
+
+	}
+
+	private void assertContain(String msg, IProofState[] unsavedPOs,
+			IProofState state) {
+		boolean found = false;
+		for (IProofState unsavedPO : unsavedPOs) {
+			if (unsavedPO == state) {
+				found = true;
+				break;
+			}
 		}
 
+		assertTrue(msg, found);
 	}
+
+	public void testRemoveCachedHypotheses() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
+
+		AutoProver.enable();
+		runBuilder();
+
+		IUserSupport userSupport = new UserSupport();
+
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
+
+		userSupport.applyTactic(Tactics.lemma("1 = 1"), monitor);
+		userSupport.applyTactic(Tactics.norm(), monitor);
+		userSupport.applyTactic(Tactics.lemma("2 = 2"), monitor);
+		userSupport.applyTactic(Tactics.norm(), monitor);
+		IProofState currentPO = userSupport.getCurrentPO();
+		Set<Predicate> selectedHyps = currentPO.getCurrentNode().getSequent()
+				.selectedHypotheses();
+		assertTrue("Select is not empty ", selectedHyps.size() >= 2);
+
+		Iterator<Predicate> iterator = selectedHyps.iterator();
+		Predicate hyp1 = iterator.next();
+		Set<Predicate> hyps1 = new HashSet<Predicate>();
+		hyps1.add(hyp1);
+		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1,
+				monitor);
+
+		Collection<Predicate> cached = currentPO.getCached();
+		assertTrue("Cache has 1 element ", cached.size() == 1);
+
+		Set<Predicate> hyps2 = new HashSet<Predicate>();
+		Predicate hyp2 = iterator.next();
+		hyps2.add(hyp2);
+		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp2), hyps2,
+				monitor);
+
+		cached = currentPO.getCached();
+		assertTrue("Cache has 2 elements ", cached.size() == 2);
+
+		userSupport.removeCachedHypotheses(hyps1);
+		assertInformation("First hypothesis has been removed ",
+				"Removed hypotheses from cache", userSupport.getInformation());
+
+		cached = currentPO.getCached();
+		assertTrue("Cache has 1 element ", cached.size() == 1);
+		assertTrue("Cache contains the second hyp ", cached.contains(hyp2));
+
+		userSupport.removeCachedHypotheses(hyps2);
+		cached = currentPO.getCached();
+		assertTrue("Cache is now empty ", cached.size() == 0);
+		assertInformation("Second hypothesis has been removed ",
+				"Removed hypotheses from cache", userSupport.getInformation());
+
+		userSupport.dispose();
+	}
+
+	public void testSearchHypotheses() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
+
+		AutoProver.enable();
+		runBuilder();
+
+		IUserSupport userSupport = new UserSupport();
+
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
+
+		IProofState currentPO = userSupport.getCurrentPO();
+
+		userSupport.searchHyps("=");
+
+		Collection<Predicate> searched = currentPO.getSearched();
+		assertTrue("Search size is 3 ", searched.size() == 3);
+
+		assertInformation("Search hypothesis ", "Search hypotheses",
+				userSupport.getInformation());
+
+		userSupport.searchHyps("Empty search");
+
+		searched = currentPO.getSearched();
+		assertTrue("Search is empty ", searched.size() == 0);
+
+		assertInformation("Search hypothesis ", "Search hypotheses",
+				userSupport.getInformation());
+
+		userSupport.dispose();
+	}
+
+	public void testRemoveSearchedHypotheses() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
+
+		AutoProver.enable();
+		runBuilder();
+
+		IUserSupport userSupport = new UserSupport();
+
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
+
+		userSupport.searchHyps("=");
+
+		IProofState currentPO = userSupport.getCurrentPO();
+		Collection<Predicate> searched = currentPO.getSearched();
+
+		assertTrue("Search has 3 elements ", searched.size() == 3);
+
+		Iterator<Predicate> iterator = searched.iterator();
+		Predicate hyp1 = iterator.next();
+		Predicate hyp2 = iterator.next();
+		Predicate hyp3 = iterator.next();
+
+		Collection<Predicate> hyps2 = new ArrayList<Predicate>();
+		hyps2.add(hyp2);
+		Collection<Predicate> hyps13 = new ArrayList<Predicate>();
+		hyps13.add(hyp1);
+		hyps13.add(hyp3);
+
+		userSupport.removeSearchedHypotheses(hyps2);
+		searched = currentPO.getSearched();
+		assertInformation("Hypotheses has been removed ",
+				"Removed hypotheses from search", userSupport.getInformation());
+		assertFalse("Second hypothesis has been removed ", searched
+				.contains(hyp2));
+		assertTrue("Search has 2 elements ", searched.size() == 2);
+
+		userSupport.removeSearchedHypotheses(hyps13);
+		searched = currentPO.getSearched();
+		assertInformation("Hypotheses has been removed ",
+				"Removed hypotheses from search", userSupport.getInformation());
+		assertTrue("Search has no elements ", searched.size() == 0);
+
+		userSupport.dispose();
+	}
+
+	public void testSelectNode() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
+
+		AutoProver.enable();
+		runBuilder();
+
+		IUserSupport userSupport = new UserSupport();
+
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
+
+		IProofState currentPO = userSupport.getCurrentPO();
+
+		IProofTreeNode node1 = currentPO.getCurrentNode();
+
+		userSupport.applyTactic(Tactics.lemma("3 = 3"), monitor);
+
+		IProofTreeNode node2 = currentPO.getCurrentNode();
+
+		userSupport.selectNode(node1);
+
+		assertEquals("Current node is node 1 ", node1, currentPO
+				.getCurrentNode());
+		assertInformation("Select 1 is successful ", "Select a new proof node",
+				userSupport.getInformation());
+
+		userSupport.selectNode(node2);
+
+		assertEquals("Current node is node 2 ", node2, currentPO
+				.getCurrentNode());
+		assertInformation("Select 2 is successful ", "Select a new proof node",
+				userSupport.getInformation());
+
+		userSupport.selectNode(node2);
+
+		assertEquals("Select node 2 again has no effect ", node2, currentPO
+				.getCurrentNode());
+		assertInformation("Select 2 has no effect ", "Not a new proof node",
+				userSupport.getInformation());
+
+		userSupport.applyTactic(Tactics.norm(), monitor);
+
+		userSupport.selectNode(node1);
+
+		assertEquals("Current node is node 1 ", node1, currentPO
+				.getCurrentNode());
+		assertInformation("Select 1 is successful ", "Select a new proof node",
+				userSupport.getInformation());
+
+		userSupport.dispose();
+	}
+
+	public void testApplyTactic() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
+
+		AutoProver.enable();
+		runBuilder();
+
+		IUserSupport userSupport = new UserSupport();
+
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
+
+		IProofState currentPO = userSupport.getCurrentPO();
+
+		IProofTreeNode node1 = currentPO.getCurrentNode();
+
+		userSupport.applyTactic(Tactics.lemma("3 = 3"), monitor);
+
+		IProofTreeNode node2 = currentPO.getCurrentNode();
+		assertTrue("Node 2 is open ", node2.isOpen());
+		assertTrue("Node 2 is a child of node 1 ", node2.getParent() == node1);
+		assertInformation("Appy tactic successfully ",
+				"Select a new proof node", userSupport.getInformation());
+
+		userSupport.dispose();
+	}
+
+	public void testApplyTacticToHypothesis() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
+
+		AutoProver.enable();
+		runBuilder();
+
+		IUserSupport userSupport = new UserSupport();
+
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
+
+		IProofState currentPO = userSupport.getCurrentPO();
+
+		userSupport.searchHyps("=");
+
+		Collection<Predicate> searched = currentPO.getSearched();
+		assertTrue("Search size is 3 ", searched.size() == 3);
+
+		Iterator<Predicate> iterator = searched.iterator();
+		Predicate hyp1 = iterator.next();
+
+		Set<Predicate> hyps1 = new HashSet<Predicate>();
+		hyps1.add(hyp1);
+
+		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1,
+				monitor);
+		assertInformation("Appy tactic successfully ",
+				"Select a new proof node", userSupport.getInformation());
+
+		Collection<Predicate> cached = currentPO.getCached();
+		assertTrue("Hypothesis is added to the cache ", cached.contains(hyp1));
+		
+		userSupport.dispose();
+	}
+
+	public void testBack() throws CoreException {
+		IPOFile poFile = createPOFile("x");
+		IPSFile psFile = poFile.getPSFile();
+
+		AutoProver.enable();
+		runBuilder();
+
+		IUserSupport userSupport = new UserSupport();
+
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
+
+		IProofState currentPO = userSupport.getCurrentPO();
+
+		IProofTreeNode node1 = currentPO.getCurrentNode();
+
+		userSupport.applyTactic(Tactics.lemma("3 = 3"), monitor);
+		userSupport.back(monitor);
+		assertEquals("Back to node 1 ", node1, currentPO.getCurrentNode());
+		assertTrue("Node 1 is open again ", node1.isOpen());
+		assertInformation("Backtrack successfully ",
+				"Select a new proof node", userSupport.getInformation());
+
+		userSupport.dispose();
+	}
+	
 }

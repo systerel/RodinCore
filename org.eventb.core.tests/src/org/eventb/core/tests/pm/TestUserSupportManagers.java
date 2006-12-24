@@ -7,12 +7,11 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eventb.core.EventBPlugin;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IPOFile;
 import org.eventb.core.IPSFile;
-import org.eventb.core.pm.IUSManagerListener;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
+import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -20,123 +19,71 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author htson
  */
-public class TestUserSupportManagers extends BasicTest {
+public class TestUserSupportManagers extends TestPM {
 
-	IUserSupportManager manager;
+	public void testUserSupportManager() throws RodinDBException, CoreException {
+		IPOFile poFile1 = createPOFile("x");
+		IPSFile psFile1 = poFile1.getPSFile();
 
-	IUserSupport actualUserSupport;
+		IPOFile poFile2 = createPOFile("y");
+		IPSFile psFile2 = poFile2.getPSFile();
 
-	int actualStatus;
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		manager = EventBPlugin.getPlugin().getUserSupportManager();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
-	public void testCreateAndDisposeUserSupports() throws Exception {
-		IMachineFile machine1 = createMachine("m0");
-		addVariables(machine1, "v0");
-		addInvariants(machine1, makeSList("inv0"),
-				makeSList("v0 ∈ ℕ"));
-		addEvent(machine1, "INITIALISATION", makeSList(), makeSList(),
-				makeSList(), makeSList("act1"),
-				makeSList("v0 ≔ 0"));
-		machine1.save(null, true);
-
+		AutoProver.enable();
 		runBuilder();
-		IPSFile psFile1 = (IPSFile) rodinProject.getRodinFile(EventBPlugin
-				.getPSFileName("m0"));
 
 		IUserSupport userSupport1 = manager.newUserSupport();
-		manager.setInput(userSupport1, psFile1, new NullProgressMonitor());
+
+		assertNotNull("First user support is not null ", userSupport1);
+		assertNull("There is no input yet for the first user support ",
+				userSupport1.getInput());
 
 		Collection<IUserSupport> userSupports = manager.getUserSupports();
+		assertEquals("There is only one user support ", 1, userSupports.size());
+		assertTrue("The first user support is stored ", userSupports
+				.contains(userSupport1));
 
-		assertEquals("There should be only one user Support ", 1, userSupports
-				.size());
+		userSupport1.setInput(psFile1, new NullProgressMonitor());
 
-		IMachineFile machine2 = createMachine("m0");
-		addVariables(machine2, "v0");
-		addInvariants(machine2, makeSList("inv0"),
-				makeSList("v0 ∈ ℕ"));
-		addEvent(machine2, "INITIALISATION", makeSList(), makeSList(),
-				makeSList(), makeSList("act1"),
-				makeSList("v0 ≔ 0"));
-		machine2.save(null, true);
-
-		runBuilder();
-		IPSFile psFile2 = (IPSFile) rodinProject.getRodinFile(EventBPlugin
-				.getPSFileName("m0"));
+		assertEquals(
+				"The input for first user support has been set correctly ",
+				psFile1, userSupport1.getInput());
+		assertInformation("Select a new PO ",
+				"Obligation changed", userSupport1
+						.getInformation());
 
 		IUserSupport userSupport2 = manager.newUserSupport();
-		manager.setInput(userSupport2, psFile2, new NullProgressMonitor());
+
+		assertNotNull("Second user support is not null ", userSupport2);
+		assertNull("There is no input yet for the second user support ",
+				userSupport2.getInput());
 
 		userSupports = manager.getUserSupports();
+		assertEquals("There is only one user support ", 2, userSupports.size());
+		assertTrue("The first user support is stored ", userSupports
+				.contains(userSupport1));
+		assertTrue("The second user support is stored ", userSupports
+				.contains(userSupport2));
 
-		assertEquals("There should be two user Supports ", 2, userSupports
+		userSupport2.setInput(psFile2, new NullProgressMonitor());
+
+		assertEquals(
+				"The input for second user support has been set correctly ",
+				psFile2, userSupport2.getInput());
+		assertInformation("Select a new PO ",
+				"Obligation changed", userSupport2
+						.getInformation());
+
+		userSupport1.dispose();
+		userSupports = manager.getUserSupports();
+		assertEquals("There is only one user support left ", 1, userSupports
 				.size());
+		assertTrue("The second user support still exists ", userSupports
+				.contains(userSupport2));
 
-		manager.disposeUserSupport(userSupport2);
-
+		userSupport2.dispose();
 		userSupports = manager.getUserSupports();
-
-		assertEquals("There now should be only one user Support ", 1,
-				userSupports.size());
-
-		manager.disposeUserSupport(userSupport1);
-
-		userSupports = manager.getUserSupports();
-
-		assertEquals("There should be only no user Supports ", 0, userSupports
-				.size());
-	}
-
-	public void testUserSupportManagerListener() throws RodinDBException,
-			CoreException {
-		UserSupportManagerListener listener = new UserSupportManagerListener();
-		manager.addUSManagerListener(listener);
-		
-		IMachineFile machine = createMachine("m0");
-		addVariables(machine, "v0");
-		addInvariants(machine, makeSList("inv0"),
-				makeSList("v0 ∈ ℕ"));
-		addEvent(machine, "INITIALISATION", makeSList(), makeSList(),
-				makeSList(), makeSList("act1"),
-				makeSList("v0 ≔ 0"));
-		machine.save(null, true);
-
-		runBuilder();
-		IPSFile psFile = (IPSFile) rodinProject.getRodinFile(EventBPlugin
-				.getPSFileName("m0"));
-
-		IUserSupport userSupport = manager.newUserSupport();
-
-		assertEquals("User Support is the same ", userSupport, actualUserSupport);
-		assertEquals("User Support is added ", IUSManagerListener.ADDED, actualStatus);
-		
-		manager.setInput(userSupport, psFile, new NullProgressMonitor());
-		
-		assertEquals("User Support is the same ", userSupport, actualUserSupport);
-		assertEquals("User Support is changed ", IUSManagerListener.CHANGED, actualStatus);
-		
-		manager.disposeUserSupport(userSupport);
-
-		assertEquals("User Support is the same ", userSupport, actualUserSupport);
-		assertEquals("User Support is removed ", IUSManagerListener.REMOVED, actualStatus);
-	}
-
-	private class UserSupportManagerListener implements IUSManagerListener {
-
-		public void USManagerChanged(IUserSupport userSupport, int status) {
-			actualUserSupport = userSupport;
-			actualStatus = status;
-		}
+		assertEquals("There are no user supports left ", 0, userSupports.size());
 
 	}
+
 }
