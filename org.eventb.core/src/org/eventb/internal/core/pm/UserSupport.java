@@ -12,12 +12,14 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.IProofManager;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.internal.core.ProofManager;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -31,7 +33,7 @@ import org.rodinp.internal.core.RodinElementDelta;
 
 public class UserSupport implements IElementChangedListener, IUserSupport {
 
-	private IPSFile psFile; // Unique for an instance of UserSupport
+	// private IPSFile psFile; // Unique for an instance of UserSupport
 
 	LinkedList<IProofState> proofStates;
 
@@ -42,6 +44,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	DeltaProcessor deltaProcessor;
 
 	private Collection<Object> information;
+
+	IProofManager proofManager;
 
 	public UserSupport() {
 		RodinCore.addElementChangedListener(this);
@@ -62,15 +66,19 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 */
 	public void setInput(final IPSFile psFile, final IProgressMonitor monitor)
 			throws RodinDBException {
-		this.psFile = psFile;
+
+		proofManager = new ProofManager(psFile);
+
+		// this.psFile = psFile;
 		proofStates = new LinkedList<IProofState>();
 
 		manager.run(new Runnable() {
 
 			public void run() {
 				try {
-					for (int i = 0; i < psFile.getStatuses().length; i++) {
-						IPSStatus prSequent = psFile.getStatuses()[i];
+					IPSStatus[] statuses = proofManager.getPSStatuses();
+					for (int i = 0; i < statuses.length; i++) {
+						IPSStatus prSequent = statuses[i];
 						ProofState state = new ProofState(UserSupport.this,
 								prSequent);
 						proofStates.add(state);
@@ -78,8 +86,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 					}
 					// Do not fire delta. The delta will be fire in
 					// nextUndischargedPO()
-					// deltaProcessor.fireDeltas();
-
 					nextUndischargedPO(true, monitor);
 				} catch (RodinDBException e) {
 					e.printStackTrace();
@@ -108,7 +114,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#getInput()
 	 */
 	public IPSFile getInput() {
-		return psFile;
+		if (proofManager != null)
+			return proofManager.getPSFile();
+		return null;
 	}
 
 	void startInformation() {
@@ -349,8 +357,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	public void searchHyps(String token) {
 		token = token.trim();
 
-		final Set<Predicate> hyps = ProverLib.hypsTextSearch(currentPS.getCurrentNode()
-				.getSequent(), token);
+		final Set<Predicate> hyps = ProverLib.hypsTextSearch(currentPS
+				.getCurrentNode().getSequent(), token);
 		startInformation();
 		manager.run(new Runnable() {
 
@@ -416,7 +424,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 				monitor);
 	}
 
-
 	void debugProofState() {
 		UserSupportUtils.debug("******** Proof States **********");
 		for (IProofState state : proofStates) {
@@ -442,25 +449,28 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 			proofStates.remove(state);
 		}
 
+		int index = 0;
+		IProofState proofState = getProofState(index);
+		IPSStatus[] statuses;
 		try {
-			int index = 0;
-			IProofState proofState = getProofState(index);
-			for (IPSStatus prSequent : psFile.getStatuses()) {
-				UserSupportUtils.debug("Trying: " + prSequent.getElementName());
-				UserSupportUtils.debug("Index: " + index);
-				if (proofState != null) {
-					if (prSequent.equals(proofState.getPRSequent())) {
-						index++;
-						proofState = getProofState(index);
-						continue;
-					}
-				}
-				IProofState state = new ProofState(this, prSequent);
-				UserSupportUtils.debug("Added at position " + index);
-				proofStates.add(index++, state);
-			}
+			statuses = proofManager.getPSStatuses();
 		} catch (RodinDBException e) {
 			e.printStackTrace();
+			return;
+		}
+		for (IPSStatus prSequent : statuses) {
+			UserSupportUtils.debug("Trying: " + prSequent.getElementName());
+			UserSupportUtils.debug("Index: " + index);
+			if (proofState != null) {
+				if (prSequent.equals(proofState.getPRSequent())) {
+					index++;
+					proofState = getProofState(index);
+					continue;
+				}
+			}
+			IProofState state = new ProofState(this, prSequent);
+			UserSupportUtils.debug("Added at position " + index);
+			proofStates.add(index++, state);
 		}
 
 	}
@@ -474,7 +484,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 				processDelta(d, monitor);
 			}
 		} else if (element instanceof IPSFile) {
-			if (psFile.equals(element)) {
+			if (this.getInput().equals(element)) {
 				for (IRodinElementDelta d : elementChangedDelta
 						.getAffectedChildren()) {
 					processDelta(d, monitor);
@@ -585,7 +595,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		else if (element instanceof IPRProof) {
 			IPRProof proofTree = (IPRProof) element;
 			// IPRSequent prSequent = proofTree.getSequent();
-			IPSStatus status = psFile.getStatus(proofTree.getElementName());
+			IPSStatus status = this.getInput().getStatus(
+					proofTree.getElementName());
 
 			IProofState state = getProofState(status);
 
@@ -648,9 +659,11 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#setComment(java.lang.String,
 	 *      org.eventb.core.seqprover.IProofTreeNode)
 	 */
-	public void setComment(String text, IProofTreeNode node) throws RodinDBException {
+	public void setComment(String text, IProofTreeNode node)
+			throws RodinDBException {
 		currentPS.setComment(text, node);
 	}
+
 	boolean reload;
 
 	public void elementChanged(final ElementChangedEvent event) {
@@ -702,6 +715,10 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public IProofManager getProofManager() {
+		return proofManager;
 	}
 
 }

@@ -17,12 +17,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
@@ -36,16 +33,13 @@ import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
-import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.pom.POLoader;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -91,15 +85,6 @@ public class ProofState implements IProofState {
 	}
 
 	/*
-	 * Creates the initial proof tree for this proof obligation.
-	 */
-	private IProofTree createProofTree() throws RodinDBException {
-		final IPOSequent poSequent = status.getPOSequent();
-		IProverSequent newSeq = POLoader.readPO(poSequent);
-		return ProverFactory.makeProofTree(newSeq, poSequent);
-	}
-
-	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eventb.core.pm.IProofState#loadProofTree(org.eclipse.core.runtime.IProgressMonitor)
@@ -109,7 +94,7 @@ public class ProofState implements IProofState {
 		if (pt != null)
 			pt.removeChangeListener(this);
 		// Construct the proof tree from the PO file.
-		pt = createProofTree();
+		pt = userSupport.getProofManager().getProofTree(status);
 		pt.addChangeListener(this);
 
 		// If a proof exists in the PR file rebuild it.
@@ -298,21 +283,7 @@ public class ProofState implements IProofState {
 	public void doSave(IProgressMonitor monitor) throws CoreException {
 		UserSupportUtils.debug("Saving: " + status.getElementName());
 
-		// TODO add lock for po and pr file
-
-		RodinCore.run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor mon) throws CoreException {
-				try {
-					mon.beginTask("Saving Proof", 2);
-					status.getProof().setProofTree(pt,
-							new SubProgressMonitor(mon, 1));
-					AutoPOM.updateStatus(((IPSStatus) status.getMutableCopy()),
-							new SubProgressMonitor(mon, 1));
-				} finally {
-					mon.done();
-				}
-			}
-		}, status.getSchedulingRule(), monitor);
+		userSupport.getProofManager().saveProofTree(status, pt, monitor);
 
 		dirty = false;
 	}
@@ -352,7 +323,7 @@ public class ProofState implements IProofState {
 		// if (isSavingOrUninitialised()) return false;
 		// if (pt == null) return false; // No proof tree, no reusable.
 
-		IProofTree newTree = createProofTree();
+		IProofTree newTree = userSupport.getProofManager().getProofTree(status);
 		IProverSequent newSeq = newTree.getSequent();
 		if (ProverLib.proofReusable(pt.getProofDependencies(), newSeq)) {
 			(BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot(),
@@ -411,7 +382,7 @@ public class ProofState implements IProofState {
 		// Construct the proof tree from the file.
 		if (pt != null)
 			pt.removeChangeListener(this);
-		pt = createProofTree();
+		pt = userSupport.getProofManager().getProofTree(status);
 		pt.addChangeListener(this);
 
 		// Current node is the next pending subgoal or the root of the proof
