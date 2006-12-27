@@ -23,7 +23,10 @@ public class ProverSequent implements IInternalProverSequent{
 	private final Set<Predicate> selectedHypotheses;
 	
 	private final Predicate goal;
+
 	
+	private static final Set<Predicate> NO_HYPS = Collections.unmodifiableSet(new HashSet<Predicate>());
+
 	
 	public ITypeEnvironment typeEnvironment() {
 		return this.typeEnvironment;
@@ -60,12 +63,12 @@ public class ProverSequent implements IInternalProverSequent{
 		return hiddenHypotheses;
 	}
 	
-	public ProverSequent(ITypeEnvironment typeEnvironment,Set<Predicate> globalHypotheses,Predicate goal){
+	public ProverSequent(ITypeEnvironment typeEnvironment,Collection<Predicate> globalHypotheses,Predicate goal){
 		this.typeEnvironment = typeEnvironment.clone();
 		this.globalHypotheses = Collections.unmodifiableSet(new HashSet<Predicate>(globalHypotheses));
-		this.localHypotheses = Collections.unmodifiableSet(new HashSet<Predicate>());
-		this.hiddenHypotheses = Collections.unmodifiableSet(new HashSet<Predicate>());
-		this.selectedHypotheses = Collections.unmodifiableSet(new HashSet<Predicate>());
+		this.localHypotheses = NO_HYPS;
+		this.hiddenHypotheses = NO_HYPS;
+		this.selectedHypotheses = NO_HYPS;
 		assert goal.isTypeChecked();
 		assert goal.isWellFormed();
 		this.goal = goal;
@@ -73,11 +76,11 @@ public class ProverSequent implements IInternalProverSequent{
 		// assert this.invariant();
 	}
 	
-	public ProverSequent(ITypeEnvironment typeEnvironment,Set<Predicate> globalHypotheses, Set<Predicate> selectedHypotheses,Predicate goal){
+	public ProverSequent(ITypeEnvironment typeEnvironment,Collection<Predicate> globalHypotheses, Collection<Predicate> selectedHypotheses,Predicate goal){
 		this.typeEnvironment = typeEnvironment.clone();
 		this.globalHypotheses = Collections.unmodifiableSet(new HashSet<Predicate>(globalHypotheses));
-		this.localHypotheses = Collections.unmodifiableSet(new HashSet<Predicate>());
-		this.hiddenHypotheses = Collections.unmodifiableSet(new HashSet<Predicate>());
+		this.localHypotheses = NO_HYPS;
+		this.hiddenHypotheses = NO_HYPS;
 		this.selectedHypotheses = Collections.unmodifiableSet(new HashSet<Predicate>(selectedHypotheses));
 		assert goal.isTypeChecked();
 		assert goal.isWellFormed();
@@ -86,21 +89,6 @@ public class ProverSequent implements IInternalProverSequent{
 		// assert this.invariant();
 	}
 	
-	
-	
-//	/**
-//	* Copy constructor
-//	* 
-//	* @param pS
-//	*/
-//	private ProverSequent(ProverSequent pS){
-//	this.typeEnvironment = pS.typeEnvironment;
-//	this.globalHypotheses = pS.globalHypotheses;
-//	this.localHypotheses = pS.localHypotheses;
-//	this.hiddenHypotheses = pS.hiddenHypotheses;
-//	this.selectedHypotheses = pS.selectedHypotheses;
-//	this.goal = pS.goal;
-//	}
 	
 	private ProverSequent(ProverSequent pS, ITypeEnvironment typeEnvironment, Set<Predicate> globalHypotheses,
 			Set<Predicate> localHypotheses, Set<Predicate> hiddenHypotheses, Set<Predicate> selectedHypotheses,
@@ -146,15 +134,6 @@ public class ProverSequent implements IInternalProverSequent{
 		}
 		Set<Predicate> newLocalHypotheses = new HashSet<Predicate>(this.localHypotheses);
 		newLocalHypotheses.addAll(hyps);
-		return new ProverSequent(this,typeEnvironment,null,newLocalHypotheses,null,null,null);
-	}
-	
-	public ProverSequent addHyp(Predicate hyp,ITypeEnvironment typeEnvironment){
-		assert (hyp != null);
-		if (typeEnvironment == null) typeEnvironment = this.typeEnvironment;
-		if (! typeCheckClosed(hyp,typeEnvironment)) return null;
-		Set<Predicate> newLocalHypotheses = new HashSet<Predicate>(this.localHypotheses);
-		newLocalHypotheses.add(hyp);
 		return new ProverSequent(this,typeEnvironment,null,newLocalHypotheses,null,null,null);
 	}
 	
@@ -266,13 +245,8 @@ public class ProverSequent implements IInternalProverSequent{
 	}
 
 
-
 	public boolean isSelected(Predicate hyp) {
 		return selectedHypotheses.contains(hyp);
 	}
-
-
-
-	
 	
 }

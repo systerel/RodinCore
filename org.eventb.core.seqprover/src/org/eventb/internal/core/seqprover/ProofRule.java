@@ -3,7 +3,6 @@ package org.eventb.internal.core.seqprover;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,26 +18,24 @@ import org.eventb.core.seqprover.IReasonerInput;
 
 public class ProofRule extends ReasonerOutput implements IProofRule{
 	
+	private static final Set<Predicate> NO_HYPS = Collections.emptySet();
+	private static final IAntecedent[] NO_ANTECEDENTS = new IAntecedent[0];
+
 	public static class Antecedent implements IAntecedent{
 		
-		private FreeIdentifier[] addedFreeIdentifiers;
-		private Set <Predicate> addedHypotheses;
-		private List <IHypAction> hypAction;
-		private Predicate goal;
+		private final FreeIdentifier[] addedFreeIdentifiers;
+		private final Set <Predicate> addedHypotheses;
+		private final List <IHypAction> hypAction;
+		private final Predicate goal;
 		
-		public Antecedent(Predicate goal){
-			addedFreeIdentifiers = new FreeIdentifier[0];
-			addedHypotheses = new HashSet<Predicate>();
-			hypAction = new ArrayList<IHypAction>();
-			this.goal = goal;
-		}
+		private static final FreeIdentifier[] NO_FREE_IDENTS = new FreeIdentifier[0];
+		private static final ArrayList<IHypAction> NO_HYP_ACTIONS = new ArrayList<IHypAction>();
 		
 		public Antecedent(Predicate goal, Set<Predicate> addedHyps, FreeIdentifier[] addedFreeIdents, List<IHypAction> hypAction) {
-			assert goal != null;
 			this.goal = goal;
-			this.addedHypotheses = addedHyps == null ? new HashSet<Predicate>() : addedHyps;
-			this.addedFreeIdentifiers = addedFreeIdents == null ? new FreeIdentifier[0] : addedFreeIdents;
-			this.hypAction = hypAction == null ? new ArrayList<IHypAction>() : hypAction;
+			this.addedHypotheses = addedHyps == null ? NO_HYPS : addedHyps;
+			this.addedFreeIdentifiers = addedFreeIdents == null ? NO_FREE_IDENTS : addedFreeIdents;
+			this.hypAction = hypAction == null ? NO_HYP_ACTIONS : hypAction;
 		}
 		
 		/**
@@ -110,39 +107,18 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		
 	}
 	
-	private String display;
-	private IAntecedent[] antecedents;
-	private Set<Predicate> neededHypotheses;
-	private Predicate goal;
-	private int reasonerConfidence;
+	private final String display;
+	private final IAntecedent[] antecedents;
+	private final Set<Predicate> neededHypotheses;
+	private final Predicate goal;
+	private final int reasonerConfidence;
 	
-	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing){
-		super(generatedBy,generatedUsing);
-		display = generatedBy.getReasonerID();
-		antecedents = null;
-		neededHypotheses = new HashSet<Predicate>();
-		goal = null;
-		reasonerConfidence = IConfidence.DISCHARGED_MAX;
-	}
-	
-	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing, Predicate goal, IAntecedent[] anticidents){
-		super(generatedBy,generatedUsing);
-		display = generatedBy.getReasonerID();
-		this.antecedents = anticidents;
-		neededHypotheses = new HashSet<Predicate>();
-		this.goal = goal;
-		reasonerConfidence = IConfidence.DISCHARGED_MAX;
-	}
-
-	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing, Predicate goal, Set<Predicate> neededHyps, Integer confidence, String display, IAntecedent[] anticidents) {
+	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing, Predicate goal, Set<Predicate> neededHyps, Integer confidence, String display, IAntecedent[] antecedents) {
 		super(generatedBy,generatedUsing);
 		
-		assert goal != null;
-		assert anticidents != null;
-		
 		this.goal = goal;
-		this.antecedents = anticidents;
-		this.neededHypotheses = neededHyps == null ? new HashSet<Predicate>() : neededHyps;
+		this.antecedents = antecedents == null ? NO_ANTECEDENTS : antecedents;
+		this.neededHypotheses = neededHyps == null ? NO_HYPS : neededHyps;
 		this.reasonerConfidence = confidence == null ? IConfidence.DISCHARGED_MAX : confidence;
 		this.display = display == null ? generatedBy.getReasonerID() : display;		
 	}

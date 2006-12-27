@@ -20,11 +20,7 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 	// while building a proof are used to process proof dependencies.
 	private boolean skipped = true;
 	
-	/**
-	 * @param hyps
-	 * @param addedIdents
-	 * @param inferredHyps
-	 */
+
 	public ForwardInfHypAction(final Collection<Predicate> hyps, final FreeIdentifier[] addedIdents, final Collection<Predicate> inferredHyps) {
 		super();
 		this.hyps = hyps;

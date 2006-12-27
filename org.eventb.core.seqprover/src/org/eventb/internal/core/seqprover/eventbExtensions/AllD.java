@@ -161,22 +161,6 @@ public class AllD implements IReasoner {
 				anticidents
 				);
 		
-//		ProofRule reasonerOutput = new ProofRule(this,input);
-//		reasonerOutput.display = "∀ hyp (inst "+displayInstantiations(instantiations)+")";
-//		reasonerOutput.neededHypotheses.add(univHyp);
-//		reasonerOutput.goal = seq.goal();
-//
-//		// Generate the anticidents
-//		reasonerOutput.anticidents = new Antecedent[2];
-//		
-//		// Well definedness condition
-//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent(WDpred);
-//		
-//		// The instantiated goal
-//		reasonerOutput.anticidents[1] = new ProofRule.Antecedent(seq.goal());
-//		reasonerOutput.anticidents[1].addConjunctsToAddedHyps(instantiatedPred);
-//		reasonerOutput.anticidents[1].hypAction.add(Lib.deselect(univHyp));
-//				
 		return reasonerOutput;
 	}
 	

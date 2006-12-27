@@ -124,7 +124,7 @@ public interface IHypAction {
 		 * inference.
 		 * 
 		 * <p>
-		 * The inference can only be performed if *all* these hypotheses are present
+		 * The inference can only be performed if all these hypotheses are present
 		 * in the hypotheses of a sequent.
 		 * </p>
 		 * 
@@ -138,7 +138,7 @@ public interface IHypAction {
 		 * Returns an array of free identifiers introduced by the forward inference.
 		 * 		 
 		 * <p>
-		 * The inference can only be performed if *all* these free identifiers are
+		 * The inference can only be performed if all these free identifiers are
 		 * fresh (i.e. not present in the type environment) of a sequent.
 		 * </p>
 		 * <p>
