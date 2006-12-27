@@ -652,5 +652,45 @@ public class TestMachineRefines extends BasicPOTest {
 		
 		getSequents(cpo);
 	}
+	
+	/*
+	 * Generate PO for event action that modifies abstract preserved variable;
+	 * two cases
+	 * 	(1) the event is new
+	 * 	(2) the abstract event is empty
+	 * (POs should be identical!)
+	 */
+	public void testRefines_14() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "p");
+		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
+		addEvent(abs, "fvt");
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "p");
+		addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("p≔TRUE"));
+		IEvent fvt = addEvent(ref, "fvt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("p≔TRUE"));
+		addEventRefines(fvt, "fvt");
+	
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "p");
+		
+		getSequent(po, "evt/p/EQL");
+		getSequent(po, "fvt/p/EQL");
+		
+	}
 
 }

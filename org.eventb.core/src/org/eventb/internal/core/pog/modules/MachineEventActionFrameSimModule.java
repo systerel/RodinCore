@@ -55,7 +55,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 			IPOFile target, 
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		if (abstractEvent == null)
+		if (machineHypothesisManager.isInitialMachine())
 			return;
 		
 		ArrayList<POGPredicate> hyp = 
@@ -106,6 +106,13 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 					continue;
 			}
 			
+			// TODO should the abstract machine be shown when there is no abstract event?
+			POGSource[] sources = abstractEvent == null ?
+					sources(new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)) :
+					sources(
+							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
+							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent));
+			
 			String sequentName = concreteEventLabel + "/" + variable.getName() + "/EQL";
 			createPO(
 					target, 
@@ -114,9 +121,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 					fullHypothesis,
 					hyp,
 					new POGPredicate(source, predicate),
-					sources(
-							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
-							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
+					sources,
 					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);
 

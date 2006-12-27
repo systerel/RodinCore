@@ -1063,5 +1063,36 @@ public class TestEventRefines extends BasicSCTest {
 				makeSList("q", "x", "y"), 
 				makeSList("⊤", "⊤", "⊤"));
 	}
+	
+	public void testEvents_33_newEventPreservedVariableAssigned() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, "p");
+		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
+
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("p", boolType);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "p");
+		addEvent(mac, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("p≔TRUE"));
+	
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt");
+		containsActions(events[0], environment, makeSList("A"), makeSList("p≔TRUE"));
+	}
 
 }
