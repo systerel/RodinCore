@@ -12,14 +12,14 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.IProofManager;
+import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
-import org.eventb.internal.core.ProofManager;
+import org.eventb.internal.core.PSWrapper;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -45,7 +45,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	private Collection<Object> information;
 
-	IProofManager proofManager;
+	IPSWrapper proofManager;
 
 	public UserSupport() {
 		RodinCore.addElementChangedListener(this);
@@ -67,7 +67,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	public void setInput(final IPSFile psFile, final IProgressMonitor monitor)
 			throws RodinDBException {
 
-		proofManager = new ProofManager(psFile);
+		proofManager = new PSWrapper(psFile);
 
 		// this.psFile = psFile;
 		proofStates = new LinkedList<IProofState>();
@@ -717,7 +717,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		}
 	}
 
-	public IProofManager getProofManager() {
+	public IPSWrapper getProofManager() {
 		return proofManager;
 	}
 

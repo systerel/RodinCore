@@ -94,7 +94,7 @@ public class ProofState implements IProofState {
 		if (pt != null)
 			pt.removeChangeListener(this);
 		// Construct the proof tree from the PO file.
-		pt = userSupport.getProofManager().getProofTree(status);
+		pt = userSupport.getProofManager().getFreshProofTree(status);
 		pt.addChangeListener(this);
 
 		// If a proof exists in the PR file rebuild it.
@@ -283,7 +283,7 @@ public class ProofState implements IProofState {
 	public void doSave(IProgressMonitor monitor) throws CoreException {
 		UserSupportUtils.debug("Saving: " + status.getElementName());
 
-		userSupport.getProofManager().saveProofTree(status, pt, monitor);
+		userSupport.getProofManager().setProofTree(status, pt, monitor);
 
 		dirty = false;
 	}
@@ -323,7 +323,7 @@ public class ProofState implements IProofState {
 		// if (isSavingOrUninitialised()) return false;
 		// if (pt == null) return false; // No proof tree, no reusable.
 
-		IProofTree newTree = userSupport.getProofManager().getProofTree(status);
+		IProofTree newTree = userSupport.getProofManager().getFreshProofTree(status);
 		IProverSequent newSeq = newTree.getSequent();
 		if (ProverLib.proofReusable(pt.getProofDependencies(), newSeq)) {
 			(BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot(),
@@ -382,7 +382,7 @@ public class ProofState implements IProofState {
 		// Construct the proof tree from the file.
 		if (pt != null)
 			pt.removeChangeListener(this);
-		pt = userSupport.getProofManager().getProofTree(status);
+		pt = userSupport.getProofManager().getFreshProofTree(status);
 		pt.addChangeListener(this);
 
 		// Current node is the next pending subgoal or the root of the proof

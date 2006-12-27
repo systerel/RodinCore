@@ -12,13 +12,14 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.IProofManager;
+import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.RodinCore;
@@ -28,13 +29,13 @@ import org.rodinp.core.RodinDBException;
  * @author htson
  * 
  */
-public class ProofManager implements IProofManager {
+public class PSWrapper implements IPSWrapper {
 
-	private IPSFile psFile;
+	private final IPSFile psFile;
 
-	private IPRFile prFile;
+	private final IPRFile prFile;
 
-	public ProofManager(IPSFile psFile) {
+	public PSWrapper(IPSFile psFile) {
 		this.psFile = psFile;
 		prFile = psFile.getPRFile();
 	}
@@ -52,13 +53,13 @@ public class ProofManager implements IProofManager {
 		return psFile;
 	}
 
-	public IProofTree getProofTree(IPSStatus psStatus) throws RodinDBException {
+	public IProofTree getFreshProofTree(IPSStatus psStatus) throws RodinDBException {
 		final IPOSequent poSequent = psStatus.getPOSequent();
 		IProverSequent newSeq = POLoader.readPO(poSequent);
 		return ProverFactory.makeProofTree(newSeq, poSequent);
 	}
 
-	public void saveProofTree(final IPSStatus status, final IProofTree pt,
+	public void setProofTree(final IPSStatus status, final IProofTree pt,
 			IProgressMonitor monitor) throws CoreException {
 		// TODO add lock for po and pr file
 		RodinCore.run(new IWorkspaceRunnable() {
@@ -136,6 +137,16 @@ public class ProofManager implements IProofManager {
 		}
 		status.setProofConfidence(null);
 		status.setBroken(broken, null);
+	}
+
+	public IProofSkeleton getProofSkeleton(IPSStatus status, IProgressMonitor monitor) throws RodinDBException {
+		final IPRProof prProof = status.getProof();
+		if (prProof.exists()) {
+			final IProofSkeleton proofSkeleton = prProof.getSkeleton(
+					FormulaFactory.getDefault(), monitor);
+			return proofSkeleton;
+		}
+		return null;
 	}
 
 }
