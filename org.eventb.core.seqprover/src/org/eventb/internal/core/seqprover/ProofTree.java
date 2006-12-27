@@ -138,5 +138,9 @@ public final class ProofTree implements IProofTree {
 	public IProofDependencies getProofDependencies() {
 		return getRoot().computeProofDeps().finished();
 	}
+	
+	public String toString(){
+		return root.toString();
+	}
 
 }
