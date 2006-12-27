@@ -9,9 +9,12 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
+
+// TODO : Rename to freeIdentRename
+// TODO : Make interface & cleanup
 public class ReplayHints {
 	
-	private static final FormulaFactory FF = FormulaFactory.getDefault();
+	private static final FormulaFactory factory = FormulaFactory.getDefault();
 	private HashMap<FreeIdentifier,Expression> freeVarRename;
 	
 	public ReplayHints(){
@@ -52,11 +55,11 @@ public class ReplayHints {
 	}
 	
 	public Predicate applyHints(Predicate predicate) {
-		return predicate.substituteFreeIdents(freeVarRename,FF);
+		return predicate.substituteFreeIdents(freeVarRename,factory);
 	}
 
 	public Expression applyHints(Expression expression) {
-		return expression.substituteFreeIdents(freeVarRename,FF);
+		return expression.substituteFreeIdents(freeVarRename,factory);
 	}
 	
 	
