@@ -22,9 +22,8 @@ import org.eventb.core.ISCTheorem;
 import org.eventb.core.pog.state.IContextAxiomTable;
 import org.eventb.core.pog.state.IContextHypothesisManager;
 import org.eventb.core.pog.state.IContextTheoremTable;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.pog.ContextAxiomTable;
 import org.eventb.internal.core.pog.ContextHypothesisManager;
 import org.eventb.internal.core.pog.ContextTheoremTable;
@@ -46,7 +45,7 @@ public class ContextHypothesisModule extends GlobalHypothesisModule {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		
@@ -103,7 +102,7 @@ public class ContextHypothesisModule extends GlobalHypothesisModule {
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		hypothesisManager.createHypotheses(target, monitor);

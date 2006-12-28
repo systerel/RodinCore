@@ -14,7 +14,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public interface ITypingState extends IStateSC {
+public interface ITypingState extends ISCState {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".typingState";
 	

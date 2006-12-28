@@ -11,7 +11,7 @@ import java.util.Hashtable;
 
 import org.eventb.core.ISCContext;
 import org.eventb.core.sc.state.IContextTable;
-import org.eventb.internal.core.state.State;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede

@@ -20,7 +20,7 @@ import org.eventb.core.ast.Predicate;
  * @author Stefan Hallerstede
  *
  */
-public interface IWitnessTable extends IStatePOG {
+public interface IWitnessTable extends IPOGState {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".witnessTable";
 

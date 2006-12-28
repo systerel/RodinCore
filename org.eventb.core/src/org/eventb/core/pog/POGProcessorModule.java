@@ -16,8 +16,7 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -26,7 +25,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class Module implements IModule {
+public abstract class POGProcessorModule implements IPOGProcessorModule {
 	
 	private static final String SEQ_HYP_NAME = "SEQHYP";
 	private static final String PRD_NAME_PREFIX = "PRD";
@@ -125,21 +124,21 @@ public abstract class Module implements IModule {
 	protected void initModules(
 			IRodinElement element,
 			IPOFile target,
-			IModule[] modules,
-			IStateRepository<IStatePOG> repository, 
+			IPOGProcessorModule[] modules,
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IModule module : modules) {
+		for (IPOGProcessorModule module : modules) {
 			module.initModule(element, target, repository, monitor);
 		}
 	}
 	
 	protected void processModules(
-			IModule[] modules, 
+			IPOGProcessorModule[] modules, 
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IModule module : modules) {
+		for (IPOGProcessorModule module : modules) {
 			module.process(element, target, repository, monitor);
 		}
 	}
@@ -147,10 +146,10 @@ public abstract class Module implements IModule {
 	protected void endModules(
 			IRodinElement element,
 			IPOFile target,
-			IModule[] modules, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGProcessorModule[] modules, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IModule module : modules) {
+		for (IPOGProcessorModule module : modules) {
 			module.endModule(element, target, repository, monitor);
 		}
 	}
@@ -161,7 +160,7 @@ public abstract class Module implements IModule {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 
 			// nothing to do
@@ -174,7 +173,7 @@ public abstract class Module implements IModule {
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 
 		// nothing to do

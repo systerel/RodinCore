@@ -9,23 +9,22 @@ package org.eventb.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.sc.state.IStateSC;
-import org.eventb.core.state.IStateRepository;
-import org.rodinp.core.IInternalParent;
+import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.tool.IFilterModule;
 import org.rodinp.core.IRodinElement;
 
 /**
- * Common protocol for processor modules.
+ * Common protocol for filter modules.
  * The protocol has two variants:
  * <li>
  * <ul> The ONCE protocol. Method <code>run()</code> is called exactly once
  * as follows:
  * <p>
  * <code>
- * m.initModule(repository, monitor);
- * m.process(element, repository, monitor);
+ * m.initModule(element, repository, monitor);
+ * a = m.accept(element, repository, monitor);
  * ...
- * m.endModule(repository, monitor);
+ * m.endModule(element, repository, monitor);
  * </code>
  * </p>
  * </ul>
@@ -33,12 +32,12 @@ import org.rodinp.core.IRodinElement;
  * as follows:
  * <p>
  * <code>
- * m.initModule(repository, monitor);
+ * m.initModule(element, repository, monitor);
  * while (more elements) {
- *    m.process(element, repository, monitor);
+ *    a = m.accept(element, repository, monitor);
  *    ...
  * }
- * m.endModule(repository, monitor);
+ * m.endModule(element, repository, monitor);
  * </code>
  * </p>
  * </ul>
@@ -47,53 +46,50 @@ import org.rodinp.core.IRodinElement;
  * It must be guaranteed by all implementors that the
  * methods are called in the specified order.
  * 
- * @see org.eventb.core.sc.IModule
+ * @see org.eventb.core.tool.IModule
  * 
  * @author Stefan Hallerstede
  *
  */
-public interface IProcessorModule extends IModule {
+public interface ISCFilterModule extends IFilterModule {
+
+	/**
+	 * Runs the static checker module.
+	 * Returns wether the element <code>element</code> should be accepted.
+	 * If an error marker was associated with the element the returned value should usually be 
+	 * <code>false</code>. Exceptions from this rule are possible, in particular, if a file
+	 * has been marked with an error.
+	 * @param element the input "unchecked" element
+	 * @param repository the state repository to use
+	 * @param monitor a progress monitor
+	 * @return wether the element should be accepted
+	 * @throws CoreException if there was a problem running this module
+	 */
+	public abstract boolean accept(
+			IRodinElement element,
+			ISCStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Initialisation code for the module
 	 * 
-	 * @param element the input "unchecked" element
 	 * @param repository the state repository to use
 	 * @param monitor a progress monitor
 	 * @throws CoreException if there was a problem initialising this module
 	 */
 	public abstract void initModule(
-			IRodinElement element,
-			IStateRepository<IStateSC> repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException;
-	
-	/**
-	 * Runs the static checker module: process the element. 
-	 * The element itself has already been accepted.
-	 * @param element the input "unchecked" element
-	 * @param target the target element (this may be a file or any other internal element)
-	 * @param repository the state repository to use
-	 * @param monitor a progress monitor
-	 * @throws CoreException if there was a problem running this module
-	 */
-	public abstract void process(
-			IRodinElement element,
-			IInternalParent target,
-			IStateRepository<IStateSC> repository, 
-			IProgressMonitor monitor) throws CoreException;
-	
+
 	/**
 	 * Termination code for the module
 	 * 
-	 * @param element the input "unchecked" element
 	 * @param repository the state repository to use
 	 * @param monitor a progress monitor
 	 * @throws CoreException if there was a problem terminating this module
 	 */
-	
 	public abstract void endModule(
-			IRodinElement element,
-			IStateRepository<IStateSC> repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException;
 
 }

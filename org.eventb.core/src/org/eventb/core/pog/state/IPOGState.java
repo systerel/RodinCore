@@ -7,12 +7,12 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
-import org.eventb.core.state.IState;
+import org.eventb.core.tool.state.IState;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface IStatePOG extends IState {
+public interface IPOGState extends IState {
 //	 marker class for proof obligation generator state
 }

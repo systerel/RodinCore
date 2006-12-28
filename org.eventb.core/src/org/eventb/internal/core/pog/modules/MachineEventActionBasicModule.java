@@ -20,8 +20,7 @@ import org.eventb.core.pog.POGHint;
 import org.eventb.core.pog.POGIntervalSelectionHint;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -36,7 +35,7 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void process(IRodinElement element, IPOFile target,
-			IStateRepository<IStatePOG> repository, IProgressMonitor monitor)
+			IPOGStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
 		processConcreteActions(

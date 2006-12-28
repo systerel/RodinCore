@@ -19,7 +19,7 @@ import org.rodinp.core.IInternalElement;
  * @author Stefan Hallerstede
  *
  */
-public interface IContextPointerArray extends IStateSC {
+public interface IContextPointerArray extends ISCState {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".contextPointerArray";
 

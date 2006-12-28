@@ -22,9 +22,8 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.state.IAbstractEventActionTable;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
-import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IWitnessTable;
-import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -103,7 +102,7 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		abstractEventGuardList =
@@ -121,7 +120,7 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEventGuardList = null;
 		abstractEventActionTable = null;

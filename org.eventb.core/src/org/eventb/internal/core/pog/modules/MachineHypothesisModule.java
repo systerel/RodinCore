@@ -26,9 +26,10 @@ import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineInvariantTable;
 import org.eventb.core.pog.state.IMachineTheoremTable;
 import org.eventb.core.pog.state.IMachineVariableTable;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGState;
+import org.eventb.core.tool.state.IStateRepository;
 import org.eventb.internal.core.pog.MachineHypothesisManager;
 import org.eventb.internal.core.pog.MachineInvariantTable;
 import org.eventb.internal.core.pog.MachineTheoremTable;
@@ -51,7 +52,7 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		
@@ -97,7 +98,7 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		hypothesisManager.createHypotheses(target, monitor);
@@ -121,7 +122,7 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 	private void fetchVariables(
 			ISCVariable[] variables, 
 			IPOPredicateSet predSet,
-			IStateRepository<IStatePOG> repository,
+			IStateRepository<IPOGState> repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		IMachineVariableTable variableTable =

@@ -12,10 +12,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.pog.IModule;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
-import org.eventb.internal.core.state.StateRepository;
+import org.eventb.core.pog.IPOGProcessorModule;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
@@ -30,13 +28,13 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	
 	public static boolean DEBUG = false;
 	
-	protected IStateRepository<IStatePOG> createRepository(
+	protected IPOGStateRepository createRepository(
 			IRodinFile file, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		final FormulaFactory factory = FormulaFactory.getDefault();
 		
-		final IStateRepository<IStatePOG> repository = new StateRepository<IStatePOG>(factory);
+		final IPOGStateRepository repository = new POGStateRepository(factory);
 		
 		return repository;
 	}
@@ -65,11 +63,11 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	protected void runModules(
 			IRodinFile file, 
 			IPOFile target, 
-			IModule[] modules, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGProcessorModule[] modules, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		for(IModule module : modules) {
+		for(IPOGProcessorModule module : modules) {
 			
 			module.initModule(
 					file, 
@@ -79,7 +77,7 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	
 		}		
 	
-		for(IModule module : modules) {
+		for(IPOGProcessorModule module : modules) {
 			
 			module.process(
 					file, 
@@ -89,7 +87,7 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	
 		}		
 		
-		for(IModule module : modules) {
+		for(IPOGProcessorModule module : modules) {
 			
 			module.endModule(
 					file, 

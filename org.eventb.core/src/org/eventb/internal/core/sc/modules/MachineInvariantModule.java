@@ -19,14 +19,15 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineFile;
-import org.eventb.core.sc.IFilterModule;
+import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
-import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.ISCState;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.tool.state.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.InvariantSymbolInfo;
@@ -43,7 +44,7 @@ public class MachineInvariantModule extends PredicateWithTypingModule<IInvariant
 	public static final String MACHINE_INVARIANT_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineInvariantFilter";
 
-	private IFilterModule[] filterModules;
+	private ISCFilterModule[] filterModules;
 
 	public MachineInvariantModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
@@ -55,7 +56,7 @@ public class MachineInvariantModule extends PredicateWithTypingModule<IInvariant
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository<IStateSC> repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 
@@ -116,7 +117,7 @@ public class MachineInvariantModule extends PredicateWithTypingModule<IInvariant
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IStateRepository<IStateSC> repository) throws CoreException {
+			IStateRepository<ISCState> repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 	}
 

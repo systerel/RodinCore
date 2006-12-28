@@ -14,7 +14,7 @@ import org.eventb.core.ISCMachineFile;
  * @author Stefan Hallerstede
  *
  */
-public interface IAbstractEventTable extends IStateSC, Iterable<IAbstractEventInfo> {
+public interface IAbstractEventTable extends ISCState, Iterable<IAbstractEventInfo> {
 	
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventSymbolTable";
 

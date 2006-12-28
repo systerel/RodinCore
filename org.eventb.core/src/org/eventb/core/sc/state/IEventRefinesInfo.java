@@ -17,7 +17,7 @@ import org.eventb.core.IRefinesEvent;
  * @author Stefan Hallerstede
  *
  */
-public interface IEventRefinesInfo extends IStateSC {
+public interface IEventRefinesInfo extends ISCState {
 	
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".eventRefinesInfo";
 	

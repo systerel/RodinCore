@@ -15,7 +15,7 @@ import org.eventb.core.ast.Expression;
  * @author Stefan Hallerstede
  *
  */
-public interface IMachineVariantInfo extends IStatePOG {
+public interface IMachineVariantInfo extends IPOGState {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".machineVariantInfo";
 

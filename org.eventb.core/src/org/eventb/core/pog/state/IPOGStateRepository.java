@@ -5,34 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.internal.core.state;
+package org.eventb.core.pog.state;
 
-import org.eventb.core.state.IState;
+import org.eventb.core.tool.state.IStateRepository;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class State implements IState {
-	
-	private boolean immutable;
-	
-	public State() {
-		immutable = false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.state.IState#isImmutable()
-	 */
-	public boolean isImmutable() {
-		return immutable;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.state.IState#makeImmutable()
-	 */
-	public void makeImmutable() {
-		immutable = true;
-	}
+public interface IPOGStateRepository extends IStateRepository<IPOGState> {
 
 }

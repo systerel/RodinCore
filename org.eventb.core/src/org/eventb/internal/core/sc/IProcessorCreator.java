@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
-import org.eventb.core.sc.IProcessorModule;
+import org.eventb.core.sc.ISCProcessorModule;
 
 /**
  * @author Stefan Hallerstede
@@ -15,6 +15,6 @@ import org.eventb.core.sc.IProcessorModule;
  */
 public interface IProcessorCreator extends IModuleCreator {
 	
-	IProcessorModule[] create();
+	ISCProcessorModule[] create();
 	
 }

@@ -15,10 +15,9 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.ICurrentEvent;
-import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -34,7 +33,7 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 	
 	@Override
 	public void initModule(
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
 		ICurrentEvent currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
@@ -44,7 +43,7 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 
 	@Override
 	public void endModule(
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(repository, monitor);
 	}
@@ -72,7 +71,7 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 	@Override
 	public boolean accept(
 			IRodinElement element, 
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		boolean ok = super.accept(element, repository, monitor);
 		

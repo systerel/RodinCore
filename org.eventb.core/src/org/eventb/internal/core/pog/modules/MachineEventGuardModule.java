@@ -21,9 +21,10 @@ import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
 import org.eventb.core.pog.state.IHypothesisManager;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGState;
+import org.eventb.core.tool.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -45,7 +46,7 @@ public class MachineEventGuardModule extends PredicateModule {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		ISCEvent event = (ISCEvent) element;
@@ -61,7 +62,7 @@ public class MachineEventGuardModule extends PredicateModule {
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventLabel = null;
 		abstractEventGuardList = null;
@@ -69,12 +70,12 @@ public class MachineEventGuardModule extends PredicateModule {
 	}
 
 	@Override
-	protected IHypothesisManager getHypothesisManager(IStateRepository<IStatePOG> repository) throws CoreException {
+	protected IHypothesisManager getHypothesisManager(IStateRepository<IPOGState> repository) throws CoreException {
 		return (IEventHypothesisManager) repository.getState(IEventHypothesisManager.STATE_TYPE);
 	}
 
 	@Override
-	protected IPredicateTable getPredicateTable(IStateRepository<IStatePOG> repository) throws CoreException {
+	protected IPredicateTable getPredicateTable(IStateRepository<IPOGState> repository) throws CoreException {
 		return (IConcreteEventGuardTable) repository.getState(IConcreteEventGuardTable.STATE_TYPE);
 	}
 

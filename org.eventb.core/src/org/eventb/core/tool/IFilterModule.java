@@ -5,17 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.state;
+package org.eventb.core.tool;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface IState {
+public interface IFilterModule extends IModule {
 
-	String getStateType();
-
-	void makeImmutable();
-	
-	boolean isImmutable();
 }

@@ -26,10 +26,10 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
-import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.tool.state.IStateRepository;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -53,7 +53,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		contextTable = 
@@ -72,7 +72,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		contextTable = null;
@@ -307,7 +307,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			
 		}
 		
-		repository.setChanged();
+		repository.setTargetChanged();
 		
 	}
 	

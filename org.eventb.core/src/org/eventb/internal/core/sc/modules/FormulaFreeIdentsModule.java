@@ -10,13 +10,12 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.sc.FilterModule;
+import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.IParsedFormula;
-import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -26,7 +25,7 @@ import org.rodinp.core.IRodinProblem;
  * @author Stefan Hallerstede
  *
  */
-public abstract class FormulaFreeIdentsModule extends FilterModule {
+public abstract class FormulaFreeIdentsModule extends SCFilterModule {
 
 	protected IParsedFormula parsedFormula;
 	protected IIdentifierSymbolTable symbolTable;
@@ -36,7 +35,7 @@ public abstract class FormulaFreeIdentsModule extends FilterModule {
 	 */
 	@Override
 	public void initModule(
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		symbolTable = (IIdentifierSymbolTable)
 			repository.getState(IIdentifierSymbolTable.STATE_TYPE);
@@ -49,7 +48,7 @@ public abstract class FormulaFreeIdentsModule extends FilterModule {
 	 */
 	public boolean accept(
 			IRodinElement element, 
-			IStateRepository<IStateSC> repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		boolean ok = true;	
@@ -102,7 +101,7 @@ public abstract class FormulaFreeIdentsModule extends FilterModule {
 	 */
 	@Override
 	public void endModule(
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		symbolTable = null;
 		parsedFormula = null;

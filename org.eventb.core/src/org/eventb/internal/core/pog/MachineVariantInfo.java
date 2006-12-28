@@ -10,7 +10,7 @@ package org.eventb.internal.core.pog;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.pog.state.IMachineVariantInfo;
-import org.eventb.internal.core.state.State;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede

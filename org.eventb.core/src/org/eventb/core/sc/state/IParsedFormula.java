@@ -15,7 +15,7 @@ import org.eventb.core.ast.Formula;
  * @author Stefan Hallerstede
  *
  */
-public interface IParsedFormula extends IStateSC {
+public interface IParsedFormula extends ISCState {
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".parsedFormula";
 
 	void setFormula(Formula formula);

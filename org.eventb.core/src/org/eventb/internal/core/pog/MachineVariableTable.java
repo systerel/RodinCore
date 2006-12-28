@@ -13,7 +13,7 @@ import java.util.Iterator;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.pog.state.IMachineVariableTable;
-import org.eventb.internal.core.state.State;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede

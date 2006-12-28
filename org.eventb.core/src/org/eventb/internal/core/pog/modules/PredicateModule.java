@@ -23,9 +23,10 @@ import org.eventb.core.pog.POGIntervalSelectionHint;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IHypothesisManager;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGState;
+import org.eventb.core.tool.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -41,7 +42,7 @@ public abstract class PredicateModule extends UtilityModule {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		predicateTable = 
@@ -50,14 +51,14 @@ public abstract class PredicateModule extends UtilityModule {
 			getHypothesisManager(repository);
 	}
 
-	protected abstract IHypothesisManager getHypothesisManager(IStateRepository<IStatePOG> repository) 
+	protected abstract IHypothesisManager getHypothesisManager(IStateRepository<IPOGState> repository) 
 	throws CoreException;
 
-	protected abstract IPredicateTable getPredicateTable(IStateRepository<IStatePOG> repository) 
+	protected abstract IPredicateTable getPredicateTable(IStateRepository<IPOGState> repository) 
 	throws CoreException;
 	
 	@Override
-	public void endModule(IRodinElement element, IPOFile target, IStateRepository<IStatePOG> repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(IRodinElement element, IPOFile target, IPOGStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		predicateTable = null;
 		hypothesisManager = null;
 		super.endModule(element, target, repository, monitor);
@@ -67,7 +68,7 @@ public abstract class PredicateModule extends UtilityModule {
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void process(IRodinElement element, IPOFile target,
-			IStateRepository<IStatePOG> repository, IProgressMonitor monitor)
+			IPOGStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		
 		List<ISCPredicateElement> elements = predicateTable.getElements();

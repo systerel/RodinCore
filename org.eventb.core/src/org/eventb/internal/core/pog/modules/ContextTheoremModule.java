@@ -12,8 +12,8 @@ import org.eventb.core.pog.state.IContextHypothesisManager;
 import org.eventb.core.pog.state.IContextTheoremTable;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGState;
+import org.eventb.core.tool.state.IStateRepository;
 
 /**
  * @author Stefan Hallerstede
@@ -22,13 +22,13 @@ import org.eventb.core.state.IStateRepository;
 public class ContextTheoremModule extends TheoremModule {
 
 	@Override
-	protected IHypothesisManager getHypothesisManager(IStateRepository<IStatePOG> repository) 
+	protected IHypothesisManager getHypothesisManager(IStateRepository<IPOGState> repository) 
 	throws CoreException {
 		return (IContextHypothesisManager) repository.getState(IContextHypothesisManager.STATE_TYPE);
 	}
 
 	@Override
-	protected IPredicateTable getPredicateTable(IStateRepository<IStatePOG> repository) 
+	protected IPredicateTable getPredicateTable(IStateRepository<IPOGState> repository) 
 	throws CoreException {
 		return (IContextTheoremTable) repository.getState(IContextTheoremTable.STATE_TYPE);
 	}

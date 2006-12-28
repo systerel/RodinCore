@@ -16,7 +16,7 @@ import org.eventb.core.ISCEvent;
  * @author Stefan Hallerstede
  *
  */
-public interface IAbstractEventGuardList extends IStatePOG {
+public interface IAbstractEventGuardList extends IPOGState {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventGuardList";
 

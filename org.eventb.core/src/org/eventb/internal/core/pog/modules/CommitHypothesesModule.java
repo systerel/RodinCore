@@ -10,17 +10,18 @@ package org.eventb.internal.core.pog.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
-import org.eventb.core.pog.Module;
+import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IHypothesisManager;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGState;
+import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.tool.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class CommitHypothesesModule extends Module {
+public abstract class CommitHypothesesModule extends POGProcessorModule {
 
 	IHypothesisManager hypothesisManager;
 	
@@ -28,7 +29,7 @@ public abstract class CommitHypothesesModule extends Module {
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void process(IRodinElement element, IPOFile target,
-			IStateRepository<IStatePOG> repository, IProgressMonitor monitor)
+			IPOGStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		
 		hypothesisManager.makeImmutable();
@@ -39,20 +40,20 @@ public abstract class CommitHypothesesModule extends Module {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		hypothesisManager = getHypothesisManager(repository);
 	}
 	
 	protected abstract IHypothesisManager getHypothesisManager(
-			IStateRepository<IStatePOG> repository) throws CoreException;
+			IStateRepository<IPOGState> repository) throws CoreException;
 
 	@Override
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		hypothesisManager = null;
 		super.endModule(element, target, repository, monitor);

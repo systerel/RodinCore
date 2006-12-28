@@ -7,12 +7,12 @@
  *******************************************************************************/
 package org.eventb.core.sc.state;
 
-import org.eventb.core.state.IState;
+import org.eventb.core.tool.state.IStateRepository;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface IStateSC extends IState {
-  // marker class for static checker state
+public interface ISCStateRepository extends IStateRepository<ISCState> {
+
 }

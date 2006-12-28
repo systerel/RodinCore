@@ -13,6 +13,6 @@ package org.eventb.core.pog;
  */
 public interface IModuleManager {
 
-	public abstract IModule[] getProcessorModules(String moduleType);
+	public abstract IPOGProcessorModule[] getProcessorModules(String moduleType);
 
 }

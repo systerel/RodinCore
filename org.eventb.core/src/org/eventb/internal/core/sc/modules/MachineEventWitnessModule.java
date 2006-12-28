@@ -27,17 +27,17 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IFilterModule;
+import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.ICurrentEvent;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.tool.state.IStateRepository;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.WitnessSymbolInfo;
@@ -54,7 +54,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	public static final String MACHINE_EVENT_WITNESS_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineEventWitnessFilter";
 
-	private IFilterModule[] filterModules;
+	private ISCFilterModule[] filterModules;
 
 	public MachineEventWitnessModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
@@ -72,7 +72,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository<IStateSC> repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 
@@ -246,7 +246,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
@@ -260,7 +260,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		btrue = null;

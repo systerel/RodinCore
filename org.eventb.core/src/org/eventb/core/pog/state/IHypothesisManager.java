@@ -23,7 +23,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public interface IHypothesisManager extends IStatePOG, Iterable<FreeIdentifier> {
+public interface IHypothesisManager extends IPOGState, Iterable<FreeIdentifier> {
 	
 	/**
 	 * Hypotheses are represented by predicate sets.

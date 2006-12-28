@@ -5,14 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.internal.core.state;
+package org.eventb.internal.core.tool.state;
 
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.state.IState;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.tool.state.IState;
+import org.eventb.core.tool.state.IStateRepository;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
 
@@ -20,7 +20,7 @@ import org.eventb.internal.core.sc.Messages;
  * @author Stefan Hallerstede
  *
  */
-public final class StateRepository<I extends IState> implements IStateRepository<I> {
+public abstract class StateRepository<I extends IState> implements IStateRepository<I> {
 	
 	private CoreException exception;
 	
@@ -67,7 +67,7 @@ public final class StateRepository<I extends IState> implements IStateRepository
 		return fileChanged;
 	}
 
-	public void setChanged() throws CoreException {
+	public void setTargetChanged() throws CoreException {
 		if (exception != null)
 			throw exception;
 		fileChanged = true;

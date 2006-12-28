@@ -9,8 +9,8 @@ package org.eventb.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.sc.state.IStateSC;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.tool.IModule;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -22,12 +22,12 @@ import org.rodinp.core.RodinDBException;
  * 
  * Default implementation for modules.
  * 
- * @see org.eventb.core.sc.IModule
+ * @see org.eventb.core.tool.IModule
  * 
  * @author Stefan Hallerstede
  *
  */
-public abstract class Module implements IModule, IMarkerDisplay {
+public abstract class SCModule implements IModule, IMarkerDisplay {
 	
 	
 	public void createProblemMarker(
@@ -54,31 +54,31 @@ public abstract class Module implements IModule, IMarkerDisplay {
 	}
 	
 	protected void initFilterModules(
-			IFilterModule[] modules,
-			IStateRepository<IStateSC> repository, 
+			ISCFilterModule[] modules,
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IFilterModule module : modules) {
+		for (ISCFilterModule module : modules) {
 			module.initModule(repository, monitor);
 		}
 	}
 	
 	protected void initProcessorModules(
 			IRodinElement element,
-			IProcessorModule[] modules,
-			IStateRepository<IStateSC> repository, 
+			ISCProcessorModule[] modules,
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IProcessorModule module : modules) {
+		for (ISCProcessorModule module : modules) {
 			module.initModule(element, repository, monitor);
 		}
 	}
 	
 	protected boolean filterModules(
-			IFilterModule[] modules, 
+			ISCFilterModule[] modules, 
 			IRodinElement element, 
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IFilterModule module : modules) {
-			IFilterModule acceptorModule = module;
+		for (ISCFilterModule module : modules) {
+			ISCFilterModule acceptorModule = module;
 			if (acceptorModule.accept(element, repository, monitor))
 				continue;
 			return false;
@@ -87,31 +87,31 @@ public abstract class Module implements IModule, IMarkerDisplay {
 	}
 	
 	protected void processModules(
-			IProcessorModule[] modules, 
+			ISCProcessorModule[] modules, 
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IProcessorModule module : modules) {
+		for (ISCProcessorModule module : modules) {
 			module.process(element, target, repository, monitor);
 		}
 	}
 	
 	protected void endFilterModules(
-			IFilterModule[] modules, 
-			IStateRepository<IStateSC> repository, 
+			ISCFilterModule[] modules, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IFilterModule module : modules) {
+		for (ISCFilterModule module : modules) {
 			module.endModule(repository, monitor);
 		}
 	}
 
 	protected void endProcessorModules(
 			IRodinElement element,
-			IProcessorModule[] modules, 
-			IStateRepository<IStateSC> repository, 
+			ISCProcessorModule[] modules, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IProcessorModule module : modules) {
+		for (ISCProcessorModule module : modules) {
 			module.endModule(element, repository, monitor);
 		}
 	}

@@ -16,8 +16,7 @@ import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.IContextPointerArray;
-import org.eventb.core.sc.state.IStateSC;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalParent;
@@ -35,7 +34,7 @@ public class ContextExtendsModule extends ContextPointerModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		
@@ -60,7 +59,7 @@ public class ContextExtendsModule extends ContextPointerModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		contextPointerArray = null;
@@ -69,7 +68,7 @@ public class ContextExtendsModule extends ContextPointerModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		// we need to do everything up to this point

@@ -19,7 +19,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public interface IPredicateTable extends IStatePOG {
+public interface IPredicateTable extends IPOGState {
 
 	List<ISCPredicateElement> getElements();
 	

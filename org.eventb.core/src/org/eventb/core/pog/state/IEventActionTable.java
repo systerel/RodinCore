@@ -19,7 +19,7 @@ import org.eventb.core.ast.FreeIdentifier;
  * @author Stefan Hallerstede
  *
  */
-public interface IEventActionTable extends IStatePOG {
+public interface IEventActionTable extends IPOGState {
 
 	List<ISCAction> getActions();
 	List<Assignment> getAssignments();

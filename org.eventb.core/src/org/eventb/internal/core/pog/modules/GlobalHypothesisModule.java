@@ -25,8 +25,7 @@ import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.internal.core.pog.TypingState;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -42,7 +41,7 @@ public abstract class GlobalHypothesisModule extends UtilityModule {
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		typeEnvironment = null;
 		super.endModule(element, target, repository, monitor);
@@ -52,7 +51,7 @@ public abstract class GlobalHypothesisModule extends UtilityModule {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		index = 0;
@@ -126,7 +125,7 @@ public abstract class GlobalHypothesisModule extends UtilityModule {
 	public void process(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor)
 		throws CoreException {
 		

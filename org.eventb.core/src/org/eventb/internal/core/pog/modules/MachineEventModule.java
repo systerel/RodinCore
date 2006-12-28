@@ -14,12 +14,11 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.pog.IModule;
+import org.eventb.core.pog.IPOGProcessorModule;
 import org.eventb.core.pog.IModuleManager;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
-import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.ITypingState;
-import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.pog.ModuleManager;
 import org.eventb.internal.core.pog.TypingState;
 import org.rodinp.core.IRodinElement;
@@ -33,7 +32,7 @@ public class MachineEventModule extends UtilityModule {
 	public static final String MACHINE_EVENT_MODULE = 
 		EventBPlugin.PLUGIN_ID + ".machineEventModule";
 
-	private IModule[] modules;
+	private IPOGProcessorModule[] modules;
 
 	public MachineEventModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
@@ -46,7 +45,7 @@ public class MachineEventModule extends UtilityModule {
 	public void process(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -83,7 +82,7 @@ public class MachineEventModule extends UtilityModule {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		typingState =
@@ -101,7 +100,7 @@ public class MachineEventModule extends UtilityModule {
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, target, repository, monitor);
 		repository.setState(typingState);

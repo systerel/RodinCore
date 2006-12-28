@@ -5,7 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.sc;
+package org.eventb.core.pog;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IPOFile;
+import org.eventb.core.pog.state.IPOGStateRepository;
+import org.rodinp.core.IRodinElement;
 
 
 /**
@@ -53,9 +59,51 @@ package org.eventb.core.sc;
  * @author Stefan Hallerstede
  *
  */
-public interface IModule {
+public interface IPOGProcessorModule {
 
-	// protocols are specified in the interfaces
-	// IAcceptorModule and IProcessorModule
+
+	/**
+	 * Initialisation code for the module
+	 * 
+	 * @param element the input "unchecked" element
+	 * @param repository the state repository to use
+	 * @param monitor a progress monitor
+	 * @throws CoreException if there was a problem initialising this module
+	 */
+	public abstract void initModule(
+			IRodinElement element,
+			IPOFile target,
+			IPOGStateRepository repository,
+			IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Runs the static checker module: process the element. 
+	 * The element itself has already been accepted.
+	 * @param element the input "unchecked" element
+	 * @param target the target element (this may be a file or any other internal element)
+	 * @param repository the state repository to use
+	 * @param monitor a progress monitor
+	 * @throws CoreException if there was a problem running this module
+	 */
+	public abstract void process(
+			IRodinElement element,
+			IPOFile target,
+			IPOGStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Termination code for the module
+	 * 
+	 * @param element the input "unchecked" element
+	 * @param repository the state repository to use
+	 * @param monitor a progress monitor
+	 * @throws CoreException if there was a problem terminating this module
+	 */
+	
+	public abstract void endModule(
+			IRodinElement element,
+			IPOFile target,
+			IPOGStateRepository repository,
+			IProgressMonitor monitor) throws CoreException;
 
 }

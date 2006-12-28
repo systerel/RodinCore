@@ -18,7 +18,7 @@ import org.eventb.core.ISCContext;
  * @author Stefan Hallerstede
  *
  */
-public interface IContextTable extends IStateSC {
+public interface IContextTable extends ISCState {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".contextTable";
 	

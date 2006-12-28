@@ -16,7 +16,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.internal.core.state.State;
+import org.eventb.internal.core.tool.state.State;
 import org.rodinp.core.RodinDBException;
 
 /**

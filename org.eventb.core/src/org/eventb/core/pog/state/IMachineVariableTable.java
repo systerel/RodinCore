@@ -16,7 +16,7 @@ import org.eventb.core.ast.FreeIdentifier;
  * @author Stefan Hallerstede
  *
  */
-public interface IMachineVariableTable extends IStatePOG, Iterable<FreeIdentifier> {
+public interface IMachineVariableTable extends IPOGState, Iterable<FreeIdentifier> {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".machineVariableTable";
 

@@ -15,7 +15,7 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
-import org.eventb.internal.core.state.State;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede

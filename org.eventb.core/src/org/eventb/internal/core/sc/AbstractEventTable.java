@@ -15,7 +15,7 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAbstractEventTable;
-import org.eventb.internal.core.state.State;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede

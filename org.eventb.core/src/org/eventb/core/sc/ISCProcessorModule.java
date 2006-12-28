@@ -5,18 +5,17 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.pog;
+package org.eventb.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPOFile;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.tool.IProcessorModule;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
-
 /**
- * Common protocol for modules.
+ * Common protocol for processor modules.
  * The protocol has two variants:
  * <li>
  * <ul> The ONCE protocol. Method <code>run()</code> is called exactly once
@@ -24,9 +23,8 @@ import org.rodinp.core.IRodinElement;
  * <p>
  * <code>
  * m.initModule(repository, monitor);
- * ...  // invocation of the body of the module
- *      // as declared in one of the interfaces
- *      // IAcceptorModule or IProcessorModule
+ * m.process(element, repository, monitor);
+ * ...
  * m.endModule(repository, monitor);
  * </code>
  * </p>
@@ -37,9 +35,8 @@ import org.rodinp.core.IRodinElement;
  * <code>
  * m.initModule(repository, monitor);
  * while (more elements) {
- * ...  // invocation of the body of the module
- *      // as declared in one of the interfaces
- *      // IAcceptorModule or IProcessorModule
+ *    m.process(element, repository, monitor);
+ *    ...
  * }
  * m.endModule(repository, monitor);
  * </code>
@@ -50,18 +47,12 @@ import org.rodinp.core.IRodinElement;
  * It must be guaranteed by all implementors that the
  * methods are called in the specified order.
  * 
- * In a list of extensions a module may only rely on the order in which 
- * the body methods are called. Initialisations and terminations will usually
- * be invoked in batch manner before resp. after all body methods have been
- * invoked.
- * 
- * Module extensions of a module should be loaded in the constructor of the module.
+ * @see org.eventb.core.tool.IModule
  * 
  * @author Stefan Hallerstede
  *
  */
-public interface IModule {
-
+public interface ISCProcessorModule extends IProcessorModule {
 
 	/**
 	 * Initialisation code for the module
@@ -73,8 +64,7 @@ public interface IModule {
 	 */
 	public abstract void initModule(
 			IRodinElement element,
-			IPOFile target,
-			IStateRepository<IStatePOG> repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException;
 	
 	/**
@@ -88,8 +78,8 @@ public interface IModule {
 	 */
 	public abstract void process(
 			IRodinElement element,
-			IPOFile target,
-			IStateRepository<IStatePOG> repository, 
+			IInternalParent target,
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException;
 	
 	/**
@@ -103,8 +93,7 @@ public interface IModule {
 	
 	public abstract void endModule(
 			IRodinElement element,
-			IPOFile target,
-			IStateRepository<IStatePOG> repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException;
 
 }

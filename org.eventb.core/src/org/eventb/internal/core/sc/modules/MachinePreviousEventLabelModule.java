@@ -11,25 +11,24 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.sc.FilterModule;
+import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAbstractEventTable;
-import org.eventb.core.sc.state.IStateSC;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachinePreviousEventLabelModule extends FilterModule {
+public class MachinePreviousEventLabelModule extends SCFilterModule {
 	
 	private IAbstractEventTable abstractEventTable;
 
 	@Override
 	public void initModule(
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEventTable = (IAbstractEventTable)
 			repository.getState(IAbstractEventTable.STATE_TYPE);
@@ -40,7 +39,7 @@ public class MachinePreviousEventLabelModule extends FilterModule {
 	 */
 	public boolean accept(
 			IRodinElement element,
-			IStateRepository<IStateSC> repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		ILabeledElement labeledElement = (ILabeledElement) element;
 		String label = labeledElement.getLabel();
@@ -62,7 +61,7 @@ public class MachinePreviousEventLabelModule extends FilterModule {
 	 */
 	@Override
 	public void endModule(
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEventTable = null;
 	}

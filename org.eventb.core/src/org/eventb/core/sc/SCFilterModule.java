@@ -9,17 +9,16 @@ package org.eventb.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.sc.state.IStateSC;
-import org.eventb.core.state.IStateRepository;
-import org.rodinp.core.IRodinElement;
+import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.tool.IModule;
 
 
 /**
- * 
+ *
  * @author Stefan Hallerstede
  *
  */
-public abstract class ProcessorModule extends Module implements IProcessorModule {
+public abstract class SCFilterModule extends SCModule implements ISCFilterModule {
 
 	/** 
 	 * Default implementation of <code>initModule()</code> does nothing.
@@ -27,8 +26,7 @@ public abstract class ProcessorModule extends Module implements IProcessorModule
 	 * @see IModule
 	 */
 	public void initModule(
-			IRodinElement element,
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		// nothing to do by default
 	}
@@ -39,11 +37,9 @@ public abstract class ProcessorModule extends Module implements IProcessorModule
 	 * @see IModule
 	 */
 	public void endModule(
-			IRodinElement element,
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		// nothing to do by default
 	}
-	
 	
 }

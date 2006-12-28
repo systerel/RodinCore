@@ -13,10 +13,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCContextFile;
-import org.eventb.core.pog.IModule;
 import org.eventb.core.pog.IModuleManager;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.pog.IPOGProcessorModule;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -30,7 +29,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 	
 	private IModuleManager manager;
 	
-	private IModule[] machineModules = null;
+	private IPOGProcessorModule[] machineModules = null;
 	
 	public ContextPOGenerator() {
 		manager = ModuleManager.getModuleManager();
@@ -63,7 +62,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 		
 			poFile.create(true, monitor);
 		
-			IStateRepository<IStatePOG> repository = createRepository(scContextFile, monitor);
+			IPOGStateRepository repository = createRepository(scContextFile, monitor);
 			
 			runModules(
 					scContextFile, 

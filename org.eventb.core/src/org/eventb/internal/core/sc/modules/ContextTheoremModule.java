@@ -19,13 +19,14 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
-import org.eventb.core.sc.IFilterModule;
+import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.ISCState;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.tool.state.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.TheoremSymbolInfo;
@@ -41,7 +42,7 @@ public class ContextTheoremModule extends TheoremModule {
 	public static final String CONTEXT_THEOREM_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".contextTheoremFilter";
 
-	private IFilterModule[] filterModules;
+	private ISCFilterModule[] filterModules;
 
 	public ContextTheoremModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
@@ -51,7 +52,7 @@ public class ContextTheoremModule extends TheoremModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository<IStateSC> repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		monitor.subTask(Messages.bind(Messages.progress_ContextTheorems));
@@ -78,7 +79,7 @@ public class ContextTheoremModule extends TheoremModule {
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IStateRepository<IStateSC> repository) throws CoreException {
+			IStateRepository<ISCState> repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IContextLabelSymbolTable.STATE_TYPE);
 	}
 

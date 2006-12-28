@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.state;
+package org.eventb.core.tool.state;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
@@ -13,7 +13,7 @@ import org.eventb.core.ast.FormulaFactory;
 /**
  * @author Stefan Hallerstede
  *
- * The state repsotory allows different static checker modules to share state.
+ * The state repository allows different modules to share state.
  */
 public interface IStateRepository <I extends IState> {
 
@@ -34,5 +34,5 @@ public interface IStateRepository <I extends IState> {
 	
 	boolean targetHasChanged() throws CoreException;
 	
-	void setChanged() throws CoreException;
+	void setTargetChanged() throws CoreException;
 }

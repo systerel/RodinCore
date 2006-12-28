@@ -23,9 +23,8 @@ import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineVariantInfo;
-import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.ITypingState;
-import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.pog.MachineVariantInfo;
 import org.rodinp.core.IRodinElement;
 
@@ -38,7 +37,7 @@ public class MachineVariantModule extends UtilityModule {
 	public void process(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		if (!variantInfo.machineHasVariant())
@@ -82,7 +81,7 @@ public class MachineVariantModule extends UtilityModule {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		
@@ -107,7 +106,7 @@ public class MachineVariantModule extends UtilityModule {
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		variantInfo = null;
 		typeEnvironment = null;

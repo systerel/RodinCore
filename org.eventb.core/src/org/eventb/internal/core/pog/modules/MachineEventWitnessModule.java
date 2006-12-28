@@ -28,9 +28,8 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.pog.POGIntervalSelectionHint;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
-import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.ITypingState;
-import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -46,7 +45,7 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 	public void process(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -192,7 +191,7 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		ITypingState typingState = (ITypingState) repository.getState(ITypingState.STATE_TYPE);
@@ -203,7 +202,7 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		typeEnvironment = null;
 		super.endModule(element, target, repository, monitor);

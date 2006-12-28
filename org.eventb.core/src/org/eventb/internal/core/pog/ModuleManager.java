@@ -9,7 +9,7 @@ package org.eventb.internal.core.pog;
 
 import java.util.Hashtable;
 
-import org.eventb.core.pog.IModule;
+import org.eventb.core.pog.IPOGProcessorModule;
 import org.eventb.core.pog.IModuleManager;
 import org.eventb.internal.core.pog.modules.ContextAxiomModule;
 import org.eventb.internal.core.pog.modules.ContextCommitHypothesesModule;
@@ -41,18 +41,18 @@ public class ModuleManager implements IModuleManager {
 
 	private static IModuleManager MANAGER = new ModuleManager();
 	
-	private IModule[] emptyProc = new IModule[0];
+	private IPOGProcessorModule[] emptyProc = new IPOGProcessorModule[0];
 	
 	private Hashtable<String, IModuleCreator> moduleTable;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IModuleManager#getProcessorModules(java.lang.String)
 	 */
-	public IModule[] getProcessorModules(String moduleType) {
+	public IPOGProcessorModule[] getProcessorModules(String moduleType) {
 		IModuleCreator creator = moduleTable.get(moduleType);
 		if (creator == null)
 			return emptyProc;
-		IModule[] rules = creator.create();
+		IPOGProcessorModule[] rules = creator.create();
 		return rules;
 	}
 
@@ -61,8 +61,8 @@ public class ModuleManager implements IModuleManager {
 		moduleTable.put(MachinePOGenerator.MACHINE_MODULE,
 				new IModuleCreator() {
 
-					public IModule[] create() {
-						return new IModule[] {
+					public IPOGProcessorModule[] create() {
+						return new IPOGProcessorModule[] {
 								new MachineHypothesisModule(),
 								new MachineTheoremModule(),
 								new MachineInvariantModule(),
@@ -76,8 +76,8 @@ public class ModuleManager implements IModuleManager {
 		moduleTable.put(MachineEventModule.MACHINE_EVENT_MODULE,
 				new IModuleCreator() {
 
-					public IModule[] create() {
-						return new IModule[] {
+					public IPOGProcessorModule[] create() {
+						return new IPOGProcessorModule[] {
 								new MachineEventHypothesisModule(),
 								new MachineEventGuardModule(),
 								new MachineEventActionModule(),
@@ -95,8 +95,8 @@ public class ModuleManager implements IModuleManager {
 		moduleTable.put(ContextPOGenerator.CONTEXT_MODULE,
 				new IModuleCreator() {
 
-					public IModule[] create() {
-						return new IModule[] {
+					public IPOGProcessorModule[] create() {
+						return new IPOGProcessorModule[] {
 								new ContextHypothesisModule(),
 								new ContextTheoremModule(),
 								new ContextAxiomModule(),

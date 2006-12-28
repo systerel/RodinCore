@@ -22,8 +22,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IMachineVariantInfo;
-import org.eventb.core.pog.state.IStatePOG;
-import org.eventb.core.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -33,7 +32,7 @@ import org.rodinp.core.IRodinElement;
 public class MachineEventVariantModule extends MachineEventRefinementModule {
 
 	public void process(IRodinElement element, IPOFile target,
-			IStateRepository<IStatePOG> repository, IProgressMonitor monitor)
+			IPOGStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		
 		if (convergence == IConvergenceElement.Convergence.ORDINARY)
@@ -114,7 +113,7 @@ public class MachineEventVariantModule extends MachineEventRefinementModule {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		convergence = concreteEvent.getConvergence();
@@ -126,7 +125,7 @@ public class MachineEventVariantModule extends MachineEventRefinementModule {
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository<IStatePOG> repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		machineVariantInfo = null;
 		super.endModule(element, target, repository, monitor);
