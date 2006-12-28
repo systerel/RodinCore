@@ -26,7 +26,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.internal.core.pog.TypingState;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -38,16 +37,6 @@ import org.rodinp.core.RodinDBException;
 public abstract class GlobalHypothesisModule extends UtilityModule {
 
 	@Override
-	public void endModule(
-			IRodinElement element, 
-			IPOFile target, 
-			IPOGStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		typeEnvironment = null;
-		super.endModule(element, target, repository, monitor);
-	}
-
-	@Override
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
@@ -56,9 +45,17 @@ public abstract class GlobalHypothesisModule extends UtilityModule {
 		super.initModule(element, target, repository, monitor);
 		index = 0;
 		
-		typeEnvironment = factory.makeTypeEnvironment();
-		
-		repository.setState(new TypingState(typeEnvironment));
+		typeEnvironment = repository.getTypeEnvironment();
+	}
+	
+	@Override
+	public void endModule(
+			IRodinElement element, 
+			IPOFile target, 
+			IPOGStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException {
+		typeEnvironment = null;
+		super.endModule(element, target, repository, monitor);
 	}
 
 	private static String PRD_NAME_PREFIX = "PRD";

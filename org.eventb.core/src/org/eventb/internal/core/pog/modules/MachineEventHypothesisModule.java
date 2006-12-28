@@ -31,7 +31,6 @@ import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineVariableTable;
 import org.eventb.core.pog.state.IPOGState;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.state.ITypingState;
 import org.eventb.core.pog.state.IWitnessTable;
 import org.eventb.core.tool.state.IStateRepository;
 import org.eventb.internal.core.pog.AbstractEventActionTable;
@@ -211,10 +210,8 @@ public class MachineEventHypothesisModule extends UtilityModule {
 		super.initModule(element, target, repository, monitor);
 		
 		factory = repository.getFormulaFactory();
+		eventTypeEnvironment = repository.getTypeEnvironment();
 		
-		ITypingState typingState =
-			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
-		eventTypeEnvironment = typingState.getTypeEnvironment();
 		IMachineHypothesisManager machineHypothesisManager =
 			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
 		

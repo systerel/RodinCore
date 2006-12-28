@@ -11,6 +11,7 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tool.state.IState;
 import org.eventb.core.tool.state.IStateRepository;
 import org.eventb.internal.core.Util;
@@ -32,10 +33,13 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 	
 	private final FormulaFactory factory;
 	
+	private ITypeEnvironment environment;
+	
 	public StateRepository(FormulaFactory factory) {
 		if (DEBUG)
 			System.out.println("NEW STATE REPOSITORY ##################");
 		this.factory = factory;
+		environment = factory.makeTypeEnvironment();
 		fileChanged = false;
 		repository = new Hashtable<String, I>(REPOSITORY_SIZE);
 		exception = null;
@@ -53,6 +57,18 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		if (state == null)
 			throw Util.newCoreException(Messages.sctool_UninitializedStateError);
 		return state;
+	}
+
+	public ITypeEnvironment getTypeEnvironment() throws CoreException {
+		if (exception != null)
+			throw exception;
+		return environment;
+	}
+
+	public void setTypeEnvironment(ITypeEnvironment environment) throws CoreException {
+		if (exception != null)
+			throw exception;
+		this.environment = environment;
 	}
 
 	public FormulaFactory getFormulaFactory() throws CoreException {

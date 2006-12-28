@@ -61,7 +61,7 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 		
 			poFile.create(true, null);
 
-			IPOGStateRepository repository = createRepository(scMachineFile, monitor);
+			IPOGStateRepository repository = createRepository(poFile, monitor);
 		
 			runModules(
 					scMachineFile, 

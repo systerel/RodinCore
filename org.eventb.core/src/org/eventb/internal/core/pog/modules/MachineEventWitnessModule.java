@@ -29,7 +29,6 @@ import org.eventb.core.pog.POGIntervalSelectionHint;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.state.ITypingState;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -194,8 +193,7 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
-		ITypingState typingState = (ITypingState) repository.getState(ITypingState.STATE_TYPE);
-		typeEnvironment = typingState.getTypeEnvironment();
+		typeEnvironment = repository.getTypeEnvironment();
 	}
 
 	@Override

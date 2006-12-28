@@ -34,7 +34,6 @@ import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.internal.core.sc.AbstractEventInfo;
@@ -308,8 +307,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 
-		typeEnvironment = 
-			((ITypingState) repository.getState(ITypingState.STATE_TYPE)).getTypeEnvironment();
+		typeEnvironment = repository.getTypeEnvironment();
 		
 		IMachineFile machineFile = (IMachineFile) element;
 		

@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
+import org.eventb.core.IPOFile;
 import org.eventb.core.tool.state.IStateRepository;
 
 /**
@@ -15,4 +16,6 @@ import org.eventb.core.tool.state.IStateRepository;
  */
 public interface IPOGStateRepository extends IStateRepository<IPOGState> {
 
+	IPOFile getTarget();
+	
 }

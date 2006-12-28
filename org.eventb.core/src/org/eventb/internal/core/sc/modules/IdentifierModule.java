@@ -17,12 +17,11 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.IMarkerDisplay;
+import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -36,11 +35,11 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class IdentifierModule extends SCProcessorModule {
 
-	FormulaFactory factory;
+	protected FormulaFactory factory;
 	
-	IIdentifierSymbolTable identifierSymbolTable;
-
-	ITypingState typingState;
+	protected ITypeEnvironment typeEnvironment;
+	
+	protected IIdentifierSymbolTable identifierSymbolTable;
 
 	protected static FreeIdentifier parseIdentifier(
 			String name, 
@@ -105,8 +104,6 @@ public abstract class IdentifierModule extends SCProcessorModule {
 			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
-		final ITypeEnvironment typeEnvironment = typingState.getTypeEnvironment();
-
 		initFilterModules(rules, repository, null);
 		
 		for(IIdentifierElement element : elements) {
@@ -137,7 +134,9 @@ public abstract class IdentifierModule extends SCProcessorModule {
 	
 	protected abstract IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element);
 
-	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo, final ITypeEnvironment typeEnvironment) throws CoreException {
+	protected void typeIdentifierSymbol(
+			IIdentifierSymbolInfo newSymbolInfo, 
+			final ITypeEnvironment environment) throws CoreException {
 		// by default no type information for the identifier is generated 	
 	}
 
@@ -177,11 +176,10 @@ public abstract class IdentifierModule extends SCProcessorModule {
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
+		typeEnvironment = repository.getTypeEnvironment();
 		
 		identifierSymbolTable = (IIdentifierSymbolTable)
 			repository.getState(IIdentifierSymbolTable.STATE_TYPE);
-
-		typingState = (ITypingState) repository.getState(ITypingState.STATE_TYPE);
 	}
 
 
@@ -192,7 +190,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 			IProgressMonitor monitor) throws CoreException {
 		factory = null;
 		identifierSymbolTable = null;
-		typingState = null;
+		typeEnvironment = null;
 		super.endModule(element, repository, monitor);
 	}
 

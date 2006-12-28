@@ -62,7 +62,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 		
 			poFile.create(true, monitor);
 		
-			IPOGStateRepository repository = createRepository(scContextFile, monitor);
+			IPOGStateRepository repository = createRepository(poFile, monitor);
 			
 			runModules(
 					scContextFile, 

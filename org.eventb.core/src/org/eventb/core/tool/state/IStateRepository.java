@@ -9,6 +9,7 @@ package org.eventb.core.tool.state;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 
 /**
  * @author Stefan Hallerstede
@@ -31,6 +32,10 @@ public interface IStateRepository <I extends IState> {
 	void removeState(String stateType) throws CoreException;
 	
 	FormulaFactory getFormulaFactory() throws CoreException;
+	
+	ITypeEnvironment getTypeEnvironment() throws CoreException;
+	
+	void setTypeEnvironment(ITypeEnvironment environment) throws CoreException;
 	
 	boolean targetHasChanged() throws CoreException;
 	

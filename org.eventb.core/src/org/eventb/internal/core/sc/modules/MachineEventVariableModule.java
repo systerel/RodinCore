@@ -15,11 +15,10 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IVariable;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.IModuleManager;
+import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -78,7 +77,6 @@ public class MachineEventVariableModule extends IdentifierModule {
 		if (eventRefinesInfo.isEmpty())
 			return;
 		IAbstractEventInfo abstractEventInfo = eventRefinesInfo.getAbstractEventInfos().get(0);
-		ITypeEnvironment typeEnvironment = typingState.getTypeEnvironment();
 		for (FreeIdentifier freeIdentifier : abstractEventInfo.getIdentifiers()) {
 			String name = freeIdentifier.getName();
 			if (identifierSymbolTable.getSymbolInfoFromTop(name) != null)

@@ -14,13 +14,11 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.pog.IPOGProcessorModule;
 import org.eventb.core.pog.IModuleManager;
+import org.eventb.core.pog.IPOGProcessorModule;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.state.ITypingState;
 import org.eventb.internal.core.pog.ModuleManager;
-import org.eventb.internal.core.pog.TypingState;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -61,7 +59,7 @@ public class MachineEventModule extends UtilityModule {
 			ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 			typeEnvironment.addAll(machineTypeEnvironment);
 			
-			repository.setState(new TypingState(typeEnvironment));
+			repository.setTypeEnvironment(typeEnvironment);
 			
 			initModules(event, target, modules, repository, monitor);
 			
@@ -72,7 +70,6 @@ public class MachineEventModule extends UtilityModule {
 
 	}
 	
-	ITypingState typingState;
 	ITypeEnvironment machineTypeEnvironment;
 	IMachineHypothesisManager machineHypothesisManager;
 	/* (non-Javadoc)
@@ -85,9 +82,7 @@ public class MachineEventModule extends UtilityModule {
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
-		typingState =
-			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
-		machineTypeEnvironment = typingState.getTypeEnvironment();
+		machineTypeEnvironment = repository.getTypeEnvironment();
 		machineHypothesisManager =
 			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
 		factory = repository.getFormulaFactory();
@@ -103,8 +98,7 @@ public class MachineEventModule extends UtilityModule {
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, target, repository, monitor);
-		repository.setState(typingState);
-		typingState = null;
+		repository.setTypeEnvironment(machineTypeEnvironment);
 		machineTypeEnvironment = null;
 		machineHypothesisManager = null;
 		factory = null;

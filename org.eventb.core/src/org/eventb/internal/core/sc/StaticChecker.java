@@ -16,7 +16,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.state.ITypingState;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -48,12 +47,9 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 		final IdentifierSymbolTable identifierSymbolTable = 
 			new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, factory);
 		
-		final ITypingState typingState = new TypingState(factory.makeTypeEnvironment());
-		
 		final IContextTable contextTable = new ContextTable(CONTEXT_TABLE_SIZE);
 
 		repository.setState(identifierSymbolTable);
-		repository.setState(typingState);
 		repository.setState(contextTable);
 
 		return repository;

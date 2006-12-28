@@ -70,10 +70,10 @@ public class ContextCarrierSetModule extends IdentifierModule {
 	@Override
 	protected void typeIdentifierSymbol(
 			IIdentifierSymbolInfo newSymbolInfo, 
-			ITypeEnvironment typeEnvironment) throws CoreException {
-		typeEnvironment.addGivenSet(newSymbolInfo.getSymbol());				
+			ITypeEnvironment environment) throws CoreException {
+		environment.addGivenSet(newSymbolInfo.getSymbol());				
 			
-		newSymbolInfo.setType(typeEnvironment.getType(newSymbolInfo.getSymbol()));
+		newSymbolInfo.setType(environment.getType(newSymbolInfo.getSymbol()));
 	}
 
 	@Override

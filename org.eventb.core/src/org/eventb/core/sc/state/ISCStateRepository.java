@@ -14,5 +14,7 @@ import org.eventb.core.tool.state.IStateRepository;
  *
  */
 public interface ISCStateRepository extends IStateRepository<ISCState> {
-
+	
+	// empty for now
+	
 }

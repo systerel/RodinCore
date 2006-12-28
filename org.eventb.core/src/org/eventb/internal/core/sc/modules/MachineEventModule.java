@@ -39,7 +39,6 @@ import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
@@ -49,7 +48,6 @@ import org.eventb.internal.core.sc.CurrentEvent;
 import org.eventb.internal.core.sc.EventRefinesInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
-import org.eventb.internal.core.sc.TypingState;
 import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.EventSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
@@ -89,7 +87,7 @@ public class MachineEventModule extends LabeledElementModule {
 	
 	FormulaFactory factory;
 	
-	ITypingState typingState;
+	ITypeEnvironment machineTypeEnvironment;
 	
 	IEvent[] events;
 	
@@ -440,9 +438,9 @@ public class MachineEventModule extends LabeledElementModule {
 						new EventLabelSymbolTable(EVENT_LABEL_SYMTAB_SIZE));
 			
 				ITypeEnvironment eventTypeEnvironment = factory.makeTypeEnvironment();
-				eventTypeEnvironment.addAll(typingState.getTypeEnvironment());
+				eventTypeEnvironment.addAll(machineTypeEnvironment);
 				addPostValues(eventTypeEnvironment);
-				repository.setState(new TypingState(eventTypeEnvironment));
+				repository.setTypeEnvironment(eventTypeEnvironment);
 			
 				initProcessorModules(events[i], processorModules, repository, null);
 			
@@ -586,8 +584,7 @@ public class MachineEventModule extends LabeledElementModule {
 		
 		factory = repository.getFormulaFactory();
 		
-		typingState = 
-			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
+		machineTypeEnvironment = repository.getTypeEnvironment();
 				
 	}
 
@@ -600,10 +597,10 @@ public class MachineEventModule extends LabeledElementModule {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		repository.setState(identifierSymbolTable);
-		repository.setState(typingState);
+		repository.setTypeEnvironment(machineTypeEnvironment);
 		identifierSymbolTable = null;
 		factory = null;
-		typingState = null;
+		machineTypeEnvironment = null;
 		events = null;
 		abstractEventTable = null;
 		super.endModule(element, repository, monitor);

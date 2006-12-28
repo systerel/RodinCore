@@ -24,7 +24,6 @@ import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineVariantInfo;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.state.ITypingState;
 import org.eventb.internal.core.pog.MachineVariantInfo;
 import org.rodinp.core.IRodinElement;
 
@@ -85,8 +84,7 @@ public class MachineVariantModule extends UtilityModule {
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		
-		typeEnvironment = 
-			((ITypingState) repository.getState(ITypingState.STATE_TYPE)).getTypeEnvironment();
+		typeEnvironment = repository.getTypeEnvironment();
 		
 		machineHypothesisManager =
 			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);

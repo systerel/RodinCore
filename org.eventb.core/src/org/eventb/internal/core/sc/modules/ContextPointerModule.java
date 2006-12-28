@@ -27,7 +27,6 @@ import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.tool.state.IStateRepository;
 import org.rodinp.core.IInternalElement;
@@ -44,7 +43,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 
 	protected IContextTable contextTable;
 	protected IIdentifierSymbolTable identifierSymbolTable;
-	protected ITypingState typingState;
+	protected ITypeEnvironment typeEnvironment;
 	protected FormulaFactory factory;
 	
 	/* (non-Javadoc)
@@ -60,8 +59,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			(IContextTable) repository.getState(IContextTable.STATE_TYPE);
 		identifierSymbolTable = 
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
-		typingState =
-			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
+		typeEnvironment = repository.getTypeEnvironment();
 		factory = repository.getFormulaFactory();
 	}
 
@@ -77,7 +75,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		super.endModule(element, repository, monitor);
 		contextTable = null;
 		identifierSymbolTable = null;
-		typingState = null;
+		typeEnvironment = null;
 		factory = null;
 	}
 
@@ -240,8 +238,6 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		HashSet<String> contextNames = new HashSet<String>(s);
 		
 		ArrayList<ISCContext> validContexts = new ArrayList<ISCContext>(s);
-		
-		ITypeEnvironment typeEnvironment = typingState.getTypeEnvironment();
 		
 		for (int index = 0; index < contextPointerArray.size(); index++) {
 

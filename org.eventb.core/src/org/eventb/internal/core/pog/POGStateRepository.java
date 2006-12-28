@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import org.eventb.core.IPOFile;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pog.state.IPOGState;
 import org.eventb.core.pog.state.IPOGStateRepository;
@@ -18,8 +19,15 @@ import org.eventb.internal.core.tool.state.StateRepository;
  */
 public class POGStateRepository extends StateRepository<IPOGState> implements IPOGStateRepository {
 
-	public POGStateRepository(FormulaFactory factory) {
+	private final IPOFile target;
+	
+	public POGStateRepository(FormulaFactory factory, IPOFile target) {
 		super(factory);
+		this.target = target;
+	}
+
+	public IPOFile getTarget() {
+		return target;
 	}
 
 }

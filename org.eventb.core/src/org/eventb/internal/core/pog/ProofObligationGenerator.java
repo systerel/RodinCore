@@ -29,12 +29,12 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	public static boolean DEBUG = false;
 	
 	protected IPOGStateRepository createRepository(
-			IRodinFile file, 
+			IPOFile target, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		final FormulaFactory factory = FormulaFactory.getDefault();
 		
-		final IPOGStateRepository repository = new POGStateRepository(factory);
+		final IPOGStateRepository repository = new POGStateRepository(factory, target);
 		
 		return repository;
 	}

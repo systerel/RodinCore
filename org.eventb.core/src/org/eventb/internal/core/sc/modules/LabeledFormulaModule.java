@@ -29,7 +29,6 @@ import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.IParsedFormula;
 import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.state.IStateRepository;
 import org.eventb.internal.core.sc.ParsedFormula;
@@ -48,7 +47,6 @@ public abstract class LabeledFormulaModule<F extends Formula, I extends IInterna
 extends LabeledElementModule {
 
 	protected IIdentifierSymbolTable identifierSymbolTable;
-	protected ITypingState typingState;
 	
 	protected List<I> formulaElements;
 	protected List<F> formulas;
@@ -64,8 +62,6 @@ extends LabeledElementModule {
 		super.initModule(element, repository, monitor);
 		identifierSymbolTable = 
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
-		typingState = 
-			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
 		
 		formulaElements = getFormulaElements(element);
 
@@ -87,7 +83,6 @@ extends LabeledElementModule {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		identifierSymbolTable = null;
-		typingState = null;
 		super.endModule(element, repository, monitor);
 	}
 
@@ -231,9 +226,9 @@ extends LabeledElementModule {
 	protected ITypeEnvironment typeCheckFormula(
 			I formulaElement,
 			F formula,
-			ITypeEnvironment typeEnvironment) throws CoreException {
+			ITypeEnvironment environment) throws CoreException {
 		
-		ITypeCheckResult typeCheckResult = formula.typeCheck(typeEnvironment);
+		ITypeCheckResult typeCheckResult = formula.typeCheck(environment);
 		
 		if (!typeCheckResult.isSuccess()) {
 			issueASTProblemMarkers(formulaElement, getFormulaAttributeType(), typeCheckResult);
@@ -250,7 +245,7 @@ extends LabeledElementModule {
 	protected boolean updateIdentifierSymbolTable(
 			IInternalElement formulaElement,
 			ITypeEnvironment inferredEnvironment, 
-			ITypeEnvironment typeEnvironment) throws CoreException {
+			ITypeEnvironment environment) throws CoreException {
 		
 		if (inferredEnvironment.isEmpty())
 			return true;
@@ -283,7 +278,7 @@ extends LabeledElementModule {
 		
 		final FormulaFactory factory = repository.getFormulaFactory();
 		
-		final ITypeEnvironment typeEnvironment = typingState.getTypeEnvironment();
+		final ITypeEnvironment typeEnvironment = repository.getTypeEnvironment();
 		
 		final Collection<FreeIdentifier> freeIdentifiers = 
 			identifierSymbolTable.getFreeIdentifiers();
