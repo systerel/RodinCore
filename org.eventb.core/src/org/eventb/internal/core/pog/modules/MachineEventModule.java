@@ -42,8 +42,7 @@ public class MachineEventModule extends UtilityModule {
 	 */
 	public void process(
 			IRodinElement element, 
-			IPOFile target,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -54,6 +53,8 @@ public class MachineEventModule extends UtilityModule {
 		if (events.length == 0)
 			return;
 		
+		IPOFile target = repository.getTarget();
+		
 		for (ISCEvent event : events) {
 			
 			ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -61,11 +62,11 @@ public class MachineEventModule extends UtilityModule {
 			
 			repository.setTypeEnvironment(typeEnvironment);
 			
-			initModules(event, target, modules, repository, monitor);
+			initModules(event, modules, repository, monitor);
 			
-			processModules(modules, event, target, repository, monitor);
+			processModules(modules, event, repository, monitor);
 			
-			endModules(event, target, modules, repository, monitor);
+			endModules(event, modules, repository, monitor);
 		}
 
 	}
@@ -78,10 +79,9 @@ public class MachineEventModule extends UtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		machineTypeEnvironment = repository.getTypeEnvironment();
 		machineHypothesisManager =
 			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
@@ -94,10 +94,9 @@ public class MachineEventModule extends UtilityModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 		repository.setTypeEnvironment(machineTypeEnvironment);
 		machineTypeEnvironment = null;
 		machineHypothesisManager = null;

@@ -9,7 +9,6 @@ package org.eventb.internal.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
@@ -39,10 +38,9 @@ public abstract class GlobalHypothesisModule extends UtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		index = 0;
 		
 		typeEnvironment = repository.getTypeEnvironment();
@@ -51,11 +49,10 @@ public abstract class GlobalHypothesisModule extends UtilityModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		typeEnvironment = null;
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 
 	private static String PRD_NAME_PREFIX = "PRD";
@@ -121,8 +118,7 @@ public abstract class GlobalHypothesisModule extends UtilityModule {
 
 	public void process(
 			IRodinElement element, 
-			IPOFile target,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor)
 		throws CoreException {
 		

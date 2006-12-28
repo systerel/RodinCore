@@ -38,8 +38,7 @@ public class MachineEventActionBodySimModule extends
 	 */
 	public void process(
 			IRodinElement element, 
-			IPOFile target,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -50,7 +49,7 @@ public class MachineEventActionBodySimModule extends
 			return;
 		
 		createBodySimProofObligations(
-				target, 
+				repository.getTarget(), 
 				abstractEvent,
 				monitor);
 

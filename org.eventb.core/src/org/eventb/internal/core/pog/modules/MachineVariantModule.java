@@ -35,12 +35,13 @@ public class MachineVariantModule extends UtilityModule {
 	
 	public void process(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		if (!variantInfo.machineHasVariant())
 			return;
+		
+		IPOFile target = repository.getTarget();
 		
 		Predicate wdPredicate = variantInfo.getExpression().getWDPredicate(factory);
 		POGSource[] sources = sources(new POGSource(IPOSource.DEFAULT_ROLE, variantInfo.getVariant()));
@@ -79,10 +80,9 @@ public class MachineVariantModule extends UtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		
 		typeEnvironment = repository.getTypeEnvironment();
 		
@@ -103,13 +103,12 @@ public class MachineVariantModule extends UtilityModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		variantInfo = null;
 		typeEnvironment = null;
 		machineHypothesisManager = null;
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 	
 	private boolean mustProveFinite() {

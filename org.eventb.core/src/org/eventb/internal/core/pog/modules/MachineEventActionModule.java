@@ -36,14 +36,15 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 	 */
 	public void process(
 			IRodinElement element, 
-			IPOFile target,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
 		int actionsLength = concreteEventActionTable.getActions().size();
 		if (actionsLength == 0)
 			return;
+		
+		IPOFile target = repository.getTarget();
 		
 		POGHint[] hints = hints(
 				new POGIntervalSelectionHint(
@@ -98,10 +99,9 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		abstractEventActionTable = 
 			(IAbstractEventActionTable) repository.getState(IAbstractEventActionTable.STATE_TYPE);
 	}
@@ -109,11 +109,10 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEventActionTable = null;
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 
 }

@@ -51,12 +51,13 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		
 		ISCMachineFile scMachineFile = (ISCMachineFile) element;
+		
+		IPOFile target = repository.getTarget();
 		
 		createContextHypSet(scMachineFile, target, monitor);
 		
@@ -97,14 +98,13 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
-		hypothesisManager.createHypotheses(target, monitor);
+		hypothesisManager.createHypotheses(repository.getTarget(), monitor);
 		factory = null;
 		
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 
 	private void createContextHypSet(

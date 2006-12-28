@@ -45,10 +45,9 @@ public class MachineEventGuardModule extends PredicateModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		ISCEvent event = (ISCEvent) element;
 		eventLabel = event.getLabel();
 		abstractEventGuardList = 
@@ -61,12 +60,11 @@ public class MachineEventGuardModule extends PredicateModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventLabel = null;
 		abstractEventGuardList = null;
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 
 	@Override

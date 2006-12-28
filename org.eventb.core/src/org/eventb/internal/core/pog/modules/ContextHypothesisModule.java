@@ -40,16 +40,18 @@ public class ContextHypothesisModule extends GlobalHypothesisModule {
 	IContextHypothesisManager hypothesisManager;
 	IContextAxiomTable axiomTable;
 	IContextTheoremTable theoremTable;
+	IPOFile target;
 	
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		
 		ISCContextFile scContextFile = (ISCContextFile) element;
+		
+		target = repository.getTarget();
 		
 		IPOPredicateSet rootSet = target.getPredicateSet(ContextHypothesisManager.ABS_HYP_NAME);
 		rootSet.create(null, monitor);
@@ -101,14 +103,16 @@ public class ContextHypothesisModule extends GlobalHypothesisModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		hypothesisManager.createHypotheses(target, monitor);
-		factory = null;
+		target = null;
+		hypothesisManager = null;
+		axiomTable = null;
+		theoremTable = null;
 		
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 
 }

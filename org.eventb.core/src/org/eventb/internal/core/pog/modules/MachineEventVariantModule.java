@@ -31,12 +31,14 @@ import org.rodinp.core.IRodinElement;
  */
 public class MachineEventVariantModule extends MachineEventRefinementModule {
 
-	public void process(IRodinElement element, IPOFile target,
-			IPOGStateRepository repository, IProgressMonitor monitor)
+	public void process(IRodinElement element, IPOGStateRepository repository,
+			IProgressMonitor monitor)
 			throws CoreException {
 		
 		if (convergence == IConvergenceElement.Convergence.ORDINARY)
 			return;
+		
+		IPOFile target = repository.getTarget();
 		
 		Expression varExpression = machineVariantInfo.getExpression();
 		List<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
@@ -112,10 +114,9 @@ public class MachineEventVariantModule extends MachineEventRefinementModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		convergence = concreteEvent.getConvergence();
 		machineVariantInfo = 
 			(IMachineVariantInfo) repository.getState(IMachineVariantInfo.STATE_TYPE);
@@ -124,11 +125,10 @@ public class MachineEventVariantModule extends MachineEventRefinementModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		machineVariantInfo = null;
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 	
 }

@@ -123,34 +123,31 @@ public abstract class POGProcessorModule implements IPOGProcessorModule {
 
 	protected void initModules(
 			IRodinElement element,
-			IPOFile target,
 			IPOGProcessorModule[] modules,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		for (IPOGProcessorModule module : modules) {
-			module.initModule(element, target, repository, monitor);
+			module.initModule(element, repository, monitor);
 		}
 	}
 	
 	protected void processModules(
 			IPOGProcessorModule[] modules, 
 			IRodinElement element, 
-			IPOFile target,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		for (IPOGProcessorModule module : modules) {
-			module.process(element, target, repository, monitor);
+			module.process(element, repository, monitor);
 		}
 	}
 	
 	protected void endModules(
 			IRodinElement element,
-			IPOFile target,
-			IPOGProcessorModule[] modules, 
+			IPOGProcessorModule[] modules,
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IPOGProcessorModule module : modules) {
-			module.endModule(element, target, repository, monitor);
+			module.endModule(element, repository, monitor);
 		}
 	}
 	
@@ -159,7 +156,6 @@ public abstract class POGProcessorModule implements IPOGProcessorModule {
 	 */
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 
@@ -172,7 +168,6 @@ public abstract class POGProcessorModule implements IPOGProcessorModule {
 	 */
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 

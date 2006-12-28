@@ -9,7 +9,6 @@ package org.eventb.core.pog;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPOFile;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.rodinp.core.IRodinElement;
 
@@ -72,7 +71,6 @@ public interface IPOGProcessorModule {
 	 */
 	public abstract void initModule(
 			IRodinElement element,
-			IPOFile target,
 			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException;
 	
@@ -80,15 +78,13 @@ public interface IPOGProcessorModule {
 	 * Runs the static checker module: process the element. 
 	 * The element itself has already been accepted.
 	 * @param element the input "unchecked" element
-	 * @param target the target element (this may be a file or any other internal element)
 	 * @param repository the state repository to use
 	 * @param monitor a progress monitor
 	 * @throws CoreException if there was a problem running this module
 	 */
 	public abstract void process(
 			IRodinElement element,
-			IPOFile target,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException;
 	
 	/**
@@ -102,7 +98,6 @@ public interface IPOGProcessorModule {
 	
 	public abstract void endModule(
 			IRodinElement element,
-			IPOFile target,
 			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException;
 

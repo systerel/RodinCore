@@ -41,10 +41,9 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		machineHypothesisManager =
 			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
 		eventHypothesisManager = 
@@ -53,7 +52,7 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 		concreteEvent = (ISCEvent) element;
 		concreteEventLabel = concreteEvent.getLabel();
 		isInitialisation = concreteEventLabel.equals("INITIALISATION");
-		fullHypothesis = eventHypothesisManager.getFullHypothesis(target);
+		fullHypothesis = eventHypothesisManager.getFullHypothesis(repository.getTarget());
 		
 		concreteEventActionTable =
 			(IConcreteEventActionTable) repository.getState(IConcreteEventActionTable.STATE_TYPE);
@@ -65,7 +64,6 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventHypothesisManager = null;
@@ -74,7 +72,7 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 		concreteEvent = null;
 		concreteEventLabel = null;
 		fullHypothesis = null;
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 
 	protected POGIntervalSelectionHint getLocalHypothesisSelectionHint(IPOFile target, String sequentName) throws RodinDBException {

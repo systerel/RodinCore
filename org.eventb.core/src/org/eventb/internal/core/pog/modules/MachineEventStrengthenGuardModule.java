@@ -46,10 +46,11 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 	 */
 	public void process(
 			IRodinElement element, 
-			IPOFile target,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
+		
+		IPOFile target = repository.getTarget();
 		
 		if (abstractEventGuardList.getAbstractEvents().size() <= 1) {
 		
@@ -201,10 +202,9 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		concreteEventGuardTable = 
 			(IConcreteEventGuardTable) repository.getState(IConcreteEventGuardTable.STATE_TYPE);
 	}
@@ -215,11 +215,10 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		concreteEventGuardTable = null;
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 
 }

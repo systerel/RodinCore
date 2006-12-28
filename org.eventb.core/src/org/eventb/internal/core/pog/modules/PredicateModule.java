@@ -41,10 +41,9 @@ public abstract class PredicateModule extends UtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		predicateTable = 
 			getPredicateTable(repository);
 		hypothesisManager = 
@@ -58,23 +57,25 @@ public abstract class PredicateModule extends UtilityModule {
 	throws CoreException;
 	
 	@Override
-	public void endModule(IRodinElement element, IPOFile target, IPOGStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(IRodinElement element, IPOGStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		predicateTable = null;
 		hypothesisManager = null;
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(IRodinElement element, IPOFile target,
-			IPOGStateRepository repository, IProgressMonitor monitor)
+	public void process(IRodinElement element, IPOGStateRepository repository,
+			IProgressMonitor monitor)
 			throws CoreException {
 		
 		List<ISCPredicateElement> elements = predicateTable.getElements();
 		
 		if(elements.size() == 0)
 			return;
+		
+		IPOFile target = repository.getTarget();
 		
 		List<Predicate> predicates = predicateTable.getPredicates();
 		

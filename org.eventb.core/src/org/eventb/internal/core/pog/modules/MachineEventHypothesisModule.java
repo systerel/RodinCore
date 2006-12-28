@@ -58,8 +58,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	 */
 	public void process(
 			IRodinElement element, 
-			IPOFile target,
-			IPOGStateRepository repository, 
+			IPOGStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		// all processing is done in the initModule() method
@@ -116,11 +115,13 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	}
 
 	private void setEventHypothesisManager(
-			IPOFile target,
 			IMachineHypothesisManager machineHypothesisManager, 
 			ISCEvent event, ISCGuard[] guards, 
-			IStateRepository<IPOGState> repository,
+			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
+		
+		IPOFile target = repository.getTarget();
+		
 		IPOPredicateSet fullHypothesis = (event.getLabel().equals("INITIALISATION")) ?
 				machineHypothesisManager.getContextHypothesis(target) :
 				machineHypothesisManager.getFullHypothesis(target);
@@ -204,10 +205,9 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		
 		factory = repository.getFormulaFactory();
 		eventTypeEnvironment = repository.getTypeEnvironment();
@@ -220,7 +220,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 		ISCGuard[] guards = concreteEvent.getSCGuards();
 		
 		setEventHypothesisManager(
-				target, machineHypothesisManager, concreteEvent, guards, repository, monitor);
+				machineHypothesisManager, concreteEvent, guards, repository, monitor);
 		
 		fetchVariables(concreteEvent.getSCVariables());
 		
@@ -241,18 +241,17 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		eventHypothesisManager.createHypotheses(target, monitor);
+		eventHypothesisManager.createHypotheses(repository.getTarget(), monitor);
 
 		eventHypothesisManager = null;
 		abstractEventGuardList = null;
 		eventTypeEnvironment = null;
 		factory = null;
 		
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 
 }

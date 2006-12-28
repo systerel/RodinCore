@@ -9,7 +9,6 @@ package org.eventb.internal.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPOFile;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IPOGState;
@@ -28,8 +27,8 @@ public abstract class CommitHypothesesModule extends POGProcessorModule {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(IRodinElement element, IPOFile target,
-			IPOGStateRepository repository, IProgressMonitor monitor)
+	public void process(IRodinElement element, IPOGStateRepository repository,
+			IProgressMonitor monitor)
 			throws CoreException {
 		
 		hypothesisManager.makeImmutable();
@@ -39,10 +38,9 @@ public abstract class CommitHypothesesModule extends POGProcessorModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		hypothesisManager = getHypothesisManager(repository);
 	}
 	
@@ -52,11 +50,10 @@ public abstract class CommitHypothesesModule extends POGProcessorModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		hypothesisManager = null;
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 	
 }

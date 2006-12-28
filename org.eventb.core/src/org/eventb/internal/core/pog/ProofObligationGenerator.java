@@ -71,8 +71,7 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 			
 			module.initModule(
 					file, 
-					target,
-					repository, 
+					repository,
 					monitor);
 	
 		}		
@@ -81,8 +80,7 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 			
 			module.process(
 					file, 
-					target,
-					repository, 
+					repository,
 					monitor);
 	
 		}		
@@ -91,8 +89,7 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 			
 			module.endModule(
 					file, 
-					target,
-					repository, 
+					repository,
 					monitor);
 	
 		}		

@@ -34,12 +34,12 @@ public class MachineEventActionBasicModule extends MachineEventActionUtilityModu
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(IRodinElement element, IPOFile target,
-			IPOGStateRepository repository, IProgressMonitor monitor)
+	public void process(IRodinElement element, IPOGStateRepository repository,
+			IProgressMonitor monitor)
 			throws CoreException {
 
 		processConcreteActions(
-				target, 
+				repository.getTarget(), 
 				concreteEventActionTable.getActions(), 
 				concreteEventActionTable.getAssignments(), 
 				monitor);

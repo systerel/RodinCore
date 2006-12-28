@@ -40,12 +40,11 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 	
 	public void process(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		createFrameSimProofObligations(
-				target, 
+				repository.getTarget(), 
 				monitor);
 	
 	}
@@ -146,10 +145,9 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, target, repository, monitor);
+		super.initModule(element, repository, monitor);
 		abstractEvent = abstractEventGuardList.getFirstAbstractEvent();
 		machineVariableTable =
 			(IMachineVariableTable) repository.getState(IMachineVariableTable.STATE_TYPE);
@@ -158,12 +156,11 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOFile target, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEvent = null;
 		machineVariableTable = null;
-		super.endModule(element, target, repository, monitor);
+		super.endModule(element, repository, monitor);
 	}
 
 }
