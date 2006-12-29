@@ -9,25 +9,25 @@ package org.eventb.internal.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.pog.POGProcessorModule;
+import org.eventb.core.pog.ProcessorModule;
 import org.eventb.core.pog.state.IHypothesisManager;
-import org.eventb.core.pog.state.IPOGState;
-import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.tool.state.IStateRepository;
+import org.eventb.core.pog.state.IState;
+import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.tool.state.IToolStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class CommitHypothesesModule extends POGProcessorModule {
+public abstract class CommitHypothesesModule extends ProcessorModule {
 
 	IHypothesisManager hypothesisManager;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(IRodinElement element, IPOGStateRepository repository,
+	public void process(IRodinElement element, IStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -38,19 +38,19 @@ public abstract class CommitHypothesesModule extends POGProcessorModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		hypothesisManager = getHypothesisManager(repository);
 	}
 	
 	protected abstract IHypothesisManager getHypothesisManager(
-			IStateRepository<IPOGState> repository) throws CoreException;
+			IToolStateRepository<IState> repository) throws CoreException;
 
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		hypothesisManager = null;
 		super.endModule(element, repository, monitor);

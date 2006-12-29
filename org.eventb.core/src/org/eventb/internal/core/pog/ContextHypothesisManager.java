@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import org.eventb.core.IPOFile;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.pog.state.IContextHypothesisManager;
 import org.rodinp.core.IRodinElement;
@@ -30,8 +31,9 @@ public class ContextHypothesisManager extends HypothesisManager implements
 
 	public ContextHypothesisManager(
 			IRodinElement parentElement, 
+			IPOFile target,
 			ISCPredicateElement[] predicateTable) {
-		super(parentElement, predicateTable, 
+		super(parentElement, target, predicateTable, 
 				ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME, IDENT_HYP_NAME,
 				IDENTIFIER_TABLE_SIZE);
 	}

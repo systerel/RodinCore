@@ -12,11 +12,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.pog.POGIntervalSelectionHint;
 import org.eventb.core.pog.state.IConcreteEventActionTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.util.POGIntervalSelectionHint;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -41,7 +41,7 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		machineHypothesisManager =
@@ -52,7 +52,7 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 		concreteEvent = (ISCEvent) element;
 		concreteEventLabel = concreteEvent.getLabel();
 		isInitialisation = concreteEventLabel.equals("INITIALISATION");
-		fullHypothesis = eventHypothesisManager.getFullHypothesis(repository.getTarget());
+		fullHypothesis = eventHypothesisManager.getFullHypothesis();
 		
 		concreteEventActionTable =
 			(IConcreteEventActionTable) repository.getState(IConcreteEventActionTable.STATE_TYPE);
@@ -64,7 +64,7 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventHypothesisManager = null;
 		machineHypothesisManager = null;
@@ -77,7 +77,7 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 
 	protected POGIntervalSelectionHint getLocalHypothesisSelectionHint(IPOFile target, String sequentName) throws RodinDBException {
 		return new POGIntervalSelectionHint(
-				eventHypothesisManager.getRootHypothesis(target),
+				eventHypothesisManager.getRootHypothesis(),
 				getSequentHypothesis(target, sequentName));
 	}
 

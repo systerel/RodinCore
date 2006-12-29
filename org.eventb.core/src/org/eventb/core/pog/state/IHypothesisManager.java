@@ -10,36 +10,41 @@ package org.eventb.core.pog.state;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FreeIdentifier;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
+ * Hypotheses in a PO file are arranged in a tree structure. Hypothesis managers are used
+ * to anticipate and create this structure. The hypotheses of each manegers from a list. 
+ * Often, there is more than one hypothesis manager. In that case these hypothesis managers 
+ * form a tree: the hypotheses tree of the PO file. Hypothesis managers are plugged together 
+ * by means of <b>root hypotheses</b> and <b>full hypotheses</b> that refer to the hypothesis
+ * sets immediately preceding the hypotheses list of a hypothesis manager and to the last 
+ * hypothesis in this list.
+ * <p>
+ * Hypotheses are represented by predicate sets.
+ * Each predicate set may be associated with a type environment which is represented
+ * by a set of typed identifiers. When the predicate sets of this manager are created, the
+ * type environment associated with this manager is added to the first predicate set created
+ * (the one that is included in all other predicate sets of this manager). The identifiers
+ * of this manager can be accessed via the <code>Iterable</code> interface it implements.
+ * </p>
+ * 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
  * @author Stefan Hallerstede
  *
  */
-public interface IHypothesisManager extends IPOGState, Iterable<FreeIdentifier> {
+public interface IHypothesisManager extends IState, Iterable<FreeIdentifier> {
 	
 	/**
-	 * Hypotheses are represented by predicate sets.
-	 * Each predicate set may be associated with a type environment which is represented
-	 * by a set of typed identifiers. When the predicate sets of this manager are created, the
-	 * type environment associated with this manager is added to the first predicate set created
-	 * (the one that is included in all other predicate sets of this manager). The identifiers
-	 * of this manager can be accessed via the <code>Iterable</code> interface it implements.
-	 * 
-	 * @param identifier the free identifier to be added
-	 * @throws CoreException TODO
-	 */
-	void addIdentifier(FreeIdentifier identifier) throws CoreException;
-	
-	/**
-	 * Returns the parent element from which the hypothesis are taken
+	 * Returns the parent element from which the hypothesis are taken.
+	 * This can be, e.g., an SC context file, an SC machine file, or an SC event.
 	 * 
 	 * @return the parent element from which the hypothesis are taken
 	 */
@@ -47,56 +52,56 @@ public interface IHypothesisManager extends IPOGState, Iterable<FreeIdentifier> 
 	
 	/**
 	 * Returns the name for the hypothesis set of a predicate element.
-	 * After this method has been called the hypothesis set must be created
-	 * when <code>createHypothesis</code> is called. If this method was not called
-	 * the correspondingly named hypothesis set does not need to be created. 
-	 * @param element the predicate elemenent for which a hypothesis set is required
+	 * When this method has been called the hypothesis set for for the predicate 
+	 * element is created. It will be saved to the PO file when 
+	 * <code>createHypotheses()</code> is called. If this method is not called
+	 * for a particular predicate element the corresponding hypothesis set is not created. 
+	 * @param element the predicate element for which a hypothesis set is required
 	 * 
 	 * @return the name of the hypothesis set
-	 * @throws CoreException TODO
+	 * @throws CoreException if this hypthesis manager is immutable
 	 * 
-	 * TODO rename to makeHypothesis()
 	 */
-	IPOPredicateSet getHypothesis(IPOFile file, ISCPredicateElement element) throws CoreException;
+	IPOPredicateSet makeHypothesis(ISCPredicateElement element) throws CoreException;
 	
 	/**
-	 * Returns a handle to a predicate of this hypothesis manager. 
-	 * This requires that the hypothesis is immutable. 
-	 * 
-	 * @param file the target PO file
+	 * Returns a handle to a PO predicate of this hypothesis manager, or <code>null</code>
+	 * if the predicate element passed as parameter is not among the predicates managed
+	 * by this hypothesis manager.
+	 * <p>
+	 * This requires that the hypothesis manager is immutable. 
+	 * </p>
+	 * <p>
+	 * Using this method PO predicate sets in the PO file can be referenced before they are created.
+	 * </p>
 	 * @param element the predicate element corresponding to the predicate
+	 * 
 	 * @return a handle to the predicate in the PO file corresponding to 
 	 * 		the predicate element passed as the parameter
-	 * @throws CoreException TODO
+	 * @throws CoreException if this hypothesis manager is mutable
 	 */
-	IPOPredicate getPredicate(IPOFile file, ISCPredicateElement element) throws CoreException;
+	IPOPredicate getPredicate(ISCPredicateElement element) throws CoreException;
 	
 	/**
-	 * Creates the requested hypothesis sets in the proof olgigation file.
+	 * Returns a handle to the predicate set that contains all predicates managed by this manager.
 	 * 
-	 * @param file the proof obligation file where to hypothesis are to be generated
-	 * @throws RodinDBException if there was a problem accessing the database
+	 * @return a handle to the predicate set that contains all predicates managed by this manager
 	 */
-	void createHypotheses(IPOFile file, IProgressMonitor monitor) throws RodinDBException;
+	IPOPredicateSet getFullHypothesis();
 	
 	/**
-	 * Returns the name of the predicate set that contains all predicates managed by this manager.
+	 * Returns a handle to the root predicate set of this hypothesis set.
+	 * This is the predicate set contained in all hypotheses of this manager.
 	 * 
-	 * @return the name of the predicate set
+	 * @return a handle to the root predicate set of this hypothesis set
 	 */
-	IPOPredicateSet getFullHypothesis(IPOFile file) throws RodinDBException;
+	IPOPredicateSet getRootHypothesis();
 	
 	/**
-	 * Returns the name of the root predicate set contained in this hypothesis set.
-	 * 
-	 * @return the name of the predicate set
-	 */
-	IPOPredicateSet getRootHypothesis(IPOFile file) throws RodinDBException;
-	
-	/**
-	 * Returns the list of managed predicates in the correct order.
+	 * Returns the list of managed predicates in the order corresponding to the input file.
 	 * These are not guaranteed to be of the same database type, e.g.,
-	 * the list may contain axioms and theorems.
+	 * the list may contain axioms and theorems. If theorems are contained in the this list,
+	 * they must be at the tail of the list.
 	 * 
 	 * @return the list of managed predicates
 	 */

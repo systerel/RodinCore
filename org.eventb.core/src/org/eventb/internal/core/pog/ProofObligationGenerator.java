@@ -12,8 +12,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.pog.IPOGProcessorModule;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.IProcessorModule;
+import org.eventb.core.pog.state.IStateRepository;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
@@ -28,13 +28,13 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	
 	public static boolean DEBUG = false;
 	
-	protected IPOGStateRepository createRepository(
+	protected IStateRepository createRepository(
 			IPOFile target, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		final FormulaFactory factory = FormulaFactory.getDefault();
 		
-		final IPOGStateRepository repository = new POGStateRepository(factory, target);
+		final IStateRepository repository = new POGStateRepository(factory, target);
 		
 		return repository;
 	}
@@ -63,11 +63,11 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	protected void runModules(
 			IRodinFile file, 
 			IPOFile target, 
-			IPOGProcessorModule[] modules, 
-			IPOGStateRepository repository, 
+			IProcessorModule[] modules, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		for(IPOGProcessorModule module : modules) {
+		for(IProcessorModule module : modules) {
 			
 			module.initModule(
 					file, 
@@ -76,7 +76,7 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	
 		}		
 	
-		for(IPOGProcessorModule module : modules) {
+		for(IProcessorModule module : modules) {
 			
 			module.process(
 					file, 
@@ -85,7 +85,7 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	
 		}		
 		
-		for(IPOGProcessorModule module : modules) {
+		for(IProcessorModule module : modules) {
 			
 			module.endModule(
 					file, 

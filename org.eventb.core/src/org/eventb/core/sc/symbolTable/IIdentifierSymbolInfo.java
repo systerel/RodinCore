@@ -10,7 +10,7 @@ package org.eventb.core.sc.symbolTable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Type;
-import org.eventb.core.sc.IMarkerDisplay;
+import org.eventb.core.sc.util.IMarkerDisplay;
 import org.rodinp.core.IInternalParent;
 
 /**

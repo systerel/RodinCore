@@ -18,8 +18,9 @@ import org.eventb.core.ISCInvariant;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.POGPredicate;
-import org.eventb.core.pog.POGSource;
+import org.eventb.core.pog.util.POGPredicate;
+import org.eventb.core.pog.util.POGSource;
+import org.eventb.core.pog.util.POGTraceablePredicate;
 
 /**
  * @author Stefan Hallerstede
@@ -73,7 +74,7 @@ public class MachineEventPreserveInvariantModule extends MachineEventInvariantMo
 				"Invariant " + (isInitialisation ? " establishment" : " preservation"),
 				fullHypothesis,
 				bighyp,
-				new POGPredicate(invariant, predicate),
+				new POGTraceablePredicate(predicate, invariant),
 				sources(
 						new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
 						new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent), 

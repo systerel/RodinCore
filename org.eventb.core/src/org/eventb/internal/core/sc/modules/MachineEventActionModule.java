@@ -27,17 +27,17 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.IActionSymbolInfo;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.eventb.core.tool.state.IStateRepository;
+import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.tool.state.IToolStateRepository;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.ActionSymbolInfo;
 import org.rodinp.core.IAttributeType;
@@ -54,7 +54,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	public static final String MACHINE_EVENT_ACTION_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineEventActionFilter";
 
-	private final ISCFilterModule[] filterModules;
+	private final IFilterModule[] filterModules;
 
 	public MachineEventActionModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
@@ -71,7 +71,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			ISCStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 
@@ -228,7 +228,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IStateRepository repository) throws CoreException {
+			IToolStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 
@@ -240,7 +240,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		isInitialisation = ((IEvent) element).getLabel().equals(IEvent.INITIALISATION);
@@ -250,7 +250,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		factory = null;
 		super.endModule(element, repository, monitor);

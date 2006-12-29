@@ -14,16 +14,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IEvent;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.sc.SCFilterModule;
-import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.FilterModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.core.sc.util.GraphProblem;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
@@ -32,13 +32,13 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventInheritedModule extends SCFilterModule {
+public class MachineEventInheritedModule extends FilterModule {
 	
 	protected ILabelSymbolTable labelSymbolTable;
 	protected IIdentifierSymbolTable identifierSymbolTable;
 
 	@Override
-	public void initModule(ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(IStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
 		labelSymbolTable = 
 			(ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
@@ -50,7 +50,7 @@ public class MachineEventInheritedModule extends SCFilterModule {
 	 * @see org.eventb.core.sc.IFilterModule#accept(org.rodinp.core.IRodinElement, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean accept(IRodinElement element,
-			ISCStateRepository repository, IProgressMonitor monitor)
+			IStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		
 		IEvent event = (IEvent) element;
@@ -116,7 +116,7 @@ public class MachineEventInheritedModule extends SCFilterModule {
 	}
 
 	@Override
-	public void endModule(ISCStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(IStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		labelSymbolTable = null;
 		identifierSymbolTable = null;
 		super.endModule(repository, monitor);

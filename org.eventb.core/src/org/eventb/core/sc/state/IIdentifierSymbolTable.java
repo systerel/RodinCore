@@ -18,7 +18,7 @@ import org.eventb.core.sc.symbolTable.ISymbolTable;
  * @author Stefan Hallerstede
  *
  */
-public interface IIdentifierSymbolTable extends ISymbolTable<IIdentifierSymbolInfo>, ISCState {
+public interface IIdentifierSymbolTable extends ISymbolTable<IIdentifierSymbolInfo>, IState {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".identifierSymbolTable";
 	

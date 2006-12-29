@@ -16,7 +16,6 @@ import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -40,8 +39,9 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 	
 	public MachineHypothesisManager(
 			IRodinElement parentElement, 
+			IPOFile target,
 			ISCPredicateElement[] predicateTable) throws CoreException {
-		super(parentElement, predicateTable, 
+		super(parentElement, target, predicateTable, 
 				ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME, IDENT_HYP_NAME, 
 				IDENTIFIER_TABLE_SIZE);
 		
@@ -62,7 +62,7 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 		return STATE_TYPE;
 	}
 	
-	public IPOPredicateSet getContextHypothesis(IPOFile target) throws RodinDBException {
+	public IPOPredicateSet getContextHypothesis() {
 		return target.getPredicateSet(CTX_HYP_NAME);
 	}
 	

@@ -10,6 +10,7 @@ package org.eventb.internal.core.sc.modules;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -23,12 +24,12 @@ import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.tool.state.IStateRepository;
+import org.eventb.core.tool.state.IToolStateRepository;
+import org.eventb.internal.core.sc.ContextPointerArray;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -52,7 +53,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		contextTable = 
@@ -70,7 +71,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		contextTable = null;
@@ -80,10 +81,13 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	}
 
 	protected abstract IRodinProblem getTargetContextNotFoundProblem();
-
+	
 	protected void fetchSCContexts(
-			IContextPointerArray contextPointerArray,
+			ContextPointerArray contextPointerArray,
 			IProgressMonitor monitor) throws RodinDBException, CoreException {
+		
+		final IIdentifierSymbolInfo[][] declaredIdentifiers =
+			new IIdentifierSymbolInfo[contextPointerArray.size()][];
 		
 		for (int index=0; index<contextPointerArray.size(); index++) {
 			
@@ -103,6 +107,8 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			
 			createUpContexts(scCF, upContexts);
 			
+			List<IIdentifierSymbolInfo> symbolInfos = new LinkedList<IIdentifierSymbolInfo>();
+			
 			for (ISCContext scIC : upContexts) {
 				
 				String contextName = scIC.getElementName();
@@ -110,9 +116,6 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				ISCCarrierSet[] scCarrierSets = scIC.getSCCarrierSets();
 				
 				ISCConstant[] scConstants = scIC.getSCConstants(); 
-				
-				List<IIdentifierSymbolInfo> symbolInfos = 
-					contextPointerArray.getIdentifierSymbolInfos(index);
 				
 				if (contextTable.containsContext(contextName)) {
 					
@@ -147,12 +150,16 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 					}
 				}
 				
+				
 			}
+			
+			declaredIdentifiers[index] = new IIdentifierSymbolInfo[symbolInfos.size()];
+			symbolInfos.toArray(declaredIdentifiers[index]);
 			
 			monitor.worked(1);
 		}
 		
-		commitValidContexts(contextPointerArray, contextTable.size() * 4 / 3 + 1);
+		commitValidContexts(contextPointerArray, declaredIdentifiers, contextTable.size() * 4 / 3 + 1);
 		
 	}
 
@@ -185,14 +192,17 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	private void fetchSymbol(
 			List<IIdentifierSymbolInfo> symbolList, 
 			int index,
-			IContextPointerArray contextPointerArray, 
+			ContextPointerArray contextPointerArray, 
 			ISCIdentifierElement element,
 			IIdentifierSymbolInfoCreator creator) throws CoreException {
 		
 		String name = element.getIdentifierString();
 		
 		IIdentifierSymbolInfo newSymbolInfo = 
-			creator.createIdentifierSymbolInfo(name, element, contextPointerArray.getContextPointer(index));
+			creator.createIdentifierSymbolInfo(
+					name, 
+					element, 
+					contextPointerArray.getContextPointer(index));
 		
 		try {
 			identifierSymbolTable.putSymbolInfo(newSymbolInfo);
@@ -232,7 +242,8 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	}
 	
 	void commitValidContexts(
-			IContextPointerArray contextPointerArray, 
+			ContextPointerArray contextPointerArray, 
+			final IIdentifierSymbolInfo[][] declaredIdentifiers,
 			int s) throws CoreException {
 
 		HashSet<String> contextNames = new HashSet<String>(s);
@@ -241,17 +252,14 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		
 		for (int index = 0; index < contextPointerArray.size(); index++) {
 
-			List<IIdentifierSymbolInfo> symbolList = 
-				contextPointerArray.getIdentifierSymbolInfos(index);
-
 			if (contextPointerArray.hasError(index)) {
-				for (IIdentifierSymbolInfo symbolInfo : symbolList) {
+				for (IIdentifierSymbolInfo symbolInfo : declaredIdentifiers[index]) {
 					symbolInfo.makeImmutable();
 				}
 				continue;
 			}
 
-			for (IIdentifierSymbolInfo symbolInfo : symbolList) {
+			for (IIdentifierSymbolInfo symbolInfo : declaredIdentifiers[index]) {
 				if (symbolInfo.isMutable()) {
 					symbolInfo.setVisible();
 					symbolInfo.makeImmutable();
@@ -271,7 +279,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			}
 		}
 		
-		contextPointerArray.getValidContexts().addAll(validContexts);
+		contextPointerArray.setValidContexts(validContexts);
 		
 	}
 	
@@ -280,7 +288,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	protected void createInternalContexts(
 			IInternalParent target, 
 			List<ISCContext> scContexts,
-			IStateRepository repository,
+			IToolStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		for (ISCContext context : scContexts) {

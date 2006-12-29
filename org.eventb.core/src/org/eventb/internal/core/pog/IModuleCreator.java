@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
-import org.eventb.core.pog.IPOGProcessorModule;
+import org.eventb.core.pog.IProcessorModule;
 
 /**
  * @author Stefan Hallerstede
@@ -15,5 +15,5 @@ import org.eventb.core.pog.IPOGProcessorModule;
  */
 public interface IModuleCreator {
 	// the parent of the creator interfaces
-	IPOGProcessorModule[] create();
+	IProcessorModule[] create();
 }

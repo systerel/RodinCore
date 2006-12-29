@@ -10,7 +10,7 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.core.tool.state.IStateRepository;
+import org.eventb.core.tool.state.IToolStateRepository;
 
 /**
  * @author Stefan Hallerstede
@@ -23,7 +23,7 @@ public abstract class MachineEventLabeledFormulaModule extends LabeledFormulaMod
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IStateRepository repository) throws CoreException {
+			IToolStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 

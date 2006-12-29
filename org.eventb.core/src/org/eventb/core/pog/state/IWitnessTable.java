@@ -18,9 +18,13 @@ import org.eventb.core.ast.Predicate;
 
 /**
  * @author Stefan Hallerstede
+ * 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  *
  */
-public interface IWitnessTable extends IPOGState {
+public interface IWitnessTable extends IState {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".witnessTable";
 
@@ -34,11 +38,10 @@ public interface IWitnessTable extends IPOGState {
 	List<BecomesEqualTo> getEventDetAssignments();
 
 	List<ISCWitness> getNondetWitnesses();
-	List<FreeIdentifier> getNondetAssignedVariables();
 	List<Predicate> getNondetPredicates();
 
 	/**
-	 * Returns all witnesses variables. Machine variable witnesses have a prime.
+	 * Returns all witnesses variables. Machine variable witnesses are primed.
 	 * 
 	 * @return all witnesses variables
 	 */

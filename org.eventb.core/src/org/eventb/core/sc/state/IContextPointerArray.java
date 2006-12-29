@@ -7,53 +7,90 @@
  *******************************************************************************/
 package org.eventb.core.sc.state;
 
-import java.util.List;
-
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.ISCContext;
+import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
-import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.ISeesContext;
 import org.rodinp.core.IInternalElement;
 
 /**
+ * A context pointer array serves to manage references to contexts.
+ * The structure of context relationships is a directed acyclic graph
+ * which is flattened by the static checker. The context pointer array
+ * is used to keep track of conclicts caused by multiple sees in a machine
+ * or extends clauses in a context. Conflicts are caused whenever an identifier,
+ * carrier set or constant, is declared in two <b>different</b> contexts that
+ * are (transitively) referenced by a context or machine.
+ * 
  * @author Stefan Hallerstede
  *
  */
-public interface IContextPointerArray extends ISCState {
+public interface IContextPointerArray extends IState {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".contextPointerArray";
 
+	/**
+	 * The enumerated type <code>PointerType</code> is used determine whether this
+	 * context pointer array is used with sees clauses in a machine or extends
+	 * clauses in a context.
+	 * 
+	 */
 	public enum PointerType {
 		EXTENDS_POINTER,
 		SEES_POINTER
 	}
 	
-//	public static int EXTENDS_POINTER = 1;
-//	public static int SEES_POINTER = 2;
-	
+	/**
+	 * Returns the type of context pointers used with this context pointer array.
+	 * 
+	 * @return the type of context pointers used with this context pointer array
+	 */
 	PointerType getContextPointerType();
 	
-	void setError(int index);
-	
+	/**
+	 * Returns whether the error flag of the context pointer with with the specified index is set.
+	 * 
+	 * @param index the index of the context pointer
+	 * @return whether the error flag of the context pointer with with the specified index is set
+	 */
 	boolean hasError(int index);
 	
+	/**
+	 * Returns the number of context pointers contained in this context pointer array.
+	 * 
+	 * @return the number of context pointers contained in this context pointer array
+	 */
 	int size();
 	
 	/**
-	 * Returns the index of the context with the name <code>contextName</code>.
+	 * Returns the index in this context pointer array of the context with the specified name.
+	 * 
 	 * @param contextName the name of the context
 	 * @return the index of the context
 	 */
 	int getPointerIndex(String contextName);
 	
+	/**
+	 * Returns the context pointer associated with the specified index.
+	 * This is either {@link IExtendsContext} or {@link ISeesContext} 
+	 * depending on the pointer type ({@link PointerType}) of this context pointer array.
+	 * 
+	 * @param index the index of the context pointer
+	 * @return the context pointer with the specified index
+	 */
 	IInternalElement getContextPointer(int index);
 	
+	/**
+	 * Returns a reference to the statically checked context file associated with the 
+	 * specified index.
+	 * This is the statically checked context retrieved by means of 
+	 * {@link IExtendsContext} or {@link ISeesContext}. This is a convenience method
+	 * to facilitate access to the referenced (statically checked) contexts.
+	 * 
+	 * @param index the index of the statically checked context file
+	 * @return a reference to the statically checked context file file associated with the 
+	 * specified index
+	 */
 	ISCContextFile getSCContextFile(int index);
-	
-	List<ISCContext> getUpContexts(int index);
-	
-	List<IIdentifierSymbolInfo> getIdentifierSymbolInfos(int index);
-	
-	List<ISCContext> getValidContexts();
 	
 }

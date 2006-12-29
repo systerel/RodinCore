@@ -10,6 +10,12 @@ package org.eventb.core.pog.state;
 import org.eventb.core.EventBPlugin;
 
 /**
+ * Common protocol for accessing the guards of an abstract event.
+ * 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
  * @author Stefan Hallerstede
  *
  */

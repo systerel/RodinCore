@@ -10,14 +10,13 @@ package org.eventb.internal.core.pog.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.IModuleManager;
-import org.eventb.core.pog.IPOGProcessorModule;
+import org.eventb.core.pog.IProcessorModule;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
 import org.eventb.internal.core.pog.ModuleManager;
 import org.rodinp.core.IRodinElement;
 
@@ -30,7 +29,7 @@ public class MachineEventModule extends UtilityModule {
 	public static final String MACHINE_EVENT_MODULE = 
 		EventBPlugin.PLUGIN_ID + ".machineEventModule";
 
-	private IPOGProcessorModule[] modules;
+	private IProcessorModule[] modules;
 
 	public MachineEventModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
@@ -42,7 +41,7 @@ public class MachineEventModule extends UtilityModule {
 	 */
 	public void process(
 			IRodinElement element, 
-			IPOGStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -52,8 +51,6 @@ public class MachineEventModule extends UtilityModule {
 		
 		if (events.length == 0)
 			return;
-		
-		IPOFile target = repository.getTarget();
 		
 		for (ISCEvent event : events) {
 			
@@ -79,7 +76,7 @@ public class MachineEventModule extends UtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		machineTypeEnvironment = repository.getTypeEnvironment();
@@ -94,7 +91,7 @@ public class MachineEventModule extends UtilityModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		repository.setTypeEnvironment(machineTypeEnvironment);

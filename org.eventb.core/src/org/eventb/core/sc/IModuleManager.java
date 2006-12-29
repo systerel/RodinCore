@@ -13,8 +13,8 @@ package org.eventb.core.sc;
  */
 public interface IModuleManager {
 
-	public abstract ISCFilterModule[] getFilterModules(String moduleType);
+	public abstract IFilterModule[] getFilterModules(String moduleType);
 	
-	public abstract ISCProcessorModule[] getProcessorModules(String moduleType);
+	public abstract IProcessorModule[] getProcessorModules(String moduleType);
 
 }

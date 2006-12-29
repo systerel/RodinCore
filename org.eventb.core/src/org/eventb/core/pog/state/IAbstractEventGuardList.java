@@ -13,10 +13,21 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCEvent;
 
 /**
+ * This class provides information on the guards of all abstract event
+ * (being refined by some concrete event). In case of a merge refinement
+ * there is more than one abstract event.
+ * <p>
+ * The information for each event is provided by class <code>IAbstractEventGuardTable</code>.
+ * </p>
+ * 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
  * @author Stefan Hallerstede
  *
  */
-public interface IAbstractEventGuardList extends IPOGState {
+public interface IAbstractEventGuardList extends IState {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventGuardList";
 

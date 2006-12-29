@@ -14,9 +14,9 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
-import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.internal.core.sc.Messages;
@@ -34,7 +34,7 @@ public class MachineVariableModule extends IdentifierModule {
 	public static final String MACHINE_VARIABLE_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineVariableFilter";
 
-	private ISCFilterModule[] filterModules;
+	private IFilterModule[] filterModules;
 
 	public MachineVariableModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
@@ -44,7 +44,7 @@ public class MachineVariableModule extends IdentifierModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			ISCStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 

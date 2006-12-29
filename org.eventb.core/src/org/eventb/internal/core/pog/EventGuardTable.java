@@ -26,7 +26,7 @@ public abstract class EventGuardTable extends PredicateTable {
 		for (ISCPredicateElement guard : guards)
 			addElement(guard, typeEnvironment, factory);
 		
-		trim();
+		makeImmutable();
 		
 	}
 	

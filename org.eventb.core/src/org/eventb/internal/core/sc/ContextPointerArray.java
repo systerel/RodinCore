@@ -9,21 +9,24 @@ package org.eventb.internal.core.sc;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.state.IContextPointerArray;
-import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.internal.core.tool.state.State;
+import org.eventb.internal.core.tool.state.ToolState;
 import org.rodinp.core.IInternalElement;
 
 /**
+ * 
+ * The contexts referenced by a context (or machine) are stored in 
+ * a context pointer array (preserving order). Contexts referenced by the
+ * referenced contexts are kept in <i>up-lists</i>.
+ * 
  * @author Stefan Hallerstede
  *
  */
-public class ContextPointerArray extends State implements IContextPointerArray {
+public class ContextPointerArray extends ToolState implements IContextPointerArray {
 
 	private final int stateSize;
 	
@@ -35,13 +38,13 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 	
 	private final boolean[] error;
 	
+	// TODO replace this by an array!
+	// the list of referenced contexts is usually not long!
 	private final Hashtable<String, Integer> indexMap; 
-	
-	private final List<List<IIdentifierSymbolInfo>> symbolInfos;
 	
 	private final List<List<ISCContext>> upContexts;
 	
-	private final List<ISCContext> validContexts;
+	private List<ISCContext> validContexts;
 
 	public ContextPointerArray(
 			PointerType pointerType,
@@ -61,13 +64,11 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 		this.contextFiles = contextFiles;
 		
 		indexMap = new Hashtable<String, Integer>(stateSize * 4 / 3 + 1);
-		symbolInfos = new ArrayList<List<IIdentifierSymbolInfo>>(stateSize);
 		upContexts = new ArrayList<List<ISCContext>>(stateSize);
 		validContexts = new ArrayList<ISCContext>(0);
 		
 		for (int i=0; i<stateSize; i++) {
 			indexMap.put(contextPointers[i].getHandleIdentifier(), i);
-			symbolInfos.add(i, new LinkedList<IIdentifierSymbolInfo>());
 			upContexts.add(i, new ArrayList<ISCContext>(0));
 		}
 		
@@ -75,8 +76,10 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IContextPointerArray#setError()
+	/**
+	 * Sets the error flag of the context pointer with the specified index.
+	 * 
+	 * @param index the index of the context pointer
 	 */
 	public void setError(int index) {
 		error[index] = true;
@@ -89,19 +92,17 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 		return error[index];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IContextPointerArray#getUpContextList(java.lang.String)
+	/**
+	 * Returns the list of statically checked contexts referenced (transitively) by the 
+	 * statically checked context with the specified index.
+	 * 
+	 * @param index the index of the statically checked context
+	 * @return the list of statically checked contexts referenced (transitively) by the 
+	 * statically checked context with the specified index
 	 */
+	// TODO remove this from state component!
 	public List<ISCContext> getUpContexts(int index) {
 		return upContexts.get(index);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IContextPointerArray#getIdentifierSymbolInfoList(java.lang.String)
-	 */
-	public List<IIdentifierSymbolInfo> getIdentifierSymbolInfos(
-			int index) {
-		return symbolInfos.get(index);
 	}
 
 	/* (non-Javadoc)
@@ -132,8 +133,14 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 		return pointerType;
 	}
 
+	/** 
+	 * returns the valid contexts, i.e., those that do not have errors.
+	 */
 	public List<ISCContext> getValidContexts() {
-		return validContexts;
+		return new ArrayList<ISCContext>(validContexts);
+	}
+	public void setValidContexts(List<ISCContext> validContexts) {
+		this.validContexts = validContexts;
 	}
 
 }

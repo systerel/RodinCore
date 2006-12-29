@@ -28,16 +28,15 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.state.IAbstractEventInfo;
-import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.core.sc.util.GraphProblem;
 import org.eventb.internal.core.sc.AbstractEventInfo;
 import org.eventb.internal.core.sc.AbstractEventTable;
+import org.eventb.internal.core.sc.AbstractMachineInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -54,13 +53,13 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	
 	ISCMachineFile scMachineFile;
 	IRefinesMachine refinesMachine;
-	IAbstractEventTable abstractEventTable;
+	AbstractEventTable abstractEventTable;
 	ITypeEnvironment typeEnvironment;
 
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			ISCStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -242,7 +241,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		
 		String label = event.getLabel();
 		
-		IAbstractEventInfo abstractEventInfo;
+		AbstractEventInfo abstractEventInfo;
 		
 		ITypeEnvironment eventTypeEnvironment = factory.makeTypeEnvironment();
 		eventTypeEnvironment.addAll(typeEnvironment);
@@ -304,7 +303,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 
 		typeEnvironment = repository.getTypeEnvironment();
@@ -336,8 +335,10 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			scMachineFile = null;
 		}
 		
+		repository.setState(new AbstractMachineInfo(scMachineFile));
+		
 		abstractEventTable = 
-			new AbstractEventTable(ABSEVT_SYMTAB_SIZE, scMachineFile);
+			new AbstractEventTable(ABSEVT_SYMTAB_SIZE);
 		
 		repository.setState(abstractEventTable);
 		
@@ -349,7 +350,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		refinesMachine = null;
 		scMachineFile = null;

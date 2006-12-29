@@ -22,18 +22,14 @@ import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.pog.state.IMachineHypothesisManager;
-import org.eventb.core.pog.state.IMachineInvariantTable;
-import org.eventb.core.pog.state.IMachineTheoremTable;
-import org.eventb.core.pog.state.IMachineVariableTable;
-import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.state.IPOGState;
-import org.eventb.core.tool.state.IStateRepository;
+import org.eventb.core.pog.state.IState;
+import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.tool.state.IToolStateRepository;
 import org.eventb.internal.core.pog.MachineHypothesisManager;
 import org.eventb.internal.core.pog.MachineInvariantTable;
 import org.eventb.internal.core.pog.MachineTheoremTable;
 import org.eventb.internal.core.pog.MachineVariableTable;
+import org.eventb.internal.core.pog.PredicateTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -44,14 +40,14 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineHypothesisModule extends GlobalHypothesisModule {
 
-	IMachineHypothesisManager hypothesisManager;
-	IMachineInvariantTable invariantTable;
-	IMachineTheoremTable theoremTable;
+	MachineHypothesisManager hypothesisManager;
+	MachineInvariantTable invariantTable;
+	MachineTheoremTable theoremTable;
 	
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		
@@ -63,7 +59,8 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 		
 		IPOPredicateSet rootSet = target.getPredicateSet(MachineHypothesisManager.ABS_HYP_NAME);
 		rootSet.create(null, monitor);
-		rootSet.setParentPredicateSet(target.getPredicateSet(MachineHypothesisManager.CTX_HYP_NAME), monitor);
+		rootSet.setParentPredicateSet(
+				target.getPredicateSet(MachineHypothesisManager.CTX_HYP_NAME), monitor);
 		
 		fetchVariables(scMachineFile.getSCVariables(), rootSet, repository, monitor);
 		
@@ -82,14 +79,14 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 		fetchPredicates(predicates, invariantTable, rootSet, invariants, bag, monitor);
 		fetchPredicates(predicates, theoremTable, rootSet, theorems, bag, monitor);
 		
-		invariantTable.trim();
-		theoremTable.trim();
+		invariantTable.makeImmutable();
+		theoremTable.makeImmutable();
 		
 		ISCPredicateElement[] predicateElements = new ISCPredicateElement[predicates.size()];		
 		predicates.toArray(predicateElements);
 		
 		hypothesisManager = 
-			new MachineHypothesisManager(scMachineFile, predicateElements);
+			new MachineHypothesisManager(scMachineFile, target, predicateElements);
 		
 		repository.setState(hypothesisManager);
 		
@@ -98,10 +95,10 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
-		hypothesisManager.createHypotheses(repository.getTarget(), monitor);
+		hypothesisManager.createHypotheses(monitor);
 		factory = null;
 		
 		super.endModule(element, repository, monitor);
@@ -122,10 +119,10 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 	private void fetchVariables(
 			ISCVariable[] variables, 
 			IPOPredicateSet predSet,
-			IStateRepository<IPOGState> repository,
+			IToolStateRepository<IState> repository,
 			IProgressMonitor monitor) throws CoreException {
 		
-		IMachineVariableTable variableTable =
+		MachineVariableTable variableTable =
 			new MachineVariableTable(variables.length);
 		repository.setState(variableTable);
 		
@@ -136,12 +133,12 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 				continue;
 			variableTable.add(identifier, variable.isPreserved());
 		}
-		variableTable.trimToSize();
+		variableTable.makeImmutable();
 	}
 	
 	private void fetchPredicates(
 			List<ISCPredicateElement> predicates,
-			IPredicateTable predicateTable,
+			PredicateTable predicateTable,
 			IPOPredicateSet rootSet, 
 			ISCPredicateElement[] predicateElements,
 			String bag,

@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import org.eventb.core.IPOFile;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.pog.state.IEventHypothesisManager;
 import org.rodinp.core.IRodinElement;
@@ -27,9 +28,10 @@ public class EventHypothesisManager extends HypothesisManager implements IEventH
 	
 	public EventHypothesisManager(
 			IRodinElement parentElement, 
+			IPOFile target,
 			ISCPredicateElement[] predicateTable,
 			String rootHypName) {
-		super(parentElement, predicateTable, rootHypName, 
+		super(parentElement, target, predicateTable, rootHypName, 
 				HYP_PREFIX + parentElement.getElementName(), 
 				ALLHYP_NAME + parentElement.getElementName(),
 				IDENT_HYP_NAME + parentElement.getElementName(),

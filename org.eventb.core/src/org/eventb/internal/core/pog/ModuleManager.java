@@ -9,8 +9,8 @@ package org.eventb.internal.core.pog;
 
 import java.util.Hashtable;
 
-import org.eventb.core.pog.IPOGProcessorModule;
 import org.eventb.core.pog.IModuleManager;
+import org.eventb.core.pog.IProcessorModule;
 import org.eventb.internal.core.pog.modules.ContextAxiomModule;
 import org.eventb.internal.core.pog.modules.ContextCommitHypothesesModule;
 import org.eventb.internal.core.pog.modules.ContextHypothesisModule;
@@ -41,18 +41,18 @@ public class ModuleManager implements IModuleManager {
 
 	private static IModuleManager MANAGER = new ModuleManager();
 	
-	private IPOGProcessorModule[] emptyProc = new IPOGProcessorModule[0];
+	private IProcessorModule[] emptyProc = new IProcessorModule[0];
 	
 	private Hashtable<String, IModuleCreator> moduleTable;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IModuleManager#getProcessorModules(java.lang.String)
 	 */
-	public IPOGProcessorModule[] getProcessorModules(String moduleType) {
+	public IProcessorModule[] getProcessorModules(String moduleType) {
 		IModuleCreator creator = moduleTable.get(moduleType);
 		if (creator == null)
 			return emptyProc;
-		IPOGProcessorModule[] rules = creator.create();
+		IProcessorModule[] rules = creator.create();
 		return rules;
 	}
 
@@ -61,8 +61,8 @@ public class ModuleManager implements IModuleManager {
 		moduleTable.put(MachinePOGenerator.MACHINE_MODULE,
 				new IModuleCreator() {
 
-					public IPOGProcessorModule[] create() {
-						return new IPOGProcessorModule[] {
+					public IProcessorModule[] create() {
+						return new IProcessorModule[] {
 								new MachineHypothesisModule(),
 								new MachineTheoremModule(),
 								new MachineInvariantModule(),
@@ -76,8 +76,8 @@ public class ModuleManager implements IModuleManager {
 		moduleTable.put(MachineEventModule.MACHINE_EVENT_MODULE,
 				new IModuleCreator() {
 
-					public IPOGProcessorModule[] create() {
-						return new IPOGProcessorModule[] {
+					public IProcessorModule[] create() {
+						return new IProcessorModule[] {
 								new MachineEventHypothesisModule(),
 								new MachineEventGuardModule(),
 								new MachineEventActionModule(),
@@ -95,8 +95,8 @@ public class ModuleManager implements IModuleManager {
 		moduleTable.put(ContextPOGenerator.CONTEXT_MODULE,
 				new IModuleCreator() {
 
-					public IPOGProcessorModule[] create() {
-						return new IPOGProcessorModule[] {
+					public IProcessorModule[] create() {
+						return new IProcessorModule[] {
 								new ContextHypothesisModule(),
 								new ContextTheoremModule(),
 								new ContextAxiomModule(),

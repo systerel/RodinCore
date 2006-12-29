@@ -11,10 +11,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.sc.SCFilterModule;
-import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.FilterModule;
 import org.eventb.core.sc.state.IAbstractEventTable;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IAbstractMachineInfo;
+import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.util.GraphProblem;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IRodinElement;
 
@@ -22,19 +23,22 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachineVariableFromLocalModule extends SCFilterModule {
+public class MachineVariableFromLocalModule extends FilterModule {
 
 	private IAbstractEventTable abstractEventTable;
+	private IAbstractMachineInfo abstractMachineInfo;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.Module#initModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void initModule(
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEventTable = (IAbstractEventTable) 
 			repository.getState(IAbstractEventTable.STATE_TYPE);
+		abstractMachineInfo = (IAbstractMachineInfo)
+			repository.getState(IAbstractMachineInfo.STATE_TYPE);
 	}
 
 	/* (non-Javadoc)
@@ -42,7 +46,7 @@ public class MachineVariableFromLocalModule extends SCFilterModule {
 	 */
 	public boolean accept(
 			IRodinElement element, 
-			ISCStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		IIdentifierElement identifierElement = (IIdentifierElement) element;
@@ -53,7 +57,7 @@ public class MachineVariableFromLocalModule extends SCFilterModule {
 			
 			String abstractName = 
 				StaticChecker.getStrippedComponentName(
-						abstractEventTable.getMachineFile().getElementName());
+						abstractMachineInfo.getAbstractMachine().getElementName());
 			
 			createProblemMarker(
 					identifierElement, 
@@ -73,9 +77,10 @@ public class MachineVariableFromLocalModule extends SCFilterModule {
 	 */
 	@Override
 	public void endModule(
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEventTable = null;
+		abstractMachineInfo = null;
 	}
 
 }

@@ -26,13 +26,13 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.pog.state.IWitnessTable;
-import org.eventb.internal.core.tool.state.State;
+import org.eventb.internal.core.tool.state.ToolState;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class WitnessTable extends State implements IWitnessTable {
+public class WitnessTable extends ToolState implements IWitnessTable {
 
 	private final List<ISCWitness> witnesses;
 	private final BecomesEqualTo primeSubstitution;
@@ -44,7 +44,6 @@ public class WitnessTable extends State implements IWitnessTable {
 	private final ArrayList<BecomesEqualTo> eventDetermist;
 	
 	private final ArrayList<ISCWitness> nondetWitnesses;
-	private final ArrayList<FreeIdentifier> nondetAssignedVariables;
 	private final ArrayList<Predicate> nondetPredicates;
 	
 	private final HashSet<FreeIdentifier> witnessedVars;
@@ -61,7 +60,6 @@ public class WitnessTable extends State implements IWitnessTable {
 		eventDetWitnesses = new ArrayList<ISCWitness>(witnesses.length);
 		eventDetermist = new ArrayList<BecomesEqualTo>(witnesses.length);
 		nondetWitnesses = new ArrayList<ISCWitness>(witnesses.length);
-		nondetAssignedVariables = new ArrayList<FreeIdentifier>(witnesses.length);
 		nondetPredicates = new ArrayList<Predicate>(witnesses.length);
 		witnessedVars = new HashSet<FreeIdentifier>(witnesses.length * 4 / 3 + 1);
 	
@@ -98,7 +96,6 @@ public class WitnessTable extends State implements IWitnessTable {
 		eventDetWitnesses.trimToSize();
 		eventDetermist.trimToSize();
 		nondetWitnesses.trimToSize();
-		nondetAssignedVariables.trimToSize();
 		nondetPredicates.trimToSize();
 	}
 	
@@ -135,7 +132,6 @@ public class WitnessTable extends State implements IWitnessTable {
 
 		// or a nondeterministic witness?
 		nondetWitnesses.add(witness);
-		nondetAssignedVariables.add(identifier);
 		nondetPredicates.add(predicate);
 		
 		// it's nondeterministic
@@ -175,10 +171,6 @@ public class WitnessTable extends State implements IWitnessTable {
 
 	public ArrayList<BecomesEqualTo> getEventDetAssignments() {
 		return eventDetermist;
-	}
-
-	public ArrayList<FreeIdentifier> getNondetAssignedVariables() {
-		return nondetAssignedVariables;
 	}
 
 	public ArrayList<Predicate> getNondetPredicates() {

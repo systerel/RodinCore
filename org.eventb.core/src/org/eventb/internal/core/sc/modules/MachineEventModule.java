@@ -28,22 +28,24 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
-import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCProcessorModule;
+import org.eventb.core.sc.IProcessorModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.eventb.core.tool.state.IStateRepository;
+import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.tool.state.IToolStateRepository;
+import org.eventb.internal.core.sc.AbstractEventInfo;
+import org.eventb.internal.core.sc.AbstractEventTable;
 import org.eventb.internal.core.sc.CurrentEvent;
 import org.eventb.internal.core.sc.EventRefinesInfo;
 import org.eventb.internal.core.sc.Messages;
@@ -73,9 +75,9 @@ public class MachineEventModule extends LabeledElementModule {
 	public static final String MACHINE_EVENT_PROCESSOR = 
 		EventBPlugin.PLUGIN_ID + ".machineEventProcessor";
 
-	private ISCFilterModule[] filterModules;
+	private IFilterModule[] filterModules;
 	
-	private ISCProcessorModule[] processorModules;
+	private IProcessorModule[] processorModules;
 
 	public MachineEventModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
@@ -91,14 +93,14 @@ public class MachineEventModule extends LabeledElementModule {
 	
 	IEvent[] events;
 	
-	private IAbstractEventTable abstractEventTable;
+	private AbstractEventTable abstractEventTable;
 
 	private static String EVENT_NAME_PREFIX = "EVT";
 	
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		IMachineFile machineFile = (IMachineFile) element;
@@ -126,7 +128,7 @@ public class MachineEventModule extends LabeledElementModule {
 			IEventSymbolInfo[] symbolInfos, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		for (IAbstractEventInfo abstractEventInfo : abstractEventTable) {
+		for (IAbstractEventInfo abstractEventInfo : abstractEventTable.getAbstractEventInfos()) {
 			if (!abstractEventInfo.isRefined())
 				createProblemMarker(
 						machineFile, 
@@ -302,7 +304,7 @@ public class MachineEventModule extends LabeledElementModule {
 				continue;
 			}
 			
-			IAbstractEventInfo abstractEventInfo = 
+			AbstractEventInfo abstractEventInfo = 
 				getAbstractEventInfoForLabel(
 						symbolInfo, 
 						label, 
@@ -389,12 +391,12 @@ public class MachineEventModule extends LabeledElementModule {
 			}
 	}
 
-	private IAbstractEventInfo getAbstractEventInfoForLabel(
+	private AbstractEventInfo getAbstractEventInfoForLabel(
 			IEventSymbolInfo symbolInfo, 
 			String label, 
 			IInternalElement element,
 			IAttributeType attributeType) throws CoreException {
-		IAbstractEventInfo abstractEventInfo = abstractEventTable.getAbstractEventInfo(label);
+		AbstractEventInfo abstractEventInfo = abstractEventTable.getAbstractEventInfo(label);
 
 		if (abstractEventInfo == null) {
 			if (attributeType == null)
@@ -418,7 +420,7 @@ public class MachineEventModule extends LabeledElementModule {
 
 	private void processEvents(
 			ISCEvent[] scEvents, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IEventSymbolInfo[] symbolInfos, 
 			IProgressMonitor monitor) throws CoreException {
 		
@@ -456,7 +458,7 @@ public class MachineEventModule extends LabeledElementModule {
 
 	private IEventSymbolInfo[] fetchEvents(
 			IMachineFile machineFile, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		String machineName = machineFile.getElementName();
@@ -534,7 +536,7 @@ public class MachineEventModule extends LabeledElementModule {
 	}
 
 	private void makeImplicitRefinement(IEvent event, IEventSymbolInfo symbolInfo) throws CoreException {
-		IAbstractEventInfo eventInfo = 
+		AbstractEventInfo eventInfo = 
 			getAbstractEventInfoForLabel(symbolInfo, symbolInfo.getSymbol(), event, null);
 		
 		if (eventInfo == null)
@@ -569,7 +571,7 @@ public class MachineEventModule extends LabeledElementModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		IMachineFile machineFile = (IMachineFile) element;
@@ -577,7 +579,7 @@ public class MachineEventModule extends LabeledElementModule {
 		events = machineFile.getEvents();
 		
 		abstractEventTable =
-			(IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
+			(AbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
 		
 		identifierSymbolTable =
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
@@ -594,7 +596,7 @@ public class MachineEventModule extends LabeledElementModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		repository.setState(identifierSymbolTable);
 		repository.setTypeEnvironment(machineTypeEnvironment);
@@ -611,7 +613,7 @@ public class MachineEventModule extends LabeledElementModule {
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IStateRepository repository) throws CoreException {
+			IToolStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 	}
 

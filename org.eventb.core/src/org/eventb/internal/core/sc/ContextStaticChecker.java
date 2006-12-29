@@ -17,8 +17,8 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.ISCProcessorModule;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.IProcessorModule;
+import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.internal.core.sc.symbolTable.ContextLabelSymbolTable;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -39,7 +39,7 @@ public class ContextStaticChecker extends StaticChecker {
 	
 	private final IModuleManager manager;
 	
-	private ISCProcessorModule[] contextProcessorModules = null;
+	private IProcessorModule[] contextProcessorModules = null;
 	
 	public ContextStaticChecker() {
 		manager = ModuleManager.getModuleManager();
@@ -72,7 +72,7 @@ public class ContextStaticChecker extends StaticChecker {
 		
 			scContextFile.create(true, monitor);
 
-			ISCStateRepository repository = createRepository(contextFile, monitor);
+			IStateRepository repository = createRepository(contextFile, monitor);
 		
 			contextFile.open(new SubProgressMonitor(monitor, 1));
 			scContextFile.open(new SubProgressMonitor(monitor, 1));
@@ -127,10 +127,10 @@ public class ContextStaticChecker extends StaticChecker {
 	}
 
 	@Override
-	protected ISCStateRepository createRepository(
+	protected IStateRepository createRepository(
 			IRodinFile file, 
 			IProgressMonitor monitor) throws CoreException {
-		ISCStateRepository repository = super.createRepository(file, monitor);
+		IStateRepository repository = super.createRepository(file, monitor);
 		final ContextLabelSymbolTable labelSymbolTable = 
 			new ContextLabelSymbolTable(LABEL_SYMTAB_SIZE);
 		repository.setState(labelSymbolTable);		

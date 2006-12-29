@@ -22,10 +22,11 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.POGPredicate;
-import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IMachineVariableTable;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.util.POGPredicate;
+import org.eventb.core.pog.util.POGSource;
+import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -40,7 +41,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 	
 	public void process(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		createFrameSimProofObligations(
@@ -91,8 +92,8 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 			
 			if (pos >= 0) {
 				hyp.add(
-						new POGPredicate(nondetActions.get(pos),
-								nondetAssignments.get(pos).getBAPredicate(factory)));
+						new POGTraceablePredicate(nondetAssignments.get(pos).getBAPredicate(factory),
+								nondetActions.get(pos)));
 				source = nondetActions.get(pos);
 			} else {
 				pos = findIndex(variable, detAssignments);
@@ -118,7 +119,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 					"Equality " + (isInitialisation ? " establishment" : " preservation"),
 					fullHypothesis,
 					hyp,
-					new POGPredicate(source, predicate),
+					new POGTraceablePredicate(predicate, source),
 					sources,
 					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);
@@ -145,7 +146,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		abstractEvent = abstractEventGuardList.getFirstAbstractEvent();
@@ -156,7 +157,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEvent = null;
 		machineVariableTable = null;

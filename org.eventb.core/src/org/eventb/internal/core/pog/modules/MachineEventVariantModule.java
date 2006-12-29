@@ -19,10 +19,10 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.POGPredicate;
-import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IMachineVariantInfo;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.util.POGSource;
+import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -31,7 +31,7 @@ import org.rodinp.core.IRodinElement;
  */
 public class MachineEventVariantModule extends MachineEventRefinementModule {
 
-	public void process(IRodinElement element, IPOGStateRepository repository,
+	public void process(IRodinElement element, IStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -60,9 +60,9 @@ public class MachineEventVariantModule extends MachineEventRefinementModule {
 				target, 
 				concreteEventLabel + "/" + "VAR", 
 				"Variant of event", 
-				eventHypothesisManager.getFullHypothesis(target), 
+				eventHypothesisManager.getFullHypothesis(), 
 				makeActionHypothesis(), 
-				new POGPredicate(machineVariantInfo.getVariant(), varPredicate), 
+				new POGTraceablePredicate(varPredicate, machineVariantInfo.getVariant()), 
 				sources, 
 				emptyHints, 
 				monitor);
@@ -78,9 +78,9 @@ public class MachineEventVariantModule extends MachineEventRefinementModule {
 					target, 
 					concreteEventLabel + "/" + "NAT", 
 					"Natural number variant of event", 
-					eventHypothesisManager.getFullHypothesis(target), 
+					eventHypothesisManager.getFullHypothesis(), 
 					makeActionHypothesis(), 
-					new POGPredicate(machineVariantInfo.getVariant(), natPredicate), 
+					new POGTraceablePredicate(natPredicate, machineVariantInfo.getVariant()), 
 					sources, 
 					emptyHints, 
 					monitor);
@@ -114,7 +114,7 @@ public class MachineEventVariantModule extends MachineEventRefinementModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		convergence = concreteEvent.getConvergence();
@@ -125,7 +125,7 @@ public class MachineEventVariantModule extends MachineEventRefinementModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		machineVariantInfo = null;
 		super.endModule(element, repository, monitor);

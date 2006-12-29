@@ -18,10 +18,11 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineFile;
-import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.SCProcessorModule;
+import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.state.IContextPointerArray;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.internal.core.sc.ContextPointerArray;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -30,7 +31,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachineContextClosureModule extends SCProcessorModule {
+public class MachineContextClosureModule extends ProcessorModule {
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -38,7 +39,7 @@ public class MachineContextClosureModule extends SCProcessorModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			ISCStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		IMachineFile machineFile = (IMachineFile) element;
@@ -55,8 +56,8 @@ public class MachineContextClosureModule extends SCProcessorModule {
 		if (abstractContexts.length == 0)
 			return;
 		
-		IContextPointerArray contextPointerArray = 
-			(IContextPointerArray) repository.getState(IContextPointerArray.STATE_TYPE);
+		ContextPointerArray contextPointerArray = 
+			(ContextPointerArray) repository.getState(IContextPointerArray.STATE_TYPE);
 
 		List<ISCContext> validContexts = contextPointerArray.getValidContexts();
 		

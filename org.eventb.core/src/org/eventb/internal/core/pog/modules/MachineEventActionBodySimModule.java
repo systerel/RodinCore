@@ -20,9 +20,10 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.POGPredicate;
-import org.eventb.core.pog.POGSource;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.util.POGPredicate;
+import org.eventb.core.pog.util.POGSource;
+import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -38,7 +39,7 @@ public class MachineEventActionBodySimModule extends
 	 */
 	public void process(
 			IRodinElement element, 
-			IPOGStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -97,7 +98,7 @@ public class MachineEventActionBodySimModule extends
 					"Action simulation",
 					fullHypothesis,
 					hyp,
-					new POGPredicate(simActions.get(i), simPredicate),
+					new POGTraceablePredicate(simPredicate, simActions.get(i)),
 					sources(
 							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
 							new POGSource(IPOSource.ABSTRACT_ROLE, simActions.get(i)),

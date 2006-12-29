@@ -14,12 +14,12 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.POGHint;
-import org.eventb.core.pog.POGIntervalSelectionHint;
-import org.eventb.core.pog.POGPredicate;
-import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IAbstractEventActionTable;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.util.POGHint;
+import org.eventb.core.pog.util.POGIntervalSelectionHint;
+import org.eventb.core.pog.util.POGSource;
+import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -36,7 +36,7 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 	 */
 	public void process(
 			IRodinElement element, 
-			IPOGStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -48,8 +48,8 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 		
 		POGHint[] hints = hints(
 				new POGIntervalSelectionHint(
-						eventHypothesisManager.getRootHypothesis(target), 
-						eventHypothesisManager.getFullHypothesis(target)));
+						eventHypothesisManager.getRootHypothesis(), 
+						eventHypothesisManager.getFullHypothesis()));
 		
 		for (int k=0; k<actionsLength; k++) {
 			ISCAction action = concreteEventActionTable.getActions().get(k);
@@ -89,7 +89,7 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 					desc, 
 					fullHypothesis, 
 					emptyPredicates, 
-					new POGPredicate(action, predicate), 
+					new POGTraceablePredicate(predicate, action), 
 					sources, 
 					hints, 
 					monitor);
@@ -99,7 +99,7 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		abstractEventActionTable = 
@@ -109,7 +109,7 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEventActionTable = null;
 		super.endModule(element, repository, monitor);

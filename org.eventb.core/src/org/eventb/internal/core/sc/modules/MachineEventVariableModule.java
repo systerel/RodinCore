@@ -16,13 +16,13 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IVariable;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Type;
-import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.sc.util.GraphProblem;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.EventVariableSymbolInfo;
 import org.rodinp.core.IInternalParent;
@@ -37,7 +37,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 	public static final String MACHINE_EVENT_VARIABLE_ACCEPTOR = 
 		EventBPlugin.PLUGIN_ID + ".machineEventVariableAcceptor";
 
-	private ISCFilterModule[] modules;
+	private IFilterModule[] modules;
 
 	public MachineEventVariableModule() {
 		IModuleManager manager = ModuleManager.getModuleManager();
@@ -50,7 +50,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			ISCStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 
@@ -107,7 +107,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		eventRefinesInfo = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
@@ -117,7 +117,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventRefinesInfo = null;
 		super.endModule(element, repository, monitor);

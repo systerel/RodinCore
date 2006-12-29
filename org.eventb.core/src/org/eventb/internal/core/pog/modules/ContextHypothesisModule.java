@@ -19,14 +19,11 @@ import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ISCTheorem;
-import org.eventb.core.pog.state.IContextAxiomTable;
-import org.eventb.core.pog.state.IContextHypothesisManager;
-import org.eventb.core.pog.state.IContextTheoremTable;
-import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.state.IPredicateTable;
+import org.eventb.core.pog.state.IStateRepository;
 import org.eventb.internal.core.pog.ContextAxiomTable;
 import org.eventb.internal.core.pog.ContextHypothesisManager;
 import org.eventb.internal.core.pog.ContextTheoremTable;
+import org.eventb.internal.core.pog.PredicateTable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -37,15 +34,15 @@ import org.rodinp.core.RodinDBException;
  */
 public class ContextHypothesisModule extends GlobalHypothesisModule {
 
-	IContextHypothesisManager hypothesisManager;
-	IContextAxiomTable axiomTable;
-	IContextTheoremTable theoremTable;
+	ContextHypothesisManager hypothesisManager;
+	ContextAxiomTable axiomTable;
+	ContextTheoremTable theoremTable;
 	IPOFile target;
 	
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		
@@ -75,14 +72,14 @@ public class ContextHypothesisModule extends GlobalHypothesisModule {
 		fetchPredicates(predicates, axiomTable, axioms, monitor);
 		fetchPredicates(predicates, theoremTable, theorems, monitor);
 		
-		axiomTable.trim();
-		theoremTable.trim();
+		axiomTable.makeImmutable();
+		theoremTable.makeImmutable();
 		
 		ISCPredicateElement[] predicateElements = new ISCPredicateElement[predicates.size()];		
 		predicates.toArray(predicateElements);
 		
 		hypothesisManager = 
-			new ContextHypothesisManager(scContextFile, predicateElements);
+			new ContextHypothesisManager(scContextFile, target, predicateElements);
 		
 		repository.setState(hypothesisManager);
 		
@@ -90,7 +87,7 @@ public class ContextHypothesisModule extends GlobalHypothesisModule {
 	
 	private void fetchPredicates(
 			List<ISCPredicateElement> predicates,
-			IPredicateTable predicateTable,
+			PredicateTable predicateTable,
 			ISCPredicateElement[] predicateElements,
 			IProgressMonitor monitor) throws RodinDBException {
 		
@@ -103,10 +100,10 @@ public class ContextHypothesisModule extends GlobalHypothesisModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
-		hypothesisManager.createHypotheses(target, monitor);
+		hypothesisManager.createHypotheses(monitor);
 		target = null;
 		hypothesisManager = null;
 		axiomTable = null;

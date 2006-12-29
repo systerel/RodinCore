@@ -13,19 +13,34 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FreeIdentifier;
 
 /**
+ * Protocol for accessing all variables of a machine.
+ * 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
  * @author Stefan Hallerstede
  *
  */
-public interface IMachineVariableTable extends IPOGState, Iterable<FreeIdentifier> {
+public interface IMachineVariableTable extends IState, Iterable<FreeIdentifier> {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".machineVariableTable";
 
+	/**
+	 * Returns whether this variable table contains the specified variable.
+	 * 
+	 * @param variable the variable whose presence is to be tested
+	 * @return whether this variable table contains the specified variable
+	 */
 	boolean contains(FreeIdentifier variable);
 	
-	void add(FreeIdentifier variable, boolean preserved);
-	
+	/**
+	 * Returns the array of variables that were already present in 
+	 * the abstraction of this machine.
+	 * 
+	 * @return the array of variables that were already present in 
+	 * the abstraction of this machine
+	 */
 	List<FreeIdentifier> getPreservedVariables();
-	
-	void trimToSize();
-		
+			
 }

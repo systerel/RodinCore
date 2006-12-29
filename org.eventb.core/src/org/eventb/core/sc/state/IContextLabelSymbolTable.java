@@ -10,6 +10,9 @@ package org.eventb.core.sc.state;
 import org.eventb.core.EventBPlugin;
 
 /**
+ * State components for keeping labeled elements of contexts,
+ * i.e. axioms and theorems.
+ * 
  * @author Stefan Hallerstede
  *
  */

@@ -9,20 +9,23 @@ package org.eventb.internal.core.pog;
 
 import org.eventb.core.IPOFile;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.pog.state.IPOGState;
-import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.internal.core.tool.state.StateRepository;
+import org.eventb.core.pog.state.IState;
+import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.internal.core.tool.state.ToolStateRepository;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class POGStateRepository extends StateRepository<IPOGState> implements IPOGStateRepository {
+public class POGStateRepository extends ToolStateRepository<IState> implements IStateRepository {
 
 	private final IPOFile target;
 	
 	public POGStateRepository(FormulaFactory factory, IPOFile target) {
 		super(factory);
+		
+		assert target.exists();
+		
 		this.target = target;
 	}
 

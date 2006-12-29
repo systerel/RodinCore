@@ -26,7 +26,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Type;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.internal.core.Util;
-import org.eventb.internal.core.tool.state.State;
+import org.eventb.internal.core.tool.state.ToolState;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -34,12 +34,23 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class HypothesisManager extends State implements IHypothesisManager {
+public abstract class HypothesisManager extends ToolState implements IHypothesisManager {
 
 	public Iterator<FreeIdentifier> iterator() {
 		return identifiers.iterator();
 	}
 
+	/**
+	 * Hypotheses are represented by predicate sets.
+	 * Each predicate set may be associated with a type environment which is represented
+	 * by a set of typed identifiers. When the predicate sets of this manager are created, the
+	 * type environment associated with this manager is added to the first predicate set created
+	 * (the one that is included in all other predicate sets of this manager). The identifiers
+	 * of this manager can be accessed via the <code>Iterable</code> interface it implements.
+	 * 
+	 * @param identifier the free identifier to be added
+	 * @throws CoreException if the hypthothesis manager is immutable
+	 */
 	public void addIdentifier(FreeIdentifier identifier) throws CoreException {
 		if (isImmutable())
 			throw Util.newCoreException(Messages.pog_immutableHypothesisViolation);
@@ -48,6 +59,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 
 	public static String PRD_NAME_PREFIX = "PRD";
 	private final IRodinElement parentElement;
+	protected final IPOFile target;
 	private final ISCPredicateElement[] predicateTable;
 	private final String[] hypothesisNames;
 	private final Hashtable<String, Integer> predicateMap;
@@ -63,6 +75,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 
 	public HypothesisManager(
 			IRodinElement parentElement, 
+			IPOFile target,
 			ISCPredicateElement[] predicateTable, 
 			String rootHypName, 
 			String hypPrefix,
@@ -70,6 +83,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 			String identHypName,
 			int identifierHashSize) {
 		this.parentElement = parentElement;
+		this.target = target;
 		this.rootHypName = rootHypName;
 		this.hypPrefix = hypPrefix;
 		this.allHypName = allHypName;
@@ -97,17 +111,17 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 		return hypothesisNames[index];
 	}
 
-	public IPOPredicateSet getHypothesis(IPOFile file, ISCPredicateElement element) throws CoreException {
+	public IPOPredicateSet makeHypothesis(ISCPredicateElement element) throws CoreException {
 		if (isImmutable())
 			throw Util.newCoreException(Messages.pog_immutableHypothesisViolation);
 		Integer index = predicateMap.get(element.getElementName());
 		if (index == null)
 			return null;
-		return file.getPredicateSet(getHypothesisName(index));
+		return target.getPredicateSet(getHypothesisName(index));
 	}
 
 	// anticipate the predicate set in which the predicate will be located
-	public IPOPredicate getPredicate(IPOFile file, ISCPredicateElement element) throws CoreException {
+	public IPOPredicate getPredicate(ISCPredicateElement element) throws CoreException {
 		if (!isImmutable())
 			throw Util.newCoreException(Messages.pog_mutableHypothesisViolation);
 		Integer index = predicateMap.get(element.getElementName());
@@ -115,16 +129,16 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 			return null;
 		for (int i=index+1; i< hypothesisNames.length; i++) {
 			if (hypothesisNames[i] != null) {
-				return file.getPredicateSet(hypothesisNames[i]).getPredicate(PRD_NAME_PREFIX + index);
+				return target.getPredicateSet(hypothesisNames[i]).getPredicate(PRD_NAME_PREFIX + index);
 			}
 		}
-		return file.getPredicateSet(allHypName).getPredicate(PRD_NAME_PREFIX + index);
+		return target.getPredicateSet(allHypName).getPredicate(PRD_NAME_PREFIX + index);
 	}
 
-	public void createHypotheses(IPOFile file, IProgressMonitor monitor) throws RodinDBException {
+	public void createHypotheses(IProgressMonitor monitor) throws RodinDBException {
 		
 		if (identifiers.size() > 0)
-			addIdentifiers(file, monitor);
+			addIdentifiers(monitor);
 		
 		int previous = 0;
 		String previousName = getFirstHypothesisName();
@@ -141,18 +155,18 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 				continue;
 			else {
 				index = 
-					addPredicateSet(file, 
-							hypothesisNames[i], previous, previousName, index, i, monitor);
+					addPredicateSet(hypothesisNames[i], 
+							previous, previousName, index, i, monitor);
 			}
 		}
 		
-		addPredicateSet(file, 
-				allHypName, previous, previousName, index, predicateTable.length, monitor);
+		addPredicateSet(allHypName, 
+				previous, previousName, index, predicateTable.length, monitor);
 	
 	}
 	
-	private void addIdentifiers(IPOFile file, IProgressMonitor monitor) throws RodinDBException {
-		IPOPredicateSet set = createPredicateSet(file, identHypName, rootHypName, monitor);
+	private void addIdentifiers(IProgressMonitor monitor) throws RodinDBException {
+		IPOPredicateSet set = createPredicateSet(identHypName, rootHypName, monitor);
 		for (FreeIdentifier identifier : identifiers) {
 			String idName = identifier.getName();
 			Type type = identifier.getType();
@@ -163,14 +177,13 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 	}
 
 	private int addPredicateSet(
-			IPOFile file, 
 			String name, 
 			int previous, 
 			String previousName, 
 			int index, 
 			int current, 
 			IProgressMonitor monitor) throws RodinDBException {
-		IPOPredicateSet set = createPredicateSet(file, name, previousName, monitor);
+		IPOPredicateSet set = createPredicateSet(name, previousName, monitor);
 		for (int k=previous; k<current; k++) {
 			IPOPredicate predicate = set.getPredicate(PRD_NAME_PREFIX + index++);
 			predicate.create(null, monitor);
@@ -181,19 +194,22 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 		return index;
 	}
 
-	private IPOPredicateSet createPredicateSet(IPOFile file, String name, String previousName, IProgressMonitor monitor) throws RodinDBException {
-		IPOPredicateSet set = file.getPredicateSet(name);
+	private IPOPredicateSet createPredicateSet(
+			String name, 
+			String previousName, 
+			IProgressMonitor monitor) throws RodinDBException {
+		IPOPredicateSet set = target.getPredicateSet(name);
 		set.create(null, monitor);
-		set.setParentPredicateSet(file.getPredicateSet(previousName), monitor);
+		set.setParentPredicateSet(target.getPredicateSet(previousName), monitor);
 		return set;
 	}
 	
-	public IPOPredicateSet getFullHypothesis(IPOFile file) throws RodinDBException {
-		return file.getPredicateSet(allHypName);
+	public IPOPredicateSet getFullHypothesis() {
+		return target.getPredicateSet(allHypName);
 	}
 
-	public IPOPredicateSet getRootHypothesis(IPOFile file) throws RodinDBException {
-		return file.getPredicateSet(rootHypName);
+	public IPOPredicateSet getRootHypothesis() {
+		return target.getPredicateSet(rootHypName);
 	}
 
 	/* (non-Javadoc)

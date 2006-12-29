@@ -13,13 +13,13 @@ import java.util.List;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
-import org.eventb.internal.core.tool.state.State;
+import org.eventb.internal.core.tool.state.ToolState;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class AbstractEventGuardList extends State implements IAbstractEventGuardList {
+public class AbstractEventGuardList extends ToolState implements IAbstractEventGuardList {
 
 	private final List<IAbstractEventGuardTable> abstractEventGuardTables;
 	

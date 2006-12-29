@@ -19,11 +19,11 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
-import org.eventb.core.pog.POGPredicate;
-import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineVariantInfo;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.util.POGSource;
+import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.eventb.internal.core.pog.MachineVariantInfo;
 import org.rodinp.core.IRodinElement;
 
@@ -35,7 +35,7 @@ public class MachineVariantModule extends UtilityModule {
 	
 	public void process(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		if (!variantInfo.machineHasVariant())
@@ -50,9 +50,9 @@ public class MachineVariantModule extends UtilityModule {
 					target, 
 					"VWD", 
 					"Well-definedness of variant", 
-					machineHypothesisManager.getFullHypothesis(target), 
+					machineHypothesisManager.getFullHypothesis(), 
 					emptyPredicates, 
-					new POGPredicate(variantInfo.getVariant(), wdPredicate), 
+					new POGTraceablePredicate(wdPredicate, variantInfo.getVariant()), 
 					sources, 
 					emptyHints, monitor);
 		}
@@ -64,9 +64,9 @@ public class MachineVariantModule extends UtilityModule {
 					target, 
 					"FIN", 
 					"Finiteness of variant", 
-					machineHypothesisManager.getFullHypothesis(target), 
+					machineHypothesisManager.getFullHypothesis(), 
 					emptyPredicates, 
-					new POGPredicate(variantInfo.getVariant(), finPredicate), 
+					new POGTraceablePredicate(finPredicate, variantInfo.getVariant()), 
 					sources, 
 					emptyHints, monitor);
 		}
@@ -80,7 +80,7 @@ public class MachineVariantModule extends UtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		
@@ -103,7 +103,7 @@ public class MachineVariantModule extends UtilityModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		variantInfo = null;
 		typeEnvironment = null;

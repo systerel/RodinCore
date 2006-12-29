@@ -25,10 +25,11 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.pog.POGIntervalSelectionHint;
-import org.eventb.core.pog.POGPredicate;
-import org.eventb.core.pog.POGSource;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.util.POGIntervalSelectionHint;
+import org.eventb.core.pog.util.POGPredicate;
+import org.eventb.core.pog.util.POGSource;
+import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -43,7 +44,7 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 	 */
 	public void process(
 			IRodinElement element, 
-			IPOGStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -133,11 +134,11 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 					desc, 
 					fullHypothesis, 
 					localHyp,
-					new POGPredicate(witness, goal),
+					new POGTraceablePredicate(goal, witness),
 					sources(new POGSource(IPOSource.DEFAULT_ROLE, witness)),
 					hints(
 							new POGIntervalSelectionHint(
-									eventHypothesisManager.getRootHypothesis(target),
+									eventHypothesisManager.getRootHypothesis(),
 									getSequentHypothesis(target, sequentName)
 							)
 					),
@@ -190,7 +191,7 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		typeEnvironment = repository.getTypeEnvironment();
@@ -199,7 +200,7 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		typeEnvironment = null;
 		super.endModule(element, repository, monitor);

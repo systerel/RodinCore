@@ -13,13 +13,13 @@ import java.util.Iterator;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.pog.state.IMachineVariableTable;
-import org.eventb.internal.core.tool.state.State;
+import org.eventb.internal.core.tool.state.ToolState;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachineVariableTable extends State implements IMachineVariableTable {
+public class MachineVariableTable extends ToolState implements IMachineVariableTable {
 	
 	final private ArrayList<FreeIdentifier> variables;
 	final private ArrayList<FreeIdentifier> preservedVariables;
@@ -57,7 +57,8 @@ public class MachineVariableTable extends State implements IMachineVariableTable
 		return preservedVariables;
 	}
 
-	public void trimToSize() {
+	@Override
+	public void makeImmutable() {
 		variables.trimToSize();
 		preservedVariables.trimToSize();
 	}

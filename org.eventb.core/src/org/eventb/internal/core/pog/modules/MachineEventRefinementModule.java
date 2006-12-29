@@ -18,11 +18,12 @@ import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.state.IAbstractEventActionTable;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
 import org.eventb.core.pog.state.IWitnessTable;
+import org.eventb.core.pog.util.POGPredicate;
+import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -49,8 +50,8 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 			for (FreeIdentifier ident : nondetAssignments.get(i).getAssignedIdentifiers()) {
 				if (freeIdents.contains(ident)) {
 					hyp.add(
-							new POGPredicate(nondetActions.get(i),
-									nondetAssignments.get(i).getBAPredicate(factory)));
+							new POGPredicate(nondetAssignments.get(i).getBAPredicate(factory),
+									nondetActions.get(i)));
 					break;
 				}
 			}
@@ -70,9 +71,9 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 		
 		for (int i=0; i<nondetAssignments.size(); i++) {
 			hyp.add(
-					new POGPredicate(
-							nondetActions.get(i),
-							nondetAssignments.get(i).getBAPredicate(factory)));
+					new POGTraceablePredicate(
+							nondetAssignments.get(i).getBAPredicate(factory),
+							nondetActions.get(i)));
 		}
 		return hyp;		
 	}
@@ -87,8 +88,8 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 
 		for (int i=0; i<nondetWitnesses.size(); i++) {
 			hyp.add(
-					new POGPredicate(nondetWitnesses.get(i),
-							nondetPredicates.get(i)));
+					new POGTraceablePredicate(nondetPredicates.get(i),
+							nondetWitnesses.get(i)));
 		}
 		
 		return hyp;
@@ -100,7 +101,7 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		abstractEventGuardList =
@@ -117,7 +118,7 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEventGuardList = null;
 		abstractEventActionTable = null;

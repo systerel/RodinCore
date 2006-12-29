@@ -14,7 +14,7 @@ import org.eventb.core.sc.symbolTable.ISymbolTable;
  * @author Stefan Hallerstede
  *
  */
-public interface ILabelSymbolTable extends ISymbolTable<ILabelSymbolInfo>, ISCState {
+public interface ILabelSymbolTable extends ISymbolTable<ILabelSymbolInfo>, IState {
 
 	// common interface to machine and event symbol tables
 }

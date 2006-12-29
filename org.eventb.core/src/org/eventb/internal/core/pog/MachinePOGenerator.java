@@ -15,8 +15,8 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.pog.IModuleManager;
-import org.eventb.core.pog.IPOGProcessorModule;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.IProcessorModule;
+import org.eventb.core.pog.state.IStateRepository;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -30,7 +30,7 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 	
 	private IModuleManager manager;
 	
-	private IPOGProcessorModule[] machineModules = null;
+	private IProcessorModule[] machineModules = null;
 	
 	public MachinePOGenerator() {
 		manager = ModuleManager.getModuleManager();
@@ -61,7 +61,7 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 		
 			poFile.create(true, null);
 
-			IPOGStateRepository repository = createRepository(poFile, monitor);
+			IStateRepository repository = createRepository(poFile, monitor);
 		
 			runModules(
 					scMachineFile, 

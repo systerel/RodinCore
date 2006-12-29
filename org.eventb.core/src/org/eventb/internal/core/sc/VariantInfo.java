@@ -9,13 +9,13 @@ package org.eventb.internal.core.sc;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.sc.state.IVariantInfo;
-import org.eventb.internal.core.tool.state.State;
+import org.eventb.internal.core.tool.state.ToolState;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class VariantInfo extends State implements IVariantInfo {
+public class VariantInfo extends ToolState implements IVariantInfo {
 
 	Expression expression;
 	

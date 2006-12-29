@@ -22,15 +22,15 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ParseProblem;
+import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.IParsedFormula;
-import org.eventb.core.sc.state.ISCState;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IState;
+import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
-import org.eventb.core.tool.state.IStateRepository;
+import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.sc.util.ParseProblem;
+import org.eventb.core.tool.state.IToolStateRepository;
 import org.eventb.internal.core.sc.ParsedFormula;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -57,7 +57,7 @@ extends LabeledElementModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		identifierSymbolTable = 
@@ -80,7 +80,7 @@ extends LabeledElementModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		identifierSymbolTable = null;
 		super.endModule(element, repository, monitor);
@@ -271,9 +271,9 @@ extends LabeledElementModule {
 	 */
 	protected void checkAndType(
 			IInternalParent target,
-			ISCFilterModule[] modules,
+			IFilterModule[] modules,
 			String component,
-			ISCStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		final FormulaFactory factory = repository.getFormulaFactory();
@@ -355,7 +355,7 @@ extends LabeledElementModule {
 	
 	private IParsedFormula parsedFormula;
 	
-	private void createParsedState(IStateRepository<ISCState> repository) throws CoreException {
+	private void createParsedState(IToolStateRepository<IState> repository) throws CoreException {
 		parsedFormula = new ParsedFormula();
 		repository.setState(parsedFormula);
 	}
@@ -364,7 +364,7 @@ extends LabeledElementModule {
 		parsedFormula.setFormula(formula);
 	}
 	
-	private void removeParsedState(IStateRepository repository) throws CoreException {
+	private void removeParsedState(IToolStateRepository repository) throws CoreException {
 		repository.removeState(IParsedFormula.STATE_TYPE);
 	}
 	

@@ -15,7 +15,7 @@ import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
  * @author Stefan Hallerstede
  *
  */
-public interface ICurrentEvent extends ISCState {
+public interface ICurrentEvent extends IState {
 	
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".currentEvent";
 

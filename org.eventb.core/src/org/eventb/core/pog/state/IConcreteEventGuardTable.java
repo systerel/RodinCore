@@ -10,6 +10,14 @@ package org.eventb.core.pog.state;
 import org.eventb.core.EventBPlugin;
 
 /**
+ * Common protocol for accessing the guards of the concrete event.
+ * There is always exacly one concrete event. In case of a split refinement
+ * each split event is treated separately.
+ * 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
  * @author Stefan Hallerstede
  *
  */

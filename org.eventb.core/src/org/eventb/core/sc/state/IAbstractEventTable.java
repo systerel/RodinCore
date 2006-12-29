@@ -8,19 +8,16 @@
 package org.eventb.core.sc.state;
 
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.ISCMachineFile;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface IAbstractEventTable extends ISCState, Iterable<IAbstractEventInfo> {
+public interface IAbstractEventTable extends IState {
 	
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventSymbolTable";
-
-	ISCMachineFile getMachineFile();
+	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventTable";
 	
-	void putAbstractEventInfo(IAbstractEventInfo info);
+	IAbstractEventInfo[] getAbstractEventInfos();
 	
 	IAbstractEventInfo getAbstractEventInfo(String label);
 	

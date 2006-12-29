@@ -8,11 +8,15 @@
 package org.eventb.core.pog.state;
 
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
-import org.rodinp.core.RodinDBException;
 
 /**
+ * This is the hypothesis manager associated with Event-B machines.
+ * 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
  * @author Stefan Hallerstede
  *
  */
@@ -20,7 +24,19 @@ public interface IMachineHypothesisManager extends IHypothesisManager {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".machineHypothesisManager";
 
-	IPOPredicateSet getContextHypothesis(IPOFile target) throws RodinDBException;
+	/**
+	 * Returns the hypothesis, i.e. the predicate set, that contains all predicates
+	 * of the seen contexts.
+	 * 
+	 * @return the hypothesis that contains all predicates of the seen contexts
+	 */
+	IPOPredicateSet getContextHypothesis();
 	
+	/**
+	 * Returns whether the machine managed by this manager is initial, i.e., it does not refine
+	 * another machine.
+	 * 
+	 * @return whether the machine managed by this manager is initial
+	 */
 	boolean isInitialMachine();
 }

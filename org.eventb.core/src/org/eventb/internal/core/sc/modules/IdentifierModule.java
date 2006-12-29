@@ -16,13 +16,13 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IMarkerDisplay;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.SCProcessorModule;
+import org.eventb.core.sc.IFilterModule;
+import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.sc.util.IMarkerDisplay;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -33,7 +33,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class IdentifierModule extends SCProcessorModule {
+public abstract class IdentifierModule extends ProcessorModule {
 
 	protected FormulaFactory factory;
 	
@@ -100,8 +100,8 @@ public abstract class IdentifierModule extends SCProcessorModule {
 	protected void fetchSymbols(
 			IIdentifierElement[] elements,
 			IInternalParent target,
-			ISCFilterModule[] rules,
-			ISCStateRepository repository,
+			IFilterModule[] rules,
+			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		initFilterModules(rules, repository, null);
@@ -172,7 +172,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
@@ -186,7 +186,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		factory = null;
 		identifierSymbolTable = null;

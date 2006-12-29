@@ -14,8 +14,8 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.pog.IModuleManager;
-import org.eventb.core.pog.IPOGProcessorModule;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.IProcessorModule;
+import org.eventb.core.pog.state.IStateRepository;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -29,7 +29,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 	
 	private IModuleManager manager;
 	
-	private IPOGProcessorModule[] machineModules = null;
+	private IProcessorModule[] machineModules = null;
 	
 	public ContextPOGenerator() {
 		manager = ModuleManager.getModuleManager();
@@ -62,7 +62,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 		
 			poFile.create(true, monitor);
 		
-			IPOGStateRepository repository = createRepository(poFile, monitor);
+			IStateRepository repository = createRepository(poFile, monitor);
 			
 			runModules(
 					scContextFile, 

@@ -7,65 +7,60 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.List;
 
-import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAbstractEventTable;
-import org.eventb.internal.core.tool.state.State;
+import org.eventb.internal.core.tool.state.ToolState;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class AbstractEventTable extends State implements IAbstractEventTable {
+public class AbstractEventTable extends ToolState implements IAbstractEventTable {
 	
-	final private ISCMachineFile machineFile;
-	final private Hashtable<String, IAbstractEventInfo> table;
-	final private HashSet<IAbstractEventInfo> set;
+	final private List<AbstractEventInfo> table;
+	final private List<String> labels;
 	final private HashSet<String> localVariables;
 
-	public AbstractEventTable(int size, ISCMachineFile m) {
-		table = new Hashtable<String, IAbstractEventInfo>(size);
-		set = new HashSet<IAbstractEventInfo>(size);
-		localVariables = new HashSet<String>(size);
-		machineFile = m;
+	public AbstractEventTable(int size) {
+		table = new ArrayList<AbstractEventInfo>(size);
+		labels = new ArrayList<String>(size);
+		localVariables = new HashSet<String>(size * 6);
 	}
 
 	public String getStateType() {
 		return STATE_TYPE;
 	}
 
-	public ISCMachineFile getMachineFile() {
-		return machineFile;
-	}
-
-	public void putAbstractEventInfo(IAbstractEventInfo info) {
-		if (set.add(info)) {
-			table.put(info.getEventLabel(), info);
+	public void putAbstractEventInfo(AbstractEventInfo info) {
+		assert !table.contains(info);
+		
+		table.add(info);
+		labels.add(info.getEventLabel());
 			
-			for (FreeIdentifier identifier : info.getIdentifiers()) {
-				localVariables.add(identifier.getName());
-			}
+		for (FreeIdentifier identifier : info.getIdentifiers()) {
+			localVariables.add(identifier.getName());
 		}
-		else
-			assert false;
 		
 	}
 
-	public IAbstractEventInfo getAbstractEventInfo(String label) {
-		return table.get(label);
+	public AbstractEventInfo getAbstractEventInfo(String label) {
+		int index = labels.indexOf(label);
+		
+		return index == -1 ? null : table.get(index);
 	}
 
 	public boolean isLocalVariable(String name) {
 		return localVariables.contains(name);
 	}
-
-	public Iterator<IAbstractEventInfo> iterator() {
-		return set.iterator();
+	
+	public AbstractEventInfo[] getAbstractEventInfos() {
+		AbstractEventInfo[] abstractEventInfos = new AbstractEventInfo[table.size()];
+		table.toArray(abstractEventInfos);
+		return abstractEventInfos;
 	}
 
 }

@@ -8,9 +8,9 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
+import org.eventb.core.sc.util.GraphProblem;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;

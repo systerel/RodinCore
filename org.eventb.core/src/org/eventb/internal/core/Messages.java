@@ -40,6 +40,9 @@ public final class Messages {
 	
 	public static String database_EventInvalidConvergenceFailure;
 	
+	public static String tool_ImmutableStateModificationFailure;
+	public static String tool_MutableStateNotUnmodifiableFailure;
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

@@ -17,12 +17,13 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
+import org.eventb.internal.core.tool.state.ToolState;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class AbstractEventInfo implements IAbstractEventInfo {
+public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
 
 	private final String label;
 	private IEventSymbolInfo implicitRefinedInfo;
@@ -109,6 +110,12 @@ public class AbstractEventInfo implements IAbstractEventInfo {
 		IAbstractEventInfo info = (IAbstractEventInfo) o;
 		return label.compareTo(info.getEventLabel());
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		IAbstractEventInfo info = (IAbstractEventInfo) obj;
+		return label.equals(info.getEventLabel());
+	}
 
 	public ISCEvent getEvent() {
 		return event;
@@ -144,6 +151,10 @@ public class AbstractEventInfo implements IAbstractEventInfo {
 
 	public IEventSymbolInfo getImplicit() {
 		return implicitRefinedInfo;
+	}
+
+	public String getStateType() {
+		return STATE_TYPE;
 	}
 
 }

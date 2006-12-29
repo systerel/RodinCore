@@ -21,10 +21,10 @@ import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
 import org.eventb.core.pog.state.IHypothesisManager;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.state.IState;
+import org.eventb.core.pog.state.IStateRepository;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.state.IPOGState;
-import org.eventb.core.tool.state.IStateRepository;
+import org.eventb.core.tool.state.IToolStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -45,7 +45,7 @@ public class MachineEventGuardModule extends PredicateModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		ISCEvent event = (ISCEvent) element;
@@ -60,7 +60,7 @@ public class MachineEventGuardModule extends PredicateModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventLabel = null;
 		abstractEventGuardList = null;
@@ -68,12 +68,12 @@ public class MachineEventGuardModule extends PredicateModule {
 	}
 
 	@Override
-	protected IHypothesisManager getHypothesisManager(IStateRepository<IPOGState> repository) throws CoreException {
+	protected IHypothesisManager getHypothesisManager(IToolStateRepository<IState> repository) throws CoreException {
 		return (IEventHypothesisManager) repository.getState(IEventHypothesisManager.STATE_TYPE);
 	}
 
 	@Override
-	protected IPredicateTable getPredicateTable(IStateRepository<IPOGState> repository) throws CoreException {
+	protected IPredicateTable getPredicateTable(IToolStateRepository<IState> repository) throws CoreException {
 		return (IConcreteEventGuardTable) repository.getState(IConcreteEventGuardTable.STATE_TYPE);
 	}
 

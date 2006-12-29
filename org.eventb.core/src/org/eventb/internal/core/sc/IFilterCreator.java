@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
-import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.IFilterModule;
 
 
 /**
@@ -16,6 +16,6 @@ import org.eventb.core.sc.ISCFilterModule;
  */
 interface IFilterCreator extends IModuleCreator {
 
-	ISCFilterModule[] create();
+	IFilterModule[] create();
 	
 }

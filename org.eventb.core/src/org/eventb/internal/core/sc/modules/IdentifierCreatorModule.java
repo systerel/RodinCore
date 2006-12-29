@@ -9,7 +9,7 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCIdentifierElement;
-import org.eventb.core.sc.SCProcessorModule;
+import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.AbstractCarrierSetSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.AbstractConstantSymbolInfo;
@@ -20,7 +20,7 @@ import org.rodinp.core.IInternalElement;
  * @author Stefan Hallerstede
  *
  */
-public abstract class IdentifierCreatorModule extends SCProcessorModule {
+public abstract class IdentifierCreatorModule extends ProcessorModule {
 	
 	protected interface IIdentifierSymbolInfoCreator {
 		public IIdentifierSymbolInfo createIdentifierSymbolInfo(

@@ -14,7 +14,7 @@ import org.eventb.core.ast.Expression;
  * @author Stefan Hallerstede
  *
  */
-public interface IVariantInfo extends ISCState {
+public interface IVariantInfo extends IState {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".variantInfo";
 	

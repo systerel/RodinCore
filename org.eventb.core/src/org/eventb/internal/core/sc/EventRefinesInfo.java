@@ -15,13 +15,13 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
-import org.eventb.internal.core.tool.state.State;
+import org.eventb.internal.core.tool.state.ToolState;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class EventRefinesInfo extends State implements IEventRefinesInfo {
+public class EventRefinesInfo extends ToolState implements IEventRefinesInfo {
 
 	private final List<IAbstractEventInfo> array;
 	private final List<IRefinesEvent> refEvents;

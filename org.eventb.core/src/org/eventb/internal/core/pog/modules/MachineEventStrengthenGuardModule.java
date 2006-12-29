@@ -22,11 +22,12 @@ import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.POGPredicate;
-import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.util.POGPredicate;
+import org.eventb.core.pog.util.POGSource;
+import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -46,7 +47,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 	 */
 	public void process(
 			IRodinElement element, 
-			IPOGStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -146,7 +147,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 				"Guard strengthening (merge)",
 				fullHypothesis,
 				hyp,
-				new POGPredicate(concreteEvent, disjPredicate),
+				new POGTraceablePredicate(disjPredicate, concreteEvent),
 				sources,
 				hints(getLocalHypothesisSelectionHint(target, sequentName)),
 				monitor);
@@ -185,7 +186,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 					"Guard strengthening (split)",
 					fullHypothesis,
 					hyp,
-					new POGPredicate(guards.get(i), absGuard),
+					new POGTraceablePredicate(absGuard, guards.get(i)),
 					sources(
 							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
 							new POGSource(IPOSource.ABSTRACT_ROLE, (ITraceableElement) guards.get(i)),
@@ -202,7 +203,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		concreteEventGuardTable = 
@@ -215,7 +216,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IPOGStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		concreteEventGuardTable = null;
 		super.endModule(element, repository, monitor);

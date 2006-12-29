@@ -14,11 +14,11 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.ICurrentEvent;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.core.sc.util.GraphProblem;
 import org.eventb.internal.core.sc.symbolTable.EventVariableSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -39,7 +39,7 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 	 */
 	@Override
 	public void initModule(
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
 		factory = repository.getFormulaFactory();
@@ -90,7 +90,7 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 	 */
 	@Override
 	public void endModule(
-			ISCStateRepository repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(repository, monitor);
 		factory = null;
