@@ -40,6 +40,7 @@ public class CarrierSetMirror extends EventBMirror {
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
 	 */
+	@Override
 	protected IPage createDefaultPage(PageBook book) {
 		MessagePage page = new MessagePage();
 		initPage(page);
@@ -53,6 +54,7 @@ public class CarrierSetMirror extends EventBMirror {
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#doCreatePage(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
 		// Try to get a carrier set mirror page.
 		Object obj = part.getAdapter(ICarrierSetMirrorPage.class);
@@ -71,6 +73,7 @@ public class CarrierSetMirror extends EventBMirror {
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
 	 */
+	@Override
 	protected IWorkbenchPart getBootstrapPart() {
 		IWorkbenchPage page = getSite().getPage();
 		if (page != null)

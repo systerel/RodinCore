@@ -59,6 +59,7 @@ public class PenguinDanceDialog extends Dialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
 		Button ok = createButton(parent, IDialogConstants.OK_ID,
@@ -69,6 +70,7 @@ public class PenguinDanceDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		// create composite
 		Composite composite = (Composite) super.createDialogArea(parent);

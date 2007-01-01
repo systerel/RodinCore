@@ -28,6 +28,7 @@ public abstract class EventBEditableTreeViewerActionGroup extends ActionGroup {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {
@@ -63,6 +64,7 @@ public abstract class EventBEditableTreeViewerActionGroup extends ActionGroup {
 	 * nothing by default.
 	 */
 	public void handleKeyPressed(KeyEvent event) {
+		// Do nothing
 	}
 
 	/**

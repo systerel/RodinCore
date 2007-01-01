@@ -46,6 +46,7 @@ public class EventBMachineEditorContributor extends EventBEditorContributor {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditorContributor#createActions()
 	 */
+	@Override
 	protected void createActions() {
 		super.createActions();
 
@@ -125,6 +126,7 @@ public class EventBMachineEditorContributor extends EventBEditorContributor {
 	 * 
 	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void contributeToMenu(IMenuManager manager) {
 //		IMenuManager menu = new MenuManager("Event-B");
 //		menu.add(newVariables);
@@ -139,6 +141,7 @@ public class EventBMachineEditorContributor extends EventBEditorContributor {
 	 * 
 	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
+	@Override
 	public void contributeToToolBar(IToolBarManager manager) {
 //		manager.add(new Separator());
 //		manager.add(newVariables);

@@ -61,7 +61,7 @@ public class ProjectExplorerContentProvider implements
 	private Object invisibleRoot = null;
 
 	// The Project Explorer.
-	private ProjectExplorer explorer;
+	ProjectExplorer explorer;
 
 	// List of elements need to be refresh (when processing Delta of changes).
 	private List<Object> toRefresh;
@@ -154,19 +154,19 @@ public class ProjectExplorerContentProvider implements
 	 * Refresh the nodes.
 	 * <p>
 	 * 
-	 * @param toRefresh
+	 * @param refreshes
 	 *            List of node to refresh
 	 * @param updateLabels
 	 *            <code>true</code> if the label need to be updated as well
 	 */
-	private void postRefresh(final List toRefresh, final boolean updateLabels) {
+	private void postRefresh(final List refreshes, final boolean updateLabels) {
 		UIUtils.asyncPostRunnable(new Runnable() {
 			public void run() {
 				TreeViewer viewer = explorer.getTreeViewer();
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
 					Object[] objects = viewer.getExpandedElements();
-					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
+					for (Iterator iter = refreshes.iterator(); iter.hasNext();) {
 						viewer.refresh(iter.next(), updateLabels);
 					}
 					viewer.setExpandedElements(objects);
@@ -198,6 +198,7 @@ public class ProjectExplorerContentProvider implements
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
+		// Do nothing
 	}
 
 	/**
@@ -234,7 +235,7 @@ public class ProjectExplorerContentProvider implements
 		if (parent instanceof IMachineFile) {
 			IMachineFile mch = (IMachineFile) parent;
 			if (elementsMap.containsKey(mch)) {
-				return (Object[]) elementsMap.get(mch);
+				return elementsMap.get(mch);
 			} else {
 				ArrayList<TreeNode> list = new ArrayList<TreeNode>();
 				list
@@ -254,7 +255,7 @@ public class ProjectExplorerContentProvider implements
 			IContextFile ctx = (IContextFile) parent;
 
 			if (elementsMap.containsKey(ctx)) {
-				return (Object[]) elementsMap.get(ctx);
+				return elementsMap.get(ctx);
 			} else {
 				ArrayList<TreeNode> list = new ArrayList<TreeNode>();
 				list.add(new TreeNode("Carrier Sets", ctx,

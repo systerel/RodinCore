@@ -32,11 +32,11 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	private Collection<Point> indexes;
 
-	private Point current;
+	Point current;
 
 	private int currSize;
 
-	private Collection<Point> dirtyStates;
+	Collection<Point> dirtyStates;
 
 	public EventBPredicateText(FormToolkit toolkit, final ScrolledForm parent) {
 
@@ -138,7 +138,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		parent.reflow(true);
 	}
 
-	private void drawBoxes(Event event) {
+	void drawBoxes(Event event) {
 		// ProverUIUtils.debugProverUI("Draw boxes");
 		if (indexes == null)
 			return;

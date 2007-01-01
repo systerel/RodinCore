@@ -34,10 +34,10 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 public class AxiomMasterSectionActionGroup extends ActionGroup {
 
 	// The Event-B Editor.
-	private IEventBEditor editor;
+	IEventBEditor editor;
 
 	// The tree viewer in the master section
-	private TreeViewer viewer;
+	TreeViewer viewer;
 
 	// Some actions
 	protected Action addAxiom;
@@ -64,6 +64,7 @@ public class AxiomMasterSectionActionGroup extends ActionGroup {
 
 		// Add an axiom.
 		addAxiom = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addAxiom(editor, viewer);
 			}
@@ -75,6 +76,7 @@ public class AxiomMasterSectionActionGroup extends ActionGroup {
 
 		// Delete the current selected element in the tree viewer.
 		delete = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.deleteElements(viewer);
 			}
@@ -86,6 +88,7 @@ public class AxiomMasterSectionActionGroup extends ActionGroup {
 
 		// Handle the up action.
 		handleUp = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.handleUp(viewer);
 			}
@@ -97,6 +100,7 @@ public class AxiomMasterSectionActionGroup extends ActionGroup {
 
 		// Handle the down action.
 		handleDown = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.handleDown(viewer);
 			}
@@ -113,6 +117,7 @@ public class AxiomMasterSectionActionGroup extends ActionGroup {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		ISelection sel = getContext().getSelection();

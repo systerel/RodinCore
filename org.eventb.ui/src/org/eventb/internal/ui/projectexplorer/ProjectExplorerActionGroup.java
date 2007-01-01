@@ -39,7 +39,7 @@ import org.eventb.ui.IEventBSharedImages;
 public class ProjectExplorerActionGroup extends ActionGroup {
 
 	// The project explorer.
-	private ProjectExplorer explorer;
+	ProjectExplorer explorer;
 
 	// Some actions and the drill down adapter
 	public static DrillDownAdapter drillDownAdapter;
@@ -64,6 +64,7 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 
 		// Creating the public action
 		newProjectAction = new Action() {
+			@Override
 			public void run() {
 				BusyIndicator.showWhile(explorer.getTreeViewer().getTree()
 						.getDisplay(), new Runnable() {
@@ -83,6 +84,7 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_PROJECT_PATH));
 
 		newComponentAction = new Action() {
+			@Override
 			public void run() {
 				BusyIndicator.showWhile(explorer.getTreeViewer().getTree()
 						.getDisplay(), new Runnable() {
@@ -114,6 +116,7 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		ISelection sel = getContext().getSelection();
 		Object input = getContext().getInput();

@@ -133,20 +133,20 @@ public class AxiomMasterSection extends EventBTreePartWithButtons {
 	 */
 	@Override
 	protected void buttonSelected(int index) {
-		AxiomMasterSectionActionGroup groupActionSet = (AxiomMasterSectionActionGroup) this
+		AxiomMasterSectionActionGroup actionSet = (AxiomMasterSectionActionGroup) this
 				.getActionGroup();
 		switch (index) {
 		case ADD_INDEX:
-			groupActionSet.addAxiom.run();
+			actionSet.addAxiom.run();
 			break;
 		case DELETE_INDEX:
-			groupActionSet.delete.run();
+			actionSet.delete.run();
 			break;
 		case UP_INDEX:
-			groupActionSet.handleUp.run();
+			actionSet.handleUp.run();
 			break;
 		case DOWN_INDEX:
-			groupActionSet.handleDown.run();
+			actionSet.handleDown.run();
 			break;
 		}
 	}

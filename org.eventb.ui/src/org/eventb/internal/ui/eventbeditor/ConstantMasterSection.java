@@ -132,20 +132,20 @@ public class ConstantMasterSection extends EventBTreePartWithButtons {
 	 */
 	@Override
 	protected void buttonSelected(int index) {
-		ConstantMasterSectionActionGroup groupActionSet = (ConstantMasterSectionActionGroup) this
+		ConstantMasterSectionActionGroup actionSet = (ConstantMasterSectionActionGroup) this
 				.getActionGroup();
 		switch (index) {
 		case ADD_INDEX:
-			groupActionSet.addConstant.run();
+			actionSet.addConstant.run();
 			break;
 		case DELETE_INDEX:
-			groupActionSet.delete.run();
+			actionSet.delete.run();
 			break;
 		case UP_INDEX:
-			groupActionSet.handleUp.run();
+			actionSet.handleUp.run();
 			break;
 		case DOWN_INDEX:
-			groupActionSet.handleDown.run();
+			actionSet.handleDown.run();
 			break;
 		}
 	}

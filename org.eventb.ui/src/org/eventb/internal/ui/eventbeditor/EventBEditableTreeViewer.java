@@ -340,8 +340,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 			 *      int, java.lang.String)
 			 */
 			@Override
-			public void commit(IRodinElement element, int col, String contents) {
-				EventBEditableTreeViewer.this.commit(element, col, contents,
+			public void commit(IRodinElement elm, int col, String contents) {
+				EventBEditableTreeViewer.this.commit(elm, col, contents,
 						new NullProgressMonitor());
 			}
 

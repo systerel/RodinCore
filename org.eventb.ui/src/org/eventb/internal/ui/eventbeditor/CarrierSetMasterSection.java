@@ -135,20 +135,20 @@ public class CarrierSetMasterSection extends EventBTreePartWithButtons {
 	 */
 	@Override
 	protected void buttonSelected(int index) {
-		CarrierSetMasterSectionActionGroup groupActionSet = (CarrierSetMasterSectionActionGroup) this
+		CarrierSetMasterSectionActionGroup actionSet = (CarrierSetMasterSectionActionGroup) this
 				.getActionGroup();
 		switch (index) {
 		case ADD_INDEX:
-			groupActionSet.addSet.run();
+			actionSet.addSet.run();
 			break;
 		case DELETE_INDEX:
-			groupActionSet.delete.run();
+			actionSet.delete.run();
 			break;
 		case UP_INDEX:
-			groupActionSet.handleUp.run();
+			actionSet.handleUp.run();
 			break;
 		case DOWN_INDEX:
-			groupActionSet.handleDown.run();
+			actionSet.handleDown.run();
 			break;
 		}
 	}
