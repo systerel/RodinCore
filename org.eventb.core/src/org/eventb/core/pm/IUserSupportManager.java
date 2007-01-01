@@ -15,32 +15,6 @@ public interface IUserSupportManager {
 	public abstract IUserSupport newUserSupport();
 
 	/**
-	 * Dispose an existing User Support
-	 * <p>
-	 * 
-	 * @param userSupport
-	 *            an existing User Support to be disposed
-	 */
-//	public abstract void disposeUserSupport(IUserSupport userSupport);
-
-	/**
-	 * Set the input for an User Support. This is normally called right after
-	 * creating a new User Support
-	 * <p>
-	 * 
-	 * @param userSupport
-	 *            an existing User Support
-	 * @param psFile
-	 *            the PSFile which will be the input for the User Support
-	 * @param monitor
-	 *            a progress monitor
-	 * @throws RodinDBException
-	 *             a Rodin Exception
-	 */
-//	public abstract void setInput(IUserSupport userSupport, IPSFile psFile,
-//			IProgressMonitor monitor) throws RodinDBException;
-
-	/**
 	 * Return the list of User Support managed by the manager
 	 * <p>
 	 * 

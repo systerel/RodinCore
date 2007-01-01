@@ -921,7 +921,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	}
 
 	void setInformation(final IUserSupport userSupport) {
-		Collection<Object> information = userSupport.getInformation();
+		Object [] information = userSupport.getInformation();
 
 		if (ProofControlUtils.DEBUG) {
 			ProofControlUtils.debug("********** MESSAGE *********");
@@ -931,9 +931,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			ProofControlUtils.debug("****************************");
 		}
 
-		int size = information.size();
+		int size = information.length;
 		if (size != 0)
-			setFormTextInformation(information.toArray()[size - 1].toString());
+			setFormTextInformation(information[size - 1].toString());
 		else
 			setFormTextInformation("");
 	}

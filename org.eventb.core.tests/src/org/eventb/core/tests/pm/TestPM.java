@@ -1,7 +1,5 @@
 package org.eventb.core.tests.pm;
 
-import java.util.Collection;
-
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
@@ -73,7 +71,7 @@ public abstract class TestPM extends BasicTest {
 		return poFile;
 	}
 	
-	void assertInformation(String message, String expected, Collection<Object> objs) {
+	void assertInformation(String message, String expected, Object [] objs) {
 		StringBuilder builder = new StringBuilder();
 		boolean sep = false;
 		for (Object obj : objs) {

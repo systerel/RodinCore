@@ -24,15 +24,14 @@ import org.rodinp.core.RodinDBException;
  * @author htson
  *         <p>
  *         This is the interface for the user support which used to manage the
- *         state of the proof obligation corresponding to a single component.
+ *         state of the proof obligations corresponding to a single component.
  *         <p>
  *         This interface is not supposed to be extended or implemented.
  */
 public interface IUserSupport extends IElementChangedListener {
 
 	/**
-	 * Set the input file for the user support. This should be called only by
-	 * the User Support Manager.
+	 * Set the input file for the user support.
 	 * <p>
 	 * 
 	 * @param psFile
@@ -47,8 +46,7 @@ public interface IUserSupport extends IElementChangedListener {
 			throws RodinDBException;
 
 	/**
-	 * Dispose the user support. Should be used only by the User Support
-	 * Manager.
+	 * Dispose the user support.
 	 */
 	public abstract void dispose();
 
@@ -63,9 +61,9 @@ public interface IUserSupport extends IElementChangedListener {
 	/**
 	 * Go to the next undischarged proof obligation. If there is no undischarged
 	 * obligation and the force flag is <code>false</code> then the User
-	 * Support state is unchaged. If the force flag is <code>true</code> and
-	 * there is no undischarged obligation then the current PO will be set to
-	 * <code>null</code>.
+	 * Support state is unchaged. If the <code>force</code> flag is
+	 * <code>true</code> and there is no undischarged obligation then the
+	 * current PO will be set to <code>null</code>.
 	 * <p>
 	 * 
 	 * @param force
@@ -81,7 +79,7 @@ public interface IUserSupport extends IElementChangedListener {
 	/**
 	 * Go to the previous undischarged proof obligation. If there is no
 	 * undischarged obligation and the force flag is <code>false</code> then
-	 * the User Support state is unchaged. If the force flag is
+	 * the User Support state is unchaged. If the <code>force</code> flag is
 	 * <code>true</code> and there is no undischarged obligation then the
 	 * current PO will be set to <code>null</code>.
 	 * <p>
@@ -150,12 +148,19 @@ public interface IUserSupport extends IElementChangedListener {
 	 * 
 	 * @return an array of unsaved proof obligations
 	 */
-	public IProofState [] getUnsavedPOs();
-
-	public abstract Collection<Object> getInformation();
+	public IProofState[] getUnsavedPOs();
 
 	/**
-	 * Remove a collection of hypothesis from the cache.
+	 * Getting the list of information stored in the user support (including the
+	 * output of the applied tactics, messages about the last action in the user
+	 * support, etc.)
+	 * 
+	 * @return a list of objects
+	 */
+	public abstract Object[] getInformation();
+
+	/**
+	 * Remove a collection of hypotheses from the cache.
 	 * <p>
 	 * 
 	 * @param hyps
@@ -175,11 +180,11 @@ public interface IUserSupport extends IElementChangedListener {
 	public abstract void searchHyps(String token);
 
 	/**
-	 * Remove a collection of hypothesis from the searched hypothesis set
+	 * Remove a collection of predicates from the searched hypothesis set.
 	 * <p>
 	 * 
 	 * @param hyps
-	 *            a collection of hypotheses
+	 *            a collection of predicates
 	 */
 	public abstract void removeSearchedHypotheses(Collection<Predicate> hyps);
 
@@ -210,7 +215,8 @@ public interface IUserSupport extends IElementChangedListener {
 			throws RodinDBException;
 
 	/**
-	 * Apply a tactic to the current proof obligation
+	 * Apply a tactic to the current proof obligation at the current proof tree
+	 * node.
 	 * <p>
 	 * 
 	 * @param t
@@ -247,6 +253,17 @@ public interface IUserSupport extends IElementChangedListener {
 	public abstract void setComment(String text, IProofTreeNode node)
 			throws RodinDBException;
 
-	public abstract void doSave(Object[] states, IProgressMonitor monitor) throws CoreException;
+	/**
+	 * Save the set of inputproof obligations to disk.
+	 * <p>
+	 * @param states
+	 *        an array of proof states to be saved
+	 * @param monitor
+	 *        a Progress Monitor
+	 * @throws CoreException
+	 *        a Core Exception if some errors occured while saving
+	 */
+	public abstract void doSave(Object[] states, IProgressMonitor monitor)
+			throws CoreException;
 
 }

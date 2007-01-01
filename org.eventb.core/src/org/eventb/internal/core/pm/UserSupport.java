@@ -327,8 +327,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		return unsaved.toArray(new IProofState[unsaved.size()]);
 	}
 
-	public Collection<Object> getInformation() {
-		return information;
+	public Object [] getInformation() {
+		return information.toArray();
 	}
 
 	/*

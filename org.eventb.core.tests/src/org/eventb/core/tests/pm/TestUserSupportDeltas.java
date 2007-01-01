@@ -245,8 +245,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		startDeltas();
 		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
 		assertDeltas("No delta if select the same PO ",
-				"[*] x.bps [CURRENT|STATE|INFORMATION]\n" +
-				"  [*] PO1[org.eventb.core.psStatus] [PROOFTREE]");
+				"[*] x.bps [CURRENT|INFORMATION]");
 
 		// Select the last PO again
 		startDeltas();
