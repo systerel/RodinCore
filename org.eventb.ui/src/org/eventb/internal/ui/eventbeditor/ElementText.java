@@ -36,28 +36,28 @@ import org.rodinp.core.IRodinElement;
  */
 public abstract class ElementText extends TimerText implements ModifyListener {
 
-	private IRodinElement element;
+	IRodinElement element;
 
-	private int column;
+	int column;
 
-	private TreeEditor editor;
+	TreeEditor editor;
 
-	private IEventBInputText text;
+	IEventBInputText text;
 
-	private TreeItem item;
+	TreeItem item;
 
-	private Tree tree;
+	Tree tree;
 
-	private int inset;
+	int inset;
 
-	private String original;
+	String original;
 
 	/**
 	 * @author htson
 	 *         <p>
 	 *         This class handles the different changes to the Text.
 	 */
-	private class ElementTextListener implements Listener {
+	class ElementTextListener implements Listener {
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -145,15 +145,15 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 	 * the given content.
 	 * <p>
 	 * 
-	 * @param element
+	 * @param elm
 	 *            The Rodin Element corresponding to this Text
 	 * 
-	 * @param column
+	 * @param col
 	 *            The column in the Editable Tree Viewer.
 	 * @param contents
 	 *            The content that will be committed.
 	 */
-	public abstract void commit(IRodinElement element, int column,
+	public abstract void commit(IRodinElement elm, int col,
 			String contents);
 
 	/**
@@ -172,8 +172,6 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 	 * Constructor.
 	 * <p>
 	 * 
-	 * @param viewer
-	 *            The Editable Tree Viewer.
 	 * @param text
 	 *            The actual Text Widget.
 	 * @param editor
