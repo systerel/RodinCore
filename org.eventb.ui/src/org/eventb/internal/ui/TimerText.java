@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 public abstract class TimerText implements ModifyListener {
 
 	// The time that the text is last modified.
-	private int lastModify;
+	int lastModify;
 	
 	private int delay;
 	
@@ -64,18 +64,10 @@ public abstract class TimerText implements ModifyListener {
 	 * Constructor.
 	 * <p>
 	 * 
-	 * @param viewer
-	 *            The Editable Tree Viewer.
 	 * @param text
 	 *            The actual Text Widget.
-	 * @param editor
-	 *            The Tree Editor.
-	 * @param item
-	 *            The Tree Item associated with this Text Widget.
-	 * @param element
-	 *            The Rodin Element corresponds to this Text Widget
-	 * @param column
-	 *            The column in the Editable Tree Viewer of the Text Widget.
+	 * @param delay
+	 *            the time for delaying in milli-seconds
 	 */
 	public TimerText(Text text, int delay) {
 		this.text = text;

@@ -18,8 +18,6 @@ package org.eventb.internal.ui.eventbeditor;
  *         An interface for constant mirror page. This is used when request for
  *         creating an constant mirror page.
  */
-public interface IConstantMirrorPage
-	extends	IEventBMirrorPage
-{
-
+public interface IConstantMirrorPage extends IEventBMirrorPage {
+	// Only extend Event B Mirror Page
 }

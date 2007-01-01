@@ -19,5 +19,5 @@ package org.eventb.internal.ui.eventbeditor;
  *         creating an axiom mirror page.
  */
 public interface IAxiomMirrorPage extends IEventBMirrorPage {
-
+	// Only extend Event B Mirror Page 
 }

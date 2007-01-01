@@ -19,5 +19,5 @@ package org.eventb.internal.ui.eventbeditor;
  *         creating an event mirror page.
  */
 public interface IEventMirrorPage extends IEventBMirrorPage {
-
+	// Only extend Event B Mirror Page
 }

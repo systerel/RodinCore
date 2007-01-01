@@ -174,7 +174,8 @@ public class ProofControl extends PageBookView implements ISelectionProvider,
      * Method declared on IViewPart.
      * Treat this the same as part activation.
      */
-    public void partBroughtToTop(IWorkbenchPart part) {
+    @Override
+	public void partBroughtToTop(IWorkbenchPart part) {
         partActivated(part);
     }
     
@@ -184,7 +185,8 @@ public class ProofControl extends PageBookView implements ISelectionProvider,
      * 
      * @param pageRec the page record containing the page to show
      */
-    protected void showPageRec(PageRec pageRec) {
+    @Override
+	protected void showPageRec(PageRec pageRec) {
         IPageSite pageSite = getPageSite(pageRec.page);
         ISelectionProvider provider = pageSite.getSelectionProvider();
         if (provider == null && (pageRec.page instanceof IContentOutlinePage))

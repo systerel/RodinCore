@@ -50,7 +50,7 @@ import org.rodinp.core.RodinDBException;
 public class SearchHypothesisPage extends Page implements
 		ISearchHypothesisPage, IUserSupportManagerChangedListener {
 
-	private ProverUI editor;
+	ProverUI editor;
 
 	ScrolledForm scrolledForm;
 

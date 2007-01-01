@@ -19,5 +19,5 @@ package org.eventb.internal.ui.eventbeditor;
  *         creating a theorem mirror page.
  */
 public interface ITheoremMirrorPage extends IEventBMirrorPage {
-
+	// Only extends Event B Mirror Page
 }

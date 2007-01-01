@@ -20,5 +20,5 @@ import org.eclipse.ui.part.IPage;
  *         This is the interface for the Proof Control pages.
  */
 public interface ISearchHypothesisPage extends IPage {
-
+	// Only extends IPage
 }

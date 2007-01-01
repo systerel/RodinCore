@@ -20,5 +20,5 @@ import org.eclipse.ui.part.IPage;
  *         This is the interface for Proof Information pages.
  */
 public interface IProofInformationPage extends IPage {
-
+	// Only extends IPage
 }

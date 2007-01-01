@@ -54,9 +54,9 @@ public class PasteAction extends SelectionListenerAction {
 	/**
 	 * System clipboard
 	 */
-	private Clipboard clipboard;
+	Clipboard clipboard;
 
-	private IRodinFile file;
+	IRodinFile file;
 
 	protected PasteAction(Shell shell, Clipboard clipboard, IRodinFile file) {
 		super(Messages.editorAction_paste_title);
@@ -255,10 +255,10 @@ public class PasteAction extends SelectionListenerAction {
 			shell.getDisplay().syncExec(new Runnable() {
 				public void run() {
 					// clipboard must have resources or files
-					ResourceTransfer resTransfer = ResourceTransfer
+					ResourceTransfer transfer = ResourceTransfer
 							.getInstance();
 					clipboardData[0] = (IResource[]) clipboard
-							.getContents(resTransfer);
+							.getContents(transfer);
 				}
 			});
 			IResource[] resourceData = clipboardData[0];

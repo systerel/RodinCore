@@ -33,6 +33,7 @@ public class RefactorActionGroup extends EventBEditableTreeViewerActionGroup {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (clipboard != null) {
 			clipboard.dispose();
@@ -68,6 +69,7 @@ public class RefactorActionGroup extends EventBEditableTreeViewerActionGroup {
 		}
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		textActionHandler = new TextActionHandler(actionBars); // hooks
 																// handlers
@@ -82,6 +84,7 @@ public class RefactorActionGroup extends EventBEditableTreeViewerActionGroup {
 		// renameAction);
 	}
 
+	@Override
 	protected void makeActions() {
 		// TreeViewer treeViewer = explorer.getViewer();
 		Shell shell = viewer.getControl().getShell();

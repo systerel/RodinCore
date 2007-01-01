@@ -19,5 +19,5 @@ package org.eventb.internal.ui.eventbeditor;
  *         for creating an carrier set mirror page.
  */
 public interface ICarrierSetMirrorPage extends IEventBMirrorPage {
-
+	// Only extend Event B Mirror Page
 }

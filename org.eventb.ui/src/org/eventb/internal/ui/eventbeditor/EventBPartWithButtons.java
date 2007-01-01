@@ -245,7 +245,7 @@ public abstract class EventBPartWithButtons extends SectionPart implements
 	 *         <p>
 	 *         A private class for selection listener of the buttons.
 	 */
-	private class SelectionHandler implements SelectionListener {
+	class SelectionHandler implements SelectionListener {
 		public void widgetSelected(SelectionEvent e) {
 			buttonSelected(e);
 		}

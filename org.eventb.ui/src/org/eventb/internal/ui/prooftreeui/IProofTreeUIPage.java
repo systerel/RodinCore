@@ -21,5 +21,5 @@ import org.eclipse.ui.part.IPage;
  *         This is the interface for Proof Tree UI pages.
  */
 public interface IProofTreeUIPage extends ISelectionProvider, IPage {
-
+	// Only extends IPage and ISelectionProvider
 }

@@ -63,15 +63,15 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 	// private String[] fPatterns;
 	// private String[] fEnabledFilterIds;
 
-	private static Collection<RuleFilter> fBuiltInFilters = null;
+	static Collection<RuleFilter> fBuiltInFilters = null;
 
-	private CheckboxTableViewer fCheckBoxList;
+	CheckboxTableViewer fCheckBoxList;
 
-	private Button fEnableUserDefinedPatterns;
+	Button fEnableUserDefinedPatterns;
 
-	private Text fUserDefinedPatterns;
+	Text fUserDefinedPatterns;
 
-	private Stack<ViewerFilter> fFilterDescriptorChangeHistory;
+	Stack<ViewerFilter> fFilterDescriptorChangeHistory;
 
 	/**
 	 * Creates a dialog to customize Java element filters.
@@ -106,6 +106,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		}
 	}
 
+	@Override
 	protected void configureShell(Shell shell) {
 		setTitle("Proof Rule Filters");
 		setMessage("Please choose a set of reasoners to filter out");
@@ -119,6 +120,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
 
@@ -160,6 +162,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		fUserDefinedPatterns.setEnabled(fEnablePatterns);
 		info.setEnabled(fEnablePatterns);
 		fEnableUserDefinedPatterns.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean state = fEnableUserDefinedPatterns.getSelection();
 				fUserDefinedPatterns.setEnabled(state);
@@ -260,6 +263,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 				IDialogConstants.SELECT_ALL_ID, label, false);
 		// SWTUtil.setButtonDimensionHint(selectButton);
 		SelectionListener listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCheckBoxList.setAllChecked(true);
 				fFilterDescriptorChangeHistory.clear();
@@ -276,6 +280,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 				IDialogConstants.DESELECT_ALL_ID, label, false);
 		// SWTUtil.setButtonDimensionHint(deselectButton);
 		listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCheckBoxList.setAllChecked(false);
 				fFilterDescriptorChangeHistory.clear();
@@ -292,6 +297,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 			fCheckBoxList.setChecked(itemsToCheck.next(), true);
 	}
 
+	@Override
 	protected void okPressed() {
 		if (fBuiltInFilters != null) {
 			ArrayList<ViewerFilter> result = new ArrayList<ViewerFilter>();
@@ -307,10 +313,12 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 	private ILabelProvider createLabelPrivder() {
 		return new LabelProvider() {
+			@Override
 			public Image getImage(Object element) {
 				return null;
 			}
 
+			@Override
 			public String getText(Object element) {
 				// if (element instanceof FilterDescriptor)
 				// return ((FilterDescriptor)element).getName();

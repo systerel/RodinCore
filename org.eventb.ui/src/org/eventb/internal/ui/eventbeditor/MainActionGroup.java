@@ -39,8 +39,10 @@ public class MainActionGroup extends EventBEditableTreeViewerActionGroup {
 	/**
 	 * Constructor: Create the actions.
 	 * 
-	 * @param projectExplorer
-	 *            The project explorer
+	 * @param editor
+	 *            an Event-B Editor
+	 * @param viewer
+	 * 			  an editable tree viewer
 	 */
 	public MainActionGroup(IEventBEditor editor, EventBEditableTreeViewer viewer) {
 		// super(navigator);
@@ -239,6 +241,7 @@ public class MainActionGroup extends EventBEditableTreeViewerActionGroup {
 	 * Extends the superclass implementation to set the context in the
 	 * subgroups.
 	 */
+	@Override
 	public void setContext(ActionContext context) {
 		super.setContext(context);
 		// gotoGroup.setContext(context);
@@ -252,7 +255,8 @@ public class MainActionGroup extends EventBEditableTreeViewerActionGroup {
     /**
      * Adds the actions in this group and its subgroups to the action bars.
      */
-    public void fillActionBars(IActionBars actionBars) {
+    @Override
+	public void fillActionBars(IActionBars actionBars) {
 //        actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(),
 //                propertyDialogAction);
 //        actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(),
@@ -281,7 +285,8 @@ public class MainActionGroup extends EventBEditableTreeViewerActionGroup {
      * Updates the actions which were added to the action bars,
      * delegating to the subgroups as necessary.
      */
-    public void updateActionBars() {
+    @Override
+	public void updateActionBars() {
 //        IStructuredSelection selection = (IStructuredSelection) getContext()
 //                .getSelection();
 //        propertyDialogAction.setEnabled(selection.size() == 1);
@@ -301,7 +306,8 @@ public class MainActionGroup extends EventBEditableTreeViewerActionGroup {
      * Handles a key pressed event by invoking the appropriate action,
      * delegating to the subgroups as necessary.
      */
-    public void handleKeyPressed(KeyEvent event) {
+    @Override
+	public void handleKeyPressed(KeyEvent event) {
         refactorGroup.handleKeyPressed(event);
 //        workspaceGroup.handleKeyPressed(event);
     }
@@ -312,6 +318,7 @@ public class MainActionGroup extends EventBEditableTreeViewerActionGroup {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 //		IStructuredSelection selection = (IStructuredSelection) getContext()
 //				.getSelection();
@@ -388,14 +395,15 @@ public class MainActionGroup extends EventBEditableTreeViewerActionGroup {
 
 	@Override
 	protected void makeActions() {
-				
+		// Do nothing
 	}
 
 	   /**
      * Extends the superclass implementation to dispose the 
      * actions in this group and its subgroups.
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
 //        ResourcesPlugin.getWorkspace().removeResourceChangeListener(
 //                resourceChangeListener);
 

@@ -35,6 +35,7 @@ public abstract class EventBMirror extends PageBookView implements
 	 * @see org.eclipse.ui.part.PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart,
 	 *      org.eclipse.ui.part.PageBookView.PageRec)
 	 */
+	@Override
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
 		IEventBMirrorPage page = (IEventBMirrorPage) pageRecord.page;
 		page.dispose();
@@ -46,6 +47,7 @@ public abstract class EventBMirror extends PageBookView implements
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#isImportant(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	protected boolean isImportant(IWorkbenchPart part) {
 		// We only care about editors
 		return (part instanceof IEditorPart);

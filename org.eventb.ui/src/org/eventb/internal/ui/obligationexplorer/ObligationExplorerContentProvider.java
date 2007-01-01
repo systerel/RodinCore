@@ -50,7 +50,7 @@ public class ObligationExplorerContentProvider implements
 	private IRodinElement invisibleRoot = null;
 
 	// The Project Explorer.
-	private ObligationExplorer explorer;
+	ObligationExplorer explorer;
 
 	// List of elements need to be refresh (when processing Delta of changes).
 	private List<IRodinElement> toRefresh;
@@ -140,19 +140,19 @@ public class ObligationExplorerContentProvider implements
 	 * Refresh the nodes.
 	 * <p>
 	 * 
-	 * @param toRefresh
+	 * @param refreshes
 	 *            List of node to refresh
 	 * @param updateLabels
 	 *            <code>true</code> if the label need to be updated as well
 	 */
-	private void postRefresh(final List toRefresh, final boolean updateLabels) {
+	private void postRefresh(final List refreshes, final boolean updateLabels) {
 		UIUtils.syncPostRunnable(new Runnable() {
 			public void run() {
 				TreeViewer viewer = explorer.getTreeViewer();
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
 					Object[] objects = viewer.getExpandedElements();
-					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
+					for (Iterator iter = refreshes.iterator(); iter.hasNext();) {
 						Object obj = iter.next();
 						viewer.refresh(obj, updateLabels);
 					}
@@ -181,6 +181,7 @@ public class ObligationExplorerContentProvider implements
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
+		// Do nothing
 	}
 
 	/* (non-Javadoc)

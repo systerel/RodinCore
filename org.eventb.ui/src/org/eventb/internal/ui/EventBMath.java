@@ -30,12 +30,8 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 	 * Constructor.
 	 * <p>
 	 * 
-	 * @param parent
-	 *            the Composite parent of this
-	 * @param toolkit
-	 *            the FormToolkit used to creat the Text
-	 * @param style
-	 *            the style used to create the Text
+	 * @param text
+	 *            a Text widget
 	 */
 	public EventBMath(final Text text) {
 		super(text);

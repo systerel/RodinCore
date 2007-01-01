@@ -60,6 +60,7 @@ public class ObligationExplorerActionGroup extends ActionGroup {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {
@@ -71,6 +72,7 @@ public class ObligationExplorerActionGroup extends ActionGroup {
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IRodinProject) {
+					// Do nothing
 				}
 			}
 			menu.add(newMenu);

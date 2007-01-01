@@ -31,7 +31,6 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
@@ -39,7 +38,6 @@ import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesMachineName;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
-import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
@@ -310,14 +308,13 @@ public class RefinesSection extends SectionPart implements
 		} else {
 			if (refined == null) { // Create new element
 				try {
-					final IRodinFile rodinFile = editor
-							.getRodinInput();
+					final IRodinFile rodinFile = editor.getRodinInput();
 					RodinCore.run(new IWorkspaceRunnable() { // Batch the
 								// creation
 								public void run(IProgressMonitor monitor)
 										throws CoreException {
 									refined = (IRefinesMachine) rodinFile
-											.createInternalElement(
+											.getInternalElement(
 													IRefinesMachine.ELEMENT_TYPE,
 													UIUtils
 															.getFreeElementName(
@@ -325,10 +322,10 @@ public class RefinesSection extends SectionPart implements
 																	rodinFile,
 																	IRefinesMachine.ELEMENT_TYPE,
 																	PrefixRefinesMachineName.QUALIFIED_NAME,
-																	PrefixRefinesMachineName.DEFAULT_PREFIX),
-													null, monitor);
-
-									refined.setAbstractMachineName(machine, null);
+																	PrefixRefinesMachineName.DEFAULT_PREFIX));
+									refined.create(null, monitor);
+									refined.setAbstractMachineName(machine,
+											null);
 								}
 							}, null);
 				} catch (RodinDBException exception) {

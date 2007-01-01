@@ -22,5 +22,5 @@ import org.rodinp.core.IElementChangedListener;
  *         interface and element changed listener.
  */
 public interface IEventBMirrorPage extends IPage, IElementChangedListener {
-
+	// Only extend IPage and IElementChangedListener
 }
