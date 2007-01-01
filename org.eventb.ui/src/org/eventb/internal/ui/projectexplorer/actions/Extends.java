@@ -25,7 +25,7 @@ public class Extends implements IObjectActionDelegate {
 
 	private IWorkbenchPart part;
 
-	private IRodinFile newFile;
+	IRodinFile newFile;
 
 	/**
 	 * Constructor for Action1.
@@ -70,17 +70,19 @@ public class Extends implements IObjectActionDelegate {
 
 						public void run(IProgressMonitor monitor)
 								throws CoreException {
-							newFile = prj.createRodinFile(EventBPlugin
-									.getContextFileName(bareName), false, null);
+							newFile = prj.getRodinFile(EventBPlugin
+									.getContextFileName(bareName));
+							newFile.create(true, monitor);
 
 							IExtendsContext extended = (IExtendsContext) newFile
-									.createInternalElement(
+									.getInternalElement(
 											IExtendsContext.ELEMENT_TYPE,
 											"internal_"
 													+ PrefixExtendsContextName.DEFAULT_PREFIX
-													+ 1, null, monitor);
-							extended
-									.setAbstractContextName(abstractContextName, monitor);
+													+ 1);
+							extended.create(null, monitor);
+							extended.setAbstractContextName(
+									abstractContextName, monitor);
 							newFile.save(monitor, true);
 						}
 
@@ -101,8 +103,8 @@ public class Extends implements IObjectActionDelegate {
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		this.selection = selection;
+	public void selectionChanged(IAction action, ISelection sel) {
+		this.selection = sel;
 	}
 
 }
