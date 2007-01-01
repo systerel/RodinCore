@@ -33,29 +33,29 @@ import org.eventb.internal.ui.TimerText;
 import org.rodinp.core.RodinDBException;
 
 public class CommentToolTip {
-	private Shell parentShell;
+	Shell parentShell;
 
-	private Shell tipShell;
+	Shell tipShell;
 
-	private Label tipLabel;
+	Label tipLabel;
 
-	private Label labelF2;
+	Label labelF2;
 
-	private Widget tipWidget; // widget this tooltip is hovering over
+	Widget tipWidget; // widget this tooltip is hovering over
 
 	protected Point tipPosition; // the position being hovered over on the
 
 	protected Point widgetPosition; // the position hovered over in the Widget;
 
-	private Shell helpShell;
+	Shell helpShell;
 
 	private final static int MAX_WIDTH = 300;
 
 	private final static int MAX_HEIGHT = 120;
 
-	private Display display;
+	Display display;
 
-	private Listener labelListener;
+	Listener labelListener;
 
 	/**
 	 * Creates a new tooltip handler
@@ -199,6 +199,7 @@ public class CommentToolTip {
 		 * the tooltip
 		 */
 		control.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDown(MouseEvent e) {
 				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Mouse Down");
@@ -230,6 +231,7 @@ public class CommentToolTip {
 		 * Trap hover events to pop-up tooltip
 		 */
 		control.addMouseTrackListener(new MouseTrackAdapter() {
+			@Override
 			public void mouseExit(MouseEvent e) {
 				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Mouse Exit");
@@ -240,6 +242,7 @@ public class CommentToolTip {
 				// tipWidget = null;
 			}
 
+			@Override
 			public void mouseHover(MouseEvent event) {
 				widgetPosition = new Point(event.x, event.y);
 				Widget widget = event.widget;
@@ -351,9 +354,8 @@ public class CommentToolTip {
 	 *            the object that is to hover
 	 * @param position
 	 *            the position of a widget to hover over
-	 * @return the top-left location for a hovering box
 	 */
-	private void setHoverLocation(Shell shell, Point position) {
+	void setHoverLocation(Shell shell, Point position) {
 		Rectangle displayBounds = shell.getDisplay().getBounds();
 		Rectangle shellBounds = shell.getBounds();
 		shellBounds.x = Math.max(Math.min(position.x, displayBounds.width

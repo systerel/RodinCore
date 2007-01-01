@@ -35,7 +35,7 @@ public class Refines implements IObjectActionDelegate {
 
 	private IWorkbenchPart part;
 
-	private IRodinFile newFile;
+	IRodinFile newFile;
 
 	/**
 	 * Constructor for Action1.
@@ -81,17 +81,19 @@ public class Refines implements IObjectActionDelegate {
 
 						public void run(IProgressMonitor monitor)
 								throws CoreException {
-							newFile = prj.createRodinFile(EventBPlugin
-									.getMachineFileName(bareName), false,
-									monitor);
+							newFile = prj.getRodinFile(EventBPlugin
+									.getMachineFileName(bareName));
+							newFile.create(false, monitor);
 
 							IRefinesMachine refined = (IRefinesMachine) newFile
-									.createInternalElement(
+									.getInternalElement(
 											IRefinesMachine.ELEMENT_TYPE,
 											"internal_"
 													+ PrefixRefinesMachineName.DEFAULT_PREFIX
-													+ 1, null, monitor);
-							refined.setAbstractMachineName(abstractMachineName, null);
+													+ 1);
+							refined.create(null, monitor);
+							refined.setAbstractMachineName(abstractMachineName,
+									null);
 
 							copyChildrenOfType(newFile, machine,
 									ISeesContext.ELEMENT_TYPE, monitor);
@@ -106,8 +108,7 @@ public class Refines implements IObjectActionDelegate {
 							for (IRodinElement element : elements) {
 								String name = ((IEvent) element)
 										.getElementName();
-								String label = ((IEvent) element)
-										.getLabel();
+								String label = ((IEvent) element).getLabel();
 								IInternalElement newElement = newFile
 										.getInternalElement(
 												IEvent.ELEMENT_TYPE, name);
@@ -116,26 +117,27 @@ public class Refines implements IObjectActionDelegate {
 								IRodinElement[] refinesEvents = newElement
 										.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
 								for (IRodinElement refinesEvent : refinesEvents)
-									((IRefinesEvent) refinesEvent).delete(
-											true, monitor);
+									((IRefinesEvent) refinesEvent).delete(true,
+											monitor);
 
 								// Need to remove the existing Witness elements
 								IRodinElement[] witnesses = newElement
 										.getChildrenOfType(IWitness.ELEMENT_TYPE);
 								for (IRodinElement witness : witnesses)
-									((IWitness) witness).delete(
-											true, monitor);
+									((IWitness) witness).delete(true, monitor);
 
 								// INITILISATION does not have RefineEvents
 								// Element
 								if (!label.equals(IEvent.INITIALISATION)) {
 									IRefinesEvent refinesEvent = (IRefinesEvent) newElement
-											.createInternalElement(
+											.getInternalElement(
 													IRefinesEvent.ELEMENT_TYPE,
 													"internal_"
 															+ PrefixRefinesEventName.DEFAULT_PREFIX
-															+ 1, null, monitor);
-									refinesEvent.setAbstractEventLabel(label, null);
+															+ 1);
+									refinesEvent.create(null, monitor);
+									refinesEvent.setAbstractEventLabel(label,
+											null);
 								}
 							}
 							newFile.save(null, true);
@@ -158,12 +160,12 @@ public class Refines implements IObjectActionDelegate {
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		this.selection = selection;
+	public void selectionChanged(IAction action, ISelection sel) {
+		this.selection = sel;
 	}
 
-	void copyChildrenOfType(IRodinFile destination,
-			IRodinFile original, IElementType type, IProgressMonitor monitor)
+	void copyChildrenOfType(IRodinFile destination, IRodinFile original,
+			IElementType type, IProgressMonitor monitor)
 			throws RodinDBException {
 		IRodinElement[] elements = original.getChildrenOfType(type);
 

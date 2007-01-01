@@ -128,8 +128,8 @@ public class Delete implements IViewActionDelegate {
 		}
 	}
 
-	public void selectionChanged(IAction action, ISelection selection) {
-		this.selection = selection;
+	public void selectionChanged(IAction action, ISelection sel) {
+		this.selection = sel;
 	}
 
 	/**
