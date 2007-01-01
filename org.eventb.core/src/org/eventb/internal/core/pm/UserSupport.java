@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -45,7 +46,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	private Collection<Object> information;
 
-	IPSWrapper proofManager;
+	IPSWrapper psWrapper;
 
 	public UserSupport() {
 		RodinCore.addElementChangedListener(this);
@@ -67,7 +68,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	public void setInput(final IPSFile psFile, final IProgressMonitor monitor)
 			throws RodinDBException {
 
-		proofManager = new PSWrapper(psFile);
+		psWrapper = new PSWrapper(psFile);
 
 		// this.psFile = psFile;
 		proofStates = new LinkedList<IProofState>();
@@ -76,7 +77,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 			public void run() {
 				try {
-					IPSStatus[] statuses = proofManager.getPSStatuses();
+					IPSStatus[] statuses = psWrapper.getPSStatuses();
 					for (int i = 0; i < statuses.length; i++) {
 						IPSStatus prSequent = statuses[i];
 						ProofState state = new ProofState(UserSupport.this,
@@ -114,8 +115,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#getInput()
 	 */
 	public IPSFile getInput() {
-		if (proofManager != null)
-			return proofManager.getPSFile();
+		if (psWrapper != null)
+			return psWrapper.getPSFile();
 		return null;
 	}
 
@@ -453,7 +454,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		IProofState proofState = getProofState(index);
 		IPSStatus[] statuses;
 		try {
-			statuses = proofManager.getPSStatuses();
+			statuses = psWrapper.getPSStatuses();
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 			return;
@@ -717,8 +718,19 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		}
 	}
 
-	public IPSWrapper getProofManager() {
-		return proofManager;
+	public IPSWrapper getPSWrapper() {
+		return psWrapper;
+	}
+
+	public void doSave(Object[] states, IProgressMonitor monitor) throws CoreException {
+		for (Object state : states) {
+			assert (state instanceof IProofState);
+			((IProofState) state).setProofTree(monitor);
+		}
+		this.getPSWrapper().save(monitor, true);
+		for (Object state : states) {
+			((IProofState) state).setDirty(false);
+		}
 	}
 
 }

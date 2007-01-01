@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupportManager;
@@ -93,19 +93,18 @@ public class ProofState implements IProofState {
 
 		if (pt != null)
 			pt.removeChangeListener(this);
+		IPSWrapper psWrapper = userSupport.getPSWrapper();
 		// Construct the proof tree from the PO file.
-		pt = userSupport.getProofManager().getFreshProofTree(status);
-		pt.addChangeListener(this);
+		pt = psWrapper.getFreshProofTree(status);
 
-		// If a proof exists in the PR file rebuild it.
-		final IPRProof prProof = status.getProof();
-		if (prProof.exists()) {
-			final IProofSkeleton proofSkeleton = prProof.getSkeleton(
-					FormulaFactory.getDefault(), monitor);
-			if (proofSkeleton != null) {
-				ProofBuilder.rebuild(pt.getRoot(), proofSkeleton);
-			}
+		// Get the proof skeleton and rebuild the tree
+		IProofSkeleton proofSkeleton = psWrapper.getProofSkeleton(status,
+				monitor);
+		if (proofSkeleton != null) {
+			ProofBuilder.rebuild(pt.getRoot(), proofSkeleton);
 		}
+
+		pt.addChangeListener(this);
 
 		// Current node is the next pending subgoal or the root of the proof
 		// tree if there are no pending subgoal.
@@ -280,12 +279,10 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void doSave(IProgressMonitor monitor) throws CoreException {
+	public void setProofTree(IProgressMonitor monitor) throws CoreException {
 		UserSupportUtils.debug("Saving: " + status.getElementName());
 
-		userSupport.getProofManager().setProofTree(status, pt, monitor);
-
-		dirty = false;
+		userSupport.getPSWrapper().setProofTree(status, pt, monitor);
 	}
 
 	/*
@@ -323,7 +320,8 @@ public class ProofState implements IProofState {
 		// if (isSavingOrUninitialised()) return false;
 		// if (pt == null) return false; // No proof tree, no reusable.
 
-		IProofTree newTree = userSupport.getProofManager().getFreshProofTree(status);
+		IProofTree newTree = userSupport.getPSWrapper().getFreshProofTree(
+				status);
 		IProverSequent newSeq = newTree.getSequent();
 		if (ProverLib.proofReusable(pt.getProofDependencies(), newSeq)) {
 			(BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot(),
@@ -382,7 +380,7 @@ public class ProofState implements IProofState {
 		// Construct the proof tree from the file.
 		if (pt != null)
 			pt.removeChangeListener(this);
-		pt = userSupport.getProofManager().getFreshProofTree(status);
+		pt = userSupport.getPSWrapper().getFreshProofTree(status);
 		pt.addChangeListener(this);
 
 		// Current node is the next pending subgoal or the root of the proof
@@ -510,14 +508,15 @@ public class ProofState implements IProofState {
 		}
 	}
 
-	public void setComment(final String text, final IProofTreeNode node) throws RodinDBException {
+	public void setComment(final String text, final IProofTreeNode node)
+			throws RodinDBException {
 		UserSupportManager.getDefault().run(new Runnable() {
 
 			public void run() {
 				node.setComment(text);
 				ProofState.this.setDirty(true);
 			}
-			
+
 		});
 	}
 

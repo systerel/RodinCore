@@ -379,7 +379,7 @@ public class TestUserSupports extends TestPM {
 
 		IProofState[] states = userSupport.getPOs();
 
-		userSupport.getCurrentPO().doSave(monitor);
+		userSupport.getCurrentPO().setProofTree(monitor);
 
 		assertFalse("After saving, there are no unsaved changes ", userSupport
 				.hasUnsavedChanges());
@@ -420,7 +420,8 @@ public class TestUserSupports extends TestPM {
 		assertEquals("The unsavedPO is the last one ",
 				states[states.length - 1], unsavedPOs[0]);
 
-		userSupport.getCurrentPO().doSave(monitor);
+		IProofState currentPO = userSupport.getCurrentPO();
+		currentPO.setProofTree(monitor);
 		unsavedPOs = userSupport.getUnsavedPOs();
 		assertEquals("After saving, there are no unsaved changes ", 0,
 				unsavedPOs.length);

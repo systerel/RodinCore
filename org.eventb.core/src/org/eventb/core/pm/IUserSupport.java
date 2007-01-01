@@ -10,6 +10,7 @@ package org.eventb.core.pm;
 import java.util.Collection;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
@@ -245,5 +246,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 */
 	public abstract void setComment(String text, IProofTreeNode node)
 			throws RodinDBException;
+
+	public abstract void doSave(Object[] states, IProgressMonitor monitor) throws CoreException;
 
 }

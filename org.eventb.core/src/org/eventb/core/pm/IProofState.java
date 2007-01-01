@@ -48,7 +48,7 @@ public interface IProofState extends IProofTreeChangedListener {
 
 	public abstract boolean isDirty();
 
-	public abstract void doSave(IProgressMonitor monitor) throws CoreException;
+	public abstract void setProofTree(IProgressMonitor monitor) throws CoreException;
 
 	public abstract void setDirty(boolean dirty);
 

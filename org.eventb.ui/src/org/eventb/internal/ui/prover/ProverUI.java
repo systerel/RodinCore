@@ -81,7 +81,7 @@ public class ProverUI extends FormEditor implements
 	private SearchHypothesisPage fSearchHypothesisPage;
 
 	// The associated UserSupport
-	private IUserSupport userSupport;
+	IUserSupport userSupport;
 
 	// The associated rodin file handle
 	private IPSFile prFile = null;
@@ -285,18 +285,13 @@ public class ProverUI extends FormEditor implements
 
 		if (results != null && results.length != 0) {
 
-			final IPSFile localPSFile = this.getRodinInput();
+//			final IPSFile localPSFile = this.getRodinInput();
 
 			try {
 				RodinCore.run(new IWorkspaceRunnable() {
 
 					public void run(IProgressMonitor pm) throws CoreException {
-						for (Object result : results) {
-							((IProofState) result).doSave(pm);
-						}
-						// Save the file from the database to disk
-						localPSFile.save(pm, false);
-						localPSFile.getPRFile().save(pm, false);
+						userSupport.doSave(results, pm);
 					}
 
 				}, null);
