@@ -41,7 +41,6 @@ public class ProofRuleTests extends TestCase {
 	private final static IAntecedent[] NO_ANTECEDENTS = new IAntecedent[0];
 	private final static Set<Predicate> NO_HYPS = Collections.emptySet();
 	
-	
 	/**
 	 * Rule discharging a sequent with a true goal.
 	 * 
@@ -106,6 +105,22 @@ public class ProofRuleTests extends TestCase {
 				null,
 				"introFreeIdent ("+freeIdent.toString()+")",
 				anticidents);
+	}
+	
+	/**
+	 * Generates an ill formed rule.
+	 * 
+	 * Non-discharging.
+	 * Goal dependent.
+	 */
+	private final static IProofRule illFormed(){ 
+		IAntecedent[] anticidents = new IAntecedent[1];
+		anticidents[0] = ProverFactory.makeAntecedent(null);
+		return ProverFactory.makeProofRule(
+				null, null,
+				True, NO_HYPS,
+				IConfidence.DISCHARGED_MAX,
+				"illFormed", anticidents);
 	}
 	
 	/**
@@ -204,6 +219,20 @@ public class ProofRuleTests extends TestCase {
 		assertNull(newSeqs);
 	}
 	
+	/**
+	 * Tests for rule application for ill-formed rules
+	 */
+	public void testIllFormedRuleApplication(){
+		IProverSequent seq;
+		IProverSequent[] newSeqs;
+		
+		IProofRule illFormed = illFormed();
+
+		seq = TestLib.genSeq(" ⊤ |- ⊤");
+		newSeqs = illFormed.apply(seq);
+		assertNull(newSeqs);
+	}
+
 	/**
 	 * Tests for rule application for non-discharging rules
 	 */

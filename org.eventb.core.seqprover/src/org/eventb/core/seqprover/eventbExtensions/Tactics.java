@@ -118,7 +118,9 @@ public class Tactics {
 				}
 				
 				Set<Predicate> hypsToSelect = ProverLib.hypsFreeIdentsSearch(seq,freeIdents);
-				hypsToSelect.removeAll(seq.selectedHypotheses());
+				for (Predicate hyp : seq.selectedHypIterable()) {
+					hypsToSelect.remove(hyp);
+				}
 				if (hypsToSelect.isEmpty())
 					return "No more hypotheses found";
 				return (mngHyp(ProverFactory.makeSelectHypAction(hypsToSelect))).apply(pt, pm);

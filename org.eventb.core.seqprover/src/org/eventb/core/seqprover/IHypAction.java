@@ -8,6 +8,7 @@ import java.util.Collection;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.internal.core.seqprover.IInternalProverSequent;
 
 /**
  * Interface describing the information stored in a {@link IHypAction} object.
@@ -92,7 +93,8 @@ public interface IHypAction {
 		 * action does its job.
 		 * <p>
 		 * The action is performed on all the hypotheses that are also 
-		 * present in the sequent.
+		 * present in the sequent. The exact description of what is performed
+		 * can be found in the javadoc for {@link IInternalProverSequent}
 		 * </p>
 		 * @return
 		 * 		the set of hypotheses to change the selection of 
@@ -125,7 +127,8 @@ public interface IHypAction {
 		 * 
 		 * <p>
 		 * The inference can only be performed if all these hypotheses are present
-		 * in the hypotheses of a sequent.
+		 * in the hypotheses of a sequent.The exact description of what is performed
+		 * can be found in the javadoc for {@link IInternalProverSequent}
 		 * </p>
 		 * 
 		 * @return
@@ -143,7 +146,8 @@ public interface IHypAction {
 		 * </p>
 		 * <p>
 		 * In case this inferrence can be performed on a sequent, these free identifiers
-		 * will be added to its type environment.
+		 * will be added to its type environment. The exact description of what is performed
+		 * can be found in the javadoc for {@link IInternalProverSequent}
 		 * </p>
 		 * 
 		 * @return
@@ -156,7 +160,8 @@ public interface IHypAction {
 		 * 
 		 * <p>
 		 * In case this inferrence can be performed on a sequent, these hypotheses
-		 * will be added to its set of hypotheses.
+		 * will be added to its set of hypotheses. The exact description of what is performed
+		 * can be found in the javadoc for {@link IInternalProverSequent}.
 		 * </p>
 		 * 
 		 * @return

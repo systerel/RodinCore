@@ -182,7 +182,8 @@ public final class ProverFactory {
 	 * @param generatedUsing
 	 * 		The reasoner input used.
 	 * @param hypActions
-	 * 		The hypothesis actions contained in the rule.
+	 * 		The hypothesis actions contained in the rule, or <code>null</code> iff 
+	 * 		there are no hypothesis actions.
 	 * @return
 	 * 		A new proof rule with the given information.
 	 */
@@ -326,7 +327,8 @@ public final class ProverFactory {
 	 * Returns a new proof tree with the given sequent at the root.
 	 * 
 	 * @param sequent
-	 *            the sequent of the root node
+	 *            the sequent of the root node. 
+	 *            This parameter must not be <code>null</code>.
 	 * @param origin
 	 *            an object describing the origin of the sequent, might be
 	 *            <code>null</code>

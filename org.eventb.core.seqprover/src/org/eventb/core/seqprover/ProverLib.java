@@ -90,8 +90,10 @@ public class ProverLib {
 
 	public static boolean deepEquals(IProverSequent S1,IProverSequent S2){
 		if (! S1.goal().equals(S2.goal())) return false;
-		if (! S1.selectedHypotheses().equals(S2.selectedHypotheses())) return false;
-		if (! S1.hiddenHypotheses().equals(S2.hiddenHypotheses())) return false;
+		// if (! S1.selectedHypotheses().equals(S2.selectedHypotheses())) return false;
+		if (! collectPreds(S1.selectedHypIterable()).equals(collectPreds(S2.selectedHypIterable()))) return false;
+		// if (! S1.hiddenHypotheses().equals(S2.hiddenHypotheses())) return false;
+		if (! collectPreds(S1.hiddenHypIterable()).equals(collectPreds(S2.hiddenHypIterable()))) return false;
 		// if (! S1.visibleHypotheses().equals(S2.visibleHypotheses())) return false;
 		// if (! S1.hypotheses().equals(S2.hypotheses())) return false;
 		if (! collectPreds(S1.hypIterable()).equals(collectPreds(S2.hypIterable()))) return false;

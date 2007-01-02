@@ -15,6 +15,7 @@ import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -32,7 +33,7 @@ public class Review implements IReasoner{
 
 		// TODO add check on confidence parameter
 		public Input(IProverSequent sequent, int confidence) {
-			this.hyps = sequent.selectedHypotheses();
+			this.hyps = ProverLib.collectPreds(sequent.selectedHypIterable());
 			this.goal = sequent.goal();
 			this.confidence = confidence;
 		}

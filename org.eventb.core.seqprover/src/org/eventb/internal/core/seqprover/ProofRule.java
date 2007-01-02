@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IHypAction;
@@ -67,23 +66,24 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		}
 		
 		private IProverSequent genSequent(IProverSequent seq, Predicate goalInstantiation){
-			ITypeEnvironment newTypeEnv;
-			if (addedFreeIdentifiers.length == 0)
-				newTypeEnv = seq.typeEnvironment();
-			else
-			{
-				newTypeEnv = seq.typeEnvironment().clone();
-				for (FreeIdentifier freeIdent : addedFreeIdentifiers) {
-					// check for variable name clash
-					if (newTypeEnv.contains(freeIdent.getName()))
-					{
-						// name clash
-						return null;
-					}
-					newTypeEnv.addName(freeIdent.getName(),freeIdent.getType());
-				}
-			}
+//			ITypeEnvironment newTypeEnv;
+//			if (addedFreeIdentifiers.length == 0)
+//				newTypeEnv = seq.typeEnvironment();
+//			else
+//			{
+//				newTypeEnv = seq.typeEnvironment().clone();
+//				for (FreeIdentifier freeIdent : addedFreeIdentifiers) {
+//					// check for variable name clash
+//					if (newTypeEnv.contains(freeIdent.getName()))
+//					{
+//						// name clash
+//						return null;
+//					}
+//					newTypeEnv.addName(freeIdent.getName(),freeIdent.getType());
+//				}
+//			}
 			
+			// newGoal not required
 			Predicate newGoal;
 			if (goal == null)
 			{
@@ -96,13 +96,20 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 				newGoal = goal;
 			}
 			
-			IInternalProverSequent result = ((IInternalProverSequent) seq).replaceGoal(newGoal,newTypeEnv);
+			IInternalProverSequent result = ((IInternalProverSequent) seq).modify(addedFreeIdentifiers, addedHypotheses, newGoal);
+			// not strictly needed
 			if (result == null) return null;
-			result = result.addHyps(addedHypotheses,null);
-			if (result == null) return null;
-			result = result.selectHypotheses(addedHypotheses);
 			result = ProofRule.performHypActions(hypAction,result);
+			// no change if seq == result
 			return result;
+			
+//			IInternalProverSequent result = ((IInternalProverSequent) seq).replaceGoal(newGoal,newTypeEnv);
+//			if (result == null) return null;
+//			result = result.addHyps(addedHypotheses,null);
+//			if (result == null) return null;
+//			result = result.selectHypotheses(addedHypotheses);
+//			result = ProofRule.performHypActions(hypAction,result);
+//			return result;
 		}
 		
 	}

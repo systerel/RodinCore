@@ -14,7 +14,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 /**
@@ -255,94 +254,94 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	}
 
 	
-	/**
-	 * Checks that grafting a tree with a un-identical sequent results in failure.
-	 */
-	public void testGraftFailure() {
-		IProverSequent sequent = makeSimpleSequent("⊥");
-		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
-		IProofTreeNode treeRoot = tree.getRoot();
-
-		sequent = makeSimpleSequent("⊤");
-		IProofTree graft = ProverFactory.makeProofTree(sequent, null);
-		IProofTreeNode graftRoot = graft.getRoot();
-		
-		Tactics.tautology().apply(graftRoot, null);
-		assertNodeClosed(graftRoot);
-		
-		boolean success = treeRoot.graft(graft);
-		assertFalse(success);
-		
-		// Grafted tree is still discharged
-		assertNodeClosed(graftRoot);
-		
-		// Original tree is still open
-		assertNodeOpen(treeRoot);		
-	}
+//	/**
+//	 * Checks that grafting a tree with a un-identical sequent results in failure.
+//	 */
+//	public void testGraftFailure() {
+//		IProverSequent sequent = makeSimpleSequent("⊥");
+//		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
+//		IProofTreeNode treeRoot = tree.getRoot();
+//
+//		sequent = makeSimpleSequent("⊤");
+//		IProofTree graft = ProverFactory.makeProofTree(sequent, null);
+//		IProofTreeNode graftRoot = graft.getRoot();
+//		
+//		Tactics.tautology().apply(graftRoot, null);
+//		assertNodeClosed(graftRoot);
+//		
+//		boolean success = treeRoot.graft(graft);
+//		assertFalse(success);
+//		
+//		// Grafted tree is still discharged
+//		assertNodeClosed(graftRoot);
+//		
+//		// Original tree is still open
+//		assertNodeOpen(treeRoot);		
+//	}
 	
 	
-	/**
-	 * Checks consistency after grafting a pending subtree on an open node.
-	 */
-	public void testGraftPending() {
-		IProverSequent sequent = makeSimpleSequent("⊤ ∧ ⊥");
-		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
-		IProofTreeNode treeRoot = tree.getRoot();
+//	/**
+//	 * Checks consistency after grafting a pending subtree on an open node.
+//	 */
+//	public void testGraftPending() {
+//		IProverSequent sequent = makeSimpleSequent("⊤ ∧ ⊥");
+//		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
+//		IProofTreeNode treeRoot = tree.getRoot();
+//
+//		sequent = makeSimpleSequent("⊤ ∧ ⊥");
+//		IProofTree graft = ProverFactory.makeProofTree(sequent, null);
+//		IProofTreeNode graftRoot = graft.getRoot();
+//		
+//		Tactics.conjI().apply(graftRoot, null);
+//		assertEquals(2, graftRoot.getChildNodes().length);
+//		IProofTreeNode ch1 = graftRoot.getChildNodes()[0];
+//		IProofTreeNode ch2 = graftRoot.getChildNodes()[1];
+//				
+//		treeRoot.graft(graft);
+//		
+//		// Grafted tree is pruned
+//		assertNodeOpen(graftRoot);
+//		
+//		// Children have been grafted
+//		assertNotSame(ch1.getProofTree(),graft);
+//		assertNotSame(ch2.getProofTree(),graft);
+//		assertSame(ch1.getProofTree(),tree);
+//		assertSame(ch2.getProofTree(),tree);
+//		
+//	}
 
-		sequent = makeSimpleSequent("⊤ ∧ ⊥");
-		IProofTree graft = ProverFactory.makeProofTree(sequent, null);
-		IProofTreeNode graftRoot = graft.getRoot();
-		
-		Tactics.conjI().apply(graftRoot, null);
-		assertEquals(2, graftRoot.getChildNodes().length);
-		IProofTreeNode ch1 = graftRoot.getChildNodes()[0];
-		IProofTreeNode ch2 = graftRoot.getChildNodes()[1];
-				
-		treeRoot.graft(graft);
-		
-		// Grafted tree is pruned
-		assertNodeOpen(graftRoot);
-		
-		// Children have been grafted
-		assertNotSame(ch1.getProofTree(),graft);
-		assertNotSame(ch2.getProofTree(),graft);
-		assertSame(ch1.getProofTree(),tree);
-		assertSame(ch2.getProofTree(),tree);
-		
-	}
-
-	/**
-	 * Checks consistency after grafting a discharged subtree on an open node.
-	 */
-	public void testGraftDischarged() {
-		IProverSequent sequent = makeSimpleSequent("⊤ ∧ ⊤");
-		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
-		IProofTreeNode treeRoot = tree.getRoot();
-
-		sequent = makeSimpleSequent("⊤ ∧ ⊤");
-		IProofTree graft = ProverFactory.makeProofTree(sequent, null);
-		IProofTreeNode graftRoot = graft.getRoot();
-		
-		Tactics.conjI().apply(graftRoot, null);
-		assertEquals(2, graftRoot.getChildNodes().length);
-		IProofTreeNode ch1 = graftRoot.getChildNodes()[0];
-		IProofTreeNode ch2 = graftRoot.getChildNodes()[1];
-		Tactics.tautology().apply(ch1, null);
-		Tactics.tautology().apply(ch2, null);
-		assertNodeClosed(graftRoot);
-		
-		treeRoot.graft(graft);
-		
-		// Grafted tree is pruned
-		assertNodeOpen(graftRoot);
-		
-		// Children have been grafted
-		assertNotSame(ch1.getProofTree(),graft);
-		assertNotSame(ch2.getProofTree(),graft);
-		assertSame(ch1.getProofTree(),tree);
-		assertSame(ch2.getProofTree(),tree);
-		assertNodeClosed(treeRoot);
-	}
+//	/**
+//	 * Checks consistency after grafting a discharged subtree on an open node.
+//	 */
+//	public void testGraftDischarged() {
+//		IProverSequent sequent = makeSimpleSequent("⊤ ∧ ⊤");
+//		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
+//		IProofTreeNode treeRoot = tree.getRoot();
+//
+//		sequent = makeSimpleSequent("⊤ ∧ ⊤");
+//		IProofTree graft = ProverFactory.makeProofTree(sequent, null);
+//		IProofTreeNode graftRoot = graft.getRoot();
+//		
+//		Tactics.conjI().apply(graftRoot, null);
+//		assertEquals(2, graftRoot.getChildNodes().length);
+//		IProofTreeNode ch1 = graftRoot.getChildNodes()[0];
+//		IProofTreeNode ch2 = graftRoot.getChildNodes()[1];
+//		Tactics.tautology().apply(ch1, null);
+//		Tactics.tautology().apply(ch2, null);
+//		assertNodeClosed(graftRoot);
+//		
+//		treeRoot.graft(graft);
+//		
+//		// Grafted tree is pruned
+//		assertNodeOpen(graftRoot);
+//		
+//		// Children have been grafted
+//		assertNotSame(ch1.getProofTree(),graft);
+//		assertNotSame(ch2.getProofTree(),graft);
+//		assertSame(ch1.getProofTree(),tree);
+//		assertSame(ch2.getProofTree(),tree);
+//		assertNodeClosed(treeRoot);
+//	}
 
 
 	// TODO split in four tests below

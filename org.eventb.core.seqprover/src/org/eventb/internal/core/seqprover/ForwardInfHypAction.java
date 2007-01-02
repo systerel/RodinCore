@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 
@@ -45,16 +44,21 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 	}	
 
 	public IInternalProverSequent perform(IInternalProverSequent seq) {
-		if (seq.containsHypotheses(hyps) &&
-				allFresh(seq.typeEnvironment(), addedIdents) &&
-				(! seq.containsHypotheses(inferredHyps)))
-		{
-			IInternalProverSequent result = seq.addHyps(inferredHyps, nonDestructiveAdd(seq.typeEnvironment(), addedIdents));
-			skipped = false;
-			return result;
-		}
-		skipped = true;
-		return seq;
+		IInternalProverSequent result = seq.performfwdInf(hyps, addedIdents, inferredHyps);
+		skipped = (result == seq);
+		return result;
+		
+//		if (seq.containsHypotheses(hyps) &&
+//				allFresh(seq.typeEnvironment(), addedIdents) &&
+//				(! seq.containsHypotheses(inferredHyps)))
+//		{
+//			// IInternalProverSequent result = seq.addHyps(inferredHyps, nonDestructiveAdd(seq.typeEnvironment(), addedIdents));
+//			IInternalProverSequent result = seq.modify(addedIdents, inferredHyps, null);
+//			skipped = false;
+//			return result;
+//		}
+//		skipped = true;
+//		return seq;
 	}
 
 	public void processDependencies(ProofDependenciesBuilder proofDeps) {
@@ -79,19 +83,19 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 		}
 	}
 	
-	private boolean allFresh(ITypeEnvironment typEnv, FreeIdentifier[] freeIdents){
-		for (FreeIdentifier freeIdent : freeIdents)
-		{
-			if (typEnv.contains(freeIdent.getName())) return false;
-		}
-		return true;
-	}
-	
-	private ITypeEnvironment nonDestructiveAdd(ITypeEnvironment typeEnv, FreeIdentifier[] freeIdents){
-		if (freeIdents.length == 0) return typeEnv;
-		ITypeEnvironment newTypEnv = typeEnv.clone();
-		newTypEnv.addAll(freeIdents);
-		return newTypEnv;
-	}
+//	private boolean allFresh(ITypeEnvironment typEnv, FreeIdentifier[] freeIdents){
+//		for (FreeIdentifier freeIdent : freeIdents)
+//		{
+//			if (typEnv.contains(freeIdent.getName())) return false;
+//		}
+//		return true;
+//	}
+//	
+//	private ITypeEnvironment nonDestructiveAdd(ITypeEnvironment typeEnv, FreeIdentifier[] freeIdents){
+//		if (freeIdents.length == 0) return typeEnv;
+//		ITypeEnvironment newTypEnv = typeEnv.clone();
+//		newTypEnv.addAll(freeIdents);
+//		return newTypEnv;
+//	}
 	
 }
