@@ -22,7 +22,7 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public class AutoRewrites extends EmptyInputReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".rewritePred";
+	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".autoRewrites";
 
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -31,8 +31,8 @@ public class AutoRewrites extends EmptyInputReasoner {
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
 		Iterable<Predicate> hypIterable = seq.hypIterable();
-		IFormulaRewriter rewriter = new RewritePredicate(true, FormulaFactory
-				.getDefault());
+		IFormulaRewriter rewriter = new AutoRewritePredicate(true,
+				FormulaFactory.getDefault());
 
 		List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Predicate pred : hypIterable) {
@@ -50,34 +50,41 @@ public class AutoRewrites extends EmptyInputReasoner {
 
 		Predicate goal = seq.goal();
 		Predicate newGoal = goal.rewrite(rewriter);
-		if (newGoal != goal)
-		{
-			IAntecedent[] antecedent = new IAntecedent[]{ProverFactory.makeAntecedent(newGoal, null, null, hypActions)};
-			return ProverFactory.makeProofRule(this, input, goal, null, null, "auto rewrite", antecedent);
+		if (newGoal != goal) {
+			IAntecedent[] antecedent = new IAntecedent[] { ProverFactory
+					.makeAntecedent(newGoal, null, null, hypActions) };
+			return ProverFactory.makeProofRule(this, input, goal, null, null,
+					"auto rewrite", antecedent);
 		}
-		if (! hypActions.isEmpty()){
-			return ProverFactory.makeProofRule(this, input, "auto rewrite", hypActions);
-		}		
-		return ProverFactory.reasonerFailure(this, input,"No auto rewrites applicable");
+		if (!hypActions.isEmpty()) {
+			return ProverFactory.makeProofRule(this, input, "auto rewrite",
+					hypActions);
+		}
+		return ProverFactory.reasonerFailure(this, input,
+				"No auto rewrites applicable");
 	}
 
-	class RewritePredicate extends DefaultRewriter {
+	class AutoRewritePredicate extends DefaultRewriter {
 
-		public RewritePredicate(boolean autoFlattening, FormulaFactory ff) {
+		public AutoRewritePredicate(boolean autoFlattening, FormulaFactory ff) {
 			super(autoFlattening, ff);
 		}
 
 		@Override
 		public Predicate rewrite(AssociativePredicate predicate) {
 			int tag = predicate.getTag();
-			if (tag != AssociativePredicate.LAND)
-				return super.rewrite(predicate);
 
-			Predicate[] subPreds = predicate.getChildren();
+			return removeAssociative(predicate,
+					tag == AssociativePredicate.LAND ? Lib.True : Lib.False);
+		}
+
+		private Predicate removeAssociative(AssociativePredicate originalPred,
+				Predicate toBeRemoved) {
+			Predicate[] subPreds = originalPred.getChildren();
 			List<Predicate> predicates = new ArrayList<Predicate>();
 			boolean rewrite = false;
 			for (Predicate subPred : subPreds) {
-				if (!subPred.equals(Lib.True)) {
+				if (!subPred.equals(toBeRemoved)) {
 					predicates.add(subPred);
 				} else {
 					rewrite = true;
@@ -86,11 +93,11 @@ public class AutoRewrites extends EmptyInputReasoner {
 
 			if (rewrite) {
 				AssociativePredicate newPred = this.getFactory()
-						.makeAssociativePredicate(tag, predicates,
-								predicate.getSourceLocation());
+						.makeAssociativePredicate(originalPred.getTag(),
+								predicates, originalPred.getSourceLocation());
 				return newPred;
 			}
-			return super.rewrite(predicate);
+			return super.rewrite(originalPred);
 		}
 	}
 }
