@@ -16,9 +16,11 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
-public class RewritePred extends EmptyInputReasoner {
+public class AutoRewrites extends EmptyInputReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".rewritePred";
 
@@ -28,7 +30,6 @@ public class RewritePred extends EmptyInputReasoner {
 
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		System.out.println("Calling REWRITE PRED");
 		Iterable<Predicate> hypIterable = seq.hypIterable();
 		IFormulaRewriter rewriter = new RewritePredicate(true, FormulaFactory
 				.getDefault());
@@ -36,31 +37,28 @@ public class RewritePred extends EmptyInputReasoner {
 		List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Predicate pred : hypIterable) {
 			Predicate newPred = pred.rewrite(rewriter);
-			// System.out.println("Rewrite " + pred + " to " + newPred);
 			if (newPred != pred) {
-				System.out.println("Rewrite " + pred + " to " + newPred);
 				Collection<Predicate> inferredHyps = new ArrayList<Predicate>();
 				Collection<Predicate> neededHyps = new ArrayList<Predicate>();
 				inferredHyps.add(newPred);
 				neededHyps.add(pred);
 				hypActions.add(ProverFactory.makeForwardInfHypAction(
 						neededHyps, inferredHyps));
+				hypActions.add(ProverFactory.makeHideHypAction(neededHyps));
 			}
 		}
 
 		Predicate goal = seq.goal();
 		Predicate newGoal = goal.rewrite(rewriter);
-		if (newGoal == goal)
-			newGoal = null;
-
-		if (newGoal == null && hypActions.isEmpty()) {
-			return ProverFactory.reasonerFailure(this, input,
-					"There are no trivial rewritings");
-		} else {
-			if (newGoal != null) System.out.println("Rewrite goal " + goal + " to " + newGoal);
-			return ProverFactory.makeProofRule(this, input, newGoal, "rewrite", hypActions);
+		if (newGoal != goal)
+		{
+			IAntecedent[] antecedent = new IAntecedent[]{ProverFactory.makeAntecedent(newGoal, null, null, hypActions)};
+			return ProverFactory.makeProofRule(this, input, goal, null, null, "auto rewrite", antecedent);
 		}
-
+		if (! hypActions.isEmpty()){
+			return ProverFactory.makeProofRule(this, input, "auto rewrite", hypActions);
+		}		
+		return ProverFactory.reasonerFailure(this, input,"No auto rewrites applicable");
 	}
 
 	class RewritePredicate extends DefaultRewriter {
@@ -79,15 +77,13 @@ public class RewritePred extends EmptyInputReasoner {
 			List<Predicate> predicates = new ArrayList<Predicate>();
 			boolean rewrite = false;
 			for (Predicate subPred : subPreds) {
-				System.out.println("Sub Pred " + subPred);
-				if (!subPred.equals(ASTLib.True)) {
+				if (!subPred.equals(Lib.True)) {
 					predicates.add(subPred);
 				} else {
 					rewrite = true;
 				}
 			}
 
-			System.out.println("Is rewrite " + rewrite);
 			if (rewrite) {
 				AssociativePredicate newPred = this.getFactory()
 						.makeAssociativePredicate(tag, predicates,

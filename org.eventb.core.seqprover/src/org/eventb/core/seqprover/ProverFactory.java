@@ -199,42 +199,7 @@ public final class ProverFactory {
 				null,null,null,
 				display,new IAntecedent[]{antecedent});
 	}
-	
-	
-	/**
-	 * Returns a new proof rule that only contains hypothesis actions.
-	 * 
-	 * <p>
-	 * This factory method returns a goal dependent rule with one antecedent containing
-	 * the given hypothesis actions.
-	 * </p>
-	 * 
-	 * @param generatedBy
-	 * 		The reasoner used.
-	 * @param generatedUsing
-	 * 		The reasoner input used.
-     * @param goal
-	 * 		The goal of the proof rule, or <code>null</code> iff the 
-	 * 		proof rule is applicable to a sequent with any goal.
-	 * @param hypActions
-	 * 		The hypothesis actions contained in the rule.
-	 * @return
-	 * 		A new proof rule with the given information.
-	 */
-	public static IProofRule makeProofRule (
-			IReasoner generatedBy,
-			IReasonerInput generatedUsing,
-			Predicate goal,
-			String display,
-			List<IHypAction> hypActions) {
 		
-		IAntecedent antecedent = makeAntecedent(null, null, null, hypActions);
-		return makeProofRule(
-				generatedBy,generatedUsing,
-				goal,null,null,
-				display,new IAntecedent[]{antecedent});
-	}
-	
 	/**
 	 * Returns a new antecedent with the given inputs. The constructed antecedent
 	 * can then be used to construct a proof rule.
