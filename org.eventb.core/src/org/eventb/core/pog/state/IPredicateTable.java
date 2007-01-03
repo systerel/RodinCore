@@ -52,4 +52,14 @@ public interface IPredicateTable extends IState {
 	 */
 	List<Predicate> getPredicates();
 	
+	/**
+	 * Returns the index of the specified predicate in the predicate array,
+	 * or <code>-1</code> if the predicate is not contained in the array.
+	 * 
+	 * @param predicate the predicate to search
+	 * @return the index of the specified predicate in the predicate array,
+	 * or <code>-1</code> if the predicate is not contained in the array
+	 */
+	int indexOfPredicate(Predicate predicate);
+
 }

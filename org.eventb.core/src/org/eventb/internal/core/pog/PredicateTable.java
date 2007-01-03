@@ -55,6 +55,10 @@ public abstract class PredicateTable extends ToolState implements IPredicateTabl
 		return predicates;
 	}
 
+	public int indexOfPredicate(Predicate predicate) {
+		return predicates.indexOf(predicate);
+	}
+
 	@Override
 	public void makeImmutable() {
 		predicateElements = new ArrayList<ISCPredicateElement>(predicateElements);
