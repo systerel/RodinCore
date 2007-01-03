@@ -161,6 +161,9 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		
 		commitValidContexts(contextPointerArray, declaredIdentifiers, upContexts, contextTable.size());
 		
+		contextPointerArray.makeImmutable();
+		contextTable.makeImmutable();
+		
 	}
 
 	private ISCContext[]  createUpContexts(ISCContextFile scCF) throws RodinDBException {

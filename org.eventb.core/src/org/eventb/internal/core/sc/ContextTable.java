@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc;
 
 import java.util.Hashtable;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCContext;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.internal.core.tool.state.ToolState;
@@ -35,7 +36,8 @@ public class ContextTable extends ToolState implements IContextTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IContextTable#addContext(java.lang.String, org.eventb.core.ISCContext)
 	 */
-	public void addContext(String name, ISCContext context) {
+	public void addContext(String name, ISCContext context) throws CoreException {
+		assertMutable();
 		contexts.put(name, context);
 	}
 

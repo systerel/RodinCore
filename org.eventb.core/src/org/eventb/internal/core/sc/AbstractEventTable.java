@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.internal.core.tool.state.ToolState;
@@ -28,15 +29,17 @@ public class AbstractEventTable extends ToolState implements IAbstractEventTable
 	public AbstractEventTable(int size) {
 		table = new ArrayList<AbstractEventInfo>(size);
 		labels = new ArrayList<String>(size);
-		localVariables = new HashSet<String>(size * 6);
+		localVariables = new HashSet<String>(size * 6 + 1);
 	}
 
 	public String getStateType() {
 		return STATE_TYPE;
 	}
 
-	public void putAbstractEventInfo(AbstractEventInfo info) {
+	public void putAbstractEventInfo(AbstractEventInfo info) throws CoreException {
 		assert !table.contains(info);
+		
+		assertMutable();
 		
 		table.add(info);
 		labels.add(info.getEventLabel());

@@ -18,7 +18,7 @@ import org.eventb.internal.core.tool.state.ToolState;
 public class AbstractMachineInfo extends ToolState implements
 		IAbstractMachineInfo {
 	
-	private ISCMachineFile machineFile;
+	private final ISCMachineFile machineFile;
 
 	public AbstractMachineInfo(ISCMachineFile machineFile) {
 		this.machineFile = machineFile;

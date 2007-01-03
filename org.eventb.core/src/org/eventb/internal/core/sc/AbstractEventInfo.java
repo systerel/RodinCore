@@ -7,10 +7,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
@@ -25,11 +27,18 @@ import org.eventb.internal.core.tool.state.ToolState;
  */
 public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
 
+	@Override
+	public void makeImmutable() {
+		super.makeImmutable();
+		splitInfos = new ArrayList<IEventSymbolInfo>(splitInfos);
+		mergeInfos = new ArrayList<IEventSymbolInfo>(mergeInfos);
+	}
+
 	private final String label;
 	private IEventSymbolInfo implicitRefinedInfo;
 	private boolean refineError;
-	private final LinkedList<IEventSymbolInfo> splitInfos;
-	private final LinkedList<IEventSymbolInfo> mergeInfos;
+	private List<IEventSymbolInfo> splitInfos;
+	private List<IEventSymbolInfo> mergeInfos;
 	private Hashtable<String,FreeIdentifier> table;
 	private final ISCEvent event;
 	private final FreeIdentifier[] idents;
@@ -121,7 +130,8 @@ public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
 		return event;
 	}
 
-	public void setRefineError(boolean value) {
+	public void setRefineError(boolean value) throws CoreException {
+		assertMutable();
 		refineError = value;
 	}
 
@@ -129,23 +139,26 @@ public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
 		return refineError;
 	}
 
-	public void addMergeSymbolInfo(IEventSymbolInfo symbolInfo) {
+	public void addMergeSymbolInfo(IEventSymbolInfo symbolInfo) throws CoreException {
+		assertMutable();
 		mergeInfos.add(symbolInfo);
 	}
 
-	public void addSplitSymbolInfo(IEventSymbolInfo symbolInfo) {
+	public void addSplitSymbolInfo(IEventSymbolInfo symbolInfo) throws CoreException {
+		assertMutable();
 		splitInfos.add(symbolInfo);
 	}
 
 	public List<IEventSymbolInfo> getMergeSymbolInfos() {
-		return mergeInfos;
+		return new ArrayList<IEventSymbolInfo>(mergeInfos);
 	}
 
 	public List<IEventSymbolInfo> getSplitSymbolInfos() {
-		return splitInfos;
+		return new ArrayList<IEventSymbolInfo>(splitInfos);
 	}
 
-	public void setImplicit(IEventSymbolInfo eventSymbolInfo) {
+	public void setImplicit(IEventSymbolInfo eventSymbolInfo) throws CoreException {
+		assertMutable();
 		implicitRefinedInfo = eventSymbolInfo;
 	}
 

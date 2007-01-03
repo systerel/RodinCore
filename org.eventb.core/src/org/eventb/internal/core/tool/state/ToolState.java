@@ -25,7 +25,7 @@ public abstract class ToolState implements IToolState {
 	}
 	
 	protected void assertImmutable() throws CoreException {
-		if (immutable)
+		if ( ! immutable)
 			throw Util.newCoreException(
 					Messages.bind(Messages.tool_ImmutableStateModificationFailure, 
 							getStateType()));

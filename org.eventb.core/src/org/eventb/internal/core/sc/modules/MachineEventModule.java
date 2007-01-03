@@ -128,7 +128,7 @@ public class MachineEventModule extends LabeledElementModule {
 			IEventSymbolInfo[] symbolInfos, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		for (IAbstractEventInfo abstractEventInfo : abstractEventTable.getAbstractEventInfos()) {
+		for (AbstractEventInfo abstractEventInfo : abstractEventTable.getAbstractEventInfos()) {
 			if (!abstractEventInfo.isRefined())
 				createProblemMarker(
 						machineFile, 
@@ -164,6 +164,8 @@ public class MachineEventModule extends LabeledElementModule {
 						eventSymbolInfo.setError();
 					}
 			}
+			
+			abstractEventInfo.makeImmutable();
 		}
 		
 		int index = 0;
@@ -223,7 +225,7 @@ public class MachineEventModule extends LabeledElementModule {
 
 	void issueErrorMarkers(
 			List<IEventSymbolInfo> symbolInfos, 
-			IAbstractEventInfo abstractEventInfo, 
+			AbstractEventInfo abstractEventInfo, 
 			IRodinProblem problem) throws CoreException {
 		String abstractEventLabel = abstractEventInfo.getEventLabel();
 		for (IEventSymbolInfo symbolInfo : symbolInfos) {
@@ -347,6 +349,8 @@ public class MachineEventModule extends LabeledElementModule {
 				abstractEventInfo.addMergeSymbolInfo(symbolInfo);
 			}
 		}
+		
+		refinesInfo.makeImmutable();
 		
 		return found;
 	}
@@ -546,6 +550,7 @@ public class MachineEventModule extends LabeledElementModule {
 			EventRefinesInfo refinesInfo = new EventRefinesInfo(1);
 			symbolInfo.setRefinesInfo(refinesInfo);
 			refinesInfo.addAbstractEventInfo(eventInfo);
+			refinesInfo.makeImmutable();
 		}
 	}
 	

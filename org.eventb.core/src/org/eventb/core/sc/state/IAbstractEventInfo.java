@@ -149,13 +149,6 @@ public interface IAbstractEventInfo extends IState, Comparable {
 	List<IEventSymbolInfo> getSplitSymbolInfos();
 	
 	/**
-	 * Sets the refine error of this abstract event info.
-	 * 
-	 * @param value the new vaule of the refine error of this abstract event info
-	 */
-	void setRefineError(boolean value);
-	
-	/**
 	 * Returns the refine error of this abstract event info.
 	 * 
 	 * @return the refine error of this abstract event info

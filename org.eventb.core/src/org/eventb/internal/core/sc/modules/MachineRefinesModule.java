@@ -137,6 +137,8 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			
 		}
 		
+		abstractEventTable.makeImmutable();
+		
 	}
 
 	protected void fetchSCContexts(

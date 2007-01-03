@@ -10,6 +10,8 @@ package org.eventb.core.sc.state;
 import org.eventb.core.EventBPlugin;
 
 /**
+ * State component for accessing information about events of the abstract machine.
+ * 
  * @author Stefan Hallerstede
  *
  */
@@ -17,10 +19,29 @@ public interface IAbstractEventTable extends IState {
 	
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventTable";
 	
+	/**
+	 * Returns the array of all abstract event infos for the abstract machine
+	 * 
+	 * @return the array of all abstract event infos
+	 */
 	IAbstractEventInfo[] getAbstractEventInfos();
 	
+	/**
+	 * Returns the abstract event info for the specified label, or <code>null</code> if this
+	 * table does not contain an abstract event info for that label.
+	 * 
+	 * @param label the label of the abstract event info sought
+	 * @return the abstract event info for the specified label, or <code>null</code> if this
+	 * table does not contain an abstract event info for that label
+	 */
 	IAbstractEventInfo getAbstractEventInfo(String label);
 	
+	/**
+	 * Returns whether any of the abstract events has a local variable with the specified name.
+	 * 
+	 * @param name the name to check
+	 * @return whether any of the abstract events has a local variable with the specified name
+	 */
 	boolean isLocalVariable(String name);
 	
 }

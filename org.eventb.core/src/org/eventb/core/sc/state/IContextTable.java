@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.sc.state;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCContext;
 
@@ -25,8 +26,9 @@ public interface IContextTable extends IState {
 	 * Add a context of the closure
 	 * 
 	 * @param name the name of the context
+	 * @throws CoreException if the context table is immutable
 	 */
-	void addContext(String name, ISCContext context);
+	void addContext(String name, ISCContext context) throws CoreException;
 	
 	/**
 	 * Returns whether this closure contains the context with the specified element name.

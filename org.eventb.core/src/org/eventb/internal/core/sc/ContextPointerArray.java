@@ -10,6 +10,7 @@ package org.eventb.internal.core.sc;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.state.IContextPointerArray;
@@ -27,6 +28,11 @@ import org.rodinp.core.IInternalElement;
  */
 public class ContextPointerArray extends ToolState implements IContextPointerArray {
 
+	@Override
+	public void makeImmutable() {
+		super.makeImmutable();
+		validContexts = new ArrayList<ISCContext>(validContexts);
+	}
 	private final int arraySize;
 	
 	private final PointerType pointerType;
@@ -59,7 +65,7 @@ public class ContextPointerArray extends ToolState implements IContextPointerArr
 		this.contextFiles = contextFiles;
 		
 		indexMap = new ArrayList<String>(arraySize);
-		validContexts = new ArrayList<ISCContext>(0);
+		validContexts = null;
 		
 		for (IInternalElement contextPointer : contextPointers) {
 			indexMap.add(contextPointer.getHandleIdentifier());
@@ -118,7 +124,8 @@ public class ContextPointerArray extends ToolState implements IContextPointerArr
 	public List<ISCContext> getValidContexts() {
 		return new ArrayList<ISCContext>(validContexts);
 	}
-	public void setValidContexts(List<ISCContext> validContexts) {
+	public void setValidContexts(List<ISCContext> validContexts) throws CoreException {
+		assertMutable();
 		this.validContexts = validContexts;
 	}
 
