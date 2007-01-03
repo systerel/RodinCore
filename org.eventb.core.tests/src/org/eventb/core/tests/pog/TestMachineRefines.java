@@ -692,5 +692,49 @@ public class TestMachineRefines extends BasicPOTest {
 		getSequent(po, "fvt/p/EQL");
 		
 	}
+	
+	/*
+	 * Proper naming in goals with nondeterministic witnesses
+	 */
+	public void testRefines_15() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "p");
+		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("p :∣ p'≠p"));
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "q");
+		addInvariants(ref, makeSList("J"), makeSList("q∈BOOL"));
+		IEvent event = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("B"), makeSList("q≔q"));
+		addEventRefines(event, "evt");
+		addEventWitnesses(event, makeSList("p'"), makeSList("p'≠q'"));
+	
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("p", boolType);
+		environment.addName("q", boolType);
+		environment.addName("p'", boolType);
+		environment.addName("q'", boolType);
+
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "p", "q");
+		
+		IPOSequent sequent = getSequent(po, "evt/A/SIM");
+		sequentHasIdentifiers(sequent, "p'", "q'");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "q∈BOOL", "p'≠q'");
+		sequentHasGoal(sequent, environment, "p'≠p");
+	}
 
 }

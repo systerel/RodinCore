@@ -81,8 +81,6 @@ public class MachineEventActionBodySimModule extends
 			
 			LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 			substitution.addAll(witnessTable.getMachinePrimedDetAssignments());
-			if (witnessTable.getPrimeSubstitution() != null)
-				substitution.add(witnessTable.getPrimeSubstitution());
 			substitution.addAll(witnessTable.getEventDetAssignments());
 			simPredicate = simPredicate.applyAssignments(substitution, factory);
 			substitution.clear();
