@@ -92,5 +92,12 @@
             id="trueGoal"
             name="%trueGoalName"/>
    </extension>
+   <extension
+         point="org.eventb.core.seqprover.reasoners">
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RewritePred"
+            id="rewritePred"
+            name="%rewritePredName"/>
+   </extension>
 
 </plugin>

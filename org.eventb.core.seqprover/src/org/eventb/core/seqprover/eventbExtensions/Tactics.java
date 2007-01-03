@@ -44,6 +44,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.DisjTo
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.RemoveNegation;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivial;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RewritePred;
 
 
 public class Tactics {
@@ -363,6 +364,14 @@ public class Tactics {
 		);
 	}
 	
+	public static ITactic autoRewriteRules() {
+		return compose(
+				BasicTactics.reasonerTac(
+						new RewritePred(),
+						new EmptyInput())
+		);
+	}
+	
 	public static ITactic prune() {
 		return BasicTactics.prune();
 	}
@@ -389,7 +398,8 @@ public class Tactics {
 				compose(
 						tautology(),
 						hyp(),
-						impI())
+						impI(),
+						autoRewriteRules())
 						);
 				
 	}
