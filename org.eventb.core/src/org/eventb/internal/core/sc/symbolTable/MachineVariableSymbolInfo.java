@@ -19,15 +19,15 @@ import org.rodinp.core.IInternalParent;
  * @author Stefan Hallerstede
  *
  */
-public class MachineVariableSymbolInfo extends VariableSymbolInfo {
+public abstract class MachineVariableSymbolInfo extends VariableSymbolInfo {
 
 	public MachineVariableSymbolInfo(
 			String symbol, 
-			String link, 
+			boolean imported,
 			IInternalElement element, 
 			IAttributeType.String attribute, 
 			String component) {
-		super(symbol, link, element, attribute, component);
+		super(symbol, imported, element, attribute, component);
 	}
 	
 	public void createSCElement(

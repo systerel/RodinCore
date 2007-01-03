@@ -177,7 +177,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		IEventRefinesInfo eventRefinesInfo = (IEventRefinesInfo)
 			repository.getState(IEventRefinesInfo.STATE_TYPE);
 		
-		if (eventRefinesInfo.isEmpty())
+		if (eventRefinesInfo.currentEventIsRefined())
 			return;
 		
 		getLocalWitnessNames(eventRefinesInfo, witnessNames);

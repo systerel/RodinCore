@@ -10,6 +10,9 @@ package org.eventb.core.sc.state;
 import org.eventb.core.EventBPlugin;
 
 /**
+ * This state component represents a label space for an event to keep, e.g.,
+ * guard labels and action labels.
+ * 
  * @author Stefan Hallerstede
  *
  */

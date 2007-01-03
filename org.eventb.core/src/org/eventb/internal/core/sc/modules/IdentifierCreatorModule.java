@@ -13,7 +13,7 @@ import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.AbstractCarrierSetSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.AbstractConstantSymbolInfo;
-import org.eventb.internal.core.sc.symbolTable.MachineVariableSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.AbstractVariableSymbolInfo;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -37,7 +37,6 @@ public abstract class IdentifierCreatorModule extends ProcessorModule {
 				IInternalElement pointerElement) {
 			return new AbstractCarrierSetSymbolInfo(
 					symbol, 
-					pointerElement.getHandleIdentifier(), 
 					pointerElement, 
 					EventBAttributes.TARGET_ATTRIBUTE, 
 					element.getParent().getElementName());
@@ -53,7 +52,6 @@ public abstract class IdentifierCreatorModule extends ProcessorModule {
 				IInternalElement pointerElement) {
 			return new AbstractConstantSymbolInfo(
 					symbol, 
-					pointerElement.getHandleIdentifier(), 
 					pointerElement, 
 					EventBAttributes.TARGET_ATTRIBUTE, 
 					element.getParent().getElementName());
@@ -67,9 +65,8 @@ public abstract class IdentifierCreatorModule extends ProcessorModule {
 				String symbol, 
 				ISCIdentifierElement element, 
 				IInternalElement pointerElement) {
-			return new MachineVariableSymbolInfo(
+			return new AbstractVariableSymbolInfo(
 					symbol, 
-					pointerElement.getHandleIdentifier(), 
 					pointerElement, 
 					EventBAttributes.TARGET_ATTRIBUTE, 
 					element.getParent().getElementName());

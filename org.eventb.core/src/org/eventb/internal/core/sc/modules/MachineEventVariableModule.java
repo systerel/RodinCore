@@ -74,7 +74,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 	 * that are not also local variables of the refined event
 	 */
 	private void patchTypeEnvironment() {
-		if (eventRefinesInfo.isEmpty())
+		if (eventRefinesInfo.currentEventIsRefined())
 			return;
 		IAbstractEventInfo abstractEventInfo = eventRefinesInfo.getAbstractEventInfos().get(0);
 		for (FreeIdentifier freeIdentifier : abstractEventInfo.getIdentifiers()) {
@@ -124,9 +124,10 @@ public class MachineEventVariableModule extends IdentifierModule {
 	}
 
 	@Override
-	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element) {
+	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(
+			String name, IIdentifierElement element) {
 		return new EventVariableSymbolInfo(
-				name, null, element, 
+				name, element, 
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, element.getParent().getElementName());
 	}
 

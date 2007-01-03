@@ -8,7 +8,6 @@
 package org.eventb.internal.core.sc.modules;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,6 +88,9 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		final IIdentifierSymbolInfo[][] declaredIdentifiers =
 			new IIdentifierSymbolInfo[contextPointerArray.size()][];
 		
+		final ISCContext[][] upContexts =
+			new ISCContext[contextPointerArray.size()][];
+		
 		for (int index=0; index<contextPointerArray.size(); index++) {
 			
 			ISCContextFile scCF = contextPointerArray.getSCContextFile(index);
@@ -103,13 +105,11 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				continue;
 			}
 			
-			List<ISCContext> upContexts = contextPointerArray.getUpContexts(index);
-			
-			createUpContexts(scCF, upContexts);
+			upContexts[index] = createUpContexts(scCF);
 			
 			List<IIdentifierSymbolInfo> symbolInfos = new LinkedList<IIdentifierSymbolInfo>();
 			
-			for (ISCContext scIC : upContexts) {
+			for (ISCContext scIC : upContexts[index]) {
 				
 				String contextName = scIC.getElementName();
 								
@@ -159,21 +159,20 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			monitor.worked(1);
 		}
 		
-		commitValidContexts(contextPointerArray, declaredIdentifiers, contextTable.size() * 4 / 3 + 1);
+		commitValidContexts(contextPointerArray, declaredIdentifiers, upContexts, contextTable.size());
 		
 	}
 
-	private void createUpContexts(ISCContextFile scCF, List<ISCContext> upContexts) 
-	throws RodinDBException {
+	private ISCContext[]  createUpContexts(ISCContextFile scCF) throws RodinDBException {
 		ISCInternalContext[] iscic = scCF.getAbstractSCContexts();
 		
-		ISCContext[] upContextArray = new ISCContext[iscic.length + 1];
+		ISCContext[] upContexts = new ISCContext[iscic.length + 1];
 		
-		System.arraycopy(iscic, 0, upContextArray, 0, iscic.length);
+		System.arraycopy(iscic, 0, upContexts, 0, iscic.length);
 		
-		upContextArray[iscic.length] = scCF;
+		upContexts[iscic.length] = scCF;
 		
-		upContexts.addAll(Arrays.asList(upContextArray));
+		return upContexts;
 	}
 
 
@@ -227,7 +226,8 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			if (symbolInfo.isMutable())
 				symbolInfo.setError();
 			
-			int pointerIndex = contextPointerArray.getPointerIndex(symbolInfo.getPointer());
+			int pointerIndex = contextPointerArray.getPointerIndex(
+					symbolInfo.getReferenceElement().getHandleIdentifier());
 			
 			if (pointerIndex != -1)
 				contextPointerArray.setError(pointerIndex);
@@ -244,11 +244,14 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	void commitValidContexts(
 			ContextPointerArray contextPointerArray, 
 			final IIdentifierSymbolInfo[][] declaredIdentifiers,
+			final ISCContext[][] upContexts,
 			int s) throws CoreException {
-
-		HashSet<String> contextNames = new HashSet<String>(s);
 		
-		ArrayList<ISCContext> validContexts = new ArrayList<ISCContext>(s);
+		final int adjust = contextPointerArray.size();
+
+		HashSet<String> contextNames = new HashSet<String>((s+adjust) * 4 / 3 + 1);
+		
+		ArrayList<ISCContext> validContexts = new ArrayList<ISCContext>(s+adjust);
 		
 		for (int index = 0; index < contextPointerArray.size(); index++) {
 
@@ -261,16 +264,13 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 
 			for (IIdentifierSymbolInfo symbolInfo : declaredIdentifiers[index]) {
 				if (symbolInfo.isMutable()) {
-					symbolInfo.setVisible();
+					symbolInfo.makeVisible();
 					symbolInfo.makeImmutable();
 				}
 				typeEnvironment.addName(symbolInfo.getSymbol(), symbolInfo.getType());
 			}
 
-			List<ISCContext> upContexts = 
-				contextPointerArray.getUpContexts(index);
-
-			for (ISCContext scContext : upContexts) {
+			for (ISCContext scContext : upContexts[index]) {
 				String name = scContext.getElementName();
 				if (!contextNames.contains(name)) {
 					contextNames.add(name);
@@ -283,7 +283,8 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		
 	}
 	
-	protected abstract ISCInternalContext getSCInternalContext(IInternalParent target, String elementName);
+	protected abstract ISCInternalContext getSCInternalContext(
+			IInternalParent target, String elementName);
 	
 	protected void createInternalContexts(
 			IInternalParent target, 

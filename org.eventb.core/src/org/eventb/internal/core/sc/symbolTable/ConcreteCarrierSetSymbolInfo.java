@@ -23,11 +23,10 @@ public class ConcreteCarrierSetSymbolInfo extends CarrierSetSymbolInfo {
 
 	public ConcreteCarrierSetSymbolInfo(
 			String symbol, 
-			String link, 
 			IInternalElement element, 
 			IAttributeType.String attribute, 
 			String component) {
-		super(symbol, link, element, attribute, component);
+		super(symbol, false, element, attribute, component);
 	}
 	
 	public void createSCElement(

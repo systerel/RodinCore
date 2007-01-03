@@ -28,7 +28,6 @@ import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IState;
 import org.eventb.core.sc.state.IStateRepository;
-import org.eventb.core.sc.state.IVariantInfo;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
 import org.eventb.core.tool.state.IToolStateRepository;
@@ -60,7 +59,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 	private static String VARIANT_NAME_PREFIX = "VAR";
 
-	IVariantInfo variantInfo;
+	VariantInfo variantInfo;
 	FormulaFactory factory;
 	
 	@Override

@@ -5,26 +5,22 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.sc.state;
+package org.eventb.internal.core.sc.symbolTable;
 
-import org.eventb.core.EventBPlugin;
-import org.eventb.core.ast.Expression;
+import org.rodinp.core.IInternalElement;
 
 /**
- * State component for the variant of the current machine being checked.
- * 
  * @author Stefan Hallerstede
  *
  */
-public interface IVariantInfo extends IState {
+public class ConcreteVariableSymbolInfo extends MachineVariableSymbolInfo {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".variantInfo";
-	
-	/**
-	 * Returns the parsed and type-checked variant.
-	 * 
-	 * @return the parsed and type-checked variant
-	 */
-	Expression getExpression();
-	
+	public ConcreteVariableSymbolInfo(
+			String symbol, 
+			IInternalElement element, 
+			org.rodinp.core.IAttributeType.String attribute, 
+			String component) {
+		super(symbol, false, element, attribute, component);
+	}
+
 }

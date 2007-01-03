@@ -21,7 +21,7 @@ import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
-import org.eventb.internal.core.sc.symbolTable.MachineVariableSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.ConcreteVariableSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -104,9 +104,10 @@ public class MachineVariableModule extends IdentifierModule {
 	}
 
 	@Override
-	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element) {
-		return new MachineVariableSymbolInfo(
-				name, null, element, 
+	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(
+			String name, IIdentifierElement element) {
+		return new ConcreteVariableSymbolInfo(
+				name, element, 
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, element.getParent().getElementName());
 	}
 

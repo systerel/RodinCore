@@ -70,7 +70,7 @@ public class ContextConstantModule extends IdentifierModule {
 	@Override
 	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element) {
 		return new ConcreteConstantSymbolInfo(
-				name, null, element, 
+				name, element, 
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, element.getParent().getElementName());
 	}
 

@@ -67,7 +67,7 @@ public class MachineEventRefinesModule extends ProcessorModule {
 		
 		IEventRefinesInfo refinesInfo = symbolInfo.getRefinesInfo();
 		
-		List<IRefinesEvent> refines = refinesInfo.getRefinesEvents();
+		List<IRefinesEvent> refines = refinesInfo.getRefinesClauses();
 		
 		if (refines.size() > 0) { // user specified refinements
 		
@@ -123,7 +123,7 @@ public class MachineEventRefinesModule extends ProcessorModule {
 		eventRefinesInfo = eventSymbolInfo.getRefinesInfo();
 		
 		if (eventRefinesInfo == null)
-			eventRefinesInfo = new EventRefinesInfo(eventSymbolInfo, 0);
+			eventRefinesInfo = new EventRefinesInfo(0);
 		
 		repository.setState(eventRefinesInfo);
 		

@@ -28,7 +28,6 @@ import org.eventb.core.pog.state.IStateRepository;
 import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGSource;
 import org.eventb.core.pog.util.POGTraceablePredicate;
-import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -39,8 +38,6 @@ import org.rodinp.core.RodinDBException;
 public class MachineEventStrengthenGuardModule extends MachineEventRefinementModule {
 	
 	protected IConcreteEventGuardTable concreteEventGuardTable;
-	
-	protected IEventRefinesInfo eventRefinesInfo;
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)

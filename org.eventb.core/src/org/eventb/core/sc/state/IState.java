@@ -10,6 +10,8 @@ package org.eventb.core.sc.state;
 import org.eventb.core.tool.state.IToolState;
 
 /**
+ * All static checker state components must inherit from this interface.
+ * 
  * @author Stefan Hallerstede
  *
  */

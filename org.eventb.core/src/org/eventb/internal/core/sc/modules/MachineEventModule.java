@@ -231,7 +231,7 @@ public class MachineEventModule extends LabeledElementModule {
 			
 			issueRefinementErrorMarker(symbolInfo);
 			
-			for (IRefinesEvent refinesEvent : refinesInfo.getRefinesEvents())
+			for (IRefinesEvent refinesEvent : refinesInfo.getRefinesClauses())
 				if (refinesEvent.getAbstractEventLabel().equals(abstractEventLabel))
 					createProblemMarker(
 							refinesEvent, 
@@ -250,13 +250,13 @@ public class MachineEventModule extends LabeledElementModule {
 	}
 	
 	private boolean fetchRefineData(
-			IEventSymbolInfo symbolInfo, 
+			EventSymbolInfo symbolInfo, 
 			IRefinesEvent[] refinesEvents, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		IEventRefinesInfo refinesInfo = symbolInfo.getRefinesInfo() == null ?
-				new EventRefinesInfo(symbolInfo, refinesEvents.length) :
-				symbolInfo.getRefinesInfo();
+		EventRefinesInfo refinesInfo = symbolInfo.getRefinesInfo() == null ?
+				new EventRefinesInfo(refinesEvents.length) :
+				(EventRefinesInfo) symbolInfo.getRefinesInfo();
 		
 		symbolInfo.setRefinesInfo(refinesInfo);
 		
@@ -481,9 +481,9 @@ public class MachineEventModule extends LabeledElementModule {
 			
 			if (symbolInfos[i].getSymbol().equals(IEvent.INITIALISATION)) {
 				init = symbolInfos[i];
-				fetchRefinement(machineFile, event, symbolInfos[i], true, monitor);
+				fetchRefinement(machineFile, event, (EventSymbolInfo) symbolInfos[i], true, monitor);
 			} else {
-				fetchRefinement(machineFile, event, symbolInfos[i], false, monitor);
+				fetchRefinement(machineFile, event, (EventSymbolInfo) symbolInfos[i], false, monitor);
 			}
 			
 			if (!filterModules(filterModules, event, repository, null)) {
@@ -507,7 +507,7 @@ public class MachineEventModule extends LabeledElementModule {
 	private void fetchRefinement(
 			IMachineFile machineFile,
 			IEvent event, 
-			IEventSymbolInfo symbolInfo, 
+			EventSymbolInfo symbolInfo, 
 			boolean isInit, 
 			IProgressMonitor monitor) throws RodinDBException, CoreException {
 		boolean inherited = event.isInherited();
@@ -535,7 +535,7 @@ public class MachineEventModule extends LabeledElementModule {
 		}
 	}
 
-	private void makeImplicitRefinement(IEvent event, IEventSymbolInfo symbolInfo) throws CoreException {
+	private void makeImplicitRefinement(IEvent event, EventSymbolInfo symbolInfo) throws CoreException {
 		AbstractEventInfo eventInfo = 
 			getAbstractEventInfoForLabel(symbolInfo, symbolInfo.getSymbol(), event, null);
 		
@@ -543,7 +543,7 @@ public class MachineEventModule extends LabeledElementModule {
 			symbolInfo.setError();
 		else {
 			eventInfo.setImplicit(symbolInfo);
-			IEventRefinesInfo refinesInfo = new EventRefinesInfo(symbolInfo, 1);
+			EventRefinesInfo refinesInfo = new EventRefinesInfo(1);
 			symbolInfo.setRefinesInfo(refinesInfo);
 			refinesInfo.addAbstractEventInfo(eventInfo);
 		}

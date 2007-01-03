@@ -142,7 +142,8 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 		ITypeEnvironment.IIterator iterator = inferredTypeEnvironment.getIterator();
 		
 		List<IAbstractEventInfo> eventInfos = refinedEventTable.getAbstractEventInfos();
-		IAbstractEventInfo eventInfo = eventInfos.size() > 0 ? refinedEventTable.getAbstractEventInfos().get(0) : null;
+		IAbstractEventInfo eventInfo = 
+			eventInfos.size() > 0 ? refinedEventTable.getAbstractEventInfos().get(0) : null;
 			
 		while (iterator.hasNext()) {
 			iterator.advance();
@@ -208,7 +209,10 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 	
-	private boolean allLocalVariables(ITypeEnvironment typeEnvironment) {
+	private boolean allLocalVariables(
+			ITypeEnvironment typeEnvironment, 
+			IInternalElement formulaElement) throws CoreException {
+		boolean ok = true;
 		ITypeEnvironment.IIterator iterator = typeEnvironment.getIterator();
 		while (iterator.hasNext()) {
 			iterator.advance();
@@ -219,9 +223,14 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 				if (variableSymbolInfo.isLocal())
 					continue;
 			}
-			return false;
+			ok = false;
+			createProblemMarker(
+					formulaElement, 
+					getFormulaAttributeType(), 
+					GraphProblem.UntypedIdentifierError, 
+					iterator.getName());
 		}
-		return true;
+		return ok;
 	}
 	
 	@Override
@@ -230,7 +239,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 			ITypeEnvironment inferredEnvironment, 
 			ITypeEnvironment typeEnvironment) throws CoreException {
 		
-		if (allLocalVariables(inferredEnvironment))
+		if (allLocalVariables(inferredEnvironment, formulaElement))
 			return super.updateIdentifierSymbolTable(
 					formulaElement, 
 					inferredEnvironment, 

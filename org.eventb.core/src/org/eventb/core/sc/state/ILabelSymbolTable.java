@@ -11,10 +11,17 @@ import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolTable;
 
 /**
+ * Common protocol for symbol tables of labeled elements.
+ * 
+ * @see IContextLabelSymbolTable
+ * @see IMachineLabelSymbolTable
+ * @see IEventLabelSymbolTable
+ * 
  * @author Stefan Hallerstede
  *
  */
 public interface ILabelSymbolTable extends ISymbolTable<ILabelSymbolInfo>, IState {
 
-	// common interface to machine and event symbol tables
+	// Common protocol for symbol tables of labeled elements
+	
 }

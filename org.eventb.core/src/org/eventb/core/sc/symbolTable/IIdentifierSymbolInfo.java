@@ -31,21 +31,14 @@ public interface IIdentifierSymbolInfo extends ISymbolInfo {
 	Type getType();
 	
 	/**
-	 * Sets the type of the identifier if possible.
-	 * If the identifier has already a type or is erroneous,
-	 * a <code>CoreException</code> is thrown.
+	 * Sets the type of the identifier.
 	 * @param type The type to be assigned to the identifier.
+	 * @throws CoreException if this symbol is not mutable
 	 */
 	void setType(Type type) throws CoreException;
 	
 	/**
-	 * Returns the ID of the pointer via which this identifier symbol is reachable.
-	 * @return the ID of the pointer
-	 */
-	String getPointer();
-	
-	/**
-	 * Returns whether this symbol was imported via a pointer.
+	 * Returns whether this symbol was imported via a pointer to another Event-B component.
 	 * @return whether this symbol was imported via a pointer
 	 */
 	boolean isImported();
@@ -65,13 +58,15 @@ public interface IIdentifierSymbolInfo extends ISymbolInfo {
 	 * Set this identifier symbol's visibility to <code>true</code>.
 	 * @throws CoreException if this symbol is not mutable
 	 */
-	void setVisible() throws CoreException;
+	void makeVisible() throws CoreException;
 	
 	/**
-	 * Create a statically checked Element for this symbol with parent <codeparent</code>.
+	 * Create a statically checked Element for this symbol with the specified parent.
 	 * 
 	 * @param parent the parent of the element to create
-	 * @param monitor a progress monitor
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @throws CoreException if there was a problem creating the element
 	 */
 	void createSCElement(IInternalParent parent, IProgressMonitor monitor) throws CoreException;

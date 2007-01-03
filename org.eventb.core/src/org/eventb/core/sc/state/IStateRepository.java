@@ -10,6 +10,8 @@ package org.eventb.core.sc.state;
 import org.eventb.core.tool.state.IToolStateRepository;
 
 /**
+ * The state repository for the static checker.
+ * 
  * @author Stefan Hallerstede
  *
  */

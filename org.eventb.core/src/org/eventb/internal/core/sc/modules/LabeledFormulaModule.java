@@ -353,7 +353,7 @@ extends LabeledElementModule {
 			symbolInfo.makeImmutable();
 	}
 	
-	private IParsedFormula parsedFormula;
+	private ParsedFormula parsedFormula;
 	
 	private void createParsedState(IToolStateRepository<IState> repository) throws CoreException {
 		parsedFormula = new ParsedFormula();

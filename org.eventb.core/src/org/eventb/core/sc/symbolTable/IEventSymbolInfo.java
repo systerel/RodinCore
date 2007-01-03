@@ -7,21 +7,30 @@
  *******************************************************************************/
 package org.eventb.core.sc.symbolTable;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 
 /**
+ * Symbol info for (concrete) events.
+ * 
  * @author Stefan Hallerstede
  *
  */
 public interface IEventSymbolInfo extends ISymbolInfo {
 
+	/**
+	 * Returns whether the event is inherited (from an abstract machine).
+	 * 
+	 * @return whether the event is inherited
+	 */
 	boolean isInherited();
 	
-	void setInherited() throws CoreException;
-	
-	void setRefinesInfo(IEventRefinesInfo refinesInfo);
-	
+	/**
+	 * Returns the refinement information associated with this event, 
+	 * or <code>null</code> if there is none.
+	 * 
+	 * @return the refinement information associated with this event, 
+	 * or <code>null</code> if there is none
+	 */
 	IEventRefinesInfo getRefinesInfo();
 
 }

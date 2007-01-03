@@ -7,12 +7,18 @@
  *******************************************************************************/
 package org.eventb.core.sc.symbolTable;
 
+import org.eventb.core.sc.state.ILabelSymbolTable;
+
 
 
 /**
+ * Common protocol for labeled elements stored in a label symbol table.
+ * 
+ * @see ILabelSymbolTable
+ * 
  * @author Stefan Hallerstede
  *
  */
 public interface ILabelSymbolInfo extends ISymbolInfo {
-// empty
+	// Common protocol for labeled elements stored in a label symbol table
 }

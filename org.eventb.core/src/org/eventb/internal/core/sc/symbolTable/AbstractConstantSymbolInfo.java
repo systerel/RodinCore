@@ -23,11 +23,10 @@ public class AbstractConstantSymbolInfo extends ConstantSymbolInfo {
 
 	public AbstractConstantSymbolInfo(
 			String symbol, 
-			String link, 
 			IInternalElement element, 
 			IAttributeType.String attribute, 
 			String component) {
-		super(symbol, link, element, attribute, component);
+		super(symbol, true, element, attribute, component);
 	}
 
 	public void createSCElement(IInternalParent parent, IProgressMonitor monitor) throws CoreException {

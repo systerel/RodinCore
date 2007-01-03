@@ -23,11 +23,11 @@ public abstract class ConstantSymbolInfo
 
 	public ConstantSymbolInfo(
 			String symbol, 
-			String link, 
+			boolean imported, 
 			IInternalElement element, 
 			IAttributeType.String attribute, 
 			String component) {
-		super(symbol, link, element, attribute, component);
+		super(symbol, imported, element, attribute, component);
 	}
 
 	@Override

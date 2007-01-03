@@ -11,9 +11,8 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCContext;
 
 /**
- * State component that serves to verify that the closure of the seen contexts of 
- * an abstract machine is contained in the closure of the seen contexts of the concrete
- * machine. 
+ * State component that conatins the closure of all contexts extended or seen.
+ * This state component contains all contexts that need to be there. 
  * 
  * @author Stefan Hallerstede
  *
@@ -23,15 +22,34 @@ public interface IContextTable extends IState {
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".contextTable";
 	
 	/**
-	 * Add a context of the closure of the abstract machine
+	 * Add a context of the closure
 	 * 
 	 * @param name the name of the context
 	 */
 	void addContext(String name, ISCContext context);
 	
+	/**
+	 * Returns whether this closure contains the context with the specified element name.
+	 * 
+	 * @param name the element name of the context
+	 * @return whether this closure contains the context with the specified element name
+	 */
 	boolean containsContext(String name);
 	
+	/**
+	 * Returns the context with the specified element name, or <code>null</code> if it is
+	 * not stored in this closure.
+	 * 
+	 * @param name the element name of the context
+	 * @return the context with the specified element name, or <code>null</code> if it is
+	 * not stored in this closure
+	 */
 	ISCContext getContext(String name);
 	
+	/**
+	 * Returns the size of this context table.
+	 * 
+	 * @return the size of this context table
+	 */
 	int size();
 }

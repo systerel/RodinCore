@@ -79,7 +79,7 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 		if (symbolInfo == null) { // abstract local variables are not contained in the symbol table; fake them!
 			String label = ((IWitness) element).getLabel();
 			if (label.equals(freeIdentifier.getName()))
-				return new EventVariableSymbolInfo(label, null, null, null, null);
+				return new EventVariableSymbolInfo(label, null, null, null);
 		}
 		return symbolInfo;
 	}

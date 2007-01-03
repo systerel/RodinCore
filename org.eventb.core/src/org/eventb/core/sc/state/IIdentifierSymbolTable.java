@@ -15,6 +15,9 @@ import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolTable;
 
 /**
+ * State component for identifiers declared in a context or a machine, or in 
+ * and abstractions and seen contexts.
+ * 
  * @author Stefan Hallerstede
  *
  */
@@ -22,5 +25,13 @@ public interface IIdentifierSymbolTable extends ISymbolTable<IIdentifierSymbolIn
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".identifierSymbolTable";
 	
+	/**
+	 * Returns a collection of <b>untyped</b> free identifiers of all identifiers stored 
+	 * in this symbol table. This collection is useful in filter modules of formulas
+	 * because the filter modules are invoked <b>before</b> type-checking.
+	 * 
+	 * @return a collection of untyped free identifiers of all identifiers stored 
+	 * in this symbol table
+	 */
 	Collection<FreeIdentifier> getFreeIdentifiers();
 }

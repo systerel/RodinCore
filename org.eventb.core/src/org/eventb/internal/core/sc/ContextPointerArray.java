@@ -8,7 +8,6 @@
 package org.eventb.internal.core.sc;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import org.eventb.core.ISCContext;
@@ -28,7 +27,7 @@ import org.rodinp.core.IInternalElement;
  */
 public class ContextPointerArray extends ToolState implements IContextPointerArray {
 
-	private final int stateSize;
+	private final int arraySize;
 	
 	private final PointerType pointerType;
 	
@@ -38,11 +37,7 @@ public class ContextPointerArray extends ToolState implements IContextPointerArr
 	
 	private final boolean[] error;
 	
-	// TODO replace this by an array!
-	// the list of referenced contexts is usually not long!
-	private final Hashtable<String, Integer> indexMap; 
-	
-	private final List<List<ISCContext>> upContexts;
+	private final ArrayList<String> indexMap; 
 	
 	private List<ISCContext> validContexts;
 
@@ -56,23 +51,21 @@ public class ContextPointerArray extends ToolState implements IContextPointerArr
 		assert pointerType == IContextPointerArray.PointerType.EXTENDS_POINTER
 			|| pointerType == IContextPointerArray.PointerType.SEES_POINTER;
 		
-		stateSize = contextPointers.length;
+		arraySize = contextPointers.length;
 		
 		this.pointerType = pointerType;
 		
 		this.contextPointers = contextPointers;
 		this.contextFiles = contextFiles;
 		
-		indexMap = new Hashtable<String, Integer>(stateSize * 4 / 3 + 1);
-		upContexts = new ArrayList<List<ISCContext>>(stateSize);
+		indexMap = new ArrayList<String>(arraySize);
 		validContexts = new ArrayList<ISCContext>(0);
 		
-		for (int i=0; i<stateSize; i++) {
-			indexMap.put(contextPointers[i].getHandleIdentifier(), i);
-			upContexts.add(i, new ArrayList<ISCContext>(0));
+		for (IInternalElement contextPointer : contextPointers) {
+			indexMap.add(contextPointer.getHandleIdentifier());
 		}
 		
-		error = new boolean[stateSize];
+		error = new boolean[arraySize];
 		
 	}
 	
@@ -92,19 +85,6 @@ public class ContextPointerArray extends ToolState implements IContextPointerArr
 		return error[index];
 	}
 
-	/**
-	 * Returns the list of statically checked contexts referenced (transitively) by the 
-	 * statically checked context with the specified index.
-	 * 
-	 * @param index the index of the statically checked context
-	 * @return the list of statically checked contexts referenced (transitively) by the 
-	 * statically checked context with the specified index
-	 */
-	// TODO remove this from state component!
-	public List<ISCContext> getUpContexts(int index) {
-		return upContexts.get(index);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
@@ -113,19 +93,18 @@ public class ContextPointerArray extends ToolState implements IContextPointerArr
 	}
 
 	public int size() {
-		return stateSize;
+		return arraySize;
 	}
 
-	public int getPointerIndex(String pointer) {
-		Integer i = indexMap.get(pointer);
-		return (i == null) ? -1 : i;
+	public int getPointerIndex(final String pointer) {
+		return indexMap.indexOf(pointer);
 	}
 
-	public IInternalElement getContextPointer(int index) {
+	public IInternalElement getContextPointer(final int index) {
 		return contextPointers[index];
 	}
 
-	public ISCContextFile getSCContextFile(int index) {
+	public ISCContextFile getSCContextFile(final int index) {
 		return contextFiles[index];
 	}
 

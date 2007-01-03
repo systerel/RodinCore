@@ -224,7 +224,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		
 		symbolInfo.setType(type);
 		
-		symbolInfo.setVisible();
+		symbolInfo.makeVisible();
 		
 		identifierSymbolTable.putSymbolInfo(symbolInfo);
 		

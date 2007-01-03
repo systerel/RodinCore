@@ -27,24 +27,19 @@ public abstract class IdentifierSymbolInfo
 
 	public IdentifierSymbolInfo(
 			String symbol, 
-			String pointer,
+			boolean imported,
 			IInternalElement element, 
 			IAttributeType.String attribute, 
 			String component) {
 		super(symbol, element, attribute, component);
 		
 		type = null;
-		this.imported = pointer != null;
+		this.imported = imported;
 		visible = !imported;
-		this.pointer = pointer;
 	}
 	
 	// whether this symbol is contained in an abstraction, or is "seen"
 	private final boolean imported; 
-	
-	// the name of the pointer via which the symbol is reachable
-	// if the symbol is abstract
-	private final String pointer; 
 	
 	private Type type;
 	
@@ -83,19 +78,12 @@ public abstract class IdentifierSymbolInfo
 	/**
 	 * Set the visibility status of the identifier to true.
 	 */
-	public void setVisible() throws CoreException {
+	public void makeVisible() throws CoreException {
 		if (!isMutable())
 			throw Util.newCoreException(Messages.symtab_ImmutableSymbolViolation);
 		this.visible = true;
 	}
 
-	/**
-	 * @return Returns the pointer.
-	 */
-	public String getPointer() {
-		return pointer;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IIdentifierSymbolInfo#issueUntypedErrorMarker(org.eventb.core.sc.IMarkerDisplay)
 	 */

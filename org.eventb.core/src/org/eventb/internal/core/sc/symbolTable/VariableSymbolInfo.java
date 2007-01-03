@@ -25,12 +25,12 @@ public abstract class VariableSymbolInfo
 	implements IVariableSymbolInfo {
 
 	public VariableSymbolInfo(
-			String symbol, 
-			String link, 
+			String symbol,
+			boolean imported,
 			IInternalElement element, 
 			IAttributeType.String attribute, 
 			String component) {
-		super(symbol, link, element, attribute, component);
+		super(symbol, imported, element, attribute, component);
 		
 		forbidden = false;
 		

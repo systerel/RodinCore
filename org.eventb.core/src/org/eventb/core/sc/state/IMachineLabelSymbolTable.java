@@ -10,6 +10,8 @@ package org.eventb.core.sc.state;
 import org.eventb.core.EventBPlugin;
 
 /**
+ * State component to store label elements of a machine.
+ * 
  * @author Stefan Hallerstede
  *
  */

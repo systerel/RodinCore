@@ -10,11 +10,9 @@ package org.eventb.internal.core.sc;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
-import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.internal.core.tool.state.ToolState;
 
 /**
@@ -25,7 +23,6 @@ public class EventRefinesInfo extends ToolState implements IEventRefinesInfo {
 
 	private final List<IAbstractEventInfo> array;
 	private final List<IRefinesEvent> refEvents;
-	private final IEventSymbolInfo symbolInfo;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
@@ -38,13 +35,12 @@ public class EventRefinesInfo extends ToolState implements IEventRefinesInfo {
 		return array;
 	}
 
-	public EventRefinesInfo(IEventSymbolInfo symbolInfo, int size) {
+	public EventRefinesInfo(int size) {
 		array = new ArrayList<IAbstractEventInfo>(size);
 		refEvents = new ArrayList<IRefinesEvent>(size);
-		this.symbolInfo = symbolInfo;
 	}
 	
-	public boolean isEmpty() {
+	public boolean currentEventIsRefined() {
 		return array.size() == 0 && refEvents.size() == 0;
 	}
 
@@ -52,15 +48,7 @@ public class EventRefinesInfo extends ToolState implements IEventRefinesInfo {
 		array.add(info);
 	}
 
-	public IEvent getEvent() {
-		return (IEvent) symbolInfo.getSourceElement();
-	}
-
-	public String getEventLabel() {
-		return symbolInfo.getSymbol();
-	}
-
-	public List<IRefinesEvent> getRefinesEvents() {
+	public List<IRefinesEvent> getRefinesClauses() {
 		return refEvents;
 	}
 
