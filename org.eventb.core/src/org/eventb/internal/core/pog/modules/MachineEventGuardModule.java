@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -21,9 +19,9 @@ import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
 import org.eventb.core.pog.state.IHypothesisManager;
+import org.eventb.core.pog.state.IPredicateTable;
 import org.eventb.core.pog.state.IState;
 import org.eventb.core.pog.state.IStateRepository;
-import org.eventb.core.pog.state.IPredicateTable;
 import org.eventb.core.tool.state.IToolStateRepository;
 import org.rodinp.core.IRodinElement;
 
@@ -95,7 +93,7 @@ public class MachineEventGuardModule extends PredicateModule {
 	
 	private boolean isRedundantWDProofObligation(Predicate predicate, int index) {
 		
-		List<IAbstractEventGuardTable> abstractEventGuardTables = 
+		IAbstractEventGuardTable[] abstractEventGuardTables = 
 			abstractEventGuardList.getAbstractEventGuardTables();
 		
 		for (IAbstractEventGuardTable abstractEventGuardTable : abstractEventGuardTables) {
@@ -109,7 +107,7 @@ public class MachineEventGuardModule extends PredicateModule {
 	}
 
 	private boolean isFreshPOForAbstractGuard(Predicate predicate, int index, IAbstractEventGuardTable abstractEventGuardTable) {
-		int absIndex = abstractEventGuardTable.getPredicates().indexOf(predicate);
+		int absIndex = abstractEventGuardTable.indexOfPredicate(predicate);
 
 		if (absIndex == -1)
 			return true;

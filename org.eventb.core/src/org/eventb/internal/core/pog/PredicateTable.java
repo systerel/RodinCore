@@ -7,10 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -25,44 +21,45 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class PredicateTable extends ToolState implements IPredicateTable {
 
-	protected List<ISCPredicateElement> predicateElements;
-	protected List<Predicate> predicates;
+	protected final ISCPredicateElement[] predicateElements;
+	protected final Predicate[] predicates;
 
-	public PredicateTable() {
-		predicateElements = new LinkedList<ISCPredicateElement>();
-		predicates = new LinkedList<Predicate>();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pog.IPredicateTable#addElement(org.eventb.core.ISCPredicateElement, org.eventb.core.ast.ITypeEnvironment, org.eventb.core.ast.FormulaFactory)
-	 */
-	public void addElement(ISCPredicateElement element, ITypeEnvironment typeEnvironment, FormulaFactory factory) throws RodinDBException {
-		predicateElements.add(element);
-		predicates.add(element.getPredicate(factory, typeEnvironment));
+	public PredicateTable(
+			ISCPredicateElement[] elements, 
+			ITypeEnvironment typeEnvironment, 
+			FormulaFactory factory) throws RodinDBException {
+		predicateElements = elements;
+		predicates = new Predicate[elements.length];
+		
+		for (int i=0; i<elements.length; i++) {
+			predicates[i] = elements[i].getPredicate(factory, typeEnvironment);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IPredicateTable#getElements()
 	 */
-	public List<ISCPredicateElement> getElements() {
-		return predicateElements;
+	public ISCPredicateElement[] getElements() {
+		ISCPredicateElement[] pe = new ISCPredicateElement[predicateElements.length];
+		System.arraycopy(predicateElements, 0, pe, 0, predicateElements.length);
+		return pe;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IPredicateTable#getPredicates()
 	 */
-	public List<Predicate> getPredicates() {
-		return predicates;
+	public Predicate[] getPredicates() {
+		Predicate[] p = new Predicate[predicates.length];
+		System.arraycopy(predicates, 0, p, 0, predicates.length);
+		return p;
 	}
 
 	public int indexOfPredicate(Predicate predicate) {
-		return predicates.indexOf(predicate);
-	}
-
-	@Override
-	public void makeImmutable() {
-		predicateElements = new ArrayList<ISCPredicateElement>(predicateElements);
-		predicates = new ArrayList<Predicate>(predicates);
+		for (int i=0; i<predicates.length; i++) {
+			if (predicates[i].equals(predicate))
+				return i;
+		}
+		return -1;
 	}
 	
 }

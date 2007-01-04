@@ -22,11 +22,7 @@ public abstract class EventGuardTable extends PredicateTable {
 			ISCPredicateElement[] guards, 
 			ITypeEnvironment typeEnvironment, 
 			FormulaFactory factory) throws RodinDBException {
-		
-		for (ISCPredicateElement guard : guards)
-			addElement(guard, typeEnvironment, factory);
-		
-		makeImmutable();
+		super(guards, typeEnvironment, factory);
 		
 	}
 	

@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
-import java.util.List;
 
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.Predicate;
@@ -37,7 +36,7 @@ public interface IPredicateTable extends IState {
 	 * 
 	 * @return the predicate elements contained in this predicate table
 	 */
-	List<ISCPredicateElement> getElements();
+	ISCPredicateElement[] getElements();
 	
 	/**
 	 * Returns the parsed and type-checked predicates corresponding to the
@@ -50,7 +49,7 @@ public interface IPredicateTable extends IState {
 	 * @return the parsed and type-checked predicates corresponding to the
 	 * predicate elements contained in this table
 	 */
-	List<Predicate> getPredicates();
+	Predicate[] getPredicates();
 	
 	/**
 	 * Returns the index of the specified predicate in the predicate array,

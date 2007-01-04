@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
-import java.util.List;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCEvent;
@@ -53,7 +52,7 @@ public interface IAbstractEventGuardList extends IState {
 	 * 
 	 * @return the list of SC abstract events corresponding to the guards
 	 */
-	List<ISCEvent> getAbstractEvents();
+	ISCEvent[] getAbstractEvents();
 	
 	/**
 	 * Returns the first abstract event from the list corresponding to the guards, 
@@ -69,7 +68,7 @@ public interface IAbstractEventGuardList extends IState {
 	 * 
 	 * @return the list of abstract event guard tables
 	 */
-	List<IAbstractEventGuardTable> getAbstractEventGuardTables();
+	IAbstractEventGuardTable[] getAbstractEventGuardTables();
 	
 	/**
 	 * Returns the first abstract event guard table from the list corresponding to the guards, 

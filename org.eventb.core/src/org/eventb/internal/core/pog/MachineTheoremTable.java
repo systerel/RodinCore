@@ -7,13 +7,24 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import org.eventb.core.ISCPredicateElement;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.IMachineTheoremTable;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
 public class MachineTheoremTable extends PredicateTable implements IMachineTheoremTable {
+
+	public MachineTheoremTable(
+			ISCPredicateElement[] elements, 
+			ITypeEnvironment typeEnvironment, 
+			FormulaFactory factory) throws RodinDBException {
+		super(elements, typeEnvironment, factory);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()

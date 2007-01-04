@@ -8,7 +8,6 @@
 package org.eventb.core.pog.state;
 
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCWitness;
@@ -35,7 +34,7 @@ public interface IWitnessTable extends IState {
 	 * 
 	 * @return the array of witnesses
 	 */
-	List<ISCWitness> getWitnesses();
+	ISCWitness[] getWitnesses();
 
 	/**
 	 * Returns the array of deterministic witnesses for <b>machine variables</b>.
@@ -139,7 +138,7 @@ public interface IWitnessTable extends IState {
 	 * 
 	 * @return all witnesses variables
 	 */
-	Set<FreeIdentifier> getWitnessedVariables();
+	List<FreeIdentifier> getWitnessedVariables();
 
 	/**
 	 * Returns a substitution that renames machine variables witnessed non-deterministically

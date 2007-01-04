@@ -9,10 +9,8 @@ package org.eventb.internal.core.pog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,7 +32,7 @@ import org.eventb.internal.core.tool.state.ToolState;
  */
 public class WitnessTable extends ToolState implements IWitnessTable {
 
-	private final List<ISCWitness> witnesses;
+	private final ISCWitness[] witnesses;
 	private final BecomesEqualTo primeSubstitution;
 	
 	private final ArrayList<ISCWitness> machineDetWitnesses;
@@ -46,14 +44,14 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 	private final ArrayList<ISCWitness> nondetWitnesses;
 	private final ArrayList<Predicate> nondetPredicates;
 	
-	private final HashSet<FreeIdentifier> witnessedVars;
+	private final List<FreeIdentifier> witnessedVars;
 
 	public WitnessTable(
 			ISCWitness[] witnesses, 
 			ITypeEnvironment typeEnvironment, 
 			FormulaFactory factory, 
 			IProgressMonitor monitor) throws CoreException {
-		this.witnesses = Arrays.asList(witnesses);
+		this.witnesses = witnesses;
 		machineDetWitnesses = new ArrayList<ISCWitness>(witnesses.length);
 		machineDetermist = new ArrayList<BecomesEqualTo>(witnesses.length);
 		machinePrimedDetermist = new ArrayList<BecomesEqualTo>(witnesses.length);
@@ -61,7 +59,7 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 		eventDetermist = new ArrayList<BecomesEqualTo>(witnesses.length);
 		nondetWitnesses = new ArrayList<ISCWitness>(witnesses.length);
 		nondetPredicates = new ArrayList<Predicate>(witnesses.length);
-		witnessedVars = new HashSet<FreeIdentifier>(witnesses.length * 4 / 3 + 1);
+		witnessedVars = new ArrayList<FreeIdentifier>(witnesses.length);
 	
 		final LinkedList<FreeIdentifier> left = new LinkedList<FreeIdentifier>();
 		final LinkedList<Expression> right = new LinkedList<Expression>();
@@ -149,40 +147,42 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 		return primeSubstitution;
 	}
 
-	public List<ISCWitness> getWitnesses() {
-		return witnesses;
+	public ISCWitness[] getWitnesses() {
+		ISCWitness[] w = new ISCWitness[witnesses.length];
+		System.arraycopy(witnesses, 0, w, 0, witnesses.length);
+		return w;
 	}
 
 	public ArrayList<ISCWitness> getMachineDetWitnesses() {
-		return machineDetWitnesses;
+		return new ArrayList<ISCWitness>(machineDetWitnesses);
 	}
 
 	public ArrayList<BecomesEqualTo> getMachineDetAssignments() {
-		return machineDetermist;
+		return new ArrayList<BecomesEqualTo>(machineDetermist);
 	}
 
 	public ArrayList<BecomesEqualTo> getMachinePrimedDetAssignments() {
-		return machinePrimedDetermist;
+		return new ArrayList<BecomesEqualTo>(machinePrimedDetermist);
 	}
 
 	public ArrayList<ISCWitness> getEventDetWitnesses() {
-		return eventDetWitnesses;
+		return new ArrayList<ISCWitness>(eventDetWitnesses);
 	}
 
 	public ArrayList<BecomesEqualTo> getEventDetAssignments() {
-		return eventDetermist;
+		return new ArrayList<BecomesEqualTo>(eventDetermist);
 	}
 
 	public ArrayList<Predicate> getNondetPredicates() {
-		return nondetPredicates;
+		return new ArrayList<Predicate>(nondetPredicates);
 	}
 
-	public Set<FreeIdentifier> getWitnessedVariables() {
-		return witnessedVars;
+	public List<FreeIdentifier> getWitnessedVariables() {
+		return new ArrayList<FreeIdentifier>(witnessedVars);
 	}
 
 	public ArrayList<ISCWitness> getNondetWitnesses() {
-		return nondetWitnesses;
+		return new ArrayList<ISCWitness>(nondetWitnesses);
 	}
 
 }

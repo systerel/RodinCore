@@ -9,7 +9,6 @@ package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -64,12 +63,12 @@ public class MachineEventActionBodySimModule extends
 		ArrayList<POGPredicate> hyp = makeActionHypothesis();
 		hyp.addAll(makeWitnessHypothesis());
 		
-		List<Assignment> simAssignments = abstractEventActionTable.getSimAssignments();
-		List<ISCAction> simActions = abstractEventActionTable.getSimActions();
+		Assignment[] simAssignments = abstractEventActionTable.getSimAssignments();
+		ISCAction[] simActions = abstractEventActionTable.getSimActions();
 		
-		for (int i=0; i<simActions.size(); i++) {
-			String actionLabel = simActions.get(i).getLabel();
-			Assignment simAssignment = simAssignments.get(i);
+		for (int i=0; i<simActions.length; i++) {
+			String actionLabel = simActions[i].getLabel();
+			Assignment simAssignment = simAssignments[i];
 			
 			if (abstractEventActionTable.getIndexOfCorrespondingConcrete(i) != -1)
 				continue;
@@ -96,10 +95,10 @@ public class MachineEventActionBodySimModule extends
 					"Action simulation",
 					fullHypothesis,
 					hyp,
-					new POGTraceablePredicate(simPredicate, simActions.get(i)),
+					new POGTraceablePredicate(simPredicate, simActions[i]),
 					sources(
 							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
-							new POGSource(IPOSource.ABSTRACT_ROLE, simActions.get(i)),
+							new POGSource(IPOSource.ABSTRACT_ROLE, simActions[i]),
 							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
 					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);

@@ -29,7 +29,6 @@ import org.eventb.internal.core.pog.MachineHypothesisManager;
 import org.eventb.internal.core.pog.MachineInvariantTable;
 import org.eventb.internal.core.pog.MachineTheoremTable;
 import org.eventb.internal.core.pog.MachineVariableTable;
-import org.eventb.internal.core.pog.PredicateTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -69,15 +68,23 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 		
 		String bag = scMachineFile.getMachineFile().getElementName();
 		
-		invariantTable = new MachineInvariantTable();
-		theoremTable = new MachineTheoremTable();
+		List<ISCPredicateElement> predicates = new LinkedList<ISCPredicateElement>();
+		List<ISCInvariant> invPreds = 
+			fetchPredicates(predicates, rootSet, invariants, bag, monitor);
+		List<ISCTheorem> thmPreds = 
+			fetchPredicates(predicates, rootSet, theorems, bag, monitor);
+		
+		invariantTable = new MachineInvariantTable(
+				invPreds.toArray(new ISCInvariant[invPreds.size()]),
+				typeEnvironment,
+				factory);
+		theoremTable = new MachineTheoremTable(
+				thmPreds.toArray(new ISCTheorem[thmPreds.size()]),
+				typeEnvironment,
+				factory);
 		
 		repository.setState(invariantTable);
 		repository.setState(theoremTable);
-		
-		List<ISCPredicateElement> predicates = new LinkedList<ISCPredicateElement>();
-		fetchPredicates(predicates, invariantTable, rootSet, invariants, bag, monitor);
-		fetchPredicates(predicates, theoremTable, rootSet, theorems, bag, monitor);
 		
 		invariantTable.makeImmutable();
 		theoremTable.makeImmutable();
@@ -136,25 +143,27 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 		variableTable.makeImmutable();
 	}
 	
-	private void fetchPredicates(
+	private <PE extends ISCPredicateElement> List<PE> fetchPredicates(
 			List<ISCPredicateElement> predicates,
-			PredicateTable predicateTable,
 			IPOPredicateSet rootSet, 
-			ISCPredicateElement[] predicateElements,
+			PE[] predicateElements,
 			String bag,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		for(ISCPredicateElement element : predicateElements) {
+		List<PE> localPreds = new LinkedList<PE>();
+		
+		for(PE element : predicateElements) {
 			ITraceableElement baggedElement = (ITraceableElement) element;
 			String elementBag = 
 				((IInternalElement) baggedElement.getSource()).getRodinFile().getElementName();
 			if (bag.equals(elementBag)) {
 				predicates.add(element);
-				predicateTable.addElement(element, typeEnvironment, factory);
+				localPreds.add(element);
 			} else {
 				savePOPredicate(rootSet, element, monitor); 
 			}
 		}
+		return localPreds;
 	}
 
 }

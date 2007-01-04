@@ -22,6 +22,7 @@ import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IStateRepository;
@@ -50,7 +51,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		
 		IPOFile target = repository.getTarget();
 		
-		if (abstractEventGuardList.getAbstractEvents().size() <= 1) {
+		if (abstractEventGuardList.getRefinementType() != IAbstractEventGuardList.MERGE) {
 		
 			ISCEvent abstractEvent = abstractEventGuardList.getFirstAbstractEvent();
 			IAbstractEventGuardTable abstractEventGuardTable = 
@@ -75,23 +76,23 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 			IPOFile target, 
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		List<IAbstractEventGuardTable> absGuardTables = 
+		IAbstractEventGuardTable[] absGuardTables = 
 			abstractEventGuardList.getAbstractEventGuardTables();
 		
 		List<Predicate> disjPredList = 
-			new ArrayList<Predicate>(absGuardTables.size());
+			new ArrayList<Predicate>(absGuardTables.length);
 		
 		for (IAbstractEventGuardTable absGuardTable : absGuardTables) {
 			
-			List<Predicate> absGuards = absGuardTable.getPredicates();
+			Predicate[] absGuards = absGuardTable.getPredicates();
 			
-			if (absGuards.size() == 0)
+			if (absGuards.length == 0)
 				return;
 			
-			List<Predicate> conjPredList = new ArrayList<Predicate>(absGuards.size());
+			List<Predicate> conjPredList = new ArrayList<Predicate>(absGuards.length);
 			
-			for (int i=0; i<absGuards.size(); i++) {
-				Predicate absGuard = absGuards.get(i);
+			for (int i=0; i<absGuards.length; i++) {
+				Predicate absGuard = absGuards[i];
 				boolean absGuardIsNew = 
 					absGuardTable.getIndexOfCorrespondingConcrete(i) == -1;
 				
@@ -127,9 +128,9 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 		disjPredicate = disjPredicate.applyAssignments(substitution, factory);
 		
-		List<ISCEvent> absEvents = abstractEventGuardList.getAbstractEvents();
+		ISCEvent[] absEvents = abstractEventGuardList.getAbstractEvents();
 		
-		List<POGSource> sourceList = new ArrayList<POGSource>(absEvents.size() + 1);
+		List<POGSource> sourceList = new ArrayList<POGSource>(absEvents.length + 1);
 		for (ISCEvent absEvent : absEvents)
 			sourceList.add(new POGSource(IPOSource.ABSTRACT_ROLE, absEvent));
 		sourceList.add(new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent));
@@ -156,14 +157,14 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 			IAbstractEventGuardTable abstractEventGuardTable,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		List<ISCPredicateElement> guards = abstractEventGuardTable.getElements();
-		List<Predicate> absGuards = abstractEventGuardTable.getPredicates();
+		ISCPredicateElement[] absGuardElements = abstractEventGuardTable.getElements();
+		Predicate[] absGuards = abstractEventGuardTable.getPredicates();
 		
 		ArrayList<POGPredicate> hyp = makeActionHypothesis();
 		hyp.addAll(makeWitnessHypothesis());
-		for (int i=0; i<guards.size(); i++) {
-			String guardLabel = ((ISCGuard) guards.get(i)).getLabel();
-			Predicate absGuard = absGuards.get(i);
+		for (int i=0; i<absGuardElements.length; i++) {
+			String guardLabel = ((ISCGuard) absGuardElements[i]).getLabel();
+			Predicate absGuard = absGuards[i];
 			
 			if (goalIsTrivial(absGuard) 
 					|| abstractEventGuardTable.getIndexOfCorrespondingConcrete(i) != -1)
@@ -183,10 +184,10 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 					"Guard strengthening (split)",
 					fullHypothesis,
 					hyp,
-					new POGTraceablePredicate(absGuard, guards.get(i)),
+					new POGTraceablePredicate(absGuard, absGuardElements[i]),
 					sources(
 							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
-							new POGSource(IPOSource.ABSTRACT_ROLE, (ITraceableElement) guards.get(i)),
+							new POGSource(IPOSource.ABSTRACT_ROLE, (ITraceableElement) absGuardElements[i]),
 							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
 					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);

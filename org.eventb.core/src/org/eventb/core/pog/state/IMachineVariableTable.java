@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
-import java.util.List;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FreeIdentifier;
@@ -41,6 +40,6 @@ public interface IMachineVariableTable extends IState, Iterable<FreeIdentifier> 
 	 * @return the array of variables that were already present in 
 	 * the abstraction of this machine
 	 */
-	List<FreeIdentifier> getPreservedVariables();
+	FreeIdentifier[] getPreservedVariables();
 			
 }

@@ -7,12 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -215,8 +212,10 @@ public abstract class HypothesisManager extends ToolState implements IHypothesis
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IHypothesisManager#getManagedPredicates()
 	 */
-	public List<ISCPredicateElement> getManagedPredicates() {
-		return new ArrayList<ISCPredicateElement>(Arrays.asList(predicateTable));
+	public ISCPredicateElement[] getManagedPredicates() {
+		ISCPredicateElement[] pe = new ISCPredicateElement[predicateTable.length];
+		System.arraycopy(predicateTable, 0, pe, 0, predicateTable.length);
+		return pe;
 	}
 
 

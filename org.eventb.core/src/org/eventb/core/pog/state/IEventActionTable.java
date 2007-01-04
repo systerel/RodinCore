@@ -38,7 +38,7 @@ public interface IEventActionTable extends IState {
 	 * 
 	 * @see IEventActionTable#getAssignments()
 	 */
-	List<ISCAction> getActions();
+	ISCAction[] getActions();
 	
 	/**
 	 * Returns the array of assignments corresponding to the actions of the event.
@@ -49,7 +49,7 @@ public interface IEventActionTable extends IState {
 	 * 
 	 * @return the array of assignments corresponding to the actions of the event
 	 */
-	List<Assignment> getAssignments();
+	Assignment[] getAssignments();
 	
 	/**
 	 * Returns the set of variables constituting the frame of the actions.

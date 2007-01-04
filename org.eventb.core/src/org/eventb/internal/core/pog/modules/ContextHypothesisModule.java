@@ -23,7 +23,6 @@ import org.eventb.core.pog.state.IStateRepository;
 import org.eventb.internal.core.pog.ContextAxiomTable;
 import org.eventb.internal.core.pog.ContextHypothesisManager;
 import org.eventb.internal.core.pog.ContextTheoremTable;
-import org.eventb.internal.core.pog.PredicateTable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -62,15 +61,15 @@ public class ContextHypothesisModule extends GlobalHypothesisModule {
 		ISCAxiom[] axioms = scContextFile.getSCAxioms();
 		ISCTheorem[] theorems = scContextFile.getSCTheorems();
 		
-		axiomTable = new ContextAxiomTable();
-		theoremTable = new ContextTheoremTable();
+		List<ISCPredicateElement> predicates = new LinkedList<ISCPredicateElement>();
+		fetchPredicates(predicates, axioms);
+		fetchPredicates(predicates, theorems);
+		
+		axiomTable = new ContextAxiomTable(axioms, typeEnvironment, factory);
+		theoremTable = new ContextTheoremTable(theorems, typeEnvironment, factory);
 		
 		repository.setState(axiomTable);
 		repository.setState(theoremTable);
-		
-		List<ISCPredicateElement> predicates = new LinkedList<ISCPredicateElement>();
-		fetchPredicates(predicates, axiomTable, axioms, monitor);
-		fetchPredicates(predicates, theoremTable, theorems, monitor);
 		
 		axiomTable.makeImmutable();
 		theoremTable.makeImmutable();
@@ -87,13 +86,10 @@ public class ContextHypothesisModule extends GlobalHypothesisModule {
 	
 	private void fetchPredicates(
 			List<ISCPredicateElement> predicates,
-			PredicateTable predicateTable,
-			ISCPredicateElement[] predicateElements,
-			IProgressMonitor monitor) throws RodinDBException {
+			ISCPredicateElement[] predicateElements) throws RodinDBException {
 		
 		for(ISCPredicateElement element : predicateElements) {
 			predicates.add(element);
-			predicateTable.addElement(element, typeEnvironment, factory);
 		}
 	}
 

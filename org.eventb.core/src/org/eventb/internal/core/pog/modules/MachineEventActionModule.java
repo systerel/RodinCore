@@ -40,8 +40,9 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		int actionsLength = concreteEventActionTable.getActions().size();
-		if (actionsLength == 0)
+		ISCAction[] actions = concreteEventActionTable.getActions();
+		
+		if (actions.length == 0)
 			return;
 		
 		IPOFile target = repository.getTarget();
@@ -51,9 +52,11 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 						eventHypothesisManager.getRootHypothesis(), 
 						eventHypothesisManager.getFullHypothesis()));
 		
-		for (int k=0; k<actionsLength; k++) {
-			ISCAction action = concreteEventActionTable.getActions().get(k);
-			Assignment assignment = concreteEventActionTable.getAssignments().get(k);
+		Assignment[] assignments = concreteEventActionTable.getAssignments();
+		
+		for (int k=0; k<actions.length; k++) {
+			ISCAction action = actions[k];
+			Assignment assignment = assignments[k];
 			
 			POGSource[] sources = sources(new POGSource(IPOSource.DEFAULT_ROLE, action));
 			

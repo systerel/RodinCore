@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOPredicate;
@@ -105,6 +104,6 @@ public interface IHypothesisManager extends IState, Iterable<FreeIdentifier> {
 	 * 
 	 * @return the list of managed predicates
 	 */
-	List<ISCPredicateElement> getManagedPredicates();
+	ISCPredicateElement[] getManagedPredicates();
 	
 }

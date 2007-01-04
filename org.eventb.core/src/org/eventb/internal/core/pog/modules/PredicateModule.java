@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
@@ -19,9 +17,9 @@ import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IHypothesisManager;
+import org.eventb.core.pog.state.IPredicateTable;
 import org.eventb.core.pog.state.IState;
 import org.eventb.core.pog.state.IStateRepository;
-import org.eventb.core.pog.state.IPredicateTable;
 import org.eventb.core.pog.util.POGHint;
 import org.eventb.core.pog.util.POGIntervalSelectionHint;
 import org.eventb.core.pog.util.POGSource;
@@ -70,20 +68,20 @@ public abstract class PredicateModule extends UtilityModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		List<ISCPredicateElement> elements = predicateTable.getElements();
+		ISCPredicateElement[] elements = predicateTable.getElements();
 		
-		if(elements.size() == 0)
+		if(elements.length == 0)
 			return;
 		
 		IPOFile target = repository.getTarget();
 		
-		List<Predicate> predicates = predicateTable.getPredicates();
+		Predicate[] predicates = predicateTable.getPredicates();
 		
-		for (int i=0; i<elements.size(); i++) {
-			ISCPredicateElement predicateElement = elements.get(i);
+		for (int i=0; i<elements.length; i++) {
+			ISCPredicateElement predicateElement = elements[i];
 			String elementLabel = ((ILabeledElement) predicateElement).getLabel();
 			
-			Predicate predicate = predicates.get(i);
+			Predicate predicate = predicates[i];
 			
 			createWDProofObligation(target, elementLabel, predicateElement, predicate, i, monitor);
 			

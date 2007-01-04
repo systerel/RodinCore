@@ -48,8 +48,8 @@ public class AbstractEventActionTable extends EventActionTable implements
 		simAssignments = new ArrayList<Assignment>(abstractActions.length);
 		simActions = new ArrayList<ISCAction>(abstractActions.length);
 		
-		for (int i=0; i<assignments.size(); i++) {
-			Assignment assignment = assignments.get(i);
+		for (int i=0; i<assignments.length; i++) {
+			Assignment assignment = assignments[i];
 			if (isDisappearing(assignment, variables) 
 					&& assignment instanceof BecomesEqualTo) {
 				disappearingWitnesses.add((BecomesEqualTo) assignment);
@@ -82,15 +82,15 @@ public class AbstractEventActionTable extends EventActionTable implements
 	}
 
 	public List<BecomesEqualTo> getDisappearingWitnesses() {
-		return disappearingWitnesses;
+		return new ArrayList<BecomesEqualTo>(disappearingWitnesses);
 	}
 
-	public List<Assignment> getSimAssignments() {
-		return simAssignments;
+	public Assignment[] getSimAssignments() {
+		return simAssignments.toArray(new Assignment[simAssignments.size()]);
 	}
 
-	public List<ISCAction> getSimActions() {
-		return simActions;
+	public ISCAction[] getSimActions() {
+		return simActions.toArray(new ISCAction[simActions.size()]);
 	}
 
 	public int getIndexOfCorrespondingAbstract(int index) {

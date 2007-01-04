@@ -53,8 +53,8 @@ public class MachineVariableTable extends ToolState implements IMachineVariableT
 		return variables.iterator();
 	}
 	
-	public ArrayList<FreeIdentifier> getPreservedVariables() {
-		return preservedVariables;
+	public FreeIdentifier[] getPreservedVariables() {
+		return preservedVariables.toArray(new FreeIdentifier[preservedVariables.size()]);
 	}
 
 	@Override
