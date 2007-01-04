@@ -52,6 +52,9 @@ extends PredicateModule<PE> {
 								hypothesis)
 					},
 					monitor);
+		} else {
+			if (DEBUG_TRIVIAL)
+				debugTraceTrivial(getProofObligationName(elementLabel));
 		}
 		
 	}

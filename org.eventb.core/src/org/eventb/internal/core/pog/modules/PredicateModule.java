@@ -124,6 +124,9 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 								hypothesis)
 					},
 					monitor);
+		} else {
+			if (DEBUG_TRIVIAL)
+				debugTraceTrivial(getWDProofObligationName(elementLabel));
 		}
 	}
 

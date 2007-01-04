@@ -29,6 +29,8 @@ import org.rodinp.core.IRodinElement;
  *
  */
 public abstract class UtilityModule extends ProcessorModule {
+	
+	public static boolean DEBUG_TRIVIAL = false;
 
 	protected List<POGPredicate> emptyPredicates;
 	protected POGHint[] emptyHints;
@@ -91,6 +93,10 @@ public abstract class UtilityModule extends ProcessorModule {
 
 	protected boolean goalIsTrivial(Predicate goal) {
 		return goal.equals(btrue) || goalIsNotRestricting(goal);
+	}
+
+	protected void debugTraceTrivial(String sequentName) {
+		System.out.println("POG: " + getClass().getSimpleName() + ": Filtered trivial PO: " + sequentName);
 	}
 
 }

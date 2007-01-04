@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.internal.core.pm.UserSupportManager;
 import org.eventb.internal.core.pog.ProofObligationGenerator;
+import org.eventb.internal.core.pog.modules.UtilityModule;
 import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.osgi.framework.BundleContext;
@@ -34,7 +35,10 @@ public class EventBPlugin extends Plugin {
 	 * debugging/tracing option names
 	 */
 	private static final String SC_TRACE = PLUGIN_ID + "/debug/sc"; //$NON-NLS-1$
+	private static final String SC_TRACE_STATE = PLUGIN_ID + "/debug/sc/state"; //$NON-NLS-1$
 	private static final String POG_TRACE = PLUGIN_ID + "/debug/pog"; //$NON-NLS-1$
+	private static final String POG_TRACE_STATE = PLUGIN_ID + "/debug/pog/state"; //$NON-NLS-1$
+	private static final String POG_TRACE_TRIVIAL = PLUGIN_ID + "/debug/pog/trivial"; //$NON-NLS-1$
 	private static final String POM_TRACE = PLUGIN_ID + "/debug/pom"; //$NON-NLS-1$
 	
 	/**
@@ -184,9 +188,18 @@ public class EventBPlugin extends Plugin {
 			option = Platform.getDebugOption(SC_TRACE);
 			if (option != null)
 				StaticChecker.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(SC_TRACE_STATE);
+			if (option != null)
+				StaticChecker.DEBUG_STATE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POG_TRACE);
 			if (option != null)
 				ProofObligationGenerator.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(POG_TRACE_STATE);
+			if (option != null)
+				ProofObligationGenerator.DEBUG_STATE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(POG_TRACE_TRIVIAL);
+			if (option != null)
+				UtilityModule.DEBUG_TRIVIAL = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POM_TRACE);
 			if (option != null)
 				AutoPOM.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$

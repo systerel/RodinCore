@@ -55,6 +55,9 @@ public class MachineVariantModule extends UtilityModule {
 					new POGTraceablePredicate(wdPredicate, variantInfo.getVariant()), 
 					sources, 
 					emptyHints, monitor);
+		} else {
+			if (DEBUG_TRIVIAL)
+				debugTraceTrivial("VWD");
 		}
 		
 		if (mustProveFinite()) {
@@ -69,6 +72,9 @@ public class MachineVariantModule extends UtilityModule {
 					new POGTraceablePredicate(finPredicate, variantInfo.getVariant()), 
 					sources, 
 					emptyHints, monitor);
+		} else {
+			if (DEBUG_TRIVIAL)
+				debugTraceTrivial("FIN");
 		}
 		
 	}

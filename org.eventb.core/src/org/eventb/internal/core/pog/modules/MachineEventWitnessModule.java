@@ -117,8 +117,9 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 			String suffix,
 			String desc,
 			IProgressMonitor monitor) throws RodinDBException {
+		String sequentName = concreteEventLabel + "/" + witnessLabel + "/" + suffix;
+		
 		if (!goalIsTrivial(goal)) {
-			String sequentName = concreteEventLabel + "/" + witnessLabel + "/" + suffix;
 			
 			ArrayList<POGPredicate> actionHyp = makeActionHypothesis();
 			boolean primed = witnessIdentifier.isPrimed();
@@ -143,6 +144,9 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 							)
 					),
 					monitor);
+		} else {
+			if (DEBUG_TRIVIAL)
+				debugTraceTrivial(sequentName);
 		}
 	}
 

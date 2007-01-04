@@ -32,6 +32,8 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 
 	public static boolean DEBUG = false;
 	
+	public static boolean DEBUG_STATE = false;
+	
 	private final static int IDENT_SYMTAB_SIZE = 2047;
 
 	private final static int CONTEXT_TABLE_SIZE = 137;
@@ -42,7 +44,10 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 		
 		final FormulaFactory factory = FormulaFactory.getDefault();
 		
-		final IStateRepository repository = new SCStateRepository(factory);
+		final SCStateRepository repository = new SCStateRepository(factory);
+		
+		if (DEBUG_STATE)
+			repository.debug();
 		
 		final IdentifierSymbolTable identifierSymbolTable = 
 			new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, factory);

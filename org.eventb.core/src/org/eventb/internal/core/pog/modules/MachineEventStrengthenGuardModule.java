@@ -77,6 +77,8 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		IAbstractEventGuardTable[] absGuardTables = 
 			abstractEventGuardList.getAbstractEventGuardTables();
 		
+		String sequentName = concreteEventLabel + "/MRG";
+		
 		List<Predicate> disjPredList = 
 			new ArrayList<Predicate>(absGuardTables.length);
 		
@@ -84,8 +86,11 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 			
 			Predicate[] absGuards = absGuardTable.getPredicates();
 			
-			if (absGuards.length == 0)
+			if (absGuards.length == 0) {
+				if (DEBUG_TRIVIAL)
+					debugTraceTrivial(sequentName);
 				return;
+			}
 			
 			List<Predicate> conjPredList = new ArrayList<Predicate>(absGuards.length);
 			
@@ -104,8 +109,11 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 						factory.makeAssociativePredicate(
 								Formula.LAND, 
 								conjPredList, null));
-			else // no proof obligation: one branch is true!
+			else { // no proof obligation: one branch is true!
+				if (DEBUG_TRIVIAL)
+					debugTraceTrivial(sequentName);
 				return;
+			}
 		}
 		
 		// disjPredList must have at least two elements
@@ -136,7 +144,6 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		POGSource[] sources = new POGSource[sourceList.size()];
 		sourceList.toArray(sources);
 	
-		String sequentName = concreteEventLabel + "/MRG";
 		createPO(
 				target, 
 				sequentName, 
@@ -163,10 +170,14 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		for (int i=0; i<absGuardElements.length; i++) {
 			String guardLabel = absGuardElements[i].getLabel();
 			Predicate absGuard = absGuardPredicates[i];
+			String sequentName = concreteEventLabel + "/" + guardLabel + "/REF";
 			
 			if (goalIsTrivial(absGuard) 
-					|| abstractEventGuardTable.getIndexOfCorrespondingConcrete(i) != -1)
+					|| abstractEventGuardTable.getIndexOfCorrespondingConcrete(i) != -1) {
+				if (DEBUG_TRIVIAL)
+					debugTraceTrivial(sequentName);
 				continue;
+			}
 			
 			absGuard = absGuard.applyAssignments(witnessTable.getEventDetAssignments(), factory);
 			LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
@@ -175,7 +186,6 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 			absGuard = absGuard.applyAssignments(substitution, factory);
 			
-			String sequentName = concreteEventLabel + "/" + guardLabel + "/REF";
 			createPO(
 					target, 
 					sequentName, 

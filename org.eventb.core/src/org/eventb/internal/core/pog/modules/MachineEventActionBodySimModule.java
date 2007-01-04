@@ -75,8 +75,13 @@ public class MachineEventActionBodySimModule extends
 			
 			Predicate simPredicate = simAssignment.getBAPredicate(factory);
 			
-			if (goalIsTrivial(simPredicate))
+			String sequentName = concreteEventLabel + "/" + actionLabel + "/SIM";
+			
+			if (goalIsTrivial(simPredicate)) {
+				if (DEBUG_TRIVIAL)
+					debugTraceTrivial(sequentName);
 				continue;
+			}
 			
 			LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 			substitution.addAll(witnessTable.getMachinePrimedDetAssignments());
@@ -88,7 +93,6 @@ public class MachineEventActionBodySimModule extends
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 			simPredicate = simPredicate.applyAssignments(substitution, factory);
 			
-			String sequentName = concreteEventLabel + "/" + actionLabel + "/SIM";
 			createPO(
 					target, 
 					sequentName, 

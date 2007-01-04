@@ -27,6 +27,7 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	public static String PRD_NAME_PREFIX = "PRD";
 	
 	public static boolean DEBUG = false;
+	public static boolean DEBUG_STATE = false;
 	
 	protected IStateRepository createRepository(
 			IPOFile target, 
@@ -34,7 +35,10 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 		
 		final FormulaFactory factory = FormulaFactory.getDefault();
 		
-		final IStateRepository repository = new POGStateRepository(factory, target);
+		final POGStateRepository repository = new POGStateRepository(factory, target);
+		
+		if (DEBUG_STATE)
+			repository.debug();
 		
 		return repository;
 	}

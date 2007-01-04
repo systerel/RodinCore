@@ -61,8 +61,11 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 			
 			Predicate predicate = invPredicates[i];
 			
-			if (goalIsTrivial(predicate))
+			if (goalIsTrivial(predicate)) {
+				if (DEBUG_TRIVIAL)
+					debugTraceTrivial(concreteEventLabel + "/" + invariantLabel + "/INV");
 				continue;
+			}
 			
 			FreeIdentifier[] freeIdentifiers = predicate.getFreeIdentifiers();
 			HashSet<FreeIdentifier> freeIdents = 

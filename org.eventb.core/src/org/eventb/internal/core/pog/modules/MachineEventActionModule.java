@@ -85,10 +85,11 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 			String suffix,
 			String desc,
 			IProgressMonitor monitor) throws RodinDBException {
+		String sequentName = concreteEventLabel + "/" + action.getLabel() + "/" + suffix;
 		if (!goalIsTrivial(predicate)) {
 			createPO(
 					target, 
-					concreteEventLabel + "/" + action.getLabel() + "/" + suffix, 
+					sequentName, 
 					desc, 
 					fullHypothesis, 
 					emptyPredicates, 
@@ -96,6 +97,9 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 					sources, 
 					hints, 
 					monitor);
+		} else {
+			if (DEBUG_TRIVIAL)
+				debugTraceTrivial(sequentName);
 		}
 	}
 	

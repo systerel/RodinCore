@@ -25,7 +25,11 @@ public abstract class ToolStateRepository<I extends IToolState> implements ITool
 	
 	private CoreException exception;
 	
-	public static boolean DEBUG = false;
+	private boolean DEBUG = false;
+	
+	public void debug() {
+		DEBUG = true;
+	}
 
 	public static final int REPOSITORY_SIZE = 117;
 	
