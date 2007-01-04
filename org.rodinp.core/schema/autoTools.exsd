@@ -88,7 +88,7 @@ for element types within the extension namespace). The token cannot contain dot
 &lt;samp&gt;org.rodinp.core.builder.IAutomaticTool&lt;/samp&gt;)
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.rodinp.core.builder.IAutomaticTool"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -117,7 +117,7 @@ for element types within the extension namespace). The token cannot contain dot
 &lt;samp&gt;org.rodinp.core.builder.IExtractor&lt;/samp&gt;)
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.rodinp.core.builder.IExtractor"/>
                </appInfo>
             </annotation>
          </attribute>
