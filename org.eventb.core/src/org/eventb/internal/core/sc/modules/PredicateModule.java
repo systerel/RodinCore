@@ -31,6 +31,11 @@ public abstract class PredicateModule<I extends IInternalElement>
 extends LabeledFormulaModule<Predicate, I> {
 	
 	@Override
+	protected Predicate[] allocateFormulas(int size) {
+		return new Predicate[size];
+	}
+
+	@Override
 	protected IAttributeType.String getFormulaAttributeType() {
 		return EventBAttributes.PREDICATE_ATTRIBUTE;
 	}

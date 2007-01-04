@@ -7,9 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -100,13 +97,13 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		if (formulaElements.size() == 0)
+		if (formulaElements.length == 0)
 			return;
 		
-		if (formulaElements.size() > 1) {
-			for (int k=1; k<formulaElements.size(); k++)
+		if (formulaElements.length > 1) {
+			for (int k=1; k<formulaElements.length; k++)
 				createProblemMarker(
-						formulaElements.get(k), 
+						formulaElements[k], 
 						EventBAttributes.EXPRESSION_ATTRIBUTE, 
 						GraphProblem.TooManyVariantsError);
 		}
@@ -120,7 +117,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 				repository,
 				monitor);
 		
-		saveVariant((ISCMachineFile) target, formulaElements.get(0), formulas.get(0), null);
+		saveVariant((ISCMachineFile) target, formulaElements[0], formulas[0], null);
 
 	}
 
@@ -185,10 +182,9 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	}
 
 	@Override
-	protected List<IVariant> getFormulaElements(IRodinElement element) throws CoreException {
+	protected IVariant[] getFormulaElements(IRodinElement element) throws CoreException {
 		IMachineFile machineFile = (IMachineFile) element;
-		IVariant[] variants = machineFile.getVariants();
-		return Arrays.asList(variants);
+		return machineFile.getVariants();
 	}
 
 }

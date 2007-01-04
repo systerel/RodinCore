@@ -68,4 +68,9 @@ extends LabeledFormulaModule<Expression, I> {
 		return expression;
 	}
 
+	@Override
+	protected Expression[] allocateFormulas(int size) {
+		return new Expression[size];
+	}
+
 }

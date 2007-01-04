@@ -50,14 +50,14 @@ public abstract class TheoremModule extends PredicateModule<ITheorem> {
 		
 		int index = offset;
 		
-		for (int i=0; i<formulaElements.size(); i++) {
-			if (formulas.get(i) == null)
+		for (int i=0; i<formulaElements.length; i++) {
+			if (formulas[i] == null)
 				continue;
 			ISCTheorem scTheorem = getSCTheorem(parent, THEOREM_NAME_PREFIX + index++);
 			scTheorem.create(null, monitor);
-			scTheorem.setLabel(formulaElements.get(i).getLabel(), monitor);
-			scTheorem.setPredicate(formulas.get(i), null);
-			scTheorem.setSource(formulaElements.get(i), monitor);
+			scTheorem.setLabel(formulaElements[i].getLabel(), monitor);
+			scTheorem.setPredicate(formulas[i], null);
+			scTheorem.setSource(formulaElements[i], monitor);
 		}
 	}
 	

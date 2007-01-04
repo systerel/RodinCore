@@ -7,9 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -71,7 +68,7 @@ public class MachineTheoremModule extends TheoremModule {
 			copySCPredicates(scTheorems, target, monitor);
 		}
 		
-		if (formulaElements.size() == 0)
+		if (formulaElements.length == 0)
 			return;
 		
 		checkAndSaveTheorems(
@@ -109,10 +106,9 @@ public class MachineTheoremModule extends TheoremModule {
 	}
 
 	@Override
-	protected List<ITheorem> getFormulaElements(IRodinElement element) throws CoreException {
+	protected ITheorem[] getFormulaElements(IRodinElement element) throws CoreException {
 		IMachineFile machineFile = (IMachineFile) element;
-		ITheorem[] theorems = machineFile.getTheorems();
-		return Arrays.asList(theorems);
+		return machineFile.getTheorems();
 	}
 
 }

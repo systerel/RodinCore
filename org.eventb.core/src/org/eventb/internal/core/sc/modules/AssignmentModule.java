@@ -69,4 +69,9 @@ extends LabeledFormulaModule<Assignment, I> {
 		return assignment;
 	}
 
+	@Override
+	protected Assignment[] allocateFormulas(int size) {
+		return new Assignment[size];
+	}
+
 }

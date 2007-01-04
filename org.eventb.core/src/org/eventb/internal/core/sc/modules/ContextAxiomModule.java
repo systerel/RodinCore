@@ -7,9 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -64,7 +61,7 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 		
 		monitor.subTask(Messages.bind(Messages.progress_ContextAxioms));
 		
-		if (formulaElements.size() == 0)
+		if (formulaElements.length == 0)
 			return;
 		
 		checkAndType(
@@ -84,14 +81,14 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 		
 		int index = 0;
 		
-		for (int i=0; i<formulaElements.size(); i++) {
-			if (formulas.get(i) == null)
+		for (int i=0; i<formulaElements.length; i++) {
+			if (formulas[i] == null)
 				continue;
 			ISCAxiom scAxiom = target.getSCAxiom(AXIOM_NAME_PREFIX + index++);
 			scAxiom.create(null, monitor);
-			scAxiom.setLabel(formulaElements.get(i).getLabel(), monitor);
-			scAxiom.setPredicate(formulas.get(i), null);
-			scAxiom.setSource(formulaElements.get(i), monitor);
+			scAxiom.setLabel(formulaElements[i].getLabel(), monitor);
+			scAxiom.setPredicate(formulas[i], null);
+			scAxiom.setSource(formulaElements[i], monitor);
 		}
 	}
 
@@ -115,10 +112,9 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 	}
 
 	@Override
-	protected List<IAxiom> getFormulaElements(IRodinElement element) throws CoreException {
+	protected IAxiom[] getFormulaElements(IRodinElement element) throws CoreException {
 		IContextFile contextFile = (IContextFile) element;
-		IAxiom[] axioms = contextFile.getAxioms();
-		return Arrays.asList(axioms);
+		return contextFile.getAxioms();
 	}
 
 }

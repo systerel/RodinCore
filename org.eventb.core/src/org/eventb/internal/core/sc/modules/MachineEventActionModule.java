@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,7 +74,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 			IProgressMonitor monitor)
 			throws CoreException {
 
-		if (formulaElements.size() > 0)
+		if (formulaElements.length > 0)
 			checkAndType(
 					target, 
 					filterModules,
@@ -100,15 +99,15 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	}
 
 	private void issueLHSProblemMarkers(boolean[] error, IProgressMonitor monitor) throws RodinDBException, CoreException {
-		for (int i=0; i<formulaElements.size(); i++) {
-			if (formulas.get(i) == null)
+		for (int i=0; i<formulaElements.length; i++) {
+			if (formulas[i] == null)
 				continue;
 			IActionSymbolInfo actionSymbolInfo = 
-				(IActionSymbolInfo) labelSymbolTable.getSymbolInfo(formulaElements.get(i).getLabel());
+				(IActionSymbolInfo) labelSymbolTable.getSymbolInfo(formulaElements[i].getLabel());
 			if (error[i]) {
-				formulas.set(i, null);
+				formulas[i] = null;
 				createProblemMarker(
-						formulaElements.get(i), 
+						formulaElements[i], 
 						getFormulaAttributeType(), 
 						GraphProblem.ActionDisjointLHSError);
 				actionSymbolInfo.setError();
@@ -118,11 +117,11 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	}
 
 	private boolean[] getAssignedByActionMap(HashMap<String, Integer> assignedByAction) {
-		boolean[] error = new boolean[formulaElements.size()];
-		for (int i=0; i< formulaElements.size(); i++) {
-			if (formulas.get(i) == null)
+		boolean[] error = new boolean[formulaElements.length];
+		for (int i=0; i< formulaElements.length; i++) {
+			if (formulas[i] == null)
 				continue;
-			for (FreeIdentifier identifier : formulas.get(i).getAssignedIdentifiers()) {
+			for (FreeIdentifier identifier : formulas[i].getAssignedIdentifiers()) {
 				String name = identifier.getName();
 				Integer conflict = assignedByAction.get(name);
 				if (conflict == null)
@@ -148,15 +147,15 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		
 		int index = 0;
 		
-		for (int i=0; i<formulaElements.size(); i++) {
-			if (formulas.get(i) == null)
+		for (int i=0; i<formulaElements.length; i++) {
+			if (formulas[i] == null)
 				continue;
 			saveAction(
 					target, 
 					ACTION_NAME_PREFIX + index++, 
-					formulaElements.get(i).getLabel(), 
-					formulas.get(i), 
-					formulaElements.get(i), 
+					formulaElements[i].getLabel(), 
+					formulas[i], 
+					formulaElements[i], 
 					monitor);
 		}
 	}
@@ -267,10 +266,9 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	}
 
 	@Override
-	protected List<IAction> getFormulaElements(IRodinElement element) throws CoreException {
+	protected IAction[] getFormulaElements(IRodinElement element) throws CoreException {
 		IEvent event = (IEvent) element;
-		IAction[] actions = event.getActions();
-		return Arrays.asList(actions);
+		return event.getActions();
 	}
 
 }

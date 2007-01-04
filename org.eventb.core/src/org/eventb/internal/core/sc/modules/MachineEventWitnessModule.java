@@ -7,9 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -81,11 +79,11 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		
 		ILabelSymbolTable savedLabelSymbolTable = labelSymbolTable;
 		
-		labelSymbolTable = new EventLabelSymbolTable(formulaElements.size() * 4 / 3 + 1);
+		labelSymbolTable = new EventLabelSymbolTable(formulaElements.length * 4 / 3 + 1);
 		
 		repository.setState(labelSymbolTable);
 		
-		if (formulaElements.size() > 0)
+		if (formulaElements.length > 0)
 			checkAndType(
 					target, 
 					filterModules,
@@ -116,22 +114,22 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		
 		int index = 0;
 		
-		for (int i=0; i<formulaElements.size(); i++) {
-			if (formulas.get(i) == null)
+		for (int i=0; i<formulaElements.length; i++) {
+			if (formulas[i] == null)
 				continue;
-			String label = formulaElements.get(i).getLabel();
+			String label = formulaElements[i].getLabel();
 			if (witnessNames.contains(label)) {
 				witnessNames.remove(label);
 				createSCWitness(
 						target, 
 						WITNESS_NAME_PREFIX + index++,
-						formulaElements.get(i).getLabel(), 
-						formulaElements.get(i),
-						formulas.get(i), 
+						formulaElements[i].getLabel(), 
+						formulaElements[i],
+						formulas[i], 
 						monitor);
 			} else {
 				createProblemMarker(
-						formulaElements.get(i), 
+						formulaElements[i], 
 						EventBAttributes.LABEL_ATTRIBUTE, 
 						GraphProblem.WitnessLabelNeedLessError);
 			}
@@ -289,10 +287,9 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	}
 
 	@Override
-	protected List<IWitness> getFormulaElements(IRodinElement element) throws CoreException {
+	protected IWitness[] getFormulaElements(IRodinElement element) throws CoreException {
 		IEvent event = (IEvent) element;
-		IWitness[] witnesses = event.getWitnesses();
-		return Arrays.asList(witnesses);
+		return event.getWitnesses();
 	}
 
 }

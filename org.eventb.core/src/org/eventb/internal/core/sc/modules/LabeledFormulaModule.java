@@ -7,9 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -43,13 +41,13 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class LabeledFormulaModule<F extends Formula, I extends IInternalElement> 
+public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInternalElement> 
 extends LabeledElementModule {
 
 	protected IIdentifierSymbolTable identifierSymbolTable;
 	
-	protected List<I> formulaElements;
-	protected List<F> formulas;
+	protected I[] formulaElements;
+	protected F[] formulas;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.Module#initModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -65,14 +63,12 @@ extends LabeledElementModule {
 		
 		formulaElements = getFormulaElements(element);
 
-		final int size = formulaElements.size();
-		formulas = new ArrayList<F>(size);
-		for (int i=0; i<size; i++) {
-			formulas.add(null);
-		}
+		formulas = allocateFormulas(formulaElements.length);
 	}
 
-	protected abstract List<I> getFormulaElements(IRodinElement element) throws CoreException;
+	protected abstract F[] allocateFormulas(int size);
+	
+	protected abstract I[] getFormulaElements(IRodinElement element) throws CoreException;
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.Module#endModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -287,9 +283,9 @@ extends LabeledElementModule {
 		
 		initFilterModules(modules, repository, null);
 		
-		for (int i=0; i<formulaElements.size(); i++) {
+		for (int i=0; i<formulaElements.length; i++) {
 			
-			I formulaElement = formulaElements.get(i);
+			I formulaElement = formulaElements[i];
 			
 			ILabelSymbolInfo symbolInfo = 
 				fetchLabel(
@@ -302,7 +298,7 @@ extends LabeledElementModule {
 					freeIdentifiers,
 					factory);
 			
-			formulas.set(i, formula);
+			formulas[i] = formula;
 			
 			boolean ok = formula != null;
 			
@@ -334,7 +330,7 @@ extends LabeledElementModule {
 			if (!ok) {
 				if (symbolInfo != null)
 					symbolInfo.setError();
-				formulas.set(i, null);
+				formulas[i] = null;
 			}
 			
 			setImmutable(symbolInfo);

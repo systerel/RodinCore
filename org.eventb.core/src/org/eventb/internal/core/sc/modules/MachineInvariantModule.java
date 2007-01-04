@@ -7,9 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -75,7 +72,7 @@ public class MachineInvariantModule extends PredicateWithTypingModule<IInvariant
 			copySCPredicates(scInvariants, target, monitor);
 		}
 		
-		if (formulaElements.size() == 0)
+		if (formulaElements.length == 0)
 			return;
 		
 		checkAndType(
@@ -96,14 +93,14 @@ public class MachineInvariantModule extends PredicateWithTypingModule<IInvariant
 		
 		int index = offset;
 		
-		for (int i=0; i<formulaElements.size(); i++) {
-			if (formulas.get(i) == null)
+		for (int i=0; i<formulaElements.length; i++) {
+			if (formulas[i] == null)
 				continue;
 			ISCInvariant scInvariant = target.getSCInvariant(INVARIANT_NAME_PREFIX + index++);
 			scInvariant.create(null, monitor);
-			scInvariant.setLabel(formulaElements.get(i).getLabel(), monitor);
-			scInvariant.setPredicate(formulas.get(i), null);
-			scInvariant.setSource(formulaElements.get(i), monitor);
+			scInvariant.setLabel(formulaElements[i].getLabel(), monitor);
+			scInvariant.setPredicate(formulas[i], null);
+			scInvariant.setSource(formulaElements[i], monitor);
 		}
 	}
 
@@ -128,10 +125,9 @@ public class MachineInvariantModule extends PredicateWithTypingModule<IInvariant
 	}
 
 	@Override
-	protected List<IInvariant> getFormulaElements(IRodinElement element) throws CoreException {
+	protected IInvariant[] getFormulaElements(IRodinElement element) throws CoreException {
 		IMachineFile machineFile = (IMachineFile) element;
-		IInvariant[] invariants = machineFile.getInvariants();
-		return Arrays.asList(invariants);
+		return machineFile.getInvariants();
 	}
 
 }

@@ -14,7 +14,6 @@ import org.eventb.core.tool.IToolProcessorModule;
  * @author Stefan Hallerstede
  *
  */
-// TODO @SuppressWarnings("unchecked")
 public abstract class ToolModuleManager <FM extends IToolFilterModule, PM extends IToolProcessorModule> {
 
 	/**

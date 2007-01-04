@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -67,7 +66,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		if (formulaElements.size() == 0)
+		if (formulaElements.length == 0)
 			return;
 
 		if (checkInitialisation(element, monitor))
@@ -86,7 +85,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 			IRodinElement event, 
 			IProgressMonitor monitor) throws RodinDBException {
 		if (((ILabeledElement) event).getLabel().equals(IEvent.INITIALISATION))
-			if (formulaElements.size() > 0) {
+			if (formulaElements.length > 0) {
 				for (IGuard guard : formulaElements)
 					createProblemMarker(
 							guard, 
@@ -106,14 +105,14 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 		
 		int index = 0;
 		
-		for (int i=0; i<formulaElements.size(); i++) {
-			if (formulas.get(i) == null)
+		for (int i=0; i<formulaElements.length; i++) {
+			if (formulas[i] == null)
 				continue;
 			ISCGuard scGuard = target.getSCGuard(GUARD_NAME_PREFIX + index++);
 			scGuard.create(null, monitor);
-			scGuard.setLabel(formulaElements.get(i).getLabel(), monitor);
-			scGuard.setPredicate(formulas.get(i), null);
-			scGuard.setSource(formulaElements.get(i), monitor);
+			scGuard.setLabel(formulaElements[i].getLabel(), monitor);
+			scGuard.setPredicate(formulas[i], null);
+			scGuard.setSource(formulaElements[i], monitor);
 		}
 	}
 
@@ -256,10 +255,9 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 	}
 
 	@Override
-	protected List<IGuard> getFormulaElements(IRodinElement element) throws CoreException {
+	protected IGuard[] getFormulaElements(IRodinElement element) throws CoreException {
 		IEvent event = (IEvent) element;
-		IGuard[] guards = event.getGuards();
-		return Arrays.asList(guards);
+		return event.getGuards();
 	}
 
 }
