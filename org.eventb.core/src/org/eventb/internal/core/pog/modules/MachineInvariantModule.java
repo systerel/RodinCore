@@ -8,18 +8,19 @@
 package org.eventb.internal.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.ISCInvariant;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineInvariantTable;
-import org.eventb.core.pog.state.IState;
 import org.eventb.core.pog.state.IPredicateTable;
+import org.eventb.core.pog.state.IState;
 import org.eventb.core.tool.state.IToolStateRepository;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachineInvariantModule extends PredicateModule {
+public class MachineInvariantModule extends PredicateModule<ISCInvariant> {
 
 	@Override
 	protected IHypothesisManager getHypothesisManager(IToolStateRepository<IState> repository) 
@@ -28,7 +29,7 @@ public class MachineInvariantModule extends PredicateModule {
 	}
 
 	@Override
-	protected IPredicateTable getPredicateTable(IToolStateRepository<IState> repository) 
+	protected IPredicateTable<ISCInvariant> getPredicateTable(IToolStateRepository<IState> repository) 
 	throws CoreException {
 		return (IMachineInvariantTable) repository.getState(IMachineInvariantTable.STATE_TYPE);
 	}

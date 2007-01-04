@@ -8,8 +8,8 @@
 package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -77,6 +77,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 					eventTypeEnvironment, 
 					machineVariableTable, 
 					factory);
+		concreteEventActionTable.makeImmutable();
 		repository.setState(concreteEventActionTable);
 		
 		IAbstractEventActionTable abstractEventActionTable = 
@@ -105,6 +106,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 					machineVariableTable,
 					concreteEventActionTable,
 					factory);
+		abstractEventActionTable.makeImmutable();
 		repository.setState(abstractEventActionTable);
 		return abstractEventActionTable;
 	}
@@ -171,7 +173,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 		return concreteEventGuardTable;
 	}
 
-	private void fetchPostValueVariables(Set<FreeIdentifier> identifiers) throws CoreException {
+	private void fetchPostValueVariables(Collection<FreeIdentifier> identifiers) throws CoreException {
 		for (FreeIdentifier identifier : identifiers) {
 			FreeIdentifier primedIdentifier = identifier.withPrime(factory);
 			if (eventTypeEnvironment.contains(primedIdentifier.getName()))
@@ -195,6 +197,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 			IProgressMonitor monitor) throws CoreException, RodinDBException {
 		IWitnessTable witnessTable = 
 			new WitnessTable(concreteEvent.getSCWitnesses(), eventTypeEnvironment, factory, monitor);
+		witnessTable.makeImmutable();
 		repository.setState(witnessTable);
 	}
 

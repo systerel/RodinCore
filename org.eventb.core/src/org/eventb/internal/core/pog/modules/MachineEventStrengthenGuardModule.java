@@ -17,8 +17,6 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
-import org.eventb.core.ISCPredicateElement;
-import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
@@ -157,14 +155,14 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 			IAbstractEventGuardTable abstractEventGuardTable,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		ISCPredicateElement[] absGuardElements = abstractEventGuardTable.getElements();
-		Predicate[] absGuards = abstractEventGuardTable.getPredicates();
+		ISCGuard[] absGuardElements = abstractEventGuardTable.getElements();
+		Predicate[] absGuardPredicates = abstractEventGuardTable.getPredicates();
 		
 		ArrayList<POGPredicate> hyp = makeActionHypothesis();
 		hyp.addAll(makeWitnessHypothesis());
 		for (int i=0; i<absGuardElements.length; i++) {
-			String guardLabel = ((ISCGuard) absGuardElements[i]).getLabel();
-			Predicate absGuard = absGuards[i];
+			String guardLabel = absGuardElements[i].getLabel();
+			Predicate absGuard = absGuardPredicates[i];
 			
 			if (goalIsTrivial(absGuard) 
 					|| abstractEventGuardTable.getIndexOfCorrespondingConcrete(i) != -1)
@@ -187,7 +185,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 					new POGTraceablePredicate(absGuard, absGuardElements[i]),
 					sources(
 							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
-							new POGSource(IPOSource.ABSTRACT_ROLE, (ITraceableElement) absGuardElements[i]),
+							new POGSource(IPOSource.ABSTRACT_ROLE, absGuardElements[i]),
 							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
 					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);

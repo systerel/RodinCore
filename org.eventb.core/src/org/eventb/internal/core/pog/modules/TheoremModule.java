@@ -7,12 +7,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import org.eventb.core.ISCTheorem;
+
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class TheoremModule extends PredicateToProveModule {
+public abstract class TheoremModule extends PredicateToProveModule<ISCTheorem> {
 
 	@Override
 	protected String getProofObligationDescription() {

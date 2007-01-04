@@ -8,6 +8,7 @@
 package org.eventb.core.pog.state;
 
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ISCAxiom;
 
 /**
  * Common protocol for accessing all axioms of a context.
@@ -19,7 +20,7 @@ import org.eventb.core.EventBPlugin;
  * @author Stefan Hallerstede
  *
  */
-public interface IContextAxiomTable extends IPredicateTable {
+public interface IContextAxiomTable extends IPredicateTable<ISCAxiom> {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".contextAxiomTable";
 

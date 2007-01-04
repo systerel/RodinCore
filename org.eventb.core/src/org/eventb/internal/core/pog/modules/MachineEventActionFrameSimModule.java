@@ -9,7 +9,6 @@ package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -71,12 +70,9 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 		List<ISCAction> detActions = 
 			concreteEventActionTable.getDetActions();
 		
-		Set<FreeIdentifier> abstractAssignedVariables = 
-			abstractEventActionTable.getAssignedVariables();
-		
 		for (FreeIdentifier variable : machineVariableTable.getPreservedVariables()) {
 			
-			if(abstractAssignedVariables.contains(variable))
+			if(abstractEventActionTable.containsAssignedVariable(variable))
 				continue;
 			
 			hyp.clear();

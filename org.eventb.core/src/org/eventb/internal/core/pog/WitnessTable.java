@@ -9,6 +9,7 @@ package org.eventb.internal.core.pog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,16 +36,16 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 	private final ISCWitness[] witnesses;
 	private final BecomesEqualTo primeSubstitution;
 	
-	private final ArrayList<ISCWitness> machineDetWitnesses;
-	private final ArrayList<BecomesEqualTo> machineDetermist;
-	private final ArrayList<BecomesEqualTo> machinePrimedDetermist;
-	private final ArrayList<ISCWitness> eventDetWitnesses;
-	private final ArrayList<BecomesEqualTo> eventDetermist;
+	private List<ISCWitness> machineDetWitnesses;
+	private List<BecomesEqualTo> machineDetermist;
+	private List<BecomesEqualTo> machinePrimedDetermist;
+	private List<ISCWitness> eventDetWitnesses;
+	private List<BecomesEqualTo> eventDetermist;
 	
-	private final ArrayList<ISCWitness> nondetWitnesses;
-	private final ArrayList<Predicate> nondetPredicates;
+	private List<ISCWitness> nondetWitnesses;
+	private List<Predicate> nondetPredicates;
 	
-	private final List<FreeIdentifier> witnessedVars;
+	private List<FreeIdentifier> witnessedVars;
 
 	public WitnessTable(
 			ISCWitness[] witnesses, 
@@ -87,16 +88,22 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 			primeSubstitution = factory.makeBecomesEqualTo(left, right, null);
 			primeSubstitution.typeCheck(typeEnvironment);
 		}
-		
-		machineDetWitnesses.trimToSize();
-		machineDetermist.trimToSize();
-		machinePrimedDetermist.trimToSize();
-		eventDetWitnesses.trimToSize();
-		eventDetermist.trimToSize();
-		nondetWitnesses.trimToSize();
-		nondetPredicates.trimToSize();
 	}
 	
+	@Override
+	public void makeImmutable() {
+		super.makeImmutable();
+		
+		machineDetWitnesses = Collections.unmodifiableList(machineDetWitnesses);
+		machineDetermist = Collections.unmodifiableList(machineDetermist);
+		machinePrimedDetermist = Collections.unmodifiableList(machinePrimedDetermist);
+		eventDetWitnesses = Collections.unmodifiableList(eventDetWitnesses);
+		eventDetermist = Collections.unmodifiableList(eventDetermist);
+		nondetWitnesses = Collections.unmodifiableList(nondetWitnesses);
+		nondetPredicates = Collections.unmodifiableList(nondetPredicates);
+		witnessedVars = Collections.unmodifiableList(witnessedVars);
+	}
+
 	private boolean categorize(
 			FreeIdentifier identifier, 
 			FreeIdentifier unprimed, 
@@ -148,41 +155,39 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 	}
 
 	public ISCWitness[] getWitnesses() {
-		ISCWitness[] w = new ISCWitness[witnesses.length];
-		System.arraycopy(witnesses, 0, w, 0, witnesses.length);
-		return w;
+		return witnesses.clone();
 	}
 
-	public ArrayList<ISCWitness> getMachineDetWitnesses() {
-		return new ArrayList<ISCWitness>(machineDetWitnesses);
+	public List<ISCWitness> getMachineDetWitnesses() {
+		return machineDetWitnesses;
 	}
 
-	public ArrayList<BecomesEqualTo> getMachineDetAssignments() {
-		return new ArrayList<BecomesEqualTo>(machineDetermist);
+	public List<BecomesEqualTo> getMachineDetAssignments() {
+		return machineDetermist;
 	}
 
-	public ArrayList<BecomesEqualTo> getMachinePrimedDetAssignments() {
-		return new ArrayList<BecomesEqualTo>(machinePrimedDetermist);
+	public List<BecomesEqualTo> getMachinePrimedDetAssignments() {
+		return machinePrimedDetermist;
 	}
 
-	public ArrayList<ISCWitness> getEventDetWitnesses() {
-		return new ArrayList<ISCWitness>(eventDetWitnesses);
+	public List<ISCWitness> getEventDetWitnesses() {
+		return eventDetWitnesses;
 	}
 
-	public ArrayList<BecomesEqualTo> getEventDetAssignments() {
-		return new ArrayList<BecomesEqualTo>(eventDetermist);
+	public List<BecomesEqualTo> getEventDetAssignments() {
+		return eventDetermist;
 	}
 
-	public ArrayList<Predicate> getNondetPredicates() {
-		return new ArrayList<Predicate>(nondetPredicates);
+	public List<Predicate> getNondetPredicates() {
+		return nondetPredicates;
 	}
 
 	public List<FreeIdentifier> getWitnessedVariables() {
-		return new ArrayList<FreeIdentifier>(witnessedVars);
+		return witnessedVars;
 	}
 
-	public ArrayList<ISCWitness> getNondetWitnesses() {
-		return new ArrayList<ISCWitness>(nondetWitnesses);
+	public List<ISCWitness> getNondetWitnesses() {
+		return nondetWitnesses;
 	}
 
 }

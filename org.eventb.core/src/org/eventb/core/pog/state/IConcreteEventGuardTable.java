@@ -8,6 +8,7 @@
 package org.eventb.core.pog.state;
 
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ISCGuard;
 
 /**
  * Common protocol for accessing the guards of the concrete event.
@@ -21,7 +22,7 @@ import org.eventb.core.EventBPlugin;
  * @author Stefan Hallerstede
  *
  */
-public interface IConcreteEventGuardTable extends IPredicateTable {
+public interface IConcreteEventGuardTable extends IPredicateTable<ISCGuard> {
 	
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".concreteEventGuardTable";
 

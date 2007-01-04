@@ -8,18 +8,19 @@
 package org.eventb.internal.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.ISCAxiom;
 import org.eventb.core.pog.state.IContextAxiomTable;
 import org.eventb.core.pog.state.IContextHypothesisManager;
 import org.eventb.core.pog.state.IHypothesisManager;
-import org.eventb.core.pog.state.IState;
 import org.eventb.core.pog.state.IPredicateTable;
+import org.eventb.core.pog.state.IState;
 import org.eventb.core.tool.state.IToolStateRepository;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class ContextAxiomModule extends PredicateModule {
+public class ContextAxiomModule extends PredicateModule<ISCAxiom> {
 
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.pog.modules.PredicateModule#getHypothesisManager(org.eventb.core.state.IStateRepository)
@@ -34,7 +35,7 @@ public class ContextAxiomModule extends PredicateModule {
 	 * @see org.eventb.internal.core.pog.modules.PredicateModule#getPredicateTable(org.eventb.core.state.IStateRepository)
 	 */
 	@Override
-	protected IPredicateTable getPredicateTable(
+	protected IPredicateTable<ISCAxiom> getPredicateTable(
 			IToolStateRepository<IState> repository) throws CoreException {
 		return (IContextAxiomTable) repository.getState(IContextAxiomTable.STATE_TYPE);
 	}

@@ -31,7 +31,6 @@ implements IConcreteEventGuardTable {
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
 	public String getStateType() {
-		// TODO Auto-generated method stub
 		return STATE_TYPE;
 	}
 

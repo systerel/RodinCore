@@ -19,13 +19,14 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class PredicateTable extends ToolState implements IPredicateTable {
+public abstract class PredicateTable<PE extends ISCPredicateElement> 
+extends ToolState implements IPredicateTable<PE> {
 
-	protected final ISCPredicateElement[] predicateElements;
+	protected final PE[] predicateElements;
 	protected final Predicate[] predicates;
 
 	public PredicateTable(
-			ISCPredicateElement[] elements, 
+			PE[] elements, 
 			ITypeEnvironment typeEnvironment, 
 			FormulaFactory factory) throws RodinDBException {
 		predicateElements = elements;
@@ -39,19 +40,15 @@ public abstract class PredicateTable extends ToolState implements IPredicateTabl
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IPredicateTable#getElements()
 	 */
-	public ISCPredicateElement[] getElements() {
-		ISCPredicateElement[] pe = new ISCPredicateElement[predicateElements.length];
-		System.arraycopy(predicateElements, 0, pe, 0, predicateElements.length);
-		return pe;
+	public PE[] getElements() {
+		return predicateElements.clone();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IPredicateTable#getPredicates()
 	 */
 	public Predicate[] getPredicates() {
-		Predicate[] p = new Predicate[predicates.length];
-		System.arraycopy(predicates, 0, p, 0, predicates.length);
-		return p;
+		return predicates.clone();
 	}
 
 	public int indexOfPredicate(Predicate predicate) {

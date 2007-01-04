@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
-import org.eventb.core.ISCPredicateElement;
+import org.eventb.core.ISCGuard;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -25,7 +25,7 @@ implements IAbstractEventGuardTable {
 	private final Correspondence<Predicate> correspondence;
 	
 	public AbstractEventGuardTable(
-			ISCPredicateElement[] guards, 
+			ISCGuard[] guards, 
 			ITypeEnvironment typeEnvironment, 
 			IConcreteEventGuardTable concreteTable,
 			FormulaFactory factory) throws RodinDBException {

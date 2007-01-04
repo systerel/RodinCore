@@ -7,8 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ISCAction;
 import org.eventb.core.ast.Assignment;
@@ -56,7 +56,15 @@ public interface IEventActionTable extends IState {
 	 * 
 	 * @return the set of variables constituting the frame of the actions
 	 */
-	Set<FreeIdentifier> getAssignedVariables();
+	Collection<FreeIdentifier> getAssignedVariables();
+	
+	/**
+	 * Returns whether the specified variable is in the frame of one of the actions.
+	 * 
+	 * @param variable the variable to check
+	 * @return whether the specified variable is in the frame of one of the actions
+	 */
+	boolean containsAssignedVariable(FreeIdentifier variable);
 	
 	/**
 	 * Returns the array of non-determistic actions of this event.

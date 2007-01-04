@@ -8,9 +8,10 @@
 package org.eventb.internal.core.pog;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCAction;
@@ -31,14 +32,14 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 	protected final ISCAction[] actions;
 	protected final Assignment[] assignments;
 	
-	protected final ArrayList<Assignment> nondeterm;
-	protected final ArrayList<BecomesEqualTo> determist;
-	protected final ArrayList<BecomesEqualTo> primedDetermist;
+	protected List<Assignment> nondeterm;
+	protected List<BecomesEqualTo> determist;
+	protected List<BecomesEqualTo> primedDetermist;
 
-	protected final ArrayList<ISCAction> nondetActions;
-	protected final ArrayList<ISCAction> detActions;
+	protected List<ISCAction> nondetActions;
+	protected List<ISCAction> detActions;
 	
-	protected final HashSet<FreeIdentifier> assignedVars;
+	protected Collection<FreeIdentifier> assignedVars;
 
 	public EventActionTable(
 			ISCAction[] actions, 
@@ -75,25 +76,34 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 			}
 		}
 		makePrimedDetermist(factory);
-		determist.trimToSize();
-		nondeterm.trimToSize();
-		nondetActions.trimToSize();
-		detActions.trimToSize();
-		primedDetermist.trimToSize();
 	}
 	
-	public Set<FreeIdentifier> getAssignedVariables() {
-		return new HashSet<FreeIdentifier>(assignedVars);
+	@Override
+	public void makeImmutable() {
+		super.makeImmutable();
+		
+		assignedVars = Collections.unmodifiableCollection(assignedVars);
+		determist =  Collections.unmodifiableList(determist);
+		nondeterm = Collections.unmodifiableList(nondeterm);
+		nondetActions = Collections.unmodifiableList(nondetActions);
+		detActions = Collections.unmodifiableList(detActions);
+		primedDetermist = Collections.unmodifiableList(primedDetermist);
+	}
+
+	public Collection<FreeIdentifier> getAssignedVariables() {
+		return assignedVars;
+	}
+
+	public boolean containsAssignedVariable(FreeIdentifier variable) {
+		return assignedVars.contains(variable);
 	}
 
 	public Assignment[] getAssignments() {
-		Assignment[] a = new Assignment[assignments.length];
-		System.arraycopy(assignments, 0, a, 0, assignments.length);
-		return a;
+		return assignments.clone();
 	}
 
 	public List<BecomesEqualTo> getDetAssignments() {
-		return new ArrayList<BecomesEqualTo>(determist);
+		return determist;
 	}
 
 	private void makePrimedDetermist(FormulaFactory factory) {
@@ -112,11 +122,11 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 	 * @see org.eventb.core.pog.IAssignmentTable#getPrimedDetAssignments()
 	 */
 	public List<BecomesEqualTo> getPrimedDetAssignments() {
-		return new ArrayList<BecomesEqualTo>(primedDetermist);
+		return primedDetermist;
 	}
 	
 	protected void fetchAssignedIdentifiers(
-			HashSet<FreeIdentifier> assignedIdents, 
+			Collection<FreeIdentifier> assignedIdents, 
 			Assignment assignment) {
 		FreeIdentifier[] freeIdentifiers = assignment.getAssignedIdentifiers();
 		for (FreeIdentifier identifier : freeIdentifiers)
@@ -124,24 +134,22 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 	}
 
 	public List<Assignment> getNondetAssignments() {
-		return new ArrayList<Assignment>(nondeterm);
+		return nondeterm;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IEventActionTable#getActions()
 	 */
 	public ISCAction[] getActions() {
-		ISCAction[] a = new ISCAction[actions.length];
-		System.arraycopy(actions, 0, a, 0, actions.length);
-		return a;
+		return actions.clone();
 	}
 	
 	public List<ISCAction> getNondetActions() {
-		return new ArrayList<ISCAction>(nondetActions);
+		return nondetActions;
 	}
 	
 	public List<ISCAction> getDetActions() {
-		return new ArrayList<ISCAction>(detActions);
+		return detActions;
 	}
 
 }

@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
-import org.eventb.core.ISCPredicateElement;
+import org.eventb.core.ISCInvariant;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.IMachineInvariantTable;
@@ -17,10 +17,11 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineInvariantTable extends PredicateTable implements IMachineInvariantTable {
+public class MachineInvariantTable 
+extends PredicateTable<ISCInvariant> implements IMachineInvariantTable {
 
 	public MachineInvariantTable(
-			ISCPredicateElement[] elements, 
+			ISCInvariant[] elements, 
 			ITypeEnvironment typeEnvironment, 
 			FormulaFactory factory) throws RodinDBException {
 		super(elements, typeEnvironment, factory);

@@ -8,6 +8,7 @@
 package org.eventb.internal.core.pog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -28,9 +29,15 @@ import org.eventb.core.pog.state.IMachineVariableTable;
 public class AbstractEventActionTable extends EventActionTable implements
 		IAbstractEventActionTable {
 	
-	private ArrayList<BecomesEqualTo> disappearingWitnesses;
-	private ArrayList<Assignment> simAssignments;
-	private ArrayList<ISCAction> simActions;
+	@Override
+	public void makeImmutable() {
+		super.makeImmutable();
+		disappearingWitnesses = Collections.unmodifiableList(disappearingWitnesses);
+	}
+
+	private List<BecomesEqualTo> disappearingWitnesses;
+	private Assignment[] simAssignments;
+	private ISCAction[] simActions;
 	
 	private final Correspondence<Assignment> correspondence;
 
@@ -45,8 +52,8 @@ public class AbstractEventActionTable extends EventActionTable implements
 		correspondence = new Correspondence<Assignment>(concreteTable.getAssignments(), assignments);
 		
 		disappearingWitnesses = new ArrayList<BecomesEqualTo>(abstractActions.length);
-		simAssignments = new ArrayList<Assignment>(abstractActions.length);
-		simActions = new ArrayList<ISCAction>(abstractActions.length);
+		ArrayList<Assignment> simAsn = new ArrayList<Assignment>(abstractActions.length);
+		ArrayList<ISCAction> simAct = new ArrayList<ISCAction>(abstractActions.length);
 		
 		for (int i=0; i<assignments.length; i++) {
 			Assignment assignment = assignments[i];
@@ -54,14 +61,13 @@ public class AbstractEventActionTable extends EventActionTable implements
 					&& assignment instanceof BecomesEqualTo) {
 				disappearingWitnesses.add((BecomesEqualTo) assignment);
 			} else {
-				simAssignments.add(assignment);
-				simActions.add(abstractActions[i]);
+				simAsn.add(assignment);
+				simAct.add(abstractActions[i]);
 			}
 					
 		}
-		disappearingWitnesses.trimToSize();
-		simAssignments.trimToSize();
-		simActions.trimToSize();
+		simAssignments = simAsn.toArray(new Assignment[simAsn.size()]);
+		simActions = simAct.toArray(new ISCAction[simAct.size()]);
 
 	}
 	
@@ -82,15 +88,15 @@ public class AbstractEventActionTable extends EventActionTable implements
 	}
 
 	public List<BecomesEqualTo> getDisappearingWitnesses() {
-		return new ArrayList<BecomesEqualTo>(disappearingWitnesses);
+		return disappearingWitnesses;
 	}
 
 	public Assignment[] getSimAssignments() {
-		return simAssignments.toArray(new Assignment[simAssignments.size()]);
+		return simAssignments.clone();
 	}
 
 	public ISCAction[] getSimActions() {
-		return simActions.toArray(new ISCAction[simActions.size()]);
+		return simActions.clone();
 	}
 
 	public int getIndexOfCorrespondingAbstract(int index) {

@@ -8,6 +8,7 @@
 package org.eventb.core.pog.state;
 
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ISCInvariant;
 
 /**
  * Common protocol for accessing all invariants of a machine.
@@ -19,7 +20,7 @@ import org.eventb.core.EventBPlugin;
  * @author Stefan Hallerstede
  *
  */
-public interface IMachineInvariantTable extends IPredicateTable {
+public interface IMachineInvariantTable extends IPredicateTable<ISCInvariant> {
 	
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".machineInvariantTable";
 

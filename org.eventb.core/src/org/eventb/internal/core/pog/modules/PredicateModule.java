@@ -31,9 +31,9 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public abstract class PredicateModule extends UtilityModule {
+public abstract class PredicateModule<PE extends ISCPredicateElement> extends UtilityModule {
 	
-	protected IPredicateTable predicateTable;
+	protected IPredicateTable<PE> predicateTable;
 	protected IHypothesisManager hypothesisManager;
 
 	@Override
@@ -51,7 +51,7 @@ public abstract class PredicateModule extends UtilityModule {
 	protected abstract IHypothesisManager getHypothesisManager(IToolStateRepository<IState> repository) 
 	throws CoreException;
 
-	protected abstract IPredicateTable getPredicateTable(IToolStateRepository<IState> repository) 
+	protected abstract IPredicateTable<PE> getPredicateTable(IToolStateRepository<IState> repository) 
 	throws CoreException;
 	
 	@Override
@@ -68,7 +68,7 @@ public abstract class PredicateModule extends UtilityModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		ISCPredicateElement[] elements = predicateTable.getElements();
+		PE[] elements = predicateTable.getElements();
 		
 		if(elements.length == 0)
 			return;
@@ -78,7 +78,7 @@ public abstract class PredicateModule extends UtilityModule {
 		Predicate[] predicates = predicateTable.getPredicates();
 		
 		for (int i=0; i<elements.length; i++) {
-			ISCPredicateElement predicateElement = elements[i];
+			PE predicateElement = elements[i];
 			String elementLabel = ((ILabeledElement) predicateElement).getLabel();
 			
 			Predicate predicate = predicates[i];
@@ -94,7 +94,7 @@ public abstract class PredicateModule extends UtilityModule {
 	protected void createProofObligation(
 			IPOFile target, 
 			String elementLabel, 
-			ISCPredicateElement predicateElement, 
+			PE predicateElement, 
 			Predicate predicate, 
 			IProgressMonitor monitor) throws CoreException {
 		// create proof obligation (used for theorems)
@@ -103,7 +103,7 @@ public abstract class PredicateModule extends UtilityModule {
 	protected void createWDProofObligation(
 			IPOFile target, 
 			String elementLabel, 
-			ISCPredicateElement predicateElement, 
+			PE predicateElement, 
 			Predicate predicate, 
 			int index,
 			IProgressMonitor monitor) throws CoreException {

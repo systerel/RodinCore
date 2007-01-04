@@ -29,14 +29,14 @@ import org.eventb.core.ast.Predicate;
  * @author Stefan Hallerstede
  *
  */
-public interface IPredicateTable extends IState {
+public interface IPredicateTable<PE extends ISCPredicateElement> extends IState {
 
 	/**
 	 * Returns the predicate elements contained in this predicate table.
 	 * 
 	 * @return the predicate elements contained in this predicate table
 	 */
-	ISCPredicateElement[] getElements();
+	PE[] getElements();
 	
 	/**
 	 * Returns the parsed and type-checked predicates corresponding to the

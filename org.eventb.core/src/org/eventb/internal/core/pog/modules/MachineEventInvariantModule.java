@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCInvariant;
-import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IMachineInvariantTable;
@@ -53,12 +52,12 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 	private void processInvariants(
 			IPOFile target, 
 			IProgressMonitor monitor) throws CoreException {
-		ISCPredicateElement[] invariants = invariantTable.getElements();
+		ISCInvariant[] invariants = invariantTable.getElements();
 		Predicate[] invPredicates = invariantTable.getPredicates();
 		
 		for (int i=0; i<invariants.length; i++) {
 			
-			String invariantLabel = ((ISCInvariant) invariants[i]).getLabel();
+			String invariantLabel = invariants[i].getLabel();
 			
 			Predicate predicate = invPredicates[i];
 			
@@ -79,7 +78,7 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 				
 				createInvariantProofObligation(
 						target, 
-						(ISCInvariant) invariants[i], 
+						invariants[i], 
 						invariantLabel, 
 						predicate, 
 						freeIdents,

@@ -53,9 +53,7 @@ public class AbstractEventGuardList extends ToolState implements IAbstractEventG
 	}
 
 	public IAbstractEventGuardTable[] getAbstractEventGuardTables() {
-		IAbstractEventGuardTable[] agt = new IAbstractEventGuardTable[abstractEventGuardTables.length];
-		System.arraycopy(abstractEventGuardTables, 0, agt, 0, abstractEventGuardTables.length);
-		return agt;
+		return abstractEventGuardTables.clone();
 	}
 
 	public int getRefinementType() {
@@ -63,9 +61,7 @@ public class AbstractEventGuardList extends ToolState implements IAbstractEventG
 	}
 	
 	public ISCEvent[] getAbstractEvents() {
-		ISCEvent[] ae = new ISCEvent[abstractEvents.length];
-		System.arraycopy(abstractEvents, 0, ae, 0, abstractEvents.length);
-		return ae;
+		return abstractEvents.clone();
 	}
 
 	public ISCEvent getFirstAbstractEvent() {

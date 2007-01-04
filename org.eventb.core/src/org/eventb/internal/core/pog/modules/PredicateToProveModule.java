@@ -24,13 +24,14 @@ import org.eventb.core.pog.util.POGTraceablePredicate;
  * @author Stefan Hallerstede
  *
  */
-public abstract class PredicateToProveModule extends PredicateModule {
+public abstract class PredicateToProveModule<PE extends ISCPredicateElement> 
+extends PredicateModule<PE> {
 
 	@Override
 	protected void createProofObligation(
 			IPOFile target, 
 			String elementLabel, 
-			ISCPredicateElement predicateElement, 
+			PE predicateElement, 
 			Predicate predicate, 
 			IProgressMonitor monitor) throws CoreException {
 		if(!goalIsTrivial(predicate)) {
@@ -42,7 +43,9 @@ public abstract class PredicateToProveModule extends PredicateModule {
 					hypothesis,
 					emptyPredicates,
 					new POGTraceablePredicate(predicate, predicateElement),
-					sources(new POGSource(IPOSource.DEFAULT_ROLE, (ITraceableElement) predicateElement)),
+					sources(new POGSource(
+							IPOSource.DEFAULT_ROLE, 
+							(ITraceableElement) predicateElement)),
 					new POGHint[] {
 						new POGIntervalSelectionHint(
 								hypothesisManager.getRootHypothesis(), 

@@ -8,6 +8,7 @@
 package org.eventb.core.pog.state;
 
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ISCGuard;
 
 /**
  * Common protocol for accessing the guards of an abstract event.
@@ -19,7 +20,7 @@ import org.eventb.core.EventBPlugin;
  * @author Stefan Hallerstede
  *
  */
-public interface IAbstractEventGuardTable extends IPredicateTable, ICorrespondence {
+public interface IAbstractEventGuardTable extends IPredicateTable<ISCGuard>, ICorrespondence {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventGuardTable";
 

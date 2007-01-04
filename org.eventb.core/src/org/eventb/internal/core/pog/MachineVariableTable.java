@@ -8,8 +8,11 @@
 package org.eventb.internal.core.pog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.pog.state.IMachineVariableTable;
@@ -22,13 +25,13 @@ import org.eventb.internal.core.tool.state.ToolState;
 public class MachineVariableTable extends ToolState implements IMachineVariableTable {
 	
 	final private ArrayList<FreeIdentifier> variables;
-	final private ArrayList<FreeIdentifier> preservedVariables;
-	final private HashSet<FreeIdentifier> hashSet;
+	private List<FreeIdentifier> preservedVariables;
+	final private Set<FreeIdentifier> cache;
 
 	public MachineVariableTable(int size) {
 		variables = new ArrayList<FreeIdentifier>(size);
 		preservedVariables = new ArrayList<FreeIdentifier>(size);
-		hashSet = new HashSet<FreeIdentifier>(size * 4 / 3 + 1);
+		cache = new HashSet<FreeIdentifier>(size * 4 / 3 + 1);
 	}
 	
 	/* (non-Javadoc)
@@ -39,28 +42,28 @@ public class MachineVariableTable extends ToolState implements IMachineVariableT
 	}
 
 	public boolean contains(FreeIdentifier variable) {
-		return hashSet.contains(variable);
+		return cache.contains(variable);
 	}
 
 	public void add(FreeIdentifier variable, boolean preserved) {
 		variables.add(variable);
 		if (preserved)
 			preservedVariables.add(variable);
-		hashSet.add(variable);
+		cache.add(variable);
 	}
 	
 	public Iterator<FreeIdentifier> iterator() {
 		return variables.iterator();
 	}
 	
-	public FreeIdentifier[] getPreservedVariables() {
-		return preservedVariables.toArray(new FreeIdentifier[preservedVariables.size()]);
+	public List<FreeIdentifier> getPreservedVariables() {
+		return preservedVariables;
 	}
 
 	@Override
 	public void makeImmutable() {
 		variables.trimToSize();
-		preservedVariables.trimToSize();
+		preservedVariables = Collections.unmodifiableList(preservedVariables);
 	}
 
 }

@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCPredicateElement;
+import org.eventb.core.ISCGuard;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
@@ -29,7 +29,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventGuardModule extends PredicateModule {
+public class MachineEventGuardModule extends PredicateModule<ISCGuard> {
 
 	public static final String MACHINE_EVENT_GUARD_MODULE = 
 		EventBPlugin.PLUGIN_ID + ".machineEventGuardModule";
@@ -71,7 +71,7 @@ public class MachineEventGuardModule extends PredicateModule {
 	}
 
 	@Override
-	protected IPredicateTable getPredicateTable(IToolStateRepository<IState> repository) throws CoreException {
+	protected IPredicateTable<ISCGuard> getPredicateTable(IToolStateRepository<IState> repository) throws CoreException {
 		return (IConcreteEventGuardTable) repository.getState(IConcreteEventGuardTable.STATE_TYPE);
 	}
 
@@ -79,7 +79,7 @@ public class MachineEventGuardModule extends PredicateModule {
 	protected void createWDProofObligation(
 			IPOFile target, 
 			String elementLabel, 
-			ISCPredicateElement predicateElement, 
+			ISCGuard predicateElement, 
 			Predicate predicate, 
 			int index,
 			IProgressMonitor monitor) throws CoreException {

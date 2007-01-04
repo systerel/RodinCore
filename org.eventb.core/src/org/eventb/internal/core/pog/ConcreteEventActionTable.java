@@ -7,8 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCAction;
@@ -37,7 +37,7 @@ public class ConcreteEventActionTable extends EventActionTable implements
 			FormulaFactory factory) throws CoreException {
 		super(actions, typeEnvironment, factory);
 		
-		Set<FreeIdentifier> assignedVariables = getAssignedVariables();
+		Collection<FreeIdentifier> assignedVariables = getAssignedVariables();
 		
 		LinkedList<FreeIdentifier> xiLeft = new LinkedList<FreeIdentifier>();
 		LinkedList<Expression> xiRight = new LinkedList<Expression>();

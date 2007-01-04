@@ -213,9 +213,7 @@ public abstract class HypothesisManager extends ToolState implements IHypothesis
 	 * @see org.eventb.core.pog.IHypothesisManager#getManagedPredicates()
 	 */
 	public ISCPredicateElement[] getManagedPredicates() {
-		ISCPredicateElement[] pe = new ISCPredicateElement[predicateTable.length];
-		System.arraycopy(predicateTable, 0, pe, 0, predicateTable.length);
-		return pe;
+		return predicateTable.clone();
 	}
 
 

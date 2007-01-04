@@ -8,11 +8,12 @@
 package org.eventb.internal.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineTheoremTable;
-import org.eventb.core.pog.state.IState;
 import org.eventb.core.pog.state.IPredicateTable;
+import org.eventb.core.pog.state.IState;
 import org.eventb.core.tool.state.IToolStateRepository;
 
 /**
@@ -28,7 +29,7 @@ public class MachineTheoremModule extends TheoremModule {
 	}
 
 	@Override
-	protected IPredicateTable getPredicateTable(IToolStateRepository<IState> repository) 
+	protected IPredicateTable<ISCTheorem> getPredicateTable(IToolStateRepository<IState> repository) 
 	throws CoreException {
 		return (IMachineTheoremTable) repository.getState(IMachineTheoremTable.STATE_TYPE);
 	}

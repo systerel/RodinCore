@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
-import org.eventb.core.ISCPredicateElement;
+import org.eventb.core.ISCGuard;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.RodinDBException;
@@ -16,10 +16,10 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class EventGuardTable extends PredicateTable {
+public abstract class EventGuardTable extends PredicateTable<ISCGuard> {
 
 	public EventGuardTable(
-			ISCPredicateElement[] guards, 
+			ISCGuard[] guards, 
 			ITypeEnvironment typeEnvironment, 
 			FormulaFactory factory) throws RodinDBException {
 		super(guards, typeEnvironment, factory);
