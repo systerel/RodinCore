@@ -51,7 +51,7 @@
     &lt;samp&gt;org.eventb.eventBKeyboard.views.IEventBKeyboardTranslator&lt;/samp&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eventb.eventBKeyboard.IEventBKeyboardTranslator"/>
                </appInfo>
             </annotation>
          </attribute>

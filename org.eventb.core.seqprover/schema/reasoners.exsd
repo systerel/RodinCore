@@ -68,7 +68,7 @@
                   the fully-qualified name of an implementation of &lt;code&gt;org.eventb.core.seqprover.IReasoner&lt;/code&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eventb.core.seqprover.IReasoner"/>
                </appInfo>
             </annotation>
          </attribute>
