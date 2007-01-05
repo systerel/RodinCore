@@ -171,6 +171,8 @@ public class Refines implements IObjectActionDelegate {
 			throws RodinDBException {
 
 		final T[] elements = original.getChildrenOfType(type);
+		if (elements.length == 0)
+			return;
 		final IRodinFile[] containers = new IRodinFile[] {destination};
 		final IRodinDB rodinDB = destination.getRodinDB();
 		rodinDB.copy(elements, containers, null, null, false, monitor);
