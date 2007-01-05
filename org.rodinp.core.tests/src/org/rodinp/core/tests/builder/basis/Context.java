@@ -12,7 +12,7 @@ public class Context extends Component implements IContext {
 	}
 
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<IContext> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

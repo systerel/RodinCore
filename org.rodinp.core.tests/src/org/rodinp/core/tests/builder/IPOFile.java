@@ -17,7 +17,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface IPOFile extends IRodinFile {
 
-	public static final IFileElementType ELEMENT_TYPE = 
+	public static final IFileElementType<IPOFile> ELEMENT_TYPE = 
 		RodinCore.getFileElementType("org.rodinp.core.tests.poFile");
 	
 	ISCContext getCheckedContext();

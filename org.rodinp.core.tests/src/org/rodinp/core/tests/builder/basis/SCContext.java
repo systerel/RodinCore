@@ -12,7 +12,7 @@ public class SCContext extends Component implements ISCContext {
 	}
 
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<ISCContext> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

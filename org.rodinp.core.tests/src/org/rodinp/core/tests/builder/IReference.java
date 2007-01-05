@@ -17,7 +17,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface IReference extends IInternalElement {
 	
-	public static final IInternalElementType ELEMENT_TYPE = 
+	public static final IInternalElementType<IReference> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType("org.rodinp.core.tests.reference");
 
 }

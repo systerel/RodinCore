@@ -6,7 +6,7 @@ import org.rodinp.core.RodinCore;
 
 public interface ISCContext extends ISCProvable {
 
-	public static final IFileElementType ELEMENT_TYPE = 
+	public static final IFileElementType<ISCContext> ELEMENT_TYPE = 
 		RodinCore.getFileElementType("org.rodinp.core.tests.scContext");
 	
 	IContext getUncheckedVersion();

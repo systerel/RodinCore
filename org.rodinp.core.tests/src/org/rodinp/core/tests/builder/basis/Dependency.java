@@ -11,7 +11,7 @@ public class Dependency extends InternalElement implements IDependency {
 		super(name, parent);
 	}
 
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IDependency> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

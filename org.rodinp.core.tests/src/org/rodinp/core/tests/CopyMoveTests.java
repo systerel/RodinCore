@@ -157,8 +157,9 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 			return ((IRodinProject) container).getRodinFile(name);
 		} else if (container instanceof IInternalParent) {
 			assertTrue("illegal child type", original instanceof IInternalElement);
-			return ((IInternalParent) container).getInternalElement(
-					(IInternalElementType) original.getElementType(), name);
+			final IInternalElementType<? extends IInternalElement> type =
+				((IInternalElement) original).getElementType();
+			return ((IInternalParent) container).getInternalElement(type, name);
 		} else {
 			assertTrue("illegal container type", false);
 			return null;

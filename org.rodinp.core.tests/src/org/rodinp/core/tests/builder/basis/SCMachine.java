@@ -27,7 +27,7 @@ public class SCMachine extends Component implements ISCMachine {
 	 * @see org.rodinp.core.basis.RodinElement#getElementType()
 	 */
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<ISCMachine> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

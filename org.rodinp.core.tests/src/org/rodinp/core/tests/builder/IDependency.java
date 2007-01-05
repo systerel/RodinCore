@@ -6,7 +6,7 @@ import org.rodinp.core.RodinCore;
 
 public interface IDependency extends IInternalElement {
 
-	public static final IInternalElementType ELEMENT_TYPE = 
+	public static final IInternalElementType<IDependency> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType("org.rodinp.core.tests.dependency");
 
 }

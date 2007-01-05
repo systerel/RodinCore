@@ -8,7 +8,7 @@ import org.rodinp.core.basis.RodinFile;
 
 public class RodinTestFile extends RodinFile {
 
-	public static final IFileElementType ELEMENT_TYPE =
+	public static final IFileElementType<RodinTestFile> ELEMENT_TYPE =
 		RodinCore.getFileElementType("org.rodinp.core.tests.test");
 
 	public RodinTestFile(IFile file, IRodinElement parent) {
@@ -16,7 +16,7 @@ public class RodinTestFile extends RodinFile {
 	}
 
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<RodinTestFile> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

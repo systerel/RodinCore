@@ -18,7 +18,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IMachine extends IRodinFile {
 	
-	public static final IFileElementType ELEMENT_TYPE =
+	public static final IFileElementType<IMachine> ELEMENT_TYPE =
 		RodinCore.getFileElementType("org.rodinp.core.tests.machine");
 	
 	ISCMachine getCheckedVersion();

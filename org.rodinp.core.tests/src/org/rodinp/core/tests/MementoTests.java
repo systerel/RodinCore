@@ -126,13 +126,13 @@ public class MementoTests extends ModifyingResourceTests {
 	 * restored using its memento.
 	 */
 	public void testTopMemento() {
-		final IInternalElementType type = NamedElement.ELEMENT_TYPE;
+		final IInternalElementType<NamedElement> type = NamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
-		NamedElement ne = (NamedElement) rf.getInternalElement(type, "foo");
+		NamedElement ne = rf.getInternalElement(type, "foo");
 		assertMemento("/P/X.test|" + type.getId() + "#foo", ne);
 		
 		// Element with empty name
-		ne = (NamedElement) rf.getInternalElement(type, "");
+		ne = rf.getInternalElement(type, "");
 		assertMemento("/P/X.test|" + type.getId() + "#", ne);
 	}
 
@@ -141,7 +141,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * restored using its memento.
 	 */
 	public void testNonTopMemento() {
-		final IInternalElementType nType = NamedElement.ELEMENT_TYPE;
+		final IInternalElementType<NamedElement> nType = NamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
 
 		IInternalElement top = rf.getInternalElement(nType, "foo");

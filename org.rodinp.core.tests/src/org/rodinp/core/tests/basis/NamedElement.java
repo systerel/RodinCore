@@ -14,14 +14,14 @@ import org.rodinp.core.basis.InternalElement;
 
 public class NamedElement extends InternalElement {
 	
-	public static final IInternalElementType ELEMENT_TYPE = 
+	public static final IInternalElementType<NamedElement> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType("org.rodinp.core.tests.namedElement");
 
 	public NamedElement(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 
-	public IInternalElementType getElementType() {
+	public IInternalElementType<NamedElement> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

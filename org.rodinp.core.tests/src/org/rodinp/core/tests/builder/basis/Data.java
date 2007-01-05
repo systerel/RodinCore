@@ -12,7 +12,7 @@ public class Data extends InternalElement implements IData {
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IData> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

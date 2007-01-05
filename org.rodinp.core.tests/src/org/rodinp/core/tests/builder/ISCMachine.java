@@ -17,7 +17,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface ISCMachine extends ISCProvable {
 
-	public static final IFileElementType ELEMENT_TYPE = 
+	public static final IFileElementType<ISCMachine> ELEMENT_TYPE = 
 		RodinCore.getFileElementType("org.rodinp.core.tests.scMachine");
 	
 	IMachine getUncheckedVersion();

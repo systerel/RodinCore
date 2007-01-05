@@ -26,7 +26,7 @@ public class Reference extends InternalElement implements IReference {
 	 * @see org.rodinp.core.basis.RodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IReference> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

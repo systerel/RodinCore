@@ -7,8 +7,8 @@ import org.rodinp.core.RodinDBException;
 
 public interface IContext extends IRodinFile {
 
-	public static final IFileElementType ELEMENT_TYPE = 
-		RodinCore.getFileElementType("org.rodinp.core.tests.context");
+	public static final IFileElementType<IContext> ELEMENT_TYPE = RodinCore
+			.getFileElementType("org.rodinp.core.tests.context");
 	
 	ISCContext getCheckedVersion();
 

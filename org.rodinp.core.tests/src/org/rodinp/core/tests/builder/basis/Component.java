@@ -36,8 +36,7 @@ public abstract class Component extends RodinFile {
 	}
 
 	public IContext[] getUsedContexts() throws RodinDBException {
-		IRodinElement[] deps;
-		deps = this.getChildrenOfType(IDependency.ELEMENT_TYPE);
+		IDependency[] deps = this.getChildrenOfType(IDependency.ELEMENT_TYPE);
 		IContext[] result = new IContext[deps.length];
 		final IRodinProject rodinProject = getRodinProject();
 		for (int i = 0; i < deps.length; i++) {

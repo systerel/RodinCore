@@ -14,7 +14,7 @@ public class POFile extends Component implements IPOFile {
 	}
 
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<IPOFile> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

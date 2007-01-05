@@ -30,7 +30,7 @@ public class Machine extends Component implements IMachine {
 	 * @see org.rodinp.core.basis.RodinElement#getElementType()
 	 */
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<IMachine> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
@@ -39,8 +39,7 @@ public class Machine extends Component implements IMachine {
 	}
 
 	public ISCMachine getReferencedMachine() throws RodinDBException {
-		IRodinElement[] refs;
-		refs = this.getChildrenOfType(IReference.ELEMENT_TYPE);
+		IReference[] refs = this.getChildrenOfType(IReference.ELEMENT_TYPE);
 		
 		assert refs.length <= 1;
 		
