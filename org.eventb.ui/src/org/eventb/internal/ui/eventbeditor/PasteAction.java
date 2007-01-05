@@ -31,13 +31,13 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.basis.InternalElement;
 
 public class PasteAction extends SelectionListenerAction {
 
@@ -208,8 +208,7 @@ public class PasteAction extends SelectionListenerAction {
 									"element"
 											+ UIUtils.getFreeElementNameIndex(
 													(IInternalParent) parent,
-													(IInternalElementType)
-													element.getElementType(),
+													((InternalElement) element).getElementType(),
 													"element", 1), false,
 									new NullProgressMonitor());
 					}

@@ -160,7 +160,7 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 						.getRodinFile(fileName);
 				rodinFile.create(false, pMonitor);
 				if (rodinFile instanceof IMachineFile) {
-					IEvent init = (IEvent) rodinFile.getInternalElement(
+					IEvent init = rodinFile.getInternalElement(
 							IEvent.ELEMENT_TYPE, "internal_"
 									+ PrefixEvtName.DEFAULT_PREFIX + 1);
 					init.create(null, pMonitor);

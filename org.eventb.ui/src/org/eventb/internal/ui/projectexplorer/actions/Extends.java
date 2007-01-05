@@ -74,7 +74,7 @@ public class Extends implements IObjectActionDelegate {
 									.getContextFileName(bareName));
 							newFile.create(true, monitor);
 
-							IExtendsContext extended = (IExtendsContext) newFile
+							IExtendsContext extended = newFile
 									.getInternalElement(
 											IExtendsContext.ELEMENT_TYPE,
 											"internal_"

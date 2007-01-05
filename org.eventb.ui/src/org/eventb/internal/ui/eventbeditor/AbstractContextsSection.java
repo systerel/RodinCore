@@ -302,8 +302,7 @@ public abstract class AbstractContextsSection<F extends IRodinFile> extends
 		final IRodinProject project = rodinFile.getRodinProject();
 		final IContextFile[] contexts;
 		try {
-			contexts = (IContextFile[]) project
-					.getChildrenOfType(IContextFile.ELEMENT_TYPE);
+			contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "when listing the contexts of " + project);
 			return;

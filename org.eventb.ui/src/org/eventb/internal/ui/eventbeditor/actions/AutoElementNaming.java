@@ -12,9 +12,8 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 
@@ -27,17 +26,18 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 			editor = (IEventBEditor) targetEditor;
 	}
 
-	public void rename(final IElementType type, final String prefix) {
+	public <T extends IInternalElement> void rename(
+			final IInternalElementType<T> type, final String prefix) {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IRodinFile file = editor.getRodinInput();
-					IRodinElement[] elements = file.getChildrenOfType(type);
+					T[] elements = file.getChildrenOfType(type);
 
 					// Rename to the real desired naming convention
 					for (int counter = 1; counter <= elements.length; counter++) {
-						IRodinElement element = elements[counter - 1];
+						T element = elements[counter - 1];
 						if (element instanceof IIdentifierElement) {
 							if (EventBEditorUtils.DEBUG)
 								EventBEditorUtils
@@ -58,8 +58,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 									+ counter, monitor);
 
 						}
-						((IInternalElement) element).rename(prefix + counter,
-								false, null);
+						element.rename(prefix + counter, false, null);
 					}
 				}
 

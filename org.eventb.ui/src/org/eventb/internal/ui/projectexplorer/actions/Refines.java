@@ -21,8 +21,9 @@ import org.eventb.core.IWitness;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesEventName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesMachineName;
-import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -85,7 +86,7 @@ public class Refines implements IObjectActionDelegate {
 									.getMachineFileName(bareName));
 							newFile.create(false, monitor);
 
-							IRefinesMachine refined = (IRefinesMachine) newFile
+							IRefinesMachine refined = newFile
 									.getInternalElement(
 											IRefinesMachine.ELEMENT_TYPE,
 											"internal_"
@@ -129,7 +130,7 @@ public class Refines implements IObjectActionDelegate {
 								// INITILISATION does not have RefineEvents
 								// Element
 								if (!label.equals(IEvent.INITIALISATION)) {
-									IRefinesEvent refinesEvent = (IRefinesEvent) newElement
+									IRefinesEvent refinesEvent = newElement
 											.getInternalElement(
 													IRefinesEvent.ELEMENT_TYPE,
 													"internal_"
@@ -164,15 +165,15 @@ public class Refines implements IObjectActionDelegate {
 		this.selection = sel;
 	}
 
-	void copyChildrenOfType(IRodinFile destination, IRodinFile original,
-			IElementType type, IProgressMonitor monitor)
+	<T extends IInternalElement> void copyChildrenOfType(
+			IRodinFile destination, IRodinFile original,
+			IInternalElementType<T> type, IProgressMonitor monitor)
 			throws RodinDBException {
-		IRodinElement[] elements = original.getChildrenOfType(type);
 
-		for (IRodinElement element : elements) {
-			((IInternalElement) element).copy(destination, null, null, false,
-					monitor);
-		}
+		final T[] elements = original.getChildrenOfType(type);
+		final IRodinFile[] containers = new IRodinFile[] {destination};
+		final IRodinDB rodinDB = destination.getRodinDB();
+		rodinDB.copy(elements, containers, null, null, false, monitor);
 	}
 
 }

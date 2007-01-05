@@ -238,13 +238,14 @@ public class ProjectExplorerContentProvider implements
 				return elementsMap.get(mch);
 			} else {
 				ArrayList<TreeNode> list = new ArrayList<TreeNode>();
-				list
-						.add(new TreeNode("Variables", mch,
-								IVariable.ELEMENT_TYPE));
-				list.add(new TreeNode("Invariants", mch,
+				list.add(new TreeNode<IVariable>("Variables", mch,
+						IVariable.ELEMENT_TYPE));
+				list.add(new TreeNode<IInvariant>("Invariants", mch,
 						IInvariant.ELEMENT_TYPE));
-				list.add(new TreeNode("Theorems", mch, ITheorem.ELEMENT_TYPE));
-				list.add(new TreeNode("Events", mch, IEvent.ELEMENT_TYPE));
+				list.add(new TreeNode<ITheorem>("Theorems", mch,
+						ITheorem.ELEMENT_TYPE));
+				list.add(new TreeNode<IEvent>("Events", mch,
+						IEvent.ELEMENT_TYPE));
 				elementsMap.put(mch, list.toArray());
 
 				return list.toArray();
@@ -258,13 +259,14 @@ public class ProjectExplorerContentProvider implements
 				return elementsMap.get(ctx);
 			} else {
 				ArrayList<TreeNode> list = new ArrayList<TreeNode>();
-				list.add(new TreeNode("Carrier Sets", ctx,
+				list.add(new TreeNode<ICarrierSet>("Carrier Sets", ctx,
 						ICarrierSet.ELEMENT_TYPE));
-				list
-						.add(new TreeNode("Constants", ctx,
-								IConstant.ELEMENT_TYPE));
-				list.add(new TreeNode("Axioms", ctx, IAxiom.ELEMENT_TYPE));
-				list.add(new TreeNode("Theorems", ctx, ITheorem.ELEMENT_TYPE));
+				list.add(new TreeNode<IConstant>("Constants", ctx,
+						IConstant.ELEMENT_TYPE));
+				list.add(new TreeNode<IAxiom>("Axioms", ctx,
+						IAxiom.ELEMENT_TYPE));
+				list.add(new TreeNode<ITheorem>("Theorems", ctx,
+						ITheorem.ELEMENT_TYPE));
 				elementsMap.put(ctx, list.toArray());
 
 				return list.toArray();

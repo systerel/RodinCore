@@ -228,7 +228,7 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 			if (ssel.size() == 1) {
 				IRodinElement element = (IRodinElement) ssel.getFirstElement();
 				submenu.add(new ShowAbstractEventContribution(file,
-						(IEvent) element.getAncestor(IEvent.ELEMENT_TYPE)));
+						element.getAncestor(IEvent.ELEMENT_TYPE)));
 			}
 
 			// Abstract invariants

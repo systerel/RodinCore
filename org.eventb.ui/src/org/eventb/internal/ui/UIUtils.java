@@ -314,61 +314,63 @@ public class UIUtils {
 		return prefix;
 	}
 
-	public static String getFreeElementName(IEventBEditor editor,
-			IInternalParent parent, IInternalElementType type,
-			QualifiedName qualifiedName, String defaultPrefix)
-			throws RodinDBException {
+	public static <T extends IInternalElement> String getFreeElementName(
+			IEventBEditor editor, IInternalParent parent,
+			IInternalElementType<T> type, QualifiedName qualifiedName,
+			String defaultPrefix) throws RodinDBException {
 		String prefix = getNamePrefix(editor, qualifiedName, defaultPrefix);
 		return prefix + getFreeElementNameIndex(editor, parent, type, prefix);
 	}
 
-	public static int getFreeElementNameIndex(IEventBEditor editor,
-			IInternalParent parent, IInternalElementType type, String prefix)
+	public static <T extends IInternalElement> int getFreeElementNameIndex(
+			IEventBEditor editor, IInternalParent parent,
+			IInternalElementType<T> type, String prefix)
 			throws RodinDBException {
 		return getFreeElementNameIndex(parent, type, prefix, 1);
 	}
 
-	public static int getFreeElementNameIndex(IInternalParent parent,
-			IInternalElementType type, String prefix, int beginIndex)
-			throws RodinDBException {
+	public static <T extends IInternalElement> int getFreeElementNameIndex(
+			IInternalParent parent, IInternalElementType<T> type,
+			String prefix, int beginIndex) throws RodinDBException {
 
-		IRodinElement[] elements = parent.getChildrenOfType(type);
+		T[] elements = parent.getChildrenOfType(type);
 
 		int i;
 		for (i = beginIndex; i < elements.length + beginIndex; i++) {
-			IInternalElement element = parent.getInternalElement(type, prefix
-					+ i);
+			T element = parent.getInternalElement(type, prefix + i);
 			if (!element.exists())
 				break;
 		}
 		return i;
 	}
 
-	public static String getFreeElementLabel(IEventBEditor editor,
-			IInternalParent parent, IInternalElementType type,
-			QualifiedName qualifiedName, String defaultPrefix)
-			throws RodinDBException {
+	public static <T extends ILabeledElement> String getFreeElementLabel(
+			IEventBEditor editor, IInternalParent parent,
+			IInternalElementType<T> type, QualifiedName qualifiedName,
+			String defaultPrefix) throws RodinDBException {
 		String prefix = getPrefix(editor, qualifiedName, defaultPrefix);
 		return prefix + getFreeElementLabelIndex(editor, parent, type, prefix);
 	}
 
-	public static int getFreeElementLabelIndex(IEventBEditor editor,
-			IInternalParent parent, IInternalElementType type, String prefix)
+	public static <T extends ILabeledElement> int getFreeElementLabelIndex(
+			IEventBEditor editor, IInternalParent parent,
+			IInternalElementType<T> type, String prefix)
 			throws RodinDBException {
 		return getFreeElementLabelIndex(editor, parent, type, prefix, 1);
 	}
 
-	public static int getFreeElementLabelIndex(IEventBEditor editor,
-			IInternalParent parent, IInternalElementType type, String prefix,
-			int beginIndex) throws RodinDBException {
+	public static <T extends ILabeledElement> int getFreeElementLabelIndex(
+			IEventBEditor editor, IInternalParent parent,
+			IInternalElementType<T> type, String prefix, int beginIndex)
+			throws RodinDBException {
 
-		IRodinElement[] elements = parent.getChildrenOfType(type);
+		T[] elements = parent.getChildrenOfType(type);
 
 		int i;
 		for (i = beginIndex; i < elements.length + beginIndex; i++) {
 			boolean exists = false;
-			for (IRodinElement element : elements) {
-				if (((ILabeledElement) element).getLabel().equals(prefix + i)) {
+			for (T element : elements) {
+				if (element.getLabel().equals(prefix + i)) {
 					exists = true;
 					break;
 				}
@@ -379,33 +381,33 @@ public class UIUtils {
 		return i;
 	}
 
-	public static String getFreeElementIdentifier(IEventBEditor editor,
-			IInternalParent parent, IInternalElementType type,
-			QualifiedName qualifiedName, String defaultPrefix)
-			throws RodinDBException {
+	public static <T extends IIdentifierElement> String getFreeElementIdentifier(
+			IEventBEditor editor, IInternalParent parent,
+			IInternalElementType<T> type, QualifiedName qualifiedName,
+			String defaultPrefix) throws RodinDBException {
 		String prefix = getPrefix(editor, qualifiedName, defaultPrefix);
 		return prefix
 				+ getFreeElementIdentifierIndex(editor, parent, type, prefix);
 	}
 
-	public static int getFreeElementIdentifierIndex(IEventBEditor editor,
-			IInternalParent parent, IInternalElementType type, String prefix)
-			throws RodinDBException {
+	public static <T extends IIdentifierElement> int getFreeElementIdentifierIndex(
+			IEventBEditor editor, IInternalParent parent,
+			IInternalElementType<T> type, String prefix) throws RodinDBException {
 		return getFreeElementIdentifierIndex(editor, parent, type, prefix, 1);
 	}
 
-	public static int getFreeElementIdentifierIndex(IEventBEditor editor,
-			IInternalParent parent, IInternalElementType type, String prefix,
-			int beginIndex) throws RodinDBException {
+	public static <T extends IIdentifierElement> int getFreeElementIdentifierIndex(
+			IEventBEditor editor, IInternalParent parent,
+			IInternalElementType<T> type, String prefix, int beginIndex)
+			throws RodinDBException {
 
-		IRodinElement[] elements = parent.getChildrenOfType(type);
+		T[] elements = parent.getChildrenOfType(type);
 
 		int i;
 		for (i = beginIndex; i < elements.length + beginIndex; i++) {
 			boolean exists = true;
-			for (IRodinElement element : elements) {
-				if (!((IIdentifierElement) element).getIdentifierString()
-						.equals(prefix + i)) {
+			for (T element : elements) {
+				if (! element.getIdentifierString().equals(prefix + i)) {
 					exists = false;
 					break;
 				}
@@ -416,15 +418,13 @@ public class UIUtils {
 		return i;
 	}
 
-	public static IRodinElement getFirstChildOfTypeWithLabel(IParent parent,
-			IInternalElementType type, String label) throws RodinDBException {
-		IRodinElement[] children = parent.getChildrenOfType(type);
-		for (IRodinElement child : children) {
-			if (child instanceof ILabeledElement) {
-				String elementLabel = ((ILabeledElement) child).getLabel();
-				if (elementLabel.equals(label))
-					return child;
-			}
+	public static <T extends ILabeledElement> T getFirstChildOfTypeWithLabel(
+			IParent parent, IInternalElementType<T> type, String label)
+			throws RodinDBException {
+
+		for (T child : parent.getChildrenOfType(type)) {
+			if (label.equals(child.getLabel()))
+				return child;
 		}
 		return null;
 	}

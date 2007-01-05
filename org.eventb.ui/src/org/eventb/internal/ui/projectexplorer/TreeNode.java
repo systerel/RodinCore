@@ -14,6 +14,7 @@ package org.eventb.internal.ui.projectexplorer;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eventb.ui.EventBUIPlugin;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
@@ -25,7 +26,7 @@ import org.rodinp.core.RodinDBException;
  *         This class provide an object for immediate group of variables,
  *         invariants, etc. in the tree of the Project Explorer.
  */
-public class TreeNode {
+public class TreeNode<T extends IInternalElement> {
 
 	// Name of the node
 	private String name;
@@ -34,7 +35,7 @@ public class TreeNode {
 	private IParent parent;
 
 	// The type of the children of this node (IVariable, IInvariant, etc.)
-	private IInternalElementType childrenType;
+	private IInternalElementType<T> childrenType;
 
 	/**
 	 * Constructor.
@@ -47,7 +48,7 @@ public class TreeNode {
 	 * @param type
 	 *            The type of the children
 	 */
-	public TreeNode(String name, IParent parent, IInternalElementType type) {
+	public TreeNode(String name, IParent parent, IInternalElementType<T> type) {
 		this.name = name;
 		this.parent = parent;
 		childrenType = type;

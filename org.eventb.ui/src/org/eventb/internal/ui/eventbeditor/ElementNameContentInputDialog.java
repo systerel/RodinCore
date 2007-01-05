@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eventb.core.ILabeledElement;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
@@ -39,7 +40,9 @@ import org.rodinp.core.RodinDBException;
  *         This class extends the Dialog class and provides an input dialog for
  *         entering a list of element name with content.
  */
-public class ElementNameContentInputDialog extends EventBInputDialog {
+public class ElementNameContentInputDialog<T extends ILabeledElement> extends
+		EventBInputDialog {
+
 	private String prefix;
 
 	private Collection<String> names;
@@ -56,7 +59,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 
 	private IEventBEditor editor;
 
-	private IInternalElementType type;
+	private IInternalElementType<T> type;
 
 	/**
 	 * Constructor.
@@ -74,7 +77,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 	 *            The start counter for the elements.
 	 */
 	public ElementNameContentInputDialog(Shell parentShell, String title,
-			String message, IEventBEditor editor, IInternalElementType type,
+			String message, IEventBEditor editor, IInternalElementType<T> type,
 			String prefix, int index) {
 		super(parentShell, title);
 		this.message = message;

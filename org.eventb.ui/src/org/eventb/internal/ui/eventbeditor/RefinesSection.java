@@ -313,7 +313,7 @@ public class RefinesSection extends SectionPart implements
 								// creation
 								public void run(IProgressMonitor monitor)
 										throws CoreException {
-									refined = (IRefinesMachine) rodinFile
+									refined = rodinFile
 											.getInternalElement(
 													IRefinesMachine.ELEMENT_TYPE,
 													UIUtils
@@ -409,7 +409,7 @@ public class RefinesSection extends SectionPart implements
 		final IRodinProject rodinProject = rodinFile.getRodinProject();
 		machineCombo.add(NULL_VALUE);
 		try {
-			final IMachineFile[] machines = (IMachineFile[]) rodinProject
+			final IMachineFile[] machines = rodinProject
 					.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
 			for (IMachineFile machine : machines) {
 				if (!rodinFile.equals(machine)) {
