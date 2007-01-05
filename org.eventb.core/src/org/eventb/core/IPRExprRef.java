@@ -9,7 +9,7 @@ import org.rodinp.core.RodinDBException;
 
 public interface IPRExprRef extends IInternalElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IPRExprRef> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prExprRef"); //$NON-NLS-1$
 
 	Expression[] getExpressions(IProofStoreReader store) throws RodinDBException;

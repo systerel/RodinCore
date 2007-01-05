@@ -37,7 +37,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IRefinesEvent extends IInternalElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IRefinesEvent> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".refinesEvent"); //$NON-NLS-1$
 
 	/**

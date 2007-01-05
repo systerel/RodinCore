@@ -33,7 +33,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface IAxiom extends ICommentedElement, ILabeledElement, IPredicateElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IAxiom> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".axiom"); //$NON-NLS-1$
 
 	// No additional method

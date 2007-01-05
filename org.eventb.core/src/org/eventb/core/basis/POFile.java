@@ -33,24 +33,24 @@ public class POFile extends EventBFile implements IPOFile {
 	}
 
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<IPOFile> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	
 	public IPOPredicateSet getPredicateSet(String elementName) {
-		return (IPOPredicateSet) getInternalElement(IPOPredicateSet.ELEMENT_TYPE, elementName);
+		return getInternalElement(IPOPredicateSet.ELEMENT_TYPE, elementName);
 	}
 
 	public IPOSequent[] getSequents() throws RodinDBException {
-		return (POSequent[]) getChildrenOfType(IPOSequent.ELEMENT_TYPE); 
+		return getChildrenOfType(IPOSequent.ELEMENT_TYPE); 
 	}
 
 	public IPOPredicateSet[] getPredicateSets() throws RodinDBException {
-		return (IPOPredicateSet[]) getChildrenOfType(POPredicateSet.ELEMENT_TYPE);
+		return getChildrenOfType(POPredicateSet.ELEMENT_TYPE);
 	}
 
 	public IPOSequent getSequent(String elementName) {
-		return (IPOSequent) getInternalElement(IPOSequent.ELEMENT_TYPE, elementName);
+		return getInternalElement(IPOSequent.ELEMENT_TYPE, elementName);
 	}
 
 }

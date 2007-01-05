@@ -38,7 +38,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IEvent extends ICommentedElement, ILabeledElement, IConvergenceElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IEvent> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".event"); //$NON-NLS-1$
 	
 	/**

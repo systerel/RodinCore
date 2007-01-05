@@ -33,10 +33,8 @@ public class PRIdentifier extends SCIdentifierElement implements IPRIdentifier {
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPRIdentifier> getElementType() {
 		return ELEMENT_TYPE;
 	}
-	
-
 
 }

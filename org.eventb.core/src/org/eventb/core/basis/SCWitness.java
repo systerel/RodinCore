@@ -40,7 +40,7 @@ public class SCWitness extends SCPredicateElement implements ISCWitness {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCWitness> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

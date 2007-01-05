@@ -15,7 +15,7 @@ import org.rodinp.core.RodinDBException;
 
 public interface IPRProofRule extends IInternalElement {
 		
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IPRProofRule> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prRule"); //$NON-NLS-1$
 
 	IProofSkeleton getProofSkeleton(IProofStoreReader store, String comment) throws RodinDBException;

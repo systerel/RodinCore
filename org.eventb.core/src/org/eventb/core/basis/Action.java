@@ -38,7 +38,7 @@ public class Action extends EventBElement implements IAction {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IAction> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	

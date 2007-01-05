@@ -46,7 +46,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	}
 	
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPRProof> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	
@@ -182,27 +182,27 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	};
 		
 	public IPRStoredExpr getExpression(String name) {
-		return (IPRStoredExpr) getInternalElement(IPRStoredExpr.ELEMENT_TYPE, name);
+		return getInternalElement(IPRStoredExpr.ELEMENT_TYPE, name);
 	}
 
 	public IPRStoredExpr[] getExpressions() throws RodinDBException {
-		return (IPRStoredExpr[]) getChildrenOfType(IPRStoredExpr.ELEMENT_TYPE);
+		return getChildrenOfType(IPRStoredExpr.ELEMENT_TYPE);
 	}
 
 	public IPRIdentifier getIdentifier(String name) {
-		return (IPRIdentifier) getInternalElement(IPRIdentifier.ELEMENT_TYPE, name);
+		return getInternalElement(IPRIdentifier.ELEMENT_TYPE, name);
 	}
 
 	public IPRIdentifier[] getIdentifiers() throws RodinDBException {
-		return (IPRIdentifier[]) getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
+		return getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
 	}
 
 	public IPRStoredPred getPredicate(String name) {
-		return (IPRStoredPred) getInternalElement(IPRStoredPred.ELEMENT_TYPE, name);
+		return getInternalElement(IPRStoredPred.ELEMENT_TYPE, name);
 	}
 
 	public IPRStoredPred[] getPredicates() throws RodinDBException {
-		return (IPRStoredPred[]) getChildrenOfType(IPRStoredPred.ELEMENT_TYPE);
+		return getChildrenOfType(IPRStoredPred.ELEMENT_TYPE);
 	}
 
 	public String[] getSets() throws RodinDBException {

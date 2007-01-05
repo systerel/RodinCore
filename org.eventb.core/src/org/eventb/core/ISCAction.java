@@ -39,7 +39,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface ISCAction extends ITraceableElement, ILabeledElement, ISCAssignmentElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<ISCAction> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scAction"); //$NON-NLS-1$
 
 	// No additional method

@@ -35,7 +35,7 @@ public class Witness extends EventBElement implements IWitness {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IWitness> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

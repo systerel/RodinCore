@@ -38,7 +38,7 @@ public class SCAction extends SCAssignmentElement implements ISCAction {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCAction> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

@@ -34,7 +34,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface ITheorem extends ICommentedElement, ILabeledElement, IPredicateElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<ITheorem> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".theorem"); //$NON-NLS-1$
 
 	// No additional method

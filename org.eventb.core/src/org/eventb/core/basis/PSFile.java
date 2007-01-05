@@ -35,16 +35,16 @@ public class PSFile extends EventBFile implements IPSFile {
 	}
 
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<IPSFile> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
 	public IPSStatus[] getStatuses() throws RodinDBException {
-		return (IPSStatus[]) getChildrenOfType(PSStatus.ELEMENT_TYPE);
+		return getChildrenOfType(PSStatus.ELEMENT_TYPE);
 	}
 
 	public IPSStatus getStatus(String name) {
-		return (IPSStatus) getInternalElement(IPSStatus.ELEMENT_TYPE, name);
+		return getInternalElement(IPSStatus.ELEMENT_TYPE, name);
 	}
 
 }

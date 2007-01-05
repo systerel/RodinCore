@@ -38,7 +38,7 @@ public class CarrierSet extends EventBElement implements ICarrierSet {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ICarrierSet> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

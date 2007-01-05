@@ -44,7 +44,7 @@ public class SCRefinesMachine extends EventBElement implements
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCRefinesMachine> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

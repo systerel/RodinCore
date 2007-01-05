@@ -38,7 +38,7 @@ import org.rodinp.core.RodinCore;
 public interface ISCAxiom 
 extends ITraceableElement, ILabeledElement, ISCPredicateElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<ISCAxiom> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scAxiom"); //$NON-NLS-1$
 
 	// No additional method

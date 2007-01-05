@@ -38,7 +38,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<ISCVariable> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scVariable"); //$NON-NLS-1$
 
 	/**

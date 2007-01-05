@@ -32,7 +32,7 @@ public class Variant extends EventBElement implements IVariant {
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IVariant> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

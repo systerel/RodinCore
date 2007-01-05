@@ -26,7 +26,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPRHypAction extends IInternalElement {
 	
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IPRHypAction> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prHypAction"); //$NON-NLS-1$
 
 	IHypAction getAction(IProofStoreReader store) throws RodinDBException;

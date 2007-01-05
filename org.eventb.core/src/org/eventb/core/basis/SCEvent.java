@@ -45,7 +45,7 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCEvent> getElementType() {
 		return ISCEvent.ELEMENT_TYPE;
 	}
 	
@@ -53,7 +53,7 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	 * @see org.eventb.core.ISCEvent#getSCRefinesClauses()
 	 */
 	public ISCRefinesEvent[] getSCRefinesClauses() throws RodinDBException {
-		return (ISCRefinesEvent[]) getChildrenOfType(ISCRefinesEvent.ELEMENT_TYPE); 
+		return getChildrenOfType(ISCRefinesEvent.ELEMENT_TYPE); 
 	}
 
 	/* (non-Javadoc)
@@ -61,7 +61,7 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	 */
 	public ISCEvent[] getAbstractSCEvents() throws RodinDBException {
 		final ISCRefinesEvent[] refinesClauses =
-			(ISCRefinesEvent[]) getChildrenOfType(ISCRefinesEvent.ELEMENT_TYPE);
+			getChildrenOfType(ISCRefinesEvent.ELEMENT_TYPE);
 		final ISCEvent[] result = new ISCEvent[refinesClauses.length];
 		for (int i = 0; i < result.length; i++) {
 			result[i] = refinesClauses[i].getAbstractSCEvent();
@@ -73,48 +73,48 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	 * @see org.eventb.core.ISCEvent#getSCVariables()
 	 */
 	public ISCVariable[] getSCVariables() throws RodinDBException {
-		return (ISCVariable[]) getChildrenOfType(ISCVariable.ELEMENT_TYPE); 
+		return getChildrenOfType(ISCVariable.ELEMENT_TYPE); 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ISCEvent#getSCWitnesses()
 	 */
 	public ISCWitness[] getSCWitnesses() throws RodinDBException {
-		return (ISCWitness[]) getChildrenOfType(ISCWitness.ELEMENT_TYPE);
+		return getChildrenOfType(ISCWitness.ELEMENT_TYPE);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ISCEvent#getSCGuards()
 	 */
 	public ISCGuard[] getSCGuards() throws RodinDBException {
-		return (ISCGuard[]) getChildrenOfType(ISCGuard.ELEMENT_TYPE); 
+		return getChildrenOfType(ISCGuard.ELEMENT_TYPE); 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ISCEvent#getSCActions()
 	 */
 	public ISCAction[] getSCActions() throws RodinDBException {
-		return (ISCAction[]) getChildrenOfType(ISCAction.ELEMENT_TYPE); 
+		return getChildrenOfType(ISCAction.ELEMENT_TYPE); 
 	}
 
 	public ISCAction getSCAction(String elementName) {
-		return (ISCAction) getInternalElement(ISCAction.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCAction.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCGuard getSCGuard(String elementName) {
-		return (ISCGuard) getInternalElement(ISCGuard.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCGuard.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCRefinesEvent getSCRefinesClause(String elementName) {
-		return (ISCRefinesEvent) getInternalElement(ISCRefinesEvent.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCRefinesEvent.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCVariable getSCVariable(String elementName) {
-		return (ISCVariable) getInternalElement(ISCVariable.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCVariable.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCWitness getSCWitness(String elementName) {
-		return (ISCWitness) getInternalElement(ISCWitness.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCWitness.ELEMENT_TYPE, elementName);
 	}
 
 }

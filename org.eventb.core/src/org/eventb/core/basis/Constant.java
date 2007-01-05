@@ -38,7 +38,7 @@ public class Constant extends EventBElement implements IConstant {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IConstant> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

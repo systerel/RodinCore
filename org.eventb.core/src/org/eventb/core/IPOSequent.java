@@ -35,7 +35,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPOSequent extends IInternalElement {
 	
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IPOSequent> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poSequent"); //$NON-NLS-1$
 	
 	@Deprecated

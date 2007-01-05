@@ -39,54 +39,49 @@ public class SCContextFile extends EventBFile implements ISCContextFile {
 	}
 
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<ISCContextFile> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
 	public ISCCarrierSet[] getSCCarrierSets() 
 	throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE);
-		return (ISCCarrierSet[]) elements; 
+		return getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE); 
 	}
 	
 	public ISCConstant[] getSCConstants() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISCConstant.ELEMENT_TYPE);
-		return (ISCConstant[]) elements; 
+		return getChildrenOfType(ISCConstant.ELEMENT_TYPE); 
 	}
 
 	public ISCAxiom[] getSCAxioms() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISCAxiom.ELEMENT_TYPE);
-		return (ISCAxiom[]) elements; 
+		return getChildrenOfType(ISCAxiom.ELEMENT_TYPE); 
 	}
 
 	public ISCTheorem[] getSCTheorems() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
-		return (ISCTheorem[]) elements; 
+		return getChildrenOfType(ISCTheorem.ELEMENT_TYPE); 
 	}
 
 	public ISCInternalContext[] getAbstractSCContexts() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISCInternalContext.ELEMENT_TYPE);
-		return (ISCInternalContext[]) elements; 
+		return getChildrenOfType(ISCInternalContext.ELEMENT_TYPE); 
 	}
 	
 	public ISCInternalContext getSCInternalContext(String elementName) {
-		return (ISCInternalContext) getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCAxiom getSCAxiom(String elementName) {
-		return (ISCAxiom) getInternalElement(ISCAxiom.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCAxiom.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCCarrierSet getSCCarrierSet(String elementName) {
-		return (ISCCarrierSet) getInternalElement(ISCCarrierSet.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCCarrierSet.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCConstant getSCConstant(String elementName) {
-		return (ISCConstant) getInternalElement(ISCConstant.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCConstant.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCTheorem getSCTheorem(String elementName) {
-		return (ISCTheorem) getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
 	}
 
 }

@@ -33,7 +33,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface IInvariant extends ICommentedElement, ILabeledElement, IPredicateElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IInvariant> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".invariant"); //$NON-NLS-1$
 
 	// No additional method

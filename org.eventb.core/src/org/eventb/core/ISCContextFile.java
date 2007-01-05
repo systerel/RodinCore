@@ -46,7 +46,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface ISCContextFile extends ISCContext, IEventBFile {
 
-	IFileElementType ELEMENT_TYPE =
+	IFileElementType<ISCContextFile> ELEMENT_TYPE =
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".scContextFile"); //$NON-NLS-1$
 
 	/**

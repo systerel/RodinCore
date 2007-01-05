@@ -35,7 +35,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPSStatus extends IInternalElement {
 
-	IInternalElementType ELEMENT_TYPE = RodinCore
+	IInternalElementType<IPSStatus> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(EventBPlugin.PLUGIN_ID + ".psStatus"); //$NON-NLS-1$
 
 	/**

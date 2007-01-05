@@ -39,7 +39,7 @@ public class SCAxiom extends SCPredicateElement implements ISCAxiom {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCAxiom> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

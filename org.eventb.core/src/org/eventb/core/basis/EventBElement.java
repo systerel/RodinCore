@@ -34,7 +34,8 @@ public abstract class EventBElement extends InternalElement {
 	}
 
 	@Deprecated
-	protected IRodinElement getSingletonChild(IElementType elementType,
+	protected < T extends IRodinElement> T getSingletonChild(
+			IElementType<T> elementType,
 			String message) throws RodinDBException {
 
 		return EventBUtil.getSingletonChild(this, elementType, message);

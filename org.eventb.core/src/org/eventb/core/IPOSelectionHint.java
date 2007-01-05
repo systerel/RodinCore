@@ -49,7 +49,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPOSelectionHint extends IPOHint {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IPOSelectionHint> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poSelHint"); //$NON-NLS-1$
 	
 	/**

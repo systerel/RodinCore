@@ -33,7 +33,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface IVariant extends ICommentedElement, IExpressionElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IVariant> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".variant"); //$NON-NLS-1$
 
 	// No additional method

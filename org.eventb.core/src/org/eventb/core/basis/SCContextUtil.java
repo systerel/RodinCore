@@ -28,19 +28,19 @@ import org.rodinp.core.basis.RodinElement;
 abstract class SCContextUtil {
 
 	static public ISCCarrierSet[] getSCCarrierSets(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
-		return (ISCCarrierSet[]) element.getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE); 
+		return element.getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE); 
 	}
 
 	static public ISCConstant[] getSCConstants(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
-		return (ISCConstant[]) element.getChildrenOfType(ISCConstant.ELEMENT_TYPE); 
+		return element.getChildrenOfType(ISCConstant.ELEMENT_TYPE); 
 	}
 
 	static public ISCAxiom[] getSCAxioms(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
-		return (ISCAxiom[]) element.getChildrenOfType(ISCAxiom.ELEMENT_TYPE);
+		return element.getChildrenOfType(ISCAxiom.ELEMENT_TYPE);
 	}
 
 	static public ISCTheorem[] getSCTheorems(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
-		return (ISCTheorem[]) element.getChildrenOfType(ISCTheorem.ELEMENT_TYPE); 
+		return element.getChildrenOfType(ISCTheorem.ELEMENT_TYPE); 
 	}
 
 }

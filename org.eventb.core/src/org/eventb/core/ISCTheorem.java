@@ -38,7 +38,7 @@ import org.rodinp.core.RodinCore;
 public interface ISCTheorem 
 extends ITraceableElement, ILabeledElement, ISCPredicateElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<ISCTheorem> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scTheorem"); //$NON-NLS-1$
 
 	// No additional method

@@ -43,28 +43,28 @@ public class Event extends EventBElement implements IEvent {
 	}
 	
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IEvent> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	
 	public IRefinesEvent[] getRefinesClauses() throws RodinDBException {
-		return (RefinesEvent[]) getChildrenOfType(IRefinesEvent.ELEMENT_TYPE); 
+		return getChildrenOfType(IRefinesEvent.ELEMENT_TYPE); 
 	}
 
 	public IVariable[] getVariables() throws RodinDBException {
-		return (Variable[]) getChildrenOfType(IVariable.ELEMENT_TYPE); 
+		return getChildrenOfType(IVariable.ELEMENT_TYPE); 
 	}
 
 	public IWitness[] getWitnesses() throws RodinDBException {
-		return (Witness[]) getChildrenOfType(IWitness.ELEMENT_TYPE); 
+		return getChildrenOfType(IWitness.ELEMENT_TYPE); 
 	}
 	
 	public IGuard[] getGuards() throws RodinDBException {
-		return (Guard[]) getChildrenOfType(IGuard.ELEMENT_TYPE); 
+		return getChildrenOfType(IGuard.ELEMENT_TYPE); 
 	}
 	
 	public IAction[] getActions() throws RodinDBException {
-		return (Action[]) getChildrenOfType(IAction.ELEMENT_TYPE); 
+		return getChildrenOfType(IAction.ELEMENT_TYPE); 
 	}
 
 	public boolean isInherited() throws RodinDBException {
@@ -76,23 +76,23 @@ public class Event extends EventBElement implements IEvent {
 	}
 
 	public IAction getAction(String elementName) {
-		return (IAction) getInternalElement(IAction.ELEMENT_TYPE, elementName);
+		return getInternalElement(IAction.ELEMENT_TYPE, elementName);
 	}
 
 	public IGuard getGuard(String elementName) {
-		return (IGuard) getInternalElement(IGuard.ELEMENT_TYPE, elementName);
+		return getInternalElement(IGuard.ELEMENT_TYPE, elementName);
 	}
 
 	public IRefinesEvent getRefinesClause(String elementName) {
-		return (IRefinesEvent) getInternalElement(IRefinesEvent.ELEMENT_TYPE, elementName);
+		return getInternalElement(IRefinesEvent.ELEMENT_TYPE, elementName);
 	}
 
 	public IVariable getVariable(String elementName) {
-		return (IVariable) getInternalElement(IVariable.ELEMENT_TYPE, elementName);
+		return getInternalElement(IVariable.ELEMENT_TYPE, elementName);
 	}
 
 	public IWitness getWitness(String elementName) {
-		return (IWitness) getInternalElement(IWitness.ELEMENT_TYPE, elementName);
+		return getInternalElement(IWitness.ELEMENT_TYPE, elementName);
 	}
 
 }

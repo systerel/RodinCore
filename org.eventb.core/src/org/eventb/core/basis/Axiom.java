@@ -35,7 +35,7 @@ public class Axiom extends EventBElement implements IAxiom {
 	}
 	
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IAxiom> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

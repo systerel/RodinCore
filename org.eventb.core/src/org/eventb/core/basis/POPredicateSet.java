@@ -42,12 +42,12 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 	 * @see org.rodinp.core.RodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPOPredicateSet> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	
 	public IPOPredicate[] getPredicates() throws RodinDBException {
-		return (IPOPredicate[]) getChildrenOfType(IPOPredicate.ELEMENT_TYPE);
+		return getChildrenOfType(IPOPredicate.ELEMENT_TYPE);
 	}
 	
 	@Deprecated
@@ -74,15 +74,15 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 	}
 
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
-		return (IPOIdentifier[]) getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
+		return getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
 	}
 
 	public IPOIdentifier getIdentifier(String elementName) {
-		return (IPOIdentifier) getInternalElement(IPOIdentifier.ELEMENT_TYPE, elementName);
+		return getInternalElement(IPOIdentifier.ELEMENT_TYPE, elementName);
 	}
 
 	public IPOPredicate getPredicate(String elementName) {
-		return (IPOPredicate) getInternalElement(IPOPredicate.ELEMENT_TYPE, elementName);
+		return getInternalElement(IPOPredicate.ELEMENT_TYPE, elementName);
 	}
 
 	public void setParentPredicateSet(IPOPredicateSet predicateSet, IProgressMonitor monitor) 

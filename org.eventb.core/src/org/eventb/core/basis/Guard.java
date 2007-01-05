@@ -35,7 +35,7 @@ public class Guard extends EventBElement implements IGuard {
 	}
 	
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IGuard> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

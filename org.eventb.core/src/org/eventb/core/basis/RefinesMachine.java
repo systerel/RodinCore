@@ -53,7 +53,7 @@ public class RefinesMachine extends InternalElement implements IRefinesMachine {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IRefinesMachine> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

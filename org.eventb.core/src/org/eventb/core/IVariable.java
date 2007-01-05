@@ -31,7 +31,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface IVariable extends ICommentedElement, IIdentifierElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IVariable> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".variable"); //$NON-NLS-1$
 
 	// No additional method

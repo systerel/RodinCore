@@ -43,7 +43,7 @@ public class SCRefinesEvent extends EventBElement implements ISCRefinesEvent {
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCRefinesEvent> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	

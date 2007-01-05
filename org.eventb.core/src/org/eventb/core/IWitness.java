@@ -34,7 +34,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface IWitness extends ICommentedElement, ILabeledElement, IPredicateElement {
 	
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IWitness> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".witness"); //$NON-NLS-1$
 	
 	// No additional method

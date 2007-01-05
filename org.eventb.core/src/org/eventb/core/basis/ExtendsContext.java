@@ -47,7 +47,7 @@ public class ExtendsContext extends InternalElement implements IExtendsContext {
 	 * @see org.rodinp.core.basis.RodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IExtendsContext> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

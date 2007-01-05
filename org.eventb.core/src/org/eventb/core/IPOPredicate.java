@@ -22,7 +22,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPOPredicate extends ISCPredicateElement, ITraceableElement {
 	
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IPOPredicate> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poPredicate"); //$NON-NLS-1$
 	
 	@Deprecated

@@ -38,7 +38,7 @@ public class Theorem extends EventBElement implements ITheorem {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ITheorem> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

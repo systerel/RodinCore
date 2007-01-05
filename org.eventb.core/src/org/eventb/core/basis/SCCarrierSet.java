@@ -40,7 +40,7 @@ public class SCCarrierSet extends SCIdentifierElement implements ISCCarrierSet {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCCarrierSet> getElementType() {
 		return ISCCarrierSet.ELEMENT_TYPE;
 	}
 

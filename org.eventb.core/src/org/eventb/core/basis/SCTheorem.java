@@ -40,7 +40,7 @@ public class SCTheorem extends SCPredicateElement implements ISCTheorem {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCTheorem> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

@@ -141,10 +141,10 @@ public abstract class EventBProofElement extends InternalElement {
 	}
 	
 	public FreeIdentifier[] getFreeIdents(FormulaFactory factory) throws RodinDBException {
-		IRodinElement[] children = getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
+		IPRIdentifier[] children = getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
 		FreeIdentifier[] freeIdents = new FreeIdentifier[children.length];
 		for (int i = 0; i < freeIdents.length; i++) {
-			freeIdents[i] = ((IPRIdentifier)children[i]).getIdentifier(factory);			
+			freeIdents[i] = children[i].getIdentifier(factory);			
 		}
 		return freeIdents;
 	}
@@ -152,8 +152,8 @@ public abstract class EventBProofElement extends InternalElement {
 	public void setFreeIdents(FreeIdentifier[] freeIdents, IProgressMonitor monitor) throws RodinDBException {
 		
 		for (int i = 0; i < freeIdents.length; i++) {
-			IPRIdentifier prIdent = (IPRIdentifier) 
-			getInternalElement(IPRIdentifier.ELEMENT_TYPE, freeIdents[i].getName());
+			IPRIdentifier prIdent = getInternalElement(
+					IPRIdentifier.ELEMENT_TYPE, freeIdents[i].getName());
 			prIdent.create(null, monitor);
 			prIdent.setType(freeIdents[i].getType(), monitor);
 		}
@@ -164,7 +164,6 @@ public abstract class EventBProofElement extends InternalElement {
 		// write out the comment of the root node
 		final String comment = skel.getComment();
 		setComment(comment, null);
-		
 		
 		if (skel.getRule() == null) return;
 				
@@ -200,10 +199,10 @@ public abstract class EventBProofElement extends InternalElement {
 
 
 	public IPRProofRule getProofRule(String name) {
-		return (IPRProofRule) getInternalElement(IPRProofRule.ELEMENT_TYPE, name);
+		return getInternalElement(IPRProofRule.ELEMENT_TYPE, name);
 	}
 
 	public IPRProofRule[] getProofRules() throws RodinDBException {
-		return (IPRProofRule[]) getChildrenOfType(IPRProofRule.ELEMENT_TYPE);
+		return getChildrenOfType(IPRProofRule.ELEMENT_TYPE);
 	}
 }

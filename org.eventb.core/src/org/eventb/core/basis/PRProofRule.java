@@ -45,7 +45,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPRProofRule> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
@@ -163,26 +163,23 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 	}
 
 	public IPRRuleAntecedent getAntecedent(String name) {
-		return (IPRRuleAntecedent) getInternalElement(IPRRuleAntecedent.ELEMENT_TYPE, name);
+		return getInternalElement(IPRRuleAntecedent.ELEMENT_TYPE, name);
 	}
 
 	public IPRRuleAntecedent[] getAntecedents() throws RodinDBException {
-		return (IPRRuleAntecedent[]) getChildrenOfType(IPRRuleAntecedent.ELEMENT_TYPE);
+		return getChildrenOfType(IPRRuleAntecedent.ELEMENT_TYPE);
 	}
 
 	public IPRExprRef getPRExprRef(String key) {
-		return (IPRExprRef) getInternalElement(IPRExprRef.ELEMENT_TYPE,
-				"." + key);
+		return getInternalElement(IPRExprRef.ELEMENT_TYPE, "." + key);
 	}
 
 	public IPRPredRef getPRPredRef(String key) {
-		return (IPRPredRef) getInternalElement(IPRPredRef.ELEMENT_TYPE,
-				"." + key);
+		return getInternalElement(IPRPredRef.ELEMENT_TYPE, "." + key);
 	}
 
 	public IPRStringInput getPRStringInput(String key) {
-		return (IPRStringInput) getInternalElement(IPRStringInput.ELEMENT_TYPE,
-				"." + key);
+		return getInternalElement(IPRStringInput.ELEMENT_TYPE, "." + key);
 	}
 
 }

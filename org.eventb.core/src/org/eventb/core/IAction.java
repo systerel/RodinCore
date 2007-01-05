@@ -33,7 +33,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface IAction extends ICommentedElement, ILabeledElement, IAssignmentElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IAction> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".action"); //$NON-NLS-1$
 
 	// No additional method

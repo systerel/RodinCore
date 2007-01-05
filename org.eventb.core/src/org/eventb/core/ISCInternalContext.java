@@ -37,7 +37,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface ISCInternalContext extends IInternalElement, ISCContext {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<ISCInternalContext> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scInternalContext"); //$NON-NLS-1$
 
 	// No additional method

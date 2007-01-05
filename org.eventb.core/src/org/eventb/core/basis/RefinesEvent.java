@@ -43,7 +43,7 @@ public class RefinesEvent extends InternalElement implements IRefinesEvent {
 	 * @see org.rodinp.core.basis.RodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IRefinesEvent> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

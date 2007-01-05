@@ -39,7 +39,7 @@ public class POPredicate extends SCPredicateElement implements IPOPredicate {
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPOPredicate> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

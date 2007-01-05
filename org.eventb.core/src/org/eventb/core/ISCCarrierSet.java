@@ -36,7 +36,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface ISCCarrierSet extends ITraceableElement, ISCIdentifierElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<ISCCarrierSet> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scCarrierSet"); //$NON-NLS-1$
 
 	// No additional method

@@ -33,7 +33,7 @@ public class POSelectionHint extends EventBElement implements IPOSelectionHint {
 	 * @see org.rodinp.core.basis.RodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPOSelectionHint> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

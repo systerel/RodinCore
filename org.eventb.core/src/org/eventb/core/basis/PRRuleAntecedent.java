@@ -35,13 +35,12 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPRRuleAntecedent> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	
 	public IAntecedent getAntecedent(IProofStoreReader store) throws RodinDBException {
-		
-		
+
 		Predicate goal = null;
 		if (hasGoal()) goal = getGoal(store);
 		
@@ -69,7 +68,9 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 	}
 
 
-public void setAntecedent(IAntecedent antecedent, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
+	public void setAntecedent(IAntecedent antecedent,
+			IProofStoreCollector store, IProgressMonitor monitor)
+			throws RodinDBException {
 
 		if (antecedent.getAddedFreeIdents().length != 0){
 			setFreeIdents(antecedent.getAddedFreeIdents(), monitor);
@@ -82,8 +83,9 @@ public void setAntecedent(IAntecedent antecedent, IProofStoreCollector store, IP
 		if (! antecedent.getHypAction().isEmpty()){
 			int count = 0;
 			for (IHypAction action : antecedent.getHypAction()) {
-				IPRHypAction child = (IPRHypAction) getInternalElement(
-						IPRHypAction.ELEMENT_TYPE, action.getActionType().toString());
+				IPRHypAction child = getInternalElement(
+						IPRHypAction.ELEMENT_TYPE,
+						action.getActionType().toString());
 				child.create(null, null);
 				child.setAction(action, store, null);
 				count ++;

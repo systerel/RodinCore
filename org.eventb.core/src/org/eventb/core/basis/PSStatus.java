@@ -50,7 +50,7 @@ public class PSStatus extends InternalElement implements IPSStatus {
 	 * @see org.rodinp.core.RodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPSStatus> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	

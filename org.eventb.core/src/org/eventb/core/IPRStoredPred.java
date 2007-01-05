@@ -24,7 +24,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPRStoredPred extends IInternalElement {
 	
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IPRStoredPred> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prPred"); //$NON-NLS-1$
 
 	Predicate getPredicate(FormulaFactory factory, ITypeEnvironment typEnv) throws RodinDBException;

@@ -35,7 +35,7 @@ public class Invariant extends EventBElement implements IInvariant {
 	}
 	
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IInvariant> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

@@ -36,7 +36,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface ISCWitness extends ITraceableElement, ILabeledElement, ISCPredicateElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<ISCWitness> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scWitness"); //$NON-NLS-1$
 
 }

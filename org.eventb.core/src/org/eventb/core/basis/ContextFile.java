@@ -39,54 +39,48 @@ public class ContextFile extends EventBFile implements IContextFile {
 	}
 
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<IContextFile> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
 	public ICarrierSet getCarrierSet(String elementName) {
-		return (ICarrierSet) getInternalElement(ICarrierSet.ELEMENT_TYPE,
-				elementName);
+		return getInternalElement(ICarrierSet.ELEMENT_TYPE, elementName);
 	}
 
 	public ICarrierSet[] getCarrierSets() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
-		return (ICarrierSet[]) elements; 
+		return getChildrenOfType(ICarrierSet.ELEMENT_TYPE); 
 	}
 	
 	public IConstant getConstant(String elementName) {
-		return (IConstant) getInternalElement(IConstant.ELEMENT_TYPE, elementName);
+		return getInternalElement(IConstant.ELEMENT_TYPE, elementName);
 	}
 
 	public IConstant[] getConstants() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IConstant.ELEMENT_TYPE);
-		return (IConstant[]) elements; 
+		return getChildrenOfType(IConstant.ELEMENT_TYPE); 
 	}
 	
 	public IAxiom getAxiom(String elementName) {
-		return (IAxiom) getInternalElement(IAxiom.ELEMENT_TYPE, elementName);
+		return getInternalElement(IAxiom.ELEMENT_TYPE, elementName);
 	}
 
 	public IAxiom[] getAxioms() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IAxiom.ELEMENT_TYPE);
-		return (IAxiom[]) elements; 
+		return getChildrenOfType(IAxiom.ELEMENT_TYPE); 
 	}
 	
 	public ITheorem getTheorem(String elementName) {
-		return (ITheorem) getInternalElement(ITheorem.ELEMENT_TYPE, elementName);
+		return getInternalElement(ITheorem.ELEMENT_TYPE, elementName);
 	}
 
 	public ITheorem[] getTheorems() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ITheorem.ELEMENT_TYPE);
-		return (Theorem[]) elements; 
+		return getChildrenOfType(ITheorem.ELEMENT_TYPE); 
 	}
 
 	public IExtendsContext getExtendsClause(String elementName) {
-		return (IExtendsContext) getInternalElement(IExtendsContext.ELEMENT_TYPE, elementName);
+		return getInternalElement(IExtendsContext.ELEMENT_TYPE, elementName);
 	}
 
 	public IExtendsContext[] getExtendsClauses() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
-		return (IExtendsContext[]) elements; 
+		return getChildrenOfType(IExtendsContext.ELEMENT_TYPE); 
 	}
 
 }

@@ -36,7 +36,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface ISCConstant extends ITraceableElement, ISCIdentifierElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<ISCConstant> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scConstant"); //$NON-NLS-1$
 
 	// No additional method

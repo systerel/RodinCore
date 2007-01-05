@@ -39,7 +39,7 @@ public class SCGuard extends SCPredicateElement implements ISCGuard {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCGuard> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

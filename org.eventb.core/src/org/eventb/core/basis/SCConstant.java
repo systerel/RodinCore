@@ -40,7 +40,7 @@ public class SCConstant extends SCIdentifierElement implements ISCConstant {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCConstant> getElementType() {
 		return ISCConstant.ELEMENT_TYPE;
 	}
 	

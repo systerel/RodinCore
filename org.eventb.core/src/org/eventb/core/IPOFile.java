@@ -29,7 +29,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPOFile extends IEventBFile {
 
-	public IFileElementType ELEMENT_TYPE = RodinCore
+	public IFileElementType<IPOFile> ELEMENT_TYPE = RodinCore
 			.getFileElementType(EventBPlugin.PLUGIN_ID + ".poFile"); //$NON-NLS-1$
 
 	/**

@@ -15,7 +15,7 @@ public class PRStringInput extends InternalElement implements IPRStringInput{
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPRStringInput> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

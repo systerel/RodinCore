@@ -30,7 +30,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPOPredicateSet extends IInternalElement {
 	
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IPOPredicateSet> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poPredicateSet"); //$NON-NLS-1$
 
 	/**

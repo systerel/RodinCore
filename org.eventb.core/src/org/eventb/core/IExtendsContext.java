@@ -44,7 +44,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IExtendsContext extends IInternalElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IExtendsContext> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".extendsContext"); //$NON-NLS-1$
 
 	/**

@@ -41,7 +41,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPSFile extends IEventBFile{
 
-	IFileElementType ELEMENT_TYPE =
+	IFileElementType<IPSFile> ELEMENT_TYPE =
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".psFile"); //$NON-NLS-1$
 	
 	/**

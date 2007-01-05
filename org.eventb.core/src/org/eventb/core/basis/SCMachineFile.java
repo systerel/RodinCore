@@ -43,18 +43,16 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 	}
 
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<ISCMachineFile> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
 	public ISCVariable[] getSCVariables() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISCVariable.ELEMENT_TYPE);
-		return (ISCVariable[]) elements; 
+		return getChildrenOfType(ISCVariable.ELEMENT_TYPE); 
 	}
 	
 	public ISCEvent[] getSCEvents() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISCEvent.ELEMENT_TYPE);
-		return (ISCEvent[]) elements; 
+		return getChildrenOfType(ISCEvent.ELEMENT_TYPE); 
 	}
 	
 	@Deprecated
@@ -67,79 +65,75 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 	}
 
 	public ISCInternalContext[] getSCSeenContexts() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISCInternalContext.ELEMENT_TYPE);
-		return (ISCInternalContext[]) elements;
+		return getChildrenOfType(ISCInternalContext.ELEMENT_TYPE);
 	}
 
 	public ISCInvariant[] getSCInvariants() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISCInvariant.ELEMENT_TYPE);
-		return (ISCInvariant[]) elements;
+		return getChildrenOfType(ISCInvariant.ELEMENT_TYPE);
 	}
 
 	public ISCTheorem[] getSCTheorems() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
-		return (ISCTheorem[]) elements;
+		return getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
 	}
 
 	@Deprecated
 	public ISCRefinesMachine getRefinesClause() throws RodinDBException {
-		return (ISCRefinesMachine) getSingletonChild(
+		return getSingletonChild(
 				ISCRefinesMachine.ELEMENT_TYPE, 
 				Messages.database_SCMachineMultipleRefinesFailure);
 	}
 
 	@Deprecated
 	public ISCVariant getSCVariant() throws RodinDBException {
-		return (ISCVariant) getSingletonChild(
+		return getSingletonChild(
 				ISCVariant.ELEMENT_TYPE, 
 				Messages.database_SCMachineMultipleVariantFailure);
 	}
 
 	public ISCMachineFile[] getAbstractSCMachines() throws RodinDBException {
 		ISCRefinesMachine[] refinesMachines = getSCRefinesClauses();
-		ISCMachineFile[] machineFiles = new ISCMachineFile[refinesMachines.length];
-		for (int i=0; i<refinesMachines.length; i++)
-			machineFiles[i] = 
-				refinesMachines[i].getAbstractSCMachine();
+		final int length = refinesMachines.length;
+		ISCMachineFile[] machineFiles = new ISCMachineFile[length];
+		for (int i=0; i<length; i++) {
+			machineFiles[i] = refinesMachines[i].getAbstractSCMachine();
+		}
 		return machineFiles;
 	}
 
 	public ISCRefinesMachine[] getSCRefinesClauses() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISCRefinesMachine.ELEMENT_TYPE);
-		return (ISCRefinesMachine[]) elements; 
+		return getChildrenOfType(ISCRefinesMachine.ELEMENT_TYPE); 
 	}
 
 	public ISCVariant[] getSCVariants() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISCVariant.ELEMENT_TYPE);
-		return (ISCVariant[]) elements; 
+		return getChildrenOfType(ISCVariant.ELEMENT_TYPE); 
 	}
 
 	public ISCEvent getSCEvent(String elementName) {
-		return (ISCEvent) getInternalElement(ISCEvent.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCEvent.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCInvariant getSCInvariant(String elementName) {
-		return (ISCInvariant) getInternalElement(ISCInvariant.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCInvariant.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCRefinesMachine getSCRefinesClause(String elementName) {
-		return (ISCRefinesMachine) getInternalElement(ISCRefinesMachine.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCRefinesMachine.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCTheorem getSCTheorem(String elementName) {
-		return (ISCTheorem) getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCVariable getSCVariable(String elementName) {
-		return (ISCVariable) getInternalElement(ISCVariable.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCVariable.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCVariant getSCVariant(String elementName) {
-		return (ISCVariant) getInternalElement(ISCVariant.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCVariant.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCInternalContext getSCSeenContext(String elementName) {
-		return (ISCInternalContext) getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
 	}
 
 }

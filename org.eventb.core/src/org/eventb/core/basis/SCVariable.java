@@ -34,7 +34,7 @@ public class SCVariable extends SCIdentifierElement implements ISCVariable {
 	}
 	
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCVariable> getElementType() {
 		return ISCVariable.ELEMENT_TYPE;
 	}
 

@@ -34,7 +34,7 @@ public class POIdentifier extends SCIdentifierElement implements IPOIdentifier {
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPOIdentifier> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	

@@ -43,39 +43,34 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	}
 
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<IMachineFile> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	
 	public IVariable[] getVariables() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IVariable.ELEMENT_TYPE);
-		return (IVariable[]) elements; 
+		return getChildrenOfType(IVariable.ELEMENT_TYPE);
 	}
 	
 	public ITheorem[] getTheorems() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ITheorem.ELEMENT_TYPE);
-		return (ITheorem[]) elements; 
+		return getChildrenOfType(ITheorem.ELEMENT_TYPE);
 	}
 	
 	public IInvariant[] getInvariants() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IInvariant.ELEMENT_TYPE);
-		return (IInvariant[]) elements; 
+		return getChildrenOfType(IInvariant.ELEMENT_TYPE);
 	}
 	
 	public IEvent[] getEvents() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IEvent.ELEMENT_TYPE);
-		return (IEvent[]) elements; 
+		return getChildrenOfType(IEvent.ELEMENT_TYPE); 
 	}
 	
 	public ISeesContext[] getSeesClauses() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(ISeesContext.ELEMENT_TYPE);
-		return (ISeesContext[]) elements; 
+		return getChildrenOfType(ISeesContext.ELEMENT_TYPE); 
 	}
 	
 	@Deprecated
 	public IRefinesMachine getRefinesClause(IProgressMonitor monitor) throws RodinDBException {
-		return (IRefinesMachine) getSingletonChild(
-				IRefinesMachine.ELEMENT_TYPE, Messages.database_MachineMultipleRefinesFailure);
+		return getSingletonChild(IRefinesMachine.ELEMENT_TYPE,
+				Messages.database_MachineMultipleRefinesFailure);
 	}
 
 	@Deprecated
@@ -85,46 +80,44 @@ public class MachineFile extends EventBFile implements IMachineFile {
 
 	@Deprecated
 	public IVariant getVariant() throws RodinDBException {
-		return (IVariant) getSingletonChild(
-				IVariant.ELEMENT_TYPE, Messages.database_MachineMultipleVariantFailure);
+		return getSingletonChild(IVariant.ELEMENT_TYPE,
+				Messages.database_MachineMultipleVariantFailure);
 	}
 
 	public IRefinesMachine[] getRefinesClauses() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
-		return (IRefinesMachine[]) elements; 
+		return getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 	}
 
 	public IVariant[] getVariants() throws RodinDBException {
-		IRodinElement[] elements = getChildrenOfType(IVariant.ELEMENT_TYPE);
-		return (IVariant[]) elements; 
+		return getChildrenOfType(IVariant.ELEMENT_TYPE);
 	}
 
 	public IEvent getEvent(String elementName) {
-		return (IEvent) getInternalElement(IEvent.ELEMENT_TYPE, elementName);
+		return getInternalElement(IEvent.ELEMENT_TYPE, elementName);
 	}
 
 	public IInvariant getInvariant(String elementName) {
-		return (IInvariant) getInternalElement(IInvariant.ELEMENT_TYPE, elementName);
+		return getInternalElement(IInvariant.ELEMENT_TYPE, elementName);
 	}
 
 	public IRefinesMachine getRefinesClause(String elementName) {
-		return (IRefinesMachine) getInternalElement(IRefinesMachine.ELEMENT_TYPE, elementName);
+		return getInternalElement(IRefinesMachine.ELEMENT_TYPE, elementName);
 	}
 
 	public ISeesContext getSeesClause(String elementName) {
-		return (ISeesContext) getInternalElement(ISeesContext.ELEMENT_TYPE, elementName);
+		return getInternalElement(ISeesContext.ELEMENT_TYPE, elementName);
 	}
 
 	public ITheorem getTheorem(String elementName) {
-		return (ITheorem) getInternalElement(ITheorem.ELEMENT_TYPE, elementName);
+		return getInternalElement(ITheorem.ELEMENT_TYPE, elementName);
 	}
 
 	public IVariable getVariable(String elementName) {
-		return (IVariable) getInternalElement(IVariable.ELEMENT_TYPE, elementName);
+		return getInternalElement(IVariable.ELEMENT_TYPE, elementName);
 	}
 
 	public IVariant getVariant(String elementName) {
-		return (IVariant) getInternalElement(IVariant.ELEMENT_TYPE, elementName);
+		return getInternalElement(IVariant.ELEMENT_TYPE, elementName);
 	}
 
 }

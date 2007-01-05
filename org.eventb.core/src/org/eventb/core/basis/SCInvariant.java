@@ -39,7 +39,7 @@ public class SCInvariant extends SCPredicateElement implements ISCInvariant {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCInvariant> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

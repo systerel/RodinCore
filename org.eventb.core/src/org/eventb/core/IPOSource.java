@@ -26,7 +26,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPOSource extends IInternalElement, ITraceableElement {
 	
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IPOSource> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poSource"); //$NON-NLS-1$
 	
 	

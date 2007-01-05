@@ -30,7 +30,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface IConstant extends ICommentedElement, IIdentifierElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IConstant> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".constant"); //$NON-NLS-1$
 
 	// No additional method

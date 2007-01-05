@@ -30,7 +30,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface ICarrierSet extends ICommentedElement, IIdentifierElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<ICarrierSet> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".carrierSet"); //$NON-NLS-1$
 
 	// No additional method

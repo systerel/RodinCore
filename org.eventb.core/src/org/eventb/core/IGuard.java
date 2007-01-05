@@ -34,7 +34,7 @@ import org.rodinp.core.RodinCore;
  */
 public interface IGuard extends ICommentedElement, ILabeledElement, IPredicateElement {
 	
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IGuard> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".guard"); //$NON-NLS-1$
 	
 	// No additional method

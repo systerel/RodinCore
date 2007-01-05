@@ -28,7 +28,7 @@ public class PRStoredExpr extends SCExpressionElement implements IPRStoredExpr {
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPRStoredExpr> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	
@@ -44,8 +44,8 @@ public class PRStoredExpr extends SCExpressionElement implements IPRStoredExpr {
 	public void setFreeIdents(FreeIdentifier[] freeIdents, IProgressMonitor monitor) throws RodinDBException {
 		
 		for (int i = 0; i < freeIdents.length; i++) {
-			IPRIdentifier prIdent = (IPRIdentifier) 
-			getInternalElement(IPRIdentifier.ELEMENT_TYPE, freeIdents[i].getName());
+			IPRIdentifier prIdent = getInternalElement(
+					IPRIdentifier.ELEMENT_TYPE, freeIdents[i].getName());
 			prIdent.create(null, monitor);
 			prIdent.setType(freeIdents[i].getType(), monitor);
 		}

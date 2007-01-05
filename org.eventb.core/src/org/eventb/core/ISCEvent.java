@@ -41,7 +41,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergenceElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<ISCEvent> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scEvent"); //$NON-NLS-1$
 
 	/**

@@ -19,7 +19,7 @@ public class PRExprRef extends InternalElement implements IPRExprRef{
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPRExprRef> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

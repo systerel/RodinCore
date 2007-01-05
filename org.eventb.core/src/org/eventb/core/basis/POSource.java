@@ -29,7 +29,7 @@ public class POSource extends EventBElement implements IPOSource {
 	 * @see org.rodinp.core.basis.RodinElement#getElementType()
 	 */
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPOSource> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	public String getRole() throws RodinDBException {

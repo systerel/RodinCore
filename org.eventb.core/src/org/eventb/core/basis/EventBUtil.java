@@ -24,13 +24,13 @@ public final class EventBUtil {
 		// no instances of this class
 	}
 	
-	public static IRodinElement getSingletonChild(
+	public static <T extends IRodinElement> T getSingletonChild(
 			RodinElement parent,
-			IElementType elementType,
+			IElementType<T> elementType,
 			String message) throws RodinDBException {
 
-		IRodinElement[] elements = parent.getChildrenOfType(elementType);
-		if(elements.length == 1)
+		T[] elements = parent.getChildrenOfType(elementType);
+		if (elements.length == 1)
 			return elements[0];
 		else if (elements.length == 0)
 			return null;

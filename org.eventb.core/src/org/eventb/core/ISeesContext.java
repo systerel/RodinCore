@@ -33,7 +33,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface ISeesContext extends IInternalElement {
 
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<ISeesContext> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".seesContext"); //$NON-NLS-1$
 
 	/**

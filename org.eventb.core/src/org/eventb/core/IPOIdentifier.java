@@ -23,7 +23,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPOIdentifier extends ISCIdentifierElement {
 	
-	IInternalElementType ELEMENT_TYPE =
+	IInternalElementType<IPOIdentifier> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poIdentifier"); //$NON-NLS-1$
 
 	@Deprecated

@@ -35,7 +35,7 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<IPRHypAction> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

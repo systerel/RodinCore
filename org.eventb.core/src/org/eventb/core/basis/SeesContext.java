@@ -43,7 +43,7 @@ public class SeesContext extends InternalElement implements ISeesContext {
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISeesContext> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

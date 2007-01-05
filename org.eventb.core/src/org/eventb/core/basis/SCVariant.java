@@ -36,7 +36,7 @@ public class SCVariant extends SCExpressionElement implements ISCVariant {
 	}
 
 	@Override
-	public IInternalElementType getElementType() {
+	public IInternalElementType<ISCVariant> getElementType() {
 		return ELEMENT_TYPE;
 	}
 

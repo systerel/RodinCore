@@ -80,8 +80,8 @@ public abstract class EventBFile extends RodinFile implements IEventBFile {
 	}
 
 	@Deprecated
-	protected final IRodinElement getSingletonChild(IElementType elementType,
-			String message) throws RodinDBException {
+	protected final <T extends IRodinElement> T getSingletonChild(
+			IElementType<T> elementType, String message) throws RodinDBException {
 
 		return EventBUtil.getSingletonChild(this, elementType, message);
 	}

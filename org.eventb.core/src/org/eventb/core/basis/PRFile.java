@@ -34,16 +34,16 @@ public class PRFile extends EventBFile implements IPRFile {
 	}
 
 	@Override
-	public IFileElementType getElementType() {
+	public IFileElementType<IPRFile> getElementType() {
 		return ELEMENT_TYPE;
 	}
 	
 	public IPRProof[] getProofs() throws RodinDBException {
-		return (PRProof[]) getChildrenOfType(IPRProof.ELEMENT_TYPE);
+		return getChildrenOfType(IPRProof.ELEMENT_TYPE);
 	}
 
 	public IPRProof getProof(String name) {
-		return (IPRProof) getInternalElement(IPRProof.ELEMENT_TYPE,name);
+		return getInternalElement(IPRProof.ELEMENT_TYPE,name);
 	}
 
 }

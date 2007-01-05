@@ -43,7 +43,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IMachineFile extends IEventBFile {
 
-	IFileElementType ELEMENT_TYPE =
+	IFileElementType<IMachineFile> ELEMENT_TYPE =
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".machineFile"); //$NON-NLS-1$
 
 	/**
