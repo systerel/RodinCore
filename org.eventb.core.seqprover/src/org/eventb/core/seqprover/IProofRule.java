@@ -13,9 +13,29 @@ import org.eventb.core.ast.Predicate;
  * A proof rule contains a goal, needed hypotheses, and a possibly empty array of
  * anticidents.
  * </p>
+ * 
+ * <p>
+ * The goal and needed hypotheses are used to determine if the rule is applicable
+ * to a sequent. The antecedents are used to calculate the result of applying the
+ * rule to a sequent. All three are used to calculate proof dependencies.
+ * </p>
+ * 
+ * <p>
+ * From the point of view of a proof tree, rules are applied in a top-down (i.e. from
+ * root to leaves) manner, and proof dependencies are calculated in a bottom-up
+ * (i.e. from leaves to root) manner.
+ * </p>
+ * 
+ * <p>
+ * Note that in addition to the set of hypotheses explicitly stated in a sequent,
+ * the well-definedness predicates of each hypothesis, and that of the goal may be assumed.
+ * If this is the case, the actual hypotheses or goal need to be stated explicity
+ * in the needed hypotheses or the goal of the rule respectively. 
+ * </p>
+ * 
  * <p>
  * This interface is not intended to be implemented by clients. Objects of this type 
- * are typically generated inside reasoners by calling a factory method.
+ * are typically generated inside reasoners by calling a factory method in {@link ProverFactory}.
  * </p>
  * @see IAntecedent
  * @see org.eventb.core.seqprover.IReasoner

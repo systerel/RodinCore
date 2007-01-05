@@ -278,7 +278,21 @@ public final class ProverFactory {
 
 	
 	/**
-	 * Returns a new sequent.
+	 * Returns a new sequent with the given parameters.
+	 * 
+	 * <p>
+	 * Note : <br>
+	 * The parameters provided to construct the sequent must be consistent
+	 * in order to construct a proper sequent. In particular:
+	 * <ul>
+	 * <li> All predicates (i.e. all hypotheses and the goal) must be type checked.
+	 * <li> The type environment provided should contain all free identifiers and carrier
+	 * sets appearing in the predicates of the sequent and can be used to successfully
+	 * type check them.
+	 * </ul>
+	 * These checks need to be done before calling this method. The behaviour of the
+	 * sequent prover is undefined if these checks are not done.
+	 * </p>
 	 * 
 	 * @param typeEnv
 	 * 		The type environment for the sequent, or <code>null</code> iff the empty
@@ -291,15 +305,30 @@ public final class ProverFactory {
 	 * @param goal
 	 * 		The goal. This parameter must not be <code>null</code>.
 	 * @return
-	 * 		A new sequent with the given information, or <code>null</code> if a valid
-	 * 		sequent could not be constructed
+	 * 		A new sequent with the given parameters.
 	 */
 	public static IProverSequent makeSequent(ITypeEnvironment typeEnv,Collection<Predicate> hyps,Predicate goal){
 		return new ProverSequent(typeEnv,hyps,goal);
 	}
 	
 	/**
-	 * Returns a new sequent with some selected hypotheses.
+	 * Returns a new sequent with some selected hypotheses from the given parameters.
+	 * 
+	 * <p>
+	 * Note : <br>
+	 * The parameters provided to construct the sequent must be consistent
+	 * in order to construct a proper sequent. In particular:
+	 * <ul>
+	 * <li> All predicates (i.e. all hypotheses and the goal) must be type checked.
+	 * <li> The type environment provided should contain all free identifiers and carrier
+	 * sets appearing in the predicates of the sequent and can be used to successfully
+	 * type check them.
+	 * <li> All hypotheses to be selected must also be present in the set of 
+	 * hypotheses provided.
+	 * </ul>
+	 * These checks need to be done before calling this method. The behaviour of the
+	 * sequent prover is undefined if these checks are not done.
+	 * </p>
 	 * 
 	 * @param typeEnv
 	 * 		The type environment for the sequent, or <code>null</code> iff the empty
@@ -315,8 +344,7 @@ public final class ProverFactory {
 	 * @param goal
 	 * 		The goal. This parameter must not be <code>null</code>.
 	 * @return
-	 * 		A new sequent with the given information, or <code>null</code> if a valid
-	 * 		sequent could not be constructed
+	 * 		A new sequent with the given information.
 	 */
 	public static IProverSequent makeSequent(ITypeEnvironment typeEnv,Collection<Predicate> hyps,Collection<Predicate> selHyps,Predicate goal){
 		return new ProverSequent(typeEnv,hyps,selHyps,goal);
