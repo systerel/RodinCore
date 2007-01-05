@@ -9,6 +9,7 @@ package org.rodinp.core.basis;
 
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IUnnamedInternalElement;
 
 /**
  * This abstract class is intended to be implemented by clients that contribute
@@ -27,9 +28,10 @@ public abstract class UnnamedInternalElement extends InternalElement implements
 		org.rodinp.core.IUnnamedInternalElement {
 
 	/* Type of this unnamed internal element. */ 
-	private IInternalElementType type;
+	private IInternalElementType<? extends IUnnamedInternalElement> type;
 
-	public UnnamedInternalElement(IInternalElementType type,
+	public UnnamedInternalElement(
+			IInternalElementType<? extends IUnnamedInternalElement> type,
 			IRodinElement parent) {
 
 		super("", parent);
@@ -37,7 +39,7 @@ public abstract class UnnamedInternalElement extends InternalElement implements
 	}
 
 	@Override
-	public final IInternalElementType getElementType() {
+	public final IInternalElementType<? extends IUnnamedInternalElement> getElementType() {
 		return type;
 	}
 

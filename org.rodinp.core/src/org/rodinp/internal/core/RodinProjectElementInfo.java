@@ -13,8 +13,8 @@ package org.rodinp.internal.core;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.basis.RodinElement;
-import org.rodinp.core.basis.RodinFile;
 
 /** 
  * Info for IRodinProject.
@@ -82,9 +82,9 @@ import org.rodinp.core.basis.RodinFile;
 			for (IResource res : members) {
 				switch (res.getType()) {
 				case IResource.FILE:
-					final RodinFile rf = project.getRodinFile(res.getName());
+					final IRodinFile rf = project.getRodinFile(res.getName());
 					if (rf != null) {
-						newChildren[resourcesCounter++] = rf;
+						newChildren[resourcesCounter++] = (RodinElement) rf;
 					}
 					break;
 				}

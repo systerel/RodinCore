@@ -50,6 +50,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -592,7 +593,7 @@ public class RodinDBManager implements ISaveParticipant {
 	 * Removes the buffer for the given Rodin file from the cache.
 	 * Returns the removed buffer, or null if none.
 	 */
-	public synchronized void removeBuffer(RodinFile rodinFile, boolean force) {
+	public synchronized void removeBuffer(IRodinFile rodinFile, boolean force) {
 		this.cache.removeBuffer(rodinFile, force);
 	}	
 

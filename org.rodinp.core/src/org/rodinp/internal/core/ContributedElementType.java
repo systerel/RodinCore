@@ -12,15 +12,15 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.rodinp.core.basis.RodinElement;
+import org.rodinp.core.IRodinElement;
 
 /**
  * Base class for contributed element types.
  * 
  * @author Laurent Voisin
  */
-public abstract class ContributedElementType<T extends RodinElement> extends
-		ElementType {
+public abstract class ContributedElementType<T extends IRodinElement> extends
+		ElementType<T> {
 
 	// Name of the plugin which contributes this element type
 	private final String bundleName;

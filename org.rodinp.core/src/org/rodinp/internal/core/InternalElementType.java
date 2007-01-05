@@ -11,6 +11,7 @@ package org.rodinp.internal.core;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -20,8 +21,8 @@ import org.rodinp.core.basis.InternalElement;
  * @author lvoisin
  *
  */
-public class InternalElementType extends
-		ContributedElementType<InternalElement> implements IInternalElementType {
+public class InternalElementType<T extends IInternalElement> extends
+		ContributedElementType<T> implements IInternalElementType<T> {
 
 	private final boolean named;
 	
@@ -33,11 +34,12 @@ public class InternalElementType extends
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void computeClass() {
 		Bundle bundle = Platform.getBundle(getBundleName());
 		try {
 			Class<?> clazz = bundle.loadClass(getClassName());
-			classObject = clazz.asSubclass(InternalElement.class);
+			classObject = (Class<? extends T>) clazz.asSubclass(InternalElement.class);
 		} catch (Exception e) {
 			throw new IllegalStateException(
 					"Can't find constructor for element type " + getId(), e);
@@ -75,7 +77,7 @@ public class InternalElementType extends
 	 * @return a handle on the internal element or <code>null</code> if the
 	 *         element type is unknown
 	 */
-	public InternalElement createInstance(String elementName, IInternalParent parent) {
+	public T createInstance(String elementName, IInternalParent parent) {
 		if (constructor == null) {
 			computeConstructor();
 		}

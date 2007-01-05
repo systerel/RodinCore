@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinElement;
@@ -152,7 +153,7 @@ public class CopyResourceElementsOperation extends MultiOperation  {
 	
 		// copy resource
 		IFile sourceResource = source.getResource();
-		RodinFile destRF = dest.getRodinFile(destName);
+		IRodinFile destRF = dest.getRodinFile(destName);
 		IFile destFile = destRF.getResource();
 		if (! destRF.equals(source)) {
 			try {

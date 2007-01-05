@@ -28,7 +28,6 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.Openable;
 import org.rodinp.core.basis.RodinElement;
-import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 import org.rodinp.internal.core.util.MementoTokenizer;
 
@@ -235,7 +234,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	}
 	
 	@Override
-	public IElementType getElementType() {
+	public IElementType<IRodinProject> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
@@ -246,7 +245,7 @@ public class RodinProject extends Openable implements IRodinProject {
 				if (!memento.hasMoreTokens())
 					return this;
 				String fileName = memento.nextToken();
-				RodinElement file = getRodinFile(fileName);
+				RodinElement file = (RodinElement) getRodinFile(fileName);
 				if (file == null) {
 					return null;
 				}
@@ -423,7 +422,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	/**
 	 * @see IRodinProject
 	 */
-	public RodinFile getRodinFile(String fileName) {
+	public IRodinFile getRodinFile(String fileName) {
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
 		FileElementType type = manager.getFileElementTypeFor(fileName);
 		if (type == null) {
@@ -434,10 +433,10 @@ public class RodinProject extends Openable implements IRodinProject {
 	}
 
 	@Deprecated
-	public RodinFile createRodinFile(String name, boolean force,
+	public IRodinFile createRodinFile(String name, boolean force,
 			IProgressMonitor monitor) throws RodinDBException {
 
-		final RodinFile rodinFile = getRodinFile(name);
+		final IRodinFile rodinFile = getRodinFile(name);
 		if (rodinFile == null) {
 			throw newRodinDBException(new RodinDBStatus(
 					IRodinDBStatusConstants.INVALID_NAME, name));

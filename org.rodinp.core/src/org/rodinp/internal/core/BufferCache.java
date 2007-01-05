@@ -8,16 +8,14 @@
 
 package org.rodinp.internal.core;
 
-import org.rodinp.core.basis.RodinFile;
-
+import org.rodinp.core.IRodinFile;
 
 /**
  * Implements a cache of Rodin file buffers.
  * 
- * 
  * @author Laurent Voisin
  */
-public class BufferCache extends OverflowingLRUCache<RodinFile, Buffer> {
+public class BufferCache extends OverflowingLRUCache<IRodinFile, Buffer> {
 
 	public BufferCache(int size) {
 		super(size);
@@ -28,13 +26,13 @@ public class BufferCache extends OverflowingLRUCache<RodinFile, Buffer> {
 	}
 
 	@Override
-	protected boolean close(LRUCacheEntry<RodinFile, Buffer> entry) {
+	protected boolean close(LRUCacheEntry<IRodinFile, Buffer> entry) {
 		Buffer buffer = entry._fValue;
-		return ! buffer.hasUnsavedChanges();
+		return !buffer.hasUnsavedChanges();
 	}
 
 	@Override
-	protected OverflowingLRUCache<RodinFile, Buffer> newInstance(int size,
+	protected OverflowingLRUCache<IRodinFile, Buffer> newInstance(int size,
 			int overflow) {
 		return null;
 	}

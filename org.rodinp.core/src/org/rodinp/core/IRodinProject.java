@@ -44,7 +44,7 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	/**
 	 * The element type of all Rodin projects.
 	 */
-	IElementType ELEMENT_TYPE = ElementType.PROJECT_ELEMENT_TYPE;
+	IElementType<IRodinProject> ELEMENT_TYPE = ElementType.PROJECT_ELEMENT_TYPE;
 
 	/**
 	 * Returns the <code>IRodinElement</code> corresponding to the given

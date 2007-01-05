@@ -51,7 +51,7 @@ public interface IParent {
 	 *                or if an exception occurs while accessing its
 	 *                corresponding resource
 	 */
-	IRodinElement[] getChildrenOfType(IElementType type) throws RodinDBException;
+	<T extends IRodinElement> T[] getChildrenOfType(IElementType<T> type) throws RodinDBException;
 
 	/**
 	 * Returns whether this element <b>may</b> have one or more immediate

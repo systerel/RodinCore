@@ -15,6 +15,7 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.AttributeType;
@@ -81,11 +82,12 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	}
 	
 	@Deprecated
-	public InternalElement createInternalElement(IInternalElementType type,
+	public <T extends IInternalElement> T createInternalElement(
+			IInternalElementType<T> type,
 			String childName, IInternalElement nextSibling,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		InternalElement result = getInternalElement(type, childName);
+		T result = getInternalElement(type, childName);
 		result.create(nextSibling, monitor);
 		return result;
 	}
@@ -191,7 +193,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	}
 
 	@Override
-	public abstract IInternalElementType getElementType();
+	public abstract IInternalElementType<? extends IInternalElement> getElementType();
 
 	protected RodinFileElementInfo getFileInfo(IProgressMonitor monitor) throws RodinDBException {
 		RodinFile file = getOpenableParent();
@@ -230,14 +232,16 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return REM_INTERNAL;
 	}
 	
-	public InternalElement getInternalElement(IInternalElementType childType,
+	public <T extends IInternalElement> T getInternalElement(
+			IInternalElementType<T> childType,
 			String childName) {
 
-		return ((InternalElementType) childType).createInstance(childName, this);
+		return ((InternalElementType<T>) childType).createInstance(childName, this);
 	}
 
 	@Deprecated
-	public InternalElement getInternalElement(IInternalElementType childType,
+	public <T extends IInternalElement> T getInternalElement(
+			IInternalElementType<T> childType,
 			String childName, int childOccurrenceCount) {
 
 		if (childOccurrenceCount != 1) {
@@ -253,7 +257,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		}
 		
 		// Recreate this handle in the mutable version of its file.
-		final RodinFile newFile = file.getMutableCopy();
+		final IRodinFile newFile = file.getMutableCopy();
 		return (InternalElement) Util.getSimilarElement(this, newFile);
 	}
 
@@ -304,7 +308,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		}
 		
 		// Recreate this handle in the snapshot version of its file.
-		final RodinFile newFile = file.getSnapshot();
+		final IRodinFile newFile = file.getSnapshot();
 		return (InternalElement) Util.getSimilarElement(this, newFile);
 	}
 

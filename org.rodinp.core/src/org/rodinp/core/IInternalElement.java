@@ -111,7 +111,7 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
-	IInternalElementType getElementType();
+	IInternalElementType<? extends IInternalElement> getElementType();
 	
 	/**
 	 * Returns the occurrence count of this internal element, which is always

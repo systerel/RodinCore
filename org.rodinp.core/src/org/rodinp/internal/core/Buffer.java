@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -235,7 +236,8 @@ public class Buffer {
 			Element domChild) {
 		
 		try {
-			final IInternalElementType childType = getElementType(domChild);
+			final IInternalElementType<? extends IInternalElement> childType =
+				getElementType(domChild);
 			final String childName = getElementName(domChild);
 			if (childName == null) {
 				Util.log(null, "internal element with no name in file " + owner);
@@ -257,7 +259,9 @@ public class Buffer {
 		return domElement.getAttributeNS(null, NAME_ATTRIBUTE);
 	}
 
-	public IInternalElementType getElementType(Element domElement) {
+	public IInternalElementType<? extends IInternalElement> getElementType(
+			Element domElement) {
+
 		final String id = domElement.getNodeName();
 		return RodinCore.getInternalElementType(id);
 	}

@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.content.IContentType;
  * 
  * @see RodinCore#getFileElementType(String)
  */
-public interface IFileElementType extends IElementType {
+public interface IFileElementType<T extends IRodinFile> extends IElementType<T> {
 
 	/**
 	 * Returns the content type associated to this file element type.

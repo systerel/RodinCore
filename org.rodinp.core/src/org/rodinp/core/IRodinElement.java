@@ -97,7 +97,7 @@ public interface IRodinElement extends IAdaptable {
 	 * @return the first ancestor of this Rodin element that has the given type,
 	 *         or <code>null</code> if no such an ancestor can be found
 	 */
-	IRodinElement getAncestor(IElementType ancestorType);
+	<T extends IRodinElement> T getAncestor(IElementType<T> ancestorType);
 
 	/**
 	 * Returns the resource that corresponds directly to this element, or
@@ -135,7 +135,7 @@ public interface IRodinElement extends IAdaptable {
 	 * 
 	 * @return the element type
 	 */
-	IElementType getElementType();
+	IElementType<? extends IRodinElement> getElementType();
 
 	/**
 	 * Returns a string representation of this element handle. The format of the

@@ -27,7 +27,8 @@ package org.rodinp.core;
  * 
  * @see RodinCore#getInternalElementType(String)
  */
-public interface IInternalElementType extends IElementType {
+public interface IInternalElementType<T extends IInternalElement> extends
+		IElementType<T> {
 
 	// No additional method
 	

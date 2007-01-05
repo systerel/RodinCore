@@ -15,10 +15,11 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.osgi.framework.Bundle;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.basis.RodinFile;
 
-public class FileElementType extends
-		ContributedElementType<RodinFile> implements IFileElementType {
+public class FileElementType<T extends IRodinFile> extends
+		ContributedElementType<T> implements IFileElementType<T> {
 
 	// Content type associated to this file element type
 	// (cached value)
@@ -33,11 +34,12 @@ public class FileElementType extends
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void computeClass() {
 		Bundle bundle = Platform.getBundle(getBundleName());
 		try {
 			Class<?> clazz = bundle.loadClass(getClassName());
-			classObject = clazz.asSubclass(RodinFile.class);
+			classObject = (Class<? extends T>) clazz.asSubclass(RodinFile.class);
 		} catch (Exception e) {
 			throw new IllegalStateException(
 					"Can't find class for element type " + getId(), e);
@@ -69,7 +71,7 @@ public class FileElementType extends
 		return contentTypeId;
 	}
 
-	public RodinFile createInstance(IFile file, RodinProject project) {
+	public IRodinFile createInstance(IFile file, RodinProject project) {
 		if (constructor == null) {
 			computeConstructor();
 		}

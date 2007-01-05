@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinDB;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.basis.Openable;
 import org.rodinp.core.basis.RodinFile;
@@ -142,7 +143,7 @@ public class RodinDBCache {
 	 * <code>force</code> is <code>true</code>, always remove the buffer,
 	 * otherwise remove the buffer only if it has not been modified yet.
 	 */
-	public void removeBuffer(RodinFile rodinFile, boolean force) {
+	public void removeBuffer(IRodinFile rodinFile, boolean force) {
 		if (force) {
 			this.bufferCache.remove(rodinFile);
 		} else {

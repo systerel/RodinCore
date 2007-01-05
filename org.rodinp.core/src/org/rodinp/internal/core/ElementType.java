@@ -11,7 +11,9 @@ package org.rodinp.internal.core;
 import java.util.HashMap;
 
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.util.Messages;
 
@@ -20,20 +22,20 @@ import org.rodinp.internal.core.util.Messages;
  * 
  * @author Laurent Voisin
  */
-public abstract class ElementType implements IElementType {
+public abstract class ElementType<T extends IRodinElement> implements IElementType<T> {
 
-	public static final class DatabaseElementType extends ElementType {
+	public static final class DatabaseElementType extends ElementType<IRodinDB> {
 		protected DatabaseElementType() {
 			super(RodinCore.PLUGIN_ID + ".database", Messages.type_database);
 		}
 
 		@Override
-		public RodinDB[] getArray(int length) {
-			return new RodinDB[length];
+		public IRodinDB[] getArray(int length) {
+			return new IRodinDB[length];
 		}
 	}
 
-	public static final class ProjectElementType extends ElementType {
+	public static final class ProjectElementType extends ElementType<IRodinProject> {
 		protected ProjectElementType() {
 			super(RodinCore.PLUGIN_ID + ".project", Messages.type_project);
 		}
@@ -44,8 +46,8 @@ public abstract class ElementType implements IElementType {
 		}
 	}
 
-	private static final HashMap<String, ElementType> registry = 
-		new HashMap<String, ElementType>();
+	private static final HashMap<String, ElementType<? extends IRodinElement>>
+		registry = new HashMap<String, ElementType<? extends IRodinElement>>();
 	
 	public static final DatabaseElementType DATABASE_ELEMENT_TYPE = 
 		new DatabaseElementType();
@@ -53,8 +55,8 @@ public abstract class ElementType implements IElementType {
 	public static final ProjectElementType PROJECT_ELEMENT_TYPE = 
 		new ProjectElementType();
 
-	private static void register(String id, ElementType type) {
-		final ElementType oldType = registry.put(id, type);
+	private static void register(String id, ElementType<? extends IRodinElement> type) {
+		final ElementType<? extends IRodinElement> oldType = registry.put(id, type);
 		if (oldType != null) {
 			registry.put(id, oldType);
 			throw new IllegalStateException(
@@ -62,7 +64,7 @@ public abstract class ElementType implements IElementType {
 		}
 	}
 	
-	public static IElementType getElementType(String id) {
+	public static IElementType<? extends IRodinElement> getElementType(String id) {
 		return registry.get(id);
 	}
 	
@@ -91,6 +93,6 @@ public abstract class ElementType implements IElementType {
 		return id;
 	}
 
-	public abstract IRodinElement[] getArray(int length);
+	public abstract T[] getArray(int length);
 
 }

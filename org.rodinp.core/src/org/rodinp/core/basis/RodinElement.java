@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
@@ -110,7 +111,7 @@ public abstract class RodinElement extends PlatformObject implements
 		if (! memento.hasMoreTokens()) return parent;
 		if (memento.nextToken().charAt(0) != REM_TYPE_SEP) return parent;
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		final InternalElementType childType = 
+		final InternalElementType<? extends IInternalElement> childType = 
 			manager.getInternalElementType(childTypeId);
 		if (childType == null) {
 			// Unknown internal type
@@ -220,11 +221,12 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * @see IRodinElement
 	 */
-	public IRodinElement getAncestor(IElementType ancestorType) {
+	@SuppressWarnings("unchecked")
+	public <T extends IRodinElement> T getAncestor(IElementType<T> ancestorType) {
 		IRodinElement element = this;
 		while (element != null) {
 			if (element.getElementType() == ancestorType)
-				return element;
+				return (T) element;
 			element = element.getParent();
 		}
 		return null;
@@ -255,15 +257,15 @@ public abstract class RodinElement extends PlatformObject implements
 	 * @deprecated Please use {@link #getChildrenOfType(IElementType)} instead.
 	 */
 	@Deprecated
-	public ArrayList<? extends IRodinElement> getFilteredChildrenList(
-			IElementType type) throws RodinDBException {
+	@SuppressWarnings("unchecked")
+	public <T extends IRodinElement> ArrayList<T> getFilteredChildrenList(
+			IElementType<T> type) throws RodinDBException {
 
 		final RodinElement[] children = getElementInfo().getChildren();
-		final ArrayList<RodinElement> list = new ArrayList<RodinElement>(
-				children.length);
+		final ArrayList<T> list = new ArrayList<T>(children.length);
 		for (RodinElement child : children) {
 			if (child.getElementType() == type) {
-				list.add(child);
+				list.add((T) child);
 			}
 		}
 		return list;
@@ -272,18 +274,18 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * @see IParent
 	 */
-	public IRodinElement[] getChildrenOfType(IElementType type)
+	@SuppressWarnings("unchecked")
+	public <T extends IRodinElement> T[] getChildrenOfType(IElementType<T> type)
 			throws RodinDBException {
 
 		final RodinElement[] children = getElementInfo().getChildren();
-		final ArrayList<RodinElement> list = new ArrayList<RodinElement>(
-				children.length);
+		final ArrayList<T> list = new ArrayList<T>(children.length);
 		for (RodinElement child : children) {
 			if (child.getElementType() == type) {
-				list.add(child);
+				list.add((T) child);
 			}
 		}
-		return list.toArray(((ElementType) type).getArray(list.size()));
+		return list.toArray(((ElementType<T>) type).getArray(list.size()));
 	}
 
 	
@@ -316,7 +318,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * @see IRodinElement
 	 */
-	public abstract IElementType getElementType();
+	public abstract IElementType<? extends IRodinElement> getElementType();
 
 	/*
 	 * Creates a Rodin element handle from the given memento. The given token is

@@ -41,7 +41,7 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	/**
 	 * The element type of the Rodin database.
 	 */
-	IElementType ELEMENT_TYPE = ElementType.DATABASE_ELEMENT_TYPE;
+	IElementType<IRodinDB> ELEMENT_TYPE = ElementType.DATABASE_ELEMENT_TYPE;
 
 	/**
 	 * Returns whether this Rodin database contains an

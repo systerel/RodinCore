@@ -41,7 +41,7 @@ package org.rodinp.core;
  * @see RodinCore#getFileElementType(String)
  * @see RodinCore#getInternalElementType(String)
  */
-public interface IElementType {
+public interface IElementType<T extends IRodinElement> {
 
 	/**
 	 * Returns the unique identifier of this element type.

@@ -21,7 +21,11 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.basis.RodinFile;
 
 /**
  * Manager for Rodin element types.
@@ -78,10 +82,10 @@ public class ElementTypeManager {
 	private HashMap<String, FileElementType> fileContentTypes;
 
 	// Access to file element types using their unique id
-	private HashMap<String, FileElementType> fileElementTypeIds;
+	private HashMap<String, FileElementType<RodinFile>> fileElementTypeIds;
 
 	private void computeFileElementTypes() {
-		fileElementTypeIds = new HashMap<String, FileElementType>();
+		fileElementTypeIds = new HashMap<String, FileElementType<RodinFile>>();
 		fileContentTypes = new HashMap<String, FileElementType>();
 		fileContentTypes = new HashMap<String, FileElementType>();
 		
@@ -90,7 +94,7 @@ public class ElementTypeManager {
 		IConfigurationElement[] elements = 
 			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, FILE_ELEMENT_TYPES_ID);
 		for (IConfigurationElement element: elements) {
-			FileElementType type = new FileElementType(element);
+			FileElementType<RodinFile> type = new FileElementType<RodinFile>(element);
 			fileElementTypeIds.put(type.getId(), type);
 			fileContentTypes.put(type.getContentTypeId(), type);
 		}
@@ -113,17 +117,20 @@ public class ElementTypeManager {
 	private static final String INTERNAL_ELEMENT_TYPES_ID = "internalElementTypes";
 	
 	// Access to internal element types using their unique id
-	private HashMap<String, InternalElementType> internalElementTypeIds;
+	private HashMap<String, InternalElementType<? extends IInternalElement>>
+		internalElementTypeIds;
 
 	private void computeInternalElementTypes() {
-		internalElementTypeIds = new HashMap<String, InternalElementType>();
+		internalElementTypeIds =
+			new HashMap<String, InternalElementType<? extends IInternalElement>>();
 		
 		// Read the extension point extensions.
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = 
 			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, INTERNAL_ELEMENT_TYPES_ID);
 		for (IConfigurationElement element: elements) {
-			InternalElementType type = new InternalElementType(element);
+			InternalElementType<? extends IInternalElement> type =
+				new InternalElementType<IInternalElement>(element);
 			internalElementTypeIds.put(type.getId(), type);
 		}
 
@@ -148,7 +155,9 @@ public class ElementTypeManager {
 	 * @return the element type or <code>null</code> if this
 	 *         element type id is unknown.
 	 */
-	public InternalElementType getInternalElementType(String id) {
+	public InternalElementType<? extends IInternalElement> getInternalElementType(
+			String id) {
+
 		if (internalElementTypeIds == null) {
 			computeInternalElementTypes();
 		}
@@ -178,7 +187,7 @@ public class ElementTypeManager {
 		return getFileElementTypeFor(file.getName());
 	}
 
-	public FileElementType getFileElementType(String id) {
+	public FileElementType<? extends IRodinFile> getFileElementType(String id) {
 		if (fileElementTypeIds == null) {
 			computeFileElementTypes();
 		}
@@ -197,7 +206,7 @@ public class ElementTypeManager {
 		return getFileElementTypeFor(fileName) != null;
 	}
 	
-	public IElementType getElementType(String id) {
+	public IElementType<? extends IRodinElement> getElementType(String id) {
 		if (internalElementTypeIds == null) {
 			computeInternalElementTypes();
 		}

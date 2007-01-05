@@ -164,7 +164,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	 * @see IRodinElement
 	 */
 	@Override
-	public IElementType getElementType() {
+	public IElementType<IRodinDB> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
@@ -248,7 +248,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	 * @see IRodinDB
 	 */
 	public IRodinProject[] getRodinProjects() throws RodinDBException {
-		return (IRodinProject[]) getChildrenOfType(IRodinProject.ELEMENT_TYPE);
+		return getChildrenOfType(IRodinProject.ELEMENT_TYPE);
 
 	}
 

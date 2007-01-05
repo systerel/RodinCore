@@ -130,18 +130,18 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return new RodinFileElementInfo();
 	}
 
-	private final RodinFile createNewHandle() {
+	private final IRodinFile createNewHandle() {
 		final FileElementType type = (FileElementType) getElementType();
 		return type.createInstance(file, (RodinProject) getParent());
 	}
 
 	@Deprecated
-	public final InternalElement createInternalElement(
-			IInternalElementType type, String name,
+	public final <T extends IInternalElement> T createInternalElement(
+			IInternalElementType<T> type, String name,
 			IInternalElement nextSibling, IProgressMonitor monitor)
 			throws RodinDBException {
 		
-		InternalElement result = getInternalElement(type, name);
+		T result = getInternalElement(type, name);
 		result.create(nextSibling, monitor);
 		return result;
 	}
@@ -183,7 +183,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	@Override
-	public abstract IFileElementType getElementType();
+	public abstract IFileElementType<? extends IRodinFile> getElementType();
 
 	@Override
 	public final IRodinElement getHandleFromMemento(String token, MementoTokenizer memento) {
@@ -199,15 +199,15 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return REM_EXTERNAL;
 	}
 
-	public final InternalElement getInternalElement(IInternalElementType type,
-			String name) {
+	public final <T extends IInternalElement> T getInternalElement(
+			IInternalElementType<T> type, String name) {
 
-		return ((InternalElementType) type).createInstance(name, this);
+		return ((InternalElementType<T>) type).createInstance(name, this);
 	}
 
 	@Deprecated
-	public final InternalElement getInternalElement(IInternalElementType type,
-			String name, int occurrenceCount) {
+	public final <T extends IInternalElement> T getInternalElement(
+			IInternalElementType<T> type, String name, int occurrenceCount) {
 
 		if (occurrenceCount != 1) {
 			throw new IllegalArgumentException("Occurrence count must be 1");
@@ -215,7 +215,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return getInternalElement(type, name);
 	}
 
-	public final RodinFile getMutableCopy() {
+	public final IRodinFile getMutableCopy() {
 		if (! isSnapshot()) {
 			return this;
 		}
@@ -230,11 +230,11 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return file;
 	}
 	
-	public final RodinFile getSnapshot() {
+	public final IRodinFile getSnapshot() {
 		if (isSnapshot()) {
 			return this;
 		}
-		final RodinFile result = createNewHandle();
+		final RodinFile result = (RodinFile) createNewHandle();
 		result.snapshot = true;
 		return result;
 	}

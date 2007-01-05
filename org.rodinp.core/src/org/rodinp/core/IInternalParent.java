@@ -72,7 +72,8 @@ public interface IInternalParent extends IParent, IRodinElement {
 	 *             method on the element to create.
 	 */
 	@Deprecated
-	IInternalElement createInternalElement(IInternalElementType type, String name,
+	<T extends IInternalElement> T createInternalElement(
+			IInternalElementType<T> type, String name,
 			IInternalElement nextSibling, IProgressMonitor monitor)
 			throws RodinDBException;
 
@@ -90,8 +91,8 @@ public interface IInternalParent extends IParent, IRodinElement {
 	 *            name of the child element
 	 * @return the child internal element with the given type and name
 	 */
-	IInternalElement getInternalElement(IInternalElementType childType,
-			String childName);
+	<T extends IInternalElement> T getInternalElement(
+			IInternalElementType<T> childType, String childName);
 
 	/**
 	 * Returns a handle to a child internal element with the given type and
@@ -117,7 +118,8 @@ public interface IInternalParent extends IParent, IRodinElement {
 	 *             count has become deprecated.
 	 */
 	@Deprecated
-	IInternalElement getInternalElement(IInternalElementType childType,
+	<T extends IInternalElement> T getInternalElement(
+			IInternalElementType<T> childType,
 			String childName, int occurrenceCount)
 			throws IllegalArgumentException;
 	

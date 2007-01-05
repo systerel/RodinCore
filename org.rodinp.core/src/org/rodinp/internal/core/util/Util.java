@@ -87,6 +87,7 @@ public class Util {
 		return string.trim();
 	}
 
+	@SuppressWarnings("unchecked")
 	private static final IInternalParent internGetSimilarElement(
 			IInternalParent element, IRodinFile newFile) {
 		if (element instanceof RodinFile) {

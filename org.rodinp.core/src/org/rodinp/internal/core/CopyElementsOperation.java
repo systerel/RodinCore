@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
@@ -158,7 +159,8 @@ public class CopyElementsOperation extends MultiOperation {
 		if (newName == null) {
 			newName = element.getElementName();
 		}
-		final IInternalElementType newType = element.getElementType();
+		final IInternalElementType<? extends IInternalElement> newType =
+			element.getElementType();
 		return (InternalElement) destParent.getInternalElement(newType, newName);
 	}
 

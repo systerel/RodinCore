@@ -267,7 +267,9 @@ public class RodinCore extends Plugin {
 	 * @throws IllegalArgumentException
 	 *             if no such internal element type has been contributed
 	 */
-	public static IInternalElementType getInternalElementType(String id) {
+	@SuppressWarnings("unchecked")
+	public static <T extends IInternalElement> IInternalElementType<T> getInternalElementType(
+			String id) {
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
 		final IInternalElementType result = manager.getInternalElementType(id);
 		if (result != null) {
@@ -393,9 +395,9 @@ public class RodinCore extends Plugin {
 	 * @throws IllegalArgumentException
 	 *             if no such element type has been contributed
 	 */
-	public static IElementType getElementType(String id) {
+	public static IElementType<? extends IRodinElement> getElementType(String id) {
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		final IElementType result = manager.getElementType(id);
+		final IElementType<? extends IRodinElement> result = manager.getElementType(id);
 		if (result != null) {
 			return result;
 		}
@@ -411,7 +413,8 @@ public class RodinCore extends Plugin {
 	 * @throws IllegalArgumentException
 	 *             if no such file element type has been contributed
 	 */
-	public static IFileElementType getFileElementType(String id) {
+	@SuppressWarnings("unchecked")
+	public static <T extends IRodinFile> IFileElementType<T> getFileElementType(String id) {
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
 		final IFileElementType result = manager.getFileElementType(id);
 		if (result != null) {
