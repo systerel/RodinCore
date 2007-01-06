@@ -41,9 +41,19 @@ public interface ICommentedElement extends IInternalElement {
 			throws RodinDBException;
 
 	/**
+	 * Tells whether this element carries a comment.
+	 * 
+	 * @return <code>true</code> iff this element has a comment attached to it
+	 * 
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	boolean hasComment() throws RodinDBException;
+
+	/**
 	 * Returns the comment contained in this element.
 	 * 
-	 * @return the identifier of this element as a string
+	 * @return the comment attached to this element
 	 * 
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database

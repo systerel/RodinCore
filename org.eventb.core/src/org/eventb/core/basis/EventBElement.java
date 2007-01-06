@@ -99,6 +99,15 @@ public abstract class EventBElement extends InternalElement {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eventb.core.ICommentedElement#hasComment()
+	 */
+	public boolean hasComment() throws RodinDBException {
+		return hasAttribute(EventBAttributes.COMMENT_ATTRIBUTE);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.ICommentedElement#getComment(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public String getComment() throws RodinDBException {
