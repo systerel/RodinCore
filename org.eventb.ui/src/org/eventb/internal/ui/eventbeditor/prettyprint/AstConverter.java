@@ -16,6 +16,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
+import org.eventb.core.ICommentedElement;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
@@ -225,7 +226,7 @@ public abstract class AstConverter {
 	 *            a progress monitor
 	 */
 	private void addVariables(IRodinFile rodinFile, IProgressMonitor monitor) {
-		IRodinElement[] vars;
+		IVariable[] vars;
 		try {
 			vars = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
@@ -235,8 +236,7 @@ public abstract class AstConverter {
 		}
 		if (vars.length != 0) {
 			section("VARIABLES");
-			for (IRodinElement child : vars) {
-				IVariable var = (IVariable) child;
+			for (IVariable var: vars) {
 				beginLevel1();
 				try {
 					append(makeHyperlink(var.getHandleIdentifier(), var
@@ -246,14 +246,7 @@ public abstract class AstConverter {
 							"Cannot get the identifier string for variable "
 									+ var.getElementName());
 				}
-
-				try {
-					String comment = var.getComment();
-					if (!comment.equals(""))
-						append("   /* " + UIUtils.XMLWrapUp(comment) + " */");
-				} catch (RodinDBException e) {
-					// There is no comment attached to this variable
-				}
+				addComment(var);
 				endLevel();
 			}
 		}
@@ -270,7 +263,7 @@ public abstract class AstConverter {
 	 *            a progress monitor
 	 */
 	private void addInvariants(IRodinFile rodinFile, IProgressMonitor monitor) {
-		IRodinElement[] invs;
+		IInvariant[] invs;
 		try {
 			invs = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
@@ -280,8 +273,7 @@ public abstract class AstConverter {
 		}
 		if (invs.length != 0) {
 			section("INVARIANTS");
-			for (IRodinElement child : invs) {
-				IInvariant inv = (IInvariant) child;
+			for (IInvariant inv: invs) {
 				beginLevel1();
 				try {
 					append(makeHyperlink(inv.getHandleIdentifier(), inv
@@ -292,14 +284,7 @@ public abstract class AstConverter {
 							"Cannot get details for invariant "
 									+ inv.getElementName());
 				}
-
-				try {
-					String comment = inv.getComment();
-					if (!comment.equals(""))
-						append("      /* " + UIUtils.XMLWrapUp(comment) + " */");
-				} catch (RodinDBException e) {
-					// There is no comment attached to this invariant
-				}
+				addComment(inv);
 				endLevel();
 			}
 		}
@@ -316,7 +301,7 @@ public abstract class AstConverter {
 	 *            a progress monitor
 	 */
 	private void addCarrierSets(IRodinFile rodinFile, IProgressMonitor monitor) {
-		IRodinElement[] sets;
+		ICarrierSet[] sets;
 		try {
 			sets = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
@@ -327,8 +312,7 @@ public abstract class AstConverter {
 		}
 		if (sets.length != 0) {
 			section("SETS");
-			for (IRodinElement child : sets) {
-				ICarrierSet set = (ICarrierSet) child;
+			for (ICarrierSet set: sets) {
 				beginLevel1();
 				try {
 					append(makeHyperlink(set.getHandleIdentifier(), set
@@ -339,14 +323,7 @@ public abstract class AstConverter {
 									+ set.getElementName());
 					e.printStackTrace();
 				}
-
-				try {
-					String comment = set.getComment();
-					if (!comment.equals(""))
-						append("   /* " + UIUtils.XMLWrapUp(comment) + " */");
-				} catch (RodinDBException e) {
-					// There is no comment attached to this carrier set
-				}
+				addComment(set);
 				endLevel();
 			}
 		}
@@ -363,7 +340,7 @@ public abstract class AstConverter {
 	 *            a progress monitor
 	 */
 	private void addConstants(IRodinFile rodinFile, IProgressMonitor monitor) {
-		IRodinElement[] csts;
+		IConstant[] csts;
 		try {
 			csts = rodinFile.getChildrenOfType(IConstant.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
@@ -373,8 +350,7 @@ public abstract class AstConverter {
 		}
 		if (csts.length != 0) {
 			section("CONSTANTS");
-			for (IRodinElement child : csts) {
-				IConstant cst = (IConstant) child;
+			for (IConstant cst: csts) {
 				beginLevel1();
 				try {
 					append(makeHyperlink(cst.getHandleIdentifier(), cst
@@ -385,14 +361,7 @@ public abstract class AstConverter {
 									+ cst.getElementName());
 					e.printStackTrace();
 				}
-
-				try {
-					String comment = cst.getComment();
-					if (!comment.equals(""))
-						append("   /* " + UIUtils.XMLWrapUp(comment) + " */");
-				} catch (RodinDBException e) {
-					// There is no comment attached to this carrier set
-				}
+				addComment(cst);
 				endLevel();
 			}
 		}
@@ -409,7 +378,7 @@ public abstract class AstConverter {
 	 *            a progress monitor
 	 */
 	private void addAxioms(IRodinFile rodinFile, IProgressMonitor monitor) {
-		IRodinElement[] axms;
+		IAxiom[] axms;
 		try {
 			axms = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
@@ -419,8 +388,7 @@ public abstract class AstConverter {
 		}
 		if (axms.length != 0) {
 			section("AXIOMS");
-			for (IRodinElement child : axms) {
-				IAxiom axm = (IAxiom) child;
+			for (IAxiom axm: axms) {
 				beginLevel1();
 				try {
 					append(makeHyperlink(axm.getHandleIdentifier(), axm
@@ -431,18 +399,12 @@ public abstract class AstConverter {
 							"Cannot get details for axiom "
 									+ axm.getElementName());
 				}
-
-				try {
-					String comment = axm.getComment();
-					if (!comment.equals(""))
-						append("   /* " + UIUtils.XMLWrapUp(comment) + " */");
-				} catch (RodinDBException e) {
-					// There is no comment attached to this theorem
-				}
+				addComment(axm);
 				endLevel();
 			}
 		}
 	}
+
 
 	/**
 	 * This private helper method adds component's information about theorems to
@@ -455,7 +417,7 @@ public abstract class AstConverter {
 	 *            a progress monitor
 	 */
 	private void addTheorems(IRodinFile rodinFile, IProgressMonitor monitor) {
-		IRodinElement[] thms;
+		ITheorem[] thms;
 		try {
 			thms = rodinFile.getChildrenOfType(ITheorem.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
@@ -465,8 +427,7 @@ public abstract class AstConverter {
 		}
 		if (thms.length != 0) {
 			section("THEOREMS");
-			for (IRodinElement child : thms) {
-				ITheorem thm = (ITheorem) child;
+			for (ITheorem thm: thms) {
 				beginLevel1();
 				try {
 					append(makeHyperlink(thm.getHandleIdentifier(), thm
@@ -477,14 +438,7 @@ public abstract class AstConverter {
 							"Cannot get details for theorem "
 									+ thm.getElementName());
 				}
-
-				try {
-					String comment = thm.getComment();
-					if (!comment.equals(""))
-						append("   /* " + UIUtils.XMLWrapUp(comment) + " */");
-				} catch (RodinDBException e) {
-					// There is no comment attached to this theorem
-				}
+				addComment(thm);
 				endLevel();
 			}
 		}
@@ -501,7 +455,7 @@ public abstract class AstConverter {
 	 *            a progress monitor
 	 */
 	private void addEvents(IRodinFile rodinFile, IProgressMonitor monitor) {
-		IRodinElement[] evts;
+		IEvent[] evts;
 		try {
 			evts = rodinFile.getChildrenOfType(IEvent.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
@@ -512,8 +466,7 @@ public abstract class AstConverter {
 
 		if (evts.length != 0) {
 			section("EVENTS");
-			for (IRodinElement element : evts) {
-				IEvent evt = (IEvent) element;
+			for (IEvent evt: evts) {
 				try {
 					emptyLine();
 					beginLevel1();
@@ -526,20 +479,12 @@ public abstract class AstConverter {
 									+ evt.getElementName());
 					continue;
 				}
-
-				try {
-					String comment = evt.getComment();
-					if (!comment.equals(""))
-						append("   /* " + UIUtils.XMLWrapUp(comment) + " */");
-				} catch (RodinDBException e) {
-					// There is no comment attached to this event
-				}
-
-				IRodinElement[] lvars;
-				IRodinElement[] guards;
-				IRodinElement[] actions;
-				IRodinElement[] refinesEvents;
-				IRodinElement[] witnesses;
+				addComment(evt);
+				IVariable[] lvars;
+				IGuard[] guards;
+				IAction[] actions;
+				IRefinesEvent[] refinesEvents;
+				IWitness[] witnesses;
 				try {
 					refinesEvents = evt
 							.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
@@ -558,8 +503,7 @@ public abstract class AstConverter {
 					beginLevel2();
 					bold("REFINES");
 					endLevel();
-					for (IRodinElement child : refinesEvents) {
-						IRefinesEvent refinesEvent = (IRefinesEvent) child;
+					for (IRefinesEvent refinesEvent: refinesEvents) {
 						beginLevel3();
 						try {
 							append(makeHyperlink(refinesEvent
@@ -579,8 +523,7 @@ public abstract class AstConverter {
 					beginLevel2();
 					bold("ANY");
 					endLevel();
-					for (IRodinElement child : lvars) {
-						IVariable var = (IVariable) child;
+					for (IVariable var: lvars) {
 						beginLevel3();
 						try {
 							append(makeHyperlink(var
@@ -591,16 +534,7 @@ public abstract class AstConverter {
 									"Cannot get the identifier string for local variable "
 											+ var.getElementName());
 						}
-
-						try {
-							String comment = var.getComment();
-							if (!comment.equals(""))
-								append("   /* " + UIUtils.XMLWrapUp(comment)
-										+ " */");
-						} catch (RodinDBException e) {
-							// There is no comment attached to this local
-							// variable
-						}
+						addComment(var);
 						endLevel();
 					}
 					beginLevel2();
@@ -616,8 +550,7 @@ public abstract class AstConverter {
 					endLevel();
 				}
 
-				for (IRodinElement child : guards) {
-					IGuard guard = (IGuard) child;
+				for (IGuard guard: guards) {
 					beginLevel3();
 					try {
 						formString
@@ -632,14 +565,7 @@ public abstract class AstConverter {
 								"Cannot get details for guard "
 										+ guard.getElementName());
 					}
-					try {
-						String comment = guard.getComment();
-						if (!comment.equals(""))
-							append("   /* " + UIUtils.XMLWrapUp(comment)
-									+ " */");
-					} catch (RodinDBException e) {
-						// There is no comment attached to this event
-					}
+					addComment(guard);
 					endLevel();
 				}
 
@@ -647,8 +573,7 @@ public abstract class AstConverter {
 					beginLevel2();
 					bold("WITNESSES");
 					endLevel();
-					for (IRodinElement child : witnesses) {
-						IWitness witness = (IWitness) child;
+					for (IWitness witness: witnesses) {
 						beginLevel3();
 						try {
 							append(makeHyperlink(witness
@@ -661,14 +586,7 @@ public abstract class AstConverter {
 									"Cannot get details for guard "
 											+ witness.getElementName());
 						}
-						try {
-							String comment = witness.getComment();
-							if (!comment.equals(""))
-								append("   /* " + UIUtils.XMLWrapUp(comment)
-										+ " */");
-						} catch (RodinDBException e) {
-							// There is no comment attached to this event
-						}
+						addComment(witness);
 						endLevel();
 					}
 				}
@@ -679,8 +597,7 @@ public abstract class AstConverter {
 					endLevel();
 				}
 
-				for (IRodinElement child : actions) {
-					IAction action = (IAction) child;
+				for (IAction action: actions) {
 					beginLevel3();
 					try {
 						append(makeHyperlink(action
@@ -693,14 +610,7 @@ public abstract class AstConverter {
 								"Cannot get details for action "
 										+ action.getElementName());
 					}
-					try {
-						String comment = action.getComment();
-						if (!comment.equals(""))
-							append("   /* " + UIUtils.XMLWrapUp(comment)
-									+ " */");
-					} catch (RodinDBException e) {
-						// There is no comment attached to this event
-					}
+					addComment(action);
 					endLevel();
 				}
 				beginLevel2();
@@ -723,7 +633,7 @@ public abstract class AstConverter {
 	 *            a progress monitor
 	 */
 	private void addVariant(IRodinFile rodinFile, IProgressMonitor monitor) {
-		IRodinElement[] variants;
+		IVariant[] variants;
 		try {
 			variants = rodinFile.getChildrenOfType(IVariant.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
@@ -733,8 +643,7 @@ public abstract class AstConverter {
 		}
 		if (variants.length != 0) {
 			section("VARIANT");
-			for (IRodinElement child : variants) {
-				IVariant variant = (IVariant) child;
+			for (IVariant variant: variants) {
 				beginLevel1();
 				try {
 					append(makeHyperlink(variant.getHandleIdentifier(),
@@ -744,16 +653,27 @@ public abstract class AstConverter {
 							"Cannot get the expression string for variant "
 									+ variant.getElementName());
 				}
-
-				try {
-					String comment = variant.getComment();
-					if (!comment.equals(""))
-						append("   /* " + UIUtils.XMLWrapUp(comment) + " */");
-				} catch (RodinDBException e) {
-					// There is no comment attached to this variant
-				}
+				addComment(variant);
 				endLevel();
 			}
+		}
+	}
+
+	/**
+	 * Append the comment attached to this element, if any.
+	 * 
+	 * @param element the commented element
+	 */
+	private void addComment(ICommentedElement element) {
+		try {
+			if (element.hasComment()) {
+				String comment = element.getComment();
+				if (comment.length() != 0)
+					append("   /* " + UIUtils.XMLWrapUp(comment) + " */");
+			}
+		} catch (RodinDBException e) {
+			// ignore
+			if (UIUtils.DEBUG) e.printStackTrace();
 		}
 	}
 
