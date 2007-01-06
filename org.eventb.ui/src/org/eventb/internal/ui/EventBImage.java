@@ -180,14 +180,13 @@ public class EventBImage {
 		String key = "desc:" + desc;
 		String overlay = "0";
 		if (element instanceof ICommentedElement) {
-			ICommentedElement commentedElement = (ICommentedElement) element;
+			ICommentedElement ce = (ICommentedElement) element;
 			try {
-				String comment = commentedElement
-						.getComment();
-				if (!comment.equals(""))
+				if (ce.hasComment() && ce.getComment().length() != 0)
 					overlay = "1";
 			} catch (RodinDBException e) {
 				// Do nothing
+				if (UIUtils.DEBUG) e.printStackTrace();
 			}
 		}
 		key += ":" + overlay;

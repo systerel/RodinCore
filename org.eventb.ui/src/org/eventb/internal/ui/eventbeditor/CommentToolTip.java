@@ -105,7 +105,10 @@ public class CommentToolTip {
 			this.text = text;
 			this.element = element;
 			try {
-				original = element.getComment();
+				if (element.hasComment())
+					original = element.getComment();
+				else
+					original = "";
 			} catch (RodinDBException e) {
 				original = "";
 			}
@@ -151,28 +154,31 @@ public class CommentToolTip {
 	}
 
 	protected String getToolTipText(ICommentedElement element) {
-		String comments;
+		String comment;
 		try {
-			comments = element.getComment();
+			if (! element.hasComment()) {
+				return "";
+			}
+			comment = element.getComment();
 		} catch (RodinDBException e) {
-			comments = "";
+			comment = "";
 		}
-		int i = comments.indexOf('.');
-		int j = comments.indexOf('\n');
+		int i = comment.indexOf('.');
+		int j = comment.indexOf('\n');
 		if (i == -1) {
 			if (j == -1)
-				return comments; // One line comments
+				return comment; // One line comment
 			else {
-				return comments.substring(0, j); // Return the first line
+				return comment.substring(0, j); // Return the first line
 			}
 		} else {
 			i++;
 			if (j == -1)
-				return comments.substring(0, i); // Return the first
+				return comment.substring(0, i); // Return the first
 			// sentence
 			else {
 				int k = i < j ? i : j; // k is the minimum
-				return comments.substring(0, k);
+				return comment.substring(0, k);
 			}
 		}
 
@@ -390,7 +396,11 @@ public class CommentToolTip {
 			Text text = new Text(helpShell, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 
 			try {
-				text.setText(element.getComment());
+				if (element.hasComment()) {
+					text.setText(element.getComment());
+				} else {
+					text.setText("");
+				}
 			} catch (RodinDBException e1) {
 				text.setText("");
 			}
