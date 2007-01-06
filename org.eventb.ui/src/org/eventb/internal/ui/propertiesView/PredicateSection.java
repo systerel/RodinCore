@@ -75,7 +75,7 @@ public class PredicateSection extends AbstractPropertySection implements
 		};
 
 		CLabel labelLabel = getWidgetFactory().createCLabel(composite,
-				"Comment:");
+				"Predicate:");
 		data = new FormData();
 		data.left = new FormAttachment(0, 0);
 		data.right = new FormAttachment(predicateText,
