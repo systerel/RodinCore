@@ -60,9 +60,6 @@ public class MachineEventActionBodySimModule extends
 			ISCEvent abstractEvent, 
 			IProgressMonitor monitor) throws RodinDBException {
 
-		ArrayList<POGPredicate> hyp = makeActionHypothesis();
-		hyp.addAll(makeWitnessHypothesis());
-		
 		Assignment[] simAssignments = abstractEventActionTable.getSimAssignments();
 		ISCAction[] simActions = abstractEventActionTable.getSimActions();
 		
@@ -92,6 +89,12 @@ public class MachineEventActionBodySimModule extends
 				substitution.add(concreteEventActionTable.getXiUnprime());
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 			simPredicate = simPredicate.applyAssignments(substitution, factory);
+			
+// TODO: remove following
+//			ArrayList<POGPredicate> hyp = makeActionHypothesis();
+//			hyp.addAll(makeWitnessHypothesis());
+			
+			ArrayList<POGPredicate> hyp = makeActionAndWitnessHypothesis(simPredicate);
 			
 			createPO(
 					target, 

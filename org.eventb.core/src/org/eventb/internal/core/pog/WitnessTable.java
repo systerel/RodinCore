@@ -34,6 +34,10 @@ import org.eventb.internal.core.tool.state.ToolState;
 public class WitnessTable extends ToolState implements IWitnessTable {
 
 	private final ISCWitness[] witnesses;
+	private final boolean[] deterministic;
+	private List<FreeIdentifier> witnessedVars;
+	private List<Predicate> witnessPredicates;
+	
 	private final BecomesEqualTo primeSubstitution;
 	
 	private List<ISCWitness> machineDetWitnesses;
@@ -43,9 +47,8 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 	private List<BecomesEqualTo> eventDetermist;
 	
 	private List<ISCWitness> nondetWitnesses;
+	private List<FreeIdentifier> nondetIdentifiers;
 	private List<Predicate> nondetPredicates;
-	
-	private List<FreeIdentifier> witnessedVars;
 
 	public WitnessTable(
 			ISCWitness[] witnesses, 
@@ -53,6 +56,7 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 			FormulaFactory factory, 
 			IProgressMonitor monitor) throws CoreException {
 		this.witnesses = witnesses;
+		this.deterministic = new boolean[witnesses.length];
 		machineDetWitnesses = new ArrayList<ISCWitness>(witnesses.length);
 		machineDetermist = new ArrayList<BecomesEqualTo>(witnesses.length);
 		machinePrimedDetermist = new ArrayList<BecomesEqualTo>(witnesses.length);
@@ -60,7 +64,9 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 		eventDetermist = new ArrayList<BecomesEqualTo>(witnesses.length);
 		nondetWitnesses = new ArrayList<ISCWitness>(witnesses.length);
 		nondetPredicates = new ArrayList<Predicate>(witnesses.length);
+		nondetIdentifiers = new ArrayList<FreeIdentifier>(witnesses.length);
 		witnessedVars = new ArrayList<FreeIdentifier>(witnesses.length);
+		witnessPredicates = new ArrayList<Predicate>(witnesses.length);
 	
 		final LinkedList<FreeIdentifier> left = new LinkedList<FreeIdentifier>();
 		final LinkedList<Expression> right = new LinkedList<Expression>();
@@ -75,8 +81,9 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 						identifier.withoutPrime(factory) : 
 						identifier;
 			witnessedVars.add(identifier);
-			boolean nondet = categorize(identifier, unprimed, predicate, witnesses[i], factory);
-			if (nondet && identifier != unprimed) {
+			witnessPredicates.add(predicate);
+			deterministic[i] = categorize(identifier, unprimed, predicate, witnesses[i], factory);
+			if ( ! deterministic[i] && identifier != unprimed) {
 				left.add(unprimed);
 				right.add(identifier);
 			}	
@@ -100,8 +107,10 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 		eventDetWitnesses = Collections.unmodifiableList(eventDetWitnesses);
 		eventDetermist = Collections.unmodifiableList(eventDetermist);
 		nondetWitnesses = Collections.unmodifiableList(nondetWitnesses);
+		nondetIdentifiers = Collections.unmodifiableList(nondetIdentifiers);
 		nondetPredicates = Collections.unmodifiableList(nondetPredicates);
 		witnessedVars = Collections.unmodifiableList(witnessedVars);
+		witnessPredicates = Collections.unmodifiableList(witnessPredicates);
 	}
 
 	private boolean categorize(
@@ -131,16 +140,17 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 										relationalPredicate.getRight(), null));
 					}
 					// it's deterministic
-					return false;
+					return true;
 				}
 		}
 
 		// or a nondeterministic witness?
 		nondetWitnesses.add(witness);
+		nondetIdentifiers.add(identifier);
 		nondetPredicates.add(predicate);
 		
 		// it's nondeterministic
-		return true;
+		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -182,12 +192,24 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 		return nondetPredicates;
 	}
 
-	public List<FreeIdentifier> getWitnessedVariables() {
+	public List<FreeIdentifier> getVariables() {
 		return witnessedVars;
 	}
 
 	public List<ISCWitness> getNondetWitnesses() {
 		return nondetWitnesses;
+	}
+
+	public List<FreeIdentifier> getNondetVariables() {
+		return nondetIdentifiers;
+	}
+
+	public List<Predicate> getPredicates() {
+		return witnessPredicates;
+	}
+
+	public boolean isDeterministic(int index) {
+		return deterministic[index];
 	}
 
 }

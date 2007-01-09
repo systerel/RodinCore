@@ -9,7 +9,6 @@ package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -121,20 +120,25 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 		
 		if (!goalIsTrivial(goal)) {
 			
-			ArrayList<POGPredicate> actionHyp = makeActionHypothesis();
-			boolean primed = witnessIdentifier.isPrimed();
-			List<POGPredicate> localHyp = primed ? actionHyp : emptyPredicates;
+			goal = applyDetAssignments(goal);
 			
-			if (primed) { // global witness
-				goal = applyDetAssignments(goal);
-			}
+			ArrayList<POGPredicate> hyp = makeActionHypothesis(goal);
+			
+// TODO: remove following:
+//			ArrayList<POGPredicate> actionHyp = makeActionHypothesis();
+//			boolean primed = witnessIdentifier.isPrimed();
+//			List<POGPredicate> localHyp = primed ? actionHyp : emptyPredicates;
+//			
+//			if (primed) { // global witness
+//				goal = applyDetAssignments(goal);
+//			}
 			
 			createPO(
 					target, 
 					sequentName, 
 					desc, 
 					fullHypothesis, 
-					localHyp,
+					hyp,
 					new POGTraceablePredicate(goal, witness),
 					sources(new POGSource(IPOSource.DEFAULT_ROLE, witness)),
 					hints(

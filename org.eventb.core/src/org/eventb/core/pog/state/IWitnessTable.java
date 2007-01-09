@@ -31,10 +31,57 @@ public interface IWitnessTable extends IState {
 
 	/**
 	 * Returns the array of witnesses.
+	 * The indices of the returned array correspond to those
+	 * returned by <code>getVariables()</code> and
+	 * <code>getPredicates()</code>.
+	 * 
+	 * @see IWitnessTable#getVariables()
+	 * @see IWitnessTable#getPredicates()
 	 * 
 	 * @return the array of witnesses
 	 */
 	ISCWitness[] getWitnesses();
+
+	/**
+	 * Returns the array of witnessed variables. Machine variable witnesses are primed.
+	 * <p>
+	 * The indices of this list correspond to the indices of the list of
+	 * witnesses returned by <code>getWitnesses()</code>.
+	 * </p>
+	 * 
+	 * @see IWitnessTable#getWitnesses()
+	 * 
+	 * @return array of witnessed variables
+	 */
+	List<FreeIdentifier> getVariables();
+	
+	/**
+	 * Returns the array of parsed and type-checked predicates
+	 * corresponding to the witnesses for event and machine variables.
+	 * <p>
+	 * The indices of this list correspond to the indices of the list of
+	 * witnesses returned by <code>getWitnesses()</code>.
+	 * </p>
+	 * 
+	 * @see IWitnessTable#getWitnesses()
+	 * 
+	 * @return the array of parsed and type-checked predicates
+	 * corresponding to the witnesses for event and machine variables
+	 */
+	List<Predicate> getPredicates();
+	
+	/**
+	 * Returns whether the witness at the specified index is deterministic.
+	 * <p>
+	 * The indices correspond to the indices of the list of
+	 * witnesses returned by <code>getWitnesses()</code>.
+	 * </p>
+	 * 
+	 * @see IWitnessTable#getWitnesses()
+	 * 
+	 * @return whether the witness at the specified index is deterministic
+	 */
+	boolean isDeterministic(int index);
 
 	/**
 	 * Returns the array of deterministic witnesses for <b>machine variables</b>.
@@ -119,6 +166,22 @@ public interface IWitnessTable extends IState {
 	List<ISCWitness> getNondetWitnesses();
 	
 	/**
+	 * Returns the array of type-checked identifiers corresponding to the non-deterministic 
+	 * witnesses for event and machine variables. Machine variable witnesses have a 
+	 * prime attached, event variables not.
+	 * <p>
+	 * The indices of this list correspond to the indices of the list of
+	 * witnesses returned by <code>getNondetWitnesses()</code>.
+	 * </p>
+	 * 
+	 * @see IWitnessTable#getNondetWitnesses()
+	 * 
+	 * @return the array of parsed and type-checked predicates
+	 * corresponding to the non-deterministic witnesses for event and machine variables
+	 */
+	List<FreeIdentifier> getNondetVariables();
+	
+	/**
 	 * Returns the array of parsed and type-checked predicates
 	 * corresponding to the non-deterministic witnesses for event and machine variables.
 	 * <p>
@@ -132,13 +195,6 @@ public interface IWitnessTable extends IState {
 	 * corresponding to the non-deterministic witnesses for event and machine variables
 	 */
 	List<Predicate> getNondetPredicates();
-
-	/**
-	 * Returns all witnesses variables. Machine variable witnesses are primed.
-	 * 
-	 * @return all witnesses variables
-	 */
-	List<FreeIdentifier> getWitnessedVariables();
 
 	/**
 	 * Returns a substitution that renames machine variables witnessed non-deterministically

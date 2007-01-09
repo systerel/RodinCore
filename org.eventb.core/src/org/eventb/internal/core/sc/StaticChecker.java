@@ -34,6 +34,8 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 	
 	public static boolean DEBUG_STATE = false;
 	
+	public static boolean DEBUG_MARKERS = false;
+	
 	private final static int IDENT_SYMTAB_SIZE = 2047;
 
 	private final static int CONTEXT_TABLE_SIZE = 137;

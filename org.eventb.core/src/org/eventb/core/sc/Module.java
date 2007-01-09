@@ -9,9 +9,13 @@ package org.eventb.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IEventBFile;
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.util.IMarkerDisplay;
 import org.eventb.core.tool.IToolModule;
+import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -30,18 +34,41 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class Module implements IToolModule, IMarkerDisplay {
 	
+	private void traceMarker(IRodinElement element, String message) {
+		
+		String name = element.getElementName();
+		
+		try {
+			if (element instanceof ILabeledElement)
+				name = ((ILabeledElement) element).getLabel();
+			else if (element instanceof IIdentifierElement)
+				name = ((IIdentifierElement) element).getIdentifierString();
+			else if (element instanceof IEventBFile)
+				name = ((IEventBFile) element).getBareName();
+		} catch (RodinDBException e) {
+			// ignore
+		} finally {
+		
+			System.out.println("SC MARKER: " + name + ": " + message);
+		}
+	}
 	
 	public void createProblemMarker(
 			IRodinElement element, 
 			IRodinProblem problem, 
 			Object... args)
 		throws RodinDBException {
+		if (StaticChecker.DEBUG_MARKERS)
+			traceMarker(element, problem.getLocalizedMessage(args));
+
 		element.createProblemMarker(problem, args);
 	}
 	
 	public void createProblemMarker(IInternalElement element,
 			IAttributeType attributeType, IRodinProblem problem,
 			Object... args) throws RodinDBException {
+		if (StaticChecker.DEBUG_MARKERS)
+			traceMarker(element, problem.getLocalizedMessage(args));
 
 		element.createProblemMarker(attributeType, problem, args);
 	}
@@ -49,6 +76,8 @@ public abstract class Module implements IToolModule, IMarkerDisplay {
 	public void createProblemMarker(IInternalElement element,
 			IAttributeType.String attributeType, int charStart, int charEnd,
 			IRodinProblem problem, Object... args) throws RodinDBException {
+		if (StaticChecker.DEBUG_MARKERS)
+			traceMarker(element, problem.getLocalizedMessage(args));
 
 		element.createProblemMarker(attributeType, charStart, charEnd+1, problem,
 				args);

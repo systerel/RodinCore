@@ -571,7 +571,7 @@ public class TestMachineRefines extends BasicPOTest {
 	}
 
 	/*
-	 * filter event merge POs entirely if one of the dijuncts is true
+	 * filter event merge POs entirely if one of the disjuncts is true
 	 */
 	public void testRefines_12() throws Exception {
 		IMachineFile abs = createMachine("abs");
@@ -735,6 +735,233 @@ public class TestMachineRefines extends BasicPOTest {
 		sequentHasIdentifiers(sequent, "p'", "q'");
 		sequentHasHypotheses(sequent, environment, "p∈BOOL", "q∈BOOL", "p'≠q'");
 		sequentHasGoal(sequent, environment, "p'≠p");
+	}
+	
+	/*
+	 * If the event variable witnesses do not refer to post state variable values,
+	 * a more efficient way of POs can be generated:
+	 * (1) the concrete non-determistic actions can be removed from the hypothesis of /GRD
+	 * (2) and, as a consequence, the abstract non-determistic actions can be put in the
+	 * hypothesis of the concrete /FIS.
+	 */
+	public void testRefines_16() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "p");
+		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G"), makeSList("x≠p"), 
+				makeSList("A"), makeSList("p :∣ p'≠x"));
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "p");
+		
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("B"), makeSList("p :∣ p'≠p"));
+		addEventRefines(evt, "evt");
+		addEventWitnesses(evt, makeSList("x"), makeSList("p'=x"));
+		
+		IEvent fvt = addEvent(ref, "fvt", 
+				makeSList("y"), 
+				makeSList("H"), makeSList("y≠p"), 
+				makeSList("B"), makeSList("p :∣ p'≠y"));
+		addEventRefines(fvt, "evt");
+		addEventWitnesses(fvt, makeSList("x"), makeSList("y=x"));
+	
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("p", boolType);
+		environment.addName("p'", boolType);
+		environment.addName("x", boolType);
+		environment.addName("y", boolType);
+
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "p");
+		
+		IPOSequent sequent = getSequent(po, "evt/G/REF");
+		sequentHasIdentifiers(sequent, "p'", "x");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p'=x", "p'≠p");
+		sequentHasGoal(sequent, environment, "x≠p");
+		
+		sequent = getSequent(po, "evt/B/FIS");
+		sequentHasIdentifiers(sequent, "p'", "x");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL");
+		sequentHasNotHypotheses(sequent, environment, "x≠p", "p'≠x");
+		sequentHasGoal(sequent, environment, "∃p'·p'≠p");
+		
+		sequent = getSequent(po, "fvt/G/REF");
+		sequentHasIdentifiers(sequent, "p'", "x", "y");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "y≠p", "y=x");
+		sequentHasNotHypotheses(sequent, environment, "p'≠p");
+		sequentHasGoal(sequent, environment, "x≠p");
+		
+		sequent = getSequent(po, "fvt/B/FIS");
+		sequentHasIdentifiers(sequent, "p'", "x", "y");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "y≠p", "y=x", "p'≠x");
+		sequentHasGoal(sequent, environment, "∃p'·p'≠y");
+	}
+	
+	/*
+	 * If the event variable witnesses do not refer to post state variable values of
+	 * certain variables, then corresponding before-after predicates do not need to be
+	 * added to the hypothesis of /REF
+	 */
+	public void testRefines_17() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "p", "q");
+		addInvariants(abs, makeSList("I", "J"), makeSList("p∈BOOL", "q∈BOOL"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G"), makeSList("x≠p"), 
+				makeSList("A", "B"), makeSList("p :∣ p'≠x", "q :∣ q'≠p"));
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "p", "q");
+		
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A", "B"), makeSList("p :∣ p'≠p", "q :∣ q'≠q"));
+		addEventRefines(evt, "evt");
+		addEventWitnesses(evt, makeSList("x"), makeSList("p'=x"));
+	
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("p", boolType);
+		environment.addName("p'", boolType);
+		environment.addName("x", boolType);
+		environment.addName("y'", boolType);
+
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "p", "q");
+		
+		IPOSequent sequent = getSequent(po, "evt/G/REF");
+		sequentHasIdentifiers(sequent, "p'", "q'", "x");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p'=x", "p'≠p");
+		sequentHasNotHypotheses(sequent, environment, "q'≠p");
+		sequentHasGoal(sequent, environment, "x≠p");
+	}
+	
+	/*
+	 * Additional abstract before-after predicates in a /FIS proof obligation must
+	 * be correctly rewritten using the witnesses (all witnesses!)
+	 */
+	public void testRefines_18() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "p");
+		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G"), makeSList("x≠p"), 
+				makeSList("A"), makeSList("p :∣ p'≠x"));
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "q");
+		addInvariants(ref, makeSList("J"), makeSList("p∈{q}"));
+	
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList("y"), 
+				makeSList("H"), makeSList("y∈{q}"), 
+				makeSList("B"), makeSList("q :∣ q'≠q"));
+		addEventRefines(evt, "evt");
+		addEventWitnesses(evt, makeSList("x", "p'"), makeSList("y=x", "p'=y"));
+		
+		IEvent fvt = addEvent(ref, "fvt", 
+				makeSList("y"), 
+				makeSList("H"), makeSList("y≠q"), 
+				makeSList("B"), makeSList("q :∣ q'≠y"));
+		addEventRefines(fvt, "evt");
+		addEventWitnesses(fvt, makeSList("x", "p'"), makeSList("x=y", "p'=y"));
+		
+		IEvent gvt = addEvent(ref, "gvt", 
+				makeSList("y"), 
+				makeSList("H"), makeSList("y≠q"), 
+				makeSList("B"), makeSList("q :∣ q'≠y"));
+		addEventRefines(gvt, "evt");
+		addEventWitnesses(gvt, makeSList("x", "p'"), makeSList("y=x", "y=p'"));
+		
+		IEvent hvt = addEvent(ref, "hvt", 
+				makeSList(), 
+				makeSList("H"), makeSList("q∈{q}"), 
+				makeSList("B"), makeSList("q :∣ q'≠q"));
+		addEventRefines(hvt, "evt");
+		addEventWitnesses(hvt, makeSList("x", "p'"), makeSList("q'=x", "q'=p'"));
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("p", boolType);
+		environment.addName("p'", boolType);
+		environment.addName("q", boolType);
+		environment.addName("q'", boolType);
+		environment.addName("x", boolType);
+		environment.addName("y", boolType);
+
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "p", "q");
+		
+		IPOSequent sequent = getSequent(po, "evt/G/REF");
+		sequentHasIdentifiers(sequent, "p'", "q'", "x", "y");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "p∈{q}", "y∈{q}", "y=x");
+		sequentHasNotHypotheses(sequent, environment, "p'=y", "y≠x");
+		sequentHasGoal(sequent, environment, "x≠p");
+		
+		sequent = getSequent(po, "evt/B/FIS");
+		sequentHasIdentifiers(sequent, "p'", "q'", "x", "y");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "y≠x", "y=x", "y∈{q}");
+		sequentHasNotHypotheses(sequent, environment, "p'=y");
+		sequentHasGoal(sequent, environment, "∃q'·q'≠q");
+		
+		sequent = getSequent(po, "fvt/G/REF");
+		sequentHasIdentifiers(sequent, "p'", "q'", "x", "y");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "y≠q");
+		sequentHasGoal(sequent, environment, "y≠p");
+		
+		sequent = getSequent(po, "fvt/B/FIS");
+		sequentHasIdentifiers(sequent, "p'", "q'", "x", "y");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "p∈{q}", "y≠q", "y≠y");
+		sequentHasGoal(sequent, environment, "∃q'·q'≠y");
+		
+		sequent = getSequent(po, "gvt/G/REF");
+		sequentHasIdentifiers(sequent, "p'", "q'", "x", "y");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "p∈{q}", "y≠q", "y=x");
+		sequentHasNotHypotheses(sequent, environment, "y=p'");
+		sequentHasGoal(sequent, environment, "x≠p");
+		
+		sequent = getSequent(po, "gvt/B/FIS");
+		sequentHasIdentifiers(sequent, "p'", "q'", "x", "y");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "p∈{q}", "y=x", "y=p'", "p'≠x");
+		sequentHasGoal(sequent, environment, "∃q'·q'≠y");
+		
+		sequent = getSequent(po, "hvt/G/REF");
+		sequentHasIdentifiers(sequent, "p'", "q'", "x");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "q∈{q}", "q'=x", "q'≠q");
+		sequentHasGoal(sequent, environment, "x≠p");
+		
+		sequent = getSequent(po, "hvt/B/FIS");
+		sequentHasIdentifiers(sequent, "p'", "q'", "x");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "q∈{q}");
+		sequentHasNotHypotheses(sequent, environment, "q'=x", "q'=p'", "p'≠x");
+		sequentHasGoal(sequent, environment, "∃q'·q'≠q");
 	}
 
 }

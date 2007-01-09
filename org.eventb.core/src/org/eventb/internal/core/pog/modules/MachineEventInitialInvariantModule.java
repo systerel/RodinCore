@@ -27,7 +27,7 @@ import org.eventb.core.pog.util.POGTraceablePredicate;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventEstablishInvariantModule extends MachineEventInvariantModule {
+public class MachineEventInitialInvariantModule extends MachineEventInvariantModule {
 
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.pog.modules.MachineEventInvariantModule#isApplicable()
@@ -47,8 +47,6 @@ public class MachineEventEstablishInvariantModule extends MachineEventInvariantM
 			Set<FreeIdentifier> freeIdents,
 			IProgressMonitor monitor) throws CoreException {
 		
-		ArrayList<POGPredicate> hyp = makeActionHypothesis();
-		
 		LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		
 		if (concreteEventActionTable.getDeltaPrime() != null)
@@ -57,6 +55,11 @@ public class MachineEventEstablishInvariantModule extends MachineEventInvariantM
 		substitution.clear();
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());	
 		predicate = predicate.applyAssignments(substitution, factory);
+	
+// TODO: remove following:
+//		ArrayList<POGPredicate> hyp = makeActionHypothesis();
+		
+		ArrayList<POGPredicate> hyp = makeActionHypothesis(predicate);
 		
 		String sequentName = concreteEventLabel + "/" + invariantLabel + "/INV";
 		createPO(

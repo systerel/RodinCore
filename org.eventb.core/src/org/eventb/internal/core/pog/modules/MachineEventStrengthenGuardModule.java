@@ -124,9 +124,6 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 					Formula.LOR, 
 					disjPredList, null);
 		
-		ArrayList<POGPredicate> hyp = makeActionHypothesis();
-		hyp.addAll(makeWitnessHypothesis());
-
 		disjPredicate = disjPredicate.applyAssignments(witnessTable.getEventDetAssignments(), factory);
 		LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		if (concreteEventActionTable.getXiUnprime() != null)
@@ -140,6 +137,12 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		for (ISCEvent absEvent : absEvents)
 			sourceList.add(new POGSource(IPOSource.ABSTRACT_ROLE, absEvent));
 		sourceList.add(new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent));
+		
+// TODO remove if ok:			
+//		ArrayList<POGPredicate> hyp = makeActionHypothesis();
+//		hyp.addAll(makeWitnessHypothesis());
+		
+		ArrayList<POGPredicate> hyp = makeActionAndWitnessHypothesis(disjPredicate);
 		
 		POGSource[] sources = new POGSource[sourceList.size()];
 		sourceList.toArray(sources);
@@ -165,8 +168,6 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		ISCGuard[] absGuardElements = abstractEventGuardTable.getElements();
 		Predicate[] absGuardPredicates = abstractEventGuardTable.getPredicates();
 		
-		ArrayList<POGPredicate> hyp = makeActionHypothesis();
-		hyp.addAll(makeWitnessHypothesis());
 		for (int i=0; i<absGuardElements.length; i++) {
 			String guardLabel = absGuardElements[i].getLabel();
 			Predicate absGuard = absGuardPredicates[i];
@@ -185,6 +186,12 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 				substitution.add(concreteEventActionTable.getXiUnprime());
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 			absGuard = absGuard.applyAssignments(substitution, factory);
+		
+// TODO remove if ok:			
+//			ArrayList<POGPredicate> hyp = makeWitnessHypothesis();
+//			hyp.addAll(makeActionHypothesis());
+			
+			ArrayList<POGPredicate> hyp = makeActionAndWitnessHypothesis(absGuard);
 			
 			createPO(
 					target, 

@@ -1060,7 +1060,7 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCEvent[] events = getSCEvents(file, "evt", "fvt");
 		containsWitnesses(events[0], environment, 
-				makeSList("q", "x", "y"), 
+				makeSList("q'", "x", "y"), 
 				makeSList("⊤", "⊤", "⊤"));
 	}
 	
@@ -1093,6 +1093,49 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCEvent[] events = getSCEvents(file, "evt");
 		containsActions(events[0], environment, makeSList("A"), makeSList("p≔TRUE"));
+	}
+	
+	/*
+	 * Witnesses must not reference post values of abstract disappearing global variables
+	 */
+	public void testEvents_25_localWitnessWithPostValues() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, "p");
+		addInvariants(abs, makeSList("I1"), makeSList("p∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x", "y"), 
+				makeSList("G1", "G2"), makeSList("x∈ℕ", "y∈ℕ"), 
+				makeSList("A1"), makeSList("p:∈{x}"));
+
+		abs.save(null, true);
+		
+		runBuilder();
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "q");
+		addInvariants(mac, makeSList("I1"), makeSList("q≠p"));
+		IEvent fvt = addEvent(mac, "fvt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("q:∈{q}"));
+		addEventRefines(fvt, "evt");
+		addEventWitnesses(fvt, makeSList("x", "y", "p'"), makeSList("x=p'", "y=q'", "q'≠p'"));
+	
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("p'", intType);
+		environment.addName("q'", intType);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "fvt");
+		containsWitnesses(events[0], environment, 
+				makeSList("x", "y", "p'"), makeSList("⊤", "y=q'", "q'≠p'"));
 	}
 
 }

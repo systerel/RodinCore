@@ -7,17 +7,24 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ISCAction;
+import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.BecomesEqualTo;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.state.IAbstractEventActionTable;
 import org.eventb.core.pog.state.IStateRepository;
 import org.eventb.core.pog.util.POGHint;
 import org.eventb.core.pog.util.POGIntervalSelectionHint;
+import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGSource;
 import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.rodinp.core.IRodinElement;
@@ -27,10 +34,8 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventActionModule extends MachineEventActionUtilityModule {
+public class MachineEventActionModule extends MachineEventRefinementModule {
 
-	protected IAbstractEventActionTable abstractEventActionTable;
-	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -62,13 +67,16 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 			
 			if (abstractEventActionTable.getIndexOfCorrespondingAbstract(k) == -1) {
 				
+				Predicate baPredicate = assignment.getBAPredicate(factory);
+				List<POGPredicate> hyp = makeGuardAndActionHypothesis(baPredicate);
+				
 				Predicate wdPredicate = assignment.getWDPredicate(factory);
-				createProofObligation(target, 
+				createProofObligation(target, hyp,
 						wdPredicate, action, sources, hints, 
 						"WD", "Well-definedness of action", monitor);
 				
 				Predicate fisPredicate = assignment.getFISPredicate(factory);
-				createProofObligation(target, 
+				createProofObligation(target, hyp,
 						fisPredicate, action, sources, hints, 
 						"FIS", "Feasibility of action", monitor);
 				
@@ -76,8 +84,57 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 		}
 	}
 
+	private List<POGPredicate> makeGuardAndActionHypothesis(Predicate baPredicate) {
+		
+		List<ISCAction> actions = abstractEventActionTable.getNondetActions();
+		
+		ArrayList<POGPredicate> hyp = new ArrayList<POGPredicate>(
+				witnessTable.getNondetWitnesses().size() +
+				actions.size());
+		
+		if (eventVariableWitnessPredicatesUnprimed(hyp)) {
+			List<Predicate> predicates = abstractEventActionTable.getNondetPredicates();
+			List<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
+			substitution.addAll(witnessTable.getEventDetAssignments());
+			substitution.addAll(witnessTable.getMachinePrimedDetAssignments());
+//			if (witnessTable.getPrimeSubstitution() != null)
+//				substitution.add(witnessTable.getPrimeSubstitution());
+			
+			for (int i=0; i<actions.size(); i++) {
+				Predicate predicate = predicates.get(i);
+				predicate = predicate.applyAssignments(substitution, factory);
+				hyp.add(new POGPredicate(predicate, actions.get(i)));
+			}
+			
+			return hyp;
+		} else
+			return emptyPredicates;
+	}
+
+	private boolean eventVariableWitnessPredicatesUnprimed(List<POGPredicate> hyp) {
+		
+		List<FreeIdentifier> witnessIdents = witnessTable.getVariables();
+		List<Predicate> witnessPreds = witnessTable.getPredicates();
+		ISCWitness[] witnesses = witnessTable.getWitnesses();
+		
+		for (int i=0; i<witnessIdents.size(); i++) {
+			Predicate predicate = witnessPreds.get(i);
+			if ( ! witnessIdents.get(i).isPrimed()) {
+				FreeIdentifier[] freeIdents = predicate.getFreeIdentifiers();
+				for (FreeIdentifier freeIdent : freeIdents) {
+					if (freeIdent.isPrimed())
+						return false;
+				}
+			}
+			if ( !witnessTable.isDeterministic(i))
+				hyp.add(new POGPredicate(predicate, witnesses[i]));
+		}
+		return true;
+	}
+
 	private void createProofObligation(
 			IPOFile target, 
+			List<POGPredicate> hyp,
 			Predicate predicate, 
 			ISCAction action, 
 			POGSource[] sources, 
@@ -92,7 +149,7 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 					sequentName, 
 					desc, 
 					fullHypothesis, 
-					emptyPredicates, 
+					hyp, 
 					new POGTraceablePredicate(predicate, action), 
 					sources, 
 					hints, 
@@ -103,23 +160,4 @@ public class MachineEventActionModule extends MachineEventActionUtilityModule {
 		}
 	}
 	
-	@Override
-	public void initModule(
-			IRodinElement element, 
-			IStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, repository, monitor);
-		abstractEventActionTable = 
-			(IAbstractEventActionTable) repository.getState(IAbstractEventActionTable.STATE_TYPE);
-	}
-
-	@Override
-	public void endModule(
-			IRodinElement element, 
-			IStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		abstractEventActionTable = null;
-		super.endModule(element, repository, monitor);
-	}
-
 }

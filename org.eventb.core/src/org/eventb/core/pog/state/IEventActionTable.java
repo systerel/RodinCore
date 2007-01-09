@@ -14,6 +14,7 @@ import org.eventb.core.ISCAction;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.Predicate;
 
 /**
  * Common protocol for event actions (of abstract and concrete events).
@@ -89,6 +90,19 @@ public interface IEventActionTable extends IState {
 	 * non-deterministic actions of the event
 	 */
 	List<Assignment> getNondetAssignments();
+	
+	/**
+	 * Returns the array of before-after predicates corresponding to the 
+	 * non-deterministic actions of the event.
+	 * <p>
+	 * The indices of this list correspond to the indices of the list of
+	 * non-deterministic actions returned by <code>getNondetActions()</code>. 
+	 * </p>
+	 * 
+	 * @return the array of non-deterministic assignments corresponding to the 
+	 * non-deterministic actions of the event
+	 */
+	List<Predicate> getNondetPredicates();
 	
 	/**
 	 * Returns the array of deterministic actions of this event.

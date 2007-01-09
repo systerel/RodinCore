@@ -175,7 +175,7 @@ public class TestMachineEventWitnesses extends BasicPOTest {
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, 
 				makeSList("pp", "ax'", "ay'", "az'"), 
-				makeSList("qq∈pp", "ax'=cx'", "ay'=cx'+ay'", "cz'=az'"));
+				makeSList("qq∈pp∪{0}", "ax'=cx'", "ay'=cx'+ay'", "cz'=az'"));
 		
 		mac.save(null, true);
 		
@@ -191,22 +191,26 @@ public class TestMachineEventWitnesses extends BasicPOTest {
 		
 		sequent = getSequent(po, "evt/A1/SIM");
 		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
-		sequentHasHypotheses(sequent, environment, "qq∈pp");
+		sequentHasHypotheses(sequent, environment, "qq∈pp∪{0}");
+		sequentHasNotHypotheses(sequent, environment, "pp⊆ℕ", "ax'=cx'", "ay'=cx'+ay'", "cz'=az'");
 		sequentHasGoal(sequent, environment, "qq∈pp");
 		
 		sequent = getSequent(po, "evt/A2/SIM");
 		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
-		sequentHasHypotheses(sequent, environment, "qq∈pp", "ay'=cx'+ay'", "cz'=az'");
+		sequentHasHypotheses(sequent, environment, "ay'=cx'+ay'", "cz'=az'");
+		sequentHasNotHypotheses(sequent, environment, "pp⊆ℕ", "qq∈pp∪{0}", "ax'=cx'");
 		sequentHasGoal(sequent, environment, "ay'=az'");
 
 		sequent = getSequent(po, "evt/I1/INV");
 		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
-		sequentHasHypotheses(sequent, environment);
+		sequentHasNotHypotheses(sequent, environment, 
+				"pp⊆ℕ", "qq∈pp∪{0}", "ax'=cx'", "ay'=cx'+ay'", "cz'=az'");
 		sequentHasGoal(sequent, environment, "qq>qq");
 
 		sequent = getSequent(po, "evt/I2/INV");
 		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
 		sequentHasHypotheses(sequent, environment, "{cy',cz'} ⊆ {qq}", "ay'=cx'+ay'");
+		sequentHasNotHypotheses(sequent, environment, "pp⊆ℕ", "qq∈pp∪{0}", "ax'=cx'");
 		sequentHasGoal(sequent, environment, "cy'+qq>ay'");
 
 		sequent = getSequent(po, "evt/I3/INV");

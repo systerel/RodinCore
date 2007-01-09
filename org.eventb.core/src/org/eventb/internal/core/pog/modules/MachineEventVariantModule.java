@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IMachineVariantInfo;
 import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGSource;
 import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.rodinp.core.IRodinElement;
@@ -56,12 +58,17 @@ public class MachineEventVariantModule extends MachineEventRefinementModule {
 				new POGSource(IPOSource.DEFAULT_ROLE, machineVariantInfo.getVariant()),
 				new POGSource(IPOSource.DEFAULT_ROLE, concreteEvent));
 		
+// TODO remove if ok:			
+//		ArrayList<POGPredicate> hyp = makeActionHypothesis();
+		
+		ArrayList<POGPredicate> hyp =  makeActionHypothesis(varPredicate);
+		
 		createPO(
 				target, 
 				concreteEventLabel + "/" + "VAR", 
 				"Variant of event", 
 				eventHypothesisManager.getFullHypothesis(), 
-				makeActionHypothesis(), 
+				hyp, 
 				new POGTraceablePredicate(varPredicate, machineVariantInfo.getVariant()), 
 				sources, 
 				emptyHints, 
@@ -79,7 +86,7 @@ public class MachineEventVariantModule extends MachineEventRefinementModule {
 					concreteEventLabel + "/" + "NAT", 
 					"Natural number variant of event", 
 					eventHypothesisManager.getFullHypothesis(), 
-					makeActionHypothesis(), 
+					hyp, 
 					new POGTraceablePredicate(natPredicate, machineVariantInfo.getVariant()), 
 					sources, 
 					emptyHints, 

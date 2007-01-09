@@ -142,13 +142,13 @@ public abstract class SymbolInfo implements ISymbolInfo {
 					getReferenceElement(), 
 					getReferenceAttributeType(), 
 					getConflictError(), 
-					getSymbol());
+					getSymbol(), getComponentName());
 		else
 			markerDisplay.createProblemMarker(
 					getReferenceElement(), 
 					getReferenceAttributeType(), 
 					getConflictWarning(), 
-					getSymbol());
+					getSymbol(), getComponentName());
 	}
 	
 	public abstract IRodinProblem getConflictWarning();

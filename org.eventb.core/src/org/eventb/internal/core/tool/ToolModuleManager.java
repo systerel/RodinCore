@@ -30,9 +30,16 @@ public abstract class ToolModuleManager <FM extends IToolFilterModule, PM extend
 	 */
 	protected abstract String getRootModuleId();
 
-	private final FM[] NO_FILTER = (FM[]) new Object[0];
+	private final FM[] NO_FILTER;
 	
-	private final PM[] NO_PROCESSOR = (PM[]) new Object[0];
+	private final PM[] NO_PROCESSOR;
 
+	protected ToolModuleManager(FM[] NO_FILTER, PM[] NO_PROCESSOR) {
+		assert NO_FILTER.length == 0 && NO_PROCESSOR.length == 0;
+		
+		this.NO_FILTER = NO_FILTER;
+		this.NO_PROCESSOR = NO_PROCESSOR;
+	}
+	
 	
 }

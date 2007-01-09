@@ -118,6 +118,13 @@ public abstract class BasicSCTest extends EventBTest {
 		return table;
 	}
 
+	public Hashtable<String, String> getAssignmentTable(ISCAssignmentElement[] elements) throws RodinDBException {
+		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
+		for (ISCAssignmentElement assignment : elements)
+			table.put(((ILabeledElement) assignment).getLabel(), assignment.getAssignmentString());
+		return table;
+	}
+
 	public Set<String> getSCPredicateSet(ISCPredicateElement[] elements) throws RodinDBException {
 		HashSet<String> predicates = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCPredicateElement element : elements)
@@ -148,11 +155,18 @@ public abstract class BasicSCTest extends EventBTest {
 	public void containsPredicates(
 			String type, ITypeEnvironment environment, String[] labels, String[] strings, 
 			ISCPredicateElement[] predicateElements) throws RodinDBException {
-		for (int k=0; k<predicateElements.length; k++) {
-			String label = ((ILabeledElement) predicateElements[k]).getLabel();
-			String predicate = predicateElements[k].getPredicateString();
-			assertNotNull("should contain" + type + " " + labels[k], label);
-			assertEquals("should be" + type + " " + strings[k], 
+		assert labels.length == strings.length;
+		assertEquals("wrong number [" + type + "]", strings.length, predicateElements.length);
+		
+		if (predicateElements.length == 0)
+			return;
+		
+		Hashtable<String, String> table = getPredicateTable(predicateElements);
+		
+		for (int k=0; k<labels.length; k++) {
+			String predicate = table.get(labels[k]);
+			assertNotNull("should contain" + type + " " + labels[k], predicate);
+			assertEquals("wrong " + type, 
 					getNormalizedPredicate(strings[k], environment), 
 					predicate);
 		}
@@ -161,11 +175,12 @@ public abstract class BasicSCTest extends EventBTest {
 	public void containsAssignments(
 			String type, ITypeEnvironment environment, String[] labels, String[] strings, 
 			ISCAssignmentElement[] assignmentElements) throws RodinDBException {
-		for (int k=0; k<assignmentElements.length; k++) {
-			String label = ((ILabeledElement) assignmentElements[k]).getLabel();
-			String assignment = assignmentElements[k].getAssignmentString();
-			assertNotNull("should contain" + type + " " + labels[k], label);
-			assertEquals("should be" + type + " " + strings[k], 
+		assert labels.length == strings.length;
+		Hashtable<String, String> table = getAssignmentTable(assignmentElements);
+		for (int k=0; k<labels.length; k++) {
+			String assignment = table.get(labels[k]);
+			assertNotNull("should contain" + type + " " + labels[k], assignment);
+			assertEquals("wrong " + type, 
 					getNormalizedAssignment(strings[k], environment), 
 					assignment);
 		}
@@ -174,40 +189,19 @@ public abstract class BasicSCTest extends EventBTest {
 	public void containsGuards(ISCEvent event, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
 		ISCGuard[] guards = event.getSCGuards();
 		
-		assertEquals("wrong number of guards", strings.length, guards.length);
-		
-		if (strings.length == 0)
-			return;
-		
 		containsPredicates("guard", environment, labels, strings, guards);
-//		Hashtable<String, String> table = getPredicateTable(guards);
-//		tableContainsPredicates("guard", environment, labels, strings, table);
 	}
 
 	public void containsWitnesses(ISCEvent event, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
 		ISCWitness[] witnesses = event.getSCWitnesses();
 		
-		assertEquals("wrong number of witnesses", strings.length, witnesses.length);
-		
-		if (strings.length == 0)
-			return;
-		
 		containsPredicates("witness", environment, labels, strings, witnesses);
-//		Hashtable<String, String> table = getPredicateTable(witnesses);
-//		tableContainsPredicates("witness", environment, labels, strings, table);
 	}
 
 	public void containsAxioms(ISCContext context, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
 		ISCAxiom[] axioms = context.getSCAxioms();
 		
-		assertEquals("wrong number of axioms", strings.length, axioms.length);
-		
-		if (strings.length == 0)
-			return;
-		
 		containsPredicates("axiom", environment, labels, strings, axioms);
-//		Hashtable<String, String> table = getPredicateTable(axioms);
-//		tableContainsPredicates("axiom", environment, labels, strings, table);
 	}
 
 	public void containsTheorems(ISCContextFile file, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
@@ -223,27 +217,13 @@ public abstract class BasicSCTest extends EventBTest {
 	}
 
 	private void containsTheorems(ISCTheorem[] theorems, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		assertEquals("wrong number of theorems", strings.length, theorems.length);
-		
-		if (strings.length == 0)
-			return;
-		
 		containsPredicates("theorem", environment, labels, strings, theorems);
-//		Hashtable<String, String> table = getPredicateTable(theorems);
-//		tableContainsPredicates("theorem", environment, labels, strings, table);
 	}
 
 	public void containsInvariants(ISCMachineFile file, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
 		ISCInvariant[] invariants = file.getSCInvariants();
 		
-		assertEquals("wrong number of invariant", strings.length, invariants.length);
-		
-		if (strings.length == 0)
-			return;
-		
 		containsPredicates("invariant", environment, labels, strings, invariants);
-//		Hashtable<String, String> table = getPredicateTable(invariants);
-//		tableContainsPredicates("invariant", environment, labels, strings, table);
 	}
 
 	public ISCInternalContext[] getInternalContexts(ISCContextFile file, int num) throws RodinDBException {
@@ -314,28 +294,8 @@ public abstract class BasicSCTest extends EventBTest {
 		
 		containsAssignments("action", environment, actionLabels, actions, acts);
 		
-//		Hashtable<String, String> table = getActionTable(acts);	
-//		tableContainsAssignments("action", environment, actionNames, actions, table);
 	}
 
-//	private void tableContainsAssignments(String type, ITypeEnvironment environment, String[] labels, String[] strings, Hashtable<String, String> table) {
-//		for (int i=0; i<strings.length; i++) {
-//			String action = table.get(labels[i]);
-//			String naction = getNormalizedAssignment(strings[i], environment);
-//			assertNotNull("should contain" + type + " " + labels[i], action);
-//			assertEquals("should be" + type + " " + strings[i], naction, action);
-//		}
-//	}
-			
-//	private void tableContainsPredicates(String type, ITypeEnvironment environment, String[] labels, String[] strings, Hashtable<String, String> table) {
-//		for (int i=0; i<strings.length; i++) {
-//			String action = table.get(labels[i]);
-//			String naction = getNormalizedPredicate(strings[i], environment);
-//			assertNotNull("should contain" + type + " " + labels[i], action);
-//			assertEquals("should be" + type + " " + strings[i], naction, action);
-//		}
-//	}
-			
 	public void containsVariables(ISCEvent event, String... strings) throws RodinDBException {
 		ISCVariable[] variables = event.getSCVariables();
 		

@@ -181,8 +181,8 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		sequent = getSequent(po, "evt/H/REF");
 		
 		sequentHasIdentifiers(sequent, "y", "yc");
-		sequentHasSelectionHints(sequent, typeEnvironment, "yc>1", "x=1", "yc=y");
-		sequentHasNotSelectionHints(sequent, typeEnvironment, "x∈0‥4", "z∈BOOL∖{TRUE}");
+		sequentHasSelectionHints(sequent, typeEnvironment, "yc>1", "x=1");
+		sequentHasNotSelectionHints(sequent, typeEnvironment, "x∈0‥4", "z∈BOOL∖{TRUE}", "yc=y");
 	}
 	
 	/**
@@ -233,17 +233,17 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		
 		sequentHasIdentifiers(sequent, "y", "yc", "x'", "z'", "zc'");
 		sequentHasSelectionHints(sequent, typeEnvironment, 
-				"yc>1", "x=1", "yc=y", "z'≠zc'");
+				"yc>1", "x=1", "yc=y");
 		sequentHasNotSelectionHints(sequent, typeEnvironment, 
-				"x∈0‥4", "z∈BOOL∖{TRUE}", "zc∈BOOL∖{TRUE}");
+				"x∈0‥4", "z∈BOOL∖{TRUE}", "zc∈BOOL∖{TRUE}", "z'≠zc'");
 		
 		sequent = getSequent(po, "evt/T/SIM");
 		
 		sequentHasIdentifiers(sequent, "y", "yc", "x'", "z'", "zc'");
 		sequentHasSelectionHints(sequent, typeEnvironment, 
-				"yc>1", "x=1", "yc=y", "z'≠zc'");
+				"yc>1", "x=1", "z'≠zc'");
 		sequentHasNotSelectionHints(sequent, typeEnvironment, 
-				"x∈0‥4", "z∈BOOL∖{TRUE}", "zc∈BOOL∖{TRUE}");
+				"x∈0‥4", "z∈BOOL∖{TRUE}", "zc∈BOOL∖{TRUE}", "yc=y");
 	}
 	
 	/**
@@ -265,11 +265,11 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		addMachineRefines(mac, "abs");
 
 		addVariables(mac, "x", "zc");
-		addInvariants(mac, makeSList("JC"), makeSList("zc∈BOOL∖{TRUE}"));
+		addInvariants(mac, makeSList("JC", "JD"), makeSList("zc∈BOOL∖{TRUE}", "z≠zc"));
 		IEvent event = addEvent(mac, "evt", 
 				makeSList("yc"), 
 				makeSList("GC", "HC"), makeSList("yc>1", "x=1"), 
-				makeSList("SC", "TC"), makeSList("x≔1", "zc≔TRUE"));
+				makeSList("SC", "TC"), makeSList("x≔1", "zc :∣ TRUE≠zc'"));
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("y", "z'"), makeSList("yc=y", "z'≠zc'"));
 
@@ -294,9 +294,17 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		
 		sequentHasIdentifiers(sequent, "y", "yc", "x'", "z'", "zc'");
 		sequentHasSelectionHints(sequent, typeEnvironment, 
-				"yc>1", "x=1", "yc=y", "z'≠zc'", "zc∈BOOL∖{TRUE}");
+				"yc>1", "x=1", "TRUE≠zc'", "zc∈BOOL∖{TRUE}");
 		sequentHasNotSelectionHints(sequent, typeEnvironment, 
-				"x∈0‥4", "z∈BOOL∖{TRUE}");
+				"x∈0‥4", "z∈BOOL∖{TRUE}", "yc=y", "z≠zc");
+		
+		sequent = getSequent(po, "evt/JD/INV");
+		
+		sequentHasIdentifiers(sequent, "y", "yc", "x'", "z'", "zc'");
+		sequentHasSelectionHints(sequent, typeEnvironment, 
+				"yc>1", "x=1", "z'≠zc'", "TRUE≠zc'", "z≠zc");
+		sequentHasNotSelectionHints(sequent, typeEnvironment, 
+				"x∈0‥4", "z∈BOOL∖{TRUE}", "zc∈BOOL∖{TRUE}", "yc=y");
 	}
 
 }

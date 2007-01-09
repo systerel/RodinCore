@@ -20,6 +20,7 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IEventActionTable;
 import org.eventb.internal.core.tool.state.ToolState;
 
@@ -32,12 +33,13 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 	protected final ISCAction[] actions;
 	protected final Assignment[] assignments;
 	
-	protected List<Assignment> nondeterm;
-	protected List<BecomesEqualTo> determist;
-	protected List<BecomesEqualTo> primedDetermist;
+	protected List<ISCAction> detActions;
+	protected List<BecomesEqualTo> detAssn;
+	protected List<BecomesEqualTo> primedDetAssn;
 
 	protected List<ISCAction> nondetActions;
-	protected List<ISCAction> detActions;
+	protected List<Assignment> nondetAssn;
+	protected List<Predicate> nondetPred;
 	
 	protected Collection<FreeIdentifier> assignedVars;
 
@@ -45,14 +47,16 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 			ISCAction[] actions, 
 			ITypeEnvironment typeEnvironment, 
 			FormulaFactory factory) throws CoreException {
-		nondeterm = 
+		nondetAssn = 
 			new ArrayList<Assignment>(actions.length);
+		nondetPred = 
+			new ArrayList<Predicate>(actions.length);
 		assignedVars = 
 			new HashSet<FreeIdentifier>(actions.length * 15);
 		assignments = new Assignment[actions.length];		
-		determist = 
+		detAssn = 
 			new ArrayList<BecomesEqualTo>(actions.length);
-		primedDetermist =
+		primedDetAssn =
 			new ArrayList<BecomesEqualTo>(actions.length);
 		this.actions = actions;
 		nondetActions = new ArrayList<ISCAction>(actions.length);
@@ -68,10 +72,11 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 			fetchAssignedIdentifiers(assignedVars, assignment);
 			
 			if (assignment instanceof BecomesEqualTo) {
-				determist.add((BecomesEqualTo) assignment);
+				detAssn.add((BecomesEqualTo) assignment);
 				detActions.add(action);
 			} else {
-				nondeterm.add(assignment);
+				nondetAssn.add(assignment);
+				nondetPred.add(assignment.getBAPredicate(factory));
 				nondetActions.add(action);
 			}
 		}
@@ -83,11 +88,12 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 		super.makeImmutable();
 		
 		assignedVars = Collections.unmodifiableCollection(assignedVars);
-		determist =  Collections.unmodifiableList(determist);
-		nondeterm = Collections.unmodifiableList(nondeterm);
+		detAssn =  Collections.unmodifiableList(detAssn);
+		nondetAssn = Collections.unmodifiableList(nondetAssn);
+		nondetPred = Collections.unmodifiableList(nondetPred);
 		nondetActions = Collections.unmodifiableList(nondetActions);
 		detActions = Collections.unmodifiableList(detActions);
-		primedDetermist = Collections.unmodifiableList(primedDetermist);
+		primedDetAssn = Collections.unmodifiableList(primedDetAssn);
 	}
 
 	public Collection<FreeIdentifier> getAssignedVariables() {
@@ -103,18 +109,18 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 	}
 
 	public List<BecomesEqualTo> getDetAssignments() {
-		return determist;
+		return detAssn;
 	}
 
 	private void makePrimedDetermist(FormulaFactory factory) {
-		for (BecomesEqualTo becomesEqualTo : determist) {
+		for (BecomesEqualTo becomesEqualTo : detAssn) {
 			FreeIdentifier[] unprimedLeft = becomesEqualTo.getAssignedIdentifiers();
 			FreeIdentifier[] primedLeft = new FreeIdentifier[unprimedLeft.length];
 			for (int i=0; i<unprimedLeft.length; i++)
 				primedLeft[i] = unprimedLeft[i].withPrime(factory);
 			BecomesEqualTo primed = 
 				factory.makeBecomesEqualTo(primedLeft, becomesEqualTo.getExpressions(), null);
-			primedDetermist.add(primed);
+			primedDetAssn.add(primed);
 		}
 	}
 
@@ -122,7 +128,7 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 	 * @see org.eventb.core.pog.IAssignmentTable#getPrimedDetAssignments()
 	 */
 	public List<BecomesEqualTo> getPrimedDetAssignments() {
-		return primedDetermist;
+		return primedDetAssn;
 	}
 	
 	protected void fetchAssignedIdentifiers(
@@ -134,7 +140,11 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 	}
 
 	public List<Assignment> getNondetAssignments() {
-		return nondeterm;
+		return nondetAssn;
+	}
+
+	public List<Predicate> getNondetPredicates() {
+		return nondetPred;
 	}
 
 	/* (non-Javadoc)

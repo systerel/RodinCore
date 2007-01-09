@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -46,10 +47,6 @@ public class MachineEventPreserveInvariantModule extends MachineEventInvariantMo
 			Set<FreeIdentifier> freeIdents,
 			IProgressMonitor monitor) throws CoreException {
 		
-		LinkedList<POGPredicate> bighyp = new LinkedList<POGPredicate>();
-		bighyp.addAll(makeActionHypothesis());
-		bighyp.addAll(makeWitnessHypothesis());
-		
 		LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		if (concreteEventActionTable.getDeltaPrime() != null)
 			substitution.add(concreteEventActionTable.getDeltaPrime());
@@ -66,6 +63,13 @@ public class MachineEventPreserveInvariantModule extends MachineEventInvariantMo
 			substitution.add(concreteEventActionTable.getXiUnprime());
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 		predicate = predicate.applyAssignments(substitution, factory);
+		
+// TODO: remove following:
+//		LinkedList<POGPredicate> bighyp = new LinkedList<POGPredicate>();
+//		bighyp.addAll(makeActionHypothesis());
+//		bighyp.addAll(makeWitnessHypothesis());
+		
+		ArrayList<POGPredicate> bighyp = makeActionAndWitnessHypothesis(predicate);
 		
 		String sequentName = concreteEventLabel + "/" + invariantLabel + "/INV";
 		createPO(
