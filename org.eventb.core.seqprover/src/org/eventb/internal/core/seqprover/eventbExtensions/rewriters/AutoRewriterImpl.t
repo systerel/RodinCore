@@ -50,32 +50,79 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	@Override
 	public Predicate rewrite(BinaryPredicate predicate) {
 	    %match (Predicate predicate) {
-	    	Limp(P, BFALSE()) -> {
-	    		return Lib.makeNeg(`P);
-	    	}
-	    	Limp(_, BTRUE()) -> {
-	    		return predicate.getRight();
+	    	Limp(BTRUE(), P) -> {
+	    		return `P;
 	    	}
 	    	Limp(BFALSE(), _) -> {
 	    		return Lib.True;
 	    	}
-	    	Limp(BTRUE(), P) -> {
+	    	Limp(_, BTRUE()) -> {
+	    		return predicate.getRight();
+	    	}
+	    	Limp(P, BFALSE()) -> {
+	    		return Lib.makeNeg(`P);
+	    	}
+	    	Limp(P, P) -> {
+	    		return Lib.True;
+	    	}
+	    	Leqv(P, BTRUE()) -> {
+	    		return `P;
+	    	}
+	    	Leqv(BTRUE(), P) -> {
 	    		return `P;
 	    	}
 	    	Leqv(P, BFALSE()) -> {
 	    		return Lib.makeNeg(`P);
 	    	}
-	    	Leqv(P, BTRUE()) -> {
-	    		return `P;
-	    	}
 	    	Leqv(BFALSE(), P) -> {
 	    		return Lib.makeNeg(`P);
 	    	}
-	    	Leqv(BTRUE(), P) -> {
-	    		return `P;
+	    	Leqv(P, P) -> {
+	    		return Lib.True;
 	    	}
 	    }
 	    return predicate;
 	}
 	
+	@Override
+	public Predicate rewrite(AssociativePredicate predicate) {
+	    %match (Predicate predicate) {
+	    	(Land | Lor) (children) -> {
+				boolean isAnd = predicate.getTag() == Formula.LAND;
+
+				return FormulaSimplification.simplifiedAssociativePredicate(predicate, `children, isAnd ? Lib.True : Lib.False,
+    				isAnd ? Lib.False : Lib.True);
+			}
+	    }
+	    return predicate;
+	}
+
+	@Override
+	public Predicate rewrite(UnaryPredicate predicate) {
+	    %match (Predicate predicate) {
+	    	Not(BTRUE()) -> {
+				return Lib.False;
+			}
+			Not(BFALSE()) -> {
+				return Lib.True;
+			}
+			Not(Not(P)) -> {
+				return `P;
+			}
+	    }
+	    return predicate;
+	}
+
+	@Override
+	public Predicate rewrite(QuantifiedPredicate predicate) {
+	    %match (Predicate predicate) {
+	    	ForAll(idents, Land(children)) -> {
+	    		return FormulaSimplification.splitQuantifiedPredicate(predicate.getTag(), predicate.getPredicate().getTag(), `idents, `children);
+	    	}
+			Exists(idents, Lor(children)) -> {
+	    		return FormulaSimplification.splitQuantifiedPredicate(predicate.getTag(), predicate.getPredicate().getTag(), `idents, `children);
+	    	}
+	    }
+	    return predicate;
+	}
 }
