@@ -1,6 +1,8 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -10,30 +12,38 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class FormulaSimplification {
+
+	private static <T extends Formula<T>> Collection<T> simplifiedAssociativeFormula(
+			T[] children, T neutral, T determinant) {
+		Collection<T> formulas = new LinkedHashSet<T>();
+		for (T child : children) {
+			if (child.equals(determinant)) {
+				formulas = new ArrayList<T>();
+				formulas.add(determinant);
+				return formulas;
+			}
+			if (!child.equals(neutral)) {
+				formulas.add(child);
+			}
+		}
+		return formulas;
+	}
 
 	public static Predicate simplifiedAssociativePredicate(
 			AssociativePredicate predicate, Predicate[] children,
 			Predicate neutral, Predicate determinant) {
-		List<Predicate> predicates = new ArrayList<Predicate>();
-		boolean rewrite = false;
-		for (Predicate subPred : children) {
-			if (subPred.equals(determinant))
-				return determinant;
-			if (subPred.equals(neutral)) {
-				rewrite = true;
-			} else {
-				predicates.add(subPred);
-			}
-		}
 
-		if (rewrite) {
+		Collection<Predicate> predicates = simplifiedAssociativeFormula(
+				children, neutral, determinant);
+		if (predicates.size() != children.length) {
 			if (predicates.size() == 0)
 				return neutral;
 
 			if (predicates.size() == 1)
-				return predicates.get(0);
+				return predicates.iterator().next();
 
 			AssociativePredicate newPred = FormulaFactory.getDefault()
 					.makeAssociativePredicate(predicate.getTag(), predicates,
@@ -68,36 +78,33 @@ public class FormulaSimplification {
 
 	public static Expression simplifiedAssociativeExpression(
 			AssociativeExpression expression, Expression[] children) {
-		List<Expression> expressions = new ArrayList<Expression>();
-		Expression empty = FormulaFactory.getDefault().makeAtomicExpression(Formula.EMPTYSET, null);
-		boolean rewrite = false;
 		int tag = expression.getTag();
-		for (Expression child : children) {
-			if (child.equals(empty)) {
-				if (tag == Formula.BINTER) {
-					return empty;
-				}
-				else {
-					rewrite = true;					
-				}
-			} else {
-				expressions.add(child);
-			}
-		}
+		Expression neutral = tag == Formula.BUNION ? Lib.emptySet : null;
+		Expression determinant = tag == Formula.BINTER ? Lib.emptySet : null;
+		Collection<Expression> expressions = simplifiedAssociativeFormula(children, neutral, determinant);
 
-		if (rewrite) {
+		if (expressions.size() != children.length) {
 			if (expressions.size() == 0)
-				return empty;
+				return Lib.emptySet;
 
 			if (expressions.size() == 1)
-				return expressions.get(0);
+				return expressions.iterator().next();
 
 			AssociativeExpression newExpression = FormulaFactory.getDefault()
-					.makeAssociativeExpression(tag, expressions,
-							null);
+					.makeAssociativeExpression(tag, expressions, null);
 			return newExpression;
 		}
 		return expression;
+	}
+
+	public static Predicate simplifySetMember(Predicate predicate,
+			Expression E, Expression[] members) {
+		for (Expression member : members) {
+			if (member.equals(E)) {
+				return Lib.True;
+			}
+		}
+		return predicate;
 	}
 
 }

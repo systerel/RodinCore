@@ -215,6 +215,44 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	Equal(Mapsto(E, F) , Mapsto(G, H)) -> {
 	    		return FormulaSimplification.rewriteMapsto(`E, `F, `G, `H);
 	    	}
+	    	
+	    	/**
+	    	 * Set Theory 5: ∅ ⊆ S == ⊤
+	    	 */
+	    	SubsetEq(EmptySet(), _) -> {
+	    		return Lib.True;
+	    	}
+	    	
+	    	/**
+	    	 * Set Theory 6: S ⊆ S == ⊤
+	    	 */
+	    	SubsetEq(S, S) -> {
+	    		return Lib.True;
+	    	}
+			
+			/**
+	    	 * Set Theory 7: E ∈ ∅ == ⊥
+	    	 */
+	    	In(_, EmptySet()) -> {
+	    		return Lib.False;
+	    	}	    	
+
+			/**
+	    	 * Set Theory 8: A ∈ {A} == ⊤
+	    	 * Set Theory 9: B ∈ {A, ..., B, ..., C} == ⊤
+	    	 */
+	    	In(E, SetExtension(members)) -> {
+	    		return FormulaSimplification.simplifySetMember(predicate, `E, `members);
+	    	}
+
+			/**
+	    	 * Set Theory 8: A ∈ {A} == ⊤
+	    	 * Set Theory 9: B ∈ {A, ..., B, ..., C} == ⊤
+	    	 */
+	    	In(E, SetExtension(members)) -> {
+	    		return FormulaSimplification.simplifySetMember(predicate, `E, `members);
+	    	}
+
 	    }
 	    return predicate;
 	}
@@ -234,4 +272,33 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    }
 	    return expression;
 	}
+
+	@Override
+	public Expression rewrite(BinaryExpression expression) {
+	    %match (Expression expression) {
+
+			/**
+	    	 * Set Theory 11: S ∖ S == ∅
+	    	 */
+	    	SetMinus(S, S) -> {
+	    		return Lib.emptySet;
+	    	}
+	    }
+	    return expression;
+	}
+
+	@Override
+	public Expression rewrite(UnaryExpression expression) {
+	    %match (Expression expression) {
+
+			/**
+	    	 * Set Theory 12: r∼∼ == r
+	    	 */
+	    	Converse(Converse(r)) -> {
+	    		return `r;
+	    	}
+	    }
+	    return expression;
+	}
+
 }
