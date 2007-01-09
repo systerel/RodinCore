@@ -6,6 +6,7 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class SetExtension extends Expression {
 		synthesizeType(factory, null);
 	}
 
-	protected SetExtension(List<? extends Expression> expressions,
+	protected SetExtension(Collection<? extends Expression> expressions,
 			SourceLocation location, FormulaFactory factory) {
 		super(SETEXT, location, combineHashCodes(expressions));
 		Expression[] temp = new Expression[expressions.size()];

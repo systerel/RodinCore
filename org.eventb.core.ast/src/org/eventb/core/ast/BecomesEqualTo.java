@@ -8,8 +8,8 @@
 
 package org.eventb.core.ast;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.IdentListMerger;
@@ -43,8 +43,9 @@ public class BecomesEqualTo extends Assignment {
 		synthesizeType(ff);
 	}
 
-	protected BecomesEqualTo(List<FreeIdentifier> assignedIdents, List<Expression> values,
-			SourceLocation location, FormulaFactory ff) {
+	protected BecomesEqualTo(Collection<FreeIdentifier> assignedIdents,
+			Collection<Expression> values, SourceLocation location,
+			FormulaFactory ff) {
 		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
 		this.values = values.toArray(new Expression[values.size()]);
 		checkPreconditions();

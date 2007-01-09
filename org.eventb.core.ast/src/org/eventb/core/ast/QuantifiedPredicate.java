@@ -13,6 +13,7 @@ import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.core.ast.QuantifiedUtil.resolveIdents;
 
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -63,7 +64,8 @@ public class QuantifiedPredicate extends Predicate {
 		synthesizeType(ff);
 	}
 
-	protected QuantifiedPredicate(Predicate pred, List<BoundIdentDecl> boundIdentifiers, int tag,
+	protected QuantifiedPredicate(Predicate pred,
+			Collection<BoundIdentDecl> boundIdentifiers, int tag,
 			SourceLocation location, FormulaFactory ff) {
 		super(tag, location,
 				combineHashCodes(boundIdentifiers.size(), pred.hashCode()));

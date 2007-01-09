@@ -12,6 +12,7 @@ import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class AssociativeExpression extends Expression {
 		synthesizeType(factory, null);
 	}
 
-	protected AssociativeExpression(List<? extends Expression> children,
+	protected AssociativeExpression(Collection<? extends Expression> children,
 			int tag, SourceLocation location, FormulaFactory factory) {
 
 		super(tag, location, combineHashCodes(children));

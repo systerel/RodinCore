@@ -11,6 +11,7 @@ import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class AssociativePredicate extends Predicate {
 		synthesizeType(ff);
 	}
 
-	protected AssociativePredicate(List<Predicate> children, int tag,
+	protected AssociativePredicate(Collection<Predicate> children, int tag,
 			SourceLocation location, FormulaFactory ff) {
 		
 		super(tag, location, combineHashCodes(children));

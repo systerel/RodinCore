@@ -13,6 +13,7 @@ import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.core.ast.QuantifiedUtil.resolveIdents;
 
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -107,7 +108,7 @@ public class QuantifiedExpression extends Expression {
 	}
 	
 	protected QuantifiedExpression(Expression expr, Predicate pred,
-			List<BoundIdentDecl> boundIdentifiers, int tag,
+			Collection<BoundIdentDecl> boundIdentifiers, int tag,
 			SourceLocation location, Form form, FormulaFactory factory) {
 
 		super(tag, location, combineHashCodes(

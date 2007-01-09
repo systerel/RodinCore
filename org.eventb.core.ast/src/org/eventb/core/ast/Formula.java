@@ -853,7 +853,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 *            some formulas
 	 * @return a combination of the formulas' hash codes
 	 */
-	protected static int combineHashCodes(List<? extends Formula> formulas) {
+	protected static int combineHashCodes(Collection<? extends Formula> formulas) {
 		int result = 0;
 		for (Formula formula: formulas) {
 			result = combineHashCodes(result, formula.hashCode);

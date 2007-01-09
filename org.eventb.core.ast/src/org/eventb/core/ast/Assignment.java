@@ -9,6 +9,7 @@
 package org.eventb.core.ast;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +74,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	 * @param assignedIdents array of free identifiers that constitute the left-hand side
 	 */
 	protected Assignment(int tag, SourceLocation location, int hashCode,
-			List<FreeIdentifier> assignedIdents) {
+			Collection<FreeIdentifier> assignedIdents) {
 		
 		super(tag, location, combineHashCodes(combineHashCodes(assignedIdents), hashCode));
 		this.assignedIdents = assignedIdents.toArray(new FreeIdentifier[assignedIdents.size()]);

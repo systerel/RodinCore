@@ -5,7 +5,7 @@
 package org.eventb.core.ast;
 
 import java.math.BigInteger;
-import java.util.List;
+import java.util.Collection;
 
 import org.eventb.internal.core.parser.Lexer;
 import org.eventb.internal.core.parser.ParseResult;
@@ -74,7 +74,7 @@ public class FormulaFactory {
 	 * @return a new associative expression
 	 */
 	public AssociativeExpression makeAssociativeExpression(
-			int tag, List<Expression> children, SourceLocation location) {
+			int tag, Collection<Expression> children, SourceLocation location) {
 		return new AssociativeExpression(children, tag, location, this);
 	}
 	
@@ -93,7 +93,7 @@ public class FormulaFactory {
 	 * @return a new associative predicate
 	 */
 	public AssociativePredicate makeAssociativePredicate(
-			int tag, List<Predicate> predicates, SourceLocation location) {
+			int tag, Collection<Predicate> predicates, SourceLocation location) {
 		return new AssociativePredicate(predicates, tag, location, this);
 	}
 
@@ -192,8 +192,8 @@ public class FormulaFactory {
 	 * 
 	 * @return a new "becomes equal to" assignment
 	 */
-	public BecomesEqualTo makeBecomesEqualTo(List<FreeIdentifier> idents,
-			List<Expression> values, SourceLocation location) {
+	public BecomesEqualTo makeBecomesEqualTo(Collection<FreeIdentifier> idents,
+			Collection<Expression> values, SourceLocation location) {
 		return new BecomesEqualTo(idents, values, location, this);
 	}
 
@@ -268,8 +268,8 @@ public class FormulaFactory {
 	 * 
 	 * @return a new "becomes such that" assignment
 	 */
-	public BecomesSuchThat makeBecomesSuchThat(List<FreeIdentifier> idents,
-			List<BoundIdentDecl> primedIdents, Predicate condition,
+	public BecomesSuchThat makeBecomesSuchThat(Collection<FreeIdentifier> idents,
+			Collection<BoundIdentDecl> primedIdents, Predicate condition,
 			SourceLocation location) {
 		return new BecomesSuchThat(idents, primedIdents, condition, location, this);
 	}
@@ -551,7 +551,7 @@ public class FormulaFactory {
 	 * @return a new quantified expression
 	 */
 	public QuantifiedExpression makeQuantifiedExpression(int tag,
-			List<BoundIdentDecl> boundIdentifiers, Predicate pred, Expression expr,
+			Collection<BoundIdentDecl> boundIdentifiers, Predicate pred, Expression expr,
 			SourceLocation location, QuantifiedExpression.Form form) {
 		return new QuantifiedExpression(expr, pred, boundIdentifiers, tag,
 				location, form, this);
@@ -591,7 +591,7 @@ public class FormulaFactory {
 	 * @return a new quantified predicate
 	 */
 	public QuantifiedPredicate makeQuantifiedPredicate(int tag,
-			List<BoundIdentDecl> boundIdentifiers, Predicate pred, SourceLocation location) {
+			Collection<BoundIdentDecl> boundIdentifiers, Predicate pred, SourceLocation location) {
 		return new QuantifiedPredicate(pred, boundIdentifiers, tag, location, this);
 	}
 	
@@ -658,7 +658,7 @@ public class FormulaFactory {
 	 *            the location of the set extension
 	 * @return a new set extension
 	 */
-	public SetExtension makeSetExtension(List<Expression> expressions, SourceLocation location) {
+	public SetExtension makeSetExtension(Collection<Expression> expressions, SourceLocation location) {
 		return new SetExtension(expressions, location, this);
 	}
 

@@ -12,8 +12,8 @@ import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.BoundIdentSubstitution;
@@ -76,8 +76,8 @@ public class BecomesSuchThat extends Assignment {
 		synthesizeType(ff);
 	}
 
-	protected BecomesSuchThat(List<FreeIdentifier> assignedIdents,
-			List<BoundIdentDecl> primedIdents, Predicate condition,
+	protected BecomesSuchThat(Collection<FreeIdentifier> assignedIdents,
+			Collection<BoundIdentDecl> primedIdents, Predicate condition,
 			SourceLocation location,
 			FormulaFactory ff) {
 
