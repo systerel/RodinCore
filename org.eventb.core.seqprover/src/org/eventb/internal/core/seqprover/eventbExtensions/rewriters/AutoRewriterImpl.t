@@ -46,47 +46,16 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	}
 
 	%include {Formula.tom}
-
-	@Override
-	public Predicate rewrite(BinaryPredicate predicate) {
-	    %match (Predicate predicate) {
-	    	Limp(BTRUE(), P) -> {
-	    		return `P;
-	    	}
-	    	Limp(BFALSE(), _) -> {
-	    		return Lib.True;
-	    	}
-	    	Limp(_, BTRUE()) -> {
-	    		return predicate.getRight();
-	    	}
-	    	Limp(P, BFALSE()) -> {
-	    		return Lib.makeNeg(`P);
-	    	}
-	    	Limp(P, P) -> {
-	    		return Lib.True;
-	    	}
-	    	Leqv(P, BTRUE()) -> {
-	    		return `P;
-	    	}
-	    	Leqv(BTRUE(), P) -> {
-	    		return `P;
-	    	}
-	    	Leqv(P, BFALSE()) -> {
-	    		return Lib.makeNeg(`P);
-	    	}
-	    	Leqv(BFALSE(), P) -> {
-	    		return Lib.makeNeg(`P);
-	    	}
-	    	Leqv(P, P) -> {
-	    		return Lib.True;
-	    	}
-	    }
-	    return predicate;
-	}
 	
 	@Override
 	public Predicate rewrite(AssociativePredicate predicate) {
 	    %match (Predicate predicate) {
+	    	/**
+	    	 * Conjunction 1: P ∧ ... ∧ ⊤ ∧ ... ∧ Q  == P ∧ ... ∧ Q
+	    	 * Conjunction 2: P ∧ ... ∧ ⊥ ∧ ... ∧ Q  == ⊥
+	    	 * Disjunction 1: P ⋁ ... ⋁ ⊤ ⋁ ... ⋁ Q  == ⊤
+	    	 * Disjunction 2: P ⋁ ... ⋁ ⊥ ⋁ ... ⋁ Q  == P ⋁ ... ⋁ Q
+	    	 */
 	    	(Land | Lor) (children) -> {
 				boolean isAnd = predicate.getTag() == Formula.LAND;
 
@@ -98,14 +67,102 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	}
 
 	@Override
+	public Predicate rewrite(BinaryPredicate predicate) {
+	    %match (Predicate predicate) {
+	    	/**
+	    	 * Implication 1: ⊤ ⇒ P == P
+	    	 */
+	    	Limp(BTRUE(), P) -> {
+	    		return `P;
+	    	}
+
+	    	/**
+	    	 * Implication 2: ⊥ ⇒ P == ⊤
+	    	 */
+	    	Limp(BFALSE(), _) -> {
+	    		return Lib.True;
+	    	}
+
+	    	/**
+	    	 * Implication 3: P ⇒ ⊤ == ⊤
+	    	 */
+	    	Limp(_, BTRUE()) -> {
+	    		return predicate.getRight();
+	    	}
+	    	
+	    	/**
+	    	 * Implication 4: P ⇒ ⊥ == ¬P
+	    	 */
+	    	Limp(P, BFALSE()) -> {
+	    		return Lib.makeNeg(`P);
+	    	}
+
+	    	/**
+	    	 * Implication 5: P ⇒ P == ⊤
+	    	 */
+	    	Limp(P, P) -> {
+	    		return Lib.True;
+	    	}
+
+	    	/**
+	    	 * Equivalent 1: P ⇔ ⊤ == P
+	    	 */
+	    	Leqv(P, BTRUE()) -> {
+	    		return `P;
+	    	}
+
+	    	/**
+	    	 * Equivalent 2: ⊤ ⇔ P = P
+	    	 */
+	    	Leqv(BTRUE(), P) -> {
+	    		return `P;
+	    	}
+
+	    	/**
+	    	 * Equivalent 3: P ⇔ ⊥ = ¬P
+	    	 */
+	    	Leqv(P, BFALSE()) -> {
+	    		return Lib.makeNeg(`P);
+	    	}
+
+	    	/**
+	    	 * Equivalent 4: ⊥ ⇔ P == ¬P
+	    	 */
+	    	Leqv(BFALSE(), P) -> {
+	    		return Lib.makeNeg(`P);
+	    	}
+
+	    	/**
+	    	 * Equivalent 5: P ⇔ P == ⊤
+	    	 */
+	    	Leqv(P, P) -> {
+	    		return Lib.True;
+	    	}
+	    }
+	    return predicate;
+	}
+
+	@Override
 	public Predicate rewrite(UnaryPredicate predicate) {
 	    %match (Predicate predicate) {
+
+	    	/**
+	    	 * Negation 1: ¬⊤ == ⊥
+	    	 */
 	    	Not(BTRUE()) -> {
 				return Lib.False;
 			}
+
+	    	/**
+	    	 * Negation 2: ¬⊥ == ⊤
+	    	 */
 			Not(BFALSE()) -> {
 				return Lib.True;
 			}
+
+	    	/**
+	    	 * Negation 2: ¬¬P == P
+	    	 */
 			Not(Not(P)) -> {
 				return `P;
 			}
@@ -116,13 +173,65 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	@Override
 	public Predicate rewrite(QuantifiedPredicate predicate) {
 	    %match (Predicate predicate) {
+
+	    	/**
+	    	 * Quantification 1: ∀x·(P ∧ ... ∧ Q) == (∀x·P) ∧ ... ∧ ∀(x·Q)
+	    	 */
 	    	ForAll(idents, Land(children)) -> {
 	    		return FormulaSimplification.splitQuantifiedPredicate(predicate.getTag(), predicate.getPredicate().getTag(), `idents, `children);
 	    	}
+
+	    	/**
+	    	 * Quantification 2: ∃x·(P ⋁ ... ⋁ Q) == (∃x·P) ⋁ ... ⋁ ∃(x·Q)
+	    	 */
 			Exists(idents, Lor(children)) -> {
 	    		return FormulaSimplification.splitQuantifiedPredicate(predicate.getTag(), predicate.getPredicate().getTag(), `idents, `children);
 	    	}
 	    }
 	    return predicate;
+	}
+	
+	@Override
+	public Predicate rewrite(RelationalPredicate predicate) {
+	    %match (Predicate predicate) {
+
+	    	/**
+	    	 * Equality 1: E = E == ⊤
+	    	 */
+	    	Equal(E, E) -> {
+	    		return Lib.True;
+	    	}
+
+	    	/**
+	    	 * Equality 2: E ≠ E == ⊥
+	    	 */
+	    	NotEqual(E, E) -> {
+	    		return Lib.False;
+	    	}
+
+	    	/**
+	    	 * Equality 3: E ↦ F = G ↦ H == E = G ∧ F = H
+	    	 */
+	    	Equal(Mapsto(E, F) , Mapsto(G, H)) -> {
+	    		return FormulaSimplification.rewriteMapsto(`E, `F, `G, `H);
+	    	}
+	    }
+	    return predicate;
+	}
+	
+	@Override
+	public Expression rewrite(AssociativeExpression expression) {
+	    %match (Expression expression) {
+
+	    	/**
+	    	 * Set Theory 1: S ∩ ... ∩ ∅ ∩ ... ∩ T == ∅
+	    	 * Set Theory 2: S ∪ ... ∪ ∅ ∪ ... ∪ T == S ∪ ... ∪ T
+	    	 */
+	    	(BInter | BUnion) (children) -> {
+	    		return FormulaSimplification.simplifiedAssociativeExpression(expression, `children);
+	    	}
+
+	    }
+	    return expression;
 	}
 }
