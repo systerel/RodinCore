@@ -1,5 +1,7 @@
 package org.eventb.core.seqprover.rewriterTests;
 
+import java.math.BigInteger;
+
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -11,6 +13,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
@@ -25,6 +28,12 @@ public class AutoFormulaRewriterTests extends TestCase {
 
 	private Predicate R;
 
+	private Predicate notP;
+
+	private Predicate notQ;
+
+	private Predicate notR;
+
 	private FormulaFactory ff;
 
 	@Override
@@ -34,6 +43,9 @@ public class AutoFormulaRewriterTests extends TestCase {
 		Q = TestLib.genPredicate("2 = 3");
 		R = TestLib.genPredicate("3 = 4");
 		ff = FormulaFactory.getDefault();
+		notP = ff.makeUnaryPredicate(Predicate.NOT, P, null);
+		notQ = ff.makeUnaryPredicate(Predicate.NOT, Q, null);
+		notR = ff.makeUnaryPredicate(Predicate.NOT, R, null);
 		super.setUp();
 	}
 
@@ -55,7 +67,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 		AssociativePredicate expected = ff.makeAssociativePredicate(
 				Predicate.LAND, predicates, null);
 
-		// P & ... & true & ... & Q == P & ... & Q
+		// P & ... & true & ... & Q == P & ... & ... & Q
 		assertAssociativePredicate("P ∧ ⊤ == P", P, Predicate.LAND, P, Lib.True);
 		assertAssociativePredicate("⊤ ∧ P == P", P, Predicate.LAND, Lib.True, P);
 		assertAssociativePredicate("P ∧ Q ∧ R == P ∧ Q ∧ R", expected,
@@ -96,20 +108,35 @@ public class AutoFormulaRewriterTests extends TestCase {
 				Predicate.LAND, Lib.False, P, Q, Lib.False, R, Lib.False);
 
 		// P & ... & Q & ... & Q & ... & R == P & ... & Q & ... & ... & R
-		assertAssociativePredicate("P ∧ P = P", P, Predicate.LAND, P,
-				P);
-		assertAssociativePredicate("P ∧ P ∧ Q ∧ R = P ∧ Q ∧ R", expected, Predicate.LAND,
-				P, P, Q, R);
-		assertAssociativePredicate("P ∧ Q ∧ P ∧ R = P ∧ Q ∧ R", expected, Predicate.LAND,
-				P, Q, P, R);
-		assertAssociativePredicate("P ∧ Q ∧ R ∧ P = P ∧ Q ∧ R", expected, Predicate.LAND,
-				P, Q, R, P);
-		assertAssociativePredicate("P ∧ Q ∧ R ∧ Q = P ∧ Q ∧ R", expected, Predicate.LAND,
-				P, Q, R, Q);
-		assertAssociativePredicate("P ∧ Q ∧ R ∧ R = P ∧ Q ∧ R", expected, Predicate.LAND,
-				P, Q, R, R);
-		assertAssociativePredicate("P ∧ Q ∧ R ∧ Q ∧ R = P ∧ Q ∧ R", expected, Predicate.LAND,
-				P, Q, R, R);
+		assertAssociativePredicate("P ∧ P = P", P, Predicate.LAND, P, P);
+		assertAssociativePredicate("P ∧ P ∧ Q ∧ R = P ∧ Q ∧ R", expected,
+				Predicate.LAND, P, P, Q, R);
+		assertAssociativePredicate("P ∧ Q ∧ P ∧ R = P ∧ Q ∧ R", expected,
+				Predicate.LAND, P, Q, P, R);
+		assertAssociativePredicate("P ∧ Q ∧ R ∧ P = P ∧ Q ∧ R", expected,
+				Predicate.LAND, P, Q, R, P);
+		assertAssociativePredicate("P ∧ Q ∧ R ∧ Q = P ∧ Q ∧ R", expected,
+				Predicate.LAND, P, Q, R, Q);
+		assertAssociativePredicate("P ∧ Q ∧ R ∧ R = P ∧ Q ∧ R", expected,
+				Predicate.LAND, P, Q, R, R);
+		assertAssociativePredicate("P ∧ Q ∧ R ∧ Q ∧ R = P ∧ Q ∧ R", expected,
+				Predicate.LAND, P, Q, R, Q, R);
+
+		// P & ... & Q & ... & not(Q) & ... & R == false
+		assertAssociativePredicate("P ∧ ¬P = ⊥", Lib.False, Predicate.LAND, P,
+				notP);
+		assertAssociativePredicate("P ∧ ¬P ∧ Q ∧ R = ⊥", Lib.False,
+				Predicate.LAND, P, notP, Q, R);
+		assertAssociativePredicate("P ∧ Q ∧ ¬P ∧ R = ⊥", Lib.False,
+				Predicate.LAND, P, Q, notP, R);
+		assertAssociativePredicate("P ∧ Q ∧ R ∧ ¬P = ⊥", Lib.False,
+				Predicate.LAND, P, Q, R, notP);
+		assertAssociativePredicate("P ∧ ¬Q ∧ R ∧ Q = ⊥", Lib.False,
+				Predicate.LAND, P, notQ, R, Q);
+		assertAssociativePredicate("P ∧ Q ∧ ¬R ∧ R = ⊥", Lib.False,
+				Predicate.LAND, P, Q, notR, R);
+		assertAssociativePredicate("P ∧ ¬Q ∧ R ∧ Q ∧ ¬R = ⊥", Lib.False,
+				Predicate.LAND, P, Q, R, Q, notR);
 	}
 
 	public void testDisjunction() {
@@ -138,7 +165,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 		assertAssociativePredicate("⊤ ⋁ P ⋁ Q ⋁ ⊤ ⋁ R ⋁ ⊤ == ⊤", Lib.True,
 				Predicate.LOR, Lib.True, P, Q, Lib.True, R, Lib.True);
 
-		// P or ... or false or ... or Q == P or ... or Q
+		// P or ... or false or ... or Q == P or ... or ... or Q
 		assertAssociativePredicate("P ⋁ ⊥ = P", P, Predicate.LOR, P, Lib.False);
 		assertAssociativePredicate("⊥ ⋁ P = P", P, Predicate.LOR, Lib.False, P);
 		assertAssociativePredicate("P ⋁ Q ⋁ ⊥ ⋁ R = P ⋁ Q ⋁ R", expected,
@@ -156,21 +183,38 @@ public class AutoFormulaRewriterTests extends TestCase {
 		assertAssociativePredicate("⊥ P ⋁ Q ⋁ ⊥ ⋁ R ⋁ ⊥ = P ⋁ Q ⋁ R", expected,
 				Predicate.LOR, Lib.False, P, Q, Lib.False, R, Lib.False);
 
-		// P or ... or Q or ... or Q or ... or R == P or ... or Q or ... or ... or R
-		assertAssociativePredicate("P ⋁ P = P", P, Predicate.LOR, P,
-				P);
-		assertAssociativePredicate("P ⋁ P ⋁ Q ⋁ R = P ⋁ Q ⋁ R", expected, Predicate.LOR,
-				P, P, Q, R);
-		assertAssociativePredicate("P ⋁ Q ⋁ P ⋁ R = P ⋁ Q ⋁ R", expected, Predicate.LOR,
-				P, Q, P, R);
-		assertAssociativePredicate("P ⋁ Q ⋁ R ⋁ P = P ⋁ Q ⋁ R", expected, Predicate.LOR,
-				P, Q, R, P);
-		assertAssociativePredicate("P ⋁ Q ⋁ R ⋁ Q = P ⋁ Q ⋁ R", expected, Predicate.LOR,
-				P, Q, R, Q);
-		assertAssociativePredicate("P ⋁ Q ⋁ R ⋁ R = P ⋁ Q ⋁ R", expected, Predicate.LOR,
-				P, Q, R, R);
-		assertAssociativePredicate("P ⋁ Q ⋁ R ⋁ Q ⋁ R = P ⋁ Q ⋁ R", expected, Predicate.LOR,
-				P, Q, R, R);	}
+		// P or ... or Q or ... or Q or ... or R == P or ... or Q or ... or ...
+		// or R
+		assertAssociativePredicate("P ⋁ P = P", P, Predicate.LOR, P, P);
+		assertAssociativePredicate("P ⋁ P ⋁ Q ⋁ R = P ⋁ Q ⋁ R", expected,
+				Predicate.LOR, P, P, Q, R);
+		assertAssociativePredicate("P ⋁ Q ⋁ P ⋁ R = P ⋁ Q ⋁ R", expected,
+				Predicate.LOR, P, Q, P, R);
+		assertAssociativePredicate("P ⋁ Q ⋁ R ⋁ P = P ⋁ Q ⋁ R", expected,
+				Predicate.LOR, P, Q, R, P);
+		assertAssociativePredicate("P ⋁ Q ⋁ R ⋁ Q = P ⋁ Q ⋁ R", expected,
+				Predicate.LOR, P, Q, R, Q);
+		assertAssociativePredicate("P ⋁ Q ⋁ R ⋁ R = P ⋁ Q ⋁ R", expected,
+				Predicate.LOR, P, Q, R, R);
+		assertAssociativePredicate("P ⋁ Q ⋁ R ⋁ Q ⋁ R = P ⋁ Q ⋁ R", expected,
+				Predicate.LOR, P, Q, R, Q, R);
+
+		// P or ... or Q or ... or not(Q) or ... or R == true
+		assertAssociativePredicate("P ⋁ ¬P = T", Lib.True, Predicate.LOR, P,
+				notP);
+		assertAssociativePredicate("P ⋁ ¬P ⋁ Q ⋁ R = T", Lib.True,
+				Predicate.LOR, P, notP, Q, R);
+		assertAssociativePredicate("P ⋁ Q ⋁ ¬P ⋁ R = T", Lib.True,
+				Predicate.LOR, P, Q, notP, R);
+		assertAssociativePredicate("P ⋁ Q ⋁ R ⋁ ¬P = T", Lib.True,
+				Predicate.LOR, P, Q, R, notP);
+		assertAssociativePredicate("P ⋁ ¬Q ⋁ R ⋁ Q = T", Lib.True,
+				Predicate.LOR, P, notQ, R, Q);
+		assertAssociativePredicate("P ⋁ Q ⋁ ¬R ⋁ R = T", Lib.True,
+				Predicate.LOR, P, Q, notR, R);
+		assertAssociativePredicate("P ⋁ ¬Q ⋁ R ⋁ Q ⋁ ¬R = T", Lib.True,
+				Predicate.LOR, P, Q, R, Q, notR);
+	}
 
 	private void assertBinaryPredicate(String message, Predicate expected,
 			Predicate left, int tag, Predicate right) {
@@ -251,8 +295,8 @@ public class AutoFormulaRewriterTests extends TestCase {
 		Predicate pred3 = ff.makeQuantifiedPredicate(Predicate.FORALL,
 				new BoundIdentDecl[] { x }, R, null);
 
-		Predicate expected = ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] {
-				pred1, pred2 }, null);
+		Predicate expected = ff.makeAssociativePredicate(Predicate.LAND,
+				new Predicate[] { pred1, pred2 }, null);
 		assertQuantificationPredicate("∀x·P ∧ Q == (∀x·P) ∧ (∀x·Q)", expected,
 				Predicate.FORALL, new BoundIdentDecl[] { x }, ff
 						.makeAssociativePredicate(Predicate.LAND,
@@ -336,7 +380,8 @@ public class AutoFormulaRewriterTests extends TestCase {
 		assertEquals(message, expected, r.rewrite(expression));
 	}
 
-	private void assertUnaryExpression(String message, Expression expected, int tag, Expression expression) {
+	private void assertUnaryExpression(String message, Expression expected,
+			int tag, Expression expression) {
 		assertEquals(message, expected, r.rewrite(ff.makeUnaryExpression(tag,
 				expression, null)));
 	}
@@ -348,6 +393,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 		Expression T = ff.makeSetExtension(fFalse, null);
 		Expression R = ff.makeSetExtension(new Expression[] { fTrue, fFalse },
 				null);
+
 		// S /\ ... /\ {} /\ ... /\ T == {}
 		Expression expected = ff.makeAssociativeExpression(Formula.BINTER,
 				new Expression[] { S, T, R }, null);
@@ -373,7 +419,23 @@ public class AutoFormulaRewriterTests extends TestCase {
 				Formula.BINTER, Lib.emptySet, S, T, Lib.emptySet, R,
 				Lib.emptySet);
 
-		// S /\ ... /\ {} /\ ... /\ T == {}
+		// S /\ ... /\ T /\ ... /\ T /\ ... /\ R == S /\ ... /\ T /\ ... /\ ...
+		// /\ R
+		assertAssociativeExpression("S ∩ S = S", S, Formula.BINTER, S, S);
+		assertAssociativeExpression("S ∩ S ∩ T ∩ R = S ∩ T ∩ R", expected,
+				Formula.BINTER, S, S, T, R);
+		assertAssociativeExpression("S ∩ T ∩ S ∩ R = S ∩ T ∩ R", expected,
+				Formula.BINTER, S, T, S, R);
+		assertAssociativeExpression("S ∩ T ∩ R ∩ S = S ∩ T ∩ R", expected,
+				Formula.BINTER, S, T, R, S);
+		assertAssociativeExpression("S ∩ T ∩ R ∩ T = S ∩ T ∩ R", expected,
+				Formula.BINTER, S, T, R, T);
+		assertAssociativeExpression("S ∩ T ∩ R ∩ R = S ∩ T ∩ R", expected,
+				Formula.BINTER, S, T, R, R);
+		assertAssociativeExpression("S ∩ T ∩ R ∩ T ∩ R = S ∩ T ∩ R", expected,
+				Formula.BINTER, S, T, R, T, R);
+
+		// S \/ ... \/ {} \/ ... \/ T == S ... \/ ... \/ T
 		expected = ff.makeAssociativeExpression(Formula.BUNION,
 				new Expression[] { S, T, R }, null);
 		assertAssociativeExpression("S ∪ ∅ == S", S, Formula.BUNION, S,
@@ -398,6 +460,22 @@ public class AutoFormulaRewriterTests extends TestCase {
 				expected, Formula.BUNION, Lib.emptySet, S, T, Lib.emptySet, R,
 				Lib.emptySet);
 
+		// S \/ ... \/ T \/ ... \/ T \/ ... \/ R == S \/ ... \/ T \/ ... \/ ...
+		// \/ R
+		assertAssociativeExpression("S ∩ S = S", S, Formula.BUNION, S, S);
+		assertAssociativeExpression("S ∩ S ∩ T ∩ R = S ∩ T ∩ R", expected,
+				Formula.BUNION, S, S, T, R);
+		assertAssociativeExpression("S ∩ T ∩ S ∩ R = S ∩ T ∩ R", expected,
+				Formula.BUNION, S, T, S, R);
+		assertAssociativeExpression("S ∩ T ∩ R ∩ S = S ∩ T ∩ R", expected,
+				Formula.BUNION, S, T, R, S);
+		assertAssociativeExpression("S ∩ T ∩ R ∩ T = S ∩ T ∩ R", expected,
+				Formula.BUNION, S, T, R, T);
+		assertAssociativeExpression("S ∩ T ∩ R ∩ R = S ∩ T ∩ R", expected,
+				Formula.BUNION, S, T, R, R);
+		assertAssociativeExpression("S ∩ T ∩ R ∩ T ∩ R = S ∩ T ∩ R", expected,
+				Formula.BUNION, S, T, R, T, R);
+
 		// {} <: S == true
 		assertRelationalPredicate("∅ ⊆ S == ⊤", Lib.True, Lib.emptySet,
 				Formula.SUBSETEQ, S);
@@ -420,6 +498,24 @@ public class AutoFormulaRewriterTests extends TestCase {
 		assertRelationalPredicate("B ∈ {A, ..., B, ..., C} == ⊤", Lib.True,
 				fFalse, Formula.IN, R);
 
+		// E : {x | P(x)} == P(E)
+		BoundIdentDecl xDecl = ff.makeBoundIdentDecl("x", null);
+		Expression E = ff.makeIntegerLiteral(new BigInteger("4"), null);
+		Expression x = ff.makeBoundIdentifier(0, null);
+		Predicate pred1 = ff.makeRelationalPredicate(Predicate.IN, x, ff
+				.makeAtomicExpression(Formula.NATURAL, null), null);
+		Predicate pred2 = ff.makeRelationalPredicate(Predicate.LE, x, ff
+				.makeIntegerLiteral(new BigInteger("3"), null), null);
+
+		Predicate pred = ff.makeAssociativePredicate(Predicate.LAND,
+				new Predicate[] { pred1, pred2 }, null);
+		Expression cSet = ff.makeQuantifiedExpression(Formula.CSET,
+				new BoundIdentDecl[] { xDecl }, pred, x, null,
+				QuantifiedExpression.Form.Implicit);
+
+		Predicate result = TestLib.genPredicate("4 ∈ ℕ ∧ 4 ≤ 3");
+		assertRelationalPredicate("", result, E, Formula.IN, cSet);
+
 		// S \ S == {}
 		assertBinaryExpression("S ∖ S == ∅", Lib.emptySet, S, Formula.SETMINUS,
 				S);
@@ -429,17 +525,17 @@ public class AutoFormulaRewriterTests extends TestCase {
 				R);
 
 		// r~~ == r
-		Expression m1 = ff.makeBinaryExpression(Formula.MAPSTO, fTrue, fFalse, null);
-		Expression m2 = ff.makeBinaryExpression(Formula.MAPSTO, fFalse, fTrue, null);
-		Expression f = ff.makeSetExtension(new Expression[] {m1}, null);
+		Expression m1 = ff.makeBinaryExpression(Formula.MAPSTO, fTrue, fFalse,
+				null);
+		Expression m2 = ff.makeBinaryExpression(Formula.MAPSTO, fFalse, fTrue,
+				null);
+		Expression f = ff.makeSetExtension(new Expression[] { m1 }, null);
 		assertUnaryExpression("", f, Formula.CONVERSE, ff.makeUnaryExpression(
 				Formula.CONVERSE, f, null));
-		f = ff.makeSetExtension(new Expression[] {m1, m2}, null);
+		f = ff.makeSetExtension(new Expression[] { m1, m2 }, null);
 		assertUnaryExpression("", f, Formula.CONVERSE, ff.makeUnaryExpression(
 				Formula.CONVERSE, f, null));
-		
-		
-		
+
 	}
 
 }

@@ -246,11 +246,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
-	    	 * Set Theory 8: A ∈ {A} == ⊤
-	    	 * Set Theory 9: B ∈ {A, ..., B, ..., C} == ⊤
+	    	 * Set Theory 10: E ∈ {x | P(x)} == P(E)
 	    	 */
-	    	In(E, SetExtension(members)) -> {
-	    		return FormulaSimplification.simplifySetMember(predicate, `E, `members);
+	    	In(E, Cset(idents, guard, expression)) -> {
+	    		return FormulaSimplification.simplifySetComprehension(predicate, `E, `idents, `guard, `expression);
 	    	}
 
 	    }

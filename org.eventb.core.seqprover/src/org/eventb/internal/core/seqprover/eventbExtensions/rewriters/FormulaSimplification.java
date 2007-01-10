@@ -8,10 +8,13 @@ import java.util.List;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class FormulaSimplification {
@@ -25,8 +28,29 @@ public class FormulaSimplification {
 				formulas.add(determinant);
 				return formulas;
 			}
+
 			if (!child.equals(neutral)) {
-				formulas.add(child);
+				if (child instanceof Predicate) {
+					Predicate pred = (Predicate) child;
+					Predicate negation;
+					if (pred instanceof UnaryPredicate
+							&& pred.getTag() == Predicate.NOT) {
+						negation = ((UnaryPredicate) pred).getChild();
+					} else {
+						negation = FormulaFactory.getDefault()
+								.makeUnaryPredicate(Predicate.NOT,
+										(Predicate) child, null);
+					}
+					if (formulas.contains(negation)) {
+						formulas = new ArrayList<T>();
+						formulas.add(determinant);
+						return formulas;
+					} else {
+						formulas.add(child);
+					}
+				} else {
+					formulas.add(child);
+				}
 			}
 		}
 		return formulas;
@@ -81,7 +105,8 @@ public class FormulaSimplification {
 		int tag = expression.getTag();
 		Expression neutral = tag == Formula.BUNION ? Lib.emptySet : null;
 		Expression determinant = tag == Formula.BINTER ? Lib.emptySet : null;
-		Collection<Expression> expressions = simplifiedAssociativeFormula(children, neutral, determinant);
+		Collection<Expression> expressions = simplifiedAssociativeFormula(
+				children, neutral, determinant);
 
 		if (expressions.size() != children.length) {
 			if (expressions.size() == 0)
@@ -102,6 +127,25 @@ public class FormulaSimplification {
 		for (Expression member : members) {
 			if (member.equals(E)) {
 				return Lib.True;
+			}
+		}
+		return predicate;
+	}
+
+	public static Predicate simplifySetComprehension(Predicate predicate,
+			final Expression E, BoundIdentDecl[] idents, Predicate guard,
+			Expression expression) {
+		// TODO: Implement by instantiating expression directly ?
+		if (idents.length == 1) {
+			if (expression instanceof BoundIdentifier) {
+				BoundIdentifier boundIdent = (BoundIdentifier) expression;
+				if (boundIdent.getBoundIndex() == 0) {
+					QuantifiedPredicate qPred = FormulaFactory.getDefault()
+							.makeQuantifiedPredicate(Predicate.FORALL, idents,
+									guard, null);
+					return qPred.instantiate(new Expression[] { E },
+							FormulaFactory.getDefault());
+				}
 			}
 		}
 		return predicate;
