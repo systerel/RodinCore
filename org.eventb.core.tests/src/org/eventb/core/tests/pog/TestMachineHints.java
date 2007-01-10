@@ -172,13 +172,13 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		
 		containsIdentifiers(po, "x", "z");
 		
-		IPOSequent sequent = getSequent(po, "evt/G/REF");
+		IPOSequent sequent = getSequent(po, "evt/G/GRD");
 		
 		sequentHasIdentifiers(sequent, "y", "yc");
 		sequentHasSelectionHints(sequent, typeEnvironment, "yc>1", "x=1", "yc=y");
 		sequentHasNotSelectionHints(sequent, typeEnvironment, "x∈0‥4", "z∈BOOL∖{TRUE}");
 		
-		sequent = getSequent(po, "evt/H/REF");
+		sequent = getSequent(po, "evt/H/GRD");
 		
 		sequentHasIdentifiers(sequent, "y", "yc");
 		sequentHasSelectionHints(sequent, typeEnvironment, "yc>1", "x=1");

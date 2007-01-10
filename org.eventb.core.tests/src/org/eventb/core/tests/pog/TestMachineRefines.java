@@ -323,11 +323,11 @@ public class TestMachineRefines extends BasicPOTest {
 		
 		IPOSequent sequent;
 		
-		noSequent(po, "evt/GA1/REF");
+		noSequent(po, "evt/GA1/GRD");
 		
-		noSequent(po, "evt/GA2/REF");
+		noSequent(po, "evt/GA2/GRD");
 
-		sequent= getSequent(po, "evt/GA3/REF");
+		sequent= getSequent(po, "evt/GA3/GRD");
 		sequentHasGoal(sequent, environment, "x−1∈ℕ");
 	}
 
@@ -412,7 +412,7 @@ public class TestMachineRefines extends BasicPOTest {
 		noSequent(po, "evt/SC1/FIS");
 		noSequent(po, "evt/SC2/WD");
 		
-		sequent= getSequent(po, "evt/GA/REF");
+		sequent= getSequent(po, "evt/GA/GRD");
 		sequentHasHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0");
 		sequentHasGoal(sequent, environment, "x−1∈ℕ");
 		
@@ -786,7 +786,7 @@ public class TestMachineRefines extends BasicPOTest {
 		IPOFile po = ref.getPOFile();
 		containsIdentifiers(po, "p");
 		
-		IPOSequent sequent = getSequent(po, "evt/G/REF");
+		IPOSequent sequent = getSequent(po, "evt/G/GRD");
 		sequentHasIdentifiers(sequent, "p'", "x");
 		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p'=x", "p'≠p");
 		sequentHasGoal(sequent, environment, "x≠p");
@@ -797,7 +797,7 @@ public class TestMachineRefines extends BasicPOTest {
 		sequentHasNotHypotheses(sequent, environment, "x≠p", "p'≠x");
 		sequentHasGoal(sequent, environment, "∃p'·p'≠p");
 		
-		sequent = getSequent(po, "fvt/G/REF");
+		sequent = getSequent(po, "fvt/G/GRD");
 		sequentHasIdentifiers(sequent, "p'", "x", "y");
 		sequentHasHypotheses(sequent, environment, "p∈BOOL", "y≠p", "y=x");
 		sequentHasNotHypotheses(sequent, environment, "p'≠p");
@@ -812,7 +812,7 @@ public class TestMachineRefines extends BasicPOTest {
 	/*
 	 * If the event variable witnesses do not refer to post state variable values of
 	 * certain variables, then corresponding before-after predicates do not need to be
-	 * added to the hypothesis of /REF
+	 * added to the hypothesis of /GRD
 	 */
 	public void testRefines_17() throws Exception {
 		IMachineFile abs = createMachine("abs");
@@ -849,7 +849,7 @@ public class TestMachineRefines extends BasicPOTest {
 		IPOFile po = ref.getPOFile();
 		containsIdentifiers(po, "p", "q");
 		
-		IPOSequent sequent = getSequent(po, "evt/G/REF");
+		IPOSequent sequent = getSequent(po, "evt/G/GRD");
 		sequentHasIdentifiers(sequent, "p'", "q'", "x");
 		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p'=x", "p'≠p");
 		sequentHasNotHypotheses(sequent, environment, "q'≠p");
@@ -919,7 +919,7 @@ public class TestMachineRefines extends BasicPOTest {
 		IPOFile po = ref.getPOFile();
 		containsIdentifiers(po, "p", "q");
 		
-		IPOSequent sequent = getSequent(po, "evt/G/REF");
+		IPOSequent sequent = getSequent(po, "evt/G/GRD");
 		sequentHasIdentifiers(sequent, "p'", "q'", "x", "y");
 		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "p∈{q}", "y∈{q}", "y=x");
 		sequentHasNotHypotheses(sequent, environment, "p'=y", "y≠x");
@@ -931,7 +931,7 @@ public class TestMachineRefines extends BasicPOTest {
 		sequentHasNotHypotheses(sequent, environment, "p'=y");
 		sequentHasGoal(sequent, environment, "∃q'·q'≠q");
 		
-		sequent = getSequent(po, "fvt/G/REF");
+		sequent = getSequent(po, "fvt/G/GRD");
 		sequentHasIdentifiers(sequent, "p'", "q'", "x", "y");
 		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "y≠q");
 		sequentHasGoal(sequent, environment, "y≠p");
@@ -941,7 +941,7 @@ public class TestMachineRefines extends BasicPOTest {
 		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "p∈{q}", "y≠q", "y≠y");
 		sequentHasGoal(sequent, environment, "∃q'·q'≠y");
 		
-		sequent = getSequent(po, "gvt/G/REF");
+		sequent = getSequent(po, "gvt/G/GRD");
 		sequentHasIdentifiers(sequent, "p'", "q'", "x", "y");
 		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "p∈{q}", "y≠q", "y=x");
 		sequentHasNotHypotheses(sequent, environment, "y=p'");
@@ -952,7 +952,7 @@ public class TestMachineRefines extends BasicPOTest {
 		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "p∈{q}", "y=x", "y=p'", "p'≠x");
 		sequentHasGoal(sequent, environment, "∃q'·q'≠y");
 		
-		sequent = getSequent(po, "hvt/G/REF");
+		sequent = getSequent(po, "hvt/G/GRD");
 		sequentHasIdentifiers(sequent, "p'", "q'", "x");
 		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "q∈{q}", "q'=x", "q'≠q");
 		sequentHasGoal(sequent, environment, "x≠p");

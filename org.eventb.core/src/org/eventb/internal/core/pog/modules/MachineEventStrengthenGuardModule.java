@@ -171,7 +171,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		for (int i=0; i<absGuardElements.length; i++) {
 			String guardLabel = absGuardElements[i].getLabel();
 			Predicate absGuard = absGuardPredicates[i];
-			String sequentName = concreteEventLabel + "/" + guardLabel + "/REF";
+			String sequentName = concreteEventLabel + "/" + guardLabel + "/GRD";
 			
 			if (goalIsTrivial(absGuard) 
 					|| abstractEventGuardTable.getIndexOfCorrespondingConcrete(i) != -1) {
