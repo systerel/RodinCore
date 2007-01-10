@@ -31,12 +31,12 @@ import org.rodinp.core.RodinDBException;
 public class TestUserSupports extends TestPM {
 
 	private void assertDischarged(IProofState state) throws RodinDBException {
-		assertTrue("PR " + state.getPRSequent().getElementName()
+		assertTrue("PR " + state.getPSStatus().getElementName()
 				+ " should be closed", state.isClosed());
 	}
 
 	private void assertNotDischarged(IProofState state) throws RodinDBException {
-		assertFalse("PR " + state.getPRSequent().getElementName()
+		assertFalse("PR " + state.getPSStatus().getElementName()
 				+ " should not be closed", state.isClosed());
 	}
 
@@ -115,7 +115,7 @@ public class TestUserSupports extends TestPM {
 				userSupport.getInformation());
 
 		// Prune the first PO
-		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
 		userSupport.nextUndischargedPO(false, monitor);
@@ -161,7 +161,7 @@ public class TestUserSupports extends TestPM {
 				.getInformation());
 
 		// Prune the last PO
-		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
@@ -173,7 +173,7 @@ public class TestUserSupports extends TestPM {
 				userSupport.getInformation());
 
 		// Prune the first PO
-		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
 		userSupport.nextUndischargedPO(true, monitor);
@@ -215,7 +215,7 @@ public class TestUserSupports extends TestPM {
 				userSupport.getInformation());
 
 		// Prune the first PO
-		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
 		userSupport.prevUndischargedPO(false, monitor);
@@ -266,7 +266,7 @@ public class TestUserSupports extends TestPM {
 		hyps.add(hypothesis);
 
 		// Prune the last PO
-		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
@@ -278,7 +278,7 @@ public class TestUserSupports extends TestPM {
 				userSupport.getInformation());
 
 		// Prune the first PO
-		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
 		userSupport.prevUndischargedPO(true, monitor);
@@ -316,7 +316,7 @@ public class TestUserSupports extends TestPM {
 				userSupport.getCurrentPO());
 
 		// Select first PO
-		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
 
 		assertEquals("Current PO is the first PO ", states[0], userSupport
 				.getCurrentPO());
@@ -324,7 +324,7 @@ public class TestUserSupports extends TestPM {
 				.getInformation());
 
 		// Select the last PO again
-		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
 
 		assertEquals("Current PO is the last PO again ",
@@ -385,7 +385,7 @@ public class TestUserSupports extends TestPM {
 				.hasUnsavedChanges());
 
 		// Prune the last PO
-		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
@@ -427,12 +427,12 @@ public class TestUserSupports extends TestPM {
 				unsavedPOs.length);
 
 		// Prune the last PO
-		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
 		// Prune the first PO
-		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
 		unsavedPOs = userSupport.getUnsavedPOs();

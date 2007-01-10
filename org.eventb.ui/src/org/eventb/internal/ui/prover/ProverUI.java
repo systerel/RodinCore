@@ -130,7 +130,7 @@ public class ProverUI extends FormEditor implements
 	 */
 	public void setCurrentPO(IPSStatus prSequent, IProgressMonitor monitor) {
 		IProofState proofState = userSupport.getCurrentPO();
-		if (proofState != null && proofState.getPRSequent().equals(prSequent))
+		if (proofState != null && proofState.getPSStatus().equals(prSequent))
 			return;
 		try {
 			userSupport.setCurrentPO(prSequent, monitor);
@@ -337,7 +337,7 @@ public class ProverUI extends FormEditor implements
 
 		public String getText(Object element) {
 			if (element instanceof IProofState) {
-				return ((IProofState) element).getPRSequent().getElementName();
+				return ((IProofState) element).getPSStatus().getElementName();
 			}
 			return element.toString();
 		}
@@ -386,7 +386,7 @@ public class ProverUI extends FormEditor implements
 		IProofState currentPO = userSupport.getCurrentPO();
 		if (currentPO != null && currentPO.isUninitialised())
 			try {
-				userSupport.setCurrentPO(currentPO.getPRSequent(),
+				userSupport.setCurrentPO(currentPO.getPSStatus(),
 						new NullProgressMonitor());
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
@@ -413,7 +413,7 @@ public class ProverUI extends FormEditor implements
 				IProofState ps = this.getUserSupport().getCurrentPO();
 				if (ps != null) {
 					IPSStatus prSequent = this.getUserSupport().getCurrentPO()
-							.getPRSequent();
+							.getPSStatus();
 					obligationExplorer.externalSetSelection(prSequent);
 					obligationExplorer.getTreeViewer().reveal(prSequent);
 				} else {
@@ -452,7 +452,7 @@ public class ProverUI extends FormEditor implements
 	public IPSStatus getCurrentProverSequent() {
 		IProofState ps = getUserSupport().getCurrentPO();
 		if (ps != null)
-			return ps.getPRSequent();
+			return ps.getPSStatus();
 		else
 			return null;
 	}

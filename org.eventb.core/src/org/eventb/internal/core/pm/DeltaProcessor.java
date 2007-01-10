@@ -299,4 +299,16 @@ public class DeltaProcessor {
 		this.fireDeltas();
 	}
 
+	public void newProofTree(UserSupport userSupport, ProofState state) {
+		if (rootDelta == null)
+			rootDelta = new UserSupportManagerDelta();
+		
+		ProofStateDelta affectedState = new ProofStateDelta(state);
+		affectedState.setKind(IProofStateDelta.CHANGED);
+		affectedState.setFlags(IProofStateDelta.F_PROOFTREE);
+		
+		rootDelta.addAffectedProofState(userSupport, affectedState);
+		this.fireDeltas();
+	}
+
 }

@@ -80,7 +80,7 @@ public class ProofStateDelta implements IProofStateDelta {
 		if (kind == ADDED) builder.append("[+] ");
 		else if (kind == REMOVED) builder.append("[-] ");
 		else if (kind == CHANGED) builder.append("[*] ");
-		builder.append(ps.getPRSequent());
+		builder.append(ps.getPSStatus());
 		builder.append(" [");
 		boolean sep = false;
 		sep = toStringFlag(builder, F_CACHE, "CACHE", sep);

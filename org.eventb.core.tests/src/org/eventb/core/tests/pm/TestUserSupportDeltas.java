@@ -71,7 +71,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas("Next PO failed ", "[*] x.bps [INFORMATION]");
 
 		// Prune the first PO
-		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
 		clearDeltas();
@@ -109,7 +109,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas("Next PO to null", "[*] x.bps [CURRENT|INFORMATION]");
 
 		// Prune the last PO
-		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
@@ -120,7 +120,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 				"[*] x.bps [INFORMATION]");
 
 		// Prune the first PO
-		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
 		clearDeltas();
@@ -156,7 +156,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas("Next PO failed ", "[*] x.bps [INFORMATION]");
 
 		// Prune the first PO
-		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
 		clearDeltas();
@@ -194,7 +194,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas("Next PO to null", "[*] x.bps [CURRENT|INFORMATION]");
 
 		// Prune the last PO
-		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
@@ -205,7 +205,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 				"[*] x.bps [INFORMATION]");
 
 		// Prune the first PO
-		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
 		userSupport.applyTactic(Tactics.prune(), monitor);
 
 		clearDeltas();
@@ -236,20 +236,20 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IProofState[] states = userSupport.getPOs();
 
 		startDeltas();
-		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
 		assertDeltas("No delta if select the same PO ",
 				"[*] x.bps [INFORMATION]");
 
 		// Select first PO
 		startDeltas();
-		userSupport.setCurrentPO(states[0].getPRSequent(), monitor);
+		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
 		assertDeltas("No delta if select the same PO ",
 				"[*] x.bps [CURRENT|INFORMATION]");
 
 		// Select the last PO again
 		startDeltas();
-		userSupport.setCurrentPO(states[states.length - 1].getPRSequent(),
+		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
 		assertDeltas("No delta if select the same PO ",
 				"[*] x.bps [CURRENT|INFORMATION]");

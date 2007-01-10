@@ -106,7 +106,7 @@ public class ProofInformationPage extends Page implements
 
 		IProofState ps = editor.getUserSupport().getCurrentPO();
 		if (ps != null)
-			scrolledForm.setText(ps.getPRSequent().getElementName());
+			scrolledForm.setText(ps.getPSStatus().getElementName());
 
 		Composite body = scrolledForm.getBody();
 		body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -115,7 +115,7 @@ public class ProofInformationPage extends Page implements
 
 		formText = new EventBFormText(toolkit.createFormText(body, true));
 		if (ps != null)
-			setFormText(ps.getPRSequent(), new NullProgressMonitor());
+			setFormText(ps.getPSStatus(), new NullProgressMonitor());
 
 		toolkit.paintBordersFor(body);
 		scrolledForm.reflow(true);
@@ -321,7 +321,7 @@ public class ProofInformationPage extends Page implements
 			public void run() {
 				IProofState ps = userSupport.getCurrentPO();
 				if (ps != null) {
-					IPSStatus prSequent = ps.getPRSequent();
+					IPSStatus prSequent = ps.getPSStatus();
 					if (prSequent.exists()) {
 						scrolledForm.setText(prSequent.getElementName());
 						setFormText(prSequent, new NullProgressMonitor());

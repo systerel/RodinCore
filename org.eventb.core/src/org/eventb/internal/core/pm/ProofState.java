@@ -89,35 +89,77 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#loadProofTree(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void loadProofTree(IProgressMonitor monitor) throws RodinDBException {
+	public void loadProofTree(final IProgressMonitor monitor) throws RodinDBException {
+		userSupport.startInformation();
 
-		if (pt != null)
-			pt.removeChangeListener(this);
-		IPSWrapper psWrapper = userSupport.getPSWrapper();
-		// Construct the proof tree from the PO file.
-		pt = psWrapper.getFreshProofTree(status);
+		EventBPlugin.getDefault().getUserSupportManager().run(new Runnable() {
 
-		// Get the proof skeleton and rebuild the tree
-		IProofSkeleton proofSkeleton = psWrapper.getProofSkeleton(status,
-				monitor);
-		if (proofSkeleton != null) {
-			ProofBuilder.rebuild(pt.getRoot(), proofSkeleton);
-		}
+			public void run() {
+				if (pt != null)
+					pt.removeChangeListener(ProofState.this);
+				
+				IPSWrapper psWrapper = userSupport.getPSWrapper();
 
-		pt.addChangeListener(this);
+				// Construct the proof tree from the PO file.
+				try {
+					pt = psWrapper.getFreshProofTree(status);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
 
-		// Current node is the next pending subgoal or the root of the proof
-		// tree if there are no pending subgoal.
-		current = getNextPendingSubgoal();
-		if (current == null) {
-			current = pt.getRoot();
-		}
+				// Get the proof skeleton and rebuild the tree
+				IProofSkeleton proofSkeleton;
+				try {
+					proofSkeleton = psWrapper.getProofSkeleton(status,
+							monitor);
+					if (proofSkeleton != null) {
+						ProofBuilder.rebuild(pt.getRoot(), proofSkeleton);
+					}
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-		// if the proof tree was previously broken then the rebuild would
-		// fix the proof, making it dirty.
-		dirty = status.isBroken();
-		cached = new HashSet<Predicate>();
-		searched = new HashSet<Predicate>();
+				pt.addChangeListener(ProofState.this);
+				
+				ProofState.this.newProofTree();
+
+				// Current node is the next pending subgoal or the root of the proof
+				// tree if there are no pending subgoal.
+				IProofTreeNode node = getNextPendingSubgoal();
+				
+				if (node == null) {
+					node = pt.getRoot();
+				}
+				try {
+					setCurrentNode(node);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				// if the proof tree was previously broken then the rebuild would
+				// fix the proof, making it dirty.
+				try {
+					ProofState.this.setDirty(status.isBroken());
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				ProofState.this.setCached(new HashSet<Predicate>());
+				ProofState.this.setSearched(new HashSet<Predicate>());
+				userSupport.addInformation("Proof Tree is reloaded");
+				deltaProcessor.informationChanged(userSupport);
+			}
+			
+		});
+	}
+
+	protected void newProofTree() {
+		deltaProcessor.newProofTree(userSupport, this);
 	}
 
 	/*
@@ -137,7 +179,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#getPRSequent()
 	 */
-	public IPSStatus getPRSequent() {
+	public IPSStatus getPSStatus() {
 		return status;
 	}
 
@@ -203,7 +245,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#getNextPendingSubgoal()
 	 */
-	public IProofTreeNode getNextPendingSubgoal() {
+	IProofTreeNode getNextPendingSubgoal() {
 		return pt.getRoot().getFirstOpenDescendant();
 	}
 
@@ -216,7 +258,17 @@ public class ProofState implements IProofState {
 		cached.addAll(hyps);
 		deltaProcessor.cacheChanged(userSupport, this);
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.pm.IProofState#setSearched(java.util.Collection)
+	 */
+	protected void setCached(Collection<Predicate> cached) {
+		this.cached = cached;
+		deltaProcessor.cacheChanged(userSupport, this);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -291,7 +343,8 @@ public class ProofState implements IProofState {
 	 * @see org.eventb.core.pm.IProofState#setDirty(boolean)
 	 */
 	public void setDirty(boolean dirty) {
-		this.dirty = dirty;
+		if (this.dirty != dirty)
+			this.dirty = dirty;
 	}
 
 	/*
@@ -305,7 +358,7 @@ public class ProofState implements IProofState {
 			return false;
 		else {
 			IProofState proofState = (IProofState) obj;
-			return proofState.getPRSequent().equals(status);
+			return proofState.getPSStatus().equals(status);
 		}
 
 	}
@@ -334,11 +387,8 @@ public class ProofState implements IProofState {
 			if (current == null) {
 				current = pt.getRoot();
 			}
-			dirty = true;
-			return;
 		}
-		// If NOT, then mark the Proof State as dirty. Send delta to the
-		// user
+		this.setDirty(true);
 	}
 
 	/*
@@ -513,7 +563,9 @@ public class ProofState implements IProofState {
 		UserSupportManager.getDefault().run(new Runnable() {
 
 			public void run() {
+				// This should generate a Proof Tree Delta
 				node.setComment(text);
+				
 				ProofState.this.setDirty(true);
 			}
 

@@ -196,7 +196,7 @@ public class ObligationExplorer extends ViewPart implements
 			// + userSupport);
 			IProofState [] proofStates = userSupport.getPOs();
 			for (IProofState proofState : proofStates) {
-				if (proofState.getPRSequent().equals(status)) {
+				if (proofState.getPSStatus().equals(status)) {
 					IProofTree tree = proofState.getProofTree();
 					if (!proofState.isDirty() || tree == null)
 						break;
@@ -314,7 +314,7 @@ public class ObligationExplorer extends ViewPart implements
 						IProofState [] proofStates = userSupport
 								.getPOs();
 						for (IProofState proofState : proofStates) {
-							if (proofState.getPRSequent().equals(element)) {
+							if (proofState.getPSStatus().equals(element)) {
 								IProofTree tree = proofState.getProofTree();
 
 								if (tree != null && proofState.isDirty()) {
@@ -395,7 +395,7 @@ public class ObligationExplorer extends ViewPart implements
 					// userSupport);
 					IProofState [] proofStates = userSupport.getPOs();
 					for (IProofState proofState : proofStates) {
-						if (proofState.getPRSequent().equals(obj)) {
+						if (proofState.getPSStatus().equals(obj)) {
 							if (proofState.isDirty())
 								return "* " + ((IPSStatus) obj).getElementName();
 							else
@@ -444,7 +444,7 @@ public class ObligationExplorer extends ViewPart implements
 					// userSupport);
 					IProofState [] proofStates = userSupport.getPOs();
 					for (IProofState proofState : proofStates) {
-						if (proofState.getPRSequent().equals(element)) {
+						if (proofState.getPSStatus().equals(element)) {
 							if (proofState.isDirty())
 								return yellow;
 							else
@@ -773,7 +773,7 @@ public class ObligationExplorer extends ViewPart implements
 						if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
 							IProofState ps = affectedUserSupport.getUserSupport().getCurrentPO();
 							if (ps != null) {
-								IPSStatus prSequent = ps.getPRSequent();
+								IPSStatus prSequent = ps.getPSStatus();
 								externalSetSelection(prSequent);
 							} else { // Empty selection
 								clearSelection();

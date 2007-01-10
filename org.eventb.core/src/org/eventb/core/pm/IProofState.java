@@ -21,7 +21,7 @@ public interface IProofState extends IProofTreeChangedListener {
 
 	public abstract boolean isClosed() throws RodinDBException;
 
-	public abstract IPSStatus getPRSequent();
+	public abstract IPSStatus getPSStatus();
 
 	public abstract IProofTree getProofTree();
 
@@ -31,8 +31,6 @@ public interface IProofState extends IProofTreeChangedListener {
 			throws RodinDBException;
 
 	public abstract IProofTreeNode getNextPendingSubgoal(IProofTreeNode node);
-
-	public abstract IProofTreeNode getNextPendingSubgoal();
 
 	public abstract void addAllToCached(Collection<Predicate> hyps);
 
