@@ -1,27 +1,39 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class FormulaSimplification {
 
+	private static FormulaFactory ff = FormulaFactory.getDefault();
+
 	private static <T extends Formula<T>> Collection<T> simplifiedAssociativeFormula(
-			T[] children, T neutral, T determinant) {
-		Collection<T> formulas = new LinkedHashSet<T>();
+			T[] children, T neutral, T determinant, boolean eliminateDuplicate) {
+		Collection<T> formulas;
+		if (eliminateDuplicate)
+			formulas = new LinkedHashSet<T>();
+		else
+			formulas = new ArrayList<T>();
+
 		for (T child : children) {
 			if (child.equals(determinant)) {
 				formulas = new ArrayList<T>();
@@ -37,9 +49,8 @@ public class FormulaSimplification {
 							&& pred.getTag() == Predicate.NOT) {
 						negation = ((UnaryPredicate) pred).getChild();
 					} else {
-						negation = FormulaFactory.getDefault()
-								.makeUnaryPredicate(Predicate.NOT,
-										(Predicate) child, null);
+						negation = ff.makeUnaryPredicate(Predicate.NOT,
+								(Predicate) child, null);
 					}
 					if (formulas.contains(negation)) {
 						formulas = new ArrayList<T>();
@@ -56,12 +67,12 @@ public class FormulaSimplification {
 		return formulas;
 	}
 
-	public static Predicate simplifiedAssociativePredicate(
+	public static Predicate simplifyAssociativePredicate(
 			AssociativePredicate predicate, Predicate[] children,
 			Predicate neutral, Predicate determinant) {
 
 		Collection<Predicate> predicates = simplifiedAssociativeFormula(
-				children, neutral, determinant);
+				children, neutral, determinant, true);
 		if (predicates.size() != children.length) {
 			if (predicates.size() == 0)
 				return neutral;
@@ -69,9 +80,8 @@ public class FormulaSimplification {
 			if (predicates.size() == 1)
 				return predicates.iterator().next();
 
-			AssociativePredicate newPred = FormulaFactory.getDefault()
-					.makeAssociativePredicate(predicate.getTag(), predicates,
-							null);
+			AssociativePredicate newPred = ff.makeAssociativePredicate(
+					predicate.getTag(), predicates, null);
 			return newPred;
 		}
 		return predicate;
@@ -87,36 +97,67 @@ public class FormulaSimplification {
 			predicates.add(qPred);
 		}
 
-		return FormulaFactory.getDefault().makeAssociativePredicate(subTag,
-				predicates, null);
+		return ff.makeAssociativePredicate(subTag, predicates, null);
 	}
 
 	public static Predicate rewriteMapsto(Expression E, Expression F,
 			Expression G, Expression H) {
-		FormulaFactory ff = FormulaFactory.getDefault();
-		Predicate pred1 = ff.makeRelationalPredicate(Formula.EQUAL, E, G, null);
-		Predicate pred2 = ff.makeRelationalPredicate(Formula.EQUAL, F, H, null);
+
+		Predicate pred1 = ff.makeRelationalPredicate(Expression.EQUAL, E, G,
+				null);
+		Predicate pred2 = ff.makeRelationalPredicate(Expression.EQUAL, F, H,
+				null);
 		return ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] {
 				pred1, pred2 }, null);
 	}
 
-	public static Expression simplifiedAssociativeExpression(
+	public static Expression simplifyAssociativeExpression(
 			AssociativeExpression expression, Expression[] children) {
 		int tag = expression.getTag();
-		Expression neutral = tag == Formula.BUNION ? Lib.emptySet : null;
-		Expression determinant = tag == Formula.BINTER ? Lib.emptySet : null;
+
+		Expression neutral = null;
+		Expression determinant = null;
+		IntegerLiteral number0 = ff.makeIntegerLiteral(new BigInteger("0"),
+				null);
+		IntegerLiteral number1 = ff.makeIntegerLiteral(new BigInteger("1"),
+				null);
+		switch (tag) {
+		case Expression.BUNION:
+			neutral = Lib.emptySet;
+			determinant = null;
+			break;
+		case Expression.BINTER:
+			neutral = null;
+			determinant = Lib.emptySet;
+			break;
+		case Expression.PLUS:
+			neutral = number0;
+			determinant = null;
+			break;
+		case Expression.MUL:
+			neutral = number1;
+			determinant = number0;
+			break;
+		}
+		boolean eliminateDuplicate = (tag == Expression.BUNION || tag == Expression.BINTER);
+
 		Collection<Expression> expressions = simplifiedAssociativeFormula(
-				children, neutral, determinant);
+				children, neutral, determinant, eliminateDuplicate);
 
 		if (expressions.size() != children.length) {
 			if (expressions.size() == 0)
-				return Lib.emptySet;
+				if (tag == Expression.BUNION || tag == Expression.BINTER)
+					return Lib.emptySet;
+				else if (tag == Expression.PLUS)
+					return number0;
+				else if (tag == Expression.MUL)
+					return number1;
 
 			if (expressions.size() == 1)
 				return expressions.iterator().next();
 
-			AssociativeExpression newExpression = FormulaFactory.getDefault()
-					.makeAssociativeExpression(tag, expressions, null);
+			AssociativeExpression newExpression = ff.makeAssociativeExpression(
+					tag, expressions, null);
 			return newExpression;
 		}
 		return expression;
@@ -129,6 +170,10 @@ public class FormulaSimplification {
 				return Lib.True;
 			}
 		}
+		if (members.length == 1) {
+			return ff.makeRelationalPredicate(Predicate.EQUAL, E, members[0],
+					null);
+		}
 		return predicate;
 	}
 
@@ -140,15 +185,86 @@ public class FormulaSimplification {
 			if (expression instanceof BoundIdentifier) {
 				BoundIdentifier boundIdent = (BoundIdentifier) expression;
 				if (boundIdent.getBoundIndex() == 0) {
-					QuantifiedPredicate qPred = FormulaFactory.getDefault()
-							.makeQuantifiedPredicate(Predicate.FORALL, idents,
-									guard, null);
-					return qPred.instantiate(new Expression[] { E },
-							FormulaFactory.getDefault());
+					QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
+							Predicate.FORALL, idents, guard, null);
+					return qPred.instantiate(new Expression[] { E }, ff);
 				}
 			}
 		}
 		return predicate;
+	}
+
+	public static Expression getDomain(Expression expression,
+			Expression[] members) {
+		Collection<Expression> domain = new HashSet<Expression>();
+
+		for (Expression member : members) {
+			if (member instanceof BinaryExpression
+					&& member.getTag() == Expression.MAPSTO) {
+				BinaryExpression bExp = (BinaryExpression) member;
+				domain.add(bExp.getLeft());
+			} else {
+				return expression;
+			}
+		}
+
+		return ff.makeSetExtension(domain, null);
+	}
+
+	public static Expression getRange(Expression expression,
+			Expression[] members) {
+		Collection<Expression> domain = new HashSet<Expression>();
+
+		for (Expression member : members) {
+			if (member instanceof BinaryExpression
+					&& member.getTag() == Expression.MAPSTO) {
+				BinaryExpression bExp = (BinaryExpression) member;
+				domain.add(bExp.getRight());
+			} else {
+				return expression;
+			}
+		}
+
+		return ff.makeSetExtension(domain, null);
+	}
+
+	public static Expression simplifyFunctionOvr(Expression expression,
+			Expression[] children, Expression applyTo) {
+		Expression lastExpression = children[children.length - 1];
+		if (lastExpression instanceof SetExtension) {
+			SetExtension sExt = (SetExtension) lastExpression;
+			Expression[] members = sExt.getMembers();
+			if (members.length == 1) {
+				Expression child = members[0];
+				if (child instanceof BinaryExpression
+						&& child.getTag() == Expression.MAPSTO) {
+					if (((BinaryExpression) child).getLeft().equals(applyTo)) {
+						return ((BinaryExpression) child).getRight();
+					}
+				}
+			}
+		}
+
+		return expression;
+	}
+
+	public static Predicate simplifySetEquality(Predicate predicate,
+			Expression[] membersE, Expression[] membersF) {
+		if (membersE.length == 1 && membersF.length == 1) {
+			return ff.makeRelationalPredicate(Predicate.EQUAL, membersE[0],
+					membersF[0], null);
+		}
+		return predicate;
+	}
+
+	public static Expression simplifyMinusArithmetic(Expression expression,
+			Expression E, Expression F) {
+		if (F.equals(ff.makeIntegerLiteral(new BigInteger("0"), null))) {
+			return E;
+		} else if (E.equals(ff.makeIntegerLiteral(new BigInteger("0"), null))) {
+			return ff.makeUnaryExpression(Expression.UNMINUS, F, null);
+		}
+		return expression;
 	}
 
 }

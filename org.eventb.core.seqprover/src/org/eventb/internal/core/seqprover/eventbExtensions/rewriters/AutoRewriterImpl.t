@@ -59,7 +59,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	(Land | Lor) (children) -> {
 				boolean isAnd = predicate.getTag() == Formula.LAND;
 
-				return FormulaSimplification.simplifiedAssociativePredicate(predicate, `children, isAnd ? Lib.True : Lib.False,
+				return FormulaSimplification.simplifyAssociativePredicate(predicate, `children, isAnd ? Lib.True : Lib.False,
     				isAnd ? Lib.False : Lib.True);
 			}
 	    }
@@ -240,6 +240,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			/**
 	    	 * Set Theory 8: A ∈ {A} == ⊤
 	    	 * Set Theory 9: B ∈ {A, ..., B, ..., C} == ⊤
+	    	 * Set Theory 16: E ∈ {F} == E = F (if F is a single expression)
 	    	 */
 	    	In(E, SetExtension(members)) -> {
 	    		return FormulaSimplification.simplifySetMember(predicate, `E, `members);
@@ -251,7 +252,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	In(E, Cset(idents, guard, expression)) -> {
 	    		return FormulaSimplification.simplifySetComprehension(predicate, `E, `idents, `guard, `expression);
 	    	}
-
+		
+			/**
+	    	 * Set Theory 17: {E} = {F} == E = F   if E, F is a single expression
+	    	 */
+	    	Equal(SetExtension(E), SetExtension(F)) -> {
+	    		return FormulaSimplification.simplifySetEquality(predicate, `E, `F);
+	    	}
 	    }
 	    return predicate;
 	}
@@ -265,9 +272,23 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory 2: S ∪ ... ∪ ∅ ∪ ... ∪ T == S ∪ ... ∪ T
 	    	 */
 	    	(BInter | BUnion) (children) -> {
-	    		return FormulaSimplification.simplifiedAssociativeExpression(expression, `children);
+	    		return FormulaSimplification.simplifyAssociativeExpression(expression, `children);
 	    	}
 
+	    	/**
+	    	 * Arithmetic 1: E + ... + 0 + ... + F == E + ... + ... + F
+	    	 */
+	    	Plus (children) -> {
+	    		return FormulaSimplification.simplifyAssociativeExpression(expression, `children);
+	    	}
+
+	    	/**
+	    	 * Arithmetic 5: E ∗ ... ∗ 1 ∗ ... ∗ F == E ∗ ... ∗ ... ∗ F
+	    	 * Arithmetic 6: E ∗ ... ∗ 0 ∗ ... ∗ F == 0
+	    	 */
+	    	Mul (children) -> {
+	    		return FormulaSimplification.simplifyAssociativeExpression(expression, `children);
+	    	}
 	    }
 	    return expression;
 	}
@@ -282,6 +303,22 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	SetMinus(S, S) -> {
 	    		return Lib.emptySet;
 	    	}
+
+			/**
+	    	 * Set Theory 15: (f  {E↦ F})(E) == F
+	    	 */
+	    	FunImage(Ovr(children), E) -> {
+	    		return FormulaSimplification.simplifyFunctionOvr(expression, `children, `E);
+	    	}
+
+			/**
+	    	 * Arithmetic 2: E − 0 == E
+	    	 * Arithmetic 3: 0 − E == −E
+	    	 */
+	    	Minus(E, F) -> {
+	    		return FormulaSimplification.simplifyMinusArithmetic(expression, `E, `F);
+	    	}
+
 	    }
 	    return expression;
 	}
@@ -296,6 +333,28 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	Converse(Converse(r)) -> {
 	    		return `r;
 	    	}
+
+			/**
+	    	 * Set Theory 13: dom(x ↦ a, ..., y ↦ b) = {x, ..., y}
+	    	 */
+	    	Dom(SetExtension(members)) -> {
+	    		return FormulaSimplification.getDomain(expression, `members);
+	    	}
+		
+			/**
+	    	 * Set Theory 14: ran(x ↦ a, ..., y ↦ b) = {a, ..., b}
+	    	 */
+	    	Ran(SetExtension(members)) -> {
+	    		return FormulaSimplification.getRange(expression, `members);
+	    	}
+
+			/**
+	    	 * Arithmetic 4: −(−E) = E
+	    	 */
+	    	UnMinus(UnMinus(E)) -> {
+	    		return `E;
+	    	}
+			
 	    }
 	    return expression;
 	}

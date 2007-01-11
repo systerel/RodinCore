@@ -9,7 +9,6 @@ import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.Predicate;
@@ -343,10 +342,10 @@ public class AutoFormulaRewriterTests extends TestCase {
 
 	public void testEquality() {
 		// E = E == true
-		Expression E = ff.makeAtomicExpression(Formula.TRUE, null);
-		Expression F = ff.makeAtomicExpression(Formula.FALSE, null);
-		Expression G = ff.makeAtomicExpression(Formula.FALSE, null);
-		Expression H = ff.makeAtomicExpression(Formula.TRUE, null);
+		Expression E = ff.makeAtomicExpression(Expression.TRUE, null);
+		Expression F = ff.makeAtomicExpression(Expression.FALSE, null);
+		Expression G = ff.makeAtomicExpression(Expression.FALSE, null);
+		Expression H = ff.makeAtomicExpression(Expression.TRUE, null);
 		assertRelationalPredicate("E = E == ⊤", Lib.True, E, Predicate.EQUAL, E);
 
 		// E /= E == false
@@ -354,14 +353,16 @@ public class AutoFormulaRewriterTests extends TestCase {
 				Predicate.NOTEQUAL, E);
 
 		// E |-> F = G |-> H == E = G & F = H
-		Predicate pred1 = ff.makeRelationalPredicate(Formula.EQUAL, E, G, null);
-		Predicate pred2 = ff.makeRelationalPredicate(Formula.EQUAL, F, H, null);
+		Predicate pred1 = ff.makeRelationalPredicate(Expression.EQUAL, E, G,
+				null);
+		Predicate pred2 = ff.makeRelationalPredicate(Expression.EQUAL, F, H,
+				null);
 		AssociativePredicate expected = ff.makeAssociativePredicate(
 				Predicate.LAND, new Predicate[] { pred1, pred2 }, null);
-		BinaryExpression left = ff.makeBinaryExpression(Formula.MAPSTO, E, F,
-				null);
-		BinaryExpression right = ff.makeBinaryExpression(Formula.MAPSTO, G, H,
-				null);
+		BinaryExpression left = ff.makeBinaryExpression(Expression.MAPSTO, E,
+				F, null);
+		BinaryExpression right = ff.makeBinaryExpression(Expression.MAPSTO, G,
+				H, null);
 		assertRelationalPredicate("E ↦ F = G ↦ H == E = G ∧ F = H", expected,
 				left, Predicate.EQUAL, right);
 	}
@@ -387,155 +388,322 @@ public class AutoFormulaRewriterTests extends TestCase {
 	}
 
 	public void testSetTheory() {
-		Expression fTrue = ff.makeAtomicExpression(Formula.TRUE, null);
-		Expression fFalse = ff.makeAtomicExpression(Formula.FALSE, null);
+		Expression fTrue = ff.makeAtomicExpression(Expression.TRUE, null);
+		Expression fFalse = ff.makeAtomicExpression(Expression.FALSE, null);
 		Expression S = ff.makeSetExtension(fTrue, null);
 		Expression T = ff.makeSetExtension(fFalse, null);
 		Expression R = ff.makeSetExtension(new Expression[] { fTrue, fFalse },
 				null);
 
 		// S /\ ... /\ {} /\ ... /\ T == {}
-		Expression expected = ff.makeAssociativeExpression(Formula.BINTER,
+		Expression expected = ff.makeAssociativeExpression(Expression.BINTER,
 				new Expression[] { S, T, R }, null);
-		assertAssociativeExpression("S ∩ ∅ == ∅", Lib.emptySet, Formula.BINTER,
-				S, Lib.emptySet);
-		assertAssociativeExpression("∅ ∩ S == ∅", Lib.emptySet, Formula.BINTER,
-				Lib.emptySet, S);
+		assertAssociativeExpression("S ∩ ∅ == ∅", Lib.emptySet,
+				Expression.BINTER, S, Lib.emptySet);
+		assertAssociativeExpression("∅ ∩ S == ∅", Lib.emptySet,
+				Expression.BINTER, Lib.emptySet, S);
 		assertAssociativeExpression("S ∩ T ∩ R == S ∩ T ∩ R", expected,
-				Formula.BINTER, S, T, R);
+				Expression.BINTER, S, T, R);
 		assertAssociativeExpression("S ∩ T ∩ ∅ ∩ R == ∅", Lib.emptySet,
-				Formula.BINTER, S, T, Lib.emptySet, R);
+				Expression.BINTER, S, T, Lib.emptySet, R);
 		assertAssociativeExpression("∅ ∩ S ∩ T ∩ R == ∅", Lib.emptySet,
-				Formula.BINTER, Lib.emptySet, S, T, R);
+				Expression.BINTER, Lib.emptySet, S, T, R);
 		assertAssociativeExpression("S ∩ T ∩ R ∩ ∅ == ∅", Lib.emptySet,
-				Formula.BINTER, S, T, R, Lib.emptySet);
+				Expression.BINTER, S, T, R, Lib.emptySet);
 		assertAssociativeExpression("S ∩ T ∩ ∅ ∩ R ∩ ∅ == ∅", Lib.emptySet,
-				Formula.BINTER, S, T, Lib.emptySet, R, Lib.emptySet);
+				Expression.BINTER, S, T, Lib.emptySet, R, Lib.emptySet);
 		assertAssociativeExpression("∅ ∩ S ∩ T ∩ R ∩ ∅ == ∅", Lib.emptySet,
-				Formula.BINTER, Lib.emptySet, S, T, R, Lib.emptySet);
+				Expression.BINTER, Lib.emptySet, S, T, R, Lib.emptySet);
 		assertAssociativeExpression("∅ ∩ S ∩ T ∩ ∅ ∩ R == ∅", Lib.emptySet,
-				Formula.BINTER, Lib.emptySet, S, T, Lib.emptySet, R);
+				Expression.BINTER, Lib.emptySet, S, T, Lib.emptySet, R);
 		assertAssociativeExpression("∅ ∩ S ∩ T ∩ ∅ ∩ R ∩ ∅ == ∅", Lib.emptySet,
-				Formula.BINTER, Lib.emptySet, S, T, Lib.emptySet, R,
+				Expression.BINTER, Lib.emptySet, S, T, Lib.emptySet, R,
 				Lib.emptySet);
 
 		// S /\ ... /\ T /\ ... /\ T /\ ... /\ R == S /\ ... /\ T /\ ... /\ ...
 		// /\ R
-		assertAssociativeExpression("S ∩ S = S", S, Formula.BINTER, S, S);
+		assertAssociativeExpression("S ∩ S = S", S, Expression.BINTER, S, S);
 		assertAssociativeExpression("S ∩ S ∩ T ∩ R = S ∩ T ∩ R", expected,
-				Formula.BINTER, S, S, T, R);
+				Expression.BINTER, S, S, T, R);
 		assertAssociativeExpression("S ∩ T ∩ S ∩ R = S ∩ T ∩ R", expected,
-				Formula.BINTER, S, T, S, R);
+				Expression.BINTER, S, T, S, R);
 		assertAssociativeExpression("S ∩ T ∩ R ∩ S = S ∩ T ∩ R", expected,
-				Formula.BINTER, S, T, R, S);
+				Expression.BINTER, S, T, R, S);
 		assertAssociativeExpression("S ∩ T ∩ R ∩ T = S ∩ T ∩ R", expected,
-				Formula.BINTER, S, T, R, T);
+				Expression.BINTER, S, T, R, T);
 		assertAssociativeExpression("S ∩ T ∩ R ∩ R = S ∩ T ∩ R", expected,
-				Formula.BINTER, S, T, R, R);
+				Expression.BINTER, S, T, R, R);
 		assertAssociativeExpression("S ∩ T ∩ R ∩ T ∩ R = S ∩ T ∩ R", expected,
-				Formula.BINTER, S, T, R, T, R);
+				Expression.BINTER, S, T, R, T, R);
 
 		// S \/ ... \/ {} \/ ... \/ T == S ... \/ ... \/ T
-		expected = ff.makeAssociativeExpression(Formula.BUNION,
+		expected = ff.makeAssociativeExpression(Expression.BUNION,
 				new Expression[] { S, T, R }, null);
-		assertAssociativeExpression("S ∪ ∅ == S", S, Formula.BUNION, S,
+		assertAssociativeExpression("S ∪ ∅ == S", S, Expression.BUNION, S,
 				Lib.emptySet);
-		assertAssociativeExpression("∅ ∪ S == S", S, Formula.BUNION,
+		assertAssociativeExpression("∅ ∪ S == S", S, Expression.BUNION,
 				Lib.emptySet, S);
 		assertAssociativeExpression("S ∪ T ∪ R == S ∪ T ∪ R", expected,
-				Formula.BUNION, S, T, R);
+				Expression.BUNION, S, T, R);
 		assertAssociativeExpression("S ∪ T ∪ ∅ ∪ R == S ∪ T ∪ R", expected,
-				Formula.BUNION, S, T, Lib.emptySet, R);
+				Expression.BUNION, S, T, Lib.emptySet, R);
 		assertAssociativeExpression("∅ ∪ S ∪ T ∪ R == S ∪ T ∪ R", expected,
-				Formula.BUNION, Lib.emptySet, S, T, R);
+				Expression.BUNION, Lib.emptySet, S, T, R);
 		assertAssociativeExpression("S ∪ T ∪ R ∪ ∅ == S ∪ T ∪ R", expected,
-				Formula.BUNION, S, T, R, Lib.emptySet);
+				Expression.BUNION, S, T, R, Lib.emptySet);
 		assertAssociativeExpression("S ∪ T ∪ ∅ ∪ R ∪ ∅ == S ∪ T ∪ R", expected,
-				Formula.BUNION, S, T, Lib.emptySet, R, Lib.emptySet);
+				Expression.BUNION, S, T, Lib.emptySet, R, Lib.emptySet);
 		assertAssociativeExpression("∅ ∪ S ∪ T ∪ R ∪ ∅ == S ∪ T ∪ R", expected,
-				Formula.BUNION, Lib.emptySet, S, T, R, Lib.emptySet);
+				Expression.BUNION, Lib.emptySet, S, T, R, Lib.emptySet);
 		assertAssociativeExpression("∅ ∪ S ∪ T ∪ ∅ ∪ R == S ∪ T ∪ R", expected,
-				Formula.BUNION, Lib.emptySet, S, T, Lib.emptySet, R);
+				Expression.BUNION, Lib.emptySet, S, T, Lib.emptySet, R);
 		assertAssociativeExpression("∅ ∪ S ∪ T ∪ ∅ ∪ R ∪ ∅ == S ∪ T ∪ R",
-				expected, Formula.BUNION, Lib.emptySet, S, T, Lib.emptySet, R,
-				Lib.emptySet);
+				expected, Expression.BUNION, Lib.emptySet, S, T, Lib.emptySet,
+				R, Lib.emptySet);
 
 		// S \/ ... \/ T \/ ... \/ T \/ ... \/ R == S \/ ... \/ T \/ ... \/ ...
 		// \/ R
-		assertAssociativeExpression("S ∩ S = S", S, Formula.BUNION, S, S);
+		assertAssociativeExpression("S ∩ S = S", S, Expression.BUNION, S, S);
 		assertAssociativeExpression("S ∩ S ∩ T ∩ R = S ∩ T ∩ R", expected,
-				Formula.BUNION, S, S, T, R);
+				Expression.BUNION, S, S, T, R);
 		assertAssociativeExpression("S ∩ T ∩ S ∩ R = S ∩ T ∩ R", expected,
-				Formula.BUNION, S, T, S, R);
+				Expression.BUNION, S, T, S, R);
 		assertAssociativeExpression("S ∩ T ∩ R ∩ S = S ∩ T ∩ R", expected,
-				Formula.BUNION, S, T, R, S);
+				Expression.BUNION, S, T, R, S);
 		assertAssociativeExpression("S ∩ T ∩ R ∩ T = S ∩ T ∩ R", expected,
-				Formula.BUNION, S, T, R, T);
+				Expression.BUNION, S, T, R, T);
 		assertAssociativeExpression("S ∩ T ∩ R ∩ R = S ∩ T ∩ R", expected,
-				Formula.BUNION, S, T, R, R);
+				Expression.BUNION, S, T, R, R);
 		assertAssociativeExpression("S ∩ T ∩ R ∩ T ∩ R = S ∩ T ∩ R", expected,
-				Formula.BUNION, S, T, R, T, R);
+				Expression.BUNION, S, T, R, T, R);
 
 		// {} <: S == true
 		assertRelationalPredicate("∅ ⊆ S == ⊤", Lib.True, Lib.emptySet,
-				Formula.SUBSETEQ, S);
+				Expression.SUBSETEQ, S);
 
 		// S <: S == true
-		assertRelationalPredicate("S ⊆ S == ⊤", Lib.True, S, Formula.SUBSETEQ,
-				S);
+		assertRelationalPredicate("S ⊆ S == ⊤", Lib.True, S,
+				Expression.SUBSETEQ, S);
 
 		// E : {} == false
-		assertRelationalPredicate("E ∈ ∅ == ⊥", Lib.False, fTrue, Formula.IN,
-				Lib.emptySet);
+		assertRelationalPredicate("E ∈ ∅ == ⊥", Lib.False, fTrue,
+				Expression.IN, Lib.emptySet);
 
 		// A : {A} == true
-		assertRelationalPredicate("A ∈ {A} == ⊤", Lib.True, fTrue, Formula.IN,
-				S);
+		assertRelationalPredicate("A ∈ {A} == ⊤", Lib.True, fTrue,
+				Expression.IN, S);
 
 		// B : {A, ..., B, ..., C} == true
 		assertRelationalPredicate("B ∈ {A, ..., B, ..., C} == ⊤", Lib.True,
-				fTrue, Formula.IN, R);
+				fTrue, Expression.IN, R);
 		assertRelationalPredicate("B ∈ {A, ..., B, ..., C} == ⊤", Lib.True,
-				fFalse, Formula.IN, R);
+				fFalse, Expression.IN, R);
 
 		// E : {x | P(x)} == P(E)
 		BoundIdentDecl xDecl = ff.makeBoundIdentDecl("x", null);
 		Expression E = ff.makeIntegerLiteral(new BigInteger("4"), null);
 		Expression x = ff.makeBoundIdentifier(0, null);
 		Predicate pred1 = ff.makeRelationalPredicate(Predicate.IN, x, ff
-				.makeAtomicExpression(Formula.NATURAL, null), null);
+				.makeAtomicExpression(Expression.NATURAL, null), null);
 		Predicate pred2 = ff.makeRelationalPredicate(Predicate.LE, x, ff
 				.makeIntegerLiteral(new BigInteger("3"), null), null);
 
 		Predicate pred = ff.makeAssociativePredicate(Predicate.LAND,
 				new Predicate[] { pred1, pred2 }, null);
-		Expression cSet = ff.makeQuantifiedExpression(Formula.CSET,
+		Expression cSet = ff.makeQuantifiedExpression(Expression.CSET,
 				new BoundIdentDecl[] { xDecl }, pred, x, null,
 				QuantifiedExpression.Form.Implicit);
 
 		Predicate result = TestLib.genPredicate("4 ∈ ℕ ∧ 4 ≤ 3");
-		assertRelationalPredicate("", result, E, Formula.IN, cSet);
+		assertRelationalPredicate("", result, E, Expression.IN, cSet);
 
 		// S \ S == {}
-		assertBinaryExpression("S ∖ S == ∅", Lib.emptySet, S, Formula.SETMINUS,
-				S);
-		assertBinaryExpression("T ∖ T == ∅", Lib.emptySet, T, Formula.SETMINUS,
-				T);
-		assertBinaryExpression("R ∖ R == ∅", Lib.emptySet, R, Formula.SETMINUS,
-				R);
+		assertBinaryExpression("S ∖ S == ∅", Lib.emptySet, S,
+				Expression.SETMINUS, S);
+		assertBinaryExpression("T ∖ T == ∅", Lib.emptySet, T,
+				Expression.SETMINUS, T);
+		assertBinaryExpression("R ∖ R == ∅", Lib.emptySet, R,
+				Expression.SETMINUS, R);
 
 		// r~~ == r
-		Expression m1 = ff.makeBinaryExpression(Formula.MAPSTO, fTrue, fFalse,
-				null);
-		Expression m2 = ff.makeBinaryExpression(Formula.MAPSTO, fFalse, fTrue,
-				null);
+		Expression m1 = ff.makeBinaryExpression(Expression.MAPSTO, fTrue,
+				fFalse, null);
+		Expression m2 = ff.makeBinaryExpression(Expression.MAPSTO, fFalse,
+				fTrue, null);
+		Expression m3 = ff.makeBinaryExpression(Expression.MAPSTO, fFalse,
+				fFalse, null);
+		Expression m4 = ff.makeBinaryExpression(Expression.MAPSTO, fTrue,
+				fTrue, null);
 		Expression f = ff.makeSetExtension(new Expression[] { m1 }, null);
-		assertUnaryExpression("", f, Formula.CONVERSE, ff.makeUnaryExpression(
-				Formula.CONVERSE, f, null));
+		assertUnaryExpression("f∼∼ = f", f, Expression.CONVERSE, ff
+				.makeUnaryExpression(Expression.CONVERSE, f, null));
 		f = ff.makeSetExtension(new Expression[] { m1, m2 }, null);
-		assertUnaryExpression("", f, Formula.CONVERSE, ff.makeUnaryExpression(
-				Formula.CONVERSE, f, null));
+		assertUnaryExpression("f∼∼ = f", f, Expression.CONVERSE, ff
+				.makeUnaryExpression(Expression.CONVERSE, f, null));
 
+		// dom({x |-> a, ..., y |-> b}) == {x, ..., y}
+		f = ff.makeSetExtension(new Expression[] { m1 }, null);
+		assertUnaryExpression("", S, Expression.KDOM, f);
+		f = ff.makeSetExtension(new Expression[] { m1, m2 }, null);
+		assertUnaryExpression("", R, Expression.KDOM, f);
+		f = ff.makeSetExtension(new Expression[] { m1, m4 }, null);
+		assertUnaryExpression("", S, Expression.KDOM, f);
+		f = ff.makeSetExtension(new Expression[] { m1, m2, m3, m4 }, null);
+		assertUnaryExpression("", R, Expression.KDOM, f);
+
+		// ran({x |-> a, ..., y |-> b}) == {a, ..., b}
+		f = ff.makeSetExtension(new Expression[] { m1 }, null);
+		assertUnaryExpression("", T, Expression.KRAN, f);
+		f = ff.makeSetExtension(new Expression[] { m1, m2 }, null);
+		assertUnaryExpression("", R, Expression.KRAN, f);
+		f = ff.makeSetExtension(new Expression[] { m1, m3 }, null);
+		assertUnaryExpression("", T, Expression.KRAN, f);
+		f = ff.makeSetExtension(new Expression[] { m1, m2, m3, m4 }, null);
+		assertUnaryExpression("", R, Expression.KRAN, f);
+
+		// (f <+ {E |-> F})(E) = F
+		f = ff.makeSetExtension(new Expression[] { m1 }, null);
+
+		Expression g = ff.makeAssociativeExpression(Expression.OVR,
+				new Expression[] { f, ff.makeSetExtension(m2, null) }, null);
+
+		assertBinaryExpression("{f  {E ↦ F})(E) = F", fTrue, g,
+				Expression.FUNIMAGE, fFalse);
+		assertBinaryExpression("{f  {E ↦ F})(E) = F", ff.makeBinaryExpression(
+				Expression.FUNIMAGE, g, fTrue, null), g, Expression.FUNIMAGE,
+				fTrue);
+
+		g = ff.makeAssociativeExpression(Expression.OVR, new Expression[] { f,
+				ff.makeSetExtension(m4, null) }, null);
+		assertBinaryExpression("{f  {E ↦ F})(E) = F", fTrue, g,
+				Expression.FUNIMAGE, fTrue);
+		assertBinaryExpression("{f  {E ↦ F})(E) = F", ff.makeBinaryExpression(
+				Expression.FUNIMAGE, g, fFalse, null), g, Expression.FUNIMAGE,
+				fFalse);
+
+		f = ff.makeSetExtension(new Expression[] { m1, m3 }, null);
+
+		g = ff.makeAssociativeExpression(Expression.OVR, new Expression[] { f,
+				ff.makeSetExtension(m2, null) }, null);
+		assertBinaryExpression("{f  {E ↦ F})(E) = F", fTrue, g,
+				Expression.FUNIMAGE, fFalse);
+		assertBinaryExpression("{f  {E ↦ F})(E) = F", ff.makeBinaryExpression(
+				Expression.FUNIMAGE, g, fTrue, null), g, Expression.FUNIMAGE,
+				fTrue);
+
+		g = ff.makeAssociativeExpression(Expression.OVR, new Expression[] { f,
+				ff.makeSetExtension(m4, null) }, null);
+		assertBinaryExpression("{f  {E ↦ F})(E) = F", fTrue, g,
+				Expression.FUNIMAGE, fTrue);
+		assertBinaryExpression("{f  {E ↦ F})(E) = F", ff.makeBinaryExpression(
+				Expression.FUNIMAGE, g, fFalse, null), g, Expression.FUNIMAGE,
+				fFalse);
+
+		// E : {F} == E = F (if F is a single expression)
+		assertRelationalPredicate(
+				"E ∈ {F} == E = F   if F is a single expression", ff
+						.makeRelationalPredicate(Predicate.EQUAL, fTrue,
+								fFalse, null), fTrue, Predicate.IN, ff
+						.makeSetExtension(fFalse, null));
+
+		// {E} = {F} == E = F if E, F is a single expression
+		assertRelationalPredicate(
+				"{E} = {F} == E = F   if E, F is a single expression", ff
+						.makeRelationalPredicate(Predicate.EQUAL, fTrue,
+								fFalse, null),
+				ff.makeSetExtension(fTrue, null), Predicate.EQUAL, ff
+						.makeSetExtension(fFalse, null));
 	}
 
+	public void testArithmetic() {
+		Expression number0 = ff.makeIntegerLiteral(new BigInteger("0"), null);
+		Expression number1 = ff.makeIntegerLiteral(new BigInteger("1"), null);
+		Expression number2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
+		Expression number3 = ff.makeIntegerLiteral(new BigInteger("3"), null);
+
+		// E + ... + 0 + ... + F == E + ... + ... + F
+		Expression sum11 = ff.makeAssociativeExpression(Expression.PLUS,
+				new Expression[] { number1, number1 }, null);
+		Expression sum12 = ff.makeAssociativeExpression(Expression.PLUS,
+				new Expression[] { number1, number2 }, null);
+		assertAssociativeExpression("0 + 0 == 0", number0, Expression.PLUS,
+				number0, number0);
+		assertAssociativeExpression("0 + 1 == 1", number1, Expression.PLUS,
+				number0, number1);
+		assertAssociativeExpression("1 + 0 == 1", number1, Expression.PLUS,
+				number1, number0);
+		assertAssociativeExpression("1 + 0 + 1 == 1 + 1", sum11,
+				Expression.PLUS, number1, number0, number1);
+		assertAssociativeExpression("0 + 1 + 2 == 1 + 2", sum12,
+				Expression.PLUS, number0, number1, number2);
+		assertAssociativeExpression("1 + 0 + 2 == 1 + 2", sum12,
+				Expression.PLUS, number1, number0, number2);
+		assertAssociativeExpression("1 + 2 + 0== 1 + 2", sum12,
+				Expression.PLUS, number1, number2, number0);
+		assertAssociativeExpression("1 + 0 + 2 + 0 == 1 + 2", sum12,
+				Expression.PLUS, number1, number0, number2, number0);
+		assertAssociativeExpression("0 + 1 + 2 + 0 == 1 + 2", sum12,
+				Expression.PLUS, number0, number1, number2, number0);
+		assertAssociativeExpression("0 + 1 + 0 + 2 == 1 + 2", sum12,
+				Expression.PLUS, number0, number1, number0, number2);
+
+		// E - 0 == E
+		assertBinaryExpression("E − 0 == E", number1, number1,
+				Expression.MINUS, number0);
+
+		// 0 - E == -E
+		assertBinaryExpression("0 − E == −E", ff.makeUnaryExpression(
+				Expression.UNMINUS, number1, null), number0, Expression.MINUS,
+				number1);
+
+		// --E == E
+		assertUnaryExpression("−(−E) = E", number1, Expression.UNMINUS, ff
+				.makeUnaryExpression(Expression.UNMINUS, number1, null));
+
+		// E * ... * 0 * ... * F == 0
+		assertAssociativeExpression("0 * 0 == 0", number0, Expression.MUL,
+				number0, number0);
+		assertAssociativeExpression("0 * 1 == 0", number0, Expression.MUL,
+				number0, number1);
+		assertAssociativeExpression("1 * 0 == 0", number0, Expression.MUL,
+				number1, number0);
+		assertAssociativeExpression("1 * 0 * 1 == 0", number0,
+				Expression.MUL, number1, number0, number1);
+		assertAssociativeExpression("0 * 1 * 2 == 0", number0,
+				Expression.MUL, number0, number1, number2);
+		assertAssociativeExpression("1 * 0 * 2 == 0", number0,
+				Expression.MUL, number1, number0, number2);
+		assertAssociativeExpression("1 * 2 * 0== 0", number0,
+				Expression.MUL, number1, number2, number0);
+		assertAssociativeExpression("1 * 0 * 2 * 0 == 0", number0,
+				Expression.MUL, number1, number0, number2, number0);
+		assertAssociativeExpression("0 * 1 * 2 * 0 == 0", number0,
+				Expression.MUL, number0, number1, number2, number0);
+		assertAssociativeExpression("0 * 1 * 0 * 2 == 0", number0,
+				Expression.MUL, number0, number1, number0, number2);
+
+		// E * ... * 1 * ... * F == E * ... * ... * F
+		Expression prod23 = ff.makeAssociativeExpression(Expression.MUL,
+				new Expression[] { number2, number3 }, null);
+		assertAssociativeExpression("1 * 1 == 1", number1, Expression.MUL,
+				number1, number1);
+		assertAssociativeExpression("1 * 2 == 2", number2, Expression.MUL,
+				number1, number2);
+		assertAssociativeExpression("2 * 1 == 2", number2, Expression.MUL,
+				number2, number1);
+		assertAssociativeExpression("2 * 1 * 3 == 2 * 3", prod23,
+				Expression.MUL, number2, number1, number3);
+		assertAssociativeExpression("1 * 2 * 3 == 2 * 3", prod23,
+				Expression.MUL, number1, number2, number3);
+		assertAssociativeExpression("2 * 1 * 3 == 2 * 3", prod23,
+				Expression.MUL, number2, number1, number3);
+		assertAssociativeExpression("2 * 3 * 1== 2 * 3", prod23,
+				Expression.MUL, number2, number3, number1);
+		assertAssociativeExpression("2 * 1 * 3 * 1 == 2 * 3", prod23,
+				Expression.MUL, number2, number1, number3, number1);
+		assertAssociativeExpression("1 * 2 * 3 * 1 == 2 * 3", prod23,
+				Expression.MUL, number1, number2, number3, number1);
+		assertAssociativeExpression("1 * 2 * 1 * 3 == 2 * 3", prod23,
+				Expression.MUL, number1, number2, number1, number3);
+	}
 }
