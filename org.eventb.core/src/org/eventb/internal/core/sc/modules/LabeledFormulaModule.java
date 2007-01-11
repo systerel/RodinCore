@@ -49,6 +49,8 @@ extends LabeledElementModule {
 	protected I[] formulaElements;
 	protected F[] formulas;
 	
+	private final static Object[] NO_OBJECT = new Object[0];
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.Module#initModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -119,18 +121,18 @@ extends LabeledElementModule {
 			case BoundIdentifierIndexOutOfBounds:
 				// internal error
 				problem = ParseProblem.InternalError;
-				objects = new Object[0];
+				objects = NO_OBJECT;
 				break;
 				
 			case Circularity:
 				problem = ParseProblem.CircularityError;
-				objects = new Object[0];
+				objects = NO_OBJECT;
 				break;
 				
 			case InvalidTypeExpression:
 				// internal error
 				problem = ParseProblem.InternalError;
-				objects = new Object[0];
+				objects = NO_OBJECT;
 				break;
 				
 			case LexerError:
@@ -143,13 +145,13 @@ extends LabeledElementModule {
 			case LexerException:
 				// internal error
 				problem = ParseProblem.InternalError;
-				objects = new Object[0];
+				objects = NO_OBJECT;
 				break;
 				
 			case ParserException:
 				// internal error
 				problem = ParseProblem.InternalError;
-				objects = new Object[0];
+				objects = NO_OBJECT;
 				break;
 				
 			case SyntaxError:
@@ -165,7 +167,7 @@ extends LabeledElementModule {
 				
 			case TypeCheckFailure:
 				problem = ParseProblem.TypeCheckError;
-				objects = new Object[0];			
+				objects = NO_OBJECT;			
 				break;
 				
 			case TypesDoNotMatch:
@@ -178,13 +180,13 @@ extends LabeledElementModule {
 				
 			case TypeUnknown:
 				problem = ParseProblem.TypeUnknownError;
-				objects = new Object[0];			
+				objects = NO_OBJECT;			
 				break;
 				
 			default:
 				
 				problem = ParseProblem.InternalError;
-				objects = new Object[0];
+				objects = NO_OBJECT;
 				
 				break;
 			}
