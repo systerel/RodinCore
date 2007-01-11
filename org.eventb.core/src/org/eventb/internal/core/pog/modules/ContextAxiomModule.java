@@ -13,8 +13,7 @@ import org.eventb.core.pog.state.IContextAxiomTable;
 import org.eventb.core.pog.state.IContextHypothesisManager;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.state.IState;
-import org.eventb.core.tool.state.IToolStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
 
 /**
  * @author Stefan Hallerstede
@@ -27,7 +26,7 @@ public class ContextAxiomModule extends PredicateModule<ISCAxiom> {
 	 */
 	@Override
 	protected IHypothesisManager getHypothesisManager(
-			IToolStateRepository<IState> repository) throws CoreException {
+			IStateRepository repository) throws CoreException {
 		return (IContextHypothesisManager) repository.getState(IContextHypothesisManager.STATE_TYPE);
 	}
 
@@ -36,7 +35,7 @@ public class ContextAxiomModule extends PredicateModule<ISCAxiom> {
 	 */
 	@Override
 	protected IPredicateTable<ISCAxiom> getPredicateTable(
-			IToolStateRepository<IState> repository) throws CoreException {
+			IStateRepository repository) throws CoreException {
 		return (IContextAxiomTable) repository.getState(IContextAxiomTable.STATE_TYPE);
 	}
 

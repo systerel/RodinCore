@@ -27,7 +27,6 @@ import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.tool.state.IToolStateRepository;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -292,7 +291,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	protected void createInternalContexts(
 			IInternalParent target, 
 			List<ISCContext> scContexts,
-			IToolStateRepository repository,
+			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		for (ISCContext context : scContexts) {

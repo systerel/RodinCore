@@ -10,8 +10,7 @@ package org.eventb.internal.core.pog.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.pog.state.IContextHypothesisManager;
 import org.eventb.core.pog.state.IHypothesisManager;
-import org.eventb.core.pog.state.IState;
-import org.eventb.core.tool.state.IToolStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
 
 /**
  * @author Stefan Hallerstede
@@ -23,7 +22,7 @@ public class ContextCommitHypothesesModule extends CommitHypothesesModule {
 	 * @see org.eventb.internal.core.pog.modules.CommitHypothesesModule#getHypothesisManager()
 	 */
 	@Override
-	protected IHypothesisManager getHypothesisManager(IToolStateRepository<IState> repository) 
+	protected IHypothesisManager getHypothesisManager(IStateRepository repository) 
 	throws CoreException {
 		return (IHypothesisManager) repository.getState(IContextHypothesisManager.STATE_TYPE);
 	}

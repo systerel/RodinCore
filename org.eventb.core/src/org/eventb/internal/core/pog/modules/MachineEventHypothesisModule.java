@@ -28,10 +28,8 @@ import org.eventb.core.pog.state.IConcreteEventActionTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineVariableTable;
-import org.eventb.core.pog.state.IState;
 import org.eventb.core.pog.state.IStateRepository;
 import org.eventb.core.pog.state.IWitnessTable;
-import org.eventb.core.tool.state.IToolStateRepository;
 import org.eventb.internal.core.pog.AbstractEventActionTable;
 import org.eventb.internal.core.pog.AbstractEventGuardList;
 import org.eventb.internal.core.pog.AbstractEventGuardTable;
@@ -66,7 +64,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	
 	private void fetchActionsAndVariables(
 			ISCEvent concreteEvent, 
-			IToolStateRepository<IState> repository) throws CoreException {
+			IStateRepository repository) throws CoreException {
 		
 		IMachineVariableTable machineVariableTable =
 			(IMachineVariableTable) repository.getState(IMachineVariableTable.STATE_TYPE);
@@ -93,7 +91,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	private IAbstractEventActionTable fetchAbstractActions(
 			IConcreteEventActionTable concreteEventActionTable, 
 			IMachineVariableTable machineVariableTable, 
-			IToolStateRepository<IState> repository) throws RodinDBException, CoreException {
+			IStateRepository repository) throws RodinDBException, CoreException {
 		ISCEvent abstractEvent = abstractEventGuardList.getFirstAbstractEvent();
 		
 		if (abstractEvent != null)
@@ -135,7 +133,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	private void fetchGuards(
 			ISCEvent concreteEvent,
 			ISCGuard[] concreteGuards, 
-			IToolStateRepository<IState> repository) throws CoreException {
+			IStateRepository repository) throws CoreException {
 		
 		IConcreteEventGuardTable concreteEventGuardTable = 
 			fetchConcreteGuards(concreteGuards, repository);
@@ -163,7 +161,9 @@ public class MachineEventHypothesisModule extends UtilityModule {
 		repository.setState(abstractEventGuardList);
 	}
 
-	private IConcreteEventGuardTable fetchConcreteGuards(ISCGuard[] concreteGuards, IToolStateRepository<IState> repository) throws RodinDBException, CoreException {
+	private IConcreteEventGuardTable fetchConcreteGuards(
+			ISCGuard[] concreteGuards, 
+			IStateRepository repository) throws RodinDBException, CoreException {
 		IConcreteEventGuardTable concreteEventGuardTable = 
 			new ConcreteEventGuardTable(
 					concreteGuards, 
@@ -193,7 +193,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 
 	private void fetchWitnesses(
 			ISCEvent concreteEvent, 
-			IToolStateRepository<IState> repository, 
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException, RodinDBException {
 		IWitnessTable witnessTable = 
 			new WitnessTable(concreteEvent.getSCWitnesses(), eventTypeEnvironment, factory, monitor);

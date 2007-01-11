@@ -13,8 +13,7 @@ import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineTheoremTable;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.state.IState;
-import org.eventb.core.tool.state.IToolStateRepository;
+import org.eventb.core.pog.state.IStateRepository;
 
 /**
  * @author Stefan Hallerstede
@@ -23,13 +22,13 @@ import org.eventb.core.tool.state.IToolStateRepository;
 public class MachineTheoremModule extends TheoremModule {
 
 	@Override
-	protected IHypothesisManager getHypothesisManager(IToolStateRepository<IState> repository) 
+	protected IHypothesisManager getHypothesisManager(IStateRepository repository) 
 	throws CoreException {
 		return (IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
 	}
 
 	@Override
-	protected IPredicateTable<ISCTheorem> getPredicateTable(IToolStateRepository<IState> repository) 
+	protected IPredicateTable<ISCTheorem> getPredicateTable(IStateRepository repository) 
 	throws CoreException {
 		return (IMachineTheoremTable) repository.getState(IMachineTheoremTable.STATE_TYPE);
 	}

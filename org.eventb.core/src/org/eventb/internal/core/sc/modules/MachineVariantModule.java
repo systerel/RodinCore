@@ -23,11 +23,9 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.core.sc.state.IState;
 import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
-import org.eventb.core.tool.state.IToolStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.VariantInfo;
@@ -145,7 +143,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IToolStateRepository<IState> repository) throws CoreException {
+			IStateRepository repository) throws CoreException {
 		// this method is never called because fetchLabel() is overriden
 		return null;
 	}

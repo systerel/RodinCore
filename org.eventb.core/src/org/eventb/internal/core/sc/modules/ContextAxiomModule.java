@@ -22,7 +22,6 @@ import org.eventb.core.sc.state.IContextLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
-import org.eventb.core.tool.state.IToolStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.AxiomSymbolInfo;
@@ -101,7 +100,7 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IToolStateRepository repository) throws CoreException {
+			IStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IContextLabelSymbolTable.STATE_TYPE);
 	}
 

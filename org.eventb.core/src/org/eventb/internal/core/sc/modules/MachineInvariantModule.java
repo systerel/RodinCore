@@ -21,10 +21,8 @@ import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.state.IAbstractMachineInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
-import org.eventb.core.sc.state.IState;
 import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
-import org.eventb.core.tool.state.IToolStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.InvariantSymbolInfo;
@@ -114,7 +112,7 @@ public class MachineInvariantModule extends PredicateWithTypingModule<IInvariant
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IToolStateRepository<IState> repository) throws CoreException {
+			IStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 	}
 

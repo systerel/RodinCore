@@ -22,9 +22,7 @@ import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.pog.state.IState;
 import org.eventb.core.pog.state.IStateRepository;
-import org.eventb.core.tool.state.IToolStateRepository;
 import org.eventb.internal.core.pog.MachineHypothesisManager;
 import org.eventb.internal.core.pog.MachineInvariantTable;
 import org.eventb.internal.core.pog.MachineTheoremTable;
@@ -126,7 +124,7 @@ public class MachineHypothesisModule extends GlobalHypothesisModule {
 	private void fetchVariables(
 			ISCVariable[] variables, 
 			IPOPredicateSet predSet,
-			IToolStateRepository<IState> repository,
+			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		MachineVariableTable variableTable =

@@ -18,13 +18,11 @@ import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.state.IState;
 import org.eventb.core.pog.state.IStateRepository;
 import org.eventb.core.pog.util.POGHint;
 import org.eventb.core.pog.util.POGIntervalSelectionHint;
 import org.eventb.core.pog.util.POGSource;
 import org.eventb.core.pog.util.POGTraceablePredicate;
-import org.eventb.core.tool.state.IToolStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -48,10 +46,10 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 			getHypothesisManager(repository);
 	}
 
-	protected abstract IHypothesisManager getHypothesisManager(IToolStateRepository<IState> repository) 
+	protected abstract IHypothesisManager getHypothesisManager(IStateRepository repository) 
 	throws CoreException;
 
-	protected abstract IPredicateTable<PE> getPredicateTable(IToolStateRepository<IState> repository) 
+	protected abstract IPredicateTable<PE> getPredicateTable(IStateRepository repository) 
 	throws CoreException;
 	
 	@Override

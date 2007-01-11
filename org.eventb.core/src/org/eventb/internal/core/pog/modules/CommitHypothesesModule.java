@@ -11,9 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.pog.ProcessorModule;
 import org.eventb.core.pog.state.IHypothesisManager;
-import org.eventb.core.pog.state.IState;
 import org.eventb.core.pog.state.IStateRepository;
-import org.eventb.core.tool.state.IToolStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -45,7 +43,7 @@ public abstract class CommitHypothesesModule extends ProcessorModule {
 	}
 	
 	protected abstract IHypothesisManager getHypothesisManager(
-			IToolStateRepository<IState> repository) throws CoreException;
+			IStateRepository repository) throws CoreException;
 
 	@Override
 	public void endModule(

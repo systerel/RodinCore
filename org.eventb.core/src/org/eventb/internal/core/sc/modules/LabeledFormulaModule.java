@@ -23,12 +23,10 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.IParsedFormula;
-import org.eventb.core.sc.state.IState;
 import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
 import org.eventb.core.sc.util.ParseProblem;
-import org.eventb.core.tool.state.IToolStateRepository;
 import org.eventb.internal.core.sc.ParsedFormula;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -353,7 +351,7 @@ extends LabeledElementModule {
 	
 	private ParsedFormula parsedFormula;
 	
-	private void createParsedState(IToolStateRepository<IState> repository) throws CoreException {
+	private void createParsedState(IStateRepository repository) throws CoreException {
 		parsedFormula = new ParsedFormula();
 		repository.setState(parsedFormula);
 	}
@@ -362,7 +360,7 @@ extends LabeledElementModule {
 		parsedFormula.setFormula(formula);
 	}
 	
-	private void removeParsedState(IToolStateRepository repository) throws CoreException {
+	private void removeParsedState(IStateRepository repository) throws CoreException {
 		repository.removeState(IParsedFormula.STATE_TYPE);
 	}
 	

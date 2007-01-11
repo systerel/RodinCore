@@ -36,7 +36,6 @@ import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
-import org.eventb.core.tool.state.IToolStateRepository;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.ActionSymbolInfo;
 import org.rodinp.core.IAttributeType;
@@ -227,7 +226,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IToolStateRepository repository) throws CoreException {
+			IStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 

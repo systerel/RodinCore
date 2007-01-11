@@ -35,7 +35,6 @@ import org.eventb.core.sc.state.IStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
-import org.eventb.core.tool.state.IToolStateRepository;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.WitnessSymbolInfo;
@@ -170,7 +169,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 
 	private void getWitnessNames(
 			HashSet<String> witnessNames,
-			IToolStateRepository repository) throws CoreException {
+			IStateRepository repository) throws CoreException {
 		
 		IEventRefinesInfo eventRefinesInfo = (IEventRefinesInfo)
 			repository.getState(IEventRefinesInfo.STATE_TYPE);
@@ -276,7 +275,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IToolStateRepository repository) throws CoreException {
+			IStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 
