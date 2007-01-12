@@ -8,6 +8,7 @@
 package org.eventb.internal.core.sc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -31,7 +32,7 @@ public class ContextPointerArray extends ToolState implements IContextPointerArr
 	@Override
 	public void makeImmutable() {
 		super.makeImmutable();
-		validContexts = new ArrayList<ISCContext>(validContexts);
+		validContexts = Collections.unmodifiableList(validContexts);
 	}
 	private final int arraySize;
 	
@@ -122,7 +123,7 @@ public class ContextPointerArray extends ToolState implements IContextPointerArr
 	 * returns the valid contexts, i.e., those that do not have errors.
 	 */
 	public List<ISCContext> getValidContexts() {
-		return new ArrayList<ISCContext>(validContexts);
+		return validContexts;
 	}
 	public void setValidContexts(List<ISCContext> validContexts) throws CoreException {
 		assertMutable();

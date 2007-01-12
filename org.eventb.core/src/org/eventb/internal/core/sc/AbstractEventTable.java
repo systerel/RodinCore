@@ -8,6 +8,7 @@
 package org.eventb.internal.core.sc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -22,9 +23,15 @@ import org.eventb.internal.core.tool.state.ToolState;
  */
 public class AbstractEventTable extends ToolState implements IAbstractEventTable {
 	
-	final private List<AbstractEventInfo> table;
-	final private List<String> labels;
-	final private HashSet<String> localVariables;
+	@Override
+	public void makeImmutable() {
+		super.makeImmutable();
+		table = Collections.unmodifiableList(table);
+	}
+
+	private List<AbstractEventInfo> table;
+	private final List<String> labels;
+	private final HashSet<String> localVariables;
 
 	public AbstractEventTable(int size) {
 		table = new ArrayList<AbstractEventInfo>(size);
@@ -44,7 +51,7 @@ public class AbstractEventTable extends ToolState implements IAbstractEventTable
 		table.add(info);
 		labels.add(info.getEventLabel());
 			
-		for (FreeIdentifier identifier : info.getIdentifiers()) {
+		for (FreeIdentifier identifier : info.getVariables()) {
 			localVariables.add(identifier.getName());
 		}
 		
@@ -60,10 +67,8 @@ public class AbstractEventTable extends ToolState implements IAbstractEventTable
 		return localVariables.contains(name);
 	}
 	
-	public AbstractEventInfo[] getAbstractEventInfos() {
-		AbstractEventInfo[] abstractEventInfos = new AbstractEventInfo[table.size()];
-		table.toArray(abstractEventInfos);
-		return abstractEventInfos;
+	public List<AbstractEventInfo> getAbstractEventInfos() {
+		return table;
 	}
 
 }

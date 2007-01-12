@@ -8,6 +8,7 @@
 package org.eventb.internal.core.sc.modules;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -71,7 +72,7 @@ public class MachineEventInheritedModule extends FilterModule {
 			IEvent event,
 			IEventSymbolInfo eventSymbolInfo, 
 			IAbstractEventInfo abstractEventInfo, 
-			Formula[] formulas) throws RodinDBException {
+			List<? extends Formula> formulas) throws RodinDBException {
 		
 		boolean ok = true;
 		

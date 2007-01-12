@@ -378,7 +378,7 @@ public class MachineEventModule extends LabeledElementModule {
 
 	private void checkForLocalVariableTypeErrors(IEventSymbolInfo symbolInfo, HashSet<String> typeErrors, Hashtable<String, Type> types, IAbstractEventInfo abstractEventInfo) throws RodinDBException, CoreException {
 		if (types != null)
-			for (FreeIdentifier identifier : abstractEventInfo.getIdentifiers()) {
+			for (FreeIdentifier identifier : abstractEventInfo.getVariables()) {
 				String name = identifier.getName();
 				Type newType = identifier.getType();
 				Type type = types.put(name, newType);

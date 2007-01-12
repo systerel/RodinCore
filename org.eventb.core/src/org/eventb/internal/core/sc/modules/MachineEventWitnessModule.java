@@ -8,6 +8,7 @@
 package org.eventb.internal.core.sc.modules;
 
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -191,7 +192,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	private void getGlobalWitnessNames(
 			IAbstractEventInfo abstractEventInfo, 
 			HashSet<String> witnessNames) throws RodinDBException {
-		Assignment[] assignments = abstractEventInfo.getActions();
+		List<Assignment> assignments = abstractEventInfo.getActions();
 		
 		for (Assignment assignment : assignments) {
 			
@@ -224,7 +225,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		
 		for (IAbstractEventInfo abstractEventInfo : eventRefinesInfo.getAbstractEventInfos()) {
 			
-			FreeIdentifier[] identifiers = abstractEventInfo.getIdentifiers();
+			List<FreeIdentifier> identifiers = abstractEventInfo.getVariables();
 		
 			for (FreeIdentifier identifier : identifiers) {
 				// if a symbol with the same name is found it can only be

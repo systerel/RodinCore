@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.sc.state;
 
+import java.util.List;
+
 import org.eventb.core.EventBPlugin;
 
 /**
@@ -24,7 +26,7 @@ public interface IAbstractEventTable extends IState {
 	 * 
 	 * @return the array of all abstract event infos
 	 */
-	IAbstractEventInfo[] getAbstractEventInfos();
+	List<? extends IAbstractEventInfo> getAbstractEventInfos();
 	
 	/**
 	 * Returns the abstract event info for the specified label, or <code>null</code> if this

@@ -69,7 +69,7 @@ public interface IAbstractEventInfo extends IState, Comparable {
 	 * 
 	 * @return the array of typed free identifiers contained in this abstract event info
 	 */
-	FreeIdentifier[] getIdentifiers();
+	List<FreeIdentifier> getVariables();
 	
 	/**
 	 * Returns the array of parsed and type-checked predicates corresponding to the guards
@@ -78,7 +78,7 @@ public interface IAbstractEventInfo extends IState, Comparable {
 	 * @return the array of parsed and type-checked predicates corresponding to the guards
 	 * of the corresponding event
 	 */
-	Predicate[] getGuards();
+	List<Predicate> getGuards();
 	
 	/**
 	 * Returns the array of parsed and type-checked assignments corresponding to the actions
@@ -87,7 +87,7 @@ public interface IAbstractEventInfo extends IState, Comparable {
 	 * @return the array of parsed and type-checked assignments corresponding to the actions
 	 * of the corresponding event
 	 */
-	Assignment[] getActions();
+	List<Assignment> getActions();
 	
 	/**
 	 * Returns the event symbol info the event that implicitly refines the event corresponding

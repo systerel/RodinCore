@@ -77,7 +77,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 		if (eventRefinesInfo.currentEventIsRefined())
 			return;
 		IAbstractEventInfo abstractEventInfo = eventRefinesInfo.getAbstractEventInfos().get(0);
-		for (FreeIdentifier freeIdentifier : abstractEventInfo.getIdentifiers()) {
+		for (FreeIdentifier freeIdentifier : abstractEventInfo.getVariables()) {
 			String name = freeIdentifier.getName();
 			if (identifierSymbolTable.getSymbolInfoFromTop(name) != null)
 				continue;

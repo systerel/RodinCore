@@ -7,7 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,8 +31,11 @@ public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
 	@Override
 	public void makeImmutable() {
 		super.makeImmutable();
-		splitInfos = new ArrayList<IEventSymbolInfo>(splitInfos);
-		mergeInfos = new ArrayList<IEventSymbolInfo>(mergeInfos);
+		splitInfos = Collections.unmodifiableList(splitInfos);
+		mergeInfos = Collections.unmodifiableList(mergeInfos);
+		idents = Collections.unmodifiableList(idents);
+		guards = Collections.unmodifiableList(guards);
+		actions = Collections.unmodifiableList(actions);
 	}
 
 	private final String label;
@@ -41,9 +45,9 @@ public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
 	private List<IEventSymbolInfo> mergeInfos;
 	private Hashtable<String,FreeIdentifier> table;
 	private final ISCEvent event;
-	private final FreeIdentifier[] idents;
-	private final Predicate[] guards;
-	private final Assignment[] actions;
+	private List<FreeIdentifier> idents;
+	private List<Predicate> guards;
+	private List<Assignment> actions;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getEventLabel()
@@ -57,7 +61,7 @@ public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
 	 */
 	public FreeIdentifier getIdentifier(String name) {
 		if (table == null) {
-			table = new Hashtable<String,FreeIdentifier>(idents.length * 4 / 3 + 1);
+			table = new Hashtable<String,FreeIdentifier>(idents.size() * 4 / 3 + 1);
 			for (FreeIdentifier identifier : idents) {
 				table.put(identifier.getName(), identifier);
 			}
@@ -68,21 +72,21 @@ public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getIdentifiers()
 	 */
-	public FreeIdentifier[] getIdentifiers() {
+	public List<FreeIdentifier> getVariables() {
 		return idents;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getGuards()
 	 */
-	public Predicate[] getGuards() {
+	public List<Predicate> getGuards() {
 		return guards;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getActions()
 	 */
-	public Assignment[] getActions() {
+	public List<Assignment> getActions() {
 		return actions;
 	}
 
@@ -94,9 +98,9 @@ public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
 			Assignment[] actions) {
 		this.event = event;
 		this.label = label;
-		this.idents = idents;
-		this.guards = guards;
-		this.actions = actions;
+		this.idents = Arrays.asList(idents);
+		this.guards = Arrays.asList(guards);
+		this.actions = Arrays.asList(actions);
 		refineError = false;
 		implicitRefinedInfo = null;
 		splitInfos = new LinkedList<IEventSymbolInfo>();
@@ -150,11 +154,11 @@ public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
 	}
 
 	public List<IEventSymbolInfo> getMergeSymbolInfos() {
-		return new ArrayList<IEventSymbolInfo>(mergeInfos);
+		return mergeInfos;
 	}
 
 	public List<IEventSymbolInfo> getSplitSymbolInfos() {
-		return new ArrayList<IEventSymbolInfo>(splitInfos);
+		return splitInfos;
 	}
 
 	public void setImplicit(IEventSymbolInfo eventSymbolInfo) throws CoreException {
