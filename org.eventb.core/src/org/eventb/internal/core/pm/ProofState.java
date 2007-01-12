@@ -89,7 +89,8 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#loadProofTree(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void loadProofTree(final IProgressMonitor monitor) throws RodinDBException {
+	public void loadProofTree(final IProgressMonitor monitor)
+			throws RodinDBException {
 		userSupport.startInformation();
 
 		EventBPlugin.getDefault().getUserSupportManager().run(new Runnable() {
@@ -97,7 +98,7 @@ public class ProofState implements IProofState {
 			public void run() {
 				if (pt != null)
 					pt.removeChangeListener(ProofState.this);
-				
+
 				IPSWrapper psWrapper = userSupport.getPSWrapper();
 
 				// Construct the proof tree from the PO file.
@@ -112,8 +113,7 @@ public class ProofState implements IProofState {
 				// Get the proof skeleton and rebuild the tree
 				IProofSkeleton proofSkeleton;
 				try {
-					proofSkeleton = psWrapper.getProofSkeleton(status,
-							monitor);
+					proofSkeleton = psWrapper.getProofSkeleton(status, monitor);
 					if (proofSkeleton != null) {
 						ProofBuilder.rebuild(pt.getRoot(), proofSkeleton);
 					}
@@ -123,13 +123,14 @@ public class ProofState implements IProofState {
 				}
 
 				pt.addChangeListener(ProofState.this);
-				
+
 				ProofState.this.newProofTree();
 
-				// Current node is the next pending subgoal or the root of the proof
+				// Current node is the next pending subgoal or the root of the
+				// proof
 				// tree if there are no pending subgoal.
 				IProofTreeNode node = getNextPendingSubgoal();
-				
+
 				if (node == null) {
 					node = pt.getRoot();
 				}
@@ -140,7 +141,8 @@ public class ProofState implements IProofState {
 					e.printStackTrace();
 				}
 
-				// if the proof tree was previously broken then the rebuild would
+				// if the proof tree was previously broken then the rebuild
+				// would
 				// fix the proof, making it dirty.
 				try {
 					ProofState.this.setDirty(status.isBroken());
@@ -148,13 +150,13 @@ public class ProofState implements IProofState {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 				ProofState.this.setCached(new HashSet<Predicate>());
 				ProofState.this.setSearched(new HashSet<Predicate>());
 				userSupport.addInformation("Proof Tree is reloaded");
 				deltaProcessor.informationChanged(userSupport);
 			}
-			
+
 		});
 	}
 
@@ -258,7 +260,7 @@ public class ProofState implements IProofState {
 		cached.addAll(hyps);
 		deltaProcessor.cacheChanged(userSupport, this);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -268,7 +270,7 @@ public class ProofState implements IProofState {
 		this.cached = cached;
 		deltaProcessor.cacheChanged(userSupport, this);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -462,13 +464,14 @@ public class ProofState implements IProofState {
 	}
 
 	public void applyTactic(final ITactic t, final IProofTreeNode node,
-			final IProofMonitor pm) throws RodinDBException {
+			final IProgressMonitor monitor) throws RodinDBException {
 		userSupport.startInformation();
 		UserSupportManager.getDefault().run(new Runnable() {
 
 			public void run() {
-				internalApplyTactic(t, node, pm);
-				selectNextPendingSubGoal(node);
+				if (internalApplyTactic(t, node, new ProofMonitor(monitor))) {
+					selectNextPendingSubGoal(node);					
+				}
 			}
 
 		});
@@ -483,8 +486,9 @@ public class ProofState implements IProofState {
 
 			public void run() {
 				ProofState.this.addAllToCached(hyps);
-				internalApplyTactic(t, node, new ProofMonitor(monitor));
-				selectNextPendingSubGoal(node);
+				if (internalApplyTactic(t, node, new ProofMonitor(monitor))) {
+					selectNextPendingSubGoal(node);
+				}
 			}
 
 		});
@@ -503,24 +507,29 @@ public class ProofState implements IProofState {
 		}
 	}
 
-	protected void internalApplyTactic(ITactic t, IProofTreeNode node,
+	protected boolean internalApplyTactic(ITactic t, IProofTreeNode node,
 			IProofMonitor pm) {
 		Object info = t.apply(node, pm);
-		if (!t.equals(Tactics.prune())) {
-			IUserSupportManager usManager = EventBPlugin.getDefault()
-					.getUserSupportManager();
-			if (usManager.getProvingMode().isExpertMode()) {
-				Tactics.postProcessExpert().apply(node, pm);
-			} else {
-				Tactics.postProcessBeginner().apply(node, pm);
-			}
-		}
 		if (info == null) {
 			info = "Tactic applied successfully";
 			this.setDirty(true);
+			if (!t.equals(Tactics.prune())) {
+				IUserSupportManager usManager = EventBPlugin.getDefault()
+						.getUserSupportManager();
+				if (usManager.getProvingMode().isExpertMode()) {
+					Tactics.postProcessExpert().apply(node, pm);
+				} else {
+					Tactics.postProcessBeginner().apply(node, pm);
+				}
+			}
+			userSupport.addInformation(info);
+			deltaProcessor.informationChanged(userSupport);
+			return true;
+		} else {
+			userSupport.addInformation(info);
+			deltaProcessor.informationChanged(userSupport);
+			return false;
 		}
-		userSupport.addInformation(info);
-		deltaProcessor.informationChanged(userSupport);
 	}
 
 	/*
@@ -545,8 +554,7 @@ public class ProofState implements IProofState {
 
 				public void run() {
 					try {
-						applyTactic(Tactics.prune(), parent, new ProofMonitor(
-								monitor));
+						applyTactic(Tactics.prune(), parent, monitor);
 					} catch (RodinDBException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -565,7 +573,7 @@ public class ProofState implements IProofState {
 			public void run() {
 				// This should generate a Proof Tree Delta
 				node.setComment(text);
-				
+
 				ProofState.this.setDirty(true);
 			}
 

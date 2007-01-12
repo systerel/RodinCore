@@ -67,7 +67,7 @@ public interface IProofState extends IProofTreeChangedListener {
 	public abstract void unloadProofTree();
 
 	public abstract void applyTactic(ITactic t, IProofTreeNode node,
-			IProofMonitor monitor) throws RodinDBException;
+			IProgressMonitor monitor) throws RodinDBException;
 
 	public abstract void applyTacticToHypotheses(ITactic t,
 			IProofTreeNode node, Set<Predicate> hyps, IProgressMonitor monitor)

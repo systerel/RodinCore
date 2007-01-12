@@ -22,7 +22,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.internal.core.PSWrapper;
-import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IParent;
@@ -411,7 +410,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	public void applyTactic(final ITactic t, final IProgressMonitor monitor)
 			throws RodinDBException {
 		IProofTreeNode node = currentPS.getCurrentNode();
-		currentPS.applyTactic(t, node, new ProofMonitor(monitor));
+		currentPS.applyTactic(t, node, monitor);
 	}
 
 	/*
