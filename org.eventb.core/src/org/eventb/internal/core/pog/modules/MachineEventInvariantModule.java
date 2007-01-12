@@ -8,6 +8,7 @@
 package org.eventb.internal.core.pog.modules;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -52,14 +53,15 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 	private void processInvariants(
 			IPOFile target, 
 			IProgressMonitor monitor) throws CoreException {
-		ISCInvariant[] invariants = invariantTable.getElements();
-		Predicate[] invPredicates = invariantTable.getPredicates();
+		List<ISCInvariant> invariants = invariantTable.getElements();
+		List<Predicate> invPredicates = invariantTable.getPredicates();
 		
-		for (int i=0; i<invariants.length; i++) {
+		for (int i=0; i<invariants.size(); i++) {
 			
-			String invariantLabel = invariants[i].getLabel();
+			ISCInvariant invariant = invariants.get(i);
+			String invariantLabel = invariant.getLabel();
 			
-			Predicate predicate = invPredicates[i];
+			Predicate predicate = invPredicates.get(i);
 			
 			if (goalIsTrivial(predicate)) {
 				if (DEBUG_TRIVIAL)
@@ -81,7 +83,7 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 				
 				createInvariantProofObligation(
 						target, 
-						invariants[i], 
+						invariant, 
 						invariantLabel, 
 						predicate, 
 						freeIdents,

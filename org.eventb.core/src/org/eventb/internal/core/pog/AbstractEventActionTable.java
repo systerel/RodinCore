@@ -33,11 +33,13 @@ public class AbstractEventActionTable extends EventActionTable implements
 	public void makeImmutable() {
 		super.makeImmutable();
 		disappearingWitnesses = Collections.unmodifiableList(disappearingWitnesses);
+		simAssignments = Collections.unmodifiableList(simAssignments);
+		simActions = Collections.unmodifiableList(simActions);
 	}
 
 	private List<BecomesEqualTo> disappearingWitnesses;
-	private Assignment[] simAssignments;
-	private ISCAction[] simActions;
+	private List<Assignment> simAssignments;
+	private List<ISCAction> simActions;
 	
 	private final Correspondence<Assignment> correspondence;
 
@@ -52,22 +54,20 @@ public class AbstractEventActionTable extends EventActionTable implements
 		correspondence = new Correspondence<Assignment>(concreteTable.getAssignments(), assignments);
 		
 		disappearingWitnesses = new ArrayList<BecomesEqualTo>(abstractActions.length);
-		ArrayList<Assignment> simAsn = new ArrayList<Assignment>(abstractActions.length);
-		ArrayList<ISCAction> simAct = new ArrayList<ISCAction>(abstractActions.length);
+		simAssignments = new ArrayList<Assignment>(abstractActions.length);
+		simActions = new ArrayList<ISCAction>(abstractActions.length);
 		
-		for (int i=0; i<assignments.length; i++) {
-			Assignment assignment = assignments[i];
+		for (int i=0; i<assignments.size(); i++) {
+			Assignment assignment = assignments.get(i);
 			if (isDisappearing(assignment, variables) 
 					&& assignment instanceof BecomesEqualTo) {
 				disappearingWitnesses.add((BecomesEqualTo) assignment);
 			} else {
-				simAsn.add(assignment);
-				simAct.add(abstractActions[i]);
+				simAssignments.add(assignment);
+				simActions.add(abstractActions[i]);
 			}
 					
 		}
-		simAssignments = simAsn.toArray(new Assignment[simAsn.size()]);
-		simActions = simAct.toArray(new ISCAction[simAct.size()]);
 
 	}
 	
@@ -91,12 +91,12 @@ public class AbstractEventActionTable extends EventActionTable implements
 		return disappearingWitnesses;
 	}
 
-	public Assignment[] getSimAssignments() {
-		return simAssignments.clone();
+	public List<Assignment> getSimAssignments() {
+		return simAssignments;
 	}
 
-	public ISCAction[] getSimActions() {
-		return simActions.clone();
+	public List<ISCAction> getSimActions() {
+		return simActions;
 	}
 
 	public int getIndexOfCorrespondingAbstract(int index) {

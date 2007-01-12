@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import java.util.List;
+
 import org.eventb.core.pog.state.ICorrespondence;
 
 /**
@@ -32,23 +34,15 @@ public class Correspondence<C extends Object> implements ICorrespondence {
 		return indexOfConcrete[index];
 	}
 	
-	private int indexOf(C[] array, C object) {
-		for (int i=0; i<array.length; i++) {
-			if (array[i].equals(object))
-				return i;
-		}
-		return -1;
-	}
-
-	public Correspondence(C[] conFormulas, C[] absFormulas) {
-		indexOfConcrete = new int[absFormulas.length];
-		indexOfAbstract = new int[conFormulas.length];
+	public Correspondence(List<C> conFormulas, List<C> absFormulas) {
+		indexOfConcrete = new int[absFormulas.size()];
+		indexOfAbstract = new int[conFormulas.size()];
 		
-		for (int k=0; k<conFormulas.length; k++)
-			indexOfAbstract[k] = indexOf(absFormulas, conFormulas[k]);
+		for (int k=0; k<conFormulas.size(); k++)
+			indexOfAbstract[k] = absFormulas.indexOf(conFormulas.get(k));
 		
-		for (int k=0; k<absFormulas.length; k++)
-			indexOfConcrete[k] = indexOf(conFormulas, absFormulas[k]);
+		for (int k=0; k<absFormulas.size(); k++)
+			indexOfConcrete[k] = conFormulas.indexOf(absFormulas.get(k));
 	}
 
 }

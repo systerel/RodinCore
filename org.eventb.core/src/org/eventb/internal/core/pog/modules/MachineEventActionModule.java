@@ -45,9 +45,9 @@ public class MachineEventActionModule extends MachineEventRefinementModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		ISCAction[] actions = concreteEventActionTable.getActions();
+		List<ISCAction> actions = concreteEventActionTable.getActions();
 		
-		if (actions.length == 0)
+		if (actions.size() == 0)
 			return;
 		
 		IPOFile target = repository.getTarget();
@@ -57,11 +57,11 @@ public class MachineEventActionModule extends MachineEventRefinementModule {
 						eventHypothesisManager.getRootHypothesis(), 
 						eventHypothesisManager.getFullHypothesis()));
 		
-		Assignment[] assignments = concreteEventActionTable.getAssignments();
+		List<Assignment> assignments = concreteEventActionTable.getAssignments();
 		
-		for (int k=0; k<actions.length; k++) {
-			ISCAction action = actions[k];
-			Assignment assignment = assignments[k];
+		for (int k=0; k<actions.size(); k++) {
+			ISCAction action = actions.get(k);
+			Assignment assignment = assignments.get(k);
 			
 			POGSource[] sources = sources(new POGSource(IPOSource.DEFAULT_ROLE, action));
 			
@@ -115,7 +115,7 @@ public class MachineEventActionModule extends MachineEventRefinementModule {
 		
 		List<FreeIdentifier> witnessIdents = witnessTable.getVariables();
 		List<Predicate> witnessPreds = witnessTable.getPredicates();
-		ISCWitness[] witnesses = witnessTable.getWitnesses();
+		List<ISCWitness> witnesses = witnessTable.getWitnesses();
 		
 		for (int i=0; i<witnessIdents.size(); i++) {
 			Predicate predicate = witnessPreds.get(i);
@@ -127,7 +127,7 @@ public class MachineEventActionModule extends MachineEventRefinementModule {
 				}
 			}
 			if ( !witnessTable.isDeterministic(i))
-				hyp.add(new POGPredicate(predicate, witnesses[i]));
+				hyp.add(new POGPredicate(predicate, witnesses.get(i)));
 		}
 		return true;
 	}

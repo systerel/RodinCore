@@ -8,6 +8,7 @@
 package org.eventb.internal.core.pog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,8 +31,8 @@ import org.eventb.internal.core.tool.state.ToolState;
  */
 public abstract class EventActionTable extends ToolState implements IEventActionTable {
 	
-	protected final ISCAction[] actions;
-	protected final Assignment[] assignments;
+	protected List<ISCAction> actions;
+	protected List<Assignment> assignments;
 	
 	protected List<ISCAction> detActions;
 	protected List<BecomesEqualTo> detAssn;
@@ -53,12 +54,12 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 			new ArrayList<Predicate>(actions.length);
 		assignedVars = 
 			new HashSet<FreeIdentifier>(actions.length * 15);
-		assignments = new Assignment[actions.length];		
+		assignments = new ArrayList<Assignment>(actions.length);		
 		detAssn = 
 			new ArrayList<BecomesEqualTo>(actions.length);
 		primedDetAssn =
 			new ArrayList<BecomesEqualTo>(actions.length);
-		this.actions = actions;
+		this.actions = Arrays.asList(actions);
 		nondetActions = new ArrayList<ISCAction>(actions.length);
 		detActions = new ArrayList<ISCAction>(actions.length);
 		
@@ -67,7 +68,7 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 			ISCAction action = actions[i];
 			Assignment assignment = action.getAssignment(factory, typeEnvironment);
 			
-			assignments[i] = assignment;
+			assignments.add(assignment);
 			
 			fetchAssignedIdentifiers(assignedVars, assignment);
 			
@@ -87,6 +88,8 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 	public void makeImmutable() {
 		super.makeImmutable();
 		
+		actions = Collections.unmodifiableList(actions);
+		assignments = Collections.unmodifiableList(assignments);
 		assignedVars = Collections.unmodifiableCollection(assignedVars);
 		detAssn =  Collections.unmodifiableList(detAssn);
 		nondetAssn = Collections.unmodifiableList(nondetAssn);
@@ -104,8 +107,8 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 		return assignedVars.contains(variable);
 	}
 
-	public Assignment[] getAssignments() {
-		return assignments.clone();
+	public List<Assignment> getAssignments() {
+		return assignments;
 	}
 
 	public List<BecomesEqualTo> getDetAssignments() {
@@ -150,8 +153,8 @@ public abstract class EventActionTable extends ToolState implements IEventAction
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IEventActionTable#getActions()
 	 */
-	public ISCAction[] getActions() {
-		return actions.clone();
+	public List<ISCAction> getActions() {
+		return actions;
 	}
 	
 	public List<ISCAction> getNondetActions() {

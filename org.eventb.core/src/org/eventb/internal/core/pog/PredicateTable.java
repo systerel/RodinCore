@@ -7,6 +7,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -22,41 +26,37 @@ import org.rodinp.core.RodinDBException;
 public abstract class PredicateTable<PE extends ISCPredicateElement> 
 extends ToolState implements IPredicateTable<PE> {
 
-	protected final PE[] predicateElements;
-	protected final Predicate[] predicates;
+	protected final List<PE> predicateElements;
+	protected final List<Predicate> predicates;
 
 	public PredicateTable(
 			PE[] elements, 
 			ITypeEnvironment typeEnvironment, 
 			FormulaFactory factory) throws RodinDBException {
-		predicateElements = elements;
-		predicates = new Predicate[elements.length];
+		predicateElements = Arrays.asList(elements);
+		predicates = new ArrayList<Predicate>(elements.length);
 		
-		for (int i=0; i<elements.length; i++) {
-			predicates[i] = elements[i].getPredicate(factory, typeEnvironment);
+		for (PE element : elements) {
+			predicates.add(element.getPredicate(factory, typeEnvironment));
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IPredicateTable#getElements()
 	 */
-	public PE[] getElements() {
-		return predicateElements.clone();
+	public List<PE> getElements() {
+		return predicateElements;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IPredicateTable#getPredicates()
 	 */
-	public Predicate[] getPredicates() {
-		return predicates.clone();
+	public List<Predicate> getPredicates() {
+		return predicates;
 	}
 
 	public int indexOfPredicate(Predicate predicate) {
-		for (int i=0; i<predicates.length; i++) {
-			if (predicates[i].equals(predicate))
-				return i;
-		}
-		return -1;
+		return predicates.indexOf(predicate);
 	}
 	
 }

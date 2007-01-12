@@ -28,19 +28,23 @@ public interface IConcreteEventActionTable extends IEventActionTable {
 
 	/**
 	 * Returns a substitution to rename all variables not in the frame of the actions
-	 * of the event from primed to unprimed.
+	 * of the event from primed to unprimed, or <code>null</code> if there are no variables to
+	 * be renamed.
 	 * 
 	 * @return a substitution to rename all variables not in the frame of the actions
-	 * of the event from primed to unprimed
+	 * of the event from primed to unprimed, or <code>null</code> if there are no variables to
+	 * be renamed
 	 */
 	BecomesEqualTo getXiUnprime();
 	
 	/**
 	 * Returns a substitution to rename all variables in the frame of the actions
-	 * of the event from unprimed to primed.
+	 * of the event from unprimed to primed, or <code>null</code> if there are no variables to
+	 * be renamed.
 	 * 
 	 * @return a substitution to rename all variables in the frame of the actions
-	 * of the event from unprimed to primed
+	 * of the event from unprimed to primed, or <code>null</code> if there are no variables to
+	 * be renamed
 	 */
 	BecomesEqualTo getDeltaPrime();
 

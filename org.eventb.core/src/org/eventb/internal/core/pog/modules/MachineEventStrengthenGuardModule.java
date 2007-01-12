@@ -74,28 +74,28 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 			IPOFile target, 
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		IAbstractEventGuardTable[] absGuardTables = 
+		List<IAbstractEventGuardTable> absGuardTables = 
 			abstractEventGuardList.getAbstractEventGuardTables();
 		
 		String sequentName = concreteEventLabel + "/MRG";
 		
 		List<Predicate> disjPredList = 
-			new ArrayList<Predicate>(absGuardTables.length);
+			new ArrayList<Predicate>(absGuardTables.size());
 		
 		for (IAbstractEventGuardTable absGuardTable : absGuardTables) {
 			
-			Predicate[] absGuards = absGuardTable.getPredicates();
+			List<Predicate> absGuards = absGuardTable.getPredicates();
 			
-			if (absGuards.length == 0) {
+			if (absGuards.size() == 0) {
 				if (DEBUG_TRIVIAL)
 					debugTraceTrivial(sequentName);
 				return;
 			}
 			
-			List<Predicate> conjPredList = new ArrayList<Predicate>(absGuards.length);
+			List<Predicate> conjPredList = new ArrayList<Predicate>(absGuards.size());
 			
-			for (int i=0; i<absGuards.length; i++) {
-				Predicate absGuard = absGuards[i];
+			for (int i=0; i<absGuards.size(); i++) {
+				Predicate absGuard = absGuards.get(i);
 				boolean absGuardIsNew = 
 					absGuardTable.getIndexOfCorrespondingConcrete(i) == -1;
 				
@@ -131,9 +131,9 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 		disjPredicate = disjPredicate.applyAssignments(substitution, factory);
 		
-		ISCEvent[] absEvents = abstractEventGuardList.getAbstractEvents();
+		List<ISCEvent> absEvents = abstractEventGuardList.getAbstractEvents();
 		
-		List<POGSource> sourceList = new ArrayList<POGSource>(absEvents.length + 1);
+		List<POGSource> sourceList = new ArrayList<POGSource>(absEvents.size() + 1);
 		for (ISCEvent absEvent : absEvents)
 			sourceList.add(new POGSource(IPOSource.ABSTRACT_ROLE, absEvent));
 		sourceList.add(new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent));
@@ -165,12 +165,13 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 			IAbstractEventGuardTable abstractEventGuardTable,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		ISCGuard[] absGuardElements = abstractEventGuardTable.getElements();
-		Predicate[] absGuardPredicates = abstractEventGuardTable.getPredicates();
+		List<ISCGuard> absGuardElements = abstractEventGuardTable.getElements();
+		List<Predicate> absGuardPredicates = abstractEventGuardTable.getPredicates();
 		
-		for (int i=0; i<absGuardElements.length; i++) {
-			String guardLabel = absGuardElements[i].getLabel();
-			Predicate absGuard = absGuardPredicates[i];
+		for (int i=0; i<absGuardElements.size(); i++) {
+			ISCGuard absGuardElement = absGuardElements.get(i);
+			String guardLabel = absGuardElement.getLabel();
+			Predicate absGuard = absGuardPredicates.get(i);
 			String sequentName = concreteEventLabel + "/" + guardLabel + "/GRD";
 			
 			if (goalIsTrivial(absGuard) 
@@ -199,10 +200,10 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 					"Guard strengthening (split)",
 					fullHypothesis,
 					hyp,
-					new POGTraceablePredicate(absGuard, absGuardElements[i]),
+					new POGTraceablePredicate(absGuard, absGuardElement),
 					sources(
 							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
-							new POGSource(IPOSource.ABSTRACT_ROLE, absGuardElements[i]),
+							new POGSource(IPOSource.ABSTRACT_ROLE, absGuardElement),
 							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
 					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);

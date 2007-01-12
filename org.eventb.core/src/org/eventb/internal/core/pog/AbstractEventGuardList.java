@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eventb.core.ISCEvent;
@@ -20,11 +21,11 @@ import org.eventb.internal.core.tool.state.ToolState;
  */
 public class AbstractEventGuardList extends ToolState implements IAbstractEventGuardList {
 
-	private final IAbstractEventGuardTable[] abstractEventGuardTables;
+	private List<IAbstractEventGuardTable> abstractEventGuardTables;
 	
 	private final int refinementType;
 	
-	private final ISCEvent[] abstractEvents;
+	private List<ISCEvent> abstractEvents;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.state.IState#getStateType()
@@ -39,10 +40,9 @@ public class AbstractEventGuardList extends ToolState implements IAbstractEventG
 		
 		assert abstractEvents.length == abstractEventGuardTables.size();
 		
-		this.abstractEvents = abstractEvents;
+		this.abstractEvents = Arrays.asList(abstractEvents);
 		
-		this.abstractEventGuardTables = abstractEventGuardTables.toArray(
-				new IAbstractEventGuardTable[abstractEventGuardTables.size()]);
+		this.abstractEventGuardTables = abstractEventGuardTables;
 		
 		if (abstractEventGuardTables.size() == 0)
 			refinementType = INTRO;
@@ -52,30 +52,30 @@ public class AbstractEventGuardList extends ToolState implements IAbstractEventG
 			refinementType = MERGE;
 	}
 
-	public IAbstractEventGuardTable[] getAbstractEventGuardTables() {
-		return abstractEventGuardTables.clone();
+	public List<IAbstractEventGuardTable> getAbstractEventGuardTables() {
+		return abstractEventGuardTables;
 	}
 
 	public int getRefinementType() {
 		return refinementType;
 	}
 	
-	public ISCEvent[] getAbstractEvents() {
-		return abstractEvents.clone();
+	public List<ISCEvent> getAbstractEvents() {
+		return abstractEvents;
 	}
 
 	public ISCEvent getFirstAbstractEvent() {
-		if (abstractEvents.length == 0)
+		if (abstractEvents.size() == 0)
 			return null;
 		
-		return abstractEvents[0];
+		return abstractEvents.get(0);
 	}
 
 	public IAbstractEventGuardTable getFirstAbstractEventGuardTable() {
-		if (abstractEventGuardTables.length == 0)
+		if (abstractEventGuardTables.size() == 0)
 			return null;
 		
-		return abstractEventGuardTables[0];
+		return abstractEventGuardTables.get(0);
 	}
 
 }

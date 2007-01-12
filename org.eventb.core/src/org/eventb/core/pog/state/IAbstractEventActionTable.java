@@ -50,7 +50,7 @@ public interface IAbstractEventActionTable extends IEventActionTable, ICorrespon
 	 * 
 	 * @see IAbstractEventActionTable#getSimAssignments()
 	 */
-	ISCAction[] getSimActions();
+	List<ISCAction> getSimActions();
 	
 	/**
 	 * Returns the array of abstract (non-deterministic) assignments
@@ -62,6 +62,6 @@ public interface IAbstractEventActionTable extends IEventActionTable, ICorrespon
 	 * 
 	 * @return array of abstract assignments that need to be simluated
 	 */
-	Assignment[] getSimAssignments();
+	List<Assignment> getSimAssignments();
 	
 }

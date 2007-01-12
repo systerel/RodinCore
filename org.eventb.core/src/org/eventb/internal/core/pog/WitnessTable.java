@@ -33,7 +33,7 @@ import org.eventb.internal.core.tool.state.ToolState;
  */
 public class WitnessTable extends ToolState implements IWitnessTable {
 
-	private final ISCWitness[] witnesses;
+	private List<ISCWitness> witnesses;
 	private final boolean[] deterministic;
 	private List<FreeIdentifier> witnessedVars;
 	private List<Predicate> witnessPredicates;
@@ -55,7 +55,7 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 			ITypeEnvironment typeEnvironment, 
 			FormulaFactory factory, 
 			IProgressMonitor monitor) throws CoreException {
-		this.witnesses = witnesses;
+		this.witnesses = Arrays.asList(witnesses);
 		this.deterministic = new boolean[witnesses.length];
 		machineDetWitnesses = new ArrayList<ISCWitness>(witnesses.length);
 		machineDetermist = new ArrayList<BecomesEqualTo>(witnesses.length);
@@ -101,6 +101,7 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 	public void makeImmutable() {
 		super.makeImmutable();
 		
+		witnesses = Collections.unmodifiableList(witnesses);
 		machineDetWitnesses = Collections.unmodifiableList(machineDetWitnesses);
 		machineDetermist = Collections.unmodifiableList(machineDetermist);
 		machinePrimedDetermist = Collections.unmodifiableList(machinePrimedDetermist);
@@ -164,8 +165,8 @@ public class WitnessTable extends ToolState implements IWitnessTable {
 		return primeSubstitution;
 	}
 
-	public ISCWitness[] getWitnesses() {
-		return witnesses.clone();
+	public List<ISCWitness> getWitnesses() {
+		return witnesses;
 	}
 
 	public List<ISCWitness> getMachineDetWitnesses() {

@@ -96,14 +96,4 @@ public interface IHypothesisManager extends IState, Iterable<FreeIdentifier> {
 	 */
 	IPOPredicateSet getRootHypothesis();
 	
-	/**
-	 * Returns the list of managed predicates in the order corresponding to the input file.
-	 * These are not guaranteed to be of the same database type, e.g.,
-	 * the list may contain axioms and theorems. If theorems are contained in the this list,
-	 * they must be at the tail of the list.
-	 * 
-	 * @return the list of managed predicates
-	 */
-	ISCPredicateElement[] getManagedPredicates();
-	
 }

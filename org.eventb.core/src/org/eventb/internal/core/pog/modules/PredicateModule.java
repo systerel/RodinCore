@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
@@ -66,20 +68,20 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		PE[] elements = predicateTable.getElements();
+		List<PE> elements = predicateTable.getElements();
 		
-		if(elements.length == 0)
+		if(elements.size() == 0)
 			return;
 		
 		IPOFile target = repository.getTarget();
 		
-		Predicate[] predicates = predicateTable.getPredicates();
+		List<Predicate> predicates = predicateTable.getPredicates();
 		
-		for (int i=0; i<elements.length; i++) {
-			PE predicateElement = elements[i];
+		for (int i=0; i<elements.size(); i++) {
+			PE predicateElement = elements.get(i);
 			String elementLabel = ((ILabeledElement) predicateElement).getLabel();
 			
-			Predicate predicate = predicates[i];
+			Predicate predicate = predicates.get(i);
 			
 			createWDProofObligation(target, elementLabel, predicateElement, predicate, i, monitor);
 			

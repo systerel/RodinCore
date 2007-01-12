@@ -40,7 +40,7 @@ public interface IWitnessTable extends IState {
 	 * 
 	 * @return the array of witnesses
 	 */
-	ISCWitness[] getWitnesses();
+	List<ISCWitness> getWitnesses();
 
 	/**
 	 * Returns the array of witnessed variables. Machine variable witnesses are primed.

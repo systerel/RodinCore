@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -91,7 +93,7 @@ public class MachineEventGuardModule extends PredicateModule<ISCGuard> {
 	
 	private boolean isRedundantWDProofObligation(Predicate predicate, int index) {
 		
-		IAbstractEventGuardTable[] abstractEventGuardTables = 
+		List<IAbstractEventGuardTable> abstractEventGuardTables = 
 			abstractEventGuardList.getAbstractEventGuardTables();
 		
 		for (IAbstractEventGuardTable abstractEventGuardTable : abstractEventGuardTables) {

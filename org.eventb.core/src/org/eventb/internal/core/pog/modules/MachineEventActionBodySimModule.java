@@ -9,6 +9,7 @@ package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -60,12 +61,14 @@ public class MachineEventActionBodySimModule extends
 			ISCEvent abstractEvent, 
 			IProgressMonitor monitor) throws RodinDBException {
 
-		Assignment[] simAssignments = abstractEventActionTable.getSimAssignments();
-		ISCAction[] simActions = abstractEventActionTable.getSimActions();
+		List<Assignment> simAssignments = 
+			abstractEventActionTable.getSimAssignments();
+		List<ISCAction> simActions = abstractEventActionTable.getSimActions();
 		
-		for (int i=0; i<simActions.length; i++) {
-			String actionLabel = simActions[i].getLabel();
-			Assignment simAssignment = simAssignments[i];
+		for (int i=0; i<simActions.size(); i++) {
+			ISCAction action = simActions.get(i);
+			String actionLabel = action.getLabel();
+			Assignment simAssignment = simAssignments.get(i);
 			
 			if (abstractEventActionTable.getIndexOfCorrespondingConcrete(i) != -1)
 				continue;
@@ -102,10 +105,10 @@ public class MachineEventActionBodySimModule extends
 					"Action simulation",
 					fullHypothesis,
 					hyp,
-					new POGTraceablePredicate(simPredicate, simActions[i]),
+					new POGTraceablePredicate(simPredicate, action),
 					sources(
 							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
-							new POGSource(IPOSource.ABSTRACT_ROLE, simActions[i]),
+							new POGSource(IPOSource.ABSTRACT_ROLE, action),
 							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
 					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);
