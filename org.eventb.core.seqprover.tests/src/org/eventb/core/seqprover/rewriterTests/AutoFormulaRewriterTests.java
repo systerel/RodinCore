@@ -613,6 +613,11 @@ public class AutoFormulaRewriterTests extends TestCase {
 								fFalse, null),
 				ff.makeSetExtension(fTrue, null), Predicate.EQUAL, ff
 						.makeSetExtension(fFalse, null));
+		
+		// S \ {} == S
+		assertBinaryExpression("S ∖ ∅ == S", S, S, Expression.SETMINUS, Lib.emptySet);
+		assertBinaryExpression("T ∖ ∅ == T", T, T, Expression.SETMINUS, Lib.emptySet);
+		assertBinaryExpression("R ∖ ∅ == R", R, R, Expression.SETMINUS, Lib.emptySet);
 	}
 
 	public void testArithmetic() {
@@ -620,6 +625,12 @@ public class AutoFormulaRewriterTests extends TestCase {
 		Expression number1 = ff.makeIntegerLiteral(new BigInteger("1"), null);
 		Expression number2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
 		Expression number3 = ff.makeIntegerLiteral(new BigInteger("3"), null);
+		Expression numberMinus1 = ff.makeUnaryExpression(Expression.UNMINUS,
+				number1, null);
+		Expression numberMinus2 = ff.makeUnaryExpression(Expression.UNMINUS,
+				number2, null);
+		Expression numberMinus3 = ff.makeUnaryExpression(Expression.UNMINUS,
+				number3, null);
 
 		// E + ... + 0 + ... + F == E + ... + ... + F
 		Expression sum11 = ff.makeAssociativeExpression(Expression.PLUS,
@@ -652,35 +663,12 @@ public class AutoFormulaRewriterTests extends TestCase {
 				Expression.MINUS, number0);
 
 		// 0 - E == -E
-		assertBinaryExpression("0 − E == −E", ff.makeUnaryExpression(
-				Expression.UNMINUS, number1, null), number0, Expression.MINUS,
-				number1);
+		assertBinaryExpression("0 − E == −E", numberMinus1, number0,
+				Expression.MINUS, number1);
 
 		// --E == E
-		assertUnaryExpression("−(−E) = E", number1, Expression.UNMINUS, ff
-				.makeUnaryExpression(Expression.UNMINUS, number1, null));
-
-		// E * ... * 0 * ... * F == 0
-		assertAssociativeExpression("0 * 0 == 0", number0, Expression.MUL,
-				number0, number0);
-		assertAssociativeExpression("0 * 1 == 0", number0, Expression.MUL,
-				number0, number1);
-		assertAssociativeExpression("1 * 0 == 0", number0, Expression.MUL,
-				number1, number0);
-		assertAssociativeExpression("1 * 0 * 1 == 0", number0,
-				Expression.MUL, number1, number0, number1);
-		assertAssociativeExpression("0 * 1 * 2 == 0", number0,
-				Expression.MUL, number0, number1, number2);
-		assertAssociativeExpression("1 * 0 * 2 == 0", number0,
-				Expression.MUL, number1, number0, number2);
-		assertAssociativeExpression("1 * 2 * 0== 0", number0,
-				Expression.MUL, number1, number2, number0);
-		assertAssociativeExpression("1 * 0 * 2 * 0 == 0", number0,
-				Expression.MUL, number1, number0, number2, number0);
-		assertAssociativeExpression("0 * 1 * 2 * 0 == 0", number0,
-				Expression.MUL, number0, number1, number2, number0);
-		assertAssociativeExpression("0 * 1 * 0 * 2 == 0", number0,
-				Expression.MUL, number0, number1, number0, number2);
+		assertUnaryExpression("−(−E) = E", number1, Expression.UNMINUS,
+				numberMinus1);
 
 		// E * ... * 1 * ... * F == E * ... * ... * F
 		Expression prod23 = ff.makeAssociativeExpression(Expression.MUL,
@@ -705,5 +693,66 @@ public class AutoFormulaRewriterTests extends TestCase {
 				Expression.MUL, number1, number2, number3, number1);
 		assertAssociativeExpression("1 * 2 * 1 * 3 == 2 * 3", prod23,
 				Expression.MUL, number1, number2, number1, number3);
+
+		// E * ... * 0 * ... * F == 0
+		assertAssociativeExpression("0 * 0 == 0", number0, Expression.MUL,
+				number0, number0);
+		assertAssociativeExpression("0 * 1 == 0", number0, Expression.MUL,
+				number0, number1);
+		assertAssociativeExpression("1 * 0 == 0", number0, Expression.MUL,
+				number1, number0);
+		assertAssociativeExpression("1 * 0 * 1 == 0", number0, Expression.MUL,
+				number1, number0, number1);
+		assertAssociativeExpression("0 * 1 * 2 == 0", number0, Expression.MUL,
+				number0, number1, number2);
+		assertAssociativeExpression("1 * 0 * 2 == 0", number0, Expression.MUL,
+				number1, number0, number2);
+		assertAssociativeExpression("1 * 2 * 0== 0", number0, Expression.MUL,
+				number1, number2, number0);
+		assertAssociativeExpression("1 * 0 * 2 * 0 == 0", number0,
+				Expression.MUL, number1, number0, number2, number0);
+		assertAssociativeExpression("0 * 1 * 2 * 0 == 0", number0,
+				Expression.MUL, number0, number1, number2, number0);
+		assertAssociativeExpression("0 * 1 * 0 * 2 == 0", number0,
+				Expression.MUL, number0, number1, number0, number2);
+
+		// (-E) * (-F) == E * F
+		assertAssociativeExpression("(−2) ∗ (−3) == 2 ∗ 3", prod23,
+				Expression.MUL, numberMinus2, numberMinus3);
+		assertAssociativeExpression("(−1) ∗ (−2) ∗ 3 == 2 ∗ 3", prod23,
+				Expression.MUL, numberMinus1, numberMinus2, number3);
+		assertAssociativeExpression("(−1) ∗ (−2) ∗ (−3) == −(2 ∗ 3)", ff
+				.makeUnaryExpression(Expression.UNMINUS, prod23, null),
+				Expression.MUL, numberMinus1, numberMinus2, numberMinus3);
+
+		// E / 1 == E
+		assertBinaryExpression("E ÷ 1 = E", number2, number2, Expression.DIV,
+				number1);
+
+		// 0 / E == 0
+		assertBinaryExpression("0 ÷ E = 0", number0, number0, Expression.DIV,
+				number2);
+
+		// (-E) /(-F) == E / F
+		Expression expected = ff.makeBinaryExpression(Expression.DIV, number3,
+				number2, null);
+		assertBinaryExpression("(−E) ÷ (−F) == E ÷ F", expected, numberMinus3,
+				Expression.DIV, numberMinus2);
+
+		// E^1 == E
+		assertBinaryExpression("E^1 == E", number2, number2, Expression.EXPN,
+				number1);
+
+		// E^0 == 1
+		assertBinaryExpression("E^0 == 1", number1, number2, Expression.EXPN,
+				number0);
+
+		// 1^E == 1
+		assertBinaryExpression("1^E == 1", number1, number1, Expression.EXPN,
+				number0);
+		assertBinaryExpression("1^E == 1", number1, number1, Expression.EXPN,
+				number1);
+		assertBinaryExpression("1^E == 1", number1, number1, Expression.EXPN,
+				number2);
 	}
 }
