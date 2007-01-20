@@ -1096,5 +1096,17 @@
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eventb.internal.ui.preferences.PreferenceInitializer"/>
    </extension>
+   <extension
+         point="org.eventb.ui.proofTactics">
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.doubleImpIHyp"
+            interrupt="false"
+            name="%proofTactics.doubleImplHyp.name"
+            priorty="8"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DoubleImplHyp"
+            target="hypothesis"
+            tooltip="%proofTactics.doubleImplHyp.tooltip"/>
+   </extension>
 
 </plugin>

@@ -187,6 +187,15 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			Exists(idents, Lor(children)) -> {
 	    		return FormulaSimplification.splitQuantifiedPredicate(predicate.getTag(), predicate.getPredicate().getTag(), `idents, `children);
 	    	}
+	    	
+	    	/**
+	    	 * Quantification 3: ∀x, ..., y, ..., z·P(y) ∧ ... ∧ y = E ∧ ... ∧ Q(y) ⇒ R(y) 
+	    	 *                == ∀x, ..., ...,z·P(E) ∧ ... ∧ ... ∧ Q(E) ⇒ R(E)
+	    	 */
+	    	ForAll(idents, Limp(Land(children), R)) -> {
+	    		return FormulaSimplification.checkForAllOnePointRule(predicate, `idents, `children, `R);
+	    	}
+	    	
 	    }
 	    return predicate;
 	}
@@ -287,7 +296,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Arithmetic 6: E ∗ ... ∗ 0 ∗ ... ∗ F == 0
 	    	 */
 	    	Mul (children) -> {
-	    		return FormulaSimplification.simplifyAssociativeExpression(expression, `children);
+	    		return FormulaSimplification.simplifyMulArithmetic(expression, `children);
 	    	}
 	    }
 	    return expression;
@@ -305,6 +314,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
+	    	 * Set Theory 18: S ∖ ∅ == S
+	    	 */
+	    	SetMinus(S, T) -> {
+	    		return FormulaSimplification.simplifySetSubtraction(expression, `S, `T);
+	    	}
+	    	
+	    	/**
 	    	 * Set Theory 15: (f  {E↦ F})(E) == F
 	    	 */
 	    	FunImage(Ovr(children), E) -> {
@@ -319,6 +335,28 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		return FormulaSimplification.simplifyMinusArithmetic(expression, `E, `F);
 	    	}
 
+			/**
+	    	 * Arithmetic 10: (−E) ÷ (−F) == E ÷ F
+	    	 */
+	    	Div(UnMinus(E), UnMinus(F)) -> {
+	    		return FormulaSimplification.getFaction(`E, `F);
+	    	}
+
+			/**
+	    	 * Arithmetic 8: E ÷ 1 = E
+	    	 * Arithmetic 9: 0 ÷ E = 0
+	    	 */
+	    	Div(E, F) -> {
+	    		return FormulaSimplification.simplifyDivArithmetic(expression, `E, `F);
+	    	}
+	    	
+			/**
+	    	 * Arithmetic 11: E^1 == E
+	    	 * Arithmetic 12: E^0 == 1
+	    	 */
+	    	Expn (E, F) -> {
+	    		return FormulaSimplification.simplifyExpnArithmetic(expression, `E, `F);
+	    	}
 	    }
 	    return expression;
 	}

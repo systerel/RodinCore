@@ -107,8 +107,8 @@ public abstract class GlobalTacticDropdownToolItem {
 				// Determine where to put the dropdown list
 				ToolItem item1 = (ToolItem) event.widget;
 				Rectangle rect = item1.getBounds();
-				Point pt = item1.getParent()
-						.toDisplay(new Point(rect.x, rect.y));
+				Point pt = item1.getParent().toDisplay(
+						new Point(rect.x, rect.y));
 				menu.setLocation(pt.x, pt.y + rect.height);
 				menu.setVisible(true);
 			} else {
@@ -171,16 +171,19 @@ public abstract class GlobalTacticDropdownToolItem {
 				return;
 			}
 			IProofTreeNode node = currentPO.getCurrentNode();
-			item.setEnabled(provider.isApplicable(node, null, input));
+			item
+					.setEnabled(provider.getApplicablePositions(node, null,
+							input) != null);
 			return;
 		}
-		
-		IProofCommand command = registry.getProofCommand(active, TacticUIRegistry.TARGET_GLOBAL);
+
+		IProofCommand command = registry.getProofCommand(active,
+				TacticUIRegistry.TARGET_GLOBAL);
 		if (command != null) {
 			item.setEnabled(command.isApplicable(us, null, input));
 			return;
 		}
-		
+
 		item.setEnabled(false);
 	}
 

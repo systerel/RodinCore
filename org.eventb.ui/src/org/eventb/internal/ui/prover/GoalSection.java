@@ -198,7 +198,9 @@ public class GoalSection extends SectionPart {
 
 		if (node == null) {
 			Collection<Point> indexes = new ArrayList<Point>();
-			goalText.setText("No current goal", indexes);
+			Point [] links = new Point[0];
+			Runnable[] listeners = new Runnable[0];
+			goalText.setText("No current goal", indexes, links, listeners);
 			styledText.setBackground(color);
 		} else {
 			Predicate goal = node.getSequent().goal();
@@ -242,7 +244,7 @@ public class GoalSection extends SectionPart {
 				// String str = actualString.substring(loc.getStart(), loc
 				// .getEnd() + 1);
 				string += str;
-				goalText.setText(string, indexes);
+				goalText.setText(string, indexes, new Point [0], new Runnable [0]);
 			} else {
 				String str = PredicateUtil.prettyPrint(max_length,
 						actualString, parsedPred);
@@ -250,7 +252,7 @@ public class GoalSection extends SectionPart {
 				// String str = actualString.substring(loc.getStart(),
 				// loc.getEnd());
 				Collection<Point> indexes = new ArrayList<Point>();
-				goalText.setText(str, indexes);
+				goalText.setText(str, indexes, new Point[0], new Runnable[0]);
 				if (!node.isOpen()) {
 					styledText.setBackground(color);
 				}
@@ -417,7 +419,7 @@ public class GoalSection extends SectionPart {
 
 					if (provider != null) {
 						IProofTreeNode node = us.getCurrentPO().getCurrentNode();
-						ITactic tactic = provider.getTactic(node, null, inputs);
+						ITactic tactic = provider.getTactic(node, null, null, inputs);
 						try {
 							us.applyTactic(tactic, null);
 						} catch (RodinDBException e1) {

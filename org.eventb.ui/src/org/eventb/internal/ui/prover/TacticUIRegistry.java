@@ -3,6 +3,7 @@ package org.eventb.internal.ui.prover;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -13,6 +14,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
@@ -65,13 +67,13 @@ public class TacticUIRegistry {
 			tip = configuration.getAttribute("tooltip");
 		}
 
-		public boolean isApplicableToGoal(IUserSupport us) {
-			return isApplicable(us, null, null);
+		public List<IPosition> getApplicableToGoalPositions(IUserSupport us) {
+			return getApplicablePositions(us, null, null);
 		}
 
-		public boolean isApplicable(IUserSupport us, Predicate hyp,
+		public List<IPosition> getApplicablePositions(IUserSupport us, Predicate hyp,
 				String input) {
-			
+
 			if (provider == null && command == null) {
 				loadImplementation();
 			}
@@ -80,16 +82,16 @@ public class TacticUIRegistry {
 			if (currentPO != null) {
 				node = currentPO.getCurrentNode();
 			}
-			
+
 			// Try tactic provider first
 			if (provider != null)
-				return provider.isApplicable(node, hyp, input);
+				return provider.getApplicablePositions(node, hyp, input);
 
 			// Try proof command
-			if (command != null)
-				return command.isApplicable(us, hyp, input);
+			if (command != null && command.isApplicable(us, hyp, input))
+				return new ArrayList<IPosition>();
 
-			return false;
+			return null;
 		}
 
 		private void loadImplementation() {
@@ -164,9 +166,9 @@ public class TacticUIRegistry {
 			return tip;
 		}
 
-		public boolean isApplicableToHypothesis(IUserSupport us,
+		public List<IPosition> getApplicableToHypothesisPositions(IUserSupport us,
 				Predicate hyp) {
-			return isApplicable(us, hyp, null);
+			return getApplicablePositions(us, hyp, null);
 		}
 
 		public String getDropdown() {
@@ -200,7 +202,7 @@ public class TacticUIRegistry {
 		IConfigurationElement configuration;
 
 		Collection<String> dropdowns;
-		
+
 		Collection<String> tactics;
 
 		public ToolbarInfo(IConfigurationElement configuration) {
@@ -243,8 +245,8 @@ public class TacticUIRegistry {
 						String tacticID = info.getID();
 						tactics.add(tacticID);
 						if (ProverUIUtils.DEBUG) {
-							ProverUIUtils.debug("Attached tactic "
-									+ tacticID + " to toolbar " + id);
+							ProverUIUtils.debug("Attached tactic " + tacticID
+									+ " to toolbar " + id);
 						}
 					}
 				}
@@ -444,7 +446,7 @@ public class TacticUIRegistry {
 
 		for (String key : goalRegistry.keySet()) {
 			TacticUIInfo info = goalRegistry.get(key);
-			if (info.isApplicableToGoal(us)) {
+			if (info.getApplicableToGoalPositions(us) != null) {
 				result.add(key);
 			}
 		}
@@ -508,8 +510,7 @@ public class TacticUIRegistry {
 		return null;
 	}
 
-	public String[] getApplicableToHypothesis(IUserSupport us,
-			Predicate hyp) {
+	public String[] getApplicableToHypothesis(IUserSupport us, Predicate hyp) {
 		if (hypothesisRegistry == null)
 			loadRegistry();
 
@@ -517,7 +518,7 @@ public class TacticUIRegistry {
 
 		for (String key : hypothesisRegistry.keySet()) {
 			TacticUIInfo info = hypothesisRegistry.get(key);
-			if (info.isApplicableToHypothesis(us, hyp)) {
+			if (info.getApplicableToHypothesisPositions(us, hyp) != null) {
 				result.add(key);
 			}
 		}
@@ -604,6 +605,17 @@ public class TacticUIRegistry {
 		}
 
 		return new ArrayList<String>(0);
+	}
+
+	public List<IPosition> getApplicableToHypothesisPositions(String tacticID, IUserSupport us, Predicate hyp) {
+		if (hypothesisRegistry == null)
+			loadRegistry();
+
+		TacticUIInfo info = hypothesisRegistry.get(tacticID);
+		if (info != null)
+			return info.getApplicableToHypothesisPositions(us, hyp);
+
+		return null;
 	}
 
 }

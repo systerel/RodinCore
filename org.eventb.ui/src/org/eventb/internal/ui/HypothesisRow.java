@@ -15,6 +15,7 @@ package org.eventb.internal.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -31,10 +32,12 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
@@ -231,18 +234,104 @@ public class HypothesisRow {
 			// loc.getEnd());
 
 			string += str;
-			hypothesisText.setText(string, indexes);
+
+			// Reparsed the String,
+			// Get the list of applicable tactic
+			// For each tactic, get the applicable positions
+
+			IParseResult parseResult = formulaFactory.parsePredicate(string);
+			assert parseResult.isSuccess();
+			Predicate parsedStr = parseResult.getParsedPredicate();
+
+			List<Point> links = new ArrayList<Point>();
+			List<Runnable> runnables = new ArrayList<Runnable>();
+
+			final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
+					.getDefault();
+			final IProofTreeNode node = userSupport.getCurrentPO()
+					.getCurrentNode();
+			String[] tactics = tacticUIRegistry.getApplicableToHypothesis(
+					userSupport, hyp);
+
+			for (final String tacticID : tactics) {
+				List<IPosition> positions = tacticUIRegistry
+						.getApplicableToHypothesisPositions(tacticID,
+								userSupport, hyp);
+				if (positions.size() == 0)
+					continue;
+				for (final IPosition position : positions) {
+					Formula subFormula = parsedStr.getSubFormula(position);
+					Point pt = getOperatorPosition(subFormula);
+					links.add(pt);
+					runnables.add(new Runnable() {
+						public void run() {
+							applyTactic(tacticID, node, position);
+						}
+					});
+				}
+			}
+
+			hypothesisText.setText(string, indexes, links
+					.toArray(new Point[links.size()]), runnables
+					.toArray(new Runnable[runnables.size()]));
 		} else {
 			String str = PredicateUtil.prettyPrint(max_length, actualString,
 					parsedPred);
-			// SourceLocation loc = parsedPred.getSourceLocation();
-			// String str = actualString.substring(loc.getStart(),
-			// loc.getEnd());
+
+			IParseResult parseResult = formulaFactory.parsePredicate(str);
+			assert parseResult.isSuccess();
+			Predicate parsedStr = parseResult.getParsedPredicate();
 
 			Collection<Point> indexes = new ArrayList<Point>();
-			hypothesisText.setText(str, indexes);
+
+			List<Point> links = new ArrayList<Point>();
+			List<Runnable> runnables = new ArrayList<Runnable>();
+
+			final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
+					.getDefault();
+			final IProofTreeNode node = userSupport.getCurrentPO()
+					.getCurrentNode();
+			String[] tactics = tacticUIRegistry.getApplicableToHypothesis(
+					userSupport, hyp);
+
+			for (final String tacticID : tactics) {
+				List<IPosition> positions = tacticUIRegistry
+						.getApplicableToHypothesisPositions(tacticID,
+								userSupport, hyp);
+				if (positions.size() == 0)
+					continue;
+				for (final IPosition position : positions) {
+					Formula subFormula = parsedStr.getSubFormula(position);
+					Point pt = getOperatorPosition(subFormula);
+					links.add(pt);
+					runnables.add(new Runnable() {
+						public void run() {
+							applyTactic(tacticID, node, position);
+						}
+					});
+				}
+			}
+
+			hypothesisText.setText(str, indexes, links.toArray(new Point[links
+					.size()]), runnables
+					.toArray(new Runnable[runnables.size()]));
 		}
 		toolkit.paintBordersFor(hypothesisComposite);
+	}
+
+	private Point getOperatorPosition(Formula subFormula) {
+		if (subFormula instanceof QuantifiedPredicate) {
+			// TODO Find the character representing the quantified operator
+			return new Point(0, 1);
+		}
+		if (subFormula instanceof BinaryPredicate) {
+			BinaryPredicate bPred = (BinaryPredicate) subFormula;
+			SourceLocation leftLocation = bPred.getLeft().getSourceLocation();
+			SourceLocation rightLocation = bPred.getRight().getSourceLocation();
+			return new Point(leftLocation.getEnd() + 1, rightLocation
+					.getStart() - 1);
+		}
+		return new Point(0, 1);// The first character
 	}
 
 	/*
@@ -282,57 +371,20 @@ public class HypothesisRow {
 		}
 
 		for (final String tacticID : tactics) {
+			List<IPosition> positions = tacticUIRegistry
+					.getApplicableToHypothesisPositions(tacticID, userSupport,
+							hyp);
+			if (positions.size() != 0)
+				continue;
+
 			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 					SWT.CENTER);
 			hyperlink
 					.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			toolkit.adapt(hyperlink, true, true);
 			hyperlink.setImage(tacticUIRegistry.getIcon(tacticID));
-			hyperlink.addHyperlinkListener(new IHyperlinkListener() {
-
-				public void linkEntered(HyperlinkEvent e) {
-					return;
-				}
-
-				public void linkExited(HyperlinkEvent e) {
-					return;
-				}
-
-				public void linkActivated(HyperlinkEvent e) {
-					Set<Predicate> hypSet = new HashSet<Predicate>();
-					hypSet.add(hyp);
-					String[] inputs = hypothesisText.getResults();
-					if (ProverUIUtils.DEBUG)
-						for (String input : inputs)
-							ProverUIUtils.debug("Input: \"" + input + "\"");
-
-					ITacticProvider provider = tacticUIRegistry
-							.getTacticProvider(tacticID);
-					if (provider != null)
-						try {
-							userSupport.applyTacticToHypotheses(provider.getTactic(
-									node, hyp, inputs), hypSet,
-									new NullProgressMonitor());
-						} catch (RodinDBException e2) {
-							// TODO Auto-generated catch block
-							e2.printStackTrace();
-						}
-					else {
-						IProofCommand command = tacticUIRegistry
-								.getProofCommand(tacticID,
-										TacticUIRegistry.TARGET_HYPOTHESIS);
-						if (command != null) {
-							try {
-								command.apply(userSupport, hyp, inputs, new NullProgressMonitor());
-							} catch (RodinDBException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-						}
-					}
-				}
-
-			});
+			hyperlink
+					.addHyperlinkListener(new HyperlinkListener(tacticID, node));
 			hyperlink.setBackground(background);
 			hyperlink.setToolTipText(tacticUIRegistry.getTip(tacticID));
 			hyperlink.setEnabled(enable);
@@ -374,4 +426,61 @@ public class HypothesisRow {
 		return hyp;
 	}
 
+	void applyTactic(String tacticID, IProofTreeNode node, IPosition position) {
+		TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+		Set<Predicate> hypSet = new HashSet<Predicate>();
+		hypSet.add(hyp);
+		String[] inputs = hypothesisText.getResults();
+		if (ProverUIUtils.DEBUG)
+			for (String input : inputs)
+				ProverUIUtils.debug("Input: \"" + input + "\"");
+
+		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
+		if (provider != null)
+			try {
+				userSupport.applyTacticToHypotheses(provider.getTactic(node,
+						hyp, position, inputs), hypSet,
+						new NullProgressMonitor());
+			} catch (RodinDBException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+		else {
+			IProofCommand command = tacticUIRegistry.getProofCommand(tacticID,
+					TacticUIRegistry.TARGET_HYPOTHESIS);
+			if (command != null) {
+				try {
+					command.apply(userSupport, hyp, inputs,
+							new NullProgressMonitor());
+				} catch (RodinDBException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
+	}
+
+	class HyperlinkListener implements IHyperlinkListener {
+		private String tacticID;
+
+		private IProofTreeNode node;
+
+		public HyperlinkListener(String tacticID, IProofTreeNode node) {
+			this.node = node;
+			this.tacticID = tacticID;
+		}
+
+		public void linkEntered(HyperlinkEvent e) {
+			return;
+		}
+
+		public void linkExited(HyperlinkEvent e) {
+			return;
+		}
+
+		public void linkActivated(HyperlinkEvent e) {
+			applyTactic(tacticID, node, null);
+		}
+
+	}
 }

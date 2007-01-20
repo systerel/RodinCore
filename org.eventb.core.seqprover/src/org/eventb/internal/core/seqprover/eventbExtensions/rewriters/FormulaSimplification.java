@@ -10,6 +10,7 @@ import java.util.List;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
@@ -18,7 +19,9 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
@@ -133,10 +136,6 @@ public class FormulaSimplification {
 		case Expression.PLUS:
 			neutral = number0;
 			determinant = null;
-			break;
-		case Expression.MUL:
-			neutral = number1;
-			determinant = number0;
 			break;
 		}
 		boolean eliminateDuplicate = (tag == Expression.BUNION || tag == Expression.BINTER);
@@ -265,6 +264,152 @@ public class FormulaSimplification {
 			return ff.makeUnaryExpression(Expression.UNMINUS, F, null);
 		}
 		return expression;
+	}
+
+	public static Expression simplifyDivArithmetic(Expression expression,
+			Expression E, Expression F) {
+		if (F.equals(ff.makeIntegerLiteral(new BigInteger("1"), null))) {
+			return E;
+		} else if (E.equals(ff.makeIntegerLiteral(new BigInteger("0"), null))) {
+			return ff.makeIntegerLiteral(new BigInteger("0"), null);
+		}
+		return expression;
+	}
+
+	public static Expression getFaction(Expression E, Expression F) {
+		return ff.makeBinaryExpression(Expression.DIV, E, F, null);
+	}
+
+	public static Expression simplifyExpnArithmetic(
+			BinaryExpression expression, Expression E, Expression F) {
+		if (F.equals(ff.makeIntegerLiteral(new BigInteger("1"), null))) {
+			return E;
+		} else if (F.equals(ff.makeIntegerLiteral(new BigInteger("0"), null))) {
+			return ff.makeIntegerLiteral(new BigInteger("1"), null);
+		} else if (E.equals(ff.makeIntegerLiteral(new BigInteger("1"), null))) {
+			return ff.makeIntegerLiteral(new BigInteger("1"), null);
+		}
+		return expression;
+	}
+
+	public static Expression simplifyMulArithmetic(
+			AssociativeExpression expression, Expression[] children) {
+		Expression number1 = ff.makeIntegerLiteral(new BigInteger("1"), null);
+		boolean positive = true;
+		boolean change = false;
+		// Expression neutral = number1;
+		Expression number0 = ff.makeIntegerLiteral(new BigInteger("0"), null);
+		Expression numberMinus1 = ff.makeUnaryExpression(Expression.UNMINUS,
+				number1, null);
+		// Expression determinant = number0;
+		Collection<Expression> expressions = new ArrayList<Expression>();
+
+		for (Expression child : children) {
+			if (child.equals(number0)) {
+				return number0;
+			}
+
+			if (child.equals(numberMinus1)) {
+				positive = !positive;
+				change = true;
+			} else if (!child.equals(number1)) {
+				if (child instanceof UnaryExpression
+						&& child.getTag() == Expression.UNMINUS) {
+					expressions.add(((UnaryExpression) child).getChild());
+					positive = !positive;
+					change = true;
+				} else {
+					expressions.add(child);
+				}
+			} else {
+				change = true;
+			}
+		}
+		if (change) {
+			if (expressions.size() == 0)
+				return number1;
+
+			if (expressions.size() == 1)
+				return expressions.iterator().next();
+
+			Expression newExpression = ff.makeAssociativeExpression(
+					Expression.MUL, expressions, null);
+			if (!positive)
+				newExpression = ff.makeUnaryExpression(Expression.UNMINUS,
+						newExpression, null);
+			return newExpression;
+		}
+		return expression;
+	}
+
+	public static Expression simplifySetSubtraction(
+			BinaryExpression expression, Expression S, Expression T) {
+		if (T.equals(Lib.emptySet)) {
+			return S;
+		}
+		return expression;
+	}
+
+	public static Predicate checkForAllOnePointRule(Predicate predicate,
+			BoundIdentDecl[] identDecls, Predicate[] children, Predicate R) {
+		for (Predicate child : children) {
+			if (child instanceof RelationalPredicate
+					&& child.getTag() == Predicate.EQUAL) {
+				RelationalPredicate rPred = (RelationalPredicate) child;
+				Expression left = rPred.getLeft();
+				if (left instanceof BoundIdentifier) {
+					BoundIdentifier y = (BoundIdentifier) left;
+					Expression right = rPred.getRight();
+					BoundIdentifier[] boundIdentifiers = right
+							.getBoundIdentifiers();
+					if (contain(identDecls, y.getDeclaration(identDecls))
+							&& !contain(boundIdentifiers, y)) {
+						// Do the subtitution here
+						return subtitute(rPred, identDecls, children, R);
+
+					}
+				}
+			}
+		}
+		return predicate;
+	}
+
+	private static Predicate subtitute(RelationalPredicate pred,
+			BoundIdentDecl[] identDecls, Predicate[] children, Predicate r) {
+		Collection<Predicate> predicates = new ArrayList<Predicate>();
+
+		for (Predicate child : children) {
+			if (!child.equals(pred)) {
+				predicates.add(child);
+			}
+		}
+		AssociativePredicate left = ff.makeAssociativePredicate(Predicate.LAND,
+				predicates, null);
+
+		BinaryPredicate innerPred = ff.makeBinaryPredicate(Predicate.LIMP,
+				left, r, null);
+		BoundIdentifier y = ((BoundIdentifier) pred.getLeft());
+		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
+				Predicate.FORALL, new BoundIdentDecl[] { y
+						.getDeclaration(identDecls) }, innerPred, null);
+		Predicate instantiate = qPred.instantiate(new Expression[] { pred
+				.getRight() }, ff);
+		return ff.makeQuantifiedPredicate(Predicate.FORALL, remove(identDecls,
+				y.getDeclaration(identDecls)), instantiate, null);
+	}
+
+	private static BoundIdentDecl[] remove(BoundIdentDecl[] identDecls,
+			BoundIdentDecl declaration) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private static <T extends Object> boolean contain(T[] array, T element) {
+		for (T member : array) {
+			if (member.equals(element))
+				return true;
+		}
+		return false;
 	}
 
 }

@@ -98,6 +98,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites"
             id="autoRewrites"
             name="%autoRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites"
+            id="doubleImplGoalRewrites"
+            name="%doubleImplGoalRewrites"/>
    </extension>
 
 </plugin>

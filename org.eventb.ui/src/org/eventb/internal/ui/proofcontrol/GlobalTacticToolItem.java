@@ -72,14 +72,16 @@ public class GlobalTacticToolItem {
 		ITacticProvider provider = TacticUIRegistry.getDefault()
 				.getTacticProvider(tacticID);
 		if (provider != null) {
-			
+
 			IProofState currentPO = us.getCurrentPO();
 			if (currentPO == null) {
 				item.setEnabled(false);
 				return;
 			}
 			IProofTreeNode node = currentPO.getCurrentNode();
-			item.setEnabled(provider.isApplicable(node, null, input));
+			item
+					.setEnabled(provider.getApplicablePositions(node, null,
+							input) != null);
 			return;
 		} else {
 			IProofCommand command = TacticUIRegistry.getDefault()
