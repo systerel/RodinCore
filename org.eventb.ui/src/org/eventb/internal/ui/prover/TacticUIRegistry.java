@@ -618,4 +618,15 @@ public class TacticUIRegistry {
 		return null;
 	}
 
+	public List<IPosition> getApplicableToGoalPositions(String tacticID, IUserSupport userSupport) {
+		if (goalRegistry == null)
+			loadRegistry();
+
+		TacticUIInfo info = goalRegistry.get(tacticID);
+		if (info != null)
+			return info.getApplicableToGoalPositions(userSupport);
+
+		return null;
+	}
+
 }

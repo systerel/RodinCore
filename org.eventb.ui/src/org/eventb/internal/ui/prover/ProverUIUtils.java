@@ -1,5 +1,10 @@
 package org.eventb.internal.ui.prover;
 
+import org.eclipse.swt.graphics.Point;
+import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
@@ -57,6 +62,22 @@ public class ProverUIUtils {
 		return null;
 	}
 	
+
+	public static Point getOperatorPosition(Formula subFormula) {
+		if (subFormula instanceof QuantifiedPredicate) {
+			// TODO Find the character representing the quantified operator
+			return new Point(0, 1);
+		}
+		if (subFormula instanceof BinaryPredicate) {
+			BinaryPredicate bPred = (BinaryPredicate) subFormula;
+			SourceLocation leftLocation = bPred.getLeft().getSourceLocation();
+			SourceLocation rightLocation = bPred.getRight().getSourceLocation();
+			return new Point(leftLocation.getEnd() + 1, rightLocation
+					.getStart() - 1);
+		}
+		return new Point(0, 1);// The first character
+	}
+
 	// private static Collection<HypothesisTacticUI> hypothesisTactics = null;
 
 	/**

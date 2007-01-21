@@ -10,7 +10,6 @@ import java.util.List;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
@@ -364,8 +363,9 @@ public class FormulaSimplification {
 							.getBoundIdentifiers();
 					if (contain(identDecls, y.getDeclaration(identDecls))
 							&& !contain(boundIdentifiers, y)) {
-						// Do the subtitution here
-						return subtitute(rPred, identDecls, children, R);
+						// TODO  Do the subtitution here
+						return predicate;
+//						return subtitute(rPred, identDecls, children, R);
 
 					}
 				}
@@ -374,35 +374,35 @@ public class FormulaSimplification {
 		return predicate;
 	}
 
-	private static Predicate subtitute(RelationalPredicate pred,
-			BoundIdentDecl[] identDecls, Predicate[] children, Predicate r) {
-		Collection<Predicate> predicates = new ArrayList<Predicate>();
+//	private static Predicate subtitute(RelationalPredicate pred,
+//			BoundIdentDecl[] identDecls, Predicate[] children, Predicate r) {
+//		Collection<Predicate> predicates = new ArrayList<Predicate>();
+//
+//		for (Predicate child : children) {
+//			if (!child.equals(pred)) {
+//				predicates.add(child);
+//			}
+//		}
+//		AssociativePredicate left = ff.makeAssociativePredicate(Predicate.LAND,
+//				predicates, null);
+//
+//		BinaryPredicate innerPred = ff.makeBinaryPredicate(Predicate.LIMP,
+//				left, r, null);
+//		BoundIdentifier y = ((BoundIdentifier) pred.getLeft());
+//		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
+//				Predicate.FORALL, new BoundIdentDecl[] { y
+//						.getDeclaration(identDecls) }, innerPred, null);
+//		Predicate instantiate = qPred.instantiate(new Expression[] { pred
+//				.getRight() }, ff);
+//		return ff.makeQuantifiedPredicate(Predicate.FORALL, remove(identDecls,
+//				y.getDeclaration(identDecls)), instantiate, null);
+//	}
 
-		for (Predicate child : children) {
-			if (!child.equals(pred)) {
-				predicates.add(child);
-			}
-		}
-		AssociativePredicate left = ff.makeAssociativePredicate(Predicate.LAND,
-				predicates, null);
-
-		BinaryPredicate innerPred = ff.makeBinaryPredicate(Predicate.LIMP,
-				left, r, null);
-		BoundIdentifier y = ((BoundIdentifier) pred.getLeft());
-		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
-				Predicate.FORALL, new BoundIdentDecl[] { y
-						.getDeclaration(identDecls) }, innerPred, null);
-		Predicate instantiate = qPred.instantiate(new Expression[] { pred
-				.getRight() }, ff);
-		return ff.makeQuantifiedPredicate(Predicate.FORALL, remove(identDecls,
-				y.getDeclaration(identDecls)), instantiate, null);
-	}
-
-	private static BoundIdentDecl[] remove(BoundIdentDecl[] identDecls,
-			BoundIdentDecl declaration) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	private static BoundIdentDecl[] remove(BoundIdentDecl[] identDecls,
+//			BoundIdentDecl declaration) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	private static <T extends Object> boolean contain(T[] array, T element) {
 		for (T member : array) {

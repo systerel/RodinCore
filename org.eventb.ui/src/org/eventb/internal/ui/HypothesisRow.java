@@ -32,7 +32,6 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -261,7 +260,7 @@ public class HypothesisRow {
 					continue;
 				for (final IPosition position : positions) {
 					Formula subFormula = parsedStr.getSubFormula(position);
-					Point pt = getOperatorPosition(subFormula);
+					Point pt = ProverUIUtils.getOperatorPosition(subFormula);
 					links.add(pt);
 					runnables.add(new Runnable() {
 						public void run() {
@@ -302,7 +301,7 @@ public class HypothesisRow {
 					continue;
 				for (final IPosition position : positions) {
 					Formula subFormula = parsedStr.getSubFormula(position);
-					Point pt = getOperatorPosition(subFormula);
+					Point pt = ProverUIUtils.getOperatorPosition(subFormula);
 					links.add(pt);
 					runnables.add(new Runnable() {
 						public void run() {
@@ -317,21 +316,6 @@ public class HypothesisRow {
 					.toArray(new Runnable[runnables.size()]));
 		}
 		toolkit.paintBordersFor(hypothesisComposite);
-	}
-
-	private Point getOperatorPosition(Formula subFormula) {
-		if (subFormula instanceof QuantifiedPredicate) {
-			// TODO Find the character representing the quantified operator
-			return new Point(0, 1);
-		}
-		if (subFormula instanceof BinaryPredicate) {
-			BinaryPredicate bPred = (BinaryPredicate) subFormula;
-			SourceLocation leftLocation = bPred.getLeft().getSourceLocation();
-			SourceLocation rightLocation = bPred.getRight().getSourceLocation();
-			return new Point(leftLocation.getEnd() + 1, rightLocation
-					.getStart() - 1);
-		}
-		return new Point(0, 1);// The first character
 	}
 
 	/*

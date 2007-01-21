@@ -8,27 +8,29 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.ui.prover.ITacticProvider;
+import org.eventb.ui.prover.DefaultTacticProvider;
 
-public class ForallInstantiationHyp implements ITacticProvider {
+public class ForallInstantiationHyp extends DefaultTacticProvider {
 
 	List<IPosition> positions;
 
+	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.allD(hyp, inputs);
 	}
 
+	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (Tactics.allD_applicable(hyp)) {
-			internalGetPositions(node, hyp);
+			internalGetPositions(hyp);
 			return positions;
 		}
 		return null;
 	}
 
-	public void internalGetPositions(IProofTreeNode node, Predicate hyp) {
+	private void internalGetPositions(Predicate hyp) {
 		positions = new ArrayList<IPosition>();
 		positions.add(hyp.getPosition(hyp.getSourceLocation()));
 	}

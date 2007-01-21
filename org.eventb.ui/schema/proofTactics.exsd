@@ -110,7 +110,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eventb.ui.prover.ITacticProvider"/>
+                  <meta.attribute kind="java" basedOn="org.eventb.ui.prover.DefaultTacticProvider:org.eventb.ui.prover.ITacticProvider"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -14,7 +14,9 @@ package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
@@ -36,15 +38,16 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
 import org.rodinp.core.RodinDBException;
 
@@ -174,7 +177,7 @@ public class GoalSection extends SectionPart {
 		return;
 	}
 
-	public void createGoalText(IProofTreeNode node) {
+	public void createGoalText(final IProofTreeNode node) {
 		Color color = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 		if (goalText != null)
 			goalText.dispose();
@@ -198,7 +201,7 @@ public class GoalSection extends SectionPart {
 
 		if (node == null) {
 			Collection<Point> indexes = new ArrayList<Point>();
-			Point [] links = new Point[0];
+			Point[] links = new Point[0];
 			Runnable[] listeners = new Runnable[0];
 			goalText.setText("No current goal", indexes, links, listeners);
 			styledText.setBackground(color);
@@ -244,15 +247,84 @@ public class GoalSection extends SectionPart {
 				// String str = actualString.substring(loc.getStart(), loc
 				// .getEnd() + 1);
 				string += str;
-				goalText.setText(string, indexes, new Point [0], new Runnable [0]);
+
+				IParseResult parsedResult = formulaFactory.parsePredicate(string);
+				assert parsedResult.isSuccess();
+				Predicate parsedStr = parsedResult.getParsedPredicate();
+
+				List<Point> links = new ArrayList<Point>();
+				List<Runnable> runnables = new ArrayList<Runnable>();
+				IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
+						.getEditor()).getUserSupport();
+
+				final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
+						.getDefault();
+				String[] tactics = tacticUIRegistry
+						.getApplicableToGoal(userSupport);
+
+				for (final String tacticID : tactics) {
+					List<IPosition> positions = tacticUIRegistry
+							.getApplicableToGoalPositions(tacticID, userSupport);
+					if (positions.size() == 0)
+						continue;
+					for (final IPosition position : positions) {
+						Formula subFormula = parsedStr.getSubFormula(position);
+						Point pt = ProverUIUtils
+								.getOperatorPosition(subFormula);
+						links.add(pt);
+						runnables.add(new Runnable() {
+							public void run() {
+								applyTactic(tacticID, node, position);
+							}
+						});
+					}
+				}
+
+				goalText.setText(string, indexes, links.toArray(new Point[links
+						.size()]), runnables.toArray(new Runnable[runnables
+						.size()]));
 			} else {
 				String str = PredicateUtil.prettyPrint(max_length,
 						actualString, parsedPred);
-				// SourceLocation loc = parsedPred.getSourceLocation();
-				// String str = actualString.substring(loc.getStart(),
-				// loc.getEnd());
+
 				Collection<Point> indexes = new ArrayList<Point>();
-				goalText.setText(str, indexes, new Point[0], new Runnable[0]);
+
+				IParseResult parsedResult = formulaFactory.parsePredicate(str);
+				assert parsedResult.isSuccess();
+				Predicate parsedStr = parsedResult.getParsedPredicate();
+
+				List<Point> links = new ArrayList<Point>();
+				List<Runnable> runnables = new ArrayList<Runnable>();
+				IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
+						.getEditor()).getUserSupport();
+
+				final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
+						.getDefault();
+				String[] tactics = tacticUIRegistry
+						.getApplicableToGoal(userSupport);
+
+				for (final String tacticID : tactics) {
+					List<IPosition> positions = tacticUIRegistry
+							.getApplicableToGoalPositions(tacticID, userSupport);
+					if (positions.size() == 0)
+						continue;
+					for (final IPosition position : positions) {
+						Formula subFormula = parsedStr.getSubFormula(position);
+						Point pt = ProverUIUtils
+								.getOperatorPosition(subFormula);
+						links.add(pt);
+						runnables.add(new Runnable() {
+							public void run() {
+								applyTactic(tacticID, node, position);
+							}
+						});
+					}
+				}
+
+				goalText.setText(str, indexes, links.toArray(new Point[links
+						.size()]), runnables.toArray(new Runnable[runnables
+						.size()]));
+
 				if (!node.isOpen()) {
 					styledText.setBackground(color);
 				}
@@ -395,6 +467,13 @@ public class GoalSection extends SectionPart {
 		}
 
 		for (final String tacticID : tactics) {
+
+			List<IPosition> positions = tacticUIRegistry
+					.getApplicableToGoalPositions(tacticID, us);
+			
+			if (positions.size() != 0)
+				continue;
+
 			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 					SWT.CENTER);
 			hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
@@ -413,21 +492,10 @@ public class GoalSection extends SectionPart {
 				}
 
 				public void linkActivated(HyperlinkEvent e) {
-					String[] inputs = goalText.getResults();
-					ITacticProvider provider = tacticUIRegistry
-							.getTacticProvider(tacticID);
+					IProofTreeNode node = us.getCurrentPO()
+					.getCurrentNode();
 
-					if (provider != null) {
-						IProofTreeNode node = us.getCurrentPO().getCurrentNode();
-						ITactic tactic = provider.getTactic(node, null, null, inputs);
-						try {
-							us.applyTactic(tactic, null);
-						} catch (RodinDBException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-
+					applyTactic(tacticID, node, null);
 				}
 
 			});
@@ -436,6 +504,39 @@ public class GoalSection extends SectionPart {
 		}
 
 		return;
+	}
+
+	void applyTactic(String tacticID, IProofTreeNode node, IPosition position) {
+		TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+		String[] inputs = goalText.getResults();
+		if (ProverUIUtils.DEBUG)
+			for (String input : inputs)
+				ProverUIUtils.debug("Input: \"" + input + "\"");
+
+		IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
+				.getEditor()).getUserSupport();
+		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
+		if (provider != null)
+			try {
+				userSupport.applyTactic(provider.getTactic(node, null,
+						position, inputs), new NullProgressMonitor());
+			} catch (RodinDBException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+		else {
+			IProofCommand command = tacticUIRegistry.getProofCommand(tacticID,
+					TacticUIRegistry.TARGET_HYPOTHESIS);
+			if (command != null) {
+				try {
+					command.apply(userSupport, null, inputs,
+							new NullProgressMonitor());
+				} catch (RodinDBException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
 	}
 
 }

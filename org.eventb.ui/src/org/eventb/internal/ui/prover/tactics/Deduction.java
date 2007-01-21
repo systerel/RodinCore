@@ -8,15 +8,17 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.ui.prover.ITacticProvider;
+import org.eventb.ui.prover.DefaultTacticProvider;
 
-public class Deduction implements ITacticProvider {
+public class Deduction extends DefaultTacticProvider {
 
+	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.impI();
 	}
 
+	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (node != null && Tactics.impI_applicable(node.getSequent().goal()))

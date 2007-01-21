@@ -8,15 +8,17 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.ui.prover.ITacticProvider;
+import org.eventb.ui.prover.DefaultTacticProvider;
 
-public class Lasoo implements ITacticProvider {
+public class Lasoo extends DefaultTacticProvider {
 
+	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.lasoo();
 	}
 
+	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node, Predicate hyp,
 			String input) {
 		if (node != null && node.isOpen()) return new ArrayList<IPosition>();
