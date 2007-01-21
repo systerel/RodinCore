@@ -347,8 +347,9 @@ public class Tactics {
 
 	public static ITactic postProcessBeginner() {
 		// System.out.println("* Beginner Mode *");
-		return onAllPending(compose(tautology(), hyp(), impI(),
-				autoRewriteRules()));
+//		return onAllPending(compose(tautology(), hyp(), impI(),
+//				autoRewriteRules()));
+		return onAllPending(compose(tautology(), hyp(), impI()));
 
 	}
 
