@@ -15,6 +15,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.pm.UserSupport;
 import org.eventb.internal.core.pom.AutoProver;
@@ -277,11 +278,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport.applyTactic(Tactics.lemma("2 = 2"), monitor);
 		userSupport.applyTactic(Tactics.norm(), monitor);
 		IProofState currentPO = userSupport.getCurrentPO();
-		Set<Predicate> selectedHyps = currentPO.getCurrentNode().getSequent()
-				.selectedHypotheses();
-		assertTrue("Select is not empty ", selectedHyps.size() >= 2);
+		
+		IProverSequent sequent = currentPO.getCurrentNode().getSequent();
+		Iterable<Predicate> selectedHypIterable = sequent.selectedHypIterable();
 
-		Iterator<Predicate> iterator = selectedHyps.iterator();
+		Iterator<Predicate> iterator = selectedHypIterable.iterator();
 		Predicate hyp1 = iterator.next();
 		Set<Predicate> hyps1 = new HashSet<Predicate>();
 		hyps1.add(hyp1);

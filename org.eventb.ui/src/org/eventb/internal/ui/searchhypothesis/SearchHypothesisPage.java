@@ -133,7 +133,7 @@ public class SearchHypothesisPage extends Page implements
 	void init() {
 		IProofState ps = editor.getUserSupport().getCurrentPO();
 
-		Collection<Predicate> selected = new ArrayList<Predicate>();
+		Iterable<Predicate> selected = new ArrayList<Predicate>();
 		Collection<Predicate> cached = new ArrayList<Predicate>();
 		Collection<Predicate> searched = new ArrayList<Predicate>();
 
@@ -141,7 +141,7 @@ public class SearchHypothesisPage extends Page implements
 		if (ps != null) {
 			IProofTreeNode node = ps.getCurrentNode();
 			if (node != null) {
-				selected = node.getSequent().selectedHypotheses();
+				selected = node.getSequent().selectedHypIterable();
 				if (node.isOpen())
 					enable = true;
 			}
@@ -157,7 +157,7 @@ public class SearchHypothesisPage extends Page implements
 	}
 
 	private void init(Collection<Predicate> hyps,
-			Collection<Predicate> selected, Collection<Predicate> cached,
+			Iterable<Predicate> selected, Collection<Predicate> cached,
 			boolean enable) {
 		// Remove everything
 		for (HypothesisRow row : rows) {

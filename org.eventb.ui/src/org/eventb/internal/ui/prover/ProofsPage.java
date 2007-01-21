@@ -14,9 +14,7 @@ package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -49,6 +47,7 @@ import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.RodinDBException;
@@ -286,15 +285,16 @@ public class ProofsPage extends FormPage implements
 
 	void initHypothesisSections(IProofState ps) {
 
-		Collection<Predicate> selected = new ArrayList<Predicate>();
+		Iterable<Predicate> selected = new ArrayList<Predicate>();
 		Collection<Predicate> cached = new ArrayList<Predicate>();
 		Collection<Predicate> searched = new ArrayList<Predicate>();
 
 		boolean enable = false;
 		if (ps != null) {
 			IProofTreeNode node = ps.getCurrentNode();
+			IProverSequent sequent = node.getSequent();
 			if (node != null) {
-				selected = node.getSequent().selectedHypotheses();
+				selected = sequent.selectedHypIterable();
 				if (node.isOpen())
 					enable = true;
 			}
@@ -302,9 +302,9 @@ public class ProofsPage extends FormPage implements
 			for (Iterator<Predicate> i = currentCached.iterator(); i.hasNext();) {
 				Predicate hyp = i.next();
 				if (node != null)
-					if (!node.getSequent().containsHypothesis(hyp))
+					if (!sequent.containsHypothesis(hyp))
 						continue;
-				if (!selected.contains(hyp))
+				if (!(sequent.isSelected(hyp)))
 					cached.add(hyp);
 			}
 			Collection<Predicate> currentSearched = ps.getSearched();
@@ -312,9 +312,9 @@ public class ProofsPage extends FormPage implements
 					.hasNext();) {
 				Predicate hyp = i.next();
 				if (node != null)
-					if (!node.getSequent().containsHypothesis(hyp))
+					if (!sequent.containsHypothesis(hyp))
 						continue;
-				if (!selected.contains(hyp) && !cached.contains(hyp))
+				if (!sequent.isSelected(hyp) && !cached.contains(hyp))
 					searched.add(hyp);
 			}
 		}
@@ -435,14 +435,13 @@ public class ProofsPage extends FormPage implements
 
 	void initCacheAndSearch() {
 		IProofState ps = userSupport.getCurrentPO();
-		Set<Predicate> selected = new HashSet<Predicate>();
 		ArrayList<Predicate> cached = new ArrayList<Predicate>();
 		ArrayList<Predicate> searched = new ArrayList<Predicate>();
 		boolean enable = false;
 		if (ps != null) {
 			IProofTreeNode node = ps.getCurrentNode();
+			IProverSequent sequent = node.getSequent();
 			if (node != null) {
-				selected = node.getSequent().selectedHypotheses();
 				if (node.isOpen())
 					enable = true;
 			}
@@ -450,9 +449,9 @@ public class ProofsPage extends FormPage implements
 			for (Iterator<Predicate> i = currentCached.iterator(); i.hasNext();) {
 				Predicate hyp = i.next();
 				if (node != null)
-					if (!node.getSequent().containsHypothesis(hyp))
+					if (!sequent.containsHypothesis(hyp))
 						continue;
-				if (!selected.contains(hyp))
+				if (!sequent.isSelected(hyp))
 					cached.add(hyp);
 			}
 
@@ -461,9 +460,9 @@ public class ProofsPage extends FormPage implements
 					.hasNext();) {
 				Predicate hyp = i.next();
 				if (node != null)
-					if (!node.getSequent().containsHypothesis(hyp))
+					if (!sequent.containsHypothesis(hyp))
 						continue;
-				if (!selected.contains(hyp) && !cached.contains(hyp))
+				if (!sequent.isSelected(hyp) && !cached.contains(hyp))
 					searched.add(hyp);
 			}
 		}

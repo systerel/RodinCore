@@ -130,7 +130,7 @@ public abstract class HypothesesSection extends SectionPart {
 	protected abstract void createTextClient(Section section,
 			FormToolkit toolkit);
 
-	public void init(Collection<Predicate> hyps, boolean enable) {
+	public void init(Iterable<Predicate> hyps, boolean enable) {
 		// Remove everything
 		for (HypothesisRow row : rows) {
 			row.dispose();

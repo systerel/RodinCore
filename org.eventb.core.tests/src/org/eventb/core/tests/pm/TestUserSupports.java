@@ -478,9 +478,8 @@ public class TestUserSupports extends TestPM {
 		userSupport.applyTactic(Tactics.lemma("2 = 2"), monitor);
 		userSupport.applyTactic(Tactics.norm(), monitor);
 		IProofState currentPO = userSupport.getCurrentPO();
-		Set<Predicate> selectedHyps = currentPO.getCurrentNode().getSequent()
-				.selectedHypotheses();
-		assertTrue("Select is not empty ", selectedHyps.size() >= 2);
+		Iterable<Predicate> selectedHyps = currentPO.getCurrentNode().getSequent()
+				.selectedHypIterable();
 
 		Iterator<Predicate> iterator = selectedHyps.iterator();
 		Predicate hyp1 = iterator.next();
