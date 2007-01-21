@@ -244,8 +244,10 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		// Select first PO
 		startDeltas();
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
-		assertDeltas("No delta if select the same PO ",
-				"[*] x.bps [CURRENT|INFORMATION]");
+		assertDeltas(
+				"Select the first PO ",
+				"[*] x.bps [CURRENT|STATE|INFORMATION]\n"
+						+ "  [*] PO1[org.eventb.core.psStatus] [CACHE|SEARCH|NODE|PROOFTREE]");
 
 		// Select the last PO again
 		startDeltas();
@@ -448,7 +450,9 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		startDeltas();
 		userSupport.applyTactic(Tactics.lemma("3 = 3"), monitor);
-		assertDeltas("Apply tactic successful ", "[*] x.bps [STATE|INFORMATION]\n"
+		assertDeltas(
+				"Apply tactic successful ",
+				"[*] x.bps [STATE|INFORMATION]\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [NODE|PROOFTREE]");
 		stopDeltas();
 		userSupport.dispose();
@@ -481,13 +485,15 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		startDeltas();
 		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1,
 				monitor);
-		assertDeltas("Apply tactic successful ", "[*] x.bps [STATE|INFORMATION]\n"
-				+ "  [*] PO7[org.eventb.core.psStatus] [CACHE|NODE|PROOFTREE]");
-		
+		assertDeltas(
+				"Apply tactic successful ",
+				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "  [*] PO7[org.eventb.core.psStatus] [CACHE|NODE|PROOFTREE]");
+
 		stopDeltas();
 		userSupport.dispose();
 	}
-	
+
 	public void testBacktrack() throws CoreException {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
@@ -501,12 +507,14 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport.setInput(psFile, monitor);
 
 		userSupport.applyTactic(Tactics.lemma("3 = 3"), monitor);
-		
+
 		startDeltas();
 		userSupport.back(monitor);
-		
-		assertDeltas("Apply backtrack successful ", "[*] x.bps [STATE|INFORMATION]\n"
-				+ "  [*] PO7[org.eventb.core.psStatus] [NODE|PROOFTREE]");
+
+		assertDeltas(
+				"Apply backtrack successful ",
+				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "  [*] PO7[org.eventb.core.psStatus] [NODE|PROOFTREE]");
 
 		stopDeltas();
 		userSupport.dispose();

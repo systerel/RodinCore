@@ -38,7 +38,7 @@ public class TestUserSupportManagers extends TestPM {
 				userSupport1.getInput());
 
 		Collection<IUserSupport> userSupports = manager.getUserSupports();
-		assertEquals("There is only one user support ", 1, userSupports.size());
+		assertTrue("There is at least one user support ", 1 <= userSupports.size());
 		assertTrue("The first user support is stored ", userSupports
 				.contains(userSupport1));
 
@@ -47,9 +47,9 @@ public class TestUserSupportManagers extends TestPM {
 		assertEquals(
 				"The input for first user support has been set correctly ",
 				psFile1, userSupport1.getInput());
-		assertInformation("Select a new PO ",
-				"Obligation changed", userSupport1
-						.getInformation());
+		assertInformation("Select a new PO ", "Select a new proof node\n"
+				+ "Proof Tree is reloaded\n" + "Obligation changed",
+				userSupport1.getInformation());
 
 		IUserSupport userSupport2 = manager.newUserSupport();
 
@@ -69,9 +69,9 @@ public class TestUserSupportManagers extends TestPM {
 		assertEquals(
 				"The input for second user support has been set correctly ",
 				psFile2, userSupport2.getInput());
-		assertInformation("Select a new PO ",
-				"Obligation changed", userSupport2
-						.getInformation());
+		assertInformation("Select a new PO ", "Select a new proof node\n"
+				+ "Proof Tree is reloaded\n" + "Obligation changed",
+				userSupport2.getInformation());
 
 		userSupport1.dispose();
 		userSupports = manager.getUserSupports();

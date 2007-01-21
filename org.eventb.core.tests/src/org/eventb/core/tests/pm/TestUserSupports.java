@@ -62,8 +62,9 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current PO is the last PO", states[states.length - 1],
 				userSupport.getCurrentPO());
-		assertInformation("Select a new PO ", "Obligation changed", userSupport
-				.getInformation());
+		assertInformation("Select a new PO ", "Select a new proof node\n"
+				+ "Proof Tree is reloaded\n" + "Obligation changed",
+				userSupport.getInformation());
 		userSupport.dispose();
 	}
 
@@ -320,8 +321,9 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current PO is the first PO ", states[0], userSupport
 				.getCurrentPO());
-		assertInformation("Select first PO ", "Obligation changed", userSupport
-				.getInformation());
+		assertInformation("Select first PO ", "Select a new proof node\n"
+				+ "Proof Tree is reloaded\n" + "Obligation changed",
+				userSupport.getInformation());
 
 		// Select the last PO again
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
@@ -665,7 +667,7 @@ public class TestUserSupports extends TestPM {
 
 		IProofTreeNode node1 = currentPO.getCurrentNode();
 
-		userSupport.applyTactic(Tactics.lemma("3 = 3"), monitor);
+		userSupport.applyTactic(Tactics.lemma("2 = 3"), monitor);
 
 		IProofTreeNode node2 = currentPO.getCurrentNode();
 		assertTrue("Node 2 is open ", node2.isOpen());
@@ -708,7 +710,7 @@ public class TestUserSupports extends TestPM {
 
 		Collection<Predicate> cached = currentPO.getCached();
 		assertTrue("Hypothesis is added to the cache ", cached.contains(hyp1));
-		
+
 		userSupport.dispose();
 	}
 
@@ -732,10 +734,10 @@ public class TestUserSupports extends TestPM {
 		userSupport.back(monitor);
 		assertEquals("Back to node 1 ", node1, currentPO.getCurrentNode());
 		assertTrue("Node 1 is open again ", node1.isOpen());
-		assertInformation("Backtrack successfully ",
-				"Select a new proof node", userSupport.getInformation());
+		assertInformation("Backtrack successfully ", "Select a new proof node",
+				userSupport.getInformation());
 
 		userSupport.dispose();
 	}
-	
+
 }
