@@ -48,6 +48,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivia
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.MPImplHypRewrites;
 
 public class Tactics {
 
@@ -395,6 +396,11 @@ public class Tactics {
 
 		}
 		return false;
+	}
+
+	public static ITactic mpImpHyp(Predicate pred, IPosition position) {
+		return BasicTactics.reasonerTac(new MPImplHypRewrites(),
+				new MPImplHypRewrites.Input(pred, position));
 	}
 
 }

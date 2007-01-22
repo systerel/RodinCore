@@ -1107,6 +1107,15 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.DoubleImplHyp"
             target="hypothesis"
             tooltip="%proofTactics.doubleImplHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.MPImpIHyp"
+            interrupt="false"
+            name="%proofTactics.mpImplHyp.name"
+            priorty="8"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.MPImplHyp"
+            target="hypothesis"
+            tooltip="%proofTactics.mpImplHyp.tooltip"/>
    </extension>
 
 </plugin>

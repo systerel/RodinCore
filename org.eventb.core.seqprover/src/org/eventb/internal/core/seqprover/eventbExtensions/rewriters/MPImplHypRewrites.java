@@ -11,9 +11,9 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 
-public class DoubleImplHypRewrites extends AbstractManualRewrites {
+public class MPImplHypRewrites extends AbstractManualRewrites {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".doubleImplGoalRewrites";
@@ -25,7 +25,7 @@ public class DoubleImplHypRewrites extends AbstractManualRewrites {
 	@Override
 	protected String getDisplayName(Predicate pred, IPosition position) {
 		assert pred != null;
-		return "db impl (" + pred.getSubFormula(position) + ")";
+		return "mp impl (" + pred.getSubFormula(position) + ")";
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class DoubleImplHypRewrites extends AbstractManualRewrites {
 	public boolean isApplicable(Predicate pred, IPosition position) {
 		Formula formula = pred.getSubFormula(position);
 		if (formula instanceof Predicate) {
-			return Tactics.isDoubleImplPredicate((Predicate) formula);
+			return Lib.isImp((Predicate) formula);
 		}
 		return false;
 	}
@@ -50,7 +50,7 @@ public class DoubleImplHypRewrites extends AbstractManualRewrites {
 		FormulaFactory ff = FormulaFactory.getDefault();
 		BinaryPredicate predicate = (BinaryPredicate) pred
 				.getSubFormula(position);
-		IFormulaRewriter rewriter = new DoubleImplicationRewriter(true, ff);
+		IFormulaRewriter rewriter = new MPImplRewriter(true, ff);
 		Predicate newSubPredicate = rewriter.rewrite(predicate);
 		return new Predicate[] { pred.rewriteSubFormula(position,
 				newSubPredicate, ff) };
