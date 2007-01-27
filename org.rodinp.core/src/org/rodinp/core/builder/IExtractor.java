@@ -31,7 +31,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * in case there are cycles in the dependency graph. The main aim is to avoid bogus error 
  * messages to the user in situations where the user cannot correct a cyclicity problem.
  * 
- * @see org.rodinp.core.builder.IAutomaticTool
+ * @see IGraph
+ * @see IAutomaticTool
  */
 public interface IExtractor {
 	
