@@ -1299,7 +1299,6 @@ public class EventBEditorUtils {
 						String content = contents[i];
 						newThm = rodinFile.getInternalElement(
 								ITheorem.ELEMENT_TYPE, prefix + index);
-						assert newThm.exists();
 						newThm.create(null, monitor);
 						index = UIUtils.getFreeElementNameIndex(rodinFile,
 								ITheorem.ELEMENT_TYPE, prefix, index + 1);
