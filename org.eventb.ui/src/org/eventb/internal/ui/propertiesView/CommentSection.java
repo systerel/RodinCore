@@ -3,7 +3,6 @@ package org.eventb.internal.ui.propertiesView;
 import static org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants.HSPACE;
 import static org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants.VSPACE;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -17,6 +16,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ICommentedElement;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBInputText;
@@ -60,14 +60,9 @@ public class CommentSection extends AbstractPropertySection implements
 		new TimerText(commentText, 1000) {
 			@Override
 			protected void response() {
-				try {
-					element.setComment(commentText.getText(), new NullProgressMonitor());
-				} catch (RodinDBException e) {
-					UIUtils.log(e, "Error modifiying element "
-							+ element.getElementName());
-					if (UIUtils.DEBUG)
-						e.printStackTrace();
-				}
+				UIUtils.setStringAttribute(element,
+						EventBAttributes.COMMENT_ATTRIBUTE,
+						commentText.getText(), null);
 			}
 		};
 

@@ -25,11 +25,13 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ICommentedElement;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
 public class CommentToolTip {
@@ -125,12 +127,8 @@ public class CommentToolTip {
 			case SWT.Traverse:
 				switch (event.detail) {
 				case SWT.TRAVERSE_ESCAPE:
-					try {
-						element.setComment(original, null);
-					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					UIUtils.setStringAttribute(element,
+							EventBAttributes.COMMENT_ATTRIBUTE, original, null);
 					text.dispose();
 					helpShell.dispose();
 					break;
@@ -143,12 +141,9 @@ public class CommentToolTip {
 			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Set comment for "
 						+ element.getElementName());
-			try {
-				element.setComment(text.getTextWidget().getText(), null);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			UIUtils.setStringAttribute(element,
+					EventBAttributes.COMMENT_ATTRIBUTE,
+					text.getTextWidget().getText(), null);
 		}
 
 	}
