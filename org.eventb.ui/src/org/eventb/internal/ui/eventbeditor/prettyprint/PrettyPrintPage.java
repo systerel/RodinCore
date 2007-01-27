@@ -150,14 +150,22 @@ public class PrettyPrintPage extends EventBEditorPage implements
 	@Override
 	public void setActive(boolean active) {
 		super.setActive(active);
+		refresh();
+	}
+
+	/**
+	 * Refresh the page contents.  Currently, not incremental, everything is
+	 * recomputed anew.
+	 */
+	private void refresh() {
 		if (form == null)
 			return;
 		if (form.getContent().isDisposed())
 			return;
-		if (active && needsUpdate) {
+		if (isActive() && needsUpdate) {
 			// We are switching to this page - refresh it
 			// if needed.
-			Display display = this.getEditorSite().getShell().getDisplay();
+			final Display display = this.getEditorSite().getShell().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
 					// Reset the content string of the form text
@@ -175,6 +183,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 	 */
 	public void elementChanged(ElementChangedEvent event) {
 		needsUpdate = true;
+		refresh();
 	}
 
 	@Override
