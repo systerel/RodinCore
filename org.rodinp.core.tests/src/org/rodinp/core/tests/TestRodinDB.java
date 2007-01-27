@@ -34,12 +34,12 @@ public class TestRodinDB extends AbstractRodinDBTests {
 		assertEquals(workspace, db.getWorkspace());
 		assertEquals(workspaceRoot, db.getWorkspaceRoot());
 		assertEquals(workspaceRoot, db.getCorrespondingResource());
+		assertTrue(db.exists());
 		assertFalse(db.isReadOnly());
 		// last handle-only method
 		
 		// Opening methods.
 		assertExists("Database should exist", db);
-		assertTrue(db.isOpen());
 		assertTrue(db.contains(workspaceRoot));
 		assertEquals("No project initially", 0, db.getNonRodinResources().length);
 		assertEquals("No project initially", 0, db.getRodinProjects().length);
