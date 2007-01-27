@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
@@ -39,6 +40,7 @@ import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
@@ -444,4 +446,34 @@ public class UIUtils {
 		return set;
 	}
 
+	/**
+	 * Sets the given string attribute of the given Rodin element to the given
+	 * new value, if it is not already set. In case the new value is empty, the
+	 * attribute is removed.
+	 * 
+	 * @param element
+	 * @param attrType
+	 * @param newValue
+	 * @param pm
+	 */
+	public static void setStringAttribute(IInternalElement element,
+			IAttributeType.String attrType, String newValue,
+			IProgressMonitor pm) {
+		try {
+			if (newValue.length() == 0) {
+				if (element.hasAttribute(attrType)) {
+					element.removeAttribute(attrType, pm);
+				}
+			} else if (!element.hasAttribute(attrType)
+					|| !newValue.equals(element.getAttributeValue(attrType))) {
+				element.setAttributeValue(attrType, newValue, pm);
+			}
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "Error changing attribute " + attrType.getId()
+					+ " for element " + element.getElementName());
+			if (UIUtils.DEBUG)
+				e.printStackTrace();
+		}
+	}
+	
 }
