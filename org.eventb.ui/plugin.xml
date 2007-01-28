@@ -211,15 +211,21 @@
       <wizard
             category="org.eventb.ui.wizards"
             class="org.eventb.internal.ui.wizards.NewProjectWizard"
+            finalPerspective="org.eventb.ui.perspective.eventb"
             icon="icons/sample.gif"
             id="org.eventb.ui.wizards.NewProject"
-            name="%newWizard.project"/>
+            name="%newWizard.project"
+            preferredPerspectives="org.eventb.ui.perspective.eventb,org.eventb.ui.perspective.proving"
+            project="true"/>
       <wizard
             category="org.eventb.ui.wizards"
             class="org.eventb.internal.ui.wizards.NewComponentWizard"
+            finalPerspective="org.eventb.ui.perspective.eventb"
             icon="icons/sample.gif"
             id="org.eventb.ui.wizards.NewComponent"
-            name="%newWizard.component"/>
+            name="%newWizard.component"
+            preferredPerspectives="org.eventb.ui.perspective.eventb,org.eventb.ui.perspective.proving"
+            project="false"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
