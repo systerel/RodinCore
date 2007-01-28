@@ -97,7 +97,7 @@ public class NewProjectWizardPage extends WizardPage {
 			return;
 		}
 		if (container != null) {
-			updateStatus("Project is already existed");
+			updateStatus("A project with this name already exists.");
 			return;
 		}
 		updateStatus(null);
