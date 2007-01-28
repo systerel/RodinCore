@@ -597,21 +597,27 @@ public abstract class AstConverter {
 					endLevel();
 				}
 
-				for (IAction action: actions) {
+				if (actions.length == 0) {
 					beginLevel3();
-					try {
-						append(makeHyperlink(action
-								.getHandleIdentifier(), action.getLabel())
-								+ ": "
-								+ UIUtils.XMLWrapUp(action
-										.getAssignmentString()));
-					} catch (RodinDBException e) {
-						EventBEditorUtils.debugAndLogError(e,
-								"Cannot get details for action "
-										+ action.getElementName());
-					}
-					addComment(action);
+					append("skip");
 					endLevel();
+				} else {
+					for (IAction action: actions) {
+						beginLevel3();
+						try {
+							append(makeHyperlink(action
+									.getHandleIdentifier(), action.getLabel())
+									+ ": "
+									+ UIUtils.XMLWrapUp(action
+											.getAssignmentString()));
+						} catch (RodinDBException e) {
+							EventBEditorUtils.debugAndLogError(e,
+									"Cannot get details for action "
+									+ action.getElementName());
+						}
+						addComment(action);
+						endLevel();
+					}
 				}
 				beginLevel2();
 				bold("END");
