@@ -1,10 +1,9 @@
 package org.eventb.core.ast.tests;
 
-import org.eventb.core.ast.IPosition;
-import org.eventb.internal.core.ast.IntStack;
-import org.eventb.internal.core.ast.Position;
-
 import junit.framework.TestCase;
+
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IPosition;
 
 /**
  * Tests for interface {@link IPosition} and its standard implementation.
@@ -13,6 +12,8 @@ import junit.framework.TestCase;
  */
 public class TestPosition extends TestCase {
 
+	private static FormulaFactory ff = FormulaFactory.getDefault();
+	
 	private void assertSameSign(int expected, int actual) {
 		if (expected == 0 && actual != 0)
 			fail("Expected zero, was " + actual);
@@ -36,13 +37,7 @@ public class TestPosition extends TestCase {
 	}
 	
 	private IPosition mPos(String image) {
-		if (image.length() == 0)
-			return IPosition.ROOT;
-		final IntStack stack = new IntStack();
-		for (String token: image.split("\\.")) {
-			stack.push(Integer.parseInt(token));
-		}
-		final IPosition pos = new Position(stack);
+		final IPosition pos = ff.makePosition(image);
 		assertEquals(image, pos.toString());
 		return pos;
 	}
@@ -169,7 +164,29 @@ public class TestPosition extends TestCase {
 		assertFalse(mPos("1.2.3.4").isRoot());
 	}
 	
-	public void testRoot() {
+	private void assertMementoFailure(final String image) {
+		try {
+			mPos(image);
+			fail("Exception expected");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+	}
+	
+	public final void testMemento() {
+		mPos("");
+		mPos("1");
+		mPos("1000.200.300");
+		
+		assertMementoFailure(".");
+		assertMementoFailure("0.");
+		assertMementoFailure(".0");
+		assertMementoFailure("1..2");
+		assertMementoFailure("-1");
+		assertMementoFailure("1.-2");
+	}
+
+	public final void testRoot() {
 		final IPosition root = IPosition.ROOT;
 		assertTrue(root.isRoot());
 		assertEquals("", root.toString());

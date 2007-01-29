@@ -7,6 +7,7 @@ package org.eventb.core.ast;
 import java.math.BigInteger;
 import java.util.Collection;
 
+import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.parser.Lexer;
 import org.eventb.internal.core.parser.ParseResult;
 import org.eventb.internal.core.parser.Parser;
@@ -839,6 +840,20 @@ public class FormulaFactory {
 	 */
 	public IntegerType makeIntegerType() {
 		return new IntegerType();
+	}
+
+	/**
+	 * Returns the formula position corresponding to the given string image.
+	 * 
+	 * @param image
+	 *            string image of the position, should have been obtained from
+	 *            {@link IPosition#toString()}.
+	 * @return the position denoted by the given string
+	 * @throws IllegalArgumentException
+	 *             if the given string doesn't denote a formula position
+	 */
+	public IPosition makePosition(String image) {
+		return new Position(image);
 	}
 
 	/**

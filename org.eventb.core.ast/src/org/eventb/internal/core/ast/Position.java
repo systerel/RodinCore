@@ -8,6 +8,7 @@
 package org.eventb.internal.core.ast;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import org.eventb.core.ast.IPosition;
 
@@ -24,10 +25,14 @@ public final class Position implements IPosition {
 		return new Position();
 	}
 
+	private static final int[] NO_INTS = new int[0];
+	
+	private static final Pattern DOT_PATTERN = Pattern.compile("\\.");
+	
 	public final int[] indexes;
 	
 	private Position() {
-		this.indexes = new int[0];
+		this.indexes = NO_INTS;
 	}
 	
 	private Position(int[] indexes) {
@@ -36,6 +41,29 @@ public final class Position implements IPosition {
 
 	public Position(IntStack stack) {
 		this.indexes = stack.toArray();
+	}
+
+	public Position(String image) {
+		if (image.length() == 0) {
+			this.indexes = NO_INTS;
+		} else {
+			final String[] components = DOT_PATTERN.split(image, -1);
+			final int length = components.length;
+			this.indexes = new int[length];
+			for (int i = 0; i < length; i++) {
+				try {
+					final int idx = Integer.parseInt(components[i]);
+					if (idx < 0) {
+						throw new IllegalArgumentException(
+								"Negative index in position: " + image);
+					}
+					this.indexes[i] = idx;
+				} catch (NumberFormatException e) {
+					throw new IllegalArgumentException("Invalid position: "
+							+ image);
+				}
+			}
+		}
 	}
 
 	public int compareTo(IPosition position) {

@@ -110,4 +110,13 @@ public interface IPosition extends Comparable<IPosition> {
 	 */
 	boolean isRoot();
 
+	/**
+	 * Returns a string representation of this position. Such a string can be
+	 * persisted and this position retrieved later using the appropriate factory
+	 * method.
+	 * 
+	 * @see FormulaFactory#makePosition(String)
+	 */
+	String toString();
+
 }
