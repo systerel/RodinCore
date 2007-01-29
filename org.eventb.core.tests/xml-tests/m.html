@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2006 ETH Zurich.
+	
+ All rights reserved. This program and the accompanying materials
+ are made available under the terms of the Eclipse Public License v1.0
+ which accompanies this distribution, and is available at
+ http://www.eclipse.org/legal/epl-v10.html
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<link type="text/css" rel="stylesheet" href="style.css"/>
+		<title>m</title>
+	</head>
+	<body>
+		<div class="main">
+			<div class="keyword">MACHINE</div>
+			<table class="body" cellspacing="0" cellpadding="0">
+				<tr class="line">
+					<td align="left" valign="top">m</td>
+				</tr>
+			</table>
+			<div class="keyword">REFINES</div>
+			<table class="body" cellspacing="0" cellpadding="0">
+				<tr class="line">
+					<td align="left" valign="top">m2</td>
+				</tr>
+			</table>
+			<div class="keyword">SEES</div>
+			<table class="body" cellspacing="0" cellpadding="0">
+				<tr class="line">
+					<td align="left" valign="top">c3</td>
+				</tr>
+			</table>
+			<div class="keyword">VARIABLES</div>
+			<table class="body" cellspacing="0" cellpadding="0">
+				<tr class="line">
+					<td align="left" valign="top">resrt</td>
+					<td>
+						<table class="comment" cellspacing="0" cellpadding="0">
+							<tr>
+								<td class="begincomment">/*</td>
+								<td>voila un commentaire</td>
+								<td/>
+							</tr>
+							<tr>
+								<td/>
+								<td>un autre commentaire</td>
+								<td/>
+							</tr>
+							<tr>
+								<td/>
+								<td>multi ligne</td>
+								<td class="endcomment">*/</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			<div class="keyword">INVARIANTS</div>
+			<table class="body" cellspacing="0" cellpadding="0">
+				<tr class="line">
+					<td class="label" align="left" valign="top">inv1:</td>
+					<td class="tab" valign="top">GRN ⊆ S</td>
+					<td>
+						<table class="comment" cellspacing="0" cellpadding="0">
+							<tr>
+								<td class="begincomment">/*</td>
+								<td>commentaire</td>
+								<td/>
+							</tr>
+							<tr>
+								<td/>
+								<td>multi ligne</td>
+								<td class="endcomment">*/</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			<div class="keyword">VARIANT</div>
+			<table class="body" cellspacing="0" cellpadding="0">
+				<tr class="line">
+					<td align="left" valign="top">card(OCC)</td>
+					<td>
+						<table class="comment" cellspacing="0" cellpadding="0">
+							<tr>
+								<td class="begincomment">//</td>
+								<td>variant</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			<div class="keyword">EVENTS</div>
+			<table class="body" cellspacing="0" cellpadding="0">
+				<tr class="line">
+					<td align="left" valign="top">
+						<div class="eventname">INITIALISATION</div>
+						<div class="eventmain">
+							<div class="eventkeyword">WITNESSES</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										wit1:</td>
+									<td class="tab" valign="top">⊤</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">BEGIN</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										act1:</td>
+									<td class="tab" valign="top">resrt ≔ ∅</td>
+								</tr>
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										act2:</td>
+									<td class="tab" valign="top">resbl ≔ ∅</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">END</div>
+						</div>
+					</td>
+				</tr>
+				<tr class="line">
+					<td align="left" valign="top">
+						<div class="eventname">route_reservation</div>
+						<div class="eventmain">
+							<div class="eventkeyword">REFINES</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td align="left" valign="top">
+										route_reservation</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">WHEN</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										grd1:</td>
+									<td class="tab" valign="top">r ∈ R ∖ resrt</td>
+								</tr>
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										grd2:</td>
+									<td class="tab" valign="top">rtbl∼[{r}] ∩ resbl =
+										∅</td>
+									<td>
+										<table class="comment" cellspacing="0"
+											cellpadding="0">
+											<tr>
+												<td class="begincomment">//</td>
+												<td>garde</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">WITNESSES</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										wit1:</td>
+									<td class="tab" valign="top">⊤</td>
+									<td>
+										<table class="comment" cellspacing="0"
+											cellpadding="0">
+											<tr>
+												<td class="begincomment">//</td>
+												<td>witness</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">THEN</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										act1:</td>
+									<td class="tab" valign="top">resrt ≔ resrt ∪
+										{r}</td>
+									<td>
+										<table class="comment" cellspacing="0"
+											cellpadding="0">
+											<tr>
+												<td class="begincomment">//</td>
+												<td>action</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										act2:</td>
+									<td class="tab" valign="top">rsrtbl ≔ rsrtbl ∪
+										(rtbl ▷ {r})</td>
+								</tr>
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										act3:</td>
+									<td class="tab" valign="top">resbl ≔ resbl ∪
+										rtbl∼[{r}]</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">END</div>
+						</div>
+					</td>
+				</tr>
+				<tr class="line">
+					<td align="left" valign="top">
+						<div class="eventname">route_freeing</div>
+						<table class="comment" cellspacing="0" cellpadding="0">
+							<tr>
+								<td class="begincomment">/*</td>
+								<td>commentaire</td>
+								<td/>
+							</tr>
+							<tr>
+								<td/>
+								<td>multi ligne</td>
+								<td class="endcomment">*/</td>
+							</tr>
+						</table>
+						<div class="eventmain">
+							<div class="eventkeyword">REFINES</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td align="left" valign="top">
+										route_freeing</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">ANY</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td align="left" valign="top">r</td>
+									<td>
+										<table class="comment" cellspacing="0"
+											cellpadding="0">
+											<tr>
+												<td class="begincomment">//</td>
+												<td>variable</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">WHERE</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										grd1:</td>
+									<td class="tab" valign="top">r ∈ resrt ∖
+										ran(rsrtbl)</td>
+									<td>
+										<table class="comment" cellspacing="0"
+											cellpadding="0">
+											<tr>
+												<td class="begincomment">//</td>
+												<td>guard</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">WITNESSES</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										r:</td>
+									<td class="tab" valign="top">fst(r) = b</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">THEN</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										act1:</td>
+									<td class="tab" valign="top">resrt ≔ resrt ∖
+										{r}</td>
+									<td>
+										<table class="comment" cellspacing="0"
+											cellpadding="0">
+											<tr>
+												<td class="begincomment">/*</td>
+												<td>voila un </td>
+												<td/>
+											</tr>
+											<tr>
+												<td/>
+												<td>autre commentaire</td>
+												<td/>
+											</tr>
+											<tr>
+												<td/>
+												<td>multi ligne</td>
+												<td class="endcomment">*/</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										act2:</td>
+									<td class="tab" valign="top">frm ≔ frm ∖ {r}</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">END</div>
+						</div>
+					</td>
+				</tr>
+				<tr class="line">
+					<td align="left" valign="top">
+						<div class="eventname">skip</div>
+						<div class="eventmain">
+							<div class="eventkeyword">BEGIN</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										skip</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">END</div>
+						</div>
+					</td>
+				</tr>
+				<tr class="line">
+					<td align="left" valign="top">
+						<div class="eventname">FRONT_MOVE_2</div>
+						<div class="eventmain">
+							<div class="eventkeyword">REFINES</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td align="left" valign="top">
+										FRONT_MOVE_2</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">ANY</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td align="left" valign="top">b</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">WHERE</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										grd1:</td>
+									<td class="tab" valign="top">b ∈ OCC</td>
+								</tr>
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										grd2:</td>
+									<td class="tab" valign="top">b ∈ dom(TRK)</td>
+								</tr>
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										grd3:</td>
+									<td class="tab" valign="top">TRK(b) ∉ OCC</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">THEN</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										act1:</td>
+									<td class="tab" valign="top">OCC ≔ OCC ∪
+										{TRK(b)}</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">END</div>
+						</div>
+					</td>
+				</tr>
+				<tr class="line">
+					<td align="left" valign="top">
+						<div class="eventname">point_positioning</div>
+						<div class="eventmain">
+							<div class="eventkeyword">REFINES</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td align="left" valign="top">
+										point_positioning</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">BEGIN</div>
+							<table class="eventbody" cellspacing="0"
+								cellpadding="0">
+								<tr class="eventline">
+									<td class="label" align="left" valign="top">
+										act1:</td>
+									<td class="tab" valign="top">TRK ≔ (dom(nxt(r)) ⩤
+										TRK ⩥ ran(nxt(r))) ∪ nxt(r)</td>
+								</tr>
+							</table>
+							<div class="eventkeyword">END</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+			<div class="keyword">END</div>
+		</div>
+	</body>
+</html>
