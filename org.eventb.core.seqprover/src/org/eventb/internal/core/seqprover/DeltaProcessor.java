@@ -74,7 +74,7 @@ public class DeltaProcessor {
 			return;
 		}
 		// Save the delta tree
-		ProofTreeDelta savedRoot = rootDelta;
+		final ProofTreeDelta savedRoot = rootDelta;
 		rootDelta = null;
 		
 		final int length = listeners.size();
@@ -82,13 +82,12 @@ public class DeltaProcessor {
 			// No listeners
 			return;
 		}
-		// Save the list of listeners
-		IProofTreeChangedListener[] savedListeners =
-			new IProofTreeChangedListener[length];
-		listeners.toArray(savedListeners);
+		// Save the list of listeners to prevent concurrent modification
+		final IProofTreeChangedListener[] savedListeners =
+			listeners.toArray(new IProofTreeChangedListener[length]);
 		try {
 			firing = true;
-			for (IProofTreeChangedListener listener: listeners) {
+			for (IProofTreeChangedListener listener: savedListeners) {
 				notifyListener(listener, savedRoot);
 			}
 		} finally {
