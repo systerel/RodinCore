@@ -11,6 +11,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -19,39 +20,38 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 
 public class AutoFormulaRewriterTests extends TestCase {
 
+	private static final FormulaFactory ff = FormulaFactory.getDefault();
+
+	private static final IntegerLiteral L1 =
+		ff.makeIntegerLiteral(new BigInteger("1"), null);
+	private static final IntegerLiteral L2 =
+		ff.makeIntegerLiteral(new BigInteger("2"), null);
+	private static final IntegerLiteral L3 =
+		ff.makeIntegerLiteral(new BigInteger("3"), null);
+	private static final IntegerLiteral L4 =
+		ff.makeIntegerLiteral(new BigInteger("4"), null);
+
+	private static final Predicate P =
+		ff.makeRelationalPredicate(Predicate.EQUAL, L1, L2, null);		
+	private static final Predicate Q =
+		ff.makeRelationalPredicate(Predicate.EQUAL, L2, L3, null);		
+	private static final Predicate R =
+		ff.makeRelationalPredicate(Predicate.EQUAL, L3, L4, null);		
+
+	private static final Predicate notP =
+		ff.makeUnaryPredicate(Predicate.NOT, P, null);
+	private static final Predicate notQ =
+		ff.makeUnaryPredicate(Predicate.NOT, Q, null);
+	private static final Predicate notR =
+		ff.makeUnaryPredicate(Predicate.NOT, R, null);
+
 	private IFormulaRewriter r;
-
-	private Predicate P;
-
-	private Predicate Q;
-
-	private Predicate R;
-
-	private Predicate notP;
-
-	private Predicate notQ;
-
-	private Predicate notR;
-
-	private FormulaFactory ff;
+	
 
 	@Override
 	protected void setUp() throws Exception {
-		r = new AutoRewriterImpl();
-		P = TestLib.genPredicate("1 = 2");
-		Q = TestLib.genPredicate("2 = 3");
-		R = TestLib.genPredicate("3 = 4");
-		ff = FormulaFactory.getDefault();
-		notP = ff.makeUnaryPredicate(Predicate.NOT, P, null);
-		notQ = ff.makeUnaryPredicate(Predicate.NOT, Q, null);
-		notR = ff.makeUnaryPredicate(Predicate.NOT, R, null);
 		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		// TODO Auto-generated method stub
-		super.tearDown();
+		r = new AutoRewriterImpl();
 	}
 
 	private void assertAssociativePredicate(String message, Predicate expected,
@@ -622,7 +622,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 
 	public void testArithmetic() {
 		Expression number0 = ff.makeIntegerLiteral(new BigInteger("0"), null);
-		Expression number1 = ff.makeIntegerLiteral(new BigInteger("1"), null);
+		Expression number1 = L1;
 		Expression number2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
 		Expression number3 = ff.makeIntegerLiteral(new BigInteger("3"), null);
 		Expression numberMinus1 = ff.makeUnaryExpression(Expression.UNMINUS,
