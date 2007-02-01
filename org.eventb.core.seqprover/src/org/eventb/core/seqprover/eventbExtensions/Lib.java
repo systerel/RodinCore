@@ -8,22 +8,33 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 
 
@@ -402,11 +413,120 @@ public final class Lib {
 		return null;
 	}
 	
+	@Deprecated
 	public static Predicate rewrite(Predicate P, FreeIdentifier from, Expression to){
 		if (! Arrays.asList(P.getFreeIdentifiers()).contains(from)) return P;
 		Map<FreeIdentifier,Expression> subst = new HashMap<FreeIdentifier,Expression>();
 		subst.put(from,to);
 		return P.substituteFreeIdents(subst,ff);
+	}
+	
+	public static Predicate rewrite(Predicate P, Expression from, Expression to){
+		IFormulaRewriter rewriter = new FixedRewriter(from,to);
+		return P.rewrite(rewriter);
+	}
+	
+	private static class FixedRewriter extends DefaultRewriter {
+		final Formula from;
+		final Formula to;
+		
+		public FixedRewriter(Formula from, Formula to) {
+			super(false, Lib.ff);
+			this.from = from;
+			this.to = to;
+		}
+
+		private Formula doRewrite(Formula formula) {
+			if (formula.equals(from)) {
+				return to;
+			}
+			return formula;
+		}
+		
+		@Override
+		public Expression rewrite(AssociativeExpression expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		@Override
+		public Predicate rewrite(AssociativePredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+
+		@Override
+		public Expression rewrite(AtomicExpression expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		@Override
+		public Expression rewrite(BinaryExpression expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		@Override
+		public Predicate rewrite(BinaryPredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+
+		@Override
+		public Expression rewrite(BoolExpression expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		@Override
+		public Expression rewrite(BoundIdentifier identifier) {
+			return (Expression) doRewrite(identifier);
+		}
+
+		@Override
+		public Expression rewrite(FreeIdentifier identifier) {
+			return (Expression) doRewrite(identifier);
+		}
+
+		@Override
+		public Expression rewrite(IntegerLiteral literal) {
+			return (Expression) doRewrite(literal);
+		}
+
+		@Override
+		public Predicate rewrite(LiteralPredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+
+		@Override
+		public Expression rewrite(QuantifiedExpression expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		@Override
+		public Predicate rewrite(QuantifiedPredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+
+		@Override
+		public Predicate rewrite(RelationalPredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+
+		@Override
+		public Expression rewrite(SetExtension expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		@Override
+		public Predicate rewrite(SimplePredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
+
+		@Override
+		public Expression rewrite(UnaryExpression expression) {
+			return (Expression) doRewrite(expression);
+		}
+
+		@Override
+		public Predicate rewrite(UnaryPredicate predicate) {
+			return (Predicate) doRewrite(predicate);
+		}
 	}
 	
 	

@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -18,6 +17,8 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 
+// TODO : implement the symetric operation (he)
+// TODO : reform rule output to use forward inference
 public class Eq extends SinglePredInputReasoner{
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".eq";
@@ -45,17 +46,13 @@ public class Eq extends SinglePredInputReasoner{
 		 
 		from = Lib.eqLeft(eqHypPred);
 		to = Lib.eqRight(eqHypPred);
-		
-		// TODO remove when full equality possible.
-		if (!(from instanceof FreeIdentifier)) 
-			return ProverFactory.reasonerFailure(this,input,"Identifier expected:"+from);
-		
+				
 		Set<Predicate> toDeselect = new HashSet<Predicate>();
 		toDeselect.add(eqHyp);
 		Set<Predicate> rewrittenHyps = new HashSet<Predicate>();
 		for (Predicate shyp : seq.selectedHypIterable()){
 			if (! shyp.equals(eqHyp)){
-				Predicate rewritten = (Lib.rewrite(shyp,(FreeIdentifier)from,to));
+				Predicate rewritten = (Lib.rewrite(shyp,from,to));
 				if (! rewritten.equals(shyp)){
 					toDeselect.add(shyp);
 					rewrittenHyps.add(rewritten);
@@ -63,7 +60,7 @@ public class Eq extends SinglePredInputReasoner{
 			}
 		}
 		
-		Predicate rewrittenGoal = Lib.rewrite(seq.goal(),(FreeIdentifier)from,to);
+		Predicate rewrittenGoal = Lib.rewrite(seq.goal(),from,to);
 		
 		//	Generate the anticident
 		IAntecedent[] anticidents = new IAntecedent[1];
