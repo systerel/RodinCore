@@ -1,10 +1,14 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
@@ -18,7 +22,7 @@ import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 
 // TODO : implement the symetric operation (he)
-// TODO : reform rule output to use forward inference
+// TODO : take input from the genearted rule (maybe, since it removes backward compatability)
 public class Eq extends SinglePredInputReasoner{
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".eq";
@@ -31,57 +35,106 @@ public class Eq extends SinglePredInputReasoner{
 		
 		SinglePredInput input = (SinglePredInput) reasonerInput;
 
-		Predicate eqHypPred = input.getPredicate();
-		Predicate eqHyp = eqHypPred;
+		// Predicate eqHypPred = input.getPredicate();
+		Predicate eqHyp = input.getPredicate();
 		
 		if (! seq.containsHypothesis(eqHyp))
 		return ProverFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+eqHyp);
-		if (! Lib.isEq(eqHypPred))
+		if (! Lib.isEq(eqHyp))
 			return ProverFactory.reasonerFailure(this,input,
-					"Hypothesis is not an implication:"+eqHyp);
+					"Hypothesis is not an equality:"+eqHyp);
 		
 		Expression from;
 		Expression to;
 		 
-		from = Lib.eqLeft(eqHypPred);
-		to = Lib.eqRight(eqHypPred);
-				
+		from = Lib.eqLeft(eqHyp);
+		to = Lib.eqRight(eqHyp);
+		
+		List<IHypAction> rewrites = new ArrayList<IHypAction>();
 		Set<Predicate> toDeselect = new HashSet<Predicate>();
 		toDeselect.add(eqHyp);
-		Set<Predicate> rewrittenHyps = new HashSet<Predicate>();
+		
 		for (Predicate shyp : seq.selectedHypIterable()){
-			if (! shyp.equals(eqHyp)){
+			if (shyp != eqHyp) {
 				Predicate rewritten = (Lib.rewrite(shyp,from,to));
-				if (! rewritten.equals(shyp)){
+				if (rewritten != shyp)
+				{
+					rewrites.add(ProverFactory.makeForwardInfHypAction(
+							Collections.singleton(shyp),
+							Collections.singleton(rewritten)));
 					toDeselect.add(shyp);
-					rewrittenHyps.add(rewritten);
 				}
 			}
 		}
-		
+
 		Predicate rewrittenGoal = Lib.rewrite(seq.goal(),from,to);
 		
-		//	Generate the anticident
+		if (rewrittenGoal == seq.goal() && rewrites.isEmpty())
+			return ProverFactory.reasonerFailure(this,input,
+					"Nothing to do");
+
+		Predicate goalDep = seq.goal();
+		Predicate newGoal = rewrittenGoal;
+		
+		// remove goal dependency if goal is not rewritten
+		if (rewrittenGoal == seq.goal()){
+			goalDep = null;
+			newGoal = null;
+		}
+		rewrites.add(ProverFactory.makeDeselectHypAction(toDeselect));
 		IAntecedent[] anticidents = new IAntecedent[1];
 		anticidents[0] = ProverFactory.makeAntecedent(
-				rewrittenGoal,
-				rewrittenHyps,
-				ProverFactory.makeDeselectHypAction(toDeselect));
+				newGoal,null,null,
+				rewrites);
 		
-		//	 Generate the successful reasoner output
-		// no need to clone since toDeselect is not used later
-		Set<Predicate> neededHyps = toDeselect;
-		neededHyps.add(eqHyp);
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
-				this,input,
-				seq.goal(),
-				neededHyps,
-				null,
-				"eh ("+eqHyp+")",
-				anticidents);
-		
+		this,input,
+		goalDep,
+		Collections.singleton(eqHyp),
+		null,
+		"eh ("+eqHyp+")",
+		anticidents);
+
 		return reasonerOutput;
+		
+		
+		
+//		Set<Predicate> toDeselect = new HashSet<Predicate>();
+//		toDeselect.add(eqHyp);
+//		Set<Predicate> rewrittenHyps = new HashSet<Predicate>();
+//		for (Predicate shyp : seq.selectedHypIterable()){
+//			if (! shyp.equals(eqHyp)){
+//				Predicate rewritten = (Lib.rewrite(shyp,from,to));
+//				if (! rewritten.equals(shyp)){
+//					toDeselect.add(shyp);
+//					rewrittenHyps.add(rewritten);
+//				}
+//			}
+//		}
+//		
+//		Predicate rewrittenGoal = Lib.rewrite(seq.goal(),from,to);
+//		
+//		//	Generate the anticident
+//		IAntecedent[] anticidents = new IAntecedent[1];
+//		anticidents[0] = ProverFactory.makeAntecedent(
+//				rewrittenGoal,
+//				rewrittenHyps,
+//				ProverFactory.makeDeselectHypAction(toDeselect));
+//		
+//		//	 Generate the successful reasoner output
+//		// no need to clone since toDeselect is not used later
+//		Set<Predicate> neededHyps = toDeselect;
+//		neededHyps.add(eqHyp);
+//		IProofRule reasonerOutput = ProverFactory.makeProofRule(
+//				this,input,
+//				seq.goal(),
+//				neededHyps,
+//				null,
+//				"eh ("+eqHyp+")",
+//				anticidents);
+//		
+//		return reasonerOutput;
 	}
 
 }

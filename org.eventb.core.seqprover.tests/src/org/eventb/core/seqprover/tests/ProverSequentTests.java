@@ -64,7 +64,7 @@ public class ProverSequentTests extends TestCase {
 		assertNull(newSeq);
 		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_x_bool}, null, null);
 		assertNull(newSeq);
-		Predicate pred_y = TestLib.genPredicate("y=1");
+		Predicate pred_y = TestLib.genPred("y=1");
 		newSeq = ((IInternalProverSequent)seq).modify(null, null, pred_y);
 		assertNull(newSeq);
 		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(pred_y), null);
@@ -138,10 +138,10 @@ public class ProverSequentTests extends TestCase {
 		IProverSequent seq;
 		IProverSequent newSeq;
 		
-		final Predicate pred1 = TestLib.genPredicate("1=1");
+		final Predicate pred1 = TestLib.genPred("1=1");
 		Collection<Predicate> hyps = Arrays.asList(pred1,False);
 		FreeIdentifier[] freeIdent_x = new FreeIdentifier[] {freeIdent_x_int};
-		final Predicate pred2_x = TestLib.genPredicate("x=1");
+		final Predicate pred2_x = TestLib.genPred("x=1");
 		Collection<Predicate> infHyps = Arrays.asList(pred2_x,True);
 		// IProofRule fwdInf = fwdInf(pred1, freeIdent_x, pred2);
 		

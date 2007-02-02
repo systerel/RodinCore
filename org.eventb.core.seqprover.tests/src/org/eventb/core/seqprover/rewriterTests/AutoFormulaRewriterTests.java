@@ -514,7 +514,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 				new BoundIdentDecl[] { xDecl }, pred, x, null,
 				QuantifiedExpression.Form.Implicit);
 
-		Predicate result = TestLib.genPredicate("4 ∈ ℕ ∧ 4 ≤ 3");
+		Predicate result = TestLib.genPred("4 ∈ ℕ ∧ 4 ≤ 3");
 		assertRelationalPredicate("", result, E, Expression.IN, cSet);
 
 		// S \ S == {}

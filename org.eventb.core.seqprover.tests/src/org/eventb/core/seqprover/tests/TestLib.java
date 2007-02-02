@@ -61,13 +61,13 @@ public class TestLib {
 		// return (new ProofTree(genSeq(str))).getRoot();
 	}
 	
-	public static Predicate genHyp(String s){
+	private static Predicate genHyp(String s){
 		Predicate hypPred = Lib.parsePredicate(s);
 		Lib.typeCheck(hypPred);
 		return hypPred;
 	}
 	
-	public static Set<Predicate> genHyps(String... strs){
+	public static Set<Predicate> genPreds(String... strs){
 		Set<Predicate> hyps = new HashSet<Predicate>(strs.length);
 		for (String s : strs) 
 			hyps.add(genHyp(s));
@@ -85,10 +85,35 @@ public class TestLib {
 		return typeEnv;
 	}
 	
-	public static Predicate genPredicate(String str){
+	public static Predicate genPred(String str){
 		Predicate result = Lib.parsePredicate(str);
 		Lib.typeCheck(result);
 		return result;
+	}
+	
+	
+	/**
+	 * Searches the set of hypotheses in the given sequent for the given
+	 * hypotheses and returns the hypothesis found as it occurs in the
+	 * sequent.
+	 * 
+	 * This is useful for extracting the reference of a hypothesis inside
+	 * a sequent in the case where this is needed.
+	 * 
+	 * @param seq
+	 * 		The sequent in whose hyoptheses to search
+	 * @param hyp
+	 * 		The hypothesis to search for
+	 * @return
+	 * 		The sequent copy of the hypothesis in case it is found, or
+	 * 		<code>null</code> otherwise.
+	 */
+	public static Predicate getHypRef(IProverSequent seq, Predicate hyp)
+	{
+		for (Predicate pred : seq.hypIterable()) {
+			if (hyp.equals(pred)) return pred;
+		}
+		return null;
 	}
 	
 }

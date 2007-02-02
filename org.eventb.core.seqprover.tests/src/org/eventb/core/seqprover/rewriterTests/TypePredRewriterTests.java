@@ -14,16 +14,16 @@ public class TypePredRewriterTests extends TestCase {
 	
 	public void testApply(){
 		assertEquals(
-				r.apply(TestLib.genPredicate("ℤ≠ ∅")),
+				r.apply(TestLib.genPred("ℤ≠ ∅")),
 				Lib.True);
 		assertEquals(
-				r.apply(TestLib.genPredicate("∅≠ ℤ")),
+				r.apply(TestLib.genPred("∅≠ ℤ")),
 				Lib.True);
 		assertEquals(
-				r.apply(TestLib.genPredicate("1+1 ∈ℤ")),
+				r.apply(TestLib.genPred("1+1 ∈ℤ")),
 				Lib.True);
 		assertEquals(
-				r.apply(TestLib.genPredicate("1+1 ∉ℤ")),
+				r.apply(TestLib.genPred("1+1 ∉ℤ")),
 				Lib.False);
 		
 	}

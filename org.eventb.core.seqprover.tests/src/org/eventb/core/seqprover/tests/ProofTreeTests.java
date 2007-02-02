@@ -359,8 +359,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		Tactics.hyp().apply(proofTree.getRoot(), null);
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
-		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("x=1")));
-		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps("x=1")));
+		assertTrue(proofDependencies.getGoal().equals(TestLib.genPred("x=1")));
+		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds("x=1")));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		
@@ -371,9 +371,9 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		Tactics.hyp().apply(proofTree.getRoot().getFirstOpenDescendant(), null);
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
-		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("x=1 ⇒ x=1")));
-		assertFalse(proofDependencies.getUsedHypotheses().containsAll(TestLib.genHyps("x=1")));
-		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
+		assertTrue(proofDependencies.getGoal().equals(TestLib.genPred("x=1 ⇒ x=1")));
+		assertFalse(proofDependencies.getUsedHypotheses().containsAll(TestLib.genPreds("x=1")));
+		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds()));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		
@@ -395,8 +395,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		Tactics.allI().apply(proofTree.getRoot(), null);
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
-		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("∀ x· x∈ℤ")));
-		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
+		assertTrue(proofDependencies.getGoal().equals(TestLib.genPred("∀ x· x∈ℤ")));
+		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds()));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv()));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().contains("x"));
 	}

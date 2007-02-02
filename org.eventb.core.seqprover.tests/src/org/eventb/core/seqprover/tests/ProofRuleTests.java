@@ -240,7 +240,7 @@ public class ProofRuleTests extends TestCase {
 		IProverSequent seq;
 		IProverSequent[] newSeqs;
 		
-		Predicate cutPred = TestLib.genPredicate("1=1");
+		Predicate cutPred = TestLib.genPred("1=1");
 		IProofRule cut = cut(cutPred);
 		
 		seq = TestLib.genSeq(" ⊥ |- ⊥ ");
@@ -287,7 +287,7 @@ public class ProofRuleTests extends TestCase {
 		IProverSequent seq;
 		IProverSequent[] newSeqs;
 		
-		Predicate pred = TestLib.genPredicate("1=1");
+		Predicate pred = TestLib.genPred("1=1");
 		IProofRule hide = hideHyp(pred);
 		IProofRule select = selectHyp(pred);
 		
@@ -319,9 +319,9 @@ public class ProofRuleTests extends TestCase {
 		IProverSequent seq;
 		IProverSequent[] newSeqs;
 		
-		Predicate pred1 = TestLib.genPredicate("1=1");
+		Predicate pred1 = TestLib.genPred("1=1");
 		FreeIdentifier freeIdent_x = factory.makeFreeIdentifier("x", null, factory.makeIntegerType());
-		Predicate pred2 = TestLib.genPredicate("x=1");
+		Predicate pred2 = TestLib.genPred("x=1");
 		IProofRule fwdInf = fwdInf(pred1, freeIdent_x, pred2);
 		
 		// unmodifying
