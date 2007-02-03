@@ -8,12 +8,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eventb.core.ast.AssociativeExpression;
+import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.SetExtension;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -39,6 +43,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
@@ -348,10 +353,9 @@ public class Tactics {
 
 	public static ITactic postProcessBeginner() {
 		// System.out.println("* Beginner Mode *");
-//		return onAllPending(compose(tautology(), hyp(), impI(),
-//				autoRewriteRules()));
-		return onAllPending(compose(tautology(), hyp(), impI()));
-
+		return onAllPending(compose(tautology(), hyp(), impI(),
+				autoRewriteRules()));
+		// return onAllPending(compose(tautology(), hyp(), impI()));
 	}
 
 	public static ITactic postProcessExpert() {
@@ -401,6 +405,44 @@ public class Tactics {
 	public static ITactic mpImpHyp(Predicate pred, IPosition position) {
 		return BasicTactics.reasonerTac(new MPImplHypRewrites(),
 				new MPImplHypRewrites.Input(pred, position));
+	}
+
+	public static boolean isFunOvrApp(Expression expression) {
+		if (Lib.isFunApp(expression)) {
+			Expression right = ((BinaryExpression) expression).getRight();
+			if (right.getBoundIdentifiers().length != 0)
+				return false;
+
+			Expression left = ((BinaryExpression) expression).getLeft();
+			if (Lib.isOrv(left)) {
+				Expression[] children = ((AssociativeExpression) left)
+						.getChildren();
+				Expression last = children[children.length - 1];
+				if (last instanceof SetExtension) {
+					Expression[] expressions = ((SetExtension) last)
+							.getMembers();
+
+					if (expressions.length == 1) {
+						if (expressions[0] instanceof BinaryExpression
+								&& expressions[0].getTag() == Expression.MAPSTO) {
+							Expression E = ((BinaryExpression) expressions[0])
+									.getLeft();
+							if (E.getBoundIdentifiers().length != 0)
+								return false;
+							else
+								return true;
+						}
+					}
+				}
+
+			}
+		}
+		return false;
+	}
+
+	public static ITactic funOvrGoal(IPosition position) {
+		return BasicTactics.reasonerTac(new FunOvr(), new FunOvr.Input(null,
+				position));
 	}
 
 }

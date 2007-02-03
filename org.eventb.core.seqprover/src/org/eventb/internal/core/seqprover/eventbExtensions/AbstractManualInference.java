@@ -1,15 +1,12 @@
-package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
+package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -21,7 +18,7 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
-public abstract class AbstractManualRewrites implements IReasoner {
+public abstract class AbstractManualInference implements IReasoner {
 
 	private final static String POSITION_KEY = "pos";
 
@@ -61,79 +58,20 @@ public abstract class AbstractManualRewrites implements IReasoner {
 	public IReasonerOutput apply(IProverSequent seq,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 		final Input input = (Input) reasonerInput;
-		final Predicate hyp = input.pred;
-		final IPosition position = input.position;
+		Predicate pred = input.pred;
+		IPosition position = input.position;
 
-		final Predicate goal = seq.goal();
-		if (hyp == null) {
-			// Goal rewriting
-			final Predicate[] newGoals = rewrite(goal, position);
-			if (newGoals == null) {
-				return ProverFactory.reasonerFailure(this, input, "Rewriter "
-						+ getReasonerID() + " inapplicable for goal " + goal);
-			}
+		IAntecedent[] antecidents = getAntecedents(seq, pred, position);
 
-			final int length = newGoals.length;
-			IAntecedent[] antecedents = new IAntecedent[length];
-			for (int i = 0; i < length; ++i) {
-				antecedents[i] = ProverFactory.makeAntecedent(newGoals[i]);
-			}
-			return ProverFactory.makeProofRule(this, input, goal,
-					getDisplayName(hyp, position), antecedents);
-		} else {
-			// Hypothesis rewriting
-			if (!seq.containsHypothesis(hyp)) {
-				return ProverFactory.reasonerFailure(this, input,
-						"Nonexistent hypothesis: " + hyp);
-			}
-
-			final Predicate[] rewriteOutput = rewrite(hyp, position);
-			if (rewriteOutput == null) {
-				return ProverFactory.reasonerFailure(this, input, "Rewriter "
-						+ getReasonerID() + " inapplicable for hypothesis "
-						+ hyp);
-			}
-
-			// final HashSet<Predicate> predSet = new HashSet<Predicate>(Arrays
-			// .asList(newHyps));
-			// final IAntecedent[] antecedents = new IAntecedent[] {
-			// ProverFactory
-			// .makeAntecedent(goal, predSet, getHypAction(pred)) };
-			// return ProverFactory.makeProofRule(this, input, goal, hyp,
-			// getDisplayName(pred), antecedents);
-
-			final List<Predicate> newHyps = Arrays.asList(rewriteOutput);
-			final IHypAction forwardInf = ProverFactory
-					.makeForwardInfHypAction(Collections.singleton(hyp),
-							newHyps);
-			List<IHypAction> hypActions = Arrays.asList(forwardInf,
-					getHypAction(hyp, position), ProverFactory
-							.makeSelectHypAction(newHyps));
-			return ProverFactory.makeProofRule(this, input, getDisplayName(hyp,
-					position), hypActions);
-
-			//			
-			// final IAntecedent[] antecedents =
-			// new IAntecedent[] { ProverFactory.makeAntecedent(
-			// goal,
-			// Arrays.asList(
-			// forwardInf,
-			// getHypAction(hyp),
-			// ProverFactory.makeSelectHypAction(newHyps))) };
-			// return ProverFactory.makeProofRule(this, input, goal,
-			// getDisplayName(hyp), antecedents);
-
-		}
+		// Generate the successful reasoner output
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(this, input,
+				seq.goal(), getDisplayName(pred, position), antecidents);
+		
+		return reasonerOutput;
 	}
 
-	/**
-	 * Apply the rewriting to the given predicate.
-	 * 
-	 * @param pred
-	 *            predicate to rewrite
-	 * @return an array of predicates which are the result of rewriting
-	 */
-	protected abstract Predicate[] rewrite(Predicate pred, IPosition position);
+	protected abstract IAntecedent[] getAntecedents(IProverSequent seq,
+			Predicate pred, IPosition position);
 
 	/**
 	 * Returns the name to display in the generated rule.
@@ -144,16 +82,6 @@ public abstract class AbstractManualRewrites implements IReasoner {
 	 * @return the name to display in the rule
 	 */
 	protected abstract String getDisplayName(Predicate pred, IPosition position);
-
-	/**
-	 * Returns the action to perform on hypotheses.
-	 * 
-	 * @param pred
-	 *            the hypothesis predicate that gets rewritten
-	 * @return the action to perform on hypotheses.
-	 */
-	protected abstract IHypAction getHypAction(Predicate pred,
-			IPosition position);
 
 	/**
 	 * Returns whether this reasoner is applicable to the given predicate.

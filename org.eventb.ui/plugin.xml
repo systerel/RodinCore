@@ -1122,6 +1122,15 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.MPImplHyp"
             target="hypothesis"
             tooltip="%proofTactics.mpImplHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.funOvrGoal"
+            interrupt="true"
+            name="%proofTactics.funOvrGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunOvrGoal"
+            target="goal"
+            tooltip="%proofTactics.funOvrGoal.tooltip"/>
    </extension>
 
 </plugin>

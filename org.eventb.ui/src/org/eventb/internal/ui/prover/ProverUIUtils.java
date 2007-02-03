@@ -1,7 +1,10 @@
 package org.eventb.internal.ui.prover;
 
 import org.eclipse.swt.graphics.Point;
+import org.eventb.core.ast.AssociativeExpression;
+import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
@@ -10,6 +13,7 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerDelta;
+import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 public class ProverUIUtils {
 
@@ -49,11 +53,10 @@ public class ProverUIUtils {
 		}
 		return null;
 	}
-	
-	public static IProofStateDelta getProofStateDelta(
-			IUserSupportDelta delta, IProofState proofState) {
-		IProofStateDelta[] affectedProofStates = delta
-				.getAffectedProofStates();
+
+	public static IProofStateDelta getProofStateDelta(IUserSupportDelta delta,
+			IProofState proofState) {
+		IProofStateDelta[] affectedProofStates = delta.getAffectedProofStates();
 		for (IProofStateDelta affectedProofState : affectedProofStates) {
 			if (affectedProofState.getProofState() == proofState) {
 				return affectedProofState;
@@ -61,7 +64,6 @@ public class ProverUIUtils {
 		}
 		return null;
 	}
-	
 
 	public static Point getOperatorPosition(Formula subFormula) {
 		if (subFormula instanceof QuantifiedPredicate) {
@@ -74,6 +76,15 @@ public class ProverUIUtils {
 			SourceLocation rightLocation = bPred.getRight().getSourceLocation();
 			return new Point(leftLocation.getEnd() + 1, rightLocation
 					.getStart() - 1);
+		}
+		if (Tactics.isFunOvrApp((Expression) subFormula)) {
+			Expression left = ((BinaryExpression) subFormula).getLeft();
+			Expression[] children = ((AssociativeExpression) left)
+					.getChildren();
+			Expression last = children[children.length - 1];
+			Expression secondLast = children[children.length - 2];
+			return new Point(secondLast.getSourceLocation().getEnd() + 1, last
+					.getSourceLocation().getStart());
 		}
 		return new Point(0, 1);// The first character
 	}
