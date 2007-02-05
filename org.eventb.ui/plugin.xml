@@ -1125,12 +1125,21 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.funOvrGoal"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactics.funOvrGoal.name"
             priorty="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FunOvrGoal"
             target="goal"
             tooltip="%proofTactics.funOvrGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.funOvrHyp"
+            interrupt="false"
+            name="%proofTactics.funOvrHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunOvrHyp"
+            target="hypothesis"
+            tooltip="%proofTactics.funOvrHyp.tooltip"/>
    </extension>
 
 </plugin>

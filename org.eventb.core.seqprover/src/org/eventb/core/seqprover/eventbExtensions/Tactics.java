@@ -445,4 +445,9 @@ public class Tactics {
 				position));
 	}
 
+	public static ITactic funOvrHyp(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new FunOvr(), new FunOvr.Input(hyp,
+				position));
+	}
+
 }

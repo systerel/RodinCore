@@ -6,7 +6,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -63,11 +62,14 @@ public abstract class AbstractManualInference implements IReasoner {
 
 		IAntecedent[] antecidents = getAntecedents(seq, pred, position);
 
-		// Generate the successful reasoner output
-		IProofRule reasonerOutput = ProverFactory.makeProofRule(this, input,
-				seq.goal(), getDisplayName(pred, position), antecidents);
-		
-		return reasonerOutput;
+		if (pred == null) {
+			// Generate the successful reasoner output
+			return ProverFactory.makeProofRule(this, input, seq.goal(),
+					getDisplayName(pred, position), antecidents);
+		} else {
+			return ProverFactory.makeProofRule(this, input, null,
+					getDisplayName(pred, position), antecidents);
+		}
 	}
 
 	protected abstract IAntecedent[] getAntecedents(IProverSequent seq,
