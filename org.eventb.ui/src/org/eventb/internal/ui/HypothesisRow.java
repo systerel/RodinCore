@@ -14,8 +14,10 @@ package org.eventb.internal.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -242,13 +244,11 @@ public class HypothesisRow {
 			assert parseResult.isSuccess();
 			Predicate parsedStr = parseResult.getParsedPredicate();
 
-			List<Point> links = new ArrayList<Point>();
-			List<Runnable> runnables = new ArrayList<Runnable>();
+			Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
 
 			final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
 					.getDefault();
-			final IProofTreeNode node = userSupport.getCurrentPO()
-					.getCurrentNode();
+
 			String[] tactics = tacticUIRegistry.getApplicableToHypothesis(
 					userSupport, hyp);
 
@@ -261,18 +261,21 @@ public class HypothesisRow {
 				for (final IPosition position : positions) {
 					Formula subFormula = parsedStr.getSubFormula(position);
 					Point pt = ProverUIUtils.getOperatorPosition(subFormula);
-					links.add(pt);
-					runnables.add(new Runnable() {
-						public void run() {
-							applyTactic(tacticID, node, position);
-						}
-					});
+					TacticPositionUI tacticPositionUI = links.get(pt);
+					if (tacticPositionUI == null) {
+						tacticPositionUI = new TacticPositionUI();
+						links.put(pt, tacticPositionUI);
+					}
+					tacticPositionUI.addTacticPosition(tacticID, position);
+					
+//					runnables.add(new Runnable() {
+//						public void run() {
+//							applyTactic(tacticID, node, position);
+//						}
+//					});
 				}
 			}
-
-			hypothesisText.setText(string, indexes, links
-					.toArray(new Point[links.size()]), runnables
-					.toArray(new Runnable[runnables.size()]));
+			hypothesisText.setText(string, userSupport, hyp, indexes, links);
 		} else {
 			String str = PredicateUtil.prettyPrint(max_length, actualString,
 					parsedPred);
@@ -283,13 +286,11 @@ public class HypothesisRow {
 
 			Collection<Point> indexes = new ArrayList<Point>();
 
-			List<Point> links = new ArrayList<Point>();
-			List<Runnable> runnables = new ArrayList<Runnable>();
+			Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
 
 			final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
 					.getDefault();
-			final IProofTreeNode node = userSupport.getCurrentPO()
-					.getCurrentNode();
+
 			String[] tactics = tacticUIRegistry.getApplicableToHypothesis(
 					userSupport, hyp);
 
@@ -302,18 +303,21 @@ public class HypothesisRow {
 				for (final IPosition position : positions) {
 					Formula subFormula = parsedStr.getSubFormula(position);
 					Point pt = ProverUIUtils.getOperatorPosition(subFormula);
-					links.add(pt);
-					runnables.add(new Runnable() {
-						public void run() {
-							applyTactic(tacticID, node, position);
-						}
-					});
+					TacticPositionUI tacticPositionUI = links.get(pt);
+					if (tacticPositionUI == null) {
+						tacticPositionUI = new TacticPositionUI();
+						links.put(pt, tacticPositionUI);
+					}
+					tacticPositionUI.addTacticPosition(tacticID, position);
+					
+//					runnables.add(new Runnable() {
+//						public void run() {
+//							applyTactic(tacticID, node, position);
+//						}
+//					});
 				}
 			}
-
-			hypothesisText.setText(str, indexes, links.toArray(new Point[links
-					.size()]), runnables
-					.toArray(new Runnable[runnables.size()]));
+			hypothesisText.setText(str, userSupport, hyp, indexes, links);
 		}
 		toolkit.paintBordersFor(hypothesisComposite);
 	}

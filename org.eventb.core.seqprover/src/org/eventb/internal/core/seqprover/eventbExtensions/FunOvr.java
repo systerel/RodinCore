@@ -123,8 +123,7 @@ public class FunOvr extends AbstractManualInference {
 	}
 
 	@Override
-	public boolean isApplicable(Predicate pred, IPosition position) {
-		Formula formula = pred.getSubFormula(position);
+	public boolean isApplicable(Formula formula) {
 		if (formula instanceof Expression) {
 			return Tactics.isFunOvrApp((Expression) formula);
 		}

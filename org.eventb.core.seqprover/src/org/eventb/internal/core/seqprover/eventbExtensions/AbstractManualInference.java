@@ -2,6 +2,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.Set;
 
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -86,14 +87,13 @@ public abstract class AbstractManualInference implements IReasoner {
 	protected abstract String getDisplayName(Predicate pred, IPosition position);
 
 	/**
-	 * Returns whether this reasoner is applicable to the given predicate.
+	 * Returns whether this reasoner is applicable to the given formula.
 	 * 
-	 * @param pred
-	 *            the predicate to test for rewritability
-	 * @return <code>true</code> if the given predicate might get rewritten by
-	 *         this reasoner
+	 * @param formula
+	 *            the formula to test for applicability
+	 * @return <code>true</code> if the reasoner is applicable at this formula
 	 */
-	public abstract boolean isApplicable(Predicate pred, IPosition position);
+	public abstract boolean isApplicable(Formula formula);
 
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
