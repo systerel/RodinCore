@@ -11,6 +11,7 @@ import org.eventb.core.ISCAxiom;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.IContextAxiomTable;
+import org.eventb.core.tool.state.IToolStateType;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -29,7 +30,7 @@ public class ContextAxiomTable extends PredicateTable<ISCAxiom> implements ICont
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

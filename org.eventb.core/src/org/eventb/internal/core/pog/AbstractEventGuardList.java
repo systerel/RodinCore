@@ -13,6 +13,7 @@ import java.util.List;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
+import org.eventb.core.tool.state.IToolStateType;
 import org.eventb.internal.core.tool.state.ToolState;
 
 /**
@@ -30,7 +31,7 @@ public class AbstractEventGuardList extends ToolState implements IAbstractEventG
 	/* (non-Javadoc)
 	 * @see org.eventb.core.state.IState#getStateType()
 	 */
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

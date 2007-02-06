@@ -10,6 +10,8 @@ package org.eventb.core.pog.state;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.pog.POGCore;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * Protocol for accessing the variant of a machine.
@@ -23,7 +25,8 @@ import org.eventb.core.ast.Expression;
  */
 public interface IMachineVariantInfo extends IState {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".machineVariantInfo";
+	final static IToolStateType<IMachineVariantInfo> STATE_TYPE = 
+		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".machineVariantInfo");
 
 	/**
 	 * Returns the parsed and type-checked variant expression, or <code>null</code> 

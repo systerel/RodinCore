@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCEvent;
+import org.eventb.core.pog.POGCore;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * This class provides information on the guards of all abstract event
@@ -30,7 +32,8 @@ import org.eventb.core.ISCEvent;
  */
 public interface IAbstractEventGuardList extends IState {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventGuardList";
+	final static IToolStateType<IAbstractEventGuardList> STATE_TYPE = 
+		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".abstractEventGuardList");
 
 	/**
 	 * A new event is introduced, i.e. there is no abstraction.

@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.sc.state.IVariantInfo;
+import org.eventb.core.tool.state.IToolStateType;
 import org.eventb.internal.core.tool.state.ToolState;
 
 /**
@@ -36,7 +37,7 @@ public class VariantInfo extends ToolState implements IVariantInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

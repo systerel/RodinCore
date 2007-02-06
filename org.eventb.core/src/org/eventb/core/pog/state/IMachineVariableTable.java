@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.pog.POGCore;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * Protocol for accessing all variables of a machine.
@@ -25,7 +27,8 @@ import org.eventb.core.ast.FreeIdentifier;
  */
 public interface IMachineVariableTable extends IState, Iterable<FreeIdentifier> {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".machineVariableTable";
+	final static IToolStateType<IMachineVariableTable> STATE_TYPE = 
+		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".machineVariableTable");
 
 	/**
 	 * Returns whether this variable table contains the specified variable.

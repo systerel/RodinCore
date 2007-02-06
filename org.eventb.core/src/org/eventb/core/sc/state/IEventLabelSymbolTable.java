@@ -8,6 +8,8 @@
 package org.eventb.core.sc.state;
 
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.sc.SCCore;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * This state component represents a label space for an event to keep, e.g.,
@@ -18,6 +20,7 @@ import org.eventb.core.EventBPlugin;
  */
 public interface IEventLabelSymbolTable extends ILabelSymbolTable {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".eventLabelSymbolTable";
+	final static IToolStateType<IEventLabelSymbolTable> STATE_TYPE = 
+		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".eventLabelSymbolTable");
 
 }

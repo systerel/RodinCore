@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc.symbolTable;
 
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * @author Stefan Hallerstede
@@ -24,7 +25,7 @@ public class ContextLabelSymbolTable extends SymbolTable<ILabelSymbolInfo> imple
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

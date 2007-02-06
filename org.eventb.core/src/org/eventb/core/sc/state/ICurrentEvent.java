@@ -9,8 +9,10 @@ package org.eventb.core.sc.state;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.IFilterModule;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * The static checker protocol does not permit to pass the current event as
@@ -22,7 +24,8 @@ import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
  */
 public interface ICurrentEvent extends IState {
 	
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".currentEvent";
+	final static IToolStateType<ICurrentEvent> STATE_TYPE = 
+		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".currentEvent");
 
 	/**
 	 * Returns the current event.

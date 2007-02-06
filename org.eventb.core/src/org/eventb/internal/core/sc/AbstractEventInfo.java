@@ -20,6 +20,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
+import org.eventb.core.tool.state.IToolStateType;
 import org.eventb.internal.core.tool.state.ToolState;
 
 /**
@@ -170,7 +171,7 @@ public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
 		return implicitRefinedInfo;
 	}
 
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

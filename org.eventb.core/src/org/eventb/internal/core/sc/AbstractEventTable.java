@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.state.IAbstractEventTable;
+import org.eventb.core.tool.state.IToolStateType;
 import org.eventb.internal.core.tool.state.ToolState;
 
 /**
@@ -39,7 +40,7 @@ public class AbstractEventTable extends ToolState implements IAbstractEventTable
 		localVariables = new HashSet<String>(size * 6 + 1);
 	}
 
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

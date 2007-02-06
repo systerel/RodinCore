@@ -25,11 +25,11 @@ public interface IToolStateRepository <I extends IToolState> {
 	 * @throws CoreException if no state for the specified type has been created,
 	 * 		i.e. if the state was not initialised before being read.
 	 */
-	I getState(String stateType) throws CoreException;
+	I getState(IToolStateType<? extends I> stateType) throws CoreException;
 	
 	void setState(I state) throws CoreException;
 	
-	void removeState(String stateType) throws CoreException;
+	void removeState(IToolStateType<? extends I> stateType) throws CoreException;
 	
 	FormulaFactory getFormulaFactory() throws CoreException;
 	

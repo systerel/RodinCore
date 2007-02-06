@@ -19,6 +19,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.IConcreteEventActionTable;
 import org.eventb.core.pog.state.IMachineVariableTable;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * @author Stefan Hallerstede
@@ -72,7 +73,7 @@ public class ConcreteEventActionTable extends EventActionTable implements
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

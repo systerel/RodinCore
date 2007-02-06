@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.state.IContextPointerArray;
+import org.eventb.core.tool.state.IToolStateType;
 import org.eventb.internal.core.tool.state.ToolState;
 import org.rodinp.core.IInternalElement;
 
@@ -95,7 +96,7 @@ public class ContextPointerArray extends ToolState implements IContextPointerArr
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

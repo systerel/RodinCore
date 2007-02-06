@@ -11,6 +11,7 @@ import org.eventb.core.ISCInvariant;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.IMachineInvariantTable;
+import org.eventb.core.tool.state.IToolStateType;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -30,7 +31,7 @@ extends PredicateTable<ISCInvariant> implements IMachineInvariantTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

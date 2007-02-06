@@ -10,6 +10,7 @@ package org.eventb.internal.core.pog;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.pog.state.IMachineVariantInfo;
+import org.eventb.core.tool.state.IToolStateType;
 import org.eventb.internal.core.tool.state.ToolState;
 
 /**
@@ -30,7 +31,7 @@ public class MachineVariantInfo extends ToolState implements IMachineVariantInfo
 		return variant;
 	}
 
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

@@ -11,11 +11,28 @@ package org.eventb.core.tool.state;
  * @author Stefan Hallerstede
  *
  */
-public interface IToolState {
+public interface IToolStateType<T extends IToolState> {
 
-	IToolStateType<?> getStateType();
+	/**
+	 * Returns the unique identifier of this state type.
+	 * 
+	 * @return the unique identifier of this state type
+	 */
+	String getId();
 
-	void makeImmutable();
-	
-	boolean isImmutable();
+	/**
+	 * Returns the human-readable name of this state type.
+	 * 
+	 * @return the name of this state type
+	 */
+	String getName();
+
+	/**
+	 * Returns a string representation of this state type, that is its unique
+	 * identifier.
+	 * 
+	 * @return the unique identifier of this state type
+	 */
+	String toString();
+
 }

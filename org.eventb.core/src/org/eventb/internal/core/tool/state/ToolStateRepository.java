@@ -14,6 +14,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tool.state.IToolState;
 import org.eventb.core.tool.state.IToolStateRepository;
+import org.eventb.core.tool.state.IToolStateType;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
 
@@ -45,16 +46,16 @@ public abstract class ToolStateRepository<I extends IToolState> implements ITool
 		this.factory = factory;
 		environment = factory.makeTypeEnvironment();
 		fileChanged = false;
-		repository = new Hashtable<String, I>(REPOSITORY_SIZE);
+		repository = new Hashtable<IToolStateType<?>, I>(REPOSITORY_SIZE);
 		exception = null;
 	}
 	
-	private final Hashtable<String, I> repository;
+	private final Hashtable<IToolStateType<?>, I> repository;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IStateRepository#getState(java.lang.String)
 	 */
-	public I getState(String stateType) throws CoreException {
+	public I getState(IToolStateType<? extends I> stateType) throws CoreException {
 		if (exception != null)
 			throw exception;
 		I state = repository.get(stateType);
@@ -103,7 +104,7 @@ public abstract class ToolStateRepository<I extends IToolState> implements ITool
 		repository.put(state.getStateType(), state);
 	}
 
-	public void removeState(String stateType) throws CoreException {
+	public void removeState(IToolStateType<? extends I> stateType) throws CoreException {
 		if (exception != null)
 			throw exception;
 		

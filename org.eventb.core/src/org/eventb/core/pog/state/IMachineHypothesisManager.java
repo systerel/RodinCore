@@ -9,6 +9,8 @@ package org.eventb.core.pog.state;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.pog.POGCore;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * This is the hypothesis manager associated with Event-B machines.
@@ -22,7 +24,8 @@ import org.eventb.core.IPOPredicateSet;
  */
 public interface IMachineHypothesisManager extends IHypothesisManager {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".machineHypothesisManager";
+	final static IToolStateType<IMachineHypothesisManager> STATE_TYPE = 
+		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".machineHypothesisManager");
 
 	/**
 	 * Returns the hypothesis, i.e. the predicate set, that contains all predicates

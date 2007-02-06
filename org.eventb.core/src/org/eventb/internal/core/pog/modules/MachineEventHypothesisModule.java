@@ -29,14 +29,14 @@ import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineVariableTable;
 import org.eventb.core.pog.state.IStateRepository;
-import org.eventb.core.pog.state.IWitnessTable;
+import org.eventb.core.pog.state.IEventWitnessTable;
 import org.eventb.internal.core.pog.AbstractEventActionTable;
 import org.eventb.internal.core.pog.AbstractEventGuardList;
 import org.eventb.internal.core.pog.AbstractEventGuardTable;
 import org.eventb.internal.core.pog.ConcreteEventActionTable;
 import org.eventb.internal.core.pog.ConcreteEventGuardTable;
 import org.eventb.internal.core.pog.EventHypothesisManager;
-import org.eventb.internal.core.pog.WitnessTable;
+import org.eventb.internal.core.pog.EventWitnessTable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -195,8 +195,8 @@ public class MachineEventHypothesisModule extends UtilityModule {
 			ISCEvent concreteEvent, 
 			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException, RodinDBException {
-		IWitnessTable witnessTable = 
-			new WitnessTable(concreteEvent.getSCWitnesses(), eventTypeEnvironment, factory, monitor);
+		IEventWitnessTable witnessTable = 
+			new EventWitnessTable(concreteEvent.getSCWitnesses(), eventTypeEnvironment, factory, monitor);
 		witnessTable.makeImmutable();
 		repository.setState(witnessTable);
 	}

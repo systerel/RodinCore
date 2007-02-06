@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+   <extension-point id="scStateTypes" name="%scStateTypes" schema="schema/scStateTypes.exsd"/>
+   <extension-point id="pogStateTypes" name="%pogStateTypes" schema="schema/pogStateTypes.exsd"/>
    <extension
          point="org.eclipse.core.runtime.contentTypes">
       <content-type
@@ -463,6 +465,124 @@
             class="org.eventb.internal.core.RodinProjectAdapterFactory">
          <adapter type="org.rodinp.core.IRodinProject"/>
       </factory>
+   </extension>
+   <extension
+         point="org.eventb.core.scStateTypes">
+      <stateType
+            class="org.eventb.core.sc.state.IAbstractEventInfo"
+            id="abstractEventInfo"
+            name="%abstractEventInfo"/>
+      <stateType
+            class="org.eventb.core.sc.state.IAbstractEventTable"
+            id="abstractEventTable"
+            name="%abstractEventTable"/>
+      <stateType
+            class="org.eventb.core.sc.state.IAbstractMachineInfo"
+            id="abstractMachineInfo"
+            name="%abstractMachineInfo"/>
+      <stateType
+            class="org.eventb.core.sc.state.IContextLabelSymbolTable"
+            id="contextLabelSymbolTable"
+            name="%contextLabelSymbolTable"/>
+      <stateType
+            class="org.eventb.core.sc.state.IContextPointerArray"
+            id="contextPointerArray"
+            name="%contextPointerArray"/>
+      <stateType
+            class="org.eventb.core.sc.state.IContextTable"
+            id="contextTable"
+            name="%contextTable"/>
+      <stateType
+            class="org.eventb.core.sc.state.ICurrentEvent"
+            id="currentEvent"
+            name="%currentEvent"/>
+      <stateType
+            class="org.eventb.core.sc.state.IEventLabelSymbolTable"
+            id="eventLabelSymbolTable"
+            name="%eventLabelSymbolTable"/>
+      <stateType
+            class="org.eventb.core.sc.state.IEventRefinesInfo"
+            id="eventRefinesInfo"
+            name="%eventRefinesInfo"/>
+      <stateType
+            class="org.eventb.core.sc.state.IIdentifierSymbolTable"
+            id="identifierSymbolTable"
+            name="%identifierSymbolTable"/>
+      <stateType
+            class="org.eventb.core.sc.state.IMachineLabelSymbolTable"
+            id="machineLabelSymbolTable"
+            name="%machineLabelSymbolTable"/>
+      <stateType
+            class="org.eventb.core.sc.state.IParsedFormula"
+            id="parsedFormula"
+            name="%parsedFormula"/>
+      <stateType
+            class="org.eventb.core.sc.state.IVariantInfo"
+            id="variantInfo"
+            name="%variantInfo"/>
+   </extension>
+   <extension
+         point="org.eventb.core.pogStateTypes">
+      <stateType
+            class="org.eventb.core.pog.state.IAbstractEventActionTable"
+            id="abstractEventActionTable"
+            name="%abstractEventActionTable"/>
+      <stateType
+            class="org.eventb.core.pog.state.IAbstractEventGuardList"
+            id="abstractEventGuardList"
+            name="%abstractEventGuardList"/>
+      <stateType
+            class="org.eventb.core.pog.state.IAbstractEventGuardTable"
+            id="abstractEventGuardTable"
+            name="%abstractEventGuardTable"/>
+      <stateType
+            class="org.eventb.core.pog.state.IConcreteEventActionTable"
+            id="concreteEventActionTable"
+            name="%concreteEventActionTable"/>
+      <stateType
+            class="org.eventb.core.pog.state.IConcreteEventGuardTable"
+            id="concreteEventGuardTable"
+            name="%concreteEventGuardTable"/>
+      <stateType
+            class="org.eventb.core.pog.state.IContextAxiomTable"
+            id="contextAxiomTable"
+            name="%contextAxiomTable"/>
+      <stateType
+            class="org.eventb.core.pog.state.IContextHypothesisManager"
+            id="contextHypothesisManager"
+            name="%contextHypothesisManager"/>
+      <stateType
+            class="org.eventb.core.pog.state.IContextTheoremTable"
+            id="contextTheoremTable"
+            name="%contextTheoremTable"/>
+      <stateType
+            class="org.eventb.core.pog.state.IEventHypothesisManager"
+            id="eventHypothesisManager"
+            name="%eventHypothesisManager"/>
+      <stateType
+            class="org.eventb.core.pog.state.IMachineHypothesisManager"
+            id="machineHypothesisManager"
+            name="%machineHypothesisManager"/>
+      <stateType
+            class="org.eventb.core.pog.state.IMachineInvariantTable"
+            id="machineInvariantTable"
+            name="%machineInvariantTable"/>
+      <stateType
+            class="org.eventb.core.pog.state.IMachineTheoremTable"
+            id="machineTheoremTable"
+            name="%machineTheoremTable"/>
+      <stateType
+            class="org.eventb.core.pog.state.IMachineVariableTable"
+            id="machineVariableTable"
+            name="%machineVariableTable"/>
+      <stateType
+            class="org.eventb.core.pog.state.IMachineVariantInfo"
+            id="machineVariantInfo"
+            name="%machineVariantInfo"/>
+      <stateType
+            class="org.eventb.core.pog.state.IEventWitnessTable"
+            id="eventWitnessTable"
+            name="%eventWitnessTable"/>
    </extension>
 
 </plugin>

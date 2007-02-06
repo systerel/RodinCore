@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IRefinesEvent;
+import org.eventb.core.sc.SCCore;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * State component for refinement information associated with events.
@@ -25,7 +27,8 @@ import org.eventb.core.IRefinesEvent;
  */
 public interface IEventRefinesInfo extends IState {
 	
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".eventRefinesInfo";
+	final static IToolStateType<IEventRefinesInfo> STATE_TYPE = 
+		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".eventRefinesInfo");
 	
 	/**
 	 * Returns whether the current event is refined or not.

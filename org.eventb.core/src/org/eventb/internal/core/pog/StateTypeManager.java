@@ -5,17 +5,30 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.tool.state;
+package org.eventb.internal.core.pog;
+
+import org.eventb.internal.core.tool.ToolStateTypeManager;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface IToolState {
+public class StateTypeManager extends ToolStateTypeManager {
 
-	IToolStateType<?> getStateType();
-
-	void makeImmutable();
+	/**
+	 * The singleton manager
+	 */
+	private static final StateTypeManager MANAGER = new StateTypeManager();
 	
-	boolean isImmutable();
+	/**
+	 * Returns the singleton ElementTypeManager
+	 */
+	public final static StateTypeManager getInstance() {
+		return MANAGER;
+	}
+	
+	private StateTypeManager() {
+		super("pogStateTypes");
+	}
+
 }

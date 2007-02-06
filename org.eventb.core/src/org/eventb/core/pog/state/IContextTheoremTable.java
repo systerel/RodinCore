@@ -9,6 +9,8 @@ package org.eventb.core.pog.state;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCTheorem;
+import org.eventb.core.pog.POGCore;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * Common protocol for accessing all theorems of a context.
@@ -22,6 +24,7 @@ import org.eventb.core.ISCTheorem;
  */
 public interface IContextTheoremTable extends IPredicateTable<ISCTheorem> {
 	
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".contextTheoremTable";
+	final static IToolStateType<IContextTheoremTable> STATE_TYPE = 
+		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".contextTheoremTable");
 
 }

@@ -11,8 +11,10 @@ import java.util.Collection;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolTable;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * State component for identifiers declared in a context or a machine, or in 
@@ -23,7 +25,8 @@ import org.eventb.core.sc.symbolTable.ISymbolTable;
  */
 public interface IIdentifierSymbolTable extends ISymbolTable<IIdentifierSymbolInfo>, IState {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".identifierSymbolTable";
+	final static IToolStateType<IIdentifierSymbolTable> STATE_TYPE = 
+		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".identifierSymbolTable");
 	
 	/**
 	 * Returns a collection of <b>untyped</b> free identifiers of all identifiers stored 

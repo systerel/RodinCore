@@ -14,6 +14,8 @@ import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.POGCore;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * This state component provides information on witnesses associated with refined events.
@@ -25,9 +27,10 @@ import org.eventb.core.ast.Predicate;
  * </p>
  *
  */
-public interface IWitnessTable extends IState {
+public interface IEventWitnessTable extends IState {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".witnessTable";
+	final static IToolStateType<IEventWitnessTable> STATE_TYPE = 
+		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".eventWitnessTable");
 
 	/**
 	 * Returns the array of witnesses.
@@ -35,8 +38,8 @@ public interface IWitnessTable extends IState {
 	 * returned by <code>getVariables()</code> and
 	 * <code>getPredicates()</code>.
 	 * 
-	 * @see IWitnessTable#getVariables()
-	 * @see IWitnessTable#getPredicates()
+	 * @see IEventWitnessTable#getVariables()
+	 * @see IEventWitnessTable#getPredicates()
 	 * 
 	 * @return the array of witnesses
 	 */
@@ -49,7 +52,7 @@ public interface IWitnessTable extends IState {
 	 * witnesses returned by <code>getWitnesses()</code>.
 	 * </p>
 	 * 
-	 * @see IWitnessTable#getWitnesses()
+	 * @see IEventWitnessTable#getWitnesses()
 	 * 
 	 * @return array of witnessed variables
 	 */
@@ -63,7 +66,7 @@ public interface IWitnessTable extends IState {
 	 * witnesses returned by <code>getWitnesses()</code>.
 	 * </p>
 	 * 
-	 * @see IWitnessTable#getWitnesses()
+	 * @see IEventWitnessTable#getWitnesses()
 	 * 
 	 * @return the array of parsed and type-checked predicates
 	 * corresponding to the witnesses for event and machine variables
@@ -77,7 +80,7 @@ public interface IWitnessTable extends IState {
 	 * witnesses returned by <code>getWitnesses()</code>.
 	 * </p>
 	 * 
-	 * @see IWitnessTable#getWitnesses()
+	 * @see IEventWitnessTable#getWitnesses()
 	 * 
 	 * @return whether the witness at the specified index is deterministic
 	 */
@@ -89,8 +92,8 @@ public interface IWitnessTable extends IState {
 	 * returned by <code>getMachineDetAssignments()</code> and
 	 * <code>getMachinePrimedDetAssignments()</code>.
 	 * 
-	 * @see IWitnessTable#getMachineDetAssignments()
-	 * @see IWitnessTable#getMachinePrimedDetAssignments()
+	 * @see IEventWitnessTable#getMachineDetAssignments()
+	 * @see IEventWitnessTable#getMachinePrimedDetAssignments()
 	 * 
 	 * @return the array of deterministic witnesses
 	 */
@@ -104,7 +107,7 @@ public interface IWitnessTable extends IState {
 	 * witnesses returned by <code>getMachineDetWitnesses()</code>.
 	 * </p>
 	 * 
-	 * @see IWitnessTable#getMachineDetWitnesses()
+	 * @see IEventWitnessTable#getMachineDetWitnesses()
 	 * 
 	 * @return the array of parsed and type-checked assignments
 	 * corresponding to the deterministic witnesses for machine variables
@@ -121,7 +124,7 @@ public interface IWitnessTable extends IState {
 	 * witnesses returned by <code>getMachineDetWitnesses()</code>.
 	 * </p>
 	 * 
-	 * @see IWitnessTable#getMachineDetWitnesses()
+	 * @see IEventWitnessTable#getMachineDetWitnesses()
 	 * 
 	 * @return the array of parsed and type-checked assignments to primed variables
 	 * corresponding to the deterministic witnesses for machine variables
@@ -133,7 +136,7 @@ public interface IWitnessTable extends IState {
 	 * The indices of the returned array correspond to those
 	 * returned by <code>getEventDetAssignments()</code>.
 	 * 
-	 * @see IWitnessTable#getEventDetAssignments()
+	 * @see IEventWitnessTable#getEventDetAssignments()
 	 * 
 	 * @return the array of deterministic witnesses for event variables
 	 */
@@ -147,7 +150,7 @@ public interface IWitnessTable extends IState {
 	 * witnesses returned by <code>getEventDetWitnesses()</code>.
 	 * </p>
 	 * 
-	 * @see IWitnessTable#getEventDetWitnesses()
+	 * @see IEventWitnessTable#getEventDetWitnesses()
 	 * 
 	 * @return the array of parsed and type-checked assignments
 	 * corresponding to the deterministic witnesses for event variables
@@ -159,7 +162,7 @@ public interface IWitnessTable extends IState {
 	 * The indices of the returned array correspond to those
 	 * returned by <code>getNondetPredicates()</code>.
 	 * 
-	 * @see IWitnessTable#getNondetPredicates()
+	 * @see IEventWitnessTable#getNondetPredicates()
 	 * 
 	 * @return the array of non-deterministic witnesses for event and machine variables
 	 */
@@ -174,7 +177,7 @@ public interface IWitnessTable extends IState {
 	 * witnesses returned by <code>getNondetWitnesses()</code>.
 	 * </p>
 	 * 
-	 * @see IWitnessTable#getNondetWitnesses()
+	 * @see IEventWitnessTable#getNondetWitnesses()
 	 * 
 	 * @return the array of parsed and type-checked predicates
 	 * corresponding to the non-deterministic witnesses for event and machine variables
@@ -189,7 +192,7 @@ public interface IWitnessTable extends IState {
 	 * witnesses returned by <code>getNondetWitnesses()</code>.
 	 * </p>
 	 * 
-	 * @see IWitnessTable#getNondetWitnesses()
+	 * @see IEventWitnessTable#getNondetWitnesses()
 	 * 
 	 * @return the array of parsed and type-checked predicates
 	 * corresponding to the non-deterministic witnesses for event and machine variables

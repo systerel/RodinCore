@@ -22,7 +22,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IAbstractEventActionTable;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IStateRepository;
-import org.eventb.core.pog.state.IWitnessTable;
+import org.eventb.core.pog.state.IEventWitnessTable;
 import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.rodinp.core.IRodinElement;
@@ -35,7 +35,7 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	
 	protected IAbstractEventGuardList abstractEventGuardList;
 	protected IAbstractEventActionTable abstractEventActionTable;
-	protected IWitnessTable witnessTable;
+	protected IEventWitnessTable witnessTable;
 
 	private void makeActionHypothesis(
 			ArrayList<POGPredicate> hyp, Set<FreeIdentifier> freeIdents) {
@@ -180,7 +180,7 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 		abstractEventActionTable = 
 			(IAbstractEventActionTable) repository.getState(IAbstractEventActionTable.STATE_TYPE);
 		witnessTable =
-			(IWitnessTable) repository.getState(IWitnessTable.STATE_TYPE);
+			(IEventWitnessTable) repository.getState(IEventWitnessTable.STATE_TYPE);
 	}
 
 	/* (non-Javadoc)

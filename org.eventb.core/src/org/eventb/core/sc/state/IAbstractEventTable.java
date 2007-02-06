@@ -10,6 +10,8 @@ package org.eventb.core.sc.state;
 import java.util.List;
 
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.sc.SCCore;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * State component for accessing information about events of the abstract machine.
@@ -19,7 +21,8 @@ import org.eventb.core.EventBPlugin;
  */
 public interface IAbstractEventTable extends IState {
 	
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".abstractEventTable";
+	final static IToolStateType<IAbstractEventTable> STATE_TYPE = 
+		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".abstractEventTable");
 	
 	/**
 	 * Returns the array of all abstract event infos for the abstract machine

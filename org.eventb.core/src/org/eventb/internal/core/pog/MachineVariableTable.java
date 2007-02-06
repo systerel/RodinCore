@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.pog.state.IMachineVariableTable;
+import org.eventb.core.tool.state.IToolStateType;
 import org.eventb.internal.core.tool.state.ToolState;
 
 /**
@@ -37,7 +38,7 @@ public class MachineVariableTable extends ToolState implements IMachineVariableT
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

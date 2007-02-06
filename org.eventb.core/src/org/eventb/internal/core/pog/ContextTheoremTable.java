@@ -11,6 +11,7 @@ import org.eventb.core.ISCTheorem;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.IContextTheoremTable;
+import org.eventb.core.tool.state.IToolStateType;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -29,7 +30,7 @@ public class ContextTheoremTable extends PredicateTable<ISCTheorem> implements I
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

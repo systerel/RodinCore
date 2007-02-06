@@ -9,6 +9,8 @@ package org.eventb.core.pog.state;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.BecomesEqualTo;
+import org.eventb.core.pog.POGCore;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * Common protocol for accessing the actions of the concrete event.
@@ -24,7 +26,8 @@ import org.eventb.core.ast.BecomesEqualTo;
  */
 public interface IConcreteEventActionTable extends IEventActionTable {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".concreteEventActionTable";
+	final static IToolStateType<IConcreteEventActionTable> STATE_TYPE = 
+		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".concreteEventActionTable");
 
 	/**
 	 * Returns a substitution to rename all variables not in the frame of the actions

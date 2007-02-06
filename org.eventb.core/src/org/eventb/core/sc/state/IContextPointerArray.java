@@ -11,6 +11,8 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISeesContext;
+import org.eventb.core.sc.SCCore;
+import org.eventb.core.tool.state.IToolStateType;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -27,7 +29,8 @@ import org.rodinp.core.IInternalElement;
  */
 public interface IContextPointerArray extends IState {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".contextPointerArray";
+	final static IToolStateType<IContextPointerArray> STATE_TYPE = 
+		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".contextPointerArray");
 
 	/**
 	 * The enumerated type <code>PointerType</code> is used determine whether this

@@ -14,6 +14,7 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
+import org.eventb.core.tool.state.IToolStateType;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 
@@ -58,7 +59,7 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 		}
 	}
 
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 	

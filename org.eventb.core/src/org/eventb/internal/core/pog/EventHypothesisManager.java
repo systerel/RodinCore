@@ -10,6 +10,7 @@ package org.eventb.internal.core.pog;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.pog.state.IEventHypothesisManager;
+import org.eventb.core.tool.state.IToolStateType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -38,7 +39,7 @@ public class EventHypothesisManager extends HypothesisManager implements IEventH
 				IDENTIFIER_TABLE_SIZE);
 	}
 
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

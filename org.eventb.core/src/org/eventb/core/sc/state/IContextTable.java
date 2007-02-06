@@ -10,6 +10,8 @@ package org.eventb.core.sc.state;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCContext;
+import org.eventb.core.sc.SCCore;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * State component that conatins the closure of all contexts extended or seen.
@@ -20,7 +22,8 @@ import org.eventb.core.ISCContext;
  */
 public interface IContextTable extends IState {
 
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".contextTable";
+	final static IToolStateType<IContextTable> STATE_TYPE = 
+		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".contextTable");
 	
 	/**
 	 * Add a context of the closure

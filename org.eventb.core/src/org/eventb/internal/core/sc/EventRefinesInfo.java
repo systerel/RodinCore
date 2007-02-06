@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
+import org.eventb.core.tool.state.IToolStateType;
 import org.eventb.internal.core.tool.state.ToolState;
 
 /**
@@ -35,7 +36,7 @@ public class EventRefinesInfo extends ToolState implements IEventRefinesInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

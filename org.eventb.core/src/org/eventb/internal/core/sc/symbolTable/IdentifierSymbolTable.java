@@ -16,6 +16,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.tool.state.IToolStateType;
 
 /**
  * @author Stefan Hallerstede
@@ -34,7 +35,7 @@ public class IdentifierSymbolTable extends SymbolTable<IIdentifierSymbolInfo> im
 		this.factory = factory;
 	}
 
-	public String getStateType() {
+	public IToolStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 	
