@@ -14,7 +14,9 @@ package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -46,6 +48,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.TacticPositionUI;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
@@ -200,10 +203,9 @@ public class GoalSection extends SectionPart {
 		// max_length = 30;
 
 		if (node == null) {
-			Collection<Point> indexes = new ArrayList<Point>();
-			Point[] links = new Point[0];
-			Runnable[] listeners = new Runnable[0];
-			goalText.setText("No current goal", indexes, links, listeners);
+			IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
+					.getEditor()).getUserSupport();
+			goalText.setText("No current goal", userSupport, node.getSequent().goal(), null, null);
 			styledText.setBackground(color);
 		} else {
 			Predicate goal = node.getSequent().goal();
@@ -252,13 +254,13 @@ public class GoalSection extends SectionPart {
 				assert parsedResult.isSuccess();
 				Predicate parsedStr = parsedResult.getParsedPredicate();
 
-				List<Point> links = new ArrayList<Point>();
-				List<Runnable> runnables = new ArrayList<Runnable>();
-				IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
-						.getEditor()).getUserSupport();
+				Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
 
 				final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
 						.getDefault();
+				IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
+						.getEditor()).getUserSupport();
+
 				String[] tactics = tacticUIRegistry
 						.getApplicableToGoal(userSupport);
 
@@ -271,18 +273,16 @@ public class GoalSection extends SectionPart {
 						Formula subFormula = parsedStr.getSubFormula(position);
 						Point pt = ProverUIUtils
 								.getOperatorPosition(subFormula);
-						links.add(pt);
-						runnables.add(new Runnable() {
-							public void run() {
-								applyTactic(tacticID, node, position);
-							}
-						});
+						TacticPositionUI tacticPositionUI = links.get(pt);
+						if (tacticPositionUI == null) {
+							tacticPositionUI = new TacticPositionUI();
+							links.put(pt, tacticPositionUI);
+						}
+						tacticPositionUI.addTacticPosition(tacticID, position);
 					}
 				}
 
-				goalText.setText(string, indexes, links.toArray(new Point[links
-						.size()]), runnables.toArray(new Runnable[runnables
-						.size()]));
+				goalText.setText(string, userSupport, node.getSequent().goal(), indexes, links);
 			} else {
 				String str = PredicateUtil.prettyPrint(max_length,
 						actualString, parsedPred);
@@ -293,8 +293,7 @@ public class GoalSection extends SectionPart {
 				assert parsedResult.isSuccess();
 				Predicate parsedStr = parsedResult.getParsedPredicate();
 
-				List<Point> links = new ArrayList<Point>();
-				List<Runnable> runnables = new ArrayList<Runnable>();
+				Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
 				IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
 						.getEditor()).getUserSupport();
 
@@ -312,18 +311,16 @@ public class GoalSection extends SectionPart {
 						Formula subFormula = parsedStr.getSubFormula(position);
 						Point pt = ProverUIUtils
 								.getOperatorPosition(subFormula);
-						links.add(pt);
-						runnables.add(new Runnable() {
-							public void run() {
-								applyTactic(tacticID, node, position);
-							}
-						});
+						TacticPositionUI tacticPositionUI = links.get(pt);
+						if (tacticPositionUI == null) {
+							tacticPositionUI = new TacticPositionUI();
+							links.put(pt, tacticPositionUI);
+						}
+						tacticPositionUI.addTacticPosition(tacticID, position);
 					}
 				}
 
-				goalText.setText(str, indexes, links.toArray(new Point[links
-						.size()]), runnables.toArray(new Runnable[runnables
-						.size()]));
+				goalText.setText(str, userSupport, node.getSequent().goal(), indexes, links);
 
 				if (!node.isOpen()) {
 					styledText.setBackground(color);

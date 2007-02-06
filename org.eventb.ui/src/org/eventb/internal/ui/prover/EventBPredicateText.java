@@ -2,7 +2,11 @@ package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -11,22 +15,38 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.core.ast.IPosition;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.eventb.internal.ui.TacticPositionUI;
+import org.eventb.ui.prover.IProofCommand;
+import org.eventb.ui.prover.ITacticProvider;
+import org.rodinp.core.RodinDBException;
 
 public class EventBPredicateText implements IPropertyChangeListener {
 
+	private IUserSupport us;
+
+	private Predicate hyp;
+	
 	StyledText text;
 
 	ScrolledForm parent;
@@ -37,9 +57,11 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	private Collection<Point> boxes;
 
-	Point[] links;
+	Map<Point, TacticPositionUI> links;
 
-	Runnable[] commands;
+	// Point[] links;
+
+	// Runnable[] commands;
 
 	Point current;
 
@@ -51,7 +73,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	final Color YELLOW = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
 
-	int currentLinkIndex;
+	Point currentLink;
 
 	public EventBPredicateText(FormToolkit toolkit, final ScrolledForm parent) {
 
@@ -72,12 +94,12 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	}
 
 	// This must be called after initialisation
-	public void setText(String string, Collection<Point> boxes, Point[] links,
-			Runnable[] commands) {
-		this.boxes = boxes;
+	public void setText(String string, IUserSupport us, Predicate hyp, Collection<Point> boxes, Map<Point, TacticPositionUI> links) {
+		this.hyp = hyp;
+		this.us = us;
 		this.links = links;
-		this.commands = commands;
-		currentLinkIndex = -1;
+		this.boxes = boxes;
+		currentLink = null;
 		text.setText(string);
 		text.pack();
 		text.addModifyListener(new EventBStyledTextModifyListener());
@@ -157,7 +179,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			}
 		}
 
-		for (Point link : links) {
+		for (Point link : links.keySet()) {
 			if (link.x > current.y) {
 				link.x = link.x + offset;
 				link.y = link.y + offset;
@@ -201,7 +223,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			text.setStyleRange(style);
 		}
 
-		for (Point link : links) {
+		for (Point link : links.keySet()) {
 			StyleRange style = new StyleRange();
 			style.start = link.x;
 			style.length = link.y - link.x;
@@ -250,13 +272,93 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	class MouseDownListener implements Listener {
 
 		public void handleEvent(Event e) {
-			if (currentLinkIndex != -1) {
-				Runnable op = commands[currentLinkIndex];
-				op.run();
+			if (currentLink != null) {
+				TacticPositionUI tacticPositionUI = links.get(currentLink);
+				String [] tacticIDs = tacticPositionUI.getTacticIDs();
+				IPosition [] positions = tacticPositionUI.getPositions();
+				if (tacticIDs.length == 1) {
+					applyTactic(tacticIDs[0], positions[0]);
+				} else {
+					Point widgetPosition = new Point(e.x, e.y);
+					final Menu menu = new Menu(text);
+
+					for (int i = 0; i < tacticIDs.length; ++i) {
+						final String tacticID = tacticIDs[i];
+						final IPosition position = positions[i];
+						
+						MenuItem item = new MenuItem(menu, SWT.DEFAULT);
+						TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+						item.setText(tacticUIRegistry.getTip(tacticID));
+						item.addSelectionListener(new SelectionListener() {
+
+							public void widgetDefaultSelected(SelectionEvent se) {
+								widgetSelected(se);
+							}
+
+							public void widgetSelected(SelectionEvent se) {
+								applyTactic(tacticID, position);
+							}
+
+						});
+					}
+
+					// Create the F2 label
+					// Label labelF2 = new Label(tipShell, SWT.RIGHT);
+					// labelF2.setForeground(display
+					// .getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+					// labelF2.setBackground(display
+					// .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+					// labelF2.setLayoutData(new
+					// GridData(GridData.FILL_HORIZONTAL
+					// | GridData.VERTICAL_ALIGN_CENTER));
+					// labelF2.setText("Press 'F2' to edit.");
+
+					Point tipPosition = text.toDisplay(widgetPosition);
+					// Point shellSize = tipShell
+					// .computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					// int width = 200 < shellSize.x ? 200 : shellSize.x;
+					// Point pt = tipShell.computeSize(width, SWT.DEFAULT);
+					// int height = 150 < pt.y ? 150 : pt.y;
+					// tipLabel.setSize(width, height);
+					// tipShell.setSize(width, height);
+					// tipLabel.setSize(200, 40);
+					// if (EventBEditorUtils.DEBUG) {
+					// EventBEditorUtils.debug("Widget: " + tipWidget);
+					// EventBEditorUtils
+					// .debug("WidgetPosition: " + widgetPosition);
+					// EventBEditorUtils.debug("TipPosition: " + tipPosition);
+					// EventBEditorUtils.debug("Size: " + width + ", " +
+					// height);
+					// }
+					setHoverLocation(menu, tipPosition);
+					menu.setVisible(true);
+
+					//				
+					// Point pt = text.toControl(e.x, e.y);
+					// menu.setLocation(pt.x, pt.y);
+					// menu.setVisible(true);
+				}
+
 			}
 			return;
 		}
 
+	}
+
+	/**
+	 * Sets the location for a hovering shell
+	 * 
+	 * @param menu
+	 *            the menu
+	 * @param position
+	 *            the position of a widget to hover over
+	 */
+	void setHoverLocation(Menu menu, Point position) {
+		Rectangle displayBounds = menu.getDisplay().getBounds();
+
+		int x = Math.max(Math.min(position.x, displayBounds.width), 0);
+		int y = Math.max(Math.min(position.y + 16, displayBounds.height), 0);
+		menu.setLocation(new Point(x, y));
 	}
 
 	class MouseMoveListener implements Listener {
@@ -265,21 +367,21 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			Point location = new Point(e.x, e.y);
 			try {
 				int offset = getCharacterOffset(location);
-				int index = getLinkIndex(offset);
-				if (index != -1) {
-					if (currentLinkIndex != index) {
-						if (currentLinkIndex != -1) {
+				Point index = getLink(offset);
+				if (index != null) {
+					if (!currentLink.equals(index)) {
+						if (currentLink != null) {
 							disableCurrentLink();
 						}
 						enableLink(index);
-						currentLinkIndex = index;
+						currentLink = index;
 						text.setCursor(handCursor);
 					}
 				} else {
-					if (currentLinkIndex != -1) {
+					if (currentLink != null) {
 						disableCurrentLink();
 						text.setCursor(arrowCursor);
-						currentLinkIndex = -1;
+						currentLink = null;
 					}
 				}
 				// if (ProverUIUtils.DEBUG)
@@ -300,21 +402,21 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			Point location = new Point(e.x, e.y);
 			try {
 				int offset = getCharacterOffset(location);
-				int index = getLinkIndex(offset);
-				if (index != -1) {
-					if (currentLinkIndex != index) {
-						if (currentLinkIndex != -1) {
+				Point index = getLink(offset);
+				if (index != null) {
+					if (currentLink != index) {
+						if (currentLink != null) {
 							disableCurrentLink();
 						}
 						enableLink(index);
-						currentLinkIndex = index;
+						currentLink = index;
 						text.setCursor(handCursor);
 					}
 				} else {
-					if (currentLinkIndex != -1) {
+					if (currentLink != null) {
 						disableCurrentLink();
 						text.setCursor(arrowCursor);
-						currentLinkIndex = -1;
+						currentLink = null;
 					}
 				}
 			} catch (IllegalArgumentException exception) {
@@ -332,14 +434,14 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			try {
 				int offset = getCharacterOffset(location);
 
-				if (offset == 0 && commands.length != 0) {
+				// if (offset == 0 && commands.length != 0) {
 
-					// IHyperlinkListener listener =
-					// listeners.iterator().next();
-					// listener.linkActivated(new HyperlinkEvent(text, text,
-					// text
-					// .toString(), 0));
-				}
+				// IHyperlinkListener listener =
+				// listeners.iterator().next();
+				// listener.linkActivated(new HyperlinkEvent(text, text,
+				// text
+				// .toString(), 0));
+				// }
 				// if (ProverUIUtils.DEBUG)
 				ProverUIUtils.debug("Hover Offset " + offset);
 			} catch (IllegalArgumentException exception) {
@@ -354,9 +456,9 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		public void handleEvent(Event event) {
 			if (ProverUIUtils.DEBUG)
 				ProverUIUtils.debug("Exit ");
-			if (currentLinkIndex != -1) {
+			if (currentLink != null) {
 				disableCurrentLink();
-				currentLinkIndex = -1;
+				currentLink = null;
 			}
 
 		}
@@ -373,18 +475,17 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		return offset;
 	}
 
-	public void enableLink(int index) {
+	public void enableLink(Point index) {
 		StyleRange style = new StyleRange();
-		style.start = links[index].x;
-		style.length = links[index].y - links[index].x;
+		style.start = index.x;
+		style.length = index.y - index.x;
 		style.foreground = BLUE;
 		style.underline = true;
 		text.setStyleRange(style);
 	}
 
 	public void disableCurrentLink() {
-		assert currentLinkIndex != -1;
-		Point currentLink = links[currentLinkIndex];
+		assert currentLink != null;
 		StyleRange style = new StyleRange();
 		style.start = currentLink.x;
 		style.length = currentLink.y - currentLink.x;
@@ -393,11 +494,47 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		text.setStyleRange(style);
 	}
 
-	public int getLinkIndex(int offset) {
-		for (int i = 0; i < links.length; ++i) {
-			if (links[i].x <= offset && offset < links[i].y)
-				return i;
+	public Point getLink(int offset) {
+		Set<Point> keySet = links.keySet();
+		for (Point index : keySet) {
+			if (index.x <= offset && offset < index.y)
+				return index;
 		}
-		return -1;
+		return null;
 	}
+	
+	void applyTactic(String tacticID, IPosition position) {
+		TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+		Set<Predicate> hypSet = new HashSet<Predicate>();
+		hypSet.add(hyp);
+		String[] inputs = this.getResults();
+		if (ProverUIUtils.DEBUG)
+			for (String input : inputs)
+				ProverUIUtils.debug("Input: \"" + input + "\"");
+
+		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
+		if (provider != null)
+			try {
+				us.applyTacticToHypotheses(provider.getTactic(us.getCurrentPO().getCurrentNode(),
+						hyp, position, inputs), hypSet,
+						new NullProgressMonitor());
+			} catch (RodinDBException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+		else {
+			IProofCommand command = tacticUIRegistry.getProofCommand(tacticID,
+					TacticUIRegistry.TARGET_HYPOTHESIS);
+			if (command != null) {
+				try {
+					command.apply(us, hyp, inputs,
+							new NullProgressMonitor());
+				} catch (RodinDBException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
+	}
+
 }
