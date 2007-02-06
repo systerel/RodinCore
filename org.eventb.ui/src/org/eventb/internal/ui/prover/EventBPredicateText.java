@@ -24,11 +24,15 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.IPosition;
@@ -43,10 +47,16 @@ import org.rodinp.core.RodinDBException;
 
 public class EventBPredicateText implements IPropertyChangeListener {
 
+	private final static int MAX_WIDTH = 300;
+
+	private final static int MAX_HEIGHT = 120;
+
+	Listener labelListener;
+
 	private IUserSupport us;
 
 	private Predicate hyp;
-	
+
 	StyledText text;
 
 	ScrolledForm parent;
@@ -75,6 +85,8 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	Point currentLink;
 
+	Shell tipShell;
+
 	public EventBPredicateText(FormToolkit toolkit, final ScrolledForm parent) {
 
 		this.parent = parent;
@@ -91,10 +103,32 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		text.addListener(SWT.MouseHover, new MouseHoverListener());
 		text.addListener(SWT.MouseExit, new MouseExitListener());
 		text.addListener(SWT.MouseEnter, new MouseEnterListener());
+
+		// Implement a "fake" tooltip
+		labelListener = new Listener() {
+			public void handleEvent(Event event) {
+				Label label = (Label) event.widget;
+				Shell shell = label.getShell();
+				switch (event.type) {
+				case SWT.MouseDown:
+					shell.dispose();
+					text.getShell().setFocus();
+					break;
+				case SWT.MouseExit:
+					shell.dispose();
+					break;
+				case SWT.MouseMove:
+					shell.dispose();
+					break;
+				}
+			}
+		};
+
 	}
 
 	// This must be called after initialisation
-	public void setText(String string, IUserSupport us, Predicate hyp, Collection<Point> boxes, Map<Point, TacticPositionUI> links) {
+	public void setText(String string, IUserSupport us, Predicate hyp,
+			Collection<Point> boxes, Map<Point, TacticPositionUI> links) {
 		this.hyp = hyp;
 		this.us = us;
 		this.links = links;
@@ -274,8 +308,8 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		public void handleEvent(Event e) {
 			if (currentLink != null) {
 				TacticPositionUI tacticPositionUI = links.get(currentLink);
-				String [] tacticIDs = tacticPositionUI.getTacticIDs();
-				IPosition [] positions = tacticPositionUI.getPositions();
+				String[] tacticIDs = tacticPositionUI.getTacticIDs();
+				IPosition[] positions = tacticPositionUI.getPositions();
 				if (tacticIDs.length == 1) {
 					applyTactic(tacticIDs[0], positions[0]);
 				} else {
@@ -285,9 +319,10 @@ public class EventBPredicateText implements IPropertyChangeListener {
 					for (int i = 0; i < tacticIDs.length; ++i) {
 						final String tacticID = tacticIDs[i];
 						final IPosition position = positions[i];
-						
+
 						MenuItem item = new MenuItem(menu, SWT.DEFAULT);
-						TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+						TacticUIRegistry tacticUIRegistry = TacticUIRegistry
+								.getDefault();
 						item.setText(tacticUIRegistry.getTip(tacticID));
 						item.addSelectionListener(new SelectionListener() {
 
@@ -302,41 +337,9 @@ public class EventBPredicateText implements IPropertyChangeListener {
 						});
 					}
 
-					// Create the F2 label
-					// Label labelF2 = new Label(tipShell, SWT.RIGHT);
-					// labelF2.setForeground(display
-					// .getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-					// labelF2.setBackground(display
-					// .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-					// labelF2.setLayoutData(new
-					// GridData(GridData.FILL_HORIZONTAL
-					// | GridData.VERTICAL_ALIGN_CENTER));
-					// labelF2.setText("Press 'F2' to edit.");
-
 					Point tipPosition = text.toDisplay(widgetPosition);
-					// Point shellSize = tipShell
-					// .computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					// int width = 200 < shellSize.x ? 200 : shellSize.x;
-					// Point pt = tipShell.computeSize(width, SWT.DEFAULT);
-					// int height = 150 < pt.y ? 150 : pt.y;
-					// tipLabel.setSize(width, height);
-					// tipShell.setSize(width, height);
-					// tipLabel.setSize(200, 40);
-					// if (EventBEditorUtils.DEBUG) {
-					// EventBEditorUtils.debug("Widget: " + tipWidget);
-					// EventBEditorUtils
-					// .debug("WidgetPosition: " + widgetPosition);
-					// EventBEditorUtils.debug("TipPosition: " + tipPosition);
-					// EventBEditorUtils.debug("Size: " + width + ", " +
-					// height);
-					// }
-					setHoverLocation(menu, tipPosition);
+					setMenuLocation(menu, tipPosition);
 					menu.setVisible(true);
-
-					//				
-					// Point pt = text.toControl(e.x, e.y);
-					// menu.setLocation(pt.x, pt.y);
-					// menu.setVisible(true);
 				}
 
 			}
@@ -353,7 +356,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	 * @param position
 	 *            the position of a widget to hover over
 	 */
-	void setHoverLocation(Menu menu, Point position) {
+	void setMenuLocation(Menu menu, Point position) {
 		Rectangle displayBounds = menu.getDisplay().getBounds();
 
 		int x = Math.max(Math.min(position.x, displayBounds.width), 0);
@@ -364,6 +367,9 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	class MouseMoveListener implements Listener {
 
 		public void handleEvent(Event e) {
+			if (tipShell != null && !tipShell.isDisposed())
+				tipShell.dispose();
+
 			Point location = new Point(e.x, e.y);
 			try {
 				int offset = getCharacterOffset(location);
@@ -430,22 +436,62 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	class MouseHoverListener implements Listener {
 
 		public void handleEvent(Event e) {
-			Point location = new Point(e.x, e.y);
-			try {
-				int offset = getCharacterOffset(location);
+			if (currentLink != null) {
+				TacticPositionUI tacticPositionUI = links.get(currentLink);
+				String[] tacticIDs = tacticPositionUI.getTacticIDs();
 
-				// if (offset == 0 && commands.length != 0) {
+				if (tipShell != null && !tipShell.isDisposed())
+					tipShell.dispose();
 
-				// IHyperlinkListener listener =
-				// listeners.iterator().next();
-				// listener.linkActivated(new HyperlinkEvent(text, text,
-				// text
-				// .toString(), 0));
-				// }
-				// if (ProverUIUtils.DEBUG)
-				ProverUIUtils.debug("Hover Offset " + offset);
-			} catch (IllegalArgumentException exception) {
-				// Do nothing
+				tipShell = new Shell(text.getShell(), SWT.ON_TOP | SWT.NO_FOCUS
+						| SWT.TOOL);
+				Display display = text.getDisplay();
+
+				GridLayout gridLayout = new GridLayout();
+				// gridLayout.numColumns = 1;
+				gridLayout.marginWidth = 0;
+				gridLayout.marginHeight = 0;
+				tipShell.setLayout(gridLayout);
+				tipShell.setBackground(display
+						.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+
+				for (int i = 0; i < tacticIDs.length; ++i) {
+					Label tipLabel = new Label(tipShell, SWT.NONE);
+					tipLabel.setForeground(display
+							.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+					tipLabel.setBackground(display
+							.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+					tipLabel.setLayoutData(new GridData(GridData.FILL_BOTH
+							| GridData.VERTICAL_ALIGN_CENTER));
+					// Create a new font for this label
+					Font font = JFaceResources
+							.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+					tipLabel.setFont(font);
+					tipLabel.setText("Item ");
+					tipLabel.setText(getToolTipText(tacticIDs[i]));
+					tipLabel.addListener(SWT.MouseExit, labelListener);
+					tipLabel.addListener(SWT.MouseDown, labelListener);
+
+					// Create a separator
+					Label separator = new Label(tipShell, SWT.SEPARATOR);
+					GridData gd = new GridData(GridData.FILL_HORIZONTAL
+							| GridData.VERTICAL_ALIGN_CENTER);
+					gd.heightHint = 1;
+					separator.setLayoutData(gd);
+				}
+				Point widgetPosition = new Point(e.x, e.y);
+
+				Point tipPosition = text.toDisplay(widgetPosition);
+				Point shellSize = tipShell
+						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				int width = MAX_WIDTH < shellSize.x ? MAX_WIDTH : shellSize.x;
+				Point pt = tipShell.computeSize(width, SWT.DEFAULT);
+				int height = MAX_HEIGHT < pt.y ? MAX_HEIGHT : pt.y;
+				// tipLabel.setSize(width, height);
+				tipShell.setSize(width, height);
+				// tipLabel.setSize(200, 40);
+				setHoverLocation(tipShell, tipPosition);
+				tipShell.setVisible(true);
 			}
 			return;
 		}
@@ -502,7 +548,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		}
 		return null;
 	}
-	
+
 	void applyTactic(String tacticID, IPosition position) {
 		TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 		Set<Predicate> hypSet = new HashSet<Predicate>();
@@ -515,8 +561,8 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
 		if (provider != null)
 			try {
-				us.applyTacticToHypotheses(provider.getTactic(us.getCurrentPO().getCurrentNode(),
-						hyp, position, inputs), hypSet,
+				us.applyTacticToHypotheses(provider.getTactic(us.getCurrentPO()
+						.getCurrentNode(), hyp, position, inputs), hypSet,
 						new NullProgressMonitor());
 			} catch (RodinDBException e2) {
 				// TODO Auto-generated catch block
@@ -527,8 +573,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 					TacticUIRegistry.TARGET_HYPOTHESIS);
 			if (command != null) {
 				try {
-					command.apply(us, hyp, inputs,
-							new NullProgressMonitor());
+					command.apply(us, hyp, inputs, new NullProgressMonitor());
 				} catch (RodinDBException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -537,4 +582,46 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		}
 	}
 
+	/**
+	 * Sets the location for a hovering shell
+	 * 
+	 * @param shell
+	 *            the object that is to hover
+	 * @param position
+	 *            the position of a widget to hover over
+	 */
+	void setHoverLocation(Shell shell, Point position) {
+		Rectangle displayBounds = shell.getDisplay().getBounds();
+		Rectangle shellBounds = shell.getBounds();
+		shellBounds.x = Math.max(Math.min(position.x, displayBounds.width
+				- shellBounds.width), 0);
+		shellBounds.y = Math.max(Math.min(position.y + 16, displayBounds.height
+				- shellBounds.height), 0);
+		shell.setBounds(shellBounds);
+	}
+
+	protected String getToolTipText(String tacticID) {
+		TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+
+		String tip = tacticUIRegistry.getTip(tacticID);
+		int i = tip.indexOf('.');
+		int j = tip.indexOf('\n');
+		if (i == -1) {
+			if (j == -1)
+				return tip; // One line comment
+			else {
+				return tip.substring(0, j); // Return the first line
+			}
+		} else {
+			i++;
+			if (j == -1)
+				return tip.substring(0, i); // Return the first
+			// sentence
+			else {
+				int k = i < j ? i : j; // k is the minimum
+				return tip.substring(0, k);
+			}
+		}
+
+	}
 }
