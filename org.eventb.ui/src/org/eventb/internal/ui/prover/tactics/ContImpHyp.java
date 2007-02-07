@@ -11,7 +11,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider;
 
-public class MPImplHyp extends DefaultTacticProvider {
+public class ContImpHyp extends DefaultTacticProvider {
 
 	private List<IPosition> positions = null;
 

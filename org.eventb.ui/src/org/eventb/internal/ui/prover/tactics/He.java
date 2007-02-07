@@ -7,7 +7,6 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider;
 import org.eventb.ui.prover.ITacticProvider;
@@ -19,7 +18,6 @@ public class He extends DefaultTacticProvider implements ITacticProvider {
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		// Do not need to pass the sequent
 		return Tactics.he(hyp);
 	}
 
@@ -38,7 +36,7 @@ public class He extends DefaultTacticProvider implements ITacticProvider {
 
 	private void internalGetPositions(Predicate hyp) {
 		positions = new ArrayList<IPosition>();
-		if (Lib.isEq(hyp)) {
+		if (Tactics.eqE_applicable(hyp)) {
 			IPosition position = hyp.getPosition(hyp.getSourceLocation());
 			positions.add(position);
 		}

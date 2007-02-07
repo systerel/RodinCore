@@ -1115,13 +1115,13 @@
             tooltip="%proofTactics.doubleImplHyp.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.MPImpIHyp"
+            id="org.eventb.ui.contImpIHyp"
             interrupt="false"
-            name="%proofTactics.mpImplHyp.name"
+            name="%proofTactics.contImplHyp.name"
             priorty="8"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.MPImplHyp"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ContImpHyp"
             target="hypothesis"
-            tooltip="%proofTactics.mpImplHyp.tooltip"/>
+            tooltip="%proofTactics.contImplHyp.tooltip"/>
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.funOvrGoal"
