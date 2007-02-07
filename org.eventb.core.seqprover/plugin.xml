@@ -106,6 +106,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.FunOvr"
             id="funOvr"
             name="%funOvrName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.He"
+            id="he"
+            name="%heName"/>
    </extension>
 
 </plugin>

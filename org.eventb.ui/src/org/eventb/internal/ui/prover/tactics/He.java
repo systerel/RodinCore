@@ -10,31 +10,38 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider;
+import org.eventb.ui.prover.ITacticProvider;
 
-public class ForallInstantiationGoal extends DefaultTacticProvider {
+public class He extends DefaultTacticProvider implements ITacticProvider {
 
-	private List<IPosition> positions;
+	private List<IPosition> positions = null;
 
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		return Tactics.allI();
+		// Do not need to pass the sequent
+		return Tactics.he(hyp);
 	}
 
 	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
-		if (node != null && Tactics.allI_applicable(node.getSequent().goal())) {
-			internalGetPositions(node.getSequent().goal());
-			return positions;
-		}
-		return null;
+		if (node == null)
+			return null;
+
+		internalGetPositions(hyp);
+		if (positions.size() == 0)
+			return null;
+		return positions;
 	}
 
-	private void internalGetPositions(Predicate goal) {
+
+	private void internalGetPositions(Predicate hyp) {
 		positions = new ArrayList<IPosition>();
-		if (Lib.isUnivQuant(goal))
-			positions.add(goal.getPosition(goal.getSourceLocation()));
+		if (Lib.isEq(hyp)) {
+			IPosition position = hyp.getPosition(hyp.getSourceLocation());
+			positions.add(position);
+		}
 	}
 
 }

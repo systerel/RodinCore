@@ -7,6 +7,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider;
 
@@ -32,7 +33,8 @@ public class ForallInstantiationHyp extends DefaultTacticProvider {
 
 	private void internalGetPositions(Predicate hyp) {
 		positions = new ArrayList<IPosition>();
-		positions.add(hyp.getPosition(hyp.getSourceLocation()));
+		if (Lib.isUnivQuant(hyp))
+			positions.add(hyp.getPosition(hyp.getSourceLocation()));
 	}
 
 }

@@ -7,6 +7,7 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
@@ -70,12 +71,19 @@ public class ProverUIUtils {
 			// TODO Find the character representing the quantified operator
 			return new Point(0, 1);
 		}
+		if (subFormula instanceof RelationalPredicate) {
+			RelationalPredicate rPred = (RelationalPredicate) subFormula;
+			Expression left = rPred.getLeft();
+			Expression right = rPred.getRight();
+			return new Point(left.getSourceLocation().getEnd() + 1, right
+					.getSourceLocation().getStart());
+		}
 		if (subFormula instanceof BinaryPredicate) {
 			BinaryPredicate bPred = (BinaryPredicate) subFormula;
 			SourceLocation leftLocation = bPred.getLeft().getSourceLocation();
 			SourceLocation rightLocation = bPred.getRight().getSourceLocation();
 			return new Point(leftLocation.getEnd() + 1, rightLocation
-					.getStart() - 1);
+					.getStart());
 		}
 		if (Tactics.isFunOvrApp((Expression) subFormula)) {
 			Expression left = ((BinaryExpression) subFormula).getLeft();

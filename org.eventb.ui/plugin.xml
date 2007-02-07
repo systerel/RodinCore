@@ -1140,6 +1140,15 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.FunOvrHyp"
             target="hypothesis"
             tooltip="%proofTactics.funOvrHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.he"
+            interrupt="false"
+            name="%proofTactics.he.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.He"
+            target="hypothesis"
+            tooltip="%proofTactics.he.tooltip"/>
    </extension>
 
 </plugin>

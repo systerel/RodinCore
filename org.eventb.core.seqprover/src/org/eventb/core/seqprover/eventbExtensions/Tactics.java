@@ -44,6 +44,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
+import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
@@ -408,6 +409,16 @@ public class Tactics {
 	}
 
 	public static boolean isFunOvrApp(Expression expression) {
+		// It should be the top most predicate
+//		IPosition position = expression.getPosition(expression
+//				.getSourceLocation());
+//		position = position.getParent();
+//		while (!position.isFirstChild()) {
+//		}
+//		
+//		position.getParent();
+		
+		
 		if (Lib.isFunApp(expression)) {
 			Expression right = ((BinaryExpression) expression).getRight();
 			if (right.getBoundIdentifiers().length != 0)
@@ -429,8 +440,9 @@ public class Tactics {
 									.getLeft();
 							if (E.getBoundIdentifiers().length != 0)
 								return false;
-							else
+							else {
 								return true;
+							}
 						}
 					}
 				}
@@ -448,6 +460,10 @@ public class Tactics {
 	public static ITactic funOvrHyp(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new FunOvr(), new FunOvr.Input(hyp,
 				position));
+	}
+
+	public static ITactic he(Predicate hyp) {
+		return BasicTactics.reasonerTac(new He(), new SinglePredInput(hyp));
 	}
 
 }

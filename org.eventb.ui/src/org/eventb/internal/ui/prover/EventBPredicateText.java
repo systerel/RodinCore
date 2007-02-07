@@ -177,11 +177,6 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 		// It is only modify-able if it is within one subrange and the
 		for (Point index : boxes) {
-
-			// if (ProverUIUtils.DEBUG)
-			ProverUIUtils.debug("Event " + e);
-			ProverUIUtils.debug("index.x " + index.x + ", index.y " + index.y);
-			ProverUIUtils.debug("pt.x " + pt.x + ", pt.y " + pt.y);
 			if (index.x > pt.x)
 				continue;
 			if (index.y < pt.y)
@@ -228,7 +223,6 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	}
 
 	void drawBoxes(Event event) {
-		// ProverUIUtils.debugProverUI("Draw boxes");
 		if (boxes == null)
 			return;
 		String contents = text.getText();
@@ -375,7 +369,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 				int offset = getCharacterOffset(location);
 				Point index = getLink(offset);
 				if (index != null) {
-					if (!currentLink.equals(index)) {
+					if (!index.equals(currentLink)) {
 						if (currentLink != null) {
 							disableCurrentLink();
 						}
@@ -410,7 +404,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 				int offset = getCharacterOffset(location);
 				Point index = getLink(offset);
 				if (index != null) {
-					if (currentLink != index) {
+					if (!index.equals(currentLink)) {
 						if (currentLink != null) {
 							disableCurrentLink();
 						}
@@ -468,10 +462,11 @@ public class EventBPredicateText implements IPropertyChangeListener {
 							.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 					tipLabel.setFont(font);
 					tipLabel.setText("Item ");
-					tipLabel.setText(getToolTipText(tacticIDs[i]));
+					tipLabel.setText("   " + getToolTipText(tacticIDs[i]) + "   ");
 					tipLabel.addListener(SWT.MouseExit, labelListener);
 					tipLabel.addListener(SWT.MouseDown, labelListener);
 
+					tipLabel.pack();
 					// Create a separator
 					Label separator = new Label(tipShell, SWT.SEPARATOR);
 					GridData gd = new GridData(GridData.FILL_HORIZONTAL
@@ -487,9 +482,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 				int width = MAX_WIDTH < shellSize.x ? MAX_WIDTH : shellSize.x;
 				Point pt = tipShell.computeSize(width, SWT.DEFAULT);
 				int height = MAX_HEIGHT < pt.y ? MAX_HEIGHT : pt.y;
-				// tipLabel.setSize(width, height);
 				tipShell.setSize(width, height);
-				// tipLabel.setSize(200, 40);
 				setHoverLocation(tipShell, tipPosition);
 				tipShell.setVisible(true);
 			}
@@ -564,9 +557,9 @@ public class EventBPredicateText implements IPropertyChangeListener {
 				us.applyTacticToHypotheses(provider.getTactic(us.getCurrentPO()
 						.getCurrentNode(), hyp, position, inputs), hypSet,
 						new NullProgressMonitor());
-			} catch (RodinDBException e2) {
+			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
-				e2.printStackTrace();
+				e.printStackTrace();
 			}
 		else {
 			IProofCommand command = tacticUIRegistry.getProofCommand(tacticID,
@@ -574,9 +567,9 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			if (command != null) {
 				try {
 					command.apply(us, hyp, inputs, new NullProgressMonitor());
-				} catch (RodinDBException e1) {
+				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					e.printStackTrace();
 				}
 			}
 		}
@@ -610,15 +603,17 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			if (j == -1)
 				return tip; // One line comment
 			else {
-				return tip.substring(0, j); // Return the first line
+				// Return the first line
+				return tip.substring(0, j);
 			}
 		} else {
 			i++;
 			if (j == -1)
-				return tip.substring(0, i); // Return the first
-			// sentence
+				// Return the first sentence
+				return tip.substring(0, i);
 			else {
-				int k = i < j ? i : j; // k is the minimum
+				// k is the minimum of i and j
+				int k = i < j ? i : j;
 				return tip.substring(0, k);
 			}
 		}
