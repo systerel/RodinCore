@@ -139,7 +139,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 			}
 		};
 		filterLVarAction.setChecked(false);
-		filterInvAction.setToolTipText("Filter local variable elements");
+		filterLVarAction.setToolTipText("Filter local variable elements");
 
 		ViewerFilter elementFilter = new ViewerFilter() {
 
