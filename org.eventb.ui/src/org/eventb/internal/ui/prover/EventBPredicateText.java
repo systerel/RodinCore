@@ -300,6 +300,9 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	class MouseDownListener implements Listener {
 
 		public void handleEvent(Event e) {
+			if (tipShell != null && !tipShell.isDisposed())
+				tipShell.dispose();
+			
 			if (currentLink != null) {
 				TacticPositionUI tacticPositionUI = links.get(currentLink);
 				String[] tacticIDs = tacticPositionUI.getTacticIDs();

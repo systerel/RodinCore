@@ -122,7 +122,7 @@ public class HypothesisRow {
 		buttonComposite = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.makeColumnsEqualWidth = true;
-		layout.numColumns = 5;
+		layout.numColumns = 3;
 
 		buttonComposite.setLayout(layout);
 		buttonComposite.setBackground(background);
