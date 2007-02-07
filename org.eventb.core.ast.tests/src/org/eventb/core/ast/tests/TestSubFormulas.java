@@ -51,6 +51,7 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -259,41 +260,51 @@ public class TestSubFormulas extends TestCase {
 			return (Predicate) doRewrite(predicate);
 		}
 	}
+
+	private static Type INT = ff.makeIntegerType();
 	
-	private Type INT = ff.makeIntegerType();
-	
-	private Type POW(Type base) {
+	private static Type POW(Type base) {
 		return ff.makePowerSetType(base);
 	}
 
-	private Predicate btrue = mLiteralPredicate(BTRUE);
+	private static Predicate btrue = mLiteralPredicate(BTRUE);
 	
-	private BoundIdentDecl bd_x = mBoundIdentDecl("x", INT);
-	private BoundIdentDecl bd_X = mBoundIdentDecl("X", INT);
-	private BoundIdentDecl bd_y = mBoundIdentDecl("y", INT);
-	private BoundIdentDecl bd_z = mBoundIdentDecl("z", INT);
+	private static BoundIdentDecl bd_x = mBoundIdentDecl("x", INT);
+	private static BoundIdentDecl bd_X = mBoundIdentDecl("X", INT);
+	private static BoundIdentDecl bd_y = mBoundIdentDecl("y", INT);
+	private static BoundIdentDecl bd_z = mBoundIdentDecl("z", INT);
 	
-	private FreeIdentifier id_x = mFreeIdentifier("x", INT);
-	private FreeIdentifier id_X = mFreeIdentifier("X", INT);
-	private FreeIdentifier id_y = mFreeIdentifier("y", INT);
-	private FreeIdentifier id_S = mFreeIdentifier("S", POW(INT));
-	private FreeIdentifier id_T = mFreeIdentifier("T", POW(INT));
+	private static FreeIdentifier id_x = mFreeIdentifier("x", INT);
+	private static FreeIdentifier id_X = mFreeIdentifier("X", INT);
+	private static FreeIdentifier id_y = mFreeIdentifier("y", INT);
+	private static FreeIdentifier id_S = mFreeIdentifier("S", POW(INT));
+	private static FreeIdentifier id_T = mFreeIdentifier("T", POW(INT));
 	
-	private Expression b0 = mBoundIdentifier(0, INT);
-	private Expression b1 = mBoundIdentifier(1, INT);
+	private static Expression b0 = mBoundIdentifier(0, INT);
+	private static Expression b1 = mBoundIdentifier(1, INT);
 
-	private Expression m0x = mMaplet(b0, id_x);
-	private Expression m0X = mMaplet(b0, id_X);
-	private Expression m01x = mMaplet(mMaplet(b0, b1), id_x);
-	private Expression m01X = mMaplet(mMaplet(b0, b1), id_X);
-	private Expression m0y = mMaplet(b0, id_y);
+	private static Expression m0x = mMaplet(b0, id_x);
+	private static Expression m0X = mMaplet(b0, id_X);
+	private static Expression m01x = mMaplet(mMaplet(b0, b1), id_x);
+	private static Expression m01X = mMaplet(mMaplet(b0, b1), id_X);
+	private static Expression m0y = mMaplet(b0, id_y);
 	
-	private RelationalPredicate equals = mRelationalPredicate(EQUAL, id_x, id_x);
-	private RelationalPredicate equalsX = mRelationalPredicate(EQUAL, id_X, id_X);
+	private static RelationalPredicate equals =
+		mRelationalPredicate(EQUAL, id_x, id_x);
+	private static RelationalPredicate equalsX =
+		mRelationalPredicate(EQUAL, id_X, id_X);
 
-	private FixedFilter bdFilter = new FixedFilter(bd_x, bd_X);
-	private FixedFilter idFilter = new FixedFilter(id_x, id_X);
-	private FixedFilter equalsFilter = new FixedFilter(equals, equalsX);
+	private static FixedFilter bdFilter = new FixedFilter(bd_x, bd_X);
+	private static FixedFilter idFilter = new FixedFilter(id_x, id_X);
+	private static FixedFilter equalsFilter = new FixedFilter(equals, equalsX);
+
+	private static final IFormulaFilter defaultFilter = new DefaultFilter();
+	
+	private <T extends Formula<T>> void checkDefaultFilter(Formula<T> f) {
+		final List<IPosition> actualPositions = f.getPositions(defaultFilter);
+		assertEquals("Default filter should not select any position",
+				0, actualPositions.size());
+	}
 
 	private <T extends Formula<T>> void checkPositions(FixedFilter filter,
 			Formula<T> formula, final Object... args) {
@@ -315,6 +326,9 @@ public class TestSubFormulas extends TestCase {
 			assertEquals("Unexpected rewrite", expRewrite,
 					formula.rewriteSubFormula(actualPos, filter.replacement, ff));
 		}
+		
+		// Additional transversal test with the default filter
+		checkDefaultFilter(formula);
 	}
 	
 	private void checkBdFilterQExpr(int tag, Form form) {
