@@ -3,13 +3,13 @@ package org.eventb.internal.ui.prover.tactics;
 import java.util.List;
 
 import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.internal.ui.prover.DefaultFormularFilter;
 import org.eventb.ui.prover.DefaultTacticProvider;
 
 public class DoubleImplHyp extends DefaultTacticProvider {
@@ -35,7 +35,7 @@ public class DoubleImplHyp extends DefaultTacticProvider {
 	}
 
 	private void internalGetPositions(Predicate hyp) {
-		positions = hyp.getPositions(new DefaultFormularFilter() {
+		positions = hyp.getPositions(new DefaultFilter() {
 
 			@Override
 			public boolean select(BinaryPredicate predicate) {

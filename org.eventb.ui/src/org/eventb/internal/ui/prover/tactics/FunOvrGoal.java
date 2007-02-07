@@ -3,12 +3,12 @@ package org.eventb.internal.ui.prover.tactics;
 import java.util.List;
 
 import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.internal.ui.prover.DefaultFormularFilter;
 import org.eventb.ui.prover.DefaultTacticProvider;
 
 public class FunOvrGoal extends DefaultTacticProvider {
@@ -35,7 +35,7 @@ public class FunOvrGoal extends DefaultTacticProvider {
 	}
 
 	private void internalGetPositions(Predicate pred) {
-		positions = pred.getPositions(new DefaultFormularFilter() {
+		positions = pred.getPositions(new DefaultFilter() {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
