@@ -111,7 +111,7 @@
             id="he"
             name="%heName"/>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.ModusTollen"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens"
             id="mt"
             name="%mtName"/>
    </extension>

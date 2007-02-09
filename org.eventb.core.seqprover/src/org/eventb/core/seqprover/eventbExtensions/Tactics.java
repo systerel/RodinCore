@@ -48,7 +48,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
-import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollen;
+import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.DisjToImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.RemoveNegation;
@@ -464,8 +464,8 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new He(), new SinglePredInput(hyp));
 	}
 
-	public static ITactic modusTollen(Predicate impHyp) {
-		return BasicTactics.reasonerTac(new ModusTollen(), new ModusTollen.Input(impHyp));
+	public static ITactic modusTollens(Predicate impHyp) {
+		return BasicTactics.reasonerTac(new ModusTollens(), new ModusTollens.Input(impHyp));
 	}
 
 }

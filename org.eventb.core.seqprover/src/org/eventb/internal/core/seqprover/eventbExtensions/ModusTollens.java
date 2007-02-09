@@ -12,7 +12,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 
-public class ModusTollen extends HypothesisReasoner {
+public class ModusTollens extends HypothesisReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".impE";
 

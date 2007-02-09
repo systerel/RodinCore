@@ -11,14 +11,14 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider;
 
-public class ModusTollen extends DefaultTacticProvider {
+public class ModusTollens extends DefaultTacticProvider {
 
 	private List<IPosition> positions;
 
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		return Tactics.modusTollen(hyp);
+		return Tactics.modusTollens(hyp);
 	}
 
 	@Override

@@ -1155,7 +1155,7 @@
             interrupt="false"
             name="%proofTactics.mt.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ModusTollen"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ModusTollens"
             target="hypothesis"
             tooltip="%proofTactics.mt.tooltip"/>
    </extension>
