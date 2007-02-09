@@ -2,7 +2,6 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.Set;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -93,7 +92,7 @@ public abstract class AbstractManualInference implements IReasoner {
 	 *            the formula to test for applicability
 	 * @return <code>true</code> if the reasoner is applicable at this formula
 	 */
-	public abstract boolean isApplicable(Formula formula);
+//	public abstract boolean isApplicable(Formula formula);
 
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {

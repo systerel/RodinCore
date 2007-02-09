@@ -120,7 +120,7 @@ public class GoalSection extends SectionPart {
 		Composite comp = scrolledForm.getBody();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.verticalSpacing = 3;
+		layout.verticalSpacing = 5;
 		comp.setLayout(layout);
 		section.setClient(scrolledForm);
 		toolkit.paintBordersFor(scrolledForm);
@@ -152,7 +152,7 @@ public class GoalSection extends SectionPart {
 		buttonComposite = toolkit.createComposite(comp);
 		GridLayout layout = new GridLayout();
 		layout.makeColumnsEqualWidth = true;
-		layout.numColumns = 5;
+		layout.numColumns = 3;
 
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
@@ -270,9 +270,8 @@ public class GoalSection extends SectionPart {
 					if (positions.size() == 0)
 						continue;
 					for (final IPosition position : positions) {
-						Formula subFormula = parsedStr.getSubFormula(position);
 						Point pt = ProverUIUtils
-								.getOperatorPosition(subFormula);
+								.getOperatorPosition(parsedStr, position);
 						TacticPositionUI tacticPositionUI = links.get(pt);
 						if (tacticPositionUI == null) {
 							tacticPositionUI = new TacticPositionUI();
@@ -308,9 +307,8 @@ public class GoalSection extends SectionPart {
 					if (positions.size() == 0)
 						continue;
 					for (final IPosition position : positions) {
-						Formula subFormula = parsedStr.getSubFormula(position);
 						Point pt = ProverUIUtils
-								.getOperatorPosition(subFormula);
+								.getOperatorPosition(parsedStr, position);
 						TacticPositionUI tacticPositionUI = links.get(pt);
 						if (tacticPositionUI == null) {
 							tacticPositionUI = new TacticPositionUI();

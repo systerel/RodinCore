@@ -259,8 +259,7 @@ public class HypothesisRow {
 				if (positions.size() == 0)
 					continue;
 				for (final IPosition position : positions) {
-					Formula subFormula = parsedStr.getSubFormula(position);
-					Point pt = ProverUIUtils.getOperatorPosition(subFormula);
+					Point pt = ProverUIUtils.getOperatorPosition(parsedStr, position);
 					TacticPositionUI tacticPositionUI = links.get(pt);
 					if (tacticPositionUI == null) {
 						tacticPositionUI = new TacticPositionUI();
@@ -301,8 +300,7 @@ public class HypothesisRow {
 				if (positions.size() == 0)
 					continue;
 				for (final IPosition position : positions) {
-					Formula subFormula = parsedStr.getSubFormula(position);
-					Point pt = ProverUIUtils.getOperatorPosition(subFormula);
+					Point pt = ProverUIUtils.getOperatorPosition(parsedStr, position);
 					TacticPositionUI tacticPositionUI = links.get(pt);
 					if (tacticPositionUI == null) {
 						tacticPositionUI = new TacticPositionUI();

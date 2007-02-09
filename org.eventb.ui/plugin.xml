@@ -1149,6 +1149,15 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.He"
             target="hypothesis"
             tooltip="%proofTactics.he.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.mt"
+            interrupt="false"
+            name="%proofTactics.mt.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ModusTollen"
+            target="hypothesis"
+            tooltip="%proofTactics.mt.tooltip"/>
    </extension>
 
 </plugin>

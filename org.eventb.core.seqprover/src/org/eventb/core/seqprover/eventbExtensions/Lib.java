@@ -610,9 +610,9 @@ public final class Lib {
 		return ff.makeTypeEnvironment();
 	}
 
-	public static boolean isFunApp(Expression expression) {
-		if (expression instanceof BinaryExpression
-				&& expression.getTag() == Expression.FUNIMAGE) {
+	public static boolean isFunApp(Formula formula) {
+		if (formula instanceof BinaryExpression
+				&& formula.getTag() == Expression.FUNIMAGE) {
 			return true;
 		}
 		return false;

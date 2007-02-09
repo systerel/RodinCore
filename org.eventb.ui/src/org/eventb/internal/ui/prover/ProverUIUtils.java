@@ -6,6 +6,8 @@ import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.IPosition;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SourceLocation;
@@ -66,7 +68,8 @@ public class ProverUIUtils {
 		return null;
 	}
 
-	public static Point getOperatorPosition(Formula subFormula) {
+	public static Point getOperatorPosition(Predicate predicate, IPosition position) {
+		Formula subFormula = predicate.getSubFormula(position);
 		if (subFormula instanceof QuantifiedPredicate) {
 			// TODO Find the character representing the quantified operator
 			return new Point(0, 1);
@@ -85,7 +88,7 @@ public class ProverUIUtils {
 			return new Point(leftLocation.getEnd() + 1, rightLocation
 					.getStart());
 		}
-		if (Tactics.isFunOvrApp((Expression) subFormula)) {
+		if (Tactics.isFunOvrApp(predicate, position)) {
 			Expression left = ((BinaryExpression) subFormula).getLeft();
 			Expression[] children = ((AssociativeExpression) left)
 					.getChildren();

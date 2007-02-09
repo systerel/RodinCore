@@ -19,7 +19,6 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 public class FunOvr extends AbstractManualInference {
 
@@ -121,13 +120,13 @@ public class FunOvr extends AbstractManualInference {
 			return "ovr goal";
 		}
 	}
-
-	@Override
-	public boolean isApplicable(Formula formula) {
-		if (formula instanceof Expression) {
-			return Tactics.isFunOvrApp((Expression) formula);
-		}
-		return false;
-	}
+//
+//	@Override
+//	public boolean isApplicable(Formula orgFormula, Formula formula) {
+//		if (formula instanceof Expression) {
+//			return Tactics.isFunOvrApp(orgFormula, (Expression) formula);
+//		}
+//		return false;
+//	}
 
 }

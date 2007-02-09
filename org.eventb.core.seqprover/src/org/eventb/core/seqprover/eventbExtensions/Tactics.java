@@ -13,6 +13,7 @@ import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -47,6 +48,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
+import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollen;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.DisjToImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.RemoveNegation;
@@ -408,23 +410,25 @@ public class Tactics {
 				new MPImplHypRewrites.Input(pred, position));
 	}
 
-	public static boolean isFunOvrApp(Expression expression) {
+	public static boolean isFunOvrApp(Predicate predicate, IPosition position) {
 		// It should be the top most predicate
-//		IPosition position = expression.getPosition(expression
-//				.getSourceLocation());
-//		position = position.getParent();
-//		while (!position.isFirstChild()) {
-//		}
+//		if (position.isRoot())
+//			return false;
 //		
-//		position.getParent();
-		
-		
-		if (Lib.isFunApp(expression)) {
-			Expression right = ((BinaryExpression) expression).getRight();
-			if (right.getBoundIdentifiers().length != 0)
-				return false;
+//		IPosition tmp = position.getParent();
+//
+//		while (!tmp.isRoot()) {
+//			Formula subFormula = predicate.getSubFormula(tmp);
+//			if (subFormula instanceof QuantifiedExpression)
+//				return false;
+//			if (subFormula instanceof Predicate)
+//				return false;
+//			tmp = tmp.getParent();
+//		}
 
-			Expression left = ((BinaryExpression) expression).getLeft();
+		Formula subFormula = predicate.getSubFormula(position);
+		if (Lib.isFunApp(subFormula)) {
+			Expression left = ((BinaryExpression) subFormula).getLeft();
 			if (Lib.isOrv(left)) {
 				Expression[] children = ((AssociativeExpression) left)
 						.getChildren();
@@ -436,13 +440,7 @@ public class Tactics {
 					if (expressions.length == 1) {
 						if (expressions[0] instanceof BinaryExpression
 								&& expressions[0].getTag() == Expression.MAPSTO) {
-							Expression E = ((BinaryExpression) expressions[0])
-									.getLeft();
-							if (E.getBoundIdentifiers().length != 0)
-								return false;
-							else {
-								return true;
-							}
+							return true;
 						}
 					}
 				}
@@ -464,6 +462,10 @@ public class Tactics {
 
 	public static ITactic he(Predicate hyp) {
 		return BasicTactics.reasonerTac(new He(), new SinglePredInput(hyp));
+	}
+
+	public static ITactic modusTollen(Predicate impHyp) {
+		return BasicTactics.reasonerTac(new ModusTollen(), new ModusTollen.Input(impHyp));
 	}
 
 }

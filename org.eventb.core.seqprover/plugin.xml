@@ -110,6 +110,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.He"
             id="he"
             name="%heName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.ModusTollen"
+            id="mt"
+            name="%mtName"/>
    </extension>
 
 </plugin>

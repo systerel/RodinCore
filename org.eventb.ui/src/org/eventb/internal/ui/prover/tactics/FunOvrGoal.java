@@ -34,12 +34,14 @@ public class FunOvrGoal extends DefaultTacticProvider {
 		return positions;
 	}
 
-	private void internalGetPositions(Predicate pred) {
+	private void internalGetPositions(final Predicate pred) {
 		positions = pred.getPositions(new DefaultFilter() {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (Tactics.isFunOvrApp(expression))
+				IPosition position = pred.getPosition(expression
+						.getSourceLocation());
+				if (Tactics.isFunOvrApp(pred, position))
 					return true;
 				return false;
 			}
