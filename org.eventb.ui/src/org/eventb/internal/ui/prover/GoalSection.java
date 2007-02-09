@@ -120,7 +120,7 @@ public class GoalSection extends SectionPart {
 		Composite comp = scrolledForm.getBody();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.verticalSpacing = 5;
+		layout.verticalSpacing = 3;
 		comp.setLayout(layout);
 		section.setClient(scrolledForm);
 		toolkit.paintBordersFor(scrolledForm);
