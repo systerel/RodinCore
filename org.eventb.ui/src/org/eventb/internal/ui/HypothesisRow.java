@@ -303,7 +303,7 @@ public class HypothesisRow {
 									userSupport, hyp);
 					if (positions.size() == 0)
 						continue;
-					for (final IPosition position : positions) {
+					for (IPosition position : positions) {
 						Point pt = tacticUIRegistry.getOperatorPosition(
 								tacticID, parsedStr, str, position);
 						TacticPositionUI tacticPositionUI = links.get(pt);

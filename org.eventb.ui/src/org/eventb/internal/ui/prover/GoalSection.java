@@ -72,6 +72,8 @@ public class GoalSection extends SectionPart {
 
 	private FormToolkit toolkit;
 
+	IUserSupport us;
+
 	private ScrolledForm scrolledForm;
 
 	private Composite buttonComposite;
@@ -101,6 +103,7 @@ public class GoalSection extends SectionPart {
 		super(parent, page.getManagedForm().getToolkit(), style);
 		this.page = page;
 		toolkit = page.getManagedForm().getToolkit();
+		us = ((ProverUI) ((ProofsPage) this.page).getEditor()).getUserSupport();
 		createClient(getSection());
 	}
 
@@ -124,9 +127,7 @@ public class GoalSection extends SectionPart {
 		section.setClient(scrolledForm);
 		toolkit.paintBordersFor(scrolledForm);
 
-		IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
-				.getEditor()).getUserSupport();
-		IProofState ps = userSupport.getCurrentPO();
+		IProofState ps = us.getCurrentPO();
 		if (ps != null) {
 			setGoal(ps.getCurrentNode());
 		} else
@@ -162,15 +163,12 @@ public class GoalSection extends SectionPart {
 		goalComposite.setLayoutData(gd);
 		goalComposite.getBody().setLayout(new FillLayout());
 
-		IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
-				.getEditor()).getUserSupport();
-
 		if (node == null)
 			createNullHyperlinks();
 		else if (node.isOpen())
-			createHyperlinks(userSupport, true);
+			createImageHyperlinks(true);
 		else
-			createHyperlinks(userSupport, false);
+			createImageHyperlinks(false);
 
 		createGoalText(node);
 
@@ -202,131 +200,38 @@ public class GoalSection extends SectionPart {
 		// max_length = 30;
 
 		if (node == null) {
-			IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
-					.getEditor()).getUserSupport();
-			goalText.setText("No current goal", userSupport, node.getSequent()
-					.goal(), null, null);
+			goalText.setText("No current goal", us, node.getSequent().goal(),
+					null, null);
 			styledText.setBackground(color);
 		} else {
 			Predicate goal = node.getSequent().goal();
-			actualString = goal.toString();
-			IParseResult parseResult = ff.parsePredicate(actualString);
+			String tmpString = goal.toString();
+			IParseResult parseResult = ff.parsePredicate(tmpString);
 			assert parseResult.isSuccess();
-			parsedPred = parseResult.getParsedPredicate();
+			Predicate tmpPred = parseResult.getParsedPredicate();
 
-			if (node.isOpen()
-					&& parsedPred instanceof QuantifiedPredicate
-					&& parsedPred.getTag() == Formula.EXISTS) {
-				QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPred;
-				Collection<Point> indexes = new ArrayList<Point>();
+			Collection<Point> indexes = new ArrayList<Point>();
 
-				String string = "\u2203 ";
-				BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
-
-				int i = 0;
-				for (BoundIdentDecl ident : idents) {
-					SourceLocation loc = ident.getSourceLocation();
-					String image = actualString.substring(loc.getStart(), loc
-							.getEnd() + 1);
-					// ProverUIUtils.debugProverUI("Ident: " + image);
-					string += " " + image + " ";
-					int x = string.length();
-					string += "      ";
-					int y = string.length();
-					indexes.add(new Point(x, y));
-
-					if (++i == idents.length) {
-						string += "\u00b7\n";
-					} else {
-						string += ", ";
-					}
-				}
-				String str = PredicateUtil.prettyPrint(max_length,
-						actualString, qpred.getPredicate());
-				// SourceLocation loc =
-				// qpred.getPredicate().getSourceLocation();
-				// String str = actualString.substring(loc.getStart(), loc
-				// .getEnd() + 1);
-				string += str;
-
-				IParseResult parsedResult = ff.parsePredicate(string);
-				assert parsedResult.isSuccess();
-				Predicate parsedStr = parsedResult.getParsedPredicate();
-
-				Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
-
-				final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
-						.getDefault();
-				IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
-						.getEditor()).getUserSupport();
-
-				String[] tactics = tacticUIRegistry
-						.getApplicableToGoal(userSupport);
-
-				for (final String tacticID : tactics) {
-					List<IPosition> positions = tacticUIRegistry
-							.getApplicableToGoalPositions(tacticID, userSupport);
-					if (positions.size() == 0)
-						continue;
-					for (final IPosition position : positions) {
-						Point pt = tacticUIRegistry.getOperatorPosition(
-								tacticID, parsedStr, string, position);
-						TacticPositionUI tacticPositionUI = links.get(pt);
-						if (tacticPositionUI == null) {
-							tacticPositionUI = new TacticPositionUI();
-							links.put(pt, tacticPositionUI);
-						}
-						tacticPositionUI.addTacticPosition(tacticID, position);
-					}
-				}
-
-				goalText.setText(string, userSupport, node.getSequent().goal(),
-						indexes, links);
+			if (node.isOpen() && tmpPred instanceof QuantifiedPredicate
+					&& tmpPred.getTag() == Formula.EXISTS) {
+				indexes = getIndexesString(tmpPred, tmpString);
 			} else {
-				String str = PredicateUtil.prettyPrint(max_length,
-						actualString, parsedPred);
+				actualString = PredicateUtil.prettyPrint(max_length, tmpString,
+						tmpPred);
+			}
+			IParseResult parsedResult = ff.parsePredicate(actualString);
+			assert parsedResult.isSuccess();
+			parsedPred = parsedResult.getParsedPredicate();
 
-				Collection<Point> indexes = new ArrayList<Point>();
+			Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
+			if (node.isOpen()) {
+				links = getHyperlinks();
+			}
+			goalText.setText(actualString, us, node.getSequent().goal(),
+					indexes, links);
 
-				IParseResult parsedResult = ff.parsePredicate(str);
-				assert parsedResult.isSuccess();
-				Predicate parsedStr = parsedResult.getParsedPredicate();
-
-				IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
-						.getEditor()).getUserSupport();
-				Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
-				if (node.isOpen()) {
-
-					final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
-							.getDefault();
-					String[] tactics = tacticUIRegistry
-							.getApplicableToGoal(userSupport);
-
-					for (final String tacticID : tactics) {
-						List<IPosition> positions = tacticUIRegistry
-								.getApplicableToGoalPositions(tacticID,
-										userSupport);
-						if (positions.size() == 0)
-							continue;
-						for (final IPosition position : positions) {
-							Point pt = tacticUIRegistry.getOperatorPosition(
-									tacticID, parsedStr, str, position);
-							TacticPositionUI tacticPositionUI = links.get(pt);
-							if (tacticPositionUI == null) {
-								tacticPositionUI = new TacticPositionUI();
-								links.put(pt, tacticPositionUI);
-							}
-							tacticPositionUI.addTacticPosition(tacticID,
-									position);
-						}
-					}
-				}
-				goalText.setText(str, userSupport, node.getSequent().goal(),
-						indexes, links);
-
-				if (!node.isOpen()) {
-					styledText.setBackground(color);
-				}
+			if (!node.isOpen()) {
+				styledText.setBackground(color);
 			}
 
 		}
@@ -432,6 +337,63 @@ public class GoalSection extends SectionPart {
 
 	}
 
+	private Map<Point, TacticPositionUI> getHyperlinks() {
+		Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
+
+		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+
+		String[] tactics = tacticUIRegistry.getApplicableToGoal(us);
+
+		for (final String tacticID : tactics) {
+			List<IPosition> positions = tacticUIRegistry
+					.getApplicableToGoalPositions(tacticID, us);
+			if (positions.size() == 0)
+				continue;
+			for (final IPosition position : positions) {
+				Point pt = tacticUIRegistry.getOperatorPosition(tacticID,
+						parsedPred, actualString, position);
+				TacticPositionUI tacticPositionUI = links.get(pt);
+				if (tacticPositionUI == null) {
+					tacticPositionUI = new TacticPositionUI();
+					links.put(pt, tacticPositionUI);
+				}
+				tacticPositionUI.addTacticPosition(tacticID, position);
+			}
+		}
+		return links;
+	}
+
+	private Collection<Point> getIndexesString(Predicate pred,
+			String sourceString) {
+		QuantifiedPredicate qpred = (QuantifiedPredicate) pred;
+		Collection<Point> indexes = new ArrayList<Point>();
+
+		actualString = "\u2203 ";
+		BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
+
+		int i = 0;
+		for (BoundIdentDecl ident : idents) {
+			SourceLocation loc = ident.getSourceLocation();
+			String image = sourceString.substring(loc.getStart(),
+					loc.getEnd() + 1);
+			// ProverUIUtils.debugProverUI("Ident: " + image);
+			actualString += " " + image + " ";
+			int x = actualString.length();
+			actualString += "      ";
+			int y = actualString.length();
+			indexes.add(new Point(x, y));
+
+			if (++i == idents.length) {
+				actualString += "\u00b7\n";
+			} else {
+				actualString += ", ";
+			}
+		}
+		actualString += PredicateUtil.prettyPrint(max_length, sourceString,
+				qpred.getPredicate());
+		return indexes;
+	}
+
 	@Override
 	public void dispose() {
 		goalText.dispose();
@@ -456,7 +418,7 @@ public class GoalSection extends SectionPart {
 	 * <p>
 	 * 
 	 */
-	private void createHyperlinks(final IUserSupport us, boolean enable) {
+	private void createImageHyperlinks(boolean enable) {
 
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 		String[] tactics = tacticUIRegistry.getApplicableToGoal(us);
@@ -492,7 +454,6 @@ public class GoalSection extends SectionPart {
 
 				public void linkActivated(HyperlinkEvent e) {
 					IProofTreeNode node = us.getCurrentPO().getCurrentNode();
-
 					applyTactic(tacticID, node, null);
 				}
 
@@ -511,13 +472,12 @@ public class GoalSection extends SectionPart {
 			for (String input : inputs)
 				ProverUIUtils.debug("Input: \"" + input + "\"");
 
-		IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
-				.getEditor()).getUserSupport();
 		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
 		if (provider != null)
 			try {
-				userSupport.applyTactic(provider.getTactic(node, null,
-						position, inputs), new NullProgressMonitor());
+				us.applyTactic(
+						provider.getTactic(node, null, position, inputs),
+						new NullProgressMonitor());
 			} catch (RodinDBException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
@@ -527,8 +487,7 @@ public class GoalSection extends SectionPart {
 					TacticUIRegistry.TARGET_HYPOTHESIS);
 			if (command != null) {
 				try {
-					command.apply(userSupport, null, inputs,
-							new NullProgressMonitor());
+					command.apply(us, null, inputs, new NullProgressMonitor());
 				} catch (RodinDBException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
