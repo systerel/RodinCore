@@ -290,33 +290,35 @@ public class HypothesisRow {
 
 			Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
 
-			final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
-					.getDefault();
+			if (enable) {
+				final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
+						.getDefault();
 
-			String[] tactics = tacticUIRegistry.getApplicableToHypothesis(
-					userSupport, hyp);
+				String[] tactics = tacticUIRegistry.getApplicableToHypothesis(
+						userSupport, hyp);
 
-			for (final String tacticID : tactics) {
-				List<IPosition> positions = tacticUIRegistry
-						.getApplicableToHypothesisPositions(tacticID,
-								userSupport, hyp);
-				if (positions.size() == 0)
-					continue;
-				for (final IPosition position : positions) {
-					Point pt = tacticUIRegistry.getOperatorPosition(tacticID,
-							parsedStr, str, position);
-					TacticPositionUI tacticPositionUI = links.get(pt);
-					if (tacticPositionUI == null) {
-						tacticPositionUI = new TacticPositionUI();
-						links.put(pt, tacticPositionUI);
+				for (final String tacticID : tactics) {
+					List<IPosition> positions = tacticUIRegistry
+							.getApplicableToHypothesisPositions(tacticID,
+									userSupport, hyp);
+					if (positions.size() == 0)
+						continue;
+					for (final IPosition position : positions) {
+						Point pt = tacticUIRegistry.getOperatorPosition(
+								tacticID, parsedStr, str, position);
+						TacticPositionUI tacticPositionUI = links.get(pt);
+						if (tacticPositionUI == null) {
+							tacticPositionUI = new TacticPositionUI();
+							links.put(pt, tacticPositionUI);
+						}
+						tacticPositionUI.addTacticPosition(tacticID, position);
+
+						// runnables.add(new Runnable() {
+						// public void run() {
+						// applyTactic(tacticID, node, position);
+						// }
+						// });
 					}
-					tacticPositionUI.addTacticPosition(tacticID, position);
-
-					// runnables.add(new Runnable() {
-					// public void run() {
-					// applyTactic(tacticID, node, position);
-					// }
-					// });
 				}
 			}
 			hypothesisText.setText(str, userSupport, hyp, indexes, links);
