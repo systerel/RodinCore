@@ -66,8 +66,7 @@ public class GoalSection extends SectionPart {
 
 	private static final String SECTION_DESCRIPTION = "The current goal";
 
-	private static final FormulaFactory formulaFactory = FormulaFactory
-			.getDefault();
+	private static final FormulaFactory ff = FormulaFactory.getDefault();
 
 	FormPage page;
 
@@ -211,12 +210,11 @@ public class GoalSection extends SectionPart {
 		} else {
 			Predicate goal = node.getSequent().goal();
 			actualString = goal.toString();
-			IParseResult parseResult = formulaFactory
-					.parsePredicate(actualString);
+			IParseResult parseResult = ff.parsePredicate(actualString);
 			assert parseResult.isSuccess();
 			parsedPred = parseResult.getParsedPredicate();
 
-			if (node != null && node.isOpen()
+			if (node.isOpen()
 					&& parsedPred instanceof QuantifiedPredicate
 					&& parsedPred.getTag() == Formula.EXISTS) {
 				QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPred;
@@ -251,8 +249,7 @@ public class GoalSection extends SectionPart {
 				// .getEnd() + 1);
 				string += str;
 
-				IParseResult parsedResult = formulaFactory
-						.parsePredicate(string);
+				IParseResult parsedResult = ff.parsePredicate(string);
 				assert parsedResult.isSuccess();
 				Predicate parsedStr = parsedResult.getParsedPredicate();
 
@@ -291,36 +288,39 @@ public class GoalSection extends SectionPart {
 
 				Collection<Point> indexes = new ArrayList<Point>();
 
-				IParseResult parsedResult = formulaFactory.parsePredicate(str);
+				IParseResult parsedResult = ff.parsePredicate(str);
 				assert parsedResult.isSuccess();
 				Predicate parsedStr = parsedResult.getParsedPredicate();
 
-				Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
 				IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
 						.getEditor()).getUserSupport();
+				Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
+				if (node.isOpen()) {
 
-				final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
-						.getDefault();
-				String[] tactics = tacticUIRegistry
-						.getApplicableToGoal(userSupport);
+					final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
+							.getDefault();
+					String[] tactics = tacticUIRegistry
+							.getApplicableToGoal(userSupport);
 
-				for (final String tacticID : tactics) {
-					List<IPosition> positions = tacticUIRegistry
-							.getApplicableToGoalPositions(tacticID, userSupport);
-					if (positions.size() == 0)
-						continue;
-					for (final IPosition position : positions) {
-						Point pt = tacticUIRegistry.getOperatorPosition(
-								tacticID, parsedStr, str, position);
-						TacticPositionUI tacticPositionUI = links.get(pt);
-						if (tacticPositionUI == null) {
-							tacticPositionUI = new TacticPositionUI();
-							links.put(pt, tacticPositionUI);
+					for (final String tacticID : tactics) {
+						List<IPosition> positions = tacticUIRegistry
+								.getApplicableToGoalPositions(tacticID,
+										userSupport);
+						if (positions.size() == 0)
+							continue;
+						for (final IPosition position : positions) {
+							Point pt = tacticUIRegistry.getOperatorPosition(
+									tacticID, parsedStr, str, position);
+							TacticPositionUI tacticPositionUI = links.get(pt);
+							if (tacticPositionUI == null) {
+								tacticPositionUI = new TacticPositionUI();
+								links.put(pt, tacticPositionUI);
+							}
+							tacticPositionUI.addTacticPosition(tacticID,
+									position);
 						}
-						tacticPositionUI.addTacticPosition(tacticID, position);
 					}
 				}
-
 				goalText.setText(str, userSupport, node.getSequent().goal(),
 						indexes, links);
 
