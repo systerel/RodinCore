@@ -2,8 +2,12 @@ package org.eventb.internal.ui.prover.tactics;
 
 import java.util.List;
 
+import org.eclipse.swt.graphics.Point;
+import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.DefaultFilter;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -47,6 +51,19 @@ public class FunOvrGoal extends DefaultTacticProvider {
 			}
 		});
 
+	}
+
+	@Override
+	public Point getOperatorPosition(Predicate predicate, String predStr, IPosition position) {
+		assert Tactics.isFunOvrApp(predicate, position);
+		Formula subFormula = predicate.getSubFormula(position);
+		Expression left = ((BinaryExpression) subFormula).getLeft();
+		Expression[] children = ((AssociativeExpression) left)
+				.getChildren();
+		Expression last = children[children.length - 1];
+		Expression secondLast = children[children.length - 2];
+		return getOperatorPosition(predStr, secondLast.getSourceLocation().getEnd() + 1, last
+					.getSourceLocation().getStart());
 	}
 
 }

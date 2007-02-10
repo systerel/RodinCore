@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
@@ -194,6 +195,17 @@ public class TacticUIRegistry {
 
 		public String getToolbar() {
 			return configuration.getAttribute("toolbar");
+		}
+
+		public Point getOperatorPosition(Predicate predicate, String predStr, IPosition position) {
+			if (provider == null) {
+				loadImplementation();
+			}
+			
+			// Try tactic provider first
+			assert (provider != null);
+
+			return provider.getOperatorPosition(predicate, predStr, position);
 		}
 
 	}
@@ -625,6 +637,21 @@ public class TacticUIRegistry {
 		TacticUIInfo info = goalRegistry.get(tacticID);
 		if (info != null)
 			return info.getApplicableToGoalPositions(userSupport);
+
+		return null;
+	}
+
+	public Point getOperatorPosition(String tacticID, Predicate predicate, String predStr, IPosition position) {
+		if (goalRegistry == null)
+			loadRegistry();
+
+		TacticUIInfo info = goalRegistry.get(tacticID);
+		if (info != null)
+			return info.getOperatorPosition(predicate, predStr, position);
+
+		info = hypothesisRegistry.get(tacticID);
+		if (info != null)
+			return info.getOperatorPosition(predicate, predStr, position);
 
 		return null;
 	}

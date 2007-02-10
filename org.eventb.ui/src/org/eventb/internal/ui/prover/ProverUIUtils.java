@@ -1,22 +1,10 @@
 package org.eventb.internal.ui.prover;
 
-import org.eclipse.swt.graphics.Point;
-import org.eventb.core.ast.AssociativeExpression;
-import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerDelta;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 public class ProverUIUtils {
 
@@ -66,38 +54,6 @@ public class ProverUIUtils {
 			}
 		}
 		return null;
-	}
-
-	public static Point getOperatorPosition(Predicate predicate, IPosition position) {
-		Formula subFormula = predicate.getSubFormula(position);
-		if (subFormula instanceof QuantifiedPredicate) {
-			// TODO Find the character representing the quantified operator
-			return new Point(0, 1);
-		}
-		if (subFormula instanceof RelationalPredicate) {
-			RelationalPredicate rPred = (RelationalPredicate) subFormula;
-			Expression left = rPred.getLeft();
-			Expression right = rPred.getRight();
-			return new Point(left.getSourceLocation().getEnd() + 1, right
-					.getSourceLocation().getStart());
-		}
-		if (subFormula instanceof BinaryPredicate) {
-			BinaryPredicate bPred = (BinaryPredicate) subFormula;
-			SourceLocation leftLocation = bPred.getLeft().getSourceLocation();
-			SourceLocation rightLocation = bPred.getRight().getSourceLocation();
-			return new Point(leftLocation.getEnd() + 1, rightLocation
-					.getStart());
-		}
-		if (Tactics.isFunOvrApp(predicate, position)) {
-			Expression left = ((BinaryExpression) subFormula).getLeft();
-			Expression[] children = ((AssociativeExpression) left)
-					.getChildren();
-			Expression last = children[children.length - 1];
-			Expression secondLast = children[children.length - 2];
-			return new Point(secondLast.getSourceLocation().getEnd() + 1, last
-					.getSourceLocation().getStart());
-		}
-		return new Point(0, 1);// The first character
 	}
 
 	// private static Collection<HypothesisTacticUI> hypothesisTactics = null;

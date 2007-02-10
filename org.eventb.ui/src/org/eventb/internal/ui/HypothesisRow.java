@@ -259,19 +259,22 @@ public class HypothesisRow {
 				if (positions.size() == 0)
 					continue;
 				for (final IPosition position : positions) {
-					Point pt = ProverUIUtils.getOperatorPosition(parsedStr, position);
+					Point pt = tacticUIRegistry.getOperatorPosition(tacticID,
+							parsedStr, string, position);
+					// Point pt = ProverUIUtils.getOperatorPosition(parsedStr,
+					// position);
 					TacticPositionUI tacticPositionUI = links.get(pt);
 					if (tacticPositionUI == null) {
 						tacticPositionUI = new TacticPositionUI();
 						links.put(pt, tacticPositionUI);
 					}
 					tacticPositionUI.addTacticPosition(tacticID, position);
-					
-//					runnables.add(new Runnable() {
-//						public void run() {
-//							applyTactic(tacticID, node, position);
-//						}
-//					});
+
+					// runnables.add(new Runnable() {
+					// public void run() {
+					// applyTactic(tacticID, node, position);
+					// }
+					// });
 				}
 			}
 			hypothesisText.setText(string, userSupport, hyp, indexes, links);
@@ -300,19 +303,20 @@ public class HypothesisRow {
 				if (positions.size() == 0)
 					continue;
 				for (final IPosition position : positions) {
-					Point pt = ProverUIUtils.getOperatorPosition(parsedStr, position);
+					Point pt = tacticUIRegistry.getOperatorPosition(tacticID,
+							parsedStr, str, position);
 					TacticPositionUI tacticPositionUI = links.get(pt);
 					if (tacticPositionUI == null) {
 						tacticPositionUI = new TacticPositionUI();
 						links.put(pt, tacticPositionUI);
 					}
 					tacticPositionUI.addTacticPosition(tacticID, position);
-					
-//					runnables.add(new Runnable() {
-//						public void run() {
-//							applyTactic(tacticID, node, position);
-//						}
-//					});
+
+					// runnables.add(new Runnable() {
+					// public void run() {
+					// applyTactic(tacticID, node, position);
+					// }
+					// });
 				}
 			}
 			hypothesisText.setText(str, userSupport, hyp, indexes, links);

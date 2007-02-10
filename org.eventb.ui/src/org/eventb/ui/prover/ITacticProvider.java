@@ -2,6 +2,7 @@ package org.eventb.ui.prover;
 
 import java.util.List;
 
+import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -22,5 +23,8 @@ public interface ITacticProvider {
 	 */
 	@Deprecated
 	public boolean isApplicable(IProofTreeNode node, Predicate hyp, String input);
+
+	public Point getOperatorPosition(Predicate predicate, String predStr,
+			IPosition position);
 
 }

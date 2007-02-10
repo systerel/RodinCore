@@ -24,8 +24,6 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -47,10 +45,6 @@ import org.rodinp.core.RodinDBException;
 
 public class EventBPredicateText implements IPropertyChangeListener {
 
-	private final static int MAX_WIDTH = 300;
-
-	private final static int MAX_HEIGHT = 120;
-
 	Listener labelListener;
 
 	private IUserSupport us;
@@ -69,10 +63,6 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	Map<Point, TacticPositionUI> links;
 
-	// Point[] links;
-
-	// Runnable[] commands;
-
 	Point current;
 
 	private int currSize;
@@ -85,7 +75,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	Point currentLink;
 
-	Shell tipShell;
+	Menu tipMenu;
 
 	public EventBPredicateText(FormToolkit toolkit, final ScrolledForm parent) {
 
@@ -300,8 +290,8 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	class MouseDownListener implements Listener {
 
 		public void handleEvent(Event e) {
-			if (tipShell != null && !tipShell.isDisposed())
-				tipShell.dispose();
+			if (tipMenu != null && !tipMenu.isDisposed())
+				tipMenu.dispose();
 			
 			if (currentLink != null) {
 				TacticPositionUI tacticPositionUI = links.get(currentLink);
@@ -311,13 +301,14 @@ public class EventBPredicateText implements IPropertyChangeListener {
 					applyTactic(tacticIDs[0], positions[0]);
 				} else {
 					Point widgetPosition = new Point(e.x, e.y);
-					final Menu menu = new Menu(text);
+
+					tipMenu = new Menu(text);
 
 					for (int i = 0; i < tacticIDs.length; ++i) {
 						final String tacticID = tacticIDs[i];
 						final IPosition position = positions[i];
 
-						MenuItem item = new MenuItem(menu, SWT.DEFAULT);
+						MenuItem item = new MenuItem(tipMenu, SWT.DEFAULT);
 						TacticUIRegistry tacticUIRegistry = TacticUIRegistry
 								.getDefault();
 						item.setText(tacticUIRegistry.getTip(tacticID));
@@ -335,8 +326,8 @@ public class EventBPredicateText implements IPropertyChangeListener {
 					}
 
 					Point tipPosition = text.toDisplay(widgetPosition);
-					setMenuLocation(menu, tipPosition);
-					menu.setVisible(true);
+					setMenuLocation(tipMenu, tipPosition);
+					tipMenu.setVisible(true);
 				}
 
 			}
@@ -364,8 +355,8 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	class MouseMoveListener implements Listener {
 
 		public void handleEvent(Event e) {
-			if (tipShell != null && !tipShell.isDisposed())
-				tipShell.dispose();
+			if (tipMenu != null && !tipMenu.isDisposed())
+				tipMenu.dispose();
 
 			Point location = new Point(e.x, e.y);
 			try {
@@ -436,58 +427,39 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			if (currentLink != null) {
 				TacticPositionUI tacticPositionUI = links.get(currentLink);
 				String[] tacticIDs = tacticPositionUI.getTacticIDs();
+				IPosition[] positions = tacticPositionUI.getPositions();
 
-				if (tipShell != null && !tipShell.isDisposed())
-					tipShell.dispose();
+				if (tipMenu != null && !tipMenu.isDisposed())
+					tipMenu.dispose();
 
-				tipShell = new Shell(text.getShell(), SWT.ON_TOP | SWT.NO_FOCUS
-						| SWT.TOOL);
-				Display display = text.getDisplay();
-
-				GridLayout gridLayout = new GridLayout();
-				// gridLayout.numColumns = 1;
-				gridLayout.marginWidth = 0;
-				gridLayout.marginHeight = 0;
-				tipShell.setLayout(gridLayout);
-				tipShell.setBackground(display
-						.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-
-				for (int i = 0; i < tacticIDs.length; ++i) {
-					Label tipLabel = new Label(tipShell, SWT.NONE);
-					tipLabel.setForeground(display
-							.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-					tipLabel.setBackground(display
-							.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-					tipLabel.setLayoutData(new GridData(GridData.FILL_BOTH
-							| GridData.VERTICAL_ALIGN_CENTER));
-					// Create a new font for this label
-					Font font = JFaceResources
-							.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-					tipLabel.setFont(font);
-					tipLabel.setText("Item ");
-					tipLabel.setText("   " + getToolTipText(tacticIDs[i]) + "   ");
-					tipLabel.addListener(SWT.MouseExit, labelListener);
-					tipLabel.addListener(SWT.MouseDown, labelListener);
-
-					tipLabel.pack();
-					// Create a separator
-					Label separator = new Label(tipShell, SWT.SEPARATOR);
-					GridData gd = new GridData(GridData.FILL_HORIZONTAL
-							| GridData.VERTICAL_ALIGN_CENTER);
-					gd.heightHint = 1;
-					separator.setLayoutData(gd);
-				}
 				Point widgetPosition = new Point(e.x, e.y);
 
+				tipMenu = new Menu(text);
+
+				for (int i = 0; i < tacticIDs.length; ++i) {
+					final String tacticID = tacticIDs[i];
+					final IPosition position = positions[i];
+
+					MenuItem item = new MenuItem(tipMenu, SWT.DEFAULT);
+					TacticUIRegistry tacticUIRegistry = TacticUIRegistry
+							.getDefault();
+					item.setText(tacticUIRegistry.getTip(tacticID));
+					item.addSelectionListener(new SelectionListener() {
+
+						public void widgetDefaultSelected(SelectionEvent se) {
+							widgetSelected(se);
+						}
+
+						public void widgetSelected(SelectionEvent se) {
+							applyTactic(tacticID, position);
+						}
+
+					});
+				}
+
 				Point tipPosition = text.toDisplay(widgetPosition);
-				Point shellSize = tipShell
-						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				int width = MAX_WIDTH < shellSize.x ? MAX_WIDTH : shellSize.x;
-				Point pt = tipShell.computeSize(width, SWT.DEFAULT);
-				int height = MAX_HEIGHT < pt.y ? MAX_HEIGHT : pt.y;
-				tipShell.setSize(width, height);
-				setHoverLocation(tipShell, tipPosition);
-				tipShell.setVisible(true);
+				setMenuLocation(tipMenu, tipPosition);
+				tipMenu.setVisible(true);
 			}
 			return;
 		}
@@ -596,30 +568,4 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		shell.setBounds(shellBounds);
 	}
 
-	protected String getToolTipText(String tacticID) {
-		TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-
-		String tip = tacticUIRegistry.getTip(tacticID);
-		int i = tip.indexOf('.');
-		int j = tip.indexOf('\n');
-		if (i == -1) {
-			if (j == -1)
-				return tip; // One line comment
-			else {
-				// Return the first line
-				return tip.substring(0, j);
-			}
-		} else {
-			i++;
-			if (j == -1)
-				// Return the first sentence
-				return tip.substring(0, i);
-			else {
-				// k is the minimum of i and j
-				int k = i < j ? i : j;
-				return tip.substring(0, k);
-			}
-		}
-
-	}
 }

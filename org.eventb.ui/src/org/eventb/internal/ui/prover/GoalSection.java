@@ -205,7 +205,8 @@ public class GoalSection extends SectionPart {
 		if (node == null) {
 			IUserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
 					.getEditor()).getUserSupport();
-			goalText.setText("No current goal", userSupport, node.getSequent().goal(), null, null);
+			goalText.setText("No current goal", userSupport, node.getSequent()
+					.goal(), null, null);
 			styledText.setBackground(color);
 		} else {
 			Predicate goal = node.getSequent().goal();
@@ -250,7 +251,8 @@ public class GoalSection extends SectionPart {
 				// .getEnd() + 1);
 				string += str;
 
-				IParseResult parsedResult = formulaFactory.parsePredicate(string);
+				IParseResult parsedResult = formulaFactory
+						.parsePredicate(string);
 				assert parsedResult.isSuccess();
 				Predicate parsedStr = parsedResult.getParsedPredicate();
 
@@ -270,8 +272,8 @@ public class GoalSection extends SectionPart {
 					if (positions.size() == 0)
 						continue;
 					for (final IPosition position : positions) {
-						Point pt = ProverUIUtils
-								.getOperatorPosition(parsedStr, position);
+						Point pt = tacticUIRegistry.getOperatorPosition(
+								tacticID, parsedStr, string, position);
 						TacticPositionUI tacticPositionUI = links.get(pt);
 						if (tacticPositionUI == null) {
 							tacticPositionUI = new TacticPositionUI();
@@ -281,7 +283,8 @@ public class GoalSection extends SectionPart {
 					}
 				}
 
-				goalText.setText(string, userSupport, node.getSequent().goal(), indexes, links);
+				goalText.setText(string, userSupport, node.getSequent().goal(),
+						indexes, links);
 			} else {
 				String str = PredicateUtil.prettyPrint(max_length,
 						actualString, parsedPred);
@@ -307,8 +310,8 @@ public class GoalSection extends SectionPart {
 					if (positions.size() == 0)
 						continue;
 					for (final IPosition position : positions) {
-						Point pt = ProverUIUtils
-								.getOperatorPosition(parsedStr, position);
+						Point pt = tacticUIRegistry.getOperatorPosition(
+								tacticID, parsedStr, str, position);
 						TacticPositionUI tacticPositionUI = links.get(pt);
 						if (tacticPositionUI == null) {
 							tacticPositionUI = new TacticPositionUI();
@@ -318,7 +321,8 @@ public class GoalSection extends SectionPart {
 					}
 				}
 
-				goalText.setText(str, userSupport, node.getSequent().goal(), indexes, links);
+				goalText.setText(str, userSupport, node.getSequent().goal(),
+						indexes, links);
 
 				if (!node.isOpen()) {
 					styledText.setBackground(color);
@@ -465,7 +469,7 @@ public class GoalSection extends SectionPart {
 
 			List<IPosition> positions = tacticUIRegistry
 					.getApplicableToGoalPositions(tacticID, us);
-			
+
 			if (positions.size() != 0)
 				continue;
 
@@ -487,8 +491,7 @@ public class GoalSection extends SectionPart {
 				}
 
 				public void linkActivated(HyperlinkEvent e) {
-					IProofTreeNode node = us.getCurrentPO()
-					.getCurrentNode();
+					IProofTreeNode node = us.getCurrentPO().getCurrentNode();
 
 					applyTactic(tacticID, node, null);
 				}
