@@ -39,7 +39,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public interface IHypothesisManager extends IState, Iterable<FreeIdentifier> {
+public interface IHypothesisManager extends IPOGState, Iterable<FreeIdentifier> {
 	
 	/**
 	 * Returns the parent element from which the hypothesis are taken.

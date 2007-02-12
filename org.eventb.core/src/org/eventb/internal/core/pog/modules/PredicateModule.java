@@ -20,7 +20,7 @@ import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGHint;
 import org.eventb.core.pog.util.POGIntervalSelectionHint;
 import org.eventb.core.pog.util.POGSource;
@@ -39,7 +39,7 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		predicateTable = 
@@ -48,14 +48,14 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 			getHypothesisManager(repository);
 	}
 
-	protected abstract IHypothesisManager getHypothesisManager(IStateRepository repository) 
+	protected abstract IHypothesisManager getHypothesisManager(IPOGStateRepository repository) 
 	throws CoreException;
 
-	protected abstract IPredicateTable<PE> getPredicateTable(IStateRepository repository) 
+	protected abstract IPredicateTable<PE> getPredicateTable(IPOGStateRepository repository) 
 	throws CoreException;
 	
 	@Override
-	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(IRodinElement element, IPOGStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		predicateTable = null;
 		hypothesisManager = null;
 		super.endModule(element, repository, monitor);
@@ -64,7 +64,7 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(IRodinElement element, IStateRepository repository,
+	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		

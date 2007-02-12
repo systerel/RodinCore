@@ -10,14 +10,14 @@ package org.eventb.internal.core.pog;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.pog.state.IMachineVariantInfo;
-import org.eventb.core.tool.state.IToolStateType;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachineVariantInfo extends ToolState implements IMachineVariantInfo {
+public class MachineVariantInfo extends State implements IMachineVariantInfo {
 
 	private final Expression varExpression;
 	
@@ -31,7 +31,7 @@ public class MachineVariantInfo extends ToolState implements IMachineVariantInfo
 		return variant;
 	}
 
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

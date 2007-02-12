@@ -9,14 +9,14 @@ package org.eventb.internal.core.sc;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.sc.state.IParsedFormula;
-import org.eventb.core.tool.state.IToolStateType;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class ParsedFormula extends ToolState implements IParsedFormula {
+public class ParsedFormula extends State implements IParsedFormula {
 
 	private Formula formula;
 	
@@ -37,7 +37,7 @@ public class ParsedFormula extends ToolState implements IParsedFormula {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

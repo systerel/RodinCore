@@ -10,14 +10,14 @@ package org.eventb.internal.core.sc;
 import org.eventb.core.IEvent;
 import org.eventb.core.sc.state.ICurrentEvent;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
-import org.eventb.core.tool.state.IToolStateType;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class CurrentEvent extends ToolState implements ICurrentEvent {
+public class CurrentEvent extends State implements ICurrentEvent {
 
 	private final IEvent event;
 	private final IEventSymbolInfo eventSymbolInfo;
@@ -37,7 +37,7 @@ public class CurrentEvent extends ToolState implements ICurrentEvent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

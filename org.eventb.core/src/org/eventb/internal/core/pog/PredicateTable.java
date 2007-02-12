@@ -16,7 +16,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.internal.core.tool.state.State;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -24,7 +24,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public abstract class PredicateTable<PE extends ISCPredicateElement> 
-extends ToolState implements IPredicateTable<PE> {
+extends State implements IPredicateTable<PE> {
 
 	protected final List<PE> predicateElements;
 	protected final List<Predicate> predicates;

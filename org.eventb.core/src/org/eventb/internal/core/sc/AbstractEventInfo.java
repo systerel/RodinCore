@@ -20,14 +20,14 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
-import org.eventb.core.tool.state.IToolStateType;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
+public class AbstractEventInfo extends State implements IAbstractEventInfo {
 
 	@Override
 	public void makeImmutable() {
@@ -171,7 +171,7 @@ public class AbstractEventInfo extends ToolState implements IAbstractEventInfo {
 		return implicitRefinedInfo;
 	}
 
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

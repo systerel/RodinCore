@@ -9,9 +9,9 @@ package org.eventb.internal.core.sc;
 
 import java.util.Hashtable;
 
-import org.eventb.core.sc.IFilterModule;
-import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.IProcessorModule;
+import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.internal.core.sc.modules.ContextAxiomFreeIdentsModule;
 import org.eventb.internal.core.sc.modules.ContextAxiomModule;
 import org.eventb.internal.core.sc.modules.ContextCarrierSetModule;
@@ -50,34 +50,34 @@ import org.eventb.internal.core.sc.modules.MachineVariantModule;
  * @author Stefan Hallerstede
  *
  */
-public final class ModuleManager implements IModuleManager {
+public final class ModuleManager implements ISCModuleManager {
 	
-	private static IModuleManager MANAGER = new ModuleManager();
+	private static ISCModuleManager MANAGER = new ModuleManager();
 	
-	private IFilterModule[] emptyFlt = new IFilterModule[0];
-	private IProcessorModule[] emptyProc = new IProcessorModule[0];
+	private ISCFilterModule[] emptyFlt = new ISCFilterModule[0];
+	private ISCProcessorModule[] emptyProc = new ISCProcessorModule[0];
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.IModuleManager#getModules(java.lang.String)
 	 */
-	public IFilterModule[] getFilterModules(String moduleType) {
+	public ISCFilterModule[] getFilterModules(String moduleType) {
 		IFilterCreator creator = 
 			(IFilterCreator) moduleTable.get(moduleType);
 		if (creator == null)
 			return emptyFlt;
-		IFilterModule[] rules = creator.create();
+		ISCFilterModule[] rules = creator.create();
 		return rules;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.IModuleManager#getModules(java.lang.String)
 	 */
-	public IProcessorModule[] getProcessorModules(String moduleType) {
+	public ISCProcessorModule[] getProcessorModules(String moduleType) {
 		IProcessorCreator creator = 
 			(IProcessorCreator) moduleTable.get(moduleType);
 		if (creator == null)
 			return emptyProc;
-		IProcessorModule[] rules = creator.create();
+		ISCProcessorModule[] rules = creator.create();
 		return rules;
 	}
 	
@@ -90,8 +90,8 @@ public final class ModuleManager implements IModuleManager {
 		
 		moduleTable.put(ContextAxiomModule.CONTEXT_AXIOM_FILTER,
 				new IFilterCreator() {
-					public IFilterModule[] create() {
-						return new IFilterModule[] {
+					public ISCFilterModule[] create() {
+						return new ISCFilterModule[] {
 								new ContextAxiomFreeIdentsModule()
 						};
 					}
@@ -100,8 +100,8 @@ public final class ModuleManager implements IModuleManager {
 		
 		moduleTable.put(ContextTheoremModule.CONTEXT_THEOREM_FILTER,
 				new IFilterCreator() {
-					public IFilterModule[] create() {
-						return new IFilterModule[] {
+					public ISCFilterModule[] create() {
+						return new ISCFilterModule[] {
 								new ContextTheoremFreeIdentsModule()
 						};
 					}
@@ -110,8 +110,8 @@ public final class ModuleManager implements IModuleManager {
 		
 		moduleTable.put(ContextStaticChecker.CONTEXT_PROCESSOR,
 				new IProcessorCreator() {
-					public IProcessorModule[] create() {
-						return new IProcessorModule[] {
+					public ISCProcessorModule[] create() {
+						return new ISCProcessorModule[] {
 								new ContextExtendsModule(),
 								new ContextCarrierSetModule(),
 								new ContextConstantModule(),
@@ -129,8 +129,8 @@ public final class ModuleManager implements IModuleManager {
 		moduleTable.put(
 				MachineVariableModule.MACHINE_VARIABLE_FILTER, 
 				new IFilterCreator() {
-					public IFilterModule[] create() {
-						return new IFilterModule[] {
+					public ISCFilterModule[] create() {
+						return new ISCFilterModule[] {
 								new MachineVariableFromLocalModule()
 						};
 					}
@@ -141,8 +141,8 @@ public final class ModuleManager implements IModuleManager {
 		moduleTable.put(
 				MachineInvariantModule.MACHINE_INVARIANT_FILTER, 
 				new IFilterCreator() {
-					public IFilterModule[] create() {
-						return new IFilterModule[] {
+					public ISCFilterModule[] create() {
+						return new ISCFilterModule[] {
 								new MachineInvariantFreeIdentsModule(),
 								new MachinePreviousEventLabelModule()
 						};
@@ -154,8 +154,8 @@ public final class ModuleManager implements IModuleManager {
 		moduleTable.put(
 				MachineTheoremModule.MACHINE_THEOREM_FILTER, 
 				new IFilterCreator() {
-					public IFilterModule[] create() {
-						return new IFilterModule[] {
+					public ISCFilterModule[] create() {
+						return new ISCFilterModule[] {
 								new MachineTheoremFreeIdentsModule(),
 								new MachinePreviousEventLabelModule()
 						};
@@ -167,8 +167,8 @@ public final class ModuleManager implements IModuleManager {
 		moduleTable.put(
 				MachineVariantModule.MACHINE_VARIANT_FILTER, 
 				new IFilterCreator() {
-					public IFilterModule[] create() {
-						return new IFilterModule[] {
+					public ISCFilterModule[] create() {
+						return new ISCFilterModule[] {
 								new MachineVariantFreeIdentsModule()
 						};
 					}
@@ -178,8 +178,8 @@ public final class ModuleManager implements IModuleManager {
 		
 		moduleTable.put(MachineStaticChecker.MACHINE_PROCESSOR,
 				new IProcessorCreator() {
-					public IProcessorModule[] create() {
-						return new IProcessorModule[] {
+					public ISCProcessorModule[] create() {
+						return new ISCProcessorModule[] {
 								new MachineRefinesModule(),
 								new MachineSeesContextModule(),
 								new MachineContextClosureModule(),
@@ -200,8 +200,8 @@ public final class ModuleManager implements IModuleManager {
 		moduleTable.put(
 				MachineEventGuardModule.MACHINE_EVENT_GUARD_FILTER, 
 				new IFilterCreator() {
-					public IFilterModule[] create() {
-						return new IFilterModule[] {
+					public ISCFilterModule[] create() {
+						return new ISCFilterModule[] {
 								new MachineEventGuardFreeIdentsModule()
 						};
 					}
@@ -212,8 +212,8 @@ public final class ModuleManager implements IModuleManager {
 		moduleTable.put(
 				MachineEventWitnessModule.MACHINE_EVENT_WITNESS_FILTER, 
 				new IFilterCreator() {
-					public IFilterModule[] create() {
-						return new IFilterModule[] {
+					public ISCFilterModule[] create() {
+						return new ISCFilterModule[] {
 								new MachineEventWitnessFreeIdentsModule()
 						};
 					}
@@ -224,8 +224,8 @@ public final class ModuleManager implements IModuleManager {
 		moduleTable.put(
 				MachineEventActionModule.MACHINE_EVENT_ACTION_FILTER, 
 				new IFilterCreator() {
-					public IFilterModule[] create() {
-						return new IFilterModule[] {
+					public ISCFilterModule[] create() {
+						return new ISCFilterModule[] {
 								new MachineEventActionFreeIdentsModule()
 						};
 					}
@@ -236,8 +236,8 @@ public final class ModuleManager implements IModuleManager {
 		moduleTable.put(
 				MachineEventModule.MACHINE_EVENT_FILTER, 
 				new IFilterCreator() {
-					public IFilterModule[] create() {
-						return new IFilterModule[] {
+					public ISCFilterModule[] create() {
+						return new ISCFilterModule[] {
 								new MachineEventInheritedModule()
 						};
 					}
@@ -248,8 +248,8 @@ public final class ModuleManager implements IModuleManager {
 		moduleTable.put(
 				MachineEventModule.MACHINE_EVENT_PROCESSOR, 
 				new IProcessorCreator() {
-					public IProcessorModule[] create() {
-						return new IProcessorModule[] {
+					public ISCProcessorModule[] create() {
+						return new ISCProcessorModule[] {
 								new MachineEventRefinesModule(),
 								new MachineEventConvergenceModule(),
 								new MachineEventVariableModule(),
@@ -271,7 +271,7 @@ public final class ModuleManager implements IModuleManager {
 	 * 
 	 * @return the module manager instance
 	 */
-	public static IModuleManager getModuleManager() {
+	public static ISCModuleManager getModuleManager() {
 		return MANAGER;
 	}
 	

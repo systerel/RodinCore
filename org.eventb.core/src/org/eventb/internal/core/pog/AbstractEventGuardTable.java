@@ -13,7 +13,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -38,7 +38,7 @@ implements IAbstractEventGuardTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

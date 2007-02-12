@@ -10,7 +10,7 @@ package org.eventb.core.sc.state;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * State component providing information about an abstract machine of
@@ -19,9 +19,9 @@ import org.eventb.core.tool.state.IToolStateType;
  * @author Stefan Hallerstede
  *
  */
-public interface IAbstractMachineInfo extends IState {
+public interface IAbstractMachineInfo extends ISCState {
 
-	final static IToolStateType<IAbstractMachineInfo> STATE_TYPE = 
+	final static IStateType<IAbstractMachineInfo> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".abstractMachineInfo");
 	
 	/**

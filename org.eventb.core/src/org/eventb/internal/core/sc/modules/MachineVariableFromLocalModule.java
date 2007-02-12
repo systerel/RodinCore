@@ -11,10 +11,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.sc.FilterModule;
+import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.IAbstractMachineInfo;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.util.GraphProblem;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IRodinElement;
@@ -23,7 +23,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachineVariableFromLocalModule extends FilterModule {
+public class MachineVariableFromLocalModule extends SCFilterModule {
 
 	private IAbstractEventTable abstractEventTable;
 	private IAbstractMachineInfo abstractMachineInfo;
@@ -33,7 +33,7 @@ public class MachineVariableFromLocalModule extends FilterModule {
 	 */
 	@Override
 	public void initModule(
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEventTable = (IAbstractEventTable) 
 			repository.getState(IAbstractEventTable.STATE_TYPE);
@@ -46,7 +46,7 @@ public class MachineVariableFromLocalModule extends FilterModule {
 	 */
 	public boolean accept(
 			IRodinElement element, 
-			IStateRepository repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		IIdentifierElement identifierElement = (IIdentifierElement) element;
@@ -77,7 +77,7 @@ public class MachineVariableFromLocalModule extends FilterModule {
 	 */
 	@Override
 	public void endModule(
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEventTable = null;
 		abstractMachineInfo = null;

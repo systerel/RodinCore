@@ -25,7 +25,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.rodinp.core.IInternalElement;
@@ -51,7 +51,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		contextTable = 
@@ -69,7 +69,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		contextTable = null;
@@ -291,7 +291,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	protected void createInternalContexts(
 			IInternalParent target, 
 			List<ISCContext> scContexts,
-			IStateRepository repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		for (ISCContext context : scContexts) {

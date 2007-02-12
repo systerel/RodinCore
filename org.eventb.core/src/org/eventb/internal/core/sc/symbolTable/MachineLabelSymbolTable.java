@@ -9,7 +9,7 @@ package org.eventb.internal.core.sc.symbolTable;
 
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * @author Stefan Hallerstede
@@ -21,7 +21,7 @@ public class MachineLabelSymbolTable extends SymbolTable<ILabelSymbolInfo> imple
 		super(size);
 	}
 
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

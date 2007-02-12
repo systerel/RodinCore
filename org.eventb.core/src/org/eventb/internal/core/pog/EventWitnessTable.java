@@ -25,14 +25,14 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.pog.state.IEventWitnessTable;
-import org.eventb.core.tool.state.IToolStateType;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class EventWitnessTable extends ToolState implements IEventWitnessTable {
+public class EventWitnessTable extends State implements IEventWitnessTable {
 
 	private List<ISCWitness> witnesses;
 	private final boolean[] deterministic;
@@ -158,7 +158,7 @@ public class EventWitnessTable extends ToolState implements IEventWitnessTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

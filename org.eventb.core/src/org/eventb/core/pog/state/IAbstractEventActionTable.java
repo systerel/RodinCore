@@ -14,7 +14,7 @@ import org.eventb.core.ISCAction;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * This class provides information on the actions of the abstract event
@@ -29,7 +29,7 @@ import org.eventb.core.tool.state.IToolStateType;
  */
 public interface IAbstractEventActionTable extends IEventActionTable, ICorrespondence {
 
-	final static IToolStateType<IAbstractEventActionTable> STATE_TYPE = 
+	final static IStateType<IAbstractEventActionTable> STATE_TYPE = 
 		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".abstractEventActionTable");
 	
 	/**

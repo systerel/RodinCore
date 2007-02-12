@@ -20,10 +20,10 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.sc.IFilterModule;
+import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.IParsedFormula;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
 import org.eventb.core.sc.util.ParseProblem;
@@ -55,7 +55,7 @@ extends LabeledElementModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		identifierSymbolTable = 
@@ -76,7 +76,7 @@ extends LabeledElementModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		identifierSymbolTable = null;
 		super.endModule(element, repository, monitor);
@@ -267,9 +267,9 @@ extends LabeledElementModule {
 	 */
 	protected void checkAndType(
 			IInternalParent target,
-			IFilterModule[] modules,
+			ISCFilterModule[] modules,
 			String component,
-			IStateRepository repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		final FormulaFactory factory = repository.getFormulaFactory();
@@ -351,7 +351,7 @@ extends LabeledElementModule {
 	
 	private ParsedFormula parsedFormula;
 	
-	private void createParsedState(IStateRepository repository) throws CoreException {
+	private void createParsedState(ISCStateRepository repository) throws CoreException {
 		parsedFormula = new ParsedFormula();
 		repository.setState(parsedFormula);
 	}
@@ -360,7 +360,7 @@ extends LabeledElementModule {
 		parsedFormula.setFormula(formula);
 	}
 	
-	private void removeParsedState(IStateRepository repository) throws CoreException {
+	private void removeParsedState(ISCStateRepository repository) throws CoreException {
 		repository.removeState(IParsedFormula.STATE_TYPE);
 	}
 	

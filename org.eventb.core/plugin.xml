@@ -3,6 +3,9 @@
 <plugin>
    <extension-point id="scStateTypes" name="%scStateTypes" schema="schema/scStateTypes.exsd"/>
    <extension-point id="pogStateTypes" name="%pogStateTypes" schema="schema/pogStateTypes.exsd"/>
+   <extension-point id="scModules" name="%scModules" schema="schema/scModules.exsd"/>
+   <extension-point id="pogModules" name="%pogModules" schema="schema/pogModules.exsd"/>
+   <extension-point id="configurations" name="%configurations" schema="schema/configurations.exsd"/>
    <extension
          point="org.eclipse.core.runtime.contentTypes">
       <content-type

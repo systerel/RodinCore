@@ -16,11 +16,11 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCContextFile;
-import org.eventb.core.sc.IFilterModule;
-import org.eventb.core.sc.IModuleManager;
+import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.ISCModuleManager;
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
@@ -38,10 +38,10 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 	public static final String CONTEXT_AXIOM_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".contextAxiomFilter";
 
-	private final IFilterModule[] filterModules;
+	private final ISCFilterModule[] filterModules;
 
 	public ContextAxiomModule() {
-		IModuleManager manager = ModuleManager.getModuleManager();
+		ISCModuleManager manager = ModuleManager.getModuleManager();
 		filterModules = 
 			manager.getFilterModules(CONTEXT_AXIOM_FILTER);
 	}
@@ -54,7 +54,7 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -100,7 +100,7 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IStateRepository repository) throws CoreException {
+			ISCStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IContextLabelSymbolTable.STATE_TYPE);
 	}
 

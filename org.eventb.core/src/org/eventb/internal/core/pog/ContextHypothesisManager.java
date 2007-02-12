@@ -10,7 +10,7 @@ package org.eventb.internal.core.pog;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.pog.state.IContextHypothesisManager;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -42,7 +42,7 @@ public class ContextHypothesisManager extends HypothesisManager implements
 	/* (non-Javadoc)
 	 * @see org.eventb.core.state.IState#getStateType()
 	 */
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

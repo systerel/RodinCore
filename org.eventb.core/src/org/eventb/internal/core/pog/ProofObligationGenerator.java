@@ -12,8 +12,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.pog.IProcessorModule;
-import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.IPOGProcessorModule;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
@@ -29,7 +29,7 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_STATE = false;
 	
-	protected IStateRepository createRepository(
+	protected IPOGStateRepository createRepository(
 			IPOFile target, 
 			IProgressMonitor monitor) throws CoreException {
 		
@@ -67,11 +67,11 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	protected void runModules(
 			IRodinFile file, 
 			IPOFile target, 
-			IProcessorModule[] modules, 
-			IStateRepository repository, 
+			IPOGProcessorModule[] modules, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		for(IProcessorModule module : modules) {
+		for(IPOGProcessorModule module : modules) {
 			
 			module.initModule(
 					file, 
@@ -80,7 +80,7 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	
 		}		
 	
-		for(IProcessorModule module : modules) {
+		for(IPOGProcessorModule module : modules) {
 			
 			module.process(
 					file, 
@@ -89,7 +89,7 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	
 		}		
 		
-		for(IProcessorModule module : modules) {
+		for(IPOGProcessorModule module : modules) {
 			
 			module.endModule(
 					file, 

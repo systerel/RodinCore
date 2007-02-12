@@ -10,21 +10,21 @@ package org.eventb.core.sc.state;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.IFilterModule;
+import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * The static checker protocol does not permit to pass the current event as
- * a parameter to filter modules {@link IFilterModule} for elements contained in an event.
+ * a parameter to filter modules {@link ISCFilterModule} for elements contained in an event.
  * This state component can be used to access the current event instead.
  * 
  * @author Stefan Hallerstede
  *
  */
-public interface ICurrentEvent extends IState {
+public interface ICurrentEvent extends ISCState {
 	
-	final static IToolStateType<ICurrentEvent> STATE_TYPE = 
+	final static IStateType<ICurrentEvent> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".currentEvent");
 
 	/**

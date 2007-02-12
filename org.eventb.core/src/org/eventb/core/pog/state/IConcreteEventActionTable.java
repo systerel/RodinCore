@@ -10,7 +10,7 @@ package org.eventb.core.pog.state;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * Common protocol for accessing the actions of the concrete event.
@@ -26,7 +26,7 @@ import org.eventb.core.tool.state.IToolStateType;
  */
 public interface IConcreteEventActionTable extends IEventActionTable {
 
-	final static IToolStateType<IConcreteEventActionTable> STATE_TYPE = 
+	final static IStateType<IConcreteEventActionTable> STATE_TYPE = 
 		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".concreteEventActionTable");
 
 	/**

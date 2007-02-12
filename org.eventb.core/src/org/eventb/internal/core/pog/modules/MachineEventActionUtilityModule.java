@@ -15,7 +15,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.pog.state.IConcreteEventActionTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
-import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGIntervalSelectionHint;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -41,7 +41,7 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		machineHypothesisManager =
@@ -64,7 +64,7 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventHypothesisManager = null;
 		machineHypothesisManager = null;

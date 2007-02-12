@@ -26,7 +26,7 @@ import org.eventb.core.ast.Predicate;
  * @author Stefan Hallerstede
  *
  */
-public interface IEventActionTable extends IState {
+public interface IEventActionTable extends IPOGState {
 
 	/**
 	 * Returns the list of actions of the event.

@@ -20,7 +20,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGSource;
 import org.eventb.core.pog.util.POGTraceablePredicate;
@@ -39,7 +39,7 @@ public class MachineEventActionBodySimModule extends
 	 */
 	public void process(
 			IRodinElement element, 
-			IStateRepository repository,
+			IPOGStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		

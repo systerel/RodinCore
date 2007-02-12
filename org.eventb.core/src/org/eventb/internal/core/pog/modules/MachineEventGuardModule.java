@@ -22,7 +22,7 @@ import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -43,7 +43,7 @@ public class MachineEventGuardModule extends PredicateModule<ISCGuard> {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		ISCEvent event = (ISCEvent) element;
@@ -58,7 +58,7 @@ public class MachineEventGuardModule extends PredicateModule<ISCGuard> {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventLabel = null;
 		abstractEventGuardList = null;
@@ -66,12 +66,12 @@ public class MachineEventGuardModule extends PredicateModule<ISCGuard> {
 	}
 
 	@Override
-	protected IHypothesisManager getHypothesisManager(IStateRepository repository) throws CoreException {
+	protected IHypothesisManager getHypothesisManager(IPOGStateRepository repository) throws CoreException {
 		return (IEventHypothesisManager) repository.getState(IEventHypothesisManager.STATE_TYPE);
 	}
 
 	@Override
-	protected IPredicateTable<ISCGuard> getPredicateTable(IStateRepository repository) throws CoreException {
+	protected IPredicateTable<ISCGuard> getPredicateTable(IPOGStateRepository repository) throws CoreException {
 		return (IConcreteEventGuardTable) repository.getState(IConcreteEventGuardTable.STATE_TYPE);
 	}
 

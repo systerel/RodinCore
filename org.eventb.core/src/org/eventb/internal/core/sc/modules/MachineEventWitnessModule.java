@@ -25,14 +25,14 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.sc.IFilterModule;
-import org.eventb.core.sc.IModuleManager;
+import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.ISCModuleManager;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.ICurrentEvent;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
@@ -52,10 +52,10 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	public static final String MACHINE_EVENT_WITNESS_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineEventWitnessFilter";
 
-	private IFilterModule[] filterModules;
+	private ISCFilterModule[] filterModules;
 
 	public MachineEventWitnessModule() {
-		IModuleManager manager = ModuleManager.getModuleManager();
+		ISCModuleManager manager = ModuleManager.getModuleManager();
 		filterModules = manager.getFilterModules(MACHINE_EVENT_WITNESS_FILTER);
 	}
 	
@@ -70,7 +70,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 
@@ -170,7 +170,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 
 	private void getWitnessNames(
 			HashSet<String> witnessNames,
-			IStateRepository repository) throws CoreException {
+			ISCStateRepository repository) throws CoreException {
 		
 		IEventRefinesInfo eventRefinesInfo = (IEventRefinesInfo)
 			repository.getState(IEventRefinesInfo.STATE_TYPE);
@@ -244,7 +244,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
@@ -258,7 +258,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		btrue = null;
@@ -276,7 +276,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IStateRepository repository) throws CoreException {
+			ISCStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 

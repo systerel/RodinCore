@@ -28,7 +28,7 @@ import org.eventb.core.pog.state.IConcreteEventActionTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineVariableTable;
-import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IEventWitnessTable;
 import org.eventb.internal.core.pog.AbstractEventActionTable;
 import org.eventb.internal.core.pog.AbstractEventGuardList;
@@ -55,7 +55,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	 */
 	public void process(
 			IRodinElement element, 
-			IStateRepository repository,
+			IPOGStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		// all processing is done in the initModule() method
@@ -64,7 +64,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	
 	private void fetchActionsAndVariables(
 			ISCEvent concreteEvent, 
-			IStateRepository repository) throws CoreException {
+			IPOGStateRepository repository) throws CoreException {
 		
 		IMachineVariableTable machineVariableTable =
 			(IMachineVariableTable) repository.getState(IMachineVariableTable.STATE_TYPE);
@@ -91,7 +91,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	private IAbstractEventActionTable fetchAbstractActions(
 			IConcreteEventActionTable concreteEventActionTable, 
 			IMachineVariableTable machineVariableTable, 
-			IStateRepository repository) throws RodinDBException, CoreException {
+			IPOGStateRepository repository) throws RodinDBException, CoreException {
 		ISCEvent abstractEvent = abstractEventGuardList.getFirstAbstractEvent();
 		
 		if (abstractEvent != null)
@@ -116,7 +116,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	private void setEventHypothesisManager(
 			IMachineHypothesisManager machineHypothesisManager, 
 			ISCEvent event, ISCGuard[] guards, 
-			IStateRepository repository,
+			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		IPOFile target = repository.getTarget();
@@ -133,7 +133,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	private void fetchGuards(
 			ISCEvent concreteEvent,
 			ISCGuard[] concreteGuards, 
-			IStateRepository repository) throws CoreException {
+			IPOGStateRepository repository) throws CoreException {
 		
 		IConcreteEventGuardTable concreteEventGuardTable = 
 			fetchConcreteGuards(concreteGuards, repository);
@@ -163,7 +163,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 
 	private IConcreteEventGuardTable fetchConcreteGuards(
 			ISCGuard[] concreteGuards, 
-			IStateRepository repository) throws RodinDBException, CoreException {
+			IPOGStateRepository repository) throws RodinDBException, CoreException {
 		IConcreteEventGuardTable concreteEventGuardTable = 
 			new ConcreteEventGuardTable(
 					concreteGuards, 
@@ -193,7 +193,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 
 	private void fetchWitnesses(
 			ISCEvent concreteEvent, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException, RodinDBException {
 		IEventWitnessTable witnessTable = 
 			new EventWitnessTable(concreteEvent.getSCWitnesses(), eventTypeEnvironment, factory, monitor);
@@ -207,7 +207,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		
@@ -243,7 +243,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		eventHypothesisManager.createHypotheses(monitor);

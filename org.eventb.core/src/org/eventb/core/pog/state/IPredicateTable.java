@@ -31,7 +31,7 @@ import org.eventb.core.ast.Predicate;
  * @author Stefan Hallerstede
  *
  */
-public interface IPredicateTable<PE extends ISCPredicateElement> extends IState {
+public interface IPredicateTable<PE extends ISCPredicateElement> extends IPOGState {
 
 	/**
 	 * Returns the predicate elements contained in this predicate table.

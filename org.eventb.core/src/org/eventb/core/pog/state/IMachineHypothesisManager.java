@@ -10,7 +10,7 @@ package org.eventb.core.pog.state;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * This is the hypothesis manager associated with Event-B machines.
@@ -24,7 +24,7 @@ import org.eventb.core.tool.state.IToolStateType;
  */
 public interface IMachineHypothesisManager extends IHypothesisManager {
 
-	final static IToolStateType<IMachineHypothesisManager> STATE_TYPE = 
+	final static IStateType<IMachineHypothesisManager> STATE_TYPE = 
 		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".machineHypothesisManager");
 
 	/**

@@ -9,7 +9,7 @@ package org.eventb.core.pog.state;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * Common protocol for accessing and managing the hypothesis sets of an event.
@@ -23,7 +23,7 @@ import org.eventb.core.tool.state.IToolStateType;
  */
 public interface IEventHypothesisManager extends IHypothesisManager {
 
-	final static IToolStateType<IEventHypothesisManager> STATE_TYPE = 
+	final static IStateType<IEventHypothesisManager> STATE_TYPE = 
 		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".eventHypothesisManager");
 	
 }

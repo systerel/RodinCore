@@ -14,14 +14,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
-import org.eventb.core.tool.state.IToolStateType;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class EventRefinesInfo extends ToolState implements IEventRefinesInfo {
+public class EventRefinesInfo extends State implements IEventRefinesInfo {
 
 	@Override
 	public void makeImmutable() {
@@ -36,7 +36,7 @@ public class EventRefinesInfo extends ToolState implements IEventRefinesInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

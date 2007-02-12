@@ -9,14 +9,14 @@ package org.eventb.internal.core.sc;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.sc.state.IVariantInfo;
-import org.eventb.core.tool.state.IToolStateType;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class VariantInfo extends ToolState implements IVariantInfo {
+public class VariantInfo extends State implements IVariantInfo {
 
 	Expression expression;
 	
@@ -37,7 +37,7 @@ public class VariantInfo extends ToolState implements IVariantInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

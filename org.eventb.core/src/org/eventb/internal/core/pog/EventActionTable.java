@@ -23,13 +23,13 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IEventActionTable;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class EventActionTable extends ToolState implements IEventActionTable {
+public abstract class EventActionTable extends State implements IEventActionTable {
 	
 	protected List<ISCAction> actions;
 	protected List<Assignment> assignments;

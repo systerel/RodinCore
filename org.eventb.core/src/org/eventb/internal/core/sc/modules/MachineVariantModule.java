@@ -20,10 +20,10 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
-import org.eventb.core.sc.IFilterModule;
-import org.eventb.core.sc.IModuleManager;
+import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.ISCModuleManager;
 import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
 import org.eventb.internal.core.sc.Messages;
@@ -44,10 +44,10 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	public static final String MACHINE_VARIANT_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineVariantFilter";
 
-	private final IFilterModule[] filterModules;
+	private final ISCFilterModule[] filterModules;
 
 	public MachineVariantModule() {
-		IModuleManager manager = ModuleManager.getModuleManager();
+		ISCModuleManager manager = ModuleManager.getModuleManager();
 		filterModules = 
 			manager.getFilterModules(MACHINE_VARIANT_FILTER);
 	}
@@ -60,7 +60,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		variantInfo = new VariantInfo();
@@ -71,7 +71,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		variantInfo = null;
 		factory = null;
@@ -92,7 +92,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		if (formulaElements.length == 0)
@@ -143,7 +143,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IStateRepository repository) throws CoreException {
+			ISCStateRepository repository) throws CoreException {
 		// this method is never called because fetchLabel() is overriden
 		return null;
 	}

@@ -22,13 +22,13 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.sc.IFilterModule;
-import org.eventb.core.sc.IModuleManager;
+import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.ISCModuleManager;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
@@ -49,10 +49,10 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 	public static final String MACHINE_EVENT_GUARD_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineEventGuardFilter";
 
-	private IFilterModule[] filterModules;
+	private ISCFilterModule[] filterModules;
 
 	public MachineEventGuardModule() {
-		IModuleManager manager = ModuleManager.getModuleManager();
+		ISCModuleManager manager = ModuleManager.getModuleManager();
 		filterModules = manager.getFilterModules(MACHINE_EVENT_GUARD_FILTER);
 	}
 
@@ -61,7 +61,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -175,7 +175,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		refinedEventTable = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
@@ -187,7 +187,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		refinedEventTable = null;
@@ -203,7 +203,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IStateRepository repository) throws CoreException {
+			ISCStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 	

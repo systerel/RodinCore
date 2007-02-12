@@ -20,7 +20,7 @@ import org.eventb.core.sc.symbolTable.ISymbolTable;
  * @author Stefan Hallerstede
  *
  */
-public interface ILabelSymbolTable extends ISymbolTable<ILabelSymbolInfo>, IState {
+public interface ILabelSymbolTable extends ISymbolTable<ILabelSymbolInfo>, ISCState {
 
 	// Common protocol for symbol tables of labeled elements
 	

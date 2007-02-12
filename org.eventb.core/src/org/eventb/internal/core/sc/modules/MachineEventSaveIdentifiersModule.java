@@ -10,9 +10,9 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Type;
-import org.eventb.core.sc.ProcessorModule;
+import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.VariableSymbolInfo;
@@ -23,7 +23,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventSaveIdentifiersModule extends ProcessorModule {
+public class MachineEventSaveIdentifiersModule extends SCProcessorModule {
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -31,7 +31,7 @@ public class MachineEventSaveIdentifiersModule extends ProcessorModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor)
 			throws CoreException {
 		

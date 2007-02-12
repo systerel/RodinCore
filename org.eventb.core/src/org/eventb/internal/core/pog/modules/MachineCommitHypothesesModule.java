@@ -10,7 +10,7 @@ package org.eventb.internal.core.pog.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
-import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGStateRepository;
 
 /**
  * @author Stefan Hallerstede
@@ -22,7 +22,7 @@ public class MachineCommitHypothesesModule extends CommitHypothesesModule {
 	 * @see org.eventb.internal.core.pog.modules.CommitHypothesesModule#getHypothesisManager()
 	 */
 	@Override
-	protected IHypothesisManager getHypothesisManager(IStateRepository repository) 
+	protected IHypothesisManager getHypothesisManager(IPOGStateRepository repository) 
 	throws CoreException {
 		return (IHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
 	}

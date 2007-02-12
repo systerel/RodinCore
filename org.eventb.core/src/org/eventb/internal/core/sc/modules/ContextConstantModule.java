@@ -14,9 +14,9 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.sc.IFilterModule;
-import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
@@ -33,10 +33,10 @@ public class ContextConstantModule extends IdentifierModule {
 	public static final String CONTEXT_CONSTANT_ACCEPTOR = 
 		EventBPlugin.PLUGIN_ID + ".contextConstantAcceptor";
 
-	private IFilterModule[] rules;
+	private ISCFilterModule[] rules;
 
 	public ContextConstantModule() {
-		IModuleManager manager = ModuleManager.getModuleManager();
+		ISCModuleManager manager = ModuleManager.getModuleManager();
 		rules = manager.getFilterModules(CONTEXT_CONSTANT_ACCEPTOR);
 	}
 
@@ -46,7 +46,7 @@ public class ContextConstantModule extends IdentifierModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 
 		IContextFile contextFile = (IContextFile) element;

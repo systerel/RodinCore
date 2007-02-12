@@ -15,7 +15,7 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * This state component provides information on witnesses associated with refined events.
@@ -27,9 +27,9 @@ import org.eventb.core.tool.state.IToolStateType;
  * </p>
  *
  */
-public interface IEventWitnessTable extends IState {
+public interface IEventWitnessTable extends IPOGState {
 
-	final static IToolStateType<IEventWitnessTable> STATE_TYPE = 
+	final static IStateType<IEventWitnessTable> STATE_TYPE = 
 		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".eventWitnessTable");
 
 	/**

@@ -10,7 +10,7 @@ package org.eventb.core.sc.state;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * State component for the variant of the current machine being checked.
@@ -18,9 +18,9 @@ import org.eventb.core.tool.state.IToolStateType;
  * @author Stefan Hallerstede
  *
  */
-public interface IVariantInfo extends IState {
+public interface IVariantInfo extends ISCState {
 
-	final static IToolStateType<IVariantInfo> STATE_TYPE = 
+	final static IStateType<IVariantInfo> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".variantInfo");
 	
 	/**

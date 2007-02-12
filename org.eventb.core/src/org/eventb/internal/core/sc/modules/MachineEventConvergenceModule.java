@@ -15,10 +15,10 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.sc.ProcessorModule;
+import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.state.IVariantInfo;
 import org.eventb.core.sc.util.GraphProblem;
 import org.rodinp.core.IInternalElement;
@@ -30,7 +30,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventConvergenceModule extends ProcessorModule {
+public class MachineEventConvergenceModule extends SCProcessorModule {
 	
 	IVariantInfo variantInfo;
 	IEventRefinesInfo eventRefinesInfo;
@@ -38,7 +38,7 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		variantInfo = (IVariantInfo) repository.getState(IVariantInfo.STATE_TYPE);
@@ -48,7 +48,7 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		IEvent event = (IEvent) element;
@@ -150,7 +150,7 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		variantInfo = null;
 		eventRefinesInfo = null;

@@ -23,7 +23,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
-import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGSource;
 import org.eventb.core.pog.util.POGTraceablePredicate;
@@ -43,7 +43,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 	 */
 	public void process(
 			IRodinElement element, 
-			IStateRepository repository,
+			IPOGStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -217,7 +217,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		concreteEventGuardTable = 
@@ -230,7 +230,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		concreteEventGuardTable = null;
 		super.endModule(element, repository, monitor);

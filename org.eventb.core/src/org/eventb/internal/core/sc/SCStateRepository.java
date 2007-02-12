@@ -8,15 +8,15 @@
 package org.eventb.internal.core.sc;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.sc.state.IState;
-import org.eventb.core.sc.state.IStateRepository;
-import org.eventb.internal.core.tool.state.ToolStateRepository;
+import org.eventb.core.sc.state.ISCState;
+import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.internal.core.tool.state.StateRepository;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class SCStateRepository extends ToolStateRepository<IState> implements IStateRepository {
+public class SCStateRepository extends StateRepository<ISCState> implements ISCStateRepository {
 
 	public SCStateRepository(FormulaFactory factory) {
 		super(factory);

@@ -23,7 +23,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Type;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.internal.core.Util;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.internal.core.tool.state.State;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -31,7 +31,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class HypothesisManager extends ToolState implements IHypothesisManager {
+public abstract class HypothesisManager extends State implements IHypothesisManager {
 
 	public Iterator<FreeIdentifier> iterator() {
 		return identifiers.iterator();

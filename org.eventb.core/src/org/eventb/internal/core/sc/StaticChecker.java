@@ -13,9 +13,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.sc.IProcessorModule;
+import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.IContextTable;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -40,7 +40,7 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 
 	private final static int CONTEXT_TABLE_SIZE = 137;
 
-	protected IStateRepository createRepository(
+	protected ISCStateRepository createRepository(
 			IRodinFile file, 
 			IProgressMonitor monitor) throws CoreException {
 		
@@ -99,8 +99,8 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 	protected void runProcessorModules(
 			IRodinFile file, 
 			IInternalParent target, 
-			IProcessorModule[] modules, 
-			IStateRepository repository, 
+			ISCProcessorModule[] modules, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		file.getResource().deleteMarkers(
@@ -108,7 +108,7 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 				true, 
 				IResource.DEPTH_INFINITE);
 		
-		for(IProcessorModule module : modules) {
+		for(ISCProcessorModule module : modules) {
 			
 			module.initModule(
 					file, 
@@ -117,7 +117,7 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 	
 		}		
 	
-		for(IProcessorModule module : modules) {
+		for(ISCProcessorModule module : modules) {
 			
 			module.process(
 					file, 
@@ -127,7 +127,7 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 	
 		}		
 		
-		for(IProcessorModule module : modules) {
+		for(ISCProcessorModule module : modules) {
 			
 			module.endModule(
 					file, 

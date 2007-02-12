@@ -16,7 +16,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * This state (sub-) component provides access to information about an abstract event.
@@ -31,9 +31,9 @@ import org.eventb.core.tool.state.IToolStateType;
  * @author Stefan Hallerstede
  *
  */
-public interface IAbstractEventInfo extends IState, Comparable {
+public interface IAbstractEventInfo extends ISCState, Comparable {
 	
-	final static IToolStateType<IAbstractEventInfo> STATE_TYPE = 
+	final static IStateType<IAbstractEventInfo> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".abstractEventInfo");
 
 	/**

@@ -26,11 +26,11 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.sc.IFilterModule;
-import org.eventb.core.sc.IModuleManager;
+import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.ISCModuleManager;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IActionSymbolInfo;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
@@ -52,10 +52,10 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	public static final String MACHINE_EVENT_ACTION_FILTER = 
 		EventBPlugin.PLUGIN_ID + ".machineEventActionFilter";
 
-	private final IFilterModule[] filterModules;
+	private final ISCFilterModule[] filterModules;
 
 	public MachineEventActionModule() {
-		IModuleManager manager = ModuleManager.getModuleManager();
+		ISCModuleManager manager = ModuleManager.getModuleManager();
 		filterModules = manager.getFilterModules(MACHINE_EVENT_ACTION_FILTER);
 	}
 
@@ -69,7 +69,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository,
+			ISCStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 
@@ -226,7 +226,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IStateRepository repository) throws CoreException {
+			ISCStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 
@@ -238,7 +238,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		isInitialisation = ((IEvent) element).getLabel().equals(IEvent.INITIALISATION);
@@ -248,7 +248,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		factory = null;
 		super.endModule(element, repository, monitor);

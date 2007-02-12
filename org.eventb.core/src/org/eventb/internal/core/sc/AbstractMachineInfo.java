@@ -9,14 +9,14 @@ package org.eventb.internal.core.sc;
 
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.sc.state.IAbstractMachineInfo;
-import org.eventb.core.tool.state.IToolStateType;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class AbstractMachineInfo extends ToolState implements
+public class AbstractMachineInfo extends State implements
 		IAbstractMachineInfo {
 	
 	private final ISCMachineFile machineFile;
@@ -35,7 +35,7 @@ public class AbstractMachineInfo extends ToolState implements
 	/* (non-Javadoc)
 	 * @see org.eventb.core.tool.state.IToolState#getStateType()
 	 */
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

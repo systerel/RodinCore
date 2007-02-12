@@ -14,7 +14,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolTable;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * State component for identifiers declared in a context or a machine, or in 
@@ -23,9 +23,9 @@ import org.eventb.core.tool.state.IToolStateType;
  * @author Stefan Hallerstede
  *
  */
-public interface IIdentifierSymbolTable extends ISymbolTable<IIdentifierSymbolInfo>, IState {
+public interface IIdentifierSymbolTable extends ISymbolTable<IIdentifierSymbolInfo>, ISCState {
 
-	final static IToolStateType<IIdentifierSymbolTable> STATE_TYPE = 
+	final static IStateType<IIdentifierSymbolTable> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".identifierSymbolTable");
 	
 	/**

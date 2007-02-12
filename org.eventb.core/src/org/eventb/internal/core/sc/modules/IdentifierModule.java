@@ -16,10 +16,10 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.sc.IFilterModule;
-import org.eventb.core.sc.ProcessorModule;
+import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
-import org.eventb.core.sc.state.IStateRepository;
+import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
 import org.eventb.core.sc.util.IMarkerDisplay;
@@ -33,7 +33,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class IdentifierModule extends ProcessorModule {
+public abstract class IdentifierModule extends SCProcessorModule {
 
 	protected FormulaFactory factory;
 	
@@ -100,8 +100,8 @@ public abstract class IdentifierModule extends ProcessorModule {
 	protected void fetchSymbols(
 			IIdentifierElement[] elements,
 			IInternalParent target,
-			IFilterModule[] rules,
-			IStateRepository repository,
+			ISCFilterModule[] rules,
+			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		initFilterModules(rules, repository, null);
@@ -172,7 +172,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
@@ -186,7 +186,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		factory = null;
 		identifierSymbolTable = null;

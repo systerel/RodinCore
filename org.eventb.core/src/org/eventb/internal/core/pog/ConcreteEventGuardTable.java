@@ -11,7 +11,7 @@ import org.eventb.core.ISCGuard;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -31,7 +31,7 @@ implements IConcreteEventGuardTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

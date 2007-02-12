@@ -12,14 +12,14 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCContext;
 import org.eventb.core.sc.state.IContextTable;
-import org.eventb.core.tool.state.IToolStateType;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class ContextTable extends ToolState implements IContextTable {
+public class ContextTable extends State implements IContextTable {
 
 	private final Hashtable<String, ISCContext> contexts;
 	
@@ -30,7 +30,7 @@ public class ContextTable extends ToolState implements IContextTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

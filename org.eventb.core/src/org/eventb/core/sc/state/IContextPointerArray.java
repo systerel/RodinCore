@@ -12,7 +12,7 @@ import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -27,9 +27,9 @@ import org.rodinp.core.IInternalElement;
  * @author Stefan Hallerstede
  *
  */
-public interface IContextPointerArray extends IState {
+public interface IContextPointerArray extends ISCState {
 
-	final static IToolStateType<IContextPointerArray> STATE_TYPE = 
+	final static IStateType<IContextPointerArray> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".contextPointerArray");
 
 	/**

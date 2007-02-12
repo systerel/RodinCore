@@ -9,7 +9,7 @@ package org.eventb.core.sc.state;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * State component to store label elements of a machine.
@@ -19,7 +19,7 @@ import org.eventb.core.tool.state.IToolStateType;
  */
 public interface IMachineLabelSymbolTable extends ILabelSymbolTable {
 
-	final static IToolStateType<IMachineLabelSymbolTable> STATE_TYPE = 
+	final static IStateType<IMachineLabelSymbolTable> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".machineLabelSymbolTable");
 
 }

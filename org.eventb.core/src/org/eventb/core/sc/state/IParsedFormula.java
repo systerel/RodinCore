@@ -11,7 +11,7 @@ package org.eventb.core.sc.state;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * Parsed formulas cannot be passed as parameters to filter modules.
@@ -20,9 +20,9 @@ import org.eventb.core.tool.state.IToolStateType;
  * @author Stefan Hallerstede
  *
  */
-public interface IParsedFormula extends IState {
+public interface IParsedFormula extends ISCState {
 	
-	final static IToolStateType<IParsedFormula> STATE_TYPE = 
+	final static IStateType<IParsedFormula> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".parsedFormula");
 	
 	/**

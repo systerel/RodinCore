@@ -9,7 +9,7 @@ package org.eventb.core.sc.state;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * State components for keeping labeled elements of contexts,
@@ -20,7 +20,7 @@ import org.eventb.core.tool.state.IToolStateType;
  */
 public interface IContextLabelSymbolTable extends ILabelSymbolTable {
 	
-	final static IToolStateType<IContextLabelSymbolTable> STATE_TYPE = 
+	final static IStateType<IContextLabelSymbolTable> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".contextLabelSymbolTable");
 
 }

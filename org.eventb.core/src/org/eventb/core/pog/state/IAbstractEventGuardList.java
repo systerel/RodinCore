@@ -13,7 +13,7 @@ import java.util.List;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * This class provides information on the guards of all abstract event
@@ -30,9 +30,9 @@ import org.eventb.core.tool.state.IToolStateType;
  * @author Stefan Hallerstede
  *
  */
-public interface IAbstractEventGuardList extends IState {
+public interface IAbstractEventGuardList extends IPOGState {
 
-	final static IToolStateType<IAbstractEventGuardList> STATE_TYPE = 
+	final static IStateType<IAbstractEventGuardList> STATE_TYPE = 
 		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".abstractEventGuardList");
 
 	/**

@@ -7,9 +7,9 @@
  *******************************************************************************/
 package org.eventb.core.pog;
 
-import org.eventb.core.tool.state.IToolState;
-import org.eventb.core.tool.state.IToolStateType;
-import org.eventb.internal.core.pog.StateTypeManager;
+import org.eventb.core.tool.state.IState;
+import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.state.POGStateTypeManager;
 
 /**
  * @author Stefan Hallerstede
@@ -27,10 +27,10 @@ public final class POGCore {
 	 *             if no such tool state type has been contributed
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends IToolState> IToolStateType<T> getToolStateType(
+	public static <T extends IState> IStateType<T> getToolStateType(
 			String id) {
-		final StateTypeManager manager = StateTypeManager.getInstance();
-		final IToolStateType result = manager.getToolStateType(id);
+		final POGStateTypeManager manager = POGStateTypeManager.getInstance();
+		final IStateType result = manager.getStateType(id);
 		if (result != null) {
 			return result;
 		}

@@ -22,7 +22,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IMachineVariableTable;
-import org.eventb.core.pog.state.IStateRepository;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGSource;
 import org.eventb.core.pog.util.POGTraceablePredicate;
@@ -40,7 +40,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 	
 	public void process(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		createFrameSimProofObligations(
@@ -142,7 +142,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		abstractEvent = abstractEventGuardList.getFirstAbstractEvent();
@@ -153,7 +153,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		abstractEvent = null;
 		machineVariableTable = null;

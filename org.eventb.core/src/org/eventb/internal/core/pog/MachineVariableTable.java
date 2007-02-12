@@ -16,14 +16,14 @@ import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.pog.state.IMachineVariableTable;
-import org.eventb.core.tool.state.IToolStateType;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachineVariableTable extends ToolState implements IMachineVariableTable {
+public class MachineVariableTable extends State implements IMachineVariableTable {
 	
 	final private ArrayList<FreeIdentifier> variables;
 	private List<FreeIdentifier> preservedVariables;
@@ -38,7 +38,7 @@ public class MachineVariableTable extends ToolState implements IMachineVariableT
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
-	public IToolStateType<?> getStateType() {
+	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 

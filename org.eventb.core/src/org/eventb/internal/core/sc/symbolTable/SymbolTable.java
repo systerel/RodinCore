@@ -17,13 +17,13 @@ import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolTable;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.tool.state.ToolState;
+import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class SymbolTable<I extends ISymbolInfo> extends ToolState implements ISymbolTable<I> {
+public abstract class SymbolTable<I extends ISymbolInfo> extends State implements ISymbolTable<I> {
 
 	private final Hashtable<String, I> table;
 	

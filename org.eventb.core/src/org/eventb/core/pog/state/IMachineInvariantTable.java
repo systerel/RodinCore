@@ -10,7 +10,7 @@ package org.eventb.core.pog.state;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.tool.state.IToolStateType;
+import org.eventb.core.tool.state.IStateType;
 
 /**
  * Common protocol for accessing all invariants of a machine.
@@ -24,7 +24,7 @@ import org.eventb.core.tool.state.IToolStateType;
  */
 public interface IMachineInvariantTable extends IPredicateTable<ISCInvariant> {
 	
-	final static IToolStateType<IMachineInvariantTable> STATE_TYPE = 
+	final static IStateType<IMachineInvariantTable> STATE_TYPE = 
 		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".machineInvariantTable");
 
 }
