@@ -19,6 +19,7 @@ import org.eventb.internal.core.pog.modules.MachineCommitHypothesesModule;
 import org.eventb.internal.core.pog.modules.MachineEventActionBodySimModule;
 import org.eventb.internal.core.pog.modules.MachineEventActionFrameSimModule;
 import org.eventb.internal.core.pog.modules.MachineEventActionModule;
+import org.eventb.internal.core.pog.modules.MachineEventCommitHypothesesModule;
 import org.eventb.internal.core.pog.modules.MachineEventGuardModule;
 import org.eventb.internal.core.pog.modules.MachineEventHypothesisModule;
 import org.eventb.internal.core.pog.modules.MachineEventInitialInvariantModule;
@@ -80,6 +81,7 @@ public class ModuleManager implements IPOGModuleManager {
 						return new IPOGProcessorModule[] {
 								new MachineEventHypothesisModule(),
 								new MachineEventGuardModule(),
+								new MachineEventCommitHypothesesModule(),
 								new MachineEventWitnessModule(),
 								new MachineEventActionModule(),
 								new MachineEventInitialInvariantModule(),
