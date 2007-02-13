@@ -70,14 +70,15 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	}
 	
 	void internalPack() {
-		control.getParent().setRedraw(false);
+		Composite parent = control.getParent();
+		parent.setRedraw(false);
 		Rectangle bounds = control.getBounds();
 		Point preferredSize = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		if (preferredSize.x != bounds.width || preferredSize.y != bounds.height) {
-			control.getParent().pack();
+		if (preferredSize.x > bounds.width || preferredSize.y > bounds.height) {
+			parent.pack();
 			form.reflow(true);
 		}
-		control.getParent().setRedraw(true);
+		parent.setRedraw(true);
 	}
 
 }

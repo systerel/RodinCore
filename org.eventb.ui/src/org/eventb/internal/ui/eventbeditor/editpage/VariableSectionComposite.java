@@ -69,6 +69,9 @@ public class VariableSectionComposite extends DefaultSectionComposite {
 			map = sectionRegistry.createColumns(fForm, fToolkit, fComp,
 					variable, map);
 		}
+		
+		createButtons(fEditor, fToolkit, fComp, fInput, null); // The last null element
+		
 		fToolkit.paintBordersFor(fComp);
 		fComp.getParent().pack();
 		fForm.reflow(true);
