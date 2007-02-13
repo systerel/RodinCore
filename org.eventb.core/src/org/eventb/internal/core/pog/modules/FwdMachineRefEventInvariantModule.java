@@ -27,7 +27,7 @@ import org.eventb.core.pog.util.POGTraceablePredicate;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventPreserveInvariantModule extends MachineEventInvariantModule {
+public class FwdMachineRefEventInvariantModule extends MachineEventInvariantModule {
 
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.pog.modules.MachineEventInvariantModule#isApplicable()

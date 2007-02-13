@@ -34,12 +34,5 @@ public interface IMachineHypothesisManager extends IHypothesisManager {
 	 * @return the hypothesis that contains all predicates of the seen contexts
 	 */
 	IPOPredicateSet getContextHypothesis();
-	
-	/**
-	 * Returns whether the machine managed by this manager is initial, i.e., it does not refine
-	 * another machine.
-	 * 
-	 * @return whether the machine managed by this manager is initial
-	 */
-	boolean isInitialMachine();
+
 }

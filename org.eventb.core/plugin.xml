@@ -586,6 +586,10 @@
             class="org.eventb.core.pog.state.IEventWitnessTable"
             id="eventWitnessTable"
             name="%eventWitnessTable"/>
+      <stateType
+            class="org.eventb.internal.core.pog.MachineInfo"
+            id="machineInfo"
+            name="%machineInfo"/>
    </extension>
 
 </plugin>

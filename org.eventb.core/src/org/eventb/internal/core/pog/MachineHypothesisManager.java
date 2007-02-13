@@ -10,12 +10,9 @@ package org.eventb.internal.core.pog;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
-import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCPredicateElement;
-import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.tool.state.IStateType;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -36,8 +33,6 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 	
 	private static final int IDENTIFIER_TABLE_SIZE = 213;
 	
-	private final ISCMachineFile abstractMachine;
-	
 	public MachineHypothesisManager(
 			IRodinElement parentElement, 
 			IPOFile target,
@@ -45,18 +40,6 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 		super(parentElement, target, predicateTable, 
 				ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME, IDENT_HYP_NAME, 
 				IDENTIFIER_TABLE_SIZE);
-		
-		ISCRefinesMachine[] refinesMachines = ((ISCMachineFile) parentElement).getSCRefinesClauses();
-		
-		if (refinesMachines.length == 0)
-			abstractMachine = null;
-		else {
-			abstractMachine = refinesMachines[0].getAbstractSCMachine();
-			
-			if (refinesMachines.length > 1) {
-				throw Util.newCoreException(Messages.pog_multipleRefinementError);
-			}
-		}
 	}
 
 	public IStateType<?> getStateType() {
@@ -65,9 +48,5 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 	
 	public IPOPredicateSet getContextHypothesis() {
 		return target.getPredicateSet(CTX_HYP_NAME);
-	}
-	
-	public boolean isInitialMachine() {
-		return abstractMachine == null;
 	}
 }

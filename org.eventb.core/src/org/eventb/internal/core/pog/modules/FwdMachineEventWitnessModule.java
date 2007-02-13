@@ -9,12 +9,12 @@ package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSource;
-import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -24,11 +24,13 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.pog.state.IEventWitnessTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGIntervalSelectionHint;
 import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGSource;
 import org.eventb.core.pog.util.POGTraceablePredicate;
+import org.eventb.internal.core.pog.EventWitnessTable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -36,7 +38,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventWitnessModule extends MachineEventRefinementModule {
+public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModule {
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -47,11 +49,9 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		ISCEvent event = (ISCEvent) element;
+		List<ISCWitness> witnesses = witnessTable.getWitnesses();
 		
-		ISCWitness[] witnesses = event.getSCWitnesses();
-		
-		if (witnesses.length == 0)
+		if (witnesses.size() == 0)
 			return;
 		
 		IPOFile target = repository.getTarget();
@@ -123,16 +123,7 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 			goal = applyDetAssignments(goal);
 			
 			ArrayList<POGPredicate> hyp = makeActionHypothesis(goal);
-			
-// TODO: remove following:
-//			ArrayList<POGPredicate> actionHyp = makeActionHypothesis();
-//			boolean primed = witnessIdentifier.isPrimed();
-//			List<POGPredicate> localHyp = primed ? actionHyp : emptyPredicates;
-//			
-//			if (primed) { // global witness
-//				goal = applyDetAssignments(goal);
-//			}
-			
+						
 			createPO(
 					target, 
 					sequentName, 
@@ -194,6 +185,7 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 		return found;
 	}
 	
+	protected IEventWitnessTable witnessTable;
 	protected ITypeEnvironment typeEnvironment;
 
 	@Override
@@ -203,6 +195,10 @@ public class MachineEventWitnessModule extends MachineEventRefinementModule {
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		typeEnvironment = repository.getTypeEnvironment();
+		witnessTable = 
+			new EventWitnessTable(concreteEvent.getSCWitnesses(), typeEnvironment, factory, monitor);
+		witnessTable.makeImmutable();
+		repository.setState(witnessTable);
 	}
 
 	@Override

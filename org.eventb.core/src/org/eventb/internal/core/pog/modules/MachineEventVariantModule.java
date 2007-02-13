@@ -31,7 +31,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventVariantModule extends MachineEventRefinementModule {
+public class MachineEventVariantModule extends MachineEventActionUtilityModule {
 
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor)
@@ -57,9 +57,6 @@ public class MachineEventVariantModule extends MachineEventRefinementModule {
 		POGSource[] sources = sources(
 				new POGSource(IPOSource.DEFAULT_ROLE, machineVariantInfo.getVariant()),
 				new POGSource(IPOSource.DEFAULT_ROLE, concreteEvent));
-		
-// TODO remove if ok:			
-//		ArrayList<POGPredicate> hyp = makeActionHypothesis();
 		
 		ArrayList<POGPredicate> hyp =  makeActionHypothesis(varPredicate);
 		

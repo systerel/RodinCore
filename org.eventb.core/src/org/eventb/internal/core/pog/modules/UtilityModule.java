@@ -32,8 +32,8 @@ public abstract class UtilityModule extends POGProcessorModule {
 	
 	public static boolean DEBUG_TRIVIAL = false;
 
-	protected List<POGPredicate> emptyPredicates;
-	protected POGHint[] emptyHints;
+	protected static final List<POGPredicate> emptyPredicates = new ArrayList<POGPredicate>(0);
+	protected static final POGHint[] emptyHints = new POGHint[0];
 	protected Predicate btrue;
 	protected FormulaFactory factory;
 	
@@ -49,8 +49,6 @@ public abstract class UtilityModule extends POGProcessorModule {
 		
 		factory = repository.getFormulaFactory();
 		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
-		emptyPredicates = new ArrayList<POGPredicate>(0);
-		emptyHints = new POGHint[0];
 	}
 	
 	/* (non-Javadoc)
@@ -64,8 +62,6 @@ public abstract class UtilityModule extends POGProcessorModule {
 		
 		factory = null;
 		btrue = null;
-		emptyPredicates = null;
-		emptyHints = null;
 		super.endModule(element, repository, monitor);
 	}
 	

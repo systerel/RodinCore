@@ -31,7 +31,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventActionBodySimModule extends
+public class FwdMachineEventActionBodySimModule extends
 		MachineEventRefinementModule {
 	
 	/* (non-Javadoc)

@@ -34,7 +34,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventStrengthenGuardModule extends MachineEventRefinementModule {
+public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinementModule {
 	
 	protected IConcreteEventGuardTable concreteEventGuardTable;
 

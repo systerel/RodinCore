@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IEvent;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCAction;
@@ -29,14 +30,12 @@ import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineVariableTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.state.IEventWitnessTable;
 import org.eventb.internal.core.pog.AbstractEventActionTable;
 import org.eventb.internal.core.pog.AbstractEventGuardList;
 import org.eventb.internal.core.pog.AbstractEventGuardTable;
 import org.eventb.internal.core.pog.ConcreteEventActionTable;
 import org.eventb.internal.core.pog.ConcreteEventGuardTable;
 import org.eventb.internal.core.pog.EventHypothesisManager;
-import org.eventb.internal.core.pog.EventWitnessTable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -121,7 +120,7 @@ public class MachineEventHypothesisModule extends UtilityModule {
 		
 		IPOFile target = repository.getTarget();
 		
-		IPOPredicateSet fullHypothesis = (event.getLabel().equals("INITIALISATION")) ?
+		IPOPredicateSet fullHypothesis = (event.getLabel().equals(IEvent.INITIALISATION)) ?
 				machineHypothesisManager.getContextHypothesis() :
 				machineHypothesisManager.getFullHypothesis();
 		eventHypothesisManager = 
@@ -191,16 +190,6 @@ public class MachineEventHypothesisModule extends UtilityModule {
 		}
 	}
 
-	private void fetchWitnesses(
-			ISCEvent concreteEvent, 
-			IPOGStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException, RodinDBException {
-		IEventWitnessTable witnessTable = 
-			new EventWitnessTable(concreteEvent.getSCWitnesses(), eventTypeEnvironment, factory, monitor);
-		witnessTable.makeImmutable();
-		repository.setState(witnessTable);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -232,8 +221,6 @@ public class MachineEventHypothesisModule extends UtilityModule {
 				repository);
 		
 		fetchActionsAndVariables(concreteEvent, repository);
-		
-		fetchWitnesses(concreteEvent, repository, monitor);
 	
 	}
 

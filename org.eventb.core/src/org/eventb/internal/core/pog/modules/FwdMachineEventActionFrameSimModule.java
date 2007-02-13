@@ -33,7 +33,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventActionFrameSimModule extends MachineEventRefinementModule {
+public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementModule {
 
 	protected ISCEvent abstractEvent;
 	protected IMachineVariableTable machineVariableTable;
@@ -53,7 +53,7 @@ public class MachineEventActionFrameSimModule extends MachineEventRefinementModu
 			IPOFile target, 
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		if (machineHypothesisManager.isInitialMachine())
+		if (machineInfo.isInitialMachine())
 			return;
 		
 		ArrayList<POGPredicate> hyp = 

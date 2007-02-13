@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -17,25 +15,33 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
-import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
 import org.eventb.core.pog.state.IHypothesisManager;
-import org.eventb.core.pog.state.IPredicateTable;
+import org.eventb.core.pog.state.IMachineInfo;
 import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.state.IPredicateTable;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventGuardModule extends PredicateModule<ISCGuard> {
+public abstract class MachineEventGuardModule extends PredicateModule<ISCGuard> {
+
+	@Override
+	public void process(IRodinElement element, IPOGStateRepository repository, IProgressMonitor monitor) throws CoreException {
+		if (!isApplicable())
+			return;
+		super.process(element, repository, monitor);
+	}
 
 	public static final String MACHINE_EVENT_GUARD_MODULE = 
 		EventBPlugin.PLUGIN_ID + ".machineEventGuardModule";
 
-	String eventLabel;
-	IAbstractEventGuardList abstractEventGuardList;
+	protected String eventLabel;
+	protected IAbstractEventGuardList abstractEventGuardList;
+	protected IMachineInfo machineInfo;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -48,6 +54,7 @@ public class MachineEventGuardModule extends PredicateModule<ISCGuard> {
 		super.initModule(element, repository, monitor);
 		ISCEvent event = (ISCEvent) element;
 		eventLabel = event.getLabel();
+		machineInfo = (IMachineInfo) repository.getState(IMachineInfo.STATE_TYPE);
 		abstractEventGuardList = 
 			(IAbstractEventGuardList) repository.getState(IAbstractEventGuardList.STATE_TYPE);
 	}
@@ -61,6 +68,7 @@ public class MachineEventGuardModule extends PredicateModule<ISCGuard> {
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventLabel = null;
+		machineInfo = null;
 		abstractEventGuardList = null;
 		super.endModule(element, repository, monitor);
 	}
@@ -91,38 +99,9 @@ public class MachineEventGuardModule extends PredicateModule<ISCGuard> {
 				predicate, index, monitor);
 	}
 	
-	private boolean isRedundantWDProofObligation(Predicate predicate, int index) {
-		
-		List<IAbstractEventGuardTable> abstractEventGuardTables = 
-			abstractEventGuardList.getAbstractEventGuardTables();
-		
-		for (IAbstractEventGuardTable abstractEventGuardTable : abstractEventGuardTables) {
-		
-			if (isFreshPOForAbstractGuard(predicate, index, abstractEventGuardTable))
-				continue;
-			
-			return true;
-		}
-		return false;
-	}
-
-	private boolean isFreshPOForAbstractGuard(Predicate predicate, int index, IAbstractEventGuardTable abstractEventGuardTable) {
-		int absIndex = abstractEventGuardTable.indexOfPredicate(predicate);
-
-		if (absIndex == -1)
-			return true;
-
-		for (int k=0; k<absIndex; k++) {
-		
-			int indexOfConcrete = abstractEventGuardTable.getIndexOfCorrespondingConcrete(k);
-		
-			if (indexOfConcrete != -1 && indexOfConcrete < index)
-				continue;
-		
-			return true;
-		}
-		return false;
-	}
+	protected abstract boolean isApplicable();
+	
+	protected abstract boolean isRedundantWDProofObligation(Predicate predicate, int index);
 
 	@Override
 	protected String getWDProofObligationDescription() {

@@ -8,21 +8,18 @@
 package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ISCAction;
 import org.eventb.core.ISCWitness;
-import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IAbstractEventActionTable;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
-import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IEventWitnessTable;
+import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.rodinp.core.IRodinElement;
@@ -37,57 +34,6 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	protected IAbstractEventActionTable abstractEventActionTable;
 	protected IEventWitnessTable witnessTable;
 
-	private void makeActionHypothesis(
-			ArrayList<POGPredicate> hyp, Set<FreeIdentifier> freeIdents) {
-		// create local hypothesis for nondeterministic assignments
-		
-		List<Predicate> nondetPredicates = concreteEventActionTable.getNondetPredicates();
-		List<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
-		
-		for (int i=0; i<nondetPredicates.size(); i++) {
-			Predicate baPredicate = nondetPredicates.get(i);
-			for (FreeIdentifier ident : baPredicate.getFreeIdentifiers()) {
-				if (ident.isPrimed() && freeIdents.contains(ident)) {
-					hyp.add(new POGPredicate(
-									baPredicate,
-									nondetActions.get(i)));
-					break;
-				}
-			}
-		
-		}
-		
-	}
-
-	protected ArrayList<POGPredicate> makeActionHypothesis() {
-		// create local hypothesis for nondeterministic assignments
-		
-		List<Assignment> nondetAssignments = concreteEventActionTable.getNondetAssignments();
-		List<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
-		
-		ArrayList<POGPredicate> hyp = 
-			new ArrayList<POGPredicate>(nondetAssignments.size());
-		
-		for (int i=0; i<nondetAssignments.size(); i++) {
-			hyp.add(
-					new POGTraceablePredicate(
-							nondetAssignments.get(i).getBAPredicate(factory),
-							nondetActions.get(i)));
-		}
-		return hyp;		
-	}
-	
-	protected ArrayList<POGPredicate> makeActionHypothesis(Predicate predicate) {
-		// create local hypothesis for nondeterministic assignments
-		
-		ArrayList<POGPredicate> hyp = newLocalHypothesis();
-		Set<FreeIdentifier> freeIdents = newFreeIdentsFromPredicate(predicate);
-		
-		makeActionHypothesis(hyp, freeIdents);
-		
-		return hyp;		
-	}
-	
 	protected ArrayList<POGPredicate> makeActionAndWitnessHypothesis(Predicate predicate) {
 		// create local hypothesis for nondeterministic assignments
 		
@@ -102,26 +48,12 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 		return hyp;		
 	}
 	
-	private ArrayList<POGPredicate> newLocalHypothesis() {
+	@Override
+	protected ArrayList<POGPredicate> newLocalHypothesis() {
 		int size = 
 			witnessTable.getNondetWitnesses().size() +
 			concreteEventActionTable.getNondetActions().size();
 		return new ArrayList<POGPredicate>(size);
-	}
-	
-	private Set<FreeIdentifier> newFreeIdentsFromPredicate(Predicate predicate) {
-		FreeIdentifier[] identifiers = predicate.getFreeIdentifiers();
-		HashSet<FreeIdentifier> identSet = 
-			new HashSet<FreeIdentifier>(identifiers.length * 16 / 3 + 1);
-		return addAllFreeIdents(identSet, identifiers);
-	}
-
-	private Set<FreeIdentifier> addAllFreeIdents(
-			Set<FreeIdentifier> identSet, FreeIdentifier[] identifiers) {
-		for (FreeIdentifier identifier : identifiers) {
-			identSet.add(identifier);
-		}
-		return identSet;
 	}
 	
 	private void addFreeIdentsFromHypothesis(

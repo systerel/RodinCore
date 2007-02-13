@@ -15,21 +15,25 @@ import org.eventb.internal.core.pog.modules.ContextAxiomModule;
 import org.eventb.internal.core.pog.modules.ContextCommitHypothesesModule;
 import org.eventb.internal.core.pog.modules.ContextHypothesisModule;
 import org.eventb.internal.core.pog.modules.ContextTheoremModule;
-import org.eventb.internal.core.pog.modules.MachineCommitHypothesesModule;
-import org.eventb.internal.core.pog.modules.MachineEventActionBodySimModule;
-import org.eventb.internal.core.pog.modules.MachineEventActionFrameSimModule;
-import org.eventb.internal.core.pog.modules.MachineEventActionModule;
-import org.eventb.internal.core.pog.modules.MachineEventCommitHypothesesModule;
-import org.eventb.internal.core.pog.modules.MachineEventGuardModule;
+import org.eventb.internal.core.pog.modules.FwdMachineEventActionBodySimModule;
+import org.eventb.internal.core.pog.modules.FwdMachineEventActionFrameSimModule;
+import org.eventb.internal.core.pog.modules.FwdMachineEventActionModule;
+import org.eventb.internal.core.pog.modules.FwdMachineEventGuardModule;
 import org.eventb.internal.core.pog.modules.MachineEventHypothesisModule;
-import org.eventb.internal.core.pog.modules.MachineEventInitialInvariantModule;
+import org.eventb.internal.core.pog.modules.FwdMachineEventStrengthenGuardModule;
+import org.eventb.internal.core.pog.modules.FwdMachineNewEventInvariantModule;
+import org.eventb.internal.core.pog.modules.IniMachineEventActionModule;
+import org.eventb.internal.core.pog.modules.IniMachineEventGuardModule;
+import org.eventb.internal.core.pog.modules.IniMachineNewEventInvariantModule;
+import org.eventb.internal.core.pog.modules.MachineCommitHypothesesModule;
+import org.eventb.internal.core.pog.modules.MachineEventCommitHypothesesModule;
 import org.eventb.internal.core.pog.modules.MachineEventModule;
-import org.eventb.internal.core.pog.modules.MachineEventPreserveInvariantModule;
-import org.eventb.internal.core.pog.modules.MachineEventStrengthenGuardModule;
 import org.eventb.internal.core.pog.modules.MachineEventVariantModule;
-import org.eventb.internal.core.pog.modules.MachineEventWitnessModule;
+import org.eventb.internal.core.pog.modules.FwdMachineEventWitnessModule;
 import org.eventb.internal.core.pog.modules.MachineHypothesisModule;
 import org.eventb.internal.core.pog.modules.MachineInvariantModule;
+import org.eventb.internal.core.pog.modules.FwdMachineRefEventInvariantModule;
+import org.eventb.internal.core.pog.modules.MachineRefinementModule;
 import org.eventb.internal.core.pog.modules.MachineTheoremModule;
 import org.eventb.internal.core.pog.modules.MachineVariantModule;
 
@@ -64,9 +68,10 @@ public class ModuleManager implements IPOGModuleManager {
 
 					public IPOGProcessorModule[] create() {
 						return new IPOGProcessorModule[] {
+								new MachineRefinementModule(),
 								new MachineHypothesisModule(),
-								new MachineTheoremModule(),
 								new MachineInvariantModule(),
+								new MachineTheoremModule(),
 								new MachineCommitHypothesesModule(),
 								new MachineVariantModule(),
 								new MachineEventModule()
@@ -80,15 +85,18 @@ public class ModuleManager implements IPOGModuleManager {
 					public IPOGProcessorModule[] create() {
 						return new IPOGProcessorModule[] {
 								new MachineEventHypothesisModule(),
-								new MachineEventGuardModule(),
+								new IniMachineEventGuardModule(),
+								new FwdMachineEventGuardModule(),
 								new MachineEventCommitHypothesesModule(),
-								new MachineEventWitnessModule(),
-								new MachineEventActionModule(),
-								new MachineEventInitialInvariantModule(),
-								new MachineEventPreserveInvariantModule(),
-								new MachineEventActionBodySimModule(),
-								new MachineEventActionFrameSimModule(),
-								new MachineEventStrengthenGuardModule(),
+								new FwdMachineEventWitnessModule(),
+								new IniMachineEventActionModule(),
+								new FwdMachineEventActionModule(),
+								new IniMachineNewEventInvariantModule(),
+								new FwdMachineNewEventInvariantModule(),
+								new FwdMachineRefEventInvariantModule(),
+								new FwdMachineEventActionBodySimModule(),
+								new FwdMachineEventActionFrameSimModule(),
+								new FwdMachineEventStrengthenGuardModule(),
 								new MachineEventVariantModule()
 						};
 					}
@@ -100,8 +108,8 @@ public class ModuleManager implements IPOGModuleManager {
 					public IPOGProcessorModule[] create() {
 						return new IPOGProcessorModule[] {
 								new ContextHypothesisModule(),
-								new ContextTheoremModule(),
 								new ContextAxiomModule(),
+								new ContextTheoremModule(),
 								new ContextCommitHypothesesModule()
 						};
 					}

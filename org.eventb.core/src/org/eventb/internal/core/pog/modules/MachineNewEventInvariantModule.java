@@ -27,7 +27,7 @@ import org.eventb.core.pog.util.POGTraceablePredicate;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventInitialInvariantModule extends MachineEventInvariantModule {
+public abstract class MachineNewEventInvariantModule extends MachineEventInvariantModule {
 
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.pog.modules.MachineEventInvariantModule#isApplicable()
@@ -56,9 +56,6 @@ public class MachineEventInitialInvariantModule extends MachineEventInvariantMod
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());	
 		predicate = predicate.applyAssignments(substitution, factory);
 	
-// TODO: remove following:
-//		ArrayList<POGPredicate> hyp = makeActionHypothesis();
-		
 		ArrayList<POGPredicate> hyp = makeActionHypothesis(predicate);
 		
 		String sequentName = concreteEventLabel + "/" + invariantLabel + "/INV";
