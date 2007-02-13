@@ -133,4 +133,9 @@ public class EventBContextEditor extends EventBEditor<IContextFile> {
 		return (IContextFile) RodinCore.valueOf(inputFile);
 	}
 
+	@Override
+	public String getEditorId() {
+		return EDITOR_ID;
+	}
+
 }

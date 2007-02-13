@@ -86,4 +86,5 @@ public interface IEventBEditor<F extends IRodinFile> extends IEditorPart {
 	 */
 	public abstract F getRodinInput();
 
+	public String getEditorId();
 }

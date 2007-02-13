@@ -10,6 +10,7 @@
       name="%point.elementUIName" 
       schema="schema/elementui.exsd"/>
    <extension-point id="proofTactics" name="%point.proofTacticsName" schema="schema/proofTactics.exsd"/>
+   <extension-point id="editSections" name="%point.editSectionsName" schema="schema/editSection.exsd"/>
   
    <extension
          point="org.eclipse.ui.views">
@@ -201,6 +202,13 @@
                id="org.eventb.ui.editors.machine"/>
          <target
                id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.editpage.EditPage"
+            id="org.eventb.ui.edit"
+            name="%editorPage.edit"
+            priority="9">
+         <target id="org.eventb.ui.editors.machine"/>
       </page>
    </extension>
    <extension
@@ -1158,6 +1166,96 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.ModusTollens"
             target="hypothesis"
             tooltip="%proofTactics.mt.tooltip"/>
+   </extension>
+   <extension
+         point="org.eventb.ui.editSections">
+      <section
+            class="org.eventb.internal.ui.eventbeditor.editpage.DeclarationSectionComposite"
+            id="org.event.ui.sections.declaration"
+            name="Declaration"
+            priority="0">
+         <target id="org.eventb.ui.editors.machine"/>
+      </section>
+      <section
+            class="org.eventb.internal.ui.eventbeditor.editpage.VariableSectionComposite"
+            id="org.event.ui.sections.variable"
+            name="Variables"
+            priority="3">
+         <target id="org.eventb.ui.editors.machine"/>
+      </section>
+      <section
+            class="org.eventb.internal.ui.eventbeditor.editpage.InvariantSectionComposite"
+            id="org.event.ui.sections.invariant"
+            name="Invariants"
+            priority="4">
+         <target id="org.eventb.ui.editors.machine"/>
+      </section>
+      <section
+            class="org.eventb.internal.ui.eventbeditor.editpage.TheoremSectionComposite"
+            id="org.event.ui.sections.theorem"
+            name="Theorems"
+            priority="5">
+         <target id="org.eventb.ui.editors.machine"/>
+      </section>
+   </extension>
+   <extension
+         point="org.eventb.ui.editSections">
+      <column
+            class="org.eventb.internal.ui.eventbeditor.editpage.IdentifierEditComposite"
+            horizontalExpand="false"
+            id="org.eventb.ui.variable.identifier"
+            name="Identifier">
+         <type id="org.eventb.core.variable"/>
+      </column>
+      <column
+            class="org.eventb.internal.ui.eventbeditor.editpage.LabelEditComposite"
+            horizontalExpand="false"
+            id="org.eventb.ui.invariant.label"
+            name="Label">
+         <type id="org.eventb.core.invariant"/>
+         <type id="org.eventb.core.theorem"/>
+      </column>
+      <column
+            class="org.eventb.internal.ui.eventbeditor.editpage.PredicateEditComposite"
+            horizontalExpand="true"
+            id="org.eventb.ui.invariant.predicate"
+            name="Predicate">
+         <type id="org.eventb.core.invariant"/>
+         <type id="org.eventb.core.theorem"/>
+      </column>
+      <column
+            class="org.eventb.internal.ui.eventbeditor.editpage.CommentEditComposite"
+            horizontalExpand="true"
+            id="org.eventb.ui.invariant.comment"
+            name="Comment">
+         <type id="org.eventb.core.variable"/>
+         <type id="org.eventb.core.invariant"/>
+         <type id="org.eventb.core.theorem"/>
+      </column>
+   </extension>
+   <extension
+         point="org.eventb.ui.editSections">
+      <action
+            class="org.eventb.internal.ui.eventbeditor.editpage.Add"
+            id="org.eventb.ui.variable.add"
+            name="Add"
+            tooltip="Add variable at this position">
+         <type id="org.eventb.core.variable"/>
+      </action>
+      <action
+            class="org.eventb.internal.ui.eventbeditor.editpage.Remove"
+            id="org.eventb.ui.variable.remove"
+            name="Remove"
+            tooltip="Remove this variable">
+         <type id="org.eventb.core.variable"/>
+      </action>
+      <action
+            class="org.eventb.internal.ui.eventbeditor.editpage.Up"
+            id="org.eventb.ui.variable.up"
+            name="Up"
+            tooltip="Move variable up">
+         <type id="org.eventb.core.variable"/>
+      </action>
    </extension>
 
 </plugin>

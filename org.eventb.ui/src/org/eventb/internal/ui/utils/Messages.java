@@ -25,6 +25,8 @@ public class Messages {
 	public static String editorPage_invariantPage_tabTitle;
 	public static String editorPage_prettyPrint_title;
 	public static String editorPage_prettyPrint_tabTitle;
+	public static String editorPage_edit_title;
+	public static String editorPage_edit_tabTitle;
 	public static String editorPage_synthethicViewPage_title;
 	public static String editorPage_synthethicViewPage_tabTitle;
 	

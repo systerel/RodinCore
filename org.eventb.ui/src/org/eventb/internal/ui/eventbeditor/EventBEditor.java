@@ -865,4 +865,6 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		return this.getSite().getId(); // Return the ID of the editor
 	}
 
+	abstract public String getEditorId();
+
 }

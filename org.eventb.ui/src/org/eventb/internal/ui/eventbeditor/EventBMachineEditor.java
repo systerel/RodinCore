@@ -123,4 +123,9 @@ public class EventBMachineEditor extends EventBEditor<IMachineFile> {
 		super.dispose();
 	}
 
+	@Override
+	public String getEditorId() {
+		return EDITOR_ID;
+	}
+
 }

@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
+import org.eventb.core.ICommentedElement;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IConvergenceElement;
@@ -1704,5 +1705,13 @@ public class EventBEditorUtils {
 			e.printStackTrace();
 		}
 		UIUtils.log(e, message);
+	}
+
+	public static String getComments(ICommentedElement element) {
+		try {
+			return element.getComment();
+		} catch (RodinDBException e) {
+			return "";
+		}
 	}
 }
