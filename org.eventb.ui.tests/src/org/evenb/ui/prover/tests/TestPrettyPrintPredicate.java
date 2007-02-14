@@ -11,16 +11,14 @@ public class TestPrettyPrintPredicate extends TestCase {
 
 	private void predTest(String msg, String predString,
 			String expectedPrettyPrint) {
-		System.out.println("Predicate: \"" + predString + "\"");
 		IParseResult parseResult = Lib.ff.parsePredicate(predString);
 		assertTrue("Parse Successful", parseResult.isSuccess());
 		Predicate parsedPred = parseResult.getParsedPredicate();
 
 		String prettyPrint = PredicateUtil.prettyPrint(30, predString,
 				parsedPred);
-		System.out.println("Pretty Print: \"" + prettyPrint + "\"");
 
-		assertEquals(msg + ": ", expectedPrettyPrint, prettyPrint);
+		assertEquals(msg, expectedPrettyPrint, prettyPrint);
 	}
 
 	public void testAssociativePredicate() {
@@ -36,6 +34,14 @@ public class TestPrettyPrintPredicate extends TestCase {
 				"⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤",
 				"⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228"
 						+ "\n" + "⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤");
+		predTest("And with quantifier",
+				"a=beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeh∧"
+				+ "(∃x·∀y·x+y=ceeeeeeeeeeeeeeeeeeeeeeeeeh)",
+				"a=beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeh∧\n"
+				+ "(∃ x · \n"
+				+ "  ∀ y · \n"
+				+ "    x+y=ceeeeeeeeeeeeeeeeeeeeeeeeeh)"
+		);
 	}
 
 	public void testBinaryPredicate() {

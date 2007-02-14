@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -17,24 +18,20 @@ public class PredicateUtil {
 
 	private static final int tab = 2;
 
-	private static String printSpace(int indent) {
-		String result = "";
-		for (int i = 0; i < indent; i++)
-			result += " ";
-		return result;
-	}
-
-	public static String prettyPrint(int max_length, String predString,
+	public static String prettyPrint(int maxLen, String predString,
 			Predicate pred) {
-		return prettyPrint(max_length, predString, pred, 0, false);
+		return prettyPrint(maxLen, predString, pred, 0);
 	}
 
-	private static String prettyPrint(int max_length, String predString,
-			Predicate pred, int indent, boolean brackets) {
-		String str = addSpacing(predString, pred, brackets);
+	private static String prettyPrint(int maxLen, String predString,
+			Predicate pred, int indent) {
 
-		if (str.length() <= max_length - indent)
+		String str = addSpacing(predString, pred);
+		if (str.length() <= maxLen - indent)
 			return printSpace(indent) + str;
+		
+		// Doesn't fit the line length constraint
+		String result = "";
 		if (pred instanceof AssociativePredicate) {
 			AssociativePredicate aPred = (AssociativePredicate) pred;
 			String op = "";
@@ -43,7 +40,6 @@ public class PredicateUtil {
 				op = "\u2227";
 			else if (tag == Predicate.LOR)
 				op = "\u2228";
-			String result = "";
 			ArrayList<Predicate> currentChildren = new ArrayList<Predicate>();
 			String oldString = "";
 			String currentString = "";
@@ -61,16 +57,7 @@ public class PredicateUtil {
 							op, height);
 					currentHeight = height;
 				}
-				boolean needBrackets = false;
-				SourceLocation loc = child.getSourceLocation();
-				if (i != children.length) {
-					if (predString.charAt(loc.getEnd() + 1) == ')')
-						needBrackets = true;
-				} else if (predString.charAt(loc.getStart() - 1) == '(')
-					needBrackets = true;
-
-				tmpString = addSpacing(predString, child, currentHeight,
-						needBrackets);
+				tmpString = addSpacing(predString, child, currentHeight);
 
 				if (i != children.length) {
 					tmpString += printSpace(currentHeight + 1) + op;
@@ -84,23 +71,23 @@ public class PredicateUtil {
 					newString = tmpString;
 
 				if (i == children.length) {
-					if (newString.length() <= max_length - indent) {
+					if (newString.length() <= maxLen - indent) {
 						result += printSpace(indent) + newString;
 					} else {
 						if (oldString != "")
 							result += printSpace(indent) + oldString + "\n";
-						result += prettyPrint(max_length, predString, child,
-								indent, needBrackets);
+						result += prettyPrint(maxLen, predString, child,
+								indent);
 					}
 				}
 
 				else {
-					if (newString.length() <= max_length - indent) {
+					if (newString.length() <= maxLen - indent) {
 						currentString = newString;
 						currentChildren.add(child);
 					} else if (oldString == "") {
-						result += prettyPrint(max_length, predString, child,
-								indent, needBrackets);
+						result += prettyPrint(maxLen, predString, child,
+								indent);
 						result += printSpace(indent) + op + "\n";
 						currentString = "";
 						currentChildren.clear();
@@ -110,21 +97,16 @@ public class PredicateUtil {
 						currentHeight = getHeight(child);
 						currentChildren.clear();
 						currentChildren.add(child);
-						currentString = addSpacing(predString, child,
-								currentHeight, needBrackets)
-								+ printSpace(currentHeight + 1) + op;
+						currentString =
+							addSpacing(predString, child, currentHeight)
+							+ printSpace(currentHeight + 1) + op;
 					}
 				}
 
 			}
-			if (ProverUIUtils.DEBUG) {
-				ProverUIUtils.debug("Pred: " + pred);
-				ProverUIUtils.debug("Result: \n" + result);
-			}
-			return result;
 		}
 
-		if (pred instanceof BinaryPredicate) {
+		else if (pred instanceof BinaryPredicate) {
 			BinaryPredicate bPred = (BinaryPredicate) pred;
 			String op = "";
 			int tag = bPred.getTag();
@@ -133,26 +115,20 @@ public class PredicateUtil {
 			else if (tag == Predicate.LEQV)
 				op = "\u21d4";
 			Predicate left = bPred.getLeft();
-			boolean needBracketsLeft = predString.charAt(left
-					.getSourceLocation().getEnd() + 1) == ')';
 			Predicate right = bPred.getRight();
-			boolean needBracketsRight = predString.charAt(right
-					.getSourceLocation().getStart() - 1) == '(';
-			return prettyPrint(max_length, predString, left, indent + tab,
-					needBracketsLeft)
+			result = prettyPrint(maxLen, predString, left, indent + tab)
 					+ "\n"
 					+ printSpace(indent)
 					+ op
 					+ "\n"
-					+ prettyPrint(max_length, predString, right, indent + tab,
-							needBracketsRight);
+					+ prettyPrint(maxLen, predString, right, indent + tab);
 		}
 
-		if (pred instanceof LiteralPredicate) {
-			return printSpace(indent) + str;
+		else if (pred instanceof LiteralPredicate) {
+			result = printSpace(indent) + str;
 		}
 
-		if (pred instanceof QuantifiedPredicate) {
+		else if (pred instanceof QuantifiedPredicate) {
 			QuantifiedPredicate qPred = (QuantifiedPredicate) pred;
 			int tag = qPred.getTag();
 			String op = "";
@@ -160,43 +136,24 @@ public class PredicateUtil {
 				op = "\u2200";
 			else if (tag == Predicate.EXISTS)
 				op = "\u2203";
-			BoundIdentDecl[] idents = qPred.getBoundIdentDecls();
-
-			String result = printSpace(indent) + op + " ";
-			int i = 0;
-			for (BoundIdentDecl ident : idents) {
-				SourceLocation loc = ident.getSourceLocation();
-				String image = predString.substring(loc.getStart(), loc
-						.getEnd() + 1);
-				if (ProverUIUtils.DEBUG)
-					ProverUIUtils.debug("Ident: " + image);
-
-				if (i++ == 0) {
-					result += image;
-				} else {
-					result += ", " + image;
-				}
-			}
-
-			result += " \u00b7 ";
+			BoundIdentDecl[] decls = qPred.getBoundIdentDecls();
 			Predicate predicate = qPred.getPredicate();
-			boolean needBrackets = predString.charAt(predicate
-					.getSourceLocation().getStart() - 1) == '(';
-			return result
+
+			result = printSpace(indent) + op + " "
+					+ getDeclsImage(decls, predString) + " \u00b7 "
 					+ "\n"
-					+ prettyPrint(max_length, predString, predicate, indent
-							+ tab, needBrackets);
+					+ prettyPrint(maxLen, predString, predicate, indent + tab);
 		}
 
-		if (pred instanceof RelationalPredicate) {
-			return printSpace(indent) + str;
+		else if (pred instanceof RelationalPredicate) {
+			result = printSpace(indent) + str;
 		}
 
-		if (pred instanceof SimplePredicate) {
-			return printSpace(indent) + str;
+		else if (pred instanceof SimplePredicate) {
+			result = printSpace(indent) + str;
 		}
 
-		if (pred instanceof UnaryPredicate) {
+		else if (pred instanceof UnaryPredicate) {
 			UnaryPredicate uPred = (UnaryPredicate) pred;
 			int tag = uPred.getTag();
 			String op = "";
@@ -204,15 +161,66 @@ public class PredicateUtil {
 				op = "\u00ac";
 
 			Predicate child = uPred.getChild();
-			boolean needBrackets = predString.charAt(child.getSourceLocation()
-					.getStart() - 1) == '(';
-			return printSpace(indent)
+			result = printSpace(indent)
 					+ op
 					+ "\n"
-					+ prettyPrint(max_length, predString, child, indent + tab,
-							needBrackets);
+					+ prettyPrint(maxLen, predString, child, indent + tab);
 		}
-		return "";
+
+		if (hasBrackets(pred, predString)) {
+			result = "(" + result + ')';
+		}
+		if (ProverUIUtils.DEBUG) {
+			ProverUIUtils.debug("Pred: " + pred);
+			ProverUIUtils.debug("Result: \n" + result);
+		}
+		return result;
+	}
+
+	private static <T extends Formula<T>> String getImage(T formula,
+			String string) {
+
+		final SourceLocation loc = formula.getSourceLocation();
+		final String image = string.substring(loc.getStart(), loc.getEnd() + 1);
+		if (hasBrackets(formula, string)) {
+			return "(" + image + ')';
+		}
+		return image;
+	}
+
+	private static String getDeclsImage(BoundIdentDecl[] decls, String string) {
+		final StringBuilder builder = new StringBuilder();
+		String sep = "";
+		for (BoundIdentDecl decl: decls) {
+			builder.append(sep);
+			sep = ", ";
+			builder.append(getImage(decl, string));
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * Tells whether the given sub-formula occurs surrounded by brackets in the
+	 * given string. The source location of the given sub-formula must originate
+	 * from the given string.
+	 * 
+	 * @param formula
+	 *            a sub-formula
+	 * @param string
+	 *            a string where the given sub-formula has been parsed from
+	 * @return <code>true</code> iff the given sub-formula is surrounded by
+	 *         brackets
+	 */
+	private static <T extends Formula<T>> boolean hasBrackets(T formula,
+			String string) {
+
+		final SourceLocation loc = formula.getSourceLocation();
+		final int before = loc.getStart() - 1;
+		final int after = loc.getEnd() + 1;
+		if (0 <= before && after < string.length()) {
+			return string.charAt(before) == '(' && string.charAt(after) == ')';
+		}
+		return false;
 	}
 
 	// Assume that there are more children after
@@ -223,28 +231,22 @@ public class PredicateUtil {
 		for (Predicate child : currentChildren) {
 			if (i != 0)
 				result += printSpace(height + 1);
-			boolean needBrackets = predString.charAt(child.getSourceLocation()
-					.getEnd() + 1) == ')';
-			result += addSpacing(predString, child, height, needBrackets);
+			result += addSpacing(predString, child, height);
 			result += printSpace(height + 1) + op;
 			i++;
 		}
 		return result;
 	}
 
-	public static String addSpacing(String predString, Predicate pred,
-			boolean brackets) {
-		return addSpacing(predString, pred, getHeight(pred), brackets);
+	// Made public for testing purposes.
+	public static String addSpacing(String predString, Predicate pred) {
+		return addSpacing(predString, pred, getHeight(pred));
 	}
 
 	private static String addSpacing(String predString, Predicate pred,
-			int height, boolean brackets) {
-		// Determine if the predicate need to have brackets around
-		// boolean brackets = false;
-		// SourceLocation loc = pred.getSourceLocation();
-		// int start = loc.getStart();
-		// if (start != 0 && predString.charAt(start - 1) == '(')
-		// brackets = true;
+			int height) {
+
+		String result = "";
 
 		if (pred instanceof AssociativePredicate) {
 			AssociativePredicate aPred = (AssociativePredicate) pred;
@@ -254,28 +256,16 @@ public class PredicateUtil {
 				op = "\u2227";
 			else if (tag == Predicate.LOR)
 				op = "\u2228";
-			String result = "";
 			int i = 0;
 			for (Predicate child : aPred.getChildren()) {
 				if (i != 0)
 					result += addSpacing(op, height);
-				boolean needBrackets = false;
-				if (i != 0)
-					needBrackets = predString.charAt(child.getSourceLocation()
-							.getStart() - 1) == '(';
-				else
-					needBrackets = predString.charAt(child.getSourceLocation()
-							.getEnd() + 1) == ')';
-				result += addSpacing(predString, child, height - 1,
-						needBrackets);
+				result += addSpacing(predString, child, height - 1);
 				i++;
 			}
-			if (brackets)
-				result = "(" + result + ")";
-			return result;
 		}
 
-		if (pred instanceof BinaryPredicate) {
+		else if (pred instanceof BinaryPredicate) {
 			BinaryPredicate bPred = (BinaryPredicate) pred;
 			String op = "";
 			int tag = bPred.getTag();
@@ -283,70 +273,34 @@ public class PredicateUtil {
 				op = "\u21d2";
 			else if (tag == Predicate.LEQV)
 				op = "\u21d4";
-			Predicate left = bPred.getLeft();
-			boolean needBracketsLeft = predString.charAt(left
-					.getSourceLocation().getEnd() + 1) == ')';
-			Predicate right = bPred.getRight();
-			boolean needBracketsRight = predString.charAt(right
-					.getSourceLocation().getStart() - 1) == '(';
-			String result = addSpacing(predString, left, height - 1,
-					needBracketsLeft)
+			result = addSpacing(predString, bPred.getLeft(), height - 1)
 					+ addSpacing(op, height)
-					+ addSpacing(predString, right, height - 1,
-							needBracketsRight);
-			if (brackets)
-				result = "(" + result + ")";
-			return result;
+					+ addSpacing(predString, bPred.getRight(), height - 1);
 		}
 
-		if (pred instanceof LiteralPredicate) {
-			SourceLocation loc = pred.getSourceLocation();
-			String result = predString.substring(loc.getStart(),
-					loc.getEnd() + 1);
-			if (brackets)
-				result = "(" + result + ")";
-			return result;
+		else if (pred instanceof LiteralPredicate) {
+			result = getImage(pred, predString);
 		}
 
-		if (pred instanceof QuantifiedPredicate) {
-			QuantifiedPredicate qPred = (QuantifiedPredicate) pred;
+		else if (pred instanceof QuantifiedPredicate) {
+			final QuantifiedPredicate qPred = (QuantifiedPredicate) pred;
 
-			int tag = qPred.getTag();
-			String op = "";
+			final String op;
+			final int tag = qPred.getTag();
 			if (tag == Predicate.FORALL)
 				op = "\u2200";
 			else if (tag == Predicate.EXISTS)
 				op = "\u2203";
-			BoundIdentDecl[] idents = qPred.getBoundIdentDecls();
-
-			String result = op + " ";
-			int i = 0;
-			for (BoundIdentDecl ident : idents) {
-				SourceLocation loc = ident.getSourceLocation();
-				String image = predString.substring(loc.getStart(), loc
-						.getEnd() + 1);
-				if (ProverUIUtils.DEBUG)
-					ProverUIUtils.debug("Ident: " + image);
-
-				if (i++ == 0) {
-					result += image;
-				} else {
-					result += ", " + image;
-				}
-			}
-
-			Predicate predicate = qPred.getPredicate();
-			boolean needBrackets = predString.charAt(predicate
-					.getSourceLocation().getStart() - 1) == '(';
-			result += " \u00b7 "
-					+ addSpacing(predString, predicate, height, needBrackets);
-			if (brackets)
-				result = "(" + result + ")";
-
-			return result;
+			else
+				op = "";
+			
+			final BoundIdentDecl[] decls = qPred.getBoundIdentDecls();
+			final Predicate child = qPred.getPredicate();
+			result = op + " " + getDeclsImage(decls, predString) + " \u00b7 "
+					+ addSpacing(predString, child, height);
 		}
 
-		if (pred instanceof RelationalPredicate) {
+		else if (pred instanceof RelationalPredicate) {
 			RelationalPredicate rPred = (RelationalPredicate) pred;
 
 			int tag = rPred.getTag();
@@ -376,54 +330,47 @@ public class PredicateUtil {
 			else if (tag == Predicate.NOTSUBSETEQ)
 				op = "\u2288";
 
-			SourceLocation loc = rPred.getLeft().getSourceLocation();
-			String imageLeft = predString.substring(loc.getStart(), loc
-					.getEnd() + 1);
-			loc = rPred.getRight().getSourceLocation();
-			String imageRight = predString.substring(loc.getStart(), loc
-					.getEnd() + 1);
-			String result = imageLeft + addSpacing(op, height) + imageRight;
-			if (brackets)
-				result = "(" + result + ")";
-			return result;
+			final String imageLeft = getImage(rPred.getLeft(), predString);
+			final String imageRight = getImage(rPred.getRight(), predString);
+			result = imageLeft + addSpacing(op, height) + imageRight;
 		}
 
-		if (pred instanceof SimplePredicate) {
-			SourceLocation loc = pred.getSourceLocation();
-			String result = predString.substring(loc.getStart(),
-					loc.getEnd() + 1);
-			if (brackets)
-				result = "(" + result + ")";
-			return result;
+		else if (pred instanceof SimplePredicate) {
+			result = getImage(pred, predString);
 		}
 
-		if (pred instanceof UnaryPredicate) {
+		else if (pred instanceof UnaryPredicate) {
 			UnaryPredicate uPred = (UnaryPredicate) pred;
 			int tag = uPred.getTag();
 			String op = "";
 			if (tag == Predicate.NOT)
 				op = "\u00ac";
 
-			Predicate child = uPred.getChild();
-			boolean needBrackets = predString.charAt(child.getSourceLocation()
-					.getStart() - 1) == '(';
-			String result = addSpacing(op, height)
-					+ addSpacing(predString, child, height - 1, needBrackets);
-			if (brackets)
-				result = "(" + result + ")";
-			return result;
+			result = addSpacing(op, height)
+					+ addSpacing(predString, uPred.getChild(), height - 1);
 		}
-		return "";
+
+		if (hasBrackets(pred, predString)) {
+			result = "(" + result + ')';
+		}
+		return result;
 	}
 
 	private static String addSpacing(String op, int height) {
-		String result = "";
+		final StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < height; i++)
-			result += " ";
-		result += op;
+			builder.append(' ');
+		builder.append(op);
 		for (int i = 0; i < height; i++)
-			result += " ";
-		return result;
+			builder.append(' ');
+		return builder.toString();
+	}
+
+	private static String printSpace(int indent) {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < indent; i++)
+			builder.append(' ');
+		return builder.toString();
 	}
 
 	private static int getHeight(Predicate pred) {
@@ -440,7 +387,7 @@ public class PredicateUtil {
 		if (pred instanceof BinaryPredicate) {
 			int leftHeight = getHeight(((BinaryPredicate) pred).getLeft());
 			int rightHeight = getHeight(((BinaryPredicate) pred).getRight());
-			return leftHeight > rightHeight ? leftHeight : rightHeight + 1;
+			return leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
 		}
 
 		if (pred instanceof LiteralPredicate) {
