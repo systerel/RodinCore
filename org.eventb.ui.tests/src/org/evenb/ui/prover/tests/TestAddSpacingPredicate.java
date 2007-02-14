@@ -10,14 +10,11 @@ import junit.framework.TestCase;
 public class TestAddSpacingPredicate extends TestCase {
 	private void addSpacingTest(String msg, String predString,
 			String expectedPrettyPrint) {
-		System.out.println("Predicate: \"" + predString + "\"");
 		IParseResult parseResult = Lib.ff.parsePredicate(predString);
 		assertTrue("Parse Successful", parseResult.isSuccess());
 		Predicate parsedPred = parseResult.getParsedPredicate();
 
-		String prettyPrint = PredicateUtil.addSpacing(predString, parsedPred,
-				false);
-		System.out.println("Add Spacing: \"" + prettyPrint + "\"");
+		String prettyPrint = PredicateUtil.addSpacing(predString, parsedPred);
 
 		assertEquals(msg + ": ", expectedPrettyPrint, prettyPrint);
 	}
