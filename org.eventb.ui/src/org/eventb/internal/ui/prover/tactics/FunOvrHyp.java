@@ -1,9 +1,14 @@
 package org.eventb.internal.ui.prover.tactics;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Point;
+import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.DefaultFilter;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -39,14 +44,33 @@ public class FunOvrHyp extends DefaultTacticProvider {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				IPosition position = pred.getPosition(expression
-						.getSourceLocation());
-				if (Tactics.isFunOvrApp(pred, position))
+				if (Tactics.isFunOvrApp(expression))
 					return true;
 				return false;
 			}
 		});
 
+		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
+		for (IPosition pos : positions) {
+			if (!Tactics.isParentTopLevelPredicate(pred, pos)) {
+				toBeRemoved.add(pos);
+			}
+		}
+
+		positions.remove(toBeRemoved);
+	}
+
+	@Override
+	public Point getOperatorPosition(Predicate predicate, String predStr, IPosition position) {
+		assert Tactics.isFunOvrApp(predicate.getSubFormula(position));
+		Formula subFormula = predicate.getSubFormula(position);
+		Expression left = ((BinaryExpression) subFormula).getLeft();
+		Expression[] children = ((AssociativeExpression) left)
+				.getChildren();
+		Expression last = children[children.length - 1];
+		Expression secondLast = children[children.length - 2];
+		return getOperatorPosition(predStr, secondLast.getSourceLocation().getEnd() + 1, last
+					.getSourceLocation().getStart());
 	}
 
 }

@@ -1,5 +1,6 @@
 package org.eventb.internal.ui.prover.tactics;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Point;
@@ -43,19 +44,25 @@ public class FunOvrGoal extends DefaultTacticProvider {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				IPosition position = pred.getPosition(expression
-						.getSourceLocation());
-				if (Tactics.isFunOvrApp(pred, position))
+				if (Tactics.isFunOvrApp(expression))
 					return true;
 				return false;
 			}
 		});
 
-	}
+		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
+		for (IPosition pos : positions) {
+			if (!Tactics.isParentTopLevelPredicate(pred, pos)) {
+				toBeRemoved.add(pos);
+			}
+		}
 
+		positions.removeAll(toBeRemoved);
+	}
+	
 	@Override
 	public Point getOperatorPosition(Predicate predicate, String predStr, IPosition position) {
-		assert Tactics.isFunOvrApp(predicate, position);
+		assert Tactics.isFunOvrApp(predicate.getSubFormula(position));
 		Formula subFormula = predicate.getSubFormula(position);
 		Expression left = ((BinaryExpression) subFormula).getLeft();
 		Expression[] children = ((AssociativeExpression) left)
