@@ -16,7 +16,7 @@ import org.rodinp.core.IRodinProblem;
  * @author Stefan Hallerstede
  *
  */
-public class ContextAxiomFreeIdentsModule extends ContextFormulaFreeIdentsModule {
+public class ContextAxiomFreeIdentsModule extends FormulaFreeIdentsModule {
 
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.FormulaFreeIdentsModule#declaredFreeIdentifierErrorMessage()

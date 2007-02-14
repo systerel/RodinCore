@@ -8,9 +8,13 @@
 package org.eventb.core.tool;
 
 /**
+ * Basic type for processor modules.
+ * 
  * @author Stefan Hallerstede
  *
  */
 public interface IProcessorModule extends IModule {
+
+	// basic type for processor modules 
 
 }

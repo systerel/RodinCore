@@ -28,6 +28,13 @@ public interface ICurrentEvent extends ISCState {
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".currentEvent");
 
 	/**
+	 * Returns whether the current event is the initialisation.
+	 * 
+	 * @return whether the current event is the initialisation
+	 */
+	boolean isInitialisation();
+	
+	/**
 	 * Returns the current event.
 	 * 
 	 * @return the current event

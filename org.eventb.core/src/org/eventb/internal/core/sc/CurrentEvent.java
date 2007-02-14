@@ -21,10 +21,12 @@ public class CurrentEvent extends State implements ICurrentEvent {
 
 	private final IEvent event;
 	private final IEventSymbolInfo eventSymbolInfo;
+	private final boolean isInitialisation;
 	
 	public CurrentEvent(IEvent event, IEventSymbolInfo eventSymbolInfo) {
 		this.event = event;
 		this.eventSymbolInfo = eventSymbolInfo;
+		isInitialisation = eventSymbolInfo.getSymbol().equals(IEvent.INITIALISATION);
 	}
 	
 	/* (non-Javadoc)
@@ -43,6 +45,10 @@ public class CurrentEvent extends State implements ICurrentEvent {
 
 	public IEventSymbolInfo getCurrentEventSymbolInfo() {
 		return eventSymbolInfo;
+	}
+
+	public boolean isInitialisation() {
+		return isInitialisation;
 	}
 
 }

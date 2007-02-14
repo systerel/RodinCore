@@ -8,9 +8,13 @@
 package org.eventb.core.tool;
 
 /**
+ * Basic type for filter modules. 
+ * 
  * @author Stefan Hallerstede
  *
  */
 public interface IFilterModule extends IModule {
 
+	// basic type for filter modules 
+	
 }

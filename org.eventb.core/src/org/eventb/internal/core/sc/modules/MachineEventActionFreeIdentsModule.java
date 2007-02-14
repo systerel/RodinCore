@@ -10,7 +10,6 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.state.ICurrentEvent;
@@ -38,7 +37,7 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 		super.initModule(repository, monitor);
 		ICurrentEvent currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
 		isInitialisation = 
-			currentEvent.getCurrentEvent().getLabel().equals(IEvent.INITIALISATION);
+			currentEvent.isInitialisation();
 	}
 
 	@Override
