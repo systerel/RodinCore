@@ -18,6 +18,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -410,23 +411,12 @@ public class Tactics {
 				new MPImplHypRewrites.Input(pred, position));
 	}
 
-	public static boolean isFunOvrApp(Predicate predicate, IPosition position) {
+	public static boolean isFunOvrApp(Formula subFormula) {
 		// It should be the top most predicate
-//		if (position.isRoot())
-//			return false;
-//		
-//		IPosition tmp = position.getParent();
-//
-//		while (!tmp.isRoot()) {
-//			Formula subFormula = predicate.getSubFormula(tmp);
-//			if (subFormula instanceof QuantifiedExpression)
-//				return false;
-//			if (subFormula instanceof Predicate)
-//				return false;
-//			tmp = tmp.getParent();
-//		}
+		// if (position.isRoot())
+		// return false;
+		//		
 
-		Formula subFormula = predicate.getSubFormula(position);
 		if (Lib.isFunApp(subFormula)) {
 			Expression left = ((BinaryExpression) subFormula).getLeft();
 			if (Lib.isOrv(left)) {
@@ -465,7 +455,23 @@ public class Tactics {
 	}
 
 	public static ITactic modusTollens(Predicate impHyp) {
-		return BasicTactics.reasonerTac(new ModusTollens(), new ModusTollens.Input(impHyp));
+		return BasicTactics.reasonerTac(new ModusTollens(),
+				new ModusTollens.Input(impHyp));
+	}
+
+	public static boolean isParentTopLevelPredicate(Predicate pred,
+			IPosition pos) {
+		IPosition tmp = pos.getParent();
+
+		while (!tmp.isRoot()) {
+			Formula subFormula = pred.getSubFormula(tmp);
+			if (subFormula instanceof QuantifiedExpression)
+				return false;
+			if (subFormula instanceof Predicate)
+				return false;
+			tmp = tmp.getParent();
+		}
+		return true;
 	}
 
 }
