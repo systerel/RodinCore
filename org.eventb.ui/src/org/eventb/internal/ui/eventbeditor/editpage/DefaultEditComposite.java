@@ -11,40 +11,51 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.rodinp.core.IRodinElement;
 
 public abstract class DefaultEditComposite implements IEditComposite {
-	
+
 	ScrolledForm form;
-	
+
 	IRodinElement element;
 
 	Control control;
-	
+
 	public void setForm(ScrolledForm form) {
 		this.form = form;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setElement(org.rodinp.core.IRodinElement)
 	 */
 	public void setElement(IRodinElement element) {
 		this.element = element;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#createComposite(org.eclipse.ui.forms.widgets.FormToolkit, org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#createComposite(org.eclipse.ui.forms.widgets.FormToolkit,
+	 *      org.eclipse.swt.widgets.Composite)
 	 */
 	abstract public void createComposite(FormToolkit toolkit, Composite parent);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setValue()
 	 */
 	abstract public void setValue();
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#getValue()
 	 */
 	abstract public String getValue();
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#refresh()
 	 */
 	public void refresh() {
@@ -52,23 +63,28 @@ public abstract class DefaultEditComposite implements IEditComposite {
 		internalPack();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setFillHorizontal(boolean)
 	 */
 	public void setFillHorizontal(boolean fill) {
-		if (fill)
-			control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		else
-			control.setLayoutData(new GridData());
+		GridData gridData;
+		gridData = new GridData(SWT.FILL, SWT.TOP,
+				fill, false);
+
+		control.setLayoutData(gridData);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setControl(org.eclipse.swt.widgets.Control)
 	 */
 	public void setControl(Control control) {
 		this.control = control;
 	}
-	
+
 	void internalPack() {
 		Composite parent = control.getParent();
 		parent.setRedraw(false);

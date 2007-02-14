@@ -141,6 +141,20 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="prefix" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="postfix" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

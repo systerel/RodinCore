@@ -203,13 +203,6 @@
          <target
                id="org.eventb.ui.editors.context"/>
       </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.editpage.EditPage"
-            id="org.eventb.ui.edit"
-            name="%editorPage.edit"
-            priority="9">
-         <target id="org.eventb.ui.editors.machine"/>
-      </page>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -1211,7 +1204,8 @@
             class="org.eventb.internal.ui.eventbeditor.editpage.LabelEditComposite"
             horizontalExpand="false"
             id="org.eventb.ui.invariant.label"
-            name="Label">
+            name="Label"
+            postfix="::">
          <type id="org.eventb.core.invariant"/>
          <type id="org.eventb.core.theorem"/>
       </column>
@@ -1227,7 +1221,8 @@
             class="org.eventb.internal.ui.eventbeditor.editpage.CommentEditComposite"
             horizontalExpand="true"
             id="org.eventb.ui.invariant.comment"
-            name="Comment">
+            name="Comment"
+            prefix="//">
          <type id="org.eventb.core.variable"/>
          <type id="org.eventb.core.invariant"/>
          <type id="org.eventb.core.theorem"/>

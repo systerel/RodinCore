@@ -2,72 +2,85 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
-import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.eventb.ui.eventbeditor.ISectionComposite;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.RodinDBException;
 
-public class InvariantSectionComposite implements ISectionComposite {
-	Map<IRodinElement, Collection<IEditComposite>> map;
+public class InvariantSectionComposite extends DefaultSectionComposite {
 
-	public ISectionComposite create(IEventBEditor editor, FormToolkit toolkit, ScrolledForm form,
-			Composite parent, IRodinFile rInput) {
-		assert rInput instanceof IMachineFile;
-		map = new HashMap<IRodinElement, Collection<IEditComposite>>();
+	@Override
+	public void createContents() throws RodinDBException {
 		EditSectionRegistry sectionRegistry = EditSectionRegistry.getDefault();
-		int numColumns = sectionRegistry.getNumColumns(IInvariant.ELEMENT_TYPE) + 1;
+		int numColumns = 1 + 3 * sectionRegistry
+				.getNumColumns(IInvariant.ELEMENT_TYPE);
 
-		final Composite comp = toolkit.createComposite(parent);
-		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		map = new HashMap<IRodinElement, Collection<IEditComposite>>();
+
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = numColumns;
-		comp.setLayout(gridLayout);
-		Label label = toolkit.createLabel(comp, "INVARIANTS");
+		// gridLayout.numColumns = numColumns;
+		fComp.setLayout(gridLayout);
+		Label label = fToolkit.createLabel(fComp, "INVARIANTS");
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = numColumns;
 		label.setLayoutData(gd);
 
+//		Composite tmpComp = fToolkit.createComposite(fComp);
+//		gd = new GridData();
+//		gd.heightHint = 0;
+//		gd.widthHint = 0;
+//		tmpComp.setLayoutData(gd);
+//		String[] names = sectionRegistry
+//				.getColumnNames(IInvariant.ELEMENT_TYPE);
+//		for (String name : names) {
+//			label = fToolkit.createLabel(fComp, name);
+//			gd = new GridData(SWT.FILL, SWT.FILL, false, false);
+//			label.setLayoutData(gd);
+//		}
+
 		IInvariant[] invariants;
-		try {
-			invariants = ((IMachineFile) rInput).getInvariants();
-		} catch (RodinDBException e1) {
-			// TODO Auto-generated catch block
-			return this;
-		}
+		invariants = fInput.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 
 		for (IInvariant invariant : invariants) {
-			createButtons(toolkit, comp);
+			Composite comp = fToolkit.createComposite(fComp);
+			comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			gridLayout = new GridLayout();
+			gridLayout.numColumns = numColumns + 1;
+			comp.setLayout(gridLayout);
+			createButtons(fInput, comp, invariant, IInvariant.ELEMENT_TYPE);
 
-			map = sectionRegistry.createColumns(form, toolkit, comp, invariant,
-					map);
+			map = sectionRegistry.createColumns(fForm, fToolkit, comp,
+					invariant, map);
+			fToolkit.paintBordersFor(comp);
 		}
-		toolkit.paintBordersFor(comp);
 
-		return this;
-	}
+		Composite comp = fToolkit.createComposite(fComp);
+		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gridLayout = new GridLayout();
+		gridLayout.numColumns = numColumns + 1;
+		comp.setLayout(gridLayout);
+		createButtons(fInput, comp, null, IInvariant.ELEMENT_TYPE); // The last
+																	// null
+																	// element
 
-	private void createButtons(FormToolkit toolkit, Composite parent) {
-		Button button = toolkit.createButton(parent, "+", SWT.PUSH);
-		GridData gd = new GridData();
-		button.setLayoutData(gd);
+		fToolkit.paintBordersFor(fComp);
+		fComp.getParent().pack();
+		fForm.reflow(true);
 	}
 
 	public void elementChanged(ElementChangedEvent event) {
-		
+		IRodinElementDelta delta = event.getDelta();
+		changedElements = new HashSet<IRodinElement>();
+		refresh = false;
+		processDelta(delta, IInvariant.ELEMENT_TYPE);
+		postRefresh();
 	}
 
 }

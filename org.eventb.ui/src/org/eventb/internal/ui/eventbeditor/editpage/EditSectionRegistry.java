@@ -13,7 +13,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.UIUtils;
@@ -292,6 +295,15 @@ public class EditSectionRegistry {
 				Map<IRodinElement, Collection<IEditComposite>> map) {
 			try {
 				IEditComposite editComposite;
+				String prefix = config.getAttribute("prefix");
+				if (prefix == null)
+					prefix = "";
+				Label label = toolkit.createLabel(parent, " " + prefix + " ");
+				GridData gridData = new GridData();
+				gridData.verticalAlignment =  SWT.TOP;
+				label.setLayoutData(gridData);
+//				label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+				
 				editComposite = (IEditComposite) config
 						.createExecutableExtension("class");
 				editComposite.setForm(form);
@@ -300,6 +312,14 @@ public class EditSectionRegistry {
 				editComposite.setFillHorizontal(config.getAttribute(
 						"horizontalExpand").equalsIgnoreCase("true"));
 				map = EditPage.addToMap(map, element, editComposite);
+				String postfix = config.getAttribute("postfix");
+				if (postfix == null)
+					postfix = "";
+				label = toolkit.createLabel(parent, " " + postfix + " ");
+				gridData = new GridData();
+				gridData.verticalAlignment = SWT.TOP;
+				label.setLayoutData(gridData);
+//				label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -485,7 +505,8 @@ public class EditSectionRegistry {
 			this.config = config;
 		}
 
-		public boolean isApplicable(IInternalParent parent, IInternalElement element) throws CoreException {
+		public boolean isApplicable(IInternalParent parent,
+				IInternalElement element) throws CoreException {
 			if (editAction == null)
 				editAction = (IEditAction) config
 						.createExecutableExtension("class");
@@ -576,7 +597,8 @@ public class EditSectionRegistry {
 	}
 
 	public synchronized boolean isApplicable(String actionID,
-			IInternalParent parent, IInternalElement element, IElementType type) throws CoreException {
+			IInternalParent parent, IInternalElement element, IElementType type)
+			throws CoreException {
 		if (actionRegistry == null)
 			loadActionRegistry();
 		ActionsInfo info = actionRegistry.get(type);
