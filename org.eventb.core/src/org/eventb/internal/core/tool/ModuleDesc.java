@@ -69,7 +69,7 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 			classObject = (Class<? extends T>) clazz.asSubclass(IModule.class);
 		} catch (Exception e) {
 			throw new IllegalStateException(
-					"Cannot load filter module class " + getId(), e);
+					"Cannot load module class " + getId(), e);
 		}
 	}
 
