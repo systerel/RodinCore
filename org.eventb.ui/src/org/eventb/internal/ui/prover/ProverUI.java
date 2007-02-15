@@ -281,7 +281,10 @@ public class ProverUI extends FormEditor implements
 		dlg.setInitialSelections(initSelection);
 		dlg.setTitle("Save Proofs");
 		dlg.open();
-		final Object[] results = dlg.getResult();
+		final Object[] objects = dlg.getResult();
+		final int length = objects.length;
+		final IProofState[] results = new IProofState[length];
+		System.arraycopy(objects, 0, results, 0, length);
 
 		if (results != null && results.length != 0) {
 
