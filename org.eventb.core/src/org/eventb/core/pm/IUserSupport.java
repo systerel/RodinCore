@@ -263,7 +263,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @throws CoreException
 	 *        a Core Exception if some errors occured while saving
 	 */
-	public abstract void doSave(Object[] states, IProgressMonitor monitor)
+	public abstract void doSave(IProofState[] states, IProgressMonitor monitor)
 			throws CoreException;
 
 }
