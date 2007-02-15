@@ -31,6 +31,9 @@ public class TestUserSupportManagers extends TestPM {
 		AutoProver.enable();
 		runBuilder();
 
+		// Initial number of opened user supports
+		final int nbUS = manager.getUserSupports().size();
+		
 		IUserSupport userSupport1 = manager.newUserSupport();
 
 		assertNotNull("First user support is not null ", userSupport1);
@@ -38,7 +41,7 @@ public class TestUserSupportManagers extends TestPM {
 				userSupport1.getInput());
 
 		Collection<IUserSupport> userSupports = manager.getUserSupports();
-		assertTrue("There is at least one user support ", 1 <= userSupports.size());
+		assertEquals("There is at least one user support ", nbUS + 1, userSupports.size());
 		assertTrue("The first user support is stored ", userSupports
 				.contains(userSupport1));
 
@@ -58,7 +61,8 @@ public class TestUserSupportManagers extends TestPM {
 				userSupport2.getInput());
 
 		userSupports = manager.getUserSupports();
-		assertEquals("There is only one user support ", 2, userSupports.size());
+		assertEquals("There are at least two user support ",
+				nbUS + 2, userSupports.size());
 		assertTrue("The first user support is stored ", userSupports
 				.contains(userSupport1));
 		assertTrue("The second user support is stored ", userSupports
@@ -75,14 +79,15 @@ public class TestUserSupportManagers extends TestPM {
 
 		userSupport1.dispose();
 		userSupports = manager.getUserSupports();
-		assertEquals("There is only one user support left ", 1, userSupports
-				.size());
+		assertEquals("There is only one user support left ", 
+				nbUS + 1, userSupports.size());
 		assertTrue("The second user support still exists ", userSupports
 				.contains(userSupport2));
 
 		userSupport2.dispose();
 		userSupports = manager.getUserSupports();
-		assertEquals("There are no user supports left ", 0, userSupports.size());
+		assertEquals("There are no user supports left ",
+				nbUS, userSupports.size());
 
 	}
 
