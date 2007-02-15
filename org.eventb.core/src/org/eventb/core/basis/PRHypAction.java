@@ -44,16 +44,16 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 		// read in the action type
 		String actionType = getElementName();
 		
-		if (actionType.equals(ISelectionHypAction.SELECT_ACTION_TYPE))
+		if (actionType.startsWith(ISelectionHypAction.SELECT_ACTION_TYPE))
 			return ProverFactory.makeSelectHypAction(getHyps(store));
-		if (actionType.equals(ISelectionHypAction.DESELECT_ACTION_TYPE))
+		if (actionType.startsWith(ISelectionHypAction.DESELECT_ACTION_TYPE))
 			return ProverFactory.makeDeselectHypAction(getHyps(store));
-		if (actionType.equals(ISelectionHypAction.HIDE_ACTION_TYPE))
+		if (actionType.startsWith(ISelectionHypAction.HIDE_ACTION_TYPE))
 			return ProverFactory.makeHideHypAction(getHyps(store));
-		if (actionType.equals(ISelectionHypAction.SHOW_ACTION_TYPE))
+		if (actionType.startsWith(ISelectionHypAction.SHOW_ACTION_TYPE))
 			return ProverFactory.makeShowHypAction(getHyps(store));
 
-		if (actionType.equals(IForwardInfHypAction.ACTION_TYPE)){
+		if (actionType.startsWith(IForwardInfHypAction.ACTION_TYPE)){
 			Collection<Predicate> hyps = getHyps(store);
 			FreeIdentifier[] addedFreeIdents = getFreeIdents(store.getFormulaFactory());
 			Collection<Predicate> infHyps = getInfHyps(store);
@@ -70,11 +70,9 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 		if (actionType.equals(ISelectionHypAction.SELECT_ACTION_TYPE) || 
 				actionType.equals(ISelectionHypAction.DESELECT_ACTION_TYPE) ||
 				actionType.equals(ISelectionHypAction.HIDE_ACTION_TYPE) ||
-				actionType.equals(ISelectionHypAction.SHOW_ACTION_TYPE))
+				actionType.equals(ISelectionHypAction.SHOW_ACTION_TYPE)) {
 			setHyps(((ISelectionHypAction)a).getHyps(), store, monitor);
-		
-		if (actionType.equals(IForwardInfHypAction.ACTION_TYPE))
-		{
+		} else if (actionType.equals(IForwardInfHypAction.ACTION_TYPE)) {
 			final IForwardInfHypAction forwardInf = ((IForwardInfHypAction)a);
 			setHyps(forwardInf.getHyps(), store, monitor);
 			setFreeIdents(forwardInf.getAddedFreeIdents(), monitor);

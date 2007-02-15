@@ -83,9 +83,10 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 		if (! antecedent.getHypAction().isEmpty()){
 			int count = 0;
 			for (IHypAction action : antecedent.getHypAction()) {
+				final String name = action.getActionType().toString() + count; 
 				IPRHypAction child = getInternalElement(
 						IPRHypAction.ELEMENT_TYPE,
-						action.getActionType().toString());
+						name);
 				child.create(null, null);
 				child.setAction(action, store, null);
 				count ++;
