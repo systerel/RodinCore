@@ -28,6 +28,13 @@ import org.rodinp.core.RodinDBException;
  */
 public class TestUserSupportDeltas extends TestPMDelta {
 
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		// Turn on beginner mode
+		manager.getProvingMode().setExpertMode(false);
+	}
+
 	public void testSetInput() throws CoreException {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
