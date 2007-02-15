@@ -746,15 +746,15 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		return psWrapper;
 	}
 
-	public void doSave(Object[] states, IProgressMonitor monitor)
+	public void doSave(IProofState[] states, IProgressMonitor monitor)
 			throws CoreException {
-		for (Object state : states) {
-			assert (state instanceof IProofState);
-			((IProofState) state).setProofTree(monitor);
+		for (IProofState state : states) {
+			state.setProofTree(monitor);
+			state.getPSStatus().setManualProof(true, monitor);
 		}
 		this.getPSWrapper().save(monitor, true);
-		for (Object state : states) {
-			((IProofState) state).setDirty(false);
+		for (IProofState state : states) {
+			state.setDirty(false);
 		}
 	}
 
