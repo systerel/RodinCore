@@ -27,24 +27,29 @@ public class AutoRewrites extends EmptyInputReasoner {
 
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		Iterable<Predicate> hypIterable = seq.hypIterable();
-		IFormulaRewriter rewriter = new AutoRewriterImpl();
+		
+		final IFormulaRewriter rewriter = new AutoRewriterImpl();
 
-		List<IHypAction> hypActions = new ArrayList<IHypAction>();
-		for (Predicate pred : hypIterable) {
+		final List<IHypAction> hypActions = new ArrayList<IHypAction>();
+		for (Predicate pred : seq.hypIterable()) {
 			if (seq.isHidden(pred))
 				continue; // Do not rewrite hidden hypothesis
 
 			Predicate newPred = recursiveRewrite(pred, rewriter);
-
 			if (newPred != pred) {
-				Collection<Predicate> inferredHyps = new ArrayList<Predicate>();
+				// Hide the original hypothesis
 				Collection<Predicate> neededHyps = new ArrayList<Predicate>();
-				inferredHyps.add(newPred);
 				neededHyps.add(pred);
-				hypActions.add(ProverFactory.makeForwardInfHypAction(
-						neededHyps, inferredHyps));
 				hypActions.add(ProverFactory.makeHideHypAction(neededHyps));
+
+				// Add the new version of the hypothesis, if interesting
+				if (newPred.getTag() != Predicate.BTRUE) {
+					Collection<Predicate> inferredHyps = new ArrayList<Predicate>();
+					inferredHyps.add(newPred);
+
+					hypActions.add(ProverFactory.makeForwardInfHypAction(
+							neededHyps, inferredHyps));
+				}
 			}
 		}
 
