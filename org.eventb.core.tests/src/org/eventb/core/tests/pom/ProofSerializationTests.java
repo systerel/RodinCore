@@ -15,7 +15,6 @@ import org.eventb.core.IPRProof;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
-import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
@@ -25,8 +24,6 @@ import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-
-import com.sun.corba.se.spi.ior.MakeImmutable;
 
 public class ProofSerializationTests extends TestCase {
 	
