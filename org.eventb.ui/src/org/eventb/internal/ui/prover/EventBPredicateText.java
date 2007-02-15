@@ -518,6 +518,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	}
 
 	void applyTactic(String tacticID, IPosition position) {
+		assert (hyp != null);
 		TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 		Set<Predicate> hypSet = new HashSet<Predicate>();
 		hypSet.add(hyp);

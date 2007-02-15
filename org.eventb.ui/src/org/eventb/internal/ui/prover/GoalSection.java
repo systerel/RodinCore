@@ -200,8 +200,7 @@ public class GoalSection extends SectionPart {
 		// max_length = 30;
 
 		if (node == null) {
-			goalText.setText("No current goal", us, node.getSequent().goal(),
-					null, null);
+			goalText.setText("No current goal", us, null, null, null);
 			styledText.setBackground(color);
 		} else {
 			Predicate goal = node.getSequent().goal();
