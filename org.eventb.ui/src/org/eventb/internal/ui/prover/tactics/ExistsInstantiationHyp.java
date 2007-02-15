@@ -34,7 +34,7 @@ public class ExistsInstantiationHyp extends DefaultTacticProvider {
 	private void internalGetPositions(Predicate hyp) {
 		positions = new ArrayList<IPosition>();
 		if (Lib.isExQuant(hyp))
-			positions.add(hyp.getPosition(hyp.getSourceLocation()));
+			positions.add(IPosition.ROOT);
 	}
 
 }

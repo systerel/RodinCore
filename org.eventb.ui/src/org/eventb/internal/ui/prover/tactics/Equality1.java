@@ -36,8 +36,7 @@ public class Equality1 extends DefaultTacticProvider {
 	private void internalGetPositions(Predicate hyp) {
 		positions = new ArrayList<IPosition>();
 		if (Tactics.eqE_applicable(hyp)) {
-			IPosition position = hyp.getPosition(hyp.getSourceLocation());
-			positions.add(position);
+			positions.add(IPosition.ROOT);
 		}
 	}
 	

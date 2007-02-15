@@ -34,7 +34,7 @@ public class ForallInstantiationGoal extends DefaultTacticProvider {
 	private void internalGetPositions(Predicate goal) {
 		positions = new ArrayList<IPosition>();
 		if (Lib.isUnivQuant(goal))
-			positions.add(goal.getPosition(goal.getSourceLocation()));
+			positions.add(IPosition.ROOT);
 	}
 
 }

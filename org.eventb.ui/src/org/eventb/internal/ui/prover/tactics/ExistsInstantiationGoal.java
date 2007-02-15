@@ -34,7 +34,7 @@ public class ExistsInstantiationGoal extends DefaultTacticProvider {
 	private void internalGetPositions(Predicate goal) {
 		positions = new ArrayList<IPosition>();
 		if (Lib.isExQuant(goal))
-			positions.add(goal.getPosition(goal.getSourceLocation()));
+			positions.add(IPosition.ROOT);
 	}
 
 }
