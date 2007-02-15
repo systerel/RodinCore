@@ -25,8 +25,7 @@ import org.eventb.internal.core.tool.graph.ParentGraph;
  * @author Stefan Hallerstede
  *
  */
-public abstract class ModuleManager<FM extends IFilterModule, PM extends IProcessorModule> 
-extends SortingUtil {
+public abstract class ModuleManager extends SortingUtil {
 	
 	// Debug flag set from tracing options 
 	public static boolean VERBOSE = false;
@@ -76,16 +75,21 @@ extends SortingUtil {
 	
 	protected abstract List<ModuleDesc<? extends IModule>> getModuleListForConfig(String configId);
 
+	protected abstract void verifyProcessor(ProcessorModuleDesc<? extends IProcessorModule> moduleDesc);
+	
 	private void loadProcessorModules(IConfigurationElement[] elements) {
 		
 		for (IConfigurationElement element: elements) {
 			
 			ProcessorModuleDesc<? extends IProcessorModule> processor = 
 				new ProcessorModuleDesc<IProcessorModule>(element);
+			verifyProcessor(processor);
 			register(processor.getId(), processor);
 			
 		}
 	}
+	
+	protected abstract void verifyFilter(FilterModuleDesc<? extends IFilterModule> moduleDesc);
 
 	private void loadFilterModules(IConfigurationElement[] elements) {
 		
@@ -93,6 +97,7 @@ extends SortingUtil {
 			
 			FilterModuleDesc<? extends IFilterModule> filter = 
 				new FilterModuleDesc<IFilterModule>(element);
+			verifyFilter(filter);
 			register(filter.getId(), filter);
 			
 		}
@@ -116,14 +121,14 @@ extends SortingUtil {
 
 	protected ModuleManager(final String modules_id) {
 		this.modules_id = modules_id;
-		factoryMap = new HashMap<String, ModuleFactory<FM,PM>>();
+		factoryMap = new HashMap<String, ModuleFactory>();
 	}
 	
-	Map<String, ModuleFactory<FM, PM>> factoryMap;
+	Map<String, ModuleFactory> factoryMap;
 
-	public IModuleFactory<FM, PM> getModuleFactory(String configId) {
+	public IModuleFactory getModuleFactory(String configId) {
 		
-		ModuleFactory<FM, PM> factory = factoryMap.get(configId);
+		ModuleFactory factory = factoryMap.get(configId);
 		if (factory != null)
 			return factory;
 		
@@ -142,5 +147,7 @@ extends SortingUtil {
 		return factory;
 	}
 
-	protected abstract ModuleFactory<FM, PM> computeModuleFactory(ModuleGraph moduleGraph);
+	protected ModuleFactory computeModuleFactory(ModuleGraph moduleGraph) {
+		return new ModuleFactory(moduleGraph, this);
+	}
 }

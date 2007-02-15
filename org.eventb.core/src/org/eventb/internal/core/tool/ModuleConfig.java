@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IModule;
-import org.eventb.core.tool.IProcessorModule;
 
 /**
  * @author Stefan Hallerstede
@@ -27,7 +25,7 @@ public class ModuleConfig extends ConfigWithClosure<ModuleDesc<? extends IModule
 	public ModuleConfig(
 			String modulesId,
 			IConfigurationElement configElement, 
-			ModuleManager<? extends IFilterModule, ? extends IProcessorModule> moduleManager) {
+			ModuleManager moduleManager) {
 		super(configElement);
 		
 		IConfigurationElement[] elements = configElement.getChildren(modulesId);
@@ -36,7 +34,7 @@ public class ModuleConfig extends ConfigWithClosure<ModuleDesc<? extends IModule
 	
 	private void loadModules(
 			IConfigurationElement[] elements, 
-			ModuleManager<? extends IFilterModule, ? extends IProcessorModule> moduleManager) {
+			ModuleManager moduleManager) {
 		modules = new ArrayList<ModuleDesc<? extends IModule>>(elements.length);
 		for (IConfigurationElement element : elements) {
 			String moduleId = element.getAttribute("id");

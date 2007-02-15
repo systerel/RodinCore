@@ -11,11 +11,11 @@ package org.eventb.internal.core.tool;
 import java.lang.reflect.Constructor;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eventb.core.tool.IFilterModule;
+import org.eclipse.core.runtime.Platform;
 import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.tool.graph.Node;
+import org.osgi.framework.Bundle;
 
 /**
  * Description of a module (filter or processor) registered with
@@ -62,7 +62,16 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 	// support for graph analysis
 	public abstract Node<ModuleDesc<? extends IModule>> createNode();
 
-	protected abstract void computeClass();
+	protected void computeClass() {
+		Bundle bundle = Platform.getBundle(getBundleName());
+		try {
+			Class<?> clazz = bundle.loadClass(getClassName());
+			classObject = (Class<? extends T>) clazz.asSubclass(IModule.class);
+		} catch (Exception e) {
+			throw new IllegalStateException(
+					"Cannot load filter module class " + getId(), e);
+		}
+	}
 
 	protected void computeConstructor() {
 		if (classObject == null) {
@@ -99,7 +108,6 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 		return parent;
 	}
 	
-	public abstract <FM extends IFilterModule, PM extends IProcessorModule> 
-	void addToModuleFactory(ModuleFactory<FM, PM> factory, ModuleManager<FM, PM> manager);
+	public abstract void addToModuleFactory(ModuleFactory factory, ModuleManager manager);
 
 }

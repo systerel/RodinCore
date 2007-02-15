@@ -9,13 +9,9 @@
 package org.eventb.internal.core.tool;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
-import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IModule;
-import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.tool.graph.FilterModuleNode;
 import org.eventb.internal.core.tool.graph.Node;
-import org.osgi.framework.Bundle;
 
 /**
  * Description of an extractor registered with the tool manager.
@@ -25,7 +21,7 @@ import org.osgi.framework.Bundle;
  * 
  * @author Stefan Hallerstede
  */
-public class FilterModuleDesc<T extends IFilterModule> extends ModuleDesc<T> {
+public class FilterModuleDesc<T extends IModule> extends ModuleDesc<T> {
 	
 	/**
 	 * Creates a new filter decription.
@@ -39,28 +35,14 @@ public class FilterModuleDesc<T extends IFilterModule> extends ModuleDesc<T> {
 	}
 	
 	@Override
-	protected void computeClass() {
-		Bundle bundle = Platform.getBundle(getBundleName());
-		try {
-			Class<?> clazz = bundle.loadClass(getClassName());
-			classObject = (Class<? extends T>) clazz.asSubclass(IFilterModule.class);
-		} catch (Exception e) {
-			throw new IllegalStateException(
-					"Cannot load filter module class " + getId(), e);
-		}
-	}
-
-	@Override
 	public Node<ModuleDesc<? extends IModule>> createNode() {
 		return new FilterModuleNode(this, getId(), getPrereqs());
 	}
 
 	@Override
-	public <FM extends IFilterModule, PM extends IProcessorModule> 
-	void addToModuleFactory(ModuleFactory<FM, PM> factory, ModuleManager<FM, PM> manager) {
-		ModuleDesc<? extends PM> parent = (ModuleDesc<? extends PM>) manager.getModuleDesc(getParent());
-		ModuleDesc<? extends FM> filter = (ModuleDesc<? extends FM>) this;
-		factory.addFilterToFactory(parent, filter);
+	public void addToModuleFactory(ModuleFactory factory, ModuleManager manager) {
+		ModuleDesc<? extends IModule> parent = manager.getModuleDesc(getParent());
+		factory.addFilterToFactory(parent, this);
 	}
 	
 }

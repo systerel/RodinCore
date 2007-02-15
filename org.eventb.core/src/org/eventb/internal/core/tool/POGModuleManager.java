@@ -11,14 +11,15 @@ import java.util.List;
 
 import org.eventb.core.pog.IPOGFilterModule;
 import org.eventb.core.pog.IPOGProcessorModule;
+import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IModule;
-import org.eventb.internal.core.tool.graph.ModuleGraph;
+import org.eventb.core.tool.IProcessorModule;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class POGModuleManager extends ModuleManager<IPOGFilterModule, IPOGProcessorModule> {
+public class POGModuleManager extends ModuleManager {
 
 	private static final String POG_MODULES_ID = "pogModules";
 	private static final POGModuleManager MANAGER = new POGModuleManager();
@@ -39,9 +40,24 @@ public class POGModuleManager extends ModuleManager<IPOGFilterModule, IPOGProces
 	}
 
 	@Override
-	protected ModuleFactory<IPOGFilterModule, IPOGProcessorModule> computeModuleFactory(
-			ModuleGraph moduleGraph) {
-		return new POGModuleFactory(moduleGraph, this);
+	protected void verifyFilter(FilterModuleDesc<? extends IFilterModule> moduleDesc) {
+		try {
+			moduleDesc.classObject.asSubclass(IPOGFilterModule.class);
+		} catch (ClassCastException e) {
+			throw new IllegalStateException(
+					"Not a POG filter module " + moduleDesc.getId());
+		}
+		
+	}
+
+	@Override
+	protected void verifyProcessor(ProcessorModuleDesc<? extends IProcessorModule> moduleDesc) {
+		try {
+			moduleDesc.classObject.asSubclass(IPOGProcessorModule.class);
+		} catch (ClassCastException e) {
+			throw new IllegalStateException(
+					"Not a POG processor module " + moduleDesc.getId());
+		}
 	}
 
 }

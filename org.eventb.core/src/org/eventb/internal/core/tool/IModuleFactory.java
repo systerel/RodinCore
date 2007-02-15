@@ -15,11 +15,11 @@ import org.eventb.core.tool.IProcessorModule;
  * @author Stefan Hallerstede
  *
  */
-public interface IModuleFactory<FM extends IFilterModule, PM extends IProcessorModule> {
+public interface IModuleFactory {
 	
-	FM[] getFilterModules(IModuleType<? extends PM> parent);
+	IFilterModule[] getFilterModules(IModuleType<? extends IProcessorModule> parent);
 	
-	PM[] getProcessorModules(IModuleType<? extends PM> parent);
+	IProcessorModule[] getProcessorModules(IModuleType<? extends IProcessorModule> parent);
 	
 
 }
