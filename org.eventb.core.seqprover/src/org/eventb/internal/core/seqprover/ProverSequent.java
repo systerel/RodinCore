@@ -149,7 +149,8 @@ public class ProverSequent implements IInternalProverSequent{
 		ITypeEnvironment newTypeEnv = typeEnvironment;
 		Set<Predicate> newLocalHypotheses = null;
 		Set<Predicate> newSelectedHypotheses = null;
-		if (freshFreeIdents != null)
+		Set<Predicate> newHiddenHypotheses = null;
+		if (freshFreeIdents != null && freshFreeIdents.length != 0)
 		{
 			newTypeEnv = typeEnvironment.clone();
 			for (FreeIdentifier freshFreeIdent : freshFreeIdents) {
@@ -158,9 +159,10 @@ public class ProverSequent implements IInternalProverSequent{
 				modified = true;
 			}
 		}
-		if (addhyps != null){
+		if (addhyps != null && addhyps.size() != 0) {
 			newLocalHypotheses = new HashSet<Predicate>(localHypotheses);
 			newSelectedHypotheses = new HashSet<Predicate>(selectedHypotheses);
+			newHiddenHypotheses = new HashSet<Predicate>(hiddenHypotheses);
 			for (Predicate hyp : addhyps) {
 				if (! typeCheckClosed(hyp,newTypeEnv)) return null;
 				if (! this.containsHypothesis(hyp)){
@@ -168,14 +170,19 @@ public class ProverSequent implements IInternalProverSequent{
 					modified = true;
 				}
 				modified |= newSelectedHypotheses.add(hyp);
+				modified |= newHiddenHypotheses.remove(hyp);
 			}
 		}
-		if (newGoal != null){
+		if (newGoal != null && ! newGoal.equals(goal)) {
 			if (! typeCheckClosed(newGoal,newTypeEnv)) return null;
-			if (! newGoal.equals(goal)) modified = true;
+			modified = true;
 		}
 		
-		if (modified) return new ProverSequent(this,newTypeEnv,null,newLocalHypotheses,null,newSelectedHypotheses,newGoal);
+		if (modified) {
+			return new ProverSequent(this, newTypeEnv, null,
+					newLocalHypotheses, newHiddenHypotheses,
+					newSelectedHypotheses, newGoal);
+		}
 		return this;
 	}
 		
