@@ -354,18 +354,15 @@ public class Tactics {
 	// public static ITactic mngHyp(ActionType type, Predicate hypothesis){
 	// return mngHyp(type, Collections.singleton(hypothesis));
 	// }
+	private static ITactic cleanupTac =
+		compose(contradiction(), tautology(), hyp(), impI()); 
 
 	public static ITactic postProcessBeginner() {
-		// System.out.println("* Beginner Mode *");
-		return onAllPending(compose(tautology(), hyp(), impI(),
-				autoRewriteRules()));
-		// return onAllPending(compose(tautology(), hyp(), impI()));
+		return repeat(onAllPending(cleanupTac));
 	}
 
 	public static ITactic postProcessExpert() {
-		// System.out.println("* Expert Mode *");
-		return norm();
-
+		return repeat(onAllPending(compose(norm(), autoRewriteRules())));
 	}
 
 	public static ITactic afterLasoo(final ITactic tactic) {
