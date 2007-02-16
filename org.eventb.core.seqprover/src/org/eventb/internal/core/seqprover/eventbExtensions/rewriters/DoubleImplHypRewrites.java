@@ -3,7 +3,6 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import java.util.Arrays;
 
 import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
@@ -11,7 +10,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 public class DoubleImplHypRewrites extends AbstractManualRewrites {
 
@@ -34,15 +32,6 @@ public class DoubleImplHypRewrites extends AbstractManualRewrites {
 			return null;
 		}
 		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
-	}
-
-	@Override
-	public boolean isApplicable(Predicate pred, IPosition position) {
-		Formula formula = pred.getSubFormula(position);
-		if (formula instanceof Predicate) {
-			return Tactics.isDoubleImplPredicate((Predicate) formula);
-		}
-		return false;
 	}
 
 	@Override
