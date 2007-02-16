@@ -155,16 +155,6 @@ public abstract class AbstractManualRewrites implements IReasoner {
 	protected abstract IHypAction getHypAction(Predicate pred,
 			IPosition position);
 
-	/**
-	 * Returns whether this reasoner is applicable to the given predicate.
-	 * 
-	 * @param pred
-	 *            the predicate to test for rewritability
-	 * @return <code>true</code> if the given predicate might get rewritten by
-	 *         this reasoner
-	 */
-	public abstract boolean isApplicable(Predicate pred, IPosition position);
-
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 
