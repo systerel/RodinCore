@@ -5,9 +5,9 @@ import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 
-public class MPImplRewriter extends DefaultRewriter {
+public class ContImplRewriter extends DefaultRewriter {
 
-	public MPImplRewriter(boolean autoFlattening,
+	public ContImplRewriter(boolean autoFlattening,
 			FormulaFactory ff) {
 		super(autoFlattening, ff);
 	}

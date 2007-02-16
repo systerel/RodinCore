@@ -57,7 +57,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivia
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.MPImplHypRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
 
 public class Tactics {
 
@@ -403,9 +403,9 @@ public class Tactics {
 		return false;
 	}
 
-	public static ITactic mpImpHyp(Predicate pred, IPosition position) {
-		return BasicTactics.reasonerTac(new MPImplHypRewrites(),
-				new MPImplHypRewrites.Input(pred, position));
+	public static ITactic contImpHyp(Predicate pred, IPosition position) {
+		return BasicTactics.reasonerTac(new ContImplHypRewrites(),
+				new ContImplHypRewrites.Input(pred, position));
 	}
 
 	public static boolean isFunOvrApp(Formula subFormula) {
