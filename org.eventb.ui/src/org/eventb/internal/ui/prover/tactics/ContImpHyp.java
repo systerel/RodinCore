@@ -18,7 +18,7 @@ public class ContImpHyp extends DefaultTacticProvider {
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		return Tactics.mpImpHyp(hyp, position); // Second level
+		return Tactics.contImpHyp(hyp, position); // Second level
 	}
 
 	@Override

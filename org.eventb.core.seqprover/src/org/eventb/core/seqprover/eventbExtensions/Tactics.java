@@ -6,12 +6,16 @@ import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.AssociativeExpression;
+import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
@@ -19,7 +23,9 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -56,8 +62,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Remove
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivial;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
 
 public class Tactics {
 
@@ -354,8 +360,8 @@ public class Tactics {
 	// public static ITactic mngHyp(ActionType type, Predicate hypothesis){
 	// return mngHyp(type, Collections.singleton(hypothesis));
 	// }
-	private static ITactic cleanupTac =
-		compose(contradiction(), tautology(), hyp(), impI()); 
+	private static ITactic cleanupTac = compose(contradiction(), tautology(),
+			hyp(), impI());
 
 	public static ITactic postProcessBeginner() {
 		return repeat(onAllPending(cleanupTac));
@@ -471,4 +477,31 @@ public class Tactics {
 		return true;
 	}
 
+	public static List<IPosition> rn_getPositions(Predicate pred) {
+		return pred.getPositions(new DefaultFilter() {
+			@Override
+			public boolean select(UnaryPredicate predicate) {
+				if (predicate.getTag() == Predicate.NOT) {
+					Predicate child = predicate.getChild();
+					if (child instanceof RelationalPredicate) {
+						RelationalPredicate rPred = (RelationalPredicate) child;
+						if (rPred.getTag() == Predicate.EQUAL) {
+							Expression right = rPred.getRight();
+							if (right instanceof AtomicExpression) {
+								AtomicExpression aExp = (AtomicExpression) right;
+								if (aExp.getTag() == Expression.EMPTYSET)
+									return true;
+							}
+
+						}
+					}
+					if (child instanceof AssociativePredicate) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+		});
+	}
 }

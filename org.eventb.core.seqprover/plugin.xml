@@ -114,6 +114,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens"
             id="mt"
             name="%mtName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation"
+            id="rn"
+            name="%rnName"/>
    </extension>
 
 </plugin>

@@ -93,15 +93,6 @@ public abstract class AbstractManualRewrites implements IReasoner {
 						+ getReasonerID() + " inapplicable for hypothesis "
 						+ hyp);
 			}
-
-			// final HashSet<Predicate> predSet = new HashSet<Predicate>(Arrays
-			// .asList(newHyps));
-			// final IAntecedent[] antecedents = new IAntecedent[] {
-			// ProverFactory
-			// .makeAntecedent(goal, predSet, getHypAction(pred)) };
-			// return ProverFactory.makeProofRule(this, input, goal, hyp,
-			// getDisplayName(pred), antecedents);
-
 			final List<Predicate> newHyps = Arrays.asList(rewriteOutput);
 			final IHypAction forwardInf = ProverFactory
 					.makeForwardInfHypAction(Collections.singleton(hyp),
@@ -111,17 +102,6 @@ public abstract class AbstractManualRewrites implements IReasoner {
 							.makeSelectHypAction(newHyps));
 			return ProverFactory.makeProofRule(this, input, getDisplayName(hyp,
 					position), hypActions);
-
-			//			
-			// final IAntecedent[] antecedents =
-			// new IAntecedent[] { ProverFactory.makeAntecedent(
-			// goal,
-			// Arrays.asList(
-			// forwardInf,
-			// getHypAction(hyp),
-			// ProverFactory.makeSelectHypAction(newHyps))) };
-			// return ProverFactory.makeProofRule(this, input, goal,
-			// getDisplayName(hyp), antecedents);
 
 		}
 	}

@@ -30,6 +30,7 @@
 	
 	<target name="clean" description="clean up">
 		<delete file="${translator.src}/AutoRewriterImpl.java" />
-	</target>
+		<delete file="${translator.src}/RemoveNegationRewriterImpl.java" />
+    </target>
 	
 </project>
