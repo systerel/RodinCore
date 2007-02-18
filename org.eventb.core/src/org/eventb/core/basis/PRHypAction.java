@@ -65,7 +65,7 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 
 	public void setAction(IHypAction a,  IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
 		
-		String actionType = getElementName();
+		String actionType = a.getActionType();
 
 		if (actionType.equals(ISelectionHypAction.SELECT_ACTION_TYPE) || 
 				actionType.equals(ISelectionHypAction.DESELECT_ACTION_TYPE) ||
