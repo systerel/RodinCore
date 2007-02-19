@@ -39,9 +39,9 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
  * Basic automated rewriter for the Event-B sequent prover.
  */
 @SuppressWarnings("unused")
-public class RemoveNegationRewriterImpl extends DefaultRewriter {
+public class ManualRewriterImpl extends DefaultRewriter {
 
-	public RemoveNegationRewriterImpl() {
+	public ManualRewriterImpl() {
 		super(true, FormulaFactory.getDefault());
 	}
 
@@ -316,6 +316,13 @@ public class RemoveNegationRewriterImpl extends DefaultRewriter {
 	    	 */
 	    	Equal(SetExtension(E), SetExtension(F)) -> {
 	    		return FormulaSimplification.simplifySetEquality(predicate, `E, `F);
+	    	}
+	    	
+	    	/**
+	    	 * Set Theory: E ↦ F ∈ S × T == E ∈ S ∧ F ∈ T
+	    	 */
+	    	In(Mapsto(E, F), Cprod(S, T)) -> {
+	    		return FormulaUnfold.inMap(`E, `F, `S, `T);
 	    	}
 	    }
 	    return predicate;

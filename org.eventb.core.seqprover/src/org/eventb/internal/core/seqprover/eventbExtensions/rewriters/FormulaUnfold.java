@@ -41,4 +41,12 @@ public class FormulaUnfold {
 		return ff.makeQuantifiedPredicate(tag, idents, notP, null);
 	}
 
+	public static Predicate inMap(Expression E, Expression F, Expression S,
+			Expression T) {
+		Predicate P = ff.makeRelationalPredicate(Predicate.IN, E, S, null);
+		Predicate Q = ff.makeRelationalPredicate(Predicate.IN, F, T, null);
+		return ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] { P,
+				Q }, null);
+	}
+
 }

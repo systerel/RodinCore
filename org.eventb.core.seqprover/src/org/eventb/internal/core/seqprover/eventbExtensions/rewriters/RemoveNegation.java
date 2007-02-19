@@ -12,6 +12,7 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class RemoveNegation extends AbstractManualRewrites implements IReasoner {
 
@@ -34,13 +35,13 @@ public class RemoveNegation extends AbstractManualRewrites implements IReasoner 
 
 	@Override
 	protected Predicate[] rewrite(Predicate pred, IPosition position) {
-		IFormulaRewriter rewriter = new RemoveNegationRewriterImpl();
+		IFormulaRewriter rewriter = new ManualRewriterImpl();
 
 		FormulaFactory ff = FormulaFactory.getDefault();
 		Formula predicate = pred.getSubFormula(position);
 
 		Formula newSubPredicate = null;
-		if (predicate instanceof UnaryPredicate)
+		if (Lib.isNeg(pred))
 			newSubPredicate = rewriter.rewrite((UnaryPredicate) predicate);
 		if (newSubPredicate == null)
 			return null;
