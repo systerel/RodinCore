@@ -15,9 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.sc.ISCProcessorModule;
-import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -37,14 +35,9 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	
 	public static boolean DEBUG_MARKERS = false;
 	
-	private final static int IDENT_SYMTAB_SIZE = 2047;
-
-	private final static int CONTEXT_TABLE_SIZE = 137;
-
 	protected static final String DEFAULT_CONFIG = EventBPlugin.PLUGIN_ID + ".fwd";
 
-	// TODO: move non-constructor state elements to BaseModule
-	protected ISCStateRepository createRepository(
+	protected final ISCStateRepository createRepository(
 			IRodinFile file, 
 			IProgressMonitor monitor) throws CoreException {
 		
@@ -55,14 +48,6 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 		if (DEBUG_STATE)
 			repository.debug();
 		
-		final IdentifierSymbolTable identifierSymbolTable = 
-			new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, factory);
-		
-		final IContextTable contextTable = new ContextTable(CONTEXT_TABLE_SIZE);
-
-		repository.setState(identifierSymbolTable);
-		repository.setState(contextTable);
-
 		return repository;
 	}
 	

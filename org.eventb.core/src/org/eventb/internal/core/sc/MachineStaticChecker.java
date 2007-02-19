@@ -18,10 +18,8 @@ import org.eventb.core.ISeesContext;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.internal.core.sc.modules.MachineModule;
-import org.eventb.internal.core.sc.symbolTable.MachineLabelSymbolTable;
 import org.eventb.internal.core.tool.IModuleFactory;
 import org.eventb.internal.core.tool.SCModuleManager;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -30,8 +28,6 @@ import org.rodinp.core.builder.IGraph;
  *
  */
 public class MachineStaticChecker extends StaticChecker {
-
-	private final static int LABEL_SYMTAB_SIZE = 2047;
 
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IAutomaticTool#run(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
@@ -126,18 +122,6 @@ public class MachineStaticChecker extends StaticChecker {
 			monitor.done();
 		}
 
-	}
-
-	@Override
-	// TODO: move non-constructor state elements to MachineModule
-	protected ISCStateRepository createRepository(
-			IRodinFile file, 
-			IProgressMonitor monitor) throws CoreException {
-		ISCStateRepository repository = super.createRepository(file, monitor);
-		final MachineLabelSymbolTable labelSymbolTable = 
-			new MachineLabelSymbolTable(LABEL_SYMTAB_SIZE);
-		repository.setState(labelSymbolTable);		
-		return repository;
 	}
 
 }

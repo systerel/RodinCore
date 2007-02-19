@@ -31,9 +31,8 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 	public static boolean DEBUG_STATE = false;
 	
 	protected static final String DEFAULT_CONFIG = EventBPlugin.PLUGIN_ID + ".fwd";
-
 	
-	protected IPOGStateRepository createRepository(
+	protected final IPOGStateRepository createRepository(
 			IPOFile target, 
 			IProgressMonitor monitor) throws CoreException {
 		
