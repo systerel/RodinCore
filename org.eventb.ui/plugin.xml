@@ -809,13 +809,13 @@
             tooltip="%proofTactics.exI.tooltip"/>
       <tactic
             icon="icons/full/ctool16/negI_prover.gif"
-            id="org.eventb.ui.negI"
+            id="org.eventb.ui.rnGoal"
             interrupt="false"
-            name="%proofTactics.negI.name"
+            name="%proofTactics.rnGoal.name"
             priorty="7"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveNegationGoal"
             target="goal"
-            tooltip="%proofTactics.negI.tooltip"/>
+            tooltip="%proofTactics.rnGoal.tooltip"/>
       <tactic
             dropdown="org.eventb.ui.reviewDropdown"
             icon="icons/full/ctool16/rv_prover.gif"
@@ -981,13 +981,13 @@
             tooltip="%hypothesisProofTactics.DisjE.tooltip"/>
       <tactic
             icon="icons/full/ctool16/negE_prover.gif"
-            id="org.eventb.ui.negE"
+            id="org.eventb.ui.rnHyp"
             interrupt="false"
-            name="%proofTactics.negE.name"
+            name="%proofTactics.rnHyp.name"
             priorty="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveNegationHyp"
             target="hypothesis"
-            tooltip="%hypothesisProofTactics.NegE.tooltip"/>
+            tooltip="%proofTactics.rnHyp.tooltip"/>
       <tactic
             icon="icons/full/ctool16/allD_prover.gif"
             id="org.eventb.ui.allE"

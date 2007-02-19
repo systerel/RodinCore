@@ -50,7 +50,8 @@ public class DefaultTacticProvider implements ITacticProvider {
 		return false;
 	}
 
-	public Point getOperatorPosition(Predicate predicate, String predStr, IPosition position) {
+	public Point getOperatorPosition(Predicate predicate, String predStr,
+			IPosition position) {
 		Formula subFormula = predicate.getSubFormula(position);
 		if (subFormula instanceof AssociativePredicate) {
 			return new Point(0, 1);
@@ -59,8 +60,8 @@ public class DefaultTacticProvider implements ITacticProvider {
 			BinaryPredicate bPred = (BinaryPredicate) subFormula;
 			SourceLocation leftLocation = bPred.getLeft().getSourceLocation();
 			SourceLocation rightLocation = bPred.getRight().getSourceLocation();
-			return getOperatorPosition(predStr, leftLocation.getEnd() + 1, rightLocation
-					.getStart());
+			return getOperatorPosition(predStr, leftLocation.getEnd() + 1,
+					rightLocation.getStart());
 		}
 		if (subFormula instanceof LiteralPredicate) {
 			return new Point(0, 1);
@@ -75,14 +76,17 @@ public class DefaultTacticProvider implements ITacticProvider {
 			RelationalPredicate rPred = (RelationalPredicate) subFormula;
 			Expression left = rPred.getLeft();
 			Expression right = rPred.getRight();
-			return getOperatorPosition(predStr, left.getSourceLocation().getEnd() + 1, right
-					.getSourceLocation().getStart());
+			return getOperatorPosition(predStr, left.getSourceLocation()
+					.getEnd() + 1, right.getSourceLocation().getStart());
 		}
 		if (subFormula instanceof SimplePredicate) {
 			return new Point(0, 1);
 		}
 		if (subFormula instanceof UnaryPredicate) {
-			return new Point(0, 1);
+			UnaryPredicate uPred = (UnaryPredicate) subFormula;
+			Predicate child = uPred.getChild();
+			return getOperatorPosition(predStr, subFormula.getSourceLocation().getStart(), child.getSourceLocation()
+					.getStart());
 		}
 		if (subFormula instanceof AssociativeExpression) {
 			return new Point(0, 1);
@@ -115,19 +119,20 @@ public class DefaultTacticProvider implements ITacticProvider {
 			if (letter == false && !isSpaceOrBracket(c)) {
 				x = i;
 				letter = true;
-			}
-			else if (letter == true && isSpaceOrBracket(c)) {
+			} else if (letter == true && isSpaceOrBracket(c)) {
 				y = i;
 				return new Point(x, y);
 			}
 			++i;
 		}
-		if (letter == true) return new Point(x, end);
-		else return new Point(start, end);
+		if (letter == true)
+			return new Point(x, end);
+		else
+			return new Point(start, end);
 	}
 
 	private boolean isSpaceOrBracket(char c) {
-		return (c == ' ' || c ==  '(' || c == ')');
+		return (c == ' ' || c == '(' || c == ')');
 	}
 
 }

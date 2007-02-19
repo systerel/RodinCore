@@ -333,6 +333,42 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       }
 }
     }
+    if(tom_is_fun_sym_Not(tom_match3_1) ||  false ) {
+      { Predicate  tom_match3_1_child=tom_get_slot_Not_child(tom_match3_1);
+      if(tom_is_fun_sym_Limp(tom_match3_1_child) ||  false ) {
+        { Predicate  tom_match3_1_child_left=tom_get_slot_Limp_left(tom_match3_1_child);
+        { Predicate  tom_match3_1_child_right=tom_get_slot_Limp_right(tom_match3_1_child);
+
+				return FormulaUnfold.negImp(tom_match3_1_child_left, tom_match3_1_child_right);
+			}
+}
+      }
+}
+    }
+    if(tom_is_fun_sym_Not(tom_match3_1) ||  false ) {
+      { Predicate  tom_match3_1_child=tom_get_slot_Not_child(tom_match3_1);
+      if(tom_is_fun_sym_ForAll(tom_match3_1_child) ||  false ) {
+        { BoundIdentDecl[]  tom_match3_1_child_identifiers=tom_get_slot_ForAll_identifiers(tom_match3_1_child);
+        { Predicate  tom_match3_1_child_predicate=tom_get_slot_ForAll_predicate(tom_match3_1_child);
+
+				return FormulaUnfold.negQuant(Formula.EXISTS, tom_match3_1_child_identifiers, tom_match3_1_child_predicate);
+			}
+}
+      }
+}
+    }
+    if(tom_is_fun_sym_Not(tom_match3_1) ||  false ) {
+      { Predicate  tom_match3_1_child=tom_get_slot_Not_child(tom_match3_1);
+      if(tom_is_fun_sym_ForAll(tom_match3_1_child) ||  false ) {
+        { BoundIdentDecl[]  tom_match3_1_child_identifiers=tom_get_slot_ForAll_identifiers(tom_match3_1_child);
+        { Predicate  tom_match3_1_child_predicate=tom_get_slot_ForAll_predicate(tom_match3_1_child);
+
+				return FormulaUnfold.negQuant(Formula.FORALL, tom_match3_1_child_identifiers, tom_match3_1_child_predicate);
+			}
+}
+      }
+}
+    }
 }
 
 	    return predicate;

@@ -1,6 +1,5 @@
 package org.eventb.internal.ui.prover.tactics;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.ast.IPosition;
@@ -15,15 +14,17 @@ public class RemoveNegationHyp extends DefaultTacticProvider {
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		return Tactics.removeNegHyp(hyp);
+		return Tactics.removeNegHyp(hyp, position);
 	}
 
 	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
-		if (Tactics.removeNegHyp_applicable(hyp))
-			return new ArrayList<IPosition>();
-		return null;
+		List<IPosition> positions = Tactics.rn_getPositions(hyp);
+		if (positions.size() == 0) {
+			return null;
+		}
+		return positions;
 	}
 
 }

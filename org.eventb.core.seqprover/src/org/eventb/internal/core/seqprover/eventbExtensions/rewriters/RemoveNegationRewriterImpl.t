@@ -161,7 +161,7 @@ public class RemoveNegationRewriterImpl extends DefaultRewriter {
 			}
 
 	    	/**
-	    	 * Negation 2: ¬¬P == P
+	    	 * Negation 3: ¬¬P == P
 	    	 */
 			Not(Not(P)) -> {
 				return `P;
@@ -195,6 +195,26 @@ public class RemoveNegationRewriterImpl extends DefaultRewriter {
 				return FormulaUnfold.deMorgan(Formula.LAND, `children);
 			}
 			
+			/**
+			 * Negation: ¬(P ⇒ Q) == P ∧ ¬Q
+			 */
+			Not(Limp(P, Q)) -> {
+				return FormulaUnfold.negImp(`P, `Q);
+			}
+			
+			/**
+			 * Negation: ¬(∀x·P) == ∃x·¬P
+			 */
+			Not(ForAll(idents, P)) -> {
+				return FormulaUnfold.negQuant(Formula.EXISTS, `idents, `P);
+			}
+			
+			/**
+			 * Negation: ¬(∃x·P) == ∀x·¬P
+			 */
+			Not(ForAll(idents, P)) -> {
+				return FormulaUnfold.negQuant(Formula.FORALL, `idents, `P);
+			}
 	    }
 	    return predicate;
 	}

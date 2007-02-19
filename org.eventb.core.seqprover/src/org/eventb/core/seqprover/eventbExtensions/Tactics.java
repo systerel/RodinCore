@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -23,7 +22,6 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IHypAction;
@@ -58,12 +56,12 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.DisjToImpl;
-import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.RemoveNegation;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivial;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 
 public class Tactics {
 
@@ -212,14 +210,14 @@ public class Tactics {
 		return Lib.isExQuant(goal);
 	}
 
-	public static ITactic removeNegGoal() {
+	public static ITactic removeNegGoal(IPosition position) {
 		return BasicTactics.reasonerTac(new RemoveNegation(),
-				new RemoveNegation.Input(null));
+				new RemoveNegation.Input(null, position));
 	}
 
-	public static boolean removeNegGoal_applicable(Predicate goal) {
-		return (new RemoveNegation()).isApplicable(goal);
-	}
+//	public static boolean removeNegGoal_applicable(Predicate goal) {
+//		return (new RemoveNegation()).isApplicable(goal);
+//	}
 
 	public static ITactic disjToImpGoal() {
 		return BasicTactics.reasonerTac(new DisjToImpl(), new DisjToImpl.Input(
@@ -294,14 +292,14 @@ public class Tactics {
 		return Lib.isExQuant(hyp);
 	}
 
-	public static ITactic removeNegHyp(Predicate hyp) {
+	public static ITactic removeNegHyp(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new RemoveNegation(),
-				new RemoveNegation.Input(hyp));
+				new RemoveNegation.Input(hyp, position));
 	}
 
-	public static boolean removeNegHyp_applicable(Predicate hyp) {
-		return (new RemoveNegation()).isApplicable(hyp);
-	}
+//	public static boolean removeNegHyp_applicable(Predicate hyp) {
+//		return (new RemoveNegation()).isApplicable(hyp);
+//	}
 
 	public static ITactic falsifyHyp(Predicate hyp) {
 		return BasicTactics.reasonerTac(new Contr(), new Contr.Input(hyp));
@@ -483,19 +481,34 @@ public class Tactics {
 			public boolean select(UnaryPredicate predicate) {
 				if (predicate.getTag() == Predicate.NOT) {
 					Predicate child = predicate.getChild();
-					if (child instanceof RelationalPredicate) {
-						RelationalPredicate rPred = (RelationalPredicate) child;
-						if (rPred.getTag() == Predicate.EQUAL) {
-							Expression right = rPred.getRight();
-							if (right instanceof AtomicExpression) {
-								AtomicExpression aExp = (AtomicExpression) right;
-								if (aExp.getTag() == Expression.EMPTYSET)
-									return true;
-							}
-
-						}
-					}
+//					if (child instanceof RelationalPredicate) {
+//						RelationalPredicate rPred = (RelationalPredicate) child;
+//						if (rPred.getTag() == Predicate.EQUAL) {
+//							Expression right = rPred.getRight();
+//							if (right instanceof AtomicExpression) {
+//								AtomicExpression aExp = (AtomicExpression) right;
+//								if (aExp.getTag() == Expression.EMPTYSET)
+//									return true;
+//							}
+//
+//						}
+//					}
 					if (child instanceof AssociativePredicate) {
+						return true;
+					}
+					if (child.equals(Lib.True) || child.equals(Lib.False)) {
+						return true;
+					}
+					if (Lib.isNeg(child)) {
+						return true;
+					}
+					if (Lib.isImp(child)) {
+						return true;
+					}
+					if (Lib.isExQuant(child)) {
+						return true;
+					}
+					if (Lib.isUnivQuant(child)) {
 						return true;
 					}
 				}

@@ -22,9 +22,23 @@ public class FormulaUnfold {
 	public static Predicate deMorgan(int tag, Predicate[] children) {
 		Predicate[] newChildren = new Predicate[children.length];
 		for (int i = 0; i < children.length; ++i) {
-			newChildren[i] = ff.makeUnaryPredicate(Predicate.NOT, children[i], null);
+			newChildren[i] = ff.makeUnaryPredicate(Predicate.NOT, children[i],
+					null);
 		}
 		return ff.makeAssociativePredicate(tag, newChildren, null);
+	}
+
+	public static Predicate negImp(Predicate P, Predicate Q) {
+		Predicate notQ = ff.makeUnaryPredicate(Predicate.NOT, Q, null);
+
+		return ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] { P,
+				notQ }, null);
+	}
+
+	public static Predicate negQuant(int tag, BoundIdentDecl[] idents,
+			Predicate P) {
+		Predicate notP = ff.makeUnaryPredicate(Predicate.NOT, P, null);
+		return ff.makeQuantifiedPredicate(tag, idents, notP, null);
 	}
 
 }
