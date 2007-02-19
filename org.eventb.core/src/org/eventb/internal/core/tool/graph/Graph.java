@@ -22,18 +22,23 @@ public abstract class Graph<T> {
 	
 	protected static final int DEFAULT_SIZE = 100;
 
+	protected final String creator;
+	
 	private final Hashtable<String, Node<T>> graph;
 	private final List<Node<T>> nodes;
 	private final List<Node<T>> sorted;
 	
-	public Graph() {
+	public Graph(String creator) {
 		graph = new Hashtable<String, Node<T>>(DEFAULT_SIZE * 4 / 3 + 1);
 		nodes = new ArrayList<Node<T>>(DEFAULT_SIZE);
 		sorted = new ArrayList<Node<T>>(DEFAULT_SIZE);
+		this.creator = creator;
 	}
 	
 	// return descriptive name of graph for error messages
-	public abstract String getName();
+	public String getName() {
+		return creator;
+	}
 	
 	protected abstract Node<T> createNode(T object);
 	
@@ -54,15 +59,16 @@ public abstract class Graph<T> {
 		return graph.get(id);
 	}
 	
-	public void connect() {
+	private void connect() {
 		for (Node<T> node : nodes) {
 			node.connect(this);
 		}
 	}
 	
-	public void sort() {
-		Node<T> next = null;
+	private void sort() {
+		Node<T> next;
 		do {
+			next = null;
 			for (Node<T> node : nodes) {
 				if (node.getCount() == 0) {
 					next = node;
@@ -94,7 +100,7 @@ public abstract class Graph<T> {
 		if(!isPartialOrder())
 			throw new IllegalStateException(
 					getName() + 
-					" is cyclic. Involved configurations: " + 
+					" is cyclic. Involved nodes: " + 
 					getCycle(), null);
 	}
 	

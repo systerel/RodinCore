@@ -7,10 +7,23 @@
  *******************************************************************************/
 package org.eventb.core.pog;
 
+import org.eventb.core.tool.IFilterModule;
+import org.eventb.core.tool.IProcessorModule;
+
 /**
  * @author Stefan Hallerstede
  *
  */
-public class POGFilterModule implements IPOGFilterModule {
+public abstract class POGFilterModule extends POGModule implements IPOGFilterModule {
+
+	@Override
+	protected IFilterModule[] getFilterModules() {
+		throw new UnsupportedOperationException("Attempt to load submodules in filter module");
+	}
+
+	@Override
+	protected IProcessorModule[] getProcessorModules() {
+		throw new UnsupportedOperationException("Attempt to load submodules in filter module");
+	}
 
 }

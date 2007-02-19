@@ -16,15 +16,14 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractMachineInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.TheoremSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -35,14 +34,11 @@ import org.rodinp.core.IRodinElement;
  */
 public class MachineTheoremModule extends TheoremModule {
 	
-	public static final String MACHINE_THEOREM_FILTER = 
-		EventBPlugin.PLUGIN_ID + ".machineTheoremFilter";
-
-	private ISCFilterModule[] filterModules;
-
-	public MachineTheoremModule() {
-		ISCModuleManager manager = ModuleManager.getModuleManager();
-		filterModules = manager.getFilterModules(MACHINE_THEOREM_FILTER);
+	public static final IModuleType<MachineTheoremModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineTheoremModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
 	}
 
 	public void process(
@@ -72,7 +68,6 @@ public class MachineTheoremModule extends TheoremModule {
 		checkAndSaveTheorems(
 				target, 
 				offset,
-				filterModules,
 				repository,
 				monitor);
 		

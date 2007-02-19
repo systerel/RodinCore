@@ -10,7 +10,9 @@ package org.eventb.core.sc;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IModule;
+import org.eventb.core.tool.IProcessorModule;
 
 
 /**
@@ -19,6 +21,16 @@ import org.eventb.core.tool.IModule;
  *
  */
 public abstract class SCFilterModule extends SCModule implements ISCFilterModule {
+
+	@Override
+	protected IFilterModule[] getFilterModules() {
+		throw new UnsupportedOperationException("Attempt to load submodules in filter module");
+	}
+
+	@Override
+	protected IProcessorModule[] getProcessorModules() {
+		throw new UnsupportedOperationException("Attempt to load submodules in filter module");
+	}
 
 	/** 
 	 * Default implementation of <code>initModule()</code> does nothing.

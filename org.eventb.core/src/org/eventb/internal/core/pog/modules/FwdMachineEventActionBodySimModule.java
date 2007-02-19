@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ISCAction;
@@ -20,10 +21,12 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGSource;
 import org.eventb.core.pog.util.POGTraceablePredicate;
+import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -34,6 +37,13 @@ import org.rodinp.core.RodinDBException;
 public class FwdMachineEventActionBodySimModule extends
 		MachineEventRefinementModule {
 	
+	public static final IModuleType<FwdMachineEventActionBodySimModule> MODULE_TYPE = 
+		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineEventActionBodySimModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */

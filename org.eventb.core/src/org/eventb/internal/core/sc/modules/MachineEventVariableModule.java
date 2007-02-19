@@ -16,14 +16,13 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IVariable;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Type;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
-import org.eventb.internal.core.sc.ModuleManager;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.EventVariableSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -34,16 +33,13 @@ import org.rodinp.core.IRodinElement;
  */
 public class MachineEventVariableModule extends IdentifierModule {
 
-	public static final String MACHINE_EVENT_VARIABLE_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".machineEventVariableAcceptor";
-
-	private ISCFilterModule[] modules;
-
-	public MachineEventVariableModule() {
-		ISCModuleManager manager = ModuleManager.getModuleManager();
-		modules = manager.getFilterModules(MACHINE_EVENT_VARIABLE_ACCEPTOR);
-	}
+	public static final IModuleType<MachineEventVariableModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventVariableModule"); //$NON-NLS-1$
 	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
+
 	protected IEventRefinesInfo eventRefinesInfo;
 	protected boolean isInitialisation;
 
@@ -62,7 +58,6 @@ public class MachineEventVariableModule extends IdentifierModule {
 			fetchSymbols(
 					variables,
 					target,
-					modules,
 					repository, 
 					monitor);
 		

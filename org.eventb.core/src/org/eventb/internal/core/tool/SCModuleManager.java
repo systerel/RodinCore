@@ -21,7 +21,7 @@ import org.eventb.core.tool.IProcessorModule;
  */
 public class SCModuleManager extends ModuleManager {
 
-	private static final String SC_MODULES_ID = "scModules";
+	private static final String SC_MODULES_ID = "scModuleTypes";
 	private static final SCModuleManager MANAGER = new SCModuleManager();
 	
 	private static final SCConfigManager SC_CONFIG_MANAGER = SCConfigManager.getInstance();
@@ -42,7 +42,7 @@ public class SCModuleManager extends ModuleManager {
 	@Override
 	protected void verifyFilter(FilterModuleDesc<? extends IFilterModule> moduleDesc) {
 		try {
-			moduleDesc.classObject.asSubclass(ISCFilterModule.class);
+			moduleDesc.getClassObject().asSubclass(ISCFilterModule.class);
 		} catch (ClassCastException e) {
 			throw new IllegalStateException(
 					"Not a SC filter module " + moduleDesc.getId());
@@ -53,11 +53,16 @@ public class SCModuleManager extends ModuleManager {
 	@Override
 	protected void verifyProcessor(ProcessorModuleDesc<? extends IProcessorModule> moduleDesc) {
 		try {
-			moduleDesc.classObject.asSubclass(ISCProcessorModule.class);
+			moduleDesc.getClassObject().asSubclass(ISCProcessorModule.class);
 		} catch (ClassCastException e) {
 			throw new IllegalStateException(
 					"Not a SC processor module " + moduleDesc.getId());
 		}
+	}
+
+	@Override
+	protected String getName() {
+		return "SC";
 	}
 
 }

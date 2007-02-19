@@ -14,12 +14,11 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.ConcreteConstantSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -30,14 +29,11 @@ import org.rodinp.core.IRodinElement;
  */
 public class ContextConstantModule extends IdentifierModule {
 
-	public static final String CONTEXT_CONSTANT_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".contextConstantAcceptor";
-
-	private ISCFilterModule[] rules;
-
-	public ContextConstantModule() {
-		ISCModuleManager manager = ModuleManager.getModuleManager();
-		rules = manager.getFilterModules(CONTEXT_CONSTANT_ACCEPTOR);
+	public static final IModuleType<ContextConstantModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextConstantModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
 	}
 
 	/* (non-Javadoc)
@@ -61,7 +57,6 @@ public class ContextConstantModule extends IdentifierModule {
 		fetchSymbols(
 				constants,
 				target,
-				rules,
 				repository,
 				monitor);
 		

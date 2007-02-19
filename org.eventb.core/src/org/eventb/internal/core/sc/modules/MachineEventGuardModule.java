@@ -22,8 +22,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.IEventRefinesInfo;
@@ -33,7 +32,7 @@ import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
-import org.eventb.internal.core.sc.ModuleManager;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.GuardSymbolInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -46,14 +45,11 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 
-	public static final String MACHINE_EVENT_GUARD_FILTER = 
-		EventBPlugin.PLUGIN_ID + ".machineEventGuardFilter";
-
-	private ISCFilterModule[] filterModules;
-
-	public MachineEventGuardModule() {
-		ISCModuleManager manager = ModuleManager.getModuleManager();
-		filterModules = manager.getFilterModules(MACHINE_EVENT_GUARD_FILTER);
+	public static final IModuleType<MachineEventGuardModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventGuardModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
 	}
 
 	private static String GUARD_NAME_PREFIX = "GRD";
@@ -71,7 +67,6 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 		if (checkInitialisation(element, monitor))
 			checkAndType(
 					target, 
-					filterModules,
 					element.getElementName(),
 					repository,
 					monitor);

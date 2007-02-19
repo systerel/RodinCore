@@ -16,14 +16,13 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.TheoremSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -34,14 +33,11 @@ import org.rodinp.core.IRodinElement;
  */
 public class ContextTheoremModule extends TheoremModule {
 
-	public static final String CONTEXT_THEOREM_FILTER = 
-		EventBPlugin.PLUGIN_ID + ".contextTheoremFilter";
-
-	private ISCFilterModule[] filterModules;
-
-	public ContextTheoremModule() {
-		ISCModuleManager manager = ModuleManager.getModuleManager();
-		filterModules = manager.getFilterModules(CONTEXT_THEOREM_FILTER);
+	public static final IModuleType<ContextTheoremModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextTheoremModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
 	}
 
 	public void process(
@@ -58,7 +54,6 @@ public class ContextTheoremModule extends TheoremModule {
 		checkAndSaveTheorems(
 				target, 
 				0,
-				filterModules,
 				repository,
 				monitor);
 		

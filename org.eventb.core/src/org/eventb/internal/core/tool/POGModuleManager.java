@@ -21,7 +21,7 @@ import org.eventb.core.tool.IProcessorModule;
  */
 public class POGModuleManager extends ModuleManager {
 
-	private static final String POG_MODULES_ID = "pogModules";
+	private static final String POG_MODULES_ID = "pogModuleTypes";
 	private static final POGModuleManager MANAGER = new POGModuleManager();
 	
 	private static final POGConfigManager POG_CONFIG_MANAGER = POGConfigManager.getInstance();
@@ -42,7 +42,7 @@ public class POGModuleManager extends ModuleManager {
 	@Override
 	protected void verifyFilter(FilterModuleDesc<? extends IFilterModule> moduleDesc) {
 		try {
-			moduleDesc.classObject.asSubclass(IPOGFilterModule.class);
+			moduleDesc.getClassObject().asSubclass(IPOGFilterModule.class);
 		} catch (ClassCastException e) {
 			throw new IllegalStateException(
 					"Not a POG filter module " + moduleDesc.getId());
@@ -53,11 +53,16 @@ public class POGModuleManager extends ModuleManager {
 	@Override
 	protected void verifyProcessor(ProcessorModuleDesc<? extends IProcessorModule> moduleDesc) {
 		try {
-			moduleDesc.classObject.asSubclass(IPOGProcessorModule.class);
+			moduleDesc.getClassObject().asSubclass(IPOGProcessorModule.class);
 		} catch (ClassCastException e) {
 			throw new IllegalStateException(
 					"Not a POG processor module " + moduleDesc.getId());
 		}
+	}
+
+	@Override
+	protected String getName() {
+		return "POG";
 	}
 
 }

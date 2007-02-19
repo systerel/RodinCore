@@ -15,4 +15,6 @@ import org.eventb.core.tool.IFilterModule;
  */
 public interface IPOGFilterModule extends IFilterModule {
 
+	
+	// TODO implement POG filters
 }

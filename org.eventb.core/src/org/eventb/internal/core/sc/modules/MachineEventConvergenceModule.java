@@ -12,15 +12,18 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.ISCEvent;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.state.IVariantInfo;
 import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -32,6 +35,13 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineEventConvergenceModule extends SCProcessorModule {
 	
+	public static final IModuleType<MachineEventConvergenceModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventConvergenceModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
+
 	IVariantInfo variantInfo;
 	IEventRefinesInfo eventRefinesInfo;
 

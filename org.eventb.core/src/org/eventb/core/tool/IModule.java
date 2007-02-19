@@ -55,6 +55,8 @@ package org.eventb.core.tool;
  */
 public interface IModule {
 
+	IModuleType<?> getModuleType();
+	
 	// protocols are specified in the interfaces
 	// IAcceptorModule and IProcessorModule
 

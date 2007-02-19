@@ -9,6 +9,7 @@
 package org.eventb.internal.core.tool;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IModule;
 import org.eventb.internal.core.tool.graph.FilterModuleNode;
 import org.eventb.internal.core.tool.graph.Node;
@@ -21,7 +22,7 @@ import org.eventb.internal.core.tool.graph.Node;
  * 
  * @author Stefan Hallerstede
  */
-public class FilterModuleDesc<T extends IModule> extends ModuleDesc<T> {
+public class FilterModuleDesc<T extends IFilterModule> extends ModuleDesc<T> {
 	
 	/**
 	 * Creates a new filter decription.
@@ -31,11 +32,13 @@ public class FilterModuleDesc<T extends IModule> extends ModuleDesc<T> {
 	 */
 	public FilterModuleDesc(IConfigurationElement configElement) {
 		super(configElement);
-		assert getParent() != null;
 	}
 	
 	@Override
 	public Node<ModuleDesc<? extends IModule>> createNode() {
+		if (getParent() == null)
+			throw new IllegalStateException("filter module without parent " + getId());
+
 		return new FilterModuleNode(this, getId(), getPrereqs());
 	}
 

@@ -11,15 +11,16 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISeesContext;
-import org.eventb.core.sc.ISCModuleManager;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.internal.core.sc.modules.MachineModule;
 import org.eventb.internal.core.sc.symbolTable.MachineLabelSymbolTable;
+import org.eventb.internal.core.tool.IModuleFactory;
+import org.eventb.internal.core.tool.SCModuleManager;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
@@ -32,20 +33,6 @@ public class MachineStaticChecker extends StaticChecker {
 
 	private final static int LABEL_SYMTAB_SIZE = 2047;
 
-	public static final String MACHINE_SC_TOOL_ID = EventBPlugin.PLUGIN_ID + ".machineSC"; //$NON-NLS-1$
-	public static final String MACHINE_SC_REFINES_ID = EventBPlugin.PLUGIN_ID + ".machineSCRefines"; //$NON-NLS-1$
-	public static final String MACHINE_SC_SEES_ID = EventBPlugin.PLUGIN_ID + ".machineSCSees"; //$NON-NLS-1$
-
-	public static final String MACHINE_PROCESSOR = EventBPlugin.PLUGIN_ID + ".machineProcessor"; //$NON-NLS-1$
-	
-	private ISCModuleManager manager;
-	
-	private ISCProcessorModule[] machineProcessorModules = null;
-	
-	public MachineStaticChecker() {
-		manager = ModuleManager.getModuleManager();
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IAutomaticTool#run(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -65,12 +52,6 @@ public class MachineStaticChecker extends StaticChecker {
 							StaticChecker.getStrippedComponentName(file.getName())), 
 					size);
 
-			if (machineProcessorModules == null) {
-			
-				machineProcessorModules = manager.getProcessorModules(MACHINE_PROCESSOR);
-			
-			}
-		
 			scMachineFile.create(true, null);
 			
 			ISCStateRepository repository = createRepository(machineFile, monitor);
@@ -78,10 +59,16 @@ public class MachineStaticChecker extends StaticChecker {
 			machineFile.open(new SubProgressMonitor(monitor, 1));
 			scMachineFile.open(new SubProgressMonitor(monitor, 1));
 		
+			IModuleFactory moduleFactory = 
+				SCModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
+			
+			ISCProcessorModule rootModule = 
+				(ISCProcessorModule) moduleFactory.getRootModule(MachineModule.MODULE_TYPE);
+			
 			runProcessorModules(
+					rootModule,
 					machineFile, 
 					scMachineFile,
-					machineProcessorModules, 
 					repository,
 					monitor);
 		
@@ -142,6 +129,7 @@ public class MachineStaticChecker extends StaticChecker {
 	}
 
 	@Override
+	// TODO: move non-constructor state elements to MachineModule
 	protected ISCStateRepository createRepository(
 			IRodinFile file, 
 			IProgressMonitor monitor) throws CoreException {

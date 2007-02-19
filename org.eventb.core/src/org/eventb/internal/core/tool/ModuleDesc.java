@@ -37,7 +37,7 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 	
 	// Class implementing this module
 	// (cached value)
-	protected Class<? extends T> classObject;
+	private Class<? extends T> classObject;
 
 	// Constructor to use to create modules
 	// (cached value)
@@ -62,6 +62,7 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 	// support for graph analysis
 	public abstract Node<ModuleDesc<? extends IModule>> createNode();
 
+	@SuppressWarnings("unchecked")
 	protected void computeClass() {
 		Bundle bundle = Platform.getBundle(getBundleName());
 		try {
@@ -71,6 +72,13 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 			throw new IllegalStateException(
 					"Cannot load module class " + getId(), e);
 		}
+	}
+	
+	protected Class<? extends T> getClassObject() {
+		if (classObject == null) {
+			computeClass();
+		}
+		return classObject;
 	}
 
 	protected void computeConstructor() {

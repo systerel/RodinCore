@@ -10,13 +10,16 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCInternalContext;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalParent;
@@ -28,6 +31,13 @@ import org.rodinp.core.IRodinProblem;
  *
  */
 public class ContextExtendsModule extends ContextPointerModule {
+
+	public static final IModuleType<ContextExtendsModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextExtendsModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
 
 	protected ContextPointerArray contextPointerArray;
 	

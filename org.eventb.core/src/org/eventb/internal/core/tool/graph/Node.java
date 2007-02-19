@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.tool.graph;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +17,11 @@ import java.util.List;
  *
  */
 public class Node<T> implements Iterable<Node<T>> {
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -31,7 +35,7 @@ public class Node<T> implements Iterable<Node<T>> {
 
 	private final T object;
 	private final String id;
-	private List<String> predecs;
+	private String[] predecs;
 	
 	protected List<Node<T>> succ;
 	protected int count;
@@ -39,7 +43,7 @@ public class Node<T> implements Iterable<Node<T>> {
 	public Node(T object, String id, String[] predecs) {
 		this.id = id;
 		this.object = object;
-		this.predecs = Arrays.asList(predecs);
+		this.predecs = predecs;
 		
 		count = 0;
 		succ = new LinkedList<Node<T>>();
@@ -65,12 +69,16 @@ public class Node<T> implements Iterable<Node<T>> {
 	}
 
 	public void addPredec(String p) {
-		if (predecs.contains(p))
-			return;
-		predecs.add(p);
+		for (String s : predecs)
+			if (p.equals(s))
+				return;
+		String[] x = new String[predecs.length+1];
+		System.arraycopy(predecs, 0, x, 0, predecs.length);
+		x[predecs.length] = p;
+		predecs = x;
 	}
 	
-	public List<String> getPredecs() {
+	public String[] getPredecs() {
 		return predecs;
 	}
 	

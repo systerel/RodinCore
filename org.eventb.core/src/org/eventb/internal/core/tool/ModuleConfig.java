@@ -47,7 +47,7 @@ public class ModuleConfig extends ConfigWithClosure<ModuleDesc<? extends IModule
 		}
 	}
 	
-	public List<ModuleDesc<? extends IModule>> getModules() {
+	public List<ModuleDesc<? extends IModule>> getModuleDescs() {
 		return modules;
 	}
 
@@ -55,7 +55,7 @@ public class ModuleConfig extends ConfigWithClosure<ModuleDesc<? extends IModule
 	public List<ModuleDesc<? extends IModule>> computeClosure(
 			Map<String, ? extends ConfigWithClosure<ModuleDesc<? extends IModule>>> configs) {
 		List<ModuleDesc<? extends IModule>> closure =  super.computeClosure(configs);
-		for (ModuleDesc<? extends IModule> desc : modules) {
+		for (ModuleDesc<? extends IModule> desc : getModuleDescs()) {
 			if (closure.contains(desc))
 				continue;
 			closure.add(desc);

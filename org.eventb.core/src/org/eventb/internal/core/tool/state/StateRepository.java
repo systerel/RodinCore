@@ -58,9 +58,16 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 	public I getState(IStateType<? extends I> stateType) throws CoreException {
 		if (exception != null)
 			throw exception;
+		if (DEBUG)
+			System.out.print("GET STATE: " + stateType);
 		I state = repository.get(stateType);
-		if (state == null)
+		if (state == null) {
+			if (DEBUG)
+				System.out.println(" FAILED");
 			throw Util.newCoreException(Messages.sctool_UninitializedStateError);
+		}
+		if (DEBUG)
+			System.out.println(" OK");
 		return state;
 	}
 

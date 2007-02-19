@@ -3,8 +3,8 @@
 <plugin>
    <extension-point id="scStateTypes" name="%scStateTypes" schema="schema/scStateTypes.exsd"/>
    <extension-point id="pogStateTypes" name="%pogStateTypes" schema="schema/pogStateTypes.exsd"/>
-   <extension-point id="scModules" name="%scModules" schema="schema/scModules.exsd"/>
-   <extension-point id="pogModules" name="%pogModules" schema="schema/pogModules.exsd"/>
+   <extension-point id="scModuleTypes" name="%scModuleTypes" schema="schema/scModuleTypes.exsd"/>
+   <extension-point id="pogModuleTypes" name="%pogModuleTypes" schema="schema/pogModuleTypes.exsd"/>
    <extension-point id="configurations" name="%configurations" schema="schema/configurations.exsd"/>
    <extension
          point="org.eclipse.core.runtime.contentTypes">
@@ -299,21 +299,21 @@
          </extractor>
       </tool>
       <tool
-            class="org.eventb.internal.core.pog.ContextPOGenerator"
+            class="org.eventb.internal.core.pog.ContextProofObligationGenerator"
             id="contextPOG"
             name="%contextPOG">
          <extractor
-               class="org.eventb.internal.core.pog.ContextPOGenerator"
+               class="org.eventb.internal.core.pog.ContextProofObligationGenerator"
                name="%contextPOGExtractor">
             <inputType id="org.eventb.core.scContextFile"/>
          </extractor>
       </tool>
       <tool
-            class="org.eventb.internal.core.pog.MachinePOGenerator"
+            class="org.eventb.internal.core.pog.MachineProofObligationGenerator"
             id="machinePOG"
             name="%machinePOG">
          <extractor
-               class="org.eventb.internal.core.pog.MachinePOGenerator"
+               class="org.eventb.internal.core.pog.MachineProofObligationGenerator"
                name="%machinePOGExtractor">
             <inputType id="org.eventb.core.scMachineFile"/>
          </extractor>
@@ -590,6 +590,507 @@
             class="org.eventb.internal.core.pog.MachineInfo"
             id="machineInfo"
             name="%machineInfo"/>
+   </extension>
+   <extension
+         point="org.eventb.core.configurations">
+      <configuration
+            id="ctxSC"
+            name="%ctxSC">
+         <scModule id="org.eventb.core.contextModule"/>
+      </configuration>
+      <configuration
+            id="ctxPOG"
+            name="%ctxPOG">
+         <pogModule id="org.eventb.core.contextModule"/>
+      </configuration>
+      <configuration
+            id="mchSC"
+            name="%mchSC">
+         <scModule id="org.eventb.core.machineModule"/>
+      </configuration>
+       <configuration
+            id="mchPOG"
+            name="%mchPOG">
+         <pogModule id="org.eventb.core.machineModule"/>
+      </configuration>
+      <configuration
+            id="ctxBase"
+            name="%ctxBase">
+         <config id="org.eventb.core.ctxSC"/>
+         <scModule id="org.eventb.core.contextExtendsModule"/>
+         <scModule id="org.eventb.core.contextCarrierSetModule"/>
+         <scModule id="org.eventb.core.contextConstantModule"/>
+         <scModule id="org.eventb.core.contextCommitIdentsModule"/>
+         <scModule id="org.eventb.core.contextAxiomModule"/>
+         <scModule id="org.eventb.core.contextAxiomFreeIdentsModule"/>
+         <scModule id="org.eventb.core.contextTheoremModule"/>
+         <scModule id="org.eventb.core.contextTheoremFreeIdentsModule"/>
+      </configuration>
+      <configuration
+            id="mchBase"
+            name="%mchBase">
+         <config id="org.eventb.core.mchSC"/>
+         <config id="org.eventb.core.ctxBase"/>
+         <scModule id="org.eventb.core.machineRefinesModule"/>
+         <scModule id="org.eventb.core.machineSeesContextModule"/>
+         <scModule id="org.eventb.core.machineContextClosureModule"/>
+         <scModule id="org.eventb.core.machineVariableModule"/>
+         <scModule id="org.eventb.core.machineCommitIdentsModule"/>
+         <scModule id="org.eventb.core.machineInvariantModule"/>
+         <scModule id="org.eventb.core.machineInvariantFreeIdentsModule"/>
+         <scModule id="org.eventb.core.machineTheoremModule"/>
+         <scModule id="org.eventb.core.machineTheoremFreeIdentsModule"/>
+         <scModule id="org.eventb.core.machineVariantModule"/>
+         <scModule id="org.eventb.core.machineVariantFreeIdentsModule"/>
+         <scModule id="org.eventb.core.machineVariableFromLocalModule"/>
+         <scModule id="org.eventb.core.machineEventModule"/>
+         <scModule id="org.eventb.core.machineEventRefinesModule"/>
+         <scModule id="org.eventb.core.machineEventInheritedModule"/>
+         <scModule id="org.eventb.core.machineEventConvergenceModule"/>
+         <scModule id="org.eventb.core.machineEventVariableModule"/>
+         <scModule id="org.eventb.core.machineEventCommitIdentsModule"/>
+         <scModule id="org.eventb.core.machineEventGuardModule"/>
+         <scModule id="org.eventb.core.machineEventGuardFreeIdentsModule"/>
+         <scModule id="org.eventb.core.machineEventGuardFreeIdentsModule"/>
+         <scModule id="org.eventb.core.machineEventActionModule"/>
+         <scModule id="org.eventb.core.machineEventActionFreeIdentsModule"/>
+      </configuration>
+      <configuration
+            id="ctx"
+            name="%ctx">
+         <config id="org.eventb.core.ctxBase"/>
+         <config id="org.eventb.core.ctxPOG"/>
+         <pogModule id="org.eventb.core.contextHypothesesModule"/>
+         <pogModule id="org.eventb.core.contextCommitHypothesesModule"/>
+         <pogModule id="org.eventb.core.contextAxiomModule"/>
+         <pogModule id="org.eventb.core.contextTheoremModule"/>
+      </configuration>
+      <configuration
+            id="fwd"
+            name="%fwd">
+         <config id="org.eventb.core.ctx"/>
+         <config id="org.eventb.core.mchBase"/>
+         <config id="org.eventb.core.mchPOG"/>
+         <scModule id="org.eventb.core.machineEventWitnessModule"/>
+         <scModule id="org.eventb.core.machineEventWitnessFreeIdentsModule"/>
+         <pogModule id="org.eventb.core.fwdMachineRefinementModule"/>
+         <pogModule id="org.eventb.core.fwdMachineHypothesesModule"/>
+         <pogModule id="org.eventb.core.fwdMachineCommitHypothesesModule"/>
+         <pogModule id="org.eventb.core.fwdMachineInvariantModule"/>
+         <pogModule id="org.eventb.core.fwdMachineTheoremModule"/>
+         <pogModule id="org.eventb.core.fwdMachineVariantModule"/>
+         <pogModule id="org.eventb.core.fwdMachineEventModule"/>
+         <pogModule id="org.eventb.core.fwdMachineNewEventInvariantModule"/>
+         <pogModule id="org.eventb.core.fwdMachineRefEventInvariantModule"/>
+         <pogModule id="org.eventb.core.fwdMachineEventHypothesesModule"/>
+         <pogModule id="org.eventb.core.fwdMachineEventCommitHypothesesModule"/>
+         <pogModule id="org.eventb.core.fwdMachineEventGuardModule"/>
+         <pogModule id="org.eventb.core.fwdMachineEventStrengthenGuardModule"/>
+         <pogModule id="org.eventb.core.fwdMachineEventWitnessModule"/>
+         <pogModule id="org.eventb.core.fwdMachineEventActionModule"/>
+         <pogModule id="org.eventb.core.fwdMachineEventActionBodySimModule"/>
+         <pogModule id="org.eventb.core.fwdMachineEventActionFrameSimModule"/>
+         <pogModule id="org.eventb.core.fwdMachineEventVariantModule"/>
+      </configuration>
+   </extension>
+   <extension
+         name="%scContextModuleTypes"
+         point="org.eventb.core.scModuleTypes">
+      <processorType
+            class="org.eventb.internal.core.sc.modules.ContextModule"
+            id="contextModule"
+            name="%scContextModule"
+            />
+      <processorType
+            class="org.eventb.internal.core.sc.modules.ContextExtendsModule"
+            id="contextExtendsModule"
+            name="%scContextExtendsModule"
+            parent="org.eventb.core.contextModule"/>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.ContextCarrierSetModule"
+            id="contextCarrierSetModule"
+            name="%scContextCarrierSetModule"
+            parent="org.eventb.core.contextModule">
+         <prereq id="org.eventb.core.contextExtendsModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.ContextConstantModule"
+            id="contextConstantModule"
+            name="%scContextConstantModule"
+            parent="org.eventb.core.contextModule">
+         <prereq id="org.eventb.core.contextExtendsModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.ContextAxiomModule"
+            id="contextAxiomModule"
+            name="%scContextAxiomModule"
+            parent="org.eventb.core.contextModule">
+         <prereq id="org.eventb.core.contextCarrierSetModule"/>
+         <prereq id="org.eventb.core.contextConstantModule"/>
+      </processorType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.ContextAxiomFreeIdentsModule"
+            id="contextAxiomFreeIdentsModule"
+            name="%scContextAxiomFreeIdentsModule"
+            parent="org.eventb.core.contextAxiomModule"/>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.ContextTheoremModule"
+            id="contextTheoremModule"
+            name="%scContextTheoremModule"
+            parent="org.eventb.core.contextModule">
+         <prereq id="org.eventb.core.contextAxiomModule"/>
+      </processorType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.ContextTheoremFreeIdentsModule"
+            id="contextTheoremFreeIdentsModule"
+            name="%scContextTheoremFreeIdentsModule"
+            parent="org.eventb.core.contextTheoremModule"/>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.ContextCommitIdentsModule"
+            id="contextCommitIdentsModule"
+            name="%scContextCommitIdentsModule"
+            parent="org.eventb.core.contextModule">
+         <prereq id="org.eventb.core.contextAxiomModule"/>
+      </processorType>
+   </extension>
+   <extension
+         name="%scMachineModuleTypes"
+         point="org.eventb.core.scModuleTypes">
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineModule"
+            id="machineModule"
+            name="%scMachineModule"/>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineRefinesModule"
+            id="machineRefinesModule"
+            name="%scMachineRefinesModule"
+            parent="org.eventb.core.machineModule"/>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineSeesContextModule"
+            id="machineSeesContextModule"
+            name="%scMachineSeesContextModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.machineRefinesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineContextClosureModule"
+            id="machineContextClosureModule"
+            name="%scMachineContextClosureModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.machineSeesContextModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineVariableModule"
+            id="machineVariableModule"
+            name="%scMachineVariableModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.machineSeesContextModule"/>
+      </processorType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineVariableFromLocalModule"
+            id="machineVariableFromLocalModule"
+            name="%scMachineVariableFromLocalModule"
+            parent="org.eventb.core.machineVariableModule"/>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineInvariantModule"
+            id="machineInvariantModule"
+            name="%scMachineInvariantModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.machineVariableModule"/>
+      </processorType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineInvariantFreeIdentsModule"
+            id="machineInvariantFreeIdentsModule"
+            name="%scMachineInvariantFreeIdentsModule"
+            parent="org.eventb.core.machineInvariantModule"/>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachinePreviousEventLabelModule"
+            id="machinePreviousEventLabelModule"
+            name="%scMachinePreviousEventLabelModule"
+            parent="org.eventb.core.machineInvariantModule"/>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineTheoremModule"
+            id="machineTheoremModule"
+            name="%scMachineTheoremModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.machineInvariantModule"/>
+      </processorType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineTheoremFreeIdentsModule"
+            id="machineTheoremFreeIdentsModule"
+            name="%scMachineTheoremFreeIdentsModule"
+            parent="org.eventb.core.machineTheoremModule"/>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineCommitIdentsModule"
+            id="machineCommitIdentsModule"
+            name="%scMachineCommitIdentsModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.machineInvariantModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineVariantModule"
+            id="machineVariantModule"
+            name="%scMachineVariantModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.machineCommitIdentsModule"/>
+      </processorType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineVariantFreeIdentsModule"
+            id="machineVariantFreeIdentsModule"
+            name="%scMachineVariantFreeIdentsModule"
+            parent="org.eventb.core.machineVariantModule"/>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineEventModule"
+            id="machineEventModule"
+            name="%scMachineEventModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.machineCommitIdentsModule"/>
+      </processorType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineEventInheritedModule"
+            id="machineEventInheritedModule"
+            name="%scMachineEventInheritedModule"
+            parent="org.eventb.core.machineEventModule"/>
+   </extension>
+   <extension
+         name="%scEventModuleTypes"
+         point="org.eventb.core.scModuleTypes">
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineEventRefinesModule"
+            id="machineEventRefinesModule"
+            name="%scMachineEventRefinesModule"
+            parent="org.eventb.core.machineEventModule"/>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineEventConvergenceModule"
+            id="machineEventConvergenceModule"
+            name="%scMachineEventConvergenceModule"
+            parent="org.eventb.core.machineEventModule">
+         <prereq id="org.eventb.core.machineEventRefinesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineEventVariableModule"
+            id="machineEventVariableModule"
+            name="%scMachineEventVariableModule"
+            parent="org.eventb.core.machineEventModule">
+         <prereq id="org.eventb.core.machineEventRefinesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineEventGuardModule"
+            id="machineEventGuardModule"
+            name="%scMachineEventGuardModule"
+            parent="org.eventb.core.machineEventModule">
+         <prereq id="org.eventb.core.machineEventVariableModule"/>
+      </processorType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineEventGuardFreeIdentsModule"
+            id="machineEventGuardFreeIdentsModule"
+            name="%scMachineEventGuardFreeIdentsModule"
+            parent="org.eventb.core.machineEventGuardModule"/>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineEventCommitIdentsModule"
+            id="machineEventCommitIdentsModule"
+            name="%scMachineEventCommitIdentsModule"
+            parent="org.eventb.core.machineEventModule">
+         <prereq id="org.eventb.core.machineEventGuardModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineEventWitnessModule"
+            id="machineEventWitnessModule"
+            name="%scMachineEventWitnessModule"
+            parent="org.eventb.core.machineEventModule">
+         <prereq id="org.eventb.core.machineEventCommitIdentsModule"/>
+      </processorType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineEventWitnessFreeIdentsModule"
+            id="machineEventWitnessFreeIdentsModule"
+            name="%scMachineEventWitnessFreeIdentsModule"
+            parent="org.eventb.core.machineEventWitnessModule"/>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineEventActionModule"
+            id="machineEventActionModule"
+            name="%scMachineEventActionModule"
+            parent="org.eventb.core.machineEventModule">
+         <prereq id="org.eventb.core.machineEventCommitIdentsModule"/>
+      </processorType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineEventActionFreeIdentsModule"
+            id="machineEventActionFreeIdentsModule"
+            name="%scMachineEventActionFreeIdentsModule"
+            parent="org.eventb.core.machineEventActionModule"/>
+   </extension>
+   <extension
+         name="%pogContextModuleTypes"
+         point="org.eventb.core.pogModuleTypes">
+      <processorType
+            class="org.eventb.internal.core.pog.modules.ContextModule"
+            id="contextModule"
+            name="%pogContextModule"/>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.ContextHypothesesModule"
+            id="contextHypothesesModule"
+            name="%pogContextHypothesesModule"
+            parent="org.eventb.core.contextModule"/>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.ContextAxiomModule"
+            id="contextAxiomModule"
+            name="%pogContextAxiomModule"
+            parent="org.eventb.core.contextModule">
+         <prereq id="org.eventb.core.contextHypothesesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.ContextTheoremModule"
+            id="contextTheoremModule"
+            name="%pogContextTheoremModule"
+            parent="org.eventb.core.contextModule">
+         <prereq id="org.eventb.core.contextHypothesesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.ContextCommitHypothesesModule"
+            id="contextCommitHypothesesModule"
+            name="%pogContextCommitHypothesesModule"
+            parent="org.eventb.core.contextModule">
+         <prereq id="org.eventb.core.contextAxiomModule"/>
+         <prereq id="org.eventb.core.contextTheoremModule"/>
+      </processorType>
+   </extension>
+   <extension
+         name="%pogMachineModuleTypes"
+         point="org.eventb.core.pogModuleTypes">
+      <processorType
+            class="org.eventb.internal.core.pog.modules.MachineModule"
+            id="machineModule"
+            name="%pogMachineModule"/>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineRefinementModule"
+            id="fwdMachineRefinementModule"
+            name="%pogFwdMachineRefinementModule"
+            parent="org.eventb.core.machineModule"/>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineHypothesesModule"
+            id="fwdMachineHypothesesModule"
+            name="%pogFwdMachineHypothesesModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.fwdMachineRefinementModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineInvariantModule"
+            id="fwdMachineInvariantModule"
+            name="%pogFwdMachineInvariantModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.fwdMachineHypothesesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineTheoremModule"
+            id="fwdMachineTheoremModule"
+            name="%pogFwdMachineTheoremModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.fwdMachineHypothesesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineCommitHypothesesModule"
+            id="fwdMachineCommitHypothesesModule"
+            name="%pogFwdMachineCommitHypothesesModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.fwdMachineInvariantModule"/>
+         <prereq id="org.eventb.core.fwdMachineTheoremModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineVariantModule"
+            id="fwdMachineVariantModule"
+            name="%pogFwdMachineVariantModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.fwdMachineCommitHypothesesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineEventModule"
+            id="fwdMachineEventModule"
+            name="%pogFwdMachineEventModule"
+            parent="org.eventb.core.machineModule">
+         <prereq id="org.eventb.core.fwdMachineCommitHypothesesModule"/>
+      </processorType>
+   </extension>
+   <extension
+         name="%pogEventModuleTypes"
+         point="org.eventb.core.pogModuleTypes">
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineEventHypothesesModule"
+            id="fwdMachineEventHypothesesModule"
+            name="%pogFwdMachineEventHypothesesModule"
+            parent="org.eventb.core.fwdMachineEventModule"/>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineEventGuardModule"
+            id="fwdMachineEventGuardModule"
+            name="%pogFwdMachineEventGuardModule"
+            parent="org.eventb.core.fwdMachineEventModule">
+         <prereq id="org.eventb.core.fwdMachineEventHypothesesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineEventCommitHypothesesModule"
+            id="fwdMachineEventCommitHypothesesModule"
+            name="%pogFwdMachineEventCommitHypothesesModule"
+            parent="org.eventb.core.fwdMachineEventModule">
+         <prereq id="org.eventb.core.fwdMachineEventGuardModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineEventWitnessModule"
+            id="fwdMachineEventWitnessModule"
+            name="%pogFwdMachineEventWitnessModule"
+            parent="org.eventb.core.fwdMachineEventModule">
+         <prereq id="org.eventb.core.fwdMachineEventCommitHypothesesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineEventActionModule"
+            id="fwdMachineEventActionModule"
+            name="%pogFwdMachineEventActionModule"
+            parent="org.eventb.core.fwdMachineEventModule">
+         <prereq id="org.eventb.core.fwdMachineEventCommitHypothesesModule"/>
+         <prereq id="org.eventb.core.fwdMachineEventWitnessModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineNewEventInvariantModule"
+            id="fwdMachineNewEventInvariantModule"
+            name="%pogFwdMachineNewEventInvariantModule"
+            parent="org.eventb.core.fwdMachineEventModule">
+         <prereq id="org.eventb.core.fwdMachineEventCommitHypothesesModule"/>
+         <prereq id="org.eventb.core.fwdMachineEventWitnessModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineEventStrengthenGuardModule"
+            id="fwdMachineEventStrengthenGuardModule"
+            name="%pogFwdMachineEventStrengthenGuardModule"
+            parent="org.eventb.core.fwdMachineEventModule">
+         <prereq id="org.eventb.core.fwdMachineEventCommitHypothesesModule"/>
+         <prereq id="org.eventb.core.fwdMachineEventWitnessModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineEventActionBodySimModule"
+            id="fwdMachineEventActionBodySimModule"
+            name="%pogFwdMachineEventActionBodySimModule"
+            parent="org.eventb.core.fwdMachineEventModule">
+         <prereq id="org.eventb.core.fwdMachineEventCommitHypothesesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineEventActionFrameSimModule"
+            id="fwdMachineEventActionFrameSimModule"
+            name="%pogFwdMachineEventActionFrameSimModule"
+            parent="org.eventb.core.fwdMachineEventModule">
+         <prereq id="org.eventb.core.fwdMachineEventCommitHypothesesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineEventVariantModule"
+            id="fwdMachineEventVariantModule"
+            name="%pogFwdMachineEventVariantModule"
+            parent="org.eventb.core.fwdMachineEventModule">
+         <prereq id="org.eventb.core.fwdMachineEventCommitHypothesesModule"/>
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.pog.modules.FwdMachineRefEventInvariantModule"
+            id="fwdMachineRefEventInvariantModule"
+            name="%pogFwdMachineRefEventInvariantModule"
+            parent="org.eventb.core.fwdMachineEventModule">
+         <prereq id="org.eventb.core.fwdMachineEventCommitHypothesesModule"/>
+         <prereq id="org.eventb.core.fwdMachineEventWitnessModule"/>
+      </processorType>
    </extension>
 
 </plugin>

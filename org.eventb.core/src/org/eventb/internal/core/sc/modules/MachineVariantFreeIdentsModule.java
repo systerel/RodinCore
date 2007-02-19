@@ -10,10 +10,13 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
@@ -24,6 +27,13 @@ import org.rodinp.core.IRodinProblem;
  */
 public class MachineVariantFreeIdentsModule extends MachineFormulaFreeIdentsModule {
 	
+	public static final IModuleType<MachineVariantFreeIdentsModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariantFreeIdentsModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
+
 	@Override
 	protected IRodinProblem declaredFreeIdentifierError() {
 		return GraphProblem.VariantFreeIdentifierError;

@@ -10,13 +10,16 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ICurrentEvent;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -27,6 +30,13 @@ import org.rodinp.core.IRodinProblem;
  *
  */
 public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule {
+
+	public static final IModuleType<MachineEventActionFreeIdentsModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventActionFreeIdentsModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
 
 	private boolean isInitialisation;
 	

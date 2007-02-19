@@ -25,13 +25,9 @@ public class BaseConfigManager extends ConfigManager<String, BaseConfig> {
 	
 	@Override
 	protected void analyseConfigs(List<BaseConfig> configList) {
-		ConfigGraph graph = new ConfigGraph();
+		ConfigGraph graph = new ConfigGraph("BASE");
 		graph.addAll(configList);
-		graph.sort();
-		if(!graph.isPartialOrder())
-			throw new IllegalStateException(
-					"Configuration graph is cyclic. Involved configurations: " + 
-					graph.getCycle(), null);
+		graph.analyse();
 	}
 
 	public static BaseConfigManager getInstance() {

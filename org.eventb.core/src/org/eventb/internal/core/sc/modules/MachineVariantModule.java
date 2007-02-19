@@ -20,14 +20,13 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.VariantInfo;
 import org.eventb.internal.core.sc.symbolTable.VariantSymbolInfo;
 import org.rodinp.core.IInternalElement;
@@ -41,15 +40,11 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineVariantModule extends ExpressionModule<IVariant> {
 
-	public static final String MACHINE_VARIANT_FILTER = 
-		EventBPlugin.PLUGIN_ID + ".machineVariantFilter";
-
-	private final ISCFilterModule[] filterModules;
-
-	public MachineVariantModule() {
-		ISCModuleManager manager = ModuleManager.getModuleManager();
-		filterModules = 
-			manager.getFilterModules(MACHINE_VARIANT_FILTER);
+	public static final IModuleType<MachineVariantModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariantModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
 	}
 
 	private static String VARIANT_NAME_PREFIX = "VAR";
@@ -110,7 +105,6 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 		
 		checkAndType(
 				target, 
-				filterModules,
 				element.getElementName(),
 				repository,
 				monitor);

@@ -20,6 +20,7 @@ import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGHint;
 import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGSource;
+import org.eventb.core.tool.IProcessorModule;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -28,7 +29,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class POGProcessorModule implements IPOGProcessorModule {
+public abstract class POGProcessorModule extends POGModule implements IPOGProcessorModule {
 	
 	private static final String SEQ_HYP_NAME = "SEQHYP";
 	private static final String PRD_NAME_PREFIX = "PRD";
@@ -127,33 +128,33 @@ public abstract class POGProcessorModule implements IPOGProcessorModule {
 
 	}
 
-	protected void initModules(
+	final protected void initModules(
 			IRodinElement element,
-			IPOGProcessorModule[] modules,
 			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		for (IPOGProcessorModule module : modules) {
-			module.initModule(element, repository, monitor);
+		for (IProcessorModule module : getProcessorModules()) {
+			IPOGProcessorModule pogModule = (IPOGProcessorModule) module;
+			pogModule.initModule(element, repository, monitor);
 		}
 	}
 	
-	protected void processModules(
-			IPOGProcessorModule[] modules, 
+	final protected void processModules(
 			IRodinElement element, 
 			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		for (IPOGProcessorModule module : modules) {
-			module.process(element, repository, monitor);
+		for (IProcessorModule module : getProcessorModules()) {
+			IPOGProcessorModule pogModule = (IPOGProcessorModule) module;
+			pogModule.process(element, repository, monitor);
 		}
 	}
 	
-	protected void endModules(
+	final protected void endModules(
 			IRodinElement element,
-			IPOGProcessorModule[] modules,
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		for (IPOGProcessorModule module : modules) {
-			module.endModule(element, repository, monitor);
+		for (IProcessorModule module : getProcessorModules()) {
+			IPOGProcessorModule pogModule = (IPOGProcessorModule) module;
+			pogModule.endModule(element, repository, monitor);
 		}
 	}
 	

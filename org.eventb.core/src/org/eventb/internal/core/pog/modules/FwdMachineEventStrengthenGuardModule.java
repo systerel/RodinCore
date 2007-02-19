@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ISCEvent;
@@ -20,6 +21,7 @@ import org.eventb.core.ISCGuard;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
@@ -27,6 +29,7 @@ import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGSource;
 import org.eventb.core.pog.util.POGTraceablePredicate;
+import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -36,6 +39,13 @@ import org.rodinp.core.RodinDBException;
  */
 public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinementModule {
 	
+	public static final IModuleType<FwdMachineEventStrengthenGuardModule> MODULE_TYPE = 
+		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineEventStrengthenGuardModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
+
 	protected IConcreteEventGuardTable concreteEventGuardTable;
 
 	/* (non-Javadoc)

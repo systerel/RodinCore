@@ -25,8 +25,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.ICurrentEvent;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
@@ -36,7 +35,7 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
-import org.eventb.internal.core.sc.ModuleManager;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.WitnessSymbolInfo;
 import org.rodinp.core.IInternalParent;
@@ -49,16 +48,13 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 
-	public static final String MACHINE_EVENT_WITNESS_FILTER = 
-		EventBPlugin.PLUGIN_ID + ".machineEventWitnessFilter";
-
-	private ISCFilterModule[] filterModules;
-
-	public MachineEventWitnessModule() {
-		ISCModuleManager manager = ModuleManager.getModuleManager();
-		filterModules = manager.getFilterModules(MACHINE_EVENT_WITNESS_FILTER);
-	}
+	public static final IModuleType<MachineEventWitnessModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventWitnessModule"); //$NON-NLS-1$
 	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
+
 	Predicate btrue;
 	FormulaFactory factory;
 	ICurrentEvent currentEvent;
@@ -86,7 +82,6 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		if (formulaElements.length > 0)
 			checkAndType(
 					target, 
-					filterModules,
 					element.getElementName(),
 					repository,
 					monitor);

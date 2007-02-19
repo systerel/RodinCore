@@ -22,20 +22,24 @@ public class ProcessorModuleNode extends ModuleNode {
 		super(object, id, predecs);
 	}
 
-	public void connect(ModuleGraph graph) {
-		connectParent(graph);
-		connectFilters(graph);
-		super.connect(graph);
+	@Override
+	public void connect(Graph<ModuleDesc<? extends IModule>> graph) {
+		ModuleGraph moduleGraph = (ModuleGraph) graph;
+//		connectParent(moduleGraph);
+		connectFilters(moduleGraph);
+		super.connect(moduleGraph);
 	}
 
 	@Override
 	public void storeFilterInParent(ModuleNode node) {
-		assert getObject().getParent() == node.getId();
+		assert getObject().getParent().equals(node.getId());
 		// nothing to do
 	}
 
 	protected void connectFilters(ModuleGraph graph) {
 		String parent = getObject().getParent();
+		if (parent == null)
+			return;
 		ModuleNode pNode = graph.getNode(parent);
 		List<ModuleNode> filters = pNode.getChildFilters();
 		for (ModuleNode node : filters) {
@@ -43,6 +47,11 @@ public class ProcessorModuleNode extends ModuleNode {
 			if (incr)
 				count++;
 		}
+	}
+
+	@Override
+	public boolean canBeParent() {
+		return true;
 	}
 
 }

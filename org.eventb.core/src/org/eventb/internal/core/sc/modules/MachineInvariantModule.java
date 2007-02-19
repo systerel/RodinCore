@@ -16,15 +16,14 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineFile;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractMachineInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.InvariantSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -36,14 +35,11 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineInvariantModule extends PredicateWithTypingModule<IInvariant> {
 
-	public static final String MACHINE_INVARIANT_FILTER = 
-		EventBPlugin.PLUGIN_ID + ".machineInvariantFilter";
-
-	private ISCFilterModule[] filterModules;
-
-	public MachineInvariantModule() {
-		ISCModuleManager manager = ModuleManager.getModuleManager();
-		filterModules = manager.getFilterModules(MACHINE_INVARIANT_FILTER);
+	public static final IModuleType<MachineInvariantModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineInvariantModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
 	}
 
 	private static String INVARIANT_NAME_PREFIX = "INV";
@@ -75,7 +71,6 @@ public class MachineInvariantModule extends PredicateWithTypingModule<IInvariant
 		
 		checkAndType(
 				target, 
-				filterModules,
 				element.getElementName(),
 				repository,
 				monitor);

@@ -16,14 +16,13 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCContextFile;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.AxiomSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -35,15 +34,11 @@ import org.rodinp.core.RodinDBException;
  */
 public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 
-	public static final String CONTEXT_AXIOM_FILTER = 
-		EventBPlugin.PLUGIN_ID + ".contextAxiomFilter";
-
-	private final ISCFilterModule[] filterModules;
-
-	public ContextAxiomModule() {
-		ISCModuleManager manager = ModuleManager.getModuleManager();
-		filterModules = 
-			manager.getFilterModules(CONTEXT_AXIOM_FILTER);
+	public static final IModuleType<ContextAxiomModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextAxiomModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
 	}
 
 	private static String AXIOM_NAME_PREFIX = "AXM";
@@ -65,7 +60,6 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 		
 		checkAndType(
 				target, 
-				filterModules,
 				element.getElementName(),
 				repository,
 				monitor);

@@ -7,8 +7,11 @@
  *******************************************************************************/
 package org.eventb.core.sc;
 
+import org.eventb.core.tool.IModule;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.core.tool.state.IState;
 import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.SCModuleManager;
 import org.eventb.internal.core.tool.state.SCStateTypeManager;
 
 /**
@@ -34,7 +37,27 @@ public final class SCCore {
 		if (result != null) {
 			return result;
 		}
-		throw new IllegalArgumentException("Unknown sc tool state type: " + id);
+		throw new IllegalArgumentException("Unknown SC tool state type: " + id);
+	}
+	
+	/**
+	 * Returns the module type with the given id.
+	 * 
+	 * @param id
+	 *            unique identifier of the module type
+	 * @return the module type with the given id
+	 * @throws IllegalArgumentException
+	 *             if no such module type has been contributed
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends IModule> IModuleType<T> getModuleType(
+			String id) {
+		final SCModuleManager manager = SCModuleManager.getInstance();
+		final IModuleType result = manager.getModuleDesc(id);
+		if (result != null) {
+			return result;
+		}
+		throw new IllegalArgumentException("Unknown SC module type: " + id);
 	}
 
 }

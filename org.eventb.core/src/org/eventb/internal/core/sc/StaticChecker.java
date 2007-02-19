@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.IContextTable;
@@ -28,7 +29,7 @@ import org.rodinp.core.builder.IExtractor;
  * @author Stefan Hallerstede
  *
  */
-public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
+public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 
 	public static boolean DEBUG = false;
 	
@@ -40,6 +41,9 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 
 	private final static int CONTEXT_TABLE_SIZE = 137;
 
+	protected static final String DEFAULT_CONFIG = EventBPlugin.PLUGIN_ID + ".fwd";
+
+	// TODO: move non-constructor state elements to BaseModule
 	protected ISCStateRepository createRepository(
 			IRodinFile file, 
 			IProgressMonitor monitor) throws CoreException {
@@ -97,9 +101,9 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 	}
 
 	protected void runProcessorModules(
+			ISCProcessorModule rootModule,
 			IRodinFile file, 
 			IInternalParent target, 
-			ISCProcessorModule[] modules, 
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
@@ -108,33 +112,11 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 				true, 
 				IResource.DEPTH_INFINITE);
 		
-		for(ISCProcessorModule module : modules) {
-			
-			module.initModule(
-					file, 
-					repository, 
-					monitor);
+		rootModule.initModule(file, repository, monitor);
 	
-		}		
-	
-		for(ISCProcessorModule module : modules) {
-			
-			module.process(
-					file, 
-					target,
-					repository, 
-					monitor);
-	
-		}		
+		rootModule.process(file, target, repository, monitor);
 		
-		for(ISCProcessorModule module : modules) {
-			
-			module.endModule(
-					file, 
-					repository, 
-					monitor);
-	
-		}		
+		rootModule.endModule(file, repository, monitor);	
 	
 	}
 

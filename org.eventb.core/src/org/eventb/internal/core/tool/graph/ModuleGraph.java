@@ -16,6 +16,10 @@ import org.eventb.internal.core.tool.ModuleDesc;
  */
 public class ModuleGraph extends Graph<ModuleDesc<? extends IModule>> {
 
+	public ModuleGraph(String creator) {
+		super(creator);
+	}
+
 	public void analyse(ParentGraph parentGraph) {
 		complete(parentGraph);
 		analyse();
@@ -23,19 +27,25 @@ public class ModuleGraph extends Graph<ModuleDesc<? extends IModule>> {
 
 	@Override
 	public ModuleNode getNode(String id) {
+		assert id != null;
 		return (ModuleNode) super.getNode(id);
 	}
 	
-	public void complete(ParentGraph parentGraph) {
+	private void complete(ParentGraph parentGraph) {
 		for (String id : parentGraph) {
 			ModuleNode node = getNode(id);
 			String parentId = node.getObject().getParent();
 			if (parentId == null)
 				continue;
 			ModuleNode pNode = getNode(parentId);
+			if (pNode == null)
+				throw new IllegalStateException("Unknown parent " + parentId + " for module type " + id);
+			if (!pNode.canBeParent())
+				throw new IllegalStateException("Module type " + id + " cannot be parent");
 			for (String reqId : node.getPredecs()) {
 				pNode.addPredec(reqId);
 			}
+			pNode.addPredec(id);
 			
 			node.storeFilterInParent(pNode);
 		}
@@ -48,7 +58,7 @@ public class ModuleGraph extends Graph<ModuleDesc<? extends IModule>> {
 
 	@Override
 	public String getName() {
-		return "Module graph";
+		return super.getName() + " Module graph";
 	}
 
 }

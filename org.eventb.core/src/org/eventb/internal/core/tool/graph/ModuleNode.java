@@ -26,16 +26,18 @@ public abstract class ModuleNode extends Node<ModuleDesc<? extends IModule>> {
 		childFilters = new LinkedList<ModuleNode>();
 	}
 	
-	protected void connectParent(ModuleGraph graph) {
-		String parent = getObject().getParent();
-		Node<ModuleDesc<? extends IModule>> node = graph.getNode(parent);
-		if (node == null)
-			throw new IllegalStateException(
-					"Cannot find parent: " + parent + " for node: " + getId(), null);
-		boolean incr = node.addSucc(this);
-		if (incr)
-			count++;
-	}
+//	protected void connectParent(ModuleGraph graph) {
+//		String parent = getObject().getParent();
+//		if (parent == null)
+//			return;
+//		ModuleNode node = graph.getNode(parent);
+//		if (node == null)
+//			throw new IllegalStateException(
+//					"Cannot find parent: " + parent + " for node: " + getId(), null);
+//		boolean incr = node.addSucc(this);
+//		if (incr)
+//			count++;
+//	}
 	
 	protected void addChildFilter(ModuleNode node) {
 		if (childFilters.contains(node))
@@ -48,5 +50,7 @@ public abstract class ModuleNode extends Node<ModuleDesc<? extends IModule>> {
 	}
 	
 	public abstract void storeFilterInParent(ModuleNode node);
+	
+	public abstract boolean canBeParent();
 	
 }

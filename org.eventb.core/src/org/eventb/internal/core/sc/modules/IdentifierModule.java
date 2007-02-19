@@ -16,7 +16,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -92,19 +91,16 @@ public abstract class IdentifierModule extends SCProcessorModule {
 	 * 
 	 * @param elements the identifier elements to fetch
 	 * @param target the target static checked container
-	 * @param rules the additional rules to take into account
-	 * the type environment updated accordingly
 	 * @param repository the state repository
 	 * @throws CoreException if there was a problem accessing the symbol table
 	 */
 	protected void fetchSymbols(
 			IIdentifierElement[] elements,
 			IInternalParent target,
-			ISCFilterModule[] rules,
 			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
-		initFilterModules(rules, repository, null);
+		initFilterModules(repository, null);
 		
 		for(IIdentifierElement element : elements) {
 			FreeIdentifier identifier = parseIdentifier(element, monitor);
@@ -120,7 +116,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 					element,
 					newSymbolInfo);
 
-			if (!ok || !filterModules(rules, element, repository, null))
+			if (!ok || !filterModules(element, repository, null))
 				continue;
 				
 			typeIdentifierSymbol(newSymbolInfo, typeEnvironment);
@@ -129,7 +125,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 				
 		}
 		
-		endFilterModules(rules, repository, null);
+		endFilterModules(repository, null);
 	}
 	
 	protected abstract IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element);

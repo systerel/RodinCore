@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
-import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinDBException;
@@ -27,13 +26,11 @@ public abstract class TheoremModule extends PredicateModule<ITheorem> {
 	protected void checkAndSaveTheorems(
 			IInternalParent target, 
 			int offset,
-			ISCFilterModule[] rules, 
 			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		checkAndType(
 				target, 
-				rules,
 				target.getElementName(),
 				repository,
 				monitor);

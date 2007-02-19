@@ -20,7 +20,6 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.IParsedFormula;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -258,16 +257,14 @@ extends LabeledElementModule {
 		return false;
 	}
 
-		/**
+	/**
 	 * @param target the target static checked container
-		 * @param modules additional rules for the predicate elements
-		 * @param component the name of the component that contains the predicate elements
-		 * @param repository the state repository
-		 * @throws CoreException if there was a problem accessing the database or the symbol table
+	 * @param component the name of the component that contains the predicate elements
+	 * @param repository the state repository
+	 * @throws CoreException if there was a problem accessing the database or the symbol table
 	 */
 	protected void checkAndType(
 			IInternalParent target,
-			ISCFilterModule[] modules,
 			String component,
 			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
@@ -281,7 +278,7 @@ extends LabeledElementModule {
 		
 		createParsedState(repository);
 		
-		initFilterModules(modules, repository, null);
+		initFilterModules(repository, null);
 		
 		for (int i=0; i<formulaElements.length; i++) {
 			
@@ -308,7 +305,7 @@ extends LabeledElementModule {
 				
 				setParsedState(formula);
 			
-				if (!filterModules(modules, formulaElement, repository, null)) {
+				if (!filterModules(formulaElement, repository, null)) {
 					// the predicate will be rejected
 					// and will not contribute to the type environment!
 					ok = false;
@@ -339,7 +336,7 @@ extends LabeledElementModule {
 			
 		}
 		
-		endFilterModules(modules, repository, null);
+		endFilterModules(repository, null);
 		
 		removeParsedState(repository);
 	}

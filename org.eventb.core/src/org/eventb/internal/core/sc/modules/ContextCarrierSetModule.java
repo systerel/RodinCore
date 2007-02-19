@@ -15,12 +15,11 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.ConcreteCarrierSetSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -31,14 +30,11 @@ import org.rodinp.core.IRodinElement;
  */
 public class ContextCarrierSetModule extends IdentifierModule {
 
-	public static final String CONTEXT_CARRIERSET_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".contextCarrierSetAcceptor";
-
-	private ISCFilterModule[] modules;
-
-	public ContextCarrierSetModule() {
-		ISCModuleManager manager = ModuleManager.getModuleManager();
-		modules = manager.getFilterModules(CONTEXT_CARRIERSET_ACCEPTOR);
+	public static final IModuleType<ContextCarrierSetModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextCarrierSetModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
 	}
 
 	/* (non-Javadoc)
@@ -62,7 +58,6 @@ public class ContextCarrierSetModule extends IdentifierModule {
 		fetchSymbols(
 				carrierSets,
 				target,
-				modules,
 				repository, 
 				monitor);
 	}

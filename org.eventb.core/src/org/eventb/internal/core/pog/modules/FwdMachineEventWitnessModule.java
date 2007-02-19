@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ISCWitness;
@@ -24,12 +25,14 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IEventWitnessTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGIntervalSelectionHint;
 import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGSource;
 import org.eventb.core.pog.util.POGTraceablePredicate;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.pog.EventWitnessTable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -39,6 +42,13 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModule {
+
+	public static final IModuleType<FwdMachineEventWitnessModule> MODULE_TYPE = 
+		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineEventWitnessModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)

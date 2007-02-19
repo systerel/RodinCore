@@ -7,12 +7,15 @@
  *******************************************************************************/
 package org.eventb.core.pog;
 
+import org.eventb.core.tool.IModuleType;
+import org.eventb.core.tool.IProcessorModule;
+
 /**
  * @author Stefan Hallerstede
  *
  */
 public interface IPOGModuleManager {
 
-	public abstract IPOGProcessorModule[] getProcessorModules(String moduleType);
+	public abstract IPOGProcessorModule[] getProcessorModules(IModuleType<? extends IProcessorModule> moduleType);
 
 }

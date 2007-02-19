@@ -8,7 +8,10 @@
 package org.eventb.internal.core.sc.modules;
 
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.EventBPlugin;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinProblem;
 
@@ -17,6 +20,13 @@ import org.rodinp.core.IRodinProblem;
  *
  */
 public class ContextAxiomFreeIdentsModule extends FormulaFreeIdentsModule {
+
+	public static final IModuleType<ContextAxiomFreeIdentsModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextAxiomFreeIdentsModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.FormulaFreeIdentsModule#declaredFreeIdentifierErrorMessage()

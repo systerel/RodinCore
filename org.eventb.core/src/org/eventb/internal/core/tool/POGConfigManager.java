@@ -47,7 +47,7 @@ public class POGConfigManager extends ConfigManager<ModuleDesc<? extends IModule
 	protected void printConfig(ModuleConfig config) {
 		System.out.println("  " + config.getId());
 		System.out.println("    name: " + config.getName());
-		for (ModuleDesc<? extends IModule> desc : config.getModules()) {
+		for (ModuleDesc<? extends IModule> desc : config.getModuleDescs()) {
 			System.out.println("    - " + desc.getId());
 		}
 	}

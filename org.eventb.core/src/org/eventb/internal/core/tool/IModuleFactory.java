@@ -8,6 +8,7 @@
 package org.eventb.internal.core.tool;
 
 import org.eventb.core.tool.IFilterModule;
+import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.core.tool.IProcessorModule;
 
@@ -17,9 +18,10 @@ import org.eventb.core.tool.IProcessorModule;
  */
 public interface IModuleFactory {
 	
-	IFilterModule[] getFilterModules(IModuleType<? extends IProcessorModule> parent);
+	IFilterModule[] getFilterModules(IModuleType<? extends IModule> parentType);
 	
-	IProcessorModule[] getProcessorModules(IModuleType<? extends IProcessorModule> parent);
+	IProcessorModule[] getProcessorModules(IModuleType<? extends IModule> parentType);
 	
-
+	IProcessorModule getRootModule(IModuleType<? extends IModule> type);
+	
 }

@@ -5,21 +5,21 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 package org.eventb.internal.core.sc;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
-import org.eventb.core.sc.ISCModuleManager;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.internal.core.sc.modules.ContextModule;
 import org.eventb.internal.core.sc.symbolTable.ContextLabelSymbolTable;
+import org.eventb.internal.core.tool.IModuleFactory;
+import org.eventb.internal.core.tool.SCModuleManager;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
@@ -29,21 +29,8 @@ import org.rodinp.core.builder.IGraph;
  *
  */
 public class ContextStaticChecker extends StaticChecker {
-	
+
 	private final static int LABEL_SYMTAB_SIZE = 2047;
-
-	public static final String CONTEXT_SC_TOOL_ID = EventBPlugin.PLUGIN_ID + ".contextSC"; //$NON-NLS-1$
-	public static final String CONTEXT_SC_EXTENDS_ID = EventBPlugin.PLUGIN_ID + ".contextSCExtends"; //$NON-NLS-1$
-
-	public static final String CONTEXT_PROCESSOR = EventBPlugin.PLUGIN_ID + ".contextProcessor"; //$NON-NLS-1$
-	
-	private final ISCModuleManager manager;
-	
-	private ISCProcessorModule[] contextProcessorModules = null;
-	
-	public ContextStaticChecker() {
-		manager = ModuleManager.getModuleManager();
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IAutomaticTool#run(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
@@ -64,23 +51,23 @@ public class ContextStaticChecker extends StaticChecker {
 							StaticChecker.getStrippedComponentName(file.getName())), 
 					size);
 
-			if (contextProcessorModules == null) {
-			
-				contextProcessorModules = manager.getProcessorModules(CONTEXT_PROCESSOR);
-			
-			}
-		
 			scContextFile.create(true, monitor);
 
 			ISCStateRepository repository = createRepository(contextFile, monitor);
 		
 			contextFile.open(new SubProgressMonitor(monitor, 1));
 			scContextFile.open(new SubProgressMonitor(monitor, 1));
+			
+			IModuleFactory moduleFactory = 
+				SCModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
+			
+			ISCProcessorModule rootModule = 
+				(ISCProcessorModule) moduleFactory.getRootModule(ContextModule.MODULE_TYPE);
 		
 			runProcessorModules(
+					rootModule,
 					contextFile, 
 					scContextFile,
-					contextProcessorModules, 
 					repository,
 					monitor);
 		
@@ -97,6 +84,18 @@ public class ContextStaticChecker extends StaticChecker {
 		}
 	}
 
+	@Override
+	// TODO: move non-constructor state elements to ContextModule
+	protected ISCStateRepository createRepository(
+			IRodinFile file, 
+			IProgressMonitor monitor) throws CoreException {
+		ISCStateRepository repository = super.createRepository(file, monitor);
+		final ContextLabelSymbolTable labelSymbolTable = 
+			new ContextLabelSymbolTable(LABEL_SYMTAB_SIZE);
+		repository.setState(labelSymbolTable);		
+		return repository;
+	}
+	
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		
 		try {
@@ -124,17 +123,6 @@ public class ContextStaticChecker extends StaticChecker {
 			monitor.done();
 		}
 
-	}
-
-	@Override
-	protected ISCStateRepository createRepository(
-			IRodinFile file, 
-			IProgressMonitor monitor) throws CoreException {
-		ISCStateRepository repository = super.createRepository(file, monitor);
-		final ContextLabelSymbolTable labelSymbolTable = 
-			new ContextLabelSymbolTable(LABEL_SYMTAB_SIZE);
-		repository.setState(labelSymbolTable);		
-		return repository;
 	}
 
 }

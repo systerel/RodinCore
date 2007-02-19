@@ -13,15 +13,18 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineFile;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IInternalParent;
@@ -32,6 +35,13 @@ import org.rodinp.core.IRodinElement;
  *
  */
 public class MachineContextClosureModule extends SCProcessorModule {
+
+	public static final IModuleType<MachineContextClosureModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineContextClosureModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)

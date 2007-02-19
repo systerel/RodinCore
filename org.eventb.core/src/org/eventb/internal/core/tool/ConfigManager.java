@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.tool;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +25,7 @@ import org.eventb.core.EventBPlugin;
 public abstract class ConfigManager<T, C extends ConfigWithClosure<T>> extends SortingUtil {
 	
 	// Local id of the configuration extension point of this plugin
-	private static final String CONFIGURATION_ID = "configuration";
+	private static final String CONFIGURATION_ID = "configurations";
 	
 	// Access to configurations using their unique id
 	private Map<String, C> configs;
@@ -96,10 +97,12 @@ public abstract class ConfigManager<T, C extends ConfigWithClosure<T>> extends S
 		return configs.get(id);
 	}
 	
+	private List<T> NO_CONFIG = new ArrayList<T>(0);
+	
 	public List<T> getConfigClosure(String id) {
 		C config = getConfig(id);
 		if (config == null)
-			return null;
+			return NO_CONFIG;
 		return config.computeClosure(configs);
 	}
 	

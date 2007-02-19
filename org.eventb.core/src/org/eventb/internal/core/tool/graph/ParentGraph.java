@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.tool.graph;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,6 +19,11 @@ import org.eventb.internal.core.tool.ModuleDesc;
  *
  */
 public class ParentGraph extends Graph<ModuleDesc<? extends IModule>> implements Iterable<String> {
+
+	public ParentGraph(String creator) {
+		super(creator);
+		roots = new ArrayList<Node<ModuleDesc<? extends IModule>>>();
+	}
 
 	private List<Node<ModuleDesc<? extends IModule>>> roots;
 	
@@ -66,7 +72,7 @@ public class ParentGraph extends Graph<ModuleDesc<? extends IModule>> implements
 
 	@Override
 	public String getName() {
-		return "Parent graph";
+		return super.getName() + " Parent graph";
 	}
 
 	// returns the ids of all nodes from leafs down to the roots

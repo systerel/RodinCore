@@ -7,8 +7,11 @@
  *******************************************************************************/
 package org.eventb.core.pog;
 
+import org.eventb.core.tool.IModule;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.core.tool.state.IState;
 import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.POGModuleManager;
 import org.eventb.internal.core.tool.state.POGStateTypeManager;
 
 /**
@@ -34,7 +37,27 @@ public final class POGCore {
 		if (result != null) {
 			return result;
 		}
-		throw new IllegalArgumentException("Unknown pog tool state type: " + id);
+		throw new IllegalArgumentException("Unknown POG tool state type: " + id);
+	}
+
+	/**
+	 * Returns the module type with the given id.
+	 * 
+	 * @param id
+	 *            unique identifier of the module type
+	 * @return the module type with the given id
+	 * @throws IllegalArgumentException
+	 *             if no such module type has been contributed
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends IModule> IModuleType<T> getModuleType(
+			String id) {
+		final POGModuleManager manager = POGModuleManager.getInstance();
+		final IModuleType result = manager.getModuleDesc(id);
+		if (result != null) {
+			return result;
+		}
+		throw new IllegalArgumentException("Unknown POG module type: " + id);
 	}
 
 }

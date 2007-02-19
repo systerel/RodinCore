@@ -34,6 +34,7 @@ public class ModuleFactory implements IModuleFactory {
 		List<ModuleDesc<? extends IModule>> filters = filterMap.get(key);
 		if (filters == null) {
 			filters = new ArrayList<ModuleDesc<? extends IModule>>();
+			filterMap.put(key, filters);
 		}
 		filters.add(filter);
 	}
@@ -44,6 +45,7 @@ public class ModuleFactory implements IModuleFactory {
 		List<ModuleDesc<? extends IModule>> processors = processorMap.get(key);
 		if (processors == null) {
 			processors = new ArrayList<ModuleDesc<? extends IModule>>();
+			processorMap.put(key, processors);
 		}
 		processors.add(processor);
 	}
@@ -60,7 +62,7 @@ public class ModuleFactory implements IModuleFactory {
 	IFilterModule[] NO_FILTERS = new IFilterModule[0];
 	IProcessorModule[] NO_PROCESSORS = new IProcessorModule[0];
 
-	public IFilterModule[] getFilterModules(IModuleType<? extends IProcessorModule> parent) {
+	public IFilterModule[] getFilterModules(IModuleType<? extends IModule> parent) {
 		List<ModuleDesc<? extends IModule>> filters = filterMap.get(parent);
 		if (filters == null)
 			return NO_FILTERS;
@@ -68,11 +70,12 @@ public class ModuleFactory implements IModuleFactory {
 		IFilterModule[] filterModules = new IFilterModule[size];
 		for (int k=0; k<size; k++) {
 			filterModules[k] = (IFilterModule) filters.get(k).createInstance();
+			setModuleFactory(filterModules[k]);
 		}
 		return filterModules;
 	}
 
-	public IProcessorModule[] getProcessorModules(IModuleType<? extends IProcessorModule> parent) {
+	public IProcessorModule[] getProcessorModules(IModuleType<? extends IModule> parent) {
 		List<ModuleDesc<? extends IModule>> processors = processorMap.get(parent);
 		if (processors == null)
 			return NO_PROCESSORS;
@@ -80,8 +83,25 @@ public class ModuleFactory implements IModuleFactory {
 		IProcessorModule[] processorModules = new IProcessorModule[size];
 		for (int k=0; k<size; k++) {
 			processorModules[k] = (IProcessorModule) processors.get(k).createInstance();
+			setModuleFactory(processorModules[k]);
 		}
 		return processorModules;
+	}
+	
+	private void setModuleFactory(IModule module) {
+		if (module instanceof Module) {
+			Module mm = (Module) module;
+			mm.setModuleFactory(this);
+		}
+	}
+
+	public IProcessorModule getRootModule(IModuleType<? extends IModule> type) {
+		ModuleDesc<? extends IModule> desc = (ModuleDesc<? extends IModule>) type;
+		if (desc.getParent() != null)
+			throw new IllegalArgumentException("Not a root module " + type.getId());
+		IProcessorModule module = (IProcessorModule) desc.createInstance();
+		setModuleFactory(module);
+		return module;
 	}
 
 }

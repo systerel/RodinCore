@@ -28,9 +28,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCModuleManager;
-import org.eventb.core.sc.ISCProcessorModule;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.IEventRefinesInfo;
@@ -43,12 +41,12 @@ import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.AbstractEventInfo;
 import org.eventb.internal.core.sc.AbstractEventTable;
 import org.eventb.internal.core.sc.CurrentEvent;
 import org.eventb.internal.core.sc.EventRefinesInfo;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.EventSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
@@ -65,25 +63,16 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineEventModule extends LabeledElementModule {
 	
+	public static final IModuleType<MachineEventModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
+
 	public static int EVENT_LABEL_SYMTAB_SIZE = 47;
 	public static int EVENT_IDENT_SYMTAB_SIZE = 29;
 
-	public static final String MACHINE_EVENT_FILTER = 
-		EventBPlugin.PLUGIN_ID + ".machineEventFilter";
-
-	public static final String MACHINE_EVENT_PROCESSOR = 
-		EventBPlugin.PLUGIN_ID + ".machineEventProcessor";
-
-	private ISCFilterModule[] filterModules;
-	
-	private ISCProcessorModule[] processorModules;
-
-	public MachineEventModule() {
-		ISCModuleManager manager = ModuleManager.getModuleManager();
-		filterModules = manager.getFilterModules(MACHINE_EVENT_FILTER);
-		processorModules = manager.getProcessorModules(MACHINE_EVENT_PROCESSOR);
-	}
-	
 	IIdentifierSymbolTable identifierSymbolTable;
 	
 	FormulaFactory factory;
@@ -447,11 +436,11 @@ public class MachineEventModule extends LabeledElementModule {
 				addPostValues(eventTypeEnvironment);
 				repository.setTypeEnvironment(eventTypeEnvironment);
 			
-				initProcessorModules(events[i], processorModules, repository, null);
+				initProcessorModules(events[i], repository, null);
 			
-				processModules(processorModules, events[i], scEvents[i], repository, monitor);
+				processModules(events[i], scEvents[i], repository, monitor);
 			
-				endProcessorModules(events[i], processorModules, repository, null);
+				endProcessorModules(events[i], repository, null);
 			}
 			
 			monitor.worked(1);
@@ -466,7 +455,7 @@ public class MachineEventModule extends LabeledElementModule {
 		
 		String machineName = machineFile.getElementName();
 		
-		initFilterModules(filterModules, repository, null);
+		initFilterModules(repository, null);
 		
 		IEventSymbolInfo[] symbolInfos = new IEventSymbolInfo[events.length];
 		
@@ -489,7 +478,7 @@ public class MachineEventModule extends LabeledElementModule {
 				fetchRefinement(machineFile, event, (EventSymbolInfo) symbolInfos[i], false, monitor);
 			}
 			
-			if (!filterModules(filterModules, event, repository, null)) {
+			if (!filterModules(event, repository, null)) {
 				symbolInfos[i].setError();
 				continue;
 			}
@@ -502,7 +491,7 @@ public class MachineEventModule extends LabeledElementModule {
 					GraphProblem.MachineWithoutInitialisationError,
 					machineName);
 		
-		endFilterModules(filterModules, repository, null);
+		endFilterModules(repository, null);
 		
 		return symbolInfos;
 	}

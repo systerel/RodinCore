@@ -10,12 +10,15 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IIdentifierElement;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.IAbstractMachineInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.util.GraphProblem;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IRodinElement;
 
@@ -24,6 +27,13 @@ import org.rodinp.core.IRodinElement;
  *
  */
 public class MachineVariableFromLocalModule extends SCFilterModule {
+
+	public static final IModuleType<MachineVariableFromLocalModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariableFromLocalModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
+	}
 
 	private IAbstractEventTable abstractEventTable;
 	private IAbstractMachineInfo abstractMachineInfo;

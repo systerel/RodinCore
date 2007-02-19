@@ -26,8 +26,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCModuleManager;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -36,7 +35,7 @@ import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.sc.util.GraphProblem;
-import org.eventb.internal.core.sc.ModuleManager;
+import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.ActionSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalParent;
@@ -49,14 +48,11 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineEventActionModule extends AssignmentModule<IAction> {
 
-	public static final String MACHINE_EVENT_ACTION_FILTER = 
-		EventBPlugin.PLUGIN_ID + ".machineEventActionFilter";
-
-	private final ISCFilterModule[] filterModules;
-
-	public MachineEventActionModule() {
-		ISCModuleManager manager = ModuleManager.getModuleManager();
-		filterModules = manager.getFilterModules(MACHINE_EVENT_ACTION_FILTER);
+	public static final IModuleType<MachineEventActionModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventActionModule"); //$NON-NLS-1$
+	
+	public IModuleType<?> getModuleType() {
+		return MODULE_TYPE;
 	}
 
 	private static String ACTION_NAME_PREFIX = "ACT";
@@ -76,7 +72,6 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		if (formulaElements.length > 0)
 			checkAndType(
 					target, 
-					filterModules,
 					element.getParent().getElementName(),
 					repository,
 					monitor);

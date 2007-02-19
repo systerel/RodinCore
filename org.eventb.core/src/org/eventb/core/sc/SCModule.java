@@ -7,18 +7,17 @@
  *******************************************************************************/
 package org.eventb.core.sc;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IEventBFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.util.IMarkerDisplay;
+import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IModule;
+import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.sc.StaticChecker;
+import org.eventb.internal.core.tool.Module;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
@@ -32,7 +31,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class SCModule implements IModule, IMarkerDisplay {
+public abstract class SCModule extends Module implements IModule, IMarkerDisplay {
 	
 	private void traceMarker(IRodinElement element, String message) {
 		
@@ -53,6 +52,29 @@ public abstract class SCModule implements IModule, IMarkerDisplay {
 		}
 	}
 	
+	@Override
+	protected IFilterModule[] getFilterModules() {
+		IFilterModule[] filterModules = super.getFilterModules();
+		traceModules(filterModules);
+		return filterModules;
+	}
+
+	@Override
+	protected IProcessorModule[] getProcessorModules() {
+		IProcessorModule[] processorModules = super.getProcessorModules();
+		traceModules(processorModules);
+		return processorModules;
+	}
+
+	private <M extends IModule> void traceModules(M[] modules) {
+		if (DEBUG_MODULE) {
+			for (IModule module : modules) {
+				System.out.println("SC ACCESS: " + module.getModuleType());
+			}
+		}
+	}
+
+	public static boolean DEBUG_MODULE = false;
 	public void createProblemMarker(
 			IRodinElement element, 
 			IRodinProblem problem, 
@@ -81,69 +103,6 @@ public abstract class SCModule implements IModule, IMarkerDisplay {
 
 		element.createProblemMarker(attributeType, charStart, charEnd+1, problem,
 				args);
-	}
-	
-	protected void initFilterModules(
-			ISCFilterModule[] modules,
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		for (ISCFilterModule module : modules) {
-			module.initModule(repository, monitor);
-		}
-	}
-	
-	protected void initProcessorModules(
-			IRodinElement element,
-			ISCProcessorModule[] modules,
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		for (ISCProcessorModule module : modules) {
-			module.initModule(element, repository, monitor);
-		}
-	}
-	
-	protected boolean filterModules(
-			ISCFilterModule[] modules, 
-			IRodinElement element, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		for (ISCFilterModule module : modules) {
-			ISCFilterModule acceptorModule = module;
-			if (acceptorModule.accept(element, repository, monitor))
-				continue;
-			return false;
-		}
-		return true;
-	}
-	
-	protected void processModules(
-			ISCProcessorModule[] modules, 
-			IRodinElement element, 
-			IInternalParent target,
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		for (ISCProcessorModule module : modules) {
-			module.process(element, target, repository, monitor);
-		}
-	}
-	
-	protected void endFilterModules(
-			ISCFilterModule[] modules, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		for (ISCFilterModule module : modules) {
-			module.endModule(repository, monitor);
-		}
-	}
-
-	protected void endProcessorModules(
-			IRodinElement element,
-			ISCProcessorModule[] modules, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		for (ISCProcessorModule module : modules) {
-			module.endModule(element, repository, monitor);
-		}
 	}
 	
 	@Override

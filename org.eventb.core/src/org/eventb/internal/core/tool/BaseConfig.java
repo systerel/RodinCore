@@ -25,6 +25,6 @@ public class BaseConfig extends ConfigWithClosure<String> {
 	protected List<String> newClosure() {
 		List<String> closure = super.newClosure();
 		closure.add(getId());
-		return null;
+		return closure;
 	}
 }

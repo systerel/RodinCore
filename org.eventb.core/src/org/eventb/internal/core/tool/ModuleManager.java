@@ -27,6 +27,10 @@ import org.eventb.internal.core.tool.graph.ParentGraph;
  */
 public abstract class ModuleManager extends SortingUtil {
 	
+	private static final String FILTER_TYPE = "filterType";
+
+	private static final String PROCESSOR_TYPE = "processorType";
+
 	// Debug flag set from tracing options 
 	public static boolean VERBOSE = false;
 
@@ -55,10 +59,12 @@ public abstract class ModuleManager extends SortingUtil {
 		IConfigurationElement[] elements = 
 			registry.getConfigurationElementsFor(EventBPlugin.PLUGIN_ID, modules_id);
 		
+		loadModules(elements);
+//		for (IConfigurationElement element : elements) {
+//			loadFilterModules(element);
+//			loadProcessorModules(element);
+//		}
 		
-		loadFilterModules(elements);
-		
-		loadProcessorModules(elements);
 		
 		if (VERBOSE) {
 			System.out.println("---------------------------------------------------");
@@ -77,28 +83,31 @@ public abstract class ModuleManager extends SortingUtil {
 
 	protected abstract void verifyProcessor(ProcessorModuleDesc<? extends IProcessorModule> moduleDesc);
 	
-	private void loadProcessorModules(IConfigurationElement[] elements) {
-		
-		for (IConfigurationElement element: elements) {
-			
-			ProcessorModuleDesc<? extends IProcessorModule> processor = 
-				new ProcessorModuleDesc<IProcessorModule>(element);
-			verifyProcessor(processor);
-			register(processor.getId(), processor);
-			
-		}
-	}
-	
 	protected abstract void verifyFilter(FilterModuleDesc<? extends IFilterModule> moduleDesc);
+	
+	protected abstract String getName();
 
-	private void loadFilterModules(IConfigurationElement[] elements) {
+	private void loadModules(IConfigurationElement[] elements) {
 		
 		for (IConfigurationElement element: elements) {
-			
-			FilterModuleDesc<? extends IFilterModule> filter = 
-				new FilterModuleDesc<IFilterModule>(element);
-			verifyFilter(filter);
-			register(filter.getId(), filter);
+			String name = element.getName();
+			if (name.equals(FILTER_TYPE)) {
+				
+				FilterModuleDesc<? extends IFilterModule> filter = 
+					new FilterModuleDesc<IFilterModule>(element);
+				verifyFilter(filter);
+				register(filter.getId(), filter);
+				
+			} else if (name.equals(PROCESSOR_TYPE)) {
+				
+				ProcessorModuleDesc<? extends IProcessorModule> processor = 
+					new ProcessorModuleDesc<IProcessorModule>(element);
+				verifyProcessor(processor);
+				register(processor.getId(), processor);
+				
+			} else {
+				throw new IllegalStateException("Unknown module declaration: " + name);
+			}
 			
 		}
 	}
@@ -133,18 +142,24 @@ public abstract class ModuleManager extends SortingUtil {
 			return factory;
 		
 		List<ModuleDesc<? extends IModule>> moduleList = getModuleListForConfig(configId);
-		ParentGraph parentGraph = new ParentGraph();
-		ModuleGraph moduleGraph = new ModuleGraph();
+		ModuleGraph moduleGraph = sortModules(moduleList, getName());
+		
+		factory = computeModuleFactory(moduleGraph);
+		factoryMap.put(configId, factory);
+		return factory;
+	}
+
+	// this method is part of the testing interface 
+	public static ModuleGraph sortModules(List<ModuleDesc<? extends IModule>> moduleList, String creator) {
+		ParentGraph parentGraph = new ParentGraph(creator);
+		ModuleGraph moduleGraph = new ModuleGraph(creator);
 		for (ModuleDesc<? extends IModule> moduleDesc : moduleList) {
 			parentGraph.add(moduleDesc);
 			moduleGraph.add(moduleDesc);
 		}
 		parentGraph.analyse();
 		moduleGraph.analyse(parentGraph);
-		
-		factory = computeModuleFactory(moduleGraph);
-		factoryMap.put(configId, factory);
-		return factory;
+		return moduleGraph;
 	}
 
 	protected ModuleFactory computeModuleFactory(ModuleGraph moduleGraph) {

@@ -49,13 +49,18 @@ public class BasicDesc {
 	}
 	
 	@Override
-	public final String toString() {
+	public String toString() {
 		return id;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		return id.equals(((BasicDesc) obj).id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
 	}
 
 }

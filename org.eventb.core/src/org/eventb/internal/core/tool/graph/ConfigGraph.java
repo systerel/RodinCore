@@ -15,6 +15,10 @@ import org.eventb.internal.core.tool.BaseConfig;
  */
 public class ConfigGraph extends Graph<BaseConfig> {
 
+	public ConfigGraph(String creator) {
+		super(creator);
+	}
+
 	@Override
 	protected Node<BaseConfig> createNode(BaseConfig object) {
 		return new ConfigNode(object, object.getId(), object.getIncluded());
@@ -22,7 +26,7 @@ public class ConfigGraph extends Graph<BaseConfig> {
 
 	@Override
 	public String getName() {
-		return "Configuration graph";
+		return super.getName() + " Configuration graph";
 	}
 
 }

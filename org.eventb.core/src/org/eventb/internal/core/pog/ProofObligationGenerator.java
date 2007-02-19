@@ -10,6 +10,7 @@ package org.eventb.internal.core.pog;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pog.IPOGProcessorModule;
@@ -22,12 +23,15 @@ import org.rodinp.core.builder.IExtractor;
  * @author Stefan Hallerstede
  *
  */
-public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtractor {
+public abstract class ProofObligationGenerator implements IAutomaticTool, IExtractor {
 
 	public static String PRD_NAME_PREFIX = "PRD";
 	
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_STATE = false;
+	
+	protected static final String DEFAULT_CONFIG = EventBPlugin.PLUGIN_ID + ".fwd";
+
 	
 	protected IPOGStateRepository createRepository(
 			IPOFile target, 
@@ -65,38 +69,15 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	}
 
 	protected void runModules(
+			IPOGProcessorModule rootModule,
 			IRodinFile file, 
-			IPOFile target, 
-			IPOGProcessorModule[] modules, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		for(IPOGProcessorModule module : modules) {
-			
-			module.initModule(
-					file, 
-					repository,
-					monitor);
-	
-		}		
-	
-		for(IPOGProcessorModule module : modules) {
-			
-			module.process(
-					file, 
-					repository,
-					monitor);
-	
-		}		
+		rootModule.initModule(file, repository, monitor);
+		rootModule.process(file, repository, monitor);
+		rootModule.endModule(file, repository, monitor);
 		
-		for(IPOGProcessorModule module : modules) {
-			
-			module.endModule(
-					file, 
-					repository,
-					monitor);
-	
-		}		
 	}
 
 }

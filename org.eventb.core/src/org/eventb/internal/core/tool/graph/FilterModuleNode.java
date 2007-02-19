@@ -20,16 +20,23 @@ public class FilterModuleNode extends ModuleNode {
 		super(object, id, predecs);
 	}
 	
-	public void connect(ModuleGraph graph) {
-		connectParent(graph);
+	@Override
+	public void connect(Graph<ModuleDesc<? extends IModule>> graph) {
+		ModuleGraph moduleGraph = (ModuleGraph) graph;
+//		connectParent(moduleGraph);
 		
-		super.connect(graph);
+		super.connect(moduleGraph);
 	}
 
 	@Override
 	public void storeFilterInParent(ModuleNode node) {
-		assert getObject().getParent() == node.getId();
+		assert getObject().getParent().equals(node.getId());
 		node.addChildFilter(this);
+	}
+
+	@Override
+	public boolean canBeParent() {
+		return false;
 	}
 	
 }
