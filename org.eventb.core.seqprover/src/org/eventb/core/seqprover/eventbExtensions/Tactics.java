@@ -64,6 +64,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePr
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 
 public class Tactics {
@@ -586,5 +587,10 @@ public class Tactics {
 			}
 
 		});
+	}
+
+	public static ITactic removeMembership(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new RemoveMembership(),
+				new RemoveMembership.Input(hyp, position));
 	}
 }

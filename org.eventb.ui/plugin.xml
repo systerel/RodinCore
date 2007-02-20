@@ -1159,6 +1159,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.ModusTollens"
             target="hypothesis"
             tooltip="%proofTactics.mt.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.rmHyp"
+            interrupt="false"
+            name="%proofTactics.rmHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveMembershipHyp"
+            target="hypothesis"
+            tooltip="%proofTactics.rmHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.rmGoal"
+            interrupt="false"
+            name="%proofTactics.rmGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveMembershipGoal"
+            target="goal"
+            tooltip="%proofTactics.rmGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
