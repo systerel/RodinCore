@@ -593,4 +593,19 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new RemoveMembership(),
 				new RemoveMembership.Input(hyp, position));
 	}
+
+	public static List<IPosition> ri_getPositions(Predicate pred) {
+		return pred.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(RelationalPredicate predicate) {
+				if (predicate.getTag() == Predicate.SUBSETEQ) {
+					return true;
+				}
+				return super.select(predicate);
+			}
+			
+		});
+	
+	}
 }

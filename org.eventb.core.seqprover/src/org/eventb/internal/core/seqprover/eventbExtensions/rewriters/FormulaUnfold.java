@@ -249,4 +249,21 @@ public class FormulaUnfold {
 				Q }, null);
 	}
 
+	public static Predicate subsetEq(Expression S, Expression T) {
+		Type type = S.getType();
+		assert type instanceof PowerSetType;
+		Type baseType = type.getBaseType();
+
+		BoundIdentDecl[] identDecls = getBoundIdentDecls(0, baseType);
+		Expression exp = getExpression(0, baseType);
+
+		Predicate P = ff.makeRelationalPredicate(Predicate.IN, exp, S
+				.shiftBoundIdentifiers(identDecls.length, ff), null);
+
+		Predicate Q = ff.makeRelationalPredicate(Predicate.IN, exp, T
+				.shiftBoundIdentifiers(identDecls.length, ff), null);
+		return ff.makeQuantifiedPredicate(Predicate.FORALL, identDecls, ff
+				.makeBinaryPredicate(Predicate.LIMP, P, Q, null), null);
+	}
+
 }

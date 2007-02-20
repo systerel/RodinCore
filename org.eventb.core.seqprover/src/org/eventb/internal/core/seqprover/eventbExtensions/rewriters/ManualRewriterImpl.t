@@ -430,6 +430,13 @@ public class ManualRewriterImpl extends DefaultRewriter {
 	    	In(Mapsto(E, F), RanSub(r, T)) -> {
 	    		return FormulaUnfold.inRanManipulation(false, `E, `F, `r, `T);
 	    	}
+	    	
+	    	/**
+	    	 * Set Theory: S ⊆ T == ∀x·x ∈ S ⇒ x ∈ T
+	    	 */
+	    	SubsetEq(S, T) -> {
+	    		return FormulaUnfold.subsetEq(`S, `T);
+	    	}
 	    }
 	    return predicate;
 	}

@@ -118,6 +118,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership"
             id="rm"
             name="%rmName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion"
+            id="ri"
+            name="%riName"/>
    </extension>
 
 </plugin>
