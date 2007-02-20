@@ -67,7 +67,7 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 		this.contextFiles = contextFiles;
 		
 		indexMap = new ArrayList<String>(arraySize);
-		validContexts = null;
+		validContexts = new ArrayList<ISCContext>(0);
 		
 		for (IInternalElement contextPointer : contextPointers) {
 			indexMap.add(contextPointer.getHandleIdentifier());
