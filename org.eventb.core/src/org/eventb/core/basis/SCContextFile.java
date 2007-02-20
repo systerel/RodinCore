@@ -12,6 +12,7 @@ import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCExtendsContext;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCTheorem;
 import org.rodinp.core.IFileElementType;
@@ -64,6 +65,14 @@ public class SCContextFile extends EventBFile implements ISCContextFile {
 		return getChildrenOfType(ISCInternalContext.ELEMENT_TYPE); 
 	}
 	
+	public ISCExtendsContext getSCExtendsClause(String elementName) {
+		return getInternalElement(ISCExtendsContext.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCExtendsContext[] getSCExtendsClauses() throws RodinDBException {
+		return getChildrenOfType(ISCExtendsContext.ELEMENT_TYPE); 
+	}
+
 	public ISCInternalContext getSCInternalContext(String elementName) {
 		return getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
 	}

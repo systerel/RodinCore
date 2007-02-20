@@ -13,6 +13,7 @@ import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCRefinesMachine;
+import org.eventb.core.ISCSeesContext;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCVariant;
@@ -104,6 +105,10 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 		return getChildrenOfType(ISCRefinesMachine.ELEMENT_TYPE); 
 	}
 
+	public ISCSeesContext[] getSCSeesClauses() throws RodinDBException {
+		return getChildrenOfType(ISCSeesContext.ELEMENT_TYPE); 
+	}
+
 	public ISCVariant[] getSCVariants() throws RodinDBException {
 		return getChildrenOfType(ISCVariant.ELEMENT_TYPE); 
 	}
@@ -118,6 +123,10 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 
 	public ISCRefinesMachine getSCRefinesClause(String elementName) {
 		return getInternalElement(ISCRefinesMachine.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCSeesContext getSCSeesClause(String elementName) {
+		return getInternalElement(ISCSeesContext.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCTheorem getSCTheorem(String elementName) {

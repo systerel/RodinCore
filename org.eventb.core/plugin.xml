@@ -224,6 +224,14 @@
             id="scRefinesMachine"
             name="%eventBscRefinesMachine"/>
       <internalElementType
+            class="org.eventb.core.basis.SCExtendsContext"
+            id="scExtendsContext"
+            name="%eventBscExtendsContext"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCSeesContext"
+            id="scSeesContext"
+            name="%eventBscSeesContext"/>
+      <internalElementType
             class="org.eventb.core.basis.SCVariant"
             id="scVariant"
             name="%eventBscVariant"/>

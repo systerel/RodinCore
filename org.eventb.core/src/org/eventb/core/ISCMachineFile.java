@@ -21,6 +21,7 @@ import org.rodinp.core.RodinDBException;
  * The elements contained in an event-B SC machine file are:
  * <ul>
  * <li>at most one refines clause (<code>ISCRefinesMachine</code>)</li>
+ * <li>sees clauses (<code>ISCSeesContext</code>)</li>
  * <li>internal contexts (<code>ISCInternalContext</code>)</li>
  * <li>variables (<code>ISCVariable</code>)</li>
  * <li>invariants (<code>ISCInvariant</code>)</li>
@@ -117,6 +118,27 @@ public interface ISCMachineFile extends IEventBFile {
 	 */
 	ISCInternalContext[] getSCSeenContexts() 
 	throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child SC sees clause with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC sees clause
+	 * @return a handle to a child SC sees clause with the given element name
+	 */
+	ISCSeesContext getSCSeesClause(String elementName);
+
+	/**
+	 * Returns an array of all SC sees clauses of this SC machine.
+	 * @return an array of SC sees clauses
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCSeesContext[] getSCSeesClauses() throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child SC variable with the given element name.

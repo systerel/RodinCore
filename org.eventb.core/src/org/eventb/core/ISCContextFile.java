@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 ETH Zurich.
+ * Copyright (c) 2005-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.rodinp.core.RodinDBException;
  * <p>
  * The elements contained in an event-B SC context are:
  * <ul>
+ * <li>extends clauses (<code>ISCExtendsContext</code>)</li>
  * <li>internal contexts (<code>ISCInternalContext</code>)</li>
  * <li>carrier sets (<code>ISCCarrierSet</code>)</li>
  * <li>constants (<code>ISCConstant</code>)</li>
@@ -71,5 +72,26 @@ public interface ISCContextFile extends ISCContext, IEventBFile {
 	 *             if there was a problem accessing the database
 	 */
 	ISCInternalContext[] getAbstractSCContexts() throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child SC extends clause with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC extends clause
+	 * @return a handle to a child SC extends clause with the given element name
+	 */
+	ISCExtendsContext getSCExtendsClause(String elementName);
+
+	/**
+	 * Returns an array of all SC extends clauses of this SC context.
+	 * @return an array of SC extends clauses
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCExtendsContext[] getSCExtendsClauses() throws RodinDBException;
 
 }
