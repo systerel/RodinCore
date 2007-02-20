@@ -322,14 +322,14 @@ public abstract class BasicSCTest extends EventBTest {
 	}
 
 	public void refinesEvents(ISCEvent event, String... strings) throws RodinDBException {
-		ISCRefinesEvent[] variables = event.getSCRefinesClauses();
+		ISCRefinesEvent[] refines = event.getSCRefinesClauses();
 		
-		assertEquals("wrong number of refines clauses", strings.length, variables.length);
+		assertEquals("wrong number of refines clauses", strings.length, refines.length);
 		
 		if (strings.length == 0)
 			return;
 		
-		Set<String> nameSet = getRefinedNameSet(variables);
+		Set<String> nameSet = getRefinedNameSet(refines);
 	
 		for (String string : strings)
 			assertTrue("should contain " + string, nameSet.contains(string));
