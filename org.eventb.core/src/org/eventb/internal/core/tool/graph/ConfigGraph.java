@@ -21,7 +21,7 @@ public class ConfigGraph extends Graph<BaseConfig> {
 
 	@Override
 	protected Node<BaseConfig> createNode(BaseConfig object) {
-		return new ConfigNode(object, object.getId(), object.getIncluded());
+		return new ConfigNode(object, object.getId(), object.getIncluded(), this);
 	}
 
 	@Override

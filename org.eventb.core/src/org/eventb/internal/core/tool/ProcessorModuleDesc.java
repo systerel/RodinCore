@@ -7,9 +7,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.tool;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IProcessorModule;
+import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.graph.Node;
 import org.eventb.internal.core.tool.graph.ProcessorModuleNode;
 
@@ -30,13 +33,15 @@ public class ProcessorModuleDesc<T extends IProcessorModule> extends ModuleDesc<
 	}
 
 	@Override
-	public Node<ModuleDesc<? extends IModule>> createNode() {
-		return new ProcessorModuleNode(this, getId(), getPrereqs());
+	public Node<ModuleDesc<? extends IModule>> createNode(ModuleGraph graph) {
+		return new ProcessorModuleNode(this, getId(), getPrereqs(), graph);
 	}
 
 	@Override
-	public void addToModuleFactory(ModuleFactory factory, ModuleManager manager) {
-		ModuleDesc<? extends IModule> parent = manager.getModuleDesc(getParent());
+	public void addToModuleFactory(
+			ModuleFactory factory, 
+			Map<String, ModuleDesc<? extends IModule>> modules) {
+		ModuleDesc<? extends IModule> parent = modules.get(getParent());
 		factory.addProcessorToFactory(parent, this);
 	}
 

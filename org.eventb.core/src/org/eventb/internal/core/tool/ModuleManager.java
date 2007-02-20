@@ -39,19 +39,19 @@ public abstract class ModuleManager extends SortingUtil {
 	
 	// Access to modules using their unique id
 	// This table contains all filter and processor modules
-	private HashMap<String, ModuleDesc<? extends IModule>> moduleIds;
+	private HashMap<String, ModuleDesc<? extends IModule>> modules;
 
 	private void register(String id, ModuleDesc<? extends IModule> type) {
-		final ModuleDesc<? extends IModule> oldType = moduleIds.put(id, type);
+		final ModuleDesc<? extends IModule> oldType = modules.put(id, type);
 		if (oldType != null) {
-			moduleIds.put(id, oldType);
+			modules.put(id, oldType);
 			throw new IllegalStateException(
 					"Attempt to create twice module type " + id);
 		}
 	}
 	
 	private void computeModules() {
-		moduleIds =
+		modules =
 			new HashMap<String, ModuleDesc<? extends IModule>>();
 		
 		// Read the extension point extensions.
@@ -59,18 +59,13 @@ public abstract class ModuleManager extends SortingUtil {
 		IConfigurationElement[] elements = 
 			registry.getConfigurationElementsFor(EventBPlugin.PLUGIN_ID, modules_id);
 		
-		loadModules(elements);
-//		for (IConfigurationElement element : elements) {
-//			loadFilterModules(element);
-//			loadProcessorModules(element);
-//		}
-		
+		loadModules(elements);		
 		
 		if (VERBOSE) {
 			System.out.println("---------------------------------------------------");
 			System.out.println(modules_id + " registered:");
-			for (String id: getSortedIds(moduleIds)) {
-				ModuleDesc<? extends IModule> type = moduleIds.get(id);
+			for (String id: getSortedIds(modules)) {
+				ModuleDesc<? extends IModule> type = modules.get(id);
 				System.out.println("  " + type.getId());
 				System.out.println("    name: " + type.getName());
 				System.out.println("    class: " + type.getClassName());
@@ -122,10 +117,10 @@ public abstract class ModuleManager extends SortingUtil {
 	 */
 	public ModuleDesc<? extends IModule> getModuleDesc(String id) {
 
-		if (moduleIds == null) {
+		if (modules == null) {
 			computeModules();
 		}
-		return moduleIds.get(id);
+		return modules.get(id);
 	}
 
 	protected ModuleManager(final String modules_id) {
@@ -163,6 +158,6 @@ public abstract class ModuleManager extends SortingUtil {
 	}
 
 	protected ModuleFactory computeModuleFactory(ModuleGraph moduleGraph) {
-		return new ModuleFactory(moduleGraph, this);
+		return new ModuleFactory(moduleGraph, modules);
 	}
 }

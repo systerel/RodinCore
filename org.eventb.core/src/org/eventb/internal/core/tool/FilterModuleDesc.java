@@ -8,10 +8,13 @@
 
 package org.eventb.internal.core.tool;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IModule;
 import org.eventb.internal.core.tool.graph.FilterModuleNode;
+import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.graph.Node;
 
 /**
@@ -35,16 +38,18 @@ public class FilterModuleDesc<T extends IFilterModule> extends ModuleDesc<T> {
 	}
 	
 	@Override
-	public Node<ModuleDesc<? extends IModule>> createNode() {
+	public Node<ModuleDesc<? extends IModule>> createNode(ModuleGraph graph) {
 		if (getParent() == null)
 			throw new IllegalStateException("filter module without parent " + getId());
 
-		return new FilterModuleNode(this, getId(), getPrereqs());
+		return new FilterModuleNode(this, getId(), getPrereqs(), graph);
 	}
 
 	@Override
-	public void addToModuleFactory(ModuleFactory factory, ModuleManager manager) {
-		ModuleDesc<? extends IModule> parent = manager.getModuleDesc(getParent());
+	public void addToModuleFactory(
+			ModuleFactory factory, 
+			Map<String, ModuleDesc<? extends IModule>> modules) {
+		ModuleDesc<? extends IModule> parent = modules.get(getParent());
 		factory.addFilterToFactory(parent, this);
 	}
 	

@@ -9,6 +9,7 @@ package org.eventb.internal.core.tool;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,13 +51,13 @@ public class ModuleFactory implements IModuleFactory {
 		processors.add(processor);
 	}
 	
-	public ModuleFactory(ModuleGraph graph, ModuleManager manager) {
+	public ModuleFactory(ModuleGraph graph, Map<String, ModuleDesc<? extends IModule>> modules) {
 		filterMap = 
 			new HashMap<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>>();
 		processorMap = 
 			new HashMap<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>>();
 		for (Node<ModuleDesc<? extends IModule>> node : graph.getSorted())
-			node.getObject().addToModuleFactory(this, manager);
+			node.getObject().addToModuleFactory(this, modules);
 	}
 	
 	IFilterModule[] NO_FILTERS = new IFilterModule[0];
@@ -102,6 +103,32 @@ public class ModuleFactory implements IModuleFactory {
 		IProcessorModule module = (IProcessorModule) desc.createInstance();
 		setModuleFactory(module);
 		return module;
+	}
+	
+	// for testing purposes
+	private List<String> postfixOrder(ModuleDesc<? extends IModule> root) {
+		List<String> ids = new LinkedList<String>();
+		ids.addAll(postfixList(root, filterMap));
+		ids.addAll(postfixList(root, processorMap));
+		ids.add(root.getId());
+		return ids;
+	}
+
+	private List<String> postfixList(
+			ModuleDesc<? extends IModule> root, 
+			Map<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>> map) {
+		List<String> mIds = new LinkedList<String>();
+		List<ModuleDesc<? extends IModule>> modules = map.get(root);
+		if (modules == null)
+			return mIds;
+		for (ModuleDesc<? extends IModule> module : modules) {
+			mIds.addAll(postfixOrder(module));
+		}
+		return mIds;
+	}
+	
+	public String toString(ModuleDesc<? extends IModule> root) {
+		return postfixOrder(root).toString();
 	}
 
 }

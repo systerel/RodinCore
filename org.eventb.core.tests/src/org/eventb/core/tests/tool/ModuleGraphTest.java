@@ -8,10 +8,13 @@
 package org.eventb.core.tests.tool;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eventb.core.tool.IModule;
 import org.eventb.internal.core.tool.ModuleDesc;
+import org.eventb.internal.core.tool.ModuleFactory;
 import org.eventb.internal.core.tool.ModuleManager;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
 
@@ -61,6 +64,30 @@ public class ModuleGraphTest extends Declarations {
 		}
 	}
 	
+	private static class FactoryTest extends ModuleTest {
+		private final String sorted;
+		private final Map<String, ModuleDesc<? extends IModule>> map;		
+		private final ModuleDesc<? extends IModule> root;
+		public FactoryTest(
+				ModuleDesc<? extends IModule>[] items, 
+				ModuleDesc<? extends IModule> root, 
+				String sorted) {
+			super(items);
+			this.sorted = sorted;
+			this.root = root;
+			map = new HashMap<String, ModuleDesc<? extends IModule>>();
+			for (ModuleDesc<? extends IModule> desc : items) {
+				map.put(desc.getId(), desc);
+			}
+		}
+		public void test() {
+			ModuleGraph graph = getAnalysedGraph();
+			ModuleFactory factory = new ModuleFactory(graph, map);
+			String result = factory.toString(root);
+			assertEquals("sorted factory failed", "[" + sorted + "]", result);
+		}
+	}
+	
 	private static ModuleDesc[][] moduleDescs = new ModuleDesc[][] {
 		new ModuleDesc[] {
 		},
@@ -105,6 +132,20 @@ public class ModuleGraphTest extends Declarations {
 				new ProcDesc("3", "org.m.6"),
 				new ProcDesc("5", "org.m.6"),
 				new ProcDesc("7", null)
+		},
+		new ModuleDesc[] {
+				new ProcDesc("C", null),
+				new ProcDesc("B", "org.m.C", "org.m.X"),
+				new ProcDesc("A", "org.m.C"),
+				new ProcDesc("X", "org.m.A"),
+				new ProcDesc("Y", "org.m.B")
+		},
+		new ModuleDesc[] {
+				new ProcDesc("C", null),
+				new ProcDesc("B", "org.m.C"),
+				new ProcDesc("Y", "org.m.B", "org.m.X"),
+				new ProcDesc("A", "org.m.C"),
+				new ProcDesc("X", "org.m.A")
 		}
 	};
 	
@@ -128,7 +169,10 @@ public class ModuleGraphTest extends Declarations {
 		new FailingTest(moduleDescs[7]),
 		new FailingTest(moduleDescs[8]),
 		// preserve relative order
-		new SortingTest(moduleDescs[9], "org.m.1, org.m.2, org.m.3, org.m.4, org.m.5, org.m.6, org.m.7")
+		new SortingTest(moduleDescs[9], "org.m.1, org.m.2, org.m.3, org.m.4, org.m.5, org.m.6, org.m.7"),
+		// submodule prereq requirements must be observed by the factory
+		new FactoryTest(moduleDescs[10], moduleDescs[10][0], "org.m.X, org.m.A, org.m.Y, org.m.B, org.m.C"),
+		new FactoryTest(moduleDescs[11], moduleDescs[11][0], "org.m.X, org.m.A, org.m.Y, org.m.B, org.m.C")
 	};
 	
 	/**

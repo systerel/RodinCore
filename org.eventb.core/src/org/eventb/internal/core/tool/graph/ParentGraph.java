@@ -67,7 +67,7 @@ public class ParentGraph extends Graph<ModuleDesc<? extends IModule>> implements
 	protected Node<ModuleDesc<? extends IModule>> createNode(ModuleDesc<? extends IModule> object) {
 		String parent = object.getParent();
 		String[] parents = parent == null ? NO_PARENT : new String[] {parent};
-		return new ParentNode(object, object.getId(), parents);
+		return new ParentNode(object, object.getId(), parents, this);
 	}
 
 	@Override

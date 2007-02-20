@@ -16,8 +16,13 @@ import org.eventb.internal.core.tool.ModuleDesc;
  */
 public class ParentNode extends Node<ModuleDesc<? extends IModule>> {
 	
-	public ParentNode(ModuleDesc<? extends IModule> object, String id, String[] predecs) {
-		super(object, id, predecs);
+	@Override
+	public ParentGraph getGraph() {
+		return (ParentGraph) super.getGraph();
+	}
+
+	public ParentNode(ModuleDesc<? extends IModule> object, String id, String[] predecs, ParentGraph graph) {
+		super(object, id, predecs, graph);
 	}
 
 }

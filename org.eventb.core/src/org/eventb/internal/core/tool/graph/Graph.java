@@ -61,7 +61,7 @@ public abstract class Graph<T> {
 	
 	private void connect() {
 		for (Node<T> node : nodes) {
-			node.connect(this);
+			node.connect();
 		}
 	}
 	
@@ -114,5 +114,15 @@ public abstract class Graph<T> {
 	
 	public List<Node<T>> getCycle() {
 		return nodes;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		for (Node<T> node : nodes)
+			builder.append(node.toStringFormatted());
+		for (Node<T> node : sorted)
+			builder.append(node.toStringFormatted());
+		return builder.toString();
 	}
 }

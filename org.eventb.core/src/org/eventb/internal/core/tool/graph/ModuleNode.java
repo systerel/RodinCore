@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.tool.graph;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,23 +22,13 @@ public abstract class ModuleNode extends Node<ModuleDesc<? extends IModule>> {
 	
 	private final List<ModuleNode> childFilters; 
 	
-	public ModuleNode(ModuleDesc<? extends IModule> object, String id, String[] predecs) {
-		super(object, id, predecs);
-		childFilters = new LinkedList<ModuleNode>();
-	}
+	private ArrayList<String> parents;
 	
-//	protected void connectParent(ModuleGraph graph) {
-//		String parent = getObject().getParent();
-//		if (parent == null)
-//			return;
-//		ModuleNode node = graph.getNode(parent);
-//		if (node == null)
-//			throw new IllegalStateException(
-//					"Cannot find parent: " + parent + " for node: " + getId(), null);
-//		boolean incr = node.addSucc(this);
-//		if (incr)
-//			count++;
-//	}
+	public ModuleNode(ModuleDesc<? extends IModule> object, String id, String[] predecs, ModuleGraph graph) {
+		super(object, id, predecs, graph);
+		childFilters = new LinkedList<ModuleNode>();
+		parents = null;
+	}
 	
 	protected void addChildFilter(ModuleNode node) {
 		if (childFilters.contains(node))
@@ -52,5 +43,26 @@ public abstract class ModuleNode extends Node<ModuleDesc<? extends IModule>> {
 	public abstract void storeFilterInParent(ModuleNode node);
 	
 	public abstract boolean canBeParent();
+	
+	@Override
+	public ModuleGraph getGraph() {
+		return (ModuleGraph) super.getGraph();
+	}
+	
+	public List<String> getParents() {
+		ModuleGraph moduleGraph = getGraph();
+		if (parents == null) {
+			parents = new ArrayList<String>();
+			String parentId = getObject().getParent();
+			if (parentId != null) {
+				ModuleNode pNode = moduleGraph.getNode(parentId);
+				parents.addAll(pNode.getParents());
+				parents.add(parentId);
+			}
+			parents.trimToSize();
+		}
+		
+		return parents;
+	}
 	
 }

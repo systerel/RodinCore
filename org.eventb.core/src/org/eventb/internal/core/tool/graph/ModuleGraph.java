@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.tool.graph;
 
+import java.util.List;
+
 import org.eventb.core.tool.IModule;
 import org.eventb.internal.core.tool.ModuleDesc;
 
@@ -47,13 +49,58 @@ public class ModuleGraph extends Graph<ModuleDesc<? extends IModule>> {
 			}
 			pNode.addPredec(id);
 			
+			mergePredecs(pNode);
+			
 			node.storeFilterInParent(pNode);
 		}
 	}
+
+	private void mergePredecs(ModuleNode pNode) {
+		String parentId =  pNode.getId();
+		String ppId = pNode.getObject().getParent();
+		if (ppId == null) {
+			for (String mId : pNode.getPredecs()) {
+				if (mId.equals(parentId) || nodeHasRoot(mId, parentId))
+					continue;
+				throw new IllegalStateException("Root module type " + parentId + " has proper prereq");
+			}
+		} else {
+			for (String mId : pNode.getPredecs()) {
+				ModuleNode mNode = getNode(mId);
+				String mParent = mNode.getObject().getParent();
+				if (mParent != null && !mNode.getParents().contains(parentId) && !mParent.equals(ppId)) {
+					// the predec has a different parent
+					addPredecForAncestor(pNode, mNode);
+				}
+			}
+		}
+	}
 	
+	private void addPredecForAncestor(final ModuleNode node, final ModuleNode predec) {
+		List<String> nParents = node.getParents();
+		
+		ModuleNode pNode = predec;
+		String pParent = predec.getObject().getParent(); 
+		while (pParent != null) {
+			if (nParents.contains(pParent)) {
+				node.addPredec(pNode.getId());
+				return;
+			}
+			pNode = getNode(pParent);
+			pParent = pNode.getObject().getParent();
+		}
+		throw new IllegalStateException(
+				"Cannot satisfy prereq " + predec.getId() + 
+				" for module type " + node.getId());
+	}
+
+	private boolean nodeHasRoot(final String id, final String parentId) {
+		return getNode(id).getParents().contains(parentId);
+	}
+
 	@Override
-	protected Node<ModuleDesc<? extends IModule>> createNode(ModuleDesc<? extends IModule> object) {
-		return object.createNode();
+	protected Node<ModuleDesc<? extends IModule>> createNode(final ModuleDesc<? extends IModule> object) {
+		return object.createNode(this);
 	}
 
 	@Override

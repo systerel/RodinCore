@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.tool.graph;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,23 +34,29 @@ public class Node<T> implements Iterable<Node<T>> {
 		return id;
 	}
 
+	public String toStringFormatted() {
+		return id + "\n\t" + Arrays.asList(predecs).toString() +"\n";
+	}
+
 	private final T object;
 	private final String id;
 	private String[] predecs;
+	private final Graph<T> graph;
 	
 	protected List<Node<T>> succ;
 	protected int count;
 	
-	public Node(T object, String id, String[] predecs) {
+	public Node(T object, String id, String[] predecs, Graph<T> graph) {
 		this.id = id;
 		this.object = object;
 		this.predecs = predecs;
+		this.graph = graph;
 		
 		count = 0;
 		succ = new LinkedList<Node<T>>();
 	}
 	
-	public void connect(Graph<T> graph) {
+	public void connect() {
 		for (String predec : predecs) {
 			Node<T> node = graph.getNode(predec);
 			if (node == null)
@@ -92,6 +99,10 @@ public class Node<T> implements Iterable<Node<T>> {
 	
 	public int getCount() {
 		return count;
+	}
+	
+	public Graph<T> getGraph() {
+		return graph;
 	}
 	
 	public void decCount() {

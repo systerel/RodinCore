@@ -16,18 +16,11 @@ import org.eventb.internal.core.tool.ModuleDesc;
  */
 public class FilterModuleNode extends ModuleNode {
 
-	public FilterModuleNode(ModuleDesc<? extends IModule> object, String id, String[] predecs) {
-		super(object, id, predecs);
+	public FilterModuleNode(
+			ModuleDesc<? extends IModule> object, String id, String[] predecs, ModuleGraph graph) {
+		super(object, id, predecs, graph);
 	}
 	
-	@Override
-	public void connect(Graph<ModuleDesc<? extends IModule>> graph) {
-		ModuleGraph moduleGraph = (ModuleGraph) graph;
-//		connectParent(moduleGraph);
-		
-		super.connect(moduleGraph);
-	}
-
 	@Override
 	public void storeFilterInParent(ModuleNode node) {
 		assert getObject().getParent().equals(node.getId());

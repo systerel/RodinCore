@@ -15,8 +15,13 @@ import org.eventb.internal.core.tool.BaseConfig;
  */
 public class ConfigNode extends Node<BaseConfig> {
 
-	public ConfigNode(BaseConfig object, String id, String[] predecs) {
-		super(object, id, predecs);
+	@Override
+	public ConfigGraph getGraph() {
+		return (ConfigGraph) super.getGraph();
+	}
+
+	public ConfigNode(BaseConfig object, String id, String[] predecs, ConfigGraph graph) {
+		super(object, id, predecs, graph);
 	}
 
 }

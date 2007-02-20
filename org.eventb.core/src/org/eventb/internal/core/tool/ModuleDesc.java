@@ -9,11 +9,13 @@
 package org.eventb.internal.core.tool;
 
 import java.lang.reflect.Constructor;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IModuleType;
+import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.graph.Node;
 import org.osgi.framework.Bundle;
 
@@ -60,7 +62,7 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 	}
 	
 	// support for graph analysis
-	public abstract Node<ModuleDesc<? extends IModule>> createNode();
+	public abstract Node<ModuleDesc<? extends IModule>> createNode(ModuleGraph graph);
 
 	@SuppressWarnings("unchecked")
 	protected void computeClass() {
@@ -116,6 +118,8 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 		return parent;
 	}
 	
-	public abstract void addToModuleFactory(ModuleFactory factory, ModuleManager manager);
+	public abstract void addToModuleFactory(
+			ModuleFactory factory, 
+			Map<String, ModuleDesc<? extends IModule>> modules);
 
 }

@@ -18,16 +18,15 @@ import org.eventb.internal.core.tool.ModuleDesc;
  */
 public class ProcessorModuleNode extends ModuleNode {
 	
-	public ProcessorModuleNode(ModuleDesc<? extends IModule> object, String id, String[] predecs) {
-		super(object, id, predecs);
+	public ProcessorModuleNode(
+			ModuleDesc<? extends IModule> object, String id, String[] predecs, ModuleGraph graph) {
+		super(object, id, predecs, graph);
 	}
 
 	@Override
-	public void connect(Graph<ModuleDesc<? extends IModule>> graph) {
-		ModuleGraph moduleGraph = (ModuleGraph) graph;
-//		connectParent(moduleGraph);
-		connectFilters(moduleGraph);
-		super.connect(moduleGraph);
+	public void connect() {
+		connectFilters();
+		super.connect();
 	}
 
 	@Override
@@ -36,11 +35,11 @@ public class ProcessorModuleNode extends ModuleNode {
 		// nothing to do
 	}
 
-	protected void connectFilters(ModuleGraph graph) {
+	protected void connectFilters() {
 		String parent = getObject().getParent();
 		if (parent == null)
 			return;
-		ModuleNode pNode = graph.getNode(parent);
+		ModuleNode pNode = getGraph().getNode(parent);
 		List<ModuleNode> filters = pNode.getChildFilters();
 		for (ModuleNode node : filters) {
 			boolean incr = node.addSucc(this);
