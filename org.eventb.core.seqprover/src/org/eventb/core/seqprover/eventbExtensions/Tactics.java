@@ -484,7 +484,7 @@ public class Tactics {
 			public boolean select(UnaryPredicate predicate) {
 				if (predicate.getTag() == Predicate.NOT) {
 					Predicate child = predicate.getChild();
-					 if (child instanceof RelationalPredicate) {
+					if (child instanceof RelationalPredicate) {
 						RelationalPredicate rPred = (RelationalPredicate) child;
 						if (rPred.getTag() == Predicate.EQUAL) {
 							Expression right = rPred.getRight();
@@ -546,10 +546,39 @@ public class Tactics {
 							&& rTag == Expression.POW) {
 						return true;
 					}
-					if (right instanceof AssociativeExpression) {
+					if (right instanceof AssociativeExpression
+							&& (rTag == Expression.BUNION || rTag == Expression.BINTER)) {
 						return true;
 					}
-					if (right instanceof BinaryExpression && rTag == Expression.SETMINUS) {
+					if (right instanceof BinaryExpression
+							&& rTag == Expression.SETMINUS) {
+						return true;
+					}
+					if (right instanceof SetExtension) {
+						return true;
+					}
+					if (right instanceof UnaryExpression
+							&& (rTag == Expression.KUNION || rTag == Expression.KINTER)) {
+						return true;
+					}
+					if (right instanceof QuantifiedExpression
+							&& (rTag == Expression.QUNION || rTag == Expression.QINTER)) {
+						return true;
+					}
+					if (right instanceof UnaryExpression
+							&& (rTag == Expression.KDOM || rTag == Expression.KRAN)) {
+						return true;
+					}
+					if (right instanceof UnaryExpression
+							&& rTag == Expression.CONVERSE) {
+						return true;
+					}
+					if (right instanceof BinaryExpression
+							&& (rTag == Expression.DOMRES || rTag == Expression.DOMSUB)) {
+						return true;
+					}
+					if (right instanceof BinaryExpression
+							&& (rTag == Expression.RANRES || rTag == Expression.RANSUB)) {
 						return true;
 					}
 				}

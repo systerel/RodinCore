@@ -1,6 +1,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.PowerSetType;
@@ -8,6 +9,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class FormulaUnfold {
 
@@ -115,6 +117,136 @@ public class FormulaUnfold {
 		Predicate notQ = ff.makeUnaryPredicate(Predicate.NOT, Q, null);
 		return ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] { P,
 				notQ }, null);
+	}
+
+	public static Predicate inSetExtention(Expression E, Expression[] members) {
+		Predicate[] predicates = new Predicate[members.length];
+		for (int i = 0; i < members.length; ++i) {
+			Expression member = members[i];
+			if (member.equals(E)) {
+				return Lib.True;
+			} else {
+				predicates[i] = ff.makeRelationalPredicate(Predicate.EQUAL, E,
+						member, null);
+			}
+		}
+		if (predicates.length == 1) {
+			return predicates[0];
+		}
+		return ff.makeAssociativePredicate(Predicate.LOR, predicates, null);
+	}
+
+	public static Predicate inGeneralised(int tag, Expression E, Expression S) {
+		Type type = S.getType();
+		Type baseType = type.getBaseType();
+		assert (baseType != null);
+
+		BoundIdentDecl decl = ff.makeBoundIdentDecl("s", null, baseType);
+
+		BoundIdentifier ident = ff.makeBoundIdentifier(0, null, baseType);
+		Predicate P = ff.makeRelationalPredicate(Predicate.IN, ident, S
+				.shiftBoundIdentifiers(1, ff), null);
+		Predicate Q = ff.makeRelationalPredicate(Predicate.IN, E
+				.shiftBoundIdentifiers(1, ff), ident, null);
+		if (tag == Predicate.EXISTS)
+			return ff.makeQuantifiedPredicate(tag,
+					new BoundIdentDecl[] { decl }, ff.makeAssociativePredicate(
+							Predicate.LAND, new Predicate[] { P, Q }, null),
+					null);
+		else {
+			return ff.makeQuantifiedPredicate(tag,
+					new BoundIdentDecl[] { decl }, ff.makeBinaryPredicate(
+							Predicate.LIMP, P, Q, null), null);
+		}
+	}
+
+	public static Predicate inQuantified(int tag, Expression E,
+			BoundIdentDecl[] x, Predicate P, Expression T) {
+		Predicate Q = ff.makeRelationalPredicate(Predicate.IN, E
+				.shiftBoundIdentifiers(1, ff), T, null);
+		if (tag == Predicate.EXISTS)
+			return ff.makeQuantifiedPredicate(tag, x, ff
+					.makeAssociativePredicate(Predicate.LAND, new Predicate[] {
+							P, Q }, null), null);
+		else {
+			return ff.makeQuantifiedPredicate(tag, x, ff.makeBinaryPredicate(
+					Predicate.LIMP, P, Q, null), null);
+		}
+	}
+
+	public static Predicate inDom(Expression E, Expression r) {
+		Type type = r.getType();
+
+		Type baseType = type.getBaseType();
+		assert baseType instanceof ProductType;
+		Type rType = ((ProductType) baseType).getRight();
+
+		BoundIdentDecl decl = ff.makeBoundIdentDecl("y", null, rType);
+
+		BoundIdentifier ident = ff.makeBoundIdentifier(0, null, rType);
+
+		Expression left = ff.makeBinaryExpression(Expression.MAPSTO, E
+				.shiftBoundIdentifiers(1, ff), ident, null);
+		Predicate pred = ff.makeRelationalPredicate(Predicate.IN, left, r
+				.shiftBoundIdentifiers(1, ff), null);
+		return ff.makeQuantifiedPredicate(Predicate.EXISTS,
+				new BoundIdentDecl[] { decl }, pred, null);
+	}
+
+	public static Predicate inRan(Expression F, Expression r) {
+		Type type = r.getType();
+
+		Type baseType = type.getBaseType();
+		assert baseType instanceof ProductType;
+		Type rType = ((ProductType) baseType).getLeft();
+
+		BoundIdentDecl decl = ff.makeBoundIdentDecl("x", null, rType);
+
+		BoundIdentifier ident = ff.makeBoundIdentifier(0, null, rType);
+
+		Expression left = ff.makeBinaryExpression(Expression.MAPSTO, ident, F
+				.shiftBoundIdentifiers(1, ff), null);
+		Predicate pred = ff.makeRelationalPredicate(Predicate.IN, left, r
+				.shiftBoundIdentifiers(1, ff), null);
+		return ff.makeQuantifiedPredicate(Predicate.EXISTS,
+				new BoundIdentDecl[] { decl }, pred, null);
+	}
+
+	public static Predicate inConverse(Expression E, Expression F, Expression r) {
+		Expression map = ff.makeBinaryExpression(Expression.MAPSTO, F, E, null);
+		return ff.makeRelationalPredicate(Predicate.IN, map, r, null);
+	}
+
+	public static Predicate inDomManipulation(boolean restricted, Expression E,
+			Expression F, Expression S, Expression r) {
+		Predicate P;
+		if (restricted) {
+			P = ff.makeRelationalPredicate(Predicate.IN, E, S, null);
+		} else {
+			P = ff.makeRelationalPredicate(Predicate.NOTIN, E, S, null);
+		}
+
+		Predicate Q = ff.makeRelationalPredicate(Predicate.IN, ff
+				.makeBinaryExpression(Expression.MAPSTO, E, F, null), r, null);
+		return ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] { P,
+				Q }, null);
+	}
+
+	public static Predicate inRanManipulation(boolean restricted, Expression E,
+			Expression F, Expression r, Expression T) {
+
+		Predicate P = ff.makeRelationalPredicate(Predicate.IN, ff
+				.makeBinaryExpression(Expression.MAPSTO, E, F, null), r, null);
+
+		Predicate Q;
+		if (restricted) {
+			Q = ff.makeRelationalPredicate(Predicate.IN, F, T, null);
+		} else {
+			Q = ff.makeRelationalPredicate(Predicate.NOTIN, F, T, null);
+		}
+
+		return ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] { P,
+				Q }, null);
 	}
 
 }

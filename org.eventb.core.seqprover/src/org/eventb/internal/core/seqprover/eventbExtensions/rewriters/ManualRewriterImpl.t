@@ -299,9 +299,10 @@ public class ManualRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory 8: A ∈ {A} == ⊤
 	    	 * Set Theory 9: B ∈ {A, ..., B, ..., C} == ⊤
 	    	 * Set Theory 16: E ∈ {F} == E = F (if F is a single expression)
+	    	 * Set Theory: E ∈ {A, ..., B} == E = A ⋁ ... ⋁ E = B
 	    	 */
 	    	In(E, SetExtension(members)) -> {
-	    		return FormulaSimplification.simplifySetMember(predicate, `E, `members);
+	    		return FormulaUnfold.inSetExtention(`E, `members);
 	    	}
 
 			/**
@@ -351,6 +352,83 @@ public class ManualRewriterImpl extends DefaultRewriter {
 	    	 */
 	    	In(E, SetMinus(S, T)) -> {
 	    		return FormulaUnfold.inSetMinus(`E, `S, `T);
+	    	}
+	    	
+	    	/**
+	    	 * Set Theory: E ∈ union(S) == ∃s·s ∈ S ∧ E ∈ s
+	    	 */
+	    	In(E, Union(S)) -> {
+	    		return FormulaUnfold.inGeneralised(Formula.EXISTS, `E, `S);
+	    	}
+	    	
+	    	/**
+	    	 * Set Theory: E ∈ inter(S) == ∀s·s ∈ S ⇒ E ∈ s
+	    	 */
+	    	In(E, Inter(S)) -> {
+	    		return FormulaUnfold.inGeneralised(Formula.FORALL, `E, `S);
+	    	}
+	    	
+	    	/**
+	    	 * Set Theory: E ∈ (⋃x·P|T) == ∃x·P ∧ E ∈ T
+	    	 */
+	    	In(E, Qunion(x,P,T)) -> {
+	    		return FormulaUnfold.inQuantified(Formula.EXISTS, `E, `x, `P, `T);
+	    	}
+
+	    	/**
+	    	 * Set Theory: E ∈ (⋂x·P|T) == ∀x·P ⇒ E ∈ T
+	    	 */
+	    	In(E, Qinter(x,P,T)) -> {
+	    		return FormulaUnfold.inQuantified(Formula.FORALL, `E, `x, `P, `T);
+	    	}
+
+	    	/**
+	    	 * Set Theory: E ∈ dom(r) == ∃y·E ↦ y ∈ r
+	    	 */
+	    	In(E, Dom(r)) -> {
+	    		return FormulaUnfold.inDom(`E, `r);
+	    	}
+
+	    	/**
+	    	 * Set Theory: F ∈ ran(r) == ∃x·x ↦ F ∈ r
+	    	 */
+	    	In(F, Ran(r)) -> {
+	    		return FormulaUnfold.inRan(`F, `r);
+	    	}
+	    	
+	    	/**
+	    	 * Set Theory: E ↦ F ∈ r∼ == F ↦ E ∈ r
+	    	 */
+	    	In(Mapsto(E, F), Converse(r)) -> {
+	    		return FormulaUnfold.inConverse(`E, `F, `r);
+	    	}
+	    	
+	    	/**
+	    	 * Set Theory: E ↦ F ∈ S ◁ r == E ∈ S ∧ E ↦ F ∈ r
+	    	 */
+	    	In(Mapsto(E, F), DomRes(S, r)) -> {
+	    		return FormulaUnfold.inDomManipulation(true, `E, `F, `S, `r);
+	    	}
+	    	
+	    	/**
+	    	 * Set Theory: E ↦ F ∈ S ⩤ r == E ∉ S ∧ E ↦ F ∈ r
+	    	 */
+	    	In(Mapsto(E, F), DomSub(S, r)) -> {
+	    		return FormulaUnfold.inDomManipulation(false, `E, `F, `S, `r);
+	    	}
+	    	
+	    	/**
+	    	 * Set Theory: E ↦ F ∈ r ▷ T  == E ↦ F ∈ r ∧ F ∈ T
+	    	 */
+	    	In(Mapsto(E, F), RanRes(r, T)) -> {
+	    		return FormulaUnfold.inRanManipulation(true, `E, `F, `r, `T);
+	    	}
+
+	    	/**
+	    	 * Set Theory: E ↦ F ∈ r ⩥ T  == E ↦ F ∈ r ∧ F ∉ T
+	    	 */
+	    	In(Mapsto(E, F), RanSub(r, T)) -> {
+	    		return FormulaUnfold.inRanManipulation(false, `E, `F, `r, `T);
 	    	}
 	    }
 	    return predicate;
