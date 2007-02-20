@@ -114,6 +114,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation"
             id="rn"
             name="%rnName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership"
+            id="rm"
+            name="%rmName"/>
    </extension>
 
 </plugin>

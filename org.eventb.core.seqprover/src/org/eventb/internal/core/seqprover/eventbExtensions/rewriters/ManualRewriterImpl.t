@@ -324,6 +324,34 @@ public class ManualRewriterImpl extends DefaultRewriter {
 	    	In(Mapsto(E, F), Cprod(S, T)) -> {
 	    		return FormulaUnfold.inMap(`E, `F, `S, `T);
 	    	}
+	    	
+	    	/**
+	    	 * Set Theory: E ∈ ℙ(S) == E ⊆ S
+	    	 */
+	    	In(E, Pow(S)) -> {
+	    		return FormulaUnfold.inPow(`E, `S);
+	    	}
+	    	
+	    	/**
+	    	 * Set Theory: E ∈ S ∪ ... ∪ T == E ∈ S ⋁ ... ⋁ E ∈ T
+	    	 */
+	    	In(E, BUnion(children)) -> {
+	    		return FormulaUnfold.inAssociative(Formula.LOR, `E, `children);
+	    	}
+	    	
+	    	/**
+	    	 * Set Theory: E ∈ S ∩ ... ∩ T == E ∈ S ∧ ... ∧ E ∈ T
+	    	 */
+	    	In(E, BInter(children)) -> {
+	    		return FormulaUnfold.inAssociative(Formula.LAND, `E, `children);
+	    	}
+	    	
+	    	/**
+	    	 * Set Theory: E ∈ S ∖ T == E ∈ S ∧ ¬(E ∈ T)
+	    	 */
+	    	In(E, SetMinus(S, T)) -> {
+	    		return FormulaUnfold.inSetMinus(`E, `S, `T);
+	    	}
 	    }
 	    return predicate;
 	}
