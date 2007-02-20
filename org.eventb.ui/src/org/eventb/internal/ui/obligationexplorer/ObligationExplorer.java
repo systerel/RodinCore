@@ -137,51 +137,55 @@ public class ObligationExplorer extends ViewPart implements
 
 	static int DISCHARGED;
 
+	/**
+	 * Implements filtering based on proof obligation names.
+	 */
 	class ObligationTextFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 
-			boolean selection = exclude.getSelection();
 			if (element instanceof PSStatus) {
-				PSStatus sequent = (PSStatus) element;
-
-				if (sequent.getElementName().indexOf(filterText.getText()) == -1)
-					return selection;
+				final String filterString = filterText.getText();
+				final boolean excluding = exclude.getSelection();
+				if (filterString.length() == 0) {
+					// This filter always match the PO name
+					return !excluding;
+				}
+				final PSStatus sequent = (PSStatus) element;
+				if (sequent.getElementName().contains(filterString))
+					return !excluding;
 				else
-					return !selection;
-			} else {
-				return true;
+					return excluding;
 			}
+			return true;
 		}
 
 	}
 
+	/**
+	 * Implements filtering of discharged proof obligations.
+	 */
 	class DischargedFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
-			boolean selection = discharge.getSelection();
+			
 			if (element instanceof IPSStatus) {
-				IPSStatus sequent = (IPSStatus) element;
-				int status = NULL;
-				try {
-					status = getStatus(sequent);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if (! discharge.getSelection()) {
+					// No filtering on discharged POs
+					return true;
 				}
 
-				if (status == DISCHARGED)
-					return !selection;
-				else
-					return true;
-			} else {
-				return true;
+				try {
+					return getStatus((IPSStatus) element) != DISCHARGED;
+				} catch (RodinDBException e) {
+					// Ignore case where database is not up to date
+				}
 			}
-
+			return true;
 		}
 
 	}
