@@ -14,7 +14,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for a refines clause of a machine.
+ * Common protocol for a refines clause of a statically checked machine.
  * <p>
  * A refines element has a name that is returned by
  * {@link org.rodinp.core.IRodinElement#getElementName()}.
