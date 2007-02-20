@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -22,7 +23,9 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -215,9 +218,9 @@ public class Tactics {
 				new RemoveNegation.Input(null, position));
 	}
 
-//	public static boolean removeNegGoal_applicable(Predicate goal) {
-//		return (new RemoveNegation()).isApplicable(goal);
-//	}
+	// public static boolean removeNegGoal_applicable(Predicate goal) {
+	// return (new RemoveNegation()).isApplicable(goal);
+	// }
 
 	public static ITactic disjToImpGoal() {
 		return BasicTactics.reasonerTac(new DisjToImpl(), new DisjToImpl.Input(
@@ -297,9 +300,9 @@ public class Tactics {
 				new RemoveNegation.Input(hyp, position));
 	}
 
-//	public static boolean removeNegHyp_applicable(Predicate hyp) {
-//		return (new RemoveNegation()).isApplicable(hyp);
-//	}
+	// public static boolean removeNegHyp_applicable(Predicate hyp) {
+	// return (new RemoveNegation()).isApplicable(hyp);
+	// }
 
 	public static ITactic falsifyHyp(Predicate hyp) {
 		return BasicTactics.reasonerTac(new Contr(), new Contr.Input(hyp));
@@ -481,18 +484,23 @@ public class Tactics {
 			public boolean select(UnaryPredicate predicate) {
 				if (predicate.getTag() == Predicate.NOT) {
 					Predicate child = predicate.getChild();
-//					if (child instanceof RelationalPredicate) {
-//						RelationalPredicate rPred = (RelationalPredicate) child;
-//						if (rPred.getTag() == Predicate.EQUAL) {
-//							Expression right = rPred.getRight();
-//							if (right instanceof AtomicExpression) {
-//								AtomicExpression aExp = (AtomicExpression) right;
-//								if (aExp.getTag() == Expression.EMPTYSET)
-//									return true;
-//							}
-//
-//						}
-//					}
+					 if (child instanceof RelationalPredicate) {
+						RelationalPredicate rPred = (RelationalPredicate) child;
+						if (rPred.getTag() == Predicate.EQUAL) {
+							Expression right = rPred.getRight();
+							Expression left = rPred.getLeft();
+							if (right instanceof AtomicExpression) {
+								AtomicExpression aExp = (AtomicExpression) right;
+								if (aExp.getTag() == Expression.EMPTYSET)
+									return true;
+							}
+							if (left instanceof AtomicExpression) {
+								AtomicExpression aExp = (AtomicExpression) right;
+								if (aExp.getTag() == Expression.EMPTYSET)
+									return true;
+							}
+						}
+					}
 					if (child instanceof AssociativePredicate) {
 						return true;
 					}
@@ -512,7 +520,40 @@ public class Tactics {
 						return true;
 					}
 				}
-				return false;
+				return super.select(predicate);
+			}
+
+		});
+	}
+
+	public static List<IPosition> rm_getPositions(Predicate pred) {
+		return pred.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(RelationalPredicate predicate) {
+				if (predicate.getTag() == Predicate.IN) {
+					Expression left = predicate.getLeft();
+					Expression right = predicate.getRight();
+					int rTag = right.getTag();
+					int lTag = left.getTag();
+					if (left instanceof BinaryExpression
+							&& lTag == Expression.MAPSTO
+							&& right instanceof BinaryExpression
+							&& rTag == Expression.CPROD) {
+						return true;
+					}
+					if (right instanceof UnaryExpression
+							&& rTag == Expression.POW) {
+						return true;
+					}
+					if (right instanceof AssociativeExpression) {
+						return true;
+					}
+					if (right instanceof BinaryExpression && rTag == Expression.SETMINUS) {
+						return true;
+					}
+				}
+				return super.select(predicate);
 			}
 
 		});
