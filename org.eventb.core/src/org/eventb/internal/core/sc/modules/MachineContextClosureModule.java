@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCSeesContext;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IContextPointerArray;
@@ -29,6 +30,7 @@ import org.eventb.internal.core.sc.ContextPointerArray;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -38,6 +40,8 @@ public class MachineContextClosureModule extends SCProcessorModule {
 
 	public static final IModuleType<MachineContextClosureModule> MODULE_TYPE = 
 		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineContextClosureModule"); //$NON-NLS-1$
+
+	private static final String CSEES_NAME_PREFIX = "CSEES";
 	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
@@ -53,15 +57,16 @@ public class MachineContextClosureModule extends SCProcessorModule {
 			IProgressMonitor monitor) throws CoreException {
 		
 		IMachineFile machineFile = (IMachineFile) element;
+		ISCMachineFile scMachFile = (ISCMachineFile) target;
 
 		IRefinesMachine[] refinesMachines = machineFile.getRefinesClauses();
 		
 		if (refinesMachines.length == 0)
 			return;
 		
-		ISCMachineFile scMachineFile = refinesMachines[0].getAbstractSCMachine();
+		ISCMachineFile scAbsMachFile = refinesMachines[0].getAbstractSCMachine();
 		
-		ISCInternalContext[] abstractContexts = scMachineFile.getSCSeenContexts();
+		ISCInternalContext[] abstractContexts = scAbsMachFile.getSCSeenContexts();
 		
 		if (abstractContexts.length == 0)
 			return;
@@ -76,6 +81,7 @@ public class MachineContextClosureModule extends SCProcessorModule {
 			validContextNames.add(context.getElementName());
 		}
 		
+		int count = 0;
 		for (ISCInternalContext context : abstractContexts) {
 			String name = context.getElementName();
 			if (validContextNames.contains(name))
@@ -90,11 +96,28 @@ public class MachineContextClosureModule extends SCProcessorModule {
 				
 				// repair
 				// TODO delta checking
-				context.copy(target, null, null, false, null);
+				copySeesClause(scMachFile, scAbsMachFile, context, count ++);
+				context.copy(scMachFile, null, null, false, null);
 
 			}
 		}
 		
+	}
+
+	// Copy the sees clause from the abstraction if it introduces directly the
+	// context, otherwise don't add any sees clause: the context is seen
+	// indirectly.
+	private void copySeesClause(ISCMachineFile scMachine,
+			ISCMachineFile scAbsMachFile, ISCInternalContext scContext,
+			int count) throws RodinDBException {
+
+		final String ctxName = scContext.getElementName();
+		for (ISCSeesContext clause : scAbsMachFile.getSCSeesClauses()) {
+			if (ctxName.equals(clause.getSeenSCContext().getComponentName())) {
+				final String name = CSEES_NAME_PREFIX + count;
+				clause.copy(scMachine, null, name, false, null);
+			}
+		}
 	}
 
 }

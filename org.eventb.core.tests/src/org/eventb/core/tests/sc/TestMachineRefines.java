@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,8 @@ public class TestMachineRefines extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 				
+		seesContexts(file);
+		
 		containsVariables(file, "V1", "V2");
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();

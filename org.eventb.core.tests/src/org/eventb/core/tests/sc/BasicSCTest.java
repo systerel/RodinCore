@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCEvent;
+import org.eventb.core.ISCExtendsContext;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
@@ -35,6 +36,7 @@ import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ISCRefinesEvent;
+import org.eventb.core.ISCSeesContext;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCVariant;
@@ -94,6 +96,27 @@ public abstract class BasicSCTest extends EventBTest {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCRefinesEvent element : elements)
 			names.add(element.getAbstractSCEvent().getLabel());
+		return names;
+	}
+
+	public Set<String> getSeenNameSet(ISCSeesContext[] elements) throws RodinDBException {
+		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
+		for(ISCSeesContext element : elements)
+			names.add(element.getSeenSCContext().getComponentName());
+		return names;
+	}
+
+	public Set<String> getExtendedNameSet(ISCExtendsContext[] elements) throws RodinDBException {
+		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
+		for(ISCExtendsContext element : elements)
+			names.add(element.getAbstractSCContext().getComponentName());
+		return names;
+	}
+
+	public Set<String> getContextNameSet(ISCContext[] elements) throws RodinDBException {
+		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
+		for(ISCContext element : elements)
+			names.add(element.getElementName());
 		return names;
 	}
 
@@ -333,6 +356,58 @@ public abstract class BasicSCTest extends EventBTest {
 	
 		for (String string : strings)
 			assertTrue("should contain " + string, nameSet.contains(string));
+	}
+
+	public void extendsContexts(ISCContextFile scContext, String... names) throws RodinDBException {
+		ISCExtendsContext[] scExtends = scContext.getSCExtendsClauses();
+		
+		assertEquals("wrong number of extends clauses", names.length, scExtends.length);
+		
+		if (names.length == 0)
+			return;
+		
+		Set<String> nameSet = getExtendedNameSet(scExtends);
+		for (String name : names)
+			assertTrue("should contain " + name, nameSet.contains(name));
+	}
+
+	public void containsContexts(ISCContextFile scContext, String... names) throws RodinDBException {
+		ISCInternalContext[] contexts = scContext.getAbstractSCContexts();
+		
+		assertEquals("wrong number of internal contexts", names.length, contexts.length);
+		
+		if (names.length == 0)
+			return;
+		
+		Set<String> nameSet = getContextNameSet(contexts);
+		for (String name : names)
+			assertTrue("should contain " + name, nameSet.contains(name));
+	}
+
+	public void seesContexts(ISCMachineFile scMachine, String... names) throws RodinDBException {
+		ISCSeesContext[] sees = scMachine.getSCSeesClauses();
+		
+		assertEquals("wrong number of sees clauses", names.length, sees.length);
+		
+		if (names.length == 0)
+			return;
+		
+		Set<String> nameSet = getSeenNameSet(sees);
+		for (String name : names)
+			assertTrue("should contain " + name, nameSet.contains(name));
+	}
+
+	public void containsContexts(ISCMachineFile scMachine, String... names) throws RodinDBException {
+		ISCInternalContext[] contexts = scMachine.getSCSeenContexts();
+		
+		assertEquals("wrong number of internal contexts", names.length, contexts.length);
+		
+		if (names.length == 0)
+			return;
+		
+		Set<String> nameSet = getContextNameSet(contexts);
+		for (String name : names)
+			assertTrue("should contain " + name, nameSet.contains(name));
 	}
 
 	public void containsVariables(ISCMachineFile file, String... strings) throws RodinDBException {

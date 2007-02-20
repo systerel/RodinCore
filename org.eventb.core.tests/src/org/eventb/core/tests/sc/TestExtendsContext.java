@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public class TestExtendsContext extends BasicSCTest {
 		
 		ISCContextFile file = con.getSCContextFile();
 		
+		extendsContexts(file, "abs");
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S");
@@ -86,7 +87,7 @@ public class TestExtendsContext extends BasicSCTest {
 		runBuilder();
 		
 		ISCContextFile file = con.getSCContextFile();
-		
+		extendsContexts(file);
 		getInternalContexts(file, 0);
 		
 	}
@@ -115,6 +116,9 @@ public class TestExtendsContext extends BasicSCTest {
 		runBuilder();
 		
 		ISCContextFile file = con.getSCContextFile();
+
+		extendsContexts(file, "abs1", "abs2");
+		containsContexts(file, "abs1", "abs2");
 		
 		ISCInternalContext[] contexts = getInternalContexts(file, 2);
 		
@@ -154,10 +158,34 @@ public class TestExtendsContext extends BasicSCTest {
 		
 		ISCContextFile file = con.getSCContextFile();
 		
+		extendsContexts(file, "abs3");
+		containsContexts(file, "abs3");
+
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S31", "S32");
 		
+	}
+	
+	public void testExtendsContext_01() throws Exception {
+		IContextFile abs1 = createContext("abs1");
+		addCarrierSets(abs1, makeSList("S1"));
+		abs1.save(null, true);
+		
+		IContextFile abs2 = createContext("abs2");
+		addContextExtends(abs2, "abs1");
+		addCarrierSets(abs2, makeSList("S2"));
+		abs2.save(null, true);
+		
+		IContextFile con = createContext("con");
+		addContextExtends(con, "abs2");
+		con.save(null, true);
+
+		runBuilder();
+		
+		ISCContextFile file = con.getSCContextFile();
+		extendsContexts(file, "abs2");
+		containsContexts(file, "abs1", "abs2");
 	}
 
 }
