@@ -17,7 +17,6 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.internal.core.sc.modules.MachineModule;
 import org.eventb.internal.core.tool.IModuleFactory;
 import org.eventb.internal.core.tool.SCModuleManager;
 import org.rodinp.core.RodinCore;
@@ -59,7 +58,7 @@ public class MachineStaticChecker extends StaticChecker {
 				SCModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
 			
 			ISCProcessorModule rootModule = 
-				(ISCProcessorModule) moduleFactory.getRootModule(MachineModule.MODULE_TYPE);
+				(ISCProcessorModule) moduleFactory.getRootModule(IMachineFile.ELEMENT_TYPE);
 			
 			runProcessorModules(
 					rootModule,

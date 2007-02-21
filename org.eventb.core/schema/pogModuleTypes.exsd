@@ -16,6 +16,7 @@
             <choice>
                <element ref="filterType"/>
                <element ref="processorType"/>
+               <element ref="rootType"/>
             </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -65,8 +66,8 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the identifier for this attribute type (simple id token, unique
-for attribute types within the extension namespace). The token cannot contain dot (.) or whitespace.
+                  the identifier for this filter module type (simple id token, unique
+for (filter/processor/root) module types within the extension namespace). The token cannot contain dot (.) or whitespace.
                </documentation>
             </annotation>
          </attribute>
@@ -109,8 +110,8 @@ It is not allowed to choose a filter module as parent.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the identifier for this attribute type (simple id token, unique
-for attribute types within the extension namespace). The token cannot contain dot (.) or whitespace.
+                  the identifier for this processor type (simple id token, unique
+for (filter/processor/root) types within the extension namespace). The token cannot contain dot (.) or whitespace.
                </documentation>
             </annotation>
          </attribute>
@@ -124,11 +125,51 @@ for attribute types within the extension namespace). The token cannot contain do
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="parent" type="string">
+         <attribute name="parent" type="string" use="required">
             <annotation>
                <documentation>
                   the optional parent (processor) module. Root modules must leave the attribute undefined.
 It is not allowed to choose a filter module as parent.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully-qualified name of a subclass of &lt;code&gt;org.eventb.core.pog.IPOGProcessorModule&lt;/code&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eventb.core.pog.IPOGProcessorModule"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="rootType">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the identifier for this root type (simple id token, unique
+for (filter/processor/root) types within the extension namespace). The token cannot contain dot (.) or whitespace.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the human-readable name of this root module
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="input" type="string" use="required">
+            <annotation>
+               <documentation>
+                  identifier of the input file element type for this root module.
                </documentation>
             </annotation>
          </attribute>

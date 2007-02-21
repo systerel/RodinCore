@@ -51,10 +51,10 @@ public interface IContextPointerArray extends ISCState {
 	PointerType getContextPointerType();
 	
 	/**
-	 * Returns whether the error flag of the context pointer with with the specified index is set.
+	 * Returns whether the error flag of the context pointer with the specified index is set.
 	 * 
 	 * @param index the index of the context pointer
-	 * @return whether the error flag of the context pointer with with the specified index is set
+	 * @return whether the error flag of the context pointer with the specified index is set
 	 */
 	boolean hasError(int index);
 	

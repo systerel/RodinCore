@@ -12,11 +12,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.tool.IModule;
+import org.eventb.core.tool.IModuleType;
+import org.eventb.core.tool.IProcessorModule;
+import org.eventb.internal.core.sc.modules.ContextModule;
+import org.eventb.internal.core.sc.modules.MachineModule;
 import org.eventb.internal.core.tool.ModuleDesc;
 import org.eventb.internal.core.tool.ModuleFactory;
 import org.eventb.internal.core.tool.ModuleManager;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
+import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -49,8 +57,8 @@ public class ModuleGraphTest extends Declarations {
 		}
 	}
 	
-	private static class FailingTest extends ModuleTest {
-		public FailingTest(ModuleDesc<? extends IModule>[] items) {
+	private static class FailingSortTest extends ModuleTest {
+		public FailingSortTest(ModuleDesc<? extends IModule>[] items) {
 			super(items);
 		}
 		@Override
@@ -88,7 +96,121 @@ public class ModuleGraphTest extends Declarations {
 		}
 	}
 	
-	private static ModuleDesc[][] moduleDescs = new ModuleDesc[][] {
+	private abstract static class AbstractCompleteTest extends ModuleTest {
+
+		AbstractCompleteTest(
+				ModuleDesc<? extends IModule>[] items, 
+				IFileElementType<? extends IRodinFile>[] types) {
+			super(items);
+			this.types = types;
+			map = new HashMap<String, ModuleDesc<? extends IModule>>();
+			for (ModuleDesc<? extends IModule> desc : items) {
+				map.put(desc.getId(), desc);
+			}
+		}
+		
+		private final Map<String, ModuleDesc<? extends IModule>> map;		
+		private final IFileElementType<? extends IRodinFile>[] types;
+		
+		protected IModule[] run() {
+			ModuleGraph graph = getAnalysedGraph();
+			ModuleFactory factory = new ModuleFactory(graph, map);
+			IModule[] modules = new IModule[types.length];
+			for (int i=0; i< types.length; i++) {
+				IFileElementType<? extends IRodinFile> type = types[i];
+				modules[i] = factory.getRootModule(type);
+			}
+			return modules;
+		}
+		
+	}
+	
+	private static class GetRootTest extends AbstractCompleteTest {
+		
+		private final IModuleType<? extends IModule>[] mTypes;
+		
+		GetRootTest(
+				ModuleDesc<? extends IModule>[] items, 
+				IFileElementType<? extends IRodinFile>[] types,
+				IModuleType<? extends IModule>[] mTypes) {
+			super(items, types);
+			this.mTypes = mTypes;
+		}
+
+		@Override
+		protected void test() {
+			IModule[] modules = run();
+			assertEquals("wrong number of modules", mTypes.length, modules.length);
+			for (int i=0; i<modules.length; i++) {
+				assertEquals("Wrong module type", mTypes[i], modules[i].getModuleType());
+			}
+		}
+		
+	}
+	
+	private static class FailingRootTest extends AbstractCompleteTest {
+
+		FailingRootTest(
+				ModuleDesc<? extends IModule>[] items, 
+				IFileElementType<? extends IRodinFile>[] types) {
+			super(items, types);
+		}
+
+		@Override
+		protected void test() {
+			try {
+				run();
+				fail("test should have failed");
+			} catch (Exception e) {
+			}
+			
+		}
+		
+	}
+	
+	private static final IFileElementType[][] types = 
+		new IFileElementType[][] {
+			new IFileElementType[] {
+			},
+			new IFileElementType[] {
+					IContextFile.ELEMENT_TYPE
+			},
+			new IFileElementType[] {
+					IContextFile.ELEMENT_TYPE,
+					IMachineFile.ELEMENT_TYPE
+			}
+	};
+	
+	private static IProcessorModule cProcessor = new IProcessorModule() {
+
+		public IModuleType<?> getModuleType() {
+			return ContextModule.MODULE_TYPE;
+		}
+		
+	};
+	
+	private static IProcessorModule mProcessor = new IProcessorModule() {
+
+		public IModuleType<?> getModuleType() {
+			return MachineModule.MODULE_TYPE;
+		}
+		
+	};
+	
+	private static final IModuleType[][] mTypes = 
+		new IModuleType[][] {
+			new IModuleType[] {
+			},
+			new IModuleType[] {
+					ContextModule.MODULE_TYPE
+			},
+			new IModuleType[] {
+					ContextModule.MODULE_TYPE,
+					MachineModule.MODULE_TYPE
+			}
+	};
+	
+	private static final ModuleDesc[][] moduleDescs = new ModuleDesc[][] {
 		new ModuleDesc[] {
 		},
 		new ModuleDesc[] {
@@ -146,33 +268,62 @@ public class ModuleGraphTest extends Declarations {
 				new ProcDesc("Y", "org.m.B", "org.m.X"),
 				new ProcDesc("A", "org.m.C"),
 				new ProcDesc("X", "org.m.A")
+		},
+		new ModuleDesc[] {
+				new RootDesc("X", null, IContextFile.ELEMENT_TYPE),
+				new RootDesc("Y", null, IContextFile.ELEMENT_TYPE)
+		},
+		new ModuleDesc[] {
+				new RootDesc("X", cProcessor, IContextFile.ELEMENT_TYPE)
+		},
+		new ModuleDesc[] {
+				new RootDesc("X", cProcessor, IContextFile.ELEMENT_TYPE),
+				new RootDesc("X", mProcessor, IMachineFile.ELEMENT_TYPE)
+		},
+		new ModuleDesc[] {
+				new RootDesc("C", cProcessor, IContextFile.ELEMENT_TYPE),
+				new ProcDesc("B", "org.m.C"),
+				new FilterDesc("A", "org.m.B")
 		}
 	};
 	
 	@SuppressWarnings("unchecked")
-	private static ModuleTest[] testItems = new ModuleTest[] {
-		// empty list should work
-		new SortingTest(moduleDescs[0], ""),
-		// self-loop should fail
-		new FailingTest(moduleDescs[1]),
-		// unknown parent should fail
-		new FailingTest(moduleDescs[2]),
-		// order between two nodes: parent last
-		new SortingTest(moduleDescs[3], "org.m.2, org.m.1"),
-		// order between children: first filters, then processors; but preserve relative order
-		new SortingTest(moduleDescs[4], "org.m.a, org.m.f, org.m.c, org.m.b"),
-		// a filter must have a parent
-		new FailingTest(moduleDescs[5]),
-		// a filter cannot be a parent
-		new FailingTest(moduleDescs[6]),
-		// a parent (transitively) cannot be a prereq
-		new FailingTest(moduleDescs[7]),
-		new FailingTest(moduleDescs[8]),
-		// preserve relative order
-		new SortingTest(moduleDescs[9], "org.m.1, org.m.2, org.m.3, org.m.4, org.m.5, org.m.6, org.m.7"),
-		// submodule prereq requirements must be observed by the factory
-		new FactoryTest(moduleDescs[10], moduleDescs[10][0], "org.m.X, org.m.A, org.m.Y, org.m.B, org.m.C"),
-		new FactoryTest(moduleDescs[11], moduleDescs[11][0], "org.m.X, org.m.A, org.m.Y, org.m.B, org.m.C")
+	private static final ModuleTest[] testItems = new ModuleTest[] {
+			// empty list should work
+			new SortingTest(moduleDescs[0], ""),
+			// self-loop should fail
+			new FailingSortTest(moduleDescs[1]),
+			// unknown parent should fail
+			new FailingSortTest(moduleDescs[2]),
+			// order between two nodes: parent last
+			new SortingTest(moduleDescs[3], "org.m.2, org.m.1"),
+			// order between children: first filters, then processors; but
+			// preserve
+			// relative order
+			new SortingTest(moduleDescs[4],
+					"org.m.a, org.m.f, org.m.c, org.m.b"),
+			// a filter must have a parent
+			new FailingSortTest(moduleDescs[5]),
+			// a filter cannot be a parent
+			new FailingSortTest(moduleDescs[6]),
+			// a parent (transitively) cannot be a prereq
+			new FailingSortTest(moduleDescs[7]),
+			new FailingSortTest(moduleDescs[8]),
+			// preserve relative order
+			new SortingTest(moduleDescs[9],
+					"org.m.1, org.m.2, org.m.3, org.m.4, org.m.5, org.m.6, org.m.7"),
+			// submodule prereq requirements must be observed by the factory
+			new FactoryTest(moduleDescs[10], moduleDescs[10][0],
+					"org.m.X, org.m.A, org.m.Y, org.m.B, org.m.C"),
+			new FactoryTest(moduleDescs[11], moduleDescs[11][0],
+					"org.m.X, org.m.A, org.m.Y, org.m.B, org.m.C"),
+			// root modules must be unique for file element types
+			new FailingRootTest(moduleDescs[12], types[0]),
+			// the right modules become roots
+			new GetRootTest(moduleDescs[13], types[1], mTypes[1]),
+			new GetRootTest(moduleDescs[14], types[2], mTypes[2]),
+			// the root module has the right children
+			new FactoryTest(moduleDescs[15], moduleDescs[15][0], "org.m.A, org.m.B, org.m.C"),
 	};
 	
 	/**

@@ -35,7 +35,10 @@ public class DummyConfigurationElement implements IConfigurationElement {
 	 */
 	public String getAttribute(String name)
 			throws InvalidRegistryObjectException {
-		return name;
+		if (name.equals("input"))
+			return "org.eventb.core.contextFile";
+		else
+			return name;
 	}
 
 	/* (non-Javadoc)

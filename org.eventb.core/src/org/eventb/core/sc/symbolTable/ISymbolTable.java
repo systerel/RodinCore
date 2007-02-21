@@ -44,7 +44,8 @@ public interface ISymbolTable<I extends ISymbolInfo> extends Iterable<I> {
 	
 	/**
 	 * Inserts a symbol info into the symbol table. Multiple insertions are not allowed.
-	 * The symbol corresponding symbol is <code>symbolInfo.getSymbol()</code>.
+	 * The key of the corresponding symbol is <code>symbolInfo.getSymbol()</code>. If the
+	 * symbol table is stacked, the symbol is inserted in the top level symbol table.
 	 * 
 	 * @param symbolInfo the symbol info for the symbol
 	 * @throws CoreException if the symbol is already present in the symbol table

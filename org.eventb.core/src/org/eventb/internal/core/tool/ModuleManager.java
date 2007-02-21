@@ -41,8 +41,8 @@ public abstract class ModuleManager extends SortingUtil {
 	// This table contains all filter and processor modules
 	private HashMap<String, ModuleDesc<? extends IModule>> modules;
 
-	private void register(String id, ModuleDesc<? extends IModule> type) {
-		final ModuleDesc<? extends IModule> oldType = modules.put(id, type);
+	private void register(String id, ModuleDesc<? extends IModule> desc) {
+		final ModuleDesc<? extends IModule> oldType = modules.put(id, desc);
 		if (oldType != null) {
 			modules.put(id, oldType);
 			throw new IllegalStateException(
@@ -99,6 +99,13 @@ public abstract class ModuleManager extends SortingUtil {
 					new ProcessorModuleDesc<IProcessorModule>(element);
 				verifyProcessor(processor);
 				register(processor.getId(), processor);
+				
+			} else if (name.equals("rootType")) { 
+				
+				RootModuleDesc<IProcessorModule> root =
+					new RootModuleDesc<IProcessorModule>(element);
+				verifyProcessor(root);
+				register(root.getId(), root);
 				
 			} else {
 				throw new IllegalStateException("Unknown module declaration: " + name);

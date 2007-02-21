@@ -19,6 +19,8 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.graph.Node;
+import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -28,6 +30,7 @@ public class ModuleFactory implements IModuleFactory {
 	
 	protected Map<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>> filterMap;
 	protected Map<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>> processorMap;
+	private Map<IFileElementType<? extends IRodinFile>, ModuleDesc<? extends IModule>> rootMap;
 
 	protected void addFilterToFactory(
 			ModuleDesc<? extends IModule> key, 
@@ -51,11 +54,21 @@ public class ModuleFactory implements IModuleFactory {
 		processors.add(processor);
 	}
 	
+	protected void addRootToFactory(
+			IFileElementType<? extends IRodinFile> key, 
+			ModuleDesc<? extends IModule> root) {
+		ModuleDesc<? extends IModule> oldRoot = rootMap.put(key, root);
+		if (oldRoot != null)
+			throw new IllegalStateException("Non-unique root module for file element " + key.getId());
+	}
+	
 	public ModuleFactory(ModuleGraph graph, Map<String, ModuleDesc<? extends IModule>> modules) {
 		filterMap = 
 			new HashMap<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>>();
 		processorMap = 
 			new HashMap<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>>();
+		rootMap = 
+			new HashMap<IFileElementType<? extends IRodinFile>, ModuleDesc<? extends IModule>>();
 		for (Node<ModuleDesc<? extends IModule>> node : graph.getSorted())
 			node.getObject().addToModuleFactory(this, modules);
 	}
@@ -96,10 +109,10 @@ public class ModuleFactory implements IModuleFactory {
 		}
 	}
 
-	public IProcessorModule getRootModule(IModuleType<? extends IModule> type) {
-		ModuleDesc<? extends IModule> desc = (ModuleDesc<? extends IModule>) type;
-		if (desc.getParent() != null)
-			throw new IllegalArgumentException("Not a root module " + type.getId());
+	public IProcessorModule getRootModule(IFileElementType<? extends IRodinFile> type) {
+		ModuleDesc<? extends IModule> desc = rootMap.get(type);
+		if (desc == null)
+			throw new IllegalArgumentException("No root module for " + type.getId());
 		IProcessorModule module = (IProcessorModule) desc.createInstance();
 		setModuleFactory(module);
 		return module;

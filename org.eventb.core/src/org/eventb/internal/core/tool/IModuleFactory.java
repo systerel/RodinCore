@@ -11,6 +11,8 @@ import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.core.tool.IProcessorModule;
+import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -22,6 +24,6 @@ public interface IModuleFactory {
 	
 	IProcessorModule[] getProcessorModules(IModuleType<? extends IModule> parentType);
 	
-	IProcessorModule getRootModule(IModuleType<? extends IModule> type);
+	IProcessorModule getRootModule(IFileElementType<? extends IRodinFile> type);
 	
 }
