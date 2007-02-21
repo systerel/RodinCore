@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 ETH Zurich.
+ * Copyright (c) 2005-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -202,5 +204,29 @@ public interface ISCEvent extends ITraceableElement, ILabeledElement, IConvergen
 	 */
 	@Deprecated
 	boolean isForbidden() throws RodinDBException;
+
+	/**
+	 * Returns the type environment of this event, given the type environment of
+	 * its parent machine. The returned type environment is made of a copy of
+	 * the given machine type environment together with all the local variables
+	 * defined in this event. The given type environment is not modified by this
+	 * method.
+	 * <p>
+	 * The returned type environment can be used subsequently to type-check the
+	 * guards and actions of this event. It might not be appropriate for
+	 * type-checking the witnesses of this event.
+	 * </p>
+	 * 
+	 * @param machineTEnv
+	 *            type environment of the parent machine
+	 * @param factory
+	 *            formula factory to use for building the result
+	 * @return the type environment of this event
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 * @see ISCMachineFile#getTypeEnvironment(FormulaFactory)
+	 */
+	ITypeEnvironment getTypeEnvironment(ITypeEnvironment machineTEnv,
+			FormulaFactory factory) throws RodinDBException;
 
 }

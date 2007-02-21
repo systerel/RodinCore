@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCExtendsContext;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCTheorem;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -91,6 +93,17 @@ public class SCContextFile extends EventBFile implements ISCContextFile {
 
 	public ISCTheorem getSCTheorem(String elementName) {
 		return getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
+	}
+
+	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
+			throws RodinDBException {
+		
+		ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		for (ISCInternalContext ictx: getAbstractSCContexts()) {
+			SCContextUtil.augmentTypeEnvironment(ictx, typenv, factory);
+		}
+		SCContextUtil.augmentTypeEnvironment(this, typenv, factory);
+		return typenv;
 	}
 
 }

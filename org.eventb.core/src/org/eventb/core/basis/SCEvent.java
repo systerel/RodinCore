@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 ETH Zurich.
+ * Copyright (c) 2005-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCRefinesEvent;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCWitness;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -115,6 +117,17 @@ public class SCEvent extends EventBElement implements ISCEvent {
 
 	public ISCWitness getSCWitness(String elementName) {
 		return getInternalElement(ISCWitness.ELEMENT_TYPE, elementName);
+	}
+
+	public ITypeEnvironment getTypeEnvironment(ITypeEnvironment mchTypenv,
+			FormulaFactory factory) throws RodinDBException {
+
+		ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		typenv.addAll(mchTypenv);
+		for (ISCVariable vrb : getSCVariables()) {
+			typenv.add(vrb.getIdentifier(factory));
+		}
+		return typenv;
 	}
 
 }

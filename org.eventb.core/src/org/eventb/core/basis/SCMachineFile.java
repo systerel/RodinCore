@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 ETH Zurich.
+ * Copyright (c) 2005-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import org.eventb.core.ISCSeesContext;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCVariant;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.internal.core.Messages;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
@@ -143,6 +145,19 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 
 	public ISCInternalContext getSCSeenContext(String elementName) {
 		return getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
+	}
+
+	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
+			throws RodinDBException {
+
+		ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		for (ISCInternalContext ictx : getSCSeenContexts()) {
+			SCContextUtil.augmentTypeEnvironment(ictx, typenv, factory);
+		}
+		for (ISCVariable vrb : getSCVariables()) {
+			typenv.add(vrb.getIdentifier(factory));
+		}
+		return typenv;
 	}
 
 }

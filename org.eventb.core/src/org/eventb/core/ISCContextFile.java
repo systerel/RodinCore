@@ -8,6 +8,8 @@
 
 package org.eventb.core;
 
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -93,5 +95,23 @@ public interface ISCContextFile extends ISCContext, IEventBFile {
 	 *             if there was a problem accessing the database
 	 */
 	ISCExtendsContext[] getSCExtendsClauses() throws RodinDBException;
+
+	/**
+	 * Returns the type environment defined by this context file. The returned
+	 * type environment is made of all carrier sets and constants defined in
+	 * this context and its abstractions.
+	 * <p>
+	 * It can be used subsequently to type-check the axioms and theorems of this
+	 * context.
+	 * </p>
+	 * 
+	 * @param factory
+	 *            formula factory to use for building the result
+	 * @return the type environment of this context
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
+			throws RodinDBException;
 
 }

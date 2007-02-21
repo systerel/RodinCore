@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 ETH Zurich.
+ * Copyright (c) 2005-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,8 @@
 
 package org.eventb.core;
 
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -270,5 +272,26 @@ public interface ISCMachineFile extends IEventBFile {
 	 */
 	@Deprecated
 	ISCRefinesMachine getRefinesClause() throws RodinDBException;
+
+	/**
+	 * Returns the type environment defined by this machine file. The returned
+	 * type environment is made of all carrier sets and constants defined in the
+	 * seen contexts and their abstractions, together with the variables
+	 * declared in this machine and its abstractions.
+	 * 
+	 * <p>
+	 * It can be used subsequently to type-check the invariants and theorems of
+	 * this machine. It can also be used as a basis for building the type
+	 * environment of an event of this machine.
+	 * </p>
+	 * 
+	 * @param factory
+	 *            formula factory to use for building the result
+	 * @return the type environment of this machine
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
+			throws RodinDBException;
 
 }
