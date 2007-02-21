@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -154,6 +154,13 @@ public abstract class EventBTest extends BuilderTest {
 		
 	}
 	
+	public IEvent addInitialisation(IMachineFile mchFile, String[] actionNames,
+			String[] actions) throws RodinDBException {
+
+		return addEvent(mchFile, IEvent.INITIALISATION, makeSList(),
+				makeSList(), makeSList(), actionNames, actions);
+	}
+
 	public void setConvergence(IEvent event, 
 			IConvergenceElement.Convergence convergence) throws RodinDBException {
 		event.setConvergence(convergence, null);
