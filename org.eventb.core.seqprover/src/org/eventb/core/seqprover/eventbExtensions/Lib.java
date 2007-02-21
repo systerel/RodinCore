@@ -440,27 +440,81 @@ public final class Lib {
 		// else System.out.println(str+" : "+plr.getProblems());
 		return null;
 	}
-	
+
 	@Deprecated
-	public static Predicate rewrite(Predicate P, FreeIdentifier from, Expression to){
-		if (! Arrays.asList(P.getFreeIdentifiers()).contains(from)) return P;
-		Map<FreeIdentifier,Expression> subst = new HashMap<FreeIdentifier,Expression>();
-		subst.put(from,to);
-		return P.substituteFreeIdents(subst,ff);
+	public static Predicate rewrite(Predicate P, FreeIdentifier from,
+			Expression to) {
+		if (!Arrays.asList(P.getFreeIdentifiers()).contains(from))
+			return P;
+		Map<FreeIdentifier, Expression> subst = new HashMap<FreeIdentifier, Expression>();
+		subst.put(from, to);
+		return P.substituteFreeIdents(subst, ff);
 	}
 
-	
-	public static Predicate rewrite(Predicate P, Expression from, Expression to){
-		IFormulaRewriter rewriter = new FixedRewriter(from,to);
+	public static Predicate rewrite(Predicate P, Expression from, Expression to) {
+		IFormulaRewriter rewriter = new EqualityRewriter(from, to);
 		return P.rewrite(rewriter);
 	}
-	
+
+	private static class EqualityRewriter extends FixedRewriter {
+
+		public EqualityRewriter(Formula from, Formula to) {
+			super(from, to);
+		}
+
+		@Override
+		public Expression rewrite(AssociativeExpression expression) {
+			int tag = expression.getTag();
+			if (from instanceof AssociativeExpression && from.getTag() == tag) {
+				AssociativeExpression aExp = (AssociativeExpression) from;
+				Expression[] children = expression.getChildren();
+				Expression[] rewriteChildren = aExp.getChildren();
+
+				// i will be index of the first rewritten child
+				int i;
+				for (i = 0; i < children.length; ++i) {
+					if (children[i].equals(rewriteChildren[0])) {
+						break;
+					}
+				}
+
+				if (i + rewriteChildren.length > children.length)
+					return expression;
+
+				for (int j = 1; j < rewriteChildren.length; ++j) {
+					if (!rewriteChildren[j].equals(children[i + j])) {
+						return expression;
+					}
+				}
+
+				// Replace "rewriteChildren.length" children from index i by
+				// "to"
+				Expression[] newChildren = new Expression[children.length
+						- rewriteChildren.length + 1];
+				System.arraycopy(children, 0, newChildren, 0, i);
+				newChildren[i] = (Expression) to;
+				System.arraycopy(children, i + rewriteChildren.length,
+						newChildren, i + 1, children.length - i
+								- rewriteChildren.length);
+				
+				if (newChildren.length == 1) {
+					return newChildren[0];
+				}
+				AssociativeExpression result = ff.makeAssociativeExpression(tag, newChildren, null);
+				return result.flatten(ff);
+			}
+			return super.rewrite(expression);
+		}
+
+	}
+
 	private static class FixedRewriter extends DefaultRewriter {
 		final Formula from;
+
 		final Formula to;
-		
+
 		public FixedRewriter(Formula from, Formula to) {
-			super(false, Lib.ff);
+			super(true, Lib.ff);
 			this.from = from;
 			this.to = to;
 		}
@@ -471,7 +525,7 @@ public final class Lib {
 			}
 			return formula;
 		}
-		
+
 		@Override
 		public Expression rewrite(AssociativeExpression expression) {
 			return (Expression) doRewrite(expression);
@@ -557,8 +611,7 @@ public final class Lib {
 			return (Predicate) doRewrite(predicate);
 		}
 	}
-	
-	
+
 	/**
 	 * Type checks a formula and returns <code>true</code> iff no new type
 	 * information was infreed from this type check (i.e. the formula contains

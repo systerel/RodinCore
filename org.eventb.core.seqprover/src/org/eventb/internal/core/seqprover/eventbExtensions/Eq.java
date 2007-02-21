@@ -56,7 +56,7 @@ public class Eq extends SinglePredInputReasoner{
 		toDeselect.add(eqHyp);
 		
 		for (Predicate shyp : seq.selectedHypIterable()){
-			if (shyp != eqHyp) {
+			if (!shyp.equals(eqHyp)) {
 				Predicate rewritten = (Lib.rewrite(shyp,from,to));
 				if (rewritten != shyp)
 				{
