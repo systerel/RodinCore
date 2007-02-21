@@ -1,6 +1,6 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
@@ -35,12 +35,15 @@ public class ImpE extends HypothesisReasoner {
 		final Predicate toAssume = Lib.impRight(pred);
 		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(toAssume);
 		addedHyps.addAll(Lib.breakPossibleConjunct(toShow));
+		Set<Predicate> deselectedHyps = new HashSet<Predicate>();
+		deselectedHyps.add(toShow);
+		deselectedHyps.add(pred);
 		return new IAntecedent[] {
 				ProverFactory.makeAntecedent(toShow),
 				ProverFactory.makeAntecedent(
 						sequent.goal(),
 						addedHyps,
-						ProverFactory.makeDeselectHypAction(Arrays.asList(pred)))
+						ProverFactory.makeDeselectHypAction(deselectedHyps))
 		};
 	}
 

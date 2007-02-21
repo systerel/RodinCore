@@ -29,11 +29,15 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasonerFailure;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -242,12 +246,35 @@ public class Tactics {
 		return new ITactic() {
 
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
-				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
+				IProverSequent seq = pt.getSequent();
+				ITypeEnvironment typeEnv = seq.typeEnvironment();
 				BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(pred);
 				final AllD.Input input = new AllD.Input(instantiations,
 						boundIdentDecls, typeEnv, pred);
-				return (BasicTactics.reasonerTac(new AllD(), input)).apply(pt,
-						pm);
+
+				AllD allD = new AllD();
+				IReasonerOutput output = allD.apply(seq, input, pm);
+
+				if (output instanceof IReasonerFailure) {
+					return output;
+				}
+				if (output == null)
+					return "! Plugin returned null !";
+				if (!(output instanceof IProofRule))
+					return output;
+				IAntecedent[] antecedents = ((IProofRule) output)
+						.getAntecedents();
+				assert antecedents.length == 2;
+				Set<Predicate> addedHyps = antecedents[1].getAddedHyps();
+				assert addedHyps.size() == 1;
+				if (!pt.isOpen()) return "Root already has children";
+				if (!pt.applyRule((IProofRule) output)) 
+					return "Rule "+((IProofRule) output).getDisplayName()+" is not applicable";
+
+				// Find the new hypothesis and try to apply impE.
+				IProofTreeNode[] openDescendants = pt.getOpenDescendants();
+				IProofTreeNode node = openDescendants[openDescendants.length - 1];
+				return impE(addedHyps.iterator().next()).apply(node, pm);
 			}
 
 		};
@@ -605,9 +632,9 @@ public class Tactics {
 				}
 				return super.select(predicate);
 			}
-			
+
 		});
-	
+
 	}
 
 	public static ITactic removeInclusion(Predicate hyp, IPosition position) {
