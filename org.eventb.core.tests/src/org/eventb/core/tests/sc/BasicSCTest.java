@@ -256,6 +256,16 @@ public abstract class BasicSCTest extends EventBTest {
 		return contexts;
 	}
 
+	public ISCEvent getSCEvent(ISCMachineFile file, String label) throws RodinDBException {
+		for (ISCEvent event: file.getSCEvents()) {
+			if (label.equals(event.getLabel())) {
+				return event;
+			}
+		}
+		fail("No event labelled " + label + " in " + file);
+		return null;
+	}
+
 	public ISCEvent[] getSCEvents(ISCMachineFile file, String...strings) throws RodinDBException {
 		ISCEvent[] events = file.getSCEvents();
 		
