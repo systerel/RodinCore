@@ -15,26 +15,22 @@ import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.EventBPlugin;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import junit.framework.TestCase;
 
 /**
  * Tests the XSL pretty printer for machines and contexts.
@@ -67,21 +63,21 @@ public class TestPrettyPrint extends TestCase {
 		return new File(path.toOSString());
 	}
 	
-	public void testContext() {
+	public void testContext() throws Exception {
 		doTest("c",".buc");
 	}
 	
-	public void testMachine() {
+	public void testMachine() throws Exception {
 		doTest("m",".bum");
 	}
 	
-	private void doTest(String name, String ext) {
-		Source source = new StreamSource(XSLT_FILE);
+	private void doTest(String name, String ext) throws Exception {
+		final Source source = new StreamSource(XSLT_FILE);
+		final Transformer transformer =
+			TransformerFactory.newInstance().newTransformer(source);
+		final File file = File.createTempFile("xsl", "");
 		try {
-			Transformer transformer = TransformerFactory.newInstance().newTransformer(source);
-
-			File file = File.createTempFile("xsl", "");
-			Result result = new StreamResult(file);
+			final Result result = new StreamResult(file);
 
 			transformer.setParameter("name", name);
 			transformer.transform(new StreamSource(
@@ -94,24 +90,11 @@ public class TestPrettyPrint extends TestCase {
 					getLocalFile(TEST_DIR + name + ".html", PLUGIN_ID));
 			Document actualDocument = builder.parse(file);
 			
-			if (actualDocument.isEqualNode(expectedDocument)) {
-				assertTrue(true);
-			}
-			else {
+			if (! actualDocument.isEqualNode(expectedDocument)) {
 				assertEquals(getString(expectedDocument), getString(actualDocument));
 			}
-		} catch (TransformerConfigurationException e) {
-			fail();
-		} catch (TransformerFactoryConfigurationError e) {
-			fail();
-		} catch (TransformerException e) {
-			fail();
-		} catch (ParserConfigurationException e) {
-			fail();
-		} catch (SAXException e) {
-			fail();
-		} catch (IOException e) {
-			fail();
+		} finally {
+			file.delete();
 		}		
 	}
 	
