@@ -1177,6 +1177,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveMembershipGoal"
             target="goal"
             tooltip="%proofTactics.rmGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.riHyp"
+            interrupt="false"
+            name="%proofTactics.riHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusionHyp"
+            target="hypothesis"
+            tooltip="%proofTactics.riHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.riGoal"
+            interrupt="false"
+            name="%proofTactics.riGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusionGoal"
+            target="goal"
+            tooltip="%proofTactics.riGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
