@@ -21,7 +21,7 @@ public class RemoveInclusion extends AbstractManualRewrites implements
 	@Override
 	protected String getDisplayName(Predicate pred, IPosition position) {
 		if (pred != null)
-			return "remove ⊆" + pred.getSubFormula(position);
+			return "remove ⊆ in " + pred.getSubFormula(position);
 		return "remove ⊆ in goal";
 	}
 

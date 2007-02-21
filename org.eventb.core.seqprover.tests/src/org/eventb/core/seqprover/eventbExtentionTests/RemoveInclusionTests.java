@@ -41,6 +41,21 @@ public class RemoveInclusionTests extends TestCase {
 
 	Predicate P6 = TestLib.genPred("∀x·x = 0 ⇒ {x, 2} ⊆ {x, 2}");
 
+	Predicate P7 = TestLib.genPred("(0 = 1) ⇒ {1 ↦ 2} ⊆ {1 ↦ 2, 2 ↦ 3}");
+
+	Predicate P8 = TestLib.genPred("∀x·x = 0 ⇒ {x ↦ 2} ⊆ {x ↦ 2, 2 ↦ x}");
+
+	Predicate P9 = TestLib
+			.genPred("(0 = 1) ⇒ {(0 ↦ 2) ↦ (2 ↦ 3)} ⊆ {(1 ↦ 2) ↦ (2 ↦ 3)}");
+
+	Predicate P10 = TestLib
+			.genPred("∀x·x = 0 ⇒ {0 ↦ (2 ↦ 2) ↦ x} ⊆ {x ↦ (2 ↦ 2) ↦ x}");
+
+	Predicate P11 = TestLib.genPred("(0 = 1) ⇒ {1 ↦ {2}} ⊆ {1 ↦ {2}, 2 ↦ {3}}");
+
+	Predicate P12 = TestLib
+			.genPred("∀x·x = 0 ⇒ {{x} ↦ 2} ⊆ {{x} ↦ 2, {2} ↦ x}");
+
 	public void testGoalNotApplicable() {
 		IProverSequent seq;
 		IReasonerOutput output;
@@ -88,6 +103,42 @@ public class RemoveInclusionTests extends TestCase {
 
 		// Position in goal is incorrect
 		seq = TestLib.genSeq(" ⊤ |- " + P6);
+		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("0.1")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in goal is incorrect
+		seq = TestLib.genSeq(" ⊤ |- " + P7);
+		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("0")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in goal is incorrect
+		seq = TestLib.genSeq(" ⊤ |- " + P8);
+		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("0.1")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in goal is incorrect
+		seq = TestLib.genSeq(" ⊤ |- " + P9);
+		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("0")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in goal is incorrect
+		seq = TestLib.genSeq(" ⊤ |- " + P10);
+		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("0.1")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in goal is incorrect
+		seq = TestLib.genSeq(" ⊤ |- " + P11);
+		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("0")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in goal is incorrect
+		seq = TestLib.genSeq(" ⊤ |- " + P12);
 		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
 				.makePosition("0.1")), null);
 		assertTrue(output instanceof IReasonerFailure);
@@ -146,6 +197,42 @@ public class RemoveInclusionTests extends TestCase {
 		output = riReasoner.apply(seq, new RemoveNegation.Input(P6, ff
 				.makePosition("0.1")), null);
 		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in hyp is incorrect
+		seq = TestLib.genSeq(P7 + " |- ⊤ ");
+		output = riReasoner.apply(seq, new RemoveNegation.Input(P7, ff
+				.makePosition("0")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in hyp is incorrect
+		seq = TestLib.genSeq(P8 + " |- ⊤ ");
+		output = riReasoner.apply(seq, new RemoveNegation.Input(P8, ff
+				.makePosition("0.1")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in hyp is incorrect
+		seq = TestLib.genSeq(P9 + " |- ⊤ ");
+		output = riReasoner.apply(seq, new RemoveNegation.Input(P9, ff
+				.makePosition("0")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in hyp is incorrect
+		seq = TestLib.genSeq(P10 + " |- ⊤ ");
+		output = riReasoner.apply(seq, new RemoveNegation.Input(P10, ff
+				.makePosition("0.1")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in hyp is incorrect
+		seq = TestLib.genSeq(P11 + " |- ⊤ ");
+		output = riReasoner.apply(seq, new RemoveNegation.Input(P11, ff
+				.makePosition("0")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in hyp is incorrect
+		seq = TestLib.genSeq(P12 + " |- ⊤ ");
+		output = riReasoner.apply(seq, new RemoveNegation.Input(P12, ff
+				.makePosition("0.1")), null);
+		assertTrue(output instanceof IReasonerFailure);
 	}
 
 	/**
@@ -165,6 +252,18 @@ public class RemoveInclusionTests extends TestCase {
 		assertPositions("Position found for P5 ", "1", positions);
 		positions = Tactics.ri_getPositions(P6);
 		assertPositions("Position found for P6 ", "1.1", positions);
+		positions = Tactics.ri_getPositions(P7);
+		assertPositions("Position found for P7 ", "1", positions);
+		positions = Tactics.ri_getPositions(P8);
+		assertPositions("Position found for P8 ", "1.1", positions);
+		positions = Tactics.ri_getPositions(P9);
+		assertPositions("Position found for P9 ", "1", positions);
+		positions = Tactics.ri_getPositions(P10);
+		assertPositions("Position found for P10 ", "1.1", positions);
+		positions = Tactics.ri_getPositions(P11);
+		assertPositions("Position found for P11 ", "1", positions);
+		positions = Tactics.ri_getPositions(P12);
+		assertPositions("Position found for P12 ", "1.1", positions);
 	}
 
 	/**
@@ -214,8 +313,8 @@ public class RemoveInclusionTests extends TestCase {
 				.makePosition("1")), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
-		assertSequents("Applied successfully goal P3 ",
-				"{}[][][⊤] |- 0=1⇒⊤", newSeqs);
+		assertSequents("Applied successfully goal P3 ", "{}[][][⊤] |- 0=1⇒⊤",
+				newSeqs);
 
 		seq = TestLib.genSeq(P3 + " |- ⊤ ");
 		output = riReasoner.apply(seq, new RemoveNegation.Input(P3, ff
@@ -239,16 +338,15 @@ public class RemoveInclusionTests extends TestCase {
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully hyp P4 ",
-				"{}[∀x·x=0⇒∅⊆{x,2}][][∀x·x=0⇒⊤] |- ⊤",
-				newSeqs);
+				"{}[∀x·x=0⇒∅⊆{x,2}][][∀x·x=0⇒⊤] |- ⊤", newSeqs);
 
 		seq = TestLib.genSeq(" ⊤ |- " + P5);
 		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
 				.makePosition("1")), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
-		assertSequents("Applied successfully goal P5 ",
-				"{}[][][⊤] |- 0=1⇒⊤", newSeqs);
+		assertSequents("Applied successfully goal P5 ", "{}[][][⊤] |- 0=1⇒⊤",
+				newSeqs);
 
 		seq = TestLib.genSeq(P5 + " |- ⊤ ");
 		output = riReasoner.apply(seq, new RemoveNegation.Input(P5, ff
@@ -272,7 +370,125 @@ public class RemoveInclusionTests extends TestCase {
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully hyp P6 ",
-				"{}[∀x·x=0⇒{x,2}⊆{x,2}][][∀x·x=0⇒⊤] |- ⊤",
+				"{}[∀x·x=0⇒{x,2}⊆{x,2}][][∀x·x=0⇒⊤] |- ⊤", newSeqs);
+
+		seq = TestLib.genSeq(" ⊤ |- " + P7);
+		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents("Applied successfully goal P7 ",
+				"{}[][][⊤] |- 0=1⇒(∀x,x0·x0 ↦ x∈{1 ↦ 2}⇒x0 ↦ x∈{1 ↦ 2,2 ↦ 3})",
+				newSeqs);
+
+		seq = TestLib.genSeq(P7 + " |- ⊤ ");
+		output = riReasoner.apply(seq, new RemoveNegation.Input(P7, ff
+				.makePosition("1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully hyp P7 ",
+				"{}[0=1⇒{1 ↦ 2}⊆{1 ↦ 2,2 ↦ 3}][][0=1⇒(∀x,x0·x0 ↦ x∈{1 ↦ 2}⇒x0 ↦ x∈{1 ↦ 2,2 ↦ 3})] |- ⊤",
+				newSeqs);
+
+		seq = TestLib.genSeq(" ⊤ |- " + P8);
+		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("1.1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully goal P8 ",
+				"{}[][][⊤] |- ∀x·x=0⇒(∀x0,x1·x1 ↦ x0∈{x ↦ 2}⇒x1 ↦ x0∈{x ↦ 2,2 ↦ x})",
+				newSeqs);
+
+		seq = TestLib.genSeq(P8 + " |- ⊤ ");
+		output = riReasoner.apply(seq, new RemoveNegation.Input(P8, ff
+				.makePosition("1.1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully hyp P8 ",
+				"{}[∀x·x=0⇒{x ↦ 2}⊆{x ↦ 2,2 ↦ x}][][∀x·x=0⇒(∀x0,x1·x1 ↦ x0∈{x ↦ 2}⇒x1 ↦ x0∈{x ↦ 2,2 ↦ x})] |- ⊤",
+				newSeqs);
+
+		seq = TestLib.genSeq(" ⊤ |- " + P9);
+		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully goal P9 ",
+				"{}[][][⊤] |- 0=1⇒(∀x,x0,x1,x2·x2 ↦ x1 ↦ (x0 ↦ x)∈{0 ↦ 2 ↦ (2 ↦ 3)}⇒x2 ↦ x1 ↦ (x0 ↦ x)∈{1 ↦ 2 ↦ (2 ↦ 3)})",
+				newSeqs);
+
+		seq = TestLib.genSeq(P9 + " |- ⊤ ");
+		output = riReasoner.apply(seq, new RemoveNegation.Input(P9, ff
+				.makePosition("1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully hyp P9 ",
+				"{}[0=1⇒{0 ↦ 2 ↦ (2 ↦ 3)}⊆{1 ↦ 2 ↦ (2 ↦ 3)}][][0=1⇒(∀x,x0,x1,x2·x2 ↦ x1 ↦ (x0 ↦ x)∈{0 ↦ 2 ↦ (2 ↦ 3)}⇒x2 ↦ x1 ↦ (x0 ↦ x)∈{1 ↦ 2 ↦ (2 ↦ 3)})] |- ⊤",
+				newSeqs);
+
+		seq = TestLib.genSeq(" ⊤ |- " + P10);
+		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("1.1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully goal P10 ",
+				"{}[][][⊤] |- ∀x·x=0⇒(∀x0,x1,x2,x3·x3 ↦ (x2 ↦ x1) ↦ x0∈{0 ↦ (2 ↦ 2) ↦ x}⇒x3 ↦ (x2 ↦ x1) ↦ x0∈{x ↦ (2 ↦ 2) ↦ x})",
+				newSeqs);
+
+		seq = TestLib.genSeq(P10 + " |- ⊤ ");
+		output = riReasoner.apply(seq, new RemoveNegation.Input(P10, ff
+				.makePosition("1.1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully hyp P10 ",
+				"{}[∀x·x=0⇒{0 ↦ (2 ↦ 2) ↦ x}⊆{x ↦ (2 ↦ 2) ↦ x}][][∀x·x=0⇒(∀x0,x1,x2,x3·x3 ↦ (x2 ↦ x1) ↦ x0∈{0 ↦ (2 ↦ 2) ↦ x}⇒x3 ↦ (x2 ↦ x1) ↦ x0∈{x ↦ (2 ↦ 2) ↦ x})] |- ⊤",
+				newSeqs);
+
+		seq = TestLib.genSeq(" ⊤ |- " + P11);
+		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully goal P11 ",
+				"{}[][][⊤] |- 0=1⇒(∀x,x0·x0 ↦ x∈{1 ↦ {2}}⇒x0 ↦ x∈{1 ↦ {2},2 ↦ {3}})",
+				newSeqs);
+
+		seq = TestLib.genSeq(P11 + " |- ⊤ ");
+		output = riReasoner.apply(seq, new RemoveNegation.Input(P11, ff
+				.makePosition("1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully hyp P11 ",
+				"{}[0=1⇒{1 ↦ {2}}⊆{1 ↦ {2},2 ↦ {3}}][][0=1⇒(∀x,x0·x0 ↦ x∈{1 ↦ {2}}⇒x0 ↦ x∈{1 ↦ {2},2 ↦ {3}})] |- ⊤",
+				newSeqs);
+
+		seq = TestLib.genSeq(" ⊤ |- " + P12);
+		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("1.1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully goal P12 ",
+				"{}[][][⊤] |- ∀x·x=0⇒(∀x0,x1·x1 ↦ x0∈{{x} ↦ 2}⇒x1 ↦ x0∈{{x} ↦ 2,{2} ↦ x})",
+				newSeqs);
+
+		seq = TestLib.genSeq(P12 + " |- ⊤ ");
+		output = riReasoner.apply(seq, new RemoveNegation.Input(P12, ff
+				.makePosition("1.1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully hyp P12 ",
+				"{}[∀x·x=0⇒{{x} ↦ 2}⊆{{x} ↦ 2,{2} ↦ x}][][∀x·x=0⇒(∀x0,x1·x1 ↦ x0∈{{x} ↦ 2}⇒x1 ↦ x0∈{{x} ↦ 2,{2} ↦ x})] |- ⊤",
 				newSeqs);
 	}
 

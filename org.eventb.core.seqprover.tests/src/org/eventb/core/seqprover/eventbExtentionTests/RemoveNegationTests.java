@@ -70,6 +70,10 @@ public class RemoveNegationTests extends TestCase {
 
 	Predicate P20 = TestLib.genPred("∀x·x = 0 ⇒ ¬({1 ↦ ((x ↦ 0) ↦ x)} = ∅)");
 
+	Predicate P21 = TestLib.genPred("(0 = 1) ⇒ ¬({1 ↦ {2}} = ∅)");
+
+	Predicate P22 = TestLib.genPred("∀x·x = 0 ⇒ ¬({{x} ↦ 0} = ∅)");
+
 	public void testGoalNotApplicable() {
 		IProverSequent seq;
 		IReasonerOutput output;
@@ -201,6 +205,18 @@ public class RemoveNegationTests extends TestCase {
 
 		// Position in goal is incorrect
 		seq = TestLib.genSeq(" ⊤ |- " + P20);
+		output = rnReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("0.1")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in goal is incorrect
+		seq = TestLib.genSeq(" ⊤ |- " + P21);
+		output = rnReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("0.1")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in goal is incorrect
+		seq = TestLib.genSeq(" ⊤ |- " + P22);
 		output = rnReasoner.apply(seq, new RemoveNegation.Input(null, ff
 				.makePosition("0.1")), null);
 		assertTrue(output instanceof IReasonerFailure);
@@ -343,6 +359,18 @@ public class RemoveNegationTests extends TestCase {
 		output = rnReasoner.apply(seq, new RemoveNegation.Input(P20, ff
 				.makePosition("0.1")), null);
 		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in hyp is incorrect
+		seq = TestLib.genSeq(P21 + " |- ⊤ ");
+		output = rnReasoner.apply(seq, new RemoveNegation.Input(P21, ff
+				.makePosition("0")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in hyp is incorrect
+		seq = TestLib.genSeq(P22 + " |- ⊤ ");
+		output = rnReasoner.apply(seq, new RemoveNegation.Input(P22, ff
+				.makePosition("0.1")), null);
+		assertTrue(output instanceof IReasonerFailure);
 	}
 
 	/**
@@ -390,6 +418,10 @@ public class RemoveNegationTests extends TestCase {
 		assertPositions("Position found for P19 ", "1", positions);
 		positions = Tactics.rn_getPositions(P20);
 		assertPositions("Position found for P20 ", "1.1", positions);
+		positions = Tactics.rn_getPositions(P21);
+		assertPositions("Position found for P21 ", "1", positions);
+		positions = Tactics.rn_getPositions(P22);
+		assertPositions("Position found for P22 ", "1.1", positions);
 	}
 
 	/**
@@ -733,6 +765,46 @@ public class RemoveNegationTests extends TestCase {
 		assertSequents(
 				"Applied successfully hyp P20 ",
 				"{}[∀x·x=0⇒¬{1 ↦ (x ↦ 0 ↦ x)}=∅][][∀x·x=0⇒(∃x0,x1,x2,x3·x3 ↦ (x2 ↦ x1 ↦ x0)∈{1 ↦ (x ↦ 0 ↦ x)})] |- ⊤",
+				newSeqs);
+
+		seq = TestLib.genSeq(" ⊤ |- " + P21);
+		output = rnReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully goal P21 ",
+				"{}[][][⊤] |- 0=1⇒(∃x,x0·x0 ↦ x∈{1 ↦ {2}})",
+				newSeqs);
+
+		seq = TestLib.genSeq(P21 + " |- ⊤ ");
+		output = rnReasoner.apply(seq, new RemoveNegation.Input(P21, ff
+				.makePosition("1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully hyp P21 ",
+				"{}[0=1⇒¬{1 ↦ {2}}=∅][][0=1⇒(∃x,x0·x0 ↦ x∈{1 ↦ {2}})] |- ⊤",
+				newSeqs);
+
+		seq = TestLib.genSeq(" ⊤ |- " + P22);
+		output = rnReasoner.apply(seq, new RemoveNegation.Input(null, ff
+				.makePosition("1.1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully goal P22 ",
+				"{}[][][⊤] |- ∀x·x=0⇒(∃x0,x1·x1 ↦ x0∈{{x} ↦ 0})",
+				newSeqs);
+
+		seq = TestLib.genSeq(P22 + " |- ⊤ ");
+		output = rnReasoner.apply(seq, new RemoveNegation.Input(P22, ff
+				.makePosition("1.1")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents(
+				"Applied successfully hyp P22 ",
+				"{}[∀x·x=0⇒¬{{x} ↦ 0}=∅][][∀x·x=0⇒(∃x0,x1·x1 ↦ x0∈{{x} ↦ 0})] |- ⊤",
 				newSeqs);
 	}
 

@@ -54,12 +54,12 @@ public class FormulaUnfold {
 			BoundIdentDecl[] identDeclsLeft = getBoundIdentDecls(i, left);
 			BoundIdentDecl[] identDeclsRight = getBoundIdentDecls(i
 					+ identDeclsLeft.length, right);
-			BoundIdentDecl[] identDecls = new BoundIdentDecl[identDeclsLeft.length
-					+ identDeclsRight.length];
-			System.arraycopy(identDeclsLeft, 0, identDecls, 0,
-					identDeclsLeft.length);
-			System.arraycopy(identDeclsRight, 0, identDecls,
-					identDeclsLeft.length, identDeclsRight.length);
+			BoundIdentDecl[] identDecls = new BoundIdentDecl[identDeclsRight.length
+					+ identDeclsLeft.length];
+			System.arraycopy(identDeclsRight, 0, identDecls, 0,
+					identDeclsRight.length);
+			System.arraycopy(identDeclsLeft, 0, identDecls,
+					identDeclsRight.length, identDeclsLeft.length);
 			return identDecls;
 		} else {
 			return new BoundIdentDecl[] { ff

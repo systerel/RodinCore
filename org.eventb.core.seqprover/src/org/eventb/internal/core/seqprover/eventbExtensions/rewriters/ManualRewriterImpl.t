@@ -293,7 +293,7 @@ public class ManualRewriterImpl extends DefaultRewriter {
 	    	 */
 	    	In(_, EmptySet()) -> {
 	    		return Lib.False;
-	    	}	    	
+	    	}
 
 			/**
 	    	 * Set Theory 8: A ∈ {A} == ⊤
