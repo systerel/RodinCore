@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,8 @@ public interface ISCAssignmentElement extends IInternalElement {
 	 * @return the assignment of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * 
+	 * @see ISCEvent#getTypeEnvironment(ITypeEnvironment, FormulaFactory)
 	 */
 	Assignment getAssignment(FormulaFactory factory, ITypeEnvironment typenv)
 			throws RodinDBException;
