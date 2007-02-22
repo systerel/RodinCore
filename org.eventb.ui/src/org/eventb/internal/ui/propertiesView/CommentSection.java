@@ -31,7 +31,7 @@ public class CommentSection extends AbstractPropertySection implements
 		IElementChangedListener {
 
 	Text commentText;
-	
+
 	IEventBInputText inputText;
 
 	ICommentedElement element;
@@ -55,14 +55,15 @@ public class CommentSection extends AbstractPropertySection implements
 		data.top = new FormAttachment(0, VSPACE);
 		data.height = commentText.getLineHeight() * 3;
 		commentText.setLayoutData(data);
-		
+
 		inputText = new EventBMath(commentText);
 		new TimerText(commentText, 1000) {
 			@Override
 			protected void response() {
-				UIUtils.setStringAttribute(element,
-						EventBAttributes.COMMENT_ATTRIBUTE,
-						commentText.getText(), null);
+				String comments = commentText.getText();
+				if (!getComment(element).equals(comments))
+					UIUtils.setStringAttribute(element,
+							EventBAttributes.COMMENT_ATTRIBUTE, comments, null);
 			}
 		};
 
@@ -72,6 +73,17 @@ public class CommentSection extends AbstractPropertySection implements
 		data.right = new FormAttachment(commentText, HSPACE);
 		data.top = new FormAttachment(commentText, 0, SWT.CENTER);
 		labelLabel.setLayoutData(data);
+	}
+
+	protected String getComment(ICommentedElement commentedElement) {
+		try {
+			if (commentedElement.hasComment())
+				return commentedElement.getComment();
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	@Override
@@ -84,7 +96,8 @@ public class CommentSection extends AbstractPropertySection implements
 			}
 		} catch (RodinDBException e) {
 			commentText.setText("");
-			if (UIUtils.DEBUG) e.printStackTrace();
+			if (UIUtils.DEBUG)
+				e.printStackTrace();
 		}
 		super.refresh();
 	}
@@ -132,5 +145,4 @@ public class CommentSection extends AbstractPropertySection implements
 			inputText.dispose();
 	}
 
-	
 }

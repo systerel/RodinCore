@@ -1063,6 +1063,20 @@
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IPredicateElement"/>
          </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.labelSection"
+               class="org.eventb.internal.ui.propertiesView.InheritanceSection"
+               id="org.eventb.ui.inheritanceSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.IEvent"/>
+         </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.inheritanceSection"
+               class="org.eventb.internal.ui.propertiesView.ConvergenceSection"
+               id="org.eventb.ui.convergenceSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.IEvent"/>
+         </propertySection>
       </propertySections>
       <propertySections contributorId="org.eventb.ui.editors.context">
          <propertySection
