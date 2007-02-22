@@ -11,8 +11,10 @@ public class ExtendsContextModifier implements IElementModifier {
 	public void modify(IRodinElement element, String text)
 			throws RodinDBException {
 		if (element instanceof IExtendsContext) {
-			((IExtendsContext) element).setAbstractContextName(text,
-					new NullProgressMonitor());
+			IExtendsContext extendsContext = (IExtendsContext) element;
+			if (!extendsContext.getAbstractContextName().equals(text))
+				extendsContext.setAbstractContextName(text,
+						new NullProgressMonitor());
 		}
 		return;
 	}

@@ -11,8 +11,9 @@ public class IdentifierModifier implements IElementModifier {
 	public void modify(IRodinElement element, String text)
 			throws RodinDBException {
 		if (element instanceof IIdentifierElement) {
-			((IIdentifierElement) element).setIdentifierString(text,
-					new NullProgressMonitor());
+			IIdentifierElement iElement = (IIdentifierElement) element;
+			if (!iElement.getIdentifierString().equals(text))
+				iElement.setIdentifierString(text, new NullProgressMonitor());
 		}
 		return;
 	}

@@ -11,8 +11,10 @@ public class RefinesMachineModifier implements IElementModifier {
 	public void modify(IRodinElement element, String text)
 			throws RodinDBException {
 		if (element instanceof IRefinesMachine) {
-			((IRefinesMachine) element).setAbstractMachineName(text,
-					new NullProgressMonitor());
+			IRefinesMachine refinesMachine = (IRefinesMachine) element;
+			if (!refinesMachine.getAbstractMachine().equals(text))
+				refinesMachine.setAbstractMachineName(text,
+						new NullProgressMonitor());
 		}
 		return;
 	}

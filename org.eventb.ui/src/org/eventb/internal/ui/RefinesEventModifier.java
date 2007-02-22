@@ -11,8 +11,10 @@ public class RefinesEventModifier implements IElementModifier {
 	public void modify(IRodinElement element, String text)
 			throws RodinDBException {
 		if (element instanceof IRefinesEvent) {
-			((IRefinesEvent) element).setAbstractEventLabel(text,
-					new NullProgressMonitor());
+			IRefinesEvent refinesEvent = (IRefinesEvent) element;
+			if (!refinesEvent.getAbstractEventLabel().equals(text))
+				refinesEvent.setAbstractEventLabel(text,
+						new NullProgressMonitor());
 		}
 		return;
 	}

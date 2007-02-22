@@ -11,8 +11,9 @@ public class PredicateModifier implements IElementModifier {
 	public void modify(IRodinElement element, String text)
 			throws RodinDBException {
 		if (element instanceof IPredicateElement) {
-			((IPredicateElement) element).setPredicateString(text,
-					new NullProgressMonitor());
+			IPredicateElement pElement = (IPredicateElement) element;
+			if (!pElement.getPredicateString().equals(text))
+				pElement.setPredicateString(text, new NullProgressMonitor());
 		}
 		return;
 	}

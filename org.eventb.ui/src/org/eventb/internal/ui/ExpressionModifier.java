@@ -11,8 +11,9 @@ public class ExpressionModifier implements IElementModifier {
 	public void modify(IRodinElement element, String text)
 			throws RodinDBException {
 		if (element instanceof IExpressionElement) {
-			((IExpressionElement) element).setExpressionString(text,
-					new NullProgressMonitor());
+			IExpressionElement eElement = (IExpressionElement) element;
+			if (!eElement.getExpressionString().equals(text))
+				eElement.setExpressionString(text, new NullProgressMonitor());
 		}
 		return;
 	}

@@ -11,8 +11,9 @@ public class AssignmentModifier implements IElementModifier {
 	public void modify(IRodinElement element, String text)
 			throws RodinDBException {
 		if (element instanceof IAssignmentElement) {
-			((IAssignmentElement) element).setAssignmentString(text,
-					new NullProgressMonitor());
+			IAssignmentElement aElement = (IAssignmentElement) element;
+			if (!aElement.getAssignmentString().equals(text))
+				aElement.setAssignmentString(text, new NullProgressMonitor());
 		}
 		return;
 	}
