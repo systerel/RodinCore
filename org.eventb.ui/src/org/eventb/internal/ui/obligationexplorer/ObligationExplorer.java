@@ -121,21 +121,16 @@ public class ObligationExplorer extends ViewPart implements
 
 	Text filterText;
 
-	static int NULL = 0;
+	// Proof states
 
-	private static int UNATTEMPTED = 1;
-
-	private static int PENDING_BROKEN = 2;
-
-	private static int PENDING = 3;
-
-	private static int REVIEWED_BROKEN = 4;
-
-	private static int REVIEWED = 5;
-
-	private static int DISCHARGED_BROKEN = 6;
-
-	static int DISCHARGED;
+	static int UNKNOWN = -1;
+	static int DISCHARGED = 0;
+	static int UNATTEMPTED = 1;
+	static int PENDING_BROKEN = 2;
+	static int PENDING = 3;
+	static int REVIEWED_BROKEN = 4;
+	static int REVIEWED = 5;
+	static int DISCHARGED_BROKEN = 6;
 
 	/**
 	 * Implements filtering based on proof obligation names.
@@ -228,7 +223,7 @@ public class ObligationExplorer extends ViewPart implements
 						else
 							return DISCHARGED;
 					}
-					return NULL; // Should not happen
+					return UNKNOWN; // Should not happen
 				}
 			}
 		}
@@ -262,7 +257,7 @@ public class ObligationExplorer extends ViewPart implements
 
 		}
 
-		return NULL;
+		return UNKNOWN;
 
 		// Previous code:
 		// IProof status = ps.getProof();
@@ -367,10 +362,10 @@ public class ObligationExplorer extends ViewPart implements
 				}
 			}
 			if (element instanceof IPSFile) {
-				IPSFile prFile = (IPSFile) element;
-				if (prFile.getMachineFile().exists())
+				IPSFile psFile = (IPSFile) element;
+				if (psFile.getMachineFile().exists())
 					return registry.get(IEventBSharedImages.IMG_MACHINE);
-				else if (prFile.getContextFile().exists())
+				else if (psFile.getContextFile().exists())
 					return registry.get(IEventBSharedImages.IMG_CONTEXT);
 			}
 			if (element instanceof IRodinElement)
@@ -685,12 +680,10 @@ public class ObligationExplorer extends ViewPart implements
 	}
 
 	/**
-	 * Refersh the view by refreshing the tree viewer.
+	 * Refresh the view by refreshing the tree viewer.
 	 */
 	public void refresh() {
 		fViewer.refresh();
-//		column.pack();
-//		column.setWidth(MAX_WIDTH);
 	}
 
 	/*
@@ -801,6 +794,7 @@ public class ObligationExplorer extends ViewPart implements
 	}
 
 	void clearSelection() {
+		// TODO LV checks with Son why redraw change, is it for revealing the new selection? 
 		fViewer.getControl().setRedraw(false);
 		fViewer.setSelection(new StructuredSelection());
 		fViewer.getControl().setRedraw(true);
