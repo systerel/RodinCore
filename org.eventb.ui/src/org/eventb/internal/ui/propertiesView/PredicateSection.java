@@ -47,12 +47,13 @@ public class PredicateSection extends AbstractPropertySection implements
 				.createFlatFormComposite(parent);
 		FormData data;
 
-		predicateText = getWidgetFactory().createText(composite, "");
+		predicateText = getWidgetFactory().createText(composite, "", SWT.MULTI);
 
 		data = new FormData();
 		data.left = new FormAttachment(0, STANDARD_LABEL_WIDTH);
 		data.right = new FormAttachment(100, 0);
 		data.top = new FormAttachment(0, ITabbedPropertyConstants.VSPACE);
+		data.height = predicateText.getLineHeight() * 3;
 		predicateText.setLayoutData(data);
 
 		inputText = new EventBMath(predicateText);
@@ -62,8 +63,11 @@ public class PredicateSection extends AbstractPropertySection implements
 			@Override
 			protected void response() {
 				try {
-					element.setPredicateString(predicateText.getText(),
-							new NullProgressMonitor());
+					String predText = predicateText.getText();
+					if (!element.getPredicateString().equals(
+							predText))
+						element.setPredicateString(predText,
+								new NullProgressMonitor());
 				} catch (RodinDBException e) {
 					UIUtils.log(e, "Error modifiying element "
 							+ element.getElementName());
