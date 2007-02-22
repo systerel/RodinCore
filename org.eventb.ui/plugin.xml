@@ -1288,5 +1288,30 @@
          <type id="org.eventb.core.variable"/>
       </action>
    </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+<!-- Contributions to the Obligation Explorer View Toolbar -->
+      <viewContribution
+            targetID="org.eventb.ui.views.ObligationExplorer"
+            id="org.eventb.ui.views.ObligationExplorer.toolbar">
+         <action
+               id="org.eventb.ui.views.ObligationExplorer.toolbar.collapseAll"
+               toolbarPath="navigationGroup"
+               class="org.eventb.internal.ui.obligationexplorer.actions.ObligationsCollapseAllAction"
+               icon="$nl$/icons/full/elcl16/collapseall.gif"
+               label="%action.CollapseAll.label"
+               tooltip="%action.CollapseAll.tooltip">
+         </action>
+         <action
+               id="org.eventb.ui.views.ObligationExplorer.toolbar.expandAll"
+               toolbarPath="navigationGroup"
+               class="org.eventb.internal.ui.obligationexplorer.actions.ObligationsExpandAllAction"
+               icon="$nl$/icons/full/elcl16/expandall.gif"
+               helpContextId="breakpoints_expand_all_action_context"
+               label="%action.ExpandAll.label"
+               tooltip="%action.ExpandAll.tooltip">
+         </action>
+      </viewContribution>
+   </extension>
 
 </plugin>
