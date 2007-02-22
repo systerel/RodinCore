@@ -61,7 +61,7 @@ public class CommentSection extends AbstractPropertySection implements
 			@Override
 			protected void response() {
 				String comments = commentText.getText();
-				if (!getComment(element).equals(comments))
+				if (!getComment().equals(comments))
 					UIUtils.setStringAttribute(element,
 							EventBAttributes.COMMENT_ATTRIBUTE, comments, null);
 			}
@@ -75,10 +75,10 @@ public class CommentSection extends AbstractPropertySection implements
 		labelLabel.setLayoutData(data);
 	}
 
-	protected String getComment(ICommentedElement commentedElement) {
+	protected String getComment() {
 		try {
-			if (commentedElement.hasComment())
-				return commentedElement.getComment();
+			if (element.exists() && element.hasComment())
+				return element.getComment();
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,17 +88,7 @@ public class CommentSection extends AbstractPropertySection implements
 
 	@Override
 	public void refresh() {
-		try {
-			if (element.exists() && element.hasComment()) {
-				commentText.setText(element.getComment());
-			} else {
-				commentText.setText("");
-			}
-		} catch (RodinDBException e) {
-			commentText.setText("");
-			if (UIUtils.DEBUG)
-				e.printStackTrace();
-		}
+		commentText.setText(getComment());
 		super.refresh();
 	}
 
