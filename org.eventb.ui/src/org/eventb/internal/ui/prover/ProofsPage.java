@@ -361,7 +361,7 @@ public class ProofsPage extends FormPage implements
 				}
 				else if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();
-					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
+					if ((flags & IUserSupportDelta.F_CURRENT) != 0) {
 						IProofState ps = userSupport.getCurrentPO();
 						if (ps != null) { // Reload everything
 							initHypothesisSections(ps);
@@ -372,7 +372,7 @@ public class ProofsPage extends FormPage implements
 						}
 						ProofsPage.this.getManagedForm().getForm().reflow(true);						
 					}
-					else if ((flags | IUserSupportDelta.F_STATE) != 0) {
+					else if ((flags & IUserSupportDelta.F_STATE) != 0) {
 						IProofState proofState = userSupport.getCurrentPO();
 						IProofStateDelta affectedProofState = ProverUIUtils.getProofStateDelta(affectedUserSupport, proofState);
 						
@@ -411,14 +411,14 @@ public class ProofsPage extends FormPage implements
 						}
 						else if (affectedProofState.getKind() == IProofStateDelta.CHANGED) {
 							int psFlags = affectedProofState.getFlags();
-							if ((psFlags | IProofStateDelta.F_NODE) != 0) {
+							if ((psFlags & IProofStateDelta.F_NODE) != 0) {
 								initHypothesisSections(proofState);
 								goalSection.setGoal(proofState.getCurrentNode());
 							}
-							if ((psFlags | IProofStateDelta.F_CACHE) != 0) {
+							if ((psFlags & IProofStateDelta.F_CACHE) != 0) {
 								initCacheAndSearch();								
 							}
-							if ((psFlags | IProofStateDelta.F_SEARCH) != 0) {
+							if ((psFlags & IProofStateDelta.F_SEARCH) != 0) {
 								initCacheAndSearch();								
 								Section section = searchedSection.getSection();
 								if (!section.isExpanded()) {
@@ -468,7 +468,6 @@ public class ProofsPage extends FormPage implements
 		}
 		cachedSection.init(cached, enable);
 		searchedSection.init(searched, enable);
-
 	}
 
 	// private boolean flag;
