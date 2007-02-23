@@ -12,7 +12,11 @@
 
 package org.eventb.internal.ui.searchhypothesis;
 
+import java.util.Set;
+
 import org.eclipse.ui.part.IPage;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IUserSupport;
 
 /**
  * @author htson
@@ -20,5 +24,9 @@ import org.eclipse.ui.part.IPage;
  *         This is the interface for the Proof Control pages.
  */
 public interface ISearchHypothesisPage extends IPage {
+
+	IUserSupport getUserSupport();
 	// Only extends IPage
+
+	Set<Predicate> getSelectedHyps();
 }

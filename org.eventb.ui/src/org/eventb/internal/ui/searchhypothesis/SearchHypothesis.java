@@ -1,6 +1,7 @@
 package org.eventb.internal.ui.searchhypothesis;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -17,7 +18,9 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -263,8 +266,8 @@ public class SearchHypothesis extends PageBookView implements
 
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
 
-//		IUserSupportDelta affectedUserSupport = ProverUIUtils
-//				.getUserSupportDelta(delta, userSupport);
+		// IUserSupportDelta affectedUserSupport = ProverUIUtils
+		// .getUserSupportDelta(delta, userSupport);
 
 		// ISearchHypothesisPage page= null;
 
@@ -307,5 +310,19 @@ public class SearchHypothesis extends PageBookView implements
 		// updateLabel();
 		// updateCancelAction();
 
+	}
+
+	public Set<Predicate> getSelectedHyps() {
+		ISearchHypothesisPage currentPage = ((ISearchHypothesisPage) this.getCurrentPage());
+		if (currentPage != null)
+			return currentPage.getSelectedHyps();
+		return null;
+	}
+
+	public IUserSupport getUserSupport() {
+		ISearchHypothesisPage currentPage = ((ISearchHypothesisPage) this.getCurrentPage());
+		if (currentPage != null)
+			return currentPage.getUserSupport();
+		return null;
 	}
 }

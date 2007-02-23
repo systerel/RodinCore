@@ -49,7 +49,7 @@ public class SearchHypothesesSection extends HypothesesSection {
 
 	private static final String SECTION_DESCRIPTION = "The set of searched hypotheses";
 
-	private ImageHyperlink ds;
+	ImageHyperlink ds;
 
 	ImageHyperlink sl;
 
@@ -106,7 +106,7 @@ public class SearchHypothesesSection extends HypothesesSection {
 				// }
 			}
 
-			else if (widget.equals(sl)) {
+			else if (widget.equals(ds)) {
 				Set<Predicate> deselected = new HashSet<Predicate>();
 				for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
 					HypothesisRow hr = it.next();

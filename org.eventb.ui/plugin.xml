@@ -1282,6 +1282,7 @@
          point="org.eventb.ui.editSections">
       <action
             class="org.eventb.internal.ui.eventbeditor.editpage.Add"
+            icon="icons/full/ctool16/add.gif"
             id="org.eventb.ui.variable.add"
             name="Add"
             tooltip="Add variable at this position">
@@ -1289,6 +1290,7 @@
       </action>
       <action
             class="org.eventb.internal.ui.eventbeditor.editpage.Remove"
+            icon="icons/full/ctool16/remove.gif"
             id="org.eventb.ui.variable.remove"
             name="Remove"
             tooltip="Remove this variable">
@@ -1296,6 +1298,7 @@
       </action>
       <action
             class="org.eventb.internal.ui.eventbeditor.editpage.Up"
+            icon="icons/applied.gif"
             id="org.eventb.ui.variable.up"
             name="Up"
             tooltip="Move variable up">
@@ -1325,6 +1328,26 @@
                label="%action.ExpandAll.label"
                tooltip="%action.ExpandAll.tooltip">
          </action>
+      </viewContribution>
+      <viewContribution
+            id="org.eventb.ui.views.SearchHypothesis.toolbar"
+            targetID="org.eventb.ui.views.SearchHypothesis">
+         <action
+               class="org.eventb.internal.ui.searchhypothesis.actions.Add"
+               icon="icons/full/ctool16/add.gif"
+               id="org.eventb.ui.views.SearchHypothesis.toolbar.add"
+               label="%action.Add.label"
+               style="push"
+               toolbarPath="navigationGroup"
+               tooltip="%action.Add.tooltip"/>
+         <action
+               class="org.eventb.internal.ui.searchhypothesis.actions.Remove"
+               icon="icons/full/ctool16/remove.gif"
+               id="org.eventb.ui.views.SearchHypothesis.toolbar.remove"
+               label="%action.Remove.label"
+               style="push"
+               toolbarPath="navigationGroup"
+               tooltip="%action.Remove.tooltip"/>
       </viewContribution>
    </extension>
 
