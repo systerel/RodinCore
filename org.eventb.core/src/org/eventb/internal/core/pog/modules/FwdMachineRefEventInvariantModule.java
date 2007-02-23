@@ -74,11 +74,6 @@ public class FwdMachineRefEventInvariantModule extends MachineEventInvariantModu
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 		predicate = predicate.applyAssignments(substitution, factory);
 		
-// TODO: remove following:
-//		LinkedList<POGPredicate> bighyp = new LinkedList<POGPredicate>();
-//		bighyp.addAll(makeActionHypothesis());
-//		bighyp.addAll(makeWitnessHypothesis());
-		
 		ArrayList<POGPredicate> bighyp = makeActionAndWitnessHypothesis(predicate);
 		
 		String sequentName = concreteEventLabel + "/" + invariantLabel + "/INV";

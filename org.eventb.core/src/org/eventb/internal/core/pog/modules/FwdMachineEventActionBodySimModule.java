@@ -103,10 +103,6 @@ public class FwdMachineEventActionBodySimModule extends
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 			simPredicate = simPredicate.applyAssignments(substitution, factory);
 			
-// TODO: remove following
-//			ArrayList<POGPredicate> hyp = makeActionHypothesis();
-//			hyp.addAll(makeWitnessHypothesis());
-			
 			ArrayList<POGPredicate> hyp = makeActionAndWitnessHypothesis(simPredicate);
 			
 			createPO(
