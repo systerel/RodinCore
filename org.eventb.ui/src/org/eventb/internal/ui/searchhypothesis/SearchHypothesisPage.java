@@ -43,6 +43,7 @@ import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
@@ -132,9 +133,6 @@ public class SearchHypothesisPage extends Page implements
 		layout.verticalSpacing = 0;
 		comp.setLayout(layout);
 
-		// createTextClient(section, toolkit);
-		// updateTextClientStatus();
-//		hookContextMenu();
 		contributeToActionBars();
 		init();
 	}
@@ -142,50 +140,41 @@ public class SearchHypothesisPage extends Page implements
 	void init() {
 		IProofState ps = editor.getUserSupport().getCurrentPO();
 
-		Iterable<Predicate> selected = new ArrayList<Predicate>();
-		Collection<Predicate> cached = new ArrayList<Predicate>();
 		Collection<Predicate> searched = new ArrayList<Predicate>();
 
 		boolean enable = false;
+		IProverSequent sequent = null;
 		if (ps != null) {
 			IProofTreeNode node = ps.getCurrentNode();
 			if (node != null) {
-				selected = node.getSequent().selectedHypIterable();
+				sequent = node.getSequent();
 				if (node.isOpen())
 					enable = true;
 			}
-			cached = ps.getCached();
 
 			searched = ps.getSearched();
 		}
 
-		init(searched, selected, cached, enable);
-		// selectedSection.init(selected, enable);
-		// cachedSection.init(cached, enable);
-		// searchedSection.init(searched, enable);
+		init(searched, sequent, enable);
 	}
 
-	private void init(Collection<Predicate> hyps, Iterable<Predicate> selected,
-			Collection<Predicate> cached, boolean enable) {
+	private void init(Collection<Predicate> hyps, IProverSequent sequent,
+			boolean enable) {
 		// Remove everything
 		for (HypothesisRow row : rows) {
 			row.dispose();
 		}
 		rows.clear();
 
-		// Add new hyps
 		int i = 0;
 		for (Predicate hyp : hyps) {
-			// UIUtils.debugEventBEditor("Add to " + this.title + " hyp: "
-			// + hyp.getPredicate());
 			HypothesisRow row = new HypothesisRow(toolkit, scrolledForm
-					.getBody(), hyp, editor.getUserSupport(), (i % 2) == 0,
-					enable);
+					.getBody(), hyp, editor.getUserSupport(), sequent
+					.isSelected(hyp), enable);
 			rows.add(row);
 			i++;
 		}
 
-		// updateTextClientStatus();
 		scrolledForm.reflow(true);
 	}
 
@@ -217,7 +206,6 @@ public class SearchHypothesisPage extends Page implements
 	 *            the menu manager
 	 */
 	void fillContextMenu(IMenuManager manager) {
-		// manager.add(expertMode);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
