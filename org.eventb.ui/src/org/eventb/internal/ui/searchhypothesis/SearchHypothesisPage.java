@@ -136,7 +136,7 @@ public class SearchHypothesisPage extends Page implements
 		// updateTextClientStatus();
 //		hookContextMenu();
 		contributeToActionBars();
-
+		init();
 	}
 
 	void init() {
