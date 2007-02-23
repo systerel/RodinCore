@@ -113,24 +113,27 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 			ok |= abstractConvergence == IConvergenceElement.Convergence.ANTICIPATED 
 			&& convergence == IConvergenceElement.Convergence.CONVERGENT;
 			ok |= abstractConvergence == IConvergenceElement.Convergence.CONVERGENT 
-			&& convergence == IConvergenceElement.Convergence.ORDINARY;
+			&& convergence == IConvergenceElement.Convergence.CONVERGENT;
 			if (!ok) {
-				if (abstractConvergence == IConvergenceElement.Convergence.ORDINARY)
+				if (abstractConvergence == IConvergenceElement.Convergence.ORDINARY) {
 					createProblemMarker(
 							element, 
 							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
 							GraphProblem.OrdinaryFaultyConvergenceWarning);
-				else if (abstractConvergence == IConvergenceElement.Convergence.CONVERGENT)
+					return IConvergenceElement.Convergence.ORDINARY;
+				} else if (abstractConvergence == IConvergenceElement.Convergence.CONVERGENT) {
 					createProblemMarker(
 							element, 
 							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
 							GraphProblem.ConvergentFaultyConvergenceWarning);
-				else 
+					return IConvergenceElement.Convergence.CONVERGENT;
+				} else {
 					createProblemMarker(
 							element, 
 							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
 							GraphProblem.AnticipatedFaultyConvergenceWarning);
-				return IConvergenceElement.Convergence.ORDINARY;
+				return IConvergenceElement.Convergence.ANTICIPATED;
+				}
 			}
 		}
 		return convergence;

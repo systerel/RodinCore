@@ -96,12 +96,12 @@ public class TestConvergence extends BasicSCTest {
 		
 		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
 		isOrdinary(events[0]);
-		isOrdinary(events[1]);
-		isOrdinary(events[2]);
+		isAnticipated(events[1]);
+		isConvergent(events[2]);
 		
 	}
 	
-	public void testCvg_03_FaultyRefinedSetToOrdinary() throws Exception {
+	public void testCvg_03_AllRefinedByAnticipated() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");
@@ -137,7 +137,7 @@ public class TestConvergence extends BasicSCTest {
 		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
 		isOrdinary(events[0]);
 		isAnticipated(events[1]);
-		isOrdinary(events[2]);
+		isConvergent(events[2]);
 		
 	}
 	
@@ -177,7 +177,7 @@ public class TestConvergence extends BasicSCTest {
 		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
 		isOrdinary(events[0]);
 		isConvergent(events[1]);
-		isOrdinary(events[2]);
+		isConvergent(events[2]);
 		
 	}
 	
