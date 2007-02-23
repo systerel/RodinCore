@@ -370,7 +370,7 @@ public class ProofsPage extends FormPage implements
 										.setGoal(proofState.getCurrentNode());
 							}
 							if ((psFlags & IProofStateDelta.F_CACHE) != 0) {
-								initCacheAndSearch();
+								initCacheSection();
 							}
 							ProofsPage.this.getManagedForm().getForm().reflow(
 									true);
@@ -381,7 +381,7 @@ public class ProofsPage extends FormPage implements
 		});
 	}
 
-	void initCacheAndSearch() {
+	void initCacheSection() {
 		IProofState ps = userSupport.getCurrentPO();
 		ArrayList<Predicate> cached = new ArrayList<Predicate>();
 		boolean enable = false;
