@@ -256,33 +256,6 @@ public class ProofsPage extends FormPage implements
 		form.updateToolBar();
 	}
 
-	// private updateButtons() {
-	//		
-	// }
-
-	// private class ProofPageLayout extends Layout {
-	//
-	// @Override
-	// protected Point computeSize(Composite composite, int wHint, int hHint,
-	// boolean flushCache) {
-	// Point pt = sashForm.getSize();
-	// if (sashForm != null)
-	// return new Point(pt.x, pt.y);
-	//
-	// Rectangle rect = ProofsPage.this.getManagedForm().getForm()
-	// .getClientArea();
-	//
-	// Point size = new Point(rect.width, rect.height);
-	// return size;
-	// }
-	//
-	// @Override
-	// protected void layout(Composite composite, boolean flushCache) {
-	// ProofsPage.this.autoLayout();
-	// }
-	//
-	// }
-
 	void initHypothesisSections(IProofState ps) {
 
 		Iterable<Predicate> selected = new ArrayList<Predicate>();

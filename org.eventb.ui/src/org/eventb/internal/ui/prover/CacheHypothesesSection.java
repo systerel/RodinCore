@@ -138,14 +138,14 @@ public class CacheHypothesesSection extends HypothesesSection {
 		ds = new ImageHyperlink(composite, SWT.CENTER);
 		toolkit.adapt(ds, true, true);
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-		ds.setImage(registry.get(IEventBSharedImages.IMG_PENDING));
+		ds.setImage(registry.get(IEventBSharedImages.IMG_REMOVE));
 		ds.addHyperlinkListener(new CachedHyperlinkAdapter());
 		ds.setBackground(section.getTitleBarGradientBackground());
 		ds.setToolTipText("Deselect checked hypotheses");
 		
 		sl = new ImageHyperlink(composite, SWT.CENTER);
 		toolkit.adapt(sl, true, true);
-		sl.setImage(registry.get(IEventBSharedImages.IMG_DISCHARGED));
+		sl.setImage(registry.get(IEventBSharedImages.IMG_ADD));
 		sl.addHyperlinkListener(new CachedHyperlinkAdapter());
 		sl.setBackground(section.getTitleBarGradientBackground());
 		sl.setToolTipText("Select checked hypotheses");

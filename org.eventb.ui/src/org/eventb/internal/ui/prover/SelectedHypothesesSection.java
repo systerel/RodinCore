@@ -185,7 +185,7 @@ public class SelectedHypothesesSection extends HypothesesSection {
 		ds = new ImageHyperlink(composite, SWT.CENTER);
 		toolkit.adapt(ds, true, true);
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-		ds.setImage(registry.get(IEventBSharedImages.IMG_PENDING));
+		ds.setImage(registry.get(IEventBSharedImages.IMG_REMOVE));
 		ds.addHyperlinkListener(new SelectedHyperlinkAdapter());
 		ds.setBackground(section.getTitleBarGradientBackground());
 		ds.setToolTipText("Deselect checked hypotheses");

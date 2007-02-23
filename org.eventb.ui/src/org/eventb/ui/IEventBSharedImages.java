@@ -45,6 +45,10 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_NULL = "NULL";
 
+	public static final String IMG_ADD = "Add";
+	
+	public static final String IMG_REMOVE = "Remove";
+
 	/**
 	 * Paths to the icons for buttons, menus, etc.
 	 */

@@ -41,7 +41,7 @@ public class EventBImage {
 	public static final String IMG_NEW_PROJECT = "New Project";
 
 	public static final String IMG_NEW_COMPONENT = "New Component";
-
+	
 	/**
 	 * Returns an image descriptor for the image file within the Event-B UI
 	 * Plugin at the given plug-in relative path
@@ -107,6 +107,9 @@ public class EventBImage {
 
 		registerImage(registry, IMG_PENGUIN, "icons/penguins-dancing.gif");
 		registerImage(registry, IEventBSharedImages.IMG_NULL, "icons/full/ctool16/null.gif");
+		
+		registerImage(registry, IEventBSharedImages.IMG_ADD, "icons/full/ctool16/add.gif");
+		registerImage(registry, IEventBSharedImages.IMG_REMOVE, "icons/full/ctool16/remove.gif");
 	}
 
 	/**
