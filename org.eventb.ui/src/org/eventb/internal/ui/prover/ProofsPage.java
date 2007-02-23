@@ -82,8 +82,6 @@ public class ProofsPage extends FormPage implements
 
 	Action layoutAction;
 
-	HypothesesSection searchedSection;
-
 	private SashForm sashForm;
 
 	IUserSupport userSupport;
@@ -104,17 +102,18 @@ public class ProofsPage extends FormPage implements
 	public ProofsPage(ProverUI editor) {
 		super(editor, PAGE_ID, PAGE_TAB_TITLE); //$NON-NLS-1$
 		userSupport = editor.getUserSupport();
-		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(this);
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
+				this);
 		layouting = false;
 		IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
 		store.addPropertyChangeListener(this);
-
 	}
 
 	@Override
 	public void dispose() {
-		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(this);
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
+				this);
 		IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
 		store.removePropertyChangeListener(this);
@@ -141,11 +140,6 @@ public class ProofsPage extends FormPage implements
 
 		comp = new Composite(sashForm, SWT.NULL);
 		comp.setBackground(form.getBackground());
-
-		searchedSection = new SearchHypothesesSection(this, sashForm,
-				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
-						| Section.COMPACT);
-		managedForm.addPart(searchedSection);
 
 		cachedSection = new CacheHypothesesSection(this, sashForm,
 				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
@@ -243,11 +237,7 @@ public class ProofsPage extends FormPage implements
 		};
 
 		layoutAction.setChecked(store
-				.getBoolean(PreferenceConstants.P_PROOFPAGE_AUTOLAYOUT)); // TODO
-		// Set
-		// from
-		// preference
-		// page
+				.getBoolean(PreferenceConstants.P_PROOFPAGE_AUTOLAYOUT));
 		layoutAction.setToolTipText("Automatically layout");
 
 		ScrolledForm form = managedForm.getForm();
@@ -260,7 +250,6 @@ public class ProofsPage extends FormPage implements
 
 		Iterable<Predicate> selected = new ArrayList<Predicate>();
 		Collection<Predicate> cached = new ArrayList<Predicate>();
-		Collection<Predicate> searched = new ArrayList<Predicate>();
 
 		boolean enable = false;
 		if (ps != null) {
@@ -280,22 +269,10 @@ public class ProofsPage extends FormPage implements
 				if (!(sequent.isSelected(hyp)))
 					cached.add(hyp);
 			}
-			Collection<Predicate> currentSearched = ps.getSearched();
-			for (Iterator<Predicate> i = currentSearched.iterator(); i
-					.hasNext();) {
-				Predicate hyp = i.next();
-				if (node != null)
-					if (!sequent.containsHypothesis(hyp))
-						continue;
-				if (!sequent.isSelected(hyp) && !cached.contains(hyp))
-					searched.add(hyp);
-			}
 		}
 
 		selectedSection.init(selected, enable);
 		cachedSection.init(cached, enable);
-		searchedSection.init(searched, enable);
-
 	}
 
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
@@ -305,15 +282,15 @@ public class ProofsPage extends FormPage implements
 
 		final IUserSupportDelta affectedUserSupport = ProverUIUtils
 				.getUserSupportDelta(delta, userSupport);
-		
+
 		if (affectedUserSupport == null)
 			return;
-		
+
 		final int kind = affectedUserSupport.getKind();
-		
+
 		if (kind == IUserSupportDelta.REMOVED)
 			return;
-		
+
 		if (ProverUIUtils.DEBUG)
 			ProverUIUtils
 					.debug("Proof State Change "
@@ -331,8 +308,7 @@ public class ProofsPage extends FormPage implements
 						goalSection.setGoal(null);
 					}
 					ProofsPage.this.getManagedForm().getForm().reflow(true);
-				}
-				else if (kind == IUserSupportDelta.CHANGED) {
+				} else if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();
 					if ((flags & IUserSupportDelta.F_CURRENT) != 0) {
 						IProofState ps = userSupport.getCurrentPO();
@@ -343,14 +319,16 @@ public class ProofsPage extends FormPage implements
 							initHypothesisSections(null);
 							goalSection.setGoal(null);
 						}
-						ProofsPage.this.getManagedForm().getForm().reflow(true);						
-					}
-					else if ((flags & IUserSupportDelta.F_STATE) != 0) {
+						ProofsPage.this.getManagedForm().getForm().reflow(true);
+					} else if ((flags & IUserSupportDelta.F_STATE) != 0) {
 						IProofState proofState = userSupport.getCurrentPO();
-						IProofStateDelta affectedProofState = ProverUIUtils.getProofStateDelta(affectedUserSupport, proofState);
-						
-						if (affectedProofState == null) return;
-						
+						IProofStateDelta affectedProofState = ProverUIUtils
+								.getProofStateDelta(affectedUserSupport,
+										proofState);
+
+						if (affectedProofState == null)
+							return;
+
 						if (affectedProofState.getKind() == IProofStateDelta.REMOVED) {
 							if (proofState != null) {
 
@@ -359,9 +337,13 @@ public class ProofsPage extends FormPage implements
 								if (activePage.isPartVisible(ProofsPage.this
 										.getEditor())) {
 									try {
-										MessageDialog.openInformation(ProofsPage.this
-												.getSite().getShell(), "Out of Date",
-												"The Proof Obligation is deleted.");
+										MessageDialog
+												.openInformation(
+														ProofsPage.this
+																.getSite()
+																.getShell(),
+														"Out of Date",
+														"The Proof Obligation is deleted.");
 										userSupport.nextUndischargedPO(true,
 												new NullProgressMonitor());
 									} catch (RodinDBException e) {
@@ -377,28 +359,21 @@ public class ProofsPage extends FormPage implements
 										e.printStackTrace();
 									}
 								}
-							}							
-						}
-						else if (affectedProofState.getKind() == IProofStateDelta.REMOVED) {
+							}
+						} else if (affectedProofState.getKind() == IProofStateDelta.REMOVED) {
 							return;
-						}
-						else if (affectedProofState.getKind() == IProofStateDelta.CHANGED) {
+						} else if (affectedProofState.getKind() == IProofStateDelta.CHANGED) {
 							int psFlags = affectedProofState.getFlags();
 							if ((psFlags & IProofStateDelta.F_NODE) != 0) {
 								initHypothesisSections(proofState);
-								goalSection.setGoal(proofState.getCurrentNode());
+								goalSection
+										.setGoal(proofState.getCurrentNode());
 							}
 							if ((psFlags & IProofStateDelta.F_CACHE) != 0) {
-								initCacheAndSearch();								
+								initCacheAndSearch();
 							}
-							if ((psFlags & IProofStateDelta.F_SEARCH) != 0) {
-								initCacheAndSearch();								
-								Section section = searchedSection.getSection();
-								if (!section.isExpanded()) {
-									section.setExpanded(true);
-								}
-							}
-							ProofsPage.this.getManagedForm().getForm().reflow(true);							
+							ProofsPage.this.getManagedForm().getForm().reflow(
+									true);
 						}
 					}
 				}
@@ -409,7 +384,6 @@ public class ProofsPage extends FormPage implements
 	void initCacheAndSearch() {
 		IProofState ps = userSupport.getCurrentPO();
 		ArrayList<Predicate> cached = new ArrayList<Predicate>();
-		ArrayList<Predicate> searched = new ArrayList<Predicate>();
 		boolean enable = false;
 		if (ps != null) {
 			IProofTreeNode node = ps.getCurrentNode();
@@ -428,34 +402,17 @@ public class ProofsPage extends FormPage implements
 					cached.add(hyp);
 			}
 
-			Collection<Predicate> currentSearched = ps.getSearched();
-			for (Iterator<Predicate> i = currentSearched.iterator(); i
-					.hasNext();) {
-				Predicate hyp = i.next();
-				if (node != null)
-					if (!sequent.containsHypothesis(hyp))
-						continue;
-				if (!sequent.isSelected(hyp) && !cached.contains(hyp))
-					searched.add(hyp);
-			}
 		}
 		cachedSection.init(cached, enable);
-		searchedSection.init(searched, enable);
 	}
 
-	// private boolean flag;
-
-	int[] weights = new int[5];
+	int[] weights = new int[4];
 
 	void autoLayout() {
-		// if (flag)
-		// return;
-		// flag = true;
 		weights[0] = 0;
 
 		ScrolledForm form = this.getManagedForm().getForm();
 		Rectangle original = form.getBody().getBounds();
-		// ProverUIUtils.debugProverUI("Original bound " + original);
 
 		if (ProverUIUtils.DEBUG) {
 			ProverUIUtils.debug("*********************");
@@ -473,102 +430,80 @@ public class ProofsPage extends FormPage implements
 
 		if (horizontal != null && horizontal.isVisible()) {
 			totalHeight += horizontal.getSize().y;
-			// ProverUIUtils.debugProverUI("Horizontal " +
-			// horizontal.getSize());
 		}
 
 		if (vertical != null && vertical.isVisible()) {
 			totalWidth += vertical.getSize().x;
-			// ProverUIUtils.debugProverUI("Vertical " + vertical.getSize());
 		}
 
-		// ProverUIUtils.debugProverUI("Total Height: " + totalHeight);
-		// ProverUIUtils.debugProverUI("Total Width: " + totalWidth);
-
-		weights[1] = searchedSection.getSection().computeSize(totalWidth,
-				SWT.DEFAULT).y;
-		weights[2] = cachedSection.getSection().computeSize(totalWidth,
+		weights[1] = cachedSection.getSection().computeSize(totalWidth,
 				SWT.DEFAULT).y;
 
-		weights[3] = selectedSection.getSection().computeSize(totalWidth,
+		weights[2] = selectedSection.getSection().computeSize(totalWidth,
 				SWT.DEFAULT).y;
 
-		weights[4] = goalSection.getSection().computeSize(totalWidth,
+		weights[3] = goalSection.getSection().computeSize(totalWidth,
 				SWT.DEFAULT).y;
 
 		if (ProverUIUtils.DEBUG) {
 			ProverUIUtils.debug("Desired Weight ");
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0; i < 4; i++) {
 				ProverUIUtils.debug("weights[" + i + "] is " + weights[i]);
 			}
 		}
-		// for (int i = 0; i < 5; i++) {
-		// ProverUIUtils.debugProverUI("Before Height (" + i + "): "
-		// + weights[i]);
-		// }
-
 		if (totalHeight < 1) {
 			totalHeight = DEFAULT_HEIGHT;
 			totalWidth = DEFAULT_WIDTH;
 		}
-		// if (totalHeight < 1) { // Not initialised yet
-		// weights[0] = 0;
-		// // UIUtils.debugProverUI("Client area: " +
-		// // sashForm.getClientArea());
-		// sashForm.setWeights(weights);
-		// form.reflow(true);
-		// } else {
 		int sum = 0;
 		// Do not resize the goalSection
-		for (int i = 1; i < 4; i++) {
+		for (int i = 1; i < 3; i++) {
 			sum += weights[i];
 		}
 
-		if (sum < totalHeight - weights[4]) {
-			weights[0] = totalHeight - sum - weights[4];
+		if (sum < totalHeight - weights[3]) {
+			weights[0] = totalHeight - sum - weights[3];
 			Rectangle rect = sashForm
 					.computeTrim(0, 0, totalWidth, totalHeight);
 			if (ProverUIUtils.DEBUG) {
 				ProverUIUtils.debug("Total Width " + totalWidth);
 				ProverUIUtils.debug("Total Height " + totalHeight);
-				for (int i = 0; i < 5; i++) {
+				for (int i = 0; i < 4; i++) {
 					ProverUIUtils.debug("weights[" + i + "] is " + weights[i]);
 				}
 				ProverUIUtils.debug("Rect: " + rect);
 			}
-			// ProverUIUtils.debugProverUI("Client area: "
-			// + sashForm.getClientArea());
 			sashForm.setBounds(rect);
 			sashForm.setWeights(weights);
 			form.reflow(true);
 		} else {
 			weights[0] = 0;
-			for (int i = 1; i < 4; i++) {
-				weights[i] = weights[i] * (totalHeight - weights[4]) / sum;
+			for (int i = 1; i < 3; i++) {
+				weights[i] = weights[i] * (totalHeight - weights[3]) / sum;
 			}
 
 			// re-adjust according to MINIMUM_SECTION_HEIGHT
 			Collection<Integer> fix = new ArrayList<Integer>();
-			if (totalHeight - weights[4] - MIN_SECTION_HEIGHT * 3 <= 0) {
-				for (int i = 1; i < 4; i++) {
+			if (totalHeight - weights[3] - MIN_SECTION_HEIGHT * 3 <= 0) {
+				for (int i = 1; i < 3; i++) {
 					weights[i] = MIN_SECTION_HEIGHT;
 				}
 			} else {
 				int i = checkWeight();
-				while (i != 0 && fix.size() != 3) {
+				while (i != 0 && fix.size() != 2) {
 					weights[i] = MIN_SECTION_HEIGHT;
 					fix.add(new Integer(i));
 					// readjust
 					sum = 0;
-					for (int j = 1; j < 4; j++) {
+					for (int j = 1; j < 3; j++) {
 						if (!fix.contains(new Integer(j)))
 							sum += weights[j];
 					}
 
-					for (int j = 1; j < 4; j++) {
+					for (int j = 1; j < 3; j++) {
 						if (!fix.contains(new Integer(j)))
 							weights[j] = weights[j]
-									* (totalHeight - weights[4] - MIN_SECTION_HEIGHT
+									* (totalHeight - weights[3] - MIN_SECTION_HEIGHT
 											* fix.size()) / sum;
 					}
 
@@ -580,7 +515,7 @@ public class ProofsPage extends FormPage implements
 			if (ProverUIUtils.DEBUG) {
 				ProverUIUtils.debug("Total Width " + totalWidth);
 				ProverUIUtils.debug("Total Height " + totalHeight);
-				for (int i = 0; i < 5; i++) {
+				for (int i = 0; i < 4; i++) {
 					ProverUIUtils.debug("weights[" + i + "] is " + weights[i]);
 				}
 				ProverUIUtils.debug("Rect: " + rect);
@@ -588,30 +523,16 @@ public class ProofsPage extends FormPage implements
 
 			sashForm.setBounds(rect);
 
-			// ProverUIUtils.debugProverUI("Client area: "
-			// + sashForm.getClientArea());
 			selectedSection.getSection().layout();
-			searchedSection.getSection().layout();
 			cachedSection.getSection().layout();
 			goalSection.getSection().layout();
 			sashForm.setWeights(weights);
-
-			// ProverUIUtils.debugProverUI("form Client area "
-			// + form.getClientArea());
-			// form.reflow(true);
 		}
-		// }
-
-		// flag = false;
-		// for (HypothesisRow row : selectedSection.getRows()) {
-		// row.createHypothesisText();
-		// }
 	}
 
 	void scaleLayout() {
 		ScrolledForm form = this.getManagedForm().getForm();
 		Rectangle original = form.getBody().getBounds();
-		// ProverUIUtils.debugProverUI("Original bound " + original);
 
 		// -1 in totalHeight to avoid the vertical scrollbar in the beginning???
 		int totalHeight = form.getClientArea().height - original.y - 1;
@@ -622,30 +543,18 @@ public class ProofsPage extends FormPage implements
 
 		if (horizontal != null && horizontal.isVisible()) {
 			totalHeight += horizontal.getSize().y;
-			// ProverUIUtils.debugProverUI("Horizontal " +
-			// horizontal.getSize());
 		}
 
 		if (vertical != null && vertical.isVisible()) {
 			totalWidth += vertical.getSize().x;
-			// ProverUIUtils.debugProverUI("Vertical " + vertical.getSize());
 		}
 
 		Rectangle rect = sashForm.computeTrim(0, 0, totalWidth, totalHeight);
 		sashForm.setBounds(rect);
-
-		// ProverUIUtils.debugProverUI("Client area: "
-		// + sashForm.getClientArea());
-		// sashForm.setWeights(weights);
-
-		// ProverUIUtils.debugProverUI("form Client area "
-		// + form.getClientArea());
-		// form.reflow(true);
-
 	}
 
 	private int checkWeight() {
-		for (int i = 1; i < 4; i++) {
+		for (int i = 1; i < 3; i++) {
 			if (weights[i] < MIN_SECTION_HEIGHT)
 				return i;
 		}
