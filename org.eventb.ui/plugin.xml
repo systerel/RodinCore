@@ -1077,6 +1077,20 @@
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IEvent"/>
          </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.commentSection"
+               class="org.eventb.internal.ui.propertiesView.SeesContextSection"
+               id="org.eventb.ui.seesContextSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.ISeesContext"/>
+         </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.commentSection"
+               class="org.eventb.internal.ui.propertiesView.RefinesMachineSection"
+               id="org.eventb.ui.refinesMachineSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.IRefinesMachine"/>
+         </propertySection>
       </propertySections>
       <propertySections contributorId="org.eventb.ui.editors.context">
          <propertySection
