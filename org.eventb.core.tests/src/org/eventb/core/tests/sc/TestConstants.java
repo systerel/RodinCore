@@ -44,6 +44,8 @@ public class TestConstants extends GenericIdentTest<IContextFile, ISCContextFile
 		containsConstants(file, "C1");
 		
 		containsAxioms(file, environment, makeSList("A1"), makeSList("C1∈S1"));
+		
+		containsMarkers(con, false);
 	}
 	
 	/**
@@ -76,6 +78,7 @@ public class TestConstants extends GenericIdentTest<IContextFile, ISCContextFile
 		
 		containsConstants(contexts[0], "C1");
 
+		containsMarkers(con, false);
 	}
 	
 	/**
@@ -131,6 +134,7 @@ public class TestConstants extends GenericIdentTest<IContextFile, ISCContextFile
 		containsConstants(file, "d");
 		containsAxioms(file, typeEnvironment, makeSList("A1", "A2"), makeSList("d∈ℕ", "d>0"));
 		
+		containsMarkers(con, false);
 	}
 
 }

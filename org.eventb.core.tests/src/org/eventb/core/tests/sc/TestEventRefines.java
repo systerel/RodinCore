@@ -19,9 +19,13 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestEventRefines extends BasicSCTest {
 	
+	/*
+	 * simple refines clause
+	 */
 	public void testEvents_00_refines() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
+		addInitialisation(abs);
 		addEvent(abs, "evt");
 
 		abs.save(null, true);
@@ -30,6 +34,7 @@ public class TestEventRefines extends BasicSCTest {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt");
 		addEventRefines(evt, "evt");
 		
@@ -39,14 +44,19 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		ISCEvent[] events = getSCEvents(file, "evt");
-		refinesEvents(events[0], "evt");
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		refinesEvents(events[1], "evt");
 		
+		containsMarkers(mac, false);
 	}
 	
+	/*
+	 * split refines clause
+	 */
 	public void testEvents_01_split2() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
+		addInitialisation(abs);
 		addEvent(abs, "evt");
 
 		abs.save(null, true);
@@ -55,6 +65,7 @@ public class TestEventRefines extends BasicSCTest {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt1 = addEvent(mac, "evt1");
 		addEventRefines(evt1, "evt");
 		IEvent evt2 = addEvent(mac, "evt2");
@@ -66,15 +77,20 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		ISCEvent[] events = getSCEvents(file, "evt1", "evt2");
-		refinesEvents(events[0], "evt");
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt1", "evt2");
 		refinesEvents(events[1], "evt");
+		refinesEvents(events[2], "evt");
 		
+		containsMarkers(mac, false);
 	}
 
+	/*
+	 * identically named local variables of abstract and cocrete events do correspond
+	 */
 	public void testEvents_02_localTypesCorrespond() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
+		addInitialisation(abs);
 		addEvent(abs, "evt", makeSList("L1"), makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
 
 		abs.save(null, true);
@@ -83,6 +99,7 @@ public class TestEventRefines extends BasicSCTest {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt", makeSList("L1"), makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 		
@@ -92,12 +109,16 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		ISCEvent[] events = getSCEvents(file, "evt");
-		refinesEvents(events[0], "evt");
-		containsVariables(events[0], "L1");
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		refinesEvents(events[1], "evt");
+		containsVariables(events[1], "L1");
 		
+		containsMarkers(mac, false);
 	}
 	
+	/*
+	 * error if identically named local variables of abstract and concrete events do NOT correspond
+	 */
 	public void testEvents_03_localTypeConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -124,6 +145,9 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}
 	
+	/*
+	 * create default witness if local variable disappears
+	 */
 	public void testEvents_04_localDefaultWitness() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -158,11 +182,15 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}
 	
-	public void testEvents_05_globalDefaultWitness() throws Exception {
+	/*
+	 * global witness refering to local variable of abstract event
+	 */
+	public void testEvents_05_globalWitness() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInitialisation(abs, "V1");
 		addEvent(abs, "evt", makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1:∈ℕ"));
@@ -173,6 +201,8 @@ public class TestEventRefines extends BasicSCTest {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		IEvent init = addInitialisation(mac);
+		addEventWitnesses(init, makeSList("V1'"), makeSList("V1'=1"));
 		IEvent evt = addEvent(mac, "evt", makeSList("L2"), 
 				makeSList("G1"), makeSList("L2∈ℕ"), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
@@ -188,19 +218,24 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		ISCEvent[] events = getSCEvents(file, "evt");
-		refinesEvents(events[0], "evt");
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		refinesEvents(events[1], "evt");
 		
-		containsVariables(events[0], "L2");
-		containsWitnesses(events[0], typeEnvironment, makeSList("V1'"), makeSList("V1'=L2"));
+		containsVariables(events[1], "L2");
+		containsWitnesses(events[1], typeEnvironment, makeSList("V1'"), makeSList("V1'=L2"));
 		
+		containsMarkers(mac, false);
 	}
 	
-	public void testEvents_06_globalDefaultWitness() throws Exception {
+	/*
+	 * global witness refering to post value of global variable of concrete machine
+	 */
+	public void testEvents_06_globalWitness() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInitialisation(abs, "V1");
 		addEvent(abs, "evt", makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1:∈ℕ"));
@@ -213,6 +248,8 @@ public class TestEventRefines extends BasicSCTest {
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
 		addInvariants(mac, makeSList("I2"), makeSList("V2⊆ℕ"));
+		IEvent init = addInitialisation(mac, "V2");
+		addEventWitnesses(init, makeSList("V1'"), makeSList("V1'=1"));
 		IEvent evt = addEvent(mac, "evt", makeSList(), 
 				makeSList(), makeSList(), makeSList("A2"), makeSList("V2:∣V2'⊆ℕ"));
 		addEventRefines(evt, "evt");
@@ -229,14 +266,18 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		ISCEvent[] events = getSCEvents(file, "evt");
-		refinesEvents(events[0], "evt");
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		refinesEvents(events[1], "evt");
 		
-		containsVariables(events[0]);
-		containsWitnesses(events[0], typeEnvironment, makeSList("V1'"), makeSList("V1'∈V2'"));
+		containsVariables(events[1]);
+		containsWitnesses(events[1], typeEnvironment, makeSList("V1'"), makeSList("V1'∈V2'"));
 		
+		containsMarkers(mac, false);
 	}
 	
+	/*
+	 * creation of local default witness
+	 */
 	public void testEvents_07_localTypesAndWitnesses() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -271,9 +312,13 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}
 	
+	/*
+	 * split event into three events
+	 */
 	public void testEvents_08_split3() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
+		addInitialisation(abs);
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
 
 		abs.save(null, true);
@@ -282,6 +327,7 @@ public class TestEventRefines extends BasicSCTest {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt");
 		addEventRefines(evt, "evt");
 		IEvent fvt = addEvent(mac, "fvt");
@@ -294,15 +340,21 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
-		refinesEvents(events[0], "evt");
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt", "gvt");
 		refinesEvents(events[1], "evt");
 		refinesEvents(events[2], "evt");
+		refinesEvents(events[3], "evt");
+		
+		containsMarkers(mac, false);
 	}
 
+	/*
+	 * merge two events into one
+	 */
 	public void testEvents_09_merge2() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
+		addInitialisation(abs);
 		addEvent(abs, "evt");
 		addEvent(abs, "fvt");
 
@@ -312,6 +364,7 @@ public class TestEventRefines extends BasicSCTest {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt");
 		addEventRefines(evt, "evt");
 		addEventRefines(evt, "fvt");
@@ -321,13 +374,19 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		ISCEvent[] events = getSCEvents(file, "evt");
-		refinesEvents(events[0], "evt", "fvt");
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		refinesEvents(events[1], "evt", "fvt");
+		
+		containsMarkers(mac, false);
 	}
 	
+	/*
+	 * inherit event
+	 */
 	public void testEvents_10_inherited() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
+		addInitialisation(abs);
 		addEvent(abs, "evt");
 
 		abs.save(null, true);
@@ -336,6 +395,7 @@ public class TestEventRefines extends BasicSCTest {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		addInheritedEvent(mac, "evt");
 		mac.save(null, true);
 		
@@ -343,10 +403,15 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		ISCEvent[] events = getSCEvents(file, "evt");
-		refinesEvents(events[0], "evt");
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		refinesEvents(events[1], "evt");
+		
+		containsMarkers(mac, false);
 	}
 
+	/*
+	 * conflict: inherited AND refined event
+	 */
 	public void testEvents_11_InheritedRefinesConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -373,6 +438,9 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}
 
+	/*
+	 * conflict: inherited AND split event
+	 */
 	public void testEvents_12_inheritedSplitConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -401,6 +469,9 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}	
 	
+	/*
+	 * conflict: event merge more than once
+	 */
 	public void testEvents_13_mergeMergeConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -431,9 +502,13 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}	
 	
+	/*
+	 * interit / refines / merge used together correctly
+	 */
 	public void testEvents_14_inheritedRefinesMergeOK() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
+		addInitialisation(abs);
 		addEvent(abs, "evt");
 		addEvent(abs, "fvt");
 		addEvent(abs, "gvt");
@@ -445,6 +520,7 @@ public class TestEventRefines extends BasicSCTest {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt");
 		addEventRefines(evt, "evt");
 		IEvent fvt = addEvent(mac, "fvt");
@@ -459,13 +535,18 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "hvt", "ivt");
-		refinesEvents(events[0], "evt");
-		refinesEvents(events[1], "fvt", "gvt");
-		refinesEvents(events[2], "hvt");
-		refinesEvents(events[3]);
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt", "hvt", "ivt");
+		refinesEvents(events[1], "evt");
+		refinesEvents(events[2], "fvt", "gvt");
+		refinesEvents(events[3], "hvt");
+		refinesEvents(events[4]);
+		
+		containsMarkers(mac, false);
 	}	
 	
+	/*
+	 * interit / refines / merge used together in-correctly
+	 */
 	public void testEvents_15_inheritedRefinesMergeConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -492,6 +573,9 @@ public class TestEventRefines extends BasicSCTest {
 		getSCEvents(file, "ivt");
 	}	
 	
+	/*
+	 * initialisation implicitly refined
+	 */
 	public void testEvents_16_initialisationDefaultRefines() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -514,8 +598,13 @@ public class TestEventRefines extends BasicSCTest {
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		refinesEvents(events[0], IEvent.INITIALISATION);
 		
+		containsMarkers(mac, false);
+		
 	}
 	
+	/*
+	 * initialisation cannot be explicitly refined
+	 */
 	public void testEvents_17_initialisationRefines() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -540,6 +629,9 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}
 	
+	/*
+	 * initialisation can be inherited
+	 */
 	public void testEvents_18_initialisationInherited() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -562,8 +654,12 @@ public class TestEventRefines extends BasicSCTest {
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		refinesEvents(events[0], IEvent.INITIALISATION);
 		
+		containsMarkers(mac, false);
 	}
 	
+	/*
+	 * no other event can refine the initialisation
+	 */
 	public void testEvents_19_initialisationNotRefined() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -589,6 +685,9 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}
 	
+	/*
+	 * several refinement problems occuring together
+	 */
 	public void testEvents_20_multipleRefineProblems() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -623,9 +722,13 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}
 	
+	/*
+	 * identically named local variables of merged abstract events must have compatible types
+	 */
 	public void testEvents_21_mergeLocalAbstractTypesCorrespond() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
+		addInitialisation(abs);
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("G1"), makeSList("x∈ℕ"), 
@@ -645,7 +748,11 @@ public class TestEventRefines extends BasicSCTest {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		IEvent evt = addEvent(mac, "evt");
+		addInitialisation(mac);
+		IEvent evt = addEvent(mac, "evt", 
+				makeSList("x", "y"), makeSList("G1", "G2"), 
+				makeSList("x∈ℕ","y∈BOOL"), 
+				makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 		addEventRefines(evt, "gvt");
 		addEventRefines(evt, "hvt");
@@ -657,10 +764,15 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		getSCEvents(file, "evt", "fvt");
+		getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt");
 		
+		containsMarkers(mac, false);
 	}
 
+	/*
+	 * error:
+	 * identically named local variables of merged abstract events do not have compatible types
+	 */
 	public void testEvents_22_mergeLocalAbstractTypesConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -700,11 +812,16 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}
 
+	/*
+	 * actions of abstract events must be identical (labels AND assignments)
+	 * module reordering
+	 */
 	public void testEvents_23_mergeAbstractActionsIdentical() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "p", "q");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"));
+		addInitialisation(abs, "p", "q");
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("G1"), makeSList("x∈ℕ"), 
@@ -724,7 +841,12 @@ public class TestEventRefines extends BasicSCTest {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		IEvent evt = addEvent(mac, "evt");
+		addVariables(mac, "p", "q");
+		addInitialisation(mac, "p", "q");
+		IEvent evt = addEvent(mac, "evt", 
+				makeSList("x", "y"), 
+				makeSList("G1", "G2"), makeSList("x∈ℕ", "y∈BOOL"), 
+				makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 		addEventRefines(evt, "gvt");
 		addEventRefines(evt, "hvt");
@@ -736,10 +858,15 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		getSCEvents(file, "evt", "fvt");
+		getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt");
 		
+		containsMarkers(mac, false);
 	}
 
+	/*
+	 * error:
+	 * actions of abstract events differ
+	 */
 	public void testEvents_24_mergeAbstractActionsDiffer() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -780,11 +907,15 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}
 	
+	/*
+	 * local witness ok
+	 */
 	public void testEvents_25_localWitnessRefines() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "p");
 		addInvariants(abs, makeSList("I1"), makeSList("p∈ℕ"));
+		addInitialisation(abs, "p");
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("G1"), makeSList("x∈ℕ"), 
@@ -797,6 +928,7 @@ public class TestEventRefines extends BasicSCTest {
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "p");
+		addInitialisation(mac, "p");
 		IEvent fvt = addEvent(mac, "fvt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -814,15 +946,21 @@ public class TestEventRefines extends BasicSCTest {
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		
-		ISCEvent[] events = getSCEvents(file, "fvt");
-		containsWitnesses(events[0], typeEnvironment, makeSList("x"), makeSList("x=p"));
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "fvt");
+		containsWitnesses(events[1], typeEnvironment, makeSList("x"), makeSList("x=p"));
+		
+		containsMarkers(mac, false);
 	}
 	
+	/*
+	 * local witnesses in split ok
+	 */
 	public void testEvents_26_localWitnessSplit() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "p");
 		addInvariants(abs, makeSList("I1"), makeSList("p∈ℕ"));
+		addInitialisation(abs, "p");
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("G1"), makeSList("x∈ℕ"), 
@@ -835,6 +973,7 @@ public class TestEventRefines extends BasicSCTest {
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "p");
+		addInitialisation(mac, "p");
 		IEvent evt = addEvent(mac, "evt", 
 				makeSList("x"), 
 				makeSList("G1"), makeSList("x∈ℕ"), 
@@ -857,10 +996,15 @@ public class TestEventRefines extends BasicSCTest {
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		
-		ISCEvent[] events = getSCEvents(file, "evt", "fvt");
-		containsWitnesses(events[1], typeEnvironment, makeSList("x"), makeSList("x=p"));
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt");
+		containsWitnesses(events[2], typeEnvironment, makeSList("x"), makeSList("x=p"));
+		
+		containsMarkers(mac, false);
 	}
 	
+	/*
+	 * post-values of abstract disappearing variables must be be referenced in witnesses 
+	 */
 	public void testEvents_27_globalWitnessAbstractVariables() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -959,6 +1103,7 @@ public class TestEventRefines extends BasicSCTest {
 		IMachineFile abs = createMachine("abs");
 		addVariables(abs, "A", "B");
 		addInvariants(abs, makeSList("I", "J"), makeSList("A∈ℤ", "B∈ℤ"));
+		addInitialisation(abs, "A", "B");
 		addEvent(abs, "evt", 
 				makeSList("x", "y"), 
 				makeSList("G", "H"), makeSList("x∈ℕ", "y∈ℕ"), 
@@ -968,6 +1113,7 @@ public class TestEventRefines extends BasicSCTest {
 		IMachineFile ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B");
+		addInitialisation(ref, "A", "B");
 		addInheritedEvent(ref, "evt");
 		ref.save(null, true);
 		runBuilder();
@@ -980,12 +1126,19 @@ public class TestEventRefines extends BasicSCTest {
 		
 		ISCMachineFile file = ref.getSCMachineFile();
 		
-		ISCEvent[] events = getSCEvents(file, "evt");
-		containsVariables(events[0], "x", "y");
-		containsGuards(events[0], environment, makeSList("G", "H"), makeSList("x∈ℕ", "y∈ℕ"));
-		containsActions(events[0], environment, makeSList("S", "T"), makeSList("A≔A+1", "B≔B+1"));
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		containsVariables(events[1], "x", "y");
+		containsGuards(events[1], environment, makeSList("G", "H"), makeSList("x∈ℕ", "y∈ℕ"));
+		containsActions(events[1], environment, makeSList("S", "T"), makeSList("A≔A+1", "B≔B+1"));
+		
+		containsMarkers(ref, false);
 	}
 	
+	/*
+	 * labels of merged event actions must correspond
+	 * (otherwise the ensueing POG would depend on the order of the events in the file,
+	 * or create unreadable PO names)
+	 */
 	public void testEvents_31_mergeAbstractActionLabelsDiffer() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -1021,6 +1174,9 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}
 	
+	/*
+	 * create default witnesses for abstract global and local variables in merge
+	 */
 	public void testEvents_32_mergeAbstractActionCreateDefaultWitnesses() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		

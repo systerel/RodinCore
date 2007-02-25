@@ -33,6 +33,7 @@ public class TestCarrierSets extends BasicSCTest {
 		
 		containsCarrierSets(file, "S1");
 		
+		containsMarkers(con, false);
 	}
 
 	/**
@@ -50,6 +51,8 @@ public class TestCarrierSets extends BasicSCTest {
 		ISCContextFile file = con.getSCContextFile();
 		
 		containsCarrierSets(file, "S1", "S2");
+		
+		containsMarkers(con, false);
 	}
 
 	/**
@@ -114,6 +117,8 @@ public class TestCarrierSets extends BasicSCTest {
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S1");
+		
+		containsMarkers(con, false);
 	}
 
 	/**

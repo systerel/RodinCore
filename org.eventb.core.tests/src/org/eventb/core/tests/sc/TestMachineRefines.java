@@ -19,6 +19,10 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestMachineRefines extends BasicSCTest {
 	
+	/*
+	 * abstract machine identifiers have precedence over 
+	 * seen context identifiers
+	 */
 	public void testMachineRefines_0() throws Exception {
 		IContextFile con =  createContext("con");
 		addCarrierSets(con, "V1");
@@ -64,6 +68,10 @@ public class TestMachineRefines extends BasicSCTest {
 
 	}
 	
+	/*
+	 * refined machine should see at least all contexts seen by
+	 * their abstract machine; carrier sets are propagated
+	 */
 	public void testMachineRefines_1() throws Exception {
 		IContextFile con =  createContext("con");
 		addCarrierSets(con, "S1");
@@ -73,6 +81,7 @@ public class TestMachineRefines extends BasicSCTest {
 		runBuilder();
 
 		IMachineFile abs = createMachine("abs");
+		addInitialisation(abs);
 		
 		addMachineSees(abs, "con");
 
@@ -81,7 +90,8 @@ public class TestMachineRefines extends BasicSCTest {
 		runBuilder();
 
 		IMachineFile mac = createMachine("mac");
-		
+		addInitialisation(mac);
+	
 		addMachineSees(mac, "con");
 		addMachineRefines(mac, "abs");
 
@@ -95,8 +105,13 @@ public class TestMachineRefines extends BasicSCTest {
 		
 		containsCarrierSets(contexts[0], "S1");
 
+		containsMarkers(mac, false);
 	}
 	
+	/*
+	 * refined machine should see at least all contexts seen by
+	 * their abstract machine; constants are propagated
+	 */
 	public void testMachineRefines_2() throws Exception {
 		IContextFile con =  createContext("con");
 		addConstants(con, "C1");
@@ -129,8 +144,14 @@ public class TestMachineRefines extends BasicSCTest {
 		
 		containsConstants(contexts[0], "C1");
 
+		containsMarkers(mac, false);
 	}
 	
+	/*
+	 * refined machine should see at least all contexts seen by
+	 * their abstract machine; constants are propagated
+	 * when also variables are declared
+	 */
 	public void testMachineRefines_3() throws Exception {
 		IContextFile con =  createContext("con");
 		addConstants(con, "C1");
@@ -167,8 +188,12 @@ public class TestMachineRefines extends BasicSCTest {
 		
 		containsConstants(contexts[0], "C1");
 
+		containsMarkers(mac, false);
 	}
 	
+	/*
+	 * variables are propagated
+	 */
 	public void testMachineRefines_4() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
@@ -197,6 +222,8 @@ public class TestMachineRefines extends BasicSCTest {
 				
 		containsVariables(file, "V1", "V2");
 		containsInvariants(file, typeEnvironment, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2=V1+1"));
+
+		containsMarkers(mac, false);
 	}
 
 }

@@ -110,7 +110,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			
 			for (ISCContext scIC : upContexts[index]) {
 				
-				String contextName = scIC.getElementName();
+				String contextName = scIC.getComponentName();
 								
 				ISCCarrierSet[] scCarrierSets = scIC.getSCCarrierSets();
 				

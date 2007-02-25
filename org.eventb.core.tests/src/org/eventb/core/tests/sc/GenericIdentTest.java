@@ -19,6 +19,9 @@ public abstract class GenericIdentTest <IRF extends IRodinFile, ISCRF extends IR
 extends BasicSCTest 
 implements IGenericSCTest<IRF, ISCRF> {
 
+	/**
+	 * Creating a constant or variable without a type must fail
+	 */
 	public void testIdents_00() throws Exception {
 		IRF cmp = createComponent("cmp", (IRF) null);
 
@@ -34,6 +37,9 @@ implements IGenericSCTest<IRF, ISCRF> {
 		
 	}
 
+	/**
+	 * Creating a constant or variable without a type must succeed
+	 */
 	public void testIdents_01() throws Exception {
 		IRF cmp = createComponent("cmp", (IRF) null);
 
@@ -53,8 +59,12 @@ implements IGenericSCTest<IRF, ISCRF> {
 		
 		containsNonTheorems(file, environment, makeSList("I1"), makeSList("V1∈ℤ"));
 
+		containsMarkers(cmp, false);
 	}
 	
+	/**
+	 * refering to a nondeclared identifier should fail
+	 */
 	public void testIdents_02() throws Exception {
 		IRF cmp = createComponent("cmp", (IRF) null);
 

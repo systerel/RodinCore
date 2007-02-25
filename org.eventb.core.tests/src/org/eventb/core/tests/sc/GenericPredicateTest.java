@@ -33,6 +33,7 @@ implements IGenericSCTest <IRF, ISCRF> {
 		
 		containsNonTheorems(file, emptyEnv, makeSList("P"), makeSList("ℕ≠∅"));
 		
+		containsMarkers(con, false);
 	}
 	
 	/**
@@ -89,10 +90,11 @@ implements IGenericSCTest <IRF, ISCRF> {
 		
 		containsNonTheorems(file, emptyEnv, makeSList("P"), makeSList("x∈1‥0"));
 		
+		containsMarkers(con, false);
 	}
 	
 	/**
-	 * use of undecrlared constants or variables
+	 * use of undeclared constants or variables
 	 */
 	public void test_04() throws Exception {
 		IRF con = createComponent("con", (IRF) null);
@@ -125,6 +127,7 @@ implements IGenericSCTest <IRF, ISCRF> {
 		
 		containsTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
 		
+		containsMarkers(con, false);
 	}
 	
 	/**
@@ -143,6 +146,7 @@ implements IGenericSCTest <IRF, ISCRF> {
 		
 		containsTheorems(file, emptyEnv, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"));
 		
+		containsMarkers(con, false);
 	}
 	
 	/**

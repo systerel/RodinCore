@@ -58,6 +58,7 @@ public class TestVariables extends GenericIdentTest<IMachineFile, ISCMachineFile
 		
 		containsInvariants(file, environment, makeSList("I1"), makeSList("V1∈S1"));
 
+		containsMarkers(mac, false);
 	}
 	
 	/**
@@ -131,6 +132,7 @@ public class TestVariables extends GenericIdentTest<IMachineFile, ISCMachineFile
 		
 		containsInvariants(file, environment, makeSList("I1"), makeSList("V1∈ℕ"));
 
+		containsMarkers(mac, false);
 	}
 
 }

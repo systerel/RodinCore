@@ -19,6 +19,9 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestSeesContext extends BasicSCTest {
 	
+	/*
+	 * Seen contexts are copied into internal contexts
+	 */
 	public void testSeesContext_0() throws Exception {
 		IContextFile con = createContext("con");
 
@@ -61,6 +64,7 @@ public class TestSeesContext extends BasicSCTest {
 		
 		containsInvariants(file, typeEnvironment, makeSList("I1"), makeSList("V1=C1"));
 
+		containsMarkers(mac, false);
 	}
 
 	/**
@@ -84,6 +88,8 @@ public class TestSeesContext extends BasicSCTest {
 		ISCMachineFile file = mac.getSCMachineFile();
 		seesContexts(file, "con2");
 		containsContexts(file, "con1", "con2");
+
+		containsMarkers(mac, false);
 	}
 
 	/**

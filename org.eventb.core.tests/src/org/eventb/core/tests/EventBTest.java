@@ -138,6 +138,18 @@ public abstract class EventBTest extends BuilderTest {
 		return event;
 	}
 	
+	public IEvent addInitialisation(IMachineFile rodinFile, String... variables) throws RodinDBException {
+		String assn = variables.length == 0 ? null : variables[0];
+		for (int k=1; k<variables.length; k++) {
+			assn += "," + variables[k];
+		}
+		if (assn != null) 
+			assn += ":∣⊤";
+		String[] ll = (assn == null) ? makeSList() : makeSList("INIT");
+		String[] aa = (assn == null) ? makeSList() : makeSList(assn);
+		return addInitialisation(rodinFile, ll, aa);
+	}
+	
 	public IEvent addEvent(IMachineFile rodinFile, 
 			String name) throws RodinDBException {
 		return addEvent(rodinFile, name, makeSList(), makeSList(), makeSList(), makeSList(), makeSList());

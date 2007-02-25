@@ -78,12 +78,12 @@ public class MachineContextClosureModule extends SCProcessorModule {
 		
 		HashSet<String> validContextNames = new HashSet<String>(validContexts.size() * 4 / 3 + 1);
 		for (ISCContext context : validContexts) {
-			validContextNames.add(context.getElementName());
+			validContextNames.add(context.getComponentName());
 		}
 		
 		int count = 0;
 		for (ISCInternalContext context : abstractContexts) {
-			String name = context.getElementName();
+			String name = context.getComponentName();
 			if (validContextNames.contains(name))
 				continue;
 			else {

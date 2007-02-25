@@ -81,4 +81,8 @@ public class SCInternalContext extends InternalElement implements
 		return getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
 	}
 
+	public String getComponentName() {
+		return getElementName();
+	}
+
 }

@@ -13,6 +13,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContextFile;
+import org.eventb.core.IEventBFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.SCCore;
@@ -73,9 +74,10 @@ public class ContextCarrierSetModule extends IdentifierModule {
 
 	@Override
 	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element) {
+		IEventBFile context = (IEventBFile) element.getParent();
 		return new ConcreteCarrierSetSymbolInfo(
 				name, element, 
-				EventBAttributes.IDENTIFIER_ATTRIBUTE, element.getParent().getElementName());
+				EventBAttributes.IDENTIFIER_ATTRIBUTE, context.getComponentName());
 	}
 
 }

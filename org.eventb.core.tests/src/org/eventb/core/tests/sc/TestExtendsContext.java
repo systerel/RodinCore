@@ -39,6 +39,8 @@ public class TestExtendsContext extends BasicSCTest {
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S");
+		
+		containsMarkers(con, false);
 	}
 
 	public void testFetchCarrierSet_02_twoCarrierSets() throws Exception {
@@ -61,6 +63,8 @@ public class TestExtendsContext extends BasicSCTest {
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S1", "S2");
+		
+		containsMarkers(con, false);
 	}
 	
 	public void testFetchCarrierSet_03_extendsConflict() throws Exception {
@@ -125,6 +129,8 @@ public class TestExtendsContext extends BasicSCTest {
 		containsCarrierSets(contexts[0], "S11", "S12");
 
 		containsCarrierSets(contexts[1], "S21", "S22");
+		
+		containsMarkers(con, false);
 	}
 	
 	public void testFetchCarrierSet_05_extendsPartialConflict() throws Exception {
@@ -186,6 +192,8 @@ public class TestExtendsContext extends BasicSCTest {
 		ISCContextFile file = con.getSCContextFile();
 		extendsContexts(file, "abs2");
 		containsContexts(file, "abs1", "abs2");
+		
+		containsMarkers(con, false);
 	}
 
 }

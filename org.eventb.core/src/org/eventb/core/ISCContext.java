@@ -33,6 +33,23 @@ import org.rodinp.core.RodinDBException;
 public interface ISCContext extends IRodinElement {
 
 	/**
+	 * Returns the name of the event-B component associated context.
+	 * As an <code>ISCContext</code> can be backed by an <code>ISCInternalContext</code>
+	 * or an <code>ISCContextFile</code> it returns in the former case the element name
+	 * (i.e. the component name of the context from which it was copied), and in the latter
+	 * case the proper component name using <code>IEventBFile.getComponentName()</code>.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @see IRodinElement#getElementName()
+	 * @see IEventBFile#getComponentName()
+	 * 
+	 * @return the name of the event-B component
+	 */
+	String getComponentName();
+
+	/**
 	 * Returns a handle to a child SC carrier set with the given element name.
 	 * <p>
 	 * This is a handle-only method. The child element may or may not be

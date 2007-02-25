@@ -66,7 +66,9 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineFile
 		IMachineFile mac = createMachine("mac");
 		addMachineSees(mac, "con");
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1", "I2", "I3", "I4"), makeSList("V1=V1", "V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"));
+		addInvariants(mac, 
+				makeSList("I1", "I2", "I3", "I4"), 
+				makeSList("V1=V1", "V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"));
 	
 		mac.save(null, true);
 		
@@ -74,7 +76,9 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineFile
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		containsInvariants(file, typeEnvironment, makeSList("I2", "I3", "I4"), makeSList("V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"));
+		containsInvariants(file, typeEnvironment, 
+				makeSList("I2", "I3", "I4"), 
+				makeSList("V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"));
 		
 	}
 	

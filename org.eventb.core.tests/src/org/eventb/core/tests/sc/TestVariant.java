@@ -18,6 +18,9 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestVariant extends BasicSCTest {
 	
+	/**
+	 * create an integer variant
+	 */
 	public void testVariant_00() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
@@ -31,8 +34,12 @@ public class TestVariant extends BasicSCTest {
 		
 		containsVariant(file, emptyEnv, "1");
 		
+		containsMarkers(mac, false);
 	}
 
+	/**
+	 * create a set variant
+	 */
 	public void testVariant_01() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
@@ -46,8 +53,12 @@ public class TestVariant extends BasicSCTest {
 		
 		containsVariant(file, emptyEnv, "{TRUE}");
 		
+		containsMarkers(mac, false);
 	}
 	
+	/**
+	 * create an integer variant containing a variable
+	 */
 	public void testVariant_02() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
@@ -66,8 +77,12 @@ public class TestVariant extends BasicSCTest {
 		
 		containsVariant(file, typeEnvironment, "V1");
 		
+		containsMarkers(mac, false);
 	}
 	
+	/**
+	 * variants must be of type integer or POW(...)
+	 */
 	public void testVariant_03() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
@@ -83,6 +98,9 @@ public class TestVariant extends BasicSCTest {
 		
 	}
 	
+	/**
+	 * create an integer variant containing a variable and a constant
+	 */
 	public void testVariant_04() throws Exception {
 		IContextFile con = createContext("con");
 		addConstants(con, "C1");
@@ -110,8 +128,12 @@ public class TestVariant extends BasicSCTest {
 		
 		containsVariant(file, typeEnvironment, "V1+C1");
 		
+		containsMarkers(mac, false);
 	}
 	
+	/**
+	 * variants must not refer to disappearing variables
+	 */
 	public void testVariant_05() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariables(abs, "V0");

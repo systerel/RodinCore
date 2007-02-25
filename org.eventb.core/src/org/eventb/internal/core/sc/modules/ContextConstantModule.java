@@ -13,6 +13,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
+import org.eventb.core.IEventBFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -64,9 +65,10 @@ public class ContextConstantModule extends IdentifierModule {
 
 	@Override
 	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element) {
+		IEventBFile context = (IEventBFile) element.getParent();
 		return new ConcreteConstantSymbolInfo(
 				name, element, 
-				EventBAttributes.IDENTIFIER_ATTRIBUTE, element.getParent().getElementName());
+				EventBAttributes.IDENTIFIER_ATTRIBUTE, context.getComponentName());
 	}
 
 }

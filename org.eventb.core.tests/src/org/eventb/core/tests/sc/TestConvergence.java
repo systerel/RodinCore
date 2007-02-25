@@ -21,6 +21,7 @@ public class TestConvergence extends BasicSCTest {
 	public void testCvg_00_AllThreeKindsOK() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
+		addInitialisation(mac);
 		addVariant(mac, "1");
 		IEvent evt = addEvent(mac, "evt");
 		setOrdinary(evt);
@@ -34,10 +35,12 @@ public class TestConvergence extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
-		isOrdinary(events[0]);
-		isAnticipated(events[1]);
-		isConvergent(events[2]);
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt", "gvt");
+		isOrdinary(events[1]);
+		isAnticipated(events[2]);
+		isConvergent(events[3]);
+		
+		containsMarkers(mac, false);
 	}
 	
 	public void testCvg_01_FaultySetToDefaultOrdinary() throws Exception {
@@ -141,7 +144,7 @@ public class TestConvergence extends BasicSCTest {
 		
 	}
 	
-	public void testCvg_04_FaultyRefinedSetToOrdinary() throws Exception {
+	public void testCvg_04_AllRefinedByConvergent() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");
@@ -211,6 +214,83 @@ public class TestConvergence extends BasicSCTest {
 		ISCMachineFile file = mac.getSCMachineFile();
 		
 		ISCEvent[] events = getSCEvents(file, "evt");
+		isOrdinary(events[0]);
+	}
+	
+	public void testCvg_06_InitialisationIsOrdinary() throws Exception {
+		
+		IMachineFile abs = createMachine("abs");
+		addInitialisation(abs);
+
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent init = addInitialisation(mac);
+		setOrdinary(init);
+		addVariant(mac, "1");
+		
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
+		isOrdinary(events[0]);
+		
+		containsMarkers(mac, false);
+	}
+	
+	public void testCvg_07_InitialisationIsNotAnticipated() throws Exception {
+		
+		IMachineFile abs = createMachine("abs");
+		addInitialisation(abs);
+
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent init = addInitialisation(mac);
+		setAnticipated(init);
+		addVariant(mac, "1");
+		
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
+		isOrdinary(events[0]);
+	}
+	
+	public void testCvg_08_InitialisationIsNotConvergent() throws Exception {
+		
+		IMachineFile abs = createMachine("abs");
+		addInitialisation(abs);
+
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent init = addInitialisation(mac);
+		setConvergent(init);
+		addVariant(mac, "1");
+		
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		isOrdinary(events[0]);
 	}
 

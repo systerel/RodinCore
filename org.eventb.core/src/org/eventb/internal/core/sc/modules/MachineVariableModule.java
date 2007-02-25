@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEventBFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
@@ -101,9 +102,10 @@ public class MachineVariableModule extends IdentifierModule {
 	@Override
 	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(
 			String name, IIdentifierElement element) {
+		IEventBFile file = (IEventBFile) element.getParent();
 		return new ConcreteVariableSymbolInfo(
 				name, element, 
-				EventBAttributes.IDENTIFIER_ATTRIBUTE, element.getParent().getElementName());
+				EventBAttributes.IDENTIFIER_ATTRIBUTE, file.getComponentName());
 	}
 
 }
