@@ -64,11 +64,8 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 			IProgressMonitor monitor) throws CoreException {
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, freeIdentifier, monitor);
 		if (isInitialisation && symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
-			createProblemMarker(
-					element, 
-					getAttributeType(), 
-					GraphProblem.InitialisationActionRHSError,
-					freeIdentifier.getName());
+			// problem marker for GraphProblem.InitialisationActionRHSError is generated
+			// in FormulaFreeIdentsModule
 			return null;
 		}
 		return symbolInfo;

@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -60,27 +61,76 @@ public class AbstractEventActionTable extends EventActionTable implements
 		
 		for (int i=0; i<assignments.size(); i++) {
 			Assignment assignment = assignments.get(i);
-			if (isDisappearing(assignment, variables) 
-					&& assignment instanceof BecomesEqualTo) {
-				disappearingWitnesses.add((BecomesEqualTo) assignment);
-			} else {
-				simAssignments.add(assignment);
-				simActions.add(abstractActions[i]);
-			}
+			
+			categorise(assignment, abstractActions[i], variables, factory);
 					
 		}
 
 	}
 	
-	private boolean isDisappearing(Assignment assignment, IMachineVariableTable variables) {
-		boolean found = false;
-		for (FreeIdentifier identifier : assignment.getAssignedIdentifiers())
-			if (variables.contains(identifier)) {
-				found = true;
+	private void categorise(
+			Assignment assignment, 
+			ISCAction action, 
+			IMachineVariableTable variables, 
+			FormulaFactory factory) {
+		if (assignment instanceof BecomesEqualTo) {
+			BecomesEqualTo bet = (BecomesEqualTo) assignment;
+			
+			// analyse deterministic assignment
+			FreeIdentifier[] lhs = bet.getAssignedIdentifiers();
+			boolean[] preserved = new boolean[lhs.length];
+			int pcount = 0;
+			for (int k=0; k<lhs.length; k++) {
+				if (variables.contains(lhs[k])) {
+					pcount++;
+					preserved[k] = true;
+				}
 			}
-		return !found;
+			
+			if (pcount == lhs.length) {
+				simAssignments.add(assignment);
+				simActions.add(action);
+			} else if (pcount == 0) {
+				disappearingWitnesses.add(bet);
+			} else {
+			
+				Expression[] rhs = bet.getExpressions();
+			
+				// split assignment
+				FreeIdentifier[] lhsP = new FreeIdentifier[pcount];
+				Expression[] rhsP = new Expression[pcount];
+			
+				FreeIdentifier[] lhsD = new FreeIdentifier[pcount];
+				Expression[] rhsD = new Expression[pcount];
+			
+				int p = 0;
+				int d = 0;
+			
+				for (int k=0; k<lhs.length; k++) {
+					if (preserved[k]) {
+						lhsP[p] = lhs[k];
+						rhsP[p] = rhs[k];
+						p++;
+					} else {
+						lhsD[d] = lhs[k];
+						rhsD[d] = rhs[k];
+						d++;
+					}
+				}
+			
+				simAssignments.add(factory.makeBecomesEqualTo(lhsP, rhsP, null));
+				simActions.add(action);
+				
+				disappearingWitnesses.add(factory.makeBecomesEqualTo(lhsD, rhsD, null));
+			
+			}
+			
+		} else {
+			simAssignments.add(assignment);
+			simActions.add(action);
+		}
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
