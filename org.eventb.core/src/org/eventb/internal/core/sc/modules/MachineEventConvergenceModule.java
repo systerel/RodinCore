@@ -19,6 +19,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
+import org.eventb.core.sc.state.ICurrentEvent;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.state.IVariantInfo;
@@ -44,6 +45,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 
 	IVariantInfo variantInfo;
 	IEventRefinesInfo eventRefinesInfo;
+	ICurrentEvent currentEvent;
 
 	@Override
 	public void initModule(
@@ -53,6 +55,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 		super.initModule(element, repository, monitor);
 		variantInfo = (IVariantInfo) repository.getState(IVariantInfo.STATE_TYPE);
 		eventRefinesInfo = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
+		currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
 	}
 
 	public void process(
@@ -65,12 +68,23 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 		
 		IConvergenceElement.Convergence convergence = event.getConvergence();
 		
-		List<IAbstractEventInfo> abstractEventInfos = eventRefinesInfo.getAbstractEventInfos();
-		if (abstractEventInfos.size() != 0) { // not a new event
-			convergence = 
-				checkAbstractConvergence(event, convergence, abstractEventInfos, null);
+		if (currentEvent.isInitialisation()) {
+			if (convergence != IConvergenceElement.Convergence.ORDINARY) {
+				convergence = IConvergenceElement.Convergence.ORDINARY;
+				createProblemMarker(
+						event, 
+						EventBAttributes.CONVERGENCE_ATTRIBUTE, 
+						GraphProblem.InconsistentAbstractConvergenceWarning);
+			}
+		} else {
+		
+			List<IAbstractEventInfo> abstractEventInfos = eventRefinesInfo.getAbstractEventInfos();
+			if (abstractEventInfos.size() != 0) { // not a new event
+				convergence = 
+					checkAbstractConvergence(event, convergence, abstractEventInfos, null);
+			}
+			convergence = checkVariantConvergence(event, convergence);
 		}
-		convergence = checkVariantConvergence(event, convergence);
 		saveConvergence((ISCEvent) target, convergence, null);
 	}
 	
@@ -167,6 +181,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 			IProgressMonitor monitor) throws CoreException {
 		variantInfo = null;
 		eventRefinesInfo = null;
+		currentEvent = null;
 		super.endModule(element, repository, monitor);
 	}
 

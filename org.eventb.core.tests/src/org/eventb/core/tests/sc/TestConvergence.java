@@ -219,15 +219,7 @@ public class TestConvergence extends BasicSCTest {
 	
 	public void testCvg_06_InitialisationIsOrdinary() throws Exception {
 		
-		IMachineFile abs = createMachine("abs");
-		addInitialisation(abs);
-
-		abs.save(null, true);
-		
-		runBuilder();
-		
 		IMachineFile mac = createMachine("mac");
-		addMachineRefines(mac, "abs");
 		IEvent init = addInitialisation(mac);
 		setOrdinary(init);
 		addVariant(mac, "1");
@@ -246,15 +238,7 @@ public class TestConvergence extends BasicSCTest {
 	
 	public void testCvg_07_InitialisationIsNotAnticipated() throws Exception {
 		
-		IMachineFile abs = createMachine("abs");
-		addInitialisation(abs);
-
-		abs.save(null, true);
-		
-		runBuilder();
-		
 		IMachineFile mac = createMachine("mac");
-		addMachineRefines(mac, "abs");
 		IEvent init = addInitialisation(mac);
 		setAnticipated(init);
 		addVariant(mac, "1");
@@ -271,15 +255,7 @@ public class TestConvergence extends BasicSCTest {
 	
 	public void testCvg_08_InitialisationIsNotConvergent() throws Exception {
 		
-		IMachineFile abs = createMachine("abs");
-		addInitialisation(abs);
-
-		abs.save(null, true);
-		
-		runBuilder();
-		
 		IMachineFile mac = createMachine("mac");
-		addMachineRefines(mac, "abs");
 		IEvent init = addInitialisation(mac);
 		setConvergent(init);
 		addVariant(mac, "1");

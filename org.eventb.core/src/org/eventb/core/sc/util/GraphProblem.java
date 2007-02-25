@@ -74,6 +74,7 @@ public enum GraphProblem implements IRodinProblem {
 	AnticipatedFaultyConvergenceWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AnticipatedFaultyConvergence),
 	AnticipatedEventNoVariantWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AnticipatedEventNoVariant),
 	ConvergentEventNoVariantWarning(IMarker.SEVERITY_WARNING, Messages.scuser_ConvergentEventNoVariant),
+	InitialisationNotOrdinaryWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InitialisationNotOrdinary),
 	AxiomLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_AxiomLabelConflict),
 	AxiomLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AxiomLabelConflict),
 	TheoremLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoremLabelConflict),

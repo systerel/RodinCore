@@ -106,6 +106,7 @@ public final class Messages {
     public static String scuser_AnticipatedFaultyConvergence;
     public static String scuser_AnticipatedEventNoVariant;
     public static String scuser_ConvergentEventNoVariant;
+    public static String scuser_InitialisationNotOrdinary;
 
     public static String scuser_AxiomLabelConflict;
     public static String scuser_TheoremLabelConflict;
