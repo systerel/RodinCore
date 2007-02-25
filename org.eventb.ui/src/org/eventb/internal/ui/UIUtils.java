@@ -235,6 +235,23 @@ public class UIUtils {
 	}
 
 	/**
+	 * Activate a particular view given the ID.
+	 * <p>
+	 * 
+	 * @param view_ID
+	 *            the ID of the view which will be activate
+	 */
+	public static void showView(String view_ID) {
+		try {
+			EventBUIPlugin.getActivePage().showView(view_ID);
+		} catch (PartInitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return;
+	}
+
+	/**
 	 * Running a runable asynchronously.
 	 * <p>
 	 * 
@@ -394,7 +411,8 @@ public class UIUtils {
 
 	public static <T extends IIdentifierElement> int getFreeElementIdentifierIndex(
 			IEventBEditor editor, IInternalParent parent,
-			IInternalElementType<T> type, String prefix) throws RodinDBException {
+			IInternalElementType<T> type, String prefix)
+			throws RodinDBException {
 		return getFreeElementIdentifierIndex(editor, parent, type, prefix, 1);
 	}
 
@@ -409,7 +427,7 @@ public class UIUtils {
 		for (i = beginIndex; i < elements.length + beginIndex; i++) {
 			boolean exists = true;
 			for (T element : elements) {
-				if (! element.getIdentifierString().equals(prefix + i)) {
+				if (!element.getIdentifierString().equals(prefix + i)) {
 					exists = false;
 					break;
 				}
@@ -457,8 +475,7 @@ public class UIUtils {
 	 * @param pm
 	 */
 	public static void setStringAttribute(IInternalElement element,
-			IAttributeType.String attrType, String newValue,
-			IProgressMonitor pm) {
+			IAttributeType.String attrType, String newValue, IProgressMonitor pm) {
 		try {
 			if (newValue.length() == 0) {
 				if (element.hasAttribute(attrType)) {
@@ -475,5 +492,5 @@ public class UIUtils {
 				e.printStackTrace();
 		}
 	}
-	
+
 }
