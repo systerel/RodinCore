@@ -963,5 +963,56 @@ public class TestMachineRefines extends BasicPOTest {
 		sequentHasNotHypotheses(sequent, environment, "q'=x", "q'=p'", "p'≠x");
 		sequentHasGoal(sequent, environment, "∃q'·q'≠q");
 	}
+	
+	/*
+	 * Disappearing variables in deterministic actions must not be simulated,
+	 * but the preserved variables must be simulated. This also holds for
+	 * multiple assignments!
+	 */
+	public void testRefines_19() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "x", "y");
+		addInvariants(abs, makeSList("I", "J"), makeSList("x∈ℤ", "y∈ℤ"));
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x,y ≔ y,x"));
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "y", "z");
+		addInvariants(ref, makeSList("K", "L"), makeSList("z∈ℤ", "y≤x"));
+	
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("B"), makeSList("y,z ≔ z,y"));
+		addEventRefines(evt, "evt");
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		environment.addName("y", intType);
+		environment.addName("z", intType);
+
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "x", "y", "z");
+		
+		IPOSequent 
+		sequent = getSequent(po, "evt/A/SIM");
+		sequentHasIdentifiers(sequent, "x'", "y'", "z'");
+		sequentHasHypotheses(sequent, environment, "x∈ℤ", "y∈ℤ", "z∈ℤ", "y≤x");
+		sequentHasGoal(sequent, environment, "z=x");
+		
+		sequent = getSequent(po, "evt/L/INV");
+		sequentHasIdentifiers(sequent, "x'", "y'", "z'");
+		sequentHasHypotheses(sequent, environment, "x∈ℤ", "y∈ℤ", "z∈ℤ", "y≤x");
+		sequentHasGoal(sequent, environment, "z≤y");
+	}
 
 }
