@@ -27,7 +27,7 @@ public class RefinesMachineSection extends CComboSection {
 		try {
 			machines = project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "when listing the contexts of " + project);
+			UIUtils.log(e, "when listing the machines of " + project);
 			return;
 		}
 		for (IMachineFile machine : machines) {
@@ -38,9 +38,9 @@ public class RefinesMachineSection extends CComboSection {
 
 	@Override
 	void setText(String text) throws RodinDBException {
-		IRefinesMachine sElement = (IRefinesMachine) element;
-		if (!sElement.getAbstractMachineName().equals(text)) {
-			sElement.setAbstractMachineName(text, new NullProgressMonitor());
+		IRefinesMachine rElement = (IRefinesMachine) element;
+		if (!rElement.getAbstractMachineName().equals(text)) {
+			rElement.setAbstractMachineName(text, new NullProgressMonitor());
 		}
 	}
 
