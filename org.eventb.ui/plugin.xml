@@ -750,6 +750,17 @@
                menubarPath="modelling"
                tooltip="%popupMenu.delete.tooltip"/>
       </viewerContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.eventb.ui.internalElement"
+            objectClass="org.rodinp.core.IInternalElement">
+         <action
+               class="org.eventb.internal.ui.propertiesView.Properties"
+               id="org.eventb.ui.property"
+               label="%popupMenu.property.label"
+               menubarPath="additions"
+               tooltip="%popupMenu.property.tooltip"/>
+      </objectContribution>
    </extension>
    <extension
          point="org.eventb.ui.proofTactics">
