@@ -277,6 +277,18 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	/**
+	 * Returns the form of this expression. This form corresponds to the way the
+	 * expression was initially parsed. It doesn't have any impact on the
+	 * mathematical meaning of this expression, which is always the same,
+	 * whatever the form.
+	 * 
+	 * @return the form of this expression.
+	 */
+	public Form getForm() {
+		return form;
+	}
+	
+	/**
 	 * Returns the list of the identifiers which are declared as bound by this formula.
 	 * 
 	 * @return list of bound identifier declarations
