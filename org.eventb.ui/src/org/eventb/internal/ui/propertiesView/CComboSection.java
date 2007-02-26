@@ -16,27 +16,23 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
-import org.eventb.core.IContextFile;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public abstract class AbstractContextSection<F extends IRodinFile> extends AbstractPropertySection implements
+public abstract class CComboSection extends AbstractPropertySection implements
 		IElementChangedListener {
 
-	CCombo contextCombo;
+	CCombo comboWidget;
 
 	IInternalElement element;
 
-	IEventBEditor<F> editor;
+	IEventBEditor editor;
 
-	public AbstractContextSection() {
+	public CComboSection() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -49,42 +45,59 @@ public abstract class AbstractContextSection<F extends IRodinFile> extends Abstr
 				.createFlatFormComposite(parent);
 		FormData data;
 
-		contextCombo = getWidgetFactory().createCCombo(composite, SWT.BORDER);
+		comboWidget = getWidgetFactory().createCCombo(composite,
+				SWT.DEFAULT);
 
 		data = new FormData();
 		data.left = new FormAttachment(0, STANDARD_LABEL_WIDTH);
 		data.right = new FormAttachment(100, 0);
 		data.top = new FormAttachment(0, ITabbedPropertyConstants.VSPACE);
-		contextCombo.setLayoutData(data);
+		comboWidget.setLayoutData(data);
 
-		contextCombo.addSelectionListener(new SelectionListener() {
+		comboWidget.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
 
 			public void widgetSelected(SelectionEvent e) {
-				String text = contextCombo.getText();
-				setContext(text);
+				try {
+					setText(comboWidget.getText());
+				} catch (RodinDBException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 
 		});
 
 		CLabel labelLabel = getWidgetFactory().createCLabel(composite,
-				"Context:");
+				getLabel() + ":");
 		data = new FormData();
 		data.left = new FormAttachment(0, 0);
-		data.right = new FormAttachment(contextCombo,
+		data.right = new FormAttachment(comboWidget,
 				ITabbedPropertyConstants.HSPACE);
-		data.top = new FormAttachment(contextCombo, 0, SWT.CENTER);
+		data.top = new FormAttachment(comboWidget, 0, SWT.CENTER);
 		labelLabel.setLayoutData(data);
 	}
 
-	public abstract void setContext(String text);
+	abstract String getLabel();
+
+	abstract void setText(String text) throws RodinDBException;
+
+	abstract void setData();
+
+	abstract String getText() throws RodinDBException;
 
 	@Override
 	public void refresh() {
-		initContextCombo();
+		try {
+			comboWidget.removeAll();
+			setData();
+			comboWidget.setText(getText());
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
 		super.refresh();
 	}
 
@@ -92,22 +105,25 @@ public abstract class AbstractContextSection<F extends IRodinFile> extends Abstr
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
 		Assert.isTrue(part instanceof IEventBEditor);
-		editor = (IEventBEditor<F>) part;
+		editor = (IEventBEditor) part;
 		Assert.isTrue(selection instanceof IStructuredSelection);
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 		Assert.isTrue(input instanceof IInternalElement);
 		this.element = (IInternalElement) input;
+		refresh();
 	}
 
 	public void elementChanged(ElementChangedEvent event) {
 		// TODO Filter out the delta first
-		if (contextCombo.isDisposed())
+		if (comboWidget.isDisposed())
 			return;
-		Display display = contextCombo.getDisplay();
+		Display display = comboWidget.getDisplay();
 		display.asyncExec(new Runnable() {
+
 			public void run() {
 				refresh();
 			}
+
 		});
 	}
 
@@ -122,24 +138,5 @@ public abstract class AbstractContextSection<F extends IRodinFile> extends Abstr
 		super.aboutToBeShown();
 		RodinCore.removeElementChangedListener(this);
 	}
-
-	final void initContextCombo() {
-		contextCombo.removeAll();
-		final IRodinProject project = editor.getRodinInput().getRodinProject();
-		final IContextFile[] contexts;
-		try {
-			contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-		} catch (RodinDBException e) {
-			UIUtils.log(e, "when listing the contexts of " + project);
-			return;
-		}
-		for (IContextFile context : contexts) {
-			final String bareName = context.getComponentName();
-				contextCombo.add(bareName);
-		}
-		setInitialInput();
-	}
-
-	public abstract void setInitialInput();
 
 }

@@ -1,46 +1,46 @@
 package org.eventb.internal.ui.propertiesView;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextFile;
 import org.eventb.core.ISeesContext;
+import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
-public class SeesContextSection extends AbstractContextSection<IMachineFile> {
+public class SeesContextSection extends CComboSection {
 
-	public SeesContextSection() {
-		// TODO Auto-generated constructor stub
+	@Override
+	String getLabel() {
+		return "Abs. Ctx.";
 	}
 
 	@Override
-	public void refresh() {
-		initContextCombo();
-		super.refresh();
-	}
-
-	@Override
-	public void setContext(String text) {
-		assert element instanceof ISeesContext;
+	String getText() throws RodinDBException {
 		ISeesContext sElement = (ISeesContext) element;
+		return sElement.getSeenContextName();
+	}
+
+	@Override
+	void setData() {
+		final IRodinProject project = editor.getRodinInput().getRodinProject();
+		final IContextFile[] contexts;
 		try {
-			if (!sElement.getSeenContextName().equals(text)) {
-				sElement.setSeenContextName(text,
-						new NullProgressMonitor());
-			}
+			contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			UIUtils.log(e, "when listing the contexts of " + project);
+			return;
+		}
+		for (IContextFile context : contexts) {
+			final String bareName = context.getComponentName();
+			comboWidget.add(bareName);
 		}
 	}
 
 	@Override
-	public void setInitialInput() {
-		assert element instanceof ISeesContext;
+	void setText(String text) throws RodinDBException {
 		ISeesContext sElement = (ISeesContext) element;
-		try {
-			contextCombo.setText(sElement.getSeenContextName());
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (!sElement.getSeenContextName().equals(text)) {
+			sElement.setSeenContextName(text, new NullProgressMonitor());
 		}
 	}
 
