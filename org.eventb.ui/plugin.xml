@@ -1124,17 +1124,29 @@
          </propertySection>
          <propertySection
                afterSection="org.eventb.ui.labelSection"
-               class="org.eventb.internal.ui.propertiesView.CommentSection"
-               id="org.eventb.ui.commentSection"
-               tab="org.eventb.ui.basicTab">
-            <input type="org.eventb.core.ICommentedElement"/>
-         </propertySection>
-         <propertySection
-               afterSection="org.eventb.ui.labelSection"
                class="org.eventb.internal.ui.propertiesView.PredicateSection"
                id="org.eventb.ui.predicateSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IPredicateElement"/>
+         </propertySection>
+         <propertySection
+               class="org.eventb.internal.ui.propertiesView.IdentifierSection"
+               id="org.eventb.ui.identifierSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.IIdentifierElement"/>
+         </propertySection>
+         <propertySection
+               class="org.eventb.internal.ui.propertiesView.ExtendsContextSection"
+               id="org.eventb.ui.extendsContextSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.IExtendsContext"/>
+         </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.predicateSection"
+               class="org.eventb.internal.ui.propertiesView.CommentSection"
+               id="org.eventb.ui.commentSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.ICommentedElement"/>
          </propertySection>
       </propertySections>
    </extension>
