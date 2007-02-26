@@ -1050,6 +1050,12 @@
             <input type="org.eventb.core.ILabeledElement"/>
          </propertySection>
          <propertySection
+               class="org.eventb.internal.ui.propertiesView.IdentifierSection"
+               id="org.eventb.ui.IdentifierSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.IIdentifierElement"/>
+         </propertySection>
+         <propertySection
                afterSection="org.eventb.ui.labelSection"
                class="org.eventb.internal.ui.propertiesView.CommentSection"
                id="org.eventb.ui.commentSection"
