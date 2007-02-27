@@ -17,11 +17,13 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSource;
+import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.POGCore;
+import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IMachineVariantInfo;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGPredicate;
@@ -47,7 +49,10 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		if (convergence == IConvergenceElement.Convergence.ORDINARY)
+		if (concreteConvergence == IConvergenceElement.Convergence.ORDINARY)
+			return;
+		if (concreteConvergence == IConvergenceElement.Convergence.CONVERGENT
+				&& abstractConvergence == IConvergenceElement.Convergence.CONVERGENT)
 			return;
 		
 		IPOFile target = repository.getTarget();
@@ -106,7 +111,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			Expression varExpression, 
 			boolean isIntVariant) {
 		int tag;
-		if (convergence == IConvergenceElement.Convergence.ANTICIPATED)
+		if (concreteConvergence == IConvergenceElement.Convergence.ANTICIPATED)
 			if (isIntVariant)
 				tag = Formula.LE;
 			else
@@ -122,7 +127,8 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		return varPredicate;
 	}
 
-	protected IConvergenceElement.Convergence convergence;
+	protected IConvergenceElement.Convergence concreteConvergence;
+	protected IConvergenceElement.Convergence abstractConvergence;
 	protected IMachineVariantInfo machineVariantInfo;
 	
 	@Override
@@ -131,7 +137,11 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
-		convergence = concreteEvent.getConvergence();
+		concreteConvergence = concreteEvent.getConvergence();
+		IAbstractEventGuardList abstractEventGuardList = 
+			(IAbstractEventGuardList) repository.getState(IAbstractEventGuardList.STATE_TYPE);
+		ISCEvent abstractEvent = abstractEventGuardList.getFirstAbstractEvent();
+		abstractConvergence = abstractEvent == null ? null : abstractEvent.getConvergence();
 		machineVariantInfo = 
 			(IMachineVariantInfo) repository.getState(IMachineVariantInfo.STATE_TYPE);
 	}

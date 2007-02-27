@@ -18,6 +18,9 @@ import org.eventb.core.ISCMachineFile;
  */
 public class TestConvergence extends BasicSCTest {
 	
+	/**
+	 * All kinds of convergence can be refined by the same kind.
+	 */
 	public void testCvg_00_AllThreeKindsOK() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
@@ -43,7 +46,11 @@ public class TestConvergence extends BasicSCTest {
 		containsMarkers(mac, false);
 	}
 	
-	public void testCvg_01_FaultySetToDefaultOrdinary() throws Exception {
+	/**
+	 * If there is no variant all events are set to ordinary.
+	 * Unless: see testCvg_09
+	 */
+	public void testCvg_01_NoVariantSetToDefaultOrdinary() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		IEvent evt = addEvent(mac, "evt");
@@ -64,6 +71,11 @@ public class TestConvergence extends BasicSCTest {
 		isOrdinary(events[2]);
 	}
 	
+	/**
+	 * anticipated events and convergent events cannot be refined by ordinary events.
+	 * If the abstract event was anticipated, the concrete is set to anticipated.
+	 * If the abstract event was convergent, the concrete event is set to convergent.
+	 */
 	public void testCvg_02_AllRefinedByOrdinary() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariant(abs, "1");
@@ -104,6 +116,11 @@ public class TestConvergence extends BasicSCTest {
 		
 	}
 	
+	/**
+	 * ordinary events and convergent events cannot be refined by anticipated events.
+	 * If the abstract event was ordinary, the concrete is set to ordinary.
+	 * If the abstract event was convergent, the concrete event is set to convergent.
+	 */
 	public void testCvg_03_AllRefinedByAnticipated() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariant(abs, "1");
@@ -144,6 +161,10 @@ public class TestConvergence extends BasicSCTest {
 		
 	}
 	
+	/**
+	 * ordinary events cannot be refined by convergent events.
+	 * In that case the concrete event is set to ordinary. 
+	 */
 	public void testCvg_04_AllRefinedByConvergent() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariant(abs, "1");
@@ -184,6 +205,10 @@ public class TestConvergence extends BasicSCTest {
 		
 	}
 	
+	/**
+	 * If in a merge the abstract event have different convergences, a warning is
+	 * issued and the refining event set to ordinary.
+	 */
 	public void testCvg_05_mergeFaultySetToOrdinary() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariant(abs, "1");
@@ -217,6 +242,9 @@ public class TestConvergence extends BasicSCTest {
 		isOrdinary(events[0]);
 	}
 	
+	/**
+	 * The initialisation should be marked ordinary.
+	 */
 	public void testCvg_06_InitialisationIsOrdinary() throws Exception {
 		
 		IMachineFile mac = createMachine("mac");
@@ -236,6 +264,9 @@ public class TestConvergence extends BasicSCTest {
 		containsMarkers(mac, false);
 	}
 	
+	/**
+	 * The initialisation must not be marked anticipated.
+	 */
 	public void testCvg_07_InitialisationIsNotAnticipated() throws Exception {
 		
 		IMachineFile mac = createMachine("mac");
@@ -253,6 +284,9 @@ public class TestConvergence extends BasicSCTest {
 		isOrdinary(events[0]);
 	}
 	
+	/**
+	 * The initialisation must not be marked convergent.
+	 */
 	public void testCvg_08_InitialisationIsNotConvergent() throws Exception {
 		
 		IMachineFile mac = createMachine("mac");
@@ -268,6 +302,40 @@ public class TestConvergence extends BasicSCTest {
 		
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		isOrdinary(events[0]);
+	}
+	
+	/**
+	 * If a convergent event is refined by a convergent there is no need for a 
+	 * variant in the refined machine what concerns the convergent event.
+	 */
+	public void testCvg_09_refinedByConvergentNoVariantNeeded() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariant(abs, "1");
+		addInitialisation(abs);
+		IEvent evt = addEvent(abs, "evt");
+		setConvergent(evt);
+
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
+		IEvent mevt = addEvent(mac, "evt");
+		addEventRefines(mevt, "evt");
+		setConvergent(mevt);
+		
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		isConvergent(events[1]);
+		
+		containsMarkers(mac, false);
 	}
 
 }

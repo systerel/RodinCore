@@ -248,7 +248,7 @@ public class TestMachineVariant extends BasicPOTest {
 	}
 	
 	/*
-	 * well-definedness variants
+	 * well-definedness of variants
 	 */
 	public void test_04_wDef() throws Exception {
 		
@@ -266,5 +266,45 @@ public class TestMachineVariant extends BasicPOTest {
 		sequentHasHypotheses(sequent, environment, invPredicates);
 		sequentHasGoal(sequent, environment, "x≠0");
 	}
+	
+	public void test_05_cvgRefinesCvg() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "x");
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		IEvent aev = addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x ≔ x+1"));
+		setConvergent(aev);
+		addVariant(abs, "x");
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "x");
+	
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("B"), makeSList("x ≔ x+2"));
+		addEventRefines(evt, "evt");
+		setConvergent(evt);
+		addVariant(abs, "x");
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		environment.addName("y", intType);
+		environment.addName("z", intType);
+
+		IPOFile po = ref.getPOFile();
+		
+		noSequent(po, "evt/VAR");
+	}
+
 
 }
