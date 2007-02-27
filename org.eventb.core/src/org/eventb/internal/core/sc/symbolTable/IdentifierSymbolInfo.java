@@ -9,8 +9,8 @@ package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Type;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.sc.util.IMarkerDisplay;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IAttributeType;

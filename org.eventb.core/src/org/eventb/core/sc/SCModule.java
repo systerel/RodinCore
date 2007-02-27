@@ -10,7 +10,6 @@ package org.eventb.core.sc;
 import org.eventb.core.IEventBFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.sc.util.IMarkerDisplay;
 import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IProcessorModule;

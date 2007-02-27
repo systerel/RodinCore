@@ -9,8 +9,8 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.util.GraphProblem;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinProblem;

@@ -7,8 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IWitnessSymbolInfo;
-import org.eventb.core.sc.util.GraphProblem;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
