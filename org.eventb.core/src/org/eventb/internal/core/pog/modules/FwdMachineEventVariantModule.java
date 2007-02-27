@@ -77,7 +77,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		
 		createPO(
 				target, 
-				concreteEventLabel + "/" + "VAR", 
+				concreteEventLabel + "/VAR", 
 				"Variant of event", 
 				eventHypothesisManager.getFullHypothesis(), 
 				hyp, 
@@ -95,7 +95,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 						null);
 			createPO(
 					target, 
-					concreteEventLabel + "/" + "NAT", 
+					concreteEventLabel + "/NAT", 
 					"Natural number variant of event", 
 					eventHypothesisManager.getFullHypothesis(), 
 					hyp, 
