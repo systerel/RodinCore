@@ -1,6 +1,10 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2006-2007 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.rodinp.internal.platform;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -51,10 +55,10 @@ public class RodinIntroPart extends IntroPart {
 		label.setText("Sourceforge: http://sourceforge.net/projects/rodin-b-sharp");
 		label = new Label(container, SWT.CENTER);
 		label.setFont(JFaceResources.getHeaderFont());
-		label.setText("D15 (D3.4) Prototypes of basic tools and platform");
+		label.setText("D23 (D3.5) Internal version of basic tools and platform");
 		label = new Label(container, SWT.CENTER);
 		label.setFont(JFaceResources.getHeaderFont());
-		label.setText("Copyright (c) 2005, 2006 ETH Zurich and others");
+		label.setText("Copyright (c) 2005-2007 ETH Zurich and others");
 		label = new Label(container, SWT.CENTER);
 		label.setFont(JFaceResources.getHeaderFont());
 		label.setText("This prototype has been developed with the support of the EU.");
