@@ -7,6 +7,7 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjToImplRewriter;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegationRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Rewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TrivialRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypePredRewriter;
@@ -19,6 +20,18 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypePredRew
  */
 public abstract class SimpleRewriter extends AbstractRewriter {
 	
+	public static class RemoveNegation extends SimpleRewriter {
+		public static final String REASONER_ID =
+			SequentProver.PLUGIN_ID + ".removeNegation";
+		private static final Rewriter REWRITER = new RemoveNegationRewriter();
+		public RemoveNegation() {
+			super(REWRITER);
+		}
+		public String getReasonerID() {
+			return REASONER_ID;
+		}
+	}
+
 	public static class DisjToImpl extends SimpleRewriter {
 		public static final String REASONER_ID =
 			SequentProver.PLUGIN_ID + ".disjToImpl";

@@ -72,6 +72,10 @@
             id="review"
             name="%reviewName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter$RemoveNegation"
+            id="removeNegation"
+            name="%removeNegationName"/>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter$DisjToImpl"
             id="disjToImpl"
             name="%disjToImplName"/>
