@@ -23,7 +23,7 @@ public class RemoveMembershipGoal extends DefaultTacticProvider implements
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (node != null) {
-			List<IPosition> positions = Tactics.rm_getPositions(node
+			List<IPosition> positions = Tactics.rmGetPositions(node
 					.getSequent().goal());
 			if (positions.size() == 0)
 				return null;

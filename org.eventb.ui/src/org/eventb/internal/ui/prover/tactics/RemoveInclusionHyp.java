@@ -23,7 +23,7 @@ public class RemoveInclusionHyp extends DefaultTacticProvider implements
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (node != null) {
-			List<IPosition> positions = Tactics.ri_getPositions(hyp);
+			List<IPosition> positions = Tactics.riGetPositions(hyp);
 			if (positions.size() == 0)
 				return null;
 			return positions;

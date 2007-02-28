@@ -21,7 +21,7 @@ public class RemoveNegationGoal extends DefaultTacticProvider {
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (node != null) {
-			List<IPosition> positions = Tactics.rn_getPositions(node.getSequent().goal());
+			List<IPosition> positions = Tactics.rnGetPositions(node.getSequent().goal());
 			if (positions.size() == 0) {
 				return null;
 			}

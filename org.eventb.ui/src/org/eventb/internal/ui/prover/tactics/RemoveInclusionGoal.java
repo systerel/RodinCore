@@ -23,7 +23,7 @@ public class RemoveInclusionGoal extends DefaultTacticProvider implements
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (node != null) {
-			List<IPosition> positions = Tactics.ri_getPositions(node
+			List<IPosition> positions = Tactics.riGetPositions(node
 					.getSequent().goal());
 			if (positions.size() == 0)
 				return null;

@@ -20,7 +20,7 @@ public class RemoveNegationHyp extends DefaultTacticProvider {
 	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
-		List<IPosition> positions = Tactics.rn_getPositions(hyp);
+		List<IPosition> positions = Tactics.rnGetPositions(hyp);
 		if (positions.size() == 0) {
 			return null;
 		}

@@ -23,7 +23,7 @@ public class RemoveMembershipHyp extends DefaultTacticProvider implements
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (node != null) {
-			List<IPosition> positions = Tactics.rm_getPositions(hyp);
+			List<IPosition> positions = Tactics.rmGetPositions(hyp);
 			if (positions.size() == 0)
 				return null;
 			return positions;
