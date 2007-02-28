@@ -18,7 +18,7 @@ public class ForallInstantiationHyp extends DefaultTacticProvider {
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		return Tactics.allD(hyp, inputs);
+		return Tactics.allDThenImpE(hyp, inputs);
 	}
 
 	@Override
