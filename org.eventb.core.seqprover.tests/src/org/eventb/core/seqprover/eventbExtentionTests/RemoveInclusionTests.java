@@ -240,29 +240,29 @@ public class RemoveInclusionTests extends TestCase {
 	 */
 	public void testGetPositions() {
 		List<IPosition> positions;
-		positions = Tactics.ri_getPositions(P1);
+		positions = Tactics.riGetPositions(P1);
 		assertPositions("Position found for P1 ", "1", positions);
-		positions = Tactics.ri_getPositions(P2);
+		positions = Tactics.riGetPositions(P2);
 		assertPositions("Position found for P2 ", "1.1", positions);
-		positions = Tactics.ri_getPositions(P3);
+		positions = Tactics.riGetPositions(P3);
 		assertPositions("Position found for P3 ", "1", positions);
-		positions = Tactics.ri_getPositions(P4);
+		positions = Tactics.riGetPositions(P4);
 		assertPositions("Position found for P4 ", "1.1", positions);
-		positions = Tactics.ri_getPositions(P5);
+		positions = Tactics.riGetPositions(P5);
 		assertPositions("Position found for P5 ", "1", positions);
-		positions = Tactics.ri_getPositions(P6);
+		positions = Tactics.riGetPositions(P6);
 		assertPositions("Position found for P6 ", "1.1", positions);
-		positions = Tactics.ri_getPositions(P7);
+		positions = Tactics.riGetPositions(P7);
 		assertPositions("Position found for P7 ", "1", positions);
-		positions = Tactics.ri_getPositions(P8);
+		positions = Tactics.riGetPositions(P8);
 		assertPositions("Position found for P8 ", "1.1", positions);
-		positions = Tactics.ri_getPositions(P9);
+		positions = Tactics.riGetPositions(P9);
 		assertPositions("Position found for P9 ", "1", positions);
-		positions = Tactics.ri_getPositions(P10);
+		positions = Tactics.riGetPositions(P10);
 		assertPositions("Position found for P10 ", "1.1", positions);
-		positions = Tactics.ri_getPositions(P11);
+		positions = Tactics.riGetPositions(P11);
 		assertPositions("Position found for P11 ", "1", positions);
-		positions = Tactics.ri_getPositions(P12);
+		positions = Tactics.riGetPositions(P12);
 		assertPositions("Position found for P12 ", "1.1", positions);
 	}
 
