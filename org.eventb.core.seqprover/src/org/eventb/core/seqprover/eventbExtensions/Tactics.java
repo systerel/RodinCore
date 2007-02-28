@@ -61,6 +61,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
+import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.DisjToImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivial;
@@ -219,14 +220,42 @@ public class Tactics {
 		return Lib.isExQuant(goal);
 	}
 
+	/**
+	 * Returns a tactic to remove a top-level negation operator in the current
+	 * goal.
+	 * 
+	 * @return a tactic to remove a top-level negation operator in the current
+	 *         goal.
+	 * @deprecated use <code>removeNegGoal(IPosition.ROOT)</code> instead.
+	 * @see #removeNegGoal(IPosition)
+	 */
+	@Deprecated
+	public static ITactic removeNegGoal() {
+		return BasicTactics.reasonerTac(new SimpleRewriter.RemoveNegation(),
+				new SimpleRewriter.RemoveNegation.Input(null));
+	}
+
+	/**
+	 * Tells whether the <code>removeNegGoal()</code> tactic is applicable to
+	 * the given goal.
+	 * 
+	 * @param goal
+	 *            the goal to test for applicability
+	 * @return <code>true</code> iff the <code>removeNegGoal()</code> tactic
+	 *         is applicable
+	 * @deprecated use
+	 *             <code>rnGetPositions(goal).contains(IPosition.ROOT)</code>
+	 * @see #rnGetPositions(Predicate)
+	 */
+	@Deprecated
+	public static boolean removeNegGoal_applicable(Predicate goal) {
+		return (new SimpleRewriter.RemoveNegation()).isApplicable(goal);
+	}
+	
 	public static ITactic removeNegGoal(IPosition position) {
 		return BasicTactics.reasonerTac(new RemoveNegation(),
 				new RemoveNegation.Input(null, position));
 	}
-
-	// public static boolean removeNegGoal_applicable(Predicate goal) {
-	// return (new RemoveNegation()).isApplicable(goal);
-	// }
 
 	public static ITactic disjToImpGoal() {
 		return BasicTactics.reasonerTac(new DisjToImpl(), new DisjToImpl.Input(
@@ -239,8 +268,25 @@ public class Tactics {
 
 	// Tactics applicable on a hypothesis
 
-	// TODO : change order of input in one of the two places
 	public static ITactic allD(final Predicate univHyp,
+			final String... instantiations) {
+		final Predicate pred = univHyp;
+		return new ITactic() {
+
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
+				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
+				BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(pred);
+				final AllD.Input input = new AllD.Input(instantiations,
+						boundIdentDecls, typeEnv, pred);
+				return (BasicTactics.reasonerTac(new AllD(), input)).apply(pt,
+						pm);
+			}
+
+		};
+	}
+
+	// TODO : change order of input in one of the two places
+	public static ITactic allDThenImpE(final Predicate univHyp,
 			final String... instantiations) {
 		final Predicate pred = univHyp;
 		return new ITactic() {
@@ -324,14 +370,41 @@ public class Tactics {
 		return Lib.isExQuant(hyp);
 	}
 
+	/**
+	 * Returns a tactic to remove a top-level negation operator in the given
+	 * hypothesis.
+	 * 
+	 * @return a tactic to remove a top-level negation operator in the given
+	 *         hypothesis
+	 * @deprecated use <code>removeNegHyp(IPosition.ROOT)</code> instead.
+	 * @see #removeNegHyp(IPosition)
+	 */
+	@Deprecated
+	public static ITactic removeNegHyp(Predicate hyp) {
+		return BasicTactics.reasonerTac(new SimpleRewriter.RemoveNegation(),
+				new SimpleRewriter.RemoveNegation.Input(hyp));
+	}
+
+	/**
+	 * Tells whether the <code>removeNegHyp()</code> tactic is applicable to
+	 * the given hypothesis.
+	 * 
+	 * @param hyp
+	 *            the hypothesis to test for applicability
+	 * @return <code>true</code> iff the <code>removeNegHyp()</code> tactic
+	 *         is applicable
+	 * @deprecated use <code>rnGetPositions(hyp).contains(IPosition.ROOT)</code>
+	 * @see #rnGetPositions(Predicate)
+	 */
+	@Deprecated
+	public static boolean removeNegHyp_applicable(Predicate hyp) {
+		return (new SimpleRewriter.RemoveNegation()).isApplicable(hyp);
+	}
+
 	public static ITactic removeNegHyp(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new RemoveNegation(),
 				new RemoveNegation.Input(hyp, position));
 	}
-
-	// public static boolean removeNegHyp_applicable(Predicate hyp) {
-	// return (new RemoveNegation()).isApplicable(hyp);
-	// }
 
 	public static ITactic falsifyHyp(Predicate hyp) {
 		return BasicTactics.reasonerTac(new Contr(), new Contr.Input(hyp));
@@ -439,9 +512,28 @@ public class Tactics {
 		return false;
 	}
 
-	public static ITactic contImpHyp(Predicate pred, IPosition position) {
+	/**
+	 * Returns a tactic to rewrite an implicative sub-predicate, occurring in an
+	 * hypothesis, to its contrapositive.
+	 * 
+	 * @param hyp
+	 *            an hypothesis predicate that contains the sub-predicate to
+	 *            rewrite
+	 * @param position
+	 *            position of the sub-predicate to rewrite
+	 * @return a tactic to rewrite an implicative sub-predicate to its
+	 *         contrapositive
+	 * @deprecated use <code>contImpHyp(hyp, position)</code> instead. The
+	 *             change was caused by this method having a weird name.
+	 */
+	@Deprecated
+	public static ITactic mpImpHyp(Predicate hyp, IPosition position) {
+		return contImpHyp(hyp, position);
+	}
+
+	public static ITactic contImpHyp(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new ContImplHypRewrites(),
-				new ContImplHypRewrites.Input(pred, position));
+				new ContImplHypRewrites.Input(hyp, position));
 	}
 
 	public static boolean isFunOvrApp(Formula subFormula) {
@@ -507,7 +599,7 @@ public class Tactics {
 		return true;
 	}
 
-	public static List<IPosition> rn_getPositions(Predicate pred) {
+	public static List<IPosition> rnGetPositions(Predicate pred) {
 		return pred.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(UnaryPredicate predicate) {
@@ -555,7 +647,7 @@ public class Tactics {
 		});
 	}
 
-	public static List<IPosition> rm_getPositions(Predicate pred) {
+	public static List<IPosition> rmGetPositions(Predicate pred) {
 		return pred.getPositions(new DefaultFilter() {
 
 			@Override
@@ -622,7 +714,7 @@ public class Tactics {
 				new RemoveMembership.Input(hyp, position));
 	}
 
-	public static List<IPosition> ri_getPositions(Predicate pred) {
+	public static List<IPosition> riGetPositions(Predicate pred) {
 		return pred.getPositions(new DefaultFilter() {
 
 			@Override
