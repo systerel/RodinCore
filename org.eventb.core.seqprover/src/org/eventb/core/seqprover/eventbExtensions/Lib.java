@@ -513,6 +513,8 @@ public final class Lib {
 
 		final Formula to;
 
+		// TODO add check of compatibility between from and to
+		// rather than breaking later when the rewriting is done.
 		public FixedRewriter(Formula from, Formula to) {
 			super(true, Lib.ff);
 			this.from = from;
