@@ -267,6 +267,9 @@ public class TestMachineVariant extends BasicPOTest {
 		sequentHasGoal(sequent, environment, "x≠0");
 	}
 	
+	/**
+	 * No PO is generated for convergent events refining convergent events
+	 */
 	public void test_05_cvgRefinesCvg() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariables(abs, "x");
@@ -296,15 +299,165 @@ public class TestMachineVariant extends BasicPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
-		environment.addName("y", intType);
-		environment.addName("z", intType);
-
 		IPOFile po = ref.getPOFile();
 		
 		noSequent(po, "evt/VAR");
 	}
 
+	/*
+	 * if a machine does not have a variant, antipated events should generate
+	 * variant proof obligations
+	 */
+	public void test_06_anticipatedNoVariantNoPO() throws Exception {
+		
+		IMachineFile mac = createMachineFragment("mac");
+		IEvent evt = addEvent(mac, "evt");
+		setAnticipated(evt);
+		
+		mac.save(null, true);
+		
+		runBuilder();
+
+		IPOFile po = getPOFile(mac);
+		
+		noSequent(po, "evt/VAR");
+	}
+	
+	/**
+	 * if an anticipated and a convergent event are merged the abstraction is treated like an
+	 * anticipated event: PO for convergence is created for convergent concrete events.
+	 */
+	public void test_07_mergeAntCvg() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "x");
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		IEvent aev = addEvent(abs, "aev", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x ≔ x+1"));
+		setConvergent(aev);
+		IEvent bev = addEvent(abs, "bev", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x ≔ x+1"));
+		setAnticipated(bev);
+		addVariant(abs, "x");
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "x");
+	
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("B"), makeSList("x ≔ x+2"));
+		addEventRefines(evt, "aev", "bev");
+		setConvergent(evt);
+		addVariant(ref, "x");
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", intType);
+		
+		IPOFile po = ref.getPOFile();
+		
+		IPOSequent sequent = getSequent(po, "evt/VAR");
+		sequentHasGoal(sequent, typeEnvironment, "x+2<x");
+	}
+	
+	/**
+	 * if an anticipated and a convergent event are merged the abstraction is treated like an
+	 * anticipated event: PO for anticipation is created for anticipated concrete events.
+	 */
+	public void test_08_mergeAntCvg() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "x");
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		IEvent aev = addEvent(abs, "aev", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x ≔ x+1"));
+		setConvergent(aev);
+		IEvent bev = addEvent(abs, "bev", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x ≔ x+1"));
+		setAnticipated(bev);
+		addVariant(abs, "x");
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "x");
+	
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("B"), makeSList("x ≔ x+2"));
+		addEventRefines(evt, "aev", "bev");
+		setAnticipated(evt);
+		addVariant(ref, "x");
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", intType);
+		
+		IPOFile po = ref.getPOFile();
+		
+		IPOSequent sequent = getSequent(po, "evt/VAR");
+		sequentHasGoal(sequent, typeEnvironment, "x+2≤x");
+	}
+	
+	/**
+	 * A PO is generated for anticipated events refining convergent events.
+	 * The abstract event is regarded as "only" being anticipated; the stronger
+	 * property is "forgotten".
+	 */
+	public void test_09_antRefinesCvg() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "x");
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		IEvent aev = addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x ≔ x+1"));
+		setConvergent(aev);
+		addVariant(abs, "x");
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "x");
+	
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("B"), makeSList("x ≔ x+2"));
+		addEventRefines(evt, "evt");
+		setAnticipated(evt);
+		addVariant(ref, "x");
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", intType);
+		
+		IPOFile po = ref.getPOFile();
+		
+		IPOSequent sequent = getSequent(po, "evt/VAR");
+		sequentHasGoal(sequent, typeEnvironment, "x+2≤x");
+	}
 
 }

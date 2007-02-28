@@ -47,10 +47,10 @@ public class TestConvergence extends BasicSCTest {
 	}
 	
 	/**
-	 * If there is no variant all events are set to ordinary.
+	 * If there is no variant convergent events are set to ordinary.
 	 * Unless: see testCvg_09
 	 */
-	public void testCvg_01_NoVariantSetToDefaultOrdinary() throws Exception {
+	public void testCvg_01_NoVariantConvergentSetToOrdinary() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		IEvent evt = addEvent(mac, "evt");
@@ -67,18 +67,17 @@ public class TestConvergence extends BasicSCTest {
 		
 		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
 		isOrdinary(events[0]);
-		isOrdinary(events[1]);
+		isAnticipated(events[1]);
 		isOrdinary(events[2]);
 	}
 	
 	/**
-	 * anticipated events and convergent events cannot be refined by ordinary events.
-	 * If the abstract event was anticipated, the concrete is set to anticipated.
-	 * If the abstract event was convergent, the concrete event is set to convergent.
+	 * anticipated events and convergent events can be refined by ordinary events.
 	 */
 	public void testCvg_02_AllRefinedByOrdinary() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariant(abs, "1");
+		addInitialisation(abs);
 		IEvent evt = addEvent(abs, "evt");
 		setOrdinary(evt);
 		IEvent fvt = addEvent(abs, "fvt");
@@ -92,6 +91,7 @@ public class TestConvergence extends BasicSCTest {
 		
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		addVariant(mac, "1");
 		IEvent mevt = addEvent(mac, "evt");
 		addEventRefines(mevt, "evt");
@@ -109,17 +109,16 @@ public class TestConvergence extends BasicSCTest {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
-		isOrdinary(events[0]);
-		isAnticipated(events[1]);
-		isConvergent(events[2]);
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt", "gvt");
+		isOrdinary(events[1]);
+		isOrdinary(events[2]);
+		isOrdinary(events[3]);
 		
+		containsMarkers(mac, false);
 	}
 	
 	/**
-	 * ordinary events and convergent events cannot be refined by anticipated events.
-	 * If the abstract event was ordinary, the concrete is set to ordinary.
-	 * If the abstract event was convergent, the concrete event is set to convergent.
+	 * ordinary events cannot be refined by anticipated events: the concrete is set to ordinary.
 	 */
 	public void testCvg_03_AllRefinedByAnticipated() throws Exception {
 		IMachineFile abs = createMachine("abs");
@@ -157,7 +156,7 @@ public class TestConvergence extends BasicSCTest {
 		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
 		isOrdinary(events[0]);
 		isAnticipated(events[1]);
-		isConvergent(events[2]);
+		isAnticipated(events[2]);
 		
 	}
 	

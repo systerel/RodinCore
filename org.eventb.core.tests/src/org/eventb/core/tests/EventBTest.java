@@ -88,10 +88,12 @@ public abstract class EventBTest extends BuilderTest {
 		}
 	}
 
-	public void addEventRefines(IEvent event, String name) throws RodinDBException {
-		IRefinesEvent refines = event.getRefinesClause(getUniqueName());
-		refines.create(null, null);
-		refines.setAbstractEventLabel(name, null);
+	public void addEventRefines(IEvent event, String... names) throws RodinDBException {
+		for (String name : names) {
+			IRefinesEvent refines = event.getRefinesClause(getUniqueName());
+			refines.create(null, null);
+			refines.setAbstractEventLabel(name, null);
+		}
 	}
 
 	public void addEventWitnesses(IEvent event, String[] labels, String[] predicates) throws RodinDBException {

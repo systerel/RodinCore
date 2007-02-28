@@ -8,6 +8,7 @@
 package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import org.eventb.core.pog.util.POGSource;
 import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -49,15 +51,23 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			IProgressMonitor monitor)
 			throws CoreException {
 		
+		// no PO for ordinary events
 		if (concreteConvergence == IConvergenceElement.Convergence.ORDINARY)
 			return;
+		
+		// no PO for convergent events if the abstract event was convergent
 		if (concreteConvergence == IConvergenceElement.Convergence.CONVERGENT
 				&& abstractConvergence == IConvergenceElement.Convergence.CONVERGENT)
 			return;
 		
+		// no PO for anticipated events if there is no variant
+		Expression varExpression = machineVariantInfo.getExpression();
+		if (concreteConvergence == IConvergenceElement.Convergence.ANTICIPATED
+				&& varExpression == null)
+			return;
+		
 		IPOFile target = repository.getTarget();
 		
-		Expression varExpression = machineVariantInfo.getExpression();
 		List<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		if (concreteEventActionTable.getDeltaPrime() != null)
 			substitution.add(concreteEventActionTable.getDeltaPrime());
@@ -138,12 +148,27 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		concreteConvergence = concreteEvent.getConvergence();
-		IAbstractEventGuardList abstractEventGuardList = 
-			(IAbstractEventGuardList) repository.getState(IAbstractEventGuardList.STATE_TYPE);
-		ISCEvent abstractEvent = abstractEventGuardList.getFirstAbstractEvent();
-		abstractConvergence = abstractEvent == null ? null : abstractEvent.getConvergence();
+		getAbstractConvergence(repository);
 		machineVariantInfo = 
 			(IMachineVariantInfo) repository.getState(IMachineVariantInfo.STATE_TYPE);
+	}
+
+	private void getAbstractConvergence(IPOGStateRepository repository) throws CoreException, RodinDBException {
+		IAbstractEventGuardList abstractEventGuardList = 
+			(IAbstractEventGuardList) repository.getState(IAbstractEventGuardList.STATE_TYPE);
+		List<ISCEvent> abstractEvents = abstractEventGuardList.getAbstractEvents();
+		if (abstractEvents.size() == 0) {
+			abstractConvergence = null;
+			return;
+		}
+		
+		List<IConvergenceElement.Convergence> convergences = 
+			new ArrayList<IConvergenceElement.Convergence>(abstractEvents.size());
+		
+		for(ISCEvent abstractEvent : abstractEvents) {
+			convergences.add(abstractEvent.getConvergence());
+		}
+		abstractConvergence = Collections.min(convergences);
 	}
 
 	@Override

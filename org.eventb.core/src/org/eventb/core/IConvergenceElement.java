@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import java.util.Collection;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -32,12 +34,24 @@ public interface IConvergenceElement extends IInternalElement {
 	 * types of events. Each convergence type is associated with an integer code used to
 	 * represent the corresponding type in the database. The codes are public and can be
 	 * used when it is necessary to access the database without this interface.
-	 *
+	 * <p>
+	 * The order of the convergence values in the declaration is relevant. 
+	 * <code>ORDINARY</code> is the weakest and <code>CONVERGENT</code> the strongest
+	 * requirement. This is relevant in merge refinements where merging of the 
+	 * abstract events gives a combined convergence. Let <code>absConv</code> be a
+	 * {@link Collection} of convergences of the abstract events (containing all convergence
+	 * values appearing in one of the abstract events), then the combined convergence can be
+	 * calculated by
+	 * <pre>
+	 * combConv = Collections.min(absConv);
+	 * </pre>
+	 * </p>
+	 * This calculation is used in the Event-B core static checker and proof obligation generator.
 	 */
 	enum Convergence {
 		ORDINARY(0),
-		CONVERGENT(1),
-		ANTICIPATED(2);
+		ANTICIPATED(2),
+		CONVERGENT(1);
 		
 		private final int code;
 
@@ -48,6 +62,7 @@ public interface IConvergenceElement extends IInternalElement {
 		public int getCode() {
 			return code;
 		}
+		
 	}
 	
 	/**

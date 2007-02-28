@@ -91,7 +91,7 @@ public class MachineEventInheritedModule extends SCFilterModule {
 		for (Formula formula : formulas) {
 			for (FreeIdentifier identifier : formula.getFreeIdentifiers()) {
 				String name = identifier.getName();
-				boolean found = abstractEventInfo.getIdentifier(name) != null;
+				boolean found = abstractEventInfo.getVariable(name) != null;
 				if (!found) {
 					IIdentifierSymbolInfo symbolInfo = identifierSymbolTable.getSymbolInfo(name);
 					if (symbolInfo == null || symbolInfo.hasError() || !symbolInfo.isVisible()) {

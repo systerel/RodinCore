@@ -21,13 +21,13 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.tool.state.IStateType;
-import org.eventb.internal.core.tool.state.State;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class AbstractEventInfo extends State implements IAbstractEventInfo {
+public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEventInfo {
 
 	@Override
 	public void makeImmutable() {
@@ -60,7 +60,7 @@ public class AbstractEventInfo extends State implements IAbstractEventInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getIdentifier(java.lang.String)
 	 */
-	public FreeIdentifier getIdentifier(String name) {
+	public FreeIdentifier getVariable(String name) {
 		if (table == null) {
 			table = new Hashtable<String,FreeIdentifier>(idents.size() * 4 / 3 + 1);
 			for (FreeIdentifier identifier : idents) {
@@ -96,7 +96,8 @@ public class AbstractEventInfo extends State implements IAbstractEventInfo {
 			String label, 
 			FreeIdentifier[] idents, 
 			Predicate[] guards, 
-			Assignment[] actions) {
+			Assignment[] actions) throws RodinDBException {
+		super(event);
 		this.event = event;
 		this.label = label;
 		this.idents = Arrays.asList(idents);

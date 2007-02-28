@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -69,7 +71,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 		
 		IEvent event = (IEvent) element;
 		
-		concreteConvergence = event.getConvergence();
+		concreteConvergence = currentEvent.getConvergence();
 		
 		if (currentEvent.isInitialisation()) {
 			if (concreteConvergence != IConvergenceElement.Convergence.ORDINARY) {
@@ -77,7 +79,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 				createProblemMarker(
 						event, 
 						EventBAttributes.CONVERGENCE_ATTRIBUTE, 
-						GraphProblem.InconsistentAbstractConvergenceWarning);
+						GraphProblem.InitialisationNotOrdinaryWarning);
 			}
 		} else {
 		
@@ -106,65 +108,37 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 			IInternalElement element, 
 			List<IAbstractEventInfo> abstractEventInfos, 
 			IProgressMonitor monitor) throws CoreException {
-		abstractConvergence = IConvergenceElement.Convergence.ORDINARY;
-		int i = 0;
-		boolean ok = true;
-		for (IAbstractEventInfo abstractEventInfo : abstractEventInfos) {
-			if (i++ == 0)
-				abstractConvergence = abstractEventInfo.getEvent().getConvergence();
-			else if (abstractEventInfo.getEvent().getConvergence() != abstractConvergence)
-				ok = false;
-		}
-		if (!ok) {
+		
+		getAbstractConvergence(abstractEventInfos);
+		
+		if (abstractConvergence == IConvergenceElement.Convergence.ORDINARY
+				&& concreteConvergence != IConvergenceElement.Convergence.ORDINARY) {
 			createProblemMarker(
 					element, 
 					EventBAttributes.CONVERGENCE_ATTRIBUTE, 
-					GraphProblem.InconsistentAbstractConvergenceWarning);
+					GraphProblem.OrdinaryFaultyConvergenceWarning);
 			concreteConvergence = IConvergenceElement.Convergence.ORDINARY;
-		} else {
-			ok = false;
-			ok |= abstractConvergence == IConvergenceElement.Convergence.ORDINARY 
-			&& concreteConvergence == IConvergenceElement.Convergence.ORDINARY;
-			ok |= abstractConvergence == IConvergenceElement.Convergence.ANTICIPATED 
-			&& concreteConvergence == IConvergenceElement.Convergence.ANTICIPATED;
-			ok |= abstractConvergence == IConvergenceElement.Convergence.ANTICIPATED 
-			&& concreteConvergence == IConvergenceElement.Convergence.CONVERGENT;
-			ok |= abstractConvergence == IConvergenceElement.Convergence.CONVERGENT 
-			&& concreteConvergence == IConvergenceElement.Convergence.CONVERGENT;
-			if (!ok) {
-				if (abstractConvergence == IConvergenceElement.Convergence.ORDINARY) {
-					createProblemMarker(
-							element, 
-							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
-							GraphProblem.OrdinaryFaultyConvergenceWarning);
-					concreteConvergence = IConvergenceElement.Convergence.ORDINARY;
-				} else if (abstractConvergence == IConvergenceElement.Convergence.CONVERGENT) {
-					createProblemMarker(
-							element, 
-							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
-							GraphProblem.ConvergentFaultyConvergenceWarning);
-					concreteConvergence = IConvergenceElement.Convergence.CONVERGENT;
-				} else {
-					createProblemMarker(
-							element, 
-							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
-							GraphProblem.AnticipatedFaultyConvergenceWarning);
-					concreteConvergence = IConvergenceElement.Convergence.ANTICIPATED;
-				}
-			}
+		} 
+	}
+
+	private void getAbstractConvergence(List<IAbstractEventInfo> abstractEventInfos) throws RodinDBException {
+
+		List<IConvergenceElement.Convergence> convergences = 
+			new ArrayList<IConvergenceElement.Convergence>(abstractEventInfos.size());
+		
+		for (IAbstractEventInfo abstractEventInfo : abstractEventInfos) {
+			
+			convergences.add(abstractEventInfo.getConvergence());
+			
 		}
+		
+		abstractConvergence = Collections.min(convergences);
 	}
 
 	private void checkVariantConvergence(IInternalElement element) throws CoreException {
 		
 		if (variantInfo.getExpression() == null)
-			if (concreteConvergence == IConvergenceElement.Convergence.ANTICIPATED) {
-				createProblemMarker(
-						element, 
-						EventBAttributes.CONVERGENCE_ATTRIBUTE, 
-						GraphProblem.AnticipatedEventNoVariantWarning);
-				concreteConvergence = IConvergenceElement.Convergence.ORDINARY;
-			} else if (concreteConvergence == IConvergenceElement.Convergence.CONVERGENT
+			if (concreteConvergence == IConvergenceElement.Convergence.CONVERGENT
 					&& abstractConvergence != IConvergenceElement.Convergence.CONVERGENT) {
 				createProblemMarker(
 						element, 

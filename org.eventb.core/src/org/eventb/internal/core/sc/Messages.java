@@ -100,11 +100,10 @@ public final class Messages {
     public static String scuser_WitnessFreeIdentifierError;
     public static String scuser_InvalidVariantTypeError;
     public static String scuser_TooManyVariants;
-    public static String scuser_InconsistentAbstractConvergence;
     public static String scuser_ConvergentFaultyConvergence;
     public static String scuser_OrdinaryFaultyConvergence;
     public static String scuser_AnticipatedFaultyConvergence;
-    public static String scuser_AnticipatedEventNoVariant;
+    public static String scuser_NoConvergentEventButVariant;
     public static String scuser_ConvergentEventNoVariant;
     public static String scuser_InitialisationNotOrdinary;
 

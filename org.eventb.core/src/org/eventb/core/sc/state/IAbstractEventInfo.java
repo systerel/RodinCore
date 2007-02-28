@@ -31,7 +31,7 @@ import org.eventb.core.tool.state.IStateType;
  * @author Stefan Hallerstede
  *
  */
-public interface IAbstractEventInfo extends ISCState, Comparable {
+public interface IAbstractEventInfo extends ISCState, IConvergenceInfo, Comparable {
 	
 	final static IStateType<IAbstractEventInfo> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".abstractEventInfo");
@@ -55,17 +55,17 @@ public interface IAbstractEventInfo extends ISCState, Comparable {
 	String getEventLabel();
 	
 	/**
-	 * Returns an typed free identifier with the specified name contained in this 
-	 * abstract event info, or <code>null</code> if no identifier with this name
+	 * Returns a typed free variable with the specified name contained in this 
+	 * abstract event info, or <code>null</code> if no variable with this name
 	 * is contained in this abstract event info.
 	 * 
 	 * @param name the name of the free identifier to look up
 	 * @return the corresponding typed free identifier, or <code>null</code> if none
 	 */
-	FreeIdentifier getIdentifier(String name);
+	FreeIdentifier getVariable(String name);
 	
 	/**
-	 * Returns the array of typed free identifiers contained in this abstract event info.
+	 * Returns the array of typed free variables contained in this abstract event info.
 	 * <p>
 	 * The free identifiers correspond to event variables.
 	 * </p>

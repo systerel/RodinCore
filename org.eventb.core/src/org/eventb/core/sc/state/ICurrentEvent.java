@@ -22,7 +22,7 @@ import org.eventb.core.tool.state.IStateType;
  * @author Stefan Hallerstede
  *
  */
-public interface ICurrentEvent extends ISCState {
+public interface ICurrentEvent extends ISCState, IConvergenceInfo {
 	
 	final static IStateType<ICurrentEvent> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".currentEvent");

@@ -187,11 +187,12 @@ public abstract class EventBElement extends InternalElement {
 		setAttributeValue(EventBAttributes.IDENTIFIER_ATTRIBUTE, identifier, null);
 	}
 	
-	private static final IConvergenceElement.Convergence[] convergences = new IConvergenceElement.Convergence[] {
-		IConvergenceElement.Convergence.ORDINARY,
-		IConvergenceElement.Convergence.CONVERGENT,
-		IConvergenceElement.Convergence.ANTICIPATED
-	};
+	private static final IConvergenceElement.Convergence[] convergences = 
+		new IConvergenceElement.Convergence[] {
+			IConvergenceElement.Convergence.ORDINARY,
+			IConvergenceElement.Convergence.CONVERGENT,
+			IConvergenceElement.Convergence.ANTICIPATED
+		};
 	
 	/*
 	 * (non-Javadoc)

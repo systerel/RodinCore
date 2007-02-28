@@ -14,7 +14,7 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.state.IStateType;
 
 /**
- * State component that conatins the closure of all contexts extended or seen.
+ * State component that contains the closure of all contexts, extended or seen.
  * This state component contains all contexts that need to be there. 
  * 
  * @author Stefan Hallerstede
