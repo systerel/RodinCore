@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 
@@ -37,38 +38,24 @@ public interface ISymbolInfo extends Comparable {
 	String getComponentName();
 	
 	/**
-	 * Returns the reference element to which to attach error messages concerning this symbol info
-	 * 
-	 * @return the reference element of this symbol info
-	 */
-	IInternalElement getReferenceElement();
-	
-	// TODO unify reference and source element; too complicated and unnecessary
-	/**
-	 * Returns the source element. By default this returns the reference element unless
-	 * the source element is set explicity with <code>setSourceElement</code>.
+	 * Returns the source element. This is not necessarily <b>the</b> <i>source element</i>
+	 * of the identifier but only <b>a</b> source element -called <i>reference element</i>- 
+	 * which is in some way related to <b>the</b> source element.
 	 * <p>
-	 * The use of this value is different from <code>getReferenceElement()</code>:
-	 * <li>
-	 * <ul><code>getSourceElement()</code> yields tracing information for source elements as used 
-	 * for {@link ITraceableElement}.</ul>
-	 * <ul><code>getReferenceElement()</code> yields an element to which an error message concerning
-	 * the element represented by this symbol.
-	 * </li>
+	 * In its function as reference element the source element serves mainly to have a
+	 * meaningful place to attach problems ({@link IRodinProblem}).
 	 * </p>
+	 * <p>
+	 * In its function as <b>the</b> source element it serves to provide traceability 
+	 * information ({@link ITraceableElement}) in statically checked files.
+	 * </p>
+	 * Which of the two applies is decided by implementing classes.
 	 * 
 	 * @see ITraceableElement
 	 * 
 	 * @return the source element of this symbol info
 	 */
 	IInternalElement getSourceElement();
-	
-	/**
-	 * Sets the source element for this symbol.
-	 * 
-	 * @param source the source element
-	 */
-	void setSourceElement(IInternalElement source);
 	
 	/**
 	 * Returns whether this symbol is errorneous.

@@ -21,7 +21,7 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.symbolTable.ConcreteCarrierSetSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.CarrierSetSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -75,7 +75,7 @@ public class ContextCarrierSetModule extends IdentifierModule {
 	@Override
 	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element) {
 		IEventBFile context = (IEventBFile) element.getParent();
-		return new ConcreteCarrierSetSymbolInfo(
+		return CarrierSetSymbolInfo.makeConcreteCarrierSetSymbolInfo(
 				name, element, 
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, context.getComponentName());
 	}

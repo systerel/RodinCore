@@ -7,10 +7,18 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ISCConstant;
+import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IConstantSymbolInfo;
+import org.eventb.internal.core.Util;
+import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinProblem;
 
 /**
@@ -20,8 +28,63 @@ import org.rodinp.core.IRodinProblem;
 public abstract class ConstantSymbolInfo 
 	extends IdentifierSymbolInfo 
 	implements IConstantSymbolInfo {
+	
+	private static class AbstractConstantSymbolInfo extends ConstantSymbolInfo {
 
-	public ConstantSymbolInfo(
+		public AbstractConstantSymbolInfo(
+				String symbol, 
+				IInternalElement element, 
+				IAttributeType.String attribute, 
+				String component) {
+			super(symbol, true, element, attribute, component);
+		}
+
+		public ISCIdentifierElement createSCElement(
+				IInternalParent parent, IProgressMonitor monitor) throws CoreException {
+			throw Util.newCoreException(Messages.symtab_cannotCreateAbstractConstant);
+		}
+
+	}
+
+	private static class ConcreteConstantSymbolInfo extends ConstantSymbolInfo {
+
+		public ConcreteConstantSymbolInfo(
+				String symbol, 
+				IInternalElement element, 
+				IAttributeType.String attribute, 
+				String component) {
+			super(symbol, false, element, attribute, component);
+		}
+		
+		public ISCIdentifierElement createSCElement(
+				IInternalParent parent, 
+				IProgressMonitor monitor) throws CoreException {
+			ISCConstant constant = ((ISCContextFile) parent).getSCConstant(getSymbol());
+			constant.create(null, monitor);
+			constant.setType(getType(), null);
+			constant.setSource(getSourceElement(), monitor);
+			return constant;
+		}
+
+	}
+
+	public static ConstantSymbolInfo makeAbstractConstantSymbolInfo(
+			String symbol, 
+			IInternalElement element, 
+			IAttributeType.String attribute, 
+			String component) {
+		return new AbstractConstantSymbolInfo(symbol, element, attribute, component);
+	}
+
+	public static ConstantSymbolInfo makeConcreteConstantSymbolInfo(
+			String symbol, 
+			IInternalElement element, 
+			IAttributeType.String attribute, 
+			String component) {
+		return new ConcreteConstantSymbolInfo(symbol, element, attribute, component);
+	}
+
+	ConstantSymbolInfo(
 			String symbol, 
 			boolean imported, 
 			IInternalElement element, 

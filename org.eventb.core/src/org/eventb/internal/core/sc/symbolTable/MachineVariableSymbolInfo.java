@@ -20,15 +20,31 @@ import org.rodinp.core.IInternalParent;
  * @author Stefan Hallerstede
  *
  */
-public abstract class MachineVariableSymbolInfo extends VariableSymbolInfo {
+public class MachineVariableSymbolInfo extends VariableSymbolInfo {
 
-	public MachineVariableSymbolInfo(
+	private MachineVariableSymbolInfo(
 			String symbol, 
 			boolean imported,
 			IInternalElement element, 
 			IAttributeType.String attribute, 
 			String component) {
 		super(symbol, imported, element, attribute, component);
+	}
+	
+	public static MachineVariableSymbolInfo makeAbstractVariableSymbolInfo(
+			String symbol, 
+			IInternalElement element, 
+			org.rodinp.core.IAttributeType.String attribute, 
+			String component) {
+		 return new MachineVariableSymbolInfo(symbol, true, element, attribute, component);
+	}
+	
+	public static MachineVariableSymbolInfo makeConcreteVariableSymbolInfo(
+			String symbol, 
+			IInternalElement element, 
+			org.rodinp.core.IAttributeType.String attribute, 
+			String component) {
+		return new MachineVariableSymbolInfo(symbol, false, element, attribute, component);
 	}
 	
 	public ISCIdentifierElement createSCElement(

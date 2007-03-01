@@ -13,9 +13,9 @@ import org.eventb.core.ISCContext;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.internal.core.sc.symbolTable.AbstractCarrierSetSymbolInfo;
-import org.eventb.internal.core.sc.symbolTable.AbstractConstantSymbolInfo;
-import org.eventb.internal.core.sc.symbolTable.AbstractVariableSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.CarrierSetSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.ConstantSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.MachineVariableSymbolInfo;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -38,7 +38,7 @@ public abstract class IdentifierCreatorModule extends SCProcessorModule {
 				ISCIdentifierElement element, 
 				IInternalElement pointerElement) {
 			ISCContext context = (ISCContext) element.getParent();
-			return new AbstractCarrierSetSymbolInfo(
+			return CarrierSetSymbolInfo.makeAbstractCarrierSetSymbolInfo(
 					symbol, 
 					pointerElement, 
 					EventBAttributes.TARGET_ATTRIBUTE, 
@@ -54,7 +54,7 @@ public abstract class IdentifierCreatorModule extends SCProcessorModule {
 				ISCIdentifierElement element, 
 				IInternalElement pointerElement) {
 			ISCContext context = (ISCContext) element.getParent();
-			return new AbstractConstantSymbolInfo(
+			return ConstantSymbolInfo.makeAbstractConstantSymbolInfo(
 					symbol, 
 					pointerElement, 
 					EventBAttributes.TARGET_ATTRIBUTE, 
@@ -70,7 +70,7 @@ public abstract class IdentifierCreatorModule extends SCProcessorModule {
 				ISCIdentifierElement element, 
 				IInternalElement pointerElement) {
 			IEventBFile file = (IEventBFile) element.getParent();
-			return new AbstractVariableSymbolInfo(
+			return MachineVariableSymbolInfo.makeAbstractVariableSymbolInfo(
 					symbol, 
 					pointerElement, 
 					EventBAttributes.TARGET_ATTRIBUTE, 

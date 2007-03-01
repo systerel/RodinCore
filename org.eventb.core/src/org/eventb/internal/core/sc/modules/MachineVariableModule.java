@@ -21,7 +21,8 @@ import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.symbolTable.ConcreteVariableSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.MachineVariableSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.VariableSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -77,10 +78,11 @@ public class MachineVariableModule extends IdentifierModule {
 			IIdentifierSymbolInfo symbolInfo = 
 				identifierSymbolTable.getSymbolInfo(newSymbolInfo.getSymbol());
 			
-			if (symbolInfo instanceof IVariableSymbolInfo) {
-				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
+			if (symbolInfo instanceof VariableSymbolInfo) {
+				assert symbolInfo instanceof IVariableSymbolInfo;
+				VariableSymbolInfo variableSymbolInfo = (VariableSymbolInfo) symbolInfo;
 				variableSymbolInfo.setConcrete();
-				variableSymbolInfo.setSourceElement(element);
+				variableSymbolInfo.setSourceElement(element, EventBAttributes.IDENTIFIER_ATTRIBUTE);
 				return true;
 			}
 			
@@ -103,7 +105,7 @@ public class MachineVariableModule extends IdentifierModule {
 	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(
 			String name, IIdentifierElement element) {
 		IEventBFile file = (IEventBFile) element.getParent();
-		return new ConcreteVariableSymbolInfo(
+		return MachineVariableSymbolInfo.makeConcreteVariableSymbolInfo(
 				name, element, 
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, file.getComponentName());
 	}

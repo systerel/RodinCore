@@ -90,8 +90,8 @@ public abstract class IdentifierSymbolInfo
 	public void createUntypedErrorMarker(IMarkerDisplay markerDisplay) throws CoreException {
 		
 		markerDisplay.createProblemMarker(
-				getReferenceElement(), 
-				getReferenceAttributeType(), 
+				getSourceElement(), 
+				getSourceAttributeType(), 
 				getUntypedError(), 
 				getSymbol());
 		

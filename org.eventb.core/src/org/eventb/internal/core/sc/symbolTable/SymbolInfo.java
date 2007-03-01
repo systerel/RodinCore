@@ -31,8 +31,7 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	
 	private boolean mutable;
 	
-	private final IInternalElement refElement;
-	private final IAttributeType.String refAttribute;
+	private IAttributeType.String sourceAttributeType;
 	
 	private IInternalElement sourceElement;
 
@@ -40,12 +39,11 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	
 	public SymbolInfo(
 			String symbol, 
-			IInternalElement element, 
-			IAttributeType.String attribute, 
+			IInternalElement sourceElement, 
+			IAttributeType.String srcAttribute, 
 			String component) {
-		refElement = element;
-		refAttribute = attribute;
-		sourceElement = element;
+		this.sourceAttributeType = srcAttribute;
+		this.sourceElement = sourceElement;
 		this.component = component;
 		mutable = true;
 		error = false;
@@ -69,13 +67,6 @@ public abstract class SymbolInfo implements ISymbolInfo {
 			throw Util.newCoreException(Messages.symtab_ImmutableSymbolViolation);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.ISymbolInfo#getSourceElement()
-	 */
-	public final IInternalElement getReferenceElement() {
-		return refElement;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.ISymbolInfo#isMutable()
 	 */
@@ -105,6 +96,16 @@ public abstract class SymbolInfo implements ISymbolInfo {
 		SymbolInfo that = (SymbolInfo) o;
 		return this.symbol.compareTo(that.symbol);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof SymbolInfo && symbol.equals(((SymbolInfo) obj).getSymbol());
+	}
+
+	@Override
+	public int hashCode() {
+		return symbol.hashCode();
+	}
 
 	public String getComponentName() {
 		return component;
@@ -129,24 +130,29 @@ public abstract class SymbolInfo implements ISymbolInfo {
 		return sourceElement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.symbolTable.ISymbolInfo#setSourceElement(org.rodinp.core.IRodinElement)
+	/**
+	 * Sets the source element for this symbol.
+	 * 
+	 * @param sourceElement the source element
+	 * @param sourceAttributeType the attribute in the source element to which attach markers 
 	 */
-	public void setSourceElement(IInternalElement source) {
-		sourceElement = source;
+	public final void setSourceElement(
+			IInternalElement sourceElement, IAttributeType.String sourceAttributeType) {
+		this.sourceElement = sourceElement;
+		this.sourceAttributeType = sourceAttributeType;
 	}
 	
 	public void createConflictMarker(IMarkerDisplay markerDisplay) throws RodinDBException {
 		if (isMutable())
 			markerDisplay.createProblemMarker(
-					getReferenceElement(), 
-					getReferenceAttributeType(), 
+					getSourceElement(), 
+					getSourceAttributeType(), 
 					getConflictError(), 
 					getSymbol(), getComponentName());
 		else
 			markerDisplay.createProblemMarker(
-					getReferenceElement(), 
-					getReferenceAttributeType(), 
+					getSourceElement(), 
+					getSourceAttributeType(), 
 					getConflictWarning(), 
 					getSymbol(), getComponentName());
 	}
@@ -154,8 +160,8 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	public abstract IRodinProblem getConflictWarning();
 	public abstract IRodinProblem getConflictError();
 	
-	public final IAttributeType.String getReferenceAttributeType() {
-		return refAttribute;
+	public final IAttributeType.String getSourceAttributeType() {
+		return sourceAttributeType;
 	}
 
 }

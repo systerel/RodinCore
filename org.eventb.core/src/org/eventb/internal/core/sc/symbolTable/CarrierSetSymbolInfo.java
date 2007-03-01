@@ -7,10 +7,18 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ISCCarrierSet;
+import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.ICarrierSetSymbolInfo;
+import org.eventb.internal.core.Util;
+import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinProblem;
 
 /**
@@ -21,13 +29,67 @@ public abstract class CarrierSetSymbolInfo
 	extends IdentifierSymbolInfo
 	implements ICarrierSetSymbolInfo {
 
-	public CarrierSetSymbolInfo(
+	private static class AbstractCarrierSetSymbolInfo extends CarrierSetSymbolInfo {
+
+		public AbstractCarrierSetSymbolInfo(
+				String symbol, 
+				IInternalElement element, 
+				IAttributeType.String attribute, 
+				String component) {
+			super(symbol, true, element, attribute, component);
+		}
+
+		public ISCIdentifierElement createSCElement(
+				IInternalParent parent, IProgressMonitor monitor) throws CoreException {
+			throw Util.newCoreException(Messages.symtab_cannotCreateAbstractCarrierSet);
+		}
+
+	}
+	
+	private static class ConcreteCarrierSetSymbolInfo extends CarrierSetSymbolInfo {
+
+		public ConcreteCarrierSetSymbolInfo(
+				String symbol, 
+				IInternalElement element, 
+				IAttributeType.String attribute, 
+				String component) {
+			super(symbol, false, element, attribute, component);
+		}
+		
+		public ISCIdentifierElement createSCElement(
+				IInternalParent parent, 
+				IProgressMonitor monitor) throws CoreException {
+			ISCCarrierSet set = ((ISCContextFile) parent).getSCCarrierSet(getSymbol());
+			set.create(null, monitor);
+			set.setType(getType(), null);
+			set.setSource(getSourceElement(), monitor);
+			return set;
+		}
+	}
+	
+	protected CarrierSetSymbolInfo(
 			String symbol, 
 			boolean imported, 
 			IInternalElement element, 
 			IAttributeType.String attribute, 
 			String component) {
 		super(symbol, imported, element, attribute, component);
+	}
+	
+	public static CarrierSetSymbolInfo makeAbstractCarrierSetSymbolInfo(
+			String symbol, 
+			IInternalElement element, 
+			IAttributeType.String attribute, 
+			String component) {
+		return new AbstractCarrierSetSymbolInfo(symbol, element, attribute, component);
+	}
+	
+	public static CarrierSetSymbolInfo makeConcreteCarrierSetSymbolInfo(
+			String symbol, 
+			IInternalElement element, 
+			IAttributeType.String attribute, 
+			String component) {
+		return new ConcreteCarrierSetSymbolInfo(symbol, element, attribute, component);
 	}
 
 	@Override
