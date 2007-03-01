@@ -425,10 +425,10 @@ public class UIUtils {
 
 		int i;
 		for (i = beginIndex; i < elements.length + beginIndex; i++) {
-			boolean exists = true;
+			boolean exists = false;
 			for (T element : elements) {
-				if (!element.getIdentifierString().equals(prefix + i)) {
-					exists = false;
+				if (element.getIdentifierString().equals(prefix + i)) {
+					exists = true;
 					break;
 				}
 			}
