@@ -12,10 +12,19 @@ import org.eventb.internal.ui.TimerText;
 
 public abstract class TextEditComposite extends DefaultEditComposite {
 
+	@Override
+	public void setControlValue() {
+		Text text = (Text) control;
+		String str = getValue();
+		if (!text.getText().equals(str))
+			text.setText(str);
+	}
+
 	public void createComposite(FormToolkit toolkit, Composite parent, int style) {
 		Text text = toolkit.createText(parent, getValue(), style);
 		setControl(text);
-		text.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN));
+		text.setForeground(Display.getDefault().getSystemColor(
+				SWT.COLOR_DARK_GREEN));
 		new EventBMath(text);
 		new TimerText(text, 1000) {
 			@Override
@@ -31,4 +40,16 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 
 		});
 	}
+
+	public void select(boolean selection) {
+		Text text = (Text) control;
+		if (selection)
+			text
+					.setBackground(text.getDisplay().getSystemColor(
+							SWT.COLOR_GRAY));
+		else {
+			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		}
+	}
+
 }

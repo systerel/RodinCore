@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.rodinp.core.IRodinElement;
 
 public abstract class DefaultEditComposite implements IEditComposite {
@@ -44,7 +45,7 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setValue()
 	 */
-	abstract public void setValue();
+	abstract public void setControlValue();
 
 	/*
 	 * (non-Javadoc)
@@ -56,10 +57,17 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setValue()
+	 */
+	abstract public void setValue();
+	
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#refresh()
 	 */
 	public void refresh() {
-		setValue();
+		setControlValue();
 		internalPack();
 	}
 
@@ -87,14 +95,22 @@ public abstract class DefaultEditComposite implements IEditComposite {
 
 	void internalPack() {
 		Composite parent = control.getParent();
-		parent.setRedraw(false);
-		Rectangle bounds = control.getBounds();
-		Point preferredSize = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Rectangle bounds = parent.getBounds();
+		Point preferredSize = parent.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		
 		if (preferredSize.x > bounds.width || preferredSize.y > bounds.height) {
-			parent.pack();
+			if (EventBEditorUtils.DEBUG)
+				EventBEditorUtils.debug("Full resize");
+			form.getBody().pack();
 			form.reflow(true);
 		}
-		parent.setRedraw(true);
+		else {
+			if (EventBEditorUtils.DEBUG)
+				EventBEditorUtils.debug("Local resize");
+			control.pack();
+			parent.pack(true);
+			parent.setBounds(bounds);
+		}
 	}
 
 }

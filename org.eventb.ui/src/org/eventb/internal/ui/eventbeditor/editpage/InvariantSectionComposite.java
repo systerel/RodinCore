@@ -1,77 +1,96 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eventb.core.IInvariant;
+import org.eventb.core.IMachineFile;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixInvName;
+import org.eventb.ui.EventBFormText;
+import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 public class InvariantSectionComposite extends DefaultSectionComposite {
 
 	@Override
 	public void createContents() throws RodinDBException {
-		EditSectionRegistry sectionRegistry = EditSectionRegistry.getDefault();
-		int numColumns = 1 + 3 * sectionRegistry
-				.getNumColumns(IInvariant.ELEMENT_TYPE);
-
-		map = new HashMap<IRodinElement, Collection<IEditComposite>>();
-
 		GridLayout gridLayout = new GridLayout();
-		// gridLayout.numColumns = numColumns;
+		gridLayout.numColumns = 1;
 		fComp.setLayout(gridLayout);
-		Label label = fToolkit.createLabel(fComp, "INVARIANTS");
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = numColumns;
-		label.setLayoutData(gd);
+		map = new LinkedHashMap<IInternalElement, EditRow>();
 
-//		Composite tmpComp = fToolkit.createComposite(fComp);
-//		gd = new GridData();
-//		gd.heightHint = 0;
-//		gd.widthHint = 0;
-//		tmpComp.setLayoutData(gd);
-//		String[] names = sectionRegistry
-//				.getColumnNames(IInvariant.ELEMENT_TYPE);
-//		for (String name : names) {
-//			label = fToolkit.createLabel(fComp, name);
-//			gd = new GridData(SWT.FILL, SWT.FILL, false, false);
-//			label.setLayoutData(gd);
-//		}
+		FormText widget = fToolkit.createFormText(fComp, true);
+
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		widget.setLayoutData(gd);
+		new EventBFormText(widget);
+		String text = "<form><li style=\"text\" bindent = \"-20\"><b>INVARIANTS</b></li></form>";
+		widget.setText(text, true, true);
 
 		IInvariant[] invariants;
-		invariants = fInput.getChildrenOfType(IInvariant.ELEMENT_TYPE);
+		invariants = ((IMachineFile) fInput).getInvariants();
 
 		for (IInvariant invariant : invariants) {
-			Composite comp = fToolkit.createComposite(fComp);
-			comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			gridLayout = new GridLayout();
-			gridLayout.numColumns = numColumns + 1;
-			comp.setLayout(gridLayout);
-			createButtons(fInput, comp, invariant, IInvariant.ELEMENT_TYPE);
+			if (EventBEditorUtils.DEBUG) {
+				EventBEditorUtils.debug("Create a row for "
+						+ invariant.getLabel());
+			}
+			EditRow row = new EditRow(fPage, fInput, fToolkit, fComp,
+					invariant, IInvariant.ELEMENT_TYPE, fForm, 0) {
 
-			map = sectionRegistry.createColumns(fForm, fToolkit, comp,
-					invariant, map);
-			fToolkit.paintBordersFor(comp);
+				@Override
+				public void Add() {
+					InvariantSectionComposite.this.Add(parent, element);
+				}
+
+				@Override
+				public void Remove() {
+					try {
+						element.delete(true, new NullProgressMonitor());
+					} catch (RodinDBException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+			};
+			map.put(invariant, row);
 		}
 
-		Composite comp = fToolkit.createComposite(fComp);
-		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		gridLayout = new GridLayout();
-		gridLayout.numColumns = numColumns + 1;
-		comp.setLayout(gridLayout);
-		createButtons(fInput, comp, null, IInvariant.ELEMENT_TYPE); // The last
-																	// null
-																	// element
+		new EditRow(fPage, fInput, fToolkit, fComp, null,
+				IInvariant.ELEMENT_TYPE, fForm, 0) {
+
+			@Override
+			public void Add() {
+				InvariantSectionComposite.this.Add(parent, null);
+			}
+
+			@Override
+			public void Remove() {
+				// Do nothing
+			}
+
+		};
 
 		fToolkit.paintBordersFor(fComp);
-		fComp.getParent().pack();
+		fToolkit.paintBordersFor(fForm.getBody());
+		fForm.getBody().pack();
 		fForm.reflow(true);
 	}
 
@@ -83,4 +102,31 @@ public class InvariantSectionComposite extends DefaultSectionComposite {
 		postRefresh();
 	}
 
+	void Add(final IInternalParent parent, final IInternalElement element) {
+		QualifiedName qualifiedName = PrefixInvName.QUALIFIED_NAME;
+		String defaultPrefix = PrefixInvName.DEFAULT_PREFIX;
+		try {
+			final String newName = UIUtils.getFreeElementName(fEditor, parent,
+					IInvariant.ELEMENT_TYPE, qualifiedName, defaultPrefix);
+			final String newLabel = UIUtils.getFreeElementLabel(fEditor,
+					parent, IInvariant.ELEMENT_TYPE, qualifiedName,
+					defaultPrefix);
+
+			RodinCore.run(new IWorkspaceRunnable() {
+
+				public void run(IProgressMonitor monitor) throws CoreException {
+					IInvariant inv = parent.getInternalElement(
+							IInvariant.ELEMENT_TYPE, newName);
+
+					inv.create(element, new NullProgressMonitor());
+					inv.setLabel(newLabel, monitor);
+					inv.setPredicateString(EventBUIPlugin.INV_DEFAULT, monitor);
+				}
+
+			}, new NullProgressMonitor());
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

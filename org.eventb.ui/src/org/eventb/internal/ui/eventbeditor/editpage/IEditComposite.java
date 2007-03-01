@@ -12,9 +12,11 @@ public interface IEditComposite {
 
 	abstract public void createComposite(FormToolkit toolkit, Composite parent);
 
-	abstract public void setValue();
+	abstract public void setControlValue();
 
 	abstract public String getValue();
+
+	abstract public void setValue();
 
 	public abstract void refresh();
 
@@ -23,5 +25,7 @@ public interface IEditComposite {
 	public abstract void setControl(Control control);
 
 	public abstract void setForm(ScrolledForm form);
+
+	public abstract void select(boolean selection);
 
 }

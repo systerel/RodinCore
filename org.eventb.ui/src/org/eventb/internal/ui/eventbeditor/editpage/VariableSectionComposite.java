@@ -1,82 +1,110 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixVarName;
+import org.eventb.ui.EventBFormText;
 import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 public class VariableSectionComposite extends DefaultSectionComposite {
 
 	@Override
 	public void createContents() throws RodinDBException {
-		EditSectionRegistry sectionRegistry = EditSectionRegistry.getDefault();
-		int numColumns = 1 + 3 * sectionRegistry.getNumColumns(IVariable.ELEMENT_TYPE);
-
-		map = new HashMap<IRodinElement, Collection<IEditComposite>>();
-
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
 		fComp.setLayout(gridLayout);
-		
-		Label label = fToolkit.createLabel(fComp, "VARIABLES");
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-//		gd.horizontalSpan = numColumns;
-		label.setLayoutData(gd);
+		map = new LinkedHashMap<IInternalElement, EditRow>();
+		fComp.addKeyListener(new KeyListener() {
 
-//		Composite comp = fToolkit.createComposite(fComp);
-//		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-//		gridLayout = new GridLayout();
-//		gridLayout.numColumns = numColumns + 1;
-//		comp.setLayout(gridLayout);
-//		
-//		Composite tmpComp = fToolkit.createComposite(comp);
-//		gd = new GridData();
-//		gd.heightHint = 0;
-//		gd.widthHint = 0;
-//		tmpComp.setLayoutData(gd);
-//		String[] names = sectionRegistry.getColumnNames(IVariable.ELEMENT_TYPE);
-//		for (String name : names) {
-//			label = fToolkit.createLabel(comp, name);
-//			gd = new GridData(SWT.FILL, SWT.FILL, false, false);
-//			gd.horizontalSpan = 3;
-//			label.setLayoutData(gd);
-//		}
-//
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void keyReleased(KeyEvent e) {
+				if (EventBEditorUtils.DEBUG)
+					EventBEditorUtils.debug("Variable Section Composite Key event " + e);
+			}
+			
+		});
+		
+		FormText widget = fToolkit.createFormText(fComp, true);
+
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		widget.setLayoutData(gd);
+		new EventBFormText(widget);
+		String text = "<form><li style=\"text\" bindent = \"-20\"><b>VARIABLES</b></li></form>";
+		widget.setText(text, true, true);
+
 		IVariable[] variables;
 		variables = ((IMachineFile) fInput).getVariables();
 
 		for (IVariable variable : variables) {
-			Composite comp = fToolkit.createComposite(fComp);
-			comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			gridLayout = new GridLayout();
-			gridLayout.numColumns = numColumns + 1;
-			comp.setLayout(gridLayout);
-			createButtons(fInput, comp, variable, IVariable.ELEMENT_TYPE);
-			
-			map = sectionRegistry.createColumns(fForm, fToolkit, comp,
-					variable, map);
-			fToolkit.paintBordersFor(comp);
+			if (EventBEditorUtils.DEBUG) {
+				EventBEditorUtils.debug("Create a row for "
+						+ variable.getIdentifierString());
+			}
+			EditRow row = new EditRow(fPage, fInput, fToolkit, fComp,
+					variable, IVariable.ELEMENT_TYPE, fForm, 0) {
+
+				@Override
+				public void Add() {
+					VariableSectionComposite.this.Add(parent, element);
+				}
+
+				@Override
+				public void Remove() {
+					try {
+						element.delete(true, new NullProgressMonitor());
+					} catch (RodinDBException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+			};
+			map.put(variable, row);
 		}
-		
-		Composite comp = fToolkit.createComposite(fComp);
-		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		gridLayout = new GridLayout();
-		gridLayout.numColumns = numColumns + 1;
-		comp.setLayout(gridLayout);
-		createButtons(fInput, comp, null, IVariable.ELEMENT_TYPE); // The last null element
-		
+
+		new EditRow(fPage, fInput, fToolkit, fComp, null,
+				IVariable.ELEMENT_TYPE, fForm, 0) {
+
+			@Override
+			public void Add() {
+				VariableSectionComposite.this.Add(parent, null);
+			}
+
+			@Override
+			public void Remove() {
+				// Do nothing
+			}
+
+		};
+
 		fToolkit.paintBordersFor(fComp);
-		fComp.getParent().pack();
+		fToolkit.paintBordersFor(fForm.getBody());
+		fForm.getBody().pack();
 		fForm.reflow(true);
 	}
 
@@ -88,4 +116,30 @@ public class VariableSectionComposite extends DefaultSectionComposite {
 		postRefresh();
 	}
 
+	void Add(final IInternalParent parent, final IInternalElement element) {
+		QualifiedName qualifiedName = PrefixVarName.QUALIFIED_NAME;
+		String defaultPrefix = PrefixVarName.DEFAULT_PREFIX;
+		try {
+			final String newName = UIUtils.getFreeElementName(fEditor, parent,
+					IVariable.ELEMENT_TYPE, qualifiedName, defaultPrefix);
+			final String newIdentifier = UIUtils.getFreeElementIdentifier(
+					fEditor, parent, IVariable.ELEMENT_TYPE, qualifiedName,
+					defaultPrefix);
+
+			RodinCore.run(new IWorkspaceRunnable() {
+
+				public void run(IProgressMonitor monitor) throws CoreException {
+					IVariable var = parent.getInternalElement(
+							IVariable.ELEMENT_TYPE, newName);
+
+					var.create(element, new NullProgressMonitor());
+					var.setIdentifierString(newIdentifier, monitor);
+				}
+
+			}, new NullProgressMonitor());
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

@@ -28,7 +28,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 
 public class EditSectionRegistry {
@@ -58,13 +57,12 @@ public class EditSectionRegistry {
 			sections = new ArrayList<SectionInfo>();
 		}
 
-		public ISectionComposite[] createSections(IEventBEditor editor,
-				FormToolkit toolkit, ScrolledForm form, Composite parent,
-				IRodinFile rInput) {
+		public ISectionComposite[] createSections(EditPage page,
+				FormToolkit toolkit, ScrolledForm form, Composite parent) {
 			Collection<ISectionComposite> sectionComps = new ArrayList<ISectionComposite>();
 			for (SectionInfo section : sections) {
-				ISectionComposite sectionComp = section.createSection(editor,
-						toolkit, form, parent, rInput);
+				ISectionComposite sectionComp = section.createSection(page,
+						toolkit, form, parent);
 				if (sectionComp != null)
 					sectionComps.add(sectionComp);
 			}
@@ -132,15 +130,13 @@ public class EditSectionRegistry {
 			return this.priority;
 		}
 
-		public ISectionComposite createSection(IEventBEditor editor,
-				FormToolkit toolkit, ScrolledForm form, Composite parent,
-				IRodinFile rInput) {
+		public ISectionComposite createSection(EditPage page,
+				FormToolkit toolkit, ScrolledForm form, Composite parent) {
 			try {
 				ISectionComposite sectionComp;
 				sectionComp = (ISectionComposite) config
 						.createExecutableExtension("class");
-				return sectionComp
-						.create(editor, toolkit, form, parent, rInput);
+				return sectionComp.create(page, toolkit, form, parent);
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -216,17 +212,17 @@ public class EditSectionRegistry {
 		return section.getAttribute("id");
 	}
 
-	public ISectionComposite[] createSections(IEventBEditor editor,
-			FormToolkit toolkit, ScrolledForm form, Composite parent,
-			IRodinFile rInput) {
+	public ISectionComposite[] createSections(EditPage page,
+			FormToolkit toolkit, ScrolledForm form, Composite parent) {
 		if (sectionRegistry == null)
 			loadSectionRegistry();
 
+		IEventBEditor editor = (IEventBEditor) page.getEditor();
 		SectionsInfo info = sectionRegistry.get(editor.getEditorId());
 		if (info == null) {
 			return new ISectionComposite[0];
 		}
-		return info.createSections(editor, toolkit, form, parent, rInput);
+		return info.createSections(page, toolkit, form, parent);
 
 	}
 
@@ -258,14 +254,14 @@ public class EditSectionRegistry {
 			columns.add(info);
 		}
 
-		public Map<IRodinElement, Collection<IEditComposite>> createColumns(
-				ScrolledForm form, FormToolkit toolkit, Composite parent,
-				IRodinElement element,
-				Map<IRodinElement, Collection<IEditComposite>> map) {
-			for (ColumnInfo column : columns) {
-				map = column.createColumn(toolkit, form, parent, element, map);
+		public IEditComposite[] createColumns(ScrolledForm form,
+				FormToolkit toolkit, Composite parent, IRodinElement element) {
+			IEditComposite[] result = new IEditComposite[columns.size()];
+			for (int i = 0; i < columns.size(); ++i) {
+				result[i] = columns.get(i).createColumn(toolkit, form, parent,
+						element);
 			}
-			return map;
+			return result;
 		}
 
 		public String[] getColumnNames() {
@@ -289,10 +285,8 @@ public class EditSectionRegistry {
 			return config.getAttribute("name");
 		}
 
-		public Map<IRodinElement, Collection<IEditComposite>> createColumn(
-				FormToolkit toolkit, ScrolledForm form, Composite parent,
-				IRodinElement element,
-				Map<IRodinElement, Collection<IEditComposite>> map) {
+		public IEditComposite createColumn(FormToolkit toolkit,
+				ScrolledForm form, Composite parent, IRodinElement element) {
 			try {
 				IEditComposite editComposite;
 				String prefix = config.getAttribute("prefix");
@@ -300,10 +294,10 @@ public class EditSectionRegistry {
 					prefix = "";
 				Label label = toolkit.createLabel(parent, " " + prefix + " ");
 				GridData gridData = new GridData();
-				gridData.verticalAlignment =  SWT.TOP;
+				gridData.verticalAlignment = SWT.TOP;
 				label.setLayoutData(gridData);
-//				label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-				
+				// label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+
 				editComposite = (IEditComposite) config
 						.createExecutableExtension("class");
 				editComposite.setForm(form);
@@ -311,7 +305,6 @@ public class EditSectionRegistry {
 				editComposite.createComposite(toolkit, parent);
 				editComposite.setFillHorizontal(config.getAttribute(
 						"horizontalExpand").equalsIgnoreCase("true"));
-				map = EditPage.addToMap(map, element, editComposite);
 				String postfix = config.getAttribute("postfix");
 				if (postfix == null)
 					postfix = "";
@@ -319,12 +312,13 @@ public class EditSectionRegistry {
 				gridData = new GridData();
 				gridData.verticalAlignment = SWT.TOP;
 				label.setLayoutData(gridData);
-//				label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+				// label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+				return editComposite;
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return map;
+			return null;
 		}
 
 	}
@@ -388,19 +382,17 @@ public class EditSectionRegistry {
 		return info.getNumColumns();
 	}
 
-	public synchronized Map<IRodinElement, Collection<IEditComposite>> createColumns(
-			ScrolledForm form, FormToolkit toolkit, Composite parent,
-			IRodinElement element,
-			Map<IRodinElement, Collection<IEditComposite>> map) {
+	public synchronized IEditComposite[] createColumns(ScrolledForm form,
+			FormToolkit toolkit, Composite parent, IRodinElement element) {
 		if (columnRegistry == null)
 			loadColumnRegistry();
 
 		ColumnsInfo info = columnRegistry.get(element.getElementType());
 		if (info == null) {
-			return map;
+			return new IEditComposite[0];
 		}
 
-		return info.createColumns(form, toolkit, parent, element, map);
+		return info.createColumns(form, toolkit, parent, element);
 	}
 
 	public synchronized String[] getColumnNames(IElementType type) {
@@ -435,10 +427,10 @@ public class EditSectionRegistry {
 
 		public void run(String actionID, IEventBEditor editor,
 				IInternalParent parent, IInternalElement element,
-				IInternalElementType<? extends IInternalElement> type)
+				IInternalElementType<IInternalElement> type)
 				throws CoreException {
 			ActionInfo info = actions.get(actionID);
-			info.run(editor, parent, element);
+			info.run(editor, parent, element, type);
 		}
 
 		public String getToolTip(String actionID) {
@@ -452,9 +444,11 @@ public class EditSectionRegistry {
 		}
 
 		public boolean isApplicable(String actionID, IInternalParent parent,
-				IInternalElement element) throws CoreException {
+				IInternalElement element,
+				IInternalElementType<IInternalElement> type)
+				throws CoreException {
 			ActionInfo info = actions.get(actionID);
-			return info.isApplicable(parent, element);
+			return info.isApplicable(parent, element, type);
 		}
 
 	}
@@ -506,11 +500,13 @@ public class EditSectionRegistry {
 		}
 
 		public boolean isApplicable(IInternalParent parent,
-				IInternalElement element) throws CoreException {
+				IInternalElement element,
+				IInternalElementType<IInternalElement> type)
+				throws CoreException {
 			if (editAction == null)
 				editAction = (IEditAction) config
 						.createExecutableExtension("class");
-			return editAction.isApplicable(parent, element);
+			return editAction.isApplicable(parent, element, type);
 		}
 
 		public String getName() {
@@ -522,11 +518,13 @@ public class EditSectionRegistry {
 		}
 
 		public void run(IEventBEditor editor, IInternalParent parent,
-				IInternalElement element) throws CoreException {
+				IInternalElement element,
+				IInternalElementType<IInternalElement> type)
+				throws CoreException {
 			if (editAction == null)
 				editAction = (IEditAction) config
 						.createExecutableExtension("class");
-			editAction.run(editor, parent, element);
+			editAction.run(editor, parent, element, type);
 		}
 
 		public String getId() {
@@ -561,8 +559,7 @@ public class EditSectionRegistry {
 
 	public void run(String actionID, IEventBEditor editor,
 			IInternalParent parent, IInternalElement element,
-			IInternalElementType<? extends IInternalElement> type)
-			throws CoreException {
+			IInternalElementType<IInternalElement> type) throws CoreException {
 		if (actionRegistry == null)
 			loadActionRegistry();
 
@@ -597,8 +594,8 @@ public class EditSectionRegistry {
 	}
 
 	public synchronized boolean isApplicable(String actionID,
-			IInternalParent parent, IInternalElement element, IElementType type)
-			throws CoreException {
+			IInternalParent parent, IInternalElement element,
+			IInternalElementType<IInternalElement> type) throws CoreException {
 		if (actionRegistry == null)
 			loadActionRegistry();
 		ActionsInfo info = actionRegistry.get(type);
@@ -606,7 +603,7 @@ public class EditSectionRegistry {
 			return false;
 		}
 
-		return info.isApplicable(actionID, parent, element);
+		return info.isApplicable(actionID, parent, element, type);
 	}
 
 }

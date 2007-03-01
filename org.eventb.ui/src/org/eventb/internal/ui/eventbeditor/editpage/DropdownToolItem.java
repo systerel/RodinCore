@@ -46,7 +46,7 @@ public class DropdownToolItem {
 
 	private IInternalParent parent;
 
-	IInternalElementType<? extends IInternalElement> type;
+	IInternalElementType<IInternalElement> type;
 
 	/**
 	 * @author htson
@@ -140,7 +140,7 @@ public class DropdownToolItem {
 	 */
 	public DropdownToolItem(IEventBEditor editor, ToolItem item,
 			IInternalParent parent, IInternalElement element,
-			IInternalElementType<? extends IInternalElement> type) {
+			IInternalElementType<IInternalElement> type) {
 		this.item = item;
 		this.element = element;
 		this.editor = editor;

@@ -4,13 +4,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinDBException;
 
 public class Up implements IEditAction {
 
 	public void run(IEventBEditor editor, final IInternalParent parent,
-			final IInternalElement element) throws CoreException {
+			final IInternalElement element,
+			IInternalElementType<IInternalElement> type) throws CoreException {
 
 		// Trying to find the previous element
 		IInternalElement[] children = parent.getChildrenOfType(element
@@ -27,7 +29,9 @@ public class Up implements IEditAction {
 		element.move(parent, prev, null, false, new NullProgressMonitor());
 	}
 
-	public boolean isApplicable(IInternalParent parent, IInternalElement element)
+	public boolean isApplicable(IInternalParent parent,
+			IInternalElement element,
+			IInternalElementType<IInternalElement> type)
 			throws RodinDBException {
 		if (element == null)
 			return false;
@@ -37,7 +41,7 @@ public class Up implements IEditAction {
 
 		if (element.equals(children[0]))
 			return false;
-		
+
 		return true;
 	}
 
