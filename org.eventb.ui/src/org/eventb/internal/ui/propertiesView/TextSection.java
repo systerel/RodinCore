@@ -91,7 +91,9 @@ public abstract class TextSection extends AbstractPropertySection implements
 	@Override
 	public void refresh() {
 		try {
-			textWidget.setText(getText());
+			String text = getText();
+			if (!textWidget.getText().equals(text))
+				textWidget.setText(text);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -127,14 +129,14 @@ public abstract class TextSection extends AbstractPropertySection implements
 
 	@Override
 	public void aboutToBeHidden() {
+		RodinCore.removeElementChangedListener(this);
 		super.aboutToBeHidden();
-		RodinCore.addElementChangedListener(this);
 	}
 
 	@Override
 	public void aboutToBeShown() {
+		RodinCore.addElementChangedListener(this);
 		super.aboutToBeShown();
-		RodinCore.removeElementChangedListener(this);
 	}
 
 }
