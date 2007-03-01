@@ -129,14 +129,14 @@ public abstract class CComboSection extends AbstractPropertySection implements
 
 	@Override
 	public void aboutToBeHidden() {
+		RodinCore.removeElementChangedListener(this);
 		super.aboutToBeHidden();
-		RodinCore.addElementChangedListener(this);
 	}
 
 	@Override
 	public void aboutToBeShown() {
+		RodinCore.addElementChangedListener(this);
 		super.aboutToBeShown();
-		RodinCore.removeElementChangedListener(this);
 	}
 
 }
