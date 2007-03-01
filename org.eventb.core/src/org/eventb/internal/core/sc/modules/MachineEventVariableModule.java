@@ -68,7 +68,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 	 * add abstract local variables to type environment
 	 * that are not also local variables of the refined event
 	 */
-	private void patchTypeEnvironment() {
+	private void patchTypeEnvironment() throws CoreException {
 		if (eventRefinesInfo.currentEventIsRefined())
 			return;
 		IAbstractEventInfo abstractEventInfo = eventRefinesInfo.getAbstractEventInfos().get(0);

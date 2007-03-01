@@ -30,9 +30,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.state.IAbstractEventInfo;
-import org.eventb.core.sc.state.IAbstractEventTable;
-import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
@@ -42,26 +39,21 @@ import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.AbstractEventInfo;
-import org.eventb.internal.core.sc.AbstractEventTable;
 import org.eventb.internal.core.sc.CurrentEvent;
 import org.eventb.internal.core.sc.EventRefinesInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.EventSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
-import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventModule extends LabeledElementModule {
+public class MachineEventModule extends AbstractEventWrapperModule {
 	
 	public static final IModuleType<MachineEventModule> MODULE_TYPE = 
 		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventModule"); //$NON-NLS-1$
@@ -81,8 +73,6 @@ public class MachineEventModule extends LabeledElementModule {
 	
 	IEvent[] events;
 	
-	private AbstractEventTable abstractEventTable;
-
 	private static String EVENT_NAME_PREFIX = "EVT";
 	
 	public void process(
@@ -116,44 +106,43 @@ public class MachineEventModule extends LabeledElementModule {
 			IEventSymbolInfo[] symbolInfos, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		for (AbstractEventInfo abstractEventInfo : abstractEventTable.getAbstractEventInfos()) {
-			if (!abstractEventInfo.isRefined())
+		for (AbstractEventWrapper abstractEventWrapper : getWrappers()) {
+			if (!abstractEventWrapper.isRefined())
 				createProblemMarker(
 						machineFile, 
 						GraphProblem.AbstractEventNotRefinedError, 
-						abstractEventInfo.getEventLabel());
+						abstractEventWrapper.getInfo().getEventLabel());
 			else {
-				List<IEventSymbolInfo> mergeSymbolInfos = abstractEventInfo.getMergeSymbolInfos();
-				List<IEventSymbolInfo> splitSymbolInfos = abstractEventInfo.getSplitSymbolInfos();
+				List<IEventSymbolInfo> mergeSymbolInfos = abstractEventWrapper.getMergeSymbolInfos();
+				List<IEventSymbolInfo> splitSymbolInfos = abstractEventWrapper.getSplitSymbolInfos();
 				if (mergeSymbolInfos.size() > 0 && splitSymbolInfos.size() > 0) {
 					issueErrorMarkers(
 							mergeSymbolInfos, 
-							abstractEventInfo, 
+							abstractEventWrapper, 
 							GraphProblem.EventMergeSplitError);
 					issueErrorMarkers(
 							splitSymbolInfos, 
-							abstractEventInfo, 
+							abstractEventWrapper, 
 							GraphProblem.EventMergeSplitError);
 				} else if (mergeSymbolInfos.size() > 1) {
 					issueErrorMarkers(
 							mergeSymbolInfos, 
-							abstractEventInfo, 
+							abstractEventWrapper, 
 							GraphProblem.EventMergeMergeError);
 				}
 				
-				IEventSymbolInfo eventSymbolInfo = abstractEventInfo.getImplicit();
+				IEventSymbolInfo eventSymbolInfo = abstractEventWrapper.getImplicit();
 				
 				if (eventSymbolInfo != null)
 					if (mergeSymbolInfos.size() > 0 || splitSymbolInfos.size() > 0) {
 						createProblemMarker(
 								eventSymbolInfo.getSourceElement(), 
 								GraphProblem.EventInheritedMergeSplitError, 
-								abstractEventInfo.getEventLabel());
+								abstractEventWrapper.getInfo().getEventLabel());
 						eventSymbolInfo.setError();
 					}
 			}
 			
-			abstractEventInfo.makeImmutable();
 		}
 		
 		int index = 0;
@@ -177,7 +166,7 @@ public class MachineEventModule extends LabeledElementModule {
 			int index, 
 			IEventSymbolInfo info, 
 			IEvent event, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 
 		ISCEvent abstractSCEvent = 
 			info.getRefinesInfo().getAbstractEventInfos().get(0).getEvent();
@@ -211,34 +200,6 @@ public class MachineEventModule extends LabeledElementModule {
 		return scEvent;
 	}
 
-	void issueErrorMarkers(
-			List<IEventSymbolInfo> symbolInfos, 
-			AbstractEventInfo abstractEventInfo, 
-			IRodinProblem problem) throws CoreException {
-		String abstractEventLabel = abstractEventInfo.getEventLabel();
-		for (IEventSymbolInfo symbolInfo : symbolInfos) {
-			IEventRefinesInfo refinesInfo = symbolInfo.getRefinesInfo();
-			
-			issueRefinementErrorMarker(symbolInfo);
-			
-			for (IRefinesEvent refinesEvent : refinesInfo.getRefinesClauses())
-				if (refinesEvent.getAbstractEventLabel().equals(abstractEventLabel))
-					createProblemMarker(
-							refinesEvent, 
-							problem,
-							abstractEventLabel);
-		}
-		abstractEventInfo.setRefineError(true);
-	}
-
-	private void issueRefinementErrorMarker(IEventSymbolInfo symbolInfo) throws CoreException {
-		if (!symbolInfo.hasError())
-			createProblemMarker(
-					symbolInfo.getSourceElement(), 
-					GraphProblem.EventRefinementError);
-		symbolInfo.setError();
-	}
-	
 	private boolean fetchRefineData(
 			EventSymbolInfo symbolInfo, 
 			IRefinesEvent[] refinesEvents, 
@@ -294,28 +255,28 @@ public class MachineEventModule extends LabeledElementModule {
 				continue;
 			}
 			
-			AbstractEventInfo abstractEventInfo = 
-				getAbstractEventInfoForLabel(
+			AbstractEventWrapper abstractEventWrapper = 
+				getAbstractEventWrapperForLabel(
 						symbolInfo, 
 						label, 
 						refinesEvents[i], 
 						EventBAttributes.TARGET_ATTRIBUTE);
 			
-			if (abstractEventInfo == null)
+			if (abstractEventWrapper == null)
 				continue;
 			
-			if (symbolInfo.getSymbol().equals(abstractEventInfo.getEventLabel()))
+			if (symbolInfo.getSymbol().equals(abstractEventWrapper.getInfo().getEventLabel()))
 				found = true;
 			
 			checkForLocalVariableTypeErrors(
 					symbolInfo, 
 					typeErrors, 
 					types, 
-					abstractEventInfo);
+					abstractEventWrapper);
 			
 			if (actions != null && !actionError)
 				if (firstAction) {
-					for (ISCAction action : abstractEventInfo.getEvent().getSCActions()) {
+					for (ISCAction action : abstractEventWrapper.getInfo().getEvent().getSCActions()) {
 						actions.put(action.getLabel(), action.getAssignmentString());
 					}
 					firstAction = false;
@@ -324,17 +285,17 @@ public class MachineEventModule extends LabeledElementModule {
 							symbolInfo, 
 							actions, 
 							actionError, 
-							abstractEventInfo);
+							abstractEventWrapper);
 				}
 			
-			refinesInfo.addAbstractEventInfo(abstractEventInfo);
+			refinesInfo.addAbstractEventInfo(abstractEventWrapper.getInfo());
 			refinesInfo.addRefinesEvent(refinesEvents[i]);
 			
 			// this is a pretty rough distinction. But it should be sufficient in practice.
 			if (refinesEvents.length == 1) {
-				abstractEventInfo.addSplitSymbolInfo(symbolInfo);
+				abstractEventWrapper.addSplitSymbolInfo(symbolInfo);
 			} else {
-				abstractEventInfo.addMergeSymbolInfo(symbolInfo);
+				abstractEventWrapper.addMergeSymbolInfo(symbolInfo);
 			}
 		}
 		
@@ -343,8 +304,12 @@ public class MachineEventModule extends LabeledElementModule {
 		return found;
 	}
 
-	private boolean checkAbstractActionAccordance(IEventSymbolInfo symbolInfo, Hashtable<String, String> actions, boolean actionError, IAbstractEventInfo abstractEventInfo) throws RodinDBException, CoreException {
-		ISCAction[] scActions = abstractEventInfo.getEvent().getSCActions();
+	private boolean checkAbstractActionAccordance(
+			IEventSymbolInfo symbolInfo, 
+			Hashtable<String, String> actions, 
+			boolean actionError, 
+			AbstractEventWrapper abstractEventWrapper) throws RodinDBException, CoreException {
+		ISCAction[] scActions = abstractEventWrapper.getInfo().getEvent().getSCActions();
 		boolean ok = scActions.length == actions.size();
 		if (ok)
 			for (ISCAction action : scActions) {
@@ -365,9 +330,12 @@ public class MachineEventModule extends LabeledElementModule {
 		return actionError;
 	}
 
-	private void checkForLocalVariableTypeErrors(IEventSymbolInfo symbolInfo, HashSet<String> typeErrors, Hashtable<String, Type> types, IAbstractEventInfo abstractEventInfo) throws RodinDBException, CoreException {
+	private void checkForLocalVariableTypeErrors(
+			IEventSymbolInfo symbolInfo, 
+			HashSet<String> typeErrors, Hashtable<String, Type> types, 
+			AbstractEventWrapper abstractEventWrapper) throws RodinDBException, CoreException {
 		if (types != null)
-			for (FreeIdentifier identifier : abstractEventInfo.getVariables()) {
+			for (FreeIdentifier identifier : abstractEventWrapper.getInfo().getVariables()) {
 				String name = identifier.getName();
 				Type newType = identifier.getType();
 				Type type = types.put(name, newType);
@@ -381,33 +349,6 @@ public class MachineEventModule extends LabeledElementModule {
 					symbolInfo.setError();
 				}
 			}
-	}
-
-	private AbstractEventInfo getAbstractEventInfoForLabel(
-			IEventSymbolInfo symbolInfo, 
-			String label, 
-			IInternalElement element,
-			IAttributeType attributeType) throws CoreException {
-		AbstractEventInfo abstractEventInfo = abstractEventTable.getAbstractEventInfo(label);
-
-		if (abstractEventInfo == null) {
-			if (attributeType == null)
-				createProblemMarker(
-						element,
-						GraphProblem.AbstractEventNotFoundError);
-			else
-				createProblemMarker(
-						element,
-						attributeType,
-						GraphProblem.AbstractEventNotFoundError);
-			abstractEventInfo = null;
-			createProblemMarker(
-					element,
-					attributeType,
-					GraphProblem.EventRefinementError);
-			issueRefinementErrorMarker(symbolInfo);
-		}
-		return abstractEventInfo;
 	}
 
 	private void processEvents(
@@ -516,9 +457,9 @@ public class MachineEventModule extends LabeledElementModule {
 		} else {
 			boolean found = fetchRefineData(symbolInfo, event.getRefinesClauses(), monitor);
 			if (!found && !isInit) {
-				IAbstractEventInfo abstractEventInfo =
-					abstractEventTable.getAbstractEventInfo(symbolInfo.getSymbol());
-				if (abstractEventInfo != null)
+				AbstractEventWrapper abstractEventWrapper =
+					getAbstractEventWrapper(symbolInfo.getSymbol());
+				if (abstractEventWrapper != null)
 					createProblemMarker(
 							machineFile,
 							GraphProblem.InconsistentEventLabelWarning,
@@ -528,16 +469,16 @@ public class MachineEventModule extends LabeledElementModule {
 	}
 
 	private void makeImplicitRefinement(IEvent event, EventSymbolInfo symbolInfo) throws CoreException {
-		AbstractEventInfo eventInfo = 
-			getAbstractEventInfoForLabel(symbolInfo, symbolInfo.getSymbol(), event, null);
+		AbstractEventWrapper abstractEventWrapper = 
+			getAbstractEventWrapperForLabel(symbolInfo, symbolInfo.getSymbol(), event, null);
 		
-		if (eventInfo == null)
+		if (abstractEventWrapper == null)
 			symbolInfo.setError();
 		else {
-			eventInfo.setImplicit(symbolInfo);
+			abstractEventWrapper.setImplicit(symbolInfo);
 			EventRefinesInfo refinesInfo = new EventRefinesInfo(1);
 			symbolInfo.setRefinesInfo(refinesInfo);
-			refinesInfo.addAbstractEventInfo(eventInfo);
+			refinesInfo.addAbstractEventInfo(abstractEventWrapper.getInfo());
 			refinesInfo.makeImmutable();
 		}
 	}
@@ -571,9 +512,6 @@ public class MachineEventModule extends LabeledElementModule {
 		
 		events = machineFile.getEvents();
 		
-		abstractEventTable =
-			(AbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
-		
 		identifierSymbolTable =
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
 		
@@ -597,7 +535,6 @@ public class MachineEventModule extends LabeledElementModule {
 		factory = null;
 		machineTypeEnvironment = null;
 		events = null;
-		abstractEventTable = null;
 		super.endModule(element, repository, monitor);
 	}
 	

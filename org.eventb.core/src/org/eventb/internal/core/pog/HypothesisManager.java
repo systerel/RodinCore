@@ -33,6 +33,11 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class HypothesisManager extends State implements IHypothesisManager {
 
+	@Override
+	public String toString() {
+		return getStateType().toString();
+	}
+
 	public Iterator<FreeIdentifier> iterator() {
 		return identifiers.iterator();
 	}

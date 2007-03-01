@@ -10,7 +10,6 @@ package org.eventb.internal.core.sc;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -19,7 +18,6 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.state.IAbstractEventInfo;
-import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.tool.state.IStateType;
 import org.rodinp.core.RodinDBException;
 
@@ -30,20 +28,19 @@ import org.rodinp.core.RodinDBException;
 public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEventInfo {
 
 	@Override
+	public String toString() {
+		return getEventLabel();
+	}
+
+	@Override
 	public void makeImmutable() {
 		super.makeImmutable();
-		splitInfos = Collections.unmodifiableList(splitInfos);
-		mergeInfos = Collections.unmodifiableList(mergeInfos);
 		idents = Collections.unmodifiableList(idents);
 		guards = Collections.unmodifiableList(guards);
 		actions = Collections.unmodifiableList(actions);
 	}
 
 	private final String label;
-	private IEventSymbolInfo implicitRefinedInfo;
-	private boolean refineError;
-	private List<IEventSymbolInfo> splitInfos;
-	private List<IEventSymbolInfo> mergeInfos;
 	private Hashtable<String,FreeIdentifier> table;
 	private final ISCEvent event;
 	private List<FreeIdentifier> idents;
@@ -60,7 +57,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getIdentifier(java.lang.String)
 	 */
-	public FreeIdentifier getVariable(String name) {
+	public FreeIdentifier getVariable(String name) throws CoreException {
 		if (table == null) {
 			table = new Hashtable<String,FreeIdentifier>(idents.size() * 4 / 3 + 1);
 			for (FreeIdentifier identifier : idents) {
@@ -73,21 +70,21 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getIdentifiers()
 	 */
-	public List<FreeIdentifier> getVariables() {
+	public List<FreeIdentifier> getVariables() throws CoreException {
 		return idents;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getGuards()
 	 */
-	public List<Predicate> getGuards() {
+	public List<Predicate> getGuards() throws CoreException {
 		return guards;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getActions()
 	 */
-	public List<Assignment> getActions() {
+	public List<Assignment> getActions() throws CoreException {
 		return actions;
 	}
 
@@ -103,16 +100,8 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 		this.idents = Arrays.asList(idents);
 		this.guards = Arrays.asList(guards);
 		this.actions = Arrays.asList(actions);
-		refineError = false;
-		implicitRefinedInfo = null;
-		splitInfos = new LinkedList<IEventSymbolInfo>();
-		mergeInfos = new LinkedList<IEventSymbolInfo>();
 	}
 
-	public boolean isRefined() {
-		return implicitRefinedInfo != null || splitInfos.size() != 0 || mergeInfos.size() != 0;
-	}
-	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -134,42 +123,6 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 
 	public ISCEvent getEvent() {
 		return event;
-	}
-
-	public void setRefineError(boolean value) throws CoreException {
-		assertMutable();
-		refineError = value;
-	}
-
-	public boolean hasRefineError() {
-		return refineError;
-	}
-
-	public void addMergeSymbolInfo(IEventSymbolInfo symbolInfo) throws CoreException {
-		assertMutable();
-		mergeInfos.add(symbolInfo);
-	}
-
-	public void addSplitSymbolInfo(IEventSymbolInfo symbolInfo) throws CoreException {
-		assertMutable();
-		splitInfos.add(symbolInfo);
-	}
-
-	public List<IEventSymbolInfo> getMergeSymbolInfos() {
-		return mergeInfos;
-	}
-
-	public List<IEventSymbolInfo> getSplitSymbolInfos() {
-		return splitInfos;
-	}
-
-	public void setImplicit(IEventSymbolInfo eventSymbolInfo) throws CoreException {
-		assertMutable();
-		implicitRefinedInfo = eventSymbolInfo;
-	}
-
-	public IEventSymbolInfo getImplicit() {
-		return implicitRefinedInfo;
 	}
 
 	public IStateType<?> getStateType() {

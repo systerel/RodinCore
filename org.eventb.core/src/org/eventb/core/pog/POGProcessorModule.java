@@ -20,6 +20,7 @@ import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.util.POGHint;
 import org.eventb.core.pog.util.POGPredicate;
 import org.eventb.core.pog.util.POGSource;
+import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IProcessorModule;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -128,11 +129,17 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 
 	}
 
+	private <M extends IModule> void traceModule(M module, String kind) {
+		System.out.println("POG MODULE: " + module.getModuleType());
+	}
+
 	final protected void initModules(
 			IRodinElement element,
 			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		for (IProcessorModule module : getProcessorModules()) {
+			if (DEBUG_MODULE)
+				traceModule(module, "PROCESSOR");
 			IPOGProcessorModule pogModule = (IPOGProcessorModule) module;
 			pogModule.initModule(element, repository, monitor);
 		}

@@ -18,6 +18,11 @@ import org.eventb.internal.core.tool.state.State;
  */
 public class ParsedFormula extends State implements IParsedFormula {
 
+	@Override
+	public String toString() {
+		return formula.toString();
+	}
+
 	private Formula formula;
 	
 	/* (non-Javadoc)

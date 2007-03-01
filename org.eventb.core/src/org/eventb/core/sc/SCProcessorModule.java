@@ -24,10 +24,22 @@ import org.rodinp.core.IRodinElement;
  */
 public abstract class SCProcessorModule extends SCModule implements ISCProcessorModule {
 
+	private static final String PROCESSOR = "PROCESSOR";
+	private static final String FILTER = "FILTER";
+	private static final String INI = "INI";
+	private static final String RUN = "RUN";
+	private static final String END = "END";
+
+	private <M extends IModule> void traceModule(M module, String op, String kind) {
+		System.out.println("SC MOD" + op + ": " + module.getModuleType() + " " + kind);
+	}
+
 	protected void initFilterModules(
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IFilterModule module : getFilterModules()) {
+			if (DEBUG_MODULE)
+				traceModule(module, INI, FILTER);
 			ISCFilterModule scModule = (ISCFilterModule) module;
 			scModule.initModule(repository, monitor);
 		}
@@ -38,6 +50,8 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IProcessorModule module : getProcessorModules()) {
+			if (DEBUG_MODULE)
+				traceModule(module, INI, PROCESSOR);
 			ISCProcessorModule scModule = (ISCProcessorModule) module;
 			scModule.initModule(element, repository, monitor);
 		}
@@ -48,6 +62,8 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IFilterModule module : getFilterModules()) {
+			if (DEBUG_MODULE)
+				traceModule(module, RUN, FILTER);
 			ISCFilterModule scModule = (ISCFilterModule) module;
 			if (scModule.accept(element, repository, monitor))
 				continue;
@@ -62,6 +78,8 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IProcessorModule module : getProcessorModules()) {
+			if (DEBUG_MODULE)
+				traceModule(module, RUN, PROCESSOR);
 			ISCProcessorModule scModule = (ISCProcessorModule) module;
 			scModule.process(element, target, repository, monitor);
 		}
@@ -71,6 +89,8 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IFilterModule module : getFilterModules()) {
+			if (DEBUG_MODULE)
+				traceModule(module, END, FILTER);
 			ISCFilterModule scModule = (ISCFilterModule) module;
 			scModule.endModule(repository, monitor);
 		}
@@ -81,6 +101,8 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IProcessorModule module : getProcessorModules()) {
+			if (DEBUG_MODULE)
+				traceModule(module, END, PROCESSOR);
 			ISCProcessorModule scModule = (ISCProcessorModule) module;
 			scModule.endModule(element, repository, monitor);
 		}

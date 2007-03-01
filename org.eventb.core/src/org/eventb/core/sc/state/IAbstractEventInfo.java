@@ -9,13 +9,13 @@ package org.eventb.core.sc.state;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.tool.state.IStateType;
 
 /**
@@ -64,8 +64,9 @@ public interface IAbstractEventInfo extends ISCState, IConvergenceInfo, Comparab
 	 * 
 	 * @param name the name of the free identifier to look up
 	 * @return the corresponding typed free identifier, or <code>null</code> if none
+	 * @throws CoreException if state is not immutable
 	 */
-	FreeIdentifier getVariable(String name);
+	FreeIdentifier getVariable(String name) throws CoreException;
 	
 	/**
 	 * Returns the array of typed free variables contained in this abstract event info.
@@ -74,91 +75,28 @@ public interface IAbstractEventInfo extends ISCState, IConvergenceInfo, Comparab
 	 * </p>
 	 * 
 	 * @return the array of typed free identifiers contained in this abstract event info
+	 * @throws CoreException if state is not immutable
 	 */
-	List<FreeIdentifier> getVariables();
+	List<FreeIdentifier> getVariables() throws CoreException;
 	
 	/**
 	 * Returns the array of parsed and type-checked predicates corresponding to the guards
 	 * of the corresponding event.
 	 * 
 	 * @return the array of parsed and type-checked predicates corresponding to the guards
+	 * @throws CoreException if state is not immutable
 	 * of the corresponding event
 	 */
-	List<Predicate> getGuards();
+	List<Predicate> getGuards() throws CoreException;
 	
 	/**
 	 * Returns the array of parsed and type-checked assignments corresponding to the actions
 	 * of the corresponding event.
 	 * 
 	 * @return the array of parsed and type-checked assignments corresponding to the actions
+	 * @throws CoreException if state is not immutable
 	 * of the corresponding event
 	 */
-	List<Assignment> getActions();
-	
-	/**
-	 * Returns the event symbol info the event that implicitly refines the event corresponding
-	 * to this abstract event info, or <code>null</code> if the abstract event is not implicitly
-	 * refined.
-	 * <p>
-	 * Implicit refinement refers to refined initialisations and inherited events that are 
-	 * <b>not</b> allowed to have <b>explicit</b> refinement clauses. Hence, they are referred
-	 * to as implicitly refined here. 
-	 * </p>
-	 * <b>Attention:</b>
-	 * Reliable information about refinement relationships can only be detrmined via the 
-	 * refinining, i.e. concrete, event. If <code>hasRefineError()</code> is <code>true</code>,
-	 * the refinement information available in this abstract event info will be inconsistent.
-	 * </p>
-	 * 
-	 * @return the event symbol info the event that implicitly refines the event corresponding
-	 * to this abstract event info, or <code>null</code> if the abstract event is not implicitly
-	 * refined
-	 */
-	IEventSymbolInfo getImplicit();
-	
-	/**
-	 * returns whether the event corresponding to this abstract event info is refined by some event.
-	 * 
-	 * @return whether the event corresponding to this abstract event info is refined by some event
-	 */
-	boolean isRefined();
-	
-	/**
-	 * Returns the event symbol infos that merge refine the abstract event corresponding
-	 * to this abstract event info.
-	 * <p>
-	 * <b>Attention:</b>
-	 * Reliable information about refinement relationships can only be detrmined via the 
-	 * refinining, i.e. concrete, event. If <code>hasRefineError()</code> is <code>true</code>,
-	 * the refinement information available in this abstract event info will be inconsistent.
-	 * </p>
-	 * 
-	 * @return the event symbol infos that merge refine the abstract event corresponding
-	 * to this abstract event info
-	 */
-	List<IEventSymbolInfo> getMergeSymbolInfos();
-	
-	/**
-	 * Returns the event symbol infos that split refine the abstract event corresponding
-	 * to this abstract event info. This should usually be a list with exactly one element.
-	 * See, however, the remark below.
-	 * <p>
-	 * <b>Attention:</b>
-	 * Reliable information about refinement relationships can only be detrmined via the 
-	 * refinining, i.e. concrete, event. If <code>hasRefineError()</code> is <code>true</code>,
-	 * the refinement information available in this abstract event info will be inconsistent.
-	 * </p>
-	 * 
-	 * @return the event symbol infos that merge refine the abstract event corresponding
-	 * to this abstract event info
-	 */
-	List<IEventSymbolInfo> getSplitSymbolInfos();
-	
-	/**
-	 * Returns the refine error of this abstract event info.
-	 * 
-	 * @return the refine error of this abstract event info
-	 */
-	boolean hasRefineError();
+	List<Assignment> getActions() throws CoreException;
 
 }

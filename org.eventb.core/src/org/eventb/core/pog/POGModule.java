@@ -8,7 +8,6 @@
 package org.eventb.core.pog;
 
 import org.eventb.core.tool.IFilterModule;
-import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.tool.Module;
 
@@ -21,23 +20,13 @@ public abstract class POGModule extends Module {
 	@Override
 	protected IFilterModule[] getFilterModules() {
 		IFilterModule[] filterModules = super.getFilterModules();
-		traceModules(filterModules);
 		return filterModules;
 	}
 
 	@Override
 	protected IProcessorModule[] getProcessorModules() {
 		IProcessorModule[] processorModules = super.getProcessorModules();
-		traceModules(processorModules);
 		return processorModules;
-	}
-
-	private <M extends IModule> void traceModules(M[] modules) {
-		if (DEBUG_MODULE) {
-			for (IModule module : modules) {
-				System.out.println("POG ACCESS: " + module.getModuleType());
-			}
-		}
 	}
 
 	public static boolean DEBUG_MODULE = false;

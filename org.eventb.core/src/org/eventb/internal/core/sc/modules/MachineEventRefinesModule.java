@@ -73,7 +73,7 @@ public class MachineEventRefinesModule extends SCProcessorModule {
 	private void createRefinesClause(
 			ISCEvent target, 
 			IEventSymbolInfo symbolInfo, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		
 		IEventRefinesInfo refinesInfo = symbolInfo.getRefinesInfo();
 		
@@ -134,6 +134,7 @@ public class MachineEventRefinesModule extends SCProcessorModule {
 		
 		if (eventRefinesInfo == null)
 			eventRefinesInfo = new EventRefinesInfo(0);
+		eventRefinesInfo.makeImmutable();
 		
 		repository.setState(eventRefinesInfo);
 		

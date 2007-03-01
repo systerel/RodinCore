@@ -186,7 +186,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 
 	private void getGlobalWitnessNames(
 			IAbstractEventInfo abstractEventInfo, 
-			HashSet<String> witnessNames) throws RodinDBException {
+			HashSet<String> witnessNames) throws CoreException {
 		List<Assignment> assignments = abstractEventInfo.getActions();
 		
 		for (Assignment assignment : assignments) {
@@ -216,7 +216,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 
 	private void getLocalWitnessNames(
 			IEventRefinesInfo eventRefinesInfo, 
-			HashSet<String> witnessNames) throws RodinDBException {
+			HashSet<String> witnessNames) throws CoreException {
 		
 		for (IAbstractEventInfo abstractEventInfo : eventRefinesInfo.getAbstractEventInfos()) {
 			

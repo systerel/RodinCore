@@ -19,6 +19,11 @@ import org.rodinp.core.RodinDBException;
  */
 public class CurrentEvent extends ConvergenceInfo implements ICurrentEvent {
 
+	@Override
+	public String toString() {
+		return eventSymbolInfo.getSymbol();
+	}
+
 	private final IEvent event;
 	private final IEventSymbolInfo eventSymbolInfo;
 	private final boolean isInitialisation;
@@ -28,6 +33,7 @@ public class CurrentEvent extends ConvergenceInfo implements ICurrentEvent {
 		this.event = event;
 		this.eventSymbolInfo = eventSymbolInfo;
 		isInitialisation = eventSymbolInfo.getSymbol().equals(IEvent.INITIALISATION);
+		makeImmutable();
 	}
 	
 	/* (non-Javadoc)

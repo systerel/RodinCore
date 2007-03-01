@@ -82,7 +82,7 @@ public class MachineEventInheritedModule extends SCFilterModule {
 			IEvent event,
 			IEventSymbolInfo eventSymbolInfo, 
 			IAbstractEventInfo abstractEventInfo, 
-			List<? extends Formula> formulas) throws RodinDBException {
+			List<? extends Formula> formulas) throws CoreException {
 		
 		boolean ok = true;
 		

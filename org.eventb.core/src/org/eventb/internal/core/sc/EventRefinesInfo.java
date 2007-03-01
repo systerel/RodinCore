@@ -8,6 +8,7 @@
 package org.eventb.internal.core.sc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -24,14 +25,19 @@ import org.eventb.internal.core.tool.state.State;
 public class EventRefinesInfo extends State implements IEventRefinesInfo {
 
 	@Override
-	public void makeImmutable() {
-		super.makeImmutable();
-		abstractInfos.trimToSize();
-		refEvents.trimToSize();
+	public String toString() {
+		return abstractInfos.toString();
 	}
 
-	private final ArrayList<IAbstractEventInfo> abstractInfos;
-	private final ArrayList<IRefinesEvent> refEvents;
+	@Override
+	public void makeImmutable() {
+		super.makeImmutable();
+		abstractInfos = Collections.unmodifiableList(abstractInfos);
+		refEvents = Collections.unmodifiableList(refEvents);
+	}
+
+	private List<IAbstractEventInfo> abstractInfos;
+	private List<IRefinesEvent> refEvents;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
@@ -41,8 +47,9 @@ public class EventRefinesInfo extends State implements IEventRefinesInfo {
 	}
 
 	// TODO do not copy on read; use immutable arrays
-	public List<IAbstractEventInfo> getAbstractEventInfos() {
-		return new ArrayList<IAbstractEventInfo>(abstractInfos);
+	public List<IAbstractEventInfo> getAbstractEventInfos() throws CoreException {
+		assertImmutable();
+		return abstractInfos;
 	}
 
 	public EventRefinesInfo(int size) {
@@ -59,8 +66,9 @@ public class EventRefinesInfo extends State implements IEventRefinesInfo {
 		abstractInfos.add(info);
 	}
 
-	public List<IRefinesEvent> getRefinesClauses() {
-		return new ArrayList<IRefinesEvent>(refEvents);
+	public List<IRefinesEvent> getRefinesClauses() throws CoreException {
+		assertImmutable();
+		return refEvents;
 	}
 
 	public void addRefinesEvent(IRefinesEvent refinesEvent) throws CoreException {

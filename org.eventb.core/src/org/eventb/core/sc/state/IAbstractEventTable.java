@@ -9,6 +9,7 @@ package org.eventb.core.sc.state;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.state.IStateType;
@@ -31,8 +32,9 @@ public interface IAbstractEventTable extends ISCState {
 	 * Returns the array of all abstract event infos for the abstract machine
 	 * 
 	 * @return the array of all abstract event infos
+	 * @throws CoreException if state is not immutable
 	 */
-	List<? extends IAbstractEventInfo> getAbstractEventInfos();
+	List<? extends IAbstractEventInfo> getAbstractEventInfos() throws CoreException;
 	
 	/**
 	 * Returns the abstract event info for the specified label, or <code>null</code> if this
@@ -41,15 +43,17 @@ public interface IAbstractEventTable extends ISCState {
 	 * @param label the label of the abstract event info sought
 	 * @return the abstract event info for the specified label, or <code>null</code> if this
 	 * table does not contain an abstract event info for that label
+	 * @throws CoreException if state is not immutable
 	 */
-	IAbstractEventInfo getAbstractEventInfo(String label);
+	IAbstractEventInfo getAbstractEventInfo(String label) throws CoreException;
 	
 	/**
 	 * Returns whether any of the abstract events has a local variable with the specified name.
 	 * 
 	 * @param name the name to check
 	 * @return whether any of the abstract events has a local variable with the specified name
+	 * @throws CoreException if state is not immutable
 	 */
-	boolean isLocalVariable(String name);
+	boolean isLocalVariable(String name) throws CoreException;
 	
 }

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.state.IContextPointerArray;
@@ -29,6 +30,19 @@ import org.rodinp.core.IInternalElement;
  *
  */
 public class ContextPointerArray extends State implements IContextPointerArray {
+
+	@Override
+	public String toString() {
+		String[] names = new String[contextPointers.length];
+		for (int i=0; i<contextPointers.length; i++) {
+			try {
+				names[i] = contextPointers[i].getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE);
+			} catch (Exception e) {
+			// ignore
+			}
+		}
+		return pointerType + ": " + names;
+	}
 
 	@Override
 	public void makeImmutable() {

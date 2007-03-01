@@ -54,26 +54,17 @@ public abstract class SCModule extends Module implements IModule, IMarkerDisplay
 	@Override
 	protected IFilterModule[] getFilterModules() {
 		IFilterModule[] filterModules = super.getFilterModules();
-		traceModules(filterModules);
 		return filterModules;
 	}
 
 	@Override
 	protected IProcessorModule[] getProcessorModules() {
 		IProcessorModule[] processorModules = super.getProcessorModules();
-		traceModules(processorModules);
 		return processorModules;
 	}
 
-	private <M extends IModule> void traceModules(M[] modules) {
-		if (DEBUG_MODULE) {
-			for (IModule module : modules) {
-				System.out.println("SC ACCESS: " + module.getModuleType());
-			}
-		}
-	}
-
 	public static boolean DEBUG_MODULE = false;
+	
 	public void createProblemMarker(
 			IRodinElement element, 
 			IRodinProblem problem, 

@@ -9,6 +9,7 @@ package org.eventb.core.sc.state;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.sc.SCCore;
@@ -44,14 +45,16 @@ public interface IEventRefinesInfo extends ISCState {
 	 * Returns the infos for the abstract events that are refined by the current event.
 	 * 
 	 * @return the infos for the abstract events that are refined by the current event
+	 * @throws CoreException TODO
 	 */
-	List<IAbstractEventInfo> getAbstractEventInfos();
+	List<IAbstractEventInfo> getAbstractEventInfos() throws CoreException;
 	
 	/**
 	 * Returns the refines clauses of the current event.
 	 * 
 	 * @return the refines clauses of the current event
+	 * @throws CoreException TODO
 	 */
-	List<IRefinesEvent> getRefinesClauses();
+	List<IRefinesEvent> getRefinesClauses() throws CoreException;
 	
 }

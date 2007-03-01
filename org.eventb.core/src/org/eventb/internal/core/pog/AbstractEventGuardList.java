@@ -22,6 +22,11 @@ import org.eventb.internal.core.tool.state.State;
  */
 public class AbstractEventGuardList extends State implements IAbstractEventGuardList {
 
+	@Override
+	public String toString() {
+		return abstractEventGuardTables.toString();
+	}
+
 	private List<IAbstractEventGuardTable> abstractEventGuardTables;
 	
 	private final int refinementType;

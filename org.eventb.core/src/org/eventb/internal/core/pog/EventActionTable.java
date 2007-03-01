@@ -31,6 +31,11 @@ import org.eventb.internal.core.tool.state.State;
  */
 public abstract class EventActionTable extends State implements IEventActionTable {
 	
+	@Override
+	public String toString() {
+		return actions.toString();
+	}
+
 	protected List<ISCAction> actions;
 	protected List<Assignment> assignments;
 	

@@ -19,6 +19,11 @@ import org.eventb.internal.core.tool.state.State;
  */
 public class MachineVariantInfo extends State implements IMachineVariantInfo {
 
+	@Override
+	public String toString() {
+		return varExpression == null ? "null" : varExpression.toString();
+	}
+
 	private final Expression varExpression;
 	
 	private final ISCVariant variant;

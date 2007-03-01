@@ -18,6 +18,11 @@ import org.eventb.internal.core.tool.state.State;
  */
 public class MachineInfo extends State implements IMachineInfo {
 
+	@Override
+	public String toString() {
+		return abstractMachine.getComponentName();
+	}
+
 	private final ISCMachineFile abstractMachine;
 	
 	/* (non-Javadoc)

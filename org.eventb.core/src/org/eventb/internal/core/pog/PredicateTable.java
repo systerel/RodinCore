@@ -26,6 +26,11 @@ import org.rodinp.core.RodinDBException;
 public abstract class PredicateTable<PE extends ISCPredicateElement> 
 extends State implements IPredicateTable<PE> {
 
+	@Override
+	public String toString() {
+		return predicates.toString();
+	}
+
 	protected final List<PE> predicateElements;
 	protected final List<Predicate> predicates;
 

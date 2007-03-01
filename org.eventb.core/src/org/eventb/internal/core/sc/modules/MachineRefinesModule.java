@@ -73,10 +73,14 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 		
+		try {
+		
 		// now we can finish if there is no abstraction
 		
-		if (scMachineFile == null)
+		if (scMachineFile == null) {
+			abstractEventTable.makeImmutable();
 			return;
+		}
 		
 		monitor.subTask(Messages.bind(Messages.progress_MachineRefines));
 		
@@ -94,7 +98,13 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 				repository.getFormulaFactory(), 
 				null);
 		
+		abstractEventTable.makeImmutable();
+		
 		monitor.worked(1);
+		
+		} finally {
+			assert abstractEventTable.isImmutable();
+		}
 		
 	}
 	
@@ -146,8 +156,6 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			fetchSCEvent(event, factory, monitor);
 			
 		}
-		
-		abstractEventTable.makeImmutable();
 		
 	}
 

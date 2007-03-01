@@ -32,7 +32,6 @@ import org.eventb.internal.core.sc.symbolTable.VariantSymbolInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -117,12 +116,13 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 			ISCMachineFile target, 
 			IVariant variant, 
 			Expression expression,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		
 		if (expression == null)
 			return;
 		
 		variantInfo.setExpression(expression);
+		variantInfo.makeImmutable();
 		
 		ISCVariant scVariant = target.getSCVariant(VARIANT_NAME_PREFIX);
 		scVariant.create(null, monitor);

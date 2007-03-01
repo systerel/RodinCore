@@ -21,6 +21,11 @@ import org.eventb.internal.core.tool.state.State;
  */
 public class ContextTable extends State implements IContextTable {
 
+	@Override
+	public String toString() {
+		return contexts.keySet().toString();
+	}
+
 	private final Hashtable<String, ISCContext> contexts;
 	
 	public ContextTable(int size) {
@@ -57,7 +62,6 @@ public class ContextTable extends State implements IContextTable {
 	}
 
 	public int size() {
-		// TODO Auto-generated method stub
 		return contexts.size();
 	}
 

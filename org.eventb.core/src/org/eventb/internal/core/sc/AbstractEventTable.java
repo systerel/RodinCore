@@ -25,9 +25,16 @@ import org.eventb.internal.core.tool.state.State;
 public class AbstractEventTable extends State implements IAbstractEventTable {
 	
 	@Override
+	public String toString() {
+		return labels.toString();
+	}
+
+	@Override
 	public void makeImmutable() {
 		super.makeImmutable();
 		table = Collections.unmodifiableList(table);
+		for (AbstractEventInfo info : table)
+			info.makeImmutable();
 	}
 
 	private List<AbstractEventInfo> table;
@@ -37,7 +44,7 @@ public class AbstractEventTable extends State implements IAbstractEventTable {
 	public AbstractEventTable(int size) {
 		table = new ArrayList<AbstractEventInfo>(size);
 		labels = new ArrayList<String>(size);
-		localVariables = new HashSet<String>(size * 6 + 1);
+		localVariables = new HashSet<String>(31);
 	}
 
 	public IStateType<?> getStateType() {
@@ -58,17 +65,25 @@ public class AbstractEventTable extends State implements IAbstractEventTable {
 		
 	}
 
-	public AbstractEventInfo getAbstractEventInfo(String label) {
-		int index = labels.indexOf(label);
+	public AbstractEventInfo getAbstractEventInfo(String label) throws CoreException {
+		assertImmutable();
+		int index = getIndexForLabel(label);
 		
 		return index == -1 ? null : table.get(index);
 	}
 
-	public boolean isLocalVariable(String name) {
+	public int getIndexForLabel(String label) {
+		int index = labels.indexOf(label);
+		return index;
+	}
+
+	public boolean isLocalVariable(String name) throws CoreException {
+		assertImmutable();
 		return localVariables.contains(name);
 	}
 	
-	public List<AbstractEventInfo> getAbstractEventInfos() {
+	public List<AbstractEventInfo> getAbstractEventInfos() throws CoreException {
+		assertImmutable();
 		return table;
 	}
 

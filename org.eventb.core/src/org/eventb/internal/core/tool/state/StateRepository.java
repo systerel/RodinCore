@@ -58,9 +58,11 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 	public I getState(IStateType<? extends I> stateType) throws CoreException {
 		if (exception != null)
 			throw exception;
-		if (DEBUG)
-			System.out.print("GET STATE: " + stateType);
 		I state = repository.get(stateType);
+		if (DEBUG)
+			System.out.print("GET STATE: " + stateType + 
+					((state == null) ? " NONE" : 
+						(state.isImmutable() ? " IMMUTABLE" : " MUTABLE")));
 		if (state == null) {
 			if (DEBUG)
 				System.out.println(" FAILED");
@@ -103,7 +105,7 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 
 	public void setState(I state) throws CoreException {
 		if (DEBUG)
-			System.out.println("SET STATE: " + state.getStateType() + " [" + state.getClass().getName() + "]");
+			System.out.println("SET STATE: " + state.getStateType());
 		if (exception != null)
 			throw exception;
 		if (state == null)
