@@ -203,6 +203,14 @@
          <target
                id="org.eventb.ui.editors.context"/>
       </page>
+<!--      <page
+            class="org.eventb.internal.ui.eventbeditor.editpage.EditPage"
+            id="org.eventb.ui.Edit"
+            name="%editorPage.edit"
+            priority="9">
+         <target id="org.eventb.ui.editors.machine"/>
+      </page>
+      -->
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -1056,24 +1064,28 @@
       <propertySections contributorId="org.eventb.ui.editors.machine">
          <propertySection
                class="org.eventb.internal.ui.propertiesView.LabelSection"
+               enablesFor="1"
                id="org.eventb.ui.labelSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.ILabeledElement"/>
          </propertySection>
          <propertySection
                class="org.eventb.internal.ui.propertiesView.IdentifierSection"
+               enablesFor="1"
                id="org.eventb.ui.IdentifierSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IIdentifierElement"/>
          </propertySection>
          <propertySection
                class="org.eventb.internal.ui.propertiesView.RefinesEventSection"
+               enablesFor="1"
                id="org.eventb.ui.refinesEventSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IRefinesEvent"/>
          </propertySection>
          <propertySection
                class="org.eventb.internal.ui.propertiesView.ExpressionSection"
+               enablesFor="1"
                id="org.eventb.ui.expressionSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IExpressionElement"/>
@@ -1081,6 +1093,7 @@
          <propertySection
                afterSection="org.eventb.ui.labelSection"
                class="org.eventb.internal.ui.propertiesView.CommentSection"
+               enablesFor="1"
                id="org.eventb.ui.commentSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.ICommentedElement"/>
@@ -1088,6 +1101,7 @@
          <propertySection
                afterSection="org.eventb.ui.labelSection"
                class="org.eventb.internal.ui.propertiesView.PredicateSection"
+               enablesFor="1"
                id="org.eventb.ui.predicateSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IPredicateElement"/>
@@ -1095,6 +1109,7 @@
          <propertySection
                afterSection="org.eventb.ui.labelSection"
                class="org.eventb.internal.ui.propertiesView.InheritanceSection"
+               enablesFor="1"
                id="org.eventb.ui.inheritanceSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IEvent"/>
@@ -1102,18 +1117,21 @@
          <propertySection
                afterSection="org.eventb.ui.inheritanceSection"
                class="org.eventb.internal.ui.propertiesView.ConvergenceSection"
+               enablesFor="1"
                id="org.eventb.ui.convergenceSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IEvent"/>
          </propertySection>
          <propertySection
                class="org.eventb.internal.ui.propertiesView.SeesContextSection"
+               enablesFor="1"
                id="org.eventb.ui.seesContextSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.ISeesContext"/>
          </propertySection>
          <propertySection
                class="org.eventb.internal.ui.propertiesView.RefinesMachineSection"
+               enablesFor="1"
                id="org.eventb.ui.refinesMachineSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IRefinesMachine"/>
@@ -1121,6 +1139,7 @@
          <propertySection
                afterSection="org.eventb.ui.labelSection"
                class="org.eventb.internal.ui.propertiesView.AssignmentSection"
+               enablesFor="1"
                id="org.eventb.ui.assignmentSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IAssignmentElement"/>
@@ -1129,6 +1148,7 @@
       <propertySections contributorId="org.eventb.ui.editors.context">
          <propertySection
                class="org.eventb.internal.ui.propertiesView.LabelSection"
+               enablesFor="1"
                id="org.eventb.ui.labelSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.ILabeledElement"/>
@@ -1136,18 +1156,21 @@
          <propertySection
                afterSection="org.eventb.ui.labelSection"
                class="org.eventb.internal.ui.propertiesView.PredicateSection"
+               enablesFor="1"
                id="org.eventb.ui.predicateSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IPredicateElement"/>
          </propertySection>
          <propertySection
                class="org.eventb.internal.ui.propertiesView.IdentifierSection"
+               enablesFor="1"
                id="org.eventb.ui.identifierSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IIdentifierElement"/>
          </propertySection>
          <propertySection
                class="org.eventb.internal.ui.propertiesView.ExtendsContextSection"
+               enablesFor="1"
                id="org.eventb.ui.extendsContextSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IExtendsContext"/>
@@ -1155,6 +1178,7 @@
          <propertySection
                afterSection="org.eventb.ui.predicateSection"
                class="org.eventb.internal.ui.propertiesView.CommentSection"
+               enablesFor="1"
                id="org.eventb.ui.commentSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.ICommentedElement"/>
@@ -1300,62 +1324,88 @@
             priority="5">
          <target id="org.eventb.ui.editors.machine"/>
       </section>
+      <section
+            class="org.eventb.internal.ui.eventbeditor.editpage.EventSectionComposite"
+            id="org.event.ui.sections.event"
+            name="Events"
+            priority="6">
+         <target id="org.eventb.ui.editors.machine"/>
+      </section>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
       <column
             class="org.eventb.internal.ui.eventbeditor.editpage.IdentifierEditComposite"
             horizontalExpand="false"
-            id="org.eventb.ui.variable.identifier"
+            id="org.eventb.ui.identifier"
             name="Identifier">
          <type id="org.eventb.core.variable"/>
       </column>
       <column
             class="org.eventb.internal.ui.eventbeditor.editpage.LabelEditComposite"
             horizontalExpand="false"
-            id="org.eventb.ui.invariant.label"
+            id="org.eventb.ui.label"
             name="Label"
             postfix="::">
          <type id="org.eventb.core.invariant"/>
          <type id="org.eventb.core.theorem"/>
+         <type id="org.eventb.core.event"/>
+         <type id="org.eventb.core.guard"/>
+         <type id="org.eventb.core.action"/>
       </column>
       <column
             class="org.eventb.internal.ui.eventbeditor.editpage.PredicateEditComposite"
             horizontalExpand="true"
-            id="org.eventb.ui.invariant.predicate"
+            id="org.eventb.ui.predicate"
             name="Predicate">
          <type id="org.eventb.core.invariant"/>
          <type id="org.eventb.core.theorem"/>
+         <type id="org.eventb.core.guard"/>
+      </column>
+      <column
+            class="org.eventb.internal.ui.eventbeditor.editpage.InheritedEditComposite"
+            horizontalExpand="false"
+            id="org.eventb.ui.inherited"
+            name="Inherited">
+         <type id="org.eventb.core.event"/>
+      </column>
+      <column
+            class="org.eventb.internal.ui.eventbeditor.editpage.ConvergenceEditComposite"
+            horizontalExpand="false"
+            id="org.eventb.ui.convergence"
+            name="Convergence">
+         <type id="org.eventb.core.event"/>
+      </column>
+      <column
+            class="org.eventb.internal.ui.eventbeditor.editpage.AssignmentEditComposite"
+            horizontalExpand="true"
+            id="org.eventb.ui.assignment"
+            name="Assignment">
+         <type id="org.eventb.core.action"/>
+      </column>
+      <column
+            class="org.eventb.internal.ui.eventbeditor.editpage.RefinesEventEditComposite"
+            horizontalExpand="false"
+            id="org.eventb.ui.refinesevent"
+            name="Refines Event">
+         <type id="org.eventb.core.refinesEvent"/>
       </column>
       <column
             class="org.eventb.internal.ui.eventbeditor.editpage.CommentEditComposite"
             horizontalExpand="true"
-            id="org.eventb.ui.invariant.comment"
+            id="org.eventb.ui.comment"
             name="Comment"
             prefix="//">
          <type id="org.eventb.core.variable"/>
          <type id="org.eventb.core.invariant"/>
          <type id="org.eventb.core.theorem"/>
+         <type id="org.eventb.core.event"/>
+         <type id="org.eventb.core.guard"/>
+         <type id="org.eventb.core.action"/>
       </column>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
-      <action
-            class="org.eventb.internal.ui.eventbeditor.editpage.Add"
-            icon="icons/full/ctool16/add.gif"
-            id="org.eventb.ui.variable.add"
-            name="Add"
-            tooltip="Add variable at this position">
-         <type id="org.eventb.core.variable"/>
-      </action>
-      <action
-            class="org.eventb.internal.ui.eventbeditor.editpage.Remove"
-            icon="icons/full/ctool16/remove.gif"
-            id="org.eventb.ui.variable.remove"
-            name="Remove"
-            tooltip="Remove this variable">
-         <type id="org.eventb.core.variable"/>
-      </action>
       <action
             class="org.eventb.internal.ui.eventbeditor.editpage.Up"
             icon="icons/applied.gif"
