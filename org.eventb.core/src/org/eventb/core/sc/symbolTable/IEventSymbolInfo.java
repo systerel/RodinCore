@@ -11,6 +11,9 @@ import org.eventb.core.sc.state.IEventRefinesInfo;
 
 /**
  * Symbol info for (concrete) events.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

@@ -10,6 +10,9 @@ package org.eventb.core.sc.symbolTable;
 
 /**
  * Marker interface for action labels.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

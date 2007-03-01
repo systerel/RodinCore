@@ -18,6 +18,9 @@ import org.eventb.core.tool.state.IStateType;
  * The static checker protocol does not permit to pass the current event as
  * a parameter to filter modules {@link ISCFilterModule} for elements contained in an event.
  * This state component can be used to access the current event instead.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

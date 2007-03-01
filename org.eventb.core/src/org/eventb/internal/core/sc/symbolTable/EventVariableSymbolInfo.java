@@ -10,6 +10,7 @@ package org.eventb.internal.core.sc.symbolTable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCEvent;
+import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCVariable;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -29,17 +30,18 @@ public class EventVariableSymbolInfo extends VariableSymbolInfo {
 		super(symbol, false, element, attribute, component);
 	}
 	
-	public void createSCElement(
+	public ISCIdentifierElement createSCElement(
 			IInternalParent parent, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		if (parent == null)
-			return;
+			return null;
 		
 		ISCVariable variable = ((ISCEvent) parent).getSCVariable(getSymbol());
 		variable.create(null, monitor);
 		variable.setType(getType(), null);
 		variable.setSource(getSourceElement(), monitor);
+		return variable;
 	}
 
 	public boolean isLocal() {

@@ -12,7 +12,9 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * <code>IVariableSymbolInfo</code> is an {@link org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo} that
  * corresponds to an Event-B variable.
-
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * @author Stefan Hallerstede
  *
  */
@@ -33,10 +35,10 @@ public interface IVariableSymbolInfo extends IIdentifierSymbolInfo {
 	boolean isForbidden();
 	
 	/**
-	 * Marks the variable as preserved. This method can be called even
+	 * Marks the variable as concrete. This method can be called even
 	 * when the symbol info is immutable.
 	 */
-	public void setPreserved();
+	public void setConcrete();
 	
 	/**
 	 * Returns whether this is a variable of the current machine.

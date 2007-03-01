@@ -56,6 +56,8 @@ public abstract class SymbolTable<I extends ISymbolInfo> extends State implement
 		tableValues.add(symbolInfo);
 	}
 
+	// TODO clean this up; an iterator should iterate over all values, i.e., 
+	// including the symbols in stacked symbol tables, or the interface should be changed
 	public Iterator<I> iterator() {
 		return tableValues.iterator();
 	}
@@ -77,7 +79,6 @@ public abstract class SymbolTable<I extends ISymbolInfo> extends State implement
 	 */
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return table.toString();
 	}
 	

@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ISCIdentifierElement;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IAttributeType;
@@ -29,7 +30,8 @@ public class AbstractCarrierSetSymbolInfo extends CarrierSetSymbolInfo {
 		super(symbol, true, element, attribute, component);
 	}
 
-	public void createSCElement(IInternalParent parent, IProgressMonitor monitor) throws CoreException {
+	public ISCIdentifierElement createSCElement(
+			IInternalParent parent, IProgressMonitor monitor) throws CoreException {
 		throw Util.newCoreException(Messages.symtab_cannotCreateAbstractCarrierSet);
 	}
 

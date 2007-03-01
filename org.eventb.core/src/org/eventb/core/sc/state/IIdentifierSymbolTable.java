@@ -19,6 +19,9 @@ import org.eventb.core.tool.state.IStateType;
 /**
  * State component for identifiers declared in a context or a machine, or in 
  * and abstractions and seen contexts.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

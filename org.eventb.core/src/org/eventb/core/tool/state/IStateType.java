@@ -9,6 +9,9 @@ package org.eventb.core.tool.state;
 
 /**
  * @author Stefan Hallerstede
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  *
  */
 public interface IStateType<T extends IState> {

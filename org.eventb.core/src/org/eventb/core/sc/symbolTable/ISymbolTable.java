@@ -8,8 +8,19 @@
 package org.eventb.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
+import org.eventb.core.sc.state.ILabelSymbolTable;
 
 /**
+ * Symbol table template used in various forms in the static checker.
+ * 
+ * @see ILabelSymbolTable
+ * @see IIdentifierSymbolTable
+ * 
+ *<p>
+ * This interface is not intended to be implemented by clients.
+ *</p>
+ * 
  * @author Stefan Hallerstede
  *
  */

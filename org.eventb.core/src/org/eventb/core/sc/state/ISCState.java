@@ -11,7 +11,10 @@ import org.eventb.core.tool.state.IState;
 
 /**
  * All static checker state components must inherit from this interface.
- * 
+ * <p>
+ * Clients that need to contribute to the SC state repository {@link ISCStateRepository}
+ * must implement this interface for all contributed state components.
+ * </p>
  * @author Stefan Hallerstede
  *
  */

@@ -9,15 +9,20 @@ package org.eventb.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.IMarkerDisplay;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.rodinp.core.IInternalParent;
 
 /**
  * <code>IIdentifierSymbolInfo</code> is a symbol table symbol info for identifiers, 
  * i.e. carrier sets, constants, and variables. It stores the type of an identifier. 
  * The name of the identifier is the key of this symbol info.
- * 
+ * <p>
+ * Clients that need to contribute symbols to the identfier symbol table, 
+ * {@link IIdentifierSymbolTable}, must implement this interface.
+ * </p>
  * @author Stefan Hallerstede
  *
  */
@@ -61,15 +66,16 @@ public interface IIdentifierSymbolInfo extends ISymbolInfo {
 	void makeVisible() throws CoreException;
 	
 	/**
-	 * Create a statically checked Element for this symbol with the specified parent.
+	 * Create a statically checked identifier element for this symbol with the specified parent.
 	 * 
 	 * @param parent the parent of the element to create
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
+	 * @return the created statically checked identifier element
 	 * @throws CoreException if there was a problem creating the element
 	 */
-	void createSCElement(IInternalParent parent, IProgressMonitor monitor) throws CoreException;
+	ISCIdentifierElement createSCElement(IInternalParent parent, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Attaches an appropriate error message to the source element if this identifier 

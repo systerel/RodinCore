@@ -13,6 +13,9 @@ import org.eventb.core.tool.state.IStateType;
 
 /**
  * State component to store label elements of a machine.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

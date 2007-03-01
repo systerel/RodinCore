@@ -13,6 +13,9 @@ package org.eventb.core.sc.symbolTable;
  * <code>IConstantSymbolInfo</code> is an 
  * {@link org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo} that
  * corresponds to an Event-B constant.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

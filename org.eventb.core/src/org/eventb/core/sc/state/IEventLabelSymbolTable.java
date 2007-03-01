@@ -14,6 +14,9 @@ import org.eventb.core.tool.state.IStateType;
 /**
  * This state component represents a label space for an event to keep, e.g.,
  * guard labels and action labels.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

@@ -12,6 +12,9 @@ import org.eventb.core.sc.symbolTable.ISymbolTable;
 
 /**
  * Common protocol for symbol tables of labeled elements.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @see IContextLabelSymbolTable
  * @see IMachineLabelSymbolTable

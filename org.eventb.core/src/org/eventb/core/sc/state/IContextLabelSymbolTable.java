@@ -14,6 +14,9 @@ import org.eventb.core.tool.state.IStateType;
 /**
  * State components for keeping labeled elements of contexts,
  * i.e. axioms and theorems.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

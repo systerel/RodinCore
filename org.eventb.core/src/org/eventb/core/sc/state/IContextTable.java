@@ -16,6 +16,9 @@ import org.eventb.core.tool.state.IStateType;
 /**
  * State component that contains the closure of all contexts, extended or seen.
  * This state component contains all contexts that need to be there. 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

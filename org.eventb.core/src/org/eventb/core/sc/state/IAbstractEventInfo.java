@@ -25,6 +25,9 @@ import org.eventb.core.tool.state.IStateType;
  * In comparisons only event labels are considered, i.e., two 
  * abstract event infos are considered equal if their labels are equal.
  * </P>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @see IAbstractEventTable
  * 

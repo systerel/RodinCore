@@ -16,6 +16,9 @@ import org.eventb.core.tool.state.IStateType;
 /**
  * Parsed formulas cannot be passed as parameters to filter modules.
  * They are accessible by means of this state component instead.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

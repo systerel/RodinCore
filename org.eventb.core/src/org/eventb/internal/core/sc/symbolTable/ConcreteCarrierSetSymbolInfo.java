@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCIdentifierElement;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -29,13 +30,14 @@ public class ConcreteCarrierSetSymbolInfo extends CarrierSetSymbolInfo {
 		super(symbol, false, element, attribute, component);
 	}
 	
-	public void createSCElement(
+	public ISCIdentifierElement createSCElement(
 			IInternalParent parent, 
 			IProgressMonitor monitor) throws CoreException {
 		ISCCarrierSet set = ((ISCContextFile) parent).getSCCarrierSet(getSymbol());
 		set.create(null, monitor);
 		set.setType(getType(), null);
 		set.setSource(getReferenceElement(), monitor);
+		return set;
 	}
 
 

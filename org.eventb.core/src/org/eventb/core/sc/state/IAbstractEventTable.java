@@ -16,6 +16,9 @@ import org.eventb.core.tool.state.IStateType;
 /**
  * State component for accessing information about events of the abstract machine.
  * 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * @author Stefan Hallerstede
  *
  */

@@ -11,6 +11,9 @@ import org.eventb.core.tool.state.IStateRepository;
 
 /**
  * The state repository for the static checker.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

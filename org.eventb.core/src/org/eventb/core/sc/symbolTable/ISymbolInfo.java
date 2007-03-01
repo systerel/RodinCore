@@ -8,12 +8,15 @@
 package org.eventb.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.ITraceableElement;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 
 /**
+ * Basic class for symbols to be stored in a symbol table, {@link ISymbolTable}.
+ * 
  * @author Stefan Hallerstede
  *
  */
@@ -40,9 +43,21 @@ public interface ISymbolInfo extends Comparable {
 	 */
 	IInternalElement getReferenceElement();
 	
+	// TODO unify reference and source element; too complicated and unnecessary
 	/**
 	 * Returns the source element. By default this returns the reference element unless
 	 * the source element is set explicity with <code>setSourceElement</code>.
+	 * <p>
+	 * The use of this value is different from <code>getReferenceElement()</code>:
+	 * <li>
+	 * <ul><code>getSourceElement()</code> yields tracing information for source elements as used 
+	 * for {@link ITraceableElement}.</ul>
+	 * <ul><code>getReferenceElement()</code> yields an element to which an error message concerning
+	 * the element represented by this symbol.
+	 * </li>
+	 * </p>
+	 * 
+	 * @see ITraceableElement
 	 * 
 	 * @return the source element of this symbol info
 	 */

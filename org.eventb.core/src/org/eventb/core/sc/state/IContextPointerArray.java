@@ -23,6 +23,9 @@ import org.rodinp.core.IInternalElement;
  * or extends clauses in a context. Conflicts are caused whenever an identifier,
  * carrier set or constant, is declared in two <b>different</b> contexts that
  * are (transitively) referenced by a context or machine.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

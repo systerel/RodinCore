@@ -11,6 +11,10 @@ import org.eventb.core.tool.state.IState;
 
 /**
  * This class is used to mark components of the proof obligation generator state.
+ * <p>
+ * Clients that need to contribute to the POG state repository {@link IPOGStateRepository}
+ * must implement this interface for all contributed state components.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

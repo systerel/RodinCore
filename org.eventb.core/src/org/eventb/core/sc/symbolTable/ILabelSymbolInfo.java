@@ -7,14 +7,22 @@
  *******************************************************************************/
 package org.eventb.core.sc.symbolTable;
 
+import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
+import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 
 
 
 /**
  * Common protocol for labeled elements stored in a label symbol table.
+ * <p>
+ * Clients that need to contribute symbols to a label symbol table, 
+ * {@link ILabelSymbolTable}, must implement this interface.
+ * </p>
  * 
  * @see ILabelSymbolTable
+ * @see IMachineLabelSymbolTable
+ * @see IEventLabelSymbolTable
  * 
  * @author Stefan Hallerstede
  *

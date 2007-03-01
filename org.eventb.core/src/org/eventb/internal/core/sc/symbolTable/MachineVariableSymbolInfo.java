@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCVariable;
 import org.rodinp.core.IAttributeType;
@@ -30,12 +31,12 @@ public abstract class MachineVariableSymbolInfo extends VariableSymbolInfo {
 		super(symbol, imported, element, attribute, component);
 	}
 	
-	public void createSCElement(
+	public ISCIdentifierElement createSCElement(
 			IInternalParent parent, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		if (parent == null)
-			return;
+			return null;
 		
 		ISCVariable variable = ((ISCMachineFile) parent).getSCVariable(getSymbol());
 		variable.create(null, monitor);
@@ -43,6 +44,7 @@ public abstract class MachineVariableSymbolInfo extends VariableSymbolInfo {
 		variable.setForbidden(isForbidden() || !isConcrete(), monitor);
 		variable.setPreserved(isConcrete() && !isFresh(), monitor);
 		variable.setSource(getSourceElement(), monitor);
+		return variable;
 	}
 
 	public boolean isLocal() {

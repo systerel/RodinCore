@@ -12,6 +12,9 @@ import org.eventb.core.IConvergenceElement;
 
 /**
  * A convergence info provides information about the convergence of an event.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @see IAbstractEventInfo
  * @see ICurrentEvent

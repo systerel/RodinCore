@@ -59,7 +59,7 @@ public abstract class VariableSymbolInfo
 		return preserved;
 	}
 
-	public void setPreserved() {
+	public void setConcrete() {
 		this.preserved = true;
 	}
 

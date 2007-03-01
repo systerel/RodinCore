@@ -69,7 +69,7 @@ public class MachineVariableModule extends IdentifierModule {
 		try {
 			
 			identifierSymbolTable.putSymbolInfo(newSymbolInfo);
-			((IVariableSymbolInfo) newSymbolInfo).setPreserved();
+			((IVariableSymbolInfo) newSymbolInfo).setConcrete();
 			((IVariableSymbolInfo) newSymbolInfo).setFresh();
 			
 		} catch (CoreException e) {
@@ -79,7 +79,7 @@ public class MachineVariableModule extends IdentifierModule {
 			
 			if (symbolInfo instanceof IVariableSymbolInfo) {
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-				variableSymbolInfo.setPreserved();
+				variableSymbolInfo.setConcrete();
 				variableSymbolInfo.setSourceElement(element);
 				return true;
 			}

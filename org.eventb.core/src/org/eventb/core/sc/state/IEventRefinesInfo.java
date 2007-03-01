@@ -21,6 +21,9 @@ import org.eventb.core.tool.state.IStateType;
  * the current event is implicitly refined, e.g., it is inherited or
  * an initialisation in a refined machine. In that case <code>getAbstractEventInfos()</code>
  * returns a list with one element.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *
