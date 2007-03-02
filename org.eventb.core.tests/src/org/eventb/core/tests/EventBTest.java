@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
+import java.util.ArrayList;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
@@ -22,6 +25,7 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
+import org.eventb.core.ITraceableElement;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
@@ -30,6 +34,9 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -308,6 +315,59 @@ public abstract class EventBTest extends BuilderTest {
 		assn.typeCheck(environment);
 		assertTrue(assn.isTypeChecked());
 		return assn.toStringWithTypes();
+	}
+
+	public ArrayList<IRodinFile> files;
+	
+	@Override
+	protected void runBuilder() throws CoreException {
+		super.runBuilder();
+		checkSources();
+		files = new ArrayList<IRodinFile>(); // forget
+	}
+
+	private void checkSources() throws RodinDBException {
+		for (IRodinFile file : files) {
+			if (file.exists())
+				checkSources(file);
+		}
+	}
+
+	private void checkSources(IRodinElement element) throws RodinDBException {
+		if (element instanceof ITraceableElement) {
+			IRodinElement sourceElement = ((ITraceableElement) element).getSource();
+			
+			assertTrue("source reference must be in unchecked file", 
+					sourceElement.getOpenable() instanceof IContextFile ||
+					sourceElement.getOpenable() instanceof IMachineFile);
+		}
+		if (element instanceof IInternalParent) {
+		
+			IInternalParent parent = (IInternalParent) element;
+			
+			IRodinElement[] elements = parent.getChildren();
+			
+			for(IRodinElement child : elements)
+				checkSources(child);
+			
+		}
+	}
+
+	protected void addFile(IRodinFile file) {
+		if (!files.contains(file))
+			files.add(file);
+	}
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		files = new ArrayList<IRodinFile>();
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		files = null;
+		super.tearDown();
 	}
 
 }

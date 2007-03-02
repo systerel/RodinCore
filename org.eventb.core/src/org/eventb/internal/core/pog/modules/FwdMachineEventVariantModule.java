@@ -23,13 +23,12 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGPredicate;
+import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IMachineVariantInfo;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.util.POGPredicate;
-import org.eventb.core.pog.util.POGSource;
-import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -79,11 +78,12 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		boolean isIntVariant = varExpression.getType().equals(factory.makeIntegerType());
 		Predicate varPredicate = getVarPredicate(nextVarExpression, varExpression, isIntVariant);
 		
-		POGSource[] sources = sources(
-				new POGSource(IPOSource.DEFAULT_ROLE, machineVariantInfo.getVariant()),
-				new POGSource(IPOSource.DEFAULT_ROLE, concreteEvent));
+		IRodinElement variantSource = machineVariantInfo.getVariant().getSource();
+		IPOGSource[] sources = sources(
+				makeSource(IPOSource.DEFAULT_ROLE, variantSource),
+				makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource()));
 		
-		ArrayList<POGPredicate> hyp =  makeActionHypothesis(varPredicate);
+		ArrayList<IPOGPredicate> hyp =  makeActionHypothesis(varPredicate);
 		
 		createPO(
 				target, 
@@ -91,7 +91,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 				"Variant of event", 
 				eventHypothesisManager.getFullHypothesis(), 
 				hyp, 
-				new POGTraceablePredicate(varPredicate, machineVariantInfo.getVariant()), 
+				makePredicate(varPredicate, variantSource), 
 				sources, 
 				emptyHints, 
 				monitor);
@@ -109,7 +109,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 					"Natural number variant of event", 
 					eventHypothesisManager.getFullHypothesis(), 
 					hyp, 
-					new POGTraceablePredicate(natPredicate, machineVariantInfo.getVariant()), 
+					makePredicate(natPredicate, variantSource), 
 					sources, 
 					emptyHints, 
 					monitor);

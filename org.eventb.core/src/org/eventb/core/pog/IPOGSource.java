@@ -5,30 +5,23 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.pog.util;
+package org.eventb.core.pog;
 
-import org.eventb.core.ITraceableElement;
+import org.rodinp.core.IRodinElement;
 
 /**
+ * Common protocol for source elements associated with proof obligations.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p> 
+ * 
  * @author Stefan Hallerstede
  *
  */
-public class POGSource {
+public interface IPOGSource {
 	
-	private final String key;
-	private final ITraceableElement source;
+	public String getRole();
 	
-	public POGSource(String key, ITraceableElement source) {
-		this.key = key;
-		this.source = source;
-	}
-	
-	public String getRoleKey() {
-		return key;
-	}
-	
-	public ITraceableElement getSource() {
-		return source;
-	}
+	public IRodinElement getSource();
 
 }

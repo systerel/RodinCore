@@ -15,10 +15,8 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.util.POGHint;
-import org.eventb.core.pog.util.POGIntervalSelectionHint;
-import org.eventb.core.pog.util.POGSource;
-import org.eventb.core.pog.util.POGTraceablePredicate;
+import org.eventb.core.pog.IPOGHint;
+import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
@@ -36,18 +34,17 @@ extends PredicateModule<PE> {
 			IProgressMonitor monitor) throws CoreException {
 		if(!goalIsTrivial(predicate)) {
 			IPOPredicateSet hypothesis = hypothesisManager.makeHypothesis(predicateElement);
+			IRodinElement predicateSource = ((ITraceableElement) predicateElement).getSource();
 			createPO(
 					target, 
 					getProofObligationName(elementLabel), 
 					getProofObligationDescription(),
 					hypothesis,
 					emptyPredicates,
-					new POGTraceablePredicate(predicate, predicateElement),
-					sources(new POGSource(
-							IPOSource.DEFAULT_ROLE, 
-							(ITraceableElement) predicateElement)),
-					new POGHint[] {
-						new POGIntervalSelectionHint(
+					makePredicate(predicate, predicateSource),
+					sources(makeSource(IPOSource.DEFAULT_ROLE, predicateSource)),
+					new IPOGHint[] {
+						makeIntervalSelectionHint(
 								hypothesisManager.getRootHypothesis(), 
 								hypothesis)
 					},

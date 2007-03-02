@@ -114,6 +114,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		ISCRefinesMachine scRefinesMachine = target.getSCRefinesClause(REFINES_NAME);
 		scRefinesMachine.create(null, monitor);
 		scRefinesMachine.setAbstractSCMachine(scMachineFile, null);
+		scRefinesMachine.setSource(refinesMachine, null);
 	}
 	
 	/**

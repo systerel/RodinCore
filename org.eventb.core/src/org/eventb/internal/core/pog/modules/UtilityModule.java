@@ -18,10 +18,10 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.pog.IPOGHint;
+import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.util.POGHint;
-import org.eventb.core.pog.util.POGPredicate;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -32,8 +32,8 @@ public abstract class UtilityModule extends POGProcessorModule {
 	
 	public static boolean DEBUG_TRIVIAL = false;
 
-	protected static final List<POGPredicate> emptyPredicates = new ArrayList<POGPredicate>(0);
-	protected static final POGHint[] emptyHints = new POGHint[0];
+	protected static final List<IPOGPredicate> emptyPredicates = new ArrayList<IPOGPredicate>(0);
+	protected static final IPOGHint[] emptyHints = new IPOGHint[0];
 	protected Predicate btrue;
 	protected FormulaFactory factory;
 	

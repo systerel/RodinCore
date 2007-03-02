@@ -21,14 +21,13 @@ import org.eventb.core.ISCGuard;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGPredicate;
+import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.util.POGPredicate;
-import org.eventb.core.pog.util.POGSource;
-import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -143,18 +142,14 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 		
 		List<ISCEvent> absEvents = abstractEventGuardList.getAbstractEvents();
 		
-		List<POGSource> sourceList = new ArrayList<POGSource>(absEvents.size() + 1);
+		List<IPOGSource> sourceList = new ArrayList<IPOGSource>(absEvents.size() + 1);
 		for (ISCEvent absEvent : absEvents)
-			sourceList.add(new POGSource(IPOSource.ABSTRACT_ROLE, absEvent));
-		sourceList.add(new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent));
+			sourceList.add(makeSource(IPOSource.ABSTRACT_ROLE, absEvent.getSource()));
+		sourceList.add(makeSource(IPOSource.CONCRETE_ROLE, concreteEvent.getSource()));
 		
-// TODO remove if ok:			
-//		ArrayList<POGPredicate> hyp = makeActionHypothesis();
-//		hyp.addAll(makeWitnessHypothesis());
+		ArrayList<IPOGPredicate> hyp = makeActionAndWitnessHypothesis(disjPredicate);
 		
-		ArrayList<POGPredicate> hyp = makeActionAndWitnessHypothesis(disjPredicate);
-		
-		POGSource[] sources = new POGSource[sourceList.size()];
+		IPOGSource[] sources = new IPOGSource[sourceList.size()];
 		sourceList.toArray(sources);
 	
 		createPO(
@@ -163,7 +158,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 				"Guard strengthening (merge)",
 				fullHypothesis,
 				hyp,
-				new POGTraceablePredicate(disjPredicate, concreteEvent),
+				makePredicate(disjPredicate, concreteEvent.getSource()),
 				sources,
 				hints(getLocalHypothesisSelectionHint(target, sequentName)),
 				monitor);
@@ -198,11 +193,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 			absGuard = absGuard.applyAssignments(substitution, factory);
 		
-// TODO remove if ok:			
-//			ArrayList<POGPredicate> hyp = makeWitnessHypothesis();
-//			hyp.addAll(makeActionHypothesis());
-			
-			ArrayList<POGPredicate> hyp = makeActionAndWitnessHypothesis(absGuard);
+			ArrayList<IPOGPredicate> hyp = makeActionAndWitnessHypothesis(absGuard);
 			
 			createPO(
 					target, 
@@ -210,11 +201,11 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 					"Guard strengthening (split)",
 					fullHypothesis,
 					hyp,
-					new POGTraceablePredicate(absGuard, absGuardElement),
+					makePredicate(absGuard, absGuardElement.getSource()),
 					sources(
-							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
-							new POGSource(IPOSource.ABSTRACT_ROLE, absGuardElement),
-							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
+							makeSource(IPOSource.ABSTRACT_ROLE, abstractEvent.getSource()),
+							makeSource(IPOSource.ABSTRACT_ROLE, absGuardElement.getSource()),
+							makeSource(IPOSource.CONCRETE_ROLE, concreteEvent.getSource())),
 					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);
 	

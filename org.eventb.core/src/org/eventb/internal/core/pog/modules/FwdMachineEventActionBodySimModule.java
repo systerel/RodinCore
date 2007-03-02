@@ -21,11 +21,9 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.util.POGPredicate;
-import org.eventb.core.pog.util.POGSource;
-import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -103,7 +101,7 @@ public class FwdMachineEventActionBodySimModule extends
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 			simPredicate = simPredicate.applyAssignments(substitution, factory);
 			
-			ArrayList<POGPredicate> hyp = makeActionAndWitnessHypothesis(simPredicate);
+			ArrayList<IPOGPredicate> hyp = makeActionAndWitnessHypothesis(simPredicate);
 			
 			createPO(
 					target, 
@@ -111,11 +109,11 @@ public class FwdMachineEventActionBodySimModule extends
 					"Action simulation",
 					fullHypothesis,
 					hyp,
-					new POGTraceablePredicate(simPredicate, action),
+					makePredicate(simPredicate, action.getSource()),
 					sources(
-							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
-							new POGSource(IPOSource.ABSTRACT_ROLE, action),
-							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)),
+							makeSource(IPOSource.ABSTRACT_ROLE, abstractEvent.getSource()),
+							makeSource(IPOSource.ABSTRACT_ROLE, action.getSource()),
+							makeSource(IPOSource.CONCRETE_ROLE, concreteEvent.getSource())),
 					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);
 

@@ -16,13 +16,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.state.IAbstractEventActionTable;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IEventWitnessTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.util.POGPredicate;
-import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -34,10 +34,11 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	protected IAbstractEventActionTable abstractEventActionTable;
 	protected IEventWitnessTable witnessTable;
 
-	protected ArrayList<POGPredicate> makeActionAndWitnessHypothesis(Predicate predicate) {
+	protected ArrayList<IPOGPredicate> makeActionAndWitnessHypothesis(Predicate predicate) 
+	throws RodinDBException {
 		// create local hypothesis for nondeterministic assignments
 		
-		ArrayList<POGPredicate> hyp = newLocalHypothesis();
+		ArrayList<IPOGPredicate> hyp = newLocalHypothesis();
 		Set<FreeIdentifier> freeIdents = newFreeIdentsFromPredicate(predicate);
 		
 		makeWitnessHypothesis(hyp, freeIdents);
@@ -49,40 +50,40 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	}
 	
 	@Override
-	protected ArrayList<POGPredicate> newLocalHypothesis() {
+	protected ArrayList<IPOGPredicate> newLocalHypothesis() {
 		int size = 
 			witnessTable.getNondetWitnesses().size() +
 			concreteEventActionTable.getNondetActions().size();
-		return new ArrayList<POGPredicate>(size);
+		return new ArrayList<IPOGPredicate>(size);
 	}
 	
 	private void addFreeIdentsFromHypothesis(
-			Set<FreeIdentifier> identSet, List<POGPredicate> hyp) {
-		for (POGPredicate predicate : hyp) {
+			Set<FreeIdentifier> identSet, List<IPOGPredicate> hyp) {
+		for (IPOGPredicate predicate : hyp) {
 			addAllFreeIdents(identSet, predicate.getPredicate().getFreeIdentifiers());
 		}
 	}
 	
-	protected ArrayList<POGPredicate> makeWitnessHypothesis() {
+	protected ArrayList<IPOGPredicate> makeWitnessHypothesis() throws RodinDBException {
 		// create local hypothesis for nondeterministic assignments
 		List<ISCWitness> nondetWitnesses = witnessTable.getNondetWitnesses();
 		List<Predicate> nondetPredicates = witnessTable.getNondetPredicates();
 		
-		ArrayList<POGPredicate> hyp = 
-			new ArrayList<POGPredicate>(nondetWitnesses.size());
+		ArrayList<IPOGPredicate> hyp = 
+			new ArrayList<IPOGPredicate>(nondetWitnesses.size());
 
 		for (int i=0; i<nondetWitnesses.size(); i++) {
 			hyp.add(
-					new POGTraceablePredicate(nondetPredicates.get(i),
-							nondetWitnesses.get(i)));
+					makePredicate(nondetPredicates.get(i),
+							nondetWitnesses.get(i).getSource()));
 		}
 		
 		return hyp;
 	}
 	
 	private void makeWitnessHypothesis(
-			ArrayList<POGPredicate> hyp, 
-			Set<FreeIdentifier> freeIdents) {
+			ArrayList<IPOGPredicate> hyp, 
+			Set<FreeIdentifier> freeIdents) throws RodinDBException {
 		// create local hypothesis for nondeterministic assignments
 		List<ISCWitness> nondetWitnesses = witnessTable.getNondetWitnesses();
 		List<FreeIdentifier> nondetLabels = witnessTable.getNondetVariables();
@@ -91,9 +92,9 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 		for (int i=0; i<nondetWitnesses.size(); i++) {
 			if (freeIdents.contains(nondetLabels.get(i))) {
 				Predicate hypPred = nondetPredicates.get(i);
-				hyp.add(new POGTraceablePredicate(
+				hyp.add(makePredicate(
 								hypPred,
-								nondetWitnesses.get(i)));
+								nondetWitnesses.get(i).getSource()));
 			}
 		}
 	}

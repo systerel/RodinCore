@@ -20,11 +20,10 @@ import org.eventb.core.ISCInvariant;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.pog.util.POGPredicate;
-import org.eventb.core.pog.util.POGSource;
-import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.eventb.core.tool.IModuleType;
+import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
@@ -66,19 +65,20 @@ public class FwdMachineNewEventInvariantModule extends MachineEventInvariantModu
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());	
 		predicate = predicate.applyAssignments(substitution, factory);
 	
-		ArrayList<POGPredicate> hyp = makeActionHypothesis(predicate);
+		ArrayList<IPOGPredicate> hyp = makeActionHypothesis(predicate);
 		
 		String sequentName = concreteEventLabel + "/" + invariantLabel + "/INV";
+		IRodinElement invariantSource = invariant.getSource();
 		createPO(
 				target, 
 				sequentName, 
 				"Invariant " + (isInitialisation ? " establishment" : " preservation"),
 				fullHypothesis,
 				hyp,
-				new POGTraceablePredicate(predicate, invariant),
+				makePredicate(predicate, invariantSource),
 				sources(
-						new POGSource(IPOSource.DEFAULT_ROLE, concreteEvent), 
-						new POGSource(IPOSource.DEFAULT_ROLE, invariant)),
+						makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource()), 
+						makeSource(IPOSource.DEFAULT_ROLE, invariantSource)),
 				hints(
 						getLocalHypothesisSelectionHint(target, sequentName),
 						getInvariantPredicateSelectionHint(target, invariant)),

@@ -25,13 +25,10 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IEventWitnessTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.util.POGIntervalSelectionHint;
-import org.eventb.core.pog.util.POGPredicate;
-import org.eventb.core.pog.util.POGSource;
-import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.pog.EventWitnessTable;
 import org.rodinp.core.IRodinElement;
@@ -132,18 +129,19 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 			
 			goal = applyDetAssignments(goal);
 			
-			ArrayList<POGPredicate> hyp = makeActionHypothesis(goal);
+			ArrayList<IPOGPredicate> hyp = makeActionHypothesis(goal);
 						
+			IRodinElement witnessSource = witness.getSource();
 			createPO(
 					target, 
 					sequentName, 
 					desc, 
 					fullHypothesis, 
 					hyp,
-					new POGTraceablePredicate(goal, witness),
-					sources(new POGSource(IPOSource.DEFAULT_ROLE, witness)),
+					makePredicate(goal, witnessSource),
+					sources(makeSource(IPOSource.DEFAULT_ROLE, witnessSource)),
 					hints(
-							new POGIntervalSelectionHint(
+							makeIntervalSelectionHint(
 									eventHypothesisManager.getRootHypothesis(),
 									getSequentHypothesis(target, sequentName)
 							)

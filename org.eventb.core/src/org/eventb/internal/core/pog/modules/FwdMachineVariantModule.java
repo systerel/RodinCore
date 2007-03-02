@@ -20,12 +20,11 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
+import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineVariantInfo;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.util.POGSource;
-import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.pog.MachineVariantInfo;
 import org.rodinp.core.IRodinElement;
@@ -54,7 +53,7 @@ public class FwdMachineVariantModule extends UtilityModule {
 		IPOFile target = repository.getTarget();
 		
 		Predicate wdPredicate = variantInfo.getExpression().getWDPredicate(factory);
-		POGSource[] sources = sources(new POGSource(IPOSource.DEFAULT_ROLE, variantInfo.getVariant()));
+		IPOGSource[] sources = sources(makeSource(IPOSource.DEFAULT_ROLE, variantInfo.getVariant().getSource()));
 		if (!goalIsTrivial(wdPredicate)) {
 			createPO(
 					target, 
@@ -62,7 +61,7 @@ public class FwdMachineVariantModule extends UtilityModule {
 					"Well-definedness of variant", 
 					machineHypothesisManager.getFullHypothesis(), 
 					emptyPredicates, 
-					new POGTraceablePredicate(wdPredicate, variantInfo.getVariant()), 
+					makePredicate(wdPredicate, variantInfo.getVariant().getSource()), 
 					sources, 
 					emptyHints, monitor);
 		} else {
@@ -79,7 +78,7 @@ public class FwdMachineVariantModule extends UtilityModule {
 					"Finiteness of variant", 
 					machineHypothesisManager.getFullHypothesis(), 
 					emptyPredicates, 
-					new POGTraceablePredicate(finPredicate, variantInfo.getVariant()), 
+					makePredicate(finPredicate, variantInfo.getVariant().getSource()), 
 					sources, 
 					emptyHints, monitor);
 		} else {

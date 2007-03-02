@@ -7,23 +7,29 @@
  *******************************************************************************/
 package org.eventb.core.pog;
 
-import org.eventb.core.tool.IFilterModule;
-import org.eventb.core.tool.IProcessorModule;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class POGFilterModule extends POGModule implements IPOGFilterModule {
-
-	@Override
-	protected final IFilterModule[] getFilterModules() {
-		throw new UnsupportedOperationException("Attempt to load submodules in filter module");
+class POGSource implements IPOGSource {
+	
+	private final String role;
+	private final IRodinElement source;
+	
+	public POGSource(String role, IRodinElement source) throws RodinDBException {
+		this.role = role;
+		this.source = source;
 	}
-
-	@Override
-	protected final IProcessorModule[] getProcessorModules() {
-		throw new UnsupportedOperationException("Attempt to load submodules in filter module");
+	
+	public String getRole() {
+		return role;
+	}
+	
+	public IRodinElement getSource() {
+		return source;
 	}
 
 }

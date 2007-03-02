@@ -18,10 +18,9 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.state.IMachineInvariantTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.util.POGHint;
-import org.eventb.core.pog.util.POGPredicateSelectionHint;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -94,9 +93,9 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 		}
 	}
 	
-	protected POGHint getInvariantPredicateSelectionHint(
+	protected IPOGHint getInvariantPredicateSelectionHint(
 			IPOFile file, ISCInvariant invariant) throws CoreException {
-		return new POGPredicateSelectionHint(machineHypothesisManager.getPredicate(invariant));
+		return makePredicateSelectionHint(machineHypothesisManager.getPredicate(invariant));
 	}
 	
 	protected abstract void createInvariantProofObligation(

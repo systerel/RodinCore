@@ -32,6 +32,20 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class BasicPOTest extends EventBTest {
 
+	@Override
+	protected IContextFile createContext(String bareName) throws RodinDBException {
+		IContextFile file = super.createContext(bareName);
+		addFile(file.getPOFile());
+		return file;
+	}
+
+	@Override
+	protected IMachineFile createMachine(String bareName) throws RodinDBException {
+		IMachineFile file = super.createMachine(bareName);
+		addFile(file.getPOFile());
+		return file;
+	}
+
 	public Set<String> getElementNameSet(IRodinElement[] elements) throws RodinDBException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(IRodinElement element : elements)

@@ -24,6 +24,16 @@ import org.rodinp.core.IRodinElement;
  */
 public abstract class SCProcessorModule extends SCModule implements ISCProcessorModule {
 
+	@Override
+	protected final IFilterModule[] getFilterModules() {
+		return super.getFilterModules();
+	}
+
+	@Override
+	protected final IProcessorModule[] getProcessorModules() {
+		return super.getProcessorModules();
+	}
+
 	private static final String PROCESSOR = "PROCESSOR";
 	private static final String FILTER = "FILTER";
 	private static final String INI = "INI";
@@ -34,7 +44,7 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 		System.out.println("SC MOD" + op + ": " + module.getModuleType() + " " + kind);
 	}
 
-	protected void initFilterModules(
+	protected final void initFilterModules(
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IFilterModule module : getFilterModules()) {
@@ -45,7 +55,7 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 		}
 	}
 	
-	protected void initProcessorModules(
+	protected final void initProcessorModules(
 			IRodinElement element,
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
@@ -57,7 +67,7 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 		}
 	}
 	
-	protected boolean filterModules(
+	protected final boolean filterModules(
 			IRodinElement element, 
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
@@ -72,7 +82,7 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 		return true;
 	}
 	
-	protected void processModules(
+	protected final void processModules(
 			IRodinElement element, 
 			IInternalParent target,
 			ISCStateRepository repository, 
@@ -85,7 +95,7 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 		}
 	}
 	
-	protected void endFilterModules(
+	protected final void endFilterModules(
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IFilterModule module : getFilterModules()) {
@@ -96,7 +106,7 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 		}
 	}
 
-	protected void endProcessorModules(
+	protected final void endProcessorModules(
 			IRodinElement element,
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {

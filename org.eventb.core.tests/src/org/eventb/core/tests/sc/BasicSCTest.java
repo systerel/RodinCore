@@ -58,6 +58,20 @@ import org.rodinp.core.RodinMarkerUtil;
  */
 public abstract class BasicSCTest extends EventBTest {
 	
+	@Override
+	protected IContextFile createContext(String bareName) throws RodinDBException {
+		IContextFile file = super.createContext(bareName);
+		addFile(file.getSCContextFile());
+		return file;
+	}
+
+	@Override
+	protected IMachineFile createMachine(String bareName) throws RodinDBException {
+		IMachineFile file = super.createMachine(bareName);
+		addFile(file.getSCMachineFile());
+		return file;
+	}
+
 	public BasicSCTest() {
 		super();
 	}

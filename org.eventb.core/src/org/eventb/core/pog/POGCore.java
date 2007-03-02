@@ -31,7 +31,7 @@ public final class POGCore {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends IState> IStateType<T> getToolStateType(
-			String id) {
+			final String id) {
 		final POGStateTypeManager manager = POGStateTypeManager.getInstance();
 		final IStateType result = manager.getStateType(id);
 		if (result != null) {
@@ -51,7 +51,7 @@ public final class POGCore {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends IModule> IModuleType<T> getModuleType(
-			String id) {
+			final String id) {
 		final POGModuleManager manager = POGModuleManager.getInstance();
 		final IModuleType result = manager.getModuleDesc(id);
 		if (result != null) {

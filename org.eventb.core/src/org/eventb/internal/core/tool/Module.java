@@ -27,7 +27,7 @@ public abstract class Module implements IModule {
 	 * 
 	 * @param moduleFactory the module factory 
 	 */
-	void setModuleFactory(final ModuleFactory moduleFactory) {
+	final void setModuleFactory(final ModuleFactory moduleFactory) {
 		assert this.moduleFactory == null;
 		
 		this.moduleFactory = moduleFactory;

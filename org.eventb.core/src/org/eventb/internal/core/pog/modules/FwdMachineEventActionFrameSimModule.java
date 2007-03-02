@@ -22,12 +22,11 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGPredicate;
+import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IMachineVariableTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.util.POGPredicate;
-import org.eventb.core.pog.util.POGSource;
-import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -66,8 +65,8 @@ public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementM
 		if (machineInfo.isInitialMachine())
 			return;
 		
-		ArrayList<POGPredicate> hyp = 
-			new ArrayList<POGPredicate>(1);
+		ArrayList<IPOGPredicate> hyp = 
+			new ArrayList<IPOGPredicate>(1);
 		
 		List<Assignment> nondetAssignments = 
 			concreteEventActionTable.getNondetAssignments();
@@ -92,31 +91,31 @@ public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementM
 						variable.withPrime(factory), 
 						variable, null);
 			
-			IRodinElement source = null;
+			ISCAction action = null;
 			
 			int pos = findIndex(variable, nondetAssignments);
 			
 			if (pos >= 0) {
 				hyp.add(
-						new POGTraceablePredicate(nondetAssignments.get(pos).getBAPredicate(factory),
-								nondetActions.get(pos)));
-				source = nondetActions.get(pos);
+						makePredicate(nondetAssignments.get(pos).getBAPredicate(factory),
+								nondetActions.get(pos).getSource()));
+				action = nondetActions.get(pos);
 			} else {
 				pos = findIndex(variable, detAssignments);
 				
 				if (pos >= 0) {
 					predicate = predicate.applyAssignment(primedDetAssignments.get(pos), factory);
-					source = detActions.get(pos);
+					action = detActions.get(pos);
 				} else
 					continue;
 			}
 			
 			// TODO should the abstract machine be shown when there is no abstract event?
-			POGSource[] sources = abstractEvent == null ?
-					sources(new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent)) :
+			IPOGSource[] sources = abstractEvent == null ?
+					sources(makeSource(IPOSource.CONCRETE_ROLE, concreteEvent.getSource())) :
 					sources(
-							new POGSource(IPOSource.ABSTRACT_ROLE, abstractEvent),
-							new POGSource(IPOSource.CONCRETE_ROLE, concreteEvent));
+							makeSource(IPOSource.ABSTRACT_ROLE, abstractEvent.getSource()),
+							makeSource(IPOSource.CONCRETE_ROLE, concreteEvent.getSource()));
 			
 			String sequentName = concreteEventLabel + "/" + variable.getName() + "/EQL";
 			createPO(
@@ -125,7 +124,7 @@ public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementM
 					"Equality " + (isInitialisation ? " establishment" : " preservation"),
 					fullHypothesis,
 					hyp,
-					new POGTraceablePredicate(predicate, source),
+					makePredicate(predicate, action.getSource()),
 					sources,
 					hints(getLocalHypothesisSelectionHint(target, sequentName)),
 					monitor);

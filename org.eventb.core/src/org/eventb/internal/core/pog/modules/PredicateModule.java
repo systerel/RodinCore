@@ -18,13 +18,10 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IPredicateTable;
-import org.eventb.core.pog.util.POGHint;
-import org.eventb.core.pog.util.POGIntervalSelectionHint;
-import org.eventb.core.pog.util.POGSource;
-import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -110,16 +107,17 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 		Predicate wdPredicate = predicate.getWDPredicate(factory);
 		if(!goalIsTrivial(wdPredicate)) {
 			IPOPredicateSet hypothesis = hypothesisManager.makeHypothesis(predicateElement);
+			IRodinElement predicateSource = ((ITraceableElement) predicateElement).getSource();
 			createPO(
 					target, 
 					getWDProofObligationName(elementLabel), 
 					getWDProofObligationDescription(),
 					hypothesis,
 					emptyPredicates,
-					new POGTraceablePredicate(wdPredicate, predicateElement),
-					sources(new POGSource(IPOSource.DEFAULT_ROLE, (ITraceableElement) predicateElement)),
-					new POGHint[] {
-						new POGIntervalSelectionHint(
+					makePredicate(wdPredicate, predicateSource),
+					sources(makeSource(IPOSource.DEFAULT_ROLE, predicateSource)),
+					new IPOGHint[] {
+						makeIntervalSelectionHint(
 								hypothesisManager.getRootHypothesis(), 
 								hypothesis)
 					},

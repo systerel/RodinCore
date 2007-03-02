@@ -183,6 +183,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 		ISCRefinesEvent refinesEvent = scEvent.getSCRefinesClause(INHERITED_REFINES_NAME);
 		refinesEvent.create(null, monitor);
 		refinesEvent.setAbstractSCEvent(abstractSCEvent, monitor);
+		refinesEvent.setSource(scEvent.getSource(), monitor);
 		
 		return scEvent;
 	}

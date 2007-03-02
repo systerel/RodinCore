@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.pog;
 
-import org.eventb.core.tool.IFilterModule;
-import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.tool.Module;
 
 /**
@@ -17,18 +15,6 @@ import org.eventb.internal.core.tool.Module;
  */
 public abstract class POGModule extends Module {
 	
-	@Override
-	protected IFilterModule[] getFilterModules() {
-		IFilterModule[] filterModules = super.getFilterModules();
-		return filterModules;
-	}
-
-	@Override
-	protected IProcessorModule[] getProcessorModules() {
-		IProcessorModule[] processorModules = super.getProcessorModules();
-		return processorModules;
-	}
-
 	public static boolean DEBUG_MODULE = false;
 
 }

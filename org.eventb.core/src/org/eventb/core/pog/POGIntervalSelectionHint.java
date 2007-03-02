@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.pog.util;
+package org.eventb.core.pog;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOPredicateSet;
@@ -21,7 +21,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class POGIntervalSelectionHint extends POGHint {
+class POGIntervalSelectionHint implements IPOGHint {
 
 	private final IPOPredicateSet start;
 	private final IPOPredicateSet end;
@@ -56,10 +56,6 @@ public class POGIntervalSelectionHint extends POGHint {
 		return start;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pog.POGHint#create(org.eventb.core.IPOSequent, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
 	public void create(IPOSequent sequent, String name, IProgressMonitor monitor) 
 	throws RodinDBException {
 		IPOSelectionHint selectionHint = sequent.getSelectionHint(name);

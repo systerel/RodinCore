@@ -10,9 +10,7 @@ package org.eventb.core.sc;
 import org.eventb.core.IEventBFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IModule;
-import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.eventb.internal.core.tool.Module;
 import org.rodinp.core.IAttributeType;
@@ -51,18 +49,6 @@ public abstract class SCModule extends Module implements IModule, IMarkerDisplay
 		}
 	}
 	
-	@Override
-	protected IFilterModule[] getFilterModules() {
-		IFilterModule[] filterModules = super.getFilterModules();
-		return filterModules;
-	}
-
-	@Override
-	protected IProcessorModule[] getProcessorModules() {
-		IProcessorModule[] processorModules = super.getProcessorModules();
-		return processorModules;
-	}
-
 	public static boolean DEBUG_MODULE = false;
 	
 	public void createProblemMarker(

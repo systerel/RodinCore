@@ -55,7 +55,7 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IStateRepository#getState(java.lang.String)
 	 */
-	public I getState(IStateType<? extends I> stateType) throws CoreException {
+	public final I getState(IStateType<? extends I> stateType) throws CoreException {
 		if (exception != null)
 			throw exception;
 		I state = repository.get(stateType);
@@ -73,37 +73,37 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		return state;
 	}
 
-	public ITypeEnvironment getTypeEnvironment() throws CoreException {
+	public final ITypeEnvironment getTypeEnvironment() throws CoreException {
 		if (exception != null)
 			throw exception;
 		return environment;
 	}
 
-	public void setTypeEnvironment(ITypeEnvironment environment) throws CoreException {
+	public final void setTypeEnvironment(ITypeEnvironment environment) throws CoreException {
 		if (exception != null)
 			throw exception;
 		this.environment = environment;
 	}
 
-	public FormulaFactory getFormulaFactory() throws CoreException {
+	public final FormulaFactory getFormulaFactory() throws CoreException {
 		if (exception != null)
 			throw exception;
 		return factory;
 	}
 
-	public boolean targetHasChanged() throws CoreException {
+	public final boolean targetHasChanged() throws CoreException {
 		if (exception != null)
 			throw exception;
 		return fileChanged;
 	}
 
-	public void setTargetChanged() throws CoreException {
+	public final void setTargetChanged() throws CoreException {
 		if (exception != null)
 			throw exception;
 		fileChanged = true;
 	}
 
-	public void setState(I state) throws CoreException {
+	public final void setState(I state) throws CoreException {
 		if (DEBUG)
 			System.out.println("SET STATE: " + state.getStateType());
 		if (exception != null)
@@ -113,7 +113,7 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		repository.put(state.getStateType(), state);
 	}
 
-	public void removeState(IStateType<? extends I> stateType) throws CoreException {
+	public final void removeState(IStateType<? extends I> stateType) throws CoreException {
 		if (exception != null)
 			throw exception;
 		

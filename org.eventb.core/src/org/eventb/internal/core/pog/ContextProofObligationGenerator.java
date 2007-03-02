@@ -31,8 +31,6 @@ public class ContextProofObligationGenerator extends ProofObligationGenerator {
 	public boolean run(IFile source, IFile target, IProgressMonitor monitor)
 			throws CoreException {
 		
-		// TODO implement context static checker
-		
 		IPOFile poFile = (IPOFile) RodinCore.valueOf(target).getMutableCopy();
 		ISCContextFile scContextFile = (ISCContextFile) poFile.getSCContextFile().getSnapshot();
 

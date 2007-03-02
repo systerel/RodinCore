@@ -46,7 +46,6 @@ public class EventRefinesInfo extends State implements IEventRefinesInfo {
 		return STATE_TYPE;
 	}
 
-	// TODO do not copy on read; use immutable arrays
 	public List<IAbstractEventInfo> getAbstractEventInfos() throws CoreException {
 		assertImmutable();
 		return abstractInfos;

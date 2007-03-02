@@ -16,10 +16,9 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.util.POGHint;
-import org.eventb.core.pog.util.POGPredicate;
-import org.eventb.core.pog.util.POGSource;
+import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IProcessorModule;
 import org.rodinp.core.IRodinElement;
@@ -32,21 +31,31 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class POGProcessorModule extends POGModule implements IPOGProcessorModule {
 	
+	@Override
+	protected final IFilterModule[] getFilterModules() {
+		return super.getFilterModules();
+	}
+
+	@Override
+	protected final IProcessorModule[] getProcessorModules() {
+		return super.getProcessorModules();
+	}
+
 	private static final String SEQ_HYP_NAME = "SEQHYP";
 	private static final String PRD_NAME_PREFIX = "PRD";
 	private static final String SRC_NAME_PREFIX = "SRC";
 	private static final String HINT_NAME_PREFIX = "HINT";
 	private static final String GOAL_NAME = "GOAL";
 	
-	public void createPO(
+	protected final void createPO(
 			IPOFile file, 
 			String name,
 			String desc,
 			IPOPredicateSet globalHypothesis,
-			List<POGPredicate> localHypothesis,
-			POGPredicate goal,
-			POGSource[] sources,
-			POGHint[] hints,
+			List<IPOGPredicate> localHypothesis,
+			IPOGPredicate goal,
+			IPOGSource[] sources,
+			IPOGHint[] hints,
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		IPOSequent sequent = file.getSequent(name);
@@ -70,7 +79,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 
 	private void putPredicate(
 			IPOPredicate predicate, 
-			POGPredicate pogPredicate, 
+			IPOGPredicate pogPredicate, 
 			IProgressMonitor monitor) throws RodinDBException {
 		predicate.create(null, monitor);
 		predicate.setPredicate(pogPredicate.getPredicate(), monitor);
@@ -79,7 +88,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	
 	private void putPOGHints(
 			IPOSequent sequent, 
-			POGHint[] hints, 
+			IPOGHint[] hints, 
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		if (hints == null)
@@ -95,7 +104,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	
 	private void putPOGSources(
 			IPOSequent sequent, 
-			POGSource[] sources, 
+			IPOGSource[] sources, 
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		if (sources == null)
@@ -105,15 +114,15 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 			
 			IPOSource source = sequent.getSource(SRC_NAME_PREFIX + idx);
 			source.create(null, monitor);
-			source.setSource(sources[idx].getSource().getSource(), monitor);
-			source.setRole(sources[idx].getRoleKey(), monitor);
+			source.setSource(sources[idx].getSource(), monitor);
+			source.setRole(sources[idx].getRole(), monitor);
 		}
 
 	}
 	
 	private void putPOGPredicates(
 			IPOPredicateSet hypothesis, 
-			List<POGPredicate> localHypothesis, 
+			List<IPOGPredicate> localHypothesis, 
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		if (localHypothesis == null)
@@ -121,7 +130,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		
 		int index = 0;
 		
-		for (POGPredicate predicate : localHypothesis) {
+		for (IPOGPredicate predicate : localHypothesis) {
 			
 			IPOPredicate poPredicate = hypothesis.getPredicate(PRD_NAME_PREFIX + index++);
 			putPredicate(poPredicate, predicate, monitor);
@@ -133,7 +142,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		System.out.println("POG MODULE: " + module.getModuleType());
 	}
 
-	final protected void initModules(
+	protected final void initModules(
 			IRodinElement element,
 			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
@@ -145,7 +154,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		}
 	}
 	
-	final protected void processModules(
+	protected final void processModules(
 			IRodinElement element, 
 			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
@@ -155,7 +164,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		}
 	}
 	
-	final protected void endModules(
+	protected final void endModules(
 			IRodinElement element,
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
@@ -188,27 +197,63 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		// nothing to do
 		
 	}
-
-	@Deprecated
-	protected IPOPredicateSet getSequentHypothesis(IPOSequent sequent) 
+	
+	/**
+	 * Creates a POG predicate with an associated source element reference to be stored in a PO file.
+	 * 
+	 * @param predicate a predicate
+	 * @param source an associated source element
+	 * 
+	 * @see IPOPredicate
+	 */
+	protected static final IPOGPredicate makePredicate(final Predicate predicate, final IRodinElement source) {
+		return new POGPredicate(predicate, source);
+	}
+	
+	/**
+	 * Creates a POG source with an associated source element reference to be stored in a PO file.
+	 * 
+	 * @param role the role of the source
+	 * @param source the actual source element
+	 * 
+	 * @see IPOSource
+	 */
+	protected static final IPOGSource makeSource(final String role, final IRodinElement source) 
 	throws RodinDBException {
-		return sequent.getHypothesis(SEQ_HYP_NAME);
+		return new POGSource(role, source);
 	}
 
-	protected IPOPredicateSet getSequentHypothesis(IPOFile file, String sequentName) 
+	/**
+	 * Creates a predicate selection hint for <code>predicate</code>.
+	 * 
+	 * @param predicate the predicate to select
+	 */
+	protected static final IPOGHint makePredicateSelectionHint(final IPOPredicate predicate) {
+		return new POGPredicateSelectionHint(predicate);
+	}
+	
+	/**
+	 * Creates an interval selection hint.
+	 * 
+	 * @param start the predicate set immediately preceding the interval 
+	 * @param end the last predicate set in the interval
+	 */
+	protected static final IPOGHint makeIntervalSelectionHint(
+			final IPOPredicateSet start, final IPOPredicateSet end) {
+		return new POGIntervalSelectionHint(start, end);
+	}
+
+	protected static final IPOPredicateSet getSequentHypothesis(IPOFile file, String sequentName) 
 	throws RodinDBException {
 		return file.getSequent(sequentName).getHypothesis(SEQ_HYP_NAME);
 	}
 
-	protected POGSource[] sources(POGSource... sources) {
+	protected static final IPOGSource[] sources(IPOGSource... sources) {
 		return sources;
 	}
 	
-	protected POGHint[] hints(POGHint... hints) {
+	protected static final IPOGHint[] hints(IPOGHint... hints) {
 		return hints;
-	}
-	protected POGPredicate[] hypotheses(POGPredicate... predicates) {
-		return predicates;
 	}
 
 }

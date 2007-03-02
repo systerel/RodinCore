@@ -24,14 +24,14 @@ public abstract class State implements IState {
 		immutable = false;
 	}
 	
-	protected void assertImmutable() throws CoreException {
+	protected final void assertImmutable() throws CoreException {
 		if ( ! immutable)
 			throw Util.newCoreException(
 					Messages.bind(Messages.tool_ImmutableStateModificationFailure, 
 							getStateType()));
 	}
 
-	protected void assertMutable() throws CoreException {
+	protected final void assertMutable() throws CoreException {
 		if (immutable)
 			throw Util.newCoreException(
 					Messages.bind(Messages.tool_MutableStateNotUnmodifiableFailure, 
@@ -41,7 +41,7 @@ public abstract class State implements IState {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.state.IState#isImmutable()
 	 */
-	public boolean isImmutable() {
+	public final boolean isImmutable() {
 		return immutable;
 	}
 

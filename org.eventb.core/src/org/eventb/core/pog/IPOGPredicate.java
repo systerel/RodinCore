@@ -5,57 +5,35 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.pog.util;
+package org.eventb.core.pog;
 
-import org.eventb.core.IPOPredicate;
 import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * All predicates stored in a PO file have an associated source reference.
+ * Representation of a predicate as handled by the proof obligation generator.
  * <p>
- * There is also support for indirect source references used in statically 
- * checked files: {@link POGTraceablePredicate}.
+ * This interface is not intended to be implemented by clients.
  * </p>
- * @see IPOPredicate
- * @see POGTraceablePredicate
  * 
  * @author Stefan Hallerstede
  *
  */
-public class POGPredicate {
-	
-	private final IRodinElement source;
-	private final Predicate predicate;
-	
-	/**
-	 * Creates a predicate with an associated source reference to be stored in a PO file.
-	 * @param predicate a predicate
-	 * @param source an associated source
-	 */
-	public POGPredicate(Predicate predicate, IRodinElement source) {
-		this.source = source;
-		this.predicate = predicate;
-	}
-	
+public interface IPOGPredicate {
 	/**
 	 * Returns the source reference for the predicate.
 	 * 
 	 * @return the source reference for the predicate
 	 * @throws RodinDBException if there was a problem accessing the source reference
 	 */
-	public IRodinElement getSource() throws RodinDBException {
-		return source;
-	}
+	public IRodinElement getSource() throws RodinDBException;
 	
 	/**
 	 * Returns the predicate.
 	 * 
 	 * @return the predicate
 	 */
-	public Predicate getPredicate() {
-		return predicate;
-	}
+	public Predicate getPredicate();
 
 }

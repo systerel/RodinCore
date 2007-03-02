@@ -875,6 +875,7 @@
             name="%scMachineEventConvergenceModule"
             parent="org.eventb.core.machineEventModule">
          <prereq id="org.eventb.core.machineEventRefinesModule"/>
+         <prereq id="org.eventb.core.machineVariantModule"/>
       </processorType>
       <processorType
             class="org.eventb.internal.core.sc.modules.MachineEventVariableModule"

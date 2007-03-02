@@ -22,16 +22,14 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGHint;
+import org.eventb.core.pog.IPOGPredicate;
+import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IAbstractEventActionTable;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IEventWitnessTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.pog.util.POGHint;
-import org.eventb.core.pog.util.POGIntervalSelectionHint;
-import org.eventb.core.pog.util.POGPredicate;
-import org.eventb.core.pog.util.POGSource;
-import org.eventb.core.pog.util.POGTraceablePredicate;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -69,8 +67,8 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 		
 		IPOFile target = repository.getTarget();
 		
-		POGHint[] hints = hints(
-				new POGIntervalSelectionHint(
+		IPOGHint[] hints = hints(
+				makeIntervalSelectionHint(
 						eventHypothesisManager.getRootHypothesis(), 
 						eventHypothesisManager.getFullHypothesis()));
 		
@@ -80,12 +78,12 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			ISCAction action = actions.get(k);
 			Assignment assignment = assignments.get(k);
 			
-			POGSource[] sources = sources(new POGSource(IPOSource.DEFAULT_ROLE, action));
+			IPOGSource[] sources = sources(makeSource(IPOSource.DEFAULT_ROLE, action.getSource()));
 			
 			if (abstractHasNotSameAction(k)) {
 				
 				Predicate baPredicate = assignment.getBAPredicate(factory);
-				List<POGPredicate> hyp = makeAbstractActionHypothesis(baPredicate);
+				List<IPOGPredicate> hyp = makeAbstractActionHypothesis(baPredicate);
 				
 				Predicate wdPredicate = assignment.getWDPredicate(factory);
 				createProofObligation(target, hyp,
@@ -105,11 +103,11 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 		return abstractEventActionTable.getIndexOfCorrespondingAbstract(k) == -1;
 	}
 
-	private List<POGPredicate> makeAbstractActionHypothesis(Predicate baPredicate) {
+	private List<IPOGPredicate> makeAbstractActionHypothesis(Predicate baPredicate) throws RodinDBException {
 		
 		List<ISCAction> actions = abstractEventActionTable.getNondetActions();
 		
-		ArrayList<POGPredicate> hyp = new ArrayList<POGPredicate>(
+		ArrayList<IPOGPredicate> hyp = new ArrayList<IPOGPredicate>(
 				witnessTable.getNondetWitnesses().size() +
 				actions.size());
 		
@@ -122,7 +120,7 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			for (int i=0; i<actions.size(); i++) {
 				Predicate predicate = predicates.get(i);
 				predicate = predicate.applyAssignments(substitution, factory);
-				hyp.add(new POGPredicate(predicate, actions.get(i)));
+				hyp.add(makePredicate(predicate, actions.get(i).getSource()));
 			}
 			
 			return hyp;
@@ -130,7 +128,7 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			return emptyPredicates;
 	}
 
-	private boolean eventVariableWitnessPredicatesUnprimed(List<POGPredicate> hyp) {
+	private boolean eventVariableWitnessPredicatesUnprimed(List<IPOGPredicate> hyp) throws RodinDBException {
 		
 		List<FreeIdentifier> witnessIdents = witnessTable.getVariables();
 		List<Predicate> witnessPreds = witnessTable.getPredicates();
@@ -146,18 +144,18 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 				}
 			}
 			if ( !witnessTable.isDeterministic(i))
-				hyp.add(new POGPredicate(predicate, witnesses.get(i)));
+				hyp.add(makePredicate(predicate, witnesses.get(i).getSource()));
 		}
 		return true;
 	}
 
 	private void createProofObligation(
 			IPOFile target, 
-			List<POGPredicate> hyp,
+			List<IPOGPredicate> hyp,
 			Predicate predicate, 
 			ISCAction action, 
-			POGSource[] sources, 
-			POGHint[] hints, 
+			IPOGSource[] sources, 
+			IPOGHint[] hints, 
 			String suffix,
 			String desc,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -169,7 +167,7 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 					desc, 
 					fullHypothesis, 
 					hyp, 
-					new POGTraceablePredicate(predicate, action), 
+					makePredicate(predicate, action.getSource()), 
 					sources, 
 					hints, 
 					monitor);
