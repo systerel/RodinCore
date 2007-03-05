@@ -143,5 +143,45 @@ public class ModuleFactory implements IModuleFactory {
 	public String toString(ModuleDesc<? extends IModule> root) {
 		return postfixOrder(root).toString();
 	}
+	
+	// debugging support
+	public String printModuleTree(IFileElementType<? extends IRodinFile> type) {
+		StringBuffer buffer = new StringBuffer();
+		ModuleDesc<? extends IModule> desc = rootMap.get(type);
+		if (desc == null) {
+			return "Module-tree look-up failed!\n";
+		}
+		printModuleTree(buffer, desc, 0, 'R');
+		return buffer.toString();
+	}
+
+	private void printModuleTree(
+			StringBuffer buffer, 
+			ModuleDesc<? extends IModule> desc, 
+			int offset,
+			char type) {
+		
+		for (int i=0; i<offset; i++)
+			buffer.append(' ');
+		buffer.append(type);
+		buffer.append(desc.getId());
+		buffer.append('\n');
+		
+		offset += 2;
+		
+		printModuleTree(buffer, filterMap.get(desc), offset, 'F');
+		printModuleTree(buffer, processorMap.get(desc), offset, 'P');
+	}
+
+	private void printModuleTree(
+			StringBuffer buffer, 
+			List<ModuleDesc<? extends IModule>> descs, 
+			int offset, 
+			char type) {
+		if (descs == null)
+			return;
+		for (ModuleDesc<? extends IModule> desc : descs)
+			printModuleTree(buffer, desc, offset, type);
+	}
 
 }

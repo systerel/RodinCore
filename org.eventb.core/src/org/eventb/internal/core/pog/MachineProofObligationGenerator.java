@@ -50,6 +50,8 @@ public class MachineProofObligationGenerator extends ProofObligationGenerator {
 			IModuleFactory moduleFactory = 
 				POGModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
 			
+			printModuleTree(scMachineFile, moduleFactory);
+			
 			IPOGProcessorModule rootModule = 
 				(IPOGProcessorModule) moduleFactory.getRootModule(ISCMachineFile.ELEMENT_TYPE);
 		

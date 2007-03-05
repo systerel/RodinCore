@@ -49,6 +49,8 @@ public class ContextProofObligationGenerator extends ProofObligationGenerator {
 			IModuleFactory moduleFactory = 
 				POGModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
 			
+			printModuleTree(scContextFile, moduleFactory);
+			
 			IPOGProcessorModule rootModule = 
 				(IPOGProcessorModule) moduleFactory.getRootModule(ISCContextFile.ELEMENT_TYPE);
 		

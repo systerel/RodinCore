@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.sc.state;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.sc.SCCore;
@@ -30,7 +31,8 @@ public interface IVariantInfo extends ISCState {
 	 * Returns the parsed and type-checked variant.
 	 * 
 	 * @return the parsed and type-checked variant
+	 * @throws CoreException if this state component is mutable
 	 */
-	Expression getExpression();
+	Expression getExpression() throws CoreException;
 	
 }

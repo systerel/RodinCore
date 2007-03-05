@@ -58,6 +58,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getIdentifier(java.lang.String)
 	 */
 	public FreeIdentifier getVariable(String name) throws CoreException {
+		assertImmutable();
 		if (table == null) {
 			table = new Hashtable<String,FreeIdentifier>(idents.size() * 4 / 3 + 1);
 			for (FreeIdentifier identifier : idents) {
@@ -71,6 +72,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getIdentifiers()
 	 */
 	public List<FreeIdentifier> getVariables() throws CoreException {
+		assertImmutable();
 		return idents;
 	}
 
@@ -78,6 +80,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getGuards()
 	 */
 	public List<Predicate> getGuards() throws CoreException {
+		assertImmutable();
 		return guards;
 	}
 
@@ -85,6 +88,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getActions()
 	 */
 	public List<Assignment> getActions() throws CoreException {
+		assertImmutable();
 		return actions;
 	}
 
@@ -117,8 +121,10 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	
 	@Override
 	public boolean equals(Object obj) {
-		IAbstractEventInfo info = (IAbstractEventInfo) obj;
-		return label.equals(info.getEventLabel());
+		if (this == obj)
+			return true;
+		return obj instanceof IAbstractEventInfo 
+			&& label.equals(((IAbstractEventInfo) obj).getEventLabel());
 	}
 
 	public ISCEvent getEvent() {

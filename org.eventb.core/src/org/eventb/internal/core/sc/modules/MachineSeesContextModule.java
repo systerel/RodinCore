@@ -35,6 +35,43 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineSeesContextModule extends ContextPointerModule {
 
+	private ContextPointerArray contextPointerArray;
+	
+	@Override
+	public void initModule(
+			IRodinElement element, 
+			ISCStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException {
+		super.initModule(element, repository, monitor);
+		
+		IMachineFile machineFile = (IMachineFile) element;
+		
+		ISeesContext[] seesContexts = machineFile.getSeesClauses();
+		
+		ISCContextFile[] contextFiles = new ISCContextFile[seesContexts.length];
+		
+		for(int i=0; i<seesContexts.length; i++) {
+			contextFiles[i] = seesContexts[i].getSeenSCContext();
+		}
+		
+		contextPointerArray = 
+			new ContextPointerArray(
+					IContextPointerArray.PointerType.SEES_POINTER, 
+					seesContexts, 
+					contextFiles);
+		repository.setState(contextPointerArray);
+		
+	}
+
+	@Override
+	public void endModule(
+			IRodinElement element, 
+			ISCStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException {
+		super.endModule(element, repository, monitor);
+		contextPointerArray = null;
+	}
+	
 	public static final IModuleType<MachineSeesContextModule> MODULE_TYPE = 
 		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineSeesContextModule"); //$NON-NLS-1$
 
@@ -50,28 +87,13 @@ public class MachineSeesContextModule extends ContextPointerModule {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 
-		IMachineFile machineFile = (IMachineFile) element;
-		
-		ISeesContext[] seesContexts = machineFile.getSeesClauses();
-		
-		ISCContextFile[] contextFiles = new ISCContextFile[seesContexts.length];
-		
-		for(int i=0; i<seesContexts.length; i++) {
-			contextFiles[i] = seesContexts[i].getSeenSCContext();
-		}
-		
-		ContextPointerArray contextPointerArray = 
-			new ContextPointerArray(
-					IContextPointerArray.PointerType.SEES_POINTER, 
-					seesContexts, 
-					contextFiles);
-		repository.setState(contextPointerArray);
-		
 		// we need to do everything up to this point
 		// produce a define repository state
 		
-		if (seesContexts.length == 0)
+		if (contextPointerArray.size() == 0) {
+			contextPointerArray.makeImmutable();
 			return; // nothing to do
+		}
 		
 		monitor.subTask(Messages.bind(Messages.progress_MachineSees));
 		
@@ -79,7 +101,9 @@ public class MachineSeesContextModule extends ContextPointerModule {
 				contextPointerArray,
 				monitor);
 		
-		createSeesClauses((ISCMachineFile) target, contextPointerArray, null);
+		contextPointerArray.makeImmutable();
+		
+		createSeesClauses((ISCMachineFile) target, null);
 		
 		createInternalContexts(
 				target, 
@@ -99,8 +123,7 @@ public class MachineSeesContextModule extends ContextPointerModule {
 		return ((ISCMachineFile) target).getSCSeenContext(elementName);
 	}
 		
-	private void createSeesClauses(ISCMachineFile target,
-			ContextPointerArray contextPointerArray, IProgressMonitor monitor)
+	private void createSeesClauses(ISCMachineFile target, IProgressMonitor monitor)
 			throws RodinDBException {
 
 		int count = 0;

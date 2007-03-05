@@ -77,7 +77,8 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 			IInternalElement internalElement, 
 			String component, 
 			IProgressMonitor monitor) throws CoreException {
-		return new VariantSymbolInfo("VARIANT", internalElement, EventBAttributes.LABEL_ATTRIBUTE, component);
+		return new VariantSymbolInfo(
+				"VARIANT", internalElement, EventBAttributes.LABEL_ATTRIBUTE, component);
 	}
 
 	/* (non-Javadoc)
@@ -89,8 +90,10 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		if (formulaElements.length == 0)
+		if (formulaElements.length == 0) {
+			variantInfo.makeImmutable();
 			return;
+		}
 		
 		if (formulaElements.length > 1) {
 			for (int k=1; k<formulaElements.length; k++)

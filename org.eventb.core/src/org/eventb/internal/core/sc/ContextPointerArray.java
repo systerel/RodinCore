@@ -96,7 +96,8 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 	 * 
 	 * @param index the index of the context pointer
 	 */
-	public void setError(int index) {
+	public void setError(int index) throws CoreException {
+		assertMutable();
 		error[index] = true;
 	}
 
@@ -137,7 +138,8 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 	/** 
 	 * returns the valid contexts, i.e., those that do not have errors.
 	 */
-	public List<ISCContext> getValidContexts() {
+	public List<ISCContext> getValidContexts() throws CoreException {
+		assertImmutable();
 		return validContexts;
 	}
 	public void setValidContexts(List<ISCContext> validContexts) throws CoreException {

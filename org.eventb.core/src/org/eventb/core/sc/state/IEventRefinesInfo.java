@@ -38,14 +38,15 @@ public interface IEventRefinesInfo extends ISCState {
 	 * Returns whether the current event is refined or not.
 	 * 
 	 * @return whether the current event is refined or not
+	 * @throws CoreException if this state component is mutable
 	 */
-	boolean currentEventIsRefined();
+	boolean currentEventIsRefined() throws CoreException;
 	
 	/**
 	 * Returns the infos for the abstract events that are refined by the current event.
 	 * 
 	 * @return the infos for the abstract events that are refined by the current event
-	 * @throws CoreException TODO
+	 * @throws CoreException if this state component is mutable
 	 */
 	List<IAbstractEventInfo> getAbstractEventInfos() throws CoreException;
 	
@@ -53,7 +54,7 @@ public interface IEventRefinesInfo extends ISCState {
 	 * Returns the refines clauses of the current event.
 	 * 
 	 * @return the refines clauses of the current event
-	 * @throws CoreException TODO
+	 * @throws CoreException if this state component is mutable
 	 */
 	List<IRefinesEvent> getRefinesClauses() throws CoreException;
 	

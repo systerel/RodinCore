@@ -138,8 +138,14 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 
 	}
 
-	private <M extends IModule> void traceModule(M module, String kind) {
-		System.out.println("POG MODULE: " + module.getModuleType());
+	private static final String PROCESSOR = "PROCESSOR";
+//	private static final String FILTER = "FILTER";
+	private static final String INI = "INI";
+	private static final String RUN = "RUN";
+	private static final String END = "END";
+
+	private <M extends IModule> void traceModule(M module, String op, String kind) {
+		System.out.println("POG MOD" + op + ": " + module.getModuleType() + " " + kind);
 	}
 
 	protected final void initModules(
@@ -148,7 +154,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 			IProgressMonitor monitor) throws CoreException {
 		for (IProcessorModule module : getProcessorModules()) {
 			if (DEBUG_MODULE)
-				traceModule(module, "PROCESSOR");
+				traceModule(module, INI, PROCESSOR);
 			IPOGProcessorModule pogModule = (IPOGProcessorModule) module;
 			pogModule.initModule(element, repository, monitor);
 		}
@@ -159,6 +165,8 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		for (IProcessorModule module : getProcessorModules()) {
+			if (DEBUG_MODULE)
+				traceModule(module, RUN, PROCESSOR);
 			IPOGProcessorModule pogModule = (IPOGProcessorModule) module;
 			pogModule.process(element, repository, monitor);
 		}
@@ -169,6 +177,8 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IProcessorModule module : getProcessorModules()) {
+			if (DEBUG_MODULE)
+				traceModule(module, END, PROCESSOR);
 			IPOGProcessorModule pogModule = (IPOGProcessorModule) module;
 			pogModule.endModule(element, repository, monitor);
 		}

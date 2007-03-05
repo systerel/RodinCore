@@ -57,6 +57,8 @@ public class MachineStaticChecker extends StaticChecker {
 			IModuleFactory moduleFactory = 
 				SCModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
 			
+			printModuleTree(machineFile, moduleFactory);
+			
 			ISCProcessorModule rootModule = 
 				(ISCProcessorModule) moduleFactory.getRootModule(IMachineFile.ELEMENT_TYPE);
 			

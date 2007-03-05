@@ -23,85 +23,86 @@ import org.rodinp.core.builder.IGraph;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class ContextStaticChecker extends StaticChecker {
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.builder.IAutomaticTool#run(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rodinp.core.builder.IAutomaticTool#run(org.eclipse.core.resources.IFile,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean run(IFile source, IFile file, IProgressMonitor monitor)
 			throws CoreException {
-		
-		ISCContextFile scContextFile = (ISCContextFile) RodinCore.valueOf(file).getMutableCopy();
-		IContextFile contextFile = (IContextFile) scContextFile.getContextFile().getSnapshot();
-		
+
+		ISCContextFile scContextFile = (ISCContextFile) RodinCore.valueOf(file)
+				.getMutableCopy();
+		IContextFile contextFile = (IContextFile) scContextFile
+				.getContextFile().getSnapshot();
+
 		int size = contextFile.getChildren().length + 3;
-		
+
 		try {
-			
-			monitor.beginTask(
-					Messages.bind(
-							Messages.build_runningMSC, 
-							StaticChecker.getStrippedComponentName(file.getName())), 
+
+			monitor.beginTask(Messages.bind(Messages.build_runningMSC,
+					StaticChecker.getStrippedComponentName(file.getName())),
 					size);
 
 			scContextFile.create(true, monitor);
 
-			ISCStateRepository repository = createRepository(contextFile, monitor);
-		
+			ISCStateRepository repository = createRepository(contextFile,
+					monitor);
+
 			contextFile.open(new SubProgressMonitor(monitor, 1));
 			scContextFile.open(new SubProgressMonitor(monitor, 1));
-			
-			IModuleFactory moduleFactory = 
-				SCModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
-			
+
+			IModuleFactory moduleFactory = SCModuleManager.getInstance()
+					.getModuleFactory(DEFAULT_CONFIG);
+
+			printModuleTree(contextFile, moduleFactory);
+
 			ISCProcessorModule rootModule = 
 				(ISCProcessorModule) moduleFactory.getRootModule(IContextFile.ELEMENT_TYPE);
-		
-			runProcessorModules(
-					rootModule,
-					contextFile, 
-					scContextFile,
-					repository,
-					monitor);
-		
+
+			runProcessorModules(rootModule, contextFile, scContextFile,
+					repository, monitor);
+
 			scContextFile.save(new SubProgressMonitor(monitor, 1), true);
-		
+
 			// TODO delta checking
 			// return repository.targetHasChanged();
-		
+
 			return true;
-			
+
 		} finally {
 			monitor.done();
 			scContextFile.makeConsistent(null);
 		}
 	}
 
-	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
-		
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor)
+			throws CoreException {
+
 		try {
-			
-			monitor.beginTask(Messages.bind(Messages.build_extracting, file.getName()), 1);
-		
+
+			monitor.beginTask(Messages.bind(Messages.build_extracting, file
+					.getName()), 1);
+
 			IContextFile source = (IContextFile) RodinCore.valueOf(file);
 			ISCContextFile target = source.getSCContextFile();
-		
+
 			graph.addTarget(target.getResource());
-			graph.addToolDependency(
-					source.getResource(), 
-					target.getResource(), true);
-		
+			graph.addToolDependency(source.getResource(), target.getResource(),
+					true);
+
 			IExtendsContext[] extendsContexts = source.getExtendsClauses();
-			for(IExtendsContext extendsContext : extendsContexts) {
-				graph.addUserDependency(
-						source.getResource(), 
-						extendsContext.getAbstractSCContext().getResource(), 
-						target.getResource(), 
-						false);
+			for (IExtendsContext extendsContext : extendsContexts) {
+				graph.addUserDependency(source.getResource(), extendsContext
+						.getAbstractSCContext().getResource(), target
+						.getResource(), false);
 			}
-		
+
 		} finally {
 			monitor.done();
 		}

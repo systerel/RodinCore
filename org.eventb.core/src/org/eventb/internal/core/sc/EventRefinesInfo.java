@@ -56,7 +56,8 @@ public class EventRefinesInfo extends State implements IEventRefinesInfo {
 		refEvents = new ArrayList<IRefinesEvent>(size);
 	}
 	
-	public boolean currentEventIsRefined() {
+	public boolean currentEventIsRefined() throws CoreException {
+		assertImmutable();
 		return abstractInfos.size() == 0 && refEvents.size() == 0;
 	}
 

@@ -273,6 +273,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 					fetchEventVariables(event, eventTypeEnvironment, factory),
 					fetchEventGuards(event, eventTypeEnvironment, factory),
 					fetchEventActions(event, eventTypeEnvironment, factory));
+		abstractEventInfo.makeImmutable();
 		
 		abstractEventTable.putAbstractEventInfo(abstractEventInfo);
 	}

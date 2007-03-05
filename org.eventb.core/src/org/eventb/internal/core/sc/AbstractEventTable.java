@@ -72,7 +72,8 @@ public class AbstractEventTable extends State implements IAbstractEventTable {
 		return index == -1 ? null : table.get(index);
 	}
 
-	public int getIndexForLabel(String label) {
+	public int getIndexForLabel(String label) throws CoreException {
+		assertImmutable();
 		int index = labels.indexOf(label);
 		return index;
 	}

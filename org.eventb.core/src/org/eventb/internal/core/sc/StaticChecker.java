@@ -16,8 +16,8 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.internal.core.tool.IModuleFactory;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.builder.IAutomaticTool;
@@ -30,10 +30,9 @@ import org.rodinp.core.builder.IExtractor;
 public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 
 	public static boolean DEBUG = false;
-	
 	public static boolean DEBUG_STATE = false;
-	
 	public static boolean DEBUG_MARKERS = false;
+	public static boolean DEBUG_MODULECONF = false;
 	
 	protected static final String DEFAULT_CONFIG = EventBPlugin.PLUGIN_ID + ".fwd";
 
@@ -80,11 +79,6 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 			return component.substring(0, dotPos - 1);
 	}
 	
-	@Deprecated
-	public static String getParentName(IRodinElement element) {
-		return element.getParent().getElementName();
-	}
-
 	protected void runProcessorModules(
 			ISCProcessorModule rootModule,
 			IRodinFile file, 
@@ -103,6 +97,18 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 		
 		rootModule.endModule(file, repository, monitor);	
 	
+	}
+
+	protected void printModuleTree(IRodinFile file, IModuleFactory moduleFactory) {
+		if (DEBUG_MODULECONF) {
+			System.out.println("+++ STATIC CHECKER MODULES +++");
+			System.out.println("INPUT " + file.getPath());
+			System.out.println("      " + file.getElementType());
+			System.out.println("CONFIG " + DEFAULT_CONFIG);
+			System.out.print(moduleFactory
+					.printModuleTree(file.getElementType()));
+			System.out.println("++++++++++++++++++++++++++++++++++++++");
+		}
 	}
 
 }

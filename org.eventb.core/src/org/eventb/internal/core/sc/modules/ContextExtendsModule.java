@@ -89,14 +89,18 @@ public class ContextExtendsModule extends ContextPointerModule {
 		// we need to do everything up to this point
 		// produce a define repository state
 		
-		if (contextPointerArray.size() == 0)
+		if (contextPointerArray.size() == 0) {
+			contextPointerArray.makeImmutable();
 			return; // nothing to do
+		}
 		
 		monitor.subTask(Messages.bind(Messages.progress_ContextExtends));
 		
 		fetchSCContexts(
 				contextPointerArray,
 				monitor);
+		
+		contextPointerArray.makeImmutable();
 		
 		createExtendsClauses((ISCContextFile) target);
 		

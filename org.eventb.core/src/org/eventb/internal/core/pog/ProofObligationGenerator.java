@@ -15,6 +15,7 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pog.IPOGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.internal.core.tool.IModuleFactory;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
@@ -29,6 +30,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 	
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_STATE = false;
+	public static boolean DEBUG_MODULECONF = false;
 	
 	protected static final String DEFAULT_CONFIG = EventBPlugin.PLUGIN_ID + ".fwd";
 	
@@ -77,6 +79,18 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		rootModule.process(file, repository, monitor);
 		rootModule.endModule(file, repository, monitor);
 		
+	}
+
+	protected void printModuleTree(IRodinFile file, IModuleFactory moduleFactory) {
+		if (DEBUG_MODULECONF) {
+			System.out.println("+++ PROOF OBLIGATION GENERATOR MODULES +++");
+			System.out.println("INPUT " + file.getPath());
+			System.out.println("      " + file.getElementType());
+			System.out.println("CONFIG " + DEFAULT_CONFIG);
+			System.out.print(moduleFactory
+					.printModuleTree(file.getElementType()));
+			System.out.println("++++++++++++++++++++++++++++++++++++++");
+		}
 	}
 
 }

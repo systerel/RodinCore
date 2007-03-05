@@ -26,4 +26,5 @@ public interface IModuleFactory {
 	
 	IProcessorModule getRootModule(IFileElementType<? extends IRodinFile> type);
 	
+	public String printModuleTree(IFileElementType<? extends IRodinFile> type);
 }
