@@ -38,10 +38,12 @@ public class EventBPlugin extends Plugin {
 	 */
 	private static final String SC_TRACE = PLUGIN_ID + "/debug/sc"; //$NON-NLS-1$
 	private static final String SC_TRACE_STATE = PLUGIN_ID + "/debug/sc/state"; //$NON-NLS-1$
+	private static final String SC_TRACE_MODULECONF = PLUGIN_ID + "/debug/sc/moduleconf"; //$NON-NLS-1$
 	private static final String SC_TRACE_MODULES = PLUGIN_ID + "/debug/sc/modules"; //$NON-NLS-1$
 	private static final String SC_TRACE_MARKERS = PLUGIN_ID + "/debug/sc/markers"; //$NON-NLS-1$
 	private static final String POG_TRACE = PLUGIN_ID + "/debug/pog"; //$NON-NLS-1$
 	private static final String POG_TRACE_STATE = PLUGIN_ID + "/debug/pog/state"; //$NON-NLS-1$
+	private static final String POG_TRACE_MODULECONF = PLUGIN_ID + "/debug/pog/moduleconf"; //$NON-NLS-1$
 	private static final String POG_TRACE_MODULES = PLUGIN_ID + "/debug/pog/modules"; //$NON-NLS-1$
 	private static final String POG_TRACE_TRIVIAL = PLUGIN_ID + "/debug/pog/trivial"; //$NON-NLS-1$
 	private static final String POM_TRACE = PLUGIN_ID + "/debug/pom"; //$NON-NLS-1$
@@ -196,6 +198,9 @@ public class EventBPlugin extends Plugin {
 			option = Platform.getDebugOption(SC_TRACE_STATE);
 			if (option != null)
 				StaticChecker.DEBUG_STATE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(SC_TRACE_MODULECONF);
+			if (option != null)
+				StaticChecker.DEBUG_MODULECONF = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(SC_TRACE_MODULES);
 			if (option != null)
 				SCModule.DEBUG_MODULE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
@@ -208,6 +213,9 @@ public class EventBPlugin extends Plugin {
 			option = Platform.getDebugOption(POG_TRACE_STATE);
 			if (option != null)
 				ProofObligationGenerator.DEBUG_STATE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(POG_TRACE_MODULECONF);
+			if (option != null)
+				ProofObligationGenerator.DEBUG_MODULECONF = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POG_TRACE_MODULES);
 			if (option != null)
 				POGModule.DEBUG_MODULE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
