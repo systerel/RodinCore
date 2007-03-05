@@ -197,31 +197,39 @@ public class EventBPlugin extends Plugin {
 				StaticChecker.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(SC_TRACE_STATE);
 			if (option != null)
-				StaticChecker.DEBUG_STATE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				StaticChecker.DEBUG_STATE = 
+					StaticChecker.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(SC_TRACE_MODULECONF);
 			if (option != null)
-				StaticChecker.DEBUG_MODULECONF = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				StaticChecker.DEBUG_MODULECONF = 
+					StaticChecker.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(SC_TRACE_MODULES);
 			if (option != null)
-				SCModule.DEBUG_MODULE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				SCModule.DEBUG_MODULE = 
+					StaticChecker.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(SC_TRACE_MARKERS);
 			if (option != null)
-				StaticChecker.DEBUG_MARKERS = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				StaticChecker.DEBUG_MARKERS = 
+					StaticChecker.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POG_TRACE);
 			if (option != null)
 				ProofObligationGenerator.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POG_TRACE_STATE);
 			if (option != null)
-				ProofObligationGenerator.DEBUG_STATE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				ProofObligationGenerator.DEBUG_STATE = 
+					ProofObligationGenerator.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POG_TRACE_MODULECONF);
 			if (option != null)
-				ProofObligationGenerator.DEBUG_MODULECONF = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				ProofObligationGenerator.DEBUG_MODULECONF = 
+					ProofObligationGenerator.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POG_TRACE_MODULES);
 			if (option != null)
-				POGModule.DEBUG_MODULE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				POGModule.DEBUG_MODULE = 
+					ProofObligationGenerator.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POG_TRACE_TRIVIAL);
 			if (option != null)
-				UtilityModule.DEBUG_TRIVIAL = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				UtilityModule.DEBUG_TRIVIAL = 
+					ProofObligationGenerator.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POM_TRACE);
 			if (option != null)
 				AutoPOM.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
