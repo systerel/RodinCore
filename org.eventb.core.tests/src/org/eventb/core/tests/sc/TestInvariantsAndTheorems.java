@@ -81,5 +81,10 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineFile
 				makeSList("V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"));
 		
 	}
+
+	@Override
+	protected IGenericSCTest<IMachineFile, ISCMachineFile> newGeneric() {
+		return new GenericMachineSCTest(this);
+	}
 	
 }

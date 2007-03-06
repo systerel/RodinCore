@@ -7,51 +7,50 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class GenericPredicateTest <IRF extends IRodinFile, ISCRF extends IRodinFile> 
-extends BasicSCTest 
-implements IGenericSCTest <IRF, ISCRF> {
+public abstract class GenericPredicateTest <E extends IRodinElement, SCE extends IRodinElement> 
+extends GenericEventBSCTest<E, SCE> {
 	
 	/**
 	 * creation of axiom or invariant
 	 */
 	public void test_00() throws Exception {
-		IRF con = createComponent("con", (IRF) null);
+		E con = getGeneric().createElement("con");
 
-		addNonTheorems(con, makeSList("P"), makeSList("ℕ≠∅"));
+		getGeneric().addNonTheorems(con, makeSList("P"), makeSList("ℕ≠∅"));
 		
-		con.save(null, true);
+		getGeneric().save(con);
 		
 		runBuilder();
 		
-		ISCRF file = getSCComponent(con);
+		SCE file = getGeneric().getSCElement(con);
 		
-		containsNonTheorems(file, emptyEnv, makeSList("P"), makeSList("ℕ≠∅"));
+		getGeneric().containsNonTheorems(file, emptyEnv, makeSList("P"), makeSList("ℕ≠∅"));
 		
-		containsMarkers(con, false);
+		getGeneric().containsMarkers(con, false);
 	}
 	
 	/**
 	 * name conflict
 	 */
 	public void test_01() throws Exception {
-		IRF con = createComponent("con", (IRF) null);
+		E con = getGeneric().createElement("con");
 
-		addNonTheorems(con, makeSList("P"), makeSList("ℕ≠∅"));
-		addNonTheorems(con, makeSList("P"), makeSList("ℕ=∅"));
+		getGeneric().addNonTheorems(con, makeSList("P"), makeSList("ℕ≠∅"));
+		getGeneric().addNonTheorems(con, makeSList("P"), makeSList("ℕ=∅"));
 	
-		con.save(null, true);
+		getGeneric().save(con);
 		
 		runBuilder();
 		
-		ISCRF file = getSCComponent(con);
+		SCE file = getGeneric().getSCElement(con);
 		
-		containsNonTheorems(file, emptyEnv, makeSList("P"), makeSList("ℕ≠∅"));
+		getGeneric().containsNonTheorems(file, emptyEnv, makeSList("P"), makeSList("ℕ≠∅"));
 		
 	}
 	
@@ -59,17 +58,17 @@ implements IGenericSCTest <IRF, ISCRF> {
 	 * type conflict in one axiom or invariant
 	 */
 	public void test_02() throws Exception {
-		IRF con = createComponent("con", (IRF) null);
+		E con = getGeneric().createElement("con");
 
-		addNonTheorems(con, makeSList("A1"), makeSList("ℕ≠BOOL"));
+		getGeneric().addNonTheorems(con, makeSList("A1"), makeSList("ℕ≠BOOL"));
 	
-		con.save(null, true);
+		getGeneric().save(con);
 		
 		runBuilder();
 		
-		ISCRF file = getSCComponent(con);
+		SCE file = getGeneric().getSCElement(con);
 		
-		containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
 		
 	}
 	
@@ -77,37 +76,37 @@ implements IGenericSCTest <IRF, ISCRF> {
 	 * use of declared constant or variable
 	 */
 	public void test_03() throws Exception {
-		IRF con = createComponent("con", (IRF) null);
+		E con = getGeneric().createElement("con");
 
-		addIdents(con, "x");
-		addNonTheorems(con, makeSList("P"), makeSList("x∈1‥0"));
+		getGeneric().addIdents(con, "x");
+		getGeneric().addNonTheorems(con, makeSList("P"), makeSList("x∈1‥0"));
 	
-		con.save(null, true);
+		getGeneric().save(con);
 		
 		runBuilder();
 		
-		ISCRF file = getSCComponent(con);
+		SCE file = getGeneric().getSCElement(con);
 		
-		containsNonTheorems(file, emptyEnv, makeSList("P"), makeSList("x∈1‥0"));
+		getGeneric().containsNonTheorems(file, emptyEnv, makeSList("P"), makeSList("x∈1‥0"));
 		
-		containsMarkers(con, false);
+		getGeneric().containsMarkers(con, false);
 	}
 	
 	/**
 	 * use of undeclared constants or variables
 	 */
 	public void test_04() throws Exception {
-		IRF con = createComponent("con", (IRF) null);
+		E con = getGeneric().createElement("con");
 
-		addNonTheorems(con, makeSList("A1"), makeSList("C1∈ℕ"));
+		getGeneric().addNonTheorems(con, makeSList("A1"), makeSList("C1∈ℕ"));
 	
-		con.save(null, true);
+		getGeneric().save(con);
 		
 		runBuilder();
 		
-		ISCRF file = getSCComponent(con);
+		SCE file = getGeneric().getSCElement(con);
 		
-		containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
 		
 	}
 
@@ -115,56 +114,56 @@ implements IGenericSCTest <IRF, ISCRF> {
 	 * create theorem
 	 */
 	public void test_05() throws Exception {
-		IRF con = createComponent("con", (IRF) null);
+		E con = getGeneric().createElement("con");
 
-		addTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
+		getGeneric().addTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
 		
-		con.save(null, true);
+		getGeneric().save(con);
 		
 		runBuilder();
 		
-		ISCRF file = getSCComponent(con);
+		SCE file = getGeneric().getSCElement(con);
 		
-		containsTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
+		getGeneric().containsTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
 		
-		containsMarkers(con, false);
+		getGeneric().containsMarkers(con, false);
 	}
 	
 	/**
 	 * create two theorems
 	 */
 	public void test_06() throws Exception {
-		IRF con = createComponent("con", (IRF) null);
+		E con = getGeneric().createElement("con");
 
-		addTheorems(con, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"));
+		getGeneric().addTheorems(con, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"));
 		
-		con.save(null, true);
+		getGeneric().save(con);
 		
 		runBuilder();
 		
-		ISCRF file = getSCComponent(con);
+		SCE file = getGeneric().getSCElement(con);
 		
-		containsTheorems(file, emptyEnv, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"));
+		getGeneric().containsTheorems(file, emptyEnv, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"));
 		
-		containsMarkers(con, false);
+		getGeneric().containsMarkers(con, false);
 	}
 	
 	/**
 	 * create two theorems with name conflict
 	 */
 	public void test_07() throws Exception {
-		IRF con = createComponent("con", (IRF) null);
+		E con = getGeneric().createElement("con");
 
-		addTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
-		addTheorems(con, makeSList("T1"), makeSList("ℕ=∅"));
+		getGeneric().addTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
+		getGeneric().addTheorems(con, makeSList("T1"), makeSList("ℕ=∅"));
 		
-		con.save(null, true);
+		getGeneric().save(con);
 		
 		runBuilder();
 		
-		ISCRF file = getSCComponent(con);
+		SCE file = getGeneric().getSCElement(con);
 		
-		containsTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
+		getGeneric().containsTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
 		
 	}
 	
@@ -172,19 +171,19 @@ implements IGenericSCTest <IRF, ISCRF> {
 	 * name conflict of axiom (resp. invariant) and theorem
 	 */
 	public void test_08() throws Exception {
-		IRF con = createComponent("con", (IRF) null);
+		E con = getGeneric().createElement("con");
 
-		addNonTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
-		addTheorems(con, makeSList("T1"), makeSList("ℕ=∅"));
+		getGeneric().addNonTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
+		getGeneric().addTheorems(con, makeSList("T1"), makeSList("ℕ=∅"));
 		
-		con.save(null, true);
+		getGeneric().save(con);
 		
 		runBuilder();
 		
-		ISCRF file = getSCComponent(con);
+		SCE file = getGeneric().getSCElement(con);
 		
-		containsNonTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
-		containsTheorems(file, emptyEnv, makeSList(), makeSList());
+		getGeneric().containsNonTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
+		getGeneric().containsTheorems(file, emptyEnv, makeSList(), makeSList());
 		
 	}
 

@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestMachineEventWitnesses extends BasicPOTest {
+public class TestMachineEventWitnesses extends EventBPOTest {
 	
 	/**
 	 * deterministic witnesses for invariants and simulation

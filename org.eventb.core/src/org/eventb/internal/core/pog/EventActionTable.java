@@ -33,7 +33,7 @@ public abstract class EventActionTable extends State implements IEventActionTabl
 	
 	@Override
 	public String toString() {
-		return actions.toString();
+		return assignments.toString();
 	}
 
 	protected List<ISCAction> actions;

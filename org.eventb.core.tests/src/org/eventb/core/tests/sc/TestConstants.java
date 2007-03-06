@@ -137,4 +137,9 @@ public class TestConstants extends GenericIdentTest<IContextFile, ISCContextFile
 		containsMarkers(con, false);
 	}
 
+	@Override
+	protected IGenericSCTest<IContextFile, ISCContextFile> newGeneric() {
+		return new GenericContextSCTest(this);
+	}
+
 }

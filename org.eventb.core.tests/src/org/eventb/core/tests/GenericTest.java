@@ -5,19 +5,19 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.tests.pog;
-
-import org.eventb.core.IContextFile;
+package org.eventb.core.tests;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class TestContextHints extends GenericHintTest<IContextFile> {
-
-	@Override
-	protected IGenericPOTest<IContextFile> newGeneric() {
-		return new GenericContextPOTest(this);
+public abstract class GenericTest<T extends EventBTest> {
+	
+	protected final T test;
+	
+	public GenericTest(final T test) {
+		super();
+		this.test = test;
 	}
 
 }

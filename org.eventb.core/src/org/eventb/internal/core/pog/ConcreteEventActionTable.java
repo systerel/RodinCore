@@ -45,7 +45,7 @@ public class ConcreteEventActionTable extends EventActionTable implements
 		LinkedList<FreeIdentifier> deltaLeft = new LinkedList<FreeIdentifier>();
 		LinkedList<Expression> deltaRight = new LinkedList<Expression>();
 		
-		for (FreeIdentifier variable : variables) {
+		for (FreeIdentifier variable : variables.getVariables()) {
 			if (assignedVariables.contains(variable)) {
 				deltaLeft.add(variable);
 				deltaRight.add(variable.withPrime(factory));

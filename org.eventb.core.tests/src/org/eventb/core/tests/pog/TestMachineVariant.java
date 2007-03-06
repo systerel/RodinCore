@@ -23,7 +23,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class TestMachineVariant extends BasicPOTest {
+public class TestMachineVariant extends EventBPOTest {
 	
 	public static class VariantTestItem {
 		public final int kind;

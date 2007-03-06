@@ -29,7 +29,6 @@ import org.eventb.core.pog.state.IMachineVariableTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -60,7 +59,7 @@ public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementM
 	
 	private void createFrameSimProofObligations(
 			IPOFile target, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		
 		if (machineInfo.isInitialMachine())
 			return;

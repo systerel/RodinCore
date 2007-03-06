@@ -16,23 +16,22 @@ import org.rodinp.core.IRodinFile;
  * @author Stefan Hallerstede
  *
  */
-public abstract class GenericPredicateTest <IRF extends IRodinFile> 
-extends BasicPOTest 
-implements IGenericPOTest<IRF>{
+public abstract class GenericPredicateTest <F extends IRodinFile> 
+extends GenericEventBPOTest<F> {
 
 	/*
 	 * proper creation of theorem PO
 	 */
 	public void testTheorems_00_theorem() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		F cmp = getGeneric().createElement("cmp");
 
-		addTheorems(cmp, makeSList("T1"), makeSList("∀x·x>1"));
+		getGeneric().addTheorems(cmp, makeSList("T1"), makeSList("∀x·x>1"));
 		
 		cmp.save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "T1/THM");
 		
@@ -46,15 +45,15 @@ implements IGenericPOTest<IRF>{
 	 * proper creation of theorem well-definedness PO
 	 */
 	public void testTheorems_01_wDef() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		F cmp = getGeneric().createElement("cmp");
 
-		addTheorems(cmp, makeSList("T1"), makeSList("1÷0=0"));
+		getGeneric().addTheorems(cmp, makeSList("T1"), makeSList("1÷0=0"));
 		
 		cmp.save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "T1/THM");
 		
@@ -70,15 +69,15 @@ implements IGenericPOTest<IRF>{
 	 * theorem in hypothesis
 	 */
 	public void testTheorems_02_ThmInHyp() throws Exception {
-		IRF cmp = createComponent("mac", (IRF) null);
+		F cmp = getGeneric().createElement("mac");
 
-		addTheorems(cmp, makeSList("T1", "T2"), makeSList("∀x·x>1", "∀x·x>2"));
+		getGeneric().addTheorems(cmp, makeSList("T1", "T2"), makeSList("∀x·x>1", "∀x·x>2"));
 		
 		cmp.save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "T1/THM");
 		
@@ -96,17 +95,17 @@ implements IGenericPOTest<IRF>{
 	 * non-creation of theorem with trivial goal
 	 */
 	public void testTheorems_03_trivialTheorem() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		F cmp = getGeneric().createElement("cmp");
 
-		addIdents(cmp, "x");
-		addNonTheorems(cmp, makeSList("N1"), makeSList("x∈ℤ"));
-		addTheorems(cmp, makeSList("T1","T2", "T3"), makeSList("x∈ℤ", "x>1", "⊤"));
+		getGeneric().addIdents(cmp, "x");
+		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("x∈ℤ"));
+		getGeneric().addTheorems(cmp, makeSList("T1","T2", "T3"), makeSList("x∈ℤ", "x>1", "⊤"));
 		
 		cmp.save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		noSequent(po, "T1/THM");
 		
@@ -121,15 +120,15 @@ implements IGenericPOTest<IRF>{
 	 * non-creation of trivial well-definedness non-theorem PO
 	 */
 	public void testNonTheorems_04_nonTheorem() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		F cmp = getGeneric().createElement("cmp");
 
-		addTheorems(cmp, makeSList("N1"), makeSList("∀x·x>1"));
+		getGeneric().addTheorems(cmp, makeSList("N1"), makeSList("∀x·x>1"));
 		
 		cmp.save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		noSequent(po, "N1/WD");
 		
@@ -139,15 +138,15 @@ implements IGenericPOTest<IRF>{
 	 * proper creation of non-theorem well-definedness PO
 	 */
 	public void testNonTheorems_05_wDef() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		F cmp = getGeneric().createElement("cmp");
 
-		addNonTheorems(cmp, makeSList("N1"), makeSList("1÷0=0"));
+		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("1÷0=0"));
 		
 		cmp.save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "N1/WD");
 		
@@ -159,15 +158,15 @@ implements IGenericPOTest<IRF>{
 	 * proper creation of hypothesis of non-theorem well-definedness PO
 	 */
 	public void testNonTheorems_06_wDefHypOK() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		F cmp = getGeneric().createElement("cmp");
 
-		addNonTheorems(cmp, makeSList("N0", "N1"), makeSList("1<0", "1÷0=0"));
+		getGeneric().addNonTheorems(cmp, makeSList("N0", "N1"), makeSList("1<0", "1÷0=0"));
 		
 		cmp.save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "N1/WD");
 		
@@ -180,16 +179,16 @@ implements IGenericPOTest<IRF>{
 	 * proper creation of hypothesis of non-theorem well-definedness PO
 	 */
 	public void testTheorems_07_NonTheoremInHyp() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		F cmp = getGeneric().createElement("cmp");
 
-		addNonTheorems(cmp, makeSList("N1"), makeSList("1=0"));
-		addTheorems(cmp, makeSList("T1"), makeSList("1<0"));
+		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("1=0"));
+		getGeneric().addTheorems(cmp, makeSList("T1"), makeSList("1<0"));
 		
 		cmp.save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "T1/THM");
 		
@@ -202,23 +201,23 @@ implements IGenericPOTest<IRF>{
 	 * proper creation of hypothesis from abstraction
 	 */
 	public void testTheorems_08_abstraction() throws Exception {
-		IRF abs = createComponent("abs", (IRF) null);
+		F abs = getGeneric().createElement("abs");
 		
-		addNonTheorems(abs, makeSList("N0"), makeSList("2>9"));
+		getGeneric().addNonTheorems(abs, makeSList("N0"), makeSList("2>9"));
 		
 		abs.save(null, true);
 		
-		IRF cmp = createComponent("cmp", (IRF) null);
+		F cmp = getGeneric().createElement("cmp");
 
-		addSuper(cmp, "abs");
-		addNonTheorems(cmp, makeSList("N1"), makeSList("7<1"));
-		addTheorems(cmp, makeSList("T1"), makeSList("1<0"));
+		getGeneric().addSuper(cmp, "abs");
+		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("7<1"));
+		getGeneric().addTheorems(cmp, makeSList("T1"), makeSList("1<0"));
 		
 		cmp.save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "T1/THM");
 		
@@ -232,30 +231,30 @@ implements IGenericPOTest<IRF>{
 	 * proper creation of transitive hypothesis
 	 */
 	public void testTheorems_09_transitive() throws Exception {
-		IRF f0 = createComponent("f0", (IRF) null);
+		F f0 = getGeneric().createElement("f0");
 		
-		addTheorems(f0, makeSList("T0"), makeSList("5>9"));	
+		getGeneric().addTheorems(f0, makeSList("T0"), makeSList("5>9"));	
 		
 		f0.save(null, true);
 
-		IRF f1 = createComponent("f1", (IRF) null);
+		F f1 = getGeneric().createElement("f1");
 		
-		addSuper(f1, "f0");
-		addTheorems(f1, makeSList("N0"), makeSList("2>9"));
+		getGeneric().addSuper(f1, "f0");
+		getGeneric().addTheorems(f1, makeSList("N0"), makeSList("2>9"));
 		
 		f1.save(null, true);
 		
-		IRF f2 = createComponent("f2", (IRF) null);
+		F f2 = getGeneric().createElement("f2");
 
-		addSuper(f2, "f1");
-		addNonTheorems(f2, makeSList("N1"), makeSList("7<1"));
-		addTheorems(f2, makeSList("T1"), makeSList("1<0"));
+		getGeneric().addSuper(f2, "f1");
+		getGeneric().addNonTheorems(f2, makeSList("N1"), makeSList("7<1"));
+		getGeneric().addTheorems(f2, makeSList("T1"), makeSList("1<0"));
 		
 		f2.save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(f2);
+		IPOFile po = getGeneric().getPOFile(f2);
 		
 		IPOSequent sequent = getSequent(po, "T1/THM");
 		
@@ -268,10 +267,10 @@ implements IGenericPOTest<IRF>{
 	 * proper creation of identifiers and hypotheses of non-theorem well-definedness PO
 	 */
 	public void testNonTheorems_10_identAndHyp() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		F cmp = getGeneric().createElement("cmp");
 
-		addIdents(cmp, "x");
-		addNonTheorems(cmp, makeSList("N1"), makeSList("x÷x ∈ ℕ"));
+		getGeneric().addIdents(cmp, "x");
+		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("x÷x ∈ ℕ"));
 		
 		cmp.save(null, true);
 		
@@ -280,7 +279,7 @@ implements IGenericPOTest<IRF>{
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "N1/WD");
 		
@@ -294,16 +293,16 @@ implements IGenericPOTest<IRF>{
 	 * proper creation of identifiers and hypotheses of theorem well-definedness PO
 	 */
 	public void testTheorems_11_identAndHyp() throws Exception {
-		IRF abs = createComponent("abs", (IRF) null);
+		F abs = getGeneric().createElement("abs");
 
-		addIdents(abs, "x");
-		addNonTheorems(abs, makeSList("N1"), makeSList("x ∈ ℕ"));
+		getGeneric().addIdents(abs, "x");
+		getGeneric().addNonTheorems(abs, makeSList("N1"), makeSList("x ∈ ℕ"));
 		
 		abs.save(null, true);
 		
-		IRF cmp = createComponent("cmp", (IRF) null);
-		addSuper(cmp, "abs");
-		addTheorems(cmp, makeSList("N2"), makeSList("x÷x ∈ ℕ"));
+		F cmp = getGeneric().createElement("cmp");
+		getGeneric().addSuper(cmp, "abs");
+		getGeneric().addTheorems(cmp, makeSList("N2"), makeSList("x÷x ∈ ℕ"));
 		
 		cmp.save(null, true);
 		runBuilder();
@@ -311,7 +310,7 @@ implements IGenericPOTest<IRF>{
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "N2/WD");
 		

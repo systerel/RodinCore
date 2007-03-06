@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestMachineEvents extends BasicPOTest {
+public class TestMachineEvents extends EventBPOTest {
 	
 	/**
 	 * simple case of invariant preservation

@@ -83,4 +83,9 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 	
 	}
 
+	@Override
+	protected IGenericPOTest<IMachineFile> newGeneric() {
+		return new GenericMachinePOTest(this);
+	}
+
 }

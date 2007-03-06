@@ -15,4 +15,9 @@ import org.eventb.core.IContextFile;
  */
 public class TestContextAxiomsAndTheorems extends GenericPredicateTest<IContextFile> {
 
+	@Override
+	protected IGenericPOTest<IContextFile> newGeneric() {
+		return new GenericContextPOTest(this);
+	}
+
 }

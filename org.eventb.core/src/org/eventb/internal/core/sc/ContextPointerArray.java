@@ -23,8 +23,7 @@ import org.rodinp.core.IInternalElement;
 /**
  * 
  * The contexts referenced by a context (or machine) are stored in 
- * a context pointer array (preserving order). Contexts referenced by the
- * referenced contexts are kept in <i>up-lists</i>.
+ * a context pointer array (preserving order).
  * 
  * @author Stefan Hallerstede
  *

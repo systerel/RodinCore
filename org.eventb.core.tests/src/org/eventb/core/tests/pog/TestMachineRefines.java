@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestMachineRefines extends BasicPOTest {
+public class TestMachineRefines extends EventBPOTest {
 	
 	/**
 	 * rewriting of deterministic action simulation POs

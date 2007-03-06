@@ -7,23 +7,23 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface IGenericTest <IRF extends IRodinFile>{
+public interface IGenericElementTest<E extends IRodinElement> {
+	
+	void addTheorems(E element, String[] names, String[] theorems) 
+	throws RodinDBException;
 
-	public void addTheorems(IRF rodinFile, String[] names, String[] theorems) throws RodinDBException;
-
-	public void addNonTheorems(IRF rodinFile, String[] names, String[] axioms) throws RodinDBException;
+	void addNonTheorems(E element, String[] names, String[] nonTheorems) 
+	throws RodinDBException;
 	
-	public void addIdents(IRF rodinFile, String... names) throws RodinDBException;
+	void addIdents(E element, String... names) throws RodinDBException;
 	
-	public void addSuper(IRF rodinFile, String name) throws RodinDBException;
-	
-	public IRF createComponent(String bareName, IRF dummy) throws RodinDBException;
+	abstract E createElement(String bareName) throws RodinDBException;
 
 }

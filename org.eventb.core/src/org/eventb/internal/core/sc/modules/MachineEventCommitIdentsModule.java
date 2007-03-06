@@ -48,7 +48,7 @@ public class MachineEventCommitIdentsModule extends SCProcessorModule {
 		IIdentifierSymbolTable identifierSymbolTable = 
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
 		
-		for(ISymbolInfo symbolInfo : identifierSymbolTable) {
+		for(ISymbolInfo symbolInfo : identifierSymbolTable.getSymbolInfosFromTop()) {
 			
 			IIdentifierSymbolInfo identifierSymbolInfo = (IIdentifierSymbolInfo) symbolInfo;
 			

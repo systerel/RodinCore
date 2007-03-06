@@ -7,19 +7,28 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
-import org.eventb.core.tests.IGenericElementTest;
-import org.rodinp.core.IRodinFile;
+import org.eventb.core.tests.GenericMachineTest;
 import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface IGenericPOTest <E extends IRodinFile> extends IGenericElementTest <E> {
-	
-	public void addSuper(E file, String name) throws RodinDBException;
-	
-	public IPOFile getPOFile(E file) throws RodinDBException;
+public class GenericMachinePOTest extends GenericMachineTest<EventBPOTest> 
+implements IGenericPOTest<IMachineFile> {
+
+	public GenericMachinePOTest(EventBPOTest test) {
+		super(test);
+	}
+
+	public void addSuper(IMachineFile file, String name) throws RodinDBException {
+		test.addMachineRefines(file, name);
+	}
+
+	public IPOFile getPOFile(IMachineFile file) throws RodinDBException {
+		return file.getPOFile();
+	}
 
 }

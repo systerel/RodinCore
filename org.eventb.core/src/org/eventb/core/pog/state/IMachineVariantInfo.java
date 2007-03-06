@@ -33,7 +33,7 @@ public interface IMachineVariantInfo extends IPOGState {
 	 * if the machine does not have a variant.
 	 * 
 	 * @return the parsed and type-checked variant expression, or <code>null</code> 
-	 * if the machine does not have a variant
+	 * 		if the machine does not have a variant
 	 */
 	Expression getExpression();
 	

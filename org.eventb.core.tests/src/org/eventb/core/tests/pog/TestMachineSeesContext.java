@@ -12,7 +12,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author halstefa
  *
  */
-public class TestMachineSeesContext extends BasicPOTest {
+public class TestMachineSeesContext extends EventBPOTest {
 	
 	public void testSees_00() throws Exception {
 		IContextFile con = createContext("con");

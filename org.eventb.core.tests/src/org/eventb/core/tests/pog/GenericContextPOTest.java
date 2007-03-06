@@ -8,16 +8,26 @@
 package org.eventb.core.tests.pog;
 
 import org.eventb.core.IContextFile;
+import org.eventb.core.IPOFile;
+import org.eventb.core.tests.GenericContextTest;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class TestContextHints extends GenericHintTest<IContextFile> {
+public class GenericContextPOTest extends GenericContextTest<EventBPOTest> implements IGenericPOTest<IContextFile> {
 
-	@Override
-	protected IGenericPOTest<IContextFile> newGeneric() {
-		return new GenericContextPOTest(this);
+	public GenericContextPOTest(EventBPOTest test) {
+		super(test);
+	}
+
+	public void addSuper(IContextFile file, String name) throws RodinDBException {
+		test.addContextExtends(file, name);
+	}
+
+	public IPOFile getPOFile(IContextFile file) throws RodinDBException {
+		return file.getPOFile();
 	}
 
 }

@@ -72,7 +72,7 @@ public class AbstractEventActionTable extends EventActionTable implements
 			Assignment assignment, 
 			ISCAction action, 
 			IMachineVariableTable variables, 
-			FormulaFactory factory) {
+			FormulaFactory factory) throws CoreException {
 		if (assignment instanceof BecomesEqualTo) {
 			BecomesEqualTo bet = (BecomesEqualTo) assignment;
 			

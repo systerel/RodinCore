@@ -16,23 +16,22 @@ import org.rodinp.core.IRodinFile;
  * @author Stefan Hallerstede
  *
  */
-public abstract class GenericHintTest<IRF extends IRodinFile> 
-extends BasicPOTest 
-implements IGenericPOTest<IRF> {
+public abstract class GenericHintTest<F extends IRodinFile> 
+extends GenericEventBPOTest<F> {
 
 	/**
 	 * proper local hypothesis selection hints for theorems 
 	 */
 	public void testHints_00() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		F cmp = getGeneric().createElement("cmp");
 
-		addTheorems(cmp, makeSList("T1", "T2", "T3"), makeSList("∀x·x>1", "∃x·x≠0", "∀x·x÷x≠0"));
+		getGeneric().addTheorems(cmp, makeSList("T1", "T2", "T3"), makeSList("∀x·x>1", "∃x·x≠0", "∀x·x÷x≠0"));
 		
 		cmp.save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "T2/THM");
 		
@@ -55,15 +54,15 @@ implements IGenericPOTest<IRF> {
 	 * proper local hypothesis selection hints for non-theorems 
 	 */
 	public void testHints_01() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		F cmp = getGeneric().createElement("cmp");
 
-		addNonTheorems(cmp, makeSList("N1", "N2", "N3"), makeSList("∀x·x>1", "∃x·x≠0", "∀x·x÷x≠0"));
+		getGeneric().addNonTheorems(cmp, makeSList("N1", "N2", "N3"), makeSList("∀x·x>1", "∃x·x≠0", "∀x·x÷x≠0"));
 		
 		cmp.save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(cmp);
+		IPOFile po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "N3/WD");
 		

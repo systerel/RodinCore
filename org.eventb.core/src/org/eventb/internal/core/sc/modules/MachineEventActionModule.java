@@ -175,7 +175,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 			IProgressMonitor monitor) throws RodinDBException {
 		List<FreeIdentifier> patchLHS = new LinkedList<FreeIdentifier>();
 		List<BoundIdentDecl> patchBound = new LinkedList<BoundIdentDecl>();
-		for (ISymbolInfo symbolInfo : identifierSymbolTable.getParentTable()) {
+		for (ISymbolInfo symbolInfo : identifierSymbolTable.getParentTable().getSymbolInfosFromTop()) {
 			if (symbolInfo instanceof IVariableSymbolInfo && !symbolInfo.hasError()) {
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
 				if (variableSymbolInfo.isConcrete()) {

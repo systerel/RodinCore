@@ -60,7 +60,7 @@ public abstract class EventBTest extends BuilderTest {
 
 	private static int alloc;
 	
-	private static String getUniqueName() {
+	public String getUniqueName() {
 		if (alloc == Integer.MAX_VALUE)
 			throw new IndexOutOfBoundsException();
 		return "x" + alloc++;

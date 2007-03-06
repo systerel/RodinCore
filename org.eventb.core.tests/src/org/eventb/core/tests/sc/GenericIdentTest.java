@@ -8,32 +8,31 @@
 package org.eventb.core.tests.sc;
 
 import org.eventb.core.ast.ITypeEnvironment;
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinElement;
 
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class GenericIdentTest <IRF extends IRodinFile, ISCRF extends IRodinFile> 
-extends BasicSCTest 
-implements IGenericSCTest<IRF, ISCRF> {
+public abstract class GenericIdentTest <E extends IRodinElement, SCE extends IRodinElement> 
+extends GenericEventBSCTest<E, SCE> {
 
 	/**
 	 * Creating a constant or variable without a type must fail
 	 */
 	public void testIdents_00() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		E cmp = getGeneric().createElement("cmp");
 
-		addIdents(cmp, makeSList("V1"));
+		getGeneric().addIdents(cmp, makeSList("V1"));
 		
-		cmp.save(null, true);
+		getGeneric().save(cmp);
 		
 		runBuilder();
 		
-		ISCRF file = getSCComponent(cmp);
+		SCE file = getGeneric().getSCElement(cmp);
 		
-		containsIdents(file);
+		getGeneric().containsIdents(file);
 		
 	}
 
@@ -41,45 +40,45 @@ implements IGenericSCTest<IRF, ISCRF> {
 	 * Creating a constant or variable without a type must succeed
 	 */
 	public void testIdents_01() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		E cmp = getGeneric().createElement("cmp");
 
-		addIdents(cmp, makeSList("V1"));
-		addNonTheorems(cmp, makeSList("I1"), makeSList("V1∈ℤ"));
+		getGeneric().addIdents(cmp, makeSList("V1"));
+		getGeneric().addNonTheorems(cmp, makeSList("I1"), makeSList("V1∈ℤ"));
 		
-		cmp.save(null, true);
+		getGeneric().save(cmp);
 		
 		runBuilder();
 		
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
 		environment.addName("V1", factory.makeIntegerType());
 		
-		ISCRF file = getSCComponent(cmp);
+		SCE file = getGeneric().getSCElement(cmp);
 		
-		containsIdents(file, "V1");
+		getGeneric().containsIdents(file, "V1");
 		
-		containsNonTheorems(file, environment, makeSList("I1"), makeSList("V1∈ℤ"));
+		getGeneric().containsNonTheorems(file, environment, makeSList("I1"), makeSList("V1∈ℤ"));
 
-		containsMarkers(cmp, false);
+		getGeneric().containsMarkers(cmp, false);
 	}
 	
 	/**
 	 * refering to a nondeclared identifier should fail
 	 */
 	public void testIdents_02() throws Exception {
-		IRF cmp = createComponent("cmp", (IRF) null);
+		E cmp = getGeneric().createElement("cmp");
 
-		addIdents(cmp, makeSList("V1"));
-		addNonTheorems(cmp, makeSList("I1"), makeSList("V2∈ℤ"));
+		getGeneric().addIdents(cmp, makeSList("V1"));
+		getGeneric().addNonTheorems(cmp, makeSList("I1"), makeSList("V2∈ℤ"));
 
-		cmp.save(null, true);
+		getGeneric().save(cmp);
 		
 		runBuilder();
 		
-		ISCRF file = getSCComponent(cmp);
+		SCE file = getGeneric().getSCElement(cmp);
 		
-		containsIdents(file);
+		getGeneric().containsIdents(file);
 		
-		containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
 	}
 
 

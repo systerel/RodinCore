@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestMachineInit extends BasicPOTest {
+public class TestMachineInit extends EventBPOTest {
 	
 	private static String init = IEvent.INITIALISATION;
 

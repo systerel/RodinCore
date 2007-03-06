@@ -8,8 +8,10 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
@@ -28,7 +30,7 @@ public abstract class SymbolTable<I extends ISymbolInfo> extends State implement
 	private final Hashtable<String, I> table;
 	
 	// the tableValues variable is a cache that holds the value of table.values()
-	private final Collection<I> tableValues;
+	private final Set<I> tableValues;
 	
 	public SymbolTable(int size) {
 		table = new Hashtable<String, I>(size);
@@ -88,6 +90,10 @@ public abstract class SymbolTable<I extends ISymbolInfo> extends State implement
 
 	public ISymbolTable<I> getParentTable() {
 		return null;
+	}
+
+	public Collection<I> getSymbolInfosFromTop() {
+		return Collections.unmodifiableSet(tableValues);
 	}
 
 }

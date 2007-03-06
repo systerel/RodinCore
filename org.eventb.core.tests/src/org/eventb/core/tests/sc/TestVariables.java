@@ -135,4 +135,9 @@ public class TestVariables extends GenericIdentTest<IMachineFile, ISCMachineFile
 		containsMarkers(mac, false);
 	}
 
+	@Override
+	protected IGenericSCTest<IMachineFile, ISCMachineFile> newGeneric() {
+		return new GenericMachineSCTest(this);
+	}
+
 }

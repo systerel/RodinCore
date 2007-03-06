@@ -35,7 +35,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 
 	@Override
 	public String toString() {
-		return getStateType().toString();
+		return getStateType().toString() + "[" + parentElement.getElementName() + "]";
 	}
 
 	public Iterator<FreeIdentifier> iterator() {

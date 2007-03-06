@@ -307,4 +307,9 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 				"x∈0‥4", "z∈BOOL∖{TRUE}", "zc∈BOOL∖{TRUE}", "yc=y");
 	}
 
+	@Override
+	protected IGenericPOTest<IMachineFile> newGeneric() {
+		return new GenericMachinePOTest(this);
+	}
+
 }

@@ -485,7 +485,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 	}
 	
 	private void addPostValues(ITypeEnvironment typeEnvironment) {
-		for (ISymbolInfo symbolInfo : identifierSymbolTable)
+		for (ISymbolInfo symbolInfo : identifierSymbolTable.getSymbolInfosFromTop())
 			if (symbolInfo instanceof IVariableSymbolInfo){
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
 				if (variableSymbolInfo.isVisible() 

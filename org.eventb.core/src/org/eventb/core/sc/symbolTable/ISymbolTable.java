@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.sc.symbolTable;
 
+import java.util.Collection;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
@@ -24,7 +26,7 @@ import org.eventb.core.sc.state.ILabelSymbolTable;
  * @author Stefan Hallerstede
  *
  */
-public interface ISymbolTable<I extends ISymbolInfo> extends Iterable<I> {
+public interface ISymbolTable<I extends ISymbolInfo> {
 	
 	/**
 	 * Returns whether a symbol is contained in the symbol table.
@@ -36,12 +38,21 @@ public interface ISymbolTable<I extends ISymbolInfo> extends Iterable<I> {
 	
 	/**
 	 * Returns the symbol info for a symbol. If the symbol is not present 
-	 * <code>null</code> is returned. 
+	 * <code>null</code> is returned. If this is stacked symbol table, it is
+	 * searched from top to bottom.
 	 * 
 	 * @param symbol the symbol corresponding to the symbol info
 	 * @return the symbol info
 	 */
 	I getSymbolInfo(String symbol);
+	
+	/**
+	 * This method allows to access only the top level of a stacked symbol table.
+	 * Returns the collection of symbol infos of the top symbol table.
+	 * 
+	 * @return the collection of symbol infos of the top level
+	 */
+	Collection<I> getSymbolInfosFromTop();
 	
 	/**
 	 * This method allows to access only the top level of a stacked symbol table.

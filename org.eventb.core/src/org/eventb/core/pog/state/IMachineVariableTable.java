@@ -10,6 +10,7 @@ package org.eventb.core.pog.state;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.pog.POGCore;
@@ -25,7 +26,7 @@ import org.eventb.core.tool.state.IStateType;
  * @author Stefan Hallerstede
  *
  */
-public interface IMachineVariableTable extends IPOGState, Iterable<FreeIdentifier> {
+public interface IMachineVariableTable extends IPOGState {
 
 	final static IStateType<IMachineVariableTable> STATE_TYPE = 
 		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".machineVariableTable");
@@ -35,16 +36,26 @@ public interface IMachineVariableTable extends IPOGState, Iterable<FreeIdentifie
 	 * 
 	 * @param variable the variable whose presence is to be tested
 	 * @return whether this variable table contains the specified variable
+	 * @throws CoreException if this state component is mutable
 	 */
-	boolean contains(FreeIdentifier variable);
+	boolean contains(FreeIdentifier variable) throws CoreException;
+	
+	/**
+	 * Returns the array of all variables of this machine.
+	 * 
+	 * @return the array of all variables of this machine
+	 * @throws CoreException if this state component is mutable
+	 */
+	List<FreeIdentifier> getVariables() throws CoreException;
 	
 	/**
 	 * Returns the array of variables that were already present in 
 	 * the abstraction of this machine.
 	 * 
 	 * @return the array of variables that were already present in 
-	 * the abstraction of this machine
+	 * 		the abstraction of this machine
+	 * @throws CoreException if this state component is mutable
 	 */
-	List<FreeIdentifier> getPreservedVariables();
+	List<FreeIdentifier> getPreservedVariables() throws CoreException;
 			
 }

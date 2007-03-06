@@ -30,7 +30,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class BasicPOTest extends EventBTest {
+public abstract class EventBPOTest extends EventBTest {
 
 	@Override
 	protected IContextFile createContext(String bareName) throws RodinDBException {
