@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2007 ETH Zurich.
  * Strongly inspired by org.eclipse.jdt.core.ICompilationUnit.java which is
  * 
  * Copyright (c) 2000, 2005 IBM Corporation and others.
@@ -18,13 +18,16 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.Buffer;
+import org.rodinp.internal.core.ChangeElementAttributeOperation;
 import org.rodinp.internal.core.CopyResourceElementsOperation;
 import org.rodinp.internal.core.CreateRodinFileOperation;
 import org.rodinp.internal.core.DeleteResourceElementsOperation;
@@ -32,6 +35,7 @@ import org.rodinp.internal.core.FileElementType;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.MoveResourceElementsOperation;
 import org.rodinp.internal.core.OpenableElementInfo;
+import org.rodinp.internal.core.RemoveElementAttributeOperation;
 import org.rodinp.internal.core.RenameResourceElementsOperation;
 import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinFileElementInfo;
@@ -310,6 +314,96 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		if (snapshot) {
 			buffer.append('!');
 		}
+	}
+
+	private RodinFileElementInfo getFileInfo(IProgressMonitor monitor)
+	throws RodinDBException {
+		
+		return (RodinFileElementInfo) getElementInfo(monitor);
+	}
+	
+	public IAttributeType[] getAttributeTypes() throws RodinDBException {
+		return getFileInfo(null).getAttributeTypes(this);
+	}
+
+	private String getAttributeRawValue(String attrName)
+			throws RodinDBException {
+		return getFileInfo(null).getAttributeRawValue(this, attrName);
+	}
+
+	public boolean getAttributeValue(IAttributeType.Boolean attrType)
+			throws RodinDBException {
+		final String rawValue = getAttributeRawValue(attrType.getId());
+		return ((AttributeType) attrType).getBoolValue(rawValue);
+	}
+
+	public IRodinElement getAttributeValue(IAttributeType.Handle attrType)
+			throws RodinDBException {
+		final String rawValue = getAttributeRawValue(attrType.getId());
+		return ((AttributeType) attrType).getHandleValue(rawValue);
+	}
+
+	public int getAttributeValue(IAttributeType.Integer attrType)
+			throws RodinDBException {
+		final String rawValue = getAttributeRawValue(attrType.getId());
+		return ((AttributeType) attrType).getIntValue(rawValue);
+	}
+
+	public long getAttributeValue(IAttributeType.Long attrType)
+			throws RodinDBException {
+		final String rawValue = getAttributeRawValue(attrType.getId());
+		return ((AttributeType) attrType).getLongValue(rawValue);
+	}
+
+	public String getAttributeValue(IAttributeType.String attrType)
+			throws RodinDBException {
+		final String rawValue = getAttributeRawValue(attrType.getId());
+		return ((AttributeType) attrType).getStringValue(rawValue);
+	}
+
+	public boolean hasAttribute(IAttributeType type) throws RodinDBException {
+		return getFileInfo(null).hasAttribute(this, type);
+	}
+
+	public void removeAttribute(IAttributeType type, IProgressMonitor monitor) throws RodinDBException {
+		new RemoveElementAttributeOperation(this, type).runOperation(monitor);
+	}
+
+	private void setAttributeRawValue(String attrName, String newRawValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		
+		new ChangeElementAttributeOperation(this, attrName, newRawValue)
+				.runOperation(monitor);
+	}
+
+	public void setAttributeValue(IAttributeType.Boolean attrType, boolean newValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		final String newRawValue = ((AttributeType) attrType).toString(newValue);
+		setAttributeRawValue(attrType.getId(), newRawValue, monitor);
+	}
+
+	public void setAttributeValue(IAttributeType.Handle attrType, IRodinElement newValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		final String newRawValue = ((AttributeType) attrType).toString(newValue);
+		setAttributeRawValue(attrType.getId(), newRawValue, monitor);
+	}
+
+	public void setAttributeValue(IAttributeType.Integer attrType, int newValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		final String newRawValue = ((AttributeType) attrType).toString(newValue);
+		setAttributeRawValue(attrType.getId(), newRawValue, monitor);
+	}
+
+	public void setAttributeValue(IAttributeType.Long attrType, long newValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		final String newRawValue = ((AttributeType) attrType).toString(newValue);
+		setAttributeRawValue(attrType.getId(), newRawValue, monitor);
+	}
+
+	public void setAttributeValue(IAttributeType.String attrType, String newValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		final String newRawValue = ((AttributeType) attrType).toString(newValue);
+		setAttributeRawValue(attrType.getId(), newRawValue, monitor);
 	}
 
 }

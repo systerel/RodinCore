@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -147,7 +147,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	}
 
 	public synchronized IAttributeType[] getAttributeTypes(
-			InternalElement element) throws RodinDBException {
+			IInternalParent element) throws RodinDBException {
 		Element domElement = getDOMElementCheckExists(element);
 		String[] rawAttrNames = buffer.getAttributeNames(domElement);
 		ElementTypeManager manager = ElementTypeManager.getInstance();
@@ -162,7 +162,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return result.toArray(new IAttributeType[result.size()]);
 	}
 
-	public synchronized String getAttributeRawValue(InternalElement element,
+	public synchronized String getAttributeRawValue(IInternalParent element,
 			String attrName) throws RodinDBException {
 		Element domElement = getDOMElementCheckExists(element);
 		String result = buffer.getAttributeRawValue(domElement, attrName);
@@ -259,7 +259,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return info;
 	}
 
-	public synchronized boolean hasAttribute(InternalElement element,
+	public synchronized boolean hasAttribute(IInternalParent element,
 			IAttributeType type) throws RodinDBException {
 		Element domElement = getDOMElementCheckExists(element);
 		return buffer.hasAttribute(domElement, type.getId());
@@ -289,7 +289,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return true;
 	}
 	
-	public synchronized boolean removeAttribute(InternalElement element,
+	public synchronized boolean removeAttribute(IInternalParent element,
 			IAttributeType attrType) throws RodinDBException {
 		Element domElement = getDOMElementCheckExists(element);
 		return buffer.removeAttribute(domElement, attrType.getId());
@@ -360,7 +360,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		buffer.save(force, rule, pm);
 	}
 
-	public synchronized void setAttributeRawValue(InternalElement element,
+	public synchronized void setAttributeRawValue(IInternalParent element,
 			String attrName, String newRawValue) throws RodinDBException {
 		Element domElement = getDOMElementCheckExists(element);
 		buffer.setAttributeRawValue(domElement, attrName, newRawValue);

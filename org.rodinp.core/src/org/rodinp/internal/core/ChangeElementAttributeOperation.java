@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
 package org.rodinp.internal.core;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -19,11 +20,11 @@ import org.rodinp.internal.core.util.Messages;
 
 public class ChangeElementAttributeOperation extends RodinDBOperation{
 
-	private InternalElement element;
+	private IInternalParent element;
 	private String attrName;
 	private String newValue;
 	
-	public ChangeElementAttributeOperation(InternalElement element,
+	public ChangeElementAttributeOperation(IInternalParent element,
 			String attrName, String newValue) {
 		super(new IRodinElement[] { element });
 		this.element = element;
@@ -35,11 +36,15 @@ public class ChangeElementAttributeOperation extends RodinDBOperation{
 	protected void executeOperation() throws RodinDBException {
 		try {
 			beginTask(Messages.operation_changeElementAttributeProgress, 2);
-			RodinFile file = element.getRodinFile();
-			RodinFileElementInfo fileInfo = (RodinFileElementInfo)
+			final RodinFile file;
+			if (element instanceof RodinFile)
+				file = (RodinFile) element;
+			else
+				file = ((InternalElement) element).getRodinFile();
+			final RodinFileElementInfo fileInfo = (RodinFileElementInfo)
 					file.getElementInfo(getSubProgressMonitor(1));
 			fileInfo.setAttributeRawValue(element, attrName, newValue);
-			RodinElementDelta delta = newRodinElementDelta();
+			final RodinElementDelta delta = newRodinElementDelta();
 			delta.changed(element, IRodinElementDelta.F_ATTRIBUTE);
 			addDelta(delta);
 			worked(1);

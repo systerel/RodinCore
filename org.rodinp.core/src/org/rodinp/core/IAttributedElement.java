@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @author Laurent Voisin
  */
-public interface IAttributedElement {
+public interface IAttributedElement extends IRodinElement {
 
 	/**
 	 * Returns an array of the types of all attributes currently attached to

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @author Laurent Voisin
  */
-public interface IInternalParent extends IParent, IRodinElement {
+public interface IInternalParent extends IParent, IAttributedElement {
 
 	/**
 	 * Creates and returns a new child internal element with the given type and

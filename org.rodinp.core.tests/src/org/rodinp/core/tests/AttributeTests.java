@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,14 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.tests.basis.NamedElement;
 
 /**
@@ -80,7 +80,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				status.getCode());
 	}
 	
-	static void assertAttributeNames(IInternalElement element,
+	static void assertAttributeNames(IAttributedElement element,
 			IAttributeType... expectedTypes) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
@@ -102,7 +102,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 	
-	static void assertBooleanValue(IInternalElement element,
+	static void assertBooleanValue(IAttributedElement element,
 			IAttributeType.Boolean type, boolean expected)
 			throws RodinDBException {
 		
@@ -111,7 +111,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getAttributeValue(type));
 	}
 	
-	static void assertHandleValue(IInternalElement element,
+	static void assertHandleValue(IAttributedElement element,
 			IAttributeType.Handle type, IRodinElement expected)
 			throws RodinDBException {
 		
@@ -120,7 +120,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getAttributeValue(type));
 	}
 	
-	static void assertIntegerValue(IInternalElement element,
+	static void assertIntegerValue(IAttributedElement element,
 			IAttributeType.Integer type, int expected) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
@@ -128,7 +128,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getAttributeValue(type));
 	}
 	
-	static void assertLongValue(IInternalElement element,
+	static void assertLongValue(IAttributedElement element,
 			IAttributeType.Long type, long expected) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
@@ -136,7 +136,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getAttributeValue(type));
 	}
 	
-	static void assertStringValue(IInternalElement element,
+	static void assertStringValue(IAttributedElement element,
 			IAttributeType.String type, String expected)
 			throws RodinDBException {
 		
@@ -145,36 +145,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getAttributeValue(type));
 	}
 	
-//	private void assertNoAttribute(IInternalElement element, IAttributeType type)
-//			throws RodinDBException {
-//		
-//		assertExists("Element should exist", element);
-//		try {
-//			if (type == fBool) {
-//				element.getBooleanAttribute(type, null);
-//			}
-//			if (type == fHandle) {
-//				element.getHandleAttribute(type, null);
-//			}
-//			if (type == fInt) {
-//				element.getIntegerAttribute(type, null);
-//			}
-//			if (type == fLong) {
-//				element.getLongAttribute(type, null);
-//			}
-//			if (type == fString) {
-//				element.getStringAttribute(type, null);
-//			}
-//			fail("Should have raised an exception");
-//		} catch (RodinDBException e) {
-//			assertErrorFor(e, IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST,
-//					element);
-//			// TODO check string when accessor is there.
-//		}
-//	}
-	
-	
-	static void removeAttrPositive(IInternalElement element, IAttributeType type)
+	static void removeAttrPositive(IAttributedElement element, IAttributeType type)
 			throws RodinDBException {
 
 		assertExists("Element should exist", element);
@@ -183,7 +154,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.hasAttribute(type));
 	}
 
-	static void removeAttrNegative(IInternalElement element, IAttributeType type,
+	static void removeAttrNegative(IAttributedElement element, IAttributeType type,
 			int failureCode) throws RodinDBException {
 		
 		try {
@@ -194,7 +165,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	static void setBoolAttrPositive(IInternalElement element, IAttributeType.Boolean type,
+	static void setBoolAttrPositive(IAttributedElement element, IAttributeType.Boolean type,
 			boolean newValue) throws RodinDBException {
 		assertExists("Element should exist", element);
 		element.setAttributeValue(type, newValue, null);
@@ -204,7 +175,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				newValue, element.getAttributeValue(type));
 	}
 
-	static void setHandleAttrPositive(IInternalElement element, IAttributeType.Handle type,
+	static void setHandleAttrPositive(IAttributedElement element, IAttributeType.Handle type,
 			IRodinElement newValue) throws RodinDBException {
 		assertExists("Element should exist", element);
 		element.setAttributeValue(type, newValue, null);
@@ -214,7 +185,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				newValue, element.getAttributeValue(type));
 	}
 
-	static void setIntAttrPositive(IInternalElement element, IAttributeType.Integer type,
+	static void setIntAttrPositive(IAttributedElement element, IAttributeType.Integer type,
 			int newValue) throws RodinDBException {
 		assertExists("Element should exist", element);
 		element.setAttributeValue(type, newValue, null);
@@ -224,7 +195,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				newValue, element.getAttributeValue(type));
 	}
 
-	static void setLongAttrPositive(IInternalElement element, IAttributeType.Long type,
+	static void setLongAttrPositive(IAttributedElement element, IAttributeType.Long type,
 			long newValue) throws RodinDBException {
 		assertExists("Element should exist", element);
 		element.setAttributeValue(type, newValue, null);
@@ -234,7 +205,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				newValue, element.getAttributeValue(type));
 	}
 
-	static void setStringAttrPositive(IInternalElement element, IAttributeType.String type,
+	static void setStringAttrPositive(IAttributedElement element, IAttributeType.String type,
 			String newValue) throws RodinDBException {
 		assertExists("Element should exist", element);
 		element.setAttributeValue(type, newValue, null);
@@ -244,7 +215,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				newValue, element.getAttributeValue(type));
 	}
 
-	static void setBoolAttrNegative(IInternalElement element,
+	static void setBoolAttrNegative(IAttributedElement element,
 			IAttributeType.Boolean type, boolean newValue, int failureCode)
 			throws RodinDBException {
 
@@ -256,7 +227,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	static void setHandleAttrNegative(IInternalElement element,
+	static void setHandleAttrNegative(IAttributedElement element,
 			IAttributeType.Handle type, IRodinElement newValue, int failureCode)
 			throws RodinDBException {
 
@@ -268,7 +239,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	static void setIntAttrNegative(IInternalElement element,
+	static void setIntAttrNegative(IAttributedElement element,
 			IAttributeType.Integer type, int newValue, int failureCode)
 			throws RodinDBException {
 		
@@ -280,7 +251,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	static void setLongAttrNegative(IInternalElement element,
+	static void setLongAttrNegative(IAttributedElement element,
 			IAttributeType.Long type, long newValue, int failureCode)
 			throws RodinDBException {
 		
@@ -292,7 +263,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 	
-	static void setStringAttrNegative(IInternalElement element,
+	static void setStringAttrNegative(IAttributedElement element,
 			IAttributeType.String type, String newValue, int failureCode)
 			throws RodinDBException {
 		
@@ -304,86 +275,144 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 	
+	private void testGetAttributeNames(IAttributedElement ae)
+			throws CoreException {
+
+		assertAttributeNames(ae);
+		
+		setBoolAttrPositive(ae, fBool, true);
+		assertAttributeNames(ae, fBool);
+
+		setHandleAttrPositive(ae, fHandle, ae);
+		assertAttributeNames(ae, fBool, fHandle);
+		
+		setIntAttrPositive(ae, fInt, -55);
+		assertAttributeNames(ae, fBool, fHandle, fInt);
+
+		setLongAttrPositive(ae, fLong, 12345678901L);
+		assertAttributeNames(ae, fBool, fHandle, fInt, fLong);
+
+		setStringAttrPositive(ae, fString, "bar");
+		assertAttributeNames(ae, fBool, fHandle, fInt, fLong, fString);
+		
+		removeAttrPositive(ae, fLong);
+		assertAttributeNames(ae, fBool, fHandle, fInt, fString);
+	}
+	
+	/**
+	 * Ensures that the getAttributeTypes() and hasAttribute() methods works
+	 * properly on Rodin files.
+	 */
+	public void testGetAttributeNamesFile() throws CoreException {
+		final IRodinFile rf = createRodinFile("P/X.test");
+		testGetAttributeNames(rf);
+	}
+
 	/**
 	 * Ensures that the getAttributeTypes() and hasAttribute() methods works
 	 * properly on internal elements.
 	 */
-	public void testGetAttributeNames() throws CoreException {
+	public void testGetAttributeNamesInternal() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = createNEPositive(rf, "foo", null); 
-		assertAttributeNames(e1);
-		
-		setBoolAttrPositive(e1, fBool, true);
-		assertAttributeNames(e1, fBool);
+		final NamedElement e1 = createNEPositive(rf, "foo", null);
+		testGetAttributeNames(e1);
+	}
 
-		setHandleAttrPositive(e1, fHandle, rf);
-		assertAttributeNames(e1, fBool, fHandle);
-		
-		setIntAttrPositive(e1, fInt, -55);
-		assertAttributeNames(e1, fBool, fHandle, fInt);
+	private void testRemoveAttribute(IAttributedElement ae)
+			throws CoreException {
 
-		setLongAttrPositive(e1, fLong, 12345678901L);
-		assertAttributeNames(e1, fBool, fHandle, fInt, fLong);
+		setBoolAttrPositive(ae, fBool, true);
+		removeAttrPositive(ae, fBool);
 
-		setStringAttrPositive(e1, fString, "bar");
-		assertAttributeNames(e1, fBool, fHandle, fInt, fLong, fString);
-		
-		removeAttrPositive(e1, fLong);
-		assertAttributeNames(e1, fBool, fHandle, fInt, fString);
+		// Can be done twice
+		removeAttrPositive(ae, fBool);
+	}
+
+	/**
+	 * Ensures that the removeAttribute() method works properly on Rodin files.
+	 */
+	public void testRemoveAttributeFile() throws CoreException {
+		final IRodinFile rf = createRodinFile("P/X.test");
+		testRemoveAttribute(rf);
 	}
 
 	/**
 	 * Ensures that the removeAttribute() method works properly on internal
 	 * elements.
 	 */
-	public void testRemoveAttribute() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = createNEPositive(rf, "foo", null); 
-		
-		setBoolAttrPositive(e1, fBool, true);
-		removeAttrPositive(e1, fBool);
-
-		// Can be done twice
-		removeAttrPositive(e1, fBool);
-	}
-
-	/**
-	 * Ensures that attempting to remove an attribute on an inexistent element
-	 * raises an ELEMENT_DOES_NOT_EXIST error.
-	 */
-	public void testRemoveAttributeNoElement() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo"); 
-		final int code = IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
-		assertNotExists("Element should not exist", e1);
-
-		removeAttrNegative(e1, fBool, code);
-	}
-
-	/**
-	 * Ensures that attempting to set an attribute on an inexistent element
-	 * raises an ELEMENT_DOES_NOT_EXIST error.
-	 */
-	public void testSetAttributeNoElement() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo"); 
-		final int code = IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
-		assertNotExists("Element should not exist", e1);
-
-		setBoolAttrNegative(e1, fBool, true, code);
-		setHandleAttrNegative(e1, fHandle, rf, code);
-		setIntAttrNegative(e1, fInt, -55, code);
-		setLongAttrNegative(e1, fLong, 12345678901L, code);
-		setStringAttrNegative(e1, fString, "bar", code);
-	}
-
-	public void testSnapshotAttributeReadOnly() throws CoreException {
+	public void testRemoveAttributeInternal() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
 		final NamedElement e1 = createNEPositive(rf, "foo", null);
+		testRemoveAttribute(e1);
+	}
+
+	private void testRemoveAttributeNoElement(IAttributedElement ae)
+			throws CoreException {
+
+		final int code = IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
+		assertNotExists("Element should not exist", ae);
+
+		removeAttrNegative(ae, fBool, code);
+	}
+
+	/**
+	 * Ensures that attempting to remove an attribute on an inexistent Rodin
+	 * file raises an ELEMENT_DOES_NOT_EXIST error.
+	 */
+	public void testRemoveAttributeNoElementFile() throws CoreException {
+		final IRodinFile rf = getRodinFile("P/X.test");
+		testRemoveAttributeNoElement(rf);
+	}
+
+	/**
+	 * Ensures that attempting to remove an attribute on an inexistent internal
+	 * element raises an ELEMENT_DOES_NOT_EXIST error.
+	 */
+	public void testRemoveAttributeNoElementInternal() throws CoreException {
+		final IRodinFile rf = createRodinFile("P/X.test");
+		final NamedElement e1 = getNamedElement(rf, "foo");
+		testRemoveAttributeNoElement(e1);
+	}
+
+	private void testSetAttributeNoElement(IAttributedElement ae)
+			throws CoreException {
+
+		final int code = IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
+		assertNotExists("Element should not exist", ae);
+
+		setBoolAttrNegative(ae, fBool, true, code);
+		setHandleAttrNegative(ae, fHandle, ae, code);
+		setIntAttrNegative(ae, fInt, -55, code);
+		setLongAttrNegative(ae, fLong, 12345678901L, code);
+		setStringAttrNegative(ae, fString, "bar", code);
+	}
+
+	/**
+	 * Ensures that attempting to set an attribute on an inexistent Rodin file
+	 * raises an ELEMENT_DOES_NOT_EXIST error.
+	 */
+	public void testSetAttributeNoElementFile() throws CoreException {
+		final IRodinFile rf = createRodinFile("P/X.test");
+		final NamedElement e1 = getNamedElement(rf, "foo");
+		testSetAttributeNoElement(e1);
+	}
+
+	/**
+	 * Ensures that attempting to set an attribute on an inexistent internal
+	 * element raises an ELEMENT_DOES_NOT_EXIST error.
+	 */
+	public void testSetAttributeNoElementInternal() throws CoreException {
+		final IRodinFile rf = getRodinFile("P/X.test");
+		testSetAttributeNoElement(rf);
+	}
+
+	private void testSnapshotAttributeReadOnly(IRodinFile rf, IInternalParent ae)
+			throws CoreException {
+
 		final int code = IRodinDBStatusConstants.READ_ONLY;
 		rf.save(null, false);
 
-		final InternalElement snapshot = e1.getSnapshot();
+		final IInternalParent snapshot = ae.getSnapshot();
 		removeAttrNegative(snapshot, fBool, code);
 		setBoolAttrNegative(snapshot, fBool, true, code);
 		setHandleAttrNegative(snapshot, fHandle, rf, code);
@@ -392,28 +421,52 @@ public class AttributeTests extends ModifyingResourceTests {
 		setStringAttrNegative(snapshot, fString, "bar", code);
 	}
 
-	public void testAttributePersistent() throws CoreException {
+	public void testSnapshotAttributeReadOnlyFile() throws CoreException {
+		final IRodinFile rf = createRodinFile("P/X.test");
+		testSnapshotAttributeReadOnly(rf, rf);
+	}
+
+	public void testSnapshotAttributeReadOnlyInternal() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
 		final NamedElement e1 = createNEPositive(rf, "foo", null);
-		setBoolAttrPositive(e1, fBool, true);
-		setHandleAttrPositive(e1, fHandle, rf);
-		setIntAttrPositive(e1, fInt, -55);
-		setLongAttrPositive(e1, fLong, 12345678901L);
-		setStringAttrPositive(e1, fString, "bar");
+		testSnapshotAttributeReadOnly(rf, e1);
+	}
+
+	
+	private void testAttributePersistent(IRodinFile rf, IInternalParent ae)
+			throws CoreException {
+
+		setBoolAttrPositive(ae, fBool, true);
+		setHandleAttrPositive(ae, fHandle, rf);
+		setIntAttrPositive(ae, fInt, -55);
+		setLongAttrPositive(ae, fLong, 12345678901L);
+		setStringAttrPositive(ae, fString, "bar");
+
 		rf.save(null, false);
 
-		final InternalElement snapshot = e1.getSnapshot();
+		final IInternalParent snapshot = ae.getSnapshot();
 		assertBooleanValue(snapshot, fBool, true);
 		assertHandleValue(snapshot, fHandle, rf);
 		assertIntegerValue(snapshot, fInt, -55);
 		assertLongValue(snapshot, fLong, 12345678901L);
 		assertStringValue(snapshot, fString, "bar");
 
-		assertBooleanValue(e1, fBool, true);
-		assertHandleValue(e1, fHandle, rf);
-		assertIntegerValue(e1, fInt, -55);
-		assertLongValue(e1, fLong, 12345678901L);
-		assertStringValue(e1, fString, "bar");
+		assertBooleanValue(ae, fBool, true);
+		assertHandleValue(ae, fHandle, rf);
+		assertIntegerValue(ae, fInt, -55);
+		assertLongValue(ae, fLong, 12345678901L);
+		assertStringValue(ae, fString, "bar");
+	}
+	
+	public void testAttributePersistentFile() throws CoreException {
+		final IRodinFile rf = createRodinFile("P/X.test");
+		testAttributePersistent(rf, rf);
+	}
+
+	public void testAttributePersistentInternal() throws CoreException {
+		final IRodinFile rf = createRodinFile("P/X.test");
+		final NamedElement e1 = createNEPositive(rf, "foo", null);
+		testAttributePersistent(rf, e1);
 	}
 
 }
