@@ -201,4 +201,21 @@ public interface IProverSequent{
 	 */
 	Iterable<Predicate> hiddenHypIterable();
 	
+	/**
+	 * Returns an iterator for all visible hypotheses of this sequent.
+	 * 
+	 * <p>
+	 * It is intended to be used in the following way:<br>
+	 * <code>
+	 * for (Predicate hyp : seq.visibleHypIterable())<br>
+	 * {
+	 * 		// do something with hyp <br>
+	 * }
+	 * </code>
+	 * </p>
+	 * 
+	 * @return an iterator for all visible hypotheses of this sequent
+	 */
+	Iterable<Predicate> visibleHypIterable();
+	
 }

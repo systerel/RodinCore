@@ -343,5 +343,9 @@ public class ProverSequent implements IInternalProverSequent{
 	public boolean isSelected(Predicate hyp) {
 		return selectedHypotheses.contains(hyp);
 	}
+
+	public Iterable<Predicate> visibleHypIterable() {
+		return visibleHypotheses();
+	}
 	
 }
