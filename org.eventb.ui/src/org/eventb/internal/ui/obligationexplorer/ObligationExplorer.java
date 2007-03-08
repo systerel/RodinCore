@@ -385,6 +385,8 @@ public class ObligationExplorer extends ViewPart implements
 			} else if (obj instanceof IRodinFile) {
 				return ((IRodinFile) obj).getBareName();
 			} else if (obj instanceof IPSStatus) {
+				final IPSStatus psStatus = (IPSStatus) obj;
+				final String poName = psStatus.getElementName();
 
 				// Find the label in the list of UserSupport.
 				Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
@@ -394,15 +396,15 @@ public class ObligationExplorer extends ViewPart implements
 					// userSupport);
 					IProofState [] proofStates = userSupport.getPOs();
 					for (IProofState proofState : proofStates) {
-						if (proofState.getPSStatus().equals(obj)) {
+						if (proofState.getPSStatus().equals(psStatus)) {
 							if (proofState.isDirty())
-								return "* " + ((IPSStatus) obj).getElementName();
+								return "* " + poName;
 							else
-								return ((IPSStatus) obj).getElementName();
+								return poName;
 						}
 					}
 				}
-				return ((IPSStatus) obj).getElementName();
+				return poName;
 			}
 
 			return obj.toString();
