@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -289,9 +290,12 @@ public class ObligationExplorer extends ViewPart implements
 	 *         <p>
 	 *         This class provides the label for object in the tree.
 	 */
-	private class ObligationLabelProvider extends LabelProvider implements
+	private static class ObligationLabelProvider extends LabelProvider implements
 			IFontProvider, IColorProvider, IPropertyChangeListener {
 
+		private static final Color yellow =
+			Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW);
+		
 		public ObligationLabelProvider() {
 			JFaceResources.getFontRegistry().addListener(this);
 		}
@@ -421,51 +425,33 @@ public class ObligationExplorer extends ViewPart implements
 		}
 
 		public Color getForeground(Object element) {
-			Display display = Display.getCurrent();
-			return display.getSystemColor(SWT.COLOR_BLACK);
+			return null;
 		}
 
 		public Color getBackground(Object element) {
-			Display display = Display.getCurrent();
-			Color white = display.getSystemColor(SWT.COLOR_WHITE);
-			Color yellow = display.getSystemColor(SWT.COLOR_YELLOW);
-			if (element instanceof IRodinProject)
-				return white;
-			if (element instanceof IRodinFile) {
-				return white;
-			}
 			if (element instanceof IPSStatus) {
-				// UIUtils.debugObligationExplorer("Label for: " + obj);
-
-				// Find the label in the list of UserSupport.
 				Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
 						.getUserSupports();
 				for (IUserSupport userSupport : userSupports) {
-					// UIUtils.debugObligationExplorer("Get US: " +
-					// userSupport);
 					IProofState [] proofStates = userSupport.getPOs();
 					for (IProofState proofState : proofStates) {
 						if (proofState.getPSStatus().equals(element)) {
 							if (proofState.isDirty())
 								return yellow;
 							else
-								return white;
+								return null;
 						}
 					}
 				}
-				return white;
 			}
-
-			return white;
+			return null;
 		}
 
+		// If the font changed, all labels should be refreshed
 		public void propertyChange(PropertyChangeEvent event) {
-			if (event.getProperty()
-					.equals(PreferenceConstants.EVENTB_MATH_FONT)) {
-				if (event.getProperty().equals(
-						PreferenceConstants.EVENTB_MATH_FONT)) {
-					fViewer.refresh();
-				}
+			final String property = event.getProperty();
+			if (property.equals(PreferenceConstants.EVENTB_MATH_FONT)) {
+				fireLabelProviderChanged(new LabelProviderChangedEvent(this));
 			}
 		}
 		
