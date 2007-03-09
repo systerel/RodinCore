@@ -12,6 +12,12 @@
 
    <element name="extension">
       <complexType>
+         <sequence>
+            <choice>
+               <element ref="association"/>
+               <element ref="restriction"/>
+            </choice>
+         </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>

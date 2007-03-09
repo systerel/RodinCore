@@ -12,6 +12,13 @@
 
    <element name="extension">
       <complexType>
+         <sequence>
+            <choice>
+               <element ref="fileElementSpec"/>
+               <element ref="internalElementSpec"/>
+               <element ref="attributeSpec"/>
+            </choice>
+         </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -49,6 +56,13 @@
             </annotation>
          </attribute>
          <attribute name="keyword" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="postfix" type="string" use="required">
             <annotation>
                <documentation>
                   
