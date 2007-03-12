@@ -4,7 +4,7 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 
-public class ReasonerOutput implements IReasonerOutput {
+public abstract class ReasonerOutput implements IReasonerOutput {
 	
 	public final IReasoner generatedBy;
 	public final IReasonerInput generatedUsing;
