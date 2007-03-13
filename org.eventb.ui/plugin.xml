@@ -210,7 +210,7 @@
             priority="9">
          <target id="org.eventb.ui.editors.machine"/>
       </page>
-      -->
+   -->
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -1297,112 +1297,147 @@
    <extension
          point="org.eventb.ui.editSections">
       <section
-            class="org.eventb.internal.ui.eventbeditor.editpage.DeclarationSectionComposite"
-            id="org.event.ui.sections.declaration"
-            name="Declaration"
-            priority="0">
-         <target id="org.eventb.ui.editors.machine"/>
-      </section>
-      <section
-            class="org.eventb.internal.ui.eventbeditor.editpage.VariableSectionComposite"
             id="org.event.ui.sections.variable"
             name="Variables"
-            priority="3">
-         <target id="org.eventb.ui.editors.machine"/>
+            parentType="org.eventb.core.machineFile"
+            prefix="VARIABLES"
+            priority="3"
+            type="org.eventb.core.variable">
       </section>
       <section
-            class="org.eventb.internal.ui.eventbeditor.editpage.InvariantSectionComposite"
             id="org.event.ui.sections.invariant"
             name="Invariants"
-            priority="4">
-         <target id="org.eventb.ui.editors.machine"/>
+            parentType="org.eventb.core.machineFile"
+            prefix="INVARIANTS"
+            priority="4"
+            type="org.eventb.core.invariant">
       </section>
       <section
-            class="org.eventb.internal.ui.eventbeditor.editpage.TheoremSectionComposite"
             id="org.event.ui.sections.theorem"
             name="Theorems"
-            priority="5">
-         <target id="org.eventb.ui.editors.machine"/>
+            parentType="org.eventb.core.machineFile"
+            prefix="THEOREMS"
+            priority="5"
+            type="org.eventb.core.theorem">
       </section>
       <section
-            class="org.eventb.internal.ui.eventbeditor.editpage.EventSectionComposite"
             id="org.event.ui.sections.event"
             name="Events"
-            priority="6">
-         <target id="org.eventb.ui.editors.machine"/>
+            parentType="org.eventb.core.machineFile"
+            postfix="END"
+            prefix="EVENTS"
+            priority="9"
+            type="org.eventb.core.event">
       </section>
+      <section
+            id="org.event.ui.sections.refinesEvent"
+            name="Refines Event"
+            parentType="org.eventb.core.event"
+            prefix="REFINES"
+            priority="1"
+            type="org.eventb.core.refinesEvent"/>
+      <section
+            id="org.event.ui.sections.localVariable"
+            name="Local Variables"
+            parentType="org.eventb.core.event"
+            prefix="ANY"
+            priority="2"
+            type="org.eventb.core.variable"/>
+      <section
+            id="org.event.ui.sections.guard"
+            name="Guards"
+            parentType="org.eventb.core.event"
+            prefix="WHERE"
+            priority="3"
+            type="org.eventb.core.guard"/>
+      <section
+            id="org.event.ui.sections.action"
+            name="Actions"
+            parentType="org.eventb.core.event"
+            postfix="END"
+            prefix="THEN"
+            priority="9"
+            type="org.eventb.core.action"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
-      <column
+      <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.IdentifierEditComposite"
             horizontalExpand="false"
             id="org.eventb.ui.identifier"
-            name="Identifier">
+            name="Identifier"
+            priority="1">
          <type id="org.eventb.core.variable"/>
-      </column>
-      <column
+      </attribute>
+      <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.LabelEditComposite"
             horizontalExpand="false"
             id="org.eventb.ui.label"
             name="Label"
-            postfix="::">
+            postfix=":"
+            priority="1">
          <type id="org.eventb.core.invariant"/>
          <type id="org.eventb.core.theorem"/>
          <type id="org.eventb.core.event"/>
          <type id="org.eventb.core.guard"/>
          <type id="org.eventb.core.action"/>
-      </column>
-      <column
+      </attribute>
+      <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.PredicateEditComposite"
             horizontalExpand="true"
             id="org.eventb.ui.predicate"
-            name="Predicate">
+            name="Predicate"
+            priority="2">
          <type id="org.eventb.core.invariant"/>
          <type id="org.eventb.core.theorem"/>
          <type id="org.eventb.core.guard"/>
-      </column>
-      <column
+      </attribute>
+      <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.InheritedEditComposite"
             horizontalExpand="false"
             id="org.eventb.ui.inherited"
-            name="Inherited">
+            name="Inherited"
+            priority="2">
          <type id="org.eventb.core.event"/>
-      </column>
-      <column
+      </attribute>
+      <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.ConvergenceEditComposite"
             horizontalExpand="false"
             id="org.eventb.ui.convergence"
-            name="Convergence">
+            name="Convergence"
+            priority="3">
          <type id="org.eventb.core.event"/>
-      </column>
-      <column
+      </attribute>
+      <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.AssignmentEditComposite"
             horizontalExpand="true"
             id="org.eventb.ui.assignment"
-            name="Assignment">
+            name="Assignment"
+            priority="2">
          <type id="org.eventb.core.action"/>
-      </column>
-      <column
+      </attribute>
+      <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.RefinesEventEditComposite"
             horizontalExpand="false"
             id="org.eventb.ui.refinesevent"
-            name="Refines Event">
+            name="Refines Event"
+            priority="1">
          <type id="org.eventb.core.refinesEvent"/>
-      </column>
-      <column
+      </attribute>
+      <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.CommentEditComposite"
             horizontalExpand="true"
             id="org.eventb.ui.comment"
             name="Comment"
-            prefix="//">
+            prefix="//"
+            priority="9">
          <type id="org.eventb.core.variable"/>
          <type id="org.eventb.core.invariant"/>
          <type id="org.eventb.core.theorem"/>
          <type id="org.eventb.core.event"/>
          <type id="org.eventb.core.guard"/>
          <type id="org.eventb.core.action"/>
-      </column>
+      </attribute>
    </extension>
    <extension
          point="org.eventb.ui.editSections">

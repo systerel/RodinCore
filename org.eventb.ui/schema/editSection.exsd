@@ -15,7 +15,7 @@
          <sequence minOccurs="0" maxOccurs="unbounded">
             <choice>
                <element ref="section" minOccurs="0" maxOccurs="unbounded"/>
-               <element ref="column" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="attribute" minOccurs="0" maxOccurs="unbounded"/>
                <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
             </choice>
          </sequence>
@@ -48,9 +48,6 @@
 
    <element name="section">
       <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="target"/>
-         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -65,29 +62,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="priority" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eventb.ui.eventbeditor.ISectionComposite"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="target">
-      <complexType>
-         <attribute name="id" use="required">
+         <attribute name="priority" use="required">
             <annotation>
                <documentation>
                   
@@ -95,17 +70,59 @@
             </annotation>
             <simpleType>
                <restriction base="string">
-                  <enumeration value="org.eventb.ui.editors.machine">
+                  <enumeration value="1">
                   </enumeration>
-                  <enumeration value="org.eventb.ui.editors.context">
+                  <enumeration value="2">
+                  </enumeration>
+                  <enumeration value="3">
+                  </enumeration>
+                  <enumeration value="4">
+                  </enumeration>
+                  <enumeration value="5">
+                  </enumeration>
+                  <enumeration value="6">
+                  </enumeration>
+                  <enumeration value="7">
+                  </enumeration>
+                  <enumeration value="8">
+                  </enumeration>
+                  <enumeration value="9">
                   </enumeration>
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parentType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="prefix" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="postfix" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
-   <element name="column">
+   <element name="attribute">
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="type"/>
@@ -154,6 +171,35 @@
                   
                </documentation>
             </annotation>
+         </attribute>
+         <attribute name="priority" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="1">
+                  </enumeration>
+                  <enumeration value="2">
+                  </enumeration>
+                  <enumeration value="3">
+                  </enumeration>
+                  <enumeration value="4">
+                  </enumeration>
+                  <enumeration value="5">
+                  </enumeration>
+                  <enumeration value="6">
+                  </enumeration>
+                  <enumeration value="7">
+                  </enumeration>
+                  <enumeration value="8">
+                  </enumeration>
+                  <enumeration value="9">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>
