@@ -1,8 +1,11 @@
 package org.eventb.core.seqprover.reasonerExtentionTests;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import java.util.Arrays;
 
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerFailure;
@@ -11,6 +14,7 @@ import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tests.TestLib;
+import org.junit.Test;
 
 /**
  * Unit tests for the reasoner registry
@@ -20,7 +24,7 @@ import org.eventb.core.seqprover.tests.TestLib;
  * @author Farhad Mehta
  * @author Laurent Voisin
  */
-public class ReasonerRegistryTest extends TestCase {
+public class ReasonerRegistryTest {
 
 	private static int count = 0;
 	
@@ -68,6 +72,7 @@ public class ReasonerRegistryTest extends TestCase {
 	 * Test method for {@link IReasonerRegistry#isRegistered(String)} and
 	 * {@link IReasonerRegistry#getRegisteredIDs()}.
 	 */
+	@Test
 	public void testRegisteredReasoners() {
 		final String idName = getDummyId();
 		final String idInstance = getDummyId();
@@ -91,6 +96,7 @@ public class ReasonerRegistryTest extends TestCase {
 	/**
 	 * Test method for {@link IReasonerRegistry#getReasonerInstance(String)}.
 	 */
+	@Test
 	public void testGetReasonerInstance() {
 		IReasoner reasoner = registry.getReasonerInstance(TrueGoal.REASONER_ID);
 		assertTrue(reasoner instanceof TrueGoal);
@@ -102,6 +108,7 @@ public class ReasonerRegistryTest extends TestCase {
 	/**
 	 * Test method for {@link IReasonerRegistry#getReasonerName(String)}.
 	 */
+	@Test
 	public void testGetReasonerName() {
 		assertTrue(registry.getReasonerName(TrueGoal.REASONER_ID).equals("⊤ goal"));
 		assertNotNull(registry.getReasonerName(getDummyId()));
@@ -110,6 +117,7 @@ public class ReasonerRegistryTest extends TestCase {
 	/**
 	 * Ensures that a dummy reasoner always fails.
 	 */
+	@Test
 	public void testDummyReasoner() {
 		String id = getDummyId();
 		IReasoner dummyReasoner = registry.getReasonerInstance(id);
@@ -125,6 +133,7 @@ public class ReasonerRegistryTest extends TestCase {
 	/**
 	 * Test method for {@link IReasonerRegistry#isDummyReasoner(String)}.
 	 */
+	@Test
 	public void testIsDummyReasoner() {
 		IReasoner dummyReasoner = registry.getReasonerInstance(getDummyId());
 		assertTrue(registry.isDummyReasoner(dummyReasoner));
@@ -137,6 +146,7 @@ public class ReasonerRegistryTest extends TestCase {
 	 * Ensures that the erroneous id contributed through "plugin.xml" has been
 	 * ignored.
 	 */
+	@Test
 	public void testErroneousId() {
 		String[] ids = registry.getRegisteredIDs();
 		for (String id: ids) {

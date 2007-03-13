@@ -1,8 +1,8 @@
 package org.eventb.core.seqprover.rewriterTests;
 
-import java.math.BigInteger;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import java.math.BigInteger;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -17,8 +17,10 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
+import org.junit.Before;
+import org.junit.Test;
 
-public class AutoFormulaRewriterTests extends TestCase {
+public class AutoFormulaRewriterTests {
 
 	private static final FormulaFactory ff = FormulaFactory.getDefault();
 
@@ -48,9 +50,8 @@ public class AutoFormulaRewriterTests extends TestCase {
 	private IFormulaRewriter r;
 	
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		r = new AutoRewriterImpl();
 	}
 
@@ -61,6 +62,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 		assertEquals(message, expected, r.rewrite(predicate));
 	}
 
+	@Test
 	public void testConjunction() {
 		Predicate[] predicates = new Predicate[] { P, Q, R };
 		AssociativePredicate expected = ff.makeAssociativePredicate(
@@ -138,6 +140,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 				Predicate.LAND, P, Q, R, Q, notR);
 	}
 
+	@Test
 	public void testDisjunction() {
 		// P or ... or true or ... or Q == true
 		Predicate[] predicates = new Predicate[] { P, Q, R };
@@ -221,6 +224,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 				left, right, null)));
 	}
 
+	@Test
 	public void testImplication() {
 		// true => P == P
 		assertBinaryPredicate("⊤ ⇒ P == P", P, Lib.True, Predicate.LIMP, P);
@@ -241,6 +245,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 		assertBinaryPredicate("P ⇒ P == ⊤", Lib.True, P, Predicate.LIMP, P);
 	}
 
+	@Test
 	public void testEquivalent() {
 		// P <=> true == P
 		assertBinaryPredicate("P ⇔ ⊤ == P", P, P, Predicate.LEQV, Lib.True);
@@ -266,6 +271,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 				predicate, null)));
 	}
 
+	@Test
 	public void testNegation() {
 		// not(true) == false
 		assertUnaryPredicate("¬⊤ == ⊥", Lib.False, Predicate.NOT, Lib.True);
@@ -284,6 +290,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 				tag, boundIdentifiers, predicate, null)));
 	}
 
+	@Test
 	public void testQuantification() {
 		// !x.(P & Q) == (!x.P) & (!x.Q)
 		BoundIdentDecl x = ff.makeBoundIdentDecl("x", null);
@@ -340,6 +347,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 				tag, left, right, null)));
 	}
 
+	@Test
 	public void testEquality() {
 		// E = E == true
 		Expression E = ff.makeAtomicExpression(Expression.TRUE, null);
@@ -387,6 +395,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 				expression, null)));
 	}
 
+	@Test
 	public void testSetTheory() {
 		Expression fTrue = ff.makeAtomicExpression(Expression.TRUE, null);
 		Expression fFalse = ff.makeAtomicExpression(Expression.FALSE, null);
@@ -620,6 +629,7 @@ public class AutoFormulaRewriterTests extends TestCase {
 		assertBinaryExpression("R ∖ ∅ == R", R, R, Expression.SETMINUS, Lib.emptySet);
 	}
 
+	@Test
 	public void testArithmetic() {
 		Expression number0 = ff.makeIntegerLiteral(new BigInteger("0"), null);
 		Expression number1 = L1;

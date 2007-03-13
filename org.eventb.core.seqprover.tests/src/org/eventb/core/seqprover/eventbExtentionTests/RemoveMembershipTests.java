@@ -1,8 +1,8 @@
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import java.util.List;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
@@ -14,16 +14,16 @@ import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.core.seqprover.tests.Util;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
+import org.junit.Test;
 
 /**
  * Unit tests for the rn reasoner
  * 
  * @author htson
  */
-public class RemoveMembershipTests extends TestCase {
+public class RemoveMembershipTests extends AbstractTests {
 
 	private static final IReasoner rmReasoner = new RemoveMembership();
 
@@ -113,6 +113,7 @@ public class RemoveMembershipTests extends TestCase {
 	Predicate P38 = TestLib
 			.genPred("∀x·x = 0 ⇒ (1 ↦ x ∈ {1 ↦ x, x ↦ 2} ⩥ {x})");
 
+	@Test
 	public void testGoalNotApplicable() {
 		IProverSequent seq;
 		IReasonerOutput output;
@@ -124,6 +125,7 @@ public class RemoveMembershipTests extends TestCase {
 		assertTrue(output instanceof IReasonerFailure);
 	}
 
+	@Test
 	public void testPositionGoalIncorrect() {
 		IProverSequent seq;
 		IReasonerOutput output;
@@ -360,6 +362,7 @@ public class RemoveMembershipTests extends TestCase {
 	/**
 	 * Tests for correct reasoner failure
 	 */
+	@Test
 	public void testHypNotPresent() {
 		IProverSequent seq;
 		IReasonerOutput output;
@@ -371,6 +374,7 @@ public class RemoveMembershipTests extends TestCase {
 		assertTrue(output instanceof IReasonerFailure);
 	}
 
+	@Test
 	public void testHypPositionIncorrect() {
 		IProverSequent seq;
 		IReasonerOutput output;
@@ -607,6 +611,7 @@ public class RemoveMembershipTests extends TestCase {
 	/**
 	 * Tests for applicable positions
 	 */
+	@Test
 	public void testGetPositions() {
 		List<IPosition> positions;
 		positions = Tactics.rmGetPositions(P1);
@@ -690,6 +695,7 @@ public class RemoveMembershipTests extends TestCase {
 	/**
 	 * Tests for reasoner success
 	 */
+	@Test
 	public void testSuccess() {
 
 		IProverSequent seq;
@@ -1337,40 +1343,6 @@ public class RemoveMembershipTests extends TestCase {
 				"Applied successfully hyp P38 ",
 				"{}[∀x·x=0⇒1 ↦ x∈{1 ↦ x,x ↦ 2} ⩥ {x}][][∀x·x=0⇒1 ↦ x∈{1 ↦ x,x ↦ 2}∧x∉{x}] |- ⊤",
 				newSeqs);
-	}
-
-	private void assertSequents(String message, String expected,
-			IProverSequent... sequents) {
-		StringBuilder builder = new StringBuilder();
-		boolean sep = false;
-		for (IProverSequent sequent : sequents) {
-			if (sep)
-				builder.append('\n');
-			builder.append(sequent);
-			sep = true;
-		}
-		String actual = builder.toString();
-		if (!expected.equals(actual)) {
-			System.out.println(Util.displayString(actual));
-			fail(message + ":\n" + actual);
-		}
-	}
-
-	private void assertPositions(String message, String expected,
-			List<IPosition> positions) {
-		StringBuilder builder = new StringBuilder();
-		boolean sep = false;
-		for (IPosition position : positions) {
-			if (sep)
-				builder.append('\n');
-			builder.append(position);
-			sep = true;
-		}
-		String actual = builder.toString();
-		if (!expected.equals(actual)) {
-			System.out.println(Util.displayString(actual));
-			fail(message + ":\n" + actual);
-		}
 	}
 
 }

@@ -1,6 +1,6 @@
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
@@ -10,15 +10,15 @@ import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.core.seqprover.tests.Util;
 import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
+import org.junit.Test;
 
 /**
  * Unit tests for the rn reasoner
  * 
  * @author htson
  */
-public class EhTests extends TestCase {
+public class EhTests extends AbstractTests {
 
 	private static final IReasoner ehReasoner = new Eq();
 
@@ -28,6 +28,7 @@ public class EhTests extends TestCase {
 
 	Predicate P3 = TestLib.genPred("0 + 1 + 2 = 2 + 1");
 
+	@Test
 	public void testHypIsNotWellForm() {
 		IProverSequent seq;
 		IReasonerOutput output;
@@ -39,6 +40,7 @@ public class EhTests extends TestCase {
 		assertTrue(output instanceof IReasonerFailure);
 	}
 
+	@Test
 	public void testNothingToDo() {
 		IProverSequent seq;
 		IReasonerOutput output;
@@ -51,6 +53,7 @@ public class EhTests extends TestCase {
 	/**
 	 * Tests for correct reasoner failure
 	 */
+	@Test
 	public void testHypNotPresent() {
 		IProverSequent seq;
 		IReasonerOutput output;
@@ -64,6 +67,7 @@ public class EhTests extends TestCase {
 	/**
 	 * Tests for reasoner success
 	 */
+	@Test
 	public void testSuccess() {
 
 		IProverSequent seq;
@@ -90,23 +94,6 @@ public class EhTests extends TestCase {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully equality P2 ",
 				"{}[][0+1+2=2+1, 0+1=0+1+2][0+1=2+1] |- 2+0+1=2+1+3", newSeqs);
-	}
-
-	private void assertSequents(String message, String expected,
-			IProverSequent... sequents) {
-		StringBuilder builder = new StringBuilder();
-		boolean sep = false;
-		for (IProverSequent sequent : sequents) {
-			if (sep)
-				builder.append('\n');
-			builder.append(sequent);
-			sep = true;
-		}
-		String actual = builder.toString();
-		if (!expected.equals(actual)) {
-			System.out.println(Util.displayString(actual));
-			fail(message + ":\n" + actual);
-		}
 	}
 
 }

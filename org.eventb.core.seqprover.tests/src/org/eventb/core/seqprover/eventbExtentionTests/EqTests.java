@@ -1,6 +1,6 @@
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
@@ -11,19 +11,21 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
+import org.junit.Test;
 
 /**
  * Unit tests for the Eq reasoner
  * 
  * @author Farhad Mehta
  */
-public class EqTests extends TestCase {
+public class EqTests {
 
 	private static final IReasoner eqReasoner = new Eq();
 	
 	/**
 	 * Tests for correct reasoner failure
 	 */
+	@Test
 	public void testFailure(){
 		IProverSequent seq;
 		IReasonerOutput output;
@@ -49,6 +51,7 @@ public class EqTests extends TestCase {
 	/**
 	 * Tests for reasoner success
 	 */
+	@Test
 	public void testSuccess(){
 		IProverSequent seq;
 		IProverSequent[] newSeqs;

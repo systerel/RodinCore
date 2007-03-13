@@ -8,6 +8,14 @@
 
 package org.eventb.core.seqprover.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -15,6 +23,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.junit.Test;
 
 /**
  * Unit tests for classes ProofTree and ProofTreeNode: basic manipulations of
@@ -27,6 +36,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	/**
 	 * Ensures that an initial proof tree is open.
 	 */
+	@Test
 	public void testInitialTree() {
 		IProverSequent sequent = makeSimpleSequent("⊥");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -37,6 +47,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	/**
 	 * Checks consistency of a discharged proof tree.
 	 */
+	@Test
 	public void testDischargedTree() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -60,6 +71,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	/**
 	 * Checks consistency of a pending proof tree.
 	 */
+	@Test
 	public void testPendingTree() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊥");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -79,6 +91,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	/**
 	 * Checks consistency of a mixed pending proof tree.
 	 */
+	@Test
 	public void testMixedTree() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -122,6 +135,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	/**
 	 * Checks consistency after applying a rule that fails.
 	 */
+	@Test
 	public void testApplyRuleFailure() {
 		IProverSequent sequent = makeSimpleSequent("⊥");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -135,6 +149,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	/**
 	 * Checks consistency after pruning a subtree on a pending node.
 	 */
+	@Test
 	public void testPrunePending() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -174,6 +189,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	/**
 	 * Checks consistency after pruning a subtree on a discharged node.
 	 */
+	@Test
 	public void testPruneDischarged() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊤");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -218,6 +234,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	/**
 	 * Checks consistency after copying the subtree of a pending node.
 	 */
+	@Test
 	public void testCopyPending() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -348,6 +365,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	/**
 	 * Checks that proof dependency information has been properly generated.
 	 */
+	@Test
 	public void testProofDependencies() {
 		IProverSequent sequent;
 		IProofTree proofTree;
@@ -404,6 +422,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	/**
 	 * Ensures that the origin of a proof tree is tracked.
 	 */
+	@Test
 	public void testOriginTracking() {
 		final String origin = "here";
 		final IProverSequent sequent = makeSimpleSequent("⊥");
@@ -414,6 +433,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	/**
 	 * Ensures that the origin of a proof tree can be <code>null</code>.
 	 */
+	@Test
 	public void testNullOriginTracking() {
 		final IProverSequent sequent = makeSimpleSequent("⊥");
 		final IProofTree tree = ProverFactory.makeProofTree(sequent, null);

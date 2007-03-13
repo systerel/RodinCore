@@ -8,10 +8,17 @@
 
 package org.eventb.core.seqprover.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.HashSet;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
@@ -32,8 +39,7 @@ import org.eventb.core.seqprover.ProverLib;
  * 
  * @author Laurent Voisin
  */
-public abstract class AbstractProofTreeTests extends TestCase implements
-		IProofTreeChangedListener {
+public abstract class AbstractProofTreeTests implements IProofTreeChangedListener {
 
 	ArrayList<IProofTreeDelta> deltas = null;
 

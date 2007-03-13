@@ -8,10 +8,13 @@
 
 package org.eventb.core.seqprover.tests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collections;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -24,6 +27,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.junit.Test;
 
 /**
  * Unit tests for Proof Rules and their application
@@ -33,7 +37,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
  * 
  * @author Farhad Mehta
  */
-public class ProofRuleTests extends TestCase {	
+public class ProofRuleTests {	
 	
 	public final static FormulaFactory factory = FormulaFactory.getDefault();
 	public final static Predicate True = factory.makeLiteralPredicate(Formula.BTRUE,null);
@@ -194,6 +198,7 @@ public class ProofRuleTests extends TestCase {
 	/**
 	 * Tests for rule application for discharging rules
 	 */
+	@Test
 	public void testDischargingRuleApplication(){
 		IProverSequent seq;
 		IProverSequent[] newSeqs;
@@ -222,6 +227,7 @@ public class ProofRuleTests extends TestCase {
 	/**
 	 * Tests for rule application for ill-formed rules
 	 */
+	@Test
 	public void testIllFormedRuleApplication(){
 		IProverSequent seq;
 		IProverSequent[] newSeqs;
@@ -236,6 +242,7 @@ public class ProofRuleTests extends TestCase {
 	/**
 	 * Tests for rule application for non-discharging rules
 	 */
+	@Test
 	public void testNonDischargingRuleApplication(){
 		IProverSequent seq;
 		IProverSequent[] newSeqs;
@@ -257,6 +264,7 @@ public class ProofRuleTests extends TestCase {
 	/**
 	 * Tests for rule application for rules introducing Free Identifiers
 	 */
+	@Test
 	public void testFreeIdentIntroRuleApplication(){
 		IProverSequent seq;
 		IProverSequent[] newSeqs;
@@ -283,6 +291,7 @@ public class ProofRuleTests extends TestCase {
 	/**
 	 * Tests for selection rule application
 	 */
+	@Test
 	public void testSelectionRuleApplication(){
 		IProverSequent seq;
 		IProverSequent[] newSeqs;
@@ -315,6 +324,7 @@ public class ProofRuleTests extends TestCase {
 	/**
 	 * Tests for forward inference rule application
 	 */
+	@Test
 	public void testFwdInfRuleApplication(){
 		IProverSequent seq;
 		IProverSequent[] newSeqs;
@@ -349,6 +359,5 @@ public class ProofRuleTests extends TestCase {
 		assertTrue(newSeqs[0].typeEnvironment().contains(freeIdent_x.getName()));
 		
 	}
-	
 
 }

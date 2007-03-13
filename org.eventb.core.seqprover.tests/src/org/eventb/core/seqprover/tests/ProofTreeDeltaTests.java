@@ -8,11 +8,14 @@
 
 package org.eventb.core.seqprover.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.junit.Test;
 
 /**
  * Unit tests for deltas fired when modifying proof trees.
@@ -25,6 +28,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	/**
 	 * Ensures that applying a rule to an open node fires a RULE & CHILDREN delta.
 	 */
+	@Test
 	public void testApply() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -38,6 +42,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	/**
 	 * Ensures that trying to apply a rule that fails doesn't produce any delta.
 	 */
+	@Test
 	public void testApplyFailed() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -51,6 +56,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	/**
 	 * Ensures that pruning a non-open node fires a RULE & CHILDREN delta.
 	 */
+	@Test
 	public void testPrune() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -65,6 +71,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	/**
 	 * Ensures that pruning a discharged node fires a RULE & CHILDREN delta.
 	 */
+	@Test
 	public void testPruneDischarged() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -85,6 +92,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	/**
 	 * Ensures that discharging a node fires a CONFIDENCE delta for its parent.
 	 */
+	@Test
 	public void testDischargeParent() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -105,6 +113,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	 * Ensures that no CONFIDENCE delta is fired for an ancestor which doesn't get
 	 * discharged, when discharging a node.
 	 */
+	@Test
 	public void testNoDischargeAncestor() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -130,6 +139,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	 * Ensures that no CONFIDENCE delta is fired for an ancestor which wasn't yet
 	 * discharged, when pruning a node.
 	 */
+	@Test
 	public void testDischargeBranch() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -156,6 +166,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	/**
 	 * Ensures that setting a comment of a node produces a COMMENT delta.
 	 */
+	@Test
 	public void testSetComment() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -169,6 +180,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	/**
 	 * Ensures that batching a job at a node produces a combined DELTA
 	 */
+	@Test
 	public void testBatchRunNode() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
@@ -190,6 +202,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	 * Ensures that batching a job at different set of nodes in a proof tree 
 	 * produces a combined DELTA
 	 */
+	@Test
 	public void testBatchRunTree() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);

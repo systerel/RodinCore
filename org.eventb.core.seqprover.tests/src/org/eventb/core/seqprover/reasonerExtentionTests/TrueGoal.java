@@ -12,11 +12,10 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.core.seqprover.tests.SequentProverTests;
 
 public class TrueGoal extends EmptyInputReasoner {
 	
-	public static String REASONER_ID = SequentProverTests.PLUGIN_ID + ".trueGoal";
+	public static String REASONER_ID = "org.eventb.core.seqprover.tests.trueGoal";
 	
 	public String getReasonerID() {
 		return REASONER_ID;
