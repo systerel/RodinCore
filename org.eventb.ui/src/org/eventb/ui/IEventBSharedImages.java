@@ -48,7 +48,15 @@ public interface IEventBSharedImages {
 	public static final String IMG_ADD = "Add";
 	
 	public static final String IMG_REMOVE = "Remove";
+	
+	public static final String IMG_COLLAPSED = "Collapsed";
+	
+	public static final String IMG_COLLAPSED_HOVER = "Collapsed Hover";
 
+	public static final String IMG_EXPANDED = "Expanded";
+	
+	public static final String IMG_EXPANDED_HOVER = "Expanded Hover";	
+	
 	/**
 	 * Paths to the icons for buttons, menus, etc.
 	 */

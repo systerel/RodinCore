@@ -110,6 +110,11 @@ public class EventBImage {
 		
 		registerImage(registry, IEventBSharedImages.IMG_ADD, "icons/full/ctool16/add.gif");
 		registerImage(registry, IEventBSharedImages.IMG_REMOVE, "icons/full/ctool16/remove.gif");
+
+		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED, "icons/full/elcl16/collapsed.gif");
+		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED_HOVER, "icons/full/elcl16/collapsedHover.gif");
+		registerImage(registry, IEventBSharedImages.IMG_EXPANDED, "icons/full/elcl16/expanded.gif");
+		registerImage(registry, IEventBSharedImages.IMG_EXPANDED_HOVER, "icons/full/elcl16/expandedHover.gif");
 	}
 
 	/**
