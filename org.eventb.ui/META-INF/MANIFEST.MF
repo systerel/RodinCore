@@ -17,6 +17,7 @@ Require-Bundle: org.eclipse.ui;visibility:=reexport,
  org.eclipse.ui.views.properties.tabbed;visibility:=reexport
 Eclipse-LazyStart: true
 Export-Package: org.eventb.internal.ui.eventbeditor;x-friends:="org.eventb.ui.tests",
+ org.eventb.internal.ui.eventbeditor.editpage;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.prover;x-friends:="org.eventb.ui.tests",
  org.eventb.ui,
  org.eventb.ui.eventbeditor,
