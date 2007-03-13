@@ -21,7 +21,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.eventb.ui.eventbeditor.IListEnablement;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -140,17 +139,7 @@ public class EditSectionRegistry {
 		}
 
 		public boolean isEnable(IRodinElement parent) {
-			try {
-				IListEnablement editComposite = (IListEnablement) config
-						.createExecutableExtension("enable");
-				
-				return editComposite.isEnable(parent);
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			return false;
+			return true;
 		}
 
 		public String getPrefix() {
