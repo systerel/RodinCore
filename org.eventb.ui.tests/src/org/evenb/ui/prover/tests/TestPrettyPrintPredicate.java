@@ -62,6 +62,7 @@ public class TestPrettyPrintPredicate extends TestCase {
 
 	public void testQuantifiedPredicate() {
 		// TODO implement this test
+		predTest("Forall", "x∈dom(f)⇒f(x)∈T", "x∈dom(f) ⇒ f(x)∈T");
 	}
 
 	public void testRelationalPred() {
