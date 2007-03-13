@@ -28,6 +28,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
@@ -312,17 +313,17 @@ public class UIUtils {
 	}
 
 	public static String getNamePrefix(IEventBEditor editor,
-			QualifiedName qualifiedName, String defaultPrefix) {
-		return "internal_" + getPrefix(editor, qualifiedName, defaultPrefix);
+			IInternalElementType<?> type, String defaultPrefix) {
+		return "internal_" + getPrefix(editor, type, defaultPrefix);
 	}
 
 	public static String getPrefix(IEventBEditor editor,
-			QualifiedName qualifiedName, String defaultPrefix) {
+			IInternalElementType<?> type, String defaultPrefix) {
 		IRodinFile inputFile = editor.getRodinInput();
 		String prefix = null;
 		try {
 			prefix = inputFile.getResource().getPersistentProperty(
-					qualifiedName);
+					getQualifiedName(type));
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -335,9 +336,9 @@ public class UIUtils {
 
 	public static <T extends IInternalElement> String getFreeElementName(
 			IEventBEditor editor, IInternalParent parent,
-			IInternalElementType<T> type, QualifiedName qualifiedName,
+			IInternalElementType<T> type,
 			String defaultPrefix) throws RodinDBException {
-		String prefix = getNamePrefix(editor, qualifiedName, defaultPrefix);
+		String prefix = getNamePrefix(editor, type, defaultPrefix);
 		return prefix + getFreeElementNameIndex(editor, parent, type, prefix);
 	}
 
@@ -365,9 +366,8 @@ public class UIUtils {
 
 	public static <T extends ILabeledElement> String getFreeElementLabel(
 			IEventBEditor editor, IInternalParent parent,
-			IInternalElementType<T> type, QualifiedName qualifiedName,
-			String defaultPrefix) throws RodinDBException {
-		String prefix = getPrefix(editor, qualifiedName, defaultPrefix);
+			IInternalElementType<T> type, String defaultPrefix) throws RodinDBException {
+		String prefix = getPrefix(editor, type, defaultPrefix);
 		return prefix + getFreeElementLabelIndex(editor, parent, type, prefix);
 	}
 
@@ -389,7 +389,8 @@ public class UIUtils {
 		for (i = beginIndex; i < elements.length + beginIndex; i++) {
 			boolean exists = false;
 			for (T element : elements) {
-				if (element.getLabel().equals(prefix + i)) {
+				if (element.hasAttribute(EventBAttributes.LABEL_ATTRIBUTE)
+						&& element.getLabel().equals(prefix + i)) {
 					exists = true;
 					break;
 				}
@@ -402,9 +403,8 @@ public class UIUtils {
 
 	public static <T extends IIdentifierElement> String getFreeElementIdentifier(
 			IEventBEditor editor, IInternalParent parent,
-			IInternalElementType<T> type, QualifiedName qualifiedName,
-			String defaultPrefix) throws RodinDBException {
-		String prefix = getPrefix(editor, qualifiedName, defaultPrefix);
+			IInternalElementType<T> type, String defaultPrefix) throws RodinDBException {
+		String prefix = getPrefix(editor, type, defaultPrefix);
 		return prefix
 				+ getFreeElementIdentifierIndex(editor, parent, type, prefix);
 	}
@@ -427,7 +427,8 @@ public class UIUtils {
 		for (i = beginIndex; i < elements.length + beginIndex; i++) {
 			boolean exists = false;
 			for (T element : elements) {
-				if (element.getIdentifierString().equals(prefix + i)) {
+				if (element.hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE)
+						&& element.getIdentifierString().equals(prefix + i)) {
 					exists = true;
 					break;
 				}
@@ -443,7 +444,8 @@ public class UIUtils {
 			throws RodinDBException {
 
 		for (T child : parent.getChildrenOfType(type)) {
-			if (label.equals(child.getLabel()))
+			if (child.hasAttribute(EventBAttributes.LABEL_ATTRIBUTE)
+					&& label.equals(child.getLabel()))
 				return child;
 		}
 		return null;
@@ -491,6 +493,19 @@ public class UIUtils {
 			if (UIUtils.DEBUG)
 				e.printStackTrace();
 		}
+	}
+
+	public static <T extends IInternalElement> String getFreeChildName(
+			IEventBEditor editor, IInternalParent parent,
+			IInternalElementType<T> type) throws RodinDBException {
+		String defaultPrefix = "element"; // TODO Get this from extentions
+		String prefix = getNamePrefix(editor, type, defaultPrefix);
+		return prefix + getFreeElementNameIndex(editor, parent, type, prefix);
+	}
+
+	public static QualifiedName getQualifiedName(
+			IInternalElementType type) {
+		return new QualifiedName(EventBUIPlugin.PLUGIN_ID, type.getId());
 	}
 
 }

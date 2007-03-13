@@ -3,6 +3,7 @@ package org.eventb.internal.ui.eventbeditor.actions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eventb.core.ITheorem;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinFile;
 
 public class AutoThmNaming extends AutoElementNaming {
@@ -12,7 +13,7 @@ public class AutoThmNaming extends AutoElementNaming {
 		String prefix = null;
 		try {
 			prefix = inputFile.getResource().getPersistentProperty(
-					PrefixThmName.QUALIFIED_NAME);
+					UIUtils.getQualifiedName(ITheorem.ELEMENT_TYPE));
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
