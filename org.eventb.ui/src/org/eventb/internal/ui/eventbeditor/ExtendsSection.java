@@ -57,7 +57,6 @@ public class ExtendsSection extends AbstractContextsSection<IContextFile> {
 	protected void addClause(String contextName) throws RodinDBException {
 		final String name = UIUtils.getFreeElementName(editor,
 				rodinFile, IExtendsContext.ELEMENT_TYPE,
-				PrefixExtendsContextName.QUALIFIED_NAME,
 				PrefixExtendsContextName.DEFAULT_PREFIX);
 		final IExtendsContext clause = rodinFile.getExtendsClause(name);
 		clause.create(null, null);

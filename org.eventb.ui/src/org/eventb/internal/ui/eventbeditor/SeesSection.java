@@ -47,7 +47,6 @@ public class SeesSection extends AbstractContextsSection<IMachineFile> {
 	protected void addClause(String contextName) throws RodinDBException {
 		final String name = UIUtils.getFreeElementName(editor, rodinFile,
 				ISeesContext.ELEMENT_TYPE,
-				PrefixSeesContextName.QUALIFIED_NAME,
 				PrefixSeesContextName.DEFAULT_PREFIX);
 		ISeesContext clause = rodinFile.getSeesClause(name);
 		clause.create(null, null);

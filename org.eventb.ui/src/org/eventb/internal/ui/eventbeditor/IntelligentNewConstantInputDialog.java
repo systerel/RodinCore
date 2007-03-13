@@ -27,6 +27,7 @@ import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
@@ -142,7 +143,8 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		nameText.getTextWidget().addModifyListener(
 				new GuardListener(axiomPredicateText.getTextWidget()));
 
-		axiomPairTexts.add(new Pair(axiomNameText, axiomPredicateText));
+		axiomPairTexts.add(new Pair<IEventBInputText, IEventBInputText>(
+				axiomNameText, axiomPredicateText));
 
 		nameText.getTextWidget().setText(defaultName);
 
@@ -186,7 +188,8 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 			axiomPredicateText.getTextWidget().addModifyListener(
 					new DirtyStateListener());
 
-			axiomPairTexts.add(new Pair(axiomNameText, axiomPredicateText));
+			axiomPairTexts.add(new Pair<IEventBInputText, IEventBInputText>(
+					axiomNameText, axiomPredicateText));
 
 			updateSize();
 		} else if (buttonId == IDialogConstants.OK_ID) {
@@ -203,7 +206,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 					String pred = Text2EventBMathTranslator
 							.translate(axiomPredicateText.getTextWidget()
 									.getText());
-					axioms.add(new Pair(axmName, pred));
+					axioms.add(new Pair<String, String>(axmName, pred));
 				}
 			}
 		}

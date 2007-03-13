@@ -321,7 +321,6 @@ public class RefinesSection extends SectionPart implements
 																	editor,
 																	rodinFile,
 																	IRefinesMachine.ELEMENT_TYPE,
-																	PrefixRefinesMachineName.QUALIFIED_NAME,
 																	PrefixRefinesMachineName.DEFAULT_PREFIX));
 									refined.create(null, monitor);
 									refined.setAbstractMachineName(machine,

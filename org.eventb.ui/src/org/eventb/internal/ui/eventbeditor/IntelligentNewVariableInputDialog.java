@@ -27,6 +27,7 @@ import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
@@ -175,8 +176,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		nameText.getTextWidget().addModifyListener(
 				new GuardListener(invariantPredicateText.getTextWidget()));
 
-		invariantPairTexts.add(new Pair(invariantNameText,
-				invariantPredicateText));
+		invariantPairTexts.add(new Pair<IEventBInputText, IEventBInputText>(
+				invariantNameText, invariantPredicateText));
 
 		nameText.getTextWidget().setText(defaultName);
 
@@ -224,8 +225,9 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 			invariantPredicateText.getTextWidget().addModifyListener(
 					new DirtyStateListener());
 
-			invariantPairTexts.add(new Pair(invariantNameText,
-					invariantPredicateText));
+			invariantPairTexts
+					.add(new Pair<IEventBInputText, IEventBInputText>(
+							invariantNameText, invariantPredicateText));
 
 			updateSize();
 		} else if (buttonId == IDialogConstants.OK_ID) {
@@ -243,7 +245,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 					String pred = Text2EventBMathTranslator
 							.translate(invariantPredicateText.getTextWidget()
 									.getText());
-					invariants.add(new Pair(invName, pred));
+					invariants.add(new Pair<String, String>(invName, pred));
 				}
 			}
 			if (dirtyTexts.contains(initSubstitutionText.getTextWidget())) {
