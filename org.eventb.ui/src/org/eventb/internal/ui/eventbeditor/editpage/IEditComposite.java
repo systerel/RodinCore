@@ -8,6 +8,8 @@ import org.rodinp.core.IRodinElement;
 
 public interface IEditComposite {
 
+	public abstract void refresh();
+
 	public abstract void setElement(IRodinElement element);
 
 	abstract public void createComposite(FormToolkit toolkit, Composite parent);
@@ -18,14 +20,12 @@ public interface IEditComposite {
 
 	abstract public void setValue();
 
-	public abstract void refresh();
-
 	public abstract void setFillHorizontal(boolean fill);
 
 	public abstract void setControl(Control control);
 
 	public abstract void setForm(ScrolledForm form);
 
-	public abstract void select(boolean selection);
+	public abstract void setSelected(boolean selection);
 
 }

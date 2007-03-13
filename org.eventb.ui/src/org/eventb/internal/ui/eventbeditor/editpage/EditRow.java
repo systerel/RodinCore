@@ -1,13 +1,11 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -15,70 +13,77 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
-public abstract class EditRow {
+public class EditRow {
 
 	Composite composite;
 
-	FormToolkit fToolkit;
+	Composite compParent;
 
-	IInternalParent parent;
+	Composite nextComposite;
 
-	IInternalElement element;
+	FormToolkit toolkit;
 
-	IEventBEditor fEditor;
+	ScrolledForm form;
+
+	IRodinElement element;
 
 	IEditComposite[] editComposites;
-	
-	Button cButton;
-	
-	EditPage fPage;
 
-	public EditRow(EditPage page, IInternalParent parent,
-			FormToolkit toolkit, Composite compParent,
-			IInternalElement element, IElementType type, ScrolledForm fForm, int level) {
-		this.fToolkit = toolkit;
-		this.parent = parent;
+	ImageHyperlink selectHyperlink;
+
+	ImageHyperlink foldingHyperlink;
+	
+	ImageHyperlink removeHyperlink; 
+	
+	IElementComposite elementComp;
+
+	int level;
+	
+	char keyHold;
+
+	public EditRow(IElementComposite elementComp, ScrolledForm form,
+			FormToolkit toolkit, Composite compParent, Composite nextComposite,
+			IRodinElement element, int level) {
+		assert (element != null);
+		this.elementComp = elementComp;
+		this.form = form;
+		this.toolkit = toolkit;
+		this.compParent = compParent;
+		this.nextComposite = nextComposite;
 		this.element = element;
-		this.fPage = page;
-		this.fEditor = (IEventBEditor) page.getEditor();
+		this.level = level;
+
+		createContents();
+	}
+
+	private void createContents() {
 		composite = toolkit.createComposite(compParent);
+		if (nextComposite != null) {
+			assert nextComposite.getParent() == compParent;
+			composite.moveAbove(nextComposite);
+		}
+		IElementType<? extends IRodinElement> type = element.getElementType();
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		composite.addKeyListener(new KeyListener() {
-
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			public void keyReleased(KeyEvent e) {
-				if (EventBEditorUtils.DEBUG)
-					EventBEditorUtils.debug("Variable Section Composite Key event " + e);
-			}
-			
-		});
-		
 		EditSectionRegistry sectionRegistry = EditSectionRegistry.getDefault();
-		int numColumns = 1 + 3 * sectionRegistry.getNumColumns(type);
+		int numColumns = 1 + 3 * sectionRegistry.getNumAttributes(type);
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = numColumns + 1;
 		composite.setLayout(gridLayout);
 
-		createButtons(type, level);
-		if (element != null)
-			editComposites = sectionRegistry.createColumns(fForm, fToolkit,
-					composite, element);
+		createButtons(type);
+		editComposites = sectionRegistry.createAttributeComposites(form,
+				toolkit, composite, element);
 		toolkit.paintBordersFor(composite);
 	}
 
-	public void createButtons(IElementType type, int level) {
-		Composite buttonComp = fToolkit.createComposite(composite);
+	public void createButtons(IElementType type) {
+		Composite buttonComp = toolkit.createComposite(composite);
 		buttonComp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
 
 		GridLayout gridLayout = new GridLayout();
@@ -88,70 +93,127 @@ public abstract class EditRow {
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
 
-		Composite tmp = fToolkit.createComposite(buttonComp);
+		Composite tmp = toolkit.createComposite(buttonComp);
 		GridData gridData = new GridData();
-		gridData.widthHint = level * 60;
+		gridData.widthHint = level * 40;
 		gridData.heightHint = 0;
 		tmp.setLayoutData(gridData);
-		
-		if (element != null) {
-			cButton = fToolkit.createButton(buttonComp, "",
-					SWT.CHECK);
-			cButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
-			cButton.addSelectionListener(new SelectionListener() {
 
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelected(e);
-				}
-
-				public void widgetSelected(SelectionEvent e) {
-					for (IEditComposite editComposite : editComposites) {
-						editComposite.select(cButton.getSelection());
-					}
-					fPage.selectionChanges();
-				}
-
-			});
-		}
-
-		ImageHyperlink add = fToolkit.createImageHyperlink(buttonComp, SWT.TOP);
-		add.setImage(EventBImage.getImage(IEventBSharedImages.IMG_ADD));
-		add.addHyperlinkListener(new HyperlinkAdapter() {
+		foldingHyperlink = toolkit.createImageHyperlink(buttonComp, SWT.TOP);
+		foldingHyperlink
+				.setImage(EventBImage
+						.getImage(IEventBSharedImages.IMG_EXPANDED));
+		foldingHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				Add();
+				elementComp.folding();
 			}
 
 		});
 
-		if (element != null) {
-			ImageHyperlink remove = fToolkit.createImageHyperlink(buttonComp,
-					SWT.TOP);
-			remove.setImage(EventBImage
-					.getImage(IEventBSharedImages.IMG_REMOVE));
-			remove.addHyperlinkListener(new HyperlinkAdapter() {
+		foldingHyperlink.addMouseTrackListener(new MouseTrackListener() {
 
-				@Override
-				public void linkActivated(HyperlinkEvent e) {
-					Remove();
+			public void mouseEnter(MouseEvent e) {
+				if (elementComp.isExpanded()) {
+					foldingHyperlink.setImage(EventBImage
+							.getImage(IEventBSharedImages.IMG_EXPANDED_HOVER));
+				} else {
+					foldingHyperlink.setImage(EventBImage
+							.getImage(IEventBSharedImages.IMG_COLLAPSED_HOVER));
 				}
+			}
 
-			});
-		}
+			public void mouseExit(MouseEvent e) {
+				if (elementComp.isExpanded()) {
+					foldingHyperlink.setImage(EventBImage
+							.getImage(IEventBSharedImages.IMG_EXPANDED));
+				} else {
+					foldingHyperlink.setImage(EventBImage
+							.getImage(IEventBSharedImages.IMG_COLLAPSED));
+				}
+			}
+
+			public void mouseHover(MouseEvent e) {
+				// Do nothing
+			}
+
+		});
+
+		selectHyperlink = toolkit.createImageHyperlink(buttonComp, SWT.TOP);
+		selectHyperlink.setImage(EventBImage.getRodinImage(element));
+		selectHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				elementComp.getPage().selectionChanges(element);
+			}
+
+		});
+
+		removeHyperlink = toolkit.createImageHyperlink(buttonComp,
+				SWT.TOP);
+		removeHyperlink.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REMOVE));
+		removeHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
+
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				try {
+					((IInternalElement) element).delete(true,
+							new NullProgressMonitor());
+				} catch (RodinDBException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+		});
+
+		updateLinks();
+	}
+
+	void updateLinks() {
+		EditSectionRegistry editSectionRegistry = EditSectionRegistry
+				.getDefault();
+		if (editSectionRegistry.getChildrenTypes(element.getElementType()).length != 0) {
+			foldingHyperlink.setVisible(true);
+		} else
+			foldingHyperlink.setVisible(false);
 	}
 
 	public void refresh() {
 		for (IEditComposite editComposite : editComposites) {
+			editComposite.setElement(element);
 			editComposite.refresh();
+		}
+		updateLinks();
+	}
+
+	public boolean isSelected() {
+		return selectHyperlink.getSelection();
+	}
+
+	public IRodinElement getElement() {
+		return element;
+	}
+
+	public void setElement(IInternalElement element) {
+		assert element.getElementType() == this.element.getElementType();
+		this.element = element;
+		refresh();
+	}
+
+	public void dispose() {
+		composite.dispose();
+	}
+
+	public Composite getComposite() {
+		return composite;
+	}
+
+	public void setSelected(boolean select) {
+		for (IEditComposite editComposite : editComposites) {
+			editComposite.setSelected(select);
 		}
 	}
 
-	public abstract void Add();
-
-	public abstract void Remove();
-
-	public boolean isSelected() {
-		return cButton.getSelection();
-	}
 }

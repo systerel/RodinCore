@@ -60,11 +60,11 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setValue()
 	 */
 	abstract public void setValue();
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#refresh()
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#refresh(org.rodinp.core.IInternalElement)
 	 */
 	public void refresh() {
 		setControlValue();
@@ -78,8 +78,7 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	 */
 	public void setFillHorizontal(boolean fill) {
 		GridData gridData;
-		gridData = new GridData(SWT.FILL, SWT.TOP,
-				fill, false);
+		gridData = new GridData(SWT.FILL, SWT.TOP, fill, false);
 
 		control.setLayoutData(gridData);
 	}
@@ -97,14 +96,13 @@ public abstract class DefaultEditComposite implements IEditComposite {
 		Composite parent = control.getParent();
 		Rectangle bounds = parent.getBounds();
 		Point preferredSize = parent.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		
+
 		if (preferredSize.x > bounds.width || preferredSize.y > bounds.height) {
 			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Full resize");
 			form.getBody().pack();
 			form.reflow(true);
-		}
-		else {
+		} else {
 			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Local resize");
 			control.pack();

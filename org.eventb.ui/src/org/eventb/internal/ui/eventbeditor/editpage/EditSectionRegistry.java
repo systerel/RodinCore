@@ -1,7 +1,6 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,7 +21,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.eventb.ui.eventbeditor.ISectionComposite;
+import org.eventb.ui.eventbeditor.IListEnablement;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -44,52 +43,83 @@ public class EditSectionRegistry {
 		return instance;
 	}
 
-	// Map from editor to list of sections
-	private Map<String, SectionsInfo> sectionRegistry = null;
+	// Map from element types to list of sections
+	private Map<IElementType, SectionsInfo> sectionRegistry = null;
 
 	private static final String EDITSECTIONS_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".editSections";
 
 	class SectionsInfo {
-		List<SectionInfo> sections;
+		// Map from element types to list of sections
+		List<SectionInfo> unsortedSections;
+
+		LinkedHashMap<IElementType, SectionInfo> sections;
 
 		public SectionsInfo() {
-			sections = new ArrayList<SectionInfo>();
+			unsortedSections = new ArrayList<SectionInfo>();
 		}
 
-		public ISectionComposite[] createSections(EditPage page,
-				FormToolkit toolkit, ScrolledForm form, Composite parent) {
-			Collection<ISectionComposite> sectionComps = new ArrayList<ISectionComposite>();
-			for (SectionInfo section : sections) {
-				ISectionComposite sectionComp = section.createSection(page,
-						toolkit, form, parent);
-				if (sectionComp != null)
-					sectionComps.add(sectionComp);
-			}
-			return sectionComps.toArray(new ISectionComposite[sectionComps
-					.size()]);
-		}
+		// public ISectionComposite[] createSections(EditPage page,
+		// FormToolkit toolkit, ScrolledForm form, Composite parent) {
+		// Collection<ISectionComposite> sectionComps = new
+		// ArrayList<ISectionComposite>();
+		// for (SectionInfo section : sections) {
+		// ISectionComposite sectionComp = section.createSection(page,
+		// toolkit, form, parent);
+		// if (sectionComp != null)
+		// sectionComps.add(sectionComp);
+		// }
+		// return sectionComps.toArray(new ISectionComposite[sectionComps
+		// .size()]);
+		// }
 
 		public void addSection(SectionInfo info) {
-			sections.add(info);
+			unsortedSections.add(info);
 		}
 
 		public void sortSections() {
 			boolean sorted = false;
-			int size = sections.size();
+			int size = unsortedSections.size();
 			while (!sorted) {
 				sorted = true;
 				for (int i = 0; i < size - 1; i++) {
-					SectionInfo curr = sections.get(i);
-					SectionInfo next = sections.get(i + 1);
+					SectionInfo curr = unsortedSections.get(i);
+					SectionInfo next = unsortedSections.get(i + 1);
 					if (curr.getPriority() > next.getPriority()) {
 						// Swap element
-						sections.set(i, next);
-						sections.set(i + 1, curr);
+						unsortedSections.set(i, next);
+						unsortedSections.set(i + 1, curr);
 						sorted = false;
 					}
 				}
 			}
+
+			sections = new LinkedHashMap<IElementType, SectionInfo>(
+					unsortedSections.size());
+			for (SectionInfo info : unsortedSections) {
+				sections.put(info.getType(), info);
+			}
+		}
+
+		public IInternalElementType<?>[] getChildrenTypes(
+				IElementType<?> parentType) {
+			Set<IElementType> types = sections.keySet();
+			return types.toArray(new IInternalElementType<?>[types.size()]);
+		}
+
+		public String getPrefix(IElementType type) {
+			SectionInfo info = sections.get(type);
+			return info.getPrefix();
+		}
+
+		public String getPostfix(IElementType type) {
+			SectionInfo info = sections.get(type);
+			return info.getPostfix();
+		}
+
+		public boolean isEnable(IRodinElement parent, IElementType type) {
+			SectionInfo info = sections.get(type);
+			return info.isEnable(parent);
 		}
 	}
 
@@ -107,6 +137,33 @@ public class EditSectionRegistry {
 			// TODO check that id is present.
 			this.id = config.getAttribute("id");
 			priority = readPriority();
+		}
+
+		public boolean isEnable(IRodinElement parent) {
+			try {
+				IListEnablement editComposite = (IListEnablement) config
+						.createExecutableExtension("enable");
+				
+				return editComposite.isEnable(parent);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return false;
+		}
+
+		public String getPrefix() {
+			return config.getAttribute("prefix");
+		}
+
+		public String getPostfix() {
+			return config.getAttribute("postfix");
+		}
+
+		public IElementType getType() {
+			String typeStr = config.getAttribute("type");
+			return RodinCore.getElementType(typeStr);
 		}
 
 		private int readPriority() {
@@ -130,19 +187,19 @@ public class EditSectionRegistry {
 			return this.priority;
 		}
 
-		public ISectionComposite createSection(EditPage page,
-				FormToolkit toolkit, ScrolledForm form, Composite parent) {
-			try {
-				ISectionComposite sectionComp;
-				sectionComp = (ISectionComposite) config
-						.createExecutableExtension("class");
-				return sectionComp.create(page, toolkit, form, parent);
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-		}
+		// public ISectionComposite createSection(EditPage page,
+		// FormToolkit toolkit, ScrolledForm form, Composite parent) {
+		// try {
+		// ISectionComposite sectionComp;
+		// sectionComp = (ISectionComposite) config
+		// .createExecutableExtension("class");
+		// return sectionComp.create(page, toolkit, form, parent);
+		// } catch (CoreException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// return null;
+		// }
+		// }
 	}
 
 	private synchronized void loadSectionRegistry() {
@@ -151,7 +208,7 @@ public class EditSectionRegistry {
 			return;
 		}
 
-		sectionRegistry = new HashMap<String, SectionsInfo>();
+		sectionRegistry = new HashMap<IElementType, SectionsInfo>();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = reg.getExtensionPoint(EDITSECTIONS_ID);
@@ -160,13 +217,11 @@ public class EditSectionRegistry {
 		for (IConfigurationElement configuration : configurations) {
 			if (!configuration.getName().equals("section"))
 				continue;
+
 			SectionInfo info = new SectionInfo(configuration);
-			IConfigurationElement[] targets = configuration
-					.getChildren("target");
-			for (IConfigurationElement target : targets) {
-				String targetID = target.getAttribute("id");
-				addSection(targetID, info);
-			}
+			String parentTypeStr = configuration.getAttribute("parentType");
+			IElementType parentType = RodinCore.getElementType(parentTypeStr);
+			addSection(parentType, info);
 		}
 
 		sortSections();
@@ -175,117 +230,130 @@ public class EditSectionRegistry {
 	private void sortSections() {
 		assert sectionRegistry != null;
 
-		for (String targetID : sectionRegistry.keySet()) {
-			SectionsInfo infos = sectionRegistry.get(targetID);
+		for (IElementType parentType : sectionRegistry.keySet()) {
+			SectionsInfo infos = sectionRegistry.get(parentType);
 			infos.sortSections();
 		}
 	}
-
-	// private void addColumn(String sId, IConfigurationElement info) {
-	// for (IConfigurationElement sInfo : sectionRegistry) {
-	// if (sInfo.getAttribute("id").equals(sId)) {
-	// Collection<IConfigurationElement> cInfos = map.get(sInfo);
-	// if (cInfos == null) {
-	// cInfos = new ArrayList<IConfigurationElement>();
-	// map.put(sInfo, cInfos);
-	// }
-	// cInfos.add(info);
-	//
-	// String message = "Registered configuration for column "
-	// + info.getAttribute("id") + " with section " + sId;
-	// if (UIUtils.DEBUG) {
-	// System.out.println(message);
-	// }
-	// return;
-	// }
-	// }
-	// String message = "Configuration for section " + sId
-	// + " cannot be found, ignore the column configuration "
-	// + info.getAttribute("id");
-	// if (UIUtils.DEBUG) {
-	// System.out.println(message);
-	// }
-	//
-	// }
 
 	public String getSectionName(IConfigurationElement section) {
 		return section.getAttribute("id");
 	}
 
-	public ISectionComposite[] createSections(EditPage page,
-			FormToolkit toolkit, ScrolledForm form, Composite parent) {
-		if (sectionRegistry == null)
-			loadSectionRegistry();
+	// public ISectionComposite[] createSections(EditPage page,
+	// FormToolkit toolkit, ScrolledForm form, Composite parent) {
+	// if (sectionRegistry == null)
+	// loadSectionRegistry();
+	//
+	// IEventBEditor editor = (IEventBEditor) page.getEditor();
+	// SectionsInfo info = sectionRegistry.get(editor.getEditorId());
+	// if (info == null) {
+	// return new ISectionComposite[0];
+	// }
+	// return info.createSections(page, toolkit, form, parent);
+	//
+	// }
 
-		IEventBEditor editor = (IEventBEditor) page.getEditor();
-		SectionsInfo info = sectionRegistry.get(editor.getEditorId());
-		if (info == null) {
-			return new ISectionComposite[0];
-		}
-		return info.createSections(page, toolkit, form, parent);
-
-	}
-
-	private synchronized void addSection(String targetID, SectionInfo info) {
+	private synchronized void addSection(IElementType parentType,
+			SectionInfo info) {
 		assert sectionRegistry != null;
 
-		SectionsInfo infos = sectionRegistry.get(targetID);
+		SectionsInfo infos = sectionRegistry.get(parentType);
 		if (infos == null) {
 			infos = new SectionsInfo();
-			sectionRegistry.put(targetID, infos);
+			sectionRegistry.put(parentType, infos);
 		}
 		infos.addSection(info);
 	}
 
-	private Map<IElementType, ColumnsInfo> columnRegistry;
+	public synchronized IInternalElementType<? extends IInternalElement>[] getChildrenTypes(
+			IElementType<? extends IRodinElement> parentType) {
+		if (sectionRegistry == null)
+			loadSectionRegistry();
 
-	class ColumnsInfo {
-		List<ColumnInfo> columns;
+		SectionsInfo infos = sectionRegistry.get(parentType);
+		if (infos != null) {
+			return infos.getChildrenTypes(parentType);
+		}
+		return new IInternalElementType<?>[0];
+	}
 
-		public ColumnsInfo() {
-			columns = new ArrayList<ColumnInfo>();
+	public synchronized String getPrefix(IElementType parentType,
+			IElementType type) {
+		if (sectionRegistry == null)
+			loadSectionRegistry();
+
+		SectionsInfo infos = sectionRegistry.get(parentType);
+		if (infos != null) {
+			return infos.getPrefix(type);
+		}
+		return null;
+	}
+
+	public synchronized String getPostfix(IElementType parentType,
+			IElementType type) {
+		if (sectionRegistry == null)
+			loadSectionRegistry();
+
+		SectionsInfo infos = sectionRegistry.get(parentType);
+		if (infos != null) {
+			return infos.getPostfix(type);
+		}
+		return null;
+	}
+
+	public synchronized boolean isEnable(IRodinElement parent, IElementType type) {
+		if (sectionRegistry == null)
+			loadSectionRegistry();
+
+		SectionsInfo infos = sectionRegistry.get(parent.getElementType());
+		if (infos != null) {
+			return infos.isEnable(parent, type);
+		}
+		return false;
+	}
+
+	private Map<IElementType, AttributesInfo> attributeRegistry;
+
+	class AttributesInfo {
+		List<AttributeInfo> attributeInfos;
+
+		public AttributesInfo() {
+			attributeInfos = new ArrayList<AttributeInfo>();
 		}
 
-		public int getNumColumns() {
-			return columns.size();
+		public int getNumAttributes() {
+			return attributeInfos.size();
 		}
 
-		public void addColumn(ColumnInfo info) {
-			columns.add(info);
+		public void addAttribute(AttributeInfo info) {
+			attributeInfos.add(info);
 		}
 
-		public IEditComposite[] createColumns(ScrolledForm form,
+		public IEditComposite[] createAttributeComposites(ScrolledForm form,
 				FormToolkit toolkit, Composite parent, IRodinElement element) {
-			IEditComposite[] result = new IEditComposite[columns.size()];
-			for (int i = 0; i < columns.size(); ++i) {
-				result[i] = columns.get(i).createColumn(toolkit, form, parent,
-						element);
+			IEditComposite[] result = new IEditComposite[attributeInfos.size()];
+			for (int i = 0; i < attributeInfos.size(); ++i) {
+				result[i] = attributeInfos.get(i).createAttributeComposite(
+						toolkit, form, parent, element);
 			}
 			return result;
 		}
 
-		public String[] getColumnNames() {
-			List<String> names = new ArrayList<String>();
-			for (ColumnInfo column : columns) {
-				String name = column.getColumnName();
-				names.add(name);
-			}
-			return names.toArray(new String[names.size()]);
-		}
 	}
 
-	private class ColumnInfo {
+	private class AttributeInfo {
 		private IConfigurationElement config;
 
-		public ColumnInfo(IConfigurationElement config) {
+		public AttributeInfo(IConfigurationElement config) {
 			this.config = config;
 		}
 
-		public String getColumnName() {
+		public String getAttributeName() {
 			return config.getAttribute("name");
 		}
 
-		public IEditComposite createColumn(FormToolkit toolkit,
+		public IEditComposite createAttributeComposite(FormToolkit toolkit,
 				ScrolledForm form, Composite parent, IRodinElement element) {
 			try {
 				IEditComposite editComposite;
@@ -323,22 +391,22 @@ public class EditSectionRegistry {
 
 	}
 
-	private synchronized void loadColumnRegistry() {
-		if (columnRegistry != null) {
+	private synchronized void loadAttributeRegistry() {
+		if (attributeRegistry != null) {
 			// avoid to read the registry at the same time in different threads
 			return;
 		}
 
-		columnRegistry = new HashMap<IElementType, ColumnsInfo>();
+		attributeRegistry = new HashMap<IElementType, AttributesInfo>();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = reg.getExtensionPoint(EDITSECTIONS_ID);
 		IConfigurationElement[] configurations = extensionPoint
 				.getConfigurationElements();
 		for (IConfigurationElement configuration : configurations) {
-			if (!configuration.getName().equals("column"))
+			if (!configuration.getName().equals("attribute"))
 				continue;
-			ColumnInfo info = new ColumnInfo(configuration);
+			AttributeInfo info = new AttributeInfo(configuration);
 			IConfigurationElement[] types = configuration.getChildren("type");
 			for (IConfigurationElement type : types) {
 				String id = type.getAttribute("id");
@@ -354,57 +422,47 @@ public class EditSectionRegistry {
 					}
 					continue;
 				}
-				addColumn(elementType, info);
+				addAttribute(elementType, info);
 			}
 		}
 	}
 
-	private void addColumn(IElementType elementType, ColumnInfo info) {
-		assert columnRegistry != null;
+	private void addAttribute(IElementType elementType, AttributeInfo info) {
+		assert attributeRegistry != null;
 
-		ColumnsInfo infos = columnRegistry.get(elementType);
+		AttributesInfo infos = attributeRegistry.get(elementType);
 		if (infos == null) {
-			infos = new ColumnsInfo();
-			columnRegistry.put(elementType, infos);
+			infos = new AttributesInfo();
+			attributeRegistry.put(elementType, infos);
 		}
-		infos.addColumn(info);
+		infos.addAttribute(info);
 	}
 
-	public synchronized int getNumColumns(IElementType type) {
-		if (columnRegistry == null)
-			loadColumnRegistry();
+	public synchronized int getNumAttributes(IElementType type) {
+		if (attributeRegistry == null)
+			loadAttributeRegistry();
 
-		ColumnsInfo info = columnRegistry.get(type);
+		AttributesInfo info = attributeRegistry.get(type);
 		if (info == null) {
 			return 0;
 		}
 
-		return info.getNumColumns();
+		return info.getNumAttributes();
 	}
 
-	public synchronized IEditComposite[] createColumns(ScrolledForm form,
-			FormToolkit toolkit, Composite parent, IRodinElement element) {
-		if (columnRegistry == null)
-			loadColumnRegistry();
+	public synchronized IEditComposite[] createAttributeComposites(
+			ScrolledForm form, FormToolkit toolkit, Composite composite,
+			IRodinElement element) {
+		if (attributeRegistry == null)
+			loadAttributeRegistry();
 
-		ColumnsInfo info = columnRegistry.get(element.getElementType());
+		AttributesInfo info = attributeRegistry.get(element.getElementType());
 		if (info == null) {
 			return new IEditComposite[0];
 		}
 
-		return info.createColumns(form, toolkit, parent, element);
-	}
-
-	public synchronized String[] getColumnNames(IElementType type) {
-		if (columnRegistry == null)
-			loadColumnRegistry();
-
-		ColumnsInfo info = columnRegistry.get(type);
-		if (info == null) {
-			return new String[0];
-		}
-
-		return info.getColumnNames();
+		return info
+				.createAttributeComposites(form, toolkit, composite, element);
 	}
 
 	private Map<IElementType, ActionsInfo> actionRegistry;

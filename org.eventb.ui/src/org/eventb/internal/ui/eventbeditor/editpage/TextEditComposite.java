@@ -41,7 +41,7 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 		});
 	}
 
-	public void select(boolean selection) {
+	public void setSelected(boolean selection) {
 		Text text = (Text) control;
 		if (selection)
 			text

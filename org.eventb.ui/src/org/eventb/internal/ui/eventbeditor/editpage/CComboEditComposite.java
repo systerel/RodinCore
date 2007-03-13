@@ -34,7 +34,7 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 		combo.setText(getValue());
 	}
 
-	public void select(boolean selection) {
+	public void setSelected(boolean selection) {
 		CCombo combo = (CCombo) control;
 		if (selection)
 			combo.setBackground(combo.getDisplay().getSystemColor(
