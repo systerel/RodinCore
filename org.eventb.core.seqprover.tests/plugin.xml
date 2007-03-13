@@ -11,6 +11,13 @@
             class="org.eventb.core.seqprover.reasonerExtentionTests.TrueGoal"
             id="erroneous.id"
             name="Erroneous id (contains a dot)"/>
+      <reasoner
+            class="org.eventb.core.seqprover.xprover.tests.TestReasoner"
+            id="test"
+            name="%reasoner.test.name"/>
+      <reasoner
+            class="org.eventb.core.seqprover.xprover.tests.ExtendedInputReasoner"
+            id="extended"
+            name="%reasoner.extended.name"/>
    </extension>
-
 </plugin>
