@@ -1,7 +1,6 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -52,7 +51,13 @@ public class ElementComposite implements IElementComposite {
 	private void createContents() {
 		composite = toolkit.createComposite(compParent);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		composite.setLayout(new GridLayout());
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.marginTop = 0;
+		gridLayout.marginLeft = 0;
+		gridLayout.marginRight = 0;
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		composite.setLayout(gridLayout);
 
 		row = new EditRow(this, form, toolkit, composite, null, rElement, level);
 
@@ -92,16 +97,6 @@ public class ElementComposite implements IElementComposite {
 					composite, (IInternalParent) rElement, type, level + 1));
 
 		}
-	}
-
-	public List<IRodinElement> getSelectedElements() {
-		List<IRodinElement> result = new ArrayList<IRodinElement>();
-		if (row.isSelected())
-			result.add(rElement);
-		for (ISectionComposite sectionComp : sectionComps) {
-			result.addAll(sectionComp.getSelectedElements());
-		}
-		return result;
 	}
 
 	public EditPage getPage() {

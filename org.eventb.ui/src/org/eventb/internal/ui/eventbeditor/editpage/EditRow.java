@@ -87,11 +87,13 @@ public class EditRow {
 		buttonComp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
 
 		GridLayout gridLayout = new GridLayout();
-		buttonComp.setLayout(gridLayout);
 		gridLayout.numColumns = 4;
+		gridLayout.marginLeft = 0;
+		gridLayout.marginRight = 0;
 		gridLayout.marginTop = 0;
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
+		buttonComp.setLayout(gridLayout);
 
 		Composite tmp = toolkit.createComposite(buttonComp);
 		GridData gridData = new GridData();

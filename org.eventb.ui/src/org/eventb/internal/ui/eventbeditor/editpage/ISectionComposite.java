@@ -1,13 +1,9 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import java.util.List;
-
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 
 public interface ISectionComposite {
-
-	List<IRodinElement> getSelectedElements();
 
 	void dispose();
 

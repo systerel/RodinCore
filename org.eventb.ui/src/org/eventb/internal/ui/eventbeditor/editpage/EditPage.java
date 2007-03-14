@@ -488,15 +488,6 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		}
 	}
 
-	public void selectionChanges() {
-		List<IRodinElement> elements = new ArrayList<IRodinElement>();
-		for (ISectionComposite sectionComp : sectionComps) {
-			List<IRodinElement> sel = sectionComp.getSelectedElements();
-			elements.addAll(sel);
-		}
-		setSelection(new StructuredSelection(elements));
-	}
-
 	private IRodinElement lastSelectedElement;
 
 	public void selectionChanges(IRodinElement element) {

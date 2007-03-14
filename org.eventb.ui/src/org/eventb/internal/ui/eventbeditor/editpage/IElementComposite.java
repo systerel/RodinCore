@@ -1,14 +1,10 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import java.util.List;
-
 import org.eclipse.swt.widgets.Composite;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 
 public interface IElementComposite {
-
-	List<IRodinElement> getSelectedElements();
 
 	EditPage getPage();
 

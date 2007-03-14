@@ -3,7 +3,6 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -54,6 +53,18 @@ public class SectionComposite implements ISectionComposite {
 	LinkedList<IElementComposite> elementComps;
 
 	Composite elementComposite;
+	
+	Composite afterComposite;
+
+	Composite afterHyperlinkComposite;
+	
+	ImageHyperlink addAfterHyperlink;
+
+	Composite beforeComposite;
+
+	Composite beforeHyperlinkComposite;
+
+	ImageHyperlink addBeforeHyperlink;
 
 	boolean isExpanded;
 
@@ -69,14 +80,6 @@ public class SectionComposite implements ISectionComposite {
 		this.level = level;
 		isExpanded = true;
 		createContents();
-	}
-
-	public List<IRodinElement> getSelectedElements() {
-		List<IRodinElement> result = new ArrayList<IRodinElement>();
-		for (IElementComposite elementComp : elementComps) {
-			result.addAll(elementComp.getSelectedElements());
-		}
-		return result;
 	}
 
 	private void createPostfixLabel(String str) {
@@ -98,7 +101,7 @@ public class SectionComposite implements ISectionComposite {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		widget.setLayoutData(gd);
 		new EventBFormText(widget);
-		int space = -20;
+		int space = -5;
 		String text = "<form><li style=\"text\" bindent = \"" + space
 				+ "\"><b>" + str + "</b></li></form>";
 		widget.setText(text, true, true);
@@ -188,6 +191,8 @@ public class SectionComposite implements ISectionComposite {
 				elementComp.dispose();
 			}
 			elementComps.clear();
+			afterHyperlinkComposite.dispose();
+			beforeHyperlinkComposite.dispose();
 		}
 
 		form.getBody().pack(true);
@@ -211,31 +216,123 @@ public class SectionComposite implements ISectionComposite {
 		if (prefix != null)
 			createPrefixLabel(prefix);
 
+		beforeComposite = toolkit.createComposite(composite);
+		beforeComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gridLayout = new GridLayout();
+		beforeComposite.setLayout(gridLayout);
+
 		elementComposite = toolkit.createComposite(composite);
 		elementComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		elementComposite.setLayout(new GridLayout());
+		gridLayout = new GridLayout();
+		elementComposite.setLayout(gridLayout);
+
+		afterComposite = toolkit.createComposite(composite);
+		afterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gridLayout = new GridLayout();
+		afterComposite.setLayout(gridLayout);
 
 		createElementComposites();
 
-		Composite hyperlinkComp = toolkit.createComposite(composite);
-		hyperlinkComp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false,
-				false));
+		String postfix = editSectionRegistry.getPostfix(
+				parent.getElementType(), type);
 
-		gridLayout = new GridLayout();
-		hyperlinkComp.setLayout(gridLayout);
+		if (postfix != null)
+			createPostfixLabel(postfix);
+		updateFoldStatus();
+		return;
+	}
+
+	private void createElementComposites() {
+		createBeforeHyperlinks();
+		elementComps = new LinkedList<IElementComposite>();
+
+		try {
+			IRodinElement[] children = parent.getChildrenOfType(type);
+			for (IRodinElement child : children) {
+				elementComps.add(new ElementComposite(page, toolkit, form,
+						elementComposite, child, level));
+			}
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (elementComps.size() != 0)
+			createAfterHyperlinks();
+		
+	}
+
+	private void createBeforeHyperlinks() {
+		beforeHyperlinkComposite = toolkit.createComposite(beforeComposite);
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		beforeHyperlinkComposite.setLayoutData(gridData);
+		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
+		gridLayout.marginLeft = 0;
+		gridLayout.marginRight = 0;
 		gridLayout.marginTop = 0;
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
+		beforeHyperlinkComposite.setLayout(gridLayout);
 
-		Composite tmp = toolkit.createComposite(hyperlinkComp);
-		GridData gridData = new GridData();
-		gridData.widthHint = (level + 1) * 40;
+		Composite tmp = toolkit.createComposite(beforeHyperlinkComposite);
+		gridData = new GridData();
+		// -12 for alignment with the icon of children elements
+		gridData.widthHint = (level + 1) * 40 - 12; 
 		gridData.heightHint = 0;
 		tmp.setLayoutData(gridData);
 
-		ImageHyperlink addAfterHyperlink = toolkit.createImageHyperlink(
-				hyperlinkComp, SWT.TOP);
+		addBeforeHyperlink = toolkit.createImageHyperlink(
+				beforeHyperlinkComposite, SWT.TOP);
+		addBeforeHyperlink.setImage(EventBImage
+				.getImage(IEventBSharedImages.IMG_ADD));
+		addBeforeHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
+
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				IEventBEditor editor = (IEventBEditor) page.getEditor();
+				try {
+					IInternalElement[] children = parent.getChildrenOfType(type);
+					assert (children.length != 0);
+					IInternalElement first = children[0];
+					
+					String newName = UIUtils.getFreeChildName(editor, parent,
+							type);
+					IInternalElement newElement = parent
+							.getInternalElement(
+									(IInternalElementType<? extends IRodinElement>) type,
+									newName);
+					newElement.create(first, new NullProgressMonitor());
+				} catch (RodinDBException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+		});
+	}
+
+	private void createAfterHyperlinks() {
+		afterHyperlinkComposite = toolkit.createComposite(afterComposite);
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		afterHyperlinkComposite.setLayoutData(gridData);
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 2;
+		gridLayout.marginLeft = 0;
+		gridLayout.marginRight = 0;
+		gridLayout.marginTop = 0;
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		afterHyperlinkComposite.setLayout(gridLayout);
+
+		Composite tmp = toolkit.createComposite(afterHyperlinkComposite);
+		gridData = new GridData();
+		// -12 for alignment with the icon of children elements
+		gridData.widthHint = (level + 1) * 40 - 12; 
+		gridData.heightHint = 0;
+		tmp.setLayoutData(gridData);
+
+		addAfterHyperlink = toolkit.createImageHyperlink(
+				afterHyperlinkComposite, SWT.TOP);
 		addAfterHyperlink.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_ADD));
 		addAfterHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
@@ -258,29 +355,6 @@ public class SectionComposite implements ISectionComposite {
 			}
 
 		});
-
-		String postfix = editSectionRegistry.getPostfix(
-				parent.getElementType(), type);
-
-		if (postfix != null)
-			createPostfixLabel(postfix);
-		updateLinks();
-		return;
-	}
-
-	private void createElementComposites() {
-		elementComps = new LinkedList<IElementComposite>();
-
-		try {
-			IRodinElement[] children = parent.getChildrenOfType(type);
-			for (IRodinElement child : children) {
-				elementComps.add(new ElementComposite(page, toolkit, form,
-						elementComposite, child, level));
-			}
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	public void dispose() {
@@ -310,6 +384,17 @@ public class SectionComposite implements ISectionComposite {
 		}
 
 		elementComps.removeAll(toBeRemoved);
+		updateHyperlink();
+	}
+
+	private void updateHyperlink() {
+		if (elementComps.size() == 0 && afterHyperlinkComposite != null) {
+			beforeHyperlinkComposite.dispose();
+			return;
+		}
+		if (elementComps.size() != 0 && afterHyperlinkComposite == null) {
+			createBeforeHyperlinks();
+		}
 	}
 
 	public void elementAdded(IRodinElement element) {
@@ -323,6 +408,7 @@ public class SectionComposite implements ISectionComposite {
 				elementComp.elementAdded(element);
 			}
 		}
+		updateHyperlink();
 	}
 
 	public void childrenChanged(IRodinElement element, IElementType childrenType) {
@@ -358,9 +444,7 @@ public class SectionComposite implements ISectionComposite {
 						prevComp.pack();
 					}
 				}
-				updateLinks();
-//				elementComposite.redraw();
-//				elementComposite.pack();
+				updateFoldStatus();
 				elementComposite.layout();
 				elementComposite.setBounds(bounds);
 			} catch (RodinDBException e) {
@@ -385,7 +469,7 @@ public class SectionComposite implements ISectionComposite {
 		return -1;
 	}
 
-	public void updateLinks() {
+	private void updateFoldStatus() {
 		try {
 			if (parent.getChildrenOfType(type).length != 0) {
 				folding.setVisible(true);
