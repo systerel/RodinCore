@@ -52,9 +52,6 @@ public class ElementComposite implements IElementComposite {
 		composite = toolkit.createComposite(compParent);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.marginTop = 0;
-		gridLayout.marginLeft = 0;
-		gridLayout.marginRight = 0;
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
 		composite.setLayout(gridLayout);

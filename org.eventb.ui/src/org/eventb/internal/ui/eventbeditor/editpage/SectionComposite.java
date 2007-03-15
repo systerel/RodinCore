@@ -93,6 +93,7 @@ public class SectionComposite implements ISectionComposite {
 
 		Composite tmp = toolkit.createComposite(comp);
 		GridData gridData = new GridData();
+		gridData.heightHint = 0;
 		gridData.widthHint = 40 * level;
 		tmp.setLayoutData(gridData);
 
@@ -184,8 +185,15 @@ public class SectionComposite implements ISectionComposite {
 
 	public void setExpand(boolean isExpanded) {
 		this.isExpanded = isExpanded;
-		if (isExpanded)
+		if (isExpanded) {
+			GridData gridData = (GridData) beforeComposite.getLayoutData();
+			gridData.heightHint = SWT.DEFAULT;
+			gridData = (GridData) afterComposite.getLayoutData();
+			gridData.heightHint = SWT.DEFAULT;
+			gridData = (GridData) elementComposite.getLayoutData();
+			gridData.heightHint = SWT.DEFAULT;
 			createElementComposites();
+		}
 		else {
 			for (IElementComposite elementComp : elementComps) {
 				elementComp.dispose();
@@ -193,6 +201,12 @@ public class SectionComposite implements ISectionComposite {
 			elementComps.clear();
 			afterHyperlinkComposite.dispose();
 			beforeHyperlinkComposite.dispose();
+			GridData gridData = (GridData) beforeComposite.getLayoutData();
+			gridData.heightHint = 0;
+			gridData = (GridData) afterComposite.getLayoutData();
+			gridData.heightHint = 0;
+			gridData = (GridData) elementComposite.getLayoutData();
+			gridData.heightHint = 0;
 		}
 
 		form.getBody().pack(true);
@@ -203,11 +217,7 @@ public class SectionComposite implements ISectionComposite {
 		composite = toolkit.createComposite(compParent);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		composite.setLayout(new GridLayout());
-
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 1;
-		composite.setLayout(gridLayout);
-
+		
 		EditSectionRegistry editSectionRegistry = EditSectionRegistry
 				.getDefault();
 
@@ -218,18 +228,15 @@ public class SectionComposite implements ISectionComposite {
 
 		beforeComposite = toolkit.createComposite(composite);
 		beforeComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		gridLayout = new GridLayout();
-		beforeComposite.setLayout(gridLayout);
+		beforeComposite.setLayout(new GridLayout());
 
 		elementComposite = toolkit.createComposite(composite);
 		elementComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		gridLayout = new GridLayout();
-		elementComposite.setLayout(gridLayout);
+		elementComposite.setLayout(new GridLayout());
 
 		afterComposite = toolkit.createComposite(composite);
 		afterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		gridLayout = new GridLayout();
-		afterComposite.setLayout(gridLayout);
+		afterComposite.setLayout(new GridLayout());
 
 		createElementComposites();
 
@@ -238,6 +245,7 @@ public class SectionComposite implements ISectionComposite {
 
 		if (postfix != null)
 			createPostfixLabel(postfix);
+
 		updateFoldStatus();
 		return;
 	}
@@ -267,9 +275,6 @@ public class SectionComposite implements ISectionComposite {
 		beforeHyperlinkComposite.setLayoutData(gridData);
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
-		gridLayout.marginLeft = 0;
-		gridLayout.marginRight = 0;
-		gridLayout.marginTop = 0;
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
 		beforeHyperlinkComposite.setLayout(gridLayout);
@@ -317,9 +322,6 @@ public class SectionComposite implements ISectionComposite {
 		afterHyperlinkComposite.setLayoutData(gridData);
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
-		gridLayout.marginLeft = 0;
-		gridLayout.marginRight = 0;
-		gridLayout.marginTop = 0;
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
 		afterHyperlinkComposite.setLayout(gridLayout);
@@ -390,9 +392,13 @@ public class SectionComposite implements ISectionComposite {
 	private void updateHyperlink() {
 		if (elementComps.size() == 0 && afterHyperlinkComposite != null) {
 			beforeHyperlinkComposite.dispose();
+			GridData gridData = (GridData) beforeComposite.getLayoutData();
+			gridData.heightHint = 0;
 			return;
 		}
 		if (elementComps.size() != 0 && afterHyperlinkComposite == null) {
+			GridData gridData = (GridData) beforeComposite.getLayoutData();
+			gridData.heightHint = SWT.DEFAULT;
 			createBeforeHyperlinks();
 		}
 	}
