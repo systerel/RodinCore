@@ -76,19 +76,17 @@ public abstract class Graph<T> {
 				}
 			}
 			if (next != null) { // cannot be in the for-loop because next is removed from nodes list
-				sorted.add(next);
-				nodes.remove(next);
 				sort(next);
 			}
 		} while (next != null);
 	}
 	
 	private void sort(Node<T> node) {
+		sorted.add(node);
+		nodes.remove(node);
 		for (Node<T> next : node) {
 			next.decCount();
 			if (next.getCount() == 0) {
-				sorted.add(next);
-				nodes.remove(next);
 				sort(next);
 			}
 		}
