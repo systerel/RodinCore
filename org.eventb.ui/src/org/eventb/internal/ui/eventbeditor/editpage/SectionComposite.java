@@ -199,7 +199,8 @@ public class SectionComposite implements ISectionComposite {
 				elementComp.dispose();
 			}
 			elementComps.clear();
-			afterHyperlinkComposite.dispose();
+			if (afterHyperlinkComposite != null) 
+				afterHyperlinkComposite.dispose();
 			beforeHyperlinkComposite.dispose();
 			GridData gridData = (GridData) beforeComposite.getLayoutData();
 			gridData.heightHint = 0;
@@ -246,7 +247,6 @@ public class SectionComposite implements ISectionComposite {
 		if (postfix != null)
 			createPostfixLabel(postfix);
 
-		updateFoldStatus();
 		return;
 	}
 
@@ -314,6 +314,7 @@ public class SectionComposite implements ISectionComposite {
 			}
 
 		});
+		addBeforeHyperlink.setLayoutData(new GridData());
 	}
 
 	private void createAfterHyperlinks() {
@@ -357,6 +358,7 @@ public class SectionComposite implements ISectionComposite {
 			}
 
 		});
+		addAfterHyperlink.setLayoutData(new GridData());
 	}
 
 	public void dispose() {
@@ -450,7 +452,6 @@ public class SectionComposite implements ISectionComposite {
 						prevComp.pack();
 					}
 				}
-				updateFoldStatus();
 				elementComposite.layout();
 				elementComposite.setBounds(bounds);
 			} catch (RodinDBException e) {
@@ -473,18 +474,6 @@ public class SectionComposite implements ISectionComposite {
 			++i;
 		}
 		return -1;
-	}
-
-	private void updateFoldStatus() {
-		try {
-			if (parent.getChildrenOfType(type).length != 0) {
-				folding.setVisible(true);
-			} else
-				folding.setVisible(false);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	public void select(IRodinElement element, boolean select) {
