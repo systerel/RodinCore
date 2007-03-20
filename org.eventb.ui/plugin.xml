@@ -660,35 +660,6 @@
       </element>
    </extension>
    <extension
-         point="org.eclipse.ui.newWizards">
-      <category
-            id="org.eventb.ui.wizards"
-            name="%newWizard.category.eventB"/>
-      <wizard
-            category="org.eventb.ui.wizards"
-            class="org.eventb.internal.ui.wizards.NewProjectWizard"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.wizards.NewProject"
-            name="%newWizard.project"/>
-      <wizard
-            category="org.eventb.ui.wizards"
-            class="org.eventb.internal.ui.wizards.NewComponentWizard"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.wizards.NewComponent"
-            name="%newWizard.component"/>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            class="org.eventb.internal.ui.perspectives.EventBPerspective"
-            id="org.eventb.ui.perspective.eventb"
-            name="%perspective.eventb"/>
-      <perspective
-            class="org.eventb.internal.ui.perspectives.ProvingPerspective"
-            id="org.eventb.ui.perspective.proving"
-            name="%perspective.proving"/>
-   </extension>
-   <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
             description="%actionSet.eventB.description"
