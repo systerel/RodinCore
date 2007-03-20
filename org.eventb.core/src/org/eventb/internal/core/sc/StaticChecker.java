@@ -71,14 +71,6 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 
 	}
 
-	public static String getStrippedComponentName(String component) {
-		int dotPos = component.indexOf('.');
-		if (dotPos == -1)
-			return component;
-		else
-			return component.substring(0, dotPos - 1);
-	}
-	
 	protected void runProcessorModules(
 			ISCProcessorModule rootModule,
 			IRodinFile file, 

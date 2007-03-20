@@ -27,7 +27,6 @@ import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.ContextPointerArray;
-import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -92,7 +91,7 @@ public class MachineContextClosureModule extends SCProcessorModule {
 						refinesMachines[0], 
 						EventBAttributes.TARGET_ATTRIBUTE, 
 						GraphProblem.ContextOnlyInAbstractMachineWarning,
-						StaticChecker.getStrippedComponentName(name));
+						context.getComponentName());
 				
 				// repair
 				// TODO delta checking

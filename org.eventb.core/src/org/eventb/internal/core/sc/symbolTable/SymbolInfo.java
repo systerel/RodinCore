@@ -12,7 +12,6 @@ import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
@@ -111,10 +110,6 @@ public abstract class SymbolInfo implements ISymbolInfo {
 		return component;
 	}
 
-	public String getStrippedComponentName() {
-		return StaticChecker.getStrippedComponentName(component);
-	}
-	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

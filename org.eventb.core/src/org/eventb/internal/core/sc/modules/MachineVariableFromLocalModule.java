@@ -19,7 +19,6 @@ import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.IAbstractMachineInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -65,9 +64,7 @@ public class MachineVariableFromLocalModule extends SCFilterModule {
 		
 		if (abstractEventTable.isLocalVariable(variableName)) {
 			
-			String abstractName = 
-				StaticChecker.getStrippedComponentName(
-						abstractMachineInfo.getAbstractMachine().getElementName());
+			String abstractName = abstractMachineInfo.getAbstractMachine().getComponentName();
 			
 			createProblemMarker(
 					identifierElement, 

@@ -44,7 +44,7 @@ public class MachineStaticChecker extends StaticChecker {
 			monitor.beginTask(
 					Messages.bind(
 							Messages.build_runningMSC, 
-							StaticChecker.getStrippedComponentName(file.getName())), 
+							scMachineFile.getComponentName()), 
 					size);
 
 			scMachineFile.create(true, null);

@@ -46,7 +46,7 @@ public class ContextStaticChecker extends StaticChecker {
 		try {
 
 			monitor.beginTask(Messages.bind(Messages.build_runningMSC,
-					StaticChecker.getStrippedComponentName(file.getName())),
+					scContextFile.getComponentName()),
 					size);
 
 			scContextFile.create(true, monitor);
