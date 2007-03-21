@@ -268,12 +268,14 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				if (symbolInfo.isMutable()) {
 					symbolInfo.makeVisible();
 					symbolInfo.makeImmutable();
+					
+					typeEnvironment.addName(symbolInfo.getSymbol(), symbolInfo.getType());
 				}
-				typeEnvironment.addName(symbolInfo.getSymbol(), symbolInfo.getType());
+				assert typeEnvironment.contains(symbolInfo.getSymbol());
 			}
 
 			for (ISCContext scContext : upContexts[index]) {
-				String name = scContext.getElementName();
+				String name = scContext.getComponentName();
 				if (!contextNames.contains(name)) {
 					contextNames.add(name);
 					validContexts.add(scContext);
