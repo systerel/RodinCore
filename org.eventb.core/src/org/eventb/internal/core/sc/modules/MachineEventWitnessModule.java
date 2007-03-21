@@ -110,10 +110,11 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		int index = 0;
 		
 		for (int i=0; i<formulaElements.length; i++) {
-			if (formulas[i] == null)
-				continue;
+//			if (formulas[i] == null)
+//				continue;
 			String label = formulaElements[i].getLabel();
-			if (witnessNames.contains(label)) {
+			boolean labelIsWellFormed = witnessNames.contains(label);
+			if (formulas[i] != null && labelIsWellFormed) {
 				witnessNames.remove(label);
 				createSCWitness(
 						target, 
@@ -123,10 +124,17 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 						formulas[i], 
 						monitor);
 			} else {
-				createProblemMarker(
-						formulaElements[i], 
-						EventBAttributes.LABEL_ATTRIBUTE, 
-						GraphProblem.WitnessLabelNeedLessError);
+				if (labelIsWellFormed) {
+					createProblemMarker(
+							formulaElements[i], 
+							EventBAttributes.LABEL_ATTRIBUTE, 
+							GraphProblem.WitnessLabelNeedLessError, label);
+				} else {
+					createProblemMarker(
+							formulaElements[i], 
+							EventBAttributes.LABEL_ATTRIBUTE, 
+							GraphProblem.WitnessLabelNotWellFormedError, label);
+				}
 			}
 		}
 		

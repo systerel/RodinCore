@@ -90,6 +90,7 @@ public enum GraphProblem implements IRodinProblem {
 	WitnessLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_WitnessLabelConflict),
 	WitnessLabelMissingWarning(IMarker.SEVERITY_WARNING, Messages.scuser_WitnessLabelMissing),
 	WitnessLabelNeedLessError(IMarker.SEVERITY_ERROR, Messages.scuser_WitnessLabelNeedLess),
+	WitnessLabelNotWellFormedError(IMarker.SEVERITY_ERROR, Messages.scuser_WitnessLabelNotWellFormed),
 	ContextOnlyInAbstractMachineWarning(IMarker.SEVERITY_WARNING, Messages.scuser_ContextOnlyPresentInAbstractMachine),
 	WasAbstractEventLabelWarning(IMarker.SEVERITY_WARNING, Messages.scuser_WasAbstractEventLabelProblem),
 	InconsistentEventLabelWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InconsistentEventLabelProblem),
