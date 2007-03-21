@@ -143,4 +143,33 @@ public class TestSeesContext extends BasicSCTest {
 		containsContexts(file, "con1", "con2");
 	}
 
+	/**
+	 * Ensures that a context seen both directly and through the abstraction is
+	 * not duplicated and occurs as an internal context.
+	 */
+	public void testSeesContext_4() throws Exception {
+		IContextFile acon = createContext("acon");
+		acon.save(null, true);
+		
+		IContextFile ccon = createContext("ccon");
+		addContextExtends(ccon, "acon");
+		ccon.save(null, true);
+		
+		IMachineFile abs = createMachine("abs");
+		addMachineSees(abs, "acon");
+		abs.save(null, true);
+		
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addMachineSees(mac, "acon");
+		addMachineSees(mac, "ccon");
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		seesContexts(file, "acon", "ccon");
+		containsContexts(file, "acon", "ccon");
+	}
+
 }
