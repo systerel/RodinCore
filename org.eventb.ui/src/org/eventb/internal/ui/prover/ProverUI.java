@@ -257,18 +257,6 @@ public class ProverUI extends FormEditor implements
 	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// try {
-		// TODO Commit the information in the UI to the database
-		// clear the dirty state on all the pages
-		// if (this.pages != null) {
-		// for (int i = 0; i < pages.size(); i++) {
-		// Object page = pages.get(i);
-		// IFormPage fpage = (IFormPage) page;
-		//
-		// fpage.doSave(monitor);
-		// }
-		// }
-		// }
 		saving = true;
 		IProofState[] proofStates = userSupport.getUnsavedPOs();
 
@@ -282,21 +270,16 @@ public class ProverUI extends FormEditor implements
 		dlg.setTitle("Save Proofs");
 		dlg.open();
 		final Object[] objects = dlg.getResult();
-		final int length = objects.length;
-		final IProofState[] results = new IProofState[length];
-		System.arraycopy(objects, 0, results, 0, length);
-
-		if (results != null && results.length != 0) {
-
-//			final IPSFile localPSFile = this.getRodinInput();
+		if (objects != null && objects.length != 0) {
+			final int length = objects.length;
+			final IProofState[] results = new IProofState[length];
+			System.arraycopy(objects, 0, results, 0, length);
 
 			try {
 				RodinCore.run(new IWorkspaceRunnable() {
-
 					public void run(IProgressMonitor pm) throws CoreException {
 						userSupport.doSave(results, pm);
 					}
-
 				}, null);
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
