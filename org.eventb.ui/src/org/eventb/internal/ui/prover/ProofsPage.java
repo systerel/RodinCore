@@ -360,7 +360,7 @@ public class ProofsPage extends FormPage implements
 									}
 								}
 							}
-						} else if (affectedProofState.getKind() == IProofStateDelta.REMOVED) {
+						} else if (affectedProofState.getKind() == IProofStateDelta.ADDED) {
 							return;
 						} else if (affectedProofState.getKind() == IProofStateDelta.CHANGED) {
 							int psFlags = affectedProofState.getFlags();
@@ -371,6 +371,11 @@ public class ProofsPage extends FormPage implements
 							}
 							if ((psFlags & IProofStateDelta.F_CACHE) != 0) {
 								initCacheSection();
+							}
+							if ((psFlags & IProofStateDelta.F_PROOFTREE) != 0) {
+								initHypothesisSections(proofState);
+								goalSection
+										.setGoal(proofState.getCurrentNode());
 							}
 							ProofsPage.this.getManagedForm().getForm().reflow(
 									true);
