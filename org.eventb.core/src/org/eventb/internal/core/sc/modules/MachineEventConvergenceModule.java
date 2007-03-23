@@ -48,6 +48,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 	private IVariantInfo variantInfo;
 	private IEventRefinesInfo eventRefinesInfo;
 	private ICurrentEvent currentEvent;
+	private String currentEventLabel;
 
 	@Override
 	public void initModule(
@@ -58,6 +59,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 		variantInfo = (IVariantInfo) repository.getState(IVariantInfo.STATE_TYPE);
 		eventRefinesInfo = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
 		currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
+		currentEventLabel = currentEvent.getCurrentEvent().getLabel();
 	}
 	
 	private IConvergenceElement.Convergence concreteConvergence;
@@ -116,7 +118,8 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 			createProblemMarker(
 					element, 
 					EventBAttributes.CONVERGENCE_ATTRIBUTE, 
-					GraphProblem.OrdinaryFaultyConvergenceWarning);
+					GraphProblem.OrdinaryFaultyConvergenceWarning,
+					currentEventLabel);
 			concreteConvergence = IConvergenceElement.Convergence.ORDINARY;
 		} 
 	}
@@ -143,7 +146,8 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 				createProblemMarker(
 						element, 
 						EventBAttributes.CONVERGENCE_ATTRIBUTE, 
-						GraphProblem.ConvergentEventNoVariantWarning);
+						GraphProblem.ConvergentEventNoVariantWarning,
+						currentEventLabel);
 				concreteConvergence = IConvergenceElement.Convergence.ORDINARY;
 			}
 	}
@@ -156,6 +160,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 		variantInfo = null;
 		eventRefinesInfo = null;
 		currentEvent = null;
+		currentEventLabel = null;
 		super.endModule(element, repository, monitor);
 	}
 

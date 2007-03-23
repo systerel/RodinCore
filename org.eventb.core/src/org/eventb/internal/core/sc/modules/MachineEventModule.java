@@ -30,6 +30,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
@@ -47,6 +48,7 @@ import org.eventb.internal.core.sc.symbolTable.EventSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -107,11 +109,12 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 			IProgressMonitor monitor) throws CoreException {
 		
 		for (AbstractEventWrapper abstractEventWrapper : getWrappers()) {
+			String abstractEventLabel = abstractEventWrapper.getInfo().getEventLabel();
 			if (!abstractEventWrapper.isRefined())
 				createProblemMarker(
 						machineFile, 
 						GraphProblem.AbstractEventNotRefinedError, 
-						abstractEventWrapper.getInfo().getEventLabel());
+						abstractEventLabel);
 			else {
 				List<IEventSymbolInfo> mergeSymbolInfos = abstractEventWrapper.getMergeSymbolInfos();
 				List<IEventSymbolInfo> splitSymbolInfos = abstractEventWrapper.getSplitSymbolInfos();
@@ -119,16 +122,19 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 					issueErrorMarkers(
 							mergeSymbolInfos, 
 							abstractEventWrapper, 
-							GraphProblem.EventMergeSplitError);
+							GraphProblem.EventMergeSplitError, 
+							abstractEventLabel);
 					issueErrorMarkers(
 							splitSymbolInfos, 
 							abstractEventWrapper, 
-							GraphProblem.EventMergeSplitError);
+							GraphProblem.EventMergeSplitError, 
+							abstractEventLabel);
 				} else if (mergeSymbolInfos.size() > 1) {
 					issueErrorMarkers(
 							mergeSymbolInfos, 
 							abstractEventWrapper, 
-							GraphProblem.EventMergeMergeError);
+							GraphProblem.EventMergeMergeError, 
+							abstractEventLabel);
 				}
 				
 				IEventSymbolInfo eventSymbolInfo = abstractEventWrapper.getImplicit();
@@ -138,7 +144,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 						createProblemMarker(
 								eventSymbolInfo.getSourceElement(), 
 								GraphProblem.EventInheritedMergeSplitError, 
-								abstractEventWrapper.getInfo().getEventLabel());
+								abstractEventLabel);
 						eventSymbolInfo.setError();
 					}
 			}
@@ -157,6 +163,26 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 				scEvents[i] = null;
 		}
 		
+	}
+
+	protected void issueErrorMarkers(
+			List<IEventSymbolInfo> symbolInfos, 
+			AbstractEventWrapper abstractEventWrapper, 
+			IRodinProblem problem,
+			String abstractEventLabel) throws CoreException {
+		for (IEventSymbolInfo symbolInfo : symbolInfos) {
+			IEventRefinesInfo refinesInfo = symbolInfo.getRefinesInfo();
+			
+			issueRefinementErrorMarker(symbolInfo);
+			
+			for (IRefinesEvent refinesEvent : refinesInfo.getRefinesClauses())
+				if (refinesEvent.getAbstractEventLabel().equals(abstractEventLabel))
+					createProblemMarker(
+							refinesEvent, 
+							problem,
+							abstractEventLabel);
+		}
+		abstractEventWrapper.setRefineError(true);
 	}
 
 	private static String INHERITED_REFINES_NAME = "IREF";
@@ -430,8 +456,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 		if (init == null || init.hasError())
 			createProblemMarker(
 					machineFile,
-					GraphProblem.MachineWithoutInitialisationError,
-					machineName);
+					GraphProblem.MachineWithoutInitialisationError);
 		
 		endFilterModules(repository, null);
 		

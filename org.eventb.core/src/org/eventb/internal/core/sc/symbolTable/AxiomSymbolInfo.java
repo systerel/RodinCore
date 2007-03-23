@@ -8,10 +8,11 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.IAxiomSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -30,13 +31,23 @@ public class AxiomSymbolInfo
 	}
 
 	@Override
-	public IRodinProblem getConflictWarning() {
-		return GraphProblem.AxiomLabelConflictWarning;
+	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
+		// TODO Auto-generated method stub
+		markerDisplay.createProblemMarker(
+				getSourceElement(), 
+				getSourceAttributeType(), 
+				GraphProblem.AxiomLabelConflictError, 
+				getSymbol());
 	}
 
 	@Override
-	public IRodinProblem getConflictError() {
-		return GraphProblem.AxiomLabelConflictError;
+	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
+		// TODO Auto-generated method stub
+		markerDisplay.createProblemMarker(
+				getSourceElement(), 
+				getSourceAttributeType(), 
+				GraphProblem.AxiomLabelConflictWarning, 
+				getSymbol());
 	}
 	
 }

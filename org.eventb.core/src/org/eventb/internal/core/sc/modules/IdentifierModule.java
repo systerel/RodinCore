@@ -57,7 +57,8 @@ public abstract class IdentifierModule extends SCProcessorModule {
 					display.createProblemMarker(
 							element, 
 							EventBAttributes.IDENTIFIER_ATTRIBUTE, 
-							GraphProblem.InvalidIdentifierSpacesError);
+							GraphProblem.InvalidIdentifierSpacesError,
+							name);
 					
 					return null;
 				}
@@ -66,7 +67,8 @@ public abstract class IdentifierModule extends SCProcessorModule {
 		display.createProblemMarker(
 				element, 
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, 
-				GraphProblem.InvalidIdentifierError);
+				GraphProblem.InvalidIdentifierError,
+				name);
 		
 		return null;
 		

@@ -75,7 +75,7 @@ public enum ParseProblem implements IRodinProblem {
 		this.severity = severity;
 		this.message = message;
 		this.category = category;
-		this.errorCode = EventBPlugin.PLUGIN_ID + name();
+		this.errorCode = EventBPlugin.PLUGIN_ID + "." + name();
 	}
 
 	/* (non-Javadoc)

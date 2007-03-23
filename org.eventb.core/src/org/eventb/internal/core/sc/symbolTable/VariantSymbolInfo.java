@@ -7,9 +7,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.eventb.core.sc.IMarkerDisplay;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinDBException;
 
 /**
  * This class is only used internally to be able to reuse the
@@ -30,13 +31,13 @@ public class VariantSymbolInfo extends LabelSymbolInfo {
 	}
 
 	@Override
-	public IRodinProblem getConflictWarning() {
-		return null;
+	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public IRodinProblem getConflictError() {
-		return null;
+	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
+		throw new UnsupportedOperationException();
 	}
 
 }

@@ -12,10 +12,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IRefinesEvent;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.state.IAbstractEventTable;
-import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.internal.core.sc.AbstractEventInfo;
@@ -23,7 +21,6 @@ import org.eventb.internal.core.sc.AbstractEventTable;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProblem;
 
 
 /**
@@ -174,26 +171,6 @@ public abstract class AbstractEventWrapperModule extends LabeledElementModule {
 			return getWrappers()[index];
 	}
 	
-	protected void issueErrorMarkers(
-			List<IEventSymbolInfo> symbolInfos, 
-			AbstractEventWrapper abstractEventWrapper, 
-			IRodinProblem problem) throws CoreException {
-		String abstractEventLabel = abstractEventWrapper.getInfo().getEventLabel();
-		for (IEventSymbolInfo symbolInfo : symbolInfos) {
-			IEventRefinesInfo refinesInfo = symbolInfo.getRefinesInfo();
-			
-			issueRefinementErrorMarker(symbolInfo);
-			
-			for (IRefinesEvent refinesEvent : refinesInfo.getRefinesClauses())
-				if (refinesEvent.getAbstractEventLabel().equals(abstractEventLabel))
-					createProblemMarker(
-							refinesEvent, 
-							problem,
-							abstractEventLabel);
-		}
-		abstractEventWrapper.setRefineError(true);
-	}
-
 	protected void issueRefinementErrorMarker(IEventSymbolInfo symbolInfo) throws CoreException {
 		if (!symbolInfo.hasError())
 			createProblemMarker(
@@ -213,12 +190,14 @@ public abstract class AbstractEventWrapperModule extends LabeledElementModule {
 			if (attributeType == null)
 				createProblemMarker(
 						element,
-						GraphProblem.AbstractEventNotFoundError);
+						GraphProblem.AbstractEventNotFoundError,
+						label);
 			else
 				createProblemMarker(
 						element,
 						attributeType,
-						GraphProblem.AbstractEventNotFoundError);
+						GraphProblem.AbstractEventNotFoundError,
+						label);
 			abstractEventWrapper = null;
 			createProblemMarker(
 					element,

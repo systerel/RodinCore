@@ -12,9 +12,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCVariable;
+import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -65,6 +68,38 @@ public class MachineVariableSymbolInfo extends VariableSymbolInfo {
 
 	public boolean isLocal() {
 		return false;
+	}
+
+	@Override
+	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
+		if (isImported())
+			markerDisplay.createProblemMarker(
+					getSourceElement(), 
+					getSourceAttributeType(), 
+					GraphProblem.VariableNameImportConflictError, 
+					getSymbol(), getComponentName());
+		else
+			markerDisplay.createProblemMarker(
+					getSourceElement(), 
+					getSourceAttributeType(), 
+					GraphProblem.VariableNameConflictError, 
+					getSymbol());
+	}
+
+	@Override
+	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
+		if (isImported())
+			markerDisplay.createProblemMarker(
+					getSourceElement(), 
+					getSourceAttributeType(), 
+					GraphProblem.VariableNameImportConflictWarning, 
+					getSymbol(), getComponentName());
+		else
+			markerDisplay.createProblemMarker(
+					getSourceElement(), 
+					getSourceAttributeType(), 
+					GraphProblem.VariableNameConflictWarning, 
+					getSymbol());
 	}
 
 }

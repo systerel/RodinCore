@@ -9,18 +9,18 @@ package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class EventSymbolInfo extends LabelSymbolInfo implements
-		IEventSymbolInfo {
+public class EventSymbolInfo extends LabelSymbolInfo implements IEventSymbolInfo {
 	
 	public EventSymbolInfo(
 			String symbol, 
@@ -52,13 +52,21 @@ public class EventSymbolInfo extends LabelSymbolInfo implements
 	}
 
 	@Override
-	public IRodinProblem getConflictWarning() {
-		return GraphProblem.EventLabelConflictWarning;
+	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
+		markerDisplay.createProblemMarker(
+				getSourceElement(), 
+				getSourceAttributeType(), 
+				GraphProblem.EventLabelConflictError, 
+				getSymbol());
 	}
 
 	@Override
-	public IRodinProblem getConflictError() {
-		return GraphProblem.EventLabelConflictError;
+	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
+		markerDisplay.createProblemMarker(
+				getSourceElement(), 
+				getSourceAttributeType(), 
+				GraphProblem.EventLabelConflictWarning, 
+				getSymbol());
 	}
 	
 }

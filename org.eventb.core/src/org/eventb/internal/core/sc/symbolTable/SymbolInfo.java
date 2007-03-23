@@ -14,7 +14,6 @@ import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 
@@ -52,14 +51,14 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.ISymbolInfo#hasError()
 	 */
-	public boolean hasError() {
+	public final boolean hasError() {
 		return error;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.ISymbolInfo#setError()
 	 */
-	public void setError() throws CoreException {
+	public final void setError() throws CoreException {
 		if (mutable)
 			error = true;
 		else
@@ -69,7 +68,7 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.ISymbolInfo#isMutable()
 	 */
-	public boolean isMutable() {
+	public final boolean isMutable() {
 		return mutable;
 	}
 
@@ -77,36 +76,36 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	 * Make this symbol info immutable.
 	 * It cannot be made mutable again.
 	 */
-	public void makeImmutable() {
+	public final void makeImmutable() {
 		mutable = false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.ISymbolInfo#getSymbol()
 	 */
-	public String getSymbol() {
+	public final String getSymbol() {
 		return symbol;
 	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(T)
 	 */
-	public int compareTo(Object o) {
+	public final int compareTo(Object o) {
 		SymbolInfo that = (SymbolInfo) o;
 		return this.symbol.compareTo(that.symbol);
 	}
 	
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		return obj instanceof SymbolInfo && symbol.equals(((SymbolInfo) obj).getSymbol());
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		return symbol.hashCode();
 	}
 
-	public String getComponentName() {
+	public final String getComponentName() {
 		return component;
 	}
 
@@ -121,7 +120,7 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.symbolTable.ISymbolInfo#getSourceElement()
 	 */
-	public IInternalElement getSourceElement() {
+	public final IInternalElement getSourceElement() {
 		return sourceElement;
 	}
 
@@ -137,23 +136,18 @@ public abstract class SymbolInfo implements ISymbolInfo {
 		this.sourceAttributeType = sourceAttributeType;
 	}
 	
-	public void createConflictMarker(IMarkerDisplay markerDisplay) throws RodinDBException {
+	public final void createConflictMarker(IMarkerDisplay markerDisplay) throws RodinDBException {
 		if (isMutable())
-			markerDisplay.createProblemMarker(
-					getSourceElement(), 
-					getSourceAttributeType(), 
-					getConflictError(), 
-					getSymbol(), getComponentName());
+			createConflictError(markerDisplay);
 		else
-			markerDisplay.createProblemMarker(
-					getSourceElement(), 
-					getSourceAttributeType(), 
-					getConflictWarning(), 
-					getSymbol(), getComponentName());
+			createConflictWarning(markerDisplay);
 	}
 	
-	public abstract IRodinProblem getConflictWarning();
-	public abstract IRodinProblem getConflictError();
+	protected abstract void createConflictError(IMarkerDisplay markerDisplay) 
+	throws RodinDBException;
+	
+	protected abstract void createConflictWarning(IMarkerDisplay markerDisplay) 
+	throws RodinDBException;
 	
 	public final IAttributeType.String getSourceAttributeType() {
 		return sourceAttributeType;

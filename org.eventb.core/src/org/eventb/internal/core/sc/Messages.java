@@ -85,6 +85,7 @@ public final class Messages {
     public static String scuser_ConstantNameConflict;
     public static String scuser_VariableNameImportConflict;
     public static String scuser_VariableNameConflict;
+    public static String  scuser_EventVariableNameConflict;
 	public static String scuser_UntypedCarrierSetError;
     public static String scuser_UntypedConstantError;
     public static String scuser_UntypedVariableError;

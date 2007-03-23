@@ -13,6 +13,7 @@ import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.IConstantSymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
@@ -20,6 +21,7 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -44,6 +46,24 @@ public abstract class ConstantSymbolInfo
 			throw Util.newCoreException(Messages.symtab_cannotCreateAbstractConstant);
 		}
 
+		@Override
+		protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(
+					getSourceElement(), 
+					getSourceAttributeType(), 
+					GraphProblem.ConstantNameImportConflictError, 
+					getSymbol(), getComponentName());
+		}
+
+		@Override
+		protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(
+					getSourceElement(), 
+					getSourceAttributeType(), 
+					GraphProblem.ConstantNameImportConflictWarning, 
+					getSymbol(), getComponentName());
+		}
+
 	}
 
 	private static class ConcreteConstantSymbolInfo extends ConstantSymbolInfo {
@@ -66,6 +86,25 @@ public abstract class ConstantSymbolInfo
 			return constant;
 		}
 
+
+		@Override
+		protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(
+					getSourceElement(), 
+					getSourceAttributeType(), 
+					GraphProblem.ConstantNameConflictError, 
+					getSymbol());
+		}
+
+		@Override
+		protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(
+					getSourceElement(), 
+					getSourceAttributeType(), 
+					GraphProblem.ConstantNameConflictWarning, 
+					getSymbol());
+		}
+		
 	}
 
 	public static ConstantSymbolInfo makeAbstractConstantSymbolInfo(
@@ -91,22 +130,6 @@ public abstract class ConstantSymbolInfo
 			IAttributeType.String attribute, 
 			String component) {
 		super(symbol, imported, element, attribute, component);
-	}
-
-	@Override
-	public IRodinProblem getConflictWarning() {
-		if (isImported())
-			return GraphProblem.ConstantNameImportConflictWarning;
-		else
-			return GraphProblem.ConstantNameConflictWarning;
-	}
-
-	@Override
-	public IRodinProblem getConflictError() {
-		if (isImported())
-			return GraphProblem.ConstantNameImportConflictError;
-		else
-			return GraphProblem.ConstantNameConflictError;
 	}
 
 	@Override

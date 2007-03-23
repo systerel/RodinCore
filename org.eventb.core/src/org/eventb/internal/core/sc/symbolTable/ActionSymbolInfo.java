@@ -8,10 +8,11 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.IActionSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -28,13 +29,21 @@ public class ActionSymbolInfo extends LabelSymbolInfo implements IActionSymbolIn
 	}
 
 	@Override
-	public IRodinProblem getConflictWarning() {
-		return GraphProblem.ActionLabelConflictWarning;
+	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
+		markerDisplay.createProblemMarker(
+				getSourceElement(), 
+				getSourceAttributeType(), 
+				GraphProblem.ActionLabelConflictError, 
+				getSymbol());
 	}
 
 	@Override
-	public IRodinProblem getConflictError() {
-		return GraphProblem.ActionLabelConflictError;
+	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
+		markerDisplay.createProblemMarker(
+				getSourceElement(), 
+				getSourceAttributeType(), 
+				GraphProblem.ActionLabelConflictWarning, 
+				getSymbol());
 	}
 
 }

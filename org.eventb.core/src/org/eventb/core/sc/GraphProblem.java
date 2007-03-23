@@ -53,6 +53,8 @@ public enum GraphProblem implements IRodinProblem {
 	VariableNameImportConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_VariableNameImportConflict),
 	VariableNameConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_VariableNameConflict),
 	VariableNameConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_VariableNameConflict),
+	EventVariableNameConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_EventVariableNameConflict),
+	EventVariableNameConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_EventVariableNameConflict),
 	UntypedCarrierSetError(IMarker.SEVERITY_ERROR, Messages.scuser_UntypedCarrierSetError),
 	UntypedConstantError(IMarker.SEVERITY_ERROR, Messages.scuser_UntypedConstantError),
 	UntypedVariableError(IMarker.SEVERITY_ERROR, Messages.scuser_UntypedVariableError),
@@ -105,11 +107,19 @@ public enum GraphProblem implements IRodinProblem {
 	private final String message;
 	
 	private final int severity;
+	
+	private int arity;
 
 	private GraphProblem(int severity, String message) {
 		this.severity = severity;
 		this.message = message;
-		this.errorCode = EventBPlugin.PLUGIN_ID + name();
+		this.errorCode = EventBPlugin.PLUGIN_ID + "." + name();
+		arity = -1;
+	}
+	
+	public static GraphProblem valueOfErrorCode(String errorCode) {
+		String instName = errorCode.substring(errorCode.lastIndexOf('.')+1);
+		return valueOf(instName);
 	}
 
 	/* (non-Javadoc)
@@ -117,6 +127,21 @@ public enum GraphProblem implements IRodinProblem {
 	 */
 	public int getSeverity() {
 		return severity;
+	}
+	
+	/**
+	 * Returns the number of parameters needed by the message of this problem,
+	 * i.e. the length of the object array to be passed to 
+	 * <code>getLocalizedMessage()</code>.
+	 * 
+	 * @return the number of parameters needed by the message of this problem
+	 */
+	public int getArity() {
+		if (arity == -1) {
+			MessageFormat mf = new MessageFormat(message);
+		    arity = mf.getFormatsByArgumentIndex().length;
+		}
+		return arity;
 	}
 
 	/* (non-Javadoc)

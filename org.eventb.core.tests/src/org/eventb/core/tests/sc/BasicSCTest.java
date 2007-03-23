@@ -8,8 +8,10 @@
 
 package org.eventb.core.tests.sc;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -55,12 +57,35 @@ import org.rodinp.core.RodinMarkerUtil;
  * Abstract class for builder tests.
  * 
  * @author Laurent Voisin
+ * @author Stefan Hallerstede
  */
 public abstract class BasicSCTest extends EventBTest {
 	
 	@Override
+	protected void runBuilder() throws CoreException {
+		super.runBuilder();
+		for (IRodinFile file : sourceFiles)
+			assertTrue("ill-formed markers", GraphProblemSpec.check(file));
+	}
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		sourceFiles.clear();
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		sourceFiles.clear();
+		super.tearDown();
+	}
+
+	private final List<IRodinFile> sourceFiles = new ArrayList<IRodinFile>();
+	
+	@Override
 	protected IContextFile createContext(String bareName) throws RodinDBException {
 		IContextFile file = super.createContext(bareName);
+		sourceFiles.add(file);
 		addFile(file.getSCContextFile());
 		return file;
 	}
@@ -68,6 +93,7 @@ public abstract class BasicSCTest extends EventBTest {
 	@Override
 	protected IMachineFile createMachine(String bareName) throws RodinDBException {
 		IMachineFile file = super.createMachine(bareName);
+		sourceFiles.add(file);
 		addFile(file.getSCMachineFile());
 		return file;
 	}

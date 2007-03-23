@@ -8,10 +8,11 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.IWitnessSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -28,13 +29,21 @@ public class WitnessSymbolInfo extends LabelSymbolInfo implements IWitnessSymbol
 	}
 
 	@Override
-	public IRodinProblem getConflictWarning() {
-		return GraphProblem.WitnessLabelConflictWarning;
+	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
+		markerDisplay.createProblemMarker(
+				getSourceElement(), 
+				getSourceAttributeType(), 
+				GraphProblem.WitnessLabelConflictError, 
+				getSymbol(), getComponentName());
 	}
 
 	@Override
-	public IRodinProblem getConflictError() {
-		return GraphProblem.WitnessLabelConflictError;
+	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
+		markerDisplay.createProblemMarker(
+				getSourceElement(), 
+				getSourceAttributeType(), 
+				GraphProblem.WitnessLabelConflictWarning, 
+				getSymbol(), getComponentName());
 	}
 
 }

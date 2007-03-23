@@ -77,21 +77,5 @@ public abstract class VariableSymbolInfo
 	public boolean isFresh() {
 		return fresh;
 	}
-
-	@Override
-	public IRodinProblem getConflictWarning() {
-		if (isImported())
-			return GraphProblem.VariableNameImportConflictWarning;
-		else
-			return GraphProblem.VariableNameConflictWarning;
-	}
-
-	@Override
-	public IRodinProblem getConflictError() {
-		if (isImported())
-			return GraphProblem.VariableNameImportConflictError;
-		else
-			return GraphProblem.VariableNameConflictError;
-	}
 	
 }

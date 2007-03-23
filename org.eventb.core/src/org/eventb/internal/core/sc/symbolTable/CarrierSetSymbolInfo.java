@@ -13,6 +13,7 @@ import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.ICarrierSetSymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
@@ -20,6 +21,7 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -44,6 +46,24 @@ public abstract class CarrierSetSymbolInfo
 			throw Util.newCoreException(Messages.symtab_cannotCreateAbstractCarrierSet);
 		}
 
+		@Override
+		protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(
+					getSourceElement(), 
+					getSourceAttributeType(), 
+					GraphProblem.CarrierSetNameImportConflictError, 
+					getSymbol(), getComponentName());
+		}
+
+		@Override
+		protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(
+					getSourceElement(), 
+					getSourceAttributeType(), 
+					GraphProblem.CarrierSetNameImportConflictWarning, 
+					getSymbol(), getComponentName());
+		}
+
 	}
 	
 	private static class ConcreteCarrierSetSymbolInfo extends CarrierSetSymbolInfo {
@@ -64,6 +84,24 @@ public abstract class CarrierSetSymbolInfo
 			set.setType(getType(), null);
 			set.setSource(getSourceElement(), monitor);
 			return set;
+		}
+
+		@Override
+		protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(
+					getSourceElement(), 
+					getSourceAttributeType(), 
+					GraphProblem.CarrierSetNameConflictError, 
+					getSymbol());
+		}
+
+		@Override
+		protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
+			markerDisplay.createProblemMarker(
+					getSourceElement(), 
+					getSourceAttributeType(), 
+					GraphProblem.CarrierSetNameConflictWarning, 
+					getSymbol());
 		}
 	}
 	
@@ -90,22 +128,6 @@ public abstract class CarrierSetSymbolInfo
 			IAttributeType.String attribute, 
 			String component) {
 		return new ConcreteCarrierSetSymbolInfo(symbol, element, attribute, component);
-	}
-
-	@Override
-	public IRodinProblem getConflictWarning() {
-		if (isImported())
-			return GraphProblem.CarrierSetNameImportConflictWarning;
-		else
-			return GraphProblem.CarrierSetNameConflictWarning;
-	}
-
-	@Override
-	public IRodinProblem getConflictError() {
-		if (isImported())
-			return GraphProblem.CarrierSetNameImportConflictError;
-		else
-			return GraphProblem.CarrierSetNameConflictError;
 	}
 
 	@Override
