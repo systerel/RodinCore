@@ -18,11 +18,6 @@ public class LabelSection extends TextSection {
 	}
 
 	@Override
-	void setStyle() {
-		// Do nothing, by default it is SWT.SINGLE
-	}
-
-	@Override
 	void setText(String text) throws RodinDBException {
 		ILabeledElement lElement = (ILabeledElement) element;
 		if (!lElement.getLabel().equals(text))

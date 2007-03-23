@@ -21,6 +21,7 @@ public class ExpressionSection extends TextSection {
 	@Override
 	void setStyle() {
 		style = SWT.MULTI;
+		math = true;
 	}
 
 	@Override

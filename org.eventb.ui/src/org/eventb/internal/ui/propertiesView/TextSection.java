@@ -14,6 +14,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
+import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.EventBText;
+import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -27,12 +30,16 @@ public abstract class TextSection extends AbstractPropertySection implements
 
 	Text textWidget;
 
+	IEventBInputText inputText;
+	
 	IInternalElement element;
 
 	IEventBEditor editor;
 
-	int style = SWT.SINGLE;
+	int style;
 
+	boolean math;
+	
 	public TextSection() {
 		// TODO Auto-generated constructor stub
 	}
@@ -46,8 +53,9 @@ public abstract class TextSection extends AbstractPropertySection implements
 				.createFlatFormComposite(parent);
 		FormData data;
 		setStyle();
-		textWidget = getWidgetFactory().createText(composite, "", style);
 
+		textWidget = getWidgetFactory().createText(composite, "", style);
+		
 		data = new FormData();
 		data.left = new FormAttachment(0, STANDARD_LABEL_WIDTH);
 		data.right = new FormAttachment(100, 0);
@@ -55,7 +63,13 @@ public abstract class TextSection extends AbstractPropertySection implements
 		if ((style & SWT.MULTI) != 0)
 			data.height = textWidget.getLineHeight() * 3;
 		textWidget.setLayoutData(data);
-
+		if (math) {
+			inputText = new EventBMath(textWidget);
+		}
+		else {
+			inputText = new EventBText(textWidget);
+		}
+		
 		new TimerText(textWidget, 1000) {
 
 			@Override
@@ -80,7 +94,16 @@ public abstract class TextSection extends AbstractPropertySection implements
 		labelLabel.setLayoutData(data);
 	}
 
-	abstract void setStyle();
+	void setStyle() {
+		style = SWT.SINGLE;
+		math = false;
+	}
+
+	@Override
+	public void dispose() {
+		inputText.dispose();
+		super.dispose();
+	}
 
 	abstract String getLabel();
 

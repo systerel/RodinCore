@@ -17,11 +17,6 @@ public class IdentifierSection extends TextSection {
 	}
 
 	@Override
-	void setStyle() {
-		// Do nothing, by default it is SWT.SINGLE
-	}
-
-	@Override
 	void setText(String text) throws RodinDBException {
 		IIdentifierElement iElement = (IIdentifierElement) element;
 		if (!iElement.getIdentifierString().equals(text)) {
