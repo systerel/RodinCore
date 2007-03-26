@@ -1,6 +1,7 @@
 package org.eventb.internal.ui.propertiesView;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.swt.SWT;
 import org.eventb.core.IIdentifierElement;
 import org.rodinp.core.RodinDBException;
 
@@ -16,6 +17,13 @@ public class IdentifierSection extends TextSection {
 		return ((IIdentifierElement) element).getIdentifierString();
 	}
 
+
+	@Override
+	void setStyle() {
+		style = SWT.SINGLE;
+		math = true;
+	}
+	
 	@Override
 	void setText(String text) throws RodinDBException {
 		IIdentifierElement iElement = (IIdentifierElement) element;

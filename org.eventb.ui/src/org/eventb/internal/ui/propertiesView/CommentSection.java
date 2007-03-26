@@ -23,7 +23,7 @@ public class CommentSection extends TextSection {
 	@Override
 	void setStyle() {
 		style = SWT.MULTI;
-		math = true;
+		math = false;
 	}
 
 	@Override
