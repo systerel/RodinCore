@@ -6,7 +6,9 @@
          <meta.schema plugin="org.eventb.ui" id="machinePages" name="Event-B Form Page"/>
       </appInfo>
       <documentation>
-         This extension point is used to add new form page to the Event-B Editor. An Event-B editor is an editor used specifically for browsing and editting Event-B components. To open an editor, the user will typically double click on an Event-B component or an internal element in the &lt;i&gt;Project Explorer View&lt;/i&gt;.
+         &lt;p&gt;The Event-B editor is an editor used specifically for browsing and editting Event-B components. It can be extensible in many ways. In particular, a new editting page can be added.&lt;/p&gt;
+
+&lt;p&gt;This extension point allows plug-in writers to register new editting page to the Event-B Editor.&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -119,7 +121,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         Event-B UI 0.5.4
+         0.5.4
       </documentation>
    </annotation>
 
@@ -128,8 +130,9 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of an internal editor extension definition:
-&lt;br&gt;
+         &lt;p&gt;
+The following is an example of Event-B Editor page extension definition. This adds two pages to the Event-B Editor. The DependenciesPage is available for both machine and context editors. The VariablePage is only available for the machine editor.
+&lt;/p&gt;
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension point=&quot;org.eventb.ui.editorPages&quot;&gt;
@@ -159,7 +162,8 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute of &lt;samp&gt;page&lt;/samp&gt; element must be a fully qualified name of the class that extends &lt;samp&gt;org.eventb.ui.eventbeditor.EventBEditorPage&lt;/samp&gt;. Moreover, the Event-B Editor will use the default constructor to create its pages, so the implementation of the page must also provide the default contructor. Typically, this is done as follows:
+         &lt;p&gt;
+The value of the &lt;samp&gt;class&lt;/samp&gt; attribute of &lt;samp&gt;page&lt;/samp&gt; element must be a fully qualified name of the class that extends &lt;samp&gt;org.eventb.ui.eventbeditor.EventBEditorPage&lt;/samp&gt;. Moreover, the Event-B Editor will use the default constructor to create its pages, so the implementation of the page must also provide the default contructor. Typically, this is done as follows:
 &lt;br&gt;
 &lt;pre&gt;
 public class MyNewPage extends EventBEditorPage {
@@ -182,6 +186,8 @@ public class MyNewPage extends EventBEditorPage {
 &lt;/pre&gt;
 
 More information to follow ...
+
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -190,7 +196,10 @@ More information to follow ...
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The Event-B UI packages provides a number of pages for the Event-B machine editor and the Event-B Context editor. For an example, end user can have a look at the implementation of the Dependencies page (&lt;samp&gt;org.eventb.internal.ui.editors.DependenciesPage&lt;/samp&gt;).
+         &lt;p&gt;
+This &lt;samp&gt;org.eventb.ui&lt;/samp&gt; plug-in provides a number of pages for the Event-B 
+Editor. For an example, end users can have a look at the implementation of the Dependencies page (&lt;samp&gt;org.eventb.internal.ui.editors.DependenciesPage&lt;/samp&gt;).
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -199,7 +208,7 @@ More information to follow ...
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2006 ETH Zurich.&lt;br&gt;
+         Copyright (c) 2005-2006 ETH Zurich.&lt;br&gt;
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at
