@@ -63,10 +63,14 @@ public class UIUtils {
 	public static boolean DEBUG = false;
 
 	public static void log(Throwable exc, String message) {
-		Throwable nestedException;
-		if (exc instanceof RodinDBException
-				&& (nestedException = ((RodinDBException) exc).getException()) != null) {
-			exc = nestedException;
+		if (exc instanceof RodinDBException) {
+			final Throwable nestedExc = ((RodinDBException) exc).getException();
+			if (nestedExc != null) {
+				exc = nestedExc;
+			}
+		}
+		if (message == null) {
+			message = "Unknown context";
 		}
 		IStatus status = new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
 				IStatus.ERROR, message, exc);

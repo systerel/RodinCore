@@ -68,7 +68,7 @@ public class ExtendsSection extends AbstractContextsSection<IContextFile> {
 		try {
 			return rodinFile.getExtendsClauses();
 		} catch (RodinDBException e) {
-			UIUtils.log(e, null);
+			UIUtils.log(e, "when reading the extends clauses");
 			return new IExtendsContext[0];
 		}
 	}

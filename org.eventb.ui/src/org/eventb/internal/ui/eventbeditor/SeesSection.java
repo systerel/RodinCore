@@ -58,7 +58,7 @@ public class SeesSection extends AbstractContextsSection<IMachineFile> {
 		try {
 			return rodinFile.getSeesClauses();
 		} catch (RodinDBException e) {
-			UIUtils.log(e, null);
+			UIUtils.log(e, "when reading the sees clauses");
 			return new ISeesContext[0];
 		}
 	}

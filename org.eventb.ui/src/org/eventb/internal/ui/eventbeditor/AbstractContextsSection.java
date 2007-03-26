@@ -135,7 +135,7 @@ public abstract class AbstractContextsSection<F extends IRodinFile> extends
 					try {
 						deleteElements((IStructuredSelection) sel, null);
 					} catch (RodinDBException e) {
-						UIUtils.log(e, null);
+						UIUtils.log(e, "when deleting selected elements");
 					}
 				}
 			}
