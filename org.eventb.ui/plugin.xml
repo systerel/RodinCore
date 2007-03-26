@@ -10,7 +10,7 @@
       name="%point.elementUIName" 
       schema="schema/elementui.exsd"/>
    <extension-point id="proofTactics" name="%point.proofTacticsName" schema="schema/proofTactics.exsd"/>
-   <extension-point id="editSections" name="%point.editSectionsName" schema="schema/editSection.exsd"/>
+   <extension-point id="editSections" name="%point.editSectionsName" schema="schema/editSections.exsd"/>
   
    <extension
          point="org.eclipse.ui.views">
