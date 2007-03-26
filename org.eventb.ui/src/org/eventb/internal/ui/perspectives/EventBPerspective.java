@@ -15,12 +15,6 @@ package org.eventb.internal.ui.perspectives;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eventb.internal.ui.eventbeditor.AxiomMirror;
-import org.eventb.internal.ui.eventbeditor.CarrierSetMirror;
-import org.eventb.internal.ui.eventbeditor.ConstantMirror;
-import org.eventb.internal.ui.eventbeditor.EventMirror;
-import org.eventb.internal.ui.eventbeditor.InvariantMirror;
-import org.eventb.internal.ui.eventbeditor.TheoremMirror;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
@@ -65,12 +59,6 @@ public class EventBPerspective implements IPerspectiveFactory {
 		layout.addNewWizardShortcut(NewComponentWizard.WIZARD_ID);
 
 		// Add "show views".
-		layout.addShowViewShortcut(InvariantMirror.VIEW_ID);
-		layout.addShowViewShortcut(TheoremMirror.VIEW_ID);
-		layout.addShowViewShortcut(AxiomMirror.VIEW_ID);
-		layout.addShowViewShortcut(CarrierSetMirror.VIEW_ID);
-		layout.addShowViewShortcut(ConstantMirror.VIEW_ID);
-		layout.addShowViewShortcut(EventMirror.VIEW_ID);
 		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
 		layout.addShowViewShortcut(ProjectExplorer.VIEW_ID);
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);

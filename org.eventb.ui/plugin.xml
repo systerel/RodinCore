@@ -49,42 +49,6 @@
             name="%view.ProofTreeUI"/>
       <view
             category="org.eventb.ui"
-            class="org.eventb.internal.ui.eventbeditor.InvariantMirror"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.views.InvariantMirror"
-            name="%view.InvariantMirror"/>
-      <view
-            category="org.eventb.ui"
-            class="org.eventb.internal.ui.eventbeditor.TheoremMirror"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.views.TheoremMirror"
-            name="%view.TheoremMirror"/>
-      <view
-            category="org.eventb.ui"
-            class="org.eventb.internal.ui.eventbeditor.AxiomMirror"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.views.AxiomMirror"
-            name="%view.AxiomMirror"/>
-      <view
-            category="org.eventb.ui"
-            class="org.eventb.internal.ui.eventbeditor.CarrierSetMirror"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.views.CarrierSetMirror"
-            name="%view.CarrierSetMirror"/>
-      <view
-            category="org.eventb.ui"
-            class="org.eventb.internal.ui.eventbeditor.ConstantMirror"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.views.ConstantMirror"
-            name="%view.ConstantMirror"/>
-      <view
-            category="org.eventb.ui"
-            class="org.eventb.internal.ui.eventbeditor.EventMirror"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.views.EventMirror"
-            name="%view.EventMirror"/>
-      <view
-            category="org.eventb.ui"
             class="org.eventb.internal.ui.searchhypothesis.SearchHypothesis"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.SearchHypothesis"

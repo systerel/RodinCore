@@ -29,13 +29,6 @@ import org.rodinp.core.RodinCore;
  */
 public class EventBMachineEditor extends EventBEditor<IMachineFile> {
 
-	// Set of mirror pages.
-	private EventBMirrorPage invariantMirrorPage;
-
-	private EventBMirrorPage theoremMirrorPage;
-
-	private EventBMirrorPage eventMirrorPage;
-
 	/**
 	 * The plug-in identifier of the Event-B Machine Editor (value
 	 * <code>"org.eventb.internal.ui.editors.EventBMachineEditor"</code>).
@@ -72,55 +65,11 @@ public class EventBMachineEditor extends EventBEditor<IMachineFile> {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditor#getAdapter(java.lang.Class)
-	 */
-	@Override
-	public Object getAdapter(Class required) {
-		if (IInvariantMirrorPage.class.equals(required)) {
-			if (invariantMirrorPage == null) {
-				invariantMirrorPage = new InvariantMirrorPage(this);
-				return invariantMirrorPage;
-			}
-		}
-		if (ITheoremMirrorPage.class.equals(required)) {
-			if (theoremMirrorPage == null) {
-				theoremMirrorPage = new TheoremMirrorPage(this);
-				return theoremMirrorPage;
-			}
-		}
-		if (IEventMirrorPage.class.equals(required)) {
-			if (eventMirrorPage == null) {
-				eventMirrorPage = new EventMirrorPage(this);
-				return eventMirrorPage;
-			}
-		}
-		return super.getAdapter(required);
-	}
-
 	@Override
 	protected IMachineFile getRodinFile(IEditorInput input) {
 		FileEditorInput editorInput = (FileEditorInput) input;
 		IFile inputFile = editorInput.getFile();
 		return (IMachineFile) RodinCore.valueOf(inputFile);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditor#dispose()
-	 */
-	@Override
-	public void dispose() {
-		if (invariantMirrorPage != null)
-			invariantMirrorPage.dispose();
-		if (theoremMirrorPage != null)
-			theoremMirrorPage.dispose();
-		if (eventMirrorPage != null)
-			eventMirrorPage.dispose();
-		super.dispose();
 	}
 
 	@Override
