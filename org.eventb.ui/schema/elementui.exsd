@@ -6,7 +6,9 @@
          <meta.schema plugin="org.eventb.ui" id="elementui" name="Event-B Element UI"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         &lt;p&gt;The Event-B User Interface needs to display Rodin Elements in a consistent fashion. The information about how to display and modify Rodin Elements is done via this extension. This information is used in the Event-B Editor and also in various views, e.g. Project Explorer, Outline View, etc.&lt;/p&gt;
+
+&lt;p&gt;This extension point allows plug-in writers to specify how to display and modify an Rodin Element.&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -47,6 +49,9 @@
          <appInfo>
             <meta.element labelAttribute="type" icon="icon"/>
          </appInfo>
+         <documentation>
+            The Rodin Element which is going to be displayed.
+         </documentation>
       </annotation>
       <complexType>
          <sequence>
@@ -55,7 +60,7 @@
          <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  the unique id of the element
+                  the element type of the element (this will be used to identify the elements)
                </documentation>
             </annotation>
          </attribute>
@@ -79,7 +84,7 @@
          <attribute name="defaultColumn">
             <annotation>
                <documentation>
-                  
+                  the default column for editting, e.g. the default column for Variable element is &quot;name&quot;, whereas for Invariant element is &quot;content&quot;.
                </documentation>
             </annotation>
             <simpleType>
@@ -95,18 +100,23 @@
    </element>
 
    <element name="column">
+      <annotation>
+         <documentation>
+            the editting column (as in the Table/Tree Viewer)
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  unique id for the column.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="labelProvider" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  This must be a fully qualified name of the class that implements &lt;samp&gt;org.eventb.ui.IElementLabelProvider&lt;/samp&gt;. This provides the label for displaying element in particular column.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eventb.ui.IElementLabelProvider"/>
@@ -116,7 +126,7 @@
          <attribute name="modifier" type="string">
             <annotation>
                <documentation>
-                  
+                  This must be a fully qualified name of the class that implements &lt;samp&gt;org.eventb.ui.IElementModifier&lt;/samp&gt;. This is used to modify the element at this column.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eventb.ui.IElementModifier"/>
@@ -126,7 +136,7 @@
          <attribute name="math" type="boolean" use="required">
             <annotation>
                <documentation>
-                  
+                  indicate if the column need to be edited using the mathematic keyboard or not.
                </documentation>
             </annotation>
          </attribute>
@@ -138,7 +148,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         0.5.4
       </documentation>
    </annotation>
 
@@ -147,7 +157,42 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         &lt;p&gt;
+The following is an example of Event-B Editor page extension definition. This adds information for Variable and Invariant elements.
+&lt;/p&gt;
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eventb.ui.elementui&quot;&gt;
+      &lt;element
+            defaultColumn=&quot;name&quot;
+            icon=&quot;icons/full/obj16/var_obj.gif&quot;
+            priority=&quot;4&quot;
+            type=&quot;org.eventb.core.variable&quot;&gt;
+         &lt;column
+               id=&quot;name&quot;
+               labelProvider=&quot;org.eventb.internal.ui.IdentifierLabelProvider&quot;
+               math=&quot;false&quot;
+               modifier=&quot;org.eventb.internal.ui.IdentifierModifier&quot;/&gt;
+      &lt;/element&gt;
+      &lt;element
+            defaultColumn=&quot;content&quot;
+            icon=&quot;icons/full/obj16/inv_obj.gif&quot;
+            priority=&quot;5&quot;
+            type=&quot;org.eventb.core.invariant&quot;&gt;
+         &lt;column
+               id=&quot;name&quot;
+               labelProvider=&quot;org.eventb.internal.ui.LabelLabelProvider&quot;
+               math=&quot;false&quot;
+               modifier=&quot;org.eventb.internal.ui.LabelModifier&quot;/&gt;
+         &lt;column
+               id=&quot;content&quot;
+               labelProvider=&quot;org.eventb.internal.ui.PredicateLabelProvider&quot;
+               math=&quot;true&quot;
+               modifier=&quot;org.eventb.internal.ui.PredicateModifier&quot;/&gt;
+      &lt;/element&gt;      
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -156,7 +201,12 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         &lt;p&gt;
+The value of the &lt;samp&gt;labelProvider&lt;/samp&gt; attribute of &lt;samp&gt;column&lt;/samp&gt; element is always required. It must be a fully qualified name of the class that implements &lt;samp&gt;org.eventb.ui.IElementLabelProvider&lt;/samp&gt;.
+&lt;/p&gt;
+&lt;p&gt;
+The value of the &lt;samp&gt;modifier&lt;/samp&gt; attribute of &lt;samp&gt;column&lt;/samp&gt; element is optional. It must be a fully qualified name of the class that implements &lt;samp&gt;org.eventb.ui.IElementModifier&lt;/samp&gt;.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -165,7 +215,9 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         &lt;p&gt;
+This &lt;samp&gt;org.eventb.ui&lt;/samp&gt; plug-in provides a number of extentions for various Rodin Elements. The end users can have a look at the classes &lt;samp&gt;org.eventb.internal.ui.IdentifierLabelProvider&lt;/samp&gt; and &lt;samp&gt;org.eventb.internal.ui.IdentifierModifier&lt;/samp&gt; as examples of how to implement the &lt;samp&gt;labelProvider&lt;/samp&gt; and the &lt;samp&gt;modifier&lt;/samp&gt;.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -174,7 +226,13 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2005-2006 ETH Zurich.&lt;br&gt;
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+&lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+&lt;br&gt;
+Contributors: ETH Zurich
       </documentation>
    </annotation>
 
