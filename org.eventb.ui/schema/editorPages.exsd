@@ -198,7 +198,7 @@ More information to follow ...
       <documentation>
          &lt;p&gt;
 This &lt;samp&gt;org.eventb.ui&lt;/samp&gt; plug-in provides a number of pages for the Event-B 
-Editor. For an example, end users can have a look at the implementation of the Dependencies page (&lt;samp&gt;org.eventb.internal.ui.editors.DependenciesPage&lt;/samp&gt;).
+Editor. For an example, plug-in developers can have a look at the implementation of the Dependencies page (&lt;samp&gt;org.eventb.internal.ui.editors.DependenciesPage&lt;/samp&gt;).
 &lt;/p&gt;
       </documentation>
    </annotation>

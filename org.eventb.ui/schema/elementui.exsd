@@ -216,7 +216,7 @@ The value of the &lt;samp&gt;modifier&lt;/samp&gt; attribute of &lt;samp&gt;colu
       </appInfo>
       <documentation>
          &lt;p&gt;
-This &lt;samp&gt;org.eventb.ui&lt;/samp&gt; plug-in provides a number of extentions for various Rodin Elements. The end users can have a look at the classes &lt;samp&gt;org.eventb.internal.ui.IdentifierLabelProvider&lt;/samp&gt; and &lt;samp&gt;org.eventb.internal.ui.IdentifierModifier&lt;/samp&gt; as examples of how to implement the &lt;samp&gt;labelProvider&lt;/samp&gt; and the &lt;samp&gt;modifier&lt;/samp&gt;.
+This &lt;samp&gt;org.eventb.ui&lt;/samp&gt; plug-in provides a number of extentions for various Rodin Elements. The plug-in developers can have a look at the classes &lt;samp&gt;org.eventb.internal.ui.IdentifierLabelProvider&lt;/samp&gt; and &lt;samp&gt;org.eventb.internal.ui.IdentifierModifier&lt;/samp&gt; as examples of how to implement the &lt;samp&gt;labelProvider&lt;/samp&gt; and the &lt;samp&gt;modifier&lt;/samp&gt;.
 &lt;/p&gt;
       </documentation>
    </annotation>
