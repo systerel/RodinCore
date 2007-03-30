@@ -1,15 +1,25 @@
 package org.eventb.core.seqprover.proofBuilder;
 
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.internal.core.seqprover.ProofTreeNode;
 
 /**
- * Common protocol for a proof skeleton.
+ * Common protocol for a proof skeleton node.
  * 
+ * <p>
+ * A proof skeleton node is a restricted version of a proof tree node 
+ * ({@link ProofTreeNode} inherits from it) that does not contain sequents and 
+ * only contains the information that is needed to build (or re-build) the proof 
+ * tree for different initial sequents.
+ * </p>
  *
  * <p>
  * This interface is intended to be implemented by clients that wish to persist
  * or copy proofs or subproofs.
  * </p>
+ * 
+ * @see ProofTreeNode
+ * @see ProofBuilder
  * 
  * @author Farhad Mehta
  */

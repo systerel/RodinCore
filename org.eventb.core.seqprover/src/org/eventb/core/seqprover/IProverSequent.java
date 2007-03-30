@@ -146,7 +146,11 @@ public interface IProverSequent{
 	
 	/**
 	 * Returns an iterator for all selected hypotheses of this sequent.
-	 * 
+	 * <p>
+	 * This iterator mantains the order of selected hypotheses. This order is 
+	 * the order in which hypotheses are selected. In case a hypothesis is selected
+	 * a second time, its order does not get modified.
+	 * </p>
 	 * <p>
 	 * It is intended to be used in the following way:<br>
 	 * <code>
@@ -157,7 +161,6 @@ public interface IProverSequent{
 	 * </code>
 	 * </p>
 	 * 
-	 * TODO : mantain order of selected hypotheses
 	 * 
 	 * @return an iterator for all selected hypotheses of this sequent
 	 */

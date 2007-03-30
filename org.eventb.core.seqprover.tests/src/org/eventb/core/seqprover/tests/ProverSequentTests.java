@@ -21,6 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import junit.framework.TestCase;
+
+
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -36,7 +39,7 @@ import org.junit.Test;
  * 
  * @author Farhad Mehta
  */
-public class ProverSequentTests {	
+public class ProverSequentTests extends TestCase{	
 	
 	public final static FormulaFactory factory = FormulaFactory.getDefault();
 	public final static Predicate True = factory.makeLiteralPredicate(Formula.BTRUE,null);
@@ -46,6 +49,8 @@ public class ProverSequentTests {
 	private final static FreeIdentifier freeIdent_x_int = factory.makeFreeIdentifier("x", null, factory.makeIntegerType());
 	private final static FreeIdentifier freeIdent_x_bool = factory.makeFreeIdentifier("x", null, factory.makeBooleanType());
 	private final static FreeIdentifier freeIdent_y_int = factory.makeFreeIdentifier("y", null, factory.makeIntegerType());
+	
+	
 	
 	/**
 	 * Tests for sequent modification
@@ -137,6 +142,50 @@ public class ProverSequentTests {
 		newSeq = ((IInternalProverSequent)newSeq).deselectHypotheses(FalseTrue);
 		assertFalse(newSeq.isHidden(False));
 		assertFalse(newSeq.isSelected(False));
+	}
+	
+	/**
+	 * Tests for selected hypotheses order
+	 */
+	@Test
+	public void testSelectedHypOrder(){
+		IProverSequent seq;
+		IProverSequent newSeq;
+
+		final Predicate p1 = TestLib.genPred("1=1");
+		final Predicate p2 = TestLib.genPred("2=2");
+		final List<Predicate> ps = Arrays.asList(TestLib.genPred("3=3"),TestLib.genPred("4=4"));
+
+		seq = TestLib.genSeq(" ⊥ |- ⊥ ");
+		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(p1), null);
+		// The next line should not change the order
+		newSeq = ((IInternalProverSequent)newSeq).modify(null, Collections.singleton(False), null);
+		newSeq = ((IInternalProverSequent)newSeq).modify(null, Collections.singleton(True), null);
+		newSeq = ((IInternalProverSequent)newSeq).modify(null, Collections.singleton(p2), null);
+		newSeq = ((IInternalProverSequent)newSeq).modify(null, ps , null);
+		
+		Predicate[] expectedOrder1 = {False,p1,True,p2,ps.get(0),ps.get(1)};
+		
+		int i = 0;
+		for (Predicate shyp : newSeq.selectedHypIterable())
+		  {
+			assertTrue(shyp.equals(expectedOrder1[i]));
+			i++;
+		  }
+		
+		// Deselecting the first hypothesis and selecting it again puts it at the end of the list
+		// and otherwise does not damage the order.
+		newSeq = ((IInternalProverSequent)newSeq).deselectHypotheses(Collections.singleton(False));
+		newSeq = ((IInternalProverSequent)newSeq).selectHypotheses(Collections.singleton(False));
+		
+		Predicate[] expectedOrder2 = {p1,True,p2,ps.get(0),ps.get(1),False};
+		
+		i = 0;
+		for (Predicate shyp : newSeq.selectedHypIterable())
+		  {
+			assertTrue(shyp.equals(expectedOrder2[i]));
+			i++;
+		  }
 	}
 	
 	/**

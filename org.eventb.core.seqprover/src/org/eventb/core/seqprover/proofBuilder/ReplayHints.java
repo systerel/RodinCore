@@ -10,9 +10,20 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
 
-// TODO : Rename to freeIdentRename
-// TODO : Make interface & cleanup
+
+/**
+ * This is a class that stores information about free identifier renaming
+ * that can be used to rename reasoner inputs in order to support refactoring
+ * of free identifier names in proofs.
+ * 
+ * 
+ * @author Farhad Mehta
+ *
+ */
 public class ReplayHints {
+//	 TODO : Rename to freeIdentRename
+//	 TODO : Make interface & cleanup
+	
 	
 	private static final FormulaFactory factory = FormulaFactory.getDefault();
 	private HashMap<FreeIdentifier,Expression> freeVarRename;

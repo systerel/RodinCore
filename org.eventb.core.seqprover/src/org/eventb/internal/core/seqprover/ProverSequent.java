@@ -3,6 +3,7 @@ package org.eventb.internal.core.seqprover;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.Formula;
@@ -15,7 +16,8 @@ import org.eventb.core.ast.Predicate;
 public class ProverSequent implements IInternalProverSequent{
 	
 	
-	// TODO : optimise this class
+	// TODO : optimise this class : local, selected and hidden hyps are generated twice.
+	// TODO : code cleanup and documentation.
 	
 	private final ITypeEnvironment typeEnvironment;
 	
@@ -23,6 +25,7 @@ public class ProverSequent implements IInternalProverSequent{
 	private final Set<Predicate> localHypotheses;
 	
 	private final Set<Predicate> hiddenHypotheses;
+	// selectedHypotheses are ordered using LinkedHashSet
 	private final Set<Predicate> selectedHypotheses;
 	
 	private final Predicate goal;
@@ -79,7 +82,7 @@ public class ProverSequent implements IInternalProverSequent{
 		this.globalHypotheses = globalHypotheses == null ? NO_HYPS : Collections.unmodifiableSet(new HashSet<Predicate>(globalHypotheses));
 		this.localHypotheses = NO_HYPS;
 		this.hiddenHypotheses = NO_HYPS;
-		this.selectedHypotheses = selectedHypotheses == null ? NO_HYPS : Collections.unmodifiableSet(new HashSet<Predicate>(selectedHypotheses));
+		this.selectedHypotheses = selectedHypotheses == null ? NO_HYPS : Collections.unmodifiableSet(new LinkedHashSet<Predicate>(selectedHypotheses));
 		// TODO : assert that hyps contains selected
 		this.goal = goal;
 		
@@ -108,7 +111,7 @@ public class ProverSequent implements IInternalProverSequent{
 		else this.hiddenHypotheses = Collections.unmodifiableSet(new HashSet<Predicate>(hiddenHypotheses));
 		
 		if (selectedHypotheses == null) this.selectedHypotheses = pS.selectedHypotheses;
-		else this.selectedHypotheses = Collections.unmodifiableSet(new HashSet<Predicate>(selectedHypotheses));
+		else this.selectedHypotheses = Collections.unmodifiableSet(new LinkedHashSet<Predicate>(selectedHypotheses));
 		
 		if (goal == null) this.goal = pS.goal;
 		else {
@@ -135,6 +138,7 @@ public class ProverSequent implements IInternalProverSequent{
 		return new ProverSequent(this,typeEnvironment,null,newLocalHypotheses,null,null,null);
 	}
 	
+	@Deprecated
 	public ProverSequent replaceGoal(Predicate goal,ITypeEnvironment typeEnvironment){
 		assert (goal!=null);
 		if (typeEnvironment == null) typeEnvironment = this.typeEnvironment;
@@ -161,7 +165,7 @@ public class ProverSequent implements IInternalProverSequent{
 		}
 		if (addhyps != null && addhyps.size() != 0) {
 			newLocalHypotheses = new HashSet<Predicate>(localHypotheses);
-			newSelectedHypotheses = new HashSet<Predicate>(selectedHypotheses);
+			newSelectedHypotheses = new LinkedHashSet<Predicate>(selectedHypotheses);
 			newHiddenHypotheses = new HashSet<Predicate>(hiddenHypotheses);
 			for (Predicate hyp : addhyps) {
 				if (! typeCheckClosed(hyp,newTypeEnv)) return null;
@@ -190,7 +194,7 @@ public class ProverSequent implements IInternalProverSequent{
 		if (toSelect == null) return this;
 		boolean modified = false;
 		
-		Set<Predicate> newSelectedHypotheses = new HashSet<Predicate>(this.selectedHypotheses);
+		Set<Predicate> newSelectedHypotheses = new LinkedHashSet<Predicate>(this.selectedHypotheses);
 		Set<Predicate> newHiddenHypotheses = new HashSet<Predicate>(this.hiddenHypotheses);
 		
 		for (Predicate hyp:toSelect){
@@ -205,7 +209,7 @@ public class ProverSequent implements IInternalProverSequent{
 	
 	public ProverSequent deselectHypotheses(Collection<Predicate> toDeselect){
 		if (toDeselect == null) return null;
-		Set<Predicate> newSelectedHypotheses = new HashSet<Predicate>(this.selectedHypotheses);
+		Set<Predicate> newSelectedHypotheses = new LinkedHashSet<Predicate>(this.selectedHypotheses);
 		boolean modified = newSelectedHypotheses.removeAll(toDeselect);
 		if (modified) return new ProverSequent(this,null,null,null,null,newSelectedHypotheses,null);
 		return this;
@@ -216,7 +220,7 @@ public class ProverSequent implements IInternalProverSequent{
 		if (toHide == null) return this;
 		boolean modified = false;
 		
-		Set<Predicate> newSelectedHypotheses = new HashSet<Predicate>(this.selectedHypotheses);
+		Set<Predicate> newSelectedHypotheses = new LinkedHashSet<Predicate>(this.selectedHypotheses);
 		Set<Predicate> newHiddenHypotheses = new HashSet<Predicate>(this.hiddenHypotheses);
 		
 		for (Predicate hyp:toHide){
@@ -267,7 +271,7 @@ public class ProverSequent implements IInternalProverSequent{
 		
 		if (infHyps != null){
 			newLocalHypotheses = new HashSet<Predicate>(localHypotheses);
-			newSelectedHypotheses = new HashSet<Predicate>(selectedHypotheses);
+			newSelectedHypotheses = new LinkedHashSet<Predicate>(selectedHypotheses);
 			newHiddenHypotheses = new HashSet<Predicate>(hiddenHypotheses);
 			for (Predicate infHyp : infHyps) {
 				if (! typeCheckClosed(infHyp,newTypeEnv)) return this;
