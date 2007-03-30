@@ -152,11 +152,10 @@ public class BecomesEqualTo extends Assignment {
 
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] boundAbove) {
-		final SourceLocation loc = getSourceLocation();
 		for (int i = 0; i < values.length; i++) {
 			assignedIdents[i].typeCheck(result, boundAbove);
 			values[i].typeCheck(result, boundAbove);
-			result.unify(assignedIdents[i].getType(), values[i].getType(), loc);
+			result.unify(assignedIdents[i].getType(), values[i].getType(), this);
 		}
 	}
 

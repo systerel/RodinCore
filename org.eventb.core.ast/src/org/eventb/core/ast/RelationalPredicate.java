@@ -194,25 +194,24 @@ public class RelationalPredicate extends Predicate {
 
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
-		final SourceLocation loc = getSourceLocation();
 		left.typeCheck(result, quantifiedIdentifiers);
 		right.typeCheck(result,quantifiedIdentifiers);
 		switch(getTag()) {
 		case Formula.EQUAL:
 		case Formula.NOTEQUAL:
-			result.unify(left.getType(), right.getType(), loc);
+			result.unify(left.getType(), right.getType(), this);
 			break;
 		case Formula.LT:
 		case Formula.LE:
 		case Formula.GT:
 		case Formula.GE:
 			Type type = result.makeIntegerType();
-			result.unify(left.getType(), type, loc);
-			result.unify(right.getType(), type, loc);
+			result.unify(left.getType(), type, this);
+			result.unify(right.getType(), type, this);
 			break;
 		case Formula.IN:
 		case Formula.NOTIN:
-			result.unify(right.getType(), result.makePowerSetType(left.getType()), loc);
+			result.unify(right.getType(), result.makePowerSetType(left.getType()), this);
 			break;
 		case Formula.SUBSET:
 		case Formula.NOTSUBSET:
@@ -220,8 +219,8 @@ public class RelationalPredicate extends Predicate {
 		case Formula.NOTSUBSETEQ:
 			TypeVariable alpha = result.newFreshVariable(null);
 			type = result.makePowerSetType(alpha);
-			result.unify(left.getType(), type, loc);
-			result.unify(right.getType(), type, loc);
+			result.unify(left.getType(), type, this);
+			result.unify(right.getType(), type, this);
 			break;
 		default:
 			assert false;

@@ -564,7 +564,7 @@ public class QuantifiedExpression extends Expression {
 		case Formula.QINTER:
 			final TypeVariable alpha = result.newFreshVariable(null);
 			resultType = result.makePowerSetType(alpha);
-			result.unify(expr.getType(), resultType, getSourceLocation());
+			result.unify(expr.getType(), resultType, this);
 			break;
 		case Formula.CSET:
 			resultType = result.makePowerSetType(expr.getType());

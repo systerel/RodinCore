@@ -183,11 +183,10 @@ public class BecomesSuchThat extends Assignment {
 
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] boundAbove) {
-		final SourceLocation loc = getSourceLocation();
 		for (int i = 0; i < primedIdents.length; i++) {
 			assignedIdents[i].typeCheck(result, boundAbove);
 			primedIdents[i].typeCheck(result, boundAbove);
-			result.unify(assignedIdents[i].getType(), primedIdents[i].getType(), loc);
+			result.unify(assignedIdents[i].getType(), primedIdents[i].getType(), this);
 		}
 		BoundIdentDecl[] boundBelow = catenateBoundIdentLists(boundAbove, primedIdents);
 		condition.typeCheck(result, boundBelow);

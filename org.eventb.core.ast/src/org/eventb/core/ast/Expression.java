@@ -78,7 +78,7 @@ public abstract class Expression extends Formula<Expression> {
 		if (this.type == null) {
 			this.type = type;
 		} else {
-			result.unify(this.type, type, getSourceLocation());
+			result.unify(this.type, type, this);
 		}
 	}
 
@@ -131,7 +131,7 @@ public abstract class Expression extends Formula<Expression> {
 		TypeCheckResult result = new TypeCheckResult(environment);
 		boolean wasTypeChecked = isTypeChecked();
 		typeCheck(result, NO_BOUND_IDENT_DECL);
-		result.unify(getType(), expectedType, getSourceLocation());
+		result.unify(getType(), expectedType, this);
 		result.solveTypeVariables();
 		if (! wasTypeChecked) {
 			solveType(result.getUnifier());

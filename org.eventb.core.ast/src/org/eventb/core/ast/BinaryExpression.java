@@ -473,9 +473,8 @@ public class BinaryExpression extends Expression {
 
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
-		final SourceLocation loc = getSourceLocation();
-		TypeVariable alpha, beta, gamma, delta;
-		Type resultType;
+		final TypeVariable alpha, beta, gamma, delta;
+		final Type resultType;
 		
 		left.typeCheck(result, quantifiedIdentifiers);
 		right.typeCheck(result, quantifiedIdentifiers);
@@ -483,14 +482,14 @@ public class BinaryExpression extends Expression {
 		switch (getTag()) {
 		case Formula.FUNIMAGE:
 			beta = result.newFreshVariable(null);
-			result.unify(left.getType(), result.makeRelationalType(right.getType(), beta), loc);
+			result.unify(left.getType(), result.makeRelationalType(right.getType(), beta), this);
 			resultType = beta;
 			break;
 		case Formula.RELIMAGE:
 			alpha = result.newFreshVariable(null);
 			beta = result.newFreshVariable(null);
-			result.unify(left.getType(), result.makeRelationalType(alpha, beta), loc);
-			result.unify(right.getType(), result.makePowerSetType(alpha),loc);
+			result.unify(left.getType(), result.makeRelationalType(alpha, beta), this);
+			result.unify(right.getType(), result.makePowerSetType(alpha), this);
 			resultType = result.makePowerSetType(beta);
 			break;
 		case Formula.MAPSTO:
@@ -509,29 +508,29 @@ public class BinaryExpression extends Expression {
 		case Formula.TBIJ:
 			alpha = result.newFreshVariable(null);
 			beta = result.newFreshVariable(null);
-			result.unify(left.getType(), result.makePowerSetType(alpha),loc);
-			result.unify(right.getType(), result.makePowerSetType(beta),loc);
+			result.unify(left.getType(), result.makePowerSetType(alpha), this);
+			result.unify(right.getType(), result.makePowerSetType(beta), this);
 			resultType = result.makePowerSetType(result.makeRelationalType(alpha, beta));
 			break;
 		case Formula.SETMINUS:
 			alpha = result.newFreshVariable(null);
 			resultType = result.makePowerSetType(alpha);
-			result.unify(left.getType(), resultType, loc);
-			result.unify(right.getType(), resultType, loc);
+			result.unify(left.getType(), resultType, this);
+			result.unify(right.getType(), resultType, this);
 			break;
 		case Formula.CPROD:
 			alpha = result.newFreshVariable(null);
 			beta = result.newFreshVariable(null);
-			result.unify(left.getType(), result.makePowerSetType(alpha),loc);
-			result.unify(right.getType(), result.makePowerSetType(beta),loc);
+			result.unify(left.getType(), result.makePowerSetType(alpha), this);
+			result.unify(right.getType(), result.makePowerSetType(beta), this);
 			resultType = result.makeRelationalType(alpha, beta);
 			break;
 		case Formula.DPROD:
 			alpha = result.newFreshVariable(null);
 			beta = result.newFreshVariable(null);
 			gamma = result.newFreshVariable(null);
-			result.unify(left.getType(),result.makeRelationalType(alpha, beta), loc);
-			result.unify(right.getType(),result. makeRelationalType(alpha, gamma), loc);
+			result.unify(left.getType(),result.makeRelationalType(alpha, beta), this);
+			result.unify(right.getType(),result. makeRelationalType(alpha, gamma), this);
 			resultType = result.makeRelationalType(alpha, result.makeProductType(beta, gamma));
 			break;
 		case Formula.PPROD:
@@ -539,8 +538,8 @@ public class BinaryExpression extends Expression {
 			beta = result.newFreshVariable(null);
 			gamma = result.newFreshVariable(null);
 			delta = result.newFreshVariable(null);
-			result.unify(left.getType(), result.makeRelationalType(alpha, gamma), loc);
-			result.unify(right.getType(), result.makeRelationalType(beta, delta), loc);
+			result.unify(left.getType(), result.makeRelationalType(alpha, gamma), this);
+			result.unify(right.getType(), result.makeRelationalType(beta, delta), this);
 			resultType = result.makeRelationalType(
 					result.makeProductType(alpha, beta),
 					result.makeProductType(gamma, delta));
@@ -550,30 +549,30 @@ public class BinaryExpression extends Expression {
 			alpha = result.newFreshVariable(null);
 			beta = result.newFreshVariable(null);
 			resultType = result.makeRelationalType(alpha, beta);
-			result.unify(left.getType(), result.makePowerSetType(alpha), loc);
-			result.unify(right.getType(), resultType,loc);
+			result.unify(left.getType(), result.makePowerSetType(alpha), this);
+			result.unify(right.getType(), resultType, this);
 			break;
 		case Formula.RANRES:
 		case Formula.RANSUB:
 			alpha = result.newFreshVariable(null);
 			beta = result.newFreshVariable(null);
 			resultType = result.makeRelationalType(alpha, beta);
-			result.unify(left.getType(), resultType,loc);
-			result.unify(right.getType(), result.makePowerSetType(beta), loc);
+			result.unify(left.getType(), resultType, this);
+			result.unify(right.getType(), result.makePowerSetType(beta), this);
 			break;
 		case Formula.UPTO:
-			resultType = result.makeIntegerType();
-			result.unify(left.getType(), resultType, loc);
-			result.unify(right.getType(), resultType, loc);
-			resultType = result.makePowerSetType(resultType);
+			final Type intType = result.makeIntegerType();
+			result.unify(left.getType(), intType, this);
+			result.unify(right.getType(), intType, this);
+			resultType = result.makePowerSetType(intType);
 			break;
 		case Formula.MINUS:
 		case Formula.DIV:
 		case Formula.MOD:
 		case Formula.EXPN:
 			resultType = result.makeIntegerType();
-			result.unify(left.getType(), resultType, loc);
-			result.unify(right.getType(), resultType, loc);
+			result.unify(left.getType(), resultType, this);
+			result.unify(right.getType(), resultType, this);
 			break;
 		default:
 			assert false;

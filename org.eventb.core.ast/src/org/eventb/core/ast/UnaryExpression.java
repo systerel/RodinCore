@@ -332,8 +332,6 @@ public class UnaryExpression extends Expression {
 
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
-		final SourceLocation loc = getSourceLocation();
-		
 		child.typeCheck(result,quantifiedIdentifiers);
 		
 		final TypeVariable alpha, beta;
@@ -341,65 +339,65 @@ public class UnaryExpression extends Expression {
 		switch (getTag()) {
 		case Formula.UNMINUS:
 			resultType = result.makeIntegerType();
-			result.unify(child.getType(), resultType, getSourceLocation());
+			result.unify(child.getType(), resultType, this);
 			break;
 		case Formula.CONVERSE:
 			alpha = result.newFreshVariable(null);
 			beta = result.newFreshVariable(null);
-			result.unify(child.getType(), result.makeRelationalType(alpha, beta), loc);
+			result.unify(child.getType(), result.makeRelationalType(alpha, beta), this);
 			resultType = result.makeRelationalType(beta, alpha);
 			break;
 		case Formula.KCARD:
 			alpha = result.newFreshVariable(null);
-			result.unify(child.getType(), result.makePowerSetType(alpha), loc);
+			result.unify(child.getType(), result.makePowerSetType(alpha), this);
 			resultType = result.makeIntegerType();
 			break;
 		case Formula.POW:
 		case Formula.POW1:
 			alpha = result.newFreshVariable(null);
 			Type childPattern = result.makePowerSetType(alpha);
-			result.unify(child.getType(), childPattern, loc);
+			result.unify(child.getType(), childPattern, this);
 			resultType = result.makePowerSetType(childPattern);
 			break;
 		case Formula.KUNION:
 		case Formula.KINTER:
 			alpha = result.newFreshVariable(null);
 			resultType = result.makePowerSetType(alpha);
-			result.unify(child.getType(), result.makePowerSetType(resultType), loc);
+			result.unify(child.getType(), result.makePowerSetType(resultType), this);
 			break;
 		case Formula.KDOM:
 			alpha = result.newFreshVariable(null);
 			beta = result.newFreshVariable(null);
-			result.unify(child.getType(), result.makeRelationalType(alpha, beta), loc);
+			result.unify(child.getType(), result.makeRelationalType(alpha, beta), this);
 			resultType = result.makePowerSetType(alpha);
 			break;
 		case Formula.KRAN:
 			alpha = result.newFreshVariable(null);
 			beta = result.newFreshVariable(null);
-			result.unify(child.getType(), result.makeRelationalType(alpha, beta), loc);
+			result.unify(child.getType(), result.makeRelationalType(alpha, beta), this);
 			resultType = result.makePowerSetType(beta);
 			break;
 		case Formula.KPRJ1:
 			alpha = result.newFreshVariable(null);
 			beta = result.newFreshVariable(null);
-			result.unify(child.getType(), result.makeRelationalType(alpha, beta), loc);
+			result.unify(child.getType(), result.makeRelationalType(alpha, beta), this);
 			resultType = result.makeRelationalType(result.makeProductType(alpha, beta), alpha);
 			break;
 		case Formula.KPRJ2:
 			alpha = result.newFreshVariable(null);
 			beta = result.newFreshVariable(null);
-			result.unify(child.getType(), result.makeRelationalType(alpha, beta), loc);
+			result.unify(child.getType(), result.makeRelationalType(alpha, beta), this);
 			resultType = result.makeRelationalType(result.makeProductType(alpha, beta), beta);
 			break;
 		case Formula.KID:
 			alpha = result.newFreshVariable(null);
-			result.unify(child.getType(), result.makePowerSetType(alpha), loc);
+			result.unify(child.getType(), result.makePowerSetType(alpha), this);
 			resultType = result.makeRelationalType(alpha, alpha);
 			break;
 		case Formula.KMIN:
 		case Formula.KMAX:
 			resultType = result.makeIntegerType();
-			result.unify(child.getType(), result.makePowerSetType(resultType), loc);
+			result.unify(child.getType(), result.makePowerSetType(resultType), this);
 			break;
 		default:
 			assert false;

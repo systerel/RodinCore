@@ -114,9 +114,7 @@ public class BecomesMemberOf extends Assignment {
 		final FreeIdentifier lhs = assignedIdents[0];
 		lhs.typeCheck(result, boundAbove);
 		setExpr.typeCheck(result, boundAbove);
-
-		final SourceLocation loc = getSourceLocation();
-		result.unify(setExpr.getType(), result.makePowerSetType(lhs.getType()), loc);
+		result.unify(setExpr.getType(), result.makePowerSetType(lhs.getType()), this);
 	}
 
 	/* (non-Javadoc)

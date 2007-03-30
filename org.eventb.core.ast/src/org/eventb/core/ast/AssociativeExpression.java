@@ -338,8 +338,7 @@ public class AssociativeExpression extends Expression {
 
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
-		final SourceLocation loc = getSourceLocation();
-		Type resultType;
+		final Type resultType;
 		switch (getTag()) {
 		case Formula.BUNION:
 		case Formula.BINTER:
@@ -347,7 +346,7 @@ public class AssociativeExpression extends Expression {
 			resultType = result.makePowerSetType(alpha);
 			for (int i = 0; i < children.length; i++) {
 				children[i].typeCheck(result,quantifiedIdentifiers);
-				result.unify(children[i].getType(), resultType, getSourceLocation());
+				result.unify(children[i].getType(), resultType, this);
 			}
 			break;
 		case Formula.BCOMP:
@@ -356,7 +355,7 @@ public class AssociativeExpression extends Expression {
 			for (int i = 0; i < children.length; i++) {
 				tv[i+1] = result.newFreshVariable(null);
 				children[i].typeCheck(result,quantifiedIdentifiers);
-				result.unify(children[i].getType(), result.makeRelationalType(tv[i+1], tv[i]), loc);
+				result.unify(children[i].getType(), result.makeRelationalType(tv[i+1], tv[i]), this);
 			}
 			resultType = result.makeRelationalType(tv[children.length], tv[0]);
 			break;
@@ -366,7 +365,7 @@ public class AssociativeExpression extends Expression {
 			for (int i = 0; i < children.length; i++) {
 				tv[i+1] = result.newFreshVariable(null);
 				children[i].typeCheck(result,quantifiedIdentifiers);
-				result.unify(children[i].getType(), result.makeRelationalType(tv[i], tv[i+1]), loc);
+				result.unify(children[i].getType(), result.makeRelationalType(tv[i], tv[i+1]), this);
 			}
 			resultType = result.makeRelationalType(tv[0], tv[children.length]);
 			break;
@@ -376,7 +375,7 @@ public class AssociativeExpression extends Expression {
 			resultType = result.makeRelationalType(alpha, beta);
 			for (int i = 0; i < children.length; i++) {
 				children[i].typeCheck(result,quantifiedIdentifiers);
-				result.unify(children[i].getType(), resultType,loc);
+				result.unify(children[i].getType(), resultType, this);
 			}
 			break;
 		case Formula.PLUS:
@@ -384,7 +383,7 @@ public class AssociativeExpression extends Expression {
 			resultType = result.makeIntegerType();
 			for (int i = 0; i < children.length; i++) {
 				children[i].typeCheck(result,quantifiedIdentifiers);
-				result.unify(children[i].getType(), resultType, loc);
+				result.unify(children[i].getType(), resultType, this);
 			}
 			break;
 		default:

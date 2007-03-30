@@ -188,7 +188,7 @@ public class SetExtension extends Expression {
 		
 		for (Expression member : members) {
 			member.typeCheck(result, quantifiedIdentifiers);
-			result.unify(member.getType(), alpha, getSourceLocation());
+			result.unify(member.getType(), alpha, this);
 		}
 		setTemporaryType(result.makePowerSetType(alpha), result);
 	}

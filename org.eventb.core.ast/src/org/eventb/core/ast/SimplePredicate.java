@@ -106,7 +106,7 @@ public class SimplePredicate extends Predicate {
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		TypeVariable alpha = result.newFreshVariable(null);
 		child.typeCheck(result, quantifiedIdentifiers);
-		result.unify(child.getType(), result.makePowerSetType(alpha), getSourceLocation());
+		result.unify(child.getType(), result.makePowerSetType(alpha), this);
 	}
 	
 	@Override
