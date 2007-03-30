@@ -27,7 +27,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
-import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
+import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;

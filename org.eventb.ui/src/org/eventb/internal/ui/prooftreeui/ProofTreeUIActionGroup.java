@@ -27,9 +27,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.pm.IProofState;
+import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.rodinp.core.RodinDBException;
 

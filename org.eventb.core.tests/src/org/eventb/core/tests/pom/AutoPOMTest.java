@@ -13,13 +13,13 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
-import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
+import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.core.tests.BuilderTest;
 import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.pom.AutoProver;
@@ -149,7 +149,8 @@ public class AutoPOMTest extends BuilderTest {
 		
 		IProofSkeleton skel = prs[prs.length-1].getProof().getSkeleton(FormulaFactory.getDefault(), null);
 		IProofTree loadedProofTree = ProverFactory.makeProofTree(seq, null);
-		ProofBuilder.rebuild(loadedProofTree.getRoot(),skel);
+		// ProofBuilder.rebuild(loadedProofTree.getRoot(),skel);
+		BasicTactics.rebuildTac(skel).apply(loadedProofTree.getRoot(), null);
 		
 		// System.out.println(loadedProofTree.getRoot());
 		assertTrue(ProverLib.deepEquals(proofTree,loadedProofTree));

@@ -1,6 +1,7 @@
 package org.eventb.core.seqprover.proofBuilder;
 
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;

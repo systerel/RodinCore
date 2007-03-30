@@ -3,9 +3,8 @@ package org.eventb.core;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IProofDependencies;
+import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
-import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
-import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -54,7 +53,6 @@ import org.rodinp.core.RodinDBException;
  * @see IProofTree
  * @see IProofDependencies
  * @see IProofSkeleton
- * @see ProofBuilder
  * 
  * @author Farhad Mehta
  * 

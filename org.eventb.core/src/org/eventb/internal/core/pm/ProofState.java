@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
@@ -28,6 +29,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -35,8 +37,6 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
-import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
 import org.eventb.internal.core.pom.POLoader;
@@ -115,7 +115,8 @@ public class ProofState implements IProofState {
 				try {
 					proofSkeleton = psWrapper.getProofSkeleton(status, monitor);
 					if (proofSkeleton != null) {
-						ProofBuilder.rebuild(pt.getRoot(), proofSkeleton);
+						// ProofBuilder.rebuild(pt.getRoot(), proofSkeleton);
+						BasicTactics.rebuildTac(proofSkeleton).apply(pt.getRoot(), new ProofMonitor(new NullProgressMonitor()));
 					}
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block

@@ -8,7 +8,6 @@ import java.util.Set;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 
 /**
  * This is a collection of static constants and methods that are used often in relation

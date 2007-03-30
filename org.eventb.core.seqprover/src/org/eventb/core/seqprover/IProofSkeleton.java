@@ -1,6 +1,6 @@
-package org.eventb.core.seqprover.proofBuilder;
+package org.eventb.core.seqprover;
 
-import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.internal.core.seqprover.ProofTreeNode;
 
 /**

@@ -1,6 +1,5 @@
 package org.eventb.core.seqprover;
 
-import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 
 /**
  * Common protocol for a proof tree node.

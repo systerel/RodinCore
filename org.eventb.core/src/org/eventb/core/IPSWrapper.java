@@ -2,8 +2,8 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
-import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.RodinDBException;
 
 

@@ -1,7 +1,7 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
+import org.eventb.core.seqprover.IProofSkeleton;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
