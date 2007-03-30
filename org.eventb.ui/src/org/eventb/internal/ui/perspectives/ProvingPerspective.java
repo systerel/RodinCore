@@ -95,13 +95,7 @@ public class ProvingPerspective implements IPerspectiveFactory {
 		IFolderLayout bottom = layout.createFolder("bottom",
 				IPageLayout.BOTTOM, 0.75f, editorArea);
 		bottom.addView(ProofControl.VIEW_ID);
-		bottom.addView(SearchHypothesis.VIEW_ID);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
-
-		// Place the Proof Information to the bottom left of the editor area.
-		IFolderLayout bottomRight = layout.createFolder("bottomRight",
-				IPageLayout.BOTTOM, 0.60f, "right");
-		bottomRight.addView(ProofInformation.VIEW_ID);
 	}
 
 }

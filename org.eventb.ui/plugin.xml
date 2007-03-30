@@ -32,7 +32,7 @@
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.proofinformation.ProofInformation"
-            icon="icons/sample.gif"
+            icon="icons/full/obj16/info_obj.gif"
             id="org.eventb.ui.views.ProofInformation"
             name="%view.ProofInformation"/>
       <view
@@ -50,7 +50,7 @@
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.searchhypothesis.SearchHypothesis"
-            icon="icons/sample.gif"
+            icon="icons/full/obj16/search.gif"
             id="org.eventb.ui.views.SearchHypothesis"
             name="%view.SearchHypothesis"/>
    </extension>
@@ -210,6 +210,19 @@
             class="org.eventb.internal.ui.perspectives.ProvingPerspective"
             id="org.eventb.ui.perspective.proving"
             name="%perspective.proving"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eventb.ui.perspective.proving">
+         <view
+               id="org.eventb.ui.views.ProofInformation"
+               ratio="0.30"
+               relationship="fast"/>
+         <view
+               id="org.eventb.ui.views.SearchHypothesis"
+               ratio="0.50"
+               relationship="fast"/>
+      </perspectiveExtension>
    </extension>
    <extension
          id="org.eventb.ui.eventbeditorActions"
