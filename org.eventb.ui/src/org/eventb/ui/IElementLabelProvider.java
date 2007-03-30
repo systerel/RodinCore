@@ -20,7 +20,7 @@ package org.eventb.ui;
 public interface IElementLabelProvider {
 
 	/**
-	 * Getting the label of an object, this must NOT be <code>null</code>
+	 * Getting the label of an object. The result must NOT be <code>null</code>
 	 * <p>
 	 * 
 	 * @param obj
