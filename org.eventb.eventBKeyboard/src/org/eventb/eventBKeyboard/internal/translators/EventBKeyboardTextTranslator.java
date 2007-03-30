@@ -27,26 +27,6 @@ import org.eventb.internal.eventBKeyboard.KeyboardUtils;
 public class EventBKeyboardTextTranslator implements IEventBKeyboardTranslator {
 
 	/**
-	 * Testing if a character is a text character
-	 * 
-	 * @param c:
-	 *            a character
-	 * @return true if the character is one of the text characters (i.e. 'A' to
-	 *         'Z', 'a' to 'z', etc.) false otherwise
-	 */
-	private boolean isTextCharacter(char c) {
-		if (c <= 'Z' && c >= 'A')
-			return true;
-		if (c <= 'z' && c >= 'a')
-			return true;
-		if (c <= '9' && c >= '0')
-			return true;
-		if (c == '_')
-			return true;
-		return false;
-	}
-
-	/**
 	 * Attempting to find and translate a text combo. The combo is translated if
 	 * there are white space at the beginning and the end of the combo.
 	 * 
@@ -120,7 +100,7 @@ public class EventBKeyboardTextTranslator implements IEventBKeyboardTranslator {
 						// ignore and continue (similar to identical
 						// translation).
 						if (realIndex != 0) {
-							if (isTextCharacter(text.charAt(realIndex - 1))) {
+							if (Utils.isTextCharacter(text.charAt(realIndex - 1))) {
 								result = test;
 								translated = true;
 								break;
@@ -131,7 +111,7 @@ public class EventBKeyboardTextTranslator implements IEventBKeyboardTranslator {
 						// then ignore and continue (similar to identical
 						// translation).
 						if (realIndex + test.length() != endIndex) {
-							if (isTextCharacter(text.charAt(realIndex
+							if (Utils.isTextCharacter(text.charAt(realIndex
 									+ test.length()))) {
 								result = test;
 								translated = true;
