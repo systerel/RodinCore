@@ -135,6 +135,46 @@ public class TestVariables extends GenericIdentTest<IMachineFile, ISCMachineFile
 		containsMarkers(mac, false);
 	}
 
+	/**
+	 * A variable that has disappeared and reappears in a later refinement.
+	 */
+	public void testVariables_04() throws Exception {
+		final IMachineFile m0 = createMachine("m0");
+		addVariables(m0, "v1");
+		addInvariants(m0, makeSList("I1"), makeSList("v1 ∈ ℕ"));
+		addInitialisation(m0, "v1");
+		m0.save(null, true);
+		
+		final IMachineFile m1 = createMachine("m1");
+		addVariables(m1, "v2");
+		addInvariants(m1, makeSList("I1"), makeSList("v2 ∈ ℕ"));
+		addInitialisation(m1, "v2");
+		m1.save(null, true);
+
+		final IMachineFile m2 = createMachine("m2");
+		addVariables(m2, "v1");
+		addInvariants(m2, makeSList("I1"), makeSList("v1 ∈ ℕ"));
+		addInitialisation(m2, "v1");
+		m2.save(null, true);
+		
+		runBuilder();
+
+		final ISCMachineFile m0c = m0.getSCMachineFile();
+		containsVariables(m0c, "v1");
+		containsMarkers(m0c, false);
+
+		final ISCMachineFile m1c = m1.getSCMachineFile();
+		containsVariables(m1c, "v2");
+		containsMarkers(m1c, false);
+		
+		final ISCMachineFile m2c = m2.getSCMachineFile();
+		containsVariables(m2c);
+		containsMarkers(m1c, true);
+		
+		// TODO should also check that sc reports only that "v1" has disappeared
+		// and can't be resurrected.
+	}
+
 	@Override
 	protected IGenericSCTest<IMachineFile, ISCMachineFile> newGeneric() {
 		return new GenericMachineSCTest(this);
