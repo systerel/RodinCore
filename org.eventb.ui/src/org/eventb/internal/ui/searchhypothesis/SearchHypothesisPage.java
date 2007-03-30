@@ -280,6 +280,8 @@ public class SearchHypothesisPage extends Page implements
 					} else if ((flags & IUserSupportDelta.F_STATE) != 0) {
 						IProofStateDelta affectedProofState = ProverUIUtils
 								.getProofStateDelta(affectedUserSupport, ps);
+						if (affectedProofState == null) // changes not relevant
+							return;
 						int psKind = affectedProofState.getKind();
 						if (psKind == IProofStateDelta.ADDED) {
 							init();
