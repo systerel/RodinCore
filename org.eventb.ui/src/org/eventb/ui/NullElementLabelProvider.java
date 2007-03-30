@@ -9,14 +9,15 @@
  * Contributors:
  *     Rodin @ ETH Zurich
  ******************************************************************************/
+
 package org.eventb.ui;
 
 /**
  * @author htson
  *         <p>
  *         A default implementation of and
- *         <code>org.eventb.ui.IElementLabelProvider</code> which returns
- *         empty string always
+ *         <code>org.eventb.ui.IElementLabelProvider</code> which always
+ *         returns an empty string.
  */
 public class NullElementLabelProvider implements IElementLabelProvider {
 
@@ -26,7 +27,7 @@ public class NullElementLabelProvider implements IElementLabelProvider {
 	 * @see org.eventb.ui.IElementLabelProvider#getLabel(java.lang.Object)
 	 */
 	public String getLabel(Object obj) {
-		return "";
+		return ""; // Return the empty string.
 	}
 
 }
