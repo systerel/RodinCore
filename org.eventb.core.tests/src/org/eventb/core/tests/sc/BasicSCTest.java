@@ -65,7 +65,7 @@ public abstract class BasicSCTest extends EventBTest {
 	protected void runBuilder() throws CoreException {
 		super.runBuilder();
 		for (IRodinFile file : sourceFiles)
-			assertTrue("ill-formed markers", GraphProblemSpec.check(file));
+			assertTrue("ill-formed markers", GraphProblemTest.check(file));
 	}
 
 	@Override

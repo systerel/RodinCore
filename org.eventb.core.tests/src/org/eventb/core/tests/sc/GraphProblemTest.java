@@ -10,6 +10,8 @@ package org.eventb.core.tests.sc;
 import java.util.EnumMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -21,7 +23,7 @@ import org.rodinp.core.RodinMarkerUtil;
  * @author Stefan Hallerstede
  *
  */
-public class GraphProblemSpec {
+public class GraphProblemTest extends TestCase {
 	
 	private static class Spec implements Comparable<Spec> {
 		
@@ -140,11 +142,20 @@ public class GraphProblemSpec {
 	
 	private static Map<GraphProblem, Spec> specMap = 
 		new EnumMap<GraphProblem, Spec>(GraphProblem.class);
-	{
-		assert specs.length == GraphProblem.values().length;
+	static {
 		for (Spec spec : specs) {
-			assert spec.arity == spec.problem.getArity();
 			specMap.put(spec.problem, spec);
+		}
+	}
+	
+	/**
+	 * check whether the messages loaded from the properties file are complete
+	 * and take the correct number of parameters.
+	 */
+	public void testMessages() throws Exception {
+		assertEquals("wrong number of messages", specs.length, GraphProblem.values().length);
+		for (Spec spec : specs) {
+			assertEquals("wrong number of arguments", spec.arity, spec.problem.getArity());
 		}
 	}
 	
@@ -174,12 +185,5 @@ public class GraphProblemSpec {
 		}
 		return ok;
 	}
-	
-	private GraphProblemSpec() {
-		// only one instance;
-	}
-	
-	@SuppressWarnings("unused")
-	private static GraphProblemSpec graphProblemSpec = new GraphProblemSpec();
 
 }
