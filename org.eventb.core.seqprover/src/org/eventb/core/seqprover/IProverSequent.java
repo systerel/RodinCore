@@ -1,7 +1,6 @@
 package org.eventb.core.seqprover;
 
 import java.util.Collection;
-import java.util.Set;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -122,16 +121,6 @@ public interface IProverSequent{
 	 */
 	Predicate goal();
 	
-	/**
-	 * Returns the set of selected hypotheses of this sequent
-	 * 
-	 * @return the set of selected hypotheses of this sequent
-	 * 
-	 * @deprecated use <code>selectedHypIterable()</code> or
-	 * 	<code>isSelected()</code> instead.
-	 */
-	@Deprecated
-	Set<Predicate> selectedHypotheses();
 	
 	/**
 	 * Searches for the given predicate in the set of selected hypotheses.
@@ -165,17 +154,6 @@ public interface IProverSequent{
 	 * @return an iterator for all selected hypotheses of this sequent
 	 */
 	Iterable<Predicate> selectedHypIterable();
-	
-	/**
-	 * Returns the set of hidden hypotheses of this sequent
-	 * 
-	 * @return the set of hidden hypotheses of this sequent
-	 * 
-	 * @deprecated use <code>hiddenHypIterable()</code> or
-	 * 	<code>isHidden()</code> instead.
-	 */
-	@Deprecated
-	Set<Predicate> hiddenHypotheses();
 	
 	/**
 	 * Searches for the given predicate in the set of hidden hypotheses.
