@@ -10,7 +10,7 @@ package org.eventb.core.ast;
  * This class models the source location of a formula in a string, that is a
  * pair of integers (<code>start</code>, <code>end</code>) that
  * represents the index of the first and last characters of this formula in the
- * originating string.
+ * originating string (indexes are counted from 0).
  * <p>
  * The objects of this class are immutable.
  * 
