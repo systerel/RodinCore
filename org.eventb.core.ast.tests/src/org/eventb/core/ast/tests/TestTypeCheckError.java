@@ -66,4 +66,34 @@ public class TestTypeCheckError extends TestCase {
 				ProblemKind.TypeUnknown);
 	}	
 	
+	/**
+	 * Ensures that a MinusAppliedToSet is produced for both children of an
+	 * arithmetic subtraction.
+	 */
+	public void testMinusAppliedToSet() {
+		doTest("x = a − ∅", 
+				FastFactory.mTypeEnvironment(), 
+				ProblemKind.MinusAppliedToSet);
+		doTest("x = ∅ − b", 
+				FastFactory.mTypeEnvironment(), 
+				ProblemKind.MinusAppliedToSet);
+	}
+	
+	public void testMulAppliedToSet() {
+		doTest("x = a ∗ ∅", 
+				FastFactory.mTypeEnvironment(), 
+				ProblemKind.MulAppliedToSet);
+		doTest("x = ∅ ∗ b", 
+				FastFactory.mTypeEnvironment(), 
+				ProblemKind.MulAppliedToSet);
+		doTest("x = a ∗ b ∗ ∅", 
+				FastFactory.mTypeEnvironment(), 
+				ProblemKind.MulAppliedToSet);
+		doTest("x = a ∗ ∅ ∗ c", 
+				FastFactory.mTypeEnvironment(), 
+				ProblemKind.MulAppliedToSet);
+		doTest("x = ∅ ∗ b ∗ c", 
+				FastFactory.mTypeEnvironment(), 
+				ProblemKind.MulAppliedToSet);
+	}
 }

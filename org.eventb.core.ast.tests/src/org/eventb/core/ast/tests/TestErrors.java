@@ -42,7 +42,15 @@ public class TestErrors extends TestCase {
 			new ASTProblem(new SourceLocation(0,1), ProblemKind.SyntaxError, ProblemSeverities.Error, "invalid SimpleExpr"),
 			"finite(\u03bb x\u21a6y\u21a6s)\u00b7\u22a5\u2223z)",
 			new ASTProblem(new SourceLocation(14,15), ProblemKind.SyntaxError, ProblemSeverities.Error, "QDOT expected"),
-			
+			"∀(x)·x∈ℤ",
+			new ASTProblem(new SourceLocation(1,1), ProblemKind.UnexpectedLPARInDeclList, ProblemSeverities.Error),
+			"∀(x,y)·x∈ℤ ∧ y∈ℤ",
+			new ASTProblem(new SourceLocation(1,1), ProblemKind.UnexpectedLPARInDeclList, ProblemSeverities.Error),
+// TODO check how it could be extended to quantified expressions
+//			"finite(⋃(x)·(x⊆ℤ ∣ x))",
+//			new ASTProblem(new SourceLocation(5,5), ProblemKind.UnexpectedLPARInDeclList, ProblemSeverities.Error),
+//			"finite(⋃(x,y)·(x⊆ℤ ∧ y⊆ℤ ∣ x∩y))",
+//			new ASTProblem(new SourceLocation(5,5), ProblemKind.UnexpectedLPARInDeclList, ProblemSeverities.Error),
 	};
 	
 	
@@ -65,11 +73,13 @@ public class TestErrors extends TestCase {
 	 */
 	public void testParseErrors() {
 		for (int i = 0; i < parseTestPairs.length; i = i + 2) {
-			IParseResult result = formulaFactory.parsePredicate((String) parseTestPairs[i]);
+			final String input = (String) parseTestPairs[i];
+			final ASTProblem problem = (ASTProblem) parseTestPairs[i + 1];
+			final IParseResult result = formulaFactory.parsePredicate(input);
 			assertFalse(result.isSuccess());
 			assertEquals(1, result.getProblems().size());
 			assertNull(result.getParsedPredicate());
-			assertEquals(parseTestPairs[i + 1], result.getProblems().get(0));
+			assertEquals(problem, result.getProblems().get(0));
 		}
 	}
 	

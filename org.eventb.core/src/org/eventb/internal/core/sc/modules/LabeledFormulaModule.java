@@ -180,6 +180,16 @@ extends LabeledElementModule {
 				objects = NO_OBJECT;			
 				break;
 				
+			case MinusAppliedToSet:
+				problem = ParseProblem.MinusAppliedToSetError;
+				objects = NO_OBJECT;			
+				break;
+				
+			case MulAppliedToSet:
+				problem = ParseProblem.MulAppliedToSetError;
+				objects = NO_OBJECT;			
+				break;
+				
 			default:
 				
 				problem = ParseProblem.InternalError;

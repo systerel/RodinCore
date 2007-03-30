@@ -55,7 +55,16 @@ public enum ParseProblem implements IRodinProblem {
 	TypeUnknownError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_TypeUnknown, 
-			ParseProblem.CATEGORY_TYPING);
+			ParseProblem.CATEGORY_TYPING),
+	MinusAppliedToSetError(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_MinusAppliedToSet, 
+			ParseProblem.CATEGORY_TYPING),
+	MulAppliedToSetError(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_MulAppliedToSet, 
+			ParseProblem.CATEGORY_TYPING),
+	;
 	
 	public static final int CATEGORY_NONE = 0;
 	public static final int CATEGORY_LEXICAL = 1;

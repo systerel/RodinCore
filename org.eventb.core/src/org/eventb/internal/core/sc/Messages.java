@@ -139,6 +139,9 @@ public final class Messages {
     public static String scuser_TypeCheckFailure;
     public static String scuser_TypesDoNotMatch;
     public static String scuser_TypeUnknown;
+    public static String scuser_MinusAppliedToSet;
+	public static String scuser_MulAppliedToSet;
+
     
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
