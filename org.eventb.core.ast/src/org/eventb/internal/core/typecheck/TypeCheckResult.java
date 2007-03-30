@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
@@ -225,15 +226,47 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	 *            the type on the left hand side of the equation
 	 * @param right
 	 *            the type on the right hand side of the equation
-	 * @param location
-	 *            the location of the expression that generated this equation
+	 * @param origin
+	 *            the formula that generated this equation
 	 */
-	public final void unify(Type left, Type right, SourceLocation location) {
-		unifier.unify(left,right,location);
+	public final <T extends Formula<?>> void unify(Type left, Type right, T origin) {
+		unifier.unify(left, right, origin);
 	}
 	
 	public final FormulaFactory getFormulaFactory() {
 		return factory;
+	}
+
+	public final <T extends Formula<?>> void addUnificationProblem(Type left,
+			Type right, T origin) {
+		final SourceLocation loc = origin.getSourceLocation();
+		final int tag = origin.getTag();
+		ASTProblem problem = null;
+		// Special case for setminus and cartesian product
+		if (left instanceof PowerSetType) { 
+			if (tag == Formula.MINUS) {
+				problem = new ASTProblem(
+						loc,
+						ProblemKind.MinusAppliedToSet,
+						ProblemSeverities.Error);
+			}
+			else if (tag == Formula.MUL) {
+				problem = new ASTProblem(
+						loc,
+						ProblemKind.MulAppliedToSet,
+						ProblemSeverities.Error);
+			}
+		}
+		if (problem == null) {
+			// Default case with a generic error message
+			problem = new ASTProblem(
+					loc,
+					ProblemKind.TypesDoNotMatch,
+					ProblemSeverities.Error,
+					left,
+					right);
+		}
+		addProblem(problem);
 	}
 
 }

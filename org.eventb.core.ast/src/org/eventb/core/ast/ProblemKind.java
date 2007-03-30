@@ -42,6 +42,11 @@ public enum ProblemKind {
 	 */
 	SyntaxError ("Syntax error at %2$d:%3$d: %1$s"),
 	/**
+	 * No argument.
+	 */
+	UnexpectedLPARInDeclList("Unexpected left parenthesis "
+			+ "in bound identifier declaration at %1$s:%2$s"),	
+	/**
 	 * Argument 0 is the name of the variable
 	 */
 	ParserException ("Parser exception: %1$s"),
@@ -52,7 +57,7 @@ public enum ProblemKind {
 	LexerError ("Lexer error at %2$d, character '%1$s' has been ignored."),
 	
 	/**
-	 * No arguments.
+	 * No argument.
 	 */
 	LexerException ("Lexer exception"),
 	
@@ -81,9 +86,19 @@ public enum ProblemKind {
 	/**
 	 * Unlocated failure when type-checking
 	 */
-	TypeCheckFailure("Couldn't infer some types");
+	TypeCheckFailure("Couldn't infer some types"),
 	
+	/**
+	 * No parameter
+	 */
+	MinusAppliedToSet ("Arithmetic subtraction applied to a set expression. Expression between: %1$d and %2$d"),
 	
+	/**
+	 * No parameter
+	 */
+	MulAppliedToSet ("Arithmetic multiplication applied to a set expression. Expression between: %1$d and %2$d"),
+	;
+		
 	private String message;
 	private ProblemKind(String message) {
 		this.message = message;

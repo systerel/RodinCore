@@ -34,10 +34,17 @@ COMPILER Bmath
 	// declarations.
     private boolean isIdentDeclList() {
     	scanner.ResetPeek();
-    	if (la.kind != _IDENT) {
+		int kind = la.kind;
+    	if (kind == _LPAR) {
+    		kind = scanner.Peek().kind;
+    	}
+    	if (kind != _IDENT) {
     		return false;
     	}
-		final int kind = scanner.Peek().kind;
+    	if (kind == _RPAR) {
+    		kind = scanner.Peek().kind;
+    	}
+		kind = scanner.Peek().kind;
         return kind == _COMMA || kind == _QDOT || kind == _TYPING;
     }
 
@@ -270,6 +277,16 @@ COMPILER Bmath
 		}
 		exprList.clear();
 		return expr;
+	}
+
+	private ParserException unexpectedLPARInDeclList() {
+		final SourceLocation loc = new SourceLocation(t.pos, t.pos);
+		final ASTProblem problem = new ASTProblem(
+				loc,
+				ProblemKind.UnexpectedLPARInDeclList,
+				ProblemSeverities.Error);
+		result.addProblem(problem);
+		return new ParserException("Unexpected left parenthesis.");
 	}
 
 TOKENS
@@ -844,14 +861,17 @@ PRODUCTIONS
     | KMAX     (. tag = Formula.KMAX; .)
     .
 
-    DeclList <out List<BoundIdentDecl> idents> 
-    =                          	 (. idents = new Vector<BoundIdentDecl>();
-    								BoundIdentDecl decl; .)
-        IdentDecl<out decl>		 (. idents.add(decl); .)
+    DeclList <out List<BoundIdentDecl> idents>
+                                    (. idents = new Vector<BoundIdentDecl>();
+    								   BoundIdentDecl decl; .)
+    
+    =        IdentDecl<out decl>	(. idents.add(decl); .)
         {
             COMMA
-            IdentDecl<out decl>	 (. idents.add(decl); .)
+            IdentDecl<out decl>	    (. idents.add(decl); .)
         }
+    |
+    	LPAR                        (. throw unexpectedLPARInDeclList(); .)
     .
 
 	IdentDecl <out BoundIdentDecl decl> (. Type type = null; .)

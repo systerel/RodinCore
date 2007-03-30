@@ -16,7 +16,7 @@ import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.ProductType;
-import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.FormulaFactory;
 
@@ -44,19 +44,19 @@ public class TypeUnifier {
 		is_fsym(t) { t instanceof TypeVariable }
 	}
 
-	protected final Type unify(Type left, Type right, SourceLocation location) {
+	protected final <T extends Formula<?>> Type unify(Type left, Type right, T origin) {
 		if (left == null || right == null) {
 			return null;
 		}
 		%match (Type left, Type right) {
 			tv@TypeVar(), other -> {
-				return unifyVariable((TypeVariable) `tv, `other, location);
+				return unifyVariable((TypeVariable) `tv, `other, origin);
 			}
 		  	other, tv@TypeVar() -> {
-				return unifyVariable((TypeVariable) `tv, `other, location);
+				return unifyVariable((TypeVariable) `tv, `other, origin);
 			}
 			PowSet(child1), PowSet(child2) -> {
-				Type newChild = unify(`child1, `child2, location);
+				Type newChild = unify(`child1, `child2, origin);
 				if (newChild == null) {
 					return null;
 				}
@@ -69,8 +69,8 @@ public class TypeUnifier {
 				return result.makePowerSetType(newChild);
 			}
 			CProd(left1, right1), CProd(left2, right2) -> {
-				Type newLeft = unify(`left1, `left2, location);
-				Type newRight = unify(`right1, `right2, location);
+				Type newLeft = unify(`left1, `left2, origin);
+				Type newRight = unify(`right1, `right2, origin);
 				if (newLeft == null || newRight == null) {
 					return null;
 				}
@@ -94,7 +94,7 @@ public class TypeUnifier {
 				}
 				else {
 					result.addProblem(new ASTProblem(
-							location,
+							origin.getSourceLocation(),
 							ProblemKind.TypesDoNotMatch,
 							ProblemSeverities.Error,
 							left,
@@ -103,23 +103,17 @@ public class TypeUnifier {
 				}
 			}
 			_, _ -> {
-				result.addProblem(new ASTProblem(
-						location,
-						ProblemKind.TypesDoNotMatch,
-						ProblemSeverities.Error,
-						left,
-						right));
+				result.addUnificationProblem(left, right, origin);
 				return null;
 			}
 		}
 	}
 
-	private Type unifyVariable(TypeVariable variable, Type otherType,
-			SourceLocation location) {
+	private <T extends Formula<?>> Type unifyVariable(TypeVariable variable, Type otherType, T origin) {
 			
 		Type type = variable.getValue();
 		if (type != null) {
-			type = unify(type, otherType, location);
+			type = unify(type, otherType, origin);
 			if (type != null) {
 				variable.setValue(type);
 			}
@@ -131,7 +125,7 @@ public class TypeUnifier {
 			}
 			else if (occurs(variable, type)) {
 				result.addProblem(new ASTProblem(
-						location,
+						origin.getSourceLocation(),
 						ProblemKind.Circularity,
 						ProblemSeverities.Error));
 				return null;		
