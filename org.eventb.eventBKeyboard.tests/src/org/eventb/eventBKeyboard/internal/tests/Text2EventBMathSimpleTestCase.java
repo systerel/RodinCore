@@ -55,6 +55,10 @@ public class Text2EventBMathSimpleTestCase extends TestCase {
 				.translate(" POW"));
 		assertEquals(" POW ", " \u2119 ", Text2EventBMathTranslator
 				.translate(" POW "));
+		assertEquals("POW(a)", "\u2119(a)", Text2EventBMathTranslator
+				.translate("POW(a)"));
+		assertEquals("POW (a)", "\u2119 (a)", Text2EventBMathTranslator
+				.translate("POW (a)"));
 	}
 
 	public void testPOW1() {
@@ -66,6 +70,10 @@ public class Text2EventBMathSimpleTestCase extends TestCase {
 				.translate(" POW1"));
 		assertEquals(" POW1 ", " \u2119\u0031 ", Text2EventBMathTranslator
 				.translate(" POW1 "));
+		assertEquals("POW1(a)", "\u2119\u0031(a)", Text2EventBMathTranslator
+				.translate("POW1(a)"));
+		assertEquals("POW1 (a)", "\u2119\u0031 (a)", Text2EventBMathTranslator
+				.translate("POW1 (a)"));
 	}
 
 	public void testINT() {
@@ -325,6 +333,10 @@ public class Text2EventBMathSimpleTestCase extends TestCase {
 				.translate(" INTER"));
 		assertEquals(" INTER ", " \u22c2 ", Text2EventBMathTranslator
 				.translate(" INTER "));
+		assertEquals("INTER()", "\u22c2()", Text2EventBMathTranslator
+				.translate("INTER()"));
+		assertEquals("INTER ()", "\u22c2 ()", Text2EventBMathTranslator
+				.translate("INTER ()"));
 	}
 
 	public void testUNION() {
@@ -336,6 +348,10 @@ public class Text2EventBMathSimpleTestCase extends TestCase {
 				.translate(" UNION"));
 		assertEquals(" UNION ", " \u22c3 ", Text2EventBMathTranslator
 				.translate(" UNION "));
+		assertEquals("UNION()", "\u22c3()", Text2EventBMathTranslator
+				.translate("UNION()"));
+		assertEquals("UNION ()", "\u22c3 ()", Text2EventBMathTranslator
+				.translate("UNION ()"));
 	}
 
 	public void testUptoOperator() {
