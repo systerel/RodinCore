@@ -17,21 +17,21 @@ import org.eclipse.ui.forms.widgets.FormText;
 /**
  * @author htson
  *         <p>
- *         This is the interface for Event-B FormText
+ *         This is the interface for Event-B FormText.
  */
 public interface IEventBFormText {
 
 	/**
-	 * Getting the actual FormText contains inside this Event-B FormText
+	 * Getting the actual FormText contains inside this Event-B FormText.
 	 * <p>
 	 * 
-	 * @return the FormText contains in this Event-B FormText
+	 * @return the FormText contains in this Event-B FormText.
 	 */
 	public FormText getFormText();
 	
 	/**
 	 * Dispose the control, should remove any extra resources/listeners that are
-	 * located to this Event-B Form Text
+	 * located to this Event-B Form Text.
 	 */
 	public void dispose();
 	
