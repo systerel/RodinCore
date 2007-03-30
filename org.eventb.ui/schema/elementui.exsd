@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eventb.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eventb.ui" id="elementui" name="Event-B Element UI"/>
+         <meta.schema plugin="org.eventb.ui" id="elementui" name="%point.elementUIName"/>
       </appInfo>
       <documentation>
          &lt;p&gt;The Event-B User Interface needs to display Rodin Elements in a consistent fashion. The information about how to display and modify Rodin Elements is done via this extension. This information is used in the Event-B Editor and also in various views, e.g. Project Explorer, Outline View, etc.&lt;/p&gt;
@@ -13,6 +13,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            Plug-in writers register new UI information about a Rodin element to the Event-B User Interface by extending this extension point. This is the root element.  This contains a sequence of &lt;samp&gt;element&lt;/samp&gt; elements.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="element" minOccurs="0" maxOccurs="unbounded"/>
@@ -20,21 +25,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified identifier of the target extension point
+                  a fully qualified identifier of the target extension point.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional identifier of the extension instance
+                  an optional identifier of the extension instance.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional name of the extension instance
+                  an optional name of the extension instance.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -50,7 +55,7 @@
             <meta.element labelAttribute="type" icon="icon"/>
          </appInfo>
          <documentation>
-            The Rodin Element which is going to be displayed.
+            This element is used for declaring a UI information in the Event-B User Interface. At least one &lt;samp&gt;column&lt;/samp&gt; sub-element must exist.
          </documentation>
       </annotation>
       <complexType>
@@ -60,14 +65,14 @@
          <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  the element type of the element (this will be used to identify the elements)
+                  the (Rodin) element type of the element (this will be used to identify the element).
                </documentation>
             </annotation>
          </attribute>
          <attribute name="icon" type="string" use="required">
             <annotation>
                <documentation>
-                  the icon for the element which will be used in the UI (e.g. in Tree/Table Viewers)
+                  the icon for the element which will be used in the UI (e.g. in Tree/Table Viewers).
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -77,7 +82,7 @@
          <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
-                  the priority of the element, which is used for sorting the elements in the UI (e.g. in Tree/Table Viewers)
+                  the priority of the element, which is used for sorting the elements in the UI (e.g. in Tree/Table Viewers) in ascending order. The highest priority is 0.
                </documentation>
             </annotation>
          </attribute>
@@ -102,7 +107,7 @@
    <element name="column">
       <annotation>
          <documentation>
-            the editting column (as in the Table/Tree Viewer)
+            This element is used for declaring a new column in the Event-B Table/Tree Viewer.
          </documentation>
       </annotation>
       <complexType>
@@ -116,7 +121,7 @@
          <attribute name="labelProvider" type="string" use="required">
             <annotation>
                <documentation>
-                  This must be a fully qualified name of the class that implements &lt;samp&gt;org.eventb.ui.IElementLabelProvider&lt;/samp&gt;. This provides the label for displaying element in particular column.
+                  this must be a fully qualified name of the class that implements &lt;samp&gt;org.eventb.ui.IElementLabelProvider&lt;/samp&gt;. This provides the label for displaying element in particular column.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eventb.ui.IElementLabelProvider"/>
@@ -126,7 +131,7 @@
          <attribute name="modifier" type="string">
             <annotation>
                <documentation>
-                  This must be a fully qualified name of the class that implements &lt;samp&gt;org.eventb.ui.IElementModifier&lt;/samp&gt;. This is used to modify the element at this column.
+                  this must be a fully qualified name of the class that implements &lt;samp&gt;org.eventb.ui.IElementModifier&lt;/samp&gt;. This is used to modify the element at this column.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eventb.ui.IElementModifier"/>

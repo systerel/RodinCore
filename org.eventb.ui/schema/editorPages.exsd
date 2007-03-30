@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eventb.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eventb.ui" id="machinePages" name="Event-B Form Page"/>
+         <meta.schema plugin="org.eventb.ui" id="editorPages" name="%point.editorPagesName"/>
       </appInfo>
       <documentation>
          &lt;p&gt;The Event-B editor is an editor used specifically for browsing and editting Event-B components. It can be extensible in many ways. In particular, a new editting page can be added.&lt;/p&gt;
@@ -13,6 +13,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            Plug-in writers register new editor page to the Event-B Editor by extending this extension point. This is the root element.  This contains a sequence of &lt;samp&gt;page&lt;/samp&gt; elements.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="page" minOccurs="1" maxOccurs="unbounded"/>
@@ -20,21 +25,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified identifier of the target extension point
+                  a fully qualified identifier of the target extension point.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional identifier of the extension instance
+                  an optional identifier of the extension instance.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional name of the extension instance
+                  an optional name of the extension instance.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -49,6 +54,9 @@
          <appInfo>
             <meta.element labelAttribute="name"/>
          </appInfo>
+         <documentation>
+            This element is used for declaring a new page in the Event-B Editor. At least one &lt;samp&gt;target&lt;/samp&gt; sub-element must exist.
+         </documentation>
       </annotation>
       <complexType>
          <sequence>
@@ -57,14 +65,14 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique name that will be used to identify this page
+                  a unique name that will be used to identify this page.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  a translatable name that will be used in the UI for this page
+                  a translatable name that will be used in the UI for this page.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -74,7 +82,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of a class which will be used to create the page. The class must extend &lt;samp&gt;org.eventb.ui.eventbeditor.EventBEditorPage&lt;/samp&gt; and also must have a default contructor since the Event-B Editor used this to create the page
+                  the name of a class which will be used to create the page. The class must extend &lt;samp&gt;org.eventb.ui.eventbeditor.EventBEditorPage&lt;/samp&gt; and also must have a default contructor since the Event-B Editor used this to create the page.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eventb.ui.eventbeditor.EventBEditorPage"/>
@@ -84,7 +92,7 @@
          <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
-                  the priority for organising the page in an Event-B Editor. The priority must be a natural number and the highest priority is 0.
+                  the priority for sorting the page in an Event-B Editor in ascending order. The highest priority is 0.
                </documentation>
             </annotation>
          </attribute>
@@ -101,7 +109,7 @@
          <attribute name="id" use="required">
             <annotation>
                <documentation>
-                  a unique name corresponding to the kind of the Event-B Editor which is the target of the page. It is either &lt;samp&gt;org.eventb.ui.editors.machine&lt;/samp&gt; for the machine editor or &lt;samp&gt;org.eventb.ui.editors.context&lt;/samp&gt; for the context editor
+                  a unique name corresponding to the kind of the Event-B Editor which is the target of the page. It is either &lt;samp&gt;org.eventb.ui.editors.machine&lt;/samp&gt; for the machine editor or &lt;samp&gt;org.eventb.ui.editors.context&lt;/samp&gt; for the context editor.
                </documentation>
             </annotation>
             <simpleType>
