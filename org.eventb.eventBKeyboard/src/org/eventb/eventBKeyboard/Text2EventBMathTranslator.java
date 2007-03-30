@@ -19,6 +19,7 @@ import org.eventb.eventBKeyboard.internal.translators.AbstractSymbols;
 import org.eventb.eventBKeyboard.internal.translators.MathSymbols;
 import org.eventb.eventBKeyboard.internal.translators.Symbol;
 import org.eventb.eventBKeyboard.internal.translators.TextSymbols;
+import org.eventb.eventBKeyboard.internal.translators.Utils;
 
 /**
  * @author htson
@@ -67,22 +68,12 @@ public class Text2EventBMathTranslator {
 					if (index != -1) {
 						return translate(str.substring(0, index))
 								+ symbol.getTranslation()
-								+ translate(str
-										.substring(index + symbol.getCombo().length()));
+								+ translate(str.substring(index
+										+ test.length()));
 					}
 				}
 			}
 		}
-//		for (int i = 0; i < mathCombo.length; i++) {
-//			String test = mathCombo[i];
-//			int index = str.indexOf(test);
-//			if (index != -1) {
-//				return translate(str.substring(0, index))
-//						+ mathComboTranslation[i]
-//						+ translate(str
-//								.substring(index + mathCombo[i].length()));
-//			}
-//		}
 
 		// Text
 		if (symbols == null) {
@@ -90,44 +81,74 @@ public class Text2EventBMathTranslator {
 			symbols = tsymbol.getSymbols();
 			maxSize = tsymbol.getMaxSize();
 		}
-	
+
 		for (i = maxSize; i > 0; i--) {
 			key = AbstractSymbols.generateKey(i);
 
 			Collection<Symbol> collection = symbols.get(key);
 			if (collection != null) {
 				for (Symbol symbol : collection) {
-					test = " " + symbol.getCombo() + " ";
-					int index = (" " + str + " ").indexOf(test);
+					String combo = symbol.getCombo();
+					int index = comboIndex(str, combo);
 					if (index == 0) {
 						return symbol.getTranslation()
-								+ translate(str.substring(symbol.getCombo().length()));
+								+ translate(str.substring(combo
+										.length()));
 					} else if (index != -1) {
 						return translate(str.substring(0, index))
 								+ symbol.getTranslation()
-								+ translate(str
-										.substring(index + symbol.getCombo().length()));
+								+ translate(str.substring(index
+										+ combo.length()));
 					}
-					
+
 				}
 			}
 		}
-					
-//					for (int i = 0; i < textCombo.length; i++) {
-//			String test = " " + textCombo[i] + " ";
-//			int index = (" " + str + " ").indexOf(test);
-//			if (index == 0) {
-//				return textComboTranslation[i]
-//						+ translate(str.substring(textCombo[i].length()));
-//			} else if (index != -1) {
-//				return translate(str.substring(0, index))
-//						+ textComboTranslation[i]
-//						+ translate(str
-//								.substring(index + textCombo[i].length()));
-//			}
-//		}
+
+		// for (int i = 0; i < textCombo.length; i++) {
+		// String test = " " + textCombo[i] + " ";
+		// int index = (" " + str + " ").indexOf(test);
+		// if (index == 0) {
+		// return textComboTranslation[i]
+		// + translate(str.substring(textCombo[i].length()));
+		// } else if (index != -1) {
+		// return translate(str.substring(0, index))
+		// + textComboTranslation[i]
+		// + translate(str
+		// .substring(index + textCombo[i].length()));
+		// }
+		// }
 
 		return str;
+	}
+
+	private static int comboIndex(String str, String combo) {
+		int index = str.indexOf(combo);
+		if (index == -1)
+			return -1;
+		if (index == 0) {
+			int lastIndex = index + combo.length();
+			if (lastIndex < str.length()) {
+				char c = str.charAt(lastIndex);
+				if (Utils.isTextCharacter(c)) {
+					return -1;
+				}
+			}
+			return index;
+		} else {
+			char c = str.charAt(index - 1);
+			if (Utils.isTextCharacter(c)) {
+				return -1;
+			}
+			int lastIndex = index + combo.length();
+			if (lastIndex < str.length()) {
+				c = str.charAt(lastIndex);
+				if (Utils.isTextCharacter(c)) {
+					return -1;
+				}
+			}
+			return index;
+		}
 	}
 
 }
