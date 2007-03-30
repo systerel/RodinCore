@@ -37,7 +37,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @param psFile
 	 *            a proof State file (IPSFile)
 	 * @param monitor
-	 *            a progress monitor
+	 *            a progress monitor (may be null)
 	 * @throws RodinDBException
 	 *             a Rodin Exception when there are some errors openning the
 	 *             psFile
