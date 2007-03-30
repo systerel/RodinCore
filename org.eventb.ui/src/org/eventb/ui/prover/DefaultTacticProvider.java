@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.ui.prover;
 
 import java.util.ArrayList;
@@ -26,8 +38,19 @@ import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 
+/**
+ * @author htson
+ *         <p>
+ *         This class provides a default implementation for
+ *         {@link org.eventb.ui.prover.ITacticProvider}. Plug-in writers should
+ *         extends this class in order to provide their own tactic to the
+ *         Proving User Interface.
+ */
 public class DefaultTacticProvider implements ITacticProvider {
 
+	/* (non-Javadoc)
+	 * @see org.eventb.ui.prover.ITacticProvider#getApplicablePositions(org.eventb.core.seqprover.IProofTreeNode, org.eventb.core.ast.Predicate, java.lang.String)
+	 */
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (isApplicable(node, hyp, input))
@@ -35,6 +58,9 @@ public class DefaultTacticProvider implements ITacticProvider {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.ui.prover.ITacticProvider#getTactic(org.eventb.core.seqprover.IProofTreeNode, org.eventb.core.ast.Predicate, org.eventb.core.ast.IPosition, java.lang.String[])
+	 */
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return null;
@@ -50,6 +76,15 @@ public class DefaultTacticProvider implements ITacticProvider {
 		return false;
 	}
 
+	/**
+	 * This is the default implementation for finding the source location of
+	 * position in predicate. Usually, plug-in writers do not need to override
+	 * this method.
+	 * <p>
+	 * 
+	 * @see org.eventb.ui.prover.ITacticProvider#getOperatorPosition(org.eventb.core.ast.Predicate,
+	 *      java.lang.String, org.eventb.core.ast.IPosition)
+	 */
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
 		Formula subFormula = predicate.getSubFormula(position);
@@ -109,6 +144,20 @@ public class DefaultTacticProvider implements ITacticProvider {
 		return new Point(0, 1);// The first character
 	}
 
+	/**
+	 * An utility method to return the operator source location within the range
+	 * (start, end).
+	 * <p>
+	 * 
+	 * @param predStr
+	 *            the actual predicate string.
+	 * @param start
+	 *            the starting index for searching.
+	 * @param end
+	 *            the last index for searching
+	 * @return the location in the predicate string ignore the empty spaces or
+	 *         brackets in the beginning and in the end.
+	 */
 	protected Point getOperatorPosition(String predStr, int start, int end) {
 		int i = start;
 		int x = start;
@@ -131,6 +180,16 @@ public class DefaultTacticProvider implements ITacticProvider {
 			return new Point(start, end);
 	}
 
+	/**
+	 * A private utility method to check if a character is either a space or a
+	 * bracket.
+	 * <p>
+	 * 
+	 * @param c
+	 *            the character to check.
+	 * @return <code>true</code> if the character is a space or bracket,
+	 *         otherwise return <code>false</code>.
+	 */
 	private boolean isSpaceOrBracket(char c) {
 		return (c == ' ' || c == '(' || c == ')');
 	}
