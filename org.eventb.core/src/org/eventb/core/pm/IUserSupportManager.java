@@ -1,9 +1,45 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.core.pm;
 
 import java.util.Collection;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
+/**
+ * @author htson
+ *<p>
+ *
+ * Represents the user support manager. Since there
+ * is only one manager, it is commonly referred to as <em>the</em>
+ * user support manager. The manager is a singleton instance and is created needs to be created before
+ * it can be navigated or manipulated. The Rodin database element has no parent
+ * (it is the root of the Rodin element hierarchy). Its children are
+ * <code>IRodinProject</code>s.
+ * <p>
+ * This interface provides methods for performing copy, move, rename, and delete
+ * operations on multiple Rodin elements.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients. An instance of
+ * one of these handles can be created via
+ * <code>RodinCore.valueOf(workspace.getRoot())</code>.
+ * </p>
+ * 
+ * @see RodinCore#valueOf(IWorkspaceRoot)
+ */
 public interface IUserSupportManager {
 
 	/**
