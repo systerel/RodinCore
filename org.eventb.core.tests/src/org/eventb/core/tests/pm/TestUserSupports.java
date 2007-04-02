@@ -18,13 +18,12 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.internal.core.pm.TypeEnvironmentSorter;
 import org.eventb.internal.core.pm.UserSupport;
 import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Unit tests for class {@link TypeEnvironmentSorter}
+ * Unit tests for class {@link IUserSupport}
  * 
  * @author Laurent Voisin
  */
