@@ -237,9 +237,14 @@ public class ProofState implements IProofState {
 	 * @see org.eventb.core.pm.IProofState#getNextPendingSubgoal(org.eventb.core.seqprover.IProofTreeNode)
 	 */
 	public IProofTreeNode getNextPendingSubgoal(IProofTreeNode node) {
-		IProofTreeNode subGoal = node.getFirstOpenDescendant();
-		if (subGoal != null)
-			return subGoal;
+		if (node.getProofTree() != pt) {
+			// Node has been detached from this proof tree
+			return pt.getRoot().getFirstOpenDescendant();
+		}
+		final IProofTreeNode next = node.getNextOpenNode();
+		if (next != null) {
+			return next;
+		}
 		return pt.getRoot().getFirstOpenDescendant();
 	}
 
@@ -497,7 +502,7 @@ public class ProofState implements IProofState {
 	}
 
 	protected void selectNextPendingSubGoal(IProofTreeNode node) {
-		IProofTreeNode newNode = this.getNextPendingSubgoal(node);
+		final IProofTreeNode newNode = this.getNextPendingSubgoal(node);
 		if (newNode != null) {
 			try {
 				setCurrentNode(newNode);
