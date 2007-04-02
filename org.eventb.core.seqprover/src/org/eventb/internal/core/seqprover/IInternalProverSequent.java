@@ -3,17 +3,10 @@ package org.eventb.internal.core.seqprover;
 import java.util.Collection;
 
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 
 public interface IInternalProverSequent extends IProverSequent{
-	
-
-	@Deprecated
-	IInternalProverSequent addHyps(Collection<Predicate> hyps,ITypeEnvironment typeEnvironment);
-	@Deprecated
-	IInternalProverSequent replaceGoal(Predicate goal,ITypeEnvironment typeEnvironment);	
 	
 	/**
 	 * Method for non-destructive modification of a sequent.
@@ -99,7 +92,7 @@ public interface IInternalProverSequent extends IProverSequent{
 	 * <p>
 	 * The original sequent remains unmodified.
 	 * 
-	 * The hypotheses that are actually hidded are those that are present in the
+	 * The hypotheses that are actually hidden are those that are present in the
 	 * original sequent. Hiding a selected hypothesis removes it from the selected set.
 	 * </p>
 	 * <p>
