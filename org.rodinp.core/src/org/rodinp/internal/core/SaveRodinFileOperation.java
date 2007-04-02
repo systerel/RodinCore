@@ -34,11 +34,20 @@ import org.rodinp.internal.core.util.Messages;
  */
 public class SaveRodinFileOperation extends RodinDBOperation {
 
+	private final boolean keepHistory;
+	
 	/**
 	 * When executed, this operation will save the given Rodin file.
 	 */
 	public SaveRodinFileOperation(IRodinFile rodinFile, boolean force) {
 		super(rodinFile, force);
+		this.keepHistory = false;
+	}
+
+	public SaveRodinFileOperation(IRodinFile rodinFile, boolean force,
+			boolean keepHistory) {
+		super(rodinFile, force);
+		this.keepHistory = keepHistory;
 	}
 
 	/**
@@ -55,7 +64,8 @@ public class SaveRodinFileOperation extends RodinDBOperation {
 			RodinFileElementInfo fileInfo = (RodinFileElementInfo)
 					file.getElementInfo(getSubProgressMonitor(1));
 			fileInfo.saveToFile(file, 
-					force, 
+					force,
+					keepHistory,
 					getSchedulingRule(), 
 					getSubProgressMonitor(1)
 			);

@@ -350,11 +350,16 @@ public abstract class Openable extends RodinElement implements IOpenable {
 				.makeRelative(), true) != null;
 	}
 
-	/**
-	 * @see IOpenable
-	 */
 	public void save(IProgressMonitor progress, boolean force)
 			throws RodinDBException {
+		if (isReadOnly()) {
+			throw new RodinDBException(new RodinDBStatus(
+					IRodinDBStatusConstants.READ_ONLY, this));
+		}
+	}
+
+	public void save(IProgressMonitor progress, boolean force,
+			boolean keepHistory) throws RodinDBException {
 		if (isReadOnly()) {
 			throw new RodinDBException(new RodinDBStatus(
 					IRodinDBStatusConstants.READ_ONLY, this));

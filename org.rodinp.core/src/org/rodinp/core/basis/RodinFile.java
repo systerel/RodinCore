@@ -309,6 +309,18 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	@Override
+	public final void save(IProgressMonitor monitor, boolean force,
+			boolean keepHistory) throws RodinDBException {
+		super.save(monitor, force);
+		
+		// Then save the file contents.
+		if (! hasUnsavedChanges())
+			return;
+
+		new SaveRodinFileOperation(this, force, keepHistory).runOperation(monitor);
+	}
+
+	@Override
 	protected void toStringName(StringBuilder buffer) {
 		super.toStringName(buffer);
 		if (snapshot) {

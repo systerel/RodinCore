@@ -357,9 +357,9 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	}
 
 	public synchronized void saveToFile(RodinFile rodinFile, boolean force,
-			ISchedulingRule rule, IProgressMonitor pm) throws RodinDBException {
+			boolean keepHistory, ISchedulingRule rule, IProgressMonitor pm) throws RodinDBException {
 		
-		buffer.save(force, rule, pm);
+		buffer.save(force, keepHistory, rule, pm);
 	}
 
 	public synchronized void setAttributeRawValue(IInternalParent element,

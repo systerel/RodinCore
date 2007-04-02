@@ -426,7 +426,8 @@ public class Buffer {
 	/*
 	 * Save this buffer to the corresponding resource.
 	 */
-	public synchronized void save(final boolean force, ISchedulingRule rule, IProgressMonitor pm)
+	public synchronized void save(final boolean force,
+			final boolean keepHistory, ISchedulingRule rule, IProgressMonitor pm)
 			throws RodinDBException {
 		
 		final RodinDBManager manager = RodinDBManager.getRodinDBManager();
@@ -449,7 +450,7 @@ public class Buffer {
 			final IWorkspaceRunnable action = new IWorkspaceRunnable() {
 				@SuppressWarnings("synthetic-access")
 				public void run(IProgressMonitor monitor) throws CoreException {
-					file.setContents(stream, force, true, monitor);
+					file.setContents(stream, force, keepHistory, monitor);
 					stamp = file.getModificationStamp();
 				}
 			};
