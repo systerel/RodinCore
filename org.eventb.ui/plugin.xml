@@ -878,7 +878,7 @@
             id="org.eventb.ui.previous"
             interrupt="false"
             name="%proofTactics.previous.name"
-            priorty="9"
+            priorty="5"
             proofCommand="org.eventb.internal.ui.prover.tactics.Previous"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
@@ -888,11 +888,21 @@
             id="org.eventb.ui.next"
             interrupt="false"
             name="%proofTactics.next.name"
-            priorty="10"
+            priorty="6"
             proofCommand="org.eventb.internal.ui.prover.tactics.Next"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
             tooltip="%proofTactics.next.tooltip"/>
+      <tactic
+            icon="icons/full/ctool16/info_prover.gif"
+            id="org.eventb.ui.info"
+            interrupt="false"
+            name="%proofTactics.info.name"
+            priorty="7"
+            proofCommand="org.eventb.internal.ui.prover.tactics.Info"
+            target="global"
+            toolbar="org.eventb.ui.navigationToolbar"
+            tooltip="%proofTactics.info.tooltip"/>
       <toolbar
             id="org.eventb.ui.sequentToolbar"
             name="%proofToolbars.sequent.name"
