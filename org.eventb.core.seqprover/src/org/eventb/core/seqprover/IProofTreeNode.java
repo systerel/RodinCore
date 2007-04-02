@@ -70,6 +70,21 @@ public interface IProofTreeNode extends IProofSkeleton {
 	IProofTreeNode getFirstOpenDescendant();
 
 	/**
+	 * Returns the next open node encountered when traversing the proof tree of
+	 * this node in preorder.
+	 * <p>
+	 * If this node is already open, it will be returned. Otherwise, this method
+	 * will traverse the proof tree to which this node belongs, in pre-order and
+	 * return the first open node encountered after traversing this node.
+	 * </p>
+	 * 
+	 * @return the next open node after this node in pre-order or
+	 *         <code>null</code> if this node has been discharged
+	 * @see #getFirstOpenDescendant()
+	 */
+	IProofTreeNode getNextOpenNode();
+	
+	/**
 	 * Returns all open descendants of this node.
 	 * <p>
 	 * This method always returns an array, even if this node has been

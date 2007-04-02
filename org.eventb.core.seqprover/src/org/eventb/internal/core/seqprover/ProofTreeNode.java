@@ -130,8 +130,9 @@ public final class ProofTreeNode implements IProofTreeNode {
 			this.children = null;
 		else
 		{
-			this.children = new ProofTreeNode[node.children.length];
-			for (int i = 0; i < node.children.length; i++) {
+			final int length = node.children.length;
+			this.children = new ProofTreeNode[length];
+			for (int i = 0; i < length; i++) {
 				this.children[i]= new ProofTreeNode(node.children[i]);
 				this.children[i].parent = this;
 			}
@@ -322,6 +323,39 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return null;
 	}
 	
+	public IProofTreeNode getNextOpenNode() {
+		// First test this node
+		if (isOpen()) {
+			return this;
+		}
+		// Then search in its descendants
+		IProofTreeNode node = getFirstOpenDescendant();
+		if (node != null) {
+			return node;
+		}
+		// Finally, search in the following siblings
+		return getNextOpenSibling();
+	}
+
+	private IProofTreeNode getNextOpenSibling() {
+		if (parent == null) {
+			return null;
+		}
+		boolean afterThis = false;
+		for (final IProofTreeNode sibling: parent.getChildNodes()) {
+			if (afterThis) {
+				final IProofTreeNode node = sibling.getFirstOpenDescendant();
+				if (node != null) {
+					return node;
+				}
+			} else if (sibling == this) {
+				afterThis = true;
+			}
+		}
+		// Nothing found, go up to parent
+		return parent.getNextOpenSibling();
+	}
+		
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#getOpenDescendants()
 	 */
