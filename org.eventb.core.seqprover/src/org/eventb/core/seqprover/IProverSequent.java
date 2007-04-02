@@ -78,7 +78,10 @@ public interface IProverSequent{
 	
 	/**
 	 * Returns an iterator for all hypotheses of the sequent.
-	 * 
+	 * <p>
+	 * This iterator returns hypotheses in the same order as this set was 
+	 * constructed.
+	 * </p>
 	 * <p>
 	 * It is intended to be used in the following way:<br>
 	 * <code>
@@ -167,7 +170,10 @@ public interface IProverSequent{
 	
 	/**
 	 * Returns an iterator for all hidden hypotheses of this sequent.
-	 * 
+	 * <p>
+	 * This iterator returns hypotheses in the same order as this set was 
+	 * constructed.
+	 * </p>
 	 * <p>
 	 * It is intended to be used in the following way:<br>
 	 * <code>
@@ -184,7 +190,10 @@ public interface IProverSequent{
 	
 	/**
 	 * Returns an iterator for all visible hypotheses of this sequent.
-	 * 
+	 * <p>
+	 * This iterator returns hypotheses in the same order as this set was 
+	 * constructed.
+	 * </p> 
 	 * <p>
 	 * It is intended to be used in the following way:<br>
 	 * <code>
