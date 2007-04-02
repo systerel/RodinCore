@@ -28,7 +28,7 @@ import org.osgi.framework.Bundle;
  */
 public class BundledFileExtractorTests {
 
-	private static String BUNDLE_NAME = "org.eventb.xprover.core.tests";
+	private static String BUNDLE_NAME = "org.eventb.core.seqprover.tests";
 	private static Bundle bundle = Platform.getBundle(BUNDLE_NAME);
 	
 	@Test

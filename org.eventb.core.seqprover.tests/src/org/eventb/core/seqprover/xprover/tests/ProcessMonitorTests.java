@@ -32,7 +32,7 @@ import org.osgi.framework.Bundle;
  */
 public class ProcessMonitorTests {
 	
-	private static final String BUNDLE_NAME = "org.eventb.xprover.core.tests";
+	private static final String BUNDLE_NAME = "org.eventb.core.seqprover.tests";
 	private static final Bundle bundle = Platform.getBundle(BUNDLE_NAME);
 
 	private static final IPath progLocalPath = new Path("$os$/simple");
