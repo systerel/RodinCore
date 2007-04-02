@@ -69,7 +69,7 @@ public class MachineStaticChecker extends StaticChecker {
 					repository,
 					monitor);
 		
-			scMachineFile.save(new SubProgressMonitor(monitor, 1), true);
+			scMachineFile.save(new SubProgressMonitor(monitor, 1), true, false);
 		
 			// TODO delta checking
 			// return repository.targetHasChanged();

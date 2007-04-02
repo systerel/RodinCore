@@ -76,8 +76,8 @@ public class AutoProver {
 			}
 			// monitor.worked(1);
 			dirty = true;
-			if (dirty) prFile.save(null, false);
-			if (dirty) psFile.save(null, false);
+			if (dirty) prFile.save(null, false, true);
+			if (dirty) psFile.save(null, false, false);
 		} finally {
 			monitor.done();
 		}
@@ -117,7 +117,7 @@ public class AutoProver {
 				prProof.setProofTree(autoProofTree, null);
 				AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
 				status.setManualProof(false,null);
-				prFile.save(null, false);
+				prFile.save(null, false, true);
 				return true;
 			}
 			// If the auto prover made 'some' progress, and no

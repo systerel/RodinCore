@@ -61,7 +61,7 @@ public class MachineProofObligationGenerator extends ProofObligationGenerator {
 					repository,
 					monitor);
 		
-			poFile.save(monitor, true);
+			poFile.save(monitor, true, false);
 		
 			// TODO delta checking
 			// return repository.targetHasChanged();

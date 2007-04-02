@@ -102,8 +102,8 @@ public class PSWrapper implements IPSWrapper {
 
 	public void save(IProgressMonitor monitor, boolean force)
 			throws RodinDBException {
-		psFile.save(monitor, force);
-		prFile.save(monitor, force);
+		psFile.save(monitor, force, false);
+		prFile.save(monitor, force, true);
 	}
 
 	public void clean() throws RodinDBException {

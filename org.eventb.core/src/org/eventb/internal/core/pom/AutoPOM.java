@@ -100,8 +100,8 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			}
 			
 			monitor.subTask("saving");
-			prFile.save(new SubProgressMonitor(monitor, 1), true);
-			psFile.save(new SubProgressMonitor(monitor, 1), true);
+			prFile.save(new SubProgressMonitor(monitor, 1), true, true);
+			psFile.save(new SubProgressMonitor(monitor, 1), true, false);
 			
 			checkCancellation(monitor, prFile, psFile);
 

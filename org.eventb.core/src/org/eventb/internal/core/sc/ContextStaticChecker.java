@@ -68,7 +68,7 @@ public class ContextStaticChecker extends StaticChecker {
 			runProcessorModules(rootModule, contextFile, scContextFile,
 					repository, monitor);
 
-			scContextFile.save(new SubProgressMonitor(monitor, 1), true);
+			scContextFile.save(new SubProgressMonitor(monitor, 1), true, false);
 
 			// TODO delta checking
 			// return repository.targetHasChanged();

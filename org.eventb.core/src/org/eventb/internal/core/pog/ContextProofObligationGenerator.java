@@ -60,7 +60,7 @@ public class ContextProofObligationGenerator extends ProofObligationGenerator {
 					repository,
 					monitor);
 		
-			poFile.save(monitor, true);
+			poFile.save(monitor, true, false);
 			
 			return true;
 		} finally {
