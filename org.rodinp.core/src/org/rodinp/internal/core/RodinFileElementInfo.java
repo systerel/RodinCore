@@ -51,6 +51,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		invalidateParentCache(element);
 	}
 
+	@Deprecated
 	public synchronized void changeDescendantContents(
 			InternalElement element, String newContents) throws RodinDBException {
 
@@ -194,6 +195,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	 * @return the contents of this element (never <code>null</code>)
 	 * @throws RodinDBException 
 	 */
+	@Deprecated
 	public synchronized String getDescendantContents(InternalElement element)
 			throws RodinDBException {
 

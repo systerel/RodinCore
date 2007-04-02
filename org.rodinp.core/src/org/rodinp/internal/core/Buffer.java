@@ -251,6 +251,7 @@ public class Buffer {
 		}
 	}
 
+	@Deprecated
 	public String getElementContents(Element domElement) {
 		return domElement.getAttributeNS(null, CONTENTS_ATTRIBUTE);
 	}
@@ -471,6 +472,7 @@ public class Buffer {
 		changed = true;
 	}
 	
+	@Deprecated
 	public void setElementContents(Element domElement, String newContents) {
 		domElement.setAttributeNS(null, CONTENTS_ATTRIBUTE, newContents);
 		changed = true;

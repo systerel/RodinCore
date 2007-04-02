@@ -20,7 +20,6 @@ import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.ChangeElementAttributeOperation;
-import org.rodinp.internal.core.ChangeElementContentsOperation;
 import org.rodinp.internal.core.CopyElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
@@ -398,8 +397,10 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	}
 
 	@Deprecated
-	public void setContents(String contents, IProgressMonitor monitor) throws RodinDBException {
-		new ChangeElementContentsOperation(this, contents).runOperation(monitor);
+	public void setContents(String contents, IProgressMonitor monitor)
+			throws RodinDBException {
+		new org.rodinp.internal.core.ChangeElementContentsOperation(this,
+				contents).runOperation(monitor);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
+@Deprecated
 public class ChangeElementContentsOperation extends RodinDBOperation{
 
 	private InternalElement element;
