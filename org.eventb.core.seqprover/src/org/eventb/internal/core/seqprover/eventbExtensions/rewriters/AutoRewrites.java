@@ -37,18 +37,26 @@ public class AutoRewrites extends EmptyInputReasoner {
 
 			Predicate newPred = recursiveRewrite(pred, rewriter);
 			if (newPred != pred) {
-				// Hide the original hypothesis
-				Collection<Predicate> neededHyps = new ArrayList<Predicate>();
-				neededHyps.add(pred);
-				hypActions.add(ProverFactory.makeHideHypAction(neededHyps));
-
 				// Add the new version of the hypothesis, if interesting
 				if (newPred.getTag() != Predicate.BTRUE) {
+					// Hide the original hypothesis
+					Collection<Predicate> neededHyps = new ArrayList<Predicate>();
+					neededHyps.add(pred);
+					hypActions.add(ProverFactory.makeHideHypAction(neededHyps));
+
+					// make the forward action
 					Collection<Predicate> inferredHyps = new ArrayList<Predicate>();
 					inferredHyps.add(newPred);
-
 					hypActions.add(ProverFactory.makeForwardInfHypAction(
 							neededHyps, inferredHyps));
+
+					// Select the hypothesis if the original predicate is selected
+					if (seq.isSelected(pred)) {
+						Collection<Predicate> selectedHyps = new ArrayList<Predicate>();
+						selectedHyps.add(newPred);
+						hypActions.add(ProverFactory
+								.makeSelectHypAction(selectedHyps));
+					}
 				}
 			}
 		}
