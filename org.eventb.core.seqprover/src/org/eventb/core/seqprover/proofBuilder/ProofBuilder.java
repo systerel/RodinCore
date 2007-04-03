@@ -1,19 +1,41 @@
 package org.eventb.core.seqprover.proofBuilder;
 
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.ProofTreeNode;
 
 /**
- * This class contains static methods that can be used to build (or re-build)
- * a proof tree (actually proof tree nodes) from a proof skeleton.
+ * This class contains static methods that can be used to reconstruct proof tree nodes from
+ * proof skeleton nodes.
+ *
+ * <p>
+ * There are currently three ways in which this is supported:
+ * <ul>
+ * <li> Reuse : The simplest and most efficient, but also the most quick to fail way to reconstruct
+ * 				a proof tree node from a proof skeleton node. Only the rule stored in the proof skeleton
+ * 				node is tried for reuse. No reasoners are called. This way is guaranteed to succeed if the sequent
+ * 				of the open proof tree node satisfies the dependencies of the proof skeleton.
+ * <li> Replay : Each reasoner that is mentioned in the proof skeleton in replayed to generate a rule to use. The rules 
+ * 				present in the proof skeleton nodes are ignored. This method can be used to re-validate proof sleletons since 
+ * 				it completely ignores stored rules.
+ * <li> Rebuild : A mixture between reuse and replay. Reuse is performed when possible, and if not, replay is tried. In addition,
+ * 				replay hints are taken into account and generated to be used in subsequent replays in order to support refactoring.
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * The methods in this class should not be used directly, but should be used in their tactic-wrapped form.
+ * </p>
  * 
  * @see IProofSkeleton
  * @see ProofTreeNode
+ * @see BasicTactics
  * 
  * @author Farhad Mehta
  *
@@ -25,7 +47,132 @@ public class ProofBuilder {
 	 */
 	private ProofBuilder() {
 	}
+	
+	/**
+	 * A method that recursively consrtucts proof tree nodes only using the rules from a proof skeleton.
+	 * 
+	 * <p>
+	 * No reasoners are called for this proof reconstruction method
+	 * </p>
+	 * <p>
+	 * This method may be used for a quick way to reconstruct a proof from a proof skeleton when its proof dependencies
+	 * are satisfied.  
+	 * </p>
+	 * 
+	 * @param node
+	 * 			The open proof tree node where reuse should start. This node MUST be checked to be open before calling this method.
+	 * @param skeleton
+	 * 			The proof skeleton to use
+	 * @param proofMonitor
+	 * 			The proof monitor that monitors the progress of the replay activity
+	 * @return
+	 * 			<code>true</code> iff the all proof tree nodes could be completely rebuilt from the rules present in the 
+	 * 			proof skeleton nodes. If this method returns <code>false</code>, it (possibly) means that the
+	 * 			proof skeleton of the constructed tree is not identical to the one provided since the proof skeleton could not be
+	 * 			completely reused for this node.
+	 * 
+	 * TODO : Test this code & wrap using appropriate tactic.
+	 */
+	public static boolean reuse(IProofTreeNode node,IProofSkeleton skeleton, IProofMonitor proofMonitor) {
 
+		node.setComment(skeleton.getComment());
+
+		IProofRule reuseProofRule = skeleton.getRule();
+
+		// if this is an open proof skeleton node, we are done
+		if (reuseProofRule == null){
+			return true;
+		}
+
+		// Check if replay was cancelled. 
+		if (proofMonitor!= null && proofMonitor.isCanceled()) return false;
+
+		
+		// Try to reuse the rule
+		boolean reuseSuccessfull = node.applyRule(reuseProofRule);
+		if (! reuseSuccessfull) return false;
+
+		// Do this recursively on children.
+		IProofSkeleton[] skelChildren = skeleton.getChildNodes();
+		IProofTreeNode[] nodeChildren = node.getChildNodes();
+
+		if (nodeChildren.length != skelChildren.length) return false;
+
+		// run recursively for each child
+		boolean combinedResult = true;
+		for (int i = 0; i < nodeChildren.length; i++) {
+				combinedResult &= reuse(nodeChildren[i],skelChildren[i], proofMonitor);
+		}
+		return combinedResult;		
+	}
+
+	
+	/**
+	 * A method that recursively constructs proof tree nodes using a proof skeleton and replay hints using only reasoner replay.
+	 * 
+	 * <p>
+	 * This method can be used to re-validate proof sleletons since it completely ignores stored rules.
+	 * </p>
+	 * 
+	 * @param node
+	 * 			The open proof tree node where rebiulding should start. This node MUST be checked to be open before calling this method.
+	 * @param skeleton
+	 * 			The proof skeleton to use
+	 * @param proofMonitor
+	 * 			The proof monitor that monitors the progress of the rebuild activity
+	 * @return
+	 * 			<code>true</code> iff the all proof tree nodes could be completely rebuilt from the proof skeleton nodes 
+	 * 			using reasoner replay. If this method returns <code>false</code>, it (possibly) means that the
+	 * 			proof skeleton of the constructed tree is not identical to the one provided since a reasoner either failed 
+	 * 			or was not installed.
+	 * 
+	 * TODO : Test this code & wrap using appropriate tactic.
+	 */
+	public static boolean replay(IProofTreeNode node,IProofSkeleton skeleton, IProofMonitor proofMonitor) {
+
+		node.setComment(skeleton.getComment());
+		
+		IProofRule reuseProofRule = skeleton.getRule();
+
+		// if this is an open proof skeleton node, we are done
+		if (reuseProofRule == null){
+			return true;
+		}
+		
+		// Check if replay was cancelled. 
+		if (proofMonitor!= null && proofMonitor.isCanceled()) return false;
+		
+		// Try to replay the rule
+		IReasoner reasoner = reuseProofRule.generatedBy();
+		// Check if the reasoner is instaled.
+		if (reasoner == null) return false;
+
+		// Get reasoner input.
+		IReasonerInput reasonerInput = reuseProofRule.generatedUsing();
+		
+		// replay the reasoner
+		IReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(),reasonerInput, proofMonitor);
+		// Check if reasoner successfully generated a rule.
+		if (!((replayReasonerOutput != null) && ((replayReasonerOutput instanceof IProofRule)))) return false;
+
+		// Check if the generated rule is applicable
+		boolean replaySuccessfull =  node.applyRule((IProofRule) replayReasonerOutput);
+		if (! replaySuccessfull) return false;
+				
+		// Do this recursively on children.
+		IProofSkeleton[] skelChildren = skeleton.getChildNodes();
+		IProofTreeNode[] nodeChildren = node.getChildNodes();
+
+		if (nodeChildren.length != skelChildren.length) return false;
+
+		// run recursively for each child
+		boolean combinedResult = true;
+		for (int i = 0; i < nodeChildren.length; i++) {
+				combinedResult &= replay(nodeChildren[i],skelChildren[i], proofMonitor);
+		}
+		return combinedResult;
+	}
+	
 	/**
 	 * A method that recursively rebuilds proof tree nodes using a proof skeleton and replay hints.
 	 * 
@@ -41,84 +188,88 @@ public class ProofBuilder {
 	 * </p>
 	 * 
 	 * @param node
-	 * 			The open proof tree node where rebiulding should start
+	 * 			The open proof tree node where rebiulding should start. This node MUST be checked to be open before calling this method.
 	 * @param skeleton
 	 * 			The proof skeleton to use
 	 * @param replayHints
 	 * 			The replay hints to use
+	 * @param proofMonitor
+	 * 			The proof monitor that monitors the progress of the rebuild activity
 	 * @return
+	 * 			<code>true</code> iff the all proof tree nodes could be completely rebuilt from the proof skeleton nodes WITHOUT
+	 * 			recalling any of the reasoners. If this method returns <code>false</code>, it (possibly) means that the
+	 * 			proof skeleton of the constructed tree is not identical to the one provided since either:
+	 * 			<ul>
+	 * 			<li> The proof skeleton could not be completely rebuilt for this node.
+	 * 			<li> Reasoners needed to be recalled, changing the rules present in the proof skeleton.
+	 * 			</ul>
 	 */
-	public static boolean rebuild(IProofTreeNode node,IProofSkeleton skeleton, ReplayHints replayHints) {
-		// TODO:
-		// Return value true if there may be a change in the proof tree node from the
+	public static boolean rebuild(IProofTreeNode node,IProofSkeleton skeleton, ReplayHints replayHints, IProofMonitor proofMonitor) {
+
 
 		node.setComment(skeleton.getComment());
 
 		IProofRule reuseProofRule = skeleton.getRule();
-		
-		// Check if this is an open node
-		if (reuseProofRule == null) return true;
-		
-		// Try to replay the rule
-		if (true){
-			
-			IReasoner reasoner = reuseProofRule.generatedBy();
-			// uninstalled reasoner
-			assert reasoner != null;
-			
-			IReasonerInput reasonerInput = reuseProofRule.generatedUsing();
-			
-			// choose between reuse and replay
-			boolean reuseSuccessfull = false;
-			boolean replaySuccessfull = false;
-			// if there are replay hints do not even try a reuse
-			if (replayHints.isEmpty())
-			{
-				// see if reuse works
-//				Object error = BasicTactics.reasonerTac(proofRule).apply(node);
-//				reuseSuccessfull = (error == null);
-				reuseSuccessfull = node.applyRule(reuseProofRule);
-				
-			}
-			
-			IProofRule replayProofRule = null;
-			
-			if (! reuseSuccessfull)
-			{	// reuse failed
-				// try replay
-				replayHints.applyHints(reasonerInput);
-				IReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(),reasonerInput, null);
-				if ((replayReasonerOutput != null) && 
-						((replayReasonerOutput instanceof IProofRule))){
-					// reasoner successfully generated something
-					replayProofRule = (IProofRule) replayReasonerOutput;
-					replaySuccessfull = node.applyRule(replayProofRule);
-				}
-			}	
-			
-			// Check if rebuild for this node was succesfull
-			if (!(reuseSuccessfull || replaySuccessfull)) return false;
-			IProofSkeleton[] prChildren = skeleton.getChildNodes();
-			assert prChildren != null;
-			IProofTreeNode[] children = node.getChildNodes();
-			
-			// Maybe check if the node has the same number of children as the prNode
-			// it may be smart to replay anyway, but generate a warning.
-			if (children.length != prChildren.length) return false;
-			
-			// run recursively for each child
-			for (int i = 0; i < children.length; i++) {
-				ReplayHints newReplayHints = replayHints;
-				if (replayProofRule != null)
-				{
-					// generate hints for continuing the proof
-					newReplayHints = replayHints.clone();
-					newReplayHints.addHints(reuseProofRule.getAntecedents()[i],replayProofRule.getAntecedents()[i]);
-				}
-				rebuild(children[i],prChildren[i],newReplayHints);
-			}
+
+		// if this is an open proof skeleton node, we are done
+		if (reuseProofRule == null){
+			return true;
 		}
-		return false;
+		
+		// Check if replay was cancelled. 
+		if (proofMonitor!= null && proofMonitor.isCanceled()) return false;
+
+		boolean reuseSuccessfull = false;
+		boolean replaySuccessfull = false;
+
+		// If there are replay hints do not try a reuse
+		if (replayHints.isEmpty())
+		{
+			// see if reuse works
+			reuseSuccessfull = node.applyRule(reuseProofRule);
+		}
+
+		if (! reuseSuccessfull)
+		{	// reuse failed; try replay
+			IReasoner reasoner = reuseProofRule.generatedBy();
+			// Check if the reasoner is installed
+			if (reasoner == null) return false;
+			// Get the reasoner input and apply replay hints to it.
+			IReasonerInput reasonerInput = reuseProofRule.generatedUsing();
+			IProofRule replayProofRule = null;
+			replayHints.applyHints(reasonerInput);
+			IReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(),reasonerInput, proofMonitor);
+			// Check if the reasoner successfully generated a proof rule.
+			if ((replayReasonerOutput != null) && 
+					((replayReasonerOutput instanceof IProofRule))){
+				// Try to apply the generated proof rule.
+				replayProofRule = (IProofRule) replayReasonerOutput;
+				replaySuccessfull = node.applyRule(replayProofRule);
+			}
+		}	
+
+		// Check if rebuild for this node was succesfull
+		if (!(reuseSuccessfull || replaySuccessfull)) return false;
+		IProofSkeleton[] skelChildren = skeleton.getChildNodes();
+		IProofTreeNode[] nodeChildren = node.getChildNodes();
+
+		// Maybe check if the node has the same number of children as the prNode
+		// it may be smart to replay anyway, but generate a warning.
+		if (nodeChildren.length != skelChildren.length) return false;
+
+		// run recursively for each child
+		boolean combinedResult = true;
+		for (int i = 0; i < nodeChildren.length; i++) {
+			ReplayHints newReplayHints = replayHints;
+			if (replaySuccessfull)
+			{
+				// generate hints for continuing the proof
+				newReplayHints = replayHints.clone();
+				newReplayHints.addHints(reuseProofRule.getAntecedents()[i],node.getRule().getAntecedents()[i]);
+			}
+			combinedResult &= rebuild(nodeChildren[i],skelChildren[i],newReplayHints, proofMonitor);
+		}
+		return combinedResult;
 	}
 
 	/**
@@ -132,12 +283,19 @@ public class ProofBuilder {
 	 * 			The open proof tree node where rebiulding should start
 	 * @param skeleton
 	 * 			The proof skeleton to use
-	 * @param replayHints
-	 * 			The replay hints to use
+	 * @param proofMonitor
+	 * 			The proof monitor that monitors the progress of the rebuild activity
 	 * @return
+	 * 			<code>true</code> iff the all proof tree nodes could be completely rebuilt from the proof skeleton nodes WITHOUT
+	 * 			recalling any of the reasoners. If this method returns <code>false</code>, it (possibly) means that the
+	 * 			proof skeleton of the constructed tree is not identical to the one provided since either:
+	 * 			<ul>
+	 * 			<li> The proof skeleton could not be completely rebuilt for this node.
+	 * 			<li> Reasoners needed to be recalled, changing the rules present in the proof skeleton.
+	 * 			</ul>
 	 */
-	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton) {
-		return rebuild(node,skeleton,new ReplayHints());
+	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton, IProofMonitor proofMonitor) {
+		return rebuild(node,skeleton,new ReplayHints(), proofMonitor);
 	}
-	
+
 }
