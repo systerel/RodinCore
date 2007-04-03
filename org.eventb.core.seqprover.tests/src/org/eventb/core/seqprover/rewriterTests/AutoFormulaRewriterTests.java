@@ -292,6 +292,16 @@ public class AutoFormulaRewriterTests {
 
 		// not(not(P)) == not(P)
 		assertUnaryPredicate("¬¬P = P", P, Predicate.NOT, Lib.makeNeg((P)));
+
+		// not(x /: S)) == x : S
+		Expression fTrue = ff.makeAtomicExpression(Expression.TRUE, null);
+		Expression fFalse = ff.makeAtomicExpression(Expression.FALSE, null);
+		Expression S = ff.makeSetExtension(fFalse, null);
+		RelationalPredicate rPred = ff.makeRelationalPredicate(Predicate.NOTIN,
+				fTrue, S, null);
+
+		assertUnaryPredicate("¬¬P = P", ff.makeRelationalPredicate(
+				Predicate.IN, fTrue, S, null), Predicate.NOT, rPred);
 	}
 
 	private void assertQuantificationPredicate(String message,

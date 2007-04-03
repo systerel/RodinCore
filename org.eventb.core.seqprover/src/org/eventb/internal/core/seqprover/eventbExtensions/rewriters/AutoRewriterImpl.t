@@ -161,10 +161,17 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			}
 
 	    	/**
-	    	 * Negation 2: ¬¬P == P
+	    	 * Negation 3: ¬¬P == P
 	    	 */
 			Not(Not(P)) -> {
 				return `P;
+			}
+
+	    	/**
+	    	 * Negation 4: ¬(x ∉ S) == x ∈ S
+	    	 */
+			Not(NotIn(x, S)) -> {
+				return Lib.makeInclusion(`x, `S);
 			}
 	    }
 	    return predicate;
