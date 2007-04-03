@@ -264,19 +264,62 @@ public class FormulaSimplification {
 		}
 		return expression;
 	}
+//
+//	public static Expression simplifyDivArithmetic(Expression expression,
+//			Expression E, Expression F) {
+//		if (F.equals(ff.makeIntegerLiteral(new BigInteger("1"), null))) {
+//			return E;
+//		} else if (E.equals(ff.makeIntegerLiteral(new BigInteger("0"), null))) {
+//			return ff.makeIntegerLiteral(new BigInteger("0"), null);
+//		}
+//		return expression;
+//	}
 
-	public static Expression simplifyDivArithmetic(Expression expression,
-			Expression E, Expression F) {
-		if (F.equals(ff.makeIntegerLiteral(new BigInteger("1"), null))) {
-			return E;
-		} else if (E.equals(ff.makeIntegerLiteral(new BigInteger("0"), null))) {
-			return ff.makeIntegerLiteral(new BigInteger("0"), null);
+	public static Expression getFaction(Expression E, Expression F) {
+		return ff.makeBinaryExpression(Expression.DIV, E, F, null);
+	}
+
+	public static Expression getFaction(Expression expression, BigInteger E,
+			Expression F) {
+		BigInteger number0 = new BigInteger("0");
+		if (E.compareTo(number0) == 0)
+			return ff.makeIntegerLiteral(number0, null);
+		if (E.compareTo(number0) < 0) {
+			Expression minusE = ff.makeIntegerLiteral(E.abs(), null);
+			return ff.makeBinaryExpression(Expression.DIV, minusE, F, null);
 		}
 		return expression;
 	}
 
-	public static Expression getFaction(Expression E, Expression F) {
-		return ff.makeBinaryExpression(Expression.DIV, E, F, null);
+	public static Expression getFaction(Expression expression, 
+			Expression E, BigInteger F) {
+		BigInteger number0 = new BigInteger("0");
+		if (F.compareTo(number0) < 0) {
+			Expression minusF = ff.makeIntegerLiteral(F.abs(), null);
+			return ff.makeBinaryExpression(Expression.DIV, E, minusF, null);
+		}
+		BigInteger number1 = new BigInteger("1");
+		if (F.compareTo(number1) == 0) {
+			return ff.makeUnaryExpression(Expression.UNMINUS, E, null);
+		}
+		return expression;
+	}
+
+	public static Expression getFaction(Expression expression, 
+			BigInteger E, BigInteger F) {
+		BigInteger number0 = new BigInteger("0");
+		if (E.compareTo(number0) == 0)
+			return ff.makeIntegerLiteral(number0, null);
+		BigInteger number1 = new BigInteger("1");
+		if (F.compareTo(number1) == 0) {
+			return ff.makeIntegerLiteral(E, null);
+		}
+		if (E.compareTo(number0) < 0 && F.compareTo(number0) < 0) {
+			Expression minusE = ff.makeIntegerLiteral(E.abs(), null);
+			Expression minusF = ff.makeIntegerLiteral(F.abs(), null);
+			return ff.makeBinaryExpression(Expression.DIV, minusE, minusF, null);
+		}
+		return expression;
 	}
 
 	public static Expression simplifyExpnArithmetic(
@@ -300,6 +343,7 @@ public class FormulaSimplification {
 		Expression number0 = ff.makeIntegerLiteral(new BigInteger("0"), null);
 		Expression numberMinus1 = ff.makeUnaryExpression(Expression.UNMINUS,
 				number1, null);
+		Expression literalMinus1 = ff.makeIntegerLiteral(new BigInteger("-1"), null);
 		// Expression determinant = number0;
 		Collection<Expression> expressions = new ArrayList<Expression>();
 
@@ -308,7 +352,7 @@ public class FormulaSimplification {
 				return number0;
 			}
 
-			if (child.equals(numberMinus1)) {
+			if (child.equals(numberMinus1) || child.equals(literalMinus1)) {
 				positive = !positive;
 				change = true;
 			} else if (!child.equals(number1)) {
@@ -317,6 +361,19 @@ public class FormulaSimplification {
 					expressions.add(((UnaryExpression) child).getChild());
 					positive = !positive;
 					change = true;
+				}
+				else if (child instanceof IntegerLiteral) {
+					
+						BigInteger value = ((IntegerLiteral) child).getValue();
+						if (value.compareTo(new BigInteger("0")) < 0) {
+							expressions.add(ff
+								.makeIntegerLiteral(value.abs(), null));
+						positive = !positive;
+							change = true;
+						}
+						else {
+							expressions.add(child);
+						}
 				} else {
 					expressions.add(child);
 				}
@@ -363,9 +420,9 @@ public class FormulaSimplification {
 							.getBoundIdentifiers();
 					if (contain(identDecls, y.getDeclaration(identDecls))
 							&& !contain(boundIdentifiers, y)) {
-						// TODO  Do the subtitution here
+						// TODO Do the subtitution here
 						return predicate;
-//						return subtitute(rPred, identDecls, children, R);
+						// return subtitute(rPred, identDecls, children, R);
 
 					}
 				}
@@ -374,35 +431,35 @@ public class FormulaSimplification {
 		return predicate;
 	}
 
-//	private static Predicate subtitute(RelationalPredicate pred,
-//			BoundIdentDecl[] identDecls, Predicate[] children, Predicate r) {
-//		Collection<Predicate> predicates = new ArrayList<Predicate>();
-//
-//		for (Predicate child : children) {
-//			if (!child.equals(pred)) {
-//				predicates.add(child);
-//			}
-//		}
-//		AssociativePredicate left = ff.makeAssociativePredicate(Predicate.LAND,
-//				predicates, null);
-//
-//		BinaryPredicate innerPred = ff.makeBinaryPredicate(Predicate.LIMP,
-//				left, r, null);
-//		BoundIdentifier y = ((BoundIdentifier) pred.getLeft());
-//		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
-//				Predicate.FORALL, new BoundIdentDecl[] { y
-//						.getDeclaration(identDecls) }, innerPred, null);
-//		Predicate instantiate = qPred.instantiate(new Expression[] { pred
-//				.getRight() }, ff);
-//		return ff.makeQuantifiedPredicate(Predicate.FORALL, remove(identDecls,
-//				y.getDeclaration(identDecls)), instantiate, null);
-//	}
+	// private static Predicate subtitute(RelationalPredicate pred,
+	// BoundIdentDecl[] identDecls, Predicate[] children, Predicate r) {
+	// Collection<Predicate> predicates = new ArrayList<Predicate>();
+	//
+	// for (Predicate child : children) {
+	// if (!child.equals(pred)) {
+	// predicates.add(child);
+	// }
+	// }
+	// AssociativePredicate left = ff.makeAssociativePredicate(Predicate.LAND,
+	// predicates, null);
+	//
+	// BinaryPredicate innerPred = ff.makeBinaryPredicate(Predicate.LIMP,
+	// left, r, null);
+	// BoundIdentifier y = ((BoundIdentifier) pred.getLeft());
+	// QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
+	// Predicate.FORALL, new BoundIdentDecl[] { y
+	// .getDeclaration(identDecls) }, innerPred, null);
+	// Predicate instantiate = qPred.instantiate(new Expression[] { pred
+	// .getRight() }, ff);
+	// return ff.makeQuantifiedPredicate(Predicate.FORALL, remove(identDecls,
+	// y.getDeclaration(identDecls)), instantiate, null);
+	// }
 
-//	private static BoundIdentDecl[] remove(BoundIdentDecl[] identDecls,
-//			BoundIdentDecl declaration) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	// private static BoundIdentDecl[] remove(BoundIdentDecl[] identDecls,
+	// BoundIdentDecl declaration) {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
 
 	private static <T extends Object> boolean contain(T[] array, T element) {
 		for (T member : array) {
@@ -410,6 +467,10 @@ public class FormulaSimplification {
 				return true;
 		}
 		return false;
+	}
+
+	public static Expression getEmptySetOfType(Expression S) {
+		return ff.makeEmptySet(S.getType(), null);
 	}
 
 }

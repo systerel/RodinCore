@@ -310,7 +310,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory 11: S ∖ S == ∅
 	    	 */
 	    	SetMinus(S, S) -> {
-	    		return Lib.emptySet;
+	    		return FormulaSimplification.getEmptySetOfType(`S);
 	    	}
 
 			/**
@@ -344,12 +344,29 @@ public class AutoRewriterImpl extends DefaultRewriter {
 
 			/**
 	    	 * Arithmetic 8: E ÷ 1 = E
-	    	 * Arithmetic 9: 0 ÷ E = 0
+	    	 * Arithmetic 10: (−E) ÷ (−F) == E ÷ F
 	    	 */
-	    	Div(E, F) -> {
-	    		return FormulaSimplification.simplifyDivArithmetic(expression, `E, `F);
+	    	Div(UnMinus(E), IntegerLiteral(F)) -> {
+	    		return FormulaSimplification.getFaction(`expression, `E, `F);
 	    	}
-	    	
+
+			/**
+	    	 * Arithmetic 9: 0 ÷ E = 0
+	    	 * Arithmetic 10: (−E) ÷ (−F) == E ÷ F
+	    	 */
+	    	Div(IntegerLiteral(E), UnMinus(F)) -> {
+	    		return FormulaSimplification.getFaction(`expression, `E, `F);
+	    	}
+
+			/**
+	    	 * Arithmetic 8: E ÷ 1 = E
+	    	 * Arithmetic 9: 0 ÷ E = 0
+	    	 * Arithmetic 10: (−E) ÷ (−F) == E ÷ F
+	    	 */
+	    	Div(IntegerLiteral(E), IntegerLiteral(F)) -> {
+	    		return FormulaSimplification.getFaction(`expression, `E, `F);
+	    	}
+
 			/**
 	    	 * Arithmetic 11: E^1 == E
 	    	 * Arithmetic 12: E^0 == 1
