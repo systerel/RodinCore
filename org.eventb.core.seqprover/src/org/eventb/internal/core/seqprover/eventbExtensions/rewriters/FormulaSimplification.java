@@ -125,12 +125,12 @@ public class FormulaSimplification {
 				null);
 		switch (tag) {
 		case Expression.BUNION:
-			neutral = Lib.emptySet;
+			neutral = ff.makeEmptySet(expression.getType(), null);
 			determinant = null;
 			break;
 		case Expression.BINTER:
 			neutral = null;
-			determinant = Lib.emptySet;
+			determinant = ff.makeEmptySet(expression.getType(), null);
 			break;
 		case Expression.PLUS:
 			neutral = number0;
@@ -145,7 +145,7 @@ public class FormulaSimplification {
 		if (expressions.size() != children.length) {
 			if (expressions.size() == 0)
 				if (tag == Expression.BUNION || tag == Expression.BINTER)
-					return Lib.emptySet;
+					return ff.makeEmptySet(expression.getType(), null);
 				else if (tag == Expression.PLUS)
 					return number0;
 				else if (tag == Expression.MUL)
@@ -264,16 +264,6 @@ public class FormulaSimplification {
 		}
 		return expression;
 	}
-//
-//	public static Expression simplifyDivArithmetic(Expression expression,
-//			Expression E, Expression F) {
-//		if (F.equals(ff.makeIntegerLiteral(new BigInteger("1"), null))) {
-//			return E;
-//		} else if (E.equals(ff.makeIntegerLiteral(new BigInteger("0"), null))) {
-//			return ff.makeIntegerLiteral(new BigInteger("0"), null);
-//		}
-//		return expression;
-//	}
 
 	public static Expression getFaction(Expression E, Expression F) {
 		return ff.makeBinaryExpression(Expression.DIV, E, F, null);
@@ -400,7 +390,7 @@ public class FormulaSimplification {
 
 	public static Expression simplifySetSubtraction(
 			BinaryExpression expression, Expression S, Expression T) {
-		if (T.equals(Lib.emptySet)) {
+		if (T.equals(ff.makeEmptySet(S.getType(), null))) {
 			return S;
 		}
 		return expression;

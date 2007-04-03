@@ -66,9 +66,6 @@ public final class Lib {
 	public final static Predicate False = ff.makeLiteralPredicate(
 			Formula.BFALSE, null);
 
-	public final static Expression emptySet = ff.makeAtomicExpression(
-			Formula.EMPTYSET, null);
-
 	public static boolean isTrue(Predicate P) {
 		if (P instanceof LiteralPredicate && P.getTag() == Formula.BTRUE)
 			return true;
