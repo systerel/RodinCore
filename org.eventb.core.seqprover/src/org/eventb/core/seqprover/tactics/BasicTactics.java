@@ -9,7 +9,6 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
-import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class BasicTactics {
 	
@@ -47,10 +46,6 @@ public class BasicTactics {
 		return new ReuseTac(reasonerOutput);
 	}
 	
-//	public static ITactic ruleTac(ProofRule rule){
-//		return new RuleTac(rule);
-//	}
-	
 	public static ITactic pasteTac(IProofTreeNode toPaste){
 		return new PasteTac(toPaste);
 	}
@@ -60,11 +55,10 @@ public class BasicTactics {
 
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				if (!pt.isOpen()) return "Root already has children";
-				ProofBuilder.rebuild(pt,proofSkeleton,new ReplayHints());
+				ProofBuilder.rebuild(pt,proofSkeleton, pm);
 				if (!pt.isOpen()) return null;
 				return "Rebuild unsuccessful";
 			}
-			
 		};
 	}
 	
@@ -96,23 +90,6 @@ public class BasicTactics {
 		}
 	}
 	
-//	private static class RuleTac implements ITactic {
-//		
-//		private final ProofRule rule;
-//		
-//		public RuleTac(ProofRule rule)
-//		{
-//			this.rule = rule;
-//		}
-//		
-//		public Object apply(IProofTreeNode pt){
-//			if (!pt.isOpen()) return "Root already has children";
-//			if (pt.applyRule(this.rule)) return null;
-//			else return "Rule "+this.rule.getDisplayName()+" is not applicable";
-//			
-//		}
-//	}
-	
 	private static class ReasonerTac implements ITactic {
 		
 		private final IReasoner reasoner;
@@ -132,10 +109,6 @@ public class BasicTactics {
 			if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;
 			ITactic temp = new ReuseTac((IProofRule)reasonerOutput);
 			return temp.apply(pt, pm);
-			
-//			ProofRule reasonerStep = new ReasoningStep((ReasonerOutputSucc) reasonerOutput);
-//			ITactic temp = new RuleTac(reasonerStep);
-//			return temp.apply(pt);
 		}
 	}
 	
@@ -152,10 +125,6 @@ public class BasicTactics {
 			if (!pt.isOpen()) return "Root already has children";
 			if (pt.applyRule(reasonerOutput)) return null;
 			else return "Rule "+reasonerOutput.getDisplayName()+" is not applicable";
-			
-//			ProofRule reasonerStep = new ReasoningStep(reasonerOutput);
-//			ITactic temp = new RuleTac(reasonerStep);
-//			return temp.apply(pt);
 		}
 	}
 	
