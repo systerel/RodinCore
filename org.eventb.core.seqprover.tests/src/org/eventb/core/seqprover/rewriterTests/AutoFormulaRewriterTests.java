@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -14,6 +15,10 @@ import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.UnaryExpression;
+import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
@@ -59,7 +64,7 @@ public class AutoFormulaRewriterTests {
 			int tag, Predicate... predicates) {
 		AssociativePredicate predicate = ff.makeAssociativePredicate(tag,
 				predicates, null);
-		assertEquals(message, expected, r.rewrite(predicate));
+		assertEquals(message, expected, predicate.rewrite(r));
 	}
 
 	@Test
@@ -220,8 +225,9 @@ public class AutoFormulaRewriterTests {
 
 	private void assertBinaryPredicate(String message, Predicate expected,
 			Predicate left, int tag, Predicate right) {
-		assertEquals(message, expected, r.rewrite(ff.makeBinaryPredicate(tag,
-				left, right, null)));
+		BinaryPredicate bPred = ff.makeBinaryPredicate(tag,
+								left, right, null);
+		assertEquals(message, expected, bPred.rewrite(r));
 	}
 
 	@Test
@@ -267,8 +273,9 @@ public class AutoFormulaRewriterTests {
 
 	private void assertUnaryPredicate(String message, Predicate expected,
 			int tag, Predicate predicate) {
-		assertEquals(message, expected, r.rewrite(ff.makeUnaryPredicate(tag,
-				predicate, null)));
+		UnaryPredicate uPred = ff.makeUnaryPredicate(tag,
+								predicate, null);
+		assertEquals(message, expected, uPred.rewrite(r));
 	}
 
 	@Test
@@ -286,8 +293,9 @@ public class AutoFormulaRewriterTests {
 	private void assertQuantificationPredicate(String message,
 			Predicate expected, int tag, BoundIdentDecl[] boundIdentifiers,
 			Predicate predicate) {
-		assertEquals(message, expected, r.rewrite(ff.makeQuantifiedPredicate(
-				tag, boundIdentifiers, predicate, null)));
+		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
+								tag, boundIdentifiers, predicate, null);
+		assertEquals(message, expected, qPred.rewrite(r));
 	}
 
 	@Test
@@ -343,8 +351,9 @@ public class AutoFormulaRewriterTests {
 
 	private void assertRelationalPredicate(String message, Predicate expected,
 			Expression left, int tag, Expression right) {
-		assertEquals(message, expected, r.rewrite(ff.makeRelationalPredicate(
-				tag, left, right, null)));
+		RelationalPredicate rPred = ff.makeRelationalPredicate(
+								tag, left, right, null);
+		assertEquals(message, expected, rPred.rewrite(r));
 	}
 
 	@Test
@@ -379,20 +388,22 @@ public class AutoFormulaRewriterTests {
 			Expression expected, int tag, Expression... expressions) {
 		AssociativeExpression expression = ff.makeAssociativeExpression(tag,
 				expressions, null);
-		assertEquals(message, expected, r.rewrite(expression));
+		assertEquals(message, expected, expression.rewrite(r));
 	}
 
 	private void assertBinaryExpression(String message, Expression expected,
 			Expression left, int tag, Expression right) {
 		BinaryExpression expression = ff.makeBinaryExpression(tag, left, right,
 				null);
-		assertEquals(message, expected, r.rewrite(expression));
+		
+		assertEquals(message, expected, expression.rewrite(r));
 	}
 
 	private void assertUnaryExpression(String message, Expression expected,
 			int tag, Expression expression) {
-		assertEquals(message, expected, r.rewrite(ff.makeUnaryExpression(tag,
-				expression, null)));
+		UnaryExpression uExp = ff.makeUnaryExpression(tag,
+								expression, null);
+		assertEquals(message, expected, uExp.rewrite(r));
 	}
 
 	@Test
@@ -470,6 +481,11 @@ public class AutoFormulaRewriterTests {
 				expected, Expression.BUNION, Lib.emptySet, S, T, Lib.emptySet,
 				R, Lib.emptySet);
 
+		assertRelationalPredicate("", ff.makeRelationalPredicate(
+				Predicate.SUBSETEQ, S, T, null), ff
+				.makeAssociativeExpression(Expression.BUNION, new Expression[] {
+						S, Lib.emptySet }, null), Predicate.SUBSETEQ, T);
+		
 		// S \/ ... \/ T \/ ... \/ T \/ ... \/ R == S \/ ... \/ T \/ ... \/ ...
 		// \/ R
 		assertAssociativeExpression("S ∩ S = S", S, Expression.BUNION, S, S);
@@ -527,12 +543,12 @@ public class AutoFormulaRewriterTests {
 		assertRelationalPredicate("", result, E, Expression.IN, cSet);
 
 		// S \ S == {}
-		assertBinaryExpression("S ∖ S == ∅", Lib.emptySet, S,
-				Expression.SETMINUS, S);
-		assertBinaryExpression("T ∖ T == ∅", Lib.emptySet, T,
-				Expression.SETMINUS, T);
-		assertBinaryExpression("R ∖ R == ∅", Lib.emptySet, R,
-				Expression.SETMINUS, R);
+		assertBinaryExpression("S ∖ S == ∅",
+				ff.makeEmptySet(S.getType(), null), S, Expression.SETMINUS, S);
+		assertBinaryExpression("T ∖ T == ∅",
+				ff.makeEmptySet(T.getType(), null), T, Expression.SETMINUS, T);
+		assertBinaryExpression("R ∖ R == ∅",
+				ff.makeEmptySet(R.getType(), null), R, Expression.SETMINUS, R);
 
 		// r~~ == r
 		Expression m1 = ff.makeBinaryExpression(Expression.MAPSTO, fTrue,
