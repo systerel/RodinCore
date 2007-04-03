@@ -66,7 +66,8 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * @see org.eventb.core.seqprover.IProverSequent#typeEnvironment()
 	 */
 	public ITypeEnvironment typeEnvironment() {
-		return this.typeEnvironment;
+		// TODO : Maybe avoid cloning by returning an immutable version of the type environemnt
+		return this.typeEnvironment.clone();
 	}
 		
 	/* (non-Javadoc)
@@ -417,21 +418,41 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * @see org.eventb.core.seqprover.IProverSequent#hypIterable()
 	 */
 	public Iterable<Predicate> hypIterable() {
-		return new Iterable<Predicate>(){
-
-			public Iterator<Predicate> iterator() {
-				return new CompositeIterator<Predicate>(localHypotheses.iterator(),globalHypotheses.iterator());	
-			};
-			
-		};
+		return iterable(new CompositeIterator<Predicate>(
+				globalHypotheses.iterator(),
+				localHypotheses.iterator()));
 	}
 
 
+	/**
+	 * Given a Predicate iterator, this class returns an instance of its iterable class
+	 * so that it can be used in a <code>for</code> loop.
+	 * <p>
+	 * This is a convenience method.
+	 * </p>
+	 * 
+	 * @param iterator
+	 * 			The given Predicate iterator
+	 * @return
+	 * 			The iterable Predicate class that can be used in a <code>for</code>
+	 * 			loop
+	 */
+	private Iterable<Predicate> iterable(final Iterator<Predicate> iterator){
+		return new Iterable<Predicate>(){
+
+			public Iterator<Predicate> iterator() {
+				return iterator;
+			}
+		};
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.seqprover.IProverSequent#hiddenHypIterable()
 	 */
 	public Iterable<Predicate> hiddenHypIterable() {
-		return hiddenHypotheses;
+		return iterable(new ImmutableIterator<Predicate>(hiddenHypotheses));
+		// Safer compared to:
+		// return hiddenHypotheses;
 	}
 
 
@@ -439,7 +460,9 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * @see org.eventb.core.seqprover.IProverSequent#selectedHypIterable()
 	 */
 	public Iterable<Predicate> selectedHypIterable() {
-		return selectedHypotheses;
+		return iterable(new ImmutableIterator<Predicate>(selectedHypotheses));
+		// Safer compared to:
+		// return selectedHypotheses;
 	}
 
 	/* (non-Javadoc)
@@ -460,26 +483,18 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * @see org.eventb.core.seqprover.IProverSequent#visibleHypIterable()
 	 */
 	public Iterable<Predicate> visibleHypIterable() {
-		return new Iterable<Predicate>(){
+		return iterable(new DifferenceIterator<Predicate>(
+				new CompositeIterator<Predicate>(
+						globalHypotheses.iterator(),localHypotheses.iterator()),
+				hiddenHypotheses));
 
-			public Iterator<Predicate> iterator() {
-				return new DifferenceIterator<Predicate>(
-						new CompositeIterator<Predicate>(
-								localHypotheses.iterator(),globalHypotheses.iterator()),
-						hiddenHypotheses);	
-			};
-		};
 	}
 		
 	public Iterable<Predicate> visibleMinusSelectedIterable() {
-		return new Iterable<Predicate>(){
-
-			public Iterator<Predicate> iterator() {
-				return new DifferenceIterator<Predicate>(
-						visibleHypIterable().iterator(),
-						selectedHypotheses);
-			};
-		};
+		return iterable(new DifferenceIterator<Predicate>(
+				visibleHypIterable().iterator(),
+				selectedHypotheses)
+				);
 	}
 	
 }
@@ -587,4 +602,41 @@ class DifferenceIterator<T> implements Iterator<T>{
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}	
+}
+
+/**
+ * An implementation for an iterator that provides an immutable version of a 
+ * given iterator. 
+ * <p>
+ * Removal of elements is unsupported for this iterator.
+ * </p>
+ * 
+ * @author Farhad Mehta
+ *
+ * @param <T> 
+ * 		The base type for the elements returnded by the iterator.
+ */
+class ImmutableIterator<T> implements Iterator<T>{
+
+	private Iterator<T> iterator;	
+	
+	public ImmutableIterator(Iterator<T> iterator) {
+		this.iterator = iterator;
+	}
+	
+	public ImmutableIterator(Iterable<T> iterable) {
+		this.iterator = iterable.iterator();
+	}
+		
+	public boolean hasNext() {
+		return iterator.hasNext();
+	}
+
+	public T next() {
+		return iterator.next();
+	}
+
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}		
 }
