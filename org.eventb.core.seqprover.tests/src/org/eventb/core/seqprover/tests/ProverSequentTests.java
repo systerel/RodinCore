@@ -138,18 +138,19 @@ public class ProverSequentTests extends TestCase{
 	}
 	
 	/**
-	 * Tests for selected hypotheses order
+	 * Tests for hypotheses order
 	 */
 	@Test
 	public void testSelectedHypOrder(){
 		IProverSequent seq;
 		IProverSequent newSeq;
 
+		final Predicate p0 = TestLib.genPred("0=0");
 		final Predicate p1 = TestLib.genPred("1=1");
 		final Predicate p2 = TestLib.genPred("2=2");
 		final List<Predicate> ps = Arrays.asList(TestLib.genPred("3=3"),TestLib.genPred("4=4"));
 
-		seq = TestLib.genSeq(" ⊥ |- ⊥ ");
+		seq = TestLib.genSeq(" ⊥ ;; 0=0 |- ⊥ ");
 		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(p1), null);
 		// The next line should not change the order
 		newSeq = ((IInternalProverSequent)newSeq).modify(null, Collections.singleton(False), null);
@@ -157,29 +158,81 @@ public class ProverSequentTests extends TestCase{
 		newSeq = ((IInternalProverSequent)newSeq).modify(null, Collections.singleton(p2), null);
 		newSeq = ((IInternalProverSequent)newSeq).modify(null, ps , null);
 		
-		Predicate[] expectedOrder1 = {False,p1,True,p2,ps.get(0),ps.get(1)};
+		// Test order of selected hypotheses
+		testIterable(new Predicate[]{False,p0,p1,True,p2,ps.get(0),ps.get(1)}, newSeq.selectedHypIterable());
 		
-		int i = 0;
-		for (Predicate shyp : newSeq.selectedHypIterable())
-		  {
-			assertTrue(shyp.equals(expectedOrder1[i]));
-			i++;
-		  }
+		// Test order of all hypotheses
+		testIterable(new Predicate[]{False,p0,p1,True,p2,ps.get(0),ps.get(1)}, newSeq.hypIterable());
 		
-		// Deselecting the first hypothesis and selecting it again puts it at the end of the list
-		// and otherwise does not damage the order.
-		newSeq = ((IInternalProverSequent)newSeq).deselectHypotheses(Collections.singleton(False));
-		newSeq = ((IInternalProverSequent)newSeq).selectHypotheses(Collections.singleton(False));
+		// Hide two hypotheses	
+		newSeq = ((IInternalProverSequent)newSeq).hideHypotheses(Collections.singleton(True));
+		newSeq = ((IInternalProverSequent)newSeq).hideHypotheses(Collections.singleton(False));
 		
-		Predicate[] expectedOrder2 = {p1,True,p2,ps.get(0),ps.get(1),False};
+		// Order of all hypotheses remains unchanged
+		testIterable(new Predicate[]{False,p0,p1,True,p2,ps.get(0),ps.get(1)}, newSeq.hypIterable());
 		
-		i = 0;
-		for (Predicate shyp : newSeq.selectedHypIterable())
-		  {
-			assertTrue(shyp.equals(expectedOrder2[i]));
-			i++;
-		  }
+		// Test Order of hidden hypotheses
+		testIterable(new Predicate[]{True,False}, newSeq.hiddenHypIterable());
+
+		// Test order of selected hypotheses
+		testIterable(new Predicate[]{p0,p1,p2,ps.get(0),ps.get(1)}, newSeq.selectedHypIterable());
+
+		// Test Order of visible hypotheses
+		testIterable(new Predicate[]{p0,p1,p2,ps.get(0),ps.get(1)}, newSeq.visibleHypIterable());
+
+		// Select a hidden hypotheses.
+		newSeq = ((IInternalProverSequent)newSeq).selectHypotheses(Collections.singleton(True));		
+
+		// Order of all hypotheses remains unchanged
+		testIterable(new Predicate[]{False,p0,p1,True,p2,ps.get(0),ps.get(1)}, newSeq.hypIterable());
+		
+		// Test Order of hidden hypotheses
+		testIterable(new Predicate[]{False}, newSeq.hiddenHypIterable());
+
+		// Test order of selected hypotheses
+		testIterable(new Predicate[]{p0,p1,p2,ps.get(0),ps.get(1),True}, newSeq.selectedHypIterable());
+
+		// Test Order of visible hypotheses
+		testIterable(new Predicate[]{p0,p1,True,p2,ps.get(0),ps.get(1)}, newSeq.visibleHypIterable());
+		
+		// Hide a selected hypothesis.
+		newSeq = ((IInternalProverSequent)newSeq).hideHypotheses(Collections.singleton(ps.get(1)));		
+
+		// Order of all hypotheses remains unchanged
+		testIterable(new Predicate[]{False,p0,p1,True,p2,ps.get(0),ps.get(1)}, newSeq.hypIterable());
+		
+		// Test Order of hidden hypotheses
+		testIterable(new Predicate[]{False,ps.get(1)}, newSeq.hiddenHypIterable());
+
+		// Test order of selected hypotheses
+		testIterable(new Predicate[]{p0,p1,p2,ps.get(0),True}, newSeq.selectedHypIterable());
+
+		// Test Order of visible hypotheses
+		testIterable(new Predicate[]{p0,p1,True,p2,ps.get(0)}, newSeq.visibleHypIterable());
+		
 	}
+	
+
+	/**
+	 * Tests that the given iterable iterates over exactly the same elements
+	 * in the same order as expected
+	 * 
+	 * @param expected
+	 * 			Array containing the expected iteration order
+	 * @param iterable
+	 * 			The iterable to test
+	 */
+	private void testIterable(Predicate[] expected, Iterable<Predicate> iterable){
+		int i = 0;
+		for (Predicate hyp : iterable)
+		  {
+			assertTrue("Iterable has more elements than expected",i<expected.length);
+			assertTrue("Expected: "+expected[i]+" got: "+hyp,hyp.equals(expected[i]));
+			i++;
+		  }
+		assertEquals("Iterable has less elements than expected",i, expected.length);
+	}
+	
 	
 	/**
 	 * Tests for forward inference operations
@@ -194,7 +247,6 @@ public class ProverSequentTests extends TestCase{
 		FreeIdentifier[] freeIdent_x = new FreeIdentifier[] {freeIdent_x_int};
 		final Predicate pred2_x = TestLib.genPred("x=1");
 		Collection<Predicate> infHyps = Arrays.asList(pred2_x,True);
-		// IProofRule fwdInf = fwdInf(pred1, freeIdent_x, pred2);
 		
 		// unmodifying
 		// hyp absent
