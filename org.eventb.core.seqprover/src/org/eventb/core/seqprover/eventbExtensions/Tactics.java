@@ -73,10 +73,30 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclu
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 
+
+/**
+ * This class contains static methods that wrap Event-B reasoner extensions into
+ * tactics. In many cases, applicability methods are also incuded that implement a
+ * quick check to see if the tactic may be applicable in a particular situation.
+ * 
+ * 
+ * @author Farhad Mehta
+ * @author htson
+ * 
+ * TODO : complete comments.
+ */
 public class Tactics {
 
 	// Globally applicable tactics
 
+	/**
+	 * The review tactic.
+	 * 
+	 * @param reviewerConfidence
+	 * 			The reviewer confidence to use.
+	 * @return
+	 * 			The resulting tactic
+	 */
 	public static ITactic review(final int reviewerConfidence) {
 		return new ITactic() {
 
@@ -88,6 +108,16 @@ public class Tactics {
 		};
 	}
 
+	/**
+	 * The add lemma tactic.
+	 * 
+	 * Introduces a lemma (and its well definedness condition) into a proof.
+	 * 
+	 * @param lemma
+	 * 		The lemma to introduce as a String.
+	 * @return
+	 * 		The resulting lemma tactic.
+	 */
 	public static ITactic lemma(final String lemma) {
 
 		return new ITactic() {
@@ -101,6 +131,15 @@ public class Tactics {
 		};
 	}
 
+	/**
+	 * The normalize tactic.
+	 * 
+	 * This is a combination of applying some simple tactics (conjI,allI,impI,hyp...)
+	 * repeatedly in order to simplify the structure of a subgoal.
+	 * 
+	 * @return
+	 * 		The normalize tactic.
+	 */
 	public static ITactic norm() {
 		ITactic Ti = repeat(compose(conjI(), allI(), impI()));
 		ITactic T = repeat(compose(hyp(), trivialGoalRewrite(), tautology(),
@@ -108,11 +147,16 @@ public class Tactics {
 		return repeat(onAllPending(T));
 	}
 
-	public static ITactic doCase1(String trueCase, ITypeEnvironment typeEnv) {
-		return BasicTactics.reasonerTac(new DoCase(), new SinglePredInput(
-				trueCase, typeEnv));
-	}
-
+	/**
+	 * The do case tactic.
+	 * 
+	 * Introduces a case distinction on a predicate into a proof.
+	 * 
+	 * @param trueCase
+	 * 		The true case of the case distinction as a String.
+	 * @return
+	 * 		The resulting do case tactic.
+	 */
 	public static ITactic doCase(final String trueCase) {
 
 		return new ITactic() {
@@ -126,6 +170,15 @@ public class Tactics {
 		};
 	}
 
+	/**
+	 * The lasoo tactic.
+	 * 
+	 * This tactic selects all hypotheses that have free identifiers in common
+	 * with the current goal and currently selected hypotheses.
+	 * 
+	 * @return
+	 * 		The lasoo tactic.
+	 */
 	public static ITactic lasoo() {
 
 		return new ITactic() {
@@ -155,13 +208,17 @@ public class Tactics {
 
 	// Tactics applicable on the goal
 
+	/**
+	 * The contradict goal tactic.
+	 * 
+	 * 
+	 * 
+	 * @return
+	 * 		The contradict goal tactic.
+	 */
 	public static ITactic contradictGoal() {
 		return BasicTactics.reasonerTac(new Contr(), new Contr.Input(null));
 	}
-
-	// public static boolean contradictGoal_applicable(Predicate goal){
-	// return (! Lib.isFalse(goal));
-	// }
 
 	public static boolean contradictGoal_applicable(IProofTreeNode node) {
 		Predicate goal = node.getSequent().goal();
@@ -285,7 +342,6 @@ public class Tactics {
 		};
 	}
 
-	// TODO : change order of input in one of the two places
 	public static ITactic allDThenImpE(final Predicate univHyp,
 			final String... instantiations) {
 		final Predicate pred = univHyp;
@@ -448,21 +504,11 @@ public class Tactics {
 		return BasicTactics.prune();
 	}
 
-	// public static ITactic mngHyp(ActionType type, Set<Predicate> hypotheses)
-	// {
-	// return BasicTactics.reasonerTac(
-	// new MngHyp(),
-	// new MngHyp.Input(type, hypotheses));
-	// }
-
 	public static ITactic mngHyp(IHypAction hypAction) {
 		return BasicTactics.reasonerTac(new MngHyp(), new MngHyp.Input(
 				hypAction));
 	}
 
-	// public static ITactic mngHyp(ActionType type, Predicate hypothesis){
-	// return mngHyp(type, Collections.singleton(hypothesis));
-	// }
 	private static ITactic cleanupTac = compose(contradiction(), tautology(),
 			hyp(), impI());
 
