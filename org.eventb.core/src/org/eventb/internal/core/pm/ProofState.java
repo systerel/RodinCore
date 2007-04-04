@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
@@ -116,7 +115,9 @@ public class ProofState implements IProofState {
 					proofSkeleton = psWrapper.getProofSkeleton(status, monitor);
 					if (proofSkeleton != null) {
 						// ProofBuilder.rebuild(pt.getRoot(), proofSkeleton);
-						BasicTactics.rebuildTac(proofSkeleton).apply(pt.getRoot(), new ProofMonitor(new NullProgressMonitor()));
+						BasicTactics.rebuildTac(proofSkeleton).apply(
+								pt.getRoot(),
+								new ProofMonitor(monitor));
 					}
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
