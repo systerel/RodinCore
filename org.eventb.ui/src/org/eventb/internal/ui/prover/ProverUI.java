@@ -12,12 +12,15 @@
 
 package org.eventb.internal.ui.prover;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -40,6 +43,7 @@ import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.internal.ui.proofcontrol.ProofControlPage;
@@ -84,7 +88,7 @@ public class ProverUI extends FormEditor implements
 	IUserSupport userSupport;
 
 	// The associated rodin file handle
-	private IPSFile prFile = null;
+	IPSFile prFile = null;
 
 	private boolean saving;
 
@@ -111,11 +115,19 @@ public class ProverUI extends FormEditor implements
 		if (input instanceof IFileEditorInput) {
 			IFile inputFile = ((IFileEditorInput) input).getFile();
 			prFile = (IPSFile) RodinCore.valueOf(inputFile);
-			try {
-				userSupport.setInput(prFile, new NullProgressMonitor());
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
+			UIUtils.runWithProgressDialog(this.getEditorSite().getShell(),
+					new IRunnableWithProgress() {
+
+						public void run(IProgressMonitor monitor)
+								throws InvocationTargetException,
+								InterruptedException {
+							try {
+								userSupport.setInput(prFile, monitor);
+							} catch (RodinDBException e) {
+								e.printStackTrace();
+							}
+						}
+			});
 			this.setPartName(prFile.getComponentName());
 		}
 		super.setInput(input);
@@ -369,15 +381,21 @@ public class ProverUI extends FormEditor implements
 		// if (userSupport.isOutOfDate()) {
 		// updateUserSupport();
 		// }
-		IProofState currentPO = userSupport.getCurrentPO();
+		final IProofState currentPO = userSupport.getCurrentPO();
 		if (currentPO != null && currentPO.isUninitialised())
-			try {
-				userSupport.setCurrentPO(currentPO.getPSStatus(),
-						new NullProgressMonitor());
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			UIUtils.runWithProgressDialog(this.getEditorSite().getShell(), new IRunnableWithProgress() {
+
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						userSupport.setCurrentPO(currentPO.getPSStatus(),
+								new NullProgressMonitor());
+					} catch (RodinDBException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+			});
 		syncObligationExplorer();
 		super.setFocus();
 		// UIUtils.debugProverUI("Focus");

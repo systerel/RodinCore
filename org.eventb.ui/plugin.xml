@@ -876,7 +876,7 @@
       <tactic
             icon="icons/full/ctool16/prev_prover.gif"
             id="org.eventb.ui.previous"
-            interrupt="false"
+            interrupt="true"
             name="%proofTactics.previous.name"
             priorty="5"
             proofCommand="org.eventb.internal.ui.prover.tactics.Previous"
@@ -886,7 +886,7 @@
       <tactic
             icon="icons/full/ctool16/next_prover.gif"
             id="org.eventb.ui.next"
-            interrupt="false"
+            interrupt="true"
             name="%proofTactics.next.name"
             priorty="6"
             proofCommand="org.eventb.internal.ui.prover.tactics.Next"

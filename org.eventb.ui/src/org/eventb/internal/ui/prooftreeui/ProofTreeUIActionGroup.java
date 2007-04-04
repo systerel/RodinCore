@@ -12,10 +12,13 @@
 
 package org.eventb.internal.ui.prooftreeui;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -29,8 +32,11 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -116,15 +122,11 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 							&& ssel.getFirstElement() instanceof IProofTreeNode) {
 
 						if (ProofTreeUI.buffer instanceof IProofSkeleton) {
-							IProofSkeleton copyNode = (IProofSkeleton) ProofTreeUI.buffer;
-							
-							try {
-								proofTreeUI.getUserSupport().applyTactic(
-										BasicTactics.rebuildTac(copyNode), new NullProgressMonitor());
-							} catch (RodinDBException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+							final IProofSkeleton copyNode = (IProofSkeleton) ProofTreeUI.buffer;
+							ITactic pasteTactic = BasicTactics.rebuildTac(copyNode);
+							ProverUIUtils.applyTacticWithProgress(proofTreeUI
+									.getControl().getShell(), proofTreeUI
+									.getUserSupport(), pasteTactic);
 							if (ProofTreeUIUtils.DEBUG)
 								ProofTreeUIUtils.debug("Paste: " + copyNode);
 						}
@@ -160,12 +162,23 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 		nextPOAction = new Action() {
 			@Override
 			public void run() {
-				try {
-					ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport()
-							.nextUndischargedPO(false, new NullProgressMonitor());
-				} catch (RodinDBException e) {
-					e.printStackTrace();
-				}
+				UIUtils.runWithProgressDialog(
+						ProofTreeUIActionGroup.this.proofTreeUI.getControl()
+								.getShell(), new IRunnableWithProgress() {
+
+							public void run(IProgressMonitor monitor)
+									throws InvocationTargetException,
+									InterruptedException {
+
+								try {
+									ProofTreeUIActionGroup.this.proofTreeUI
+											.getUserSupport()
+											.nextUndischargedPO(false, monitor);
+								} catch (RodinDBException e) {
+									e.printStackTrace();
+								}
+							}
+				});
 			}
 		};
 		nextPOAction.setText("Next PO");
@@ -177,12 +190,23 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 		prevPOAction = new Action() {
 			@Override
 			public void run() {
-				try {
-					ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport()
-							.prevUndischargedPO(false, new NullProgressMonitor());
-				} catch (RodinDBException e) {
-					e.printStackTrace();
-				}
+				UIUtils.runWithProgressDialog(
+						ProofTreeUIActionGroup.this.proofTreeUI.getControl()
+								.getShell(), new IRunnableWithProgress() {
+
+							public void run(IProgressMonitor monitor)
+									throws InvocationTargetException,
+									InterruptedException {
+
+								try {
+									ProofTreeUIActionGroup.this.proofTreeUI
+											.getUserSupport()
+											.prevUndischargedPO(false, monitor);
+								} catch (RodinDBException e) {
+									e.printStackTrace();
+								}
+							}
+				});
 			}
 		};
 		prevPOAction.setText("Previous PO");

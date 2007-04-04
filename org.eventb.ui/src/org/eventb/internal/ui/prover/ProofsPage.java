@@ -12,13 +12,16 @@
 
 package org.eventb.internal.ui.prover;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -48,6 +51,7 @@ import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.RodinDBException;
@@ -336,20 +340,33 @@ public class ProofsPage extends FormPage implements
 										.getActivePage();
 								if (activePage.isPartVisible(ProofsPage.this
 										.getEditor())) {
-									try {
-										MessageDialog
-												.openInformation(
-														ProofsPage.this
-																.getSite()
-																.getShell(),
-														"Out of Date",
-														"The Proof Obligation is deleted.");
-										userSupport.nextUndischargedPO(true,
-												new NullProgressMonitor());
-									} catch (RodinDBException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
+									MessageDialog.openInformation(
+											ProofsPage.this.getSite()
+													.getShell(), "Out of Date",
+											"The Proof Obligation is deleted.");
+									UIUtils
+											.runWithProgressDialog(
+											ProofsPage.this.getPartControl()
+													.getShell(),
+											new IRunnableWithProgress() {
+
+												public void run(
+														IProgressMonitor monitor)
+														throws InvocationTargetException,
+														InterruptedException {
+													try {
+														userSupport
+																.nextUndischargedPO(
+																		true,
+																		monitor);
+													} catch (RodinDBException e) {
+														// TODO Auto-generated
+														// catch block
+														e.printStackTrace();
+													}
+												}
+
+											});
 								} else {
 									try {
 										userSupport.setCurrentPO(null,
