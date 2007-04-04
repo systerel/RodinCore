@@ -26,7 +26,7 @@ public class ProverUIPreferencePage
 	public ProverUIPreferencePage() {
 		super(GRID);
 		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
-		setDescription("Preference for the Event-B Prover User Interface");
+		setDescription("Preference for the Event-B Proving User Interface");
 	}
 	
 	/**
@@ -44,6 +44,12 @@ public class ProverUIPreferencePage
 				PreferenceConstants.P_PROOFPAGE_AUTOLAYOUT,
 				"&Automatically layout in Proofs Page",
 				getFieldEditorParent()));
+
+		addField(
+				new BooleanFieldEditor(
+					PreferenceConstants.P_EXPERTMODE,
+					"&Expert mode for proving",
+					getFieldEditorParent()));
 
 //		addField(new RadioGroupFieldEditor(
 //				PreferenceConstants.P_CHOICE,

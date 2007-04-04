@@ -26,6 +26,9 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -79,6 +82,7 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
@@ -96,7 +100,7 @@ import org.rodinp.core.RodinDBException;
  *         This class is an implementation of a Proof Control 'page'.
  */
 public class ProofControlPage extends Page implements IProofControlPage,
-		IUserSupportManagerChangedListener {
+		IUserSupportManagerChangedListener, IPropertyChangeListener {
 
 	boolean share;
 
@@ -133,6 +137,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		this.editor = editor;
 		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
 				this);
+		IPreferenceStore store = EventBUIPlugin.getDefault()
+				.getPreferenceStore();
+		store.addPropertyChangeListener(this);
 	}
 
 	/**
@@ -167,6 +174,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		// Deregister with the UserSupport
 		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
 				this);
+		IPreferenceStore store = EventBUIPlugin.getDefault()
+				.getPreferenceStore();
+		store.removePropertyChangeListener(this);
 		formTextInformation.dispose();
 		textInput.dispose();
 		history.dispose();
@@ -796,23 +806,30 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * Creat the actions used in this page.
 	 */
 	private void makeActions() {
+		final IPreferenceStore store = EventBUIPlugin.getDefault()
+				.getPreferenceStore();
+
 		expertMode = new Action("Expert mode switch", SWT.CHECK) {
 			@Override
 			public void run() {
+				boolean checked = expertMode.isChecked();
+				store.setValue(PreferenceConstants.P_EXPERTMODE,
+						checked);
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 						.getUserSupportManager();
 				IProvingMode provingMode = usManager.getProvingMode();
-				if (expertMode.isChecked())
+				if (checked)
 					provingMode.setExpertMode(true);
 				else
 					provingMode.setExpertMode(false);
 			}
 		};
+		expertMode.setChecked(store
+				.getBoolean(PreferenceConstants.P_EXPERTMODE));
 		expertMode.setToolTipText("Expert mode switch");
 
 		expertMode.setImageDescriptor(EventBImage
 				.getImageDescriptor(IEventBSharedImages.IMG_EXPERT_MODE_PATH));
-
 	}
 
 	/**
@@ -878,7 +895,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 		if (affectedUserSupport == null)
 			return;
-		
+
 		display.syncExec(new Runnable() {
 			public void run() {
 
@@ -921,7 +938,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	}
 
 	void setInformation(final IUserSupport userSupport) {
-		Object [] information = userSupport.getInformation();
+		Object[] information = userSupport.getInformation();
 
 		if (ProofControlUtils.DEBUG) {
 			ProofControlUtils.debug("********** MESSAGE *********");
@@ -938,4 +955,18 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			setFormTextInformation("");
 	}
 
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(
+				PreferenceConstants.P_EXPERTMODE)) {
+			Object newValue = event.getNewValue();
+			assert newValue instanceof Boolean || newValue instanceof String;
+			if (newValue instanceof String)
+				expertMode.setChecked(((String) newValue)
+						.compareToIgnoreCase("true") == 0);
+			else {
+				expertMode.setChecked((Boolean) newValue);
+			}
+		}
+
+	}
 }
