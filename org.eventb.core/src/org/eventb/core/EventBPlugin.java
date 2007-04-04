@@ -13,6 +13,7 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
 import org.eventb.core.sc.SCModule;
 import org.eventb.internal.core.pm.UserSupportManager;
+import org.eventb.internal.core.pm.UserSupportUtils;
 import org.eventb.internal.core.pog.ProofObligationGenerator;
 import org.eventb.internal.core.pog.modules.UtilityModule;
 import org.eventb.internal.core.pom.AutoPOM;
@@ -47,6 +48,7 @@ public class EventBPlugin extends Plugin {
 	private static final String POG_TRACE_MODULES = PLUGIN_ID + "/debug/pog/modules"; //$NON-NLS-1$
 	private static final String POG_TRACE_TRIVIAL = PLUGIN_ID + "/debug/pog/trivial"; //$NON-NLS-1$
 	private static final String POM_TRACE = PLUGIN_ID + "/debug/pom"; //$NON-NLS-1$
+	private static final String PM_TRACE = PLUGIN_ID + "/debug/pm"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the name of the component whose data are stored in the file with the given name.
@@ -233,6 +235,9 @@ public class EventBPlugin extends Plugin {
 			option = Platform.getDebugOption(POM_TRACE);
 			if (option != null)
 				AutoPOM.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(PM_TRACE);
+			if (option != null)
+				UserSupportUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 
