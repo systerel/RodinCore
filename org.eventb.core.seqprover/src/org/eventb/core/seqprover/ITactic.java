@@ -27,7 +27,7 @@ public interface ITactic {
 	 * 
 	 * <p>
 	 * The convention is that a tactic applied at a particular node is allowed to
-	 * modify only the subtree rooted at that node.
+	 * modify only the subtree rooted at that node, but this is not checked.
 	 * </p>
 	 * 
 	 * @param ptNode
@@ -45,7 +45,7 @@ public interface ITactic {
 	 * failure can be read from the <code>toString()</code> method from the object
 	 * returned. In the near future the return type for the tactic will be refined
 	 * to return more information useful for composing tactics. Implementors should
-	 * therefore rely on the return type at this time.
+	 * therefore not rely on the return type at this time.
 	 * </p>
 	 * 
 	 * @see IProofMonitor
