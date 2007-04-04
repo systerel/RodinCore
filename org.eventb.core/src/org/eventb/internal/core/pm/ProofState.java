@@ -341,7 +341,8 @@ public class ProofState implements IProofState {
 	 * @see org.eventb.core.pm.IProofState#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void setProofTree(IProgressMonitor monitor) throws CoreException {
-		UserSupportUtils.debug("Saving: " + status.getElementName());
+		if (UserSupportUtils.DEBUG)
+			UserSupportUtils.debug("Saving: " + status.getElementName());
 
 		userSupport.getPSWrapper().setProofTree(status, pt, monitor);
 	}
@@ -551,8 +552,9 @@ public class ProofState implements IProofState {
 	 * @see org.eventb.core.pm.IUserSupport#proofTreeChanged(org.eventb.core.seqprover.IProofTreeDelta)
 	 */
 	public void proofTreeChanged(IProofTreeDelta proofTreeDelta) {
-		UserSupportUtils.debug("UserSupport - Proof Tree Changed: "
-				+ proofTreeDelta);
+		if (UserSupportUtils.DEBUG)
+			UserSupportUtils.debug("UserSupport - Proof Tree Changed: "
+					+ proofTreeDelta);
 		deltaProcessor.proofTreeChanged(userSupport, this, proofTreeDelta);
 	}
 

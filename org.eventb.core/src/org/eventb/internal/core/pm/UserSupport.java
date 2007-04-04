@@ -27,6 +27,7 @@ import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -268,7 +269,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		manager.run(new Runnable() {
 
 			public void run() {
-				UserSupportUtils.debug("New Proof Sequent: " + ps);
+				if (UserSupportUtils.DEBUG)
+					UserSupportUtils.debug("New Proof Sequent: " + ps);
 				if (ps == null) {
 					currentPS = null;
 				} else {
@@ -460,8 +462,10 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 			return;
 		}
 		for (IPSStatus prSequent : statuses) {
-			UserSupportUtils.debug("Trying: " + prSequent.getElementName());
-			UserSupportUtils.debug("Index: " + index);
+			if (UserSupportUtils.DEBUG) {
+				UserSupportUtils.debug("Trying: " + prSequent.getElementName());
+				UserSupportUtils.debug("Index: " + index);
+			}
 			if (proofState != null) {
 				if (prSequent.equals(proofState.getPSStatus())) {
 					index++;
@@ -470,7 +474,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 				}
 			}
 			IProofState state = new ProofState(this, prSequent);
-			UserSupportUtils.debug("Added at position " + index);
+			if (UserSupportUtils.DEBUG)
+				UserSupportUtils.debug("Added at position " + index);
 			proofStates.add(index++, state);
 		}
 
@@ -516,23 +521,30 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 			return;
 		}
 
+		// ignore other files
+		if (element instanceof IRodinFile) {
+			return;
+		}
+		
+		// IPSStatus has been changed
 		if (element instanceof IPSStatus) {
 			int kind = elementChangedDelta.getKind();
 
 			if (kind == IRodinElementDelta.ADDED) {
-				UserSupportUtils.debug("IPSStatus changed: "
-						+ element.getElementName() + " is added");
+				if (UserSupportUtils.DEBUG)
+					UserSupportUtils.debug("IPSStatus changed: "
+							+ element.getElementName() + " is added");
 
 				reload = true;
 			} else if (kind == IRodinElementDelta.REMOVED) {
-				UserSupportUtils.debug("IPSStatus changed: "
-						+ element.getElementName() + " is removed");
+				if (UserSupportUtils.DEBUG)
+					UserSupportUtils.debug("IPSStatus changed: "
+							+ element.getElementName() + " is removed");
 				deleted.add((IPSStatus) element);
 				reload = true;
 			} else if (kind == IRodinElementDelta.CHANGED) {
 
 				int flag = elementChangedDelta.getFlags();
-				UserSupportUtils.debug("Flag: " + flag);
 
 				// Trying to reuse only if the children of the PRSequent has
 				// changed or if the prsequent has been replaced.
@@ -541,9 +553,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 					IPSStatus prSequent = (IPSStatus) element;
 
 					IProofState state = getProofState(prSequent);
-
-					UserSupportUtils.debug("Testing: "
-							+ state.getPSStatus().getElementName());
 
 					if (state.isUninitialised())
 						return;
@@ -695,7 +704,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		final IProgressMonitor monitor = new NullProgressMonitor();
 		reload = false;
 		try {
-			processDelta(event.getDelta(), monitor);
+			IRodinElementDelta delta = event.getDelta();
+			System.out.println("Delta: " + delta);
+			processDelta(delta, monitor);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
@@ -705,18 +716,23 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 				public void run() {
 					if (reload) {
-						debugProofState();
+						if (UserSupportUtils.DEBUG)
+							debugProofState();
 						reloadPRSequent();
-						UserSupportUtils.debug("****** After ******");
-						debugProofState();
+						if (UserSupportUtils.DEBUG) {
+							UserSupportUtils.debug("After");
+							debugProofState();
+						}
 					}
 
 					if (currentPS != null) {
-						UserSupportUtils.debug("CurrentPS: "
-								+ currentPS.getPSStatus().getElementName());
-						for (IPSStatus sequent : deleted) {
-							UserSupportUtils.debug("Deleted: "
-									+ sequent.getElementName());
+						if (UserSupportUtils.DEBUG) {
+							UserSupportUtils.debug("CurrentPS: "
+									+ currentPS.getPSStatus().getElementName());
+							for (IPSStatus sequent : deleted) {
+								UserSupportUtils.debug("Deleted: "
+										+ sequent.getElementName());
+							}
 						}
 						if (deleted.contains(currentPS.getPSStatus())) {
 							// ProofStateDelta newDelta = new ProofStateDelta(
