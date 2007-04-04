@@ -12,18 +12,21 @@
 
 package org.eventb.internal.ui;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
@@ -102,7 +105,7 @@ public class UIUtils {
 	 * @param obj
 	 *            the object (e.g. a proof obligation or a Rodin file)
 	 */
-	public static void linkToProverUI(Object obj) {
+	public static void linkToProverUI(final Object obj) {
 		String editorId = ProverUI.EDITOR_ID;
 
 		IPSFile component = null;
@@ -133,10 +136,19 @@ public class UIUtils {
 			IEditorInput fileInput = new FileEditorInput(component
 					.getResource());
 
-			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
+			final ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
 					.openEditor(fileInput, editorId);
 			if (obj instanceof IPSStatus)
-				editor.setCurrentPO((IPSStatus) obj, new NullProgressMonitor());
+				UIUtils.runWithProgressDialog(editor.getSite().getShell(),
+						new IRunnableWithProgress() {
+
+							public void run(IProgressMonitor monitor)
+									throws InvocationTargetException,
+									InterruptedException {
+								editor.setCurrentPO((IPSStatus) obj, monitor);
+							}
+
+						});
 		} catch (PartInitException e) {
 			MessageDialog
 					.openError(null, null, "Error open the proving editor");
@@ -510,6 +522,26 @@ public class UIUtils {
 	public static QualifiedName getQualifiedName(
 			IInternalElementType type) {
 		return new QualifiedName(EventBUIPlugin.PLUGIN_ID, type.getId());
+	}
+
+	public static void runWithProgressDialog(Shell shell,
+			final IRunnableWithProgress op) {
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+		try {
+			dialog.run(true, true, op);
+		} catch (InterruptedException exception) {
+			if (UIUtils.DEBUG)
+				System.out.println("Interrupt");
+			return;
+		} catch (InvocationTargetException exception) {
+			final Throwable realException = exception.getTargetException();
+			if (UIUtils.DEBUG)
+				System.out.println("Interrupt");
+			realException.printStackTrace();
+			final String message = realException.getMessage();
+			MessageDialog.openError(shell, "Unexpected Error", message);
+			return;
+		}
 	}
 
 }
