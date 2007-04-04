@@ -3,9 +3,11 @@ package org.eventb.internal.core.pm;
 
 public class UserSupportUtils {
 	
-	private static final boolean DEBUG = false;
+	public static boolean DEBUG = false;
+	
+	private static final String DEBUG_PREFIX = "*** User Support ***";
 	
 	public static void debug(String message) {
-		if (DEBUG) System.out.println(message);
+		System.out.println(DEBUG_PREFIX + message);
 	}
 }
