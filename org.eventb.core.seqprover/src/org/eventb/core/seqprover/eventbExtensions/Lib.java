@@ -650,7 +650,11 @@ public final class Lib {
 	 * @param formula
 	 *            The formula to type check
 	 * @return
+	 * 
+	 * @deprecated use {@link #typeCheckClosed(Formula, ITypeEnvironment)} with an
+	 * empty type environment, or the AST methods directly instead.
 	 */
+	@Deprecated
 	public static ITypeEnvironment typeCheck(Formula formula) {
 		ITypeCheckResult tcr = formula.typeCheck(ff.makeTypeEnvironment());
 		if (!tcr.isSuccess())

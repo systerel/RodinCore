@@ -1,5 +1,7 @@
 package org.eventb.core.seqprover;
 
+import org.eventb.core.seqprover.tactics.BasicTactics;
+
 
 /**
  * Common protocol for a proof tree node.
@@ -255,7 +257,12 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * 
 	 * @see ITactic
 	 * 
-	 * @return <code>true</code> iff the operation suceeded. 
+	 * @return <code>true</code> iff the operation suceeded.
+	 * 
+	 * @deprecated
+	 * Instead first extract the proof skeleton using {@link #copyProofSkeleton()} and
+	 * then use one of the proof reconstruction tactics in {@link BasicTactics}.
+	 *  
 	 */
 	@Deprecated
 	boolean graft(IProofTree tree);

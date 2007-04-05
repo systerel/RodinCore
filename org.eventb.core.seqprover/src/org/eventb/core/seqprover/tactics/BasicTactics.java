@@ -326,14 +326,29 @@ public class BasicTactics {
 	}
 	
 	
+	/**
+	 * Tactic that takes a reference to a (source) proof tree node and tries to 
+	 * reuse the proof from that node for the (target) node the tactic is applied to.
+	 * 
+	 * @param toPaste
+	 * 		A reference to the (source) node to use.
+	 * @return
+	 * 		The resulting tactic
+	 * 
+	 * @deprecated
+	 * A problem with using references to (source) proof nodes for reuse is that the
+	 * proof trees rooted at them may change over time. This is not something one expects
+	 * with the copy/paste procedure. Instead use {@link #reuseTac(IProofSkeleton)} after 
+	 * first extracting a copy of the (source) proof tree node using the <code>copyProofSkeleton()</code>
+	 * method in {@link IProofTreeNode}.
+	 * 
+	 */
 	@Deprecated
 	public static ITactic pasteTac(IProofTreeNode toPaste){
 		return new PasteTac(toPaste);
 	}	
 	
 
-		
-	@Deprecated
 	private static class PasteTac implements ITactic {
 		
 		private final IProofTreeNode toPaste;
