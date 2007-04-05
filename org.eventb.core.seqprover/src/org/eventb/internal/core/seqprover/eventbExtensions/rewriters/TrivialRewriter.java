@@ -70,8 +70,9 @@ public class TrivialRewriter implements Rewriter{
 			BoundIdentifier boundIdent = ff.makeBoundIdentifier(0,null,type);
 			Predicate pred = ff.makeRelationalPredicate(RelationalPredicate.IN,boundIdent,nonEmptySet,null);
 			Predicate exPred = makeExQuant(boundIdentDecls,pred);
-			typeCheck(exPred);
-			assert exPred.isTypeChecked();
+			// next lines commented out since type synthesis is now implemented
+			// typeCheck(exPred);
+			// assert exPred.isTypeChecked();
 			return exPred;
 		}
 		return null;
