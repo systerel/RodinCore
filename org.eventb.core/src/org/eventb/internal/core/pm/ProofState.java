@@ -382,9 +382,9 @@ public class ProofState implements IProofState {
 	 * 
 	 * Not currently used : Used before for supporting copy&paste.
 	 * This is now supported using proofSkeletons & rebuildTac()
-	 * TODO : See if this method is really needed.
+	 * TODO : See if this method is really needed, and if so, remove the call to
+	 * the deprecated method.
 	 */
-	@Deprecated
 	public void proofReuse(IProofMonitor monitor) throws RodinDBException {
 		// if (isSavingOrUninitialised()) return false;
 		// if (pt == null) return false; // No proof tree, no reusable.
