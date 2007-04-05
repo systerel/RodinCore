@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -17,63 +15,78 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
+/**
+ * This is a collection of static methods for conveniently constructing objects used for
+ * testing using their string counterparts. 
+ * 
+ * @author Farhad Mehta
+ *
+ * TODO : At the moment there are two copies of this file (in org.eventb.core.tests(.pom), and
+ *  org.eventb.core.seqprover.tests). Find a way to use ony one copy.
+ *
+ */
 public class TestLib {
 
 	public final static FormulaFactory ff = Lib.ff;
 	
-	public static IProverSequent genSeq(String s){
-		String[] hypsStr = (s.split("[|]-")[0]).split(";;");
+	/**
+	 * Constructs a simple sequent (only with selected hypotheses and a goal) from
+	 * a string of the form "shyp1 ;; shyp2 ;; .. ;; shypn |- goal"
+	 * 
+	 * <p>
+	 * The type environment of the sequent should be inferrable from the predicates in
+	 * the order in which they appear (eg. "x+1=y ;; x=y |- x/=0" is fine, but
+	 * "x=y ;; x+1=y |- x/=0" is not since "x=y" cannot be typechecked alone)
+	 * </p>
+	 * 
+	 * This method is used to easily construct sequents for test cases.
+	 * 
+	 * @param sequentAsString
+	 * 			The sequent as a string
+	 * @return
+	 * 			The resulting sequent, or <code>null</code> in case the sequent 
+	 * 			could not be constructed due to a parsing or typechecking error.
+	 */
+	public static IProverSequent genSeq(String sequentAsString){
+		String[] hypsStr = (sequentAsString.split("[|]-")[0]).split(";;");
 		if ((hypsStr.length == 1) && (hypsStr[0].matches("^[ ]*$")))
 			hypsStr = new String[0];
 		
-		String goalStr = s.split("[|]-")[1];
+		String goalStr = sequentAsString.split("[|]-")[1];
 		
 		// Parsing
 		Predicate[] hyps = new Predicate[hypsStr.length];
-		Predicate goal = Lib.parsePredicate(goalStr);
 		for (int i=0;i<hypsStr.length;i++){
 			hyps[i] = Lib.parsePredicate(hypsStr[i]);
+			if (hyps[i] == null) return null;
 		}
+		Predicate goal = Lib.parsePredicate(goalStr);
+		if (goal == null) return null;
 		
 		// Type check
 		ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
+		ITypeCheckResult tcResult;
 		
 		for (int i=0;i<hyps.length;i++){
-			ITypeCheckResult tcResult =  hyps[i].typeCheck(typeEnvironment);
-			Assert.assertTrue(tcResult.isSuccess());
+			tcResult =  hyps[i].typeCheck(typeEnvironment);
+			if (! tcResult.isSuccess()) return null;
 			typeEnvironment.addAll(tcResult.getInferredEnvironment());
 		}
-		{
-			ITypeCheckResult tcResult =  goal.typeCheck(typeEnvironment);
-			Assert.assertTrue(tcResult.isSuccess());
-			typeEnvironment.addAll(tcResult.getInferredEnvironment());
-		}
-		
+
+		tcResult =  goal.typeCheck(typeEnvironment);
+		if (! tcResult.isSuccess()) return null;
+		typeEnvironment.addAll(tcResult.getInferredEnvironment());
+				
 		// constructing sequent
 		Set<Predicate> Hyps = new LinkedHashSet<Predicate>(Arrays.asList(hyps));
-
 		IProverSequent seq = ProverFactory.makeSequent(typeEnvironment,Hyps,Hyps,goal);
 		return seq;
 	}
 	
 	public static IProofTreeNode genProofTreeNode(String str){
 		return ProverFactory.makeProofTree(genSeq(str), null).getRoot();
-		// return (new ProofTree(genSeq(str))).getRoot();
 	}
-	
-	private static Predicate genHyp(String s){
-		Predicate hypPred = Lib.parsePredicate(s);
-		Lib.typeCheck(hypPred);
-		return hypPred;
-	}
-	
-	public static Set<Predicate> genPreds(String... strs){
-		Set<Predicate> hyps = new HashSet<Predicate>(strs.length);
-		for (String s : strs) 
-			hyps.add(genHyp(s));
-		return hyps;
-	}
-	
+		
 	public static ITypeEnvironment genTypeEnv(String... strs){
 		ITypeEnvironment typeEnv = Lib.makeTypeEnvironment();
 		assert strs.length % 2 == 0;
@@ -85,12 +98,39 @@ public class TestLib {
 		return typeEnv;
 	}
 	
+	/**
+	 * Generates a type checked predicate from a string.
+	 * 
+	 * The type environment must be completely inferrable from the given predicate.
+	 * (eg. "x=x" will not work since the type of x is unknown)
+	 * 
+	 * @param str
+	 * 		The string version of the predicate
+	 * @return
+	 * 		The type checked predicate, or <code>null</code> if there was a parsing
+	 * 		of type checking error. 
+	 */
 	public static Predicate genPred(String str){
 		Predicate result = Lib.parsePredicate(str);
-		Lib.typeCheck(result);
+		if (result == null) return null;
+		ITypeCheckResult tcResult =  result.typeCheck(ff.makeTypeEnvironment());
+		if (! tcResult.isSuccess()) return null;
 		return result;
 	}
 	
+	/**
+	 * A Set version of {@link #genPred(String)}
+	 * 
+	 * @param strs
+	 * @return
+	 */
+	public static Set<Predicate> genPreds(String... strs){
+		Set<Predicate> hyps = new HashSet<Predicate>(strs.length);
+		for (String s : strs) 
+			hyps.add(genPred(s));
+		return hyps;
+	}
+
 	
 	/**
 	 * Searches the set of hypotheses in the given sequent for the given
