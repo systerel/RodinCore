@@ -52,8 +52,8 @@ public interface IProofState extends IProofTreeChangedListener {
 
 	public abstract boolean equals(Object obj);
 
-	// Pre: Must be initalised and not currently saving.
-	@Deprecated
+	// Must be initalised and not currently saving.
+	// TODO: Check if this method is reallly needed.
 	public abstract void proofReuse(IProofMonitor monitor)
 			throws RodinDBException;
 
