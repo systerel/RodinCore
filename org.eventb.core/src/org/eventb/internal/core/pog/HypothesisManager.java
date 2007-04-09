@@ -144,8 +144,6 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 		
 		int previous = 0;
 		String previousName = getFirstHypothesisName();
-
-		int index = 0;
 		
 		// we start at index 1 because the root hypothesis set is created
 		// by the layer above this hypothesis manager.
@@ -156,14 +154,13 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 			if (hypothesisNames[i] == null)
 				continue;
 			else {
-				index = 
-					addPredicateSet(hypothesisNames[i], 
-							previous, previousName, index, i, monitor);
+				addPredicateSet(i, hypothesisNames[i], previous, previousName, monitor);
+				previous = i;
+				previousName = hypothesisNames[i];
 			}
 		}
 		
-		addPredicateSet(allHypName, 
-				previous, previousName, index, predicateTable.length, monitor);
+		addPredicateSet(predicateTable.length, allHypName, previous, previousName, monitor);
 	
 	}
 	
@@ -178,22 +175,20 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 		}
 	}
 
-	private int addPredicateSet(
-			String name, 
+	private void addPredicateSet(
+			int current, 
+			String currentName, 
 			int previous, 
 			String previousName, 
-			int index, 
-			int current, 
 			IProgressMonitor monitor) throws RodinDBException {
-		IPOPredicateSet set = createPredicateSet(name, previousName, monitor);
+		IPOPredicateSet set = createPredicateSet(currentName, previousName, monitor);
 		for (int k=previous; k<current; k++) {
-			IPOPredicate predicate = set.getPredicate(PRD_NAME_PREFIX + index++);
+			IPOPredicate predicate = set.getPredicate(PRD_NAME_PREFIX + previous++);
 			predicate.create(null, monitor);
 			predicate.setPredicateString(predicateTable[k].getPredicateString(), monitor);
 			predicate.setSource(
 					((ITraceableElement) predicateTable[k]).getSource(), monitor);
 		}
-		return index;
 	}
 
 	private IPOPredicateSet createPredicateSet(

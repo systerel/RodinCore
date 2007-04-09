@@ -49,6 +49,7 @@ public abstract class EventBTest extends BuilderTest {
 	public final Type intType = factory.makeIntegerType();
 	public final Type boolType = factory.makeBooleanType();
 	public final Type powIntType = factory.makePowerSetType(intType);
+	public final Type relIntType = factory.makePowerSetType(factory.makeProductType(intType, intType));
 
 	public EventBTest() {
 		super();
