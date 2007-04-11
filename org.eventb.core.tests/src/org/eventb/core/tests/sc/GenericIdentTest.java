@@ -80,6 +80,26 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
 	}
+	
+	/**
+	 * refering to identifiers with faulty declaration should fail
+	 */
+	public void testIdents_03() throws Exception {
+		E cmp = getGeneric().createElement("cmp");
+
+		getGeneric().addIdents(cmp, makeSList("V1", "V1"));
+		getGeneric().addNonTheorems(cmp, makeSList("I1"), makeSList("V1∈ℤ"));
+
+		getGeneric().save(cmp);
+		
+		runBuilder();
+		
+		SCE file = getGeneric().getSCElement(cmp);
+		
+		getGeneric().containsIdents(file);
+		
+		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+	}
 
 
 }

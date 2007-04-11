@@ -125,97 +125,98 @@ public abstract class BasicSCTest extends EventBTest {
 				IConvergenceElement.Convergence.CONVERGENT, getConvergence(event));
 	}
 
-	public Set<String> getIdentifierNameSet(ISCIdentifierElement[] elements) throws RodinDBException {
+	private Set<String> getIdentifierNameSet(ISCIdentifierElement[] elements) throws RodinDBException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCIdentifierElement element : elements)
-			names.add(element.getIdentifierString());
+			if (element != null)
+				names.add(element.getIdentifierString());
 		return names;
 	}
 
-	public Set<String> getRefinedNameSet(ISCRefinesEvent[] elements) throws RodinDBException {
+	private Set<String> getRefinedNameSet(ISCRefinesEvent[] elements) throws RodinDBException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCRefinesEvent element : elements)
 			names.add(element.getAbstractSCEvent().getLabel());
 		return names;
 	}
 
-	public Set<String> getSeenNameSet(ISCSeesContext[] elements) throws RodinDBException {
+	private Set<String> getSeenNameSet(ISCSeesContext[] elements) throws RodinDBException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCSeesContext element : elements)
 			names.add(element.getSeenSCContext().getComponentName());
 		return names;
 	}
 
-	public Set<String> getExtendedNameSet(ISCExtendsContext[] elements) throws RodinDBException {
+	private Set<String> getExtendedNameSet(ISCExtendsContext[] elements) throws RodinDBException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCExtendsContext element : elements)
 			names.add(element.getAbstractSCContext().getComponentName());
 		return names;
 	}
 
-	public Set<String> getContextNameSet(ISCContext[] elements) throws RodinDBException {
+	private Set<String> getContextNameSet(ISCContext[] elements) throws RodinDBException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCContext element : elements)
 			names.add(element.getElementName());
 		return names;
 	}
 
-	public Set<String> getLabelNameSet(ILabeledElement[] elements) throws RodinDBException {
+	private Set<String> getLabelNameSet(ILabeledElement[] elements) throws RodinDBException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ILabeledElement element : elements)
 			names.add(element.getLabel());
 		return names;
 	}
 
-	public Hashtable<String, String> getActionTable(ISCAction[] elements) throws RodinDBException {
+	private Hashtable<String, String> getActionTable(ISCAction[] elements) throws RodinDBException {
 		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
 		for (ISCAction action : elements)
 			table.put(action.getLabel(), action.getAssignmentString());
 		return table;
 	}
 
-	public Hashtable<String, String> getPredicateTable(ISCPredicateElement[] elements) throws RodinDBException {
+	private Hashtable<String, String> getPredicateTable(ISCPredicateElement[] elements) throws RodinDBException {
 		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
 		for (ISCPredicateElement predicate : elements)
 			table.put(((ILabeledElement) predicate).getLabel(), predicate.getPredicateString());
 		return table;
 	}
 
-	public Hashtable<String, String> getAssignmentTable(ISCAssignmentElement[] elements) throws RodinDBException {
+	private Hashtable<String, String> getAssignmentTable(ISCAssignmentElement[] elements) throws RodinDBException {
 		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
 		for (ISCAssignmentElement assignment : elements)
 			table.put(((ILabeledElement) assignment).getLabel(), assignment.getAssignmentString());
 		return table;
 	}
 
-	public Set<String> getSCPredicateSet(ISCPredicateElement[] elements) throws RodinDBException {
+	private Set<String> getSCPredicateSet(ISCPredicateElement[] elements) throws RodinDBException {
 		HashSet<String> predicates = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCPredicateElement element : elements)
 			predicates.add(element.getPredicateString());
 		return predicates;
 	}
 
-	public Expression expressionFromString(String expression) {
+	private Expression expressionFromString(String expression) {
 		Expression ee = factory.parseExpression(expression).getParsedExpression();
 		return ee;
 	}
 	
-	public Predicate predicateFromString(String predicate) {
+	private Predicate predicateFromString(String predicate) {
 		Predicate pp = factory.parsePredicate(predicate).getParsedPredicate();
 		return pp;
 	}
 	
-	public Assignment assignmentFromString(String assignment) {
+	private Assignment assignmentFromString(String assignment) {
 		Assignment aa = factory.parseAssignment(assignment).getParsedAssignment();
 		return aa;
 	}
 
-	public Type typeFromString(String type) {
+	private Type typeFromString(String type) {
 		Type tt = factory.parseType(type).getParsedType();
 		return tt;
 	}
 
-	public void containsPredicates(
+	private void containsPredicates(
 			String type, ITypeEnvironment environment, String[] labels, String[] strings, 
 			ISCPredicateElement[] predicateElements) throws RodinDBException {
 		assert labels.length == strings.length;
@@ -235,7 +236,7 @@ public abstract class BasicSCTest extends EventBTest {
 		}
 	}
 
-	public void containsAssignments(
+	private void containsAssignments(
 			String type, ITypeEnvironment environment, String[] labels, String[] strings, 
 			ISCAssignmentElement[] assignmentElements) throws RodinDBException {
 		assert labels.length == strings.length;
@@ -460,6 +461,20 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain " + name, nameSet.contains(name));
 	}
 
+	public void forbiddenVariables(ISCMachineFile file, String... strings) throws RodinDBException {
+		ISCVariable[] variables = file.getSCVariables();
+		
+		for (int i=0; i<variables.length; i++) {
+			if (! variables[i].isForbidden())
+				variables[i] = null;
+		}
+		
+		Set<String> nameSet = getIdentifierNameSet(variables);
+	
+		for (String string : strings)
+			assertTrue("should contain " + string, nameSet.contains(string));
+	}
+
 	public void containsVariables(ISCMachineFile file, String... strings) throws RodinDBException {
 		ISCVariable[] variables = file.getSCVariables();
 		
@@ -503,32 +518,6 @@ public abstract class BasicSCTest extends EventBTest {
 	
 		for (String string : strings)
 			assertTrue("should contain " + string, nameSet.contains(string));
-	}
-
-	// for generic tests:
-	
-	public ISCMachineFile getSCComponent(IMachineFile rodinFile) throws RodinDBException {
-		return rodinFile.getSCMachineFile();
-	}
-	
-	public ISCContextFile getSCComponent(IContextFile rodinFile) throws RodinDBException {
-		return rodinFile.getSCContextFile();
-	}
-	
-	public void containsIdents(ISCContextFile rodinFile, String...strings) throws RodinDBException {
-		containsConstants(rodinFile, strings);
-	}
-	
-	public void containsIdents(ISCMachineFile rodinFile, String...strings) throws RodinDBException {
-		containsVariables(rodinFile, strings);
-	}
-	
-	public void containsNonTheorems(ISCContextFile context, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		containsAxioms(context, environment, labels, strings);
-	}
-
-	public void containsNonTheorems(ISCMachineFile machine, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		containsInvariants(machine, environment, labels, strings);
 	}
 
 }

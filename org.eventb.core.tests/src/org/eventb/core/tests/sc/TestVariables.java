@@ -8,7 +8,9 @@
 package org.eventb.core.tests.sc;
 
 import org.eventb.core.IContextFile;
+import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -146,12 +148,14 @@ public class TestVariables extends GenericIdentTest<IMachineFile, ISCMachineFile
 		m0.save(null, true);
 		
 		final IMachineFile m1 = createMachine("m1");
+		addMachineRefines(m1, "m0");
 		addVariables(m1, "v2");
 		addInvariants(m1, makeSList("I1"), makeSList("v2 ∈ ℕ"));
 		addInitialisation(m1, "v2");
 		m1.save(null, true);
 
 		final IMachineFile m2 = createMachine("m2");
+		addMachineRefines(m2, "m1");
 		addVariables(m2, "v1");
 		addInvariants(m2, makeSList("I1"), makeSList("v1 ∈ ℕ"));
 		addInitialisation(m2, "v1");
@@ -164,17 +168,22 @@ public class TestVariables extends GenericIdentTest<IMachineFile, ISCMachineFile
 		containsMarkers(m0c, false);
 
 		final ISCMachineFile m1c = m1.getSCMachineFile();
-		containsVariables(m1c, "v2");
+		containsVariables(m1c, "v1", "v2");
+		forbiddenVariables(m1c, "v1");
 		containsMarkers(m1c, false);
 		
 		final ISCMachineFile m2c = m2.getSCMachineFile();
-		containsVariables(m2c);
-		containsMarkers(m1c, true);
+		containsVariables(m2c, "v1", "v2");
+		forbiddenVariables(m2c, "v1", "v2");
+		containsMarkers(m2, true);
+		
+		ISCEvent[] events = getSCEvents(m2c, IEvent.INITIALISATION);
+		containsActions(events[0], emptyEnv, makeSList(), makeSList());
 		
 		// TODO should also check that sc reports only that "v1" has disappeared
 		// and can't be resurrected.
 	}
-
+	
 	@Override
 	protected IGenericSCTest<IMachineFile, ISCMachineFile> newGeneric() {
 		return new GenericMachineSCTest(this);
