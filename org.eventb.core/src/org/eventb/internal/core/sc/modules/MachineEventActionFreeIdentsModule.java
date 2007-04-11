@@ -23,13 +23,12 @@ import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule {
+public class MachineEventActionFreeIdentsModule extends MachineFormulaFreeIdentsModule {
 
 	public static final IModuleType<MachineEventActionFreeIdentsModule> MODULE_TYPE = 
 		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventActionFreeIdentsModule"); //$NON-NLS-1$
@@ -64,8 +63,11 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 			IProgressMonitor monitor) throws CoreException {
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, freeIdentifier, monitor);
 		if (isInitialisation && symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
-			// problem marker for GraphProblem.InitialisationActionRHSError is generated
-			// in FormulaFreeIdentsModule
+			createProblemMarker(
+					element, getAttributeType(), 
+					freeIdentifier.getSourceLocation().getStart(), 
+					freeIdentifier.getSourceLocation().getEnd(), 
+					GraphProblem.InitialisationActionRHSError, freeIdentifier.getName());
 			return null;
 		}
 		return symbolInfo;
@@ -102,13 +104,13 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 			if (symbolInfo instanceof IVariableSymbolInfo) {
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
 				if (variableSymbolInfo.isForbidden()) {
-					createProblemMarker(
-							element, 
-							getAttributeType(), 
-							GraphProblem.UndeclaredFreeIdentifierError,
-							name);
-					return false;
-				} else if (variableSymbolInfo.isImported() && !variableSymbolInfo.isConcrete()) {
+//					createProblemMarker(
+//							element, 
+//							getAttributeType(), 
+//							GraphProblem.UndeclaredFreeIdentifierError,
+//							name);
+//					return false;
+//				} else if (variableSymbolInfo.isImported() && !variableSymbolInfo.isConcrete()) {
 					createProblemMarker(
 							element, 
 							getAttributeType(), 
@@ -133,11 +135,6 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 			}
 		}
 		return true;
-	}
-
-	@Override
-	protected IRodinProblem declaredFreeIdentifierError() {
-		return GraphProblem.InitialisationActionRHSError;
 	}
 
 	@Override

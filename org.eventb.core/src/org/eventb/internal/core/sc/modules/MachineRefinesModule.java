@@ -352,7 +352,8 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			createProblemMarker(
 					refinesMachine, 
 					EventBAttributes.TARGET_ATTRIBUTE, 
-					GraphProblem.AbstractMachineNotFoundError);
+					GraphProblem.AbstractMachineNotFoundError,
+					scMachineFile.getComponentName());
 			
 			scMachineFile = null;
 		}

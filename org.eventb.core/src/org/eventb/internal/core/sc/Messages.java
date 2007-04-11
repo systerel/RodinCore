@@ -85,12 +85,13 @@ public final class Messages {
     public static String scuser_ConstantNameConflict;
     public static String scuser_VariableNameImportConflict;
     public static String scuser_VariableNameConflict;
-    public static String  scuser_EventVariableNameConflict;
+    public static String scuser_EventVariableNameConflict;
 	public static String scuser_UntypedCarrierSetError;
     public static String scuser_UntypedConstantError;
     public static String scuser_UntypedVariableError;
     public static String scuser_UntypedIdentifierError;
     public static String scuser_UndeclaredFreeIdentifierError;
+    public static String scuser_FreeIdentifierFaultyDeclError;
     public static String scuser_VariantFreeIdentifierError;
     public static String scuser_AxiomFreeIdentifierError;
     public static String scuser_TheoremFreeIdentifierError;
@@ -118,13 +119,13 @@ public final class Messages {
     public static String scuser_WitnessLabelConflict;
     public static String scuser_WitnessLabelMissing;
     public static String scuser_WitnessLabelNeedLess;
-    public static String scuser_WitnessLabelNotWellFormed;
    
     public static String scuser_ContextOnlyPresentInAbstractMachine;
     
     public static String scuser_WasAbstractEventLabelProblem;
     public static String scuser_InconsistentEventLabelProblem;
     public static String scuser_VariableHasDisappearedError;
+    public static String scuser_DisappearedVariableRedeclaredError;
     public static String scuser_VariableIsLocalInAbstractMachine;
     public static String scuser_AssignedIdentifierNotVariable;
     public static String scuser_LocalVariableChangedTypeError;

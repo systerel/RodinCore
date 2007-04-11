@@ -110,31 +110,24 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		int index = 0;
 		
 		for (int i=0; i<formulaElements.length; i++) {
-//			if (formulas[i] == null)
-//				continue;
 			String label = formulaElements[i].getLabel();
-			boolean labelIsWellFormed = witnessNames.contains(label);
-			if (formulas[i] != null && labelIsWellFormed) {
-				witnessNames.remove(label);
-				createSCWitness(
-						target, 
-						WITNESS_NAME_PREFIX + index++,
-						formulaElements[i].getLabel(), 
-						formulaElements[i],
-						formulas[i], 
-						monitor);
-			} else {
-				if (labelIsWellFormed) {
-					createProblemMarker(
-							formulaElements[i], 
-							EventBAttributes.LABEL_ATTRIBUTE, 
-							GraphProblem.WitnessLabelNeedLessError, label);
-				} else {
-					createProblemMarker(
-							formulaElements[i], 
-							EventBAttributes.LABEL_ATTRIBUTE, 
-							GraphProblem.WitnessLabelNotWellFormedError, label);
+			boolean labelIsNeeded = witnessNames.contains(label);
+			if (labelIsNeeded) {
+				if (formulas[i] != null) {
+					witnessNames.remove(label);
+					createSCWitness(
+							target, 
+							WITNESS_NAME_PREFIX + index++,
+							formulaElements[i].getLabel(), 
+							formulaElements[i],
+							formulas[i], 
+							monitor);
 				}
+			} else {
+				createProblemMarker(
+						formulaElements[i], 
+						EventBAttributes.LABEL_ATTRIBUTE, 
+						GraphProblem.WitnessLabelNeedLessError, label);
 			}
 		}
 		

@@ -42,10 +42,16 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scVariable"); //$NON-NLS-1$
 
 	/**
-	 * A variable name that has been used in an abstraction but not in some refinement
-	 * cannot be used again. It is "forbidden".
+	 * <p>
+	 * A variable that was declared in an abstract machine but not
+	 * in a refined machine is <i>forbidden</i> in the refined machine and all its
+	 * refinements, i.e. the variable can never be used again.
+	 * </p>
+	 * <p>
+	 * A variable cannot be preserved and forbidden at the same time.
+	 * </p>
 	 * 
-	 * @param value the "forbidden" status of the variable name
+	 * @param value whether the variable is forbidden or not
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
@@ -56,17 +62,31 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	
 	/**
 	 * Returns whether the variable name is forbidden or not.
+	 * <p>
+	 * A variable that was declared in an abstract machine but not
+	 * in a refined machine is <i>forbidden</i> in the refined machine and all its
+	 * refinements, i.e. the variable can never be used again.
+	 * </p>
+	 * <p>
+	 * A variable cannot be preserved and forbidden at the same time.
+	 * </p>
 	 * 
 	 * @return whether the variable name is forbidden or not
 	 * 
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	boolean isForbidden() throws RodinDBException;
+	
 	/**
-	 * A variable name that has been used in the abstraction and the refinement
-	 * are called "preserved". A forbidden variable must not be preserved.
+	 * <p>
+	 * A variable that was declared in an abstract machine and is declared again
+	 * in a refined machine is <i>preserved</i> in the refined machine.
+	 * </p>
+	 * <p>
+	 * A variable cannot be preserved and forbidden at the same time.
+	 * </p>
 	 * 
-	 * @param value the "preserved" status of the variable name
+	 * @param value whether the variable is preserved or not
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
@@ -77,6 +97,13 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	
 	/**
 	 * Returns whether the variable name is preserved or not.
+	 * <p>
+	 * A variable that was declared in an abstract machine and is declared again
+	 * in a refined machine is <i>preserved</i> in the refined machine.
+	 * </p>
+	 * <p>
+	 * A variable cannot be preserved and forbidden at the same time.
+	 * </p>
 	 * 
 	 * @return whether the variable name is preserved or not
 	 * 

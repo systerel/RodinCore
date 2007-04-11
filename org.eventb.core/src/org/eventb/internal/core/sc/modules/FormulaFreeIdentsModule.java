@@ -19,7 +19,6 @@ import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -61,17 +60,8 @@ public abstract class FormulaFreeIdentsModule extends SCFilterModule {
 			
 			IIdentifierSymbolInfo symbolInfo = getSymbolInfo(internalElement, freeIdentifier, monitor);
 			
-			if (symbolInfo == null || symbolInfo.hasError() || !symbolInfo.isVisible()) {
+			if (symbolInfo == null) {
 				ok = false;
-				IRodinProblem problem = 
-					symbolInfo == null && symbolTable.containsKey(freeIdentifier.getName()) ?
-					declaredFreeIdentifierError() :
-					GraphProblem.UndeclaredFreeIdentifierError;
-					createProblemMarker(
-							(IInternalElement) element, getAttributeType(), 
-							freeIdentifier.getSourceLocation().getStart(), 
-							freeIdentifier.getSourceLocation().getEnd(), 
-							problem, freeIdentifier.getName());
 			}
 		}
 		return ok;
@@ -83,8 +73,6 @@ public abstract class FormulaFreeIdentsModule extends SCFilterModule {
 		return freeIdentifiers;
 	}
 	
-	protected abstract IRodinProblem declaredFreeIdentifierError();
-	
 	protected abstract IAttributeType.String getAttributeType();
 
 	protected IIdentifierSymbolInfo getSymbolInfo(
@@ -93,6 +81,20 @@ public abstract class FormulaFreeIdentsModule extends SCFilterModule {
 			IProgressMonitor monitor) throws CoreException {
 		IIdentifierSymbolInfo symbolInfo = 
 			symbolTable.getSymbolInfo(freeIdentifier.getName());
+		if (symbolInfo == null) {
+			createProblemMarker(
+					element, getAttributeType(), 
+					freeIdentifier.getSourceLocation().getStart(), 
+					freeIdentifier.getSourceLocation().getEnd(), 
+					GraphProblem.UndeclaredFreeIdentifierError, freeIdentifier.getName());
+		} else if (symbolInfo.hasError() || !symbolInfo.isVisible()) {
+			createProblemMarker(
+					element, getAttributeType(), 
+					freeIdentifier.getSourceLocation().getStart(), 
+					freeIdentifier.getSourceLocation().getEnd(), 
+					GraphProblem.FreeIdentifierFaultyDeclError, freeIdentifier.getName());
+			symbolInfo = null;
+		}
 		return symbolInfo;
 	}
 

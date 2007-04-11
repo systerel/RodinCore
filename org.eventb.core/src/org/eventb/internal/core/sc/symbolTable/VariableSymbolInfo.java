@@ -34,14 +34,14 @@ public abstract class VariableSymbolInfo
 		
 		forbidden = false;
 		
-		preserved = false;
+		concrete = false;
 		
 		fresh = false;
 	}
 
 	private boolean forbidden;
 	
-	private boolean preserved;
+	private boolean concrete;
 	
 	private boolean fresh;
 	
@@ -53,14 +53,17 @@ public abstract class VariableSymbolInfo
 		if (!isMutable())
 			throw Util.newCoreException(Messages.symtab_ImmutableSymbolViolation);
 		this.forbidden = true;
+		this.concrete = false;
 	}
 
 	public boolean isConcrete() {
-		return preserved;
+		return concrete;
 	}
 
 	public void setConcrete() {
-		this.preserved = true;
+		assert !forbidden;
+		
+		this.concrete = true;
 	}
 
 	@Override

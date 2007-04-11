@@ -25,7 +25,6 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.EventVariableSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -70,6 +69,11 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 		FreeIdentifier identifier = primed ? 
 				freeIdentifier.withoutPrime(factory) : 
 				freeIdentifier;
+		if (!primed) { // abstract local variables are not contained in the symbol table; fake them!
+			String label = ((IWitness) element).getLabel();
+			if (label.equals(freeIdentifier.getName()))
+				return new EventVariableSymbolInfo(label, null, null, null);
+		}
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, identifier, monitor);
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
@@ -78,18 +82,23 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 				if (primed && !label.equals(freeIdentifier.getName())) {
 					// error: only the primed abstract disappearing variable
 					// of the label may appear in the witness predicate
+					createProblemMarker(
+							element, getAttributeType(), 
+							freeIdentifier.getSourceLocation().getStart(), 
+							freeIdentifier.getSourceLocation().getEnd(), 
+							GraphProblem.WitnessFreeIdentifierError, freeIdentifier.getName());
 					return null;
 				}
 			}
 			if (isInitialisation && !primed) {
 				// error: unprimed variables cannot occur in initialisation witness predicates
+				createProblemMarker(
+						element, getAttributeType(), 
+						freeIdentifier.getSourceLocation().getStart(), 
+						freeIdentifier.getSourceLocation().getEnd(), 
+						GraphProblem.InitialisationActionRHSError, freeIdentifier.getName());
 				return null;
 			}
-		}
-		if (symbolInfo == null) { // abstract local variables are not contained in the symbol table; fake them!
-			String label = ((IWitness) element).getLabel();
-			if (label.equals(freeIdentifier.getName()))
-				return new EventVariableSymbolInfo(label, null, null, null);
 		}
 		return symbolInfo;
 	}
@@ -104,11 +113,6 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(repository, monitor);
 		factory = null;
-	}
-
-	@Override
-	protected IRodinProblem declaredFreeIdentifierError() {
-		return GraphProblem.WitnessFreeIdentifierError;
 	}
 
 	@Override

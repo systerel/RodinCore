@@ -10,6 +10,7 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.rodinp.core.IInternalElement;
@@ -31,16 +32,17 @@ public abstract class MachineFormulaFreeIdentsModule extends FormulaFreeIdentsMo
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, freeIdentifier, monitor);
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-			if (variableSymbolInfo.isForbidden())
+			if (variableSymbolInfo.isForbidden()) {
+				createProblemMarker(
+						element, 
+						getAttributeType(), 
+						GraphProblem.VariableHasDisappearedError,
+						variableSymbolInfo.getSymbol());
 				return null;
+			}
 		}
 		return symbolInfo;
 	}
-
-//	@Override
-//	protected String declaredFreeIdentifierErrorMessage() {
-//		return Messages.scuser_FormulaFreeIdentifierError;
-//	}
 
 	
 }

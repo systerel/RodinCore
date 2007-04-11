@@ -19,7 +19,6 @@ import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProblem;
 
 
 /**
@@ -47,15 +46,16 @@ public class MachineEventGuardFreeIdentsModule extends MachineFormulaFreeIdentsM
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			IVariableSymbolInfo variableSymbolInfo = 
 				(IVariableSymbolInfo) symbolInfo;
-			if (!variableSymbolInfo.isLocal() && !variableSymbolInfo.isConcrete())
+			if (variableSymbolInfo.isForbidden()) {
+				createProblemMarker(
+						element, getAttributeType(), 
+						freeIdentifier.getSourceLocation().getStart(), 
+						freeIdentifier.getSourceLocation().getEnd(), 
+						GraphProblem.VariableHasDisappearedError, freeIdentifier.getName());
 				return null;
+			}
 		}
 		return symbolInfo;
-	}
-
-	@Override
-	protected IRodinProblem declaredFreeIdentifierError() {
-		return GraphProblem.GuardFreeIdentifierError;
 	}
 
 	@Override

@@ -15,6 +15,7 @@ import org.eventb.core.IEventBFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
@@ -67,24 +68,32 @@ public class MachineVariableModule extends IdentifierModule {
 			IIdentifierElement element,
 			IIdentifierSymbolInfo newSymbolInfo) throws CoreException {
 		
-		try {
+		IIdentifierSymbolInfo symbolInfo = 
+			identifierSymbolTable.getSymbolInfo(newSymbolInfo.getSymbol());
+		
+		if (symbolInfo instanceof VariableSymbolInfo) {
+			assert symbolInfo instanceof IVariableSymbolInfo;
+			VariableSymbolInfo variableSymbolInfo = (VariableSymbolInfo) symbolInfo;
 			
-			identifierSymbolTable.putSymbolInfo(newSymbolInfo);
-			((IVariableSymbolInfo) newSymbolInfo).setConcrete();
-			((IVariableSymbolInfo) newSymbolInfo).setFresh();
+			if (variableSymbolInfo.isForbidden()) {
+				createProblemMarker(
+						element, EventBAttributes.IDENTIFIER_ATTRIBUTE, 
+						GraphProblem.DisappearedVariableRedeclaredError, symbolInfo.getSymbol());
+				return false;
+			}
 			
-		} catch (CoreException e) {
-			
-			IIdentifierSymbolInfo symbolInfo = 
-				identifierSymbolTable.getSymbolInfo(newSymbolInfo.getSymbol());
-			
-			if (symbolInfo instanceof VariableSymbolInfo) {
-				assert symbolInfo instanceof IVariableSymbolInfo;
-				VariableSymbolInfo variableSymbolInfo = (VariableSymbolInfo) symbolInfo;
+			if (symbolInfo.isImported()) {
 				variableSymbolInfo.setConcrete();
 				variableSymbolInfo.setSourceElement(element, EventBAttributes.IDENTIFIER_ATTRIBUTE);
 				return true;
 			}
+		}
+		
+		try {
+			
+			identifierSymbolTable.putSymbolInfo(newSymbolInfo);
+			
+		} catch (CoreException e) {
 			
 			newSymbolInfo.createConflictMarker(this);
 			
@@ -98,6 +107,8 @@ public class MachineVariableModule extends IdentifierModule {
 			
 			return false;
 		}
+		((IVariableSymbolInfo) newSymbolInfo).setConcrete();
+		((IVariableSymbolInfo) newSymbolInfo).setFresh();
 		return true;
 	}
 

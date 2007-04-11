@@ -9,11 +9,9 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -28,13 +26,6 @@ public class ContextTheoremFreeIdentsModule extends FormulaFreeIdentsModule {
 		return MODULE_TYPE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.FormulaFreeIdentsModule#declaredFreeIdentifierErrorMessage()
-	 */
-	@Override
-	protected IRodinProblem declaredFreeIdentifierError() {
-		return GraphProblem.TheoremFreeIdentifierError;
-	}
 	@Override
 	protected IAttributeType.String getAttributeType() {
 		return EventBAttributes.PREDICATE_ATTRIBUTE;
