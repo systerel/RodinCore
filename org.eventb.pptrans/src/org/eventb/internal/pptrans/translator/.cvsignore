@@ -1,0 +1,9 @@
+Translator.java
+BorderTranslator.java
+GoalChecker.java
+IdentifierDecomposition.java
+IdentityTranslator.java
+QuantMapletBuilder.java
+PredicateSimplification.java
+BoundIdentifierDecomposition.java
+DecomposedQuant.java
