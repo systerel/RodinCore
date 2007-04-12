@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eventb.core.seqprover.reasoners">
+      <reasoner
+            class="org.eventb.internal.pp.ui.PPReasoner"
+            id="PPReasoner"
+            name="PP Reasoner"/>
+   </extension>
+   <extension
+         point="org.eventb.ui.proofTactics">
+      <tactic
+            dropdown="org.eventb.protopp.ui.NewPPDropdown"
+            icon="icons/npp.gif"
+            id="org.eventb.protopp.ppall"
+            interrupt="true"
+            name="NewPP"
+            priorty="9"
+            tacticProvider="org.eventb.internal.pp.ui.PPTacticProvider"
+            target="global"
+            tooltip="Launch NewPP"/>
+      <tactic
+            dropdown="org.eventb.protopp.ui.NewPPDropdown"
+            icon="icons/nppr.gif"
+            id="org.eventb.protopp.pprestricted"
+            interrupt="true"
+            name="NewPP (restricted)"
+            priorty="9"
+            tacticProvider="org.eventb.internal.pp.ui.PPTacticProviderRestricted"
+            target="global"
+            tooltip="Launch NewPP (restricted)"/>
+      <dropdown
+            id="org.eventb.protopp.ui.NewPPDropdown"
+            name="NewPP"
+            priority="9"
+            toolbar="org.eventb.ui.sequentToolbar"/>
+   </extension>
+
+</plugin>
