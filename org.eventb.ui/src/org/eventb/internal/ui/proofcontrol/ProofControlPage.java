@@ -419,24 +419,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		}
 	}
 
-	// private ToolItem createToolItem(CoolItem coolItem, String text,
-	// Image image, int style, String toolTipText) {
-	// ToolBar toolBar = (ToolBar) coolItem.getControl();
-	// ToolItem item = new ToolItem(toolBar, style);
-	// if (image != null)
-	// item.setImage(image);
-	// if (text != null)
-	// item.setText(text);
-	//
-	// item.setToolTipText(toolTipText);
-	// toolBar.pack();
-	// Point size = toolBar.getSize();
-	// Point preferred = coolItem.computeSize(size.x + dropdownCount
-	// * dropdownSize, size.y);
-	// coolItem.setPreferredSize(preferred);
-	// return item;
-	// }
-
 	private class ToolBarDropTargetListener implements DropTargetListener {
 
 		ToolBar toolBar;
@@ -792,13 +774,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the toolbar manager
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
-		IUserSupportManager usManager = EventBPlugin.getDefault()
-				.getUserSupportManager();
-		if (usManager.getProvingMode().isExpertMode()) {
-			expertMode.setChecked(true);
-		} else {
-			expertMode.setChecked(false);
-		}
 		manager.add(expertMode);
 	}
 
@@ -815,17 +790,15 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				boolean checked = expertMode.isChecked();
 				store.setValue(PreferenceConstants.P_EXPERTMODE,
 						checked);
-				IUserSupportManager usManager = EventBPlugin.getDefault()
-						.getUserSupportManager();
-				IProvingMode provingMode = usManager.getProvingMode();
-				if (checked)
-					provingMode.setExpertMode(true);
-				else
-					provingMode.setExpertMode(false);
 			}
 		};
-		expertMode.setChecked(store
-				.getBoolean(PreferenceConstants.P_EXPERTMODE));
+		boolean b = store
+						.getBoolean(PreferenceConstants.P_EXPERTMODE);
+		expertMode.setChecked(b);
+		IUserSupportManager usManager = EventBPlugin.getDefault()
+				.getUserSupportManager();
+		IProvingMode provingMode = usManager.getProvingMode();
+		provingMode.setExpertMode(b);
 		expertMode.setToolTipText("Expert mode switch");
 
 		expertMode.setImageDescriptor(EventBImage
@@ -841,13 +814,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	@Override
 	public void setFocus() {
 		pgComp.setFocus();
-		// textInput.setFocus();
-		// ProofState currentPO = editor.getUserSupport().getCurrentPO();
-		// if (currentPO == null)
-		// updateToolItems(null);
-		// else
-		// updateToolItems(currentPO.getCurrentNode());
-		// buttonBar.setFocus();
 	}
 
 	/*
@@ -960,11 +926,21 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				PreferenceConstants.P_EXPERTMODE)) {
 			Object newValue = event.getNewValue();
 			assert newValue instanceof Boolean || newValue instanceof String;
-			if (newValue instanceof String)
-				expertMode.setChecked(((String) newValue)
-						.compareToIgnoreCase("true") == 0);
-			else {
-				expertMode.setChecked((Boolean) newValue);
+			if (newValue instanceof String) {
+				boolean b = ((String) newValue)
+										.compareToIgnoreCase("true") == 0;
+				expertMode.setChecked(b);
+				IUserSupportManager usManager = EventBPlugin.getDefault()
+				.getUserSupportManager();
+				IProvingMode provingMode = usManager.getProvingMode();
+				provingMode.setExpertMode(b);
+			} else {
+				Boolean b = (Boolean) newValue;
+				expertMode.setChecked(b);
+				IUserSupportManager usManager = EventBPlugin.getDefault()
+					.getUserSupportManager();
+				IProvingMode provingMode = usManager.getProvingMode();
+				provingMode.setExpertMode(b);
 			}
 		}
 
