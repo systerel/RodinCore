@@ -20,7 +20,7 @@ public class PPProverCall extends XProverCall {
 	public PPProverCall(XProverInput input, Iterable<Predicate> hypothesis, Predicate goal, IProofMonitor pm) {
 		super(hypothesis,goal,pm);
 		
-		this.prover = new PPProof(hypothesis,goal);
+		this.prover = new PPProof(hypotheses,this.goal);
 		this.input = input;
 	}
 	
