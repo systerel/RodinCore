@@ -1,0 +1,108 @@
+package org.eventb.pptrans.provers.equality;
+
+import org.eventb.internal.pp.core.elements.Sort;
+import org.eventb.internal.pp.core.elements.terms.Constant;
+import org.eventb.pptrans.Dumper;
+import org.eventb.pptrans.IProver;
+import org.eventb.pptrans.Level;
+import org.eventb.pptrans.elements.IClause;
+import org.eventb.pptrans.elements.IEquality;
+import org.eventb.internal.pp.core.datastructure.IChangeListener;
+import org.eventb.internal.pp.core.datastructure.IDispatcher;
+import org.eventb.internal.pp.core.datastructure.IObservable;
+import org.eventb.internal.pp.core.search.IterableHashSet;
+import org.eventb.internal.pp.core.search.ResetIterator;
+import org.eventb.internal.pp.core.simplifiers.EqualitySimplifier;
+
+public class EqualityProver implements IProver, IChangeListener {
+
+	private IterableHashSet<IClause> nonUnitClauses;
+	private ResetIterator<IClause> nonUnitClausesIterator;
+	private EqualitySimplifier simplifier;
+	
+	private IEquivalenceManager manager;
+
+	private IDispatcher dispatcher;
+	
+	public EqualityProver(IEquivalenceManager manager, EqualitySimplifier simplifier) {
+		this.manager = manager;
+		this.simplifier = simplifier;
+		
+		this.nonUnitClauses = new IterableHashSet<IClause>();
+		this.nonUnitClausesIterator = nonUnitClauses.iterator();
+	}
+	
+	
+	public void contradiction(Level oldLevel, Level newLevel, boolean proofFound) {
+	}
+
+	public void initialize(IDispatcher dispatcher, IObservable clauses) {
+		this.dispatcher = dispatcher;
+		
+		clauses.addChangeListener(this);
+	}
+
+	public IClause next() {
+		// infers new clause out of manager and non-unit clauses
+		while (nonUnitClausesIterator.hasNext()) {
+			IClause clause = nonUnitClausesIterator.next();
+			IClause newClause = clause.simplify(simplifier);
+			if (newClause == null) continue;
+			if (!newClause.equals(clause)) {
+				// remove clause if it has been simplified to no more equalities
+				nonUnitClauses.remove(clause);
+				return newClause;
+			}
+		}
+		return null;
+	}
+	
+	private void newUnitClause(IClause clause) {
+		// give to manager
+		IEquality equality = clause.getEqualityLiterals().get(0);
+		if (equality.isConstant() && !equality.isQuantified()) {
+			Constant c1 = (Constant)equality.getTerms().get(0);
+			Constant c2 = (Constant)equality.getTerms().get(1);
+			if (equality.isPositive()) {
+				manager.addEquality(c1, c2);
+			}
+			else {
+				manager.addInequality(c1, c2);
+			}
+		}
+		else {
+			// TODO
+		}
+		
+	}
+
+	public void registerDumper(Dumper dumper) {
+		dumper.addDataStructure("Equality non unit clauses", nonUnitClauses.iterator());
+	}
+
+	public boolean accepts(IClause clause) {
+		return clause.isUnit() && clause.getEqualityLiterals().size() == 1
+		&& !clause.getEqualityLiterals().get(0).getSort().equals(Sort.ARITHMETIC);
+	}
+	
+	public void addOwnClause(IClause clause) {
+		assert dispatcher != null;
+		
+		newUnitClause(clause);
+		// reset the non unit clauses iterator because new clauses can appear
+		nonUnitClausesIterator.reset();
+	}
+	
+	public void newClause(IClause clause) {
+		if (!clause.isUnit() && clause.getEqualityLiterals().size() > 1) {
+			nonUnitClauses.appends(clause);
+		}
+	}
+
+	public void removeClause(IClause clause) {
+		if (!clause.isUnit() && clause.getEqualityLiterals().size() > 1) {
+			nonUnitClauses.remove(clause);
+		}
+	}
+
+}
