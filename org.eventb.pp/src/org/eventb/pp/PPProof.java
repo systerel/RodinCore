@@ -138,11 +138,11 @@ public class PPProof {
 	}
 	
 	private void loadGoal() {
-		if (goal.getTag() == Formula.BTRUE) {
+		if (transformedGoal.getTag() == Formula.BTRUE) {
 			// proof done
 			result = new PPResult(Result.valid,new Tracer(true)); 
 		}
-		else if (goal.getTag() == Formula.BFALSE) {
+		else if (transformedGoal.getTag() == Formula.BFALSE) {
 			// ignore
 		}
 		else {
