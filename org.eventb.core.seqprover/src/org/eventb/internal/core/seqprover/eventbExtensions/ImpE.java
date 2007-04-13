@@ -1,5 +1,6 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,7 +40,9 @@ public class ImpE extends HypothesisReasoner {
 		deselectedHyps.add(toShow);
 		deselectedHyps.add(pred);
 		return new IAntecedent[] {
-				ProverFactory.makeAntecedent(toShow),
+				ProverFactory.makeAntecedent(
+						toShow,null,
+						ProverFactory.makeDeselectHypAction(Arrays.asList(pred))),
 				ProverFactory.makeAntecedent(
 						sequent.goal(),
 						addedHyps,
@@ -49,7 +52,7 @@ public class ImpE extends HypothesisReasoner {
 
 	@Override
 	protected String getDisplay(Predicate pred) {
-		return "⇒ hyp (" + pred + ")";
+		return "⇒ hyp mp (" + pred + ")";
 	}
 
 }

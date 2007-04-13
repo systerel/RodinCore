@@ -12,6 +12,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 
+// TODO : Rename to impEcontrapositive to be uniform with impE
 public class ModusTollens extends HypothesisReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".impE";
@@ -40,7 +41,9 @@ public class ModusTollens extends HypothesisReasoner {
 		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(toAssume);
 		addedHyps.addAll(Lib.breakPossibleConjunct(toShow));
 		return new IAntecedent[] {
-				ProverFactory.makeAntecedent(toShow),
+				ProverFactory.makeAntecedent(
+						toShow,null,
+						ProverFactory.makeDeselectHypAction(Arrays.asList(pred))),
 				ProverFactory.makeAntecedent(sequent.goal(), addedHyps,
 						ProverFactory
 								.makeDeselectHypAction(Arrays.asList(pred))) };
@@ -48,7 +51,7 @@ public class ModusTollens extends HypothesisReasoner {
 
 	@Override
 	protected String getDisplay(Predicate pred) {
-		return "Modus Tollen hyp (" + pred + ")";
+		return "⇒ hyp mt (" + pred + ")";
 	}
 
 }
