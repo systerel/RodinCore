@@ -72,7 +72,7 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 			// TODO clean here
 			InferrenceResult nextClause = resolver.next();
 			if (nextClause == null) {
-				if (nonUnitProver.next()) {
+				while (nextClause==null && nonUnitProver.next()) {
 					resolver.initialize(nonUnitProver.getMatchingUnit(), nonUnitProver.getMatchingNonUnit());
 					nextClause = resolver.next();
 				}
