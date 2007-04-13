@@ -418,39 +418,55 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * @see org.eventb.core.seqprover.IProverSequent#hypIterable()
 	 */
 	public Iterable<Predicate> hypIterable() {
-		return iterable(new CompositeIterator<Predicate>(
-				globalHypotheses.iterator(),
-				localHypotheses.iterator()));
-	}
-
-
-	/**
-	 * Given a Predicate iterator, this class returns an instance of its iterable class
-	 * so that it can be used in a <code>for</code> loop.
-	 * <p>
-	 * This is a convenience method.
-	 * </p>
-	 * 
-	 * @param iterator
-	 * 			The given Predicate iterator
-	 * @return
-	 * 			The iterable Predicate class that can be used in a <code>for</code>
-	 * 			loop
-	 */
-	private Iterable<Predicate> iterable(final Iterator<Predicate> iterator){
 		return new Iterable<Predicate>(){
 
 			public Iterator<Predicate> iterator() {
-				return iterator;
+				return new CompositeIterator<Predicate>(
+						globalHypotheses.iterator(),
+						localHypotheses.iterator());
 			}
 		};
+		
+//		return iterable(new CompositeIterator<Predicate>(
+//				globalHypotheses.iterator(),
+//				localHypotheses.iterator()));
 	}
+
+
+//	/**
+//	 * Given a Predicate iterator, this class returns an instance of its iterable class
+//	 * so that it can be used in a <code>for</code> loop.
+//	 * <p>
+//	 * This is a convenience method.
+//	 * </p>
+//	 * 
+//	 * @param iterator
+//	 * 			The given Predicate iterator
+//	 * @return
+//	 * 			The iterable Predicate class that can be used in a <code>for</code>
+//	 * 			loop
+//	 */
+//	private Iterable<Predicate> iterable(final Iterator<Predicate> iterator){
+//		return new Iterable<Predicate>(){
+//
+//			public Iterator<Predicate> iterator() {
+//				return iterator;
+//			}
+//		};
+//	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.seqprover.IProverSequent#hiddenHypIterable()
 	 */
 	public Iterable<Predicate> hiddenHypIterable() {
-		return iterable(new ImmutableIterator<Predicate>(hiddenHypotheses));
+		return new Iterable<Predicate>(){
+
+			public Iterator<Predicate> iterator() {
+				return new ImmutableIterator<Predicate>(hiddenHypotheses);
+			}
+		};
+		
+		// return iterable(new ImmutableIterator<Predicate>(hiddenHypotheses));
 		// Safer compared to:
 		// return hiddenHypotheses;
 	}
@@ -460,7 +476,13 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * @see org.eventb.core.seqprover.IProverSequent#selectedHypIterable()
 	 */
 	public Iterable<Predicate> selectedHypIterable() {
-		return iterable(new ImmutableIterator<Predicate>(selectedHypotheses));
+		return new Iterable<Predicate>(){
+
+			public Iterator<Predicate> iterator() {
+				return new ImmutableIterator<Predicate>(selectedHypotheses);
+			}
+		};
+		// return iterable(new ImmutableIterator<Predicate>(selectedHypotheses));
 		// Safer compared to:
 		// return selectedHypotheses;
 	}
@@ -483,19 +505,37 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * @see org.eventb.core.seqprover.IProverSequent#visibleHypIterable()
 	 */
 	public Iterable<Predicate> visibleHypIterable() {
-		return iterable(new DifferenceIterator<Predicate>(
-				new CompositeIterator<Predicate>(
-						globalHypotheses.iterator(),localHypotheses.iterator()),
-				hiddenHypotheses));
+		return new Iterable<Predicate>(){
+
+			public Iterator<Predicate> iterator() {
+				return new DifferenceIterator<Predicate>(
+						new CompositeIterator<Predicate>(
+								globalHypotheses.iterator(),localHypotheses.iterator()),
+						hiddenHypotheses);
+			}
+		};
+//		return iterable(new DifferenceIterator<Predicate>(
+//				new CompositeIterator<Predicate>(
+//						globalHypotheses.iterator(),localHypotheses.iterator()),
+//				hiddenHypotheses));
 
 	}
 		
 	public Iterable<Predicate> visibleMinusSelectedIterable() {
-		return iterable(new DifferenceIterator<Predicate>(
-				visibleHypIterable().iterator(),
-				selectedHypotheses)
-				);
+		return new Iterable<Predicate>(){
+
+			public Iterator<Predicate> iterator() {
+				return new DifferenceIterator<Predicate>(
+						visibleHypIterable().iterator(),
+						selectedHypotheses);
+			}
+		};
 	}
+//		return iterable(new DifferenceIterator<Predicate>(
+//				visibleHypIterable().iterator(),
+//				selectedHypotheses)
+//				);
+//	}
 	
 }
 
