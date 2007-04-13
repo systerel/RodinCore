@@ -67,7 +67,7 @@ public class EqTests {
 		assertTrue(newSeqs.length == 1);
 		// Note: this test is pretty printer dependent. Change string (after inspection)
 		// in case pretty printer is modified
-		assertTrue(newSeqs[0].toString().equals("{}[][1+1=2, 1=2][2+2=2] |- 2+2+2=3"));
+		assertTrue(newSeqs[0].toString().equals("{}[][1=2 ,1+1=2][2+2=2] |- 2+2+2=3"));
 	}
 	
 }
