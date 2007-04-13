@@ -1,19 +1,28 @@
 package org.eventb.pp.core.provers;
 
 import static org.eventb.pp.Util.cClause;
+import static org.eventb.pp.Util.cCons;
+import static org.eventb.pp.Util.cELocVar;
 import static org.eventb.pp.Util.cEqClause;
+import static org.eventb.pp.Util.cEqual;
+import static org.eventb.pp.Util.cNEqual;
+import static org.eventb.pp.Util.cNotPred;
 import static org.eventb.pp.Util.cNotProp;
+import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.cProp;
+import static org.eventb.pp.Util.cVar;
 import static org.eventb.pp.Util.mList;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
 
 import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
+import org.eventb.pp.Util;
 
 /**
  * TODO Comment
@@ -258,17 +267,25 @@ public class TestPredicateProver extends TestCase {
 	};
 
 	public void testDisj() {
-		doTest(tests);
+		for (TestPair test : tests) {
+			doTest(test);
+		}
 	}
 	
 	public void testEq() {
-		doTest(testEq);
+		for (TestPair test : testEq) {
+			doTest(test);
+		}
 	}
 	
 	
-	public void doTest(TestPair[] tests) {
-		
-		for (TestPair test : tests) {
+	public void testHiddenInferrence() {
+		doTest(new TestPair(mList(cClause(cPred(0,cELocVar(1)),cProp(1)),cClause(cPred(0,cCons("a")),cProp(1))),
+				mList(cClause(cNotPred(0,cCons("a")))),
+				cClause(cProp(1),cNEqual(cCons("a"), cCons("a")))));
+	}
+	
+	public void doTest(TestPair test) {
 			PredicateProver prover = new PredicateProver(new VariableContext());
 			
 			for (IClause clause : test.nonUnit) {
@@ -285,6 +302,5 @@ public class TestPredicateProver extends TestCase {
 			}
 			assertNull("\nUnit: " + test.unit + "NonUnit: " + test.nonUnit, prover.next());
 			assertEquals(test.result.length, i);
-		}
 	}
 }

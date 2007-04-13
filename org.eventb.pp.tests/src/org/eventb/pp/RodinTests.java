@@ -55,6 +55,8 @@ public class RodinTests extends AbstractPPTest {
 //		env.addName("r", REL(ty_S, ty_S));
 		env.addName("R", POW(ty_T));
 		env.addName("rtbl", REL(ty_S,ty_T));
+		
+		env.addName("S", POW(ty_S));
 	}
 	
 	
@@ -68,8 +70,9 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	TestPair[] tests = new TestPair[]{
-			new TestPair(mSet("∀r·r∈R⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}","nxt∈R → (B ⤔ B)"),
-					"∀r·r∈R⇒r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))∧r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))",true),
+			new TestPair(mSet("q ⊆ S"),"S ∖ q ⊆ S",true)
+//			new TestPair(mSet("∀r·r∈R⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}","nxt∈R → (B ⤔ B)"),
+//					"∀r·r∈R⇒r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))∧r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))",true),
 //			new TestPair(mSet("A ⊆ B"),"r[A] ⊆ r[B]",true),
 //			new TestPair(mSet("a = c"),"a ∈ {c,d}",true),
 //			new TestPair(mSet("(∃x,y·f(x)=y ∧ g(y)=a)"),"(∃x·(g∘f)(x)=a)",true),
@@ -84,32 +87,28 @@ public class RodinTests extends AbstractPPTest {
 //					"(∀x,x0,x1·x0 ↦ x∈SIG∧x1 ↦ x∈SIG⇒x0=x1)"),"⊥",false)
 	};
 	
+	public void testTrueGoal() {
+		doTest(new TestPair(new HashSet(),"⊤",true));
+	}
+	
+	public void testFalseHypothesis() {
+		doTest(new TestPair(mSet("⊥"),"⊥",true));
+	}
+	
 	private void doTest(TestPair test) {
 //		ITypeEnvironment env = ff.makeTypeEnvironment();
 
 		
-		List<Predicate> translatedHypotheses = new ArrayList<Predicate>();
 		for (Predicate pred : test.hypotheses) {
 			typeCheck(pred,env);
-			translatedHypotheses.add(translate(pred));
 		}
 		typeCheck(test.goal, env);
-		Predicate translatedGoal = translate(test.goal);
 		
-		System.out.println("Translated hypotheses: "+translatedHypotheses);
-		System.out.println("Translated goal: "+translatedGoal);
-		
-		PPProof prover = new PPProof(translatedHypotheses,translatedGoal);
+		PPProof prover = new PPProof(test.hypotheses,test.goal);
+		prover.translate();
 		prover.prove(200);
 		PPResult result = prover.getResult();
 		assertEquals(result.getResult()==Result.valid, test.result);
-	}
-	
-	private Predicate translate(Predicate predicate) {
-		predicate = Translator.decomposeIdentifiers(predicate, ff);
-		predicate = Translator.reduceToPredicateCalulus(predicate, ff);
-		predicate = Translator.simplifyPredicate(predicate, ff);
-		return predicate;
 	}
 	
 	private void typeCheck(Predicate predicate, ITypeEnvironment environment) {
