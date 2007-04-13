@@ -1415,11 +1415,11 @@
             targetID="org.eventb.ui.views.ObligationExplorer"
             id="org.eventb.ui.views.ObligationExplorer.toolbar">
          <action
-               id="org.eventb.ui.views.ObligationExplorer.toolbar.collapseAll"
-               toolbarPath="navigationGroup"
                class="org.eventb.internal.ui.obligationexplorer.actions.ObligationsCollapseAllAction"
                icon="$nl$/icons/full/elcl16/collapseall.gif"
+               id="org.eventb.ui.views.ObligationExplorer.toolbar.collapseAll"
                label="%action.CollapseAll.label"
+               toolbarPath="navigationGroup"
                tooltip="%action.CollapseAll.tooltip">
          </action>
          <action
@@ -1451,6 +1451,24 @@
                style="push"
                toolbarPath="navigationGroup"
                tooltip="%action.Remove.tooltip"/>
+      </viewContribution>
+      <viewContribution
+            id="org.eventb.ui.ProofTree.toolbar"
+            targetID="org.eventb.ui.views.ProofTreeUI">
+         <action
+               class="org.eventb.internal.ui.prooftreeui.ProofTreeCollapseAllAction"
+               helpContextId="%action.CollapseAll.tooltip"
+               icon="$nl$/icons/full/elcl16/collapseall.gif"
+               id="org.eventb.ui.views.ProofTree.toolbar.collapseAll"
+               label="%action.CollapseAll.label"
+               toolbarPath="navigationGroup"/>
+         <action
+               class="org.eventb.internal.ui.prooftreeui.ProofTreeExpandAllAction"
+               helpContextId="%action.ExpandAll.tooltip"
+               icon="$nl$/icons/full/elcl16/expandall.gif"
+               id="org.eventb.ui.views.ProofTree.toolbar.expandAll"
+               label="%action.ExpandAll.label"
+               toolbarPath="navigationGroup"/>
       </viewContribution>
    </extension>
 
