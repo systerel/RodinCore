@@ -393,6 +393,26 @@ public class Tactics {
 	public static boolean conjD_applicable(Predicate hyp) {
 		return Lib.isConj(hyp);
 	}
+	
+	
+	/**
+	 * This tactic tries to split a conjunction in the selected hyps
+	 * 
+	 * @return
+	 */
+	public static ITactic conjD_auto(){
+		return new ITactic(){
+
+			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+					if (conjD_applicable(shyp)){
+						return conjD(shyp).apply(ptNode, pm);
+					}
+				}
+				return "Selected hyps contain no conjunctions";
+			}
+		};
+	}
 
 	public static ITactic impE(Predicate impHyp) {
 		return BasicTactics.reasonerTac(new ImpE(), new ImpE.Input(impHyp));
@@ -517,7 +537,7 @@ public class Tactics {
 	}
 
 	public static ITactic postProcessExpert() {
-		return repeat(onAllPending(compose(norm(), autoRewriteRules())));
+		return repeat(onAllPending(compose(autoRewriteRules(), conjD_auto(), norm())));
 	}
 
 	public static ITactic afterLasoo(final ITactic tactic) {
@@ -779,4 +799,5 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new RemoveInclusion(),
 				new RemoveInclusion.Input(hyp, position));
 	}
+
 }
