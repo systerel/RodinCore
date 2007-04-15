@@ -26,6 +26,8 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
  * rewriter.
  * </p>
  * 
+ * TODO : Modify implementation to generate forward inferences for hyp rewrites.
+ * 
  * @author Laurent Voisin
  */
 public abstract class AbstractRewriter implements IReasoner {
