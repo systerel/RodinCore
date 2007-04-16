@@ -107,7 +107,7 @@ public class Review implements IReasoner{
 				seq.goal(),
 				hyps,
 				reviewerConfidence,
-				"rv (confidence "+reviewerConfidence+")",
+				"rv ("+reviewerConfidence+") (" + seq.goal().toString()+")",
 				new IAntecedent[0]);		
 		
 		return reasonerOutput;
