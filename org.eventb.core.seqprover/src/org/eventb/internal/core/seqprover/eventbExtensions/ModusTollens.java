@@ -15,7 +15,7 @@ import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 // TODO : Rename to impEcontrapositive to be uniform with impE
 public class ModusTollens extends HypothesisReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".impE";
+	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".mt";
 
 	public String getReasonerID() {
 		return REASONER_ID;
