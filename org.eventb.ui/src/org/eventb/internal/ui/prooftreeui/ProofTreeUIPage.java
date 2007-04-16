@@ -140,166 +140,18 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				IProofTreeNode proofTree = (IProofTreeNode) element;
 
 				if (!proofTree.isOpen()) {
-					return proofTree.getRule().getDisplayName();
-					// TODO : maybe make this an option.
-					// + proofTree.getSequent().goal();
+					if (ProofTreeUI.showGoal)
+						return proofTree.getRule().getDisplayName() + " : "
+								+ proofTree.getSequent().goal();
+					else 
+						return proofTree.getRule().getDisplayName();
 				} else {
 					return proofTree.getSequent().goal().toString();
 				}
 			}
 			return super.getText(element);
 		}
-
 	}
-
-	// class ProofTreeLabelProvider implements ITableLabelProvider,
-	// ITableFontProvider, ITableColorProvider, IPropertyChangeListener {
-	//
-	// private Font font = null;
-	//
-	// public ProofTreeLabelProvider() {
-	// // Register as a listener to the font registry
-	// JFaceResources.getFontRegistry().addListener(this);
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
-	// * int)
-	// */
-	// public Image getColumnImage(Object element, int columnIndex) {
-	// if (element instanceof IProofTreeNode) {
-	// return EventBImage
-	// .getProofTreeNodeImage((IProofTreeNode) element);
-	// }
-	//
-	// // TODO Removed?
-	// String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-	// return PlatformUI.getWorkbench().getSharedImages().getImage(
-	// imageKey);
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
-	// * int)
-	// */
-	// public String getColumnText(Object element, int columnIndex) {
-	// if (element instanceof IProofTreeNode) {
-	// IProofTreeNode proofTree = (IProofTreeNode) element;
-	//
-	// if (!proofTree.isOpen()) {
-	// return proofTree.getRule().getDisplayName();
-	// // TODO : maybe make this an option.
-	// // + proofTree.getSequent().goal();
-	// } else {
-	// return proofTree.getSequent().goal().toString();
-	// }
-	// }
-	// return element.toString();
-	//
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	// */
-	// public void addListener(ILabelProviderListener listener) {
-	// // TODO Auto-generated method stub
-	//
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	// */
-	// public void dispose() {
-	// // TODO Auto-generated method stub
-	//
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
-	// * java.lang.String)
-	// */
-	// public boolean isLabelProperty(Object element, String property) {
-	// // TODO Auto-generated method stub
-	// return false;
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	// */
-	// public void removeListener(ILabelProviderListener listener) {
-	// // TODO Auto-generated method stub
-	//
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object,
-	// * int)
-	// */
-	// public Color getBackground(Object element, int columnIndex) {
-	// Display display = Display.getCurrent();
-	// return display.getSystemColor(SWT.COLOR_WHITE);
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object,
-	// * int)
-	// */
-	// public Color getForeground(Object element, int columnIndex) {
-	// Display display = Display.getCurrent();
-	// return display.getSystemColor(SWT.COLOR_BLACK);
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object,
-	// * int)
-	// */
-	// public Font getFont(Object element, int columnIndex) {
-	// // UIUtils.debug("Get fonts");
-	// if (font == null) {
-	// font = JFaceResources
-	// .getFont(PreferenceConstants.EVENTB_MATH_FONT);
-	// }
-	// return font;
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// org.eclipse.core.runtime.Preferences$IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
-	// */
-	// public void propertyChange(PropertyChangeEvent event) {
-	// font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-	// ProofTreeUIPage.this.getViewer().refresh();
-	// }
-	//
-	// }
 
 	/**
 	 * Creates a content outline page using the given editor. Register as a
@@ -313,7 +165,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		super();
 		this.userSupport = userSupport;
 		// byUserSupport = false;
-		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(this);
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
+				this);
 	}
 
 	/*
@@ -329,12 +182,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	@Override
 	public void createControl(Composite parent) {
-		// Composite comp = new Composite(parent, SWT.DEFAULT);
-		// GridLayout gl = new GridLayout();
-		// gl.numColumns = 1;
-		// comp.setLayout(gl);
-		// GridData ld = new GridData(GridData.FILL_BOTH);
-		// comp.setLayoutData(ld);
 		Composite comp = parent;
 
 		viewer = new TreeViewer(comp, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -351,72 +198,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		ProofTreeUIToolTip handler = new ProofTreeUIToolTip(viewer.getControl()
 				.getShell(), userSupport);
 		handler.activateHoverHelp(viewer.getControl());
-		// elementColumn.setResizable(true);
-		// TODO Implement using ViewerFilter????
-		// viewer.addFilter(new ViewerFilter() {
-		//
-		// /* (non-Javadoc)
-		// * @see
-		// org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
-		// java.lang.Object, java.lang.Object)
-		// */
-		// @Override
-		// public boolean select(Viewer viewer, Object parentElement, Object
-		// element) {
-		// if (element instanceof IProofTreeNode) {
-		// if (((IProofTreeNode) element).isOpen()) return true;
-		// if (((IProofTreeNode) element).getRule().getName().equals("hyp"))
-		// return false;
-		// }
-		// return true;
-		// }
-		//			
-		// });
-		// Label label = new Label(parent, SWT.CENTER | SWT.WRAP);
-		// label.setText("Confident Level: ");
-		// gd = new GridData();
-		// // gd.heightHint = 50;
-		// // gd.widthHint = 100;
-		// gd.horizontalAlignment = SWT.CENTER;
-		// label.setLayoutData(gd);
-		// label.pack();
-
-		// confidentLevel = new Combo(parent, SWT.DEFAULT);
-		// for (int i = 0; i <= 10; i++)
-		// confidentLevel.add(i+"");
-		// gd = new GridData();
-		// confidentLevel.setLayoutData(gd);
-
-		// comments = new Text(comp, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		// gd = new GridData(GridData.FILL_HORIZONTAL);
-		// gd.heightHint = 150;
-		// gd.horizontalSpan = 1;
-		// comments.setLayoutData(gd);
-		//
-		// comments.addFocusListener(new FocusListener() {
-		//
-		// public void focusGained(FocusEvent e) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		//
-		// public void focusLost(FocusEvent e) {
-		// ISelection sel = viewer.getSelection();
-		// UIUtils.debugProverUI("Selection: " + sel);
-		// if (sel instanceof IStructuredSelection) {
-		// IStructuredSelection ssel = (IStructuredSelection) sel;
-		// if (ssel.size() == 1) {
-		// IProofTreeNode node = (IProofTreeNode) ssel
-		// .getFirstElement();
-		// UIUtils.debugProverUI("Node: "
-		// + node.getSequent().toString());
-		// userSupport.setComment(comments.getText());
-		// }
-		// }
-		// }
-		//
-		// });
-		//
 
 		makeActions();
 		hookContextMenu();
@@ -474,7 +255,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	@Override
 	public void dispose() {
-		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(this);
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
+				this);
 		super.dispose();
 	}
 
@@ -529,6 +311,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
 		groupActionSet.drillDownAdapter.addNavigationActions(manager);
+		manager.update(true);
 	}
 
 	/**
@@ -825,40 +608,43 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 										proofState);
 						if (affectedProofState != null) {
 							if (affectedProofState.getKind() == IProofStateDelta.ADDED) {
-								if (proofState != null) { // Change only when change the PO
+								if (proofState != null) { // Change only when
+															// change the PO
 									ProofTreeUIPage page = ProofTreeUIPage.this;
 									page.setInput(proofState.getProofTree());
-									IProofTreeNode currentNode = proofState.getCurrentNode();
+									IProofTreeNode currentNode = proofState
+											.getCurrentNode();
 									page.getViewer().expandAll();
 									// elementColumn.pack();
 									// elementColumn.setWidth(MAX_WIDTH);
 									if (currentNode != null)
 										page.getViewer().setSelection(
-												new StructuredSelection(currentNode));
+												new StructuredSelection(
+														currentNode));
 								} else {
 									ProofTreeUIPage page = ProofTreeUIPage.this;
 									page.setInput(null);
 									// elementColumn.pack();
 									// elementColumn.setWidth(MAX_WIDTH);
-								}								
-							}
-							else if (affectedProofState.getKind() == IProofStateDelta.REMOVED) {
+								}
+							} else if (affectedProofState.getKind() == IProofStateDelta.REMOVED) {
 								return;
-							}
-							else if (affectedProofState.getKind() == IProofStateDelta.CHANGED) {
+							} else if (affectedProofState.getKind() == IProofStateDelta.CHANGED) {
 								if ((affectedProofState.getFlags() | IProofStateDelta.F_PROOFTREE) != 0) {
 									viewer.refresh();
 								}
 								if ((affectedProofState.getFlags() | IProofStateDelta.F_NODE) != 0) {
-									IProofTreeNode node = proofState.getCurrentNode();
+									IProofTreeNode node = proofState
+											.getCurrentNode();
 									if (node != null) {
-										viewer.setSelection(new StructuredSelection(node),
+										viewer.setSelection(
+												new StructuredSelection(node),
 												true);
-									}									
+									}
 								}
 							}
 						}
-						
+
 					}
 				}
 			}

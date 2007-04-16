@@ -12,17 +12,24 @@
 
 package org.eventb.internal.ui.prooftreeui;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPage;
-import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.EventBUIPlugin;
 
@@ -45,7 +52,7 @@ public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 	private String defaultText = "A proof tree is not available";
 
 	public static Object buffer;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -71,8 +78,7 @@ public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 		Object obj = part.getAdapter(IProofTreeUIPage.class);
 		if (obj instanceof IProofTreeUIPage) {
 			IProofTreeUIPage page = (IProofTreeUIPage) obj;
-			if (page instanceof IPageBookViewPage)
-				initPage((IPageBookViewPage) page);
+			initPage(page);
 			page.createControl(getPageBook());
 			return new PageRec(part, page);
 		}
@@ -165,5 +171,115 @@ public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 	public void selectionChanged(SelectionChangedEvent event) {
 		getSelectionProvider().selectionChanged(event);
 	}
+
+	@Override
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		createActions();
+		createMenu();
+		createToolbar();
+		hookGlobalActions();
+
+		restoreState();
+	}
+
+	private void restoreState() {
+		if (memento == null)
+			return;
+		memento = memento.getChild("showGoal");
+		if (memento != null) { // Only if there is a saved state before
+			showGoal = memento.getID().equalsIgnoreCase("true");
+			showGoalAction.setChecked(showGoal);
+			memento = null;
+		}
+	}
+
+	@Override
+	public void saveState(IMemento mem) {
+		mem = mem.createChild("showGoal", showGoal ? "true" : "false");
+	}
+
+	private IMemento memento;
+
+	@Override
+	public void init(IViewSite site, IMemento mem) throws PartInitException {
+		init(site);
+		this.memento = mem;
+	}
+
+	private IAction showGoalAction;
+
+	static boolean showGoal;
+
+	private void createActions() {
+		showGoalAction = new Action("Show Goal", Action.AS_CHECK_BOX) {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#run()
+			 */
+			@Override
+			public void run() {
+				showGoal = this.isChecked();
+				// Update all the pages
+				IPage currentPage = ProofTreeUI.this.getCurrentPage();
+				((ProofTreeUIPage) currentPage).refresh();
+			}
+		};
+		showGoalAction.setImageDescriptor(EventBImage
+				.getImageDescriptor("icons/sample.gif"));
+	}
+
+	/**
+	 * Create menu.
+	 */
+	private void createMenu() {
+		// This is a temporary code
+		// IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
+		// mgr.add(someAction);
+	}
+
+	/**
+	 * Create toolbar.
+	 */
+	private void createToolbar() {
+		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+		mgr.add(showGoalAction);
+	}
+
+	private void hookGlobalActions() {
+		// This is a temporary code
+		// IActionBars bars = getViewSite().getActionBars();
+		// bars.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL,
+		// selectAllAction);
+		// bars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE,
+		// deleteItemAction);
+		// viewer.getControl().addKeyListener(new KeyAdapter() {
+		// public void keyPressed(KeyEvent event) {
+		// if (event.character == SWT.DEL &&
+		// event.stateMask == 0 &&
+		// deleteItemAction.isEnabled())
+		// {
+		// deleteItemAction.run();
+		// }
+		// }
+		// });
+	}
+
+	@Override
+	public void partActivated(IWorkbenchPart part) {
+		super.partActivated(part);
+		IPage currentPage = this.getCurrentPage();
+		if (currentPage instanceof ProofTreeUIPage) {
+			((ProofTreeUIPage) currentPage).refresh();
+		}
+	}
+
+	@Override
+	public void partBroughtToTop(IWorkbenchPart part) {
+		partActivated(part);
+	}
+	
+	
 
 }
