@@ -32,6 +32,7 @@ import org.eclipse.ui.part.PageBookView;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IEventBSharedImages;
 
 /**
  * @author htson
@@ -227,7 +228,7 @@ public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 			}
 		};
 		showGoalAction.setImageDescriptor(EventBImage
-				.getImageDescriptor("icons/sample.gif"));
+				.getImageDescriptor(IEventBSharedImages.IMG_SHOW_GOAL_PATH));
 	}
 
 	/**
