@@ -15,18 +15,29 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.part.IPage;
 
 /**
- * Implementation of the collapse all action in the obligation explorer
+ * Implementation of the collapse all action in the proof tree
  * 
- * @author Laurent Voisin
+ * @author htson
  */
 public class ProofTreeCollapseAllAction implements IViewActionDelegate {
 
 	private ProofTreeUI fView;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
+	 */
 	public void init(IViewPart view) {
+		assert view instanceof ProofTreeUI;
 		fView = (ProofTreeUI) view;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
 	public void run(IAction action) {
 		IPage currentPage = fView.getCurrentPage();
 		if (currentPage != null && currentPage instanceof ProofTreeUIPage) {
@@ -34,8 +45,14 @@ public class ProofTreeCollapseAllAction implements IViewActionDelegate {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
+	 *      org.eclipse.jface.viewers.ISelection)
+	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		// ignore
+		// Do nothing
 	}
 
 }
