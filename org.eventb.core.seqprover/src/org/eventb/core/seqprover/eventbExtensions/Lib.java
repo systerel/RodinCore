@@ -83,6 +83,12 @@ public final class Lib {
 			return true;
 		return false;
 	}
+	
+	public static boolean isFreeIdent(Expression e) {
+		if (e instanceof FreeIdentifier && e.getTag() == Formula.FREE_IDENT)
+			return true;
+		return false;
+	}
 
 	public static boolean isUnivQuant(Predicate P) {
 		if (P instanceof QuantifiedPredicate && P.getTag() == Formula.FORALL)

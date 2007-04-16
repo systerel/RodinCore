@@ -396,9 +396,9 @@ public class Tactics {
 	
 	
 	/**
-	 * This tactic tries to split a conjunction in the selected hyps
+	 * This tactic tries to split a conjunction in the selected hyps.
 	 * 
-	 * @return
+	 * @return the tactic
 	 */
 	public static ITactic conjD_auto(){
 		return new ITactic(){
@@ -421,6 +421,27 @@ public class Tactics {
 	public static boolean impE_applicable(Predicate hyp) {
 		return Lib.isImp(hyp);
 	}
+	
+	/**
+	 * This tactic tries to automatically apply an impE or he for an implicative selected hyp 
+	 * where the right hand side of the implication is contained in the hyps.
+	 *  
+	 * @return the tactic
+	 */
+	public static ITactic impE_auto(){
+		return new ITactic(){
+			
+			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+					if (Lib.isImp(shyp) &&
+							ptNode.getSequent().containsHypotheses(Lib.breakPossibleConjunct(Lib.impLeft(shyp)))){
+						return impE(shyp).apply(ptNode, pm);
+					}
+				}
+				return "Selected hyps contain no appropriate implications";
+			}
+		};
+	}
 
 	public static ITactic disjE(Predicate disjHyp) {
 		return BasicTactics.reasonerTac(new DisjE(), new DisjE.Input(disjHyp));
@@ -438,6 +459,33 @@ public class Tactics {
 		return Lib.isEq(hyp);
 	}
 
+	/**
+	 * This tactic tries to automatically apply an eqE or he for an equality selected hyp 
+	 * where one side of the equality is a free variable and the other side is an expression
+	 * that doesn't contain the free variable.
+	 *  
+	 * @return the tactic
+	 */
+	public static ITactic eqE_auto(){
+		return new ITactic(){
+
+			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+					if (Lib.isEq(shyp)){
+						if (Lib.isFreeIdent(Lib.eqLeft(shyp)) &&
+								! Arrays.asList(Lib.eqRight(shyp).getFreeIdentifiers()).contains(Lib.eqLeft(shyp)))
+						return eqE(shyp).apply(ptNode, pm);
+						if (Lib.isFreeIdent(Lib.eqRight(shyp)) &&
+								! Arrays.asList(Lib.eqLeft(shyp).getFreeIdentifiers()).contains(Lib.eqRight(shyp)))
+							return he(shyp).apply(ptNode, pm);
+					}
+					
+				}
+				return "Selected hyps contain no appropriate equalities";
+			}
+		};
+	}
+	
 	public static ITactic exE(Predicate exHyp) {
 		return BasicTactics.reasonerTac(new ExE(), new ExE.Input(exHyp));
 	}
@@ -490,6 +538,27 @@ public class Tactics {
 			IProverSequent seq) {
 		return (!seq.goal().equals(Lib.makeNeg(hyp)));
 	}
+	
+	/**
+	 * This tactic tries to find a contradiction for a negated hyp in the selected hyps.
+	 * 
+	 * @return the tactic
+	 */
+	public static ITactic falsifyHyp_auto(){
+		return new ITactic(){
+
+			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+					if (Lib.isNeg(shyp) &&
+							ptNode.getSequent().containsHypotheses(Lib.breakPossibleConjunct(Lib.negPred(shyp)))){
+						return falsifyHyp(shyp).apply(ptNode, pm);
+					}
+				}
+				return "Selected hyps contain no contradicting negations";
+			}
+		};
+	}
+
 
 	// Misc tactics
 
@@ -536,8 +605,16 @@ public class Tactics {
 		return repeat(onAllPending(cleanupTac));
 	}
 
+	// It is important that conjD_auto() is called sometime before falsifyHyp_auto()
+	// and impE_auto()
 	public static ITactic postProcessExpert() {
-		return repeat(onAllPending(compose(autoRewriteRules(), conjD_auto(), norm())));
+		return repeat(onAllPending(compose(
+				autoRewriteRules(),
+				conjD_auto(),
+				falsifyHyp_auto(),
+				eqE_auto(),
+				impE_auto(),
+				norm())));
 	}
 
 	public static ITactic afterLasoo(final ITactic tactic) {
