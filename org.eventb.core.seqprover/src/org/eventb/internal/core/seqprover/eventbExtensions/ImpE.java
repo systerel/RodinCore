@@ -37,7 +37,7 @@ public class ImpE extends HypothesisReasoner {
 		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(toAssume);
 		addedHyps.addAll(Lib.breakPossibleConjunct(toShow));
 		Set<Predicate> deselectedHyps = new HashSet<Predicate>();
-		deselectedHyps.add(toShow);
+		// deselectedHyps.add(toShow);
 		deselectedHyps.add(pred);
 		return new IAntecedent[] {
 				ProverFactory.makeAntecedent(

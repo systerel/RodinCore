@@ -1,6 +1,9 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.Collections;
+
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
@@ -21,16 +24,18 @@ public class Contr extends HypothesisReasoner{
 			Predicate pred) {
 
 		final Predicate newGoal;
+		IHypAction deselect = null;
 		if (pred == null) {
 			newGoal = Lib.False;
 		} else {
 			newGoal = Lib.makeNeg(pred);
+			deselect = ProverFactory.makeDeselectHypAction(Collections.singleton(pred));
 		}
 		return new IAntecedent[] {
 				ProverFactory.makeAntecedent(
 						newGoal,
 						Lib.breakPossibleConjunct(Lib.makeNeg(sequent.goal())),
-						null)
+						deselect)
 		};
 	}
 

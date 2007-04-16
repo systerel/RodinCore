@@ -23,6 +23,7 @@ import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 
 // TODO : implement the symetric operation (he)
 // TODO : take input from the genearted rule (maybe, since it removes backward compatability)
+// TODO : make this a hypothesis reasoner
 public class Eq extends SinglePredInputReasoner{
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".eq";
