@@ -1,4 +1,30 @@
+/*******************************************************************************
+ * Copyright (c) 2006-2007 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.ui;
+
+/**
+ * A registry for common images used by the Event-B User Interface which may be useful 
+ * to other plug-ins.
+ * <p>
+ * This inteface provides <code>Image</code> and <code>ImageDescriptor</code>s
+ * for each named image in the interface.  All <code>Image</code> objects provided 
+ * by this class are managed by this class and must never be disposed 
+ * by other clients.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ */
 
 public interface IEventBSharedImages {
 
@@ -117,5 +143,7 @@ public interface IEventBSharedImages {
 	public static final String IMG_REFINES_PATH = "icons/full/ctool16/refines.gif";
 
 	public static final String IMG_NULL_PATH = "icons/full/ctool16/null.gif";
+
+	public static final String IMG_SHOW_GOAL_PATH = "icons/full/ctool16/showgoal.gif";
 
 }
