@@ -2,6 +2,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.ast.IFormulaRewriter;
@@ -14,6 +15,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public class AutoRewrites extends EmptyInputReasoner {
@@ -27,32 +29,42 @@ public class AutoRewrites extends EmptyInputReasoner {
 
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		
+
 		final IFormulaRewriter rewriter = new AutoRewriterImpl();
 
 		final List<IHypAction> hypActions = new ArrayList<IHypAction>();
-		for (Predicate pred : seq.hypIterable()) {
-			if (seq.isHidden(pred))
-				continue; // Do not rewrite hidden hypothesis
+		for (Predicate hyp : seq.visibleHypIterable()) {
+			
+			// Rewrite the hypothesis
+			Predicate inferredHyp = recursiveRewrite(hyp, rewriter);
+			Collection<Predicate> inferredHyps = Lib.breakPossibleConjunct(inferredHyp);
 
-			Predicate newPred = recursiveRewrite(pred, rewriter);
-			if (newPred != pred) {
-				// Add the new version of the hypothesis, if interesting
-				if (newPred.getTag() != Predicate.BTRUE) {
-					Collection<Predicate> neededHyps = new ArrayList<Predicate>();
-					neededHyps.add(pred);
-
-					// make the forward action
-					Collection<Predicate> inferredHyps = new ArrayList<Predicate>();
-					inferredHyps.add(newPred);
-					hypActions.add(ProverFactory.makeForwardInfHypAction(
-							neededHyps, inferredHyps));
-
-					// Hide the original hypothesis. IMPORTANT: Do it after the
-					// forward inference hypothesis action
-					hypActions.add(ProverFactory.makeHideHypAction(neededHyps));
+			// Check if rewriting made a change
+			if (inferredHyp == hyp && inferredHyps.size() == 1) continue;
+			// Check if rewriting generated something interesting
+			if (inferredHyp.getTag() == Predicate.BTRUE) continue;
+			
+			// Check if rewriting generated something new
+			if (seq.containsHypotheses(inferredHyps)){
+				// if the original hyp was selected then...
+				if (seq.isSelected(hyp)){
+					// hide it and...
+					hypActions.add(ProverFactory.makeHideHypAction(Collections.singleton(hyp)));
+					// select the inferred hyps
+					hypActions.add(ProverFactory.makeSelectHypAction(inferredHyps));
 				}
+				continue;
 			}
+
+			// make the forward inference action
+			Collection<Predicate> originalHyps = Collections.singleton(hyp);
+			hypActions.add(ProverFactory.makeForwardInfHypAction(
+					originalHyps, inferredHyps));
+
+			// Hide the original hypothesis. IMPORTANT: Do it after the
+			// forward inference hypothesis action
+			hypActions.add(ProverFactory.makeHideHypAction(originalHyps));
+
 		}
 
 		Predicate goal = seq.goal();

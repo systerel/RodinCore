@@ -610,7 +610,8 @@ public class Tactics {
 	public static ITactic postProcessExpert() {
 		return repeat(onAllPending(compose(
 				autoRewriteRules(),
-				conjD_auto(),
+				// autoRewriteRules() already incorporates what conjD_auto() does
+				// conjD_auto(),
 				falsifyHyp_auto(),
 				eqE_auto(),
 				impE_auto(),
