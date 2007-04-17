@@ -242,14 +242,16 @@ public class ProverUI extends FormEditor implements
 
 		if (ISearchHypothesisPage.class.equals(required)) {
 			if (fSearchHypothesisPage == null) {
-				fSearchHypothesisPage = new SearchHypothesisPage(this);
+				fSearchHypothesisPage = new SearchHypothesisPage(this
+						.getUserSupport());
 			}
 			return fSearchHypothesisPage;
 		}
 
 		if (ICacheHypothesisPage.class.equals(required)) {
 			if (fCacheHypothesisPage == null) {
-				fCacheHypothesisPage = new CacheHypothesisPage(this);
+				fCacheHypothesisPage = new CacheHypothesisPage(this
+						.getUserSupport());
 			}
 			return fCacheHypothesisPage;
 		}

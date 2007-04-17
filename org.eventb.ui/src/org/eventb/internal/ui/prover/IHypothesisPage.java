@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007 ETH Zurich.
+ * Copyright (c) 2007 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,15 +10,22 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui.searchhypothesis;
+package org.eventb.internal.ui.prover;
 
-import org.eventb.internal.ui.prover.IHypothesisPage;
+import java.util.Set;
+
+import org.eclipse.ui.part.IPageBookViewPage;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IUserSupport;
 
 /**
  * @author htson
  *         <p>
- *         This is the interface for the Search Hypothesis Pages.
+ *         This is the interface for the Proof Control pages.
  */
-public interface ISearchHypothesisPage extends IHypothesisPage {
-	// Direct extension of IHypothesisPage
+public interface IHypothesisPage extends IPageBookViewPage {
+
+	IUserSupport getUserSupport();
+
+	Set<Predicate> getSelectedHyps();
 }

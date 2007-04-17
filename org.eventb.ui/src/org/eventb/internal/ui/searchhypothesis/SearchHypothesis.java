@@ -11,7 +11,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPage;
-import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
@@ -29,14 +28,14 @@ import org.eventb.ui.EventBUIPlugin;
 /**
  * @author htson
  *         <p>
- *         Implementation of the Proof Control View.
+ *         Implementation of the Search Hypothesis View.
  */
 public class SearchHypothesis extends PageBookView implements
 		ISelectionProvider, ISelectionChangedListener,
 		IUserSupportManagerChangedListener {
 
 	/**
-	 * The identifier of the Proof Control View (value
+	 * The identifier of the Search Hypothesis View (value
 	 * <code>"org.eventb.ui.views.SearchHypothesis"</code>).
 	 */
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
@@ -89,8 +88,7 @@ public class SearchHypothesis extends PageBookView implements
 		Object obj = part.getAdapter(ISearchHypothesisPage.class);
 		if (obj instanceof ISearchHypothesisPage) {
 			ISearchHypothesisPage page = (ISearchHypothesisPage) obj;
-			if (page instanceof IPageBookViewPage)
-				initPage((IPageBookViewPage) page);
+			initPage(page);
 			page.createControl(getPageBook());
 			return new PageRec(part, page);
 		}
@@ -106,7 +104,7 @@ public class SearchHypothesis extends PageBookView implements
 	 */
 	@Override
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
-		ISearchHypothesisPage page = (ISearchHypothesisPage) pageRecord.page;
+		IPage page = pageRecord.page;
 		page.dispose();
 		pageRecord.dispose();
 	}
