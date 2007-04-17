@@ -5,6 +5,7 @@
          id="reasoners" 
          name="%point.reasoners" 
          schema="schema/reasoners.exsd"/>
+   <extension-point id="tactics" name="%point.tactics" schema="schema/tactics.exsd"/>
    <extension
          point="org.eventb.core.seqprover.reasoners">
       <reasoner

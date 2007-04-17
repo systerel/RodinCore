@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eventb.core.seqprover">
+<schema targetNamespace="org.eventb.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eventb.core.seqprover" id="reasoner" name="Reasoner"/>
+         <meta.schema plugin="org.eventb.core" id="tactics" name="%point.tactics"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point accepts tactic extensions.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="reasoner" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="tactic" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -42,19 +42,20 @@
       </complexType>
    </element>
 
-   <element name="reasoner">
+   <element name="tactic">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the identifier for this reasoner (simple id token). The token cannot contain a dot (.) or whitespace.
+                  the unique identifier for this tactic (simple id token, unique
+for tactics within the extension namespace). The token cannot contain a dot (.) or whitespace.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  the human-readable name of this reasoner
+                  a human readable name for this tactic
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -64,10 +65,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully-qualified name of an implementation of &lt;code&gt;org.eventb.core.seqprover.IReasoner&lt;/code&gt;
+                  the fully-qualified name of an implementation of &lt;code&gt;org.eventb.core.seqprover.ITactic&lt;/code&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eventb.core.seqprover.IReasoner"/>
+                  <meta.attribute kind="java" basedOn="org.eventb.core.seqprover.ITactic"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -79,7 +80,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         0.7.3
       </documentation>
    </annotation>
 
@@ -115,7 +116,13 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2005-2006 ETH Zurich.&lt;br&gt;
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+&lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+&lt;br&gt;
+Contributors: ETH Zurich
       </documentation>
    </annotation>
 

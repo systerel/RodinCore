@@ -4,6 +4,7 @@ package org.eventb.core.seqprover;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
+import org.eventb.internal.core.seqprover.TacticRegistry;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -18,7 +19,8 @@ public class SequentProver extends Plugin {
 	 */
 	private static final String SEQPROVER_TRACE = PLUGIN_ID + "/debug/seqProver"; //$NON-NLS-1$
 	private static final String REASONER_REGISTRY_TRACE = PLUGIN_ID + "/debug/reasonerRegistry"; //$NON-NLS-1$	
-
+	private static final String TACTIC_REGISTRY_TRACE = PLUGIN_ID + "/debug/tacticRegistry"; //$NON-NLS-1$
+	
 	/**
 	 * The shared instance.
 	 */
@@ -62,6 +64,9 @@ public class SequentProver extends Plugin {
 			option = Platform.getDebugOption(REASONER_REGISTRY_TRACE);
 			if (option != null)
 				ReasonerRegistry.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(TACTIC_REGISTRY_TRACE);
+			if (option != null)
+				TacticRegistry.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 
@@ -82,6 +87,10 @@ public class SequentProver extends Plugin {
 
 	public static IReasonerRegistry getReasonerRegistry(){
 		return ReasonerRegistry.getReasonerRegistry();
+	}
+	
+	public static ITacticRegistry getTacticRegistry(){
+		return TacticRegistry.getTacticRegistry();
 	}
 	
 	public static void debugOut(String message){
