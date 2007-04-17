@@ -143,11 +143,30 @@ public class ReasonerRegistry implements IReasonerRegistry {
 				this.id = null;
 				Util.log(null,
 						"Invalid id: " + localId + " (must not contain a dot)");
+			} else if (containsWhitespace(localId)) {
+				this.id = null;
+				Util.log(null,
+						"Invalid id: " + localId + " (must not contain a whitespace)");
 			} else {
 				final String nameSpace = element.getNamespaceIdentifier();
 				this.id = nameSpace + "." + localId;
 			}
 			this.name = element.getAttribute("name");
+		}
+		
+		/**
+		 * Checks if a string contains a whitespace character
+		 * 
+		 * @param str
+		 * 		String to check for.
+		 * @return
+		 * 		<code>true</code> iff the string contains a whitespace character.
+		 */
+		private static boolean containsWhitespace(String str){
+			for (int i = 0; i < str.length(); i++) {
+				if (Character.isWhitespace(str.charAt(i))) return true;
+			}
+			return false;
 		}
 		
 		public ReasonerInfo(String id) {
