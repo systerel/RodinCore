@@ -877,5 +877,21 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new RemoveInclusion(),
 				new RemoveInclusion.Input(hyp, position));
 	}
+	
+	public class Norm implements ITactic{
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			return norm().apply(ptNode, pm);
+		}
+		
+	}
+	
+	public class AutoRewriteRules implements ITactic{
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			return autoRewriteRules().apply(ptNode, pm);
+		}
+		
+	}
 
 }

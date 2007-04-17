@@ -128,5 +128,16 @@
             id="ri"
             name="%riName"/>
    </extension>
+   <extension
+         point="org.eventb.core.seqprover.tactics">
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$Norm"
+            id="norm"
+            name="%normName"/>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoRewriteRules"
+            id="autoRewriteRules"
+            name="%autoRewriteRulesName"/>
+   </extension>
 
 </plugin>
