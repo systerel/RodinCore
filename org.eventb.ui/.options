@@ -6,3 +6,5 @@ org.eventb.ui/debug/proverui = false
 org.eventb.ui/debug/proofcontrol = false
 org.eventb.ui/debug/prooftreeui = false
 org.eventb.ui/debug/proofinformation = false
+org.eventb.ui/debug/searchhypothesis = false
+org.eventb.ui/debug/cachedhypothesis = false
