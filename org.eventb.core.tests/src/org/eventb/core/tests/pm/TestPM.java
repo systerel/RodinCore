@@ -81,6 +81,10 @@ public abstract class TestPM extends BasicTest {
 			sep = true;
 		}
 		String actual = builder.toString();
+		assertString(message, actual, expected);
+	}
+
+	void assertString(String message, String actual, String expected) {
 		if (!expected.equals(actual)) {
 			System.out.println(Util.displayString(actual));
 			fail(message + ":\n" + actual);
