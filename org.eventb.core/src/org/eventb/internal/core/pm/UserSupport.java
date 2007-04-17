@@ -443,15 +443,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 				hyps, monitor);
 	}
 
-	void debugProofState() {
-		UserSupportUtils.debug("******** Proof States **********");
-		for (IProofState state : proofStates.values()) {
-			UserSupportUtils.debug("Goal: "
-					+ state.getPSStatus().getElementName());
-		}
-		UserSupportUtils.debug("******************************");
-	}
-
 	IProofState getProofState(int index) {
 		IProofState proofState = null;
 		if (index < proofStates.size())
