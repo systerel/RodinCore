@@ -222,11 +222,15 @@
       <perspectiveExtension targetID="org.eventb.ui.perspective.proving">
          <view
                id="org.eventb.ui.views.ProofInformation"
-               ratio="0.30"
+               ratio="0.25"
                relationship="fast"/>
          <view
                id="org.eventb.ui.views.SearchHypothesis"
-               ratio="0.50"
+               ratio="0.25"
+               relationship="fast"/>
+         <view
+               id="org.eventb.ui.views.CacheHypothesis"
+               ratio="0.25"
                relationship="fast"/>
       </perspectiveExtension>
    </extension>
