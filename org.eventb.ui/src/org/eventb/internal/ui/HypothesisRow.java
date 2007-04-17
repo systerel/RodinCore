@@ -119,6 +119,12 @@ public class HypothesisRow {
 		else
 			background = new Color(Display.getDefault(), 225, 255, 255);
 
+		checkBox = toolkit.createButton(parent, "", SWT.CHECK);
+		checkBox.setBackground(background);
+		checkBox.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING,
+				false, false));
+		checkBox.setEnabled(enable);
+
 		buttonComposite = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.makeColumnsEqualWidth = true;
@@ -126,8 +132,8 @@ public class HypothesisRow {
 
 		buttonComposite.setLayout(layout);
 		buttonComposite.setBackground(background);
-		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-				false));
+		buttonComposite.setLayoutData(new GridData(SWT.FILL,
+				SWT.FILL, false, false));
 		createImageHyperlinks(buttonComposite);
 
 		hypothesisComposite = toolkit.createScrolledForm(parent);
@@ -143,41 +149,8 @@ public class HypothesisRow {
 		parsedPred = parseResult.getParsedPredicate();
 
 		createHypothesisText();
-		checkBox = toolkit.createButton(parent, "", SWT.CHECK);
-		checkBox.setBackground(background);
-		checkBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		checkBox.setEnabled(enable);
 
 	}
-
-	// private class HypothesisTextLayout extends Layout {
-	//
-	// @Override
-	// protected Point computeSize(Composite composite, int wHint, int hHint,
-	// boolean flushCache) {
-	// Point size = layout(composite, false, 0, 0, wHint, hHint,
-	// flushCache);
-	// if (wHint != SWT.DEFAULT)
-	// size.x = wHint;
-	// if (hHint != SWT.DEFAULT)
-	// size.y = hHint;
-	// return size;
-	// }
-	//
-	// private Point layout(Composite composite, boolean b, int i, int j,
-	// int hint, int hint2, boolean flushCache) {
-	// createHypothesisText();
-	// return hypothesisText.getMainTextWidget().getSize();
-	// }
-	//
-	// @Override
-	// protected void layout(Composite composite, boolean flushCache) {
-	// Rectangle rect = composite.getClientArea();
-	// layout(composite, true, rect.x, rect.y, rect.width, rect.height,
-	// flushCache);
-	// }
-	//
-	// }
 
 	public void createHypothesisText() {
 		if (hypothesisText != null)
@@ -350,8 +323,6 @@ public class HypothesisRow {
 	 */
 	private void createImageHyperlinks(Composite parent) {
 		final IProofTreeNode node = userSupport.getCurrentPO().getCurrentNode();
-		// Collection<HypothesisTacticUI> tactics = ProverUIUtils
-		// .getApplicableToHypothesis(node, hyp);
 
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 		String[] tactics = tacticUIRegistry.getApplicableToHypothesis(
@@ -372,7 +343,7 @@ public class HypothesisRow {
 			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 					SWT.CENTER);
 			hyperlink
-					.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+					.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, true));
 			toolkit.adapt(hyperlink, true, true);
 			hyperlink.setImage(tacticUIRegistry.getIcon(tacticID));
 			hyperlink
