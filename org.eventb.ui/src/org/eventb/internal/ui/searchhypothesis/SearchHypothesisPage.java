@@ -42,7 +42,6 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.ui.HypothesisRow;
-import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBUIPlugin;
@@ -267,8 +266,8 @@ public class SearchHypothesisPage extends Page implements
 
 		// This case should NOT happened.
 		if (kind == IUserSupportDelta.ADDED) {
-			if (ProofControlUtils.DEBUG)
-				ProofControlUtils
+			if (SearchHypothesisUtils.DEBUG)
+				SearchHypothesisUtils
 						.debug("Error: Delta said that the user Support is added");
 			return; // Do nothing
 		}
@@ -300,8 +299,8 @@ public class SearchHypothesisPage extends Page implements
 							int psKind = affectedProofState.getKind();
 							if (psKind == IProofStateDelta.ADDED) {
 								// This case should not happened
-								if (ProofControlUtils.DEBUG)
-									ProofControlUtils
+								if (SearchHypothesisUtils.DEBUG)
+									SearchHypothesisUtils
 											.debug("Error: Delta said that the proof state is added");
 								return;
 							}
