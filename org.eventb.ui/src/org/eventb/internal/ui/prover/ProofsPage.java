@@ -12,16 +12,11 @@
 
 package org.eventb.internal.ui.prover;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -35,7 +30,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -51,10 +45,9 @@ import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
+import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.ui.EventBUIPlugin;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -280,43 +273,43 @@ public class ProofsPage extends FormPage implements
 	}
 
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
-		Display display = Display.getDefault();
+		// Do nothing if the page is disposed.
 		if (this.getManagedForm().getForm().isDisposed())
 			return;
 
+		// Trying to get the changes for the current user support.
 		final IUserSupportDelta affectedUserSupport = ProverUIUtils
 				.getUserSupportDelta(delta, userSupport);
 
+		// Do nothing if there is no change for this current user support.
 		if (affectedUserSupport == null)
 			return;
 
+		// If the user support has been removed, do nothing. This will be handle
+		// by the main proof editor.
 		final int kind = affectedUserSupport.getKind();
+		if (kind == IUserSupportDelta.REMOVED) {
+			return; // Do nothing
+		}
 
-		if (kind == IUserSupportDelta.REMOVED)
-			return;
+		// This case should NOT happened.
+		if (kind == IUserSupportDelta.ADDED) {
+			if (ProverUIUtils.DEBUG)
+				ProverUIUtils
+						.debug("Error: Delta said that the user Support is added");
+			return; // Do nothing
+		}
 
-		if (ProverUIUtils.DEBUG)
-			ProverUIUtils
-					.debug("Proof State Change "
-							+ ((ProverUI) getEditor()).getRodinInput()
-									.getElementName());
+		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
-				if (kind == IUserSupportDelta.ADDED) {
-					IProofState ps = userSupport.getCurrentPO();
-					if (ps != null) { // Reload everything
-						initHypothesisSections(ps);
-						goalSection.setGoal(ps.getCurrentNode());
-					} else {
-						initHypothesisSections(null);
-						goalSection.setGoal(null);
-					}
-					ProofsPage.this.getManagedForm().getForm().reflow(true);
-				} else if (kind == IUserSupportDelta.CHANGED) {
+				// Handle the case where the user support has changed.
+				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();
 					if ((flags & IUserSupportDelta.F_CURRENT) != 0) {
+						// The current proof state is changed, reupdate the page
 						IProofState ps = userSupport.getCurrentPO();
-						if (ps != null) { // Reload everything
+						if (ps != null) {
 							initHypothesisSections(ps);
 							goalSection.setGoal(ps.getCurrentNode());
 						} else {
@@ -324,78 +317,50 @@ public class ProofsPage extends FormPage implements
 							goalSection.setGoal(null);
 						}
 						ProofsPage.this.getManagedForm().getForm().reflow(true);
-					} else if ((flags & IUserSupportDelta.F_STATE) != 0) {
+						return;
+					} 
+					
+					if ((flags & IUserSupportDelta.F_STATE) != 0) {
+						// If the changes occurs in some proof states.	
 						IProofState proofState = userSupport.getCurrentPO();
-						IProofStateDelta affectedProofState = ProverUIUtils
+						// Trying to get the change for the current proof state. 
+						final IProofStateDelta affectedProofState = ProverUIUtils
 								.getProofStateDelta(affectedUserSupport,
 										proofState);
+						if (affectedProofState != null) {
+							// If there are some changes
+							int psKind = affectedProofState.getKind();
 
-						if (affectedProofState == null)
-							return;
+							if (psKind == IProofStateDelta.ADDED) {
+								// This case should not happened
+								if (ProofControlUtils.DEBUG)
+									ProofControlUtils
+											.debug("Error: Delta said that the proof state is added");
+								return;
+							}
 
-						if (affectedProofState.getKind() == IProofStateDelta.REMOVED) {
-							if (proofState != null) {
+							if (psKind == IProofStateDelta.REMOVED) {
+								// Do nothing in this case, this will be handled
+								// by the main proof editor.
+								return;
+							}
+							
+							if (psKind == IProofStateDelta.CHANGED) {
+								// If there are some changes to the proof state.
+								int psFlags = affectedProofState.getFlags();
 
-								IWorkbenchPage activePage = EventBUIPlugin
-										.getActivePage();
-								if (activePage.isPartVisible(ProofsPage.this
-										.getEditor())) {
-									MessageDialog.openInformation(
-											ProofsPage.this.getSite()
-													.getShell(), "Out of Date",
-											"The Proof Obligation is deleted.");
-									UIUtils
-											.runWithProgressDialog(
-											ProofsPage.this.getPartControl()
-													.getShell(),
-											new IRunnableWithProgress() {
-
-												public void run(
-														IProgressMonitor monitor)
-														throws InvocationTargetException,
-														InterruptedException {
-													try {
-														userSupport
-																.nextUndischargedPO(
-																		true,
-																		monitor);
-													} catch (RodinDBException e) {
-														// TODO Auto-generated
-														// catch block
-														e.printStackTrace();
-													}
-												}
-
-											});
-								} else {
-									try {
-										userSupport.setCurrentPO(null,
-												new NullProgressMonitor());
-									} catch (RodinDBException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
+								if ((psFlags & IProofStateDelta.F_NODE) != 0) {
+									initHypothesisSections(proofState);
+									goalSection.setGoal(proofState
+											.getCurrentNode());
 								}
+								if ((psFlags & IProofStateDelta.F_CACHE) != 0) {
+									initCacheSection();
+								}
+
+								ProofsPage.this.getManagedForm().getForm()
+										.reflow(true);
 							}
-						} else if (affectedProofState.getKind() == IProofStateDelta.ADDED) {
-							return;
-						} else if (affectedProofState.getKind() == IProofStateDelta.CHANGED) {
-							int psFlags = affectedProofState.getFlags();
-							if ((psFlags & IProofStateDelta.F_NODE) != 0) {
-								initHypothesisSections(proofState);
-								goalSection
-										.setGoal(proofState.getCurrentNode());
-							}
-							if ((psFlags & IProofStateDelta.F_CACHE) != 0) {
-								initCacheSection();
-							}
-							if ((psFlags & IProofStateDelta.F_PROOFTREE) != 0) {
-								initHypothesisSections(proofState);
-								goalSection
-										.setGoal(proofState.getCurrentNode());
-							}
-							ProofsPage.this.getManagedForm().getForm().reflow(
-									true);
 						}
 					}
 				}

@@ -65,13 +65,8 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		ISelectionChangedListener, IUserSupportManagerChangedListener {
-
-	// private static final int MAX_WIDTH = 1500;
-
 	// The contained tree viewer.
 	TreeViewer viewer;
-
-	// private Text comments;
 
 	// The invisible root of the tree.
 	private IProofTree invisibleRoot = null;
@@ -81,13 +76,10 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	// TODO Change to Rule class?
 	private Object[] filters = {}; // Default filters
 
-	// private TreeColumn elementColumn;
-
 	// The current editting element.
 	private Object fInput;
 
-	// private Combo confidentLevel;
-
+	// The associated user support.
 	IUserSupport userSupport;
 
 	// Group of action that is used.
@@ -164,6 +156,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	public ProofTreeUIPage(IUserSupport userSupport) {
 		super();
 		this.userSupport = userSupport;
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(this);
 		// byUserSupport = false;
 		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
 				this);
@@ -194,7 +187,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		gd.horizontalSpan = 1;
 		tree.setLayoutData(gd);
 
-		// elementColumn = new TreeColumn(tree, SWT.LEFT);
 		ProofTreeUIToolTip handler = new ProofTreeUIToolTip(viewer.getControl()
 				.getShell(), userSupport);
 		handler.activateHoverHelp(viewer.getControl());
@@ -206,9 +198,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 		if (fInput != null)
 			update();
-		// elementColumn.pack();
-		// elementColumn.setWidth(MAX_WIDTH);
-
 	}
 
 	/**
@@ -235,12 +224,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				// Saving the expanded elements
 				Object[] elements = viewer.getExpandedElements();
 				viewer.setInput(fInput);
-				// viewer.refresh();
 				if (fInput != null) {
 					viewer.setExpandedElements(elements);
-					// elementColumn.pack();
-					// elementColumn.setWidth(MAX_WIDTH);
-					// UIUtils.debug("Width: " + elementColumn.getWidth());
 					viewer.refresh();
 
 					IProofState currentPO = userSupport.getCurrentPO();
@@ -276,7 +261,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
-		// getSite().registerContextMenu(menuMgr, viewer);
 	}
 
 	/**
@@ -459,12 +443,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (!ssel.isEmpty()) {
-				// if (byUserSupport) { // Do nothing if the selection is from
-				// // UserSupport
-				// byUserSupport = false;
-				// return;
-				// }
-
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IProofTreeNode) {
 					try {
@@ -474,13 +452,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 						e.printStackTrace();
 					}
 				}
-				// if (ssel.size() == 1) {
-				// IProofTreeNode node = (IProofTreeNode) ssel
-				// .getFirstElement();
-				// comments.setText(node.getComment());
-				// }
 			} else { // Do nothing when there is no selection
-				// editor.getUserSupport().selectNode(null);
 			}
 		}
 
@@ -545,106 +517,111 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	}
 
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
-		// byUserSupport = true;
 		if (ProofTreeUIUtils.DEBUG)
 			ProofTreeUIUtils.debug("Proof Tree UI for "
 					+ ProofTreeUIPage.this.userSupport.getInput()
 							.getElementName() + ": State Changed: "
 					+ delta.toString());
 
+		// Trying to get the changes for the current user support.
 		final IUserSupportDelta affectedUserSupport = ProverUIUtils
 				.getUserSupportDelta(delta, userSupport);
 
+		// Do nothing if there is no change for this current user support.
 		if (affectedUserSupport == null)
 			return;
 
+		// If the user support has been removed, do nothing. This will be handle
+		// by the main proof editor.
 		final int kind = affectedUserSupport.getKind();
 		if (kind == IUserSupportDelta.REMOVED) {
 			return; // Do nothing
 		}
 
+		// This case should NOT happened.
+		if (kind == IUserSupportDelta.ADDED) {
+			if (ProofTreeUIUtils.DEBUG)
+				ProofTreeUIUtils
+						.debug("Error: Delta said that the user Support is added");
+			return; // Do nothing
+		}
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				if (kind == IUserSupportDelta.ADDED) {
-					IProofState ps = userSupport.getCurrentPO();
-					if (ps != null) { // Change only when change the PO
-						ProofTreeUIPage page = ProofTreeUIPage.this;
-						page.setInput(ps.getProofTree());
-						IProofTreeNode currentNode = ps.getCurrentNode();
-						page.getViewer().expandAll();
-						if (currentNode != null)
-							page.getViewer().setSelection(
-									new StructuredSelection(currentNode));
-					} else {
-						ProofTreeUIPage page = ProofTreeUIPage.this;
-						page.setInput(null);
-					}
-				} else if (kind == IUserSupportDelta.CHANGED) {
+				// Handle the case where the user support has changed.
+				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();
+					
 					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
+						// The current proof state is changed.
 						IProofState ps = userSupport.getCurrentPO();
-						if (ps != null) { // Change only when change the PO
+						if (ps != null) {
+							// The current proof state is not null, set the
+							// input to the proof tree, select the current node
+							// and expand all.
 							ProofTreeUIPage page = ProofTreeUIPage.this;
 							page.setInput(ps.getProofTree());
 							IProofTreeNode currentNode = ps.getCurrentNode();
 							page.getViewer().expandAll();
-							// elementColumn.pack();
-							// elementColumn.setWidth(MAX_WIDTH);
 							if (currentNode != null)
 								page.getViewer().setSelection(
 										new StructuredSelection(currentNode));
 						} else {
-							ProofTreeUIPage page = ProofTreeUIPage.this;
-							page.setInput(null);
-							// elementColumn.pack();
-							// elementColumn.setWidth(MAX_WIDTH);
+							// The new proof state is null, set the input to
+							// empty.
+							ProofTreeUIPage.this.setInput(null);
 						}
 					} else if ((flags | IUserSupportDelta.F_STATE) != 0) {
+						// If the changes occurs in some proof states.
 						IProofState proofState = userSupport.getCurrentPO();
-						IProofStateDelta affectedProofState = ProverUIUtils
+						// Trying to get the change for the current proof state. 
+						final IProofStateDelta affectedProofState = ProverUIUtils
 								.getProofStateDelta(affectedUserSupport,
 										proofState);
 						if (affectedProofState != null) {
-							if (affectedProofState.getKind() == IProofStateDelta.ADDED) {
-								if (proofState != null) { // Change only when
-															// change the PO
-									ProofTreeUIPage page = ProofTreeUIPage.this;
-									page.setInput(proofState.getProofTree());
-									IProofTreeNode currentNode = proofState
-											.getCurrentNode();
-									page.getViewer().expandAll();
-									// elementColumn.pack();
-									// elementColumn.setWidth(MAX_WIDTH);
-									if (currentNode != null)
-										page.getViewer().setSelection(
-												new StructuredSelection(
-														currentNode));
-								} else {
-									ProofTreeUIPage page = ProofTreeUIPage.this;
-									page.setInput(null);
-									// elementColumn.pack();
-									// elementColumn.setWidth(MAX_WIDTH);
-								}
-							} else if (affectedProofState.getKind() == IProofStateDelta.REMOVED) {
+						
+							// If there are some changes
+							int psKind = affectedProofState.getKind();
+
+							if (psKind == IProofStateDelta.ADDED) {
+								// This case should not happened
+								if (ProofTreeUIUtils.DEBUG)
+									ProofTreeUIUtils
+											.debug("Error: Delta said that the proof state is added");
 								return;
-							} else if (affectedProofState.getKind() == IProofStateDelta.CHANGED) {
-								if ((affectedProofState.getFlags() | IProofStateDelta.F_PROOFTREE) != 0) {
+							}
+
+							if (psKind == IProofStateDelta.REMOVED) {
+								// Do nothing in this case, this will be handled
+								// by the main proof editor.
+								return;
+							}
+							
+							if (psKind == IProofStateDelta.CHANGED) {
+								// If there are some changes to the proof state.
+								int psFlags = affectedProofState.getFlags();
+								if ((psFlags | IProofStateDelta.F_PROOFTREE) != 0) {
+									// Refresh if the proof tree has changed.
 									viewer.refresh();
 								}
-								if ((affectedProofState.getFlags() | IProofStateDelta.F_NODE) != 0) {
-									IProofTreeNode node = proofState
-											.getCurrentNode();
+								if ((psFlags | IProofStateDelta.F_NODE) != 0) {
+									// If the current node has been changed
+									IProofTreeNode node = proofState.getCurrentNode();
 									if (node != null) {
-										viewer.setSelection(
-												new StructuredSelection(node),
+										// Select the new current node if not null.
+										viewer.setSelection(new StructuredSelection(node),
 												true);
-									}
+									}									
+									else {
+										// Set the selection to empty otherwise.
+										viewer.setSelection(new StructuredSelection(),
+												true);
+									}									
 								}
 							}
 						}
-
+						
 					}
 				}
 			}

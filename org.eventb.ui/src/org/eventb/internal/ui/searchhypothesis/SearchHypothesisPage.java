@@ -17,11 +17,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,7 +28,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
@@ -45,10 +42,10 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.ui.HypothesisRow;
+import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBUIPlugin;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -249,75 +246,91 @@ public class SearchHypothesisPage extends Page implements
 	 */
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
 
+		// Do nothing if the form is disposed.
 		if (scrolledForm.isDisposed())
 			return;
 
-		final IUserSupport userSupport = editor.getUserSupport();
-
+		// Trying to get the changes for the current user support.
 		final IUserSupportDelta affectedUserSupport = ProverUIUtils
-				.getUserSupportDelta(delta, userSupport);
+				.getUserSupportDelta(delta, editor.getUserSupport());
 
+		// Do nothing if there is no change for this current user support.
 		if (affectedUserSupport == null)
 			return;
 
+		// If the user support has been removed, do nothing. This will be handle
+		// by the main proof editor.
 		final int kind = affectedUserSupport.getKind();
-		if (kind == IUserSupportDelta.REMOVED)
-			return;
+		if (kind == IUserSupportDelta.REMOVED) {
+			return; // Do nothing
+		}
 
-		Display display = Display.getDefault();
+		// This case should NOT happened.
+		if (kind == IUserSupportDelta.ADDED) {
+			if (ProofControlUtils.DEBUG)
+				ProofControlUtils
+						.debug("Error: Delta said that the user Support is added");
+			return; // Do nothing
+		}
+
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+				.getDisplay();
 
 		display.syncExec(new Runnable() {
 			public void run() {
-				if (kind == IUserSupportDelta.ADDED) {
-					init();
-					scrolledForm.reflow(true);
-				} else if (kind == IUserSupportDelta.CHANGED) {
+				// Handle the case where the user support has changed.
+				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();
-					IProofState ps = userSupport.getCurrentPO();
 					if ((flags & IUserSupportDelta.F_CURRENT) != 0) {
+						// The current proof state is changed, reinitialise the
+						// view.
 						init();
 						scrolledForm.reflow(true);
-					} else if ((flags & IUserSupportDelta.F_STATE) != 0) {
-						IProofStateDelta affectedProofState = ProverUIUtils
-								.getProofStateDelta(affectedUserSupport, ps);
-						if (affectedProofState == null) // changes not relevant
-							return;
-						int psKind = affectedProofState.getKind();
-						if (psKind == IProofStateDelta.ADDED) {
-							init();
-							scrolledForm.reflow(true);
-						} else if (psKind == IProofStateDelta.REMOVED) {
-							if (ps != null) {
-								IWorkbenchPage activePage = EventBUIPlugin
-										.getActivePage();
-								if (activePage.isPartVisible(editor)) {
-									try {
-										MessageDialog
-												.openInformation(
-														SearchHypothesisPage.this
-																.getSite()
-																.getShell(),
-														"Out of Date",
-														"The Proof Obligation is deleted.");
-										userSupport.nextUndischargedPO(true,
-												new NullProgressMonitor());
-									} catch (RodinDBException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-								} else {
-									try {
-										userSupport.setCurrentPO(null,
-												new NullProgressMonitor());
-									} catch (RodinDBException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-								}
+						return;
+					}
+					if ((flags & IUserSupportDelta.F_STATE) != 0) {
+						// If the changes occurs in some proof states.	
+						IProofState proofState = editor.getUserSupport().getCurrentPO();
+						// Trying to get the change for the current proof state. 
+						final IProofStateDelta affectedProofState = ProverUIUtils
+								.getProofStateDelta(affectedUserSupport,
+										proofState);
+						if (affectedProofState != null) {
+							// If there are some changes
+							int psKind = affectedProofState.getKind();
+							if (psKind == IProofStateDelta.ADDED) {
+								// This case should not happened
+								if (ProofControlUtils.DEBUG)
+									ProofControlUtils
+											.debug("Error: Delta said that the proof state is added");
+								return;
 							}
-						} else if (psKind == IProofStateDelta.CHANGED) {
-							init();
-							scrolledForm.reflow(true);
+
+							if (psKind == IProofStateDelta.REMOVED) {
+								// Do nothing in this case, this will be handled
+								// by the main proof editor.
+								return;
+							}
+							
+							if (psKind == IProofStateDelta.CHANGED) {
+								// If there are some changes to the proof state.
+								int psFlags = affectedProofState.getFlags();
+								if ((psFlags | IProofStateDelta.F_NODE) != 0) {
+									// Update the view if the current node has
+									// been changed.
+									init();
+									scrolledForm.reflow(true);
+									return;
+								}
+								if ((psFlags | IProofStateDelta.F_SEARCH) != 0) {
+									// Update the view if the search hypotheses
+									// has been changed.
+									init();
+									scrolledForm.reflow(true);
+									return;
+								}
+
+							}
 						}
 					}
 				}

@@ -38,6 +38,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.pm.IProofState;
+import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManager;
@@ -47,6 +48,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.internal.ui.proofcontrol.ProofControlPage;
+import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.proofinformation.IProofInformationPage;
 import org.eventb.internal.ui.proofinformation.ProofInformationPage;
 import org.eventb.internal.ui.prooftreeui.IProofTreeUIPage;
@@ -489,51 +491,69 @@ public class ProverUI extends FormEditor implements
 		if (saving)
 			return; // Ignore delta while saving
 
-		IUserSupportDelta affectedUserSupport = ProverUIUtils
+		// Trying to get the changes for the current user support.
+		final IUserSupportDelta affectedUserSupport = ProverUIUtils
 				.getUserSupportDelta(delta, userSupport);
 
+		// Do nothing if there is no change for this current user support.
 		if (affectedUserSupport == null)
 			return;
 
-		int kind = affectedUserSupport.getKind();
+		// If the user support has been removed. This should be only the effect
+		// of closing the editor, hence doing nothing
+		final int kind = affectedUserSupport.getKind();
+		if (kind == IUserSupportDelta.REMOVED) {
+			return; // Do nothing
+		}
 
-		if (kind == IUserSupportDelta.REMOVED)
-			return;
+		// This case should NOT happened.
+		if (kind == IUserSupportDelta.ADDED) {
+			if (ProofControlUtils.DEBUG)
+				ProofControlUtils
+						.debug("Error: Delta said that the user Support is added");
+			return; // Do nothing
+		}
 
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 
 		display.syncExec(new Runnable() {
 			public void run() {
-				// if (userSupport.isOutOfDate()) {
-				// IWorkbenchPage activePage =
-				// EventBUIPlugin.getActivePage();
-				// if (activePage.isPartVisible(ProverUI.this))
-				// updateUserSupport();
-				// }
+				// Handle the case where the user support has changed.
+				if (kind == IUserSupportDelta.CHANGED) {
+					int flags = affectedUserSupport.getFlags();
+					if ((flags & IUserSupportDelta.F_STATE) != 0) {
+						// If the changes occurs in some proof states.
+						IProofStateDelta[] affectedProofStates = affectedUserSupport
+								.getAffectedProofStates();
+						for (IProofStateDelta affectedProofState : affectedProofStates) {
+							int psKind = affectedProofState.getKind();
 
-				ProverUI.this.editorDirtyStateChanged();
-				// syncObligationExplorer();
+							if (psKind == IProofStateDelta.ADDED) {
+								ProverUI.this.editorDirtyStateChanged();
+								return;
+							}
+
+							if (psKind == IProofStateDelta.REMOVED) {
+								ProverUI.this.editorDirtyStateChanged();
+								return;
+							}
+
+							if (psKind == IProofStateDelta.CHANGED) {
+								// If there are some changes to the proof state.
+								int psFlags = affectedProofState.getFlags();
+
+								if ((psFlags & IProofStateDelta.F_PROOFTREE) != 0) {
+									ProverUI.this.editorDirtyStateChanged();
+									return;
+								}
+
+							}
+						}
+					}
+				}
 			}
 		});
 	}
-
-	//
-	// private void updateUserSupport() {
-	// MessageDialog
-	// .openInformation(this.getActivePageInstance().getSite()
-	// .getShell(), "Out of Date",
-	// "The Proof Obligation is Out of Date and need to be reloeaded.");
-	// try {
-	// doSave(null);
-	// EventBPlugin.getDefault().getUserSupportManager().setInput(userSupport,
-	// this.getRodinInput());
-	// } catch (RodinDBException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// return;
-	//
-	// }
 
 }

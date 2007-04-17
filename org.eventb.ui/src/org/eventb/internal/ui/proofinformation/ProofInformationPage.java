@@ -45,6 +45,7 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.IEventBFormText;
 import org.rodinp.core.IRodinElement;
@@ -296,39 +297,60 @@ public class ProofInformationPage extends Page implements
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 		if (scrolledForm.getContent().isDisposed())
 			return;
-
 		final IUserSupport userSupport = this.editor.getUserSupport();
 
-		IUserSupportDelta[] affectedUserSupports = delta
-				.getAffectedUserSupports();
-		IUserSupportDelta userSupportDelta = null;
-		for (IUserSupportDelta tmp : affectedUserSupports) {
-			if (tmp.getUserSupport() == userSupport) {
-				userSupportDelta = tmp;
-				break;
-			}
-		}
-		if (userSupportDelta == null)
-			return;
-		final IUserSupportDelta affectedUserSupport = userSupportDelta;
+		// Trying to get the changes for the current user support.
+		final IUserSupportDelta affectedUserSupport = ProverUIUtils
+				.getUserSupportDelta(delta, userSupport);
 
-		final int kind = affectedUserSupport.getKind();
-		if (kind == IUserSupportDelta.REMOVED)
+		// Do nothing if there is no change for this current user support.
+		if (affectedUserSupport == null)
 			return;
+
+		// If the user support has been removed, do nothing. This will be handle
+		// by the main proof editor.
+		final int kind = affectedUserSupport.getKind();
+		if (kind == IUserSupportDelta.REMOVED) {
+			return; // Do nothing
+		}
+
+		// This case should NOT happened.
+		if (kind == IUserSupportDelta.ADDED) {
+			if (ProofInformationUtils.DEBUG)
+				ProofInformationUtils
+						.debug("Error: Delta said that the user Support is added");
+			return; // Do nothing
+		}
 
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
-				IProofState ps = userSupport.getCurrentPO();
-				if (ps != null) {
-					IPSStatus prSequent = ps.getPSStatus();
-					if (prSequent.exists()) {
-						scrolledForm.setText(prSequent.getElementName());
-						setFormText(prSequent, new NullProgressMonitor());
-						scrolledForm.reflow(true);
+				// Handle the case where the user support has changed.
+				if (kind == IUserSupportDelta.CHANGED) {
+					int flags = affectedUserSupport.getFlags();
+					
+					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
+						// The current proof state is changed.
+						IProofState ps = userSupport.getCurrentPO();
+						if (ps != null) {
+							IPSStatus prSequent = ps.getPSStatus();
+							if (prSequent.exists()) {
+								scrolledForm.setText(prSequent.getElementName());
+								setFormText(prSequent, new NullProgressMonitor());
+								scrolledForm.reflow(true);
+							}
+							else {
+								scrolledForm.setText(prSequent.getElementName()
+										+ "does not exists");
+								scrolledForm.reflow(true);								
+							}
+						}
+						else {
+							clearFormText();							
+						}
 					}
-				} else {
-					clearFormText();
+					// Ignore all the other changes to the user support and the
+					// proof states.
 				}
 			}
 		});
