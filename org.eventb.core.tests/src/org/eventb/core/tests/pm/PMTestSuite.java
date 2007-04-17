@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 /**
  * @author htson
  *         <p>
- *         JUnit Testing Suite contain all the Test Case for Text2EventBMath
+ *         JUnit Testing Suite contain all the Test Cases for testing User Supports 
  *         translator.
  */
 public class PMTestSuite {
@@ -27,7 +27,7 @@ public class PMTestSuite {
 	 * Creating a new TestSuite
 	 * <p>
 	 * 
-	 * @return a new TestSuite for Text2EventBMath translator
+	 * @return a new TestSuite for User Supports
 	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite(
@@ -37,6 +37,8 @@ public class PMTestSuite {
 		suite.addTestSuite(TestUserSupportManagerDeltas.class);
 		suite.addTestSuite(TestUserSupports.class);
 		suite.addTestSuite(TestUserSupportDeltas.class);
+		suite.addTestSuite(TestUserSupportChanges.class);
+		suite.addTestSuite(TestUserSupportChangeDeltas.class);
 		// $JUnit-END$
 		return suite;
 	}
