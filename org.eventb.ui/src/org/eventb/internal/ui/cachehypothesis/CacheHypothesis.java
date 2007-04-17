@@ -19,7 +19,7 @@ import org.eventb.ui.EventBUIPlugin;
 /**
  * @author htson
  *         <p>
- *         Implementation of the Proof Control View.
+ *         Implementation of the Cache Hypothesis View.
  */
 public class CacheHypothesis extends ProverContentOutline {
 
