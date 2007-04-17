@@ -848,52 +848,89 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 */
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
-
+		// Do nothing if the form is disposed.
 		if (scrolledForm.isDisposed())
 			return;
 
 		final IUserSupport userSupport = this.editor.getUserSupport();
 
+		// Trying to get the changes for the current user support.
 		final IUserSupportDelta affectedUserSupport = ProverUIUtils
 				.getUserSupportDelta(delta, userSupport);
 
+		// Do nothing if there is no change for this current user support.
 		if (affectedUserSupport == null)
 			return;
 
+		// If the user support has been removed, do nothing. This will be handle
+		// by the main proof editor.
+		final int kind = affectedUserSupport.getKind();
+		if (kind == IUserSupportDelta.REMOVED) {
+			return; // Do nothing
+		}
+
+		// This case should NOT happened.
+		if (kind == IUserSupportDelta.ADDED) {
+			if (ProofControlUtils.DEBUG)
+				ProofControlUtils
+						.debug("Error: Delta said that the user Support is added");
+			return; // Do nothing
+		}
+
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+				.getDisplay();
+
 		display.syncExec(new Runnable() {
 			public void run() {
-
-				int kind = affectedUserSupport.getKind();
-				if (kind == IUserSupportDelta.ADDED) {
-					setInformation(userSupport);
-					updateToolItems(editor.getUserSupport());
-				} else if (kind == IUserSupportDelta.REMOVED) {
-					// Do nothing
-				} else if (kind == IUserSupportDelta.CHANGED) {
+				// Handle the case where the user support has changed.
+				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();
 
+					// Set the information if it has been changed.
 					if ((flags | IUserSupportDelta.F_INFORMATION) != 0) {
 						setInformation(userSupport);
 					}
 
-					IProofState ps = userSupport.getCurrentPO();
 					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
+						// The current proof state is changed, update the tool
+						// items.
 						updateToolItems(editor.getUserSupport());
-					} else {
-						IProofStateDelta[] affectedProofStates = affectedUserSupport
-								.getAffectedProofStates();
-						IProofStateDelta affectedProofState = null;
-						for (IProofStateDelta proofStateDelta : affectedProofStates) {
-							if (proofStateDelta.getProofState() == ps) {
-								affectedProofState = proofStateDelta;
-								break;
+					} else if ((flags | IUserSupportDelta.F_STATE) != 0) {
+						// If the changes occurs in some proof states.	
+						IProofState proofState = userSupport.getCurrentPO();
+						// Trying to get the change for the current proof state. 
+						final IProofStateDelta affectedProofState = ProverUIUtils
+								.getProofStateDelta(affectedUserSupport,
+										proofState);
+						if (affectedProofState != null) {
+							// If there are some changes
+							int psKind = affectedProofState.getKind();
+
+							if (psKind == IProofStateDelta.ADDED) {
+								// This case should not happened
+								if (ProofControlUtils.DEBUG)
+									ProofControlUtils
+											.debug("Error: Delta said that the proof state is added");
+								return;
+							}
+
+							if (psKind == IProofStateDelta.REMOVED) {
+								// Do nothing in this case, this will be handled
+								// by the main proof editor.
+								return;
+							}
+							
+							if (psKind == IProofStateDelta.CHANGED) {
+								// If there are some changes to the proof state.
+								int psFlags = affectedProofState.getFlags();
+
+								if ((psFlags | IProofStateDelta.F_NODE) != 0) {
+									// Update the items if the current node has
+									// been changed.
+									updateToolItems(editor.getUserSupport());
+								}
 							}
 						}
-
-						if (affectedProofState != null)
-							updateToolItems(editor.getUserSupport());
 					}
 				}
 
