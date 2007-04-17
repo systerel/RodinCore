@@ -12,6 +12,7 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
 
 public interface IProofState extends IProofTreeChangedListener {
@@ -57,12 +58,16 @@ public interface IProofState extends IProofTreeChangedListener {
 	public abstract void proofReuse(IProofMonitor monitor)
 			throws RodinDBException;
 
+	public abstract void proofRebuilt(ProofMonitor monitor)
+			throws RodinDBException;
+
 	public abstract boolean isUninitialised();
 
 	public abstract boolean isSequentDischarged() throws RodinDBException;
 
 	public abstract boolean isProofReusable() throws RodinDBException;
 
+	@Deprecated
 	public abstract void reloadProofTree() throws RodinDBException;
 
 	public abstract void unloadProofTree();

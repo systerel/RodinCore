@@ -129,8 +129,7 @@ public class ProofState implements IProofState {
 				ProofState.this.newProofTree();
 
 				// Current node is the next pending subgoal or the root of the
-				// proof
-				// tree if there are no pending subgoal.
+				// proof tree if there are no pending subgoal.
 				IProofTreeNode node = getNextPendingSubgoal();
 
 				if (node == null) {
@@ -144,8 +143,7 @@ public class ProofState implements IProofState {
 				}
 
 				// if the proof tree was previously broken then the rebuild
-				// would
-				// fix the proof, making it dirty.
+				// would fix the proof, marking it dirty.
 				try {
 					ProofState.this.setDirty(status.isBroken());
 				} catch (RodinDBException e) {
@@ -345,6 +343,7 @@ public class ProofState implements IProofState {
 			UserSupportUtils.debug("Saving: " + status.getElementName());
 
 		userSupport.getPSWrapper().setProofTree(status, pt, monitor);
+		setDirty(false);
 	}
 
 	/*
@@ -386,25 +385,46 @@ public class ProofState implements IProofState {
 	 * the deprecated method.
 	 */
 	public void proofReuse(IProofMonitor monitor) throws RodinDBException {
-		// if (isSavingOrUninitialised()) return false;
-		// if (pt == null) return false; // No proof tree, no reusable.
-
 		IProofTree newTree = userSupport.getPSWrapper().getFreshProofTree(
 				status);
-		IProverSequent newSeq = newTree.getSequent();
-		if (ProverLib.proofReusable(pt.getProofDependencies(), newSeq)) {
-			(BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot(),
-					monitor);
-			if (pt != null)
-				pt.removeChangeListener(this);
-			pt = newTree;
-			newTree.addChangeListener(this);
-			current = getNextPendingSubgoal();
-			if (current == null) {
-				current = pt.getRoot();
-			}
+		
+		IProofSkeleton proofSkeleton = pt.getRoot().copyProofSkeleton();
+		ITactic reuseTac = BasicTactics.reuseTac(proofSkeleton);
+		reuseTac.apply(newTree.getRoot(), monitor);
+		pt.removeChangeListener(this);
+		
+		pt = newTree;
+		newTree.addChangeListener(this);
+		IProofTreeNode newNode = getNextPendingSubgoal();
+		if (newNode == null) {
+			newNode = pt.getRoot();
+		}
+		setCurrentNode(newNode);
+		this.setDirty(true);
+		deltaProcessor.newProofTree(userSupport, this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofState#proofRebuilt(org.eventb.internal.core.ProofMonitor)
+	 */
+	public void proofRebuilt(ProofMonitor monitor) throws RodinDBException {
+		IProofTree newTree = userSupport.getPSWrapper().getFreshProofTree(
+				status);
+		
+		IProofSkeleton proofSkeleton = pt.getRoot().copyProofSkeleton();
+		ITactic rebuiltTac = BasicTactics.rebuildTac(proofSkeleton);
+		rebuiltTac.apply(newTree.getRoot(), monitor);
+		
+		pt.removeChangeListener(this);
+
+		pt = newTree;
+		newTree.addChangeListener(this);
+		current = getNextPendingSubgoal();
+		if (current == null) {
+			current = pt.getRoot();
 		}
 		this.setDirty(true);
+		deltaProcessor.newProofTree(userSupport, this);
 	}
 
 	/*
@@ -441,6 +461,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#reloadProofTree()
 	 */
+	@Deprecated
 	public void reloadProofTree() throws RodinDBException {
 
 		// Construct the proof tree from the file.
@@ -473,8 +494,27 @@ public class ProofState implements IProofState {
 
 	@Override
 	public String toString() {
-		return status.toString(); // Return the psStatus identify this Proof
-		// State
+		StringBuffer buffer = new StringBuffer("****** Proof Status for: ");
+		buffer.append(status + " ******\n");
+		buffer.append("Is dirty? " + dirty + "\n");
+		buffer.append("** Proof Tree **\n");
+		buffer.append(pt);
+		buffer.append("\n");
+		buffer.append("** Cached **\n");
+		for (Predicate hyp : cached) {
+			buffer.append(hyp);
+			buffer.append("\n");			
+		}
+		buffer.append("** Searched **\n");
+		for (Predicate hyp : searched) {
+			buffer.append(hyp);
+			buffer.append("\n");			
+		}
+		buffer.append("Current node: ");
+		buffer.append(current);
+		buffer.append("\n");
+		buffer.append("****************************");
+		return buffer.toString();
 	}
 
 	public void applyTactic(final ITactic t, final IProofTreeNode node,
