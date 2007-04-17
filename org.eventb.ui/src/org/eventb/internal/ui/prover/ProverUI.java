@@ -45,6 +45,8 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.cachehypothesis.CacheHypothesisPage;
+import org.eventb.internal.ui.cachehypothesis.ICacheHypothesisPage;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.internal.ui.proofcontrol.ProofControlPage;
@@ -85,6 +87,9 @@ public class ProverUI extends FormEditor implements
 
 	// The associated Search Hypothesis
 	private SearchHypothesisPage fSearchHypothesisPage;
+
+	// The associated Cache Hypothesis
+	private ICacheHypothesisPage fCacheHypothesisPage;
 
 	// The associated UserSupport
 	IUserSupport userSupport;
@@ -194,6 +199,7 @@ public class ProverUI extends FormEditor implements
 		userSupport.dispose();
 		if (fProofTreeUI != null)
 			fProofTreeUI.setInput(null);
+		
 		super.dispose();
 	}
 
@@ -239,6 +245,13 @@ public class ProverUI extends FormEditor implements
 				fSearchHypothesisPage = new SearchHypothesisPage(this);
 			}
 			return fSearchHypothesisPage;
+		}
+
+		if (ICacheHypothesisPage.class.equals(required)) {
+			if (fCacheHypothesisPage == null) {
+				fCacheHypothesisPage = new CacheHypothesisPage(this);
+			}
+			return fCacheHypothesisPage;
 		}
 
 		return super.getAdapter(required);
