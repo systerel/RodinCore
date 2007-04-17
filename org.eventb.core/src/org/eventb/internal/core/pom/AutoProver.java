@@ -151,9 +151,11 @@ public class AutoProver {
 				BasicTactics.onAllPending(
 						B4freeCore.externalML(MLforces, timeOutDelay)), // ML
 				BasicTactics.onAllPending(
-						B4freeCore.externalP1(timeOutDelay)), // P1
+								B4freeCore.externalPP(true, timeOutDelay)), // P0
 				BasicTactics.onAllPending(
-						B4freeCore.externalPP(false, timeOutDelay)) // PP
+						B4freeCore.externalP1(timeOutDelay)) // P1
+//				BasicTactics.onAllPending(
+//						B4freeCore.externalPP(false, timeOutDelay)) // PP
 				);
 	}
 
