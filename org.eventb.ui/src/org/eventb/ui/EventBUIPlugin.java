@@ -24,6 +24,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorerUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorerUtils;
@@ -31,6 +32,7 @@ import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.proofinformation.ProofInformationUtils;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils;
 import org.eventb.internal.ui.prover.ProverUIUtils;
+import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.RodinCore;
@@ -70,6 +72,12 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 	private static final String PROOFINFORMATION_TRACE = PLUGIN_ID
 			+ "/debug/proofinformation"; //$NON-NLS-1$
+
+	private static final String SEARCHHYPOTHESIS_TRACE = PLUGIN_ID
+			+ "/debug/searchhypothesis"; //$NON-NLS-1$
+
+	private static final String CACHEDHYPOTHESIS_TRACE = PLUGIN_ID
+			+ "/debug/cachedhypothesis"; //$NON-NLS-1$
 
 	/**
 	 * Default values for creating RODIN Elements
@@ -163,6 +171,14 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 			option = Platform.getDebugOption(PROOFINFORMATION_TRACE);
 			if (option != null)
 				ProofInformationUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+			option = Platform.getDebugOption(SEARCHHYPOTHESIS_TRACE);
+			if (option != null)
+				SearchHypothesisUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+			option = Platform.getDebugOption(CACHEDHYPOTHESIS_TRACE);
+			if (option != null)
+				CacheHypothesisUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 
