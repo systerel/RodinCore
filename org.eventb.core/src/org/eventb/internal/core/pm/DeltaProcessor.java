@@ -311,4 +311,15 @@ public class DeltaProcessor {
 		this.fireDeltas();
 	}
 
+	public void removeProofState(IUserSupport userSupport, IProofState state) {
+		if (rootDelta == null)
+			rootDelta = new UserSupportManagerDelta();
+		
+		ProofStateDelta affectedState = new ProofStateDelta(state);
+		affectedState.setKind(IProofStateDelta.REMOVED);
+		
+		rootDelta.addAffectedProofState(userSupport, affectedState);
+		this.fireDeltas();
+	}
+
 }
