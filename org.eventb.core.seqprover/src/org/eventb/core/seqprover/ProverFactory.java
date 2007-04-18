@@ -8,6 +8,7 @@ import java.util.Set;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.internal.core.seqprover.ForwardInfHypAction;
@@ -374,7 +375,7 @@ public final class ProverFactory {
 	 * @return
 	 * 		A new select hypotheses action
 	 */
-	public static IHypAction makeSelectHypAction(Collection<Predicate> toSelect){
+	public static ISelectionHypAction makeSelectHypAction(Collection<Predicate> toSelect){
 		return new SelectionHypAction(ISelectionHypAction.SELECT_ACTION_TYPE,toSelect);
 	}
 
@@ -386,7 +387,7 @@ public final class ProverFactory {
 	 * @return
 	 * 		A new deselect hypotheses action
 	 */
-	public static IHypAction makeDeselectHypAction(Collection<Predicate> toDeselect){
+	public static ISelectionHypAction makeDeselectHypAction(Collection<Predicate> toDeselect){
 		return new SelectionHypAction(ISelectionHypAction.DESELECT_ACTION_TYPE,toDeselect);
 	}
 
@@ -398,7 +399,7 @@ public final class ProverFactory {
 	 * @return
 	 * 		A new hide hypotheses action
 	 */
-	public static IHypAction makeHideHypAction(Collection<Predicate> toHide){
+	public static ISelectionHypAction makeHideHypAction(Collection<Predicate> toHide){
 		return new SelectionHypAction(ISelectionHypAction.HIDE_ACTION_TYPE,toHide);
 	}
 
@@ -410,7 +411,7 @@ public final class ProverFactory {
 	 * @return
 	 * 		A new show hypotheses action
 	 */
-	public static IHypAction makeShowHypAction(Collection<Predicate> toShow){
+	public static ISelectionHypAction makeShowHypAction(Collection<Predicate> toShow){
 		return new SelectionHypAction(ISelectionHypAction.SHOW_ACTION_TYPE,toShow);
 	}
 	
@@ -432,7 +433,7 @@ public final class ProverFactory {
 	 * @return
 	 * 		A new forward inference hypothesis action
 	 */
-	public static IHypAction makeForwardInfHypAction(Collection<Predicate> hyps, FreeIdentifier[] addedFreeIdents, Collection<Predicate> inferredHyps){
+	public static IForwardInfHypAction makeForwardInfHypAction(Collection<Predicate> hyps, FreeIdentifier[] addedFreeIdents, Collection<Predicate> inferredHyps){
 		return new ForwardInfHypAction(hyps,addedFreeIdents,inferredHyps);
 	}
 	
@@ -449,7 +450,7 @@ public final class ProverFactory {
 	 * @return
 	 * 		A new forward inference hypothesis action
 	 */
-	public static IHypAction makeForwardInfHypAction(Collection<Predicate> hyps, Collection<Predicate> inferredHyps){
+	public static IForwardInfHypAction makeForwardInfHypAction(Collection<Predicate> hyps, Collection<Predicate> inferredHyps){
 		return new ForwardInfHypAction(hyps,NO_FREE_IDENTS,inferredHyps);
 	}
 

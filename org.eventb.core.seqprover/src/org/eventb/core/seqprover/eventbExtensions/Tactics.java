@@ -27,7 +27,6 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -37,6 +36,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
@@ -593,9 +593,8 @@ public class Tactics {
 		return BasicTactics.prune();
 	}
 
-	public static ITactic mngHyp(IHypAction hypAction) {
-		return BasicTactics.reasonerTac(new MngHyp(), new MngHyp.Input(
-				hypAction));
+	public static ITactic mngHyp(ISelectionHypAction hypAction) {
+		return BasicTactics.reasonerTac(new MngHyp(), new MngHyp.Input(hypAction));
 	}
 
 	private static ITactic cleanupTac = compose(contradiction(), tautology(),

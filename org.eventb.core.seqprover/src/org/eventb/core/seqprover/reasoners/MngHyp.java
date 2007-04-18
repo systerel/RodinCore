@@ -29,13 +29,13 @@ public class MngHyp implements IReasoner {
 
 	public static class Input implements IReasonerInput {
 
-		IHypAction action;
+		ISelectionHypAction action;
 
 //		public Input(ActionType type, Set<Predicate> hyps) {
 //			this.action = new Action(type, hyps);
 //		}
 
-		public Input(IHypAction action) {
+		public Input(ISelectionHypAction action) {
 			this.action = action;
 		}
 
@@ -43,7 +43,7 @@ public class MngHyp implements IReasoner {
 		public void applyHints(ReplayHints hints) {
 
 			final String type = action.getActionType();
-			final Collection<Predicate> hyps = ((ISelectionHypAction) action).getHyps();
+			final Collection<Predicate> hyps = action.getHyps();
 			Predicate[] newPreds = new Predicate[hyps.size()];
 			int i = 0;
 			for (Predicate hyp : hyps) {
@@ -83,7 +83,7 @@ public class MngHyp implements IReasoner {
 			throw new SerializeException(new IllegalStateException(
 					"Two many actions in the rule antecedent"));
 		}
-		return new Input(actions.get(0));
+		return new Input((ISelectionHypAction) actions.get(0));
 	}
 
 	public IReasonerOutput apply(IProverSequent seq,
