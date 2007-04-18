@@ -369,8 +369,10 @@ public class HypothesisRow {
 		if (hypothesisText != null)
 			hypothesisText.dispose();
 
-		checkBox.removeSelectionListener(listener);
-		checkBox.dispose();
+		if (!checkBox.isDisposed()) {
+			checkBox.removeSelectionListener(listener);
+			checkBox.dispose();
+		}
 		buttonComposite.dispose();
 		hypothesisComposite.dispose();
 	}
