@@ -127,17 +127,25 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion"
             id="ri"
             name="%riName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.AutoImpE"
+            id="autoImpE"
+            name="%autoImpEname"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">
       <tactic
-            class="org.eventb.core.seqprover.eventbExtensions.Tactics$Norm"
-            id="norm"
-            name="%normName"/>
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$NormTac"
+            id="normTac"
+            name="%normTacName"/>
       <tactic
-            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoRewriteRules"
-            id="autoRewriteRules"
-            name="%autoRewriteRulesName"/>
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoRewriteTac"
+            id="autoRewriteTac"
+            name="%autoRewriteTacName"/>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoImpETac"
+            id="autoImpETac"
+            name="%autoImpETacName"/>
    </extension>
 
 </plugin>

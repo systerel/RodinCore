@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -159,7 +160,7 @@ public final class Lib {
 	public static Set<Predicate> breakPossibleConjunct(Predicate P) {
 		if (!isConj(P))
 			return singeleton(P);
-		return new HashSet<Predicate>(Arrays.asList(((AssociativePredicate) P)
+		return new LinkedHashSet<Predicate>(Arrays.asList(((AssociativePredicate) P)
 				.getChildren()));
 	}
 

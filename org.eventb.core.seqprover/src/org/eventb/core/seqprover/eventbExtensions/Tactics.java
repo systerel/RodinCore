@@ -47,6 +47,7 @@ import org.eventb.core.seqprover.reasoners.Review;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
+import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.Contr;
 import org.eventb.internal.core.seqprover.eventbExtensions.Cut;
@@ -585,8 +586,7 @@ public class Tactics {
 	}
 
 	public static ITactic autoRewriteRules() {
-		return compose(BasicTactics.reasonerTac(new AutoRewrites(),
-				new EmptyInput()));
+		return BasicTactics.reasonerTac(new AutoRewrites(),new EmptyInput());
 	}
 
 	public static ITactic prune() {
@@ -614,7 +614,8 @@ public class Tactics {
 				// conjD_auto(),
 				falsifyHyp_auto(),
 				eqE_auto(),
-				impE_auto(),
+				// impE_auto(),
+				new AutoImpETac(),
 				norm())));
 	}
 
@@ -878,7 +879,7 @@ public class Tactics {
 				new RemoveInclusion.Input(hyp, position));
 	}
 	
-	public class Norm implements ITactic{
+	public class NormTac implements ITactic{
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			return norm().apply(ptNode, pm);
@@ -886,12 +887,19 @@ public class Tactics {
 		
 	}
 	
-	public class AutoRewriteRules implements ITactic{
+	public static class AutoRewriteTac implements ITactic{
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			return autoRewriteRules().apply(ptNode, pm);
 		}
 		
+	}
+	
+	public static class AutoImpETac implements ITactic{
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			return BasicTactics.reasonerTac(new AutoImpE(), new EmptyInput()).apply(ptNode, pm);
+		}	
 	}
 
 }
