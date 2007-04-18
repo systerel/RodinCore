@@ -1443,26 +1443,6 @@
          </action>
       </viewContribution>
       <viewContribution
-            id="org.eventb.ui.views.SearchHypothesis.toolbar"
-            targetID="org.eventb.ui.views.SearchHypothesis">
-         <action
-               class="org.eventb.internal.ui.searchhypothesis.actions.Add"
-               icon="icons/full/ctool16/add.gif"
-               id="org.eventb.ui.views.SearchHypothesis.toolbar.add"
-               label="%action.Add.label"
-               style="push"
-               toolbarPath="navigationGroup"
-               tooltip="%action.Add.tooltip"/>
-         <action
-               class="org.eventb.internal.ui.searchhypothesis.actions.Remove"
-               icon="icons/full/ctool16/remove.gif"
-               id="org.eventb.ui.views.SearchHypothesis.toolbar.remove"
-               label="%action.Remove.label"
-               style="push"
-               toolbarPath="navigationGroup"
-               tooltip="%action.Remove.tooltip"/>
-      </viewContribution>
-      <viewContribution
             id="org.eventb.ui.ProofTree.toolbar"
             targetID="org.eventb.ui.views.ProofTreeUI">
          <action
