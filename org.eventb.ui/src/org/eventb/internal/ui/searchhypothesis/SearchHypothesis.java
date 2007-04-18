@@ -1,13 +1,9 @@
 package org.eventb.internal.ui.searchhypothesis;
 
 import java.util.HashMap;
-import java.util.Set;
 
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPage;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.pm.IUserSupport;
-import org.eventb.internal.ui.prover.IHypothesisPage;
 import org.eventb.internal.ui.prover.ProverContentOutline;
 import org.eventb.ui.EventBUIPlugin;
 
@@ -46,21 +42,7 @@ public class SearchHypothesis extends ProverContentOutline {
 			page.createControl(getPageBook());
 			return new PageRec(part, page);
 		}
-		// There is no content outline
-		return null;
-	}
-
-	public Set<Predicate> getSelectedHyps() {
-		IPage currentPage = this.getCurrentPage();
-		if (currentPage != null && currentPage instanceof IHypothesisPage)
-			return ((IHypothesisPage) currentPage).getSelectedHyps();
-		return null;
-	}
-
-	public IUserSupport getUserSupport() {
-		IPage currentPage = this.getCurrentPage();
-		if (currentPage != null && currentPage instanceof IHypothesisPage)
-			return ((IHypothesisPage) currentPage).getUserSupport();
+		// There is no Search Hypotheses Page
 		return null;
 	}
 

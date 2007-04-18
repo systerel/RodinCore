@@ -12,21 +12,13 @@
 
 package org.eventb.internal.ui.prover;
 
-import java.util.Set;
-
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.ui.part.IPageBookViewPage;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.pm.IUserSupport;
 
 /**
  * @author htson
  *         <p>
- *         This is the interface for the Proof Control pages.
+ *         This is the interface for the Hypothesis Page pages.
  */
-public interface IHypothesisPage extends IPageBookViewPage, SelectionListener {
-
-	IUserSupport getUserSupport();
-
-	Set<Predicate> getSelectedHyps();
+public interface IHypothesisPage extends IPageBookViewPage {
+	// Direct extensions of IPageBookViewPage
 }
