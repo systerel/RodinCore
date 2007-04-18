@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -92,6 +93,8 @@ public class HypothesisRow {
 
 	private FormToolkit toolkit;
 
+	SelectionListener listener;
+	
 	/**
 	 * @author htson
 	 *         <p>
@@ -107,12 +110,14 @@ public class HypothesisRow {
 	 *            The composite parent
 	 */
 	public HypothesisRow(FormToolkit toolkit, Composite parent, Predicate hyp,
-			IUserSupport userSupport, boolean odd, boolean enable) {
+			IUserSupport userSupport, boolean odd,
+			boolean enable, SelectionListener listener) {
 		GridData gd;
 		this.hyp = hyp;
+		this.listener = listener;
 		this.userSupport = userSupport;
 		this.enable = enable;
-
+		
 		this.toolkit = toolkit;
 		if (odd)
 			background = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
@@ -124,7 +129,8 @@ public class HypothesisRow {
 		checkBox.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING,
 				false, false));
 		checkBox.setEnabled(enable);
-
+		checkBox.addSelectionListener(listener);
+		
 		buttonComposite = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.makeColumnsEqualWidth = true;
@@ -363,6 +369,7 @@ public class HypothesisRow {
 		if (hypothesisText != null)
 			hypothesisText.dispose();
 
+		checkBox.removeSelectionListener(listener);
 		checkBox.dispose();
 		buttonComposite.dispose();
 		hypothesisComposite.dispose();

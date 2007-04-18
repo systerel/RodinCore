@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -35,7 +37,7 @@ import org.eventb.ui.IEventBFormText;
  *         This is the based class for creating different hypothesis sections
  *         (cached, searched, selected).
  */
-public abstract class HypothesesSection extends SectionPart {
+public abstract class HypothesesSection extends SectionPart implements SelectionListener {
 
 	// The page contains the section.
 	protected ProofsPage page;
@@ -145,7 +147,7 @@ public abstract class HypothesesSection extends SectionPart {
 						+ hyp);
 			HypothesisRow row = new HypothesisRow(this.getManagedForm()
 					.getToolkit(), comp, hyp, ((ProverUI) page.getEditor())
-					.getUserSupport(), (i % 2) == 0, enable);
+					.getUserSupport(), (i % 2) == 0, enable, this);
 			rows.add(row);
 			i++;
 		}
@@ -180,4 +182,14 @@ public abstract class HypothesesSection extends SectionPart {
 	public Collection<HypothesisRow> getRows() {
 		return rows;
 	}
+
+	public void widgetDefaultSelected(SelectionEvent e) {
+		// Do nothing at the moment
+	}
+
+	public void widgetSelected(SelectionEvent e) {
+		widgetDefaultSelected(e);
+	}
+	
+	
 }

@@ -21,11 +21,19 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -60,6 +68,8 @@ public abstract class HypothesisPage extends Page implements
 
 	private FormToolkit toolkit;
 
+	private Composite control;
+	
 	int flag;
 
 	/**
@@ -95,6 +105,22 @@ public abstract class HypothesisPage extends Page implements
 				this);
 		super.dispose();
 	}
+	
+	int itemCount;
+	CoolItem createItem(CoolBar coolBar, int count) {
+	    ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
+	    for (int i = 0; i < count; i++) {
+	        ToolItem item = new ToolItem(toolBar, SWT.PUSH);
+	        item.setText(itemCount++ +"");
+	    }
+	    toolBar.pack();
+	    Point size = toolBar.getSize();
+	    CoolItem item = new CoolItem(coolBar, SWT.NONE);
+	    item.setControl(toolBar);
+	    Point preferred = item.computeSize(size.x, size.y);
+	    item.setPreferredSize(preferred);
+	    return item;
+	}
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -107,9 +133,42 @@ public abstract class HypothesisPage extends Page implements
 	public void createControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 
-		scrolledForm = toolkit.createScrolledForm(parent);
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		scrolledForm.setLayoutData(gd);
+		control = toolkit.createComposite(parent, SWT.NULL);
+    
+	    CoolBar buttonBar = new CoolBar(control, SWT.FLAT);
+	    ToolBar toolBar = new ToolBar(buttonBar, SWT.FLAT);
+		createItems(toolBar);
+		toolBar.pack();
+		Point size = toolBar.getSize();
+		CoolItem item = new CoolItem(buttonBar, SWT.NONE);
+		item.setControl(toolBar);
+		Point preferred = item.computeSize(size.x, size.y);
+		item.setPreferredSize(preferred);
+
+		// Creat a dummy coolbar, if not then the cool bar is not displayed
+		// Very strange requirement for creating a cool bar.
+		ToolBar dummyBar = new ToolBar(buttonBar, SWT.FLAT);
+	    dummyBar.pack();
+	    size = dummyBar.getSize();
+	    CoolItem dummyItem = new CoolItem(buttonBar, SWT.NONE);
+	    dummyItem.setControl(dummyBar);
+	    preferred = dummyItem.computeSize(size.x, size.y);
+	    dummyItem.setPreferredSize(preferred);
+
+		control.setLayout(new FormLayout());
+		FormData coolData = new FormData();
+		coolData.left = new FormAttachment(0);
+		coolData.right = new FormAttachment(100);
+		coolData.top = new FormAttachment(0);
+		buttonBar.setLayoutData(coolData);
+
+		scrolledForm = toolkit.createScrolledForm(control);
+		FormData scrolledData = new FormData();
+		scrolledData.left = new FormAttachment(0);
+		scrolledData.right = new FormAttachment(100);
+		scrolledData.top = new FormAttachment(buttonBar);
+		scrolledData.bottom = new FormAttachment(100);
+		scrolledForm.setLayoutData(scrolledData);
 
 		Composite comp = scrolledForm.getBody();
 		GridLayout layout = new GridLayout();
@@ -120,6 +179,10 @@ public abstract class HypothesisPage extends Page implements
 		contributeToActionBars();
 		init();
 	}
+
+	public abstract void updateToolbarItems();
+	
+	public abstract void createItems(ToolBar toolBar);
 
 	private IProverSequent getProverSequent(IProofState ps) {
 		IProverSequent sequent = null;
@@ -160,6 +223,7 @@ public abstract class HypothesisPage extends Page implements
 		// Remove everything
 		for (HypothesisRow row : rows) {
 			row.dispose();
+			
 		}
 		rows.clear();
 
@@ -167,12 +231,13 @@ public abstract class HypothesisPage extends Page implements
 		for (Predicate hyp : hyps) {
 			HypothesisRow row = new HypothesisRow(toolkit, scrolledForm
 					.getBody(), hyp, userSupport, sequent
-					.isSelected(hyp), enable);
+					.isSelected(hyp), enable, this);
 			rows.add(row);
 			i++;
 		}
 
 		scrolledForm.reflow(true);
+		updateToolbarItems();
 	}
 
 	/**
@@ -236,7 +301,7 @@ public abstract class HypothesisPage extends Page implements
 	 */
 	@Override
 	public Control getControl() {
-		return scrolledForm;
+		return control;
 	}
 
 	/*
@@ -346,4 +411,14 @@ public abstract class HypothesisPage extends Page implements
 		return selected;
 	}
 
+	public void widgetDefaultSelected(SelectionEvent e) {
+		updateToolbarItems();
+	}
+
+	public void widgetSelected(SelectionEvent e) {
+		widgetDefaultSelected(e);
+	}
+
+
 }
+
