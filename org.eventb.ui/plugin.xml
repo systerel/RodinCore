@@ -884,6 +884,16 @@
             toolbar="org.eventb.ui.navigationToolbar"
             tooltip="%proofTactics.searchHyp.tooltip"/>
       <tactic
+            icon="icons/full/ctool16/cached.gif"
+            id="org.eventb.ui.cacheHypothesis"
+            interrupt="false"
+            name="%proofTactics.cachehypothesis.name"
+            priorty="2"
+            proofCommand="org.eventb.internal.ui.prover.tactics.ShowCache"
+            target="global"
+            toolbar="org.eventb.ui.navigationToolbar"
+            tooltip="%proofTactics.cachehypothesis.tooltip"/>
+      <tactic
             icon="icons/full/ctool16/prev_prover.gif"
             id="org.eventb.ui.previous"
             interrupt="true"
