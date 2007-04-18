@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -106,22 +105,6 @@ public abstract class HypothesisPage extends Page implements
 		super.dispose();
 	}
 	
-	int itemCount;
-	CoolItem createItem(CoolBar coolBar, int count) {
-	    ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
-	    for (int i = 0; i < count; i++) {
-	        ToolItem item = new ToolItem(toolBar, SWT.PUSH);
-	        item.setText(itemCount++ +"");
-	    }
-	    toolBar.pack();
-	    Point size = toolBar.getSize();
-	    CoolItem item = new CoolItem(coolBar, SWT.NONE);
-	    item.setControl(toolBar);
-	    Point preferred = item.computeSize(size.x, size.y);
-	    item.setPreferredSize(preferred);
-	    return item;
-	}
-
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
