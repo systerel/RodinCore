@@ -21,7 +21,6 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 
-// TODO : implement the symetric operation (he)
 // TODO : take input from the genearted rule (maybe, since it removes backward compatability)
 // TODO : make this a hypothesis reasoner
 public class Eq extends SinglePredInputReasoner{
@@ -99,43 +98,6 @@ public class Eq extends SinglePredInputReasoner{
 
 		return reasonerOutput;
 		
-		
-		
-//		Set<Predicate> toDeselect = new HashSet<Predicate>();
-//		toDeselect.add(eqHyp);
-//		Set<Predicate> rewrittenHyps = new HashSet<Predicate>();
-//		for (Predicate shyp : seq.selectedHypIterable()){
-//			if (! shyp.equals(eqHyp)){
-//				Predicate rewritten = (Lib.rewrite(shyp,from,to));
-//				if (! rewritten.equals(shyp)){
-//					toDeselect.add(shyp);
-//					rewrittenHyps.add(rewritten);
-//				}
-//			}
-//		}
-//		
-//		Predicate rewrittenGoal = Lib.rewrite(seq.goal(),from,to);
-//		
-//		//	Generate the anticident
-//		IAntecedent[] anticidents = new IAntecedent[1];
-//		anticidents[0] = ProverFactory.makeAntecedent(
-//				rewrittenGoal,
-//				rewrittenHyps,
-//				ProverFactory.makeDeselectHypAction(toDeselect));
-//		
-//		//	 Generate the successful reasoner output
-//		// no need to clone since toDeselect is not used later
-//		Set<Predicate> neededHyps = toDeselect;
-//		neededHyps.add(eqHyp);
-//		IProofRule reasonerOutput = ProverFactory.makeProofRule(
-//				this,input,
-//				seq.goal(),
-//				neededHyps,
-//				null,
-//				"eh ("+eqHyp+")",
-//				anticidents);
-//		
-//		return reasonerOutput;
 	}
 
 }
