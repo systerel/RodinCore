@@ -92,6 +92,14 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal"
             id="trueGoal"
             name="%trueGoalName"/>
+       <reasoner
+             class="org.eventb.internal.core.seqprover.eventbExtensions.ExF"
+             id="exF"
+             name="%exFName"/>
+       <reasoner
+             class="org.eventb.internal.core.seqprover.eventbExtensions.ConjF"
+             id="conjF"
+             name="%conjFName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.reasoners">
@@ -128,7 +136,7 @@
             id="ri"
             name="%riName"/>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.AutoImpE"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF"
             id="autoImpE"
             name="%autoImpEname"/>
    </extension>
@@ -143,7 +151,7 @@
             id="autoRewriteTac"
             name="%autoRewriteTacName"/>
       <tactic
-            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoImpETac"
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoImpFTac"
             id="autoImpETac"
             name="%autoImpETacName"/>
    </extension>

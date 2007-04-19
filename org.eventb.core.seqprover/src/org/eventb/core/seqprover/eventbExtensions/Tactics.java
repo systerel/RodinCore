@@ -47,14 +47,16 @@ import org.eventb.core.seqprover.reasoners.Review;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
-import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpE;
+import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
+import org.eventb.internal.core.seqprover.eventbExtensions.ConjF;
 import org.eventb.internal.core.seqprover.eventbExtensions.Contr;
 import org.eventb.internal.core.seqprover.eventbExtensions.Cut;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.DoCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExE;
+import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
@@ -387,11 +389,11 @@ public class Tactics {
 		return Lib.isUnivQuant(hyp);
 	}
 
-	public static ITactic conjD(Predicate conjHyp) {
-		return BasicTactics.reasonerTac(new Conj(), new Conj.Input(conjHyp));
+	public static ITactic conjF(Predicate conjHyp) {
+		return BasicTactics.reasonerTac(new ConjF(), new ConjF.Input(conjHyp));
 	}
 
-	public static boolean conjD_applicable(Predicate hyp) {
+	public static boolean conjF_applicable(Predicate hyp) {
 		return Lib.isConj(hyp);
 	}
 	
@@ -406,8 +408,8 @@ public class Tactics {
 
 			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-					if (conjD_applicable(shyp)){
-						return conjD(shyp).apply(ptNode, pm);
+					if (conjF_applicable(shyp)){
+						return conjF(shyp).apply(ptNode, pm);
 					}
 				}
 				return "Selected hyps contain no conjunctions";
@@ -487,12 +489,23 @@ public class Tactics {
 		};
 	}
 	
+	/**
+	 * @param exHyp
+	 * @return
+	 * 
+	 * @deprecated use {@link #exF(Predicate)} instead.
+	 */
+	@Deprecated
 	public static ITactic exE(Predicate exHyp) {
 		return BasicTactics.reasonerTac(new ExE(), new ExE.Input(exHyp));
 	}
 
-	public static boolean exE_applicable(Predicate hyp) {
+	public static boolean exF_applicable(Predicate hyp) {
 		return Lib.isExQuant(hyp);
+	}
+	
+	public static ITactic exF(Predicate exHyp) {
+		return BasicTactics.reasonerTac(new ExF(), new ExF.Input(exHyp));
 	}
 
 	/**
@@ -608,14 +621,16 @@ public class Tactics {
 	// and impE_auto()
 	public static ITactic postProcessExpert() {
 		return repeat(onAllPending(compose(
-				autoRewriteRules(),
+				new AutoRewriteTac(),
 				// autoRewriteRules() already incorporates what conjD_auto() does
 				// conjD_auto(),
 				falsifyHyp_auto(),
 				eqE_auto(),
 				// impE_auto(),
-				new AutoImpETac(),
-				norm())));
+				new AutoImpFTac(),
+				new AutoExFTac(),
+				new NormTac()
+				)));
 	}
 
 	public static ITactic afterLasoo(final ITactic tactic) {
@@ -878,7 +893,7 @@ public class Tactics {
 				new RemoveInclusion.Input(hyp, position));
 	}
 	
-	public class NormTac implements ITactic{
+	public static class NormTac implements ITactic{
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			return norm().apply(ptNode, pm);
@@ -894,11 +909,24 @@ public class Tactics {
 		
 	}
 	
-	public static class AutoImpETac implements ITactic{
+	public static class AutoImpFTac implements ITactic{
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return BasicTactics.reasonerTac(new AutoImpE(), new EmptyInput()).apply(ptNode, pm);
+			return BasicTactics.reasonerTac(new AutoImpF(), new EmptyInput()).apply(ptNode, pm);
 		}	
+	}
+	
+	public static class AutoExFTac implements ITactic{
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+				if (exF_applicable(shyp)){
+					return exF(shyp).apply(ptNode, pm);
+				}
+			}
+			return "Selected hyps contain no existential hyps";
+		}
+		
 	}
 
 }

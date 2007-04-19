@@ -16,6 +16,12 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 
+/**
+ * @author fmehta
+ *
+ * @deprecated use the reasoner ExF instead since it generates a forward inference instead
+ */
+@Deprecated
 public class ExE extends HypothesisReasoner{
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".exE";

@@ -9,7 +9,7 @@ import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpE;
+import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
 import org.junit.Test;
 
 /**
@@ -19,7 +19,7 @@ import org.junit.Test;
  */
 public class AutoImpETests {
 
-	private static final IReasoner autoImpEreasoner = new AutoImpE();
+	private static final IReasoner autoImpEreasoner = new AutoImpF();
 	
 	/**
 	 * Tests for correct reasoner failure
