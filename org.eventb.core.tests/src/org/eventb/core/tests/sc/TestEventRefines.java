@@ -1293,5 +1293,40 @@ public class TestEventRefines extends BasicSCTest {
 		containsWitnesses(events[0], environment, 
 				makeSList("x", "y", "p'"), makeSList("⊤", "y=q'", "q'≠p'"));
 	}
+	
+	/*
+	 * 
+	 */
+	public void testEvents_26_localVarRefByGlobalVarConflict() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G1"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+
+		abs.save(null, true);
+		
+		runBuilder();
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
+		IEvent fvt = addEvent(mac, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList(), makeSList());
+		addEventRefines(fvt, "evt");
+	
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt");
+		containsWitnesses(events[0], emptyEnv, makeSList("x"), makeSList("⊤"));
+	}
 
 }

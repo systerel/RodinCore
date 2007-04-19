@@ -35,12 +35,12 @@ public interface IEventRefinesInfo extends ISCState {
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".eventRefinesInfo");
 	
 	/**
-	 * Returns whether the current event is refined or not.
+	 * Returns whether the current event is new (i.e. does not refine an abstract event) or not.
 	 * 
-	 * @return whether the current event is refined or not
+	 * @return whether the current event is new or not
 	 * @throws CoreException if this state component is mutable
 	 */
-	boolean currentEventIsRefined() throws CoreException;
+	boolean currentEventIsNew() throws CoreException;
 	
 	/**
 	 * Returns the infos for the abstract events that are refined by the current event.
