@@ -18,13 +18,13 @@ public class ExistsInstantiationHyp extends DefaultTacticProvider {
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		return Tactics.exE(hyp);
+		return Tactics.exF(hyp);
 	}
 
 	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
-		if (Tactics.exE_applicable(hyp)) {
+		if (Tactics.exF_applicable(hyp)) {
 			internalGetPositions(hyp);
 			return positions;
 		}

@@ -15,13 +15,13 @@ public class ConjunctionElemination extends DefaultTacticProvider {
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		return Tactics.conjD(hyp);
+		return Tactics.conjF(hyp);
 	}
 
 	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
-		if (Tactics.conjD_applicable(hyp))
+		if (Tactics.conjF_applicable(hyp))
 			return new ArrayList<IPosition>();
 		return null;
 	}
