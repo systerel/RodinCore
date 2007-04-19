@@ -23,6 +23,8 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 
+// TODO : maybe Rename to AllE
+// TDOD : maybe return a fwd inference instead of a complete rule if WD is trivial
 public class AllD implements IReasoner {
 	
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".allD";
@@ -148,14 +150,14 @@ public class AllD implements IReasoner {
 		anticidents[0] = ProverFactory.makeAntecedent(WDpred);
 		// The instantiated goal
 		anticidents[1] = ProverFactory.makeAntecedent(
-				seq.goal(),
+				null,
 				Lib.breakPossibleConjunct(instantiatedPred),
 				ProverFactory.makeDeselectHypAction(Arrays.asList(univHyp))
 				);
 		
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
-				seq.goal(),
+				null,
 				univHyp,
 				"∀ hyp (inst "+displayInstantiations(instantiations)+")",
 				anticidents
