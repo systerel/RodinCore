@@ -41,7 +41,14 @@ public class EventBImage {
 	public static final String IMG_NEW_PROJECT = "New Project";
 
 	public static final String IMG_NEW_COMPONENT = "New Component";
+
+	public static final String IMG_DISCHARGED_SMILEY = "Discharged Smiley";
 	
+	public static final String IMG_PENDING_SMILEY = "Pending Smiley";
+
+	public static final String IMG_DISCHARGED_SMILEY_PATH = "icons/full/ctool16/wink.gif";
+	
+	public static final String IMG_PENDING_SMILEY_PATH = "icons/full/ctool16/sad.gif";
 	/**
 	 * Returns an image descriptor for the image file within the Event-B UI
 	 * Plugin at the given plug-in relative path
@@ -115,6 +122,9 @@ public class EventBImage {
 		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED_HOVER, "icons/full/elcl16/collapsedHover.gif");
 		registerImage(registry, IEventBSharedImages.IMG_EXPANDED, "icons/full/elcl16/expanded.gif");
 		registerImage(registry, IEventBSharedImages.IMG_EXPANDED_HOVER, "icons/full/elcl16/expandedHover.gif");
+
+		registerImage(registry, EventBImage.IMG_DISCHARGED_SMILEY, "icons/full/ctool16/Wink.gif");
+		registerImage(registry, EventBImage.IMG_PENDING_SMILEY, "icons/full/ctool16/sad.gif");
 	}
 
 	/**

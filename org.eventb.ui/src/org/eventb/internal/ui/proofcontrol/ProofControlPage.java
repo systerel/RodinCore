@@ -12,11 +12,17 @@
 
 package org.eventb.internal.ui.proofcontrol;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -29,7 +35,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -42,6 +50,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
@@ -92,6 +101,7 @@ import org.eventb.ui.IEventBFormText;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
+import org.osgi.framework.Bundle;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -126,6 +136,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	String currentInput = "";
 
+	Browser browser; 
+	
 	/**
 	 * Constructor
 	 * <p>
@@ -586,16 +598,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		pgComp = toolkit.createComposite(parent, SWT.NULL);
 		pgComp.setLayout(new FormLayout());
 
-		// if (ProofControlUtils.DEBUG)
-		// ProofControlUtils.debug("Parent: "
-		// + this.editor.getRodinInput().getElementName() + " is "
-		// + parent);
-
-		// parent.setLayout(new GridLayout());
-
-		// Composite composite = toolkit.createComposite(parent);
-		// composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
 		CoolBar coolBar = new CoolBar(pgComp, SWT.FLAT);
 
 		FormData coolData = new FormData();
@@ -617,18 +619,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		gl.numColumns = 1;
 		body.setLayout(gl);
 
-		// coolBar.addListener(SWT.Resize, new Listener() {
-		// public void handleEvent(Event event) {
-		// scrolledForm.pack();
-		// }
-		// });
-
 		// Create toolbars
 		dropdownItems = new ArrayList<GlobalTacticDropdownToolItem>();
 		toolItems = new ArrayList<GlobalTacticToolItem>();
-
-		// ArrayList<GlobalTacticToolbarUI> toolbars = ExtensionLoader
-		// .getGlobalToolbar();
 
 		Collection<String> toolbars = TacticUIRegistry.getDefault()
 				.getToolbars();
@@ -637,8 +630,14 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			createItem(coolBar, toolbar);
 		}
 
+		Composite midComp = toolkit.createComposite(body, SWT.NULL);
+		midComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		gl = new GridLayout();
+		gl.numColumns = 2;
+		midComp.setLayout(gl);
+		
 		// A text field
-		textInput = new EventBMath(toolkit.createText(body, "", SWT.MULTI));
+		textInput = new EventBMath(toolkit.createText(midComp, "", SWT.MULTI));
 
 		textInput.getTextWidget().addModifyListener(new ModifyListener() {
 
@@ -652,7 +651,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		});
 
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 50;
+		gd.heightHint = textInput.getTextWidget().getLineHeight() * 3;
 		gd.widthHint = 200;
 		textInput.getTextWidget().setLayoutData(gd);
 		textInput.getTextWidget().addModifyListener(new ModifyListener() {
@@ -662,6 +661,12 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			}
 		});
 
+		browser = new Browser(midComp, Window.getDefaultOrientation());
+		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+//		smiley = toolkit.createImageHyperlink(midComp, SWT.DEFAULT);
+//		smiley.setEnabled(false);
+		toolkit.paintBordersFor(midComp);
+		
 		historyCombo = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
 		historyCombo.addSelectionListener(new SelectionListener() {
 
@@ -678,8 +683,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		historyCombo.setLayoutData(gd);
 		history = new EventBControl(historyCombo);
 
-		updateToolItems(editor.getUserSupport());
-
 		formTextInformation = new EventBFormText(toolkit.createFormText(body,
 				true));
 		gd = new GridData();
@@ -689,7 +692,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		formTextInformation.getFormText().setLayoutData(gd);
 		setFormTextInformation("");
 
-		toolkit.paintBordersFor(body);
 		scrolledForm.reflow(true);
 
 		makeActions();
@@ -697,11 +699,58 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		contributeToActionBars();
 
 		updateToolItems(editor.getUserSupport());
+		updateSmiley();
 		coolBar.pack();
-		// coolBar.setVisible(false);
-		// textInput.getTextWidget().setVisible(false);
-		// scrolledForm.getBody().setVisible(false);
 		pgComp.setVisible(false);
+	}
+
+	void updateSmiley() {
+		Image image;
+		String path;
+		IProofState currentPO = editor.getUserSupport().getCurrentPO();
+		try {
+			if (currentPO != null && currentPO.isClosed()) {
+				image = EventBImage.getImage(EventBImage.IMG_DISCHARGED_SMILEY);
+				path = EventBImage.IMG_DISCHARGED_SMILEY_PATH;
+			}
+			else {
+				image = EventBImage.getImage(EventBImage.IMG_PENDING_SMILEY);
+				path = EventBImage.IMG_PENDING_SMILEY_PATH;
+			}
+		} catch (RodinDBException e1) {
+			image = EventBImage.getImage(EventBImage.IMG_PENDING_SMILEY);
+			path = "icons/full/ctool16/sad.gif";
+		}
+		// if the bundle is not ready then there is no image
+		Bundle bundle = Platform.getBundle(EventBUIPlugin.PLUGIN_ID);
+		if ((bundle == null)
+				&& (bundle.getState() & (Bundle.RESOLVED | Bundle.STARTING
+						| Bundle.ACTIVE | Bundle.STOPPING)) != 0)
+			return;
+
+		// look for the image (this will check both the plugin and fragment
+		// folders
+		URL fullPathString = FileLocator.find(bundle, new Path(
+				path), null);
+		if (fullPathString == null) {
+			try {
+				fullPathString = new URL(path);
+			} catch (MalformedURLException e) {
+				return;
+			}
+		}
+
+		try {
+			browser.setText("<html><body><img align=\"center\" src=\""
+					+ FileLocator.toFileURL(fullPathString).getFile()
+					+ "\" alt=\"Smile\"></body></html>");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
+		gd.widthHint = image.getBounds().width + 20;
+		gd.heightHint = image.getBounds().height + 20;
+		browser.setLayoutData(gd);
 	}
 
 	/**
@@ -895,6 +944,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						// The current proof state is changed, update the tool
 						// items.
 						updateToolItems(editor.getUserSupport());
+						updateSmiley();
+						scrolledForm.reflow(true);
 					} else if ((flags | IUserSupportDelta.F_STATE) != 0) {
 						// If the changes occurs in some proof states.	
 						IProofState proofState = userSupport.getCurrentPO();
@@ -928,7 +979,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 									// Update the items if the current node has
 									// been changed.
 									updateToolItems(editor.getUserSupport());
+									if ((psFlags | IProofStateDelta.F_PROOFTREE) != 0) {
+										updateSmiley();									
+									}
 								}
+								else if ((psFlags | IProofStateDelta.F_PROOFTREE) != 0) {
+									// Update the items if the current node has
+									// been changed.
+									updateToolItems(editor.getUserSupport());
+									updateSmiley();
+								}
+								scrolledForm.reflow(true);
 							}
 						}
 					}
