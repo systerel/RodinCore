@@ -33,6 +33,7 @@ import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.tool.IModuleType;
@@ -171,7 +172,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		IEventRefinesInfo eventRefinesInfo = (IEventRefinesInfo)
 			repository.getState(IEventRefinesInfo.STATE_TYPE);
 		
-		if (eventRefinesInfo.currentEventIsRefined())
+		if (eventRefinesInfo.currentEventIsNew())
 			return;
 		
 		getLocalWitnessNames(eventRefinesInfo, witnessNames);
@@ -226,9 +227,14 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 			for (FreeIdentifier identifier : identifiers) {
 				// if a symbol with the same name is found it can only be
 				// a local variable of the concrete event.
-				if (identifierSymbolTable.getSymbolInfo(identifier.getName()) != null)
-					continue;
-			
+				IIdentifierSymbolInfo symbolInfo = identifierSymbolTable.getSymbolInfo(identifier.getName());
+				if (symbolInfo != null) {
+					if (symbolInfo instanceof IVariableSymbolInfo) {
+						IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
+						if (variableSymbolInfo.isLocal() && !variableSymbolInfo.hasError())
+							continue;
+					}
+				}
 				witnessNames.add(identifier.getName());
 			}
 		}

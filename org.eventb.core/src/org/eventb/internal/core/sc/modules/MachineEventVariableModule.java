@@ -69,7 +69,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 	 * that are not also local variables of the refined event
 	 */
 	private void patchTypeEnvironment() throws CoreException {
-		if (eventRefinesInfo.currentEventIsRefined())
+		if (eventRefinesInfo.currentEventIsNew())
 			return;
 		IAbstractEventInfo abstractEventInfo = eventRefinesInfo.getAbstractEventInfos().get(0);
 		for (FreeIdentifier freeIdentifier : abstractEventInfo.getVariables()) {
