@@ -74,8 +74,6 @@ public class ProofsPage extends FormPage implements
 
 	private HypothesesSection selectedSection;
 
-//	private HypothesesSection cachedSection;
-
 	Action layoutAction;
 
 	private SashForm sashForm;
@@ -137,19 +135,10 @@ public class ProofsPage extends FormPage implements
 		comp = new Composite(sashForm, SWT.NULL);
 		comp.setBackground(form.getBackground());
 
-//		cachedSection = new CacheHypothesesSection(this, sashForm,
-//				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
-//						| Section.EXPANDED);
-//		managedForm.addPart(cachedSection);
-//		cachedSection.getSection().setLayoutData(
-//				new GridData(SWT.FILL, SWT.FILL, true, true));
-
 		selectedSection = new SelectedHypothesesSection(this, sashForm,
 				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
 						| Section.EXPANDED);
 		managedForm.addPart(selectedSection);
-		// selectedSection.getSection().setLayoutData(
-		// new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		IProofState ps = userSupport.getCurrentPO();
 		initHypothesisSections(ps);
@@ -268,7 +257,6 @@ public class ProofsPage extends FormPage implements
 		}
 
 		selectedSection.init(selected, enable);
-//		cachedSection.init(cached, enable);
 	}
 
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
@@ -353,9 +341,6 @@ public class ProofsPage extends FormPage implements
 									goalSection.setGoal(proofState
 											.getCurrentNode());
 								}
-//								if ((psFlags & IProofStateDelta.F_CACHE) != 0) {
-//									initCacheSection();
-//								}
 
 								ProofsPage.this.getManagedForm().getForm()
 										.reflow(true);
@@ -366,31 +351,6 @@ public class ProofsPage extends FormPage implements
 			}
 		});
 	}
-
-//	void initCacheSection() {
-//		IProofState ps = userSupport.getCurrentPO();
-//		ArrayList<Predicate> cached = new ArrayList<Predicate>();
-//		boolean enable = false;
-//		if (ps != null) {
-//			IProofTreeNode node = ps.getCurrentNode();
-//			IProverSequent sequent = node.getSequent();
-//			if (node != null) {
-//				if (node.isOpen())
-//					enable = true;
-//			}
-//			Collection<Predicate> currentCached = ps.getCached();
-//			for (Iterator<Predicate> i = currentCached.iterator(); i.hasNext();) {
-//				Predicate hyp = i.next();
-//				if (node != null)
-//					if (!sequent.containsHypothesis(hyp))
-//						continue;
-//				if (!sequent.isSelected(hyp))
-//					cached.add(hyp);
-//			}
-//
-//		}
-//		cachedSection.init(cached, enable);
-//	}
 
 	int[] weights = new int[3];
 
@@ -421,9 +381,6 @@ public class ProofsPage extends FormPage implements
 		if (vertical != null && vertical.isVisible()) {
 			totalWidth += vertical.getSize().x;
 		}
-
-//		weights[1] = cachedSection.getSection().computeSize(totalWidth,
-//				SWT.DEFAULT).y;
 
 		weights[1] = selectedSection.getSection().computeSize(totalWidth,
 				SWT.DEFAULT).y;
@@ -510,7 +467,6 @@ public class ProofsPage extends FormPage implements
 			sashForm.setBounds(rect);
 
 			selectedSection.getSection().layout();
-//			cachedSection.getSection().layout();
 			goalSection.getSection().layout();
 			sashForm.setWeights(weights);
 		}
