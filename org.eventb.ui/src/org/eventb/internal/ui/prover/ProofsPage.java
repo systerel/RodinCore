@@ -69,9 +69,7 @@ public class ProofsPage extends FormPage implements
 
 	private static final int DEFAULT_WIDTH = 400;
 
-	// Different sections
-	GoalSection goalSection;
-
+	// Selected Hypotheses sections
 	private HypothesesSection selectedSection;
 
 	Action layoutAction;
@@ -142,10 +140,6 @@ public class ProofsPage extends FormPage implements
 
 		IProofState ps = userSupport.getCurrentPO();
 		initHypothesisSections(ps);
-
-		goalSection = new GoalSection(this, sashForm,
-				ExpandableComposite.TITLE_BAR);
-		managedForm.addPart(goalSection);
 
 		body.setLayout(new ProofsPageLayout());
 		createToolBarActions(managedForm);
@@ -298,10 +292,8 @@ public class ProofsPage extends FormPage implements
 						IProofState ps = userSupport.getCurrentPO();
 						if (ps != null) {
 							initHypothesisSections(ps);
-							goalSection.setGoal(ps.getCurrentNode());
 						} else {
 							initHypothesisSections(null);
-							goalSection.setGoal(null);
 						}
 						ProofsPage.this.getManagedForm().getForm().reflow(true);
 						return;
@@ -336,10 +328,9 @@ public class ProofsPage extends FormPage implements
 								// If there are some changes to the proof state.
 								int psFlags = affectedProofState.getFlags();
 
-								if ((psFlags & IProofStateDelta.F_NODE) != 0) {
+								if ((psFlags & IProofStateDelta.F_NODE) != 0
+										|| (psFlags & IProofStateDelta.F_PROOFTREE) != 0) {
 									initHypothesisSections(proofState);
-									goalSection.setGoal(proofState
-											.getCurrentNode());
 								}
 
 								ProofsPage.this.getManagedForm().getForm()
@@ -352,7 +343,7 @@ public class ProofsPage extends FormPage implements
 		});
 	}
 
-	int[] weights = new int[3];
+	int[] weights = new int[2];
 
 	void autoLayout() {
 		weights[0] = 0;
@@ -385,12 +376,9 @@ public class ProofsPage extends FormPage implements
 		weights[1] = selectedSection.getSection().computeSize(totalWidth,
 				SWT.DEFAULT).y;
 
-		weights[2] = goalSection.getSection().computeSize(totalWidth,
-				SWT.DEFAULT).y;
-
 		if (ProverUIUtils.DEBUG) {
 			ProverUIUtils.debug("Desired Weight ");
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 2; i++) {
 				ProverUIUtils.debug("weights[" + i + "] is " + weights[i]);
 			}
 		}
@@ -399,19 +387,18 @@ public class ProofsPage extends FormPage implements
 			totalWidth = DEFAULT_WIDTH;
 		}
 		int sum = 0;
-		// Do not resize the goalSection
 		for (int i = 1; i < 2; i++) {
 			sum += weights[i];
 		}
 
-		if (sum < totalHeight - weights[2]) {
-			weights[0] = totalHeight - sum - weights[2];
+		if (sum < totalHeight) {
+			weights[0] = totalHeight - sum;
 			Rectangle rect = sashForm
 					.computeTrim(0, 0, totalWidth, totalHeight);
 			if (ProverUIUtils.DEBUG) {
 				ProverUIUtils.debug("Total Width " + totalWidth);
 				ProverUIUtils.debug("Total Height " + totalHeight);
-				for (int i = 0; i < 3; i++) {
+				for (int i = 0; i < 2; i++) {
 					ProverUIUtils.debug("weights[" + i + "] is " + weights[i]);
 				}
 				ProverUIUtils.debug("Rect: " + rect);
@@ -422,12 +409,12 @@ public class ProofsPage extends FormPage implements
 		} else {
 			weights[0] = 0;
 			for (int i = 1; i < 2; i++) {
-				weights[i] = weights[i] * (totalHeight - weights[2]) / sum;
+				weights[i] = weights[i] * totalHeight / sum;
 			}
 
 			// re-adjust according to MINIMUM_SECTION_HEIGHT
 			Collection<Integer> fix = new ArrayList<Integer>();
-			if (totalHeight - weights[2] - MIN_SECTION_HEIGHT * 2 <= 0) {
+			if (totalHeight - MIN_SECTION_HEIGHT * 2 <= 0) {
 				for (int i = 1; i < 2; i++) {
 					weights[i] = MIN_SECTION_HEIGHT;
 				}
@@ -446,7 +433,7 @@ public class ProofsPage extends FormPage implements
 					for (int j = 1; j < 2; j++) {
 						if (!fix.contains(new Integer(j)))
 							weights[j] = weights[j]
-									* (totalHeight - weights[2] - MIN_SECTION_HEIGHT
+									* (totalHeight - MIN_SECTION_HEIGHT
 											* fix.size()) / sum;
 					}
 
@@ -458,7 +445,7 @@ public class ProofsPage extends FormPage implements
 			if (ProverUIUtils.DEBUG) {
 				ProverUIUtils.debug("Total Width " + totalWidth);
 				ProverUIUtils.debug("Total Height " + totalHeight);
-				for (int i = 0; i < 3; i++) {
+				for (int i = 0; i < 2; i++) {
 					ProverUIUtils.debug("weights[" + i + "] is " + weights[i]);
 				}
 				ProverUIUtils.debug("Rect: " + rect);
@@ -467,7 +454,6 @@ public class ProofsPage extends FormPage implements
 			sashForm.setBounds(rect);
 
 			selectedSection.getSection().layout();
-			goalSection.getSection().layout();
 			sashForm.setWeights(weights);
 		}
 	}
