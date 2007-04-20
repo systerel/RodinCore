@@ -29,7 +29,8 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 	ToolItem removeItem;
 
 	public SearchHypothesisComposite(IUserSupport userSupport) {
-		super(userSupport, IProofStateDelta.F_NODE | IProofStateDelta.F_SEARCH);
+		super(userSupport, IProofStateDelta.F_NODE
+				| IProofStateDelta.F_PROOFTREE | IProofStateDelta.F_SEARCH);
 	}
 
 	@Override
@@ -86,7 +87,12 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 		if (ps != null) {
 			searched = ps.getSearched();
 		}
-		return searched;
+		Collection<Predicate> validSearched = new ArrayList<Predicate>();
+		for (Predicate search : searched) {
+			if (ps.getCurrentNode().getSequent().containsHypothesis(search))
+				validSearched.add(search);
+		}
+		return validSearched;
 	}
 
 	@Override

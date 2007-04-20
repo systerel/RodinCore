@@ -141,6 +141,7 @@ public abstract class HypothesisComposite implements
 		layout.verticalSpacing = 0;
 		comp.setLayout(layout);
 
+		init();
 	}
 
 	public abstract void createItems(ToolBar toolBar);
@@ -186,7 +187,6 @@ public abstract class HypothesisComposite implements
 		// Remove everything
 		for (HypothesisRow row : rows) {
 			row.dispose();
-
 		}
 		rows.clear();
 
