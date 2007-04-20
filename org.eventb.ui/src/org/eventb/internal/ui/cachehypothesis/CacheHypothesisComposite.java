@@ -29,7 +29,8 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 	ToolItem removeItem;
 
 	public CacheHypothesisComposite(IUserSupport userSupport) {
-		super(userSupport, IProofStateDelta.F_NODE | IProofStateDelta.F_CACHE);
+		super(userSupport, IProofStateDelta.F_NODE
+				| IProofStateDelta.F_PROOFTREE | IProofStateDelta.F_CACHE);
 	}
 
 	@Override
@@ -86,7 +87,12 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		if (ps != null) {
 			cached = ps.getCached();
 		}
-		return cached;
+		Collection<Predicate> validCached = new ArrayList<Predicate>();
+		for (Predicate cache : cached) {
+			if (ps.getCurrentNode().getSequent().containsHypothesis(cache))
+				validCached.add(cache);
+		}
+		return validCached;
 	}
 
 	@Override
