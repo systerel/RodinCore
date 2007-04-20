@@ -824,6 +824,16 @@
             toolbar="org.eventb.ui.sequentToolbar"
             tooltip="%proofTactics.addHyp.tooltip"/>
       <tactic
+            icon="icons/full/ctool16/ae_prover.gif"
+            id="org.eventb.ui.abstrExpr"
+            interrupt="false"
+            name="%proofTactics.abstrExpr.name"
+            priorty="3"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.AbstrExpr"
+            target="global"
+            toolbar="org.eventb.ui.sequentToolbar"
+            tooltip="%proofTactics.abstrExpr.tooltip"/>
+      <tactic
             icon="icons/full/ctool16/auto_prover.png"
             id="org.eventb.ui.autoProver"
             interrupt="true"

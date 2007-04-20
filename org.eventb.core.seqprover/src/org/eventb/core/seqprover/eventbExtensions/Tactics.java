@@ -40,11 +40,13 @@ import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
+import org.eventb.core.seqprover.reasonerInputs.SingleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasoners.Hyp;
 import org.eventb.core.seqprover.reasoners.MngHyp;
 import org.eventb.core.seqprover.reasoners.Review;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.internal.core.seqprover.eventbExtensions.AbstrExpr;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
 import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
@@ -75,6 +77,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplH
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
+
+import com.sun.org.apache.bcel.internal.generic.IAND;
 
 
 /**
@@ -129,6 +133,59 @@ public class Tactics {
 				return (BasicTactics.reasonerTac(new Cut(),
 						new SinglePredInput(lemma, pt.getSequent()
 								.typeEnvironment()))).apply(pt, pm);
+			}
+
+		};
+	}
+	
+	/**
+	 * The abstract expression tactic.
+	 * 
+	 * Abstracts an expression (and introduces its well definedness condition) into a proof.
+	 * 
+	 * @param expression
+	 * 		The expression to abstract as a String.
+	 * @return
+	 * 		The resulting Abstract Expression tactic.
+	 */
+	public static ITactic abstrExpr(final String expression) {
+
+		return new ITactic() {
+
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
+				return (BasicTactics.reasonerTac(new AbstrExpr(),
+						new SingleExprInput(expression, pt.getSequent()
+								.typeEnvironment()))).apply(pt, pm);
+			}
+
+		};
+	}
+	
+	public static ITactic abstrExprThenEq(final String expression) {
+		
+		return new ITactic() {
+
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
+				
+				// Apply the abstract expression tactic
+				Object result = abstrExpr(expression).apply(pt, pm);
+				
+				// Check if it was successful
+				if (result != null) return result;
+				
+				// Get the introduced equality
+				IAntecedent[] antecedents = pt.getRule().getAntecedents();
+				assert antecedents.length != 0;
+				IAntecedent lastAntecedent = antecedents[antecedents.length - 1];
+				Set<Predicate> addedHyps = lastAntecedent.getAddedHyps();
+				assert addedHyps.size() == 1;
+				Predicate eqHyp = addedHyps.iterator().next();
+				assert Lib.isEq(eqHyp);
+				
+				// Get the node where Eq should be applied
+				IProofTreeNode node = pt.getChildNodes()[antecedents.length - 1];
+				// apply Eq
+				return he(eqHyp).apply(node, pm);
 			}
 
 		};
