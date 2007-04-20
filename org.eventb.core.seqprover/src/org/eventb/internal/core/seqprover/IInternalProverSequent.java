@@ -145,8 +145,8 @@ public interface IInternalProverSequent extends IProverSequent{
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * In case the forward inference is applicable, the <code>inferredHyps</code> are
-	 * are not present are added as new hypotheses, and :
+	 * In case the forward inference is applicable, the <code>addedIdents</code> are added to the type environment,
+	 * the <code>inferredHyps</code> that are not present are added as new hypotheses, and :
 	 * <ul>
 	 * <li> Selected iff at least one of the <code>hyps</code> is selected
 	 * <li> Hidden iff all of the <code>hyps</code> are hidden
