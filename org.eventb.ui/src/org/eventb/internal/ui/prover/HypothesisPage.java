@@ -68,7 +68,7 @@ public abstract class HypothesisPage extends Page implements
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		hypComp.createControl(parent);
+		hypComp.createControl(parent, true);
 		contributeToActionBars();
 	}
 
