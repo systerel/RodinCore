@@ -2,7 +2,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -51,8 +51,11 @@ public class Eq extends SinglePredInputReasoner{
 		from = Lib.eqLeft(eqHyp);
 		to = Lib.eqRight(eqHyp);
 		
+		// This code is common to the reasoners Eq and He
+		
 		List<IHypAction> rewrites = new ArrayList<IHypAction>();
-		Set<Predicate> toDeselect = new HashSet<Predicate>();
+		Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
+		Set<Predicate> toSelect = new LinkedHashSet<Predicate>();
 		toDeselect.add(eqHyp);
 		
 		for (Predicate shyp : seq.selectedHypIterable()){
@@ -64,6 +67,7 @@ public class Eq extends SinglePredInputReasoner{
 							Collections.singleton(shyp),
 							Collections.singleton(rewritten)));
 					toDeselect.add(shyp);
+					toSelect.add(rewritten);
 				}
 			}
 		}
@@ -83,6 +87,7 @@ public class Eq extends SinglePredInputReasoner{
 			newGoal = null;
 		}
 		rewrites.add(ProverFactory.makeDeselectHypAction(toDeselect));
+		rewrites.add(ProverFactory.makeSelectHypAction(toSelect));
 		IAntecedent[] anticidents = new IAntecedent[1];
 		anticidents[0] = ProverFactory.makeAntecedent(
 				newGoal,null,null,

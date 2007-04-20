@@ -2,7 +2,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -49,46 +49,99 @@ public class He extends SinglePredInputReasoner {
 		from = Lib.eqRight(eqHyp);
 		to = Lib.eqLeft(eqHyp);
 
+		// This code is common to the reasoners Eq and He
+		
 		List<IHypAction> rewrites = new ArrayList<IHypAction>();
-		Set<Predicate> toDeselect = new HashSet<Predicate>();
+		Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
+		Set<Predicate> toSelect = new LinkedHashSet<Predicate>();
 		toDeselect.add(eqHyp);
-
-		for (Predicate shyp : seq.selectedHypIterable()) {
+		
+		for (Predicate shyp : seq.selectedHypIterable()){
 			if (!shyp.equals(eqHyp)) {
-				Predicate rewritten = (Lib.rewrite(shyp, from, to));
-				if (rewritten != shyp) {
+				Predicate rewritten = (Lib.rewrite(shyp,from,to));
+				if (rewritten != shyp)
+				{
 					rewrites.add(ProverFactory.makeForwardInfHypAction(
-							Collections.singleton(shyp), Collections
-									.singleton(rewritten)));
+							Collections.singleton(shyp),
+							Collections.singleton(rewritten)));
 					toDeselect.add(shyp);
+					toSelect.add(rewritten);
 				}
 			}
 		}
 
-		Predicate rewrittenGoal = Lib.rewrite(seq.goal(), from, to);
-
+		Predicate rewrittenGoal = Lib.rewrite(seq.goal(),from,to);
+		
 		if (rewrittenGoal == seq.goal() && rewrites.isEmpty())
-			return ProverFactory.reasonerFailure(this, input,
-					"No rewriting in selected hypotheses and goal");
+			return ProverFactory.reasonerFailure(this,input,
+					"Nothing to do");
 
 		Predicate goalDep = seq.goal();
 		Predicate newGoal = rewrittenGoal;
-
+		
 		// remove goal dependency if goal is not rewritten
-		if (rewrittenGoal == seq.goal()) {
+		if (rewrittenGoal == seq.goal()){
 			goalDep = null;
 			newGoal = null;
 		}
 		rewrites.add(ProverFactory.makeDeselectHypAction(toDeselect));
+		rewrites.add(ProverFactory.makeSelectHypAction(toSelect));
 		IAntecedent[] anticidents = new IAntecedent[1];
-		anticidents[0] = ProverFactory.makeAntecedent(newGoal, null, null,
+		anticidents[0] = ProverFactory.makeAntecedent(
+				newGoal,null,null,
 				rewrites);
-
-		IProofRule reasonerOutput = ProverFactory.makeProofRule(this, input,
-				goalDep, Collections.singleton(eqHyp), null, "he (" + eqHyp
-						+ ")", anticidents);
+		
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
+		this,input,
+		goalDep,
+		Collections.singleton(eqHyp),
+		null,
+		"he ("+eqHyp+")",
+		anticidents);
 
 		return reasonerOutput;
+		
+//		
+//		List<IHypAction> rewrites = new ArrayList<IHypAction>();
+//		Set<Predicate> toDeselect = new HashSet<Predicate>();
+//		toDeselect.add(eqHyp);
+//
+//		for (Predicate shyp : seq.selectedHypIterable()) {
+//			if (!shyp.equals(eqHyp)) {
+//				Predicate rewritten = (Lib.rewrite(shyp, from, to));
+//				if (rewritten != shyp) {
+//					rewrites.add(ProverFactory.makeForwardInfHypAction(
+//							Collections.singleton(shyp), Collections
+//									.singleton(rewritten)));
+//					toDeselect.add(shyp);
+//				}
+//			}
+//		}
+//
+//		Predicate rewrittenGoal = Lib.rewrite(seq.goal(), from, to);
+//
+//		if (rewrittenGoal == seq.goal() && rewrites.isEmpty())
+//			return ProverFactory.reasonerFailure(this, input,
+//					"No rewriting in selected hypotheses and goal");
+//
+//		Predicate goalDep = seq.goal();
+//		Predicate newGoal = rewrittenGoal;
+//
+//		// remove goal dependency if goal is not rewritten
+//		if (rewrittenGoal == seq.goal()) {
+//			goalDep = null;
+//			newGoal = null;
+//		}
+//		rewrites.add(ProverFactory.makeDeselectHypAction(toDeselect));
+//		IAntecedent[] anticidents = new IAntecedent[1];
+//		anticidents[0] = ProverFactory.makeAntecedent(newGoal, null, null,
+//				rewrites);
+//
+//		IProofRule reasonerOutput = ProverFactory.makeProofRule(this, input,
+//				goalDep, Collections.singleton(eqHyp), null, "he (" + eqHyp
+//						+ ")", anticidents);
+//
+//		return reasonerOutput;
 	}
 
 }
