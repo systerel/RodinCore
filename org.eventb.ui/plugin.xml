@@ -59,6 +59,12 @@
             icon="icons/full/ctool16/cached.gif"
             id="org.eventb.ui.views.CacheHypothesis"
             name="%view.CacheHypothesis"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.internal.ui.goal.Goal"
+            icon="icons/full/ctool16/goal.gif"
+            id="org.eventb.ui.views.Goal"
+            name="%view.Goal"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -232,6 +238,11 @@
                id="org.eventb.ui.views.CacheHypothesis"
                ratio="0.25"
                relationship="fast"/>
+         <view
+               id="org.eventb.ui.views.Goal"
+               ratio="0.4"
+               relationship="top"
+               relative="org.eventb.ui.views.ProofControl"/>
       </perspectiveExtension>
    </extension>
    <extension

@@ -26,6 +26,7 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.goal.GoalUtils;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorerUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorerUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
@@ -78,6 +79,9 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 	private static final String CACHEDHYPOTHESIS_TRACE = PLUGIN_ID
 			+ "/debug/cachedhypothesis"; //$NON-NLS-1$
+
+	private static final String GOAL_TRACE = PLUGIN_ID
+			+ "/debug/goal"; //$NON-NLS-1$
 
 	/**
 	 * Default values for creating RODIN Elements
@@ -179,6 +183,10 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 			option = Platform.getDebugOption(CACHEDHYPOTHESIS_TRACE);
 			if (option != null)
 				CacheHypothesisUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+			option = Platform.getDebugOption(GOAL_TRACE);
+			if (option != null)
+				GoalUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 

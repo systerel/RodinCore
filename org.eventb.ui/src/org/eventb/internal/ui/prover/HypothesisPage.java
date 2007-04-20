@@ -116,7 +116,7 @@ public abstract class HypothesisPage extends Page implements
 	}
 
 	/**
-	 * Passing the focus request to the button bar.
+	 * Passing the focus request to the hypothesis composite.
 	 * <p>
 	 * 
 	 * @see org.eclipse.ui.part.IPage#setFocus()

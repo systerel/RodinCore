@@ -47,6 +47,8 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.cachehypothesis.CacheHypothesisPage;
 import org.eventb.internal.ui.cachehypothesis.ICacheHypothesisPage;
+import org.eventb.internal.ui.goal.GoalPage;
+import org.eventb.internal.ui.goal.IGoalPage;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.internal.ui.proofcontrol.ProofControlPage;
@@ -90,6 +92,9 @@ public class ProverUI extends FormEditor implements
 
 	// The associated Cache Hypothesis
 	private ICacheHypothesisPage fCacheHypothesisPage;
+
+	// The associated Goal
+	private IGoalPage fGoalPage;
 
 	// The associated UserSupport
 	IUserSupport userSupport;
@@ -254,6 +259,14 @@ public class ProverUI extends FormEditor implements
 						.getUserSupport());
 			}
 			return fCacheHypothesisPage;
+		}
+
+		if (IGoalPage.class.equals(required)) {
+			if (fGoalPage == null) {
+				fGoalPage = new GoalPage(this
+						.getUserSupport());
+			}
+			return fGoalPage;
 		}
 
 		return super.getAdapter(required);

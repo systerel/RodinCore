@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2007 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui.prover;
+package org.eventb.internal.ui.goal;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
@@ -27,15 +30,17 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.forms.SectionPart;
-import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.part.Page;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -45,10 +50,19 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IProofState;
+import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.TacticPositionUI;
+import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
+import org.eventb.internal.ui.prover.EventBPredicateText;
+import org.eventb.internal.ui.prover.PredicateUtil;
+import org.eventb.internal.ui.prover.ProverUIUtils;
+import org.eventb.internal.ui.prover.TacticUIRegistry;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
@@ -57,24 +71,18 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author htson
  *         <p>
- *         This class implements the goal section in the Prover UI Editor.
+ *         This class is an implementation of a Goal 'page'.
  */
-public class GoalSection extends SectionPart {
-
-	// Title and description.
-	private static final String SECTION_TITLE = "Goal";
-
-	private static final String SECTION_DESCRIPTION = "The current goal";
+public class GoalPage extends Page implements
+		IGoalPage {
 
 	private static final FormulaFactory ff = FormulaFactory.getDefault();
 
-	FormPage page;
+	protected IUserSupport userSupport;
 
 	private FormToolkit toolkit;
 
-	IUserSupport us;
-
-	private ScrolledForm scrolledForm;
+	ScrolledForm scrolledForm;
 
 	private Composite buttonComposite;
 
@@ -89,49 +97,45 @@ public class GoalSection extends SectionPart {
 	private int max_length = 30;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 * <p>
 	 * 
-	 * @param page
-	 *            The page that contain this section
-	 * @param parent
-	 *            the composite parent of the section
-	 * @param style
-	 *            style to create this section
+	 * @param userSupport
+	 *            the User Support associated with this Goal Page.
 	 */
-	public GoalSection(FormPage page, Composite parent, int style) {
-		super(parent, page.getManagedForm().getToolkit(), style);
-		this.page = page;
-		toolkit = page.getManagedForm().getToolkit();
-		us = ((ProverUI) ((ProofsPage) this.page).getEditor()).getUserSupport();
-		createClient(getSection());
+	public GoalPage(IUserSupport userSupport) {
+		super();
+		this.userSupport = userSupport;
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
+				this);
 	}
 
-	/**
-	 * Creating the client of the section.
-	 * <p>
-	 * 
-	 * @param section
-	 *            the section that used as the parent of the client
-	 */
-	public void createClient(Section section) {
-		section.setText(SECTION_TITLE);
-		section.setDescription(SECTION_DESCRIPTION);
-		scrolledForm = toolkit.createScrolledForm(section);
+	@Override
+	public void dispose() {
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
+				this);
+		super.dispose();
+	}
+
+	@Override
+	public void createControl(Composite parent) {
+		toolkit = new FormToolkit(parent.getDisplay());
+		scrolledForm = toolkit.createScrolledForm(parent);
 
 		Composite comp = scrolledForm.getBody();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.verticalSpacing = 5;
 		comp.setLayout(layout);
-		section.setClient(scrolledForm);
 		toolkit.paintBordersFor(scrolledForm);
 
-		IProofState ps = us.getCurrentPO();
+		IProofState ps = userSupport.getCurrentPO();
 		if (ps != null) {
 			setGoal(ps.getCurrentNode());
 		} else
 			setGoal(null);
+		
+		contributeToActionBars();
 	}
 
 	/**
@@ -177,6 +181,71 @@ public class GoalSection extends SectionPart {
 		return;
 	}
 
+	private void createNullHyperlinks() {
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("Create Null Image");
+		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
+				SWT.CENTER);
+		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		toolkit.adapt(hyperlink, true, true);
+		hyperlink.setImage(EventBImage.getImage(IEventBSharedImages.IMG_NULL));
+		hyperlink.setEnabled(false);
+		return;
+	}
+
+	/**
+	 * Utility methods to create hyperlinks for applicable tactics.
+	 * <p>
+	 * 
+	 */
+	private void createImageHyperlinks(boolean enable) {
+
+		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+		String[] tactics = tacticUIRegistry.getApplicableToGoal(userSupport);
+
+		if (tactics.length == 0) {
+			createNullHyperlinks();
+		}
+
+		for (final String tacticID : tactics) {
+
+			List<IPosition> positions = tacticUIRegistry
+					.getApplicableToGoalPositions(tacticID, userSupport);
+
+			if (positions.size() != 0)
+				continue;
+
+			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
+					SWT.CENTER);
+			hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+					false));
+			toolkit.adapt(hyperlink, true, true);
+			hyperlink.setImage(tacticUIRegistry.getIcon(tacticID));
+
+			hyperlink.addHyperlinkListener(new IHyperlinkListener() {
+
+				public void linkEntered(HyperlinkEvent e) {
+					return;
+				}
+
+				public void linkExited(HyperlinkEvent e) {
+					return;
+				}
+
+				public void linkActivated(HyperlinkEvent e) {
+					IProofTreeNode node = userSupport.getCurrentPO().getCurrentNode();
+					applyTactic(tacticID, node, null);
+				}
+
+			});
+			hyperlink.setToolTipText(tacticUIRegistry.getTip(tacticID));
+			hyperlink.setEnabled(enable);
+		}
+
+		return;
+	}
+
 	private void createGoalText(final IProofTreeNode node) {
 		Color color = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 		if (goalText != null)
@@ -200,7 +269,7 @@ public class GoalSection extends SectionPart {
 		// max_length = 30;
 
 		if (node == null) {
-			goalText.setText("No current goal", us, null, null, null);
+			goalText.setText("No current goal", userSupport, null, null, null);
 			styledText.setBackground(color);
 		} else {
 			Predicate goal = node.getSequent().goal();
@@ -226,7 +295,7 @@ public class GoalSection extends SectionPart {
 			if (node.isOpen()) {
 				links = getHyperlinks();
 			}
-			goalText.setText(actualString, us, node.getSequent().goal(),
+			goalText.setText(actualString, userSupport, node.getSequent().goal(),
 					indexes, links);
 
 			if (!node.isOpen()) {
@@ -336,16 +405,47 @@ public class GoalSection extends SectionPart {
 
 	}
 
+	void applyTactic(String tacticID, IProofTreeNode node, IPosition position) {
+		TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+		String[] inputs = goalText.getResults();
+		if (ProverUIUtils.DEBUG)
+			for (String input : inputs)
+				ProverUIUtils.debug("Input: \"" + input + "\"");
+
+		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
+		if (provider != null)
+			try {
+				userSupport.applyTactic(
+						provider.getTactic(node, null, position, inputs),
+						new NullProgressMonitor());
+			} catch (RodinDBException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+		else {
+			IProofCommand command = tacticUIRegistry.getProofCommand(tacticID,
+					TacticUIRegistry.TARGET_HYPOTHESIS);
+			if (command != null) {
+				try {
+					command.apply(userSupport, null, inputs, new NullProgressMonitor());
+				} catch (RodinDBException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
+	}
+
 	private Map<Point, TacticPositionUI> getHyperlinks() {
 		Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
 
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 
-		String[] tactics = tacticUIRegistry.getApplicableToGoal(us);
+		String[] tactics = tacticUIRegistry.getApplicableToGoal(userSupport);
 
 		for (final String tacticID : tactics) {
 			List<IPosition> positions = tacticUIRegistry
-					.getApplicableToGoalPositions(tacticID, us);
+					.getApplicableToGoalPositions(tacticID, userSupport);
 			if (positions.size() == 0)
 				continue;
 			for (final IPosition position : positions) {
@@ -361,7 +461,7 @@ public class GoalSection extends SectionPart {
 		}
 		return links;
 	}
-
+	
 	private Collection<Point> getIndexesString(Predicate pred,
 			String sourceString) {
 		QuantifiedPredicate qpred = (QuantifiedPredicate) pred;
@@ -393,106 +493,145 @@ public class GoalSection extends SectionPart {
 		return indexes;
 	}
 
-	@Override
-	public void dispose() {
-		goalText.dispose();
-		super.dispose();
-	}
-
-	private void createNullHyperlinks() {
-		if (ProverUIUtils.DEBUG)
-			ProverUIUtils.debug("Create Null Image");
-		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
-				SWT.CENTER);
-		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		toolkit.adapt(hyperlink, true, true);
-		hyperlink.setImage(EventBImage.getImage(IEventBSharedImages.IMG_NULL));
-		hyperlink.setEnabled(false);
-		return;
+	/**
+	 * Setup the action bars
+	 */
+	private void contributeToActionBars() {
+		IActionBars bars = getSite().getActionBars();
+		fillLocalPullDown(bars.getMenuManager());
+		fillLocalToolBar(bars.getToolBarManager());
 	}
 
 	/**
-	 * Utility methods to create hyperlinks for applicable tactics.
+	 * Fill the local pull down.
 	 * <p>
 	 * 
+	 * @param manager
+	 *            the menu manager
 	 */
-	private void createImageHyperlinks(boolean enable) {
-
-		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-		String[] tactics = tacticUIRegistry.getApplicableToGoal(us);
-
-		if (tactics.length == 0) {
-			createNullHyperlinks();
-		}
-
-		for (final String tacticID : tactics) {
-
-			List<IPosition> positions = tacticUIRegistry
-					.getApplicableToGoalPositions(tacticID, us);
-
-			if (positions.size() != 0)
-				continue;
-
-			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
-					SWT.CENTER);
-			hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-					false));
-			toolkit.adapt(hyperlink, true, true);
-			hyperlink.setImage(tacticUIRegistry.getIcon(tacticID));
-
-			hyperlink.addHyperlinkListener(new IHyperlinkListener() {
-
-				public void linkEntered(HyperlinkEvent e) {
-					return;
-				}
-
-				public void linkExited(HyperlinkEvent e) {
-					return;
-				}
-
-				public void linkActivated(HyperlinkEvent e) {
-					IProofTreeNode node = us.getCurrentPO().getCurrentNode();
-					applyTactic(tacticID, node, null);
-				}
-
-			});
-			hyperlink.setToolTipText(tacticUIRegistry.getTip(tacticID));
-			hyperlink.setEnabled(enable);
-		}
-
-		return;
+	private void fillLocalPullDown(IMenuManager manager) {
+		manager.add(new Separator());
 	}
 
-	void applyTactic(String tacticID, IProofTreeNode node, IPosition position) {
-		TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-		String[] inputs = goalText.getResults();
-		if (ProverUIUtils.DEBUG)
-			for (String input : inputs)
-				ProverUIUtils.debug("Input: \"" + input + "\"");
-
-		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
-		if (provider != null)
-			try {
-				us.applyTactic(
-						provider.getTactic(node, null, position, inputs),
-						new NullProgressMonitor());
-			} catch (RodinDBException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-		else {
-			IProofCommand command = tacticUIRegistry.getProofCommand(tacticID,
-					TacticUIRegistry.TARGET_HYPOTHESIS);
-			if (command != null) {
-				try {
-					command.apply(us, null, inputs, new NullProgressMonitor());
-				} catch (RodinDBException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		}
+	/**
+	 * Fill the context menu.
+	 * <p>
+	 * 
+	 * @param manager
+	 *            the menu manager
+	 */
+	void fillContextMenu(IMenuManager manager) {
+		// Other plug-ins can contribute there actions here
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
+	/**
+	 * Fill the local toolbar.
+	 * <p>
+	 * 
+	 * @param manager
+	 *            the toolbar manager
+	 */
+	private void fillLocalToolBar(IToolBarManager manager) {
+		// Do nothing
+	}
+
+	@Override
+	public Control getControl() {
+		return scrolledForm;
+	}
+
+	@Override
+	public void setFocus() {
+		scrolledForm.setFocus();
+	}
+
+	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
+		// Do nothing if the page is disposed.
+		if (scrolledForm.isDisposed())
+			return;
+
+		// Trying to get the changes for the current user support.
+		final IUserSupportDelta affectedUserSupport = ProverUIUtils
+				.getUserSupportDelta(delta, userSupport);
+
+		// Do nothing if there is no change for this current user support.
+		if (affectedUserSupport == null)
+			return;
+
+		// If the user support has been removed, do nothing. This will be handle
+		// by the main proof editor.
+		final int kind = affectedUserSupport.getKind();
+		if (kind == IUserSupportDelta.REMOVED) {
+			return; // Do nothing
+		}
+
+		// This case should NOT happened.
+		if (kind == IUserSupportDelta.ADDED) {
+			if (ProverUIUtils.DEBUG)
+				ProverUIUtils
+						.debug("Error: Delta said that the user Support is added");
+			return; // Do nothing
+		}
+
+		Display display = EventBUIPlugin.getActiveWorkbenchShell().getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				// Handle the case where the user support has changed.
+				if (kind == IUserSupportDelta.CHANGED) {
+					int flags = affectedUserSupport.getFlags();
+					if ((flags & IUserSupportDelta.F_CURRENT) != 0) {
+						// The current proof state is changed, reupdate the page
+						IProofState ps = userSupport.getCurrentPO();
+						if (ps != null) {
+							setGoal(ps.getCurrentNode());
+						} else {
+							setGoal(null);
+						}
+						scrolledForm.reflow(true);
+						return;
+					} 
+					
+					if ((flags & IUserSupportDelta.F_STATE) != 0) {
+						// If the changes occurs in some proof states.	
+						IProofState proofState = userSupport.getCurrentPO();
+						// Trying to get the change for the current proof state. 
+						final IProofStateDelta affectedProofState = ProverUIUtils
+								.getProofStateDelta(affectedUserSupport,
+										proofState);
+						if (affectedProofState != null) {
+							// If there are some changes
+							int psKind = affectedProofState.getKind();
+
+							if (psKind == IProofStateDelta.ADDED) {
+								// This case should not happened
+								if (ProofControlUtils.DEBUG)
+									ProofControlUtils
+											.debug("Error: Delta said that the proof state is added");
+								return;
+							}
+
+							if (psKind == IProofStateDelta.REMOVED) {
+								// Do nothing in this case, this will be handled
+								// by the main proof editor.
+								return;
+							}
+							
+							if (psKind == IProofStateDelta.CHANGED) {
+								// If there are some changes to the proof state.
+								int psFlags = affectedProofState.getFlags();
+
+								if ((psFlags & IProofStateDelta.F_NODE) != 0
+										|| (psFlags & IProofStateDelta.F_PROOFTREE) != 0) {
+									setGoal(proofState.getCurrentNode());
+								}
+								scrolledForm.reflow(true);
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+	
 }

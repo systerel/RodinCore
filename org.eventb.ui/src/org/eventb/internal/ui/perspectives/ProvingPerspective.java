@@ -93,7 +93,7 @@ public class ProvingPerspective implements IPerspectiveFactory {
 
 		// Place the Proof Control / Problems to the bottom of the editor area.
 		IFolderLayout bottom = layout.createFolder("bottom",
-				IPageLayout.BOTTOM, 0.75f, editorArea);
+				IPageLayout.BOTTOM, 0.60f, editorArea);
 		bottom.addView(ProofControl.VIEW_ID);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 	}
