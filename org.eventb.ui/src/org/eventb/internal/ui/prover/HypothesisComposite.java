@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -95,10 +96,12 @@ public abstract class HypothesisComposite implements
 		}
 	}
 	
-	public void createControl(Composite parent) {
+	public void createControl(Composite parent, boolean grabVertical) {
 		toolkit = new FormToolkit(parent.getDisplay());
 
 		control = toolkit.createComposite(parent, SWT.NULL);
+		parent.setLayout(new GridLayout());
+		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, grabVertical));
 
 		CoolBar buttonBar = new CoolBar(control, SWT.FLAT);
 		ToolBar toolBar = new ToolBar(buttonBar, SWT.FLAT);
@@ -175,14 +178,14 @@ public abstract class HypothesisComposite implements
 		IProofState ps = userSupport.getCurrentPO();
 
 		IProverSequent sequent = getProverSequent(ps);
-		Collection<Predicate> hyps = getHypotheses(ps);
+		Iterable<Predicate> hyps = getHypotheses(ps);
 		boolean enable = isEnable(ps);
 		init(hyps, sequent, enable);
 	}
 
-	public abstract Collection<Predicate> getHypotheses(IProofState ps);
+	public abstract Iterable<Predicate> getHypotheses(IProofState ps);
 
-	private void init(Collection<Predicate> hyps, IProverSequent sequent,
+	private void init(Iterable<Predicate> hyps, IProverSequent sequent,
 			boolean enable) {
 		// Remove everything
 		for (HypothesisRow row : rows) {

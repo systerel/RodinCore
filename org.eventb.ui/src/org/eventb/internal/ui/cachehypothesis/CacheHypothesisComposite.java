@@ -82,7 +82,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 	}
 
 	@Override
-	public Collection<Predicate> getHypotheses(IProofState ps) {
+	public Iterable<Predicate> getHypotheses(IProofState ps) {
 		Collection<Predicate> cached = new ArrayList<Predicate>();
 		if (ps != null) {
 			cached = ps.getCached();

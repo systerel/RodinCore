@@ -82,7 +82,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 	}
 
 	@Override
-	public Collection<Predicate> getHypotheses(IProofState ps) {
+	public Iterable<Predicate> getHypotheses(IProofState ps) {
 		Collection<Predicate> searched = new ArrayList<Predicate>();
 		if (ps != null) {
 			searched = ps.getSearched();
