@@ -574,7 +574,9 @@ public class GoalPage extends Page implements
 			return; // Do nothing
 		}
 
-		Display display = EventBUIPlugin.getActiveWorkbenchShell().getDisplay();
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+				.getDisplay();
+		
 		display.syncExec(new Runnable() {
 			public void run() {
 				// Handle the case where the user support has changed.
