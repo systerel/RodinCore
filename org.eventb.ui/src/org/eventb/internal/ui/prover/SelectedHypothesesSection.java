@@ -30,7 +30,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.RodinDBException;

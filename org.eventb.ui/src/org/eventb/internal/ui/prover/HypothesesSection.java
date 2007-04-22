@@ -28,7 +28,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.ui.IEventBFormText;
 
 /**

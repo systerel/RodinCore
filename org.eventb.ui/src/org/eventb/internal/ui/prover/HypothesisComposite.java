@@ -42,7 +42,6 @@ import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.ui.EventBUIPlugin;
 
 /**

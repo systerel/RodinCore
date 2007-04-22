@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui;
+package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,10 +45,8 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.internal.ui.prover.EventBPredicateText;
-import org.eventb.internal.ui.prover.PredicateUtil;
-import org.eventb.internal.ui.prover.ProverUIUtils;
-import org.eventb.internal.ui.prover.TacticUIRegistry;
+import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.TacticPositionUI;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
