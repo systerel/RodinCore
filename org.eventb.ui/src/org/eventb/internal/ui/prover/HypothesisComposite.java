@@ -23,7 +23,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -95,13 +94,15 @@ public abstract class HypothesisComposite implements
 			row.dispose();
 		}
 	}
-	
-	public void createControl(Composite parent, boolean grabVertical) {
+
+	public void createControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 
 		control = toolkit.createComposite(parent, SWT.NULL);
-		parent.setLayout(new GridLayout());
-		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, grabVertical));
+		if (ProverUIUtils.DEBUG) {
+			control.setBackground(Display.getDefault().getSystemColor(
+				SWT.COLOR_DARK_GRAY));
+		}
 
 		CoolBar buttonBar = new CoolBar(control, SWT.FLAT);
 		ToolBar toolBar = new ToolBar(buttonBar, SWT.FLAT);
@@ -143,8 +144,13 @@ public abstract class HypothesisComposite implements
 		layout.numColumns = 3;
 		layout.verticalSpacing = 0;
 		comp.setLayout(layout);
+		if (ProverUIUtils.DEBUG) {
+			comp
+				.setBackground(Display.getDefault().getSystemColor(
+						SWT.COLOR_GREEN));
+		}
 
-		init();
+		refresh();
 	}
 
 	public abstract void createItems(ToolBar toolBar);
@@ -174,7 +180,7 @@ public abstract class HypothesisComposite implements
 		return enable;
 	}
 
-	void init() {
+	void refresh() {
 		IProofState ps = userSupport.getCurrentPO();
 
 		IProverSequent sequent = getProverSequent(ps);
@@ -251,14 +257,13 @@ public abstract class HypothesisComposite implements
 					if ((usFlags & IUserSupportDelta.F_CURRENT) != 0) {
 						// The current proof state is changed, reinitialise the
 						// view.
-						init();
-						scrolledForm.reflow(true);
+						refresh();
 						return;
 					}
 					if ((usFlags & IUserSupportDelta.F_STATE) != 0) {
-						// If the changes occurs in some proof states.	
+						// If the changes occurs in some proof states.
 						IProofState proofState = userSupport.getCurrentPO();
-						// Trying to get the change for the current proof state. 
+						// Trying to get the change for the current proof state.
 						final IProofStateDelta affectedProofState = ProverUIUtils
 								.getProofStateDelta(affectedUserSupport,
 										proofState);
@@ -278,15 +283,14 @@ public abstract class HypothesisComposite implements
 								// by the main proof editor.
 								return;
 							}
-							
+
 							if (psKind == IProofStateDelta.CHANGED) {
 								// If there are some changes to the proof state.
 								int psFlags = affectedProofState.getFlags();
 								if ((psFlags & flags) != 0) {
 									// Update the view if the corresponding flag
 									// has been changed
-									init();
-									scrolledForm.reflow(true);
+									refresh();
 									return;
 								}
 
@@ -320,4 +324,13 @@ public abstract class HypothesisComposite implements
 		}
 		return selected;
 	}
+
+	public void reflow(boolean flushCache) {
+		scrolledForm.reflow(flushCache);
+	}
+
+	public void setBounds(int x, int y, int width, int height) {
+		control.setBounds(x, y, width, height);
+	}
+
 }

@@ -9,6 +9,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
@@ -25,9 +26,11 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 
 	ToolItem removeItem;
 
-	public SelectedHypothesisComposite(IUserSupport userSupport) {
+	ScrolledForm parentForm;
+	public SelectedHypothesisComposite(IUserSupport userSupport, ScrolledForm parentForm) {
 		super(userSupport, IProofStateDelta.F_NODE
 				| IProofStateDelta.F_PROOFTREE);
+		this.parentForm = parentForm;
 	}
 
 	@Override
@@ -58,9 +61,11 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 
 	@Override
 	public Iterable<Predicate> getHypotheses(IProofState ps) {
-		IProofTreeNode currentNode = ps.getCurrentNode();
-		if (currentNode != null)
-			return currentNode.getSequent().selectedHypIterable();
+		if (ps != null) {
+			IProofTreeNode currentNode = ps.getCurrentNode();
+			if (currentNode != null)
+				return currentNode.getSequent().selectedHypIterable();
+		}
 		return new ArrayList<Predicate>();
 	}
 
@@ -77,4 +82,11 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 		widgetDefaultSelected(e);
 	}
 
+	@Override
+	void refresh() {
+		super.refresh();
+		parentForm.getBody().layout();
+	}
+
+	
 }

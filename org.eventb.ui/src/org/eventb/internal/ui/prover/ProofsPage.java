@@ -12,10 +12,18 @@
 
 package org.eventb.internal.ui.prover;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -25,7 +33,9 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
+import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
+import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson
@@ -42,14 +52,26 @@ public class ProofsPage extends FormPage implements
 
 	public static final String PAGE_TAB_TITLE = "State";
 
+	private static final int DEFAULT_HEIGHT = 400;
+
+	private static final int DEFAULT_WIDTH = 400;
+
 	private HypothesisComposite hypComposite;
 
 	IUserSupport userSupport;
 
 	Composite body;
 
-	private Composite comp;
+	boolean layouting = false;
+	
+	Action layoutAction;
 
+	private Composite tmpComp;
+	
+	private Composite control;
+
+	Display display = Display.getDefault();
+	
 	/**
 	 * Constructor.
 	 * <p>
@@ -60,7 +82,6 @@ public class ProofsPage extends FormPage implements
 	public ProofsPage(ProverUI editor) {
 		super(editor, PAGE_ID, PAGE_TAB_TITLE); //$NON-NLS-1$
 		userSupport = editor.getUserSupport();
-		hypComposite = new SelectedHypothesisComposite(userSupport);
 	}
 
 	@Override
@@ -81,14 +102,116 @@ public class ProofsPage extends FormPage implements
 		form.setText(PAGE_TITLE); //$NON-NLS-1$
 		body = form.getBody();
 
-
-		comp = new Composite(body, SWT.NULL);
-		comp.setBackground(form.getBackground());
+		control = new Composite(body, SWT.NULL);
+		control.setLayout(new GridLayout());
+		if (ProverUIUtils.DEBUG) {
+			control.setBackground(display.getSystemColor(SWT.COLOR_BLUE));
+		}
+		else {
+			control.setBackground(form.getBackground());
+		}
+//		control.setSize(400, 600);
+		
+		tmpComp = new Composite(control, SWT.NULL);
+		if (ProverUIUtils.DEBUG) {
+			tmpComp.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+		}
+		else {
+			tmpComp.setBackground(form.getBackground());
+		}
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.heightHint = 0;
-		comp.setLayoutData(gridData);
+		gridData.widthHint = 0;
+		tmpComp.setLayoutData(gridData);
 		
-		hypComposite.createControl(body, false);
+		hypComposite = new SelectedHypothesisComposite(userSupport, form);
+		hypComposite.createControl(control);
+		hypComposite.getControl().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, false, false));
+
+		body.setLayout(new ProofsPageLayout());
+
+		createToolBarActions(managedForm);
+	}
+
+	/**
+	 * Create the Toolbar actions.
+	 * <p>
+	 * 
+	 * @param managedForm
+	 *            The managed form contains the Toolbar.
+	 */
+	protected void createToolBarActions(IManagedForm managedForm) {
+		final IPreferenceStore store = EventBUIPlugin.getDefault()
+				.getPreferenceStore();
+
+		layoutAction = new Action("auto", Action.AS_CHECK_BOX) {
+			@Override
+			public void run() {
+				boolean checked = this.isChecked();
+				store.setValue(PreferenceConstants.P_PROOFPAGE_AUTOLAYOUT,
+						checked);
+				if (checked) {
+					ProofsPage.this.body.layout();
+				}
+			}
+		};
+
+		layoutAction.setChecked(store
+				.getBoolean(PreferenceConstants.P_PROOFPAGE_AUTOLAYOUT));
+		layoutAction.setToolTipText("Automatically layout");
+
+		ScrolledForm form = managedForm.getForm();
+
+		form.getToolBarManager().add(layoutAction);
+		form.updateToolBar();
+	}
+
+	/**
+	 * @author htson
+	 *         <p>
+	 *         A special layout class for the Proofs Page to fit the sections
+	 *         into the client area of the page. Depending on the state of the
+	 *         auto layout button, the sections are resize to the best display
+	 *         or not
+	 * 
+	 */
+	protected class ProofsPageLayout extends Layout {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite,
+		 *      int, int, boolean)
+		 */
+		@Override
+		protected Point computeSize(Composite composite, int wHint, int hHint,
+				boolean flushCache) {
+			ScrolledForm form = ProofsPage.this.getManagedForm().getForm();
+			Rectangle bounds = form.getBody().getBounds();
+
+			return new Point(bounds.x, bounds.y);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
+		 *      boolean)
+		 */
+		@Override
+		protected void layout(Composite composite, boolean flushCache) {
+			// Do nothing if already layouting (avoid looping)
+			if (layouting == true)
+				return;
+			layouting = true;
+			if (layoutAction.isChecked())
+				autoLayout();
+			else
+				scaleLayout();
+			layouting = false;
+		}
+
 	}
 
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
@@ -119,7 +242,6 @@ public class ProofsPage extends FormPage implements
 			return; // Do nothing
 		}
 
-		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
 				// Handle the case where the user support has changed.
@@ -179,6 +301,81 @@ public class ProofsPage extends FormPage implements
 				}
 			}
 		});
+	}
+
+	void autoLayout() {
+		ScrolledForm form = this.getManagedForm().getForm();
+		Rectangle original = form.getBody().getBounds();
+
+		if (ProverUIUtils.DEBUG) {
+			ProverUIUtils.debug("*********************");
+			ProverUIUtils.debug("Client area height "
+					+ form.getClientArea().height);
+			ProverUIUtils.debug("Client area width "
+					+ form.getClientArea().width);
+		}
+		// -1 in totalHeight to avoid the vertical scrollbar in the beginning???
+		int totalHeight = form.getClientArea().height - original.y - 1;
+		int totalWidth = form.getClientArea().width;
+
+		ScrollBar horizontal = form.getHorizontalBar();
+		ScrollBar vertical = form.getVerticalBar();
+
+		if (horizontal != null && horizontal.isVisible()) {
+			totalHeight += horizontal.getSize().y;
+		}
+
+		if (vertical != null && vertical.isVisible()) {
+			totalWidth += vertical.getSize().x;
+		}
+
+		int selectedHeight = hypComposite.getControl().computeSize(totalWidth,
+				SWT.DEFAULT).y;
+
+		if (ProverUIUtils.DEBUG) {
+			ProverUIUtils.debug("Desired Height " + selectedHeight);
+		}
+		if (totalHeight < 1) {
+			totalHeight = DEFAULT_HEIGHT;
+			totalWidth = DEFAULT_WIDTH;
+		}
+		if (selectedHeight < totalHeight) {
+			if (ProverUIUtils.DEBUG) {
+				ProverUIUtils.debug("Total Width " + totalWidth);
+				ProverUIUtils.debug("Total Height " + totalHeight);
+			}
+			control.setBounds(0, 0, totalWidth, totalHeight);
+			control.layout(true);
+			hypComposite.reflow(true);
+			form.reflow(true);
+		} else {
+			control.setBounds(0, 0, totalWidth, totalHeight);
+			hypComposite.setBounds(0, 0, totalWidth, totalHeight);
+			hypComposite.reflow(true);
+		}
+	}
+
+	void scaleLayout() {
+		hypComposite.reflow(true);
+//		Rectangle rect = sashForm.computeTrim(0, 0, totalWidth, totalHeight);
+//		sashForm.setBounds(rect);
+	}
+
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(
+				PreferenceConstants.P_PROOFPAGE_AUTOLAYOUT)) {
+			Object newValue = event.getNewValue();
+			assert newValue instanceof Boolean || newValue instanceof String;
+			if (newValue instanceof String)
+				layoutAction.setChecked(((String) newValue)
+						.compareToIgnoreCase("true") == 0);
+			else {
+				layoutAction.setChecked((Boolean) newValue);
+			}
+			// Run layout action
+			layoutAction.run();
+		}
+
 	}
 
 }
