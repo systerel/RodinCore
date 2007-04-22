@@ -86,7 +86,7 @@ public class GoalPage extends Page implements
 
 	private Composite buttonComposite;
 
-	private ScrolledForm goalComposite;
+	private Composite goalComposite;
 
 	EventBPredicateText goalText;
 
@@ -162,10 +162,10 @@ public class GoalPage extends Page implements
 		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false));
 
-		goalComposite = toolkit.createScrolledForm(comp);
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
+		goalComposite = toolkit.createComposite(comp);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		goalComposite.setLayoutData(gd);
-		goalComposite.getBody().setLayout(new FillLayout());
+		goalComposite.setLayout(new FillLayout());
 
 		if (node == null)
 			createNullHyperlinks();

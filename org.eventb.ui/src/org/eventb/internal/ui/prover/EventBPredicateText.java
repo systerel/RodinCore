@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -32,7 +33,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
@@ -53,7 +53,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	StyledText text;
 
-	ScrolledForm parent;
+	Composite parent;
 
 	final Cursor handCursor;
 
@@ -77,11 +77,11 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	Menu tipMenu;
 
-	public EventBPredicateText(FormToolkit toolkit, final ScrolledForm parent) {
+	public EventBPredicateText(FormToolkit toolkit, final Composite parent) {
 
 		this.parent = parent;
 		dirtyStates = new ArrayList<Point>();
-		text = new StyledText(parent.getBody(), SWT.MULTI | SWT.FULL_SELECTION);
+		text = new StyledText(parent, SWT.MULTI | SWT.FULL_SELECTION);
 		Font font = JFaceResources
 				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		text.setFont(font);
@@ -209,7 +209,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 		setStyle();
 		text.pack();
-		parent.reflow(true);
+		parent.redraw();
 	}
 
 	void drawBoxes(Event event) {
