@@ -142,6 +142,7 @@ public abstract class HypothesisComposite implements
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.verticalSpacing = 0;
+		
 		comp.setLayout(layout);
 		if (ProverUIUtils.DEBUG) {
 			comp
@@ -201,7 +202,7 @@ public abstract class HypothesisComposite implements
 		int i = 0;
 		for (Predicate hyp : hyps) {
 			HypothesisRow row = new HypothesisRow(toolkit, scrolledForm
-					.getBody(), hyp, userSupport, sequent.isSelected(hyp),
+					.getBody(), hyp, userSupport, i % 2 != 0,
 					enable, this);
 			rows.add(row);
 			i++;
