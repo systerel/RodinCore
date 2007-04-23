@@ -12,17 +12,11 @@
 
 package org.eventb.internal.ui.proofcontrol;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -35,9 +29,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -73,6 +65,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.EventBPlugin;
@@ -101,7 +94,6 @@ import org.eventb.ui.IEventBFormText;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
-import org.osgi.framework.Bundle;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -135,8 +127,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	private Composite pgComp;
 
 	String currentInput = "";
+	
+	private Composite midComp;
 
-	Browser browser; 
+	ImageHyperlink smiley; 
 	
 	/**
 	 * Constructor
@@ -274,14 +268,12 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 		for (final String tacticID : tacticIDs) {
 			ToolItem item = new ToolItem(toolBar, SWT.PUSH);
-			// item.setText(itemCount++ + "");
 			item.setImage(registry.getIcon(tacticID));
 			item.setToolTipText(registry.getTip(tacticID));
 
 			final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
 					item, tacticID, registry.isInterruptable(tacticID,
 							TacticUIRegistry.TARGET_GLOBAL));
-			// items.add(globalTacticToolItem);
 
 			item.addSelectionListener(new SelectionAdapter() {
 
@@ -334,21 +326,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			toolItems.add(globalTacticToolItem);
 		}
 
-		// for (int i = 0; i < count; i++) {
-		// final ToolItem item = new ToolItem(toolBar, SWT.PUSH);
-		// item.setText(itemCount++ + "");
-		// item.addSelectionListener(new SelectionListener() {
-		//
-		// public void widgetSelected(SelectionEvent e) {
-		// textInput.getTextWidget().setText(item.getText());
-		// }
-		//
-		// public void widgetDefaultSelected(SelectionEvent e) {
-		// widgetSelected(e);
-		// }
-		//
-		// });
-		// }
 		toolBar.pack();
 		Point size = toolBar.getSize();
 		CoolItem item = new CoolItem(coolBar, SWT.NONE);
@@ -630,8 +607,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			createItem(coolBar, toolbar);
 		}
 
-		Composite midComp = toolkit.createComposite(body, SWT.NULL);
+		midComp = toolkit.createComposite(body, SWT.NULL);
 		midComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		midComp.setBackground(scrolledForm.getBackground());
 		gl = new GridLayout();
 		gl.numColumns = 2;
 		midComp.setLayout(gl);
@@ -661,10 +639,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			}
 		});
 
-		browser = new Browser(midComp, Window.getDefaultOrientation());
-		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-//		smiley = toolkit.createImageHyperlink(midComp, SWT.DEFAULT);
-//		smiley.setEnabled(false);
+		smiley = new ImageHyperlink(midComp, SWT.BOTTOM);
+		smiley.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		smiley.setEnabled(false);
+		smiley.setBackground(scrolledForm.getBackground());
 		toolkit.paintBordersFor(midComp);
 		
 		historyCombo = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -706,51 +684,19 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	void updateSmiley() {
 		Image image;
-		String path;
 		IProofState currentPO = editor.getUserSupport().getCurrentPO();
 		try {
-			if (currentPO != null && currentPO.isClosed()) {
+			if (currentPO == null || currentPO.isClosed()) {
 				image = EventBImage.getImage(EventBImage.IMG_DISCHARGED_SMILEY);
-				path = EventBImage.IMG_DISCHARGED_SMILEY_PATH;
 			}
 			else {
 				image = EventBImage.getImage(EventBImage.IMG_PENDING_SMILEY);
-				path = EventBImage.IMG_PENDING_SMILEY_PATH;
 			}
 		} catch (RodinDBException e1) {
 			image = EventBImage.getImage(EventBImage.IMG_PENDING_SMILEY);
-			path = "icons/full/ctool16/sad.gif";
 		}
-		// if the bundle is not ready then there is no image
-		Bundle bundle = Platform.getBundle(EventBUIPlugin.PLUGIN_ID);
-		if ((bundle == null)
-				&& (bundle.getState() & (Bundle.RESOLVED | Bundle.STARTING
-						| Bundle.ACTIVE | Bundle.STOPPING)) != 0)
-			return;
-
-		// look for the image (this will check both the plugin and fragment
-		// folders
-		URL fullPathString = FileLocator.find(bundle, new Path(
-				path), null);
-		if (fullPathString == null) {
-			try {
-				fullPathString = new URL(path);
-			} catch (MalformedURLException e) {
-				return;
-			}
-		}
-
-		try {
-			browser.setText("<html><body><img align=\"center\" src=\""
-					+ FileLocator.toFileURL(fullPathString).getFile()
-					+ "\" alt=\"Smile\"></body></html>");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
-		gd.widthHint = image.getBounds().width + 20;
-		gd.heightHint = image.getBounds().height + 20;
-		browser.setLayoutData(gd);
+		smiley.setImage(image);
+		midComp.pack();
 	}
 
 	/**
