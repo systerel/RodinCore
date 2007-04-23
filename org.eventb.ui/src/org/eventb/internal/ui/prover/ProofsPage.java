@@ -225,10 +225,10 @@ public class ProofsPage extends FormPage implements
 			control.setBounds(0, 0, totalWidth, totalHeight);
 			control.layout(true);
 			hypComposite.reflow(true);
-			form.reflow(true);
 		} else {
 			control.setBounds(0, 0, totalWidth, totalHeight);
-			hypComposite.setBounds(0, 0, totalWidth, totalHeight);
+			control.layout(true);
+			hypComposite.setSize(totalWidth, totalHeight);
 			hypComposite.reflow(true);
 		}
 	}
