@@ -23,7 +23,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 
-// TODO : maybe Rename to AllE
+// TODO : maybe Rename to AllE or AllF
 // TDOD : maybe return a fwd inference instead of a complete rule if WD is trivial
 public class AllD implements IReasoner {
 	

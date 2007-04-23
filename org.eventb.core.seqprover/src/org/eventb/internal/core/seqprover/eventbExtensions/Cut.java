@@ -15,6 +15,17 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 
+/**
+ * Generates a 'cut' rule, introducing the given predicate as a hypothesis.
+ * 
+ * <p>
+ * This rule is also sometimes refered to as the 'ah' (add hypothesis) rule. The well definedness subgoal 
+ * for the introduced hypothesis is also generated.
+ * <p>
+ * 
+ * @author Farhad Mehta
+ *
+ */
 public class Cut extends SinglePredInputReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".cut";
@@ -69,28 +80,6 @@ public class Cut extends SinglePredInputReasoner {
 				null,
 				"ah ("+lemma.toString()+")",
 				anticidents);
-		
-//		
-//		// Generate the successful reasoner output
-//		ProofRule reasonerOutput = new ProofRule(this,input);
-//		reasonerOutput.display = "ah ("+lemma.toString()+")";
-//		reasonerOutput.goal = seq.goal();
-//
-//		// Generate the anticidents
-//		reasonerOutput.anticidents = new Antecedent[3];
-//		
-//		// Well definedness condition
-//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent();
-//		reasonerOutput.anticidents[0].goal = lemmaWD;
-//		
-//		// The lemma to be proven
-//		reasonerOutput.anticidents[1] = new ProofRule.Antecedent();
-//		reasonerOutput.anticidents[1].goal = lemma;
-//		
-//		// Proving the original goal with the help of the lemma
-//		reasonerOutput.anticidents[2] = new ProofRule.Antecedent();
-//		reasonerOutput.anticidents[2].addConjunctsToAddedHyps(lemma);
-//		reasonerOutput.anticidents[2].goal = seq.goal();
 				
 		return reasonerOutput;
 	}

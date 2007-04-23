@@ -15,6 +15,16 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
+/**
+ * Generates the introduntion rule for universal quantification.
+ * 
+ * <p>
+ * This reasoner frees all universally quantified variables in a goal.
+ * </p>
+ * 
+ * @author Farhad Mehta
+ *
+ */
 public class AllI extends EmptyInputReasoner{
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".allI";
@@ -28,9 +38,6 @@ public class AllI extends EmptyInputReasoner{
 		if (! Lib.isUnivQuant(seq.goal()))
 			return ProverFactory.reasonerFailure(
 					this,input,"Goal is not universally quantified");
-		
-		
-		
 		
 		QuantifiedPredicate UnivQ = (QuantifiedPredicate)seq.goal();
 		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(UnivQ);
@@ -55,16 +62,6 @@ public class AllI extends EmptyInputReasoner{
 				"∀ goal (frees "+displayFreeIdents(freeIdents)+")",
 				anticidents
 				);
-			
-//			
-//		ProofRule reasonerOutput = new ProofRule(this,input);
-//		reasonerOutput.goal = seq.goal();
-//		reasonerOutput.display = "∀ goal (frees "+displayFreeIdents(freeIdents)+")";
-//		
-//		reasonerOutput.anticidents = new Antecedent[1];
-//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent(UnivQ.instantiate(freeIdents,Lib.ff));
-//		reasonerOutput.anticidents[0].addedFreeIdentifiers = freeIdents;
-//		assert reasonerOutput.anticidents[0].goal.isTypeChecked();
 				
 		return reasonerOutput;
 	}
