@@ -12,6 +12,8 @@
 
 package org.eventb.internal.ui.prover;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -24,14 +26,23 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.core.EventBPlugin;
+import org.eventb.core.pm.IProofState;
+import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportManagerChangedListener;
+import org.eventb.core.pm.IUserSupportManagerDelta;
+import org.eventb.ui.EventBUIPlugin;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
  *         <p>
  *         This is the implementation of the Proof Page in the Prover UI Editor.
  */
-public class ProofsPage extends FormPage {
+public class ProofsPage extends FormPage implements
+		IUserSupportManagerChangedListener {
 
 	// ID, title and the tab-title
 	public static final String PAGE_ID = "Selected Hypotheses"; //$NON-NLS-1$
@@ -56,8 +67,6 @@ public class ProofsPage extends FormPage {
 	
 	private Composite control;
 
-	Display display = Display.getDefault();
-	
 	/**
 	 * Constructor.
 	 * <p>
@@ -68,11 +77,15 @@ public class ProofsPage extends FormPage {
 	public ProofsPage(ProverUI editor) {
 		super(editor, PAGE_ID, PAGE_TAB_TITLE); //$NON-NLS-1$
 		userSupport = editor.getUserSupport();
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
+				this);
 	}
 
 	@Override
 	public void dispose() {
 		hypComposite.dispose();
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
+				this);
 		super.dispose();
 	}
 
@@ -89,9 +102,17 @@ public class ProofsPage extends FormPage {
 		body = form.getBody();
 
 		control = new Composite(body, SWT.NULL);
-		control.setLayout(new GridLayout());
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.horizontalSpacing = 0;
+		gridLayout.verticalSpacing = 0;
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;
+		
+		control.setLayout(gridLayout);
+
 		if (ProverUIUtils.DEBUG) {
-			control.setBackground(display.getSystemColor(SWT.COLOR_BLUE));
+			control.setBackground(EventBUIPlugin.getDefault().getWorkbench()
+					.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		}
 		else {
 			control.setBackground(form.getBackground());
@@ -99,7 +120,8 @@ public class ProofsPage extends FormPage {
 
 		tmpComp = new Composite(control, SWT.NULL);
 		if (ProverUIUtils.DEBUG) {
-			tmpComp.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+			tmpComp.setBackground(EventBUIPlugin.getDefault().getWorkbench()
+					.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		}
 		else {
 			tmpComp.setBackground(form.getBackground());
@@ -209,6 +231,85 @@ public class ProofsPage extends FormPage {
 			hypComposite.setBounds(0, 0, totalWidth, totalHeight);
 			hypComposite.reflow(true);
 		}
+	}
+
+	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
+		// Do nothing if the managed form is disposed.
+		if (this.getManagedForm().getForm().isDisposed())
+			return;
+
+		// Trying to get the changes for the current user support.
+		final IUserSupportDelta affectedUserSupport = ProverUIUtils
+				.getUserSupportDelta(delta, userSupport);
+
+		// Do nothing if there is no change for this current user support.
+		if (affectedUserSupport == null)
+			return;
+
+		// If the user support has been removed, do nothing. This will be handle
+		// by the main proof editor.
+		final int kind = affectedUserSupport.getKind();
+		if (kind == IUserSupportDelta.REMOVED) {
+			// Pop up dialog to notify user.
+		}
+
+		// This case should NOT happened.
+		if (kind == IUserSupportDelta.ADDED) {
+			if (ProverUIUtils.DEBUG)
+				ProverUIUtils
+						.debug("Error: Delta said that the user support is added");
+			return; // Do nothing
+		}
+
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+				.getDisplay();
+
+		display.syncExec(new Runnable() {
+			public void run() {
+				// Handle the case where the user support has changed.
+				if (kind == IUserSupportDelta.CHANGED) {
+					int usFlags = affectedUserSupport.getFlags();
+					
+					if ((usFlags & IUserSupportDelta.F_STATE) != 0) {
+						// If the changes occurs in some proof states.
+						IProofState proofState = userSupport.getCurrentPO();
+						// Trying to get the change for the current proof state.
+						final IProofStateDelta affectedProofState = ProverUIUtils
+								.getProofStateDelta(affectedUserSupport,
+										proofState);
+						if (affectedProofState != null) {
+							// If there are some changes
+							int psKind = affectedProofState.getKind();
+							if (psKind == IProofStateDelta.ADDED) {
+								// This case should not happened
+								if (ProverUIUtils.DEBUG)
+									ProverUIUtils
+											.debug("Error: Delta said that the proof state is added");
+								return;
+							}
+
+							if (psKind == IProofStateDelta.REMOVED) {
+								MessageDialog
+										.openInformation(
+												ProofsPage.this
+														.getManagedForm()
+														.getForm().getShell(),
+												"Proof Obligation Deleted",
+												"The proof obligation that you are working on has been deleted and is going to be closed now.");
+								try {
+									userSupport.setCurrentPO(null, new NullProgressMonitor());
+								} catch (RodinDBException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								return;
+							}
+						}
+					}
+				}
+			}
+		});
+
 	}
 
 }
