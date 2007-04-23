@@ -22,10 +22,10 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -129,7 +129,7 @@ public class HypothesisRow {
 		else {
 			checkBox.setBackground(background);
 		}
-		checkBox.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING,
+		checkBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
 				false, false));
 		checkBox.setEnabled(enable);
 		checkBox.addSelectionListener(listener);
@@ -151,7 +151,7 @@ public class HypothesisRow {
 		createImageHyperlinks(buttonComposite);
 
 		hypothesisComposite = toolkit.createComposite(parent);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		hypothesisComposite.setLayoutData(gd);
 		if (ProverUIUtils.DEBUG) {
 			hypothesisComposite.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_MAGENTA));
@@ -159,7 +159,7 @@ public class HypothesisRow {
 		else {
 			hypothesisComposite.setBackground(background);		
 		}
-		hypothesisComposite.setLayout(new FillLayout());
+		hypothesisComposite.setLayout(new GridLayout());
 
 		Predicate pred = hyp;
 		actualString = pred.toString();
@@ -175,7 +175,9 @@ public class HypothesisRow {
 		if (hypothesisText != null)
 			hypothesisText.dispose();
 		hypothesisText = new EventBPredicateText(toolkit, hypothesisComposite);
-		hypothesisText.getMainTextWidget().setBackground(background);
+		StyledText textWidget = hypothesisText.getMainTextWidget();
+		textWidget.setBackground(background);
+		textWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// int borderWidth =
 		// hypothesisText.getMainTextWidget().getBorderWidth();
