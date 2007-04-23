@@ -11,6 +11,16 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 
+/**
+ * Generates a proof rule to contradict the goal and falsify a given hypothesis simultaniously.
+ * 
+ * <p>
+ * In case no hypothesis is given, the reasoner assumes the given hypothesis is 'true'.
+ * </p>
+ * 
+ * @author Farhad Mehta
+ *
+ */
 public class Contr extends HypothesisReasoner{
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".contr";
