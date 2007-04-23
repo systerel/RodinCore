@@ -15,6 +15,17 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 
+
+/**
+ * Generates the proof rule for case distinction on the given predicate
+ * 
+ * <p>
+ * The well definedness subgoal for the given predicate is generated.
+ * </p>
+ * 
+ * @author Farhad Mehta
+ *
+ */
 public class DoCase extends SinglePredInputReasoner{
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".doCase";
@@ -56,46 +67,23 @@ public class DoCase extends SinglePredInputReasoner{
 		
 		// The goal with the true case
 		anticidents[1] = ProverFactory.makeAntecedent(
-				seq.goal(),
+				null,
 				Collections.singleton(trueCase),
 				null);
 		
 		// The goal with the false case
 		anticidents[2] = ProverFactory.makeAntecedent(
-				seq.goal(),
+				null,
 				Collections.singleton(Lib.makeNeg(trueCase)),
 				null);
 		
 		// Generate the successful reasoner output
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
-				seq.goal(),
+				null,
 				"dc ("+trueCase.toString()+")",
 				anticidents);
-	
-		
-//		// Generate the successful reasoner output
-//		ProofRule reasonerOutput = new ProofRule(this,input);
-//		reasonerOutput.display = "dc ("+trueCase.toString()+")";
-//		reasonerOutput.goal = seq.goal();
-//
-//		// Generate the anticidents
-//		reasonerOutput.anticidents = new Antecedent[3];
-//		
-//		// Well definedness condition
-//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent();
-//		reasonerOutput.anticidents[0].goal = trueCaseWD;
-//		
-//		// The goal with the true case
-//		reasonerOutput.anticidents[1] = new ProofRule.Antecedent();
-//		reasonerOutput.anticidents[1].addConjunctsToAddedHyps(trueCase);
-//		reasonerOutput.anticidents[1].goal = seq.goal();
-//		
-//		// The goal with the false case
-//		reasonerOutput.anticidents[2] = new ProofRule.Antecedent();
-//		reasonerOutput.anticidents[2].addToAddedHyps(Lib.makeNeg(trueCase));
-//		reasonerOutput.anticidents[2].goal = seq.goal();	
-				
+
 		return reasonerOutput;
 	}
 
