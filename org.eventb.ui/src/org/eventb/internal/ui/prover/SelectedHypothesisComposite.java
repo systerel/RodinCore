@@ -85,7 +85,8 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 	@Override
 	void refresh() {
 		super.refresh();
-		parentForm.getBody().layout();
+		parentForm.reflow(true);
+		scrollToBottom();
 	}
 
 	
