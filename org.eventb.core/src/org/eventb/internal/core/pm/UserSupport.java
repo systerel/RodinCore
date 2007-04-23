@@ -3,7 +3,7 @@ package org.eventb.internal.core.pm;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -29,9 +29,9 @@ import org.rodinp.core.RodinDBException;
 
 public class UserSupport implements IElementChangedListener, IUserSupport {
 
-	LinkedHashMap<IPSStatus, IProofState> proofStates;
+	LinkedHashSet<IProofState> proofStates;
 
-	protected IPSStatus currentPSStatus;
+	protected IProofState currentPS;
 
 	private UserSupportManager manager;
 
@@ -43,7 +43,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	public UserSupport() {
 		RodinCore.addElementChangedListener(this);
-		proofStates = new LinkedHashMap<IPSStatus, IProofState>();
+		proofStates = new LinkedHashSet<IProofState>();
 		manager = (UserSupportManager) EventBPlugin.getDefault()
 				.getUserSupportManager();
 		deltaProcessor = manager.getDeltaProcessor();
@@ -64,7 +64,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		psWrapper = new PSWrapper(psFile);
 
 		// this.psFile = psFile;
-		proofStates = new LinkedHashMap<IPSStatus, IProofState>();
+		proofStates = new LinkedHashSet<IProofState>();
 
 		manager.run(new Runnable() {
 
@@ -75,7 +75,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 						IPSStatus psStatus = statuses[i];
 						ProofState state = new ProofState(UserSupport.this,
 								psStatus);
-						proofStates.put(psStatus, state);
+						proofStates.add(state);
 						deltaProcessor.newProofState(UserSupport.this, state);
 					}
 					// Do not fire delta. The delta will be fire in
@@ -131,52 +131,51 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	public void nextUndischargedPO(final boolean force,
 			final IProgressMonitor monitor) throws RodinDBException {
 		startInformation();
-		final Set<IPSStatus> keySet = proofStates.keySet();
-		final IPSStatus[] keys = keySet.toArray(new IPSStatus[keySet.size()]);
-		int tmp;
-		if (currentPSStatus == null) {
-			tmp = -1;
-		} else {
-			tmp = -1;
-			for (int i = 0; i < keys.length; ++i) {
-				if (keys[i].equals(currentPSStatus)) {
-					tmp = i;
+
+		boolean found = false;
+		IProofState newProofState = null;
+		IProofState firstOpenedProofState = null;
+		for (IProofState proofState : proofStates) {
+			if (firstOpenedProofState == null && !proofState.isClosed()) {
+				firstOpenedProofState = proofState;
+			}
+			if (found) {
+				if (!proofState.isClosed()) {
+					newProofState = proofState;
 					break;
 				}
 			}
+			else {
+				if (proofState.equals(currentPS)) {
+					found = true;
+				}
+			}
 		}
-
-		final int index = tmp;
+		
+		if (found && newProofState == null)  {// Have not found new proof State yet
+			newProofState = firstOpenedProofState;
+		}
+		else if (!found) {
+			newProofState = firstOpenedProofState;
+		}
+		
+		final IProofState proofState = newProofState;
 
 		manager.run(new Runnable() {
 
 			public void run() {
-				for (int i = 1; i <= keys.length; i++) {
-					int j = (index + i) % keys.length;
-					IPSStatus psStatus = keys[j];
-					IProofState ps = proofStates.get(psStatus);
-					try {
-						if (!ps.isClosed()) {
-							setProofState(psStatus, monitor);
-							return;
-						}
-					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-
-				if (force) {
-					try {
+				try {
+					if (proofState != null)
+						setProofState(proofState, monitor);
+					else if (force) {
 						setProofState(null, monitor);
-					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						addInformation("No un-discharged proof obligation found");
+						deltaProcessor.informationChanged(UserSupport.this);
 					}
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-
-				addInformation("No un-discharged proof obligation found");
-				deltaProcessor.informationChanged(UserSupport.this);
 			}
 
 		});
@@ -191,52 +190,49 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	public void prevUndischargedPO(final boolean force,
 			final IProgressMonitor monitor) throws RodinDBException {
 		startInformation();
-		final Set<IPSStatus> keySet = proofStates.keySet();
-		final IPSStatus[] keys = keySet.toArray(new IPSStatus[keySet.size()]);
-		int tmp;
-		if (currentPSStatus == null) {
-			tmp = -1;
-		} else {
-			tmp = -1;
-			for (int i = 0; i < keys.length; ++i) {
-				if (keys[i].equals(currentPSStatus)) {
-					tmp = i;
-					break;
+
+		boolean found = false;
+		IProofState newProofState = null;
+		IProofState lastOpenedProofState = null;
+		for (IProofState proofState : proofStates) {
+			if (!found) {
+				if (proofState.equals(currentPS)) {
+					if (lastOpenedProofState != null) {
+						newProofState = lastOpenedProofState;
+						break;
+					}
+					found = true;
 				}
 			}
+			if (!proofState.isClosed()) {
+				lastOpenedProofState = proofState;
+			}
 		}
-
-		final int index = tmp;
+		
+		if (found && newProofState == null)  {// Have not found new proof State yet
+			newProofState = lastOpenedProofState;
+		}
+		else if (!found) {
+			newProofState = lastOpenedProofState;
+		}
+		
+		final IProofState proofState = newProofState;
 
 		manager.run(new Runnable() {
 
 			public void run() {
-				for (int i = 1; i <= keys.length; i++) {
-					IPSStatus psStatus = keys[(keys.length + index - i)
-							% keys.length];
-					IProofState ps = proofStates.get(psStatus);
-					try {
-						if (!ps.isClosed()) {
-							setProofState(psStatus, monitor);
-							return;
-						}
-					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-
-				if (force) {
-					try {
+				try {
+					if (proofState != null)
+						setProofState(proofState, monitor);
+					else if (force) {
 						setProofState(null, monitor);
-					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						addInformation("No un-discharged proof obligation found");
+						deltaProcessor.informationChanged(UserSupport.this);
 					}
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-
-				addInformation("No un-discharged proof obligation found");
-				deltaProcessor.informationChanged(UserSupport.this);
 			}
 
 		});
@@ -248,7 +244,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#getCurrentPO()
 	 */
 	public IProofState getCurrentPO() {
-		return proofStates.get(currentPSStatus);
+		return currentPS;
 	}
 
 	/*
@@ -263,31 +259,39 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 			setProofState(null, monitor);
 			return;
 		}
-		setProofState(psStatus, monitor);
+		for (IProofState proofState : proofStates) {
+			if (proofState.getPSStatus().equals(psStatus))
+				setProofState(proofState, monitor);			
+		}
 	}
 
-	void setProofState(final IPSStatus psStatus, final IProgressMonitor monitor)
+	void setProofState(final IProofState proofState, final IProgressMonitor monitor)
 			throws RodinDBException {
 		startInformation();
-		if (currentPSStatus == psStatus) {
+		if (currentPS == null && proofState == null) {
 			// Try to fire the remaining delta
 			addInformation("No new obligation");
 			deltaProcessor.informationChanged(this);
 			return;
 		}
 
+		if (currentPS != null && currentPS.equals(proofState)) {
+			// Try to fire the remaining delta
+			addInformation("No new obligation");
+			deltaProcessor.informationChanged(this);
+			return;			
+		}
+		
 		manager.run(new Runnable() {
 
 			public void run() {
 				if (UserSupportUtils.DEBUG)
-					UserSupportUtils.debug("New Proof Sequent: " + psStatus);
-				if (psStatus == null) {
-					currentPSStatus = null;
+					UserSupportUtils.debug("New Proof Sequent: " + proofState);
+				if (proofState == null) {
+					currentPS = null;
 				} else {
-					currentPSStatus = psStatus;
+					currentPS = proofState;
 					// Load the proof tree if it is not there already
-					IProofState proofState = proofStates.get(currentPSStatus);
-					assert proofState != null;
 					if (proofState.getProofTree() == null) {
 						try {
 							proofState.loadProofTree(monitor);
@@ -311,8 +315,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#getPOs()
 	 */
 	public IProofState[] getPOs() {
-		return proofStates.values()
-				.toArray(new IProofState[proofStates.size()]);
+		return proofStates.toArray(new IProofState[proofStates.size()]);
 	}
 
 	/*
@@ -321,8 +324,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#hasUnsavedChanges()
 	 */
 	public boolean hasUnsavedChanges() {
-		for (IProofState ps : proofStates.values()) {
-			if (ps.isDirty())
+		for (IProofState proofState : proofStates) {
+			if (proofState.isDirty())
 				return true;
 		}
 		return false;
@@ -335,9 +338,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 */
 	public IProofState[] getUnsavedPOs() {
 		Collection<IProofState> unsaved = new HashSet<IProofState>();
-		for (IProofState ps : proofStates.values()) {
-			if (ps.isDirty())
-				unsaved.add(ps);
+		for (IProofState proofState : proofStates) {
+			if (proofState.isDirty())
+				unsaved.add(proofState);
 		}
 		return unsaved.toArray(new IProofState[unsaved.size()]);
 	}
@@ -356,7 +359,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		manager.run(new Runnable() {
 
 			public void run() {
-				proofStates.get(currentPSStatus).removeAllFromCached(hyps);
+				currentPS.removeAllFromCached(hyps);
 				addInformation("Removed hypotheses from cache");
 				deltaProcessor.informationChanged(UserSupport.this);
 			}
@@ -373,14 +376,13 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	public void searchHyps(String token) {
 		token = token.trim();
 
-		final IProofState proofState = proofStates.get(currentPSStatus);
-		final Set<Predicate> hyps = ProverLib.hypsTextSearch(proofState
+		final Set<Predicate> hyps = ProverLib.hypsTextSearch(currentPS
 				.getCurrentNode().getSequent(), token);
 		startInformation();
 		manager.run(new Runnable() {
 
 			public void run() {
-				proofState.setSearched(hyps);
+				currentPS.setSearched(hyps);
 				addInformation("Search hypotheses");
 				deltaProcessor.informationChanged(UserSupport.this);
 			}
@@ -400,7 +402,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		manager.run(new Runnable() {
 
 			public void run() {
-				proofStates.get(currentPSStatus).removeAllFromSearched(hyps);
+				currentPS.removeAllFromSearched(hyps);
 				addInformation("Removed hypotheses from search");
 				deltaProcessor.informationChanged(UserSupport.this);
 			}
@@ -410,11 +412,11 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	}
 
 	public void selectNode(IProofTreeNode node) throws RodinDBException {
-		proofStates.get(currentPSStatus).setCurrentNode(node);
+		currentPS.setCurrentNode(node);
 	}
 
 	protected void addAllToCached(Set<Predicate> hyps) {
-		proofStates.get(currentPSStatus).addAllToCached(hyps);
+		currentPS.addAllToCached(hyps);
 	}
 
 	/*
@@ -425,9 +427,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 */
 	public void applyTactic(final ITactic t, final IProgressMonitor monitor)
 			throws RodinDBException {
-		final IProofState proofState = proofStates.get(currentPSStatus);
-		IProofTreeNode node = proofState.getCurrentNode();
-		proofState.applyTactic(t, node, monitor);
+		IProofTreeNode node = currentPS.getCurrentNode();
+		currentPS.applyTactic(t, node, monitor);
 	}
 
 	/*
@@ -438,54 +439,51 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 */
 	public void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
 			IProgressMonitor monitor) throws RodinDBException {
-		final IProofState proofState = proofStates.get(currentPSStatus);
-		proofState.applyTacticToHypotheses(t, proofState.getCurrentNode(),
+		currentPS.applyTacticToHypotheses(t, currentPS.getCurrentNode(),
 				hyps, monitor);
 	}
 
-	IProofState getProofState(int index) {
-		IProofState proofState = null;
-		if (index < proofStates.size())
-			proofState = proofStates.get(index);
-		return proofState;
-	}
+//	IProofState getProofState(int index) {
+//		IProofState proofState = null;
+//		if (index < proofStates.size())
+//			proofState = proofStates.get(index);
+//		return proofState;
+//	}
 
 	void refresh() {
 		manager.run(new Runnable() {
 
 			public void run() {
 
-				LinkedHashMap<IPSStatus, IProofState> newProofStates;
+				LinkedHashSet<IProofState> newProofStates;
 				// Remove the deleted ones first
-				for (IPSStatus psStatus : usDeltaProcessor.getToBeDeleted()) {
+				for (IProofState proofState : usDeltaProcessor.getToBeDeleted()) {
 					deltaProcessor.removeProofState(UserSupport.this,
-							proofStates.get(psStatus));
-					proofStates.remove(psStatus);
+							proofState);
+					proofStates.remove(proofState);
 				}
-
+				
 				// Contruct the Proof States
-				IPSStatus[] statuses;
+				IPSStatus[] psStatuses;
 				try {
-					statuses = psWrapper.getPSStatuses();
+					psStatuses = psWrapper.getPSStatuses();
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 					return;
 				}
 
-				newProofStates = new LinkedHashMap<IPSStatus, IProofState>(
-						statuses.length);
+				newProofStates = new LinkedHashSet<IProofState>(
+						psStatuses.length);
 
-				for (IPSStatus status : statuses) {
-					IProofState proofState = proofStates.get(status);
+				for (IPSStatus psStatus : psStatuses) {
+					IProofState proofState = UserSupport.this.getProofState(psStatus);
 
 					if (proofState == null) { // A new PS Status
-						IProofState state = new ProofState(UserSupport.this,
-								status);
-						newProofStates.put(status, state);
-						deltaProcessor.newProofState(UserSupport.this, state);
-					} else {
-						newProofStates.put(status, proofState);
+						proofState = new ProofState(UserSupport.this,
+								psStatus);
+						deltaProcessor.newProofState(UserSupport.this, proofState);
 					}
+					newProofStates.add(proofState);
 				}
 
 				proofStates = newProofStates;
@@ -499,8 +497,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#back(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void back(IProgressMonitor monitor) throws RodinDBException {
-		final IProofState proofState = proofStates.get(currentPSStatus);
-		proofState.back(proofState.getCurrentNode(), monitor);
+		currentPS.back(currentPS.getCurrentNode(), monitor);
 	}
 
 	/*
@@ -511,7 +508,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 */
 	public void setComment(String text, IProofTreeNode node)
 			throws RodinDBException {
-		proofStates.get(currentPSStatus).setComment(text, node);
+		currentPS.setComment(text, node);
 	}
 
 	UserSupportDeltaProcessor usDeltaProcessor;
@@ -539,9 +536,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 				}
 
 				// Process reloaded
-				for (IPSStatus psStatus : usDeltaProcessor.getToBeReloaded()) {
-					IProofState proofState = proofStates.get(psStatus);
-
+				for (IProofState proofState : usDeltaProcessor.getToBeReloaded()) {
 					try {
 						proofState.loadProofTree(monitor);
 					} catch (RodinDBException e) {
@@ -552,8 +547,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 				}
 
 				// Process Reused
-				for (IPSStatus psStatus : usDeltaProcessor.getToBeReused()) {
-					IProofState proofState = proofStates.get(psStatus);
+				for (IProofState proofState : usDeltaProcessor.getToBeReused()) {
 					try {
 						proofState.proofReuse(new ProofMonitor(
 								monitor));
@@ -564,8 +558,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 				}
 
 				// Process Rebuilt
-				for (IPSStatus psStatus : usDeltaProcessor.getToBeRebuilt()) {
-					IProofState proofState = proofStates.get(psStatus);
+				for (IProofState proofState : usDeltaProcessor.getToBeRebuilt()) {
 					try {
 						proofState.proofRebuilt(new ProofMonitor(
 								new NullProgressMonitor()));
@@ -607,7 +600,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 			buffer.append("\n");
 		}
 		buffer.append("Current psSatus: ");
-		buffer.append(currentPSStatus);
+		buffer.append(currentPS.getPSStatus());
 		buffer.append("\n");
 		buffer.append("** Information **\n");
 		for (Object info : information) {
@@ -616,6 +609,14 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		}
 		buffer.append("********************************************************\n");
 		return buffer.toString();
+	}
+
+	public IProofState getProofState(IPSStatus psStatus) {
+		for (IProofState proofState : proofStates) {
+			if (proofState.getPSStatus().equals(psStatus))
+				return proofState;
+		}
+		return null;
 	}
 
 	

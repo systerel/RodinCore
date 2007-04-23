@@ -14,15 +14,15 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 public class UserSupportDeltaProcessor {
-	Set<IPSStatus> toBeTrashed;
+	Set<IProofState> toBeTrashed;
 
-	Set<IPSStatus> toBeReloaded;
+	Set<IProofState> toBeReloaded;
 
-	Set<IPSStatus> toBeReused;
+	Set<IProofState> toBeReused;
 
-	Set<IPSStatus> toBeRebuilt;
+	Set<IProofState> toBeRebuilt;
 
-	Set<IPSStatus> toBeDeleted;
+	Set<IProofState> toBeDeleted;
 
 	Set<IPSStatus> toBeAdded;
 
@@ -32,16 +32,16 @@ public class UserSupportDeltaProcessor {
 	
 	public UserSupportDeltaProcessor(UserSupport userSupport) {
 		this.userSupport = userSupport;
-		toBeTrashed = new HashSet<IPSStatus>();
-		toBeReloaded = new HashSet<IPSStatus>();
-		toBeReused = new HashSet<IPSStatus>();
-		toBeRebuilt = new HashSet<IPSStatus>();
+		toBeTrashed = new HashSet<IProofState>();
+		toBeReloaded = new HashSet<IProofState>();
+		toBeReused = new HashSet<IProofState>();
+		toBeRebuilt = new HashSet<IProofState>();
 		toBeAdded = new HashSet<IPSStatus>();
-		toBeDeleted = new HashSet<IPSStatus>();
+		toBeDeleted = new HashSet<IProofState>();
 		needRefreshed = false;
 	}
 
-	public Set<IPSStatus> getToBeDeleted() {
+	public Set<IProofState> getToBeDeleted() {
 		return toBeDeleted;
 	}
 
@@ -49,15 +49,15 @@ public class UserSupportDeltaProcessor {
 		return needRefreshed;
 	}
 
-	public Set<IPSStatus> getToBeReloaded() {
+	public Set<IProofState> getToBeReloaded() {
 		return toBeReloaded;
 	}
 
-	public Set<IPSStatus> getToBeReused() {
+	public Set<IProofState> getToBeReused() {
 		return toBeReused;
 	}
 
-	public Set<IPSStatus> getToBeRebuilt() {
+	public Set<IProofState> getToBeRebuilt() {
 		return toBeRebuilt;
 	}
 
@@ -144,8 +144,9 @@ public class UserSupportDeltaProcessor {
 							+ element.getElementName() + " is removed");
 				// Try to reuse
 				IPSStatus psStatus = (IPSStatus) element;
-				toBeDeleted.add(psStatus);
-				toBeTrashed.add(psStatus);
+				IProofState proofState = userSupport.getProofState(psStatus);
+				toBeDeleted.add(proofState);
+				toBeTrashed.add(proofState);
 				needRefreshed = true;
 				return;
 			}
@@ -162,28 +163,28 @@ public class UserSupportDeltaProcessor {
 						|| ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0)) {
 					// Try to reuse
 					IPSStatus psStatus = (IPSStatus) element;
-					IProofState state = userSupport.proofStates.get(psStatus);
+					IProofState proofState = userSupport.getProofState(psStatus);
 
 					// Do nothing if the state is uninitialised
-					if (state.isUninitialised())
+					if (proofState.isUninitialised())
 						return;
 
 					// If the state is not modified, reload the proof from the
 					// DB
-					if (!state.isDirty()) {
-						toBeReloaded.add(psStatus);
+					if (!proofState.isDirty()) {
+						toBeReloaded.add(proofState);
 						return;
 					}
 
 					// if the state is dischared automatically, trash the
 					// current proof and reload the proof from the DB
 					try {
-						if (state.isSequentDischarged()) {
+						if (proofState.isSequentDischarged()) {
 							if (UserSupportUtils.DEBUG)
 								UserSupportUtils
 										.debug("Proof Discharged in file, to be trashed then reloaded");
-							toBeTrashed.add(psStatus);
-							toBeReloaded.add(psStatus);
+							toBeTrashed.add(proofState);
+							toBeReloaded.add(proofState);
 							return;
 						}
 					} catch (RodinDBException e) {
@@ -192,11 +193,11 @@ public class UserSupportDeltaProcessor {
 					}
 
 					try {
-						if (state.isProofReusable()) {
+						if (proofState.isProofReusable()) {
 							if (UserSupportUtils.DEBUG)
 								UserSupportUtils
 										.debug("Proof is reusable, to be reused");
-							toBeReused.add(psStatus);
+							toBeReused.add(proofState);
 							return;
 						}
 
@@ -205,8 +206,8 @@ public class UserSupportDeltaProcessor {
 							if (UserSupportUtils.DEBUG)
 								UserSupportUtils
 										.debug("Proof is NOT reusable, to be trashed and rebuilt");
-							toBeTrashed.add(psStatus);
-							toBeRebuilt.add(psStatus);
+							toBeTrashed.add(proofState);
+							toBeRebuilt.add(proofState);
 						}
 					} catch (RodinDBException e) {
 						// TODO Auto-generated catch block
