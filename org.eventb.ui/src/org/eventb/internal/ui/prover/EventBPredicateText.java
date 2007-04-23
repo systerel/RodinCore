@@ -69,7 +69,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	Collection<Point> dirtyStates;
 
-	final Color BLUE = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
+	final Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
 
 	final Color YELLOW = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
 
@@ -217,7 +217,6 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			return;
 		String contents = text.getText();
 		int lineHeight = text.getLineHeight();
-		final Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
 		event.gc.setForeground(RED);
 		for (Point index : boxes) {
 			String str = contents.substring(index.x, index.y);
@@ -245,7 +244,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			StyleRange style = new StyleRange();
 			style.start = link.x;
 			style.length = link.y - link.x;
-			style.foreground = BLUE;
+			style.foreground = RED;
 			text.setStyleRange(style);
 		}
 	}
@@ -493,7 +492,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		StyleRange style = new StyleRange();
 		style.start = index.x;
 		style.length = index.y - index.x;
-		style.foreground = BLUE;
+		style.foreground = RED;
 		style.underline = true;
 		text.setStyleRange(style);
 	}
@@ -503,7 +502,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		StyleRange style = new StyleRange();
 		style.start = currentLink.x;
 		style.length = currentLink.y - currentLink.x;
-		style.foreground = BLUE;
+		style.foreground = RED;
 		style.underline = false;
 		text.setStyleRange(style);
 	}
