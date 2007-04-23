@@ -491,6 +491,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 			}
 			// Other plug-ins can contribute there actions here
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+			super.fillContextMenu(menu);
 		}
 	}
 
