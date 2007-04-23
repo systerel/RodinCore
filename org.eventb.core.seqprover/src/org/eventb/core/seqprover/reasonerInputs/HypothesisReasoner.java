@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -21,6 +22,7 @@ import org.eventb.internal.core.seqprover.ReasonerFailure;
  * mark it as the sole needed hypothesis in their generated rule.
  * 
  * @author Laurent Voisin
+ * @author Farhad Mehta
  */
 public abstract class HypothesisReasoner implements IReasoner {
 	
@@ -111,6 +113,11 @@ public abstract class HypothesisReasoner implements IReasoner {
 	 * not need to check it again here.
 	 * </p>
 	 * 
+	 * <p>
+	 * Antecedents returned by this method may contain <code>null</code> goals only in 
+	 * case the method {@link #isGoalDependent(IProverSequent, Predicate)} returns <code>false</code>.
+	 * </p>
+	 * 
 	 * @param sequent
 	 *            the goal of the current sequent
 	 * @param pred
@@ -132,5 +139,35 @@ public abstract class HypothesisReasoner implements IReasoner {
 	 * @return the display string for the generated rule
 	 */
 	protected abstract String getDisplay(Predicate pred);
+	
+	/**
+	 * Returns whether the generated rule should be goal dependent.
+	 * 
+	 * <p>
+	 * When this method is called, it has already been checked that {@link #getAntecedents(IProverSequent, Predicate)}
+	 * has not returned an {@link IllegalArgumentException}, and also that the given
+	 * predicate is indeed an hypothesis of the given sequent. Hence, clients do
+	 * not need to check it again here.
+	 * </p>
+	 * 
+	 * <p>
+	 * By default, this method returns <code>true</code>. Subclasses may override this method to provide different
+	 * behaviour. Antecedents returned by {@link #getAntecedents(IProverSequent, Predicate)}
+	 * may contain <code>null</code> goals only in case this method returns <code>false</code>.
+	 * </p>
+	 * 
+	 * @see IProofRule
+	 * 
+	 * @param sequent
+	 *            the goal of the current sequent
+	 * @param pred
+	 *            the predicate of the hypothesis, or <code>null</code> if
+	 *            none
+	 * @return <code>true</code> iff the generated rule should be goal dependent.
+	 */
+	protected boolean isGoalDependent(IProverSequent sequent, Predicate pred){
+		return true;
+	}
+
 
 }
