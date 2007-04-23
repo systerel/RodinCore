@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -329,8 +330,14 @@ public abstract class HypothesisComposite implements
 		scrolledForm.reflow(flushCache);
 	}
 
-	public void setBounds(int x, int y, int width, int height) {
-		control.setBounds(x, y, width, height);
+	public void scrollToBottom() {
+		ScrollBar verticalBar = scrolledForm.getVerticalBar();
+		if (verticalBar != null)
+			verticalBar.setSelection(verticalBar.getMaximum() - verticalBar.getThumb());		
+	}
+	
+	public void setSize(int width, int height) {
+		control.setSize(width, height);
 	}
 
 }
