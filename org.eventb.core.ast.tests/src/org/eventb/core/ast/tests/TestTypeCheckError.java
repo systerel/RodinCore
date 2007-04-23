@@ -5,6 +5,8 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.ASTProblem;
+import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
@@ -21,28 +23,58 @@ public class TestTypeCheckError extends TestCase {
 
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 	
-	private void doTest(String input, ITypeEnvironment te, ProblemKind... problems) {
+	private void doTestPredicate(String input, ITypeEnvironment te, ProblemKind... problems) {
 		final IParseResult parseResult = ff.parsePredicate(input);
 		assertTrue("Parser failed on: " + input, parseResult.isSuccess());
 		final Predicate pred = parseResult.getParsedPredicate();
 		
-		final ITypeCheckResult tcResult = pred.typeCheck(te);
+		doTest(pred, te, problems);
+	}
+	
+	private void doTestAssignment(String input, ITypeEnvironment te, ProblemKind... problems) {
+		final IParseResult parseResult = ff.parseAssignment(input);
+		assertTrue("Parser failed on: " + input, parseResult.isSuccess());
+		final Assignment pred = parseResult.getParsedAssignment();
+		
+		doTest(pred, te, problems);
+	}
+	
+	private void doTest(Formula formula, ITypeEnvironment te, ProblemKind... problems) {
+		final ITypeCheckResult tcResult = formula.typeCheck(te);
 		assertFalse("Type checker succeeded unexpectedly", tcResult.isSuccess());
-		assertFalse("Predicate shouldn't be typechecked", pred.isTypeChecked());
+		assertFalse("Predicate shouldn't be typechecked", formula.isTypeChecked());
 		List<ASTProblem> actualProblems = tcResult.getProblems();
 		assertEquals("Unexpected list of problems", problems.length, actualProblems.size());
 		int idx = 0;
 		for (ASTProblem actualProblem: actualProblems) {
 			assertEquals("Unexpected problem", problems[idx], actualProblem.getMessage());
 			++ idx;
-		}
+		}	
 	}
 
+	/**
+	 * Ensures that assignments are translated correctly
+	 */
+	public void testAssignment() {
+		doTestAssignment("x≔x{a ↦ b}",
+				FastFactory.mTypeEnvironment(),
+				ProblemKind.TypeUnknown,
+				ProblemKind.TypeUnknown,
+				ProblemKind.TypeUnknown
+		);
+		doTestAssignment("x(a)≔b",
+				FastFactory.mTypeEnvironment(),
+				ProblemKind.TypeUnknown,
+				ProblemKind.TypeUnknown,
+				ProblemKind.TypeUnknown
+		);
+	}
+	
 	/**
 	 * Ensures that a TypesDoNotMatch is produced when there is a type conflict.
 	 */
 	public void testTypesDoNotMatch() {
-		doTest("1 = TRUE", 
+		doTestPredicate("1 = TRUE", 
 				FastFactory.mTypeEnvironment(), 
 				ProblemKind.TypesDoNotMatch);
 	}
@@ -52,7 +84,7 @@ public class TestTypeCheckError extends TestCase {
 	 * incompatible dependency between types.
 	 */
 	public void testCircularity() {
-		doTest("x∈y ∧ y∈x", 
+		doTestPredicate("x∈y ∧ y∈x", 
 				FastFactory.mTypeEnvironment(), 
 				ProblemKind.Circularity);
 	}
@@ -61,7 +93,7 @@ public class TestTypeCheckError extends TestCase {
 	 * Ensures that a TypeUnknown is produced when a type can't be inferred
 	 */
 	public void testTypeUnknown() {
-		doTest("finite(∅)", 
+		doTestPredicate("finite(∅)", 
 				FastFactory.mTypeEnvironment(), 
 				ProblemKind.TypeUnknown);
 	}	
@@ -71,28 +103,28 @@ public class TestTypeCheckError extends TestCase {
 	 * arithmetic subtraction.
 	 */
 	public void testMinusAppliedToSet() {
-		doTest("x = a − ∅", 
+		doTestPredicate("x = a − ∅", 
 				FastFactory.mTypeEnvironment(), 
 				ProblemKind.MinusAppliedToSet);
-		doTest("x = ∅ − b", 
+		doTestPredicate("x = ∅ − b", 
 				FastFactory.mTypeEnvironment(), 
 				ProblemKind.MinusAppliedToSet);
 	}
 	
 	public void testMulAppliedToSet() {
-		doTest("x = a ∗ ∅", 
+		doTestPredicate("x = a ∗ ∅", 
 				FastFactory.mTypeEnvironment(), 
 				ProblemKind.MulAppliedToSet);
-		doTest("x = ∅ ∗ b", 
+		doTestPredicate("x = ∅ ∗ b", 
 				FastFactory.mTypeEnvironment(), 
 				ProblemKind.MulAppliedToSet);
-		doTest("x = a ∗ b ∗ ∅", 
+		doTestPredicate("x = a ∗ b ∗ ∅", 
 				FastFactory.mTypeEnvironment(), 
 				ProblemKind.MulAppliedToSet);
-		doTest("x = a ∗ ∅ ∗ c", 
+		doTestPredicate("x = a ∗ ∅ ∗ c", 
 				FastFactory.mTypeEnvironment(), 
 				ProblemKind.MulAppliedToSet);
-		doTest("x = ∅ ∗ b ∗ c", 
+		doTestPredicate("x = ∅ ∗ b ∗ c", 
 				FastFactory.mTypeEnvironment(), 
 				ProblemKind.MulAppliedToSet);
 	}
