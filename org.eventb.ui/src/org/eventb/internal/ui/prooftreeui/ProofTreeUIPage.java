@@ -43,6 +43,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.PageBook;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
@@ -85,6 +86,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	// Group of action that is used.
 	ProofTreeUIActionGroup groupActionSet;
 
+	PageBook pageBook;
+	
 	/**
 	 * @author htson
 	 *         <p>
@@ -175,9 +178,10 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	@Override
 	public void createControl(Composite parent) {
-		Composite comp = parent;
+		assert parent instanceof PageBook;
+		pageBook = (PageBook) parent;
 
-		viewer = new TreeViewer(comp, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TreeViewer(pageBook, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ProofTreeUIContentProvider(this));
 		viewer.setLabelProvider(new ProofTreeLabelProvider());
 		viewer.addSelectionChangedListener(this);
@@ -198,6 +202,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 		if (fInput != null)
 			update();
+		
+		this.getSite().setSelectionProvider(viewer);
 	}
 
 	/**
@@ -261,6 +267,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
+		this.getSite().registerContextMenu("Proof tree " + fInput, menuMgr, viewer);
 	}
 
 	/**
