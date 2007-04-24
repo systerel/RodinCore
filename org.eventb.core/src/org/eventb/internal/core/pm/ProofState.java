@@ -25,6 +25,7 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
+import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -153,7 +154,8 @@ public class ProofState implements IProofState {
 
 				ProofState.this.setCached(new HashSet<Predicate>());
 				ProofState.this.setSearched(new HashSet<Predicate>());
-				userSupport.addInformation("Proof Tree is reloaded");
+				userSupport.addInformation("Proof Tree is reloaded",
+						IUserSupportInformation.MAX_PRIORITY);
 				deltaProcessor.informationChanged(userSupport);
 			}
 
@@ -218,10 +220,12 @@ public class ProofState implements IProofState {
 					// Fire delta
 					deltaProcessor.setNewCurrentNode(userSupport,
 							ProofState.this);
-					userSupport.addInformation("Select a new proof node");
+					userSupport.addInformation("Select a new proof node",
+							IUserSupportInformation.MIN_PRIORITY);
 
 				} else {
-					userSupport.addInformation("Not a new proof node");
+					userSupport.addInformation("Not a new proof node",
+							IUserSupportInformation.MIN_PRIORITY);
 				}
 				deltaProcessor.informationChanged(userSupport);
 			}
@@ -576,11 +580,13 @@ public class ProofState implements IProofState {
 					Tactics.postProcessBeginner().apply(node, pm);
 				}
 			}
-			userSupport.addInformation(info);
+			userSupport.addInformation(info,
+					IUserSupportInformation.MAX_PRIORITY);
 			deltaProcessor.informationChanged(userSupport);
 			return true;
 		} else {
-			userSupport.addInformation(info);
+			userSupport.addInformation(info,
+					IUserSupportInformation.MAX_PRIORITY);
 			deltaProcessor.informationChanged(userSupport);
 			return false;
 		}

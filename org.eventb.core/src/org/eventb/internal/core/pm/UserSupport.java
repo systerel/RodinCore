@@ -16,6 +16,7 @@ import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
@@ -37,7 +38,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	DeltaProcessor deltaProcessor;
 
-	private Collection<Object> information;
+	private Collection<IUserSupportInformation> information;
 
 	IPSWrapper psWrapper; // Unique for an instance of UserSupport
 
@@ -114,12 +115,14 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	}
 
 	void startInformation() {
-		information = new ArrayList<Object>();
+		information = new ArrayList<IUserSupportInformation>();
 	}
 
-	void addInformation(Object obj) {
+	void addInformation(Object obj, int priority) {
 		assert (information != null);
-		information.add(obj);
+		assert (IUserSupportInformation.MIN_PRIORITY <= priority);
+		assert (priority <= IUserSupportInformation.MAX_PRIORITY);
+		information.add(new UserSupportInformation(obj, priority));
 	}
 
 	/*
@@ -169,7 +172,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 						setProofState(proofState, monitor);
 					else if (force) {
 						setProofState(null, monitor);
-						addInformation("No un-discharged proof obligation found");
+						addInformation(
+								"No un-discharged proof obligation found",
+								IUserSupportInformation.MIN_PRIORITY);
 						deltaProcessor.informationChanged(UserSupport.this);
 					}
 				} catch (RodinDBException e) {
@@ -226,7 +231,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 						setProofState(proofState, monitor);
 					else if (force) {
 						setProofState(null, monitor);
-						addInformation("No un-discharged proof obligation found");
+						addInformation(
+								"No un-discharged proof obligation found",
+								IUserSupportInformation.MIN_PRIORITY);
 						deltaProcessor.informationChanged(UserSupport.this);
 					}
 				} catch (RodinDBException e) {
@@ -270,14 +277,16 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		startInformation();
 		if (currentPS == null && proofState == null) {
 			// Try to fire the remaining delta
-			addInformation("No new obligation");
+			addInformation("No new obligation",
+					IUserSupportInformation.MIN_PRIORITY);
 			deltaProcessor.informationChanged(this);
 			return;
 		}
 
 		if (currentPS != null && currentPS.equals(proofState)) {
 			// Try to fire the remaining delta
-			addInformation("No new obligation");
+			addInformation("No new obligation",
+					IUserSupportInformation.MIN_PRIORITY);
 			deltaProcessor.informationChanged(this);
 			return;			
 		}
@@ -302,7 +311,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 					}
 				}
 				deltaProcessor.currentProofStateChange(UserSupport.this);
-				addInformation("Obligation changed");
+				addInformation("New current obligation",
+						IUserSupportInformation.MAX_PRIORITY);
 				deltaProcessor.informationChanged(UserSupport.this);
 			}
 
@@ -345,10 +355,28 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		return unsaved.toArray(new IProofState[unsaved.size()]);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IUserSupport#getInformation()
+	 */
+	@Deprecated
 	public Object[] getInformation() {
-		return information.toArray();
+		Object [] result = new Object[information.size()];
+		int i = 0;
+		for (IUserSupportInformation info : information) {
+			result[i] = info.getInformation();
+			++i;
+		}
+		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IUserSupport#getInformationWithPriority()
+	 */
+	public IUserSupportInformation[] getInformationWithPriority() {
+		return information.toArray(new IUserSupportInformation[information
+				.size()]);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -360,7 +388,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 			public void run() {
 				currentPS.removeAllFromCached(hyps);
-				addInformation("Removed hypotheses from cache");
+				addInformation("Removed hypotheses from cache",
+						IUserSupportInformation.MIN_PRIORITY);
 				deltaProcessor.informationChanged(UserSupport.this);
 			}
 
@@ -383,7 +412,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 			public void run() {
 				currentPS.setSearched(hyps);
-				addInformation("Search hypotheses");
+				addInformation("Search hypotheses",
+						IUserSupportInformation.MIN_PRIORITY);
 				deltaProcessor.informationChanged(UserSupport.this);
 			}
 
@@ -403,7 +433,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 			public void run() {
 				currentPS.removeAllFromSearched(hyps);
-				addInformation("Removed hypotheses from search");
+				addInformation("Removed hypotheses from search",
+						IUserSupportInformation.MIN_PRIORITY);
 				deltaProcessor.informationChanged(UserSupport.this);
 			}
 
@@ -603,8 +634,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		buffer.append(currentPS.getPSStatus());
 		buffer.append("\n");
 		buffer.append("** Information **\n");
-		for (Object info : information) {
-			buffer.append("  " + info);
+		for (IUserSupportInformation info : information) {
+			buffer.append("  " + info.getInformation() + " (Priority "
+					+ info.getPriority() + ")");
 			buffer.append("\n");
 		}
 		buffer.append("********************************************************\n");

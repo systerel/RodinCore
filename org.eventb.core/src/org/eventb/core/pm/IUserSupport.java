@@ -157,9 +157,20 @@ public interface IUserSupport extends IElementChangedListener {
 	 * support, etc.)
 	 * 
 	 * @return a list of objects
+	 * @see #getInformationWithPriority() 
 	 */
+	@Deprecated
 	public abstract Object[] getInformation();
 
+	/**
+	 * Getting the list of information stored in the user support (including the
+	 * output of the applied tactics, messages about the last action in the user
+	 * support, etc.)
+	 * 
+	 * @return a list of objects
+	 */
+	public abstract IUserSupportInformation[] getInformationWithPriority();
+	
 	/**
 	 * Remove a collection of hypotheses from the cache.
 	 * <p>
