@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
@@ -13,6 +14,7 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
+import org.eventb.core.ast.SourceLocation;
 
 /**
  * Unit test of errors produced by the mathematical formula Type-Checker.
@@ -128,4 +130,18 @@ public class TestTypeCheckError extends TestCase {
 				FastFactory.mTypeEnvironment(), 
 				ProblemKind.MulAppliedToSet);
 	}
+	
+	/**
+	 * Ensures that no assertion is raised when type-checking a formula with a
+	 * shared bound identifier declaration which doesn't typecheck.
+	 */
+	public void testSharedBID() {
+		BoundIdentDecl decl = ff.makeBoundIdentDecl("x", new SourceLocation(0, 1));
+		BoundIdentDecl[] decls = new BoundIdentDecl[] {decl};
+		Predicate btrue = ff.makeLiteralPredicate(Predicate.BTRUE, null);
+		Predicate p = ff.makeQuantifiedPredicate(Predicate.FORALL, decls, btrue, null);
+		Predicate q = ff.makeBinaryPredicate(Predicate.LIMP, p, p, null);
+		doTest(q, ff.makeTypeEnvironment(), ProblemKind.TypeUnknown);
+	}
+	
 }
