@@ -19,24 +19,14 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.eventb.core.pm.IProofState;
-import org.eventb.core.seqprover.IProofSkeleton;
-import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -51,27 +41,9 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 	final ProofTreeUIPage proofTreeUI;
 
 	// Different actions.
-	private Action copy;
-
-	private Action paste;
-
 	protected Action prevPOAction;
 
 	protected Action nextPOAction;
-
-	protected Action pruneAction;
-
-	protected Action normAction;
-
-	protected Action conjIAction;
-
-	protected Action hypAction;
-
-	protected Action allIAction;
-
-	protected Action impIAction;
-
-	protected Action trivialAction;
 
 	protected Action filterAction;
 
@@ -87,57 +59,6 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 	public ProofTreeUIActionGroup(final ProofTreeUIPage proofTreeUI) {
 		this.proofTreeUI = proofTreeUI;
 		drillDownAdapter = new DrillDownAdapter(proofTreeUI.getViewer());
-
-		copy = new Action() {
-			@Override
-			public void run() {
-				ISelection sel = ProofTreeUIActionGroup.this.proofTreeUI
-						.getSelection();
-				if (sel instanceof IStructuredSelection) {
-					IStructuredSelection ssel = (IStructuredSelection) sel;
-					if (ssel.size() == 1
-							&& ssel.getFirstElement() instanceof IProofTreeNode) {
-						ProofTreeUI.buffer = ((IProofTreeNode) ssel
-								.getFirstElement()).copyProofSkeleton();
-						if (ProofTreeUIUtils.DEBUG)
-							ProofTreeUIUtils.debug("Copied : "
-									+ ProofTreeUI.buffer);
-					}
-				}
-			}
-		};
-		copy.setText("&Copy");
-		copy.setToolTipText("Copy the proof tree");
-		copy.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
-
-		paste = new Action() {
-			@Override
-			public void run() {
-				ISelection sel = ProofTreeUIActionGroup.this.proofTreeUI
-						.getSelection();
-				if (sel instanceof IStructuredSelection) {
-					IStructuredSelection ssel = (IStructuredSelection) sel;
-					if (ssel.size() == 1
-							&& ssel.getFirstElement() instanceof IProofTreeNode) {
-
-						if (ProofTreeUI.buffer instanceof IProofSkeleton) {
-							final IProofSkeleton copyNode = (IProofSkeleton) ProofTreeUI.buffer;
-							ITactic pasteTactic = BasicTactics.rebuildTac(copyNode);
-							ProverUIUtils.applyTacticWithProgress(proofTreeUI
-									.getControl().getShell(), proofTreeUI
-									.getUserSupport(), pasteTactic);
-							if (ProofTreeUIUtils.DEBUG)
-								ProofTreeUIUtils.debug("Paste: " + copyNode);
-						}
-					}
-				}
-			}
-		};
-		paste.setText("&Paste");
-		paste.setToolTipText("Paste the proof tree");
-		paste.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
 
 		filterAction = new Action() {
 			@Override
@@ -214,253 +135,6 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 		prevPOAction.setImageDescriptor(PlatformUI.getWorkbench()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_BACK));
-
-		pruneAction = new Action() {
-			@Override
-			public void run() {
-				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
-						.getViewer();
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-
-				if (obj instanceof IProofTreeNode) {
-					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isOpen()) {
-						Tactics.prune().apply(proofTree, null);
-						viewer.refresh(proofTree);
-						viewer.setSelection(new StructuredSelection(proofTree));
-					}
-				}
-			}
-		};
-		pruneAction.setText("Prune");
-		pruneAction.setToolTipText("Prune the proof tree at this current node");
-		pruneAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_OBJS_INFO_TSK));
-
-		normAction = new Action() {
-			@Override
-			public void run() {
-				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
-						.getViewer();
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-
-				if (obj instanceof IProofTreeNode) {
-					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isClosed()) {
-						Tactics.norm().apply(proofTree, null);
-						viewer.refresh(proofTree);
-						// Expand the node
-						viewer.expandToLevel(proofTree,
-								AbstractTreeViewer.ALL_LEVELS);
-						// Select the first pending "subgoal"
-						IProofTreeNode subGoal = proofTree
-								.getFirstOpenDescendant();
-						if (subGoal != null) {
-							viewer
-									.setSelection(new StructuredSelection(
-											subGoal));
-						}
-					}
-				}
-			}
-		};
-		normAction.setText("Normalisation");
-		normAction
-				.setToolTipText("Applying some common (normalisation) rules at this node");
-		normAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_OBJS_INFO_TSK));
-
-		conjIAction = new Action() {
-			@Override
-			public void run() {
-				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
-						.getViewer();
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-
-				if (obj instanceof IProofTreeNode) {
-					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isClosed()) {
-						Tactics.conjI().apply(proofTree, null);
-						viewer.refresh(proofTree);
-						// Expand the node
-						viewer.expandToLevel(proofTree,
-								AbstractTreeViewer.ALL_LEVELS);
-
-						// Select the first pending "subgoal"
-						IProofTreeNode subGoal = proofTree
-								.getFirstOpenDescendant();
-						if (subGoal != null) {
-							viewer
-									.setSelection(new StructuredSelection(
-											subGoal));
-						}
-					}
-				}
-			}
-		};
-		conjIAction.setText("Conj");
-		conjIAction
-				.setToolTipText("Applying conjI tactic to the current sequent");
-		conjIAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_OBJS_INFO_TSK));
-
-		hypAction = new Action() {
-			@Override
-			public void run() {
-				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
-						.getViewer();
-
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-
-				if (obj instanceof IProofTreeNode) {
-					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isClosed()) {
-						Tactics.hyp().apply(proofTree, null);
-						ProofTreeUIActionGroup.this.proofTreeUI
-								.refresh(proofTree);
-						// Expand the node
-						viewer.expandToLevel(proofTree,
-								AbstractTreeViewer.ALL_LEVELS);
-
-						IProofState ps = ProofTreeUIActionGroup.this.proofTreeUI
-								.getUserSupport().getCurrentPO();
-						// Select the next pending "subgoal"
-						IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
-						if (pt != null)
-							ProofTreeUIActionGroup.this.proofTreeUI.getViewer()
-									.setSelection(new StructuredSelection(pt));
-					}
-				}
-			}
-		};
-		hypAction.setText("Hypothesis");
-		hypAction.setToolTipText("Applying hyp tactic to the current sequent");
-		hypAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_OBJS_INFO_TSK));
-
-		allIAction = new Action() {
-			@Override
-			public void run() {
-				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
-						.getViewer();
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-
-				if (obj instanceof IProofTreeNode) {
-					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isClosed()) {
-						Tactics.allI().apply(proofTree, null);
-						viewer.refresh(proofTree);
-						// Expand the node
-						viewer.expandToLevel(proofTree,
-								AbstractTreeViewer.ALL_LEVELS);
-
-						// Select the first pending "subgoal"
-						IProofTreeNode subGoal = proofTree
-								.getFirstOpenDescendant();
-						if (subGoal != null) {
-							viewer
-									.setSelection(new StructuredSelection(
-											subGoal));
-						}
-					}
-				}
-			}
-		};
-		allIAction.setText("AllI");
-		allIAction
-				.setToolTipText("Applying allI tactic to the current sequent");
-		allIAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_OBJS_INFO_TSK));
-
-		impIAction = new Action() {
-			@Override
-			public void run() {
-				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
-						.getViewer();
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-
-				if (obj instanceof IProofTreeNode) {
-					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isClosed()) {
-						Tactics.impI().apply(proofTree, null);
-						viewer.refresh(proofTree);
-						// Expand the node
-						viewer.expandToLevel(proofTree,
-								AbstractTreeViewer.ALL_LEVELS);
-
-						// Select the first pending "subgoal"
-						IProofTreeNode subGoal = proofTree
-								.getFirstOpenDescendant();
-						if (subGoal != null) {
-							viewer
-									.setSelection(new StructuredSelection(
-											subGoal));
-						}
-					}
-				}
-			}
-		};
-		impIAction.setText("impI");
-		impIAction
-				.setToolTipText("Applying impI tactic to the current sequent");
-		impIAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_OBJS_INFO_TSK));
-
-		trivialAction = new Action() {
-			@Override
-			public void run() {
-				TreeViewer viewer = ProofTreeUIActionGroup.this.proofTreeUI
-						.getViewer();
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-
-				if (obj instanceof IProofTreeNode) {
-					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isClosed()) {
-						Tactics.trivial().apply(proofTree, null);
-						viewer.refresh(proofTree);
-						// Expand the node
-						viewer.expandToLevel(proofTree,
-								AbstractTreeViewer.ALL_LEVELS);
-
-						// Select the first pending "subgoal"
-						IProofTreeNode subGoal = proofTree
-								.getFirstOpenDescendant();
-						if (subGoal != null) {
-							viewer
-									.setSelection(new StructuredSelection(
-											subGoal));
-						}
-					}
-				}
-			}
-		};
-		trivialAction.setText("trivial");
-		trivialAction
-				.setToolTipText("Applying trivial tactic to the current sequent");
-		trivialAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_OBJS_INFO_TSK));
-
 	}
 
 	/**
@@ -473,22 +147,6 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 	public void fillContextMenu(IMenuManager menu) {
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) sel;
-			if (ssel.size() == 1) {
-				IProofTreeNode pt = (IProofTreeNode) ssel.getFirstElement();
-
-				if (!pt.isOpen()) {
-					menu.add(copy);
-					menu.add(new Separator());
-					menu.add(pruneAction);
-				} else {
-					if (ProofTreeUI.buffer != null)
-						menu.add(paste);
-					menu.add(new Separator());
-				}
-			} else {
-				menu.add(pruneAction);
-			}
 			// Other plug-ins can contribute there actions here
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			super.fillContextMenu(menu);

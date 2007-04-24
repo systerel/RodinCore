@@ -729,7 +729,7 @@
       </viewerContribution>
       <objectContribution
             adaptable="false"
-            id="org.eventb.ui.internalElement"
+            id="org.eventb.ui.InternalElement"
             objectClass="org.rodinp.core.IInternalElement">
          <action
                class="org.eventb.internal.ui.propertiesView.Properties"
@@ -737,6 +737,35 @@
                label="%popupMenu.property.label"
                menubarPath="additions"
                tooltip="%popupMenu.property.tooltip"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.eventb.ui.ProofTreeNode"
+            objectClass="org.eventb.core.seqprover.IProofTreeNode">
+         <action
+               class="org.eventb.internal.ui.prooftreeui.Prune"
+               enablesFor="1"
+               icon="icons/full/ctool16/pn_prover.gif"
+               id="org.eventb.ui.prune"
+               label="%popupMenu.prune.label"
+               menubarPath="additions"
+               tooltip="%popupMenu.prune.tooltip"/>
+         <action
+               class="org.eventb.internal.ui.prooftreeui.Paste"
+               enablesFor="1"
+               icon="icons/full/elcl16/paste.gif"
+               id="org.eventb.ui.paste"
+               label="%popupMenu.paste.label"
+               menubarPath="additions"
+               tooltip="%popupMenu.paste.tooltip"/>
+         <action
+               class="org.eventb.internal.ui.prooftreeui.Copy"
+               enablesFor="1"
+               icon="icons/full/elcl16/copy.gif"
+               id="org.eventb.ui.copy"
+               label="%popupMenu.copy.label"
+               menubarPath="additions"
+               tooltip="%popupMenu.copy.tooltip"/>
       </objectContribution>
    </extension>
    <extension
