@@ -24,11 +24,14 @@ import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.internal.core.Util;
 
 /**
- * Processor for proof tree deltas.
- * 
- * This class manages listeners and maintains a current delta.
- * 
- * @author Laurent Voisin
+ * @author htson
+ *         <p>
+ *         Processor for user support manager deltas. This class manages
+ *         listeners and maintains a current delta.
+ *         <p>
+ *         This based on
+ *         <code>org.eventb.internal.core.seqprover.DeltaProcessor</code> by
+ *         Laurent Voisin
  */
 public class DeltaProcessor {
 	
@@ -101,47 +104,7 @@ public class DeltaProcessor {
 			firing = false;
 		}
 	}
-	
-//	private IUserSupportDelta getDeltaForUserSupport(IUserSupport userSupport) {
-//		if (rootDelta == null)
-//			rootDelta = new UserSupportManagerDelta();
-//		
-//		final IProofTreeNode parent = node.getParent();
-//		if (parent == null) {
-//			if (rootDelta == null)
-//				rootDelta = new ProofTreeDelta(node);
-//			return rootDelta;
-//		}
-//		final ProofTreeDelta parentDelta = getDeltaForNode(parent);
-//		if (parentDelta == null)
-//			return null;
-//		return parentDelta.addChild(node);
-//	}
-	
-//	void ruleChanged(IProofTreeNode node) {
-//		ProofTreeDelta delta = getDeltaForNode(node);
-//		if (delta != null)
-//			delta.setRuleChanged();
-//	}
-//	
-//	void childrenChanged(IProofTreeNode node) {
-//		ProofTreeDelta delta = getDeltaForNode(node);
-//		if (delta != null)
-//			delta.setChildrenChanged();
-//	}
-//	
-//	void confidenceChanged(IProofTreeNode node) {
-//		ProofTreeDelta delta = getDeltaForNode(node);
-//		if (delta != null)
-//			delta.setConfidenceChanged();
-//	}
-//	
-//	void commentChanged(IProofTreeNode node) {
-//		ProofTreeDelta delta = getDeltaForNode(node);
-//		if (delta != null)
-//			delta.setCommentChanged();
-//	}
-	
+
 	private void notifyListener(
 			final IUserSupportManagerChangedListener listener,
 			final IUserSupportManagerDelta delta) {
