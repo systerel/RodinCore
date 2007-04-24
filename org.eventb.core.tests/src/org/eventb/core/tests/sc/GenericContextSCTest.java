@@ -12,6 +12,7 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tests.GenericContextTest;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -49,5 +50,16 @@ public class GenericContextSCTest extends GenericContextTest<BasicSCTest> implem
 		test.containsMarkers(element, yes);
 	}
 
+	public IRodinElement[] getIdents(IContextFile element) throws RodinDBException {
+		return element.getConstants();
+	}
+
+	public IRodinElement[] getNonTheorems(IContextFile element) throws RodinDBException {
+		return element.getAxioms();
+	}
+
+	public IRodinElement[] getTheorems(IContextFile element) throws RodinDBException {
+		return element.getTheorems();
+	}
 
 }

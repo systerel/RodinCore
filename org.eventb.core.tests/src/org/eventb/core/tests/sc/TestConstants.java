@@ -111,6 +111,8 @@ public class TestConstants extends GenericIdentTest<IContextFile, ISCContextFile
 		
 		containsConstants(contexts[0], "C1");
 
+		hasMarker(con.getConstants()[0]);
+		hasMarker(con.getExtendsClauses()[0]);
 	}
 
 	/**

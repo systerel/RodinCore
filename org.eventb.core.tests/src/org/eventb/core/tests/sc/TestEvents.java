@@ -67,8 +67,8 @@ public class TestEvents extends BasicSCTest {
 	public void testEvents_02_createTwoEventsWithNameConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
-		addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
-		addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
+		IEvent e = addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
+		IEvent f = addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
 		
 		mac.save(null, true);
 		
@@ -77,6 +77,9 @@ public class TestEvents extends BasicSCTest {
 		ISCMachineFile file = mac.getSCMachineFile();
 		
 		containsEvents(file);
+		
+		hasMarker(e);
+		hasMarker(f);
 	}
 	
 	/*
@@ -129,7 +132,10 @@ public class TestEvents extends BasicSCTest {
 	public void testEvents_05_createTwoGuardsWithLabelConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
-		addEvent(mac, "evt1", makeSList(), makeSList("G1", "G1"), makeSList("1∈ℕ", "2∈ℕ"), makeSList(), makeSList());
+		IEvent e = 
+			addEvent(mac, "evt1", 
+					makeSList(), 
+					makeSList("G1", "G1"), makeSList("1∈ℕ", "2∈ℕ"), makeSList(), makeSList());
 		
 		mac.save(null, true);
 		
@@ -141,6 +147,8 @@ public class TestEvents extends BasicSCTest {
 		
 		containsGuards(scEvents[0], emptyEnv, makeSList("G1"), makeSList("1∈ℕ"));
 		
+		hasMarker(e.getGuards()[0]);
+		hasMarker(e.getGuards()[1]);
 	}
 	
 	/*
@@ -210,7 +218,10 @@ public class TestEvents extends BasicSCTest {
 
 		addVariables(mac, "L1");
 		addInvariants(mac, makeSList("I1"), makeSList("L1⊆ℕ"));
-		addEvent(mac, "evt1", makeSList("L1"), makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
+		IEvent e = 
+			addEvent(mac, "evt1", 
+					makeSList("L1"), 
+					makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
 		
 		mac.save(null, true);
 		
@@ -225,6 +236,8 @@ public class TestEvents extends BasicSCTest {
 		containsVariables(scEvents[0]);
 		containsGuards(scEvents[0], typeEnvironment, makeSList(), makeSList());
 		
+		hasMarker(e.getVariables()[0]);
+		hasMarker(e.getGuards()[0]);
 	}
 	
 	/*
@@ -302,7 +315,7 @@ public class TestEvents extends BasicSCTest {
 
 		addVariables(mac, "L1");
 		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"));
-		addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), 
+		IEvent e = addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), 
 				makeSList("A1","A1"), makeSList("L1≔1", "L1≔2"));
 	
 		mac.save(null, true);
@@ -317,6 +330,8 @@ public class TestEvents extends BasicSCTest {
 		
 		containsActions(scEvents[0], typeEnvironment, makeSList("A1"), makeSList("L1≔1"));
 		
+		hasMarker(e.getActions()[0]);
+		hasMarker(e.getActions()[1]);
 	}
 	
 	/*
@@ -330,7 +345,7 @@ public class TestEvents extends BasicSCTest {
 
 		addVariables(mac, "L1");
 		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"));
-		addEvent(mac, "evt1", makeSList(), makeSList("A1"), makeSList("1∈ℕ"), 
+		IEvent e = addEvent(mac, "evt1", makeSList(), makeSList("A1"), makeSList("1∈ℕ"), 
 				makeSList("A1"), makeSList("L1≔1"));
 	
 		mac.save(null, true);
@@ -348,6 +363,7 @@ public class TestEvents extends BasicSCTest {
 		containsGuards(scEvents[0], typeEnvironment, makeSList("A1"), makeSList("1∈ℕ"));
 		containsActions(scEvents[0], typeEnvironment, makeSList(), makeSList());
 		
+		hasMarker(e.getActions()[0]);
 	}
 	
 	/*
@@ -396,7 +412,7 @@ public class TestEvents extends BasicSCTest {
 
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
-		addEvent(mac, "evt1", makeSList("L1"), 
+		IEvent e = addEvent(mac, "evt1", makeSList("L1"), 
 				makeSList("G1"), makeSList("L1∈ℕ"), 
 				makeSList("A1"), makeSList("L1≔V1"));
 	
@@ -416,6 +432,7 @@ public class TestEvents extends BasicSCTest {
 		containsGuards(scEvents[0], typeEnvironment, makeSList("G1"), makeSList("L1∈ℕ"));
 		containsActions(scEvents[0], typeEnvironment, makeSList(), makeSList());
 		
+		hasMarker(e.getActions()[0]);
 	}
 	
 	/*
@@ -466,7 +483,7 @@ public class TestEvents extends BasicSCTest {
 
 		addVariables(mac, "u", "v", "w", "x", "y", "z");
 		addInvariants(mac, makeSList("I1"), makeSList("u∈ℕ ∧ v∈ℕ ∧ w∈ℕ ∧ x∈ℕ ∧ y∈ℕ ∧ z∈ℕ"));
-		addEvent(mac, "evt", makeSList(), 
+		IEvent e = addEvent(mac, "evt", makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1", "A2", "A3", "A4", "A5"), 
 				makeSList("u≔1", "v,w:∣⊤", "v≔1", "x≔u", "y,z,w≔v,w,1"));
@@ -483,6 +500,9 @@ public class TestEvents extends BasicSCTest {
 		
 		containsActions(scEvents[0], typeEnvironment, makeSList("A1", "A4"), makeSList("u≔1", "x≔u"));
 		
+		hasMarker(e.getActions()[1]);
+		hasMarker(e.getActions()[2]);
+		hasMarker(e.getActions()[4]);
 	}
 	
 	/*
@@ -491,7 +511,7 @@ public class TestEvents extends BasicSCTest {
 	public void testEvents_17_initialisationLocalVariableProblem() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
-		addEvent(mac, IEvent.INITIALISATION, makeSList("x"), 
+		IEvent e = addEvent(mac, IEvent.INITIALISATION, makeSList("x"), 
 				makeSList("G1"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 	
@@ -506,6 +526,8 @@ public class TestEvents extends BasicSCTest {
 		containsVariables(scEvents[0]);
 		containsGuards(scEvents[0], emptyEnv, makeSList(), makeSList());
 		
+		hasMarker(e.getVariables()[0]);
+		hasMarker(e.getGuards()[0]);
 	}
 	
 	/*
@@ -519,7 +541,7 @@ public class TestEvents extends BasicSCTest {
 
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
-		addEvent(mac, IEvent.INITIALISATION, makeSList(), 
+		IEvent e = addEvent(mac, IEvent.INITIALISATION, makeSList(), 
 				makeSList("G1", "G2"), makeSList("x∈ℕ", "⊤"), 
 				makeSList(), makeSList());
 	
@@ -533,6 +555,8 @@ public class TestEvents extends BasicSCTest {
 		
 		containsGuards(scEvents[0], emptyEnv, makeSList(), makeSList());
 		
+		hasMarker(e.getGuards()[0]);
+		hasMarker(e.getGuards()[1]);
 	}
 	
 	/*
@@ -547,7 +571,7 @@ public class TestEvents extends BasicSCTest {
 
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
-		addEvent(mac, "evt", makeSList(), 
+		IEvent e = addEvent(mac, "evt", makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x :∣ y'=x"));
 	
@@ -560,7 +584,8 @@ public class TestEvents extends BasicSCTest {
 		ISCEvent[] scEvents = getSCEvents(file, "evt");
 		
 		containsActions(scEvents[0], emptyEnv, makeSList(), makeSList());
-		
+	
+		hasMarker(e.getActions()[0]);
 	}
 	
 	/*
@@ -602,7 +627,7 @@ public class TestEvents extends BasicSCTest {
 
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
-		addEvent(mac, IEvent.INITIALISATION, makeSList(), 
+		IEvent e = addEvent(mac, IEvent.INITIALISATION, makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x :∣ x=1"));
 	
@@ -616,6 +641,7 @@ public class TestEvents extends BasicSCTest {
 		
 		containsActions(scEvents[0], typeEnvironment, makeSList("GEN"), makeSList("x :∣ ⊤"));
 		
+		hasMarker(e.getActions()[0]);
 	}
 	
 	/*
@@ -629,7 +655,7 @@ public class TestEvents extends BasicSCTest {
 
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
-		addEvent(mac, IEvent.INITIALISATION, makeSList(), 
+		IEvent e = addEvent(mac, IEvent.INITIALISATION, makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList(), makeSList());
 	
@@ -643,6 +669,7 @@ public class TestEvents extends BasicSCTest {
 		
 		containsActions(scEvents[0], typeEnvironment, makeSList("GEN"), makeSList("x :∣ ⊤"));
 		
+		hasMarker(e);
 	}
 	
 	/*
@@ -671,7 +698,7 @@ public class TestEvents extends BasicSCTest {
 
 		addVariables(mac, "y");
 		addInvariants(mac, makeSList("I1"), makeSList("y∈ℕ"));
-		addEvent(mac, IEvent.INITIALISATION, makeSList(), 
+		IEvent e = addEvent(mac, IEvent.INITIALISATION, makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x:∣x'=2"));
 	
@@ -684,6 +711,8 @@ public class TestEvents extends BasicSCTest {
 		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION);
 		
 		containsWitnesses(scEvents[0], typeEnvironment, makeSList("x'"), makeSList("⊤"));
+		
+		hasMarker(e);
 		
 	}
 	
@@ -728,6 +757,7 @@ public class TestEvents extends BasicSCTest {
 		
 		containsWitnesses(scEvents[0], typeEnvironment, makeSList("x'"), makeSList("⊤"));
 		
+		hasMarker(evt.getWitnesses()[0]);
 	}
 
 }

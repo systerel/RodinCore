@@ -66,6 +66,8 @@ public class TestMachineRefines extends BasicSCTest {
 		
 		getInternalContexts(file, 0);
 
+		hasMarker(mac.getSeesClauses()[0]);
+		
 	}
 	
 	/*

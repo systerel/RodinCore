@@ -100,6 +100,8 @@ public class TestVariables extends GenericIdentTest<IMachineFile, ISCMachineFile
 		
 		containsInvariants(file, environment, makeSList("I2"), makeSList("C1=TRUE"));
 
+		hasMarker(mac.getVariables()[0]);
+		hasMarker(mac.getInvariants()[0]);
 	}
 	
 	/**
@@ -182,6 +184,7 @@ public class TestVariables extends GenericIdentTest<IMachineFile, ISCMachineFile
 		
 		// TODO should also check that sc reports only that "v1" has disappeared
 		// and can't be resurrected.
+		hasMarker(m2.getVariables()[0]);
 	}
 	
 	@Override

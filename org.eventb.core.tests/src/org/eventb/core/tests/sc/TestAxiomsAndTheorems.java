@@ -39,6 +39,7 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextFile, IS
 		
 		containsAxioms(file, typeEnvironment, makeSList("A2"), makeSList("C1∈S1"));
 		
+		hasMarker(con.getAxioms()[0]);
 	}
 	
 	/**
@@ -62,6 +63,8 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextFile, IS
 		ISCContextFile file = con.getSCContextFile();
 		
 		containsAxioms(file, typeEnvironment, makeSList("A2", "A3", "A4"), makeSList("C1∈S1", "C1∈{C1}", "S1 ⊆ {C1}"));
+		
+		hasMarker(con.getAxioms()[0]);
 		
 	}
 

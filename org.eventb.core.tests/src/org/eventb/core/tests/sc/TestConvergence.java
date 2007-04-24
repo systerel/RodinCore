@@ -69,6 +69,8 @@ public class TestConvergence extends BasicSCTest {
 		isOrdinary(events[0]);
 		isAnticipated(events[1]);
 		isOrdinary(events[2]);
+		
+		hasMarker(gvt);
 	}
 	
 	/**
@@ -158,6 +160,7 @@ public class TestConvergence extends BasicSCTest {
 		isAnticipated(events[1]);
 		isAnticipated(events[2]);
 		
+		hasMarker(mevt);
 	}
 	
 	/**
@@ -202,6 +205,7 @@ public class TestConvergence extends BasicSCTest {
 		isConvergent(events[1]);
 		isConvergent(events[2]);
 		
+		hasMarker(mevt);
 	}
 	
 	/**
@@ -239,6 +243,8 @@ public class TestConvergence extends BasicSCTest {
 		
 		ISCEvent[] events = getSCEvents(file, "evt");
 		isOrdinary(events[0]);
+		
+		hasMarker(mevt);
 	}
 	
 	/**
@@ -281,6 +287,8 @@ public class TestConvergence extends BasicSCTest {
 		
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		isOrdinary(events[0]);
+		
+		hasMarker(init);
 	}
 	
 	/**
@@ -301,6 +309,8 @@ public class TestConvergence extends BasicSCTest {
 		
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		isOrdinary(events[0]);
+		
+		hasMarker(init);
 	}
 	
 	/**

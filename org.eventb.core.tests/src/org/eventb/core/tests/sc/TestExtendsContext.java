@@ -18,6 +18,9 @@ import org.eventb.core.ISCInternalContext;
  */
 public class TestExtendsContext extends BasicSCTest {
 
+	/**
+	 * a carrier set should be copied into internal contexts
+	 */
 	public void testFetchCarrierSet_01_createCarrierSet() throws Exception {
 		IContextFile abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S"));
@@ -43,6 +46,9 @@ public class TestExtendsContext extends BasicSCTest {
 		containsMarkers(con, false);
 	}
 
+	/**
+	 * two carrier sets should be copied into internal contexts
+	 */
 	public void testFetchCarrierSet_02_twoCarrierSets() throws Exception {
 		IContextFile abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S1", "S2"));
@@ -67,6 +73,9 @@ public class TestExtendsContext extends BasicSCTest {
 		containsMarkers(con, false);
 	}
 	
+	/**
+	 * internal contexts that would introduce name conflicts must be removed
+	 */
 	public void testFetchCarrierSet_03_extendsConflict() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
@@ -94,8 +103,14 @@ public class TestExtendsContext extends BasicSCTest {
 		extendsContexts(file);
 		getInternalContexts(file, 0);
 		
+		hasMarker(con.getExtendsClauses()[0]);
+		hasMarker(con.getExtendsClauses()[1]);
+		
 	}
 
+	/**
+	 * carrier sets from different contexts should be copied into corresponding internal contexts
+	 */
 	public void testFetchCarrierSet_04_extendsNoConflict() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
@@ -133,6 +148,10 @@ public class TestExtendsContext extends BasicSCTest {
 		containsMarkers(con, false);
 	}
 	
+	/**
+	 * internal contexts that would introduce name conflicts must be removed
+	 * but contexts untouched should be kept.
+	 */
 	public void testFetchCarrierSet_05_extendsPartialConflict() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
@@ -171,9 +190,14 @@ public class TestExtendsContext extends BasicSCTest {
 		
 		containsCarrierSets(contexts[0], "S31", "S32");
 		
+		hasMarker(con.getExtendsClauses()[0]);
+		hasMarker(con.getExtendsClauses()[1]);
 	}
 	
-	public void testExtendsContext_01() throws Exception {
+	/**
+	 * Contexts should be included transitively.
+	 */
+	public void testExtendsContext_01_transitive() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S1"));
 		abs1.save(null, true);

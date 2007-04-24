@@ -52,6 +52,7 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		getGeneric().containsNonTheorems(file, emptyEnv, makeSList("P"), makeSList("ℕ≠∅"));
 		
+		hasMarker(getGeneric().getNonTheorems(con)[1]);
 	}
 	
 	/**
@@ -70,6 +71,7 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
 		
+		hasMarker(getGeneric().getNonTheorems(con)[0]);
 	}
 	
 	/**
@@ -108,6 +110,7 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
 		
+		hasMarker(getGeneric().getNonTheorems(con)[0]);
 	}
 
 	/**
@@ -165,6 +168,7 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		getGeneric().containsTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
 		
+		hasMarker(getGeneric().getTheorems(con)[1]);
 	}
 	
 	/**
@@ -184,6 +188,8 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		getGeneric().containsNonTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
 		getGeneric().containsTheorems(file, emptyEnv, makeSList(), makeSList());
+		
+		hasMarker(getGeneric().getTheorems(con)[0]);
 		
 	}
 

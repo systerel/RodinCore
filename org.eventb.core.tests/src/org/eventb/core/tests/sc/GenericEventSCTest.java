@@ -14,6 +14,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tests.GenericEventTest;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -55,6 +56,19 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 
 	public void save(IEvent element) throws RodinDBException {
 		element.getRodinFile().save(null, true);
+	}
+
+	public IRodinElement[] getIdents(IEvent element) throws RodinDBException {
+		return element.getVariables();
+	}
+
+	public IRodinElement[] getNonTheorems(IEvent element) throws RodinDBException {
+		return element.getGuards();
+	}
+
+	public IRodinElement[] getTheorems(IEvent element) throws RodinDBException {
+		// TODO adapt to new db layout with mix of guards and theorems
+		return new IRodinElement[0];
 	}
 
 

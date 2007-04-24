@@ -26,6 +26,12 @@ extends IGenericElementTest <E> {
 
 	public SCE getSCElement(E element) throws RodinDBException;	
 	
+	public IRodinElement[] getIdents(E element) throws RodinDBException;
+	
+	public IRodinElement[] getTheorems(E element) throws RodinDBException;
+	
+	public IRodinElement[] getNonTheorems(E element) throws RodinDBException;
+	
 	public void containsIdents(SCE element, String...strings) throws RodinDBException;
 	
 	public void containsTheorems(SCE element, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException;

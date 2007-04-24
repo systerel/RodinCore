@@ -113,6 +113,8 @@ public class TestSeesContext extends BasicSCTest {
 		ISCMachineFile file = mac.getSCMachineFile();
 		seesContexts(file, "con");
 		containsContexts(file, "con");
+		
+		hasMarker(mac.getRefinesClauses()[0]);
 	}
 
 	/**

@@ -96,6 +96,7 @@ public class TestVariant extends BasicSCTest {
 		
 		containsVariant(file, emptyEnv);
 		
+		hasMarker(mac.getVariants()[0]);
 	}
 	
 	/**
@@ -158,6 +159,8 @@ public class TestVariant extends BasicSCTest {
 		containsVariables(file, "V0", "V1");
 		containsVariant(file, emptyEnv);
 		
+		hasMarker(mac.getVariants()[0]);
+	
 	}
 
 }

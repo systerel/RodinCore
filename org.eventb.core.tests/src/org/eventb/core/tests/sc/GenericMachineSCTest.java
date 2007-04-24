@@ -12,6 +12,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tests.GenericMachineTest;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -47,6 +48,18 @@ public class GenericMachineSCTest extends GenericMachineTest<BasicSCTest> implem
 
 	public void containsMarkers(IMachineFile element, boolean yes) throws CoreException {
 		test.containsMarkers(element, yes);
+	}
+
+	public IRodinElement[] getIdents(IMachineFile element) throws RodinDBException {
+		return element.getVariables();
+	}
+
+	public IRodinElement[] getNonTheorems(IMachineFile element) throws RodinDBException {
+		return element.getInvariants();
+	}
+
+	public IRodinElement[] getTheorems(IMachineFile element) throws RodinDBException {
+		return element.getTheorems();
 	}
 
 

@@ -34,6 +34,7 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		getGeneric().containsIdents(file);
 		
+		hasMarker(getGeneric().getIdents(cmp)[0]);
 	}
 
 	/**
@@ -79,7 +80,10 @@ extends GenericEventBSCTest<E, SCE> {
 		getGeneric().containsIdents(file);
 		
 		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
-	}
+		
+		hasMarker(getGeneric().getIdents(cmp)[0]);
+		hasMarker(getGeneric().getNonTheorems(cmp)[0]);
+}
 	
 	/**
 	 * refering to identifiers with faulty declaration should fail
@@ -99,6 +103,10 @@ extends GenericEventBSCTest<E, SCE> {
 		getGeneric().containsIdents(file);
 		
 		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		
+		hasMarker(getGeneric().getIdents(cmp)[0]);
+		hasMarker(getGeneric().getIdents(cmp)[1]);
+		hasMarker(getGeneric().getNonTheorems(cmp)[0]);
 	}
 
 

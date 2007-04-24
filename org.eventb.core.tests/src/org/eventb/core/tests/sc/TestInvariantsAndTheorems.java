@@ -46,6 +46,8 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineFile
 		
 		containsInvariants(file, typeEnvironment, makeSList("I2"), makeSList("V1∈S1"));
 		
+		hasMarker(mac.getInvariants()[0]);
+		
 	}
 	
 	/**
@@ -80,6 +82,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineFile
 				makeSList("I2", "I3", "I4"), 
 				makeSList("V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"));
 		
+		hasMarker(mac.getInvariants()[0]);
 	}
 
 	@Override
