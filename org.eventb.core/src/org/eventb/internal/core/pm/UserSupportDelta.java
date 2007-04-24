@@ -28,8 +28,6 @@ public class UserSupportDelta implements IUserSupportDelta {
 	 */
 	private static IProofStateDelta[] emptyStates = new IProofStateDelta[] {};
 
-	// private Object[] information;
-
 	public UserSupportDelta(IUserSupport userSupport) {
 		this.userSupport = userSupport;
 	}
@@ -119,11 +117,6 @@ public class UserSupportDelta implements IUserSupportDelta {
 	public IProofStateDelta[] getAffectedProofStates() {
 		return affectedStates;
 	}
-
-	//
-	// public Object[] getInformation() {
-	// return information;
-	// }
 
 	protected void addAffectedProofState(IProofStateDelta affectedState) {
 		switch (this.kind) {
@@ -268,16 +261,6 @@ public class UserSupportDelta implements IUserSupportDelta {
 			System.arraycopy(old, index + 1, array, index, rest);
 		return array;
 	}
-
-	//
-	// protected void mergeInformation(Object[] preinformation,
-	// Object[] postinformation) {
-	// information = new Object[preinformation.length + postinformation.length];
-	// System.arraycopy(preinformation, 0, information, 0,
-	// preinformation.length);
-	// System.arraycopy(postinformation, 0, information,
-	// preinformation.length, postinformation.length);
-	// }
 
 	@Override
 	public String toString() {
