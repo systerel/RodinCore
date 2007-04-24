@@ -71,19 +71,6 @@ public abstract class TestPM extends BasicTest {
 		return poFile;
 	}
 	
-	void assertInformation(String message, String expected, Object [] objs) {
-		StringBuilder builder = new StringBuilder();
-		boolean sep = false;
-		for (Object obj : objs) {
-			if (sep)
-				builder.append('\n');
-			builder.append(obj);
-			sep = true;
-		}
-		String actual = builder.toString();
-		assertString(message, actual, expected);
-	}
-
 	void assertString(String message, String actual, String expected) {
 		if (!expected.equals(actual)) {
 			System.out.println(Util.displayString(actual));

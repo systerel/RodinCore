@@ -37,4 +37,11 @@ public class UserSupportInformation implements IUserSupportInformation {
 	public int getPriority() {
 		return priority;
 	}
+
+	@Override
+	public String toString() {
+		return information.toString() + " (priority " + priority + ")";
+	}
+
+
 }

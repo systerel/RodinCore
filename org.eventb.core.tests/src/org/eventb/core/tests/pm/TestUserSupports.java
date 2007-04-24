@@ -68,9 +68,6 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current PO is the last PO", states[states.length - 1],
 				userSupport.getCurrentPO());
-		assertInformation("Select a new PO ", "Select a new proof node\n"
-				+ "Proof Tree is reloaded\n" + "New current obligation",
-				userSupport.getInformation());
 		userSupport.dispose();
 	}
 
@@ -118,8 +115,6 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current PO is still the last PO",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("No undischarged PO ", "No new obligation",
-				userSupport.getInformation());
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
@@ -129,15 +124,11 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the last PO",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("Select new PO (last PO) ", "New current obligation",
-				userSupport.getInformation());
 
 		userSupport.nextUndischargedPO(false, monitor);
 
 		assertEquals("Current Proof State is now the first PO", states[0],
 				userSupport.getCurrentPO());
-		assertInformation("Select new PO (first PO) ", "New current obligation",
-				userSupport.getInformation());
 
 		userSupport.dispose();
 	}
@@ -163,9 +154,6 @@ public class TestUserSupports extends TestPM {
 		userSupport.nextUndischargedPO(true, monitor);
 
 		assertNull("Current PO is null", userSupport.getCurrentPO());
-		assertInformation("No undischarged PO ", "New current obligation\n"
-				+ "No un-discharged proof obligation found", userSupport
-				.getInformation());
 
 		// Prune the last PO
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
@@ -176,8 +164,6 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the last PO",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("Select new PO (last PO) ", "No new obligation",
-				userSupport.getInformation());
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
@@ -187,15 +173,11 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the last PO",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("Select new PO (last PO) ", "New current obligation",
-				userSupport.getInformation());
 
 		userSupport.nextUndischargedPO(true, monitor);
 
 		assertEquals("Current Proof State is now the first PO", userSupport
 				.getCurrentPO(), states[0]);
-		assertInformation("Select new PO (first PO) ", "New current obligation",
-				userSupport.getInformation());
 
 		userSupport.dispose();
 	}
@@ -218,8 +200,6 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current PO is still the last PO",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("No undischarged PO ", "No new obligation",
-				userSupport.getInformation());
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
@@ -229,15 +209,11 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the last PO",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("Select new PO (last PO) ", "New current obligation",
-				userSupport.getInformation());
 
 		userSupport.prevUndischargedPO(false, monitor);
 
 		assertEquals("Current Proof State is now the first PO", states[0],
 				userSupport.getCurrentPO());
-		assertInformation("Select new PO (first PO) ", "New current obligation",
-				userSupport.getInformation());
 
 		userSupport.dispose();
 	}
@@ -264,9 +240,6 @@ public class TestUserSupports extends TestPM {
 		userSupport.prevUndischargedPO(true, monitor);
 
 		assertNull("Current PO is null", userSupport.getCurrentPO());
-		assertInformation("No undischarged PO ", "New current obligation\n"
-				+ "No un-discharged proof obligation found", userSupport
-				.getInformation());
 
 		Set<Predicate> hyps = new HashSet<Predicate>();
 		Predicate hypothesis = (Predicate) hypotheses.toArray()[0];
@@ -281,8 +254,6 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the last PO",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("Select new PO (last PO) ", "No new obligation",
-				userSupport.getInformation());
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
@@ -292,15 +263,11 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the last PO",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("Select new PO (last PO) ", "New current obligation",
-				userSupport.getInformation());
 
 		userSupport.prevUndischargedPO(true, monitor);
 
 		assertEquals("Current Proof State is now the first PO", userSupport
 				.getCurrentPO(), states[0]);
-		assertInformation("Select new PO (first PO) ", "New current obligation",
-				userSupport.getInformation());
 
 		userSupport.dispose();
 	}
@@ -327,9 +294,6 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current PO is the first PO ", states[0], userSupport
 				.getCurrentPO());
-		assertInformation("Select first PO ", "Select a new proof node\n"
-				+ "Proof Tree is reloaded\n" + "New current obligation",
-				userSupport.getInformation());
 
 		// Select the last PO again
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
@@ -337,8 +301,6 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current PO is the last PO again ",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("Select last PO ", "New current obligation", userSupport
-				.getInformation());
 
 		userSupport.dispose();
 	}
@@ -507,8 +469,6 @@ public class TestUserSupports extends TestPM {
 		assertTrue("Cache has 2 elements ", cached.size() == 2);
 
 		userSupport.removeCachedHypotheses(hyps1);
-		assertInformation("First hypothesis has been removed ",
-				"Removed hypotheses from cache", userSupport.getInformation());
 
 		cached = currentPO.getCached();
 		assertTrue("Cache has 1 element ", cached.size() == 1);
@@ -517,8 +477,6 @@ public class TestUserSupports extends TestPM {
 		userSupport.removeCachedHypotheses(hyps2);
 		cached = currentPO.getCached();
 		assertTrue("Cache is now empty ", cached.size() == 0);
-		assertInformation("Second hypothesis has been removed ",
-				"Removed hypotheses from cache", userSupport.getInformation());
 
 		userSupport.dispose();
 	}
@@ -542,16 +500,10 @@ public class TestUserSupports extends TestPM {
 		Collection<Predicate> searched = currentPO.getSearched();
 		assertTrue("Search size is 3 ", searched.size() == 3);
 
-		assertInformation("Search hypothesis ", "Search hypotheses",
-				userSupport.getInformation());
-
 		userSupport.searchHyps("Empty search");
 
 		searched = currentPO.getSearched();
 		assertTrue("Search is empty ", searched.size() == 0);
-
-		assertInformation("Search hypothesis ", "Search hypotheses",
-				userSupport.getInformation());
 
 		userSupport.dispose();
 	}
@@ -588,16 +540,12 @@ public class TestUserSupports extends TestPM {
 
 		userSupport.removeSearchedHypotheses(hyps2);
 		searched = currentPO.getSearched();
-		assertInformation("Hypotheses has been removed ",
-				"Removed hypotheses from search", userSupport.getInformation());
 		assertFalse("Second hypothesis has been removed ", searched
 				.contains(hyp2));
 		assertTrue("Search has 2 elements ", searched.size() == 2);
 
 		userSupport.removeSearchedHypotheses(hyps13);
 		searched = currentPO.getSearched();
-		assertInformation("Hypotheses has been removed ",
-				"Removed hypotheses from search", userSupport.getInformation());
 		assertTrue("Search has no elements ", searched.size() == 0);
 
 		userSupport.dispose();
@@ -627,22 +575,16 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current node is node 1 ", node1, currentPO
 				.getCurrentNode());
-		assertInformation("Select 1 is successful ", "Select a new proof node",
-				userSupport.getInformation());
 
 		userSupport.selectNode(node2);
 
 		assertEquals("Current node is node 2 ", node2, currentPO
 				.getCurrentNode());
-		assertInformation("Select 2 is successful ", "Select a new proof node",
-				userSupport.getInformation());
 
 		userSupport.selectNode(node2);
 
 		assertEquals("Select node 2 again has no effect ", node2, currentPO
 				.getCurrentNode());
-		assertInformation("Select 2 has no effect ", "Not a new proof node",
-				userSupport.getInformation());
 
 		userSupport.applyTactic(Tactics.norm(), monitor);
 
@@ -650,8 +592,6 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current node is node 1 ", node1, currentPO
 				.getCurrentNode());
-		assertInformation("Select 1 is successful ", "Select a new proof node",
-				userSupport.getInformation());
 
 		userSupport.dispose();
 	}
@@ -677,8 +617,6 @@ public class TestUserSupports extends TestPM {
 		IProofTreeNode node2 = currentPO.getCurrentNode();
 		assertTrue("Node 2 is open ", node2.isOpen());
 		assertTrue("Node 2 is a child of node 1 ", node2.getParent() == node1);
-		assertInformation("Appy tactic successfully ",
-				"Select a new proof node", userSupport.getInformation());
 
 		userSupport.dispose();
 	}
@@ -710,8 +648,6 @@ public class TestUserSupports extends TestPM {
 
 		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1,
 				monitor);
-		assertInformation("Appy tactic successfully ",
-				"Select a new proof node", userSupport.getInformation());
 
 		Collection<Predicate> cached = currentPO.getCached();
 		assertTrue("Hypothesis is added to the cache ", cached.contains(hyp1));
@@ -739,8 +675,6 @@ public class TestUserSupports extends TestPM {
 		userSupport.back(monitor);
 		assertEquals("Back to node 1 ", node1, currentPO.getCurrentNode());
 		assertTrue("Node 1 is open again ", node1.isOpen());
-		assertInformation("Backtrack successfully ", "Select a new proof node",
-				userSupport.getInformation());
 
 		userSupport.dispose();
 	}

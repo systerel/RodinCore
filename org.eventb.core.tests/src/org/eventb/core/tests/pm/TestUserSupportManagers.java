@@ -50,10 +50,6 @@ public class TestUserSupportManagers extends TestPM {
 		assertEquals(
 				"The input for first user support has been set correctly ",
 				psFile1, userSupport1.getInput());
-		assertInformation("Select a new PO ", "Select a new proof node\n"
-				+ "Proof Tree is reloaded\n"
-				+ "New current obligation",
-				userSupport1.getInformation());
 
 		IUserSupport userSupport2 = manager.newUserSupport();
 
@@ -74,9 +70,6 @@ public class TestUserSupportManagers extends TestPM {
 		assertEquals(
 				"The input for second user support has been set correctly ",
 				psFile2, userSupport2.getInput());
-		assertInformation("Select a new PO ", "Select a new proof node\n"
-				+ "Proof Tree is reloaded\n" + "New current obligation",
-				userSupport2.getInformation());
 
 		userSupport1.dispose();
 		userSupports = manager.getUserSupports();

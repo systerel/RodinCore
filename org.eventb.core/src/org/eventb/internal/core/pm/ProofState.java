@@ -91,8 +91,6 @@ public class ProofState implements IProofState {
 	 */
 	public void loadProofTree(final IProgressMonitor monitor)
 			throws RodinDBException {
-		userSupport.startInformation();
-
 		EventBPlugin.getDefault().getUserSupportManager().run(new Runnable() {
 
 			public void run() {
@@ -154,9 +152,9 @@ public class ProofState implements IProofState {
 
 				ProofState.this.setCached(new HashSet<Predicate>());
 				ProofState.this.setSearched(new HashSet<Predicate>());
-				userSupport.addInformation("Proof Tree is reloaded",
-						IUserSupportInformation.MAX_PRIORITY);
-				deltaProcessor.informationChanged(userSupport);
+				deltaProcessor.informationChanged(userSupport,
+						new UserSupportInformation("Proof Tree is reloaded",
+								IUserSupportInformation.MAX_PRIORITY));
 			}
 
 		});
@@ -212,7 +210,6 @@ public class ProofState implements IProofState {
 	 */
 	public void setCurrentNode(final IProofTreeNode newNode)
 			throws RodinDBException {
-		userSupport.startInformation();
 		UserSupportManager.getDefault().run(new Runnable() {
 			public void run() {
 				if (current != newNode) {
@@ -220,14 +217,15 @@ public class ProofState implements IProofState {
 					// Fire delta
 					deltaProcessor.setNewCurrentNode(userSupport,
 							ProofState.this);
-					userSupport.addInformation("Select a new proof node",
-							IUserSupportInformation.MIN_PRIORITY);
-
+					deltaProcessor.informationChanged(userSupport,
+							new UserSupportInformation(
+									"Select a new proof node",
+									IUserSupportInformation.MIN_PRIORITY));
 				} else {
-					userSupport.addInformation("Not a new proof node",
-							IUserSupportInformation.MIN_PRIORITY);
+					deltaProcessor.informationChanged(userSupport,
+							new UserSupportInformation("Not a new proof node",
+									IUserSupportInformation.MIN_PRIORITY));
 				}
-				deltaProcessor.informationChanged(userSupport);
 			}
 		});
 
@@ -288,6 +286,10 @@ public class ProofState implements IProofState {
 	public void removeAllFromCached(Collection<Predicate> hyps) {
 		cached.removeAll(hyps);
 		deltaProcessor.cacheChanged(userSupport, this);
+		deltaProcessor.informationChanged(userSupport,
+				new UserSupportInformation(
+						"Removed hypotheses from cache",
+						IUserSupportInformation.MAX_PRIORITY));
 	}
 
 	/*
@@ -307,6 +309,10 @@ public class ProofState implements IProofState {
 	public void removeAllFromSearched(Collection<Predicate> hyps) {
 		searched.removeAll(hyps);
 		deltaProcessor.searchChanged(userSupport, this);
+		deltaProcessor.informationChanged(userSupport,
+				new UserSupportInformation(
+						"Removed hypotheses from search",
+						IUserSupportInformation.MAX_PRIORITY));
 	}
 
 	/*
@@ -523,7 +529,6 @@ public class ProofState implements IProofState {
 
 	public void applyTactic(final ITactic t, final IProofTreeNode node,
 			final IProgressMonitor monitor) throws RodinDBException {
-		userSupport.startInformation();
 		UserSupportManager.getDefault().run(new Runnable() {
 
 			public void run() {
@@ -539,7 +544,6 @@ public class ProofState implements IProofState {
 	public void applyTacticToHypotheses(final ITactic t,
 			final IProofTreeNode node, final Set<Predicate> hyps,
 			final IProgressMonitor monitor) throws RodinDBException {
-		userSupport.startInformation();
 		UserSupportManager.getDefault().run(new Runnable() {
 
 			public void run() {
@@ -580,14 +584,14 @@ public class ProofState implements IProofState {
 					Tactics.postProcessBeginner().apply(node, pm);
 				}
 			}
-			userSupport.addInformation(info,
-					IUserSupportInformation.MAX_PRIORITY);
-			deltaProcessor.informationChanged(userSupport);
+			deltaProcessor.informationChanged(userSupport,
+					new UserSupportInformation(info,
+							IUserSupportInformation.MAX_PRIORITY));
 			return true;
 		} else {
-			userSupport.addInformation(info,
-					IUserSupportInformation.MAX_PRIORITY);
-			deltaProcessor.informationChanged(userSupport);
+			deltaProcessor.informationChanged(userSupport,
+					new UserSupportInformation(info,
+							IUserSupportInformation.MAX_PRIORITY));
 			return false;
 		}
 	}

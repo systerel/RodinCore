@@ -114,10 +114,6 @@ public class TestUserSupportChanges extends TestPM {
 						+ "Current node: null\n"
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
-						+ "** Information **\n"
-						+ "  Select a new proof node (Priority 1)\n"
-						+ "  Proof Tree is reloaded (Priority 2)\n"
-						+ "  New current obligation (Priority 2)\n"
 						+ "********************************************************\n");
 		PSWrapperUtil.removePO(poFile, psFile, prFile, dischargedPO);
 		// Check the status of the User Support here
@@ -127,10 +123,6 @@ public class TestUserSupportChanges extends TestPM {
 				"****** User Support for: x ******\n"
 						+ "** Proof States **\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
-						+ "** Information **\n"
-						+ "  Select a new proof node (Priority 1)\n"
-						+ "  Proof Tree is reloaded (Priority 2)\n"
-						+ "  New current obligation (Priority 2)\n"
 						+ "********************************************************\n");
 	}
 
@@ -164,10 +156,6 @@ public class TestUserSupportChanges extends TestPM {
 						+ "\n"
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
-						+ "** Information **\n"
-						+ "  Select a new proof node (Priority 1)\n"
-						+ "  Proof Tree is reloaded (Priority 2)\n"
-						+ "  New current obligation (Priority 2)\n"
 						+ "********************************************************\n");
 		PSWrapperUtil.removePO(poFile, psFile, prFile, originalPO);
 		// Check the status of the User Support here
@@ -177,10 +165,6 @@ public class TestUserSupportChanges extends TestPM {
 				"****** User Support for: x ******\n"
 						+ "** Proof States **\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
-						+ "** Information **\n"
-						+ "  Select a new proof node (Priority 1)\n"
-						+ "  Proof Tree is reloaded (Priority 2)\n"
-						+ "  New current obligation (Priority 2)\n"
 						+ "********************************************************\n");
 	}
 
@@ -230,10 +214,6 @@ public class TestUserSupportChanges extends TestPM {
 						+ "Current node: null\n"
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
-						+ "** Information **\n"
-						+ "  Select a new proof node (Priority 1)\n"
-						+ "  Proof Tree is reloaded (Priority 2)\n"
-						+ "  New current obligation (Priority 2)\n"
 						+ "********************************************************\n");
 	}
 
@@ -304,9 +284,6 @@ public class TestUserSupportChanges extends TestPM {
 						+ "Current node: null\n"
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
-						+ "** Information **\n"
-						+ "  Select a new proof node (Priority 1)\n"
-						+ "  Proof Tree is reloaded (Priority 2)\n"
 						+ "********************************************************\n");
 	}
 
@@ -363,9 +340,6 @@ public class TestUserSupportChanges extends TestPM {
 						+ "Current node: null\n"
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
-						+ "** Information **\n"
-						+ "  Select a new proof node (Priority 1)\n"
-						+ "  Proof Tree is reloaded (Priority 2)\n"
 						+ "********************************************************\n");
 	}
 
@@ -432,8 +406,6 @@ public class TestUserSupportChanges extends TestPM {
 						+ "Current node: null\n"
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
-						+ "** Information **\n"
-						+ "  Select a new proof node (Priority 1)\n"
 						+ "********************************************************\n");
 	}
 
@@ -510,8 +482,6 @@ public class TestUserSupportChanges extends TestPM {
 				"Current node: null\n" + 
 				"****************************\n" + 
 				"Current psSatus: original PO[org.eventb.core.psStatus]\n" + 
-				"** Information **\n" + 
-				"  Tactic applied successfully (Priority 2)\n" + 
 				"********************************************************\n");
 	}
 

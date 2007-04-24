@@ -17,6 +17,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
@@ -162,7 +163,6 @@ public class DeltaProcessor {
 
 		UserSupportDelta affectedUserSupport = new UserSupportDelta(userSupport);
 		affectedUserSupport.setKind(IUserSupportDelta.REMOVED);
-		
 		// Added to the delta
 		rootDelta.addAffectedUserSupport(affectedUserSupport);
 		
@@ -176,8 +176,12 @@ public class DeltaProcessor {
 
 		UserSupportDelta affectedUserSupport = new UserSupportDelta(userSupport);
 		affectedUserSupport.setKind(IUserSupportDelta.CHANGED);
-		affectedUserSupport.setFlags(IUserSupportDelta.F_CURRENT);
-
+		affectedUserSupport.setFlags(IUserSupportDelta.F_CURRENT
+				| IUserSupportDelta.F_INFORMATION);
+		affectedUserSupport
+				.addInformation(new UserSupportInformation(
+						"New current obligation",
+						IUserSupportInformation.MAX_PRIORITY));
 		// Added to the delta
 		rootDelta.addAffectedUserSupport(affectedUserSupport);
 		
@@ -234,14 +238,15 @@ public class DeltaProcessor {
 		this.fireDeltas();
 	}
 
-	public void informationChanged(IUserSupport userSupport) {
+	public void informationChanged(IUserSupport userSupport, IUserSupportInformation info) {
 		if (rootDelta == null)
 			rootDelta = new UserSupportManagerDelta();
 
 		UserSupportDelta affectedUserSupport = new UserSupportDelta(userSupport);
 		affectedUserSupport.setKind(IUserSupportDelta.CHANGED);
 		affectedUserSupport.setFlags(IUserSupportDelta.F_INFORMATION);
-
+		affectedUserSupport.addInformation(info);
+		
 		// Added to the delta
 		rootDelta.addAffectedUserSupport(affectedUserSupport);
 		

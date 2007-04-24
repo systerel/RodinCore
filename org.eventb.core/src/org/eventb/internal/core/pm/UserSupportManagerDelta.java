@@ -118,9 +118,12 @@ public class UserSupportManagerDelta implements IUserSupportManagerDelta {
 				switch (affectedUserSupport.getKind()) {
 				case IUserSupportDelta.ADDED:
 					// user support was changed then added -> it is added
+					((UserSupportDelta) affectedUserSupport).clearInformation();
+					break;
 				case IUserSupportDelta.REMOVED:
 					// user support was changed then removed -> it is removed
 					affectedUserSupports[existingUserSupportIndex] = affectedUserSupport;
+					((UserSupportDelta) affectedUserSupport).clearInformation();
 					return;
 				case IUserSupportDelta.CHANGED:
 					// user support was changed then changed -> it is changed
@@ -138,10 +141,8 @@ public class UserSupportManagerDelta implements IUserSupportManagerDelta {
 							.setFlags(existingFlags
 									| affectedUserSupport.getFlags());
 					// append information
-					// ((UserSupportDelta)
-					// existingUserSupport).mergeInformation(
-					// existingUserSupport.getInformation(),
-					// affectedUserSupport.getInformation());
+					((UserSupportDelta) existingUserSupport).addInformationAll(
+							affectedUserSupport.getInformation());
 
 					return;
 				}
@@ -154,9 +155,8 @@ public class UserSupportManagerDelta implements IUserSupportManagerDelta {
 				((UserSupportDelta) affectedUserSupport)
 						.setFlags(affectedUserSupport.getFlags() | existingFlags);
 				// append information
-				// ((UserSupportDelta) affectedUserSupport).mergeInformation(
-				// existingUserSupport.getInformation(),
-				// affectedUserSupport.getInformation());
+				((UserSupportDelta) existingUserSupport).addInformationAll(
+						affectedUserSupport.getInformation());
 			}
 		}
 

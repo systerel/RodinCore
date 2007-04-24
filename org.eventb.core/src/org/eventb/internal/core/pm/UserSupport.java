@@ -1,6 +1,5 @@
 package org.eventb.internal.core.pm;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -38,8 +37,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	DeltaProcessor deltaProcessor;
 
-	private Collection<IUserSupportInformation> information;
-
 	IPSWrapper psWrapper; // Unique for an instance of UserSupport
 
 	public UserSupport() {
@@ -64,7 +61,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 		psWrapper = new PSWrapper(psFile);
 
-		// this.psFile = psFile;
 		proofStates = new LinkedHashSet<IProofState>();
 
 		manager.run(new Runnable() {
@@ -96,9 +92,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#dispose()
 	 */
 	public void dispose() {
-		startInformation();
 		RodinCore.removeElementChangedListener(this);
-
 		manager.removeUserSupport(this);
 		deltaProcessor.removeUserSupport(this);
 	}
@@ -114,16 +108,16 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		return null;
 	}
 
-	void startInformation() {
-		information = new ArrayList<IUserSupportInformation>();
-	}
+//	void startInformation() {
+//		information = new ArrayList<IUserSupportInformation>();
+//	}
 
-	void addInformation(Object obj, int priority) {
-		assert (information != null);
-		assert (IUserSupportInformation.MIN_PRIORITY <= priority);
-		assert (priority <= IUserSupportInformation.MAX_PRIORITY);
-		information.add(new UserSupportInformation(obj, priority));
-	}
+//	void addInformation(Object obj, int priority) {
+//		assert (information != null);
+//		assert (IUserSupportInformation.MIN_PRIORITY <= priority);
+//		assert (priority <= IUserSupportInformation.MAX_PRIORITY);
+//		information.add(new UserSupportInformation(obj, priority));
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -133,8 +127,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 */
 	public void nextUndischargedPO(final boolean force,
 			final IProgressMonitor monitor) throws RodinDBException {
-		startInformation();
-
 		boolean found = false;
 		IProofState newProofState = null;
 		IProofState firstOpenedProofState = null;
@@ -172,10 +164,12 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 						setProofState(proofState, monitor);
 					else if (force) {
 						setProofState(null, monitor);
-						addInformation(
-								"No un-discharged proof obligation found",
-								IUserSupportInformation.MIN_PRIORITY);
-						deltaProcessor.informationChanged(UserSupport.this);
+						deltaProcessor
+								.informationChanged(
+										UserSupport.this,
+										new UserSupportInformation(
+												"No un-discharged proof obligation found",
+												IUserSupportInformation.MAX_PRIORITY));
 					}
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
@@ -194,8 +188,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 */
 	public void prevUndischargedPO(final boolean force,
 			final IProgressMonitor monitor) throws RodinDBException {
-		startInformation();
-
 		boolean found = false;
 		IProofState newProofState = null;
 		IProofState lastOpenedProofState = null;
@@ -231,10 +223,12 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 						setProofState(proofState, monitor);
 					else if (force) {
 						setProofState(null, monitor);
-						addInformation(
-								"No un-discharged proof obligation found",
-								IUserSupportInformation.MIN_PRIORITY);
-						deltaProcessor.informationChanged(UserSupport.this);
+						deltaProcessor
+								.informationChanged(
+										UserSupport.this,
+										new UserSupportInformation(
+												"No un-discharged proof obligation found",
+												IUserSupportInformation.MAX_PRIORITY));
 					}
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
@@ -274,20 +268,17 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	void setProofState(final IProofState proofState, final IProgressMonitor monitor)
 			throws RodinDBException {
-		startInformation();
 		if (currentPS == null && proofState == null) {
 			// Try to fire the remaining delta
-			addInformation("No new obligation",
-					IUserSupportInformation.MIN_PRIORITY);
-			deltaProcessor.informationChanged(this);
+			deltaProcessor.informationChanged(this, new UserSupportInformation(
+					"No new obligation", IUserSupportInformation.MIN_PRIORITY));
 			return;
 		}
 
 		if (currentPS != null && currentPS.equals(proofState)) {
 			// Try to fire the remaining delta
-			addInformation("No new obligation",
-					IUserSupportInformation.MIN_PRIORITY);
-			deltaProcessor.informationChanged(this);
+			deltaProcessor.informationChanged(this, new UserSupportInformation(
+					"No new obligation", IUserSupportInformation.MIN_PRIORITY));
 			return;			
 		}
 		
@@ -311,9 +302,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 					}
 				}
 				deltaProcessor.currentProofStateChange(UserSupport.this);
-				addInformation("New current obligation",
-						IUserSupportInformation.MAX_PRIORITY);
-				deltaProcessor.informationChanged(UserSupport.this);
 			}
 
 		});
@@ -360,37 +348,19 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 */
 	@Deprecated
 	public Object[] getInformation() {
-		Object [] result = new Object[information.size()];
-		int i = 0;
-		for (IUserSupportInformation info : information) {
-			result[i] = info.getInformation();
-			++i;
-		}
-		return result;
+		return new Object[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupport#getInformationWithPriority()
-	 */
-	public IUserSupportInformation[] getInformationWithPriority() {
-		return information.toArray(new IUserSupportInformation[information
-				.size()]);
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eventb.core.pm.IUserSupport#removeCachedHypotheses(java.util.Collection)
 	 */
 	public void removeCachedHypotheses(final Collection<Predicate> hyps) {
-		startInformation();
 		manager.run(new Runnable() {
 
 			public void run() {
 				currentPS.removeAllFromCached(hyps);
-				addInformation("Removed hypotheses from cache",
-						IUserSupportInformation.MIN_PRIORITY);
-				deltaProcessor.informationChanged(UserSupport.this);
 			}
 
 		});
@@ -407,14 +377,13 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 		final Set<Predicate> hyps = ProverLib.hypsTextSearch(currentPS
 				.getCurrentNode().getSequent(), token);
-		startInformation();
 		manager.run(new Runnable() {
 
 			public void run() {
 				currentPS.setSearched(hyps);
-				addInformation("Search hypotheses",
-						IUserSupportInformation.MIN_PRIORITY);
-				deltaProcessor.informationChanged(UserSupport.this);
+				deltaProcessor.informationChanged(UserSupport.this,
+						new UserSupportInformation("Search hypotheses",
+								IUserSupportInformation.MAX_PRIORITY));
 			}
 
 		});
@@ -428,14 +397,10 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#removeSearchedHypotheses(java.util.Collection)
 	 */
 	public void removeSearchedHypotheses(final Collection<Predicate> hyps) {
-		startInformation();
 		manager.run(new Runnable() {
 
 			public void run() {
 				currentPS.removeAllFromSearched(hyps);
-				addInformation("Removed hypotheses from search",
-						IUserSupportInformation.MIN_PRIORITY);
-				deltaProcessor.informationChanged(UserSupport.this);
 			}
 
 		});
@@ -633,12 +598,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		buffer.append("Current psSatus: ");
 		buffer.append(currentPS.getPSStatus());
 		buffer.append("\n");
-		buffer.append("** Information **\n");
-		for (IUserSupportInformation info : information) {
-			buffer.append("  " + info.getInformation() + " (Priority "
-					+ info.getPriority() + ")");
-			buffer.append("\n");
-		}
 		buffer.append("********************************************************\n");
 		return buffer.toString();
 	}

@@ -48,6 +48,9 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		startDeltas();
 		userSupport.setInput(psFile, monitor);
 		assertDeltas("Set input ", "[*] x.bps [CURRENT|STATE|INFORMATION]\n"
+				+ "Select a new proof node (priority 1)\n"
+				+ "Proof Tree is reloaded (priority 2)\n"
+				+ "New current obligation (priority 2)\n"
 				+ "  [+] PO1[org.eventb.core.psStatus] []\n"
 				+ "  [+] PO2[org.eventb.core.psStatus] []\n"
 				+ "  [+] PO3[org.eventb.core.psStatus] []\n"
@@ -76,7 +79,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		startDeltas();
 		userSupport.nextUndischargedPO(false, monitor);
-		assertDeltas("Next PO failed ", "[*] x.bps [INFORMATION]");
+		assertDeltas("Next PO failed ", "[*] x.bps [INFORMATION]\n"
+				+ "No new obligation (priority 1)");
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
@@ -85,12 +89,14 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		clearDeltas();
 		userSupport.nextUndischargedPO(false, monitor);
 		assertDeltas("Next PO to the last PO",
-				"[*] x.bps [CURRENT|INFORMATION]");
+				"[*] x.bps [CURRENT|INFORMATION]\n"
+						+ "New current obligation (priority 2)");
 
 		clearDeltas();
 		userSupport.nextUndischargedPO(false, monitor);
 		assertDeltas("Next PO to the first PO",
-				"[*] x.bps [CURRENT|INFORMATION]");
+				"[*] x.bps [CURRENT|INFORMATION]\n"
+						+ "New current obligation (priority 2)");
 		stopDeltas();
 		userSupport.dispose();
 	}
@@ -114,7 +120,9 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		startDeltas();
 		userSupport.nextUndischargedPO(true, monitor);
 
-		assertDeltas("Next PO to null", "[*] x.bps [CURRENT|INFORMATION]");
+		assertDeltas("Next PO to null", "[*] x.bps [CURRENT|INFORMATION]\n"
+				+ "New current obligation (priority 2)\n"
+				+ "No un-discharged proof obligation found (priority 2)");
 
 		// Prune the last PO
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
@@ -125,7 +133,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport.nextUndischargedPO(true, monitor);
 
 		assertDeltas("Next PO to the last PO (no delta) ",
-				"[*] x.bps [INFORMATION]");
+				"[*] x.bps [INFORMATION]\n" + "No new obligation (priority 1)");
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
@@ -133,13 +141,16 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		clearDeltas();
 		userSupport.nextUndischargedPO(true, monitor);
-		assertDeltas("Next PO to the last PO (with delta) ",
-				"[*] x.bps [CURRENT|INFORMATION]");
+		assertDeltas(
+				"Next PO to the last PO (with delta) ",
+				"[*] x.bps [CURRENT|INFORMATION]\n"
+						+ "New current obligation (priority 2)");
 
 		clearDeltas();
 		userSupport.nextUndischargedPO(true, monitor);
 		assertDeltas("Next PO to the first PO ",
-				"[*] x.bps [CURRENT|INFORMATION]");
+				"[*] x.bps [CURRENT|INFORMATION]\n"
+						+ "New current obligation (priority 2)");
 		stopDeltas();
 		userSupport.dispose();
 	}
@@ -161,7 +172,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		startDeltas();
 		userSupport.prevUndischargedPO(false, monitor);
-		assertDeltas("Next PO failed ", "[*] x.bps [INFORMATION]");
+		assertDeltas("Previous PO failed ", "[*] x.bps [INFORMATION]\n"
+				+ "No new obligation (priority 1)");
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
@@ -169,13 +181,15 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		clearDeltas();
 		userSupport.prevUndischargedPO(false, monitor);
-		assertDeltas("Next PO to the last PO",
-				"[*] x.bps [CURRENT|INFORMATION]");
+		assertDeltas("Previous PO to the last PO",
+				"[*] x.bps [CURRENT|INFORMATION]\n"
+						+ "New current obligation (priority 2)");
 
 		clearDeltas();
 		userSupport.prevUndischargedPO(false, monitor);
-		assertDeltas("Next PO to the first PO",
-				"[*] x.bps [CURRENT|INFORMATION]");
+		assertDeltas("Previous PO to the first PO",
+				"[*] x.bps [CURRENT|INFORMATION]\n"
+						+ "New current obligation (priority 2)");
 		stopDeltas();
 		userSupport.dispose();
 	}
@@ -199,7 +213,9 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		startDeltas();
 		userSupport.prevUndischargedPO(true, monitor);
 
-		assertDeltas("Next PO to null", "[*] x.bps [CURRENT|INFORMATION]");
+		assertDeltas("Previous PO to null", "[*] x.bps [CURRENT|INFORMATION]\n"
+				+ "New current obligation (priority 2)\n"
+				+ "No un-discharged proof obligation found (priority 2)");
 
 		// Prune the last PO
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
@@ -210,7 +226,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport.prevUndischargedPO(true, monitor);
 
 		assertDeltas("Next PO to the last PO (no delta) ",
-				"[*] x.bps [INFORMATION]");
+				"[*] x.bps [INFORMATION]\n" + "No new obligation (priority 1)");
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
@@ -219,12 +235,14 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		clearDeltas();
 		userSupport.prevUndischargedPO(true, monitor);
 		assertDeltas("Next PO to the last PO (with delta) ",
-				"[*] x.bps [CURRENT|INFORMATION]");
+				"[*] x.bps [CURRENT|INFORMATION]\n"
+						+ "New current obligation (priority 2)");
 
 		clearDeltas();
 		userSupport.prevUndischargedPO(true, monitor);
 		assertDeltas("Next PO to the first PO ",
-				"[*] x.bps [CURRENT|INFORMATION]");
+				"[*] x.bps [CURRENT|INFORMATION]\n"
+						+ "New current obligation (priority 2)");
 		stopDeltas();
 		userSupport.dispose();
 	}
@@ -247,7 +265,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
 		assertDeltas("No delta if select the same PO ",
-				"[*] x.bps [INFORMATION]");
+				"[*] x.bps [INFORMATION]\n" + "No new obligation (priority 1)");
 
 		// Select first PO
 		startDeltas();
@@ -255,14 +273,18 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas(
 				"Select the first PO ",
 				"[*] x.bps [CURRENT|STATE|INFORMATION]\n"
+						+ "Select a new proof node (priority 1)\n"
+						+ "Proof Tree is reloaded (priority 2)\n"
+						+ "New current obligation (priority 2)\n"
 						+ "  [*] PO1[org.eventb.core.psStatus] [CACHE|SEARCH|NODE|PROOFTREE]");
 
 		// Select the last PO again
 		startDeltas();
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
-		assertDeltas("No delta if select the same PO ",
-				"[*] x.bps [CURRENT|INFORMATION]");
+		assertDeltas("Current PO is the last PO again ",
+				"[*] x.bps [CURRENT|INFORMATION]\n"
+						+ "New current obligation (priority 2)");
 
 		stopDeltas();
 		userSupport.dispose();
@@ -306,12 +328,14 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport.removeCachedHypotheses(hyps1);
 		assertDeltas("First hypothesis has been removed ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Removed hypotheses from cache (priority 2)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [CACHE]");
 
 		clearDeltas();
 		userSupport.removeCachedHypotheses(hyps2);
 		assertDeltas("Second hypothesis has been removed ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Removed hypotheses from cache (priority 2)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [CACHE]");
 
 		stopDeltas();
@@ -334,12 +358,14 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport.searchHyps("=");
 
 		assertDeltas("Search is successful ", "[*] x.bps [STATE|INFORMATION]\n"
+				+ "Search hypotheses (priority 2)\n"
 				+ "  [*] PO7[org.eventb.core.psStatus] [SEARCH]");
 		clearDeltas();
 		userSupport.searchHyps("Empty search");
 
 		assertDeltas("Search is unsuccessful ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Search hypotheses (priority 2)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [SEARCH]");
 		stopDeltas();
 		userSupport.dispose();
@@ -378,12 +404,14 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport.removeSearchedHypotheses(hyps2);
 		assertDeltas("Second hypothesis has been removed ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Removed hypotheses from search (priority 2)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [SEARCH]");
 
 		clearDeltas();
 		userSupport.removeSearchedHypotheses(hyps13);
 		assertDeltas("First and third hypotheses has been removed ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Removed hypotheses from search (priority 2)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [SEARCH]");
 		stopDeltas();
 		userSupport.dispose();
@@ -414,6 +442,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		assertDeltas("Current node is changed for PO7 ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Select a new proof node (priority 1)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [NODE]");
 
 		clearDeltas();
@@ -421,13 +450,15 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		assertDeltas("Current node is changed again for PO7 ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Select a new proof node (priority 1)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [NODE]");
 
 		clearDeltas();
 		userSupport.selectNode(node2);
 
 		assertDeltas("Select the same current node has no effect ",
-				"[*] x.bps [INFORMATION]");
+				"[*] x.bps [INFORMATION]\n"
+						+ "Not a new proof node (priority 1)");
 
 		userSupport.applyTactic(Tactics.norm(), monitor);
 		clearDeltas();
@@ -438,6 +469,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		assertDeltas("Current node is changed again for PO7 ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Select a new proof node (priority 1)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [NODE]");
 
 		stopDeltas();
@@ -461,6 +493,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas(
 				"Apply tactic successful ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Tactic applied successfully (priority 2)\n"
+						+ "Select a new proof node (priority 1)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [NODE|PROOFTREE]");
 		stopDeltas();
 		userSupport.dispose();
@@ -496,6 +530,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas(
 				"Apply tactic successful ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Tactic applied successfully (priority 2)\n"
+						+ "Select a new proof node (priority 1)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [CACHE|NODE|PROOFTREE]");
 
 		stopDeltas();
@@ -522,6 +558,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas(
 				"Apply backtrack successful ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Tactic applied successfully (priority 2)\n"
+						+ "Select a new proof node (priority 1)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [NODE|PROOFTREE]");
 
 		stopDeltas();

@@ -1,10 +1,12 @@
 package org.eventb.internal.core.pm;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.seqprover.IProofTreeDelta;
 
 public class UserSupportDelta implements IUserSupportDelta {
@@ -23,6 +25,8 @@ public class UserSupportDelta implements IUserSupportDelta {
 
 	private IProofStateDelta[] affectedStates = emptyStates;
 
+	private Collection<IUserSupportInformation> information;
+	
 	/**
 	 * Empty array of IProofStateDelta
 	 */
@@ -30,6 +34,7 @@ public class UserSupportDelta implements IUserSupportDelta {
 
 	public UserSupportDelta(IUserSupport userSupport) {
 		this.userSupport = userSupport;
+		information = new ArrayList<IUserSupportInformation>();
 	}
 
 	/*
@@ -262,6 +267,15 @@ public class UserSupportDelta implements IUserSupportDelta {
 		return array;
 	}
 
+	public void addInformation(IUserSupportInformation info) {
+		information.add(info);
+	}
+	
+	void addInformationAll(IUserSupportInformation[] informations) {
+		for (IUserSupportInformation info : informations)
+			information.add(info);
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -280,6 +294,10 @@ public class UserSupportDelta implements IUserSupportDelta {
 		sep = toStringFlag(builder, F_STATE, "STATE", sep);
 		sep = toStringFlag(builder, F_INFORMATION, "INFORMATION", sep);
 		builder.append("]");
+		for (IUserSupportInformation info : information) {
+			builder.append("\n");
+			builder.append(info.toString());
+		}
 		for (IProofStateDelta state : affectedStates) {
 			builder.append("\n");
 			builder.append(state.toString());
@@ -298,6 +316,15 @@ public class UserSupportDelta implements IUserSupportDelta {
 			return true;
 		}
 		return sep;
+	}
+
+	public void clearInformation() {
+		information = new ArrayList<IUserSupportInformation>();
+	}
+
+	public IUserSupportInformation[] getInformation() {
+		return information.toArray(new IUserSupportInformation[information
+				.size()]);
 	}
 
 }

@@ -191,6 +191,8 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		assertDeltas(
 				"Change: PO is loaded and NOT modified ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Select a new proof node (priority 1)\n"
+						+ "Proof Tree is reloaded (priority 2)\n" 
 						+ "  [*] original PO[org.eventb.core.psStatus] [CACHE|SEARCH|NODE|PROOFTREE]");
 		stopDeltas();
 	}
@@ -227,6 +229,8 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		assertDeltas(
 				"Change: PO is modified and discharged automatically in DB ",
 				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Select a new proof node (priority 1)\n"
+						+ "Proof Tree is reloaded (priority 2)\n"
 						+ "  [*] original PO[org.eventb.core.psStatus] [CACHE|SEARCH|NODE|PROOFTREE]");
 		stopDeltas();
 	}
@@ -261,8 +265,11 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		}
 		startDeltas();
 		PSWrapperUtil.copyPO(poFile, psFile, prFile, reusablePO, originalPO);
-		assertDeltas("Change: PO is modified and reusable ", "[*] x.bps [STATE|INFORMATION]\n"
-				+ "  [*] original PO[org.eventb.core.psStatus] [NODE|PROOFTREE]");
+		assertDeltas(
+				"Change: PO is modified and reusable ",
+				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Select a new proof node (priority 1)\n"
+						+ "  [*] original PO[org.eventb.core.psStatus] [NODE|PROOFTREE]");
 		stopDeltas();
 	}
 	
@@ -300,8 +307,11 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		PSWrapperUtil.copyPO(poFile, psFile, prFile, rebuiltPO, originalPO);
 		startDeltas();
 		PSWrapperUtil.copyPO(poFile, psFile, prFile, reusablePO, originalPO);
-		assertDeltas("Change: PO is modified and NOT reusable ", "[*] x.bps [STATE|INFORMATION]\n"
-				+ "  [*] original PO[org.eventb.core.psStatus] [NODE|PROOFTREE]");
+		assertDeltas(
+				"Change: PO is modified and NOT reusable ",
+				"[*] x.bps [STATE|INFORMATION]\n"
+						+ "Select a new proof node (priority 1)\n"
+						+ "  [*] original PO[org.eventb.core.psStatus] [NODE|PROOFTREE]");
 		stopDeltas();
 	}
 }

@@ -1,5 +1,6 @@
 package org.eventb.core.pm;
 
+
 /**
  * @author htson
  *         <p>
@@ -142,5 +143,14 @@ public interface IUserSupportDelta {
 	 * @return deltas for the affected (added, removed or changed) proof states
 	 */
 	public IProofStateDelta[] getAffectedProofStates();
+
+	/**
+	 * Getting the list of information about the changes in user support
+	 * (including the output of the applied tactics, messages about the last
+	 * action in the user support, etc.)
+	 * 
+	 * @return an array of IUserSupportInformation
+	 */
+	public IUserSupportInformation [] getInformation();
 
 }

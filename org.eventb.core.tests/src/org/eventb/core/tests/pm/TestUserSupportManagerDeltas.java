@@ -39,6 +39,9 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 
 		assertDeltas("Set input for the first user support",
 				"[*] x.bps [CURRENT|STATE|INFORMATION]\n"
+						+ "Select a new proof node (priority 1)\n"
+						+ "Proof Tree is reloaded (priority 2)\n"
+						+ "New current obligation (priority 2)\n" 
 						+ "  [+] PO1[org.eventb.core.psStatus] []\n"
 						+ "  [+] PO2[org.eventb.core.psStatus] []\n"
 						+ "  [+] PO3[org.eventb.core.psStatus] []\n"
@@ -57,6 +60,9 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 
 		assertDeltas("Set input for the second user support",
 				"[*] y.bps [CURRENT|STATE|INFORMATION]\n"
+						+ "Select a new proof node (priority 1)\n"
+						+ "Proof Tree is reloaded (priority 2)\n"
+						+ "New current obligation (priority 2)\n" 
 						+ "  [+] PO1[org.eventb.core.psStatus] []\n"
 						+ "  [+] PO2[org.eventb.core.psStatus] []\n"
 						+ "  [+] PO3[org.eventb.core.psStatus] []\n"

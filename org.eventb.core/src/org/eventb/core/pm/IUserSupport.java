@@ -157,6 +157,8 @@ public interface IUserSupport extends IElementChangedListener {
 	 * support, etc.)
 	 * 
 	 * @return a list of objects
+	 * 
+	 * @deprecated Use #IUserSupportDelta.getInformation() instead
 	 */
 	@Deprecated
 	public abstract Object[] getInformation();
