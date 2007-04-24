@@ -884,7 +884,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 					// Set the information if it has been changed.
 					if ((flags | IUserSupportDelta.F_INFORMATION) != 0) {
-						setInformation(userSupport);
+						setInformation(affectedUserSupport.getInformation());
 					}
 
 					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
@@ -948,12 +948,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	}
 
-	void setInformation(final IUserSupport userSupport) {
-		Object[] information = userSupport.getInformation();
-
+	void setInformation(final IUserSupportInformation[] information) {
 		if (ProofControlUtils.DEBUG) {
 			ProofControlUtils.debug("********** MESSAGE *********");
-			for (Object info : information) {
+			for (IUserSupportInformation info : information) {
 				ProofControlUtils.debug(info.toString());
 			}
 			ProofControlUtils.debug("****************************");
@@ -967,12 +965,12 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 		// Trying to print the latest message with highest priority.
 		for (int priority = IUserSupportInformation.MAX_PRIORITY; IUserSupportInformation.MIN_PRIORITY <= priority; --priority) {
-//			for (int i = information.length - 1; 0 <= i; --i) {
-//				if (information[i].getPriority() == priority) {
-//					setFormTextInformation(information[i].getInformation().toString());
-//					return;
-//				}
-//			}
+			for (int i = information.length - 1; 0 <= i; --i) {
+				if (information[i].getPriority() == priority) {
+					setFormTextInformation(information[i].getInformation().toString());
+					return;
+				}
+			}
 		}
 		setFormTextInformation("");
 	}
