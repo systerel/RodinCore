@@ -160,9 +160,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		super();
 		this.userSupport = userSupport;
 		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(this);
-		// byUserSupport = false;
-		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
-				this);
 	}
 
 	/*
@@ -235,9 +232,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					viewer.refresh();
 
 					IProofState currentPO = userSupport.getCurrentPO();
-					if (currentPO != null & currentPO.getCurrentNode() != null)
-						viewer.setSelection(new StructuredSelection(currentPO
-								.getCurrentNode()));
+					if (currentPO != null)
+						selectCurrentNode(currentPO.getCurrentNode());
 				}
 				control.setRedraw(true);
 			}
@@ -516,13 +512,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		return userSupport;
 	}
 
-	/**
-	 * Select the root of the tree viewer.
-	 */
-	public void selectRoot() {
-		this.setSelection(new StructuredSelection(root));
-	}
-
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 		if (ProofTreeUIUtils.DEBUG)
 			ProofTreeUIUtils.debug("Proof Tree UI for "
@@ -569,11 +558,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 							// and expand all.
 							ProofTreeUIPage page = ProofTreeUIPage.this;
 							page.setInput(ps.getProofTree());
-							IProofTreeNode currentNode = ps.getCurrentNode();
-							page.getViewer().expandAll();
-							if (currentNode != null)
-								page.getViewer().setSelection(
-										new StructuredSelection(currentNode));
 						} else {
 							// The new proof state is null, set the input to
 							// empty.
@@ -615,16 +599,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 								if ((psFlags | IProofStateDelta.F_NODE) != 0) {
 									// If the current node has been changed
 									IProofTreeNode node = proofState.getCurrentNode();
-									if (node != null) {
-										// Select the new current node if not null.
-										viewer.setSelection(new StructuredSelection(node),
-												true);
-									}									
-									else {
-										// Set the selection to empty otherwise.
-										viewer.setSelection(new StructuredSelection(),
-												true);
-									}									
+									
+									selectCurrentNode(node);						
 								}
 							}
 						}
@@ -635,6 +611,25 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		});
 	}
 
+	void selectCurrentNode(IProofTreeNode node) {
+		ISelection selection = viewer.getSelection();
+		if (node != null) {
+			// Select the new current node if not null.
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ssel = (IStructuredSelection) selection;
+				if (ssel.isEmpty() || !ssel.getFirstElement().equals(node))
+					viewer.setSelection(new StructuredSelection(node),
+							true);
+			}
+		}									
+		else {
+			// Set the selection to empty otherwise.
+			if (!selection.isEmpty())
+				viewer.setSelection(new StructuredSelection(),
+					true);
+		}					
+	}
+	
 	public Object[] getFilters() {
 		return filters;
 	}
