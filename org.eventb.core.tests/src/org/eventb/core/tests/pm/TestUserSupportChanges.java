@@ -115,9 +115,9 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
 						+ "** Information **\n"
-						+ "  Select a new proof node\n"
-						+ "  Proof Tree is reloaded\n"
-						+ "  Obligation changed\n"
+						+ "  Select a new proof node (Priority 1)\n"
+						+ "  Proof Tree is reloaded (Priority 2)\n"
+						+ "  New current obligation (Priority 2)\n"
 						+ "********************************************************\n");
 		PSWrapperUtil.removePO(poFile, psFile, prFile, dischargedPO);
 		// Check the status of the User Support here
@@ -128,9 +128,9 @@ public class TestUserSupportChanges extends TestPM {
 						+ "** Proof States **\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
 						+ "** Information **\n"
-						+ "  Select a new proof node\n"
-						+ "  Proof Tree is reloaded\n"
-						+ "  Obligation changed\n"
+						+ "  Select a new proof node (Priority 1)\n"
+						+ "  Proof Tree is reloaded (Priority 2)\n"
+						+ "  New current obligation (Priority 2)\n"
 						+ "********************************************************\n");
 	}
 
@@ -165,9 +165,9 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
 						+ "** Information **\n"
-						+ "  Select a new proof node\n"
-						+ "  Proof Tree is reloaded\n"
-						+ "  Obligation changed\n"
+						+ "  Select a new proof node (Priority 1)\n"
+						+ "  Proof Tree is reloaded (Priority 2)\n"
+						+ "  New current obligation (Priority 2)\n"
 						+ "********************************************************\n");
 		PSWrapperUtil.removePO(poFile, psFile, prFile, originalPO);
 		// Check the status of the User Support here
@@ -178,9 +178,9 @@ public class TestUserSupportChanges extends TestPM {
 						+ "** Proof States **\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
 						+ "** Information **\n"
-						+ "  Select a new proof node\n"
-						+ "  Proof Tree is reloaded\n"
-						+ "  Obligation changed\n"
+						+ "  Select a new proof node (Priority 1)\n"
+						+ "  Proof Tree is reloaded (Priority 2)\n"
+						+ "  New current obligation (Priority 2)\n"
 						+ "********************************************************\n");
 	}
 
@@ -231,9 +231,9 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
 						+ "** Information **\n"
-						+ "  Select a new proof node\n"
-						+ "  Proof Tree is reloaded\n"
-						+ "  Obligation changed\n"
+						+ "  Select a new proof node (Priority 1)\n"
+						+ "  Proof Tree is reloaded (Priority 2)\n"
+						+ "  New current obligation (Priority 2)\n"
 						+ "********************************************************\n");
 	}
 
@@ -305,8 +305,8 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
 						+ "** Information **\n"
-						+ "  Select a new proof node\n"
-						+ "  Proof Tree is reloaded\n"
+						+ "  Select a new proof node (Priority 1)\n"
+						+ "  Proof Tree is reloaded (Priority 2)\n"
 						+ "********************************************************\n");
 	}
 
@@ -364,8 +364,8 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
 						+ "** Information **\n"
-						+ "  Select a new proof node\n"
-						+ "  Proof Tree is reloaded\n"
+						+ "  Select a new proof node (Priority 1)\n"
+						+ "  Proof Tree is reloaded (Priority 2)\n"
 						+ "********************************************************\n");
 	}
 
@@ -433,7 +433,7 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
 						+ "** Information **\n"
-						+ "  Select a new proof node\n"
+						+ "  Select a new proof node (Priority 1)\n"
 						+ "********************************************************\n");
 	}
 
@@ -511,7 +511,7 @@ public class TestUserSupportChanges extends TestPM {
 				"****************************\n" + 
 				"Current psSatus: original PO[org.eventb.core.psStatus]\n" + 
 				"** Information **\n" + 
-				"  Tactic applied successfully\n" + 
+				"  Tactic applied successfully (Priority 2)\n" + 
 				"********************************************************\n");
 	}
 

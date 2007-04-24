@@ -69,7 +69,7 @@ public class TestUserSupports extends TestPM {
 		assertEquals("Current PO is the last PO", states[states.length - 1],
 				userSupport.getCurrentPO());
 		assertInformation("Select a new PO ", "Select a new proof node\n"
-				+ "Proof Tree is reloaded\n" + "Obligation changed",
+				+ "Proof Tree is reloaded\n" + "New current obligation",
 				userSupport.getInformation());
 		userSupport.dispose();
 	}
@@ -129,14 +129,14 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the last PO",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("Select new PO (last PO) ", "Obligation changed",
+		assertInformation("Select new PO (last PO) ", "New current obligation",
 				userSupport.getInformation());
 
 		userSupport.nextUndischargedPO(false, monitor);
 
 		assertEquals("Current Proof State is now the first PO", states[0],
 				userSupport.getCurrentPO());
-		assertInformation("Select new PO (first PO) ", "Obligation changed",
+		assertInformation("Select new PO (first PO) ", "New current obligation",
 				userSupport.getInformation());
 
 		userSupport.dispose();
@@ -163,7 +163,7 @@ public class TestUserSupports extends TestPM {
 		userSupport.nextUndischargedPO(true, monitor);
 
 		assertNull("Current PO is null", userSupport.getCurrentPO());
-		assertInformation("No undischarged PO ", "Obligation changed\n"
+		assertInformation("No undischarged PO ", "New current obligation\n"
 				+ "No un-discharged proof obligation found", userSupport
 				.getInformation());
 
@@ -187,14 +187,14 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the last PO",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("Select new PO (last PO) ", "Obligation changed",
+		assertInformation("Select new PO (last PO) ", "New current obligation",
 				userSupport.getInformation());
 
 		userSupport.nextUndischargedPO(true, monitor);
 
 		assertEquals("Current Proof State is now the first PO", userSupport
 				.getCurrentPO(), states[0]);
-		assertInformation("Select new PO (first PO) ", "Obligation changed",
+		assertInformation("Select new PO (first PO) ", "New current obligation",
 				userSupport.getInformation());
 
 		userSupport.dispose();
@@ -229,14 +229,14 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the last PO",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("Select new PO (last PO) ", "Obligation changed",
+		assertInformation("Select new PO (last PO) ", "New current obligation",
 				userSupport.getInformation());
 
 		userSupport.prevUndischargedPO(false, monitor);
 
 		assertEquals("Current Proof State is now the first PO", states[0],
 				userSupport.getCurrentPO());
-		assertInformation("Select new PO (first PO) ", "Obligation changed",
+		assertInformation("Select new PO (first PO) ", "New current obligation",
 				userSupport.getInformation());
 
 		userSupport.dispose();
@@ -264,7 +264,7 @@ public class TestUserSupports extends TestPM {
 		userSupport.prevUndischargedPO(true, monitor);
 
 		assertNull("Current PO is null", userSupport.getCurrentPO());
-		assertInformation("No undischarged PO ", "Obligation changed\n"
+		assertInformation("No undischarged PO ", "New current obligation\n"
 				+ "No un-discharged proof obligation found", userSupport
 				.getInformation());
 
@@ -292,14 +292,14 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the last PO",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("Select new PO (last PO) ", "Obligation changed",
+		assertInformation("Select new PO (last PO) ", "New current obligation",
 				userSupport.getInformation());
 
 		userSupport.prevUndischargedPO(true, monitor);
 
 		assertEquals("Current Proof State is now the first PO", userSupport
 				.getCurrentPO(), states[0]);
-		assertInformation("Select new PO (first PO) ", "Obligation changed",
+		assertInformation("Select new PO (first PO) ", "New current obligation",
 				userSupport.getInformation());
 
 		userSupport.dispose();
@@ -328,7 +328,7 @@ public class TestUserSupports extends TestPM {
 		assertEquals("Current PO is the first PO ", states[0], userSupport
 				.getCurrentPO());
 		assertInformation("Select first PO ", "Select a new proof node\n"
-				+ "Proof Tree is reloaded\n" + "Obligation changed",
+				+ "Proof Tree is reloaded\n" + "New current obligation",
 				userSupport.getInformation());
 
 		// Select the last PO again
@@ -337,7 +337,7 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current PO is the last PO again ",
 				states[states.length - 1], userSupport.getCurrentPO());
-		assertInformation("Select last PO ", "Obligation changed", userSupport
+		assertInformation("Select last PO ", "New current obligation", userSupport
 				.getInformation());
 
 		userSupport.dispose();
