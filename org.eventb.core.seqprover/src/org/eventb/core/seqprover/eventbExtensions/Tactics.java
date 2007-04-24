@@ -533,11 +533,16 @@ public class Tactics {
 				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
 					if (Lib.isEq(shyp)){
 						if (Lib.isFreeIdent(Lib.eqLeft(shyp)) &&
-								! Arrays.asList(Lib.eqRight(shyp).getFreeIdentifiers()).contains(Lib.eqLeft(shyp)))
-						return eqE(shyp).apply(ptNode, pm);
+								! Arrays.asList(Lib.eqRight(shyp).getFreeIdentifiers()).contains(Lib.eqLeft(shyp))){
+							// Try eq and return only if the tactic actually did something.
+							if (eqE(shyp).apply(ptNode, pm) == null) return null;
+						}
+						
 						if (Lib.isFreeIdent(Lib.eqRight(shyp)) &&
-								! Arrays.asList(Lib.eqLeft(shyp).getFreeIdentifiers()).contains(Lib.eqRight(shyp)))
-							return he(shyp).apply(ptNode, pm);
+								! Arrays.asList(Lib.eqLeft(shyp).getFreeIdentifiers()).contains(Lib.eqRight(shyp))){
+							// Try he and return only if the tactic actually did something.
+							if (he(shyp).apply(ptNode, pm) == null) return null;
+						}
 					}
 					
 				}
