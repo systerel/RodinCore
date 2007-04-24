@@ -144,6 +144,10 @@ public abstract class Expression extends Formula<Expression> {
 		if (isTypeChecked()) {
 			return true;
 		}
+		if (type == null) {
+			// Shared node, already solved (and failed).
+			return false;
+		}
 		Type inferredType = unifier.solve(type);
 		type = null;
 		boolean success = inferredType != null && inferredType.isSolved();

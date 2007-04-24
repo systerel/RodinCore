@@ -146,6 +146,10 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		if (isTypeChecked()) {
 			return true;
 		}
+		if (type == null) {
+			// Shared node, already solved (and failed).
+			return false;
+		}
 		Type inferredType = unifier.solve(type);
 		type = null;
 		if (inferredType != null && inferredType.isSolved()) {
