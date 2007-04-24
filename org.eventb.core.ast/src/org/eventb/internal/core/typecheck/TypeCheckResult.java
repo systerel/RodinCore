@@ -268,5 +268,22 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		}
 		addProblem(problem);
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		str.append("{ problems = {");
+		str.append(super.toString());
+		str.append("}");
+		for (final TypeVariable v: typeVariables) {
+			str.append("\n  ");
+			str.append(v.toString());
+			str.append("=");
+			final Type val = v.getValue();
+			str.append(val == null ? "?" : val);
+		}
+		str.append("}");
+		return str.toString();
+	}
 
 }
