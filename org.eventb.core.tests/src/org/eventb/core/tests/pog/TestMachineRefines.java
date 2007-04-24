@@ -1014,5 +1014,49 @@ public class TestMachineRefines extends EventBPOTest {
 		sequentHasHypotheses(sequent, environment, "x∈ℤ", "y∈ℤ", "z∈ℤ", "y≤x");
 		sequentHasGoal(sequent, environment, "z≤y");
 	}
+	
+	/*
+	 * Check if types of local variables of abstract event are added to type environment
+	 */
+	public void testRefines_20() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "x", "y");
+		addInvariants(abs, makeSList("I", "J"), makeSList("x∈ℤ", "y∈ℤ"));
+		addEvent(abs, "evt", 
+				makeSList("a", "b"), 
+				makeSList("G", "H"), makeSList("a ∈ ℕ", "b ∈ {a}"), 
+				makeSList("A"), makeSList("x,y ≔ a,b"));
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "x", "y");
+	
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList("c"), 
+				makeSList("GG"), makeSList("c ∈ ℕ"), 
+				makeSList("B"), makeSList("x,y ≔ c,c"));
+		addEventRefines(evt, "evt");
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		environment.addName("y", intType);
+		environment.addName("a", intType);
+		environment.addName("b", intType);
+		environment.addName("c", intType);
+
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "x", "y");
+		
+		IPOSequent 
+		sequent = getSequent(po, "evt/A/SIM");
+		sequentHasIdentifiers(sequent, "x'", "y'", "a", "b", "c");
+		sequentHasGoal(sequent, environment, "c=a ∧ c=b");
+	}
 
 }

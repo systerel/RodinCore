@@ -144,6 +144,8 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 			ISCGuard[] concreteGuards, 
 			IPOGStateRepository repository) throws CoreException {
 		
+		fetchVariables(concreteEvent.getSCVariables());
+		
 		IConcreteEventGuardTable concreteEventGuardTable = 
 			fetchConcreteGuards(concreteGuards, repository);
 		
@@ -153,6 +155,8 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 			new ArrayList<IAbstractEventGuardTable>(abstractEvents.length);
 		
 		for (ISCEvent abstractEvent : abstractEvents) {
+			
+			fetchVariables(abstractEvent.getSCVariables());
 		
 			IAbstractEventGuardTable abstractEventGuardTable = 
 				new AbstractEventGuardTable(
@@ -222,8 +226,6 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 		
 		setEventHypothesisManager(
 				machineHypothesisManager, concreteEvent, guards, repository, monitor);
-		
-		fetchVariables(concreteEvent.getSCVariables());
 		
 		fetchGuards(
 				concreteEvent,
