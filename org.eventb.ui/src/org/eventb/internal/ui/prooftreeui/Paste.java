@@ -3,9 +3,11 @@ package org.eventb.internal.ui.prooftreeui;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
@@ -16,8 +18,10 @@ public class Paste implements IObjectActionDelegate {
 
 	private ISelection selection;
 	
-	private ProofTreeUI proofTreeUI;
+	private IUserSupport userSupport = null;
 	
+	private Shell shell = null;
+
 	/**
 	 * Constructor.
 	 */
@@ -29,14 +33,18 @@ public class Paste implements IObjectActionDelegate {
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		assert targetPart instanceof ProofTreeUI;
-		this.proofTreeUI = (ProofTreeUI) targetPart;
+		if (targetPart instanceof ProofTreeUI) {
+			this.userSupport = ((ProofTreeUIPage) ((ProofTreeUI) targetPart)
+					.getCurrentPage()).getUserSupport();
+			this.shell = targetPart.getSite().getShell();
+		}
 	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
+		assert userSupport != null;
 		assert selection instanceof IStructuredSelection;
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		assert ssel.size() == 1;
@@ -45,9 +53,7 @@ public class Paste implements IObjectActionDelegate {
 
 		final IProofSkeleton copyNode = (IProofSkeleton) ProofTreeUI.buffer;
 		ITactic pasteTactic = BasicTactics.rebuildTac(copyNode);
-		ProverUIUtils.applyTacticWithProgress(proofTreeUI.getCurrentPage()
-				.getControl().getShell(), ((ProofTreeUIPage) proofTreeUI
-				.getCurrentPage()).getUserSupport(), pasteTactic);
+		ProverUIUtils.applyTacticWithProgress(shell, userSupport, pasteTactic);
 		if (ProofTreeUIUtils.DEBUG)
 			ProofTreeUIUtils.debug("Paste: " + copyNode);
 	}
@@ -56,6 +62,10 @@ public class Paste implements IObjectActionDelegate {
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection sel) {
+		if (userSupport == null) {
+			action.setEnabled(false);
+			return;
+		}
 		this.selection = sel;
 		assert selection instanceof IStructuredSelection;
 		IStructuredSelection ssel = (IStructuredSelection) selection;

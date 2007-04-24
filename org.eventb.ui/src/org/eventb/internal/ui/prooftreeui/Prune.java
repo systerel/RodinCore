@@ -7,6 +7,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.rodinp.core.RodinDBException;
@@ -15,7 +16,7 @@ public class Prune implements IObjectActionDelegate {
 
 	private ISelection selection;
 	
-	private ProofTreeUI proofTreeUI;
+	private IUserSupport userSupport = null;
 	
 	/**
 	 * Constructor.
@@ -28,22 +29,24 @@ public class Prune implements IObjectActionDelegate {
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		assert targetPart instanceof ProofTreeUI;
-		this.proofTreeUI = (ProofTreeUI) targetPart;
+		if (targetPart instanceof ProofTreeUI) {
+			this.userSupport = ((ProofTreeUIPage) ((ProofTreeUI) targetPart)
+					.getCurrentPage()).getUserSupport();
+		}
 	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
+		assert userSupport != null;
 		assert selection instanceof IStructuredSelection;
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		assert (ssel.size() == 1);
 		assert (ssel.getFirstElement() instanceof IProofTreeNode);
 
 		try {
-			((ProofTreeUIPage) proofTreeUI.getCurrentPage()).getUserSupport()
-					.applyTactic(Tactics.prune(), new NullProgressMonitor());
+			userSupport.applyTactic(Tactics.prune(), new NullProgressMonitor());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,6 +57,10 @@ public class Prune implements IObjectActionDelegate {
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection sel) {
+		if (userSupport == null) {
+			action.setEnabled(false);
+			return;
+		}
 		this.selection = sel;
 		assert selection instanceof IStructuredSelection;
 		IStructuredSelection ssel = (IStructuredSelection) selection;
