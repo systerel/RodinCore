@@ -74,6 +74,7 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IProvingMode;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
@@ -959,10 +960,21 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		}
 
 		int size = information.length;
-		if (size != 0)
-			setFormTextInformation(information[size - 1].toString());
-		else
+		if (size == 0) {
 			setFormTextInformation("");
+			return;
+		}
+
+		// Trying to print the latest message with highest priority.
+		for (int priority = IUserSupportInformation.MAX_PRIORITY; IUserSupportInformation.MIN_PRIORITY <= priority; --priority) {
+//			for (int i = information.length - 1; 0 <= i; --i) {
+//				if (information[i].getPriority() == priority) {
+//					setFormTextInformation(information[i].getInformation().toString());
+//					return;
+//				}
+//			}
+		}
+		setFormTextInformation("");
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
