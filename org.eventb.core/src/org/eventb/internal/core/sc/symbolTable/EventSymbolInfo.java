@@ -40,7 +40,7 @@ public class EventSymbolInfo extends LabelSymbolInfo implements IEventSymbolInfo
 	}
 
 	public IEventRefinesInfo getRefinesInfo() {
-		return hasError() ? null : refinesInfo;
+		return refinesInfo;
 	}
 
 	public boolean isInherited() {

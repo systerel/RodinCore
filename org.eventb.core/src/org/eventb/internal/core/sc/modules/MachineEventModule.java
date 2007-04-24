@@ -146,6 +146,16 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 								GraphProblem.EventInheritedMergeSplitError, 
 								abstractEventLabel);
 						eventSymbolInfo.setError();
+						issueErrorMarkers(
+								mergeSymbolInfos, 
+								abstractEventWrapper, 
+								GraphProblem.EventInheritedMergeSplitError, 
+								abstractEventLabel);
+						issueErrorMarkers(
+								splitSymbolInfos, 
+								abstractEventWrapper, 
+								GraphProblem.EventInheritedMergeSplitError, 
+								abstractEventLabel);
 					}
 			}
 			

@@ -49,7 +49,9 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.tests.EventBTest;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
 
@@ -393,6 +395,50 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain markers", markers.length != 0);
 		else
 			assertEquals("should not contain markers", 0, markers.length);
+	}
+	
+	public void hasMarker(IRodinElement element) throws Exception {
+		hasMarker(element, null);
+	}
+
+//	public void hasMarker(IRodinElement element, IRodinProblem problem) throws Exception {
+//		IRodinFile file = (IRodinFile) element.getOpenable();
+//		IMarker[] markers = 
+//			file.getResource().findMarkers(
+//					RodinMarkerUtil.RODIN_PROBLEM_MARKER, 
+//					true, 
+//					IResource.DEPTH_INFINITE);
+//		for (IMarker marker : markers) {
+//			IRodinElement elem = RodinMarkerUtil.getElement(marker);
+//			if (elem != null && elem.equals(element))
+//				if (problem == null || problem.getErrorCode().equals(RodinMarkerUtil.getErrorCode(marker)))
+//					return;
+//		}
+//		fail("problem marker missing from element");
+//	}
+
+	public void hasMarker(IRodinElement element, IRodinProblem problem, String... args) throws Exception {
+		IRodinFile file = (IRodinFile) element.getOpenable();
+		IMarker[] markers = 
+			file.getResource().findMarkers(
+					RodinMarkerUtil.RODIN_PROBLEM_MARKER, 
+					true, 
+					IResource.DEPTH_INFINITE);
+		for (IMarker marker : markers) {
+			IRodinElement elem = RodinMarkerUtil.getElement(marker);
+			if (elem != null && elem.equals(element))
+				if (problem == null)
+					return;
+				else if (problem.getErrorCode().equals(RodinMarkerUtil.getErrorCode(marker))) {
+					String[] pargs = RodinMarkerUtil.getArguments(marker);
+					assertEquals(args.length, pargs.length);
+					for (int i=0; i<args.length; i++) {
+						assertEquals(args[i], pargs[i]);
+					}
+					return;
+				}
+		}
+		fail("problem marker missing from element");
 	}
 
 	public void refinesEvents(ISCEvent event, String... strings) throws RodinDBException {
