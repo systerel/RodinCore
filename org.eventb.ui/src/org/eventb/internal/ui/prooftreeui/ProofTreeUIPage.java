@@ -314,7 +314,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				groupActionSet.normAction.run();
+				// Do nothing
 			}
 		});
 	}
