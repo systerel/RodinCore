@@ -90,7 +90,7 @@ public abstract class HypothesisReasoner implements IReasoner {
 			}
 		}
 		
-		final Predicate goal = seq.goal();
+		
 		final String display = getDisplay(pred);
 		final IAntecedent[] antecedents; 
 		try {
@@ -98,6 +98,15 @@ public abstract class HypothesisReasoner implements IReasoner {
 		} catch (IllegalArgumentException e) {
 			return new ReasonerFailure(this, input, e.getMessage());
 		}
+		
+		final Predicate goal;
+		if (isGoalDependent(seq, pred)){
+			goal = seq.goal();
+		} else
+		{
+			goal = null;
+		}
+		
 		return ProverFactory.makeProofRule(this, input, goal, hyp, display,
 				antecedents);
 	}
