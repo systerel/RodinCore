@@ -1224,6 +1224,10 @@
             class="org.eventb.internal.ui.preferences.PreferencePage"
             id="org.eventb.ui.preferences.eventBCategory"
             name="%preferencePage.eventBCategory.name"/>
+      <page
+            class="org.eventb.internal.ui.preferences.SeqProverPreferencePage"
+            id="org.eventb.ui.preferences.seqProver"
+            name="%preferencePage.seqProverPage.name"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
