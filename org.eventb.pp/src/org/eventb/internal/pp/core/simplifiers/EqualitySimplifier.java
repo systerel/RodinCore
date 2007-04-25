@@ -1,6 +1,5 @@
 package org.eventb.internal.pp.core.simplifiers;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class EqualitySimplifier implements ISimplifier {
 		equalities = clause.getEqualityLiterals();
 		predicates = clause.getPredicateLiterals();
 		arithmetic = clause.getArithmeticLiterals();
-		conditions = new ArrayList<IEquality>();
+		conditions = clause.getConditions();
 	}
 	
 	public IClause simplifyDisjunctiveClause(PPDisjClause clause) {
@@ -41,7 +40,11 @@ public class EqualitySimplifier implements ISimplifier {
 		if (!ok) {
 			return null;
 		}
-		IClause result = new PPDisjClause(clause.getLevel(),predicates,equalities,arithmetic);
+		ok = simplifyEquality(conditions);
+		if (!ok) {
+			return null;
+		}
+		IClause result = new PPDisjClause(clause.getLevel(),predicates,equalities,arithmetic,conditions);
 		result.setOrigin(clause.getOrigin());
 		return result;
 	}
@@ -93,6 +96,6 @@ public class EqualitySimplifier implements ISimplifier {
 	}
 
 	public boolean canSimplify(IClause clause) {
-		return clause.getEqualityLiterals().size() > 0;
+		return clause.getEqualityLiterals().size() > 0 || clause.getConditions().size() > 0;
 	}
 }

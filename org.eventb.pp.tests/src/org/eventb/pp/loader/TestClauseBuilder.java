@@ -1283,6 +1283,12 @@ public class TestClauseBuilder extends TestCase {
 		return result;
 	}
 	
+	public void testEquivalence() {
+		for (TestPair test : equiClauses) {
+			doTest(test.predicate, test.unitClauses, test.clauses, false);	
+		}
+	}
+	
 	public void testLocalVariable() {
 		for (TestPair test : testVariableTable) {
 			doTest(test.predicate, test.unitClauses, test.clauses, false);
@@ -1304,12 +1310,6 @@ public class TestClauseBuilder extends TestCase {
 	public void testComplex() {
 		for (TestPair test : tests3) {
 			doTest(test.predicate, test.unitClauses, test.clauses, false);
-		}
-	}
-	
-	public void testEquivalence() {
-		for (TestPair test : equiClauses) {
-			doTest(test.predicate, test.unitClauses, test.clauses, false);	
 		}
 	}
 	

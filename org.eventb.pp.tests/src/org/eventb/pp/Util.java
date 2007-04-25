@@ -23,6 +23,7 @@ import org.eventb.internal.pp.core.elements.IEquality;
 import org.eventb.internal.pp.core.elements.ILiteral;
 import org.eventb.internal.pp.core.elements.IPredicate;
 import org.eventb.internal.pp.core.elements.PPArithmetic;
+import org.eventb.internal.pp.core.elements.PPDisjClause;
 import org.eventb.internal.pp.core.elements.PPEqClause;
 import org.eventb.internal.pp.core.elements.PPEquality;
 import org.eventb.internal.pp.core.elements.PPPredicate;
@@ -256,6 +257,18 @@ public class Util {
 		IClause clause = ClauseFactory.getDefault().newDisjClause(level, mList(literals));
 		clause.setOrigin(new DummyOrigin());
 		return clause;
+	}
+	
+	public static AbstractPPClause cClause(List<ILiteral> literals, IEquality... conditions) {
+		List<IPredicate> predicates = new ArrayList<IPredicate>();
+		List<IEquality> equalities = new ArrayList<IEquality>();
+		List<IArithmetic> arithmetic = new ArrayList<IArithmetic>();
+		for (ILiteral literal : literals) {
+			if (literal instanceof IPredicate) predicates.add((IPredicate)literal);
+			else if (literal instanceof IEquality) equalities.add((IEquality)literal);
+			else if (literal instanceof IArithmetic) arithmetic.add((IArithmetic)literal);
+		}
+		return new PPDisjClause(Level.base,predicates,equalities,arithmetic,(List)mList(conditions));
 	}
 	
 	public static IClause cEqClause(ILiteral... literals) {

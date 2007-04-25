@@ -26,7 +26,7 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
  * @author François Terrier
  *
  */
-public class ArithmeticLiteral extends AbstractSingleFormula<ArithmeticDescriptor> implements ISubFormula<ArithmeticDescriptor> {
+public class ArithmeticLiteral extends AbstractSingleFormula<ArithmeticDescriptor> {
 
 	public enum Type {LESS_EQUAL, LESS, EQUAL};
 	
@@ -58,6 +58,10 @@ public class ArithmeticLiteral extends AbstractSingleFormula<ArithmeticDescripto
 		else {
 			return new PPArithmetic(left,right,type == Type.LESS?AType.LESS:AType.LESS_EQUAL);
 		}
+	}
+
+	public boolean hasEquivalenceFirst() {
+		return false;
 	}
 
 }

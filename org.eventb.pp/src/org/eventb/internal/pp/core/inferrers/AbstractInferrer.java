@@ -35,18 +35,17 @@ public abstract class AbstractInferrer implements IInferrer {
 		equalities = getListCopy(clause.getEqualityLiterals(),map,context);
 		predicates = getListCopy(clause.getPredicateLiterals(),map,context);
 		arithmetic = getListCopy(clause.getArithmeticLiterals(),map,context);
+		conditions = getListCopy(clause.getConditions(),map,context);
 	}
 	
 	protected void init(PPDisjClause clause) {
 		substitutionsMap = new HashMap<AbstractVariable, AbstractVariable>();
 		init(clause,substitutionsMap);
-		conditions = new ArrayList<IEquality>();
 	}
 	
 	protected void init(PPEqClause clause) {
 		substitutionsMap = new HashMap<AbstractVariable, AbstractVariable>();
 		init(clause,substitutionsMap);
-		conditions = getListCopy(clause.getConditions(),substitutionsMap,context);
 	}
 	
 	protected <T extends ILiteral<T>> List<T> getListCopy(List<T> list,

@@ -15,8 +15,7 @@ import org.eventb.internal.pp.loader.formula.descriptor.EquivalenceClauseDescrip
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 
-public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescriptor> implements
-		ISubFormula<EquivalenceClauseDescriptor>, ILabelizableFormula<EquivalenceClauseDescriptor> {
+public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescriptor> {
 	
 	public EquivalenceClause(List<ISignedFormula> children,
 			List<TermSignature> terms, EquivalenceClauseDescriptor descriptor) {
@@ -25,15 +24,15 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 
 	public List<List<ILiteral>> getDefinitionClauses(List<TermSignature> termList,
 			LabelManager manager, List<List<ILiteral>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
-		flags.isEquivalence = true;
-		flags.isQuantified = false;
+//		flags.isEquivalence = true;
+//		flags.isQuantified = false;
 		List<List<ILiteral>> result = new ArrayList<List<ILiteral>>();
 		int start = 0;
 		if (flags.isPositive) {
 			for (ISignedFormula child : children) {
 				List<TermSignature> subIndex = termList.subList(start, start + child.getIndexSize());
-				prefix = child.getClauses(subIndex, manager, prefix, flags, table, bool);
-				manager.setForceLabelize(false);
+				prefix = child.getClauses(subIndex, manager, prefix, table, flags, bool);
+//				manager.setForceLabelize(false);
 				start += child.getIndexSize();
 			}
 			result = prefix;
@@ -43,8 +42,8 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 			for (ISignedFormula child : children) {
 				if (!first) flags.isPositive = true;
 				List<TermSignature> subIndex = termList.subList(start, start + child.getIndexSize());
-				prefix = child.getClauses(subIndex, manager, prefix, flags, table, bool);
-				manager.setForceLabelize(false);
+				prefix = child.getClauses(subIndex, manager, prefix, table, flags, bool);
+//				manager.setForceLabelize(false);
 				start += child.getIndexSize();
 				first = false;
 			}
@@ -68,6 +67,10 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 	@Override
 	protected EquivalenceClauseDescriptor getNewDescriptor(List<IIntermediateResult> result, int index) {
 		return new EquivalenceClauseDescriptor(descriptor.getContext(), result, index);
+	}
+
+	public boolean hasEquivalenceFirst() {
+		return true;
 	}
 
 }

@@ -26,14 +26,16 @@ public abstract class AbstractLabelizableFormula<T extends LiteralDescriptor> ex
 			ClauseFactory factory, boolean positive1, boolean positive2, 
 			BooleanEqualityTable bool, VariableTable variableTable) {
 		variableTable.reset();
-		TermVisitorContext context = new TermVisitorContext();
+		TermVisitorContext context = new TermVisitorContext(hasEquivalenceFirst());
 		// positive part of label
-		manager.setForceLabelize(false);
+//		manager.setForceLabelize(false);
 		
 		context.isPositive = positive1;
-		List<List<ILiteral>> positiveLiterals = getDefinitionClauses(manager, context, variableTable, bool);
+		TermVisitorContext newContext = getNewContext(context);
+		List<List<ILiteral>> positiveLiterals = getDefinitionClauses(manager, newContext, variableTable, bool);
 		context.isPositive = positive2;
-		ILiteral posLiteral = getLiteral(descriptor.getUnifiedResults(), context, variableTable, bool);
+		newContext = getNewContext(context);
+		ILiteral posLiteral = getLiteral(descriptor.getUnifiedResults(), newContext, variableTable, bool);
 		for (List<ILiteral> positiveClause : positiveLiterals) {
 			positiveClause.add(0, posLiteral);
 			IClause clause;
@@ -57,30 +59,32 @@ public abstract class AbstractLabelizableFormula<T extends LiteralDescriptor> ex
 	
 	protected abstract boolean isLabelizable(LabelManager manager, TermVisitorContext context);
 	
-	public List<List<ILiteral>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
+	public List<List<ILiteral>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral>> prefix, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
 		ClauseBuilder.debugEnter(this);
 		List<List<ILiteral>> result;
-		if (isLabelizable(manager, flags)) {
+		if (isLabelizable(manager, context)) {
 			ClauseBuilder.debug(this + " cannot be simplified");
 			
 			if (isEquivalence()) manager.addEquivalenceLabel(this);
-//			else if (prefix.size()==1 && prefix.get(0).size()==0) {
-//				// unit clause
-//				manager.addLabel(this, flags.isPositive);
-//			}
+			// if it is used only once, we labelize only one
+			// TODO optimize more, if used several times, but only positively or negatively
+			if (!context.isEquivalence && /* context.isQuantified && !context.isForall && */ descriptor.getResults().size() == 1) {
+				manager.addLabel(this, context.isPositive);
+			}
 			else {
 				manager.addLabel(this, true);
 				manager.addLabel(this, false);
 			}
 				
 			for (List<ILiteral> list : prefix) {
-				list.add(getLiteral(termList, flags, table, bool));
+				list.add(getLiteral(termList, context, table, bool));
 			}
 			result = prefix;
 		}
 		else {
+			TermVisitorContext newContext = getNewContext(context);
 			ClauseBuilder.debug(this + " can be simplified");
-			result = getDefinitionClauses(termList, manager, prefix, flags, table, bool);
+			result = getDefinitionClauses(termList, manager, prefix, newContext, table, bool);
 		}
 		ClauseBuilder.debugExit(this);
 		return result;

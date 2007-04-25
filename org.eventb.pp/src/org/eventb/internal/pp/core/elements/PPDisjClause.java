@@ -1,10 +1,8 @@
 package org.eventb.internal.pp.core.elements;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
 import org.eventb.internal.pp.core.inferrers.IInferrer;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 
@@ -15,8 +13,16 @@ public class PPDisjClause extends AbstractPPClause {
 //		super(level, predicates, others);
 //	}
 
+	public PPDisjClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic, List<IEquality> conditions) {
+		super(level, predicates, equalities, arithmetic, conditions);
+		
+		assert predicates != null && equalities != null && arithmetic != null && conditions != null;
+	}
+	
 	public PPDisjClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic) {
 		super(level, predicates, equalities, arithmetic);
+		
+		assert predicates != null && equalities != null && arithmetic != null;
 	}
 	
 	@Override
@@ -39,16 +45,9 @@ public class PPDisjClause extends AbstractPPClause {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof PPDisjClause) {
-			PPDisjClause tmp = (PPDisjClause) obj;
-			HashMap<AbstractVariable, AbstractVariable> map = new HashMap<AbstractVariable, AbstractVariable>();
-			return super.equalsWithDifferentVariables(tmp,map);
+			return super.equals(obj);
 		}
 		return false;
-	}
-	
-	@Override
-	public int hashCode() {
-		return super.hashCodeWithDifferentVariables();
 	}
 
 	public IClause simplify(ISimplifier simplifier) {

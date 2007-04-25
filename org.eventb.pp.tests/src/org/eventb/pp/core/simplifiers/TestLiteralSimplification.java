@@ -10,11 +10,15 @@ import static org.eventb.pp.Util.cNotProp;
 import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.cProp;
 import static org.eventb.pp.Util.mList;
+
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.ILiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
@@ -318,15 +322,41 @@ public class TestLiteralSimplification extends TestCase {
 		
 		// Equivalence with conditions
 		new TestPair(
-				cEqClause(mList(cProp(0),cNotProp(0),cNotProp(0)),cEqual(a,b),cEqual(a,b)),
-				cClause(cProp(0),cEqual(a,b))
+				cEqClause(mList(cProp(0),cNotProp(0),cNotProp(0)),cNEqual(a,b),cNEqual(a,b)),
+				cClause(mList(cProp(0)),cNEqual(a,b))
 		),
 		new TestPair(
-				cEqClause(mList(cNotProp(0),cNotProp(0)),cEqual(a,b),cEqual(a,b)),
+				cEqClause(mList(cNotProp(0),cNotProp(0)),cNEqual(a,b),cNEqual(a,b)),
 				null
 		),
 		new TestPair(
-				cEqClause(mList(cNotProp(0),cNotProp(0)),cEqual(a,b),cEqual(a,b)),
+				cEqClause(mList(cProp(0),cProp(0)),cNEqual(a,b),cNEqual(a,b)),
+				null
+		),
+		new TestPair(
+				cEqClause(mList(cProp(0),cNotProp(0)),cNEqual(a,b),cNEqual(a,b)),
+				cClause(new ArrayList<ILiteral>(),cNEqual(a, b))
+		),
+		
+		// Disjunctive with conditions
+		new TestPair(
+				cClause(mList(cProp(0),cNotProp(0)),cNEqual(a,b),cNEqual(a,b)),
+				null
+		),
+		new TestPair(
+				cClause(mList(cNotProp(0),cNotProp(0)),cNEqual(a,b),cNEqual(a,b)),
+				cClause(mList(cNotProp(0)),cNEqual(a,b))
+		),
+		new TestPair(
+				cClause(mList(cProp(0),cProp(0)),cNEqual(a,b),cNEqual(a,b)),
+				cClause(mList(cProp(0)),cNEqual(a,b))
+		),
+		new TestPair(
+				cClause(mList(cNEqual(a,b)),cNEqual(a,b)),
+				cClause(cNEqual(a,b))
+		),
+		new TestPair(
+				cClause(mList(cEqual(a,b)),cNEqual(a,b)),
 				null
 		),
 		

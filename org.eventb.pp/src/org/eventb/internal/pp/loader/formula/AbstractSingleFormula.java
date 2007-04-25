@@ -11,7 +11,7 @@ import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
 public abstract class AbstractSingleFormula<T extends LiteralDescriptor>
-		extends AbstractFormula<T> implements ISubFormula<T> {
+		extends AbstractFormula<T> {
 
 	public AbstractSingleFormula(List<TermSignature> terms, T descriptor) {
 		super(terms, descriptor);
@@ -34,8 +34,8 @@ public abstract class AbstractSingleFormula<T extends LiteralDescriptor>
 		return;
 	}
 
-	public void setFlags(TermVisitorContext context) {
-		// DO NOTHING
+	public TermVisitorContext getNewContext(TermVisitorContext context) {
+		return context;
 	}
 
 	public String toTreeForm(String prefix) {

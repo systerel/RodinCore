@@ -32,7 +32,7 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
  * @author François Terrier
  *
  */
-public class EqualityLiteral extends AbstractSingleFormula<EqualityDescriptor> implements ISubFormula<EqualityDescriptor> {
+public class EqualityLiteral extends AbstractSingleFormula<EqualityDescriptor> {
 
 	
 	public EqualityLiteral(List<TermSignature> terms,
@@ -48,4 +48,7 @@ public class EqualityLiteral extends AbstractSingleFormula<EqualityDescriptor> i
 		return result;
 	}
 
+	public boolean hasEquivalenceFirst() {
+		return false;
+	}
 }

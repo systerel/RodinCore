@@ -28,6 +28,10 @@ public interface IClause {
 	
 	public List<IArithmetic> getArithmeticLiterals();
 	
+	public List<IEquality> getConditions();
+	
+	public boolean isBlocked();
+	
 //	// stack of contexts, level-dependent information
 //	public Stack<IClauseContext> getContexts();
 

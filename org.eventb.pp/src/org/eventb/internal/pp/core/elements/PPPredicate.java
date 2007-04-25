@@ -205,6 +205,7 @@ public class PPPredicate extends PPProposition implements IPredicate {
 		// 2 test matching signs
 		if (matcher.isPositive() == matched.isPositive() && !equivalence) return false;
 		// 3 test compatible terms
+		// we reject constant term in unit clause matching pseudo constant term in non-unit clause
 		for (int i=0;i<matcher.getTerms().size();i++) {
 			Term matcherTerm = matcher.getTerms().get(i);
 			Term matchedTerm = matched.getTerms().get(i);

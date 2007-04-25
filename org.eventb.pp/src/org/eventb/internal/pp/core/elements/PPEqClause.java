@@ -10,36 +10,27 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.IInferrer;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 
 public class PPEqClause extends AbstractPPClause {
-	private List<IEquality> conditions = new ArrayList<IEquality>();
-	
-//	@Deprecated
-//	public PPEqClause(int level, List<IPredicate> predicates, List<ILiteral> others) {
-//		super(level, predicates, others);
-//	}
 	
 	public PPEqClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic) {
 		super(level, predicates, equalities, arithmetic);
 		
-		assert predicates.size() + equalities.size() >= 2;
+		// not a unit clause. unit clauses are disjunctive clauses
+		assert !isUnit();
+		assert predicates != null && equalities != null && arithmetic != null;
 	}
 
 	public PPEqClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic, List<IEquality> conditions) {
-		super(level, predicates, equalities, arithmetic);
-		this.conditions = conditions;
+		super(level, predicates, equalities, arithmetic, conditions);
 		
-		assert predicates.size() + equalities.size() >= 2;
+		// not a unit clause. unit clauses are disjunctive clauses
+		assert !isUnit();
+		assert predicates != null && equalities != null && arithmetic != null && conditions != null;
 	}
 	
-	public List<IEquality> getConditions() {
-		List<IEquality> result = new ArrayList<IEquality>();
-		result.addAll(conditions);
-		return result;
-	}
 	
 	@Override
 	protected void computeBitSets() {
@@ -49,43 +40,26 @@ public class PPEqClause extends AbstractPPClause {
 		}
 	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof PPEqClause) {
-			PPEqClause tmp = (PPEqClause) obj;
-			HashMap<AbstractVariable, AbstractVariable> map = new HashMap<AbstractVariable, AbstractVariable>();
-			return super.equalsWithDifferentVariables(tmp,map) && listEquals(conditions, tmp.conditions, map);
-		}
-		return false;
+	public void infer(IInferrer inferrer) {
+		inferrer.inferFromEquivalenceClause(this);
 	}
 	
-	@Override
-	public int hashCode() {
-		return 31 * super.hashCodeWithDifferentVariables() + hashCode(conditions);
-	}
-
-	@Override
-	public String toString() {
-		HashMap<Variable, String> variableMap = new HashMap<Variable, String>();
-		StringBuffer str = new StringBuffer();
-		str.append("E"+super.toString(variableMap));
-		if (conditions.size() > 0) {
-			str.append(", CONDITIONS: ");
-			str.append("[");
-			for (ILiteral<?> literal : conditions) {
-				str.append(literal.toString(variableMap));
-				str.append(", ");
-			}
-			str.append("]");
-		}
-		return str.toString();
-	}
-	
-
 	public IClause simplify(ISimplifier simplifier) {
 		return simplifier.simplifyEquivalenceClause(this);
 	}
-
+	
+	@Override
+	public String toString() {
+		return "E"+super.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PPEqClause) {
+			return super.equals(obj);
+		}
+		return false;
+	}
 	
 	// form a new clause from an equivalence clause
 	public static IClause newClause(Level level, List<IPredicate> predicate, 
@@ -120,8 +94,7 @@ public class PPEqClause extends AbstractPPClause {
 				if (literal instanceof IArithmetic) arithmetic.add((IArithmetic)literal);
 			}
 			
-			equality.addAll(conditions);
-			return new PPDisjClause(level, predicate, equality, arithmetic);
+			return new PPDisjClause(level, predicate, equality, arithmetic, conditions);
 		}
 		////////////////////////////////
 		return new PPEqClause(level, predicate, equality, arithmetic, conditions);
@@ -145,7 +118,4 @@ public class PPEqClause extends AbstractPPClause {
 		}
 	}
 
-	public void infer(IInferrer inferrer) {
-		inferrer.inferFromEquivalenceClause(this);
-	}
 }

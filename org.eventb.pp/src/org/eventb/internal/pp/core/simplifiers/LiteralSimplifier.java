@@ -13,6 +13,13 @@ import org.eventb.internal.pp.core.elements.IPredicate;
 import org.eventb.internal.pp.core.elements.PPDisjClause;
 import org.eventb.internal.pp.core.elements.PPEqClause;
 
+/**
+ * This simplifier removes all duplicate predicate, arithmetic or equality literals in a clause.
+ * If the clause is disjunctive, conditions that are duplicate of existing inequalities are removed.
+ *
+ * @author François Terrier
+ *
+ */
 public class LiteralSimplifier implements ISimplifier {
 	
 	private IVariableContext context;
@@ -33,8 +40,13 @@ public class LiteralSimplifier implements ISimplifier {
 		if (equalityLiterals == null) return null;
 		List<IArithmetic> arithmeticLiterals = getDisjSimplifiedList(clause.getArithmeticLiterals());
 		if (arithmeticLiterals == null) return null;
+		List<IEquality> conditions = getDisjSimplifiedList(clause.getConditions());
 		
-		IClause result = new PPDisjClause(clause.getLevel(),predicateLiterals,equalityLiterals,arithmeticLiterals);
+		// we look for conditions that are in the equalities
+		conditions = getDisjSimplifiedConditions(equalityLiterals, conditions);
+		if (conditions == null) return null;
+		
+		IClause result = new PPDisjClause(clause.getLevel(),predicateLiterals,equalityLiterals,arithmeticLiterals,conditions);
 		result.setOrigin(clause.getOrigin());
 		return result;
 	}
@@ -82,6 +94,20 @@ public class LiteralSimplifier implements ISimplifier {
 		IClause result = PPEqClause.newClause(clause.getLevel(), predicateLiterals, equalityLiterals, arithmeticLiterals,
 					conditions, context);
 		result.setOrigin(clause.getOrigin());
+		return result;
+	}
+	
+	private List<IEquality> getDisjSimplifiedConditions(List<IEquality> equalities, List<IEquality> conditions) {
+		List<IEquality> result = new ArrayList<IEquality>();
+		condloop: for (IEquality condition : conditions) {
+			for (IEquality equality : equalities) {
+				if (condition.getInverse().equals(equality)) {
+					return null;
+				}
+				if (condition.equals(equality)) continue condloop;
+			}
+			result.add(condition);
+		}
 		return result;
 	}
 	

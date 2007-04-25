@@ -3,10 +3,10 @@ package org.eventb.pp.core.search;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import junit.framework.TestCase;
+
 import org.eventb.internal.pp.core.search.IRandomAccessIterable;
 import org.eventb.internal.pp.core.search.IterableHashSet;
-
-import junit.framework.TestCase;
 
 public class TestRandom extends TestCase {
 

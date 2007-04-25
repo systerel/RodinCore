@@ -44,6 +44,9 @@ public class ResolutionInferrer extends AbstractInferrer {
 		unitClause = clause;
 		// we save a copy of the original predicate
 		predicate = clause.getPredicateLiterals().get(0).getCopyWithNewVariables(context, new HashMap<AbstractVariable, AbstractVariable>());
+		
+		// we do not accept existential unit clause
+		assert !predicate.isQuantified();
 	}
 	
 	@Override
@@ -63,7 +66,7 @@ public class ResolutionInferrer extends AbstractInferrer {
 	}
 	
 	public boolean canInfer(IClause clause) {
-		if (position<0 || unitClause==null || predicate==null) {
+		if (position<0 || unitClause==null || predicate==null /* || clause.isBlocked() */ ) {
 			throw new IllegalStateException();
 		}
 		if (PPPredicate.match(predicate,clause.getPredicateLiterals().get(position),clause instanceof PPEqClause)) return true;
@@ -77,9 +80,9 @@ public class ResolutionInferrer extends AbstractInferrer {
 	@Override
 	protected void inferFromDisjunctiveClauseHelper() {
 		IPredicate matchingPredicate = predicates.remove(position);
-		equalities.addAll(predicate.getConditions(matchingPredicate));
+		conditions.addAll(predicate.getConditions(matchingPredicate));
 		
-		result = new PPDisjClause(level,predicates,equalities,arithmetic); 
+		result = new PPDisjClause(level,predicates,equalities,arithmetic,conditions); 
 	}
 
 	@Override

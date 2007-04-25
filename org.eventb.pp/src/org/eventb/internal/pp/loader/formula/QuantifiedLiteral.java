@@ -22,7 +22,7 @@ import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.QuantifiedDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
-public class QuantifiedLiteral extends AbstractLabelizableFormula<QuantifiedDescriptor> implements ILabelizableFormula<QuantifiedDescriptor>, ISubFormula<QuantifiedDescriptor> {
+public class QuantifiedLiteral extends AbstractLabelizableFormula<QuantifiedDescriptor> {
 	private boolean isForall;
 	private ISignedFormula child;
 	private List<TermSignature> definingTerms;
@@ -76,21 +76,25 @@ public class QuantifiedLiteral extends AbstractLabelizableFormula<QuantifiedDesc
 
 	@Override
 	protected boolean isLabelizable(LabelManager manager, TermVisitorContext context) {
-		return manager.isForceLabelize();
+		return (context.isQuantified?!context.isForall:false)
+			|| (manager.isGettingDefinitions()&&context.isQuantified);
 	}
 
 	public List<List<ILiteral>> getDefinitionClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral>> prefix, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
-		context.isForall = context.isPositive?isForall:!isForall;
+//		TermVisitorContext newContext = new TermVisitorContext();
+//		
+//		newContext.isForall = context.isPositive?isForall:!isForall;
+//		newContext.isPositive = context.isPositive;
+//		newContext.startOffset = startOffset;
+//		newContext.endOffset = endOffset;
+//		
+//		newContext.isQuantified = true;
+//		if (manager.isGettingDefinitions() || !context.isForall) manager.setForceLabelize(true);
 		
-		context.startOffset = startOffset;
-		context.endOffset = endOffset;
-		
-		context.isQuantified = true;
-		if (manager.isGettingDefinitions() || !context.isForall) manager.setForceLabelize(true);
 		List<TermSignature> copy = new ArrayList<TermSignature>(termList.size());
 		copy.addAll(termList);
 		List<TermSignature> quantifiedTermList = transform(copy, context, table);
-		return child.getClauses(quantifiedTermList, manager, prefix, context, table, bool);
+		return child.getClauses(quantifiedTermList, manager, prefix, table, context, bool);
 	}
 	
 	public ILiteral getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
@@ -116,8 +120,18 @@ public class QuantifiedLiteral extends AbstractLabelizableFormula<QuantifiedDesc
 		child.split();
 	}
 
-	public void setFlags(TermVisitorContext context) {
-		child.setFlags(context);
+	public TermVisitorContext getNewContext(TermVisitorContext context) {
+		TermVisitorContext newContext = new TermVisitorContext(context.isEquivalence);
+		
+		newContext.isForall = context.isPositive?isForall:!isForall;
+		newContext.isPositive = context.isPositive;
+		newContext.startOffset = startOffset;
+		newContext.endOffset = endOffset;
+		newContext.isQuantified = true;
+		
+		return newContext;
+		
+//		child.setFlags(context);
 //		context.isQuantified = true;
 //		context.isForall = isForall;
 //		context.quantifierOffset = lastQuantifiedOffset;
@@ -134,6 +148,11 @@ public class QuantifiedLiteral extends AbstractLabelizableFormula<QuantifiedDesc
 
 	public boolean isEquivalence() {
 		return false;
+	}
+
+
+	public boolean hasEquivalenceFirst() {
+		return child.hasEquivalenceFirst();
 	}
 
 }

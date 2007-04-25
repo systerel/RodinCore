@@ -22,30 +22,34 @@ public class ExistentialSimplifier implements ISimplifier {
 	private List<IPredicate> predicates;
 	private List<IEquality> equalities;
 	private List<IArithmetic> arithmetic;
+	private List<IEquality> conditions;
 	
 	private void init(IClause clause) {
 		predicates = clause.getPredicateLiterals();
 		equalities = clause.getEqualityLiterals();
 		arithmetic = clause.getArithmeticLiterals();
+		conditions = clause.getConditions();
 	}
 	
 	public IClause simplifyDisjunctiveClause(PPDisjClause clause) {
 		init(clause);
-		simplifyExistential();
-		IClause result = new PPDisjClause(clause.getLevel(),predicates,equalities,arithmetic);
+		simplifyExistentialHelper(predicates);
+		simplifyExistentialHelper(equalities);
+		simplifyExistentialHelper(arithmetic);
+		simplifyExistentialHelper(conditions);
+		IClause result = new PPDisjClause(clause.getLevel(),predicates,equalities,arithmetic,conditions);
 		result.setOrigin(clause.getOrigin());
 		return result;
 	}
 
 	public IClause simplifyEquivalenceClause(PPEqClause clause) {
+		init(clause);
+		simplifyExistentialHelper(conditions);
+		IClause result = new PPEqClause(clause.getLevel(),predicates,equalities,arithmetic,conditions);
+		result.setOrigin(clause.getOrigin());
 		return clause;
 	}
 
-	private void simplifyExistential() {
-		simplifyExistentialHelper(predicates);
-		simplifyExistentialHelper(equalities);
-		simplifyExistentialHelper(arithmetic);
-	}
 	
 	public <T extends ILiteral<T>> T simplifyExistential(ILiteral<T> literal) {
 		List<LocalVariable> existentials = new ArrayList<LocalVariable>();

@@ -5,9 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.eventb.internal.pp.core.search.ConditionIterator;
-
 import junit.framework.TestCase;
+
+import org.eventb.internal.pp.core.search.ConditionIterator;
 
 public class TestIterator extends TestCase {
 

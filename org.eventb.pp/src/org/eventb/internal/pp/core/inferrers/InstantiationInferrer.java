@@ -64,7 +64,7 @@ public class InstantiationInferrer extends AbstractInferrer {
 	@Override
 	protected void inferFromDisjunctiveClauseHelper() {
 		substitute();
-		result = new PPDisjClause(level,predicates,equalities,arithmetic);
+		result = new PPDisjClause(level,predicates,equalities,arithmetic,conditions);
 	}
 
 	@Override

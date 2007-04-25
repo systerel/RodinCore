@@ -16,7 +16,7 @@ import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
-public class PredicateLiteral extends AbstractSingleFormula<PredicateDescriptor> implements ISubFormula<PredicateDescriptor> {
+public class PredicateLiteral extends AbstractSingleFormula<PredicateDescriptor> {
 
 	public PredicateLiteral(List<TermSignature> terms, PredicateDescriptor descriptor) {
 		super(terms,descriptor);
@@ -27,4 +27,7 @@ public class PredicateLiteral extends AbstractSingleFormula<PredicateDescriptor>
         return result;
 	}
 
+	public boolean hasEquivalenceFirst() {
+		return false;
+	}
 }

@@ -59,7 +59,7 @@ public class SignedFormula<T extends LiteralDescriptor> implements ISignedFormul
 		return isPositive;
 	}
 
-	public List<List<ILiteral>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
+	public List<List<ILiteral>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral>> prefix, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool) {
 		if (!isPositive) flags.isPositive = !flags.isPositive;
 		List<List<ILiteral>> result = child.getClauses(termList, manager, prefix, flags, table, bool);
 		if (!isPositive) flags.isPositive = !flags.isPositive;
@@ -81,10 +81,12 @@ public class SignedFormula<T extends LiteralDescriptor> implements ISignedFormul
 	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, 
 			ClauseFactory factory, BooleanEqualityTable bool, VariableTable variableTable,
 			IOrigin origin) {
-		TermVisitorContext flags = new TermVisitorContext();
-		setFlags(flags);
+		TermVisitorContext flags = new TermVisitorContext(hasEquivalenceFirst());
+//		setFlags(flags);
 		variableTable.reset();
+		if (!isPositive) flags.isPositive = !flags.isPositive;
 		List<List<ILiteral>> result = child.getClauses(child.getTerms(), manager, variableTable, flags, bool);
+		if (!isPositive) flags.isPositive = !flags.isPositive;
 		for (List<ILiteral> list : result) {
 			IClause clause;
 			if (flags.isEquivalence && list.size() > 1) clause = factory.newEqClause(list);
@@ -105,12 +107,16 @@ public class SignedFormula<T extends LiteralDescriptor> implements ISignedFormul
 		return (isPositive?"":"not ")+child.toString();
 	}
 
-	public void setFlags(TermVisitorContext context) {
-		child.setFlags(context);
-		context.isPositive = isPositive;
-	}
+//	public void setFlags(TermVisitorContext context) {
+//		child.getNewContext(context);
+//		context.isPositive = isPositive;
+//	}
 
 	public String toTreeForm(String prefix) {
 		return prefix+(isPositive?"":"not ")+child.toTreeForm(prefix);
+	}
+
+	public boolean hasEquivalenceFirst() {
+		return child.hasEquivalenceFirst();
 	}
 }

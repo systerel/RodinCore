@@ -12,8 +12,7 @@ import org.eventb.internal.pp.loader.formula.descriptor.IndexedDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 
-public abstract class AbstractClause<T extends IndexedDescriptor> extends AbstractLabelizableFormula<T> implements
-		ISubFormula<T>, ILabelizableFormula<T> {
+public abstract class AbstractClause<T extends IndexedDescriptor> extends AbstractLabelizableFormula<T> {
 
 	protected List<ISignedFormula> children;
 	
@@ -44,8 +43,11 @@ public abstract class AbstractClause<T extends IndexedDescriptor> extends Abstra
 	
 	@Override
 	protected boolean isLabelizable(LabelManager manager, TermVisitorContext context) {
-		return (descriptor.getResults().size() > 1 || manager.isForceLabelize() 
-				|| (isEquivalence()?!context.isEquivalence:context.isEquivalence));
+		return (descriptor.getResults().size() > 1 
+			|| (context.isQuantified?!context.isForall:false)
+			|| (context.isEquivalence?!isEquivalence():isEquivalence())
+			|| (manager.isGettingDefinitions() && context.isQuantified)
+			);
 	}
 	
 	public ILiteral getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
@@ -77,8 +79,13 @@ public abstract class AbstractClause<T extends IndexedDescriptor> extends Abstra
 		return false;
 	}
 	
-	public void setFlags(TermVisitorContext context) {
-		context.isEquivalence = isEquivalence();
+	public TermVisitorContext getNewContext(TermVisitorContext context) {
+		TermVisitorContext newContext = new TermVisitorContext(context.isEquivalence);
+		
+		newContext.isQuantified = false;
+		newContext.isPositive = context.isPositive;
+		
+		return newContext;
 	}
 	
 	

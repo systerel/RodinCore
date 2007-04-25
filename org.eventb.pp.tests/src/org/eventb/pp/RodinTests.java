@@ -1,9 +1,6 @@
 package org.eventb.pp;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
@@ -12,10 +9,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.ProofStrategy;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
-import org.eventb.pp.PPProof;
-import org.eventb.pp.PPResult;
 import org.eventb.pp.PPResult.Result;
-import org.eventb.pptrans.Translator;
 
 public class RodinTests extends AbstractPPTest {
 	
@@ -57,6 +51,10 @@ public class RodinTests extends AbstractPPTest {
 		env.addName("rtbl", REL(ty_S,ty_T));
 		
 		env.addName("S", POW(ty_S));
+		
+		env.addName("q", POW(ty_T));
+		env.addName("r", REL(ty_T,ty_T));
+		
 	}
 	
 	
@@ -70,7 +68,10 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	TestPair[] tests = new TestPair[]{
-			new TestPair(mSet("q ⊆ S"),"S ∖ q ⊆ S",true)
+			new TestPair(mSet("r ∈ ran(r)∖{x} → ran(r)","r∼[q]⊆q","x∈q"),
+					"ran(r)∖r∼[ran(r)∖q]⊆q",true)
+//			new TestPair(mSet("A = S"),"S ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)",true)
+//			new TestPair(mSet("q ⊆ S"),"S ∖ q ⊆ S",true)
 //			new TestPair(mSet("∀r·r∈R⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}","nxt∈R → (B ⤔ B)"),
 //					"∀r·r∈R⇒r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))∧r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))",true),
 //			new TestPair(mSet("A ⊆ B"),"r[A] ⊆ r[B]",true),

@@ -7,4 +7,5 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eventb.pp,
  org.eventb.core.ast,
- org.eventb.pptrans
+ org.eventb.pptrans,
+ org.junit

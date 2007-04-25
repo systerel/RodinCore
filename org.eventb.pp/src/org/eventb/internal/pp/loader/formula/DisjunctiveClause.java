@@ -15,8 +15,7 @@ import org.eventb.internal.pp.loader.formula.descriptor.DisjunctiveClauseDescrip
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 
-public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescriptor> implements
-		ILabelizableFormula<DisjunctiveClauseDescriptor>, ISubFormula<DisjunctiveClauseDescriptor> {
+public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescriptor> {
 	
 	public DisjunctiveClause(List<ISignedFormula> children,
 			List<TermSignature> terms, DisjunctiveClauseDescriptor descriptor) {
@@ -35,24 +34,24 @@ public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescripto
 	public List<List<ILiteral>> getDefinitionClauses(List<TermSignature> terms,
 			LabelManager manager, List<List<ILiteral>> prefix,
 			TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
-		flags.isEquivalence = false;
-		flags.isQuantified = false;
+//		flags.isEquivalence = false;
+//		flags.isQuantified = false;
 		List<List<ILiteral>> result = new ArrayList<List<ILiteral>>();
 		int start = 0;
 		if (!flags.isPositive) {
 			for (ISignedFormula child : children) {
 				List<TermSignature> subIndex = terms.subList(start, start + child.getIndexSize());
 				List<List<ILiteral>> copy = copyClauseList(prefix);
-				result.addAll(child.getClauses(subIndex, manager, copy, flags, table, bool));
-				manager.setForceLabelize(false);
+				result.addAll(child.getClauses(subIndex, manager, copy, table, flags, bool));
+//				manager.setForceLabelize(false);
 				start += child.getIndexSize();
 			}
 		}
 		else {
 			for (ISignedFormula child : children) {
 				List<TermSignature> subIndex = terms.subList(start, start + child.getIndexSize());
-				prefix = child.getClauses(subIndex, manager, prefix, flags, table, bool);
-				manager.setForceLabelize(false);
+				prefix = child.getClauses(subIndex, manager, prefix, table, flags, bool);
+//				manager.setForceLabelize(false);
 				start += child.getIndexSize();
 			}
 			result = prefix;
@@ -81,6 +80,11 @@ public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescripto
 	@Override
 	protected DisjunctiveClauseDescriptor getNewDescriptor(List<IIntermediateResult> result, int index) {
 		return new DisjunctiveClauseDescriptor(descriptor.getContext(), result, index);
+	}
+
+
+	public boolean hasEquivalenceFirst() {
+		return false;
 	}
 
 }

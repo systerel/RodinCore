@@ -157,17 +157,17 @@ public class TestResolution extends AbstractPPTest {
 			new TestPair(
 					cClause(cPred(0,var0),cPred(1,var0)),
 					cClause(cNotPred(0,var0)),
-					cClause(cPred(1,var0),cNEqual(var00,var0))
+					cClause(mList(cPred(1,var0)),cNEqual(var00,var0))
 			),
 			new TestPair(
 					cClause(cPred(0,a),cPred(1,a)),
 					cClause(cNotPred(0,b)),
-					cClause(cPred(1,a),cNEqual(a, b))
+					cClause(mList(cPred(1,a)),cNEqual(a, b))
 			),
 			new TestPair(
 					cClause(cPred(0,evar1),cProp(1)),
 					cClause(cNotPred(0,var0)),
-					cClause(cProp(1),cNEqual(evar1, var00))
+					cClause(mList(cProp(1)),cNEqual(evar1, var00))
 			),
 			// constants + pseudo constant
 //			new TestPair(
@@ -194,75 +194,75 @@ public class TestResolution extends AbstractPPTest {
 			new TestPair(
 					cEqClause(cPred(0,a),cPred(1,var0)),
 					cClause(cPred(0,var0)),
-					cClause(cPred(1,var0),cNEqual(var00,a))
+					cClause(mList(cPred(1,var0)),cNEqual(var00,a))
 			),
 			new TestPair(
 					cEqClause(cNotPred(0,a),cPred(1,var0)),
 					cClause(cPred(0,var0)),
-					cClause(cNotPred(1,var0),cNEqual(a,var00))
+					cClause(mList(cNotPred(1,var0)),cNEqual(a,var00))
 			),
 			new TestPair(
 					cEqClause(cPred(0,a),cPred(1,evar0)),
 					cClause(cPred(0,var0)),
-					cClause(cPred(1,evar0),cNEqual(a,var00))
+					cClause(mList(cPred(1,evar0)),cNEqual(a,var00))
 			),
 			new TestPair(
 					cEqClause(cPred(0,a),cPred(1,fvar2)),
 					cClause(cPred(0,var0)),
-					cClause(cPred(1,var11),cNEqual(a,var00))
+					cClause(mList(cPred(1,var11)),cNEqual(a,var00))
 			),
 			new TestPair(
 					cEqClause(cPred(0,a),cPred(1,evar2)),
 					cClause(cNotPred(0,var0)),
-					cClause(cNotPred(1,var11),cNEqual(a, var00))
+					cClause(mList(cNotPred(1,var11)),cNEqual(a, var00))
 			),
 			new TestPair(
 					cEqClause(cPred(0,a),cPred(1,fvar2)),
 					cClause(cNotPred(0,var0)),
-					cClause(cNotPred(1,evar2),cNEqual(a, var00))
+					cClause(mList(cNotPred(1,evar2)),cNEqual(a, var00))
 			),
 			
 			// 4 TESTS with local variables + transformation
 			new TestPair(
 					cEqClause(cNotPred(0,evar2),cPred(1,var0)),
 					cClause(cPred(0,var0)),
-					cClause(cNotPred(1,var0),cNEqual(var00,evar2))
+					cClause(mList(cNotPred(1,var0)),cNEqual(var00,evar2))
 			),
 			new TestPair(
 					cEqClause(cPred(0,fvar2),cPred(1,var0)),
 					cClause(cPred(0,var0)),
-					cClause(cPred(1,var0),cNEqual(var00,evar2))
+					cClause(mList(cPred(1,var0)),cNEqual(var00,evar2))
 			),
 			new TestPair(
 					cEqClause(cPred(0,evar2),cPred(1,var0)),
 					cClause(cPred(0,var0)),
-					cClause(cPred(1,var0),cNEqual(var00,var11))
+					cClause(mList(cPred(1,var0)),cNEqual(var00,var11))
 			),
 			new TestPair(
 					cEqClause(cNotPred(0,fvar2),cPred(1,var0)),
 					cClause(cPred(0,var0)),
-					cClause(cNotPred(1,var0),cNEqual(var00,var11))
+					cClause(mList(cNotPred(1,var0)),cNEqual(var00,var11))
 			),
 			// same tests with constants
 			new TestPair(
 					cEqClause(cPred(0,evar2),cPred(1,var0)),
 					cClause(cPred(0,a)),
-					cClause(cPred(1,var0),cNEqual(a,var11))
+					cClause(mList(cPred(1,var0)),cNEqual(a,var11))
 			),
 			new TestPair(
 					cEqClause(cNotPred(0,fvar2),cPred(1,var0)),
 					cClause(cPred(0,a)),
-					cClause(cNotPred(1,var0),cNEqual(a,var11))
+					cClause(mList(cNotPred(1,var0)),cNEqual(a,var11))
 			),
 			new TestPair(
 					cEqClause(cNotPred(0,evar2),cPred(1,var0)),
 					cClause(cNotPred(0,a)),
-					cClause(cPred(1,var0),cNEqual(a,var11))
+					cClause(mList(cPred(1,var0)),cNEqual(a,var11))
 			),
 			new TestPair(
 					cEqClause(cPred(0,fvar2),cPred(1,var0)),
 					cClause(cNotPred(0,a)),
-					cClause(cNotPred(1,var0),cNEqual(a,var11))
+					cClause(mList(cNotPred(1,var0)),cNEqual(a,var11))
 			),
 			
 			

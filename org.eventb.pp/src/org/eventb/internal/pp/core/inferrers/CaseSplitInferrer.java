@@ -113,11 +113,11 @@ public class CaseSplitInferrer extends AbstractInferrer {
 	public boolean canInfer(IClause clause) {
 		if (clause.isUnit()) return false;
 		if (clause.getOrigin().isDefinition()) return false;
+		if (clause.getConditions().size() > 0) return false;
 		
 //		if (!clause.getOrigin().dependsOnGoal()) return false;
 		
 		if (!isConstant(clause.getPredicateLiterals()) || !isConstant(clause.getEqualityLiterals()) || !isConstant(clause.getArithmeticLiterals())) return false;
-		if ((clause instanceof PPEqClause) && ((PPEqClause)clause).getConditions().size() > 0) return false;
 		return true;
 	}
 	

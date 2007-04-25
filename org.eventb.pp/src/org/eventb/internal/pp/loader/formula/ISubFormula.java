@@ -70,7 +70,9 @@ public interface ISubFormula<T extends LiteralDescriptor> {
 	
 	public void split();
 	
-	public void setFlags(TermVisitorContext context);
+	public TermVisitorContext getNewContext(TermVisitorContext context);
+	
+	public boolean hasEquivalenceFirst();
 	
 	public String toString();
 

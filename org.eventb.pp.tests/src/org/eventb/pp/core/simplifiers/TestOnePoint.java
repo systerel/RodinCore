@@ -130,6 +130,12 @@ public class TestOnePoint extends TestCase {
 					cEqClause(mList(cPred(0,a),cPred(1,a)),cNEqual(b,b))
 			),
 			
+			// Disjunctive with conditions
+			new TestPair(
+					cClause(mList(cPred(0,var0)),cNEqual(var0,a)),
+					cClause(cPred(0,a))
+			),
+			
 			// EQUALITY alone
 			new TestPair(
 					cClause(cNEqual(var0, var1)),

@@ -59,13 +59,15 @@ public interface ISignedFormula {
 	// - when called on a signed formula, it uses terms recorded in the formula instance
 	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable variableTable, IOrigin origin);
 
-	public List<List<ILiteral>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool);
+	public List<List<ILiteral>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral>> prefix, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool);
 
 	public void split();
 	
 	public int getIndexSize();
 
-	public void setFlags(TermVisitorContext context);
+	public boolean hasEquivalenceFirst();
+	
+//	public void setFlags(TermVisitorContext context);
 	
 	
 	public String toTreeForm(String prefix);

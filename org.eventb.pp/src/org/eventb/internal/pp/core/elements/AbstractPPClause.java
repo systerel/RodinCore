@@ -22,23 +22,27 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public abstract class AbstractPPClause implements IClause {
 
+	protected List<IArithmetic> arithmetic;
 	protected List<IEquality> equalities;
-	protected List<IArithmetic> arithmetic = new ArrayList<IArithmetic>();
 	protected List<IPredicate> predicates;
+
+	protected List<IEquality> conditions = new ArrayList<IEquality>();
 	
 	protected IOrigin origin;
 	protected Level level = Level.base;
 	
-	public AbstractPPClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic) {
+	public AbstractPPClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic, List<IEquality> conditions) {
 		this.level = level;
 		this.predicates = predicates;
 		this.equalities = equalities;
 		this.arithmetic = arithmetic;
+		this.conditions = conditions;
 		
 		computeBitSets();
 	}
 	
-	public AbstractPPClause(List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic) {
+	public AbstractPPClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic) {
+		this.level = level;
 		this.predicates = predicates;
 		this.equalities = equalities;
 		this.arithmetic = arithmetic;
@@ -52,7 +56,7 @@ public abstract class AbstractPPClause implements IClause {
 		if (clause instanceof AbstractPPClause) {
 			AbstractPPClause temp = (AbstractPPClause) clause;
 			return listEquals(predicates, temp.predicates, map) && listEquals(equalities, temp.equalities, map)
-				&& listEquals(arithmetic, temp.arithmetic, map);
+				&& listEquals(arithmetic, temp.arithmetic, map) && listEquals(conditions, temp.conditions, map);
 		}
 		return false;
 	}
@@ -62,8 +66,10 @@ public abstract class AbstractPPClause implements IClause {
 		hashCode = 31*hashCode + hashCode(predicates);
 		hashCode = 31*hashCode + hashCode(equalities);
 		hashCode = 31*hashCode + hashCode(arithmetic);
+		hashCode = 31*hashCode + hashCode(conditions);
 		return hashCode;
 	}
+	
 	
 	protected int hashCode(List<? extends ILiteral<?>> list) {
 		int hashCode = 1;
@@ -84,7 +90,25 @@ public abstract class AbstractPPClause implements IClause {
 		return true;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof AbstractPPClause) {
+			AbstractPPClause tmp = (AbstractPPClause) obj;
+			HashMap<AbstractVariable, AbstractVariable> map = new HashMap<AbstractVariable, AbstractVariable>();
+			return equalsWithDifferentVariables(tmp,map);
+		}
+		return false;
+	}
 	
+	@Override
+	public int hashCode() {
+		return hashCodeWithDifferentVariables();
+	}
+	
+	public boolean isBlocked() {
+		return conditions.size() > 0;
+	}
+
 	@Override
 	public String toString() {
 		HashMap<Variable, String> variableMap = new HashMap<Variable, String>();
@@ -106,6 +130,15 @@ public abstract class AbstractPPClause implements IClause {
 		for (ILiteral literal : arithmetic) {
 			str.append(literal.toString(variableMap));
 			str.append(", ");
+		}
+		if (conditions.size() > 0) {
+			str.append(" CONDITIONS: ");
+			str.append("[");
+			for (ILiteral<?> literal : conditions) {
+				str.append(literal.toString(variableMap));
+				str.append(", ");
+			}
+			str.append("]");
 		}
 		str.append("]");
 		return str.toString();
@@ -132,7 +165,7 @@ public abstract class AbstractPPClause implements IClause {
 
 	protected BitSet negativeLiterals = new BitSet();
 	protected BitSet positiveLiterals = new BitSet();
-	
+
 	protected abstract void computeBitSets();
 
 	
@@ -167,6 +200,12 @@ public abstract class AbstractPPClause implements IClause {
 		return result;
 	}
 	
+	public List<IEquality> getConditions() {
+		List<IEquality> result = new ArrayList<IEquality>();
+		result.addAll(conditions);
+		return result;
+	}
+	
 	protected <T extends ILiteral<T>> List<T> getListCopy(List<T> list,
 			HashMap<AbstractVariable, AbstractVariable> substitutionsMap, IVariableContext context) {
 		List<T> result = new ArrayList<T>();
@@ -177,12 +216,12 @@ public abstract class AbstractPPClause implements IClause {
 	}
 	
 	public boolean isUnit() {
-		if (equalities.size() + predicates.size() + arithmetic.size() == 1) return true;
+		if (equalities.size() + predicates.size() + arithmetic.size() + conditions.size() == 1) return true;
 		return false;
 	}
 
 	public boolean isEmpty() {
-		if (equalities.size() + predicates.size() + arithmetic.size() == 0) return true;
+		if (equalities.size() + predicates.size() + arithmetic.size() + conditions.size() == 0) return true;
 		return false;
 	}
 

@@ -7,11 +7,15 @@ import static org.eventb.pp.Util.cNEqual;
 import static org.eventb.pp.Util.cNotPred;
 import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.mList;
+
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.ILiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
@@ -149,9 +153,23 @@ public class TestEqualitySimplifier extends TestCase {
 					cEqClause(mList(cPred(0,a),cNEqual(a,a)),cNEqual(a,a)),
 					cClause(cNotPred(0,a))
 			),
+			
+			// DISJUNCTIVE with conditions
 			new TestPair(
-					cEqClause(mList(cPred(0,a),cNEqual(a,a)),cEqual(a,a)),
-					null
+					cClause(mList(cPred(0,a),cPred(1,a)),cNEqual(a,a)),
+					cClause(cPred(0,a),cPred(1,a))
+			),
+			new TestPair(
+					cClause(mList(cPred(0,a),cPred(1,a)),cNEqual(a,a),cNEqual(b,b)),
+					cClause(cPred(0,a),cPred(1,a))
+			),
+			new TestPair(
+					cClause(mList(cPred(0,a),cNEqual(a,a))),
+					cClause(cPred(0,a))
+			),
+			new TestPair(
+					cClause(new ArrayList<ILiteral>(),cNEqual(a,a)),
+					cClause()
 			),
 			
 	};
@@ -167,7 +185,10 @@ public class TestEqualitySimplifier extends TestCase {
 			EqualitySimplifier rule = new EqualitySimplifier(variableContext(),null);
 			
 			Constant.uniqueIdentifier = 0;
+			
+			assertTrue(rule.canSimplify(test.input));
 			IClause actual = test.input.simplify(rule);
+			
 			assertEquals(test.input.toString(),test.output,actual);
 		}
 	}

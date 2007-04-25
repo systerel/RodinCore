@@ -85,7 +85,7 @@ public class ClauseBuilder {
 		for (INormalizedFormula signature : context.getResults()) {
 			debug("========================================");
 			debug("Getting clauses for original formula: " + signature);
-			manager.setForceLabelize(false);
+//			manager.setForceLabelize(false);
 			buildNormalizedFormulas(signature);
 		}
 		
@@ -108,7 +108,7 @@ public class ClauseBuilder {
 			debug("========================================");
 			debug("Getting definition clauses for label: " + formula + ": " + formula.getStringDeps());
 			formula.split();
-			manager.setForceLabelize(false);
+//			manager.setForceLabelize(false);
 			
 //			if (manager.isNextEquivalence()) {
 //				formula.getFinalClauses(clauses, manager, cf, bool, variableTable, true);

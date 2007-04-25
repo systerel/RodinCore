@@ -27,20 +27,20 @@ public class OnePointRule implements ISimplifier {
 		predicates = clause.getPredicateLiterals();
 		equalities = clause.getEqualityLiterals();
 		arithmetic = clause.getArithmeticLiterals();
-		conditions = new ArrayList<IEquality>();
+		conditions = clause.getConditions();
 	}
 	
 	public IClause simplifyDisjunctiveClause(PPDisjClause clause) {
 		init(clause);
 		onePointLoop(equalities);
-		IClause result = new PPDisjClause(clause.getLevel(),predicates,equalities,arithmetic);
+		onePointLoop(conditions);
+		IClause result = new PPDisjClause(clause.getLevel(),predicates,equalities,arithmetic,conditions);
 		result.setOrigin(clause.getOrigin());
 		return result;
 	}
 
 	public IClause simplifyEquivalenceClause(PPEqClause clause) {
 		init(clause);
-		conditions = clause.getConditions();
 		onePointLoop(conditions);
 		IClause result = new PPEqClause(clause.getLevel(),predicates,equalities,arithmetic,conditions);
 		result.setOrigin(clause.getOrigin());

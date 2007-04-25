@@ -1,17 +1,6 @@
 package org.eventb.pp.core.provers;
 
-import static org.eventb.pp.Util.mList;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.provers.equality.IEquivalenceManager;
-import org.eventb.internal.pp.core.provers.equality.INode;
 import org.eventb.pp.AbstractPPTest;
-import org.eventb.pp.Util;
 
 public class TestEqualityManager extends AbstractPPTest {
 
