@@ -780,15 +780,6 @@
             target="goal"
             tooltip="%proofTactics.falsifyGoal.tooltip"/>
       <tactic
-            icon="icons/full/ctool16/impI_prover.gif"
-            id="org.eventb.ui.impI"
-            interrupt="false"
-            name="%proofTactics.impI.name"
-            priorty="2"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.Deduction"
-            target="goal"
-            tooltip="%proofTactics.impI.tooltip"/>
-      <tactic
             icon="icons/full/ctool16/disjI_prover.gif"
             id="org.eventb.ui.disjI"
             interrupt="false"
@@ -1330,6 +1321,15 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusionGoal"
             target="goal"
             tooltip="%proofTactics.riGoal.tooltip"/>
+      <tactic
+            icon="icons/full/ctool16/impI_prover.gif"
+            id="org.eventb.ui.impI"
+            interrupt="false"
+            name="%proofTactics.impI.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.Deduction"
+            target="goal"
+            tooltip="%proofTactics.impI.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">

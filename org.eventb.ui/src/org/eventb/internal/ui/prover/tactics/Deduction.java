@@ -21,8 +21,11 @@ public class Deduction extends DefaultTacticProvider {
 	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
-		if (node != null && Tactics.impI_applicable(node.getSequent().goal()))
-			return new ArrayList<IPosition>();
+		if (node != null && Tactics.impI_applicable(node.getSequent().goal())) {
+			List<IPosition> positions = new ArrayList<IPosition>();
+			positions.add(IPosition.ROOT);
+			return positions;
+		}
 		return null;
 	}
 
