@@ -453,7 +453,8 @@ public class ProofState implements IProofState {
 	 */
 	public boolean isSequentDischarged() throws RodinDBException {
 		final IPRProof prProof = status.getProof();
-		return (prProof.exists() && (prProof.getConfidence() > IConfidence.PENDING));
+		return (!status.isBroken() && prProof.exists() && (prProof
+				.getConfidence() > IConfidence.PENDING));
 	}
 
 	/*
