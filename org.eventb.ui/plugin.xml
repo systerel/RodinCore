@@ -1216,18 +1216,23 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="org.eventb.ui.preferences.eventBCategory"
+            category="org.eventb.ui.preferences.eventB"
             class="org.eventb.internal.ui.preferences.ProverUIPreferencePage"
             id="org.eventb.ui.preferences.proverUI"
             name="%preferencePage.proverUIPage.name"/>
       <page
             class="org.eventb.internal.ui.preferences.PreferencePage"
-            id="org.eventb.ui.preferences.eventBCategory"
+            id="org.eventb.ui.preferences.eventB"
             name="%preferencePage.eventBCategory.name"/>
       <page
             class="org.eventb.internal.ui.preferences.SeqProverPreferencePage"
             id="org.eventb.ui.preferences.seqProver"
             name="%preferencePage.seqProverPage.name"/>
+      <page
+            category="org.eventb.ui.preferences.seqProver"
+            class="org.eventb.internal.ui.preferences.PostTacticPreferencePage"
+            id="org.eventb.ui.preferences.postTactic"
+            name="%preferencePage.postTacticPage.name"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
