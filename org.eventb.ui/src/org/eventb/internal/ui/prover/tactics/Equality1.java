@@ -12,8 +12,6 @@ import org.eventb.ui.prover.DefaultTacticProvider;
 
 public class Equality1 extends DefaultTacticProvider {
 
-	private List<IPosition> positions = null;
-
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
@@ -25,19 +23,13 @@ public class Equality1 extends DefaultTacticProvider {
 			Predicate hyp, String input) {
 		if (node == null)
 			return null;
-
-		internalGetPositions(hyp);
-		if (positions.size() == 0)
-			return null;
-		return positions;
-	}
-
-
-	private void internalGetPositions(Predicate hyp) {
-		positions = new ArrayList<IPosition>();
 		if (Tactics.eqE_applicable(hyp)) {
+			List<IPosition> positions = new ArrayList<IPosition>();
 			positions.add(IPosition.ROOT);
+			return positions;
+
 		}
+		return null;
 	}
-	
+
 }
