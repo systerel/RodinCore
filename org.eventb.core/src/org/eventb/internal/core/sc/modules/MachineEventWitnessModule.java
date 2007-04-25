@@ -285,6 +285,9 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(
 			String symbol, ILabeledElement element, String component) throws CoreException {
+		// generate appropriate error messages, if the label is not an identifier
+		// (we do not need to do anything else because the witness will be invalid anyway!)
+		IdentifierModule.parseIdentifier(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, factory, this);
 		return new WitnessSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
 	}
 

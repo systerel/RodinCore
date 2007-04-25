@@ -22,6 +22,7 @@ import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -43,6 +44,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 	protected static FreeIdentifier parseIdentifier(
 			String name, 
 			IInternalElement element,
+			IAttributeType.String attrType,
 			FormulaFactory factory,
 			IMarkerDisplay display) throws RodinDBException {
 		
@@ -56,7 +58,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 				else {
 					display.createProblemMarker(
 							element, 
-							EventBAttributes.IDENTIFIER_ATTRIBUTE, 
+							attrType, 
 							GraphProblem.InvalidIdentifierSpacesError,
 							name);
 					
@@ -66,7 +68,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 		}
 		display.createProblemMarker(
 				element, 
-				EventBAttributes.IDENTIFIER_ATTRIBUTE, 
+				attrType, 
 				GraphProblem.InvalidIdentifierError,
 				name);
 		
@@ -85,7 +87,13 @@ public abstract class IdentifierModule extends SCProcessorModule {
 	protected FreeIdentifier parseIdentifier(
 			IIdentifierElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		return parseIdentifier(element.getIdentifierString(), element, factory, this);
+		return 
+		parseIdentifier(
+				element.getIdentifierString(), 
+				element, 
+				EventBAttributes.IDENTIFIER_ATTRIBUTE, 
+				factory, 
+				this);
 	}
 
 	/**
