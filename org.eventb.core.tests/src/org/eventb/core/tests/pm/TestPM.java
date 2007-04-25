@@ -1,5 +1,7 @@
 package org.eventb.core.tests.pm;
 
+import java.util.ArrayList;
+
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
@@ -17,6 +19,9 @@ public abstract class TestPM extends BasicTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		manager = EventBPlugin.getPlugin().getUserSupportManager();
+		// Disable the Post tactic
+		EventBPlugin.getDefault().getUserSupportManager().getProvingMode()
+				.setPostTactics(new ArrayList<String>());
 	}
 
 	@Override

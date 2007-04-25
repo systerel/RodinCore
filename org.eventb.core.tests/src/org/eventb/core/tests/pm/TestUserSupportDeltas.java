@@ -304,7 +304,9 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		userSupport.applyTactic(Tactics.lemma("1 = 1"), monitor);
 		userSupport.applyTactic(Tactics.norm(), monitor);
+		userSupport.applyTactic(Tactics.norm(), monitor);
 		userSupport.applyTactic(Tactics.lemma("2 = 2"), monitor);
+		userSupport.applyTactic(Tactics.norm(), monitor);
 		userSupport.applyTactic(Tactics.norm(), monitor);
 		IProofState currentPO = userSupport.getCurrentPO();
 		

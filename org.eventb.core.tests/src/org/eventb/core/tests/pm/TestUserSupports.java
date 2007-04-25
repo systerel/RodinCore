@@ -442,9 +442,11 @@ public class TestUserSupports extends TestPM {
 		userSupport.setInput(psFile, monitor);
 
 		userSupport.applyTactic(Tactics.lemma("1 = 1"), monitor);
-		userSupport.applyTactic(Tactics.norm(), monitor);
+		userSupport.applyTactic(Tactics.norm(), monitor); // Discharge true goal
+		userSupport.applyTactic(Tactics.norm(), monitor); // Discharge 1 = 1
 		userSupport.applyTactic(Tactics.lemma("2 = 2"), monitor);
-		userSupport.applyTactic(Tactics.norm(), monitor);
+		userSupport.applyTactic(Tactics.norm(), monitor); // Discharge true goal
+		userSupport.applyTactic(Tactics.norm(), monitor); // Discharge 2 = 2
 		IProofState currentPO = userSupport.getCurrentPO();
 		Iterable<Predicate> selectedHyps = currentPO.getCurrentNode().getSequent()
 				.selectedHypIterable();
