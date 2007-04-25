@@ -12,22 +12,28 @@
 
 package org.eventb.ui;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.pm.IProvingMode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.goal.GoalUtils;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorerUtils;
+import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorerUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.proofinformation.ProofInformationUtils;
@@ -137,6 +143,22 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		// Stored the database instance starting at the root workspace
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		database = RodinCore.valueOf(root);
+		
+		initialisePreferences();
+	}
+
+	/**
+	 * Reading the value of the preferences and initialise various components
+	 */
+	private void initialisePreferences() {
+		final IPreferenceStore store = EventBUIPlugin.getDefault()
+				.getPreferenceStore();
+
+		String s = store.getString(PreferenceConstants.P_PROVINGMODE);
+		ArrayList<String> tacticIDs = ProverUIUtils.parseString(s);
+		IProvingMode provingMode = EventBPlugin.getDefault()
+				.getUserSupportManager().getProvingMode();
+		provingMode.setPostTactics(tacticIDs);
 	}
 
 	/**
