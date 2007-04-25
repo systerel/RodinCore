@@ -720,6 +720,16 @@ public class Tactics {
 				new DoubleImplHypRewrites.Input(pred, position));
 	}
 
+	public static List<IPosition> doubleImpHypGetPositions(Predicate hyp) {
+		return hyp.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryPredicate predicate) {
+				return isDoubleImplPredicate(predicate);
+			}
+		});
+	}
+
 	public static boolean isDoubleImplPredicate(Predicate predicate) {
 		if (Lib.isImp(predicate)) {
 			BinaryPredicate bPred = (BinaryPredicate) predicate;
