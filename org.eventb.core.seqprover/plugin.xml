@@ -154,6 +154,18 @@
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoImpFTac"
             id="autoImpETac"
             name="%autoImpETacName"/>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics.AutoFalsifyHypTac"
+            id="autoFalsifyHyp"
+            name="%autoFalsifyHypTacName"/>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics.AutoEqETac"
+            id="autoEqE"
+            name="%autoEqETacName"/>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics.AutoExFTac"
+            id="autoExF"
+            name="%autoExFTacName"/>
    </extension>
 
 </plugin>

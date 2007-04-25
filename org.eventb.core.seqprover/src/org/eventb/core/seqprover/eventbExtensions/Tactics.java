@@ -78,8 +78,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclu
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 
-import com.sun.org.apache.bcel.internal.generic.IAND;
-
 
 /**
  * This class contains static methods that wrap Event-B reasoner extensions into
@@ -987,6 +985,22 @@ public class Tactics {
 				}
 			}
 			return "Selected hyps contain no existential hyps";
+		}
+		
+	}
+
+	public static class AutoFalsifyHypTac implements ITactic{
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			return falsifyHyp_auto().apply(ptNode, pm);
+		}
+		
+	}
+
+	public static class AutoEqETac implements ITactic{
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			return eqE_auto().apply(ptNode, pm);
 		}
 		
 	}
