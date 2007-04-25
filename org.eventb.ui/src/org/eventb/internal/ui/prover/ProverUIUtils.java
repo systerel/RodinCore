@@ -1,6 +1,8 @@
 package org.eventb.internal.ui.prover;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -69,4 +71,29 @@ public class ProverUIUtils {
 		});
 	}
 	
+	public static ArrayList<String> parseString(String stringList) {
+        StringTokenizer st = new StringTokenizer(stringList, ",");//$NON-NLS-1$
+        ArrayList<String> result = new ArrayList<String>();
+        while (st.hasMoreElements()) {
+            result.add((String) st.nextElement());
+        }
+        return result;
+	}
+
+	public static String toCommaSeparatedList(ArrayList<Object> objects) {
+		// Return the comma separated list of items
+		StringBuffer buffer = new StringBuffer();
+		boolean sep = false;
+		for (Object item : objects) {
+			if (sep) {
+				sep = true;
+			}
+			else {
+				buffer.append(",");
+			}
+			buffer.append(item);
+		}
+		return buffer.toString();
+	}
+
 }
