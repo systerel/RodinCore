@@ -578,11 +578,8 @@ public class ProofState implements IProofState {
 			if (!t.equals(Tactics.prune())) {
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 						.getUserSupportManager();
-				if (usManager.getProvingMode().isExpertMode()) {
-					Tactics.postProcessExpert().apply(node, pm);
-				} else {
-					Tactics.postProcessBeginner().apply(node, pm);
-				}
+				ITactic postTactic = usManager.getProvingMode().getPostTactic();
+				postTactic.apply(node, pm);
 			}
 			deltaProcessor.informationChanged(userSupport,
 					new UserSupportInformation(info,
