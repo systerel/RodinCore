@@ -25,16 +25,10 @@ public class ModusTollens extends DefaultTacticProvider {
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (node != null && Lib.isImp(hyp)) {
-			internalGetPositions(hyp);
-			return positions;
+			positions = new ArrayList<IPosition>();
+			positions.add(IPosition.ROOT);
 		}
 		return null;
-	}
-
-	private void internalGetPositions(Predicate hyp) {
-		positions = new ArrayList<IPosition>();
-		positions.add(IPosition.ROOT);
-//		positions.add(hyp.getPosition(hyp.getSourceLocation()));
 	}
 
 }
