@@ -992,13 +992,13 @@
             tooltip="%hypothesisProofTactics.falsify.tooltip"/>
       <tactic
             icon="icons/full/ctool16/impE1_prover.gif"
-            id="org.eventb.ui.impE1"
+            id="org.eventb.ui.mp"
             interrupt="false"
-            name="%proofTactics.impE1.name"
+            name="%proofTactics.mp.name"
             priorty="2"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ImplicationElemination1"
             target="hypothesis"
-            tooltip="%hypothesisProofTactics.ImpE1.tooltip"/>
+            tooltip="%proofTactics.mp.tooltip"/>
       <tactic
             icon="icons/full/ctool16/conjE_prover.gif"
             id="org.eventb.ui.conjE"

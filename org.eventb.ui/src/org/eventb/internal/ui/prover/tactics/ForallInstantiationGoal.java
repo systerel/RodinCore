@@ -7,13 +7,10 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider;
 
 public class ForallInstantiationGoal extends DefaultTacticProvider {
-
-	private List<IPosition> positions;
 
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
@@ -25,16 +22,11 @@ public class ForallInstantiationGoal extends DefaultTacticProvider {
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (node != null && Tactics.allI_applicable(node.getSequent().goal())) {
-			internalGetPositions(node.getSequent().goal());
+			List<IPosition> positions = new ArrayList<IPosition>();
+			positions.add(IPosition.ROOT);
 			return positions;
 		}
 		return null;
-	}
-
-	private void internalGetPositions(Predicate goal) {
-		positions = new ArrayList<IPosition>();
-		if (Lib.isUnivQuant(goal))
-			positions.add(IPosition.ROOT);
 	}
 
 }

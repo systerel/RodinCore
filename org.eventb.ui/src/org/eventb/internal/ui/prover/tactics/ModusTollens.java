@@ -27,6 +27,7 @@ public class ModusTollens extends DefaultTacticProvider {
 		if (node != null && Lib.isImp(hyp)) {
 			positions = new ArrayList<IPosition>();
 			positions.add(IPosition.ROOT);
+			return positions;
 		}
 		return null;
 	}

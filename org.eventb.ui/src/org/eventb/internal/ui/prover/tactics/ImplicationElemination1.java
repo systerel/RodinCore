@@ -21,8 +21,11 @@ public class ImplicationElemination1 extends DefaultTacticProvider {
 	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
-		if (Tactics.impE_applicable(hyp))
-			return new ArrayList<IPosition>();
+		if (Tactics.impE_applicable(hyp)) {
+			List<IPosition> positions = new ArrayList<IPosition>();
+			positions.add(IPosition.ROOT);
+			return positions;
+		}
 		return null;
 	}
 
