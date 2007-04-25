@@ -6,10 +6,12 @@ package org.eventb.core.tests.pm;
 import static org.eventb.core.seqprover.IConfidence.REVIEWED_MAX;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPRFile;
@@ -117,7 +119,13 @@ public class PendingSubgoalTests extends TestPM {
 		super.setUp();
 		// Turn on beginner mode
 		manager.getProvingMode().setExpertMode(false);
-		
+
+		// Set norm as postactic
+		ArrayList<String> tacticIDs = new ArrayList<String>();
+		tacticIDs.add("org.eventb.core.seqprover.normTac");
+		EventBPlugin.getDefault().getUserSupportManager().getProvingMode()
+				.setPostTactics(tacticIDs);
+
 		poFile = createPOFile();
 		prFile = poFile.getPRFile();
 		psFile = poFile.getPSFile();
