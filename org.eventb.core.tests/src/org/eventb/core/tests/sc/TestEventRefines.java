@@ -144,8 +144,8 @@ public class TestEventRefines extends BasicSCTest {
 		refinesEvents(events[0], "evt");
 		containsVariables(events[0]);
 		
-		hasMarker(evt.getGuards()[0], GraphProblem.LocalVariableChangedTypeError, "L1", "ℙ(ℤ)", "ℤ");
-		hasMarker(evt.getVariables()[0], GraphProblem.UntypedVariableError, "L1");
+		hasMarker(evt.getGuards()[0], null, GraphProblem.LocalVariableChangedTypeError, "L1", "ℙ(ℤ)", "ℤ");
+		hasMarker(evt.getVariables()[0], null, GraphProblem.UntypedVariableError, "L1");
 		
 	}
 	
@@ -184,7 +184,7 @@ public class TestEventRefines extends BasicSCTest {
 		containsVariables(events[0], "L2");
 		containsWitnesses(events[0], typeEnvironment, makeSList("L1","L3"), makeSList("L1∈L2", "⊤"));
 		
-		hasMarker(evt, GraphProblem.WitnessLabelMissingWarning, "L3");
+		hasMarker(evt, null, GraphProblem.WitnessLabelMissingWarning, "L3");
 		
 	}
 	
@@ -316,7 +316,7 @@ public class TestEventRefines extends BasicSCTest {
 		containsVariables(events[0], "L1", "L2");
 		containsWitnesses(events[0], typeEnvironment, makeSList("L3"), makeSList("⊤"));
 		
-		hasMarker(evt, GraphProblem.WitnessLabelMissingWarning, "L3");
+		hasMarker(evt, null, GraphProblem.WitnessLabelMissingWarning, "L3");
 		
 	}
 	
@@ -842,7 +842,7 @@ public class TestEventRefines extends BasicSCTest {
 		
 		getSCEvents(file, "fvt");
 		
-		hasMarker(evt, GraphProblem.EventMergeVariableTypeError, "x");
+		hasMarker(evt, null, GraphProblem.EventMergeVariableTypeError, "x");
 		
 	}
 

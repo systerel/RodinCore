@@ -49,6 +49,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.tests.EventBTest;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
@@ -397,6 +398,10 @@ public abstract class BasicSCTest extends EventBTest {
 			assertEquals("should not contain markers", 0, markers.length);
 	}
 	
+	public void hasMarker(IRodinElement element, IAttributeType attrType) throws Exception {
+		hasMarker(element, attrType, null);
+	}
+
 	public void hasMarker(IRodinElement element) throws Exception {
 		hasMarker(element, null);
 	}
@@ -417,7 +422,7 @@ public abstract class BasicSCTest extends EventBTest {
 //		fail("problem marker missing from element");
 //	}
 
-	public void hasMarker(IRodinElement element, IRodinProblem problem, String... args) throws Exception {
+	public void hasMarker(IRodinElement element, IAttributeType attrType, IRodinProblem problem, String... args) throws Exception {
 		IRodinFile file = (IRodinFile) element.getOpenable();
 		IMarker[] markers = 
 			file.getResource().findMarkers(
@@ -426,10 +431,14 @@ public abstract class BasicSCTest extends EventBTest {
 					IResource.DEPTH_INFINITE);
 		for (IMarker marker : markers) {
 			IRodinElement elem = RodinMarkerUtil.getElement(marker);
-			if (elem != null && elem.equals(element))
+			if (elem != null && elem.equals(element)) {
+				if (attrType != null) {
+					IAttributeType attributeType = RodinMarkerUtil.getAttributeType(marker);
+					assertEquals("problem not attached to attribute", attrType, attributeType);
+				}
 				if (problem == null)
 					return;
-				else if (problem.getErrorCode().equals(RodinMarkerUtil.getErrorCode(marker))) {
+				if (problem.getErrorCode().equals(RodinMarkerUtil.getErrorCode(marker))) {
 					String[] pargs = RodinMarkerUtil.getArguments(marker);
 					assertEquals(args.length, pargs.length);
 					for (int i=0; i<args.length; i++) {
@@ -437,8 +446,10 @@ public abstract class BasicSCTest extends EventBTest {
 					}
 					return;
 				}
+			}
 		}
-		fail("problem marker missing from element");
+		fail("problem marker missing from element" +
+				((attrType != null) ? " (attribute: " + attrType.getId() + ")" : ""));
 	}
 
 	public void refinesEvents(ISCEvent event, String... strings) throws RodinDBException {

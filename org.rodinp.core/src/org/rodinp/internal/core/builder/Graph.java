@@ -356,6 +356,8 @@ public class Graph implements Serializable, Iterable<Node> {
 			ExtractorDescription extractorDescription, 
 			Exception e) {
 		Util.log(e, " while extracting from " + file.getName()); //$NON-NLS-1$
+		if (RodinBuilder.DEBUG_RUN)
+			System.out.println("Error extracting:\n" + e);
 		MarkerHelper.deleteAllProblemMarkers(file);
 		MarkerHelper.addMarker(
 				file, 
