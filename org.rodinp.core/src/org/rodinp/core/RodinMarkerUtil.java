@@ -234,6 +234,33 @@ public final class RodinMarkerUtil {
 	}
 
 	/**
+	 * Returns the smallest element marked by the given marker. Returns
+	 * <code>null</code> if the marker does not exist or does not relate to a
+	 * Rodin element.
+	 * <p>
+	 * If the given marker carries an internal element, this internal element is
+	 * returned. Otherwise, if the resource to which this marked is attached
+	 * corresponds to a Rodin element, this element is returned. Otherwise,
+	 * <code>null</code> is returned.
+	 * </p>
+	 * 
+	 * @param marker
+	 *            marker to read
+	 * @return the smallest element corresponding to the given marker or
+	 *         <code>null</code> if there is no corresponding Rodin element
+	 * @throws IllegalArgumentException
+	 *             if the given marker is not a Rodin problem marker
+	 * @see #ELEMENT
+	 */
+	public static IRodinElement getElement(IMarker marker) {
+		final IRodinElement ie = getInternalElement(marker);
+		if (ie != null) {
+			return ie;
+		}
+		return RodinCore.valueOf(marker.getResource());
+	}
+	
+	/**
 	 * Returns the internal element of the given marker. Returns
 	 * <code>null</code> if the marker does not exist or does not carry an
 	 * internal element.

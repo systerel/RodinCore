@@ -169,6 +169,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		// Check attributes through enquiry methods of RodinMarkerUtil
 		assertEquals(pb.getErrorCode(), RodinMarkerUtil.getErrorCode(marker));
 		assertSameArgs(args, RodinMarkerUtil.getArguments(marker));
+		assertEquals(elem, RodinMarkerUtil.getElement(marker));
 		assertEquals(elem instanceof IInternalElement ? elem : null,
 				RodinMarkerUtil.getInternalElement(marker));
 		assertEquals(attrType, RodinMarkerUtil.getAttributeType(marker));
