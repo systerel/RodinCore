@@ -5,6 +5,7 @@ import static org.eventb.core.seqprover.tactics.BasicTactics.onAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -183,7 +184,20 @@ public class Tactics {
 				// Get the node where Eq should be applied
 				IProofTreeNode node = pt.getChildNodes()[antecedents.length - 1];
 				// apply Eq
-				return he(eqHyp).apply(node, pm);
+				result = he(eqHyp).apply(node, pm);
+				
+				// Check if it was successful
+				if (result != null) return result;
+				
+				// Immediately deselect the introduced equality so that
+				// the autoEQ tactic does not reverse the last eq.
+				
+				ISelectionHypAction deselectHypAction = ProverFactory.makeDeselectHypAction(Collections.singleton(eqHyp));
+				assert node.getChildNodes().length == 1;
+				node = node.getChildNodes()[0];
+				mngHyp(deselectHypAction).apply(node, pm);
+				
+				return null;
 			}
 
 		};
@@ -534,9 +548,7 @@ public class Tactics {
 								! Arrays.asList(Lib.eqRight(shyp).getFreeIdentifiers()).contains(Lib.eqLeft(shyp))){
 							// Try eq and return only if the tactic actually did something.
 							if (eqE(shyp).apply(ptNode, pm) == null) return null;
-						}
-						
-						if (Lib.isFreeIdent(Lib.eqRight(shyp)) &&
+						} else if (Lib.isFreeIdent(Lib.eqRight(shyp)) &&
 								! Arrays.asList(Lib.eqLeft(shyp).getFreeIdentifiers()).contains(Lib.eqRight(shyp))){
 							// Try he and return only if the tactic actually did something.
 							if (he(shyp).apply(ptNode, pm) == null) return null;

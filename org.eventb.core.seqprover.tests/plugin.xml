@@ -31,6 +31,10 @@
             id="identityTac"
             name="Identity Tactic"/>
       <tactic
+            class="org.eventb.core.seqprover.tacticExtentionTests.IdentityTactic$FailTactic"
+            id="failTac"
+            name="Fail Tactic"/>
+      <tactic
             class="org.eventb.core.seqprover.tacticExtentionTests.IdentityTactic"
             id="erroneous.id"
             name="Erroneous id (contains a dot)"/>

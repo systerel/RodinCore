@@ -9,6 +9,7 @@ import java.util.Arrays;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.tacticExtentionTests.IdentityTactic.FailTactic;
 import org.junit.Test;
 
 /**
@@ -75,6 +76,7 @@ public class TacticRegistryTest {
 		
 		// Initially, contains only registered extensions
 		assertKnown(IdentityTactic.TACTIC_ID);
+		assertKnown(FailTactic.TACTIC_ID);
 		assertNotKnown(idName);
 		assertNotKnown(idInstance);
 		assertNotKnown(idOther);
@@ -95,6 +97,9 @@ public class TacticRegistryTest {
 	public void testGetTacticInstance() {
 		ITactic tactic = registry.getTacticInstance(IdentityTactic.TACTIC_ID);
 		assertTrue(tactic instanceof IdentityTactic);
+		
+		tactic = registry.getTacticInstance(FailTactic.TACTIC_ID);
+		assertTrue(tactic instanceof FailTactic);
 		
 		tactic = registry.getTacticInstance(getDummyId());
 		assertTrue(tactic instanceof ITactic);

@@ -56,7 +56,7 @@ public class Eq extends SinglePredInputReasoner{
 		List<IHypAction> rewrites = new ArrayList<IHypAction>();
 		Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
 		Set<Predicate> toSelect = new LinkedHashSet<Predicate>();
-		toDeselect.add(eqHyp);
+		// toDeselect.add(eqHyp);
 		
 		for (Predicate shyp : seq.selectedHypIterable()){
 			if (!shyp.equals(eqHyp)) {

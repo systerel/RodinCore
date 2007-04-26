@@ -58,8 +58,8 @@ public class AbstrExprTests {
 		assertTrue(newSeqs.length == 2);
 		// Note: this test is pretty printer dependent. Change string (after inspection)
 		// in case pretty printer is modified
-		assertTrue(newSeqs[0].toString().equals("{x=ℤ}[][][x=1 ,x+1=2] |- ⊤"));
-		assertTrue(newSeqs[1].toString().equals("{ae=ℤ, x=ℤ}[][][x=1 ,x+1=2 ,ae=x+1] |- (x+1)+1=3"));
+		assertTrue(newSeqs[0].toString().equals("{x=ℤ}[][][x=1, x+1=2] |- ⊤"));
+		assertTrue(newSeqs[1].toString().equals("{ae=ℤ, x=ℤ}[][][x=1, x+1=2, ae=x+1] |- (x+1)+1=3"));
 		
 	}
 	

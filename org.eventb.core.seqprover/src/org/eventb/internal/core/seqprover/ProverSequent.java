@@ -376,7 +376,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		while (iterator.hasNext()){
 			str.append((iterator.next()).toString());
 			if (iterator.hasNext()){
-				str.append(" ,");
+				str.append(", ");
 			}
 		}
 		str.append("]");

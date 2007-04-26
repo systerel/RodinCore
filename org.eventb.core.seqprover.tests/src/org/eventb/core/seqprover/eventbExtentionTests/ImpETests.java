@@ -63,7 +63,7 @@ public class ImpETests {
 		// Note: this test is pretty printer dependent. Change string (after inspection)
 		// in case pretty printer is modified
 		assertTrue(newSeqs[0].toString().equals("{}[][1=1⇒2=2][] |- 1=1"));
-		assertTrue(newSeqs[1].toString().equals("{}[][1=1⇒2=2][2=2 ,1=1] |- ⊤"));
+		assertTrue(newSeqs[1].toString().equals("{}[][1=1⇒2=2][2=2, 1=1] |- ⊤"));
 		
 		// Rule is not goal dependent
 		assertTrue(((IProofRule)output).getGoal() == null);

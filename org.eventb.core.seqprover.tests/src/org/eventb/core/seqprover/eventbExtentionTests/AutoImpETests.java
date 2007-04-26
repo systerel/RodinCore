@@ -58,7 +58,7 @@ public class AutoImpETests {
 		assertTrue(newSeqs.length == 1);
 		// Note: this test is pretty printer dependent. Change string (after inspection)
 		// in case pretty printer is modified
-		assertTrue(newSeqs[0].toString().equals("{}[1=1∧2=2⇒3=3][][1=1 ,2=2⇒3=3] |- 4=4"));
+		assertTrue(newSeqs[0].toString().equals("{}[1=1∧2=2⇒3=3][][1=1, 2=2⇒3=3] |- 4=4"));
 		
 		// test total impE
 		seq = TestLib.genSeq(" 1=1 ;; 2=2 ;; 1=1 ∧ 2=2 ⇒ 3=3 |- 4 = 4 ");
@@ -68,7 +68,7 @@ public class AutoImpETests {
 		assertTrue(newSeqs.length == 1);
 		// Note: this test is pretty printer dependent. Change string (after inspection)
 		// in case pretty printer is modified
-		assertTrue(newSeqs[0].toString().equals("{}[1=1∧2=2⇒3=3][][1=1 ,2=2 ,3=3] |- 4=4"));
+		assertTrue(newSeqs[0].toString().equals("{}[1=1∧2=2⇒3=3][][1=1, 2=2, 3=3] |- 4=4"));
 		
 	}
 	

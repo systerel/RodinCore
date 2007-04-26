@@ -155,16 +155,16 @@
             id="autoImpETac"
             name="%autoImpETacName"/>
       <tactic
-            class="org.eventb.core.seqprover.eventbExtensions.Tactics.AutoFalsifyHypTac"
-            id="autoFalsifyHyp"
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoFalsifyHypTac"
+            id="autoFalsifyHypTac"
             name="%autoFalsifyHypTacName"/>
       <tactic
-            class="org.eventb.core.seqprover.eventbExtensions.Tactics.AutoEqETac"
-            id="autoEqE"
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoEqETac"
+            id="autoEqETac"
             name="%autoEqETacName"/>
       <tactic
-            class="org.eventb.core.seqprover.eventbExtensions.Tactics.AutoExFTac"
-            id="autoExF"
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoExFTac"
+            id="autoExFTac"
             name="%autoExFTacName"/>
    </extension>
 
