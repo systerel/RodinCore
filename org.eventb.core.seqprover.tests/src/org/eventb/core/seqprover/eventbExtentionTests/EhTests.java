@@ -79,21 +79,21 @@ public class EhTests extends AbstractTests {
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully equality P1 ",
-				"{}[][0=1, 0+1=2][1+1=2] |- 1+1+1=3", newSeqs);
+				"{}[][0+1=2][0=1, 1+1=2] |- 1+1+1=3", newSeqs);
 
 		seq = TestLib.genSeq(P2 + " ;; 0+1 = 2 |- 2+0+1 = 3 ");
 		output = ehReasoner.apply(seq, new SinglePredInput(P2), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully equality P2 ",
-				"{}[][0+1=1, 0+1=2][1=2] |- 2+1=3", newSeqs);
+				"{}[][0+1=2][0+1=1, 1=2] |- 2+1=3", newSeqs);
 
 		seq = TestLib.genSeq(P3 + " ;; 0+1 = 0+1+2 |- 2+0+1 = 0+1+2+3 ");
 		output = ehReasoner.apply(seq, new SinglePredInput(P3), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully equality P2 ",
-				"{}[][0+1+2=2+1, 0+1=0+1+2][0+1=2+1] |- 2+0+1=2+1+3", newSeqs);
+				"{}[][0+1=0+1+2][0+1+2=2+1, 0+1=2+1] |- 2+0+1=2+1+3", newSeqs);
 	}
 
 }
