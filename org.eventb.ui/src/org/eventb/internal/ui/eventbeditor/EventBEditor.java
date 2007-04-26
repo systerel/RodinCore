@@ -848,7 +848,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 	public void gotoMarker(IMarker marker) {
 		IInternalElement element;
 		try {
-			element = RodinMarkerUtil.getElement(marker);
+			element = RodinMarkerUtil.getInternalElement(marker);
 		} catch (IllegalArgumentException e) {
 			if (EventBEditorUtils.DEBUG) {
 				EventBEditorUtils.debug("Not a Rodin Marker");

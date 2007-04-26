@@ -430,7 +430,7 @@ public abstract class BasicSCTest extends EventBTest {
 					true, 
 					IResource.DEPTH_INFINITE);
 		for (IMarker marker : markers) {
-			IRodinElement elem = RodinMarkerUtil.getElement(marker);
+			IRodinElement elem = RodinMarkerUtil.getInternalElement(marker);
 			if (elem != null && elem.equals(element)) {
 				if (attrType != null) {
 					IAttributeType attributeType = RodinMarkerUtil.getAttributeType(marker);

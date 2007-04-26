@@ -246,7 +246,7 @@ public final class RodinMarkerUtil {
 	 *             if the given marker is not a Rodin problem marker
 	 * @see #ELEMENT
 	 */
-	public static IInternalElement getElement(IMarker marker) {
+	public static IInternalElement getInternalElement(IMarker marker) {
 		checkRodinProblemMarker(marker);
 		final String handleId = marker.getAttribute(ELEMENT, null);
 		if (handleId == null) {

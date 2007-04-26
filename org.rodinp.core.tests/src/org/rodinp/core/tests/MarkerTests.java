@@ -170,7 +170,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		assertEquals(pb.getErrorCode(), RodinMarkerUtil.getErrorCode(marker));
 		assertSameArgs(args, RodinMarkerUtil.getArguments(marker));
 		assertEquals(elem instanceof IInternalElement ? elem : null,
-				RodinMarkerUtil.getElement(marker));
+				RodinMarkerUtil.getInternalElement(marker));
 		assertEquals(attrType, RodinMarkerUtil.getAttributeType(marker));
 		// Normalize invalid position
 		if (charStart < 0) charStart = -1;
