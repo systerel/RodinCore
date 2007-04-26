@@ -320,6 +320,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 			text.getTextWidget().addModifyListener(new DirtyStateListener());
 		}
 		actCount = 3;
+		nameText.getTextWidget().selectAll();
 	}
 
 	/*
