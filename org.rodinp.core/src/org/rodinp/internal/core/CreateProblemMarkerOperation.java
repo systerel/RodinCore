@@ -198,12 +198,10 @@ public class CreateProblemMarkerOperation extends RodinDBOperation {
 
 	private IRodinDBStatus verifyAttributeId(InternalElement element,
 			boolean withCharPos) {
-
-		// TODO check for null attribute type
 		
 		// Check that attribute exists
 		try {
-			if (!element.hasAttribute(attrType)) {
+			if (withCharPos && !element.hasAttribute(attrType)) {
 				return new RodinDBStatus(ATTRIBUTE_DOES_NOT_EXIST, element,
 						attrType.getId());
 			}

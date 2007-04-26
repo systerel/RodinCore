@@ -61,7 +61,6 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *                if this method fails. Reasons include:
 	 *                <ul>
 	 *                <li>This element does not exist.</li>
-	 *                <li>The specified attribute is not set for this element.</li>
 	 *                </ul>
 	 * @see RodinMarkerUtil
 	 */
@@ -93,7 +92,8 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *                if this method fails. Reasons include:
 	 *                <ul>
 	 *                <li>This element does not exist.</li>
-	 *                <li>The specified attribute is not set for this element.</li>
+	 *                <li>The specified attribute is not set for this element,
+	 *                although start and end positions have been specified.</li>
 	 *                <li>The start and end positions are specified together
 	 *                with a <code>null</code> attribute id.</li>
 	 *                <li>The start and end positions are specified with an

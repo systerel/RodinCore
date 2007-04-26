@@ -382,15 +382,14 @@ public class MarkerTests extends ModifyingResourceTests {
 	}
 	
 	/**
-	 * Ensures that a problem marker cannot be set on an inexistent attribute of
+	 * Ensures that a problem marker can be set on an inexistent attribute of
 	 * an internal element.
 	 */
 	public void testMarkerAttrInexistent() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
 		rodinFile.save(null, false);
-		createMarkerNegative(ATTRIBUTE_DOES_NOT_EXIST, ne,
-				fString, TestProblem.err0);
+		createMarkerPositive(ne, fString, TestProblem.err0);
 	}
 	
 	/**
