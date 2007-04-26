@@ -15,6 +15,10 @@ package org.eventb.internal.ui.eventbeditor;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -22,6 +26,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eventb.core.IInvariant;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
@@ -30,6 +35,7 @@ import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -47,8 +53,6 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 	private int invIndex;
 
-	private String defaultInitName;
-
 	private String name;
 
 	private Collection<Pair> invariants;
@@ -65,7 +69,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 	private IEventBInputText initSubstitutionText;
 
-	private IEventBEditor editor;
+	IEventBEditor editor;
 
 	/**
 	 * Constructor.
@@ -77,18 +81,15 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 *            the title of the dialog
 	 * @param defaultName
 	 *            the default variable name
-	 * @param defaultInitName
-	 *            the default init name
 	 */
 	public IntelligentNewVariableInputDialog(IEventBEditor editor,
 			Shell parentShell, String title, String defaultName,
-			String invPrefix, int invIndex, String defaultInitName) {
+			String invPrefix, int invIndex) {
 		super(parentShell, title);
 		this.editor = editor;
 		this.defaultName = defaultName;
 		this.invIndex = invIndex;
 		this.invPrefix = invPrefix;
-		this.defaultInitName = defaultInitName;
 		invariantPairTexts = new ArrayList<Pair>();
 	}
 
@@ -99,6 +100,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.RETRY_ID, "&Add", true);
 		createButton(parent, IDialogConstants.YES_ID, "&More Inv.", true);
 
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
@@ -138,7 +140,15 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		label = toolkit.createLabel(body, "Initialisation");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
-		initNameText = new EventBText(toolkit.createText(body, defaultInitName));
+		String actLabel = "act";
+		try {
+			actLabel = EventBEditorUtils.getFreeInitialisationActionName(editor);
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		initNameText = new EventBText(toolkit.createText(body, actLabel));
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = 50;
 		initNameText.getTextWidget().setLayoutData(gd);
@@ -179,8 +189,10 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		invariantPairTexts.add(new Pair<IEventBInputText, IEventBInputText>(
 				invariantNameText, invariantPredicateText));
 
-		nameText.getTextWidget().setText(defaultName);
-
+		Text nameTextWidget = nameText.getTextWidget();
+		nameTextWidget.setText(defaultName);
+		nameTextWidget.selectAll();
+		nameTextWidget.setFocus();
 	}
 
 	/*
@@ -231,33 +243,97 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 			updateSize();
 		} else if (buttonId == IDialogConstants.OK_ID) {
-			name = nameText.getTextWidget().getText();
-
-			invariants = new ArrayList<Pair>();
-			for (Pair pair : invariantPairTexts) {
-				IEventBInputText invariantPredicateText = (IEventBInputText) pair
-						.getSecond();
-				IEventBInputText invariantNameText = (IEventBInputText) pair
-						.getFirst();
-				if (dirtyTexts.contains(invariantPredicateText.getTextWidget())) {
-					String invName = invariantNameText.getTextWidget()
-							.getText();
-					String pred = Text2EventBMathTranslator
-							.translate(invariantPredicateText.getTextWidget()
-									.getText());
-					invariants.add(new Pair<String, String>(invName, pred));
-				}
-			}
-			if (dirtyTexts.contains(initSubstitutionText.getTextWidget())) {
-				initName = initNameText.getTextWidget().getText();
-				initSubstitution = initSubstitutionText.getTextWidget()
-						.getText();
-			} else {
-				initName = null;
-				initSubstitution = null;
-			}
+			setFieldValues();
+		} else if (buttonId == IDialogConstants.RETRY_ID) {
+			setFieldValues();
+			addValues();
+			initialise();
 		}
 		super.buttonPressed(buttonId);
+	}
+
+	private void addValues() {
+		try {
+			RodinCore.run(new IWorkspaceRunnable() {
+				
+				public void run(IProgressMonitor monitor) throws CoreException {
+					EventBEditorUtils.createNewVariable(editor, getName(),
+							monitor);
+					EventBEditorUtils.createNewInvariant(editor, getInvariants(),
+							monitor);
+
+					String actName = getInitActionName();
+					String actSub = getInitActionSubstitution();
+					EventBEditorUtils.createNewInitialisationAction(editor, actName,
+							actSub, monitor);
+				}
+				
+			}, new NullProgressMonitor());
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void initialise() {
+		clearDirtyTexts();
+		for (Pair pair : invariantPairTexts) {
+			IEventBInputText invariantPredicateText = (IEventBInputText) pair
+					.getSecond();
+			IEventBInputText invariantNameText = (IEventBInputText) pair
+					.getFirst();
+			try {
+				invIndex = UIUtils.getFreeElementLabelIndex(editor, editor
+						.getRodinInput(), IInvariant.ELEMENT_TYPE, invPrefix,
+						invIndex + 1);
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			invariantNameText.getTextWidget().setText(invPrefix + invIndex);
+			invariantPredicateText.getTextWidget().setText("");
+		}
+		String actionName = "act";
+		try {
+			actionName = EventBEditorUtils.getFreeInitialisationActionName(editor);
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		initNameText.getTextWidget().setText(actionName);
+		initSubstitutionText.getTextWidget().setText("");
+		Text nameTextWidget = nameText.getTextWidget();
+		nameTextWidget.setText(defaultName);
+		nameTextWidget.selectAll();
+		nameTextWidget.setFocus();
+	}
+
+	private void setFieldValues() {
+		name = nameText.getTextWidget().getText();
+
+		invariants = new ArrayList<Pair>();
+		for (Pair pair : invariantPairTexts) {
+			IEventBInputText invariantPredicateText = (IEventBInputText) pair
+					.getSecond();
+			IEventBInputText invariantNameText = (IEventBInputText) pair
+					.getFirst();
+			if (dirtyTexts.contains(invariantPredicateText.getTextWidget())) {
+				String invName = invariantNameText.getTextWidget()
+						.getText();
+				String pred = Text2EventBMathTranslator
+						.translate(invariantPredicateText.getTextWidget()
+								.getText());
+				invariants.add(new Pair<String, String>(invName, pred));
+			}
+		}
+		if (dirtyTexts.contains(initSubstitutionText.getTextWidget())) {
+			initName = initNameText.getTextWidget().getText();
+			initSubstitution = initSubstitutionText.getTextWidget()
+					.getText();
+		} else {
+			initName = null;
+			initSubstitution = null;
+		}
 	}
 
 	/**
@@ -286,11 +362,11 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 * 
 	 * @return the initialisation action as input by the user
 	 */
-	public String getInitSubstitution() {
+	public String getInitActionSubstitution() {
 		return initSubstitution;
 	}
 
-	public String getInitName() {
+	public String getInitActionName() {
 		return initName;
 	}
 
