@@ -156,8 +156,15 @@ public abstract class EventBInputDialog extends Dialog {
 				dirtyTexts.add(text);
 				text.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
 			}
-
 		}
+	}
+
+	protected void clearDirtyTexts() {
+		Display display = Display.getCurrent();
+		for (Text text : dirtyTexts) {
+			text.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+		}
+		dirtyTexts.clear();
 	}
 
 	protected void updateSize() {
