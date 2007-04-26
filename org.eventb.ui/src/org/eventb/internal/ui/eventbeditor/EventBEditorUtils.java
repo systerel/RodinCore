@@ -902,16 +902,14 @@ public class EventBEditorUtils {
 		try {
 
 			String prefix = UIUtils.getPrefix(editor,
-					IInvariant.ELEMENT_TYPE, PrefixInvName.DEFAULT_PREFIX);
+					IInvariant.ELEMENT_TYPE,
+					PrefixInvName.DEFAULT_PREFIX);
 			int index = UIUtils.getFreeElementLabelIndex(editor, rodinFile,
 					IInvariant.ELEMENT_TYPE, prefix);
 
-			String varName = UIUtils.getFreeElementIdentifier(editor,
-					rodinFile, IVariable.ELEMENT_TYPE,
-					PrefixVarName.DEFAULT_PREFIX);
 			final IntelligentNewVariableInputDialog dialog = new IntelligentNewVariableInputDialog(
 					editor, Display.getCurrent().getActiveShell(),
-					"New Variable", varName, prefix, index);
+					"New Variable", prefix, index);
 
 			dialog.open();
 

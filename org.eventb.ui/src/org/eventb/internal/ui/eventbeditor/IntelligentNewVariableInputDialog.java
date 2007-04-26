@@ -28,12 +28,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.IInvariant;
+import org.eventb.core.IVariable;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixVarName;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -46,8 +48,6 @@ import org.rodinp.core.RodinDBException;
  *         initilisation.
  */
 public class IntelligentNewVariableInputDialog extends EventBInputDialog {
-
-	private String defaultName;
 
 	private String invPrefix;
 
@@ -79,15 +79,12 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 *            the parent shell of the dialog
 	 * @param title
 	 *            the title of the dialog
-	 * @param defaultName
-	 *            the default variable name
 	 */
 	public IntelligentNewVariableInputDialog(IEventBEditor editor,
-			Shell parentShell, String title, String defaultName,
+			Shell parentShell, String title,
 			String invPrefix, int invIndex) {
 		super(parentShell, title);
 		this.editor = editor;
-		this.defaultName = defaultName;
 		this.invIndex = invIndex;
 		this.invPrefix = invPrefix;
 		invariantPairTexts = new ArrayList<Pair>();
@@ -190,7 +187,16 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 				invariantNameText, invariantPredicateText));
 
 		Text nameTextWidget = nameText.getTextWidget();
-		nameTextWidget.setText(defaultName);
+		String varName = "var";
+		try {
+			varName = UIUtils.getFreeElementIdentifier(editor,
+					editor.getRodinInput(), IVariable.ELEMENT_TYPE,
+					PrefixVarName.DEFAULT_PREFIX);
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		nameTextWidget.setText(varName);
 		nameTextWidget.selectAll();
 		nameTextWidget.setFocus();
 	}
@@ -303,7 +309,16 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		initNameText.getTextWidget().setText(actionName);
 		initSubstitutionText.getTextWidget().setText("");
 		Text nameTextWidget = nameText.getTextWidget();
-		nameTextWidget.setText(defaultName);
+		String varName = "var";
+		try {
+			varName = UIUtils.getFreeElementIdentifier(editor,
+					editor.getRodinInput(), IVariable.ELEMENT_TYPE,
+					PrefixVarName.DEFAULT_PREFIX);
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		nameTextWidget.setText(varName);
 		nameTextWidget.selectAll();
 		nameTextWidget.setFocus();
 	}
