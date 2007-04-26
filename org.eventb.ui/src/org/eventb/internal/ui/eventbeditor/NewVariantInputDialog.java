@@ -100,9 +100,10 @@ public class NewVariantInputDialog extends EventBInputDialog {
 		expressionText = new EventBMath(toolkit.createText(body, defaultPrefix));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
-		expressionText.getTextWidget().setLayoutData(gd);
-		expressionText.getTextWidget().addModifyListener(new DirtyStateListener());
-
+		Text textWidget = expressionText.getTextWidget();
+		textWidget.setLayoutData(gd);
+		textWidget.addModifyListener(new DirtyStateListener());
+		textWidget.selectAll();
 	}
 
 	/*
