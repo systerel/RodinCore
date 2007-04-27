@@ -1,7 +1,7 @@
 package org.eventb.internal.core.pm;
 
-import static org.eventb.core.seqprover.tactics.BasicTactics.compose;
-import static org.eventb.core.seqprover.tactics.BasicTactics.onAllPending;
+import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
+import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
 
 import java.util.ArrayList;
 
@@ -9,7 +9,6 @@ import org.eventb.core.pm.IProvingMode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.tactics.BasicTactics;
 
 public class ProvingMode implements IProvingMode {
 
@@ -43,7 +42,7 @@ public class ProvingMode implements IProvingMode {
 	}
 
 	private ITactic composeTactics(ITactic ... list) {
-		return BasicTactics.repeat(onAllPending(compose(list)));
+		return repeat(composeOnAllPending(list));
 	}
 
 	public void setPostTactics(ArrayList<String> tacticIDs) {
