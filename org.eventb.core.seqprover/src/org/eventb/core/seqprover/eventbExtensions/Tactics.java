@@ -1,6 +1,7 @@
 package org.eventb.core.seqprover.eventbExtensions;
 
 import static org.eventb.core.seqprover.tactics.BasicTactics.compose;
+import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.onAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
 
@@ -692,7 +693,7 @@ public class Tactics {
 	// It is important that conjD_auto() is called sometime before falsifyHyp_auto()
 	// and impE_auto()
 	public static ITactic postProcessExpert() {
-		return repeat(onAllPending(compose(
+		return repeat(composeOnAllPending(
 				new AutoRewriteTac(),
 				// autoRewriteRules() already incorporates what conjD_auto() does
 				// conjD_auto(),
@@ -702,7 +703,7 @@ public class Tactics {
 				new AutoImpFTac(),
 				new AutoExFTac(),
 				new NormTac()
-				)));
+				));
 	}
 
 	public static ITactic afterLasoo(final ITactic tactic) {
