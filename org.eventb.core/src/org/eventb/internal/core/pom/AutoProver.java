@@ -145,15 +145,13 @@ public class AutoProver {
 		final int MLforces = 
 			B4freeCore.ML_FORCE_0 |
 			B4freeCore.ML_FORCE_1;
-		return BasicTactics.compose(
+		return BasicTactics.composeOnAllPending(
 				// Tactics.lasoo(),
-				BasicTactics.onAllPending(Tactics.norm()),
-				BasicTactics.onAllPending(
-						B4freeCore.externalML(MLforces, timeOutDelay)), // ML
-				BasicTactics.onAllPending(
-								B4freeCore.externalPP(true, timeOutDelay)), // P0
-				BasicTactics.onAllPending(
-						B4freeCore.externalP1(timeOutDelay)) // P1
+				// Tactics.norm(),
+				Tactics.postProcessExpert(),
+				B4freeCore.externalML(MLforces, timeOutDelay) // ML
+//				B4freeCore.externalPP(true, timeOutDelay), // P0
+//				B4freeCore.externalP1(timeOutDelay) // P1
 //				BasicTactics.onAllPending(
 //						B4freeCore.externalPP(false, timeOutDelay)) // PP
 				);
