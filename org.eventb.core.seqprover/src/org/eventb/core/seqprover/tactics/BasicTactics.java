@@ -205,7 +205,7 @@ public class BasicTactics {
 	 * irrespective of whether they succeed or fail.
 	 * </p>
 	 * <p>
-	 * The resulting tactic succeeds iff all tactics succeed.
+	 * The resulting tactic succeeds iff at least one tactics succeeded.
 	 * </p>
 	 * 
 	 * @param tactics
@@ -221,6 +221,42 @@ public class BasicTactics {
 				Object lastFailure = "compose unapplicable: no tactics";
 				for (ITactic tactic : tactics){
 					Object tacticApp = tactic.apply(pt, pm);
+					if (tacticApp == null) applicable = true; 
+					else lastFailure = tacticApp;
+				}
+				return applicable ? null : lastFailure;
+			}
+		};
+	}
+	
+	/**
+	 * Composes a sequence of tactics that are intended to be applied on open proof tree nodes.
+	 * 
+	 * <p>
+	 * The behavoiur of the constructed tactic is identical to <code>compose(onAllPending(t1)... onAllPending(tn))</code>.
+	 * </p>
+	 * 
+	 * <p>
+	 * Applying the resulting tactic applies ALL given tactics on ALL pending proof tree nodes, in the given order,
+	 * irrespective of whether they succeed or fail.
+	 * </p>
+	 * <p>
+	 * The resulting tactic succeeds iff at least one tactic succeeded.
+	 * </p>
+	 * 
+	 * @param tactics
+	 * 			Array of tactics to compose
+	 * @return
+	 * 			The resulting tactic.
+	 */
+	public static ITactic composeOnAllPending(final ITactic ... tactics){
+		return new ITactic(){
+	
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
+				boolean applicable = false;
+				Object lastFailure = "compose unapplicable: no tactics";
+				for (ITactic tactic : tactics){
+					Object tacticApp = onAllPending(tactic).apply(pt, pm);
 					if (tacticApp == null) applicable = true; 
 					else lastFailure = tacticApp;
 				}
