@@ -1313,7 +1313,7 @@ public class TestEventRefines extends BasicSCTest {
 	/*
 	 * Witnesses must not reference post values of abstract disappearing global variables
 	 */
-	public void testEvents_25_localWitnessWithPostValues() throws Exception {
+	public void testEvents_34_localWitnessWithPostValues() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "p");
@@ -1358,7 +1358,7 @@ public class TestEventRefines extends BasicSCTest {
 	/*
 	 * 
 	 */
-	public void testEvents_26_localVarRefByGlobalVarConflict() throws Exception {
+	public void testEvents_35_localVarRefByGlobalVarConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", 
@@ -1391,6 +1391,49 @@ public class TestEventRefines extends BasicSCTest {
 		
 		hasMarker(mac.getVariables()[0]);
 		hasMarker(fvt);
+	}
+	
+	/*
+	 * post-values of abstract disappearing variables must be be referenced in witnesses 
+	 */
+	public void testEvents_36_disappearedVariableAssigned() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, "V1");
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addEvent(abs, "evt", makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("V1:∈ℕ"));
+
+		abs.save(null, true);
+		
+		runBuilder();
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "V2");
+		addInvariants(mac, makeSList("I1"), makeSList("V2∈ℕ"));
+		IEvent evt = addEvent(mac, "evt", makeSList(), 
+				makeSList(), makeSList(), makeSList("A2"), makeSList("V1:∈ℕ"));
+		addEventRefines(evt, "evt");
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("V1'", intType);
+		typeEnvironment.addName("V2'", intType);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt");
+		refinesEvents(events[0], "evt");
+		
+		containsWitnesses(events[0], typeEnvironment, makeSList("V1'"), makeSList("⊤"));
+		
+		hasMarker(evt);
+		hasMarker(evt.getActions()[0]);
+		
 	}
 
 }
