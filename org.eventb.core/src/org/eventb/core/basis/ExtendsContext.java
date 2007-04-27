@@ -50,6 +50,11 @@ public class ExtendsContext extends InternalElement implements IExtendsContext {
 	public IInternalElementType<IExtendsContext> getElementType() {
 		return ELEMENT_TYPE;
 	}
+	
+	public boolean hasAbstractContextName() 
+	throws RodinDBException {
+		return hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IExtendsContext#getAbstractContextName()

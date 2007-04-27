@@ -19,6 +19,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.sc.GraphProblem;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -51,6 +52,13 @@ extends LabeledFormulaModule<Predicate, I> {
 		
 		IPredicateElement predicateElement = (IPredicateElement) formulaElement;
 
+		if (!predicateElement.hasPredicateString()) {
+			createProblemMarker(
+					predicateElement, 
+					EventBAttributes.PREDICATE_ATTRIBUTE, 
+					GraphProblem.PredicateUndefError);
+			return null;
+		}
 		String predicateString = predicateElement.getPredicateString();
 		
 		// parse the predicate

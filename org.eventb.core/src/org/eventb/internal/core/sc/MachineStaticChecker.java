@@ -101,17 +101,16 @@ public class MachineStaticChecker extends StaticChecker {
 					source.getResource(), 
 					target.getResource(), true);	
 		
-			if (seen.length != 0) {
-				for (ISeesContext seesContext : seen) {
+			for (ISeesContext seesContext : seen) {
+				if (seesContext.hasSeenContextName())
 					graph.addUserDependency(
 							source.getResource(), 
 							seesContext.getSeenSCContext().getResource(), 
 							target.getResource(), 
 							true);
-				}
 			}
 		
-			if (abstractMachines.length != 0) {
+			if (abstractMachines.length != 0 && abstractMachines[0].hasAbstractMachineName()) {
 				graph.addUserDependency(
 						source.getResource(), 
 						abstractMachines[0].getAbstractSCMachine().getResource(), 

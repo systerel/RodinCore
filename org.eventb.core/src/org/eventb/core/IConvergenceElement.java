@@ -21,6 +21,10 @@ import org.rodinp.core.RodinDBException;
  * {@link Convergence#ANTICIPATED} are permitted.
  * </p>
  * <p>
+ * The attribute storing the convergence is <i>optional</i>. This means if the attribute
+ * is not present, the value should be interpreted as <i>undefined</i>.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
@@ -64,6 +68,14 @@ public interface IConvergenceElement extends IInternalElement {
 		}
 		
 	}
+	
+	/**
+	 * Tests whether the convergence is defined or not.
+	 * 
+	 * @return whether the convergence is defined or not
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean hasConvergence() throws RodinDBException;
 	
 	/**
 	 * Sets the convergence to one of the values {@link Convergence#ORDINARY}, 

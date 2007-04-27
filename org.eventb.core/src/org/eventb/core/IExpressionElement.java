@@ -19,6 +19,10 @@ import org.rodinp.core.RodinDBException;
  * guarantee that it is parseable.
  * </p>
  * <p>
+ * The attribute storing the expression string is <i>optional</i>. This means if the attribute
+ * is not present, the value should be interpreted as <i>undefined</i>.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
@@ -26,6 +30,14 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IExpressionElement extends IInternalElement {
 
+	/**
+	 * Tests whether the expression string is defined or not.
+	 * 
+	 * @return whether the assignemnt string is defined or not
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean hasExpressionString() throws RodinDBException;
+	
 	/**
 	 * Returns the string representation of the expression contained in this
 	 * element.

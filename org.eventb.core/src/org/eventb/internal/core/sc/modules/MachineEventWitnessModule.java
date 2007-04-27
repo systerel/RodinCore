@@ -111,10 +111,10 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		int index = 0;
 		
 		for (int i=0; i<formulaElements.length; i++) {
-			String label = formulaElements[i].getLabel();
-			boolean labelIsNeeded = witnessNames.contains(label);
-			if (labelIsNeeded) {
-				if (formulas[i] != null) {
+			if (formulas[i] != null) {
+				String label = formulaElements[i].getLabel();
+				boolean labelIsNeeded = witnessNames.contains(label);
+				if (labelIsNeeded) {
 					witnessNames.remove(label);
 					createSCWitness(
 							target, 
@@ -123,12 +123,12 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 							formulaElements[i],
 							formulas[i], 
 							monitor);
+				} else {
+					createProblemMarker(
+							formulaElements[i], 
+							EventBAttributes.LABEL_ATTRIBUTE, 
+							GraphProblem.WitnessLabelNeedLessError, label);
 				}
-			} else {
-				createProblemMarker(
-						formulaElements[i], 
-						EventBAttributes.LABEL_ATTRIBUTE, 
-						GraphProblem.WitnessLabelNeedLessError, label);
 			}
 		}
 		

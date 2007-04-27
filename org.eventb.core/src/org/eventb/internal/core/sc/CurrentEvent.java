@@ -11,13 +11,14 @@ import org.eventb.core.IEvent;
 import org.eventb.core.sc.state.ICurrentEvent;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.tool.state.IStateType;
+import org.eventb.internal.core.tool.state.State;
 import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class CurrentEvent extends ConvergenceInfo implements ICurrentEvent {
+public class CurrentEvent extends State implements ICurrentEvent {
 
 	@Override
 	public String toString() {
@@ -28,8 +29,9 @@ public class CurrentEvent extends ConvergenceInfo implements ICurrentEvent {
 	private final IEventSymbolInfo eventSymbolInfo;
 	private final boolean isInitialisation;
 	
-	public CurrentEvent(IEvent event, IEventSymbolInfo eventSymbolInfo) throws RodinDBException {
-		super(event);
+	public CurrentEvent(
+			IEvent event, 
+			IEventSymbolInfo eventSymbolInfo) throws RodinDBException {
 		this.event = event;
 		this.eventSymbolInfo = eventSymbolInfo;
 		isInitialisation = eventSymbolInfo.getSymbol().equals(IEvent.INITIALISATION);

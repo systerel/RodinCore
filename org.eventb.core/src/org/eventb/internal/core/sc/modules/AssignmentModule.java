@@ -17,6 +17,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
+import org.eventb.core.sc.GraphProblem;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 
@@ -42,6 +43,14 @@ extends LabeledFormulaModule<Assignment, I> {
 			FormulaFactory factory) throws CoreException {
 		
 		IAssignmentElement assignmentElement = (IAssignmentElement) formulaElement;
+		
+		if (!assignmentElement.hasAssignmentString()) {
+			createProblemMarker(
+					assignmentElement, 
+					EventBAttributes.ASSIGNMENT_ATTRIBUTE, 
+					GraphProblem.AssignmentUndefError);
+			return null;
+		}
 		
 		String assignmentString = assignmentElement.getAssignmentString();
 		

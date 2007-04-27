@@ -17,7 +17,6 @@ import org.eventb.core.IConvergenceElement;
  * </p>
  * 
  * @see IAbstractEventInfo
- * @see ICurrentEvent
  * 
  * @author Stefan Hallerstede
  *

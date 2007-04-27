@@ -9,7 +9,9 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ILabeledElement;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -60,6 +62,14 @@ public abstract class LabeledElementModule extends SCProcessorModule {
 		
 		ILabeledElement labeledElement = (ILabeledElement) internalElement;
 		
+		if (!labeledElement.hasLabel()) {
+			createProblemMarker(
+					labeledElement, 
+					EventBAttributes.LABEL_ATTRIBUTE, 
+					GraphProblem.LabelUndefError);
+			return null;
+		}
+			
 		String label = labeledElement.getLabel();
 		
 		ILabelSymbolInfo newSymbolInfo = createLabelSymbolInfo(label, labeledElement, component);

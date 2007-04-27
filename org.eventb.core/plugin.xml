@@ -654,6 +654,7 @@
          <scModule id="org.eventb.core.machineEventModule"/>
          <scModule id="org.eventb.core.machineEventRefinesModule"/>
          <scModule id="org.eventb.core.machineEventInheritedModule"/>
+         <scModule id="org.eventb.core.machineEventConvergenceDefModule"/>
          <scModule id="org.eventb.core.machineEventConvergenceModule"/>
          <scModule id="org.eventb.core.machineEventVariableModule"/>
          <scModule id="org.eventb.core.machineEventCommitIdentsModule"/>
@@ -860,6 +861,11 @@
             id="machineEventInheritedModule"
             name="%scMachineEventInheritedModule"
             parent="org.eventb.core.machineEventModule"/>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineEventConvergenceDefModule"
+            id="machineEventConvergenceDefModule"
+            name="%machineEventConvergenceDefModule"
+            parent="org.eventb.core.machineEventModule"/>
    </extension>
    <extension
          name="%scEventModuleTypes"
@@ -876,6 +882,7 @@
             parent="org.eventb.core.machineEventModule">
          <prereq id="org.eventb.core.machineEventRefinesModule"/>
          <prereq id="org.eventb.core.machineVariantModule"/>
+         <prereq id="org.eventb.core.machineEventConvergenceDefModule"/>
       </processorType>
       <processorType
             class="org.eventb.internal.core.sc.modules.MachineEventVariableModule"

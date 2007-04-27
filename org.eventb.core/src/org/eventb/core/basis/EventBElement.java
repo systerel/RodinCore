@@ -41,6 +41,10 @@ public abstract class EventBElement extends InternalElement {
 		return EventBUtil.getSingletonChild(this, elementType, message);
 	}
 	
+	public boolean hasAssignmentString() throws RodinDBException {
+		return hasAttribute(EventBAttributes.ASSIGNMENT_ATTRIBUTE);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -64,6 +68,10 @@ public abstract class EventBElement extends InternalElement {
 	public void setAssignmentString(String assignment) 
 	throws RodinDBException {
 		setAttributeValue(EventBAttributes.ASSIGNMENT_ATTRIBUTE, assignment, null);
+	}
+	
+	public boolean hasLabel() throws RodinDBException {
+		return hasAttribute(EventBAttributes.LABEL_ATTRIBUTE);
 	}
 
 	/*
@@ -113,6 +121,10 @@ public abstract class EventBElement extends InternalElement {
 	public String getComment() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE);
 	}
+	
+	public boolean hasPredicateString() throws RodinDBException {
+		return hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -135,6 +147,10 @@ public abstract class EventBElement extends InternalElement {
 	@Deprecated
 	public void setPredicateString(String predicate) throws RodinDBException {
 		setAttributeValue(EventBAttributes.PREDICATE_ATTRIBUTE, predicate, null);
+	}
+	
+	public boolean hasExpressionString() throws RodinDBException {
+		return hasAttribute(EventBAttributes.EXPRESSION_ATTRIBUTE);
 	}
 
 	/*
@@ -162,6 +178,10 @@ public abstract class EventBElement extends InternalElement {
 		setExpressionString(expression, null);
 	}
 
+	public boolean hasIdentifierString() throws RodinDBException {
+		return hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -193,6 +213,10 @@ public abstract class EventBElement extends InternalElement {
 			IConvergenceElement.Convergence.CONVERGENT,
 			IConvergenceElement.Convergence.ANTICIPATED
 		};
+	
+	public boolean hasConvergence() throws RodinDBException {
+		return hasAttribute(EventBAttributes.CONVERGENCE_ATTRIBUTE);
+	}
 	
 	/*
 	 * (non-Javadoc)

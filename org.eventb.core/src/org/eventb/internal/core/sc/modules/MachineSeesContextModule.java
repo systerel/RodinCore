@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCContextFile;
@@ -51,7 +52,13 @@ public class MachineSeesContextModule extends ContextPointerModule {
 		ISCContextFile[] contextFiles = new ISCContextFile[seesContexts.length];
 		
 		for(int i=0; i<seesContexts.length; i++) {
-			contextFiles[i] = seesContexts[i].getSeenSCContext();
+			if (seesContexts[i].hasSeenContextName())
+				contextFiles[i] = seesContexts[i].getSeenSCContext();
+			else
+				createProblemMarker(
+						seesContexts[i], 
+						EventBAttributes.TARGET_ATTRIBUTE,
+						GraphProblem.SeenContextNameUndefError);
 		}
 		
 		contextPointerArray = 
@@ -129,13 +136,12 @@ public class MachineSeesContextModule extends ContextPointerModule {
 		int count = 0;
 		final int size = contextPointerArray.size();
 		for (int i = 0; i < size; ++i) {
-			if (!contextPointerArray.hasError(i)) {
+			final ISCContextFile scSeenContext = contextPointerArray.getSCContextFile(i);
+			if (scSeenContext != null && !contextPointerArray.hasError(i)) {
 				final ISCSeesContext scSees = target
 						.getSCSeesClause(SEES_NAME_PREFIX + count++);
 				scSees.create(null, monitor);
 
-				final ISCContextFile scSeenContext = contextPointerArray
-						.getSCContextFile(i);
 				scSees.setSeenSCContext(scSeenContext, monitor);
 
 				final IInternalElement source = contextPointerArray

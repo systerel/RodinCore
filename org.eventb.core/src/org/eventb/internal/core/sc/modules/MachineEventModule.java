@@ -269,6 +269,14 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 				
 		for (int i=0; i<refinesEvents.length; i++) {
 			
+			if (!refinesEvents[i].hasAbstractEventLabel()) {
+				createProblemMarker(
+						refinesEvents[i], 
+						EventBAttributes.TARGET_ATTRIBUTE, 
+						GraphProblem.AbstractEventLabelUndefError);
+				continue;
+			}
+			
 			String label = refinesEvents[i].getAbstractEventLabel();
 			
 			// filter duplicates
@@ -449,14 +457,16 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 			if (symbolInfos[i] == null)
 				continue;
 			
+			boolean ok;
+			
 			if (symbolInfos[i].getSymbol().equals(IEvent.INITIALISATION)) {
 				init = symbolInfos[i];
-				fetchRefinement(machineFile, event, (EventSymbolInfo) symbolInfos[i], true, monitor);
+				ok = fetchRefinement(machineFile, event, (EventSymbolInfo) symbolInfos[i], true, monitor);
 			} else {
-				fetchRefinement(machineFile, event, (EventSymbolInfo) symbolInfos[i], false, monitor);
+				ok = fetchRefinement(machineFile, event, (EventSymbolInfo) symbolInfos[i], false, monitor);
 			}
 			
-			if (!filterModules(event, repository, null)) {
+			if (ok && !filterModules(event, repository, null)) {
 				symbolInfos[i].setError();
 				continue;
 			}
@@ -473,13 +483,27 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 		return symbolInfos;
 	}
 	
-	private void fetchRefinement(
+	private boolean fetchRefinement(
 			IMachineFile machineFile,
 			IEvent event, 
 			EventSymbolInfo symbolInfo, 
 			boolean isInit, 
 			IProgressMonitor monitor) throws RodinDBException, CoreException {
-		boolean inherited = event.isInherited();
+		
+		boolean inherited;
+		
+		if (event.hasInherited())
+			inherited = event.isInherited();
+		else {
+			createProblemMarker(
+					event, 
+					EventBAttributes.INHERITED_ATTRIBUTE, 
+					GraphProblem.InheritedUndefError);
+			EventRefinesInfo refinesInfo = new EventRefinesInfo(0);
+			refinesInfo.makeImmutable();
+			symbolInfo.setRefinesInfo(refinesInfo);
+			return false;
+		}
 		
 		if (isInit && !inherited) {
 			if (machineFile.getRefinesClauses().length != 0)
@@ -502,6 +526,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 							symbolInfo.getSymbol());
 			}
 		}
+		return true;
 	}
 
 	private void makeImplicitRefinement(IEvent event, EventSymbolInfo symbolInfo) throws CoreException {

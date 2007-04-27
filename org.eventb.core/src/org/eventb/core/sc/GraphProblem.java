@@ -20,12 +20,23 @@ import org.rodinp.core.IRodinProblem;
  */
 public enum GraphProblem implements IRodinProblem {
 
+	IdentifierUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_IdentifierUndef),
+	PredicateUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_PredicateUndef),
+	ExpressionUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_ExpressionUndef),
+	AssignmentUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentUndef),
+	ConvergenceUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_ConvergenceUndef),
+	InheritedUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_InheritedUndef),
 	InvalidIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_InvalidIdentifierName),
 	InvalidIdentifierSpacesError(IMarker.SEVERITY_ERROR, Messages.scuser_InvalidIdentifierContainsSpaces),
+	LabelUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_LabelUndef),
+	AbstractContextNameUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractContextNameUndef),
 	AbstractContextNotFoundError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractContextNotFound),
+	SeenContextNameUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_SeenContextNameUndef),
 	SeenContextNotFoundError(IMarker.SEVERITY_ERROR, Messages.scuser_SeenContextNotFound),
+	AbstractMachineNameUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractMachineNameUndef),
 	TooManyAbstractMachinesError(IMarker.SEVERITY_ERROR, Messages.scuser_OnlyOneAbstractMachine),
 	AbstractMachineNotFoundError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractMachineNotFound),
+	AbstractEventLabelUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractEventLabelUndef),
 	AbstractEventNotFoundError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractEventNotFound),
 	AbstractEventNotRefinedError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractEventNotRefined),
 	AbstractEventLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AbstractEventLabelConflict),

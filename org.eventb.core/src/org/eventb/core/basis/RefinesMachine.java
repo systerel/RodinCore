@@ -41,6 +41,10 @@ public class RefinesMachine extends InternalElement implements IRefinesMachine {
 	public RefinesMachine(String name, IRodinElement parent) {
 		super(name, parent);
 	}
+	
+	public boolean hasAbstractMachineName() throws RodinDBException {
+		return hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesMachine#getRefinedMachine()

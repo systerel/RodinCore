@@ -66,6 +66,10 @@ public class Event extends EventBElement implements IEvent {
 	public IAction[] getActions() throws RodinDBException {
 		return getChildrenOfType(IAction.ELEMENT_TYPE); 
 	}
+	
+	public boolean hasInherited() throws RodinDBException {
+		return hasAttribute(EventBAttributes.INHERITED_ATTRIBUTE);
+	}
 
 	public boolean isInherited() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.INHERITED_ATTRIBUTE);

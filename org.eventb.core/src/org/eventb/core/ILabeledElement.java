@@ -22,6 +22,10 @@ import org.rodinp.core.RodinDBException;
  * The name is manipulated as a bare string of characters.
  * </p>
  * <p>
+ * The attribute storing the label is <i>optional</i>. This means if the attribute
+ * is not present, the value should be interpreted as <i>undefined</i>.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
@@ -29,6 +33,14 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface ILabeledElement extends IInternalElement {
+	
+	/**
+	 * Tests whether the label is defined or not.
+	 * 
+	 * @return whether the label is defined or not
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean hasLabel() throws RodinDBException;
 
 	/**
 	 * Sets the label contained in this element.

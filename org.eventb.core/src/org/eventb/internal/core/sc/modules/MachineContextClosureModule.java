@@ -14,8 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineFile;
@@ -23,6 +21,7 @@ import org.eventb.core.ISCSeesContext;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
+import org.eventb.core.sc.state.IAbstractMachineInfo;
 import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
@@ -45,6 +44,8 @@ public class MachineContextClosureModule extends SCProcessorModule {
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
+	
+	private IAbstractMachineInfo abstractMachineInfo;
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -55,17 +56,13 @@ public class MachineContextClosureModule extends SCProcessorModule {
 			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
-		IMachineFile machineFile = (IMachineFile) element;
 		ISCMachineFile scMachFile = (ISCMachineFile) target;
-
-		IRefinesMachine[] refinesMachines = machineFile.getRefinesClauses();
 		
-		if (refinesMachines.length == 0)
+		if (abstractMachineInfo.getAbstractMachine() == null)
 			return;
-		
-		ISCMachineFile scAbsMachFile = refinesMachines[0].getAbstractSCMachine();
-		
-		ISCInternalContext[] abstractContexts = scAbsMachFile.getSCSeenContexts();
+
+		ISCInternalContext[] abstractContexts = 
+			abstractMachineInfo.getAbstractMachine().getSCSeenContexts();
 		
 		if (abstractContexts.length == 0)
 			return;
@@ -88,14 +85,14 @@ public class MachineContextClosureModule extends SCProcessorModule {
 			else {
 				
 				createProblemMarker(
-						refinesMachines[0], 
+						abstractMachineInfo.getRefinesClause(), 
 						EventBAttributes.TARGET_ATTRIBUTE, 
 						GraphProblem.ContextOnlyInAbstractMachineWarning,
 						context.getComponentName());
 				
 				// repair
 				// TODO delta checking
-				copySeesClause(scMachFile, scAbsMachFile, context, count ++);
+				copySeesClause(scMachFile, abstractMachineInfo.getAbstractMachine(), context, count ++);
 				context.copy(scMachFile, null, null, false, null);
 
 			}
@@ -117,6 +114,24 @@ public class MachineContextClosureModule extends SCProcessorModule {
 				clause.copy(scMachine, null, name, false, null);
 			}
 		}
+	}
+
+	@Override
+	public void initModule(
+			IRodinElement element, 
+			ISCStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException {
+		super.initModule(element, repository, monitor);
+		abstractMachineInfo = (IAbstractMachineInfo) repository.getState(IAbstractMachineInfo.STATE_TYPE);
+	}
+
+	@Override
+	public void endModule(
+			IRodinElement element, 
+			ISCStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException {
+		abstractMachineInfo = null;
+		super.endModule(element, repository, monitor);
 	}
 
 }

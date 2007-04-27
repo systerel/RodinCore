@@ -73,7 +73,15 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 		
 		IEvent event = (IEvent) element;
 		
-		concreteConvergence = currentEvent.getConvergence();
+		if (!currentEvent.getCurrentEvent().hasConvergence()) {
+			
+			assert target == null; // event should have been filtered
+			return;
+		}
+		
+		concreteConvergence = currentEvent.getCurrentEvent().getConvergence();
+		
+		assert concreteConvergence != null;
 		
 		if (currentEvent.isInitialisation()) {
 			if (concreteConvergence != IConvergenceElement.Convergence.ORDINARY) {

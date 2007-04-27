@@ -67,6 +67,8 @@ public class ModuleGraph extends Graph<ModuleDesc<? extends IModule>> {
 		} else {
 			for (String mId : pNode.getPredecs()) {
 				ModuleNode mNode = getNode(mId);
+				if (mNode == null)
+					throw new IllegalStateException("Prereq module type " + mId + " unknown");
 				String mParent = mNode.getObject().getParent();
 				if (mParent != null && !mNode.getParents().contains(parentId) && !mParent.equals(ppId)) {
 					// the predec has a different parent

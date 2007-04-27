@@ -46,6 +46,10 @@ public class RefinesEvent extends InternalElement implements IRefinesEvent {
 	public IInternalElementType<IRefinesEvent> getElementType() {
 		return ELEMENT_TYPE;
 	}
+	
+	public boolean hasAbstractEventLabel() throws RodinDBException {
+		return hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesEvent#getAbstractMachineName()

@@ -92,6 +92,10 @@ public interface IContextPointerArray extends ISCState {
 	 * This is the statically checked context retrieved by means of 
 	 * {@link IExtendsContext} or {@link ISeesContext}. This is a convenience method
 	 * to facilitate access to the referenced (statically checked) contexts.
+	 * <p>
+	 * If the returned value is <code>null</code> for some index, this means that 
+	 * no file has been specified and the index should be ignored.
+	 * </p>
 	 * 
 	 * @param index the index of the statically checked context file
 	 * @return a reference to the statically checked context file file associated with the 

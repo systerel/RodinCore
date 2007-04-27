@@ -19,12 +19,24 @@ import org.rodinp.core.RodinDBException;
  * guarantee that it is parseable.
  * </p>
  * <p>
+ * The attribute storing the assignment string is <i>optional</i>. This means if the attribute
+ * is not present, the value should be interpreted as <i>undefined</i>.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
  * @author Stefan Hallerstede
  */
 public interface IPredicateElement extends IInternalElement {
+	
+	/**
+	 * Tests whether the predicate string is defined or not.
+	 * 
+	 * @return whether the predicate string is defined or not
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean hasPredicateString() throws RodinDBException;
 
 	/**
 	 * Returns the string representation of the predicate contained in this

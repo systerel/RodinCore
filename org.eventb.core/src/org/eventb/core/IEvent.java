@@ -29,6 +29,10 @@ import org.rodinp.core.RodinDBException;
  * </ul>
  * </p>
  * <p>
+ * The attribute storing whether teh event is inherited is <i>optional</i>. This means if the attribute
+ * is not present, the value should be interpreted as <i>undefined</i>.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
@@ -46,6 +50,14 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 */
 	String INITIALISATION = "INITIALISATION";
 
+	/**
+	 * Tests whether the inherited value is defined or not.
+	 * 
+	 * @return whether the inherited value is defined or not
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean hasInherited() throws RodinDBException;
+	
 	/**
 	 * Returns whether the event is inherited, that is whether it is
 	 * automatically generated and maintained.

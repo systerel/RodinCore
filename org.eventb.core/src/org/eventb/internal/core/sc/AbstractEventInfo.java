@@ -13,6 +13,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.IConvergenceElement;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
@@ -95,10 +96,11 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	public AbstractEventInfo(
 			ISCEvent event,
 			String label, 
+			IConvergenceElement.Convergence convergence,
 			FreeIdentifier[] idents, 
 			Predicate[] guards, 
 			Assignment[] actions) throws RodinDBException {
-		super(event);
+		super(convergence);
 		this.event = event;
 		this.label = label;
 		this.idents = Arrays.asList(idents);

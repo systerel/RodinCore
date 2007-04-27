@@ -19,10 +19,10 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class ConvergenceInfo extends State implements IConvergenceInfo {
 
-	private IConvergenceElement.Convergence convergence;
+	private final IConvergenceElement.Convergence convergence;
 	
-	ConvergenceInfo(IConvergenceElement convergenceElement) throws RodinDBException {
-		this.convergence = convergenceElement.getConvergence();
+	ConvergenceInfo(IConvergenceElement.Convergence convergence) throws RodinDBException {
+		this.convergence = convergence;
 	}
 	
 	public Convergence getConvergence() {

@@ -10,6 +10,7 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
@@ -60,7 +61,14 @@ public class ContextExtendsModule extends ContextPointerModule {
 		ISCContextFile[] contextFiles = new ISCContextFile[extendsContexts.length];
 		
 		for(int i=0; i<extendsContexts.length; i++) {
-			contextFiles[i] = extendsContexts[i].getAbstractSCContext();
+			if (extendsContexts[i].hasAbstractContextName()) {
+				contextFiles[i] = extendsContexts[i].getAbstractSCContext();
+			} else {
+				createProblemMarker(
+						extendsContexts[i], 
+						EventBAttributes.TARGET_ATTRIBUTE,
+						GraphProblem.AbstractContextNameUndefError);
+			}
 		}
 		
 		contextPointerArray = 
@@ -128,13 +136,12 @@ public class ContextExtendsModule extends ContextPointerModule {
 		int count = 0;
 		final int size = contextPointerArray.size();
 		for (int i = 0; i < size; ++i) {
-			if (!contextPointerArray.hasError(i)) {
+			final ISCContextFile scSeenContext = contextPointerArray.getSCContextFile(i);
+			if (scSeenContext != null && !contextPointerArray.hasError(i)) {
 				final ISCExtendsContext scExtends = scCtxFile
 						.getSCExtendsClause(EXTENDS_NAME_PREFIX + count++);
 				scExtends.create(null, null);
 
-				final ISCContextFile scSeenContext = contextPointerArray
-						.getSCContextFile(i);
 				scExtends.setAbstractSCContext(scSeenContext, null);
 
 				final IInternalElement source = contextPointerArray

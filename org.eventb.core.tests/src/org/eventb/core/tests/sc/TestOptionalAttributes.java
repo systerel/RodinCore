@@ -23,6 +23,9 @@ public class TestOptionalAttributes extends BasicSCTest {
 		protected F f;
 		public abstract void createFile() throws Exception;
 		public abstract void removeAttr() throws Exception;
+		public void saveFile() throws Exception {
+			f.save(null, true);
+		}
 		public abstract void checkAttr() throws Exception;
 	}
 	
@@ -56,7 +59,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 				makeSList("a"), 
 				makeSList("G"), makeSList("a∈ℤ"), 
 				makeSList(), makeSList());
-		createContext("con");
+		IContextFile c = createContext("con");
 		IMachineFile m = createMachine("mch");
 		addMachineRefines(m, "abs");
 		addMachineSees(m, "con");
@@ -71,17 +74,26 @@ public class TestOptionalAttributes extends BasicSCTest {
 		addEventRefines(e, "e");
 		addEventWitnesses(e, makeSList("a"), makeSList("⊤"));
 		addInitialisation(m, "v");
+		
+		a.save(null, true);
+		c.save(null, true);
+		// m is saved after some attribute will have been removed
+		
 		return m;
 	}
 	
 	private IContextFile createContext() throws Exception {
-		createContext("abs");
+		IContextFile a = createContext("abs");
 		IContextFile c = createContext("con");
 		addContextExtends(c, "abs");
 		addCarrierSets(c, "S");
 		addConstants(c, "C");
 		addAxioms(c, makeSList("A"), makeSList("C∈S"));
 		addTheorems(c, makeSList("T"), makeSList("⊤"));
+		
+		a.save(null, true);
+		// c is saved after some attribute will have been removed
+		
 		return c;
 	}
 	
@@ -114,12 +126,12 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void checkAttr() throws Exception {
-					hasMarker(f.getRefinesClauses()[0],EventBAttributes.TARGET_ATTRIBUTE );
+					hasMarker(f.getRefinesClauses()[0],EventBAttributes.TARGET_ATTRIBUTE);
 				}
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getRefinesClauses()[0].hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
+					assertTrue(f.getRefinesClauses()[0].hasAttribute(EventBAttributes.TARGET_ATTRIBUTE));
 					f.getRefinesClauses()[0].removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, null);
 				}
 				
@@ -133,7 +145,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getSeesClauses()[0].hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
+					assertTrue(f.getSeesClauses()[0].hasAttribute(EventBAttributes.TARGET_ATTRIBUTE));
 					f.getSeesClauses()[0].removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, null);
 				}
 				
@@ -147,7 +159,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getVariables()[0].hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE);
+					assertTrue(f.getVariables()[0].hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE));
 					f.getVariables()[0].removeAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE, null);
 				}
 				
@@ -161,7 +173,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getInvariants()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE);
+					assertTrue(f.getInvariants()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE));
 					f.getInvariants()[0].removeAttribute(EventBAttributes.LABEL_ATTRIBUTE, null);
 				}
 				
@@ -175,7 +187,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getInvariants()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE);
+					assertTrue(f.getInvariants()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE));
 					f.getInvariants()[0].removeAttribute(EventBAttributes.PREDICATE_ATTRIBUTE, null);
 				}
 				
@@ -189,7 +201,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getTheorems()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE);
+					assertTrue(f.getTheorems()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE));
 					f.getTheorems()[0].removeAttribute(EventBAttributes.LABEL_ATTRIBUTE, null);
 				}
 				
@@ -203,7 +215,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getTheorems()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE);
+					assertTrue(f.getTheorems()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE));
 					f.getTheorems()[0].removeAttribute(EventBAttributes.PREDICATE_ATTRIBUTE, null);
 				}
 				
@@ -217,7 +229,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getVariants()[0].hasAttribute(EventBAttributes.EXPRESSION_ATTRIBUTE);
+					assertTrue(f.getVariants()[0].hasAttribute(EventBAttributes.EXPRESSION_ATTRIBUTE));
 					f.getVariants()[0].removeAttribute(EventBAttributes.EXPRESSION_ATTRIBUTE, null);
 				}
 				
@@ -231,7 +243,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getEvents()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE);
+					assertTrue(f.getEvents()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE));
 					f.getEvents()[0].removeAttribute(EventBAttributes.LABEL_ATTRIBUTE, null);
 				}
 				
@@ -245,7 +257,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getEvents()[0].hasAttribute(EventBAttributes.CONVERGENCE_ATTRIBUTE);
+					assertTrue(f.getEvents()[0].hasAttribute(EventBAttributes.CONVERGENCE_ATTRIBUTE));
 					f.getEvents()[0].removeAttribute(EventBAttributes.CONVERGENCE_ATTRIBUTE, null);
 				}
 				
@@ -259,7 +271,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getEvents()[0].hasAttribute(EventBAttributes.INHERITED_ATTRIBUTE);
+					assertTrue(f.getEvents()[0].hasAttribute(EventBAttributes.INHERITED_ATTRIBUTE));
 					f.getEvents()[0].removeAttribute(EventBAttributes.INHERITED_ATTRIBUTE, null);
 				}
 				
@@ -273,7 +285,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					e().getVariables()[0].hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE);
+					assertTrue(e().getVariables()[0].hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE));
 					e().getVariables()[0].removeAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE, null);
 				}
 				
@@ -287,7 +299,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					e().getGuards()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE);
+					assertTrue(e().getGuards()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE));
 					e().getGuards()[0].removeAttribute(EventBAttributes.LABEL_ATTRIBUTE, null);
 				}
 				
@@ -301,7 +313,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					e().getGuards()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE);
+					assertTrue(e().getGuards()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE));
 					e().getGuards()[0].removeAttribute(EventBAttributes.PREDICATE_ATTRIBUTE, null);
 				}
 				
@@ -315,7 +327,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					e().getActions()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE);
+					assertTrue(e().getActions()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE));
 					e().getActions()[0].removeAttribute(EventBAttributes.LABEL_ATTRIBUTE, null);
 				}
 				
@@ -329,7 +341,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					e().getActions()[0].hasAttribute(EventBAttributes.ASSIGNMENT_ATTRIBUTE);
+					assertTrue(e().getActions()[0].hasAttribute(EventBAttributes.ASSIGNMENT_ATTRIBUTE));
 					e().getActions()[0].removeAttribute(EventBAttributes.ASSIGNMENT_ATTRIBUTE, null);
 				}
 				
@@ -343,7 +355,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					e().getWitnesses()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE);
+					assertTrue(e().getWitnesses()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE));
 					e().getWitnesses()[0].removeAttribute(EventBAttributes.LABEL_ATTRIBUTE, null);
 				}
 				
@@ -357,7 +369,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					e().getWitnesses()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE);
+					assertTrue(e().getWitnesses()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE));
 					e().getWitnesses()[0].removeAttribute(EventBAttributes.PREDICATE_ATTRIBUTE, null);
 				}
 				
@@ -371,7 +383,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					e().getRefinesClauses()[0].hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
+					assertTrue(e().getRefinesClauses()[0].hasAttribute(EventBAttributes.TARGET_ATTRIBUTE));
 					e().getRefinesClauses()[0].removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, null);
 				}
 				
@@ -385,7 +397,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getExtendsClauses()[0].hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
+					assertTrue(f.getExtendsClauses()[0].hasAttribute(EventBAttributes.TARGET_ATTRIBUTE));
 					f.getExtendsClauses()[0].removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, null);
 				}
 				
@@ -399,7 +411,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getCarrierSets()[0].hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE);
+					assertTrue(f.getCarrierSets()[0].hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE));
 					f.getCarrierSets()[0].removeAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE, null);
 				}
 				
@@ -413,7 +425,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getConstants()[0].hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE);
+					assertTrue(f.getConstants()[0].hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE));
 					f.getConstants()[0].removeAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE, null);
 				}
 				
@@ -427,7 +439,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getAxioms()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE);
+					assertTrue(f.getAxioms()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE));
 					f.getAxioms()[0].removeAttribute(EventBAttributes.LABEL_ATTRIBUTE, null);
 				}
 				
@@ -441,7 +453,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getAxioms()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE);
+					assertTrue(f.getAxioms()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE));
 					f.getAxioms()[0].removeAttribute(EventBAttributes.PREDICATE_ATTRIBUTE, null);
 				}
 				
@@ -455,7 +467,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getTheorems()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE);
+					assertTrue(f.getTheorems()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE));
 					f.getTheorems()[0].removeAttribute(EventBAttributes.LABEL_ATTRIBUTE, null);
 				}
 				
@@ -469,7 +481,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 
 				@Override
 				public void removeAttr() throws Exception {
-					f.getTheorems()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE);
+					assertTrue(f.getTheorems()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE));
 					f.getTheorems()[0].removeAttribute(EventBAttributes.PREDICATE_ATTRIBUTE, null);
 				}
 				
@@ -481,6 +493,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 		for (OptAttrTest test : tests) {
 			test.createFile();
 			test.removeAttr();
+			test.saveFile();
 			runBuilder();
 			test.checkAttr();
 		}

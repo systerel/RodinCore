@@ -87,13 +87,23 @@ public abstract class IdentifierModule extends SCProcessorModule {
 	protected FreeIdentifier parseIdentifier(
 			IIdentifierElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		return 
-		parseIdentifier(
-				element.getIdentifierString(), 
-				element, 
-				EventBAttributes.IDENTIFIER_ATTRIBUTE, 
-				factory, 
-				this);
+		
+		if (element.hasIdentifierString()) {
+		
+			return parseIdentifier(
+					element.getIdentifierString(), 
+					element, 
+					EventBAttributes.IDENTIFIER_ATTRIBUTE, 
+					factory, 
+					this);
+		} else {
+			
+			createProblemMarker(
+					element, 
+					EventBAttributes.IDENTIFIER_ATTRIBUTE, 
+					GraphProblem.IdentifierUndefError);
+			return null;
+		}
 	}
 
 	/**

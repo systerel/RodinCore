@@ -27,6 +27,10 @@ import org.rodinp.core.RodinDBException;
  * machine in a refinement relationship.
  * </p>
  * <p>
+ * The attribute storing the abstract machine name is <i>optional</i>. This means if the attribute
+ * is not present, the value should be interpreted as <i>undefined</i>.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
@@ -39,6 +43,14 @@ public interface IRefinesMachine extends IInternalElement {
 	IInternalElementType<IRefinesMachine> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".refinesMachine"); //$NON-NLS-1$
 
+	/**
+	 * Tests whether the abstract machine name is defined or not.
+	 * 
+	 * @return whether the abstract machine name is defined or not
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean hasAbstractMachineName() throws RodinDBException;
+	
 	/**
 	 * Returns the name of the machine that is refined by the machine that
 	 * contains this element.

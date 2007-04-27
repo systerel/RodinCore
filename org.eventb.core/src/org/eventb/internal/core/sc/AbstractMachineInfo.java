@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
+import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.sc.state.IAbstractMachineInfo;
 import org.eventb.core.tool.state.IStateType;
@@ -25,9 +26,14 @@ public class AbstractMachineInfo extends State implements
 	}
 
 	private final ISCMachineFile machineFile;
+	private final IRefinesMachine refinesMachine;
 
-	public AbstractMachineInfo(ISCMachineFile machineFile) {
+	public AbstractMachineInfo(ISCMachineFile machineFile, IRefinesMachine refinesMachine) {
+		
+		assert (machineFile == null || refinesMachine != null);
+		
 		this.machineFile = machineFile;
+		this.refinesMachine = refinesMachine;
 		makeImmutable();
 	}
 	
@@ -43,6 +49,10 @@ public class AbstractMachineInfo extends State implements
 	 */
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
+	}
+
+	public IRefinesMachine getRefinesClause() {
+		return refinesMachine;
 	}
 
 }

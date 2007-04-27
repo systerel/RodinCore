@@ -17,6 +17,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
+import org.eventb.core.sc.GraphProblem;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 
@@ -43,6 +44,13 @@ extends LabeledFormulaModule<Expression, I> {
 		
 		IExpressionElement expressionElement = (IExpressionElement) formulaElement;
 
+		if (!expressionElement.hasExpressionString()) {
+			createProblemMarker(
+					expressionElement, 
+					EventBAttributes.EXPRESSION_ATTRIBUTE, 
+					GraphProblem.ExpressionUndefError);
+			return null;
+		}
 		String expressionString = expressionElement.getExpressionString();
 		
 		// parse the predicate

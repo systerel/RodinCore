@@ -20,12 +20,24 @@ import org.rodinp.core.RodinDBException;
  * guarantee that it is parseable (i.e., a syntactically correct identifier).
  * </p>
  * <p>
+ * The attribute storing the identifier string is <i>optional</i>. This means if the attribute
+ * is not present, the value should be interpreted as <i>undefined</i>.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
  * @author Laurent Voisin
  */
 public interface IIdentifierElement extends IInternalElement {
+	
+	/**
+	 * Tests whether the identifier string is defined or not.
+	 * 
+	 * @return whether the identifier string is defined or not
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean hasIdentifierString() throws RodinDBException;
 
 	/**
 	 * This method is deprecated; use <code>setIdentifierString(String,IProgressMonitor)</code> instead.

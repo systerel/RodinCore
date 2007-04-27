@@ -58,11 +58,22 @@ public class GraphProblemTest extends TestCase {
 	
 	private static Spec[] specs = new Spec[] {
 			spec(GraphProblem.InvalidIdentifierError, 1),
+			spec(GraphProblem.PredicateUndefError, 0),
+			spec(GraphProblem.ExpressionUndefError, 0),
+			spec(GraphProblem.AssignmentUndefError, 0),
+			spec(GraphProblem.ConvergenceUndefError, 0),
+			spec(GraphProblem.InheritedUndefError, 0),
+			spec(GraphProblem.IdentifierUndefError, 0),
 			spec(GraphProblem.InvalidIdentifierSpacesError, 1),
+			spec(GraphProblem.LabelUndefError, 0),
+			spec(GraphProblem.AbstractContextNameUndefError, 0),
 			spec(GraphProblem.AbstractContextNotFoundError, 1),
+			spec(GraphProblem.SeenContextNameUndefError, 0),
 			spec(GraphProblem.SeenContextNotFoundError, 1),
+			spec(GraphProblem.AbstractMachineNameUndefError, 0),
 			spec(GraphProblem.TooManyAbstractMachinesError, 0),
 			spec(GraphProblem.AbstractMachineNotFoundError, 1),
+			spec(GraphProblem.AbstractEventLabelUndefError, 0),
 			spec(GraphProblem.AbstractEventNotFoundError, 1),
 			spec(GraphProblem.AbstractEventNotRefinedError, 1),
 			spec(GraphProblem.AbstractEventLabelConflictWarning, 1),
@@ -177,6 +188,7 @@ public class GraphProblemTest extends TestCase {
 				continue;
 			}
 			Spec spec = specMap.get(problem);
+			assertNotNull("missing problem spec", spec);
 			int k = RodinMarkerUtil.getArguments(marker).length;
 			if (spec.arity != k) {
 				ok = false;

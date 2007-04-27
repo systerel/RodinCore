@@ -57,13 +57,23 @@ public final class Messages {
 	
     // error messages of the static checker addressed to the user
 	
+	public static String scuser_IdentifierUndef;
+	public static String scuser_PredicateUndef;
+	public static String scuser_ExpressionUndef;
+	public static String scuser_AssignmentUndef;
+	public static String scuser_ConvergenceUndef;
+	public static String scuser_InheritedUndef;
 	public static String scuser_InvalidIdentifierName;
 	public static String scuser_InvalidIdentifierContainsSpaces;
-	
+	public static String scuser_LabelUndef;
+	public static String scuser_AbstractContextNameUndef;
     public static String scuser_AbstractContextNotFound;
+    public static String scuser_SeenContextNameUndef;
     public static String scuser_SeenContextNotFound;
+    public static String scuser_AbstractMachineNameUndef;
     public static String scuser_OnlyOneAbstractMachine;
     public static String scuser_AbstractMachineNotFound;
+    public static String scuser_AbstractEventLabelUndef;
     public static String scuser_AbstractEventNotFound;
     public static String scuser_AbstractEventNotRefined;
     public static String scuser_AbstractEventLabelConflict;

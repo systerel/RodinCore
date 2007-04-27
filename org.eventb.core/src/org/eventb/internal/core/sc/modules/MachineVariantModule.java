@@ -121,11 +121,11 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 			Expression expression,
 			IProgressMonitor monitor) throws CoreException {
 		
-		if (expression == null)
-			return;
-		
 		variantInfo.setExpression(expression);
 		variantInfo.makeImmutable();
+		
+		if (expression == null)
+			return;
 		
 		ISCVariant scVariant = target.getSCVariant(VARIANT_NAME_PREFIX);
 		scVariant.create(null, monitor);

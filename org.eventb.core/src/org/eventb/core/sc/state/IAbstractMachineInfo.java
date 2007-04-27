@@ -8,6 +8,7 @@
 package org.eventb.core.sc.state;
 
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.state.IStateType;
@@ -30,10 +31,27 @@ public interface IAbstractMachineInfo extends ISCState {
 	/**
 	 * Returns a handle to the abstract machine if there is one, and 
 	 * <code>null</code> otherwise.
+	 * <p>
+	 * If this method does not return <code>null</code>, then <code>getRefinesClause()</code>
+	 * does not return <code>null</code> either.
+	 * </p>
 	 * 
 	 * @return a handle to the abstract machine if there is one, and 
 	 * <code>null</code> otherwise
 	 */
 	ISCMachineFile getAbstractMachine();
+	
+	/**
+	 * Returns a handle to the refines clause from which the abstract
+	 * machine was extracted, or <code>null</code> if none.
+	 * <p>
+	 * If this method returns <code>null</code>, then <code>getAbstractMachine()</code> 
+	 * returns <code>null</code> too.
+	 * </p>
+	 * 
+	 * @return a handle to the refines clause from which the abstract
+	 * machine was extracted, or <code>null</code> if none
+	 */
+	IRefinesMachine getRefinesClause();
 
 }

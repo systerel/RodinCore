@@ -94,6 +94,9 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			
 			ISCContextFile scCF = contextPointerArray.getSCContextFile(index);
 			
+			if (scCF == null)
+				continue; // the context file has not been found
+			
 			if (!scCF.exists()) {
 				createProblemMarker(
 						contextPointerArray.getContextPointer(index), 
@@ -257,13 +260,16 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		
 		for (int index = 0; index < contextPointerArray.size(); index++) {
 
+			if (contextPointerArray.getSCContextFile(index) == null)
+				continue; // there is no context file for this index
+			
 			if (contextPointerArray.hasError(index)) {
 				for (IIdentifierSymbolInfo symbolInfo : declaredIdentifiers[index]) {
 					symbolInfo.makeImmutable();
 				}
 				continue;
 			}
-
+			
 			for (IIdentifierSymbolInfo symbolInfo : declaredIdentifiers[index]) {
 				if (symbolInfo.isMutable()) {
 					symbolInfo.makeVisible();

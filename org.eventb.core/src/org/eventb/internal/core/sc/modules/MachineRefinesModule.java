@@ -270,6 +270,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			new AbstractEventInfo(
 					event,
 					label, 
+					event.getConvergence(),
 					fetchEventVariables(event, eventTypeEnvironment, factory),
 					fetchEventGuards(event, eventTypeEnvironment, factory),
 					fetchEventActions(event, eventTypeEnvironment, factory));
@@ -345,8 +346,16 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		
 		refinesMachine = refinesMachines.length == 0 ? null : refinesMachines[0];
 		
-		scMachineFile = 
-			(refinesMachine == null) ? null : refinesMachine.getAbstractSCMachine();
+		if (refinesMachine != null) {
+			if (refinesMachine.hasAbstractMachineName()) {
+				scMachineFile = refinesMachine.getAbstractSCMachine();
+			} else {
+				createProblemMarker(
+						refinesMachine, 
+						EventBAttributes.TARGET_ATTRIBUTE, 
+						GraphProblem.AbstractMachineNameUndefError);
+			}
+		}
 		
 		if (scMachineFile != null && !scMachineFile.exists()) {
 			createProblemMarker(
@@ -358,7 +367,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			scMachineFile = null;
 		}
 		
-		repository.setState(new AbstractMachineInfo(scMachineFile));
+		repository.setState(new AbstractMachineInfo(scMachineFile, refinesMachine));
 		
 		abstractEventTable = 
 			new AbstractEventTable(ABSEVT_SYMTAB_SIZE);

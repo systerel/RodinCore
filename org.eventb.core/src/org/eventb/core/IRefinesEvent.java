@@ -28,6 +28,10 @@ import org.rodinp.core.RodinDBException;
  * refinement relationship.
  * </p>
  * <p>
+ * The attribute storing the abstract event label is <i>optional</i>. This means if the attribute
+ * is not present, the value should be interpreted as <i>undefined</i>.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
@@ -40,6 +44,14 @@ public interface IRefinesEvent extends IInternalElement {
 	IInternalElementType<IRefinesEvent> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".refinesEvent"); //$NON-NLS-1$
 
+	/**
+	 * Tests whether the abstract event label is defined or not.
+	 * 
+	 * @return whether the abstract event label is defined or not
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean hasAbstractEventLabel() throws RodinDBException;
+	
 	/**
 	 * Returns the label of the event that is refined by the event that contains
 	 * this element.

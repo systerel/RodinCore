@@ -24,6 +24,10 @@ import org.rodinp.core.RodinDBException;
  * the seen context.
  * </p>
  * <p>
+ * The attribute storing the seen context name is <i>optional</i>. This means if the attribute
+ * is not present, the value should be interpreted as <i>undefined</i>.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
@@ -36,6 +40,14 @@ public interface ISeesContext extends IInternalElement {
 	IInternalElementType<ISeesContext> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".seesContext"); //$NON-NLS-1$
 
+	/**
+	 * Tests whether the seen context name is defined or not.
+	 * 
+	 * @return whether the seen context name is defined or not
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean hasSeenContextName() throws RodinDBException;
+	
 	/**
 	 * Returns the name of the context that is seen by the machine which
 	 * contains this element.

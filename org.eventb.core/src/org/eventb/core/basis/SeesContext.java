@@ -53,6 +53,10 @@ public class SeesContext extends InternalElement implements ISeesContext {
 		final IRodinProject project = getRodinProject();
 		return (ISCContextFile) project.getRodinFile(scName);
 	}
+	
+	public boolean hasSeenContextName() throws RodinDBException {
+		return hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
+	}
 
 	public String getSeenContextName() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE);
