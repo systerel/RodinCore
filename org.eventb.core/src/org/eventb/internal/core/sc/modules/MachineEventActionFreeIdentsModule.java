@@ -103,7 +103,7 @@ public class MachineEventActionFreeIdentsModule extends MachineFormulaFreeIdents
 			IIdentifierSymbolInfo symbolInfo = symbolTable.getSymbolInfo(name);
 			if (symbolInfo instanceof IVariableSymbolInfo) {
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-				if (variableSymbolInfo.isForbidden()) {
+				if (variableSymbolInfo.isForbidden() || !variableSymbolInfo.isConcrete()) {
 //					createProblemMarker(
 //							element, 
 //							getAttributeType(), 
