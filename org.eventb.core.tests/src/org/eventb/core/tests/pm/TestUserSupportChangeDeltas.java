@@ -218,7 +218,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 
 		// Modified current PPO
 		try {
-			userSupport.applyTactic(Tactics.review(1),
+			userSupport.applyTactic(Tactics.review(1), false,
 					new NullProgressMonitor());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
@@ -257,7 +257,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		userSupport.setInput(psFile, null);
 		// Modified current PO
 		try {
-			userSupport.applyTactic(Tactics.review(1),
+			userSupport.applyTactic(Tactics.review(1), false,
 					new NullProgressMonitor());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
@@ -298,7 +298,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		userSupport.setInput(psFile, null);
 		// Modified current PO
 		try {
-			userSupport.applyTactic(Tactics.review(1),
+			userSupport.applyTactic(Tactics.review(1), false,
 					new NullProgressMonitor());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
