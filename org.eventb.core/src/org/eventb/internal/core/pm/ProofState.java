@@ -534,13 +534,22 @@ public class ProofState implements IProofState {
 		return buffer.toString();
 	}
 
+	@Deprecated
+	public void applyTactic(ITactic t, IProofTreeNode node,
+			IProgressMonitor monitor) throws RodinDBException {
+		applyTactic(t, node, true, monitor);
+	}
+
+
 	public void applyTactic(final ITactic t, final IProofTreeNode node,
-			final IProgressMonitor monitor) throws RodinDBException {
+			final boolean applyPostTactic, final IProgressMonitor monitor)
+			throws RodinDBException {
 		UserSupportManager.getDefault().run(new Runnable() {
 
 			public void run() {
-				if (internalApplyTactic(t, node, new ProofMonitor(monitor))) {
-					selectNextPendingSubGoal(node);					
+				if (internalApplyTactic(t, node, new ProofMonitor(monitor),
+						applyPostTactic)) {
+					selectNextPendingSubGoal(node);
 				}
 			}
 
@@ -548,14 +557,23 @@ public class ProofState implements IProofState {
 
 	}
 
+	@Deprecated
+	public void applyTacticToHypotheses(ITactic t, IProofTreeNode node,
+			Set<Predicate> hyps, IProgressMonitor monitor)
+			throws RodinDBException {
+		applyTacticToHypotheses(t, node, hyps, true, monitor);
+	}
+
 	public void applyTacticToHypotheses(final ITactic t,
 			final IProofTreeNode node, final Set<Predicate> hyps,
-			final IProgressMonitor monitor) throws RodinDBException {
+			final boolean applyPostTactic, final IProgressMonitor monitor)
+			throws RodinDBException {
 		UserSupportManager.getDefault().run(new Runnable() {
 
 			public void run() {
 				ProofState.this.addAllToCached(hyps);
-				if (internalApplyTactic(t, node, new ProofMonitor(monitor))) {
+				if (internalApplyTactic(t, node, new ProofMonitor(monitor),
+						applyPostTactic)) {
 					selectNextPendingSubGoal(node);
 				}
 			}
@@ -577,11 +595,11 @@ public class ProofState implements IProofState {
 	}
 
 	protected boolean internalApplyTactic(ITactic t, IProofTreeNode node,
-			IProofMonitor pm) {
+			IProofMonitor pm, boolean applyPostTactic) {
 		Object info = t.apply(node, pm);
 		if (info == null) {
 			info = "Tactic applied successfully";
-			if (!t.equals(Tactics.prune())) {
+			if (applyPostTactic) {
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 						.getUserSupportManager();
 				ITactic postTactic = usManager.getProvingMode().getPostTactic();
@@ -623,7 +641,7 @@ public class ProofState implements IProofState {
 
 				public void run() {
 					try {
-						applyTactic(Tactics.prune(), parent, monitor);
+						applyTactic(Tactics.prune(), parent, false, monitor);
 					} catch (RodinDBException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
