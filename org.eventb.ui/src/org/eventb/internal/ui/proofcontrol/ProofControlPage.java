@@ -389,7 +389,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					try {
 						pm.beginTask("Proving", IProgressMonitor.UNKNOWN);
 						try {
-							userSupport.applyTactic(tactic, pm);
+							userSupport.applyTactic(tactic, true, pm);
 						} catch (RodinDBException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -401,7 +401,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			});
 		} else {
 			try {
-				userSupport.applyTactic(tactic, null);
+				userSupport.applyTactic(tactic, true, null);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
