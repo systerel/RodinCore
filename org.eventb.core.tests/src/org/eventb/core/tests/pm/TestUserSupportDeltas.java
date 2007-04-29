@@ -84,7 +84,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		clearDeltas();
 		userSupport.nextUndischargedPO(false, monitor);
@@ -114,7 +114,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
 
-		userSupport.applyTactic(Tactics.review(1), monitor);
+		userSupport.applyTactic(Tactics.review(1), false, monitor);
 
 		IProofState[] states = userSupport.getPOs();
 		startDeltas();
@@ -127,7 +127,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		// Prune the last PO
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		clearDeltas();
 		userSupport.nextUndischargedPO(true, monitor);
@@ -137,7 +137,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		clearDeltas();
 		userSupport.nextUndischargedPO(true, monitor);
@@ -177,7 +177,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		clearDeltas();
 		userSupport.prevUndischargedPO(false, monitor);
@@ -207,7 +207,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
 
-		userSupport.applyTactic(Tactics.review(1), monitor);
+		userSupport.applyTactic(Tactics.review(1), false, monitor);
 
 		IProofState[] states = userSupport.getPOs();
 		startDeltas();
@@ -220,7 +220,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		// Prune the last PO
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		clearDeltas();
 		userSupport.prevUndischargedPO(true, monitor);
@@ -230,7 +230,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		clearDeltas();
 		userSupport.prevUndischargedPO(true, monitor);
@@ -302,12 +302,12 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
 
-		userSupport.applyTactic(Tactics.lemma("1 = 1"), monitor);
-		userSupport.applyTactic(Tactics.norm(), monitor);
-		userSupport.applyTactic(Tactics.norm(), monitor);
-		userSupport.applyTactic(Tactics.lemma("2 = 2"), monitor);
-		userSupport.applyTactic(Tactics.norm(), monitor);
-		userSupport.applyTactic(Tactics.norm(), monitor);
+		userSupport.applyTactic(Tactics.lemma("1 = 1"), true, monitor);
+		userSupport.applyTactic(Tactics.norm(), true, monitor);
+		userSupport.applyTactic(Tactics.norm(), true, monitor);
+		userSupport.applyTactic(Tactics.lemma("2 = 2"), true, monitor);
+		userSupport.applyTactic(Tactics.norm(), true, monitor);
+		userSupport.applyTactic(Tactics.norm(), true, monitor);
 		IProofState currentPO = userSupport.getCurrentPO();
 		
 		IProverSequent sequent = currentPO.getCurrentNode().getSequent();
@@ -317,13 +317,13 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		Predicate hyp1 = iterator.next();
 		Set<Predicate> hyps1 = new HashSet<Predicate>();
 		hyps1.add(hyp1);
-		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1,
+		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1, true,
 				monitor);
 
 		Set<Predicate> hyps2 = new HashSet<Predicate>();
 		Predicate hyp2 = iterator.next();
 		hyps2.add(hyp2);
-		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp2), hyps2,
+		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp2), hyps2, true,
 				monitor);
 
 		startDeltas();
@@ -435,7 +435,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		IProofTreeNode node1 = currentPO.getCurrentNode();
 
-		userSupport.applyTactic(Tactics.lemma("3 = 3"), monitor);
+		userSupport.applyTactic(Tactics.lemma("3 = 3"), true, monitor);
 
 		IProofTreeNode node2 = currentPO.getCurrentNode();
 
@@ -462,7 +462,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 				"[*] x.bps [INFORMATION]\n"
 						+ "Not a new proof node (priority 1)");
 
-		userSupport.applyTactic(Tactics.norm(), monitor);
+		userSupport.applyTactic(Tactics.norm(), true, monitor);
 		clearDeltas();
 		userSupport.selectNode(node1);
 
@@ -491,7 +491,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport.setInput(psFile, monitor);
 
 		startDeltas();
-		userSupport.applyTactic(Tactics.lemma("3 = 3"), monitor);
+		userSupport.applyTactic(Tactics.lemma("3 = 3"), true, monitor);
 		assertDeltas(
 				"Apply tactic successful ",
 				"[*] x.bps [STATE|INFORMATION]\n"
@@ -527,7 +527,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		Set<Predicate> hyps1 = new HashSet<Predicate>();
 		hyps1.add(hyp1);
 		startDeltas();
-		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1,
+		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1, true,
 				monitor);
 		assertDeltas(
 				"Apply tactic successful ",
@@ -552,7 +552,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
 
-		userSupport.applyTactic(Tactics.lemma("3 = 3"), monitor);
+		userSupport.applyTactic(Tactics.lemma("3 = 3"), true, monitor);
 
 		startDeltas();
 		userSupport.back(monitor);
