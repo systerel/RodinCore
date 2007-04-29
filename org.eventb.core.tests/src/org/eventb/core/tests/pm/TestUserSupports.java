@@ -118,7 +118,7 @@ public class TestUserSupports extends TestPM {
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -147,7 +147,7 @@ public class TestUserSupports extends TestPM {
 
 		// Checks that all POs are discharged except the last one.
 
-		userSupport.applyTactic(Tactics.review(1), monitor);
+		userSupport.applyTactic(Tactics.review(1), false, monitor);
 
 		IProofState[] states = userSupport.getPOs();
 
@@ -158,7 +158,7 @@ public class TestUserSupports extends TestPM {
 		// Prune the last PO
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		userSupport.nextUndischargedPO(true, monitor);
 
@@ -167,7 +167,7 @@ public class TestUserSupports extends TestPM {
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		userSupport.nextUndischargedPO(true, monitor);
 
@@ -203,7 +203,7 @@ public class TestUserSupports extends TestPM {
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		userSupport.prevUndischargedPO(false, monitor);
 
@@ -230,7 +230,7 @@ public class TestUserSupports extends TestPM {
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
 
-		userSupport.applyTactic(Tactics.review(1), monitor);
+		userSupport.applyTactic(Tactics.review(1), false, monitor);
 		userSupport.searchHyps("");
 		// Check delta
 
@@ -248,7 +248,7 @@ public class TestUserSupports extends TestPM {
 		// Prune the last PO
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		userSupport.prevUndischargedPO(true, monitor);
 
@@ -257,7 +257,7 @@ public class TestUserSupports extends TestPM {
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		userSupport.prevUndischargedPO(true, monitor);
 
@@ -342,7 +342,7 @@ public class TestUserSupports extends TestPM {
 
 		// Checks that all POs are discharged except the last one.
 
-		userSupport.applyTactic(Tactics.review(1), monitor);
+		userSupport.applyTactic(Tactics.review(1), false, monitor);
 
 		assertTrue("There are unsaved changes after applying a tactic ",
 				userSupport.hasUnsavedChanges());
@@ -357,7 +357,7 @@ public class TestUserSupports extends TestPM {
 		// Prune the last PO
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		assertTrue("There are unsaved changes after pruning a proof ",
 				userSupport.hasUnsavedChanges());
@@ -381,7 +381,7 @@ public class TestUserSupports extends TestPM {
 		assertEquals("Initially, there are no unsaved PO ", 0,
 				unsavedPOs.length);
 
-		userSupport.applyTactic(Tactics.review(1), monitor);
+		userSupport.applyTactic(Tactics.review(1), false, monitor);
 		unsavedPOs = userSupport.getUnsavedPOs();
 		assertEquals("There are 1 unsaved changes after applying a tactic ", 1,
 				unsavedPOs.length);
@@ -399,11 +399,11 @@ public class TestUserSupports extends TestPM {
 		// Prune the last PO
 		userSupport.setCurrentPO(states[states.length - 1].getPSStatus(),
 				monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		// Prune the first PO
 		userSupport.setCurrentPO(states[0].getPSStatus(), monitor);
-		userSupport.applyTactic(Tactics.prune(), monitor);
+		userSupport.applyTactic(Tactics.prune(), false, monitor);
 
 		unsavedPOs = userSupport.getUnsavedPOs();
 		assertEquals("there are 2 unsaved PO ", 2, unsavedPOs.length);
@@ -441,12 +441,12 @@ public class TestUserSupports extends TestPM {
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
 
-		userSupport.applyTactic(Tactics.lemma("1 = 1"), monitor);
-		userSupport.applyTactic(Tactics.norm(), monitor); // Discharge true goal
-		userSupport.applyTactic(Tactics.norm(), monitor); // Discharge 1 = 1
-		userSupport.applyTactic(Tactics.lemma("2 = 2"), monitor);
-		userSupport.applyTactic(Tactics.norm(), monitor); // Discharge true goal
-		userSupport.applyTactic(Tactics.norm(), monitor); // Discharge 2 = 2
+		userSupport.applyTactic(Tactics.lemma("1 = 1"), true, monitor);
+		userSupport.applyTactic(Tactics.norm(), true, monitor); // Discharge true goal
+		userSupport.applyTactic(Tactics.norm(), true, monitor); // Discharge 1 = 1
+		userSupport.applyTactic(Tactics.lemma("2 = 2"), true, monitor);
+		userSupport.applyTactic(Tactics.norm(), true, monitor); // Discharge true goal
+		userSupport.applyTactic(Tactics.norm(), true, monitor); // Discharge 2 = 2
 		IProofState currentPO = userSupport.getCurrentPO();
 		Iterable<Predicate> selectedHyps = currentPO.getCurrentNode().getSequent()
 				.selectedHypIterable();
@@ -455,7 +455,7 @@ public class TestUserSupports extends TestPM {
 		Predicate hyp1 = iterator.next();
 		Set<Predicate> hyps1 = new HashSet<Predicate>();
 		hyps1.add(hyp1);
-		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1,
+		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1, true,
 				monitor);
 
 		Collection<Predicate> cached = currentPO.getCached();
@@ -464,7 +464,7 @@ public class TestUserSupports extends TestPM {
 		Set<Predicate> hyps2 = new HashSet<Predicate>();
 		Predicate hyp2 = iterator.next();
 		hyps2.add(hyp2);
-		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp2), hyps2,
+		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp2), hyps2, true,
 				monitor);
 
 		cached = currentPO.getCached();
@@ -569,7 +569,7 @@ public class TestUserSupports extends TestPM {
 
 		IProofTreeNode node1 = currentPO.getCurrentNode();
 
-		userSupport.applyTactic(Tactics.lemma("3 = 3"), monitor);
+		userSupport.applyTactic(Tactics.lemma("3 = 3"), true, monitor);
 
 		IProofTreeNode node2 = currentPO.getCurrentNode();
 
@@ -588,7 +588,7 @@ public class TestUserSupports extends TestPM {
 		assertEquals("Select node 2 again has no effect ", node2, currentPO
 				.getCurrentNode());
 
-		userSupport.applyTactic(Tactics.norm(), monitor);
+		userSupport.applyTactic(Tactics.norm(), true, monitor);
 
 		userSupport.selectNode(node1);
 
@@ -614,7 +614,7 @@ public class TestUserSupports extends TestPM {
 
 		IProofTreeNode node1 = currentPO.getCurrentNode();
 
-		userSupport.applyTactic(Tactics.lemma("2 = 3"), monitor);
+		userSupport.applyTactic(Tactics.lemma("2 = 3"), true, monitor);
 
 		IProofTreeNode node2 = currentPO.getCurrentNode();
 		assertTrue("Node 2 is open ", node2.isOpen());
@@ -648,7 +648,7 @@ public class TestUserSupports extends TestPM {
 		Set<Predicate> hyps1 = new HashSet<Predicate>();
 		hyps1.add(hyp1);
 
-		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1,
+		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1, true,
 				monitor);
 
 		Collection<Predicate> cached = currentPO.getCached();
@@ -673,7 +673,7 @@ public class TestUserSupports extends TestPM {
 
 		IProofTreeNode node1 = currentPO.getCurrentNode();
 
-		userSupport.applyTactic(Tactics.lemma("3 = 3"), monitor);
+		userSupport.applyTactic(Tactics.lemma("3 = 3"), true, monitor);
 		userSupport.back(monitor);
 		assertEquals("Back to node 1 ", node1, currentPO.getCurrentNode());
 		assertTrue("Node 1 is open again ", node1.isOpen());
