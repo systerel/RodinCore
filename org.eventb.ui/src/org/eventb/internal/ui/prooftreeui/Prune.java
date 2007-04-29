@@ -46,7 +46,7 @@ public class Prune implements IObjectActionDelegate {
 		assert (ssel.getFirstElement() instanceof IProofTreeNode);
 
 		try {
-			userSupport.applyTactic(Tactics.prune(), new NullProgressMonitor());
+			userSupport.applyTactic(Tactics.prune(), false, new NullProgressMonitor());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

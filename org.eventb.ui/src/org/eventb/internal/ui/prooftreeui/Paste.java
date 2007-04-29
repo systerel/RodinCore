@@ -53,7 +53,7 @@ public class Paste implements IObjectActionDelegate {
 
 		final IProofSkeleton copyNode = (IProofSkeleton) ProofTreeUI.buffer;
 		ITactic pasteTactic = BasicTactics.rebuildTac(copyNode);
-		ProverUIUtils.applyTacticWithProgress(shell, userSupport, pasteTactic);
+		ProverUIUtils.applyTacticWithProgress(shell, userSupport, pasteTactic, true);
 		if (ProofTreeUIUtils.DEBUG)
 			ProofTreeUIUtils.debug("Paste: " + copyNode);
 	}
