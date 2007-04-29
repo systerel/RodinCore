@@ -213,10 +213,34 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @param monitor
 	 *            a progress monitor
 	 * @throws RodinDBException
+	 *             in case where there are some error in applying tactic
+	 * @deprecated use
+	 *             {@link #applyTacticToHypotheses(ITactic, Set, boolean, IProgressMonitor)}
+	 *             instead
 	 */
+	@Deprecated
 	public abstract void applyTacticToHypotheses(final ITactic t,
 			final Set<Predicate> hyps, final IProgressMonitor monitor)
 			throws RodinDBException;
+
+	/**
+	 * Apply a tactic to the current proof obligation to a set of hypothesis
+	 * <p>
+	 * 
+	 * @param t
+	 *            a proof tactic
+	 * @param hyps
+	 *            a set of hypothesis
+	 * @param applyPostTactic
+	 *            indicating if post tactic should be applied or not
+	 * @param monitor
+	 *            a progress monitor
+	 * @throws RodinDBException
+	 *             in case where there are some error in applying tactic
+	 */
+	public abstract void applyTacticToHypotheses(final ITactic t,
+			final Set<Predicate> hyps, final boolean applyPostTactic,
+			final IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Apply a tactic to the current proof obligation at the current proof tree
@@ -228,8 +252,29 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @param monitor
 	 *            a progress monitor
 	 * @throws RodinDBException
+	 *            in case where there are some error in applying tactic
+	 * @deprecated use {@link #applyTactic(ITactic, boolean, IProgressMonitor)}
+	 *             instead
 	 */
+	@Deprecated
 	public abstract void applyTactic(final ITactic t,
+			final IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Apply a tactic to the current proof obligation at the current proof tree
+	 * node.
+	 * <p>
+	 * 
+	 * @param t
+	 *            a proof tactic
+	 * @param applyPostTactic
+	 *            indicating if post tactic should be applied or not
+	 * @param monitor
+	 *            a progress monitor
+	 * @throws RodinDBException
+	 *            in case where there are some error in applying tactic
+	 */
+	public abstract void applyTactic(final ITactic t, boolean applyPostTactic, 
 			final IProgressMonitor monitor) throws RodinDBException;
 
 	/**

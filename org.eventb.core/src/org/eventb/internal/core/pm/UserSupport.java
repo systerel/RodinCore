@@ -31,7 +31,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	LinkedHashSet<IProofState> proofStates;
 
-	protected IProofState currentPS;
+	protected ProofState currentPS;
 
 	private UserSupportManager manager;
 
@@ -290,7 +290,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 				if (proofState == null) {
 					currentPS = null;
 				} else {
-					currentPS = proofState;
+					currentPS = (ProofState) proofState;
 					// Load the proof tree if it is not there already
 					if (proofState.getProofTree() == null) {
 						try {
@@ -421,30 +421,42 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#applyTactic(org.eventb.core.seqprover.ITactic,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Deprecated
 	public void applyTactic(final ITactic t, final IProgressMonitor monitor)
 			throws RodinDBException {
-		IProofTreeNode node = currentPS.getCurrentNode();
-		currentPS.applyTactic(t, node, monitor);
+		applyTactic(t, true, monitor);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.pm.IUserSupport#applyTactic(org.eventb.core.seqprover.ITactic,
+	 *      boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void applyTactic(final ITactic t, boolean applyPostTactic,
+			final IProgressMonitor monitor) throws RodinDBException {
+		IProofTreeNode node = currentPS.getCurrentNode();
+		currentPS.applyTactic(t, node, applyPostTactic, monitor);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eventb.core.pm.IUserSupport#applyTacticToHypotheses(org.eventb.core.seqprover.ITactic,
 	 *      java.util.Set, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Deprecated
 	public void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
 			IProgressMonitor monitor) throws RodinDBException {
-		currentPS.applyTacticToHypotheses(t, currentPS.getCurrentNode(),
-				hyps, monitor);
+		applyTacticToHypotheses(t, hyps, true, monitor);
 	}
 
-//	IProofState getProofState(int index) {
-//		IProofState proofState = null;
-//		if (index < proofStates.size())
-//			proofState = proofStates.get(index);
-//		return proofState;
-//	}
+	public void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
+			boolean applyPostTactic, IProgressMonitor monitor)
+			throws RodinDBException {
+		currentPS.applyTacticToHypotheses(t, currentPS.getCurrentNode(), hyps,
+				applyPostTactic, monitor);
+	}
 
 	void refresh() {
 		manager.run(new Runnable() {
