@@ -8,6 +8,8 @@
 
 package org.eventb.core.tests.pm;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
@@ -67,7 +69,7 @@ public class TestUserSupportChanges extends TestPM {
 
 		// Turn on beginner mode
 		manager.getProvingMode().setExpertMode(false);
-
+		manager.getProvingMode().setPostTactics(new ArrayList<String>());
 		userSupport = new UserSupport();
 	}
 
@@ -146,12 +148,12 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n"
 						+ "Is dirty? false\n"
 						+ "** Proof Tree **\n"
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ ,x∈ℕ ,2=2 ,1=1][] |- 1=2		- =>\n"
+						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, x∈ℕ, 2=2, 1=1][] |- 1=2		- =>\n"
 						+ "1 pending subgoals\n"
 						+ "\n"
 						+ "** Cached **\n"
 						+ "** Searched **\n"
-						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ ,x∈ℕ ,2=2 ,1=1][] |- 1=2		- =>\n"
+						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, x∈ℕ, 2=2, 1=1][] |- 1=2		- =>\n"
 						+ "1 pending subgoals\n"
 						+ "\n"
 						+ "****************************\n"
@@ -196,12 +198,12 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n"
 						+ "Is dirty? false\n"
 						+ "** Proof Tree **\n"
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ ,x∈ℕ ,2=2 ,1=1][] |- 1=2		- =>\n"
+						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, x∈ℕ, 2=2, 1=1][] |- 1=2		- =>\n"
 						+ "1 pending subgoals\n"
 						+ "\n"
 						+ "** Cached **\n"
 						+ "** Searched **\n"
-						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ ,x∈ℕ ,2=2 ,1=1][] |- 1=2		- =>\n"
+						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, x∈ℕ, 2=2, 1=1][] |- 1=2		- =>\n"
 						+ "1 pending subgoals\n"
 						+ "\n"
 						+ "****************************\n"
@@ -266,12 +268,12 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n"
 						+ "Is dirty? false\n"
 						+ "** Proof Tree **\n"
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ ,f(x)∈ℕ ,x∈dom(f) ,x∈ℕ ,2=2 ,1=1][] |- 1=1		hyp <>\n"
+						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=1		hyp <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "** Cached **\n"
 						+ "** Searched **\n"
-						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ ,f(x)∈ℕ ,x∈dom(f) ,x∈ℕ ,2=2 ,1=1][] |- 1=1		hyp <>\n"
+						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=1		hyp <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "****************************\n"
@@ -322,12 +324,12 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n"
 						+ "Is dirty? false\n"
 						+ "** Proof Tree **\n"
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ ,f(x)∈ℕ ,x∈dom(f) ,x∈ℕ ,2=2 ,1=1][] |- 1=1		hyp <>\n"
+						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=1		hyp <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "** Cached **\n"
 						+ "** Searched **\n"
-						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ ,f(x)∈ℕ ,x∈dom(f) ,x∈ℕ ,2=2 ,1=1][] |- 1=1		hyp <>\n"
+						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=1		hyp <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "****************************\n"
@@ -380,12 +382,12 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n"
 						+ "Is dirty? true\n"
 						+ "** Proof Tree **\n"
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ ,f(x)∈ℕ ,x∈dom(f) ,x∈ℕ ,2=2 ,1=1][] |- 1=2		rv (1) (1=2) <>\n"
+						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=2		rv (1) (1=2) <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "** Cached **\n"
 						+ "** Searched **\n"
-						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ ,f(x)∈ℕ ,x∈dom(f) ,x∈ℕ ,2=2 ,1=1][] |- 1=2		rv (1) (1=2) <>\n"
+						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=2		rv (1) (1=2) <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "****************************\n"
@@ -448,12 +450,12 @@ public class TestUserSupportChanges extends TestPM {
 				"****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n" + 
 				"Is dirty? true\n" + 
 				"** Proof Tree **\n" + 
-				"{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ ,f(x)∈ℕ ,x∈dom(f) ,x∈ℕ ,2=2 ,1=1][] |- 1=2		- =>\n" + 
+				"{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=2		- =>\n" + 
 				"1 pending subgoals\n" + 
 				"\n" + 
 				"** Cached **\n" + 
 				"** Searched **\n" + 
-				"Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ ,f(x)∈ℕ ,x∈dom(f) ,x∈ℕ ,2=2 ,1=1][] |- 1=2		- =>\n" + 
+				"Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=2		- =>\n" + 
 				"1 pending subgoals\n" + 
 				"\n" + 
 				"****************************\n" + 
