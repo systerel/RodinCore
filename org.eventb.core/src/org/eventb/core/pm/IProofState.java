@@ -72,9 +72,43 @@ public interface IProofState extends IProofTreeChangedListener {
 
 	public abstract void unloadProofTree();
 
+
+	/**
+	 * Apply a tactic at a given proof tree node
+	 * <p>
+	 * 
+	 * @param t
+	 *            a tactic
+	 * @param node
+	 *            a proof tree node
+	 * @param monitor
+	 *            a proof monitor
+	 * @throws RodinDBException
+	 *             when there are some problem in applying the tactic.
+	 * @deprecated use method from {@link IUserSupport} instead
+	 */
+	@Deprecated
 	public abstract void applyTactic(ITactic t, IProofTreeNode node,
 			IProgressMonitor monitor) throws RodinDBException;
 
+
+	/**
+	 * Apply a tactic to a set of hypotheses at a given proof tree node.
+	 * <p>
+	 * 
+	 * @param t
+	 *            a tactic
+	 * @param node
+	 *            a proof tree node
+	 * @param hyps
+	 *            a set of predicates (hypotheses)
+	 * @param monitor
+	 *            a proof monitor
+	 * @throws RodinDBException
+	 *             when there are some problem in applying the tactic.
+	 * @deprecated use method from {@link IUserSupport} instead
+	 */
+	@Deprecated
 	public abstract void applyTacticToHypotheses(ITactic t,
 			IProofTreeNode node, Set<Predicate> hyps, IProgressMonitor monitor)
 			throws RodinDBException;
