@@ -124,6 +124,7 @@ public class ProverUI extends FormEditor implements
 	 */
 	@Override
 	protected void setInput(IEditorInput input) {
+		super.setInput(input);
 		if (input instanceof IFileEditorInput) {
 			IFile inputFile = ((IFileEditorInput) input).getFile();
 			prFile = (IPSFile) RodinCore.valueOf(inputFile);
@@ -142,7 +143,7 @@ public class ProverUI extends FormEditor implements
 			});
 			this.setPartName(prFile.getComponentName());
 		}
-		super.setInput(input);
+		editorDirtyStateChanged();
 	}
 
 	/**
