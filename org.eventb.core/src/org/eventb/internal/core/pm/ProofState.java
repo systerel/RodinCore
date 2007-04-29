@@ -122,11 +122,18 @@ public class ProofState implements IProofState {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 				pt.addChangeListener(ProofState.this);
-
 				ProofState.this.newProofTree();
-
+				ProofState.this.setDirty(false);
+				
+				if (!pt.getRoot().isClosed()) {
+					// Run Post tactic at the root of the tree
+					IUserSupportManager usManager = EventBPlugin.getDefault()
+							.getUserSupportManager();
+					ITactic postTactic = usManager.getProvingMode()
+							.getPostTactic();
+					postTactic.apply(pt.getRoot(), new ProofMonitor(monitor));
+				}
 				// Current node is the next pending subgoal or the root of the
 				// proof tree if there are no pending subgoal.
 				IProofTreeNode node = getNextPendingSubgoal();
@@ -144,7 +151,8 @@ public class ProofState implements IProofState {
 				// if the proof tree was previously broken then the rebuild
 				// would fix the proof, marking it dirty.
 				try {
-					ProofState.this.setDirty(status.isBroken());
+					if (status.isBroken())
+						ProofState.this.setDirty(true);
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -410,7 +418,6 @@ public class ProofState implements IProofState {
 			newNode = pt.getRoot();
 		}
 		setCurrentNode(newNode);
-		this.setDirty(true);
 		deltaProcessor.newProofTree(userSupport, this);
 	}
 
@@ -433,7 +440,6 @@ public class ProofState implements IProofState {
 		if (current == null) {
 			current = pt.getRoot();
 		}
-		this.setDirty(true);
 		deltaProcessor.newProofTree(userSupport, this);
 	}
 
@@ -575,7 +581,6 @@ public class ProofState implements IProofState {
 		Object info = t.apply(node, pm);
 		if (info == null) {
 			info = "Tactic applied successfully";
-			this.setDirty(true);
 			if (!t.equals(Tactics.prune())) {
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 						.getUserSupportManager();
@@ -604,6 +609,7 @@ public class ProofState implements IProofState {
 			UserSupportUtils.debug("UserSupport - Proof Tree Changed: "
 					+ proofTreeDelta);
 		deltaProcessor.proofTreeChanged(userSupport, this, proofTreeDelta);
+		setDirty(true);
 	}
 
 	public void back(IProofTreeNode node, final IProgressMonitor monitor)
@@ -631,16 +637,7 @@ public class ProofState implements IProofState {
 
 	public void setComment(final String text, final IProofTreeNode node)
 			throws RodinDBException {
-		UserSupportManager.getDefault().run(new Runnable() {
-
-			public void run() {
-				// This should generate a Proof Tree Delta
-				node.setComment(text);
-
-				ProofState.this.setDirty(true);
-			}
-
-		});
+		node.setComment(text);
 	}
 
 }
