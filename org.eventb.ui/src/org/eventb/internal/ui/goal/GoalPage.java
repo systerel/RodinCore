@@ -416,7 +416,7 @@ public class GoalPage extends Page implements
 		if (provider != null)
 			try {
 				userSupport.applyTactic(
-						provider.getTactic(node, null, position, inputs),
+						provider.getTactic(node, null, position, inputs), true,
 						new NullProgressMonitor());
 			} catch (RodinDBException e2) {
 				// TODO Auto-generated catch block
