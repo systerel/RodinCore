@@ -309,7 +309,7 @@ public class TestUserSupportChanges extends TestPM {
 		userSupport.setInput(psFile, null);
 		// Modified current PO
 		try {
-			userSupport.applyTactic(Tactics.review(1),
+			userSupport.applyTactic(Tactics.review(1), false,
 					new NullProgressMonitor());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
@@ -367,7 +367,7 @@ public class TestUserSupportChanges extends TestPM {
 		userSupport.setInput(psFile, null);
 		// Modified current PO
 		try {
-			userSupport.applyTactic(Tactics.review(1),
+			userSupport.applyTactic(Tactics.review(1), false,
 					new NullProgressMonitor());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
@@ -436,7 +436,7 @@ public class TestUserSupportChanges extends TestPM {
 		userSupport.setInput(psFile, null);
 		// Modified current PO
 		try {
-			userSupport.applyTactic(Tactics.review(1),
+			userSupport.applyTactic(Tactics.review(1), false,
 					new NullProgressMonitor());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
