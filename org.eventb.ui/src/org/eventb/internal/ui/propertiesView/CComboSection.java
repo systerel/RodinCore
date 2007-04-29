@@ -91,6 +91,9 @@ public abstract class CComboSection extends AbstractPropertySection implements
 
 	@Override
 	public void refresh() {
+		if (comboWidget.isDisposed())
+			return;
+		
 		try {
 			comboWidget.removeAll();
 			setData();

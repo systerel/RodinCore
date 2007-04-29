@@ -113,6 +113,9 @@ public abstract class TextSection extends AbstractPropertySection implements
 
 	@Override
 	public void refresh() {
+		if (textWidget.isDisposed())
+			return;
+		
 		try {
 			String text = getText();
 			if (!textWidget.getText().equals(text))
