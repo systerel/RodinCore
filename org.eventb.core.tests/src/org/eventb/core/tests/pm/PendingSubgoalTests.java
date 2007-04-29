@@ -193,7 +193,7 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(), G);
 		
 		ITactic tac = Tactics.doCase(P1.toString());
-		userSupport.applyTactic(tac, null);
+		userSupport.applyTactic(tac, true, null);
 		assertOpen(mList(P1), G);
 	}
 
@@ -206,11 +206,11 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(), G);
 		
 		final ITactic tac = Tactics.doCase(P1.toString());
-		userSupport.applyTactic(tac, null);
+		userSupport.applyTactic(tac, true, null);
 		assertOpen(mList(P1), G);
 		
 		final ITactic tac2 = Tactics.review(REVIEWED_MAX);
-		userSupport.applyTactic(tac2, null);
+		userSupport.applyTactic(tac2, true, null);
 		assertOpen(mList(nP1), G);
 	}
 
@@ -223,14 +223,14 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(), G);
 		
 		final ITactic tac = Tactics.doCase(P1.toString());
-		userSupport.applyTactic(tac, null);
+		userSupport.applyTactic(tac, true, null);
 		assertOpen(mList(P1), G);
 		
 		gotoNextSibling();
 		assertOpen(mList(nP1), G);
 
 		final ITactic tac2 = Tactics.review(REVIEWED_MAX);
-		userSupport.applyTactic(tac2, null);
+		userSupport.applyTactic(tac2, true, null);
 		assertOpen(mList(P1), G);
 	}
 
@@ -243,18 +243,18 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(), G);
 		
 		final ITactic tac = Tactics.doCase(P1.toString());
-		userSupport.applyTactic(tac, null);
+		userSupport.applyTactic(tac, true, null);
 		assertOpen(mList(P1), G);
 		
 		gotoNextSibling();
 		assertOpen(mList(nP1), G);
 
 		final ITactic tac2 = Tactics.doCase(P2.toString());
-		userSupport.applyTactic(tac2, null);
+		userSupport.applyTactic(tac2, true, null);
 		assertOpen(mList(nP1, P2), G);
 		
 		final ITactic tac3 = Tactics.review(REVIEWED_MAX);
-		userSupport.applyTactic(tac3, null);
+		userSupport.applyTactic(tac3, true, null);
 		assertOpen(mList(nP1, nP2), G);
 	}
 
@@ -267,21 +267,21 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(), G);
 
 		final ITactic tac = Tactics.doCase(P1.toString());
-		userSupport.applyTactic(tac, null);
+		userSupport.applyTactic(tac, true, null);
 		assertOpen(mList(P1), G);
 
 		gotoNextSibling();
 		assertOpen(mList(nP1), G);
 
 		final ITactic tac2 = Tactics.doCase(P2.toString());
-		userSupport.applyTactic(tac2, null);
+		userSupport.applyTactic(tac2, true, null);
 		assertOpen(mList(nP1, P2), G);
 
 		gotoNextSibling();
 		assertOpen(mList(nP1, nP2), G);
 
 		final ITactic tac3 = Tactics.review(REVIEWED_MAX);
-		userSupport.applyTactic(tac3, null);
+		userSupport.applyTactic(tac3, true, null);
 		assertOpen(mList(P1), G);
 	}
 
