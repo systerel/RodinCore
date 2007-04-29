@@ -45,7 +45,8 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 				Set<Predicate> deselected = SelectedHypothesisComposite.this.getSelectedHyps();
 				ITactic t = Tactics.mngHyp(ProverFactory.makeDeselectHypAction(deselected));
 				try {
-					userSupport.applyTacticToHypotheses(t, deselected, new NullProgressMonitor());
+					userSupport.applyTacticToHypotheses(t, deselected, true,
+							new NullProgressMonitor());
 				} catch (RodinDBException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

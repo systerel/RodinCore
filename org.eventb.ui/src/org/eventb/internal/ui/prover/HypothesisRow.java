@@ -424,7 +424,7 @@ public class HypothesisRow {
 		if (provider != null)
 			try {
 				userSupport.applyTacticToHypotheses(provider.getTactic(node,
-						hyp, position, inputs), hypSet,
+						hyp, position, inputs), hypSet, true,
 						new NullProgressMonitor());
 			} catch (RodinDBException e2) {
 				// TODO Auto-generated catch block

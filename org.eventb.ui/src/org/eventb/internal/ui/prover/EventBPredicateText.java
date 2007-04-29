@@ -530,7 +530,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		if (provider != null)
 			try {
 				us.applyTacticToHypotheses(provider.getTactic(us.getCurrentPO()
-						.getCurrentNode(), hyp, position, inputs), hypSet,
+						.getCurrentNode(), hyp, position, inputs), hypSet, true,
 						new NullProgressMonitor());
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block

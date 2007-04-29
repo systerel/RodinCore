@@ -58,11 +58,14 @@ public class ProverUIUtils {
 		return null;
 	}
 
-	public static void applyTacticWithProgress(Shell shell, final IUserSupport userSupport, final ITactic tactic) {
+	public static void applyTacticWithProgress(Shell shell,
+			final IUserSupport userSupport, final ITactic tactic,
+			final boolean applyPostTactic) {
 		UIUtils.runWithProgressDialog(shell, new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
 				try {
-					userSupport.applyTactic(tactic, monitor);
+					userSupport.applyTactic(tactic, applyPostTactic, monitor);
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
