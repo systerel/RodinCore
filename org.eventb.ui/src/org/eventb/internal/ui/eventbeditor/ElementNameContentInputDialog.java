@@ -152,12 +152,12 @@ public class ElementNameContentInputDialog<T extends ILabeledElement> extends
 			gd.widthHint = 150;
 			textMath.getTextWidget().setLayoutData(gd);
 			contentTexts.add(textMath);
-			textMath.getTextWidget().setFocus();
 			textMath.getTextWidget().addModifyListener(new DirtyStateListener());
 			if (focusText == null)
 				focusText = textMath.getTextWidget();
 		}
 
+		focusText.selectAll();
 		focusText.setFocus();
 	}
 

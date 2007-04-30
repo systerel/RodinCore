@@ -108,7 +108,9 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 		text.getTextWidget().setLayoutData(gd);
 		text.getTextWidget().addModifyListener(new DirtyStateListener());
 		texts.add(text);
-
+		text.getTextWidget().selectAll();
+		text.getTextWidget().setFocus();
+		
 		label = toolkit.createLabel(body, message);
 		// label.setLayoutData(new GridData());
 
@@ -129,7 +131,6 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 		text.getTextWidget().setLayoutData(gd);
 		text.getTextWidget().addModifyListener(new DirtyStateListener());
 		texts.add(text);
-
 	}
 
 	/*

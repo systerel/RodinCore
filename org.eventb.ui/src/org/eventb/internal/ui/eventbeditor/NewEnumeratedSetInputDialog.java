@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
@@ -90,8 +91,9 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 		nameText = new EventBText(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 150;
-		nameText.getTextWidget().setLayoutData(gd);
-		nameText.getTextWidget().addModifyListener(new DirtyStateListener());
+		Text textWidget = nameText.getTextWidget();
+		textWidget.setLayoutData(gd);
+		textWidget.addModifyListener(new DirtyStateListener());
 
 		elementTexts = new ArrayList<IEventBInputText>();
 
@@ -108,7 +110,10 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 
 			elementTexts.add(elementText);
 		}
-		nameText.getTextWidget().setText(defaultName);
+		textWidget.setText(defaultName);
+		textWidget.selectAll();
+		textWidget.setFocus();
+		
 		scrolledForm.reflow(true);
 	}
 

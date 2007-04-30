@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eventb.core.IAxiom;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
@@ -118,8 +119,9 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.horizontalSpan = 2;
 		gd.widthHint = 200;
-		nameText.getTextWidget().setLayoutData(gd);
-		nameText.getTextWidget().addModifyListener(new DirtyStateListener());
+		Text textWidget = nameText.getTextWidget();
+		textWidget.setLayoutData(gd);
+		textWidget.addModifyListener(new DirtyStateListener());
 
 		label = toolkit.createLabel(body, "Axiom");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -140,14 +142,15 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		axiomPredicateText.getTextWidget().setLayoutData(gd);
 		axiomPredicateText.getTextWidget().addModifyListener(
 				new DirtyStateListener());
-		nameText.getTextWidget().addModifyListener(
+		textWidget.addModifyListener(
 				new GuardListener(axiomPredicateText.getTextWidget()));
 
 		axiomPairTexts.add(new Pair<IEventBInputText, IEventBInputText>(
 				axiomNameText, axiomPredicateText));
 
-		nameText.getTextWidget().setText(defaultName);
-
+		textWidget.setText(defaultName);
+		textWidget.selectAll();
+		textWidget.setFocus();
 	}
 
 	/*
