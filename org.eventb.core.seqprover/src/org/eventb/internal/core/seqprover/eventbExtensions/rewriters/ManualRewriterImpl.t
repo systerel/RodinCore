@@ -212,7 +212,7 @@ public class ManualRewriterImpl extends DefaultRewriter {
 			/**
 			 * Negation: ¬(∃x·P) == ∀x·¬P
 			 */
-			Not(ForAll(idents, P)) -> {
+			Not(Exists(idents, P)) -> {
 				return FormulaUnfold.negQuant(Formula.FORALL, `idents, `P);
 			}
 	    }
