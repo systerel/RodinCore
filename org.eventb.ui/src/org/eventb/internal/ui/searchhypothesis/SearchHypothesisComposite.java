@@ -47,7 +47,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 				Set<Predicate> selected = SearchHypothesisComposite.this.getSelectedHyps();
 				ITactic t = Tactics.mngHyp(ProverFactory.makeSelectHypAction(selected));
 				try {
-					userSupport.applyTacticToHypotheses(t, selected,
+					userSupport.applyTacticToHypotheses(t, selected, true,
 							new NullProgressMonitor());
 				} catch (RodinDBException e1) {
 					// TODO Auto-generated catch block
