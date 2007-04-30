@@ -62,7 +62,6 @@ import org.eventb.internal.ui.prover.EventBPredicateText;
 import org.eventb.internal.ui.prover.PredicateUtil;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
-import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
@@ -548,7 +547,7 @@ public class GoalPage extends Page implements
 
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
 		// Do nothing if the page is disposed.
-		if (scrolledForm.isDisposed())
+		if (this.getControl().isDisposed())
 			return;
 
 		// Trying to get the changes for the current user support.
@@ -574,8 +573,7 @@ public class GoalPage extends Page implements
 			return; // Do nothing
 		}
 
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
+		Display display = this.getControl().getDisplay();
 		
 		display.syncExec(new Runnable() {
 			public void run() {
