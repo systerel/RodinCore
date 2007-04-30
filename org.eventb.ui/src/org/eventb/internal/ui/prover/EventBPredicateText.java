@@ -2,6 +2,7 @@ package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -78,8 +79,8 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	Menu tipMenu;
 
 	public EventBPredicateText(FormToolkit toolkit, final Composite parent) {
-
 		this.parent = parent;
+		links = new HashMap<Point, TacticPositionUI>();
 		dirtyStates = new ArrayList<Point>();
 		text = new StyledText(parent, SWT.MULTI | SWT.FULL_SELECTION);
 		Font font = JFaceResources
