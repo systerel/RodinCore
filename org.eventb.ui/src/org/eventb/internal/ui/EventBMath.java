@@ -43,8 +43,11 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 			}
 
 			public void focusLost(FocusEvent e) {
-				text.setText(Text2EventBMathTranslator
-						.translate(text.getText()));
+				String translate = Text2EventBMathTranslator
+										.translate(text.getText());
+				if (!text.getText().equals(translate)) {
+					text.setText(translate);
+				}
 			}
 
 		});
