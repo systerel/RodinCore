@@ -13,7 +13,7 @@ public class Review implements IProofCommand {
 
 	public void apply(IUserSupport us, Predicate hyp, String[] inputs,
 			IProgressMonitor monitor) throws RodinDBException {
-		us.applyTactic(Tactics.review(1), null);
+		us.applyTactic(Tactics.review(1), false, null);
 	}
 
 	public boolean isApplicable(IUserSupport us, Predicate hyp, String input) {

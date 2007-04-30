@@ -13,7 +13,7 @@ public class Prune implements IProofCommand {
 
 	public void apply(IUserSupport us, Predicate hyp, String[] inputs,
 			IProgressMonitor monitor) throws RodinDBException {
-		us.applyTactic(Tactics.prune(), monitor);
+		us.applyTactic(Tactics.prune(), false, monitor);
 	}
 
 	public boolean isApplicable(IUserSupport us, Predicate hyp, String input) {
