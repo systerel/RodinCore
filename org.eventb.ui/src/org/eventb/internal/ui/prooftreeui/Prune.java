@@ -64,8 +64,14 @@ public class Prune implements IObjectActionDelegate {
 		this.selection = sel;
 		assert selection instanceof IStructuredSelection;
 		IStructuredSelection ssel = (IStructuredSelection) selection;
-		assert ssel.size() == 1;
-		assert ssel.getFirstElement() instanceof IProofTreeNode;
+		if (ssel.size() != 1) {
+			action.setEnabled(false);
+			return;
+		}
+		if (!(ssel.getFirstElement() instanceof IProofTreeNode)) {
+			action.setEnabled(false);
+			return;			
+		}
 		IProofTreeNode node = (IProofTreeNode) ssel.getFirstElement();
 		if (node.isOpen()) {
 			action.setEnabled(false);
