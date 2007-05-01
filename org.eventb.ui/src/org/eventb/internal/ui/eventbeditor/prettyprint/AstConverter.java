@@ -675,7 +675,7 @@ public abstract class AstConverter {
 			if (element.hasComment()) {
 				String comment = element.getComment();
 				if (comment.length() != 0)
-					append("   /* " + UIUtils.XMLWrapUp(comment) + " */");
+					append("          /* " + UIUtils.XMLWrapUp(comment) + " */");
 			}
 		} catch (RodinDBException e) {
 			// ignore

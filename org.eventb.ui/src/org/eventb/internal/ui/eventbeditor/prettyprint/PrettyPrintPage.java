@@ -113,6 +113,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		});
 
 		formText = new EventBFormText(widget);
+		widget.setWhitespaceNormalized(false);
 
 		setFormText(new NullProgressMonitor());
 
