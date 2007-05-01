@@ -177,6 +177,34 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				return `P;
 			}
 
+	    	/**
+	    	 * Negation 8: ¬ a ≤ b == a > b
+	    	 */
+			Not(Le(a, b)) -> {
+				return makeRelationalPredicate(Predicate.GT, `a, `b);
+			}
+
+	    	/**
+	    	 * Negation 9: ¬ a ≥ b == a < b
+	    	 */
+			Not(Ge(a, b)) -> {
+				return makeRelationalPredicate(Predicate.LT, `a, `b);
+			}
+
+	    	/**
+	    	 * Negation 10: ¬ a > b == a ≤ b
+	    	 */
+			Not(Gt(a, b)) -> {
+				return makeRelationalPredicate(Predicate.LE, `a, `b);
+			}
+
+	    	/**
+	    	 * Negation 11: ¬ a < b == a ≥ b
+	    	 */
+			Not(Lt(a, b)) -> {
+				return makeRelationalPredicate(Predicate.GE, `a, `b);
+			}
+
 	    }
 	    return predicate;
 	}
