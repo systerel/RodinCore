@@ -13,6 +13,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
@@ -42,7 +43,9 @@ public class EditRow {
 	ImageHyperlink removeHyperlink; 
 	
 	IElementComposite elementComp;
-
+	
+	Composite buttonComp;
+	
 	int level;
 	
 	char keyHold;
@@ -64,6 +67,10 @@ public class EditRow {
 
 	private void createContents() {
 		composite = toolkit.createComposite(compParent);
+		if (EventBEditorUtils.DEBUG) {
+			composite.setBackground(composite.getDisplay().getSystemColor(
+					SWT.COLOR_RED));
+		}
 		if (nextComposite != null) {
 			assert nextComposite.getParent() == compParent;
 			composite.moveAbove(nextComposite);
@@ -83,16 +90,19 @@ public class EditRow {
 	}
 
 	public void createButtons(IElementType type) {
-		Composite buttonComp = toolkit.createComposite(composite);
+		buttonComp = toolkit.createComposite(composite);
 		buttonComp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
-
+		if (EventBEditorUtils.DEBUG) {
+			buttonComp.setBackground(buttonComp.getDisplay().getSystemColor(
+					SWT.COLOR_CYAN));
+		}
+		
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 4;
-		gridLayout.marginLeft = 0;
-		gridLayout.marginRight = 0;
-		gridLayout.marginTop = 0;
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
+		gridLayout.horizontalSpacing = 0;
+		gridLayout.verticalSpacing = 0;
 		buttonComp.setLayout(gridLayout);
 
 		Composite tmp = toolkit.createComposite(buttonComp);
@@ -215,6 +225,26 @@ public class EditRow {
 	public void setSelected(boolean select) {
 		for (IEditComposite editComposite : editComposites) {
 			editComposite.setSelected(select);
+		}
+		if (select) {
+			composite.setBackground(composite.getDisplay().getSystemColor(
+					SWT.COLOR_GRAY));
+			buttonComp.setBackground(buttonComp.getDisplay().getSystemColor(
+					SWT.COLOR_GRAY));
+		}
+		else {
+			if (EventBEditorUtils.DEBUG) {
+				composite.setBackground(composite.getDisplay().getSystemColor(
+						SWT.COLOR_RED));
+				buttonComp.setBackground(buttonComp.getDisplay().getSystemColor(
+						SWT.COLOR_CYAN));
+			}
+			else {
+				composite.setBackground(composite.getDisplay().getSystemColor(
+						SWT.COLOR_WHITE));				
+				buttonComp.setBackground(composite.getDisplay().getSystemColor(
+						SWT.COLOR_WHITE));				
+			}
 		}
 	}
 
