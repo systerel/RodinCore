@@ -62,8 +62,8 @@ public class ElementComposite implements IElementComposite {
 		gridLayout.marginHeight = 0;
 		composite.setLayout(gridLayout);
 
-		row = new EditRow(this, form, toolkit, composite, null, rElement, level);
-
+		row = new EditRow(this, form, toolkit);
+		row.createContents(toolkit, composite, null, level);
 		createSectionComposites();
 	}
 
