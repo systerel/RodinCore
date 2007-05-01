@@ -45,6 +45,16 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		super(true, FormulaFactory.getDefault());
 	}
 
+
+	public Predicate makeUnaryPredicate(int tag, Predicate child) {
+		return ff.makeUnaryPredicate(tag, child, null);
+	}
+
+	public Predicate makeRelationalPredicate(int tag, Expression left,
+			Expression right) {
+		return ff.makeRelationalPredicate(tag, left, right, null);
+	}
+	
 	%include {Formula.tom}
 	
 	@Override
@@ -223,6 +233,39 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 */
 	    	NotEqual(E, E) -> {
 	    		return Lib.False;
+	    	}
+
+	    	/**
+	    	 * Negation 5: E ≠ F == ¬ E = F
+	    	 */
+	    	NotEqual(E, F) -> {
+	    		return makeUnaryPredicate(
+	    			Predicate.NOT, makeRelationalPredicate(Expression.EQUAL, `E, `F));
+	    	}
+
+	    	/**
+	    	 * Negation 6: E ∉ F == ¬ E ∈ F
+	    	 */
+	    	NotIn(E, F) -> {
+	    		return makeUnaryPredicate(
+	    			Predicate.NOT, makeRelationalPredicate(Expression.IN, `E, `F));
+	    	}
+
+
+	    	/**
+	    	 * Negation 7: E ⊄ F == ¬ E ⊂ F
+	    	 */
+	    	NotSubset(E, F) -> {
+	    		return makeUnaryPredicate(
+	    			Predicate.NOT, makeRelationalPredicate(Expression.SUBSET, `E, `F));
+	    	}
+
+	    	/**
+	    	 * Negation 8: E ⊈ F == ¬ E ⊆ F
+	    	 */
+	    	NotSubsetEq(E, F) -> {
+	    		return makeUnaryPredicate(
+	    			Predicate.NOT, makeRelationalPredicate(Expression.SUBSETEQ, `E, `F));
 	    	}
 
 	    	/**
