@@ -177,12 +177,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				return `P;
 			}
 
-	    	/**
-	    	 * Negation 4: ¬(x ∉ S) == x ∈ S
-	    	 */
-			Not(NotIn(x, S)) -> {
-				return Lib.makeInclusion(`x, `S);
-			}
 	    }
 	    return predicate;
 	}
@@ -236,7 +230,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 	    	/**
-	    	 * Negation 5: E ≠ F == ¬ E = F
+	    	 * Negation 4: E ≠ F == ¬ E = F
 	    	 */
 	    	NotEqual(E, F) -> {
 	    		return makeUnaryPredicate(
@@ -244,7 +238,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 	    	/**
-	    	 * Negation 6: E ∉ F == ¬ E ∈ F
+	    	 * Negation 5: E ∉ F == ¬ E ∈ F
 	    	 */
 	    	NotIn(E, F) -> {
 	    		return makeUnaryPredicate(
@@ -253,7 +247,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 
 
 	    	/**
-	    	 * Negation 7: E ⊄ F == ¬ E ⊂ F
+	    	 * Negation 6: E ⊄ F == ¬ E ⊂ F
 	    	 */
 	    	NotSubset(E, F) -> {
 	    		return makeUnaryPredicate(
@@ -261,7 +255,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 	    	/**
-	    	 * Negation 8: E ⊈ F == ¬ E ⊆ F
+	    	 * Negation 7: E ⊈ F == ¬ E ⊆ F
 	    	 */
 	    	NotSubsetEq(E, F) -> {
 	    		return makeUnaryPredicate(
