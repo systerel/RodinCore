@@ -3,7 +3,6 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -194,7 +193,7 @@ public class FormulaSimplification {
 
 	public static Expression getDomain(Expression expression,
 			Expression[] members) {
-		Collection<Expression> domain = new HashSet<Expression>();
+		Collection<Expression> domain = new LinkedHashSet<Expression>();
 
 		for (Expression member : members) {
 			if (member instanceof BinaryExpression
@@ -211,7 +210,7 @@ public class FormulaSimplification {
 
 	public static Expression getRange(Expression expression,
 			Expression[] members) {
-		Collection<Expression> domain = new HashSet<Expression>();
+		Collection<Expression> domain = new LinkedHashSet<Expression>();
 
 		for (Expression member : members) {
 			if (member instanceof BinaryExpression
