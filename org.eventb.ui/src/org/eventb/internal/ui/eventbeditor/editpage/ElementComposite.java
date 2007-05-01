@@ -2,11 +2,13 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.ArrayList;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -50,6 +52,10 @@ public class ElementComposite implements IElementComposite {
 
 	private void createContents() {
 		composite = toolkit.createComposite(compParent);
+		if (EventBEditorUtils.DEBUG) {
+			composite.setBackground(composite.getDisplay().getSystemColor(
+					SWT.COLOR_GRAY));
+		}
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.marginWidth = 0;
