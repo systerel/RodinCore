@@ -330,6 +330,27 @@ public class AutoFormulaRewriterTests {
 		assertRelationalPredicate("E ⊈ F == ¬ E ⊆ F", ff.makeUnaryPredicate(Predicate.NOT, ff
 				.makeRelationalPredicate(Predicate.SUBSETEQ, integer, nat, null), null),
 				integer, Predicate.NOTSUBSETEQ, nat);
+
+		// not(a <= b) == a > b
+		assertUnaryPredicate("¬ a ≤ b == a > b", ff.makeRelationalPredicate(
+				Predicate.GT, E, F, null), Predicate.NOT, ff
+				.makeRelationalPredicate(Predicate.LE, E, F, null));
+
+		// not(a >= b) == a < b
+		assertUnaryPredicate("¬ a ≥ b == a < b", ff.makeRelationalPredicate(
+				Predicate.LT, E, F, null), Predicate.NOT, ff
+				.makeRelationalPredicate(Predicate.GE, E, F, null));
+
+    	// not(a > b) == a <= b
+		assertUnaryPredicate("¬ a > b == a ≤ b", ff.makeRelationalPredicate(
+				Predicate.LE, E, F, null), Predicate.NOT, ff
+				.makeRelationalPredicate(Predicate.GT, E, F, null));
+
+	   	// not(a < b) == a >= b
+		assertUnaryPredicate("¬ a < b == a ≥ b", ff.makeRelationalPredicate(
+				Predicate.GE, E, F, null), Predicate.NOT, ff
+				.makeRelationalPredicate(Predicate.LT, E, F, null));
+
 	}
 
 	private void assertQuantificationPredicate(String message,
