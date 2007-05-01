@@ -23,7 +23,7 @@ public class RefinesEventEditComposite extends CComboEditComposite {
 	}
 
 	@Override
-	public void setControlValue() {
+	public void refresh() {
 		CCombo combo = (CCombo) control;
 		combo.removeAll();
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
@@ -46,7 +46,7 @@ public class RefinesEventEditComposite extends CComboEditComposite {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		super.setControlValue();
+		super.refresh();
 	}
 
 	@Override
