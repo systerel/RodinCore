@@ -43,13 +43,6 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setValue()
-	 */
-	abstract public void setControlValue();
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#getValue()
 	 */
 	abstract public String getValue();
@@ -66,10 +59,7 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#refresh(org.rodinp.core.IInternalElement)
 	 */
-	public void refresh() {
-		setControlValue();
-		internalPack();
-	}
+	public abstract void refresh();
 
 	/*
 	 * (non-Javadoc)
@@ -94,6 +84,7 @@ public abstract class DefaultEditComposite implements IEditComposite {
 
 	void internalPack() {
 		Composite parent = control.getParent();
+//		form.getBody().setRedraw(false);
 		Rectangle bounds = parent.getBounds();
 		Point preferredSize = parent.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
@@ -105,10 +96,9 @@ public abstract class DefaultEditComposite implements IEditComposite {
 		} else {
 			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Local resize");
-			control.pack();
-			parent.pack(true);
 			parent.setBounds(bounds);
 		}
+//		form.getBody().setRedraw(true);
 	}
 
 }

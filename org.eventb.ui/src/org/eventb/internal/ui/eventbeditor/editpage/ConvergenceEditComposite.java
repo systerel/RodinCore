@@ -34,7 +34,7 @@ public class ConvergenceEditComposite extends CComboEditComposite {
 	}
 
 	@Override
-	public void setControlValue() {
+	public void refresh() {
 		CCombo combo = (CCombo) control;
 		if (combo.getItemCount() != 3) {
 			combo.removeAll();
@@ -42,7 +42,7 @@ public class ConvergenceEditComposite extends CComboEditComposite {
 			combo.add(CONVERGENT);
 			combo.add(ANTICIPATED);
 		}
-		super.setControlValue();
+		super.refresh();
 	}
 
 	@Override

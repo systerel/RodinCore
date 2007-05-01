@@ -13,11 +13,13 @@ import org.eventb.internal.ui.TimerText;
 public abstract class TextEditComposite extends DefaultEditComposite {
 
 	@Override
-	public void setControlValue() {
+	public void refresh() {
 		Text text = (Text) control;
 		String str = getValue();
-		if (!text.getText().equals(str))
+		if (!text.getText().equals(str)) {
 			text.setText(str);
+			internalPack();
+		}
 	}
 
 	public void createComposite(FormToolkit toolkit, Composite parent, int style) {

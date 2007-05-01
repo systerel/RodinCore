@@ -24,14 +24,14 @@ public class InheritedEditComposite extends CComboEditComposite {
 	}
 
 	@Override
-	public void setControlValue() {
+	public void refresh() {
 		CCombo combo = (CCombo) control;
 		if (combo.getItemCount() != 2) {
 			combo.removeAll();
 			combo.add(TRUE);
 			combo.add(FALSE);
 		}
-		super.setControlValue();
+		super.refresh();
 	}
 
 	@Override

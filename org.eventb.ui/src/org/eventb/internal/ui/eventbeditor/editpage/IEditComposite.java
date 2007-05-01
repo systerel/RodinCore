@@ -14,8 +14,6 @@ public interface IEditComposite {
 
 	abstract public void createComposite(FormToolkit toolkit, Composite parent);
 
-	abstract public void setControlValue();
-
 	abstract public String getValue();
 
 	abstract public void setValue();
