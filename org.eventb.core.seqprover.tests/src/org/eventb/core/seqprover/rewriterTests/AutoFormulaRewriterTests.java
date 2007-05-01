@@ -42,6 +42,14 @@ public class AutoFormulaRewriterTests {
 	private static final IntegerLiteral L4 =
 		ff.makeIntegerLiteral(new BigInteger("4"), null);
 
+	private static final Expression E = Lib.parseExpression("x + 2");
+
+	private static final Expression F = Lib.parseExpression("y + 1");
+	
+	private static final Expression nat = Lib.parseExpression("ℕ1");
+
+	private static final Expression integer = Lib.parseExpression("ℤ");
+
 	private static final Predicate P =
 		ff.makeRelationalPredicate(Predicate.EQUAL, L1, L2, null);		
 	private static final Predicate Q =
@@ -284,24 +292,44 @@ public class AutoFormulaRewriterTests {
 
 	@Test
 	public void testNegation() {
-		// not(true) == false
+		// not(true)  ==  false
 		assertUnaryPredicate("¬⊤ == ⊥", Lib.False, Predicate.NOT, Lib.True);
 
-		// not(false) == true
+		// not(false)  ==  true
 		assertUnaryPredicate("¬⊥ == ⊤", Lib.False, Predicate.NOT, Lib.True);
 
-		// not(not(P)) == not(P)
+		// not(not(P))  ==  not(P)
 		assertUnaryPredicate("¬¬P = P", P, Predicate.NOT, Lib.makeNeg((P)));
 
-		// not(x /: S)) == x : S
+		// not(x /: S))  ==  x : S
 		Expression fTrue = ff.makeAtomicExpression(Expression.TRUE, null);
 		Expression fFalse = ff.makeAtomicExpression(Expression.FALSE, null);
 		Expression S = ff.makeSetExtension(fFalse, null);
 		RelationalPredicate rPred = ff.makeRelationalPredicate(Predicate.NOTIN,
 				fTrue, S, null);
 
-		assertUnaryPredicate("¬¬P = P", ff.makeRelationalPredicate(
+		assertUnaryPredicate("¬ (x ∉ S) == x ∈ S", ff.makeRelationalPredicate(
 				Predicate.IN, fTrue, S, null), Predicate.NOT, rPred);
+		
+		// E /= F  ==  not (E = F)
+		assertRelationalPredicate("E ≠ F == ¬ E = F", ff.makeUnaryPredicate(Predicate.NOT, ff
+				.makeRelationalPredicate(Predicate.EQUAL, E, F, null), null),
+				E, Predicate.NOTEQUAL, F);
+
+		// E /: F  ==  not (E : F)
+		assertRelationalPredicate("E ∉ F == ¬ E ∈ F", ff.makeUnaryPredicate(Predicate.NOT, ff
+				.makeRelationalPredicate(Predicate.IN, E, nat, null), null),
+				E, Predicate.NOTIN, nat);
+
+		// E /<<: F  ==  not (E <<: F)
+		assertRelationalPredicate("E ⊄ F == ¬ E ⊂ F", ff.makeUnaryPredicate(Predicate.NOT, ff
+				.makeRelationalPredicate(Predicate.SUBSET, integer, nat, null), null),
+				integer, Predicate.NOTSUBSET, nat);
+
+		// E /<: F  ==  not (E <: F)
+		assertRelationalPredicate("E ⊈ F == ¬ E ⊆ F", ff.makeUnaryPredicate(Predicate.NOT, ff
+				.makeRelationalPredicate(Predicate.SUBSETEQ, integer, nat, null), null),
+				integer, Predicate.NOTSUBSETEQ, nat);
 	}
 
 	private void assertQuantificationPredicate(String message,
