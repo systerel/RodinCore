@@ -108,6 +108,10 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		gLayout.horizontalSpacing = 5;
 		body.setLayout(gLayout);
 
+		if (EventBEditorUtils.DEBUG) {
+			body.setBackground(form.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		}
+		
 		createDeclaration(body);
 
 		createSections(body);
@@ -158,6 +162,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 				public void handleEvent(Event event) {
 					IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
 					IWorkbenchPart activePart = activePage.getActivePart();
+					event.type = SWT.None;
 					// Only concern with active EventBEditor
 					if (activePart instanceof IEventBEditor) {
 						IEventBEditor editor = (IEventBEditor) activePart;
@@ -178,6 +183,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 											+ page.getEditor());
 								}
 								((EditPage) page).move(true);
+								event.doit = false;
 							} else if (event.stateMask == SWT.ALT
 									&& event.keyCode == SWT.ARROW_DOWN) {
 								if (EventBEditorUtils.DEBUG) {
@@ -185,6 +191,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 											+ page.getEditor());
 								}
 								((EditPage) page).move(false);
+								event.doit = false;
 							}
 						}
 
@@ -249,12 +256,14 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		FormToolkit toolkit = this.getManagedForm().getToolkit();
 		EventBEditor editor = (EventBEditor) this.getEditor();
 		final Composite comp = toolkit.createComposite(parent);
+		if (EventBEditorUtils.DEBUG) {
+			comp.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+		}
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		comp.setLayout(gridLayout);
 		FormText widget = toolkit.createFormText(comp, true);
-
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		widget.setLayoutData(gd);
 		new EventBFormText(widget);
@@ -373,8 +382,8 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 					}
 				}
 
-				form.getBody().setRedraw(true);
 				form.getBody().pack(true);
+				form.getBody().setRedraw(true);
 				form.reflow(true);
 			}
 
