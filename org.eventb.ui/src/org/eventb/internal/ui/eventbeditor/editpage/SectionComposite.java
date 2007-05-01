@@ -20,6 +20,7 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -218,6 +219,10 @@ public class SectionComposite implements ISectionComposite {
 		composite = toolkit.createComposite(compParent);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		composite.setLayout(new GridLayout());
+		if (EventBEditorUtils.DEBUG) {
+			composite.setBackground(composite.getDisplay().getSystemColor(
+					SWT.COLOR_DARK_CYAN));
+		}
 		
 		EditSectionRegistry editSectionRegistry = EditSectionRegistry
 				.getDefault();
@@ -230,14 +235,26 @@ public class SectionComposite implements ISectionComposite {
 		beforeComposite = toolkit.createComposite(composite);
 		beforeComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		beforeComposite.setLayout(new GridLayout());
-
+		if (EventBEditorUtils.DEBUG) {
+			beforeComposite.setBackground(composite.getDisplay().getSystemColor(
+					SWT.COLOR_DARK_GRAY));
+		}
+		
 		elementComposite = toolkit.createComposite(composite);
 		elementComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		elementComposite.setLayout(new GridLayout());
+		if (EventBEditorUtils.DEBUG) {
+			elementComposite.setBackground(composite.getDisplay().getSystemColor(
+					SWT.COLOR_GREEN));
+		}
 
 		afterComposite = toolkit.createComposite(composite);
 		afterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		afterComposite.setLayout(new GridLayout());
+		if (EventBEditorUtils.DEBUG) {
+			afterComposite.setBackground(composite.getDisplay().getSystemColor(
+					SWT.COLOR_DARK_GRAY));
+		}
 
 		createElementComposites();
 
@@ -251,11 +268,12 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	private void createElementComposites() {
-		createBeforeHyperlinks();
-		elementComps = new LinkedList<IElementComposite>();
 
 		try {
 			IRodinElement[] children = parent.getChildrenOfType(type);
+			if (children.length != 0)
+				createBeforeHyperlinks();
+			elementComps = new LinkedList<IElementComposite>();
 			for (IRodinElement child : children) {
 				elementComps.add(new ElementComposite(page, toolkit, form,
 						elementComposite, child, level));
@@ -264,9 +282,7 @@ public class SectionComposite implements ISectionComposite {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (elementComps.size() != 0)
-			createAfterHyperlinks();
-		
+		createAfterHyperlinks();
 	}
 
 	private void createBeforeHyperlinks() {
@@ -392,13 +408,14 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	private void updateHyperlink() {
-		if (elementComps.size() == 0 && afterHyperlinkComposite != null) {
+		if (elementComps.size() == 0 && beforeHyperlinkComposite != null) {
 			beforeHyperlinkComposite.dispose();
 			GridData gridData = (GridData) beforeComposite.getLayoutData();
 			gridData.heightHint = 0;
+			beforeHyperlinkComposite = null;
 			return;
 		}
-		if (elementComps.size() != 0 && afterHyperlinkComposite == null) {
+		if (elementComps.size() != 0 && beforeHyperlinkComposite == null) {
 			GridData gridData = (GridData) beforeComposite.getLayoutData();
 			gridData.heightHint = SWT.DEFAULT;
 			createBeforeHyperlinks();
