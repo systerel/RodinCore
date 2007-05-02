@@ -798,8 +798,11 @@ public class AutoFormulaRewriterTests {
 		assertBinaryExpression("0 − E == −E", uNumberMinus1, number0,
 				Expression.MINUS, number1);
 
-		// --E == E
-		assertUnaryExpression("−(−E) = E", number1, Expression.UNMINUS,
+		// -(-E) == E
+		assertUnaryExpression("−(−E) = E", E, Expression.UNMINUS,
+				ff.makeUnaryExpression(Expression.UNMINUS, E, null));
+
+		assertUnaryExpression("−(−i) = i", number1, Expression.UNMINUS,
 				numberMinus1);
 
 		// E * ... * 1 * ... * F == E * ... * ... * F
@@ -886,5 +889,51 @@ public class AutoFormulaRewriterTests {
 				number1);
 		assertBinaryExpression("1^E == 1", number1, number1, Expression.EXPN,
 				number2);
+		
+		// -(i) == (-i) where i is a literal
+		assertUnaryExpression("−(1) == (−1)", numberMinus1, Expression.UNMINUS, number1);
+
+		// -(-i) == i where i is a literal
+		assertUnaryExpression("−(−1) == 1", number1, Expression.UNMINUS, numberMinus1);
+		
+		// i = j == true   or   i = j == false  (by computation)
+		assertRelationalPredicate("1 = 1 == ⊤", Lib.True, number1, Predicate.EQUAL, number1);
+		assertRelationalPredicate("1 = 2 == ⊥", Lib.False, number1, Predicate.EQUAL, number2);
+		assertRelationalPredicate("1 = −1 == ⊥", Lib.False, number1, Predicate.EQUAL, numberMinus1);
+		assertRelationalPredicate("−1 = −1 == ⊤", Lib.True, numberMinus1, Predicate.EQUAL, numberMinus1);
+		assertRelationalPredicate("−1 = −2 == ⊥", Lib.False, numberMinus1, Predicate.EQUAL, numberMinus2);
+		assertRelationalPredicate("−1 = 1 == ⊥", Lib.False, numberMinus1, Predicate.EQUAL, number1);
+
+		// i <= j == true   or   i <= j == false  (by computation)
+		assertRelationalPredicate("1 ≤ 1 == ⊤", Lib.True, number1, Predicate.LE, number1);
+		assertRelationalPredicate("1 ≤ 2 == ⊤", Lib.True, number1, Predicate.LE, number2);
+		assertRelationalPredicate("1 ≤ −1 == ⊥", Lib.False, number1, Predicate.LE, numberMinus1);
+		assertRelationalPredicate("−1 ≤ −1 == ⊤", Lib.True, numberMinus1, Predicate.LE, numberMinus1);
+		assertRelationalPredicate("−1 ≤ −2 == ⊥", Lib.False, numberMinus1, Predicate.LE, numberMinus2);
+		assertRelationalPredicate("−1 ≤ 1 == ⊤", Lib.True, numberMinus1, Predicate.LE, number1);
+
+		// i < j == true   or   i < j == false  (by computation)
+		assertRelationalPredicate("1 < 1 == ⊥", Lib.False, number1, Predicate.LT, number1);
+		assertRelationalPredicate("1 < 2 == ⊤", Lib.True, number1, Predicate.LT, number2);
+		assertRelationalPredicate("1 < −1 == ⊥", Lib.False, number1, Predicate.LT, numberMinus1);
+		assertRelationalPredicate("−1 < −1 == ⊥", Lib.False, numberMinus1, Predicate.LT, numberMinus1);
+		assertRelationalPredicate("−1 < −2 == ⊥", Lib.False, numberMinus1, Predicate.LT, numberMinus2);
+		assertRelationalPredicate("−1 < 1 == ⊤", Lib.True, numberMinus1, Predicate.LT, number1);
+
+		// i >= j == true   or   i >= j == false  (by computation)
+		assertRelationalPredicate("1 ≥ 1 == ⊤", Lib.True, number1, Predicate.GE, number1);
+		assertRelationalPredicate("1 ≥ 2 == ⊥", Lib.False, number1, Predicate.GE, number2);
+		assertRelationalPredicate("1 ≥ −1 == ⊤", Lib.True, number1, Predicate.GE, numberMinus1);
+		assertRelationalPredicate("−1 ≥ −1 == ⊤", Lib.True, numberMinus1, Predicate.GE, numberMinus1);
+		assertRelationalPredicate("−1 ≥ −2 == ⊤", Lib.True, numberMinus1, Predicate.GE, numberMinus2);
+		assertRelationalPredicate("−1 ≥ 1 == ⊥", Lib.False, numberMinus1, Predicate.GE, number1);
+
+		// i > j == true   or   i > j == false  (by computation)
+		assertRelationalPredicate("1 > 1 == ⊥", Lib.False, number1, Predicate.GT, number1);
+		assertRelationalPredicate("1 > 2 == ⊥", Lib.False, number1, Predicate.GT, number2);
+		assertRelationalPredicate("1 > −1 == ⊤", Lib.True, number1, Predicate.GT, numberMinus1);
+		assertRelationalPredicate("−1 > −1 == ⊥", Lib.False, numberMinus1, Predicate.GT, numberMinus1);
+		assertRelationalPredicate("−1 > −2 == ⊤", Lib.True, numberMinus1, Predicate.GT, numberMinus2);
+		assertRelationalPredicate("−1 > 1 == ⊥", Lib.False, numberMinus1, Predicate.GT, number1);
 	}
 }
