@@ -140,7 +140,7 @@
             id="autoImpE"
             name="%autoImpEname"/>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjToImplRewrites"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites"
             id="disjToImplRewrites"
             name="%disjToImplRewritesName"/>
    </extension>
