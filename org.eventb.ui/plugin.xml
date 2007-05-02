@@ -1330,6 +1330,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.Deduction"
             target="goal"
             tooltip="%proofTactics.impI.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.disjToImplGoal"
+            interrupt="false"
+            name="%proofTactics.disjToImplGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DisjToImplGoal"
+            target="goal"
+            tooltip="%proofTactics.disjToImplGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.disjToImplHyp"
+            interrupt="false"
+            name="%proofTactics.disjToImplHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DisjToImplHyp"
+            target="hypothesis"
+            tooltip="%proofTactics.disjToImplHyp.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
