@@ -994,7 +994,7 @@ public class Tactics {
 
 	public static ITactic disjToImpl(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new DisjunctionToImplicationRewrites(),
-				new DisjToImplRewrites.Input(hyp, position));
+				new DisjunctionToImplicationRewrites.Input(hyp, position));
 	}
 
 	public static class NormTac implements ITactic{
