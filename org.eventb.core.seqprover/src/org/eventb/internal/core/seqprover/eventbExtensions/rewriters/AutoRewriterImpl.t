@@ -381,6 +381,41 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	Equal(SetExtension(E), SetExtension(F)) -> {
 	    		return FormulaSimplification.simplifySetEquality(predicate, `E, `F);
 	    	}
+	    	
+	    	/**
+	    	 * Arithmetic 16: i = j == ⊤  or  i = j == ⊥ (by computation)
+	    	 */
+	    	Equal(IntegerLiteral(i), IntegerLiteral(j)) -> {
+	    		return `i.equals(`j) ? Lib.True : Lib.False;
+	    	}
+
+	    	/**
+	    	 * Arithmetic 17: i ≤ j == ⊤  or  i ≤ j == ⊥ (by computation)
+	    	 */
+	    	Le(IntegerLiteral(i), IntegerLiteral(j)) -> {
+	    		return `i.compareTo(`j) <= 0 ? Lib.True : Lib.False;
+	    	}
+
+	    	/**
+	    	 * Arithmetic 18: i < j == ⊤  or  i < j == ⊥ (by computation)
+	    	 */
+	    	Lt(IntegerLiteral(i), IntegerLiteral(j)) -> {
+	    		return `i.compareTo(`j) < 0 ? Lib.True : Lib.False;
+	    	}
+
+	    	/**
+	    	 * Arithmetic 19: i ≥ j == ⊤  or  i ≥ j == ⊥ (by computation)
+	    	 */
+	    	Ge(IntegerLiteral(i), IntegerLiteral(j)) -> {
+	    		return `i.compareTo(`j) >= 0 ? Lib.True : Lib.False;
+	    	}
+
+	    	/**
+	    	 * Arithmetic 20: i > j == ⊤  or  i > j == ⊥ (by computation)
+	    	 */
+	    	Gt(IntegerLiteral(i), IntegerLiteral(j)) -> {
+	    		return `i.compareTo(`j) > 0 ? Lib.True : Lib.False;
+	    	}
 	    }
 	    return predicate;
 	}
@@ -407,6 +442,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	/**
 	    	 * Arithmetic 5: E ∗ ... ∗ 1 ∗ ... ∗ F == E ∗ ... ∗ ... ∗ F
 	    	 * Arithmetic 6: E ∗ ... ∗ 0 ∗ ... ∗ F == 0
+	    	 * Arithmetic 7: (-E) ∗ (-F) == (E * F)
+	    	 * Arithmetic 7.1: (-E) ∗ F == -(E * F)
 	    	 */
 	    	Mul (children) -> {
 	    		return FormulaSimplification.simplifyMulArithmetic(expression, `children);
