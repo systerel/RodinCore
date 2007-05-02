@@ -285,6 +285,20 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 	    	/**
+	    	 * Equality 4: TRUE = FALSE == ⊥
+	    	 */
+	    	Equal(TRUE(), FALSE()) -> {
+	    		return Lib.False;
+	    	}
+
+	    	/**
+	    	 * Equality 4: FALSE = TRUE == ⊥
+	    	 */
+	    	Equal(FALSE(), TRUE()) -> {
+	    		return Lib.False;
+	    	}
+
+	    	/**
 	    	 * Negation 4: E ≠ F == ¬ E = F
 	    	 */
 	    	NotEqual(E, F) -> {
