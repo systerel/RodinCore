@@ -43,10 +43,30 @@ public class AutoFormulaRewriterTests {
 	private static Expression number3 = ff.makeIntegerLiteral(new BigInteger(
 			"3"), null);
 
+	private static Expression numberMinus1 = ff.makeIntegerLiteral(new BigInteger(
+			"-1"), null);;
+
+	private static Expression numberMinus2 = ff.makeIntegerLiteral(new BigInteger(
+			"-2"), null);
+
+	private static Expression numberMinus3 = ff.makeIntegerLiteral(new BigInteger(
+			"-3"), null);
+
+	private static Expression uNumberMinus1 = ff.makeUnaryExpression(Expression.UNMINUS,
+			number1, null);
+
+	private static Expression uNumberMinus2 = ff.makeUnaryExpression(Expression.UNMINUS,
+			number2, null);
+
+	private static Expression uNumberMinus3 = ff.makeUnaryExpression(Expression.UNMINUS,
+			number3, null);
+
 	private static final Expression E = Lib.parseExpression("x ∗ 2");
 
 	private static final Expression F = Lib.parseExpression("y ∗ 3");
 	
+	private static final Expression bE = Lib.parseExpression("x");
+
 	private static Expression S = Lib.parseExpression("{1}");
 	
 	private static Expression T = Lib.parseExpression("{1,2}");
@@ -80,6 +100,9 @@ public class AutoFormulaRewriterTests {
 		S.typeCheck(Lib.makeTypeEnvironment());
 		T.typeCheck(Lib.makeTypeEnvironment());
 		U.typeCheck(Lib.makeTypeEnvironment());
+		E.typeCheck(Lib.makeTypeEnvironment());
+		F.typeCheck(Lib.makeTypeEnvironment());
+		bE.typeCheck(Lib.makeTypeEnvironment());
 	}
 
 	private void assertAssociativePredicate(String message, Predicate expected,
@@ -312,14 +335,10 @@ public class AutoFormulaRewriterTests {
 		assertUnaryPredicate("¬¬P = P", P, Predicate.NOT, Lib.makeNeg((P)));
 
 		// not(x /: S))  ==  x : S
-		Expression fTrue = ff.makeAtomicExpression(Expression.TRUE, null);
-		Expression fFalse = ff.makeAtomicExpression(Expression.FALSE, null);
-		Expression S = ff.makeSetExtension(fFalse, null);
 		RelationalPredicate rPred = ff.makeRelationalPredicate(Predicate.NOTIN,
-				fTrue, S, null);
-
+				number0, S, null);
 		assertUnaryPredicate("¬ (x ∉ S) == x ∈ S", ff.makeRelationalPredicate(
-				Predicate.IN, fTrue, S, null), Predicate.NOT, rPred);
+				Predicate.IN, number0, S, null), Predicate.NOT, rPred);
 		
 		// E /= F  ==  not (E = F)
 		assertRelationalPredicate("E ≠ F == ¬ E = F", ff.makeUnaryPredicate(Predicate.NOT, ff
@@ -361,6 +380,15 @@ public class AutoFormulaRewriterTests {
 				Predicate.GE, E, F, null), Predicate.NOT, ff
 				.makeRelationalPredicate(Predicate.LT, E, F, null));
 
+	   	// not(E = FALSE) == E = TRUE
+		assertUnaryPredicate("¬ E = FALSE == E = TRUE", ff.makeRelationalPredicate(
+				Predicate.EQUAL, bE, Lib.TRUE, null), Predicate.NOT, ff
+				.makeRelationalPredicate(Predicate.EQUAL, bE, Lib.FALSE, null));
+
+	   	// not(E = FALSE) == E = TRUE
+		assertUnaryPredicate("¬ E = TRUE == E = FALSE", ff.makeRelationalPredicate(
+				Predicate.EQUAL, bE, Lib.FALSE, null), Predicate.NOT, ff
+				.makeRelationalPredicate(Predicate.EQUAL, bE, Lib.TRUE, null));
 	}
 
 	private void assertQuantificationPredicate(String message,
@@ -432,10 +460,6 @@ public class AutoFormulaRewriterTests {
 	@Test
 	public void testEquality() {
 		// E = E == true
-		Expression E = ff.makeAtomicExpression(Expression.TRUE, null);
-		Expression F = ff.makeAtomicExpression(Expression.FALSE, null);
-		Expression G = ff.makeAtomicExpression(Expression.FALSE, null);
-		Expression H = ff.makeAtomicExpression(Expression.TRUE, null);
 		assertRelationalPredicate("E = E == ⊤", Lib.True, E, Predicate.EQUAL, E);
 
 		// E /= E == false
@@ -443,16 +467,16 @@ public class AutoFormulaRewriterTests {
 				Predicate.NOTEQUAL, E);
 
 		// E |-> F = G |-> H == E = G & F = H
-		Predicate pred1 = ff.makeRelationalPredicate(Expression.EQUAL, E, G,
+		Predicate pred1 = ff.makeRelationalPredicate(Expression.EQUAL, E, number1,
 				null);
-		Predicate pred2 = ff.makeRelationalPredicate(Expression.EQUAL, F, H,
+		Predicate pred2 = ff.makeRelationalPredicate(Expression.EQUAL, F, number2,
 				null);
 		AssociativePredicate expected = ff.makeAssociativePredicate(
 				Predicate.LAND, new Predicate[] { pred1, pred2 }, null);
 		BinaryExpression left = ff.makeBinaryExpression(Expression.MAPSTO, E,
 				F, null);
-		BinaryExpression right = ff.makeBinaryExpression(Expression.MAPSTO, G,
-				H, null);
+		BinaryExpression right = ff.makeBinaryExpression(Expression.MAPSTO, number1,
+				number2, null);
 		assertRelationalPredicate("E ↦ F = G ↦ H == E = G ∧ F = H", expected,
 				left, Predicate.EQUAL, right);
 	}
@@ -481,9 +505,6 @@ public class AutoFormulaRewriterTests {
 
 	@Test
 	public void testSetTheory() {
-		Expression fTrue = ff.makeAtomicExpression(Expression.TRUE, null);
-		Expression fFalse = ff.makeAtomicExpression(Expression.FALSE, null);
-
 		// S /\ ... /\ {} /\ ... /\ T == {}
 		Expression expected = ff.makeAssociativeExpression(Expression.BINTER,
 				new Expression[] { S, T, U }, null);
@@ -580,12 +601,12 @@ public class AutoFormulaRewriterTests {
 				Expression.SUBSETEQ, S);
 
 		// E : {} == false
-		assertRelationalPredicate("E ∈ ∅ == ⊥", Lib.False, fTrue,
+		assertRelationalPredicate("E ∈ ∅ == ⊥", Lib.False, E,
 				Expression.IN, emptySet);
 
 		// A : {A} == true
-		assertRelationalPredicate("A ∈ {A} == ⊤", Lib.True, fTrue,
-				Expression.IN, ff.makeSetExtension(fTrue, null));
+		assertRelationalPredicate("A ∈ {A} == ⊤", Lib.True, E,
+				Expression.IN, ff.makeSetExtension(E, null));
 
 		// B : {A, ..., B, ..., C} == true
 		assertRelationalPredicate("B ∈ {A, ..., B, ..., C} == ⊤", Lib.True, ff
@@ -705,17 +726,17 @@ public class AutoFormulaRewriterTests {
 		// E : {F} == E = F (if F is a single expression)
 		assertRelationalPredicate(
 				"E ∈ {F} == E = F   if F is a single expression", ff
-						.makeRelationalPredicate(Predicate.EQUAL, fTrue,
-								fFalse, null), fTrue, Predicate.IN, ff
-						.makeSetExtension(fFalse, null));
+						.makeRelationalPredicate(Predicate.EQUAL, E,
+								F, null), E, Predicate.IN, ff
+						.makeSetExtension(F, null));
 
 		// {E} = {F} == E = F if E, F is a single expression
 		assertRelationalPredicate(
 				"{E} = {F} == E = F   if E, F is a single expression", ff
-						.makeRelationalPredicate(Predicate.EQUAL, fTrue,
-								fFalse, null),
-				ff.makeSetExtension(fTrue, null), Predicate.EQUAL, ff
-						.makeSetExtension(fFalse, null));
+						.makeRelationalPredicate(Predicate.EQUAL, E,
+								F, null),
+				ff.makeSetExtension(E, null), Predicate.EQUAL, ff
+						.makeSetExtension(F, null));
 		
 		// S \ {} == S
 		assertBinaryExpression("S ∖ ∅ == S", S, S, Expression.SETMINUS, emptySet);
@@ -725,13 +746,6 @@ public class AutoFormulaRewriterTests {
 
 	@Test
 	public void testArithmetic() {
-		Expression numberMinus1 = ff.makeUnaryExpression(Expression.UNMINUS,
-				number1, null);
-		Expression numberMinus2 = ff.makeUnaryExpression(Expression.UNMINUS,
-				number2, null);
-		Expression numberMinus3 = ff.makeUnaryExpression(Expression.UNMINUS,
-				number3, null);
-
 		// E + ... + 0 + ... + F == E + ... + ... + F
 		Expression sum11 = ff.makeAssociativeExpression(Expression.PLUS,
 				new Expression[] { number1, number1 }, null);
@@ -763,7 +777,7 @@ public class AutoFormulaRewriterTests {
 				Expression.MINUS, number0);
 
 		// 0 - E == -E
-		assertBinaryExpression("0 − E == −E", numberMinus1, number0,
+		assertBinaryExpression("0 − E == −E", uNumberMinus1, number0,
 				Expression.MINUS, number1);
 
 		// --E == E
