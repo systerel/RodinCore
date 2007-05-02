@@ -75,6 +75,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivia
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjToImplRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
@@ -976,6 +977,26 @@ public class Tactics {
 				new RemoveInclusion.Input(hyp, position));
 	}
 	
+	public static List<IPosition> disjToImplGetPositions(Predicate pred) {
+		return pred.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(AssociativePredicate predicate) {
+				if (predicate.getTag() == Predicate.LOR) {
+					return true;
+				}
+				return super.select(predicate);
+			}
+
+		});
+
+	}
+
+	public static ITactic disjToImpl(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new DisjToImplRewrites(),
+				new DisjToImplRewrites.Input(hyp, position));
+	}
+
 	public static class NormTac implements ITactic{
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
