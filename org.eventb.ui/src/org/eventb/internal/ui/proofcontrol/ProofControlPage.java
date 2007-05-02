@@ -615,6 +615,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		gl.numColumns = 2;
 		midComp.setLayout(gl);
 		
+		smiley = new ImageHyperlink(midComp, SWT.BOTTOM);
+		smiley.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		smiley.setEnabled(false);
+		smiley.setBackground(scrolledForm.getBackground());
+
 		// A text field
 		textInput = new EventBMath(toolkit.createText(midComp, "", SWT.MULTI));
 
@@ -640,10 +645,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			}
 		});
 
-		smiley = new ImageHyperlink(midComp, SWT.BOTTOM);
-		smiley.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		smiley.setEnabled(false);
-		smiley.setBackground(scrolledForm.getBackground());
 		toolkit.paintBordersFor(midComp);
 		
 		historyCombo = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
