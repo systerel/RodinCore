@@ -876,14 +876,14 @@
             tooltip="%proofTactics.autoProver.tooltip"/>
       <tactic
             icon="icons/full/ctool16/broom_prover.gif"
-            id="org.eventb.ui.norm"
+            id="org.eventb.ui.postTactic"
             interrupt="false"
-            name="%proofTactics.norm.name"
+            name="%proofTactics.postTactic.name"
             priorty="4"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.Normalise"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.PostTactic"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
-            tooltip="%proofTactics.norm.tooltip"/>
+            tooltip="%proofTactics.postTactic.tooltip"/>
       <tactic
             icon="icons/full/ctool16/lasoo_prover.gif"
             id="org.eventb.ui.lasoo"
