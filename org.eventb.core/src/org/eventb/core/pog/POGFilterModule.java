@@ -14,6 +14,7 @@ import org.eventb.core.tool.IProcessorModule;
  * @author Stefan Hallerstede
  *
  */
+//TODO javadoc
 public abstract class POGFilterModule extends POGModule implements IPOGFilterModule {
 
 	@Override

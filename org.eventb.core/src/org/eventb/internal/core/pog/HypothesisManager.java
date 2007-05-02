@@ -54,8 +54,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 	 * @throws CoreException if the hypthothesis manager is immutable
 	 */
 	public void addIdentifier(FreeIdentifier identifier) throws CoreException {
-		if (isImmutable())
-			throw Util.newCoreException(Messages.pog_immutableHypothesisViolation);
+		assertMutable();
 		identifiers.add(identifier);
 	}
 
@@ -114,8 +113,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 	}
 
 	public IPOPredicateSet makeHypothesis(ISCPredicateElement element) throws CoreException {
-		if (isImmutable())
-			throw Util.newCoreException(Messages.pog_immutableHypothesisViolation);
+		assertMutable();
 		Integer index = predicateMap.get(element.getElementName());
 		if (index == null)
 			return null;

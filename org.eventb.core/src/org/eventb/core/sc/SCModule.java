@@ -28,6 +28,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
+//TODO javadoc
 public abstract class SCModule extends Module implements IModule, IMarkerDisplay {
 	
 	private void traceMarker(IRodinElement element, String message) {

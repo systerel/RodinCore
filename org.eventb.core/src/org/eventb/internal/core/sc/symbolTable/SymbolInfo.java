@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.internal.core.Util;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -54,15 +53,20 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	public final boolean hasError() {
 		return error;
 	}
+	
+	protected void assertMutable() throws CoreException {
+		if (mutable)
+			return;
+		else
+			throw Util.newCoreException("Attempt to modify immutable symbol");
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.ISymbolInfo#setError()
 	 */
 	public final void setError() throws CoreException {
-		if (mutable)
-			error = true;
-		else
-			throw Util.newCoreException(Messages.symtab_ImmutableSymbolViolation);
+		assertMutable();
+		error = true;
 	}
 
 	/* (non-Javadoc)

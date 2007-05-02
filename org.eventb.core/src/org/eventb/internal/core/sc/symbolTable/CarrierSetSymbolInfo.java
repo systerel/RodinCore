@@ -16,7 +16,6 @@ import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.ICarrierSetSymbolInfo;
 import org.eventb.internal.core.Util;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -43,7 +42,7 @@ public abstract class CarrierSetSymbolInfo
 
 		public ISCIdentifierElement createSCElement(
 				IInternalParent parent, IProgressMonitor monitor) throws CoreException {
-			throw Util.newCoreException(Messages.symtab_cannotCreateAbstractCarrierSet);
+			throw Util.newCoreException("Attempt to create abstract carrier set");
 		}
 
 		@Override

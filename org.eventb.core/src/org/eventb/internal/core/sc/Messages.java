@@ -19,21 +19,6 @@ public final class Messages {
 
 	private static final String BUNDLE_NAME = "org.eventb.internal.core.sc.messages";//$NON-NLS-1$
 
-	// internal messages
-	
-	// Static checker error
-	public static String sctool_UninitializedStateError;
-	public static String sctool_NullStateError;
-	
-	// Symbol table errors
-	public static String symtab_SymbolConflict;
-
-	public static String symtab_ImmutableSymbolViolation;
-	public static String symtab_StackUnderflow;
-	
-	public static String symtab_cannotCreateAbstractConstant;
-	public static String symtab_cannotCreateAbstractCarrierSet;
-	
 	// build
 	public static String build_cleaning;
 	public static String build_runningMSC;

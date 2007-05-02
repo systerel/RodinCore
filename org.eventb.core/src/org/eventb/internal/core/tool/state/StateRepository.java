@@ -16,7 +16,6 @@ import org.eventb.core.tool.state.IState;
 import org.eventb.core.tool.state.IStateRepository;
 import org.eventb.core.tool.state.IStateType;
 import org.eventb.internal.core.Util;
-import org.eventb.internal.core.sc.Messages;
 
 /**
  * @author Stefan Hallerstede
@@ -66,7 +65,7 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		if (state == null) {
 			if (DEBUG)
 				System.out.println(" FAILED");
-			throw Util.newCoreException(Messages.sctool_UninitializedStateError);
+			throw Util.newCoreException("Attempt to access uninitialized state in state repository");
 		}
 		if (DEBUG)
 			System.out.println(" OK");
@@ -109,7 +108,7 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		if (exception != null)
 			throw exception;
 		if (state == null)
-			throw Util.newCoreException(Messages.sctool_NullStateError);
+			throw Util.newCoreException("Attempt to create null state");
 		repository.put(state.getStateType(), state);
 	}
 

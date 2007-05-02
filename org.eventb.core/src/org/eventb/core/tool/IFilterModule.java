@@ -7,8 +7,21 @@
  *******************************************************************************/
 package org.eventb.core.tool;
 
+import org.eventb.core.pog.IPOGFilterModule;
+import org.eventb.core.sc.ISCFilterModule;
+
 /**
- * Basic type for filter modules. 
+ * Basic type for filter modules. A filter module is one of the two
+ * kinds of modules ({@link IModule}) used by a core tool.
+ * <p>
+ * Filter modules are intended to evualate a boolean condition 
+ * on some element. It is implemented by the static checker and 
+ * the proof obligation generator.
+ * </p>
+ * 
+ * @see IModule
+ * @see ISCFilterModule
+ * @see IPOGFilterModule
  * 
  * @author Stefan Hallerstede
  *

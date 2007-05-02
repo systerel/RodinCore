@@ -10,8 +10,6 @@ package org.eventb.internal.core.sc.symbolTable;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolTable;
-import org.eventb.internal.core.Util;
-import org.eventb.internal.core.sc.Messages;
 
 /**
  * @author Stefan Hallerstede
@@ -55,7 +53,7 @@ public abstract class StackedSymbolTable<I extends ISymbolInfo> extends SymbolTa
 		String symbol = symbolInfo.getSymbol();
 		
 		if (parentTable.containsKey(symbol)) {
-			throw Util.newCoreException(Messages.symtab_SymbolConflict);
+			throwSymbolConflict();
 		}
 		
 		super.putSymbolInfo(symbolInfo);

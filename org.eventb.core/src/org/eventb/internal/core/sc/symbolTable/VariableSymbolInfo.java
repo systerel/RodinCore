@@ -10,8 +10,6 @@ package org.eventb.internal.core.sc.symbolTable;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.eventb.internal.core.Util;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
@@ -50,8 +48,7 @@ public abstract class VariableSymbolInfo
 	}
 	
 	public void setForbidden() throws CoreException {
-		if (!isMutable())
-			throw Util.newCoreException(Messages.symtab_ImmutableSymbolViolation);
+		assertMutable();
 		this.forbidden = true;
 		this.concrete = false;
 	}
@@ -72,8 +69,7 @@ public abstract class VariableSymbolInfo
 	}
 
 	public void setFresh() throws CoreException {
-		if (!isMutable())
-			throw Util.newCoreException(Messages.symtab_ImmutableSymbolViolation);
+		assertMutable();
 		fresh = true;
 	}
 

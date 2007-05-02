@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolTable;
 import org.eventb.internal.core.Util;
-import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.tool.state.State;
 
 /**
@@ -45,6 +44,10 @@ public abstract class SymbolTable<I extends ISymbolInfo> extends State implement
 		return table.get(symbol);
 	}
 	
+	protected void throwSymbolConflict() throws CoreException {
+		throw Util.newCoreException("Attempt to insert symbol into symbol table more than once");
+	}
+	
 	public void putSymbolInfo(I symbolInfo) throws CoreException {
 		
 		String key = symbolInfo.getSymbol();
@@ -53,7 +56,7 @@ public abstract class SymbolTable<I extends ISymbolInfo> extends State implement
 		if (ocell != null) {
 			// revert to old symbol table and throw exception
 			table.put(key, ocell);
-			throw Util.newCoreException(Messages.symtab_SymbolConflict);
+			throwSymbolConflict();
 		}
 		tableValues.add(symbolInfo);
 	}

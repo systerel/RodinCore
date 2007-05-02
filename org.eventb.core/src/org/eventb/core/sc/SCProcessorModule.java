@@ -22,6 +22,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
+//TODO javadoc
 public abstract class SCProcessorModule extends SCModule implements ISCProcessorModule {
 
 	@Override
@@ -121,7 +122,7 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 	/** 
 	 * Default implementation of <code>initModule()</code> does nothing.
 	 * 
-	 * @see IModule
+	 * @see IProcessorModule
 	 */
 	public void initModule(
 			IRodinElement element,
@@ -133,7 +134,7 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 	/** 
 	 * Default implementation of <code>initModule()</code> does nothing.
 	 * 
-	 * @see IModule
+	 * @see IProcessorModule
 	 */
 	public void endModule(
 			IRodinElement element,

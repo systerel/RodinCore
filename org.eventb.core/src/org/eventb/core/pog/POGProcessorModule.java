@@ -29,6 +29,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
+//TODO javadoc
 public abstract class POGProcessorModule extends POGModule implements IPOGProcessorModule {
 	
 	@Override

@@ -7,48 +7,69 @@
  *******************************************************************************/
 package org.eventb.core.tool;
 
+import org.eventb.core.tool.state.IState;
+import org.eventb.core.tool.state.IStateRepository;
 
 /**
- * Common protocol for modules.
- * The protocol has two variants:
- * <li>
- * <ul> The ONCE protocol. Method <code>run()</code> is called exactly once
- * as follows:
- * <p>
- * <code>
- * m.initModule(repository, monitor);
- * ...  // invocation of the body of the module
- *      // as declared in one of the interfaces
- *      // IAcceptorModule or IProcessorModule
- * m.endModule(repository, monitor);
- * </code>
- * </p>
+ * The <i>core tools</i>, static checker (<code>org.eventb.core.sc</code>) and 
+ * proof obligation generator (<code>org.eventb.core.pog</code>), are composed 
+ * of modules (<code>IModule</code>). Two kinds of module exist:
+ * <ul>
+ * <li>filter modules (<code>IFilterModule</code>)</li>
+ * <li>processor modules (<code>IProcessorModule</code>)</li>
  * </ul>
- * <ul> The LOOP protocol. Method <code>run()</code> is called in a loop traversing a list of elements
- * as follows:
+ * Modules pass on information to other modules by means of a state repository 
+ * ({@link IStateRepository}) using a simple access protocol.
  * <p>
- * <code>
- * m.initModule(repository, monitor);
- * while (more elements) {
- * ...  // invocation of the body of the module
- *      // as declared in one of the interfaces
- *      // IAcceptorModule or IProcessorModule
+ * All modules have the two methods:
+ * <ul>
+ * <li><code>initModule()</code>: initialisation of the module. The initialisation
+ * usually requests state ({@link IState}) from the state repository 
+ * ({@link IStateRepository}). This is done unconditionally, so that missing states 
+ * are discovered quickly, and testing for problems with the state repository is
+ * easier.
+ * <li><code>endModule()</code>: termination of the module. The termination usually
+ * frees resources or writes some output.</li>
+ * </ul>
+ * <p>
+ * A filter module has an additional method
+ * <ul>
+ * <li><code>accept()</code> that evaluates a boolean condition.
+ * </ul>
+ * <p>
+ * Aprocessor module has an additional method
+ * <ul>
+ * <li><code>process()</code> that processes a list of elements
+ * </ul>
+ * <p>
+ * Modules are arranged in a module tree. The root of the tree is a processor module.
+ * A processor module may have filter and processor child modules. A filter module
+ * can not have child modules.
+ * When a core tool is started, a new instance of the associated module tree is
+ * created and run. A module in the tree may be executed more than once during 
+ * a single execution of a tool instance. The loading mechanism is hidden and can not
+ * be incluenced.
+ * <p>
+ * Modules are called in a loop of the form
+ * <pre>
+ * initModule();
+ * while (...) {
+ * 	 accept() or process();
  * }
- * m.endModule(repository, monitor);
- * </code>
- * </p>
- * </ul>
- * </li>
+ * endModule();
+ * </pre>
+ * If a list of filter or processor modules is to be executed, then first
+ * all modules are initialised, then <code>accept()</code> or <code>process()</code>
+ * is called, then terminated; all in the same order. Filter modules and processor
+ * modules are treated as separate lists. First all filter modules are executed,
+ * then all processor modules.
  * <p>
- * It must be guaranteed by all implementors that the
- * methods are called in the specified order.
+ * This interface is not intended to be implemented by clients, only
+ * <code>IFilterModule</code> and <code>IProcessorModule</code> are.
+ * </p>
  * 
- * In a list of extensions a module may only rely on the order in which 
- * the body methods are called. Initialisations and terminations will usually
- * be invoked in batch manner before resp. after all body methods have been
- * invoked.
- * 
- * Module extensions of a module should be loaded in the constructor of the module.
+ * @see IFilterModule
+ * @see IProcessorModule
  * 
  * @author Stefan Hallerstede
  *
@@ -56,8 +77,5 @@ package org.eventb.core.tool;
 public interface IModule {
 
 	IModuleType<?> getModuleType();
-	
-	// protocols are specified in the interfaces
-	// IAcceptorModule and IProcessorModule
 
 }

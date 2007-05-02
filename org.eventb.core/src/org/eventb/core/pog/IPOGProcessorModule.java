@@ -59,6 +59,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
+//TODO javadoc
 public interface IPOGProcessorModule extends IProcessorModule {
 
 

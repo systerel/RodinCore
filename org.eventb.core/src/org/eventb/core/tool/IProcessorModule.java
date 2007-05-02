@@ -7,8 +7,24 @@
  *******************************************************************************/
 package org.eventb.core.tool;
 
+import org.eventb.core.pog.IPOGProcessorModule;
+import org.eventb.core.sc.ISCProcessorModule;
+
 /**
- * Basic type for processor modules.
+ * Basic type for processor modules. A processor module is one of the two
+ * kinds of modules ({@link IModule}) used by a core tool.
+ * <p>
+ * Processor modules are intended to process a list of elements. 
+ * It is implemented by the static checker and the proof obligation generator.
+ * </p>
+ * <p>
+ * A processor module may have filter and processor child modules.
+ * The filter child nodes are executed before the processor child modules.
+ * </p>
+ * 
+ * @see IModule
+ * @see ISCProcessorModule
+ * @see IPOGProcessorModule
  * 
  * @author Stefan Hallerstede
  *

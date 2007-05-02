@@ -52,6 +52,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
+//TODO javadoc
 public interface ISCProcessorModule extends IProcessorModule {
 
 	/**

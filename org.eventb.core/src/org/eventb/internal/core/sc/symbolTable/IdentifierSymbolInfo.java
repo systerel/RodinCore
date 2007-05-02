@@ -11,8 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.internal.core.Util;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
@@ -63,8 +61,7 @@ public abstract class IdentifierSymbolInfo
 	 * @see org.eventb.core.sc.IIdentifierSymbolInfo#setType(org.eventb.core.ast.Type)
 	 */
 	public void setType(Type type) throws CoreException {
-		if (!isMutable())
-			throw Util.newCoreException(Messages.symtab_ImmutableSymbolViolation);
+		assertMutable();
 		this.type = type;
 	}
 
@@ -79,8 +76,7 @@ public abstract class IdentifierSymbolInfo
 	 * Set the visibility status of the identifier to true.
 	 */
 	public void makeVisible() throws CoreException {
-		if (!isMutable())
-			throw Util.newCoreException(Messages.symtab_ImmutableSymbolViolation);
+		assertMutable();
 		this.visible = true;
 	}
 

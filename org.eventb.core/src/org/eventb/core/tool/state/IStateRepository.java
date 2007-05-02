@@ -16,6 +16,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  *
  * The state repository allows different modules to share state.
  */
+// TODO javadoc
 public interface IStateRepository <I extends IState> {
 
 	/**

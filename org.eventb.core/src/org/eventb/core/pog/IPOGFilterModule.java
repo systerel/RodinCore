@@ -13,6 +13,7 @@ import org.eventb.core.tool.IFilterModule;
  * @author Stefan Hallerstede
  *
  */
+//TODO javadoc
 public interface IPOGFilterModule extends IFilterModule {
 
 	

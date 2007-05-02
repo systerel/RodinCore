@@ -13,6 +13,7 @@ import org.eventb.internal.core.tool.Module;
  * @author Stefan Hallerstede
  *
  */
+//TODO javadoc
 public abstract class POGModule extends Module {
 	
 	public static boolean DEBUG_MODULE = false;

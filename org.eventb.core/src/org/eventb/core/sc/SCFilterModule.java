@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IFilterModule;
-import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IProcessorModule;
 
 
@@ -20,6 +19,7 @@ import org.eventb.core.tool.IProcessorModule;
  * @author Stefan Hallerstede
  *
  */
+//TODO javadoc
 public abstract class SCFilterModule extends SCModule implements ISCFilterModule {
 
 	@Override
@@ -35,7 +35,7 @@ public abstract class SCFilterModule extends SCModule implements ISCFilterModule
 	/** 
 	 * Default implementation of <code>initModule()</code> does nothing.
 	 * 
-	 * @see IModule
+	 * @see IFilterModule
 	 */
 	public void initModule(
 			ISCStateRepository repository, 
@@ -46,7 +46,7 @@ public abstract class SCFilterModule extends SCModule implements ISCFilterModule
 	/** 
 	 * Default implementation of <code>initModule()</code> does nothing.
 	 * 
-	 * @see IModule
+	 * @see IFilterModule
 	 */
 	public void endModule(
 			ISCStateRepository repository, 
