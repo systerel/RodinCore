@@ -489,6 +489,14 @@ public class AutoFormulaRewriterTests {
 				number2, null);
 		assertRelationalPredicate("E ↦ F = G ↦ H == E = G ∧ F = H", expected,
 				left, Predicate.EQUAL, right);
+		
+		// TRUE = FALSE  ==  false
+		assertRelationalPredicate("TRUE = FALSE == ⊥", Lib.False, Lib.TRUE,
+				Predicate.EQUAL, Lib.FALSE);
+
+		// FALSE = TRUE  ==  false
+		assertRelationalPredicate("FALSE = TRUE == ⊥", Lib.False, Lib.FALSE,
+				Predicate.EQUAL, Lib.TRUE);
 	}
 
 	private void assertAssociativeExpression(String message,
