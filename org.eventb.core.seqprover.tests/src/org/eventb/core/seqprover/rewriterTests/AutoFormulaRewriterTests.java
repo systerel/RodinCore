@@ -385,10 +385,20 @@ public class AutoFormulaRewriterTests {
 				Predicate.EQUAL, bE, Lib.TRUE, null), Predicate.NOT, ff
 				.makeRelationalPredicate(Predicate.EQUAL, bE, Lib.FALSE, null));
 
-	   	// not(E = FALSE) == E = TRUE
+	   	// not(E = TRUE) == E = FALSE
 		assertUnaryPredicate("¬ E = TRUE == E = FALSE", ff.makeRelationalPredicate(
 				Predicate.EQUAL, bE, Lib.FALSE, null), Predicate.NOT, ff
 				.makeRelationalPredicate(Predicate.EQUAL, bE, Lib.TRUE, null));
+
+	   	// not(FALSE = E) == TRUE = E
+		assertUnaryPredicate("¬ FALSE = E == TRUE = E", ff.makeRelationalPredicate(
+				Predicate.EQUAL, Lib.TRUE, bE, null), Predicate.NOT, ff
+				.makeRelationalPredicate(Predicate.EQUAL, Lib.FALSE, bE, null));
+
+	   	// not(TRUE = E) == FALSE = E
+		assertUnaryPredicate("¬ TRUE = E == FALSE = E", ff.makeRelationalPredicate(
+				Predicate.EQUAL, Lib.FALSE, bE, null), Predicate.NOT, ff
+				.makeRelationalPredicate(Predicate.EQUAL, Lib.TRUE, bE, null));
 	}
 
 	private void assertQuantificationPredicate(String message,
