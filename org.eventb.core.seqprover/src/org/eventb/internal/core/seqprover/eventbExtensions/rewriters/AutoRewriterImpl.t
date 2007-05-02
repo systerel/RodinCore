@@ -218,6 +218,20 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			Not(Equal(E, TRUE())) -> {
 				return makeRelationalPredicate(Predicate.EQUAL, `E, Lib.FALSE);
 			}
+
+	    	/**
+	    	 * Negation 14: ¬ (FALSE = E) == TRUE = E
+	    	 */
+			Not(Equal(FALSE(), E)) -> {
+				return makeRelationalPredicate(Predicate.EQUAL, Lib.TRUE, `E);
+			}
+
+	    	/**
+	    	 * Negation 15: ¬ (TRUE = E) == FALSE = E
+	    	 */
+			Not(Equal(TRUE(), E)) -> {
+				return makeRelationalPredicate(Predicate.EQUAL, Lib.FALSE, `E);
+			}
 	    }
 	    return predicate;
 	}
