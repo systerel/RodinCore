@@ -75,7 +75,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivia
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjToImplRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
@@ -993,7 +993,7 @@ public class Tactics {
 	}
 
 	public static ITactic disjToImpl(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new DisjToImplRewrites(),
+		return BasicTactics.reasonerTac(new DisjunctionToImplicationRewrites(),
 				new DisjToImplRewrites.Input(hyp, position));
 	}
 
