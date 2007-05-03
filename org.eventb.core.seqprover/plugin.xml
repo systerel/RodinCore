@@ -143,6 +143,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites"
             id="disjToImplRewrites"
             name="%disjToImplRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.NegEnum"
+            id="negEnum"
+            name="%negEnumName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">
@@ -170,6 +174,10 @@
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoExFTac"
             id="autoExFTac"
             name="%autoExFTacName"/>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoNegEnumTac"
+            id="autoNegEnumTac"
+            name="%autoNegEnumTacName"/>
    </extension>
 
 </plugin>
