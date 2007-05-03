@@ -13,7 +13,17 @@
 package org.eventb.internal.ui.obligationexplorer;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -61,6 +71,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
@@ -85,7 +97,9 @@ import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.RodinMarkerUtil;
 
 /**
  * @author htson
@@ -290,14 +304,19 @@ public class ObligationExplorer extends ViewPart implements
 	 *         <p>
 	 *         This class provides the label for object in the tree.
 	 */
-	private static class ObligationLabelProvider extends LabelProvider implements
-			IFontProvider, IColorProvider, IPropertyChangeListener {
+	private class ObligationLabelProvider extends LabelProvider
+			implements IFontProvider, IColorProvider, IPropertyChangeListener,
+			IResourceChangeListener {
 
-		private static final Color yellow =
+		private final Color yellow =
 			Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW);
 		
 		public ObligationLabelProvider() {
 			JFaceResources.getFontRegistry().addListener(this);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			workspace.addResourceChangeListener(this,
+					IResourceChangeEvent.POST_BUILD
+							| IResourceChangeEvent.POST_CHANGE);
 		}
 
 		@Override
@@ -367,10 +386,14 @@ public class ObligationExplorer extends ViewPart implements
 			}
 			if (element instanceof IPSFile) {
 				IPSFile psFile = (IPSFile) element;
-				if (psFile.getMachineFile().exists())
-					return registry.get(IEventBSharedImages.IMG_MACHINE);
-				else if (psFile.getContextFile().exists())
-					return registry.get(IEventBSharedImages.IMG_CONTEXT);
+				IMachineFile machineFile = psFile.getMachineFile();
+				if (machineFile.exists()) {
+					return EventBImage.getRodinImage(machineFile);
+				} else {
+					IContextFile contextFile = psFile.getContextFile();
+					if (contextFile.exists())
+						return EventBImage.getRodinImage(contextFile);
+				}
 			}
 			if (element instanceof IRodinElement)
 				return EventBImage.getRodinImage((IRodinElement) element);
@@ -417,6 +440,7 @@ public class ObligationExplorer extends ViewPart implements
 		@Override
 		public void dispose() {
 			JFaceResources.getFontRegistry().removeListener(this);
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 			super.dispose();
 		}
 
@@ -453,6 +477,62 @@ public class ObligationExplorer extends ViewPart implements
 			if (property.equals(PreferenceConstants.EVENTB_MATH_FONT)) {
 				fireLabelProviderChanged(new LabelProviderChangedEvent(this));
 			}
+		}
+
+		public void resourceChanged(IResourceChangeEvent event) {
+			IMarkerDelta[] rodinProblemMakerDeltas = event.findMarkerDeltas(
+					RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
+			
+			final Set<IResource> resources = new HashSet<IResource>();
+			for (IMarkerDelta delta : rodinProblemMakerDeltas) {
+				IResource resource = delta.getResource();
+				resources.add(resource);
+				if (resource instanceof IFile) {
+					resources.add(resource.getParent());
+				}
+			}
+			if (resources.size() != 0) {
+				Display display = fViewer.getControl().getDisplay();
+				display.syncExec(new Runnable() {
+
+					public void run() {
+						for (IResource resource : resources) {
+							if (resource instanceof IProject) {
+								fViewer
+										.update(
+												RodinCore
+														.valueOf((IProject) resource),
+												new String[] { RodinMarkerUtil.RODIN_PROBLEM_MARKER });
+							} else {
+								IRodinFile file = RodinCore
+										.valueOf((IFile) resource);
+								IPSFile psFile = null;
+								if (file instanceof IMachineFile) {
+									IMachineFile machineFile = (IMachineFile) file;
+									psFile = machineFile.getPSFile();
+								}
+								else if (file instanceof IContextFile) {
+									IContextFile contextFile = (IContextFile) file;
+									psFile = contextFile.getPSFile();
+								}
+								if (psFile != null)
+								fViewer
+											.update(
+													psFile,
+													new String[] { RodinMarkerUtil.RODIN_PROBLEM_MARKER });
+							}
+						}
+					}
+
+				});
+			}
+		}
+
+		@Override
+		public boolean isLabelProperty(Object element, String property) {
+			if (property.equals(RodinMarkerUtil.RODIN_PROBLEM_MARKER))
+				return true;
+			return super.isLabelProperty(element, property);
 		}
 		
 	}
