@@ -695,6 +695,13 @@ public final class Lib {
 		return false;
 	}
 
+	public static boolean isSetExtension(Expression expression) {
+		if (expression instanceof SetExtension) {
+			return true;
+		}
+		return false;
+	}
+
 	// /**
 	// * Typechecks a formula assuming an initial type environment
 	// *
