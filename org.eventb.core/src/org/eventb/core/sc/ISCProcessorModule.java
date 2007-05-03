@@ -9,50 +9,31 @@ package org.eventb.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IProcessorModule;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
 /**
- * Common protocol for processor modules.
- * The protocol has two variants:
- * <li>
- * <ul> The ONCE protocol. Method <code>run()</code> is called exactly once
- * as follows:
+ * The processor modules of the static checker generate 
+ * the statically checked output. The use of the methods <code>initModule()</code>,
+ * <code>process()</code>, and <code>endModule()</code> are described 
+ * in {@link IModule}.
  * <p>
- * <code>
- * m.initModule(repository, monitor);
- * m.process(element, repository, monitor);
- * ...
- * m.endModule(repository, monitor);
- * </code>
- * </p>
- * </ul>
- * <ul> The LOOP protocol. Method <code>run()</code> is called in a loop traversing a list of elements
- * as follows:
- * <p>
- * <code>
- * m.initModule(repository, monitor);
- * while (more elements) {
- *    m.process(element, repository, monitor);
- *    ...
- * }
- * m.endModule(repository, monitor);
- * </code>
- * </p>
- * </ul>
- * </li>
- * <p>
- * It must be guaranteed by all implementors that the
- * methods are called in the specified order.
+ * The state and the state repository must be of types {@link ISCState} and
+ * {@link ISCStateRepository} to avoid accidental mixing of static checker and
+ * proof obligation generator state.
  * 
- * @see org.eventb.core.tool.IModule
+ * @see IModule
+ * @see IProcessorModule
+ * @see ISCState
+ * @see ISCStateRepository
  * 
  * @author Stefan Hallerstede
  *
  */
-//TODO javadoc
 public interface ISCProcessorModule extends IProcessorModule {
 
 	/**

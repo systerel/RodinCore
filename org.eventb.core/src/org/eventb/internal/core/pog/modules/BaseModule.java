@@ -24,7 +24,7 @@ public abstract class BaseModule extends POGProcessorModule {
 			IRodinElement element, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		endModules(element, repository, monitor);
+		endProcessorModules(element, repository, monitor);
 		
 	}
 
@@ -33,7 +33,7 @@ public abstract class BaseModule extends POGProcessorModule {
 			IRodinElement element, 
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		initModules(element, repository, monitor);
+		initProcessorModules(element, repository, monitor);
 	}
 
 	public void process(

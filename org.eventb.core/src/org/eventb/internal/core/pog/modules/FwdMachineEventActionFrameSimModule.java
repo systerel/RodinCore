@@ -22,6 +22,7 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
@@ -111,10 +112,13 @@ public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementM
 			
 			// TODO should the abstract machine be shown when there is no abstract event?
 			IPOGSource[] sources = abstractEvent == null ?
-					sources(makeSource(IPOSource.CONCRETE_ROLE, concreteEvent.getSource())) :
-					sources(
-							makeSource(IPOSource.ABSTRACT_ROLE, abstractEvent.getSource()),
-							makeSource(IPOSource.CONCRETE_ROLE, concreteEvent.getSource()));
+					new IPOGSource[] {
+						makeSource(IPOSource.CONCRETE_ROLE, concreteEvent.getSource())
+					}:
+					new IPOGSource[] {
+						makeSource(IPOSource.ABSTRACT_ROLE, abstractEvent.getSource()),
+						makeSource(IPOSource.CONCRETE_ROLE, concreteEvent.getSource())
+					};
 			
 			String sequentName = concreteEventLabel + "/" + variable.getName() + "/EQL";
 			createPO(
@@ -125,7 +129,9 @@ public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementM
 					hyp,
 					makePredicate(predicate, action.getSource()),
 					sources,
-					hints(getLocalHypothesisSelectionHint(target, sequentName)),
+					new IPOGHint[] {
+						getLocalHypothesisSelectionHint(target, sequentName)
+					},
 					monitor);
 
 		}

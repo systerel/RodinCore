@@ -21,14 +21,16 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * 
- * Default implementation for modules.
+ * Default implementation for static checker modules.
+ * It provides an implementation for creating problem markers
+ * in the input file implementing {@link IMarkerDisplay}.
  * 
- * @see org.eventb.core.tool.IModule
+ * @see IModule
+ * @see IMarkerDisplay
  * 
  * @author Stefan Hallerstede
  *
  */
-//TODO javadoc
 public abstract class SCModule extends Module implements IModule, IMarkerDisplay {
 	
 	private void traceMarker(IRodinElement element, String message) {

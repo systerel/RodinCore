@@ -30,7 +30,7 @@ class POGPredicateSelectionHint implements IPOGHint {
 	 * 
 	 * @param predicate the predicate to select
 	 */
-	public POGPredicateSelectionHint(final IPOPredicate predicate) {
+	POGPredicateSelectionHint(final IPOPredicate predicate) {
 		this.predicate = predicate;
 	}
 

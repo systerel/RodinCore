@@ -9,8 +9,8 @@ package org.eventb.core.sc.state;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
-import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.tool.state.IStateType;
 

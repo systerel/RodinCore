@@ -15,20 +15,24 @@ import org.eventb.core.tool.IProcessorModule;
 
 
 /**
+ * Default implementation of a static checker filter module. 
+ * <p>
+ * The two methods <code>getFilterModules()</code> and <code>getProcessorModules()</code>
+ * throw an <code>UnsupportedOperationException</code>. Filter modules cannot have
+ * child modules.
  *
  * @author Stefan Hallerstede
  *
  */
-//TODO javadoc
 public abstract class SCFilterModule extends SCModule implements ISCFilterModule {
 
 	@Override
-	protected IFilterModule[] getFilterModules() {
+	protected final IFilterModule[] getFilterModules() {
 		throw new UnsupportedOperationException("Attempt to load submodules in filter module");
 	}
 
 	@Override
-	protected IProcessorModule[] getProcessorModules() {
+	protected final IProcessorModule[] getProcessorModules() {
 		throw new UnsupportedOperationException("Attempt to load submodules in filter module");
 	}
 

@@ -53,7 +53,9 @@ public class FwdMachineVariantModule extends UtilityModule {
 		IPOFile target = repository.getTarget();
 		
 		Predicate wdPredicate = variantInfo.getExpression().getWDPredicate(factory);
-		IPOGSource[] sources = sources(makeSource(IPOSource.DEFAULT_ROLE, variantInfo.getVariant().getSource()));
+		IPOGSource[] sources = new IPOGSource[] {
+				makeSource(IPOSource.DEFAULT_ROLE, variantInfo.getVariant().getSource())
+		};
 		if (!goalIsTrivial(wdPredicate)) {
 			createPO(
 					target, 
@@ -63,7 +65,7 @@ public class FwdMachineVariantModule extends UtilityModule {
 					emptyPredicates, 
 					makePredicate(wdPredicate, variantInfo.getVariant().getSource()), 
 					sources, 
-					emptyHints, monitor);
+					NO_HINTS, monitor);
 		} else {
 			if (DEBUG_TRIVIAL)
 				debugTraceTrivial("VWD");
@@ -80,7 +82,7 @@ public class FwdMachineVariantModule extends UtilityModule {
 					emptyPredicates, 
 					makePredicate(finPredicate, variantInfo.getVariant().getSource()), 
 					sources, 
-					emptyHints, monitor);
+					NO_HINTS, monitor);
 		} else {
 			if (DEBUG_TRIVIAL)
 				debugTraceTrivial("FIN");

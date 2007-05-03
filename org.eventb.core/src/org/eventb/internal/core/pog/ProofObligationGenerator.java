@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pog.IPOGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.internal.core.tool.IModuleFactory;
@@ -38,9 +37,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 			IPOFile target, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		final FormulaFactory factory = FormulaFactory.getDefault();
-		
-		final POGStateRepository repository = new POGStateRepository(factory, target);
+		final POGStateRepository repository = new POGStateRepository(target);
 		
 		if (DEBUG_STATE)
 			repository.debug();

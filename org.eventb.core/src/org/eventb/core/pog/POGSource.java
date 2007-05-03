@@ -19,7 +19,7 @@ class POGSource implements IPOGSource {
 	private final String role;
 	private final IRodinElement source;
 	
-	public POGSource(String role, IRodinElement source) throws RodinDBException {
+	POGSource(String role, IRodinElement source) throws RodinDBException {
 		this.role = role;
 		this.source = source;
 	}

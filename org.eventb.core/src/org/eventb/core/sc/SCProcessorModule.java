@@ -18,11 +18,14 @@ import org.rodinp.core.IRodinElement;
 
 
 /**
+ * Default implementation of a static checker processor module. 
+ * 
+ * @see ISCProcessorModule
+ * @see SCModule
  * 
  * @author Stefan Hallerstede
  *
  */
-//TODO javadoc
 public abstract class SCProcessorModule extends SCModule implements ISCProcessorModule {
 
 	@Override
@@ -45,6 +48,19 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 		System.out.println("SC MOD" + op + ": " + module.getModuleType() + " " + kind);
 	}
 
+	/**
+	 * Initialise filter modules in the order returned by
+	 * <code>getFilterModules()</code>.
+	 * 
+	 * @param repository
+	 *            the state repository to pass to all filter modules
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws CoreException
+	 *             if there was a problem during the initialisation of one of
+	 *             the modules
+	 */
 	protected final void initFilterModules(
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
@@ -56,6 +72,19 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 		}
 	}
 	
+	/**
+	 * Initialise processor modules in the order returned by
+	 * <code>getProcessorModules()</code>.
+	 * 
+	 * @param repository
+	 *            the state repository to pass to all processor modules
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws CoreException
+	 *             if there was a problem during the initialisation of one of
+	 *             the modules
+	 */
 	protected final void initProcessorModules(
 			IRodinElement element,
 			ISCStateRepository repository, 
@@ -68,6 +97,24 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 		}
 	}
 	
+	/**
+	 * Evaluate whether to accept or reject an element using the child filter
+	 * modules in the order returned by <code>getFilterModules()</code>.
+	 * <p>
+	 * The evaualtion is stopped as soon as some filter module returns
+	 * <code>false</code>.
+	 * 
+	 * @param element
+	 *            the element to accept or reject
+	 * @param repository
+	 *            the state repository to pass to all filter modules
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return whether to accept the specified element
+	 * @throws CoreException
+	 *             if there was a problem during the evaluation
+	 */
 	protected final boolean filterModules(
 			IRodinElement element, 
 			ISCStateRepository repository, 
@@ -83,6 +130,20 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 		return true;
 	}
 	
+	/**
+	 * Process an element using the child processor modules in the order
+	 * returned by <code>getProcessorModules()</code>.
+	 * 
+	 * @param element
+	 *            the element to process
+	 * @param repository
+	 *            the state repository to pass to all processor modules
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws CoreException
+	 *             if there was a problem during processing
+	 */
 	protected final void processModules(
 			IRodinElement element, 
 			IInternalParent target,
@@ -96,6 +157,19 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 		}
 	}
 	
+	/**
+	 * Terminate filter modules in the order returned by
+	 * <code>getFilterModules()</code>.
+	 * 
+	 * @param repository
+	 *            the state repository to pass to all filter modules
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws CoreException
+	 *             if there was a problem during the termination of one of
+	 *             the modules
+	 */
 	protected final void endFilterModules(
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
@@ -107,6 +181,19 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 		}
 	}
 
+	/**
+	 * Terminate processor modules in the order returned by
+	 * <code>getProcessorModules()</code>.
+	 * 
+	 * @param repository
+	 *            the state repository to pass to all processor modules
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws CoreException
+	 *             if there was a problem during the termination of one of
+	 *             the modules
+	 */
 	protected final void endProcessorModules(
 			IRodinElement element,
 			ISCStateRepository repository, 

@@ -79,9 +79,10 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		Predicate varPredicate = getVarPredicate(nextVarExpression, varExpression, isIntVariant);
 		
 		IRodinElement variantSource = machineVariantInfo.getVariant().getSource();
-		IPOGSource[] sources = sources(
+		IPOGSource[] sources = new IPOGSource[] {
 				makeSource(IPOSource.DEFAULT_ROLE, variantSource),
-				makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource()));
+				makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource())
+		};
 		
 		ArrayList<IPOGPredicate> hyp =  makeActionHypothesis(varPredicate);
 		
@@ -93,7 +94,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 				hyp, 
 				makePredicate(varPredicate, variantSource), 
 				sources, 
-				emptyHints, 
+				NO_HINTS, 
 				monitor);
 		
 		if (isIntVariant) {
@@ -111,7 +112,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 					hyp, 
 					makePredicate(natPredicate, variantSource), 
 					sources, 
-					emptyHints, 
+					NO_HINTS, 
 					monitor);
 		}
 	}

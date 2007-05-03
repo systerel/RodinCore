@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
@@ -55,11 +56,11 @@ public class FwdMachineEventModule extends UtilityModule {
 			
 			repository.setTypeEnvironment(typeEnvironment);
 			
-			initModules(event, repository, monitor);
+			initProcessorModules(event, repository, monitor);
 			
 			processModules(event, repository, monitor);
 			
-			endModules(event, repository, monitor);
+			endProcessorModules(event, repository, monitor);
 		}
 
 	}
@@ -78,7 +79,7 @@ public class FwdMachineEventModule extends UtilityModule {
 		machineTypeEnvironment = repository.getTypeEnvironment();
 		machineHypothesisManager =
 			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
-		factory = repository.getFormulaFactory();
+		factory = FormulaFactory.getDefault();
 	}
 
 	/* (non-Javadoc)

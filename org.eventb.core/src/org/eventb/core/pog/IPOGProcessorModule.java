@@ -9,57 +9,31 @@ package org.eventb.core.pog;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.pog.state.IPOGState;
 import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IProcessorModule;
 import org.rodinp.core.IRodinElement;
 
 
 /**
- * Common protocol for modules.
- * The protocol has two variants:
- * <li>
- * <ul> The ONCE protocol. Method <code>run()</code> is called exactly once
- * as follows:
+ * The processor modules of the proof obligation generator generate 
+ * the proof obligations. The use of the methods <code>initModule()</code>,
+ * <code>process()</code>, and <code>endModule()</code> are described 
+ * in {@link IModule}.
  * <p>
- * <code>
- * m.initModule(repository, monitor);
- * ...  // invocation of the body of the module
- *      // as declared in one of the interfaces
- *      // IAcceptorModule or IProcessorModule
- * m.endModule(repository, monitor);
- * </code>
- * </p>
- * </ul>
- * <ul> The LOOP protocol. Method <code>run()</code> is called in a loop traversing a list of elements
- * as follows:
- * <p>
- * <code>
- * m.initModule(repository, monitor);
- * while (more elements) {
- * ...  // invocation of the body of the module
- *      // as declared in one of the interfaces
- *      // IAcceptorModule or IProcessorModule
- * }
- * m.endModule(repository, monitor);
- * </code>
- * </p>
- * </ul>
- * </li>
- * <p>
- * It must be guaranteed by all implementors that the
- * methods are called in the specified order.
+ * The state and the state repository must be of types {@link IPOGState} and
+ * {@link IPOGStateRepository} to avoid accidental mixing of static checker and
+ * proof obligation generator state.
  * 
- * In a list of extensions a module may only rely on the order in which 
- * the body methods are called. Initialisations and terminations will usually
- * be invoked in batch manner before resp. after all body methods have been
- * invoked.
- * 
- * Module extensions of a module should be loaded in the constructor of the module.
+ * @see IModule
+ * @see IProcessorModule
+ * @see IPOGState
+ * @see IPOGStateRepository
  * 
  * @author Stefan Hallerstede
  *
  */
-//TODO javadoc
 public interface IPOGProcessorModule extends IProcessorModule {
 
 

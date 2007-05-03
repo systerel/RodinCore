@@ -13,7 +13,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.internal.core.tool.IModuleFactory;
@@ -40,9 +39,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 			IRodinFile file, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		final FormulaFactory factory = FormulaFactory.getDefault();
-		
-		final SCStateRepository repository = new SCStateRepository(factory);
+		final SCStateRepository repository = new SCStateRepository();
 		
 		if (DEBUG_STATE)
 			repository.debug();

@@ -32,7 +32,7 @@ class POGIntervalSelectionHint implements IPOGHint {
 	 * @param start the predicate set immediately preceding the interval 
 	 * @param end the last predicate set in the interval
 	 */
-	public POGIntervalSelectionHint(final IPOPredicateSet start, final IPOPredicateSet end) {
+	POGIntervalSelectionHint(final IPOPredicateSet start, final IPOPredicateSet end) {
 		super();
 		this.start = start;
 		this.end = end;

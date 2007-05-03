@@ -67,10 +67,11 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 		
 		IPOFile target = repository.getTarget();
 		
-		IPOGHint[] hints = hints(
+		IPOGHint[] hints = new IPOGHint[] {
 				makeIntervalSelectionHint(
 						eventHypothesisManager.getRootHypothesis(), 
-						eventHypothesisManager.getFullHypothesis()));
+						eventHypothesisManager.getFullHypothesis())
+		};
 		
 		List<Assignment> assignments = concreteEventActionTable.getAssignments();
 		
@@ -78,7 +79,9 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			ISCAction action = actions.get(k);
 			Assignment assignment = assignments.get(k);
 			
-			IPOGSource[] sources = sources(makeSource(IPOSource.DEFAULT_ROLE, action.getSource()));
+			IPOGSource[] sources = new IPOGSource[] {
+					makeSource(IPOSource.DEFAULT_ROLE, action.getSource())
+			};
 			
 			if (abstractHasNotSameAction(k)) {
 				

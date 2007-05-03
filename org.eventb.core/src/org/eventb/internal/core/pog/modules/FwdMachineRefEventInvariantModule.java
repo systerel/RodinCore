@@ -20,7 +20,9 @@ import org.eventb.core.ISCInvariant;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGPredicate;
+import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.tool.IModuleType;
 
@@ -82,13 +84,15 @@ public class FwdMachineRefEventInvariantModule extends MachineEventInvariantModu
 				fullHypothesis,
 				bighyp,
 				makePredicate(predicate, invariant.getSource()),
-				sources(
+				new IPOGSource[] {
 						makeSource(IPOSource.ABSTRACT_ROLE, abstractEvent.getSource()),
 						makeSource(IPOSource.CONCRETE_ROLE, concreteEvent.getSource()), 
-						makeSource(IPOSource.DEFAULT_ROLE, invariant.getSource())),
-				hints(
+						makeSource(IPOSource.DEFAULT_ROLE, invariant.getSource())
+				},
+				new IPOGHint[] {
 						getLocalHypothesisSelectionHint(target, sequentName),
-						getInvariantPredicateSelectionHint(target, invariant)),
+						getInvariantPredicateSelectionHint(target, invariant)
+				},
 				monitor);
 	}
 

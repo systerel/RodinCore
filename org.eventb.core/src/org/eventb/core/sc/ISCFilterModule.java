@@ -9,62 +9,49 @@ package org.eventb.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IFilterModule;
+import org.eventb.core.tool.IModule;
+import org.eventb.core.tool.IProcessorModule;
 import org.rodinp.core.IRodinElement;
 
 /**
- * Common protocol for filter modules.
- * The protocol has two variants:
- * <li>
- * <ul> The ONCE protocol. Method <code>run()</code> is called exactly once
- * as follows:
+ * The processor modules of the static checker are used to accept (or reject)
+ * elements of a component. The use of the methods <code>initModule()</code>,
+ * <code>process()</code>, and <code>endModule()</code> are described 
+ * in {@link IModule}.
  * <p>
- * <code>
- * m.initModule(element, repository, monitor);
- * a = m.accept(element, repository, monitor);
- * ...
- * m.endModule(element, repository, monitor);
- * </code>
- * </p>
- * </ul>
- * <ul> The LOOP protocol. Method <code>run()</code> is called in a loop traversing a list of elements
- * as follows:
- * <p>
- * <code>
- * m.initModule(element, repository, monitor);
- * while (more elements) {
- *    a = m.accept(element, repository, monitor);
- *    ...
- * }
- * m.endModule(element, repository, monitor);
- * </code>
- * </p>
- * </ul>
- * </li>
- * <p>
- * It must be guaranteed by all implementors that the
- * methods are called in the specified order.
+ * The state and the state repository must be of types {@link ISCState} and
+ * {@link ISCStateRepository} to avoid accidental mixing of static checker and
+ * proof obligation generator state.
  * 
- * @see org.eventb.core.tool.IModule
+ * @see IModule
+ * @see IProcessorModule
+ * @see ISCState
+ * @see ISCStateRepository
  * 
  * @author Stefan Hallerstede
  *
  */
-//TODO javadoc
 public interface ISCFilterModule extends IFilterModule {
 
 	/**
-	 * Runs the static checker module.
-	 * Returns wether the element <code>element</code> should be accepted.
-	 * If an error marker was associated with the element the returned value should usually be 
-	 * <code>false</code>. Exceptions from this rule are possible, in particular, if a file
-	 * has been marked with an error.
-	 * @param element the input "unchecked" element
-	 * @param repository the state repository to use
-	 * @param monitor a progress monitor
+	 * Runs the static checker module. Returns wether the <code>element</code>
+	 * should be accepted. If an error marker was associated with the
+	 * <code>element</code> the returned value should usually be
+	 * <code>false</code>. Exceptions from this rule are possible, in
+	 * particular, if the <code>element</code> has been already marked with an error.
+	 * 
+	 * @param element
+	 *            the input "unchecked" element
+	 * @param repository
+	 *            the state repository to use
+	 * @param monitor
+	 *            a progress monitor
 	 * @return wether the element should be accepted
-	 * @throws CoreException if there was a problem running this module
+	 * @throws CoreException
+	 *             if there was a problem running this module
 	 */
 	public abstract boolean accept(
 			IRodinElement element,

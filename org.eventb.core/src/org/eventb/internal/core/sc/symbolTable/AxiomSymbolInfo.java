@@ -32,7 +32,6 @@ public class AxiomSymbolInfo
 
 	@Override
 	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
-		// TODO Auto-generated method stub
 		markerDisplay.createProblemMarker(
 				getSourceElement(), 
 				getSourceAttributeType(), 
@@ -42,7 +41,6 @@ public class AxiomSymbolInfo
 
 	@Override
 	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
-		// TODO Auto-generated method stub
 		markerDisplay.createProblemMarker(
 				getSourceElement(), 
 				getSourceAttributeType(), 

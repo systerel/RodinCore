@@ -16,6 +16,7 @@ import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IPOGHint;
+import org.eventb.core.pog.IPOGSource;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -42,7 +43,9 @@ extends PredicateModule<PE> {
 					hypothesis,
 					emptyPredicates,
 					makePredicate(predicate, predicateSource),
-					sources(makeSource(IPOSource.DEFAULT_ROLE, predicateSource)),
+					new IPOGSource[] {
+						makeSource(IPOSource.DEFAULT_ROLE, predicateSource)
+					},
 					new IPOGHint[] {
 						makeIntervalSelectionHint(
 								hypothesisManager.getRootHypothesis(), 

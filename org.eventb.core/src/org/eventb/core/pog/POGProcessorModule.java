@@ -25,11 +25,14 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Default implementation of a proof obligation generator processor module. 
+ * 
+ * @see IPOGProcessorModule
+ * @see POGModule
  * 
  * @author Stefan Hallerstede
  *
  */
-//TODO javadoc
 public abstract class POGProcessorModule extends POGModule implements IPOGProcessorModule {
 	
 	@Override
@@ -48,8 +51,34 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	private static final String HINT_NAME_PREFIX = "HINT";
 	private static final String GOAL_NAME = "GOAL";
 	
+	/**
+	 * Create a proof obligation in the specified file.
+	 * 
+	 * @param target the target file
+	 * @param name
+	 *            the name of the proof obligation
+	 * @param desc
+	 *            a description of the proof obligation
+	 * @param globalHypothesis
+	 *            the global hypothesis (shared between proof obligations)
+	 * @param localHypothesis
+	 *            the local hypothesis (<b>not</b> share between proof
+	 *            obliagtions)
+	 * @param goal
+	 *            the goal to be proved
+	 * @param sources
+	 *            references to source elements from which the proof obligation
+	 *            was derived
+	 * @param hints
+	 *            hints for a theorem prover
+	 * @param monitor
+	 *            if there was a problem during the initialisation of one of the
+	 *            modules
+	 * @throws RodinDBException
+	 *             if there was a problem creating the proof obligation
+	 */
 	protected final void createPO(
-			IPOFile file, 
+			IPOFile target, 
 			String name,
 			String desc,
 			IPOPredicateSet globalHypothesis,
@@ -59,7 +88,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 			IPOGHint[] hints,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		IPOSequent sequent = file.getSequent(name);
+		IPOSequent sequent = target.getSequent(name);
 		sequent.create(null, monitor);
 		
 		IPOPredicateSet hypothesis = sequent.getHypothesis(SEQ_HYP_NAME);
@@ -149,7 +178,20 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		System.out.println("POG MOD" + op + ": " + module.getModuleType() + " " + kind);
 	}
 
-	protected final void initModules(
+	/**
+	 * Initialise processor modules in the order returned by
+	 * <code>getProcessorModules()</code>.
+	 * 
+	 * @param repository
+	 *            the state repository to pass to all processor modules
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws CoreException
+	 *             if there was a problem during the initialisation of one of
+	 *             the modules
+	 */
+	protected final void initProcessorModules(
 			IRodinElement element,
 			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
@@ -161,6 +203,20 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		}
 	}
 	
+	/**
+	 * Process an element using the child processor modules in the order
+	 * returned by <code>getProcessorModules()</code>.
+	 * 
+	 * @param element
+	 *            the element to process
+	 * @param repository
+	 *            the state repository to pass to all processor modules
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws CoreException
+	 *             if there was a problem during processing
+	 */
 	protected final void processModules(
 			IRodinElement element, 
 			IPOGStateRepository repository,
@@ -173,7 +229,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		}
 	}
 	
-	protected final void endModules(
+	protected final void endProcessorModules(
 			IRodinElement element,
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
@@ -254,17 +310,19 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		return new POGIntervalSelectionHint(start, end);
 	}
 
-	protected static final IPOPredicateSet getSequentHypothesis(IPOFile file, String sequentName) 
-	throws RodinDBException {
-		return file.getSequent(sequentName).getHypothesis(SEQ_HYP_NAME);
-	}
-
-	protected static final IPOGSource[] sources(IPOGSource... sources) {
-		return sources;
-	}
-	
-	protected static final IPOGHint[] hints(IPOGHint... hints) {
-		return hints;
+	/**
+	 * Each proof obligation has its own sequent hypothesis. This is an {@link IPOPredicateSet}
+	 * associated with that sequent. There is only one per sequent.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @param target the target proof obligation file
+	 * @param sequentName the name of the sequent
+	 * @return a handle to the predicate set that represents the hypothesis
+	 */
+	protected static final IPOPredicateSet getSequentHypothesis(IPOFile target, String sequentName) {
+		return target.getSequent(sequentName).getHypothesis(SEQ_HYP_NAME);
 	}
 
 }

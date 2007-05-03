@@ -21,7 +21,9 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGPredicate;
+import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.tool.IModuleType;
@@ -110,11 +112,14 @@ public class FwdMachineEventActionBodySimModule extends
 					fullHypothesis,
 					hyp,
 					makePredicate(simPredicate, action.getSource()),
-					sources(
-							makeSource(IPOSource.ABSTRACT_ROLE, abstractEvent.getSource()),
-							makeSource(IPOSource.ABSTRACT_ROLE, action.getSource()),
-							makeSource(IPOSource.CONCRETE_ROLE, concreteEvent.getSource())),
-					hints(getLocalHypothesisSelectionHint(target, sequentName)),
+					new IPOGSource[] {
+						makeSource(IPOSource.ABSTRACT_ROLE, abstractEvent.getSource()),
+						makeSource(IPOSource.ABSTRACT_ROLE, action.getSource()),
+						makeSource(IPOSource.CONCRETE_ROLE, concreteEvent.getSource())
+					},
+					new IPOGHint[] {
+						getLocalHypothesisSelectionHint(target, sequentName)
+					},
 					monitor);
 
 		}

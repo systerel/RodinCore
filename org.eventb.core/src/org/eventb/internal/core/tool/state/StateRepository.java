@@ -33,18 +33,12 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 
 	public static final int REPOSITORY_SIZE = 117;
 	
-	private boolean fileChanged;
-	
-	private final FormulaFactory factory;
-	
 	private ITypeEnvironment environment;
 	
-	public StateRepository(FormulaFactory factory) {
+	public StateRepository() {
 		if (DEBUG)
 			System.out.println("NEW STATE REPOSITORY ##################");
-		this.factory = factory;
-		environment = factory.makeTypeEnvironment();
-		fileChanged = false;
+		environment = FormulaFactory.getDefault().makeTypeEnvironment();
 		repository = new Hashtable<IStateType<?>, I>(REPOSITORY_SIZE);
 		exception = null;
 	}
@@ -65,7 +59,7 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		if (state == null) {
 			if (DEBUG)
 				System.out.println(" FAILED");
-			throw Util.newCoreException("Attempt to access uninitialized state in state repository");
+			throwNewCoreException("Attempt to access uninitialized state in state repository");
 		}
 		if (DEBUG)
 			System.out.println(" OK");
@@ -81,25 +75,9 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 	public final void setTypeEnvironment(ITypeEnvironment environment) throws CoreException {
 		if (exception != null)
 			throw exception;
+		if (environment == null)
+			throwNewCoreException("Attempt to create null typenv");
 		this.environment = environment;
-	}
-
-	public final FormulaFactory getFormulaFactory() throws CoreException {
-		if (exception != null)
-			throw exception;
-		return factory;
-	}
-
-	public final boolean targetHasChanged() throws CoreException {
-		if (exception != null)
-			throw exception;
-		return fileChanged;
-	}
-
-	public final void setTargetChanged() throws CoreException {
-		if (exception != null)
-			throw exception;
-		fileChanged = true;
 	}
 
 	public final void setState(I state) throws CoreException {
@@ -108,7 +86,7 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		if (exception != null)
 			throw exception;
 		if (state == null)
-			throw Util.newCoreException("Attempt to create null state");
+			throwNewCoreException("Attempt to create null state");
 		repository.put(state.getStateType(), state);
 	}
 
@@ -117,6 +95,11 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 			throw exception;
 		
 		repository.remove(stateType);
+	}
+	
+	private void throwNewCoreException(String m) throws CoreException {
+		exception = Util.newCoreException(m);
+		throw exception;
 	}
 
 }

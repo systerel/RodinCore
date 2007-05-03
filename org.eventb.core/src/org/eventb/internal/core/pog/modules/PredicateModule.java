@@ -19,6 +19,7 @@ import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IPOGHint;
+import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IPredicateTable;
@@ -115,7 +116,9 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 					hypothesis,
 					emptyPredicates,
 					makePredicate(wdPredicate, predicateSource),
-					sources(makeSource(IPOSource.DEFAULT_ROLE, predicateSource)),
+					new IPOGSource[] {
+						makeSource(IPOSource.DEFAULT_ROLE, predicateSource)
+					},
 					new IPOGHint[] {
 						makeIntervalSelectionHint(
 								hypothesisManager.getRootHypothesis(), 

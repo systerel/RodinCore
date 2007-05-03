@@ -29,7 +29,7 @@ class POGPredicate implements IPOGPredicate {
 	 * @param predicate a predicate
 	 * @param source an associated source
 	 */
-	public POGPredicate(Predicate predicate, IRodinElement source) {
+	POGPredicate(Predicate predicate, IRodinElement source) {
 		this.source = source;
 		this.predicate = predicate;
 	}

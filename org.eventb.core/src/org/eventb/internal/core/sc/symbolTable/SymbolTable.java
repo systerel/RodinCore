@@ -10,7 +10,6 @@ package org.eventb.internal.core.sc.symbolTable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -59,12 +58,6 @@ public abstract class SymbolTable<I extends ISymbolInfo> extends State implement
 			throwSymbolConflict();
 		}
 		tableValues.add(symbolInfo);
-	}
-
-	// TODO clean this up; an iterator should iterate over all values, i.e., 
-	// including the symbols in stacked symbol tables, or the interface should be changed
-	public Iterator<I> iterator() {
-		return tableValues.iterator();
 	}
 
 	@Override

@@ -21,6 +21,7 @@ import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCVariable;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.POGCore;
@@ -214,7 +215,7 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		
-		factory = repository.getFormulaFactory();
+		factory = FormulaFactory.getDefault();
 		eventTypeEnvironment = repository.getTypeEnvironment();
 		
 		IMachineHypothesisManager machineHypothesisManager =

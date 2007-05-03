@@ -20,6 +20,7 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGPredicate;
+import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.rodinp.core.IRodinElement;
@@ -32,8 +33,11 @@ public abstract class UtilityModule extends POGProcessorModule {
 	
 	public static boolean DEBUG_TRIVIAL = false;
 
+	
+	protected static final IPOGSource[] NO_SOURCES = new IPOGSource[0];
+	protected static final IPOGHint[] NO_HINTS = new IPOGHint[0];
 	protected static final List<IPOGPredicate> emptyPredicates = new ArrayList<IPOGPredicate>(0);
-	protected static final IPOGHint[] emptyHints = new IPOGHint[0];
+
 	protected Predicate btrue;
 	protected FormulaFactory factory;
 	
@@ -47,7 +51,7 @@ public abstract class UtilityModule extends POGProcessorModule {
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		
-		factory = repository.getFormulaFactory();
+		factory = FormulaFactory.getDefault();
 		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
 	}
 	
