@@ -406,21 +406,20 @@ public abstract class BasicSCTest extends EventBTest {
 		hasMarker(element, null);
 	}
 
-//	public void hasMarker(IRodinElement element, IRodinProblem problem) throws Exception {
-//		IRodinFile file = (IRodinFile) element.getOpenable();
-//		IMarker[] markers = 
-//			file.getResource().findMarkers(
-//					RodinMarkerUtil.RODIN_PROBLEM_MARKER, 
-//					true, 
-//					IResource.DEPTH_INFINITE);
-//		for (IMarker marker : markers) {
-//			IRodinElement elem = RodinMarkerUtil.getElement(marker);
-//			if (elem != null && elem.equals(element))
-//				if (problem == null || problem.getErrorCode().equals(RodinMarkerUtil.getErrorCode(marker)))
-//					return;
-//		}
-//		fail("problem marker missing from element");
-//	}
+	public void hasNotMarker(IRodinElement element, IRodinProblem problem) throws Exception {
+		IRodinFile file = (IRodinFile) element.getOpenable();
+		IMarker[] markers = 
+			file.getResource().findMarkers(
+					RodinMarkerUtil.RODIN_PROBLEM_MARKER, 
+					true, 
+					IResource.DEPTH_INFINITE);
+		for (IMarker marker : markers) {
+			IRodinElement elem = RodinMarkerUtil.getElement(marker);
+			if (elem != null && elem.equals(element))
+				if (problem != null && problem.getErrorCode().equals(RodinMarkerUtil.getErrorCode(marker)))
+					fail("surplus problem marker on element");
+		}
+	}
 
 	public void hasMarker(IRodinElement element, IAttributeType attrType, IRodinProblem problem, String... args) throws Exception {
 		IRodinFile file = (IRodinFile) element.getOpenable();

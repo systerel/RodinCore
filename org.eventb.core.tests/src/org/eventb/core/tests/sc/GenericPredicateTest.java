@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.ParseProblem;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -192,5 +194,34 @@ extends GenericEventBSCTest<E, SCE> {
 		hasMarker(getGeneric().getTheorems(con)[0]);
 		
 	}
+	
+	/**
+	 * use of undeclared and faulty constants or variables
+	 * (do not create too many error messages)
+	 */
+	public void test_09() throws Exception {
+		E con = getGeneric().createElement("con");
+
+		getGeneric().addIdents(con, "C1", "C1");
+		getGeneric().addNonTheorems(con, makeSList("A1"), makeSList("C1=∅"));
+		getGeneric().addNonTheorems(con, makeSList("A2"), makeSList("C2=∅"));
+	
+		getGeneric().save(con);
+		
+		runBuilder();
+		
+		SCE file = getGeneric().getSCElement(con);
+		
+		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		
+		hasMarker(getGeneric().getNonTheorems(con)[0]);
+		hasNotMarker(getGeneric().getNonTheorems(con)[0], ParseProblem.TypeUnknownError);
+		
+		hasMarker(getGeneric().getNonTheorems(con)[1]);
+		hasNotMarker(getGeneric().getNonTheorems(con)[1], ParseProblem.TypeUnknownError);
+	}
+
+
+	
 
 }

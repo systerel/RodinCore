@@ -321,16 +321,16 @@ extends LabeledElementModule {
 					ok = false;
 				}
 				
-				ITypeEnvironment inferredEnvironment = 
-					typeCheckFormula(formulaElement, formula, typeEnvironment);
-				
-				ok &= inferredEnvironment != null;
-			
-				if (ok && !inferredEnvironment.isEmpty()) {
-					ok = updateIdentifierSymbolTable(
-							formulaElement,
-							inferredEnvironment, 
-							typeEnvironment);
+				if (ok) {
+					ITypeEnvironment inferredEnvironment = typeCheckFormula(
+							formulaElement, formula, typeEnvironment);
+
+					ok &= inferredEnvironment != null;
+
+					if (ok && !inferredEnvironment.isEmpty()) {
+						ok = updateIdentifierSymbolTable(formulaElement,
+								inferredEnvironment, typeEnvironment);
+					}
 				}
 			}
 			
