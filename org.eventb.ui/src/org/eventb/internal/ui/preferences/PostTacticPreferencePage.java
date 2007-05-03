@@ -7,29 +7,21 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IProvingMode;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
- * This class represents a preference page that
- * is contributed to the Preferences dialog. By 
- * subclassing <samp>FieldEditorPreferencePage</samp>, we
- * can use the field support built into JFace that allows
- * us to create a page that is small and knows how to 
- * save, restore and apply itself.
- * <p>
- * This page is used to modify preferences only. They
- * are stored in the preference store that belongs to
- * the main plug-in class. That way, preferences can
- * be accessed directly via the preference store.
+ * @author htson
+ *         <p>
  */
-
 public class PostTacticPreferencePage
 	extends PreferencePage
-	implements IWorkbenchPreferencePage {
+	implements
+		IWorkbenchPreferencePage {
 
 	TwoListSelectionEditor tacticsEditor;
-	
+
 	public PostTacticPreferencePage() {
 		super();
 		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
@@ -38,32 +30,51 @@ public class PostTacticPreferencePage
 
 	@Override
 	public void createFieldEditors() {
-		tacticsEditor = new TwoListSelectionEditor(PreferenceConstants.P_PROVINGMODE,
-						"&Tactics are run as post-tactics",
-						getFieldEditorParent()) {
-		
-							@Override
-							protected String createList(ArrayList<Object> objects) {
-								return ProverUIUtils.toCommaSeparatedList(objects);
-							}
-		
-							@Override
-							protected ArrayList<Object> parseString(String stringList) {
-								ArrayList<String> strings = ProverUIUtils.parseString(stringList);
-								ArrayList<Object> result = new ArrayList<Object>(strings.size());
-								for (String string : strings) {
-									result.add(string);
-								}
-								return result;
-							}
-		
-							@Override
-							protected String getLabel(Object object) {
-								return SequentProver.getTacticRegistry().getTacticName(
-										(String) object);
-							}
-					
-				};
+		tacticsEditor = new TwoListSelectionEditor(
+				PreferenceConstants.P_PROVINGMODE,
+				"&Tactics are run as post-tactics", getFieldEditorParent()) {
+
+			@Override
+			protected String createList(ArrayList<Object> objects) {
+				return ProverUIUtils.toCommaSeparatedList(objects);
+			}
+
+			@Override
+			protected ArrayList<Object> parseString(String stringList) {
+				String [] tacticIDs = ProverUIUtils
+						.parseString(stringList);
+				ArrayList<Object> result = new ArrayList<Object>();
+				for (String string : tacticIDs) {
+					if (!SequentProver.getTacticRegistry().isRegistered(string)) {
+						if (UIUtils.DEBUG) {
+							System.out.println("Tactic " + string
+									+ " is not registered.");
+						}
+					} else if (!EventBPlugin.getDefault()
+							.getPostTacticRegistry().isDeclared(string)) {
+						if (UIUtils.DEBUG) {
+							System.out.println("Tactic " + string
+									+ " is not declared as a post tactic.");
+						}
+					}
+					else {
+						if (UIUtils.DEBUG) {
+							System.out.println("Tactic " + string
+									+ " is added to the preference.");
+						}	
+						result.add(string);
+					}
+				}
+				return result;
+			}
+
+			@Override
+			protected String getLabel(Object object) {
+				return SequentProver.getTacticRegistry().getTacticName(
+						(String) object);
+			}
+
+		};
 		addField(tacticsEditor);
 	}
 
@@ -80,11 +91,14 @@ public class PostTacticPreferencePage
 
 	private void setProvingMode() {
 		ArrayList<Object> objects = tacticsEditor.getSelectedObjects();
-		ArrayList<String> tacticIDs = new ArrayList<String>(objects.size());
+		String[] tacticIDs = new String[objects.size()];
+		int i = 0;
 		for (Object object : objects) {
-			tacticIDs.add((String) object);
+			tacticIDs[i] = (String) object;
+			++i;
 		}
-		IProvingMode provingMode = EventBPlugin.getDefault().getUserSupportManager().getProvingMode();
+		IProvingMode provingMode = EventBPlugin.getDefault()
+				.getUserSupportManager().getProvingMode();
 		provingMode.setPostTactics(tacticIDs);
 	}
 

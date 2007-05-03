@@ -338,24 +338,28 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
 	@Override
 	protected void doLoad() {
 		if (left != null) {
-			String s = getPreferenceStore().getString(getPreferenceName());
-			left.removeAll();
-            leftElements = parseString(s);
-            for (Object object : leftElements) {
-                left.add(getLabel(object));
-            }
-            
-            s = getPreferenceStore().getDefaultString(getPreferenceName());
-            ArrayList<Object> defaultElements = parseString(s);
-            rightElements.clear();
-            right.removeAll();
-            for (Object object : defaultElements) {
-            	if (!leftElements.contains(object)) {
-            		rightElements.add(object);
-            		right.add(getLabel(object));
-            	}
-            }
-            
+			if (getPreferenceStore().contains(getPreferenceName())) {
+				String s = getPreferenceStore().getString(getPreferenceName());
+				left.removeAll();
+				leftElements = parseString(s);
+				for (Object object : leftElements) {
+					left.add(getLabel(object));
+				}
+
+				s = getPreferenceStore().getDefaultString(getPreferenceName());
+				ArrayList<Object> defaultElements = parseString(s);
+				rightElements.clear();
+				right.removeAll();
+				for (Object object : defaultElements) {
+					if (!leftElements.contains(object)) {
+						rightElements.add(object);
+						right.add(getLabel(object));
+					}
+				}
+			}
+			else {
+				doLoadDefault();
+			}
         }
 	}
 
