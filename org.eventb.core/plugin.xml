@@ -6,6 +6,7 @@
    <extension-point id="scModuleTypes" name="%scModuleTypes" schema="schema/scModuleTypes.exsd"/>
    <extension-point id="pogModuleTypes" name="%pogModuleTypes" schema="schema/pogModuleTypes.exsd"/>
    <extension-point id="configurations" name="%configurations" schema="schema/configurations.exsd"/>
+   <extension-point id="postTactics" name="%postTactics" schema="schema/postTactics.exsd"/>
    <extension
          point="org.eclipse.core.runtime.contentTypes">
       <content-type
@@ -1110,6 +1111,15 @@
          <prereq id="org.eventb.core.fwdMachineEventCommitHypothesesModule"/>
          <prereq id="org.eventb.core.fwdMachineEventWitnessModule"/>
       </processorType>
+   </extension>
+   <extension
+         point="org.eventb.core.postTactics">
+      <tactic id="org.eventb.core.seqprover.autoRewriteTac"/>
+      <tactic id="org.eventb.core.seqprover.autoImpETac"/>
+      <tactic id="org.eventb.core.seqprover.autoFalsifyHypTac"/>
+      <tactic id="org.eventb.core.seqprover.autoEqETac"/>
+      <tactic id="org.eventb.core.seqprover.autoExFTac"/>
+      <tactic id="org.eventb.core.seqprover.normTac"/>
    </extension>
 
 </plugin>

@@ -1,10 +1,10 @@
 package org.eventb.internal.core.pm;
 
-import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
+import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
 
-import java.util.ArrayList;
-
+import org.eventb.core.EventBPlugin;
+import org.eventb.core.pm.IPostTacticRegistry;
 import org.eventb.core.pm.IProvingMode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticRegistry;
@@ -16,17 +16,10 @@ public class ProvingMode implements IProvingMode {
 
 	private ITactic postTactic;
 	
-	private ITactic [] tactics;
-	
 	public ProvingMode() {
-		ITacticRegistry tacticRegistry = SequentProver.getTacticRegistry();
-		String[] registeredIDs = tacticRegistry.getRegisteredIDs();
-		int length = registeredIDs.length;
-		tactics = new ITactic[length];
-		for (int i = 0; i < length; ++i) {
-			tactics[i] = tacticRegistry.getTacticInstance(registeredIDs[i]);
-		}
-		postTactic = composeTactics(tactics);
+		IPostTacticRegistry postTacticRegistry = EventBPlugin.getDefault()
+				.getPostTacticRegistry();
+		setPostTactics(postTacticRegistry.getTacticIDs());
 	}
 	
 	public boolean isExpertMode() {
@@ -45,10 +38,10 @@ public class ProvingMode implements IProvingMode {
 		return repeat(composeOnAllPending(list));
 	}
 
-	public void setPostTactics(ArrayList<String> tacticIDs) {
+	public void setPostTactics(String ... tacticIDs) {
 		ITacticRegistry tacticRegistry = SequentProver.getTacticRegistry();
-		int size = tacticIDs.size();
-		tactics = new ITactic[size];
+		int size = tacticIDs.length;
+		ITactic [] tactics = new ITactic[size];
 		int i = 0;
 		for (String tacticID : tacticIDs) {
 			tactics[i] = tacticRegistry.getTacticInstance(tacticID);

@@ -1,7 +1,5 @@
 package org.eventb.core.pm;
 
-import java.util.ArrayList;
-
 import org.eventb.core.seqprover.ITactic;
 
 public interface IProvingMode {
@@ -12,6 +10,5 @@ public interface IProvingMode {
 
 	public ITactic getPostTactic();
 
-	public void setPostTactics(ArrayList<String> tacticIDs);
-
+	public void setPostTactics(String ... tacticIDs);
 }
