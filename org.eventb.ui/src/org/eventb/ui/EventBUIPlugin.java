@@ -12,8 +12,6 @@
 
 package org.eventb.ui;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
@@ -155,7 +153,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 				.getPreferenceStore();
 
 		String s = store.getString(PreferenceConstants.P_PROVINGMODE);
-		ArrayList<String> tacticIDs = ProverUIUtils.parseString(s);
+		String [] tacticIDs = ProverUIUtils.parseString(s);
 		IProvingMode provingMode = EventBPlugin.getDefault()
 				.getUserSupportManager().getProvingMode();
 		provingMode.setPostTactics(tacticIDs);

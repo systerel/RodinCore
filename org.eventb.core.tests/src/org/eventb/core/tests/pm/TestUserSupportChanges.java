@@ -8,8 +8,6 @@
 
 package org.eventb.core.tests.pm;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
@@ -69,7 +67,7 @@ public class TestUserSupportChanges extends TestPM {
 
 		// Turn on beginner mode
 		manager.getProvingMode().setExpertMode(false);
-		manager.getProvingMode().setPostTactics(new ArrayList<String>());
+		manager.getProvingMode().setPostTactics(new String[0]);
 		userSupport = new UserSupport();
 	}
 
