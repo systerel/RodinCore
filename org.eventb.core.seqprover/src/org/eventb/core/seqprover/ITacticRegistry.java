@@ -11,24 +11,18 @@ package org.eventb.core.seqprover;
  * Common protocol for accessing the Tactic Registry.
  * <p>
  * The Tactic Registry manages Tactic ids that are known to the Sequent
- * Prover. A tactic id gets registered if any of the following hold
- * (exhaustive list):
- * <ul>
- * <li>It has been registered through the <code>tactics</code> extension
- * point.</li>
- * <li>Its name has been requested by way of {@link #getTacticName()}.</li>
- * <li>Its instance has been requested by way of {@link #getTacticInstance()}.</li>
- * </ul>
+ * Prover. A tactic id gets registered only if it has been registered through 
+ * the <code>tactics</code> extension point.
  * </p>
+ * 
  * <p>
- * This interface is similar to {@link IReasonerRegistry}.
+ * This registry is not used by the sequent prover iteself, but is provided as a utility
+ * to clients that want to register and retreive stateless tactics.
  * </p>
  * 
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * 
- * TODO : see if a dummy tactic is really needed in this setting.
  * 
  * @author Farhad Mehta
  */
@@ -60,49 +54,39 @@ public interface ITacticRegistry {
 	/**
 	 * Returns an instance of the tactic extension with the given id.
 	 * <p>
+	 * Clients should first use {@link #isRegistered(String)} to check if a tactic extension with the
+	 * given id is registered.
 	 * In case no tactic extension with the given id has been registered yet,
-	 * or if there is a problem instantiating the tactic class, a dummy
-	 * tactic instance is returned. Subsequently, the tactic is considered
-	 * as registered (with that dummy instance).
+	 * or if there is a problem instantiating the tactic class, an {@link IllegalArgumentException}
+	 * is thrown.
 	 * </p>
-	 * 
-	 * @see #isDummyTactic(ITactic)
-	 * 
+	 *  
 	 * @param tacticID
 	 *            the id of the tactic
-	 * @return an instance of the tactic (might be a dummy one in case of
-	 *         error)
+	 * @return an instance of the tactic
+	 * 
+	 * @throws IllegalArgumentException
+	 * 			in case no tactic extension with the given id has been registered
 	 */
-	ITactic getTacticInstance(String tacticID);
+	ITactic getTacticInstance(String tacticID) throws IllegalArgumentException;
 
 	/**
 	 * Returns the name of the tactic extension with the given id.
 	 * <p>
-	 * In case no tactic extension with the given id has been registered, a
-	 * placeholder string is returned, stating the problem. Subsequently, the
-	 * tactic is considered as registered (with a dummy instance).
+	 * Clients should first use {@link #isRegistered(String)} to check if a tactic extension with the
+	 * given id is registered.
+	 * In case no tactic extension with the given id has been registered an {@link IllegalArgumentException}
+	 * is thrown.
 	 * </p>
+	 * 
 	 * 
 	 * @param tacticID
 	 *            the id of the tactic
 	 * @return the name of the tactic with the given id
-	 */
-	String getTacticName(String tacticID);
-
-	/**
-	 * Checks whether a given tactic is a dummy tactic.
-	 * <p>
-	 * A dummy tactic is used as a facade to a tactic that is not currently
-	 * installed. An attempt to call
-	 * the <code>apply()</code> method on it will have no effect on a proof tree.
-	 * </p>
 	 * 
-	 * TODO : see if a dummy tactic is really needed in this setting.
-	 * 
-	 * @param tactic
-	 *            the tactic to check
-	 * @return <code>true</code> iff the given tactic is a dummy tactic
+	 * @throws IllegalArgumentException
+	 * 			in case no tactic extension with the given id has been registered
 	 */
-	boolean isDummyTactic(ITactic reasoner);
+	String getTacticName(String tacticID) throws IllegalArgumentException;
 
 }

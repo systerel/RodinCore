@@ -1,7 +1,6 @@
 package org.eventb.core.seqprover.tacticExtentionTests;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -22,12 +21,7 @@ import org.junit.Test;
  */
 public class TacticRegistryTest {
 
-	private static int count = 0;
-	
-	// Each call returns a new dummy id, not used before.
-	private static String getDummyId() {
-		return "dummy_id_" + (++ count);
-	}
+	private static final String unrigisteredId = "unregistered";
 	
 	private final ITacticRegistry registry = SequentProver.getTacticRegistry();
 
@@ -69,31 +63,17 @@ public class TacticRegistryTest {
 	 * {@link ITacticRegistry#getRegisteredIDs()}.
 	 */
 	@Test
-	public void testRegisteredTactics() {
-		final String idName = getDummyId();
-		final String idInstance = getDummyId();
-		final String idOther = getDummyId();
-		
+	public void testRegisteredTactics() {		
 		// Initially, contains only registered extensions
 		assertKnown(IdentityTactic.TACTIC_ID);
 		assertKnown(FailTactic.TACTIC_ID);
-		assertNotKnown(idName);
-		assertNotKnown(idInstance);
-		assertNotKnown(idOther);
-		
-		// After some registry requests, new ids appear
-		registry.getTacticName(idName);
-		registry.getTacticInstance(idInstance);
-		assertKnown(IdentityTactic.TACTIC_ID);
-		assertKnown(idName);
-		assertKnown(idInstance);
-		assertNotKnown(idOther);
+		assertNotKnown(unrigisteredId);		
 	}
 
 	/**
 	 * Test method for {@link ITacticRegistry#getTacticInstance(String)}.
 	 */
-	@Test
+	@Test(expected=IllegalArgumentException.class)
 	public void testGetTacticInstance() {
 		ITactic tactic = registry.getTacticInstance(IdentityTactic.TACTIC_ID);
 		assertTrue(tactic instanceof IdentityTactic);
@@ -101,45 +81,20 @@ public class TacticRegistryTest {
 		tactic = registry.getTacticInstance(FailTactic.TACTIC_ID);
 		assertTrue(tactic instanceof FailTactic);
 		
-		tactic = registry.getTacticInstance(getDummyId());
-		assertTrue(tactic instanceof ITactic);
+		// Should throw an exception
+		tactic = registry.getTacticInstance(unrigisteredId);
 	}
+	
 
 	/**
 	 * Test method for {@link ITacticRegistry#getTacticName(String)}.
 	 */
-	@Test
+	@Test(expected=IllegalArgumentException.class)
 	public void testGetTacticName() {
 		assertTrue(registry.getTacticName(IdentityTactic.TACTIC_ID).equals("Identity Tactic"));
-		assertNotNull(registry.getTacticName(getDummyId()));
-	}
-	
-//	/**
-//	 * Ensures that a dummy tactic always fails.
-//	 */
-//	@Test
-//	public void testDummyTactic() {
-//		String id = getDummyId();
-//		ITactic dummyTactic = registry.getTacticInstance(id);
-//		assertEquals(dummyTactic.getTacticID(), id);
-//		ITacticOutput tacticOutput = dummyTactic.apply(
-//				TestLib.genSeq(" 1=1 |- 1=1"),
-//				new EmptyInput(),
-//				null
-//		);
-//		assertTrue(tacticOutput instanceof ITacticFailure);
-//	}
-	
-	/**
-	 * Test method for {@link ITacticRegistry#isDummyTactic(String)}.
-	 */
-	@Test
-	public void testIsDummyTactic() {
-		ITactic dummyTactic = registry.getTacticInstance(getDummyId());
-		assertTrue(registry.isDummyTactic(dummyTactic));
 		
-		ITactic trueGoal = registry.getTacticInstance(IdentityTactic.TACTIC_ID);
-		assertFalse(registry.isDummyTactic(trueGoal));
+		// Should throw an exception
+		registry.getTacticName(unrigisteredId);
 	}
 
 	/**

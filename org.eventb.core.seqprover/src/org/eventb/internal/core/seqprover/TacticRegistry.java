@@ -7,8 +7,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
@@ -16,11 +14,10 @@ import org.eventb.core.seqprover.SequentProver;
 /**
  * Singeleton class implementing the tactic registry.
  * 
- * Implimentation identical to {@link ReasonerRegistry}.
+ * Implimentation similar to {@link ReasonerRegistry}.
  * 
  * @see org.eventb.core.seqprover.ITacticRegistry
  * 
- * TODO : see if a dummy tactic is really needed in this setting.
  * 
  * @author Farhad Mehta
  */
@@ -66,23 +63,22 @@ public class TacticRegistry implements ITacticRegistry {
 		return registry.keySet().toArray(NO_STRING);
 	}
 	
-	public ITactic getTacticInstance(String id){
+	public ITactic getTacticInstance(String id) throws IllegalArgumentException{
 		return getInfo(id).getTacticInstance();
 	}
 	
-	public String getTacticName(String id){
+	public String getTacticName(String id) throws IllegalArgumentException{
 		return getInfo(id).getTacticName();
 	}
 
-	private synchronized TacticInfo getInfo(String id) {
+	private synchronized TacticInfo getInfo(String id) throws IllegalArgumentException{
 		if (registry == null) {
 			loadRegistry();
 		}
 		TacticInfo info = registry.get(id);
 		if (info == null) {
-			// Unknown tactic, just create a dummy entry
-			info = new TacticInfo(id);
-			registry.put(id, info);
+			// Unknown tactic, throw exception.
+			throw new IllegalArgumentException("Tactic with id:" + id + "not registered.");
 		}
 		return info;
 	}
@@ -114,10 +110,6 @@ public class TacticRegistry implements ITacticRegistry {
 				}
 			}
 		}
-	}
-	
-	public boolean isDummyTactic(ITactic tactic){
-		return tactic instanceof DummyTactic;
 	}
 	
 	/**
@@ -167,20 +159,13 @@ public class TacticRegistry implements ITacticRegistry {
 			return false;
 		}
 		
-		public TacticInfo(String id) {
-			this.configurationElement = null;
-			this.id = id;
-			// TODO externalize name of dummy tactic which is user-visible
-			this.name = "Unknown tactic " + id;
-		}
-		
-		public synchronized ITactic getTacticInstance(){
+		public synchronized ITactic getTacticInstance() throws IllegalArgumentException{
 			if (instance != null) {
 				return instance;
 			}
 
 			if (configurationElement == null) {
-				return instance = getDummyInstance(id);
+				throw new IllegalArgumentException("Null configuration element");
 			}
 			
 			// Try creating an instance of the specified class
@@ -190,34 +175,18 @@ public class TacticRegistry implements ITacticRegistry {
 			} catch (Exception e) {
 				final String className = 
 					configurationElement.getAttribute("class");
+				final String errorMsg = "Error instantiating class " + className +
+										" for tactic " + id;
 				Util.log(e,
-						"Error instantiating class " + className +
-						" for tactic " + id);
+						errorMsg);
 				if (DEBUG) System.out.println(
-						"Create a dummy instance for tactic " + id);
-				return instance = getDummyInstance(id);
+						errorMsg);
+				throw new IllegalArgumentException(errorMsg,e);
 			}
-			
-			// Check if the tactic id from the extension point matches that 
-			// returned by the class instance. 
-//			if (! id.equals(instance.getTacticID())) {
-//				Util.log(null,
-//						"Tactic instance says its id is " +
-//						instance.getTacticID() +
-//						" while it was registered with id " +
-//						id);
-//				if (DEBUG) System.out.println(
-//						"Created a dummy instance for tactic " + id);
-//				return instance = getDummyInstance(id);
-//			}
 
 			if (DEBUG) System.out.println(
 					"Successfully loaded tactic " + id);
 			return instance;
-		}
-
-		private static ITactic getDummyInstance(String id) {
-			return new DummyTactic();
 		}
 		
 		public String getTacticID() {
@@ -226,22 +195,6 @@ public class TacticRegistry implements ITacticRegistry {
 		
 		public String getTacticName() {
 			return name;
-		}
-
-	}
-	
-	/**
-	 * 
-	 * Protected helper class implementing dummy tactics.
-	 * <p>
-	 * Used as a placeholder when we can't create the regular instance of a
-	 * tactic (wrong class, unknown id, ...).
-	 * </p>
-	 */
-	protected static class DummyTactic implements ITactic{
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return "Dummy Tactic";
 		}
 
 	}
