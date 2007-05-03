@@ -58,10 +58,6 @@ public class PostTacticPreferencePage
 						}
 					}
 					else {
-						if (UIUtils.DEBUG) {
-							System.out.println("Tactic " + string
-									+ " is added to the preference.");
-						}	
 						result.add(string);
 					}
 				}
@@ -84,9 +80,9 @@ public class PostTacticPreferencePage
 	}
 
 	@Override
-	protected void performApply() {
+	public boolean performOk() {
 		setProvingMode();
-		super.performApply();
+		return super.performOk();
 	}
 
 	private void setProvingMode() {
