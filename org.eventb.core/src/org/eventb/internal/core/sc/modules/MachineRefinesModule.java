@@ -95,7 +95,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		fetchSCMachine(
 				abstractIdentifierSymbolTable, 
 				contextTable,
-				repository.getFormulaFactory(), 
+				FormulaFactory.getDefault(), 
 				null);
 		
 		abstractEventTable.makeImmutable();

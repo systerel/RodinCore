@@ -59,7 +59,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		identifierSymbolTable = 
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
 		typeEnvironment = repository.getTypeEnvironment();
-		factory = repository.getFormulaFactory();
+		factory = FormulaFactory.getDefault();
 	}
 
 
@@ -322,8 +322,6 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			}
 			
 		}
-		
-		repository.setTargetChanged();
 		
 	}
 	

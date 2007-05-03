@@ -51,7 +51,7 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
-		factory = repository.getFormulaFactory();
+		factory = FormulaFactory.getDefault();
 		ICurrentEvent currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
 		isInitialisation = 
 			currentEvent.getCurrentEvent().getLabel().equals(IEvent.INITIALISATION);

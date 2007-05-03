@@ -576,7 +576,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 		identifierSymbolTable =
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
 		
-		factory = repository.getFormulaFactory();
+		factory = FormulaFactory.getDefault();
 		
 		machineTypeEnvironment = repository.getTypeEnvironment();
 				

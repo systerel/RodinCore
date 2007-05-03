@@ -58,7 +58,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		variantInfo = new VariantInfo();
-		factory = repository.getFormulaFactory();
+		factory = FormulaFactory.getDefault();
 		repository.setState(variantInfo);
 	}
 

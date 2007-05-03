@@ -191,7 +191,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
-		factory = repository.getFormulaFactory();
+		factory = FormulaFactory.getDefault();
 		typeEnvironment = repository.getTypeEnvironment();
 		
 		identifierSymbolTable = (IIdentifierSymbolTable)

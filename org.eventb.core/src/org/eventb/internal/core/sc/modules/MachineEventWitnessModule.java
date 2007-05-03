@@ -249,7 +249,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
-		factory = repository.getFormulaFactory();
+		factory = FormulaFactory.getDefault();
 		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
 		currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
 	}

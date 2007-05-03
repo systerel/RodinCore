@@ -237,7 +237,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		isInitialisation = ((IEvent) element).getLabel().equals(IEvent.INITIALISATION);
-		factory = repository.getFormulaFactory();
+		factory = FormulaFactory.getDefault();
 	}
 
 	@Override

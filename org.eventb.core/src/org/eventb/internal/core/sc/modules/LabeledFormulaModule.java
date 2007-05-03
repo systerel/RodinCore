@@ -279,7 +279,7 @@ extends LabeledElementModule {
 			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
-		final FormulaFactory factory = repository.getFormulaFactory();
+		final FormulaFactory factory = FormulaFactory.getDefault();
 		
 		final ITypeEnvironment typeEnvironment = repository.getTypeEnvironment();
 		

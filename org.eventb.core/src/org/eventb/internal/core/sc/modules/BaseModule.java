@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -41,7 +42,7 @@ public abstract class BaseModule extends SCProcessorModule {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		final IdentifierSymbolTable identifierSymbolTable = 
-			new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, repository.getFormulaFactory());
+			new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, FormulaFactory.getDefault());
 		
 		final IContextTable contextTable = new ContextTable(CONTEXT_TABLE_SIZE);
 
