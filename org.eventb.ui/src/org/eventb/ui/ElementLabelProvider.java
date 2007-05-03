@@ -12,15 +12,28 @@
 
 package org.eventb.ui;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
@@ -33,6 +46,8 @@ import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinMarkerUtil;
 
 /**
  * @author htson
@@ -42,13 +57,17 @@ import org.rodinp.core.IRodinElement;
  *         labels for different elements appeared in the UI
  */
 public class ElementLabelProvider extends LabelProvider implements
-		IFontProvider, IPropertyChangeListener {
+		IFontProvider, IPropertyChangeListener, IResourceChangeListener {
 
-	private Viewer viewer;
+	Viewer viewer;
 
 	public ElementLabelProvider(Viewer viewer) {
 		this.viewer = viewer;
 		JFaceResources.getFontRegistry().addListener(this);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.addResourceChangeListener(this,
+				IResourceChangeEvent.POST_BUILD
+						| IResourceChangeEvent.POST_CHANGE);
 	}
 	
 	/*
@@ -123,7 +142,66 @@ public class ElementLabelProvider extends LabelProvider implements
 	@Override
 	public void dispose() {
 		JFaceResources.getFontRegistry().removeListener(this);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
+	}
+
+	public void resourceChanged(IResourceChangeEvent event) {
+		IMarkerDelta[] rodinProblemMakerDeltas = event.findMarkerDeltas(
+				RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
+		
+		final Set<IResource> resources = new HashSet<IResource>();
+		for (IMarkerDelta delta : rodinProblemMakerDeltas) {
+			IResource resource = delta.getResource();
+			resources.add(resource);
+			if (resource instanceof IFile) {
+				resources.add(resource.getParent());
+			}
+		}
+		if (resources.size() != 0) {
+			if (viewer instanceof StructuredViewer) {
+				Display display = viewer.getControl().getDisplay();
+				display.syncExec(new Runnable() {
+
+					public void run() {
+						for (IResource resource : resources) {							
+							if (resource instanceof IProject) {
+								((StructuredViewer) viewer)
+								.update(
+										RodinCore
+												.valueOf((IProject) resource),
+										new String[] { RodinMarkerUtil.RODIN_PROBLEM_MARKER });
+							}
+							else {
+								((StructuredViewer) viewer)
+										.update(
+												RodinCore
+														.valueOf((IFile) resource),
+												new String[] { RodinMarkerUtil.RODIN_PROBLEM_MARKER });
+							}
+						}
+					}
+
+				});
+			}
+			else {
+				Display display = viewer.getControl().getDisplay();
+				display.syncExec(new Runnable() {
+
+					public void run() {
+						viewer.refresh();
+					}
+					
+				});
+			}
+		}
+	}
+
+	@Override
+	public boolean isLabelProperty(Object element, String property) {
+		if (property.equals(RodinMarkerUtil.RODIN_PROBLEM_MARKER))
+			return true;
+		return super.isLabelProperty(element, property);
 	}
 
 	

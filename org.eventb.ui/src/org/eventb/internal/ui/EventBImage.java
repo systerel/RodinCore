@@ -12,6 +12,9 @@
 
 package org.eventb.internal.ui;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -23,7 +26,10 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.RodinMarkerUtil;
 
 /**
  * @author htson
@@ -184,26 +190,62 @@ public class EventBImage {
 	 * @return The image for displaying corresponding to the input element
 	 */
 	public static Image getRodinImage(IRodinElement element) {
+		
 		ImageDescriptor desc = ElementUIRegistry.getDefault()
 				.getImageDescriptor(element);
 		if (desc == null)
 			return null;
 
+		int F_COMMENT = 0x00001;
+		
+		int F_ERROR = 0x00002;
+		
 		// Compute the key
 		// key = desc:Description:overlay
 		// overlay = comment + error
 		String key = "desc:" + desc;
-		String overlay = "0";
+		int overlay = 0;
 		if (element instanceof ICommentedElement) {
 			ICommentedElement ce = (ICommentedElement) element;
 			try {
 				if (ce.hasComment() && ce.getComment().length() != 0)
-					overlay = "1";
+					overlay = overlay | F_COMMENT;
 			} catch (RodinDBException e) {
 				// Do nothing
 				if (UIUtils.DEBUG) e.printStackTrace();
 			}
 		}
+		
+		if (element instanceof IRodinProject) {
+			IRodinProject rodinProj = (IRodinProject) element;
+			try {
+				IMarker[] errorMarkers = rodinProj.getResource().findMarkers(
+						RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
+						IResource.DEPTH_INFINITE);
+				if (errorMarkers.length != 0) {
+					overlay = overlay | F_ERROR;
+				}
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		else if (element instanceof IRodinFile) {
+			IRodinFile rodinFile = (IRodinFile) element;
+			try {
+				IMarker[] errorMarkers = rodinFile.getResource().findMarkers(
+						RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
+						IResource.DEPTH_ZERO);
+				if (errorMarkers.length != 0) {
+					overlay = overlay | F_ERROR;
+				}
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 		key += ":" + overlay;
 
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
@@ -212,8 +254,12 @@ public class EventBImage {
 			if (UIUtils.DEBUG)
 				System.out.println("Create a new image: " + key);
 			OverlayIcon icon = new OverlayIcon(desc);
-			if (overlay == "1")
-				icon.addTopLeft(getImageDescriptor(IEventBSharedImages.IMG_COMMENT_OVERLAY_PATH));
+			if ((overlay & F_COMMENT) != 0)
+				icon
+						.addTopLeft(getImageDescriptor(IEventBSharedImages.IMG_COMMENT_OVERLAY_PATH));
+			if ((overlay & F_ERROR) != 0)
+				icon
+						.addBottomLeft(getImageDescriptor(IEventBSharedImages.IMG_ERROR_OVERLAY_PATH));
 			image = icon.createImage();
 			registry.put(key, image);
 		}
