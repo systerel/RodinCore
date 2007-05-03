@@ -28,6 +28,7 @@
          point="org.eventb.core.seqprover.tactics">
       <tactic
             class="org.eventb.core.seqprover.tacticExtentionTests.IdentityTactic"
+            description="This tactic does nothing but succeeds"
             id="identityTac"
             name="Identity Tactic"/>
       <tactic

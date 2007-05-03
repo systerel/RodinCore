@@ -70,6 +70,11 @@ public class TacticRegistry implements ITacticRegistry {
 	public String getTacticName(String id) throws IllegalArgumentException{
 		return getInfo(id).getTacticName();
 	}
+	
+
+	public String getTacticDescription(String id) throws IllegalArgumentException {
+		return getInfo(id).getTacticDescription();
+	}
 
 	private synchronized TacticInfo getInfo(String id) throws IllegalArgumentException{
 		if (registry == null) {
@@ -122,9 +127,10 @@ public class TacticRegistry implements ITacticRegistry {
 		private final String name;
 		
 		/**
-		 * Tactic instance lazily loaded using <code>configurationElement</code>
+		 * Tactic instance and description lazily loaded using <code>configurationElement</code>
 		 */
 		private ITactic instance;
+		private String description;
 		
 		public TacticInfo(IConfigurationElement element) {
 			this.configurationElement = element;
@@ -187,6 +193,21 @@ public class TacticRegistry implements ITacticRegistry {
 			if (DEBUG) System.out.println(
 					"Successfully loaded tactic " + id);
 			return instance;
+		}
+		
+		public synchronized String getTacticDescription() throws IllegalArgumentException{
+			if (description != null) {
+				return description;
+			}
+
+			if (configurationElement == null) {
+				throw new IllegalArgumentException("Null configuration element");
+			}
+			
+			description = configurationElement.getAttribute("description");
+			if (description == null) description = "";
+			return description;
+			
 		}
 		
 		public String getTacticID() {

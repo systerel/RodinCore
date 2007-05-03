@@ -52,7 +52,7 @@ for tactics within the extension namespace). The token cannot contain a dot (.) 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
                   a human readable name for this tactic
@@ -69,6 +69,16 @@ for tactics within the extension namespace). The token cannot contain a dot (.) 
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eventb.core.seqprover.ITactic"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
                </appInfo>
             </annotation>
          </attribute>

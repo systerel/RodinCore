@@ -1,5 +1,6 @@
 package org.eventb.core.seqprover.tacticExtentionTests;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -92,9 +93,21 @@ public class TacticRegistryTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testGetTacticName() {
 		assertTrue(registry.getTacticName(IdentityTactic.TACTIC_ID).equals("Identity Tactic"));
-		
+		assertTrue(registry.getTacticName(FailTactic.TACTIC_ID).equals("Fail Tactic"));
 		// Should throw an exception
 		registry.getTacticName(unrigisteredId);
+	}
+	
+	/**
+	 * Test method for {@link ITacticRegistry#getTacticDescription(String)}.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testGetTacticDescription() {
+		assertTrue(registry.getTacticDescription(IdentityTactic.TACTIC_ID).equals("This tactic does nothing but succeeds"));
+		assertNotNull(registry.getTacticDescription(FailTactic.TACTIC_ID));
+		assertTrue(registry.getTacticDescription(FailTactic.TACTIC_ID).equals(""));
+		// Should throw an exception
+		registry.getTacticDescription(unrigisteredId);
 	}
 
 	/**
