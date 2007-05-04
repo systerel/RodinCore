@@ -1304,14 +1304,9 @@ public class EventBEditorUtils {
 	 */
 	public static void newEvent(final EventBMachineEditor editor,
 			IProgressMonitor monitor) {
-
-		final IMachineFile mchFile = editor.getRodinInput();
 		try {
-			String evtLabel = UIUtils.getFreeElementLabel(editor, mchFile,
-					IEvent.ELEMENT_TYPE, PrefixEvtName.DEFAULT_PREFIX);
-
-			final NewEventInputDialog dialog = new NewEventInputDialog(Display
-					.getCurrent().getActiveShell(), "New Events", evtLabel);
+			final NewEventInputDialog dialog = new NewEventInputDialog(editor,
+					Display.getCurrent().getActiveShell(), "New Events");
 
 			dialog.open();
 
@@ -1321,7 +1316,6 @@ public class EventBEditorUtils {
 			RodinCore.run(new IWorkspaceRunnable() {
 
 				public void run(IProgressMonitor pm) throws CoreException {
-
 					String name = dialog.getName();
 					String[] varNames = dialog.getVariables();
 					String[] grdNames = dialog.getGrdNames();
@@ -1329,69 +1323,77 @@ public class EventBEditorUtils {
 					String[] actNames = dialog.getActNames();
 					String[] actSubstitutions = dialog.getActSubstitutions();
 
-					String evtName = UIUtils.getFreeElementName(editor,
-							mchFile, IEvent.ELEMENT_TYPE,
-							PrefixEvtName.DEFAULT_PREFIX);
-					IEvent evt = mchFile.getEvent(evtName);
-					evt.create(null, pm);
-					evt.setLabel(name, pm);
-					evt.setConvergence(
-							IConvergenceElement.Convergence.ORDINARY, pm);
-					evt.setInherited(false, pm);
-					editor.addNewElement(evt);
+					IEvent evt = createNewEvent(editor, name, pm);
 
-					String varPrefix = UIUtils.getNamePrefix(editor,
-							IVariable.ELEMENT_TYPE,
-							PrefixVarName.DEFAULT_PREFIX);
+					createNewVariables(editor, evt, varNames, pm);
 
-					int varIndex = UIUtils.getFreeElementNameIndex(editor, evt,
-							IVariable.ELEMENT_TYPE, varPrefix);
-					for (String varName : varNames) {
-						IVariable var = evt.getVariable(varPrefix + varIndex);
-						var.create(null, pm);
-						var.setIdentifierString(varName, pm);
-						editor.addNewElement(var);
-						varIndex = UIUtils
-								.getFreeElementNameIndex(evt,
-										IVariable.ELEMENT_TYPE, varPrefix,
-										varIndex + 1);
-					}
+					createNewGuards(editor, evt, grdNames, grdPredicates, pm);
 
-					String grdPrefix = UIUtils.getNamePrefix(editor,
-							IGuard.ELEMENT_TYPE,
-							PrefixGrdName.DEFAULT_PREFIX);
-					int grdIndex = UIUtils.getFreeElementNameIndex(editor, evt,
-							IGuard.ELEMENT_TYPE, grdPrefix);
-					for (int i = 0; i < grdNames.length; i++) {
-						IGuard grd = evt.getGuard(grdPrefix + grdIndex);
-						grd.create(null, pm);
-						grd.setLabel(grdNames[i], pm);
-						grd.setPredicateString(grdPredicates[i], null);
-						editor.addNewElement(grd);
-						grdIndex = UIUtils.getFreeElementNameIndex(evt,
-								IGuard.ELEMENT_TYPE, grdPrefix, grdIndex + 1);
-					}
-
-					String actPrefix = UIUtils.getNamePrefix(editor,
-							IAction.ELEMENT_TYPE,
-							PrefixActName.DEFAULT_PREFIX);
-					int actIndex = UIUtils.getFreeElementNameIndex(editor, evt,
-							IAction.ELEMENT_TYPE, actPrefix);
-					for (int i = 0; i < actNames.length; i++) {
-						IAction act = evt.getAction(actPrefix + actIndex);
-						act.create(null, pm);
-						act.setLabel(actNames[i], pm);
-						act.setAssignmentString(actSubstitutions[i], pm);
-						editor.addNewElement(act);
-						actIndex = UIUtils.getFreeElementNameIndex(evt,
-								IAction.ELEMENT_TYPE, actPrefix, actIndex);
-					}
+					createNewActions(editor, evt, actNames, actSubstitutions,
+							pm);
 				}
 
 			}, monitor);
 
 		} catch (CoreException e) {
 			e.printStackTrace();
+		}
+	}
+
+	protected static void createNewActions(IEventBEditor editor,
+			IEvent evt, String[] actNames, String[] actSubstitutions,
+			IProgressMonitor pm) throws RodinDBException {
+		String actPrefix = UIUtils.getNamePrefix(editor, IAction.ELEMENT_TYPE,
+				PrefixActName.DEFAULT_PREFIX);
+		int actIndex = UIUtils.getFreeElementNameIndex(editor, evt,
+				IAction.ELEMENT_TYPE, actPrefix);
+		for (int i = 0; i < actNames.length; i++) {
+			IAction act = evt.getAction(actPrefix + actIndex);
+			act.create(null, pm);
+			act.setLabel(actNames[i], pm);
+			act.setAssignmentString(actSubstitutions[i], pm);
+			editor.addNewElement(act);
+			actIndex = UIUtils.getFreeElementNameIndex(evt,
+					IAction.ELEMENT_TYPE, actPrefix, actIndex);
+		}
+	}
+
+	protected static void createNewGuards(IEventBEditor editor,
+			IEvent evt, String[] grdNames, String[] grdPredicates,
+			IProgressMonitor pm) throws RodinDBException {
+		String grdPrefix = UIUtils.getNamePrefix(editor, IGuard.ELEMENT_TYPE,
+				PrefixGrdName.DEFAULT_PREFIX);
+		int grdIndex = UIUtils.getFreeElementNameIndex(editor, evt,
+				IGuard.ELEMENT_TYPE, grdPrefix);
+		for (int i = 0; i < grdNames.length; i++) {
+			IGuard grd = evt.getGuard(grdPrefix + grdIndex);
+			grd.create(null, pm);
+			grd.setLabel(grdNames[i], pm);
+			grd.setPredicateString(grdPredicates[i], null);
+			editor.addNewElement(grd);
+			grdIndex = UIUtils.getFreeElementNameIndex(evt,
+					IGuard.ELEMENT_TYPE, grdPrefix, grdIndex + 1);
+		}
+	}
+
+	protected static void createNewVariables(IEventBEditor editor,
+			IEvent evt, String[] identifiers, IProgressMonitor pm)
+			throws RodinDBException {
+		String varPrefix = UIUtils.getNamePrefix(editor,
+				IVariable.ELEMENT_TYPE,
+				PrefixVarName.DEFAULT_PREFIX);
+
+		int varIndex = UIUtils.getFreeElementNameIndex(editor, evt,
+				IVariable.ELEMENT_TYPE, varPrefix);
+		for (String varName : identifiers) {
+			IVariable var = evt.getVariable(varPrefix + varIndex);
+			var.create(null, pm);
+			var.setIdentifierString(varName, pm);
+			editor.addNewElement(var);
+			varIndex = UIUtils
+					.getFreeElementNameIndex(evt,
+							IVariable.ELEMENT_TYPE, varPrefix,
+							varIndex + 1);
 		}
 	}
 
@@ -1700,6 +1702,28 @@ public class EventBEditorUtils {
 			return UIUtils.getFreeElementLabel(editor, initialisation,
 					IAction.ELEMENT_TYPE, PrefixActName.DEFAULT_PREFIX);
 		}
+	}
+
+	
+	public static IEvent createNewEvent(final IEventBEditor editor, final String label,
+			IProgressMonitor monitor) throws CoreException {
+		RodinCore.run(new IWorkspaceRunnable() {
+
+			public void run(IProgressMonitor pm) throws CoreException {
+				IRodinFile rodinFile = editor.getRodinInput();
+				String evtName = UIUtils.getFreeElementName(editor, rodinFile,
+						IEvent.ELEMENT_TYPE, PrefixEvtName.DEFAULT_PREFIX);
+				newEvt = ((IMachineFile) rodinFile).getEvent(evtName);
+				newEvt.create(null, pm);
+				newEvt.setLabel(label, pm);
+				newEvt.setConvergence(IConvergenceElement.Convergence.ORDINARY,
+						pm);
+				newEvt.setInherited(false, pm);
+				editor.addNewElement(newEvt);
+			}
+
+		}, monitor);
+		return newEvt;
 	}
 
 }
