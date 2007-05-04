@@ -60,9 +60,9 @@ public class TestUserSupportChanges extends TestPM {
 		prFile = poFile.getPRFile();
 
 		hyp0 = POUtil.addPredicateSet(poFile, "hyp0", null, mTypeEnvironment(
-				"x", "ℤ", "f", "ℙ(ℤ×ℤ)"), "1=1", "2=2", "x∈ℕ", "f∈ℕ ⇸ ℕ");
+				"x", "ℤ", "f", "ℙ(ℤ×ℤ)"), "2=2", "x=1", "x∈ℕ", "f∈ℕ ⇸ ℕ");
 		hyp1 = POUtil.addPredicateSet(poFile, "hyp1", null, mTypeEnvironment(
-				"x", "ℤ", "f", "ℙ(ℤ×ℤ)"), "1=1", "2=2", "x∈ℕ", "f∈ℕ ⇸ ℕ",
+				"x", "ℤ", "f", "ℙ(ℤ×ℤ)"), "2=2", "x=1", "x∈ℕ", "f∈ℕ ⇸ ℕ",
 				"f(x)∈ℕ", "x∈dom(f)");
 
 		// Turn on beginner mode
@@ -89,9 +89,9 @@ public class TestUserSupportChanges extends TestPM {
 
 	public void testRemoveCurrentPO() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "1 = 2", hyp0,
+				.addSequent(poFile, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
+		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
 		AutoProver.enable();
@@ -128,9 +128,9 @@ public class TestUserSupportChanges extends TestPM {
 
 	public void testRemoveOtherPO() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "1 = 2", hyp0,
+				.addSequent(poFile, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
+		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
 		AutoProver.enable();
@@ -146,12 +146,12 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n"
 						+ "Is dirty? false\n"
 						+ "** Proof Tree **\n"
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, x∈ℕ, 2=2, 1=1][] |- 1=2		- =>\n"
+						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, x∈ℕ, x=1, 2=2][] |- x=2		- =>\n"
 						+ "1 pending subgoals\n"
 						+ "\n"
 						+ "** Cached **\n"
 						+ "** Searched **\n"
-						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, x∈ℕ, 2=2, 1=1][] |- 1=2		- =>\n"
+						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, x∈ℕ, x=1, 2=2][] |- x=2		- =>\n"
 						+ "1 pending subgoals\n"
 						+ "\n"
 						+ "****************************\n"
@@ -170,9 +170,9 @@ public class TestUserSupportChanges extends TestPM {
 
 	public void testAddPO() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "1 = 2", hyp0,
+				.addSequent(poFile, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
+		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
 		AutoProver.enable();
@@ -196,12 +196,12 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n"
 						+ "Is dirty? false\n"
 						+ "** Proof Tree **\n"
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, x∈ℕ, 2=2, 1=1][] |- 1=2		- =>\n"
+						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, x∈ℕ, x=1, 2=2][] |- x=2		- =>\n"
 						+ "1 pending subgoals\n"
 						+ "\n"
 						+ "** Cached **\n"
 						+ "** Searched **\n"
-						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, x∈ℕ, 2=2, 1=1][] |- 1=2		- =>\n"
+						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, x∈ℕ, x=1, 2=2][] |- x=2		- =>\n"
 						+ "1 pending subgoals\n"
 						+ "\n"
 						+ "****************************\n"
@@ -225,9 +225,9 @@ public class TestUserSupportChanges extends TestPM {
 	 */
 	public void testChangePONotLoaded() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "1 = 2", hyp0,
+				.addSequent(poFile, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
+		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
 		AutoProver.enable();
@@ -249,9 +249,9 @@ public class TestUserSupportChanges extends TestPM {
 	 */
 	public void testChangePONotModified() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "1 = 2", hyp0,
+				.addSequent(poFile, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
+		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
 		AutoProver.enable();
@@ -266,12 +266,12 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n"
 						+ "Is dirty? false\n"
 						+ "** Proof Tree **\n"
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=1		hyp <>\n"
+						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, x=1, 2=2][] |- x=1		hyp <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "** Cached **\n"
 						+ "** Searched **\n"
-						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=1		hyp <>\n"
+						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, x=1, 2=2][] |- x=1		hyp <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "****************************\n"
@@ -297,9 +297,9 @@ public class TestUserSupportChanges extends TestPM {
 	 */
 	public void testChangePOModifiedAndDischargedAutoInDB() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "1 = 2", hyp0,
+				.addSequent(poFile, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
+		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
 		AutoProver.enable();
@@ -322,12 +322,12 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n"
 						+ "Is dirty? false\n"
 						+ "** Proof Tree **\n"
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=1		hyp <>\n"
+						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, x=1, 2=2][] |- x=1		hyp <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "** Cached **\n"
 						+ "** Searched **\n"
-						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=1		hyp <>\n"
+						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, x=1, 2=2][] |- x=1		hyp <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "****************************\n"
@@ -352,12 +352,12 @@ public class TestUserSupportChanges extends TestPM {
 	 */
 	public void testChangePOModifiedAndReusable() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "1 = 2", hyp0,
+				.addSequent(poFile, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
+		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		POUtil
-				.addSequent(poFile, reusablePO, "1 = 2", hyp1,
+				.addSequent(poFile, reusablePO, "x = 2", hyp1,
 						mTypeEnvironment());
 		poFile.save(null, true);
 		AutoProver.enable();
@@ -380,12 +380,12 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n"
 						+ "Is dirty? true\n"
 						+ "** Proof Tree **\n"
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=2		rv (1) (1=2) <>\n"
+						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, x=1, 2=2][] |- x=2		rv (1) (x=2) <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "** Cached **\n"
 						+ "** Searched **\n"
-						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=2		rv (1) (1=2) <>\n"
+						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, x=1, 2=2][] |- x=2		rv (1) (x=2) <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "****************************\n"
@@ -420,13 +420,13 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil
 				.addSequent(poFile, originalPO, "x∈dom(f)∧f∼;({x} ◁ f)⊆id(ℤ)", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
+		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		POUtil
-		.addSequent(poFile, rebuiltPO, "1 = 2", hyp1,
+		.addSequent(poFile, rebuiltPO, "x = 2", hyp1,
 				mTypeEnvironment());
 		POUtil
-				.addSequent(poFile, reusablePO, "1 = 2", hyp1,
+				.addSequent(poFile, reusablePO, "x = 2", hyp1,
 						mTypeEnvironment());
 		poFile.save(null, true);
 		AutoProver.enable();
@@ -448,12 +448,12 @@ public class TestUserSupportChanges extends TestPM {
 				"****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n" + 
 				"Is dirty? true\n" + 
 				"** Proof Tree **\n" + 
-				"{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=2		- =>\n" + 
+				"{f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, x=1, 2=2][] |- x=2		- =>\n" + 
 				"1 pending subgoals\n" + 
 				"\n" + 
 				"** Cached **\n" + 
 				"** Searched **\n" + 
-				"Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, 2=2, 1=1][] |- 1=2		- =>\n" + 
+				"Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), x∈ℕ, x=1, 2=2][] |- x=2		- =>\n" + 
 				"1 pending subgoals\n" + 
 				"\n" + 
 				"****************************\n" + 
