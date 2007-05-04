@@ -140,6 +140,9 @@ public class AssociativePredicate extends Predicate {
 
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		return equalsHelper(children, ((AssociativePredicate) other).children,
 				withAlphaConversion);
 	}

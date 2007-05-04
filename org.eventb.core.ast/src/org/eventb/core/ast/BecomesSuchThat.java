@@ -176,6 +176,9 @@ public class BecomesSuchThat extends Assignment {
 
 	@Override
 	protected boolean equals(Formula otherFormula, boolean withAlphaConversion) {
+		if (this.getTag() != otherFormula.getTag()) {
+			return false;
+		}
 		BecomesSuchThat other = (BecomesSuchThat) otherFormula;
 		return hasSameAssignedIdentifiers(other)
 				&& condition.equals(other.condition, withAlphaConversion);

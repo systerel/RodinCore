@@ -15,6 +15,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 
@@ -218,4 +219,27 @@ public class TestEquals extends TestCase {
 		}
 	}
 	
+	/**
+	 * Ensures that two different formulas that happen to have the same hash
+	 * code can nevertheless be compared without raising an exception.
+	 * 
+	 * Cf. bug #1711912: ClassCastException in AST Formula.equals()
+	 */
+	public final void testNotEqualsSameHashCode() {
+		final Predicate f1 = parsePredicate("CLTR ∩ cel_inv[ran(env)]=∅");
+		final Predicate f2 = parsePredicate("ran(env) ∩ cel_inv[CLTR]=∅");
+		assertEquals("Both predicates should have the same hash code",
+				f1.hashCode(), f2.hashCode());
+		assertFalse("Disequality of " + f1 + " and " + f2,
+				f1.equals(f2));
+		assertFalse("Disequality of " + f2 + " and " + f1,
+				f2.equals(f1));
+	}
+
+	private Predicate parsePredicate(String string) {
+		final IParseResult result = ff.parsePredicate(string);
+		assertTrue("Can't parse " + string, result.isSuccess());
+		return result.getParsedPredicate();
+	}
+
 }

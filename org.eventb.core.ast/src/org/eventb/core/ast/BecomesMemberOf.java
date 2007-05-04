@@ -104,6 +104,9 @@ public class BecomesMemberOf extends Assignment {
 
 	@Override
 	protected boolean equals(Formula otherFormula, boolean withAlphaConversion) {
+		if (this.getTag() != otherFormula.getTag()) {
+			return false;
+		}
 		BecomesMemberOf other = (BecomesMemberOf) otherFormula;
 		return this.hasSameAssignedIdentifiers(other)
 				&& setExpr.equals(other.setExpr, withAlphaConversion);

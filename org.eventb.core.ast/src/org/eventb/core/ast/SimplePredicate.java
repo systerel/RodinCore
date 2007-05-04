@@ -98,6 +98,9 @@ public class SimplePredicate extends Predicate {
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		SimplePredicate temp = (SimplePredicate) other;
 		return child.equals(temp.child, withAlphaConversion);
 	}

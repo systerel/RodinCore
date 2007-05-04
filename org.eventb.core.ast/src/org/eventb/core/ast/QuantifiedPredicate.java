@@ -199,6 +199,9 @@ public class QuantifiedPredicate extends Predicate {
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		QuantifiedPredicate temp = (QuantifiedPredicate) other;
 		return areEqualQuantifiers(quantifiedIdentifiers,
 				temp.quantifiedIdentifiers, withAlphaConversion)

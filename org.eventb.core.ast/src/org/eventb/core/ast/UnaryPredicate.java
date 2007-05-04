@@ -80,6 +80,9 @@ public class UnaryPredicate extends Predicate {
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		UnaryPredicate temp = (UnaryPredicate) other;
 		return child.equals(temp.child, withAlphaConversion);
 	}

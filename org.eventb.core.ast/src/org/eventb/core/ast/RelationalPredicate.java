@@ -187,6 +187,9 @@ public class RelationalPredicate extends Predicate {
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		RelationalPredicate temp = (RelationalPredicate) other;
 		return left.equals(temp.left, withAlphaConversion)
 			&& right.equals(temp.right, withAlphaConversion);

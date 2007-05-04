@@ -465,6 +465,9 @@ public class BinaryExpression extends Expression {
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		BinaryExpression otherExpr = (BinaryExpression) other;
 		return hasSameType(other)
 				&& left.equals(otherExpr.left, withAlphaConversion)

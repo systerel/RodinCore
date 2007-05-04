@@ -330,6 +330,9 @@ public class AssociativeExpression extends Expression {
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		return hasSameType(other)
 				&& equalsHelper(children,
 						((AssociativeExpression) other).children,

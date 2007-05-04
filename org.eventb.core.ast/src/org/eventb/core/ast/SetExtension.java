@@ -173,6 +173,9 @@ public class SetExtension extends Expression {
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		return hasSameType(other)
 				&& equalsHelper(members, ((SetExtension) other).members,
 						withAlphaConversion);

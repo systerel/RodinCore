@@ -92,6 +92,9 @@ public class IntegerLiteral extends Expression {
 
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		return hasSameType(other)
 				&& literal.equals(((IntegerLiteral) other).literal);
 	}

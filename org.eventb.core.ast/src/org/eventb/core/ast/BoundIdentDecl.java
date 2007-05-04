@@ -91,6 +91,9 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		BoundIdentDecl otherDecl = (BoundIdentDecl) other;
 		boolean result = type == null ? otherDecl.type == null : type.equals(otherDecl.type);
 		return result && name.equals(((BoundIdentDecl) other).name);

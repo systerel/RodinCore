@@ -126,7 +126,7 @@ public class AtomicExpression extends Expression {
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
-		return hasSameType(other);
+		return this.getTag() == other.getTag() && hasSameType(other);
 	}
 
 	@Override

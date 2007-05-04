@@ -111,6 +111,9 @@ public class BinaryPredicate extends Predicate {
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		BinaryPredicate temp = (BinaryPredicate) other;
 		return left.equals(temp.left, withAlphaConversion)
 				&& right.equals(temp.right, withAlphaConversion);

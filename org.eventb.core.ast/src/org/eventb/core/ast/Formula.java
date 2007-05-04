@@ -1058,9 +1058,6 @@ public abstract class Formula<T extends Formula<T>> {
 		if (hashCode != otherFormula.hashCode) {
 			return false;
 		}
-		if (tag != otherFormula.tag) {
-			return false;
-		}
 		return equals(otherFormula, true);
 	}
 

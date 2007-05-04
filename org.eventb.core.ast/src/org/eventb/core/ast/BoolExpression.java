@@ -84,6 +84,9 @@ public class BoolExpression extends Expression {
 
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		return hasSameType(other)
 				&& child.equals(((BoolExpression) other).child, withAlphaConversion);
 	}

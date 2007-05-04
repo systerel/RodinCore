@@ -539,6 +539,9 @@ public class QuantifiedExpression extends Expression {
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		QuantifiedExpression temp = (QuantifiedExpression) other;
 		return hasSameType(other)
 				&& areEqualQuantifiers(quantifiedIdentifiers,

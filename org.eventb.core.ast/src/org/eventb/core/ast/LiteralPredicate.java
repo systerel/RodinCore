@@ -71,7 +71,7 @@ public class LiteralPredicate extends Predicate {
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
-		return true;
+		return this.getTag() == other.getTag();
 	}
 
 	@Override

@@ -325,6 +325,9 @@ public class UnaryExpression extends Expression {
 
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
+		if (this.getTag() != other.getTag()) {
+			return false;
+		}
 		UnaryExpression otherExpr = (UnaryExpression) other;
 		return hasSameType(other)
 				&& child.equals(otherExpr.child, withAlphaConversion);
