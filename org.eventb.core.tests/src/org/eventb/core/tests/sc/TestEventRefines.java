@@ -1018,7 +1018,7 @@ public class TestEventRefines extends BasicSCTest {
 		IEvent fvt = addEvent(mac, "fvt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
-				makeSList("A1"), makeSList("p:∈{p}"));
+				makeSList("A2"), makeSList("p:∈{p}"));
 		addEventRefines(fvt, "evt");
 		addEventWitnesses(fvt, makeSList("x"), makeSList("x=p"));
 	
@@ -1394,7 +1394,7 @@ public class TestEventRefines extends BasicSCTest {
 	}
 	
 	/*
-	 * post-values of abstract disappearing variables must be be referenced in witnesses 
+	 * variables that are not in the concrete machine cannot be assigned to or from
 	 */
 	public void testEvents_36_disappearedVariableAssigned() throws Exception {
 		IMachineFile abs = createMachine("abs");
@@ -1414,7 +1414,52 @@ public class TestEventRefines extends BasicSCTest {
 		addVariables(mac, "V2");
 		addInvariants(mac, makeSList("I1"), makeSList("V2∈ℕ"));
 		IEvent evt = addEvent(mac, "evt", makeSList(), 
-				makeSList(), makeSList(), makeSList("A2"), makeSList("V1:∈ℕ"));
+				makeSList(), makeSList(), makeSList("A2", "A3"), makeSList("V1:∈ℕ", "V2≔V1"));
+		addEventRefines(evt, "evt");
+		addEventWitnesses(evt, makeSList("V1'"), makeSList("⊤"));
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("V1'", intType);
+		typeEnvironment.addName("V2'", intType);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt");
+		refinesEvents(events[0], "evt");
+		
+		containsActions(events[0], typeEnvironment, makeSList(), makeSList());
+		
+		hasMarker(evt.getActions()[0]);
+		hasMarker(evt.getActions()[1]);
+		
+	}
+	
+	/*
+	 * variables that are not in the concrete machine cannot be in guards
+	 */
+	public void testEvents_37_disappearedVariableInGuard() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, "V1");
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addEvent(abs, "evt", makeSList(), 
+				makeSList("G1"), makeSList("V1>0"), 
+				makeSList(), makeSList());
+
+		abs.save(null, true);
+		
+		runBuilder();
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "V2");
+		addInvariants(mac, makeSList("I1"), makeSList("V2∈ℕ"));
+		IEvent evt = addEvent(mac, "evt", makeSList(), 
+				makeSList("G2", "G3"), makeSList("V1>0", "V2>0"), 
+				makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 		mac.save(null, true);
 		
@@ -1429,10 +1474,9 @@ public class TestEventRefines extends BasicSCTest {
 		ISCEvent[] events = getSCEvents(file, "evt");
 		refinesEvents(events[0], "evt");
 		
-		containsWitnesses(events[0], typeEnvironment, makeSList("V1'"), makeSList("⊤"));
+		containsGuards(events[0], typeEnvironment, makeSList("G3"), makeSList("V2>0"));
 		
-		hasMarker(evt);
-		hasMarker(evt.getActions()[0]);
+		hasMarker(evt.getGuards()[0]);
 		
 	}
 

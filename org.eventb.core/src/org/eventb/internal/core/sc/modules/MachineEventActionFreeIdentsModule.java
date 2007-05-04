@@ -62,13 +62,23 @@ public class MachineEventActionFreeIdentsModule extends MachineFormulaFreeIdents
 			FreeIdentifier freeIdentifier, 
 			IProgressMonitor monitor) throws CoreException {
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, freeIdentifier, monitor);
-		if (isInitialisation && symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
-			createProblemMarker(
-					element, getAttributeType(), 
-					freeIdentifier.getSourceLocation().getStart(), 
-					freeIdentifier.getSourceLocation().getEnd(), 
-					GraphProblem.InitialisationActionRHSError, freeIdentifier.getName());
-			return null;
+		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
+			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
+			if (isInitialisation) {
+				createProblemMarker(element, getAttributeType(), freeIdentifier
+						.getSourceLocation().getStart(), freeIdentifier
+						.getSourceLocation().getEnd(),
+						GraphProblem.InitialisationActionRHSError,
+						freeIdentifier.getName());
+				return null;
+			} else if (!variableSymbolInfo.isLocal() && (variableSymbolInfo.isForbidden() || !variableSymbolInfo.isConcrete())) {
+				createProblemMarker(
+						element, 
+						getAttributeType(), 
+						GraphProblem.VariableHasDisappearedError,
+						freeIdentifier.getName());
+				return null;
+			}
 		}
 		return symbolInfo;
 	}
@@ -103,14 +113,7 @@ public class MachineEventActionFreeIdentsModule extends MachineFormulaFreeIdents
 			IIdentifierSymbolInfo symbolInfo = symbolTable.getSymbolInfo(name);
 			if (symbolInfo instanceof IVariableSymbolInfo) {
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-				if (variableSymbolInfo.isForbidden() || !variableSymbolInfo.isConcrete()) {
-//					createProblemMarker(
-//							element, 
-//							getAttributeType(), 
-//							GraphProblem.UndeclaredFreeIdentifierError,
-//							name);
-//					return false;
-//				} else if (variableSymbolInfo.isImported() && !variableSymbolInfo.isConcrete()) {
+				if (!variableSymbolInfo.isLocal() && (variableSymbolInfo.isForbidden() || !variableSymbolInfo.isConcrete())) {
 					createProblemMarker(
 							element, 
 							getAttributeType(), 

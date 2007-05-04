@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
-import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.ParseProblem;
 import org.rodinp.core.IRodinElement;
 

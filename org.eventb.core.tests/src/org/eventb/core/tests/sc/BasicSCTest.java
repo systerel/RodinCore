@@ -43,11 +43,7 @@ import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ISCWitness;
-import org.eventb.core.ast.Assignment;
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.tests.EventBTest;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
@@ -171,12 +167,12 @@ public abstract class BasicSCTest extends EventBTest {
 		return names;
 	}
 
-	private Hashtable<String, String> getActionTable(ISCAction[] elements) throws RodinDBException {
-		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
-		for (ISCAction action : elements)
-			table.put(action.getLabel(), action.getAssignmentString());
-		return table;
-	}
+//	private Hashtable<String, String> getActionTable(ISCAction[] elements) throws RodinDBException {
+//		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
+//		for (ISCAction action : elements)
+//			table.put(action.getLabel(), action.getAssignmentString());
+//		return table;
+//	}
 
 	private Hashtable<String, String> getPredicateTable(ISCPredicateElement[] elements) throws RodinDBException {
 		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
@@ -192,32 +188,32 @@ public abstract class BasicSCTest extends EventBTest {
 		return table;
 	}
 
-	private Set<String> getSCPredicateSet(ISCPredicateElement[] elements) throws RodinDBException {
-		HashSet<String> predicates = new HashSet<String>(elements.length * 4 / 3 + 1);
-		for(ISCPredicateElement element : elements)
-			predicates.add(element.getPredicateString());
-		return predicates;
-	}
+//	private Set<String> getSCPredicateSet(ISCPredicateElement[] elements) throws RodinDBException {
+//		HashSet<String> predicates = new HashSet<String>(elements.length * 4 / 3 + 1);
+//		for(ISCPredicateElement element : elements)
+//			predicates.add(element.getPredicateString());
+//		return predicates;
+//	}
 
-	private Expression expressionFromString(String expression) {
-		Expression ee = factory.parseExpression(expression).getParsedExpression();
-		return ee;
-	}
-	
-	private Predicate predicateFromString(String predicate) {
-		Predicate pp = factory.parsePredicate(predicate).getParsedPredicate();
-		return pp;
-	}
-	
-	private Assignment assignmentFromString(String assignment) {
-		Assignment aa = factory.parseAssignment(assignment).getParsedAssignment();
-		return aa;
-	}
-
-	private Type typeFromString(String type) {
-		Type tt = factory.parseType(type).getParsedType();
-		return tt;
-	}
+//	private Expression expressionFromString(String expression) {
+//		Expression ee = factory.parseExpression(expression).getParsedExpression();
+//		return ee;
+//	}
+//	
+//	private Predicate predicateFromString(String predicate) {
+//		Predicate pp = factory.parsePredicate(predicate).getParsedPredicate();
+//		return pp;
+//	}
+//	
+//	private Assignment assignmentFromString(String assignment) {
+//		Assignment aa = factory.parseAssignment(assignment).getParsedAssignment();
+//		return aa;
+//	}
+//
+//	private Type typeFromString(String type) {
+//		Type tt = factory.parseType(type).getParsedType();
+//		return tt;
+//	}
 
 	private void containsPredicates(
 			String type, ITypeEnvironment environment, String[] labels, String[] strings, 
