@@ -806,23 +806,21 @@ public class BinaryExpression extends Expression {
 	}
 
 	private Predicate getWDPredicateFUNIMAGE(FormulaFactory ff) {
-		Predicate leftConjunct = left.getWDPredicateRaw(ff);
-		Predicate rightConjunct = right.getWDPredicateRaw(ff);
-		Expression leftDom = ff.makeUnaryExpression(KDOM, left, null);
-		Predicate leftInRightDom = ff.makeRelationalPredicate(IN, right, leftDom, null);
-		Expression singleton = ff.makeSetExtension(right, null);
-		Expression comp0 = ff.makeUnaryExpression(CONVERSE, left, null);
-		Expression comp1 = ff.makeBinaryExpression(DOMRES, singleton, left, null);
-		Expression comp = ff.makeAssociativeExpression(FCOMP, new Expression[]{comp0, comp1}, null);
-		Expression ran = left.getType().getTarget().toExpression(ff);
-		Expression id = ff.makeUnaryExpression(KID, ran, null);
-		Predicate rightFct = ff.makeRelationalPredicate(SUBSETEQ, comp, id, null);
-		return 
-		getWDSimplifyC(ff,
+		final Predicate leftConjunct = left.getWDPredicateRaw(ff);
+		final Predicate rightConjunct = right.getWDPredicateRaw(ff);
+		final Expression dom = ff.makeUnaryExpression(KDOM, left, null);
+		final Predicate inDom = ff.makeRelationalPredicate(IN, right, dom, null);
+		
+		final Expression src = left.getType().getSource().toExpression(ff);
+		final Expression trg = left.getType().getTarget().toExpression(ff);
+		final Expression pfun = ff.makeBinaryExpression(PFUN, src, trg, null);
+		final Predicate isPFun = ff.makeRelationalPredicate(IN, left, pfun, null);
+		
+		return getWDSimplifyC(ff,
 				getWDSimplifyC(ff,
 						getWDSimplifyC(ff, leftConjunct, rightConjunct),
-						leftInRightDom),
-						rightFct);
+						inDom),
+						isPFun);
 	}
 
 	@Override
