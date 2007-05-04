@@ -15,8 +15,13 @@ package org.eventb.internal.ui.eventbeditor;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -24,13 +29,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.IAxiom;
+import org.eventb.core.IConstant;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixAxmName;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixCstName;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -41,22 +50,22 @@ import org.rodinp.core.RodinDBException;
  */
 public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
-	private String defaultName;
-
 	private int axmIndex;
 
-	private String axmPrefix;
+	String identifier;
 
-	private String name;
+	private IEventBInputText identifierText;
 
-	private Collection<Pair> axioms;
-
-	private IEventBInputText nameText;
-
+	Collection<String> axmLabels;
+	
+	Collection<String> axmSubs;
+	
 	private Collection<Pair> axiomPairTexts;
 
-	private IEventBEditor editor;
+	IEventBEditor editor;
 
+	private Composite composite;
+	
 	/**
 	 * Constructor.
 	 * <p>
@@ -65,18 +74,11 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	 *            the parent shell of the dialog
 	 * @param title
 	 *            the title of the dialog
-	 * @param defaultName
-	 *            the default variable name
 	 */
 	public IntelligentNewConstantInputDialog(IEventBEditor editor,
-			Shell parentShell, String title, String defaultName,
-			String axmPrefix, int axmIndex) {
+			Shell parentShell, String title) {
 		super(parentShell, title);
 		this.editor = editor;
-		this.defaultName = defaultName;
-		this.axmIndex = axmIndex;
-		this.axmPrefix = axmPrefix;
-		axiomPairTexts = new ArrayList<Pair>();
 	}
 
 	/*
@@ -86,7 +88,9 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.YES_ID, "&More Axm.", true);
+		createButton(parent, IDialogConstants.RETRY_ID, "&Add", false);
+
+		createButton(parent, IDialogConstants.YES_ID, "&More Axm.", false);
 
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
 				true);
@@ -103,31 +107,53 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	@Override
 	protected void createContents() {
 		Composite body = scrolledForm.getBody();
+		body.setLayout(new FillLayout());
+		createDialogContents(body);
 
+	}
+
+	private void createDialogContents(Composite parent) {
+		composite = toolkit.createComposite(parent);
+		if (EventBEditorUtils.DEBUG)
+			composite.setBackground(composite.getDisplay().getSystemColor(
+					SWT.COLOR_CYAN));
+
+		axiomPairTexts = new ArrayList<Pair>();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.verticalSpacing = 10;
 		layout.horizontalSpacing = 10;
-		body.setLayout(layout);
+		composite.setLayout(layout);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
 
-		Label label = toolkit.createLabel(body, "Name");
+		Label label = toolkit.createLabel(composite, "Name");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
-		nameText = new EventBText(toolkit.createText(body, ""));
+		identifierText = new EventBText(toolkit.createText(composite, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.horizontalSpan = 2;
 		gd.widthHint = 200;
-		Text textWidget = nameText.getTextWidget();
+		Text textWidget = identifierText.getTextWidget();
 		textWidget.setLayoutData(gd);
 		textWidget.addModifyListener(new DirtyStateListener());
 
-		label = toolkit.createLabel(body, "Axiom");
+		label = toolkit.createLabel(composite, "Axiom");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
+		String axmPrefix = UIUtils.getPrefix(editor,
+				IAxiom.ELEMENT_TYPE, PrefixAxmName.DEFAULT_PREFIX);
+		try {
+			axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor.getRodinInput(),
+					IAxiom.ELEMENT_TYPE, axmPrefix);
+		} catch (RodinDBException e1) {
+			// TODO Auto-generated catch block
+			axmIndex = 1;
+			e1.printStackTrace();
+		}
+
 		IEventBInputText axiomNameText = new EventBText(toolkit.createText(
-				body, axmPrefix + axmIndex));
+				composite, axmPrefix + axmIndex));
 
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = 50;
@@ -136,7 +162,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 				new DirtyStateListener());
 
 		IEventBInputText axiomPredicateText = new EventBMath(toolkit
-				.createText(body, ""));
+				.createText(composite, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 150;
 		axiomPredicateText.getTextWidget().setLayoutData(gd);
@@ -148,7 +174,16 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		axiomPairTexts.add(new Pair<IEventBInputText, IEventBInputText>(
 				axiomNameText, axiomPredicateText));
 
-		textWidget.setText(defaultName);
+		String cstLabel = "defaultLabel";
+		try {
+			cstLabel = UIUtils.getFreeElementIdentifier(editor,
+					editor.getRodinInput(), IConstant.ELEMENT_TYPE,
+					PrefixCstName.DEFAULT_PREFIX);
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		textWidget.setText(cstLabel);
 		textWidget.selectAll();
 		textWidget.setFocus();
 	}
@@ -161,13 +196,16 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CANCEL_ID) {
-			name = null;
-			axioms = null;
+			identifier = null;
+			axmLabels = null;
+			axmSubs = null;
 		} else if (buttonId == IDialogConstants.YES_ID) {
-			Composite body = scrolledForm.getBody();
-			Label label = toolkit.createLabel(body, "Axiom");
+			Label label = toolkit.createLabel(composite, "Axiom");
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 			label.setLayoutData(gd);
+			String axmPrefix = UIUtils.getPrefix(editor,
+					IAxiom.ELEMENT_TYPE,
+					PrefixAxmName.DEFAULT_PREFIX);
 
 			try {
 				axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor
@@ -178,14 +216,14 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 				e.printStackTrace();
 			}
 			IEventBInputText axiomNameText = new EventBText(toolkit.createText(
-					body, axmPrefix + axmIndex));
+					composite, axmPrefix + axmIndex));
 			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			axiomNameText.getTextWidget().setLayoutData(gd);
 			axiomNameText.getTextWidget().addModifyListener(
 					new DirtyStateListener());
 
 			IEventBInputText axiomPredicateText = new EventBMath(toolkit
-					.createText(body, ""));
+					.createText(composite, ""));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			axiomPredicateText.getTextWidget().setLayoutData(gd);
 			axiomPredicateText.getTextWidget().addModifyListener(
@@ -196,24 +234,61 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
 			updateSize();
 		} else if (buttonId == IDialogConstants.OK_ID) {
-			name = nameText.getTextWidget().getText();
-
-			axioms = new ArrayList<Pair>();
-			for (Pair pair : axiomPairTexts) {
-				IEventBInputText axiomPredicateText = (IEventBInputText) pair
-						.getSecond();
-				IEventBInputText axiomNameText = (IEventBInputText) pair
-						.getFirst();
-				if (dirtyTexts.contains(axiomPredicateText.getTextWidget())) {
-					String axmName = axiomNameText.getTextWidget().getText();
-					String pred = Text2EventBMathTranslator
-							.translate(axiomPredicateText.getTextWidget()
-									.getText());
-					axioms.add(new Pair<String, String>(axmName, pred));
-				}
-			}
+			setFieldValues();
+		} else if (buttonId == IDialogConstants.RETRY_ID) {
+			setFieldValues();
+			addValues();
+			initialise();
 		}
 		super.buttonPressed(buttonId);
+	}
+
+	private void addValues() {
+		try {
+			RodinCore.run(new IWorkspaceRunnable() {
+
+				public void run(IProgressMonitor monitor) throws CoreException {
+					EventBEditorUtils
+							.createNewConstant(editor, identifier, monitor);
+
+					EventBEditorUtils.createNewAxioms(editor, axmLabels
+							.toArray(new String[axmLabels.size()]), axmSubs
+							.toArray(new String[axmSubs.size()]), monitor);
+				}
+
+			}, new NullProgressMonitor());
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void initialise() {
+		clearDirtyTexts();
+		composite.dispose();
+		createDialogContents(scrolledForm.getBody());
+		scrolledForm.reflow(true);
+	}
+
+	private void setFieldValues() {
+		identifier = identifierText.getTextWidget().getText();
+
+		axmLabels = new ArrayList<String>();
+		axmSubs = new ArrayList<String>();
+		for (Pair pair : axiomPairTexts) {
+			IEventBInputText axiomPredicateText = (IEventBInputText) pair
+					.getSecond();
+			IEventBInputText axiomNameText = (IEventBInputText) pair
+					.getFirst();
+			if (dirtyTexts.contains(axiomPredicateText.getTextWidget())) {
+				String axmName = axiomNameText.getTextWidget().getText();
+				String sub = Text2EventBMathTranslator
+						.translate(axiomPredicateText.getTextWidget()
+								.getText());
+				axmLabels.add(axmName);
+				axmSubs.add(sub);
+			}
+		}
 	}
 
 	/**
@@ -222,23 +297,13 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	 * 
 	 * @return the variable name as input by the user
 	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * Get the axioms
-	 * <p>
-	 * 
-	 * @return the axioms as input by the user
-	 */
-	public Collection<Pair> getAxioms() {
-		return axioms;
+	public String getIdentifier() {
+		return identifier;
 	}
 
 	@Override
 	public boolean close() {
-		nameText.dispose();
+		identifierText.dispose();
 		for (Pair pair : axiomPairTexts) {
 			IEventBInputText axiomPredicateText = (IEventBInputText) pair
 					.getSecond();
@@ -247,6 +312,16 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 			axiomPredicateText.dispose();
 		}
 		return super.close();
+	}
+
+	public String[] getAxiomNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String[] getAxiomSubtitutions() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
