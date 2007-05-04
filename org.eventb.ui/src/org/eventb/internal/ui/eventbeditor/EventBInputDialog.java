@@ -179,6 +179,9 @@ public abstract class EventBInputDialog extends Dialog {
 			if (x <= MAX_WIDTH && y <= MAX_HEIGHT)
 				parent.setSize(x, y);
 		}
+		else { // Bug: resize to force refresh
+			parent.setSize(curr.x + 1, curr.y);
+		}
 		scrolledForm.reflow(true);
 	}
 }
