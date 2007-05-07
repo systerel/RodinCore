@@ -15,6 +15,8 @@ import org.junit.Test;
 /**
  * Unit tests for the Abstract expression reasoner
  * 
+ * TODO : test that WD lemmas are also added to the hyps
+ * 
  * @author Farhad Mehta
  */
 public class AbstrExprTests {
