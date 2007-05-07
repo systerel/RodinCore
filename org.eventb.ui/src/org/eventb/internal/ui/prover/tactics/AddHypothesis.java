@@ -15,13 +15,13 @@ public class AddHypothesis extends DefaultTacticProvider {
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		return Tactics.lemma(inputs[0]);
+		return Tactics.insertLemma(inputs[0]);
 	}
 
 	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
-		if (node != null && node.isOpen() && !input.equals(""))
+		if (node != null && !input.equals("")) //removed "&& node.isOpen()"
 			return new ArrayList<IPosition>();
 
 		return null;

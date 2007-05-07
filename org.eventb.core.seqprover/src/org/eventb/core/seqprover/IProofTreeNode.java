@@ -205,7 +205,7 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * Applies the given rule to this node.
 	 * 
 	 * <p>
-	 * Note that outside the sequent prover tactics provide a more uniform way
+	 * Note that outside the sequent prover, tactics provide a more uniform way
 	 * to modify proof tree nodes and should be used instead of directly calling
 	 * this method. 
 	 * </p>
@@ -221,7 +221,7 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * this node. Has no effect if no rule was currently applied to this node.
 	 * 
 	 * <p>
-	 * Note that outside the sequent prover tactics provide a more uniform way
+	 * Note that outside the sequent prover, tactics provide a more uniform way
 	 * to modify proof tree nodes and should be used instead of directly calling
 	 * this method. 
 	 * </p>
@@ -250,7 +250,7 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * A successful graft has the effect of pruning the input proof tree.
 	 * 
 	 * <p>
-	 * Note that outside the sequent prover tactics provide a more uniform way
+	 * Note that outside the sequent prover, tactics provide a more uniform way
 	 * to modify proof tree nodes and should be used instead of directly calling
 	 * this method. 
 	 * </p>

@@ -31,6 +31,7 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerFailure;
@@ -121,7 +122,7 @@ public class Tactics {
 	/**
 	 * The add lemma tactic.
 	 * 
-	 * Introduces a lemma (and its well definedness condition) into a proof.
+	 * Introduces a lemma (and its well definedness condition) at a given open proof tree node.
 	 * 
 	 * @param lemma
 	 * 		The lemma to introduce as a String.
@@ -136,6 +137,56 @@ public class Tactics {
 				return (BasicTactics.reasonerTac(new Cut(),
 						new SinglePredInput(lemma, pt.getSequent()
 								.typeEnvironment()))).apply(pt, pm);
+			}
+
+		};
+	}
+	
+	/**
+	 * The insert lemma tactic.
+	 * 
+	 * Inserts a lemma (and its well definedness condition) at a given proof tree node. This
+	 * proof tree node need not be open.
+	 * 
+	 * @param lemma
+	 * 		The lemma to insert as a String.
+	 * @return
+	 * 		The resulting tactic.
+	 */
+	public static ITactic insertLemma(final String lemma) {
+
+		return new ITactic() {
+
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
+				
+				// Try to generate a proof rule.
+				IReasonerOutput reasonerOutput = (new Cut()).apply(
+						pt.getSequent(),
+						new SinglePredInput(lemma, pt.getSequent().typeEnvironment()), pm);
+				
+				if (! (reasonerOutput instanceof IProofRule)) {
+					// reasoner failed.
+					return reasonerOutput;
+				}
+				
+				IProofRule rule = (IProofRule) reasonerOutput;
+				
+				// Get the proof skeleton at the node.
+				IProofSkeleton skel = pt.copyProofSkeleton();
+				// Prune the node.
+				pt.pruneChildren();
+				// apply the rule
+				boolean success = pt.applyRule(rule);
+				if (success){
+					// Get the node where the proof skeleton should be rebuilt.
+					IProofTreeNode continuation = pt.getChildNodes()[pt.getChildNodes().length - 1];
+					assert continuation.isOpen();
+					return BasicTactics.reuseTac(skel).apply(continuation, pm);
+				}else{
+					// reconstruct the orignal tree
+					BasicTactics.reuseTac(skel).apply(pt, pm);
+					return "Lemma could not be inserted";
+				}
 			}
 
 		};
