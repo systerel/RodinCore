@@ -30,6 +30,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
@@ -41,6 +42,7 @@ import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.CurrentEvent;
+import org.eventb.internal.core.sc.EventAccuracyInfo;
 import org.eventb.internal.core.sc.EventRefinesInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
@@ -67,13 +69,13 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 	public static int EVENT_LABEL_SYMTAB_SIZE = 47;
 	public static int EVENT_IDENT_SYMTAB_SIZE = 29;
 
-	IIdentifierSymbolTable identifierSymbolTable;
+	private IIdentifierSymbolTable identifierSymbolTable;
 	
-	FormulaFactory factory;
+	private FormulaFactory factory;
 	
-	ITypeEnvironment machineTypeEnvironment;
+	private ITypeEnvironment machineTypeEnvironment;
 	
-	IEvent[] events;
+	private IEvent[] events;
 	
 	private static String EVENT_NAME_PREFIX = "EVT";
 	
@@ -421,12 +423,18 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 				eventTypeEnvironment.addAll(machineTypeEnvironment);
 				addPostValues(eventTypeEnvironment);
 				repository.setTypeEnvironment(eventTypeEnvironment);
+				
+				final IEventAccuracyInfo accuracyInfo = new EventAccuracyInfo();
+				repository.setState(accuracyInfo);
 			
 				initProcessorModules(events[i], repository, null);
 			
 				processModules(events[i], scEvents[i], repository, monitor);
 			
 				endProcessorModules(events[i], repository, null);
+				
+				if (scEvents[i] != null)
+					scEvents[i].setAccuracy(accuracyInfo.isAccurate(), null);
 			}
 			
 			monitor.worked(1);

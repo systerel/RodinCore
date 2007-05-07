@@ -28,7 +28,9 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
+import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.sc.state.ICurrentEvent;
+import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
@@ -82,7 +84,6 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		
 		if (formulaElements.length > 0)
 			checkAndType(
-					target, 
 					element.getElementName(),
 					repository,
 					monitor);
@@ -97,6 +98,9 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 				witnessNames, 
 				element, 
 				monitor);
+		
+		if (witnessNames.size() != 0)
+			accuracyInfo.setNotAccurate();
 		
 		repository.setState(savedLabelSymbolTable);
 
@@ -252,6 +256,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		factory = FormulaFactory.getDefault();
 		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
 		currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
+		accuracyInfo = (IEventAccuracyInfo) repository.getState(IEventAccuracyInfo.STATE_TYPE);
 	}
 
 	/* (non-Javadoc)
@@ -266,6 +271,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		btrue = null;
 		factory = null;
 		currentEvent = null;
+		accuracyInfo = null;
 	}
 
 	@Override
@@ -295,6 +301,11 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	protected IWitness[] getFormulaElements(IRodinElement element) throws CoreException {
 		IEvent event = (IEvent) element;
 		return event.getWitnesses();
+	}
+
+	@Override
+	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
+		return (IEventAccuracyInfo) repository.getState(IEventAccuracyInfo.STATE_TYPE);
 	}
 
 }

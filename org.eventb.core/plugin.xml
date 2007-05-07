@@ -464,6 +464,10 @@
             id="poSelHintSnd"
             kind="handle"
             name="%eventBpoSelHintSnd"/>
+      <attributeType
+            id="accurate"
+            kind="boolean"
+            name="%eventBaccuracy"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -532,6 +536,18 @@
             class="org.eventb.core.sc.state.IVariantInfo"
             id="variantInfo"
             name="%variantInfo"/>
+      <stateType
+            class="org.eventb.core.sc.state.IContextAccuracyInfo"
+            id="contextAccuracyInfo"
+            name="%contextAccuracyInfo"/>
+      <stateType
+            class="org.eventb.core.sc.state.IMachineAccuracyInfo"
+            id="machineAccuracyInfo"
+            name="%machineAccuracyInfo"/>
+      <stateType
+            class="org.eventb.core.sc.state.IEventAccuracyInfo"
+            id="eventAccuracyInfo"
+            name="%eventAccuracyInfo"/>
    </extension>
    <extension
          point="org.eventb.core.pogStateTypes">

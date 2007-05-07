@@ -22,6 +22,7 @@ import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.ParseProblem;
+import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.IParsedFormula;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -29,7 +30,6 @@ import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.internal.core.sc.ParsedFormula;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
@@ -48,6 +48,8 @@ extends LabeledElementModule {
 	
 	private final static Object[] NO_OBJECT = new Object[0];
 	
+	protected IAccuracyInfo accuracyInfo;
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.Module#initModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -59,11 +61,14 @@ extends LabeledElementModule {
 		super.initModule(element, repository, monitor);
 		identifierSymbolTable = 
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
+		accuracyInfo = getAccuracyInfo(repository);
 		
 		formulaElements = getFormulaElements(element);
 
 		formulas = allocateFormulas(formulaElements.length);
 	}
+
+	protected abstract IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException;
 
 	protected abstract F[] allocateFormulas(int size);
 	
@@ -78,6 +83,7 @@ extends LabeledElementModule {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		identifierSymbolTable = null;
+		accuracyInfo = null;
 		super.endModule(element, repository, monitor);
 	}
 
@@ -268,13 +274,11 @@ extends LabeledElementModule {
 	}
 
 	/**
-	 * @param target the target static checked container
 	 * @param component the name of the component that contains the predicate elements
 	 * @param repository the state repository
 	 * @throws CoreException if there was a problem accessing the database or the symbol table
 	 */
 	protected void checkAndType(
-			IInternalParent target,
 			String component,
 			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
@@ -315,7 +319,7 @@ extends LabeledElementModule {
 				
 				setParsedState(formula);
 			
-				if (!filterModules(formulaElement, repository, null)) {
+				if (ok && !filterModules(formulaElement, repository, null)) {
 					// the predicate will be rejected
 					// and will not contribute to the type environment!
 					ok = false;
@@ -338,6 +342,7 @@ extends LabeledElementModule {
 				if (symbolInfo != null)
 					symbolInfo.setError();
 				formulas[i] = null;
+				accuracyInfo.setNotAccurate();
 			}
 			
 			setImmutable(symbolInfo);

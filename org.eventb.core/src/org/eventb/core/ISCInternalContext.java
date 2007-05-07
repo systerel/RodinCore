@@ -9,6 +9,7 @@ package org.eventb.core;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 
 /**
@@ -22,16 +23,16 @@ import org.rodinp.core.RodinCore;
  * </p>
  * <p>
  * An internal SC context has a name that is returned by
- * {@link org.rodinp.core.IRodinElement#getElementName()}. Its child elements
- * can be manipulated via interface {@link org.eventb.core.ISCContext}. This
+ * {@link IRodinElement#getElementName()}. Its child elements
+ * can be manipulated via interface {@link ISCContext}. This
  * interface itself does not contribute any method.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.rodinp.core.IRodinElement#getElementName()
- * @see org.eventb.core.ISCContext
+ * @see IRodinElement#getElementName()
+ * @see ISCContext
  * 
  * @author Stefan Hallerstede
  */

@@ -80,9 +80,11 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 
 	protected abstract IRodinProblem getTargetContextNotFoundProblem();
 	
-	protected void fetchSCContexts(
+	protected boolean fetchSCContexts(
 			ContextPointerArray contextPointerArray,
 			IProgressMonitor monitor) throws RodinDBException, CoreException {
+		
+		boolean accurate = true;
 		
 		final IIdentifierSymbolInfo[][] declaredIdentifiers =
 			new IIdentifierSymbolInfo[contextPointerArray.size()][];
@@ -106,6 +108,8 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				contextPointerArray.setError(index);
 				continue;
 			}
+			
+			accurate &= scCF.isAccurate();
 			
 			upContexts[index] = createUpContexts(scCF);
 			
@@ -166,6 +170,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		contextPointerArray.makeImmutable();
 		contextTable.makeImmutable();
 		
+		return accurate;
 	}
 
 	private ISCContext[]  createUpContexts(ISCContextFile scCF) throws RodinDBException {

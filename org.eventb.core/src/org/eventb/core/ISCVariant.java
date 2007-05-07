@@ -20,7 +20,7 @@ import org.rodinp.core.RodinCore;
  * <p>
  * An SC variant is a variant that has been statically checked. It contains an
  * expression that is accessed and manipulated via
- * {@link org.eventb.core.ISCExpressionElement}. This interface itself does not
+ * {@link ISCExpressionElement}. This interface itself does not
  * contribute any method.
  * </p>
  * <p>

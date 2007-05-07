@@ -18,7 +18,9 @@ import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractMachineInfo;
+import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
+import org.eventb.core.sc.state.IMachineAccuracyInfo;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
@@ -102,6 +104,11 @@ public class MachineTheoremModule extends TheoremModule {
 	protected ITheorem[] getFormulaElements(IRodinElement element) throws CoreException {
 		IMachineFile machineFile = (IMachineFile) element;
 		return machineFile.getTheorems();
+	}
+
+	@Override
+	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
+		return (IMachineAccuracyInfo) repository.getState(IMachineAccuracyInfo.STATE_TYPE);
 	}
 
 }

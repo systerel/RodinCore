@@ -11,6 +11,7 @@ package org.eventb.core;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -18,7 +19,7 @@ import org.rodinp.core.RodinDBException;
  * Common protocol for Event-B statically checked (SC) machine files.
  * <p>
  * An SC machine file has a name that is returned by
- * {@link org.rodinp.core.IRodinElement#getElementName()}.
+ * {@link IRodinElement#getElementName()}.
  * </p>
  * The elements contained in an event-B SC machine file are:
  * <ul>
@@ -43,11 +44,11 @@ import org.rodinp.core.RodinDBException;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.rodinp.core.IRodinElement#getElementName()
+ * @see IRodinElement#getElementName()
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCMachineFile extends IEventBFile {
+public interface ISCMachineFile extends IEventBFile, IAccuracyElement {
 
 	IFileElementType<ISCMachineFile> ELEMENT_TYPE = 
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".scMachineFile"); //$NON-NLS-1$

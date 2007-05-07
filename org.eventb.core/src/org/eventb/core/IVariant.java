@@ -10,24 +10,25 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 
 /**
  * Common protocol for Event-B variants.
  * <p>
  * A variant has a name that is returned by
- * {@link org.rodinp.core.IRodinElement#getElementName()} and contains an
+ * {@link IRodinElement#getElementName()} and contains an
  * expression that is accessed and manipulated via
- * {@link org.eventb.core.IExpressionElement}. This interface itself does not
+ * {@link IExpressionElement}. This interface itself does not
  * contribute any methods.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.rodinp.core.IRodinElement#getElementName()
- * @see org.eventb.core.IExpressionElement#getExpressionString()
- * @see org.eventb.core.IExpressionElement#setExpressionString(String,IProgressMonitor)
+ * @see IRodinElement#getElementName()
+ * @see IExpressionElement#getExpressionString()
+ * @see IExpressionElement#setExpressionString(String,IProgressMonitor)
  * 
  * @author Stefan Hallerstede
  */

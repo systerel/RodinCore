@@ -16,19 +16,19 @@ import org.rodinp.core.RodinCore;
  * Common protocol for Event-B witnesses.
  * <p>
  * A witness has a label that is accessed and manipulated via
- * {@link org.eventb.core.ILabeledElement} and contains a
+ * {@link ILabeledElement} and contains a
  * predicate that is accessed and manipulated via
- * {@link org.eventb.core.IPredicateElement}. This interface itself does not
+ * {@link IPredicateElement}. This interface itself does not
  * contribute any methods.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.eventb.core.ILabeledElement#getLabel()
- * @see org.eventb.core.ILabeledElement#setLabel(String, IProgressMonitor)
- * @see org.eventb.core.IPredicateElement#getPredicateString()
- * @see org.eventb.core.IPredicateElement#setPredicateString(String, IProgressMonitor)
+ * @see ILabeledElement#getLabel()
+ * @see ILabeledElement#setLabel(String, IProgressMonitor)
+ * @see IPredicateElement#getPredicateString()
+ * @see IPredicateElement#setPredicateString(String, IProgressMonitor)
  * 
  * @author Laurent Voisin
  */

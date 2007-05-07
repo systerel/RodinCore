@@ -18,7 +18,9 @@ import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractMachineInfo;
+import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
+import org.eventb.core.sc.state.IMachineAccuracyInfo;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
@@ -70,7 +72,6 @@ public class MachineInvariantModule extends PredicateWithTypingModule<IInvariant
 			return;
 		
 		checkAndType(
-				target, 
 				element.getElementName(),
 				repository,
 				monitor);
@@ -121,6 +122,11 @@ public class MachineInvariantModule extends PredicateWithTypingModule<IInvariant
 	protected IInvariant[] getFormulaElements(IRodinElement element) throws CoreException {
 		IMachineFile machineFile = (IMachineFile) element;
 		return machineFile.getInvariants();
+	}
+
+	@Override
+	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
+		return (IMachineAccuracyInfo) repository.getState(IMachineAccuracyInfo.STATE_TYPE);
 	}
 
 }

@@ -41,11 +41,12 @@ public abstract class BaseModule extends SCProcessorModule {
 			IRodinElement element, 
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
+		
 		final IdentifierSymbolTable identifierSymbolTable = 
 			new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, FormulaFactory.getDefault());
 		
 		final IContextTable contextTable = new ContextTable(CONTEXT_TABLE_SIZE);
-
+		
 		repository.setState(identifierSymbolTable);
 		repository.setState(contextTable);
 

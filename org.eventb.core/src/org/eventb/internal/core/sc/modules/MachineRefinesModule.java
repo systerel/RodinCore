@@ -33,6 +33,7 @@ import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
+import org.eventb.core.sc.state.IMachineAccuracyInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
@@ -61,10 +62,11 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 	private static int ABSEVT_SYMTAB_SIZE = 1013;
 	
-	ISCMachineFile scMachineFile;
-	IRefinesMachine refinesMachine;
-	AbstractEventTable abstractEventTable;
-	ITypeEnvironment typeEnvironment;
+	private ISCMachineFile scMachineFile;
+	private IRefinesMachine refinesMachine;
+	private AbstractEventTable abstractEventTable;
+	private ITypeEnvironment typeEnvironment;
+	private IMachineAccuracyInfo accuracyInfo;
 
 	public void process(
 			IRodinElement element, 
@@ -85,6 +87,9 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		monitor.subTask(Messages.bind(Messages.progress_MachineRefines));
 		
 		saveRefinesMachine((ISCMachineFile) target, null);
+		
+		if (!scMachineFile.isAccurate())
+			accuracyInfo.setNotAccurate();
 		
 		IIdentifierSymbolTable abstractIdentifierSymbolTable =
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
@@ -374,6 +379,8 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		
 		repository.setState(abstractEventTable);
 		
+		accuracyInfo = (IMachineAccuracyInfo) repository.getState(IMachineAccuracyInfo.STATE_TYPE);
+		
 	}
 	
 	/* (non-Javadoc)
@@ -387,6 +394,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		refinesMachine = null;
 		scMachineFile = null;
 		abstractEventTable = null;
+		accuracyInfo = null;
 	}
 
 }

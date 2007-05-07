@@ -30,7 +30,6 @@ public abstract class TheoremModule extends PredicateModule<ITheorem> {
 			IProgressMonitor monitor) throws CoreException {
 		
 		checkAndType(
-				target, 
 				target.getElementName(),
 				repository,
 				monitor);

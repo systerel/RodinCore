@@ -8,6 +8,7 @@
 package org.eventb.core;
 
 import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -15,7 +16,7 @@ import org.rodinp.core.RodinDBException;
  * Common protocol for Event-B (unchecked) contexts.
  * <p>
  * A context has a name that is returned by
- * {@link org.rodinp.core.IRodinElement#getElementName()}.
+ * {@link IRodinElement#getElementName()}.
  * </p>
  * <p>
  * The elements contained in an event-B context are:
@@ -35,7 +36,7 @@ import org.rodinp.core.RodinDBException;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.rodinp.core.IRodinElement#getElementName()
+ * @see IRodinElement#getElementName()
  * 
  * @author Laurent Voisin
  */

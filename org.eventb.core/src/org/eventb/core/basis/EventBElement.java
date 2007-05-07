@@ -126,6 +126,14 @@ public abstract class EventBElement extends InternalElement {
 		return hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE);
 	}
 
+	public boolean isAccurate() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.ACCURACY_ATTRIBUTE);
+	}
+	
+	public void setAccuracy(boolean accurate, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(EventBAttributes.ACCURACY_ATTRIBUTE, accurate, monitor);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

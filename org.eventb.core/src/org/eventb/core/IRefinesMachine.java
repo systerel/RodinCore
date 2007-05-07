@@ -10,6 +10,7 @@ package org.eventb.core;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -17,7 +18,7 @@ import org.rodinp.core.RodinDBException;
  * Common protocol for a refines clause in a machine.
  * <p>
  * An refines element has a name that is returned by
- * {@link org.rodinp.core.IRodinElement#getElementName()}.
+ * {@link IRodinElement#getElementName()}.
  * </p>
  * <p>
  * This interface provides methods for accessing and manipulating the name of
@@ -34,7 +35,7 @@ import org.rodinp.core.RodinDBException;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.rodinp.core.IRodinElement#getElementName()
+ * @see IRodinElement#getElementName()
  * 
  * @author Laurent Voisin
  */

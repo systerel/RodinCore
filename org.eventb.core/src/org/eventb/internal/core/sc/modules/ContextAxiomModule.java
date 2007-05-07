@@ -17,6 +17,8 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.IAccuracyInfo;
+import org.eventb.core.sc.state.IContextAccuracyInfo;
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -59,7 +61,6 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 			return;
 		
 		checkAndType(
-				target, 
 				element.getElementName(),
 				repository,
 				monitor);
@@ -108,6 +109,11 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 	protected IAxiom[] getFormulaElements(IRodinElement element) throws CoreException {
 		IContextFile contextFile = (IContextFile) element;
 		return contextFile.getAxioms();
+	}
+
+	@Override
+	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
+		return (IContextAccuracyInfo) repository.getState(IContextAccuracyInfo.STATE_TYPE);
 	}
 
 }

@@ -17,15 +17,15 @@ import org.rodinp.core.RodinCore;
  * events).
  * <p>
  * A variable has a name that is accessed and manipulated via
- * {@link org.eventb.core.IIdentifierElement}. This interface itself does not
+ * {@link IIdentifierElement}. This interface itself does not
  * contribute any method.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.eventb.core.IIdentifierElement#getIdentifierString()
- * @see org.eventb.core.IIdentifierElement#setIdentifierString(String,IProgressMonitor)
+ * @see IIdentifierElement#getIdentifierString()
+ * @see IIdentifierElement#setIdentifierString(String,IProgressMonitor)
  * 
  * @author Laurent Voisin
  */

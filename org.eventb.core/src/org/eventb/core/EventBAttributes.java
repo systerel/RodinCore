@@ -57,6 +57,9 @@ public final class EventBAttributes {
 	public static IAttributeType.String IDENTIFIER_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".identifier");
 
+	public static IAttributeType.Boolean ACCURACY_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".accurate");
+
 	public static IAttributeType.Handle SCTARGET_ATTRIBUTE =
 		RodinCore.getHandleAttrType(EventBPlugin.PLUGIN_ID + ".scTarget");
 	

@@ -22,7 +22,9 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
+import org.eventb.core.sc.state.IMachineAccuracyInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IModuleType;
@@ -106,7 +108,6 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 		monitor.subTask(Messages.bind(Messages.progress_MachineVariant));
 		
 		checkAndType(
-				target, 
 				element.getElementName(),
 				repository,
 				monitor);
@@ -180,6 +181,11 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	protected IVariant[] getFormulaElements(IRodinElement element) throws CoreException {
 		IMachineFile machineFile = (IMachineFile) element;
 		return machineFile.getVariants();
+	}
+
+	@Override
+	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
+		return (IMachineAccuracyInfo) repository.getState(IMachineAccuracyInfo.STATE_TYPE);
 	}
 
 }

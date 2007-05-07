@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -20,18 +21,18 @@ import org.rodinp.core.RodinDBException;
  * <p>
  * An SC variable is a variable that has been statically checked. An SC variable
  * has a name that is returned by
- * {@link org.rodinp.core.IRodinElement#getElementName()} and contains a type
+ * {@link IRodinElement#getElementName()} and contains a type
  * that is accessed and manipulated via
- * {@link org.eventb.core.ISCIdentifierElement}. This interface itself does not
+ * {@link ISCIdentifierElement}. This interface itself does not
  * contribute any method.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.rodinp.core.IRodinElement#getElementName()
- * @see org.eventb.core.ISCIdentifierElement#getType(FormulaFactory)
- * @see org.eventb.core.ISCIdentifierElement#setType(Type, IProgressMonitor)
+ * @see IRodinElement#getElementName()
+ * @see ISCIdentifierElement#getType(FormulaFactory)
+ * @see ISCIdentifierElement#setType(Type, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
  * 

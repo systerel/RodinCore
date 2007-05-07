@@ -10,10 +10,15 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ISCMachineFile;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.IMachineAccuracyInfo;
+import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
+import org.eventb.internal.core.sc.MachineAccuracyInfo;
 import org.eventb.internal.core.sc.symbolTable.MachineLabelSymbolTable;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -23,15 +28,25 @@ import org.rodinp.core.IRodinElement;
 public class MachineModule extends BaseModule {
 
 	private final static int LABEL_SYMTAB_SIZE = 2047;
+	
+	private ISCMachineFile machineFile;
+	
+	private IMachineAccuracyInfo accuracyInfo;
 
 	@Override
 	public void initModule(
 			IRodinElement element, 
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
-		final MachineLabelSymbolTable labelSymbolTable = 
+		
+		accuracyInfo = new MachineAccuracyInfo();
+		
+		final IMachineLabelSymbolTable labelSymbolTable = 
 			new MachineLabelSymbolTable(LABEL_SYMTAB_SIZE);
+		
 		repository.setState(labelSymbolTable);		
+		repository.setState(accuracyInfo);
+		
 		super.initModule(element, repository, monitor);
 	}
 
@@ -42,4 +57,25 @@ public class MachineModule extends BaseModule {
 		return MODULE_TYPE;
 	}
 	
+	@Override
+	public void process(
+			IRodinElement element, 
+			IInternalParent target, 
+			ISCStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException {
+		machineFile = (ISCMachineFile) target;
+		super.process(element, target, repository, monitor);
+	}
+	
+	@Override
+	public void endModule(
+			IRodinElement element, 
+			ISCStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException {
+
+		machineFile.setAccuracy(accuracyInfo.isAccurate(), monitor);
+		
+		super.endModule(element, repository, monitor);
+	}
+
 }

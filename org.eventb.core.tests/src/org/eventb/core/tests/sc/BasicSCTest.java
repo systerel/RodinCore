@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.IAccuracyElement;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.ILabeledElement;
@@ -445,6 +446,18 @@ public abstract class BasicSCTest extends EventBTest {
 		}
 		fail("problem marker missing from element" +
 				((attrType != null) ? " (attribute: " + attrType.getId() + ")" : ""));
+	}
+	
+	public void isNotAccurate(IAccuracyElement element) throws RodinDBException {
+		boolean acc = element.isAccurate();
+		
+		assertEquals("element is accurate", false, acc);
+	}
+	
+	public void isAccurate(IAccuracyElement element) throws RodinDBException {
+		boolean acc = element.isAccurate();
+		
+		assertEquals("element is not accurate", true, acc);
 	}
 
 	public void refinesEvents(ISCEvent event, String... strings) throws RodinDBException {

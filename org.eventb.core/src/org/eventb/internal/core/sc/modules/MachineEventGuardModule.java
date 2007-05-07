@@ -25,6 +25,8 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
+import org.eventb.core.sc.state.IAccuracyInfo;
+import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
@@ -66,7 +68,6 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 
 		if (checkInitialisation(element, monitor))
 			checkAndType(
-					target, 
 					element.getElementName(),
 					repository,
 					monitor);
@@ -252,6 +253,11 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 	protected IGuard[] getFormulaElements(IRodinElement element) throws CoreException {
 		IEvent event = (IEvent) element;
 		return event.getGuards();
+	}
+
+	@Override
+	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
+		return (IEventAccuracyInfo) repository.getState(IEventAccuracyInfo.STATE_TYPE);
 	}
 
 }

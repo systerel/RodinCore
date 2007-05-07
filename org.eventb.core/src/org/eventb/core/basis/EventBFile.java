@@ -8,6 +8,8 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEventBFile;
@@ -79,6 +81,14 @@ public abstract class EventBFile extends RodinFile implements IEventBFile {
 		return (IPSFile) getRodinProject().getRodinFile(name);
 	}
 
+	public boolean isAccurate() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.ACCURACY_ATTRIBUTE);
+	}
+	
+	public void setAccuracy(boolean accurate, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(EventBAttributes.ACCURACY_ATTRIBUTE, accurate, monitor);
+	}
+	
 	@Deprecated
 	protected final <T extends IRodinElement> T getSingletonChild(
 			IElementType<T> elementType, String message) throws RodinDBException {

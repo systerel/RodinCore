@@ -19,6 +19,7 @@ import org.eventb.core.ISCExtendsContext;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.IContextAccuracyInfo;
 import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
@@ -46,6 +47,8 @@ public class ContextExtendsModule extends ContextPointerModule {
 	}
 
 	protected ContextPointerArray contextPointerArray;
+	
+	private IContextAccuracyInfo accuracyInfo;
 	
 	@Override
 	public void initModule(
@@ -77,6 +80,8 @@ public class ContextExtendsModule extends ContextPointerModule {
 					extendsContexts, 
 					contextFiles);
 		repository.setState(contextPointerArray);
+		
+		accuracyInfo = (IContextAccuracyInfo) repository.getState(IContextAccuracyInfo.STATE_TYPE);
 	}
 
 	@Override
@@ -86,6 +91,7 @@ public class ContextExtendsModule extends ContextPointerModule {
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		contextPointerArray = null;
+		accuracyInfo = null;
 	}
 	
 	public void process(
@@ -104,13 +110,16 @@ public class ContextExtendsModule extends ContextPointerModule {
 		
 		monitor.subTask(Messages.bind(Messages.progress_ContextExtends));
 		
-		fetchSCContexts(
+		boolean accurate = fetchSCContexts(
 				contextPointerArray,
 				monitor);
 		
 		contextPointerArray.makeImmutable();
 		
-		createExtendsClauses((ISCContextFile) target);
+		accurate &= createExtendsClauses((ISCContextFile) target);
+		
+		if (!accurate)
+			accuracyInfo.setNotAccurate();
 		
 		createInternalContexts(
 				target, 
@@ -130,14 +139,18 @@ public class ContextExtendsModule extends ContextPointerModule {
 		return ((ISCContextFile) target).getSCInternalContext(elementName);
 	}
 
-	private void createExtendsClauses(ISCContextFile scCtxFile)
+	private boolean createExtendsClauses(ISCContextFile scCtxFile)
 			throws RodinDBException {
 
+		boolean accurate = true;
+		
 		int count = 0;
 		final int size = contextPointerArray.size();
 		for (int i = 0; i < size; ++i) {
 			final ISCContextFile scSeenContext = contextPointerArray.getSCContextFile(i);
-			if (scSeenContext != null && !contextPointerArray.hasError(i)) {
+			if (scSeenContext == null || contextPointerArray.hasError(i)) {
+				accurate = false;
+			} else {
 				final ISCExtendsContext scExtends = scCtxFile
 						.getSCExtendsClause(EXTENDS_NAME_PREFIX + count++);
 				scExtends.create(null, null);
@@ -149,6 +162,7 @@ public class ContextExtendsModule extends ContextPointerModule {
 				scExtends.setSource(source, null);
 			}
 		}
+		return accurate;
 	}
 
 }

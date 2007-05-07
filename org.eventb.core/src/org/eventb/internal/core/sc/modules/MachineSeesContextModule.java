@@ -20,6 +20,7 @@ import org.eventb.core.ISeesContext;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IContextPointerArray;
+import org.eventb.core.sc.state.IMachineAccuracyInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.ContextPointerArray;
@@ -37,6 +38,8 @@ import org.rodinp.core.RodinDBException;
 public class MachineSeesContextModule extends ContextPointerModule {
 
 	private ContextPointerArray contextPointerArray;
+	
+	private IMachineAccuracyInfo accuracyInfo;
 	
 	@Override
 	public void initModule(
@@ -68,6 +71,8 @@ public class MachineSeesContextModule extends ContextPointerModule {
 					contextFiles);
 		repository.setState(contextPointerArray);
 		
+		accuracyInfo = (IMachineAccuracyInfo) repository.getState(IMachineAccuracyInfo.STATE_TYPE);
+		
 	}
 
 	@Override
@@ -77,6 +82,7 @@ public class MachineSeesContextModule extends ContextPointerModule {
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		contextPointerArray = null;
+		accuracyInfo = null;
 	}
 	
 	public static final IModuleType<MachineSeesContextModule> MODULE_TYPE = 
@@ -104,13 +110,16 @@ public class MachineSeesContextModule extends ContextPointerModule {
 		
 		monitor.subTask(Messages.bind(Messages.progress_MachineSees));
 		
-		fetchSCContexts(
+		boolean accurate = fetchSCContexts(
 				contextPointerArray,
 				monitor);
 		
 		contextPointerArray.makeImmutable();
 		
-		createSeesClauses((ISCMachineFile) target, null);
+		accurate &= createSeesClauses((ISCMachineFile) target, null);
+		
+		if (!accurate)
+			accuracyInfo.setNotAccurate();
 		
 		createInternalContexts(
 				target, 
@@ -130,14 +139,18 @@ public class MachineSeesContextModule extends ContextPointerModule {
 		return ((ISCMachineFile) target).getSCSeenContext(elementName);
 	}
 		
-	private void createSeesClauses(ISCMachineFile target, IProgressMonitor monitor)
+	private boolean createSeesClauses(ISCMachineFile target, IProgressMonitor monitor)
 			throws RodinDBException {
 
+		boolean accurate = true;
+		
 		int count = 0;
 		final int size = contextPointerArray.size();
 		for (int i = 0; i < size; ++i) {
 			final ISCContextFile scSeenContext = contextPointerArray.getSCContextFile(i);
-			if (scSeenContext != null && !contextPointerArray.hasError(i)) {
+			if (scSeenContext == null || contextPointerArray.hasError(i)) {
+				accurate = false;
+			} else {
 				final ISCSeesContext scSees = target
 						.getSCSeesClause(SEES_NAME_PREFIX + count++);
 				scSees.create(null, monitor);
@@ -149,6 +162,7 @@ public class MachineSeesContextModule extends ContextPointerModule {
 				scSees.setSource(source, null);
 			}
 		}
+		return accurate;
 	}
 
 }

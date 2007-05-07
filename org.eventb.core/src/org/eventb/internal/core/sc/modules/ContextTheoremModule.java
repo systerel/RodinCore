@@ -17,6 +17,8 @@ import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.IAccuracyInfo;
+import org.eventb.core.sc.state.IContextAccuracyInfo;
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -88,6 +90,11 @@ public class ContextTheoremModule extends TheoremModule {
 	protected ITheorem[] getFormulaElements(IRodinElement element) throws CoreException {
 		IContextFile contextFile = (IContextFile) element;
 		return contextFile.getTheorems();
+	}
+
+	@Override
+	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
+		return (IContextAccuracyInfo) repository.getState(IContextAccuracyInfo.STATE_TYPE);
 	}
 
 }

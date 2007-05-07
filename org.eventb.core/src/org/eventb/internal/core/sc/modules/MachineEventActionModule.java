@@ -28,6 +28,8 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.IAccuracyInfo;
+import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -71,7 +73,6 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 
 		if (formulaElements.length > 0)
 			checkAndType(
-					target, 
 					element.getParent().getElementName(),
 					repository,
 					monitor);
@@ -196,6 +197,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 			return;
 		
 		if (patchLHS.size() > 0) {
+			accuracyInfo.setNotAccurate();
 			Predicate btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
 			Assignment assignment = factory.makeBecomesSuchThat(patchLHS, patchBound, btrue, null);
 			String label = createFreshLabel();
@@ -263,6 +265,11 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	protected IAction[] getFormulaElements(IRodinElement element) throws CoreException {
 		IEvent event = (IEvent) element;
 		return event.getActions();
+	}
+
+	@Override
+	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
+		return (IEventAccuracyInfo) repository.getState(IEventAccuracyInfo.STATE_TYPE);
 	}
 
 }
