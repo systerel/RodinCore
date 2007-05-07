@@ -1,6 +1,8 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
@@ -49,7 +51,9 @@ public class AbstrExpr extends SingleExprInputReasoner {
 		
 		// Generate the well definedness condition for the lemma
 		Predicate exprWD = Lib.WD(expr);
-
+		final Set<Predicate> exprWDs = Lib.breakPossibleConjunct(exprWD);
+		Lib.removeTrue(exprWDs);
+		
 		// Generate a fresh free identifier
 		FreeIdentifier freeIdent = Lib.ff.makeFreeIdentifier(
 				genFreshFreeIdentName(seq.typeEnvironment()),
@@ -65,8 +69,11 @@ public class AbstrExpr extends SingleExprInputReasoner {
 		anticidents[0] = ProverFactory.makeAntecedent(exprWD);
 		
 		// 
+		final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
+		addedHyps.addAll(exprWDs);
+		addedHyps.add(aeEq);
 		anticidents[1] = ProverFactory.makeAntecedent(
-				null, Collections.singleton(aeEq),
+				null, addedHyps,
 				new FreeIdentifier[] {freeIdent}, null);
 		
 		// Generate the proof rule
