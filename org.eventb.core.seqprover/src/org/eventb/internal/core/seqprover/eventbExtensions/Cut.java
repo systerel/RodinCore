@@ -1,6 +1,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -37,12 +38,12 @@ public class Cut extends SinglePredInputReasoner {
 	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProofMonitor pm){
 		
 		// Organize Input
-		SinglePredInput input = (SinglePredInput) reasonerInput;
+		final SinglePredInput input = (SinglePredInput) reasonerInput;
 		
 		if (input.hasError())
 			return ProverFactory.reasonerFailure(this,reasonerInput,input.getError());
 
-		Predicate lemma = input.getPredicate();
+		final Predicate lemma = input.getPredicate();
 		
 		// This check may be redone for replay since the type environment
 		// may have shrunk, making the previous predicate with dangling free vars.
@@ -57,25 +58,45 @@ public class Cut extends SinglePredInputReasoner {
 		// We can now assume that lemma has been properly parsed and typed.
 		
 		// Generate the well definedness condition for the lemma
-		Predicate lemmaWD = Lib.WD(lemma);
-
+		final Predicate lemmaWD = Lib.WD(lemma);
+		
+		final Set<Predicate> lemmaWDs = Lib.breakPossibleConjunct(lemmaWD);
+		Lib.removeTrue(lemmaWDs);
+		// final ISelectionHypAction deselectWDpreds = ProverFactory.makeDeselectHypAction(lemmaWDs);
+		
+		
 		// Generate the anticidents
-		IAntecedent[] anticidents = new IAntecedent[3];
+		final IAntecedent[] anticidents = new IAntecedent[3];
 		
 		// Well definedness condition
 		anticidents[0] = ProverFactory.makeAntecedent(lemmaWD);
 		
 		// The lemma to be proven
-		anticidents[1] = ProverFactory.makeAntecedent(lemma);
-		
-		// Proving the original goal with the help of the lemma
-		anticidents[2] = ProverFactory.makeAntecedent(
-				null,
-				Collections.singleton(lemma),
+		// Replaced, adding WD lemma into hyps
+		// anticidents[1] = ProverFactory.makeAntecedent(lemma);
+		anticidents[1] = ProverFactory.makeAntecedent(
+				lemma, 
+				lemmaWDs, 
 				null);
 		
+		
+		// Proving the original goal with the help of the lemma
+		// Replaced, adding WD lemma into hyps
+		//		anticidents[2] = ProverFactory.makeAntecedent(
+		//				null,
+		//				Collections.singleton(lemma),
+		//				null);
+		final Set<Predicate> lemmaWDsPlusLemma = new LinkedHashSet<Predicate>();
+		lemmaWDsPlusLemma.addAll(lemmaWDs);
+		lemmaWDsPlusLemma.add(lemma);
+		anticidents[2] = ProverFactory.makeAntecedent(
+				null,
+				lemmaWDsPlusLemma,
+				null);
+
+		
 		// Generate the proof rule
-		IProofRule reasonerOutput = ProverFactory.makeProofRule(
+		final IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				null,
 				"ah ("+lemma.toString()+")",

@@ -1,6 +1,6 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentDecl;
@@ -108,17 +108,16 @@ public class AllD implements IReasoner {
 		if (input.hasError())
 			return ProverFactory.reasonerFailure(this,reasonerInput,input.getError());
 		
-		Predicate univHypPred = input.pred;
-		Predicate univHyp = univHypPred;
+		Predicate univHyp = input.pred;
 		
 		if (! seq.containsHypothesis(univHyp))
 			return ProverFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+univHyp);
-		if (! Lib.isUnivQuant(univHypPred))
+		if (! Lib.isUnivQuant(univHyp))
 			return ProverFactory.reasonerFailure(this,input,
 					"Hypothesis is not universally quantified:"+univHyp);
 		
-		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(univHypPred);
+		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(univHyp);
 		
 		
 		// compute instantiations from the input: 
@@ -137,9 +136,12 @@ public class AllD implements IReasoner {
 		
 		
 		// Generate the well definedness predicate for the instantiations
-		Predicate WDpred = Lib.WD(instantiations);
+		final Predicate WDpred = Lib.WD(instantiations);
+		final Set<Predicate> WDpreds = Lib.breakPossibleConjunct(WDpred);
+		Lib.removeTrue(WDpreds);
+		
 		// Generate the instantiated predicate
-		Predicate instantiatedPred = Lib.instantiateBoundIdents(univHypPred,instantiations);
+		Predicate instantiatedPred = Lib.instantiateBoundIdents(univHyp,instantiations);
 		assert instantiatedPred != null;
 		
 		// Generate the successful reasoner output
@@ -148,11 +150,26 @@ public class AllD implements IReasoner {
 		IAntecedent[] anticidents = new IAntecedent[2];
 		// Well definedness condition
 		anticidents[0] = ProverFactory.makeAntecedent(WDpred);
+
 		// The instantiated goal
+		// Replaced, adding WD predicate to hypotheses
+		// anticidents[1] = ProverFactory.makeAntecedent(
+		//		null,
+		//		Lib.breakPossibleConjunct(instantiatedPred),
+		//		ProverFactory.makeDeselectHypAction(Arrays.asList(univHyp))
+		//		);
+		final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
+		addedHyps.addAll(WDpreds);
+		addedHyps.addAll(Lib.breakPossibleConjunct(instantiatedPred));
+		
+		Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
+		toDeselect.add(univHyp);
+		// toDeselect.addAll(WDpreds);
+		
 		anticidents[1] = ProverFactory.makeAntecedent(
 				null,
-				Lib.breakPossibleConjunct(instantiatedPred),
-				ProverFactory.makeDeselectHypAction(Arrays.asList(univHyp))
+				addedHyps,
+				ProverFactory.makeDeselectHypAction(toDeselect)
 				);
 		
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(

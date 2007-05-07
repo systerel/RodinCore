@@ -1,6 +1,7 @@
 package org.eventb.internal.core.pom;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.IPOIdentifier;
@@ -13,6 +14,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.RodinDBException;
 
@@ -47,11 +49,12 @@ public final class POLoader {
 	 */
 	public static IProverSequent readPO(IPOSequent poSeq) throws RodinDBException {
 		final ITypeEnvironment typeEnv = factory.makeTypeEnvironment();
-		final Set<Predicate> hypotheses = new HashSet<Predicate>();
-		final Set<Predicate> selHyps = new HashSet<Predicate>();
+		final Set<Predicate> hypotheses = new LinkedHashSet<Predicate>();
+		final Set<Predicate> selHyps = new LinkedHashSet<Predicate>();
 		final SelectionHints selHints = new SelectionHints(poSeq);
 		loadHypotheses(poSeq, selHints, hypotheses, selHyps, typeEnv);
 		final Predicate goal = readGoal(poSeq, typeEnv);
+		addWDpredicates(goal, hypotheses);
 		return ProverFactory.makeSequent(typeEnv,hypotheses,selHyps,goal);
 	}
 
@@ -105,6 +108,7 @@ public final class POLoader {
 			final Predicate hypothesis = predicate;
 			if ( selected || selHints.contains(poPred)) selHyps.add(hypothesis);
 			hypotheses.add(hypothesis);
+			addWDpredicates(hypothesis, hypotheses);
 		}
 	}
 	
@@ -132,6 +136,25 @@ public final class POLoader {
 		return dbGoals[0].getPredicate(factory, typeEnv);
 	}
 	
+
+	/**
+	 * Adds the WD predicates of the given predicate to the given predicate set.
+	 * 
+	 * <p>
+	 * In case the WD predicate is 'true', this is not added. In case the WD predicate
+	 * is a conjunction, its conjuncts are added.
+	 * </p>
+	 * 
+	 * @param pred
+	 * 				The predicate whose WD predicate should be added to the given predicate set
+	 * @param predSet
+	 * 				The predicate set to which this WD predicate should be added
+	 */
+	private static void addWDpredicates(Predicate pred, Set<Predicate> predSet){
+		Set<Predicate> toAdd = Lib.breakPossibleConjunct(pred.getWDPredicate(Lib.ff));
+		toAdd.remove(Lib.True);
+		predSet.addAll(toAdd);
+	}
 	
 	/**
 	 * This is a private class that collects selection hints from a PO Sequent.
@@ -176,21 +199,6 @@ public final class POLoader {
 				 			endP = endP.getParentPredicateSet();
 				 		}
 				 	}
-				 
-//				IPOPredicateSet end = hint.getEnd();
-//				if (end == null)
-//				{
-//					preds.add(hint.getPredicate());
-//				}
-//				else
-//				{
-//					IPOPredicateSet start = hint.getStart(); 
-//					while (end != null && (! end.getParentPredicateSet().equals(start)))
-//					{
-//						predSets.add(end);
-//						end = end.getParentPredicateSet();
-//					}
-//				}
 			}
 		}
 		

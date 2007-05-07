@@ -169,6 +169,10 @@ public final class Lib {
 		return new LinkedHashSet<Predicate>(Arrays.asList(((AssociativePredicate) P)
 				.getChildren()));
 	}
+	
+	public static boolean removeTrue(Set<Predicate> preds){
+		return preds.remove(True);
+	}
 
 	public static Predicate[] disjuncts(Predicate P) {
 		if (!isDisj(P))

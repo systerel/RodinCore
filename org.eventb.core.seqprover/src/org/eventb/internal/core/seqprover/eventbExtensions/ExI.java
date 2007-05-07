@@ -1,5 +1,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.Set;
+
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
@@ -70,7 +72,10 @@ public class ExI implements IReasoner {
 		
 		
 		// Generate the well definedness predicate for the witnesses
-		Predicate WDpred = Lib.WD(instantiations);
+		final Predicate WDpred = Lib.WD(instantiations);
+		final Set<Predicate> WDpreds = Lib.breakPossibleConjunct(WDpred);
+		Lib.removeTrue(WDpreds);
+		
 		// Generate the instantiated predicate
 		Predicate instantiatedPred = Lib.instantiateBoundIdents(seq.goal(),instantiations);
 		assert instantiatedPred != null;
@@ -82,30 +87,19 @@ public class ExI implements IReasoner {
 		anticidents[0] = ProverFactory.makeAntecedent(WDpred);
 		
 		// The instantiated goal
-		anticidents[1] = ProverFactory.makeAntecedent(instantiatedPred);
-
+		// Replaced, adding WD predicate into hyps
+		// anticidents[1] = ProverFactory.makeAntecedent(instantiatedPred);
+		anticidents[1] = ProverFactory.makeAntecedent(
+				instantiatedPred, 
+				WDpreds, 
+				null);
+		
 		// Generate the successful reasoner output
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				"∃ goal (inst "+displayInstantiations(instantiations)+")",
 				anticidents);
-		
-//		// Generate the successful reasoner output
-//		ProofRule reasonerOutput = new ProofRule(this,input);
-//		reasonerOutput.display = "∃ goal (inst "+displayInstantiations(instantiations)+")";
-//		reasonerOutput.goal = seq.goal();
-//
-//		// Generate the anticidents
-//		reasonerOutput.anticidents = new Antecedent[2];
-//		
-//		// Well definedness condition
-//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent();
-//		reasonerOutput.anticidents[0].goal = WDpred;
-//		
-//		// The instantiated goal
-//		reasonerOutput.anticidents[1] = new ProofRule.Antecedent();
-//		reasonerOutput.anticidents[1].goal = instantiatedPred;
 				
 		return reasonerOutput;
 	}
