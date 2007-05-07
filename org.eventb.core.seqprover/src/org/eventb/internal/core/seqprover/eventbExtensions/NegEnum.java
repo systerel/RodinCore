@@ -111,7 +111,7 @@ public class NegEnum extends MultiplePredInputReasoner implements IReasoner {
 			}
 		}
 		return ProverFactory.reasonerFailure(this, input,
-				"Tactic negation enumeration is not applicable for hypotheses "
+				"Negation enumeration is not applicable for hypotheses "
 						+ pred0 + " and " + pred1);
 	}
 
