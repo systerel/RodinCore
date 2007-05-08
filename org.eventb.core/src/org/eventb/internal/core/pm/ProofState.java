@@ -111,12 +111,15 @@ public class ProofState implements IProofState {
 				// Get the proof skeleton and rebuild the tree
 				IProofSkeleton proofSkeleton;
 				try {
+					ProofState.this.setDirty(false);
 					proofSkeleton = psWrapper.getProofSkeleton(status, monitor);
 					if (proofSkeleton != null) {
 						// ProofBuilder.rebuild(pt.getRoot(), proofSkeleton);
-						BasicTactics.rebuildTac(proofSkeleton).apply(
+						Object result = BasicTactics.rebuildTac(proofSkeleton).apply(
 								pt.getRoot(),
 								new ProofMonitor(monitor));
+						if (result != null)
+							ProofState.this.setDirty(true);
 					}
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
@@ -124,7 +127,6 @@ public class ProofState implements IProofState {
 				}
 				pt.addChangeListener(ProofState.this);
 				ProofState.this.newProofTree();
-				ProofState.this.setDirty(false);
 				
 				if (!pt.getRoot().isClosed()) {
 					// Run Post tactic at the root of the tree
@@ -143,16 +145,6 @@ public class ProofState implements IProofState {
 				}
 				try {
 					setCurrentNode(node);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				// if the proof tree was previously broken then the rebuild
-				// would fix the proof, marking it dirty.
-				try {
-					if (status.isBroken())
-						ProofState.this.setDirty(true);
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
