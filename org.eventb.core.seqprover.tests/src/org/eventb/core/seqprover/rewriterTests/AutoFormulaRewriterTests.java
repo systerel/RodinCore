@@ -26,67 +26,67 @@ import org.junit.Test;
 
 public class AutoFormulaRewriterTests {
 
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
+	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 	
-	private static Expression emptySet = ff.makeEmptySet(ff.makePowerSetType(ff
+	protected static Expression emptySet = ff.makeEmptySet(ff.makePowerSetType(ff
 			.makeIntegerType()), null);
 
-	private static Expression number0 = ff.makeIntegerLiteral(new BigInteger(
+	protected static Expression number0 = ff.makeIntegerLiteral(new BigInteger(
 			"0"), null);
 
-	private static Expression number1 = ff.makeIntegerLiteral(new BigInteger(
+	protected static Expression number1 = ff.makeIntegerLiteral(new BigInteger(
 			"1"), null);;
 
-	private static Expression number2 = ff.makeIntegerLiteral(new BigInteger(
+	protected static Expression number2 = ff.makeIntegerLiteral(new BigInteger(
 			"2"), null);
 
-	private static Expression number3 = ff.makeIntegerLiteral(new BigInteger(
+	protected static Expression number3 = ff.makeIntegerLiteral(new BigInteger(
 			"3"), null);
 
-	private static Expression numberMinus1 = ff.makeIntegerLiteral(new BigInteger(
+	protected static Expression numberMinus1 = ff.makeIntegerLiteral(new BigInteger(
 			"-1"), null);;
 
-	private static Expression numberMinus2 = ff.makeIntegerLiteral(new BigInteger(
+	protected static Expression numberMinus2 = ff.makeIntegerLiteral(new BigInteger(
 			"-2"), null);
 
-	private static Expression numberMinus3 = ff.makeIntegerLiteral(new BigInteger(
+	protected static Expression numberMinus3 = ff.makeIntegerLiteral(new BigInteger(
 			"-3"), null);
 
-	private static Expression uNumberMinus1 = ff.makeUnaryExpression(Expression.UNMINUS,
+	protected static Expression uNumberMinus1 = ff.makeUnaryExpression(Expression.UNMINUS,
 			number1, null);
 
-	private static Expression uNumberMinus2 = ff.makeUnaryExpression(Expression.UNMINUS,
+	protected static Expression uNumberMinus2 = ff.makeUnaryExpression(Expression.UNMINUS,
 			number2, null);
 
-	private static Expression uNumberMinus3 = ff.makeUnaryExpression(Expression.UNMINUS,
+	protected static Expression uNumberMinus3 = ff.makeUnaryExpression(Expression.UNMINUS,
 			number3, null);
 
-	private static final Expression E = Lib.parseExpression("x ∗ 2");
+	protected static final Expression E = Lib.parseExpression("x ∗ 2");
 
-	private static final Expression F = Lib.parseExpression("y ∗ 3");
+	protected static final Expression F = Lib.parseExpression("y ∗ 3");
 	
-	private static final Expression bE = Lib.parseExpression("x");
+	protected static final Expression bE = Lib.parseExpression("x");
 
-	private static Expression S = Lib.parseExpression("{1}");
+	protected static Expression S = Lib.parseExpression("{1}");
 	
-	private static Expression T = Lib.parseExpression("{1,2}");
+	protected static Expression T = Lib.parseExpression("{1,2}");
 
-	private static Expression U = Lib.parseExpression("{1,2,3}");
+	protected static Expression U = Lib.parseExpression("{1,2,3}");
 
-	private static final Predicate P = Lib.parsePredicate("x = 2");
+	protected static final Predicate P = Lib.parsePredicate("x = 2");
 			
-	private static final Predicate Q = Lib.parsePredicate("y = 3");
+	protected static final Predicate Q = Lib.parsePredicate("y = 3");
 				
-	private static final Predicate R = Lib.parsePredicate("z = 4");		
+	protected static final Predicate R = Lib.parsePredicate("z = 4");		
 
-	private static final Predicate notP =
+	protected static final Predicate notP =
 		ff.makeUnaryPredicate(Predicate.NOT, P, null);
-	private static final Predicate notQ =
+	protected static final Predicate notQ =
 		ff.makeUnaryPredicate(Predicate.NOT, Q, null);
-	private static final Predicate notR =
+	protected static final Predicate notR =
 		ff.makeUnaryPredicate(Predicate.NOT, R, null);
 
-	private IFormulaRewriter r;
+	protected IFormulaRewriter r;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -105,7 +105,7 @@ public class AutoFormulaRewriterTests {
 		bE.typeCheck(Lib.makeTypeEnvironment());
 	}
 
-	private void assertAssociativePredicate(String message, Predicate expected,
+	protected void assertAssociativePredicate(String message, Predicate expected,
 			int tag, Predicate... predicates) {
 		AssociativePredicate predicate = ff.makeAssociativePredicate(tag,
 				predicates, null);
@@ -268,7 +268,7 @@ public class AutoFormulaRewriterTests {
 				Predicate.LOR, P, Q, R, Q, notR);
 	}
 
-	private void assertBinaryPredicate(String message, Predicate expected,
+	protected void assertBinaryPredicate(String message, Predicate expected,
 			Predicate left, int tag, Predicate right) {
 		BinaryPredicate bPred = ff.makeBinaryPredicate(tag,
 								left, right, null);
@@ -316,7 +316,7 @@ public class AutoFormulaRewriterTests {
 		assertBinaryPredicate("P ⇔ P = ⊤", Lib.True, P, Predicate.LEQV, P);
 	}
 
-	private void assertUnaryPredicate(String message, Predicate expected,
+	protected void assertUnaryPredicate(String message, Predicate expected,
 			int tag, Predicate predicate) {
 		UnaryPredicate uPred = ff.makeUnaryPredicate(tag,
 								predicate, null);
@@ -401,7 +401,7 @@ public class AutoFormulaRewriterTests {
 				.makeRelationalPredicate(Predicate.EQUAL, Lib.TRUE, bE, null));
 	}
 
-	private void assertQuantificationPredicate(String message,
+	protected void assertQuantificationPredicate(String message,
 			Predicate expected, int tag, BoundIdentDecl[] boundIdentifiers,
 			Predicate predicate) {
 		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
@@ -460,7 +460,7 @@ public class AutoFormulaRewriterTests {
 
 	}
 
-	private void assertRelationalPredicate(String message, Predicate expected,
+	protected void assertRelationalPredicate(String message, Predicate expected,
 			Expression left, int tag, Expression right) {
 		RelationalPredicate rPred = ff.makeRelationalPredicate(
 								tag, left, right, null);
@@ -499,14 +499,14 @@ public class AutoFormulaRewriterTests {
 				Predicate.EQUAL, Lib.TRUE);
 	}
 
-	private void assertAssociativeExpression(String message,
+	protected void assertAssociativeExpression(String message,
 			Expression expected, int tag, Expression... expressions) {
 		AssociativeExpression expression = ff.makeAssociativeExpression(tag,
 				expressions, null);
 		assertEquals(message, expected, expression.rewrite(r));
 	}
 
-	private void assertBinaryExpression(String message, Expression expected,
+	protected void assertBinaryExpression(String message, Expression expected,
 			Expression left, int tag, Expression right) {
 		BinaryExpression expression = ff.makeBinaryExpression(tag, left, right,
 				null);
@@ -514,7 +514,7 @@ public class AutoFormulaRewriterTests {
 		assertEquals(message, expected, expression.rewrite(r));
 	}
 
-	private void assertUnaryExpression(String message, Expression expected,
+	protected void assertUnaryExpression(String message, Expression expected,
 			int tag, Expression expression) {
 		UnaryExpression uExp = ff.makeUnaryExpression(tag,
 								expression, null);
@@ -589,11 +589,6 @@ public class AutoFormulaRewriterTests {
 				expected, Expression.BUNION, emptySet, S, T, emptySet,
 				U, emptySet);
 
-		assertRelationalPredicate("", ff.makeRelationalPredicate(
-				Predicate.SUBSETEQ, S, T, null), ff
-				.makeAssociativeExpression(Expression.BUNION, new Expression[] {
-						S, emptySet }, null), Predicate.SUBSETEQ, T);
-		
 		// S \/ ... \/ T \/ ... \/ T \/ ... \/ U == S \/ ... \/ T \/ ... \/ ...
 		// \/ U
 		assertAssociativeExpression("S ∩ S = S", S, Expression.BUNION, S, S);
