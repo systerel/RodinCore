@@ -403,7 +403,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			/**
 	    	 * Set Theory 8: A ∈ {A} == ⊤
 	    	 * Set Theory 9: B ∈ {A, ..., B, ..., C} == ⊤
-	    	 * Set Theory 16: E ∈ {F} == E = F (if F is a single expression)
+	    	 * Set Theory 18: E ∈ {F} == E = F (if F is a single expression)
 	    	 */
 	    	In(E, SetExtension(members)) -> {
 	    		for (Expression member : `members) {
@@ -438,7 +438,16 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 		
 			/**
-	    	 * Set Theory 17: {E} = {F} == E = F   if E, F is a single expression
+	    	 * Set Theory 23: E ∈ Typ == ⊤ (where Typ is a type expression)
+	    	 */
+			In(_, Typ) -> {
+				if (`Typ.isATypeExpression())
+					return Lib.True;
+				return predicate;			
+			}
+			
+			/**
+	    	 * Set Theory 19: {E} = {F} == E = F   if E, F is a single expression
 	    	 */
 	    	Equal(SetExtension(E), SetExtension(F)) -> {
    				if (`E.length == 1 && `F.length == 1) {
@@ -447,6 +456,24 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				return predicate;
 	    	}
 	    	
+			/**
+			 * Set Theory 21: Typ = ∅  ==  ⊥  (where Typ is a type expression)
+			 */
+			Equal(Typ, EmptySet()) -> {
+				if (`Typ.isATypeExpression())
+					return Lib.False;
+				return predicate;
+			}
+
+			/**
+			 * Set Theory 22: ∅ = Typ  ==  ⊥  (where Typ is a type expression)
+			 */
+			Equal(EmptySet(), Typ) -> {
+				if (`Typ.isATypeExpression())
+					return Lib.False;
+				return predicate;
+			}
+
 	    	/**
 	    	 * Arithmetic 16: i = j == ⊤  or  i = j == ⊥ (by computation)
 	    	 */
@@ -529,17 +556,22 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
-	    	 * Set Theory 18: S ∖ ∅ == S
+	    	 * Set Theory 12: ∅ ∖ S == ∅
+	    	 * Set Theory 13: S ∖ ∅ == S
 	    	 */
 	    	SetMinus(S, T) -> {
-   				if (`T.equals(makeEmptySet(`S.getType()))) {
+	    		Expression emptySet = makeEmptySet(`S.getType());
+				if (`S.equals(emptySet)) {
+					return emptySet;
+				}
+   				if (`T.equals(emptySet)) {
 					return `S;
 				}
 				return expression;    		
 	    	}
 	    	
 	    	/**
-	    	 * Set Theory 15: (f  {E↦ F})(E) == F
+	    	 * Set Theory 16: (f  {E↦ F})(E) == F
 	    	 */
 	    	FunImage(Ovr(children), E) -> {
 	    		Expression lastExpression = `children[`children.length - 1];
@@ -629,14 +661,14 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    %match (Expression expression) {
 
 			/**
-	    	 * Set Theory 12: r∼∼ == r
+	    	 * Set Theory 14: r∼∼ == r
 	    	 */
 	    	Converse(Converse(r)) -> {
 	    		return `r;
 	    	}
 
 			/**
-	    	 * Set Theory 13: dom(x ↦ a, ..., y ↦ b) = {x, ..., y} 
+	    	 * Set Theory 15: dom(x ↦ a, ..., y ↦ b) = {x, ..., y} 
 	    	 *                (Also remove duplicate in the resulting set) 
 	    	 */
 	    	Dom(SetExtension(members)) -> {
@@ -656,7 +688,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 		
 			/**
-	    	 * Set Theory 14: ran(x ↦ a, ..., y ↦ b) = {a, ..., b}
+	    	 * Set Theory 16: ran(x ↦ a, ..., y ↦ b) = {a, ..., b}
 	    	 */
 	    	Ran(SetExtension(members)) -> {
 	    		Collection<Expression> range = new LinkedHashSet<Expression>();
