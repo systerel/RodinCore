@@ -323,6 +323,16 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 	    	/**
+	    	 * Equality 3: E ↦ F = G ↦ H == E = G ∧ F = H
+	    	 */
+	    	Equal(Mapsto(E, F) , Mapsto(G, H)) -> {
+	    		Predicate pred1 = makeRelationalPredicate(Expression.EQUAL, `E, `G);
+				Predicate pred2 = makeRelationalPredicate(Expression.EQUAL, `F, `H);
+				return makeAssociativePredicate(Predicate.LAND, new Predicate[] {
+						pred1, pred2 });
+	    	}
+	    	
+	    	/**
 	    	 * Equality 4: TRUE = FALSE == ⊥
 	    	 */
 	    	Equal(TRUE(), FALSE()) -> {
@@ -330,7 +340,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 	    	/**
-	    	 * Equality 4: FALSE = TRUE == ⊥
+	    	 * Equality 5: FALSE = TRUE == ⊥
 	    	 */
 	    	Equal(FALSE(), TRUE()) -> {
 	    		return Lib.False;
@@ -369,16 +379,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    			Predicate.NOT, makeRelationalPredicate(Expression.SUBSETEQ, `E, `F));
 	    	}
 
-	    	/**
-	    	 * Equality 3: E ↦ F = G ↦ H == E = G ∧ F = H
-	    	 */
-	    	Equal(Mapsto(E, F) , Mapsto(G, H)) -> {
-	    		Predicate pred1 = makeRelationalPredicate(Expression.EQUAL, `E, `G);
-				Predicate pred2 = makeRelationalPredicate(Expression.EQUAL, `F, `H);
-				return makeAssociativePredicate(Predicate.LAND, new Predicate[] {
-						pred1, pred2 });
-	    	}
-	    	
 	    	/**
 	    	 * Set Theory 5: ∅ ⊆ S == ⊤
 	    	 */
