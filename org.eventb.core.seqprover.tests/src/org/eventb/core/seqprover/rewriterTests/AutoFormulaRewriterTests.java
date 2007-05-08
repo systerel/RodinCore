@@ -61,6 +61,10 @@ public class AutoFormulaRewriterTests {
 	protected static Expression uNumberMinus3 = ff.makeUnaryExpression(Expression.UNMINUS,
 			number3, null);
 
+	protected static Expression integer = Lib.parseExpression("ℤ");
+	
+	protected static Expression powInteger = Lib.parseExpression("ℙ(ℤ)");
+	
 	protected static final Expression E = Lib.parseExpression("x ∗ 2");
 
 	protected static final Expression F = Lib.parseExpression("y ∗ 3");
@@ -658,6 +662,22 @@ public class AutoFormulaRewriterTests {
 		assertBinaryExpression("U ∖ U == ∅",
 				emptySet, U, Expression.SETMINUS, U);
 
+		// {} \ S == {}
+		assertBinaryExpression("∅ ∖ S == ∅",
+				emptySet, emptySet, Expression.SETMINUS, S);
+		assertBinaryExpression("∅ ∖ T == ∅",
+				emptySet, emptySet, Expression.SETMINUS, T);
+		assertBinaryExpression("∅ ∖ U == ∅",
+				emptySet, emptySet, Expression.SETMINUS, U);
+
+		// S \ {} == S
+		assertBinaryExpression("S ∖ ∅ == S",
+				S, S, Expression.SETMINUS, emptySet);
+		assertBinaryExpression("T ∖ ∅ == T",
+				T, T, Expression.SETMINUS, emptySet);
+		assertBinaryExpression("U ∖ ∅ == U",
+				U, U, Expression.SETMINUS, emptySet);
+
 		Expression m1 = ff.makeBinaryExpression(Expression.MAPSTO, number1,
 				number2, null);
 		Expression m2 = ff.makeBinaryExpression(Expression.MAPSTO, number2,
@@ -751,10 +771,29 @@ public class AutoFormulaRewriterTests {
 				ff.makeSetExtension(E, null), Predicate.EQUAL, ff
 						.makeSetExtension(F, null));
 		
-		// S \ {} == S
-		assertBinaryExpression("S ∖ ∅ == S", S, S, Expression.SETMINUS, emptySet);
-		assertBinaryExpression("T ∖ ∅ == T", T, T, Expression.SETMINUS, emptySet);
-		assertBinaryExpression("U ∖ ∅ == U", U, U, Expression.SETMINUS, emptySet);
+		// Typ = {} == false (where Typ is a type expression)
+		assertRelationalPredicate("ℤ = ∅ == ⊥", Lib.False, powInteger,
+				Expression.EQUAL, emptySet);
+		assertRelationalPredicate("ℙ(ℤ) = ∅ == ⊥", Lib.False, powInteger,
+				Expression.EQUAL, emptySet);
+
+		// {} = Typ == false (where Typ is a type expression)
+		assertRelationalPredicate("∅ = ℤ == ⊥", Lib.False, emptySet,
+				Expression.EQUAL, integer);
+		assertRelationalPredicate("∅ = ℙ(ℤ) == ⊥", Lib.False, emptySet,
+				Expression.EQUAL, powInteger);
+
+		// E : Typ == true (where Typ is a type expression)
+		assertRelationalPredicate("E ∈ ℤ == ⊤", Lib.True, E, Expression.IN,
+				integer);
+		assertRelationalPredicate("F ∈ ℤ == ⊤", Lib.True, F, Expression.IN,
+				integer);
+		assertRelationalPredicate("S ∈ ℙ(ℤ) == ⊤", Lib.True, S, Expression.IN,
+				powInteger);
+		assertRelationalPredicate("T ∈ ℙ(ℤ) == ⊤", Lib.True, T, Expression.IN,
+				powInteger);
+		assertRelationalPredicate("U ∈ ℙ(ℤ) == ⊤", Lib.True, U, Expression.IN,
+				powInteger);
 	}
 
 	@Test
