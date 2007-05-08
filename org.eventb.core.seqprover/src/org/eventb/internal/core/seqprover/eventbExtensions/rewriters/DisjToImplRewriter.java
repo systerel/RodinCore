@@ -8,6 +8,11 @@ import static org.eventb.core.seqprover.eventbExtensions.Lib.makeNeg;
 
 import org.eventb.core.ast.Predicate;
 
+/**
+ * @author fmehta
+ * @deprecated use {@link DisjunctionToImplicationRewriter} instead
+ */
+@Deprecated
 public class DisjToImplRewriter implements Rewriter{
 	
 	public String getRewriterID() {
@@ -25,6 +30,7 @@ public class DisjToImplRewriter implements Rewriter{
 	}
 
 	public Predicate apply(Predicate p) {
+		// (P or Q or ...) == (-P => (Q or ..))
 		if (isDisj(p))
 		{
 			Predicate[] disjuncts = disjuncts(p);

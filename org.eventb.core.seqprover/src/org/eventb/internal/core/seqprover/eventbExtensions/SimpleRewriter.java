@@ -6,6 +6,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjToImplRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegationRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Rewriter;
@@ -16,10 +17,16 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypePredRew
  * Common implementation for rewriting reasoners that rewrite a simple predicate
  * to another simple predicate.
  * 
+ * @deprecated
+ * 			All SimpleRewrites in this class are deprecated since their functionality is redundant.
+ * 			Use {@link AutoRewrites} instead
+ * 			
+ * 
  * @author Laurent Voisin
  */
 public abstract class SimpleRewriter extends AbstractRewriter {
 	
+	@Deprecated
 	public static class RemoveNegation extends SimpleRewriter {
 		public static final String REASONER_ID =
 			SequentProver.PLUGIN_ID + ".removeNegation";
@@ -32,6 +39,7 @@ public abstract class SimpleRewriter extends AbstractRewriter {
 		}
 	}
 
+	@Deprecated
 	public static class DisjToImpl extends SimpleRewriter {
 		public static final String REASONER_ID =
 			SequentProver.PLUGIN_ID + ".disjToImpl";
@@ -44,6 +52,7 @@ public abstract class SimpleRewriter extends AbstractRewriter {
 		}
 	}
 
+	@Deprecated
 	public static class Trivial extends SimpleRewriter {
 		public static final String REASONER_ID =
 			SequentProver.PLUGIN_ID + ".trivial";
@@ -56,6 +65,7 @@ public abstract class SimpleRewriter extends AbstractRewriter {
 		}
 	}
 
+	@Deprecated
 	public static class TypePred extends SimpleRewriter {
 		public static final String REASONER_ID =
 			SequentProver.PLUGIN_ID + ".trivial";

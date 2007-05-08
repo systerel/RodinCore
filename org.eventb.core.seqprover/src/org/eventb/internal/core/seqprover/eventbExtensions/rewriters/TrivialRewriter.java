@@ -9,6 +9,11 @@ import org.eventb.core.ast.Type;
 
 import static org.eventb.core.seqprover.eventbExtensions.Lib.*;
 
+/**
+ * @author fmehta
+ * @deprecated use {@link AutoRewrites} instead
+ */
+@Deprecated
 public class TrivialRewriter implements Rewriter{
 
 	public String getRewriterID() {
@@ -41,20 +46,22 @@ public class TrivialRewriter implements Rewriter{
 	}
 
 	public Predicate apply(Predicate p) {
+		// not not P == P
 		if ((isNeg(p)) && (isNeg(negPred(p)))) 
 			return  negPred(negPred(p));
-		
+		// a=a  == T
 		if (isEq(p) && eqLeft(p).equals(eqRight(p)))
-			return True;	
+			return True;
+		// a/=a == F
 		if (isNotEq(p) && notEqLeft(p).equals(notEqRight(p)))
 			return False;
-		
+		// a : {} == F
 		if (isInclusion(p) && isEmptySet(getSet(p)))
 			return False;
-		
+		// a /: {} == T
 		if (isNotInclusion(p) && isEmptySet(getSet(p)))
 			return True;
-		
+		// A /= {} <OR> {} /= A   ==   (#e. e:A)
 		if (isNotEq(p) && (isEmptySet(notEqRight(p)) || isEmptySet(notEqLeft(p))))
 		{
 			Expression nonEmptySet = isEmptySet(notEqRight(p)) ?

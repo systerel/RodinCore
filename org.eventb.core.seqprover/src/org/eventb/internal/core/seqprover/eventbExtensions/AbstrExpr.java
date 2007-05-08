@@ -1,6 +1,5 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

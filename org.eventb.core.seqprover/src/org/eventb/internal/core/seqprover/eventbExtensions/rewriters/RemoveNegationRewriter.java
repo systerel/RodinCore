@@ -4,6 +4,12 @@ import org.eventb.core.ast.Predicate;
 
 import static org.eventb.core.seqprover.eventbExtensions.Lib.*;
 
+/**
+ * @author fmehta
+ *	
+ * @deprecated use {@link RemoveNegation} instead
+ */
+@Deprecated
 public class RemoveNegationRewriter implements Rewriter {
 
 	public String getRewriterID() {
@@ -52,32 +58,42 @@ public class RemoveNegationRewriter implements Rewriter {
 		if (! (isNeg(p))) return null;
 		Predicate negP = negPred(p);
 		
+		// - T == F
 		if (isTrue(negP))
 			return False;
+		// - F == T
 		if (isFalse(negP))
 			return True;
+		// - - P == P
 		if (isNeg(negP))
 			return negPred(negP);
+		// - (P & Q &..)  = (-P or -Q or ..) 
 		if (isConj(negP))
 			return makeDisj(makeNeg(conjuncts(negP)));
+		// - (P or Q &..) = (-P & -Q &..)
 		if (isDisj(negP))
 			return makeConj(makeNeg(disjuncts(negP)));
+		// - ( P => Q) = ( P & -Q)
 		if (isImp(negP))
 			return makeConj(impLeft(negP),makeNeg(impRight(negP)));
+		// -(#x . Px) == !x. -Px
 		if (isExQuant(negP))
 			return makeUnivQuant(getBoundIdents(negP),
 					makeNeg(getBoundPredicate(negP)));
+		// -(!x. Px) == #x. - Px
 		if (isUnivQuant(negP))
 			return makeExQuant(getBoundIdents(negP),
 					makeNeg(getBoundPredicate(negP)));
-		
+		// -(a=b) == a/=b
 		if (isEq(negP))
 			return makeNotEq(eqLeft(negP),eqRight(negP));
+		// -(a/=b) == (a=b)
 		if (isNotEq(negP))
 			return makeEq(notEqLeft(negP),notEqRight(negP));
-		
+		// -(a:A) == a/:A
 		if (isInclusion(negP))
 			return makeNotInclusion(getElement(negP),getSet(negP));
+		// -(a/:A) == a:A
 		if (isNotInclusion(negP))
 			return makeInclusion(getElement(negP),getSet(negP));
 		

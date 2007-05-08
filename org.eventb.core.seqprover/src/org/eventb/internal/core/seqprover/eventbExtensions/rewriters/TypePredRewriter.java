@@ -15,6 +15,11 @@ import static org.eventb.core.seqprover.eventbExtensions.Lib.notEqRight;
 
 import org.eventb.core.ast.Predicate;
 
+/**
+ * @author fmehta
+ * @deprecated this should be done in {@link AutoRewrites}
+ */
+@Deprecated
 public class TypePredRewriter implements Rewriter{
 
 	public String getRewriterID() {
@@ -54,6 +59,10 @@ public class TypePredRewriter implements Rewriter{
 	}
 
 	public Predicate apply(Predicate p) {
+		// Ty is a type expression (NAT, BOOL, carrierset, Pow(Ty), etc)
+		// t is an expression of type Ty
+		
+		//  Ty/={} <OR> {}/=Ty  ==  T
 		if (isNotEq(p)) {
 			if (isEmptySet(notEqRight(p)) &&
 					notEqLeft(p).isATypeExpression())
@@ -63,6 +72,7 @@ public class TypePredRewriter implements Rewriter{
 				return True;
 		}
 		
+		//	  Ty={} <OR> {}=Ty  ==  F
 		if (isEq(p)) {
 			if (isEmptySet(eqRight(p)) &&
 					eqLeft(p).isATypeExpression())
@@ -71,10 +81,12 @@ public class TypePredRewriter implements Rewriter{
 					eqRight(p).isATypeExpression())
 				return False;
 		}
-			
+		
+		// t : Ty  == T
 		if (isInclusion(p) && getSet(p).isATypeExpression())
 			return True;
 		
+		// t /: Ty  == F
 		if (isNotInclusion(p) && getSet(p).isATypeExpression())
 			return False;
 		

@@ -78,6 +78,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivia
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
@@ -95,6 +96,10 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegat
  * @author htson
  * 
  * TODO : complete comments.
+ */
+/**
+ * @author fmehta
+ *
  */
 public class Tactics {
 
@@ -266,6 +271,9 @@ public class Tactics {
 	 * 
 	 * @return
 	 * 		The normalize tactic.
+	 * 
+	 * @deprecated maybe split the tactics here into individual post tactics 
+	 * 
 	 */
 	public static ITactic norm() {
 		ITactic Ti = repeat(compose(conjI(), allI(), impI()));
@@ -441,11 +449,18 @@ public class Tactics {
 				new RemoveNegation.Input(null, position));
 	}
 
+	
+	/**
+	 * @deprecated use {@link DisjunctionToImplicationRewriter} instead
+	 */
 	public static ITactic disjToImpGoal() {
 		return BasicTactics.reasonerTac(new DisjToImpl(), new DisjToImpl.Input(
 				null));
 	}
 
+	/**
+	 * @deprecated use {@link DisjunctionToImplicationRewriter} instead
+	 */
 	public static boolean disjToImpGoal_applicable(Predicate goal) {
 		return (new DisjToImpl()).isApplicable(goal);
 	}
@@ -724,10 +739,17 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new FalseHyp(), new EmptyInput());
 	}
 
+	/**
+	 * @deprecated should be done with user defined postTac
+	 */
 	public static ITactic trivial() {
 		return compose(hyp(), trivialGoalRewrite(), tautology(), hyp());
 	}
 
+	
+	/**
+	 * @deprecated should be done with user defined postTac
+	 */
 	public static ITactic trivialGoalRewrite() {
 		return compose(BasicTactics.reasonerTac(new Trivial(),
 				new Trivial.Input(null)), BasicTactics.reasonerTac(
@@ -744,13 +766,6 @@ public class Tactics {
 
 	public static ITactic mngHyp(ISelectionHypAction hypAction) {
 		return BasicTactics.reasonerTac(new MngHyp(), new MngHyp.Input(hypAction));
-	}
-
-	private static ITactic cleanupTac = compose(contradiction(), tautology(),
-			hyp(), impI());
-
-	public static ITactic postProcessBeginner() {
-		return repeat(onAllPending(cleanupTac));
 	}
 
 	// It is important that conjD_auto() is called sometime before falsifyHyp_auto()
@@ -1059,6 +1074,12 @@ public class Tactics {
 				new DisjunctionToImplicationRewrites.Input(hyp, position));
 	}
 
+	/**
+	 * @author fmehta
+	 * 
+	 * @deprecated split into smaller tactics for the post tactic
+	 *
+	 */
 	public static class NormTac implements ITactic{
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
