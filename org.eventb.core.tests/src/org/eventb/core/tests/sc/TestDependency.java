@@ -9,7 +9,6 @@ package org.eventb.core.tests.sc;
 
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
-import org.rodinp.core.RodinCore;
 
 /**
  * @author Stefan Hallerstede

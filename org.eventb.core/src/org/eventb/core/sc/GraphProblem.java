@@ -47,7 +47,7 @@ public enum GraphProblem implements IRodinProblem {
 	EventMergeActionError(IMarker.SEVERITY_ERROR, Messages.scuser_EventMergeActionConflict),
 	EventMergeLabelError(IMarker.SEVERITY_ERROR, Messages.scuser_EventMergeLabelConflict),
 	EventRefinementError(IMarker.SEVERITY_ERROR, Messages.scuser_EventRefinementError),
-	MachineWithoutInitialisationError(IMarker.SEVERITY_ERROR, Messages.scuser_MachineWithoutInitialisationError),
+	MachineWithoutInitialisationWarning(IMarker.SEVERITY_WARNING, Messages.scuser_MachineWithoutInitialisationError),
 	InitialisationRefinedError(IMarker.SEVERITY_ERROR, Messages.scuser_InitialisationRefinedError),
 	InitialisationVariableError(IMarker.SEVERITY_ERROR, Messages.scuser_InitialisationVariableError),
 	InitialisationGuardError(IMarker.SEVERITY_ERROR, Messages.scuser_InitialisationGuardError),

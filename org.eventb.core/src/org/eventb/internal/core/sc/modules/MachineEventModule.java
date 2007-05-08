@@ -493,7 +493,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 		if (init == null || init.hasError())
 			createProblemMarker(
 					machineFile,
-					GraphProblem.MachineWithoutInitialisationError);
+					GraphProblem.MachineWithoutInitialisationWarning);
 		
 		endFilterModules(repository, null);
 		
