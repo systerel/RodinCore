@@ -88,6 +88,7 @@ public class TestClauseEquality extends TestCase{
 					cClause(cPred(1,cPlus(cPlus(a,y),y))),cClause(cPred(1,cPlus(cPlus(a,x),x)))
 			},
 			
+			
 	};
 
 	

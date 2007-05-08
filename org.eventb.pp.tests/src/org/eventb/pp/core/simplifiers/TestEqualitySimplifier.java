@@ -14,15 +14,17 @@ import junit.framework.TestCase;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.VariableContext;
+import org.eventb.internal.pp.core.elements.AbstractPPClause;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.ILiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.EqualitySimplifier;
+import org.eventb.pp.AbstractPPTest;
 import org.eventb.pp.Util;
 
-public class TestEqualitySimplifier extends TestCase {
+public class TestEqualitySimplifier extends AbstractPPTest {
 
 	
 	private class TestPair {
@@ -55,30 +57,29 @@ public class TestEqualitySimplifier extends TestCase {
 	private static LocalVariable evar2 = Util.cELocVar(2);
 	
 	TestPair[] tests = new TestPair[] {
-			// simple inequality
 			new TestPair(
 					cClause(cNEqual(a,a)),
-					cClause()
+					FALSE
 			),
 			// simple equality
 			new TestPair(
 					cClause(cEqual(a,a)),
-					null
+					TRUE
 			),
 			// simple inequality with variables
 			new TestPair(
 					cClause(cNEqual(var0,var0)),
-					cClause()
+					FALSE
 			),
 			// simple equality with variables
 			new TestPair(
 					cClause(cEqual(var0,var0)),
-					null
+					TRUE
 			),
 			// simple inequality with variables
 			new TestPair(
 					cClause(cNEqual(evar0,evar0)),
-					cClause()
+					FALSE
 			),
 			// do nothing
 			new TestPair(
@@ -107,11 +108,11 @@ public class TestEqualitySimplifier extends TestCase {
 			),
 			new TestPair(
 					cClause(cNEqual(a,a),cEqual(a,a)),
-					null
+					TRUE
 			),
 			new TestPair(
 					cClause(cPred(0,a),cEqual(a,a)),
-					null
+					TRUE
 			),
 			
 			// EQUIVALENCE
@@ -121,7 +122,7 @@ public class TestEqualitySimplifier extends TestCase {
 			),
 			new TestPair(
 					cEqClause(cNEqual(a,a),cEqual(a,a)),
-					cClause()
+					FALSE
 			),
 			new TestPair(
 					cEqClause(cNEqual(a,a),cEqual(a,a),cPred(0,a)),
@@ -137,7 +138,7 @@ public class TestEqualitySimplifier extends TestCase {
 			),
 			new TestPair(
 					cEqClause(cEqual(a,a),cEqual(a,a)),
-					null
+					TRUE
 			),
 			
 			// EQUIVALENCE and conditions
@@ -169,7 +170,7 @@ public class TestEqualitySimplifier extends TestCase {
 			),
 			new TestPair(
 					cClause(new ArrayList<ILiteral>(),cNEqual(a,a)),
-					cClause()
+					FALSE
 			),
 			
 	};
@@ -182,7 +183,7 @@ public class TestEqualitySimplifier extends TestCase {
 	
 	public void testEquality() {
 		for (TestPair test : tests) {
-			EqualitySimplifier rule = new EqualitySimplifier(variableContext(),null);
+			EqualitySimplifier rule = new EqualitySimplifier(variableContext());
 			
 			Constant.uniqueIdentifier = 0;
 			

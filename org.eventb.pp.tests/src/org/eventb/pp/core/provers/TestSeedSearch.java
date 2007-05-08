@@ -100,7 +100,7 @@ public class TestSeedSearch extends TestCase {
 		}
 		DataStructureWrapper dsWrapper = new DataStructureWrapper(clauses);
 		
-		prover.initialize(null, dsWrapper);
+		prover.initialize(null, dsWrapper, null);
 		prover.newClause(pair.unitClause);
 		for (IClause clause : pair.result) {
 			assertEquals(clause,prover.next());

@@ -23,9 +23,10 @@ import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
+import org.eventb.pp.AbstractPPTest;
 import org.eventb.pp.Util;
 
-public class TestLiteralSimplification extends TestCase {
+public class TestLiteralSimplification extends AbstractPPTest {
 	private class TestPair {
 		IClause input, output;
 		
@@ -212,15 +213,15 @@ public class TestLiteralSimplification extends TestCase {
 		// discard
 		new TestPair(
 				cClause(cProp(0),cNotProp(0)),
-				null
+				TRUE
 		),
 		new TestPair(
 				cClause(cPred(0,a),cNotPred(0,a)),
-				null
+				TRUE
 		),
 		new TestPair(
 				cClause(cPred(0,var0),cNotPred(0,var0)),
-				null
+				TRUE
 		),
 		new TestPair(
 				cClause(cPred(0,evar0),cNotPred(0,evar0)),
@@ -233,11 +234,11 @@ public class TestLiteralSimplification extends TestCase {
 		
 		new TestPair(
 				cClause(cEqual(a,b),cNEqual(a,b)),
-				null
+				TRUE
 		),
 		new TestPair(
 				cClause(cEqual(a,b),cNEqual(b,a)),
-				null
+				TRUE
 		),
 		new TestPair(
 				cClause(cEqual(evar0,var0),cNEqual(var00,var0)),
@@ -247,11 +248,11 @@ public class TestLiteralSimplification extends TestCase {
 		// EQUIVALENCE Clauses
 		new TestPair(
 				cEqClause(cProp(0),cProp(0)),
-				null
+				TRUE
 		),
 		new TestPair(
 				cEqClause(cProp(0),cNotProp(0)),
-				cClause()
+				FALSE
 		),
 		new TestPair(
 				cEqClause(cProp(0),cProp(0),cProp(1)),
@@ -271,11 +272,11 @@ public class TestLiteralSimplification extends TestCase {
 		),
 		new TestPair(
 				cEqClause(cProp(0),cProp(0),cProp(1),cNotProp(1)),
-				cClause()
+				FALSE
 		),
 		new TestPair(
 				cEqClause(cProp(0),cNotProp(0),cProp(1),cNotProp(1)),
-				null
+				TRUE
 		),
 		new TestPair(
 				cEqClause(cNotProp(0),cNotProp(0),cProp(0)),
@@ -292,7 +293,7 @@ public class TestLiteralSimplification extends TestCase {
 		),
 		new TestPair(
 				cEqClause(cPred(0,evar0),cNotPred(0,fvar0)),
-				cClause()
+				FALSE
 		),
 		new TestPair(
 				cEqClause(cPred(0,evar0),cPred(0,var0)),
@@ -305,7 +306,7 @@ public class TestLiteralSimplification extends TestCase {
 		
 		new TestPair(
 				cEqClause(cProp(0),cProp(0),cEqual(a,b),cEqual(a,b)),
-				null
+				TRUE
 		),
 		new TestPair(
 				cEqClause(cProp(0),cProp(0),cEqual(a,b),cEqual(a,b),cProp(0)),
@@ -313,7 +314,7 @@ public class TestLiteralSimplification extends TestCase {
 		),
 		new TestPair(
 				cEqClause(cProp(0),cNotProp(0),cEqual(a,b),cNEqual(a,b)),
-				null
+				TRUE
 		),
 		new TestPair(
 				cEqClause(cProp(0),cNotProp(0),cEqual(a,b),cNEqual(a,b),cProp(0)),
@@ -327,11 +328,11 @@ public class TestLiteralSimplification extends TestCase {
 		),
 		new TestPair(
 				cEqClause(mList(cNotProp(0),cNotProp(0)),cNEqual(a,b),cNEqual(a,b)),
-				null
+				TRUE
 		),
 		new TestPair(
 				cEqClause(mList(cProp(0),cProp(0)),cNEqual(a,b),cNEqual(a,b)),
-				null
+				TRUE
 		),
 		new TestPair(
 				cEqClause(mList(cProp(0),cNotProp(0)),cNEqual(a,b),cNEqual(a,b)),
@@ -341,7 +342,7 @@ public class TestLiteralSimplification extends TestCase {
 		// Disjunctive with conditions
 		new TestPair(
 				cClause(mList(cProp(0),cNotProp(0)),cNEqual(a,b),cNEqual(a,b)),
-				null
+				TRUE
 		),
 		new TestPair(
 				cClause(mList(cNotProp(0),cNotProp(0)),cNEqual(a,b),cNEqual(a,b)),
@@ -357,7 +358,7 @@ public class TestLiteralSimplification extends TestCase {
 		),
 		new TestPair(
 				cClause(mList(cEqual(a,b)),cNEqual(a,b)),
-				null
+				TRUE
 		),
 		
 	};

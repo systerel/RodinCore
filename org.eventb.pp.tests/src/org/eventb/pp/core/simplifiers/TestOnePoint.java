@@ -14,6 +14,7 @@ import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
+import org.eventb.pp.AbstractPPTest;
 import org.eventb.pp.Util;
 
 /**
@@ -27,7 +28,7 @@ import org.eventb.pp.Util;
  * @author François Terrier
  *
  */
-public class TestOnePoint extends TestCase {
+public class TestOnePoint extends AbstractPPTest {
 
 	private class TestPair {
 		IClause input, output;
@@ -139,15 +140,15 @@ public class TestOnePoint extends TestCase {
 			// EQUALITY alone
 			new TestPair(
 					cClause(cNEqual(var0, var1)),
-					cClause()
+					FALSE
 			),
 			new TestPair(
 					cClause(cNEqual(var0, var1),cNEqual(var2, var3)),
-					cClause()
+					FALSE
 			),
 			new TestPair(
 					cClause(cNEqual(var0, a)),
-					cClause()
+					FALSE
 			),
 	};
 	

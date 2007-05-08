@@ -6,8 +6,10 @@ import static org.eventb.pp.Util.cFLocVar;
 import static org.eventb.pp.Util.cVar;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -18,17 +20,26 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.IEquality;
+import org.eventb.internal.pp.core.elements.PPTrueClause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
 public abstract class AbstractPPTest extends TestCase {
 
+	protected List<IEquality> EMPTY = new ArrayList<IEquality>(); 
+
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 	// Types used in these tests
 	protected static IntegerType INT = ff.makeIntegerType();
 	protected static BooleanType BOOL = ff.makeBooleanType();
 
+	protected static IClause TRUE = Util.TRUE(Level.base);
+	protected static IClause FALSE = Util.FALSE(Level.base);
+	
+	
 	protected static GivenType ty_S = ff.makeGivenType("S");
 	protected static GivenType ty_T = ff.makeGivenType("T");
 	protected static GivenType ty_U = ff.makeGivenType("U");
@@ -76,6 +87,13 @@ public abstract class AbstractPPTest extends TestCase {
 	protected static LocalVariable evar1 = cELocVar(1);
 	protected static LocalVariable fvar0 = cFLocVar(0);
 	protected static LocalVariable fvar1 = cFLocVar(1);
+	
+	protected static IEquality ab = Util.cEqual(a, b);
+	protected static IEquality nab = Util.cNEqual(a, b);
+	protected static IEquality bc = Util.cEqual(b, c);
+	protected static IEquality nbc = Util.cNEqual(b, c);
+	protected static IEquality cd = Util.cEqual(c, d);
+	protected static IEquality ncd = Util.cNEqual(c, d);
 	
 	
 	protected static <T> Set<T> mSet(T... elements) {

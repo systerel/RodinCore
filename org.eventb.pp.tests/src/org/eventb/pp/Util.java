@@ -26,8 +26,10 @@ import org.eventb.internal.pp.core.elements.PPArithmetic;
 import org.eventb.internal.pp.core.elements.PPDisjClause;
 import org.eventb.internal.pp.core.elements.PPEqClause;
 import org.eventb.internal.pp.core.elements.PPEquality;
+import org.eventb.internal.pp.core.elements.PPFalseClause;
 import org.eventb.internal.pp.core.elements.PPPredicate;
 import org.eventb.internal.pp.core.elements.PPProposition;
+import org.eventb.internal.pp.core.elements.PPTrueClause;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.PPArithmetic.AType;
 import org.eventb.internal.pp.core.elements.terms.Constant;
@@ -156,8 +158,8 @@ public class Util {
 		return list;
 	}
 	
-	public static List<ILiteral> mList(ILiteral... literals) {
-		List<ILiteral> list = new ArrayList<ILiteral>();
+	public static <T extends ILiteral> List<T> mList(T... literals) {
+		List<T> list = new ArrayList<T>();
 		list.addAll(Arrays.asList(literals));
 		return list;
 	}
@@ -229,7 +231,12 @@ public class Util {
 	// PHASE 2 //
 	/////////////
 	private static class DummyOrigin implements IOrigin {
-
+		private Level level;
+		
+		public DummyOrigin(Level level) {
+			this.level = level;
+		}
+		
 		public boolean dependsOnGoal() {
 			return false;
 		}
@@ -243,23 +250,62 @@ public class Util {
 
 		public void trace(Tracer tracer) {
 		}
+
+		public Level getLevel() {
+			return level;
+		}
 		
 	}
 	
+	
+	public static IClause newDisjClause(IOrigin origin, List<ILiteral> literals) {
+		List<IPredicate> predicates = new ArrayList<IPredicate>();
+		List<IEquality> equalities = new ArrayList<IEquality>();
+		List<IArithmetic> arithmetic = new ArrayList<IArithmetic>();
+		for (ILiteral literal : literals) {
+			if (literal instanceof IPredicate) predicates.add((IPredicate)literal);
+			else if (literal instanceof IEquality) equalities.add((IEquality)literal);
+			else if (literal instanceof IArithmetic) arithmetic.add((IArithmetic)literal);
+		}
+		return new PPDisjClause(origin,predicates,equalities,arithmetic);
+	}
+	
+	public static IClause newEqClause(IOrigin origin, List<ILiteral> literals) {
+		assert literals.size() > 1;
+		
+		List<IPredicate> predicates = new ArrayList<IPredicate>();
+		List<IEquality> equalities = new ArrayList<IEquality>();
+		List<IArithmetic> arithmetic = new ArrayList<IArithmetic>();
+		for (ILiteral literal : literals) {
+			if (literal instanceof IPredicate) predicates.add((IPredicate)literal);
+			else if (literal instanceof IEquality) equalities.add((IEquality)literal);
+			else if (literal instanceof IArithmetic) arithmetic.add((IArithmetic)literal);
+		}
+		return new PPEqClause(origin,predicates,equalities,arithmetic);
+	}
+	
+	
 	public static IClause cClause(ILiteral... literals) {
-		IClause clause = ClauseFactory.getDefault().newDisjClause(mList(literals));
-		clause.setOrigin(new DummyOrigin());
+		IClause clause = newDisjClause(new DummyOrigin(Level.base), mList(literals));
 		return clause;
+	}
+	
+	
+	public static IClause TRUE(Level level) {
+		return new PPTrueClause(new DummyOrigin(level));
+	}
+	
+	public static IClause FALSE(Level level) {
+		return new PPFalseClause(new DummyOrigin(level));
 	}
 	
 	
 	public static IClause cClause(Level level, ILiteral... literals) {
-		IClause clause = ClauseFactory.getDefault().newDisjClause(level, mList(literals));
-		clause.setOrigin(new DummyOrigin());
+		IClause clause = newDisjClause(new DummyOrigin(level), mList(literals));
 		return clause;
 	}
 	
-	public static AbstractPPClause cClause(List<ILiteral> literals, IEquality... conditions) {
+	public static AbstractPPClause cClause(List<? extends ILiteral> literals, IEquality... conditions) {
 		List<IPredicate> predicates = new ArrayList<IPredicate>();
 		List<IEquality> equalities = new ArrayList<IEquality>();
 		List<IArithmetic> arithmetic = new ArrayList<IArithmetic>();
@@ -268,22 +314,20 @@ public class Util {
 			else if (literal instanceof IEquality) equalities.add((IEquality)literal);
 			else if (literal instanceof IArithmetic) arithmetic.add((IArithmetic)literal);
 		}
-		return new PPDisjClause(Level.base,predicates,equalities,arithmetic,(List)mList(conditions));
+		return new PPDisjClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,(List)mList(conditions));
 	}
 	
 	public static IClause cEqClause(ILiteral... literals) {
-		IClause clause = ClauseFactory.getDefault().newEqClause(mList(literals));
-		clause.setOrigin(new DummyOrigin());
+		IClause clause = newEqClause(new DummyOrigin(Level.base),mList(literals));
 		return clause;
 	}
 	
 	public static IClause cEqClause(Level level, ILiteral... literals) {
-		IClause clause = ClauseFactory.getDefault().newEqClause(level,mList(literals));
-		clause.setOrigin(new DummyOrigin());
+		IClause clause = newEqClause(new DummyOrigin(level),mList(literals));
 		return clause;
 	}
 	
-	public static AbstractPPClause cEqClause(List<ILiteral> literals, IEquality... conditions) {
+	public static AbstractPPClause cEqClause(List<? extends ILiteral> literals, IEquality... conditions) {
 		List<IPredicate> predicates = new ArrayList<IPredicate>();
 		List<IEquality> equalities = new ArrayList<IEquality>();
 		List<IArithmetic> arithmetic = new ArrayList<IArithmetic>();
@@ -292,7 +336,7 @@ public class Util {
 			else if (literal instanceof IEquality) equalities.add((IEquality)literal);
 			else if (literal instanceof IArithmetic) arithmetic.add((IArithmetic)literal);
 		}
-		return new PPEqClause(Level.base,predicates,equalities,arithmetic,(List)mList(conditions));
+		return new PPEqClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,(List)mList(conditions));
 	}
 	
 	public static PPPredicate cPred(int index, Term... terms) {

@@ -38,6 +38,8 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.ILiteral;
+import org.eventb.internal.pp.core.elements.IPredicate;
+import org.eventb.internal.pp.core.elements.PPPredicate;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
@@ -52,9 +54,9 @@ public class TestClauseBuilder extends TestCase {
 	class TestPair {
 		List<String> predicate;
 		Collection<IClause> clauses;
-		Collection<ILiteral> unitClauses;
+		Collection<? extends ILiteral> unitClauses;
 		
-		TestPair (List<String> predicate, Collection<ILiteral> unitClauses, IClause... clauses) {
+		TestPair (List<String> predicate, Collection<? extends ILiteral> unitClauses, IClause... clauses) {
 			this.predicate = predicate;
 			this.unitClauses = unitClauses;
 			this.clauses = Arrays.asList(clauses);
@@ -1237,9 +1239,22 @@ public class TestClauseBuilder extends TestCase {
 			),
 	};
 	
-	public void doTest(List<String> strPredicate, Collection<ILiteral> literals, Collection<IClause> clauses, boolean goal) {
-		PredicateBuilder.DEBUG = true;
-		ClauseBuilder.DEBUG = true;
+	public void doTest(List<String> strPredicate, Collection<? extends ILiteral> literals, Collection<IClause> clauses, boolean goal) {
+		LoaderResult result = load(strPredicate, goal);
+		List<IClause> allClauses = new ArrayList<IClause>();
+		allClauses.addAll(clauses);
+		for (ILiteral lit : literals) {
+			allClauses.add(cClause(lit));
+		}
+		
+		assertSameClauses(strPredicate, allClauses, result.getClauses());
+		assertEquals("Actual: "+result.getClauses()+"\nExpected: "+allClauses,result.getClauses().size(), allClauses.size());
+//		assertSameClauses(strPredicate, literals, result.getLiterals());
+	}
+	
+	private LoaderResult load(List<String> strPredicate, boolean goal) {
+//		PredicateBuilder.DEBUG = true;
+//		ClauseBuilder.DEBUG = true;
 		
 		PredicateBuilder builder = new PredicateBuilder();
 		ClauseBuilder cBuilder = new ClauseBuilder();
@@ -1250,15 +1265,7 @@ public class TestClauseBuilder extends TestCase {
 			tmp.addAll(res.getInferredEnvironment());
 		}
 		LoaderResult result = cBuilder.buildClauses(builder.getContext());
-		List<IClause> allClauses = new ArrayList<IClause>();
-		allClauses.addAll(clauses);
-		for (ILiteral lit : literals) {
-			allClauses.add(cClause(lit));
-		}
-		
-		assertSameClauses(strPredicate, allClauses, result.getClauses());
-		assertEquals("Actual: "+result.getClauses()+"\nExpected: "+allClauses,result.getClauses().size(), allClauses.size());
-//		assertSameClauses(strPredicate, literals, result.getLiterals());
+		return result;
 	}
 	
 	private <T> void assertSameClauses(List<String> predicate, Collection<T> expected, Collection<T> actual) {
@@ -1328,6 +1335,21 @@ public class TestClauseBuilder extends TestCase {
 	public void testGoal() {
 		for (TestPair test : testsGoal) {
 			doTest(test.predicate, test.unitClauses, test.clauses, true);
+		}
+	}
+	
+	
+	public void testNotSameVariable() {
+		LoaderResult result = load(mList("(∀x·x ∈ S ∨ x ∈ S) ⇒ (∀x·x ∈ S ∨ x ∈ S )"),false);
+		for (IClause clause1 : result.getClauses()) {
+			for (IClause clause2 : result.getClauses()) {
+				if (clause1 == clause2) continue;
+				for (IPredicate	predicate1 : clause1.getPredicateLiterals()) {
+					for (IPredicate predicate2 : clause2.getPredicateLiterals()) {
+						assertNotSame(""+clause1+", "+clause2,predicate1,predicate2);
+					}
+				}
+			}
 		}
 	}
 
