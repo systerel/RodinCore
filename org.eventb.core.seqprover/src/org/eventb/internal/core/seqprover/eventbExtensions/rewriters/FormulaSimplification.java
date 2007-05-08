@@ -4,11 +4,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
@@ -16,9 +14,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 
@@ -87,31 +83,6 @@ public class FormulaSimplification {
 		return predicate;
 	}
 
-	@Deprecated
-	public static Predicate splitQuantifiedPredicate(int tag, int subTag,
-			BoundIdentDecl[] boundIdentifiers, Predicate[] children) {
-		List<Predicate> predicates = new ArrayList<Predicate>();
-		for (Predicate child : children) {
-			Predicate qPred = ff
-					.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
-			predicates.add(qPred);
-		}
-
-		return ff.makeAssociativePredicate(subTag, predicates, null);
-	}
-
-	@Deprecated
-	public static Predicate rewriteMapsto(Expression E, Expression F,
-			Expression G, Expression H) {
-
-		Predicate pred1 = ff.makeRelationalPredicate(Expression.EQUAL, E, G,
-				null);
-		Predicate pred2 = ff.makeRelationalPredicate(Expression.EQUAL, F, H,
-				null);
-		return ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] {
-				pred1, pred2 }, null);
-	}
-
 	public static Expression simplifyAssociativeExpression(
 			AssociativeExpression expression, Expression[] children) {
 		int tag = expression.getTag();
@@ -160,101 +131,6 @@ public class FormulaSimplification {
 		return expression;
 	}
 
-	@Deprecated
-	public static Predicate simplifySetComprehension(Predicate predicate,
-			final Expression E, BoundIdentDecl[] idents, Predicate guard,
-			Expression expression) {
-		if (idents.length == 1) {
-			if (expression instanceof BoundIdentifier) {
-				BoundIdentifier boundIdent = (BoundIdentifier) expression;
-				if (boundIdent.getBoundIndex() == 0) {
-					QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
-							Predicate.FORALL, idents, guard, null);
-					return qPred.instantiate(new Expression[] { E }, ff);
-				}
-			}
-		}
-		return predicate;
-	}
-
-	@Deprecated
-	public static Expression getDomain(Expression expression,
-			Expression[] members) {
-		Collection<Expression> domain = new LinkedHashSet<Expression>();
-
-		for (Expression member : members) {
-			if (member instanceof BinaryExpression
-					&& member.getTag() == Expression.MAPSTO) {
-				BinaryExpression bExp = (BinaryExpression) member;
-				domain.add(bExp.getLeft());
-			} else {
-				return expression;
-			}
-		}
-
-		return ff.makeSetExtension(domain, null);
-	}
-
-	@Deprecated
-	public static Expression getRange(Expression expression,
-			Expression[] members) {
-		Collection<Expression> range = new LinkedHashSet<Expression>();
-
-		for (Expression member : members) {
-			if (member instanceof BinaryExpression
-					&& member.getTag() == Expression.MAPSTO) {
-				BinaryExpression bExp = (BinaryExpression) member;
-				range.add(bExp.getRight());
-			} else {
-				return expression;
-			}
-		}
-
-		return ff.makeSetExtension(range, null);
-	}
-
-	@Deprecated
-	public static Expression simplifyFunctionOvr(Expression expression,
-			Expression[] children, Expression applyTo) {
-		Expression lastExpression = children[children.length - 1];
-		if (lastExpression instanceof SetExtension) {
-			SetExtension sExt = (SetExtension) lastExpression;
-			Expression[] members = sExt.getMembers();
-			if (members.length == 1) {
-				Expression child = members[0];
-				if (child instanceof BinaryExpression
-						&& child.getTag() == Expression.MAPSTO) {
-					if (((BinaryExpression) child).getLeft().equals(applyTo)) {
-						return ((BinaryExpression) child).getRight();
-					}
-				}
-			}
-		}
-
-		return expression;
-	}
-
-	@Deprecated
-	public static Predicate simplifySetEquality(Predicate predicate,
-			Expression[] membersE, Expression[] membersF) {
-		if (membersE.length == 1 && membersF.length == 1) {
-			return ff.makeRelationalPredicate(Predicate.EQUAL, membersE[0],
-					membersF[0], null);
-		}
-		return predicate;
-	}
-
-	@Deprecated
-	public static Expression simplifyMinusArithmetic(Expression expression,
-			Expression E, Expression F) {
-		if (F.equals(ff.makeIntegerLiteral(new BigInteger("0"), null))) {
-			return E;
-		} else if (E.equals(ff.makeIntegerLiteral(new BigInteger("0"), null))) {
-			return ff.makeUnaryExpression(Expression.UNMINUS, F, null);
-		}
-		return expression;
-	}
-
 	public static Expression getFaction(Expression E, Expression F) {
 		return ff.makeBinaryExpression(Expression.DIV, E, F, null);
 	}
@@ -298,19 +174,6 @@ public class FormulaSimplification {
 			Expression minusE = ff.makeIntegerLiteral(E.abs(), null);
 			Expression minusF = ff.makeIntegerLiteral(F.abs(), null);
 			return ff.makeBinaryExpression(Expression.DIV, minusE, minusF, null);
-		}
-		return expression;
-	}
-
-	@Deprecated
-	public static Expression simplifyExpnArithmetic(
-			BinaryExpression expression, Expression E, Expression F) {
-		if (F.equals(ff.makeIntegerLiteral(new BigInteger("1"), null))) {
-			return E;
-		} else if (F.equals(ff.makeIntegerLiteral(new BigInteger("0"), null))) {
-			return ff.makeIntegerLiteral(new BigInteger("1"), null);
-		} else if (E.equals(ff.makeIntegerLiteral(new BigInteger("1"), null))) {
-			return ff.makeIntegerLiteral(new BigInteger("1"), null);
 		}
 		return expression;
 	}
@@ -379,15 +242,6 @@ public class FormulaSimplification {
 		return expression;
 	}
 
-	@Deprecated
-	public static Expression simplifySetSubtraction(
-			BinaryExpression expression, Expression S, Expression T) {
-		if (T.equals(ff.makeEmptySet(S.getType(), null))) {
-			return S;
-		}
-		return expression;
-	}
-
 	public static Predicate checkForAllOnePointRule(Predicate predicate,
 			BoundIdentDecl[] identDecls, Predicate[] children, Predicate R) {
 		for (Predicate child : children) {
@@ -444,11 +298,6 @@ public class FormulaSimplification {
 				return true;
 		}
 		return false;
-	}
-
-	@Deprecated
-	public static Expression getEmptySetOfType(Expression S) {
-		return ff.makeEmptySet(S.getType(), null);
 	}
 
 }
