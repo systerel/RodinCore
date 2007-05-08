@@ -30,6 +30,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.IAbstractMachineInfo;
 import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
@@ -76,6 +77,8 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 	private ITypeEnvironment machineTypeEnvironment;
 	
 	private IEvent[] events;
+	
+	private IAbstractMachineInfo abstractMachineInfo;
 	
 	private static String EVENT_NAME_PREFIX = "EVT";
 	
@@ -520,7 +523,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 		}
 		
 		if (isInit && !inherited) {
-			if (machineFile.getRefinesClauses().length != 0)
+			if (abstractMachineInfo.getAbstractMachine() != null)
 				makeImplicitRefinement(event, symbolInfo);
 		}
 		
@@ -593,6 +596,8 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 		factory = FormulaFactory.getDefault();
 		
 		machineTypeEnvironment = repository.getTypeEnvironment();
+		
+		abstractMachineInfo = (IAbstractMachineInfo) repository.getState(IAbstractMachineInfo.STATE_TYPE);
 				
 	}
 
@@ -609,6 +614,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 		identifierSymbolTable = null;
 		factory = null;
 		machineTypeEnvironment = null;
+		abstractMachineInfo = null;
 		events = null;
 		super.endModule(element, repository, monitor);
 	}

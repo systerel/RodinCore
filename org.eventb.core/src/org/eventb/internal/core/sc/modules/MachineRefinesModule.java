@@ -350,6 +350,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		}
 		
 		refinesMachine = refinesMachines.length == 0 ? null : refinesMachines[0];
+		scMachineFile = null;
 		
 		if (refinesMachine != null) {
 			if (refinesMachine.hasAbstractMachineName()) {

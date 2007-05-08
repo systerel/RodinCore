@@ -9,6 +9,7 @@ package org.eventb.core.tests.sc;
 
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
+import org.rodinp.core.RodinCore;
 
 /**
  * @author Stefan Hallerstede
@@ -16,6 +17,9 @@ import org.eventb.core.IMachineFile;
  */
 public class TestDependency extends BasicSCTest {
 
+	/**
+	 * markers in dependent files should be deleted
+	 */
 	public void testDep_01_checkMarkersDeleted() throws Exception {
 		IContextFile con = createContext("con");
 
@@ -44,6 +48,63 @@ public class TestDependency extends BasicSCTest {
 		
 		containsMarkers(mac, false);
 
+	}
+	
+	public void testDep_02_nonexistentAbstractContext() throws Exception {
+		IContextFile con = createContext("con");
+		addContextExtends(con, "abs");
+
+		con.save(null, true);
+		
+		runBuilder();
+		
+		hasMarker(con.getExtendsClauses()[0]);
+		
+		IContextFile abs = createContext("abs");
+		
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		hasNotMarker(con.getExtendsClauses()[0]);
+	}
+	
+	public void testDep_03_nonexistentAbstractMachine() throws Exception {
+		IMachineFile con = createMachine("con");
+		addMachineRefines(con, "abs");
+
+		con.save(null, true);
+		
+		runBuilder();
+		
+		hasMarker(con.getRefinesClauses()[0]);
+		
+		IMachineFile abs = createMachine("abs");
+		
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		hasNotMarker(con.getRefinesClauses()[0]);		
+	}
+	
+	public void testDep_03_nonexistentSeenContext() throws Exception {
+		IMachineFile con = createMachine("con");
+		addMachineSees(con, "abs");
+
+		con.save(null, true);
+		
+		runBuilder();
+		
+		hasMarker(con.getSeesClauses()[0]);
+		
+		IContextFile abs = createContext("abs");
+		
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		hasNotMarker(con.getSeesClauses()[0]);
 	}
 
 }

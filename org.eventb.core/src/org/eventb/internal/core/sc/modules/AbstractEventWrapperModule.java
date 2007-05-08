@@ -199,10 +199,6 @@ public abstract class AbstractEventWrapperModule extends LabeledElementModule {
 						GraphProblem.AbstractEventNotFoundError,
 						label);
 			abstractEventWrapper = null;
-			createProblemMarker(
-					element,
-					attributeType,
-					GraphProblem.EventRefinementError);
 			issueRefinementErrorMarker(symbolInfo);
 		}
 		return abstractEventWrapper;

@@ -98,11 +98,14 @@ public class ContextStaticChecker extends StaticChecker {
 
 			IExtendsContext[] extendsContexts = source.getExtendsClauses();
 			for (IExtendsContext extendsContext : extendsContexts) {
-				if (extendsContext.hasAbstractContextName())
-					graph.addUserDependency(
-							source.getResource(), 
-							extendsContext.getAbstractSCContext().getResource(), 
-							target.getResource(), false);
+				if (extendsContext.hasAbstractContextName()) {
+					ISCContextFile abstractSCContext = extendsContext.getAbstractSCContext();
+					if (abstractSCContext.getContextFile().exists())
+						graph.addUserDependency(
+								source.getResource(), 
+								abstractSCContext.getResource(), 
+								target.getResource(), false);
+				}
 			}
 
 		} finally {

@@ -418,6 +418,10 @@ public abstract class BasicSCTest extends EventBTest {
 		}
 	}
 
+	public void hasNotMarker(IRodinElement element) throws Exception {
+		hasNotMarker(element, null);
+	}
+
 	public void hasMarker(IRodinElement element, IAttributeType attrType, IRodinProblem problem, String... args) throws Exception {
 		IRodinFile file = (IRodinFile) element.getOpenable();
 		IMarker[] markers = 

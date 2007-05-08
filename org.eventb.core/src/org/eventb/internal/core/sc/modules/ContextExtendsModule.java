@@ -28,7 +28,6 @@ import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -66,6 +65,14 @@ public class ContextExtendsModule extends ContextPointerModule {
 		for(int i=0; i<extendsContexts.length; i++) {
 			if (extendsContexts[i].hasAbstractContextName()) {
 				contextFiles[i] = extendsContexts[i].getAbstractSCContext();
+				if (!contextFiles[i].exists()) {
+					createProblemMarker(
+							extendsContexts[i], 
+							EventBAttributes.TARGET_ATTRIBUTE,
+							GraphProblem.AbstractContextNotFoundError,
+							extendsContexts[i].getAbstractContextName());
+					contextFiles[i] = null;
+				}
 			} else {
 				createProblemMarker(
 						extendsContexts[i], 
@@ -127,11 +134,6 @@ public class ContextExtendsModule extends ContextPointerModule {
 				repository, 
 				null);
 		
-	}
-
-	@Override
-	protected IRodinProblem getTargetContextNotFoundProblem() {
-		return GraphProblem.AbstractContextNotFoundError;
 	}
 
 	@Override

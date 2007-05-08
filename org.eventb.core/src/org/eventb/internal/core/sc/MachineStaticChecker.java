@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.sc.ISCProcessorModule;
@@ -102,20 +103,25 @@ public class MachineStaticChecker extends StaticChecker {
 					target.getResource(), true);	
 		
 			for (ISeesContext seesContext : seen) {
-				if (seesContext.hasSeenContextName())
-					graph.addUserDependency(
-							source.getResource(), 
-							seesContext.getSeenSCContext().getResource(), 
-							target.getResource(), 
-							true);
+				if (seesContext.hasSeenContextName()) {
+					ISCContextFile seenSCContext = seesContext.getSeenSCContext();
+					if (seenSCContext.getContextFile().exists())
+						graph.addUserDependency(
+								source.getResource(), 
+								seenSCContext.getResource(), 
+								target.getResource(), 
+								true);
+				}
 			}
 		
 			if (abstractMachines.length != 0 && abstractMachines[0].hasAbstractMachineName()) {
-				graph.addUserDependency(
-						source.getResource(), 
-						abstractMachines[0].getAbstractSCMachine().getResource(), 
-						target.getResource(), 
-						true);
+				ISCMachineFile abstractSCMachine = abstractMachines[0].getAbstractSCMachine();
+				if (abstractSCMachine.getMachineFile().exists())
+					graph.addUserDependency(
+							source.getResource(), 
+							abstractSCMachine.getResource(), 
+							target.getResource(), 
+							true);
 			}
 		
 		} finally {

@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContext;
@@ -31,7 +30,6 @@ import org.eventb.internal.core.sc.ContextPointerArray;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -78,8 +76,6 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		factory = null;
 	}
 
-	protected abstract IRodinProblem getTargetContextNotFoundProblem();
-	
 	protected boolean fetchSCContexts(
 			ContextPointerArray contextPointerArray,
 			IProgressMonitor monitor) throws RodinDBException, CoreException {
@@ -98,16 +94,6 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			
 			if (scCF == null)
 				continue; // the context file has not been found
-			
-			if (!scCF.exists()) {
-				createProblemMarker(
-						contextPointerArray.getContextPointer(index), 
-						EventBAttributes.TARGET_ATTRIBUTE,
-						getTargetContextNotFoundProblem());
-				
-				contextPointerArray.setError(index);
-				continue;
-			}
 			
 			accurate &= scCF.isAccurate();
 			

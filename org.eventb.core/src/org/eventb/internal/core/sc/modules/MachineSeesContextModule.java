@@ -28,7 +28,6 @@ import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -55,13 +54,22 @@ public class MachineSeesContextModule extends ContextPointerModule {
 		ISCContextFile[] contextFiles = new ISCContextFile[seesContexts.length];
 		
 		for(int i=0; i<seesContexts.length; i++) {
-			if (seesContexts[i].hasSeenContextName())
+			if (seesContexts[i].hasSeenContextName()) {
 				contextFiles[i] = seesContexts[i].getSeenSCContext();
-			else
+				if (!contextFiles[i].exists()) {
+					createProblemMarker(
+							seesContexts[i], 
+							EventBAttributes.TARGET_ATTRIBUTE,
+							GraphProblem.SeenContextNotFoundError,
+							seesContexts[i].getSeenContextName());
+				contextFiles[i] = null;
+			}
+			} else {
 				createProblemMarker(
 						seesContexts[i], 
 						EventBAttributes.TARGET_ATTRIBUTE,
 						GraphProblem.SeenContextNameUndefError);
+			}
 		}
 		
 		contextPointerArray = 
@@ -127,11 +135,6 @@ public class MachineSeesContextModule extends ContextPointerModule {
 				repository, 
 				null);
 		
-	}
-
-	@Override
-	protected IRodinProblem getTargetContextNotFoundProblem() {
-		return GraphProblem.SeenContextNotFoundError;
 	}
 
 	@Override
