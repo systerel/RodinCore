@@ -1,6 +1,12 @@
 package org.eventb.internal.pp.core.provers.predicate;
 
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Stack;
+
+import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.IDispatcher;
 import org.eventb.internal.pp.core.IProver;
@@ -28,10 +34,13 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 	private IterableHashSet<IClause> unitClauses;
 	private IterableHashSet<IClause> nonUnitClauses;
 	
+	private Set<IClause> generatedClauses; 
+	
 	private ResolutionInferrer inferrer;
 	private ResolutionResolver resolver;
 	
 	private IDispatcher dispatcher;
+	private ClauseSimplifier simplifier;
 	private UnitInferenceIterator unitProver;
 	private NonUnitInferenceIterator nonUnitProver;
 	
@@ -47,10 +56,13 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 	
 		unitClausesIterator = unitClauses.iterator();
 		nonUnitClausesIterator = nonUnitClauses.iterator();
+		
+		generatedClauses = new HashSet<IClause>();
 	}
 	
-	public void initialize(IDispatcher dispatcher, IObservable clauses) {
+	public void initialize(IDispatcher dispatcher, IObservable clauses, ClauseSimplifier simplifier) {
 		this.dispatcher = dispatcher;
+		this.simplifier = simplifier;
 		clauses.addChangeListener(this);
 	}
 	
@@ -75,13 +87,11 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 				while (nextClause==null && nonUnitProver.next()) {
 					IClause nonUnitClause = nonUnitProver.getMatchingNonUnit();
 					// TODO record inferrence 
-					if (nonUnitClause.isBlocked()) continue;
 					resolver.initialize(nonUnitProver.getMatchingUnit(), nonUnitClause);
 					nextClause = resolver.next();
 				}
 			}
-			if (nextClause == null) {}
-			else {
+			if (nextClause != null) {
 				PredicateProver.debug("Inferred clause: "+nonUnitProver.getMatchingUnit()+" + "+nonUnitProver.getMatchingNonUnit()+" -> "+nextClause.getClause());
 				if (handleBlocking(nextClause)) {
 					debug("Clause blocked, returning null");
@@ -91,11 +101,12 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 				}
 			}
 		}
+		
 		return result;
 	}
 	
 	private boolean handleBlocking(InferrenceResult newClause) {
-		if (newClause.isBlocked()) {
+		if (newClause.isBlockedOnInferrence()) {
 			blockedClause = newClause.getClause();
 			return true;
 		}
@@ -131,7 +142,16 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 				// TODO can we block on unit clause inferrences ?
 
 				PredicateProver.debug("Unit-unit inference: "+clause+" + "+newClause+" -> "+result.getClause());
-				dispatcher.newClause(result.getClause());
+				IClause inferredClause = result.getClause();
+				inferredClause = simplifier.run(inferredClause);
+				if (inferredClause.isFalse()) {
+					dispatcher.contradiction(inferredClause.getOrigin());
+					// we can stop here because all subsequent clauses will be lost
+					return;
+				}
+				if (!inferredClause.isTrue()) {
+					generatedClauses.add(inferredClause);
+				}
 			}
 		}
 	}
@@ -142,9 +162,7 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 	}
 	
 	public void addOwnClause(IClause clause) {
-		assert dispatcher != null;
-		
-		newUnitClause(clause);
+		if (dispatcher != null) newUnitClause(clause);
 	}
 
 	@Override
@@ -153,8 +171,13 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 			unitClauses.appends(clause);
 			unitProver.newClause(clause);
 			nonUnitProver.newClause(clause);
+			
+			// we generate the clauses
+			addOwnClause(clause);
 		}
-		else if (clause.getPredicateLiterals().size()>0 && !clause.isUnit()) {
+		else if (	clause.getPredicateLiterals().size()>0 
+					&& !clause.isUnit()
+					&& !clause.isBlockedOnConditions()) {
 			nonUnitClauses.appends(clause);
 			nonUnitProver.newClause(clause);
 		}
@@ -169,7 +192,9 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 			unitProver.removeClause(clause);
 			nonUnitProver.removeClause(clause);
 		}
-		else if (clause.getPredicateLiterals().size()>0 && !clause.isUnit()) {
+		else if (	clause.getPredicateLiterals().size()>0
+					&& !clause.isUnit()
+					&& !clause.isBlockedOnConditions()) {
 			nonUnitClauses.remove(clause);
 			nonUnitProver.removeClause(clause);
 		}
@@ -181,17 +206,29 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 		resolver.removeClause(clause);
 	}
 	
-	public void contradiction(Level oldLevel, Level newLevel, boolean proofFound) {
+	public void contradiction(Level oldLevel, Level newLevel, boolean proofFound, Stack<Level> dependencies) {
 		// the blocked clauses are not in the search space of the main prover, so
 		// it is important to verify here that they can still exist
 		if (blockedClause != null && !Level.getHighest(blockedClause.getLevel(), newLevel).equals(newLevel)) {
 			blockedClause = null;
+		}
+		
+		// TODO check if necessary
+		for (Iterator<IClause> iter = generatedClauses.iterator(); iter.hasNext();) {
+			IClause clause = iter.next();
+			if (newLevel.isAncestorOf(clause.getLevel())) iter.remove();
 		}
 	}
 
 	public void registerDumper(Dumper dumper) {
 		dumper.addDataStructure("Predicate unit clauses", unitClauses.iterator());
 		dumper.addDataStructure("Predicate non-unit clauses", nonUnitClauses.iterator());
+	}
+
+	public Set<IClause> getGeneratedClauses() {
+		Set<IClause> result = new HashSet<IClause>(generatedClauses);
+		generatedClauses.clear();
+		return result;
 	}
 
 }

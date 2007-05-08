@@ -11,6 +11,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.ProofStrategy;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
+import org.eventb.internal.pp.core.provers.equality.EqualityProver;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
 import org.eventb.internal.pp.core.provers.seedsearch.SeedSearchProver;
 import org.eventb.internal.pp.core.simplifiers.EqualitySimplifier;
@@ -204,14 +205,16 @@ public class PPProof {
 		PredicateProver prover = new PredicateProver(cBuilder.getVariableContext());
 		CaseSplitter casesplitter = new CaseSplitter(cBuilder.getVariableContext());
 		SeedSearchProver seedsearch = new SeedSearchProver(cBuilder.getVariableContext());
+		EqualityProver equalityprover = new EqualityProver(cBuilder.getVariableContext());
 		proofStrategy.setPredicateProver(prover);
 		proofStrategy.setCaseSplitter(casesplitter);
 		proofStrategy.setSeedSearch(seedsearch);
+		proofStrategy.setEqualityProver(equalityprover);
 		
 		OnePointRule onepoint = new OnePointRule();
 		ExistentialSimplifier existential = new ExistentialSimplifier();
 		LiteralSimplifier literal = new LiteralSimplifier(cBuilder.getVariableContext());
-		EqualitySimplifier equality = new EqualitySimplifier(cBuilder.getVariableContext(),null);
+		EqualitySimplifier equality = new EqualitySimplifier(cBuilder.getVariableContext());
 		
 		proofStrategy.addSimplifier(onepoint);
 		proofStrategy.addSimplifier(equality);

@@ -6,7 +6,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
+import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.IDispatcher;
 import org.eventb.internal.pp.core.IProver;
@@ -47,11 +49,12 @@ public class SeedSearchProver extends DefaultChangeListener implements IProver {
 		this.inferrer = new InstantiationInferrer(context);
 	}
 	
-	public void contradiction(Level oldLevel, Level newLevel, boolean proofFound) {
+	public void contradiction(Level oldLevel, Level newLevel, boolean proofFound, Stack<Level> dependencies) {
+		// do nothing
 	}
 
 	public void initialize(IDispatcher dispatcher,
-			IObservable clauses) {
+			IObservable clauses, ClauseSimplifier simplifier) {
 		this.clauses = clauses;
 		candidates = new IterableHashSet<IClause>();
 		candidatesIterator = candidates.iterator();
@@ -122,9 +125,7 @@ public class SeedSearchProver extends DefaultChangeListener implements IProver {
 	}
 	
 	private Term getTermForVariable(Term originalTerm, Term newTerm, Variable v) {
-		// TODO implement with arithmetic
-		if (originalTerm == v) return newTerm;
-		else return null;
+		return ( originalTerm == v ) ? newTerm : null;
 	}
 	
 	private boolean verifyAndAddToTable(IPredicate predicate, int position, Hashtable<IPredicate, List<Integer>> visitedPredicates) {
@@ -177,8 +178,7 @@ public class SeedSearchProver extends DefaultChangeListener implements IProver {
 	}
 	
 	private List<Term> computeValues(Term t, Hashtable<Variable, List<Term>> table) {
-		if (table.containsKey(t)) return table.get(t);
-		else return new ArrayList<Term>();
+		return ( table.containsKey(t) ) ? table.get(t) : new ArrayList<Term>();
 	}
 	
 	private Set<Integer> getPositions(IPredicate predicate, Variable v) {
@@ -221,7 +221,7 @@ public class SeedSearchProver extends DefaultChangeListener implements IProver {
 		dumper.addDataStructure("seed search", candidates.iterator());
 	}
 	
-	public boolean accepts(IClause clause) {
+	private boolean accepts(IClause clause) {
 		return clause.isUnit() 
 			&& clause.getPredicateLiterals().size() == 1 
 			&& isQuantified(clause);
@@ -248,6 +248,11 @@ public class SeedSearchProver extends DefaultChangeListener implements IProver {
 	@Override
 	public void newClause(IClause clause) {
 		if (accepts(clause)) candidates.appends(clause);
+	}
+
+	private Set<IClause> emptySet = new HashSet<IClause>();
+	public Set<IClause> getGeneratedClauses() {
+		return emptySet;
 	}
 
 	

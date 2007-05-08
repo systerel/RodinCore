@@ -12,6 +12,7 @@ public class VariableContext implements IVariableContext {
 	private int currentVariableID = 0;
 	
 	public VariableContext(){
+		// do nothing
 	}
 	
 //	public void setStartID(int startID) {

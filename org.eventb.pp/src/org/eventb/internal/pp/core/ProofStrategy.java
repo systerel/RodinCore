@@ -6,11 +6,9 @@ import java.util.Stack;
 import org.eventb.internal.pp.core.datastructure.DataStructureWrapper;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
-import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
-import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
-import org.eventb.internal.pp.core.provers.seedsearch.SeedSearchProver;
 import org.eventb.internal.pp.core.search.IterableHashSet;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
+import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.core.tracing.Tracer;
 import org.eventb.pp.ITracer;
 import org.eventb.pp.PPResult;
@@ -38,9 +36,10 @@ public class ProofStrategy implements IDispatcher {
 	private DataStructureWrapper dsWrapper;
 	
 	// these are provers in some sense
-	private CaseSplitter casesplitter;
-	private PredicateProver prover;
-	private SeedSearchProver seedsearch;
+	private IProver casesplitter;
+	private IProver prover;
+	private IProver seedsearch;
+	private IProver equality;
 	
 	private ClauseSimplifier simplifier;
 	
@@ -62,22 +61,28 @@ public class ProofStrategy implements IDispatcher {
 	
 	private Collection<IClause> originalClauses;
 
-	public void setPredicateProver(PredicateProver prover) {
-		prover.initialize(this, dsWrapper);
+	public void setPredicateProver(IProver prover) {
+		prover.initialize(this, dsWrapper, simplifier);
 		prover.registerDumper(dumper);
 		this.prover = prover;
 	}
 	
-	public void setCaseSplitter(CaseSplitter casesplitter) {
-		casesplitter.initialize(this, dsWrapper);
+	public void setCaseSplitter(IProver casesplitter) {
+		casesplitter.initialize(this, dsWrapper, simplifier);
 		casesplitter.registerDumper(dumper);
 		this.casesplitter = casesplitter;
 	}
 	
-	public void setSeedSearch(SeedSearchProver seedsearch) {
-		seedsearch.initialize(this, dsWrapper);
+	public void setSeedSearch(IProver seedsearch) {
+		seedsearch.initialize(this, dsWrapper, simplifier);
 		seedsearch.registerDumper(dumper);
 		this.seedsearch = seedsearch;
+	}
+	
+	public void setEqualityProver(IProver equality) {
+		equality.initialize(this, dsWrapper, simplifier);
+		equality.registerDumper(dumper);
+		this.equality = equality;
 	}
 	
 	public void setClauses(Collection<IClause> clauses) {
@@ -88,25 +93,33 @@ public class ProofStrategy implements IDispatcher {
 		this.simplifier.addSimplifier(simplifier);
 	}
 	
-	private void contradiction(IClause clause) {
-		debug("Contradiction found on: "+clause);
-		tracer.addClosingClause(clause);
+	public void contradiction(IOrigin origin) {
+		debug("Contradiction found on: "+origin);
+		tracer.addClosingClause(origin);
 		
 		Level oldLevel = level;
-		adjustLevel(clause);
+		
+		// contradiction has been found, backtrack
+		Stack<Level> dependencies = new Stack<Level>();
+		origin.getDependencies(dependencies);
+		
+		adjustLevel(dependencies);
+		if (proofFound) return;
+		
 		debug("Old level was: "+oldLevel+", new level is: "+level);
+		
+		debug("Dispatching contradiction to subprovers");
+		// tell the predicate prover
+		prover.contradiction(oldLevel, level, proofFound, dependencies);
+		// tell the case splitter
+		// TODO not stop
+		casesplitter.contradiction(oldLevel, level, proofFound, dependencies);
+		// TODO tell the arithmetic prover
+		equality.contradiction(oldLevel, level, proofFound, dependencies);
 		
 		// we backtrack our own datastructure
 		debug("ProofStrategy: Backtracking datastructures");
 		dsWrapper.backtrack(level);
-		
-		debug("Dispatching contradiction to subprovers");
-		// tell the predicate prover
-		prover.contradiction(oldLevel, level, proofFound);
-		// tell the case splitter
-		// TODO not stop
-		casesplitter.contradiction(oldLevel, level, proofFound);
-		// TODO tell the arithmetic prover
 	}
 	
 	private boolean isSubsumed(IClause clause) {
@@ -138,26 +151,28 @@ public class ProofStrategy implements IDispatcher {
 		// simplify
 		clause = simplifier.run(clause);
 		
-		if (clause == null) return;
+		if (clause.isTrue()) return;
 		
 		// dispatch to corresponding prover
-		if (clause.isEmpty()) {
-			contradiction(clause);
+		if (clause.isFalse()) {
+			contradiction(clause.getOrigin());
 			return;
 		}
 		
 		// all clauses are put here
 		// this should add the clause in all datastructures of all provers
 		if (isSubsumed(clause)) return;
-		
 		dsWrapper.add(clause);
 		
 		// TODO forward subsumption
 		// TODO this code calls back into the mainloop - think of another way
+		// TODO do not do this, let the predicate prover do the instantiations
+		// and call it back like the equality
 		// give to predicate prover
-		if (prover.accepts(clause)) {
-			prover.addOwnClause(clause);
-		}
+		
+//		if (prover.accepts(clause)) {
+//			prover.addOwnClause(clause);
+//		}
 
 	}
 	
@@ -183,6 +198,19 @@ public class ProofStrategy implements IDispatcher {
 			
 			debug("=== ProofStrategy. Step "+counter+". Level "+level+" ===");
 			dumper.dump();
+			
+			// add equality clauses
+			for (IClause clause : equality.getGeneratedClauses()) {
+				if (!isSubsumed(clause)) {
+					dsWrapper.add(clause);
+				}
+			}
+			// add prover clauses
+			for (IClause clause : prover.getGeneratedClauses()) {
+				if (!isSubsumed(clause)) {
+					dsWrapper.add(clause);
+				}
+			}
 			
 			IClause clause = prover.next();
 			
@@ -232,10 +260,7 @@ public class ProofStrategy implements IDispatcher {
 	
 	private Level lastClosedBranch;
 	
-	private void adjustLevel(IClause clause) {
-		// contradiction has been found, backtrack
-		Stack<Level> dependencies = new Stack<Level>();
-		clause.getDependencies(dependencies);
+	private void adjustLevel(Stack<Level> dependencies) {
 		
 		Level highestOddLevel = getHighestOdd(dependencies);
 		if (highestOddLevel.equals(Level.base)) {
@@ -283,6 +308,10 @@ public class ProofStrategy implements IDispatcher {
 
 	public boolean hasStopped() {
 		return stop;
+	}
+
+	public void removeClause(IClause clause) {
+		dsWrapper.remove(clause);
 	}
 
 

@@ -40,10 +40,10 @@ public class EqualityLiteral extends AbstractSingleFormula<EqualityDescriptor> {
 		super(terms,descriptor);
 	}
 
-	public ILiteral getLiteral(List<TermSignature> termList, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
+	public ILiteral<?> getLiteral(List<TermSignature> termList, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
 		assert termList.size() == 2;
 		List<Term> terms = getTermsFromTermSignature(termList, flags, table);
-		ILiteral result = new PPEquality(terms.get(0),terms.get(1),flags.isPositive);
+		ILiteral<?> result = new PPEquality(terms.get(0),terms.get(1),flags.isPositive);
 		ClauseBuilder.debug("Creating literal from "+this+": "+result);
 		return result;
 	}

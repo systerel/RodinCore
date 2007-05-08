@@ -19,19 +19,18 @@ import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
  *
  * @author François Terrier
  *
- * @param <S> the type used for the key of the element
  * @param <T>
  */
 public class SymbolTable<T extends LiteralDescriptor> {
 
-	private Hashtable<SymbolKey, T> table = new Hashtable<SymbolKey, T>();
+	private Hashtable<SymbolKey<T>, T> table = new Hashtable<SymbolKey<T>, T>();
 	
-	public T get(SymbolKey source) {
+	public T get(SymbolKey<T> source) {
 		T i = table.get(source);
 		return i;
 	}
 	
-	public T add(SymbolKey source, T target) {
+	public T add(SymbolKey<T> source, T target) {
 		assert !table.contains(source);
 		
 		table.put(source, target);
@@ -46,7 +45,7 @@ public class SymbolTable<T extends LiteralDescriptor> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SymbolTable) {
-			SymbolTable temp = (SymbolTable) obj;
+			SymbolTable<?> temp = (SymbolTable) obj;
 			return table.equals(temp.table);
 		}
 		return false;

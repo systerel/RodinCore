@@ -3,7 +3,8 @@ package org.eventb.pp;
 
 public class PPResult {
 
-	public enum Result {valid, invalid, error, timeout, cancel};
+	public enum Result {valid, invalid, error, timeout, cancel}
+	
 	private Result result;
 	private ITracer tracer;
 	

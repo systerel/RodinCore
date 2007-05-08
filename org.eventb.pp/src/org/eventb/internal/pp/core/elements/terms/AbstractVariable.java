@@ -19,8 +19,7 @@ public abstract class AbstractVariable extends Term {
 
 	@Override
 	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
-		if (map.containsKey(this)) return map.get(this);
-		else return this;
+		return map.containsKey(this) ? map.get(this) : this;
 	}
 
 	@Override

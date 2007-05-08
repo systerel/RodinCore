@@ -7,7 +7,8 @@ import org.eventb.internal.pp.core.Level;
 public class DefinitionOrigin implements IOrigin {
 
 	public void getDependencies(Stack<Level> dependencies) {
-		// do nothing
+		if (!dependencies.contains(getLevel()))
+			dependencies.push(getLevel());
 	}
 
 	public void trace(Tracer tracer) {
@@ -22,4 +23,12 @@ public class DefinitionOrigin implements IOrigin {
 		return true;
 	}
 
+	public Level getLevel() {
+		return Level.base;
+	}
+
+	@Override
+	public String toString() {
+		return getLevel().toString();
+	}
 }

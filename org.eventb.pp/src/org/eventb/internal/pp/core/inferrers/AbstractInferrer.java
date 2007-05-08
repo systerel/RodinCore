@@ -61,24 +61,26 @@ public abstract class AbstractInferrer implements IInferrer {
 	
 	protected abstract void reset();
 
-	protected abstract void inferFromDisjunctiveClauseHelper();
+	protected abstract void inferFromDisjunctiveClauseHelper(IClause clause);
 
-	protected abstract void inferFromEquivalenceClauseHelper();
+	protected abstract void inferFromEquivalenceClauseHelper(IClause clause);
 
 	public void inferFromDisjunctiveClause(PPDisjClause clause) {
 		init(clause);
-		inferFromDisjunctiveClauseHelper();
-		setParents(clause);
+		inferFromDisjunctiveClauseHelper(clause);
+//		setParents(clause);
 		reset();
 	}
 
 	public void inferFromEquivalenceClause(PPEqClause clause) {
 		init(clause);
-		inferFromEquivalenceClauseHelper();
-		setParents(clause);
+		inferFromEquivalenceClauseHelper(clause);
+//		setParents(clause);
 		reset();
 	}
 
-	protected abstract void setParents(IClause clause);
+	protected boolean isEmpty() {
+		return conditions.size() + predicates.size() + arithmetic.size() + equalities.size() == 0;
+	}
 	
 }

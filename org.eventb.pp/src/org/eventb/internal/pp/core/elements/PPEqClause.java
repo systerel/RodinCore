@@ -6,29 +6,31 @@ import java.util.List;
 import java.util.Map;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.inferrers.IInferrer;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
+import org.eventb.internal.pp.core.tracing.IOrigin;
 
-public class PPEqClause extends AbstractPPClause {
+public final class PPEqClause extends AbstractPPClause {
 	
-	public PPEqClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic) {
-		super(level, predicates, equalities, arithmetic);
+	public PPEqClause(IOrigin origin, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic) {
+		super(origin, predicates, equalities, arithmetic);
 		
 		// not a unit clause. unit clauses are disjunctive clauses
 		assert !isUnit();
 		assert predicates != null && equalities != null && arithmetic != null;
+		assert !isEmpty();
 	}
 
-	public PPEqClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic, List<IEquality> conditions) {
-		super(level, predicates, equalities, arithmetic, conditions);
+	public PPEqClause(IOrigin origin, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic, List<IEquality> conditions) {
+		super(origin, predicates, equalities, arithmetic, conditions);
 		
 		// not a unit clause. unit clauses are disjunctive clauses
 		assert !isUnit();
 		assert predicates != null && equalities != null && arithmetic != null && conditions != null;
+		assert !isEmpty();
 	}
 	
 	
@@ -45,7 +47,9 @@ public class PPEqClause extends AbstractPPClause {
 	}
 	
 	public IClause simplify(ISimplifier simplifier) {
-		return simplifier.simplifyEquivalenceClause(this);
+		IClause result = simplifier.simplifyEquivalenceClause(this);
+		assert result != null;
+		return result;
 	}
 	
 	@Override
@@ -62,9 +66,11 @@ public class PPEqClause extends AbstractPPClause {
 	}
 	
 	// form a new clause from an equivalence clause
-	public static IClause newClause(Level level, List<IPredicate> predicate, 
+	public static IClause newClause(IOrigin origin, List<IPredicate> predicate, 
 			List<IEquality> equality, List<IArithmetic> arithmetic, 
 			List<IEquality> conditions, IVariableContext context) {
+		assert predicate.size() + equality.size() + arithmetic.size() + conditions.size() > 0;
+		
 		// we have a disjunctive clause
 		if (predicate.size() + equality.size() + arithmetic.size() <= 1) {
 			ILiteral<?> literal = null;
@@ -94,10 +100,10 @@ public class PPEqClause extends AbstractPPClause {
 				if (literal instanceof IArithmetic) arithmetic.add((IArithmetic)literal);
 			}
 			
-			return new PPDisjClause(level, predicate, equality, arithmetic, conditions);
+			return new PPDisjClause(origin, predicate, equality, arithmetic, conditions);
 		}
 		////////////////////////////////
-		return new PPEqClause(level, predicate, equality, arithmetic, conditions);
+		return new PPEqClause(origin, predicate, equality, arithmetic, conditions);
 	}
 	
 	public static void inverseOneliteral(List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic) {
@@ -116,6 +122,14 @@ public class PPEqClause extends AbstractPPClause {
 			IArithmetic toInverse = arithmetic.remove(0);
 			arithmetic.add(0, toInverse.getInverse());
 		}
+	}
+
+	public boolean isFalse() {
+		return false;
+	}
+
+	public boolean isTrue() {
+		return false;
 	}
 
 }

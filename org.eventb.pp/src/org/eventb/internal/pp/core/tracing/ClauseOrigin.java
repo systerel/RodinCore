@@ -1,43 +1,28 @@
 package org.eventb.internal.pp.core.tracing;
 
 import java.util.List;
-import java.util.Stack;
 
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.IClause;
 
-public class ClauseOrigin implements IOrigin {
+public class ClauseOrigin extends AbstractInferrenceOrigin {
 
-	private List<IClause> parents;
-	private boolean dependsOnGoal;
-	
 	public ClauseOrigin(List<IClause> parents) {
-		this.parents = parents;
+		super(parents);
+	}
+
+	Level level = null;
+	public Level getLevel() {
+		if (level != null) return level;
 		
+		Level result = null;
 		for (IClause clause : parents) {
-			if (clause.getOrigin().dependsOnGoal()) dependsOnGoal = true;
-			break;
+			if (result == null || result.isAncestorOf(clause.getLevel())) {
+				result = clause.getLevel();
+			}
 		}
-	}
-
-	public void trace(Tracer tracer) {
-		for (IClause clause : parents) {
-			clause.getOrigin().trace(tracer);
-		}
-	}
-
-	public void getDependencies(Stack<Level> dependencies) {
-		for (IClause clause : parents) {
-			clause.getDependencies(dependencies);
-		}
-	}
-
-	public boolean dependsOnGoal() {
-		return dependsOnGoal;
-	}
-
-	public boolean isDefinition() {
-		return false;
+		level = result;
+		return result;
 	}
 	
 	

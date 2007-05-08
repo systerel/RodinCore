@@ -110,7 +110,7 @@ public abstract class LiteralDescriptor {
 		TermSignature term1;
 		TermSignature term2;
 		
-		private TermPair(TermSignature term1, TermSignature term2) {
+		TermPair(TermSignature term1, TermSignature term2) {
 			this.term1 = term1;
 			this.term2 = term2;
 		}

@@ -13,7 +13,8 @@ import org.eventb.internal.pp.core.elements.IPredicate;
 import org.eventb.internal.pp.core.elements.PPDisjClause;
 import org.eventb.internal.pp.core.elements.PPEqClause;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
-import org.eventb.internal.pp.core.tracing.ClauseOrigin;
+import org.eventb.internal.pp.core.tracing.IOrigin;
+import org.eventb.internal.pp.core.tracing.SplitOrigin;
 
 /**
  * This class is responsible for splitting a clause in two.
@@ -70,20 +71,20 @@ public class CaseSplitInferrer extends AbstractInferrer {
 	}
 	
 	@Override
-	protected void inferFromDisjunctiveClauseHelper() {
+	protected void inferFromDisjunctiveClauseHelper(IClause clause) {
 		splitLeftCase();
-		left = new PPDisjClause(parent.getLeftBranch(),leftPredicates,leftEqualities,leftArithmetic);
+		left = new PPDisjClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic);
 		// right case
-		right = new PPDisjClause(parent.getRightBranch(),predicates,equalities,arithmetic);
+		right = new PPDisjClause(getOrigin(clause, parent.getRightBranch()),predicates,equalities,arithmetic);
 	}
 
 	@Override
-	protected void inferFromEquivalenceClauseHelper() {
+	protected void inferFromEquivalenceClauseHelper(IClause clause) {
 		splitLeftCase();
-		left = PPEqClause.newClause(parent.getLeftBranch(),leftPredicates,leftEqualities,leftArithmetic,new ArrayList<IEquality>(),context);
+		left = PPEqClause.newClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic,new ArrayList<IEquality>(),context);
 		// right case
 		PPEqClause.inverseOneliteral(predicates, equalities, arithmetic);
-		right = PPEqClause.newClause(parent.getRightBranch(), predicates, equalities, arithmetic,new ArrayList<IEquality>(),context);
+		right = PPEqClause.newClause(getOrigin(clause, parent.getRightBranch()), predicates, equalities, arithmetic,new ArrayList<IEquality>(),context);
 	}
 
 	@Override
@@ -102,15 +103,14 @@ public class CaseSplitInferrer extends AbstractInferrer {
 		parent = null;
 	}
 
-	@Override
-	protected void setParents(IClause clause) {
+	protected IOrigin getOrigin(IClause clause, Level level) {
 		List<IClause> parents = new ArrayList<IClause>();
 		parents.add(clause);
-		left.setOrigin(new ClauseOrigin(parents));
-		right.setOrigin(new ClauseOrigin(parents));
+		return new SplitOrigin(parents, level);
 	}
 
 	public boolean canInfer(IClause clause) {
+		if (clause.isEmpty()) return false;
 		if (clause.isUnit()) return false;
 		if (clause.getOrigin().isDefinition()) return false;
 		if (clause.getConditions().size() > 0) return false;
@@ -121,8 +121,8 @@ public class CaseSplitInferrer extends AbstractInferrer {
 		return true;
 	}
 	
-	private boolean isConstant(List<? extends ILiteral> literals) {
-		for (ILiteral lit : literals) {
+	private boolean isConstant(List<? extends ILiteral<?>> literals) {
+		for (ILiteral<?> lit : literals) {
 			if (!lit.isConstant()) return false;
 		}
 		return true;

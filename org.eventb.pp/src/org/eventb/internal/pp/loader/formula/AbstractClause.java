@@ -27,6 +27,7 @@ public abstract class AbstractClause<T extends IndexedDescriptor> extends Abstra
 		return super.toString();
 	}
 	
+	@Override
 	public String getStringDeps() {
 		StringBuffer str = new StringBuffer();
 		for (ISignedFormula child : children) {
@@ -50,7 +51,7 @@ public abstract class AbstractClause<T extends IndexedDescriptor> extends Abstra
 			);
 	}
 	
-	public ILiteral getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+	public ILiteral<?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
 		return getLiteral(descriptor.getIndex(), terms, context, table);
 	}
 	

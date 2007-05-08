@@ -15,23 +15,24 @@ import org.eventb.internal.pp.loader.formula.ILabelizableFormula;
 public class LabelManager {
 
 	private boolean gettingDefinitions = false;
-	private boolean forceLabelize = false;
-	private LinkedHashSet<ILabelizableFormula> toLabelizeNeg = new LinkedHashSet<ILabelizableFormula>();
-	private LinkedHashSet<ILabelizableFormula> toLabelizePos = new LinkedHashSet<ILabelizableFormula>();
-	private LinkedHashSet<ILabelizableFormula> toLabelizeEq = new LinkedHashSet<ILabelizableFormula>();
+	private LinkedHashSet<ILabelizableFormula<?>> toLabelizeNeg = new LinkedHashSet<ILabelizableFormula<?>>();
+	private LinkedHashSet<ILabelizableFormula<?>> toLabelizePos = new LinkedHashSet<ILabelizableFormula<?>>();
+	private LinkedHashSet<ILabelizableFormula<?>> toLabelizeEq = new LinkedHashSet<ILabelizableFormula<?>>();
 	
-	public LabelManager() {}
+	public LabelManager() {
+		// do nothing
+	}
 	
-	public void addLabel(ILabelizableFormula formula, boolean pos) {
+	public void addLabel(ILabelizableFormula<?> formula, boolean pos) {
 		if (pos) addLabel(formula, toLabelizePos);
 		else addLabel(formula, toLabelizeNeg);
 	}
 	
-	public void addEquivalenceLabel(ILabelizableFormula formula) {
+	public void addEquivalenceLabel(ILabelizableFormula<?> formula) {
 		addLabel(formula, toLabelizeEq);
 	}
 	
-	private void addLabel(ILabelizableFormula formula, LinkedHashSet<ILabelizableFormula> set) {
+	private void addLabel(ILabelizableFormula<?> formula, LinkedHashSet<ILabelizableFormula<?>> set) {
 		if (!set.contains(formula)) {
 			ClauseBuilder.debug("Adding "+formula+" to list of clauses that must be labelized");
 			set.add(formula);
@@ -42,7 +43,7 @@ public class LabelManager {
 	private int currentIndexNeg = 0;
 	private int currentIndexEq = 0;
 	
-	private ILabelizableFormula nextFormula;
+	private ILabelizableFormula<?> nextFormula;
 	private boolean isNextPositive;
 //	private boolean isNextEquivalence;
 	public void nextLabelizableFormula() {
@@ -51,22 +52,19 @@ public class LabelManager {
 			nextFormula = getLabelizableFormula(toLabelizePos, currentIndexPos);
 			currentIndexPos++;
 			isNextPositive = true;
-//			isNextEquivalence = false;
 		}
 		else if (currentIndexNeg != toLabelizeNeg.size()) {
 			nextFormula = getLabelizableFormula(toLabelizeNeg, currentIndexNeg);
 			currentIndexNeg++;
-//			isNextEquivalence = false;
 			isNextPositive = false;
 		}
 		else if (currentIndexEq != toLabelizeEq.size()) {
 			nextFormula = getLabelizableFormula(toLabelizeEq, currentIndexEq);
 			currentIndexEq++;
-//			isNextEquivalence = true;
 		}
 	}
 	
-	public ILabelizableFormula getNextFormula() {
+	public ILabelizableFormula<?> getNextFormula() {
 		return nextFormula;
 	}
 	
@@ -78,7 +76,7 @@ public class LabelManager {
 		return isNextPositive;
 	}
 	
-	private ILabelizableFormula getLabelizableFormula(LinkedHashSet<ILabelizableFormula> set, int index) {
+	private ILabelizableFormula<?> getLabelizableFormula(LinkedHashSet<ILabelizableFormula<?>> set, int index) {
 		return set.toArray(new ILabelizableFormula[set.size()])[index];
 	}
 	
@@ -106,10 +104,8 @@ public class LabelManager {
 //	public boolean isForceLabelize() {
 //		return this.forceLabelize;
 //	}
-//	
-	/**
-	 * @return
-	 */
+//
+	
 	public boolean isGettingDefinitions() {
 		return gettingDefinitions;
 	}

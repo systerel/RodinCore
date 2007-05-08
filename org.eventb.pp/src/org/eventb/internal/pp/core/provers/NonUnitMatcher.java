@@ -32,7 +32,7 @@ public class NonUnitMatcher {
 		private static class NiceIterator extends ConditionIterator<IClause> {
 			private IPredicate unit;
 			
-			private NiceIterator(IPredicate unit, Iterator<IClause> iterator) {
+			NiceIterator(IPredicate unit, Iterator<IClause> iterator) {
 				super(iterator);
 				
 				this.unit = unit;

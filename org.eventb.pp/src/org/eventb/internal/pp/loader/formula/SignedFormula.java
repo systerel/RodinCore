@@ -11,6 +11,7 @@ package org.eventb.internal.pp.loader.formula;
 import java.util.Collection;
 import java.util.List;
 
+import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.ILiteral;
@@ -44,7 +45,7 @@ public class SignedFormula<T extends LiteralDescriptor> implements ISignedFormul
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (obj instanceof SignedFormula) {
-			SignedFormula temp = (SignedFormula) obj;
+			SignedFormula<?> temp = (SignedFormula) obj;
 			return isPositive == temp.isPositive && child.equals(temp.child);
 		}
 		return false;
@@ -59,9 +60,9 @@ public class SignedFormula<T extends LiteralDescriptor> implements ISignedFormul
 		return isPositive;
 	}
 
-	public List<List<ILiteral>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral>> prefix, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool) {
+	public List<List<ILiteral<?>>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral<?>>> prefix, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool) {
 		if (!isPositive) flags.isPositive = !flags.isPositive;
-		List<List<ILiteral>> result = child.getClauses(termList, manager, prefix, flags, table, bool);
+		List<List<ILiteral<?>>> result = child.getClauses(termList, manager, prefix, flags, table, bool);
 		if (!isPositive) flags.isPositive = !flags.isPositive;
 		return result;
 	}
@@ -70,7 +71,7 @@ public class SignedFormula<T extends LiteralDescriptor> implements ISignedFormul
 		return child.getIndexSize();
 	}
 
-	public ISubFormula getFormula() {
+	public ISubFormula<?> getFormula() {
 		return child;
 	}
 
@@ -79,20 +80,16 @@ public class SignedFormula<T extends LiteralDescriptor> implements ISignedFormul
 	}
 	
 	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, 
-			ClauseFactory factory, BooleanEqualityTable bool, VariableTable variableTable,
-			IOrigin origin) {
+			ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext context, IOrigin origin) {
 		TermVisitorContext flags = new TermVisitorContext(hasEquivalenceFirst());
-//		setFlags(flags);
-		variableTable.reset();
 		if (!isPositive) flags.isPositive = !flags.isPositive;
-		List<List<ILiteral>> result = child.getClauses(child.getTerms(), manager, variableTable, flags, bool);
+		List<List<ILiteral<?>>> result = child.getClauses(child.getTerms(), manager, table, flags, bool);
 		if (!isPositive) flags.isPositive = !flags.isPositive;
-		for (List<ILiteral> list : result) {
+		for (List<ILiteral<?>> list : result) {
 			IClause clause;
-			if (flags.isEquivalence && list.size() > 1) clause = factory.newEqClause(list);
-			else clause = factory.newDisjClause(list);
+			if (flags.isEquivalence && list.size() > 1) clause = factory.newEqClauseWithCopy(origin,list, context);
+			else clause = factory.newDisjClauseWithCopy(origin,list, context);
 			// we set the original predicate as this is not a definition
-			clause.setOrigin(origin);
 			clauses.add(clause);
 			ClauseBuilder.debug("New clause: "+clause);
 		}

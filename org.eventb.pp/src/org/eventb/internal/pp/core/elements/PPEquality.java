@@ -28,6 +28,8 @@ public class PPEquality implements IEquality {
 	private boolean isPositive;
 	
 	public PPEquality (Term term1, Term term2, boolean isPositive) {
+		// TODO term must be ordered
+		
 		if (term1.getSort() != null && term2.getSort()!=null) {
 			assert term1.getSort().equals(term2.getSort());
 		}

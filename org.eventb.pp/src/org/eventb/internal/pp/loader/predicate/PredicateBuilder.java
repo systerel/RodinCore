@@ -409,16 +409,15 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		List<ISignedFormula> literals = res.getLiterals();
 		IIntermediateResult iRes = res.getNewIntermediateResult();
 		
-		AbstractClause sig;
-		if (!isEquivalence) {
-			SymbolKey<DisjunctiveClauseDescriptor> key = new DisjunctiveClauseKey(literals);
-			DisjunctiveClauseDescriptor desc = updateDescriptor(key, context.getDisjClauseTable(), iRes, "disjunctive clause");
-			sig = new DisjunctiveClause(literals,iRes.getTerms(),desc);
-		}
-		else {
+		AbstractClause<?> sig;
+		if (isEquivalence) {
 			SymbolKey<EquivalenceClauseDescriptor> key = new EquivalenceClauseKey(literals);
 			EquivalenceClauseDescriptor desc = updateDescriptor(key, context.getEqClauseTable(), iRes, "equivalence clause");
 			sig = new EquivalenceClause(literals,iRes.getTerms(),desc);
+		} else {
+			SymbolKey<DisjunctiveClauseDescriptor> key = new DisjunctiveClauseKey(literals);
+			DisjunctiveClauseDescriptor desc = updateDescriptor(key, context.getDisjClauseTable(), iRes, "disjunctive clause");
+			sig = new DisjunctiveClause(literals,iRes.getTerms(),desc);
 		}
 
 		// we create the new signature

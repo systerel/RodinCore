@@ -48,20 +48,20 @@ public class NonUnitInferenceIterator extends DefaultChangeListener {
 	}
 	
 	private boolean nextMatchingUnit() {
-		if (!unitClauses.hasNext()) return false;
-		else {
+		if (unitClauses.hasNext()) {
 			currentMatchingUnit = unitClauses.next();
 			// TODO delete the old iterator. or implement a reset mechanism
 			matchingNonUnitIterator = nonUnitMatcher.iterator(currentMatchingUnit.getPredicateLiterals().get(0),true);
 			return true;
+		} else {
+			return false;
 		}
 	}
 	
 	private boolean nextMatchingPair() {
 		if (currentMatchingUnit != null && nextMatchingNonUnit()) return true;
 		else {
-			if (!nextMatchingUnit()) return false;
-			else return nextMatchingPair();
+			return ( !nextMatchingUnit() ) ? false : nextMatchingPair();
 		}
 	}
 	

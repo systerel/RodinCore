@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.ILiteral;
@@ -23,52 +24,47 @@ public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescripto
 	}
 	
 	
-	private List<List<ILiteral>> copyClauseList(List<List<ILiteral>> original) {
-		List<List<ILiteral>> result = new ArrayList<List<ILiteral>>();
-		for (List<ILiteral> list : original) {
-			result.add(new ArrayList<ILiteral>(list));
+	private List<List<ILiteral<?>>> copyClauseList(List<List<ILiteral<?>>> original, VariableTable table) {
+		List<List<ILiteral<?>>> result = new ArrayList<List<ILiteral<?>>>();
+		for (List<ILiteral<?>> list : original) {
+			result.add(new ArrayList<ILiteral<?>>(list));
 		}
 		return result;
 	}
 
-	public List<List<ILiteral>> getDefinitionClauses(List<TermSignature> terms,
-			LabelManager manager, List<List<ILiteral>> prefix,
+	public List<List<ILiteral<?>>> getDefinitionClauses(List<TermSignature> terms,
+			LabelManager manager, List<List<ILiteral<?>>> prefix,
 			TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
-//		flags.isEquivalence = false;
-//		flags.isQuantified = false;
-		List<List<ILiteral>> result = new ArrayList<List<ILiteral>>();
+		List<List<ILiteral<?>>> result = new ArrayList<List<ILiteral<?>>>();
 		int start = 0;
-		if (!flags.isPositive) {
-			for (ISignedFormula child : children) {
-				List<TermSignature> subIndex = terms.subList(start, start + child.getIndexSize());
-				List<List<ILiteral>> copy = copyClauseList(prefix);
-				result.addAll(child.getClauses(subIndex, manager, copy, table, flags, bool));
-//				manager.setForceLabelize(false);
-				start += child.getIndexSize();
-			}
-		}
-		else {
+		if (flags.isPositive) {
 			for (ISignedFormula child : children) {
 				List<TermSignature> subIndex = terms.subList(start, start + child.getIndexSize());
 				prefix = child.getClauses(subIndex, manager, prefix, table, flags, bool);
-//				manager.setForceLabelize(false);
 				start += child.getIndexSize();
 			}
 			result = prefix;
+		} else {
+			// we split because it is a conjunction
+			for (ISignedFormula child : children) {
+				List<TermSignature> subIndex = terms.subList(start, start + child.getIndexSize());
+				List<List<ILiteral<?>>> copy = copyClauseList(prefix,table);
+				result.addAll(child.getClauses(subIndex, manager, copy, table, flags, bool));
+				start += child.getIndexSize();
+			}
 		}
 		return result;
 	}
 	
-	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable variableTable, boolean positive) {
-		if (!positive) {
-			ClauseBuilder.debug("----------------");
-			ClauseBuilder.debug("Negative definition:");
-			getFinalClausesHelper(manager, clauses, factory, true, false, bool, variableTable);
-		}
-		else {
+	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext context, boolean positive) {
+		if (positive) {
 			ClauseBuilder.debug("----------------");
 			ClauseBuilder.debug("Positive definition:");
-			getFinalClausesHelper(manager, clauses, factory, false, true, bool, variableTable);
+			getFinalClausesHelper(manager, clauses, factory, false, true, bool, table, context);
+		} else {
+			ClauseBuilder.debug("----------------");
+			ClauseBuilder.debug("Negative definition:");
+			getFinalClausesHelper(manager, clauses, factory, true, false, bool, table, context);
 		}
 	}
 	

@@ -1,23 +1,26 @@
 package org.eventb.internal.pp.core.provers.equality;
 
-import java.util.Set;
-
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.IEquality;
 
 public interface IEquivalenceManager {
-
-	public boolean contradictsEquality(INode c1, INode c2);
-
-	public boolean contradictsInequality(INode c1, INode c2);
-
-//	public void addEquality(INode c1, INode c2, IOrigin origin);
-//
-//	public void addInequality(INode c1, INode c2, IOrigin origin);
-
+	
+	// here is the mapping Constant -> Node
+	// mapping Equality -> Source / one source per equality
+	
+	// nodes must be ordered
+	public void removeQueryEquality(IEquality equality, IClause clause);
+	
+	// returns contradiction + source and solved queries
+	// or null if nothing happens
+	public IFactResult addFactEquality(IEquality equality, IClause clause);
+	
+	// returns solved query
+	// or null if nothing happens
+	public IQueryResult addQueryEquality(IEquality equality, IClause clause);
+	
+	// backtrack up to/exclusive level
 	public void backtrack(Level level);
-	
-//	public IOrigin getOrigin(INode c1, INode c2);
-	
-	
-	public Set<String> dump();
+
 }

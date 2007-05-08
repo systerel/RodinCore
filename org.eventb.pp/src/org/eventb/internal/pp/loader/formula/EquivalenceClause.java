@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.ILiteral;
@@ -22,17 +23,14 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 		super(children,terms,descriptor);
 	}
 
-	public List<List<ILiteral>> getDefinitionClauses(List<TermSignature> termList,
-			LabelManager manager, List<List<ILiteral>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
-//		flags.isEquivalence = true;
-//		flags.isQuantified = false;
-		List<List<ILiteral>> result = new ArrayList<List<ILiteral>>();
+	public List<List<ILiteral<?>>> getDefinitionClauses(List<TermSignature> termList,
+			LabelManager manager, List<List<ILiteral<?>>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
+		List<List<ILiteral<?>>> result = new ArrayList<List<ILiteral<?>>>();
 		int start = 0;
 		if (flags.isPositive) {
 			for (ISignedFormula child : children) {
 				List<TermSignature> subIndex = termList.subList(start, start + child.getIndexSize());
 				prefix = child.getClauses(subIndex, manager, prefix, table, flags, bool);
-//				manager.setForceLabelize(false);
 				start += child.getIndexSize();
 			}
 			result = prefix;
@@ -43,7 +41,6 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 				if (!first) flags.isPositive = true;
 				List<TermSignature> subIndex = termList.subList(start, start + child.getIndexSize());
 				prefix = child.getClauses(subIndex, manager, prefix, table, flags, bool);
-//				manager.setForceLabelize(false);
 				start += child.getIndexSize();
 				first = false;
 			}
@@ -53,10 +50,10 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 		return result;
 	}
 
-	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable variableTable, boolean positive) {
+	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext variableContext, boolean positive) {
 		ClauseBuilder.debug("----------------");
 		ClauseBuilder.debug("Equivalence definition:");
-		getFinalClausesHelper(manager, clauses, factory, true, true, bool, variableTable);
+		getFinalClausesHelper(manager, clauses, factory, true, true, bool, table, variableContext);
 	}
 	
 	@Override

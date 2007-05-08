@@ -80,11 +80,11 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> implements IS
 		return terms;
 	}
 	
-	protected ILiteral getLiteral(int index, List<TermSignature> terms,
+	protected ILiteral<?> getLiteral(int index, List<TermSignature> terms,
 			TermVisitorContext context, VariableTable table) {
 		List<TermSignature> newList = descriptor.getSimplifiedList(terms);
 		ClauseBuilder.debug("Simplified term list for "+this+" is: "+newList);
-		ILiteral result;
+		ILiteral<?> result;
 		if (newList.size() == 0) {
 			result = new PPProposition(index, context.isPositive);
 		} else {
@@ -106,9 +106,9 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> implements IS
 		return terms;
 	}
 	
-	public List<List<ILiteral>> getClauses(List<TermSignature> terms, LabelManager manager, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool) {
-		List<List<ILiteral>> result = new ArrayList<List<ILiteral>>();
-		result.add(new ArrayList<ILiteral>());
+	public List<List<ILiteral<?>>> getClauses(List<TermSignature> terms, LabelManager manager, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool) {
+		List<List<ILiteral<?>>> result = new ArrayList<List<ILiteral<?>>>();
+		result.add(new ArrayList<ILiteral<?>>());
 		return getClauses(terms, manager, result, flags, table, bool);
 	}
 	
@@ -126,7 +126,7 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> implements IS
     @Override
     public boolean equals(Object obj) {
     	if (obj instanceof AbstractFormula) {
-    		AbstractFormula temp = (AbstractFormula)obj;
+    		AbstractFormula<?> temp = (AbstractFormula)obj;
     		return descriptor.equals(temp.descriptor);
     	}
     	return false;

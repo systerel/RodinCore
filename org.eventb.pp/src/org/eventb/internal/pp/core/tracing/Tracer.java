@@ -6,16 +6,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.pp.ITracer;
 
 public class Tracer implements ITracer {
 
-	private List<IClause> clauses = new ArrayList<IClause>();
+	private List<IOrigin> clauses = new ArrayList<IOrigin>();
 	
-	public void addClosingClause(IClause clause) {
-		for (Iterator<IClause> iter = clauses.iterator(); iter.hasNext();) {
-			IClause element = iter.next();
+	public void addClosingClause(IOrigin clause) {
+		for (Iterator<IOrigin> iter = clauses.iterator(); iter.hasNext();) {
+			IOrigin element = iter.next();
 			if (clause.getLevel().isAncestorOf(element.getLevel())) 
 				iter.remove();
 		}
@@ -25,7 +24,7 @@ public class Tracer implements ITracer {
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.pp.core.tracing.ITracer#getClauses()
 	 */
-	public List<IClause> getClauses() {
+	public List<IOrigin> getClauses() {
 		return clauses;
 	}
 	
@@ -39,8 +38,8 @@ public class Tracer implements ITracer {
 	
 	private void calculateOriginalPredicates() {
 		originalPredicates = new HashSet<Predicate>();
-		for (IClause clause : clauses) {
-			clause.getOrigin().trace(this);	
+		for (IOrigin clause : clauses) {
+			clause.trace(this);	
 		}
 	}
 	

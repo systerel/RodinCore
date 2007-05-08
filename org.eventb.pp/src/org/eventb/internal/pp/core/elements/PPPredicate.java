@@ -38,6 +38,7 @@ public class PPPredicate extends PPProposition implements IPredicate {
 		this.terms = terms;
 	}
 	
+	@Override
 	public List<Term> getTerms() {
 		return terms;
 	}
@@ -66,6 +67,7 @@ public class PPPredicate extends PPProposition implements IPredicate {
 		return toString(new HashMap<Variable, String>());
 	}
 
+	@Override
 	public String toString(HashMap<Variable, String> variableMap) {
 		StringBuffer str = new StringBuffer();
 		str.append(isPositive?"":"¬");
@@ -79,6 +81,7 @@ public class PPPredicate extends PPProposition implements IPredicate {
 		return str.toString();
 	}
 
+	@Override
 	public IPredicate getInverse() {
 		List<Term> newTerms = new ArrayList<Term>();
 		for (Term term : terms) {
@@ -105,6 +108,7 @@ public class PPPredicate extends PPProposition implements IPredicate {
 		return result;
 	}
 	
+	@Override
 	public IPredicate getCopyWithNewVariables(IVariableContext context, 
 			HashMap<AbstractVariable, AbstractVariable> substitutionsMap) {
 		Set<Variable> variables = new HashSet<Variable>();
@@ -131,6 +135,7 @@ public class PPPredicate extends PPProposition implements IPredicate {
 		return new PPPredicate(index, isPositive, result);
 	}
 	
+	@Override
 	public boolean isQuantified() {
 		for (Term term : terms) {
 			if (term.isQuantified()) return true;
@@ -138,6 +143,7 @@ public class PPPredicate extends PPProposition implements IPredicate {
 		return false;
 	}
 
+	@Override
 	public boolean isConstant() {
 		for (Term term : terms) {
 			if (!term.isConstant()) return false;

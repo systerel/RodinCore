@@ -79,7 +79,7 @@ public class Constant extends Term {
 
 	@Override
 	public void collectVariables(Set<Variable> variables) {
-		
+		// no variables, do nothing
 	}
 
 	@Override

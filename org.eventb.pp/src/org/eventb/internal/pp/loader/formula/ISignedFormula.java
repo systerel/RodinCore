@@ -11,6 +11,7 @@ package org.eventb.internal.pp.loader.formula;
 import java.util.Collection;
 import java.util.List;
 
+import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.ILiteral;
@@ -51,15 +52,15 @@ public interface ISignedFormula {
 	
 	public void switchSign();
 	
-	public ISubFormula getFormula();
+	public ISubFormula<?> getFormula();
 	
 	
 //	 PUBLIC used by clausebuilder
 	// - when called on a labelizable formula, this method uses unified term list
 	// - when called on a signed formula, it uses terms recorded in the formula instance
-	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable variableTable, IOrigin origin);
+	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext context, IOrigin origin);
 
-	public List<List<ILiteral>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral>> prefix, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool);
+	public List<List<ILiteral<?>>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral<?>>> prefix, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool);
 
 	public void split();
 	

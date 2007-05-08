@@ -2,27 +2,29 @@ package org.eventb.internal.pp.core.elements;
 
 import java.util.List;
 
-import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.inferrers.IInferrer;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
+import org.eventb.internal.pp.core.tracing.IOrigin;
 
-public class PPDisjClause extends AbstractPPClause {
+public final class PPDisjClause extends AbstractPPClause {
 
 //	@Deprecated
 //	public PPDisjClause(int level, List<IPredicate> predicates, List<ILiteral> others) {
 //		super(level, predicates, others);
 //	}
 
-	public PPDisjClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic, List<IEquality> conditions) {
-		super(level, predicates, equalities, arithmetic, conditions);
+	public PPDisjClause(IOrigin origin, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic, List<IEquality> conditions) {
+		super(origin, predicates, equalities, arithmetic, conditions);
 		
 		assert predicates != null && equalities != null && arithmetic != null && conditions != null;
+		assert !isEmpty();
 	}
 	
-	public PPDisjClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic) {
-		super(level, predicates, equalities, arithmetic);
+	public PPDisjClause(IOrigin origin, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic) {
+		super(origin, predicates, equalities, arithmetic);
 		
 		assert predicates != null && equalities != null && arithmetic != null;
+		assert !isEmpty();
 	}
 	
 	@Override
@@ -51,11 +53,21 @@ public class PPDisjClause extends AbstractPPClause {
 	}
 
 	public IClause simplify(ISimplifier simplifier) {
-		return simplifier.simplifyDisjunctiveClause(this);
+		IClause result = simplifier.simplifyDisjunctiveClause(this);
+		assert result != null;
+		return result;
 	}
 
 	public void infer(IInferrer inferrer) {
 		inferrer.inferFromDisjunctiveClause(this);
+	}
+
+	public boolean isFalse() {
+		return false;
+	}
+
+	public boolean isTrue() {
+		return false;
 	}
 
 

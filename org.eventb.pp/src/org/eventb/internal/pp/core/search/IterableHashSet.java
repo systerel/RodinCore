@@ -42,13 +42,12 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 		
 		LinkableClause link = new LinkableClause(clause);
 		
-		if (!list.isEmpty()) {
+		if (list.isEmpty()) {
+			first = link;
+			last = link;
+		} else {
 			link.previous = last;
 			last.next = link;
-			last = link;
-		}
-		else {
-			first = link;
 			last = link;
 		}
 		list.put(clause, link);

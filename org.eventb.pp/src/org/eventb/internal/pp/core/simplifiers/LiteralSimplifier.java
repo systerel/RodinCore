@@ -12,6 +12,8 @@ import org.eventb.internal.pp.core.elements.ILiteral;
 import org.eventb.internal.pp.core.elements.IPredicate;
 import org.eventb.internal.pp.core.elements.PPDisjClause;
 import org.eventb.internal.pp.core.elements.PPEqClause;
+import org.eventb.internal.pp.core.elements.PPFalseClause;
+import org.eventb.internal.pp.core.elements.PPTrueClause;
 
 /**
  * This simplifier removes all duplicate predicate, arithmetic or equality literals in a clause.
@@ -35,20 +37,19 @@ public class LiteralSimplifier implements ISimplifier {
 
 	public IClause simplifyDisjunctiveClause(PPDisjClause clause) {
 		List<IPredicate> predicateLiterals = getDisjSimplifiedList(clause.getPredicateLiterals());
-		if (predicateLiterals == null) return null;
+		if (predicateLiterals == null) return new PPTrueClause(clause.getOrigin());
 		List<IEquality> equalityLiterals = getDisjSimplifiedList(clause.getEqualityLiterals());
-		if (equalityLiterals == null) return null;
+		if (equalityLiterals == null) return new PPTrueClause(clause.getOrigin());
 		List<IArithmetic> arithmeticLiterals = getDisjSimplifiedList(clause.getArithmeticLiterals());
-		if (arithmeticLiterals == null) return null;
+		if (arithmeticLiterals == null) return new PPTrueClause(clause.getOrigin());
 		List<IEquality> conditions = getDisjSimplifiedList(clause.getConditions());
 		
 		// we look for conditions that are in the equalities
 		conditions = getDisjSimplifiedConditions(equalityLiterals, conditions);
-		if (conditions == null) return null;
+		if (conditions == null) return new PPTrueClause(clause.getOrigin());
 		
-		IClause result = new PPDisjClause(clause.getLevel(),predicateLiterals,equalityLiterals,arithmeticLiterals,conditions);
-		result.setOrigin(clause.getOrigin());
-		return result;
+		if (predicateLiterals.size() + equalityLiterals.size() + arithmeticLiterals.size() + conditions.size() == 0) return new PPFalseClause(clause.getOrigin());
+		else return new PPDisjClause(clause.getOrigin(),predicateLiterals,equalityLiterals,arithmeticLiterals,conditions);
 	}
 
 	public IClause simplifyEquivalenceClause(PPEqClause clause) {
@@ -73,7 +74,7 @@ public class LiteralSimplifier implements ISimplifier {
 		}
 		
 		if ((numberOfFalse == 0 || numberOfFalse == 2) && predicateLiterals.isEmpty() && equalityLiterals.isEmpty() && arithmeticLiterals.isEmpty()) {
-			return null;
+			return new PPTrueClause(clause.getOrigin());
 		}
 		
 		if (numberOfFalse == 1) {
@@ -91,10 +92,10 @@ public class LiteralSimplifier implements ISimplifier {
 				arithmeticLiterals.add(0,literal.getInverse());
 			}
 		}
-		IClause result = PPEqClause.newClause(clause.getLevel(), predicateLiterals, equalityLiterals, arithmeticLiterals,
+		
+		if (predicateLiterals.size() + equalityLiterals.size() + arithmeticLiterals.size() + conditions.size() == 0) return new PPFalseClause(clause.getOrigin());
+		return PPEqClause.newClause(clause.getOrigin(), predicateLiterals, equalityLiterals, arithmeticLiterals,
 					conditions, context);
-		result.setOrigin(clause.getOrigin());
-		return result;
 	}
 	
 	private List<IEquality> getDisjSimplifiedConditions(List<IEquality> equalities, List<IEquality> conditions) {
@@ -111,7 +112,7 @@ public class LiteralSimplifier implements ISimplifier {
 		return result;
 	}
 	
-	private <T extends ILiteral> List<T> getDisjSimplifiedList(List<T> literals) {
+	private <T extends ILiteral<?>> List<T> getDisjSimplifiedList(List<T> literals) {
 		LinkedHashSet<T> set = new LinkedHashSet<T>();
 		for (int i = 0; i < literals.size(); i++) {
 			T literal1 = literals.get(i);

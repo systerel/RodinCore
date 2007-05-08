@@ -36,9 +36,9 @@ public interface ISubFormula<T extends LiteralDescriptor> {
 //	 * @param table TODO
 //	 * @return the corresponding unit literal or <code>null</code> if none exists.
 //	 */
-	public List<List<ILiteral>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool);
+	public List<List<ILiteral<?>>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral<?>>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool);
 
-	public List<List<ILiteral>> getClauses(List<TermSignature> terms, LabelManager manager, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool);
+	public List<List<ILiteral<?>>> getClauses(List<TermSignature> terms, LabelManager manager, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool);
 	
 //	/**
 //	 * Returns the literal representing this formula. If it is an atomic
@@ -55,7 +55,7 @@ public interface ISubFormula<T extends LiteralDescriptor> {
 //	 * @param table TODO
 //	 * @return
 //	 */
-	public ILiteral getLiteral(List<TermSignature> terms, TermVisitorContext flags, VariableTable table /*, context*/, BooleanEqualityTable bool);
+	public ILiteral<?> getLiteral(List<TermSignature> terms, TermVisitorContext flags, VariableTable table /*, context*/, BooleanEqualityTable bool);
 
     /**
      * Returns the size of the index list.

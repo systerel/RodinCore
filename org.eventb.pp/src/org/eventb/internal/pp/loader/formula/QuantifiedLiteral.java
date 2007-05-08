@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.ILiteral;
@@ -80,7 +81,7 @@ public class QuantifiedLiteral extends AbstractLabelizableFormula<QuantifiedDesc
 			|| (manager.isGettingDefinitions()&&context.isQuantified);
 	}
 
-	public List<List<ILiteral>> getDefinitionClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral>> prefix, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+	public List<List<ILiteral<?>>> getDefinitionClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral<?>>> prefix, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
 //		TermVisitorContext newContext = new TermVisitorContext();
 //		
 //		newContext.isForall = context.isPositive?isForall:!isForall;
@@ -97,22 +98,21 @@ public class QuantifiedLiteral extends AbstractLabelizableFormula<QuantifiedDesc
 		return child.getClauses(quantifiedTermList, manager, prefix, table, context, bool);
 	}
 	
-	public ILiteral getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
-		ILiteral result = getLiteral(descriptor.getIndex(), terms, context, table);
+	public ILiteral<?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+		ILiteral<?> result = getLiteral(descriptor.getIndex(), terms, context, table);
 		return result;
 	}
 	
 
-	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable variableTable, boolean positive) {
-		if (!positive) {
-			ClauseBuilder.debug("----------------");
-			ClauseBuilder.debug("Negative definition:");
-			getFinalClausesHelper(manager, clauses, factory, true, false, bool, variableTable);
-		}
-		else {
+	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext variableContext, boolean positive) {
+		if (positive) {
 			ClauseBuilder.debug("----------------");
 			ClauseBuilder.debug("Positive definition:");
-			getFinalClausesHelper(manager, clauses, factory, false, true, bool, variableTable);
+			getFinalClausesHelper(manager, clauses, factory, false, true, bool, table, variableContext);
+		} else {
+			ClauseBuilder.debug("----------------");
+			ClauseBuilder.debug("Negative definition:");
+			getFinalClausesHelper(manager, clauses, factory, true, false, bool, table, variableContext);
 		}
 	}
 

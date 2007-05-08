@@ -10,7 +10,8 @@ import org.eventb.internal.pp.core.elements.IEquality;
 import org.eventb.internal.pp.core.elements.IPredicate;
 import org.eventb.internal.pp.core.elements.PPDisjClause;
 import org.eventb.internal.pp.core.elements.PPEqClause;
-import org.eventb.internal.pp.core.provers.equality.IEquivalenceManager;
+import org.eventb.internal.pp.core.elements.PPFalseClause;
+import org.eventb.internal.pp.core.elements.PPTrueClause;
 
 public class EqualitySimplifier implements ISimplifier {
 
@@ -20,11 +21,9 @@ public class EqualitySimplifier implements ISimplifier {
 	private List<IEquality> conditions;
 	private boolean isEquivalence = false;
 	private IVariableContext context;
-	private IEquivalenceManager manager;
 	
-	public EqualitySimplifier(IVariableContext context, IEquivalenceManager manager) {
+	public EqualitySimplifier(IVariableContext context) {
 		this.context = context;
-		this.manager = manager;
 	}
 	
 	private void init(IClause clause) {
@@ -34,42 +33,47 @@ public class EqualitySimplifier implements ISimplifier {
 		conditions = clause.getConditions();
 	}
 	
+	private boolean isEmpty() {
+		return conditions.size() + predicates.size() + arithmetic.size() + equalities.size() == 0;
+	}
+	
 	public IClause simplifyDisjunctiveClause(PPDisjClause clause) {
 		init(clause);
 		boolean ok = simplifyEquality(equalities);
 		if (!ok) {
-			return null;
+			return new PPTrueClause(clause.getOrigin());
 		}
 		ok = simplifyEquality(conditions);
 		if (!ok) {
-			return null;
+			return new PPTrueClause(clause.getOrigin());
 		}
-		IClause result = new PPDisjClause(clause.getLevel(),predicates,equalities,arithmetic,conditions);
-		result.setOrigin(clause.getOrigin());
+		
+		IClause result;
+		if (isEmpty()) result = new PPFalseClause(clause.getOrigin()); 
+		else result = new PPDisjClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 		return result;
 	}
 
+	// TODO redo with tests
 	public IClause simplifyEquivalenceClause(PPEqClause clause) {
 		init(clause);
-		conditions = clause.getConditions();
 		isTrue = true;
 		isEquivalence = true;
 		simplifyEquality(equalities);
 		isEquivalence = false;
 		boolean ok = simplifyEquality(conditions);
-		if (!ok) return null;
+		if (!ok) return new PPTrueClause(clause.getOrigin());
 		if (!isTrue) {
 			// we must inverse one predicate
 			PPEqClause.inverseOneliteral(predicates, equalities, arithmetic);
 		}
 		else if (predicates.size() + equalities.size() 
 				+ conditions.size() + arithmetic.size() == 0)
-					return null;
+				return new PPTrueClause(clause.getOrigin());
 
-		IClause result = PPEqClause.newClause(clause.getLevel(),
+		if (isEmpty()) return new PPFalseClause(clause.getOrigin());
+		else return PPEqClause.newClause(clause.getOrigin(),
 				predicates, equalities, arithmetic, conditions, context);
-		result.setOrigin(clause.getOrigin());
-		return result;
 	}
 	
 	private boolean isTrue;

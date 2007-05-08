@@ -37,17 +37,17 @@ public class ExistentialSimplifier implements ISimplifier {
 		simplifyExistentialHelper(equalities);
 		simplifyExistentialHelper(arithmetic);
 		simplifyExistentialHelper(conditions);
-		IClause result = new PPDisjClause(clause.getLevel(),predicates,equalities,arithmetic,conditions);
-		result.setOrigin(clause.getOrigin());
+		IClause result = new PPDisjClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 		return result;
 	}
 
+	
+	// TODO test !
 	public IClause simplifyEquivalenceClause(PPEqClause clause) {
 		init(clause);
 		simplifyExistentialHelper(conditions);
-		IClause result = new PPEqClause(clause.getLevel(),predicates,equalities,arithmetic,conditions);
-		result.setOrigin(clause.getOrigin());
-		return clause;
+		IClause result = new PPEqClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
+		return result;
 	}
 
 	

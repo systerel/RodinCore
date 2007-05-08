@@ -6,16 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.IPredicate;
 import org.eventb.internal.pp.core.elements.PPDisjClause;
 import org.eventb.internal.pp.core.elements.PPEqClause;
+import org.eventb.internal.pp.core.elements.PPFalseClause;
 import org.eventb.internal.pp.core.elements.PPPredicate;
 import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
+import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public class ResolutionInferrer extends AbstractInferrer {
 
@@ -26,8 +27,6 @@ public class ResolutionInferrer extends AbstractInferrer {
 	
 	private IClause result;
 	private boolean blocked;
-	
-	private Level level;
 	
 	public ResolutionInferrer(IVariableContext context) {
 		super(context);
@@ -55,7 +54,6 @@ public class ResolutionInferrer extends AbstractInferrer {
 			throw new IllegalStateException();
 		}
 		blocked = clause.getPredicateLiterals().get(position).updateInstantiationCount(predicate);
-		level = Level.getHighest(unitClause.getLevel(), clause.getLevel());
 	}
 	
 	@Override
@@ -78,15 +76,16 @@ public class ResolutionInferrer extends AbstractInferrer {
 	}
 	
 	@Override
-	protected void inferFromDisjunctiveClauseHelper() {
+	protected void inferFromDisjunctiveClauseHelper(IClause clause) {
 		IPredicate matchingPredicate = predicates.remove(position);
 		conditions.addAll(predicate.getConditions(matchingPredicate));
 		
-		result = new PPDisjClause(level,predicates,equalities,arithmetic,conditions); 
+		if (isEmpty()) result = new PPFalseClause(getOrigin(clause));
+		else result = new PPDisjClause(getOrigin(clause),predicates,equalities,arithmetic,conditions); 
 	}
 
 	@Override
-	protected void inferFromEquivalenceClauseHelper() {
+	protected void inferFromEquivalenceClauseHelper(IClause clause) {
 		IPredicate matchingPredicate = predicates.remove(position);
 		boolean sameSign = matchingPredicate.isPositive() == predicate.isPositive();
 		if (!sameSign) PPEqClause.inverseOneliteral(predicates, equalities, arithmetic);
@@ -94,7 +93,8 @@ public class ResolutionInferrer extends AbstractInferrer {
 		if (matchingPredicate.isQuantified()) matchingPredicate = transformVariables(matchingPredicate);
 		conditions.addAll(predicate.getConditions(matchingPredicate));
 		
-		result = PPEqClause.newClause(level, predicates, equalities, arithmetic, conditions, context);
+		if (isEmpty()) result = new PPFalseClause(getOrigin(clause));
+		else result = PPEqClause.newClause(getOrigin(clause), predicates, equalities, arithmetic, conditions, context);
 	}
 	
 	///////////transforms the variable in the inequality//////////////
@@ -128,12 +128,11 @@ public class ResolutionInferrer extends AbstractInferrer {
 		return result;
 	}
 
-	@Override
-	protected void setParents(IClause clause) {
+	protected IOrigin getOrigin(IClause clause) {
 		List<IClause> parents = new ArrayList<IClause>();
 		parents.add(clause);
 		parents.add(unitClause);
-		result.setOrigin(new ClauseOrigin(parents));
+		return new ClauseOrigin(parents);
 	}
 
 }

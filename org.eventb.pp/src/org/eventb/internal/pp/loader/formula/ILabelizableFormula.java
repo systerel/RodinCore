@@ -11,6 +11,7 @@ package org.eventb.internal.pp.loader.formula;
 import java.util.Collection;
 import java.util.List;
 
+import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.ILiteral;
@@ -56,9 +57,9 @@ public interface ILabelizableFormula<T extends LiteralDescriptor> extends ISubFo
 //	 * @param table TODO
 //	 * @return
 //	 */
-	public List<List<ILiteral>> getDefinitionClauses(
+	public List<List<ILiteral<?>>> getDefinitionClauses(
 			List<TermSignature> termList, LabelManager manager,
-			List<List<ILiteral>> prefix, TermVisitorContext flags,
+			List<List<ILiteral<?>>> prefix, TermVisitorContext flags,
 			VariableTable table, BooleanEqualityTable bool);
 	
 	public List<TermSignature> getTerms();
@@ -70,6 +71,6 @@ public interface ILabelizableFormula<T extends LiteralDescriptor> extends ISubFo
 //	 PUBLIC used by clausebuilder
 	// -when called on a labelizable formula, this method uses unified term list
 	// -when called on a signed formula, it uses terms recorded in the formula instance
-	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable variableTable, boolean positive);
+	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext variableContext, boolean positive);
 	
 }

@@ -96,7 +96,7 @@ public class VariableSignature extends TermSignature {
 	@Override
 	public Term getTerm(VariableTable table, TermVisitorContext context) {
 		Term var;
-		if (!isQuantified(context.startOffset, context.endOffset) || !context.isQuantified) {
+		if (!context.isQuantified || !isQuantified(context.startOffset, context.endOffset)) {
 			var = table.getVariable(uniqueIndex, sort);
 		}
 		else if (context.isEquivalence) {

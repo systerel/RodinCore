@@ -30,6 +30,7 @@ public abstract class AbstractConstantSignature extends TermSignature {
 		return true;
 	}
 	
+	@Override
 	public abstract Term getTerm(VariableTable table, TermVisitorContext context);
 
 	@Override

@@ -3,14 +3,12 @@ package org.eventb.internal.pp.loader.formula;
 
 public class TermVisitorContext {
 
-//	public boolean freshContext = true;
+	// set before starting visiting
+	public final boolean isEquivalence;
 	
 	public TermVisitorContext(boolean equivalence) {
 		this.isEquivalence = equivalence;
 	}
-	
-	// set before starting visiting
-	public final boolean isEquivalence;
 	
 	// set before and changed during visiting
 	public boolean isPositive = true;

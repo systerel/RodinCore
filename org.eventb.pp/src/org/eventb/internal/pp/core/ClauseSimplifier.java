@@ -29,9 +29,9 @@ public class ClauseSimplifier {
 		for (ISimplifier simplifier : simplifiers) {
 			if (simplifier.canSimplify(clause)) {
 				clause = clause.simplify(simplifier);
-				if (clause == null) {
-					debug("Simplified: "+originalClause.toString()+" -> ⊤");
-					return null;
+				if (clause.isEmpty()) {
+					debug("Simplified: "+originalClause.toString()+" -> "+clause.toString());
+					return clause;
 				}
 			}
 		}

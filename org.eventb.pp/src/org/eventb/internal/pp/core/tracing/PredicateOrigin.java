@@ -16,7 +16,8 @@ public class PredicateOrigin implements IOrigin {
 	}
 
 	public void getDependencies(Stack<Level> dependencies) {
-		return;
+		if (!dependencies.contains(getLevel()))
+			dependencies.push(getLevel());
 	}
 
 	public void trace(Tracer tracer) {
@@ -31,5 +32,14 @@ public class PredicateOrigin implements IOrigin {
 	public boolean isDefinition() {
 		return false;
 	}
-	
+
+	public Level getLevel() {
+		return Level.base;
+	}
+
+	@Override
+	public String toString() {
+		return getLevel().toString();
+	}
+
 }

@@ -80,7 +80,7 @@ public abstract class Term {
 	public void resetInstantiationCount() {
 		this.numberOfInferences = Term.MAX_NUMBER_OF_INFERENCES;
 	}
-	private static final int MAX_NUMBER_OF_INFERENCES = 3;
+	private static final int MAX_NUMBER_OF_INFERENCES = 1;
 	protected int numberOfInferences = Term.MAX_NUMBER_OF_INFERENCES;
 	public void incrementInstantiationCount() {
 		this.numberOfInferences--;

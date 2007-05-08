@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Stack;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
@@ -29,10 +28,9 @@ public abstract class AbstractPPClause implements IClause {
 	protected List<IEquality> conditions = new ArrayList<IEquality>();
 	
 	protected IOrigin origin;
-	protected Level level = Level.base;
 	
-	public AbstractPPClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic, List<IEquality> conditions) {
-		this.level = level;
+	public AbstractPPClause(IOrigin origin, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic, List<IEquality> conditions) {
+		this.origin = origin;
 		this.predicates = predicates;
 		this.equalities = equalities;
 		this.arithmetic = arithmetic;
@@ -41,8 +39,8 @@ public abstract class AbstractPPClause implements IClause {
 		computeBitSets();
 	}
 	
-	public AbstractPPClause(Level level, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic) {
-		this.level = level;
+	public AbstractPPClause(IOrigin origin, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic) {
+		this.origin = origin;
 		this.predicates = predicates;
 		this.equalities = equalities;
 		this.arithmetic = arithmetic;
@@ -105,7 +103,7 @@ public abstract class AbstractPPClause implements IClause {
 		return hashCodeWithDifferentVariables();
 	}
 	
-	public boolean isBlocked() {
+	public boolean isBlockedOnConditions() {
 		return conditions.size() > 0;
 	}
 
@@ -117,17 +115,17 @@ public abstract class AbstractPPClause implements IClause {
 
 	public String toString(HashMap<Variable, String> variableMap) {
 		StringBuffer str = new StringBuffer();
-		str.append(""+level);
+		str.append(""+getLevel());
 		str.append("[");
-		for (ILiteral literal : predicates) {
+		for (ILiteral<?> literal : predicates) {
 			str.append(literal.toString(variableMap));
 			str.append(", ");
 		}
-		for (ILiteral literal : equalities) {
+		for (ILiteral<?> literal : equalities) {
 			str.append(literal.toString(variableMap));
 			str.append(", ");
 		}
-		for (ILiteral literal : arithmetic) {
+		for (ILiteral<?> literal : arithmetic) {
 			str.append(literal.toString(variableMap));
 			str.append(", ");
 		}
@@ -146,7 +144,7 @@ public abstract class AbstractPPClause implements IClause {
 	
 
 	public Level getLevel() {
-		return level;
+		return origin.getLevel();
 	}
 //
 //	public Stack<IClauseContext> getContexts() {
@@ -154,21 +152,11 @@ public abstract class AbstractPPClause implements IClause {
 //		return null;
 //	}
 
-	public void getDependencies(Stack<Level> dependencies) {
-		if (!dependencies.contains(level))
-			dependencies.push(level);
-		if (level.equals(Level.base)) {
-			return;
-		}
-		origin.getDependencies(dependencies);
-	}
-
 	protected BitSet negativeLiterals = new BitSet();
 	protected BitSet positiveLiterals = new BitSet();
 
 	protected abstract void computeBitSets();
 
-	
 	public boolean contains(IPredicate predicate) {
 		return hasPredicateOfSign(predicate, false);
 	}
@@ -227,7 +215,7 @@ public abstract class AbstractPPClause implements IClause {
 
 
 	public boolean equalsWithLevel(IClause clause) {
-		return level.equals(clause.getLevel()) && equals(clause);
+		return getLevel().equals(clause.getLevel()) && equals(clause);
 	}
 
 	public IOrigin getOrigin() {

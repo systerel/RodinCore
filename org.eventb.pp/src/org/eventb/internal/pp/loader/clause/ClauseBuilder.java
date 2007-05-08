@@ -76,7 +76,7 @@ public class ClauseBuilder {
 		debugContext(context);
 		
 		variableContext = new VariableContext();
-		variableTable = new VariableTable(variableContext);
+		variableTable = new VariableTable();
 		bool = new BooleanEqualityTable(context.getNextLiteralIdentifier());
 
 		clauses = new ArrayList<IClause>();
@@ -114,10 +114,10 @@ public class ClauseBuilder {
 //				formula.getFinalClauses(clauses, manager, cf, bool, variableTable, true);
 //			}
 			if (manager.isNextPositive()) {
-				formula.getFinalClauses(clauses, manager, cf, bool, variableTable, false);
+				formula.getFinalClauses(clauses, manager, cf, bool, variableTable, variableContext, false);
 			}
 			else {
-				formula.getFinalClauses(clauses, manager, cf, bool, variableTable, true);
+				formula.getFinalClauses(clauses, manager, cf, bool, variableTable, variableContext, true);
 			}
 			
 			manager.nextLabelizableFormula();
@@ -147,24 +147,11 @@ public class ClauseBuilder {
 	private void buildNormalizedFormulas(INormalizedFormula result) {
 		ISignedFormula sig = result.getSignature();
 		sig.split();
-		sig.getFinalClauses(clauses, manager, cf, bool, variableTable, new PredicateOrigin(result.getOriginalPredicate(), result.isGoal()));
+		sig.getFinalClauses(clauses, manager, cf, bool, variableTable, variableContext, new PredicateOrigin(result.getOriginalPredicate(), result.isGoal()));
 	}
 	
 	public IVariableContext getVariableContext() {
 		return variableContext;
 	}
-	
-//	private void addClause(List<ILiteral> clause) {
-//		if (clause.size() == 1) {
-//			unitClauses.add(cf.newDisjClause(clause));
-//		}
-//		else {
-//			// TODO really a disjunctive clause here ?
-//			// clauses should not be created here, they should be
-//			// only created inside DisjunctiveClause and
-//			// EquivalenceClause
-//			clauses.add(cf.newDisjClause(clause));
-//		}
-//	}
 	
 }

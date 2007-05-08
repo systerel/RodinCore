@@ -1,19 +1,26 @@
 package org.eventb.internal.pp.core.provers.casesplit;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
+import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.IDispatcher;
 import org.eventb.internal.pp.core.IProver;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.datastructure.DefaultChangeListener;
 import org.eventb.internal.pp.core.datastructure.IObservable;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.inferrers.CaseSplitInferrer;
+import org.eventb.internal.pp.core.inferrers.IInferrer;
 import org.eventb.internal.pp.core.search.ConditionIterator;
+import org.eventb.internal.pp.core.search.IterableHashSet;
 import org.eventb.internal.pp.core.search.ResetIterator;
 
-public class CaseSplitter implements IProver {
+public class CaseSplitter extends DefaultChangeListener implements IProver {
+	
 	/**
 	 * Debug flag for <code>PROVER_CASESPLIT_TRACE</code>
 	 */
@@ -29,9 +36,9 @@ public class CaseSplitter implements IProver {
 	}
 	
 	private Stack<SplitPair> splits = new Stack<SplitPair>();
-	
 	private SplitPair nextCase;
 	
+	private IterableHashSet<IClause> candidates;
 	private CaseSplitIterator splitIterator;
 	private CaseSplitInferrer inferrer;
 	
@@ -41,16 +48,18 @@ public class CaseSplitter implements IProver {
 		this.inferrer = new CaseSplitInferrer(context);
 	}
 	
-	public void initialize(IDispatcher dispatcher, IObservable clauses) {
+	public void initialize(IDispatcher dispatcher, IObservable clauses, ClauseSimplifier simplifier) {
 		this.dispatcher = dispatcher;
+		candidates = new IterableHashSet<IClause>();
 		
-		splitIterator = new CaseSplitIterator(clauses.iterator());
+		splitIterator = new CaseSplitIterator(candidates.iterator(),inferrer);
+		clauses.addChangeListener(this);
 	}
 	
-	public void contradiction(Level oldLevel, Level newLevel, boolean proofFound) {
+	public void contradiction(Level oldLevel, Level newLevel, boolean proofFound, Stack<Level> dependencies) {
 		// contradiction has been found, backtrack
 		// main loop on the next case
-		backtrack(oldLevel, proofFound);
+		backtrack(oldLevel, proofFound, dependencies);
 	}
 	
 	// this returns the next clause produced by a case split.
@@ -70,6 +79,7 @@ public class CaseSplitter implements IProver {
 		debug("Case: "+result);
 		
 //		assert splits.size() == dispatcher.getLevel().getHeight();
+		
 		return result;
 	}
 	
@@ -86,7 +96,8 @@ public class CaseSplitter implements IProver {
 		
 		IClause clause = splitIterator.next();
 		if (clause == null) throw new IllegalStateException();
-			
+		candidates.remove(clause);
+		
 		splits.push(split(clause));
 		debug("New case split on "+clause+", size of split stack: "+splits.size());
 		return splits.peek().left;
@@ -95,31 +106,41 @@ public class CaseSplitter implements IProver {
 	private SplitPair split(IClause clause) {
 		inferrer.setLevel(dispatcher.getLevel().getParent());
 		clause.infer(inferrer);
-		return new SplitPair(clause,inferrer.getLeftCase(),inferrer.getRightCase());
+		return new SplitPair(clause,inferrer.getLeftCase(),inferrer.getRightCase(),dispatcher.getLevel().getParent());
 	}
 	
 	/**
 	 * Backtrack from this level up to and inclusive the level specified as a parameter.
 	 * 
-	 * @param level the level which must be backtracked
+	 * @param oldLevel the level which must be backtracked
 	 */
-	private void backtrack(Level oldLevel, boolean proofDone) {
+	private void backtrack(Level oldLevel, boolean proofDone, Stack<Level> dependencies) {
 		debug("CaseSplitter: Backtracking datastructures, size of split stack: "+splits.size());
-		if (proofDone) {
+		
+		if (	nextCase != null
+			&&	nextCase.original.getLevel().isAncestorOf(dispatcher.getLevel())) {
+			// we put the clause as a candidate again
+			candidates.appends(nextCase.original);
+		}
+		
+ 		if (proofDone) {
 			debug("CaseSplitter: Clearing data structures");
 			splits.clear();
 			return;
 		}
 		debug("CaseSplitter: Backtracking from: "+oldLevel+", to: "+dispatcher.getLevel());
 		Level tmp = oldLevel;
-		int i = 0;
+
 		while (!tmp.getParent().equals(dispatcher.getLevel())) {
+			SplitPair pair = splits.pop();
+			if (!dependencies.contains(tmp)) { 
+				// we put it back in the candidate list
+				candidates.appends(pair.original);
+			}
+			
 			tmp = tmp.getParent();
-			i++;
-		}
-		debug("CaseSplitter: Backtracking "+i+" levels");
-		for (int j = 0; j < i; j++) {
-			splits.pop();			
+			
+			assert tmp.equals(pair.level);
 		}
 		debug("CaseSplitter: Backtracking done, size of split stack: "+splits.size());
 		nextCase = splits.pop();
@@ -127,29 +148,56 @@ public class CaseSplitter implements IProver {
 	}
 	
 	public void registerDumper(Dumper dumper) {
+		dumper.addDataStructure("CaseSplit", candidates.iterator());
+	} 
+	
+	private boolean accepts(IClause clause) {
+		return inferrer.canInfer(clause);
 	}
 	
+	@Override
+	public void newClause(IClause clause) {
+		if (accepts(clause)) candidates.appends(clause);
+	}
+
+	@Override
+	public void removeClause(IClause clause) {
+		if (accepts(clause)) candidates.remove(clause);
+	}
+
+	
 	private class CaseSplitIterator extends ConditionIterator<IClause> {
+		private IInferrer inferrer;
 		
-		public CaseSplitIterator(ResetIterator<IClause> nonUnitClauses) {
-			super(nonUnitClauses);
+		public CaseSplitIterator(ResetIterator<IClause> iterator, IInferrer inferrer) {
+			super(iterator);
+			this.inferrer = inferrer;
 		}
 
+		@Override
 		public boolean isSelected(IClause clause) {
-			return inferrer.canInfer(clause);
+			assert inferrer.canInfer(clause);
+			
+			return true;
 		}
-
 	}
 
 	private static class SplitPair {
-		private IClause original;
-		private IClause left,right;
+		IClause original;
+		IClause left,right;
+		Level level;
 		
-		private SplitPair(IClause original, IClause left, IClause right) {
+		SplitPair(IClause original, IClause left, IClause right, Level level) {
 			this.original = original;
 			this.left = left;
 			this.right = right;
+			this.level = level;
 		}
+	}
+
+	private Set<IClause> emptySet = new HashSet<IClause>();
+	public Set<IClause> getGeneratedClauses() {
+		return emptySet;
 	}
 
 }

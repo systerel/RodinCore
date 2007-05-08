@@ -11,6 +11,7 @@ package org.eventb.internal.pp.core.elements;
 
 public interface IEquality extends ILiteral<IEquality> {
 
+	
 	public Sort getSort();
 	
 	public boolean isPositive();

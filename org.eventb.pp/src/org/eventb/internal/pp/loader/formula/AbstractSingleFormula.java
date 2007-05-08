@@ -17,13 +17,13 @@ public abstract class AbstractSingleFormula<T extends LiteralDescriptor>
 		super(terms, descriptor);
 	}
 
-	public List<List<ILiteral>> getClauses(List<TermSignature> termList,
-			LabelManager manager, List<List<ILiteral>> prefix,
+	public List<List<ILiteral<?>>> getClauses(List<TermSignature> termList,
+			LabelManager manager, List<List<ILiteral<?>>> prefix,
 			TermVisitorContext flags, VariableTable table,
 			BooleanEqualityTable bool) {
 		ClauseBuilder.debugEnter(this);
-		ILiteral predicate = getLiteral(termList, flags, table, bool);
-		for (List<ILiteral> list : prefix) {
+		ILiteral<?> predicate = getLiteral(termList, flags, table, bool);
+		for (List<ILiteral<?>> list : prefix) {
 			list.add(predicate);
 		}
 		ClauseBuilder.debugExit(this);

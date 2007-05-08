@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.ILiteral;
 import org.eventb.internal.pp.core.elements.PPDisjClause;
@@ -14,13 +13,12 @@ import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
+import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public class InstantiationInferrer extends AbstractInferrer {
 
 	private Variable variable;
 	private Term term;
-	
-	private Level level;
 	
 	private IClause result;
 	
@@ -62,21 +60,20 @@ public class InstantiationInferrer extends AbstractInferrer {
 	}
 	
 	@Override
-	protected void inferFromDisjunctiveClauseHelper() {
+	protected void inferFromDisjunctiveClauseHelper(IClause clause) {
 		substitute();
-		result = new PPDisjClause(level,predicates,equalities,arithmetic,conditions);
+		result = new PPDisjClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
 	}
 
 	@Override
-	protected void inferFromEquivalenceClauseHelper() {
+	protected void inferFromEquivalenceClauseHelper(IClause clause) {
 		substitute();
-		result = new PPEqClause(level,predicates,equalities,arithmetic,conditions);
+		result = new PPEqClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
 	}
 
 	@Override
 	protected void initialize(IClause clause) throws IllegalStateException {
 		if (variable == null || term == null) throw new IllegalStateException();
-		level = clause.getLevel();
 	}
 
 	@Override
@@ -85,11 +82,10 @@ public class InstantiationInferrer extends AbstractInferrer {
 		term = null;
 	}
 
-	@Override
-	protected void setParents(IClause clause) {
+	protected IOrigin getOrigin(IClause clause) {
 		List<IClause> parents = new ArrayList<IClause>();
 		parents.add(clause);
-		result.setOrigin(new ClauseOrigin(parents));
+		return new ClauseOrigin(parents);
 	}
 
 	public boolean canInfer(IClause clause) {

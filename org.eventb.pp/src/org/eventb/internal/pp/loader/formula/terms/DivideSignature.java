@@ -41,12 +41,11 @@ public class DivideSignature extends BinaryTermSignature {
 
 	@Override
 	public TermSignature getUnquantifiedTerm(int startOffset, int endOffset, List<TermSignature> termList) {
-		if (!isQuantified(startOffset, endOffset)) {
+		if (isQuantified(startOffset,endOffset)) {
+			return new DivideSignature(super.getUnquantifiedSignatureHelper(startOffset, endOffset, termList));
+		} else {
 			addTerm(this.deepCopy(), termList);
 			return new VariableHolder(sort);
-		}
-		else {
-			return new DivideSignature(super.getUnquantifiedSignatureHelper(startOffset, endOffset, termList));
 		}
 	}
 	

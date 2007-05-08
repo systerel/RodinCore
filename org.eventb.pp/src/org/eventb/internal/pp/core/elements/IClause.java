@@ -9,7 +9,6 @@
 package org.eventb.internal.pp.core.elements;
 
 import java.util.List;
-import java.util.Stack;
 
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.inferrers.IInferrer;
@@ -20,8 +19,6 @@ public interface IClause {
 	
 	public Level getLevel();
 	
-	public void getDependencies(Stack<Level> dependencies);
-	
 	public List<IEquality> getEqualityLiterals();
 	
 	public List<IPredicate> getPredicateLiterals();
@@ -30,7 +27,7 @@ public interface IClause {
 	
 	public List<IEquality> getConditions();
 	
-	public boolean isBlocked();
+	public boolean isBlockedOnConditions();
 	
 //	// stack of contexts, level-dependent information
 //	public Stack<IClauseContext> getContexts();
@@ -46,7 +43,7 @@ public interface IClause {
 //	
 //	public void setOriginalPredicate(Predicate predicate);
 	
-	public void setOrigin(IOrigin origin);
+//	public void setOrigin(IOrigin origin);
 	
 	public IOrigin getOrigin();
 	
@@ -54,6 +51,10 @@ public interface IClause {
 	public boolean isUnit();
 	
 	public boolean isEmpty();
+	
+	public boolean isFalse();
+	
+	public boolean isTrue();
 	
 	public boolean contains(IPredicate predicate);
 

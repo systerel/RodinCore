@@ -41,7 +41,7 @@ public class ArithmeticLiteral extends AbstractSingleFormula<ArithmeticDescripto
 		return type;
 	}
 
-	public ILiteral getLiteral(List<TermSignature> termList, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
+	public ILiteral<?> getLiteral(List<TermSignature> termList, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
 		assert termList.size() == 2;
 		List<Term> terms = getTermsFromTermSignature(termList, flags, table);
 		// normalize terms here
@@ -50,13 +50,12 @@ public class ArithmeticLiteral extends AbstractSingleFormula<ArithmeticDescripto
 		if (type == Type.EQUAL) {
 			return new PPArithmetic(left,right,flags.isPositive?AType.EQUAL:AType.UNEQUAL);
 		}
-		if (!flags.isPositive) {
+		if (flags.isPositive) {
+			return new PPArithmetic(left,right,type == Type.LESS?AType.LESS:AType.LESS_EQUAL);
+		} else {
 			left = terms.get(1);
 			right = terms.get(0);
 			return new PPArithmetic(left,right,type == Type.LESS?AType.LESS_EQUAL:AType.LESS);
-		}
-		else {
-			return new PPArithmetic(left,right,type == Type.LESS?AType.LESS:AType.LESS_EQUAL);
 		}
 	}
 

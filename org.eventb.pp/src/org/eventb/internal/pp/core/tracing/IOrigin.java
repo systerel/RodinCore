@@ -14,4 +14,6 @@ public interface IOrigin {
 	
 	public boolean isDefinition();
 	
+	public Level getLevel();
+	
 }

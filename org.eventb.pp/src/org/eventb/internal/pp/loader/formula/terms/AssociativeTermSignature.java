@@ -77,12 +77,11 @@ public abstract class AssociativeTermSignature extends TermSignature {
 		List<TermSignature> signatures = new ArrayList<TermSignature>();
 		for (TermSignature term : terms) {
 			TermSignature sig;
-			if (!term.isQuantified(startOffset, endOffset)) {
+			if (term.isQuantified(startOffset,endOffset)) {
+				sig = term.getUnquantifiedTerm(startOffset, endOffset, termList);
+			} else {
 				addTerm(term.deepCopy(), termList);
 				sig = new VariableHolder(sort); 
-			}
-			else {
-				sig = term.getUnquantifiedTerm(startOffset, endOffset, termList);
 			}
 			signatures.add(sig);
 		}

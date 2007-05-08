@@ -2,7 +2,6 @@ package org.eventb.internal.pp.loader.clause;
 
 import java.util.Hashtable;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
@@ -15,33 +14,28 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
  */
 public class VariableTable {
 
-	private Hashtable<Integer, Variable> variableTable;
-	private Hashtable<Integer, LocalVariable> localVariableTable;
-	private IVariableContext context;
+	private Hashtable<Integer, Variable> variableTable = new Hashtable<Integer, Variable>();
+	private Hashtable<Integer, LocalVariable> localVariableTable = new Hashtable<Integer, LocalVariable>();
 	
-	public VariableTable(IVariableContext context){
-		this.context = context;
-		reset();
-	}
-	
-	public void reset() {
-		variableTable = new Hashtable<Integer, Variable>();
-		localVariableTable = new Hashtable<Integer, LocalVariable>();
+	public VariableTable(){
+		// do nothing
 	}
 	
 	public Variable getVariable(int index, Sort sort) {
 		Variable var = variableTable.get(index);
 		if (var == null) {
-			var = context.getNextVariable(sort);
+			var = new Variable(sort);
 			variableTable.put(index, var);
 		}
 		return var;
 	}
 	
+	private int localVariableID = 0;
+	
 	public LocalVariable getLocalVariable(int index, boolean isForall, Sort sort) {
 		LocalVariable var = localVariableTable.get(index);
 		if (var == null) {
-			var = new LocalVariable(context.getNextLocalVariableID(),isForall,sort);
+			var = new LocalVariable(localVariableID++,isForall,sort);
 			localVariableTable.put(index, var);
 		}
 		return var;

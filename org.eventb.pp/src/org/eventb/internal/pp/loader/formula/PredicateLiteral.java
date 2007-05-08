@@ -22,8 +22,8 @@ public class PredicateLiteral extends AbstractSingleFormula<PredicateDescriptor>
 		super(terms,descriptor);
 	}
 	 
-	public ILiteral getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
-        ILiteral result = getLiteral(descriptor.getIndex(), terms, context, table);
+	public ILiteral<?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+        ILiteral<?> result = getLiteral(descriptor.getIndex(), terms, context, table);
         return result;
 	}
 

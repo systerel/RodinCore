@@ -10,6 +10,7 @@ public interface IInferrer {
 	
 	public void inferFromDisjunctiveClause(PPDisjClause clause);
 	
+	// TODO see what this exactly does, is it useful ?
 	public boolean canInfer(IClause clause);
 	
 }

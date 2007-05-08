@@ -16,7 +16,7 @@ public class InferrenceResult {
 		return clause;
 	}
 	
-	public boolean isBlocked() {
+	public boolean isBlockedOnInferrence() {
 		return isBlocked;
 	}
 	

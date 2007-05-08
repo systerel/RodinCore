@@ -107,7 +107,7 @@ public class LocalVariable extends AbstractVariable {
 
 	@Override
 	public void collectVariables(Set<Variable> variables) {
-		
+		// no variables, do nothing
 	}
 	
 //	// FOR TESTING ONLY

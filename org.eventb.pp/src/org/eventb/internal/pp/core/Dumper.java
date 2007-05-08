@@ -24,10 +24,10 @@ public class Dumper {
 	}
 	
 	private static class DumpableDataStructure {
-		private ResetIterator<IClause> iterator;
-		private String name;
+		ResetIterator<IClause> iterator;
+		String name;
 		
-		private DumpableDataStructure(String name, ResetIterator<IClause> iterator) {
+		DumpableDataStructure(String name, ResetIterator<IClause> iterator) {
 			this.name = name;
 			this.iterator = iterator;
 		}

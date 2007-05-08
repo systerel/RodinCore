@@ -43,12 +43,11 @@ public class BooleanEqualityLiteral extends EqualityLiteral {
 	}
 	
 	private boolean contains(List<TermSignature> list, TermSignature sig) {
-		if (sig instanceof TrueConstantSignature) return false;
-		else return list.contains(sig);
+		return sig instanceof TrueConstantSignature ? false : list.contains(sig);
 	}
 	
 	@Override
-	public ILiteral getLiteral(List<TermSignature> termList, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+	public ILiteral<?> getLiteral(List<TermSignature> termList, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
 		List<TermSignature> newList = descriptor.getUnifiedResults();
 		ILiteral result;
 		if (newList.get(1) instanceof TrueConstantSignature) {

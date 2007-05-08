@@ -12,6 +12,7 @@ import org.eventb.internal.pp.core.elements.ILiteral;
 import org.eventb.internal.pp.core.elements.IPredicate;
 import org.eventb.internal.pp.core.elements.PPDisjClause;
 import org.eventb.internal.pp.core.elements.PPEqClause;
+import org.eventb.internal.pp.core.elements.PPFalseClause;
 import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
@@ -30,21 +31,25 @@ public class OnePointRule implements ISimplifier {
 		conditions = clause.getConditions();
 	}
 	
+	private boolean isEmpty() {
+		return conditions.size() + predicates.size() + arithmetic.size() + equalities.size() == 0;
+	}
+	
 	public IClause simplifyDisjunctiveClause(PPDisjClause clause) {
 		init(clause);
 		onePointLoop(equalities);
 		onePointLoop(conditions);
-		IClause result = new PPDisjClause(clause.getLevel(),predicates,equalities,arithmetic,conditions);
-		result.setOrigin(clause.getOrigin());
-		return result;
+		if (isEmpty()) return new PPFalseClause(clause.getOrigin());
+		else return new PPDisjClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 	}
 
 	public IClause simplifyEquivalenceClause(PPEqClause clause) {
 		init(clause);
 		onePointLoop(conditions);
-		IClause result = new PPEqClause(clause.getLevel(),predicates,equalities,arithmetic,conditions);
-		result.setOrigin(clause.getOrigin());
-		return result;
+		
+		// never empty, commented out
+		// if (isEmpty()) return new PPFalseClause(clause.getOrigin());
+		return new PPEqClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 	}
 	
 	private void onePointLoop(List<IEquality> candidateList) {
@@ -55,9 +60,10 @@ public class OnePointRule implements ISimplifier {
 			if (isOnePointCandidate(equality)) {
 				candidateList.remove(equality);
 				doOnePoint(equality);
-				continue;
 			}
-			i++;
+			else {
+				i++;
+			}
 		}
 	}
 	
@@ -122,6 +128,6 @@ public class OnePointRule implements ISimplifier {
 	}
 
 	public boolean canSimplify(IClause clause) {
-		return !clause.isEmpty();
+		return !clause.isFalse();
 	}
 }
