@@ -8,6 +8,8 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -31,6 +33,7 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -41,20 +44,43 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 @SuppressWarnings("unused")
 public class AutoRewriterImpl extends DefaultRewriter {
 
+	private final IntegerLiteral number0 = ff.makeIntegerLiteral(new BigInteger("0"), null);
+	
+	private final IntegerLiteral number1 = ff.makeIntegerLiteral(new BigInteger("1"), null);
+
 	public AutoRewriterImpl() {
 		super(true, FormulaFactory.getDefault());
 	}
 
-
-	public Predicate makeUnaryPredicate(int tag, Predicate child) {
+	private UnaryPredicate makeUnaryPredicate(int tag, Predicate child) {
 		return ff.makeUnaryPredicate(tag, child, null);
 	}
 
-	public Predicate makeRelationalPredicate(int tag, Expression left,
+	private RelationalPredicate makeRelationalPredicate(int tag, Expression left,
 			Expression right) {
 		return ff.makeRelationalPredicate(tag, left, right, null);
 	}
 	
+	private AssociativePredicate makeAssociativePredicate(int tag, Predicate[] children) {
+		return ff.makeAssociativePredicate(tag, children, null);
+	}
+	
+	private QuantifiedPredicate makeQuantifiedPredicate(int tag, BoundIdentDecl[] boundIdentifiers, Predicate child) {
+		return ff.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
+	}
+
+	private SetExtension makeSetExtension(Collection<Expression> expressions) {
+		return ff.makeSetExtension(expressions, null);
+	}
+	
+	private UnaryExpression makeUnaryExpression(int tag, Expression child) {
+		return ff.makeUnaryExpression(tag, child, null);
+	}
+
+	private AtomicExpression makeEmptySet(Type type) {
+		return ff.makeEmptySet(type, null);
+	}
+		
 	%include {Formula.tom}
 	
 	@Override
@@ -243,15 +269,27 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	/**
 	    	 * Quantification 1: ∀x·(P ∧ ... ∧ Q) == (∀x·P) ∧ ... ∧ ∀(x·Q)
 	    	 */
-	    	ForAll(idents, Land(children)) -> {
-	    		return FormulaSimplification.splitQuantifiedPredicate(predicate.getTag(), predicate.getPredicate().getTag(), `idents, `children);
+	    	ForAll(boundIdentifiers, Land(children)) -> {
+	    		Predicate [] predicates = new Predicate[`children.length];
+	    		for (int i = 0; i < `children.length; ++i) {
+					Predicate qPred = makeQuantifiedPredicate(Predicate.FORALL, `boundIdentifiers, `children[i]);
+					predicates[i] = qPred;
+				}
+
+				return makeAssociativePredicate(Predicate.LAND, predicates);
 	    	}
 
 	    	/**
 	    	 * Quantification 2: ∃x·(P ⋁ ... ⋁ Q) == (∃x·P) ⋁ ... ⋁ ∃(x·Q)
 	    	 */
-			Exists(idents, Lor(children)) -> {
-	    		return FormulaSimplification.splitQuantifiedPredicate(predicate.getTag(), predicate.getPredicate().getTag(), `idents, `children);
+			Exists(boundIdentifiers, Lor(children)) -> {
+	    		Predicate [] predicates = new Predicate[`children.length];
+	    		for (int i = 0; i < `children.length; ++i) {
+					Predicate qPred = makeQuantifiedPredicate(Predicate.EXISTS, `boundIdentifiers, `children[i]);
+					predicates[i] = qPred;
+				}
+
+				return makeAssociativePredicate(Predicate.LOR, predicates);
 	    	}
 	    	
 	    	/**
@@ -335,7 +373,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Equality 3: E ↦ F = G ↦ H == E = G ∧ F = H
 	    	 */
 	    	Equal(Mapsto(E, F) , Mapsto(G, H)) -> {
-	    		return FormulaSimplification.rewriteMapsto(`E, `F, `G, `H);
+	    		Predicate pred1 = makeRelationalPredicate(Expression.EQUAL, `E, `G);
+				Predicate pred2 = makeRelationalPredicate(Expression.EQUAL, `F, `H);
+				return makeAssociativePredicate(Predicate.LAND, new Predicate[] {
+						pred1, pred2 });
 	    	}
 	    	
 	    	/**
@@ -365,21 +406,45 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory 16: E ∈ {F} == E = F (if F is a single expression)
 	    	 */
 	    	In(E, SetExtension(members)) -> {
-	    		return FormulaSimplification.simplifySetMember(predicate, `E, `members);
+	    		for (Expression member : `members) {
+					if (`member.equals(`E)) {
+						return Lib.True;
+					}
+				}
+				if (`members.length == 1) {
+					return makeRelationalPredicate(Predicate.EQUAL, `E, `members[0]);
+				}
+	    		return predicate;
 	    	}
 
 			/**
 	    	 * Set Theory 10: E ∈ {x | P(x)} == P(E)
 	    	 */
 	    	In(E, Cset(idents, guard, expression)) -> {
-	    		return FormulaSimplification.simplifySetComprehension(predicate, `E, `idents, `guard, `expression);
+				if (`idents.length == 1) {
+					Expression expression = `expression;
+					if (expression instanceof BoundIdentifier) {
+						BoundIdentifier boundIdent = (BoundIdentifier) `expression;
+						if (boundIdent.getBoundIndex() == 0) {
+							QuantifiedPredicate qPred = makeQuantifiedPredicate(
+									Predicate.FORALL, `idents, `guard);
+							Expression [] expressions = new Expression[1];
+							expressions[0] = `E;
+							return qPred.instantiate(expressions, ff);
+						}
+					}
+				}
+				return predicate;
 	    	}
 		
 			/**
 	    	 * Set Theory 17: {E} = {F} == E = F   if E, F is a single expression
 	    	 */
 	    	Equal(SetExtension(E), SetExtension(F)) -> {
-	    		return FormulaSimplification.simplifySetEquality(predicate, `E, `F);
+   				if (`E.length == 1 && `F.length == 1) {
+					return makeRelationalPredicate(Predicate.EQUAL, `E[0], `F[0]);
+				}
+				return predicate;
 	    	}
 	    	
 	    	/**
@@ -460,21 +525,39 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory 11: S ∖ S == ∅
 	    	 */
 	    	SetMinus(S, S) -> {
-	    		return FormulaSimplification.getEmptySetOfType(`S);
+	    		return makeEmptySet(`S.getType());
 	    	}
 
 			/**
 	    	 * Set Theory 18: S ∖ ∅ == S
 	    	 */
 	    	SetMinus(S, T) -> {
-	    		return FormulaSimplification.simplifySetSubtraction(expression, `S, `T);
+   				if (`T.equals(makeEmptySet(`S.getType()))) {
+					return `S;
+				}
+				return expression;    		
 	    	}
 	    	
 	    	/**
 	    	 * Set Theory 15: (f  {E↦ F})(E) == F
 	    	 */
 	    	FunImage(Ovr(children), E) -> {
-	    		return FormulaSimplification.simplifyFunctionOvr(expression, `children, `E);
+	    		Expression lastExpression = `children[`children.length - 1];
+				if (lastExpression instanceof SetExtension) {
+					SetExtension sExt = (SetExtension) lastExpression;
+					Expression[] members = sExt.getMembers();
+					if (members.length == 1) {
+						Expression child = members[0];
+						if (child instanceof BinaryExpression
+								&& child.getTag() == Expression.MAPSTO) {
+							if (((BinaryExpression) child).getLeft().equals(`E)) {
+								return ((BinaryExpression) child).getRight();
+							}
+						}
+					}
+				}
+
+				return expression;
 	    	}
 
 			/**
@@ -482,7 +565,12 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Arithmetic 3: 0 − E == −E
 	    	 */
 	    	Minus(E, F) -> {
-	    		return FormulaSimplification.simplifyMinusArithmetic(expression, `E, `F);
+	    		if (`F.equals(number0)) {
+					return `E;
+				} else if (`E.equals(number0)) {
+					return makeUnaryExpression(Expression.UNMINUS, `F);
+				}
+				return expression;
 	    	}
 
 			/**
@@ -520,9 +608,17 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			/**
 	    	 * Arithmetic 11: E^1 == E
 	    	 * Arithmetic 12: E^0 == 1
+	    	 * Arithmetic 12: 1^E == 1
 	    	 */
 	    	Expn (E, F) -> {
-	    		return FormulaSimplification.simplifyExpnArithmetic(expression, `E, `F);
+   				if (`F.equals(number1)) {
+					return `E;
+				} else if (`F.equals(number0)) {
+					return number1;
+				} else if (`E.equals(number1)) {
+					return number1;
+				}
+				return expression;
 	    	}
 	    }
 	    return expression;
@@ -540,17 +636,42 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
-	    	 * Set Theory 13: dom(x ↦ a, ..., y ↦ b) = {x, ..., y}
+	    	 * Set Theory 13: dom(x ↦ a, ..., y ↦ b) = {x, ..., y} 
+	    	 *                (Also remove duplicate in the resulting set) 
 	    	 */
 	    	Dom(SetExtension(members)) -> {
-	    		return FormulaSimplification.getDomain(expression, `members);
+   				Collection<Expression> domain = new LinkedHashSet<Expression>();
+
+				for (Expression member : `members) {
+					if (member instanceof BinaryExpression
+							&& member.getTag() == Expression.MAPSTO) {
+						BinaryExpression bExp = (BinaryExpression) member;
+						domain.add(bExp.getLeft());
+					} else {
+						return expression;
+					}
+				}
+
+				return makeSetExtension(domain);
 	    	}
 		
 			/**
 	    	 * Set Theory 14: ran(x ↦ a, ..., y ↦ b) = {a, ..., b}
 	    	 */
 	    	Ran(SetExtension(members)) -> {
-	    		return FormulaSimplification.getRange(expression, `members);
+	    		Collection<Expression> range = new LinkedHashSet<Expression>();
+
+				for (Expression member : `members) {
+					if (member instanceof BinaryExpression
+							&& member.getTag() == Expression.MAPSTO) {
+						BinaryExpression bExp = (BinaryExpression) member;
+						range.add(bExp.getRight());
+					} else {
+						return expression;
+					}
+				}
+
+				return makeSetExtension(range);
 	    	}
 
 			/**

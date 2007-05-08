@@ -21,7 +21,6 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class FormulaSimplification {
 
@@ -88,12 +87,12 @@ public class FormulaSimplification {
 		return predicate;
 	}
 
+	@Deprecated
 	public static Predicate splitQuantifiedPredicate(int tag, int subTag,
 			BoundIdentDecl[] boundIdentifiers, Predicate[] children) {
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		for (Predicate child : children) {
-			Predicate qPred = FormulaFactory
-					.getDefault()
+			Predicate qPred = ff
 					.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
 			predicates.add(qPred);
 		}
@@ -101,6 +100,7 @@ public class FormulaSimplification {
 		return ff.makeAssociativePredicate(subTag, predicates, null);
 	}
 
+	@Deprecated
 	public static Predicate rewriteMapsto(Expression E, Expression F,
 			Expression G, Expression H) {
 
@@ -160,24 +160,10 @@ public class FormulaSimplification {
 		return expression;
 	}
 
-	public static Predicate simplifySetMember(Predicate predicate,
-			Expression E, Expression[] members) {
-		for (Expression member : members) {
-			if (member.equals(E)) {
-				return Lib.True;
-			}
-		}
-		if (members.length == 1) {
-			return ff.makeRelationalPredicate(Predicate.EQUAL, E, members[0],
-					null);
-		}
-		return predicate;
-	}
-
+	@Deprecated
 	public static Predicate simplifySetComprehension(Predicate predicate,
 			final Expression E, BoundIdentDecl[] idents, Predicate guard,
 			Expression expression) {
-		// TODO: Implement by instantiating expression directly ?
 		if (idents.length == 1) {
 			if (expression instanceof BoundIdentifier) {
 				BoundIdentifier boundIdent = (BoundIdentifier) expression;
@@ -191,6 +177,7 @@ public class FormulaSimplification {
 		return predicate;
 	}
 
+	@Deprecated
 	public static Expression getDomain(Expression expression,
 			Expression[] members) {
 		Collection<Expression> domain = new LinkedHashSet<Expression>();
@@ -208,23 +195,25 @@ public class FormulaSimplification {
 		return ff.makeSetExtension(domain, null);
 	}
 
+	@Deprecated
 	public static Expression getRange(Expression expression,
 			Expression[] members) {
-		Collection<Expression> domain = new LinkedHashSet<Expression>();
+		Collection<Expression> range = new LinkedHashSet<Expression>();
 
 		for (Expression member : members) {
 			if (member instanceof BinaryExpression
 					&& member.getTag() == Expression.MAPSTO) {
 				BinaryExpression bExp = (BinaryExpression) member;
-				domain.add(bExp.getRight());
+				range.add(bExp.getRight());
 			} else {
 				return expression;
 			}
 		}
 
-		return ff.makeSetExtension(domain, null);
+		return ff.makeSetExtension(range, null);
 	}
 
+	@Deprecated
 	public static Expression simplifyFunctionOvr(Expression expression,
 			Expression[] children, Expression applyTo) {
 		Expression lastExpression = children[children.length - 1];
@@ -245,6 +234,7 @@ public class FormulaSimplification {
 		return expression;
 	}
 
+	@Deprecated
 	public static Predicate simplifySetEquality(Predicate predicate,
 			Expression[] membersE, Expression[] membersF) {
 		if (membersE.length == 1 && membersF.length == 1) {
@@ -254,6 +244,7 @@ public class FormulaSimplification {
 		return predicate;
 	}
 
+	@Deprecated
 	public static Expression simplifyMinusArithmetic(Expression expression,
 			Expression E, Expression F) {
 		if (F.equals(ff.makeIntegerLiteral(new BigInteger("0"), null))) {
@@ -311,6 +302,7 @@ public class FormulaSimplification {
 		return expression;
 	}
 
+	@Deprecated
 	public static Expression simplifyExpnArithmetic(
 			BinaryExpression expression, Expression E, Expression F) {
 		if (F.equals(ff.makeIntegerLiteral(new BigInteger("1"), null))) {
@@ -387,6 +379,7 @@ public class FormulaSimplification {
 		return expression;
 	}
 
+	@Deprecated
 	public static Expression simplifySetSubtraction(
 			BinaryExpression expression, Expression S, Expression T) {
 		if (T.equals(ff.makeEmptySet(S.getType(), null))) {
@@ -444,11 +437,6 @@ public class FormulaSimplification {
 	// y.getDeclaration(identDecls)), instantiate, null);
 	// }
 
-	// private static BoundIdentDecl[] remove(BoundIdentDecl[] identDecls,
-	// BoundIdentDecl declaration) {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
 
 	private static <T extends Object> boolean contain(T[] array, T element) {
 		for (T member : array) {
@@ -458,6 +446,7 @@ public class FormulaSimplification {
 		return false;
 	}
 
+	@Deprecated
 	public static Expression getEmptySetOfType(Expression S) {
 		return ff.makeEmptySet(S.getType(), null);
 	}
