@@ -1,9 +1,9 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
@@ -20,6 +20,7 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
+import org.eventb.internal.core.seqprover.ForwardInfHypAction;
 
 public abstract class AbstractManualRewrites implements IReasoner {
 
@@ -138,25 +139,41 @@ public abstract class AbstractManualRewrites implements IReasoner {
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 
-		Set<Predicate> neededHyps = reader.getNeededHyps();
+		IAntecedent[] antecedents = reader.getAntecedents();
+		
 		String image = reader.getString(POSITION_KEY);
 		IPosition position = FormulaFactory.getDefault().makePosition(image);
 
-		final int length = neededHyps.size();
-		if (length == 0) {
+		final int length = antecedents.length;
+		if (length != 1) {
 			// Goal rewriting
 			return new Input(null, position);
 		}
 		// Hypothesis rewriting
-		if (length != 1) {
+		else if (length == 0) {
 			throw new SerializeException(new IllegalStateException(
 					"Expected exactly one needed hypothesis!"));
 		}
-		Predicate pred = null;
-		for (Predicate hyp : neededHyps) {
-			pred = hyp;
+		IAntecedent antecedent = antecedents[0];
+		List<IHypAction> hypActions = antecedent.getHypAction();
+		if (hypActions.size() == 0) {
+			throw new SerializeException(new IllegalStateException(
+					"Expected at least one hyp action!"));
 		}
-		return new Input(pred, position);
+		IHypAction hypAction = hypActions.get(0);
+		if (hypAction instanceof ForwardInfHypAction) {
+			ForwardInfHypAction fHypAction = (ForwardInfHypAction) hypAction;
+			Collection<Predicate> hyps = fHypAction.getHyps();
+			if (hyps.size() != 1) {
+				throw new SerializeException(new IllegalStateException(
+						"Expected single required hyp in first forward hyp action!"));
+			}
+			return new Input(hyps.iterator().next(), position);
+		}
+		else {
+			throw new SerializeException(new IllegalStateException(
+					"Expected first hyp action to be a forward hyp action!"));
+		}
 	}
 
 	public final void serializeInput(IReasonerInput input,
