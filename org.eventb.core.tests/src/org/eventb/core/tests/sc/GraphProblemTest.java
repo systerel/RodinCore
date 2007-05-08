@@ -82,6 +82,7 @@ public class GraphProblemTest extends TestCase {
 			spec(GraphProblem.EventInheritedMergeSplitError, 1),
 			spec(GraphProblem.EventMergeVariableTypeError, 1),
 			spec(GraphProblem.EventMergeActionError, 0),
+			spec(GraphProblem.EventMergeLabelError, 0),
 			spec(GraphProblem.EventRefinementError, 0),
 			spec(GraphProblem.MachineWithoutInitialisationError, 0),
 			spec(GraphProblem.InitialisationRefinedError, 0),

@@ -67,6 +67,7 @@ public final class Messages {
     public static String scuser_EventInheritedMergeSplitConflict;
     public static String scuser_EventMergeVariableTypeConflict;
     public static String scuser_EventMergeActionConflict;
+    public static String scuser_EventMergeLabelConflict;
     public static String scuser_EventRefinementError;
     public static String scuser_MachineWithoutInitialisationError;
     public static String scuser_InitialisationRefinedError;

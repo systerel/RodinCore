@@ -331,7 +331,6 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 					actionError = checkAbstractActionAccordance(
 							symbolInfo, 
 							actions, 
-							actionError, 
 							abstractEventWrapper);
 				}
 			
@@ -354,16 +353,23 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 	private boolean checkAbstractActionAccordance(
 			IEventSymbolInfo symbolInfo, 
 			Hashtable<String, String> actions, 
-			boolean actionError, 
 			AbstractEventWrapper abstractEventWrapper) throws RodinDBException, CoreException {
 		ISCAction[] scActions = abstractEventWrapper.getInfo().getEvent().getSCActions();
 		boolean ok = scActions.length == actions.size();
 		if (ok)
 			for (ISCAction action : scActions) {
 				String assignment = actions.get(action.getLabel());
+				String other = action.getAssignmentString();
 				if (assignment != null 
-						&& assignment.equals(action.getAssignmentString()))
+						&& assignment.equals(other))
 					continue;
+				if (assignment == null || actions.containsValue(other)) {
+					createProblemMarker(
+							symbolInfo.getSourceElement(),
+							GraphProblem.EventMergeLabelError);
+					symbolInfo.setError();
+					return true;
+				}
 				ok = false;
 				break;
 			}
@@ -371,10 +377,10 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 			createProblemMarker(
 					symbolInfo.getSourceElement(),
 					GraphProblem.EventMergeActionError);
-			actionError = true;
 			symbolInfo.setError();
+			return true;
 		}
-		return actionError;
+		return false;
 	}
 
 	private void checkForLocalVariableTypeErrors(
