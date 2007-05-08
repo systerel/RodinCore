@@ -342,7 +342,8 @@ extends LabeledElementModule {
 				if (symbolInfo != null)
 					symbolInfo.setError();
 				formulas[i] = null;
-				accuracyInfo.setNotAccurate();
+				if (accuracyInfo != null)
+					accuracyInfo.setNotAccurate();
 			}
 			
 			setImmutable(symbolInfo);

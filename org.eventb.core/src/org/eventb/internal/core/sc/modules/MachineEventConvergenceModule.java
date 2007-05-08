@@ -23,6 +23,7 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.ICurrentEvent;
+import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.state.IVariantInfo;
@@ -48,6 +49,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 	private IVariantInfo variantInfo;
 	private IEventRefinesInfo eventRefinesInfo;
 	private ICurrentEvent currentEvent;
+	private IEventAccuracyInfo accuracyInfo;
 	private String currentEventLabel;
 
 	@Override
@@ -60,6 +62,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 		eventRefinesInfo = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
 		currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
 		currentEventLabel = currentEvent.getCurrentEvent().getLabel();
+		accuracyInfo = (IEventAccuracyInfo) repository.getState(IEventAccuracyInfo.STATE_TYPE);
 	}
 	
 	private IConvergenceElement.Convergence concreteConvergence;
@@ -102,6 +105,9 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 			}
 			checkVariantConvergence(event);
 		}
+		
+		if (concreteConvergence != currentEvent.getCurrentEvent().getConvergence())
+			accuracyInfo.setNotAccurate();
 		
 		saveConvergence((ISCEvent) target, null);
 	}
@@ -169,6 +175,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 		eventRefinesInfo = null;
 		currentEvent = null;
 		currentEventLabel = null;
+		accuracyInfo = null;
 		super.endModule(element, repository, monitor);
 	}
 

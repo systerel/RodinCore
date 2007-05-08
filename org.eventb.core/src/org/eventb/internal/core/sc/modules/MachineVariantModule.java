@@ -24,7 +24,6 @@ import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
-import org.eventb.core.sc.state.IMachineAccuracyInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IModuleType;
@@ -185,7 +184,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 	@Override
 	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
-		return (IMachineAccuracyInfo) repository.getState(IMachineAccuracyInfo.STATE_TYPE);
+		return null;
 	}
 
 }

@@ -372,4 +372,95 @@ public class TestAccuracy extends BasicSCTest {
 		isNotAccurate(con.getSCContextFile());
 	}
 
+	/**
+	 * faulty variant should make an anticipated or convergent sc event inaccurate,
+	 * but not the sc machine
+	 */
+	public void testAcc_17() throws Exception {
+		IMachineFile con = createMachine("con");
+
+		addVariables(con, "v");
+		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"));
+		addInitialisation(con);
+		IEvent evt = addEvent(con, "evt", makeSList("x"), 
+				makeSList("G"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+		setConvergent(evt);
+		IEvent fvt = addEvent(con, "fvt", makeSList("x"), 
+				makeSList("G"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+		setAnticipated(fvt);
+		addVariant(con, "x");
+	
+		con.save(null, true);
+		
+		runBuilder();
+		
+		isAccurate(con.getSCMachineFile());
+		isNotAccurate(con.getSCMachineFile().getSCEvents()[1]);
+		isAccurate(con.getSCMachineFile().getSCEvents()[2]);
+	}
+
+	/**
+	 * missing variant should make an anticipated or convergent sc event inaccurate,
+	 * but not the sc machine
+	 */
+	public void testAcc_18() throws Exception {
+		IMachineFile con = createMachine("con");
+
+		addVariables(con, "v");
+		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"));
+		addInitialisation(con);
+		IEvent evt = addEvent(con, "evt", makeSList("x"), 
+				makeSList("G"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+		setConvergent(evt);
+		IEvent fvt = addEvent(con, "fvt", makeSList("x"), 
+				makeSList("G"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+		setAnticipated(fvt);
+	
+		con.save(null, true);
+		
+		runBuilder();
+		
+		isAccurate(con.getSCMachineFile());
+		isNotAccurate(con.getSCMachineFile().getSCEvents()[1]);
+		isAccurate(con.getSCMachineFile().getSCEvents()[2]);
+	}
+
+	/**
+	 * faulty inherited convergence should make an sc event inaccurate,
+	 * but not the sc machine
+	 */
+	public void testAcc_19() throws Exception {
+		IMachineFile abs = createMachine("abs");
+
+		addInitialisation(abs);
+		IEvent evt = addEvent(abs, "evt", makeSList("x"), 
+				makeSList("G"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+		setOrdinary(evt);
+		addVariant(abs, "1");
+		
+		abs.save(null, true);
+		
+		IMachineFile con = createMachine("con");
+		addMachineRefines(con, "abs");
+
+		addInitialisation(con);
+		IEvent fvt = addEvent(con, "fvt", makeSList("x"), 
+				makeSList("G"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+		addEventRefines(fvt, "evt");
+		setConvergent(fvt);
+	
+		con.save(null, true);
+
+		runBuilder();
+		
+		isAccurate(con.getSCMachineFile());
+		isNotAccurate(con.getSCMachineFile().getSCEvents()[1]);
+	}
+
 }
