@@ -315,13 +315,11 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	}
 
 	public String[] getAxiomNames() {
-		// TODO Auto-generated method stub
-		return null;
+		return axmLabels.toArray(new String[axmLabels.size()]);
 	}
 
 	public String[] getAxiomSubtitutions() {
-		// TODO Auto-generated method stub
-		return null;
+		return axmSubs.toArray(new String[axmSubs.size()]);
 	}
 
 }
