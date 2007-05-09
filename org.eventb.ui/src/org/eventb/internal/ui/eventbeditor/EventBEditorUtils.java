@@ -1163,7 +1163,7 @@ public class EventBEditorUtils {
 			final ElementNameContentInputDialog dialog =
 				new ElementNameContentInputDialog<IInvariant>(
 					Display.getCurrent().getActiveShell(), "New Invariants",
-					"Name and predicate", editor, IInvariant.ELEMENT_TYPE,
+					"Label(s) and predicate(s)", editor, IInvariant.ELEMENT_TYPE,
 					invPrefix, invIndex);
 
 			dialog.open();
@@ -1215,13 +1215,9 @@ public class EventBEditorUtils {
 	public static void newVariant(final IEventBEditor editor,
 			final IRodinFile rodinFile) {
 		try {
-			String variantPrefix = UIUtils.getPrefix(editor,
-					IVariant.ELEMENT_TYPE,
-					PrefixVariantName.DEFAULT_PREFIX);
-
 			final NewVariantInputDialog dialog = new NewVariantInputDialog(
 					Display.getCurrent().getActiveShell(), "New Variant",
-					"Expression", variantPrefix);
+					"Expression");
 
 			dialog.open();
 			if (dialog.getReturnCode() == InputDialog.CANCEL)
@@ -1268,7 +1264,7 @@ public class EventBEditorUtils {
 			final ElementNameContentInputDialog dialog =
 				new ElementNameContentInputDialog<ITheorem>(
 					Display.getCurrent().getActiveShell(), "New Theorems",
-					"Name and predicate", editor, ITheorem.ELEMENT_TYPE,
+					"Label(s) and predicate(s)", editor, ITheorem.ELEMENT_TYPE,
 					thmPrefix, thmIndex);
 			dialog.open();
 			if (dialog.getReturnCode() == InputDialog.CANCEL)
@@ -1327,17 +1323,17 @@ public class EventBEditorUtils {
 			RodinCore.run(new IWorkspaceRunnable() {
 
 				public void run(IProgressMonitor pm) throws CoreException {
-					String name = dialog.getName();
+					String name = dialog.getLabel();
 					IEvent evt = createNewEvent(editor, name, pm);
 
-					String[] varNames = dialog.getVariables();
-					createNewVariables(editor, evt, varNames, pm);
+					String[] varNames = dialog.getParameters();
+					createNewParameters(editor, evt, varNames, pm);
 
-					String[] grdNames = dialog.getGrdNames();
+					String[] grdNames = dialog.getGrdLabels();
 					String[] grdPredicates = dialog.getGrdPredicates();
 					createNewGuards(editor, evt, grdNames, grdPredicates, pm);
 
-					String[] actNames = dialog.getActNames();
+					String[] actNames = dialog.getActLabels();
 					String[] actSubstitutions = dialog.getActSubstitutions();
 					createNewActions(editor, evt, actNames, actSubstitutions,
 							pm);
@@ -1386,7 +1382,7 @@ public class EventBEditorUtils {
 		}
 	}
 
-	protected static void createNewVariables(IEventBEditor editor,
+	protected static void createNewParameters(IEventBEditor editor,
 			IEvent evt, String[] identifiers, IProgressMonitor pm)
 			throws RodinDBException {
 		String varPrefix = UIUtils.getNamePrefix(editor,
@@ -1423,7 +1419,7 @@ public class EventBEditorUtils {
 					ICarrierSet.ELEMENT_TYPE, PrefixSetName.DEFAULT_PREFIX);
 			final ElementAttributeInputDialog dialog = new ElementAttributeInputDialog(
 					Display.getCurrent().getActiveShell(), "New Carrier Sets",
-					"Name", identifier);
+					"Identifier", identifier);
 
 			dialog.open();
 			if (dialog.getReturnCode() == InputDialog.CANCEL)
@@ -1583,7 +1579,7 @@ public class EventBEditorUtils {
 			final ElementNameContentInputDialog dialog =
 				new ElementNameContentInputDialog<IAxiom>(
 					Display.getCurrent().getActiveShell(), "New Axioms",
-					"Name and predicate", editor, IAxiom.ELEMENT_TYPE,
+					"Label(s) and predicate(s)", editor, IAxiom.ELEMENT_TYPE,
 					axmPrefix, axmIndex);
 			dialog.open();
 			if (dialog.getReturnCode() == InputDialog.CANCEL)

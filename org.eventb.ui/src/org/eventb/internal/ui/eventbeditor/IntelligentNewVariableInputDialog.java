@@ -53,19 +53,19 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 	private int invIndex;
 
-	private String name;
+	private String identifier;
 
 	private Collection<Pair> invariants;
 
-	private String initName;
+	private String initLabel;
 
 	private String initSubstitution;
 
-	private IEventBInputText nameText;
+	private IEventBInputText identifierText;
 
 	private Collection<Pair> invariantPairTexts;
 
-	private IEventBInputText initNameText;
+	private IEventBInputText initLabelText;
 
 	private IEventBInputText initSubstitutionText;
 
@@ -115,6 +115,9 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	@Override
 	protected void createContents() {
 		Composite body = scrolledForm.getBody();
+		if (EventBEditorUtils.DEBUG)
+			body.setBackground(body.getDisplay().getSystemColor(
+					SWT.COLOR_CYAN));
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -124,15 +127,15 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
 
-		Label label = toolkit.createLabel(body, "Name");
+		Label label = toolkit.createLabel(body, "Identifier");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
-		nameText = new EventBText(toolkit.createText(body, ""));
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		identifierText = new EventBText(toolkit.createText(body, ""));
+		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gd.horizontalSpan = 2;
 		gd.widthHint = 200;
-		nameText.getTextWidget().setLayoutData(gd);
-		nameText.getTextWidget().addModifyListener(new DirtyStateListener());
+		identifierText.getTextWidget().setLayoutData(gd);
+		identifierText.getTextWidget().addModifyListener(new DirtyStateListener());
 
 		label = toolkit.createLabel(body, "Initialisation");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -145,20 +148,20 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 			e.printStackTrace();
 		}
 
-		initNameText = new EventBText(toolkit.createText(body, actLabel));
-		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
+		initLabelText = new EventBText(toolkit.createText(body, actLabel));
+		gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 		gd.widthHint = 50;
-		initNameText.getTextWidget().setLayoutData(gd);
-		initNameText.getTextWidget()
+		initLabelText.getTextWidget().setLayoutData(gd);
+		initLabelText.getTextWidget()
 				.addModifyListener(new DirtyStateListener());
 
 		initSubstitutionText = new EventBMath(toolkit.createText(body, ""));
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gd.widthHint = 150;
 		initSubstitutionText.getTextWidget().setLayoutData(gd);
 		initSubstitutionText.getTextWidget().addModifyListener(
 				new DirtyStateListener());
-		nameText.getTextWidget().addModifyListener(
+		identifierText.getTextWidget().addModifyListener(
 				new ActionListener(initSubstitutionText.getTextWidget()));
 
 		label = toolkit.createLabel(body, "Invariant");
@@ -167,7 +170,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		IEventBInputText invariantNameText = new EventBText(toolkit.createText(
 				body, invPrefix + invIndex));
 
-		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
+		gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 		gd.widthHint = 50;
 		invariantNameText.getTextWidget().setLayoutData(gd);
 		invariantNameText.getTextWidget().addModifyListener(
@@ -175,18 +178,18 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 		IEventBInputText invariantPredicateText = new EventBMath(toolkit
 				.createText(body, ""));
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gd.widthHint = 150;
 		invariantPredicateText.getTextWidget().setLayoutData(gd);
 		invariantPredicateText.getTextWidget().addModifyListener(
 				new DirtyStateListener());
-		nameText.getTextWidget().addModifyListener(
+		identifierText.getTextWidget().addModifyListener(
 				new GuardListener(invariantPredicateText.getTextWidget()));
 
 		invariantPairTexts.add(new Pair<IEventBInputText, IEventBInputText>(
 				invariantNameText, invariantPredicateText));
 
-		Text nameTextWidget = nameText.getTextWidget();
+		Text nameTextWidget = identifierText.getTextWidget();
 		String varName = "var";
 		try {
 			varName = UIUtils.getFreeElementIdentifier(editor,
@@ -209,9 +212,9 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CANCEL_ID) {
-			name = null;
+			identifier = null;
 			invariants = null;
-			initName = null;
+			initLabel = null;
 			initSubstitution = null;
 		} else if (buttonId == IDialogConstants.YES_ID) {
 			Composite body = scrolledForm.getBody();
@@ -231,7 +234,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 			IEventBInputText invariantNameText = new EventBText(toolkit
 					.createText(body, invPrefix + invIndex));
 
-			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
+			gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 			invariantNameText.getTextWidget().setLayoutData(gd);
 			invariantNameText.getTextWidget().addModifyListener(
 					new DirtyStateListener());
@@ -306,9 +309,9 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		initNameText.getTextWidget().setText(actionName);
+		initLabelText.getTextWidget().setText(actionName);
 		initSubstitutionText.getTextWidget().setText("");
-		Text nameTextWidget = nameText.getTextWidget();
+		Text nameTextWidget = identifierText.getTextWidget();
 		String varName = "var";
 		try {
 			varName = UIUtils.getFreeElementIdentifier(editor,
@@ -324,7 +327,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	}
 
 	private void setFieldValues() {
-		name = nameText.getTextWidget().getText();
+		identifier = identifierText.getTextWidget().getText();
 
 		invariants = new ArrayList<Pair>();
 		for (Pair pair : invariantPairTexts) {
@@ -342,11 +345,11 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 			}
 		}
 		if (dirtyTexts.contains(initSubstitutionText.getTextWidget())) {
-			initName = initNameText.getTextWidget().getText();
+			initLabel = initLabelText.getTextWidget().getText();
 			initSubstitution = initSubstitutionText.getTextWidget()
 					.getText();
 		} else {
-			initName = null;
+			initLabel = null;
 			initSubstitution = null;
 		}
 	}
@@ -358,7 +361,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 * @return the variable name as input by the user
 	 */
 	public String getName() {
-		return name;
+		return identifier;
 	}
 
 	/**
@@ -382,12 +385,12 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	}
 
 	public String getInitActionName() {
-		return initName;
+		return initLabel;
 	}
 
 	@Override
 	public boolean close() {
-		nameText.dispose();
+		identifierText.dispose();
 		for (Pair pair : invariantPairTexts) {
 			IEventBInputText invariantPredicateText = (IEventBInputText) pair
 					.getSecond();

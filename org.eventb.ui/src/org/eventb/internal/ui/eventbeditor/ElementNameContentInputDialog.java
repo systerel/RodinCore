@@ -115,8 +115,11 @@ public class ElementNameContentInputDialog<T extends ILabeledElement> extends
 	 */
 	@Override
 	protected void createContents() {
-
 		Composite body = scrolledForm.getBody();
+		if (EventBEditorUtils.DEBUG)
+			body.setBackground(body.getDisplay().getSystemColor(
+					SWT.COLOR_CYAN));
+
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;

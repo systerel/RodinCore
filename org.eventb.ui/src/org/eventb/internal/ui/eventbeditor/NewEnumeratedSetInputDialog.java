@@ -77,6 +77,9 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 	@Override
 	protected void createContents() {
 		Composite body = scrolledForm.getBody();
+		if (EventBEditorUtils.DEBUG)
+			body.setBackground(body.getDisplay().getSystemColor(
+					SWT.COLOR_CYAN));
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -86,7 +89,7 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
 
-		toolkit.createLabel(body, "Name");
+		toolkit.createLabel(body, "Identifier");
 
 		nameText = new EventBText(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);

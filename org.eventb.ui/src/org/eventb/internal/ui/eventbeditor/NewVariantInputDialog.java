@@ -32,9 +32,6 @@ import org.eventb.internal.ui.IEventBInputText;
  */
 public class NewVariantInputDialog extends EventBInputDialog {
 
-	// The default prefix
-	private String defaultPrefix;
-
 	private String expression;
 
 	private IEventBInputText expressionText;
@@ -51,14 +48,11 @@ public class NewVariantInputDialog extends EventBInputDialog {
 	 *            The title of the dialog
 	 * @param message
 	 *            The text message of the dialog
-	 * @param defaultPrefix
-	 *            The default prefix of for the attributes
 	 */
 	public NewVariantInputDialog(Shell parentShell, String title,
-			String message, String defaultPrefix) {
+			String message) {
 		super(parentShell, title);
 		this.message = message;
-		this.defaultPrefix = defaultPrefix;
 		expressionText = null;
 		expression = null;
 	}
@@ -85,6 +79,9 @@ public class NewVariantInputDialog extends EventBInputDialog {
 	@Override
 	protected void createContents() {
 		Composite body = scrolledForm.getBody();
+		if (EventBEditorUtils.DEBUG) {
+			body.setBackground(body.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+		}
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -97,7 +94,7 @@ public class NewVariantInputDialog extends EventBInputDialog {
 		Label label = toolkit.createLabel(body, message);
 		label.setLayoutData(new GridData());
 
-		expressionText = new EventBMath(toolkit.createText(body, defaultPrefix));
+		expressionText = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
 		Text textWidget = expressionText.getTextWidget();

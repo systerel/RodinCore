@@ -127,7 +127,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
 
-		Label label = toolkit.createLabel(composite, "Name");
+		Label label = toolkit.createLabel(composite, "Identifier");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		identifierText = new EventBText(toolkit.createText(composite, ""));
