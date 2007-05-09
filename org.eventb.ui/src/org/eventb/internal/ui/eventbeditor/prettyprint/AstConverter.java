@@ -159,7 +159,7 @@ public abstract class AstConverter {
 					String name = extend.getAbstractContextName();
 					emptyLine();
 					beginLevel0();
-					bold("REFINES");
+					bold("EXTENDS");
 					append(SPACE);
 					append(makeHyperlink(EventBPlugin
 							.getContextFileName(name), name));
