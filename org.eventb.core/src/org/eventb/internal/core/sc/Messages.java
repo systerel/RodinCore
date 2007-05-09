@@ -53,6 +53,8 @@ public final class Messages {
 	public static String scuser_LabelUndef;
 	public static String scuser_AbstractContextNameUndef;
     public static String scuser_AbstractContextNotFound;
+    public static String scuser_AbstractContextRedundant;
+    public static String scuser_SeenContextRedundant;
     public static String scuser_SeenContextNameUndef;
     public static String scuser_SeenContextNotFound;
     public static String scuser_AbstractMachineNameUndef;

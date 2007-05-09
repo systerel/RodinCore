@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContext;
@@ -30,6 +31,7 @@ import org.eventb.internal.core.sc.ContextPointerArray;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -88,12 +90,25 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		final ISCContext[][] upContexts =
 			new ISCContext[contextPointerArray.size()][];
 		
+		final List<String> topNames = new ArrayList<String>(contextPointerArray.size());
+		
 		for (int index=0; index<contextPointerArray.size(); index++) {
 			
 			ISCContextFile scCF = contextPointerArray.getSCContextFile(index);
 			
 			if (scCF == null)
 				continue; // the context file has not been found
+			
+			String name = scCF.getComponentName();
+			if (topNames.contains(name)) {
+				topNames.add(null);
+				createProblemMarker(
+						contextPointerArray.getContextPointer(index), 
+						EventBAttributes.TARGET_ATTRIBUTE, 
+						getRedundantContextWarning(), name);
+			} else {
+				topNames.add(name);
+			}
 			
 			accurate &= scCF.isAccurate();
 			
@@ -151,13 +166,21 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			monitor.worked(1);
 		}
 		
-		commitValidContexts(contextPointerArray, declaredIdentifiers, upContexts, contextTable.size());
+		commitValidContexts(
+				contextPointerArray, 
+				topNames,
+				declaredIdentifiers, 
+				upContexts, 
+				contextTable.size());
 		
 		contextPointerArray.makeImmutable();
 		contextTable.makeImmutable();
 		
 		return accurate;
 	}
+
+	protected abstract IRodinProblem getRedundantContextWarning();
+
 
 	private ISCContext[]  createUpContexts(ISCContextFile scCF) throws RodinDBException {
 		ISCInternalContext[] iscic = scCF.getAbstractSCContexts();
@@ -238,18 +261,21 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	}
 	
 	void commitValidContexts(
-			ContextPointerArray contextPointerArray, 
+			final ContextPointerArray contextPointerArray, 
+			final List<String> topNames,
 			final IIdentifierSymbolInfo[][] declaredIdentifiers,
 			final ISCContext[][] upContexts,
 			int s) throws CoreException {
 		
-		final int adjust = contextPointerArray.size();
+		final int arraySize = contextPointerArray.size();
 
-		HashSet<String> contextNames = new HashSet<String>((s+adjust) * 4 / 3 + 1);
+		final HashSet<String> contextNames = new HashSet<String>((s+arraySize) * 4 / 3 + 1);
 		
-		ArrayList<ISCContext> validContexts = new ArrayList<ISCContext>(s+adjust);
+		final ArrayList<ISCContext> validContexts = new ArrayList<ISCContext>(s+arraySize);
 		
-		for (int index = 0; index < contextPointerArray.size(); index++) {
+		final boolean[] redundant = new boolean[arraySize];
+		
+		for (int index = 0; index < arraySize; index++) {
 
 			if (contextPointerArray.getSCContextFile(index) == null)
 				continue; // there is no context file for this index
@@ -277,6 +303,19 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 					contextNames.add(name);
 					validContexts.add(scContext);
 				}
+				int i = topNames.indexOf(name);
+				if (i != -1 && i != index) {
+					redundant[i] = true;
+				}
+			}
+		}
+		
+		for (int index = 0; index < arraySize; index++) {
+			if (redundant[index] == true) {
+				createProblemMarker(
+						contextPointerArray.getContextPointer(index), 
+						EventBAttributes.TARGET_ATTRIBUTE, 
+						getRedundantContextWarning(), topNames.get(index));
 			}
 		}
 		

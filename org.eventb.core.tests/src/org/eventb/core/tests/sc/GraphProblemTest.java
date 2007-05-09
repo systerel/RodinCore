@@ -68,6 +68,8 @@ public class GraphProblemTest extends TestCase {
 			spec(GraphProblem.LabelUndefError, 0),
 			spec(GraphProblem.AbstractContextNameUndefError, 0),
 			spec(GraphProblem.AbstractContextNotFoundError, 1),
+			spec(GraphProblem.AbstractContextRedundantWarning, 1),
+			spec(GraphProblem.SeenContextRedundantWarning, 1),
 			spec(GraphProblem.SeenContextNameUndefError, 0),
 			spec(GraphProblem.SeenContextNotFoundError, 1),
 			spec(GraphProblem.AbstractMachineNameUndefError, 0),

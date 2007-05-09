@@ -32,12 +32,12 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 
 	@Override
 	public String toString() {
-		String[] names = new String[contextPointers.length];
+		List<String> names = new ArrayList<String>(contextPointers.length);
 		for (int i=0; i<contextPointers.length; i++) {
 			try {
-				names[i] = contextPointers[i].getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE);
+				names.add(contextPointers[i].getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE));
 			} catch (Exception e) {
-			// ignore
+				names.add(null);
 			}
 		}
 		return pointerType + ": " + names;

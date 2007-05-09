@@ -31,6 +31,8 @@ public enum GraphProblem implements IRodinProblem {
 	LabelUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_LabelUndef),
 	AbstractContextNameUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractContextNameUndef),
 	AbstractContextNotFoundError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractContextNotFound),
+	AbstractContextRedundantWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AbstractContextRedundant),
+	SeenContextRedundantWarning(IMarker.SEVERITY_WARNING, Messages.scuser_SeenContextRedundant),
 	SeenContextNameUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_SeenContextNameUndef),
 	SeenContextNotFoundError(IMarker.SEVERITY_ERROR, Messages.scuser_SeenContextNotFound),
 	AbstractMachineNameUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractMachineNameUndef),

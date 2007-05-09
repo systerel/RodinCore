@@ -28,6 +28,7 @@ import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -165,6 +166,11 @@ public class ContextExtendsModule extends ContextPointerModule {
 			}
 		}
 		return accurate;
+	}
+
+	@Override
+	protected IRodinProblem getRedundantContextWarning() {
+		return GraphProblem.AbstractContextRedundantWarning;
 	}
 
 }

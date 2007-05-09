@@ -197,7 +197,7 @@ public class TestExtendsContext extends BasicSCTest {
 	/**
 	 * Contexts should be included transitively.
 	 */
-	public void testExtendsContext_01_transitive() throws Exception {
+	public void testExtendsContext_06_transitive() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S1"));
 		abs1.save(null, true);
@@ -218,6 +218,48 @@ public class TestExtendsContext extends BasicSCTest {
 		containsContexts(file, "abs1", "abs2");
 		
 		containsMarkers(con, false);
+	}
+
+	/**
+	 * Contexts extended transitively by means of a extended contexts
+	 * should not be extended directly by the context.
+	 * (This should be a warning not an error)
+	 */
+	public void testExtendsContext_07_redundant() throws Exception {
+		IContextFile cab = createContext("cab");
+		
+		cab.save(null, true);
+		
+		IContextFile cco = createContext("cco");
+		addContextExtends(cco, "cab");
+		IContextFile con = createContext("con");
+		addContextExtends(con, "cco");
+		addContextExtends(con, "cab");
+
+		cco.save(null, true);
+		con.save(null, true);
+		
+		runBuilder();
+		
+		hasMarker(con.getExtendsClauses()[1]);
+	}
+
+	/**
+	 * A context should not be extended directly more than once by the same context.
+	 * (This should be a warning not an error)
+	 */
+	public void testExtendsContext_08_redundant() throws Exception {
+		IContextFile cco = createContext("cco");
+		IContextFile con = createContext("con");
+		addContextExtends(con, "cco");
+		addContextExtends(con, "cco");
+
+		cco.save(null, true);
+		con.save(null, true);
+		
+		runBuilder();
+		
+		hasMarker(con.getExtendsClauses()[1]);
 	}
 
 }

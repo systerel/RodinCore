@@ -22,7 +22,7 @@ public class TestSeesContext extends BasicSCTest {
 	/*
 	 * Seen contexts are copied into internal contexts
 	 */
-	public void testSeesContext_0() throws Exception {
+	public void testSeesContext_00() throws Exception {
 		IContextFile con = createContext("con");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -71,7 +71,7 @@ public class TestSeesContext extends BasicSCTest {
 	 * Ensures that a context seen only indirectly occurs as an internal
 	 * context, but doesn't occur in a sees clause.
 	 */
-	public void testSeesContext_1() throws Exception {
+	public void testSeesContext_01() throws Exception {
 		IContextFile con1 = createContext("con1");
 		con1.save(null, true);
 		
@@ -96,7 +96,7 @@ public class TestSeesContext extends BasicSCTest {
 	 * Ensures that a context seen through the abstraction is repaired and
 	 * occurs both as an internal context and in a sees clause.
 	 */
-	public void testSeesContext_2() throws Exception {
+	public void testSeesContext_02() throws Exception {
 		IContextFile con = createContext("con");
 		con.save(null, true);
 		
@@ -122,7 +122,7 @@ public class TestSeesContext extends BasicSCTest {
 	 * indirectly seen by the abstraction) is repaired and occurs 
 	 * as an internal context and but not in a sees clause.
 	 */
-	public void testSeesContext_3() throws Exception {
+	public void testSeesContext_03() throws Exception {
 		IContextFile con1 = createContext("con1");
 		con1.save(null, true);
 		
@@ -149,7 +149,7 @@ public class TestSeesContext extends BasicSCTest {
 	 * Ensures that a context seen both directly and through the abstraction is
 	 * not duplicated and occurs as an internal context.
 	 */
-	public void testSeesContext_4() throws Exception {
+	public void testSeesContext_04() throws Exception {
 		IContextFile acon = createContext("acon");
 		acon.save(null, true);
 		
@@ -172,6 +172,48 @@ public class TestSeesContext extends BasicSCTest {
 		ISCMachineFile file = mac.getSCMachineFile();
 		seesContexts(file, "acon", "ccon");
 		containsContexts(file, "acon", "ccon");
+	}
+
+	/**
+	 * Contexts seen transitively by means of a seen contexts
+	 * should not be seen directly by the machine.
+	 * (This should be a warning not an error)
+	 */
+	public void testSeesContext_05() throws Exception {
+		IContextFile cab = createContext("cab");
+		
+		cab.save(null, true);
+		
+		IContextFile cco = createContext("cco");
+		addContextExtends(cco, "cab");
+		IMachineFile con = createMachine("con");
+		addMachineSees(con, "cco");
+		addMachineSees(con, "cab");
+
+		cco.save(null, true);
+		con.save(null, true);
+		
+		runBuilder();
+		
+		hasMarker(con.getSeesClauses()[1]);
+	}
+
+	/**
+	 * A context should not be seen directly more than once by the same machine.
+	 * (This should be a warning not an error)
+	 */
+	public void testSeesContext_06() throws Exception {
+		IContextFile cco = createContext("cco");
+		IMachineFile con = createMachine("con");
+		addMachineSees(con, "cco");
+		addMachineSees(con, "cco");
+
+		cco.save(null, true);
+		con.save(null, true);
+		
+		runBuilder();
+		
+		hasMarker(con.getSeesClauses()[1]);
 	}
 
 }
