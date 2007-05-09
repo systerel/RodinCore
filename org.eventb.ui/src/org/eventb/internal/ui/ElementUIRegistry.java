@@ -243,20 +243,24 @@ public class ElementUIRegistry {
 			for (IConfigurationElement column : columns) {
 				String id = column.getAttribute("id"); // $NON-NLS-1$
 				if (id.equals(columnID)) {
-					try {
-						modifier = (IElementModifier) column
-								.createExecutableExtension("modifier");
-						modifiers.put(columnID, modifier);
-						return false;
-					} catch (CoreException e) {
-						String message = "Cannot instantiate the label provider class "
-								+ configuration.getAttribute("modifier");
-						UIUtils.log(e, message);
-						if (UIUtils.DEBUG) {
-							System.out.println(message);
-							e.printStackTrace();
+					String modifierClass = configuration
+							.getAttribute("modifier");
+					if (modifierClass != null) {
+						try {
+							modifier = (IElementModifier) column
+									.createExecutableExtension("modifier");
+							modifiers.put(columnID, modifier);
+							return false;
+						} catch (CoreException e) {
+							String message = "Cannot instantiate the label provider class "
+									+ modifierClass;
+							UIUtils.log(e, message);
+							if (UIUtils.DEBUG) {
+								System.out.println(message);
+								e.printStackTrace();
+							}
+							return DEFAULT_EDITABLE;
 						}
-						return DEFAULT_EDITABLE;
 					}
 				}
 			}
