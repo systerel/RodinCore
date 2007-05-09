@@ -1764,12 +1764,13 @@ public abstract class Formula<T extends Formula<T>> {
 			BoundIdentDeclRemover subst = 
 				new BoundIdentDeclRemover(decls, used, formulaFactory);
 			final List<BoundIdentDecl> newDecls = subst.getNewDeclarations();
+			final Predicate newPred = pred.rewrite(subst);
 			if (newDecls.size() == 0) {
-				return pred;
+				return newPred;
 			}
 			return formulaFactory.makeQuantifiedPredicate(quant,
 					newDecls,
-					pred.rewrite(subst),
+					newPred,
 					loc);
 		}
 		return formulaFactory.makeQuantifiedPredicate(quant, decls, pred, loc);

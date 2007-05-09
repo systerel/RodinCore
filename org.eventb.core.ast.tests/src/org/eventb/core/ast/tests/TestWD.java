@@ -84,6 +84,7 @@ public class TestWD extends TestCase {
 			newEnv.addAll(result.getInferredEnvironment());
 			
 			Predicate inWD = inP.getWDPredicate(ff);
+			assertTrue("Ill-formed WD predicate: " + inWD, inWD.isWellFormed());
 			assertTrue(input + "\n"
 					+ inWD.toString() + "\n"
 					+ inWD.getSyntaxTree() + "\n",
@@ -121,8 +122,8 @@ public class TestWD extends TestCase {
 			newEnv.addAll(result.getInferredEnvironment());
 			
 			Predicate inWD = inA.getWDPredicate(ff);
-			ITypeCheckResult intResult = inWD.typeCheck(newEnv);
-			assertTrue(input + "\n" + inWD.toString() + "\n" + inWD.getSyntaxTree() + "\n", intResult.isSuccess());
+			assertTrue("Ill-formed WD predicate: " + inWD, inWD.isWellFormed());
+			assertTrue("Untyped WD predicate: " + inWD, inWD.isTypeChecked());
 			
 			IParseResult resExp = ff.parsePredicate(expected);
 			assertTrue(input, resExp.isSuccess());
@@ -241,6 +242,13 @@ public class TestWD extends TestCase {
 			), new TestPredicate(
 					"∀s·max(s) ∈ s",
 					"∀s·s≠∅ ∧ (∃b·∀x·x ∈ s  ⇒  b ≥ x)"
+			// Case where a bound variable disappears
+			), new TestPredicate(
+					"∀y·∃x·x = f(y)",
+					"∀y·y∈dom(f) ∧ f∈ℤ ⇸ ℤ"
+			), new TestPredicate(
+					"∀f,y·f∈ℤ → ℤ ⇒ (∃x·x = f(y))",
+					"∀f,y·f∈ℤ → ℤ ⇒ y∈dom(f) ∧ f∈ℤ ⇸ ℤ"
 			),
 	};
 	
