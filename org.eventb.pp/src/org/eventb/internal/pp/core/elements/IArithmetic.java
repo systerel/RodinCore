@@ -8,6 +8,7 @@
 
 package org.eventb.internal.pp.core.elements;
 
-public interface IArithmetic extends ILiteral<IArithmetic> {
 
+public interface IArithmetic extends ILiteral<IArithmetic> {
+	// not implemented yet
 }

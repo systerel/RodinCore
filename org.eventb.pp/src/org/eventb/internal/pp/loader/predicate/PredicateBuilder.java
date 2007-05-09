@@ -421,6 +421,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		}
 
 		// we create the new signature
+		@SuppressWarnings("unchecked")
 		SignedFormula lit = new SignedFormula(sig,res.isPositive());
 		
 		// we append the new literal to the result before

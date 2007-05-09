@@ -28,7 +28,7 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
  */
 public class ArithmeticLiteral extends AbstractSingleFormula<ArithmeticDescriptor> {
 
-	public enum Type {LESS_EQUAL, LESS, EQUAL};
+	public enum Type {LESS_EQUAL, LESS, EQUAL}
 	
 	private Type type;
 	

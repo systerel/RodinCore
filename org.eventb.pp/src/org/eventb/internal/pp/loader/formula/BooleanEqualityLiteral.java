@@ -49,7 +49,7 @@ public class BooleanEqualityLiteral extends EqualityLiteral {
 	@Override
 	public ILiteral<?> getLiteral(List<TermSignature> termList, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
 		List<TermSignature> newList = descriptor.getUnifiedResults();
-		ILiteral result;
+		ILiteral<?> result;
 		if (newList.get(1) instanceof TrueConstantSignature) {
 			TermSignature sig = termList.get(0);
 			Integer i;

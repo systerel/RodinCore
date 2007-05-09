@@ -17,7 +17,7 @@ public class ProverPlugin extends Plugin {
 	/**
 	 * debugging/tracing option names
 	 */
-	private static final String LOADER_TRACE = PLUGIN_ID + "/debug/loader"; //$NON-NLS-1$
+//	private static final String LOADER_TRACE = PLUGIN_ID + "/debug/loader"; //$NON-NLS-1$
 	private static final String LOADER_PHASE1_TRACE = PLUGIN_ID + "/debug/loader/phase1"; //$NON-NLS-1$
 	private static final String lOADER_PHASE2_TRACE = PLUGIN_ID + "/debug/loader/phase2"; //$NON-NLS-1$
 	
@@ -33,10 +33,10 @@ public class ProverPlugin extends Plugin {
 		// TODO Auto-generated constructor stub
 	}
 	
-	/**
-	 * The shared instance.
-	 */
-	private static ProverPlugin plugin;
+//	/**
+//	 * The shared instance.
+//	 */
+//	private static ProverPlugin plugin;
 	
 	/**
 	 * This method is called upon plug-in activation
@@ -44,7 +44,7 @@ public class ProverPlugin extends Plugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		plugin = this;
+//		plugin = this;
 		
 		configureDebugOptions();
 	}
@@ -96,6 +96,6 @@ public class ProverPlugin extends Plugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
-		plugin = null;
+//		plugin = null;
 	}
 }

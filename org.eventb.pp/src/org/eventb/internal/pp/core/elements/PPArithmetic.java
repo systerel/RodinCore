@@ -21,7 +21,7 @@ public class PPArithmetic implements IArithmetic {
 	private AType type;
 	
 	// TODO get rid of this when normalizing
-	public enum AType {LESS, LESS_EQUAL, EQUAL, UNEQUAL}; 
+	public enum AType {LESS, LESS_EQUAL, EQUAL, UNEQUAL} 
 	
 	public PPArithmetic(Term left, Term right, AType type) {
 		this.left = left;

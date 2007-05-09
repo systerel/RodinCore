@@ -18,6 +18,7 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
  */
 public class IntermediateResult implements IIntermediateResult {
 
+	@SuppressWarnings("unused")
 	private Comparator<TermSignature> orderer; 
 	
 	private List<TermSignature> results = new ArrayList<TermSignature>();
