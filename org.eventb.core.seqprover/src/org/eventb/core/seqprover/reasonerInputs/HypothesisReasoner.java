@@ -35,7 +35,9 @@ public abstract class HypothesisReasoner implements IReasoner {
 		}
 
 		public void applyHints(ReplayHints hints) {
-			pred = hints.applyHints(pred);
+			if (pred != null) {
+				pred = hints.applyHints(pred);
+			}
 		}
 
 		public String getError() {
