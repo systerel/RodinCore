@@ -39,73 +39,13 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
  * Basic manual rewriter for the Event-B sequent prover.
  */
 @SuppressWarnings("unused")
-public class ManualRewriterImpl extends AutoRewriterImpl {
+public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 
-	public ManualRewriterImpl() {
+	public RemoveMembershipRewriterImpl() {
 		super();
 	}
 
 	%include {Formula.tom}
-	
-	@Override
-	public Predicate rewrite(UnaryPredicate predicate) {
-		Predicate newPredicate = super.rewrite(predicate);
-		if (!newPredicate.equals(predicate))
-			return newPredicate;
-			
-	    %match (Predicate predicate) {
-
-			/**
-			 * Negation: ¬(S = ∅) == ∃x·x ∈ S
-			 */
-			Not(Equal(S, EmptySet())) -> {
-				return FormulaUnfold.makeExistantial(`S);
-			}
-			
-			/**
-			 * Negation: ¬(∅ = S) == ∃x·x ∈ S
-			 */
-			Not(Equal(EmptySet(), S)) -> {
-				return FormulaUnfold.makeExistantial(`S);
-			}
-			
-			/**
-			 * Negation: ¬(P ∧ ... ∧ Q) == ¬P ⋁ ... ⋁ ¬Q
-			 */
-			Not(Land(children)) -> {
-				return FormulaUnfold.deMorgan(Formula.LOR, `children);
-			}
-			
-			/**
-			 * Negation: ¬(P ⋁ ... ⋁ Q) == ¬P ∧ ... ∧ ¬Q
-			 */
-			Not(Lor(children)) -> {
-				return FormulaUnfold.deMorgan(Formula.LAND, `children);
-			}
-			
-			/**
-			 * Negation: ¬(P ⇒ Q) == P ∧ ¬Q
-			 */
-			Not(Limp(P, Q)) -> {
-				return FormulaUnfold.negImp(`P, `Q);
-			}
-			
-			/**
-			 * Negation: ¬(∀x·P) == ∃x·¬P
-			 */
-			Not(ForAll(idents, P)) -> {
-				return FormulaUnfold.negQuant(Formula.EXISTS, `idents, `P);
-			}
-			
-			/**
-			 * Negation: ¬(∃x·P) == ∀x·¬P
-			 */
-			Not(Exists(idents, P)) -> {
-				return FormulaUnfold.negQuant(Formula.FORALL, `idents, `P);
-			}
-	    }
-	    return predicate;
-	}
 
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
@@ -237,12 +177,6 @@ public class ManualRewriterImpl extends AutoRewriterImpl {
 	    		return FormulaUnfold.inRanManipulation(false, `E, `F, `r, `T);
 	    	}
 	    	
-	    	/**
-	    	 * Set Theory: S ⊆ T == ∀x·x ∈ S ⇒ x ∈ T
-	    	 */
-	    	SubsetEq(S, T) -> {
-	    		return FormulaUnfold.subsetEq(`S, `T);
-	    	}
 	    }
 	    return predicate;
 	}

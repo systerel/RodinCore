@@ -31,6 +31,9 @@
 	<target name="clean" description="clean up">
 		<delete file="${translator.src}/AutoRewriterImpl.java" />
 		<delete file="${translator.src}/ManualRewriterImpl.java" />
+		<delete file="${translator.src}/RemoveNegationRewriterImpl.java" />
+		<delete file="${translator.src}/RemoveInclusionRewriterImpl.java" />
+		<delete file="${translator.src}/RemoveMembershipRewriterImpl.java" />
     </target>
 	
 </project>
