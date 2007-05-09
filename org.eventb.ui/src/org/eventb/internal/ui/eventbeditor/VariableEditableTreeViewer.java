@@ -139,26 +139,6 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		this.setLabelProvider(new EventBTreeLabelProvider(editor, this));
 		this.setSorter(new ElementSorter());
 	}
-//
-//	@Override
-//	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
-//		IVariable var = (IVariable) element;
-//		switch (col) {
-//		case 0: // Commit name
-//			try {
-//				if (EventBEditorUtils.DEBUG)
-//					EventBEditorUtils.debug("Commit : "
-//							+ var.getIdentifierString() + " to be : " + text);
-//				if (!var.getIdentifierString().equals(text)) {
-//					var.setIdentifierString(text, monitor);
-//				}
-//			} catch (RodinDBException e) {
-//				e.printStackTrace();
-//			}
-//
-//			break;
-//		}
-//	}
 
 	@Override
 	protected void createTreeColumns() {
@@ -166,74 +146,12 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 
 		Tree tree = this.getTree();
 		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
-		elementColumn.setText("Name");
+		elementColumn.setText("Identifier");
 		elementColumn.setResizable(true);
 		elementColumn.setWidth(200);
 
 		tree.setHeaderVisible(true);
 	}
 
-//	@Override
-//	protected void edit(IRodinElement element) {
-//		this.reveal(element);
-//		TreeItem item = TreeSupports.findItem(this.getTree(), element);
-//		selectItem(item, 0);
-//	}
-
-	// public void selectionChanged(SelectionChangedEvent event) {
-	// UIUtils.debugEventBEditor("Selection changed: ");
-	// IMachineFile file = (IMachineFile) this.editor.getRodinInput();
-	// try {
-	// IRodinElement[] refines = file
-	// .getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
-	// if (refines.length == 1) {
-	// IRodinElement refine = refines[0];
-	// String name = ((IInternalElement) refine).getContents();
-	// IRodinProject prj = file.getRodinProject();
-	// IMachineFile refinedFile = (IMachineFile) prj
-	// .getRodinFile(EventBPlugin.getMachineFileName(name));
-	// UIUtils.debugEventBEditor("Refined: "
-	// + refinedFile.getElementName());
-	// if (refinedFile.exists()) {
-	// IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
-	// IEditorReference[] editors = activePage
-	// .getEditorReferences();
-	// for (IEditorReference editor : editors) {
-	// IEditorPart part = editor.getEditor(true);
-	// if (part instanceof EventBMachineEditor) {
-	// IRodinFile rodinInput = ((EventBMachineEditor) part)
-	// .getRodinInput();
-	// UIUtils.debugEventBEditor("Trying: "
-	// + rodinInput.getElementName());
-	// if (rodinInput.equals(refinedFile)) {
-	// UIUtils.debugEventBEditor("Focus");
-	// if (activePage.isPartVisible(part)) {
-	// IStructuredSelection ssel = (IStructuredSelection) event
-	// .getSelection();
-	// if (ssel.size() == 1) {
-	// IInternalElement obj = (IInternalElement) ssel
-	// .getFirstElement();
-	// IInternalElement element = refinedFile
-	// .getInternalElement(obj
-	// .getElementType(), obj
-	// .getElementName());
-	// if (element != null)
-	// ((EventBEditor) part)
-	// .setSelection(element);
-	// }
-	// }
-	// }
-	// }
-	// }
-	//					
-	// editor.setFocus();
-	// }
-	// }
-	// } catch (RodinDBException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	//
-	// }
 
 }

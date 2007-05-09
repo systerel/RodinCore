@@ -151,32 +151,6 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
-	 *      int, java.lang.String)
-	 */
-//	@Override
-//	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
-//		ICarrierSet set = (ICarrierSet) element;
-//		switch (col) {
-//		case 0: // Commit name
-//			try {
-//				if (EventBEditorUtils.DEBUG)
-//					EventBEditorUtils.debug("Commit : "
-//							+ set.getIdentifierString() + " to be : " + text);
-//				if (!set.getIdentifierString().equals(text)) {
-//					set.setIdentifierString(text, monitor);
-//				}
-//			} catch (RodinDBException e) {
-//				e.printStackTrace();
-//			}
-//
-//			break;
-//		}
-//	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#createTreeColumns()
 	 */
 	@Override
@@ -185,23 +159,11 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 
 		Tree tree = this.getTree();
 		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
-		elementColumn.setText("Name");
+		elementColumn.setText("Identifier");
 		elementColumn.setResizable(true);
 		elementColumn.setWidth(200);
 
 		tree.setHeaderVisible(true);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
-	 */
-//	@Override
-//	protected void edit(IRodinElement element) {
-//		this.reveal(element);
-//		TreeItem item = TreeSupports.findItem(this.getTree(), element);
-//		selectItem(item, 0);
-//	}
 
 }

@@ -152,45 +152,6 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
-	 *      int, java.lang.String)
-	 */
-//	@Override
-//	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
-//		IAxiom axm = (IAxiom) element;
-//		switch (col) {
-//		case 0: // Commit label
-//			try {
-//				if (EventBEditorUtils.DEBUG)
-//					EventBEditorUtils.debug("Commit : " + axm.getLabel()
-//							+ " to be : " + text);
-//				if (!axm.getLabel().equals(text)) {
-//					axm.setLabel(text, null);
-//				}
-//			} catch (RodinDBException e) {
-//				e.printStackTrace();
-//			}
-//
-//			break;
-//
-//		case 1: // Commit predicate
-//			try {
-//				if (EventBEditorUtils.DEBUG)
-//					EventBEditorUtils.debug("Commit content: " + axm.getPredicateString()
-//							+ " to be : " + text);
-//				if (!axm.getPredicateString().equals(text)) {
-//					axm.setPredicateString(text, null);
-//				}
-//			} catch (RodinDBException e) {
-//				e.printStackTrace();
-//			}
-//			break;
-//		}
-//	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#createTreeColumns()
 	 */
 	@Override
@@ -199,28 +160,16 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 
 		Tree tree = this.getTree();
 		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
-		elementColumn.setText("Name");
+		elementColumn.setText("Label");
 		elementColumn.setResizable(true);
 		elementColumn.setWidth(200);
 
 		TreeColumn predicateColumn = new TreeColumn(tree, SWT.LEFT);
-		predicateColumn.setText("Predicates");
+		predicateColumn.setText("Predicate");
 		predicateColumn.setResizable(true);
 		predicateColumn.setWidth(250);
 
 		tree.setHeaderVisible(true);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
-	 */
-//	@Override
-//	protected void edit(IRodinElement element) {
-//		this.reveal(element);
-//		TreeItem item = TreeSupports.findItem(this.getTree(), element);
-//		selectItem(item, 1);
-//	}
 
 }

@@ -148,56 +148,17 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		this.setSorter(new ElementSorter());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
-	 *      int, java.lang.String)
-	 */
-//	@Override
-//	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
-//		IConstant cst = (IConstant) element;
-//
-//		switch (col) {
-//		case 0: // Commit name
-//			try {
-//				if (EventBEditorUtils.DEBUG)
-//					EventBEditorUtils.debug("Commit : "
-//							+ cst.getIdentifierString() + " to be : " + text);
-//				if (!cst.getIdentifierString().equals(text)) {
-//					cst.setIdentifierString(text, monitor);
-//				}
-//			} catch (RodinDBException e) {
-//				e.printStackTrace();
-//			}
-//
-//			break;
-//		}
-//	}
-
 	@Override
 	protected void createTreeColumns() {
 		numColumn = 1;
 
 		Tree tree = this.getTree();
 		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
-		elementColumn.setText("Name");
+		elementColumn.setText("Identifier");
 		elementColumn.setResizable(true);
 		elementColumn.setWidth(200);
 
 		tree.setHeaderVisible(true);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
-	 */
-//	@Override
-//	protected void edit(IRodinElement element) {
-//		this.reveal(element);
-//		TreeItem item = TreeSupports.findItem(this.getTree(), element);
-//		selectItem(item, 0);
-//	}
 
 }

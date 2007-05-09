@@ -179,7 +179,6 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 			public void menuAboutToShow(IMenuManager manager) {
 				ActionContext context = new ActionContext(
 						SyntheticEditableTreeViewer.this.getSelection());
-//				context.setInput(getCurrentProject());
 				actionSet.setContext(context);
 				actionSet.fillContextMenu(manager);
 				actionSet.setContext(null);
@@ -201,115 +200,16 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 
 		Tree tree = this.getTree();
 		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
-		elementColumn.setText("Elements");
+		elementColumn.setText("Element");
 		elementColumn.setResizable(true);
 		elementColumn.setWidth(200);
 
 		TreeColumn predicateColumn = new TreeColumn(tree, SWT.LEFT);
-		predicateColumn.setText("Contents");
+		predicateColumn.setText("Content");
 		predicateColumn.setResizable(true);
 		predicateColumn.setWidth(250);
 
 		tree.setHeaderVisible(true);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
-	 *      int, java.lang.String)
-	 */
-//	@Override
-//	protected void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
-//
-//		switch (col) {
-//		case 0: // Commit label / identifier
-//			try {
-//				if (element instanceof IIdentifierElement) {
-//					IIdentifierElement identifierElement = (IIdentifierElement) element;
-//					if (!identifierElement.getIdentifierString().equals(text)) {
-//						identifierElement.setIdentifierString(text, monitor);
-//					}
-//				} else if (element instanceof ILabeledElement) {
-//					ILabeledElement labelElement = (ILabeledElement) element;
-//					if (EventBEditorUtils.DEBUG)
-//						EventBEditorUtils.debug("Rename label: "
-//								+ labelElement.getLabel() + " to " + text);
-//					if (!labelElement.getLabel().equals(text)) {
-//						labelElement.setLabel(text, null);
-//					}
-//				} else if (element instanceof ISeesContext) {
-//					ISeesContext seesContext = (ISeesContext) element;
-//					if (!seesContext.getSeenContextName().equals(text)) {
-//						seesContext.setSeenContextName(text, null);
-//					}
-//				} else if (element instanceof IExtendsContext) {
-//					IExtendsContext extendsContext = (IExtendsContext) element;
-//					if (!extendsContext.getAbstractContextName().equals(text)) {
-//						extendsContext.setAbstractContextName(text, monitor);
-//					}
-//				} else if (element instanceof IRefinesMachine) {
-//					IRefinesMachine refinesMachine = (IRefinesMachine) element;
-//					if (!refinesMachine.getAbstractMachineName().equals(text)) {
-//						refinesMachine.setAbstractMachineName(text, null);
-//					}
-//				} else if (element instanceof IRefinesEvent) {
-//					IRefinesEvent refinesEvent = (IRefinesEvent) element;
-//					if (!refinesEvent.getAbstractEventLabel().equals(text)) {
-//						refinesEvent.setAbstractEventLabel(text, null);
-//					}
-//				}
-//
-//			} catch (RodinDBException e) {
-//				e.printStackTrace();
-//			}
-//
-//			break;
-//
-//		case 1: // Commit predicate/assignment
-//			try {
-//				if (element instanceof IPredicateElement) {
-//					IPredicateElement predicateElement = (IPredicateElement) element;
-//					if (!predicateElement.getPredicateString().equals(text)) {
-//						predicateElement.setPredicateString(text, null);
-//					}
-//				} else if (element instanceof IAssignmentElement) {
-//					IAssignmentElement assignmentElement = (IAssignmentElement) element;
-//					if (!assignmentElement.getAssignmentString().equals(text)) {
-//						assignmentElement.setAssignmentString(text, monitor);
-//					}
-//				} else if (element instanceof IExpressionElement) {
-//					IExpressionElement expressionElement = (IExpressionElement) element;
-//					if (!expressionElement.getExpressionString().equals(text)) {
-//						expressionElement.setExpressionString(text, monitor);
-//					}
-//				}
-//			} catch (RodinDBException e) {
-//				e.printStackTrace();
-//			}
-//			break;
-//		}
-//	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
-	 */
-//	@Override
-//	protected void edit(IRodinElement element) {
-//		this.reveal(element);
-//		TreeItem item = TreeSupports.findItem(this.getTree(), element);
-//		if (element instanceof IVariable)
-//			selectItem(item, 0);
-//		else if (element instanceof IEvent)
-//			selectItem(item, 0);
-//		else if (element instanceof ICarrierSet)
-//			selectItem(item, 0);
-//		else if (element instanceof IConstant)
-//			selectItem(item, 0);
-//		else
-//			selectItem(item, 1);
-//	}
 
 }

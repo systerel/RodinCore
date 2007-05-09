@@ -158,12 +158,12 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 
 		Tree tree = this.getTree();
 		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
-		elementColumn.setText("Elements");
+		elementColumn.setText("Element");
 		elementColumn.setResizable(true);
 		elementColumn.setWidth(200);
 
 		TreeColumn predicateColumn = new TreeColumn(tree, SWT.LEFT);
-		predicateColumn.setText("Contents");
+		predicateColumn.setText("Content");
 		predicateColumn.setResizable(true);
 		predicateColumn.setWidth(250);
 
