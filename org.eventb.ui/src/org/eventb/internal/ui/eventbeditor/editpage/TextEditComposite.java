@@ -1,8 +1,6 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
@@ -18,8 +16,14 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 		String str = getValue();
 		if (!text.getText().equals(str)) {
 			text.setText(str);
-			internalPack();
 		}
+		internalPack();
+	}
+
+	@Override
+	public void initialise() {
+		Text text = (Text) control;
+		text.setText(getValue());
 	}
 
 	public void createComposite(FormToolkit toolkit, Composite parent, int style) {
@@ -35,12 +39,6 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 			}
 
 		};
-		text.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				internalPack();
-			}
-
-		});
 	}
 
 	public void setSelected(boolean selection) {
