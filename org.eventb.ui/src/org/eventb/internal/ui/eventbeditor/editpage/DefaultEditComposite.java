@@ -130,6 +130,29 @@ public abstract class DefaultEditComposite implements IEditComposite {
 		internalPack(control);
 	}
 
+	public void setSelected(boolean selection) {
+		if (selection) {
+			postfixLabel.setBackground(postfixLabel.getDisplay()
+					.getSystemColor(SWT.COLOR_GRAY));
+			prefixLabel.setBackground(prefixLabel.getDisplay().getSystemColor(
+					SWT.COLOR_GRAY));
+		} else {
+			if (EventBEditorUtils.DEBUG) {
+				postfixLabel.setBackground(postfixLabel.getDisplay()
+						.getSystemColor(SWT.COLOR_CYAN));
+				prefixLabel.setBackground(prefixLabel.getDisplay()
+						.getSystemColor(SWT.COLOR_CYAN));
+			}
+			else {
+				postfixLabel.setBackground(postfixLabel.getDisplay()
+						.getSystemColor(SWT.COLOR_WHITE));
+				prefixLabel.setBackground(prefixLabel.getDisplay()
+						.getSystemColor(SWT.COLOR_WHITE));				
+			}
+		}
+
+	}
+
 	private void internalPack(Control c) {
 		if (c.equals(form.getBody())) {
 			if (EventBEditorUtils.DEBUG)

@@ -43,6 +43,7 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 		combo.setText(getValue());
 	}
 
+	@Override
 	public void setSelected(boolean selection) {
 		CCombo combo = (CCombo) control;
 		if (selection)
@@ -52,6 +53,7 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 			combo.setBackground(combo.getDisplay().getSystemColor(
 					SWT.COLOR_WHITE));
 		}
+		super.setSelected(selection);
 	}
 
 }

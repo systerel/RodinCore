@@ -41,6 +41,7 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 		};
 	}
 
+	@Override
 	public void setSelected(boolean selection) {
 		Text text = (Text) control;
 		if (selection)
@@ -50,6 +51,7 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 		else {
 			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		}
+		super.setSelected(selection);
 	}
 
 }

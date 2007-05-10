@@ -76,16 +76,6 @@ public class EditRow {
 		return buttonComp.isSelected();
 	}
 
-//	public IRodinElement getElement() {
-//		return element;
-//	}
-
-//	public void setElement(IInternalElement element) {
-//		assert element.getElementType() == this.element.getElementType();
-//		this.element = element;
-//		refresh();
-//	}
-
 	public void dispose() {
 		composite.dispose();
 	}
