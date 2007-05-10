@@ -6,6 +6,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
@@ -18,7 +19,17 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	IRodinElement element;
 
 	Control control;
+	
+	String prefix;
+	
+	String postfix;
 
+	Label prefixLabel;
+	
+	Label postfixLabel;
+	
+	boolean fillHorizontal = false;
+	
 	public void setForm(ScrolledForm form) {
 		this.form = form;
 	}
@@ -38,8 +49,37 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#createComposite(org.eclipse.ui.forms.widgets.FormToolkit,
 	 *      org.eclipse.swt.widgets.Composite)
 	 */
-	abstract public void createComposite(FormToolkit toolkit, Composite parent);
+	public void createComposite(FormToolkit toolkit, Composite parent) {
+		if (prefix == null)
+			prefix = "";
+		prefixLabel = toolkit.createLabel(parent, prefix);
+		GridData gridData = new GridData();
+		gridData.verticalAlignment = SWT.TOP;
+		if (prefix == null)
+			gridData.widthHint = 0;
+		
+		prefixLabel.setLayoutData(gridData);
+		if (EventBEditorUtils.DEBUG)
+			prefixLabel.setBackground(prefixLabel.getDisplay().getSystemColor(
+					SWT.COLOR_CYAN));
 
+		createMainComposite(toolkit, parent);
+		gridData = new GridData(SWT.FILL, SWT.TOP, fillHorizontal, false);
+		control.setLayoutData(gridData);
+
+		postfixLabel = toolkit.createLabel(parent, " " + postfix + " ");
+		gridData = new GridData();
+		gridData.verticalAlignment = SWT.TOP;
+		if (postfix == null)
+			gridData.widthHint = 0;
+		postfixLabel.setLayoutData(gridData);
+		if (EventBEditorUtils.DEBUG)
+			postfixLabel.setBackground(postfixLabel.getDisplay()
+					.getSystemColor(SWT.COLOR_CYAN));
+	}
+
+	public abstract void createMainComposite(FormToolkit toolkit, Composite parent);
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -73,11 +113,8 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setFillHorizontal(boolean)
 	 */
-	public void setFillHorizontal(boolean fill) {
-		GridData gridData;
-		gridData = new GridData(SWT.FILL, SWT.TOP, fill, false);
-
-		control.setLayoutData(gridData);
+	public void setFillHorizontal(boolean fillHorizontal) {
+		this.fillHorizontal = fillHorizontal;
 	}
 
 	/*
@@ -108,6 +145,14 @@ public abstract class DefaultEditComposite implements IEditComposite {
 			c.pack();
 			c.setBounds(bounds);
 		}
+	}
+
+	public void setPostfix(String postfix) {
+		this.postfix = postfix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
 }

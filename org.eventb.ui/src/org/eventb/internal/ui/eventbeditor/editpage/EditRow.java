@@ -49,8 +49,12 @@ public class EditRow {
 		composite.setLayout(gridLayout);
 
 		createButtons(toolkit, level);
-		editComposites = sectionRegistry.createAttributeComposites(form,
-				toolkit, composite, element);
+		editComposites = sectionRegistry.createAttributeComposites(element.getElementType());
+		for (IEditComposite editComposite : editComposites) {
+			editComposite.setForm(form);
+			editComposite.setElement(element);
+			editComposite.createComposite(toolkit, composite);
+		}
 		toolkit.paintBordersFor(composite);
 	}
 

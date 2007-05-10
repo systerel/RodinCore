@@ -41,8 +41,8 @@ public class PredicateEditComposite extends TextEditComposite {
 
 
 	@Override
-	public void createComposite(FormToolkit toolkit, Composite parent) {
-		createComposite(toolkit, parent, SWT.MULTI);
+	public void createMainComposite(FormToolkit toolkit, Composite parent) {
+		createMainComposite(toolkit, parent, SWT.MULTI);
 	}
 	
 }

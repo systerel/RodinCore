@@ -12,12 +12,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -319,12 +313,10 @@ public class EditSectionRegistry {
 			attributeInfos.add(info);
 		}
 
-		public IEditComposite[] createAttributeComposites(ScrolledForm form,
-				FormToolkit toolkit, Composite parent, IRodinElement element) {
+		public IEditComposite[] createAttributeComposites() {
 			IEditComposite[] result = new IEditComposite[attributeInfos.size()];
 			for (int i = 0; i < attributeInfos.size(); ++i) {
-				result[i] = attributeInfos.get(i).createAttributeComposite(
-						toolkit, form, parent, element);
+				result[i] = attributeInfos.get(i).createAttributeComposite();
 			}
 			return result;
 		}
@@ -342,34 +334,18 @@ public class EditSectionRegistry {
 			return config.getAttribute("name");
 		}
 
-		public IEditComposite createAttributeComposite(FormToolkit toolkit,
-				ScrolledForm form, Composite parent, IRodinElement element) {
+		public IEditComposite createAttributeComposite() {
 			try {
 				IEditComposite editComposite;
 				String prefix = config.getAttribute("prefix");
-				if (prefix == null)
-					prefix = "";
-				Label label = toolkit.createLabel(parent, " " + prefix + " ");
-				GridData gridData = new GridData();
-				gridData.verticalAlignment = SWT.TOP;
-				label.setLayoutData(gridData);
-				// label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+				String postfix = config.getAttribute("postfix");
 
 				editComposite = (IEditComposite) config
 						.createExecutableExtension("class");
-				editComposite.setForm(form);
-				editComposite.setElement(element);
-				editComposite.createComposite(toolkit, parent);
+				editComposite.setPrefix(prefix);
+				editComposite.setPostfix(postfix);
 				editComposite.setFillHorizontal(config.getAttribute(
 						"horizontalExpand").equalsIgnoreCase("true"));
-				String postfix = config.getAttribute("postfix");
-				if (postfix == null)
-					postfix = "";
-				label = toolkit.createLabel(parent, " " + postfix + " ");
-				gridData = new GridData();
-				gridData.verticalAlignment = SWT.TOP;
-				label.setLayoutData(gridData);
-				// label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 				return editComposite;
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
@@ -439,19 +415,17 @@ public class EditSectionRegistry {
 		return info.getNumAttributes();
 	}
 
-	public synchronized IEditComposite[] createAttributeComposites(
-			ScrolledForm form, FormToolkit toolkit, Composite composite,
-			IRodinElement element) {
+	public synchronized IEditComposite[] createAttributeComposites(IElementType type) {
 		if (attributeRegistry == null)
 			loadAttributeRegistry();
 
-		AttributesInfo info = attributeRegistry.get(element.getElementType());
+		AttributesInfo info = attributeRegistry.get(type);
 		if (info == null) {
 			return new IEditComposite[0];
 		}
 
 		return info
-				.createAttributeComposites(form, toolkit, composite, element);
+				.createAttributeComposites();
 	}
 
 	private Map<IElementType, ActionsInfo> actionRegistry;

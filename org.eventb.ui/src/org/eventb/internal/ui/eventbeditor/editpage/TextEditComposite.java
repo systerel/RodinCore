@@ -26,7 +26,7 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 		text.setText(getValue());
 	}
 
-	public void createComposite(FormToolkit toolkit, Composite parent, int style) {
+	public void createMainComposite(FormToolkit toolkit, Composite parent, int style) {
 		Text text = toolkit.createText(parent, getValue(), style);
 		setControl(text);
 		text.setForeground(Display.getDefault().getSystemColor(

@@ -26,4 +26,8 @@ public interface IEditComposite {
 
 	public abstract void setSelected(boolean selection);
 
+	public abstract void setPrefix(String prefix);
+
+	public abstract void setPostfix(String postfix);
+
 }

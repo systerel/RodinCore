@@ -200,9 +200,9 @@ public class SectionComposite implements ISectionComposite {
 				elementComp.dispose();
 			}
 			elementComps.clear();
-			if (afterHyperlinkComposite != null) 
-				afterHyperlinkComposite.dispose();
-			beforeHyperlinkComposite.dispose();
+			if (beforeHyperlinkComposite != null) 
+				beforeHyperlinkComposite.dispose();
+			afterHyperlinkComposite.dispose();
 			GridData gridData = (GridData) beforeComposite.getLayoutData();
 			gridData.heightHint = 0;
 			gridData = (GridData) afterComposite.getLayoutData();

@@ -11,7 +11,7 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 		IEditComposite {
 
 	@Override
-	public void createComposite(FormToolkit toolkit, Composite parent) {
+	public void createMainComposite(FormToolkit toolkit, Composite parent) {
 		final CCombo combo = new CCombo(parent, SWT.FLAT | SWT.READ_ONLY);
 		setControl(combo);
 		initialise();

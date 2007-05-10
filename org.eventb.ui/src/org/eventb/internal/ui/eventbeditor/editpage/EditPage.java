@@ -22,13 +22,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -70,10 +65,10 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 	// The scrolled form
 	ScrolledForm form;
-
-	private static Listener keyDownListener = null;
-
-	private static Listener keyUpListener = null;
+//
+//	private static Listener keyDownListener = null;
+//
+//	private static Listener keyUpListener = null;
 
 	/**
 	 * Constructor: This default constructor will be used to create the page
@@ -118,89 +113,89 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		form.reflow(true);
 
 		// Register a global key listener
-		if (keyDownListener == null) {
-			if (EventBEditorUtils.DEBUG) {
-				EventBEditorUtils.debug("Register global key down listener");
-			}
+//		if (keyDownListener == null) {
+//			if (EventBEditorUtils.DEBUG) {
+//				EventBEditorUtils.debug("Register global key down listener");
+//			}
+//
+//			keyDownListener = new Listener() {
+//				public void handleEvent(Event event) {
+//					IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
+//					IWorkbenchPart activePart = activePage.getActivePart();
+//					// Only concern with active EventBEditor
+//					if (activePart instanceof IEventBEditor) {
+//						IEventBEditor editor = (IEventBEditor) activePart;
+//						IFormPage page = ((FormEditor) editor)
+//								.getActivePageInstance();
+//						// Only concern with active EditPage in the EventBEditor
+//						if (page != null && page instanceof EditPage) {
+//							if (EventBEditorUtils.DEBUG) {
+//								EventBEditorUtils.debug("Global action key: "
+//										+ event);
+//								EventBEditorUtils.debug("Editor "
+//										+ page.getEditor());
+//								if (event.keyCode == SWT.SHIFT) {
+//									shiftPressed = true;
+//								}
+//							}
+//						}
+//
+//					}
+//				}
+//			};
+//			Display display = this.getManagedForm().getForm().getDisplay();
+//			display.addFilter(SWT.KeyDown, keyDownListener);
+//
+//		}
 
-			keyDownListener = new Listener() {
-				public void handleEvent(Event event) {
-					IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
-					IWorkbenchPart activePart = activePage.getActivePart();
-					// Only concern with active EventBEditor
-					if (activePart instanceof IEventBEditor) {
-						IEventBEditor editor = (IEventBEditor) activePart;
-						IFormPage page = ((FormEditor) editor)
-								.getActivePageInstance();
-						// Only concern with active EditPage in the EventBEditor
-						if (page != null && page instanceof EditPage) {
-							if (EventBEditorUtils.DEBUG) {
-								EventBEditorUtils.debug("Global action key: "
-										+ event);
-								EventBEditorUtils.debug("Editor "
-										+ page.getEditor());
-								if (event.keyCode == SWT.SHIFT) {
-									shiftPressed = true;
-								}
-							}
-						}
-
-					}
-				}
-			};
-			Display display = this.getManagedForm().getForm().getDisplay();
-			display.addFilter(SWT.KeyDown, keyDownListener);
-
-		}
-
-		if (keyUpListener == null) {
-			if (EventBEditorUtils.DEBUG) {
-				EventBEditorUtils.debug("Register global key up listener");
-			}
-
-			keyUpListener = new Listener() {
-				public void handleEvent(Event event) {
-					IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
-					IWorkbenchPart activePart = activePage.getActivePart();
-					event.type = SWT.None;
-					// Only concern with active EventBEditor
-					if (activePart instanceof IEventBEditor) {
-						IEventBEditor editor = (IEventBEditor) activePart;
-						IFormPage page = ((FormEditor) editor)
-								.getActivePageInstance();
-						// Only concern with active EditPage in the EventBEditor
-						if (page != null && page instanceof EditPage) {
-							if (EventBEditorUtils.DEBUG) {
-								EventBEditorUtils.debug("Editor "
-										+ page.getEditor());
-							}
-							if (event.keyCode == SWT.SHIFT) {
-								shiftPressed = false;
-							} else if (event.stateMask == SWT.ALT
-									&& event.keyCode == SWT.ARROW_UP) {
-								if (EventBEditorUtils.DEBUG) {
-									EventBEditorUtils.debug("Alt + up "
-											+ page.getEditor());
-								}
-								((EditPage) page).move(true);
-								event.doit = false;
-							} else if (event.stateMask == SWT.ALT
-									&& event.keyCode == SWT.ARROW_DOWN) {
-								if (EventBEditorUtils.DEBUG) {
-									EventBEditorUtils.debug("Alt + down "
-											+ page.getEditor());
-								}
-								((EditPage) page).move(false);
-								event.doit = false;
-							}
-						}
-
-					}
-				}
-			};
-			Display display = this.getManagedForm().getForm().getDisplay();
-			display.addFilter(SWT.KeyUp, keyUpListener);
-		}
+//		if (keyUpListener == null) {
+//			if (EventBEditorUtils.DEBUG) {
+//				EventBEditorUtils.debug("Register global key up listener");
+//			}
+//
+//			keyUpListener = new Listener() {
+//				public void handleEvent(Event event) {
+//					IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
+//					IWorkbenchPart activePart = activePage.getActivePart();
+//					event.type = SWT.None;
+//					// Only concern with active EventBEditor
+//					if (activePart instanceof IEventBEditor) {
+//						IEventBEditor editor = (IEventBEditor) activePart;
+//						IFormPage page = ((FormEditor) editor)
+//								.getActivePageInstance();
+//						// Only concern with active EditPage in the EventBEditor
+//						if (page != null && page instanceof EditPage) {
+//							if (EventBEditorUtils.DEBUG) {
+//								EventBEditorUtils.debug("Editor "
+//										+ page.getEditor());
+//							}
+//							if (event.keyCode == SWT.SHIFT) {
+//								shiftPressed = false;
+//							} else if (event.stateMask == SWT.ALT
+//									&& event.keyCode == SWT.ARROW_UP) {
+//								if (EventBEditorUtils.DEBUG) {
+//									EventBEditorUtils.debug("Alt + up "
+//											+ page.getEditor());
+//								}
+//								((EditPage) page).move(true);
+//								event.doit = false;
+//							} else if (event.stateMask == SWT.ALT
+//									&& event.keyCode == SWT.ARROW_DOWN) {
+//								if (EventBEditorUtils.DEBUG) {
+//									EventBEditorUtils.debug("Alt + down "
+//											+ page.getEditor());
+//								}
+//								((EditPage) page).move(false);
+//								event.doit = false;
+//							}
+//						}
+//
+//					}
+//				}
+//			};
+//			Display display = this.getManagedForm().getForm().getDisplay();
+//			display.addFilter(SWT.KeyUp, keyUpListener);
+//		}
 
 	}
 
@@ -382,9 +377,8 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 					}
 				}
 
-				form.getBody().pack(true);
 				form.getBody().setRedraw(true);
-				form.reflow(true);
+//				form.reflow(true);
 			}
 
 		});
