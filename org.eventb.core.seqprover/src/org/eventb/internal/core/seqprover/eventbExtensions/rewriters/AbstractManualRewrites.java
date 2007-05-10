@@ -138,39 +138,38 @@ public abstract class AbstractManualRewrites implements IReasoner {
 
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
-
-		IAntecedent[] antecedents = reader.getAntecedents();
 		
-		String image = reader.getString(POSITION_KEY);
-		IPosition position = FormulaFactory.getDefault().makePosition(image);
-
-		final int length = antecedents.length;
+		final FormulaFactory ff = FormulaFactory.getDefault();
+		final String posString = reader.getString(POSITION_KEY);
+		final IPosition position = ff.makePosition(posString);
+		
 		if (reader.getGoal() != null) {
 			// Goal rewriting
 			return new Input(null, position);
 		}
-		// Hypothesis rewriting
-		else if (length == 0) {
+		
+		// else hypothesis rewriting
+		final IAntecedent[] antecedents = reader.getAntecedents();
+		if (antecedents.length != 1) {
 			throw new SerializeException(new IllegalStateException(
-					"Expected exactly one needed hypothesis!"));
+					"Expected exactly one antecedent!"));
 		}
-		IAntecedent antecedent = antecedents[0];
-		List<IHypAction> hypActions = antecedent.getHypAction();
+		final IAntecedent antecedent = antecedents[0];
+		final List<IHypAction> hypActions = antecedent.getHypAction();
 		if (hypActions.size() == 0) {
 			throw new SerializeException(new IllegalStateException(
 					"Expected at least one hyp action!"));
 		}
-		IHypAction hypAction = hypActions.get(0);
+		final IHypAction hypAction = hypActions.get(0);
 		if (hypAction instanceof ForwardInfHypAction) {
-			ForwardInfHypAction fHypAction = (ForwardInfHypAction) hypAction;
-			Collection<Predicate> hyps = fHypAction.getHyps();
+			final ForwardInfHypAction fHypAction = (ForwardInfHypAction) hypAction;
+			final Collection<Predicate> hyps = fHypAction.getHyps();
 			if (hyps.size() != 1) {
 				throw new SerializeException(new IllegalStateException(
 						"Expected single required hyp in first forward hyp action!"));
 			}
 			return new Input(hyps.iterator().next(), position);
-		}
-		else {
+		} else {
 			throw new SerializeException(new IllegalStateException(
 					"Expected first hyp action to be a forward hyp action!"));
 		}
