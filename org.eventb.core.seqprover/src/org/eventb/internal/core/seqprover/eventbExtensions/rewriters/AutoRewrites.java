@@ -112,48 +112,4 @@ public class AutoRewrites extends EmptyInputReasoner {
 		return resultPred;
 	}
 
-	// class AutoRewritePredicate extends DefaultRewriter {
-	//
-	// public AutoRewritePredicate(boolean autoFlattening, FormulaFactory ff) {
-	// super(autoFlattening, ff);
-	// }
-	//
-	// @Override
-	// public Predicate rewrite(AssociativePredicate predicate) {
-	// int tag = predicate.getTag();
-	//
-	// Predicate neutral = tag == AssociativePredicate.LAND ? Lib.True
-	// : Lib.False;
-	// Predicate determinant = tag == AssociativePredicate.LAND ? Lib.False
-	// : Lib.True;
-	// return removeAssociative(predicate, neutral, determinant);
-	// }
-	//
-	// private Predicate removeAssociative(AssociativePredicate predicate,
-	// Predicate neutral, Predicate dominant) {
-	// Predicate[] subPreds = predicate.getChildren();
-	// List<Predicate> predicates = new ArrayList<Predicate>();
-	// boolean rewrite = false;
-	// for (Predicate subPred : subPreds) {
-	// if (subPred.equals(dominant))
-	// return dominant;
-	// if (subPred.equals(neutral)) {
-	// rewrite = true;
-	// } else {
-	// predicates.add(subPred);
-	// }
-	// }
-	//
-	// if (rewrite) {
-	// if (predicates.size() == 0) {
-	// return neutral;
-	// }
-	// AssociativePredicate newPred = this.getFactory()
-	// .makeAssociativePredicate(predicate.getTag(),
-	// predicates, predicate.getSourceLocation());
-	// return newPred;
-	// }
-	// return super.rewrite(predicate);
-	// }
-	// }
 }
