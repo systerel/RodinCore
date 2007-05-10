@@ -89,17 +89,16 @@ public class OnePointRule implements ISimplifier {
 		list.addAll(tmp1);
 	}
 
-
-
 	private Term getOnePointTerm(IEquality equality, Variable variable) {
 		assert isOnePointCandidate(equality);
+		Term result;
 		Term term1 = equality.getTerms().get(0);
 		Term term2 = equality.getTerms().get(1);
 		
-		if (term1 == variable) return term2;
-		if (term2 == variable) return term1;
-		assert false;
-		return null;
+		if (term1 == variable) result = term2;
+		else result = term1;
+		
+		return result;
 	}
 
 	private Variable getOnePointVariable(IEquality equality) {
@@ -118,6 +117,8 @@ public class OnePointRule implements ISimplifier {
 		
 		Term term1 = equality.getTerms().get(0);
 		Term term2 = equality.getTerms().get(1);
+		if (term1.isQuantified()) return false;
+		if (term2.isQuantified()) return false;
 		if (term1 instanceof Variable) {
 			return !term2.contains((AbstractVariable)term1);
 		}
