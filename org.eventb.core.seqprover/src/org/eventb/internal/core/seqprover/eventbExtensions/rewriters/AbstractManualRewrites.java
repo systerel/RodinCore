@@ -145,7 +145,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 		IPosition position = FormulaFactory.getDefault().makePosition(image);
 
 		final int length = antecedents.length;
-		if (length != 1) {
+		if (reader.getGoal() != null) {
 			// Goal rewriting
 			return new Input(null, position);
 		}
