@@ -243,7 +243,7 @@ public class ElementUIRegistry {
 			for (IConfigurationElement column : columns) {
 				String id = column.getAttribute("id"); // $NON-NLS-1$
 				if (id.equals(columnID)) {
-					String modifierClass = configuration
+					String modifierClass = column
 							.getAttribute("modifier");
 					if (modifierClass != null) {
 						try {
