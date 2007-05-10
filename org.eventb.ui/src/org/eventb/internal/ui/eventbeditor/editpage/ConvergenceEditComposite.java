@@ -71,4 +71,13 @@ public class ConvergenceEditComposite extends CComboEditComposite {
 		}
 	}
 
+	@Override
+	public void initialise() {
+		CCombo combo = (CCombo) control;
+		combo.add(ORDINARY);
+		combo.add(CONVERGENT);
+		combo.add(ANTICIPATED);
+		super.initialise();
+	}
+
 }

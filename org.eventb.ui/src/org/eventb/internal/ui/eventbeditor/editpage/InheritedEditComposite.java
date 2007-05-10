@@ -53,4 +53,12 @@ public class InheritedEditComposite extends CComboEditComposite {
 		}
 	}
 
+	@Override
+	public void initialise() {
+		CCombo combo = (CCombo) control;
+		combo.add(TRUE);
+		combo.add(FALSE);
+		super.initialise();
+	}
+
 }

@@ -68,4 +68,30 @@ public class RefinesEventEditComposite extends CComboEditComposite {
 		}
 	}
 
+	@Override
+	public void initialise() {
+		CCombo combo = (CCombo) control;
+		IRefinesEvent refinesEvent = (IRefinesEvent) element;
+		IEvent event = (IEvent) refinesEvent.getParent();
+		IMachineFile file = (IMachineFile) event.getParent();
+		try {
+			IRefinesMachine[] refinesClauses = file.getRefinesClauses();
+			if (refinesClauses.length == 1) {
+				IRefinesMachine refinesMachine = refinesClauses[0];
+				IMachineFile abstractMachine = refinesMachine
+						.getAbstractMachine();
+				if (abstractMachine.exists()) {
+					IEvent[] events = abstractMachine.getEvents();
+					for (IEvent absEvent : events) {
+						combo.add(absEvent.getLabel());
+					}
+				}
+			}
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		super.initialise();
+	}
+
 }

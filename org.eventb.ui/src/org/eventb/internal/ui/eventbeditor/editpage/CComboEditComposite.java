@@ -14,7 +14,7 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 	public void createComposite(FormToolkit toolkit, Composite parent) {
 		final CCombo combo = new CCombo(parent, SWT.FLAT | SWT.READ_ONLY);
 		setControl(combo);
-		refresh();
+		initialise();
 		combo.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -35,6 +35,12 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 			combo.setText(getValue());
 			internalPack();
 		}
+	}
+
+	@Override
+	public void initialise() {
+		CCombo combo = (CCombo) control;
+		combo.setText(getValue());
 	}
 
 	public void setSelected(boolean selection) {
