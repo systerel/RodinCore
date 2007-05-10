@@ -64,6 +64,13 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#refresh(org.rodinp.core.IInternalElement)
+	 */
+	public abstract void initialise();
+	
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setFillHorizontal(boolean)
 	 */
 	public void setFillHorizontal(boolean fill) {
@@ -83,22 +90,24 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	}
 
 	void internalPack() {
-		Composite parent = control.getParent();
-//		form.getBody().setRedraw(false);
-		Rectangle bounds = parent.getBounds();
-		Point preferredSize = parent.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		internalPack(control);
+	}
 
-		if (preferredSize.x > bounds.width || preferredSize.y > bounds.height) {
+	private void internalPack(Control c) {
+		if (c.equals(form.getBody())) {
 			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Full resize");
-			form.getBody().pack();
-			form.reflow(true);
-		} else {
-			if (EventBEditorUtils.DEBUG)
-				EventBEditorUtils.debug("Local resize");
-			parent.setBounds(bounds);
+			form.reflow(true);			
 		}
-//		form.getBody().setRedraw(true);
+		Rectangle bounds = c.getBounds();
+		Point preferredSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+		if (preferredSize.x > bounds.width || preferredSize.y > bounds.height) {
+			internalPack(c.getParent());
+		} else {
+			c.pack();
+			c.setBounds(bounds);
+		}
 	}
 
 }
