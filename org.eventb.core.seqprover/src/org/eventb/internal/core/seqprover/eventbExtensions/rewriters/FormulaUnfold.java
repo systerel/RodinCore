@@ -20,8 +20,9 @@ public class FormulaUnfold {
 		assert type instanceof PowerSetType;
 		Type baseType = type.getBaseType();
 
-		BoundIdentDecl[] identDecls = getBoundIdentDecls(0, baseType);
-		Expression exp = getExpression(0, baseType);
+		BoundIdentDecl[] identDecls = getBoundIdentDecls(baseType);
+		
+		Expression exp = getExpression(identDecls.length - 1, baseType);
 
 		Predicate pred = ff.makeRelationalPredicate(Predicate.IN, exp, S
 				.shiftBoundIdentifiers(identDecls.length, ff), null);
@@ -35,10 +36,10 @@ public class FormulaUnfold {
 		if (type instanceof ProductType) {
 			Type left = ((ProductType) type).getLeft();
 			Type right = ((ProductType) type).getRight();
-			BoundIdentDecl[] identDeclsLeft = getBoundIdentDecls(i, left);
+			BoundIdentDecl[] identDeclsLeft = getBoundIdentDecls(left);
 
 			Expression expLeft = getExpression(i, left);
-			Expression expRight = getExpression(i + identDeclsLeft.length,
+			Expression expRight = getExpression(i - identDeclsLeft.length,
 					right);
 			return ff.makeBinaryExpression(Expression.MAPSTO, expLeft,
 					expRight, null);
@@ -47,19 +48,18 @@ public class FormulaUnfold {
 		}
 	}
 
-	private static BoundIdentDecl[] getBoundIdentDecls(int i, Type type) {
+	private static BoundIdentDecl[] getBoundIdentDecls(Type type) {
 		if (type instanceof ProductType) {
 			Type left = ((ProductType) type).getLeft();
 			Type right = ((ProductType) type).getRight();
-			BoundIdentDecl[] identDeclsLeft = getBoundIdentDecls(i, left);
-			BoundIdentDecl[] identDeclsRight = getBoundIdentDecls(i
-					+ identDeclsLeft.length, right);
+			BoundIdentDecl[] identDeclsLeft = getBoundIdentDecls(left);
+			BoundIdentDecl[] identDeclsRight = getBoundIdentDecls(right);
 			BoundIdentDecl[] identDecls = new BoundIdentDecl[identDeclsRight.length
 					+ identDeclsLeft.length];
-			System.arraycopy(identDeclsRight, 0, identDecls, 0,
-					identDeclsRight.length);
 			System.arraycopy(identDeclsLeft, 0, identDecls,
-					identDeclsRight.length, identDeclsLeft.length);
+					0, identDeclsLeft.length);
+			System.arraycopy(identDeclsRight, 0, identDecls, identDeclsLeft.length,
+					identDeclsRight.length);
 			return identDecls;
 		} else {
 			return new BoundIdentDecl[] { ff
@@ -254,8 +254,8 @@ public class FormulaUnfold {
 		assert type instanceof PowerSetType;
 		Type baseType = type.getBaseType();
 
-		BoundIdentDecl[] identDecls = getBoundIdentDecls(0, baseType);
-		Expression exp = getExpression(0, baseType);
+		BoundIdentDecl[] identDecls = getBoundIdentDecls(baseType);
+		Expression exp = getExpression(identDecls.length - 1, baseType);
 
 		Predicate P = ff.makeRelationalPredicate(Predicate.IN, exp, S
 				.shiftBoundIdentifiers(identDecls.length, ff), null);

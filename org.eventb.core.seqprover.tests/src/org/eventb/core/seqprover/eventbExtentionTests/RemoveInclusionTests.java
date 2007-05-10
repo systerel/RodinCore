@@ -31,30 +31,30 @@ public class RemoveInclusionTests extends AbstractTests {
 
 	Predicate P1 = TestLib.genPred("(0 = 1) ⇒ {1} ⊆ {1, 2}");
 
-	Predicate P2 = TestLib.genPred("∀x·x = 0 ⇒ {x} ⊆ {x, 2}");
+	Predicate P2 = TestLib.genPred("∀x·x = TRUE ⇒ {x} ⊆ {x, FALSE}");
 
 	Predicate P3 = TestLib.genPred("(0 = 1) ⇒ ∅ ⊆ {1, 2}");
 
-	Predicate P4 = TestLib.genPred("∀x·x = 0 ⇒ ∅ ⊆ {x, 2}");
+	Predicate P4 = TestLib.genPred("∀x·x = TRUE ⇒ ∅ ⊆ {x, FALSE}");
 
 	Predicate P5 = TestLib.genPred("(0 = 1) ⇒ {1, 2} ⊆ {1, 2}");
 
-	Predicate P6 = TestLib.genPred("∀x·x = 0 ⇒ {x, 2} ⊆ {x, 2}");
+	Predicate P6 = TestLib.genPred("∀x·x = TRUE ⇒ {x, FALSE} ⊆ {x, FALSE}");
 
 	Predicate P7 = TestLib.genPred("(0 = 1) ⇒ {1 ↦ 2} ⊆ {1 ↦ 2, 2 ↦ 3}");
 
-	Predicate P8 = TestLib.genPred("∀x·x = 0 ⇒ {x ↦ 2} ⊆ {x ↦ 2, 2 ↦ x}");
+	Predicate P8 = TestLib.genPred("∀x·x = TRUE ⇒ {x ↦ 2} ⊆ {x ↦ 2, x ↦ 3}");
 
 	Predicate P9 = TestLib
 			.genPred("(0 = 1) ⇒ {(0 ↦ 2) ↦ (2 ↦ 3)} ⊆ {(1 ↦ 2) ↦ (2 ↦ 3)}");
 
 	Predicate P10 = TestLib
-			.genPred("∀x·x = 0 ⇒ {0 ↦ (2 ↦ 2) ↦ x} ⊆ {x ↦ (2 ↦ 2) ↦ x}");
+			.genPred("∀x·x = TRUE ⇒ {FALSE ↦ (2 ↦ 2) ↦ x} ⊆ {x ↦ (2 ↦ 2) ↦ TRUE}");
 
 	Predicate P11 = TestLib.genPred("(0 = 1) ⇒ {1 ↦ {2}} ⊆ {1 ↦ {2}, 2 ↦ {3}}");
 
 	Predicate P12 = TestLib
-			.genPred("∀x·x = 0 ⇒ {{x} ↦ 2} ⊆ {{x} ↦ 2, {2} ↦ x}");
+			.genPred("∀x·x = TRUE ⇒ {{x} ↦ 2} ⊆ {{x} ↦ 2, {x} ↦ 3}");
 
 	@Test
 	public void testGoalNotApplicable() {
@@ -303,7 +303,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully goal P2 ",
-				"{}[][][⊤] |- ∀x·x=0⇒(∀x0·x0∈{x}⇒x0∈{x,2})", newSeqs);
+				"{}[][][⊤] |- ∀x·x=TRUE⇒(∀x0·x0∈{x}⇒x0∈{x,FALSE})", newSeqs);
 
 		seq = TestLib.genSeq(P2 + " |- ⊤ ");
 		output = riReasoner.apply(seq, new RemoveNegation.Input(P2, ff
@@ -311,7 +311,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully hyp P2 ",
-				"{}[∀x·x=0⇒{x}⊆{x,2}][][∀x·x=0⇒(∀x0·x0∈{x}⇒x0∈{x,2})] |- ⊤",
+				"{}[∀x·x=TRUE⇒{x}⊆{x,FALSE}][][∀x·x=TRUE⇒(∀x0·x0∈{x}⇒x0∈{x,FALSE})] |- ⊤",
 				newSeqs);
 
 		seq = TestLib.genSeq(" ⊤ |- " + P3);
@@ -336,7 +336,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully goal P4 ",
-				"{}[][][⊤] |- ∀x·x=0⇒⊤", newSeqs);
+				"{}[][][⊤] |- ∀x·x=TRUE⇒⊤", newSeqs);
 
 		seq = TestLib.genSeq(P4 + " |- ⊤ ");
 		output = riReasoner.apply(seq, new RemoveNegation.Input(P4, ff
@@ -344,7 +344,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully hyp P4 ",
-				"{}[∀x·x=0⇒∅⊆{x,2}][][∀x·x=0⇒⊤] |- ⊤", newSeqs);
+				"{}[∀x·x=TRUE⇒∅⊆{x,FALSE}][][∀x·x=TRUE⇒⊤] |- ⊤", newSeqs);
 
 		seq = TestLib.genSeq(" ⊤ |- " + P5);
 		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
@@ -368,7 +368,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully goal P6 ",
-				"{}[][][⊤] |- ∀x·x=0⇒⊤", newSeqs);
+				"{}[][][⊤] |- ∀x·x=TRUE⇒⊤", newSeqs);
 
 		seq = TestLib.genSeq(P6 + " |- ⊤ ");
 		output = riReasoner.apply(seq, new RemoveNegation.Input(P6, ff
@@ -376,7 +376,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully hyp P6 ",
-				"{}[∀x·x=0⇒{x,2}⊆{x,2}][][∀x·x=0⇒⊤] |- ⊤", newSeqs);
+				"{}[∀x·x=TRUE⇒{x,FALSE}⊆{x,FALSE}][][∀x·x=TRUE⇒⊤] |- ⊤", newSeqs);
 
 		seq = TestLib.genSeq(" ⊤ |- " + P7);
 		output = riReasoner.apply(seq, new RemoveNegation.Input(null, ff
@@ -384,7 +384,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully goal P7 ",
-				"{}[][][⊤] |- 0=1⇒(∀x,x0·x0 ↦ x∈{1 ↦ 2}⇒x0 ↦ x∈{1 ↦ 2,2 ↦ 3})",
+				"{}[][][⊤] |- 0=1⇒(∀x,x0·x ↦ x0∈{1 ↦ 2}⇒x ↦ x0∈{1 ↦ 2,2 ↦ 3})",
 				newSeqs);
 
 		seq = TestLib.genSeq(P7 + " |- ⊤ ");
@@ -394,7 +394,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents(
 				"Applied successfully hyp P7 ",
-				"{}[0=1⇒{1 ↦ 2}⊆{1 ↦ 2,2 ↦ 3}][][0=1⇒(∀x,x0·x0 ↦ x∈{1 ↦ 2}⇒x0 ↦ x∈{1 ↦ 2,2 ↦ 3})] |- ⊤",
+				"{}[0=1⇒{1 ↦ 2}⊆{1 ↦ 2,2 ↦ 3}][][0=1⇒(∀x,x0·x ↦ x0∈{1 ↦ 2}⇒x ↦ x0∈{1 ↦ 2,2 ↦ 3})] |- ⊤",
 				newSeqs);
 
 		seq = TestLib.genSeq(" ⊤ |- " + P8);
@@ -404,7 +404,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents(
 				"Applied successfully goal P8 ",
-				"{}[][][⊤] |- ∀x·x=0⇒(∀x0,x1·x1 ↦ x0∈{x ↦ 2}⇒x1 ↦ x0∈{x ↦ 2,2 ↦ x})",
+				"{}[][][⊤] |- ∀x·x=TRUE⇒(∀x0,x1·x0 ↦ x1∈{x ↦ 2}⇒x0 ↦ x1∈{x ↦ 2,x ↦ 3})",
 				newSeqs);
 
 		seq = TestLib.genSeq(P8 + " |- ⊤ ");
@@ -414,7 +414,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents(
 				"Applied successfully hyp P8 ",
-				"{}[∀x·x=0⇒{x ↦ 2}⊆{x ↦ 2,2 ↦ x}][][∀x·x=0⇒(∀x0,x1·x1 ↦ x0∈{x ↦ 2}⇒x1 ↦ x0∈{x ↦ 2,2 ↦ x})] |- ⊤",
+				"{}[∀x·x=TRUE⇒{x ↦ 2}⊆{x ↦ 2,x ↦ 3}][][∀x·x=TRUE⇒(∀x0,x1·x0 ↦ x1∈{x ↦ 2}⇒x0 ↦ x1∈{x ↦ 2,x ↦ 3})] |- ⊤",
 				newSeqs);
 
 		seq = TestLib.genSeq(" ⊤ |- " + P9);
@@ -424,7 +424,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents(
 				"Applied successfully goal P9 ",
-				"{}[][][⊤] |- 0=1⇒(∀x,x0,x1,x2·x2 ↦ x1 ↦ (x0 ↦ x)∈{0 ↦ 2 ↦ (2 ↦ 3)}⇒x2 ↦ x1 ↦ (x0 ↦ x)∈{1 ↦ 2 ↦ (2 ↦ 3)})",
+				"{}[][][⊤] |- 0=1⇒(∀x,x0,x1,x2·x ↦ x0 ↦ (x1 ↦ x2)∈{0 ↦ 2 ↦ (2 ↦ 3)}⇒x ↦ x0 ↦ (x1 ↦ x2)∈{1 ↦ 2 ↦ (2 ↦ 3)})",
 				newSeqs);
 
 		seq = TestLib.genSeq(P9 + " |- ⊤ ");
@@ -434,7 +434,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents(
 				"Applied successfully hyp P9 ",
-				"{}[0=1⇒{0 ↦ 2 ↦ (2 ↦ 3)}⊆{1 ↦ 2 ↦ (2 ↦ 3)}][][0=1⇒(∀x,x0,x1,x2·x2 ↦ x1 ↦ (x0 ↦ x)∈{0 ↦ 2 ↦ (2 ↦ 3)}⇒x2 ↦ x1 ↦ (x0 ↦ x)∈{1 ↦ 2 ↦ (2 ↦ 3)})] |- ⊤",
+				"{}[0=1⇒{0 ↦ 2 ↦ (2 ↦ 3)}⊆{1 ↦ 2 ↦ (2 ↦ 3)}][][0=1⇒(∀x,x0,x1,x2·x ↦ x0 ↦ (x1 ↦ x2)∈{0 ↦ 2 ↦ (2 ↦ 3)}⇒x ↦ x0 ↦ (x1 ↦ x2)∈{1 ↦ 2 ↦ (2 ↦ 3)})] |- ⊤",
 				newSeqs);
 
 		seq = TestLib.genSeq(" ⊤ |- " + P10);
@@ -444,7 +444,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents(
 				"Applied successfully goal P10 ",
-				"{}[][][⊤] |- ∀x·x=0⇒(∀x0,x1,x2,x3·x3 ↦ (x2 ↦ x1) ↦ x0∈{0 ↦ (2 ↦ 2) ↦ x}⇒x3 ↦ (x2 ↦ x1) ↦ x0∈{x ↦ (2 ↦ 2) ↦ x})",
+				"{}[][][⊤] |- ∀x·x=TRUE⇒(∀x0,x1,x2,x3·x0 ↦ (x1 ↦ x2) ↦ x3∈{FALSE ↦ (2 ↦ 2) ↦ x}⇒x0 ↦ (x1 ↦ x2) ↦ x3∈{x ↦ (2 ↦ 2) ↦ TRUE})",
 				newSeqs);
 
 		seq = TestLib.genSeq(P10 + " |- ⊤ ");
@@ -454,7 +454,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents(
 				"Applied successfully hyp P10 ",
-				"{}[∀x·x=0⇒{0 ↦ (2 ↦ 2) ↦ x}⊆{x ↦ (2 ↦ 2) ↦ x}][][∀x·x=0⇒(∀x0,x1,x2,x3·x3 ↦ (x2 ↦ x1) ↦ x0∈{0 ↦ (2 ↦ 2) ↦ x}⇒x3 ↦ (x2 ↦ x1) ↦ x0∈{x ↦ (2 ↦ 2) ↦ x})] |- ⊤",
+				"{}[∀x·x=TRUE⇒{FALSE ↦ (2 ↦ 2) ↦ x}⊆{x ↦ (2 ↦ 2) ↦ TRUE}][][∀x·x=TRUE⇒(∀x0,x1,x2,x3·x0 ↦ (x1 ↦ x2) ↦ x3∈{FALSE ↦ (2 ↦ 2) ↦ x}⇒x0 ↦ (x1 ↦ x2) ↦ x3∈{x ↦ (2 ↦ 2) ↦ TRUE})] |- ⊤",
 				newSeqs);
 
 		seq = TestLib.genSeq(" ⊤ |- " + P11);
@@ -464,7 +464,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents(
 				"Applied successfully goal P11 ",
-				"{}[][][⊤] |- 0=1⇒(∀x,x0·x0 ↦ x∈{1 ↦ {2}}⇒x0 ↦ x∈{1 ↦ {2},2 ↦ {3}})",
+				"{}[][][⊤] |- 0=1⇒(∀x,x0·x ↦ x0∈{1 ↦ {2}}⇒x ↦ x0∈{1 ↦ {2},2 ↦ {3}})",
 				newSeqs);
 
 		seq = TestLib.genSeq(P11 + " |- ⊤ ");
@@ -474,7 +474,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents(
 				"Applied successfully hyp P11 ",
-				"{}[0=1⇒{1 ↦ {2}}⊆{1 ↦ {2},2 ↦ {3}}][][0=1⇒(∀x,x0·x0 ↦ x∈{1 ↦ {2}}⇒x0 ↦ x∈{1 ↦ {2},2 ↦ {3}})] |- ⊤",
+				"{}[0=1⇒{1 ↦ {2}}⊆{1 ↦ {2},2 ↦ {3}}][][0=1⇒(∀x,x0·x ↦ x0∈{1 ↦ {2}}⇒x ↦ x0∈{1 ↦ {2},2 ↦ {3}})] |- ⊤",
 				newSeqs);
 
 		seq = TestLib.genSeq(" ⊤ |- " + P12);
@@ -484,7 +484,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents(
 				"Applied successfully goal P12 ",
-				"{}[][][⊤] |- ∀x·x=0⇒(∀x0,x1·x1 ↦ x0∈{{x} ↦ 2}⇒x1 ↦ x0∈{{x} ↦ 2,{2} ↦ x})",
+				"{}[][][⊤] |- ∀x·x=TRUE⇒(∀x0,x1·x0 ↦ x1∈{{x} ↦ 2}⇒x0 ↦ x1∈{{x} ↦ 2,{x} ↦ 3})",
 				newSeqs);
 
 		seq = TestLib.genSeq(P12 + " |- ⊤ ");
@@ -494,7 +494,7 @@ public class RemoveInclusionTests extends AbstractTests {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents(
 				"Applied successfully hyp P12 ",
-				"{}[∀x·x=0⇒{{x} ↦ 2}⊆{{x} ↦ 2,{2} ↦ x}][][∀x·x=0⇒(∀x0,x1·x1 ↦ x0∈{{x} ↦ 2}⇒x1 ↦ x0∈{{x} ↦ 2,{2} ↦ x})] |- ⊤",
+				"{}[∀x·x=TRUE⇒{{x} ↦ 2}⊆{{x} ↦ 2,{x} ↦ 3}][][∀x·x=TRUE⇒(∀x0,x1·x0 ↦ x1∈{{x} ↦ 2}⇒x0 ↦ x1∈{{x} ↦ 2,{x} ↦ 3})] |- ⊤",
 				newSeqs);
 	}
 
