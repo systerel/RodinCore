@@ -99,17 +99,6 @@ public class TestOnePoint extends AbstractPPTest {
 					cClause(cNEqual(a, b))
 			),
 			
-			// EXISTENTIAL
-			// TODO add a proof of this one in thesis
-			new TestPair(
-					cClause(cPred(0,var0),cNEqual(evar0,var0)),
-					cClause(cPred(0,evar0))
-			),
-			new TestPair(
-					cClause(cPred(0,var0),cPred(1,var0),cNEqual(evar0,var0)),
-					cClause(cPred(0,evar0),cPred(1,evar0))
-			),
-			
 			// EQUIVALENCE
 			// standard test
 			new TestPair(
@@ -150,6 +139,7 @@ public class TestOnePoint extends AbstractPPTest {
 					cClause(cNEqual(var0, a)),
 					FALSE
 			),
+			
 	};
 	
 	TestPair[] testNotOnePoint = new TestPair[] {
@@ -157,7 +147,27 @@ public class TestOnePoint extends AbstractPPTest {
 			new TestPair(
 					cClause(cEqual(var0, a), cPred(0, var0)),
 					cClause(cEqual(var0, a), cPred(0, var0))
-			)
+			),
+			
+			
+			new TestPair(
+					cClause(cNEqual(evar0, var1)),
+					cClause(cNEqual(evar0, var1))
+			),
+			
+			// EXISTENTIAL
+			new TestPair(
+					cClause(cPred(0,var0),cNEqual(evar0,var0)),
+					cClause(cPred(0,var0),cNEqual(evar0,var0))
+			),
+			new TestPair(
+					cClause(cPred(0,var0),cNEqual(var0,evar0)),
+					cClause(cPred(0,var0),cNEqual(var0,evar0))
+			),
+			new TestPair(
+					cClause(cPred(0,var0),cPred(1,var0),cNEqual(evar0,var0)),
+					cClause(cPred(0,var0),cPred(1,var0),cNEqual(evar0,var0))
+			),
 	};
 	
 	private OnePointRule rule = new OnePointRule();
