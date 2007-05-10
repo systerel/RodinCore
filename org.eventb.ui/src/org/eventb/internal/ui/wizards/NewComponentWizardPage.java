@@ -12,10 +12,6 @@
 
 package org.eventb.internal.ui.wizards;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -30,29 +26,28 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEventBProject;
 import org.eventb.core.IMachineFile;
+import org.eventb.internal.ui.RodinProjectSelectionDialog;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 
 /**
  * @author htson
  *         <p>
- *         The "New" wizard page allows setting the container for the new
+ *         The "New" wizard page allows setting the project for the new
  *         component as well as the component name. The page will only accept
  *         component name without the extension.
  */
 public class NewComponentWizardPage extends WizardPage {
 
 	// Some text areas.
-	private Text containerText;
+	private Text projectText;
 
 	private Text componentText;
 
@@ -63,9 +58,6 @@ public class NewComponentWizardPage extends WizardPage {
 
 	// The selection when the wizard is launched.
 	private ISelection selection;
-
-	private static final IWorkspaceRoot wsRoot =
-		ResourcesPlugin.getWorkspace().getRoot();
 
 	/**
 	 * Constructor for NewComponentWizardPage.
@@ -88,24 +80,24 @@ public class NewComponentWizardPage extends WizardPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
+		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
+		composite.setLayout(layout);
 		layout.numColumns = 3;
 		layout.verticalSpacing = 9;
-		Label label = new Label(container, SWT.NULL);
-		label.setText("&Container:");
+		Label label = new Label(composite, SWT.NULL);
+		label.setText("&Project:");
 
-		containerText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		projectText = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		containerText.setLayoutData(gd);
-		containerText.addModifyListener(new ModifyListener() {
+		projectText.setLayoutData(gd);
+		projectText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
 			}
 		});
 
-		Button button = new Button(container, SWT.PUSH);
+		Button button = new Button(composite, SWT.PUSH);
 		button.setText("Browse...");
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -113,10 +105,10 @@ public class NewComponentWizardPage extends WizardPage {
 				handleBrowse();
 			}
 		});
-		label = new Label(container, SWT.NULL);
+		label = new Label(composite, SWT.NULL);
 		label.setText("&Component name:");
 
-		componentText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		componentText = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		componentText.setLayoutData(gd);
 		componentText.addModifyListener(new ModifyListener() {
@@ -125,10 +117,10 @@ public class NewComponentWizardPage extends WizardPage {
 			}
 		});
 
-		createComposite(container, 1); // ignore the next cell
+		createComposite(composite, 1); // ignore the next cell
 
 		// composite_tab << parent
-		Composite composite_tab = createComposite(container, 1);
+		Composite composite_tab = createComposite(composite, 1);
 		createLabel(composite_tab,
 				"Please choose the type of the new component"); //$NON-NLS-1$
 		GridData data = new GridData();
@@ -144,7 +136,7 @@ public class NewComponentWizardPage extends WizardPage {
 
 		initialize();
 		dialogChanged();
-		setControl(container);
+		setControl(composite);
 	}
 
 	/**
@@ -209,10 +201,10 @@ public class NewComponentWizardPage extends WizardPage {
 	}
 
 	/**
-	 * Tests if the current workbench selection is a suitable container to use.
+	 * Tests if the current workbench selection is a suitable project to use.
 	 */
 	private void initialize() {
-		componentText.setText("NewComponent");
+		componentText.setText("changeMe");
 		machineButton.setSelection(true);
 		contextButton.setSelection(false);
 
@@ -247,28 +239,35 @@ public class NewComponentWizardPage extends WizardPage {
 			System.out.println("Project " + project);
 		
 		if (project != null) {
-//			final IProject container = project.getProject();
-			containerText.setText(project.getElementName());
+			projectText.setText(project.getElementName());
 			componentText.setFocus();
 			componentText.selectAll();
 		}
 		else {
-			containerText.setFocus();
+			projectText.setFocus();
 		}
 	}
 
 	/**
-	 * Uses the standard container selection dialog to choose the new value for
-	 * the container field.
+	 * Uses the RODIN project selection dialog to choose the new value for
+	 * the project field.
 	 */
 	void handleBrowse() {
-		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
-				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-				"Select new component container");
-		if (dialog.open() == ContainerSelectionDialog.OK) {
+		final String projectName = getProjectName();
+		IRodinProject rodinProject;
+		if (projectName.equals(""))
+			rodinProject = null;
+		else
+			rodinProject = EventBUIPlugin.getRodinDatabase().getRodinProject(
+					projectName);
+		
+		RodinProjectSelectionDialog dialog = new RodinProjectSelectionDialog(
+				getShell(), rodinProject, false, "Project Selection",
+				"Select a RODIN project");
+		if (dialog.open() == RodinProjectSelectionDialog.OK) {
 			Object[] result = dialog.getResult();
 			if (result.length == 1) {
-				containerText.setText(((Path) result[0]).toString());
+				projectText.setText(((IRodinProject) result[0]).getElementName());
 			}
 		}
 	}
@@ -277,29 +276,22 @@ public class NewComponentWizardPage extends WizardPage {
 	 * Ensures that both text fields are set correctly.
 	 */
 	void dialogChanged() {
-		final String containerName = getContainerName();
+		final String projectName = getProjectName();
 		final String componentName = getComponentName();
 		
-		if (containerName.length() == 0) {
+		if (projectName.length() == 0) {
 			updateStatus("Project must be specified");
 			return;
 		}
-		if (! wsRoot.getLocation().isValidSegment(containerName)) {
+		
+		IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase()
+				.getRodinProject(projectName);
+		if (!rodinProject.exists()) {
 			updateStatus("Project name must be valid");
 			return;
 		}
 
-		final IProject project = wsRoot.getProject(containerName);
-		final IRodinProject rodinProject = RodinCore.valueOf(project);
-		if (! project.exists()) {
-			updateStatus("Project must exist");
-			return;
-		}
-		if (! rodinProject.exists()) {
-			updateStatus("Project must be a Rodin project");
-			return;
-		}
-		if (!project.isAccessible()) {
+		if (rodinProject.isReadOnly()) {
 			updateStatus("Project must be writable");
 			return;
 		}
@@ -341,13 +333,13 @@ public class NewComponentWizardPage extends WizardPage {
 	}
 
 	/**
-	 * Get the name of the container (project).
+	 * Get the name of the project.
 	 * <p>
 	 * 
-	 * @return The name of the container project
+	 * @return The name of the project
 	 */
-	public String getContainerName() {
-		return containerText.getText();
+	public String getProjectName() {
+		return projectText.getText();
 	}
 
 	/**

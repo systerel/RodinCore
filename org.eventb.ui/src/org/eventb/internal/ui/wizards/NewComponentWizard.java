@@ -96,7 +96,7 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 	 */
 	@Override
 	public boolean performFinish() {
-		final String projectName = page.getContainerName();
+		final String projectName = page.getProjectName();
 		final String fileName = page.getComponentName() + "." + page.getType();
 
 		IRunnableWithProgress op = new IRunnableWithProgress() {
