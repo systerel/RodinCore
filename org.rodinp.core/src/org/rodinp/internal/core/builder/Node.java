@@ -183,11 +183,11 @@ public class Node implements Serializable {
 		return toolId;
 	}
 	
-	// after removal of a node from the graph
-	// the successors of the node must be recreated
-	protected void markSuccessorsDated() {
+	protected void markSuccessorsDated(boolean revivePhantoms) {
 		for(Node suc : successorNodes) {
 			suc.setDated(true);
+			if (revivePhantoms)
+				suc.setPhantom(false);
 		}
 	}
 	

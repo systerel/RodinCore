@@ -213,7 +213,38 @@ public class TestSeesContext extends BasicSCTest {
 		
 		runBuilder();
 		
+		hasNotMarker(con.getSeesClauses()[0]);
 		hasMarker(con.getSeesClauses()[1]);
+	}
+
+	/**
+	 * Contexts seen transitively by means of a seen contexts
+	 * should not be seen directly by the machine. All directly seen
+	 * contexts of that name should have a marker.
+	 * (This should be a warning not an error)
+	 */
+	public void testSeesContext_07() throws Exception {
+		IContextFile cab = createContext("cab");
+		
+		cab.save(null, true);
+		
+		IContextFile cco = createContext("cco");
+		addContextExtends(cco, "cab");
+		IMachineFile con = createMachine("con");
+		addMachineSees(con, "cab");
+		addMachineSees(con, "cco");
+		addMachineSees(con, "cab");
+		addMachineSees(con, "cab");
+
+		cco.save(null, true);
+		con.save(null, true);
+		
+		runBuilder();
+		
+		hasMarker(con.getSeesClauses()[0]);
+		hasNotMarker(con.getSeesClauses()[1]);
+		hasMarker(con.getSeesClauses()[2]);
+		hasMarker(con.getSeesClauses()[3]);
 	}
 
 }

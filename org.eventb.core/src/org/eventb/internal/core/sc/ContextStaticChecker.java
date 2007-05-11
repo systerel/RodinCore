@@ -100,11 +100,10 @@ public class ContextStaticChecker extends StaticChecker {
 			for (IExtendsContext extendsContext : extendsContexts) {
 				if (extendsContext.hasAbstractContextName()) {
 					ISCContextFile abstractSCContext = extendsContext.getAbstractSCContext();
-					if (abstractSCContext.getContextFile().exists())
-						graph.addUserDependency(
-								source.getResource(), 
-								abstractSCContext.getResource(), 
-								target.getResource(), false);
+					graph.addUserDependency(
+							source.getResource(), 
+							abstractSCContext.getResource(), 
+							target.getResource(), false);
 				}
 			}
 

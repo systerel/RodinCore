@@ -297,14 +297,15 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				assert typeEnvironment.contains(symbolInfo.getSymbol());
 			}
 
-			for (ISCContext scContext : upContexts[index]) {
-				String name = scContext.getComponentName();
+			final ISCContext[] contexts = upContexts[index];
+			for (int up=0; up < contexts.length; up++) {//ISCContext scContext : contexts) {
+				String name = contexts[up].getComponentName();
 				if (!contextNames.contains(name)) {
 					contextNames.add(name);
-					validContexts.add(scContext);
+					validContexts.add(contexts[up]);
 				}
 				int i = topNames.indexOf(name);
-				if (i != -1 && i != index) {
+				if (i != -1 && i != index && up != contexts.length-1) {
 					redundant[i] = true;
 				}
 			}

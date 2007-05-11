@@ -111,6 +111,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 		
 		runBuilder(
 				"CSC extract /P/y.ctx\n" + 
+				"CSC run /P/y.csc\n" + 
 				"CSC extract /P/x.ctx\n" + 
 				"CSC run /P/x.csc\n" + 
 				"CSC run /P/y.csc"
@@ -167,6 +168,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	
 		runBuilder(
 				"CSC extract /P/x.ctx\n" + 
+				"CSC run /P/x.csc\n" + 
 				"CSC extract /P/y.ctx\n" + 
 				"CSC extract /P/z.ctx\n" + 
 				"CSC run /P/z.csc"
@@ -191,7 +193,8 @@ public class CBuilderTest extends AbstractBuilderTest {
 			runBuilder(
 					"CSC extract /P/y.ctx\n" + 
 					"CSC extract /P/x.ctx\n" + 
-					"CSC run /P/x.csc"
+					"CSC run /P/x.csc\n" + 
+					"CSC run /P/y.csc"
 			);
 		} finally {
 			CSCTool.FAULTY = false;
@@ -303,7 +306,8 @@ public class CBuilderTest extends AbstractBuilderTest {
 		ctx.delete(true, null);
 		
 		runBuilder(
-				"CSC clean /P/x.csc"
+				"CSC clean /P/x.csc\n" + 
+				"CSC run /P/y.csc"
 				);
 		
 		hasMarkers("P/y.ctx");

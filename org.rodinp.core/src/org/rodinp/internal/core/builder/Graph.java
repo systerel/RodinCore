@@ -113,11 +113,9 @@ public class Graph implements Serializable, Iterable<Node> {
 		
 		for(Node n : values) {
 			if(!n.done) {
-				n.markSuccessorsDated();
-				if (n.getSuccessorCount() > 0) {
-					n.setDated(false);
-					n.setPhantom(true);
-				}
+				n.markSuccessorsDated(false);
+				n.setDated(false);
+				n.setPhantom(true);
 				try {
 					cleanNode(n, manager.getZeroProgressMonitor());
 				} catch(CoreException e) {
@@ -193,7 +191,6 @@ public class Graph implements Serializable, Iterable<Node> {
 				}
 				commit();
 			}
-			removePhantoms();
 		}
 
 	public void builderExtractNode(Node node, ProgressManager manager) throws CoreException {
@@ -268,10 +265,6 @@ public class Graph implements Serializable, Iterable<Node> {
 	private void runTool(Node node, ProgressManager manager) {
 		if(node.isPhantom())
 			return;
-		if(node.dependsOnPhantom()) {
-			node.printPhantomProblem();
-			return;
-		}
 		if (node.getTarget().getFile() == null) {// resource is not a file
 			Util.log(null, "Builder resource not a file" + 
 					node.getTarget().getName()); //$NON-NLS-1$
@@ -326,7 +319,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		node.setDated(false);
 		
 		if(changed) {
-			node.markSuccessorsDated();
+			node.markSuccessorsDated(true);
 			extract(node, new GraphModifier(this, node), manager);
 		}
 	}
@@ -426,14 +419,6 @@ public class Graph implements Serializable, Iterable<Node> {
 			else
 				nodePostList.remove(node);
 			nodeCache.remove(node.getTarget().getPath());
-		}
-	}
-	
-	private void removePhantoms() {
-		Collection<Node> values = new ArrayList<Node>(nodes.values());
-		for(Node node : values) {
-			if(node.isPhantom() && node.getSuccessorCount() == 0)
-				removeNode(node);
 		}
 	}
 	

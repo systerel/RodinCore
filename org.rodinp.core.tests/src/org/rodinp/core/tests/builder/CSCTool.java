@@ -4,9 +4,11 @@ package org.rodinp.core.tests.builder;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.builder.IGraph;
 
 public class CSCTool extends SCTool {
@@ -20,7 +22,7 @@ public class CSCTool extends SCTool {
 			ToolTrace.addTrace(CSC, "clean", file);
 
 		if (file.getFileExtension().equals("csc"))
-			file.delete(true, monitor);
+			RodinCore.valueOf(file).delete(true, monitor);
 	}
 	
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
@@ -62,7 +64,12 @@ public class CSCTool extends SCTool {
 		// Populate with a copy of inputs
 		copyDataElements(ctx, target);
 		for (IContext usedContext: ctx.getUsedContexts()) {
-			copyDataElements(usedContext.getCheckedVersion(), target);
+			if (usedContext.getCheckedVersion().exists())
+				copyDataElements(usedContext.getCheckedVersion(), target);
+			else
+				ctx.getResource().createMarker(
+						RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER).setAttribute(
+						IMarker.MESSAGE, "ERROR");
 		}
 		
 		target.save(null, true);

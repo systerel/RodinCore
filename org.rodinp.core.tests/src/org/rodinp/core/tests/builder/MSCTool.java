@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.builder.IGraph;
 
 /**
@@ -28,7 +29,7 @@ public class MSCTool extends SCTool {
 			ToolTrace.addTrace(MSC, "clean", file);
 
 		if (file.getFileExtension().equals("msc"))
-			file.delete(true, monitor);
+			RodinCore.valueOf(file).delete(true, monitor);
 	}
 	
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
@@ -73,11 +74,18 @@ public class MSCTool extends SCTool {
 		// Populate with a copy of inputs
 		copyDataElements(mch, target);
 		
-		if (mch.getReferencedMachine() != null)
-			copyDataElements(mch.getReferencedMachine(), target);
+		if (mch.getReferencedMachine() != null) {
+			if (mch.getReferencedMachine().exists())
+				copyDataElements(mch.getReferencedMachine(), target);
+			else
+				mch.getResource().createMarker(RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER);
+		}
 		
 		for (IContext usedContext: mch.getUsedContexts()) {
-			copyDataElements(usedContext.getCheckedVersion(), target);
+			if (usedContext.getCheckedVersion().exists())
+				copyDataElements(usedContext.getCheckedVersion(), target);
+			else
+				mch.getResource().createMarker(RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER);
 		}
 		
 		target.save(null, true);

@@ -13,11 +13,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEventBFile;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.internal.core.tool.IModuleFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
@@ -54,11 +56,13 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 			throws CoreException {
 		
 		try {
+			
+			IEventBFile eventbFile = (IEventBFile) RodinCore.valueOf(file);
 		
 			monitor.beginTask(Messages.bind(Messages.build_cleaning, file.getName()), 1);
 			
-			if (file.exists())
-				file.delete(true, monitor);
+			if (eventbFile.exists())
+				eventbFile.delete(true, monitor);
 			
 			monitor.worked(1);
 			

@@ -31,7 +31,7 @@ public abstract class POTool extends SCTool {
 		ToolTrace.addTrace(name, "clean", file);
 	
 		if (file.getFileExtension().equals("po"))
-			file.delete(true, monitor);
+			RodinCore.valueOf(file).delete(true, monitor);
 	}
 
 	protected void extract(

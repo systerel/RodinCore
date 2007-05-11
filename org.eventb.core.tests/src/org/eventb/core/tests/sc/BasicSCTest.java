@@ -413,7 +413,7 @@ public abstract class BasicSCTest extends EventBTest {
 		for (IMarker marker : markers) {
 			IRodinElement elem = RodinMarkerUtil.getElement(marker);
 			if (elem != null && elem.equals(element))
-				if (problem != null && problem.getErrorCode().equals(RodinMarkerUtil.getErrorCode(marker)))
+				if (problem == null || problem.getErrorCode().equals(RodinMarkerUtil.getErrorCode(marker)))
 					fail("surplus problem marker on element");
 		}
 	}
