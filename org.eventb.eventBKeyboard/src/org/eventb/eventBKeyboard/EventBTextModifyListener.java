@@ -44,6 +44,8 @@ public class EventBTextModifyListener implements ModifyListener {
 	 */
 	private Collection<IEventBKeyboardTranslator> translators;
 
+	private boolean enable = true;
+	
 	/**
 	 * Main method for the listener. This is call when the text in the widget
 	 * has been changed. This gets all the transator from the extension register
@@ -53,6 +55,9 @@ public class EventBTextModifyListener implements ModifyListener {
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
 	public void modifyText(ModifyEvent e) {
+		if (!enable)
+			return;
+		
 		Text widget = (Text) e.widget;
 
 		getTranslators();
@@ -97,6 +102,10 @@ public class EventBTextModifyListener implements ModifyListener {
 				}
 			}
 		}
+	}
+
+	public void setEnable(boolean enable) {
+		this.enable = enable;
 	}
 
 }
