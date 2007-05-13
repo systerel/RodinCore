@@ -12,6 +12,8 @@
 
 package org.eventb.ui;
 
+import org.rodinp.core.RodinDBException;
+
 /**
  * @author htson
  *         <p>
@@ -27,6 +29,6 @@ public interface IElementLabelProvider {
 	 *            an object
 	 * @return the label of the input object
 	 */
-	public String getLabel(Object obj);
+	public String getLabel(Object obj) throws RodinDBException;
 
 }

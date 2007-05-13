@@ -12,6 +12,8 @@
 
 package org.eventb.ui;
 
+import org.rodinp.core.RodinDBException;
+
 /**
  * @author htson
  *         <p>
@@ -26,7 +28,7 @@ public class NullElementLabelProvider implements IElementLabelProvider {
 	 * 
 	 * @see org.eventb.ui.IElementLabelProvider#getLabel(java.lang.Object)
 	 */
-	public String getLabel(Object obj) {
+	public String getLabel(Object obj) throws RodinDBException {
 		return ""; // Return the empty string.
 	}
 
