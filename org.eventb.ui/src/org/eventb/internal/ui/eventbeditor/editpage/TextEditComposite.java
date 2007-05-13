@@ -1,6 +1,8 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
@@ -10,7 +12,11 @@ import org.eventb.internal.ui.TimerText;
 import org.rodinp.core.RodinDBException;
 
 public abstract class TextEditComposite extends DefaultEditComposite {
-
+	
+	private EventBMath eventBMath;
+	
+	private MouseListener listener;
+	
 	public void refresh() {
 		Text text = (Text) control;
 		String str;
@@ -36,11 +42,11 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 
 	public void createMainComposite(FormToolkit toolkit, Composite parent, int style) {
 		Text text = toolkit.createText(parent, "", style);
+		eventBMath = new EventBMath(text);
 		setControl(text);
 		initialise();
 		text.setForeground(Display.getDefault().getSystemColor(
 				SWT.COLOR_DARK_GREEN));
-		new EventBMath(text);
 		new TimerText(text, 1000) {
 			@Override
 			protected void response() {
@@ -51,9 +57,29 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 	}
 
 	public void setUndefinedValue() {
-		Text text = (Text) control;
+		final Text text = (Text) control;
+		eventBMath.setTranslate(false);
 		text.setText("----- UNDEFINED -----");
+		eventBMath.setTranslate(true);
 		text.setEditable(false);
+		listener = new MouseListener() {
+		
+					public void mouseDoubleClick(MouseEvent e) {
+						mouseDown(e);
+					}
+		
+					public void mouseDown(MouseEvent e) {
+						text.setText("");
+						text.setEditable(true);
+						text.removeMouseListener(this);
+					}
+		
+					public void mouseUp(MouseEvent e) {
+						// Do nothing
+					}
+					
+				};
+		text.addMouseListener(listener);
 	}
 
 	@Override
