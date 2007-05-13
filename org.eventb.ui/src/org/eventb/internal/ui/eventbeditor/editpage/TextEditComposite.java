@@ -7,28 +7,37 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.TimerText;
+import org.rodinp.core.RodinDBException;
 
 public abstract class TextEditComposite extends DefaultEditComposite {
 
-	@Override
 	public void refresh() {
 		Text text = (Text) control;
-		String str = getValue();
-		if (!text.getText().equals(str)) {
-			text.setText(str);
+		String str;
+		try {
+			str = getValue();
+			if (!text.getText().equals(str)) {
+				text.setText(str);
+			}
+		} catch (RodinDBException e) {
+			setUndefinedValue();
 		}
 		internalPack();
 	}
 
-	@Override
 	public void initialise() {
 		Text text = (Text) control;
-		text.setText(getValue());
+		try {
+			text.setText(getValue());
+		} catch (RodinDBException e) {
+			setUndefinedValue();
+		}
 	}
 
 	public void createMainComposite(FormToolkit toolkit, Composite parent, int style) {
-		Text text = toolkit.createText(parent, getValue(), style);
+		Text text = toolkit.createText(parent, "", style);
 		setControl(text);
+		initialise();
 		text.setForeground(Display.getDefault().getSystemColor(
 				SWT.COLOR_DARK_GREEN));
 		new EventBMath(text);
@@ -39,6 +48,12 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 			}
 
 		};
+	}
+
+	public void setUndefinedValue() {
+		Text text = (Text) control;
+		text.setText("----- UNDEFINED -----");
+		text.setEditable(false);
 	}
 
 	@Override

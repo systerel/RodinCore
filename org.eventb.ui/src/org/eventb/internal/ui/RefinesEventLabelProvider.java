@@ -6,15 +6,9 @@ import org.rodinp.core.RodinDBException;
 
 public class RefinesEventLabelProvider implements IElementLabelProvider {
 
-	public String getLabel(Object obj) {
+	public String getLabel(Object obj) throws RodinDBException {
 		if (obj instanceof IRefinesEvent) {
-			try {
-				return ((IRefinesEvent) obj).getAbstractEventLabel();
-			} catch (RodinDBException e) {
-				if (UIUtils.DEBUG)
-					e.printStackTrace();
-				return null;
-			}
+			return ((IRefinesEvent) obj).getAbstractEventLabel();
 		}
 		return null;
 	}

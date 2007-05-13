@@ -1,6 +1,7 @@
 package org.eventb.internal.ui;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.ui.IElementModifier;
 import org.rodinp.core.IRodinElement;
@@ -12,7 +13,14 @@ public class RefinesMachineModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof IRefinesMachine) {
 			IRefinesMachine refinesMachine = (IRefinesMachine) element;
-			if (!refinesMachine.getAbstractMachine().equals(text))
+			IMachineFile abstractMachine = null;
+			try {
+				abstractMachine = refinesMachine.getAbstractMachine();
+			}
+			catch (RodinDBException e) {
+				// Do nothing
+			}
+			if (abstractMachine == null || !abstractMachine.equals(text))
 				refinesMachine.setAbstractMachineName(text,
 						new NullProgressMonitor());
 		}

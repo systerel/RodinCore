@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 public interface IEditComposite {
 
@@ -14,7 +15,7 @@ public interface IEditComposite {
 
 	abstract public void createComposite(FormToolkit toolkit, Composite parent);
 
-	abstract public String getValue();
+	abstract public String getValue() throws RodinDBException;
 
 	abstract public void setValue();
 
@@ -30,4 +31,6 @@ public interface IEditComposite {
 
 	public abstract void setPostfix(String postfix);
 
+	public abstract void setUndefinedValue();
+	
 }

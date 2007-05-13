@@ -12,7 +12,14 @@ public class RefinesEventModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof IRefinesEvent) {
 			IRefinesEvent refinesEvent = (IRefinesEvent) element;
-			if (!refinesEvent.getAbstractEventLabel().equals(text))
+			String abstractEventLabel = null;
+			try {
+				abstractEventLabel = refinesEvent.getAbstractEventLabel();
+			}
+			catch (RodinDBException e) {
+				// Do nothing
+			}
+			if (abstractEventLabel == null || !abstractEventLabel.equals(text))
 				refinesEvent.setAbstractEventLabel(text,
 						new NullProgressMonitor());
 		}

@@ -82,8 +82,10 @@ public abstract class TimerText implements ModifyListener {
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
 	public void modifyText(ModifyEvent e) {
-		lastModify = e.time;
-		text.getDisplay().timerExec(delay, new TimeRunnable(e.time));
+		if (text.getEditable()) {
+			lastModify = e.time;
+			text.getDisplay().timerExec(delay, new TimeRunnable(e.time));
+		}
 	}
 
 }

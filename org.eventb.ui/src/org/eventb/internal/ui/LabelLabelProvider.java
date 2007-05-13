@@ -6,15 +6,9 @@ import org.rodinp.core.RodinDBException;
 
 public class LabelLabelProvider implements IElementLabelProvider {
 
-	public String getLabel(Object obj) {
+	public String getLabel(Object obj) throws RodinDBException {
 		if (obj instanceof ILabeledElement) {
-			try {
-				return ((ILabeledElement) obj).getLabel();
-			} catch (RodinDBException e) {
-				if (UIUtils.DEBUG)
-					e.printStackTrace();
-				return null;
-			}
+			return ((ILabeledElement) obj).getLabel();
 		}
 		return null;
 	}

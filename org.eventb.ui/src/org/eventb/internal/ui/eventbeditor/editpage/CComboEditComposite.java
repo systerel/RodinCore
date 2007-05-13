@@ -6,10 +6,13 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.rodinp.core.RodinDBException;
 
 public abstract class CComboEditComposite extends DefaultEditComposite implements
 		IEditComposite {
 
+	protected final String UNDEFINED = "----- UNDEFINED -----";
+	
 	@Override
 	public void createMainComposite(FormToolkit toolkit, Composite parent) {
 		final CCombo combo = new CCombo(parent, SWT.FLAT | SWT.READ_ONLY);
@@ -28,19 +31,27 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 		});
 	}
 
-	@Override
 	public void refresh() {
 		CCombo combo = (CCombo) control;
-		if (!(combo.getText().equals(getValue()))) {
-			combo.setText(getValue());
-			internalPack();
+		String value;
+		try {
+			value = getValue();
+			if (!(combo.getText().equals(value))) {
+				combo.setText(value);
+				internalPack();
+			}
+		} catch (RodinDBException e) {
+			setUndefinedValue();
 		}
 	}
 
-	@Override
 	public void initialise() {
 		CCombo combo = (CCombo) control;
-		combo.setText(getValue());
+		try {
+			combo.setText(getValue());
+		} catch (RodinDBException e) {
+			setUndefinedValue();
+		}
 	}
 
 	@Override
@@ -54,6 +65,13 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 					SWT.COLOR_WHITE));
 		}
 		super.setSelected(selection);
+	}
+
+	public void setUndefinedValue() {
+		CCombo combo = (CCombo) control;
+		combo.removeAll();
+		combo.add(UNDEFINED);
+		combo.setText(UNDEFINED);
 	}
 
 }

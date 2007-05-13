@@ -378,7 +378,6 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 				}
 
 				form.getBody().setRedraw(true);
-//				form.reflow(true);
 			}
 
 		});

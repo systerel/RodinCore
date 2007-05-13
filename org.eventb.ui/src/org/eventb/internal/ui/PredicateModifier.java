@@ -12,7 +12,14 @@ public class PredicateModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof IPredicateElement) {
 			IPredicateElement pElement = (IPredicateElement) element;
-			if (!pElement.getPredicateString().equals(text))
+			String predicateString = null;
+			try {
+				predicateString = pElement.getPredicateString();
+			}
+			catch (RodinDBException e) {
+				// Do nothing
+			}
+			if (predicateString == null || !predicateString.equals(text))
 				pElement.setPredicateString(text, new NullProgressMonitor());
 		}
 		return;

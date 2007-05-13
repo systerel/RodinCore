@@ -203,7 +203,11 @@ public class ElementUIRegistry {
 		public String getLabelAtColumn(String columnID, Object obj) {
 			IElementLabelProvider provider = providers.get(columnID);
 			if (provider != null) {
-				return provider.getLabel(obj);
+				try {
+					return provider.getLabel(obj);
+				} catch (RodinDBException e) {
+					return DEFAULT_LABEL;
+				}
 			}
 
 			IConfigurationElement[] columns = configuration.getChildren();

@@ -11,16 +11,9 @@ public class InheritedEditComposite extends CComboEditComposite {
 	
 	private final String FALSE = "false";
 	
-	@Override
-	public String getValue() {
+	public String getValue() throws RodinDBException {
 		IEvent event = (IEvent) element;
-		try {
-			return event.isInherited() ? TRUE : FALSE;
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return FALSE;
+		return event.isInherited() ? TRUE : FALSE;
 	}
 
 	@Override
@@ -34,14 +27,19 @@ public class InheritedEditComposite extends CComboEditComposite {
 		super.refresh();
 	}
 
-	@Override
 	public void setValue() {
 		assert element instanceof IEvent;
 		CCombo combo = (CCombo) control;
 		IEvent event = (IEvent) element;
 		String str = combo.getText();
 
-		if (!getValue().equals(str)) {
+		String value;
+		try {
+			value = getValue();
+		} catch (RodinDBException e) {
+			value = null;
+		}
+		if (value == null || !value.equals(str)) {
 			try {
 				event.setInherited(str.equalsIgnoreCase(TRUE),
 						new NullProgressMonitor());

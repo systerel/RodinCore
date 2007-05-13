@@ -9,14 +9,19 @@ import org.rodinp.core.RodinDBException;
 
 public class PredicateEditComposite extends TextEditComposite {
 
-	@Override
 	public void setValue() {
 		assert element instanceof IPredicateElement;
 		final IPredicateElement pElement = (IPredicateElement) element;
 		Text text = (Text) control;
 		String str = text.getText();
 
-		if (!getValue().equals(str)) {
+		String value;
+		try {
+			value = getValue();
+		} catch (RodinDBException e) {
+			value = null;
+		}
+		if (value == null || !value.equals(str)) {
 			try {
 				pElement.setPredicateString(str, null);
 			} catch (RodinDBException e) {
@@ -26,17 +31,10 @@ public class PredicateEditComposite extends TextEditComposite {
 		}
 	}
 
-	@Override
-	public String getValue() {
+	public String getValue() throws RodinDBException {
 		assert element instanceof IPredicateElement;
 		final IPredicateElement pElement = (IPredicateElement) element;
-		try {
-			return pElement.getPredicateString();
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "";
+		return pElement.getPredicateString();
 	}
 
 

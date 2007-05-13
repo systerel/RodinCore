@@ -10,15 +10,10 @@ import org.rodinp.core.RodinDBException;
 
 public class CommentEditComposite extends TextEditComposite {
 
-	@Override
-	public String getValue() {
+	public String getValue() throws RodinDBException {
 		assert element instanceof ICommentedElement;
 		final ICommentedElement cElement = (ICommentedElement) element;
-		try {
-			return cElement.getComment();
-		} catch (RodinDBException e) {
-			return "";
-		}
+		return cElement.getComment();
 	}
 
 	@Override
@@ -26,13 +21,18 @@ public class CommentEditComposite extends TextEditComposite {
 		createMainComposite(toolkit, parent, SWT.MULTI);
 	}
 
-	@Override
 	public void setValue() {
 		assert element instanceof ICommentedElement;
 		final ICommentedElement cElement = (ICommentedElement) element;
 		Text text = (Text) control;
 		String str = text.getText();
-		if (!getValue().equals(str)) {
+		String value;
+		try {
+			value = getValue();
+		} catch (RodinDBException e) {
+			value = null;
+		}
+		if (value == null || !value.equals(str)) {
 			try {
 				cElement.setComment(str, new NullProgressMonitor());
 			} catch (RodinDBException e) {

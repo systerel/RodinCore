@@ -12,7 +12,14 @@ public class LabelModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof ILabeledElement) {
 			ILabeledElement lElement = (ILabeledElement) element;
-			if (!lElement.getLabel().equals(text))
+			String label = null;
+			try {
+				label = lElement.getLabel();
+			}
+			catch (RodinDBException e) {
+				// Do nothing
+			}
+			if (label == null || !label.equals(text))
 				lElement.setLabel(text, new NullProgressMonitor());
 		}
 		return;

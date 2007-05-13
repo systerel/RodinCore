@@ -83,34 +83,6 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#getValue()
-	 */
-	abstract public String getValue();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setValue()
-	 */
-	abstract public void setValue();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#refresh(org.rodinp.core.IInternalElement)
-	 */
-	public abstract void refresh();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#refresh(org.rodinp.core.IInternalElement)
-	 */
-	public abstract void initialise();
-	
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setFillHorizontal(boolean)
 	 */
 	public void setFillHorizontal(boolean fillHorizontal) {

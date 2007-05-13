@@ -9,14 +9,20 @@ import org.rodinp.core.RodinDBException;
 
 public class AssignmentEditComposite extends TextEditComposite {
 
-	@Override
 	public void setValue() {
 		assert element instanceof IAssignmentElement;
 		final IAssignmentElement aElement = (IAssignmentElement) element;
 		Text text = (Text) control;
 		String str = text.getText();
 
-		if (!getValue().equals(str)) {
+		String value;
+		try {
+			value = getValue();
+		} catch (RodinDBException e) {
+			value = null;
+		}
+
+		if (value == null || !value.equals(str)) {
 			try {
 				aElement.setAssignmentString(str, null);
 			} catch (RodinDBException e) {
@@ -26,17 +32,10 @@ public class AssignmentEditComposite extends TextEditComposite {
 		}
 	}
 
-	@Override
-	public String getValue() {
+	public String getValue() throws RodinDBException {
 		assert element instanceof IAssignmentElement;
 		final IAssignmentElement pElement = (IAssignmentElement) element;
-		try {
-			return pElement.getAssignmentString();
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "";
+		return pElement.getAssignmentString();
 	}
 
 

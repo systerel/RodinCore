@@ -12,7 +12,14 @@ public class SeesContextModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof ISeesContext) {
 			ISeesContext seesContext = (ISeesContext) element;
-			if (!seesContext.getSeenContextName().equals(text))
+			String seenContextName = null;
+			try {
+				seenContextName = seesContext.getSeenContextName();
+			}
+			catch (RodinDBException e) {
+				// Do nothing
+			}
+			if (!seenContextName.equals(text))
 				seesContext.setSeenContextName(text, new NullProgressMonitor());
 		}
 		return;

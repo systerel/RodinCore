@@ -12,7 +12,14 @@ public class ExpressionModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof IExpressionElement) {
 			IExpressionElement eElement = (IExpressionElement) element;
-			if (!eElement.getExpressionString().equals(text))
+			String expressionString = null;
+			try {
+				expressionString = eElement.getExpressionString();
+			}
+			catch (RodinDBException e) {
+				// Do nothing
+			}
+			if (expressionString == null || !expressionString.equals(text))
 				eElement.setExpressionString(text, new NullProgressMonitor());
 		}
 		return;

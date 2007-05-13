@@ -6,16 +6,9 @@ import org.rodinp.core.RodinDBException;
 
 public class SeesContextLabelProvider implements IElementLabelProvider {
 
-	public String getLabel(Object obj) {
+	public String getLabel(Object obj) throws RodinDBException {
 		if (obj instanceof ISeesContext) {
-			try {
-				return ((ISeesContext) obj).getSeenContextName();
-			} catch (RodinDBException e) {
-				if (UIUtils.DEBUG) {
-					e.printStackTrace();
-				}
-				return null;
-			}
+			return ((ISeesContext) obj).getSeenContextName();
 		}
 		return null;
 	}

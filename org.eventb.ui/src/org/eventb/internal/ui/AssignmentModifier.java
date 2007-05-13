@@ -12,7 +12,14 @@ public class AssignmentModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof IAssignmentElement) {
 			IAssignmentElement aElement = (IAssignmentElement) element;
-			if (!aElement.getAssignmentString().equals(text))
+			String assignmentString = null;
+			try {
+				assignmentString = aElement.getAssignmentString();
+			}
+			catch (RodinDBException e) {
+				// Do nothing
+			}
+			if (assignmentString == null || !assignmentString.equals(text))
 				aElement.setAssignmentString(text, new NullProgressMonitor());
 		}
 		return;

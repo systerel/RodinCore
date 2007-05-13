@@ -12,7 +12,14 @@ public class IdentifierModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof IIdentifierElement) {
 			IIdentifierElement iElement = (IIdentifierElement) element;
-			if (!iElement.getIdentifierString().equals(text))
+			String identifierString = null;
+			try {
+				identifierString = iElement.getIdentifierString();
+			}
+			catch (RodinDBException e) {
+				// Do nothing
+			}
+			if (identifierString == null || !identifierString.equals(text))
 				iElement.setIdentifierString(text, new NullProgressMonitor());
 		}
 		return;

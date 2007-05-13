@@ -399,6 +399,7 @@ public class SectionComposite implements ISectionComposite {
 			if (rElement.equals(element)) {
 				elementComp.dispose();
 				toBeRemoved.add(elementComp);
+				form.reflow(true);
 			} else
 				elementComp.elementRemoved(element);
 		}
@@ -428,6 +429,7 @@ public class SectionComposite implements ISectionComposite {
 			// Create a new Element composite added to the end of the list
 			elementComps.add(new ElementComposite(page, toolkit, form,
 					elementComposite, element, level));
+			form.reflow(true);
 		} else {
 			for (IElementComposite elementComp : elementComps) {
 				elementComp.elementAdded(element);

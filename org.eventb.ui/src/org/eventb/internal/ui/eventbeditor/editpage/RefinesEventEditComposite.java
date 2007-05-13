@@ -10,16 +10,9 @@ import org.rodinp.core.RodinDBException;
 
 public class RefinesEventEditComposite extends CComboEditComposite {
 
-	@Override
-	public String getValue() {
+	public String getValue() throws RodinDBException {
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
-		try {
-			return refinesEvent.getAbstractEventLabel();
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "";
+		return refinesEvent.getAbstractEventLabel();
 	}
 
 	@Override
@@ -49,20 +42,25 @@ public class RefinesEventEditComposite extends CComboEditComposite {
 		super.refresh();
 	}
 
-	@Override
 	public void setValue() {
 		assert element instanceof IRefinesEvent;
 		CCombo combo = (CCombo) control;
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
 		String str = combo.getText();
 
-		if (!getValue().equals(str)) {
+		String value;
+		try {
+			value = getValue();
+		} catch (RodinDBException e) {
+			value = null;
+		}
+		if (value == null || !value.equals(str)) {
 			try {
 				refinesEvent.setAbstractEventLabel(str,
 						new NullProgressMonitor());
-			} catch (RodinDBException exc) {
+			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
-				exc.printStackTrace();
+				e.printStackTrace();
 			}
 
 		}
