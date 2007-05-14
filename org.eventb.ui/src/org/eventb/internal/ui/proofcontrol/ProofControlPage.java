@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -89,9 +90,7 @@ import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
-import org.eventb.ui.EventBFormText;
 import org.eventb.ui.EventBUIPlugin;
-import org.eventb.ui.IEventBFormText;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
@@ -113,7 +112,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	ProverUI editor;
 
-	private IEventBFormText formTextInformation;
+//	private IEventBFormText formTextInformation;
 
 	ScrolledForm scrolledForm;
 
@@ -184,7 +183,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
 		store.removePropertyChangeListener(this);
-		formTextInformation.dispose();
+//		formTextInformation.dispose();
 		textInput.dispose();
 		history.dispose();
 		scrolledForm.dispose();
@@ -635,7 +634,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		});
 
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = textInput.getTextWidget().getLineHeight() * 3;
+		gd.heightHint = textInput.getTextWidget().getLineHeight() * 2;
 		gd.widthHint = 200;
 		textInput.getTextWidget().setLayoutData(gd);
 		textInput.getTextWidget().addModifyListener(new ModifyListener() {
@@ -663,14 +662,14 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		historyCombo.setLayoutData(gd);
 		history = new EventBControl(historyCombo);
 
-		formTextInformation = new EventBFormText(toolkit.createFormText(body,
-				true));
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		gd.minimumHeight = 20;
-		gd.heightHint = 20;
-		formTextInformation.getFormText().setLayoutData(gd);
-		setFormTextInformation("");
+//		formTextInformation = new EventBFormText(toolkit.createFormText(body,
+//				true));
+//		gd = new GridData();
+//		gd.horizontalSpan = 2;
+//		gd.minimumHeight = 20;
+//		gd.heightHint = 20;
+//		formTextInformation.getFormText().setLayoutData(gd);
+//		setFormTextInformation("");
 
 		scrolledForm.reflow(true);
 
@@ -708,10 +707,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * @param information
 	 *            the string (information from the UserSupport).
 	 */
-	void setFormTextInformation(String information) {
-		if (formTextInformation.getFormText().isDisposed())
-			return;
-		formTextInformation.getFormText().setText(information, false, false);
+	void setStatusInformation(String information) {
+		IStatusLineManager slManager = getSite().getActionBars()
+				.getStatusLineManager();
+		slManager.setMessage(information);
 	}
 
 	/**
@@ -960,7 +959,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 		int size = information.length;
 		if (size == 0) {
-			setFormTextInformation("");
+			setStatusInformation("");
 			return;
 		}
 
@@ -968,12 +967,12 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		for (int priority = IUserSupportInformation.MAX_PRIORITY; IUserSupportInformation.MIN_PRIORITY <= priority; --priority) {
 			for (int i = information.length - 1; 0 <= i; --i) {
 				if (information[i].getPriority() == priority) {
-					setFormTextInformation(information[i].getInformation().toString());
+					setStatusInformation(information[i].getInformation().toString());
 					return;
 				}
 			}
 		}
-		setFormTextInformation("");
+		setStatusInformation("");
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
