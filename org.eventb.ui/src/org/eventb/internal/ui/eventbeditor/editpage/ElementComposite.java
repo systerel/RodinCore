@@ -60,6 +60,7 @@ public class ElementComposite implements IElementComposite {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
+		gridLayout.verticalSpacing = 0;
 		composite.setLayout(gridLayout);
 
 		row = new EditRow(this, form, toolkit);

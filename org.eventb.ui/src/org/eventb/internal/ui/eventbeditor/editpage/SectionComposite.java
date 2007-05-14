@@ -185,14 +185,9 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	public void setExpand(boolean isExpanded) {
+		form.setRedraw(false);
 		this.isExpanded = isExpanded;
 		if (isExpanded) {
-			GridData gridData = (GridData) beforeComposite.getLayoutData();
-			gridData.heightHint = SWT.DEFAULT;
-			gridData = (GridData) afterComposite.getLayoutData();
-			gridData.heightHint = SWT.DEFAULT;
-			gridData = (GridData) elementComposite.getLayoutData();
-			gridData.heightHint = SWT.DEFAULT;
 			createElementComposites();
 		}
 		else {
@@ -210,15 +205,17 @@ public class SectionComposite implements ISectionComposite {
 			gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = 0;
 		}
-
-		form.getBody().pack(true);
 		form.reflow(true);
+		form.setRedraw(true);
 	}
 
 	public void createContents() {
 		composite = toolkit.createComposite(compParent);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		composite.setLayout(new GridLayout());
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.verticalSpacing = 0;
+		gridLayout.marginWidth = 0;
+		composite.setLayout(gridLayout);
 		if (EventBEditorUtils.DEBUG) {
 			composite.setBackground(composite.getDisplay().getSystemColor(
 					SWT.COLOR_DARK_CYAN));
@@ -232,25 +229,34 @@ public class SectionComposite implements ISectionComposite {
 		if (prefix != null)
 			createPrefixLabel(prefix);
 
+		gridLayout = new GridLayout();
+		gridLayout.verticalSpacing = 0;
+		gridLayout.marginWidth = 0;
 		beforeComposite = toolkit.createComposite(composite);
 		beforeComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		beforeComposite.setLayout(new GridLayout());
+		beforeComposite.setLayout(gridLayout);
 		if (EventBEditorUtils.DEBUG) {
 			beforeComposite.setBackground(composite.getDisplay().getSystemColor(
 					SWT.COLOR_DARK_GRAY));
 		}
 		
+		gridLayout = new GridLayout();
+		gridLayout.verticalSpacing = 0;
+		gridLayout.marginWidth = 0;
 		elementComposite = toolkit.createComposite(composite);
 		elementComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		elementComposite.setLayout(new GridLayout());
+		elementComposite.setLayout(gridLayout);
 		if (EventBEditorUtils.DEBUG) {
 			elementComposite.setBackground(composite.getDisplay().getSystemColor(
 					SWT.COLOR_GREEN));
 		}
 
+		gridLayout = new GridLayout();
+		gridLayout.verticalSpacing = 0;
+		gridLayout.marginWidth = 0;
 		afterComposite = toolkit.createComposite(composite);
 		afterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		afterComposite.setLayout(new GridLayout());
+		afterComposite.setLayout(gridLayout);
 		if (EventBEditorUtils.DEBUG) {
 			afterComposite.setBackground(composite.getDisplay().getSystemColor(
 					SWT.COLOR_DARK_GRAY));
@@ -273,16 +279,31 @@ public class SectionComposite implements ISectionComposite {
 			IRodinElement[] children = parent.getChildrenOfType(type);
 			if (children.length != 0)
 				createBeforeHyperlinks();
+			
+			GridData gridData = (GridData) beforeComposite.getLayoutData();
+			if (beforeHyperlinkComposite != null)
+				gridData.heightHint = SWT.DEFAULT;
+			else
+				gridData.heightHint = 0;
+			
 			elementComps = new LinkedList<IElementComposite>();
 			for (IRodinElement child : children) {
 				elementComps.add(new ElementComposite(page, toolkit, form,
 						elementComposite, child, level));
 			}
+			gridData = (GridData) elementComposite.getLayoutData();
+			if (elementComps.size() != 0)
+				gridData.heightHint = SWT.DEFAULT;
+			else
+				gridData.heightHint = 0;
+			
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		createAfterHyperlinks();
+		GridData gridData = (GridData) afterComposite.getLayoutData();
+		gridData.heightHint = SWT.DEFAULT;
 	}
 
 	private void createBeforeHyperlinks() {
@@ -297,8 +318,7 @@ public class SectionComposite implements ISectionComposite {
 
 		Composite tmp = toolkit.createComposite(beforeHyperlinkComposite);
 		gridData = new GridData();
-		// -12 for alignment with the icon of children elements
-		gridData.widthHint = (level + 1) * 40 - 12; 
+		gridData.widthHint = (level + 1) * 40; 
 		gridData.heightHint = 0;
 		tmp.setLayoutData(gridData);
 
@@ -345,8 +365,7 @@ public class SectionComposite implements ISectionComposite {
 
 		Composite tmp = toolkit.createComposite(afterHyperlinkComposite);
 		gridData = new GridData();
-		// -12 for alignment with the icon of children elements
-		gridData.widthHint = (level + 1) * 40 - 12; 
+		gridData.widthHint = (level + 1) * 40; 
 		gridData.heightHint = 0;
 		tmp.setLayoutData(gridData);
 

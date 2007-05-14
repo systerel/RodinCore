@@ -52,7 +52,7 @@ public class ButtonComposite {
 
 		Composite tmp = toolkit.createComposite(composite);
 		GridData gridData = new GridData();
-		gridData.widthHint = level * 40;
+		gridData.widthHint = level * 40 + 20;
 		gridData.heightHint = 0;
 		tmp.setLayoutData(gridData);
 

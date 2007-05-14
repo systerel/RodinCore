@@ -100,7 +100,8 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		form = managedForm.getForm();
 		Composite body = form.getBody();
 		GridLayout gLayout = new GridLayout();
-		gLayout.horizontalSpacing = 5;
+		gLayout.marginWidth = 0;
+		gLayout.marginHeight = 0;
 		body.setLayout(gLayout);
 
 		if (EventBEditorUtils.DEBUG) {
