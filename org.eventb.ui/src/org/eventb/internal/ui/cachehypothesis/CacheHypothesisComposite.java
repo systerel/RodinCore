@@ -37,7 +37,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 	public void createItems(ToolBar toolBar) {
 		addItem = new ToolItem(toolBar, SWT.PUSH);
 		addItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_ADD));
-		addItem.setToolTipText("Add to selected");
+		addItem.setToolTipText("Select hypotheses");
 		addItem.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -63,7 +63,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 
 		removeItem = new ToolItem(toolBar, SWT.PUSH);
 		removeItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REMOVE));
-		removeItem.setToolTipText("Remove from cached");
+		removeItem.setToolTipText("Remove hypotheses");
 		removeItem.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {

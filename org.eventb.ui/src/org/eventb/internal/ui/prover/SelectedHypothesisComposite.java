@@ -37,7 +37,7 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 	public void createItems(ToolBar toolBar) {
 		removeItem = new ToolItem(toolBar, SWT.PUSH);
 		removeItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REMOVE));
-		removeItem.setToolTipText("Remove from searched");
+		removeItem.setToolTipText("Remove hypotheses");
 		removeItem.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
