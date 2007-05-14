@@ -42,4 +42,19 @@ public class IdentifierEditComposite extends TextEditComposite {
 	public void createMainComposite(FormToolkit toolkit, Composite parent) {
 		createMainComposite(toolkit, parent, SWT.SINGLE);
 	}
+
+	@Override
+	public void setDefaultValue() {
+		assert element instanceof IIdentifierElement;
+		final IIdentifierElement iElement = (IIdentifierElement) element;
+		try {
+			iElement.setIdentifierString("", new NullProgressMonitor());
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		super.setDefaultValue();
+	}
+
+
 }

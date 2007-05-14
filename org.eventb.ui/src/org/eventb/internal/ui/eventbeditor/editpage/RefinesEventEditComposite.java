@@ -92,4 +92,18 @@ public class RefinesEventEditComposite extends CComboEditComposite {
 		super.initialise();
 	}
 
+	@Override
+	public void setDefaultValue() {
+		IRefinesEvent refinesEvent = (IRefinesEvent) element;
+		IEvent event = (IEvent) refinesEvent.getParent();
+		try {
+			refinesEvent.setAbstractEventLabel(event.getLabel(),
+					new NullProgressMonitor());
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		super.setDefaultValue();
+	}
+
 }

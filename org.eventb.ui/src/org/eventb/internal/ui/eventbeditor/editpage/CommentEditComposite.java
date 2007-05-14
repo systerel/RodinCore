@@ -42,4 +42,16 @@ public class CommentEditComposite extends TextEditComposite {
 		}
 	}
 
+	@Override
+	public void setDefaultValue() {
+		final ICommentedElement cElement = (ICommentedElement) element;
+		try {
+			cElement.setComment("", new NullProgressMonitor());
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		super.setDefaultValue();
+	}
+
 }

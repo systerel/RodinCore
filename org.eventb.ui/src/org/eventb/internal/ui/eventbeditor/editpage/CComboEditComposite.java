@@ -2,6 +2,8 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
@@ -68,10 +70,29 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 	}
 
 	public void setUndefinedValue() {
-		CCombo combo = (CCombo) control;
+		final CCombo combo = (CCombo) control;
 		combo.removeAll();
 		combo.add(UNDEFINED);
 		combo.setText(UNDEFINED);
+		combo.addFocusListener(new FocusListener() {
+
+			public void focusGained(FocusEvent e) {
+				combo.removeFocusListener(this);
+				setDefaultValue();
+			}
+
+			public void focusLost(FocusEvent e) {
+				// Do nothing
+			}
+			
+		});
+	}
+
+	@Override
+	public void setDefaultValue() {
+		final CCombo combo = (CCombo) control;
+		combo.removeAll();
+		initialise();
 	}
 
 }

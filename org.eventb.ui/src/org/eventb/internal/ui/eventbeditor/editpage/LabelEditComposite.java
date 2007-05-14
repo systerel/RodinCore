@@ -1,5 +1,6 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
@@ -41,4 +42,19 @@ public class LabelEditComposite extends TextEditComposite {
 	public void createMainComposite(FormToolkit toolkit, Composite parent) {
 		createMainComposite(toolkit, parent, SWT.SINGLE);
 	}
+
+	@Override
+	public void setDefaultValue() {
+		assert element instanceof ILabeledElement;
+		final ILabeledElement lElement = (ILabeledElement) element;
+		try {
+			lElement.setLabel("", new NullProgressMonitor());
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		super.setDefaultValue();
+	}
+	
+	
 }

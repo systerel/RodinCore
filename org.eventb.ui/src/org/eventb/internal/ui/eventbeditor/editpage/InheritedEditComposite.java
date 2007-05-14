@@ -59,4 +59,17 @@ public class InheritedEditComposite extends CComboEditComposite {
 		super.initialise();
 	}
 
+	@Override
+	public void setDefaultValue() {
+		IEvent event = (IEvent) element;
+		try {
+			event.setInherited(false,
+					new NullProgressMonitor());
+		} catch (RodinDBException exc) {
+			// TODO Auto-generated catch block
+			exc.printStackTrace();
+		}
+		super.setDefaultValue();
+	}
+
 }

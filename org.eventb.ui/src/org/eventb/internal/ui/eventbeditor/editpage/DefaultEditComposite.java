@@ -150,4 +150,6 @@ public abstract class DefaultEditComposite implements IEditComposite {
 		this.prefix = prefix;
 	}
 
+	public abstract void setDefaultValue();
+
 }

@@ -79,4 +79,17 @@ public class ConvergenceEditComposite extends CComboEditComposite {
 		super.initialise();
 	}
 
+	@Override
+	public void setDefaultValue() {
+		IEvent event = (IEvent) element;
+		try {
+			event.setConvergence(Convergence.ORDINARY,
+					new NullProgressMonitor());
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		super.setDefaultValue();
+	}
+
 }

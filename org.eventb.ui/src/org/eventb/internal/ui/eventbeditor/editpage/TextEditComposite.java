@@ -1,8 +1,8 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
@@ -14,8 +14,6 @@ import org.rodinp.core.RodinDBException;
 public abstract class TextEditComposite extends DefaultEditComposite {
 	
 	private EventBMath eventBMath;
-	
-	private MouseListener listener;
 	
 	public void refresh() {
 		Text text = (Text) control;
@@ -42,7 +40,15 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 
 	public void createMainComposite(FormToolkit toolkit, Composite parent, int style) {
 		Text text = toolkit.createText(parent, "", style);
-		eventBMath = new EventBMath(text);
+		eventBMath = new EventBMath(text) {
+
+			@Override
+			protected void commit() {
+				setValue();
+				super.commit();
+			}
+			
+		};
 		setControl(text);
 		initialise();
 		text.setForeground(Display.getDefault().getSystemColor(
@@ -62,24 +68,19 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 		text.setText("----- UNDEFINED -----");
 		eventBMath.setTranslate(true);
 		text.setEditable(false);
-		listener = new MouseListener() {
-		
-					public void mouseDoubleClick(MouseEvent e) {
-						mouseDown(e);
-					}
-		
-					public void mouseDown(MouseEvent e) {
-						text.setText("");
-						text.setEditable(true);
-						text.removeMouseListener(this);
-					}
-		
-					public void mouseUp(MouseEvent e) {
-						// Do nothing
-					}
-					
-				};
-		text.addMouseListener(listener);
+		text.addFocusListener(new FocusListener() {
+
+			public void focusGained(FocusEvent e) {
+				text.removeFocusListener(this);
+				text.setEditable(true);
+				setDefaultValue();
+			}
+
+			public void focusLost(FocusEvent e) {
+				// Do nothing
+			}
+			
+		});
 	}
 
 	@Override
@@ -93,6 +94,12 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		}
 		super.setSelected(selection);
+	}
+
+	@Override
+	public void setDefaultValue() {
+		initialise();
+		control.setFocus();
 	}
 
 }
