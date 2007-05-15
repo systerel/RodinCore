@@ -404,9 +404,10 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	public void refresh(IRodinElement element) {
-		for (IElementComposite elementComp : elementComps) {
-			elementComp.refresh(element);
-		}
+		if (elementComps != null)
+			for (IElementComposite elementComp : elementComps) {
+				elementComp.refresh(element);
+			}
 	}
 
 	public IElementType getElementType() {
