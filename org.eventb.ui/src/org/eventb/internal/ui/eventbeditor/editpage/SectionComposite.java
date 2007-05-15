@@ -184,32 +184,26 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	public void setExpand(boolean isExpanded) {
-		form.setRedraw(false);
+		long beforeTime = System.currentTimeMillis();
+		form.setRedraw(false);	
 		this.isExpanded = isExpanded;
 		if (isExpanded) {
 			createElementComposites();
 		}
 		else {
-			if (elementComps != null) {
-				for (IElementComposite elementComp : elementComps) {
-					elementComp.dispose();
-				}
-				elementComps.clear();
-			}
-			if (beforeHyperlinkComposite != null)
-				beforeHyperlinkComposite.dispose();
-			if (afterHyperlinkComposite != null)
-				afterHyperlinkComposite.dispose();
 			GridData gridData = (GridData) beforeComposite.getLayoutData();
 			gridData.heightHint = 0;
 			gridData = (GridData) afterComposite.getLayoutData();
 			gridData.heightHint = 0;
 			gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = 0;
-			
 		}
 		form.reflow(true);
 		form.setRedraw(true);
+		long afterTime = System.currentTimeMillis();
+		if (EventBEditorUtils.DEBUG)
+			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
+					+ " ms");
 	}
 
 	public void createContents() {
@@ -282,19 +276,21 @@ public class SectionComposite implements ISectionComposite {
 
 		try {
 			IRodinElement[] children = parent.getChildrenOfType(type);
-			if (children.length != 0)
+			if (beforeHyperlinkComposite == null)
 				createBeforeHyperlinks();
 			
 			GridData gridData = (GridData) beforeComposite.getLayoutData();
-			if (beforeHyperlinkComposite != null)
+			if (children.length != 0)
 				gridData.heightHint = SWT.DEFAULT;
 			else
 				gridData.heightHint = 0;
 			
-			elementComps = new LinkedList<IElementComposite>();
-			for (IRodinElement child : children) {
-				elementComps.add(new ElementComposite(page, toolkit, form,
-						elementComposite, child, level));
+			if (elementComps == null) {
+				elementComps = new LinkedList<IElementComposite>();
+				for (IRodinElement child : children) {
+					elementComps.add(new ElementComposite(page, toolkit, form,
+							elementComposite, child, level));
+				}
 			}
 			gridData = (GridData) elementComposite.getLayoutData();
 			if (elementComps.size() != 0)
@@ -306,7 +302,9 @@ public class SectionComposite implements ISectionComposite {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		createAfterHyperlinks();
+		if (afterHyperlinkComposite == null)
+			createAfterHyperlinks();
+		
 		GridData gridData = (GridData) afterComposite.getLayoutData();
 		gridData.heightHint = SWT.DEFAULT;
 	}
@@ -417,34 +415,35 @@ public class SectionComposite implements ISectionComposite {
 
 	public void elementRemoved(IRodinElement element) {
 		Collection<IElementComposite> toBeRemoved = new ArrayList<IElementComposite>();
-		for (IElementComposite elementComp : elementComps) {
-			IRodinElement rElement = elementComp.getElement();
+		if (elementComps != null) {
+			for (IElementComposite elementComp : elementComps) {
+				IRodinElement rElement = elementComp.getElement();
 
-			if (rElement.equals(element)) {
-				elementComp.dispose();
-				toBeRemoved.add(elementComp);
-				form.reflow(true);
-			} else
-				elementComp.elementRemoved(element);
+				if (rElement.equals(element)) {
+					elementComp.dispose();
+					toBeRemoved.add(elementComp);
+				} else
+					elementComp.elementRemoved(element);
+			}
+
+			elementComps.removeAll(toBeRemoved);
 		}
-
-		elementComps.removeAll(toBeRemoved);
+		if (elementComps != null && elementComps.size() == 0) {
+			GridData gridData = (GridData) elementComposite.getLayoutData();
+			gridData.heightHint = 0;			
+		}
 		updateHyperlink();
+		form.reflow(true);
 	}
 
 	private void updateHyperlink() {
-		if (elementComps != null && elementComps.size() == 0
-				&& beforeHyperlinkComposite != null) {
-			beforeHyperlinkComposite.dispose();
+		if (elementComps == null || elementComps.size() == 0 || !isExpanded) {
 			GridData gridData = (GridData) beforeComposite.getLayoutData();
 			gridData.heightHint = 0;
-			beforeHyperlinkComposite = null;
-			return;
 		}
 		else {
 			GridData gridData = (GridData) beforeComposite.getLayoutData();
 			gridData.heightHint = SWT.DEFAULT;
-			createBeforeHyperlinks();
 		}
 	}
 
@@ -454,10 +453,15 @@ public class SectionComposite implements ISectionComposite {
 			// Create a new Element composite added to the end of the list
 			elementComps.add(new ElementComposite(page, toolkit, form,
 					elementComposite, element, level));
+			GridData gridData = (GridData) elementComposite.getLayoutData();
+			gridData.heightHint = SWT.DEFAULT;
+			updateHyperlink();
 			form.reflow(true);
 		} else {
-			for (IElementComposite elementComp : elementComps) {
-				elementComp.elementAdded(element);
+			if (elementComps != null) {
+				for (IElementComposite elementComp : elementComps) {
+					elementComp.elementAdded(element);
+				}
 			}
 		}
 		updateHyperlink();
@@ -505,8 +509,10 @@ public class SectionComposite implements ISectionComposite {
 			return;
 		}
 
-		for (IElementComposite elementComp : elementComps) {
-			elementComp.childrenChanged(element, childrenType);
+		if (elementComps != null) {
+			for (IElementComposite elementComp : elementComps) {
+				elementComp.childrenChanged(element, childrenType);
+			}
 		}
 	}
 
