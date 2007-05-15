@@ -58,7 +58,7 @@ public class ButtonComposite {
 
 		foldingHyperlink = toolkit.createImageHyperlink(composite, SWT.TOP);
 		foldingHyperlink.setImage(EventBImage
-				.getImage(IEventBSharedImages.IMG_EXPANDED));
+				.getImage(IEventBSharedImages.IMG_COLLAPSED));
 		foldingHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 
 			@Override

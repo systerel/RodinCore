@@ -46,7 +46,6 @@ public class ElementComposite implements IElementComposite {
 		this.compParent = compParent;
 		this.rElement = element;
 		this.level = level;
-		this.isExpanded = true;
 		createContents();
 	}
 
@@ -65,7 +64,7 @@ public class ElementComposite implements IElementComposite {
 
 		row = new EditRow(this, form, toolkit);
 		row.createContents(toolkit, composite, null, level);
-		createSectionComposites();
+		setExpand(false);
 	}
 
 	public void folding() {
@@ -77,10 +76,12 @@ public class ElementComposite implements IElementComposite {
 		if (isExpanded)
 			createSectionComposites();
 		else {
-			for (ISectionComposite sectionComp : sectionComps) {
-				sectionComp.dispose();
+			if (sectionComps != null) {
+				for (ISectionComposite sectionComp : sectionComps) {
+					sectionComp.dispose();
+				}
+				sectionComps.clear();
 			}
-			sectionComps.clear();
 		}
 
 		form.getBody().pack(true);
