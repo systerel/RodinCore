@@ -29,6 +29,8 @@ public class ElementComposite implements IElementComposite {
 
 	Composite composite;
 
+	Composite mainSectionComposite;
+	
 	ArrayList<ISectionComposite> sectionComps;
 
 	EditPage page;
@@ -64,6 +66,15 @@ public class ElementComposite implements IElementComposite {
 
 		row = new EditRow(this, form, toolkit);
 		row.createContents(toolkit, composite, null, level);
+		
+		mainSectionComposite = toolkit.createComposite(composite);
+		mainSectionComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gridLayout = new GridLayout();
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		gridLayout.verticalSpacing = 0;
+		mainSectionComposite.setLayout(gridLayout);
+		
 		setExpand(false);
 	}
 
@@ -77,18 +88,17 @@ public class ElementComposite implements IElementComposite {
 			beforeTime = System.currentTimeMillis();
 		form.setRedraw(false);
 		this.isExpanded = isExpanded;
-		if (isExpanded)
-			createSectionComposites();
+		if (isExpanded) {
+			if (sectionComps == null)
+				createSectionComposites();
+			GridData gridData = (GridData) mainSectionComposite.getLayoutData();
+			gridData.heightHint = SWT.DEFAULT;
+		}
 		else {
-			if (sectionComps != null) {
-				for (ISectionComposite sectionComp : sectionComps) {
-					sectionComp.dispose();
-				}
-				sectionComps.clear();
-			}
+			GridData gridData = (GridData) mainSectionComposite.getLayoutData();
+			gridData.heightHint = 0;
 		}
 
-		form.getBody().pack(true);
 		form.reflow(true);
 		form.setRedraw(true);
 		if (EventBEditorUtils.DEBUG) {
@@ -109,7 +119,7 @@ public class ElementComposite implements IElementComposite {
 
 			// Create the section composite
 			sectionComps.add(new SectionComposite(page, toolkit, form,
-					composite, (IInternalParent) rElement, type, level + 1));
+					mainSectionComposite, (IInternalParent) rElement, type, level + 1));
 
 		}
 	}
@@ -224,7 +234,7 @@ public class ElementComposite implements IElementComposite {
 			row.setSelected(select);
 		}
 
-		if (rElement.isAncestorOf(element)) {
+		if (rElement.isAncestorOf(element) && sectionComps != null) {
 			for (ISectionComposite sectionComp : sectionComps) {
 				sectionComp.select(element, select);
 			}
