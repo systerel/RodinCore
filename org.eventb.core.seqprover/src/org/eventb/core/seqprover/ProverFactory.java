@@ -126,7 +126,7 @@ public final class ProverFactory {
 			Predicate goal,
 			Predicate neededHyp,
 			String display,
-			IAntecedent... anticidents) {
+			IAntecedent... antecedents) {
 		
 		final Set<Predicate>  neededHyps;
 		if (neededHyp == null) {
@@ -138,7 +138,7 @@ public final class ProverFactory {
 				generatedBy, generatedUsing,
 				goal, neededHyps,
 				null, display,
-				anticidents);
+				antecedents);
 	}
 	
 	/**
@@ -166,8 +166,8 @@ public final class ProverFactory {
 			IReasonerInput generatedUsing,
 			Predicate goal,
 			String display,
-			IAntecedent... anticidents) {
-		return makeProofRule(generatedBy,generatedUsing,goal,null,null,display,anticidents);
+			IAntecedent... antecedents) {
+		return makeProofRule(generatedBy,generatedUsing,goal,null,null,display,antecedents);
 	}
 	
 	/**
