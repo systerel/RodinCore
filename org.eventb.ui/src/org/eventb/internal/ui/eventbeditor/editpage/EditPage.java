@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
@@ -22,11 +26,15 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
@@ -61,15 +69,15 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 	List<ISectionComposite> sectionComps;
 
-	static boolean shiftPressed = false;
-
 	// The scrolled form
 	ScrolledForm form;
-//
-//	private static Listener keyDownListener = null;
-//
-//	private static Listener keyUpListener = null;
+	
+	private IHandlerActivation moveUpHandlerActivation;
 
+	private IHandlerActivation moveDownHandlerActivation;
+	
+	IContextActivation activateContext;
+	
 	/**
 	 * Constructor: This default constructor will be used to create the page
 	 */
@@ -113,91 +121,41 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		createSections(body);
 		form.reflow(true);
 
-		// Register a global key listener
-//		if (keyDownListener == null) {
-//			if (EventBEditorUtils.DEBUG) {
-//				EventBEditorUtils.debug("Register global key down listener");
-//			}
-//
-//			keyDownListener = new Listener() {
-//				public void handleEvent(Event event) {
-//					IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
-//					IWorkbenchPart activePart = activePage.getActivePart();
-//					// Only concern with active EventBEditor
-//					if (activePart instanceof IEventBEditor) {
-//						IEventBEditor editor = (IEventBEditor) activePart;
-//						IFormPage page = ((FormEditor) editor)
-//								.getActivePageInstance();
-//						// Only concern with active EditPage in the EventBEditor
-//						if (page != null && page instanceof EditPage) {
-//							if (EventBEditorUtils.DEBUG) {
-//								EventBEditorUtils.debug("Global action key: "
-//										+ event);
-//								EventBEditorUtils.debug("Editor "
-//										+ page.getEditor());
-//								if (event.keyCode == SWT.SHIFT) {
-//									shiftPressed = true;
-//								}
-//							}
-//						}
-//
-//					}
-//				}
-//			};
-//			Display display = this.getManagedForm().getForm().getDisplay();
-//			display.addFilter(SWT.KeyDown, keyDownListener);
-//
-//		}
+		IContextService contextService = (IContextService) getSite()
+				.getService(IContextService.class);
+		activateContext = contextService
+				.activateContext("org.eventb.ui.keybindings.contexts.editpage");
 
-//		if (keyUpListener == null) {
-//			if (EventBEditorUtils.DEBUG) {
-//				EventBEditorUtils.debug("Register global key up listener");
-//			}
-//
-//			keyUpListener = new Listener() {
-//				public void handleEvent(Event event) {
-//					IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
-//					IWorkbenchPart activePart = activePage.getActivePart();
-//					event.type = SWT.None;
-//					// Only concern with active EventBEditor
-//					if (activePart instanceof IEventBEditor) {
-//						IEventBEditor editor = (IEventBEditor) activePart;
-//						IFormPage page = ((FormEditor) editor)
-//								.getActivePageInstance();
-//						// Only concern with active EditPage in the EventBEditor
-//						if (page != null && page instanceof EditPage) {
-//							if (EventBEditorUtils.DEBUG) {
-//								EventBEditorUtils.debug("Editor "
-//										+ page.getEditor());
-//							}
-//							if (event.keyCode == SWT.SHIFT) {
-//								shiftPressed = false;
-//							} else if (event.stateMask == SWT.ALT
-//									&& event.keyCode == SWT.ARROW_UP) {
-//								if (EventBEditorUtils.DEBUG) {
-//									EventBEditorUtils.debug("Alt + up "
-//											+ page.getEditor());
-//								}
-//								((EditPage) page).move(true);
-//								event.doit = false;
-//							} else if (event.stateMask == SWT.ALT
-//									&& event.keyCode == SWT.ARROW_DOWN) {
-//								if (EventBEditorUtils.DEBUG) {
-//									EventBEditorUtils.debug("Alt + down "
-//											+ page.getEditor());
-//								}
-//								((EditPage) page).move(false);
-//								event.doit = false;
-//							}
-//						}
-//
-//					}
-//				}
-//			};
-//			Display display = this.getManagedForm().getForm().getDisplay();
-//			display.addFilter(SWT.KeyUp, keyUpListener);
-//		}
+		activateHandlers();
+	}
 
+	private void activateHandlers() {
+		IHandlerService handlerService = (IHandlerService) EventBUIPlugin.getDefault()
+				.getWorkbench().getAdapter(IHandlerService.class);
+		if (handlerService == null)
+			return;
+		
+		// Move Up Handler
+		IHandler moveUpHandler= new AbstractHandler() {
+			@Override
+			public Object execute(ExecutionEvent event) throws ExecutionException {
+				move(true);
+				return null;
+			}
+		};
+		moveUpHandlerActivation = handlerService.activateHandler(
+				"org.eventb.ui.keybindings.moveUp", moveUpHandler);
+
+		// Move Down Handler
+		IHandler moveDownHandler= new AbstractHandler() {
+			@Override
+			public Object execute(ExecutionEvent event) throws ExecutionException {
+				move(false);
+				return null;
+			}
+		};
+		moveDownHandlerActivation = handlerService.activateHandler(
+				"org.eventb.ui.keybindings.moveDown", moveDownHandler);
 	}
 
 	protected void move(boolean up) {
@@ -442,7 +400,22 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	public void dispose() {
 		IEventBEditor editor = this.getEventBEditor();
 		editor.removeElementChangedListener(this);
+		activateContext.getContextService().deactivateContext(activateContext);
+		deactivateHandlers();
+
 		super.dispose();
+	}
+
+	private void deactivateHandlers() {
+		IHandlerService handlerService = (IHandlerService) EventBUIPlugin
+				.getDefault().getWorkbench().getAdapter(IHandlerService.class);
+
+		if (handlerService != null) {
+			handlerService.deactivateHandler(moveUpHandlerActivation);
+			handlerService.deactivateHandler(moveDownHandlerActivation);
+		}
+		moveUpHandlerActivation = null;
+		moveDownHandlerActivation = null;
 	}
 
 	private ListenerList listenerList;
@@ -493,7 +466,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 	private IRodinElement lastSelectedElement;
 
-	public void selectionChanges(IRodinElement element) {
+	public void selectionChanges(IRodinElement element, boolean shiftPressed) {
 		long beginTime = System.currentTimeMillis();
 		if (globalSelection instanceof StructuredSelection
 				&& ((StructuredSelection) globalSelection).size() == 1
