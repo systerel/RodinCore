@@ -527,7 +527,8 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	public void select(IRodinElement element, boolean select) {
-		if (parent.isAncestorOf(element)) {
+		if (parent.isAncestorOf(element) && elementComps != null) {
+			
 			for (IElementComposite elementComp : elementComps) {
 				elementComp.select(element, select);
 			}
