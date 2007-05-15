@@ -72,6 +72,10 @@ public class ElementComposite implements IElementComposite {
 	}
 
 	public void setExpand(boolean isExpanded) {
+		long beforeTime = 0; 
+		if (EventBEditorUtils.DEBUG)
+			beforeTime = System.currentTimeMillis();
+		form.setRedraw(false);
 		this.isExpanded = isExpanded;
 		if (isExpanded)
 			createSectionComposites();
@@ -86,6 +90,12 @@ public class ElementComposite implements IElementComposite {
 
 		form.getBody().pack(true);
 		form.reflow(true);
+		form.setRedraw(true);
+		if (EventBEditorUtils.DEBUG) {
+			long afterTime = System.currentTimeMillis();
+			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
+					+ " ms");
+		}
 	}
 
 	protected void createSectionComposites() {
