@@ -133,12 +133,15 @@ public class ElementComposite implements IElementComposite {
 			return;
 		if (element == rElement) {
 			row.refresh();
-			
+			if (sectionComps == null)
+				return;
+
 			// Refresh sub section composite as well?
 			EditSectionRegistry editSectionRegistry = EditSectionRegistry
 					.getDefault();
 			IElementType<? extends IRodinElement>[] childrenTypes = editSectionRegistry
 					.getChildrenTypes(element.getElementType());
+			
 			
 			boolean recreate = false;
 			if (childrenTypes.length != sectionComps.size()) {
