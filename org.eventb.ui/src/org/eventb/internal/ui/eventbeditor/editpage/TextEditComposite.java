@@ -1,22 +1,22 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eventb.internal.ui.EventBMath;
-import org.eventb.internal.ui.TimerText;
+import org.eventb.internal.ui.EventBStyledText;
+import org.eventb.internal.ui.TimerStyledText;
 import org.rodinp.core.RodinDBException;
 
 public abstract class TextEditComposite extends DefaultEditComposite {
 	
-	protected Text text;
+	protected StyledText text;
 	private Button undefinedButton;
-	protected int style = SWT.MULTI;
+	protected int style = SWT.MULTI | SWT.BORDER;
 	
 	public void refresh() {
 		initialise();
@@ -39,8 +39,8 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 				undefinedButton.dispose();
 				undefinedButton = null;
 			}
-			text = this.getFormToolkit().createText(composite, value, style);
-			new EventBMath(text) {
+			text = new StyledText(composite, style);
+			new EventBStyledText(text) {
 
 				@Override
 				protected void commit() {
@@ -51,7 +51,7 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 			};
 			text.setForeground(Display.getDefault().getSystemColor(
 					SWT.COLOR_DARK_GREEN));
-			new TimerText(text, 200) {
+			new TimerStyledText(text, 200) {
 				@Override
 				protected void response() {
 					if (text.isFocusControl())
@@ -59,11 +59,10 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 				}
 
 			};
+			this.getFormToolkit().paintBordersFor(composite);
 		}
-		else {
-			if (!text.getText().equals(value))
-				text.setText(value);
-		}
+		if (!text.getText().equals(value))
+			text.setText(value);
 	}
 
 	public void setUndefinedValue() {
