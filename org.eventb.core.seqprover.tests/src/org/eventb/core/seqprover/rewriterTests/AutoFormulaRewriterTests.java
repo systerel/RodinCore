@@ -1,7 +1,7 @@
 package org.eventb.core.seqprover.rewriterTests;
 
 import static org.junit.Assert.assertEquals;
-
+import static org.eventb.core.ast.Formula.*;
 import java.math.BigInteger;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -415,6 +415,16 @@ public class AutoFormulaRewriterTests {
 
 	@Test
 	public void testQuantification() {
+		final Predicate P = ff.makeRelationalPredicate(EQUAL,
+				ff.makeBoundIdentifier(0, null),
+				ff.makeIntegerLiteral(new BigInteger("2"), null), null);
+		final Predicate Q = ff.makeRelationalPredicate(EQUAL,
+				ff.makeBoundIdentifier(0, null),
+				ff.makeIntegerLiteral(new BigInteger("3"), null), null);
+		final Predicate R = ff.makeRelationalPredicate(EQUAL,
+				ff.makeBoundIdentifier(0, null),
+				ff.makeIntegerLiteral(new BigInteger("4"), null), null);
+		
 		// !x.(P & Q) == (!x.P) & (!x.Q)
 		BoundIdentDecl x = ff.makeBoundIdentDecl("x", null);
 		Predicate pred1 = ff.makeQuantifiedPredicate(Predicate.FORALL,
