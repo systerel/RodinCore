@@ -1430,7 +1430,7 @@
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.PredicateEditComposite"
-            horizontalExpand="true"
+            horizontalExpand="false"
             id="org.eventb.ui.predicate"
             name="Predicate"
             priority="2">
@@ -1456,7 +1456,7 @@
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.AssignmentEditComposite"
-            horizontalExpand="true"
+            horizontalExpand="false"
             id="org.eventb.ui.assignment"
             name="Assignment"
             priority="2">
@@ -1538,6 +1538,44 @@
                label="%action.ExpandAll.label"
                toolbarPath="navigationGroup"/>
       </viewContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="%commands.categoryEditPageDescription"
+            id="org.eventb.ui.keybindings.editPageCategory"
+            name="%commands.categoryEditPageName"/>
+      <command
+            categoryId="org.eventb.ui.keybindings.editPageCategory"
+            description="%commands.moveUpDescription"
+            id="org.eventb.ui.keybindings.moveUp"
+            name="%commands.moveUpName"/>
+      <command
+            categoryId="org.eventb.ui.keybindings.editPageCategory"
+            description="%commands.moveDownDescription"
+            id="org.eventb.ui.keybindings.moveDown"
+            name="%commands.moveDownName"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="%contexts.editpageDescription"
+            id="org.eventb.ui.keybindings.contexts.editpage"
+            name="%contexts.editpageName"
+            parentId="org.eclipse.ui.contexts.window"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eventb.ui.keybindings.moveUp"
+            contextId="org.eventb.ui.keybindings.contexts.editpage"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="ALT+ARROW_UP"/>
+      <key
+            commandId="org.eventb.ui.keybindings.moveDown"
+            contextId="org.eventb.ui.keybindings.contexts.editpage"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="ALT+ARROW_DOWN"/>
    </extension>
 
 </plugin>
