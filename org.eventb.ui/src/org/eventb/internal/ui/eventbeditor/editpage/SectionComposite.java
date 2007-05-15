@@ -79,7 +79,6 @@ public class SectionComposite implements ISectionComposite {
 		this.parent = parent;
 		this.type = type;
 		this.level = level;
-		isExpanded = true;
 		createContents();
 	}
 
@@ -127,7 +126,7 @@ public class SectionComposite implements ISectionComposite {
 		folding = toolkit.createImageHyperlink(comp, SWT.TOP);
 		folding
 				.setImage(EventBImage
-						.getImage(IEventBSharedImages.IMG_EXPANDED));
+						.getImage(IEventBSharedImages.IMG_COLLAPSED));
 		folding.addHyperlinkListener(new HyperlinkAdapter() {
 
 			@Override
@@ -191,19 +190,23 @@ public class SectionComposite implements ISectionComposite {
 			createElementComposites();
 		}
 		else {
-			for (IElementComposite elementComp : elementComps) {
-				elementComp.dispose();
+			if (elementComps != null) {
+				for (IElementComposite elementComp : elementComps) {
+					elementComp.dispose();
+				}
+				elementComps.clear();
 			}
-			elementComps.clear();
-			if (beforeHyperlinkComposite != null) 
+			if (beforeHyperlinkComposite != null)
 				beforeHyperlinkComposite.dispose();
-			afterHyperlinkComposite.dispose();
+			if (afterHyperlinkComposite != null)
+				afterHyperlinkComposite.dispose();
 			GridData gridData = (GridData) beforeComposite.getLayoutData();
 			gridData.heightHint = 0;
 			gridData = (GridData) afterComposite.getLayoutData();
 			gridData.heightHint = 0;
 			gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = 0;
+			
 		}
 		form.reflow(true);
 		form.setRedraw(true);
@@ -233,7 +236,8 @@ public class SectionComposite implements ISectionComposite {
 		gridLayout.verticalSpacing = 0;
 		gridLayout.marginWidth = 0;
 		beforeComposite = toolkit.createComposite(composite);
-		beforeComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		beforeComposite.setLayoutData(gridData);
 		beforeComposite.setLayout(gridLayout);
 		if (EventBEditorUtils.DEBUG) {
 			beforeComposite.setBackground(composite.getDisplay().getSystemColor(
@@ -244,25 +248,25 @@ public class SectionComposite implements ISectionComposite {
 		gridLayout.verticalSpacing = 0;
 		gridLayout.marginWidth = 0;
 		elementComposite = toolkit.createComposite(composite);
-		elementComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		elementComposite.setLayoutData(gridData);
 		elementComposite.setLayout(gridLayout);
 		if (EventBEditorUtils.DEBUG) {
 			elementComposite.setBackground(composite.getDisplay().getSystemColor(
 					SWT.COLOR_GREEN));
 		}
-
+		
 		gridLayout = new GridLayout();
 		gridLayout.verticalSpacing = 0;
 		gridLayout.marginWidth = 0;
 		afterComposite = toolkit.createComposite(composite);
-		afterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		afterComposite.setLayoutData(gridData);
 		afterComposite.setLayout(gridLayout);
 		if (EventBEditorUtils.DEBUG) {
 			afterComposite.setBackground(composite.getDisplay().getSystemColor(
 					SWT.COLOR_DARK_GRAY));
 		}
-
-		createElementComposites();
 
 		String postfix = editSectionRegistry.getPostfix(
 				parent.getElementType(), type);
@@ -270,6 +274,7 @@ public class SectionComposite implements ISectionComposite {
 		if (postfix != null)
 			createPostfixLabel(postfix);
 
+		setExpand(false);
 		return;
 	}
 
@@ -428,14 +433,15 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	private void updateHyperlink() {
-		if (elementComps.size() == 0 && beforeHyperlinkComposite != null) {
+		if (elementComps != null && elementComps.size() == 0
+				&& beforeHyperlinkComposite != null) {
 			beforeHyperlinkComposite.dispose();
 			GridData gridData = (GridData) beforeComposite.getLayoutData();
 			gridData.heightHint = 0;
 			beforeHyperlinkComposite = null;
 			return;
 		}
-		if (elementComps.size() != 0 && beforeHyperlinkComposite == null) {
+		else {
 			GridData gridData = (GridData) beforeComposite.getLayoutData();
 			gridData.heightHint = SWT.DEFAULT;
 			createBeforeHyperlinks();
