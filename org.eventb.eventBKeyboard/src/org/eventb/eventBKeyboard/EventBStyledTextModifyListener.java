@@ -26,6 +26,8 @@ public class EventBStyledTextModifyListener implements ModifyListener {
 	// The extension identifier.
 	private static final String translatorId = "org.eventb.eventBKeyboard.translators";
 
+	private boolean enable = true;
+
 	/**
 	 * Collection of translators.
 	 */
@@ -40,6 +42,9 @@ public class EventBStyledTextModifyListener implements ModifyListener {
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
 	public void modifyText(ModifyEvent e) {
+		if (!enable)
+			return;
+
 		StyledText widget = (StyledText) e.widget;
 
 		getTranslators();
@@ -82,6 +87,11 @@ public class EventBStyledTextModifyListener implements ModifyListener {
 				}
 			}
 		}
+	}
+
+	public void setEnable(boolean translate) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
