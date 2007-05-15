@@ -1570,12 +1570,12 @@
             commandId="org.eventb.ui.keybindings.moveUp"
             contextId="org.eventb.ui.keybindings.contexts.editpage"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="ALT+ARROW_UP"/>
+            sequence="M3+ARROW_UP"/>
       <key
             commandId="org.eventb.ui.keybindings.moveDown"
             contextId="org.eventb.ui.keybindings.contexts.editpage"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="ALT+ARROW_DOWN"/>
+            sequence="M3+ARROW_DOWN"/>
    </extension>
 
 </plugin>
