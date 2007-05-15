@@ -102,7 +102,8 @@ public class ButtonComposite {
 		selectHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				elementComp.getPage().selectionChanges(element);
+				int stateMask = e.getStateMask();
+				elementComp.getPage().selectionChanges(element, (stateMask & SWT.SHIFT) != 0);
 			}
 
 		});
