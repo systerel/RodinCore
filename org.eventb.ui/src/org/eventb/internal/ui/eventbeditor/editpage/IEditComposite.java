@@ -1,7 +1,6 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.rodinp.core.IRodinElement;
@@ -20,8 +19,6 @@ public interface IEditComposite {
 	abstract public void setValue();
 
 	public abstract void setFillHorizontal(boolean fill);
-
-	public abstract void setControl(Control control);
 
 	public abstract void setForm(ScrolledForm form);
 

@@ -1,7 +1,10 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesEvent;
@@ -17,34 +20,15 @@ public class RefinesEventEditComposite extends CComboEditComposite {
 
 	@Override
 	public void refresh() {
-		CCombo combo = (CCombo) control;
-		combo.removeAll();
-		IRefinesEvent refinesEvent = (IRefinesEvent) element;
-		IEvent event = (IEvent) refinesEvent.getParent();
-		IMachineFile file = (IMachineFile) event.getParent();
-		try {
-			IRefinesMachine[] refinesClauses = file.getRefinesClauses();
-			if (refinesClauses.length == 1) {
-				IRefinesMachine refinesMachine = refinesClauses[0];
-				IMachineFile abstractMachine = refinesMachine
-						.getAbstractMachine();
-				if (abstractMachine.exists()) {
-					IEvent[] events = abstractMachine.getEvents();
-					for (IEvent absEvent : events) {
-						combo.add(absEvent.getLabel());
-					}
-				}
-			}
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		super.refresh();
+		initialise();
+		internalPack();
 	}
 
 	public void setValue() {
 		assert element instanceof IRefinesEvent;
-		CCombo combo = (CCombo) control;
+		if (combo == null)
+			return;
+		
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
 		String str = combo.getText();
 
@@ -67,8 +51,27 @@ public class RefinesEventEditComposite extends CComboEditComposite {
 	}
 
 	@Override
-	public void initialise() {
-		CCombo combo = (CCombo) control;
+	public void displayValue(String value) {
+		if (combo == null) {
+			if (undefinedButton != null) {
+				undefinedButton.dispose();
+				undefinedButton = null;
+			}
+
+			combo = new CCombo(composite, SWT.FLAT | SWT.READ_ONLY);
+			combo.addSelectionListener(new SelectionListener() {
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetSelected(e);
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					setValue();
+				}
+
+			});
+		}
+		combo.removeAll();
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
 		IEvent event = (IEvent) refinesEvent.getParent();
 		IMachineFile file = (IMachineFile) event.getParent();
@@ -89,15 +92,22 @@ public class RefinesEventEditComposite extends CComboEditComposite {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		super.initialise();
+		combo.setText(value);
 	}
 
 	@Override
 	public void setDefaultValue() {
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
 		IEvent event = (IEvent) refinesEvent.getParent();
+		String label = "abstract_event";
 		try {
-			refinesEvent.setAbstractEventLabel(event.getLabel(),
+			label = event.getLabel();
+		} catch (RodinDBException e1) {
+			// Do nothing
+		}
+		
+		try {
+			refinesEvent.setAbstractEventLabel(label,
 					new NullProgressMonitor());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block

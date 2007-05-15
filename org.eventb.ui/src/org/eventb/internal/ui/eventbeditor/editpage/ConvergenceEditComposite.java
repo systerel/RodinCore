@@ -1,7 +1,10 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eventb.core.IEvent;
 import org.eventb.core.IConvergenceElement.Convergence;
 import org.rodinp.core.RodinDBException;
@@ -26,21 +29,11 @@ public class ConvergenceEditComposite extends CComboEditComposite {
 		return ORDINARY;
 	}
 
-	@Override
-	public void refresh() {
-		CCombo combo = (CCombo) control;
-		if (combo.getItemCount() != 3) {
-			combo.removeAll();
-			combo.add(ORDINARY);
-			combo.add(CONVERGENT);
-			combo.add(ANTICIPATED);
-		}
-		super.refresh();
-	}
-
 	public void setValue() {
 		assert element instanceof IEvent;
-		CCombo combo = (CCombo) control;
+		if (combo == null)
+			return;
+		
 		IEvent event = (IEvent) element;
 		String str = combo.getText();
 
@@ -71,12 +64,30 @@ public class ConvergenceEditComposite extends CComboEditComposite {
 	}
 
 	@Override
-	public void initialise() {
-		CCombo combo = (CCombo) control;
-		combo.add(ORDINARY);
-		combo.add(CONVERGENT);
-		combo.add(ANTICIPATED);
-		super.initialise();
+	public void displayValue(String value) {
+		if (combo == null) {
+			if (undefinedButton != null) {
+				undefinedButton.dispose();
+				undefinedButton = null;
+			}
+			
+			combo = new CCombo(composite, SWT.FLAT | SWT.READ_ONLY);
+			combo.add(ORDINARY);
+			combo.add(CONVERGENT);
+			combo.add(ANTICIPATED);
+			combo.addSelectionListener(new SelectionListener() {
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetSelected(e);
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					setValue();
+				}
+
+			});
+		}
+		combo.setText(value);
 	}
 
 	@Override

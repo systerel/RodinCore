@@ -1,10 +1,6 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IAssignmentElement;
 import org.rodinp.core.RodinDBException;
 
@@ -13,7 +9,9 @@ public class AssignmentEditComposite extends TextEditComposite {
 	public void setValue() {
 		assert element instanceof IAssignmentElement;
 		final IAssignmentElement aElement = (IAssignmentElement) element;
-		Text text = (Text) control;
+		if (text == null)
+			return;
+
 		String str = text.getText();
 
 		String value;
@@ -37,12 +35,6 @@ public class AssignmentEditComposite extends TextEditComposite {
 		assert element instanceof IAssignmentElement;
 		final IAssignmentElement pElement = (IAssignmentElement) element;
 		return pElement.getAssignmentString();
-	}
-
-
-	@Override
-	public void createMainComposite(FormToolkit toolkit, Composite parent) {
-		createMainComposite(toolkit, parent, SWT.MULTI);
 	}
 
 	@Override

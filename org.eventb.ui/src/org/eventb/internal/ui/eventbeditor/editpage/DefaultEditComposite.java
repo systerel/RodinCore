@@ -3,6 +3,7 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -18,7 +19,7 @@ public abstract class DefaultEditComposite implements IEditComposite {
 
 	IRodinElement element;
 
-	Control control;
+	Composite composite;
 	
 	String prefix;
 	
@@ -29,11 +30,17 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	Label postfixLabel;
 	
 	boolean fillHorizontal = false;
+
+	private FormToolkit toolkit;
 	
 	public void setForm(ScrolledForm form) {
 		this.form = form;
 	}
 
+	protected FormToolkit getFormToolkit() {
+		return toolkit;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -49,7 +56,9 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#createComposite(org.eclipse.ui.forms.widgets.FormToolkit,
 	 *      org.eclipse.swt.widgets.Composite)
 	 */
-	public void createComposite(FormToolkit toolkit, Composite parent) {
+	public void createComposite(FormToolkit tk, Composite parent) {
+		this.toolkit = tk;
+		
 		if (prefix == null)
 			prefix = "";
 		prefixLabel = toolkit.createLabel(parent, prefix);
@@ -63,9 +72,13 @@ public abstract class DefaultEditComposite implements IEditComposite {
 			prefixLabel.setBackground(prefixLabel.getDisplay().getSystemColor(
 					SWT.COLOR_CYAN));
 
-		createMainComposite(toolkit, parent);
+		composite = toolkit.createComposite(parent);
 		gridData = new GridData(SWT.FILL, SWT.TOP, fillHorizontal, false);
-		control.setLayoutData(gridData);
+		gridData.minimumWidth = 200;
+		composite.setLayoutData(gridData);
+		composite.setLayout(new FillLayout());
+		
+		initialise();
 
 		postfixLabel = toolkit.createLabel(parent, " " + postfix + " ");
 		gridData = new GridData();
@@ -78,8 +91,8 @@ public abstract class DefaultEditComposite implements IEditComposite {
 					.getSystemColor(SWT.COLOR_CYAN));
 	}
 
-	public abstract void createMainComposite(FormToolkit toolkit, Composite parent);
-	
+	public abstract void initialise();
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -89,37 +102,33 @@ public abstract class DefaultEditComposite implements IEditComposite {
 		this.fillHorizontal = fillHorizontal;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setControl(org.eclipse.swt.widgets.Control)
-	 */
-	public void setControl(Control control) {
-		this.control = control;
-	}
-
 	void internalPack() {
-		internalPack(control);
+		internalPack(composite);
 	}
 
 	public void setSelected(boolean selection) {
 		if (selection) {
 			postfixLabel.setBackground(postfixLabel.getDisplay()
 					.getSystemColor(SWT.COLOR_GRAY));
+			composite.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 			prefixLabel.setBackground(prefixLabel.getDisplay().getSystemColor(
 					SWT.COLOR_GRAY));
 		} else {
 			if (EventBEditorUtils.DEBUG) {
 				postfixLabel.setBackground(postfixLabel.getDisplay()
 						.getSystemColor(SWT.COLOR_CYAN));
+				composite.setBackground(composite.getDisplay().getSystemColor(
+						SWT.COLOR_CYAN));
 				prefixLabel.setBackground(prefixLabel.getDisplay()
 						.getSystemColor(SWT.COLOR_CYAN));
 			}
 			else {
 				postfixLabel.setBackground(postfixLabel.getDisplay()
 						.getSystemColor(SWT.COLOR_WHITE));
+				composite.setBackground(composite.getDisplay().getSystemColor(
+						SWT.COLOR_WHITE));
 				prefixLabel.setBackground(prefixLabel.getDisplay()
-						.getSystemColor(SWT.COLOR_WHITE));				
+						.getSystemColor(SWT.COLOR_WHITE));
 			}
 		}
 
@@ -137,7 +146,7 @@ public abstract class DefaultEditComposite implements IEditComposite {
 		if (preferredSize.x > bounds.width || preferredSize.y > bounds.height) {
 			internalPack(c.getParent());
 		} else {
-			c.pack();
+			((Composite) c).layout(true);
 			c.setBounds(bounds);
 		}
 	}

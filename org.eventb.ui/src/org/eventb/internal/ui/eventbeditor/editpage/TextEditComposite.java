@@ -1,9 +1,10 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -13,71 +14,75 @@ import org.rodinp.core.RodinDBException;
 
 public abstract class TextEditComposite extends DefaultEditComposite {
 	
-	private EventBMath eventBMath;
+	protected Text text;
+	private Button undefinedButton;
+	protected int style = SWT.MULTI;
 	
 	public void refresh() {
-		Text text = (Text) control;
-		String str;
-		try {
-			str = getValue();
-			if (!text.getText().equals(str)) {
-				text.setText(str);
-			}
-		} catch (RodinDBException e) {
-			setUndefinedValue();
-		}
+		initialise();
 		internalPack();
 	}
 
+	@Override
 	public void initialise() {
-		Text text = (Text) control;
 		try {
-			text.setText(getValue());
+			String value = getValue();
+			displayValue(value);
 		} catch (RodinDBException e) {
 			setUndefinedValue();
 		}
 	}
 
-	public void createMainComposite(FormToolkit toolkit, Composite parent, int style) {
-		Text text = toolkit.createText(parent, "", style);
-		eventBMath = new EventBMath(text) {
-
-			@Override
-			protected void commit() {
-				setValue();
-				super.commit();
+	private void displayValue(String value) {
+		if (text == null) {
+			if (undefinedButton != null) {
+				undefinedButton.dispose();
+				undefinedButton = null;
 			}
-			
-		};
-		setControl(text);
-		initialise();
-		text.setForeground(Display.getDefault().getSystemColor(
-				SWT.COLOR_DARK_GREEN));
-		new TimerText(text, 1000) {
-			@Override
-			protected void response() {
-				setValue();
-			}
+			text = this.getFormToolkit().createText(composite, value, style);
+			new EventBMath(text) {
 
-		};
+				@Override
+				protected void commit() {
+					setValue();
+					super.commit();
+				}
+
+			};
+			text.setForeground(Display.getDefault().getSystemColor(
+					SWT.COLOR_DARK_GREEN));
+			new TimerText(text, 200) {
+				@Override
+				protected void response() {
+					if (text.isFocusControl())
+						setValue();
+				}
+
+			};
+		}
+		else {
+			if (!text.getText().equals(value))
+				text.setText(value);
+		}
 	}
 
 	public void setUndefinedValue() {
-		final Text text = (Text) control;
-		eventBMath.setTranslate(false);
-		text.setText("----- UNDEFINED -----");
-		eventBMath.setTranslate(true);
-		text.setEditable(false);
-		text.addFocusListener(new FocusListener() {
+		FormToolkit toolkit = this.getFormToolkit();
+		if (undefinedButton != null)
+			return;
+		
+		if (text != null)
+			text.dispose();
+		
+		undefinedButton = toolkit.createButton(composite, "UNDEFINED", SWT.PUSH);
+		undefinedButton.addSelectionListener(new SelectionListener() {
 
-			public void focusGained(FocusEvent e) {
-				text.removeFocusListener(this);
-				text.setEditable(true);
-				setDefaultValue();
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
 			}
 
-			public void focusLost(FocusEvent e) {
-				// Do nothing
+			public void widgetSelected(SelectionEvent e) {
+				setDefaultValue();
 			}
 			
 		});
@@ -85,21 +90,21 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 
 	@Override
 	public void setSelected(boolean selection) {
-		Text text = (Text) control;
+		Control control = text == null ? undefinedButton : text;
 		if (selection)
-			text
-					.setBackground(text.getDisplay().getSystemColor(
+			control
+					.setBackground(control.getDisplay().getSystemColor(
 							SWT.COLOR_GRAY));
 		else {
-			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			control.setBackground(control .getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		}
 		super.setSelected(selection);
 	}
 
 	@Override
 	public void setDefaultValue() {
-		initialise();
-		control.setFocus();
+		if (text != null)
+			text.setFocus();
 	}
 
 }

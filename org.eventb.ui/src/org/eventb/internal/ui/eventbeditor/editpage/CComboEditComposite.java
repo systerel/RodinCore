@@ -2,11 +2,10 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.rodinp.core.RodinDBException;
 
@@ -15,74 +14,77 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 
 	protected final String UNDEFINED = "----- UNDEFINED -----";
 	
-	@Override
-	public void createMainComposite(FormToolkit toolkit, Composite parent) {
-		final CCombo combo = new CCombo(parent, SWT.FLAT | SWT.READ_ONLY);
-		setControl(combo);
-		initialise();
-		combo.addSelectionListener(new SelectionListener() {
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-
-			public void widgetSelected(SelectionEvent e) {
-				setValue();
-			}
-
-		});
-	}
+	protected CCombo combo;
+	protected Button undefinedButton;
 
 	public void refresh() {
-		CCombo combo = (CCombo) control;
-		String value;
+		initialise();
+		internalPack();
+	}
+
+	@Override
+	public void initialise() {
 		try {
-			value = getValue();
-			if (!(combo.getText().equals(value))) {
-				combo.setText(value);
-				internalPack();
-			}
+			String value = getValue();
+			displayValue(value);
 		} catch (RodinDBException e) {
 			setUndefinedValue();
 		}
 	}
 
-	public void initialise() {
-		CCombo combo = (CCombo) control;
-		try {
-			combo.setText(getValue());
-		} catch (RodinDBException e) {
-			setUndefinedValue();
+	public void displayValue(String value) {
+		if (combo == null) {
+			if (undefinedButton != null) {
+				undefinedButton.dispose();
+				undefinedButton = null;
+			}
+			
+			combo = new CCombo(composite, SWT.FLAT | SWT.READ_ONLY);
+			combo.addSelectionListener(new SelectionListener() {
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetSelected(e);
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					setValue();
+				}
+
+			});
 		}
+		combo.setText(value);
 	}
 
 	@Override
 	public void setSelected(boolean selection) {
-		CCombo combo = (CCombo) control;
+		Control control = combo == null ? undefinedButton : combo;
 		if (selection)
-			combo.setBackground(combo.getDisplay().getSystemColor(
+			control.setBackground(control.getDisplay().getSystemColor(
 					SWT.COLOR_GRAY));
 		else {
-			combo.setBackground(combo.getDisplay().getSystemColor(
+			control.setBackground(control.getDisplay().getSystemColor(
 					SWT.COLOR_WHITE));
 		}
 		super.setSelected(selection);
 	}
 
 	public void setUndefinedValue() {
-		final CCombo combo = (CCombo) control;
-		combo.removeAll();
-		combo.add(UNDEFINED);
-		combo.setText(UNDEFINED);
-		combo.addFocusListener(new FocusListener() {
+		FormToolkit toolkit = this.getFormToolkit();
+		if (undefinedButton != null)
+			return;
+		
+		if (combo != null)
+			combo.dispose();
+		
+		undefinedButton = toolkit.createButton(composite, "UNDEFINED", SWT.PUSH);
+		undefinedButton.addSelectionListener(new SelectionListener() {
 
-			public void focusGained(FocusEvent e) {
-				combo.removeFocusListener(this);
-				setDefaultValue();
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
 			}
 
-			public void focusLost(FocusEvent e) {
-				// Do nothing
+			public void widgetSelected(SelectionEvent e) {
+				setDefaultValue();
 			}
 			
 		});
@@ -90,9 +92,8 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 
 	@Override
 	public void setDefaultValue() {
-		final CCombo combo = (CCombo) control;
-		combo.removeAll();
-		initialise();
+		if (combo != null)
+			combo.setFocus();
 	}
 
 }

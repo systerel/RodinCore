@@ -1,10 +1,6 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IPredicateElement;
 import org.rodinp.core.RodinDBException;
 
@@ -13,7 +9,9 @@ public class PredicateEditComposite extends TextEditComposite {
 	public void setValue() {
 		assert element instanceof IPredicateElement;
 		final IPredicateElement pElement = (IPredicateElement) element;
-		Text text = (Text) control;
+		if (text == null)
+			return;
+		
 		String str = text.getText();
 
 		String value;
@@ -36,12 +34,6 @@ public class PredicateEditComposite extends TextEditComposite {
 		assert element instanceof IPredicateElement;
 		final IPredicateElement pElement = (IPredicateElement) element;
 		return pElement.getPredicateString();
-	}
-
-
-	@Override
-	public void createMainComposite(FormToolkit toolkit, Composite parent) {
-		createMainComposite(toolkit, parent, SWT.MULTI);
 	}
 
 	@Override
