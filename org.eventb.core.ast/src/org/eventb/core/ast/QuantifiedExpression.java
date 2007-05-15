@@ -724,6 +724,8 @@ public class QuantifiedExpression extends Expression {
 		final Expression newExpr = expr.rewrite(rewriter);
 		rewriter.leavingQuantifier(nbOfBoundIdentDecls);
 
+		// TODO: implement cleanup of unused bound ident decls.
+		
 		final QuantifiedExpression before;
 		if (newPred == pred && newExpr == expr) {
 			before = this;

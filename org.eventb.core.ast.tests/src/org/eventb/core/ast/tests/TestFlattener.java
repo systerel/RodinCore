@@ -1,5 +1,16 @@
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.ast.Formula.EMPTYSET;
+import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.KFINITE;
+import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LOR;
+import static org.eventb.core.ast.Formula.MUL;
+import static org.eventb.core.ast.Formula.PLUS;
+import static org.eventb.core.ast.Formula.POW;
+import static org.eventb.core.ast.Formula.TRUE;
+import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
@@ -52,129 +63,152 @@ public class TestFlattener extends TestCase {
 	private static BoundIdentDecl bd_s = ff.makeBoundIdentDecl("s",null);
 	private static BoundIdentDecl bd_t = ff.makeBoundIdentDecl("t",null);
 
-	private static LiteralPredicate btrue = ff.makeLiteralPredicate(Formula.BTRUE, null);
+	private static LiteralPredicate btrue = ff.makeLiteralPredicate(BTRUE, null);
 
+	private static Predicate mFin(int... n) {
+		final int len = n.length;
+		final Expression[] members = new Expression[len];
+		for (int i = 0; i < len; ++i) {
+			members[i] = ff.makeBoundIdentifier(n[i], null);
+		}
+		final Expression set = ff.makeSetExtension(members, null);
+		return ff.makeSimplePredicate(KFINITE, set, null);
+	}
 	
 	private Expression[] unnormalizedExpressions = new Expression[] {
-			mAssociativeExpression(Formula.PLUS,
-					mAssociativeExpression(Formula.PLUS, id_x, id_x),
-					mAssociativeExpression(Formula.MUL, id_x, id_x)
+			mAssociativeExpression(PLUS,
+					mAssociativeExpression(PLUS, id_x, id_x),
+					mAssociativeExpression(MUL, id_x, id_x)
 			),
-			mAssociativeExpression(Formula.PLUS,
-					mAssociativeExpression(Formula.PLUS,
-							mAssociativeExpression(Formula.PLUS, id_x, id_x),
+			mAssociativeExpression(PLUS,
+					mAssociativeExpression(PLUS,
+							mAssociativeExpression(PLUS, id_x, id_x),
 							id_x,
 							id_x
 					),
-					mAssociativeExpression(Formula.MUL,
+					mAssociativeExpression(MUL,
 							id_x,
 							id_x)
 			),
-			mAssociativeExpression(Formula.PLUS,
-					mAssociativeExpression(Formula.PLUS, id_x, id_x),
-					mAssociativeExpression(Formula.MUL, id_x, id_x),
-					mAssociativeExpression(Formula.PLUS, id_x, id_x)
+			mAssociativeExpression(PLUS,
+					mAssociativeExpression(PLUS, id_x, id_x),
+					mAssociativeExpression(MUL, id_x, id_x),
+					mAssociativeExpression(PLUS, id_x, id_x)
 			),
 	
-			mUnaryExpression(Formula.UNMINUS, mIntegerLiteral(5)),
-			mUnaryExpression(Formula.UNMINUS,
-					mUnaryExpression(Formula.UNMINUS, mIntegerLiteral(5))
+			mUnaryExpression(UNMINUS, mIntegerLiteral(5)),
+			mUnaryExpression(UNMINUS,
+					mUnaryExpression(UNMINUS, mIntegerLiteral(5))
 			),
 			
 			mSetExtension(),
 	};
 	
 	private Expression[] normalizedExpressions = new Expression[] {
-			mAssociativeExpression(Formula.PLUS,
+			mAssociativeExpression(PLUS,
 					id_x,
 					id_x,
-					mAssociativeExpression(Formula.MUL, id_x, id_x)
+					mAssociativeExpression(MUL, id_x, id_x)
 			),
-			mAssociativeExpression(Formula.PLUS,
+			mAssociativeExpression(PLUS,
 					id_x,
 					id_x,
 					id_x,
 					id_x,
-					mAssociativeExpression(Formula.MUL, id_x,id_x)
+					mAssociativeExpression(MUL, id_x,id_x)
 			),
-			mAssociativeExpression(Formula.PLUS, 
+			mAssociativeExpression(PLUS, 
 					id_x,
 					id_x,
-					mAssociativeExpression(Formula.MUL, id_x, id_x),
+					mAssociativeExpression(MUL, id_x, id_x),
 					id_x,
 					id_x),
 	
 			mIntegerLiteral(-5),
 			mIntegerLiteral(5),
 			
-			mAtomicExpression(Formula.EMPTYSET),
+			mAtomicExpression(EMPTYSET),
 	};
 	
 	private Predicate[] unnormalizedPredicates = new Predicate[] {
-			mAssociativePredicate(Formula.LOR,
-					mAssociativePredicate(Formula.LOR,  btrue, btrue),
-					mAssociativePredicate(Formula.LAND, btrue, btrue)
+			mAssociativePredicate(LOR,
+					mAssociativePredicate(LOR,  btrue, btrue),
+					mAssociativePredicate(LAND, btrue, btrue)
 			),
-			mAssociativePredicate(Formula.LOR,
-					mAssociativePredicate(Formula.LOR,
-							mAssociativePredicate(Formula.LOR, btrue, btrue),
+			mAssociativePredicate(LOR,
+					mAssociativePredicate(LOR,
+							mAssociativePredicate(LOR, btrue, btrue),
 							btrue,
 							btrue
 					),
-					mAssociativePredicate(Formula.LAND, btrue, btrue)
+					mAssociativePredicate(LAND, btrue, btrue)
 			),
-			mAssociativePredicate(Formula.LOR,
-					mAssociativePredicate(Formula.LOR,  btrue, btrue),
-					mAssociativePredicate(Formula.LAND, btrue, btrue),
-					mAssociativePredicate(Formula.LOR,  btrue, btrue)
+			mAssociativePredicate(LOR,
+					mAssociativePredicate(LOR,  btrue, btrue),
+					mAssociativePredicate(LAND, btrue, btrue),
+					mAssociativePredicate(LOR,  btrue, btrue)
 			),
 	
-			mQuantifiedPredicate(Formula.FORALL, mList(bd_x),
-					mQuantifiedPredicate(Formula.FORALL, mList(bd_y), btrue)
+			mQuantifiedPredicate(FORALL, mList(bd_x),
+					mQuantifiedPredicate(FORALL, mList(bd_y), mFin(0,1))
 			),
-			mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y),
-					mQuantifiedPredicate(Formula.FORALL, mList(bd_s, bd_t), btrue)
+			mQuantifiedPredicate(FORALL, mList(bd_x, bd_y),
+					mQuantifiedPredicate(FORALL, mList(bd_s, bd_t), mFin(0,1,2,3))
 			),
 
-			mQuantifiedPredicate(Formula.FORALL, mList(bd_x),
-					mQuantifiedPredicate(Formula.FORALL, mList(bd_y),
-							mQuantifiedPredicate(Formula.FORALL, mList(bd_z), btrue)
+			mQuantifiedPredicate(FORALL, mList(bd_x),
+					mQuantifiedPredicate(FORALL, mList(bd_y),
+							mQuantifiedPredicate(FORALL, mList(bd_z), mFin(0,1,2))
 					)
 			),
-			mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y),
-					mQuantifiedPredicate(Formula.FORALL, mList(bd_s, bd_t),
-							mQuantifiedPredicate(Formula.FORALL, mList(bd_a, bd_b), btrue)
+			mQuantifiedPredicate(FORALL, mList(bd_x, bd_y),
+					mQuantifiedPredicate(FORALL, mList(bd_s, bd_t),
+							mQuantifiedPredicate(FORALL, mList(bd_a, bd_b), mFin(0,1,2,3,4,5))
+					)
+			),
+			mQuantifiedPredicate(FORALL, mList(bd_x),
+					mQuantifiedPredicate(FORALL, mList(bd_y), mFin(0))
+			),
+			mQuantifiedPredicate(FORALL, mList(bd_x),
+					mQuantifiedPredicate(FORALL, mList(bd_y), mFin(1))
+			),
+			mQuantifiedPredicate(FORALL, mList(bd_x, bd_y, bd_z),
+					mQuantifiedPredicate(FORALL, mList(bd_s),
+							mQuantifiedPredicate(FORALL, mList(bd_a, bd_b), mFin(0,2,4,5))
 					)
 			),
 			
 	};
 	
 	private Predicate[] normalizedPredicates = new Predicate[] {
-			mAssociativePredicate(Formula.LOR,
+			mAssociativePredicate(LOR,
 					btrue,
 					btrue,
-					mAssociativePredicate(Formula.LAND, btrue, btrue)
+					mAssociativePredicate(LAND, btrue, btrue)
 			),
-			mAssociativePredicate(Formula.LOR,
+			mAssociativePredicate(LOR,
 					btrue,
 					btrue,
 					btrue,
 					btrue,
-					mAssociativePredicate(Formula.LAND, btrue,btrue)
+					mAssociativePredicate(LAND, btrue,btrue)
 			),
-			mAssociativePredicate(Formula.LOR,
+			mAssociativePredicate(LOR,
 					btrue,
 					btrue,
-					mAssociativePredicate(Formula.LAND, btrue, btrue),
+					mAssociativePredicate(LAND, btrue, btrue),
 					btrue,
 					btrue
 			),
 	
-			mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y), btrue),
-			mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y, bd_s, bd_t), btrue),
+			mQuantifiedPredicate(FORALL, mList(bd_x, bd_y), mFin(0,1)),
+			mQuantifiedPredicate(FORALL, mList(bd_x, bd_y, bd_s, bd_t), mFin(0,1,2,3)),
 			
-			mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y, bd_z), btrue),
-			mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y, bd_s, bd_t, bd_a, bd_b), btrue),
+			mQuantifiedPredicate(FORALL, mList(bd_x, bd_y, bd_z), mFin(0,1,2)),
+			mQuantifiedPredicate(FORALL, mList(bd_x, bd_y, bd_s, bd_t, bd_a, bd_b), mFin(0,1,2,3,4,5)),
+			mQuantifiedPredicate(FORALL, mList(bd_y), mFin(0)),
+			mQuantifiedPredicate(FORALL, mList(bd_x), mFin(0)),
+			mQuantifiedPredicate(FORALL, mList(bd_x, bd_y, bd_s, bd_b), mFin(0,1,2,3)),
 
 	};
 	
@@ -184,11 +218,11 @@ public class TestFlattener extends TestCase {
 		
 		for (int i = 0; i < preds.length; i++) {
 			expressions[l++] = mBinaryExpression(exprs[i%exprs.length], exprs[i%exprs.length]);
-			expressions[l++] = mAtomicExpression(Formula.TRUE);
+			expressions[l++] = mAtomicExpression(TRUE);
 			expressions[l++] = mBoolExpression(preds[i]);
 			expressions[l++] = mQuantifiedExpression(mList(bd_x), preds[i], exprs[i%exprs.length]);
 			expressions[l++] = mSetExtension(exprs[i%exprs.length]);
-			expressions[l++] = mUnaryExpression(Formula.POW, exprs[i%exprs.length]);
+			expressions[l++] = mUnaryExpression(POW, exprs[i%exprs.length]);
 			expressions[l++] = id_x;
 		}
 		return expressions;

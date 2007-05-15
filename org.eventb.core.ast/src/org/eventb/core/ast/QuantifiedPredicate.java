@@ -4,7 +4,9 @@
  */
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.QuantifiedHelper.addUsedBoundIdentifiers;
 import static org.eventb.core.ast.QuantifiedHelper.appendBoundIdentifiersString;
+import static org.eventb.core.ast.QuantifiedHelper.areAllUsed;
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.BoundIdentDeclRemover;
 import org.eventb.internal.core.ast.BoundIdentSubstitution;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -358,23 +361,43 @@ public class QuantifiedPredicate extends Predicate {
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
 		
 		rewriter.enteringQuantifier(nbOfBoundIdentDecls);
-		final Predicate newPred = pred.rewrite(rewriter);
+		Predicate newPred = pred.rewrite(rewriter);
 		rewriter.leavingQuantifier(nbOfBoundIdentDecls);
 
-		final QuantifiedPredicate before;
 		final FormulaFactory ff = rewriter.getFactory();
-		final SourceLocation sloc = getSourceLocation();
-		if (newPred.getTag() == getTag() && rewriter.autoFlatteningMode()) {
-			QuantifiedPredicate quantChild = (QuantifiedPredicate) newPred;
-			BoundIdentDecl[] idents = catenateBoundIdentLists(
-					quantifiedIdentifiers, quantChild.quantifiedIdentifiers);
-			before = ff.makeQuantifiedPredicate(getTag(), idents,
-					quantChild.pred, sloc);
-		} else if (newPred == pred) {
+		BoundIdentDecl[] newDecls = quantifiedIdentifiers;
+		if (rewriter.autoFlatteningMode()) {
+			final boolean[] used = new boolean[nbOfBoundIdentDecls];
+			addUsedBoundIdentifiers(used, newPred);
+			if (! areAllUsed(used)) {
+				final BoundIdentDeclRemover subst = 
+					new BoundIdentDeclRemover(quantifiedIdentifiers, used, ff);
+				newPred = newPred.rewrite(subst);
+				final List<BoundIdentDecl> newDeclL = subst.getNewDeclarations();
+				final int size = newDeclL.size();
+				if (size == 0) {
+					// Child predicate as already been rewritten
+					return newPred;
+				} else {
+					newDecls = newDeclL.toArray(new BoundIdentDecl[size]);
+				}
+			}
+
+			if (newPred.getTag() == getTag()) {
+				QuantifiedPredicate quantChild = (QuantifiedPredicate) newPred;
+				newDecls = catenateBoundIdentLists(
+						newDecls, quantChild.quantifiedIdentifiers);
+				newPred = quantChild.pred;
+			}
+		}
+
+		final QuantifiedPredicate before;
+		if (newDecls == quantifiedIdentifiers && newPred == pred) {
 			before = this;
 		} else {
+			final SourceLocation sloc = getSourceLocation();
 			before = ff.makeQuantifiedPredicate(getTag(),
-					quantifiedIdentifiers, newPred, sloc);
+					newDecls, newPred, sloc);
 		}
 		return checkReplacement(rewriter.rewrite(before));
 	}

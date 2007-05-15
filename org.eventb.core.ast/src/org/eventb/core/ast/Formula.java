@@ -1091,10 +1091,12 @@ public abstract class Formula<T extends Formula<T>> {
 	 * Flattening consists in performing the following operations on the
 	 * formula:
 	 * <ul>
-	 * <li>Expand inline the children of an associative expression which are of
-	 * the same kind. For instance, "(x+x)+x" becomes "x+x+x".</li>
-	 * <li>Regroup quantifiers of quantified predicated of the same kind. For
-	 * instance "∀x·∀y·x=y" becomes "∀x,y·x=y".
+	 * <li>Expanding inline the children of an associative expression which are
+	 * of the same kind. For instance, "(x+x)+x" becomes "x+x+x".</li>
+	 * <li>Removing unused bound identifier declarations. For instance
+	 * "∀x,y·x=a" becomes "∀x·x=a".
+	 * <li>Regrouping quantifiers of quantified predicated of the same kind.
+	 * For instance "∀x·∀y·x=y" becomes "∀x,y·x=y".
 	 * <li>Replacing empty set extensions by empty sets: expression "{}"
 	 * becomes "∅".</li>
 	 * <li>Replacing an integer literal preceded by an unary minus by an
