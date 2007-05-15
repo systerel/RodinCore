@@ -54,8 +54,8 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 					if (!text.getText().equals(translateStr)) {
 						text.setText(translateStr);
 					}
-					commit();
 				}
+				commit();
 			}
 
 		});
