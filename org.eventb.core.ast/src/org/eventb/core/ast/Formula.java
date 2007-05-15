@@ -1695,7 +1695,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	protected abstract Predicate getWDPredicateRaw(FormulaFactory formulaFactory);
 	
-	protected final Predicate getWDSimplifyC(FormulaFactory formulaFactory, Predicate left, Predicate right) {
+	protected static final Predicate getWDSimplifyC(FormulaFactory formulaFactory, Predicate left, Predicate right) {
 		if (left.getTag() == BTRUE)
 			return right;
 		if (right.getTag() == BTRUE)
@@ -1704,7 +1704,7 @@ public abstract class Formula<T extends Formula<T>> {
 		return formulaFactory.makeAssociativePredicate(LAND, children, null);
 	}
 	
-	protected final Predicate getWDSimplifyD(FormulaFactory formulaFactory, Predicate left, Predicate right) {
+	protected static final Predicate getWDSimplifyD(FormulaFactory formulaFactory, Predicate left, Predicate right) {
 		if (left.getTag() == BTRUE)
 			return left;
 		if (right.getTag() == BTRUE)
@@ -1713,13 +1713,13 @@ public abstract class Formula<T extends Formula<T>> {
 		return formulaFactory.makeAssociativePredicate(LOR, children, null);
 	}
 	
-	protected final <S extends Formula> Predicate getWDConjunction(FormulaFactory formulaFactory, S left, S right) {
+	protected static final <S extends Formula> Predicate getWDConjunction(FormulaFactory formulaFactory, S left, S right) {
 		final Predicate conj0 = left.getWDPredicateRaw(formulaFactory);
 		final Predicate conj1 = right.getWDPredicateRaw(formulaFactory);
 		return getWDSimplifyC(formulaFactory, conj0, conj1);
 	}
 	
-	protected final <S extends Formula> Predicate getWDConjunction(FormulaFactory formulaFactory, S[] children) {
+	protected static final <S extends Formula> Predicate getWDConjunction(FormulaFactory formulaFactory, S[] children) {
 		final LinkedList<Predicate> conjuncts = new LinkedList<Predicate>();
 		for (S child: children) {
 			final Predicate conj = child.getWDPredicateRaw(formulaFactory);
@@ -1733,7 +1733,7 @@ public abstract class Formula<T extends Formula<T>> {
 		return formulaFactory.makeAssociativePredicate(LAND, conjuncts, null);
 	}
 	
-	protected final Predicate getWDSimplifyI(FormulaFactory formulaFactory, Predicate left, Predicate right) {
+	protected static final Predicate getWDSimplifyI(FormulaFactory formulaFactory, Predicate left, Predicate right) {
 		if (left.getTag() == BTRUE || right.getTag() == BTRUE)
 			return right;
 		if (right.getTag() == LIMP) {
@@ -1745,13 +1745,13 @@ public abstract class Formula<T extends Formula<T>> {
 		return formulaFactory.makeBinaryPredicate(LIMP, left, right, null);
 	}
 	
-	protected final <S extends Formula> Predicate getWDImplication(FormulaFactory formulaFactory, S left, S right) {
+	protected static final <S extends Formula> Predicate getWDImplication(FormulaFactory formulaFactory, S left, S right) {
 		Predicate antecedent = left.getWDPredicateRaw(formulaFactory);
 		Predicate consequent = right.getWDPredicateRaw(formulaFactory);
 		return getWDSimplifyI(formulaFactory, antecedent, consequent);
 	}
 	
-	protected final Predicate getWDSimplifyQ(FormulaFactory formulaFactory,
+	protected static final Predicate getWDSimplifyQ(FormulaFactory formulaFactory,
 			int quant, BoundIdentDecl[] decls, Predicate pred,
 			SourceLocation loc) {
 		
