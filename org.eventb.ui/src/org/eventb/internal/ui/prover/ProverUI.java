@@ -290,7 +290,7 @@ public class ProverUI extends FormEditor implements
 	 */
 	@Override
 	public void doSaveAs() {
-		MessageDialog.openInformation(null, null, "Saving");
+		MessageDialog.openError(null, null, "Cannot save as");
 	}
 
 	/*
@@ -308,8 +308,7 @@ public class ProverUI extends FormEditor implements
 				proofStates), new ProofStateLabelProvider(),
 				"Select the proof obligation(s) to save.");
 
-		IProofState[] initSelection = { userSupport.getCurrentPO() };
-		dlg.setInitialSelections(initSelection);
+		dlg.setInitialSelections(proofStates);
 		dlg.setTitle("Save Proofs");
 		dlg.open();
 		final Object[] objects = dlg.getResult();
