@@ -15,6 +15,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 
+// TODO : preserve order of hypotheses stored by using a LinkedHashSet inplementation
 public class ProofRule extends ReasonerOutput implements IProofRule{
 	
 	private static final Set<Predicate> NO_HYPS = Collections.emptySet();
@@ -66,22 +67,6 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		}
 		
 		private IProverSequent genSequent(IProverSequent seq, Predicate goalInstantiation){
-//			ITypeEnvironment newTypeEnv;
-//			if (addedFreeIdentifiers.length == 0)
-//				newTypeEnv = seq.typeEnvironment();
-//			else
-//			{
-//				newTypeEnv = seq.typeEnvironment().clone();
-//				for (FreeIdentifier freeIdent : addedFreeIdentifiers) {
-//					// check for variable name clash
-//					if (newTypeEnv.contains(freeIdent.getName()))
-//					{
-//						// name clash
-//						return null;
-//					}
-//					newTypeEnv.addName(freeIdent.getName(),freeIdent.getType());
-//				}
-//			}
 			
 			// newGoal not required
 			Predicate newGoal;
@@ -103,13 +88,6 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 			// no change if seq == result
 			return result;
 			
-//			IInternalProverSequent result = ((IInternalProverSequent) seq).replaceGoal(newGoal,newTypeEnv);
-//			if (result == null) return null;
-//			result = result.addHyps(addedHypotheses,null);
-//			if (result == null) return null;
-//			result = result.selectHypotheses(addedHypotheses);
-//			result = ProofRule.performHypActions(hypAction,result);
-//			return result;
 		}
 		
 	}
@@ -254,6 +232,5 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 			((IInternalHypAction)hypActions.get(i)).processDependencies(proofDeps);
 		}
 	}
-	
 
 }

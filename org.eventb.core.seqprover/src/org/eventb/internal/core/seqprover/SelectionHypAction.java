@@ -23,6 +23,7 @@ public class SelectionHypAction implements IInternalHypAction, ISelectionHypActi
 	 */
 	public SelectionHypAction(final String actionType, final Collection<Predicate> hyps) {
 		super();
+		assert hyps != null;
 		this.actionType = actionType;
 		this.hyps = hyps == null ? NO_HYPS : hyps;
 	}

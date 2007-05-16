@@ -6,13 +6,12 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.SequentProver;
 
 /**
  * This class is the default implementation of the {@link IProverSequent} and 
@@ -117,6 +116,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		this.hiddenHypotheses = NO_HYPS;
 		this.selectedHypotheses = selectedHypotheses == null ? NO_HYPS : new LinkedHashSet<Predicate>(selectedHypotheses);
 		this.goal = goal;
+		SequentProver.debugOut("Constructed new sequent " + this);
 	}
 	
 	
@@ -155,6 +155,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		this.hiddenHypotheses = NO_HYPS;
 		this.selectedHypotheses = NO_HYPS;
 		this.goal = goal;
+		SequentProver.debugOut("Constructed new sequent " + this);
 	}
 	
 	
@@ -226,7 +227,8 @@ public final class ProverSequent implements IInternalProverSequent{
 			newSelectedHypotheses = new LinkedHashSet<Predicate>(selectedHypotheses);
 			newHiddenHypotheses = new LinkedHashSet<Predicate>(hiddenHypotheses);
 			for (Predicate hyp : addhyps) {
-				if (! typeCheckClosed(hyp,newTypeEnv)) return null;
+				// if (! typeCheckClosed(hyp,newTypeEnv)) return null;
+				if (! ProverChecks.checkTyping(hyp, newTypeEnv)) return null;
 				if (! this.containsHypothesis(hyp)){
 					newLocalHypotheses.add(hyp);
 					modified = true;
@@ -236,7 +238,8 @@ public final class ProverSequent implements IInternalProverSequent{
 			}
 		}
 		if (newGoal != null && ! newGoal.equals(goal)) {
-			if (! typeCheckClosed(newGoal,newTypeEnv)) return null;
+			// if (! typeCheckClosed(newGoal,newTypeEnv)) return null;
+			if (! ProverChecks.checkTyping(newGoal,newTypeEnv)) return null;
 			modified = true;
 		}
 		
@@ -347,7 +350,8 @@ public final class ProverSequent implements IInternalProverSequent{
 			newSelectedHypotheses = new LinkedHashSet<Predicate>(selectedHypotheses);
 			newHiddenHypotheses = new LinkedHashSet<Predicate>(hiddenHypotheses);
 			for (Predicate infHyp : infHyps) {
-				if (! typeCheckClosed(infHyp,newTypeEnv)) return this;
+				// if (! typeCheckClosed(infHyp,newTypeEnv)) return this;
+				if (! ProverChecks.checkTyping(infHyp,newTypeEnv)) return this;
 				if (! this.containsHypothesis(infHyp)){
 					newLocalHypotheses.add(infHyp);
 					if (selectInfHyps) newSelectedHypotheses.add(infHyp);
@@ -382,18 +386,6 @@ public final class ProverSequent implements IInternalProverSequent{
 		str.append("]");
 		return str.toString();
 	}
-	
-	
-	private static boolean typeCheckClosed(Formula f, ITypeEnvironment t) {
-		ITypeCheckResult tcr = f.typeCheck(t);
-		// new free variables introduced
-		if (tcr.isSuccess()) {
-			return tcr.getInferredEnvironment().isEmpty();
-		}
-		return false;
-	}
-
-
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.seqprover.IProverSequent#containsHypothesis(org.eventb.core.ast.Predicate)
@@ -426,34 +418,7 @@ public final class ProverSequent implements IInternalProverSequent{
 						localHypotheses.iterator());
 			}
 		};
-		
-//		return iterable(new CompositeIterator<Predicate>(
-//				globalHypotheses.iterator(),
-//				localHypotheses.iterator()));
 	}
-
-
-//	/**
-//	 * Given a Predicate iterator, this class returns an instance of its iterable class
-//	 * so that it can be used in a <code>for</code> loop.
-//	 * <p>
-//	 * This is a convenience method.
-//	 * </p>
-//	 * 
-//	 * @param iterator
-//	 * 			The given Predicate iterator
-//	 * @return
-//	 * 			The iterable Predicate class that can be used in a <code>for</code>
-//	 * 			loop
-//	 */
-//	private Iterable<Predicate> iterable(final Iterator<Predicate> iterator){
-//		return new Iterable<Predicate>(){
-//
-//			public Iterator<Predicate> iterator() {
-//				return iterator;
-//			}
-//		};
-//	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.seqprover.IProverSequent#hiddenHypIterable()
@@ -465,10 +430,6 @@ public final class ProverSequent implements IInternalProverSequent{
 				return new ImmutableIterator<Predicate>(hiddenHypotheses);
 			}
 		};
-		
-		// return iterable(new ImmutableIterator<Predicate>(hiddenHypotheses));
-		// Safer compared to:
-		// return hiddenHypotheses;
 	}
 
 
@@ -482,9 +443,6 @@ public final class ProverSequent implements IInternalProverSequent{
 				return new ImmutableIterator<Predicate>(selectedHypotheses);
 			}
 		};
-		// return iterable(new ImmutableIterator<Predicate>(selectedHypotheses));
-		// Safer compared to:
-		// return selectedHypotheses;
 	}
 
 	/* (non-Javadoc)
@@ -514,13 +472,8 @@ public final class ProverSequent implements IInternalProverSequent{
 						hiddenHypotheses);
 			}
 		};
-//		return iterable(new DifferenceIterator<Predicate>(
-//				new CompositeIterator<Predicate>(
-//						globalHypotheses.iterator(),localHypotheses.iterator()),
-//				hiddenHypotheses));
-
 	}
-		
+
 	public Iterable<Predicate> visibleMinusSelectedIterable() {
 		return new Iterable<Predicate>(){
 
@@ -531,12 +484,6 @@ public final class ProverSequent implements IInternalProverSequent{
 			}
 		};
 	}
-//		return iterable(new DifferenceIterator<Predicate>(
-//				visibleHypIterable().iterator(),
-//				selectedHypotheses)
-//				);
-//	}
-	
 }
 
 

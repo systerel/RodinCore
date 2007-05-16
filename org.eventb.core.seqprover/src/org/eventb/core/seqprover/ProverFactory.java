@@ -371,7 +371,7 @@ public final class ProverFactory {
 	 * Returns a new select hypotheses action
 	 * 
 	 * @param toSelect
-	 * 		Hypotheses to select
+	 * 		Hypotheses to select (should not be <code>null</code>)
 	 * @return
 	 * 		A new select hypotheses action
 	 */
@@ -383,7 +383,7 @@ public final class ProverFactory {
 	 * Returns a new deselect hypotheses action
 	 * 
 	 * @param toDeselect
-	 * 		Hypotheses to deselect
+	 * 		Hypotheses to deselect (should not be <code>null</code>)
 	 * @return
 	 * 		A new deselect hypotheses action
 	 */
@@ -395,7 +395,7 @@ public final class ProverFactory {
 	 * Returns a new hide hypotheses action
 	 * 
 	 * @param toHide
-	 * 		Hypotheses to hide
+	 * 		Hypotheses to hide (should not be <code>null</code>)
 	 * @return
 	 * 		A new hide hypotheses action
 	 */
@@ -407,7 +407,7 @@ public final class ProverFactory {
 	 * Returns a new show hypotheses action
 	 * 
 	 * @param toShow
-	 * 		Hypotheses to show
+	 * 		Hypotheses to show (should not be <code>null</code>)
 	 * @return
 	 * 		A new show hypotheses action
 	 */
@@ -425,11 +425,11 @@ public final class ProverFactory {
 	 * </p>
 	 * 
 	 * @param hyps
-	 * 		The hypotheses needed for the forward inference
+	 * 		The hypotheses required by the forward inference (should not be <code>null</code>)
 	 * @param addedFreeIdents
-	 * 		Fresh free identifiers added by the forward inference
+	 * 		Fresh free identifiers added by the forward inference (should not be <code>null</code>)
 	 * @param inferredHyps
-	 * 		The inferred hypotheses
+	 * 		The inferred hypotheses (should not be <code>null</code>)
 	 * @return
 	 * 		A new forward inference hypothesis action
 	 */
@@ -444,9 +444,9 @@ public final class ProverFactory {
 	 * free identifiers
 	 * 
 	 * @param hyps
-	 * 		The hypotheses needed for the forward inference
+	 * 		The hypotheses required by the forward inference (should not be <code>null</code>)
 	 * @param inferredHyps
-	 * 		The inferred hypotheses
+	 * 		The inferred hypotheses (should not be <code>null</code>)
 	 * @return
 	 * 		A new forward inference hypothesis action
 	 */

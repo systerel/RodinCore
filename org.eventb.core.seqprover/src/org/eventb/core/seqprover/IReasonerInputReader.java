@@ -20,6 +20,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
  * This interface is intended to be implemented by clients.
  * </p>
  * 
+ * 
  * @author Farhad Mehta
  */
 public interface IReasonerInputReader {

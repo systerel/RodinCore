@@ -3,6 +3,7 @@ package org.eventb.core.seqprover;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eventb.internal.core.seqprover.ProverChecks;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.eventb.internal.core.seqprover.TacticRegistry;
 import org.osgi.framework.BundleContext;
@@ -18,6 +19,7 @@ public class SequentProver extends Plugin {
 	 * debugging/tracing option names
 	 */
 	private static final String SEQPROVER_TRACE = PLUGIN_ID + "/debug/seqProver"; //$NON-NLS-1$
+	private static final String PROVER_CHECKS_TRACE = PLUGIN_ID + "/debug/proverChecks"; //$NON-NLS-1$
 	private static final String REASONER_REGISTRY_TRACE = PLUGIN_ID + "/debug/reasonerRegistry"; //$NON-NLS-1$	
 	private static final String TACTIC_REGISTRY_TRACE = PLUGIN_ID + "/debug/tacticRegistry"; //$NON-NLS-1$
 	
@@ -61,6 +63,9 @@ public class SequentProver extends Plugin {
 			option = Platform.getDebugOption(SEQPROVER_TRACE);
 			if (option != null)
 				SequentProver.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(PROVER_CHECKS_TRACE);
+			if (option != null)
+				ProverChecks.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(REASONER_REGISTRY_TRACE);
 			if (option != null)
 				ReasonerRegistry.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$

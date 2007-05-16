@@ -22,6 +22,9 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 
 	public ForwardInfHypAction(final Collection<Predicate> hyps, final FreeIdentifier[] addedIdents, final Collection<Predicate> inferredHyps) {
 		super();
+		assert hyps != null;
+		assert addedIdents != null;
+		assert inferredHyps != null;
 		this.hyps = hyps;
 		this.addedIdents = addedIdents;
 		this.inferredHyps = inferredHyps;

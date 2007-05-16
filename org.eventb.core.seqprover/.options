@@ -1,4 +1,5 @@
 org.eventb.core.seqprover/debug = true
 org.eventb.core.seqprover/debug/seqProver = false
+org.eventb.core.seqprover/debug/proverChecks = false
 org.eventb.core.seqprover/debug/reasonerRegistry = false
-org.eventb.core.seqprover/debug/reasonerRegistry = false
+org.eventb.core.seqprover/debug/tacticRegistry = false

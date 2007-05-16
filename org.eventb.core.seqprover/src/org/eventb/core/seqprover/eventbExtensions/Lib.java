@@ -321,6 +321,32 @@ public final class Lib {
 		postConstructionCheck(result);
 		return result;
 	}
+	
+	/**
+	 * Makes an implication from a collection of predicates and a predicate.
+	 * 
+	 * <p>
+	 * The left hand side of the implication is the conjunction of the predicates in the given collection. 
+	 * In case the collection is empty, the given rignt hand side predicate is simply returned. 
+	 * </p>
+	 * 
+	 * @param left
+	 * 		the collection of predicates to use for the left hannd side of the
+	 * 		inplications
+	 * @param right
+	 * 		the predicate to use for the right hand side of the implication
+	 * @return
+	 * 		the resulting implication
+	 */
+	public static Predicate makeImpl(Collection<Predicate> left, Predicate right){
+		if (left.isEmpty()){
+			return right;
+		}
+		else{
+			return Lib.makeImp(makeConj(left), right);
+		}	
+	}
+
 
 	public static Predicate makeEq(Expression left, Expression right) {
 		Predicate result = ff.makeRelationalPredicate(Formula.EQUAL, left,
@@ -382,8 +408,42 @@ public final class Lib {
 				boundIdents, boundPred, null);
 		postConstructionCheck(result);
 		return result;
-
 	}
+	
+	
+	/**
+	 * Constructs a universally quantified predicate form a given predicate
+	 * by binding the free identifiers provided.
+	 * 
+	 * <p>
+	 * If no free identifiers are provided (<code>null</code> or an array of length 0) then
+	 * the identical predicate is returned.
+	 * </p>
+	 * 
+	 * @param freeIdents
+	 * 			the free identifiers to bind
+	 * @param pred
+	 * 			the predicate to quantify over
+	 * @return
+	 * 			the quantified predicate
+	 */
+	public static Predicate makeUnivQuant(FreeIdentifier[] freeIdents,
+			Predicate pred) {
+		
+		if (freeIdents == null || freeIdents.length == 0)
+			return pred;
+		
+		// Bind the given free identifiers 
+		Predicate boundPred = pred.bindTheseIdents(Arrays.asList(freeIdents), ff);
+		// Generate bound identifier declarations.
+		BoundIdentDecl[] boundIdentDecls = new BoundIdentDecl[freeIdents.length];
+		for (int i = 0; i < freeIdents.length; i++) {
+			FreeIdentifier freeIdent = freeIdents[i];
+			boundIdentDecls[i] = ff.makeBoundIdentDecl(freeIdent.getName(), null, freeIdent.getType());
+		}
+	
+		return makeUnivQuant(boundIdentDecls, boundPred);
+	}	
 
 	public static Predicate makeExQuant(BoundIdentDecl[] boundIdents,
 			Predicate boundPred) {
@@ -392,6 +452,40 @@ public final class Lib {
 		postConstructionCheck(result);
 		return result;
 
+	}
+	
+	/**
+	 * Constructs an existentially quantified predicate form a given predicate
+	 * by binding the free identifiers provided.
+	 * 
+	 * <p>
+	 * If no free identifiers are provided (<code>null</code> or an array of length 0) then
+	 * the identical predicate is returned.
+	 * </p>
+	 * 
+	 * @param freeIdents
+	 * 			the free identifiers to bind
+	 * @param pred
+	 * 			the predicate to quantify over
+	 * @return
+	 * 			the quantified predicate
+	 */
+	public static Predicate makeExQuant(FreeIdentifier[] freeIdents,
+			Predicate pred) {
+		
+		if (freeIdents == null || freeIdents.length == 0)
+			return pred;
+		
+		// Bind the given free identifiers 
+		Predicate boundPred = pred.bindTheseIdents(Arrays.asList(freeIdents), ff);
+		// Generate bound identifier declarations.
+		BoundIdentDecl[] boundIdentDecls = new BoundIdentDecl[freeIdents.length];
+		for (int i = 0; i < freeIdents.length; i++) {
+			FreeIdentifier freeIdent = freeIdents[i];
+			boundIdentDecls[i] = ff.makeBoundIdentDecl(freeIdent.getName(), null, freeIdent.getType());
+		}
+	
+		return makeExQuant(boundIdentDecls, boundPred);
 	}
 
 	public static Predicate WD(Formula f) {

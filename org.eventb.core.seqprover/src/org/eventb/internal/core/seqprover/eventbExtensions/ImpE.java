@@ -44,8 +44,8 @@ public class ImpE extends HypothesisReasoner {
 
 		final Predicate toShow = Lib.impLeft(pred);
 		final Predicate toAssume = Lib.impRight(pred);
-		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(toAssume);
-		addedHyps.addAll(Lib.breakPossibleConjunct(toShow));
+		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(toShow);
+		addedHyps.addAll(Lib.breakPossibleConjunct(toAssume));
 		Set<Predicate> deselectedHyps = new HashSet<Predicate>();
 		// deselectedHyps.add(toShow);
 		deselectedHyps.add(pred);

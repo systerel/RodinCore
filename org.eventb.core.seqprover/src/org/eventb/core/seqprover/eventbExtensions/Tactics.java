@@ -220,6 +220,7 @@ public class Tactics {
 		};
 	}
 	
+	// TODO : this tactic doen not work since there may be more than one added hyp from AE.
 	public static ITactic abstrExprThenEq(final String expression) {
 		
 		return new ITactic() {
