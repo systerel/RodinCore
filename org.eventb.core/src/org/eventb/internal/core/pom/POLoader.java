@@ -27,6 +27,9 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public final class POLoader {
+	
+	// flag for debug trace 
+	public static boolean DEBUG = false;
 
 	private static final FormulaFactory factory = FormulaFactory.getDefault();
 

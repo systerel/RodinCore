@@ -98,6 +98,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		return expr;
 	}
 
+	// TODO : return null in case key is not present instead of throwing an exception
 	public static class Bridge implements IReasonerInputReader {
 
 		private final IPRProofRule prProofRule;
