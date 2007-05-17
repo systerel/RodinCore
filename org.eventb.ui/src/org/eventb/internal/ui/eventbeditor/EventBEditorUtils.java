@@ -53,11 +53,9 @@ import org.eventb.internal.ui.eventbeditor.actions.PrefixCstName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixGrdName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixInvName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesEventName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixSetName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixThmName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixVarName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixVariantName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixWitName;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -274,7 +272,7 @@ public class EventBEditorUtils {
 								String name = UIUtils.getFreeElementName(
 										editor, event,
 										IRefinesEvent.ELEMENT_TYPE,
-										PrefixRefinesEventName.DEFAULT_PREFIX);
+										"refinesEvent");
 								String abs_name = ((IEvent) event).getLabel();
 								newRefEvt = event.getInternalElement(
 												IRefinesEvent.ELEMENT_TYPE,
@@ -1227,7 +1225,7 @@ public class EventBEditorUtils {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					String prefix = UIUtils.getNamePrefix(editor,
 							IVariant.ELEMENT_TYPE,
-							PrefixVariantName.DEFAULT_PREFIX);
+							"variant");
 					int index = UIUtils.getFreeElementNameIndex(editor,
 							rodinFile, IVariant.ELEMENT_TYPE, prefix);
 					newVariant = rodinFile.getInternalElement(

@@ -20,7 +20,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixExtendsContextName;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
@@ -57,7 +56,7 @@ public class ExtendsSection extends AbstractContextsSection<IContextFile> {
 	protected void addClause(String contextName) throws RodinDBException {
 		final String name = UIUtils.getFreeElementName(editor,
 				rodinFile, IExtendsContext.ELEMENT_TYPE,
-				PrefixExtendsContextName.DEFAULT_PREFIX);
+				"extendsContext");
 		final IExtendsContext clause = rodinFile.getExtendsClause(name);
 		clause.create(null, null);
 		clause.setAbstractContextName(contextName, null);

@@ -20,7 +20,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixSeesContextName;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
@@ -47,7 +46,7 @@ public class SeesSection extends AbstractContextsSection<IMachineFile> {
 	protected void addClause(String contextName) throws RodinDBException {
 		final String name = UIUtils.getFreeElementName(editor, rodinFile,
 				ISeesContext.ELEMENT_TYPE,
-				PrefixSeesContextName.DEFAULT_PREFIX);
+				"seesContext");
 		ISeesContext clause = rodinFile.getSeesClause(name);
 		clause.create(null, null);
 		clause.setSeenContextName(contextName, null);

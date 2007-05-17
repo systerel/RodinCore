@@ -19,8 +19,6 @@ import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesEventName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesMachineName;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDB;
@@ -89,9 +87,7 @@ public class Refines implements IObjectActionDelegate {
 							IRefinesMachine refined = newFile
 									.getInternalElement(
 											IRefinesMachine.ELEMENT_TYPE,
-											"internal_"
-													+ PrefixRefinesMachineName.DEFAULT_PREFIX
-													+ 1);
+											"internal_refinesMachine1");
 							refined.create(null, monitor);
 							refined.setAbstractMachineName(abstractMachineName,
 									null);
@@ -133,9 +129,7 @@ public class Refines implements IObjectActionDelegate {
 									IRefinesEvent refinesEvent = newElement
 											.getInternalElement(
 													IRefinesEvent.ELEMENT_TYPE,
-													"internal_"
-															+ PrefixRefinesEventName.DEFAULT_PREFIX
-															+ 1);
+													"internal_refinesEvent1");
 									refinesEvent.create(null, monitor);
 									refinesEvent.setAbstractEventLabel(label,
 											null);

@@ -34,7 +34,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesMachineName;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -321,7 +320,7 @@ public class RefinesSection extends SectionPart implements
 																	editor,
 																	rodinFile,
 																	IRefinesMachine.ELEMENT_TYPE,
-																	PrefixRefinesMachineName.DEFAULT_PREFIX));
+																	"refinesMachine"));
 									refined.create(null, monitor);
 									refined.setAbstractMachineName(machine,
 											null);

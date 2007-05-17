@@ -14,7 +14,6 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixExtendsContextName;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -77,9 +76,7 @@ public class Extends implements IObjectActionDelegate {
 							IExtendsContext extended = newFile
 									.getInternalElement(
 											IExtendsContext.ELEMENT_TYPE,
-											"internal_"
-													+ PrefixExtendsContextName.DEFAULT_PREFIX
-													+ 1);
+											"internal_extendsContext1");
 							extended.create(null, monitor);
 							extended.setAbstractContextName(
 									abstractContextName, monitor);
