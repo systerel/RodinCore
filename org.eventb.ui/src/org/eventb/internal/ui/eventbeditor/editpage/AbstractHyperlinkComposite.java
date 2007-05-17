@@ -56,5 +56,7 @@ public abstract class AbstractHyperlinkComposite {
 		gridData.heightHint = heightHint;
 	}
 
-	public abstract void createHyperlinks(FormToolkit toolkit, int level);
+	public void createHyperlinks(FormToolkit toolkit, int level) {
+		initialised = true;
+	}
 }

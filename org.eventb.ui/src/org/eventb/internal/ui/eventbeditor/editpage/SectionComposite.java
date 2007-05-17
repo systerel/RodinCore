@@ -251,7 +251,6 @@ public class SectionComposite implements ISectionComposite {
 			if (!beforeHyperlinkComposite.isInitialised())
 				beforeHyperlinkComposite.createHyperlinks(toolkit, level);
 			
-			
 			if (children.length != 0)
 				beforeHyperlinkComposite.setHeightHint(SWT.DEFAULT);
 			else

@@ -7,10 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
@@ -21,11 +24,16 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 public class EditSectionRegistry {
 
 	public static EditSectionRegistry instance = null;
 
+	public static String IDENTIFIER_ATTRIBUTE_ID = "org.eventb.ui.identifier";
+	
+	public static String LABEL_ATTRIBUTE_ID = "org.eventb.ui.label";
+	
 	private EditSectionRegistry() {
 		// Singleton to hide contructor
 	}
@@ -51,20 +59,6 @@ public class EditSectionRegistry {
 		public SectionsInfo() {
 			unsortedSections = new ArrayList<SectionInfo>();
 		}
-
-		// public ISectionComposite[] createSections(EditPage page,
-		// FormToolkit toolkit, ScrolledForm form, Composite parent) {
-		// Collection<ISectionComposite> sectionComps = new
-		// ArrayList<ISectionComposite>();
-		// for (SectionInfo section : sections) {
-		// ISectionComposite sectionComp = section.createSection(page,
-		// toolkit, form, parent);
-		// if (sectionComp != null)
-		// sectionComps.add(sectionComp);
-		// }
-		// return sectionComps.toArray(new ISectionComposite[sectionComps
-		// .size()]);
-		// }
 
 		public void addSection(SectionInfo info) {
 			unsortedSections.add(info);
@@ -170,19 +164,6 @@ public class EditSectionRegistry {
 			return this.priority;
 		}
 
-		// public ISectionComposite createSection(EditPage page,
-		// FormToolkit toolkit, ScrolledForm form, Composite parent) {
-		// try {
-		// ISectionComposite sectionComp;
-		// sectionComp = (ISectionComposite) config
-		// .createExecutableExtension("class");
-		// return sectionComp.create(page, toolkit, form, parent);
-		// } catch (CoreException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// return null;
-		// }
-		// }
 	}
 
 	private synchronized void loadSectionRegistry() {
@@ -222,20 +203,6 @@ public class EditSectionRegistry {
 	public String getSectionName(IConfigurationElement section) {
 		return section.getAttribute("id");
 	}
-
-	// public ISectionComposite[] createSections(EditPage page,
-	// FormToolkit toolkit, ScrolledForm form, Composite parent) {
-	// if (sectionRegistry == null)
-	// loadSectionRegistry();
-	//
-	// IEventBEditor editor = (IEventBEditor) page.getEditor();
-	// SectionsInfo info = sectionRegistry.get(editor.getEditorId());
-	// if (info == null) {
-	// return new ISectionComposite[0];
-	// }
-	// return info.createSections(page, toolkit, form, parent);
-	//
-	// }
 
 	private synchronized void addSection(IElementType parentType,
 			SectionInfo info) {
@@ -296,7 +263,7 @@ public class EditSectionRegistry {
 		return false;
 	}
 
-	private Map<IElementType, AttributesInfo> attributeRegistry;
+	Map<IElementType, AttributesInfo> attributeRegistry;
 
 	class AttributesInfo {
 		List<AttributeInfo> attributeInfos;
@@ -321,17 +288,108 @@ public class EditSectionRegistry {
 			return result;
 		}
 
+		public void createDefaultAttributes(IEventBEditor editor,
+				IInternalElement element, IProgressMonitor monitor) throws RodinDBException {
+			for (AttributeInfo attributeInfo : attributeInfos) {
+				attributeInfo.createDefaultAttribute(editor, element, monitor);
+			}
+		}
+
+		public String getDefaultPrefix(IInternalElementType type, String attributeID) {
+			for (AttributeInfo attributeInfo : attributeInfos) {
+				if (attributeID.equals(attributeInfo.getAttributeId())) {
+					return attributeInfo.getDefaultPrefix(type); 
+				}
+			}
+			return null;
+		}
+
 	}
 
 	private class AttributeInfo {
 		private IConfigurationElement config;
+		private Map<IElementType, IAttributeFactory> factories = null;
+		private Map<IElementType, String> defaultPrefixes = null;
 
 		public AttributeInfo(IConfigurationElement config) {
 			this.config = config;
 		}
 
+		public String getDefaultPrefix(IInternalElementType type) {
+			if (defaultPrefixes == null) {
+				loadPrefixes();
+			}
+			
+			return defaultPrefixes.get(type);
+		}
+
+		private void loadPrefixes() {
+			defaultPrefixes = new HashMap<IElementType, String>();
+			
+			IConfigurationElement[] typeIDs = config.getChildren("type");
+			for (IConfigurationElement typeID : typeIDs) {
+				String id = typeID.getAttribute("id");
+				try {
+					IElementType type = RodinCore.getElementType(id);
+					String defaultPrefix = typeID.getAttribute("defaultPrefix");
+					defaultPrefixes.put(type, defaultPrefix);
+				} catch (IllegalArgumentException e) {
+					String message = "Illegal element type " + id
+							+ ", ignore this configuration";
+					UIUtils.log(e, message);
+					if (UIUtils.DEBUG) {
+						System.out.println(message);
+					}
+					continue;
+				}
+			}
+		}
+
+		public void createDefaultAttribute(IEventBEditor editor,
+				IInternalElement element,
+				IProgressMonitor monitor) throws RodinDBException {
+			if (factories == null) {
+				loadFactory();
+			}
+
+			IAttributeFactory factory = factories.get(element.getElementType());
+			if (factory != null)
+				factory.createDefaulAttribute(editor, element, monitor);
+		}
+
+		private void loadFactory() {
+			factories = new HashMap<IElementType, IAttributeFactory>();
+			
+			IConfigurationElement[] typeIDs = config.getChildren("type");
+			for (IConfigurationElement typeID : typeIDs) {
+				String id = typeID.getAttribute("id");
+				try {
+					IElementType type = RodinCore.getElementType(id);
+					try {
+						IAttributeFactory factory = (IAttributeFactory) typeID
+								.createExecutableExtension("defaultValue");
+						factories.put(type, factory);
+					} catch (CoreException e) {
+						continue;
+					}
+				} catch (IllegalArgumentException e) {
+					String message = "Illegal element type " + id
+							+ ", ignore this configuration";
+					UIUtils.log(e, message);
+					if (UIUtils.DEBUG) {
+						System.out.println(message);
+					}
+					continue;
+				}
+			}
+		}
+
 		public String getAttributeName() {
 			return config.getAttribute("name");
+		}
+
+		public String getAttributeId() {
+			return config.getAttribute("id");
 		}
 
 		public IEditComposite createAttributeComposite() {
@@ -625,6 +683,38 @@ public class EditSectionRegistry {
 		}
 
 		return info.isApplicable(actionID, parent, element, type);
+	}
+
+	public synchronized IRodinElement createElement(final IEventBEditor editor,
+			final IInternalParent parent,
+			final IInternalElementType<? extends IInternalElement> type,
+			final IInternalElement sibling) throws CoreException {
+		if (attributeRegistry == null)
+			loadAttributeRegistry();
+
+		String newName = UIUtils.getFreeChildName(editor, parent, type);
+		final IInternalElement newElement = parent.getInternalElement(
+				(IInternalElementType<? extends IRodinElement>) type, newName);
+		RodinCore.run(new IWorkspaceRunnable() {
+
+			public void run(IProgressMonitor monitor) throws CoreException {
+				newElement.create(sibling, monitor);
+				AttributesInfo attributesInfo = attributeRegistry.get(type);
+				attributesInfo.createDefaultAttributes(editor, newElement,
+						monitor);
+			}
+			
+		}, new NullProgressMonitor());
+
+		return newElement;
+	}
+
+	public synchronized String getDefaultPrefix(IInternalElementType type, String attributeID) {
+		if (attributeRegistry == null)
+			loadAttributeRegistry();
+
+		AttributesInfo attributesInfo = attributeRegistry.get(type);
+		return attributesInfo.getDefaultPrefix(type, attributeID);
 	}
 
 }

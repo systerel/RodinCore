@@ -2,6 +2,7 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IAssignmentElement;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.rodinp.core.RodinDBException;
 
 public class AssignmentEditComposite extends TextEditComposite {
@@ -25,8 +26,7 @@ public class AssignmentEditComposite extends TextEditComposite {
 			try {
 				aElement.setAssignmentString(str, null);
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				EventBUIExceptionHandler.handleSetAttributeException(e);
 			}
 		}
 	}
@@ -43,10 +43,9 @@ public class AssignmentEditComposite extends TextEditComposite {
 		try {
 			aElement.setAssignmentString("", new NullProgressMonitor());
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EventBUIExceptionHandler.handleSetAttributeException(e);
 		}
 		super.setDefaultValue();
 	}
-	
+
 }

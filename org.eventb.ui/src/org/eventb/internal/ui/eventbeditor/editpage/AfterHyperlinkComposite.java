@@ -1,6 +1,6 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -9,14 +9,12 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 
@@ -46,21 +44,16 @@ public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 			public void linkActivated(HyperlinkEvent e) {
 				IEventBEditor editor = (IEventBEditor) page.getEditor();
 				try {
-					String newName = UIUtils.getFreeChildName(editor, parent,
-							type);
-					IInternalElement newElement = parent
-							.getInternalElement(
-									(IInternalElementType<? extends IRodinElement>) type,
-									newName);
-					newElement.create(null, new NullProgressMonitor());
-				} catch (RodinDBException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					EditSectionRegistry.getDefault().createElement(editor,
+							parent, type, null);
+				} catch (CoreException coreException) {
+					EventBUIExceptionHandler
+							.handleCreateElementException(coreException);
 				}
 			}
 
 		});
 		addAfterHyperlink.setLayoutData(new GridData());
-		initialised = true;
+		super.createHyperlinks(toolkit, level);
 	}
 }

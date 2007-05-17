@@ -213,6 +213,23 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="defaultValue" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eventb.internal.ui.eventbeditor.editpage.IDefaultAttributeFactory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="defaultPrefix" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
