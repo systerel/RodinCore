@@ -714,7 +714,9 @@ public class EditSectionRegistry {
 			loadAttributeRegistry();
 
 		AttributesInfo attributesInfo = attributeRegistry.get(type);
-		return attributesInfo.getDefaultPrefix(type, attributeID);
+		if (attributesInfo != null)
+			return attributesInfo.getDefaultPrefix(type, attributeID);
+		return null;
 	}
 
 }

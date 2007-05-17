@@ -36,10 +36,10 @@ public abstract class PrefixElementName<T extends IInternalElement> implements I
 		}
 
 		if (prefix == null)
-			prefix = EditSectionRegistry.getDefault().getDefaultPrefix(type, attributeID);
+			prefix = EditSectionRegistry.getDefault().getDefaultPrefix(type,
+					attributeID);
 		InputDialog dialog = new InputDialog(editor.getSite().getShell(),
-				dialogTitle,
-				message, prefix, null);
+				dialogTitle, message, prefix, null);
 		dialog.open();
 		prefix = dialog.getValue();
 

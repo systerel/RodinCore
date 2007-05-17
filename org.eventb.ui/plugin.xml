@@ -310,32 +310,56 @@
          <menu
                id="org.eventb.ui.refactoring"
                label="%editorAction.menu.refactoring">
-            <groupMarker name="InvName"/>
-            <groupMarker name="ThmName"/>
+            <groupMarker name="Naming"/>
+            <groupMarker name="Prefix"/>
          </menu>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming"
-               id="org.eventb.ui.actions.autoInvNaming"
-               label="%editorAction.autoInvNaming.label"
-               menubarPath="org.eventb.ui.refactoring/InvName"
-               style="push"/>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.PrefixInvName"
-               id="org.eventb.ui.actions.PrefixInvNaming"
-               label="%editorAction.PrefixInvNaming.label"
-               menubarPath="org.eventb.ui.refactoring/InvName"
-               style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoThmNaming"
                id="org.eventb.ui.actions.autoThmNaming"
-               label="%editorAction.autoThmNaming.label"
-               menubarPath="org.eventb.ui.refactoring/ThmName"
+               label="%editorAction.autoThmLabel.label"
+               menubarPath="org.eventb.ui.refactoring/Naming"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming"
+               id="org.eventb.ui.actions.autoInvNaming"
+               label="%editorAction.autoInvLabel.label"
+               menubarPath="org.eventb.ui.refactoring/Naming"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.PrefixVarName"
+               id="org.eventb.ui.actions.setVarIdPrefix"
+               label="%editorAction.setVarIdPrefix.label"
+               menubarPath="org.eventb.ui.refactoring/Prefix"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.PrefixThmName"
-               id="org.eventb.ui.actions.PrefixThmNaming"
-               label="%editorAction.PrefixThmNaming.label"
-               menubarPath="org.eventb.ui.refactoring/ThmName"
+               id="org.eventb.ui.actions.setThmLabelPrefix"
+               label="%editorAction.setThmLabelPrefix.label"
+               menubarPath="org.eventb.ui.refactoring/Prefix"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName"
+               id="org.eventb.ui.actions.setEvtLabelPrefix"
+               label="%editorAction.setEvtLabelPrefix.label"
+               menubarPath="org.eventb.ui.refactoring/Prefix"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.PrefixActName"
+               id="org.eventb.ui.actions.setActLabelPrefix"
+               label="%editorAction.setActLabelPrefix.label"
+               menubarPath="org.eventb.ui.refactoring/Prefix"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.PrefixInvName"
+               id="org.eventb.ui.actions.setInvLabelPrefix"
+               label="%editorAction.setInvLabelPrefix.label"
+               menubarPath="org.eventb.ui.refactoring/Prefix"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.PrefixGrdName"
+               id="org.eventb.ui.actions.setGrdLabelPrefix"
+               label="%editorAction.setGrdLabelPrefix.label"
+               menubarPath="org.eventb.ui.refactoring/Prefix"
                style="push"/>
       </editorContribution>
       <editorContribution
@@ -399,32 +423,44 @@
          <menu
                id="org.eventb.ui.refactoring"
                label="%editorAction.menu.refactoring">
-            <groupMarker name="AxmName"/>
-            <groupMarker name="ThmName"/>
+            <groupMarker name="Naming"/>
+            <groupMarker name="Prefix"/>
          </menu>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoThmNaming"
-               id="org.eventb.ui.actions.autoThmNaming"
-               label="%editorAction.autoThmNaming.label"
-               menubarPath="org.eventb.ui.refactoring/ThmName"
-               style="push"/>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.PrefixThmName"
-               id="org.eventb.ui.actions.PrefixThmNaming"
-               label="%editorAction.PrefixThmNaming.label"
-               menubarPath="org.eventb.ui.refactoring/ThmName"
+               id="org.eventb.ui.actions.autoThmLabel"
+               label="%editorAction.autoThmLabel.label"
+               menubarPath="org.eventb.ui.refactoring/Naming"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoAxmNaming"
-               id="org.eventb.ui.actions.autoAxmNaming"
-               label="%editorAction.autoAxmNaming.label"
-               menubarPath="org.eventb.ui.refactoring/AxmName"
+               id="org.eventb.ui.actions.autoAxmLabel"
+               label="%editorAction.autoAxmLabel.label"
+               menubarPath="org.eventb.ui.refactoring/Naming"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.PrefixCstName"
+               id="org.eventb.ui.actions.setCstIdPrefix"
+               label="%editorAction.setCstIdPrefix.label"
+               menubarPath="org.eventb.ui.refactoring/Prefix"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.PrefixSetName"
+               id="org.eventb.ui.actions.setSetIdPrefix"
+               label="%editorAction.setSetIdPrefix.label"
+               menubarPath="org.eventb.ui.refactoring/Prefix"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.PrefixThmName"
+               id="org.eventb.ui.actions.setThmLabelPrefix"
+               label="%editorAction.setThmLabelPrefix.label"
+               menubarPath="org.eventb.ui.refactoring/Prefix"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.PrefixAxmName"
-               id="org.eventb.ui.actions.PrefixAxmNaming"
-               label="%editorAction.PrefixAxmNaming"
-               menubarPath="org.eventb.ui.refactoring/AxmName"
+               id="org.eventb.ui.actions.setAxmLabelPrefix"
+               label="%editorAction.setAxmLabelPrefix"
+               menubarPath="org.eventb.ui.refactoring/Prefix"
                style="push"/>
       </editorContribution>
    </extension>
