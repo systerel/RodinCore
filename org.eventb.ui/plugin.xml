@@ -1413,7 +1413,9 @@
             id="org.eventb.ui.identifier"
             name="Identifier"
             priority="1">
-         <type id="org.eventb.core.variable"/>
+         <type
+               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.VariableIdentifierAttributeFactory"
+               id="org.eventb.core.variable"/>
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.LabelEditComposite"
@@ -1422,11 +1424,29 @@
             name="Label"
             postfix=":"
             priority="1">
-         <type id="org.eventb.core.invariant"/>
-         <type id="org.eventb.core.theorem"/>
-         <type id="org.eventb.core.event"/>
-         <type id="org.eventb.core.guard"/>
-         <type id="org.eventb.core.action"/>
+         <type
+               defaultPrefix="inv"
+               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.InvariantLabelAttributeFactory"
+               id="org.eventb.core.invariant"/>
+         <type
+               defaultPrefix="thm"
+               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.TheoremLabelAttributeFactory"
+               id="org.eventb.core.theorem"/>
+         <type
+               defaultPrefix="evt"
+               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory"
+               id="org.eventb.core.event"/>
+         <type
+               defaultPrefix="grd"
+               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.GuardLabelAttributeFactory"
+               id="org.eventb.core.guard"/>
+         <type
+               defaultPrefix="act"
+               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.ActionLabelAttributeFactory"
+               id="org.eventb.core.action"/>
+         <type
+               defaultPrefix="axm"
+               id="org.eventb.core.axiom"/>
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.PredicateEditComposite"
@@ -1444,7 +1464,9 @@
             id="org.eventb.ui.inherited"
             name="Inherited"
             priority="2">
-         <type id="org.eventb.core.event"/>
+         <type
+               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.InheritedAttributeFactory"
+               id="org.eventb.core.event"/>
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.ConvergenceEditComposite"
@@ -1452,7 +1474,9 @@
             id="org.eventb.ui.convergence"
             name="Convergence"
             priority="3">
-         <type id="org.eventb.core.event"/>
+         <type
+               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.ConvergenceAttributeFactory"
+               id="org.eventb.core.event"/>
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.AssignmentEditComposite"
@@ -1468,7 +1492,9 @@
             id="org.eventb.ui.refinesevent"
             name="Refines Event"
             priority="1">
-         <type id="org.eventb.core.refinesEvent"/>
+         <type
+               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.RefinesEventAttributeFactory"
+               id="org.eventb.core.refinesEvent"/>
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.CommentEditComposite"
