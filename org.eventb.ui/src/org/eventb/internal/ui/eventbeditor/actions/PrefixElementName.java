@@ -7,10 +7,15 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.EditSectionRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 
-public abstract class PrefixElementName implements IEditorActionDelegate {
+public abstract class PrefixElementName<T extends IInternalElement> implements IEditorActionDelegate {
 
 	IEventBEditor editor;
 
@@ -18,19 +23,20 @@ public abstract class PrefixElementName implements IEditorActionDelegate {
 		editor = (IEventBEditor) targetEditor;
 	}
 
-	public void setPrefix(QualifiedName qualifiedName, String defaultName, String dialogTitle, String message) {
+	public void setPrefix(IInternalElementType<T> type, String attributeID,
+			String dialogTitle, String message) {
+		QualifiedName qualifiedName = UIUtils.getQualifiedName(type);
 		IRodinFile inputFile = editor.getRodinInput();
 		String prefix = null;
 		try {
 			prefix = inputFile.getResource().getPersistentProperty(
 					qualifiedName);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EventBUIExceptionHandler.handleGetPersistentPropertyException(e);
 		}
 
 		if (prefix == null)
-			prefix = defaultName;
+			prefix = EditSectionRegistry.getDefault().getDefaultPrefix(type, attributeID);
 		InputDialog dialog = new InputDialog(editor.getSite().getShell(),
 				dialogTitle,
 				message, prefix, null);
@@ -42,8 +48,7 @@ public abstract class PrefixElementName implements IEditorActionDelegate {
 				inputFile.getResource().setPersistentProperty(qualifiedName,
 						prefix);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EventBUIExceptionHandler.handleSetPersistentPropertyException(e);
 		}
 	}
 
