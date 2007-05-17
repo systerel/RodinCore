@@ -107,8 +107,13 @@ public class EventBUIExceptionHandler {
 		UIUtils.log(exception, msg);
 	}
 
-	public static void handleGetPersistentPropertyException(CoreException e) {
+	public static void handleGetPersistentPropertyException(Exception e) {
 		handleException(e, "Exception throws when getting persistent property",
+				EventBUIExceptionHandler.UserAwareness.IGNORE);
+	}
+
+	public static void handleSetPersistentPropertyException(Exception e) {
+		handleException(e, "Exception throws when setting persistent property",
 				EventBUIExceptionHandler.UserAwareness.IGNORE);
 	}
 
