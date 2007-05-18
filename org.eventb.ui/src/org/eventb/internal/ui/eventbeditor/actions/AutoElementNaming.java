@@ -63,16 +63,13 @@ public abstract class AutoElementNaming<T extends IInternalElement>
 										+ +counter);
 							((ILabeledElement) element).setLabel(prefix
 									+ counter, monitor);
-
 						}
-//						element.rename(prefix + counter, false, null);
 					}
 				}
 
 			}, null);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EventBUIExceptionHandler.handleSetAttributeException(e);
 		}
 
 	}
