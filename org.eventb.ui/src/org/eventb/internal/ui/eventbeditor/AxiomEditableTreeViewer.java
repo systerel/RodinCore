@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextFile;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
@@ -69,8 +70,7 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 					return ((IContextFile) parent)
 							.getChildrenOfType(IAxiom.ELEMENT_TYPE);
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					EventBUIExceptionHandler.handleGetChildrenException(e);
 				}
 			}
 
@@ -78,8 +78,7 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 				try {
 					return ((IParent) parent).getChildren();
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					EventBUIExceptionHandler.handleGetChildrenException(e);
 				}
 			}
 
