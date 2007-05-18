@@ -9,6 +9,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
@@ -50,9 +51,9 @@ public class BeforeHyperlinkComposite extends AbstractHyperlinkComposite {
 
 					EditSectionRegistry.getDefault().createElement(editor,
 							parent, type, first);
-				} catch (CoreException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				} catch (CoreException exception) {
+					EventBUIExceptionHandler
+							.handleCreateElementException(exception);
 				}
 			}
 

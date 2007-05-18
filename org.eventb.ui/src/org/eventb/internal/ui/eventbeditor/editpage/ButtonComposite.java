@@ -12,6 +12,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IInternalElement;
@@ -118,9 +119,9 @@ public class ButtonComposite {
 				try {
 					((IInternalElement) element).delete(true,
 							new NullProgressMonitor());
-				} catch (RodinDBException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				} catch (RodinDBException exception) {
+					EventBUIExceptionHandler
+							.handleDeleteElementException(exception);
 				}
 			}
 
