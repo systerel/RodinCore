@@ -15,6 +15,7 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinElement;
 
 public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 
@@ -44,8 +45,9 @@ public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 			public void linkActivated(HyperlinkEvent e) {
 				IEventBEditor editor = (IEventBEditor) page.getEditor();
 				try {
-					EditSectionRegistry.getDefault().createElement(editor,
-							parent, type, null);
+					IRodinElement element = EditSectionRegistry.getDefault()
+							.createElement(editor, parent, type, null);
+					page.recursiveExpand(element);
 				} catch (CoreException coreException) {
 					EventBUIExceptionHandler
 							.handleCreateElementException(coreException);

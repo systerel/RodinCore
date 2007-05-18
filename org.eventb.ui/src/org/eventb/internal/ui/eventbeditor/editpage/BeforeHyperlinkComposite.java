@@ -15,6 +15,7 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinElement;
 
 public class BeforeHyperlinkComposite extends AbstractHyperlinkComposite {
 
@@ -49,8 +50,9 @@ public class BeforeHyperlinkComposite extends AbstractHyperlinkComposite {
 					assert (children.length != 0);
 					IInternalElement first = children[0];
 
-					EditSectionRegistry.getDefault().createElement(editor,
-							parent, type, first);
+					IRodinElement element = EditSectionRegistry.getDefault()
+							.createElement(editor, parent, type, first);
+					page.recursiveExpand(element);
 				} catch (CoreException exception) {
 					EventBUIExceptionHandler
 							.handleCreateElementException(exception);
