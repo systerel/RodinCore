@@ -3,7 +3,7 @@ package org.eventb.internal.ui.propertiesView;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IContextFile;
 import org.eventb.core.ISeesContext;
-import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -27,7 +27,7 @@ public class SeesContextSection extends CComboSection {
 		try {
 			contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "when listing the contexts of " + project);
+			EventBUIExceptionHandler.handleGetChildrenException(e);
 			return;
 		}
 		for (IContextFile context : contexts) {
@@ -39,7 +39,14 @@ public class SeesContextSection extends CComboSection {
 	@Override
 	void setText(String text) throws RodinDBException {
 		ISeesContext sElement = (ISeesContext) element;
-		if (!sElement.getSeenContextName().equals(text)) {
+		String seenContextName = null;
+		try {
+			sElement.getSeenContextName();
+		}
+		catch (RodinDBException e) {
+			// Do nothing
+		}
+		if (seenContextName == null || !seenContextName.equals(text)) {
 			sElement.setSeenContextName(text, new NullProgressMonitor());
 		}
 	}

@@ -59,19 +59,25 @@ public class ConvergenceSection extends CComboSection {
 	@Override
 	void setText(String text) throws RodinDBException {
 		IConvergenceElement cElement = (IConvergenceElement) element;
+		Convergence convergence = null;
+		try {
+			convergence = cElement.getConvergence();
+		} catch (RodinDBException e) {
+			// Do nothing
+		}
 		if (text.equals(ORDINARY)
-				&& cElement.getConvergence() != Convergence.ORDINARY) {
+				&& (convergence == null || convergence != Convergence.ORDINARY)) {
 			cElement.setConvergence(Convergence.ORDINARY,
 					new NullProgressMonitor());
 		} else if (text.equals(CONVERGENT)
-				&& cElement.getConvergence() != Convergence.CONVERGENT) {
+				&& (convergence == null || convergence != Convergence.CONVERGENT)) {
 			cElement.setConvergence(Convergence.CONVERGENT,
 					new NullProgressMonitor());
 		} else if (text.equals(ANTICIPATED)
-				&& cElement.getConvergence() != Convergence.ANTICIPATED) {
+				&& (convergence == null || convergence != Convergence.ANTICIPATED)) {
 			cElement.setConvergence(Convergence.ANTICIPATED,
 					new NullProgressMonitor());
-		}		
+		}
 	}
 
 }

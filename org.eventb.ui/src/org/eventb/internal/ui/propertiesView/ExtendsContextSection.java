@@ -39,7 +39,13 @@ public class ExtendsContextSection extends CComboSection {
 	@Override
 	void setText(String text) throws RodinDBException {
 		IExtendsContext eElement = (IExtendsContext) element;
-		if (!eElement.getAbstractContextName().equals(text)) {
+		String abstractContextName = null;
+		try {
+			abstractContextName = eElement.getAbstractContextName();
+		} catch (RodinDBException e) {
+			// Do nothing
+		}
+		if (abstractContextName == null || !abstractContextName.equals(text)) {
 			eElement.setAbstractContextName(text, new NullProgressMonitor());
 		}
 	}

@@ -39,7 +39,14 @@ public class RefinesMachineSection extends CComboSection {
 	@Override
 	void setText(String text) throws RodinDBException {
 		IRefinesMachine rElement = (IRefinesMachine) element;
-		if (!rElement.getAbstractMachineName().equals(text)) {
+		String abstractMachineName = null;
+		try {
+			rElement.getAbstractMachineName();
+		}
+		catch (RodinDBException e) {
+			// Do nothing
+		}
+		if (abstractMachineName == null || !abstractMachineName.equals(text)) {
 			rElement.setAbstractMachineName(text, new NullProgressMonitor());
 		}
 	}

@@ -7,7 +7,7 @@ import org.rodinp.core.RodinDBException;
 public class InheritanceSection extends CComboSection {
 
 	private static final String TRUE = "true";
-	
+
 	private static final String FALSE = "false";
 
 	@Override
@@ -33,10 +33,19 @@ public class InheritanceSection extends CComboSection {
 	@Override
 	void setText(String text) throws RodinDBException {
 		IEvent eElement = (IEvent) element;
-		if (eElement.isInherited() && text.equalsIgnoreCase(FALSE)) {
-			eElement.setInherited(false, new NullProgressMonitor());
+		boolean inherited;
+		try {
+			inherited = eElement.isInherited();
+		} catch (RodinDBException e) {
+			// Set the attribute anyway if there was a problem accessing the
+			// database
+			eElement.setInherited(text.equalsIgnoreCase(FALSE),
+					new NullProgressMonitor());
+			return;
 		}
-		else if (!eElement.isInherited() && text.equalsIgnoreCase(TRUE)) {
+		if (inherited && text.equalsIgnoreCase(FALSE)) {
+			eElement.setInherited(false, new NullProgressMonitor());
+		} else if (!inherited && text.equalsIgnoreCase(TRUE)) {
 			eElement.setInherited(true, new NullProgressMonitor());
 		}
 	}

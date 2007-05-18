@@ -43,7 +43,14 @@ public class RefinesEventSection extends CComboSection {
 	@Override
 	void setText(String text) throws RodinDBException {
 		IRefinesEvent rElement = (IRefinesEvent) element;
-		if (!rElement.getAbstractEventLabel().equals(text)) {
+		String abstractEventLabel = null;
+		try {
+			rElement.getAbstractEventLabel();
+		}
+		catch (RodinDBException e) {
+			// Do nothing
+		}
+		if (abstractEventLabel == null || !abstractEventLabel.equals(text)) {
 			rElement.setAbstractEventLabel(text, new NullProgressMonitor());
 		}
 	}
