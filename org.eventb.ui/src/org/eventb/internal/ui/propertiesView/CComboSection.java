@@ -16,6 +16,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -63,9 +64,9 @@ public abstract class CComboSection extends AbstractPropertySection implements
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					setText(comboWidget.getText());
-				} catch (RodinDBException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				} catch (RodinDBException exception) {
+					EventBUIExceptionHandler
+							.handleSetAttributeException(exception);
 				}
 			}
 
