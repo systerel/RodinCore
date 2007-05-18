@@ -28,16 +28,6 @@ public class EventBUIExceptionHandler {
 
 	}
 
-	public static void handleCreateElementException(Exception e) {
-		handleException(e, "Exception throws when creating a new element",
-				EventBUIExceptionHandler.UserAwareness.INFORM);
-	}
-
-	public static void handleSetAttributeException(Exception e) {
-		handleException(e, "Exception throws when setting an attribute",
-				EventBUIExceptionHandler.UserAwareness.INFORM);
-	}
-
 	private static void handleException(Exception e, String msg,
 			UserAwareness level) {
 		if (e instanceof RodinDBException) {
@@ -107,6 +97,21 @@ public class EventBUIExceptionHandler {
 		UIUtils.log(exception, msg);
 	}
 
+	public static void handleCreateElementException(Exception e) {
+		handleException(e, "Exception throws when creating a new element",
+				EventBUIExceptionHandler.UserAwareness.INFORM);
+	}
+
+	public static void handleDeleteElementException(Exception e) {
+		handleException(e, "Exception throws when deleting an element",
+				EventBUIExceptionHandler.UserAwareness.INFORM);
+	}
+
+	public static void handleSetAttributeException(Exception e) {
+		handleException(e, "Exception throws when setting an attribute",
+				EventBUIExceptionHandler.UserAwareness.INFORM);
+	}
+
 	public static void handleGetPersistentPropertyException(Exception e) {
 		handleException(e, "Exception throws when getting persistent property",
 				EventBUIExceptionHandler.UserAwareness.IGNORE);
@@ -115,6 +120,11 @@ public class EventBUIExceptionHandler {
 	public static void handleSetPersistentPropertyException(Exception e) {
 		handleException(e, "Exception throws when setting persistent property",
 				EventBUIExceptionHandler.UserAwareness.IGNORE);
+	}
+
+	public static void handleGetChildrenException(Exception e) {
+		handleException(e, "Exception throws when getting child elements",
+				EventBUIExceptionHandler.UserAwareness.INFORM);
 	}
 
 }
