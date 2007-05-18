@@ -1450,7 +1450,7 @@
             name="Identifier"
             priority="1">
          <type
-               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.VariableIdentifierAttributeFactory"
+               defaultPrefix="var"
                id="org.eventb.core.variable"/>
       </attribute>
       <attribute
@@ -1470,7 +1470,6 @@
                id="org.eventb.core.theorem"/>
          <type
                defaultPrefix="evt"
-               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory"
                id="org.eventb.core.event"/>
          <type
                defaultPrefix="grd"
