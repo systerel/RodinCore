@@ -552,4 +552,10 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		}
 	}
 
+	public void recursiveExpand(IRodinElement element) {
+		for (ISectionComposite sectionComp : sectionComps) {
+			sectionComp.recursiveExpand(element);
+		}
+	}
+
 }

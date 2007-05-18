@@ -82,13 +82,7 @@ public class ButtonComposite {
 			}
 
 			public void mouseExit(MouseEvent e) {
-				if (elementComp.isExpanded()) {
-					foldingHyperlink.setImage(EventBImage
-							.getImage(IEventBSharedImages.IMG_EXPANDED));
-				} else {
-					foldingHyperlink.setImage(EventBImage
-							.getImage(IEventBSharedImages.IMG_COLLAPSED));
-				}
+				updateExpandStatus();
 			}
 
 			public void mouseHover(MouseEvent e) {
@@ -157,6 +151,16 @@ public class ButtonComposite {
 				composite.setBackground(composite.getDisplay().getSystemColor(
 						SWT.COLOR_WHITE));
 			}
+		}
+	}
+
+	public void updateExpandStatus() {
+		if (elementComp.isExpanded()) {
+			foldingHyperlink.setImage(EventBImage
+					.getImage(IEventBSharedImages.IMG_EXPANDED));
+		} else {
+			foldingHyperlink.setImage(EventBImage
+					.getImage(IEventBSharedImages.IMG_COLLAPSED));
 		}
 	}
 

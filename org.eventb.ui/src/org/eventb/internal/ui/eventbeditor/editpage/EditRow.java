@@ -109,4 +109,8 @@ public class EditRow {
 		buttonComp.updateLinks();
 	}
 
+	public void updateExpandStatus() {
+		buttonComp.updateExpandStatus();
+	}
+
 }

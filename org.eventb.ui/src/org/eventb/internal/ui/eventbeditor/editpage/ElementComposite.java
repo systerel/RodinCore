@@ -92,13 +92,17 @@ public class ElementComposite implements IElementComposite {
 			if (sectionComps == null)
 				createSectionComposites();
 			GridData gridData = (GridData) mainSectionComposite.getLayoutData();
-			gridData.heightHint = SWT.DEFAULT;
+			if (sectionComps.size() == 0) {
+				gridData.heightHint = 0;
+			} else {
+				gridData.heightHint = SWT.DEFAULT;
+			}
 		}
 		else {
 			GridData gridData = (GridData) mainSectionComposite.getLayoutData();
 			gridData.heightHint = 0;
 		}
-
+		row.updateExpandStatus();
 		form.reflow(true);
 		form.setRedraw(true);
 		if (EventBEditorUtils.DEBUG) {
@@ -242,6 +246,20 @@ public class ElementComposite implements IElementComposite {
 				sectionComp.select(element, select);
 			}
 		}
+	}
+
+	public void recursiveExpand(IRodinElement element) {
+		if (!rElement.exists())
+			return;
+		
+		if (rElement.equals(element) || rElement.isAncestorOf(element)
+				|| element.isAncestorOf(rElement)) {
+			setExpand(true);
+			for (ISectionComposite sectionComp : sectionComps) {
+				sectionComp.recursiveExpand(element);
+			}
+		}
+
 	}
 
 }

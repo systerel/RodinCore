@@ -20,4 +20,6 @@ public interface ISectionComposite {
 
 	void select(IRodinElement element, boolean select);
 
+	void recursiveExpand(IRodinElement element);
+
 }

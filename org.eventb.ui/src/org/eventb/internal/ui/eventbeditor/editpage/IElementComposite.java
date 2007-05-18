@@ -28,4 +28,6 @@ public interface IElementComposite {
 
 	void select(IRodinElement element, boolean select);
 
+	void recursiveExpand(IRodinElement element);
+
 }

@@ -138,13 +138,7 @@ public class SectionComposite implements ISectionComposite {
 			}
 
 			public void mouseExit(MouseEvent e) {
-				if (isExpanded()) {
-					folding.setImage(EventBImage
-							.getImage(IEventBSharedImages.IMG_EXPANDED));
-				} else {
-					folding.setImage(EventBImage
-							.getImage(IEventBSharedImages.IMG_COLLAPSED));
-				}
+				updateExpandStatus();
 			}
 
 			public void mouseHover(MouseEvent e) {
@@ -185,12 +179,24 @@ public class SectionComposite implements ISectionComposite {
 			gridData.heightHint = 0;
 			afterHyperlinkComposite.setHeightHint(0);
 		}
+		updateExpandStatus();
 		form.reflow(true);
 		form.setRedraw(true);
 		long afterTime = System.currentTimeMillis();
 		if (EventBEditorUtils.DEBUG)
 			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
 					+ " ms");
+		
+	}
+
+	void updateExpandStatus() {
+		if (isExpanded()) {
+			folding.setImage(EventBImage
+					.getImage(IEventBSharedImages.IMG_EXPANDED));
+		} else {
+			folding.setImage(EventBImage
+					.getImage(IEventBSharedImages.IMG_COLLAPSED));
+		}
 	}
 
 	public void createContents() {
@@ -407,9 +413,19 @@ public class SectionComposite implements ISectionComposite {
 
 	public void select(IRodinElement element, boolean select) {
 		if (parent.isAncestorOf(element) && elementComps != null) {
-			
 			for (IElementComposite elementComp : elementComps) {
 				elementComp.select(element, select);
+			}
+		}
+	}
+
+	public void recursiveExpand(IRodinElement element) {
+		if (parent.equals(element)
+				|| (parent.isAncestorOf(element) && type.equals(element
+						.getElementType())) || element.isAncestorOf(parent)) {
+			setExpand(true);
+			for (IElementComposite elementComp : elementComps) {
+				elementComp.recursiveExpand(element);
 			}
 		}
 	}
