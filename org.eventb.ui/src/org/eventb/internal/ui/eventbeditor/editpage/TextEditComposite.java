@@ -39,6 +39,7 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 				undefinedButton.dispose();
 				undefinedButton = null;
 			}
+			setStyle();
 			text = new StyledText(composite, style);
 			new EventBStyledText(text) {
 
@@ -64,6 +65,8 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 		if (!text.getText().equals(value))
 			text.setText(value);
 	}
+
+	protected abstract void setStyle();
 
 	public void setUndefinedValue() {
 		FormToolkit toolkit = this.getFormToolkit();

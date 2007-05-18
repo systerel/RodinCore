@@ -1,6 +1,7 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.swt.SWT;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.rodinp.core.RodinDBException;
@@ -48,4 +49,9 @@ public class AssignmentEditComposite extends TextEditComposite {
 		super.setDefaultValue();
 	}
 
+	@Override
+	protected void setStyle() {
+		style = SWT.MULTI | SWT.BORDER;
+	}
+	
 }
