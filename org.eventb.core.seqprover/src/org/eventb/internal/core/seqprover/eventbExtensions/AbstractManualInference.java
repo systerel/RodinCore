@@ -61,6 +61,10 @@ public abstract class AbstractManualInference implements IReasoner {
 		IPosition position = input.position;
 
 		IAntecedent[] antecidents = getAntecedents(seq, pred, position);
+		if (antecidents == null)
+			return ProverFactory.reasonerFailure(this,input,
+				"Manual inference " + getDisplayName(pred, position)
+							+ " is not applicable");
 
 		if (pred == null) {
 			// Generate the successful reasoner output
@@ -84,15 +88,6 @@ public abstract class AbstractManualInference implements IReasoner {
 	 * @return the name to display in the rule
 	 */
 	protected abstract String getDisplayName(Predicate pred, IPosition position);
-
-	/**
-	 * Returns whether this reasoner is applicable to the given formula.
-	 * 
-	 * @param formula
-	 *            the formula to test for applicability
-	 * @return <code>true</code> if the reasoner is applicable at this formula
-	 */
-//	public abstract boolean isApplicable(Formula formula);
 
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
