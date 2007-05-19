@@ -18,7 +18,7 @@ import org.eventb.core.seqprover.tests.Util;
 /**
  * Common utility class for writing reasoner tests.
  * 
- * @author Laurent Voisin
+ * @author htson
  */
 public class AbstractTests {
 	
