@@ -785,12 +785,38 @@ public final class Lib {
 		return false;
 	}
 
-	public static boolean isOrv(Expression expression) {
+	/**
+	 * Check if an expression is a function overriding or not
+	 * <p>
+	 * 
+	 * @param expression
+	 *            any expression
+	 * @return <code>true</code> if the expression is a function overriding
+	 *         (associative expression with tag OVR), return <code>false</code>
+	 *         otherwise.
+	 */
+	public static boolean isOvr(Expression expression) {
 		if (expression instanceof AssociativeExpression
 				&& expression.getTag() == Expression.OVR) {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Check if an expression is a function overriding or not
+	 * <p>
+	 * 
+	 * @param expression
+	 *            any expression
+	 * @return <code>true</code> if the expression is a function overriding
+	 *         (associative expression with tag OVR), return <code>false</code>
+	 *         otherwise.
+	 * @deprecated use {@link #isOvr(Expression)} instead
+	 */
+	@Deprecated
+	public static boolean isOrv(Expression expression) {
+		return isOvr(expression);
 	}
 
 	public static boolean isSetExtension(Expression expression) {
