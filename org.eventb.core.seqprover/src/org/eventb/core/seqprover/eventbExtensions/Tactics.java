@@ -5,6 +5,7 @@ import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending
 import static org.eventb.core.seqprover.tactics.BasicTactics.onAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -858,32 +859,35 @@ public class Tactics {
 	}
 
 	public static boolean isFunOvrApp(Formula subFormula) {
-		// It should be the top most predicate
-		// if (position.isRoot())
-		// return false;
-		//		
-
 		if (Lib.isFunApp(subFormula)) {
 			Expression left = ((BinaryExpression) subFormula).getLeft();
-			if (Lib.isOrv(left)) {
-				Expression[] children = ((AssociativeExpression) left)
-						.getChildren();
-				Expression last = children[children.length - 1];
-				if (last instanceof SetExtension) {
-					Expression[] expressions = ((SetExtension) last)
-							.getMembers();
-
-					if (expressions.length == 1) {
-						if (expressions[0] instanceof BinaryExpression
-								&& expressions[0].getTag() == Expression.MAPSTO) {
-							return true;
-						}
-					}
-				}
-
+			if (Lib.isOvr(left)) {
+				return true;
 			}
 		}
 		return false;
+	}
+
+	public static List<IPosition> funOvrGetPositions(Predicate predicate) {
+		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryExpression expression) {
+				if (Tactics.isFunOvrApp(expression))
+					return true;
+				return false;
+			}
+		});
+
+		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
+		for (IPosition pos : positions) {
+			if (!isParentTopLevelPredicate(predicate, pos)) {
+				toBeRemoved.add(pos);
+			}
+		}
+
+		positions.removeAll(toBeRemoved);
+		return positions;
 	}
 
 	public static ITactic funOvrGoal(IPosition position) {
@@ -1185,4 +1189,5 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new NegEnum(), new MultiplePredInput(
 				new Predicate[] { shyp, hyp }));
 	}
+
 }
