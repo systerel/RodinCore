@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -86,6 +85,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplH
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 
 
 /**
@@ -783,6 +783,10 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new AutoRewrites(),new EmptyInput());
 	}
 
+	public static ITactic typeRewriteRules() {
+		return BasicTactics.reasonerTac(new TypeRewrites(),new EmptyInput());
+	}
+
 	public static ITactic prune() {
 		return BasicTactics.prune();
 	}
@@ -1118,6 +1122,14 @@ public class Tactics {
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			return autoRewriteRules().apply(ptNode, pm);
+		}
+		
+	}
+	
+	public static class TypeRewriteTac implements ITactic{
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			return typeRewriteRules().apply(ptNode, pm);
 		}
 		
 	}

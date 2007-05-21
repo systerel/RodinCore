@@ -147,6 +147,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.NegEnum"
             id="negEnum"
             name="%negEnumName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites"
+            id="typeRewrites"
+            name="%typeRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">
@@ -178,6 +182,10 @@
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoNegEnumTac"
             id="autoNegEnumTac"
             name="%autoNegEnumTacName"/>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$TypeRewriteTac"
+            id="typeRewriteTac"
+            name="%typeRewriteTacName"/>
    </extension>
 
 </plugin>
