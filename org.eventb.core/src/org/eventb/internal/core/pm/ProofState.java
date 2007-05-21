@@ -126,6 +126,14 @@ public class ProofState implements IProofState {
 					e.printStackTrace();
 				}
 				pt.addChangeListener(ProofState.this);
+				try {
+					if (status.isBroken())
+						ProofState.this.setDirty(true);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				ProofState.this.newProofTree();
 				
 				if (!pt.getRoot().isClosed()) {
