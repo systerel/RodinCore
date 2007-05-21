@@ -127,4 +127,9 @@ public class EventBUIExceptionHandler {
 				EventBUIExceptionHandler.UserAwareness.INFORM);
 	}
 
+	public static void handleRemoveAttribteException(Exception e) {
+		handleException(e, "Exception throws when removing element attribute",
+				EventBUIExceptionHandler.UserAwareness.INFORM);
+	}
+
 }
