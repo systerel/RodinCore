@@ -1,7 +1,8 @@
 package org.eventb.core.seqprover.rewriterTests;
 
+import static org.eventb.core.ast.Formula.EQUAL;
 import static org.junit.Assert.assertEquals;
-import static org.eventb.core.ast.Formula.*;
+
 import java.math.BigInteger;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -333,7 +334,7 @@ public class AutoFormulaRewriterTests {
 		assertUnaryPredicate("¬⊤ == ⊥", Lib.False, Predicate.NOT, Lib.True);
 
 		// not(false)  ==  true
-		assertUnaryPredicate("¬⊥ == ⊤", Lib.False, Predicate.NOT, Lib.True);
+		assertUnaryPredicate("¬⊥ == ⊤", Lib.True, Predicate.NOT, Lib.False);
 
 		// not(not(P))  ==  not(P)
 		assertUnaryPredicate("¬¬P = P", P, Predicate.NOT, Lib.makeNeg((P)));
@@ -781,28 +782,37 @@ public class AutoFormulaRewriterTests {
 				ff.makeSetExtension(E, null), Predicate.EQUAL, ff
 						.makeSetExtension(F, null));
 		
-		// Typ = {} == false (where Typ is a type expression)
-		assertRelationalPredicate("ℤ = ∅ == ⊥", Lib.False, powInteger,
+		// Typ = {} == false (where Typ is a type expression) is NOT done here
+		assertRelationalPredicate("ℤ = ∅ == ℤ = ∅", ff.makeRelationalPredicate(
+				Predicate.EQUAL, integer, emptySet, null), integer,
 				Expression.EQUAL, emptySet);
-		assertRelationalPredicate("ℙ(ℤ) = ∅ == ⊥", Lib.False, powInteger,
+		assertRelationalPredicate("ℙ(ℤ) = ∅ == ℙ(ℤ) = ∅", ff.makeRelationalPredicate(
+				Predicate.EQUAL, powInteger, emptySet, null), powInteger,
 				Expression.EQUAL, emptySet);
 
-		// {} = Typ == false (where Typ is a type expression)
-		assertRelationalPredicate("∅ = ℤ == ⊥", Lib.False, emptySet,
+		// {} = Typ == false (where Typ is a type expression) is NOT done here
+		assertRelationalPredicate("∅ = ℤ == ∅ = ℤ", ff.makeRelationalPredicate(
+				Predicate.EQUAL, emptySet, integer, null), emptySet,
 				Expression.EQUAL, integer);
-		assertRelationalPredicate("∅ = ℙ(ℤ) == ⊥", Lib.False, emptySet,
+		assertRelationalPredicate("∅ = ℙ(ℤ) == ∅ = ℙ(ℤ)", ff.makeRelationalPredicate(
+				Predicate.EQUAL, emptySet, powInteger, null), emptySet,
 				Expression.EQUAL, powInteger);
 
 		// E : Typ == true (where Typ is a type expression)
-		assertRelationalPredicate("E ∈ ℤ == ⊤", Lib.True, E, Expression.IN,
+		assertRelationalPredicate("E ∈ ℤ == E ∈ ℤ", ff.makeRelationalPredicate(
+				Predicate.IN, E, integer, null), E, Expression.IN,
 				integer);
-		assertRelationalPredicate("F ∈ ℤ == ⊤", Lib.True, F, Expression.IN,
+		assertRelationalPredicate("F ∈ ℤ == F ∈ ℤ", ff.makeRelationalPredicate(
+				Predicate.IN, F, integer, null), F, Expression.IN,
 				integer);
-		assertRelationalPredicate("S ∈ ℙ(ℤ) == ⊤", Lib.True, S, Expression.IN,
+		assertRelationalPredicate("S ∈ ℙ(ℤ) == S ∈ ℙ(ℤ)", ff.makeRelationalPredicate(
+				Predicate.IN, S, powInteger, null), S, Expression.IN,
 				powInteger);
-		assertRelationalPredicate("T ∈ ℙ(ℤ) == ⊤", Lib.True, T, Expression.IN,
+		assertRelationalPredicate("T ∈ ℙ(ℤ) == T ∈ ℙ(ℤ)", ff.makeRelationalPredicate(
+				Predicate.IN, T, powInteger, null), T, Expression.IN,
 				powInteger);
-		assertRelationalPredicate("U ∈ ℙ(ℤ) == ⊤", Lib.True, U, Expression.IN,
+		assertRelationalPredicate("U ∈ ℙ(ℤ) == U ∈ ℙ(ℤ)", ff.makeRelationalPredicate(
+				Predicate.IN, U, powInteger, null), U, Expression.IN,
 				powInteger);
 	}
 
