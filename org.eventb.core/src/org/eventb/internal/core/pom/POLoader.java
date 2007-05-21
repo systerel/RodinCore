@@ -12,6 +12,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -57,8 +58,29 @@ public final class POLoader {
 		final SelectionHints selHints = new SelectionHints(poSeq);
 		loadHypotheses(poSeq, selHints, hypotheses, selHyps, typeEnv);
 		final Predicate goal = readGoal(poSeq, typeEnv);
-		addWDpredicates(goal, hypotheses);
+		if (! isWDPO(poSeq)) addWDpredicates(goal, hypotheses);
 		return ProverFactory.makeSequent(typeEnv,hypotheses,selHyps,goal);
+	}
+	
+	/**
+	 * Checks if the given {@link IPOSequent} is a proof obligation for proving WD
+	 * of the goal.
+	 * 
+	 * <p>
+	 * In this case, adding the WD predicate of the goal to the hypotheses can be avoided
+	 * (see {@link #readPO(IPOSequent)}).
+	 * </p>
+	 * 
+	 * 
+	 * @param poSeq
+	 * 		the sequent to check for
+	 * @return
+	 * 		<code>true</code> iff the given PO is a WD PO.
+	 * 
+	 * 
+	 */
+	private static boolean isWDPO(IPOSequent poSeq){
+		return (poSeq.getElementName().endsWith("/WD"));
 	}
 
 	/**
@@ -141,7 +163,8 @@ public final class POLoader {
 	
 
 	/**
-	 * Adds the WD predicates of the given predicate to the given predicate set.
+	 * Adds the WD predicates of the given predicate to the given predicate set in case it
+	 * should be added (see {@link #shouldWDpredBeAdded(Predicate)}).
 	 * 
 	 * <p>
 	 * In case the WD predicate is 'true', this is not added. In case the WD predicate
@@ -154,9 +177,25 @@ public final class POLoader {
 	 * 				The predicate set to which this WD predicate should be added
 	 */
 	private static void addWDpredicates(Predicate pred, Set<Predicate> predSet){
+		if (! shouldWDpredBeAdded(pred)) return;
 		Set<Predicate> toAdd = Lib.breakPossibleConjunct(pred.getWDPredicate(Lib.ff));
 		toAdd.remove(Lib.True);
 		predSet.addAll(toAdd);
+	}
+	
+	/**
+	 * Filters predicates for whom WD predicates should be added to the hypotheses.
+	 * 
+	 * @param pred
+	 * 		the predicate to filter
+	 * @return
+	 * 		<code>true</code> iff the WD predicate for this predicate should be added to the
+	 * 		hypotheses.
+	 * 
+	 * @see #addWDpredicates(Predicate, Set)
+	 */
+	private static boolean shouldWDpredBeAdded(Predicate pred){
+		return (! (pred instanceof QuantifiedPredicate));
 	}
 	
 	/**
