@@ -154,7 +154,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eventb.internal.ui.eventbeditor.editpage.DefaultEditComposite:org.eventb.internal.ui.eventbeditor.editpage.IEditComposite"/>
+                  <meta.attribute kind="java" basedOn="org.eventb.internal.ui.eventbeditor.editpage.DefaultAttributeEditor:org.eventb.internal.ui.eventbeditor.editpage.IAttributeEditor"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -197,6 +197,36 @@
                   <enumeration value="8">
                   </enumeration>
                   <enumeration value="9">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="widget" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="text">
+                  </enumeration>
+                  <enumeration value="combo">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="style">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="single">
+                  </enumeration>
+                  <enumeration value="multi">
                   </enumeration>
                </restriction>
             </simpleType>
