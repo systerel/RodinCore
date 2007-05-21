@@ -1137,6 +1137,7 @@
       <tactic id="org.eventb.core.seqprover.autoExFTac"/>
       <tactic id="org.eventb.core.seqprover.normTac"/>
       <tactic id="org.eventb.core.seqprover.autoNegEnumTac"/>
+      <tactic id="org.eventb.core.seqprover.typeRewriteTac"/>
    </extension>
 
 </plugin>
