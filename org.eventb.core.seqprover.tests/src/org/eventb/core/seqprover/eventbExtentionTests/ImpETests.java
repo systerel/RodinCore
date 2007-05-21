@@ -1,73 +1,42 @@
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import static org.junit.Assert.assertTrue;
-
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IProofRule;
-import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasoner;
-import org.eventb.core.seqprover.IReasonerFailure;
-import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
-import org.junit.Test;
 
 /**
- * Unit tests for the ImpE reasoner
+ * Unit tests for the Eq reasoner
  * 
  * @author Farhad Mehta
+ *
  */
-public class ImpETests {
+public class ImpETests extends AbstractReasonerTests {
 
-	private static final IReasoner reasoner = new ImpE();
-	
-	/**
-	 * Tests for correct reasoner failure
-	 */
-	@Test
-	public void testFailure(){
-		IProverSequent seq;
-		IReasonerOutput output;
-		
-		final Predicate oneImpTwo = TestLib.genPred("1=1 ⇒ 2=2");
-		
-		// hyp not present
-		seq = TestLib.genSeq(" ⊤ |- ⊤ ");
-		output = reasoner.apply(seq, new HypothesisReasoner.Input(oneImpTwo), null);
-		assertTrue(output instanceof IReasonerFailure);
-		
-		// hyp not an implication
-		seq = TestLib.genSeq(" ⊤ |- ⊤ ");
-		output = reasoner.apply(seq, new HypothesisReasoner.Input(TestLib.genPred("⊤")), null);
-		assertTrue(output instanceof IReasonerFailure);
-		
+	@Override
+	public String getReasonerID() {
+		return (new ImpE()).getReasonerID();
 	}
 	
-	/**
-	 * Tests for reasoner success
-	 */
-	@Test
-	public void testSuccess(){
-		IProverSequent seq;
-		IProverSequent[] newSeqs;
-		IReasonerOutput output;
-		
-		final Predicate oneImpTwo = TestLib.genPred("1=1 ⇒ 2=2");
-				
-		seq = TestLib.genSeq(" 1=1 ⇒ 2=2  |- ⊤");
-		output = reasoner.apply(seq, new HypothesisReasoner.Input(TestLib.getHypRef(seq,oneImpTwo)), null);
-		assertTrue(output instanceof IProofRule);
-		newSeqs = ((IProofRule)output).apply(seq);
-		assertTrue(newSeqs.length == 2);
-		// Note: this test is pretty printer dependent. Change string (after inspection)
-		// in case pretty printer is modified
-		assertTrue(newSeqs[0].toString().equals("{}[][1=1⇒2=2][] |- 1=1"));
-		assertTrue(newSeqs[1].toString().equals("{}[][1=1⇒2=2][2=2, 1=1] |- ⊤"));
-		
-		// Rule is not goal dependent
-		assertTrue(((IProofRule)output).getGoal() == null);
-		
+	@Override
+	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
+		return new SuccessfullReasonerApplication[]{
+				new SuccessfullReasonerApplication(
+						TestLib.genSeq("  1=1 ⇒ 2=2  |- ⊤ "),
+						new HypothesisReasoner.Input(TestLib.genPred("1=1 ⇒ 2=2")),
+						"[{}[][1=1⇒2=2][] |- 1=1, {}[][1=1⇒2=2][1=1, 2=2] |- ⊤]"
+						)
+		};
 	}
-	
+
+	@Override
+	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
+		return new UnsuccessfullReasonerApplication[]{
+				// hyp not present
+				new UnsuccessfullReasonerApplication(TestLib.genSeq(" ⊤ |- ⊤ "), new HypothesisReasoner.Input(TestLib.genPred("1=1 ⇒ 2=2"))),
+				// hyp not an implication
+				new UnsuccessfullReasonerApplication(TestLib.genSeq(" ⊤ |- ⊥ "), new HypothesisReasoner.Input(TestLib.genPred("⊤"))),
+		};
+	}
+
 }
