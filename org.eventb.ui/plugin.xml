@@ -1386,6 +1386,13 @@
             priority="1"
             type="org.eventb.core.refinesMachine"/>
       <section
+            id="org.event.ui.sections.seesContext"
+            name="Sees Context"
+            parentType="org.eventb.core.machineFile"
+            prefix="SEES"
+            priority="2"
+            type="org.eventb.core.seesContext"/>
+      <section
             id="org.event.ui.sections.variable"
             name="Variables"
             parentType="org.eventb.core.machineFile"
@@ -1410,6 +1417,13 @@
             type="org.eventb.core.theorem">
       </section>
       <section
+            id="org.event.ui.sections.variant"
+            name="Variant"
+            parentType="org.eventb.core.machineFile"
+            prefix="VARIANT"
+            priority="8"
+            type="org.eventb.core.variant"/>
+      <section
             id="org.event.ui.sections.event"
             name="Events"
             parentType="org.eventb.core.machineFile"
@@ -1426,8 +1440,8 @@
             priority="1"
             type="org.eventb.core.refinesEvent"/>
       <section
-            id="org.event.ui.sections.localVariable"
-            name="Local Variables"
+            id="org.event.ui.sections.parameter"
+            name="Parameters"
             parentType="org.eventb.core.event"
             prefix="ANY"
             priority="2"
@@ -1439,6 +1453,13 @@
             prefix="WHERE"
             priority="3"
             type="org.eventb.core.guard"/>
+      <section
+            id="org.event.ui.sections.witness"
+            name="Witnesses"
+            parentType="org.eventb.core.event"
+            prefix="WITNESS"
+            priority="4"
+            type="org.eventb.core.witness"/>
       <section
             id="org.event.ui.sections.action"
             name="Actions"
@@ -1493,6 +1514,7 @@
          <type
                defaultPrefix="axm"
                id="org.eventb.core.axiom"/>
+         <type id="org.eventb.core.witness"/>
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.PredicateEditComposite"
@@ -1505,6 +1527,7 @@
          <type id="org.eventb.core.invariant"/>
          <type id="org.eventb.core.theorem"/>
          <type id="org.eventb.core.guard"/>
+         <type id="org.eventb.core.witness"/>
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.InheritedEditComposite"
@@ -1573,6 +1596,25 @@
             priority="1"
             widget="combo">
          <type id="org.eventb.core.refinesMachine"/>
+      </attribute>
+      <attribute
+            class="org.eventb.internal.ui.eventbeditor.editpage.SeesContextEditor"
+            horizontalExpand="false"
+            id="org.eventb.ui.seesContext"
+            name="Sees Context"
+            priority="2"
+            widget="combo">
+         <type id="org.eventb.core.seesContext"/>
+      </attribute>
+      <attribute
+            class="org.eventb.internal.ui.eventbeditor.editpage.ExpressionEditor"
+            horizontalExpand="true"
+            id="org.eventb.ui.expression"
+            name="Expressions"
+            priority="1"
+            style="multi"
+            widget="text">
+         <type id="org.eventb.core.variant"/>
       </attribute>
    </extension>
    <extension
