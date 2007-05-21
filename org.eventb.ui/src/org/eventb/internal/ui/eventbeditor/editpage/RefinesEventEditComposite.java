@@ -1,77 +1,66 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
-public class RefinesEventEditComposite extends CComboEditComposite {
+public class RefinesEventEditComposite extends DefaultAttributeEditor implements
+		IAttributeEditor {
 
-	public String getValue() throws RodinDBException {
+	@Override
+	public String getAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		assert element instanceof IRefinesEvent;
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
 		return refinesEvent.getAbstractEventLabel();
 	}
 
 	@Override
-	public void refresh() {
-		initialise();
-		internalPack();
-	}
-
-	public void setValue() {
+	public void setAttribute(IAttributedElement element, String newValue,
+			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IRefinesEvent;
-		if (combo == null)
-			return;
-		
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
-		String str = combo.getText();
-
 		String value;
 		try {
-			value = getValue();
+			value = getAttribute(element, monitor);
 		} catch (RodinDBException e) {
 			value = null;
 		}
-		if (value == null || !value.equals(str)) {
-			try {
-				refinesEvent.setAbstractEventLabel(str,
-						new NullProgressMonitor());
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+		if (value == null || !value.equals(newValue)) {
+			refinesEvent.setAbstractEventLabel(newValue,
+					new NullProgressMonitor());
 		}
 	}
 
 	@Override
-	public void displayValue(String value) {
-		if (combo == null) {
-			if (undefinedButton != null) {
-				undefinedButton.dispose();
-				undefinedButton = null;
-			}
-
-			combo = new CCombo(composite, SWT.FLAT | SWT.READ_ONLY);
-			combo.addSelectionListener(new SelectionListener() {
-
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelected(e);
-				}
-
-				public void widgetSelected(SelectionEvent e) {
-					setValue();
-				}
-
-			});
+	public void setDefaultAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		IRefinesEvent refinesEvent = (IRefinesEvent) element;
+		IEvent event = (IEvent) refinesEvent.getParent();
+		String label = "abstract_event";
+		try {
+			label = event.getLabel();
+		} catch (RodinDBException e1) {
+			// Do nothing
 		}
-		combo.removeAll();
+
+		refinesEvent.setAbstractEventLabel(label, monitor);
+	}
+
+	@Override
+	public String[] getPossibleValues(IAttributedElement element,
+			IProgressMonitor monitor) {
+		List<String> results = new ArrayList<String>();
+
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
 		IEvent event = (IEvent) refinesEvent.getParent();
 		IMachineFile file = (IMachineFile) event.getParent();
@@ -84,7 +73,7 @@ public class RefinesEventEditComposite extends CComboEditComposite {
 				if (abstractMachine.exists()) {
 					IEvent[] events = abstractMachine.getEvents();
 					for (IEvent absEvent : events) {
-						combo.add(absEvent.getLabel());
+						results.add(absEvent.getLabel());
 					}
 				}
 			}
@@ -92,28 +81,13 @@ public class RefinesEventEditComposite extends CComboEditComposite {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		combo.setText(value);
+		return results.toArray(new String[results.size()]);
 	}
 
 	@Override
-	public void setDefaultValue() {
-		IRefinesEvent refinesEvent = (IRefinesEvent) element;
-		IEvent event = (IEvent) refinesEvent.getParent();
-		String label = "abstract_event";
-		try {
-			label = event.getLabel();
-		} catch (RodinDBException e1) {
-			// Do nothing
-		}
-		
-		try {
-			refinesEvent.setAbstractEventLabel(label,
-					new NullProgressMonitor());
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		super.setDefaultValue();
+	public void removeAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		element.removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);
 	}
 
 }

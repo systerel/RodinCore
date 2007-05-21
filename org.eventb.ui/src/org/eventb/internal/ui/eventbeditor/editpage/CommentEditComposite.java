@@ -1,56 +1,56 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.SWT;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ICommentedElement;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
-public class CommentEditComposite extends TextEditComposite {
+public class CommentEditComposite extends DefaultAttributeEditor implements IAttributeEditor {
 
-	public String getValue() throws RodinDBException {
+	@Override
+	public String getAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof ICommentedElement;
 		final ICommentedElement cElement = (ICommentedElement) element;
 		return cElement.getComment();
 	}
 
-	public void setValue() {
+	@Override
+	public void setAttribute(IAttributedElement element, String newValue,
+			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof ICommentedElement;
 		final ICommentedElement cElement = (ICommentedElement) element;
-		if (text == null)
-			return;
-		
-		String str = text.getText();
+
 		String value;
 		try {
-			value = getValue();
+			value = getAttribute(element, monitor);
 		} catch (RodinDBException e) {
 			value = null;
 		}
-		if (value == null || !value.equals(str)) {
-			try {
-				cElement.setComment(str, new NullProgressMonitor());
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		if (value == null || !value.equals(newValue)) {
+			cElement.setComment(newValue, monitor);
 		}
 	}
 
 	@Override
-	public void setDefaultValue() {
+	public void setDefaultAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
 		final ICommentedElement cElement = (ICommentedElement) element;
-		try {
-			cElement.setComment("", new NullProgressMonitor());
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		super.setDefaultValue();
+		cElement.setComment("", new NullProgressMonitor());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeEditor#removeAttribute(org.rodinp.core.IAttributedElement,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	@Override
-	protected void setStyle() {
-		style = SWT.MULTI | SWT.BORDER;
+	public void removeAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		element.removeAttribute(EventBAttributes.COMMENT_ATTRIBUTE, monitor);
 	}
-	
+
 }

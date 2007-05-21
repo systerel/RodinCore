@@ -3,20 +3,15 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
+import org.rodinp.core.IAttributedElement;
 
 public interface IEditComposite {
 
 	public abstract void refresh();
 
-	public abstract void setElement(IRodinElement element);
+	public abstract void setElement(IAttributedElement element);
 
 	abstract public void createComposite(FormToolkit toolkit, Composite parent);
-
-	abstract public String getValue() throws RodinDBException;
-
-	abstract public void setValue();
 
 	public abstract void setFillHorizontal(boolean fill);
 

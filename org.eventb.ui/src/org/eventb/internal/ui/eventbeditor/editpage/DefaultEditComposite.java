@@ -11,13 +11,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IAttributedElement;
 
 public abstract class DefaultEditComposite implements IEditComposite {
 
 	ScrolledForm form;
 
-	IRodinElement element;
+	IAttributedElement element;
 
 	Composite composite;
 	
@@ -41,12 +41,17 @@ public abstract class DefaultEditComposite implements IEditComposite {
 		return toolkit;
 	}
 	
+	public void refresh() {
+		initialise();
+		internalPack();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setElement(org.rodinp.core.IRodinElement)
 	 */
-	public void setElement(IRodinElement element) {
+	public void setElement(IAttributedElement element) {
 		this.element = element;
 	}
 
@@ -158,7 +163,5 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
-
-	public abstract void setDefaultValue();
 
 }

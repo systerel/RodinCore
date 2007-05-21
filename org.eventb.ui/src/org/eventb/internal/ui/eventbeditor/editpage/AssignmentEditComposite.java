@@ -1,57 +1,73 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.SWT;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
-import org.eventb.internal.ui.EventBUIExceptionHandler;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
-public class AssignmentEditComposite extends TextEditComposite {
+public class AssignmentEditComposite extends DefaultAttributeEditor implements
+		IAttributeEditor {
 
-	public void setValue() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeEditor#setAttribute(org.rodinp.core.IAttributedElement,
+	 *      java.lang.String)
+	 */
+	@Override
+	public void setAttribute(IAttributedElement element, String newValue,
+			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IAssignmentElement;
 		final IAssignmentElement aElement = (IAssignmentElement) element;
-		if (text == null)
-			return;
-
-		String str = text.getText();
 
 		String value;
 		try {
-			value = getValue();
+			value = getAttribute(element, monitor);
 		} catch (RodinDBException e) {
 			value = null;
 		}
 
-		if (value == null || !value.equals(str)) {
-			try {
-				aElement.setAssignmentString(str, null);
-			} catch (RodinDBException e) {
-				EventBUIExceptionHandler.handleSetAttributeException(e);
-			}
+		if (value == null || !value.equals(newValue)) {
+			aElement.setAssignmentString(newValue, monitor);
 		}
 	}
 
-	public String getValue() throws RodinDBException {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeEditor#getAttribute(org.rodinp.core.IAttributedElement)
+	 */
+	@Override
+	public String getAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IAssignmentElement;
 		final IAssignmentElement pElement = (IAssignmentElement) element;
 		return pElement.getAssignmentString();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeEditor#setDefaultAttribute(org.rodinp.core.IAttributedElement)
+	 */
 	@Override
-	public void setDefaultValue() {
+	public void setDefaultAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
 		final IAssignmentElement aElement = (IAssignmentElement) element;
-		try {
-			aElement.setAssignmentString("", new NullProgressMonitor());
-		} catch (RodinDBException e) {
-			EventBUIExceptionHandler.handleSetAttributeException(e);
-		}
-		super.setDefaultValue();
+		aElement.setAssignmentString("", monitor);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeEditor#removeAttribute(org.rodinp.core.IAttributedElement,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	@Override
-	protected void setStyle() {
-		style = SWT.MULTI | SWT.BORDER;
+	public void removeAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		element.removeAttribute(EventBAttributes.ASSIGNMENT_ATTRIBUTE, monitor);
 	}
-	
+
 }

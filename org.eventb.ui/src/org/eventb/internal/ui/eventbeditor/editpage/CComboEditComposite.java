@@ -1,15 +1,16 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.rodinp.core.RodinDBException;
 
-public abstract class CComboEditComposite extends DefaultEditComposite implements
+public class CComboEditComposite extends DefaultEditComposite implements
 		IEditComposite {
 
 	protected final String UNDEFINED = "----- UNDEFINED -----";
@@ -17,42 +18,22 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 	protected CCombo combo;
 	protected Button undefinedButton;
 
-	public void refresh() {
-		initialise();
-		internalPack();
+	IAttributeEditor attributeEditor;
+	
+	public CComboEditComposite(IAttributeEditor attributeEditor) {
+		this.attributeEditor = attributeEditor;
 	}
 
 	@Override
 	public void initialise() {
 		try {
-			String value = getValue();
-			displayValue(value);
+			String value = attributeEditor.getAttribute(element,
+					new NullProgressMonitor());
+			createCombo();
+			combo.setText(value);
 		} catch (RodinDBException e) {
 			setUndefinedValue();
 		}
-	}
-
-	public void displayValue(String value) {
-		if (combo == null) {
-			if (undefinedButton != null) {
-				undefinedButton.dispose();
-				undefinedButton = null;
-			}
-			
-			combo = new CCombo(composite, SWT.FLAT | SWT.READ_ONLY);
-			combo.addSelectionListener(new SelectionListener() {
-
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelected(e);
-				}
-
-				public void widgetSelected(SelectionEvent e) {
-					setValue();
-				}
-
-			});
-		}
-		combo.setText(value);
 	}
 
 	@Override
@@ -69,31 +50,61 @@ public abstract class CComboEditComposite extends DefaultEditComposite implement
 	}
 
 	public void setUndefinedValue() {
-		FormToolkit toolkit = this.getFormToolkit();
-		if (undefinedButton != null)
-			return;
+		if (combo == null)
+			createCombo();
 		
-		if (combo != null)
-			combo.dispose();
-		
-		undefinedButton = toolkit.createButton(composite, "UNDEFINED", SWT.PUSH);
-		undefinedButton.addSelectionListener(new SelectionListener() {
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-
-			public void widgetSelected(SelectionEvent e) {
-				setDefaultValue();
-			}
-			
-		});
+		combo.setText(UNDEFINED);
 	}
 
-	@Override
-	public void setDefaultValue() {
+	private void createCombo() {
 		if (combo != null)
-			combo.setFocus();
+			combo.removeAll();
+		else {
+			combo = new CCombo(composite, SWT.BORDER | SWT.FLAT | SWT.READ_ONLY);
+			combo.addSelectionListener(new SelectionListener() {
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetSelected(e);
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					if (combo.getText().equals(UNDEFINED)) {
+						try {
+							attributeEditor.removeAttribute(element,
+									new NullProgressMonitor());
+						} catch (RodinDBException e1) {
+							EventBUIExceptionHandler.handleRemoveAttribteException(e1);
+						}
+					} else {
+						try {
+							attributeEditor.setAttribute(element, combo
+									.getText(), new NullProgressMonitor());
+						} catch (RodinDBException exception) {
+							EventBUIExceptionHandler
+									.handleSetAttributeException(exception);
+						}
+					}
+				}
+			});
+			this.getFormToolkit().paintBordersFor(composite);
+		}
+		
+		combo.add(UNDEFINED);
+		String[] values = attributeEditor.getPossibleValues(element,
+				new NullProgressMonitor());
+		for (String value : values) {
+			combo.add(value);
+		}
+	}
+
+	public void setDefaultValue() {
+		try {
+			attributeEditor.setDefaultAttribute(element, new NullProgressMonitor());
+			if (combo != null)
+				combo.setFocus();
+		} catch (RodinDBException e) {
+			EventBUIExceptionHandler.handleSetAttributeException(e);
+		}
 	}
 
 }

@@ -1,94 +1,61 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
-public class InheritedEditComposite extends CComboEditComposite {
+public class InheritedEditComposite extends DefaultAttributeEditor implements
+		IAttributeEditor {
 
 	private final String TRUE = "true";
-	
+
 	private final String FALSE = "false";
-	
-	public String getValue() throws RodinDBException {
+
+	@Override
+	public String getAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
 		IEvent event = (IEvent) element;
 		return event.isInherited() ? TRUE : FALSE;
 	}
 
 	@Override
-	public void refresh() {
-		initialise();
-		internalPack();
-		super.refresh();
-	}
-
-	public void setValue() {
+	public void setAttribute(IAttributedElement element, String newValue,
+			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IEvent;
-		if (combo == null)
-			return;
-		
-		IEvent event = (IEvent) element;
-		String str = combo.getText();
 
+		IEvent event = (IEvent) element;
 		String value;
 		try {
-			value = getValue();
+			value = getAttribute(element, monitor);
 		} catch (RodinDBException e) {
 			value = null;
 		}
-		if (value == null || !value.equals(str)) {
-			try {
-				event.setInherited(str.equalsIgnoreCase(TRUE),
-						new NullProgressMonitor());
-			} catch (RodinDBException exc) {
-				// TODO Auto-generated catch block
-				exc.printStackTrace();
-			}
-
-		}
-	}
-
-	@Override
-	public void displayValue(String value) {
-		if (combo == null) {
-			if (undefinedButton != null) {
-				undefinedButton.dispose();
-				undefinedButton = null;
-			}
-			
-			combo = new CCombo(composite, SWT.FLAT | SWT.READ_ONLY);
-			combo.add(TRUE);
-			combo.add(FALSE);
-			combo.addSelectionListener(new SelectionListener() {
-
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelected(e);
-				}
-
-				public void widgetSelected(SelectionEvent e) {
-					setValue();
-				}
-
-			});
-		}
-		combo.setText(value);
-	}
-
-	@Override
-	public void setDefaultValue() {
-		IEvent event = (IEvent) element;
-		try {
-			event.setInherited(false,
+		if (value == null || !value.equals(newValue)) {
+			event.setInherited(newValue.equalsIgnoreCase(TRUE),
 					new NullProgressMonitor());
-		} catch (RodinDBException exc) {
-			// TODO Auto-generated catch block
-			exc.printStackTrace();
 		}
-		super.setDefaultValue();
+	}
+
+	@Override
+	public void setDefaultAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		IEvent event = (IEvent) element;
+		event.setInherited(false, monitor);
+	}
+
+	@Override
+	public String[] getPossibleValues(IAttributedElement element,
+			IProgressMonitor monitor) {
+		return new String[] { TRUE, FALSE };
+	}
+
+	@Override
+	public void removeAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		element.removeAttribute(EventBAttributes.INHERITED_ATTRIBUTE, monitor);
 	}
 
 }

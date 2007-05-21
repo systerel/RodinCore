@@ -311,6 +311,8 @@ public class EditSectionRegistry {
 		private Map<IElementType, IAttributeFactory> factories = null;
 		private Map<IElementType, String> defaultPrefixes = null;
 
+		private IAttributeEditor attributeEditor = null;
+		
 		public AttributeInfo(IConfigurationElement config) {
 			this.config = config;
 		}
@@ -398,8 +400,20 @@ public class EditSectionRegistry {
 				String prefix = config.getAttribute("prefix");
 				String postfix = config.getAttribute("postfix");
 
-				editComposite = (IEditComposite) config
-						.createExecutableExtension("class");
+				String widget = config.getAttribute("widget");
+				if (attributeEditor == null) {
+					attributeEditor = (IAttributeEditor) config
+					.createExecutableExtension("class");					
+				}
+				if (widget.equals("text")) {
+					editComposite = new TextEditComposite(attributeEditor);
+				}
+				else if (widget.equals("combo")) {
+					editComposite = new CComboEditComposite(attributeEditor);
+				}
+				else {
+					return null;
+				}
 				editComposite.setPrefix(prefix);
 				editComposite.setPostfix(postfix);
 				editComposite.setFillHorizontal(config.getAttribute(

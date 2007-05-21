@@ -1,5 +1,6 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
@@ -9,24 +10,27 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.EventBStyledText;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.TimerStyledText;
 import org.rodinp.core.RodinDBException;
 
-public abstract class TextEditComposite extends DefaultEditComposite {
+public class TextEditComposite extends DefaultEditComposite {
 	
 	protected StyledText text;
 	private Button undefinedButton;
 	protected int style = SWT.MULTI | SWT.BORDER;
+
+	IAttributeEditor attributeEditor;
 	
-	public void refresh() {
-		initialise();
-		internalPack();
+	public TextEditComposite(IAttributeEditor attributeEditor) {
+		this.attributeEditor = attributeEditor;
 	}
 
 	@Override
 	public void initialise() {
 		try {
-			String value = getValue();
+			String value = attributeEditor.getAttribute(element,
+					new NullProgressMonitor());
 			displayValue(value);
 		} catch (RodinDBException e) {
 			setUndefinedValue();
@@ -39,13 +43,17 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 				undefinedButton.dispose();
 				undefinedButton = null;
 			}
-			setStyle();
 			text = new StyledText(composite, style);
 			new EventBStyledText(text) {
 
 				@Override
 				protected void commit() {
-					setValue();
+					try {
+						attributeEditor.setAttribute(element, text.getText(),
+								new NullProgressMonitor());
+					} catch (RodinDBException e) {
+						EventBUIExceptionHandler.handleSetAttributeException(e);
+					}
 					super.commit();
 				}
 
@@ -56,7 +64,12 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 				@Override
 				protected void response() {
 					if (text.isFocusControl())
-						setValue();
+						try {
+							attributeEditor.setAttribute(element, text
+									.getText(), new NullProgressMonitor());
+						} catch (RodinDBException e) {
+							EventBUIExceptionHandler.handleSetAttributeException(e);
+						}
 				}
 
 			};
@@ -65,8 +78,6 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 		if (!text.getText().equals(value))
 			text.setText(value);
 	}
-
-	protected abstract void setStyle();
 
 	public void setUndefinedValue() {
 		FormToolkit toolkit = this.getFormToolkit();
@@ -103,10 +114,14 @@ public abstract class TextEditComposite extends DefaultEditComposite {
 		super.setSelected(selection);
 	}
 
-	@Override
 	public void setDefaultValue() {
-		if (text != null)
-			text.setFocus();
+		try {
+			attributeEditor.setDefaultAttribute(element, new NullProgressMonitor());
+			if (text != null)
+				text.setFocus();
+		} catch (RodinDBException e) {
+			EventBUIExceptionHandler.handleSetAttributeException(e);
+		}
 	}
 
 }

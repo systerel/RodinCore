@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 
@@ -52,7 +53,7 @@ public class EditRow {
 		editComposites = sectionRegistry.createAttributeComposites(element.getElementType());
 		for (IEditComposite editComposite : editComposites) {
 			editComposite.setForm(form);
-			editComposite.setElement(element);
+			editComposite.setElement((IAttributedElement) element);
 			editComposite.createComposite(toolkit, composite);
 		}
 		toolkit.paintBordersFor(composite);
@@ -66,7 +67,7 @@ public class EditRow {
 	public void refresh() {
 		IRodinElement element = elementComp.getElement(); 
 		for (IEditComposite editComposite : editComposites) {
-			editComposite.setElement(element);
+			editComposite.setElement((IAttributedElement) element);
 			editComposite.refresh();
 		}
 		buttonComp.updateLinks();
