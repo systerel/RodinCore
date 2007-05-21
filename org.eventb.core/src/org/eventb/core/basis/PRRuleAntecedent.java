@@ -80,9 +80,9 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 			setHyps(antecedent.getAddedHyps(), store, monitor);
 		}
 		
-		if (! antecedent.getHypAction().isEmpty()){
+		if (! antecedent.getHypActions().isEmpty()){
 			int count = 0;
-			for (IHypAction action : antecedent.getHypAction()) {
+			for (IHypAction action : antecedent.getHypActions()) {
 				final String name = action.getActionType().toString() + count; 
 				IPRHypAction child = getInternalElement(
 						IPRHypAction.ELEMENT_TYPE,

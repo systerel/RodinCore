@@ -3,6 +3,7 @@ package org.eventb.internal.core.seqprover;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,7 +26,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		
 		private final FreeIdentifier[] addedFreeIdentifiers;
 		private final Set <Predicate> addedHypotheses;
-		private final List <IHypAction> hypAction;
+		private final List <IHypAction> hypActions;
 		private final Predicate goal;
 		
 		private static final FreeIdentifier[] NO_FREE_IDENTS = new FreeIdentifier[0];
@@ -33,9 +34,9 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		
 		public Antecedent(Predicate goal, Set<Predicate> addedHyps, FreeIdentifier[] addedFreeIdents, List<IHypAction> hypAction) {
 			this.goal = goal;
-			this.addedHypotheses = addedHyps == null ? NO_HYPS : addedHyps;
-			this.addedFreeIdentifiers = addedFreeIdents == null ? NO_FREE_IDENTS : addedFreeIdents;
-			this.hypAction = hypAction == null ? NO_HYP_ACTIONS : hypAction;
+			this.addedHypotheses = addedHyps == null ? NO_HYPS : new LinkedHashSet<Predicate>(addedHyps);
+			this.addedFreeIdentifiers = addedFreeIdents == null ? NO_FREE_IDENTS : addedFreeIdents.clone();
+			this.hypActions = hypAction == null ? NO_HYP_ACTIONS : new ArrayList<IHypAction>(hypAction);
 		}
 		
 		/**
@@ -48,10 +49,17 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		/**
 		 * @return Returns the hypAction.
 		 */
-		public final List<IHypAction> getHypAction() {
-			return hypAction;
+		public final List<IHypAction> getHypActions() {
+			return hypActions;
 		}
 
+		/**
+		 * @return Returns the hypAction.
+		 */
+		public final List<IHypAction> getHypAction() {
+			return hypActions;
+		}
+		
 		/**
 		 * @return Returns the addedHypotheses.
 		 */
@@ -84,7 +92,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 			IInternalProverSequent result = ((IInternalProverSequent) seq).modify(addedFreeIdentifiers, addedHypotheses, newGoal);
 			// not strictly needed
 			if (result == null) return null;
-			result = ProofRule.performHypActions(hypAction,result);
+			result = ProofRule.performHypActions(hypActions,result);
 			// no change if seq == result
 			return result;
 			
@@ -102,8 +110,8 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		super(generatedBy,generatedUsing);
 		
 		this.goal = goal;
-		this.antecedents = antecedents == null ? NO_ANTECEDENTS : antecedents;
-		this.neededHypotheses = neededHyps == null ? NO_HYPS : neededHyps;
+		this.antecedents = antecedents == null ? NO_ANTECEDENTS : antecedents.clone();
+		this.neededHypotheses = neededHyps == null ? NO_HYPS : new LinkedHashSet<Predicate>(neededHyps);
 		this.reasonerConfidence = confidence == null ? IConfidence.DISCHARGED_MAX : confidence;
 		this.display = display == null ? generatedBy.getReasonerID() : display;		
 	}
@@ -176,7 +184,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 			final ProofDependenciesBuilder subProofDeps = subProofsDeps[i];
 			
 			// Process the antecedent
-			processHypActionDeps(antecedent.getHypAction(), subProofDeps);
+			processHypActionDeps(antecedent.getHypActions(), subProofDeps);
 			
 			subProofDeps.getUsedHypotheses().removeAll(antecedent.getAddedHyps());
 			if (antecedent.getGoal()!=null)

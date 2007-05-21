@@ -95,7 +95,7 @@ public class ProverLib {
 		if (! a1.getGoal().equals(a2.getGoal())) return false;
 		if (! a1.getAddedHyps().equals(a2.getAddedHyps())) return false;
 		if (! Arrays.deepEquals(a1.getAddedFreeIdents(),a2.getAddedFreeIdents())) return false;
-		if (! a1.getHypAction().equals(a2.getHypAction())) return false;
+		if (! a1.getHypActions().equals(a2.getHypActions())) return false;
 		return true;
 	}
 

@@ -65,6 +65,10 @@ public interface IProofRule extends IReasonerOutput{
 	/**
 	 * Returns the needed hypotheses of this proof rule as returned by the reasoner.
 	 * 
+	 * <p>
+	 * Note : The returned object must not be modified in any way.
+	 * </p>
+	 * 
 	 * @return the needed hypotheses of this proof rule
 	 */
 	Set<Predicate> getNeededHyps();
@@ -79,12 +83,20 @@ public interface IProofRule extends IReasonerOutput{
 	/**
 	 * Returns the name of this proof rule this should be used for display.
 	 * 
+	 * <p>
+	 * Note : The returned object must not be modified in any way.
+	 * </p>
+	 * 
 	 * @return the display name of this proof rule
 	 */
 	String getDisplayName();
 	
 	/**
 	 * Returns the anticidents of this proof rule as returned by the reasoner.
+	 * 
+	 * <p>
+	 * Note : The returned object must not be modified in any way.
+	 * </p>
 	 * 
 	 * @return the anticidents of this proof rule (see {@see IAntecedent})
 	 */
@@ -135,12 +147,21 @@ public interface IProofRule extends IReasonerOutput{
 		 * <p>
 		 * Added hyps are by default selected.
 		 * </p>
+		 * 
+		 * <p>
+		 * The returned object must not be modified in any way.
+		 * </p>
+		 * 
 		 * @return the added hypotheses of this anticident
 		 */
 		Set<Predicate> getAddedHyps();
 		
 		/**
 		 * Returns the added free identifiers of this anticident.
+		 * 
+		 * <p>
+		 * The returned object must not be modified in any way.
+		 * </p>
 		 *
 		 * @return the added free identifiers of this anticident
 		 */
@@ -152,8 +173,30 @@ public interface IProofRule extends IReasonerOutput{
 		 * Added hyps are by default selected. The hypAction should not contain 
 		 * added hypotheses. (simlifier constraint)
 		 * </p>
+		 * 
+		 * <p>
+		 * The returned object must not be modified in any way.
+		 * </p>
+		 * 
 		 * @return the hypotheses selection information for this anticident
 		 */
+		List<IHypAction> getHypActions();
+		
+		/**
+		 * Returns hypotheses selection information for this anticident.
+		 * <p>
+		 * Added hyps are by default selected. The hypAction should not contain 
+		 * added hypotheses. (simlifier constraint)
+		 * </p>
+		 * @return the hypotheses selection information for this anticident
+		 * 
+		 * <p>
+		 * The returned object must not be modified in any way.
+		 * </p>
+		 * 
+		 * @deprecated use {@link #getHypActions()} instead
+		 */
+		@Deprecated
 		List<IHypAction> getHypAction();
 	}
 	

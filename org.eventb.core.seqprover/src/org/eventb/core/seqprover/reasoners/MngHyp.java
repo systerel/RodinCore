@@ -78,7 +78,7 @@ public class MngHyp implements IReasoner {
 			throw new SerializeException(new IllegalStateException(
 					"Two many antecedents in the rule"));
 		}
-		final List<IHypAction> actions = antecedents[0].getHypAction();
+		final List<IHypAction> actions = antecedents[0].getHypActions();
 		if (actions.size() != 1) {
 			throw new SerializeException(new IllegalStateException(
 					"Two many actions in the rule antecedent"));

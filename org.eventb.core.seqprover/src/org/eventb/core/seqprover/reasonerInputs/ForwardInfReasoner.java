@@ -78,7 +78,7 @@ public abstract class ForwardInfReasoner implements IReasoner {
 			"Expected exactly one antecedent."));
 		}
 
-		List<IHypAction> hypActions = antecedents[0].getHypAction();
+		List<IHypAction> hypActions = antecedents[0].getHypActions();
 		if (hypActions.size() < 1) {
 			throw new SerializeException(new IllegalStateException(
 			"Expected at least one hyp action."));

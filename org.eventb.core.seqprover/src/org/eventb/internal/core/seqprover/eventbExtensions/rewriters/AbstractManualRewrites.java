@@ -155,7 +155,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 					"Expected exactly one antecedent!"));
 		}
 		final IAntecedent antecedent = antecedents[0];
-		final List<IHypAction> hypActions = antecedent.getHypAction();
+		final List<IHypAction> hypActions = antecedent.getHypActions();
 		if (hypActions.size() == 0) {
 			throw new SerializeException(new IllegalStateException(
 					"Expected at least one hyp action!"));

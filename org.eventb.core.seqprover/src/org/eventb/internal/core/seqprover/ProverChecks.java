@@ -225,7 +225,7 @@ public class ProverChecks {
 					return false;
 			}
 			// Check all hyp actions and add to the rule type environment from them
-			for (IHypAction hypAction : antecedent.getHypAction()){
+			for (IHypAction hypAction : antecedent.getHypActions()){
 				if (hypAction instanceof ISelectionHypAction) {
 					ISelectionHypAction selHypAction = (ISelectionHypAction) hypAction;
 					// Check action type
@@ -310,7 +310,7 @@ public class ProverChecks {
 			// check that all added free identifiers are unique.
 			final ITypeEnvironment fwdInfTypeEnv = antecedentTypeEnv.clone();
 
-			for (IHypAction hypAction : antecedent.getHypAction()){
+			for (IHypAction hypAction : antecedent.getHypActions()){
 				if (hypAction instanceof ISelectionHypAction) {
 					ISelectionHypAction selHypAction = (ISelectionHypAction) hypAction;
 					if (! checkTyping(selHypAction.getHyps(), antecedentTypeEnv))
@@ -406,7 +406,7 @@ public class ProverChecks {
 
 			// Compute the forward inference justifications
 
-			for (IHypAction hypAction : antecedents[i].getHypAction()) {
+			for (IHypAction hypAction : antecedents[i].getHypActions()) {
 				if (hypAction instanceof IForwardInfHypAction) {
 					IForwardInfHypAction fwdInf = (IForwardInfHypAction) hypAction;
 					// Set<Predicate> hyps = union(h_r,h_a,fwdInf.getHyps());
