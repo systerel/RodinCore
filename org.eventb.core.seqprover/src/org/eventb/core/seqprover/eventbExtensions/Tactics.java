@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -221,7 +222,7 @@ public class Tactics {
 		};
 	}
 	
-	// TODO : this tactic doen not work since there may be more than one added hyp from AE.
+	// TODO : Find a better way to do this. Maybe have a combined reasoner.
 	public static ITactic abstrExprThenEq(final String expression) {
 		
 		return new ITactic() {
@@ -238,10 +239,11 @@ public class Tactics {
 				IAntecedent[] antecedents = pt.getRule().getAntecedents();
 				assert antecedents.length != 0;
 				IAntecedent lastAntecedent = antecedents[antecedents.length - 1];
-				Set<Predicate> addedHyps = lastAntecedent.getAddedHyps();
-				assert addedHyps.size() == 1;
-				Predicate eqHyp = addedHyps.iterator().next();
-				assert Lib.isEq(eqHyp);
+								
+				Predicate eqHyp = getLastAddedHyp(lastAntecedent);
+				
+				if (eqHyp == null ||  ! Lib.isEq(eqHyp))
+					return "Unexpected Behaviour from AE reasoner";
 				
 				// Get the node where Eq should be applied
 				IProofTreeNode node = pt.getChildNodes()[antecedents.length - 1];
@@ -263,6 +265,25 @@ public class Tactics {
 			}
 
 		};
+	}
+	
+	
+	/**
+	 * Returns the last added hypothesis of the given antecedent, or <code>null</code> if the antecedent
+	 * contains no added hypotheses.
+	 * 
+	 * @param antecedent
+	 * 		the given antecedent
+	 * @return the last added hypothesis of the given antecedent, or <code>null</code> if the antecedent
+	 * contains no added hypotheses.
+	 * 		
+	 */
+	private static Predicate getLastAddedHyp(IAntecedent antecedent){
+		Predicate last = null;
+		for (Predicate addedHyp : antecedent.getAddedHyps()) {
+			last = addedHyp;
+		}
+		return last;
 	}
 
 	/**

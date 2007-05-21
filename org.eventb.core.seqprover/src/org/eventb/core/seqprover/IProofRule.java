@@ -66,6 +66,11 @@ public interface IProofRule extends IReasonerOutput{
 	 * Returns the needed hypotheses of this proof rule as returned by the reasoner.
 	 * 
 	 * <p>
+	 * The returned collection preserves the order of the elements from the collection used to
+	 * construct it.
+	 * </p>
+	 * 
+	 * <p>
 	 * Note : The returned object must not be modified in any way.
 	 * </p>
 	 * 
@@ -149,7 +154,12 @@ public interface IProofRule extends IReasonerOutput{
 		 * </p>
 		 * 
 		 * <p>
-		 * The returned object must not be modified in any way.
+		 * The returned collection preserves the order of the elements from the collection used to
+		 * construct it.
+		 * </p>
+		 * 
+		 * <p>
+		 * Note : The returned object must not be modified in any way.
 		 * </p>
 		 * 
 		 * @return the added hypotheses of this anticident
@@ -160,7 +170,7 @@ public interface IProofRule extends IReasonerOutput{
 		 * Returns the added free identifiers of this anticident.
 		 * 
 		 * <p>
-		 * The returned object must not be modified in any way.
+		 * Note : The returned object must not be modified in any way.
 		 * </p>
 		 *
 		 * @return the added free identifiers of this anticident
@@ -175,7 +185,7 @@ public interface IProofRule extends IReasonerOutput{
 		 * </p>
 		 * 
 		 * <p>
-		 * The returned object must not be modified in any way.
+		 * Note : The returned object must not be modified in any way.
 		 * </p>
 		 * 
 		 * @return the hypotheses selection information for this anticident

@@ -70,6 +70,7 @@ public class AbstrExpr extends SingleExprInputReasoner {
 		// 
 		final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
 		addedHyps.addAll(exprWDs);
+		// aeEq is always the last addedHyp
 		addedHyps.add(aeEq);
 		anticidents[1] = ProverFactory.makeAntecedent(
 				null, addedHyps,
