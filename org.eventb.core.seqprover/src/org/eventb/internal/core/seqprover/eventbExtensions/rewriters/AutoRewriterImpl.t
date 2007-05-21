@@ -438,15 +438,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 		
 			/**
-	    	 * Set Theory 23: E ∈ Typ == ⊤ (where Typ is a type expression)
-	    	 */
-			In(_, Typ) -> {
-				if (`Typ.isATypeExpression())
-					return Lib.True;
-				return predicate;			
-			}
-			
-			/**
 	    	 * Set Theory 19: {E} = {F} == E = F   if E, F is a single expression
 	    	 */
 	    	Equal(SetExtension(E), SetExtension(F)) -> {
@@ -456,24 +447,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				return predicate;
 	    	}
 	    	
-			/**
-			 * Set Theory 21: Typ = ∅  ==  ⊥  (where Typ is a type expression)
-			 */
-			Equal(Typ, EmptySet()) -> {
-				if (`Typ.isATypeExpression())
-					return Lib.False;
-				return predicate;
-			}
-
-			/**
-			 * Set Theory 22: ∅ = Typ  ==  ⊥  (where Typ is a type expression)
-			 */
-			Equal(EmptySet(), Typ) -> {
-				if (`Typ.isATypeExpression())
-					return Lib.False;
-				return predicate;
-			}
-
 	    	/**
 	    	 * Arithmetic 16: i = j == ⊤  or  i = j == ⊥ (by computation)
 	    	 */

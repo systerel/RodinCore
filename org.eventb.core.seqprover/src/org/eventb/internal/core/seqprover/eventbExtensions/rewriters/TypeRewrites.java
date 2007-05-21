@@ -7,10 +7,9 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.SequentProver;
 
-public class AutoRewrites extends AbstractAutoRewrites {
-
+public class TypeRewrites extends AbstractAutoRewrites {
 	public static String REASONER_ID = SequentProver.PLUGIN_ID
-			+ ".autoRewrites";
+			+ ".typeRewrites";
 
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -18,9 +17,9 @@ public class AutoRewrites extends AbstractAutoRewrites {
 
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		final IFormulaRewriter rewriter = new AutoRewriterImpl();
+		final IFormulaRewriter rewriter = new TypeRewriterImpl();
 
-		return apply(seq, input, rewriter, true, pm);
+		return apply(seq, input, rewriter, false, pm);
 	}
 
 }
