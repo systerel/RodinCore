@@ -1379,6 +1379,13 @@
    <extension
          point="org.eventb.ui.editSections">
       <section
+            id="org.event.ui.sections.refinesMachine"
+            name="Refines Machine"
+            parentType="org.eventb.core.machineFile"
+            prefix="REFINES"
+            priority="1"
+            type="org.eventb.core.refinesMachine"/>
+      <section
             id="org.event.ui.sections.variable"
             name="Variables"
             parentType="org.eventb.core.machineFile"
@@ -1448,7 +1455,9 @@
             horizontalExpand="false"
             id="org.eventb.ui.identifier"
             name="Identifier"
-            priority="1">
+            priority="1"
+            style="single"
+            widget="text">
          <type
                defaultPrefix="var"
                id="org.eventb.core.variable"/>
@@ -1459,7 +1468,9 @@
             id="org.eventb.ui.label"
             name="Label"
             postfix=":"
-            priority="1">
+            priority="1"
+            style="multi"
+            widget="text">
          <type
                defaultPrefix="inv"
                defaultValue="org.eventb.internal.ui.eventbeditor.editpage.InvariantLabelAttributeFactory"
@@ -1488,7 +1499,9 @@
             horizontalExpand="false"
             id="org.eventb.ui.predicate"
             name="Predicate"
-            priority="2">
+            priority="2"
+            style="multi"
+            widget="text">
          <type id="org.eventb.core.invariant"/>
          <type id="org.eventb.core.theorem"/>
          <type id="org.eventb.core.guard"/>
@@ -1498,7 +1511,8 @@
             horizontalExpand="false"
             id="org.eventb.ui.inherited"
             name="Inherited"
-            priority="2">
+            priority="2"
+            widget="combo">
          <type
                defaultValue="org.eventb.internal.ui.eventbeditor.editpage.InheritedAttributeFactory"
                id="org.eventb.core.event"/>
@@ -1508,7 +1522,8 @@
             horizontalExpand="false"
             id="org.eventb.ui.convergence"
             name="Convergence"
-            priority="3">
+            priority="3"
+            widget="combo">
          <type
                defaultValue="org.eventb.internal.ui.eventbeditor.editpage.ConvergenceAttributeFactory"
                id="org.eventb.core.event"/>
@@ -1518,15 +1533,18 @@
             horizontalExpand="false"
             id="org.eventb.ui.assignment"
             name="Assignment"
-            priority="2">
+            priority="2"
+            style="multi"
+            widget="text">
          <type id="org.eventb.core.action"/>
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.RefinesEventEditComposite"
             horizontalExpand="false"
-            id="org.eventb.ui.refinesevent"
+            id="org.eventb.ui.refinesEvent"
             name="Refines Event"
-            priority="1">
+            priority="1"
+            widget="combo">
          <type
                defaultValue="org.eventb.internal.ui.eventbeditor.editpage.RefinesEventAttributeFactory"
                id="org.eventb.core.refinesEvent"/>
@@ -1537,13 +1555,24 @@
             id="org.eventb.ui.comment"
             name="Comment"
             prefix="//"
-            priority="9">
+            priority="9"
+            style="multi"
+            widget="text">
          <type id="org.eventb.core.variable"/>
          <type id="org.eventb.core.invariant"/>
          <type id="org.eventb.core.theorem"/>
          <type id="org.eventb.core.event"/>
          <type id="org.eventb.core.guard"/>
          <type id="org.eventb.core.action"/>
+      </attribute>
+      <attribute
+            class="org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineEditComposite"
+            horizontalExpand="false"
+            id="org.eventb.ui.refinesMachine"
+            name="Refines Machine"
+            priority="1"
+            widget="combo">
+         <type id="org.eventb.core.refinesMachine"/>
       </attribute>
    </extension>
    <extension
