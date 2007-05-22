@@ -250,11 +250,7 @@ public class ProofState implements IProofState {
 			// Node has been detached from this proof tree
 			return pt.getRoot().getFirstOpenDescendant();
 		}
-		final IProofTreeNode next = node.getNextOpenNode();
-		if (next != null) {
-			return next;
-		}
-		return pt.getRoot().getFirstOpenDescendant();
+		return node.getNextOpenNode();
 	}
 
 	/*
@@ -263,7 +259,7 @@ public class ProofState implements IProofState {
 	 * @see org.eventb.core.pm.IProofState#getNextPendingSubgoal()
 	 */
 	IProofTreeNode getNextPendingSubgoal() {
-		return pt.getRoot().getFirstOpenDescendant();
+		return getNextPendingSubgoal(pt.getRoot());
 	}
 
 	/*
