@@ -7,25 +7,16 @@ import org.eventb.core.ast.IPosition;
 
 public class TacticPositionUI {
 
-	List<String> tacticIDs;
-
-	List<IPosition> positions;
-
+	List<Pair<String, IPosition>> tacticPositions;
 	public TacticPositionUI() {
-		this.tacticIDs = new ArrayList<String>();
-		this.positions = new ArrayList<IPosition>();
+		this.tacticPositions = new ArrayList<Pair<String,IPosition>>();
 	}
 
-	public String [] getTacticIDs() {
-		return tacticIDs.toArray(new String[tacticIDs.size()]);
+	public  List<Pair<String, IPosition>> getTacticPositions() {
+		return tacticPositions;
 	}
 
-	public IPosition [] getPositions() {
-		return positions.toArray(new IPosition[positions.size()]);
-	}
-	
 	public void addTacticPosition(String tacticID, IPosition position) {
-		tacticIDs.add(tacticID);
-		positions.add(position);
+		tacticPositions.add(new Pair<String, IPosition>(tacticID, position));
 	}
 }
