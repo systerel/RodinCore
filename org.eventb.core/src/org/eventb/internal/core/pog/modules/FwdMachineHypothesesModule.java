@@ -100,8 +100,10 @@ public class FwdMachineHypothesesModule extends GlobalHypothesesModule {
 		ISCPredicateElement[] predicateElements = new ISCPredicateElement[predicates.size()];		
 		predicates.toArray(predicateElements);
 		
+		boolean accuracy = scMachineFile.isAccurate();
+		
 		hypothesisManager = 
-			new MachineHypothesisManager(scMachineFile, target, predicateElements);
+			new MachineHypothesisManager(scMachineFile, target, predicateElements, accuracy);
 		
 		repository.setState(hypothesisManager);
 		

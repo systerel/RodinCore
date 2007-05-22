@@ -494,5 +494,25 @@ public class TestAccuracy extends BasicSCTest {
 		isAccurate(con.getSCMachineFile());
 		isAccurate(con.getSCMachineFile().getSCEvents()[1]);
 	}
+
+	/**
+	 * an inaccurate sc machine does not automatically make contained sc events inaccurate
+	 */
+	public void testAcc_21() throws Exception {
+		IMachineFile con = createMachine("con");
+
+		addInvariants(con, makeSList("I"), makeSList("p>0"));
+		addInitialisation(con);
+		addEvent(con, "fvt", makeSList("x"), 
+				makeSList("G"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
 	
+		con.save(null, true);
+
+		runBuilder();
+		
+		isNotAccurate(con.getSCMachineFile());
+		isAccurate(con.getSCMachineFile().getSCEvents()[1]);
+	}
+
 }

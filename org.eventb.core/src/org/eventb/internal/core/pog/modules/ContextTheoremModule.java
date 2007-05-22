@@ -43,4 +43,9 @@ public class ContextTheoremModule extends TheoremModule {
 		return (IContextTheoremTable) repository.getState(IContextTheoremTable.STATE_TYPE);
 	}
 
+	@Override
+	protected boolean isAccurate() {
+		return ((IContextHypothesisManager) hypothesisManager).contextIsAccurate();
+	}
+
 }

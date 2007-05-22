@@ -33,8 +33,9 @@ public class ContextHypothesisManager extends HypothesisManager implements
 	public ContextHypothesisManager(
 			IRodinElement parentElement, 
 			IPOFile target,
-			ISCPredicateElement[] predicateTable) {
-		super(parentElement, target, predicateTable, 
+			ISCPredicateElement[] predicateTable,
+			boolean accurate) {
+		super(parentElement, target, predicateTable, accurate,
 				ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME, IDENT_HYP_NAME,
 				IDENTIFIER_TABLE_SIZE);
 	}
@@ -44,6 +45,10 @@ public class ContextHypothesisManager extends HypothesisManager implements
 	 */
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
+	}
+
+	public boolean contextIsAccurate() {
+		return accurate;
 	}
 
 }

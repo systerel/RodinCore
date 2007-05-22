@@ -51,6 +51,7 @@ extends PredicateModule<PE> {
 								hypothesisManager.getRootHypothesis(), 
 								hypothesis)
 					},
+					isAccurate(),
 					monitor);
 		} else {
 			if (DEBUG_TRIVIAL)

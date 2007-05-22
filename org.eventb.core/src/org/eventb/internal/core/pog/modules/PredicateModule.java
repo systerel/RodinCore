@@ -52,6 +52,8 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 	protected abstract IPredicateTable<PE> getPredicateTable(IPOGStateRepository repository) 
 	throws CoreException;
 	
+	protected abstract boolean isAccurate();
+	
 	@Override
 	public void endModule(IRodinElement element, IPOGStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		predicateTable = null;
@@ -124,6 +126,7 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 								hypothesisManager.getRootHypothesis(), 
 								hypothesis)
 					},
+					isAccurate(),
 					monitor);
 		} else {
 			if (DEBUG_TRIVIAL)

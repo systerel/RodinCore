@@ -93,6 +93,7 @@ public class FwdMachineRefEventInvariantModule extends MachineEventInvariantModu
 						getLocalHypothesisSelectionHint(target, sequentName),
 						getInvariantPredicateSelectionHint(target, invariant)
 				},
+				accurate,
 				monitor);
 	}
 

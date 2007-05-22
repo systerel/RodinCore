@@ -150,6 +150,7 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 									getSequentHypothesis(target, sequentName)
 							)
 					},
+					accurate,
 					monitor);
 		} else {
 			if (DEBUG_TRIVIAL)

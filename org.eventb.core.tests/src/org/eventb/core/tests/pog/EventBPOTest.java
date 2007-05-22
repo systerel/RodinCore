@@ -255,5 +255,15 @@ public abstract class EventBPOTest extends EventBTest {
 	public Type given(String s) {
 		return factory.makeGivenType(s);
 	}
+
+	public void sequentIsAccurate(IPOFile po, String name) throws Exception {
+		IPOSequent seq = getSequent(po, name);
+		assertTrue("sequent should be accurate", seq.isAccurate());
+	}
+
+	public void sequentIsNotAccurate(IPOFile po, String name) throws Exception {
+		IPOSequent seq = getSequent(po, name);
+		assertFalse("sequent should not be accurate", seq.isAccurate());
+	}
 	
 }

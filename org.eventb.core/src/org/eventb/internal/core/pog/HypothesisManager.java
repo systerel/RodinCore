@@ -69,6 +69,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 	private final String allHypName;
 	private final String identHypName;
 	private final HashSet<FreeIdentifier> identifiers;
+	protected final boolean accurate;
 
 	public IRodinElement getParentElement() {
 		return parentElement;
@@ -78,6 +79,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 			IRodinElement parentElement, 
 			IPOFile target,
 			ISCPredicateElement[] predicateTable, 
+			boolean accurate,
 			String rootHypName, 
 			String hypPrefix,
 			String allHypName,
@@ -90,6 +92,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 		this.allHypName = allHypName;
 		this.identHypName = identHypName;
 		this.predicateTable = predicateTable;
+		this.accurate = accurate;
 		hypothesisNames = new String[predicateTable.length];
 		predicateMap = new Hashtable<String, Integer>(predicateTable.length * 4 / 3 + 1);
 		identifiers = new HashSet<FreeIdentifier>(identifierHashSize * 4 / 3 + 1);

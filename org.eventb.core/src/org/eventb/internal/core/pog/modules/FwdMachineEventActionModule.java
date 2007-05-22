@@ -173,6 +173,7 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 					makePredicate(predicate, action.getSource()), 
 					sources, 
 					hints, 
+					accurate,
 					monitor);
 		} else {
 			if (DEBUG_TRIVIAL)

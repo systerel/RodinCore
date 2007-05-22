@@ -31,8 +31,10 @@ public class EventHypothesisManager extends HypothesisManager implements IEventH
 			IRodinElement parentElement, 
 			IPOFile target,
 			ISCPredicateElement[] predicateTable,
+			boolean accurate,
 			String rootHypName) {
-		super(parentElement, target, predicateTable, rootHypName, 
+		super(parentElement, target, predicateTable, accurate, 
+				rootHypName, 
 				HYP_PREFIX + parentElement.getElementName(), 
 				ALLHYP_NAME + parentElement.getElementName(),
 				IDENT_HYP_NAME + parentElement.getElementName(),
@@ -41,6 +43,10 @@ public class EventHypothesisManager extends HypothesisManager implements IEventH
 
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
+	}
+
+	public boolean eventIsAccurate() {
+		return accurate;
 	}
 
 }

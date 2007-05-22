@@ -86,6 +86,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 			IPOGPredicate goal,
 			IPOGSource[] sources,
 			IPOGHint[] hints,
+			boolean accurate,
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		IPOSequent sequent = target.getSequent(name);
@@ -105,6 +106,8 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		putPOGSources(sequent, sources, monitor);
 		
 		putPOGHints(sequent, hints, monitor);
+		
+		sequent.setAccuracy(accurate, monitor);
 	}
 
 	private void putPredicate(

@@ -95,6 +95,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 				makePredicate(varPredicate, variantSource), 
 				sources, 
 				NO_HINTS, 
+				accurate,
 				monitor);
 		
 		if (isIntVariant) {
@@ -113,6 +114,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 					makePredicate(natPredicate, variantSource), 
 					sources, 
 					NO_HINTS, 
+					accurate,
 					monitor);
 		}
 	}

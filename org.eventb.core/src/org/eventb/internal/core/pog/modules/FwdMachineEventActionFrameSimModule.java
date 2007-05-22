@@ -132,6 +132,7 @@ public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementM
 					new IPOGHint[] {
 						getLocalHypothesisSelectionHint(target, sequentName)
 					},
+					accurate,
 					monitor);
 
 		}

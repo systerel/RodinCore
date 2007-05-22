@@ -9,15 +9,21 @@ package org.eventb.core.pog.state;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.pog.POGCore;
+import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.tool.state.IStateType;
 
 /**
  * Common protocol for accessing and managing the hypothesis sets of an event.
- * 
+ * <p>
+ * This state component stores accuracy information for an event
+ * and its immedtiate abstractions.
+ * This information is propagated from the static checker. 
+ * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @see IAccuracyInfo
  * @author Stefan Hallerstede
  *
  */
@@ -25,5 +31,12 @@ public interface IEventHypothesisManager extends IHypothesisManager {
 
 	final static IStateType<IEventHypothesisManager> STATE_TYPE = 
 		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".eventHypothesisManager");
+	
+	/**
+	 * Returns whether the current event and its immediate abstractions are accurate.
+	 * 
+	 * @return whether the current event and its immediate abstractions are accurate
+	 */
+	boolean eventIsAccurate();
 	
 }

@@ -43,4 +43,9 @@ public class FwdMachineTheoremModule extends TheoremModule {
 		return (IMachineTheoremTable) repository.getState(IMachineTheoremTable.STATE_TYPE);
 	}
 
+	@Override
+	protected boolean isAccurate() {
+		return ((IMachineHypothesisManager) hypothesisManager).machineIsAccurate();
+	}
+
 }

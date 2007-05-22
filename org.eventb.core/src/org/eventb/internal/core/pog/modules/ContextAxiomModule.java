@@ -65,4 +65,9 @@ public class ContextAxiomModule extends PredicateModule<ISCAxiom> {
 		return elementLabel + "/WD";
 	}
 
+	@Override
+	protected boolean isAccurate() {
+		return ((IContextHypothesisManager) hypothesisManager).contextIsAccurate();
+	}
+
 }

@@ -125,7 +125,9 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 
 	private void setEventHypothesisManager(
 			IMachineHypothesisManager machineHypothesisManager, 
-			ISCEvent event, ISCGuard[] guards, 
+			ISCEvent event, 
+			ISCGuard[] guards, 
+			boolean accurate,
 			IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
@@ -135,13 +137,14 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 				machineHypothesisManager.getContextHypothesis() :
 				machineHypothesisManager.getFullHypothesis();
 		eventHypothesisManager = 
-			new EventHypothesisManager(event, target, guards, fullHypothesis.getElementName());
+			new EventHypothesisManager(event, target, guards, accurate, fullHypothesis.getElementName());
 		
 		repository.setState(eventHypothesisManager);
 	}
 
 	private void fetchGuards(
 			ISCEvent concreteEvent,
+			ISCEvent[] abstractEvents,
 			ISCGuard[] concreteGuards, 
 			IPOGStateRepository repository) throws CoreException {
 		
@@ -149,8 +152,6 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 		
 		IConcreteEventGuardTable concreteEventGuardTable = 
 			fetchConcreteGuards(concreteGuards, repository);
-		
-		ISCEvent[] abstractEvents = concreteEvent.getAbstractSCEvents();
 		
 		List<IAbstractEventGuardTable> abstractGuardTables = 
 			new ArrayList<IAbstractEventGuardTable>(abstractEvents.length);
@@ -223,13 +224,22 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 		
 		ISCEvent concreteEvent = (ISCEvent) element;
 		
+		boolean accurate = concreteEvent.isAccurate();
+		
 		ISCGuard[] guards = concreteEvent.getSCGuards();
 		
+		ISCEvent[] abstractEvents = concreteEvent.getAbstractSCEvents();
+		
+		for (ISCEvent event : abstractEvents) {
+			accurate &= event.isAccurate();
+		}
+		
 		setEventHypothesisManager(
-				machineHypothesisManager, concreteEvent, guards, repository, monitor);
+				machineHypothesisManager, concreteEvent, guards, accurate, repository, monitor);
 		
 		fetchGuards(
 				concreteEvent,
+				abstractEvents,
 				guards, 
 				repository);
 		

@@ -87,8 +87,10 @@ public class ContextHypothesesModule extends GlobalHypothesesModule {
 		ISCPredicateElement[] predicateElements = new ISCPredicateElement[predicates.size()];		
 		predicates.toArray(predicateElements);
 		
+		boolean accuracy = scContextFile.isAccurate();
+		
 		hypothesisManager = 
-			new ContextHypothesisManager(scContextFile, target, predicateElements);
+			new ContextHypothesisManager(scContextFile, target, predicateElements, accuracy);
 		
 		repository.setState(hypothesisManager);
 		

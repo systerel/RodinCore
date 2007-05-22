@@ -53,4 +53,9 @@ public class FwdMachineInvariantModule extends PredicateModule<ISCInvariant> {
 		return elementLabel + "/WD";
 	}
 
+	@Override
+	protected boolean isAccurate() {
+		return ((IMachineHypothesisManager) hypothesisManager).machineIsAccurate();
+	}
+
 }

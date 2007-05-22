@@ -120,6 +120,7 @@ public class FwdMachineEventActionBodySimModule extends
 					new IPOGHint[] {
 						getLocalHypothesisSelectionHint(target, sequentName)
 					},
+					accurate,
 					monitor);
 
 		}

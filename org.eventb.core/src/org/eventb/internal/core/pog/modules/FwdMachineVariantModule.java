@@ -65,7 +65,9 @@ public class FwdMachineVariantModule extends UtilityModule {
 					emptyPredicates, 
 					makePredicate(wdPredicate, variantInfo.getVariant().getSource()), 
 					sources, 
-					NO_HINTS, monitor);
+					NO_HINTS, 
+					machineHypothesisManager.machineIsAccurate(),
+					monitor);
 		} else {
 			if (DEBUG_TRIVIAL)
 				debugTraceTrivial("VWD");
@@ -82,7 +84,9 @@ public class FwdMachineVariantModule extends UtilityModule {
 					emptyPredicates, 
 					makePredicate(finPredicate, variantInfo.getVariant().getSource()), 
 					sources, 
-					NO_HINTS, monitor);
+					NO_HINTS, 
+					machineHypothesisManager.machineIsAccurate(),
+					monitor);
 		} else {
 			if (DEBUG_TRIVIAL)
 				debugTraceTrivial("FIN");

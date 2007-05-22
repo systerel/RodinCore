@@ -10,15 +10,21 @@ package org.eventb.core.pog.state;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.pog.POGCore;
+import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.tool.state.IStateType;
 
 /**
  * This is the hypothesis manager associated with Event-B machines.
- * 
+ * <p>
+ * This state component also stores accuracy information for a machine.
+ * This information is propagated from the static checker. 
+ * </p> 
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @see IAccuracyInfo
+ * 		
  * @author Stefan Hallerstede
  *
  */
@@ -35,4 +41,11 @@ public interface IMachineHypothesisManager extends IHypothesisManager {
 	 */
 	IPOPredicateSet getContextHypothesis();
 
+	/**
+	 * Returns whether the machine is accurate.
+	 * 
+	 * @return whether the machine is accurate
+	 */
+	boolean machineIsAccurate();
+	
 }

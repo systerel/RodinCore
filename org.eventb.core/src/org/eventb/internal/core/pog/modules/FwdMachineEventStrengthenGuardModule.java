@@ -164,6 +164,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 				new IPOGHint[] {
 					getLocalHypothesisSelectionHint(target, sequentName)
 				},
+				accurate,
 				monitor);
 	}
 
@@ -213,6 +214,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 					new IPOGHint[] {
 						getLocalHypothesisSelectionHint(target, sequentName)
 					},
+					accurate,
 					monitor);
 	
 		}

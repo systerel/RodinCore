@@ -36,8 +36,9 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 	public MachineHypothesisManager(
 			IRodinElement parentElement, 
 			IPOFile target,
-			ISCPredicateElement[] predicateTable) throws CoreException {
-		super(parentElement, target, predicateTable, 
+			ISCPredicateElement[] predicateTable,
+			boolean accurate) throws CoreException {
+		super(parentElement, target, predicateTable, accurate,
 				ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME, IDENT_HYP_NAME, 
 				IDENTIFIER_TABLE_SIZE);
 	}
@@ -48,5 +49,9 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 	
 	public IPOPredicateSet getContextHypothesis() {
 		return target.getPredicateSet(CTX_HYP_NAME);
+	}
+
+	public boolean machineIsAccurate() {
+		return accurate;
 	}
 }

@@ -22,6 +22,7 @@ import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
 import org.eventb.core.pog.state.IHypothesisManager;
+import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineInfo;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IPredicateTable;
@@ -55,6 +56,7 @@ public class FwdMachineEventGuardModule extends PredicateModule<ISCGuard> {
 	protected String eventLabel;
 	protected IAbstractEventGuardList abstractEventGuardList;
 	protected IMachineInfo machineInfo;
+	protected IMachineHypothesisManager machineHypothesisManager;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -70,6 +72,8 @@ public class FwdMachineEventGuardModule extends PredicateModule<ISCGuard> {
 		machineInfo = (IMachineInfo) repository.getState(IMachineInfo.STATE_TYPE);
 		abstractEventGuardList = 
 			(IAbstractEventGuardList) repository.getState(IAbstractEventGuardList.STATE_TYPE);
+		machineHypothesisManager =
+			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
 	}
 	
 	/* (non-Javadoc)
@@ -83,6 +87,7 @@ public class FwdMachineEventGuardModule extends PredicateModule<ISCGuard> {
 		eventLabel = null;
 		machineInfo = null;
 		abstractEventGuardList = null;
+		machineHypothesisManager = null;
 		super.endModule(element, repository, monitor);
 	}
 
@@ -153,6 +158,12 @@ public class FwdMachineEventGuardModule extends PredicateModule<ISCGuard> {
 	@Override
 	protected String getWDProofObligationName(String elementLabel) {
 		return eventLabel + "/" + elementLabel + "/WD";
+	}
+
+	@Override
+	protected boolean isAccurate() {
+		return ((IEventHypothesisManager) hypothesisManager).eventIsAccurate()
+			&& machineHypothesisManager.machineIsAccurate();
 	}
 
 }

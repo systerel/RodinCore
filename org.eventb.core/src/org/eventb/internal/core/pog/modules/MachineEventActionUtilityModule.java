@@ -41,6 +41,7 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 	protected IMachineInfo machineInfo;
 	protected IMachineHypothesisManager machineHypothesisManager;
 	protected IEventHypothesisManager eventHypothesisManager;
+	protected boolean accurate;
 	protected ISCEvent concreteEvent;
 	protected String concreteEventLabel;
 	protected boolean isInitialisation;
@@ -62,6 +63,8 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
 		eventHypothesisManager = 
 			(IEventHypothesisManager) repository.getState(IEventHypothesisManager.STATE_TYPE);
+		accurate = 
+			machineHypothesisManager.machineIsAccurate() && eventHypothesisManager.eventIsAccurate();
 		
 		concreteEvent = (ISCEvent) element;
 		concreteEventLabel = concreteEvent.getLabel();
