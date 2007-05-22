@@ -167,7 +167,7 @@ public class TestAccuracy extends BasicSCTest {
 	}
 
 	/**
-	 * erroneous theorems should make an sc event inaccurate,
+	 * erroneous event theorems should make an sc event inaccurate,
 	 * but not the sc machine
 	 */
 	public void testAcc_09() throws Exception {
@@ -430,7 +430,7 @@ public class TestAccuracy extends BasicSCTest {
 	}
 
 	/**
-	 * faulty inherited convergence should make an sc event inaccurate,
+	 * faulty refined convergence should make an sc event inaccurate,
 	 * but not the sc machine
 	 */
 	public void testAcc_19() throws Exception {
@@ -463,4 +463,36 @@ public class TestAccuracy extends BasicSCTest {
 		isNotAccurate(con.getSCMachineFile().getSCEvents()[1]);
 	}
 
+	/**
+	 * for non-inherited events:
+	 * faulty abstract sc event but well-formed concrete sc event 
+	 * should make the concrete sc event and the sc machine accurate
+	 */
+	public void testAcc_20() throws Exception {
+		IMachineFile abs = createMachine("abs");
+
+		addInitialisation(abs);
+		addEvent(abs, "evt", makeSList(), 
+				makeSList("G"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+		
+		abs.save(null, true);
+		
+		IMachineFile con = createMachine("con");
+		addMachineRefines(con, "abs");
+
+		addInitialisation(con);
+		IEvent fvt = addEvent(con, "fvt", makeSList("x"), 
+				makeSList("G"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+		addEventRefines(fvt, "evt");
+	
+		con.save(null, true);
+
+		runBuilder();
+		
+		isAccurate(con.getSCMachineFile());
+		isAccurate(con.getSCMachineFile().getSCEvents()[1]);
+	}
+	
 }
