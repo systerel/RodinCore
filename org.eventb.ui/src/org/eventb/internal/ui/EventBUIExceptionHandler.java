@@ -132,4 +132,10 @@ public class EventBUIExceptionHandler {
 				EventBUIExceptionHandler.UserAwareness.INFORM);
 	}
 
+	public static void handleGetAttributeException(RodinDBException e) {
+		handleException(e,
+				"Exception throws when getting the value of an attribute",
+				EventBUIExceptionHandler.UserAwareness.INFORM);
+	}
+
 }
