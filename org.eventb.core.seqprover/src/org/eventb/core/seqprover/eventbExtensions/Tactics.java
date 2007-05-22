@@ -26,6 +26,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryExpression;
@@ -578,6 +579,15 @@ public class Tactics {
 
 	public static boolean allD_applicable(Predicate hyp) {
 		return Lib.isUnivQuant(hyp);
+	}
+
+	public static boolean allmpD_applicable(Predicate hyp) {
+		if (Lib.isUnivQuant(hyp)) {
+			QuantifiedPredicate forall = (QuantifiedPredicate) hyp;
+			if (Lib.isImp(forall.getPredicate()))
+				return true;
+		}
+		return false;
 	}
 
 	public static ITactic conjF(Predicate conjHyp) {
