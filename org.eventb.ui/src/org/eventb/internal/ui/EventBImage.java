@@ -339,8 +339,10 @@ public class EventBImage {
 	 */
 	public static Image getPRSequentImage(IPSStatus status) {
 		String base_path = "";
-		String auto = "0";
 
+		int F_AUTO = 0x00001;
+		
+		int F_INACCURATE = 0x00002;
 		
 		int confidence;
 		try {
@@ -357,27 +359,9 @@ public class EventBImage {
 		}
 
 		boolean isAttempted = confidence > IConfidence.UNATTEMPTED;
-
 		if (!isAttempted)
 			base_path = IEventBSharedImages.IMG_UNATTEMPTED_PATH;
 		else {
-			boolean isAutomatic;
-			try {
-				isAutomatic = ! status.hasManualProof();
-			} catch (RodinDBException e) {
-				String message = "Cannot check if the proof tree of the sequent "
-					+ status.getElementName()
-					+ " is automatically generated or not";
-				if (UIUtils.DEBUG) {
-					System.out.println(message);
-					e.printStackTrace();
-				}
-				UIUtils.log(e, message);
-				return null;
-			}
-			if (isAutomatic) {
-				auto = "1";
-			}
 			boolean isProofBroken;
 			try {
 				isProofBroken = status.isBroken();
@@ -408,11 +392,37 @@ public class EventBImage {
 			}
 		}
 
+		int overlay = 0;
 
+		boolean isAutomatic = false;
+		try {
+			isAutomatic = ! status.hasManualProof();
+		} catch (RodinDBException e) {
+			String message = "Cannot check if the proof tree of the sequent "
+				+ status.getElementName()
+				+ " is automatically generated or not";
+			if (UIUtils.DEBUG) {
+				System.out.println(message);
+				e.printStackTrace();
+			}
+		}
+		if (isAutomatic) {
+			overlay = overlay | F_AUTO;
+		}
+
+		boolean isAccurate = false;
+		try {
+			isAccurate = status.getPOSequent().isAccurate();
+		} catch (RodinDBException e) {
+			// Do nothing
+		}
+		if (!isAccurate) {
+			overlay = overlay | F_INACCURATE;
+		}
 		// Compute the key
 		// key = "prsequent":pluginID:base_path:overlay
 		// overlay = auto
-		String key = "prsequent:" + base_path + ":" + auto;
+		String key = "prsequent:" + base_path + ":" + overlay;
 
 		// Return the image if it exists, otherwise create a new image and
 		// register with the registry.
@@ -422,8 +432,12 @@ public class EventBImage {
 			if (UIUtils.DEBUG)
 				System.out.println("Create a new image: " + key);
 			OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
-			if (auto == "1")
-				icon.addTopRight(getImageDescriptor(IEventBSharedImages.IMG_AUTO_OVERLAY_PATH));
+			if ((overlay & F_AUTO) != 0)
+				icon
+						.addTopRight(getImageDescriptor(IEventBSharedImages.IMG_AUTO_OVERLAY_PATH));
+			if ((overlay & F_INACCURATE) != 0)
+				icon
+						.addBottomLeft(getImageDescriptor(IEventBSharedImages.IMG_WARNING_OVERLAY_PATH));
 			image = icon.createImage();
 			registry.put(key, image);
 		}
