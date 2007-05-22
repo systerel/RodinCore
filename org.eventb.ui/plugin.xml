@@ -1375,6 +1375,15 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.DisjToImplHyp"
             target="hypothesis"
             tooltip="%proofTactics.disjToImplHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.allmpD"
+            interrupt="false"
+            name="%hypothesisProofTactics.allmpD.name"
+            priorty="1"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ForallmpD"
+            target="hypothesis"
+            tooltip="%hypothesisProofTactics.allmpD.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
