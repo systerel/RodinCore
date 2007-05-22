@@ -7,5 +7,6 @@ Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
 Require-Bundle: org.junit4,
  org.eventb.core.seqprover,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ com.b4free.rodin.core
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

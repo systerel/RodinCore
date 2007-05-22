@@ -7,6 +7,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
@@ -36,15 +37,38 @@ public class AllD implements IReasoner {
 		
 		MultipleExprInput exprsInput;
 		Predicate pred;
+		String error;
 
+		/**
+		 * @deprecated use other constructor without boundIdentDecls param instead
+		 */
+		@Deprecated
 		public Input(String[] instantiations, BoundIdentDecl[] decls,
 				ITypeEnvironment typeEnv, Predicate pred) {
 
 			this.exprsInput = new MultipleExprInput(instantiations, decls,
 					typeEnv);
 			this.pred = pred;
+			this.error = null;
 		}
 
+
+		public Input(Predicate pred, ITypeEnvironment typeEnv, String[] instantiations) {
+			if (pred instanceof QuantifiedPredicate) {
+				BoundIdentDecl[] decls = Lib.getBoundIdents(pred);
+				this.exprsInput = new MultipleExprInput(instantiations, decls ,
+						typeEnv);
+				this.pred = pred;
+				this.error = null;
+			}
+			else{
+				this.error = "Predicate " + pred +" is not a quantified predicate.";
+				this.pred = null;
+				this.exprsInput = null;
+			}
+		}
+
+		
 		public Input(IReasonerInputReader reader, Predicate pred)
 				throws SerializeException {
 
@@ -62,11 +86,12 @@ public class AllD implements IReasoner {
 		}
 
 		public String getError() {
+			if (error != null) return error;
 			return exprsInput.getError();
 		}
 
 		public boolean hasError() {
-			return exprsInput.hasError();
+			return (error != null || exprsInput.hasError());
 		}
 
 		public Expression[] computeInstantiations(BoundIdentDecl[] boundIdentDecls) {
@@ -183,7 +208,7 @@ public class AllD implements IReasoner {
 		return reasonerOutput;
 	}
 	
-	private String displayInstantiations(Expression[] instantiations){
+	protected String displayInstantiations(Expression[] instantiations){
 		StringBuilder str = new StringBuilder();
 		for (int i = 0; i < instantiations.length; i++) {
 			if (instantiations[i] == null)
