@@ -2,13 +2,13 @@ package org.eventb.core.seqprover.eventbExtentionTests;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
-// import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllmpD;
 
+// import org.eventb.core.seqprover.ITactic;
 // import com.b4free.rodin.core.B4freeCore;
 
 /**
@@ -24,8 +24,8 @@ public class AllmpDTests extends AbstractReasonerTests {
 		return (new AllmpD()).getReasonerID();
 	}
 	
-	final static Predicate hyp = TestLib.genPred(" ∀x,y· x ∈ ℤ ∧ y ∈ ℤ  ⇒ x∈P ∧ y∈Q ");
-	final static IProverSequent seq = TestLib.genSeq(" ∀x,y· x ∈ ℤ ∧ y ∈ ℤ  ⇒ x∈P ∧ y∈Q  |- z∈P ");
+	final static Predicate hyp = TestLib.genPred(" ∀x,y· x ∈ ℕ ∧ y ∈ ℕ  ⇒ x ∈ P ∧ y ∈ Q ");
+	final static IProverSequent seq = TestLib.genSeq(" ∀x,y· x ∈ ℕ ∧ y ∈ ℕ  ⇒ x ∈ P ∧ y ∈ Q  |- z∈P ");
 	
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
@@ -33,18 +33,12 @@ public class AllmpDTests extends AbstractReasonerTests {
 				// without WD condition
 				new SuccessfullReasonerApplication(
 						seq,
-						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0","1"}),
-						"[{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][][∀x,y·x∈ℤ∧y∈ℤ⇒x∈P∧y∈Q] |- ⊤," +
-						" {z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℤ∧y∈ℤ⇒x∈P∧y∈Q][] |- 0∈P∧1∈Q," +
-						" {z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℤ∧y∈ℤ⇒x∈P∧y∈Q][0∈P, 1∈Q, 0∈ℤ, 1∈ℤ] |- z∈P]"
+						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0","1"})
 						),
 				// with WD condition
 				new SuccessfullReasonerApplication(
 								seq,
-								new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"z","1÷z"}),
-								"[{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][][∀x,y·x∈ℤ∧y∈ℤ⇒x∈P∧y∈Q] |- ⊤∧z≠0," +
-								" {z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℤ∧y∈ℤ⇒x∈P∧y∈Q][z≠0] |- z∈P∧1 ÷ z∈Q," +
-								" {z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℤ∧y∈ℤ⇒x∈P∧y∈Q][z≠0, z∈P, 1 ÷ z∈Q, z∈ℤ, 1 ÷ z∈ℤ] |- z∈P]"
+								new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"z","1÷z"})
 								)
 		};
 	}
