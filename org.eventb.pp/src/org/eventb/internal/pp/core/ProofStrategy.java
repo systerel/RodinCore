@@ -5,8 +5,8 @@ import java.util.Stack;
 
 import org.eventb.internal.pp.core.datastructure.DataStructureWrapper;
 import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.search.IterableHashSet;
+import org.eventb.internal.pp.core.search.ResetIterator;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.core.tracing.Tracer;
@@ -43,11 +43,7 @@ public class ProofStrategy implements IDispatcher {
 	
 	private ClauseSimplifier simplifier;
 	
-	private boolean stop, proofFound;
-	
 	public ProofStrategy() {
-		// TODO change
-		Constant.uniqueIdentifier = 0;
 		level = Level.base;
 		
 		dsWrapper = new DataStructureWrapper(new IterableHashSet<IClause>());
@@ -104,18 +100,19 @@ public class ProofStrategy implements IDispatcher {
 		origin.getDependencies(dependencies);
 		
 		adjustLevel(dependencies);
-		if (proofFound) return;
+		if (terminated) return;
+		
 		
 		debug("Old level was: "+oldLevel+", new level is: "+level);
 		
 		debug("Dispatching contradiction to subprovers");
 		// tell the predicate prover
-		prover.contradiction(oldLevel, level, proofFound, dependencies);
+		prover.contradiction(oldLevel, level, dependencies);
 		// tell the case splitter
 		// TODO not stop
-		casesplitter.contradiction(oldLevel, level, proofFound, dependencies);
+		casesplitter.contradiction(oldLevel, level, dependencies);
 		// TODO tell the arithmetic prover
-		equality.contradiction(oldLevel, level, proofFound, dependencies);
+		equality.contradiction(oldLevel, level, dependencies);
 		
 		// we backtrack our own datastructure
 		debug("ProofStrategy: Backtracking datastructures");
@@ -190,63 +187,82 @@ public class ProofStrategy implements IDispatcher {
 		
 		boolean nextStep = true;
 		counter = 0;
-		while (!stop) {
-			if (Thread.interrupted()) throw new InterruptedException();
-			
-			counter++;
-			if (nofSteps > 0 && counter >= nofSteps) noProofFound();
-			
-			debug("=== ProofStrategy. Step "+counter+". Level "+level+" ===");
-			dumper.dump();
-			
-			// add equality clauses
-			for (IClause clause : equality.getGeneratedClauses()) {
-				if (!isSubsumed(clause)) {
-					dsWrapper.add(clause);
-				}
-			}
-			// add prover clauses
-			for (IClause clause : prover.getGeneratedClauses()) {
-				if (!isSubsumed(clause)) {
-					dsWrapper.add(clause);
-				}
-			}
-			
-			IClause clause = prover.next();
-			
-			if (clause == null) {
-				debug("== Nothing found, trying seedsearch ==");
-				clause = seedsearch.next();
-			}
-			if (clause == null) {
-				debug("== Nothing found, trying casesplit ==");
-				// handle no more clauses
-				// for now : case split
-				Level oldLevel = level;
-				nextLevel();
-				clause = casesplitter.next();
+		
+			while (!terminated) {
 				
-				// TODO this is ugly
+				if (Thread.interrupted()) throw new InterruptedException();
+				
+				counter++;
+				if (nofSteps > 0 && counter >= nofSteps) {
+					noProofFound();
+					return;
+				}
+				
+				debug("=== ProofStrategy. Step "+counter+". Level "+level+" ===");
+				dumper.dump();
+				
+				// add equality clauses
+				ResetIterator<IClause> iterator = equality.getGeneratedClauses();
+				while (iterator.hasNext()) {
+					IClause clause = iterator.next();
+					if (!isSubsumed(clause)) {
+						// this can generate a contradiction
+						dsWrapper.add(clause);
+						if (terminated) return;
+					}
+				}
+				equality.clean();
+				for (IClause clause : equality.getSubsumedClauses()) {
+					dsWrapper.remove(clause);
+				}
+				// add prover clauses
+				iterator = prover.getGeneratedClauses();
+				while (iterator.hasNext()) {
+					IClause clause = iterator.next();
+					if (!isSubsumed(clause)) {
+						// this can generate a contradiction
+						dsWrapper.add(clause);
+						if (terminated) return;
+					}
+				}
+				prover.clean();
+				
+				IClause clause = prover.next();
+				
 				if (clause == null) {
-					level = oldLevel;
+					debug("== Nothing found, trying seedsearch ==");
+					clause = seedsearch.next();
+				}
+				if (clause == null) {
+					debug("== Nothing found, trying casesplit ==");
+					// handle no more clauses
+					// for now : case split
+					Level oldLevel = level;
+					nextLevel();
+					clause = casesplitter.next();
+					
+					// TODO this is ugly
+					if (clause == null) {
+						level = oldLevel;
+					}
+					else {
+						debug("Splitting, new level: "+level.toString());
+					}
+				}
+				if (clause == null) {
+					// no case split available
+					if (nextStep)
+						nextStep = false;
+					else {
+						noProofFound();
+						return;
+					}
 				}
 				else {
-					debug("Splitting, new level: "+level.toString());
+					nextStep = true;
+					newClause(clause);
 				}
 			}
-			if (clause == null) {
-				// no case split available
-				if (nextStep)
-					nextStep = false;
-				else
-					noProofFound();
-			}
-			else {
-				nextStep = true;
-				newClause(clause);
-			}
-		}
-		
 	}
 	
 	public Level getLevel() {
@@ -282,6 +298,7 @@ public class ProofStrategy implements IDispatcher {
 		return Level.base;
 	}
 	
+	private boolean terminated = false;
 	private PPResult result;
 	
 	public PPResult getResult() {
@@ -289,16 +306,17 @@ public class ProofStrategy implements IDispatcher {
 	}
 
 	public void noProofFound() {
-		stop = true;
 		result = new PPResult(Result.invalid, null);
+		terminated = true;
+		
 //		System.out.println("no proof found, number of steps: "+counter);
 	}
 	
 	public void proofFound() {
 		// TODO contradiction has been found, stop the nonUnitProver
-		stop = true;
-		proofFound = true;
 		result = new PPResult(Result.valid, tracer);
+		terminated = true;
+		
 //		System.out.println("proof found, number of steps: "+counter);
 //		debug("** proof found, traced clauses **");
 //		debug(tracer.getClauses().toString());
@@ -306,13 +324,9 @@ public class ProofStrategy implements IDispatcher {
 //		debug(tracer.getOriginalPredicates().toString());
 	}
 
-	public boolean hasStopped() {
-		return stop;
-	}
-
-	public void removeClause(IClause clause) {
-		dsWrapper.remove(clause);
-	}
+//	public void removeClause(IClause clause) {
+//		dsWrapper.remove(clause);
+//	}
 
 
 }

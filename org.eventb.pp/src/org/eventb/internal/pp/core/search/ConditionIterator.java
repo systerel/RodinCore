@@ -73,13 +73,15 @@ public abstract class ConditionIterator<T extends Object> implements Iterator<T>
 //	private Iterator<T> current;
 	
 	public void nextClause() {
-		if (iterator.hasNext()) {
+		assert cache == null;
+		
+		if (!iterator.hasNext()) cache = null;
+		while (iterator.hasNext()) {
 			T next = iterator.next();
-			if (isSelected(next)) cache = next;
-			else nextClause();
-		}
-		else {
-			cache = null;
+			if (isSelected(next)) {
+				cache = next;
+				break;
+			}
 		}
 	}
 	

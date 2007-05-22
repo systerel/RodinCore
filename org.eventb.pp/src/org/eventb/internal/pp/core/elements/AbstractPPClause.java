@@ -21,13 +21,13 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public abstract class AbstractPPClause implements IClause {
 
-	protected List<IArithmetic> arithmetic;
-	protected List<IEquality> equalities;
-	protected List<IPredicate> predicates;
+	final protected List<IArithmetic> arithmetic;
+	final protected List<IEquality> equalities;
+	final protected List<IPredicate> predicates;
 
-	protected List<IEquality> conditions = new ArrayList<IEquality>();
+	final protected List<IEquality> conditions;
 	
-	protected IOrigin origin;
+	final protected IOrigin origin;
 	
 	public AbstractPPClause(IOrigin origin, List<IPredicate> predicates, List<IEquality> equalities, List<IArithmetic> arithmetic, List<IEquality> conditions) {
 		this.origin = origin;
@@ -44,10 +44,10 @@ public abstract class AbstractPPClause implements IClause {
 		this.predicates = predicates;
 		this.equalities = equalities;
 		this.arithmetic = arithmetic;
+		this.conditions = new ArrayList<IEquality>();
 		
 		computeBitSets();
 	}
-	
 	
 	protected boolean equalsWithDifferentVariables(IClause clause, HashMap<AbstractVariable, AbstractVariable> map) {
 		if (clause == this) return true;
@@ -67,7 +67,6 @@ public abstract class AbstractPPClause implements IClause {
 		hashCode = 31*hashCode + hashCode(conditions);
 		return hashCode;
 	}
-	
 	
 	protected int hashCode(List<? extends ILiteral<?>> list) {
 		int hashCode = 1;
@@ -213,17 +212,12 @@ public abstract class AbstractPPClause implements IClause {
 		return false;
 	}
 
-
 	public boolean equalsWithLevel(IClause clause) {
 		return getLevel().equals(clause.getLevel()) && equals(clause);
 	}
 
 	public IOrigin getOrigin() {
 		return origin;
-	}
-	
-	public void setOrigin(IOrigin origin) {
-		this.origin = origin;
 	}
 	
 	public void reset() {

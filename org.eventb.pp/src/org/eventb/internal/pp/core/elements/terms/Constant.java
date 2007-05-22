@@ -17,9 +17,6 @@ import org.eventb.internal.pp.core.elements.Sort;
 
 public class Constant extends Term {
 
-	// TODO change this
-	public static int uniqueIdentifier = 0;
-	
 	private String name;
 	
 	public Constant(String name, Sort type) {
@@ -92,5 +89,20 @@ public class Constant extends Term {
 		return hashCode();
 	}
 
+	@Override
+	public boolean isForall() {
+		return false;
+	}
 	
+	@Override
+	public int getPriority() {
+		return 2;
+	}
+
+	public int compareTo(Term o) {
+		if (equals(o)) return 0;
+		else if (o instanceof Constant) return name.compareTo(((Constant)o).name);
+		else return getPriority() - o.getPriority();
+	}
+
 }

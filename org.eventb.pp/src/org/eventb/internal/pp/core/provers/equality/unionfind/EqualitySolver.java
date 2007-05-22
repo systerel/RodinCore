@@ -1,10 +1,14 @@
 package org.eventb.internal.pp.core.provers.equality.unionfind;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
+import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
 
@@ -21,13 +25,16 @@ public class EqualitySolver {
 		nodes.add(node);
 	}
 	
-	public FactResult addFactEquality(Node node1, Node node2, FactSource source) {
+	public FactResult addFactEquality(Equality<FactSource> equality) {
+		Node node1 = equality.getLeft();
+		Node node2 = equality.getRight();
+		
 		addNode(node1);
 		addNode(node2);
 		assert node1.compareTo(node2) < 0;
 		
 		// add the source to the table
-		sourceTable.addSource(node1, node2, source);
+		sourceTable.addSource(node1, node2, equality.getSource());
 		Set<FactSource> sourceToRoot1 = new HashSet<FactSource>();
 		Node root1 = find(node1,sourceToRoot1);
 		Set<FactSource> sourceToRoot2 = new HashSet<FactSource>();
@@ -38,7 +45,7 @@ public class EqualitySolver {
 		Set<FactSource> unionSource = new HashSet<FactSource>();
 		unionSource.addAll(sourceToRoot1);
 		unionSource.addAll(sourceToRoot2);
-		unionSource.add(source);
+		unionSource.add(equality.getSource());
 		
 		Node root,child;
 		// TODO check if this is necessary
@@ -62,44 +69,52 @@ public class EqualitySolver {
 		queryResultList.addAll(checkQueryContradiction(root, true));
 		queryResultList.addAll(checkQueryContradiction(root, false));
 		
-		if (!queryResultList.isEmpty()) return new FactResult(queryResultList);
+		if (!queryResultList.isEmpty()) return new FactResult(queryResultList,false);
 		return null;
 	}
 	
 	private List<QueryResult> checkQueryContradiction(Node root, boolean isEquality) {
 		List<QueryResult> result = new ArrayList<QueryResult>();
 		for (RootInfo<QuerySource> info : isEquality?root.getRootQueryEqualities():root.getRootQueryInequalities()) {
-			if (!info.getSource().isValid()) {
-				if (isEquality) root.removeRootQueryEquality(info);
-				else root.removeRootQueryInequality(info);
+			Equality<QuerySource> equality = info.getEquality();
+			if (!equality.getSource().isValid()) {
+				if (isEquality) root.removeRootQueryEquality(equality);
+				else root.removeRootQueryInequality(equality);
 			}
 			else if (info.updateAndGetInequalNode()==root) {
 				// contradiction
-				Set<FactSource> contradictionSource = source(info.getEquality().getLeft(),info.getEquality().getRight());
-				result.add(new QueryResult(info.getSource(),contradictionSource,isEquality));
-				if (isEquality) root.removeRootQueryEquality(info);
-				else root.removeRootQueryInequality(info);
+				Set<FactSource> contradictionSource = source(equality.getLeft(),equality.getRight());
+				result.add(new QueryResult(equality.getSource(),contradictionSource,isEquality));
+				if (isEquality) root.removeRootQueryEquality(equality);
+				else root.removeRootQueryInequality(equality);
 			}
 		}
 		return result;
 	}
 	
 	private Set<FactSource> checkContradiction(Node node) {
+		Set<FactSource> source = null;
+		Level level = null;
 		for (RootInfo<FactSource> info : node.getRootFactsInequalities()) {
-//			if (!info.getSource().isValid()) {
-//				node.removeRootFactInequality(info);
-//			}
+			Equality<FactSource> equality = info.getEquality();
 			if (info.updateAndGetInequalNode()==node) {
 				// contradiction
-				Set<FactSource> contradictionSource = source(info.getEquality().getLeft(), info.getEquality().getRight());
-				contradictionSource.add(info.getSource());
-				return contradictionSource;
+				Set<FactSource> contradictionSource = source(equality.getLeft(), equality.getRight());
+				contradictionSource.add(equality.getSource());
+				Level newLevel = Source.getLevel(contradictionSource);
+				if (level == null || newLevel.isAncestorOf(level)) {
+					source = contradictionSource;
+					level = newLevel;
+				}
 			}
 		}
-		return null;
+		return source;
 	}
 
-	public FactResult addFactInequality(Node node1, Node node2, FactSource source) {
+	public FactResult addFactInequality(Equality<FactSource> equality) {
+		Node node1 = equality.getLeft();
+		Node node2 = equality.getRight();
+		
 		addNode(node1);
 		addNode(node2);
 		assert node1.compareTo(node2) < 0;
@@ -110,50 +125,123 @@ public class EqualitySolver {
 		Node root2 = find(node2, sourceToRoot2);
 		if (root1 == root2) {
 			Set<FactSource> contradictionSource = exclusiveOr(sourceToRoot1, sourceToRoot2);
-			contradictionSource.add(source);
+			contradictionSource.add(equality.getSource());
 			return new FactResult(contradictionSource);
 		}
 		
 		// add root info
-		RootInfo<FactSource> newInfo = new RootInfo<FactSource>(root2, new Equality<FactSource>(node1, node2, source));
-		root1.addRootFactInequality(newInfo);
-
+		RootInfo<FactSource> newInfo1 = new RootInfo<FactSource>(root2, equality);
+		root1.addRootFactInequality(newInfo1);
+		RootInfo<FactSource> newInfo2 = new RootInfo<FactSource>(root1, equality);
+		root2.addRootFactInequality(newInfo2);
+		
 		// check queries
 		List<QueryResult> resultList = new ArrayList<QueryResult>();
-		resultList.addAll(checkInequalityContradictionWithQuery(root2, root1, node1, node2, source, false));
-		resultList.addAll(checkInequalityContradictionWithQuery(root1, root2, node1, node2, source, false));
-		resultList.addAll(checkInequalityContradictionWithQuery(root2, root1, node1, node2, source, true));
-		resultList.addAll(checkInequalityContradictionWithQuery(root1, root2, node1, node2, source, true));
+		resultList.addAll(checkInequalityContradictionWithQuery(root1, root2, node1, node2, equality.getSource(), false));
+		resultList.addAll(checkInequalityContradictionWithQuery(root1, root2, node1, node2, equality.getSource(), true));
 		
-		if (!resultList.isEmpty()) return new FactResult(resultList);
+		// TODO check instantiations left and right
+		List<InstantiationResult> instantiationResults = new ArrayList<InstantiationResult>();
+		instantiationResults.addAll(checkInequalityInstantiation(root1, root2, node1, node2, equality.getSource()));
+		instantiationResults.addAll(checkInequalityInstantiation(root2, root1, node2, node1, equality.getSource()));
+		
+		if (!resultList.isEmpty() && !instantiationResults.isEmpty()) return new FactResult(resultList, instantiationResults);
+		else if (!resultList.isEmpty()) return new FactResult(resultList, false);
+		else if (!instantiationResults.isEmpty()) return new FactResult(instantiationResults);
 		return null;
 	}
 	
-	private List<QueryResult> checkInequalityContradictionWithQuery(Node root, Node infoNode, Node node1, Node node2, FactSource source, boolean isPositive) {
+	private List<InstantiationResult> checkInequalityInstantiation(Node root1, Node root2, Node node1, Node node2, FactSource source) {
+		List<InstantiationResult> instantiationResults = new ArrayList<InstantiationResult>();
+		for (Instantiation instantiation : root1.getRootInstantiations()) {
+			Set<FactSource> sourceToInsRoot = new HashSet<FactSource>();
+			Node instantiationRoot = find(instantiation.getNode(), sourceToInsRoot);
+			Node other = null;
+			Node same = null;
+			Node otherRoot = null;
+			if (instantiationRoot == root1) {
+				other = node2;
+				same = node1;
+				otherRoot = root2;
+			}
+			else if (instantiationRoot == root2) {
+				other = node1;
+				same = node2;
+				otherRoot = root1;
+			}
+			else assert false;
+			if (instantiation.hasInstantiation(otherRoot)) continue;
+			
+			Set<FactSource> instantiationSource = source(same, instantiation.getNode());
+			instantiationSource.add(source);
+			InstantiationResult result = new InstantiationResult(other, instantiation.getSource(), instantiationSource);
+			
+			instantiation.saveInstantiation(result.getLevel(), other);
+			instantiationResults.add(result);
+		}
+		return instantiationResults;
+	}
+	
+	private List<QueryResult> checkInequalityContradictionWithQuery(Node infoNode, Node root, Node node1, Node node2, FactSource source, boolean isPositive) {
 		List<QueryResult> resultList = new ArrayList<QueryResult>(); 
 		for (RootInfo<QuerySource> info : isPositive?infoNode.getRootQueryInequalities():infoNode.getRootQueryEqualities()) {
-			if (!info.getSource().isValid()) {
-				if (isPositive) root.removeRootQueryInequality(info);
-				else root.removeRootQueryEquality(info);
+			Equality<QuerySource> equality = info.getEquality();
+			if (!equality.getSource().isValid()) {
+				if (isPositive) infoNode.removeRootQueryInequality(equality);
+				else infoNode.removeRootQueryEquality(equality);
 			}
 			else if (info.updateAndGetInequalNode() == root) {
-				Node left = info.getEquality().getLeft();
-				Node right = info.getEquality().getRight();
+				Node left = equality.getLeft();
+				Node right = equality.getRight();
 				
-				Set<FactSource> sourceLeft = source(node1, left);
-				Set<FactSource> sourceRight = source(node2, right);
-				// TODO no need for XOR here ?
-				Set<FactSource> contradictionSource = exclusiveOr(sourceLeft, sourceRight);
+				Set<FactSource> contradictionSource = getContradictionSourceInTwoTrees(node1, node2, left, right);
 				contradictionSource.add(source);
-				resultList.add(new QueryResult(info.getSource(),contradictionSource,isPositive));
-				if (isPositive) infoNode.removeRootQueryInequality(info);
-				else infoNode.removeRootQueryEquality(info);
+				resultList.add(new QueryResult(equality.getSource(),contradictionSource,isPositive));
+				if (isPositive) {
+					root.removeRootQueryInequality(equality);
+					infoNode.removeRootQueryInequality(equality);
+				}
+				else {
+					root.removeRootQueryEquality(equality);
+					infoNode.removeRootQueryEquality(equality);
+				}
 			}
 		}
 		return resultList;
 	}
 	
-	public QueryResult addQuery(Node node1, Node node2, QuerySource source, boolean isPositive) {
+	private Set<FactSource> getContradictionSourceInTwoTrees(Node node1, Node node2, Node left, Node right) {
+		Set<FactSource> sourceToRootNode1 = new HashSet<FactSource>();
+		Node rootNode1 = find(node1, sourceToRootNode1);
+		Set<FactSource> sourceToRootNode2 = new HashSet<FactSource>();
+		Node rootNode2 = find(node2, sourceToRootNode2);
+		Set<FactSource> sourceToRootLeft = new HashSet<FactSource>();
+		Node rootLeft = find(left, sourceToRootLeft);
+		Set<FactSource> sourceToRootRight = new HashSet<FactSource>();
+		Node rootRight = find(right, sourceToRootRight);
+		Set<FactSource> source1 = null;
+		Set<FactSource> source2 = null;
+		if (rootNode1 == rootLeft) {
+			assert rootNode2 == rootRight;
+			source1 = exclusiveOr(sourceToRootNode1, sourceToRootLeft);
+			source2 = exclusiveOr(sourceToRootNode2, sourceToRootRight);
+		}
+		else if (rootNode1 == rootRight) {
+			assert rootNode2 == rootLeft;
+			source1 = exclusiveOr(sourceToRootNode1, sourceToRootRight);
+			source2 = exclusiveOr(sourceToRootNode2, sourceToRootLeft);
+		}
+		else assert false;
+		
+		// TODO no need for XOR here ?
+		Set<FactSource> contradictionSource = exclusiveOr(source1, source2);
+		return contradictionSource;
+	}
+	
+	public QueryResult addQuery(Equality<QuerySource> equality, boolean isPositive) {
+		Node node1 = equality.getLeft();
+		Node node2 = equality.getRight();
+		
 		addNode(node1);
 		addNode(node2);
 		assert node1.compareTo(node2) < 0;
@@ -166,43 +254,93 @@ public class EqualitySolver {
 		// check if already equal
 		if (root1 == root2) {
 			Set<FactSource> contradictionSource = exclusiveOr(sourceToRoot1, sourceToRoot2);
-			return new QueryResult(source, contradictionSource, isPositive);
+			return new QueryResult(equality.getSource(), contradictionSource, isPositive);
 		}
 		
 		// check if already unequal
 		QueryResult result;
-		result = checkQueryContradictionWithInequality(node1, node2, root1, root2, source, !isPositive);
+		result = checkQueryContradictionWithInequality(node1, node2, root1, root2, equality.getSource(), !isPositive);
 		if (result != null) return result;
-		result = checkQueryContradictionWithInequality(node2, node1, root2, root1, source, !isPositive);
+		result = checkQueryContradictionWithInequality(node2, node1, root2, root1, equality.getSource(), !isPositive);
 		if (result != null) return result;
 
 		// add root info
-		RootInfo<QuerySource> info = new RootInfo<QuerySource>(root2, new Equality<QuerySource>(node1, node2, source));
-		if (isPositive) root1.addRootQueryEquality(info);
-		else root1.addRootQueryInequality(info);
+		RootInfo<QuerySource> info1 = new RootInfo<QuerySource>(root2, equality);
+		if (isPositive) root1.addRootQueryEquality(info1);
+		else root1.addRootQueryInequality(info1);
+		
+		RootInfo<QuerySource> info2 = new RootInfo<QuerySource>(root1, equality);
+		if (isPositive) root2.addRootQueryEquality(info2);
+		else root2.addRootQueryInequality(info2);
 		
 		return null;
 	}
 	
 	private QueryResult checkQueryContradictionWithInequality(Node node1, Node node2, Node root1, Node root2, QuerySource source, boolean isPositive) {
 		for (RootInfo<FactSource> info : root1.getRootFactsInequalities()) {
-//			if (!info.getSource().isValid()) {
-//				root1.removeRootFactInequality(info);
-//			}
 			if (info.updateAndGetInequalNode()==root2) {
 				// contradiction
-				Node left = info.getEquality().getLeft();
-				Node right = info.getEquality().getRight();
-				
-				Set<FactSource> sourceLeft = source(left, node1);
-				Set<FactSource> sourceRight = source(right, node2);
-				// TODO no need for XOR here ?
-				Set<FactSource> contradictionSource = exclusiveOr(sourceLeft,sourceRight);
-				contradictionSource.add(info.getSource());
+				Set<FactSource> contradictionSource = getContradictionSourceInTwoTrees(node1, node2, info.getEquality().getLeft(), info.getEquality().getRight());
+				contradictionSource.add(info.getEquality().getSource());
 				return new QueryResult(source, contradictionSource, isPositive);
 			}
 		}
 		return null;
+	}
+	
+	public List<InstantiationResult> addInstantiation(Instantiation instantiation) {
+		Node node = instantiation.getNode();
+
+		Set<FactSource> sourceToRoot = new HashSet<FactSource>();
+		Node root = find(node, sourceToRoot);
+		
+		Map<Node, InstantiationResult> resultMap = new HashMap<Node, InstantiationResult>();
+		for (RootInfo<FactSource> inequalityInfo : root.getRootFactsInequalities()) {
+			// TODO test this with equivalence manager and backtrack
+			if (!instantiation.hasInstantiation(inequalityInfo.updateAndGetInequalNode())) {
+				Equality<FactSource> inequality = inequalityInfo.getEquality();
+				Set<FactSource> sourceToRootLeft = new HashSet<FactSource>();
+				Node rootLeft = find(inequality.getLeft(), sourceToRootLeft);
+				Set<FactSource> sourceToRootRight = new HashSet<FactSource>();
+				Node rootRight = find(inequality.getRight(), sourceToRootRight);
+				Node other = null;
+				Node same = null;
+				Node otherRoot = null;
+				if (root == rootRight) {
+					same = inequality.getRight();
+					other = inequality.getLeft();
+					otherRoot = rootLeft;
+				}
+				else if (root == rootLeft) {
+					same = inequality.getLeft();
+					other = inequality.getRight();
+					otherRoot = rootRight;
+				}
+				else assert false;
+				Set<FactSource> instantiationSource = source(same, node);
+				instantiationSource.add(inequality.getSource());
+				InstantiationResult result = new InstantiationResult(other, instantiation.getSource(), instantiationSource);
+				if (resultMap.containsKey(otherRoot)) {
+					InstantiationResult oldResult = resultMap.get(otherRoot);
+					if (result.getLevel().isAncestorOf(oldResult.getLevel())) {
+						resultMap.put(otherRoot, result);
+					}
+				}
+				else {
+					resultMap.put(otherRoot, result);
+				}
+			}
+		}
+		
+		for (Entry<Node, InstantiationResult> result : resultMap.entrySet()) {
+			instantiation.saveInstantiation(result.getValue().getLevel(), result.getKey());
+		}
+		
+		// add instantiation to root
+		root.addRootInstantiation(instantiation);
+		
+		if (resultMap.isEmpty()) return null;
+		return new ArrayList<InstantiationResult>(resultMap.values());
 	}
 	
 	private void union(Node root, Node child, Set<FactSource> source) {

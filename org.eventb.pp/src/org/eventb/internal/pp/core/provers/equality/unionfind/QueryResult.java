@@ -34,7 +34,7 @@ public class QueryResult implements IQueryResult {
 		return result;
 	}
 
-	public List<IClause> getSolvedClauses() {
+	public Set<IClause> getSolvedClauses() {
 		return querySource.getClauses();
 	}
 	

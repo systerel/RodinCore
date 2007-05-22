@@ -41,13 +41,4 @@ public class VariableTable {
 		return var;
 	}
 	
-//	public void pushTable() {
-////		variableTable.push(new Hashtable<Integer, Variable>());
-//		localVariableTable.push(new Hashtable<Integer, LocalVariable>());
-//	}
-//	
-//	public void popTable() {
-////		variableTable.pop();
-//		localVariableTable.pop();
-//	}
 }

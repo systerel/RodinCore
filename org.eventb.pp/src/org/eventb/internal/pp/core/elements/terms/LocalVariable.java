@@ -66,7 +66,7 @@ public class LocalVariable extends AbstractVariable {
 	
 	@Override
 	public boolean isConstant() {
-		//TODO think about this
+		// TODO think about this
 		return true;
 	}
 
@@ -80,6 +80,7 @@ public class LocalVariable extends AbstractVariable {
 		return true;
 	}
 
+	@Override
 	public boolean isForall() {
 		return isForall;
 	}
@@ -128,6 +129,15 @@ public class LocalVariable extends AbstractVariable {
 		return false;
 	}
 
+	@Override
+	public int getPriority() {
+		return 1;
+	}
 	
+	public int compareTo(Term o) {
+		if (equals(0)) return 0;
+		else if (getPriority() == o.getPriority()) return index - ((LocalVariable)o).index;
+		else return getPriority() - o.getPriority();
+	}
 
 }

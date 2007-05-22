@@ -9,7 +9,6 @@
 package org.eventb.internal.pp.core.elements;
 
 import java.util.BitSet;
-import java.util.List;
 
 /**
  * TODO comment
@@ -21,12 +20,12 @@ public interface IPredicate extends ILiteral<IPredicate> {
 
 	public int getIndex();
 	
-	public List<IEquality> getConditions(IPredicate predicate);
+//	public List<IEquality> getConditions(IPredicate predicate);
 	
 //	public boolean matches(IPredicate predicate);
 	
 //	public boolean contains(IPredicate predicate);
-	
+
 	public boolean isPositive();
 	
 	public void setBit(BitSet set);

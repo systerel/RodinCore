@@ -109,6 +109,10 @@ public class AbstractContext implements IContext {
 		result.addAll(qTable.getAllLiterals());
 		return result;
 	}
+	
+	public Collection<PredicateDescriptor> getAllPredicateDescriptors() {
+		return ptable.getAllLiterals();
+	}
 
 	private int nextIdentifier = 0;
 	
@@ -123,5 +127,5 @@ public class AbstractContext implements IContext {
 	public int getFreshVariable() {
 		return numberOfVariables++;
 	}
-	
+
 }

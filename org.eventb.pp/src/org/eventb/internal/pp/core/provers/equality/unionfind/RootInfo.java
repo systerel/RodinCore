@@ -5,10 +5,13 @@ public class RootInfo<T extends Source> {
 	private Node inequalNode;
 	private Equality<T> equality;
 	
-	
 	public RootInfo(Node inequalNode, Equality<T> equality) {
 		this.inequalNode = inequalNode;
 		this.equality = equality;
+	}
+
+	public Equality<T> getEquality() {
+		return equality;
 	}
 	
 	private void update() {
@@ -22,12 +25,18 @@ public class RootInfo<T extends Source> {
 		return inequalNode;
 	}
 	
-	public Equality<T> getEquality() {
-		return equality;
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof RootInfo) {
+			RootInfo<?> temp = (RootInfo) obj;
+			return equality.equals(temp.equality);
+		}
+		return false;
 	}
 
-	public T getSource() {
-		return equality.getSource();
+	@Override
+	public int hashCode() {
+		return equality.hashCode();
 	}
 	
 }

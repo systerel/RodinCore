@@ -61,6 +61,15 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 		return list.get(clause).clause;
 	}
 	
+	public void clear() {
+		for (NiceIterator iterator : iterators) {
+			iterator.reset();
+		}
+		list.clear();
+		first = null;
+		last = null;
+	}
+	
 //	public void resetIterator() {
 //		current = null;
 //		canRemove = false;
@@ -191,6 +200,9 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 		builder.append("]");
 		return builder.toString();
 	}
+
+	
+
 
 
 }

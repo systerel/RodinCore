@@ -102,8 +102,4 @@ public class EqualityInferrer extends AbstractInferrer {
 		return new ClauseOrigin(clauseParents);
 	}
 
-	public boolean canInfer(IClause clause) {
-		return true;
-	}
-
 }

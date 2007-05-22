@@ -1,9 +1,11 @@
 package org.eventb.internal.pp.core.provers.equality.unionfind;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.IClause;
@@ -77,7 +79,7 @@ public abstract class Source {
 	
 	public static class QuerySource extends Source {
 		
-		private List<IClause> clauses = new ArrayList<IClause>();
+		private Map<IClause, Level> clauses = new HashMap<IClause, Level>();
 		
 		protected QuerySource() {
 			// for subclasses
@@ -87,8 +89,8 @@ public abstract class Source {
 			super(equality);
 		}
 
-		public List<IClause> getClauses() {
-			return clauses;
+		public Set<IClause> getClauses() {
+			return new HashSet<IClause>(clauses.keySet());
 		}
 		
 		@Override
@@ -97,29 +99,35 @@ public abstract class Source {
 		}
 		
 		public void addClause(IClause clause) {
-			this.clauses.add(clause);
+			if (clauses.containsKey(clause)) {
+				Level oldLevel = clauses.get(clause);
+				if (clause.getLevel().isAncestorOf(oldLevel)) {
+					clauses.put(clause, clause.getLevel());
+				}
+			}
+			else {
+				clauses.put(clause, clause.getLevel());
+			}
 		}
 		
-		public IClause removeClause(IClause clause) {
+		public void removeClause(IClause clause) {
 			// if the clause exists, it should not be with a different level
 			// assumption done by proofstrategy, which removes clauses of a higher
 			// level before adding clauses of a lower level
-			for (Iterator<IClause> iter = clauses.iterator(); iter.hasNext();) {
-				IClause oldClause = iter.next();
-				if (oldClause.equalsWithLevel(clause)) {
+			for (Iterator<Entry<IClause,Level>> iter = clauses.entrySet().iterator(); iter.hasNext();) {
+				Entry<IClause,Level> entry = iter.next();
+				if (entry.getKey().equalsWithLevel(clause)) {
 					iter.remove();
-					return oldClause;
+					return;
 				}
-//				assert false;
 			}
-			return null;
 		}
 		
 		@Override
 		public void backtrack(Level level) {
-			for (Iterator<IClause> iter = clauses.iterator(); iter.hasNext();) {
-				IClause clause = iter.next();
-				if (level.isAncestorOf(clause.getLevel())) iter.remove();
+			for (Iterator<Entry<IClause,Level>> iter = clauses.entrySet().iterator(); iter.hasNext();) {
+				Entry<IClause,Level> clause = iter.next();
+				if (level.isAncestorOf(clause.getValue())) iter.remove();
 			}
 		}
 	}	

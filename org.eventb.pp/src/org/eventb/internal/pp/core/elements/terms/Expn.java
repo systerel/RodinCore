@@ -43,6 +43,12 @@ public class Expn extends BinaryTerm {
 	}
 	
 	@Override
+	public int getPriority() {
+		return 9;
+	}
+
+	
+	@Override
 	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
 		return new Expn(substituteHelper(map));
 	}

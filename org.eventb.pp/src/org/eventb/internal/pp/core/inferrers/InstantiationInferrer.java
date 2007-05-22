@@ -3,6 +3,8 @@ package org.eventb.internal.pp.core.inferrers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.IClause;
@@ -17,19 +19,12 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public class InstantiationInferrer extends AbstractInferrer {
 
-	private Variable variable;
-	private Term term;
-	
-	private IClause result;
-	
-	public void setVariable(Variable variable) {
-		this.variable = variable;
-	}
-	
-	public void setTerm(Term term) {
-		assert term.isConstant();
-		
-		this.term = term;
+	private Map<Variable, Term> instantiationMap = new HashMap<Variable, Term>();
+	protected IClause result;
+
+	public void addInstantiation(Variable variable, Term term) {
+		if (instantiationMap.containsKey(variable)) throw new IllegalStateException();
+		instantiationMap.put(variable, term);
 	}
 	
 	public IClause getResult() {
@@ -40,10 +35,12 @@ public class InstantiationInferrer extends AbstractInferrer {
 		super(context);
 	}
 
-	private void substitute() {
-		AbstractVariable variableInCopy = substitutionsMap.get(variable);
+	protected void substitute() {
 		HashMap<AbstractVariable, Term> map = new HashMap<AbstractVariable, Term>();
-		map.put(variableInCopy, term);
+		for (Entry<Variable, Term> entry : instantiationMap.entrySet()) {
+			AbstractVariable variableInCopy = substitutionsMap.get(entry.getKey());
+			map.put(variableInCopy, entry.getValue());
+		}
 		substituteInList(predicates, map);
 		substituteInList(equalities, map);
 		substituteInList(arithmetic, map);
@@ -73,23 +70,18 @@ public class InstantiationInferrer extends AbstractInferrer {
 
 	@Override
 	protected void initialize(IClause clause) throws IllegalStateException {
-		if (variable == null || term == null) throw new IllegalStateException();
+		if (instantiationMap.isEmpty()) throw new IllegalStateException();
 	}
 
 	@Override
 	protected void reset() {
-		variable = null;
-		term = null;
+		instantiationMap.clear();
 	}
-
+	
 	protected IOrigin getOrigin(IClause clause) {
 		List<IClause> parents = new ArrayList<IClause>();
 		parents.add(clause);
 		return new ClauseOrigin(parents);
-	}
-
-	public boolean canInfer(IClause clause) {
-		return true;
 	}
 
 }

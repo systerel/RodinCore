@@ -13,4 +13,6 @@ public interface IRandomAccessIterable<T extends Object> extends Iterable<T> {
 	// TODO test
 	boolean contains(T clause);
 	
+	
+	void clear();
 }

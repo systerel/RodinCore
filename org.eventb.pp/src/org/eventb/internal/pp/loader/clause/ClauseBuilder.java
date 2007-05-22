@@ -10,17 +10,31 @@ package org.eventb.internal.pp.loader.clause;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
+import org.eventb.internal.pp.core.elements.IArithmetic;
 import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.IEquality;
+import org.eventb.internal.pp.core.elements.IPredicate;
+import org.eventb.internal.pp.core.elements.PPDisjClause;
+import org.eventb.internal.pp.core.elements.PPPredicate;
+import org.eventb.internal.pp.core.elements.Sort;
+import org.eventb.internal.pp.core.elements.terms.Constant;
+import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.tracing.PredicateOrigin;
+import org.eventb.internal.pp.core.tracing.TypingOrigin;
 import org.eventb.internal.pp.loader.formula.AbstractFormula;
 import org.eventb.internal.pp.loader.formula.ILabelizableFormula;
 import org.eventb.internal.pp.loader.formula.ISignedFormula;
 import org.eventb.internal.pp.loader.formula.ISubFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
+import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
+import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.IContext;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
@@ -57,7 +71,7 @@ public class ClauseBuilder {
 		prefix.deleteCharAt(prefix.length()-1);
 	}
 	
-	private Collection<IClause> clauses;
+	private Set<IClause> clauses;
 	private IVariableContext variableContext;
 	
 	private ClauseFactory cf = ClauseFactory.getDefault();
@@ -79,7 +93,7 @@ public class ClauseBuilder {
 		variableTable = new VariableTable();
 		bool = new BooleanEqualityTable(context.getNextLiteralIdentifier());
 
-		clauses = new ArrayList<IClause>();
+		clauses = new HashSet<IClause>();
 		manager = new LabelManager();
 		
 		for (INormalizedFormula signature : context.getResults()) {
@@ -92,6 +106,8 @@ public class ClauseBuilder {
 		manager.setGettingDefinitions(true);
 		getDefinitions();
 
+		// get type informations
+		buildPredicateTypeInformation(context.getAllPredicateDescriptors());
 		
 		debug("========================================");
 		debug("End of loading phase, clauses:");
@@ -149,6 +165,35 @@ public class ClauseBuilder {
 		sig.split();
 		sig.getFinalClauses(clauses, manager, cf, bool, variableTable, variableContext, new PredicateOrigin(result.getOriginalPredicate(), result.isGoal()));
 	}
+	
+	
+	
+	private void buildPredicateTypeInformation(Collection<PredicateDescriptor> descriptors) {
+		for (PredicateDescriptor descriptor : descriptors) {
+			List<TermSignature> unifiedTerms = descriptor.getUnifiedResults();
+			if (unifiedTerms.size() == 2 && !unifiedTerms.get(1).isConstant()) {
+				TermSignature term1 = unifiedTerms.get(0);
+				TermSignature term2 = unifiedTerms.get(1);
+				IClause clause = createTypeClause(descriptor.getIndex(), term1.getSort(), term2.getSort());
+				clauses.add(clause);
+			}
+		}
+	}
+	
+	private IClause createTypeClause(int index, Sort sort1, Sort sort2) {
+		Term term1 = variableContext.getNextVariable(sort1);
+		Term term2 = new Constant(sort1.getName(), sort2);
+		List<Term> terms = new ArrayList<Term>();
+		terms.add(term1);
+		terms.add(term2);
+		IPredicate literal = new PPPredicate(index, true, terms);
+		List<IPredicate> predicates = new ArrayList<IPredicate>();
+		predicates.add(literal);
+		IClause clause = new PPDisjClause(new TypingOrigin(), predicates, 
+				new ArrayList<IEquality>(), new ArrayList<IArithmetic>(), new ArrayList<IEquality>());
+		return clause;
+	}
+	
 	
 	public IVariableContext getVariableContext() {
 		return variableContext;

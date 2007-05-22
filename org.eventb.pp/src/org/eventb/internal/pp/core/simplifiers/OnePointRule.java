@@ -13,7 +13,9 @@ import org.eventb.internal.pp.core.elements.IPredicate;
 import org.eventb.internal.pp.core.elements.PPDisjClause;
 import org.eventb.internal.pp.core.elements.PPEqClause;
 import org.eventb.internal.pp.core.elements.PPFalseClause;
+import org.eventb.internal.pp.core.elements.PPTrueClause;
 import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
+import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
@@ -37,6 +39,11 @@ public class OnePointRule implements ISimplifier {
 	
 	public IClause simplifyDisjunctiveClause(PPDisjClause clause) {
 		init(clause);
+		
+		for (IEquality equality : equalities) {
+			if (isAlwaysTrue(equality)) return new PPTrueClause(clause.getOrigin());
+		}
+		
 		onePointLoop(equalities);
 		onePointLoop(conditions);
 		if (isEmpty()) return new PPFalseClause(clause.getOrigin());
@@ -105,25 +112,40 @@ public class OnePointRule implements ISimplifier {
 		assert isOnePointCandidate(equality);
 		Term term1 = equality.getTerms().get(0);
 		Term term2 = equality.getTerms().get(1);
-		
 		if (term1 instanceof Variable) return (Variable)term1;
 		if (term2 instanceof Variable) return (Variable)term2;
 		assert false;
 		return null;
 	}
 
-	private boolean isOnePointCandidate(IEquality equality) {
-		if (equality.isPositive()) return false;
-		
-		Term term1 = equality.getTerms().get(0);
-		Term term2 = equality.getTerms().get(1);
-		if (term1.isQuantified()) return false;
-		if (term2.isQuantified()) return false;
-		if (term1 instanceof Variable) {
-			return !term2.contains((AbstractVariable)term1);
+	private boolean isAlwaysTrue(IEquality equality) {
+		if (equality.isPositive()) {
+			Term term1 = equality.getTerms().get(0);
+			Term term2 = equality.getTerms().get(1);
+			if (!term1.isQuantified() && !term2.isQuantified()) return false;
+			if (term1 instanceof LocalVariable) {
+				return !term2.contains((AbstractVariable)term1);
+			}
+			if (term2 instanceof LocalVariable) {
+				return !term1.contains((AbstractVariable)term2);
+			}
+			return false;
 		}
-		if (term2 instanceof Variable) {
-			return !term1.contains((AbstractVariable)term2);
+		return false;
+	}
+	
+	private boolean isOnePointCandidate(IEquality equality) {
+		if (!equality.isPositive()) {
+			Term term1 = equality.getTerms().get(0);
+			Term term2 = equality.getTerms().get(1);
+			if (term1.isQuantified()) return false;
+			if (term2.isQuantified()) return false;
+			if (term1 instanceof Variable) {
+				return !term2.contains((AbstractVariable)term1);
+			}
+			if (term2 instanceof Variable) {
+				return !term1.contains((AbstractVariable)term2);
+			}
 		}
 		return false;
 	}

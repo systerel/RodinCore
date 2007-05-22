@@ -53,6 +53,12 @@ public class UnaryMinus extends AssociativeTerm {
 	}
 	
 	@Override
+	public int getPriority() {
+		return 3;
+	}
+
+	
+	@Override
 	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
 		return new UnaryMinus(substituteHelper(map));
 	}

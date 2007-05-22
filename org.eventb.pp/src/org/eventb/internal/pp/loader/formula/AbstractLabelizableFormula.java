@@ -72,9 +72,10 @@ public abstract class AbstractLabelizableFormula<T extends LiteralDescriptor> ex
 				manager.addLabel(this, true);
 				manager.addLabel(this, false);
 			}
-				
+			
+			ILiteral<?> literal = getLiteral(termList, context, table, bool);
 			for (List<ILiteral<?>> list : prefix) {
-				list.add(getLiteral(termList, context, table, bool));
+				list.add(literal);
 			}
 			result = prefix;
 		}

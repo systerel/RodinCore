@@ -36,6 +36,12 @@ public class Times extends AssociativeTerm {
 	}
 	
 	@Override
+	public int getPriority() {
+		return 4;
+	}
+
+	
+	@Override
 	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
 		return new Times(substituteHelper(map));
 	}

@@ -3,6 +3,7 @@ package org.eventb.internal.pp.core.provers.equality;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -10,9 +11,12 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.IEquality;
 import org.eventb.internal.pp.core.elements.terms.Constant;
+import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Equality;
 import org.eventb.internal.pp.core.provers.equality.unionfind.EqualitySolver;
 import org.eventb.internal.pp.core.provers.equality.unionfind.FactResult;
+import org.eventb.internal.pp.core.provers.equality.unionfind.Instantiation;
+import org.eventb.internal.pp.core.provers.equality.unionfind.InstantiationResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Node;
 import org.eventb.internal.pp.core.provers.equality.unionfind.QueryResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source;
@@ -24,17 +28,36 @@ public class EquivalenceManager implements IEquivalenceManager {
 
 	private SourceTable table;
 	private EqualitySolver solver;
-	
-	private Hashtable<Constant, Node> constantTable = new Hashtable<Constant, Node>();
 
+	// maps Constant -> Node
+	// 		IEquality -> Equality
+	//		IEquality -> Instantiation
+	private Hashtable<Constant, Node> constantTable = new Hashtable<Constant, Node>();
 	private Hashtable<IEquality, Equality<FactSource>> factEqualityTable = new Hashtable<IEquality, Equality<FactSource>>();
 	private Hashtable<IEquality, Equality<QuerySource>> queryEqualityTable = new Hashtable<IEquality, Equality<QuerySource>>();
-
+	private Hashtable<IEquality, Instantiation> instantiationTable = new Hashtable<IEquality, Instantiation>();
+	
+	// for backtrack
 	private Set<Equality<FactSource>> equalities = new HashSet<Equality<FactSource>>();
  
 	public EquivalenceManager() {
 		this.table = new SourceTable();
 		this.solver = new EqualitySolver(table);
+	}
+
+	public void removeInstantiation(IEquality equality, IClause clause) {
+		assert !clause.isUnit() && !clause.isFalse();
+		
+		Instantiation instantiation = instantiationTable.get(equality);
+		if (instantiation == null) return;
+		
+		QuerySource source = instantiation.getSource();
+		source.removeClause(clause);
+		if (!source.isValid()) {
+			instantiationTable.remove(equality);
+			Node node = instantiation.getNode();
+			node.removeInstantiation(instantiation);
+		}
 	}
 	
 	public void removeQueryEquality(IEquality equality, IClause clause) {
@@ -46,29 +69,35 @@ public class EquivalenceManager implements IEquivalenceManager {
 		if (nodeEquality == null) return;
 		
 		QuerySource source = nodeEquality.getSource();
-		IClause oldClause = source.removeClause(clause);
-		if (!source.isValid()) queryEqualityTable.remove(equality);
-		if (oldClause == null) return;
-		
-		if (equality.isPositive()) nodeEquality.getLeft().removeQueryEquality(nodeEquality);
-		else nodeEquality.getLeft().removeQueryInequality(nodeEquality);
+		source.removeClause(clause);
+		if (!source.isValid()) {
+			queryEqualityTable.remove(equality);
+			removeEqualityFromNodes(nodeEquality, equality.isPositive());
+		}
+	}
+	
+	private void removeEqualityFromNodes(Equality<QuerySource> nodeEquality, boolean isPositive) {
+		if (isPositive) {
+			nodeEquality.getLeft().removeQueryEquality(nodeEquality);
+			nodeEquality.getRight().removeQueryEquality(nodeEquality);
+		}
+		else {
+			nodeEquality.getLeft().removeQueryInequality(nodeEquality);
+			nodeEquality.getRight().removeQueryInequality(nodeEquality);
+		}
 	}
 	
 	private void removeQuery(IEquality equality) {
 		// not for fact equalities
 		Equality<QuerySource> nodeEquality = queryEqualityTable.remove(equality);
-		if (equality.isPositive()) nodeEquality.getLeft().removeQueryEquality(nodeEquality);
-		else nodeEquality.getLeft().removeQueryInequality(nodeEquality);
+		removeEqualityFromNodes(nodeEquality, equality.isPositive());
 	}
 	
 	public FactResult addFactEquality(IEquality equality, IClause clause) {
-		Node left, right;
-		if (equality.getTerms().get(0) instanceof Constant && equality.getTerms().get(1) instanceof Constant) {
-			left = getNodeAndAddConstant((Constant)equality.getTerms().get(0));
-			right = getNodeAndAddConstant((Constant)equality.getTerms().get(1));
-		}
-		else return null;
-		// TODO handle non constant cases
+		assert equality.getTerms().get(0) instanceof Constant && equality.getTerms().get(1) instanceof Constant;
+		
+		Node left = getNodeAndAddConstant((Constant)equality.getTerms().get(0));
+		Node right = getNodeAndAddConstant((Constant)equality.getTerms().get(1));
 		
 		Node node1, node2;
 		if (left.compareTo(right) < 0) {
@@ -95,13 +124,16 @@ public class EquivalenceManager implements IEquivalenceManager {
 		}
 		
 		if (equality.isPositive()) equalities.add(nodeEquality);
-		else node1.addFactInequality(nodeEquality);
+		else {
+			node1.addFactInequality(nodeEquality);
+			node2.addFactInequality(nodeEquality);
+		}
 		source.setClause(clause);
 		
 		
-		FactResult result = equality.isPositive()?solver.addFactEquality(node1, node2, source):
-			solver.addFactInequality(node1, node2, source);
-		if (result != null && !result.hasContradiction()) {
+		FactResult result = equality.isPositive()?solver.addFactEquality(nodeEquality):
+			solver.addFactInequality(nodeEquality);
+		if (result != null && result.getSolvedQueries() != null) {
 			for (QueryResult queryResult : result.getSolvedQueries()) {
 				removeQuery(queryResult.getEquality());
 			}
@@ -111,13 +143,10 @@ public class EquivalenceManager implements IEquivalenceManager {
 	}
 	
 	public QueryResult addQueryEquality(IEquality equality, IClause clause) {
-		Node left, right;
-		if (equality.getTerms().get(0) instanceof Constant && equality.getTerms().get(1) instanceof Constant) {
-			left = getNodeAndAddConstant((Constant)equality.getTerms().get(0));
-			right = getNodeAndAddConstant((Constant)equality.getTerms().get(1));
-		}
-		else return null;
-		// TODO handle non constant cases
+		assert equality.getTerms().get(0) instanceof Constant && equality.getTerms().get(1) instanceof Constant;
+		
+		Node left = getNodeAndAddConstant((Constant)equality.getTerms().get(0));
+		Node right = getNodeAndAddConstant((Constant)equality.getTerms().get(1));
 		
 		Node node1, node2;
 		if (left.compareTo(right) < 0) {
@@ -140,14 +169,57 @@ public class EquivalenceManager implements IEquivalenceManager {
 		
 		if (alreadyExists) return null;
 		
-		if (equality.isPositive()) node1.addQueryEquality(nodeEquality);
-		else node1.addQueryInequality(nodeEquality);
+		if (equality.isPositive()) {
+			node1.addQueryEquality(nodeEquality);
+			node2.addQueryEquality(nodeEquality);
+		}
+		else {
+			node1.addQueryInequality(nodeEquality);
+			node2.addQueryInequality(nodeEquality);
+		}
 		
-		QueryResult result = solver.addQuery(node1, node2, source, equality.isPositive());
+		QueryResult result = solver.addQuery(nodeEquality, equality.isPositive());
 		if (result!=null) removeQuery(result.getEquality());
 		
 		return result;
 	}
+	
+	
+	public List<InstantiationResult> addInstantiationEquality(IEquality equality, IClause clause) {
+		assert !equality.isPositive()?clause.isEquivalence():true;
+		assert !clause.isUnit();
+		assert (equality.getTerms().get(0) instanceof Variable || equality.getTerms().get(1) instanceof Variable);
+		assert (equality.getTerms().get(0) instanceof Constant || equality.getTerms().get(1) instanceof Constant);
+		
+		Node node = null;
+		if (equality.getTerms().get(0) instanceof Constant) {
+			node = getNodeAndAddConstant((Constant)equality.getTerms().get(0));
+		}
+		else if (equality.getTerms().get(1) instanceof Constant) {
+			node = getNodeAndAddConstant((Constant)equality.getTerms().get(1));
+		}
+		else assert false;
+		
+		Instantiation instantiation = instantiationTable.get(equality);
+		QuerySource source;
+		if (instantiation == null) {
+			source = new Source.QuerySource(equality);
+			instantiation = new Instantiation(node, source);
+			instantiationTable.put(equality, instantiation);
+			source.addClause(clause);
+		}
+		else {
+			source = instantiation.getSource();
+			source.addClause(clause);
+			return null;
+		}
+		
+		node.addInstantiation(instantiation);
+		
+		List<InstantiationResult> result = solver.addInstantiation(instantiation);
+		return result;
+	}
+
 	
 	public void backtrack(Level level) {
 		// TODO lazy backtrack
@@ -165,18 +237,27 @@ public class EquivalenceManager implements IEquivalenceManager {
 			source.backtrack(level);
 			if (!source.isValid()) iter.remove();
 		}
+		// instantiations
+		for (Iterator<Entry<IEquality, Instantiation>> iter = instantiationTable.entrySet().iterator(); iter.hasNext();) {
+			Entry<IEquality, Instantiation> entry = iter.next();
+			QuerySource source = entry.getValue().getSource();
+			source.backtrack(level);
+			if (!source.isValid()) iter.remove();
+			else entry.getValue().backtrack(level);
+		}
 
 		// 2 backtrack nodes
 		for (Node node : constantTable.values()) {
 			node.backtrack();
 		}
-		// 3 backtrack sourcetable
+		
+		// 4 backtrack sourcetable
 		table.backtrack(level);
 		
-		// 4 add equalities
+		// 5 add equalities
 		for (Equality<FactSource> equality : equalities) {
 			if (equality.getSource().isValid()) {
-				IFactResult result = solver.addFactEquality(equality.getLeft(), equality.getRight(), equality.getSource());
+				IFactResult result = solver.addFactEquality(equality);
 				assert result == null;
 			}
 		}
@@ -185,7 +266,7 @@ public class EquivalenceManager implements IEquivalenceManager {
 	private Node getNodeAndAddConstant(Constant constant) {
 		if (constantTable.containsKey(constant)) return constantTable.get(constant);
 		else {
-			Node node = new Node(constant.getName());
+			Node node = new Node(constant);
 			constantTable.put(constant, node);
 			return node;
 		}
@@ -200,6 +281,5 @@ public class EquivalenceManager implements IEquivalenceManager {
 		table.put(equality, nodeEquality);
 		return nodeEquality;
 	}
-
 }
  

@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
+import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 
 /**
  * This is the interface for the builder context. It is updated each time
@@ -32,6 +33,8 @@ public interface IContext {
 	 * be empty.
 	 */
 //	public Collection<ISubFormula> getAllSignatures();
+	
+	public Collection<PredicateDescriptor> getAllPredicateDescriptors();
 	
 	/**
 	 * Returns all the signatures produced by the normalizer that can be

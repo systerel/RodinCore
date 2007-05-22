@@ -16,7 +16,7 @@ public class PredicateDescriptor extends IndexedDescriptor {
 	public String toString() {
 		return "P"+index;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return super.hashCode();

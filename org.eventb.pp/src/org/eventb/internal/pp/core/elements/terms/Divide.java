@@ -41,6 +41,12 @@ public class Divide extends BinaryTerm {
 	}
 	
 	@Override
+	public int getPriority() {
+		return 5;
+	}
+
+	
+	@Override
 	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
 		return new Divide(substituteHelper(map));
 	}

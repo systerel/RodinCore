@@ -41,6 +41,12 @@ public class Minus extends BinaryTerm {
 	}
 	
 	@Override
+	public int getPriority() {
+		return 7;
+	}
+
+	
+	@Override
 	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
 		return new Minus(substituteHelper(map));
 	}

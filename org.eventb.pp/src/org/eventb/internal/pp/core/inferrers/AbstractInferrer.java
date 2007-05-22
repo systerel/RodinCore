@@ -30,12 +30,17 @@ public abstract class AbstractInferrer implements IInferrer {
 	}
 	
 	protected void init(IClause clause, HashMap<AbstractVariable, AbstractVariable> map) {
+		equalities = clause.getEqualityLiterals();
+		predicates = clause.getPredicateLiterals();
+		arithmetic = clause.getArithmeticLiterals();
+		conditions = clause.getConditions();
+		
 		initialize(clause);
 		
-		equalities = getListCopy(clause.getEqualityLiterals(),map,context);
-		predicates = getListCopy(clause.getPredicateLiterals(),map,context);
-		arithmetic = getListCopy(clause.getArithmeticLiterals(),map,context);
-		conditions = getListCopy(clause.getConditions(),map,context);
+		equalities = getListCopy(equalities,map,context);
+		predicates = getListCopy(predicates,map,context);
+		arithmetic = getListCopy(arithmetic,map,context);
+		conditions = getListCopy(conditions,map,context);
 	}
 	
 	protected void init(PPDisjClause clause) {

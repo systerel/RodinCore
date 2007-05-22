@@ -13,12 +13,22 @@ public class FactResult implements IFactResult {
 
 	private Set<FactSource> source;
 	private List<QueryResult> queries;
+	private List<InstantiationResult> instantiations;
 	
 	public FactResult(Set<FactSource> source) {
 		this.source = source;
 	}
 	
-	public FactResult(List<QueryResult> queries) {
+	public FactResult(List<QueryResult> queries, boolean dummy) {
+		this.queries = queries;
+	}
+	
+	public FactResult(List<InstantiationResult> instantiations) {
+		this.instantiations = instantiations;
+	}
+	
+	public FactResult(List<QueryResult> queries, List<InstantiationResult> instantiations) {
+		this.instantiations = instantiations;
 		this.queries = queries;
 	}
 	
@@ -44,6 +54,10 @@ public class FactResult implements IFactResult {
 
 	public Level getContradictionLevel() {
 		return Source.getLevel(source);
+	}
+
+	public List<InstantiationResult> getSolvedInstantiations() {
+		return instantiations;
 	}
 	
 }

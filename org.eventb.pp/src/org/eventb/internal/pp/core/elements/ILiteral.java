@@ -36,15 +36,20 @@ public interface ILiteral<T extends ILiteral<T>> {
 			HashMap<AbstractVariable, AbstractVariable> substitutionsMap);
 	
 	
+	// true if one of the term is quantified
 	public boolean isQuantified();
 	
+	// true if is quantified and all quantified terms are forall
+	public boolean isForall();
+	
+	// true if all terms are constant or quantified
 	public boolean isConstant();
 	
 	public String toString(HashMap<Variable, String> variableMap);
 
 	
 	
-	public boolean equalsWithDifferentVariables(T literal, HashMap<AbstractVariable, AbstractVariable> map);
+	public boolean equalsWithDifferentVariables(ILiteral<?> literal, HashMap<AbstractVariable, AbstractVariable> map);
 	
 	public int hashCodeWithDifferentVariables();
 }

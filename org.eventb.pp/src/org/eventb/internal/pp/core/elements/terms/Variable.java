@@ -83,6 +83,21 @@ public class Variable extends AbstractVariable {
 		return false;
 	}
 
+	@Override
+	public boolean isForall() {
+		return false;
+	}
+	
+	@Override
+	public int getPriority() {
+		return 0;
+	}
 
+
+	public int compareTo(Term o) {
+		if (equals(o)) return 0;
+		else if (getPriority() == o.getPriority()) return hashCode()-o.hashCode();
+		else return getPriority() - o.getPriority();
+	}
 
 }

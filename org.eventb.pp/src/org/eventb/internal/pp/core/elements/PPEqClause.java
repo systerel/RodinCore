@@ -132,4 +132,8 @@ public final class PPEqClause extends AbstractPPClause {
 		return false;
 	}
 
+	public boolean isEquivalence() {
+		return true;
+	}
+
 }

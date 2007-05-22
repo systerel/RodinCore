@@ -19,6 +19,8 @@ import org.eventb.internal.pp.core.elements.terms.Term;
 
 public class ExistentialSimplifier implements ISimplifier {
 
+	private int constantIdentifier = 0;
+	
 	private List<IPredicate> predicates;
 	private List<IEquality> equalities;
 	private List<IArithmetic> arithmetic;
@@ -58,7 +60,7 @@ public class ExistentialSimplifier implements ISimplifier {
 		}
 		Map<AbstractVariable, Term> map = new HashMap<AbstractVariable, Term>();
 		for (AbstractVariable variable : existentials) {
-			map.put(variable, new Constant(String.valueOf(Constant.uniqueIdentifier++),variable.getSort()));
+			map.put(variable, new Constant(String.valueOf(constantIdentifier++),variable.getSort()));
 		}
 		return literal.substitute(map);
 	}

@@ -17,9 +17,9 @@ import java.util.Set;
 import org.eventb.internal.pp.core.elements.Sort;
 
 
-public abstract class Term {
+public abstract class Term implements Comparable<Term> {
 
-	protected Sort sort;
+	final protected Sort sort;
 	// position of the term inside a literal
 	
 	protected Term(Sort sort) {
@@ -38,12 +38,16 @@ public abstract class Term {
 	public Sort getSort() {
 		return sort;
 	}
-	
-	// TODO replace these 2 methods by 
-	public abstract boolean isConstant();
-	public abstract boolean isQuantified();
-	
 
+	// true if this term is constant or quantified
+	public abstract boolean isConstant();
+	
+	// true if this term is quantified
+	public abstract boolean isQuantified();
+
+	// true if this term is quantified and is a forall
+	public abstract boolean isForall();
+	
 	public abstract Term substitute(Map<AbstractVariable, ? extends Term> map);
 	
 	public abstract boolean contains(AbstractVariable variables);
@@ -63,6 +67,8 @@ public abstract class Term {
 	}
 	
 	public abstract String toString(HashMap<Variable, String> variableMap);
+	
+	public abstract int getPriority();
 	
 	@Override
 	public String toString() {

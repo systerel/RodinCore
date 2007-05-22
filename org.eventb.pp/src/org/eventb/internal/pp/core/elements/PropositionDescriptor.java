@@ -3,7 +3,7 @@ package org.eventb.internal.pp.core.elements;
 
 public class PropositionDescriptor implements ILiteralDescriptor {
 
-	private int index;
+	final private int index;
 	
 	public PropositionDescriptor(int index) {
 		this.index = index;

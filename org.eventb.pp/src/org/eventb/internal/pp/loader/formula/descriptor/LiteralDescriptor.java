@@ -29,13 +29,6 @@ public abstract class LiteralDescriptor {
 		termList.add(result);
 	}
 	
-//	public boolean contains(IIntermediateResult result) {
-//		for (IIntermediateResult term : termList) {
-//			if (termList.equals(term)) return true;
-//		}
-//		return false;
-//	}
-	
 	public List<IIntermediateResult> getResults() {
 		return termList;
 	}
@@ -43,7 +36,8 @@ public abstract class LiteralDescriptor {
 	public IContext getContext() {
 		return context;
 	}
-
+	
+	
 	public List<TermSignature> unifiedIndexCache;
 	public List<TermSignature> getUnifiedResults() {
 		if (unifiedIndexCache == null) calculateIndexCache();

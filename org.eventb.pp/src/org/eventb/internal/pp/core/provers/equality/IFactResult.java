@@ -16,4 +16,6 @@ public interface IFactResult {
 	// returns a list of queries if some queries are solved or null if not
 	public List<? extends IQueryResult> getSolvedQueries();
 	
+	public List<? extends IInstantiationResult> getSolvedInstantiations();
+	
 }

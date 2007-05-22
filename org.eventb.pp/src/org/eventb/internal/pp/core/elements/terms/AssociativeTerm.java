@@ -18,7 +18,7 @@ import org.eventb.internal.pp.core.elements.Sort;
 
 public abstract class AssociativeTerm extends Term {
 
-	protected List<Term> children;
+	final protected List<Term> children;
 	
 	public AssociativeTerm(List<Term> children) {
 		super(Sort.ARITHMETIC);
@@ -39,7 +39,6 @@ public abstract class AssociativeTerm extends Term {
 		return false;
 	}
 
-
 	@Override
 	public boolean isConstant() {
 		for (Term term : children) {
@@ -48,6 +47,14 @@ public abstract class AssociativeTerm extends Term {
 		return true;
 	}
 
+	@Override
+	public boolean isForall() {
+		for (Term term : children) {
+			if (term.isForall()) return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public String toString(HashMap<Variable, String> variable) {
 		StringBuffer str = new StringBuffer();
@@ -121,5 +128,25 @@ public abstract class AssociativeTerm extends Term {
 		return hashCode;
 	}
 
-
+	public int compareTo(Term o) {
+		if (equals(o)) return 0;
+		else if (getPriority() == o.getPriority()) {
+			AssociativeTerm term = (AssociativeTerm)o;
+			if (getPriority() == term.getPriority()) {
+				if (children.size() == term.children.size()) {
+					for (int i = 0; i < children.size(); i++) {
+						int c = children.get(i).compareTo(term.children.get(i));
+						if (c != 0) return c;
+					}
+				}
+				else return children.size()-term.children.size();
+			}
+			else return getPriority()-term.getPriority();
+		}
+		else return getPriority() - o.getPriority();
+		
+		assert false;
+		return 1;
+	}
+	
 }

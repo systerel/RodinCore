@@ -47,6 +47,12 @@ public class Plus extends AssociativeTerm {
 	}
 	
 	@Override
+	public int getPriority() {
+		return 6;
+	}
+
+	
+	@Override
 	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
 		return new Plus(substituteHelper(map));
 	}

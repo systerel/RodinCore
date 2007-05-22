@@ -18,8 +18,6 @@ import org.eventb.internal.pp.core.datastructure.DefaultChangeListener;
 import org.eventb.internal.pp.core.datastructure.IObservable;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.IPredicate;
-import org.eventb.internal.pp.core.elements.PPEqClause;
-import org.eventb.internal.pp.core.elements.PPPredicate;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.InstantiationInferrer;
@@ -49,7 +47,7 @@ public class SeedSearchProver extends DefaultChangeListener implements IProver {
 		this.inferrer = new InstantiationInferrer(context);
 	}
 	
-	public void contradiction(Level oldLevel, Level newLevel, boolean proofFound, Stack<Level> dependencies) {
+	public void contradiction(Level oldLevel, Level newLevel, Stack<Level> dependencies) {
 		// do nothing
 	}
 
@@ -113,8 +111,7 @@ public class SeedSearchProver extends DefaultChangeListener implements IProver {
 		Term t = getTermForVariable(term, newTerm, v);
 		//////
 		
-		inferrer.setTerm(t);
-		inferrer.setVariable(v);
+		inferrer.addInstantiation(v, t);
 		
 		currentClause.infer(inferrer);
 		
@@ -210,11 +207,36 @@ public class SeedSearchProver extends DefaultChangeListener implements IProver {
 		List<IPredicate> result = new ArrayList<IPredicate>();
 		List<IPredicate> literals = clause.getPredicateLiterals();
 		for (int i = 0;i<literals.size();i++) {
-			if (PPPredicate.match(predicate, clause.getPredicateLiterals().get(i), clause instanceof PPEqClause)) {
+			if (match(predicate, clause, i)) {
 				result.add(literals.get(i));
 			}
 		}
 		return result;
+	}
+	
+	private boolean match(IPredicate matcher, IClause clause, int position) {
+		IPredicate matched = clause.getPredicateLiterals().get(position);
+		// 1 test same index
+		if (matcher.getIndex() != matched.getIndex()) return false;
+		// 2 test matching signs
+		if (matcher.isPositive() == matched.isPositive() && !clause.isEquivalence()) return false;
+		// 3 test compatible terms
+		// we reject constant term in unit clause matching pseudo constant term in non-unit clause
+		for (int i=0;i<matcher.getTerms().size();i++) {
+			Term matcherTerm = matcher.getTerms().get(i);
+			Term matchedTerm = matched.getTerms().get(i);
+			if ((matcherTerm.isQuantified() || matcherTerm.isConstant()) && (matchedTerm.isQuantified() || matchedTerm.isConstant())) {
+				// we do not match on a locally quantified variable
+				if (matcherTerm.isQuantified()) return false;
+				if (matchedTerm.isQuantified() && !clause.isEquivalence()) return false;
+				if (matchedTerm.isQuantified() && clause.isEquivalence()) {
+					boolean forall = matchedTerm.isForall();
+					boolean sameSign = matcher.isPositive() == matched.isPositive();
+					if (forall == sameSign) return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	public void registerDumper(Dumper dumper) {
@@ -250,10 +272,16 @@ public class SeedSearchProver extends DefaultChangeListener implements IProver {
 		if (accepts(clause)) candidates.appends(clause);
 	}
 
-	private Set<IClause> emptySet = new HashSet<IClause>();
-	public Set<IClause> getGeneratedClauses() {
-		return emptySet;
+	public void clean() {
+		// do nothing
 	}
 
+	public ResetIterator<IClause> getGeneratedClauses() {
+		return null;
+	}
+
+	public Set<IClause> getSubsumedClauses() {
+		return null;
+	}
 	
 }

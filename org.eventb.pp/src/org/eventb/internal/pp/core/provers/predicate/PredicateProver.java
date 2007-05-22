@@ -1,8 +1,6 @@
 package org.eventb.internal.pp.core.provers.predicate;
 
 
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
@@ -34,7 +32,9 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 	private IterableHashSet<IClause> unitClauses;
 	private IterableHashSet<IClause> nonUnitClauses;
 	
-	private Set<IClause> generatedClauses; 
+	private IterableHashSet<IClause> generatedClauses; 
+	private ResetIterator<IClause> backtrackIterator;
+	private ResetIterator<IClause> dispatcherIterator;
 	
 	private ResolutionInferrer inferrer;
 	private ResolutionResolver resolver;
@@ -57,7 +57,9 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 		unitClausesIterator = unitClauses.iterator();
 		nonUnitClausesIterator = nonUnitClauses.iterator();
 		
-		generatedClauses = new HashSet<IClause>();
+		generatedClauses = new IterableHashSet<IClause>();
+		backtrackIterator = generatedClauses.iterator();
+		dispatcherIterator = generatedClauses.iterator();
 	}
 	
 	public void initialize(IDispatcher dispatcher, IObservable clauses, ClauseSimplifier simplifier) {
@@ -133,7 +135,7 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 		// TODO the main prover might have backtracked on a contradiction coming from here
 		// check if it is the case + document
 		while (	(newClause = unitProver.next()) != null
-				&& !dispatcher.hasStopped() && (Level.getHighest(dispatcher.getLevel(), clause.getLevel()).equals(dispatcher.getLevel()))) {
+				&& (Level.getHighest(dispatcher.getLevel(), clause.getLevel()).equals(dispatcher.getLevel()))) {
 			inferrer.setUnitClause(newClause);
 			inferrer.setPosition(0);
 			if (inferrer.canInfer(clause)) {
@@ -150,7 +152,7 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 					return;
 				}
 				if (!inferredClause.isTrue()) {
-					generatedClauses.add(inferredClause);
+					generatedClauses.appends(inferredClause);
 				}
 			}
 		}
@@ -206,7 +208,7 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 		resolver.removeClause(clause);
 	}
 	
-	public void contradiction(Level oldLevel, Level newLevel, boolean proofFound, Stack<Level> dependencies) {
+	public void contradiction(Level oldLevel, Level newLevel, Stack<Level> dependencies) {
 		// the blocked clauses are not in the search space of the main prover, so
 		// it is important to verify here that they can still exist
 		if (blockedClause != null && !Level.getHighest(blockedClause.getLevel(), newLevel).equals(newLevel)) {
@@ -214,9 +216,10 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 		}
 		
 		// TODO check if necessary
-		for (Iterator<IClause> iter = generatedClauses.iterator(); iter.hasNext();) {
-			IClause clause = iter.next();
-			if (newLevel.isAncestorOf(clause.getLevel())) iter.remove();
+		backtrackIterator.reset();
+		while (backtrackIterator.hasNext()) {
+			IClause clause = backtrackIterator.next();
+			if (newLevel.isAncestorOf(clause.getLevel())) generatedClauses.remove(clause);
 		}
 	}
 
@@ -224,11 +227,17 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 		dumper.addDataStructure("Predicate unit clauses", unitClauses.iterator());
 		dumper.addDataStructure("Predicate non-unit clauses", nonUnitClauses.iterator());
 	}
+	
+	public ResetIterator<IClause> getGeneratedClauses() {
+		return dispatcherIterator;
+	}
 
-	public Set<IClause> getGeneratedClauses() {
-		Set<IClause> result = new HashSet<IClause>(generatedClauses);
+	public void clean() {
 		generatedClauses.clear();
-		return result;
+	}
+
+	public Set<IClause> getSubsumedClauses() {
+		return null;
 	}
 
 }

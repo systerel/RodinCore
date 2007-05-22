@@ -1,18 +1,18 @@
 package org.eventb.internal.pp.core.provers.equality;
 
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.IEquality;
+import org.eventb.internal.pp.core.elements.terms.Constant;
 
-public interface IQueryResult {
+public interface IInstantiationResult {
 
-	public boolean getValue();
-	
-	public List<IClause> getSolvedValueOrigin();
-	
 	public Set<IClause> getSolvedClauses();
-
+	
 	public IEquality getEquality();
+	
+	public Constant getInstantiationValue();
+	
+	public Set<IClause> getSolvedValueOrigin();
 }

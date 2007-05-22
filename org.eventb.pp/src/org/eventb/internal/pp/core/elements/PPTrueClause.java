@@ -37,4 +37,8 @@ public class PPTrueClause extends AbstractPPClause {
 	public String toString() {
 		return "TRUE";
 	}
+
+	public boolean isEquivalence() {
+		return false;
+	}
 }

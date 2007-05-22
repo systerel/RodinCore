@@ -22,9 +22,9 @@ public abstract class AbstractSingleFormula<T extends LiteralDescriptor>
 			TermVisitorContext flags, VariableTable table,
 			BooleanEqualityTable bool) {
 		ClauseBuilder.debugEnter(this);
-		ILiteral<?> predicate = getLiteral(termList, flags, table, bool);
+		ILiteral<?> literal = getLiteral(termList, flags, table, bool);
 		for (List<ILiteral<?>> list : prefix) {
-			list.add(predicate);
+			list.add(literal);
 		}
 		ClauseBuilder.debugExit(this);
 		return prefix;

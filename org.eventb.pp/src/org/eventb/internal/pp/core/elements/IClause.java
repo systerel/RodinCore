@@ -68,6 +68,8 @@ public interface IClause {
 	
 	public void infer(IInferrer inferrer);
 	
+	public boolean isEquivalence();
+	
 //	/**
 //	 * Returns a copy of this clause, whose variables are
 //	 * distinct from the ones of the original clause.

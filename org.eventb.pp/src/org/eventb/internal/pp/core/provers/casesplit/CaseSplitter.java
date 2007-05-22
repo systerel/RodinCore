@@ -1,6 +1,5 @@
 package org.eventb.internal.pp.core.provers.casesplit;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
@@ -13,8 +12,7 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.datastructure.DefaultChangeListener;
 import org.eventb.internal.pp.core.datastructure.IObservable;
 import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.inferrers.CaseSplitInferrer;
-import org.eventb.internal.pp.core.inferrers.IInferrer;
+import org.eventb.internal.pp.core.inferrers.CaseSplitNegationInferrer;
 import org.eventb.internal.pp.core.search.ConditionIterator;
 import org.eventb.internal.pp.core.search.IterableHashSet;
 import org.eventb.internal.pp.core.search.ResetIterator;
@@ -40,12 +38,12 @@ public class CaseSplitter extends DefaultChangeListener implements IProver {
 	
 	private IterableHashSet<IClause> candidates;
 	private CaseSplitIterator splitIterator;
-	private CaseSplitInferrer inferrer;
+	private CaseSplitNegationInferrer inferrer;
 	
 	private IDispatcher dispatcher;
 	
 	public CaseSplitter(IVariableContext context) {
-		this.inferrer = new CaseSplitInferrer(context);
+		this.inferrer = new CaseSplitNegationInferrer(context);
 	}
 	
 	public void initialize(IDispatcher dispatcher, IObservable clauses, ClauseSimplifier simplifier) {
@@ -56,10 +54,10 @@ public class CaseSplitter extends DefaultChangeListener implements IProver {
 		clauses.addChangeListener(this);
 	}
 	
-	public void contradiction(Level oldLevel, Level newLevel, boolean proofFound, Stack<Level> dependencies) {
+	public void contradiction(Level oldLevel, Level newLevel, Stack<Level> dependencies) {
 		// contradiction has been found, backtrack
 		// main loop on the next case
-		backtrack(oldLevel, proofFound, dependencies);
+		backtrack(oldLevel, dependencies);
 	}
 	
 	// this returns the next clause produced by a case split.
@@ -114,7 +112,7 @@ public class CaseSplitter extends DefaultChangeListener implements IProver {
 	 * 
 	 * @param oldLevel the level which must be backtracked
 	 */
-	private void backtrack(Level oldLevel, boolean proofDone, Stack<Level> dependencies) {
+	private void backtrack(Level oldLevel, Stack<Level> dependencies) {
 		debug("CaseSplitter: Backtracking datastructures, size of split stack: "+splits.size());
 		
 		if (	nextCase != null
@@ -123,11 +121,11 @@ public class CaseSplitter extends DefaultChangeListener implements IProver {
 			candidates.appends(nextCase.original);
 		}
 		
- 		if (proofDone) {
-			debug("CaseSplitter: Clearing data structures");
-			splits.clear();
-			return;
-		}
+// 		if (proofDone) {
+//			debug("CaseSplitter: Clearing data structures");
+//			splits.clear();
+//			return;
+//		}
 		debug("CaseSplitter: Backtracking from: "+oldLevel+", to: "+dispatcher.getLevel());
 		Level tmp = oldLevel;
 
@@ -167,9 +165,9 @@ public class CaseSplitter extends DefaultChangeListener implements IProver {
 
 	
 	private class CaseSplitIterator extends ConditionIterator<IClause> {
-		private IInferrer inferrer;
+		private CaseSplitNegationInferrer inferrer;
 		
-		public CaseSplitIterator(ResetIterator<IClause> iterator, IInferrer inferrer) {
+		public CaseSplitIterator(ResetIterator<IClause> iterator, CaseSplitNegationInferrer inferrer) {
 			super(iterator);
 			this.inferrer = inferrer;
 		}
@@ -195,9 +193,16 @@ public class CaseSplitter extends DefaultChangeListener implements IProver {
 		}
 	}
 
-	private Set<IClause> emptySet = new HashSet<IClause>();
-	public Set<IClause> getGeneratedClauses() {
-		return emptySet;
+	public ResetIterator<IClause> getGeneratedClauses() {
+		return null;
 	}
 
+	public void clean() {
+		// do nothing
+	}
+
+	public Set<IClause> getSubsumedClauses() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

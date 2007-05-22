@@ -16,10 +16,14 @@ public class Sort implements Comparable<Sort> {
 	public static Sort ARITHMETIC = new Sort(FormulaFactory.getDefault().makeIntegerType());
 	public static Sort BOOLEAN = new Sort(FormulaFactory.getDefault().makeBooleanType());
 
-	private Type type;
+	final private Type type;
 	
 	public Sort(Type type) {
 		this.type = type;
+	}
+	
+	public String getName() {
+		return type.toString();
 	}
 	
 	@Override

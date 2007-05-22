@@ -70,5 +70,9 @@ public final class PPDisjClause extends AbstractPPClause {
 		return false;
 	}
 
+	public boolean isEquivalence() {
+		return false;
+	}
+
 
 }

@@ -41,6 +41,12 @@ public class Mod extends BinaryTerm {
 	}
 	
 	@Override
+	public int getPriority() {
+		return 8;
+	}
+
+	
+	@Override
 	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
 		return new Mod(substituteHelper(map));
 	}
