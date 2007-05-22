@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.provers.equality.IFactResult;
+import org.eventb.internal.pp.core.provers.equality.unionfind.Equality;
 import org.eventb.internal.pp.core.provers.equality.unionfind.EqualitySolver;
 import org.eventb.internal.pp.core.provers.equality.unionfind.FactResult;
+import org.eventb.internal.pp.core.provers.equality.unionfind.Instantiation;
+import org.eventb.internal.pp.core.provers.equality.unionfind.InstantiationResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Node;
 import org.eventb.internal.pp.core.provers.equality.unionfind.QueryResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source;
@@ -14,6 +17,7 @@ import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
 import org.eventb.pp.AbstractPPTest;
 
+@SuppressWarnings("unused")
 public class TestEqualitySolver extends AbstractPPTest {
 
 	private Node a;
@@ -98,7 +102,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		}
 
 		@Override
-		public void backtrack(Level level) {
+		public void backtrack(@SuppressWarnings("hiding") Level level) {
 			assert false;
 		}
 
@@ -131,6 +135,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 	private static FactSource R1L1 = new MyFactSource("R1",ONE);
 	private static FactSource R2L1 = new MyFactSource("R2",ONE);
 	private static FactSource R3L1 = new MyFactSource("R3",ONE);
+	private static FactSource R4L1 = new MyFactSource("R4",ONE);
 
 	private static FactSource R1L3 = new MyFactSource("R1",THREE);
 	private static FactSource R2L3 = new MyFactSource("R2",THREE);
@@ -146,6 +151,15 @@ public class TestEqualitySolver extends AbstractPPTest {
 
 	private EqualitySolver solver;
 	
+	private static <T extends Source> Equality<T> E(Node node1, Node node2, T source) {
+		return new Equality<T>(node1, node2, source);
+	}
+	
+	private static Instantiation I(Node node, QuerySource source) {
+		return new Instantiation(node, source);
+	}
+	
+	
 	@Override
 	protected void setUp() throws Exception {
 		// init solver
@@ -155,38 +169,38 @@ public class TestEqualitySolver extends AbstractPPTest {
 	private void init() {
 		solver = new EqualitySolver(new SourceTable());
 
-		a = new Node("a");
-		b = new Node("b");
-		c = new Node("c");
-		d = new Node("d");
-		e = new Node("e");
-		f = new Node("f");
+		a = new Node(super.a);
+		b = new Node(super.b);
+		c = new Node(super.c);
+		d = new Node(super.d);
+		e = new Node(super.e);
+		f = new Node(super.f);
 	}
 
 	// deductions
 	public void testEmptyManager() {
 		init();
-		assertNull(solver.addFactEquality(a,b,ES));
+		assertNull(solver.addFactEquality(E(a,b,ES)));
 		init();
-		assertNull(solver.addFactEquality(a,b,ES));
+		assertNull(solver.addFactEquality(E(a,b,ES)));
 		init();
-		assertNull(solver.addQuery(a,b,ESq,true));
+		assertNull(solver.addQuery(E(a,b,ESq),true));
 		init();
-		assertNull(solver.addQuery(a,b,ESq,false));
+		assertNull(solver.addQuery(E(a,b,ESq),false));
 	}
 
 	
 	public void testSimpleEquality() {
-		solver.addFactEquality(a,b,R1L0);
+		solver.addFactEquality(E(a,b,R1L0));
 		assertEquals(mSet(
 				"b->a"
 		),solver.dump());
-		solver.addFactEquality(b,c,R2L0);
+		solver.addFactEquality(E(b,c,R2L0));
 		assertEquals(mSet(
 				"b->a",
 				"c->a"
 		),solver.dump());
-		solver.addFactEquality(c,d,R3L0);
+		solver.addFactEquality(E(c,d,R3L0));
 		assertEquals(mSet(
 				"b->a",
 				"c->a",
@@ -195,10 +209,10 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testMergingTree() {
-		solver.addFactEquality(a,b,R1L0);
-		solver.addFactEquality(b,c,R2L0);
-		solver.addFactEquality(d,e,R3L0);
-		solver.addFactEquality(e,f,R4L0);
+		solver.addFactEquality(E(a,b,R1L0));
+		solver.addFactEquality(E(b,c,R2L0));
+		solver.addFactEquality(E(d,e,R3L0));
+		solver.addFactEquality(E(e,f,R4L0));
 		assertEquals(mSet(
 				"b->a",
 				"c->a",
@@ -206,7 +220,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 				"f->d"		
 		),solver.dump());
 		
-		solver.addFactEquality(c,d,R5L0);
+		solver.addFactEquality(E(c,d,R5L0));
 		assertEquals(mSet(
 				"b->a",
 				"c->a",
@@ -217,9 +231,9 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testAlreadyEqual() {
-		solver.addFactEquality(a,b,R1L0);
-		solver.addFactEquality(b,c,R2L0);
-		solver.addFactEquality(a,c,R3L0);
+		solver.addFactEquality(E(a,b,R1L0));
+		solver.addFactEquality(E(b,c,R2L0));
+		solver.addFactEquality(E(a,c,R3L0));
 		assertEquals(mSet(
 				"b->a",
 				"c->a"
@@ -227,15 +241,15 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testOptimization1() {
-		solver.addFactEquality(a,b,R1L0);
-		solver.addFactEquality(c,d,R2L0);
-		solver.addFactEquality(a,c,R3L0);
+		solver.addFactEquality(E(a,b,R1L0));
+		solver.addFactEquality(E(c,d,R2L0));
+		solver.addFactEquality(E(a,c,R3L0));
 		assertEquals(mSet(
 				"b->a",
 				"d->c",
 				"c->a"
 		),solver.dump());
-		solver.addFactEquality(b,d,R4L0);
+		solver.addFactEquality(E(b,d,R4L0));
 		assertEquals(mSet(
 				"b->a",
 				"c->a",
@@ -244,10 +258,10 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testOptimization2() {
-		solver.addFactEquality(a, b, R1L0);
-		solver.addFactEquality(c, d, R2L0);
-		solver.addFactEquality(a, c, R3L0);
-		solver.addFactEquality(d, e, R4L0);
+		solver.addFactEquality(E(a, b, R1L0));
+		solver.addFactEquality(E(c, d, R2L0));
+		solver.addFactEquality(E(a, c, R3L0));
+		solver.addFactEquality(E(d, e, R4L0));
 		assertEquals(mSet(
 				"b->a",
 				"d->a",
@@ -257,115 +271,131 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testFactInequality() {
-		solver.addFactInequality(a, b, ES);
+		solver.addFactInequality(E(a, b, ES));
 		assertEquals(mSet(
-				"a[F, ≠b]"
+				"a[F, ≠b]",
+				"b[F, ≠a]"
 		),solver.dump());
 	}
 
 	public void testFactInequalityComplex() {
-		solver.addFactEquality(a, b, ES);
-		solver.addFactInequality(b, c, ES);
+		solver.addFactEquality(E(a, b, ES));
+		solver.addFactInequality(E(b, c, ES));
 		assertEquals(mSet(
 				"b->a",
-				"a[F, ≠c]"
+				"a[F, ≠c]",
+				"c[F, ≠a]"
 		),solver.dump());
 	}
 
 	public void testFactInequalityComplex2() {
-		solver.addFactEquality(a, b, ES);
-		solver.addFactInequality(c, d, ES);
-		solver.addFactEquality(a, c, ES);
+		solver.addFactEquality(E(a, b, ES));
+		solver.addFactInequality(E(c, d, ES));
+		solver.addFactEquality(E(a, c, ES));
 		assertEquals(mSet(
 				"b->a",
 				"c->a",
-				"a[F, ≠d]"
+				"a[F, ≠d]",
+				"d[F, ≠a]"
 		), solver.dump());
 	}
 	
 	public void testFactInequalityComplex3() {
-		solver.addFactInequality(b, c, ES);		
-		solver.addFactEquality(a, c, ES);
+		solver.addFactInequality(E(b, c, ES));		
+		solver.addFactEquality(E(a, c, ES));
 		assertEquals(mSet(
 				"c->a",
-				"b[F, ≠a]"
+				"b[F, ≠a]",
+				"a[F, ≠b]"
 		), solver.dump());
 	}
 	
 	public void testSimpleContradictionEqualityFirst() {
-		solver.addFactEquality(a, b, ES);
-		IFactResult result = solver.addFactInequality(a, b, ES);
+		solver.addFactEquality(E(a, b, ES));
+		IFactResult result = solver.addFactInequality(E(a, b, ES));
 		assertNotNull(result);
 		assertNull(result.getSolvedQueries());
 	}
 	
 	public void testSimpleContradictionInequalityFirst() {
-		solver.addFactInequality(a, b, ES);
-		IFactResult result = solver.addFactEquality(a, b, ES);
+		solver.addFactInequality(E(a, b, ES));
+		IFactResult result = solver.addFactEquality(E(a, b, ES));
 		assertNotNull(result);
 		assertNull(result.getSolvedQueries());
 	}
 	
 	public void testContradiction1() {
-		assertNull(solver.addFactEquality(a, b, R1L0));
-		assertNull(solver.addFactEquality(c, d, R2L0));
-		assertNull(solver.addFactInequality(b, d, R3L0));
-		FactResult result = solver.addFactEquality(b, d, R4L0);
+		assertNull(solver.addFactEquality(E(a, b, R1L0)));
+		assertNull(solver.addFactEquality(E(c, d, R2L0)));
+		assertNull(solver.addFactInequality(E(b, d, R3L0)));
+		FactResult result = solver.addFactEquality(E(b, d, R4L0));
 		assertEquals(result.getContradictionSource(),mSet(R3L0,R4L0));
 		assertNull(result.getSolvedQueries());
 	}
 	
 	public void testContradiction2() {
-		assertNull(solver.addFactEquality(a, b, R1L0));
-		assertNull(solver.addFactEquality(c, d, R2L0));
-		assertNull(solver.addFactInequality(d, e, R3L0));
-		assertNull(solver.addFactEquality(b, e, R4L0));
-		FactResult result = solver.addFactEquality(b, d, R5L0);
+		assertNull(solver.addFactEquality(E(a, b, R1L0)));
+		assertNull(solver.addFactEquality(E(c, d, R2L0)));
+		assertNull(solver.addFactInequality(E(d, e, R3L0)));
+		assertNull(solver.addFactEquality(E(b, e, R4L0)));
+		FactResult result = solver.addFactEquality(E(b, d, R5L0));
 		assertEquals(result.getContradictionSource(),mSet(R5L0,R3L0,R4L0));
 		assertNull(result.getSolvedQueries());
 	}
 	
+	public void testRedundantInequality() {
+		assertNull(solver.addFactEquality(E(a, b, R1L0)));
+		assertNull(solver.addFactEquality(E(a, c, R2L1)));
+		assertNull(solver.addFactInequality(E(b, d, R3L0)));
+		assertNull(solver.addFactInequality(E(c, e, R4L1)));
+		assertNull(solver.addFactEquality(E(d, e, R5L0)));
+		FactResult result = solver.addFactEquality(E(a, d, R6L0));
+		
+		assertNotNull(result);
+		assertEquals(Level.base, result.getContradictionLevel());
+	}
+	
 	public void testSimpleQueryContradiction1() {
-		assertNull(solver.addQuery(a, b, ESq, true));
-		IFactResult result = solver.addFactEquality(a, b, ES);
+		assertNull(solver.addQuery(E(a, b, ESq), true));
+		IFactResult result = solver.addFactEquality(E(a, b, ES));
 		assertTrue(result.getSolvedQueries().size()==1);
 		assertTrue(result.getSolvedQueries().get(0).getValue());
 	}
 	
 	public void testSimpleQueryContradiction2() {
-		assertNull(solver.addQuery(a, b, ESq, false));
-		IFactResult result = solver.addFactEquality(a, b, ES);
+		assertNull(solver.addQuery(E(a, b, ESq), false));
+		IFactResult result = solver.addFactEquality(E(a, b, ES));
 		assertTrue(result.getSolvedQueries().size()==1);
 		assertFalse(result.getSolvedQueries().get(0).getValue());
 	}
 	
 	public void testSimpleQueryContradiction3() {
-		assertNull(solver.addQuery(a, b, ESq, true));
-		IFactResult result = solver.addFactInequality(a, b, ES);
+		assertNull(solver.addQuery(E(a, b, ESq), true));
+		IFactResult result = solver.addFactInequality(E(a, b, ES));
 		assertTrue(result.getSolvedQueries().size()==1);
 		assertFalse(result.getSolvedQueries().get(0).getValue());
 	}
 	
 	// TODO check this
 	public void testSimpleQueryContradiction4() {
-		assertNull(solver.addQuery(a, b, ESq, false));
-		IFactResult result = solver.addFactInequality(a, b, ES);
+		assertNull(solver.addQuery(E(a, b, ESq), false));
+		IFactResult result = solver.addFactInequality(E(a, b, ES));
 		assertTrue(result.getSolvedQueries().size()==1);
 		assertTrue(result.getSolvedQueries().get(0).getValue());
 	}
 	
 	// TODO check this
 	public void testSimpleQueryContradiction5() {
-		solver.addFactInequality(a, b, ES);
-		QueryResult result = solver.addQuery(a, b, ESq, true);
+		solver.addFactInequality(E(a, b, ES));
+		QueryResult result = solver.addQuery(E(a, b, ESq), true);
 		assertNotNull(result);
 		assertFalse(result.getValue());
 	}
 	
 	// sources without levels
 	public void testSourceTableSimple() {
-		solver.addFactEquality(a, b, R1L0);
-		solver.addFactEquality(a, c, R2L0);
+		solver.addFactEquality(E(a, b, R1L0));
+		solver.addFactEquality(E(a, c, R2L0));
 		assertEquals(mSet(
 				"a,b[R1]",
 				"a,c[R2]")
@@ -373,8 +403,8 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testSourceTableWithEdge1() {
-		solver.addFactEquality(a, b, R1L0);
-		solver.addFactEquality(b, c, R2L0);
+		solver.addFactEquality(E(a, b, R1L0));
+		solver.addFactEquality(E(b, c, R2L0));
 		assertEquals(mSet(
 				"a,b[R1]",
 				"a,c[R1, R2]",
@@ -383,9 +413,9 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testSourceTableWithEdge2() {
-		solver.addFactEquality(a, b, R1L0);
-		solver.addFactEquality(c, d, R2L0);
-		solver.addFactEquality(b, d, R3L0);
+		solver.addFactEquality(E(a, b, R1L0));
+		solver.addFactEquality(E(c, d, R2L0));
+		solver.addFactEquality(E(b, d, R3L0));
 		assertEquals(mSet(
 				"a,b[R1]",
 				"c,d[R2]",
@@ -395,9 +425,9 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testSourceTableWithEdgeRedundant() {
-		solver.addFactEquality(a, b, R1L0);
-		solver.addFactEquality(b, c, R2L0);
-		solver.addFactEquality(a, c, R3L0);
+		solver.addFactEquality(E(a, b, R1L0));
+		solver.addFactEquality(E(b, c, R2L0));
+		solver.addFactEquality(E(a, c, R3L0));
 		assertEquals(mSet(
 				"a,b[R1]",
 				"a,c[R3]",
@@ -406,10 +436,10 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testSourceTableOptimisation() {
-		solver.addFactEquality(a, b, R1L0);
-		solver.addFactEquality(c, d, R2L0);
-		solver.addFactEquality(a, c, R3L0);
-		solver.addFactEquality(b, d, R4L0);
+		solver.addFactEquality(E(a, b, R1L0));
+		solver.addFactEquality(E(c, d, R2L0));
+		solver.addFactEquality(E(a, c, R3L0));
+		solver.addFactEquality(E(b, d, R4L0));
 		assertEquals(mSet(
 				"a,b[R1]",
 				"c,d[R2]",
@@ -421,73 +451,73 @@ public class TestEqualitySolver extends AbstractPPTest {
 
 	
 	public void testSimpleSource1() {
-		solver.addFactEquality(a, b, R1L0);
-		FactResult result = solver.addFactInequality(a, b, R2L0);
+		solver.addFactEquality(E(a, b, R1L0));
+		FactResult result = solver.addFactInequality(E(a, b, R2L0));
 		assertEquals(result.getContradictionSource(), mSet(R2L0,R1L0));
 	}
 	
 	public void testSimpleSource2() {
-		solver.addFactInequality(a, b, R1L0);
-		FactResult result = solver.addFactEquality(a, b, R2L0);
+		solver.addFactInequality(E(a, b, R1L0));
+		FactResult result = solver.addFactEquality(E(a, b, R2L0));
 		assertEquals(result.getContradictionSource(), mSet(R2L0,R1L0));
 	}
 	
 	
 	public void testSource1() {
-		solver.addFactEquality(a, b, R1L0);
-		solver.addFactEquality(c, d, R2L0);
-		solver.addFactInequality(b, d, R3L0);
-		FactResult result = solver.addFactEquality(a, c, R4L0);
+		solver.addFactEquality(E(a, b, R1L0));
+		solver.addFactEquality(E(c, d, R2L0));
+		solver.addFactInequality(E(b, d, R3L0));
+		FactResult result = solver.addFactEquality(E(a, c, R4L0));
 		assertEquals(result.getContradictionSource(), mSet(R4L0,R3L0,R2L0,R1L0));
 	}
 	
 	public void testSource2() {
-		solver.addFactEquality(a, b, R1L0);
-		solver.addFactEquality(b, c, R2L0);
-		FactResult result = solver.addFactInequality(a, c, R3L0);
+		solver.addFactEquality(E(a, b, R1L0));
+		solver.addFactEquality(E(b, c, R2L0));
+		FactResult result = solver.addFactInequality(E(a, c, R3L0));
 		assertEquals(result.getContradictionSource(), mSet(R1L0,R2L0,R3L0));
 	}
 	
 	public void testSimpleSourceQuery1() {
-		solver.addFactEquality(a, b, R1L0);
-		QueryResult result = solver.addQuery(a, b, R2L0q, true);
+		solver.addFactEquality(E(a, b, R1L0));
+		QueryResult result = solver.addQuery(E(a, b, R2L0q), true);
 		assertEquals(result.getSolvedValueSource(), mSet(R1L0));
 		assertEquals(result.getQuerySource(), R2L0q);
 		assertTrue(result.getValue());
 	}
 	
 	public void testSimpleSourceQuery2() {
-		solver.addFactInequality(a, b, R1L0);
-		QueryResult result = solver.addQuery(a, b, R2L0q, true);
+		solver.addFactInequality(E(a, b, R1L0));
+		QueryResult result = solver.addQuery(E(a, b, R2L0q), true);
 		assertEquals(result.getSolvedValueSource(), mSet(R1L0));
 		assertEquals(result.getQuerySource(), R2L0q);
 		assertFalse(result.getValue());
 	}
 	
 	public void testSimpleSourceQuery3() {
-		solver.addFactEquality(a, b, R1L0);
-		QueryResult result = solver.addQuery(a, b, R2L0q, false);
+		solver.addFactEquality(E(a, b, R1L0));
+		QueryResult result = solver.addQuery(E(a, b, R2L0q), false);
 		assertEquals(result.getSolvedValueSource(), mSet(R1L0));
 		assertEquals(result.getQuerySource(), R2L0q);
 		assertFalse(result.getValue());
 	}
 	
 	public void testSimpleSourceQuery4() {
-		solver.addFactInequality(a, b, R1L0);
-		QueryResult result = solver.addQuery(a, b, R2L0q, false);
+		solver.addFactInequality(E(a, b, R1L0));
+		QueryResult result = solver.addQuery(E(a, b, R2L0q), false);
 		assertEquals(result.getSolvedValueSource(), mSet(R1L0));
 		assertEquals(result.getQuerySource(), R2L0q);
 		assertTrue(result.getValue());
 	}
 	
 	public void testComplexSourceQuery1() {
-		assertNull(solver.addQuery(c, f, R6L0q, true));
+		assertNull(solver.addQuery(E(c, f, R6L0q), true));
 		
-		assertNull(solver.addFactEquality(a,b,R1L0));
-		assertNull(solver.addFactEquality(b,c,R2L0));
-		assertNull(solver.addFactEquality(d,e,R3L0));
-		assertNull(solver.addFactEquality(e,f,R4L0));
-		FactResult result = solver.addFactEquality(a,d,R5L0);
+		assertNull(solver.addFactEquality(E(a,b,R1L0)));
+		assertNull(solver.addFactEquality(E(b,c,R2L0)));
+		assertNull(solver.addFactEquality(E(d,e,R3L0)));
+		assertNull(solver.addFactEquality(E(e,f,R4L0)));
+		FactResult result = solver.addFactEquality(E(a,d,R5L0));
 		assertNotNull(result);
 		List<QueryResult> queries = result.getSolvedQueries();
 		assertTrue(queries.size() == 1);
@@ -498,13 +528,13 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testComplexSourceQuery12() {
-		assertNull(solver.addQuery(c, f, R6L0q, false));
+		assertNull(solver.addQuery(E(c, f, R6L0q), false));
 		
-		assertNull(solver.addFactEquality(a,b,R1L0));
-		assertNull(solver.addFactEquality(b,c,R2L0));
-		assertNull(solver.addFactEquality(d,e,R3L0));
-		assertNull(solver.addFactEquality(e,f,R4L0));
-		FactResult result = solver.addFactEquality(a,d,R5L0);
+		assertNull(solver.addFactEquality(E(a,b,R1L0)));
+		assertNull(solver.addFactEquality(E(b,c,R2L0)));
+		assertNull(solver.addFactEquality(E(d,e,R3L0)));
+		assertNull(solver.addFactEquality(E(e,f,R4L0)));
+		FactResult result = solver.addFactEquality(E(a,d,R5L0));
 		assertNotNull(result);
 		List<QueryResult> queries = result.getSolvedQueries();
 		assertTrue(queries.size() == 1);
@@ -515,12 +545,12 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testComplexSourceQuery2() {
-		assertNull(solver.addFactEquality(a,b,R1L0));
-		assertNull(solver.addFactEquality(b,c,R2L0));
-		assertNull(solver.addFactEquality(d,e,R3L0));
-		assertNull(solver.addFactEquality(e,f,R4L0));
-		assertNull(solver.addFactInequality(a, d, R5L0));
-		QueryResult result = solver.addQuery(c, f, R6L0q, true);
+		assertNull(solver.addFactEquality(E(a,b,R1L0)));
+		assertNull(solver.addFactEquality(E(b,c,R2L0)));
+		assertNull(solver.addFactEquality(E(d,e,R3L0)));
+		assertNull(solver.addFactEquality(E(e,f,R4L0)));
+		assertNull(solver.addFactInequality(E(a, d, R5L0)));
+		QueryResult result = solver.addQuery(E(c, f, R6L0q), true);
 		assertNotNull(result);
 		assertFalse(result.getValue());
 		
@@ -529,12 +559,12 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testComplexSourceQuery22() {
-		assertNull(solver.addFactEquality(a,b,R1L0));
-		assertNull(solver.addFactEquality(b,c,R2L0));
-		assertNull(solver.addFactEquality(d,e,R3L0));
-		assertNull(solver.addFactEquality(e,f,R4L0));
-		assertNull(solver.addFactInequality(a, d, R5L0));
-		QueryResult result = solver.addQuery(c, f, R6L0q, false);
+		assertNull(solver.addFactEquality(E(a,b,R1L0)));
+		assertNull(solver.addFactEquality(E(b,c,R2L0)));
+		assertNull(solver.addFactEquality(E(d,e,R3L0)));
+		assertNull(solver.addFactEquality(E(e,f,R4L0)));
+		assertNull(solver.addFactInequality(E(a, d, R5L0)));
+		QueryResult result = solver.addQuery(E(c, f, R6L0q), false);
 		assertNotNull(result);
 		assertTrue(result.getValue());
 		
@@ -543,14 +573,14 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testComplexSourceQuery3() {
-		assertNull(solver.addQuery(a, d, R6L0q, true));
-		assertNull(solver.addQuery(c, f, R7L0q, true));
+		assertNull(solver.addQuery(E(a, d, R6L0q), true));
+		assertNull(solver.addQuery(E(c, f, R7L0q), true));
 		
-		assertNull(solver.addFactEquality(a,b,R1L0));
-		assertNull(solver.addFactEquality(b,c,R2L0));
-		assertNull(solver.addFactEquality(d,e,R3L0));
-		assertNull(solver.addFactEquality(e,f,R4L0));
-		FactResult result = solver.addFactInequality(a, d, R5L0);
+		assertNull(solver.addFactEquality(E(a,b,R1L0)));
+		assertNull(solver.addFactEquality(E(b,c,R2L0)));
+		assertNull(solver.addFactEquality(E(d,e,R3L0)));
+		assertNull(solver.addFactEquality(E(e,f,R4L0)));
+		FactResult result = solver.addFactInequality(E(a, d, R5L0));
 		assertNotNull(result);
 		List<QueryResult> queries = result.getSolvedQueries();
 		assertTrue(queries.size() == 2);
@@ -564,14 +594,14 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testComplexSourceQuery32() {
-		assertNull(solver.addQuery(a, d, R6L0q, false));
-		assertNull(solver.addQuery(c, f, R7L0q, false));
+		assertNull(solver.addQuery(E(a, d, R6L0q), false));
+		assertNull(solver.addQuery(E(c, f, R7L0q), false));
 		
-		assertNull(solver.addFactEquality(a,b,R1L0));
-		assertNull(solver.addFactEquality(b,c,R2L0));
-		assertNull(solver.addFactEquality(d,e,R3L0));
-		assertNull(solver.addFactEquality(e,f,R4L0));
-		FactResult result = solver.addFactInequality(a, d, R5L0);
+		assertNull(solver.addFactEquality(E(a,b,R1L0)));
+		assertNull(solver.addFactEquality(E(b,c,R2L0)));
+		assertNull(solver.addFactEquality(E(d,e,R3L0)));
+		assertNull(solver.addFactEquality(E(e,f,R4L0)));
+		FactResult result = solver.addFactInequality(E(a, d, R5L0));
 		assertNotNull(result);
 		List<QueryResult> queries = result.getSolvedQueries();
 		assertTrue(queries.size() == 2);
@@ -585,14 +615,14 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testComplexSourceQuery4() {
-		assertNull(solver.addQuery(a, d, R6L0q, true));
-		assertNull(solver.addQuery(c, f, R7L0q, true));
+		assertNull(solver.addQuery(E(a, d, R6L0q), true));
+		assertNull(solver.addQuery(E(c, f, R7L0q), true));
 		
-		assertNull(solver.addFactEquality(a,b,R1L0));
-		assertNull(solver.addFactEquality(b,c,R2L0));
-		assertNull(solver.addFactEquality(d,e,R3L0));
-		assertNull(solver.addFactEquality(e,f,R4L0));
-		FactResult result = solver.addFactEquality(a, d, R5L0);
+		assertNull(solver.addFactEquality(E(a,b,R1L0)));
+		assertNull(solver.addFactEquality(E(b,c,R2L0)));
+		assertNull(solver.addFactEquality(E(d,e,R3L0)));
+		assertNull(solver.addFactEquality(E(e,f,R4L0)));
+		FactResult result = solver.addFactEquality(E(a, d, R5L0));
 		assertNotNull(result);
 		List<QueryResult> queries = result.getSolvedQueries();
 		assertTrue(queries.size() == 2);
@@ -606,14 +636,14 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testComplexSourceQuery42() {
-		assertNull(solver.addQuery(a, d, R6L0q, false));
-		assertNull(solver.addQuery(c, f, R7L0q, false));
+		assertNull(solver.addQuery(E(a, d, R6L0q), false));
+		assertNull(solver.addQuery(E(c, f, R7L0q), false));
 		
-		assertNull(solver.addFactEquality(a,b,R1L0));
-		assertNull(solver.addFactEquality(b,c,R2L0));
-		assertNull(solver.addFactEquality(d,e,R3L0));
-		assertNull(solver.addFactEquality(e,f,R4L0));
-		FactResult result = solver.addFactEquality(a, d, R5L0);
+		assertNull(solver.addFactEquality(E(a,b,R1L0)));
+		assertNull(solver.addFactEquality(E(b,c,R2L0)));
+		assertNull(solver.addFactEquality(E(d,e,R3L0)));
+		assertNull(solver.addFactEquality(E(e,f,R4L0)));
+		FactResult result = solver.addFactEquality(E(a, d, R5L0));
 		assertNotNull(result);
 		List<QueryResult> queries = result.getSolvedQueries();
 		assertTrue(queries.size() == 2);
@@ -627,20 +657,20 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testSimpleQuerySuppressed1() {
-		assertNull(solver.addQuery(a, d, R3L0q, true));
-		assertNull(solver.addQuery(a, d, R5L0q, false));
+		assertNull(solver.addQuery(E(a, d, R3L0q), true));
+		assertNull(solver.addQuery(E(a, d, R5L0q), false));
 		
-		assertNull(solver.addFactEquality(a, b, R1L0));
-		assertNotNull(solver.addFactInequality(a, d, R4L0));
+		assertNull(solver.addFactEquality(E(a, b, R1L0)));
+		assertNotNull(solver.addFactInequality(E(a, d, R4L0)));
 		// query should not be there after being solved
-		assertNull(solver.addFactInequality(b, d, R2L0));
+		assertNull(solver.addFactInequality(E(b, d, R2L0)));
 	}
 	
 	// origin with different levels
 //	 sources without levels
 	public void testSourceTableSimpleWithLevels() {
-		solver.addFactEquality(a, b, R1L1);
-		solver.addFactEquality(a, c, R2L1);
+		solver.addFactEquality(E(a, b, R1L1));
+		solver.addFactEquality(E(a, c, R2L1));
 		assertEquals(mSet(
 				"a,b[R1/1]",
 				"a,c[R2/1]")
@@ -648,9 +678,9 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 
 	public void testSourceTableWithEdgeRedundantWithLevel1() {
-		solver.addFactEquality(a, b, R1L0);
-		solver.addFactEquality(b, c, R2L0);
-		solver.addFactEquality(a, c, R3L1);
+		solver.addFactEquality(E(a, b, R1L0));
+		solver.addFactEquality(E(b, c, R2L0));
+		solver.addFactEquality(E(a, c, R3L1));
 		assertEquals(mSet(
 				"a,b[R1]",
 				"a,c[R1, R2]",
@@ -659,9 +689,9 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testSourceTableWithEdgeRedundantWithLevel2() {
-		solver.addFactEquality(a, b, R1L1);
-		solver.addFactEquality(b, c, R2L0);
-		solver.addFactEquality(a, c, R3L1);
+		solver.addFactEquality(E(a, b, R1L1));
+		solver.addFactEquality(E(b, c, R2L0));
+		solver.addFactEquality(E(a, c, R3L1));
 		assertEquals(mSet(
 				"a,b[R1/1]",
 				"a,c[R3/1]",
@@ -670,10 +700,10 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	public void testSourceTableOptimisationWithoutLevels() {
-		solver.addFactEquality(a, b, R1L0);
-		solver.addFactEquality(c, d, R2L0);
-		solver.addFactEquality(a, c, R3L0);
-		solver.addFactEquality(d, e, R4L0);
+		solver.addFactEquality(E(a, b, R1L0));
+		solver.addFactEquality(E(c, d, R2L0));
+		solver.addFactEquality(E(a, c, R3L0));
+		solver.addFactEquality(E(d, e, R4L0));
 		assertEquals(mSet(
 				"b->a",
 				"d->a",
@@ -690,40 +720,101 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.getSourceTable().dump());
 	}
 	
-	public void testSourceTableOptimisationWithLevels() {
-		solver.addFactEquality(a, b, R1L0);
-		solver.addFactEquality(c, d, R2L1);
-		solver.addFactEquality(a, c, R3L1);
-		solver.addFactEquality(d, e, R4L0);
-		solver.addFactEquality(b, c, R5L0);
-		assertEquals(mSet(
-				"b->a",
-				"d->a",
-				"c->a",
-				"e->a"
-		),solver.dump());
-		assertEquals(mSet(
-				"a,b[R1]",
-				"c,d[R2]",
-				"a,c[R3]",
-				"d,e[R4]",
-				"a,d[R2, R3]",
-				"a,e[R4, R2, R3]"
-		),solver.getSourceTable().dump());
-	}
+//	public void testSourceTableOptimisationWithLevels() {
+//		solver.addFactEquality(E(a, b, R1L0));
+//		solver.addFactEquality(E(c, d, R2L1));
+//		solver.addFactEquality(E(a, c, R3L1));
+//		solver.addFactEquality(E(d, e, R4L0));
+//		solver.addFactEquality(E(b, c, R5L0));
+//		assertEquals(mSet(
+//				"b->a",
+//				"d->a",
+//				"c->a",
+//				"e->a"
+//		),solver.dump());
+//		assertEquals(mSet(
+//				"a,b[R1]",
+//				"c,d[R2]",
+//				"a,c[R3]",
+//				"d,e[R4]",
+//				"a,d[R2, R3]",
+//				"a,e[R4, R2, R3]"
+//		),solver.getSourceTable().dump());
+//	}
 	
 	
 	public void testRedundantQuery() {
-		solver.addQuery(a, b, R1L0q, true);
-		solver.addQuery(a, b, R2L0q, true);
+		solver.addQuery(E(a, b, R1L0q), true);
+		solver.addQuery(E(a, b, R2L0q), true);
 		
-		FactResult result = solver.addFactEquality(a, b, R3L0);
+		FactResult result = solver.addFactEquality(E(a, b, R3L0));
 		assertNotNull(result);
 		assertFalse(result.hasContradiction());
 		assertEquals(result.getSolvedQueries().size(),2);
 	}
 	
-	// backtracking
+	// instantiations
+	
+	public void testSimpleInstantiationInequalityFirst() {
+		solver.addFactInequality(E(a, b, R1L0));
+		List<InstantiationResult> result = solver.addInstantiation(I(a, R2L0q));
+		
+		assertNotNull(result);
+		assertEquals(1, result.size());
+		InstantiationResult res1 = result.get(0);
+		assertEquals(b, res1.getProposedValue());
+		assertEquals(R2L0q, res1.getSolvedSource());
+		assertEquals(mSet(R1L0), res1.getSolvedValueSource());
+	}
+
+	public void testSimpleInstantiationFirst() {
+		solver.addInstantiation(I(a, R2L0q));
+		FactResult factResult = solver.addFactInequality(E(a, b, R1L0));
+		assertNotNull(factResult);
+		assertFalse(factResult.hasContradiction());
+		assertEquals(1, factResult.getSolvedInstantiations().size());
+		InstantiationResult result = factResult.getSolvedInstantiations().get(0);
+		assertNotNull(result);
+		assertEquals(b, result.getProposedValue());
+		assertEquals(R2L0q, result.getSolvedSource());
+		assertEquals(mSet(R1L0), result.getSolvedValueSource());
+	}
+	
+	public void testMultipleInstantiation() {
+		solver.addFactEquality(E(a, b, R1L1));
+		solver.addFactEquality(E(a, c, R2L0));
+		solver.addFactInequality(E(b, d, R3L1));
+		solver.addFactInequality(E(c, e, R4L0));
+		
+		List<InstantiationResult> results = solver.addInstantiation(I(a, R6L0q));
+		assertNotNull(results);
+		assertEquals(2, results.size());
+		InstantiationResult result1 = results.get(0);
+		assertEquals(d, result1.getProposedValue());
+		assertEquals(R6L0q, result1.getSolvedSource());
+		assertEquals(mSet(R1L1, R3L1), result1.getSolvedValueSource());
+		InstantiationResult result2 = results.get(1);
+		assertEquals(e, result2.getProposedValue());
+		assertEquals(R6L0q, result2.getSolvedSource());
+		assertEquals(mSet(R2L0, R4L0), result2.getSolvedValueSource());
+	}
+	
+	public void testMultipleInstantiation2() {
+		solver.addFactEquality(E(a, b, R1L0));
+		solver.addFactEquality(E(a, c, R2L1));
+		solver.addFactInequality(E(b, d, R3L0));
+		solver.addFactInequality(E(c, e, R4L1));
+		solver.addFactEquality(E(d, e, R5L0));
+		
+		List<InstantiationResult> results = solver.addInstantiation(I(a, R6L0q));
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		InstantiationResult result1 = results.get(0);
+		assertEquals(d, result1.getProposedValue());
+		assertEquals(R6L0q, result1.getSolvedSource());
+		assertEquals(mSet(R1L0, R3L0), result1.getSolvedValueSource());
+	}
+	
 	
 	
 }

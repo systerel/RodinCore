@@ -34,7 +34,7 @@ public class TestSeedSearch extends TestCase {
 		IClause unitClause;
 		List<IClause> result;
 		
-		private TestPair(List<IClause> originalClauses, IClause unitClause, List<IClause> result) {
+		TestPair(List<IClause> originalClauses, IClause unitClause, List<IClause> result) {
 			this.originalClauses = originalClauses;
 			this.unitClause = unitClause;
 			this.result = result;

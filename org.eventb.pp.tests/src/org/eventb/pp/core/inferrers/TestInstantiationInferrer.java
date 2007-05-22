@@ -11,9 +11,8 @@ import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.InstantiationInferrer;
-import org.eventb.pp.AbstractPPTest;
 
-public class TestInstantiationInferrer extends AbstractPPTest {
+public class TestInstantiationInferrer extends AbstractInferrerTests {
 
 	private static class TestPair {
 		IClause input;
@@ -81,15 +80,19 @@ public class TestInstantiationInferrer extends AbstractPPTest {
 			
 	};
 	
+	
+	
 	public void testInstantiationInferrer() {
 		InstantiationInferrer inferrer = new InstantiationInferrer(new VariableContext());
 		for (TestPair test : tests) {
-			assertTrue(inferrer.canInfer(test.input));
-			inferrer.setTerm(test.term);
-			inferrer.setVariable(test.var);
+//			assertTrue(inferrer.canInfer(test.input));
+			inferrer.addInstantiation(test.var, test.term);
 			test.input.infer(inferrer);
 			assertEquals(test.output, inferrer.getResult());
+			
+			disjointVariables(test.input, inferrer.getResult());
 		}
+		
 	}
 	
 }

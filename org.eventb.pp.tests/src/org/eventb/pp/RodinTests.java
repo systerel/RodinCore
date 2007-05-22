@@ -8,7 +8,6 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.ClauseSimplifier;
-import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.ProofStrategy;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
 import org.eventb.pp.PPResult.Result;
@@ -36,7 +35,7 @@ public class RodinTests extends AbstractPPTest {
 		}
 	}
 	
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+	static FormulaFactory ff = FormulaFactory.getDefault();
 	private static ITypeEnvironment env = ff.makeTypeEnvironment();
 	static {
 		env.addName("f", REL(ty_S, ty_T));
@@ -72,31 +71,54 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	TestPair[] tests = new TestPair[]{
+			// translation
+//			new TestPair(mSet(
+//					"A = S",
+//					"C ⊆ S",
+//					"A ∈ U"
+//					),"C ∪ A ∈ U",true
+//			),
+//			new TestPair(mSet(
+//					"C ⊆ S",
+//					"S ∈ U"
+//					),"C ∪ S ∈ U",true
+//			),
+			// modus ponens
+//			new TestPair(mSet(
+//					"f ∈ S ⇸ T",
+//					"x ∉ dom(f)",
+//					"y ∈ T"
+//					),"f ∪ {x ↦ y} ∈ S ⇸ T",true
+//			),
+//			new TestPair(mSet(
+//					"A∪B∈U",
+//					"A∪C∈U",
+//					"(A∪B)∩(A∪C)∈U"
+//					),"A∪(B∩C)∈U",true
+//			),
+//			new TestPair(mSet(
+//					"∅∉U",
+//					"A∪B∈U",
+//					"A∪C∈U",
+//					"(A∪B)∩(A∪C)∈U"
+//					),"A∪(B∩C)=(A∪B)∩(A∪C)",true
+//			),
 			new TestPair(mSet(
-					"A∪B∈U",
-					"A∪C∈U",
-					"(A∪B)∩(A∪C)∈U"
-					),"A∪(B∩C)∈U",true
-					),
-			new TestPair(mSet(
-					"∅∉U",
-					"A∪B∈U",
-					"A∪C∈U",
 					"(A∪B)∩(A∪C)∈U"
 					),"A∪(B∩C)=(A∪B)∩(A∪C)",true
 			),
-			new TestPair(mSet(
-					"(A∪B)∈U"
-					),"A∈U",false),
-			new TestPair(mSet("r ∈ ran(r)∖{x} → ran(r)","r∼[q]⊆q","x∈q"),
-					"ran(r)∖r∼[ran(r)∖q]⊆q",true),
-			new TestPair(mSet("A = G"),"G ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)",true),
-			new TestPair(mSet("q ⊆ R"),"R ∖ q ⊆ R",true),
-			new TestPair(mSet("∀r·r∈R⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}","nxt∈R → (B ⤔ B)"),
-					"∀r·r∈R⇒r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))∧r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))",true),
-			new TestPair(mSet("R ⊆ C"),"r[R] ⊆ r[C]",true),
-			new TestPair(mSet("a = c"),"a ∈ {c,d}",true),
-			new TestPair(mSet("(∃x,y·f(x)=y ∧ g(y)=a)"),"(∃x·(g∘f)(x)=a)",true),
+//			new TestPair(mSet(
+//					"(A∪B)∈U"
+//					),"A∈U",false),
+//			new TestPair(mSet("r ∈ ran(r)∖{x} → ran(r)","r∼[q]⊆q","x∈q"),
+//					"ran(r)∖r∼[ran(r)∖q]⊆q",true),
+//			new TestPair(mSet("A = G"),"G ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)",true),
+//			new TestPair(mSet("q ⊆ R"),"R ∖ q ⊆ R",true),
+////			new TestPair(mSet("∀r·r∈R⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}","nxt∈R → (B ⤔ B)"),
+////					"∀r·r∈R⇒r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))∧r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))",true),
+//			new TestPair(mSet("R ⊆ C"),"r[R] ⊆ r[C]",true),
+//			new TestPair(mSet("a = c"),"a ∈ {c,d}",true),
+//			new TestPair(mSet("(∃x,y·f(x)=y ∧ g(y)=a)"),"(∃x·(g∘f)(x)=a)",true),
 //			new TestPair(mSet("(∀x·(∃x0·x ↦ x0∈SIG)⇒(∃x0·x0 ↦ x∈fst))" +
 //					"∧" +
 //					"(∀x,x0,x1·x ↦ x0∈SIG∧x ↦ x1∈SIG⇒x0=x1)" +
@@ -135,6 +157,11 @@ public class RodinTests extends AbstractPPTest {
 		ITypeCheckResult result = predicate.typeCheck(environment);
 		assertTrue(result.toString(),result.isSuccess());
 		environment.addAll(result.getInferredEnvironment());
+	}
+	
+	public static void main(String[] args) {
+		RodinTests test = new RodinTests();
+		test.testAll();
 	}
 	
 }

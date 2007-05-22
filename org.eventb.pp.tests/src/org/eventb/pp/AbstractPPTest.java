@@ -22,7 +22,6 @@ import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.IEquality;
-import org.eventb.internal.pp.core.elements.PPTrueClause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
@@ -89,11 +88,23 @@ public abstract class AbstractPPTest extends TestCase {
 	protected static LocalVariable fvar1 = cFLocVar(1);
 	
 	protected static IEquality ab = Util.cEqual(a, b);
+	protected static IEquality ac = Util.cEqual(a, c);
 	protected static IEquality nab = Util.cNEqual(a, b);
 	protected static IEquality bc = Util.cEqual(b, c);
 	protected static IEquality nbc = Util.cNEqual(b, c);
 	protected static IEquality cd = Util.cEqual(c, d);
 	protected static IEquality ncd = Util.cNEqual(c, d);
+	protected static IEquality nbd = Util.cNEqual(b, d);
+	protected static IEquality nac = Util.cNEqual(a, c);
+	
+	
+	protected static IEquality xa = Util.cEqual(x, a);
+	protected static IEquality xb = Util.cEqual(x, b);
+	protected static IEquality yb = Util.cEqual(y, b);
+	protected static IEquality nxa = Util.cNEqual(x, a);
+	protected static IEquality nxb = Util.cNEqual(x, b);
+	protected static IEquality xc = Util.cEqual(x, c);
+	protected static IEquality xd = Util.cEqual(x, d);
 	
 	
 	protected static <T> Set<T> mSet(T... elements) {

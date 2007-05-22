@@ -4,4 +4,5 @@ import junit.framework.TestCase;
 
 public class TestTracer extends TestCase {
 
+	// nothing yet
 }

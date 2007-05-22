@@ -17,10 +17,10 @@ public class TestRandom extends TestCase {
 	private Object e = new Object();
 	private Object f = new Object();
 	private Object g = new Object();
-	private Object h = new Object();
-	private Object i = new Object();
-	private Object j = new Object();
-	private Object k = new Object();
+//	private Object h = new Object();
+//	private Object i = new Object();
+//	private Object j = new Object();
+//	private Object k = new Object();
 	
 	
 	public void testConstruction() {
@@ -510,6 +510,7 @@ public class TestRandom extends TestCase {
 			fail();
 		}
 		catch(NoSuchElementException e) {
+			// nothing
 		}
 	}
 	
@@ -532,6 +533,7 @@ public class TestRandom extends TestCase {
 			it.next();
 			fail();
 		} catch (NoSuchElementException e) {
+			// nothing
 		}
 	}
 	
@@ -559,6 +561,7 @@ public class TestRandom extends TestCase {
 			it.next();
 			fail();
 		} catch (NoSuchElementException e) {
+			// nothing
 		}
 	}
 	

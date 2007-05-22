@@ -3,12 +3,14 @@ package org.eventb.pp.core.provers;
 import static org.eventb.pp.Util.cClause;
 import static org.eventb.pp.Util.cProp;
 
+import java.util.List;
+
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.elements.IEquality;
 import org.eventb.internal.pp.core.provers.equality.EquivalenceManager;
+import org.eventb.internal.pp.core.provers.equality.IInstantiationResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.FactResult;
+import org.eventb.internal.pp.core.provers.equality.unionfind.InstantiationResult;
 import org.eventb.pp.AbstractPPTest;
-import org.eventb.pp.Util;
 
 public class TestEquivalenceManager extends AbstractPPTest {
 	
@@ -81,6 +83,20 @@ public class TestEquivalenceManager extends AbstractPPTest {
 	public void testRemoveInexistantClauseWithLevel() {
 		manager.addQueryEquality(ab, cClause(BASE,cProp(0),ab));
 		manager.removeQueryEquality(ab, cClause(ONE, cProp(0),ab));
+		manager.backtrack(BASE);
+		assertNotNull(manager.addFactEquality(ab, cClause(ab)));
+	}
+	
+	public void testRemoveInexistantClauseWithLevel2() {
+		manager.addQueryEquality(ab, cClause(ONE,cProp(0),ab));
+		manager.addQueryEquality(ab, cClause(BASE, cProp(0),ab));
+		manager.backtrack(BASE);
+		assertNotNull(manager.addFactEquality(ab, cClause(ab)));
+	}
+	
+	public void testRemoveInexistantClauseWithLevel3() {
+		manager.addQueryEquality(ab, cClause(BASE,cProp(0),ab));
+		manager.addQueryEquality(ab, cClause(ONE, cProp(0),ab));
 		manager.backtrack(BASE);
 		assertNotNull(manager.addFactEquality(ab, cClause(ab)));
 	}
@@ -163,5 +179,161 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		
 //		manager.backtrack(BASE);
 	}
+	
+	// instantiations
+	public void testInstantiation() {
+		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(0),xa)));
+		FactResult result = manager.addFactEquality(nab, cClause(nab));
+		assertNotNull(result);
+		assertEquals(1, result.getSolvedInstantiations().size());
+		IInstantiationResult result1 = result.getSolvedInstantiations().get(0);
+		assertEquals(b, result1.getInstantiationValue());
+		assertEquals(xa, result1.getEquality());
+		assertEquals(mSet(cClause(cProp(0),xa)), result1.getSolvedClauses());
+		assertEquals(mSet(cClause(nab)), result1.getSolvedValueOrigin());
+	}
+	
+	public void testInstantiation2() {
+		assertNull(manager.addInstantiationEquality(xb, cClause(cProp(0),xb)));
+		FactResult result = manager.addFactEquality(nab, cClause(nab));
+		assertNotNull(result);
+		assertEquals(1, result.getSolvedInstantiations().size());
+		IInstantiationResult result1 = result.getSolvedInstantiations().get(0);
+		assertEquals(a, result1.getInstantiationValue());
+		assertEquals(xb, result1.getEquality());
+		assertEquals(mSet(cClause(cProp(0),xb)), result1.getSolvedClauses());
+		assertEquals(mSet(cClause(nab)), result1.getSolvedValueOrigin());
+	}
+	
+	
+	public void testInstantiationFactFirst() {
+		assertNull(manager.addFactEquality(nab, cClause(nab)));
+		List<InstantiationResult> result = manager.addInstantiationEquality(xa, cClause(cProp(0),xa));
+		assertNotNull(result);
+		assertEquals(1, result.size());
+		IInstantiationResult result1 = result.get(0);
+		assertEquals(b, result1.getInstantiationValue());
+		assertEquals(xa, result1.getEquality());
+		assertEquals(mSet(cClause(cProp(0),xa)), result1.getSolvedClauses());
+		assertEquals(mSet(cClause(nab)), result1.getSolvedValueOrigin());
+	}
+	
+	public void testInstantiationStays() {
+		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(0),xa)));
+		manager.addFactEquality(nab, cClause(nab));
+		FactResult result = manager.addFactEquality(nac, cClause(nac));
+		assertNotNull(result);
+		assertEquals(1, result.getSolvedInstantiations().size());
+		IInstantiationResult result1 = result.getSolvedInstantiations().get(0);
+		assertEquals(c, result1.getInstantiationValue());
+		assertEquals(xa, result1.getEquality());
+		assertEquals(mSet(cClause(cProp(0),xa)), result1.getSolvedClauses());
+		assertEquals(mSet(cClause(nac)), result1.getSolvedValueOrigin());
+	}
+	
+	public void testRedundantInstantiation() {
+		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(0),xa)));
+		manager.addFactEquality(nab, cClause(nab));
+		assertNull(manager.addFactEquality(bc, cClause(bc)));
+		assertNull(manager.addFactEquality(nac, cClause(nac)));
+	}
+	
+	public void testBacktrackInstantiation() {
+		assertNull(manager.addInstantiationEquality(xa, cClause(ONE, cProp(0),xa)));
+		manager.backtrack(BASE);
+		assertNull(manager.addFactEquality(nab, cClause(nab)));
+	}
+	
+	public void testSeveralSolvedInstantiations() {
+		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(0),xa)));
+		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(1),xa)));
+		FactResult result = manager.addFactEquality(nab, cClause(nab));
+		assertNotNull(result);
+		assertEquals(1, result.getSolvedInstantiations().size());
+		IInstantiationResult result1 = result.getSolvedInstantiations().get(0);
+		assertEquals(b, result1.getInstantiationValue());
+		assertEquals(xa, result1.getEquality());
+		assertEquals(mSet(cClause(cProp(0),xa),cClause(cProp(1),xa)), result1.getSolvedClauses());
+		assertEquals(mSet(cClause(nab)), result1.getSolvedValueOrigin());
+	}
+	
+	public void testSeveralSolvedInstantiationsWithBacktrack() {
+		assertNull(manager.addInstantiationEquality(xa, cClause(ONE,cProp(0),xa)));
+		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(1),xa)));
+		manager.backtrack(BASE);
+		FactResult result = manager.addFactEquality(nab, cClause(nab));
+		assertNotNull(result);
+		assertEquals(1, result.getSolvedInstantiations().size());
+		IInstantiationResult result1 = result.getSolvedInstantiations().get(0);
+		assertEquals(b, result1.getInstantiationValue());
+		assertEquals(xa, result1.getEquality());
+		assertEquals(mSet(cClause(cProp(1),xa)), result1.getSolvedClauses());
+		assertEquals(mSet(cClause(nab)), result1.getSolvedValueOrigin());
+	}
+	
+	public void testSeveralSolvedInstantiationsWithBacktrackAfter() {
+		assertNull(manager.addInstantiationEquality(xa, cClause(ONE,cProp(0),xa)));
+		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(1),xa)));
+		manager.addFactEquality(bc, cClause(bc));
+		FactResult result = manager.addFactEquality(nab, cClause(nab));
+		assertNotNull(result);
+		assertEquals(1, result.getSolvedInstantiations().size());
+		IInstantiationResult result1 = result.getSolvedInstantiations().get(0);
+		assertEquals(b, result1.getInstantiationValue());
+		assertEquals(xa, result1.getEquality());
+		assertEquals(mSet(cClause(ONE,cProp(0),xa),cClause(cProp(1),xa)), result1.getSolvedClauses());
+		assertEquals(mSet(cClause(nab)), result1.getSolvedValueOrigin());
+		
+		manager.backtrack(BASE);
+		assertNull(manager.addFactEquality(nac, cClause(nac)));
+	}
+	
+	public void testSeveralSolvedInstantiationsWithBacktrackAfter2() {
+		assertNull(manager.addInstantiationEquality(xa, cClause(ONE,cProp(0),xa)));
+		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(1),xa)));
+		manager.addFactEquality(bc, cClause(ONE, bc));
+		assertNotNull(manager.addFactEquality(nab, cClause(nab)));
+		
+		manager.backtrack(BASE);
+		
+		FactResult result = manager.addFactEquality(nac, cClause(nac));
+		
+		assertNotNull(result);
+		assertEquals(1, result.getSolvedInstantiations().size());
+		IInstantiationResult result1 = result.getSolvedInstantiations().get(0);
+		assertEquals(c, result1.getInstantiationValue());
+		assertEquals(xa, result1.getEquality());
+		assertEquals(mSet(cClause(cProp(1),xa)), result1.getSolvedClauses());
+	}
+	
+	public void testInstantiationOnEqualTree() {
+		manager.addFactEquality(ab, cClause(ab));
+		manager.addFactEquality(bc, cClause(bc));
+		manager.addInstantiationEquality(xc, cClause(cProp(0),xc));
+		
+		FactResult result = manager.addFactEquality(ncd, cClause(ncd));
+		assertNotNull(result);
+		assertEquals(1, result.getSolvedInstantiations().size());
+		IInstantiationResult result1 = result.getSolvedInstantiations().get(0);
+		assertEquals(d, result1.getInstantiationValue());
+		assertEquals(xc, result1.getEquality());
+		assertEquals(mSet(cClause(cProp(0),xc)), result1.getSolvedClauses());
+		assertEquals(mSet(cClause(ncd)), result1.getSolvedValueOrigin());
+	}	
+	
+	public void testInstantiationOnEqualTree2() {
+		manager.addFactEquality(ab, cClause(ab));
+		manager.addFactEquality(bc, cClause(bc));
+		manager.addInstantiationEquality(xc, cClause(cProp(0),xc));
+		
+		FactResult result = manager.addFactEquality(nbd, cClause(nbd));
+		assertNotNull(result);
+		assertEquals(1, result.getSolvedInstantiations().size());
+		IInstantiationResult result1 = result.getSolvedInstantiations().get(0);
+		assertEquals(d, result1.getInstantiationValue());
+		assertEquals(xc, result1.getEquality());
+		assertEquals(mSet(cClause(cProp(0),xc)), result1.getSolvedClauses());
+		assertEquals(mSet(cClause(bc),cClause(nbd)), result1.getSolvedValueOrigin());
+	}	
 	
 }

@@ -13,14 +13,10 @@ import static org.eventb.pp.Util.mList;
 
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
-
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.ILiteral;
-import org.eventb.internal.pp.core.elements.terms.Constant;
-import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
 import org.eventb.pp.AbstractPPTest;
@@ -36,25 +32,11 @@ public class TestLiteralSimplification extends AbstractPPTest {
 		}
 	}
 	
-	private static Constant a = Util.cCons("a");
-	private static Constant b = Util.cCons("b");
-	private static Constant c = Util.cCons("c");
-	
-	private static Constant newCons0 = Util.cCons("0");
-	private static Constant newCons1 = Util.cCons("1");
-	private static Constant newCons2 = Util.cCons("2");
 	
 	private static Variable var0 = Util.cVar();
 	private static Variable var00 = Util.cVar();
 	private static Variable var1 = Util.cVar();
-	private static Variable var2 = Util.cVar();
 	
-	private static LocalVariable fvar0 = Util.cFLocVar(0);
-	private static LocalVariable fvar1 = Util.cFLocVar(1);
-	private static LocalVariable fvar2 = Util.cFLocVar(2);
-	private static LocalVariable evar0 = Util.cELocVar(0);
-	private static LocalVariable evar1 = Util.cELocVar(1);
-	private static LocalVariable evar2 = Util.cELocVar(2);
 	
 	TestPair[] tests = new TestPair[] {
 		new TestPair(
@@ -373,7 +355,6 @@ public class TestLiteralSimplification extends AbstractPPTest {
 		for (TestPair test : tests) {
 			LiteralSimplifier rule = new LiteralSimplifier(variableContext());
 			
-			Constant.uniqueIdentifier = 0;
 			IClause actual = test.input.simplify(rule);
 			assertEquals(test.input.toString(),test.output,actual);
 		}

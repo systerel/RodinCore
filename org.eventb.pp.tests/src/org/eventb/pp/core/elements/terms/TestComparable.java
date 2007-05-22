@@ -1,0 +1,99 @@
+package org.eventb.pp.core.elements.terms;
+
+import org.eventb.internal.pp.core.elements.terms.Term;
+import org.eventb.pp.AbstractPPTest;
+
+public class TestComparable extends AbstractPPTest {
+
+	private static class TestPair {
+		Term term1, term2;
+		int result;
+		
+		TestPair(Term term1, Term term2, int result) {
+			this.term1 = term1;
+			this.term2 = term2;
+			this.result = result;
+		}
+	}
+
+	public void testConstants() {
+		doTest(new TestPair(
+				a,b,-1
+		));
+		doTest(new TestPair(
+				b,a,1
+		));
+		doTest(new TestPair(
+				a,a,0
+		));
+	}
+	
+	public void testConstantsWithVariables() {
+		doTest(new TestPair(
+				a,x,1
+		));
+		doTest(new TestPair(
+				x,a,-1
+		));
+	}
+
+	public void testVariables() {
+		doTest(new TestPair(
+				x,y,1
+		));
+		doTest(new TestPair(
+				y,x,-1
+		));
+		doTest(new TestPair(
+				x,x,0
+		));
+	}
+	
+	public void testLocalVariablesWithVariables() {
+		doTest(new TestPair(
+				x,evar0,-1
+		));
+		doTest(new TestPair(
+				evar0,x,1		
+		));
+	}
+	
+	public void testLocalVariables() {
+		doTest(new TestPair(
+				evar0,evar1,-1
+		));
+		doTest(new TestPair(
+				evar1,evar0,1	
+		));
+		doTest(new TestPair(
+				evar0,evar0,0
+		));
+	}
+
+	public void testLocalVariablesWithConstants() {
+		doTest(new TestPair(
+				evar0,a,-1
+		));
+		doTest(new TestPair(
+				a,evar0,1	
+		));
+	}
+	
+//	public void testArithmeticWithConstants() {
+//		
+//	}
+	
+	private void doTest(TestPair test) {
+		int actual = test.term1.compareTo(test.term2);
+		if (actual == 0) assertEquals(test.result, actual);
+		if (actual < 0) assertTrue(test.result < 0);
+		if (actual > 0) assertTrue(test.result > 0);
+		
+		actual = test.term2.compareTo(test.term1);
+		if (actual == 0) assertEquals(test.result, actual);
+		if (actual < 0) assertTrue(test.result > 0);
+		if (actual > 0) assertTrue(test.result < 0);
+	}
+	
+	
+}

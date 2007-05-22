@@ -39,7 +39,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.ILiteral;
 import org.eventb.internal.pp.core.elements.IPredicate;
-import org.eventb.internal.pp.core.elements.PPPredicate;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
@@ -169,7 +168,7 @@ public class TestClauseBuilder extends TestCase {
 			),
 			new TestPair(
 					mList("a ∈ S","a ∈ S"),
-					mList(cProp(0),cProp(0))
+					mList(cProp(0))
 			),
 			new TestPair(
 					mList("a ∈ S ∨ d ∈ U"),
@@ -196,7 +195,7 @@ public class TestClauseBuilder extends TestCase {
 			),
 			new TestPair(
 					mList("(a ∈ S ∧ d ∈ U) ∧ d ∈ U"),
-					mList(cProp(0),cProp(1),cProp(1))
+					mList(cProp(0),cProp(1))
 			),
 			
 			new TestPair(
@@ -1138,7 +1137,7 @@ public class TestClauseBuilder extends TestCase {
 			),
 			new TestPair(
 					mList("b = TRUE","b = TRUE"),
-					mList(cProp(0),cProp(0))
+					mList(cProp(0))
 			),
 			new TestPair(
 					mList("b = TRUE","b = FALSE"),
@@ -1239,6 +1238,21 @@ public class TestClauseBuilder extends TestCase {
 			),
 	};
 	
+	TestPair[] testTypeClauseGeneration = new TestPair[] {
+//			new TestPair(
+//					mList("b ∈ S", "a ∈ C"),
+//					noLit
+//			),
+			new TestPair(
+					mList("S ∈ O", "∃x·(∀x0·x0∈x)∧x∈O"),
+					noLit
+			),
+			new TestPair(
+					mList("a ∈ S", "b ∈ S"),
+					noLit
+			),
+	};
+	
 	public void doTest(List<String> strPredicate, Collection<? extends ILiteral> literals, Collection<IClause> clauses, boolean goal) {
 		LoaderResult result = load(strPredicate, goal);
 		List<IClause> allClauses = new ArrayList<IClause>();
@@ -1286,6 +1300,7 @@ public class TestClauseBuilder extends TestCase {
 	private ITypeCheckResult getResult(String strPredicate, PredicateBuilder builder, ITypeEnvironment types, boolean goal) {
 		Predicate predicate = Util.parsePredicate(strPredicate);
 		ITypeCheckResult result = predicate.typeCheck(types);
+		assertTrue(result+"",result.isSuccess());
 		builder.build(predicate,goal);
 		return result;
 	}
@@ -1338,6 +1353,11 @@ public class TestClauseBuilder extends TestCase {
 		}
 	}
 	
+	public void testTypeClauseGeneration() {
+		for (TestPair test : testTypeClauseGeneration) {
+			doTest(test.predicate, test.unitClauses, test.clauses, true);
+		}
+	}
 	
 	public void testNotSameVariable() {
 		LoaderResult result = load(mList("(∀x·x ∈ S ∨ x ∈ S) ⇒ (∀x·x ∈ S ∨ x ∈ S )"),false);

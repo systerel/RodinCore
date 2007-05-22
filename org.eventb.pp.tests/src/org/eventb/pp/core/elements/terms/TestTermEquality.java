@@ -1,4 +1,4 @@
-package org.eventb.pp.core.elements;
+package org.eventb.pp.core.elements.terms;
 
 import static org.eventb.pp.Util.cCons;
 import static org.eventb.pp.Util.cDiv;
@@ -33,9 +33,9 @@ public class TestTermEquality extends TestCase {
 	private static Constant a = cCons("a");
 	private static Constant b = cCons("b");
 	private static LocalVariable evar0 = cELocVar(0);
-	private static LocalVariable evar1 = cELocVar(1);
+//	private static LocalVariable evar1 = cELocVar(1);
 	private static LocalVariable fvar0 = cFLocVar(0);
-	private static LocalVariable fvar1 = cFLocVar(1);
+//	private static LocalVariable fvar1 = cFLocVar(1);
 	
 	
 	Term[][] equalTerms = new Term[][]{
@@ -316,7 +316,7 @@ public class TestTermEquality extends TestCase {
 			
 	};
 
-	public void testEqual() {
+	public void testEqualWithDifferentVariables() {
 		HashMap<AbstractVariable, AbstractVariable> map;
 		for (Term[] terms : equalTerms) {
 			for (int i = 0; i < terms.length-1; i++) {

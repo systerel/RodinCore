@@ -16,7 +16,7 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.AbstractPPClause;
-import org.eventb.internal.pp.core.elements.ClauseFactory;
+import org.eventb.internal.pp.core.elements.AbstractPPPredicate;
 import org.eventb.internal.pp.core.elements.IArithmetic;
 import org.eventb.internal.pp.core.elements.IClause;
 import org.eventb.internal.pp.core.elements.IEquality;
@@ -347,11 +347,11 @@ public class Util {
 		return new PPPredicate(index, false, Arrays.asList(terms));
 	}
 	
-	public static PPProposition cProp(int index) {
+	public static AbstractPPPredicate cProp(int index) {
 		return new PPProposition(index, true);
 	}
 	
-	public static PPProposition cNotProp(int index) {
+	public static AbstractPPPredicate cNotProp(int index) {
 		return new PPProposition(index, false);
 	}
 	

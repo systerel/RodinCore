@@ -17,6 +17,7 @@ import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 import org.eventb.pp.Util;
 
+@SuppressWarnings("unused")
 public class TestInstantiationBlocker extends TestCase {
 
 	private static Variable x1;

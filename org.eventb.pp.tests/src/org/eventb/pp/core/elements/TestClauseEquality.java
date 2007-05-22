@@ -32,165 +32,173 @@ public class TestClauseEquality extends TestCase{
 	private static LocalVariable fvar0 = cFLocVar(0);
 	private static LocalVariable fvar1 = cFLocVar(1);
 	
-	IClause[][] equalClauses = new IClause[][]{
-			new IClause[]{
-					cClause(cProp(0)),cClause(cProp(0))	
-			},
-			new IClause[]{
-					cClause(cPred(0,x)),cClause(cPred(0,y))	
-			},
-			new IClause[]{
-					cClause(cPred(0,x,y)),cClause(cPred(0,y,x))	
-			},
-			new IClause[]{
-					cClause(cPred(0,x,y,z)),cClause(cPred(0,y,x,z))	
-			},
-			new IClause[]{
-					cClause(cPred(0,x,y,z)),cClause(cPred(0,z,y,x))	
-			},
-			new IClause[]{
-					cClause(cPred(0,x),cPred(1,y)),cClause(cPred(0,y),cPred(1,x))
-			},
-			new IClause[]{
-					cClause(cPred(0,x),cPred(1,y),cPred(2,z)),cClause(cPred(0,y),cPred(1,x),cPred(2,z))
-			},
-			new IClause[]{
-					cClause(cPred(0,x),cPred(1,x),cPred(2,x)),cClause(cPred(0,y),cPred(1,y),cPred(2,y))
-			},
-			new IClause[]{
-					cClause(cPred(0,x),cPred(1,y),cPred(2,x)),cClause(cPred(0,z),cPred(1,x),cPred(2,z))
-			},
+	public void testPropositionalEqual() {
+		testEqual(
+				cClause(cProp(0)),cClause(cProp(0))	
+		);
+	}
 
-			new IClause[]{
-					cClause(cPred(0,x),cEqual(x,y)),cClause(cPred(0,x),cEqual(y,x))
-			},
-			new IClause[]{
-					cClause(cPred(0,y),cEqual(a,y)),cClause(cPred(0,x),cEqual(a,x))
-			},
-			new IClause[]{
-					cClause(cPred(0,y),cEqual(a,y)),cClause(cPred(0,x),cEqual(x,a))
-			},
-			
-			new IClause[]{
-					cClause(cPred(0,a)),cClause(cPred(0,a))
-			},
-			new IClause[]{
-					cClause(cPred(0,evar0)),cClause(cPred(0,evar1))
-			},
-			new IClause[]{
-					cClause(cPred(0,x,evar0)),cClause(cPred(0,y,evar1))
-			},
-			new IClause[]{
-					cEqClause(cProp(0),cPred(0,fvar0)),cEqClause(cProp(0),cPred(0,fvar1))
-			},
-			
-			new IClause[]{
-					cClause(cPred(1,cPlus(cPlus(a,y),y))),cClause(cPred(1,cPlus(cPlus(a,x),x)))
-			},
-			
-			
-	};
+	public void testPredicateEqual() {
+		testEqual(
+				cClause(cPred(0,x)),cClause(cPred(0,y))	
+		);
+		testEqual(
+				cClause(cPred(0,x,y)),cClause(cPred(0,y,x))	
+		);
+		testEqual(
+				cClause(cPred(0,x,y,z)),cClause(cPred(0,y,x,z))	
+		);
+		testEqual(
+				cClause(cPred(0,x,y,z)),cClause(cPred(0,z,y,x))	
+		);
+		testEqual(
+				cClause(cPred(0,x),cPred(1,y)),cClause(cPred(0,y),cPred(1,x))
+		);
+		testEqual(
+				cClause(cPred(0,x),cPred(1,y),cPred(2,z)),cClause(cPred(0,y),cPred(1,x),cPred(2,z))
+		);
+		testEqual(
+				cClause(cPred(0,x),cPred(1,x),cPred(2,x)),cClause(cPred(0,y),cPred(1,y),cPred(2,y))
+		);
+		testEqual(
+				cClause(cPred(0,x),cPred(1,y),cPred(2,x)),cClause(cPred(0,z),cPred(1,x),cPred(2,z))
+		);
 
+		testEqual(
+				cClause(cPred(0,x),cEqual(x,y)),cClause(cPred(0,x),cEqual(y,x))
+		);
+		testEqual(
+				cClause(cPred(0,y),cEqual(a,y)),cClause(cPred(0,x),cEqual(a,x))
+		);
+		testEqual(
+				cClause(cPred(0,y),cEqual(a,y)),cClause(cPred(0,x),cEqual(x,a))
+		);
+
+		testEqual(
+				cClause(cPred(0,a)),cClause(cPred(0,a))
+		);
+		testEqual(
+				cClause(cPred(0,evar0)),cClause(cPred(0,evar1))
+		);
+		testEqual(
+				cClause(cPred(0,x,evar0)),cClause(cPred(0,y,evar1))
+		);
+		testEqual(
+				cEqClause(cProp(0),cPred(0,fvar0)),cEqClause(cProp(0),cPred(0,fvar1))
+		);
+
+		testEqual(
+				cClause(cPred(1,cPlus(cPlus(a,y),y))),cClause(cPred(1,cPlus(cPlus(a,x),x)))
+		);
+
+		testEqual(
+				cEqClause(cPred(3,x),cPred(0,x),cNotPred(1,x,evar0)),cEqClause(cPred(3,x),cPred(0,x),cNotPred(1,x,evar1))
+		);
+	}
+
+
+	public void testUnequalClauses() {
+		testUnequal(
+				cClause(cProp(0)),cClause(cNotProp(0))
+		);
+		testUnequal(
+				cClause(cPred(1,a)),cClause(cNotPred(1,a))
+		);
+		testUnequal(
+				cClause(cEqual(a,a)),cClause(cNEqual(a,a))
+		);
+
+		testUnequal(
+				cClause(cProp(0)),cClause(cProp(1))	
+		);
+		testUnequal(
+				cClause(cPred(0,x)),cClause(cPred(0,x,x))	
+		);
+		testUnequal(
+				cClause(cPred(0,x)),cClause(cPred(1,x))	
+		);
+
+		testUnequal(
+				cClause(cPred(0,x,y)),cClause(cPred(0,y,y))	
+		);
+
+		testUnequal(
+				cClause(cPred(0,x,y,z)),cClause(cPred(0,y,x,x))	
+		);
+		testUnequal(
+				cClause(cPred(0,x,y,z)),cClause(cPred(0,x,x,x))	
+		);
+		testUnequal(
+				cClause(cPred(0,x,y,z)),cClause(cPred(0,x,x,y))	
+		);
+
+		testUnequal(
+				cClause(cPred(0,x),cPred(1,y)),cClause(cPred(0,x),cPred(1,x))
+		);
+		testUnequal(
+				cClause(cPred(0,x),cPred(1,y),cPred(2,z)),cClause(cPred(0,x),cPred(1,x),cPred(2,z))
+		);
+		testUnequal(
+				cClause(cPred(0,x),cPred(1,x),cPred(2,x)),cClause(cPred(0,x),cPred(1,y),cPred(2,y))
+		);
+		testUnequal(
+				cClause(cPred(0,x),cPred(1,y),cPred(2,x)),cClause(cPred(0,z),cPred(1,x),cPred(2,x))
+		);
+
+		testUnequal(
+				cClause(cPred(0,a)),cClause(cPred(0,b))
+		);
+
+
+		testUnequal(
+				cEqClause(cProp(1),cPred(0,evar0)),cEqClause(cProp(1),cPred(0,fvar1))
+		);
+		testUnequal(
+				cEqClause(cProp(1),cPred(0,fvar0)),cEqClause(cProp(1),cPred(0,evar1))
+		);
+
+		testUnequal(
+				cEqClause(cProp(0),cProp(0)),cClause(cProp(0),cProp(0))	
+		);
+
+		testUnequal(
+				cEqClause(cProp(0),cPred(1,a)),cClause(cProp(0),cPred(1,b))	
+		);
+
+		testUnequal(
+				cClause(cPred(0,x),cEqual(a,y)),cClause(cPred(0,x),cEqual(a,x))
+		);			
+		testUnequal(
+				cClause(cPred(0,x),cEqual(a,y)),cClause(cPred(0,x),cEqual(a,a))
+		);
+	}
 	
-	IClause[][] unequalClauses = new IClause[][]{
-			new IClause[]{
-					cClause(cProp(0)),cClause(cNotProp(0))
-			},
-			new IClause[]{
-					cClause(cPred(1,a)),cClause(cNotPred(1,a))
-			},
-			new IClause[]{
-					cClause(cEqual(a,a)),cClause(cNEqual(a,a))
-			},
-			
-			new IClause[]{
-					cClause(cProp(0)),cClause(cProp(1))	
-			},
-			new IClause[]{
-					cClause(cPred(0,x)),cClause(cPred(0,x,x))	
-			},
-			new IClause[]{
-					cClause(cPred(0,x)),cClause(cPred(1,x))	
-			},
-			
-			new IClause[]{
-					cClause(cPred(0,x,y)),cClause(cPred(0,y,y))	
-			},
-			
-			new IClause[]{
-					cClause(cPred(0,x,y,z)),cClause(cPred(0,y,x,x))	
-			},
-			new IClause[]{
-					cClause(cPred(0,x,y,z)),cClause(cPred(0,x,x,x))	
-			},
-			new IClause[]{
-					cClause(cPred(0,x,y,z)),cClause(cPred(0,x,x,y))	
-			},
-			
-			new IClause[]{
-					cClause(cPred(0,x),cPred(1,y)),cClause(cPred(0,x),cPred(1,x))
-			},
-			new IClause[]{
-					cClause(cPred(0,x),cPred(1,y),cPred(2,z)),cClause(cPred(0,x),cPred(1,x),cPred(2,z))
-			},
-			new IClause[]{
-					cClause(cPred(0,x),cPred(1,x),cPred(2,x)),cClause(cPred(0,x),cPred(1,y),cPred(2,y))
-			},
-			new IClause[]{
-					cClause(cPred(0,x),cPred(1,y),cPred(2,x)),cClause(cPred(0,z),cPred(1,x),cPred(2,x))
-			},
-
-			new IClause[]{
-					cClause(cPred(0,a)),cClause(cPred(0,b))
-			},
-
-			
-			new IClause[]{
-					cEqClause(cProp(1),cPred(0,evar0)),cEqClause(cProp(1),cPred(0,fvar1))
-			},
-			new IClause[]{
-					cEqClause(cProp(1),cPred(0,fvar0)),cEqClause(cProp(1),cPred(0,evar1))
-			},
-			
-			new IClause[]{
-					cEqClause(cProp(0),cProp(0)),cClause(cProp(0),cProp(0))	
-			},
-
-			new IClause[]{
-					cEqClause(cProp(0),cPred(1,a)),cClause(cProp(0),cPred(1,b))	
-			},
-
-			new IClause[]{
-					cClause(cPred(0,x),cEqual(a,y)),cClause(cPred(0,x),cEqual(a,x))
-			},			
-			new IClause[]{
-					cClause(cPred(0,x),cEqual(a,y)),cClause(cPred(0,x),cEqual(a,a))
-			},
-						
-	};
+	public void testUnequalDisjAndEqClauses() {
+		testUnequal(cClause(cProp(0),cProp(0)),cEqClause(cProp(0),cProp(0)));
+	}
 	
+	public void testEqualClauseWithEquality() {
+		// this is unequal
+		testUnequal(cClause(cPred(0,x),cEqual(x,y)),cClause(cPred(0,y),cEqual(x,y)));
+	}
 
-	public void testEqual() {
-		for (IClause[] clauses : equalClauses) {
-			for (int i = 0; i < clauses.length-1; i++) {
-				IClause clause1 = clauses[i];
-				IClause clause2 = clauses[i+1];
-				assertTrue(clause1.equals(clause2));
-				assertTrue(clause2.equals(clause1));
-				
-				assertEquals(""+clause1+","+clause2,clause1.hashCode(),clause2.hashCode());
-			}
+	public void testEqual(IClause... clauses) {
+		for (int i = 0; i < clauses.length-1; i++) {
+			IClause clause1 = clauses[i];
+			IClause clause2 = clauses[i+1];
+			assertTrue(clause1.equals(clause2));
+			assertTrue(clause2.equals(clause1));
+
+			assertEquals(""+clause1+","+clause2,clause1.hashCode(),clause2.hashCode());
 		}
 	}
 	
-	public void testUnequal() {
-		for (IClause[] clauses : unequalClauses) {
-			for (int i = 0; i < clauses.length-1; i++) {
-				IClause clause1 = clauses[i];
-				IClause clause2 = clauses[i+1];
-				assertFalse(clause1.equals(clause2));
-				assertFalse(clause2.equals(clause1));
-			}
+	public void testUnequal(IClause... clauses) {
+		for (int i = 0; i < clauses.length-1; i++) {
+			IClause clause1 = clauses[i];
+			IClause clause2 = clauses[i+1];
+			assertFalse(clause1.equals(clause2));
+			assertFalse(clause2.equals(clause1));
 		}
 	}
 }

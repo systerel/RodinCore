@@ -32,14 +32,14 @@ public class TestBacktracking extends TestCase {
 		cClause(L5,cProp(5)),
 	};
 	
-	private IClause[] clauses2 = new IClause[]{
-		cClause(L0,cProp(0)),
-		cClause(L1,cProp(1)),
-		cClause(L2,cProp(2)),
-		cClause(L3,cProp(3)),
-		cClause(L4,cProp(4)),
-		cClause(L5,cProp(5)),
-	};
+//	private IClause[] clauses2 = new IClause[]{
+//		cClause(L0,cProp(0)),
+//		cClause(L1,cProp(1)),
+//		cClause(L2,cProp(2)),
+//		cClause(L3,cProp(3)),
+//		cClause(L4,cProp(4)),
+//		cClause(L5,cProp(5)),
+//	};
 		
 		
 	

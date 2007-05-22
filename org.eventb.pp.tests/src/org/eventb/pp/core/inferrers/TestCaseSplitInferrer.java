@@ -3,6 +3,7 @@ package org.eventb.pp.core.inferrers;
 import static org.eventb.pp.Util.cClause;
 import static org.eventb.pp.Util.cEqClause;
 import static org.eventb.pp.Util.cEqual;
+import static org.eventb.pp.Util.cNEqual;
 import static org.eventb.pp.Util.cNotPred;
 import static org.eventb.pp.Util.cNotProp;
 import static org.eventb.pp.Util.cPred;
@@ -10,7 +11,7 @@ import static org.eventb.pp.Util.cProp;
 
 import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.inferrers.CaseSplitInferrer;
+import org.eventb.internal.pp.core.inferrers.CaseSplitNegationInferrer;
 import org.eventb.pp.AbstractPPTest;
 
 /**
@@ -25,76 +26,61 @@ import org.eventb.pp.AbstractPPTest;
  */
 public class TestCaseSplitInferrer extends AbstractPPTest {
 
-	private static class TestPair {
-		IClause original;
-		IClause left,right;
-		
-		TestPair(IClause original, IClause left, IClause right) {
-			this.original = original;
-			this.left = left;
-			this.right = right;
-		}
-	}
-	
-
-	TestPair[] pairs = new TestPair[]{
-			new TestPair(
+	public void testCaseSplitInferrer () {
+			doTest(
 					cClause(BASE, cProp(0),cProp(1)),
 					cClause(ONE, cProp(0)),
-					cClause(TWO, cProp(1))
-			),
-			new TestPair(
+					cClause(TWO, cNotProp(0))
+			);
+			doTest(
 					cEqClause(BASE, cProp(0),cProp(1)),
 					cClause(ONE, cProp(0)),
-					cClause(TWO, cNotProp(1))
-			),
-			new TestPair(
+					cClause(TWO, cNotProp(0))
+			);
+			doTest(
 					cClause(BASE, cEqual(a,b),cPred(0,a)),
 					cClause(ONE, cPred(0,a)),
-					cClause(TWO, cEqual(a,b))
-			),
-			new TestPair(
+					cClause(TWO, cNotPred(0,a))
+			);
+			doTest(
 					cClause(BASE, cEqual(a,b),cEqual(b,c)),
 					cClause(ONE, cEqual(a,b)),
-					cClause(TWO, cEqual(b,c))
-			),
-			new TestPair(
+					cClause(TWO, cNEqual(a,b))
+			);
+			doTest(
 					cEqClause(BASE, cPred(0,fvar0), cPred(0,a)),
 					cClause(ONE, cPred(0,x)),
-					cClause(TWO, cNotPred(0,a))
-			),
-			new TestPair(
+					cClause(TWO, cNotPred(0,evar0))
+			);
+			doTest(
 					cClause(BASE, cPred(0,evar0), cPred(0,a)),
 					cClause(ONE, cPred(0,evar0)),
-					cClause(TWO, cPred(0,a))
-			),
-			new TestPair(
+					cClause(TWO, cNotPred(0,x))
+			);
+			doTest(
 					cEqClause(BASE, cPred(0,evar0), cPred(0,a)),
 					cClause(ONE, cPred(0,evar0)),
-					cClause(TWO, cNotPred(0,a))
-			),
-			new TestPair(
+					cClause(TWO, cNotPred(0,x))
+			);
+			doTest(
 					cEqClause(BASE, cProp(0), cProp(1), cProp(2)),
 					cClause(ONE, cProp(0)),
-					cEqClause(TWO, cNotPred(1), cProp(2))
-			),
+					cClause(TWO, cNotProp(0))
+			);
 			
-	};
+	}
 
-	public void testCaseSplitInferrer() {
-		CaseSplitInferrer inferrer = new CaseSplitInferrer(new VariableContext());
-		
-		for (TestPair test : pairs) {
-			inferrer.setLevel(test.original.getLevel());
-			test.original.infer(inferrer);
-			assertTrue("Expected: "+test.left+", was: "+inferrer.getLeftCase()+", from :"+test.original,inferrer.getLeftCase().equalsWithLevel(test.left));
-			assertTrue("Expected: "+test.right+", was: "+inferrer.getRightCase()+", from :"+test.original,inferrer.getRightCase().equalsWithLevel(test.right));
-		}
-		
+	public void doTest(IClause original, IClause left, IClause right) {
+		CaseSplitNegationInferrer inferrer = new CaseSplitNegationInferrer(new VariableContext());
+
+		inferrer.setLevel(original.getLevel());
+		original.infer(inferrer);
+		assertTrue("Expected: "+left+", was: "+inferrer.getLeftCase()+", from :"+original,inferrer.getLeftCase().equalsWithLevel(left));
+		assertTrue("Expected: "+right+", was: "+inferrer.getRightCase()+", from :"+original,inferrer.getRightCase().equalsWithLevel(right));
 	}
 	
 	public void testIllegal() {
-		CaseSplitInferrer inferrer = new CaseSplitInferrer(new VariableContext());
+		CaseSplitNegationInferrer inferrer = new CaseSplitNegationInferrer(new VariableContext());
 
 		IClause clause = cClause(cProp(0),cProp(1));
 		try {
@@ -102,11 +88,12 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 			fail();
 		}
 		catch (IllegalStateException e) {
+			// normal case
 		}
 	}	
 	
 	public void testCanInfer() {
-		CaseSplitInferrer inferrer = new CaseSplitInferrer(new VariableContext());
+		CaseSplitNegationInferrer inferrer = new CaseSplitNegationInferrer(new VariableContext());
 		
 		IClause[] canInfer = new IClause[]{
 				cClause(cProp(0),cProp(1)),
@@ -125,7 +112,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 	}
 	
 	public void testCannotInfer() {
-		CaseSplitInferrer inferrer = new CaseSplitInferrer(new VariableContext());
+		CaseSplitNegationInferrer inferrer = new CaseSplitNegationInferrer(new VariableContext());
 		
 		IClause[] cannotInfer = new IClause[]{
 				cClause(cProp(0)),
