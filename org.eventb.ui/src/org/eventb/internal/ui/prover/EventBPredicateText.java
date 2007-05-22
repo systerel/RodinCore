@@ -2,9 +2,7 @@ package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,29 +15,22 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.TacticPositionUI;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
@@ -52,32 +43,27 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	final Cursor arrowCursor;
 
-	final Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
-
 	final Color YELLOW = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
+
+	final Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
 
 	private IUserSupport us;
 
 	private Predicate hyp;
 
 	StyledText text;
-
+	
 	private Collection<Point> boxes;
 
-	Map<Point, TacticPositionUI> links;
-
-	Point current;
+	TacticHyperlinkManager manager;
+	
+	Point currentBox;
 
 	private int currSize;
 
 	Collection<Point> dirtyStates;
 
-	Point currentLink;
-
-	Menu tipMenu;
-
 	public EventBPredicateText(FormToolkit toolkit, final Composite parent) {
-		links = new HashMap<Point, TacticPositionUI>();
 		dirtyStates = new ArrayList<Point>();
 		text = new StyledText(parent, SWT.MULTI | SWT.FULL_SELECTION);
 		Font font = JFaceResources
@@ -91,6 +77,14 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		text.addListener(SWT.MouseHover, new MouseHoverListener());
 		text.addListener(SWT.MouseExit, new MouseExitListener());
 		text.addListener(SWT.MouseEnter, new MouseEnterListener());
+		manager = new TacticHyperlinkManager(text) {
+
+			@Override
+			protected void applyTactic(String tacticID, IPosition position) {
+				EventBPredicateText.this.applyTactic(tacticID, position);
+			}
+			
+		};
 	}
 
 	// This must be called after initialisation
@@ -98,9 +92,8 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			Collection<Point> boxes, Map<Point, TacticPositionUI> links) {
 		this.hyp = hyp;
 		this.us = us;
-		this.links = links;
 		this.boxes = boxes;
-		currentLink = null;
+		manager.setHyperlinks(links);
 		text.setText(string);
 		text.pack();
 		text.addModifyListener(new EventBStyledTextModifyListener());
@@ -115,9 +108,9 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		text.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
-				if (current == null)
+				if (currentBox == null)
 					return;
-				dirtyStates.add(current);
+				dirtyStates.add(currentBox);
 				updateIndexes();
 			}
 
@@ -159,7 +152,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			}
 
 			e.doit = true;
-			current = index;
+			currentBox = index;
 			currSize = text.getText().length();
 			break;
 		}
@@ -169,27 +162,22 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		int offset = text.getText().length() - currSize;
 
 		for (Point box : boxes) {
-			if (box.x > current.y) {
+			if (box.x > currentBox.y) {
 				box.x = box.x + offset;
 				box.y = box.y + offset;
 			}
 		}
 
-		for (Point link : links.keySet()) {
-			if (link.x > current.y) {
-				link.x = link.x + offset;
-				link.y = link.y + offset;
-			}
-		}
+		manager.updateHyperlinks(currentBox.y, offset);
 		
 		for (Point point : dirtyStates) {
-			if (point.x > current.y) {
+			if (point.x > currentBox.y) {
 				point.x = point.x + offset;
 				point.y = point.y + offset;
 			}
 		}
 
-		current.y = current.y + offset;
+		currentBox.y = currentBox.y + offset;
 
 		setStyle();
 		text.redraw();
@@ -223,13 +211,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			text.setStyleRange(style);
 		}
 
-		for (Point link : links.keySet()) {
-			StyleRange style = new StyleRange();
-			style.start = link.x;
-			style.length = link.y - link.x;
-			style.foreground = RED;
-			text.setStyleRange(style);
-		}
+		manager.setHyperlinkStyle();
 	}
 
 	public StyledText getMainTextWidget() {
@@ -272,82 +254,17 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	class MouseDownListener implements Listener {
 
 		public void handleEvent(Event e) {
-			if (tipMenu != null && !tipMenu.isDisposed())
-				tipMenu.dispose();
-			Point location = new Point(e.x, e.y);
-			int offset = getCharacterOffset(location);
-			currentLink = getLink(offset);
-
-			if (currentLink != null) {
-				TacticPositionUI tacticPositionUI = links.get(currentLink);
-				List<Pair<String, IPosition>> tacticPositions = tacticPositionUI
-						.getTacticPositions();
-				if (tacticPositions.size() == 1) {
-					// Apply the only rule.
-					Pair<String, IPosition> tacticPosition = tacticPositions
-							.get(0);
-					applyTactic(tacticPosition.getFirst(), tacticPosition
-							.getSecond());
-				} else {
-					Point widgetPosition = new Point(e.x, e.y);
-					showToolTip(tacticPositionUI, widgetPosition);
-				}
-
-			}
-			return;
+			manager.mouseDown(new Point(e.x, e.y));
 		}
 
-	}
-
-	/**
-	 * Sets the location for a hovering shell
-	 * 
-	 * @param menu
-	 *            the menu
-	 * @param position
-	 *            the position of a widget to hover over
-	 */
-	void setMenuLocation(Menu menu, Point position) {
-		Rectangle displayBounds = menu.getDisplay().getBounds();
-
-		int x = Math.max(Math.min(position.x, displayBounds.width), 0);
-		int y = Math.max(Math.min(position.y + 16, displayBounds.height), 0);
-		menu.setLocation(new Point(x, y));
 	}
 
 	class MouseMoveListener implements Listener {
 
 		public void handleEvent(Event e) {
-			if (tipMenu != null && !tipMenu.isDisposed())
-				tipMenu.dispose();
-
+			manager.disposeMenu();
 			Point location = new Point(e.x, e.y);
-			try {
-				int offset = getCharacterOffset(location);
-				Point index = getLink(offset);
-				if (index != null) {
-					if (!index.equals(currentLink)) {
-						if (currentLink != null) {
-							disableCurrentLink();
-						}
-						enableLink(index);
-						currentLink = index;
-						text.setCursor(handCursor);
-					}
-				} else {
-					if (currentLink != null) {
-						disableCurrentLink();
-						text.setCursor(arrowCursor);
-						currentLink = null;
-					}
-				}
-				// if (ProverUIUtils.DEBUG)
-				// ProverUIUtils.debug("Move Offset " + offset);
-			} catch (IllegalArgumentException exception) {
-				// if (ProverUIUtils.DEBUG)
-				// ProverUIUtils.debug("Invalid");
-			}
-			return;
+			manager.setMousePosition(location);
 		}
 	}
 
@@ -357,42 +274,14 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			if (ProverUIUtils.DEBUG)
 				ProverUIUtils.debug("Enter ");
 			Point location = new Point(e.x, e.y);
-			try {
-				int offset = getCharacterOffset(location);
-				Point index = getLink(offset);
-				if (index != null) {
-					if (!index.equals(currentLink)) {
-						if (currentLink != null) {
-							disableCurrentLink();
-						}
-						enableLink(index);
-						currentLink = index;
-						text.setCursor(handCursor);
-					}
-				} else {
-					if (currentLink != null) {
-						disableCurrentLink();
-						text.setCursor(arrowCursor);
-						currentLink = null;
-					}
-				}
-			} catch (IllegalArgumentException exception) {
-				// if (ProverUIUtils.DEBUG)
-				// ProverUIUtils.debug("Invalid");
-			}
-			return;
+			manager.setMousePosition(location);
 		}
 	}
 
 	class MouseHoverListener implements Listener {
 
 		public void handleEvent(Event e) {
-			if (currentLink != null) {
-				TacticPositionUI tacticPositionUI = links.get(currentLink);
-				Point widgetPosition = new Point(e.x, e.y);
-				showToolTip(tacticPositionUI, widgetPosition);
-			}
-			return;
+			manager.showToolTip(new Point(e.x, e.y));
 		}
 	}
 
@@ -401,85 +290,10 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		public void handleEvent(Event event) {
 			if (ProverUIUtils.DEBUG)
 				ProverUIUtils.debug("Exit ");
-			disableCurrentLink();
+			manager.disposeMenu();
+			manager.disableCurrentLink();
 		}
 
-	}
-
-	int getCharacterOffset(Point pt) {
-		int offset = text.getOffsetAtLocation(pt);
-		Point location = text.getLocationAtOffset(offset);
-
-		// From the caret offset to the character offset.
-		if (pt.x < location.x)
-			offset = offset - 1;
-		return offset;
-	}
-
-	void showToolTip(TacticPositionUI tacticPositionUI, Point widgetPosition) {
-		List<Pair<String, IPosition>> tacticPositions = tacticPositionUI
-				.getTacticPositions();
-
-		if (tipMenu != null && !tipMenu.isDisposed())
-			tipMenu.dispose();
-
-		tipMenu = new Menu(text);
-
-		for (Pair<String, IPosition> tacticPosition : tacticPositions) {
-			final String tacticID = tacticPosition.getFirst();
-			final IPosition position = tacticPosition.getSecond();
-
-			MenuItem item = new MenuItem(tipMenu, SWT.DEFAULT);
-			TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-			item.setText(tacticUIRegistry.getTip(tacticID));
-			item.addSelectionListener(new SelectionListener() {
-
-				public void widgetDefaultSelected(SelectionEvent se) {
-					widgetSelected(se);
-				}
-
-				public void widgetSelected(SelectionEvent se) {
-					applyTactic(tacticID, position);
-				}
-
-			});
-		}
-
-		Point tipPosition = text.toDisplay(widgetPosition);
-		setMenuLocation(tipMenu, tipPosition);
-		disableCurrentLink();
-		text.setCursor(arrowCursor);
-		tipMenu.setVisible(true);
-	}
-
-	public void enableLink(Point index) {
-		StyleRange style = new StyleRange();
-		style.start = index.x;
-		style.length = index.y - index.x;
-		style.foreground = RED;
-		style.underline = true;
-		text.setStyleRange(style);
-	}
-
-	public void disableCurrentLink() {
-		if (currentLink == null)
-			return;
-		StyleRange style = new StyleRange();
-		style.start = currentLink.x;
-		style.length = currentLink.y - currentLink.x;
-		style.foreground = RED;
-		style.underline = false;
-		text.setStyleRange(style);
-		currentLink = null;
-	}
-
-	public Point getLink(int offset) {
-		Set<Point> keySet = links.keySet();
-		for (Point index : keySet) {
-			if (index.x <= offset && offset < index.y)
-				return index;
-		}
-		return null;
 	}
 
 	void applyTactic(String tacticID, IPosition position) {
@@ -514,24 +328,6 @@ public class EventBPredicateText implements IPropertyChangeListener {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Sets the location for a hovering shell
-	 * 
-	 * @param shell
-	 *            the object that is to hover
-	 * @param position
-	 *            the position of a widget to hover over
-	 */
-	void setHoverLocation(Shell shell, Point position) {
-		Rectangle displayBounds = shell.getDisplay().getBounds();
-		Rectangle shellBounds = shell.getBounds();
-		shellBounds.x = Math.max(Math.min(position.x, displayBounds.width
-				- shellBounds.width), 0);
-		shellBounds.y = Math.max(Math.min(position.y + 16, displayBounds.height
-				- shellBounds.height), 0);
-		shell.setBounds(shellBounds);
 	}
 
 }
