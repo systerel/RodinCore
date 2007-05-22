@@ -120,6 +120,8 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_AUTO_OVERLAY_PATH = "icons/full/ovr16/auto_ovr.gif";
 
+	public static final String IMG_WARNING_OVERLAY_PATH = "icons/full/ovr16/warning_ovr.gif";
+
 	public static final String IMG_ERROR_OVERLAY_PATH = "icons/full/ovr16/error_ovr.gif";
 
 	public static final String IMG_EXPERT_MODE_PATH = "icons/full/ctool16/xp_prover.gif";
