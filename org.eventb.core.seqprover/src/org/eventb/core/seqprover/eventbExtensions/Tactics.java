@@ -71,6 +71,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
+import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
 import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter;
@@ -243,8 +244,10 @@ public class Tactics {
 								
 				Predicate eqHyp = getLastAddedHyp(lastAntecedent);
 				
-				if (eqHyp == null ||  ! Lib.isEq(eqHyp))
+				if (eqHyp == null ||  ! Lib.isEq(eqHyp)){
+					pt.pruneChildren();
 					return "Unexpected Behaviour from AE reasoner";
+				}
 				
 				// Get the node where Eq should be applied
 				IProofTreeNode node = pt.getChildNodes()[antecedents.length - 1];
@@ -252,7 +255,13 @@ public class Tactics {
 				result = he(eqHyp).apply(node, pm);
 				
 				// Check if it was successful
-				if (result != null) return result;
+				if (result != null) {
+					// the reason the he is unsuccessful is only that the abstracted expression does not
+					// occur in the hyps or the goal.
+					// In this case, this tactic is unsuccessful. Undo the ae
+					pt.pruneChildren();
+					return "Expression " + expression + " does not occur in goal or selected hypotheses.";
+				}
 				
 				// Immediately deselect the introduced equality so that
 				// the autoEQ tactic does not reverse the last eq.
@@ -1251,6 +1260,13 @@ public class Tactics {
 	protected static ITactic negEnum(Predicate shyp, Predicate hyp) {
 		return BasicTactics.reasonerTac(new NegEnum(), new MultiplePredInput(
 				new Predicate[] { shyp, hyp }));
+	}
+	
+	public static class IsFunGoalTac implements ITactic{
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			return BasicTactics.reasonerTac(new IsFunGoal(), new EmptyInput()).apply(ptNode, pm);
+		}	
 	}
 
 }

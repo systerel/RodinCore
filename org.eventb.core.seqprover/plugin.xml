@@ -15,7 +15,7 @@
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.AllmpD"
             id="allmpD"
-            name="%allImpDName"/>
+            name="%allmpDName"/>
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.AllI"
             id="allI"
@@ -104,6 +104,10 @@
              class="org.eventb.internal.core.seqprover.eventbExtensions.ConjF"
              id="conjF"
              name="%conjFName"/>
+       <reasoner
+             class="org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal"
+             id="isFunGoal"
+             name="%isFunGoalName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.reasoners">
@@ -182,6 +186,10 @@
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoNegEnumTac"
             id="autoNegEnumTac"
             name="%autoNegEnumTacName"/>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$IsFunGoalTac"
+            id="isFunGoalTac"
+            name="%isFunGoalTacName"/>
    </extension>
 
 </plugin>

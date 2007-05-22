@@ -57,6 +57,10 @@ import org.eventb.core.ast.UnaryPredicate;
  * @author Farhad Mehta
  * 
  */
+/**
+ * @author fmehta
+ *
+ */
 public final class Lib {
 
 	public final static FormulaFactory ff = FormulaFactory.getDefault();
@@ -804,19 +808,77 @@ public final class Lib {
 	}
 
 	/**
-	 * Check if an expression is a function overriding or not
+	 * Check if an expression is a partial function
 	 * <p>
 	 * 
 	 * @param expression
 	 *            any expression
-	 * @return <code>true</code> if the expression is a function overriding
-	 *         (associative expression with tag OVR), return <code>false</code>
-	 *         otherwise.
-	 * @deprecated use {@link #isOvr(Expression)} instead
+	 * @return <code>true</code> iff the expression is a partial function
+	 *         (binary expression with tag PFUN)
 	 */
-	@Deprecated
-	public static boolean isOrv(Expression expression) {
-		return isOvr(expression);
+	public static boolean isPFun(Expression expression) {
+		if (expression instanceof BinaryExpression
+				&& expression.getTag() == Expression.PFUN) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Check if an expression is a functional binary expression
+	 * <p>
+	 * 
+	 * @param expression
+	 *            any expression
+	 * @return <code>true</code> iff the expression is a functional expression
+	 *         (binary expression with tag PFUN or TFUN or PINJ or TINJ or PSUR or TSUR or TBIJ)
+	 */
+	public static boolean isFun(Expression expression) {
+		if (expression instanceof BinaryExpression
+				&& (
+						expression.getTag() == Expression.PFUN ||
+						expression.getTag() == Expression.TFUN ||
+						expression.getTag() == Expression.PINJ ||
+						expression.getTag() == Expression.TINJ ||
+						expression.getTag() == Expression.PSUR ||
+						expression.getTag() == Expression.TSUR ||
+						expression.getTag() == Expression.TBIJ )) {
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * Returns the right hand side of a binary expression.
+	 * 
+	 * @param expr
+	 * 			the given binary expression.
+	 * @return
+	 * 			the right hand side of the given binary expression, or <code>null</code> in case
+	 * 			the given expression is not a binary expression.
+	 */
+	public static Expression getRight(Expression expr){
+		if (expr instanceof BinaryExpression) {
+			return ((BinaryExpression) expr).getRight();
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the left hand side of a binary expression.
+	 * 
+	 * @param expr
+	 * 			the given binary expression.
+	 * @return
+	 * 			the left hand side of the given binary expression, or <code>null</code> in case
+	 * 			the given expression is not a binary expression.
+	 */
+	public static Expression getLeft(Expression expr){
+		if (expr instanceof BinaryExpression) {
+			return ((BinaryExpression) expr).getLeft();
+		}
+		return null;
 	}
 
 	public static boolean isSetExtension(Expression expression) {

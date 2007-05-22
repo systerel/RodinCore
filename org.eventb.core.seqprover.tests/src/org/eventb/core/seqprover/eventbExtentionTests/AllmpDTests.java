@@ -12,7 +12,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AllmpD;
 // import com.b4free.rodin.core.B4freeCore;
 
 /**
- * Unit tests for the Eq reasoner
+ * Unit tests for the AllmpD reasoner
  * 
  * @author Farhad Mehta
  *

@@ -149,6 +149,7 @@ public class AutoProver {
 				// Tactics.lasoo(),
 				// Tactics.norm(),
 				Tactics.postProcessExpert(),
+				new Tactics.IsFunGoalTac(),
 				B4freeCore.externalML(MLforces, timeOutDelay) // ML
 //				B4freeCore.externalPP(true, timeOutDelay), // P0
 //				B4freeCore.externalP1(timeOutDelay) // P1
