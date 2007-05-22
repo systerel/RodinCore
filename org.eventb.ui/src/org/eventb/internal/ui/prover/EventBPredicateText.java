@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,7 +29,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -39,6 +39,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.TacticPositionUI;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
@@ -46,19 +47,20 @@ import org.rodinp.core.RodinDBException;
 
 public class EventBPredicateText implements IPropertyChangeListener {
 
-	Listener labelListener;
+	// Constants for showing different cursors
+	final Cursor handCursor;
+
+	final Cursor arrowCursor;
+
+	final Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
+
+	final Color YELLOW = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
 
 	private IUserSupport us;
 
 	private Predicate hyp;
 
 	StyledText text;
-
-	Composite parent;
-
-	final Cursor handCursor;
-
-	final Cursor arrowCursor;
 
 	private Collection<Point> boxes;
 
@@ -70,16 +72,11 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	Collection<Point> dirtyStates;
 
-	final Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
-
-	final Color YELLOW = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
-
 	Point currentLink;
 
 	Menu tipMenu;
 
 	public EventBPredicateText(FormToolkit toolkit, final Composite parent) {
-		this.parent = parent;
 		links = new HashMap<Point, TacticPositionUI>();
 		dirtyStates = new ArrayList<Point>();
 		text = new StyledText(parent, SWT.MULTI | SWT.FULL_SELECTION);
@@ -94,27 +91,6 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		text.addListener(SWT.MouseHover, new MouseHoverListener());
 		text.addListener(SWT.MouseExit, new MouseExitListener());
 		text.addListener(SWT.MouseEnter, new MouseEnterListener());
-
-		// Implement a "fake" tooltip
-		labelListener = new Listener() {
-			public void handleEvent(Event event) {
-				Label label = (Label) event.widget;
-				Shell shell = label.getShell();
-				switch (event.type) {
-				case SWT.MouseDown:
-					shell.dispose();
-					text.getShell().setFocus();
-					break;
-				case SWT.MouseExit:
-					shell.dispose();
-					break;
-				case SWT.MouseMove:
-					shell.dispose();
-					break;
-				}
-			}
-		};
-
 	}
 
 	// This must be called after initialisation
@@ -205,12 +181,18 @@ public class EventBPredicateText implements IPropertyChangeListener {
 				link.y = link.y + offset;
 			}
 		}
+		
+		for (Point point : dirtyStates) {
+			if (point.x > current.y) {
+				point.x = point.x + offset;
+				point.y = point.y + offset;
+			}
+		}
 
 		current.y = current.y + offset;
 
 		setStyle();
-		text.pack();
-		parent.redraw();
+		text.redraw();
 	}
 
 	void drawBoxes(Event event) {
@@ -292,42 +274,23 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		public void handleEvent(Event e) {
 			if (tipMenu != null && !tipMenu.isDisposed())
 				tipMenu.dispose();
-			
+			Point location = new Point(e.x, e.y);
+			int offset = getCharacterOffset(location);
+			currentLink = getLink(offset);
+
 			if (currentLink != null) {
 				TacticPositionUI tacticPositionUI = links.get(currentLink);
-				String[] tacticIDs = tacticPositionUI.getTacticIDs();
-				IPosition[] positions = tacticPositionUI.getPositions();
-				if (tacticIDs.length == 1) {
-					applyTactic(tacticIDs[0], positions[0]);
+				List<Pair<String, IPosition>> tacticPositions = tacticPositionUI
+						.getTacticPositions();
+				if (tacticPositions.size() == 1) {
+					// Apply the only rule.
+					Pair<String, IPosition> tacticPosition = tacticPositions
+							.get(0);
+					applyTactic(tacticPosition.getFirst(), tacticPosition
+							.getSecond());
 				} else {
 					Point widgetPosition = new Point(e.x, e.y);
-
-					tipMenu = new Menu(text);
-
-					for (int i = 0; i < tacticIDs.length; ++i) {
-						final String tacticID = tacticIDs[i];
-						final IPosition position = positions[i];
-
-						MenuItem item = new MenuItem(tipMenu, SWT.DEFAULT);
-						TacticUIRegistry tacticUIRegistry = TacticUIRegistry
-								.getDefault();
-						item.setText(tacticUIRegistry.getTip(tacticID));
-						item.addSelectionListener(new SelectionListener() {
-
-							public void widgetDefaultSelected(SelectionEvent se) {
-								widgetSelected(se);
-							}
-
-							public void widgetSelected(SelectionEvent se) {
-								applyTactic(tacticID, position);
-							}
-
-						});
-					}
-
-					Point tipPosition = text.toDisplay(widgetPosition);
-					setMenuLocation(tipMenu, tipPosition);
-					tipMenu.setVisible(true);
+					showToolTip(tacticPositionUI, widgetPosition);
 				}
 
 			}
@@ -426,40 +389,8 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		public void handleEvent(Event e) {
 			if (currentLink != null) {
 				TacticPositionUI tacticPositionUI = links.get(currentLink);
-				String[] tacticIDs = tacticPositionUI.getTacticIDs();
-				IPosition[] positions = tacticPositionUI.getPositions();
-
-				if (tipMenu != null && !tipMenu.isDisposed())
-					tipMenu.dispose();
-
 				Point widgetPosition = new Point(e.x, e.y);
-
-				tipMenu = new Menu(text);
-
-				for (int i = 0; i < tacticIDs.length; ++i) {
-					final String tacticID = tacticIDs[i];
-					final IPosition position = positions[i];
-
-					MenuItem item = new MenuItem(tipMenu, SWT.DEFAULT);
-					TacticUIRegistry tacticUIRegistry = TacticUIRegistry
-							.getDefault();
-					item.setText(tacticUIRegistry.getTip(tacticID));
-					item.addSelectionListener(new SelectionListener() {
-
-						public void widgetDefaultSelected(SelectionEvent se) {
-							widgetSelected(se);
-						}
-
-						public void widgetSelected(SelectionEvent se) {
-							applyTactic(tacticID, position);
-						}
-
-					});
-				}
-
-				Point tipPosition = text.toDisplay(widgetPosition);
-				setMenuLocation(tipMenu, tipPosition);
-				tipMenu.setVisible(true);
+				showToolTip(tacticPositionUI, widgetPosition);
 			}
 			return;
 		}
@@ -470,11 +401,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		public void handleEvent(Event event) {
 			if (ProverUIUtils.DEBUG)
 				ProverUIUtils.debug("Exit ");
-			if (currentLink != null) {
-				disableCurrentLink();
-				currentLink = null;
-			}
-
+			disableCurrentLink();
 		}
 
 	}
@@ -489,6 +416,42 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		return offset;
 	}
 
+	void showToolTip(TacticPositionUI tacticPositionUI, Point widgetPosition) {
+		List<Pair<String, IPosition>> tacticPositions = tacticPositionUI
+				.getTacticPositions();
+
+		if (tipMenu != null && !tipMenu.isDisposed())
+			tipMenu.dispose();
+
+		tipMenu = new Menu(text);
+
+		for (Pair<String, IPosition> tacticPosition : tacticPositions) {
+			final String tacticID = tacticPosition.getFirst();
+			final IPosition position = tacticPosition.getSecond();
+
+			MenuItem item = new MenuItem(tipMenu, SWT.DEFAULT);
+			TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+			item.setText(tacticUIRegistry.getTip(tacticID));
+			item.addSelectionListener(new SelectionListener() {
+
+				public void widgetDefaultSelected(SelectionEvent se) {
+					widgetSelected(se);
+				}
+
+				public void widgetSelected(SelectionEvent se) {
+					applyTactic(tacticID, position);
+				}
+
+			});
+		}
+
+		Point tipPosition = text.toDisplay(widgetPosition);
+		setMenuLocation(tipMenu, tipPosition);
+		disableCurrentLink();
+		text.setCursor(arrowCursor);
+		tipMenu.setVisible(true);
+	}
+
 	public void enableLink(Point index) {
 		StyleRange style = new StyleRange();
 		style.start = index.x;
@@ -499,13 +462,15 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	}
 
 	public void disableCurrentLink() {
-		assert currentLink != null;
+		if (currentLink == null)
+			return;
 		StyleRange style = new StyleRange();
 		style.start = currentLink.x;
 		style.length = currentLink.y - currentLink.x;
 		style.foreground = RED;
 		style.underline = false;
 		text.setStyleRange(style);
+		currentLink = null;
 	}
 
 	public Point getLink(int offset) {
