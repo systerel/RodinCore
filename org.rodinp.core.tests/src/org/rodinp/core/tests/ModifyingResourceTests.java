@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
@@ -32,6 +33,7 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.tests.basis.NamedElement;
@@ -44,6 +46,11 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 	
 	static final String emptyContents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		+ "<org.rodinp.core.tests.test/>\n";
+	public static final IAttributeType.Boolean fBool = RodinCore.getBooleanAttrType("org.rodinp.core.tests.fBool");
+	public static final IAttributeType.Handle fHandle = RodinCore.getHandleAttrType("org.rodinp.core.tests.fHandle");
+	public static final IAttributeType.Integer fInt = RodinCore.getIntegerAttrType("org.rodinp.core.tests.fInt");
+	public static final IAttributeType.Long fLong = RodinCore.getLongAttrType("org.rodinp.core.tests.fLong");
+	public static final IAttributeType.String fString = RodinCore.getStringAttrType("org.rodinp.core.tests.fString");
 	static byte[] emptyBytes = emptyContents.getBytes();
 
 	public ModifyingResourceTests(String name) {
