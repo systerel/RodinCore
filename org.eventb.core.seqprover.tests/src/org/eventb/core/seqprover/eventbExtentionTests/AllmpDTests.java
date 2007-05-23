@@ -33,13 +33,19 @@ public class AllmpDTests extends AbstractReasonerTests {
 				// without WD condition
 				new SuccessfullReasonerApplication(
 						seq,
-						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0","1"})
+						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0","1"}),
+						"[{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q] |- ⊤," +
+						" {z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][] |- 0∈ℕ∧1∈ℕ," +
+						" {z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][0∈ℕ, 1∈ℕ, 0∈P, 1∈Q] |- z∈P]"
 						),
 				// with WD condition
 				new SuccessfullReasonerApplication(
-								seq,
-								new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"z","1÷z"})
-								)
+						seq,
+						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"z","1÷z"}),
+						"[{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q] |- z≠0," +
+						" {z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][z≠0] |- z∈ℕ∧1 ÷ z∈ℕ," +
+						" {z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][z≠0, z∈ℕ, 1 ÷ z∈ℕ, z∈P, 1 ÷ z∈Q] |- z∈P]"
+						)
 		};
 	}
 
@@ -66,7 +72,10 @@ public class AllmpDTests extends AbstractReasonerTests {
 //  Comitted out, but make tests succeed	
 //	@Override
 //	public ITactic getJustDischTactic() {
-//		return B4freeCore.externalPP(false);
+//		return  
+//		B4freeCore.externalPP(false);
+//		// B4freeCore.externalML(B4freeCore.ML_FORCE_3);
+//		
 //	}
 
 }

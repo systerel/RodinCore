@@ -87,27 +87,27 @@ public class AllmpD extends AllD {
 		Predicate instantiatedImp = Lib.instantiateBoundIdents(univHyp,instantiations);
 		assert instantiatedImp != null;
 		assert Lib.isImp(instantiatedImp);
-		Predicate toAssume = Lib.impLeft(instantiatedImp);
-		Predicate toShow = Lib.impRight(instantiatedImp);
+		Predicate impLeft = Lib.impLeft(instantiatedImp);
+		Predicate impRight = Lib.impRight(instantiatedImp);
 		
 		// Generate the successful reasoner output
 		
 		// Generate the anticidents
 		IAntecedent[] anticidents = new IAntecedent[3];
 		// Well definedness condition
-		anticidents[0] = ProverFactory.makeAntecedent(WDpred);
+		anticidents[0] = ProverFactory.makeAntecedent(Lib.makeConj(WDpreds));
 
 		Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
 		toDeselect.add(univHyp);
 		// toDeselect.addAll(WDpreds);
 
-		// The instantiated to show goal
+		// The instantiated to impLeft goal
 		{
 			final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
 			addedHyps.addAll(WDpreds);
 
 			anticidents[1] = ProverFactory.makeAntecedent(
-					toAssume,
+					impLeft,
 					addedHyps,
 					ProverFactory.makeDeselectHypAction(toDeselect)
 			);
@@ -116,8 +116,8 @@ public class AllmpD extends AllD {
 		{
 			final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
 			addedHyps.addAll(WDpreds);
-			addedHyps.addAll(Lib.breakPossibleConjunct(toAssume));
-			addedHyps.addAll(Lib.breakPossibleConjunct(toShow));
+			addedHyps.addAll(Lib.breakPossibleConjunct(impLeft));
+			addedHyps.addAll(Lib.breakPossibleConjunct(impRight));
 			
 			anticidents[2] = ProverFactory.makeAntecedent(
 					null,
