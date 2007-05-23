@@ -295,13 +295,10 @@ public abstract class RodinElement extends PlatformObject implements
 		final RodinElementInfo elementInfo = getElementInfo();
 		final RodinElement[] children = elementInfo.getChildren();
 		// Must make a copy as we don't want to expose the internal array
-		final int length = children.length;
-		if (length == 0) {
+		if (children.length == 0) {
 			return NO_ELEMENTS;
 		}
-		final RodinElement[] result = new RodinElement[length];
-		System.arraycopy(children, 0, result, 0, length);
-		return result;
+		return children.clone();
 	}
 
 	/**
