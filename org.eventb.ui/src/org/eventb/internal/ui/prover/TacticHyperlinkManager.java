@@ -1,7 +1,5 @@
 package org.eventb.internal.ui.prover;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,22 +50,16 @@ public abstract class TacticHyperlinkManager {
 
 	public void updateHyperlinks(int index, int offset) {
 		Set<Point> keySet = links.keySet();
-		Collection<Point> toBeRemoved = new ArrayList<Point>();
-		Map<Point, TacticPositionUI> toBeAdded = new HashMap<Point, TacticPositionUI>();
 		
 		for (Point link : keySet) {
-			// IMPORTANT: Do NOT modified the map while iterating through it
+			// IMPORTANT: Do NOT add/remove the map while iterating through it
+			// But can modified the the key.
 			if (link.x > index) {
-				TacticPositionUI tacticPositionUI = links.get(link);
-				toBeRemoved.add(link);
-				toBeAdded.put(new Point(link.x + offset, link.y + offset),
-						tacticPositionUI);
+				link.x = link.x + offset;
+				link.y = link.y + offset;
 			}
 		}
-		for (Point link : toBeRemoved)
-			links.remove(link);
-		links.putAll(toBeAdded);
-		
+
 		if (currentLink != null && currentLink.x > index) {
 			setCurrentLink(new Point(currentLink.x + offset, currentLink.y
 					+ offset));
