@@ -7,7 +7,13 @@
             base-type="org.rodinp.core.rodin"
             file-extensions="test"
             id="content-type-test"
-            name="org.rodinp.core.tests.content-type-test"
+            name="Test content type"
+            priority="normal"/>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="test2"
+            id="content-type-test2"
+            name="Test2 content type"
             priority="normal"/>
       <content-type
             base-type="org.rodinp.core.rodin"
@@ -46,7 +52,12 @@
             class="org.rodinp.core.tests.basis.RodinTestFile"
             content-type-id="org.rodinp.core.tests.content-type-test"
             id="test"
-            name="org.rodinp.core.tests.test"/>
+            name="Test Rodin File"/>
+      <fileElementType
+            class="org.rodinp.core.tests.basis.RodinTestFile2"
+            content-type-id="org.rodinp.core.tests.content-type-test2"
+            id="test2"
+            name="Test2 Rodin File"/>
       <fileElementType
             class="org.rodinp.core.tests.builder.basis.Context"
             content-type-id="org.rodinp.core.tests.context"
@@ -78,7 +89,11 @@
       <internalElementType
             class="org.rodinp.core.tests.basis.NamedElement"
             id="namedElement"
-            name="org.rodinp.core.tests.namedElement"/>
+            name="Named Element"/>
+      <internalElementType
+            class="org.rodinp.core.tests.basis.NamedElement2"
+            id="namedElement2"
+            name="Named Element 2"/>
       <internalElementType
             class="org.rodinp.core.tests.builder.basis.Dependency"
             id="dependency"
