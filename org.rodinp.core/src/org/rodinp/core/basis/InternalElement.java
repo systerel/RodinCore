@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
@@ -24,6 +25,7 @@ import org.rodinp.internal.core.CopyElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.DeleteElementsOperation;
+import org.rodinp.internal.core.IInternalParentX;
 import org.rodinp.internal.core.InternalElementInfo;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.MoveElementsOperation;
@@ -45,7 +47,8 @@ import org.rodinp.internal.core.util.Util;
  * 
  * @see IInternalElement
  */
-public abstract class InternalElement extends RodinElement implements IInternalElement {
+public abstract class InternalElement extends RodinElement implements
+		IInternalElement, IInternalParentX {
 	
 	/* Name of this internal element */
 	private String name;
@@ -131,7 +134,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return getFileInfo(null).getAttributeTypes(this);
 	}
 	
-	private String getAttributeRawValue(String attrName)
+	public String getAttributeRawValue(String attrName)
 			throws RodinDBException {
 
 		return getFileInfo(null).getAttributeRawValue(this, attrName);
@@ -322,6 +325,12 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	@Override
 	public boolean hasChildren() throws RodinDBException {
 		return getChildren().length > 0;
+	}
+
+	public boolean hasSameContents(IInternalParent other)
+			throws RodinDBException {
+
+		return RodinElement.hasSameContents(this, (IInternalParentX) other);
 	}
 
 	@Override

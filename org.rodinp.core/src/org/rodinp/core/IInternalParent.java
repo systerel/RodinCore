@@ -146,6 +146,30 @@ public interface IInternalParent extends IParent, IAttributedElement {
 	IInternalParent getMutableCopy();
 
 	/**
+	 * Returns whether this element and the given element have the same contents
+	 * in the Rodin database. Two elements have the same contents if and only
+	 * if:
+	 * <ul>
+	 * <li>they have the same element name and element type.</li>
+	 * <li>they both don't exist or they both exist and:
+	 * <ul>
+	 * <li>they carry the same attributes (if any) with the same values;</li>
+	 * <li>their children (if any, and taken in order) have the same contents</li>
+	 * </ul>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param other
+	 *            the element to test for similar contents
+	 * @return <code>true</code> iff this element and the given element
+	 *         contain the same subtree in the Rodin database
+	 * @exception RodinDBException
+	 *                if an error was encountered while comparing the elements
+	 *                or their descendants.
+	 */
+	boolean hasSameContents(IInternalParent other) throws RodinDBException;
+	
+	/**
 	 * Returns whether this is a handle in a file snapshot.
 	 * <p>
 	 * This is a handle-only method. The element may or may not be present.

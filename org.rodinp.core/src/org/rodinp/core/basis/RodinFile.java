@@ -22,6 +22,7 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -32,6 +33,7 @@ import org.rodinp.internal.core.CopyResourceElementsOperation;
 import org.rodinp.internal.core.CreateRodinFileOperation;
 import org.rodinp.internal.core.DeleteResourceElementsOperation;
 import org.rodinp.internal.core.FileElementType;
+import org.rodinp.internal.core.IInternalParentX;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.MoveResourceElementsOperation;
 import org.rodinp.internal.core.OpenableElementInfo;
@@ -60,7 +62,8 @@ import org.rodinp.internal.core.util.Messages;
  * 
  * @see IRodinFile
  */
-public abstract class RodinFile extends Openable implements IRodinFile {
+public abstract class RodinFile extends Openable implements IRodinFile,
+		IInternalParentX {
 	
 	/**
 	 * The platform file resource this <code>IRodinFile</code> is based on
@@ -247,6 +250,12 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return file;
 	}
 	
+	public boolean hasSameContents(IInternalParent other)
+			throws RodinDBException {
+
+		return RodinElement.hasSameContents(this, (IInternalParentX) other);
+	}
+
 	@Override
 	public boolean hasUnsavedChanges() {
 		if (isReadOnly()) {
@@ -338,7 +347,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return getFileInfo(null).getAttributeTypes(this);
 	}
 
-	private String getAttributeRawValue(String attrName)
+	public String getAttributeRawValue(String attrName)
 			throws RodinDBException {
 		return getFileInfo(null).getAttributeRawValue(this, attrName);
 	}
