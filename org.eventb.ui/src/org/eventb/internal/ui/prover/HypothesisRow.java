@@ -257,7 +257,7 @@ public class HypothesisRow {
 					// position);
 					TacticPositionUI tacticPositionUI = links.get(pt);
 					if (tacticPositionUI == null) {
-						tacticPositionUI = new TacticPositionUI();
+						tacticPositionUI = new TacticPositionUI(pt);
 						links.put(pt, tacticPositionUI);
 					}
 					tacticPositionUI.addTacticPosition(tacticID, position);
@@ -269,7 +269,7 @@ public class HypothesisRow {
 					// });
 				}
 			}
-			hypothesisText.setText(string, userSupport, hyp, indexes, links);
+			hypothesisText.setText(string, userSupport, hyp, indexes, links.values());
 		} else {
 			String str = PredicateUtil.prettyPrint(max_length, actualString,
 					parsedPred);
@@ -300,7 +300,7 @@ public class HypothesisRow {
 								tacticID, parsedStr, str, position);
 						TacticPositionUI tacticPositionUI = links.get(pt);
 						if (tacticPositionUI == null) {
-							tacticPositionUI = new TacticPositionUI();
+							tacticPositionUI = new TacticPositionUI(pt);
 							links.put(pt, tacticPositionUI);
 						}
 						tacticPositionUI.addTacticPosition(tacticID, position);
@@ -313,7 +313,7 @@ public class HypothesisRow {
 					}
 				}
 			}
-			hypothesisText.setText(str, userSupport, hyp, indexes, links);
+			hypothesisText.setText(str, userSupport, hyp, indexes, links.values());
 		}
 		toolkit.paintBordersFor(hypothesisComposite);
 	}

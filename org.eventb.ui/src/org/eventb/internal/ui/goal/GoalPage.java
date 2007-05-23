@@ -290,7 +290,7 @@ public class GoalPage extends Page implements
 			assert parsedResult.isSuccess();
 			parsedPred = parsedResult.getParsedPredicate();
 
-			Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
+			Collection<TacticPositionUI> links = new ArrayList<TacticPositionUI>();
 			if (node.isOpen()) {
 				links = getHyperlinks();
 			}
@@ -435,7 +435,7 @@ public class GoalPage extends Page implements
 		}
 	}
 
-	private Map<Point, TacticPositionUI> getHyperlinks() {
+	private Collection<TacticPositionUI> getHyperlinks() {
 		Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
 
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
@@ -452,13 +452,13 @@ public class GoalPage extends Page implements
 						parsedPred, actualString, position);
 				TacticPositionUI tacticPositionUI = links.get(pt);
 				if (tacticPositionUI == null) {
-					tacticPositionUI = new TacticPositionUI();
+					tacticPositionUI = new TacticPositionUI(pt);
 					links.put(pt, tacticPositionUI);
 				}
 				tacticPositionUI.addTacticPosition(tacticID, position);
 			}
 		}
-		return links;
+		return links.values();
 	}
 	
 	private Collection<Point> getIndexesString(Predicate pred,

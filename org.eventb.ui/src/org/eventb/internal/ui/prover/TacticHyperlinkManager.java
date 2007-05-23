@@ -1,9 +1,8 @@
 package org.eventb.internal.ui.prover;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -32,7 +31,7 @@ public abstract class TacticHyperlinkManager {
 
 	StyledText text;
 
-	Map<Point, TacticPositionUI> links;
+	Collection<TacticPositionUI> links;
 
 	Menu tipMenu;
 
@@ -40,23 +39,21 @@ public abstract class TacticHyperlinkManager {
 
 	public TacticHyperlinkManager(StyledText text) {
 		this.text = text;
-		links = new HashMap<Point, TacticPositionUI>();
+		links = new ArrayList<TacticPositionUI>();
 		currentLink = null;
 	}
 
-	public void setHyperlinks(Map<Point, TacticPositionUI> links) {
+	public void setHyperlinks(Collection<TacticPositionUI> links) {
 		this.links = links;
 	}
 
 	public void updateHyperlinks(int index, int offset) {
-		Set<Point> keySet = links.keySet();
-		
-		for (Point link : keySet) {
+		for (TacticPositionUI link : links) {
 			// IMPORTANT: Do NOT add/remove the map while iterating through it
-			// But can modified the the key.
-			if (link.x > index) {
-				link.x = link.x + offset;
-				link.y = link.y + offset;
+			// IMPORTANT: Modified the key is NOT allowed either
+			Point point = link.getPoint();
+			if (point.x > index) {
+				link.setPoint(new Point(point.x + offset, point.y + offset));
 			}
 		}
 
@@ -79,17 +76,18 @@ public abstract class TacticHyperlinkManager {
 	}
 
 	public void setHyperlinkStyle() {
-		for (Point link : links.keySet()) {
+		for (TacticPositionUI link : links) {
+			Point point = link.getPoint();
 			StyleRange style = new StyleRange();
-			style.start = link.x;
-			style.length = link.y - link.x;
+			style.start = point.x;
+			style.length = point.y - point.x;
 			style.foreground = RED;
 			text.setStyleRange(style);
 		}
 	}
 
 	public void activateHyperlink(Point link, Point widgetPosition) {
-		TacticPositionUI tacticPositionUI = links.get(link);
+		TacticPositionUI tacticPositionUI = getTacticPositionUI(link);
 		List<Pair<String, IPosition>> tacticPositions = tacticPositionUI
 				.getTacticPositions();
 		if (tacticPositions.size() == 1) {
@@ -103,12 +101,21 @@ public abstract class TacticHyperlinkManager {
 		}
 	}
 
+	private TacticPositionUI getTacticPositionUI(Point link) {
+		for (TacticPositionUI tacticPosition : links) {
+			if (link.equals(tacticPosition.getPoint())) {
+				return tacticPosition;
+			}
+		}
+		return null;
+	}
+
 	protected abstract void applyTactic(String tacticID, IPosition position);
 
 	public Point getLink(Point location) {
-		Set<Point> keySet = links.keySet();
 		int offset = getCharacterOffset(location);
-		for (Point index : keySet) {
+		for (TacticPositionUI link : links) {
+			Point index = link.getPoint();
 			if (index.x <= offset && offset < index.y)
 				return index;
 		}
@@ -154,7 +161,7 @@ public abstract class TacticHyperlinkManager {
 	public void showToolTip(Point widgetPosition) {
 		if (currentLink == null)
 			return;
-		TacticPositionUI tacticPositionUI = links.get(currentLink);
+		TacticPositionUI tacticPositionUI = getTacticPositionUI(currentLink);
 		showToolTip(tacticPositionUI, widgetPosition);
 	}
 

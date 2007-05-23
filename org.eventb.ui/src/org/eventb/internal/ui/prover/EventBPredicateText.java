@@ -3,7 +3,6 @@ package org.eventb.internal.ui.prover;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -89,7 +88,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	// This must be called after initialisation
 	public void setText(String string, IUserSupport us, Predicate hyp,
-			Collection<Point> boxes, Map<Point, TacticPositionUI> links) {
+			Collection<Point> boxes, Collection<TacticPositionUI> links) {
 		this.hyp = hyp;
 		this.us = us;
 		this.boxes = boxes;
