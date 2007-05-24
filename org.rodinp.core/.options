@@ -1,5 +1,6 @@
 org.rodinp.core/debug = true
 org.rodinp.core/debug/rodindatabase = false
+org.rodinp.core/debug/rodindatabase/file = false
 org.rodinp.core/debug/builder = false
 org.rodinp.core/debug/builder/graph = false
 org.rodinp.core/debug/builder/run = false
