@@ -1384,6 +1384,16 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.ForallmpD"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.allmpD.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.nextPending"
+            interrupt="false"
+            name="%proofTactics.nextPending.name"
+            priorty="5"
+            proofCommand="org.eventb.internal.ui.prover.tactics.NextPending"
+            target="global"
+            toolbar="org.eventb.ui.navigationToolbar"
+            tooltip="%proofTactics.nextPending.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
