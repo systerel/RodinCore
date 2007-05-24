@@ -53,9 +53,7 @@ public class ProofTreeIterator implements Iterator<IProofTreeNode> {
 		}
 
 		else { // node is the root of the proof tree
-			if (node.hasChildren())
-				return node.getChildNodes()[0]; // Return the first child
-			return null; // Return null otherwise
+			return node;
 		}
 	}
 
