@@ -402,19 +402,16 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	 * longer present in the database.
 	 */
 	public void assertDeletion(IRodinElement[] elementsToDelete) throws RodinDBException {
-		IRodinElement elementToDelete = null;
-		for (int i = 0; i < elementsToDelete.length; i++) {
-			elementToDelete = elementsToDelete[i];
-			assertExists("Element must be present to be deleted", elementToDelete);
+		for (IRodinElement element: elementsToDelete) {
+			assertExists("Element must be present to be deleted", element);
 		}
 	
 		getRodinDB().delete(elementsToDelete, false, null);
 		
-		for (int i = 0; i < elementsToDelete.length; i++) {
-			elementToDelete = elementsToDelete[i];
+		for (IRodinElement element: elementsToDelete) {
 			assertNotExists(
-					"Element should not be present after deletion: " + elementToDelete,
-					elementToDelete);
+					"Element should not be present after deletion: " + element,
+					element);
 		}
 	}
 
