@@ -266,4 +266,28 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 */
 	@Deprecated
 	boolean graft(IProofTree tree);
+
+	/**
+	 * Returns the next node with satisfies the filter encountered when
+	 * traversing the proof tree of this node in preorder. The flag
+	 * <code>rootIncluded</code> indicate if the current node should be
+	 * included or not.
+	 * <p>
+	 * If <code>rootIncluded</code> is true and if this node satisfies the
+	 * filter, it will be returned. Otherwise, this method will traverse the
+	 * proof tree to which this node belongs, in pre-order and return the first
+	 * node satisfies the filter encountered after traversing this node.
+	 * </p>
+	 * 
+	 * @param rootIncluded
+	 *            the boolean flag to indicate if the current not should be
+	 *            considered or not
+	 * @param filter
+	 *            a proof tree node filter
+	 * 
+	 * @return the next node satisfies the input filter after this node in
+	 *         pre-order or <code>null</code> if there is no such node.
+	 */
+	IProofTreeNode getNextNode(boolean rootIncluded, IProofTreeNodeFilter filter);
+
 }

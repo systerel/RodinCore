@@ -2,6 +2,7 @@ package org.eventb.internal.core.seqprover;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProofTreeNodeFilter;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverLib;
 
@@ -324,38 +326,15 @@ public final class ProofTreeNode implements IProofTreeNode {
 	}
 	
 	public IProofTreeNode getNextOpenNode() {
-		// First test this node
-		if (isOpen()) {
-			return this;
-		}
-		// Then search in its descendants
-		IProofTreeNode node = getFirstOpenDescendant();
-		if (node != null) {
-			return node;
-		}
-		// Finally, search in the following siblings
-		return getNextOpenSibling();
+		return getNextNode(true, new IProofTreeNodeFilter() {
+
+			public boolean select(IProofTreeNode node) {
+				return node.isOpen();
+			}
+			
+		});
 	}
 
-	private IProofTreeNode getNextOpenSibling() {
-		if (parent == null) {
-			return null;
-		}
-		boolean afterThis = false;
-		for (final IProofTreeNode sibling: parent.getChildNodes()) {
-			if (afterThis) {
-				final IProofTreeNode node = sibling.getFirstOpenDescendant();
-				if (node != null) {
-					return node;
-				}
-			} else if (sibling == this) {
-				afterThis = true;
-			}
-		}
-		// Nothing found, go up to parent
-		return parent.getNextOpenSibling();
-	}
-		
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#getOpenDescendants()
 	 */
@@ -663,6 +642,21 @@ public final class ProofTreeNode implements IProofTreeNode {
 		if (this.rule == null) { ruleStr = "-"; }
 		else { ruleStr = this.rule.getDisplayName(); };
 		return getSequent().toString().replace("\n"," ") + "\t\t" + ruleStr;
+	}
+
+	private Iterator<IProofTreeNode> iterator(boolean rootIncluded) {
+		return new ProofTreeIterator(this, rootIncluded);
+	}
+
+	public IProofTreeNode getNextNode(boolean rootIncluded,
+			IProofTreeNodeFilter filter) {
+		Iterator<IProofTreeNode> iterator = iterator(rootIncluded);
+		for (; iterator.hasNext();) {
+			IProofTreeNode node = iterator.next();
+			if (filter.select(node))
+				return node;
+		}
+		return null;
 	}
 	
 }
