@@ -47,6 +47,25 @@ public class RodinElementInfo {
 		}
 	}
 
+	public void addChildBefore(RodinElement child, RodinElement nextSibling) {
+		if (nextSibling == null) {
+			addChild(child);
+		} else {
+			final int idx = getChildIndex(nextSibling);
+			final int length = children.length;
+			final RodinElement[] array = new RodinElement[length + 1];
+			System.arraycopy(children, 0, array, 0, idx);
+			array[idx] = child;
+			System.arraycopy(children, idx, array, idx+1, length-idx);
+			children = array;
+		}
+	}
+
+	public void changeChild(RodinElement source, RodinElement dest) {
+		final int idx = getChildIndex(source);
+		children[idx] = dest;
+	}
+
 	public boolean containsChild(RodinElement element) {
 		RodinElement[] cachedChildren = children;
 		for (RodinElement child: cachedChildren) {
@@ -54,6 +73,15 @@ public class RodinElementInfo {
 				return true;
 		}
 		return false;
+	}
+	
+	private int getChildIndex(RodinElement element) {
+		final int length = children.length;
+		for (int i = 0; i < length; ++i) {
+			if (element.equals(children[i]))
+				return i;
+		}
+		return -1;
 	}
 	
 	public RodinElement[] getChildren() {
@@ -85,6 +113,26 @@ public class RodinElementInfo {
 		return false;
 	}
 
+	public void moveChildBefore(RodinElement child, RodinElement nextSibling) {
+		final int childIdx = getChildIndex(child);
+		final int nextIdx;
+		if (nextSibling == null) {
+			nextIdx = children.length;
+		} else {
+			nextIdx = getChildIndex(nextSibling);
+		}
+
+		if (childIdx < nextIdx) {
+			final int sublen = nextIdx-childIdx-1;
+			System.arraycopy(children, childIdx+1, children, childIdx, sublen);
+			children[nextIdx-1] = child;
+		} else {
+			final int sublen = childIdx-nextIdx;
+			System.arraycopy(children, nextIdx, children, nextIdx+1, sublen);
+			children[nextIdx] = child;
+		}
+	}
+	
 	/**
 	 * Returns an array with all the same elements as the specified array except
 	 * for the element to remove. Assumes that the deletion is contained in the

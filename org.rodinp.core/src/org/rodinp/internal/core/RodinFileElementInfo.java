@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -26,6 +27,8 @@ import org.rodinp.core.basis.RodinFile;
 import org.w3c.dom.Element;
 
 public class RodinFileElementInfo extends OpenableElementInfo {
+	
+	public static boolean DEBUG = false;
 
 	// Buffer associated to this Rodin file
 	private Buffer buffer;
@@ -48,9 +51,8 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 
 	private void addToMap(InternalElement element, Element domElement) {
 		internalElements.put(element, domElement);
-		invalidateParentCache(element);
 	}
-
+	
 	@Deprecated
 	public synchronized void changeDescendantContents(
 			InternalElement element, String newContents) throws RodinDBException {
@@ -77,6 +79,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		final RodinFile element = buffer.getOwner();
 		final Element domElement = buffer.getDocumentElement();
 		computeChildren(element, domElement, this);
+		childrenUpToDate = true;
 	}
 	
 	private void computeChildren(IInternalParent element,
@@ -99,6 +102,15 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 			InternalElement nextSibling) throws RodinDBException {
 		
 		assert source.getElementType() == dest.getElementType();
+
+		if (DEBUG) {
+			System.out.println("--- COPY ---");
+			System.out.println("Destination file " + buffer.getOwner().getResource());
+			printInternalElement("source: ", source);
+			printInternalElement("dest: ", dest);
+			printInternalElement("nextSibling: ", nextSibling);
+			printCaches();
+		}
 		
 		// TODO fix big mess below.  Should synchronize properly
 		// and distinguish betweem two cases.
@@ -119,12 +131,27 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		final String newName = dest.getElementName();
 		final Element newDOMElement = 
 			buffer.importNode(domSource, domDestParent, domNextSibling, newName);
+
 		addToMap(dest, newDOMElement);
+		addToParentInfo(dest, nextSibling);
+
+		if (DEBUG) {
+			printCaches();
+			System.out.println("--- END OF COPY ---");
+		}
 	}
 
 	public synchronized void create(InternalElement newElement,
 			InternalElement nextSibling) throws RodinDBException {
 		
+		if (DEBUG) {
+			System.out.println("--- CREATE ---");
+			System.out.println("Destination file " + buffer.getOwner().getResource());
+			printInternalElement("newElement: ", newElement);
+			printInternalElement("nextSibling: ", nextSibling);
+			printCaches();
+		}
+
 		IInternalParent parent = (IInternalParent) newElement.getParent();
 		Element domParent = getDOMElementCheckExists(parent);
 		checkDOMElementForCollision(newElement);
@@ -134,17 +161,37 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		}		
 		final IInternalElementType type = newElement.getElementType();
 		final String name = newElement.getElementName();
-		Element domNewElement =
+		final Element domNewElement =
 			buffer.createElement(type, name, domParent, domNextSibling);
+		
 		addToMap(newElement, domNewElement);
+		addToParentInfo(newElement, nextSibling);
+
+		if (DEBUG) {
+			printCaches();
+			System.out.println("--- END OF CREATE ---");
+		}
 	}
 
 	public synchronized void delete(InternalElement element)
 			throws RodinDBException {
 		
+		if (DEBUG) {
+			System.out.println("--- DELETE ---");
+			System.out.println("Destination file " + buffer.getOwner().getResource());
+			printInternalElement("element: ", element);
+			printCaches();
+		}
+
 		final Element domElement = getDOMElementCheckExists(element);
 		removeFromMap(element);
 		buffer.deleteElement(domElement);
+		removeFromParentInfo(element);
+
+		if (DEBUG) {
+			printCaches();
+			System.out.println("--- END OF DELETE ---");
+		}
 	}
 
 	public synchronized IAttributeType[] getAttributeTypes(
@@ -217,20 +264,16 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		}
 		Element result = internalElements.get(element);
 		if (result != null) {
-			if (result.getParentNode() != null) {
-				// The cached DOM element still exists
-				return result;
-			}
-			// Clean up the cached DOM element
-			removeFromMap((InternalElement) element);
+			assert result.getParentNode() != null;
+			return result;
 		}
 		
 		// Not found, force a cache update
 		IRodinElement parent = element.getParent();
-		if (parent instanceof RodinFile) {
-			computeChildren();
-		} else {
+		if (parent instanceof InternalElement) {
 			getElementInfo((InternalElement) parent);
+		} else if (! childrenUpToDate) {
+			computeChildren();
 		}
 		return internalElements.get(element);
 	}
@@ -272,15 +315,6 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return buffer.hasUnsavedChanges();
 	}
 
-	private void invalidateParentCache(InternalElement element) {
-		final RodinElement parent = element.getParent();
-		if (parent instanceof RodinFile) {
-			childrenUpToDate = false;
-		} else {
-			internalCache.remove(parent);
-		}
-	}
-
 	// Returns true if parse was successful
 	public synchronized boolean parseFile(IProgressMonitor pm,
 			RodinFile rodinFile) throws RodinDBException {
@@ -291,6 +325,25 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return true;
 	}
 	
+	private void printCaches() {
+		System.out.println("Keys of internalCache:");
+		printSet(internalCache.keySet());
+
+		System.out.println("Keys of internalElements:");
+		printSet(internalElements.keySet());
+	}
+
+	private void printSet(Set<InternalElement> entries) {
+		for (InternalElement entry: entries) {
+			printInternalElement("  ", entry);
+		}
+	}
+	
+	private void printInternalElement(String prefix, InternalElement elem) {
+		System.out.println(prefix
+				+ (elem == null ? "<null>" : elem.toStringWithAncestors()));
+	}
+
 	public synchronized boolean removeAttribute(IInternalParent element,
 			IAttributeType attrType) throws RodinDBException {
 		Element domElement = getDOMElementCheckExists(element);
@@ -299,17 +352,25 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 
 	// Removes an element and all its descendants from the cache map.
 	private void removeFromMap(InternalElement element) {
-		// Remove all descendants
-		InternalElementInfo info = getElementInfo(element);
+		final Element domElement = internalElements.remove(element);
+		if (domElement == null) {
+			// This element is not cached, neither its children
+			return;
+		}
+
+		final InternalElementInfo info = internalCache.remove(element);
 		if (info != null) {
 			for (IRodinElement child: info.getChildren()) {
 				removeFromMap((InternalElement) child);
 			}
+			return;
 		}
-
-		// Remove the given element
-		internalElements.remove(element);
-		invalidateParentCache(element);
+		
+		final LinkedHashMap<InternalElement, Element> childrenMap = buffer
+				.getChildren(element, domElement);
+		for (IRodinElement child: childrenMap.keySet()) {
+			removeFromMap((InternalElement) child);
+		}
 	}
 
 	/**
@@ -327,11 +388,25 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		assert source.getParent().equals(dest.getParent());
 		assert source.getClass() == dest.getClass();
 		
+		if (DEBUG) {
+			System.out.println("--- RENAME ---");
+			System.out.println("Destination file " + buffer.getOwner().getResource());
+			printInternalElement("source: ", source);
+			printInternalElement("dest: ", dest);
+			printCaches();
+		}
+
 		Element domElement = getDOMElementCheckExists(source);
 		checkDOMElementForCollision(dest);
 		removeFromMap(source);
 		buffer.renameElement(domElement, dest.getElementName());
 		addToMap(dest, domElement);
+		changeInParentInfo(source, dest);
+
+		if (DEBUG) {
+			printCaches();
+			System.out.println("--- END OF RENAME ---");
+		}
 	}
 
 	// Returns true iff a change was made to the order of the parent children.
@@ -341,6 +416,14 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		assert nextSibling == null
 				|| source.getParent().equals(nextSibling.getParent());
 		
+		if (DEBUG) {
+			System.out.println("--- REORDER ---");
+			System.out.println("Destination file " + buffer.getOwner().getResource());
+			printInternalElement("source: ", source);
+			printInternalElement("nextSibling: ", nextSibling);
+			printCaches();
+		}
+
 		Element domSource = getDOMElementCheckExists(source);
 
 		Element domNextSibling = null;
@@ -351,8 +434,14 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		}
 		boolean changed = buffer.reorderElement(domSource, domNextSibling);
 		if (changed) {
-			invalidateParentCache(source);
+			moveInParentInfo(source, nextSibling);
 		}
+
+		if (DEBUG) {
+			printCaches();
+			System.out.println("--- END OF REORDER ---");
+		}
+
 		return changed;
 	}
 
@@ -366,6 +455,55 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 			String attrName, String newRawValue) throws RodinDBException {
 		Element domElement = getDOMElementCheckExists(element);
 		buffer.setAttributeRawValue(domElement, attrName, newRawValue);
+	}
+
+	// Parent info management methods.
+	//
+	// These methods update the parent information if it exists.
+	
+	/*
+	 * Returns the element info associated to the parent of the given element
+	 * is it has already been computed, otherwise null. 
+	 */
+	private RodinElementInfo peekParentInfo(InternalElement element) {
+		final RodinElement parent = element.getParent();
+		if (parent instanceof InternalElement) {
+			return internalCache.get(parent);
+		}
+		if (childrenUpToDate) {
+			return this;
+		}
+		return null;
+	}
+
+	private void addToParentInfo(InternalElement child, InternalElement next) {
+		final RodinElementInfo parentInfo = peekParentInfo(child);
+		if (parentInfo != null) {
+			parentInfo.addChildBefore(child, next);
+		}		
+	}
+
+	private void changeInParentInfo(InternalElement source, InternalElement dest) {
+		internalCache.remove(source);
+		final RodinElementInfo parentInfo = peekParentInfo(source);
+		if (parentInfo != null) {
+			parentInfo.changeChild(source, dest);
+		}
+	}
+
+	private void moveInParentInfo(InternalElement child, InternalElement next) {
+		final RodinElementInfo parentInfo = peekParentInfo(child);
+		if (parentInfo != null) {
+			parentInfo.moveChildBefore(child, next);
+		}
+	}
+
+	private void removeFromParentInfo(InternalElement child) {
+		internalCache.remove(child);
+		final RodinElementInfo parentInfo = peekParentInfo(child);
+		if (parentInfo != null) {
+			parentInfo.removeChild(child);
+		}
 	}
 
 }
