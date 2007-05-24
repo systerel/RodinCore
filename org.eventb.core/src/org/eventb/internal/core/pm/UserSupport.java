@@ -17,6 +17,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProofTreeNodeFilter;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.internal.core.PSWrapper;
@@ -620,6 +621,14 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 				return proofState;
 		}
 		return null;
+	}
+
+	public void selectNextSubgoal(boolean rootIncluded,
+			IProofTreeNodeFilter filter) throws RodinDBException {
+		if (currentPS == null)
+			return;
+		currentPS.selectNextSubGoal(currentPS.getCurrentNode(), rootIncluded,
+				filter);
 	}
 
 	

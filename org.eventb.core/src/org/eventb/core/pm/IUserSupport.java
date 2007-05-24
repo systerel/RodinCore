@@ -17,6 +17,7 @@ import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProofTreeNodeFilter;
 import org.eventb.core.seqprover.ITactic;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.RodinDBException;
@@ -314,5 +315,23 @@ public interface IUserSupport extends IElementChangedListener {
 	 */
 	public abstract void doSave(IProofState[] states, IProgressMonitor monitor)
 			throws CoreException;
+
+	/**
+	 * For the current proof state, select the next subgoal satisfies the
+	 * filter. The flag <code>rootIncluded</code> to indicate that if the
+	 * current node should be considered or not.
+	 * <p>
+	 * 
+	 * @param rootIncluded
+	 *            to include the current node or not
+	 * @param filter
+	 *            a proof tree node filter
+	 * 
+	 * @throws RodinDBException
+	 *             throws exception if some errors occured
+	 */
+	public abstract void selectNextSubgoal(boolean rootIncluded,
+			IProofTreeNodeFilter filter)
+			throws RodinDBException;
 
 }

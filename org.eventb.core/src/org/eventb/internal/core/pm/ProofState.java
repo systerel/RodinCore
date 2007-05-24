@@ -33,6 +33,7 @@ import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProofTreeNodeFilter;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
@@ -247,10 +248,14 @@ public class ProofState implements IProofState {
 	 */
 	public IProofTreeNode getNextPendingSubgoal(IProofTreeNode node) {
 		if (node.getProofTree() != pt) {
-			// Node has been detached from this proof tree
-			return pt.getRoot().getFirstOpenDescendant();
+			node = pt.getRoot();
 		}
-		return node.getNextOpenNode();
+		return node.getNextNode(true, new IProofTreeNodeFilter() {
+			public boolean select(IProofTreeNode n) {
+				return n.isOpen();
+			}
+			
+		});
 	}
 
 	/*
@@ -652,6 +657,22 @@ public class ProofState implements IProofState {
 	public void setComment(final String text, final IProofTreeNode node)
 			throws RodinDBException {
 		node.setComment(text);
+	}
+
+	public void selectNextSubGoal(IProofTreeNode node, boolean rootIncluded,
+			IProofTreeNodeFilter filter) throws RodinDBException {
+		final IProofTreeNode newNode = this.getNextSubgoal(node, rootIncluded,
+				filter);
+		if (newNode != null) {
+			setCurrentNode(newNode);
+		}
+	}
+
+	private IProofTreeNode getNextSubgoal(IProofTreeNode node,
+			boolean rootIncluded, IProofTreeNodeFilter filter) {
+		if (node == null)
+			node = pt.getRoot();
+		return node.getNextNode(rootIncluded, filter);
 	}
 
 }
