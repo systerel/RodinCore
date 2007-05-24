@@ -135,7 +135,7 @@ public class DeleteTests extends ModifyingResourceTests {
 			startDeltas();
 			assertDeletion(ne1);
 			assertNotExists("Should be able to delete an internal element",  ne1);
-			assertNotExists("A deleted element children should not exist",   ne2);
+			assertNotExists("A deleted element child should not exist",   ne2);
 			assertNotExists("A deleted element descendant should not exist", ne3);
 			assertDeltas(
 					"Unexpected delta",
