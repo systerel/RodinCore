@@ -79,6 +79,7 @@ import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBControl;
@@ -111,8 +112,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	IEventBInputText textInput;
 
 	ProverUI editor;
-
-//	private IEventBFormText formTextInformation;
 
 	ScrolledForm scrolledForm;
 
@@ -183,7 +182,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
 		store.removePropertyChangeListener(this);
-//		formTextInformation.dispose();
 		textInput.dispose();
 		history.dispose();
 		scrolledForm.dispose();
@@ -203,7 +201,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 			if (tacticIDs.size() != 0) {
 				ToolItem item = new ToolItem(toolBar, SWT.DROP_DOWN);
-				// item.setText(itemCount++ + "");
 
 				GlobalTacticDropdownToolItem dropdownItem = new GlobalTacticDropdownToolItem(
 						item, dropdownID) {
@@ -662,15 +659,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		historyCombo.setLayoutData(gd);
 		history = new EventBControl(historyCombo);
 
-//		formTextInformation = new EventBFormText(toolkit.createFormText(body,
-//				true));
-//		gd = new GridData();
-//		gd.horizontalSpan = 2;
-//		gd.minimumHeight = 20;
-//		gd.heightHint = 20;
-//		formTextInformation.getFormText().setLayoutData(gd);
-//		setFormTextInformation("");
-
 		scrolledForm.reflow(true);
 
 		makeActions();
@@ -686,15 +674,18 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	void updateSmiley() {
 		Image image;
 		IProofState currentPO = editor.getUserSupport().getCurrentPO();
-		try {
-			if (currentPO == null || currentPO.isClosed()) {
-				image = EventBImage.getImage(EventBImage.IMG_DISCHARGED_SMILEY);
-			}
-			else {
+		if (currentPO == null)
+			image = EventBImage.getImage(EventBImage.IMG_DISCHARGED_SMILEY);
+		else {
+			IProofTreeNode root = currentPO.getProofTree().getRoot();
+			assert root != null;
+			int confidence = root.getConfidence();
+			if (confidence <= IConfidence.PENDING)
 				image = EventBImage.getImage(EventBImage.IMG_PENDING_SMILEY);
-			}
-		} catch (RodinDBException e1) {
-			image = EventBImage.getImage(EventBImage.IMG_PENDING_SMILEY);
+			else if (confidence <= IConfidence.REVIEWED_MAX)
+				image = EventBImage.getImage(EventBImage.IMG_REVIEW_SMILEY);
+			else
+				image = EventBImage.getImage(EventBImage.IMG_DISCHARGED_SMILEY);
 		}
 		smiley.setImage(image);
 		midComp.pack();
