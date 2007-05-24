@@ -1394,6 +1394,16 @@
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
             tooltip="%proofTactics.nextPending.tooltip"/>
+      <tactic
+            icon="icons/reviewed.png"
+            id="org.eventb.ui.nextReview"
+            interrupt="false"
+            name="%proofTactics.nextReview.name"
+            priorty="6"
+            proofCommand="org.eventb.internal.ui.prover.tactics.NextReview"
+            target="global"
+            toolbar="org.eventb.ui.navigationToolbar"
+            tooltip="%proofTactics.nextReview.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
