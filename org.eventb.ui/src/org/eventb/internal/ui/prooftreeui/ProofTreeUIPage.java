@@ -49,12 +49,14 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.RodinDBException;
@@ -88,6 +90,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	PageBook pageBook;
 	
+	private ProofStatusLineManager statusManager;
+
 	/**
 	 * @author htson
 	 *         <p>
@@ -549,6 +553,11 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();
 					
+					// Set the information if it has been changed.
+					if ((flags | IUserSupportDelta.F_INFORMATION) != 0) {
+						setInformation(affectedUserSupport.getInformation());
+					}
+
 					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
 						// The current proof state is changed.
 						IProofState ps = userSupport.getCurrentPO();
@@ -632,6 +641,14 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	
 	public Object[] getFilters() {
 		return filters;
+	}
+
+	void setInformation(final IUserSupportInformation[] information) {
+		if (statusManager == null) {
+			statusManager = new ProofStatusLineManager(this.getSite()
+					.getActionBars());
+		}
+		statusManager.setProofInformation(information);
 	}
 
 }
