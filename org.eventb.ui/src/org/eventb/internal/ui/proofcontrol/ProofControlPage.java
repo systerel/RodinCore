@@ -877,17 +877,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					int flags = affectedUserSupport.getFlags();
 
 					// Set the information if it has been changed.
-					if ((flags | IUserSupportDelta.F_INFORMATION) != 0) {
+					if ((flags & IUserSupportDelta.F_INFORMATION) != 0) {
 						setInformation(affectedUserSupport.getInformation());
 					}
 
-					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
+					if ((flags & IUserSupportDelta.F_CURRENT) != 0) {
 						// The current proof state is changed, update the tool
 						// items.
 						updateToolItems(editor.getUserSupport());
 						updateSmiley();
 						scrolledForm.reflow(true);
-					} else if ((flags | IUserSupportDelta.F_STATE) != 0) {
+					} else if ((flags & IUserSupportDelta.F_STATE) != 0) {
 						// If the changes occurs in some proof states.	
 						IProofState proofState = userSupport.getCurrentPO();
 						// Trying to get the change for the current proof state. 
@@ -916,15 +916,15 @@ public class ProofControlPage extends Page implements IProofControlPage,
 								// If there are some changes to the proof state.
 								int psFlags = affectedProofState.getFlags();
 
-								if ((psFlags | IProofStateDelta.F_NODE) != 0) {
+								if ((psFlags & IProofStateDelta.F_NODE) != 0) {
 									// Update the items if the current node has
 									// been changed.
 									updateToolItems(editor.getUserSupport());
-									if ((psFlags | IProofStateDelta.F_PROOFTREE) != 0) {
+									if ((psFlags & IProofStateDelta.F_PROOFTREE) != 0) {
 										updateSmiley();									
 									}
 								}
-								else if ((psFlags | IProofStateDelta.F_PROOFTREE) != 0) {
+								else if ((psFlags & IProofStateDelta.F_PROOFTREE) != 0) {
 									// Update the items if the current node has
 									// been changed.
 									updateToolItems(editor.getUserSupport());
