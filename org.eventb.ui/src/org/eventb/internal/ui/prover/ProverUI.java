@@ -554,7 +554,7 @@ public class ProverUI extends FormEditor implements
 					int flags = affectedUserSupport.getFlags();
 
 					// Set the information if it has been changed.
-					if ((flags | IUserSupportDelta.F_INFORMATION) != 0) {
+					if ((flags & IUserSupportDelta.F_INFORMATION) != 0) {
 						setInformation(affectedUserSupport.getInformation());
 					}
 					

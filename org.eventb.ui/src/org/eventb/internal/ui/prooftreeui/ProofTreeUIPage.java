@@ -554,11 +554,11 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					int flags = affectedUserSupport.getFlags();
 					
 					// Set the information if it has been changed.
-					if ((flags | IUserSupportDelta.F_INFORMATION) != 0) {
+					if ((flags & IUserSupportDelta.F_INFORMATION) != 0) {
 						setInformation(affectedUserSupport.getInformation());
 					}
 
-					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
+					if ((flags & IUserSupportDelta.F_CURRENT) != 0) {
 						// The current proof state is changed.
 						IProofState ps = userSupport.getCurrentPO();
 						if (ps != null) {
@@ -572,7 +572,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 							// empty.
 							ProofTreeUIPage.this.setInput(null);
 						}
-					} else if ((flags | IUserSupportDelta.F_STATE) != 0) {
+					} else if ((flags & IUserSupportDelta.F_STATE) != 0) {
 						// If the changes occurs in some proof states.
 						IProofState proofState = userSupport.getCurrentPO();
 						// Trying to get the change for the current proof state. 
@@ -601,11 +601,11 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 							if (psKind == IProofStateDelta.CHANGED) {
 								// If there are some changes to the proof state.
 								int psFlags = affectedProofState.getFlags();
-								if ((psFlags | IProofStateDelta.F_PROOFTREE) != 0) {
+								if ((psFlags & IProofStateDelta.F_PROOFTREE) != 0) {
 									// Refresh if the proof tree has changed.
 									viewer.refresh();
 								}
-								if ((psFlags | IProofStateDelta.F_NODE) != 0) {
+								if ((psFlags & IProofStateDelta.F_NODE) != 0) {
 									// If the current node has been changed
 									IProofTreeNode node = proofState.getCurrentNode();
 									
@@ -624,9 +624,15 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		ISelection selection = viewer.getSelection();
 		if (node != null) {
 			// Select the new current node if not null.
+			if (selection.isEmpty()) {
+				viewer.setSelection(new StructuredSelection(node),
+						true);
+				return;
+			}
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ssel = (IStructuredSelection) selection;
-				if (ssel.isEmpty() || !ssel.getFirstElement().equals(node))
+				Object firstElement = ssel.getFirstElement();
+				if (!firstElement.equals(node))
 					viewer.setSelection(new StructuredSelection(node),
 							true);
 			}
