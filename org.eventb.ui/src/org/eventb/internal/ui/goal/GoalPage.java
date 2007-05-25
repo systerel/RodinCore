@@ -53,6 +53,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
@@ -60,6 +61,7 @@ import org.eventb.internal.ui.TacticPositionUI;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.prover.EventBPredicateText;
 import org.eventb.internal.ui.prover.PredicateUtil;
+import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.IEventBSharedImages;
@@ -94,6 +96,8 @@ public class GoalPage extends Page implements
 	private String actualString;
 
 	private int max_length = 30;
+
+	private ProofStatusLineManager statusManager;
 
 	/**
 	 * Constructor.
@@ -580,6 +584,12 @@ public class GoalPage extends Page implements
 				// Handle the case where the user support has changed.
 				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();
+
+					// Set the information if it has been changed.
+					if ((flags | IUserSupportDelta.F_INFORMATION) != 0) {
+						setInformation(affectedUserSupport.getInformation());
+					}
+
 					if ((flags & IUserSupportDelta.F_CURRENT) != 0) {
 						// The current proof state is changed, reupdate the page
 						IProofState ps = userSupport.getCurrentPO();
@@ -634,4 +644,12 @@ public class GoalPage extends Page implements
 		});
 	}
 	
+	void setInformation(final IUserSupportInformation[] information) {
+		if (statusManager == null) {
+			statusManager = new ProofStatusLineManager(this.getSite()
+					.getActionBars());
+		}
+		statusManager.setProofInformation(information);
+	}
+
 }
