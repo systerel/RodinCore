@@ -41,6 +41,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
@@ -52,7 +53,6 @@ import org.eventb.internal.ui.goal.IGoalPage;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.internal.ui.proofcontrol.ProofControlPage;
-import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.proofinformation.IProofInformationPage;
 import org.eventb.internal.ui.proofinformation.ProofInformationPage;
 import org.eventb.internal.ui.prooftreeui.IProofTreeUIPage;
@@ -102,6 +102,8 @@ public class ProverUI extends FormEditor implements
 	// The associated rodin file handle
 	IPSFile prFile = null;
 
+	private ProofStatusLineManager statusManager = null;
+	
 	private boolean saving;
 
 	/**
@@ -536,8 +538,8 @@ public class ProverUI extends FormEditor implements
 
 		// This case should NOT happened.
 		if (kind == IUserSupportDelta.ADDED) {
-			if (ProofControlUtils.DEBUG)
-				ProofControlUtils
+			if (ProverUIUtils.DEBUG)
+				ProverUIUtils
 						.debug("Error: Delta said that the user Support is added");
 			return; // Do nothing
 		}
@@ -550,6 +552,12 @@ public class ProverUI extends FormEditor implements
 				// Handle the case where the user support has changed.
 				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();
+
+					// Set the information if it has been changed.
+					if ((flags | IUserSupportDelta.F_INFORMATION) != 0) {
+						setInformation(affectedUserSupport.getInformation());
+					}
+					
 					if ((flags & IUserSupportDelta.F_STATE) != 0) {
 						// If the changes occurs in some proof states.
 						IProofStateDelta[] affectedProofStates = affectedUserSupport
@@ -582,6 +590,15 @@ public class ProverUI extends FormEditor implements
 				}
 			}
 		});
+	}
+
+	protected void setInformation(IUserSupportInformation[] information) {
+		if (statusManager == null) {
+			statusManager = new ProofStatusLineManager(this.getEditorSite()
+					.getActionBars());
+		}
+		statusManager.setProofInformation(information);
+		return;
 	}
 
 }
