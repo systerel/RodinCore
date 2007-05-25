@@ -88,6 +88,7 @@ import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
+import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
@@ -131,6 +132,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	ImageHyperlink smiley; 
 	
+	private ProofStatusLineManager statusManager;
+
 	/**
 	 * Constructor
 	 * <p>
@@ -940,30 +943,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	}
 
 	void setInformation(final IUserSupportInformation[] information) {
-		if (ProofControlUtils.DEBUG) {
-			ProofControlUtils.debug("********** MESSAGE *********");
-			for (IUserSupportInformation info : information) {
-				ProofControlUtils.debug(info.toString());
-			}
-			ProofControlUtils.debug("****************************");
+		if (statusManager == null) {
+			statusManager = new ProofStatusLineManager(this.getSite()
+					.getActionBars());
 		}
-
-		int size = information.length;
-		if (size == 0) {
-			setStatusInformation("");
-			return;
-		}
-
-		// Trying to print the latest message with highest priority.
-		for (int priority = IUserSupportInformation.MAX_PRIORITY; IUserSupportInformation.MIN_PRIORITY <= priority; --priority) {
-			for (int i = information.length - 1; 0 <= i; --i) {
-				if (information[i].getPriority() == priority) {
-					setStatusInformation(information[i].getInformation().toString());
-					return;
-				}
-			}
-		}
-		setStatusInformation("");
+		statusManager.setProofInformation(information);
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
