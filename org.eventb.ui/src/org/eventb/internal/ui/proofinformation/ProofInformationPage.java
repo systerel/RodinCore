@@ -329,7 +329,7 @@ public class ProofInformationPage extends Page implements
 				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();
 					
-					if ((flags | IUserSupportDelta.F_CURRENT) != 0) {
+					if ((flags & IUserSupportDelta.F_CURRENT) != 0) {
 						// The current proof state is changed.
 						IProofState ps = userSupport.getCurrentPO();
 						if (ps != null) {
