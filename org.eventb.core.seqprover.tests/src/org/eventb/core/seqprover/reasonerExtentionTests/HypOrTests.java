@@ -1,10 +1,9 @@
-package org.eventb.core.seqprover.eventbExtentionTests;
+package org.eventb.core.seqprover.reasonerExtentionTests;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.tests.TestLib;
 
