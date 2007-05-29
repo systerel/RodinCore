@@ -155,6 +155,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.NegEnum"
             id="negEnum"
             name="%negEnumName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.HypOr"
+            id="hypOr"
+            name="%hypOrName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">
@@ -190,6 +194,10 @@
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$IsFunGoalTac"
             id="isFunGoalTac"
             name="%isFunGoalTacName"/>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoHypOrTac"
+            id="autoHypOrTac"
+            name="%autoHypOrTacName"/>
    </extension>
 
 </plugin>
