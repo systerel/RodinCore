@@ -77,6 +77,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return ff.makeUnaryExpression(tag, child, null);
 	}
 
+	private BinaryExpression makeBinaryExpression(int tag, Expression left, Expression right) {
+		return ff.makeBinaryExpression(tag, left, right, null);
+	}
+
 	private AtomicExpression makeEmptySet(Type type) {
 		return ff.makeEmptySet(type, null);
 	}
@@ -638,6 +642,27 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 */
 	    	Converse(Converse(r)) -> {
 	    		return `r;
+	    	}
+
+			/**
+	    	 * Set Theory: {x ↦ a, ..., y ↦ b}∼ == {a ↦ x, ..., b ↦ y}
+	    	 */
+	    	Converse(SetExtension(members)) -> {
+	   				Collection<Expression> newMembers = new LinkedHashSet<Expression>();
+
+				for (Expression member : `members) {
+					if (member instanceof BinaryExpression
+							&& member.getTag() == Expression.MAPSTO) {
+						BinaryExpression bExp = (BinaryExpression) member;
+						newMembers.add(
+								makeBinaryExpression(
+										Expression.MAPSTO, bExp.getRight(), bExp.getLeft()));
+					} else {
+						return expression;
+					}
+				}
+
+				return makeSetExtension(newMembers);
 	    	}
 
 			/**

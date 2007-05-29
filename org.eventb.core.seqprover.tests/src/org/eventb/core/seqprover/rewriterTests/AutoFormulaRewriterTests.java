@@ -811,6 +811,30 @@ public class AutoFormulaRewriterTests {
 				ff.makeSetExtension(E, null), Predicate.EQUAL, ff
 						.makeSetExtension(F, null));
 		
+		// {x |-> a, ..., y |-> b}~  ==  {a |-> x, ..., b |-> y}
+		Expression number0ToE = ff.makeBinaryExpression(Expression.MAPSTO, number0, E, null);
+		Expression eToNumber0 = ff.makeBinaryExpression(Expression.MAPSTO, E, number0, null);
+		Expression number0ToF = ff.makeBinaryExpression(Expression.MAPSTO, number0, F, null);
+		Expression fToNumber0 = ff.makeBinaryExpression(Expression.MAPSTO, F, number0, null);
+		Expression number0ToNumber1 = ff.makeBinaryExpression(
+				Expression.MAPSTO, number0, number1, null);
+		Expression number1ToNumber0 = ff.makeBinaryExpression(
+				Expression.MAPSTO, number1, number0, null);
+
+		assertUnaryExpression("{0 ↦ E}∼ == {E ↦ 0}", ff.makeSetExtension(
+				new Expression[] { eToNumber0 }, null), Expression.CONVERSE, ff
+				.makeSetExtension(new Expression[] { number0ToE }, null));
+		assertUnaryExpression("{0 ↦ E, 0 ↦ F}∼ == {E ↦ 0, F ↦ 0}", ff
+				.makeSetExtension(new Expression[] { eToNumber0, fToNumber0 },
+						null), Expression.CONVERSE, ff.makeSetExtension(
+				new Expression[] { number0ToE, number0ToF }, null));
+		assertUnaryExpression(
+				"{0 ↦ E, 0 ↦ F, 0 ↦ 1}∼ == {E ↦ 0, F ↦ 0, 1 ↦ 0}", ff
+						.makeSetExtension(new Expression[] { eToNumber0,
+								fToNumber0, number1ToNumber0 }, null),
+				Expression.CONVERSE, ff.makeSetExtension(new Expression[] {
+						number0ToE, number0ToF, number0ToNumber1 }, null));
+		
 		// Typ = {} == false (where Typ is a type expression) is NOT done here
 		assertRelationalPredicate("ℤ = ∅ == ℤ = ∅", ff.makeRelationalPredicate(
 				Predicate.EQUAL, integer, emptySet, null), integer,
@@ -827,7 +851,7 @@ public class AutoFormulaRewriterTests {
 				Predicate.EQUAL, emptySet, powInteger, null), emptySet,
 				Expression.EQUAL, powInteger);
 
-		// E : Typ == true (where Typ is a type expression)
+		// E : Typ == true (where Typ is a type expression) is NOT done here
 		assertRelationalPredicate("E ∈ ℤ == E ∈ ℤ", ff.makeRelationalPredicate(
 				Predicate.IN, E, integer, null), E, Expression.IN,
 				integer);
