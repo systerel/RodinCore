@@ -1139,6 +1139,7 @@
       <tactic id="org.eventb.core.seqprover.autoNegEnumTac"/>
       <tactic id="org.eventb.core.seqprover.typeRewriteTac"/>
       <tactic id="org.eventb.core.seqprover.isFunGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.autoHypOrTac"/>
    </extension>
 
 </plugin>
