@@ -159,6 +159,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.HypOr"
             id="hypOr"
             name="%hypOrName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites"
+            id="impAndRewrites"
+            name="%impAndRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">
@@ -195,7 +199,7 @@
             id="isFunGoalTac"
             name="%isFunGoalTacName"/>
       <tactic
-            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoHypOrTac"
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$HypOrTac"
             id="autoHypOrTac"
             name="%autoHypOrTacName"/>
    </extension>
