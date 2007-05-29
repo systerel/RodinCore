@@ -11,10 +11,9 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
-import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
-public class HypOr extends SinglePredInputReasoner implements IReasoner {
+public class HypOr extends EmptyInputReasoner implements IReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".hypOr";
 
@@ -24,18 +23,7 @@ public class HypOr extends SinglePredInputReasoner implements IReasoner {
 
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		if (!(input instanceof SinglePredInput)) {
-			return ProverFactory.reasonerFailure(this, input,
-					"Input is not a single predicate input");
-		}
-		SinglePredInput mInput = (SinglePredInput) input;
-		Predicate predicate = mInput.getPredicate();
-		
-		if (!seq.containsHypothesis(predicate)) {
-			return ProverFactory.reasonerFailure(this, input,
-					"Sequent does not contain predicate " + predicate);
-		}
-		
+
 		Predicate goal = seq.goal();
 		if (!Lib.isDisj(goal)) {
 			return ProverFactory.reasonerFailure(this, input,
@@ -45,19 +33,18 @@ public class HypOr extends SinglePredInputReasoner implements IReasoner {
 		AssociativePredicate aPred = (AssociativePredicate) goal;
 		Predicate[] children = aPred.getChildren();
 		for (Predicate child : children) {
-			if (child.equals(predicate)) {
+			if (seq.containsHypothesis(child)) {
 				return ProverFactory.makeProofRule(
 						this,input,
-						null,
-						predicate,
-						"hyp with ∨ goal",
+						goal,
+						child,
+						"∨ goal in hyp",
 						new IAntecedent[0]);
 			}
 		}
 		
 		return ProverFactory.reasonerFailure(this, input,
-				"Hypothesis with ∨ goal is not applicable for hypothesis "
-						+ predicate);
+				"Hypotheses contain no disjunct in goal");
 	}
 
 

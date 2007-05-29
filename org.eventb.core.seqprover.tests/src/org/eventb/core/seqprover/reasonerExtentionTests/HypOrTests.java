@@ -1,23 +1,15 @@
 package org.eventb.core.seqprover.reasonerExtentionTests;
 
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
+//import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tests.TestLib;
+
+//import com.b4free.rodin.core.B4freeCore;
 
 public class HypOrTests extends AbstractReasonerTests {
 
-	private static final Predicate pred = Lib.parsePredicate("x = 1");
-	
-	private static final IReasonerInput input = new SinglePredInput(pred);
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		pred.typeCheck(FormulaFactory.getDefault().makeTypeEnvironment());
-	}
+	private static final IReasonerInput input = new EmptyInput();
 
 	@Override
 	public String getReasonerID() {
@@ -49,11 +41,6 @@ public class HypOrTests extends AbstractReasonerTests {
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
 		return new UnsuccessfullReasonerApplication[] {
 				new UnsuccessfullReasonerApplication(TestLib
-						.genSeq(" x = 2 |- x = 2 ∨ x = 1 ∨ x = 3 "), input),
-				new UnsuccessfullReasonerApplication(TestLib
-						.genSeq(" x = 2 |- x = 2 ∨ x = 1 ∨ x = 3 "), input,
-						"Sequent does not contain predicate " + pred),
-				new UnsuccessfullReasonerApplication(TestLib
 						.genSeq(" x = 1 |- x = 2"), input),
 				new UnsuccessfullReasonerApplication(TestLib
 						.genSeq(" x = 1 |- x = 2 "), input,
@@ -62,9 +49,13 @@ public class HypOrTests extends AbstractReasonerTests {
 						.genSeq(" x = 1 |- x = 2 ∨ x = 4 ∨ x = 3"), input),
 				new UnsuccessfullReasonerApplication(TestLib
 						.genSeq(" x = 1 |- x = 2 ∨ x = 4 ∨ x = 3 "), input,
-						"Hypothesis with ∨ goal is not applicable for hypothesis "
-								+ pred) 				
+						"Hypotheses contain no disjunct in goal")
 		};
 	}
+
+//	@Override
+//	public ITactic getJustDischTactic() {
+//		return B4freeCore.externalPP(false);
+//	}
 
 }

@@ -1263,40 +1263,13 @@ public class Tactics {
 		}	
 	}
 
-	public static class AutoHypOrTac implements ITactic {
+	public static class HypOrTac implements ITactic {
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return hypOr_auto().apply(ptNode, pm);
+			return BasicTactics.reasonerTac(new HypOr(), new EmptyInput())
+				.apply(ptNode, pm);
 		}
 
-	}
-
-	public static ITactic hypOr_auto() {
-		return new ITactic() {
-
-			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-				
-				IProverSequent sequent = ptNode.getSequent();
-				Predicate goal = sequent.goal();
-				
-				if (!Lib.isDisj(goal)) {
-					return "Goal is not a disjunctive predicate";
-				}
-				
-				AssociativePredicate aPred = (AssociativePredicate) goal;
-				for (Predicate child : aPred.getChildren()) {
-					if (sequent.containsHypothesis(child))
-						return hypOr(child).apply(ptNode, pm);
-				}
-
-				return "Sequent contains no appropriate hypothesis";
-			}
-		};
-	}
-
-	protected static ITactic hypOr(Predicate hyp) {
-		return BasicTactics
-				.reasonerTac(new HypOr(), new SinglePredInput(hyp));
 	}
 
 }
