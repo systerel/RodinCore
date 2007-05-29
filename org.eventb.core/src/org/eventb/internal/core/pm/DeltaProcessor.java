@@ -260,8 +260,10 @@ public class DeltaProcessor {
 		
 		ProofStateDelta affectedState = new ProofStateDelta(state);
 		affectedState.setKind(IProofStateDelta.CHANGED);
-		affectedState.setFlags(IProofStateDelta.F_PROOFTREE);
-		affectedState.setProofTreeDelta(proofTreeDelta);
+		if ((affectedState.getFlags() & IProofStateDelta.F_PROOFTREE) == 0) {
+			affectedState.setFlags(IProofStateDelta.F_PROOFTREE);
+			affectedState.setProofTreeDelta(proofTreeDelta);
+		}
 		
 		rootDelta.addAffectedProofState(userSupport, affectedState);
 		this.fireDeltas();
@@ -274,6 +276,7 @@ public class DeltaProcessor {
 		ProofStateDelta affectedState = new ProofStateDelta(state);
 		affectedState.setKind(IProofStateDelta.CHANGED);
 		affectedState.setFlags(IProofStateDelta.F_PROOFTREE);
+		affectedState.setProofTreeDelta(null);
 		
 		rootDelta.addAffectedProofState(userSupport, affectedState);
 		this.fireDeltas();
