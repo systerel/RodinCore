@@ -602,8 +602,16 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 								// If there are some changes to the proof state.
 								int psFlags = affectedProofState.getFlags();
 								if ((psFlags & IProofStateDelta.F_PROOFTREE) != 0) {
-									// Refresh if the proof tree has changed.
-									viewer.refresh();
+									if (affectedProofState.getProofTreeDelta() != null) {
+										// Refresh if the proof tree has changed.
+										viewer.refresh();
+									}
+									else {
+										// This is the case where the proof tree is completely change
+										// i.e. reload or rebuild
+										setInput(userSupport.getCurrentPO()
+												.getProofTree());
+									}
 								}
 								if ((psFlags & IProofStateDelta.F_NODE) != 0) {
 									// If the current node has been changed
