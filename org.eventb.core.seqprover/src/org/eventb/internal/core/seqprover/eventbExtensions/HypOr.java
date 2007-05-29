@@ -30,6 +30,12 @@ public class HypOr extends SinglePredInputReasoner implements IReasoner {
 		}
 		SinglePredInput mInput = (SinglePredInput) input;
 		Predicate predicate = mInput.getPredicate();
+		
+		if (!seq.containsHypothesis(predicate)) {
+			return ProverFactory.reasonerFailure(this, input,
+					"Sequent does not contain predicate " + predicate);
+		}
+		
 		Predicate goal = seq.goal();
 		if (!Lib.isDisj(goal)) {
 			return ProverFactory.reasonerFailure(this, input,
