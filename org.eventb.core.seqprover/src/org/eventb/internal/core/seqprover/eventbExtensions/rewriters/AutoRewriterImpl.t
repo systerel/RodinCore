@@ -690,4 +690,22 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    return expression;
 	}
 
+	@Override
+	public Expression rewrite(SetExtension expression) {
+	    %match (Expression expression) {
+			/**
+	    	 * Set Theory: {A, ..., B, ..., B, ..., C} == {A, ..., B, ..., C}
+	    	 */
+	    	SetExtension(members) -> {
+	    		Collection<Expression> newMembers = new LinkedHashSet<Expression>();
+
+				for (Expression member : `members) {
+					newMembers.add(member);
+				}
+				
+				return makeSetExtension(newMembers);
+	    	}
+		}
+	    return expression;
+	}
 }
