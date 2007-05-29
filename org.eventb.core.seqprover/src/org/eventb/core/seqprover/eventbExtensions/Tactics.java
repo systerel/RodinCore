@@ -69,6 +69,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
+import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
@@ -1217,13 +1218,6 @@ public class Tactics {
 
 	}
 
-	/**
-	 * This tactic tries to automatically apply an eqE or he for an equality
-	 * selected hyp where one side of the equality is a free variable and the
-	 * other side is an expression that doesn't contain the free variable.
-	 * 
-	 * @return the tactic
-	 */
 	public static ITactic negEnum_auto() {
 		return new ITactic() {
 
@@ -1267,6 +1261,42 @@ public class Tactics {
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			return BasicTactics.reasonerTac(new IsFunGoal(), new EmptyInput()).apply(ptNode, pm);
 		}	
+	}
+
+	public static class AutoHypOrTac implements ITactic {
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			return hypOr_auto().apply(ptNode, pm);
+		}
+
+	}
+
+	public static ITactic hypOr_auto() {
+		return new ITactic() {
+
+			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+				
+				IProverSequent sequent = ptNode.getSequent();
+				Predicate goal = sequent.goal();
+				
+				if (!Lib.isDisj(goal)) {
+					return "Goal is not a disjunctive predicate";
+				}
+				
+				AssociativePredicate aPred = (AssociativePredicate) goal;
+				for (Predicate child : aPred.getChildren()) {
+					if (sequent.containsHypothesis(child))
+						return hypOr(child).apply(ptNode, pm);
+				}
+
+				return "Sequent contains no appropriate hypothesis";
+			}
+		};
+	}
+
+	protected static ITactic hypOr(Predicate hyp) {
+		return BasicTactics
+				.reasonerTac(new HypOr(), new SinglePredInput(hyp));
 	}
 
 }
