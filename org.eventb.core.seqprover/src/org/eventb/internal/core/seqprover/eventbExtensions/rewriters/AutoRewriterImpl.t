@@ -702,8 +702,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				for (Expression member : `members) {
 					newMembers.add(member);
 				}
-				
-				return makeSetExtension(newMembers);
+				if (newMembers.size() != `members.length)	
+					return makeSetExtension(newMembers);
 	    	}
 		}
 	    return expression;
