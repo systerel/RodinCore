@@ -161,16 +161,16 @@ public class FormulaUnfold {
 	}
 
 	public static Predicate inQuantified(int tag, Expression E,
-			BoundIdentDecl[] x, Predicate P, Expression T) {
+			BoundIdentDecl[] boundIdentDecls, Predicate P, Expression T) {
 		Predicate Q = ff.makeRelationalPredicate(Predicate.IN, E
-				.shiftBoundIdentifiers(1, ff), T, null);
+				.shiftBoundIdentifiers(boundIdentDecls.length, ff), T, null);
 		if (tag == Predicate.EXISTS)
-			return ff.makeQuantifiedPredicate(tag, x, ff
+			return ff.makeQuantifiedPredicate(tag, boundIdentDecls, ff
 					.makeAssociativePredicate(Predicate.LAND, new Predicate[] {
 							P, Q }, null), null);
 		else {
-			return ff.makeQuantifiedPredicate(tag, x, ff.makeBinaryPredicate(
-					Predicate.LIMP, P, Q, null), null);
+			return ff.makeQuantifiedPredicate(tag, boundIdentDecls, ff
+					.makeBinaryPredicate(Predicate.LIMP, P, Q, null), null);
 		}
 	}
 
