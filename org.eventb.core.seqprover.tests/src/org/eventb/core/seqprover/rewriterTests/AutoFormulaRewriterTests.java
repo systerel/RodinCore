@@ -17,6 +17,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -647,6 +648,34 @@ public class AutoFormulaRewriterTests {
 				.makeIntegerLiteral(new BigInteger("3"), null), Expression.IN,
 				U);
 
+		// {A, ..., B, ..., B, ..., C} == {A, ..., B, ..., C}
+		assertSetExtension("{E, F, E} == {E, F}", ff.makeSetExtension(
+				new Expression[] { E, F }, null), E, F, E);
+		assertSetExtension("{E, F, F, E} == {E, F}", ff.makeSetExtension(
+				new Expression[] { E, F }, null), E, F, F, E);
+		assertSetExtension("{E, F, F} == {E, F}", ff.makeSetExtension(
+				new Expression[] { E, F }, null), E, F, F);
+		assertSetExtension("{E, E, F} == {E, F}", ff.makeSetExtension(
+				new Expression[] { E, F}, null), E, E, F);
+		assertSetExtension("{0, 1, 0} == {0, 1}", ff.makeSetExtension(
+				new Expression[] { number0, number1 }, null),
+				number0, number1, number0);
+		assertSetExtension("{0, 1, 1, 0} == {0, 1}", ff.makeSetExtension(
+				new Expression[] { number0, number1 }, null),
+				number0, number1, number1, number0);
+		assertSetExtension("{0, 1, 1} == {0, 1}", ff.makeSetExtension(
+				new Expression[] { number0, number1 }, null),
+				number0, number1, number1);
+		assertSetExtension("{0, 0, 1} == {0, 1}", ff.makeSetExtension(
+				new Expression[] { number0, number1 }, null),
+				number0, number0, number1);
+		assertSetExtension("{0, E, 1, 1, 0} == {0, E, 1}", ff.makeSetExtension(
+				new Expression[] { number0, E, number1 },
+				null), number0, E, number1, number1, number0);
+		assertSetExtension("{0, E, 1, F, 1, 0} == {0, E, 1, F}", ff
+				.makeSetExtension(new Expression[] { number0, E, number1, F },
+						null), number0, E, number1, F, number1, number0);
+
 		// E : {x | P(x)} == P(E)
 		BoundIdentDecl xDecl = ff.makeBoundIdentDecl("x", null);
 		Expression E = ff.makeIntegerLiteral(new BigInteger("4"), null);
@@ -814,6 +843,12 @@ public class AutoFormulaRewriterTests {
 		assertRelationalPredicate("U ∈ ℙ(ℤ) == U ∈ ℙ(ℤ)", ff.makeRelationalPredicate(
 				Predicate.IN, U, powInteger, null), U, Expression.IN,
 				powInteger);
+	}
+
+	private void assertSetExtension(String message, Expression expected,
+			Expression... expressions) {
+		SetExtension setExtension = ff.makeSetExtension(expressions, null);
+		assertEquals(expected, setExtension.rewrite(r));
 	}
 
 	@Test
