@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  * @author Laurent Voisin
  */
-public interface IRodinFile extends IOpenable, IInternalParent,
+public interface IRodinFile extends IRodinElement, IOpenable, IInternalParent,
 		IElementManipulation {
 
 	/**
