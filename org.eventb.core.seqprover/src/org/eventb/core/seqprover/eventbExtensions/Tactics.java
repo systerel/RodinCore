@@ -85,6 +85,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHyp
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
@@ -1270,6 +1271,25 @@ public class Tactics {
 				.apply(ptNode, pm);
 		}
 
+	}
+
+	public static ITactic impAndRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new ImpAndRewrites(),
+				new ImpAndRewrites.Input(hyp, position));
+	}
+
+	public static List<IPosition> impAndGetPositions(Predicate pred) {
+		return pred.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryPredicate predicate) {
+				if (predicate.getTag() == Predicate.LIMP) {
+					return Lib.isConj(predicate.getRight());
+				}
+				return super.select(predicate);
+			}
+
+		});
 	}
 
 }
