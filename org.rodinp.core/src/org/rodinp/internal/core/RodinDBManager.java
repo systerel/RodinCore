@@ -618,7 +618,7 @@ public class RodinDBManager implements ISaveParticipant {
 					VERBOSE = false;
 				}
 				element.closing(info);
-				if (!(element instanceof RodinFile) && info != null) {
+				if (!(element instanceof RodinFile)) {
 					closeChildren(info);
 				}
 				this.cache.removeInfo(element);
@@ -628,9 +628,8 @@ public class RodinDBManager implements ISaveParticipant {
 			} finally {
 				RodinDBManager.VERBOSE = wasVerbose;
 			}
-			return info;
 		}
-		return null;
+		return info;
 	}	
 
 	public void removePerProjectInfo(RodinProject javaProject) {
