@@ -1404,6 +1404,24 @@
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
             tooltip="%proofTactics.nextReview.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.impAndHyp"
+            interrupt="false"
+            name="%proofTactic.impAndHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ImpAndHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.impAndHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.impAndGoal"
+            interrupt="false"
+            name="%proofTactic.impAndGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ImpAndGoal"
+            target="goal"
+            tooltip="%proofTactic.impAndGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
