@@ -191,7 +191,7 @@ public class DefaultTacticProvider implements ITacticProvider {
 	 *         otherwise return <code>false</code>.
 	 */
 	private boolean isSpaceOrBracket(char c) {
-		return (c == ' ' || c == '(' || c == ')');
+		return (c == '\t' || c == '\n' || c == ' ' || c == '(' || c == ')');
 	}
 
 }
