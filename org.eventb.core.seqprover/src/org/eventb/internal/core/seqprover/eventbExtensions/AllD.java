@@ -174,8 +174,9 @@ public class AllD implements IReasoner {
 		// Generate the anticidents
 		IAntecedent[] anticidents = new IAntecedent[2];
 		// Well definedness condition
-		anticidents[0] = ProverFactory.makeAntecedent(WDpred);
-
+		anticidents[0] = ProverFactory.makeAntecedent(Lib.makeConj(WDpreds));
+		
+		
 		// The instantiated goal
 		// Replaced, adding WD predicate to hypotheses
 		// anticidents[1] = ProverFactory.makeAntecedent(
@@ -187,14 +188,14 @@ public class AllD implements IReasoner {
 		addedHyps.addAll(WDpreds);
 		addedHyps.addAll(Lib.breakPossibleConjunct(instantiatedPred));
 		
-		Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
-		toDeselect.add(univHyp);
-		// toDeselect.addAll(WDpreds);
+//		Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
+//		// toDeselect.add(univHyp);
+//		// toDeselect.addAll(WDpreds);
 		
 		anticidents[1] = ProverFactory.makeAntecedent(
 				null,
 				addedHyps,
-				ProverFactory.makeDeselectHypAction(toDeselect)
+				null
 				);
 		
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
