@@ -44,8 +44,9 @@ public class TestLib {
 	 * @param sequentAsString
 	 * 			The sequent as a string
 	 * @return
-	 * 			The resulting sequent, or <code>null</code> in case the sequent 
-	 * 			could not be constructed due to a parsing or typechecking error.
+	 * 			The resulting sequent
+	 * @throws IllegalArgumentException
+	 * 		 in case the sequent could not be constructed due to a parsing or typechecking error.
 	 */
 	public static IProverSequent genSeq(String sequentAsString){
 		String[] hypsStr = (sequentAsString.split("[|]-")[0]).split(";;");
@@ -58,10 +59,10 @@ public class TestLib {
 		Predicate[] hyps = new Predicate[hypsStr.length];
 		for (int i=0;i<hypsStr.length;i++){
 			hyps[i] = Lib.parsePredicate(hypsStr[i]);
-			if (hyps[i] == null) return null;
+			if (hyps[i] == null) throw new IllegalArgumentException();
 		}
 		Predicate goal = Lib.parsePredicate(goalStr);
-		if (goal == null) return null;
+		if (goal == null) throw new IllegalArgumentException();
 		
 		// Type check
 		ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
@@ -69,12 +70,12 @@ public class TestLib {
 		
 		for (int i=0;i<hyps.length;i++){
 			tcResult =  hyps[i].typeCheck(typeEnvironment);
-			if (! tcResult.isSuccess()) return null;
+			if (! tcResult.isSuccess()) throw new IllegalArgumentException();
 			typeEnvironment.addAll(tcResult.getInferredEnvironment());
 		}
 
 		tcResult =  goal.typeCheck(typeEnvironment);
-		if (! tcResult.isSuccess()) return null;
+		if (! tcResult.isSuccess()) throw new IllegalArgumentException();
 		typeEnvironment.addAll(tcResult.getInferredEnvironment());
 				
 		// constructing sequent
@@ -154,6 +155,37 @@ public class TestLib {
 			if (hyp.equals(pred)) return pred;
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the first hypothesis in the given sequent as returned by the
+	 * iterator in {@link IProverSequent#hypIterable()}.
+	 * 
+	 * <p>
+	 * This is useful in test cases where generating the hypothesis from a string is 
+	 * difficult because the typing information needed to typecheck it is present in the 
+	 * sequent, but cannot be inferred from the predicate itself.
+	 * </p>
+	 * 
+	 * <p>
+	 * It is recommended to use this method only for sequents with exactly one hypothesis 
+	 * since the order of the hypotheses does not matter and this would lead to more resilient
+	 * test case code.
+	 * </p>
+	 * 
+	 * @param seq
+	 * 		The sequent in whose hyoptheses to search
+	 * @return
+	 * 		The reference to the first hypothesis in the sequent.
+	 * @throws IllegalArgumentException
+	 * 		in case the sequent has no hypotheses
+	 */
+	public static Predicate getFirstHyp(IProverSequent seq)
+	{
+		for (Predicate pred : seq.hypIterable()) {
+			return pred;
+		}
+		throw new IllegalArgumentException("Sequent " + seq +" contains no hypotheses.");
 	}
 	
 }
