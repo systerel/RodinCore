@@ -1422,6 +1422,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.ImpAndGoal"
             target="goal"
             tooltip="%proofTactic.impAndGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.impOrHyp"
+            interrupt="false"
+            name="%proofTactic.impOrHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ImpOrHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.impOrHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.impOrGoal"
+            interrupt="false"
+            name="%proofTactic.impOrGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ImpOrGoal"
+            target="goal"
+            tooltip="%proofTactic.impOrGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
