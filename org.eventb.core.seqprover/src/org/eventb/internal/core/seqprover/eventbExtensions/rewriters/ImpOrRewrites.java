@@ -12,10 +12,10 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 
-public class ImpAndRewrites extends AbstractManualRewrites {
+public class ImpOrRewrites extends AbstractManualRewrites {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
-			+ ".impAndRewrites";
+			+ ".impOrRewrites";
 
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -24,8 +24,8 @@ public class ImpAndRewrites extends AbstractManualRewrites {
 	@Override
 	protected String getDisplayName(Predicate pred, IPosition position) {
 		if (pred == null)
-			return "⇒ with ∧ in goal";
-		return "⇒ with ∧ in hyp (" + pred.getSubFormula(position) + ")";
+			return "⇒ with ∨ in goal";
+		return "⇒ with ∨ in hyp (" + pred.getSubFormula(position) + ")";
 	}
 
 	@Override
@@ -38,11 +38,10 @@ public class ImpAndRewrites extends AbstractManualRewrites {
 
 	@Override
 	protected Predicate[] rewrite(Predicate pred, IPosition position) {
-		IFormulaRewriter rewriter = new ImpAndRewriterImpl();
+		IFormulaRewriter rewriter = new ImpOrRewriterImpl();
 		
 		FormulaFactory ff = FormulaFactory.getDefault();
 		Formula subFormula = pred.getSubFormula(position);
-
 		
 		Formula newSubFormula = null;
 		if (subFormula instanceof BinaryPredicate) {

@@ -163,6 +163,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites"
             id="impAndRewrites"
             name="%impAndRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrites"
+            id="impOrRewrites"
+            name="%impOrRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">
