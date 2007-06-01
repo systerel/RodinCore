@@ -42,16 +42,14 @@ public class ImpE extends HypothesisReasoner {
 					"Hypothesis is not an implication: " + pred);
 		}
 
-		final Predicate toShow = Lib.impLeft(pred);
-		final Predicate toAssume = Lib.impRight(pred);
-		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(toShow);
-		addedHyps.addAll(Lib.breakPossibleConjunct(toAssume));
+		final Predicate impLeft = Lib.impLeft(pred);
+		final Predicate impRight = Lib.impRight(pred);
+		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(impRight);
 		Set<Predicate> deselectedHyps = new HashSet<Predicate>();
-		// deselectedHyps.add(toShow);
 		deselectedHyps.add(pred);
 		return new IAntecedent[] {
 				ProverFactory.makeAntecedent(
-						toShow,null,
+						impLeft,null,
 						ProverFactory.makeDeselectHypAction(Arrays.asList(pred))),
 				ProverFactory.makeAntecedent(
 						null,
