@@ -1,18 +1,28 @@
-package org.eventb.core.seqprover.reasonerExtentionTests;
+package org.eventb.core.seqprover.eventbExtentionTests;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
-//import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
 
 //import com.b4free.rodin.core.B4freeCore;
 
+/**
+ * Unit tests for the {@link ImpAndRewrites} reasoner
+ * 
+ * @author htson
+ *
+ */
 public class ImpAndTests extends AbstractReasonerTests {
 
 	@Override
@@ -30,6 +40,7 @@ public class ImpAndTests extends AbstractReasonerTests {
 		// Applicable at the root in goal
 		pred = Lib.parsePredicate("x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3");
 		pred.typeCheck(ff.makeTypeEnvironment());
+		
 		input = new AbstractManualRewrites.Input(null, ff
 				.makePosition(""));
 		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
@@ -177,6 +188,48 @@ public class ImpAndTests extends AbstractReasonerTests {
 						.size()]); 
 	}
 
+	/**
+	 * Test get applicable positions
+	 */
+	public void testGetPositions() {
+		Predicate pred;
+		FormulaFactory ff = FormulaFactory.getDefault();
+		pred = Lib.parsePredicate("x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3");
+		pred.typeCheck(ff.makeTypeEnvironment());
+		List<IPosition> positions = Tactics.impAndGetPositions(pred);
+		assertEquals("There is exactly 1 applicable position ", 1, positions
+				.size());
+		assertEquals("The position is ROOT ", "", positions.get(0).toString());
+
+		pred = Lib.parsePredicate("x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3)");
+		pred.typeCheck(ff.makeTypeEnvironment());
+		positions = Tactics.impAndGetPositions(pred);
+		assertEquals("There is exactly 1 applicable position ", 1, positions
+				.size());
+		assertEquals("The position is 1 ", "1", positions.get(0).toString());
+
+		pred = Lib.parsePredicate("∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3)");
+		pred.typeCheck(ff.makeTypeEnvironment());
+
+		positions = Tactics.impAndGetPositions(pred);
+		assertEquals("There is exactly 1 applicable position ", 1, positions
+				.size());
+		assertEquals("The position is 1.1 ", "1.1", positions.get(0).toString());
+
+		pred = Lib
+				.parsePredicate("∀x·x = 4 ⇒ ((x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) ∧ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3)) ");
+		pred.typeCheck(ff.makeTypeEnvironment());
+
+		positions = Tactics.impAndGetPositions(pred);
+		assertEquals("There is exactly 3 applicable position ", 3, positions
+				.size());
+		assertEquals("The 1st position is 1", "1", positions.get(0).toString());
+		assertEquals("The 2nd position is 1.1.0", "1.1.0", positions.get(1)
+				.toString());
+		assertEquals("The 3rd position is 1.1.1", "1.1.1", positions.get(2)
+				.toString());
+	}
+	
 //	@Override
 //	public ITactic getJustDischTactic() {
 //		return B4freeCore.externalPP(false);
