@@ -97,9 +97,9 @@ public class AllmpD extends AllD {
 		// Well definedness condition
 		anticidents[0] = ProverFactory.makeAntecedent(Lib.makeConj(WDpreds));
 
-		Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
-		// toDeselect.add(univHyp);
-		// toDeselect.addAll(WDpreds);
+//		Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
+//		// toDeselect.add(univHyp);
+//		// toDeselect.addAll(WDpreds);
 
 		// The instantiated to impLeft goal
 		{
@@ -109,7 +109,7 @@ public class AllmpD extends AllD {
 			anticidents[1] = ProverFactory.makeAntecedent(
 					impLeft,
 					addedHyps,
-					ProverFactory.makeDeselectHypAction(toDeselect)
+					null
 			);
 		}
 		// The instantiated continuation
@@ -122,7 +122,7 @@ public class AllmpD extends AllD {
 			anticidents[2] = ProverFactory.makeAntecedent(
 					null,
 					addedHyps,
-					ProverFactory.makeDeselectHypAction(toDeselect)
+					null
 			);
 		}
 		
