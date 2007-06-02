@@ -266,4 +266,32 @@ public class FormulaUnfold {
 				.makeBinaryPredicate(Predicate.LIMP, P, Q, null), null);
 	}
 
+	public static Predicate inRelImage(Expression F, Expression r, Expression S) {
+		Type type = S.getType();
+		assert type instanceof PowerSetType;
+		Type baseType = type.getBaseType();
+
+		BoundIdentDecl[] identDecls = getBoundIdentDecls(baseType);
+		
+		Expression exp = getExpression(identDecls.length - 1, baseType);
+
+		// x : S
+		Predicate pred1 = ff.makeRelationalPredicate(Predicate.IN, exp, S
+				.shiftBoundIdentifiers(identDecls.length, ff), null);
+		
+		// x |-> F
+		Expression map = ff.makeBinaryExpression(Predicate.MAPSTO, exp, F
+				.shiftBoundIdentifiers(identDecls.length, ff), null);
+		
+		// x |-> F : r
+		Predicate pred2 = ff.makeRelationalPredicate(Predicate.IN, map, r
+				.shiftBoundIdentifiers(identDecls.length, ff), null);
+		
+		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
+				Predicate.EXISTS, identDecls,
+				ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] {
+						pred1, pred2 }, null), null);
+		return qPred;
+	}
+
 }
