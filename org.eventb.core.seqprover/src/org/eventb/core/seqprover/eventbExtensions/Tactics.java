@@ -1094,6 +1094,10 @@ public class Tactics {
 							&& (rTag == Expression.RANRES || rTag == Expression.RANSUB)) {
 						return true;
 					}
+					if (right instanceof BinaryExpression
+							&& rTag == Expression.RELIMAGE) {
+						return true;
+					}
 				}
 				return super.select(predicate);
 			}
