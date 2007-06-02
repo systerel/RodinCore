@@ -56,9 +56,9 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    %match (Predicate predicate) {
 
 			/**
-	    	 * Set Theory 8: A ∈ {A} == ⊤
-	    	 * Set Theory 9: B ∈ {A, ..., B, ..., C} == ⊤
-	    	 * Set Theory 16: E ∈ {F} == E = F (if F is a single expression)
+	    	 * Set Theory: A ∈ {A} == ⊤
+	    	 * Set Theory: B ∈ {A, ..., B, ..., C} == ⊤
+	    	 * Set Theory: E ∈ {F} == E = F (if F is a single expression)
 	    	 * Set Theory: E ∈ {A, ..., B} == E = A ⋁ ... ⋁ E = B
 	    	 */
 	    	In(E, SetExtension(members)) -> {
@@ -177,6 +177,13 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    		return FormulaUnfold.inRanManipulation(false, `E, `F, `r, `T);
 	    	}
 	    	
+	    	/**
+	    	 * Set Theory: F ∈ r[S] == (∃x·x ∈ S ∧ x ↦ F ∈ r)
+	    	 */
+	    	In(F, RelImage(r, S)) -> {
+	    		return FormulaUnfold.inRelImage(`F, `r, `S);
+	    	}
+	    	 
 	    }
 	    return predicate;
 	}

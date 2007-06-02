@@ -167,6 +167,30 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	
 	String resultP38 = "∀x·x=0⇒1 ↦ x∈{1 ↦ x,x ↦ 2}∧x∉{x}";
 
+	String P39 = "(0 = 1) ⇒ 1 ∈ r[{0, 1}]";
+
+	String resultP39 = "0=1⇒(∃x·x∈{0,1}∧x ↦ 1∈r)";
+	
+	String P40 = "∀x·x = 0 ⇒ x ∈ r[{0, x}]";
+	
+	String resultP40 = "∀x·x=0⇒(∃x0·x0∈{0,x}∧x0 ↦ x∈r)";
+
+	String P41 = "(0 = 1) ⇒ 1 ∈ r[{0 ↦ 1, 1 ↦ 2}]";
+
+	String resultP41 = "0=1⇒(∃x,x0·x ↦ x0∈{0 ↦ 1,1 ↦ 2}∧x ↦ x0 ↦ 1∈r)";
+	
+	String P42 = "∀x·x = 0 ⇒ x ∈ r[{0 ↦ 1, 1 ↦ 2}]";
+	
+	String resultP42 = "∀x·x=0⇒(∃x0,x1·x0 ↦ x1∈{0 ↦ 1,1 ↦ 2}∧x0 ↦ x1 ↦ x∈r)";
+
+	String P43 = "(0 = 1) ⇒ 1 ↦ 1 ∈ r[{0 ↦ 1, 1 ↦ 2}]";
+
+	String resultP43 = "0=1⇒(∃x,x0·x ↦ x0∈{0 ↦ 1,1 ↦ 2}∧x ↦ x0 ↦ (1 ↦ 1)∈r)";
+	
+	String P44 = "∀x·x = 0 ⇒ x ↦ 1 ∈ r[{0 ↦ 1, 1 ↦ 2}]";
+	
+	String resultP44 = "∀x·x=0⇒(∃x0,x1·x0 ↦ x1∈{0 ↦ 1,1 ↦ 2}∧x0 ↦ x1 ↦ (x ↦ 1)∈r)";
+
 	@Override
 	public String getReasonerID() {
 		return "org.eventb.core.seqprover.rm";
@@ -215,6 +239,12 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 		testGetPosition(P36, "1.1");
 		testGetPosition(P37, "1");
 		testGetPosition(P38, "1.1");
+		testGetPosition(P39, "1");
+		testGetPosition(P40, "1.1");
+		testGetPosition(P41, "1");
+		testGetPosition(P42, "1.1");
+		testGetPosition(P43, "1");
+		testGetPosition(P44, "1.1");
 	}
 
 	protected List<IPosition> getPositions(Predicate predicate) {
@@ -300,6 +330,18 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				P37, "1", resultP37,
 				// Test for P38
 				P38, "1.1", resultP38,
+				// Test for P39
+				P39, "1", resultP39,
+				// Test for P40
+				P40, "1.1", resultP40,
+				// Test for P41
+				P41, "1", resultP41,
+				// Test for P42
+				P42, "1.1", resultP42,
+				// Test for P43
+				P43, "1", resultP43,
+				// Test for P44
+				P44, "1.1", resultP44
 		};
 	}
 
@@ -382,7 +424,19 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				// Test for P37
 				P37, "0",
 				// Test for P38
-				P38, "1.0"
+				P38, "1.0",
+				// Test for P39
+				P39, "0",
+				// Test for P40
+				P40, "1.0",
+				// Test for P41
+				P41, "0",
+				// Test for P42
+				P42, "1.0",
+				// Test for P43
+				P43, "0",
+				// Test for P44
+				P44, "1.0"
 		};
 	}
 
