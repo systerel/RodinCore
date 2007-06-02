@@ -17,7 +17,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 public class RemoveMembership extends AbstractManualRewrites implements
 		IReasoner {
 
-	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".rn";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".rm";
 
 	@Override
 	protected String getDisplayName(Predicate pred, IPosition position) {
