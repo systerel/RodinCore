@@ -5,10 +5,11 @@ import java.util.List;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.junit.Test;
 
 /**
- * Unit tests for the ri (remove inclusion) reasoner
+ * Unit tests for the ri reasoner {@link RemoveInclusion}
  * 
  * @author htson
  */
