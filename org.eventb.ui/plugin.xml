@@ -1440,6 +1440,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.ImpOrGoal"
             target="goal"
             tooltip="%proofTactic.impOrGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.relImgUnionRightHyp"
+            interrupt="false"
+            name="%proofTactic.relImgUnionRightHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionRightHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.relImgUnionRightHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.relImgUnionRightGoal"
+            interrupt="false"
+            name="%proofTactic.relImgUnionRightGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionRightGoal"
+            target="goal"
+            tooltip="%proofTactic.relImgUnionRightGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
