@@ -41,9 +41,9 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
  * Basic automated rewriter for the Event-B sequent prover.
  */
 @SuppressWarnings("unused")
-public class RelImgConjRightRewriterImpl extends DefaultRewriter {
+public class RelImgUnionRightRewriterImpl extends DefaultRewriter {
 
-	public RelImgConjRightRewriterImpl() {
+	public RelImgUnionRightRewriterImpl() {
 		super(true, FormulaFactory.getDefault());
 	}
 		
