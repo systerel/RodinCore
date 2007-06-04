@@ -223,10 +223,6 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	}
 	    	 
 	    	/**
-	    	 * Set Theory: E ↦ F ∈ p  ... q  r == E ↦ F ∈ ((dom(r) ⩤ (p ...  q)) ∪ r)
-	    	 */
-
-	    	/**
 	    	 * Set Theory: r ∈ S  T == r ∈ S ↔ T ∧ dom(r) = S
 	    	 */
 	    	In(r, Trel(S, T)) -> {
@@ -243,20 +239,22 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	In(r, Srel(S, T)) -> {
 	    		Expression rel = makeBinaryExpression(Expression.REL, `S, `T);
 	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `r, rel);
-	    		Expression dom = makeUnaryExpression(Expression.KRAN, `r);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `T);
+	    		Expression ran = makeUnaryExpression(Expression.KRAN, `r);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
 	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    	}
 
 	    	/**
-	    	 * Set Theory: r ∈ S  T == r ∈ S  T ∧ r ∈ S  T
+	    	 * Set Theory: r ∈ S  T == r ∈ S ↔ T ∧ dom(r) = S & ran(r) = T
 	    	 */
 	    	In(r, Strel(S, T)) -> {
-	    		Expression rel1 = makeBinaryExpression(Expression.SREL, `S, `T);
-	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `r, rel1);
-	    		Expression rel2 = makeBinaryExpression(Expression.TREL, `S, `T);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.IN, `r, rel2);
-	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		Expression rel = makeBinaryExpression(Expression.REL, `S, `T);
+	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `r, rel);
+	    		Expression dom = makeUnaryExpression(Expression.KDOM, `r);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    		Expression ran = makeUnaryExpression(Expression.KRAN, `r);
+	    		Predicate pred3 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
+	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2, pred3);
 	    	}
 
 	    	/**
@@ -323,13 +321,13 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	}
 
 	    	/**
-	    	 * Set Theory: f ∈ S ⤖ T == f ∈ S ↣ T ∧ f ∈ S ↠ T
+	    	 * Set Theory: f ∈ S ⤖ T == f ∈ S ↣ T ∧ ran(f) = T
 	    	 */
 	    	In(f, Tbij(S, T)) -> {
 	    		Expression pfun1 = makeBinaryExpression(Expression.TINJ, `S, `T);
 	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun1);
-	    		Expression pfun2 = makeBinaryExpression(Expression.TSUR, `S, `T);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.IN, `f, pfun2);
+	    		Expression ran = makeUnaryExpression(Expression.KRAN, `f);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
 	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    	}
 

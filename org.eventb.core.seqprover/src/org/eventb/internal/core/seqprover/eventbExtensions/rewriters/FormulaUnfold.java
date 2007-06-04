@@ -186,16 +186,14 @@ public class FormulaUnfold {
 		assert baseType instanceof ProductType;
 		Type rType = ((ProductType) baseType).getRight();
 
-		BoundIdentDecl decl = ff.makeBoundIdentDecl("y", null, rType);
-
-		BoundIdentifier ident = ff.makeBoundIdentifier(0, null, rType);
-
+		BoundIdentDecl[] boundIdentDecls = getBoundIdentDecls(rType);
+		Expression expression = getExpression(boundIdentDecls.length - 1, rType);
 		Expression left = ff.makeBinaryExpression(Expression.MAPSTO, E
-				.shiftBoundIdentifiers(1, ff), ident, null);
+				.shiftBoundIdentifiers(boundIdentDecls.length, ff), expression, null);
 		Predicate pred = ff.makeRelationalPredicate(Predicate.IN, left, r
-				.shiftBoundIdentifiers(1, ff), null);
+				.shiftBoundIdentifiers(boundIdentDecls.length, ff), null);
 		return ff.makeQuantifiedPredicate(Predicate.EXISTS,
-				new BoundIdentDecl[] { decl }, pred, null);
+				boundIdentDecls, pred, null);
 	}
 
 	public static Predicate inRan(Expression F, Expression r) {
@@ -205,16 +203,15 @@ public class FormulaUnfold {
 		assert baseType instanceof ProductType;
 		Type rType = ((ProductType) baseType).getLeft();
 
-		BoundIdentDecl decl = ff.makeBoundIdentDecl("x", null, rType);
+		BoundIdentDecl[] boundIdentDecls = getBoundIdentDecls(rType);
+		Expression expression = getExpression(boundIdentDecls.length - 1, rType);
 
-		BoundIdentifier ident = ff.makeBoundIdentifier(0, null, rType);
-
-		Expression left = ff.makeBinaryExpression(Expression.MAPSTO, ident, F
-				.shiftBoundIdentifiers(1, ff), null);
+		Expression left = ff.makeBinaryExpression(Expression.MAPSTO, expression, F
+				.shiftBoundIdentifiers(boundIdentDecls.length, ff), null);
 		Predicate pred = ff.makeRelationalPredicate(Predicate.IN, left, r
-				.shiftBoundIdentifiers(1, ff), null);
+				.shiftBoundIdentifiers(boundIdentDecls.length, ff), null);
 		return ff.makeQuantifiedPredicate(Predicate.EXISTS,
-				new BoundIdentDecl[] { decl }, pred, null);
+				boundIdentDecls, pred, null);
 	}
 
 	public static Predicate inConverse(Expression E, Expression F, Expression r) {
