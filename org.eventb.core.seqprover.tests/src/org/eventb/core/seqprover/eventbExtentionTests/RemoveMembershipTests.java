@@ -138,13 +138,21 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	// E : dom(r) == #y. E |-> y : r
 	String P25 = "(0 = 1) ⇒ 0 ∈ dom({0 ↦ 1})";
 
-	String resultP25 = "0=1⇒(∃y·0 ↦ y∈{0 ↦ 1})";
+	String resultP25 = "0=1⇒(∃x·0 ↦ x∈{0 ↦ 1})";
 	
 	String P26 = "∀x·x = 0 ⇒ x ∈ dom({x ↦ 1, x ↦ 2})";
 
-	String resultP26 = "∀x·x=0⇒(∃y·x ↦ y∈{x ↦ 1,x ↦ 2})";
+	String resultP26 = "∀x·x=0⇒(∃x0·x ↦ x0∈{x ↦ 1,x ↦ 2})";
 	
+	String P77 = "(0 = 1) ⇒ 0 ∈ dom({0 ↦ (1↦BOOL↦0)})";
+
+	String resultP77 = "0=1⇒(∃x,x0,x1·0 ↦ (x ↦ x0 ↦ x1)∈{0 ↦ (1 ↦ BOOL ↦ 0)})";
 	
+	String P78 = "∀x·x = 0 ⇒ x ∈ dom({x ↦ (1↦BOOL↦0), x ↦ (2↦BOOL↦0)})";
+
+	String resultP78 = "∀x·x=0⇒(∃x0,x1,x2·x ↦ (x0 ↦ x1 ↦ x2)∈{x ↦ (1 ↦ BOOL ↦ 0),x ↦ (2 ↦ BOOL ↦ 0)})";
+	
+
 	// F : ran(r) == #y. y |-> F : r
 	String P27 = "(0 = 1) ⇒ 0 ∈ ran({0 ↦ 1})";
 
@@ -154,6 +162,13 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	
 	String resultP28 = "∀x·x=0⇒(∃x0·x0 ↦ x∈{x ↦ 1,2 ↦ x})";
 
+	String P79 = "(0 = 1) ⇒ 0 ∈ ran({1 ↦ BOOL ↦ 0 ↦ 1})";
+
+	String resultP79 = "0=1⇒(∃x,x0,x1·x ↦ x0 ↦ x1 ↦ 0∈{1 ↦ BOOL ↦ 0 ↦ 1})";
+	
+	String P80 = "∀x·x = 0 ⇒ x ∈ ran({1 ↦ BOOL ↦ x ↦ 1, 2 ↦ BOOL ↦ 0 ↦ x})";
+	
+	String resultP80 = "∀x·x=0⇒(∃x0,x1,x2·x0 ↦ x1 ↦ x2 ↦ x∈{1 ↦ BOOL ↦ x ↦ 1,2 ↦ BOOL ↦ 0 ↦ x})";
 	
 	// E |-> F :r~ == F |-> E : r
 	String P29 = "(0 = 1) ⇒ (0 ↦ 1 ∈ {1 ↦ 0}∼)";
@@ -302,11 +317,11 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	// r : S <<->> T == r : S <->> T & r : S <<-> T
 	String P59 = "(0 = 1) ⇒ r ∈ ℕ×BOOL  ℕ";
 	
-	String resultP59 = "0=1⇒r∈ℕ × BOOL  ℕ∧r∈ℕ × BOOL  ℕ";
+	String resultP59 = "0=1⇒r∈ℕ × BOOL ↔ ℕ∧dom(r)=ℕ × BOOL∧ran(r)=ℕ";
 	
 	String P60 = "∀x·x = 0 ⇒ r ∈ ℕ  {x}×BOOL";
 	
-	String resultP60 = "∀x·x=0⇒r∈ℕ  {x} × BOOL∧r∈ℕ  {x} × BOOL";
+	String resultP60 = "∀x·x=0⇒r∈ℕ ↔ {x} × BOOL∧dom(r)=ℕ∧ran(r)={x} × BOOL";
 
 	// f : S +-> T == f : S <-> T & !x,y,z. x |-> y : f & x |-> z : f => y = z
 	String P61 = "(0 = 1) ⇒ f ∈ ℕ×BOOL ⇸ ℕ";
@@ -376,14 +391,14 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	String resultP74 = "∀x·x=0⇒f∈ℕ ⤀ {x} × BOOL∧dom(f)=ℕ";
 
 
-	// f : S >->> T == f : S >-> T & f : S ->> T
+	// f : S >->> T == f : S >-> T & ran(f) = T
 	String P75 = "(0 = 1) ⇒ f ∈ ℕ×BOOL ⤖ ℕ";
 	
-	String resultP75 = "0=1⇒f∈ℕ × BOOL ↣ ℕ∧f∈ℕ × BOOL ↠ ℕ";
+	String resultP75 = "0=1⇒f∈ℕ × BOOL ↣ ℕ∧ran(f)=ℕ";
 	
 	String P76 = "∀x·x = 0 ⇒ f ∈ ℕ ⤖ {x}×BOOL";
 	
-	String resultP76 = "∀x·x=0⇒f∈ℕ ↣ {x} × BOOL∧f∈ℕ ↠ {x} × BOOL";
+	String resultP76 = "∀x·x=0⇒f∈ℕ ↣ {x} × BOOL∧ran(f)={x} × BOOL";
 
 
 	@Override
@@ -422,8 +437,12 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 		testGetPosition(P24, "1.1");
 		testGetPosition(P25, "1");
 		testGetPosition(P26, "1.1");
+		testGetPosition(P77, "1");
+		testGetPosition(P78, "1.1");
 		testGetPosition(P27, "1");
 		testGetPosition(P28, "1.1");
+		testGetPosition(P79, "1");
+		testGetPosition(P80, "1.1");
 		testGetPosition(P29, "1");
 		testGetPosition(P30, "1.1");
 		testGetPosition(P31, "1");
@@ -507,8 +526,12 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				P24, "1.1", resultP24,
 				P25, "1", resultP25,
 				P26, "1.1", resultP26,
+				P77, "1", resultP77,
+				P78, "1.1", resultP78,
 				P27, "1", resultP27,
 				P28, "1.1", resultP28,
+				P79, "1", resultP79,
+				P80, "1.1", resultP80,
 				P29, "1", resultP29,
 				P30, "1.1", resultP30,
 				P31, "1", resultP31,
@@ -590,8 +613,12 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				P24, "1.0",
 				P25, "0",
 				P26, "1.0",
+				P77, "0",
+				P78, "1.0",
 				P27, "0",
 				P28, "1.0",
+				P79, "0",
+				P80, "1.0",
 				P29, "0",
 				P30, "1.0",
 				P31, "0",
