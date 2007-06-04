@@ -1,4 +1,7 @@
 AutoRewriterImpl.java
+ImpAndRewriterImpl.java
+ImpOrRewriterImpl.java
 RemoveNegationRewriterImpl.java
 RemoveInclusionRewriterImpl.java
 RemoveMembershipRewriterImpl.java
+TypeRewriterImpl.java
