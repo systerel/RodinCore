@@ -99,10 +99,11 @@ public abstract class AbstractManualRewriterTests extends AbstractReasonerTests 
 	}
 
 
-	protected void testGetPosition(String p13, String expected) {
-		Predicate predicate = TestLib.genPred(p13);
+	protected void testGetPosition(String predicateImage, String expected) {
+		Predicate predicate = TestLib.genPred(predicateImage);
 		List<IPosition> positions = getPositions(predicate);
-		assertPositions("Position found for " + p13, expected, positions);
+		assertPositions("Position found for " + predicateImage, expected,
+				positions);
 	}
 
 	@Override

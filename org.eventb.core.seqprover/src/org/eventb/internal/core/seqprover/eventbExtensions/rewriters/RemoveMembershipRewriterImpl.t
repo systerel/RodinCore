@@ -45,6 +45,24 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 		super();
 	}
 
+	private RelationalPredicate makeRelationalPredicate(int tag, Expression left,
+			Expression right) {
+		return ff.makeRelationalPredicate(tag, left, right, null);
+	}
+	
+	private AssociativePredicate makeAssociativePredicate(int tag, Predicate ... children) {
+		return ff.makeAssociativePredicate(tag, children, null);
+	}
+	
+	private BinaryExpression makeBinaryExpression(int tag, Expression left,
+			Expression right) {
+		return ff.makeBinaryExpression(tag, left, right, null);
+	}
+
+	private UnaryExpression makeUnaryExpression(int tag, Expression child) {
+		return ff.makeUnaryExpression(tag, child, null);
+	}
+
 	%include {Formula.tom}
 
 	@Override
@@ -184,6 +202,137 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    		return FormulaUnfold.inRelImage(`F, `r, `S);
 	    	}
 	    	 
+	    	/**
+	    	 * Set Theory: E ↦ F ∈ p_1; p_2; ...; p_n ==
+	    	 *    ∃x_1, x_2, x_(n−1)· E ↦ x_1 ∈ p_1 ∧
+	    	 *                        x_1 ↦ x_2 ∈ p_2 ∧
+	    	 *                        ... ∧
+	    	 *                        x_(n−1) ↦ F ∈ p_n
+	    	 */
+	    	In(Mapsto(E, F), Fcomp(children)) -> {
+				return FormulaUnfold.inForwardComposition(`E, `F, `children);
+	    	}
+
+	    	/**
+	    	 * Set Theory: E ↦ F ∈ id(S) == E ∈ S ∧ F = E
+	    	 */
+	    	In(Mapsto(E, F), Id(S)) -> {
+	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `E, `S);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, `F, `E);
+	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
+	    	 
+	    	/**
+	    	 * Set Theory: E ↦ F ∈ p  ... q  r == E ↦ F ∈ ((dom(r) ⩤ (p ...  q)) ∪ r)
+	    	 */
+
+	    	/**
+	    	 * Set Theory: r ∈ S  T == r ∈ S ↔ T ∧ dom(r) = S
+	    	 */
+	    	In(r, Trel(S, T)) -> {
+	    		Expression rel = makeBinaryExpression(Expression.REL, `S, `T);
+	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `r, rel);
+	    		Expression dom = makeUnaryExpression(Expression.KDOM, `r);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
+
+	    	/**
+	    	 * Set Theory: r ∈ S  T == r ∈ S ↔ T ∧ ran(r) = T
+	    	 */
+	    	In(r, Srel(S, T)) -> {
+	    		Expression rel = makeBinaryExpression(Expression.REL, `S, `T);
+	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `r, rel);
+	    		Expression dom = makeUnaryExpression(Expression.KRAN, `r);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `T);
+	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
+
+	    	/**
+	    	 * Set Theory: r ∈ S  T == r ∈ S  T ∧ r ∈ S  T
+	    	 */
+	    	In(r, Strel(S, T)) -> {
+	    		Expression rel1 = makeBinaryExpression(Expression.SREL, `S, `T);
+	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `r, rel1);
+	    		Expression rel2 = makeBinaryExpression(Expression.TREL, `S, `T);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.IN, `r, rel2);
+	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
+
+	    	/**
+	    	 * Set Theory: f ∈ S ⇸ T == f ∈ S ↔ T ∧ ∀x,y,z·x ↦ y ∈ f ∧ x ↦ z ∈ f ⇒ y = z
+	    	 */
+	    	In(f, Pfun(S, T)) -> {
+	    		return FormulaUnfold.inPfun(`f, `S, `T);
+	    	}
+
+	    	/**
+	    	 * Set Theory: f ∈ S → T == f ∈ S ⇸ T ∧ dom(f) = S
+	    	 */
+	    	In(f, Tfun(S, T)) -> {
+	    		Expression pfun = makeBinaryExpression(Expression.PFUN, `S, `T);
+	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
+	    		Expression dom = makeUnaryExpression(Expression.KDOM, `f);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
+
+	    	/**
+	    	 * Set Theory: f ∈ S ⤔ T == f ∈ S ⇸ T ∧ f∼ ∈ T ⇸ S
+	    	 */
+	    	In(f, Pinj(S, T)) -> {
+	    		Expression pfun1 = makeBinaryExpression(Expression.PFUN, `S, `T);
+	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun1);
+	    		Expression inv = makeUnaryExpression(Expression.CONVERSE, `f);
+	    		Expression pfun2 = makeBinaryExpression(Expression.PFUN, `T, `S);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.IN, inv, pfun2);
+	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
+
+	    	/**
+	    	 * Set Theory: f ∈ S ↣ T == f ∈ S ⤔ T ∧ dom(f) = S
+	    	 */
+	    	In(f, Tinj(S, T)) -> {
+	    		Expression pfun = makeBinaryExpression(Expression.PINJ, `S, `T);
+	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
+	    		Expression dom = makeUnaryExpression(Expression.KDOM, `f);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
+
+	    	/**
+	    	 * Set Theory: f ∈ S ⤀ T == f ∈ S ⇸ T ∧ ran(f) = T
+	    	 */
+	    	In(f, Psur(S, T)) -> {
+	    		Expression pfun = makeBinaryExpression(Expression.PFUN, `S, `T);
+	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
+	    		Expression ran = makeUnaryExpression(Expression.KRAN, `f);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
+	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
+
+	    	/**
+	    	 * Set Theory: f ∈ S ↠ T == f ∈ S ⤀ T ∧ dom(f) = S
+	    	 */
+	    	In(f, Tsur(S, T)) -> {
+	    		Expression pfun = makeBinaryExpression(Expression.PSUR, `S, `T);
+	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
+	    		Expression dom = makeUnaryExpression(Expression.KDOM, `f);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
+
+	    	/**
+	    	 * Set Theory: f ∈ S ⤖ T == f ∈ S ↣ T ∧ f ∈ S ↠ T
+	    	 */
+	    	In(f, Tbij(S, T)) -> {
+	    		Expression pfun1 = makeBinaryExpression(Expression.TINJ, `S, `T);
+	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun1);
+	    		Expression pfun2 = makeBinaryExpression(Expression.TSUR, `S, `T);
+	    		Predicate pred2 = makeRelationalPredicate(Predicate.IN, `f, pfun2);
+	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
+
 	    }
 	    return predicate;
 	}

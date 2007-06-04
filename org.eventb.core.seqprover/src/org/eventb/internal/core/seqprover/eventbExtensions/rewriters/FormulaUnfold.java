@@ -1,5 +1,10 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
@@ -292,6 +297,108 @@ public class FormulaUnfold {
 				ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] {
 						pred1, pred2 }, null), null);
 		return qPred;
+	}
+
+	public static Predicate inForwardComposition(Expression E, Expression F,
+			Expression[] rels) {
+		// Create the bound identifiers
+		Collection<BoundIdentDecl> identDecls = new ArrayList<BoundIdentDecl>();
+		for (int i = 0; i < rels.length - 1; i++) {
+			Expression rel = rels[i];
+			Type type = rel.getType();
+			assert type instanceof PowerSetType;
+			PowerSetType powerType = (PowerSetType) type;
+			Type baseType = powerType.getBaseType();
+			assert baseType instanceof ProductType;
+			ProductType pType = (ProductType) baseType;
+			Type right = pType.getRight();
+			BoundIdentDecl[] boundIdentDecls = getBoundIdentDecls(right);
+			for (BoundIdentDecl boundIdentDecl : boundIdentDecls) {
+				identDecls.add(boundIdentDecl);
+			}
+		}
+
+		// Create the predicates
+		Collection<Predicate> newChildren = new ArrayList<Predicate>();
+		int size = identDecls.size();
+		Expression prev = E.shiftBoundIdentifiers(size, ff);
+		for (int i = 0; i < rels.length - 1; i++) {
+			Expression rel = rels[i];
+			Type type = rel.getType();
+			assert type instanceof PowerSetType;
+			PowerSetType powerType = (PowerSetType) type;
+			Type baseType = powerType.getBaseType();
+			assert baseType instanceof ProductType;
+			ProductType pType = (ProductType) baseType;
+			Type right = pType.getRight();
+			Expression expression = getExpression(size - 1, right);
+			BoundIdentDecl[] boundIdentDecls = getBoundIdentDecls(right);
+			size = size - boundIdentDecls.length;
+			BinaryExpression map = ff.makeBinaryExpression(Expression.MAPSTO,
+					prev, expression, null);
+			newChildren.add(ff.makeRelationalPredicate(Predicate.IN, map, rel,
+					null));
+			prev = expression;
+		}
+		BinaryExpression map = ff.makeBinaryExpression(Expression.MAPSTO, prev,
+				F.shiftBoundIdentifiers(rels.length, ff), null);
+		newChildren.add(ff.makeRelationalPredicate(Predicate.IN, map,
+				rels[rels.length - 1], null));
+
+		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
+				Predicate.EXISTS, identDecls, ff.makeAssociativePredicate(
+						Predicate.LAND, newChildren, null), null);
+		return qPred;
+	}
+
+	public static Predicate inPfun(Expression f, Expression S, Expression T) {
+		Expression pfun = ff.makeBinaryExpression(Expression.REL, S, T, null);
+		Predicate pred = ff
+				.makeRelationalPredicate(Predicate.IN, f, pfun, null);
+		
+		Type sType = S.getType();
+		assert sType instanceof PowerSetType;
+		Type sBaseType = ((PowerSetType) sType).getBaseType();
+		BoundIdentDecl[] x = getBoundIdentDecls(sBaseType);
+		Type tType = T.getType();
+		assert tType instanceof PowerSetType;
+		Type tBaseType = ((PowerSetType) tType).getBaseType();
+		BoundIdentDecl[] y = getBoundIdentDecls(tBaseType);
+		BoundIdentDecl[] z = getBoundIdentDecls(tBaseType);
+		
+		int length = x.length + y.length + z.length;
+		BoundIdentDecl[] boundIdentifiers = new BoundIdentDecl[length];
+		System.arraycopy(x, 0, boundIdentifiers, 0, x.length);
+		System.arraycopy(y, 0, boundIdentifiers, x.length, y.length);
+		System.arraycopy(z, 0, boundIdentifiers, x.length + y.length, z.length);
+
+		f = f.shiftBoundIdentifiers(length, ff);
+		
+		Expression xExpression = getExpression(length
+				- 1, sBaseType);
+		Expression yExpression = getExpression(y.length + z.length
+				- 1, tBaseType);
+		Expression zExpression = getExpression(z.length
+				- 1, tBaseType);
+		
+		Expression map1 = ff.makeBinaryExpression(Expression.MAPSTO,
+				xExpression, yExpression, null);
+		Predicate pred1 = ff.makeRelationalPredicate(Predicate.IN, map1, f,
+				null);
+		Expression map2 = ff.makeBinaryExpression(Expression.MAPSTO,
+				xExpression, zExpression, null);
+		Predicate pred2 = ff.makeRelationalPredicate(Predicate.IN, map2, f,
+				null);
+		Predicate left = ff.makeAssociativePredicate(Predicate.LAND,
+				new Predicate[] { pred1, pred2 }, null);
+		Predicate right = ff.makeRelationalPredicate(Predicate.EQUAL,
+				yExpression, zExpression, null);
+		Predicate impPred = ff.makeBinaryPredicate(Predicate.LIMP, left, right,
+				null);
+		Predicate forall = ff.makeQuantifiedPredicate(Predicate.FORALL, boundIdentifiers, impPred, null);
+		
+		AssociativePredicate aPred = ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] {pred, forall}, null);
+		return aPred;
 	}
 
 }
