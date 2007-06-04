@@ -1458,6 +1458,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionRightGoal"
             target="goal"
             tooltip="%proofTactic.relImgUnionRightGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.setEqlHyp"
+            interrupt="false"
+            name="%proofTactic.setEqlHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.SetEqlHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.setEqlHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.setEqlGoal"
+            interrupt="false"
+            name="%proofTactic.setEqlGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.SetEqlGoal"
+            target="goal"
+            tooltip="%proofTactic.setEqlGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">

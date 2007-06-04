@@ -26,7 +26,6 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -94,6 +93,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnion
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 
 
@@ -1406,6 +1406,11 @@ public class Tactics {
 			}
 
 		});
+	}
+
+	public static ITactic setEqlRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new SetEqlRewrites(),
+				new SetEqlRewrites.Input(hyp, position));
 	}
 
 }
