@@ -1098,6 +1098,58 @@ public class Tactics {
 							&& rTag == Expression.RELIMAGE) {
 						return true;
 					}
+					if (left instanceof BinaryExpression
+							&& lTag == Expression.MAPSTO
+							&& right instanceof UnaryExpression
+							&& rTag == Expression.KID) {
+						return true;
+					}
+					if (left instanceof BinaryExpression
+							&& lTag == Expression.MAPSTO
+							&& right instanceof AssociativeExpression
+							&& rTag == Expression.FCOMP) {
+						return true;
+					}
+					if (right instanceof BinaryExpression
+							&& rTag == Expression.TREL) {
+						return true;
+					}
+					if (right instanceof BinaryExpression
+							&& rTag == Expression.SREL) {
+						return true;
+					}
+					if (right instanceof BinaryExpression
+							&& rTag == Expression.STREL) {
+						return true;
+					}
+					if (right instanceof BinaryExpression
+							&& rTag == Expression.PFUN) {
+						return true;
+					}
+					if (right instanceof BinaryExpression
+							&& rTag == Expression.TFUN) {
+						return true;
+					}
+					if (right instanceof BinaryExpression
+							&& rTag == Expression.PINJ) {
+						return true;
+					}
+					if (right instanceof BinaryExpression
+							&& rTag == Expression.TINJ) {
+						return true;
+					}
+					if (right instanceof BinaryExpression
+							&& rTag == Expression.PSUR) {
+						return true;
+					}
+					if (right instanceof BinaryExpression
+							&& rTag == Expression.TSUR) {
+						return true;
+					}
+					if (right instanceof BinaryExpression
+							&& rTag == Expression.TBIJ) {
+						return true;
+					}
 				}
 				return super.select(predicate);
 			}
