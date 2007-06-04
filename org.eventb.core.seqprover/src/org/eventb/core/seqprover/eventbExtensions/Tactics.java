@@ -1174,7 +1174,6 @@ public class Tactics {
 			}
 
 		});
-
 	}
 
 	public static ITactic removeInclusion(Predicate hyp, IPosition position) {
@@ -1363,6 +1362,22 @@ public class Tactics {
 					return Lib.isDisj(predicate.getLeft());
 				}
 				return super.select(predicate);
+			}
+
+		});
+	}
+
+	public static List<IPosition> relImgUnionRightGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryExpression expression) {
+				if (expression.getTag() == Expression.RELIMAGE) {
+					Expression right = expression.getRight();
+					return right instanceof AssociativeExpression
+							&& right.getTag() == Expression.BUNION;
+				}
+				return super.select(expression);
 			}
 
 		});
