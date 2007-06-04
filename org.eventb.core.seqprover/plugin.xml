@@ -171,6 +171,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnionRightRewrites"
             id="relImgUnionRightRewrites"
             name="%relImgUnionRightRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites"
+            id="setEqlRewrites"
+            name="%setEqlRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

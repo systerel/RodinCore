@@ -5,4 +5,5 @@ RelImgUnionRightRewriterImpl.java
 RemoveNegationRewriterImpl.java
 RemoveInclusionRewriterImpl.java
 RemoveMembershipRewriterImpl.java
+SetEqlRewriterImpl.java
 TypeRewriterImpl.java

@@ -24,11 +24,14 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -1387,6 +1390,22 @@ public class Tactics {
 	public static ITactic relImgUnionRightRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new RelImgUnionRightRewrites(),
 				new RelImgUnionRightRewrites.Input(hyp, position));
+	}
+
+	public static List<IPosition> setEqlGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(RelationalPredicate predicate) {
+				if (predicate.getTag() == Predicate.EQUAL) {
+					Expression left = predicate.getLeft();
+					Type type = left.getType();
+					return type instanceof PowerSetType;
+				}
+				return super.select(predicate);
+			}
+
+		});
 	}
 
 }
