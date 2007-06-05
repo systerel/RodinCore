@@ -335,13 +335,15 @@ public class SectionComposite implements ISectionComposite {
 	public void elementAdded(IRodinElement element) {
 		if (element.getParent().equals(parent)
 				&& element.getElementType() == type) {
-			// Create a new Element composite added to the end of the list
-			elementComps.add(new ElementComposite(page, toolkit, form,
-					elementComposite, element, level));
-			GridData gridData = (GridData) elementComposite.getLayoutData();
-			gridData.heightHint = SWT.DEFAULT;
-			updateHyperlink();
-			form.reflow(true);
+			if (elementComps != null) {
+				// Create a new Element composite added to the end of the list
+				elementComps.add(new ElementComposite(page, toolkit, form,
+						elementComposite, element, level));
+				GridData gridData = (GridData) elementComposite.getLayoutData();
+				gridData.heightHint = SWT.DEFAULT;
+				updateHyperlink();
+				form.reflow(true);
+			}
 		} else {
 			if (elementComps != null) {
 				for (IElementComposite elementComp : elementComps) {
@@ -353,6 +355,9 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	public void childrenChanged(IRodinElement element, IElementType childrenType) {
+		if (elementComps == null)
+			return;
+
 		if (parent.equals(element) && childrenType == type) {
 			// Sorting the section
 			try {
