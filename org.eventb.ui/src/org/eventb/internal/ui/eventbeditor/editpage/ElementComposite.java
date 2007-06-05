@@ -190,6 +190,8 @@ public class ElementComposite implements IElementComposite {
 		if (!rElement.exists())
 			return;
 		if (rElement.isAncestorOf(element)) {
+			if (sectionComps == null)
+				return;
 			for (ISectionComposite sectionComp : sectionComps) {
 				sectionComp.elementAdded(element);
 			}
