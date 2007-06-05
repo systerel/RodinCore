@@ -297,7 +297,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	}
 
 	private void postRefresh() {
-		if (form.isDisposed())
+		if (form == null || form.isDisposed())
 			return;
 
 		Display display = form.getDisplay();
