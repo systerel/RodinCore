@@ -24,8 +24,8 @@ public class EqvRewrites extends AbstractManualRewrites {
 	@Override
 	protected String getDisplayName(Predicate pred, IPosition position) {
 		if (pred == null)
-			return "rewrites equivalent in goal";
-		return "rewrites equivalent in hyp (" + pred.getSubFormula(position) + ")";
+			return "rewrites equivalence in goal";
+		return "rewrites equivalence in hyp (" + pred.getSubFormula(position) + ")";
 	}
 
 	@Override

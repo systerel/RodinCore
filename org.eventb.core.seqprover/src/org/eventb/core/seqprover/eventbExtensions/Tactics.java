@@ -87,6 +87,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHyp
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnionRightRewrites;
@@ -1425,6 +1426,11 @@ public class Tactics {
 			}
 
 		});
+	}
+
+	public static ITactic eqvRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new EqvRewrites(),
+				new EqvRewrites.Input(hyp, position));
 	}
 
 }

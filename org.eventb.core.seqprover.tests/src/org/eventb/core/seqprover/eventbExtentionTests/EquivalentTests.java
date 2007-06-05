@@ -9,7 +9,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites
 import org.junit.Test;
 
 /**
- * Unit tests for the Equivalent Rewrites reasoner
+ * Unit tests for the Equivalence Rewrites reasoner
  * {@link EqvRewrites}
  * 
  * @author htson

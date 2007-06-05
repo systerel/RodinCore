@@ -1476,6 +1476,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.SetEqlGoal"
             target="goal"
             tooltip="%proofTactic.setEqlGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.eqvHyp"
+            interrupt="false"
+            name="%proofTactic.eqvHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.EqvHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.eqvHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.eqvGoal"
+            interrupt="false"
+            name="%proofTactic.eqvGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.EqvGoal"
+            target="goal"
+            tooltip="%proofTactic.eqvGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
