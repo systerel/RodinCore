@@ -1413,4 +1413,18 @@ public class Tactics {
 				new SetEqlRewrites.Input(hyp, position));
 	}
 
+	public static List<IPosition> eqvGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryPredicate predicate) {
+				if (predicate.getTag() == Predicate.LEQV) {
+					return true;
+				}
+				return super.select(predicate);
+			}
+
+		});
+	}
+
 }

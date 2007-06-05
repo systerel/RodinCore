@@ -5,12 +5,12 @@ import java.util.List;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnionRightRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites;
 import org.junit.Test;
 
 /**
- * Unit tests for the Relational Image with Union Right Rewrites reasoner
- * {@link RelImgUnionRightRewrites}
+ * Unit tests for the Set Equality Rewrites reasoner
+ * {@link SetEqlRewrites}
  * 
  * @author htson
  */

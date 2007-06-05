@@ -11,10 +11,13 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
+//import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.core.seqprover.tests.Util;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
+
+//import com.b4free.rodin.core.B4freeCore;
 
 /**
  * Abstract unit tests for the manual rewriter
@@ -164,4 +167,9 @@ public abstract class AbstractManualRewriterTests extends AbstractReasonerTests 
 		}
 	}
 
+//	@Override
+//	public ITactic getJustDischTactic() {
+//		return B4freeCore.externalPP(false);
+//	}
+	
 }

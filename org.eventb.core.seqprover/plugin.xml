@@ -175,6 +175,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites"
             id="setEqlRewrites"
             name="%setEqlRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites"
+            id="eqvRewrites"
+            name="%eqvRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">
