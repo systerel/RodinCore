@@ -1,21 +1,11 @@
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
-import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
-
-//import com.b4free.rodin.core.B4freeCore;
 
 /**
  * Unit tests for the {@link ImpAndRewrites} reasoner
@@ -23,7 +13,21 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewri
  * @author htson
  *
  */
-public class ImpAndTests extends AbstractReasonerTests {
+public class ImpAndTests extends AbstractManualRewriterTests {
+
+	String P1 = "x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3";
+
+	String resultP1 = "(x=0⇒x=1)∧(x=0⇒x=2)∧(x=0⇒x=3)";
+
+	String P2 = "x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3)";
+
+	String resultP2 = "x=4⇒(x=0⇒x=1)∧(x=0⇒x=2)∧(x=0⇒x=3)";
+
+	String P3 = "∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3)";
+	
+	String resultP3 = "∀x·x=4⇒(x=0⇒x=1)∧(x=0⇒x=2)∧(x=0⇒x=3)";
+
+	String P4 = "∀x·x = 4 ⇒ ((x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) ∧ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3))";
 
 	@Override
 	public String getReasonerID() {
@@ -31,208 +35,36 @@ public class ImpAndTests extends AbstractReasonerTests {
 	}
 
 	@Override
-	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		Collection<SuccessfullReasonerApplication> successfullReasonerApps = new ArrayList<SuccessfullReasonerApplication>();
-		IReasonerInput input;
-		Predicate pred;
-		FormulaFactory ff = FormulaFactory.getDefault();
-
-		// Applicable at the root in goal
-		pred = Lib.parsePredicate("x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3");
-		pred.typeCheck(ff.makeTypeEnvironment());
-		
-		input = new AbstractManualRewrites.Input(null, ff
-				.makePosition(""));
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3 "), input));
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3 "), input,
-				"[{x=ℤ}[][][⊤] |- (x=0⇒x=1)∧(x=0⇒x=2)∧(x=0⇒x=3)]"));
-		input = new AbstractManualRewrites.Input(pred, ff
-				.makePosition(""));
-
-		// Applicable at the root in hypothesis
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3 |- ⊤ "), input));
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3 |- ⊤ "), input,
-				"[{x=ℤ}[x=0⇒x=1∧x=2∧x=3][][(x=0⇒x=1)∧(x=0⇒x=2)∧(x=0⇒x=3)] |- ⊤]"));
-		
-		// Applicable at the right hand-side of an implication in goal
-		pred = Lib.parsePredicate("x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3)");
-		pred.typeCheck(ff.makeTypeEnvironment());
-		input = new AbstractManualRewrites.Input(null, ff
-				.makePosition("1"));
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) "), input));
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) "), input,
-				"[{x=ℤ}[][][⊤] |- x=4⇒(x=0⇒x=1)∧(x=0⇒x=2)∧(x=0⇒x=3)]"));
-
-		// Applicable at the right hand-side of an implication in hypothesis
-		input = new AbstractManualRewrites.Input(pred, ff
-				.makePosition("1"));
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) |- ⊤ "), input));
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) |- ⊤ "), input,
-				"[{x=ℤ}[x=4⇒(x=0⇒x=1∧x=2∧x=3)][][x=4⇒(x=0⇒x=1)∧(x=0⇒x=2)∧(x=0⇒x=3)] |- ⊤]"));
-
-		// Applicable at the right hand-side of an implication inside a
-		// quantified predicate in goal
-		pred = Lib.parsePredicate("∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3)");
-		pred.typeCheck(ff.makeTypeEnvironment());
-		input = new AbstractManualRewrites.Input(null, ff
-				.makePosition("1.1"));
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- ∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) "), input));
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- ∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) "), input,
-				"[{}[][][⊤] |- ∀x·x=4⇒(x=0⇒x=1)∧(x=0⇒x=2)∧(x=0⇒x=3)]"));
-
-		// Applicable at the right hand-side of an implication inside a
-		// quantified predicate in hypothesis
-		input = new AbstractManualRewrites.Input(pred, ff
-				.makePosition("1.1"));
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" ∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) |- ⊤ "), input));
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" ∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) |- ⊤ "), input,
-				"[{}[∀x·x=4⇒(x=0⇒x=1∧x=2∧x=3)][][∀x·x=4⇒(x=0⇒x=1)∧(x=0⇒x=2)∧(x=0⇒x=3)] |- ⊤]"));
-
-		return successfullReasonerApps
-				.toArray(new SuccessfullReasonerApplication[successfullReasonerApps
-						.size()]); 
+	protected String[] getSuccessfulTests() {
+		return new String[] {
+				P1, "", resultP1,
+				P2, "1", resultP2,
+				P3, "1.1", resultP3
+		};
 	}
 
 	@Override
-	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
-		Collection<UnsuccessfullReasonerApplication> unsuccessfullReasonerApps = new ArrayList<UnsuccessfullReasonerApplication>();
-		IReasonerInput input;
-		Predicate pred;
-		FormulaFactory ff = FormulaFactory.getDefault();
-		pred = Lib.parsePredicate("x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3");
-		pred.typeCheck(ff.makeTypeEnvironment());
-
-		// Hypothesis does not exist
-		input = new AbstractManualRewrites.Input(pred, ff
-				.makePosition(""));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" x = 0 ⇒ x = 1 |- ⊤ "), input));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" x = 0 ⇒ x = 1 |- ⊤ "), input,
-				"Nonexistent hypothesis: x=0⇒x=1∧x=2∧x=3"));
-
-		// Goal is not applicable
-		pred = Lib.parsePredicate("x = 0 ⇒ x = 1");
-		pred.typeCheck(ff.makeTypeEnvironment());
-		input = new AbstractManualRewrites.Input(null, ff
-				.makePosition(""));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- x = 0 ⇒ x = 1 "), input));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- x = 0 ⇒ x = 1"), input,
-				"Rewriter "	+ getReasonerID() + " is inapplicable for goal x=0⇒x=1"));
-		
-		// Hypothesis is not applicable
-		input = new AbstractManualRewrites.Input(pred, ff
-				.makePosition(""));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" x = 0 ⇒ x = 1 |- ⊤ "), input));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" x = 0 ⇒ x = 1 |- ⊤ "), input,
-				"Rewriter "	+ getReasonerID() + " is inapplicable for hypothesis x=0⇒x=1"));
-		
-		// Incorrect position in goal
-		pred = Lib.parsePredicate("x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3");
-		pred.typeCheck(ff.makeTypeEnvironment());
-		input = new AbstractManualRewrites.Input(null, ff
-				.makePosition("0"));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3 "), input));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3"), input,
-				"Rewriter "	+ getReasonerID() + " is inapplicable for goal x=0⇒x=1∧x=2∧x=3"));
-
-		// Incorrect position in hypothesis
-		input = new AbstractManualRewrites.Input(pred, ff
-				.makePosition("0"));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3 |- ⊤ "), input));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3 |- ⊤ "), input,
-				"Rewriter "	+ getReasonerID() + " is inapplicable for hypothesis x=0⇒x=1∧x=2∧x=3"));
-		
-		// Incorrect position (inside a quantified predicate) in goal
-		pred = Lib.parsePredicate("∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3)");
-		pred.typeCheck(ff.makeTypeEnvironment());
-		input = new AbstractManualRewrites.Input(null, ff
-				.makePosition("1.0"));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- ∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) "), input));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- ∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) "), input,
-				"Rewriter "	+ getReasonerID() + " is inapplicable for goal ∀x·x=4⇒(x=0⇒x=1∧x=2∧x=3)"));
-
-		// Incorrect position (inside a quantified predicate) in hypothesis
-		input = new AbstractManualRewrites.Input(pred, ff
-				.makePosition("1.0"));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" ∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) |- ⊤ "), input));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(TestLib
-				.genSeq(" ∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) |- ⊤ "), input,
-				"Rewriter "	+ getReasonerID() + " is inapplicable for hypothesis ∀x·x=4⇒(x=0⇒x=1∧x=2∧x=3)"));
-
-		return unsuccessfullReasonerApps
-				.toArray(new UnsuccessfullReasonerApplication[unsuccessfullReasonerApps
-						.size()]); 
+	protected String[] getUnsuccessfulTests() {
+		return new String[] {
+				P1, "0",
+				P2, "0",
+				P3, "0.1"
+		};
 	}
 
-	/**
-	 * Test get applicable positions
-	 */
-	public void testGetPositions() {
-		Predicate pred;
-		FormulaFactory ff = FormulaFactory.getDefault();
-		pred = Lib.parsePredicate("x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3");
-		pred.typeCheck(ff.makeTypeEnvironment());
-		List<IPosition> positions = Tactics.impAndGetPositions(pred);
-		assertEquals("There is exactly 1 applicable position ", 1, positions
-				.size());
-		assertEquals("The position is ROOT ", "", positions.get(0).toString());
-
-		pred = Lib.parsePredicate("x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3)");
-		pred.typeCheck(ff.makeTypeEnvironment());
-		positions = Tactics.impAndGetPositions(pred);
-		assertEquals("There is exactly 1 applicable position ", 1, positions
-				.size());
-		assertEquals("The position is 1 ", "1", positions.get(0).toString());
-
-		pred = Lib.parsePredicate("∀x·x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3)");
-		pred.typeCheck(ff.makeTypeEnvironment());
-
-		positions = Tactics.impAndGetPositions(pred);
-		assertEquals("There is exactly 1 applicable position ", 1, positions
-				.size());
-		assertEquals("The position is 1.1 ", "1.1", positions.get(0).toString());
-
-		pred = Lib
-				.parsePredicate("∀x·x = 4 ⇒ ((x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3) ∧ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3)) ");
-		pred.typeCheck(ff.makeTypeEnvironment());
-
-		positions = Tactics.impAndGetPositions(pred);
-		assertEquals("There is exactly 3 applicable position ", 3, positions
-				.size());
-		assertEquals("The 1st position is 1", "1", positions.get(0).toString());
-		assertEquals("The 2nd position is 1.1.0", "1.1.0", positions.get(1)
-				.toString());
-		assertEquals("The 3rd position is 1.1.1", "1.1.1", positions.get(2)
-				.toString());
+	@Override
+	protected List<IPosition> getPositions(Predicate predicate) {
+		return Tactics.impAndGetPositions(predicate);
 	}
-	
-//	@Override
-//	public ITactic getJustDischTactic() {
-//		return B4freeCore.externalPP(false);
-//	}
+
+	@Override
+	protected String[] getTestGetPositions() {
+		return new String[] {
+				P1, "",
+				P2, "1",
+				P3, "1.1",
+				P4, "1\n" + "1.1.0\n" + "1.1.1" 
+		};
+	}
 
 }

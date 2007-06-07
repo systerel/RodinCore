@@ -6,7 +6,6 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
-import org.junit.Test;
 
 /**
  * Unit tests for the rm reasoner {@link RemoveMembership}
@@ -406,91 +405,89 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 		return "org.eventb.core.seqprover.rm";
 	}
 		
-	/**
-	 * Tests for applicable positions
-	 */
-	@Test
-	public void testGetPositions() {
-		testGetPosition(P1, "1");
-		testGetPosition(P2, "1.1");
-		testGetPosition(P3, "1");
-		testGetPosition(P4, "1.1");
-		testGetPosition(P5, "1");
-		testGetPosition(P6, "1.1");
-		testGetPosition(P7, "1");
-		testGetPosition(P8, "1.1");
-		testGetPosition(P9, "1");
-		testGetPosition(P10, "1.1");
-		testGetPosition(P11, "1");
-		testGetPosition(P12, "1.1");
-		testGetPosition(P13, "1");
-		testGetPosition(P14, "1.1");
-		testGetPosition(P15, "1");
-		testGetPosition(P16, "1.1");
-		testGetPosition(P17, "1");
-		testGetPosition(P18, "1.1");
-		testGetPosition(P19, "1");
-		testGetPosition(P20, "1.1");
-		testGetPosition(P21, "1");
-		testGetPosition(P22, "1.1");
-		testGetPosition(P23, "1");
-		testGetPosition(P24, "1.1");
-		testGetPosition(P25, "1");
-		testGetPosition(P26, "1.1");
-		testGetPosition(P77, "1");
-		testGetPosition(P78, "1.1");
-		testGetPosition(P27, "1");
-		testGetPosition(P28, "1.1");
-		testGetPosition(P79, "1");
-		testGetPosition(P80, "1.1");
-		testGetPosition(P29, "1");
-		testGetPosition(P30, "1.1");
-		testGetPosition(P31, "1");
-		testGetPosition(P32, "1.1");
-		testGetPosition(P33, "1");
-		testGetPosition(P34, "1.1");
-		testGetPosition(P35, "1");
-		testGetPosition(P36, "1.1");
-		testGetPosition(P37, "1");
-		testGetPosition(P38, "1.1");
-		testGetPosition(P39, "1");
-		testGetPosition(P40, "1.1");
-		testGetPosition(P41, "1");
-		testGetPosition(P42, "1.1");
-		testGetPosition(P43, "1");
-		testGetPosition(P44, "1.1");
-		testGetPosition(P45, "1");
-		testGetPosition(P46, "1.1");
-		testGetPosition(P47, "1");
-		testGetPosition(P48, "1.1");
-		testGetPosition(P49, "1");
-		testGetPosition(P50, "1.1");
-		testGetPosition(P51, "1");
-		testGetPosition(P52, "1.1");
-		testGetPosition(P53, "1");
-		testGetPosition(P54, "1.1");
-		testGetPosition(P55, "1");
-		testGetPosition(P56, "1.1");
-		testGetPosition(P57, "1");
-		testGetPosition(P58, "1.1");
-		testGetPosition(P59, "1");
-		testGetPosition(P60, "1.1");
-		testGetPosition(P61, "1");
-		testGetPosition(P62, "1.1");
-		testGetPosition(P63, "1");
-		testGetPosition(P64, "1.1");
-		testGetPosition(P65, "1");
-		testGetPosition(P66, "1.1");
-		testGetPosition(P67, "1");
-		testGetPosition(P68, "1.1");
-		testGetPosition(P69, "1");
-		testGetPosition(P70, "1.1");
-		testGetPosition(P71, "1");
-		testGetPosition(P72, "1.1");
-		testGetPosition(P73, "1");
-		testGetPosition(P74, "1.1");
-		testGetPosition(P75, "1");
-		testGetPosition(P76, "1.1");
+	public String [] getTestGetPositions() {
+		return new String [] {
+				P1, "1",
+				P2, "1.1",
+				P3, "1",
+				P4, "1.1",
+				P5, "1",
+				P6, "1.1",
+				P7, "1",
+				P8, "1.1",
+				P9, "1",
+				P10, "1.1",
+				P11, "1",
+				P12, "1.1",
+				P13, "1",
+				P14, "1.1",
+				P15, "1",
+				P16, "1.1",
+				P17, "1",
+				P18, "1.1",
+				P19, "1",
+				P20, "1.1",
+				P21, "1",
+				P22, "1.1",
+				P23, "1",
+				P24, "1.1",
+				P25, "1",
+				P26, "1.1",
+				P77, "1",
+				P78, "1.1",
+				P27, "1",
+				P28, "1.1",
+				P79, "1",
+				P80, "1.1",
+				P29, "1",
+				P30, "1.1",
+				P31, "1",
+				P32, "1.1",
+				P33, "1",
+				P34, "1.1",
+				P35, "1",
+				P36, "1.1",
+				P37, "1",
+				P38, "1.1",
+				P39, "1",
+				P40, "1.1",
+				P41, "1",
+				P42, "1.1",
+				P43, "1",
+				P44, "1.1",
+				P45, "1",
+				P46, "1.1",
+				P47, "1",
+				P48, "1.1",
+				P49, "1",
+				P50, "1.1",
+				P51, "1",
+				P52, "1.1",
+				P53, "1",
+				P54, "1.1",
+				P55, "1",
+				P56, "1.1",
+				P57, "1",
+				P58, "1.1",
+				P59, "1",
+				P60, "1.1",
+				P61, "1",
+				P62, "1.1",
+				P63, "1",
+				P64, "1.1",
+				P65, "1",
+				P66, "1.1",
+				P67, "1",
+				P68, "1.1",
+				P69, "1",
+				P70, "1.1",
+				P71, "1",
+				P72, "1.1",
+				P73, "1",
+				P74, "1.1",
+				P75, "1",
+				P76, "1.1"
+		};
 	}
 
 	protected List<IPosition> getPositions(Predicate predicate) {

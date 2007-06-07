@@ -2,31 +2,26 @@ package org.eventb.core.seqprover.eventbExtentionTests;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
-//import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.core.seqprover.tests.Util;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 
 //import com.b4free.rodin.core.B4freeCore;
 
 /**
- * Abstract unit tests for the manual rewriter
- * 
  * @author htson
+ *         <p>
+ *         Abstract unit tests for the Manual Rewrites reasoner
+ *         {@link AbstractManualRewrites}
+ * 
  */
-public abstract class AbstractManualRewriterTests extends AbstractReasonerTests {
-
-	protected FormulaFactory ff = FormulaFactory.getDefault();
+public abstract class AbstractManualRewriterTests extends AbstractManualReasonerTests {
 
 	protected Collection<SuccessfullReasonerApplication> makeSuccessfullReasonerApplication(
 			String predicateImage, String positionImage, String result) {
@@ -79,34 +74,28 @@ public abstract class AbstractManualRewriterTests extends AbstractReasonerTests 
 
 		Predicate predicate = TestLib.genPred(predicateImage);
 		predicate.typeCheck(ff.makeTypeEnvironment());
-		IReasonerInput input = new AbstractManualRewrites.Input(null, ff
-				.makePosition(positionImage));
+		IPosition position = ff
+						.makePosition(positionImage);
+		IReasonerInput input = new AbstractManualRewrites.Input(null, position);
 
 		IProverSequent sequent = TestLib.genSeq(" ⊤ |- " + predicateImage);
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
 				sequent, input));
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
 				sequent, input, "Rewriter " + getReasonerID()
-						+ " is inapplicable for goal " + predicate));
+						+ " is inapplicable for goal " + predicate
+						+ " at position " + position));
 
 		sequent = TestLib.genSeq(predicateImage + " |- ⊤");
-		input = new AbstractManualRewrites.Input(predicate, ff
-				.makePosition(positionImage));
+		input = new AbstractManualRewrites.Input(predicate, position);
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
 				sequent, input));
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
 				sequent, input, "Rewriter " + getReasonerID()
-						+ " is inapplicable for hypothesis " + predicate));
+						+ " is inapplicable for hypothesis " + predicate
+						+ " at position " + position));
 
 		return unsuccessfullReasonerApps;
-	}
-
-
-	protected void testGetPosition(String predicateImage, String expected) {
-		Predicate predicate = TestLib.genPred(predicateImage);
-		List<IPosition> positions = getPositions(predicate);
-		assertPositions("Position found for " + predicateImage, expected,
-				positions);
 	}
 
 	@Override
@@ -126,8 +115,6 @@ public abstract class AbstractManualRewriterTests extends AbstractReasonerTests 
 	}
 	
 	protected abstract String[] getSuccessfulTests();
-
-	protected abstract List<IPosition> getPositions(Predicate predicate);
 
 	@Override
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
@@ -149,23 +136,6 @@ public abstract class AbstractManualRewriterTests extends AbstractReasonerTests 
 	}
 
 	protected abstract String[] getUnsuccessfulTests();
-
-	protected void assertPositions(String message, String expected,
-			List<IPosition> positions) {
-		StringBuilder builder = new StringBuilder();
-		boolean sep = false;
-		for (IPosition position : positions) {
-			if (sep)
-				builder.append('\n');
-			builder.append(position);
-			sep = true;
-		}
-		String actual = builder.toString();
-		if (!expected.equals(actual)) {
-			System.out.println(Util.displayString(actual));
-			fail(message + ":\n" + actual);
-		}
-	}
 
 //	@Override
 //	public ITactic getJustDischTactic() {

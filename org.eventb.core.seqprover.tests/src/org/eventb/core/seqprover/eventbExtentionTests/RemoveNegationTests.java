@@ -6,7 +6,6 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
-import org.junit.Test;
 
 /**
  * Unit tests for the rn reasoner {@link RemoveNegation}
@@ -106,35 +105,6 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 	@Override
 	public String getReasonerID() {
 		return "org.eventb.core.seqprover.rn";
-	}
-		
-	/**
-	 * Tests for applicable positions
-	 */
-	@Test
-	public void testGetPositions() {
-		testGetPosition(P1, "1");
-		testGetPosition(P2, "1.1");
-		testGetPosition(P3, "1");
-		testGetPosition(P4, "1.1");
-		testGetPosition(P5, "1");
-		testGetPosition(P6, "1.1");
-		testGetPosition(P7, "1");
-		testGetPosition(P8, "1.1");
-		testGetPosition(P9, "1");
-		testGetPosition(P10, "1.1");
-		testGetPosition(P11, "1");
-		testGetPosition(P12, "1.1");
-		testGetPosition(P13, "1");
-		testGetPosition(P14, "1.1");
-		testGetPosition(P15, "1");
-		testGetPosition(P16, "1.1");
-		testGetPosition(P17, "1");
-		testGetPosition(P18, "1.1");
-		testGetPosition(P19, "1");
-		testGetPosition(P20, "1.1");
-		testGetPosition(P21, "1");
-		testGetPosition(P22, "1.1");
 	}
 
 	protected List<IPosition> getPositions(Predicate predicate) {
@@ -239,6 +209,34 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 				P21, "0",
 				// Test for P22
 				P22, "1.0"
+		};
+	}
+
+	@Override
+	protected String[] getTestGetPositions() {
+		return new String[] {
+				P1, "1",
+				P2, "1.1",
+				P3, "1",
+				P4, "1.1",
+				P5, "1",
+				P6, "1.1",
+				P7, "1",
+				P8, "1.1",
+				P9, "1",
+				P10, "1.1",
+				P11, "1",
+				P12, "1.1",
+				P13, "1",
+				P14, "1.1",
+				P15, "1",
+				P16, "1.1",
+				P17, "1",
+				P18, "1.1",
+				P19, "1",
+				P20, "1.1",
+				P21, "1",
+				P22, "1.1"
 		};
 	}
 

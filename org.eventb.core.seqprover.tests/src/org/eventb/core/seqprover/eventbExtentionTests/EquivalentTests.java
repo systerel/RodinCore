@@ -6,7 +6,6 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
-import org.junit.Test;
 
 /**
  * Unit tests for the Equivalence Rewrites reasoner
@@ -29,16 +28,6 @@ public class EquivalentTests extends AbstractManualRewriterTests {
 	public String getReasonerID() {
 		return "org.eventb.core.seqprover.eqvRewrites";
 	}
-		
-
-	/**
-	 * Tests for applicable positions
-	 */
-	@Test
-	public void testGetPositions() {
-		testGetPosition(P1, "1");
-		testGetPosition(P2, "1.1");
-	}
 
 	protected List<IPosition> getPositions(Predicate predicate) {
 		return Tactics.eqvGetPositions(predicate);
@@ -57,6 +46,14 @@ public class EquivalentTests extends AbstractManualRewriterTests {
 		return new String[] {
 				P1, "0",
 				P2, "1.0"
+		};
+	}
+
+	@Override
+	protected String[] getTestGetPositions() {
+		return new String[] {
+				P1, "1",
+				P2, "1.1"
 		};
 	}
 

@@ -6,7 +6,6 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnionRightRewrites;
-import org.junit.Test;
 
 /**
  * Unit tests for the Relational Image with Union Right Rewrites reasoner
@@ -30,16 +29,6 @@ public class RelImgUnionRightTests extends AbstractManualRewriterTests {
 		return "org.eventb.core.seqprover.relImgUnionRightRewrites";
 	}
 		
-
-	/**
-	 * Tests for applicable positions
-	 */
-	@Test
-	public void testGetPositions() {
-		testGetPosition(P1, "1.1");
-		testGetPosition(P2, "1.1.1");
-	}
-
 	protected List<IPosition> getPositions(Predicate predicate) {
 		return Tactics.relImgUnionRightGetPositions(predicate);
 	}
@@ -52,12 +41,19 @@ public class RelImgUnionRightTests extends AbstractManualRewriterTests {
 		};
 	}
 
-
 	@Override
 	protected String[] getUnsuccessfulTests() {
 		return new String[] {
 				P1, "0.1",
 				P2, "1.0.1",
+		};
+	}
+
+	@Override
+	protected String[] getTestGetPositions() {
+		return new String[] {
+				P1, "1.1",
+				P2, "1.1.1"	
 		};
 	}
 }
