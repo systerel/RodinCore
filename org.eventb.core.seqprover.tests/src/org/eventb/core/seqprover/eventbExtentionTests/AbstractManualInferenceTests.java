@@ -18,16 +18,29 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInferen
  */
 public abstract class AbstractManualInferenceTests extends AbstractManualReasonerTests {
 
-	protected abstract String[] getSuccessfulTests();
+	class SuccessfulTest {
+		String sequenceImage;
+		String hypothesisImage;
+		String positionsImage;
+		String [] results;
+		public SuccessfulTest(String sequenceImage, String hypothesisImage,
+				String positionImage, String... results) {
+			this.sequenceImage = sequenceImage;
+			this.hypothesisImage = hypothesisImage;
+			this.positionsImage = positionImage;
+			this.results = results;
+		}
+	}
+	
+	protected abstract SuccessfulTest[] getSuccessfulTests();
 
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		Collection<SuccessfullReasonerApplication> successfullReasonerApps = new ArrayList<SuccessfullReasonerApplication>();
-		String [] successfulTests = getSuccessfulTests();
-		assert successfulTests.length % 4 == 0;
-		for (int i = 0; i < successfulTests.length;i += 4) {
+		SuccessfulTest [] successfulTests = getSuccessfulTests();
+		for (SuccessfulTest test : successfulTests) {
 			Collection<SuccessfullReasonerApplication> apps = makeSuccessfullReasonerApplication(
-					successfulTests[i], successfulTests[i+1], successfulTests[i+2], successfulTests[i+3]);
+					test.sequenceImage, test.hypothesisImage, test.positionsImage, test.results);
 			successfullReasonerApps.addAll(apps);
 
 		}
@@ -38,7 +51,7 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 
 	protected Collection<SuccessfullReasonerApplication> makeSuccessfullReasonerApplication(
 			String sequenceImage, String hypothesisImage, String positionImage,
-			String result) {
+			String [] results) {
 		Collection<SuccessfullReasonerApplication> successfullReasonerApps = new ArrayList<SuccessfullReasonerApplication>();
 
 		Predicate predicate = null;
@@ -51,8 +64,20 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 				.makePosition(positionImage));
 		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
 				.genSeq(sequenceImage), input));
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("[");
+		boolean first = true;
+		for (String result : results) {
+			if (first)
+				first = false;
+			else
+				buffer.append(", ");
+			buffer.append(result);
+		}
+		buffer.append("]");
 		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(sequenceImage), input, result));
+				.genSeq(sequenceImage), input, buffer.toString()));
 		return successfullReasonerApps;
 	}
 
@@ -76,7 +101,7 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 						.size()]);
 	}
 
-	protected abstract String[] getUnsuccessfulTests();
+	protected abstract String [] getUnsuccessfulTests();
 	
 	protected Collection<UnsuccessfullReasonerApplication> makeIncorrectPositionApplication(
 			String sequentImage, String predicateImage, String positionImage) {

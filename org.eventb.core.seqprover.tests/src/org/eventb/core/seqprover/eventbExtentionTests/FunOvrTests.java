@@ -32,32 +32,30 @@ public class FunOvrTests extends AbstractManualInferenceTests {
 		return "org.eventb.core.seqprover.funOvr";
 	}
 
-	protected String[] getSuccessfulTests() {
-		return new String[] {
+	protected SuccessfulTest[] getSuccessfulTests() {
+		return new SuccessfulTest[] {
 				// P3 in goal
-				" ⊤ |- " + P3,
-				null,
-				"0",
-				"[{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, y=2] |- 3=3, "
-						+ "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, ¬y=2] |- (fg)(y)=3]",
+				new SuccessfulTest(" ⊤ |- " + P3, null, "0",
+						"{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, y=2] |- 3=3",
+						"{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, ¬y=2] |- (fg)(y)=3"),
 				// P3 in hyp
-				P3 + " |- ⊤ ",
-				P3,
-				"0",
-				"[{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[(fg{2 ↦ 3})(y)=3][][y=2, 3=3] |- ⊤, "
-						+ "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[(fg{2 ↦ 3})(y)=3][][¬y=2, (fg)(y)=3] |- ⊤]",
+				new SuccessfulTest(
+						P3 + " |- ⊤ ",
+						P3,
+						"0",
+						"{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[(fg{2 ↦ 3})(y)=3][][y=2, 3=3] |- ⊤",
+						"{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[(fg{2 ↦ 3})(y)=3][][¬y=2, (fg)(y)=3] |- ⊤"),
 				// P4 in goal
-				" ⊤ |- " + P4,
-				null,
-				"1",
-				"[{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, y∈dom(h)] |- 3=h(y), "
-						+ "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, ¬y∈dom(h)] |- 3=(f{2 ↦ 3})(y)]",
+				new SuccessfulTest(" ⊤ |- " + P4, null, "1",
+						"{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, y∈dom(h)] |- 3=h(y)",
+						"{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, ¬y∈dom(h)] |- 3=(f{2 ↦ 3})(y)"),
 				// P4 in hyp
-				P4 + " |- ⊤ ",
-				P4,
-				"1",
-				"[{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[3=(f{2 ↦ 3}h)(y)][][y∈dom(h), 3=h(y)] |- ⊤, "
-						+ "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[3=(f{2 ↦ 3}h)(y)][][¬y∈dom(h), 3=(f{2 ↦ 3})(y)] |- ⊤]"	
+				new SuccessfulTest(
+						P4 + " |- ⊤ ",
+						P4,
+						"1",
+						"{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[3=(f{2 ↦ 3}h)(y)][][y∈dom(h), 3=h(y)] |- ⊤",
+						"{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[3=(f{2 ↦ 3}h)(y)][][¬y∈dom(h), 3=(f{2 ↦ 3})(y)] |- ⊤")
 		};
 	}
 

@@ -41,32 +41,24 @@ public class FunConvInterImgTests extends AbstractManualInferenceTests {
 		return "org.eventb.core.seqprover.funConvInterImg";
 	}
 
-	protected String[] getSuccessfulTests() {
-		return new String[] {
+	protected SuccessfulTest[] getSuccessfulTests() {
+		return new SuccessfulTest[] {
 				// P3 in goal
-				" ⊤ |- " + P3,
-				null,
-				"0",
-				"[{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- f∈ℤ ⇸ ℤ, "
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- f∼[{x,3}]∩f∼[{2}]={3}]",
+				new SuccessfulTest(" ⊤ |- " + P3, null, "0",
+						"{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- f∈ℤ ⇸ ℤ",
+						"{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- f∼[{x,3}]∩f∼[{2}]={3}"),
 				// P3 in hyp
-				P3 + " |- ⊤ ",
-				P3,
-				"0",
-				"[{f=ℙ(ℤ×ℤ), x=ℤ}[][][f∼[{x,3}∩{2}]={3}] |- f∈ℤ ⇸ ℤ, "
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[f∼[{x,3}∩{2}]={3}][][f∼[{x,3}]∩f∼[{2}]={3}] |- ⊤]",
+				new SuccessfulTest(P3 + " |- ⊤ ", P3, "0",
+						"{f=ℙ(ℤ×ℤ), x=ℤ}[][][f∼[{x,3}∩{2}]={3}] |- f∈ℤ ⇸ ℤ",
+						"{f=ℙ(ℤ×ℤ), x=ℤ}[f∼[{x,3}∩{2}]={3}][][f∼[{x,3}]∩f∼[{2}]={3}] |- ⊤"),
 				// P4 in goal
-				" ⊤ |- " + P4,
-				null,
-				"1",
-				"[{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- f∈ℤ ⇸ ℤ, "
-				+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- {3}=f∼[{x,3}]∩f∼[{2}]]",
+				new SuccessfulTest(" ⊤ |- " + P4, null, "1",
+						"{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- f∈ℤ ⇸ ℤ",
+						"{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- {3}=f∼[{x,3}]∩f∼[{2}]"),
 				// P4 in hyp
-				P4 + " |- ⊤ ",
-				P4,
-				"1",
-				"[{f=ℙ(ℤ×ℤ), x=ℤ}[][][{3}=f∼[{x,3}∩{2}]] |- f∈ℤ ⇸ ℤ, "
-				+ "{f=ℙ(ℤ×ℤ), x=ℤ}[{3}=f∼[{x,3}∩{2}]][][{3}=f∼[{x,3}]∩f∼[{2}]] |- ⊤]",
+				new SuccessfulTest(P4 + " |- ⊤ ", P4, "1",
+						"{f=ℙ(ℤ×ℤ), x=ℤ}[][][{3}=f∼[{x,3}∩{2}]] |- f∈ℤ ⇸ ℤ",
+						"{f=ℙ(ℤ×ℤ), x=ℤ}[{3}=f∼[{x,3}∩{2}]][][{3}=f∼[{x,3}]∩f∼[{2}]] |- ⊤")
 		};
 	}
 
