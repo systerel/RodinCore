@@ -888,6 +888,24 @@ public final class Lib {
 		return false;
 	}
 
+	public static boolean isInter(Expression expression) {
+		return expression instanceof AssociativeExpression
+				&& expression.getTag() == Expression.BINTER;
+	}
+
+	public static boolean isConv(Expression expression) {
+		return expression instanceof UnaryExpression
+				&& expression.getTag() == Expression.CONVERSE;
+	}
+
+	public static boolean isRelImg(Formula formula) {
+		if (formula instanceof BinaryExpression
+				&& formula.getTag() == Expression.RELIMAGE) {
+			return true;
+		}
+		return false;
+	}
+
 	// /**
 	// * Typechecks a formula assuming an initial type environment
 	// *

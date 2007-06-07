@@ -71,7 +71,8 @@ public abstract class AbstractManualRewrites implements IReasoner {
 			final Predicate[] newGoals = rewrite(goal, position);
 			if (newGoals == null) {
 				return ProverFactory.reasonerFailure(this, input, "Rewriter "
-						+ getReasonerID() + " is inapplicable for goal " + goal);
+						+ getReasonerID() + " is inapplicable for goal " + goal
+						+ " at position " + position);
 			}
 
 			final int length = newGoals.length;
@@ -92,7 +93,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 			if (rewriteOutput == null) {
 				return ProverFactory.reasonerFailure(this, input, "Rewriter "
 						+ getReasonerID() + " is inapplicable for hypothesis "
-						+ hyp);
+						+ hyp + " at position " + position);
 			}
 			final List<Predicate> newHyps = Arrays.asList(rewriteOutput);
 			final IHypAction forwardInf = ProverFactory

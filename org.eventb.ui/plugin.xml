@@ -1494,6 +1494,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.EqvGoal"
             target="goal"
             tooltip="%proofTactic.eqvGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.funConvInterImgHyp"
+            interrupt="false"
+            name="%proofTactic.funConvInterImgHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunConvInterImgHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.funConvInterImgHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.funConvInterImgGoal"
+            interrupt="false"
+            name="%proofTactic.funConvInterImgGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunConvInterImgGoal"
+            target="goal"
+            tooltip="%proofTactic.funConvInterImgGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">

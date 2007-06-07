@@ -69,6 +69,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunConvInterImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
@@ -1431,6 +1432,41 @@ public class Tactics {
 	public static ITactic eqvRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new EqvRewrites(),
 				new EqvRewrites.Input(hyp, position));
+	}
+
+	public static boolean isFunConvInterImgApp(Formula subFormula) {
+		if (Lib.isRelImg(subFormula)) {
+			BinaryExpression bExp = (BinaryExpression) subFormula;
+			Expression left = bExp.getLeft();
+			Expression right = bExp.getRight();
+			return Lib.isConv(left) && Lib.isInter(right);
+		}
+		return false;
+	}
+
+	public static ITactic funConvInterImg(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new FunConvInterImg(),
+				new FunConvInterImg.Input(hyp, position));
+	}
+
+	public static List<IPosition> funConvInterImgGetPositions(Predicate predicate) {
+		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryExpression expression) {
+				return Tactics.isFunConvInterImgApp(expression);
+			}
+		});
+
+		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
+		for (IPosition pos : positions) {
+			if (!isParentTopLevelPredicate(predicate, pos)) {
+				toBeRemoved.add(pos);
+			}
+		}
+
+		positions.removeAll(toBeRemoved);
+		return positions;
 	}
 
 }

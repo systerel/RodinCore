@@ -179,6 +179,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites"
             id="eqvRewrites"
             name="%eqvRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FunConvInterImg"
+            id="funConvInterImg"
+            name="%funConvInterImgName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

@@ -110,7 +110,6 @@ import org.rodinp.core.RodinMarkerUtil;
  */
 public class ObligationExplorer extends ViewPart implements
 		ISelectionChangedListener, IUserSupportManagerChangedListener {
-//	private TreeColumn column;
 
 	/**
 	 * The plug-in identifier of the Obligation Explorer (value
@@ -118,8 +117,6 @@ public class ObligationExplorer extends ViewPart implements
 	 */
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".views.ObligationExplorer";
-//
-//	private static final int MAX_WIDTH = 500;
 
 	// The tree viewer to display the structure of projects, components, etc.
 	TreeViewer fViewer;
@@ -551,8 +548,6 @@ public class ObligationExplorer extends ViewPart implements
 							+ exclude.getSelection());
 				}
 				fViewer.refresh();
-//				column.pack();
-//				column.setWidth(MAX_WIDTH);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -843,7 +838,6 @@ public class ObligationExplorer extends ViewPart implements
 							} else { // Empty selection
 								clearSelection();
 							}
-							
 						}
 								
 					}
