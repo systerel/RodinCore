@@ -112,52 +112,30 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 	}
 
 	@Override
-	protected String[] getSuccessfulTests() {
-		return new String[] {
-				// Test for P1
-				P1, "1", resultP1,
-				// Test for P2
-				P2, "1.1", resultP2,
-				// Test for P3
-				P3, "1", resultP3,
-				// Test for P4
-				P4, "1.1", resultP4,
-				// Test for P5
-				P5, "1", resultP5,
-				// Test for P6
-				P6, "1.1", resultP6,
-				// Test for P7
-				P7, "1", resultP7,
-				// Test for P8
-				P8, "1.1", resultP8,
-				// Test for P9
-				P9, "1", resultP9,
-				// Test for P10
-				P10, "1.1", resultP10,
-				// Test for P11
-				P11, "1", resultP11,
-				// Test for P12
-				P12, "1.1", resultP12,
-				// Test for P13
-				P13, "1", resultP13,
-				// Test for P14
-				P14, "1.1", resultP14,
-				// Test for P15
-				P15, "1", resultP15,
-				// Test for P16
-				P16, "1.1", resultP16,
-				// Test for P17
-				P17, "1", resultP17,
-				// Test for P18
-				P18, "1.1", resultP18,
-				// Test for P19
-				P19, "1", resultP19,
-				// Test for P20
-				P20, "1.1", resultP20,
-				// Test for P21
-				P21, "1", resultP21,
-				// Test for P22
-				P22, "1.1", resultP22
+	protected SuccessfulTest[] getSuccessfulTests() {
+		return new SuccessfulTest[] {
+				new SuccessfulTest(P1, "1", resultP1),
+				new SuccessfulTest(P2, "1.1", resultP2),
+				new SuccessfulTest(P3, "1", resultP3),
+				new SuccessfulTest(P4, "1.1", resultP4),
+				new SuccessfulTest(P5, "1", resultP5),
+				new SuccessfulTest(P6, "1.1", resultP6),
+				new SuccessfulTest(P7, "1", resultP7),
+				new SuccessfulTest(P8, "1.1", resultP8),
+				new SuccessfulTest(P9, "1", resultP9),
+				new SuccessfulTest(P10, "1.1", resultP10),
+				new SuccessfulTest(P11, "1", resultP11),
+				new SuccessfulTest(P12, "1.1", resultP12),
+				new SuccessfulTest(P13, "1", resultP13),
+				new SuccessfulTest(P14, "1.1", resultP14),
+				new SuccessfulTest(P15, "1", resultP15),
+				new SuccessfulTest(P16, "1.1", resultP16),
+				new SuccessfulTest(P17, "1", resultP17),
+				new SuccessfulTest(P18, "1.1", resultP18),
+				new SuccessfulTest(P19, "1", resultP19),
+				new SuccessfulTest(P20, "1.1", resultP20),
+				new SuccessfulTest(P21, "1", resultP21),
+				new SuccessfulTest(P22, "1.1", resultP22)
 		};
 	}
 
@@ -165,49 +143,27 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 	@Override
 	protected String[] getUnsuccessfulTests() {
 		return new String[] {
-				// Test for P1
 				P1, "0",
-				// Test for P2
 				P2, "1.0",
-				// Test for P3
 				P3, "0",
-				// Test for P4
 				P4, "1.0",
-				// Test for P5
 				P5, "0",
-				// Test for P6
 				P6, "1.0",
-				// Test for P7
 				P7, "0",
-				// Test for P8
 				P8, "1.0",
-				// Test for P9
 				P9, "0",
-				// Test for P10
 				P10, "1.0",
-				// Test for P11
 				P11, "0",
-				// Test for P12
 				P12, "1.0",
-				// Test for P13
 				P13, "0",
-				// Test for P14
 				P14, "1.0",
-				// Test for P15
 				P15, "0",
-				// Test for P16
 				P16, "1.0",
-				// Test for P17
 				P17, "0",
-				// Test for P18
 				P18, "1.0",
-				// Test for P19
 				P19, "0",
-				// Test for P20
 				P20, "1.0",
-				// Test for P21
 				P21, "0",
-				// Test for P22
 				P22, "1.0"
 		};
 	}

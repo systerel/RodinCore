@@ -34,10 +34,10 @@ public class RelImgUnionRightTests extends AbstractManualRewriterTests {
 	}
 
 	@Override
-	protected String[] getSuccessfulTests() {
-		return new String[] {
-				P1, "1.1", resultP1,
-				P2, "1.1.1", resultP2,
+	protected SuccessfulTest[] getSuccessfulTests() {
+		return new SuccessfulTest[] {
+				new SuccessfulTest(P1, "1.1", resultP1),
+				new SuccessfulTest(P2, "1.1.1", resultP2)
 		};
 	}
 

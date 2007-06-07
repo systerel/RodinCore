@@ -37,7 +37,7 @@ public class EqvRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate[] rewrite(Predicate pred, IPosition position) {
+	protected Predicate rewrite(Predicate pred, IPosition position) {
 		IFormulaRewriter rewriter = new EqvRewriterImpl();
 		
 		FormulaFactory ff = FormulaFactory.getDefault();
@@ -54,8 +54,7 @@ public class EqvRewrites extends AbstractManualRewrites {
 		if (newSubFormula == subFormula) // No rewrite occurs
 			return null;
 
-		return new Predicate[] { pred.rewriteSubFormula(position,
-				newSubFormula, ff) };
+		return pred.rewriteSubFormula(position, newSubFormula, ff);
 	}
 
 }

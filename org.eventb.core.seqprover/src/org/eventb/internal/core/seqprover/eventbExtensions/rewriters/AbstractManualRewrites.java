@@ -19,6 +19,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 import org.eventb.internal.core.seqprover.ForwardInfHypAction;
 
@@ -68,17 +69,20 @@ public abstract class AbstractManualRewrites implements IReasoner {
 		final Predicate goal = seq.goal();
 		if (hyp == null) {
 			// Goal rewriting
-			final Predicate[] newGoals = rewrite(goal, position);
-			if (newGoals == null) {
+			Predicate newGoal = rewrite(goal, position);
+			
+			if (newGoal == null) {
 				return ProverFactory.reasonerFailure(this, input, "Rewriter "
 						+ getReasonerID() + " is inapplicable for goal " + goal
 						+ " at position " + position);
 			}
-
-			final int length = newGoals.length;
+			Collection<Predicate> newGoals = Lib.breakPossibleConjunct(newGoal);
+			final int length = newGoals.size();
 			IAntecedent[] antecedents = new IAntecedent[length];
-			for (int i = 0; i < length; ++i) {
-				antecedents[i] = ProverFactory.makeAntecedent(newGoals[i]);
+			int i = 0;
+			for (Predicate pred : newGoals) {
+				antecedents[i] = ProverFactory.makeAntecedent(pred);
+				++i;
 			}
 			return ProverFactory.makeProofRule(this, input, goal,
 					getDisplayName(hyp, position), antecedents);
@@ -89,22 +93,33 @@ public abstract class AbstractManualRewrites implements IReasoner {
 						"Nonexistent hypothesis: " + hyp);
 			}
 
-			final Predicate[] rewriteOutput = rewrite(hyp, position);
-			if (rewriteOutput == null) {
+			Predicate inferredHyp = rewrite(hyp, position);
+			if (inferredHyp == null) {
 				return ProverFactory.reasonerFailure(this, input, "Rewriter "
 						+ getReasonerID() + " is inapplicable for hypothesis "
 						+ hyp + " at position " + position);
 			}
-			final List<Predicate> newHyps = Arrays.asList(rewriteOutput);
-			final IHypAction forwardInf = ProverFactory
+			
+			Collection<Predicate> inferredHyps = Lib
+				.breakPossibleConjunct(inferredHyp);
+			// Check if rewriting generated something interesting
+			inferredHyps.remove(Lib.True);
+			List<IHypAction> hypActions;
+			// make the forward inference action
+			if (!inferredHyps.isEmpty()) {
+				IHypAction forwardInf = ProverFactory
 					.makeForwardInfHypAction(Collections.singleton(hyp),
-							newHyps);
-			List<IHypAction> hypActions = Arrays.asList(forwardInf,
-					getHypAction(hyp, position), ProverFactory
-							.makeSelectHypAction(newHyps));
+							inferredHyps);
+				hypActions = Arrays.asList(forwardInf,
+						getHypAction(hyp, position), ProverFactory
+								.makeSelectHypAction(inferredHyps));
+			}
+			else {
+				hypActions = Arrays.asList(getHypAction(hyp, position),
+						ProverFactory.makeSelectHypAction(inferredHyps));				
+			}
 			return ProverFactory.makeProofRule(this, input, getDisplayName(hyp,
 					position), hypActions);
-
 		}
 	}
 
@@ -113,9 +128,9 @@ public abstract class AbstractManualRewrites implements IReasoner {
 	 * 
 	 * @param pred
 	 *            predicate to rewrite
-	 * @return an array of predicates which are the result of rewriting
+	 * @return the predicate which is the result of rewriting
 	 */
-	protected abstract Predicate[] rewrite(Predicate pred, IPosition position);
+	protected abstract Predicate rewrite(Predicate pred, IPosition position);
 
 	/**
 	 * Returns the name to display in the generated rule.

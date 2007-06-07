@@ -35,7 +35,7 @@ public class RemoveMembership extends AbstractManualRewrites implements
 	}
 
 	@Override
-	protected Predicate[] rewrite(Predicate pred, IPosition position) {
+	protected Predicate rewrite(Predicate pred, IPosition position) {
 		IFormulaRewriter rewriter = new RemoveMembershipRewriterImpl();
 
 		FormulaFactory ff = FormulaFactory.getDefault();
@@ -47,8 +47,7 @@ public class RemoveMembership extends AbstractManualRewrites implements
 			newSubPredicate = rewriter.rewrite((RelationalPredicate) predicate);
 		if (newSubPredicate == null)
 			return null;
-		return new Predicate[] { pred.rewriteSubFormula(position,
-				newSubPredicate, ff) };
+		return pred.rewriteSubFormula(position, newSubPredicate, ff);
 	}
 
 	public String getReasonerID() {

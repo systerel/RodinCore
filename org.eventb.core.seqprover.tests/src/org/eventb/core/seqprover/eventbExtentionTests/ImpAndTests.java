@@ -17,7 +17,11 @@ public class ImpAndTests extends AbstractManualRewriterTests {
 
 	String P1 = "x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3";
 
-	String resultP1 = "(x=0⇒x=1)∧(x=0⇒x=2)∧(x=0⇒x=3)";
+	String resultP1a = "x=0⇒x=1";
+	
+	String resultP1b = "x=0⇒x=2";
+	
+	String resultP1c = "x=0⇒x=3";
 
 	String P2 = "x = 4 ⇒ (x = 0 ⇒ x = 1 ∧ x = 2 ∧ x = 3)";
 
@@ -35,11 +39,11 @@ public class ImpAndTests extends AbstractManualRewriterTests {
 	}
 
 	@Override
-	protected String[] getSuccessfulTests() {
-		return new String[] {
-				P1, "", resultP1,
-				P2, "1", resultP2,
-				P3, "1.1", resultP3
+	protected SuccessfulTest[] getSuccessfulTests() {
+		return new SuccessfulTest[] {
+				new SuccessfulTest(P1, "", resultP1a, resultP1b, resultP1c),
+				new SuccessfulTest(P2, "1", resultP2),
+				new SuccessfulTest(P3, "1.1", resultP3)
 		};
 	}
 

@@ -37,7 +37,7 @@ public class RelImgUnionRightRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate[] rewrite(Predicate pred, IPosition position) {
+	protected Predicate rewrite(Predicate pred, IPosition position) {
 		IFormulaRewriter rewriter = new RelImgUnionRightRewriterImpl();
 		
 		FormulaFactory ff = FormulaFactory.getDefault();
@@ -54,8 +54,7 @@ public class RelImgUnionRightRewrites extends AbstractManualRewrites {
 		if (newSubFormula == subFormula) // No rewrite occurs
 			return null;
 
-		return new Predicate[] { pred.rewriteSubFormula(position,
-				newSubFormula, ff) };
+		return pred.rewriteSubFormula(position, newSubFormula, ff);
 	}
 
 }

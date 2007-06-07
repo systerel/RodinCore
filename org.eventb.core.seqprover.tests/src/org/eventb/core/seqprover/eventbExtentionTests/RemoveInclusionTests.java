@@ -90,20 +90,20 @@ public class RemoveInclusionTests extends AbstractManualRewriterTests {
 	}
 
 	@Override
-	protected String[] getSuccessfulTests() {
-		return new String[] {
-				P1, "1", resultP1,
-				P2, "1.1", resultP2,
-				P3, "1", resultP3,
-				P4, "1.1", resultP4,
-				P5, "1", resultP5,
-				P6, "1.1", resultP6,
-				P7, "1", resultP7,
-				P8, "1.1", resultP8,
-				P9, "1", resultP9,
-				P10, "1.1", resultP10,
-				P11, "1", resultP11,
-				P12, "1.1", resultP12
+	protected SuccessfulTest[] getSuccessfulTests() {
+		return new SuccessfulTest[] {
+				new SuccessfulTest(P1, "1", resultP1),
+				new SuccessfulTest(P2, "1.1", resultP2),
+				new SuccessfulTest(P3, "1", resultP3),
+				new SuccessfulTest(P4, "1.1", resultP4),
+				new SuccessfulTest(P5, "1", resultP5),
+				new SuccessfulTest(P6, "1.1", resultP6),
+				new SuccessfulTest(P7, "1", resultP7),
+				new SuccessfulTest(P8, "1.1", resultP8),
+				new SuccessfulTest(P9, "1", resultP9),
+				new SuccessfulTest(P10, "1.1", resultP10),
+				new SuccessfulTest(P11, "1", resultP11),
+				new SuccessfulTest(P12, "1.1", resultP12)
 		};
 	}
 

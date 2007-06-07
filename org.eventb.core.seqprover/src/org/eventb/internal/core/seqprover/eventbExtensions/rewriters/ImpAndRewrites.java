@@ -37,7 +37,7 @@ public class ImpAndRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate[] rewrite(Predicate pred, IPosition position) {
+	protected Predicate rewrite(Predicate pred, IPosition position) {
 		IFormulaRewriter rewriter = new ImpAndRewriterImpl();
 		
 		FormulaFactory ff = FormulaFactory.getDefault();
@@ -55,8 +55,7 @@ public class ImpAndRewrites extends AbstractManualRewrites {
 		if (newSubFormula == subFormula) // No rewrite occurs
 			return null;
 
-		return new Predicate[] { pred.rewriteSubFormula(position,
-				newSubFormula, ff) };
+		return pred.rewriteSubFormula(position, newSubFormula, ff);
 	}
 
 }

@@ -37,7 +37,7 @@ public class DisjunctionToImplicationRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate[] rewrite(Predicate pred, IPosition position) {
+	protected Predicate rewrite(Predicate pred, IPosition position) {
 		FormulaFactory ff = FormulaFactory.getDefault();
 		Formula subFormula = pred
 						.getSubFormula(position);
@@ -46,8 +46,7 @@ public class DisjunctionToImplicationRewrites extends AbstractManualRewrites {
 		AssociativePredicate predicate = (AssociativePredicate) subFormula;
 		IFormulaRewriter rewriter = new DisjunctionToImplicationRewriter(true, ff);
 		Predicate newSubPredicate = predicate.rewrite(rewriter);
-		return new Predicate[] { pred.rewriteSubFormula(position,
-				newSubPredicate, ff) };
+		return pred.rewriteSubFormula(position, newSubPredicate, ff);
 	}
 
 }

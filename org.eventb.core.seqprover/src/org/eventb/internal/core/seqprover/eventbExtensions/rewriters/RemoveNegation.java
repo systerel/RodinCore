@@ -34,7 +34,7 @@ public class RemoveNegation extends AbstractManualRewrites implements IReasoner 
 	}
 
 	@Override
-	protected Predicate[] rewrite(Predicate pred, IPosition position) {
+	protected Predicate rewrite(Predicate pred, IPosition position) {
 		IFormulaRewriter rewriter = new RemoveNegationRewriterImpl();
 
 		FormulaFactory ff = FormulaFactory.getDefault();
@@ -45,8 +45,7 @@ public class RemoveNegation extends AbstractManualRewrites implements IReasoner 
 			newSubPredicate = rewriter.rewrite((UnaryPredicate) predicate);
 		if (newSubPredicate == null)
 			return null;
-		return new Predicate[] { pred.rewriteSubFormula(position,
-				newSubPredicate, ff) };
+		return pred.rewriteSubFormula(position, newSubPredicate, ff);
 	}
 
 	public String getReasonerID() {

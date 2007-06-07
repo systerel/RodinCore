@@ -23,8 +23,22 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractMan
  */
 public abstract class AbstractManualRewriterTests extends AbstractManualReasonerTests {
 
+	class SuccessfulTest {
+		
+		String predicateImage;
+		String positionImage;
+		String[] results;
+		public SuccessfulTest(String predicateImage, String positionImage,
+				String... results) {
+			this.predicateImage = predicateImage;
+			this.positionImage = positionImage;
+			this.results = results;
+		}
+		
+	}
+
 	protected Collection<SuccessfullReasonerApplication> makeSuccessfullReasonerApplication(
-			String predicateImage, String positionImage, String result) {
+			String predicateImage, String positionImage, String [] results) {
 		Collection<SuccessfullReasonerApplication> successfullReasonerApps = new ArrayList<SuccessfullReasonerApplication>();
 		
 		Predicate predicate = TestLib.genPred(predicateImage);
@@ -37,9 +51,19 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 				.makePosition(positionImage));
 		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
 				.genSeq(" ⊤ |- " + predicate), input));
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("[");
+		boolean first = true;
+		for (String result : results) {
+			if (first)
+				first = false;
+			else
+				buffer.append(", ");
+			buffer.append(inferredEnvironment + "[][][⊤] |- "+ result);
+		}
+		buffer.append("]");
 		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- " + predicate), input,
-				"[" + inferredEnvironment + "[][][⊤] |- "+ result + "]"));
+				.genSeq(" ⊤ |- " + predicate), input, buffer.toString()));
 
 		// Successful in hypothesis
 		input = new AbstractManualRewrites.Input(predicate, ff
@@ -47,10 +71,21 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 
 		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
 				.genSeq(predicate + " |- ⊤"), input));
+		
+		buffer = new StringBuffer();
+		buffer.append("[" + inferredEnvironment
+				+ "[" + predicate + "][][");
+		first = true;
+		for (String result : results) {
+			if (first)
+				first = false;
+			else
+				buffer.append(", ");
+			buffer.append(result);
+		}
+		buffer.append("] |- ⊤]");
 		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(predicate + " |- ⊤"), input,
-				"[" + inferredEnvironment
-				+ "[" + predicate + "][][" + result + "] |- ⊤]"));
+				.genSeq(predicate + " |- ⊤"), input, buffer.toString()));
 		return successfullReasonerApps;
 	}
 	
@@ -101,11 +136,10 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		Collection<SuccessfullReasonerApplication> successfullReasonerApps = new ArrayList<SuccessfullReasonerApplication>();
-		String [] successfulTests = getSuccessfulTests();
-		assert successfulTests.length % 3 == 0;
-		for (int i = 0; i < successfulTests.length;i += 3) {
+		SuccessfulTest [] successfulTests = getSuccessfulTests();
+		for (SuccessfulTest test : successfulTests) {
 			Collection<SuccessfullReasonerApplication> apps = makeSuccessfullReasonerApplication(
-					successfulTests[i], successfulTests[i+1], successfulTests[i+2]);
+					test.predicateImage, test.positionImage, test.results);
 			successfullReasonerApps.addAll(apps);
 
 		}
@@ -114,7 +148,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 						.size()]); 
 	}
 	
-	protected abstract String[] getSuccessfulTests();
+	protected abstract SuccessfulTest[] getSuccessfulTests();
 
 	@Override
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
