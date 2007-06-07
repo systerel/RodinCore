@@ -62,16 +62,17 @@ public abstract class AbstractManualInference implements IReasoner {
 
 		IAntecedent[] antecidents = getAntecedents(seq, pred, position);
 		if (antecidents == null)
-			return ProverFactory.reasonerFailure(this,input,
-				"Manual inference " + getDisplayName(pred, position)
-							+ " is not applicable");
+			return ProverFactory.reasonerFailure(this, input,
+					"Inference " + getReasonerID()
+							+ " is not applicable for " + (pred == null ? seq
+							.goal() : pred) + " at position " + position);
 
 		if (pred == null) {
 			// Generate the successful reasoner output
 			return ProverFactory.makeProofRule(this, input, seq.goal(),
 					getDisplayName(pred, position), antecidents);
 		} else {
-			return ProverFactory.makeProofRule(this, input, null,
+			return ProverFactory.makeProofRule(this, input, null, pred,
 					getDisplayName(pred, position), antecidents);
 		}
 	}
