@@ -1329,11 +1329,37 @@ public class Tactics {
 
 	}
 
+
+	/**
+	 * Return the tactic "implication with conjunction rewrites"
+	 * {@link ImpAndRewrites} which is applicable to a hypothesis at a
+	 * given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "implication with conjunction rewrites"
+	 * @author htson
+	 */
 	public static ITactic impAndRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new ImpAndRewrites(),
 				new ImpAndRewrites.Input(hyp, position));
 	}
 
+
+	/**
+	 * Return the list of applicable positions of the tactic "implication with
+	 * conjunction rewrites" {@link ImpAndRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
 	public static List<IPosition> impAndGetPositions(Predicate pred) {
 		return pred.getPositions(new DefaultFilter() {
 
@@ -1348,11 +1374,37 @@ public class Tactics {
 		});
 	}
 
+
+	/**
+	 * Return the tactic "implication with disjunction rewrites"
+	 * {@link ImpOrRewrites} which is applicable to a hypothesis at a
+	 * given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "implication with disjunction rewrites"
+	 * @author htson
+	 */
 	public static ITactic impOrRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new ImpOrRewrites(),
 				new ImpOrRewrites.Input(hyp, position));
 	}
 
+
+	/**
+	 * Return the list of applicable positions of the tactic "implication with
+	 * disjunction rewrites" {@link ImpOrRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
 	public static List<IPosition> impOrGetPositions(Predicate pred) {
 		return pred.getPositions(new DefaultFilter() {
 
@@ -1367,6 +1419,16 @@ public class Tactics {
 		});
 	}
 
+	/**
+	 * Return the list of applicable positions of the tactic "relational image
+	 * apply to union rewrites" {@link RelImgUnionRightRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
 	public static List<IPosition> relImgUnionRightGetPositions(Predicate predicate) {
 		return predicate.getPositions(new DefaultFilter() {
 
@@ -1383,11 +1445,37 @@ public class Tactics {
 		});
 	}
 
+
+	/**
+	 * Return the tactic "relational image apply to union rewrites"
+	 * {@link RelImgUnionRightRewrites} which is applicable to a hypothesis at a
+	 * given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "relational image apply to union rewrites"
+	 * @author htson
+	 */
 	public static ITactic relImgUnionRightRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new RelImgUnionRightRewrites(),
 				new RelImgUnionRightRewrites.Input(hyp, position));
 	}
 
+
+	/**
+	 * Return the list of applicable positions of the tactic "set equality
+	 * rewrites" {@link SetEqlRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
 	public static List<IPosition> setEqlGetPositions(Predicate predicate) {
 		return predicate.getPositions(new DefaultFilter() {
 
@@ -1404,11 +1492,35 @@ public class Tactics {
 		});
 	}
 
+	/**
+	 * Return the tactic "set equality rewrites" {@link SetEqlRewrites} which is
+	 * applicable to a hypothesis at a given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "set equality rewrites"
+	 * @author htson
+	 */
 	public static ITactic setEqlRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new SetEqlRewrites(),
 				new SetEqlRewrites.Input(hyp, position));
 	}
 
+
+	/**
+	 * Return the list of applicable positions of the tactic "equivalence
+	 * rewrites" {@link EqvRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
 	public static List<IPosition> eqvGetPositions(Predicate predicate) {
 		return predicate.getPositions(new DefaultFilter() {
 
@@ -1423,11 +1535,38 @@ public class Tactics {
 		});
 	}
 
+
+	/**
+	 * Return the tactic "equivalence rewrites" {@link EqvRewrites} which is
+	 * applicable to a hypothesis at a given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "equivalence rewrites"
+	 * @author htson
+	 */
 	public static ITactic eqvRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new EqvRewrites(),
 				new EqvRewrites.Input(hyp, position));
 	}
 
+
+	/**
+	 * Utility method to check if the tactic "function converse apply to
+	 * intersection image" {@link FunConvInterImg} is applicable for the
+	 * formula.
+	 * <p>
+	 * 
+	 * @param formula
+	 *            a formula
+	 * @return <code>true</code> if the tactic is applicable and
+	 *         <code>false</code> otherwise.
+	 * @author htson
+	 */
 	public static boolean isFunConvInterImgApp(Formula subFormula) {
 		if (Lib.isRelImg(subFormula)) {
 			BinaryExpression bExp = (BinaryExpression) subFormula;
@@ -1438,11 +1577,37 @@ public class Tactics {
 		return false;
 	}
 
+
+	/**
+	 * Return the tactic "function converse apply to intersection image"
+	 * {@link FunConvInterImg} which is applicable to a hypothesis at a
+	 * given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "function converse apply to intersection image"
+	 * @author htson
+	 */
 	public static ITactic funConvInterImg(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new FunConvInterImg(),
 				new FunConvInterImg.Input(hyp, position));
 	}
 
+
+	/**
+	 * Return the list of applicable positions of the tactic "function converse
+	 * apply to intersection image" {@link FunConvInterImg} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
 	public static List<IPosition> funConvInterImgGetPositions(Predicate predicate) {
 		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
 
@@ -1519,7 +1684,7 @@ public class Tactics {
 
 	/**
 	 * Return the tactic "function converse apply to set minus image"
-	 * {@link FunConvSetMinusImg} which is applicable to the hypothesis at a
+	 * {@link FunConvSetMinusImg} which is applicable to a hypothesis at a
 	 * given position.
 	 * <p>
 	 * 
