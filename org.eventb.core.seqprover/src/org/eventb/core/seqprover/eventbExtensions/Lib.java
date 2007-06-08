@@ -906,6 +906,11 @@ public final class Lib {
 		return false;
 	}
 
+	public static boolean isSetMinus(Formula formula) {
+		return formula instanceof BinaryExpression
+				&& formula.getTag() == Expression.SETMINUS;
+	}
+
 	// /**
 	// * Typechecks a formula assuming an initial type environment
 	// *

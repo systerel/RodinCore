@@ -70,6 +70,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunConvInterImg;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunConvSetMinusImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
@@ -98,21 +99,14 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegat
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 
-
 /**
  * This class contains static methods that wrap Event-B reasoner extensions into
  * tactics. In many cases, applicability methods are also incuded that implement a
  * quick check to see if the tactic may be applicable in a particular situation.
  * 
- * 
- * @author Farhad Mehta
- * @author htson
+ * @author Farhad Mehta, htson
  * 
  * TODO : complete comments.
- */
-/**
- * @author fmehta
- *
  */
 public class Tactics {
 
@@ -1467,6 +1461,79 @@ public class Tactics {
 
 		positions.removeAll(toBeRemoved);
 		return positions;
+	}
+
+
+	/**
+	 * Utility method to check if the tactic "function converse apply to set
+	 * minus image" {@link FunConvSetMinusImg} is applicable for the formula.
+	 * <p>
+	 * 
+	 * @param formula
+	 *            a formula
+	 * @return <code>true</code> if the tactic is applicable and
+	 *         <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isFunConvSetMinusImgApp(Formula formula) {
+		if (Lib.isRelImg(formula)) {
+			BinaryExpression bExp = (BinaryExpression) formula;
+			Expression left = bExp.getLeft();
+			Expression right = bExp.getRight();
+			return Lib.isConv(left) && Lib.isSetMinus(right);
+		}
+		return false;
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "function converse
+	 * apply to set minus image" {@link FunConvSetMinusImg} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> funConvSetMinusImgGetPositions(Predicate predicate) {
+		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryExpression expression) {
+				return Tactics.isFunConvSetMinusImgApp(expression);
+			}
+		});
+
+		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
+		for (IPosition pos : positions) {
+			if (!isParentTopLevelPredicate(predicate, pos)) {
+				toBeRemoved.add(pos);
+			}
+		}
+
+		positions.removeAll(toBeRemoved);
+		return positions;
+	}
+
+
+	/**
+	 * Return the tactic "function converse apply to set minus image"
+	 * {@link FunConvSetMinusImg} which is applicable to the hypothesis at a
+	 * given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "function converse apply to set minus image"
+	 * @author htson
+	 */
+	public static ITactic funConvSetMinusImg(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new FunConvSetMinusImg(),
+				new FunConvSetMinusImg.Input(hyp, position));
 	}
 
 }

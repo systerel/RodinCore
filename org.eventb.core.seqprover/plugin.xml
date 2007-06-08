@@ -183,6 +183,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.FunConvInterImg"
             id="funConvInterImg"
             name="%funConvInterImgName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FunConvSetMinusImg"
+            id="funConvSetMinusImg"
+            name="%funConvSetMinusImgName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">
