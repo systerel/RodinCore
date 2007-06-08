@@ -1,10 +1,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BinaryExpression;
@@ -14,9 +11,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SetExtension;
-import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -157,30 +152,6 @@ public class FunOvr extends AbstractManualInference {
 				E, null);
 		
 		return makeAntecedent(sourcePred, inferredPred, gEqualsE);
-	}
-
-	private IAntecedent makeAntecedent(Predicate sourcePred,
-			Predicate inferredPred, Predicate newHyp) {
-		Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
-		addedHyps.add(newHyp);
-
-		if (sourcePred == null) {
-			// Function overriding in goal
-			return ProverFactory.makeAntecedent(inferredPred,
-					addedHyps, null);
-		} else {
-			// Function overriding in hypothesis
-			addedHyps.add(inferredPred); // Added the new hyp
-
-			// Hide the old hyp
-			Collection<Predicate> hideHyps = new ArrayList<Predicate>();
-			hideHyps.add(sourcePred);
-			IHypAction hypAction = ProverFactory
-					.makeHideHypAction(hideHyps);
-
-			return ProverFactory.makeAntecedent(null, addedHyps,
-					hypAction);
-		}
 	}
 
 	@Override

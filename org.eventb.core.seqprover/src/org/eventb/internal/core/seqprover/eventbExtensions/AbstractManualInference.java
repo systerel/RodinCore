@@ -1,10 +1,15 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
@@ -120,6 +125,30 @@ public abstract class AbstractManualInference implements IReasoner {
 		// Serialise the position only, the predicate is contained inside the
 		// rule
 		writer.putString(POSITION_KEY, ((Input) input).position.toString());
+	}
+
+	protected IAntecedent makeAntecedent(Predicate hyp,
+			Predicate inferredPred, Predicate ... newHyp) {
+		Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
+		addedHyps.addAll(Arrays.asList(newHyp));
+
+		if (hyp == null) {
+			// Function overriding in goal
+			return ProverFactory.makeAntecedent(inferredPred,
+					addedHyps, null);
+		} else {
+			// Function overriding in hypothesis
+			addedHyps.add(inferredPred); // Added the new hyp
+
+			// Hide the old hyp
+			Collection<Predicate> hideHyps = new ArrayList<Predicate>();
+			hideHyps.add(hyp);
+			IHypAction hypAction = ProverFactory
+					.makeHideHypAction(hideHyps);
+
+			return ProverFactory.makeAntecedent(null, addedHyps,
+					hypAction);
+		}
 	}
 
 }
