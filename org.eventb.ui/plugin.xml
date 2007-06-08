@@ -1496,40 +1496,40 @@
             tooltip="%proofTactic.eqvGoal.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.funConvInterImgHyp"
+            id="org.eventb.ui.funInterImgHyp"
             interrupt="false"
-            name="%proofTactic.funConvInterImgHyp.name"
+            name="%proofTactic.funInterImgHyp.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunConvInterImgHyp"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunInterImgHyp"
             target="hypothesis"
-            tooltip="%proofTactic.funConvInterImgHyp.tooltip"/>
+            tooltip="%proofTactic.funInterImgHyp.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.funConvInterImgGoal"
+            id="org.eventb.ui.funInterImgGoal"
             interrupt="false"
-            name="%proofTactic.funConvInterImgGoal.name"
+            name="%proofTactic.funInterImgGoal.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunConvInterImgGoal"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunInterImgGoal"
             target="goal"
-            tooltip="%proofTactic.funConvInterImgGoal.tooltip"/>
+            tooltip="%proofTactic.funInterImgGoal.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.funConvSetMinusImgHyp"
+            id="org.eventb.ui.funSetMinusImgHyp"
             interrupt="false"
-            name="%proofTactic.funConvSetMinusImgHyp.name"
+            name="%proofTactic.funSetMinusImgHyp.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunConvSetMinusImgHyp"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunSetMinusImgHyp"
             target="hypothesis"
-            tooltip="%proofTactic.funConvSetMinusImgHyp.tooltip"/>
+            tooltip="%proofTactic.funSetMinusImgHyp.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.funConvSetMinusImgGoal"
+            id="org.eventb.ui.funSetMinusImgGoal"
             interrupt="false"
-            name="%proofTactic.funConvSetMinusImgGoal.name"
+            name="%proofTactic.funSetMinusImgGoal.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunConvSetMinusImgGoal"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunSetMinusImgGoal"
             target="goal"
-            tooltip="%proofTactic.funConvSetMinusImgGoal.tooltip"/>
+            tooltip="%proofTactic.funSetMinusImgGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">

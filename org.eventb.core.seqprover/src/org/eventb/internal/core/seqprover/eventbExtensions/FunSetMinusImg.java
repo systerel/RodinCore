@@ -9,17 +9,16 @@ import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
-public class FunConvSetMinusImg extends AbstractManualInference {
+public class FunSetMinusImg extends AbstractManualInference {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID
-			+ ".funConvSetMinusImg";
+			+ ".funSetMinusImg";
 
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 	
@@ -36,8 +35,8 @@ public class FunConvSetMinusImg extends AbstractManualInference {
 
 		Formula subFormula = predicate.getSubFormula(position);
 
-		// "subFormula" should have the form f~[S \ T]
-		if (!Tactics.isFunConvSetMinusImgApp(subFormula))
+		// "subFormula" should have the form f[S \ T]
+		if (!Tactics.isFunSetMinusImgApp(subFormula))
 			return null;
 		
 		// There will be 2 antecidents
@@ -46,11 +45,9 @@ public class FunConvSetMinusImg extends AbstractManualInference {
 		BinaryExpression funAppExp = (BinaryExpression) subFormula;
 		
 		// Get f
-		Expression left = funAppExp.getLeft();
-		UnaryExpression fConverse = (UnaryExpression) left;
-		Expression f = fConverse.getChild(); 
+		Expression f = funAppExp.getLeft();
 
-		// f : A +-> B (from type of f)
+		// f~ : B +-> A (from type of f)
 		Type type = f.getType();
 		assert type instanceof PowerSetType;
 		PowerSetType powerType = (PowerSetType) type;
@@ -61,25 +58,29 @@ public class FunConvSetMinusImg extends AbstractManualInference {
 		Type B = pType.getRight();
 		Expression typeA = A.toExpression(ff);
 		Expression typeB = B.toExpression(ff);
-		Expression typeFun = ff.makeBinaryExpression(Expression.PFUN, typeA, typeB, null);
-		Predicate pred1 = ff.makeRelationalPredicate(Predicate.IN, f,
+		Expression typeFun = ff.makeBinaryExpression(Expression.PFUN, typeB,
+				typeA, null);
+		Expression fConverse = ff.makeUnaryExpression(Expression.CONVERSE, f,
+				null);
+		Predicate pred1 = ff.makeRelationalPredicate(Predicate.IN, fConverse,
 				typeFun, null);
 		
 		antecidents[0] = ProverFactory.makeAntecedent(pred1);
 		
 		BinaryExpression right = (BinaryExpression) funAppExp.getRight();
 		antecidents[1] = createDistributedAntecident(pred, predicate, position,
-				fConverse, right.getLeft(), right.getRight());
+				f, right.getLeft(), right.getRight());
 		return antecidents;
 	}
 
-	private IAntecedent createDistributedAntecident(Predicate sourcePred, Predicate predicate,
-			IPosition position, Expression fConverse, Expression left, Expression right) {
-		// make f~[S] \ f~[T]
+	private IAntecedent createDistributedAntecident(Predicate sourcePred,
+			Predicate predicate, IPosition position, Expression f,
+			Expression left, Expression right) {
+		// make f[S] \ f[T]
 		Expression newLeft = ff.makeBinaryExpression(Expression.RELIMAGE,
-					fConverse, left, null);
+					f, left, null);
 		Expression newRight = ff.makeBinaryExpression(Expression.RELIMAGE,
-				fConverse, right, null);
+				f, right, null);
 	
 		Expression newSubformula = ff.makeBinaryExpression(Expression.SETMINUS,
 				newLeft, newRight, null);
@@ -94,10 +95,10 @@ public class FunConvSetMinusImg extends AbstractManualInference {
 	@Override
 	protected String getDisplayName(Predicate pred, IPosition position) {
 		if (pred != null) {
-			return "fun. conv. set minus image " + pred.getSubFormula(position);
+			return "fun. set minus image " + pred.getSubFormula(position);
 		}
 		else {
-			return "fun. conv. set minus image in goal";
+			return "fun. set minus image in goal";
 		}
 	}
 

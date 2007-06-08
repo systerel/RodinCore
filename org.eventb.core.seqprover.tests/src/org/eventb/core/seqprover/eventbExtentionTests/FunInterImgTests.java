@@ -5,41 +5,41 @@ import java.util.List;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.internal.core.seqprover.eventbExtensions.FunConvInterImg;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
 
 /**
  * Unit tests for the Function Converse apply to intersection image reasoner
- * {@link FunConvInterImg}
+ * {@link FunInterImg}
  * 
  * @author htson
  */
-public class FunConvSetMinusImgTests extends AbstractManualInferenceTests {
+public class FunInterImgTests extends AbstractManualInferenceTests {
 
-	String P1 = "(x = 2) ⇒ f∼[{x,3} ∖ {2}] = {3}";
+	String P1 = "(x = 2) ⇒ f[{x,3} ∩ {2}] = {3}";
 
-	String P2 = "∀x· x = 2 ⇒ {3} = f∼[{x,3} ∖ {2}]";
+	String P2 = "∀x· x = 2 ⇒ {3} = f[{x,3} ∩ {2}]";
 
-	String P3 = "f∼[{x,3} ∖ {2}] = {3}";
-	
-	String resultP3GoalA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- f∈ℤ ⇸ ℤ";
-	
-	String resultP3GoalB = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- f∼[{x,3}] ∖ f∼[{2}]={3}";
+	String P3 = "f[{x,3} ∩ {2}] = {3}";
 
-	String resultP3HypA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][f∼[{x,3} ∖ {2}]={3}] |- f∈ℤ ⇸ ℤ";
-	
-	String resultP3HypB = "{f=ℙ(ℤ×ℤ), x=ℤ}[f∼[{x,3} ∖ {2}]={3}][][f∼[{x,3}] ∖ f∼[{2}]={3}] |- ⊤";
-	
-	String P4 = "{3} = f∼[{x,3} ∖ {2}]";
+	String resultP3GoalA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- f∼∈ℤ ⇸ ℤ";
 
-	String resultP4GoalA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- f∈ℤ ⇸ ℤ";
+	String resultP3GoalB = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- f[{x,3}]∩f[{2}]={3}";
 
-	String resultP4GoalB = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- {3}=f∼[{x,3}] ∖ f∼[{2}]";
+	String resultP3HypA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][f[{x,3}∩{2}]={3}] |- f∼∈ℤ ⇸ ℤ";
 
-	String resultP4HypA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][{3}=f∼[{x,3} ∖ {2}]] |- f∈ℤ ⇸ ℤ";
+	String resultP3HypB = "{f=ℙ(ℤ×ℤ), x=ℤ}[f[{x,3}∩{2}]={3}][][f[{x,3}]∩f[{2}]={3}] |- ⊤";
 
-	String resultP4HypB = "{f=ℙ(ℤ×ℤ), x=ℤ}[{3}=f∼[{x,3} ∖ {2}]][][{3}=f∼[{x,3}] ∖ f∼[{2}]] |- ⊤";
+	String P4 = "{3} = f[{x,3} ∩ {2}]";
 
-	public String [] getTestGetPositions() {
+	String resultP4GoalA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- f∼∈ℤ ⇸ ℤ";
+
+	String resultP4GoalB = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- {3}=f[{x,3}]∩f[{2}]";
+
+	String resultP4HypA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][{3}=f[{x,3}∩{2}]] |- f∼∈ℤ ⇸ ℤ";
+
+	String resultP4HypB = "{f=ℙ(ℤ×ℤ), x=ℤ}[{3}=f[{x,3}∩{2}]][][{3}=f[{x,3}]∩f[{2}]] |- ⊤";
+
+	protected String [] getTestGetPositions() {
 		return new String [] {
 				P1, "",
 				P2, "",
@@ -49,12 +49,12 @@ public class FunConvSetMinusImgTests extends AbstractManualInferenceTests {
 	}
 
 	protected List<IPosition> getPositions(Predicate predicate) {
-		return Tactics.funConvSetMinusImgGetPositions(predicate);
+		return Tactics.funInterImgGetPositions(predicate);
 	}
 	
 	@Override
 	public String getReasonerID() {
-		return "org.eventb.core.seqprover.funConvSetMinusImg";
+		return "org.eventb.core.seqprover.funInterImg";
 	}
 
 	protected SuccessfulTest[] getSuccessfulTests() {

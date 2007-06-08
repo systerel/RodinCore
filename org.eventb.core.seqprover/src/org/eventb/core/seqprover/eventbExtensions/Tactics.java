@@ -69,8 +69,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
-import org.eventb.internal.core.seqprover.eventbExtensions.FunConvInterImg;
-import org.eventb.internal.core.seqprover.eventbExtensions.FunConvSetMinusImg;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunSetMinusImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
@@ -1556,9 +1556,8 @@ public class Tactics {
 
 
 	/**
-	 * Utility method to check if the tactic "function converse apply to
-	 * intersection image" {@link FunConvInterImg} is applicable for the
-	 * formula.
+	 * Utility method to check if the tactic "function apply to intersection
+	 * image" {@link FunInterImg} is applicable for the formula.
 	 * <p>
 	 * 
 	 * @param formula
@@ -1567,21 +1566,20 @@ public class Tactics {
 	 *         <code>false</code> otherwise.
 	 * @author htson
 	 */
-	public static boolean isFunConvInterImgApp(Formula subFormula) {
+	public static boolean isFunInterImgApp(Formula subFormula) {
 		if (Lib.isRelImg(subFormula)) {
 			BinaryExpression bExp = (BinaryExpression) subFormula;
-			Expression left = bExp.getLeft();
 			Expression right = bExp.getRight();
-			return Lib.isConv(left) && Lib.isInter(right);
+			return Lib.isInter(right);
 		}
 		return false;
 	}
 
 
 	/**
-	 * Return the tactic "function converse apply to intersection image"
-	 * {@link FunConvInterImg} which is applicable to a hypothesis at a
-	 * given position.
+	 * Return the tactic "function apply to intersection image"
+	 * {@link FunInterImg} which is applicable to a hypothesis at a given
+	 * position.
 	 * <p>
 	 * 
 	 * @param hyp
@@ -1589,18 +1587,18 @@ public class Tactics {
 	 *            in goal
 	 * @param position
 	 *            a position
-	 * @return The tactic "function converse apply to intersection image"
+	 * @return The tactic "function apply to intersection image"
 	 * @author htson
 	 */
-	public static ITactic funConvInterImg(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new FunConvInterImg(),
-				new FunConvInterImg.Input(hyp, position));
+	public static ITactic funInterImg(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new FunInterImg(),
+				new FunInterImg.Input(hyp, position));
 	}
 
 
 	/**
-	 * Return the list of applicable positions of the tactic "function converse
-	 * apply to intersection image" {@link FunConvInterImg} to a predicate.
+	 * Return the list of applicable positions of the tactic "function apply to
+	 * intersection image" {@link FunInterImg} to a predicate.
 	 * <p>
 	 * 
 	 * @param predicate
@@ -1608,12 +1606,12 @@ public class Tactics {
 	 * @return a list of applicable positions
 	 * @author htson
 	 */
-	public static List<IPosition> funConvInterImgGetPositions(Predicate predicate) {
+	public static List<IPosition> funInterImgGetPositions(Predicate predicate) {
 		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				return Tactics.isFunConvInterImgApp(expression);
+				return Tactics.isFunInterImgApp(expression);
 			}
 		});
 
@@ -1630,8 +1628,8 @@ public class Tactics {
 
 
 	/**
-	 * Utility method to check if the tactic "function converse apply to set
-	 * minus image" {@link FunConvSetMinusImg} is applicable for the formula.
+	 * Utility method to check if the tactic "function apply to set minus image"
+	 * {@link FunSetMinusImg} is applicable for the formula.
 	 * <p>
 	 * 
 	 * @param formula
@@ -1640,20 +1638,19 @@ public class Tactics {
 	 *         <code>false</code> otherwise.
 	 * @author htson
 	 */
-	public static boolean isFunConvSetMinusImgApp(Formula formula) {
+	public static boolean isFunSetMinusImgApp(Formula formula) {
 		if (Lib.isRelImg(formula)) {
 			BinaryExpression bExp = (BinaryExpression) formula;
-			Expression left = bExp.getLeft();
 			Expression right = bExp.getRight();
-			return Lib.isConv(left) && Lib.isSetMinus(right);
+			return Lib.isSetMinus(right);
 		}
 		return false;
 	}
 
 
 	/**
-	 * Return the list of applicable positions of the tactic "function converse
-	 * apply to set minus image" {@link FunConvSetMinusImg} to a predicate.
+	 * Return the list of applicable positions of the tactic "function apply to
+	 * set minus image" {@link FunSetMinusImg} to a predicate.
 	 * <p>
 	 * 
 	 * @param predicate
@@ -1661,12 +1658,12 @@ public class Tactics {
 	 * @return a list of applicable positions
 	 * @author htson
 	 */
-	public static List<IPosition> funConvSetMinusImgGetPositions(Predicate predicate) {
+	public static List<IPosition> funSetMinusImgGetPositions(Predicate predicate) {
 		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				return Tactics.isFunConvSetMinusImgApp(expression);
+				return Tactics.isFunSetMinusImgApp(expression);
 			}
 		});
 
@@ -1683,9 +1680,9 @@ public class Tactics {
 
 
 	/**
-	 * Return the tactic "function converse apply to set minus image"
-	 * {@link FunConvSetMinusImg} which is applicable to a hypothesis at a
-	 * given position.
+	 * Return the tactic "function apply to set minus image"
+	 * {@link FunSetMinusImg} which is applicable to a hypothesis at a given
+	 * position.
 	 * <p>
 	 * 
 	 * @param hyp
@@ -1693,12 +1690,13 @@ public class Tactics {
 	 *            in goal
 	 * @param position
 	 *            a position
-	 * @return The tactic "function converse apply to set minus image"
+	 * @return The tactic "function apply to set minus image"
 	 * @author htson
 	 */
-	public static ITactic funConvSetMinusImg(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new FunConvSetMinusImg(),
-				new FunConvSetMinusImg.Input(hyp, position));
+	public static ITactic funSetMinusImg(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new FunSetMinusImg(),
+				new FunSetMinusImg.Input(hyp, position));
 	}
+
 
 }

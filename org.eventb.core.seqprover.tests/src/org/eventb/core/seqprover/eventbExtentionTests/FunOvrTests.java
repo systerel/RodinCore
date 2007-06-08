@@ -5,11 +5,11 @@ import java.util.List;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.internal.core.seqprover.eventbExtensions.FunConvInterImg;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
 
 /**
  * Unit tests for the Function Converse apply to intersection image reasoner
- * {@link FunConvInterImg}
+ * {@link FunInterImg}
  * 
  * @author htson
  */

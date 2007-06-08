@@ -13,12 +13,12 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider;
 
-public class FunConvSetMinusImgHyp extends DefaultTacticProvider {
+public class FunSetMinusImgGoal extends DefaultTacticProvider {
 
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		return Tactics.funConvSetMinusImg(hyp, position);
+		return Tactics.funSetMinusImg(null, position);
 	}
 
 	@Override
@@ -26,14 +26,14 @@ public class FunConvSetMinusImgHyp extends DefaultTacticProvider {
 			Predicate hyp, String input) {
 		if (node == null)
 			return null;
-
-		List<IPosition> positions = Tactics.funConvSetMinusImgGetPositions(hyp);
+		List<IPosition> positions = Tactics.funSetMinusImgGetPositions(node
+				.getSequent().goal());
 
 		if (positions.size() == 0)
 			return null;
 		return positions;
 	}
-
+	
 	@Override
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
