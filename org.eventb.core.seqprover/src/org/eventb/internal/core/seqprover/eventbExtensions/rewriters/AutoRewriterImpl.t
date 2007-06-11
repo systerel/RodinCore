@@ -547,28 +547,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				return expression;    		
 	    	}
 	    	
-	    	/**
-	    	 * Set Theory 16: (f  {E↦ F})(E) == F
-	    	 */
-	    	FunImage(Ovr(children), E) -> {
-	    		Expression lastExpression = `children[`children.length - 1];
-				if (lastExpression instanceof SetExtension) {
-					SetExtension sExt = (SetExtension) lastExpression;
-					Expression[] members = sExt.getMembers();
-					if (members.length == 1) {
-						Expression child = members[0];
-						if (child instanceof BinaryExpression
-								&& child.getTag() == Expression.MAPSTO) {
-							if (((BinaryExpression) child).getLeft().equals(`E)) {
-								return ((BinaryExpression) child).getRight();
-							}
-						}
-					}
-				}
-
-				return expression;
-	    	}
-
 			/**
 	    	 * Arithmetic 2: E − 0 == E
 	    	 * Arithmetic 3: 0 − E == −E
@@ -629,6 +607,65 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				}
 				return expression;
 	    	}
+	    	
+	    	/**
+	    	 * Set Theory: f(f∼(E)) = E
+	    	 */
+	    	FunImage(f, FunImage(Converse(f), E)) -> {
+				return `E;
+	    	}
+
+	    	/**
+	    	 * Set Theory: f∼(f(E)) = E
+	    	 */
+	    	FunImage(Converse(f), FunImage(f, E)) -> {
+				return `E;
+	    	}
+
+	    	/**
+	    	 * Set Theory 16: (f  {E↦ F})(E) == F
+	    	 */
+	    	FunImage(Ovr(children), E) -> {
+	    		Expression lastExpression = `children[`children.length - 1];
+				if (lastExpression instanceof SetExtension) {
+					SetExtension sExt = (SetExtension) lastExpression;
+					Expression[] members = sExt.getMembers();
+					if (members.length == 1) {
+						Expression child = members[0];
+						if (child instanceof BinaryExpression
+								&& child.getTag() == Expression.MAPSTO) {
+							if (((BinaryExpression) child).getLeft().equals(`E)) {
+								return ((BinaryExpression) child).getRight();
+							}
+						}
+					}
+				}
+
+				return expression;
+	    	}
+
+	    	/**
+	    	 * Set Theory: {x ↦ a, ..., y ↦ b}({a ↦ x, ..., b ↦ y}(E)) = E
+	    	 */
+	    	FunImage(SetExtension(children1), FunImage(SetExtension(children2), E)) -> {
+				if (`children1.length != `children2.length)
+					return expression;
+				for (int i = 0; i < `children1.length; ++i) {
+					Expression map1 = `children1[i];
+					Expression map2 = `children2[i];
+					if (!(Lib.isMapping(map1) && Lib.isMapping(map2)))
+						return expression;	
+					
+					BinaryExpression bExp1 = (BinaryExpression) map1;
+					BinaryExpression bExp2 = (BinaryExpression) map2;
+					
+					if (!(bExp1.getRight().equals(bExp2.getLeft()) &&
+							 bExp2.getRight().equals(bExp1.getLeft())))
+						return expression;
+				}
+				return `E;
+	    	}
+
 	    }
 	    return expression;
 	}
