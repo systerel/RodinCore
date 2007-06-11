@@ -867,6 +867,25 @@ public class AutoFormulaRewriterTests {
 		assertRelationalPredicate("U ∈ ℙ(ℤ) == U ∈ ℙ(ℤ)", ff.makeRelationalPredicate(
 				Predicate.IN, U, powInteger, null), U, Expression.IN,
 				powInteger);
+		
+		// f(f~(E)) == E
+		Expression gConverse = ff.makeUnaryExpression(Expression.CONVERSE, g, null);
+		assertBinaryExpression("g(g∼(E)) = E", number2, g,
+				Expression.FUNIMAGE, ff.makeBinaryExpression(
+						Expression.FUNIMAGE, gConverse, number2, null));
+
+		// f(f~(E)) == E
+		assertBinaryExpression("g∼(g(E)) = E", number3, gConverse,
+				Expression.FUNIMAGE, ff.makeBinaryExpression(
+						Expression.FUNIMAGE, g, number3, null));
+
+		// {x |-> a, ..., y |-> b}({a |-> x, ..., b |-> y}(E)) = E
+		f = ff.makeSetExtension(new Expression[] { m1, m2 }, null);
+		Expression fConverse = ff.makeUnaryExpression(Expression.CONVERSE, f, null);
+		assertBinaryExpression("f(f∼(E)) = E", number2, f,
+				Expression.FUNIMAGE, ff.makeBinaryExpression(
+						Expression.FUNIMAGE, fConverse, number2, null));
+
 	}
 
 	private void assertSetExtension(String message, Expression expected,
