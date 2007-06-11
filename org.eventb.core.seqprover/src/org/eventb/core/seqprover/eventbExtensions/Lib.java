@@ -54,12 +54,8 @@ import org.eventb.core.ast.UnaryPredicate;
  * </p>
  * 
  * 
- * @author Farhad Mehta
+ * @author Farhad Mehta, htson
  * 
- */
-/**
- * @author fmehta
- *
  */
 public final class Lib {
 
@@ -909,6 +905,21 @@ public final class Lib {
 	public static boolean isSetMinus(Formula formula) {
 		return formula instanceof BinaryExpression
 				&& formula.getTag() == Expression.SETMINUS;
+	}
+
+	/**
+	 * Test if the formula is a mapping "a ↦ b".
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is a mapping. Return
+	 *         <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isMapping(Formula formula) {
+		return formula instanceof BinaryExpression
+				&& formula.getTag() == Expression.MAPSTO;
 	}
 
 	// /**
