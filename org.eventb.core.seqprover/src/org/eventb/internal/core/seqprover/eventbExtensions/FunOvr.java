@@ -155,13 +155,8 @@ public class FunOvr extends AbstractManualInference {
 	}
 
 	@Override
-	protected String getDisplayName(Predicate pred, IPosition position) {
-		if (pred != null) {
-			return "ovr " + pred.getSubFormula(position);
-		}
-		else {
-			return "ovr goal";
-		}
+	protected String getDisplayName() {
+		return "ovr";
 	}
 
 }
