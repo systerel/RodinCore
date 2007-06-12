@@ -70,8 +70,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
-import org.eventb.internal.core.seqprover.eventbExtensions.FunSetMinusImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunSetMinusImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
@@ -1566,13 +1566,8 @@ public class Tactics {
 	 *         <code>false</code> otherwise.
 	 * @author htson
 	 */
-	public static boolean isFunInterImgApp(Formula subFormula) {
-		if (Lib.isRelImg(subFormula)) {
-			BinaryExpression bExp = (BinaryExpression) subFormula;
-			Expression right = bExp.getRight();
-			return Lib.isInter(right);
-		}
-		return false;
+	public static boolean isFunInterImgApp(Formula formula) {
+		return new FunInterImg().isApplicable(formula);
 	}
 
 
@@ -1607,23 +1602,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static List<IPosition> funInterImgGetPositions(Predicate predicate) {
-		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
-
-			@Override
-			public boolean select(BinaryExpression expression) {
-				return Tactics.isFunInterImgApp(expression);
-			}
-		});
-
-		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
-		for (IPosition pos : positions) {
-			if (!isParentTopLevelPredicate(predicate, pos)) {
-				toBeRemoved.add(pos);
-			}
-		}
-
-		positions.removeAll(toBeRemoved);
-		return positions;
+		return new FunInterImg().getPositions(predicate, true);
 	}
 
 
@@ -1639,12 +1618,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static boolean isFunSetMinusImgApp(Formula formula) {
-		if (Lib.isRelImg(formula)) {
-			BinaryExpression bExp = (BinaryExpression) formula;
-			Expression right = bExp.getRight();
-			return Lib.isSetMinus(right);
-		}
-		return false;
+		return new FunSetMinusImg().isApplicable(formula);
 	}
 
 
@@ -1659,23 +1633,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static List<IPosition> funSetMinusImgGetPositions(Predicate predicate) {
-		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
-
-			@Override
-			public boolean select(BinaryExpression expression) {
-				return Tactics.isFunSetMinusImgApp(expression);
-			}
-		});
-
-		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
-		for (IPosition pos : positions) {
-			if (!isParentTopLevelPredicate(predicate, pos)) {
-				toBeRemoved.add(pos);
-			}
-		}
-
-		positions.removeAll(toBeRemoved);
-		return positions;
+		return new FunSetMinusImg().getPositions(predicate, true);
 	}
 
 
@@ -1697,6 +1655,5 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new FunSetMinusImg(),
 				new FunSetMinusImg.Input(hyp, position));
 	}
-
 
 }
