@@ -130,7 +130,11 @@ public class DefaultTacticProvider implements ITacticProvider {
 			return new Point(0, 1);
 		}
 		if (subFormula instanceof BinaryExpression) {
-			return new Point(0, 1);
+			BinaryExpression bExp = (BinaryExpression) subFormula;
+			SourceLocation leftLocation = bExp.getLeft().getSourceLocation();
+			SourceLocation rightLocation = bExp.getRight().getSourceLocation();
+			return getOperatorPosition(predStr, leftLocation.getEnd() + 1,
+					rightLocation.getStart());
 		}
 		if (subFormula instanceof BoolExpression) {
 			return new Point(0, 1);
