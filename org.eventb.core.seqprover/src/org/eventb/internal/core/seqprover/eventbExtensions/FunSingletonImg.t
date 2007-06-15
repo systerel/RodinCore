@@ -46,15 +46,15 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 /**
- * Basic implementation for Function Converse inference rule f~(f(E))
+ * Basic implementation for "function apply to singleton set image" f[{E}]
  */
 @SuppressWarnings("unused")
-public class FunSetMinusImg extends AbstractManualInference {
+public class FunSingletonImg extends AbstractManualInference {
 
 	%include {Formula.tom}
 	
 	public String getReasonerID() {
-		return SequentProver.PLUGIN_ID + ".funSetMinusImg";
+		return SequentProver.PLUGIN_ID + ".funSingletonImg";
 	}
 	
 	@Override
@@ -62,10 +62,10 @@ public class FunSetMinusImg extends AbstractManualInference {
 	    %match (Expression expression) {
 			
 			/**
-	    	 * Set Theory: f[S ∖ T]
+	    	 * Set Theory: f[{E}]
 	    	 */
-			RelImage(_, SetMinus(_, _)) -> {
-				return true;
+			RelImage(_, SetExtension(children)) -> {
+				return `children.length == 1;
 			}
 
 	    }
@@ -74,7 +74,7 @@ public class FunSetMinusImg extends AbstractManualInference {
 
 	@Override
 	protected String getDisplayName() {
-		return "fun. set minus img.";
+		return "fun. singleton img.";
 	}
 
 	@Override
@@ -86,24 +86,24 @@ public class FunSetMinusImg extends AbstractManualInference {
 
 		Formula subFormula = predicate.getSubFormula(position);
 
-		// "subFormula" should have the form f[S ∖ T]
+		// "subFormula" should have the form f[{E}]
 		if (!isApplicable(subFormula))
 			return null;
 			
 		Expression expression = (Expression) subFormula;
 
 		Expression f = null;
-		Expression S = null;
-		Expression T = null;
+		Expression E = null;
 	    %match (Expression expression) {
 
 			/**
-	    	 * Set Theory: f[S ∖ T]
+	    	 * Set Theory: f[{E}]
 	    	 */
-			RelImage(ff, SetMinus(SS, TT)) -> {
-				f = `ff;
-				S = `SS;
-				T = `TT;
+			RelImage(ff, SetExtension(children)) -> {
+				if (`children.length == 1) {
+					f = `ff;
+					E = `children[0];
+				}
 			}
 
 	    }
@@ -113,16 +113,15 @@ public class FunSetMinusImg extends AbstractManualInference {
 		// There will be 2 antecidents
 		IAntecedent[] antecidents = new IAntecedent[2];
 
-		// f : A +-> B (from type of f)
-		antecidents[0] = makeFunctionalAntecident(f, true, Expression.PFUN);
-		
-		// f[S] ∖ f[T]
-		Expression exp1 = ff.makeBinaryExpression(Expression.RELIMAGE, f, S, null);
-		Expression exp2 = ff.makeBinaryExpression(Expression.RELIMAGE, f, T, null);
-		Expression exp = ff.makeBinaryExpression(Expression.SETMINUS, exp1, exp2, null);
+		// {f(E)}
+		Expression exp = ff.makeBinaryExpression(Expression.FUNIMAGE, f, E, null);
+		Expression setExt = ff.makeSetExtension(exp, null);
 		
 		Predicate inferredPred = predicate.rewriteSubFormula(position,
-				exp, ff);
+				setExt, ff);
+
+		// Well-definedness
+		antecidents[0] = makeWD(inferredPred);
 
 		antecidents[1] = makeAntecedent(pred, inferredPred);
 		return antecidents;

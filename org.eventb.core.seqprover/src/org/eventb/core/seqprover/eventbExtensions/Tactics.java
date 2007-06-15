@@ -72,6 +72,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunSetMinusImg;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunSingletonImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
@@ -1654,6 +1655,40 @@ public class Tactics {
 	public static ITactic funSetMinusImg(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new FunSetMinusImg(),
 				new FunSetMinusImg.Input(hyp, position));
+	}
+
+	/**
+	 * Return the list of applicable positions of the tactic "function apply to
+	 * singleton set image" {@link FunSetMinusImg} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> funSingletonImgGetPositions(
+			Predicate predicate) {
+		return new FunSingletonImg().getPositions(predicate, false);
+	}
+
+	/**
+	 * Return the tactic "function apply to singleton set image"
+	 * {@link FunSingletonImg} which is applicable to a hypothesis at a given
+	 * position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "function apply to singleton set image"
+	 * @author htson
+	 */
+	public static ITactic funSingletonImg(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new FunSingletonImg(),
+				new FunSingletonImg.Input(hyp, position));
 	}
 
 }

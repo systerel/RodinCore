@@ -187,6 +187,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.FunSetMinusImg"
             id="funSetMinusImg"
             name="%funSetMinusImgName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FunSingletonImg"
+            id="funSingletonImg"
+            name="%funSingletonImgName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

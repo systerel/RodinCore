@@ -1530,6 +1530,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.FunSetMinusImgGoal"
             target="goal"
             tooltip="%proofTactic.funSetMinusImgGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.funSingletonImgHyp"
+            interrupt="false"
+            name="%proofTactic.funSingletonImgHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunSingletonImgHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.funSingletonImgHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.funSingletonImgGoal"
+            interrupt="false"
+            name="%proofTactic.funSingletonImgGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunSingletonImgGoal"
+            target="goal"
+            tooltip="%proofTactic.funSingletonImgGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
