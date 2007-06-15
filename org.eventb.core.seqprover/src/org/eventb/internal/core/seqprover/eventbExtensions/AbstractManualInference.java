@@ -45,6 +45,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
@@ -347,5 +348,9 @@ public abstract class AbstractManualInference implements IReasoner {
 		}
 		
 		return ProverFactory.makeAntecedent(pred);
+	}
+
+	protected IAntecedent makeWD(Predicate pred) {
+		return ProverFactory.makeAntecedent(Lib.WD(pred));
 	}
 }
