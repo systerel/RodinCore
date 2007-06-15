@@ -922,6 +922,24 @@ public final class Lib {
 				&& formula.getTag() == Expression.MAPSTO;
 	}
 
+
+	/**
+	 * Test if the formula is a singleton set "{E}".
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is a singleton set. Return
+	 *         <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isSingletonSet(Expression expression) {
+		if (isSetExtension(expression)) {
+			return ((SetExtension) expression).getMembers().length == 1;
+		}
+		return false;
+	}
+
 	// /**
 	// * Typechecks a formula assuming an initial type environment
 	// *
