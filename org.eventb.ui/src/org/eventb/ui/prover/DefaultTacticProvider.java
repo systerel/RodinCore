@@ -34,6 +34,7 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
@@ -120,8 +121,8 @@ public class DefaultTacticProvider implements ITacticProvider {
 		if (subFormula instanceof UnaryPredicate) {
 			UnaryPredicate uPred = (UnaryPredicate) subFormula;
 			Predicate child = uPred.getChild();
-			return getOperatorPosition(predStr, subFormula.getSourceLocation().getStart(), child.getSourceLocation()
-					.getStart());
+			return getOperatorPosition(predStr, subFormula.getSourceLocation()
+					.getStart(), child.getSourceLocation().getStart());
 		}
 		if (subFormula instanceof AssociativeExpression) {
 			return new Point(0, 1);
@@ -135,6 +136,18 @@ public class DefaultTacticProvider implements ITacticProvider {
 			SourceLocation rightLocation = bExp.getRight().getSourceLocation();
 			return getOperatorPosition(predStr, leftLocation.getEnd() + 1,
 					rightLocation.getStart());
+		}
+		if (subFormula instanceof UnaryExpression) {
+			UnaryExpression uPred = (UnaryExpression) subFormula;
+			if (uPred.getTag() == Expression.CONVERSE) {
+				Expression child = uPred.getChild();
+				return getOperatorPosition(predStr, child.getSourceLocation()
+						.getEnd() + 1,
+						subFormula.getSourceLocation().getEnd() + 1);				
+			}
+			Expression child = uPred.getChild();
+			return getOperatorPosition(predStr, subFormula.getSourceLocation()
+					.getStart(), child.getSourceLocation().getStart());
 		}
 		if (subFormula instanceof BoolExpression) {
 			return new Point(0, 1);
