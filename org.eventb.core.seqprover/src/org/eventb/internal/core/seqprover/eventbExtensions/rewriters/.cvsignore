@@ -1,4 +1,5 @@
 AutoRewriterImpl.java
+ConvRewriterImpl.java
 EqvRewriterImpl.java
 ImpAndRewriterImpl.java
 ImpOrRewriterImpl.java

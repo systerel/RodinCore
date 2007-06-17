@@ -87,6 +87,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivia
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ConvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
@@ -1689,6 +1690,74 @@ public class Tactics {
 	public static ITactic funSingletonImg(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new FunSingletonImg(),
 				new FunSingletonImg.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "converse relation
+	 * rewrites" {@link ConvRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> convGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(UnaryExpression expression) {
+				if (expression.getTag() == Expression.CONVERSE) {
+					Expression child = expression.getChild();
+					if (child instanceof AssociativeExpression
+							&& child.getTag() == Expression.BUNION) {
+						return true;
+					}
+					if (child instanceof AssociativeExpression
+							&& child.getTag() == Expression.BINTER) {
+						return true;
+					}
+					if (child instanceof BinaryExpression
+							&& child.getTag() == Expression.DOMRES) {
+						return true;
+					}
+					if (child instanceof BinaryExpression
+							&& child.getTag() == Expression.DOMSUB) {
+						return true;
+					}
+					if (child instanceof BinaryExpression
+							&& child.getTag() == Expression.RANRES) {
+						return true;
+					}
+					if (child instanceof BinaryExpression
+							&& child.getTag() == Expression.RANSUB) {
+						return true;
+					}
+				}
+				return super.select(expression);
+			}
+
+		});
+	}
+
+
+	/**
+	 * Return the tactic "converse relation rewrites" {@link ConvRewrites} which
+	 * is applicable to a hypothesis at a given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "converse relation rewrites"
+	 * @author htson
+	 */
+	public static ITactic convRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new ConvRewrites(),
+				new ConvRewrites.Input(hyp, position));
 	}
 
 }

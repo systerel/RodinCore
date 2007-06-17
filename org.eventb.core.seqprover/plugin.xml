@@ -191,6 +191,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.FunSingletonImg"
             id="funSingletonImg"
             name="%funSingletonImgName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ConvRewrites"
+            id="convRewrites"
+            name="%convRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">
