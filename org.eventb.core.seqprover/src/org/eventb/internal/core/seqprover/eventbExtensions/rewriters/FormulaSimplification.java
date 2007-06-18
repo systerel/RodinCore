@@ -96,10 +96,10 @@ public class FormulaSimplification {
 		switch (tag) {
 		case Expression.BUNION:
 			neutral = ff.makeEmptySet(expression.getType(), null);
-			determinant = null;
+			determinant = expression.getType().getBaseType().toExpression(ff);
 			break;
 		case Expression.BINTER:
-			neutral = null;
+			neutral = expression.getType().getBaseType().toExpression(ff);
 			determinant = ff.makeEmptySet(expression.getType(), null);
 			break;
 		case Expression.PLUS:

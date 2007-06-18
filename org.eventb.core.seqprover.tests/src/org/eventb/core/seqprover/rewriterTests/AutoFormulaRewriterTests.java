@@ -898,6 +898,47 @@ public class AutoFormulaRewriterTests {
 				exp1.getType(), null), Expression.BCOMP, emptySet, exp1, exp2);
 		assertAssociativeExpression("p; ... ;∅; ... ;q  = ∅", ff.makeEmptySet(
 				exp1.getType(), null), Expression.BCOMP, exp1, emptySet, exp2);
+		
+		// U \ (U \ S) == S
+		Expression uMinusS = ff.makeBinaryExpression(Expression.SETMINUS,
+				integer, S, null);
+		Expression uMinusT = ff.makeBinaryExpression(Expression.SETMINUS,
+				integer, T, null);
+		Expression uMinusU = ff.makeBinaryExpression(Expression.SETMINUS,
+				integer, U, null);
+		assertBinaryExpression("ℤ ∖ (ℤ ∖ S) == S", S, integer,
+				Expression.SETMINUS, uMinusS);
+		assertBinaryExpression("ℤ ∖ (ℤ ∖ T) == T", T, integer,
+				Expression.SETMINUS, uMinusT);
+		assertBinaryExpression("ℤ ∖ (ℤ ∖ U) == U", U, integer,
+				Expression.SETMINUS, uMinusU);
+
+		// S \ U == {}
+		emptySet = ff.makeEmptySet(S.getType(), null);
+		assertBinaryExpression("S ∖ ℤ == ∅", emptySet, S, Expression.SETMINUS,
+				integer);
+		assertBinaryExpression("T ∖ ℤ == ∅", emptySet, T, Expression.SETMINUS,
+				integer);
+		assertBinaryExpression("U ∖ ℤ == ∅", emptySet, U, Expression.SETMINUS,
+				integer);
+		
+		// S \/ ... \/ U \/ ... \/ T == U
+		assertAssociativeExpression("S ∪ T ∪ ℤ ∪ U == ℤ", integer,
+				Expression.BUNION, S, T, integer, U);
+		assertAssociativeExpression("ℤ ∪ S ∪ T ∪ U == ℤ", integer,
+				Expression.BUNION, integer, S, T, U);
+		assertAssociativeExpression("S ∪ T ∪ U ∪ ℤ == ℤ", integer,
+				Expression.BUNION, S, T, U, integer);
+
+		// S /\ ... /\ U /\ ... /\ T == S /\ ... /\ ... /\ T
+		Expression resultExp = ff.makeAssociativeExpression(Expression.BINTER,
+				new Expression[] { S, T, U }, null);
+		assertAssociativeExpression("S ∩ T ∩ ℤ ∩ U == S ∩ T ∩ U", resultExp,
+				Expression.BINTER, S, T, integer, U);
+		assertAssociativeExpression("ℤ ∩ S ∩ T ∩ U == S ∩ T ∩ U", resultExp,
+				Expression.BINTER, integer, S, T, U);
+		assertAssociativeExpression("S ∩ T ∩ U ∩ ℤ == S ∩ T ∩ U", resultExp,
+				Expression.BINTER, S, T, U, integer);
 	}
 
 	private void assertSetExtension(String message, Expression expected,

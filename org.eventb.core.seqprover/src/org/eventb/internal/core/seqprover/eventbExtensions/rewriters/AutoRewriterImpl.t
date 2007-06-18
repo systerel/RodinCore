@@ -28,6 +28,7 @@ import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -494,8 +495,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    %match (Expression expression) {
 
 	    	/**
-	    	 * Set Theory 1: S ∩ ... ∩ ∅ ∩ ... ∩ T == ∅
-	    	 * Set Theory 2: S ∪ ... ∪ ∅ ∪ ... ∪ T == S ∪ ... ∪ T
+	    	 * Set Theory: S ∩ ... ∩ ∅ ∩ ... ∩ T == ∅
+	    	 * Set Theory: S ∪ ... ∪ ∅ ∪ ... ∪ T == S ∪ ... ∪ T
+	    	 * Set Theory: S ∩ ... ∩ U ∩ ... ∩ T == S ∩ ... ∩ ... ∩ T
+	    	 * Set Theory: S ∪ ... ∪ U ∪ ... ∪ T == U
 	    	 */
 	    	(BInter | BUnion) (children) -> {
 	    		return FormulaSimplification.simplifyAssociativeExpression(expression, `children);
@@ -544,20 +547,36 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
-	    	 * Set Theory 12: ∅ ∖ S == ∅
-	    	 * Set Theory 13: S ∖ ∅ == S
+	    	 * Set Theory: ∅ ∖ S == ∅
+	    	 * Set Theory: S ∖ ∅ == S
+	    	 * Set Theory: S ∖ U == ∅
 	    	 */
 	    	SetMinus(S, T) -> {
-	    		Expression emptySet = makeEmptySet(`S.getType());
+				PowerSetType type = (PowerSetType) `S.getType();
+
+	    		Expression emptySet = makeEmptySet(type);
 				if (`S.equals(emptySet)) {
 					return emptySet;
 				}
    				if (`T.equals(emptySet)) {
 					return `S;
 				}
-				return expression;    		
+				if (`T.equals(type.getBaseType().toExpression(ff))) {
+					return emptySet;
+				}
 	    	}
 	    	
+			/**
+	    	 * Set Theory: U ∖ (U ∖ S) == S
+	    	 */
+			SetMinus(U, SetMinus(U, S)) -> {
+				PowerSetType type = (PowerSetType) `S.getType();
+
+				if (`U.equals(type.getBaseType().toExpression(ff))) {
+					return `S;
+				}
+			}
+			
 			/**
 	    	 * Arithmetic 2: E − 0 == E
 	    	 * Arithmetic 3: 0 − E == −E
