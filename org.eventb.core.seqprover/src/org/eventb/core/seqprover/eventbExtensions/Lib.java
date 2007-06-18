@@ -967,6 +967,38 @@ public final class Lib {
 		return false;
 	}
 
+
+	/**
+	 * Test if the formula is a direct product "p ⊗ q".
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is a direct product.
+	 *         Return <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isDirectProduct(Formula formula) {
+		return formula instanceof BinaryExpression
+				&& formula.getTag() == Expression.DPROD;
+	}
+
+
+	/**
+	 * Test if the formula is a parallel product "p ∥ q".
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is a parallel product.
+	 *         Return <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isParallelProduct(Formula formula) {
+		return formula instanceof BinaryExpression
+				&& formula.getTag() == Expression.PPROD;
+	}
+
 	// /**
 	// * Typechecks a formula assuming an initial type environment
 	// *
