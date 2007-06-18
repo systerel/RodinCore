@@ -21,6 +21,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -103,6 +104,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclu
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetMinusRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 
 /**
@@ -1983,6 +1985,64 @@ public class Tactics {
 	public static ITactic ranDistLeftRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new RanDistLeftRewrites(),
 				new RanDistLeftRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "set minus
+	 * rewrites" {@link SetMinusRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> setMinusGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryExpression expression) {
+				if (expression.getTag() == Expression.SETMINUS) {
+					Expression left = expression.getLeft();
+					Type baseType = left.getType().getBaseType();
+					if (left.equals(baseType.toExpression(FormulaFactory
+							.getDefault()))) {
+						Expression right = expression.getRight();
+						if (Lib.isUnion(right)) {
+							return true;
+						}
+						if (Lib.isInter(right)) {
+							return true;
+						}
+						if (Lib.isSetMinus(right)) {
+							return true;
+						}
+					}
+				}
+				return super.select(expression);
+			}
+
+		});
+	}
+
+
+	/**
+	 * Return the tactic "set minus rewrites" {@link SetMinusRewrites} which is
+	 * applicable to a hypothesis at a given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "set minus rewrites"
+	 * @author htson
+	 */
+	public static ITactic setMinusRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new SetMinusRewrites(),
+				new SetMinusRewrites.Input(hyp, position));
 	}
 
 }

@@ -211,6 +211,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistRightRewrites"
             id="ranDistRightRewrites"
             name="%ranDistRightRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetMinusRewrites"
+            id="setMinusRewrites"
+            name="%setMinusRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

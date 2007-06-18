@@ -1638,6 +1638,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistRightGoal"
             target="goal"
             tooltip="%proofTactic.ranDistRightGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.setMinusHyp"
+            interrupt="false"
+            name="%proofTactic.setMinusHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.SetMinusHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.setMinusHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.setMinusGoal"
+            interrupt="false"
+            name="%proofTactic.setMinusGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.SetMinusGoal"
+            target="goal"
+            tooltip="%proofTactic.setMinusGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
