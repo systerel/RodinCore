@@ -195,6 +195,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ConvRewrites"
             id="convRewrites"
             name="%convRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistLeftRewrites"
+            id="domDistLeftRewrites"
+            name="%domDistLeftRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

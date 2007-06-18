@@ -90,6 +90,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHyp
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ConvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistLeftRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
@@ -1758,6 +1759,60 @@ public class Tactics {
 	public static ITactic convRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new ConvRewrites(),
 				new ConvRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "domain
+	 * distribution left rewrites" {@link DomDistLeftRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> domDistLeftGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryExpression expression) {
+				if (expression.getTag() == Expression.DOMRES
+						|| expression.getTag() == Expression.DOMSUB) {
+					Expression left = expression.getLeft();
+					if (left instanceof AssociativeExpression
+							&& left.getTag() == Expression.BUNION) {
+						return true;
+					}
+					if (left instanceof AssociativeExpression
+							&& left.getTag() == Expression.BINTER) {
+						return true;
+					}
+				}
+				return super.select(expression);
+			}
+
+		});
+	}
+
+
+	/**
+	 * Return the tactic "domain distribution left rewrites"
+	 * {@link DomDistLeftRewrites} which is applicable to a hypothesis at a
+	 * given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "domain distribution left rewrites"
+	 * @author htson
+	 */
+	public static ITactic domDistLeftRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new DomDistLeftRewrites(),
+				new DomDistLeftRewrites.Input(hyp, position));
 	}
 
 }
