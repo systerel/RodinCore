@@ -990,8 +990,13 @@ public class Tactics {
 			Formula subFormula = pred.getSubFormula(tmp);
 			if (subFormula instanceof QuantifiedExpression)
 				return false;
-			if (subFormula instanceof Predicate)
-				return false;
+			if (subFormula instanceof Predicate) {
+				tmp = tmp.getParent();
+				if (!tmp.isRoot())
+					return false;
+				return Lib.isNeg(pred);
+			}
+				
 			tmp = tmp.getParent();
 		}
 		return true;

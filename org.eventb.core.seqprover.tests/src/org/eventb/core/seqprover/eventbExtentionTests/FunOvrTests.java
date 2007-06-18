@@ -5,11 +5,10 @@ import java.util.List;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 
 /**
- * Unit tests for the Function Converse apply to intersection image reasoner
- * {@link FunInterImg}
+ * Unit tests for the Function override reasoner {@link FunOvr}
  * 
  * @author htson
  */
@@ -19,10 +18,46 @@ public class FunOvrTests extends AbstractManualInferenceTests {
 
 	String P2 = "∀x· x = 2 ⇒ (f  g  {x ↦ 3})(y) = 3";
 
-	String P3 = "(f  g  {2 ↦ 3})(y) = 3 ";
+	String P3 = "(f  g  {2 ↦ 3})(y) = 3";
+
+	String resultP3GoalA = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, y=2] |- 3=3";
+
+	String resultP3GoalB = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, ¬y=2] |- (fg)(y)=3";
+
+	String resultP3HypA = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[(fg{2 ↦ 3})(y)=3][][y=2, 3=3] |- ⊤";
+
+	String resultP3HypB = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[(fg{2 ↦ 3})(y)=3][][¬y=2, (fg)(y)=3] |- ⊤";
 
 	String P4 = "3 = (f  {2 ↦ 3}  h)(y)";
 
+	String resultP4GoalA = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, y∈dom(h)] |- 3=h(y)";
+
+	String resultP4GoalB = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, ¬y∈dom(h)] |- 3=(f{2 ↦ 3})(y)";
+
+	String resultP4HypA = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[3=(f{2 ↦ 3}h)(y)][][y∈dom(h), 3=h(y)] |- ⊤";
+
+	String resultP4HypB = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[3=(f{2 ↦ 3}h)(y)][][¬y∈dom(h), 3=(f{2 ↦ 3})(y)] |- ⊤";
+	
+	String P5 = "¬((f  g  {2 ↦ 3})(y) = 3)";
+
+	String resultP5GoalA = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, y=2] |- ¬3=3";
+
+	String resultP5GoalB = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, ¬y=2] |- ¬(fg)(y)=3";
+
+	String resultP5HypA = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[¬(fg{2 ↦ 3})(y)=3][][y=2, ¬3=3] |- ⊤";
+
+	String resultP5HypB = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[¬(fg{2 ↦ 3})(y)=3][][¬y=2, ¬(fg)(y)=3] |- ⊤";
+
+	String P6 = "¬3 = (f  {2 ↦ 3}  h)(y)";
+
+	String resultP6GoalA = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, y∈dom(h)] |- ¬3=h(y)";
+
+	String resultP6GoalB = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, ¬y∈dom(h)] |- ¬3=(f{2 ↦ 3})(y)";
+
+	String resultP6HypA = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[¬3=(f{2 ↦ 3}h)(y)][][y∈dom(h), ¬3=h(y)] |- ⊤";
+
+	String resultP6HypB = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[¬3=(f{2 ↦ 3}h)(y)][][¬y∈dom(h), ¬3=(f{2 ↦ 3})(y)] |- ⊤";
+	
 	protected List<IPosition> getPositions(Predicate predicate) {
 		return Tactics.funOvrGetPositions(predicate);
 	}
@@ -35,28 +70,29 @@ public class FunOvrTests extends AbstractManualInferenceTests {
 	protected SuccessfulTest[] getSuccessfulTests() {
 		return new SuccessfulTest[] {
 				// P3 in goal
-				new SuccessfulTest(" ⊤ |- " + P3, null, "0",
-						"{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, y=2] |- 3=3",
-						"{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, ¬y=2] |- (fg)(y)=3"),
+				new SuccessfulTest(" ⊤ |- " + P3, null, "0", resultP3GoalA,
+						resultP3GoalB),
 				// P3 in hyp
-				new SuccessfulTest(
-						P3 + " |- ⊤ ",
-						P3,
-						"0",
-						"{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[(fg{2 ↦ 3})(y)=3][][y=2, 3=3] |- ⊤",
-						"{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[(fg{2 ↦ 3})(y)=3][][¬y=2, (fg)(y)=3] |- ⊤"),
+				new SuccessfulTest(P3 + " |- ⊤ ", P3, "0", resultP3HypA,
+						resultP3HypB),
 				// P4 in goal
-				new SuccessfulTest(" ⊤ |- " + P4, null, "1",
-						"{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, y∈dom(h)] |- 3=h(y)",
-						"{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, ¬y∈dom(h)] |- 3=(f{2 ↦ 3})(y)"),
+				new SuccessfulTest(" ⊤ |- " + P4, null, "1", resultP4GoalA,
+						resultP4GoalB),
 				// P4 in hyp
-				new SuccessfulTest(
-						P4 + " |- ⊤ ",
-						P4,
-						"1",
-						"{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[3=(f{2 ↦ 3}h)(y)][][y∈dom(h), 3=h(y)] |- ⊤",
-						"{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[3=(f{2 ↦ 3}h)(y)][][¬y∈dom(h), 3=(f{2 ↦ 3})(y)] |- ⊤")
-		};
+				new SuccessfulTest(P4 + " |- ⊤ ", P4, "1", resultP4HypA,
+						resultP4HypB),
+				// P5 in goal
+				new SuccessfulTest(" ⊤ |- " + P5, null, "0.0", resultP5GoalA,
+						resultP5GoalB),
+				// P5 in hyp
+				new SuccessfulTest(P5 + " |- ⊤ ", P5, "0.0", resultP5HypA,
+						resultP5HypB),
+				// P6 in goal
+				new SuccessfulTest(" ⊤ |- " + P6, null, "0.1", resultP6GoalA,
+						resultP6GoalB),
+				// P3 in hyp
+				new SuccessfulTest(P6 + " |- ⊤ ", P6, "0.1", resultP6HypA,
+						resultP6HypB), };
 	}
 
 	protected String[] getUnsuccessfulTests() {
@@ -77,6 +113,22 @@ public class FunOvrTests extends AbstractManualInferenceTests {
 				" ⊤ |- " + P4,
 				null,
 				"0",
+				// P5 in hyp
+				P5 + " |- ⊤ ",
+				P5,
+				"0.1",
+				// P5 in goal
+				" ⊤ |- " + P5,
+				null,
+				"0.1",
+				// P6 in hyp
+				P6 + " |- ⊤ ",
+				P6,
+				"0.0",
+				// P6 in goal
+				" ⊤ |- " + P6,
+				null,
+				"0.0"
 		};
 	}
 
@@ -86,7 +138,9 @@ public class FunOvrTests extends AbstractManualInferenceTests {
 				P1, "",
 				P2, "",
 				P3, "0",
-				P4, "1"
+				P4, "1",
+				P5, "0.0",
+				P6, "0.1"
 		};
 	}
 
