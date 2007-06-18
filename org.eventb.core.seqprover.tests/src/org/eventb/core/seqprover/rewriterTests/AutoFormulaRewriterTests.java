@@ -1120,5 +1120,21 @@ public class AutoFormulaRewriterTests {
 		assertRelationalPredicate("−1 > −1 == ⊥", Lib.False, numberMinus1, Predicate.GT, numberMinus1);
 		assertRelationalPredicate("−1 > −2 == ⊤", Lib.True, numberMinus1, Predicate.GT, numberMinus2);
 		assertRelationalPredicate("−1 > 1 == ⊥", Lib.False, numberMinus1, Predicate.GT, number1);
+		
+		// E <= E = true
+		assertRelationalPredicate("E ≤ E == ⊤", Lib.True, E, Predicate.LE, E);
+		assertRelationalPredicate("F ≤ F == ⊤", Lib.True, F, Predicate.LE, F);
+
+		// E >= E = true
+		assertRelationalPredicate("E ≥ E == ⊤", Lib.True, E, Predicate.GE, E);
+		assertRelationalPredicate("F ≥ F == ⊤", Lib.True, F, Predicate.GE, F);
+
+		// E < E = false
+		assertRelationalPredicate("E < E == ⊥", Lib.False, E, Predicate.LT, E);
+		assertRelationalPredicate("F < F == ⊥", Lib.False, F, Predicate.LT, F);
+
+		// E > E = false
+		assertRelationalPredicate("E > E == ⊥", Lib.False, E, Predicate.GT, E);
+		assertRelationalPredicate("F > F == ⊥", Lib.False, F, Predicate.GT, F);
 	}
 }

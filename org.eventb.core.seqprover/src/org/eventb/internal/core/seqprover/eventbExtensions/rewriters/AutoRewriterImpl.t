@@ -314,20 +314,48 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    %match (Predicate predicate) {
 
 	    	/**
-	    	 * Equality 1: E = E == ⊤
+	    	 * Equality: E = E == ⊤
 	    	 */
 	    	Equal(E, E) -> {
 	    		return Lib.True;
 	    	}
 
 	    	/**
-	    	 * Equality 2: E ≠ E == ⊥
+	    	 * Equality: E ≠ E == ⊥
 	    	 */
 	    	NotEqual(E, E) -> {
 	    		return Lib.False;
 	    	}
 
+			/**
+	    	 * Arithmetic: E ≤ E == ⊤
+	    	 */
+	    	Le(E, E) -> {
+				return Lib.True;
+			}
+			
 	    	/**
+	    	 * Arithmetic: E ≥ E == ⊤
+	    	 */
+	    	Ge(E, E) -> {
+				return Lib.True;
+			}
+			
+			/**
+	    	 * Arithmetic: E < E == ⊥
+	    	 */
+	    	Lt(E, E) -> {
+				return Lib.False;
+			}
+			
+			/**
+	    	 * Arithmetic: E > E == ⊥
+	    	 */
+	    	Gt(E, E) -> {
+				return Lib.False;
+			}
+			
+			/**
 	    	 * Equality 3: E ↦ F = G ↦ H == E = G ∧ F = H
 	    	 */
 	    	Equal(Mapsto(E, F) , Mapsto(G, H)) -> {
