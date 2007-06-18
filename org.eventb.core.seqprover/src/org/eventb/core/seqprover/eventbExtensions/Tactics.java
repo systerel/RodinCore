@@ -1163,6 +1163,19 @@ public class Tactics {
 							&& rTag == Expression.TBIJ) {
 						return true;
 					}
+					if (Lib.isDirectProduct(right) && Lib.isMapping(left)) {
+						Expression innerMap = ((BinaryExpression) left).getRight();
+						return Lib.isMapping(innerMap);
+					}
+					if (Lib.isParallelProduct(right) && Lib.isMapping(left)) {
+						Expression innerMapLeft = ((BinaryExpression) left)
+								.getLeft();
+						Expression innerMapRight = ((BinaryExpression) left)
+								.getRight();
+						return Lib.isMapping(innerMapLeft)
+								&& Lib.isMapping(innerMapRight);
+					}
+					
 				}
 				return super.select(predicate);
 			}

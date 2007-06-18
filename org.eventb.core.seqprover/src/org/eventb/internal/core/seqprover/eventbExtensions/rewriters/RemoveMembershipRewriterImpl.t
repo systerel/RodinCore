@@ -331,6 +331,28 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    	}
 
+	    	/**
+	    	 * Set Theory: E ↦ (F ↦ G) ∈ p ⊗ q == E ↦ F ∈ p ∧ E ↦ G ∈ q
+	    	 */
+	    	In(Mapsto(E, Mapsto(F, G)), Dprod(p, q)) -> {
+				Expression eMapstoF = makeBinaryExpression(Expression.MAPSTO, `E, `F);
+				Expression eMapstoG = makeBinaryExpression(Expression.MAPSTO, `E, `G);
+				Predicate pred1 = makeRelationalPredicate(Predicate.IN, eMapstoF, `p);
+				Predicate pred2 = makeRelationalPredicate(Predicate.IN, eMapstoG, `q);
+				return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
+		
+	    	/**
+	    	 * Set Theory: E ↦ G ↦ (F ↦ H) ∈ p ∥ q == E ↦ F ∈ p ∧ G ↦ H ∈ q
+	    	 */
+	    	In(Mapsto(Mapsto(E, G), Mapsto(F, H)), Pprod(p, q)) -> {
+				Expression eMapstoF = makeBinaryExpression(Expression.MAPSTO, `E, `F);
+				Expression gMapstoH = makeBinaryExpression(Expression.MAPSTO, `G, `H);
+				Predicate pred1 = makeRelationalPredicate(Predicate.IN, eMapstoF, `p);
+				Predicate pred2 = makeRelationalPredicate(Predicate.IN, gMapstoH, `q);
+				return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
+		
 	    }
 	    return predicate;
 	}

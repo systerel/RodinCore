@@ -400,6 +400,26 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	String resultP76 = "∀x·x=0⇒f∈ℕ ↣ {x} × BOOL∧ran(f)={x} × BOOL";
 
 
+	// E |-> (F |-> G) : p >< q == E |-> F : p & E |-> G : q
+	String P81 = "(0 = x) ⇒ x ↦ (1 ↦ 2 ↦ 3) ∈ p ⊗ q";
+	
+	String resultP81 = "0=x⇒x ↦ (1 ↦ 2)∈p∧x ↦ 3∈q";
+	
+	String P82 = "∀x·x = 0 ⇒ x ↦ (1 ↦ 2 ↦ 3) ∈ p ⊗ q";
+	
+	String resultP82 = "∀x·x=0⇒x ↦ (1 ↦ 2)∈p∧x ↦ 3∈q";
+
+	
+	// E |-> G |-> (F |-> H) : p || q == E |-> F : p & G |-> H : q
+	String P83 = "(0 = x) ⇒ x ↦ (2 ↦ x) ↦ (1 ↦ 2 ↦ 3) ∈ p ∥ q";
+	
+	String resultP83 = "0=x⇒x ↦ (1 ↦ 2)∈p∧2 ↦ x ↦ 3∈q";
+	
+	String P84 = "∀x·x = 0 ⇒ x ↦ (2 ↦ x) ↦ (1 ↦ 2 ↦ 3) ∈ p ∥ q";
+	
+	String resultP84 = "∀x·x=0⇒x ↦ (1 ↦ 2)∈p∧2 ↦ x ↦ 3∈q";
+
+	
 	@Override
 	public String getReasonerID() {
 		return "org.eventb.core.seqprover.rm";
@@ -486,7 +506,11 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				P73, "1",
 				P74, "1.1",
 				P75, "1",
-				P76, "1.1"
+				P76, "1.1",
+				P81, "1",
+				P82, "1.1",
+				P83, "1",
+				P84, "1.1"
 		};
 	}
 
@@ -576,7 +600,11 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				new SuccessfulTest(P73, "1", resultP73),
 				new SuccessfulTest(P74, "1.1", resultP74),
 				new SuccessfulTest(P75, "1", resultP75),
-				new SuccessfulTest(P76, "1.1", resultP76)
+				new SuccessfulTest(P76, "1.1", resultP76),
+				new SuccessfulTest(P81, "1", resultP81),
+				new SuccessfulTest(P82, "1.1", resultP82),
+				new SuccessfulTest(P83, "1", resultP83),
+				new SuccessfulTest(P84, "1.1", resultP84)
 		};
 	}
 
@@ -663,7 +691,11 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				P73, "0",
 				P74, "1.0",
 				P75, "0",
-				P76, "1.0"
+				P76, "1.0",
+				P81, "0",
+				P82, "1.0",
+				P83, "0",
+				P84, "1.0"
 		};
 	}
 
