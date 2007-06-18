@@ -884,9 +884,36 @@ public final class Lib {
 		return false;
 	}
 
+
+	/**
+	 * Test if the formula is a set intersection "S ∩ ... ∩ T".
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is a set intersection.
+	 *         Return <code>false</code> otherwise.
+	 * @author htson
+	 */
 	public static boolean isInter(Expression expression) {
 		return expression instanceof AssociativeExpression
 				&& expression.getTag() == Expression.BINTER;
+	}
+
+
+	/**
+	 * Test if the formula is a set union "S ∪ ... ∪ T".
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is a set union. Return
+	 *         <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isUnion(Expression expression) {
+		return expression instanceof AssociativeExpression
+				&& expression.getTag() == Expression.BUNION;
 	}
 
 	public static boolean isConv(Expression expression) {
