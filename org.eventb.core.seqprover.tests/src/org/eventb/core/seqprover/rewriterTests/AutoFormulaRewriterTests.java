@@ -886,6 +886,18 @@ public class AutoFormulaRewriterTests {
 				Expression.FUNIMAGE, ff.makeBinaryExpression(
 						Expression.FUNIMAGE, fConverse, number2, null));
 
+		// p;...;{};...;q == {}
+		Expression exp1 = Lib.parseExpression("{1 ↦ 2}");
+		exp1.typeCheck(ff.makeTypeEnvironment());
+		Expression exp2 = Lib.parseExpression("{2 ↦ 3}");
+		exp2.typeCheck(ff.makeTypeEnvironment());
+		Expression emptySet = ff.makeEmptySet(exp1.getType(), null);
+		assertAssociativeExpression("p; ... ;∅; ... ;q  = ∅", ff.makeEmptySet(
+				exp1.getType(), null), Expression.BCOMP, exp1, exp2, emptySet);
+		assertAssociativeExpression("p; ... ;∅; ... ;q  = ∅", ff.makeEmptySet(
+				exp1.getType(), null), Expression.BCOMP, emptySet, exp1, exp2);
+		assertAssociativeExpression("p; ... ;∅; ... ;q  = ∅", ff.makeEmptySet(
+				exp1.getType(), null), Expression.BCOMP, exp1, emptySet, exp2);
 	}
 
 	private void assertSetExtension(String message, Expression expected,

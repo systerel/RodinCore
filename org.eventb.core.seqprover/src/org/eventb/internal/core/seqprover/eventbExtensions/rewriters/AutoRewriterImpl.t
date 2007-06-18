@@ -517,6 +517,17 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	Mul (children) -> {
 	    		return FormulaSimplification.simplifyMulArithmetic(expression, `children);
 	    	}
+	    	
+	    	/**
+	    	 * Set Theory: p; ... ;∅; ... ;q  = ∅
+	    	 */
+	    	Bcomp (children) -> {
+	    		for (Expression child : `children) {
+	    			if (Lib.isEmptySet(child)) {
+	    				return ff.makeEmptySet(expression.getType(), null);
+	    			}
+	    		}
+	    	}
 	    }
 	    return expression;
 	}
