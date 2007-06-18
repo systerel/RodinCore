@@ -1,9 +1,12 @@
 AutoRewriterImpl.java
 ConvRewriterImpl.java
 DomDistLeftRewriterImpl.java
+DomDistRightRewriterImpl.java
 EqvRewriterImpl.java
 ImpAndRewriterImpl.java
 ImpOrRewriterImpl.java
+RanDistLeftRewriterImpl.java
+RanDistRightRewriterImpl.java
 RelImgUnionRightRewriterImpl.java
 RemoveNegationRewriterImpl.java
 RemoveInclusionRewriterImpl.java

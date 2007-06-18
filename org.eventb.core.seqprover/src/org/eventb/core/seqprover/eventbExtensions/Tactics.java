@@ -91,10 +91,13 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ConvRewrite
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistLeftRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistRightRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistLeftRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistRightRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnionRightRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
@@ -1813,6 +1816,168 @@ public class Tactics {
 	public static ITactic domDistLeftRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new DomDistLeftRewrites(),
 				new DomDistLeftRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "domain
+	 * distribution right rewrites" {@link DomDistRightRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> domDistRightGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryExpression expression) {
+				if (expression.getTag() == Expression.DOMRES
+						|| expression.getTag() == Expression.DOMSUB) {
+					Expression right = expression.getRight();
+					if (right instanceof AssociativeExpression
+							&& right.getTag() == Expression.BUNION) {
+						return true;
+					}
+					if (right instanceof AssociativeExpression
+							&& right.getTag() == Expression.BINTER) {
+						return true;
+					}
+				}
+				return super.select(expression);
+			}
+
+		});
+	}
+
+
+	/**
+	 * Return the tactic "domain distribution right rewrites"
+	 * {@link DomDistRightRewrites} which is applicable to a hypothesis at a
+	 * given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "domain distribution right rewrites"
+	 * @author htson
+	 */
+	public static ITactic domDistRightRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new DomDistRightRewrites(),
+				new DomDistRightRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "range
+	 * distribution right rewrites" {@link RanDistRightRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> ranDistRightGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryExpression expression) {
+				if (expression.getTag() == Expression.RANRES
+						|| expression.getTag() == Expression.RANSUB) {
+					Expression right = expression.getRight();
+					if (right instanceof AssociativeExpression
+							&& right.getTag() == Expression.BUNION) {
+						return true;
+					}
+					if (right instanceof AssociativeExpression
+							&& right.getTag() == Expression.BINTER) {
+						return true;
+					}
+				}
+				return super.select(expression);
+			}
+
+		});
+	}
+
+
+	/**
+	 * Return the tactic "range distribution right rewrites"
+	 * {@link RanDistRightRewrites} which is applicable to a hypothesis at a
+	 * given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "range distribution right rewrites"
+	 * @author htson
+	 */
+	public static ITactic ranDistRightRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new RanDistRightRewrites(),
+				new RanDistRightRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "range
+	 * distribution left rewrites" {@link RanDistLeftRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> ranDistLeftGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryExpression expression) {
+				if (expression.getTag() == Expression.RANRES
+						|| expression.getTag() == Expression.RANSUB) {
+					Expression left = expression.getLeft();
+					if (left instanceof AssociativeExpression
+							&& left.getTag() == Expression.BUNION) {
+						return true;
+					}
+					if (left instanceof AssociativeExpression
+							&& left.getTag() == Expression.BINTER) {
+						return true;
+					}
+				}
+				return super.select(expression);
+			}
+
+		});
+	}
+
+
+	/**
+	 * Return the tactic "range distribution left rewrites"
+	 * {@link RanDistLeftRewrites} which is applicable to a hypothesis at a
+	 * given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "range distribution left rewrites"
+	 * @author htson
+	 */
+	public static ITactic ranDistLeftRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new RanDistLeftRewrites(),
+				new RanDistLeftRewrites.Input(hyp, position));
 	}
 
 }

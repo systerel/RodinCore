@@ -199,6 +199,18 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistLeftRewrites"
             id="domDistLeftRewrites"
             name="%domDistLeftRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistRightRewrites"
+            id="domDistRightRewrites"
+            name="%domDistRightRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistLeftRewrites"
+            id="ranDistLeftRewrites"
+            name="%ranDistLeftRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistRightRewrites"
+            id="ranDistRightRewrites"
+            name="%ranDistRightRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

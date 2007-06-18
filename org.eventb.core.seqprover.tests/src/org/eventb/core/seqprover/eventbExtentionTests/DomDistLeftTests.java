@@ -43,7 +43,7 @@ public class DomDistLeftTests extends AbstractManualRewriterTests {
 	String resultP6 = "∀x·x=0⇒{1,x} ◁ r∩({2,4} ◁ r)∩({3} ◁ r)={x ↦ x}";
 
 
-	// (s \/ ... \/ t) <| r == (s <| r) \/ ... \/ (t <| r)
+	// (s \/ ... \/ t) <<| r == (s <<| r) \/ ... \/ (t <<| r)
 	String P7 = "({1, x} ∪ {2, 4} ∪ {3}) ⩤ r = {x ↦ x}";
 
 	String resultP7 = "({1,x} ⩤ r)∪({2,4} ⩤ r)∪({3} ⩤ r)={x ↦ x}";
@@ -57,7 +57,7 @@ public class DomDistLeftTests extends AbstractManualRewriterTests {
 	String resultP9 = "∀x·x=0⇒({1,x} ⩤ r)∪({2,4} ⩤ r)∪({3} ⩤ r)={x ↦ x}";
 
 
-	// (s /\ ... /\ t) <| r == (s <| r) /\ ... /\ (t <| r)
+	// (s /\ ... /\ t) <<| r == (s <<| r) /\ ... /\ (t <<| r)
 	String P10 = "({1, x} ∩ {2, 4} ∩ {3}) ⩤ r = {x ↦ x}";
 
 	String resultP10 = "{1,x} ⩤ r∩({2,4} ⩤ r)∩({3} ⩤ r)={x ↦ x}";

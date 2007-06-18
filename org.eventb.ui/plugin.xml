@@ -1584,6 +1584,60 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.DomDistLeftGoal"
             target="goal"
             tooltip="%proofTactic.domDistLeftGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.domDistRightHyp"
+            interrupt="false"
+            name="%proofTactic.domDistRightHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DomDistRightHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.domDistRightHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.domDistRightGoal"
+            interrupt="false"
+            name="%proofTactic.domDistRightGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DomDistRightGoal"
+            target="goal"
+            tooltip="%proofTactic.domDistRightGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.ranDistLeftHyp"
+            interrupt="false"
+            name="%proofTactic.ranDistLeftHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistLeftHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.ranDistLeftHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.ranDistLeftGoal"
+            interrupt="false"
+            name="%proofTactic.ranDistLeftGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistLeftGoal"
+            target="goal"
+            tooltip="%proofTactic.ranDistLeftGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.ranDistRightHyp"
+            interrupt="false"
+            name="%proofTactic.ranDistRightHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistRightHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.ranDistRightHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.ranDistRightGoal"
+            interrupt="false"
+            name="%proofTactic.ranDistRightGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistRightGoal"
+            target="goal"
+            tooltip="%proofTactic.ranDistRightGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
