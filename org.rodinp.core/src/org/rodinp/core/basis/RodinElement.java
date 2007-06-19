@@ -13,7 +13,6 @@ package org.rodinp.core.basis;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -50,29 +49,33 @@ public abstract class RodinElement extends PlatformObject implements
 		IRodinElement {
 
 	private static class NoResourceSchedulingRule implements ISchedulingRule {
-		public IPath path;
+		public IRodinElement element;
 
-		public NoResourceSchedulingRule(IPath path) {
-			this.path = path;
+		public NoResourceSchedulingRule(IRodinElement element) {
+			if (element == null)
+				throw new NullPointerException();
+			this.element = element;
 		}
 
 		public boolean contains(ISchedulingRule rule) {
 			if (rule instanceof NoResourceSchedulingRule) {
-				return this.path
-						.isPrefixOf(((NoResourceSchedulingRule) rule).path);
-			} else {
-				return false;
+				final NoResourceSchedulingRule otherRule =
+					((NoResourceSchedulingRule) rule);
+				final IRodinElement otherElement = otherRule.element;
+				return this.element.isAncestorOf(otherElement);
 			}
+			return false;
 		}
 
 		public boolean isConflicting(ISchedulingRule rule) {
 			if (rule instanceof NoResourceSchedulingRule) {
-				IPath otherPath = ((NoResourceSchedulingRule) rule).path;
-				return this.path.isPrefixOf(otherPath)
-						|| otherPath.isPrefixOf(this.path);
-			} else {
-				return false;
+				final NoResourceSchedulingRule otherRule =
+					((NoResourceSchedulingRule) rule);
+				final IRodinElement otherElement = otherRule.element;
+				return this.element.isAncestorOf(otherElement)
+						|| otherElement.isAncestorOf(this.element);
 			}
+			return false;
 		}
 	}
 
@@ -483,12 +486,11 @@ public abstract class RodinElement extends PlatformObject implements
 	 * @see org.rodinp.core.IRodinElement#getSchedulingRule()
 	 */
 	public ISchedulingRule getSchedulingRule() {
-		IResource resource = getResource();
-		if (resource == null) {
-			return new NoResourceSchedulingRule(getPath());
-		} else {
+		final IResource resource = getResource();
+		if (resource != null) {
 			return resource;
 		}
+		return new NoResourceSchedulingRule(this);
 	}
 
 	/*
