@@ -78,8 +78,8 @@ public class SaveRodinFileOperation extends RodinDBOperation {
 
 	@Override
 	protected ISchedulingRule getSchedulingRule() {
-		IResource resource = getElementToProcess().getResource();
-		IWorkspace workspace = resource.getWorkspace();
+		final IResource resource = getElementToProcess().getResource();
+		final IWorkspace workspace = resource.getWorkspace();
 		return workspace.getRuleFactory().modifyRule(resource);
 	}
 
