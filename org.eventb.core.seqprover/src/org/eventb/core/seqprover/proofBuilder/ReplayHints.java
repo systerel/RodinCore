@@ -52,7 +52,8 @@ public class ReplayHints {
 		for (int i = 0; i < old.getAddedFreeIdents().length; i++) {
 			if
 			((i < current.getAddedFreeIdents().length) &&
-			(! old.getAddedFreeIdents()[i].equals(current.getAddedFreeIdents()[i])))
+			(! old.getAddedFreeIdents()[i].equals(current.getAddedFreeIdents()[i])) &&
+			( old.getAddedFreeIdents()[i].getType().equals(current.getAddedFreeIdents()[i].getType())))
 			{
 				this.freeVarRename.put(old.getAddedFreeIdents()[i],current.getAddedFreeIdents()[i]);
 			}
