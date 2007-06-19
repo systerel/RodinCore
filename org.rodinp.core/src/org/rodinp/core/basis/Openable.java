@@ -168,9 +168,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 		return openWhenClosed(createElementInfo(), monitor);
 	}
 
-	/*
-	 * @see IRodinElement
-	 */
+	@Override
 	public Openable getOpenable() {
 		return this;
 	}
@@ -291,8 +289,10 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	protected void openParent(Object childInfo, OpenableMap newElements,
 			IProgressMonitor pm) throws RodinDBException {
 
-		Openable openableParent = getOpenableParent();
-		if (openableParent != null && !openableParent.isOpen()) {
+		if (parent == null)
+			return;
+		final Openable openableParent = parent.getOpenable();
+		if (!openableParent.isOpen()) {
 			openableParent.generateInfos(openableParent.createElementInfo(),
 					newElements, pm);
 		}

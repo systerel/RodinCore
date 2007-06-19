@@ -198,7 +198,7 @@ public abstract class InternalElement extends RodinElement implements
 	public abstract IInternalElementType<? extends IInternalElement> getElementType();
 
 	protected RodinFileElementInfo getFileInfo(IProgressMonitor monitor) throws RodinDBException {
-		RodinFile file = getOpenableParent();
+		RodinFile file = getRodinFile();
 		RodinFileElementInfo fileInfo = (RodinFileElementInfo) file.getElementInfo(monitor);
 		if (fileInfo != null)
 			return fileInfo;
@@ -268,18 +268,20 @@ public abstract class InternalElement extends RodinElement implements
 		return 1;
 	}
 
-	public Openable getOpenable() {
-		return this.getOpenableParent();
+	@Override
+	public RodinFile getOpenable() {
+		return getRodinFile();
 	}
 
-	/*
-	 * Returns the closest openable ancestor of this element (that is its
-	 * enclosing file element). Should never return <code>null</code>.
-	 * 
-	 * @return the enclosing file of this element
-	 */
-	@Override
-	public RodinFile getOpenableParent() {
+	public IPath getPath() {
+		return getRodinFile().getPath();
+	}
+
+	public IFile getResource() {
+		return getUnderlyingResource();
+	}
+
+	public RodinFile getRodinFile() {
 		RodinElement ancestor = parent;
 		while (ancestor != null) {
 			if (ancestor instanceof Openable) {
@@ -289,18 +291,6 @@ public abstract class InternalElement extends RodinElement implements
 		}
 		assert false;
 		return null;
-	}
-
-	public IPath getPath() {
-		return getOpenableParent().getPath();
-	}
-
-	public IFile getResource() {
-		return getUnderlyingResource();
-	}
-
-	public RodinFile getRodinFile() {
-		return getOpenableParent();
 	}
 
 	public final InternalElement getSnapshot() {
@@ -315,7 +305,7 @@ public abstract class InternalElement extends RodinElement implements
 	}
 
 	public IFile getUnderlyingResource() {
-		return getOpenableParent().getResource();
+		return getRodinFile().getResource();
 	}
 
 	public boolean hasAttribute(IAttributeType type) throws RodinDBException {
@@ -416,7 +406,7 @@ public abstract class InternalElement extends RodinElement implements
 	public InternalElementInfo toStringInfo(int tab, StringBuilder buffer) {
 		InternalElementInfo info = null;
 		try {
-			RodinFile rf = getOpenableParent();
+			RodinFile rf = getRodinFile();
 			RodinFileElementInfo rfInfo = (RodinFileElementInfo) rf.getElementInfo();
 			info = rfInfo.getElementInfo(this);
 		} catch (RodinDBException e) {

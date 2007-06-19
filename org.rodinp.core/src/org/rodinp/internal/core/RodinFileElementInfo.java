@@ -114,7 +114,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		
 		// TODO fix big mess below.  Should synchronize properly
 		// and distinguish betweem two cases.
-		RodinFile rfSource = source.getOpenableParent();
+		RodinFile rfSource = source.getRodinFile();
 		RodinFileElementInfo rfSourceInfo = 
 			(RodinFileElementInfo) rfSource.getElementInfo(null);
 

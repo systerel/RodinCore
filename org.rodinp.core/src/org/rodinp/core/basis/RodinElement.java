@@ -447,16 +447,7 @@ public abstract class RodinElement extends PlatformObject implements
 		return null;
 	}
 
-	/**
-	 * Return the first instance of IOpenable in the parent hierarchy of this
-	 * element.
-	 * 
-	 * <p>
-	 * Subclasses that are not IOpenable's must override this method.
-	 */
-	public Openable getOpenableParent() {
-		return (Openable) this.parent;
-	}
+	public abstract Openable getOpenable();
 
 	/**
 	 * @see IRodinElement

@@ -131,7 +131,7 @@ public class CopyElementsOperation extends MultiOperation {
 			if (isMove()) {
 				if (! isRename()) {
 					// Remove source element
-					RodinFile rfSource = source.getOpenableParent();
+					RodinFile rfSource = source.getRodinFile();
 					RodinFileElementInfo rfSourceInfo = 
 						(RodinFileElementInfo) rfSource.getElementInfo(getSubProgressMonitor(1));
 					rfSourceInfo.delete(source);
