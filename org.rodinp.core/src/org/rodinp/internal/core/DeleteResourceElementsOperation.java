@@ -11,7 +11,7 @@
 package org.rodinp.internal.core;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -54,8 +54,10 @@ public class DeleteResourceElementsOperation extends MultiOperation {
 	protected ISchedulingRule getSchedulingRule() {
 		if (this.elementsToProcess != null && this.elementsToProcess.length == 1) {
 			IResource resource = this.elementsToProcess[0].getResource();
-			if (resource != null)
-				return ResourcesPlugin.getWorkspace().getRuleFactory().deleteRule(resource);
+			if (resource != null) {
+				final IWorkspace ws = resource.getWorkspace();
+				return ws.getRuleFactory().deleteRule(resource);
+			}
 		}
 		return super.getSchedulingRule();
 	}
