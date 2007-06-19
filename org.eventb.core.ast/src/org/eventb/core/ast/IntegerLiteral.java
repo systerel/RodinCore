@@ -61,7 +61,14 @@ public class IntegerLiteral extends Expression {
 	protected void toString(StringBuilder builder, boolean isRightChild,
 			int parentTag, String[] boundNames, boolean withTypes) {
 
+		final boolean bracketed = parentTag == UNMINUS;
+		if (bracketed) {
+			builder.append('(');
+		}
 		toStringInternal(builder);
+		if (bracketed) {
+			builder.append(')');
+		}
 	}
 
 	@Override
