@@ -496,6 +496,9 @@ public class TestParser extends TestCase {
 			), new ExprTestPair(
 					"2", 
 					mIntegerLiteral(2) 
+			), new ExprTestPair(
+					"−1", 
+					mIntegerLiteral(-1) 
 			),
 			
 			// Primary
@@ -628,6 +631,20 @@ public class TestParser extends TestCase {
 									), id_z
 							), id_t
 					) 
+			), new ExprTestPair(
+					"− 3", 
+					mUnaryExpression(Formula.UNMINUS, mIntegerLiteral(3))
+			), new ExprTestPair(
+					"−(4)", 
+					mUnaryExpression(Formula.UNMINUS, mIntegerLiteral(4))
+			), new ExprTestPair(
+					"−x", 
+					mUnaryExpression(Formula.UNMINUS, id_x)
+			), new ExprTestPair(
+					"−(x+y)", 
+					mUnaryExpression(Formula.UNMINUS,
+							mAssociativeExpression(Formula.PLUS, id_x, id_y) 
+					)
 			),
 			
 			// IntervalExpr

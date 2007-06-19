@@ -28,6 +28,7 @@ import static org.eventb.core.ast.Formula.PLUS;
 import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.Formula.RANRES;
+import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Lambda;
@@ -460,6 +461,14 @@ public class TestUnparse extends TestCase {
 									)
 							)
 					)
+			), new ExprTestPair(
+					"\u2212(1)",
+					mUnaryExpression(UNMINUS,
+							mIntegerLiteral(1)
+					)
+			), new ExprTestPair(
+					"\u22121",
+					mIntegerLiteral(-1)
 			),
 	};
 	
@@ -1155,32 +1164,6 @@ public class TestUnparse extends TestCase {
 			pair.verify(formula);
 			pair.verify(formulaParenthesized);
 		}
-	}
-
-	/**
-	 * Ensures that negative integer literal are properly pretty-printed. This
-	 * test doesn't fit into the general category, as a negative integer literal
-	 * is initially parsed as a unary minus.
-	 */
-	public void testIntegerLiteral() {
-		Expression input = mIntegerLiteral(-1);
-		
-		final String output = input.toString();
-		parseAndCheckAfterFlatten(input, "\u22121", output);
-		
-		final String outputFullyParenthesized = input.toStringFullyParenthesized();
-		parseAndCheckAfterFlatten(input, "\u22121", outputFullyParenthesized);
-	}
-
-	private void parseAndCheckAfterFlatten(Expression input, String expected,
-			String actual) {
-		
-		assertEquals("Invalid output", expected, actual);
-		IParseResult parserResult = ff.parseExpression(actual);
-		assertTrue("Parse failed", parserResult.isSuccess());
-		Expression parserOutput = parserResult.getParsedExpression();
-		parserOutput = parserOutput.flatten(ff);
-		assertEquals("Unexpected parser result", input, parserOutput);
 	}
 
 }

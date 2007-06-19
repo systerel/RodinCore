@@ -13,6 +13,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Identifier;
+import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
@@ -287,6 +288,18 @@ COMPILER Bmath
 				ProblemSeverities.Error);
 		result.addProblem(problem);
 		return new ParserException("Unexpected left parenthesis.");
+	}
+
+	private Expression makeUNMINUS(int startPos, Expression expr) {
+		final SourceLocation loc = newSourceLoc(startPos);
+        if (expr instanceof IntegerLiteral
+        		&& expr.getSourceLocation().getStart() == startPos + 1) {
+			// A unary minus followed by an integer literalm glued together,
+			// this is a negative integer literal
+        	final IntegerLiteral lit = (IntegerLiteral) expr;
+        	return factory.makeIntegerLiteral(lit.getValue().negate(), loc);
+        }
+  		return factory.makeUnaryExpression(Formula.UNMINUS, expr, loc);
 	}
 
 TOKENS
@@ -673,8 +686,7 @@ PRODUCTIONS
             MINUS									 (.	uminus = true; .)
         ]
         Term <out expr, binding>                     (.	if (uminus) {
-                                                            SourceLocation loc = newSourceLoc(startPos);
-            										  		expr = factory.makeUnaryExpression(Formula.UNMINUS, expr, loc);
+                                                            expr = makeUNMINUS(startPos, expr);
                                                         } .)
         (
 													 (. List<Expression> exprList = new ArrayList<Expression>();
