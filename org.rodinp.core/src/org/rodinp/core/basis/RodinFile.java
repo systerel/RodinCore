@@ -250,6 +250,14 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 		return file;
 	}
 	
+	public boolean hasSameAttributes(IInternalParent other) throws RodinDBException {
+		return RodinElement.hasSameAttributes(this, (IInternalParentX) other);
+	}
+
+	public boolean hasSameChildren(IInternalParent other) throws RodinDBException {
+		return RodinElement.hasSameChildren(this, (IInternalParentX) other);
+	}
+
 	public boolean hasSameContents(IInternalParent other)
 			throws RodinDBException {
 

@@ -15,17 +15,28 @@ import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.basis.NamedElement2;
 
 /**
- * Unit tests for IInternalParent.hasSameContents().
+ * Unit tests for:
+ *    IInternalParent.hasSameContents().
+ *    IInternalParent.hasSameAttributes().
+ *    IInternalParent.hasSameChildren().
  * 
  * @author Laurent Voisin
  */
 public class SameContentsTests extends ModifyingResourceTests {
 
 	public static void assertSameContents(IInternalParent left,
-			IInternalParent right, boolean expected) throws RodinDBException {
+			IInternalParent right, boolean sameContents,
+			boolean sameAttributes, boolean sameChildren)
+			throws RodinDBException {
 
-		assertEquals(expected, left.hasSameContents(right));
-		assertEquals(expected, right.hasSameContents(left));
+		assertEquals(sameContents, left.hasSameContents(right));
+		assertEquals(sameContents, right.hasSameContents(left));
+
+		assertEquals(sameAttributes, left.hasSameAttributes(right));
+		assertEquals(sameAttributes, right.hasSameAttributes(left));
+
+		assertEquals(sameChildren, left.hasSameChildren(right));
+		assertEquals(sameChildren, right.hasSameChildren(left));
 	}
 	
 	public SameContentsTests(String name) {
@@ -53,15 +64,15 @@ public class SameContentsTests extends ModifyingResourceTests {
 		
 		rf1 = getRodinFile("P/x.test");
 		rf2 = getRodinFile("P2/x.test");
-		assertSameContents(rf1, rf2, true);
+		assertSameContents(rf1, rf2, true, true, true);
 
 		rf1 = getRodinFile("P/x.test");
 		rf2 = getRodinFile("P/x.test2");
-		assertSameContents(rf1, rf2, false);
+		assertSameContents(rf1, rf2, false, true, true);
 		
 		rf1 = getRodinFile("P/x.test");
 		rf2 = getRodinFile("P/y.test");
-		assertSameContents(rf1, rf2, false);
+		assertSameContents(rf1, rf2, false, true, true);
 	}
 	
 	/**
@@ -71,13 +82,13 @@ public class SameContentsTests extends ModifyingResourceTests {
 	public void testFileExistence() throws Exception {
 		final IRodinFile rf1 = getRodinFile("P/x.test");
 		final IRodinFile rf2 = getRodinFile("P2/x.test");
-		assertSameContents(rf1, rf2, true);
+		assertSameContents(rf1, rf2, true, true, true);
 		
 		rf1.create(false, null);
-		assertSameContents(rf1, rf2, false);
+		assertSameContents(rf1, rf2, false, false, false);
 
 		rf2.create(false, null);
-		assertSameContents(rf1, rf2, true);
+		assertSameContents(rf1, rf2, true, true, true);
 	}
 	
 	/**
@@ -89,13 +100,17 @@ public class SameContentsTests extends ModifyingResourceTests {
 		final IRodinFile rf2 = createRodinFile("P2/x.test");
 
 		rf1.setAttributeValue(fBool, true, null);
-		assertSameContents(rf1, rf2, false);
+		assertSameContents(rf1, rf2, false, false, true);
 		
 		rf2.setAttributeValue(fBool, true, null);
-		assertSameContents(rf1, rf2, true);
+		assertSameContents(rf1, rf2, true, true, true);
 		
 		rf2.setAttributeValue(fBool, false, null);
-		assertSameContents(rf1, rf2, false);
+		assertSameContents(rf1, rf2, false, false, true);
+
+		rf2.setAttributeValue(fBool, true, null);
+		createNEPositive(rf2, "foo", null);
+		assertSameContents(rf1, rf2, false, true, false);
 	}
 	
 	/**
@@ -107,17 +122,17 @@ public class SameContentsTests extends ModifyingResourceTests {
 		final IRodinFile rf2 = createRodinFile("P2/x.test");
 
 		createNEPositive(rf1, "foo", null);
-		assertSameContents(rf1, rf2, false);
+		assertSameContents(rf1, rf2, false, true, false);
 		
 		final NamedElement foo2 = createNEPositive(rf2, "foo", null);
-		assertSameContents(rf1, rf2, true);
+		assertSameContents(rf1, rf2, true, true, true);
 		
 		createNEPositive(rf1, "bar", null);
 		final NamedElement bar2 = createNEPositive(rf2, "bar", foo2);
-		assertSameContents(rf1, rf2, false);
+		assertSameContents(rf1, rf2, false, true, false);
 		
 		foo2.move(rf2, bar2, null, false, null);
-		assertSameContents(rf1, rf2, true);
+		assertSameContents(rf1, rf2, true, true, true);
 	}
 	
 	/**
@@ -131,15 +146,15 @@ public class SameContentsTests extends ModifyingResourceTests {
 		
 		ne1 = rf1.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
 		ne2 = rf2.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
-		assertSameContents(ne1, ne2, true);
+		assertSameContents(ne1, ne2, true, true, true);
 
 		ne1 = rf1.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
 		ne2 = rf2.getInternalElement(NamedElement2.ELEMENT_TYPE, "foo");
-		assertSameContents(ne1, ne2, false);
+		assertSameContents(ne1, ne2, false, true, true);
 		
 		ne1 = rf1.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
 		ne2 = rf2.getInternalElement(NamedElement.ELEMENT_TYPE, "bar");
-		assertSameContents(ne1, ne2, false);
+		assertSameContents(ne1, ne2, false, true, true);
 	}
 	
 	/**
@@ -152,13 +167,13 @@ public class SameContentsTests extends ModifyingResourceTests {
 		final NamedElement ne1 = getNamedElement(rf1, "foo");
 		final NamedElement ne2 = getNamedElement(rf2, "foo");
 
-		assertSameContents(ne1, ne2, true);
+		assertSameContents(ne1, ne2, true, true, true);
 		
 		ne1.create(null, null);
-		assertSameContents(ne1, ne2, false);
+		assertSameContents(ne1, ne2, false, false, false);
 
 		ne2.create(null, null);
-		assertSameContents(ne1, ne2, true);
+		assertSameContents(ne1, ne2, true, true, true);
 	}
 	
 	/**
@@ -172,13 +187,17 @@ public class SameContentsTests extends ModifyingResourceTests {
 		final NamedElement ne2 = createNEPositive(rf2, "foo", null);
 
 		ne1.setAttributeValue(fBool, true, null);
-		assertSameContents(ne1, ne2, false);
+		assertSameContents(ne1, ne2, false, false, true);
 		
 		ne2.setAttributeValue(fBool, true, null);
-		assertSameContents(ne1, ne2, true);
+		assertSameContents(ne1, ne2, true, true, true);
 		
 		ne2.setAttributeValue(fBool, false, null);
-		assertSameContents(ne1, ne2, false);
+		assertSameContents(ne1, ne2, false, false, true);
+
+		ne2.setAttributeValue(fBool, true, null);
+		createNEPositive(ne2, "foo", null);
+		assertSameContents(ne1, ne2, false, true, false);
 	}
 	
 	/**
@@ -192,17 +211,17 @@ public class SameContentsTests extends ModifyingResourceTests {
 		final NamedElement ne2 = createNEPositive(rf2, "root", null);
 
 		createNEPositive(ne1, "foo", null);
-		assertSameContents(ne1, ne2, false);
+		assertSameContents(ne1, ne2, false, true, false);
 		
 		final NamedElement foo2 = createNEPositive(ne2, "foo", null);
-		assertSameContents(ne1, ne2, true);
+		assertSameContents(ne1, ne2, true, true, true);
 		
 		createNEPositive(ne1, "bar", null);
 		final NamedElement bar2 = createNEPositive(ne2, "bar", foo2);
-		assertSameContents(ne1, ne2, false);
+		assertSameContents(ne1, ne2, false, true, false);
 		
 		foo2.move(ne2, bar2, null, false, null);
-		assertSameContents(ne1, ne2, true);
+		assertSameContents(ne1, ne2, true, true, true);
 	}
 	
 }

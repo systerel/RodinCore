@@ -317,6 +317,14 @@ public abstract class InternalElement extends RodinElement implements
 		return getChildren().length > 0;
 	}
 
+	public boolean hasSameAttributes(IInternalParent other) throws RodinDBException {
+		return RodinElement.hasSameAttributes(this, (IInternalParentX) other);
+	}
+
+	public boolean hasSameChildren(IInternalParent other) throws RodinDBException {
+		return RodinElement.hasSameChildren(this, (IInternalParentX) other);
+	}
+
 	public boolean hasSameContents(IInternalParent other)
 			throws RodinDBException {
 

@@ -146,6 +146,45 @@ public interface IInternalParent extends IParent, IAttributedElement {
 	IInternalParent getMutableCopy();
 
 	/**
+	 * Returns whether this element and the given element have the same attributes
+	 * in the Rodin database. Two elements have the same attributes if and only
+	 * if:
+	 * <ul>
+	 * <li>they both don't exist or they both exist and
+	 * <li>they carry the same attributes (if any) with the same values.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param other
+	 *            the element to test for similar attributes
+	 * @return <code>true</code> iff this element and the given element
+	 *         have the same attributes in the Rodin database
+	 * @exception RodinDBException
+	 *                if an error was encountered while comparing the elements
+	 */
+	boolean hasSameAttributes(IInternalParent other) throws RodinDBException;
+	
+	/**
+	 * Returns whether this element and the given element have the same children
+	 * in the Rodin database. Two elements have the same contents if and only
+	 * if:
+	 * <ul>
+	 * <li>they both don't exist or they both exist and
+	 * <li>their children (if any, and taken in order) have the same contents</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param other
+	 *            the element to test for similar children
+	 * @return <code>true</code> iff this element and the given element
+	 *         contain the same children in the Rodin database
+	 * @exception RodinDBException
+	 *                if an error was encountered while comparing the elements
+	 *                or their descendants.
+	 */
+	boolean hasSameChildren(IInternalParent other) throws RodinDBException;
+	
+	/**
 	 * Returns whether this element and the given element have the same contents
 	 * in the Rodin database. Two elements have the same contents if and only
 	 * if:
@@ -154,7 +193,7 @@ public interface IInternalParent extends IParent, IAttributedElement {
 	 * <li>they both don't exist or they both exist and:
 	 * <ul>
 	 * <li>they carry the same attributes (if any) with the same values;</li>
-	 * <li>their children (if any, and taken in order) have the same contents</li>
+	 * <li>their children (if any, and taken in order) have the same contents.</li>
 	 * </ul>
 	 * </ul>
 	 * </p>

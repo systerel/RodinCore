@@ -152,6 +152,10 @@ public abstract class RodinElement extends PlatformObject implements
 		return child.getHandleFromMemento(memento);
 	}
 	
+	private static final int NONE_EXISTS = 0;
+	private static final int ONLY_ONE_EXISTS = 1;
+	private static final int BOTH_EXISTS = 2;
+	
 	protected static final boolean hasSameContents(IInternalParentX left,
 			IInternalParentX right) throws RodinDBException {
 
@@ -162,15 +166,45 @@ public abstract class RodinElement extends PlatformObject implements
 			return false;
 		}
 		
+		switch (existenceCheck(left, right)) {
+		case NONE_EXISTS:
+			return true;
+		case ONLY_ONE_EXISTS:
+			return false;
+		default:
+			return hasSameAttributesExist(left, right) 
+					&& hasSameChildrenExist(left, right);
+		}
+	}
+
+	private static int existenceCheck(IInternalParentX left, IInternalParentX right) {
 		final boolean leftExists = left.exists();
 		final boolean rightExists = right.exists();
 		if (leftExists != rightExists) {
-			return false;
+			return ONLY_ONE_EXISTS;
 		}
 		if (! leftExists) {
-			return true;
+			return NONE_EXISTS;
 		}
-		
+		return BOTH_EXISTS;
+	}
+	
+	protected static final boolean hasSameAttributes(IInternalParentX left,
+			IInternalParentX right) throws RodinDBException {
+
+		switch (existenceCheck(left, right)) {
+		case NONE_EXISTS:
+			return true;
+		case ONLY_ONE_EXISTS:
+			return false;
+		default:
+			return hasSameAttributesExist(left, right);
+		}
+	}
+
+	private static boolean hasSameAttributesExist(IInternalParentX left,
+			IInternalParentX right) throws RodinDBException {
+
 		// Attributes are not ordered
 		final IAttributeType[] leftAttrs = left.getAttributeTypes();
 		final IAttributeType[] rightAttrs = right.getAttributeTypes();
@@ -187,6 +221,24 @@ public abstract class RodinElement extends PlatformObject implements
 				return false;
 			}
 		}
+		return true;
+	}
+
+	protected static final boolean hasSameChildren(IInternalParentX left,
+			IInternalParentX right) throws RodinDBException {
+
+		switch (existenceCheck(left, right)) {
+		case NONE_EXISTS:
+			return true;
+		case ONLY_ONE_EXISTS:
+			return false;
+		default:
+			return hasSameChildrenExist(left, right);
+		}
+	}
+
+	private static boolean hasSameChildrenExist(IInternalParentX left,
+			IInternalParentX right) throws RodinDBException {
 
 		// Children are ordered
 		final IRodinElement[] leftChildren = left.getChildren();
@@ -203,9 +255,8 @@ public abstract class RodinElement extends PlatformObject implements
 			}
 		}
 		return true;
-
 	}
-	
+
 	/**
 	 * Constructs a handle for a Rodin element with the given parent element.
 	 * 
