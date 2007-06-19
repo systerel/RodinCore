@@ -719,10 +719,9 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 				// close the parents of the created elements and reset their project's cache (in case we are in an 
 				// IWorkspaceRunnable and the clients wants to use the created element's parent)
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=83646
-				for (int i = 0, length = this.resultElements.length; i < length; i++) {
-					IRodinElement element = this.resultElements[i];
+				for (IRodinElement element: this.resultElements) {
 					Openable openable = (Openable) element.getOpenable();
-					if (! (openable instanceof RodinFile)) {
+					if (openable != null && ! (openable instanceof RodinFile)) {
 						// a working copy must remain a child of its parent even after a move
 						openable.getParent().close();
 					}
