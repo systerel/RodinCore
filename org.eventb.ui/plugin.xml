@@ -754,6 +754,12 @@
       <viewerContribution
             id="org.eventb.ui.ProjectExplorer"
             targetID="org.eventb.ui.views.ProjectExplorer">
+         <visibility>
+            <or>
+               <objectClass name="org.rodinp.core.IRodinFile"/>
+               <objectClass name="org.rodinp.core.IRodinProject"/>
+            </or>
+         </visibility>
          <action
                class="org.eventb.internal.ui.projectexplorer.actions.Delete"
                enablesFor="+"
@@ -761,7 +767,8 @@
                id="org.eventb.ui.Delete"
                label="%popupMenu.delete.label"
                menubarPath="modelling"
-               tooltip="%popupMenu.delete.tooltip"/>
+               tooltip="%popupMenu.delete.tooltip">
+         </action>
       </viewerContribution>
       <objectContribution
             adaptable="false"
