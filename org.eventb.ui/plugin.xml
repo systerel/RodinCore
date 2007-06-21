@@ -20,13 +20,13 @@
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.obligationexplorer.ObligationExplorer"
-            icon="icons/sample.gif"
+            icon="icons/full/clcl16/obl_expl.gif"
             id="org.eventb.ui.views.ObligationExplorer"
             name="%view.ObligationExplorer"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.proofcontrol.ProofControl"
-            icon="icons/sample.gif"
+            icon="icons/full/clcl16/prv_ctrl.gif"
             id="org.eventb.ui.views.ProofControl"
             name="%view.ProofControl"/>
       <view
@@ -38,13 +38,13 @@
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.projectexplorer.ProjectExplorer"
-            icon="icons/sample.gif"
+            icon="icons/full/clcl16/prj_expl.gif"
             id="org.eventb.ui.views.ProjectExplorer"
             name="%view.ProjectExplorer"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.prooftreeui.ProofTreeUI"
-            icon="icons/sample.gif"
+            icon="icons/full/clcl16/prf_tree.gif"
             id="org.eventb.ui.views.ProofTreeUI"
             name="%view.ProofTreeUI"/>
       <view
