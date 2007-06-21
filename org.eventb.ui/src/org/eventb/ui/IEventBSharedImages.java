@@ -128,15 +128,25 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_PENDING_PATH = "icons/pending.gif";
 
+	public static final String IMG_PENDING_PALE_PATH = "icons/pending_pale.gif";
+
 	public static final String IMG_PENDING_BROKEN_PATH = "icons/pending_broken.gif";
 
+	/**
+	 * @deprecated used IMG_PENDING_PALE_PATH instead.
+	 */
+	@Deprecated
 	public static final String IMG_APPLIED_PATH = "icons/applied.gif";
 
 	public static final String IMG_REVIEWED_PATH = "icons/reviewed.gif";
 
+	public static final String IMG_REVIEWED_PALE_PATH = "icons/reviewed_pale.gif";
+
 	public static final String IMG_REVIEWED_BROKEN_PATH = "icons/reviewed_broken.gif";
 
 	public static final String IMG_DISCHARGED_PATH = "icons/discharged.gif";
+
+	public static final String IMG_DISCHARGED_PALE_PATH = "icons/discharged_pale.gif";
 
 	public static final String IMG_DISCHARGED_BROKEN_PATH = "icons/discharged_broken.gif";
 

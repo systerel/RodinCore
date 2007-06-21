@@ -34,7 +34,18 @@ import org.rodinp.core.RodinMarkerUtil;
 /**
  * @author htson
  *         <p>
- *         This class handles the images that are used in the Event-B UI.
+ *         A registry for common images used by the workbench which may be
+ *         useful to other plug-ins.
+ *         <p>
+ *         This class provides <code>Image</code> and
+ *         <code>ImageDescriptor</code>s for each named image in the
+ *         interface. All <code>Image</code> objects provided by this class
+ *         are managed by this class and must never be disposed by other
+ *         clients.
+ *         </p>
+ *         <p>
+ *         This class is not intended to be extended by clients.
+ *         </p>
  */
 public class EventBImage {
 
@@ -97,25 +108,35 @@ public class EventBImage {
 		registerImage(registry, IEventBSharedImages.IMG_EVENTS, "icons/full/obj16/evts_obj.gif");
 		registerImage(registry, IEventBSharedImages.IMG_CARRIER_SETS,
 				"icons/full/obj16/sets_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_CONSTANTS, "icons/full/obj16/csts_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_AXIOMS, "icons/full/obj16/axms_obj.gif");
+		registerImage(registry, IEventBSharedImages.IMG_CONSTANTS,
+				"icons/full/obj16/csts_obj.gif");
+		registerImage(registry, IEventBSharedImages.IMG_AXIOMS,
+				"icons/full/obj16/axms_obj.gif");
 		registerImage(registry, IMG_NEW_PROJECT,
 				"icons/full/clcl16/newprj_wiz.gif");
 		registerImage(registry, IMG_NEW_COMPONENT,
 				"icons/full/clcl16/newcomp_wiz.gif");
 
-		registerImage(registry, IEventBSharedImages.IMG_PENDING, "icons/pending.gif");
-		registerImage(registry, IEventBSharedImages.IMG_PENDING_BROKEN, "icons/pending_broken.gif");
-		registerImage(registry, IEventBSharedImages.IMG_APPLIED, "icons/applied.gif");
-		registerImage(registry, IEventBSharedImages.IMG_DISCHARGED, "icons/discharged.gif");
+		registerImage(registry, IEventBSharedImages.IMG_PENDING,
+				"icons/pending.gif");
+		registerImage(registry, IEventBSharedImages.IMG_PENDING_BROKEN,
+				"icons/pending_broken.gif");
+		registerImage(registry, IEventBSharedImages.IMG_APPLIED,
+				"icons/applied.gif");
+		registerImage(registry, IEventBSharedImages.IMG_DISCHARGED,
+				"icons/discharged.gif");
 		registerImage(registry, IEventBSharedImages.IMG_DISCHARGED_BROKEN,
 				"icons/discharged_broken.gif");
-		registerImage(registry, IEventBSharedImages.IMG_REVIEWED, "icons/reviewed.gif");
+		registerImage(registry, IEventBSharedImages.IMG_REVIEWED,
+				"icons/reviewed.gif");
 		registerImage(registry, IEventBSharedImages.IMG_REVIEWED_BROKEN,
 				"icons/reviewed_broken.gif");
-		registerImage(registry, IEventBSharedImages.IMG_UNATTEMPTED, "icons/unattempted.gif");
-		registerImage(registry, IEventBSharedImages.IMG_DEFAULT, "icons/sample.gif");
-		registerImage(registry, IEventBSharedImages.IMG_REFINES, "icons/full/ctool16/refines.gif");
+		registerImage(registry, IEventBSharedImages.IMG_UNATTEMPTED,
+				"icons/unattempted.gif");
+		registerImage(registry, IEventBSharedImages.IMG_DEFAULT,
+				"icons/sample.gif");
+		registerImage(registry, IEventBSharedImages.IMG_REFINES,
+				"icons/full/ctool16/refines.gif");
 
 		registerImage(registry, IMG_PENGUIN, "icons/penguins-dancing.gif");
 		registerImage(registry, IEventBSharedImages.IMG_NULL, "icons/full/ctool16/null.gif");
@@ -123,6 +144,19 @@ public class EventBImage {
 		registerImage(registry, IEventBSharedImages.IMG_ADD, "icons/full/ctool16/add.gif");
 		registerImage(registry, IEventBSharedImages.IMG_REMOVE, "icons/full/ctool16/remove.gif");
 
+		registerImage(registry, IEventBSharedImages.IMG_ADD,
+				"icons/full/ctool16/add.gif");
+		registerImage(registry, IEventBSharedImages.IMG_REMOVE,
+				"icons/full/ctool16/remove.gif");
+
+		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED,
+				"icons/full/elcl16/collapsed.gif");
+		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED_HOVER,
+				"icons/full/elcl16/collapsedHover.gif");
+		registerImage(registry, IEventBSharedImages.IMG_EXPANDED,
+				"icons/full/elcl16/expanded.gif");
+		registerImage(registry, IEventBSharedImages.IMG_EXPANDED_HOVER,
+				"icons/full/elcl16/expandedHover.gif");
 		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED, "icons/full/elcl16/collapsed.gif");
 		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED_HOVER, "icons/full/elcl16/collapsedHover.gif");
 		registerImage(registry, IEventBSharedImages.IMG_EXPANDED, "icons/full/elcl16/expanded.gif");
@@ -215,7 +249,8 @@ public class EventBImage {
 					overlay = overlay | F_COMMENT;
 			} catch (RodinDBException e) {
 				// Do nothing
-				if (UIUtils.DEBUG) e.printStackTrace();
+				if (UIUtils.DEBUG)
+					e.printStackTrace();
 			}
 		}
 		
@@ -285,13 +320,19 @@ public class EventBImage {
 
 		if (confidence == IConfidence.PENDING) {
 			if (node.hasChildren())
-				return IEventBSharedImages.IMG_APPLIED_PATH;
+				return IEventBSharedImages.IMG_PENDING_PALE_PATH;
 			return IEventBSharedImages.IMG_PENDING_PATH;
 		}
-		if (confidence <= IConfidence.REVIEWED_MAX)
+		if (confidence <= IConfidence.REVIEWED_MAX) {
+			if (node.hasChildren())
+				return IEventBSharedImages.IMG_REVIEWED_PALE_PATH;
 			return IEventBSharedImages.IMG_REVIEWED_PATH;
-		if (confidence <= IConfidence.DISCHARGED_MAX)
+		}
+		if (confidence <= IConfidence.DISCHARGED_MAX) {
+			if (node.hasChildren())
+				return IEventBSharedImages.IMG_DISCHARGED_PALE_PATH;
 			return IEventBSharedImages.IMG_DISCHARGED_PATH;
+		}
 		return IEventBSharedImages.IMG_NULL_PATH;
 	}
 
@@ -326,7 +367,8 @@ public class EventBImage {
 				System.out.println("Create a new image: " + key);
 			OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
 			if (comment == "1")
-				icon.addTopLeft(getImageDescriptor(IEventBSharedImages.IMG_COMMENT_OVERLAY_PATH));
+				icon
+						.addTopLeft(getImageDescriptor(IEventBSharedImages.IMG_COMMENT_OVERLAY_PATH));
 			image = icon.createImage();
 			registry.put(key, image);
 		}
@@ -352,7 +394,7 @@ public class EventBImage {
 			confidence = status.getProofConfidence();
 		} catch (RodinDBException e) {
 			String message = "Cannot get the confidence from the status of"
-				+ status.getElementName();
+					+ status.getElementName();
 			if (UIUtils.DEBUG) {
 				System.out.println(message);
 				e.printStackTrace();
@@ -370,7 +412,7 @@ public class EventBImage {
 				isProofBroken = status.isBroken();
 			} catch (RodinDBException e) {
 				String message = "Cannot check if the proof tree of the sequent "
-					+ status.getElementName() + " is brocken or not";
+						+ status.getElementName() + " is brocken or not";
 				if (UIUtils.DEBUG) {
 					System.out.println(message);
 					e.printStackTrace();
