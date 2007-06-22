@@ -99,16 +99,16 @@ public class Refines implements IObjectActionDelegate {
 							copyChildrenOfType(newFile, machine,
 									IEvent.ELEMENT_TYPE, monitor);
 
-							IRodinElement[] elements = machine
+							IEvent[] events = machine
 									.getChildrenOfType(IEvent.ELEMENT_TYPE);
 
-							for (IRodinElement element : elements) {
-								String name = ((IEvent) element)
-										.getElementName();
-								String label = ((IEvent) element).getLabel();
+							for (IEvent event : events) {
+								String name = event.getElementName();
+								String label = event.getLabel();
 								IInternalElement newElement = newFile
 										.getInternalElement(
 												IEvent.ELEMENT_TYPE, name);
+
 								// Need to remove the existing IRefinesEvent
 								// elements
 								IRodinElement[] refinesEvents = newElement
@@ -125,7 +125,8 @@ public class Refines implements IObjectActionDelegate {
 
 								// INITILISATION does not have RefineEvents
 								// Element
-								if (!label.equals(IEvent.INITIALISATION)) {
+								if (!label.equals(IEvent.INITIALISATION)
+										&& !event.isInherited()) {
 									IRefinesEvent refinesEvent = newElement
 											.getInternalElement(
 													IRefinesEvent.ELEMENT_TYPE,
