@@ -32,6 +32,7 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.core.basis.SeesContext;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.rodinp.core.IRodinElement;
@@ -51,6 +52,8 @@ public abstract class AstConverter {
 
 	protected String BOLD = "";
 	protected String END_BOLD = "";
+	protected String ITALIC = "";
+	protected String END_ITALIC = "";
 	protected String BEGIN_LEVEL_0 = "";
 	protected String BEGIN_LEVEL_1 = "";
 	protected String BEGIN_LEVEL_2 = "";
@@ -480,6 +483,18 @@ public abstract class AstConverter {
 					continue;
 				}
 				addComment(evt);
+				
+				try {
+					if (evt.isInherited()) {
+						beginLevel2();
+						italic("inherited");
+						endLevel();
+						continue;
+					}
+				} catch (RodinDBException e) {
+					EventBUIExceptionHandler.handleGetAttributeException(e);
+					continue;
+				}
 				IVariable[] lvars;
 				IGuard[] guards;
 				IAction[] actions;
@@ -713,6 +728,12 @@ public abstract class AstConverter {
 		formString.append(END_BOLD);
 	}
 	
+	private void italic(String str) {
+		formString.append(ITALIC);
+		formString.append(str);
+		formString.append(END_ITALIC);
+	}
+
 	private void append(String s) {
 		formString.append(s);
 	}
