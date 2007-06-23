@@ -32,6 +32,7 @@ import org.rodinp.internal.core.ChangeElementAttributeOperation;
 import org.rodinp.internal.core.CopyResourceElementsOperation;
 import org.rodinp.internal.core.CreateRodinFileOperation;
 import org.rodinp.internal.core.DeleteResourceElementsOperation;
+import org.rodinp.internal.core.ElementComparer;
 import org.rodinp.internal.core.FileElementType;
 import org.rodinp.internal.core.IInternalParentX;
 import org.rodinp.internal.core.InternalElementType;
@@ -250,18 +251,20 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 		return file;
 	}
 	
-	public boolean hasSameAttributes(IInternalParent other) throws RodinDBException {
-		return RodinElement.hasSameAttributes(this, (IInternalParentX) other);
+	public boolean hasSameAttributes(IInternalParent other)
+			throws RodinDBException {
+		return ElementComparer
+				.hasSameAttributes(this, (IInternalParentX) other);
 	}
 
-	public boolean hasSameChildren(IInternalParent other) throws RodinDBException {
-		return RodinElement.hasSameChildren(this, (IInternalParentX) other);
+	public boolean hasSameChildren(IInternalParent other)
+			throws RodinDBException {
+		return ElementComparer.hasSameChildren(this, (IInternalParentX) other);
 	}
 
 	public boolean hasSameContents(IInternalParent other)
 			throws RodinDBException {
-
-		return RodinElement.hasSameContents(this, (IInternalParentX) other);
+		return ElementComparer.hasSameContents(this, (IInternalParentX) other);
 	}
 
 	@Override

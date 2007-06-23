@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -31,7 +30,6 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.ElementType;
 import org.rodinp.internal.core.ElementTypeManager;
-import org.rodinp.internal.core.IInternalParentX;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.MultiOperation;
 import org.rodinp.internal.core.RodinDBStatus;
@@ -150,111 +148,6 @@ public abstract class RodinElement extends PlatformObject implements
 		if (lookahead != null)
 			return child.getHandleFromMemento(lookahead, memento);
 		return child.getHandleFromMemento(memento);
-	}
-	
-	private static final int NONE_EXISTS = 0;
-	private static final int ONLY_ONE_EXISTS = 1;
-	private static final int BOTH_EXISTS = 2;
-	
-	protected static final boolean hasSameContents(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException {
-
-		if (! left.getElementName().equals(right.getElementName())) {
-			return false;
-		}
-		if (left.getElementType() != right.getElementType()) {
-			return false;
-		}
-		
-		switch (existenceCheck(left, right)) {
-		case NONE_EXISTS:
-			return true;
-		case ONLY_ONE_EXISTS:
-			return false;
-		default:
-			return hasSameAttributesExist(left, right) 
-					&& hasSameChildrenExist(left, right);
-		}
-	}
-
-	private static int existenceCheck(IInternalParentX left, IInternalParentX right) {
-		final boolean leftExists = left.exists();
-		final boolean rightExists = right.exists();
-		if (leftExists != rightExists) {
-			return ONLY_ONE_EXISTS;
-		}
-		if (! leftExists) {
-			return NONE_EXISTS;
-		}
-		return BOTH_EXISTS;
-	}
-	
-	protected static final boolean hasSameAttributes(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException {
-
-		switch (existenceCheck(left, right)) {
-		case NONE_EXISTS:
-			return true;
-		case ONLY_ONE_EXISTS:
-			return false;
-		default:
-			return hasSameAttributesExist(left, right);
-		}
-	}
-
-	private static boolean hasSameAttributesExist(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException {
-
-		// Attributes are not ordered
-		final IAttributeType[] leftAttrs = left.getAttributeTypes();
-		final IAttributeType[] rightAttrs = right.getAttributeTypes();
-		if (leftAttrs.length != rightAttrs.length) {
-			return false;
-		}
-		for (IAttributeType attr: leftAttrs) {
-			if (! right.hasAttribute(attr)) {
-				return false;
-			}
-			final String attrName = attr.getId();
-			if (! left.getAttributeRawValue(attrName).equals(
-					right.getAttributeRawValue(attrName))) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	protected static final boolean hasSameChildren(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException {
-
-		switch (existenceCheck(left, right)) {
-		case NONE_EXISTS:
-			return true;
-		case ONLY_ONE_EXISTS:
-			return false;
-		default:
-			return hasSameChildrenExist(left, right);
-		}
-	}
-
-	private static boolean hasSameChildrenExist(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException {
-
-		// Children are ordered
-		final IRodinElement[] leftChildren = left.getChildren();
-		final IRodinElement[] rightChildren = right.getChildren();
-		final int length = leftChildren.length;
-		if (length != rightChildren.length) {
-			return false;
-		}
-		for (int i = 0; i < length; ++ i) {
-			IInternalElement leftChild = (IInternalElement) leftChildren[i];
-			IInternalElement rightChild = (IInternalElement) rightChildren[i];
-			if (! leftChild.hasSameContents(rightChild)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**

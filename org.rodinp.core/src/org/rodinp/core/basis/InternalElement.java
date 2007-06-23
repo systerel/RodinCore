@@ -25,6 +25,7 @@ import org.rodinp.internal.core.CopyElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.DeleteElementsOperation;
+import org.rodinp.internal.core.ElementComparer;
 import org.rodinp.internal.core.IInternalParentX;
 import org.rodinp.internal.core.InternalElementInfo;
 import org.rodinp.internal.core.InternalElementType;
@@ -317,18 +318,20 @@ public abstract class InternalElement extends RodinElement implements
 		return getChildren().length > 0;
 	}
 
-	public boolean hasSameAttributes(IInternalParent other) throws RodinDBException {
-		return RodinElement.hasSameAttributes(this, (IInternalParentX) other);
+	public boolean hasSameAttributes(IInternalParent other)
+			throws RodinDBException {
+		return ElementComparer
+				.hasSameAttributes(this, (IInternalParentX) other);
 	}
 
-	public boolean hasSameChildren(IInternalParent other) throws RodinDBException {
-		return RodinElement.hasSameChildren(this, (IInternalParentX) other);
+	public boolean hasSameChildren(IInternalParent other)
+			throws RodinDBException {
+		return ElementComparer.hasSameChildren(this, (IInternalParentX) other);
 	}
 
 	public boolean hasSameContents(IInternalParent other)
 			throws RodinDBException {
-
-		return RodinElement.hasSameContents(this, (IInternalParentX) other);
+		return ElementComparer.hasSameContents(this, (IInternalParentX) other);
 	}
 
 	@Override

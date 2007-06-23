@@ -224,4 +224,38 @@ public class SameContentsTests extends ModifyingResourceTests {
 		assertSameContents(ne1, ne2, true, true, true);
 	}
 	
+	/**
+	 * Ensures that children attributes are taken into account when comparing
+	 * elements.
+	 */
+	public void testChildrenAttributes() throws Exception {
+		final IRodinFile rf1 = createRodinFile("P/x.test");
+		final IRodinFile rf2 = createRodinFile("P2/x.test");
+
+		final NamedElement foo1 = createNEPositive(rf1, "foo", null);
+		final NamedElement foo2 = createNEPositive(rf2, "foo", null);
+		foo1.setAttributeValue(fBool, true, null);
+		foo2.setAttributeValue(fBool, true, null);
+		assertSameContents(rf1, rf2, true, true, true);
+		
+		foo2.setAttributeValue(fBool, false, null);
+		assertSameContents(rf1, rf2, false, true, false);
+	}
+	
+	/**
+	 * Ensures that grand-children are taken into account when comparing
+	 * elements.
+	 */
+	public void testGrandChildren() throws Exception {
+		final IRodinFile rf1 = createRodinFile("P/x.test");
+		final IRodinFile rf2 = createRodinFile("P2/x.test");
+
+		final NamedElement foo1 = createNEPositive(rf1, "foo", null);
+		createNEPositive(rf2, "foo", null);
+		assertSameContents(rf1, rf2, true, true, true);
+		
+		createNEPositive(foo1, "bar", null);
+		assertSameContents(rf1, rf2, false, true, false);
+	}
+	
 }
