@@ -16,11 +16,8 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
-import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
-import org.eventb.internal.ui.proofinformation.ProofInformation;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
-import org.eventb.internal.ui.searchhypothesis.SearchHypothesis;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -43,29 +40,7 @@ public class ProvingPerspective implements IPerspectiveFactory {
 	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
 	 */
 	public void createInitialLayout(IPageLayout layout) {
-		defineActions(layout);
 		defineLayout(layout);
-		layout.addPerspectiveShortcut(EventBPerspective.PERSPECTIVE_ID);
-	}
-
-	/**
-	 * Add the shortcuts to different views.
-	 * <p>
-	 * 
-	 * @param layout
-	 *            the page layout
-	 */
-	public void defineActions(IPageLayout layout) {
-		// Add "show views".
-		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
-		layout.addShowViewShortcut(ObligationExplorer.VIEW_ID);
-		layout.addShowViewShortcut(ProofTreeUI.VIEW_ID);
-		layout.addShowViewShortcut(ProofControl.VIEW_ID);
-		layout.addShowViewShortcut(ProofInformation.VIEW_ID);
-		layout.addShowViewShortcut(SearchHypothesis.VIEW_ID);
-		layout.addShowViewShortcut(ProjectExplorer.VIEW_ID);
-		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
-		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 	}
 
 	/**
@@ -83,19 +58,16 @@ public class ProvingPerspective implements IPerspectiveFactory {
 		IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT,
 				0.25f, editorArea);
 		left.addView(ProofTreeUI.VIEW_ID);
-		left.addView(ProjectExplorer.VIEW_ID);
 
 		// Place the ProofTree / Outline to right of editor area.
 		IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT,
 				0.75f, editorArea);
 		right.addView(ObligationExplorer.VIEW_ID);
-		right.addView(IPageLayout.ID_OUTLINE);
 
 		// Place the Proof Control / Problems to the bottom of the editor area.
 		IFolderLayout bottom = layout.createFolder("bottom",
 				IPageLayout.BOTTOM, 0.60f, editorArea);
 		bottom.addView(ProofControl.VIEW_ID);
-		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 	}
 
 }

@@ -243,6 +243,39 @@
                ratio="0.4"
                relationship="top"
                relative="org.eventb.ui.views.ProofControl"/>
+         <perspectiveShortcut id="org.eventb.ui.perspective.eventb"/>
+         <perspectiveShortcut id="org.eclipse.ui.resourcePerspective"/>
+         <viewShortcut id="org.eventb.ui.views.ObligationExplorer"/>
+         <viewShortcut id="org.eventb.ui.views.ProofTreeUI"/>
+         <viewShortcut id="org.eventb.ui.views.ProofControl"/>
+         <viewShortcut id="org.eventb.ui.views.ProofInformation"/>
+         <viewShortcut id="org.eventb.ui.views.SearchHypothesis"/>
+         <viewShortcut id="org.eclipse.ui.views.ProblemView"/>
+         <view
+               id="org.eclipse.ui.views.ProblemView"
+               relationship="stack"
+               relative="org.eventb.ui.views.ProofControl"/>
+         <viewShortcut id="org.eventb.ui.views.ProjectExplorer"/>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.eventb.ui.perspective.eventb">
+         <view
+               id="org.eclipse.ui.views.PropertySheet"
+               relationship="stack"
+               relative="org.eclipse.ui.views.ProblemView"/>
+         <view
+               id="org.eclipse.ui.views.TaskList"
+               relationship="stack"
+               relative="org.eclipse.ui.views.ProblemView"/>
+         <viewShortcut id="org.eclipse.ui.views.ProblemView"/>
+         <viewShortcut id="org.eclipse.ui.views.PropertySheet"/>
+         <viewShortcut id="org.eclipse.ui.views.ContentOutline"/>
+         <viewShortcut id="org.eclipse.ui.views.TaskList"/>
+         <viewShortcut id="org.eventb.ui.views.ProjectExplorer"/>
+         <newWizardShortcut id="org.eventb.ui.wizards.NewProject"/>
+         <newWizardShortcut id="org.eventb.ui.wizards.NewComponent"/>
+         <perspectiveShortcut id="org.eventb.ui.perspective.proving"/>
+         <perspectiveShortcut id="org.eclipse.ui.resourcePerspective"/>
+         <viewShortcut id="org.eventb.ui.views.ObligationExplorer"/>
       </perspectiveExtension>
    </extension>
    <extension

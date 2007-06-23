@@ -16,8 +16,6 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
-import org.eventb.internal.ui.wizards.NewComponentWizard;
-import org.eventb.internal.ui.wizards.NewProjectWizard;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -41,29 +39,7 @@ public class EventBPerspective implements IPerspectiveFactory {
 	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
 	 */
 	public void createInitialLayout(IPageLayout layout) {
-		defineActions(layout);
 		defineLayout(layout);
-		layout.addPerspectiveShortcut(ProvingPerspective.PERSPECTIVE_ID);
-	}
-
-	/**
-	 * Add the wizard actions, and the shortcuts to different views.
-	 * <p>
-	 * 
-	 * @param layout
-	 *            the page layout
-	 */
-	public void defineActions(IPageLayout layout) {
-		// Add "new wizards".
-		layout.addNewWizardShortcut(NewProjectWizard.WIZARD_ID);
-		layout.addNewWizardShortcut(NewComponentWizard.WIZARD_ID);
-
-		// Add "show views".
-		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
-		layout.addShowViewShortcut(ProjectExplorer.VIEW_ID);
-		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
-		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
-		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
 	}
 
 	/**
@@ -86,7 +62,6 @@ public class EventBPerspective implements IPerspectiveFactory {
 		IFolderLayout bottom = layout.createFolder("bottom",
 				IPageLayout.BOTTOM, 0.75f, editorArea);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
-		bottom.addView(IPageLayout.ID_TASK_LIST);
 
 		// Place the outline to right of editor area.
 		IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT,
