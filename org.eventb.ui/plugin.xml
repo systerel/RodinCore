@@ -32,7 +32,7 @@
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.proofinformation.ProofInformation"
-            icon="icons/full/obj16/info_obj.gif"
+            icon="icons/full/ctool16/info_prover.gif"
             id="org.eventb.ui.views.ProofInformation"
             name="%view.ProofInformation"/>
       <view
@@ -50,13 +50,13 @@
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.searchhypothesis.SearchHypothesis"
-            icon="icons/full/obj16/search.gif"
+            icon="icons/full/ctool16/sh_prover.gif"
             id="org.eventb.ui.views.SearchHypothesis"
             name="%view.SearchHypothesis"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.cachehypothesis.CacheHypothesis"
-            icon="icons/full/ctool16/cached.gif"
+            icon="icons/full/ctool16/ch_prover.gif"
             id="org.eventb.ui.views.CacheHypothesis"
             name="%view.CacheHypothesis"/>
       <view
@@ -860,7 +860,7 @@
             tooltip="%proofTactics.rnGoal.tooltip"/>
       <tactic
             dropdown="org.eventb.ui.reviewDropdown"
-            icon="icons/full/ctool16/rv_prover.gif"
+            icon="icons/reviewed.gif"
             id="org.eventb.ui.review"
             interrupt="false"
             name="%proofTactics.review.name"
@@ -959,7 +959,7 @@
             toolbar="org.eventb.ui.navigationToolbar"
             tooltip="%proofTactics.searchHyp.tooltip"/>
       <tactic
-            icon="icons/full/ctool16/cached.gif"
+            icon="icons/full/ctool16/ch_prover.gif"
             id="org.eventb.ui.cacheHypothesis"
             interrupt="false"
             name="%proofTactics.cachehypothesis.name"
@@ -1392,7 +1392,7 @@
             target="hypothesis"
             tooltip="%hypothesisProofTactics.allmpD.tooltip"/>
       <tactic
-            icon="icons/pending.gif"
+            icon="icons/full/ctool16/next_pd.gif"
             id="org.eventb.ui.nextPending"
             interrupt="false"
             name="%proofTactics.nextPending.name"
@@ -1402,8 +1402,8 @@
             toolbar="org.eventb.ui.navigationToolbar"
             tooltip="%proofTactics.nextPending.tooltip"/>
       <tactic
-            icon="icons/reviewed.png"
-            id="org.eventb.ui.nextReview"
+            icon="icons/full/ctool16/next_rv.gif"
+            id="org.eventb.ui.nextReviewed"
             interrupt="false"
             name="%proofTactics.nextReview.name"
             priorty="6"
