@@ -1,4 +1,5 @@
 AutoRewriterImpl.java
+AndOrDistRewriterImpl.java
 ConvRewriterImpl.java
 DomDistLeftRewriterImpl.java
 DomDistRightRewriterImpl.java

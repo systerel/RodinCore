@@ -86,6 +86,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.DisjToImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivial;
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ConvRewrites;
@@ -2056,6 +2057,77 @@ public class Tactics {
 	public static ITactic setMinusRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new SetMinusRewrites(),
 				new SetMinusRewrites.Input(hyp, position));
+	}
+
+	
+	/**
+	 * Return the list of applicable positions of the tactic "And/Or
+	 * distribution rewrites" {@link AndOrDistRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> andOrDistGetPositions(Predicate predicate) {
+		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(AssociativePredicate predicate) {
+				if (predicate.getTag() == Predicate.LAND
+						|| predicate.getTag() == Predicate.LOR) {
+					return true;
+				}
+				return super.select(predicate);
+			}
+
+		});
+		
+		List<IPosition> results = new ArrayList<IPosition>();
+		for (IPosition position : positions) {
+			AssociativePredicate aPred = ((AssociativePredicate) predicate
+								.getSubFormula(position));
+			int length = aPred.getChildren().length;
+			int tag = aPred.getTag() == Predicate.LAND ? Predicate.LOR
+					: Predicate.LAND;
+			IPosition child = position.getFirstChild();
+			int i = 0;
+			while (child != null) {
+				Formula subFormula = predicate.getSubFormula(child);
+				if (subFormula instanceof AssociativePredicate
+						&& subFormula.getTag() == tag) {
+					results.add(child);
+				}
+				++i;
+				if (i < length)
+					child = child.getNextSibling();
+				else
+					child = null;
+			}
+		}
+		
+		return results; 
+	}
+
+
+	/**
+	 * Return the tactic "And/Or distribution rewrites"
+	 * {@link AndOrDistRewrites} which is applicable to a hypothesis at a given
+	 * position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "And/Or disttribution rewrites"
+	 * @author htson
+	 */
+	public static ITactic andOrDistRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new AndOrDistRewrites(),
+				new AndOrDistRewrites.Input(hyp, position));
 	}
 
 }
