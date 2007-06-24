@@ -90,7 +90,12 @@ public class DefaultTacticProvider implements ITacticProvider {
 			IPosition position) {
 		Formula subFormula = predicate.getSubFormula(position);
 		if (subFormula instanceof AssociativePredicate) {
-			return new Point(0, 1);
+			// Return the operator between the first and second child
+
+			Predicate[] children = ((AssociativePredicate) subFormula)
+					.getChildren();
+			return getOperatorPosition(predStr, children[0].getSourceLocation()
+					.getEnd() + 1, children[1].getSourceLocation().getStart());
 		}
 		if (subFormula instanceof BinaryPredicate) {
 			BinaryPredicate bPred = (BinaryPredicate) subFormula;
