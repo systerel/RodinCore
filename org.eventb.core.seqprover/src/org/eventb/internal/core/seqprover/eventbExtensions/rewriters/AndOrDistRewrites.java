@@ -43,23 +43,22 @@ public class AndOrDistRewrites extends AbstractManualRewrites {
 			return null;
 		
 		Formula formula = pred.getSubFormula(position.getParent());
-		
-		IFormulaRewriter rewriter = new AndOrDistRewriterImpl(
-				(AssociativePredicate) subFormula);
-		
-		Formula newSubFormula = null;
-		if (formula instanceof AssociativePredicate) {
-			newSubFormula = rewriter
-				.rewrite((AssociativePredicate) formula);
-		}
-		if (newSubFormula == null)
-			return null;
-		
-		if (newSubFormula == formula) // No rewrite occurs
-			return null;
+		if ((subFormula.getTag() == Predicate.LAND && formula.getTag() == Predicate.LOR)
+				|| (subFormula.getTag() == Predicate.LOR && formula.getTag() == Predicate.LAND)) {
 
-		return pred.rewriteSubFormula(position.getParent(), newSubFormula,
-				FormulaFactory.getDefault());
+			IFormulaRewriter rewriter = new AndOrDistRewriterImpl(
+					(AssociativePredicate) subFormula);
+
+			Formula newSubFormula = rewriter
+					.rewrite((AssociativePredicate) formula);
+
+			if (newSubFormula == formula) // No rewrite occurs
+				return null;
+
+			return pred.rewriteSubFormula(position.getParent(), newSubFormula,
+					FormulaFactory.getDefault());
+		}
+		return null;
 	}
 
 }
