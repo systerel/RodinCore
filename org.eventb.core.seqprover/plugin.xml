@@ -219,6 +219,14 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites"
             id="andOrDistRewrites"
             name="%andOrDistRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.UnionInterDistRewrites"
+            id="unionInterDistRewrites"
+            name="%unionInterDistRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites"
+            id="compUnionDistRewrites"
+            name="%compUnionDistRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

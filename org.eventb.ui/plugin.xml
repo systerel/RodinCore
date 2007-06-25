@@ -1714,6 +1714,42 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.AndOrDistGoal"
             target="goal"
             tooltip="%proofTactic.andOrDistGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.unionInterDistHyp"
+            interrupt="false"
+            name="%proofTactic.unionInterDistHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.UnionInterDistHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.unionInterDistHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.unionInterDistGoal"
+            interrupt="false"
+            name="%proofTactic.unionInterDistGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.UnionInterDistGoal"
+            target="goal"
+            tooltip="%proofTactic.unionInterDistGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.compUnionDistHyp"
+            interrupt="false"
+            name="%proofTactic.compUnionDistHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.CompUnionDistHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.compUnionDistHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.compUnionDistGoal"
+            interrupt="false"
+            name="%proofTactic.compUnionDistGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.CompUnionDistGoal"
+            target="goal"
+            tooltip="%proofTactic.compUnionDistGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">

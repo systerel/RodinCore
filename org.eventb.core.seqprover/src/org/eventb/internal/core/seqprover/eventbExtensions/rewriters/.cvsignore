@@ -1,5 +1,6 @@
 AutoRewriterImpl.java
 AndOrDistRewriterImpl.java
+CompUnionDistRewriterImpl.java
 ConvRewriterImpl.java
 DomDistLeftRewriterImpl.java
 DomDistRightRewriterImpl.java
@@ -15,3 +16,4 @@ RemoveMembershipRewriterImpl.java
 SetEqlRewriterImpl.java
 SetMinusRewriterImpl.java
 TypeRewriterImpl.java
+UnionInterDistRewriterImpl.java

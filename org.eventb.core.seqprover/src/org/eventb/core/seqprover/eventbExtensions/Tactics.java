@@ -88,6 +88,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivia
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ConvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewriter;
@@ -107,6 +108,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegat
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetMinusRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.UnionInterDistRewrites;
 
 /**
  * This class contains static methods that wrap Event-B reasoner extensions into
@@ -2128,6 +2130,146 @@ public class Tactics {
 	public static ITactic andOrDistRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new AndOrDistRewrites(),
 				new AndOrDistRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "Union/Intersection
+	 * distribution rewrites" {@link UnionInterDistRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> unionInterDistGetPositions(Predicate predicate) {
+		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(AssociativeExpression expression) {
+				if (expression.getTag() == Expression.BUNION
+						|| expression.getTag() == Expression.BINTER) {
+					return true;
+				}
+				return super.select(expression);
+			}
+
+		});
+		
+		List<IPosition> results = new ArrayList<IPosition>();
+		for (IPosition position : positions) {
+			AssociativeExpression aExp = ((AssociativeExpression) predicate
+								.getSubFormula(position));
+			int length = aExp.getChildren().length;
+			int tag = aExp.getTag() == Expression.BUNION ? Expression.BINTER
+					: Expression.BUNION;
+			IPosition child = position.getFirstChild();
+			int i = 0;
+			while (child != null) {
+				Formula subFormula = predicate.getSubFormula(child);
+				if (subFormula instanceof AssociativeExpression
+						&& subFormula.getTag() == tag) {
+					results.add(child);
+				}
+				++i;
+				if (i < length)
+					child = child.getNextSibling();
+				else
+					child = null;
+			}
+		}
+		
+		return results; 
+	}
+
+
+	/**
+	 * Return the tactic "Union/Intersection distribution rewrites"
+	 * {@link UnionInterDistRewrites} which is applicable to a hypothesis at a given
+	 * position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "Union/Intersection disttribution rewrites"
+	 * @author htson
+	 */
+	public static ITactic unionInterDistRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new UnionInterDistRewrites(),
+				new UnionInterDistRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "Composition/Union
+	 * distribution rewrites" {@link CompUnionDistRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> compUnionDistGetPositions(Predicate predicate) {
+		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(AssociativeExpression expression) {
+				if (expression.getTag() == Expression.FCOMP) {
+					return true;
+				}
+				return super.select(expression);
+			}
+
+		});
+		
+		List<IPosition> results = new ArrayList<IPosition>();
+		for (IPosition position : positions) {
+			AssociativeExpression aExp = ((AssociativeExpression) predicate
+								.getSubFormula(position));
+			int length = aExp.getChildren().length;
+			int tag = Expression.BUNION;
+			IPosition child = position.getFirstChild();
+			int i = 0;
+			while (child != null) {
+				Formula subFormula = predicate.getSubFormula(child);
+				if (subFormula instanceof AssociativeExpression
+						&& subFormula.getTag() == tag) {
+					results.add(child);
+				}
+				++i;
+				if (i < length)
+					child = child.getNextSibling();
+				else
+					child = null;
+			}
+		}
+		
+		return results; 
+	}
+
+
+	/**
+	 * Return the tactic "Composition/Union distribution rewrites"
+	 * {@link CompUnionDistRewrites} which is applicable to a hypothesis at a given
+	 * position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "Composition/Union disttribution rewrites"
+	 * @author htson
+	 */
+	public static ITactic compUnionDistRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new CompUnionDistRewrites(),
+				new CompUnionDistRewrites.Input(hyp, position));
 	}
 
 }
