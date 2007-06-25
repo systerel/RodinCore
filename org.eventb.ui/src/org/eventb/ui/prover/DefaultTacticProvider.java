@@ -91,7 +91,6 @@ public class DefaultTacticProvider implements ITacticProvider {
 		Formula subFormula = predicate.getSubFormula(position);
 		if (subFormula instanceof AssociativePredicate) {
 			// Return the operator between the first and second child
-
 			Predicate[] children = ((AssociativePredicate) subFormula)
 					.getChildren();
 			return getOperatorPosition(predStr, children[0].getSourceLocation()
@@ -130,7 +129,11 @@ public class DefaultTacticProvider implements ITacticProvider {
 					.getStart(), child.getSourceLocation().getStart());
 		}
 		if (subFormula instanceof AssociativeExpression) {
-			return new Point(0, 1);
+			// Return the operator between the first and second child
+			Expression[] children = ((AssociativeExpression) subFormula)
+					.getChildren();
+			return getOperatorPosition(predStr, children[0].getSourceLocation()
+					.getEnd() + 1, children[1].getSourceLocation().getStart());
 		}
 		if (subFormula instanceof AtomicExpression) {
 			return new Point(0, 1);
