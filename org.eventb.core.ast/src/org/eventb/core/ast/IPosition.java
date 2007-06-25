@@ -52,10 +52,10 @@ public interface IPosition extends Comparable<IPosition> {
 
 	/**
 	 * Returns the position of the next sibling node of the node designated by
-	 * this position. No attempt is made to check that this position indeed
-	 * denotes a node in some formula.
+	 * this position. No attempt is made to check that the returned position
+	 * indeed denotes a node in some formula.
 	 * <p>
-	 * This position must not be a root position, nor a first child position.
+	 * This position must not be a root position.
 	 * </p>
 	 * 
 	 * @return the position of the next sibling
