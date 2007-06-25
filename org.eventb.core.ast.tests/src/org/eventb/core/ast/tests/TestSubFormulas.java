@@ -646,8 +646,23 @@ public class TestSubFormulas extends TestCase {
 		final FixedFilter filter = new FixedFilter(f1, f2);
 		checkPositions(filter, f2);
 		checkPositions(filter, f1, "", f2);
+		
+		checkAllPositions(f1, IPosition.ROOT);
 	}
 	
+	// Traverse the formula asking for all sub-formulas after the given position
+	// (in preorder)
+	private <T extends Formula<T>> void checkAllPositions(Formula<T> f,
+			IPosition p) {
+		Formula s = f.getSubFormula(p);
+		if (s != null) {
+			checkAllPositions(f, p.getFirstChild());
+			if (! p.isRoot()) {
+				checkAllPositions(f, p.getNextSibling());
+			}
+		}
+	}
+
 	/**
 	 * Ensures that filtering is implemented for all kinds of formulas.  Also
 	 * ensures that one can rewrite the root of any formula.

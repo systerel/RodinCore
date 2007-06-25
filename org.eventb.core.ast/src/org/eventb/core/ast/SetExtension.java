@@ -312,7 +312,7 @@ public class SetExtension extends Expression {
 
 	@Override
 	protected Formula getChild(int index) {
-		if (index <= members.length) {
+		if (index < members.length) {
 			return members[index];
 		}
 		return null;

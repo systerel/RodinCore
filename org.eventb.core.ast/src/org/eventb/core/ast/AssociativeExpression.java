@@ -555,7 +555,7 @@ public class AssociativeExpression extends Expression {
 
 	@Override
 	protected Formula getChild(int index) {
-		if (index <= children.length) {
+		if (index < children.length) {
 			return children[index];
 		}
 		return null;
