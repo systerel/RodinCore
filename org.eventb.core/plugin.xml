@@ -23,13 +23,13 @@
             priority="normal"/>
       <content-type
             base-type="org.rodinp.core.rodin"
-            file-extensions="bcm"
+            file-extensions="bcm,bcm_tmp"
             id="scMachineFile"
             name="%eventBSCMachineFile"
             priority="normal"/>
       <content-type
             base-type="org.rodinp.core.rodin"
-            file-extensions="bcc"
+            file-extensions="bcc,bcc_tmp"
             id="scContextFile"
             name="%eventBSCContextFile"
             priority="normal"/>

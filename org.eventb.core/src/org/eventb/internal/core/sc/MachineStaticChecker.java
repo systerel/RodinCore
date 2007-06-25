@@ -35,10 +35,11 @@ public class MachineStaticChecker extends StaticChecker {
 	public boolean run(IFile source, IFile file, IProgressMonitor monitor)
 			throws CoreException {
 		
-		ISCMachineFile scMachineFile = (ISCMachineFile) RodinCore.valueOf(file).getMutableCopy();
-		IMachineFile machineFile = (IMachineFile) scMachineFile.getMachineFile().getSnapshot();
+		final ISCMachineFile scMachineFile = (ISCMachineFile) RodinCore.valueOf(file).getMutableCopy();
+		final IMachineFile machineFile = (IMachineFile) scMachineFile.getMachineFile().getSnapshot();
+		final ISCMachineFile scTmpFile = (ISCMachineFile) getTmpSCFile(scMachineFile);
 		
-		int size = machineFile.getChildren().length + 3;
+		final int totalWork = machineFile.getChildren().length + 4;
 		
 		try {
 			
@@ -46,14 +47,14 @@ public class MachineStaticChecker extends StaticChecker {
 					Messages.bind(
 							Messages.build_runningMSC, 
 							scMachineFile.getComponentName()), 
-					size);
+					totalWork);
 
-			scMachineFile.create(true, null);
+			scTmpFile.create(true, null);
 			
 			ISCStateRepository repository = createRepository(machineFile, monitor);
 			
 			machineFile.open(new SubProgressMonitor(monitor, 1));
-			scMachineFile.open(new SubProgressMonitor(monitor, 1));
+			scTmpFile.open(new SubProgressMonitor(monitor, 1));
 		
 			IModuleFactory moduleFactory = 
 				SCModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
@@ -66,17 +67,12 @@ public class MachineStaticChecker extends StaticChecker {
 			runProcessorModules(
 					rootModule,
 					machineFile, 
-					scMachineFile,
+					scTmpFile,
 					repository,
 					monitor);
 		
-			scMachineFile.save(new SubProgressMonitor(monitor, 1), true, false);
-		
-			// TODO delta checking
-			// return repository.targetHasChanged();
-		
-			return true;
-			
+			return compareAndSave(scMachineFile, scTmpFile, monitor);
+
 		} finally {
 			monitor.done();
 			scMachineFile.makeConsistent(null);

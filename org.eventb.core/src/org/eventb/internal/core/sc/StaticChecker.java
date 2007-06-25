@@ -12,14 +12,18 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBFile;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.internal.core.tool.IModuleFactory;
 import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
@@ -102,6 +106,33 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 					.printModuleTree(file.getElementType()));
 			System.out.println("++++++++++++++++++++++++++++++++++++++");
 		}
+	}
+
+	protected IEventBFile getTmpSCFile(IEventBFile scFile) {
+		final IRodinProject project = (IRodinProject) scFile.getParent();
+		final String name = scFile.getElementName();
+		return (IEventBFile) project.getRodinFile(name + "_tmp");
+	}
+
+	// Compare the temporary file with the current statically checked file.
+	// If they're equal, then don't do anything and return false. Otherwise,
+	// copy the temporary file to the statically-checked file, save it and
+	// return true.
+	//
+	// Consumes at most to ticks of the given monitor.
+	protected boolean compareAndSave(IEventBFile scFile, IEventBFile scTmpFile,
+			IProgressMonitor monitor) throws RodinDBException {
+		if (scTmpFile.hasSameAttributes(scFile)
+				&& scTmpFile.hasSameChildren(scFile)) {
+			scTmpFile.delete(true, new SubProgressMonitor(monitor, 1));
+			return false;
+		}
+		scTmpFile.save(new SubProgressMonitor(monitor, 1), true, false);
+		final IRodinElement project = scFile.getParent();
+		final String name = scFile.getElementName();
+		final SubProgressMonitor subPM = new SubProgressMonitor(monitor, 1);
+		scTmpFile.move(project, null, name, true, subPM);
+		return true;
 	}
 
 }

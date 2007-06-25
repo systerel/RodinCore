@@ -36,44 +36,39 @@ public class ContextStaticChecker extends StaticChecker {
 	public boolean run(IFile source, IFile file, IProgressMonitor monitor)
 			throws CoreException {
 
-		ISCContextFile scContextFile = (ISCContextFile) RodinCore.valueOf(file)
-				.getMutableCopy();
-		IContextFile contextFile = (IContextFile) scContextFile
+		final ISCContextFile scContextFile = (ISCContextFile) RodinCore.valueOf(file);
+		final IContextFile contextFile = (IContextFile) scContextFile
 				.getContextFile().getSnapshot();
-
-		int size = contextFile.getChildren().length + 3;
+		final ISCContextFile scTmpFile = (ISCContextFile) getTmpSCFile(scContextFile);
+		
+		final int totalWork = contextFile.getChildren().length + 5;
 
 		try {
 
 			monitor.beginTask(Messages.bind(Messages.build_runningMSC,
 					scContextFile.getComponentName()),
-					size);
+					totalWork);
 
-			scContextFile.create(true, monitor);
+			scTmpFile.create(true, new SubProgressMonitor(monitor, 1));
 
 			ISCStateRepository repository = createRepository(contextFile,
 					monitor);
 
 			contextFile.open(new SubProgressMonitor(monitor, 1));
-			scContextFile.open(new SubProgressMonitor(monitor, 1));
+			scTmpFile.open(new SubProgressMonitor(monitor, 1));
 
 			IModuleFactory moduleFactory = SCModuleManager.getInstance()
 					.getModuleFactory(DEFAULT_CONFIG);
 
 			printModuleTree(contextFile, moduleFactory);
 
-			ISCProcessorModule rootModule = 
-				(ISCProcessorModule) moduleFactory.getRootModule(IContextFile.ELEMENT_TYPE);
+			final ISCProcessorModule rootModule = (ISCProcessorModule) moduleFactory
+					.getRootModule(IContextFile.ELEMENT_TYPE);
 
-			runProcessorModules(rootModule, contextFile, scContextFile,
+			runProcessorModules(rootModule, contextFile, scTmpFile,
 					repository, monitor);
 
-			scContextFile.save(new SubProgressMonitor(monitor, 1), true, false);
-
-			// TODO delta checking
-			// return repository.targetHasChanged();
-
-			return true;
+			return compareAndSave(scContextFile, scTmpFile, monitor);
 
 		} finally {
 			monitor.done();
