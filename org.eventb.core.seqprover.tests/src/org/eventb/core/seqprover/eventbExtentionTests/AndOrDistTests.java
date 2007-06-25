@@ -92,12 +92,12 @@ public class AndOrDistTests extends AbstractManualRewriterTests {
 				P4, "3",
 				P5, "1.3",
 				P6, "1.1.3",
-				P7, "3",
-				P8, "1.3",
-				P9, "1.1.3",
-				P10, "3",
-				P11, "1.3",
-				P12, "1.1.3"
+				P7, "2",
+				P8, "1.2",
+				P9, "1.1.2",
+				P10, "2",
+				P11, "1.2",
+				P12, "1.1.2"
 		};
 	}
 
