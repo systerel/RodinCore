@@ -70,6 +70,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunCompImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunSetMinusImg;
@@ -88,11 +89,13 @@ import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivia
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ConvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomCompRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistLeftRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistRightRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomRanUnionDistRewrites;
@@ -100,6 +103,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplH
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanCompRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistLeftRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistRightRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnionLeftRewrites;
@@ -2462,6 +2466,230 @@ public class Tactics {
 	public static ITactic relOvr(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new RelOvrRewrites(),
 				new RelOvrRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "composition image
+	 * rewrites" {@link CompImgRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> compImgGetPositions(Predicate predicate) {
+		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryExpression expression) {
+				if (expression.getTag() == Expression.RELIMAGE) {
+					return true;
+				}
+				return super.select(expression);
+			}
+
+		});
+		
+		List<IPosition> results = new ArrayList<IPosition>();
+		for (IPosition position : positions) {
+			IPosition firstChild = position.getFirstChild();  // Child on the left
+			Formula left = predicate.getSubFormula(firstChild);
+			if (left.getTag() == Expression.FCOMP) {
+				IPosition child = firstChild.getFirstChild();
+				Formula subFormula = predicate.getSubFormula(child);
+				while (subFormula != null) {
+					if (!child.isFirstChild()) {
+						results.add(child);
+					}
+					child = child.getNextSibling();
+					subFormula = predicate.getSubFormula(child);
+				}
+			}
+		}
+		
+		return results; 
+	}
+
+
+	/**
+	 * Return the tactic "composition image rewrites" {@link CompImgRewrites}
+	 * which is applicable to a hypothesis at a given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "composition image rewrites"
+	 * @author htson
+	 */
+	public static ITactic compImg(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new CompImgRewrites(),
+				new CompImgRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "domain
+	 * manipulation with composition rewrites" {@link DomCompRewrites} to a
+	 * predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> domCompGetPositions(Predicate predicate) {
+		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(AssociativeExpression expression) {
+				if (expression.getTag() == Expression.FCOMP) {
+					return true;
+				}
+				return super.select(expression);
+			}
+
+		});
+		
+		List<IPosition> results = new ArrayList<IPosition>();
+		for (IPosition position : positions) {
+			IPosition child = position.getFirstChild();
+			Formula subFormula = predicate.getSubFormula(child);
+			while (subFormula != null) {
+				child = child.getNextSibling();
+				Formula nextFormula = predicate.getSubFormula(child);
+				if (nextFormula != null
+						&& (subFormula.getTag() == Expression.DOMRES || subFormula
+								.getTag() == Expression.DOMSUB)) {
+					results.add(child.getPreviousSibling());
+				}
+				subFormula = nextFormula;
+			}
+		}
+		
+		return results; 
+	}
+
+	
+	/**
+	 * Return the tactic "domain manipulation with composition rewrites"
+	 * {@link DomCompRewrites} which is applicable to a hypothesis at a given
+	 * position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "domain manipulation with composition rewrites"
+	 * @author htson
+	 */
+	public static ITactic domComp(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new DomCompRewrites(),
+				new DomCompRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "range
+	 * manipulation with composition rewrites" {@link DomCompRewrites} to a
+	 * predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> ranCompGetPositions(Predicate predicate) {
+		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(AssociativeExpression expression) {
+				if (expression.getTag() == Expression.FCOMP) {
+					return true;
+				}
+				return super.select(expression);
+			}
+
+		});
+		
+		List<IPosition> results = new ArrayList<IPosition>();
+		for (IPosition position : positions) {
+			IPosition child = position.getFirstChild();
+			Formula subFormula = predicate.getSubFormula(child);
+			while (subFormula != null) {
+				if (!child.isFirstChild()
+						&& (subFormula.getTag() == Expression.RANRES || subFormula
+								.getTag() == Expression.RANSUB)) {
+					results.add(child);
+				}
+				child = child.getNextSibling();
+				subFormula = predicate.getSubFormula(child);
+			}
+		}
+		
+		return results; 
+	}
+
+
+	/**
+	 * Return the tactic "range manipulation with composition rewrites"
+	 * {@link RanCompRewrites} which is applicable to a hypothesis at a given
+	 * position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "range manipulation with composition rewrites"
+	 * @author htson
+	 */
+	public static ITactic ranComp(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new RanCompRewrites(),
+				new RanCompRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "function
+	 * composition image" {@link FunCompImg} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> funCompImgGetPositions(Predicate predicate) {
+		return new FunCompImg().getPositions(predicate, false);
+	}
+
+	
+	/**
+	 * Return the tactic "function composition image" {@link FunCompImg} which
+	 * is applicable to a hypothesis at a given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "function composition image"
+	 * @author htson
+	 */
+	public static ITactic funCompImg(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new FunCompImg(),
+				new FunCompImg.Input(hyp, position));
 	}
 
 }

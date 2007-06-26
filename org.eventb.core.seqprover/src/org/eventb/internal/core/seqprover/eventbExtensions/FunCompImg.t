@@ -8,6 +8,8 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -46,15 +48,34 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 /**
- * Basic implementation for Function Converse inference rule f~(f(E))
+ * Basic implementation for "function apply to singleton set image" f[{E}]
  */
 @SuppressWarnings("unused")
-public class FunSetMinusImg extends AbstractManualInference {
+public class FunCompImg extends AbstractManualInference {
 
 	%include {Formula.tom}
 	
 	public String getReasonerID() {
-		return SequentProver.PLUGIN_ID + ".funSetMinusImg";
+		return SequentProver.PLUGIN_ID + ".funCompImg";
+	}
+	
+	@Override
+	protected List<IPosition> filter(Predicate predicate, List<IPosition> positions) {
+		List<IPosition> results = new ArrayList<IPosition>();
+		for (IPosition position : positions) {
+			IPosition leftChild = position.getFirstChild();
+			IPosition child = leftChild.getFirstChild();
+			Formula subFormula = predicate.getSubFormula(child);
+			while (subFormula != null) {
+				if (!child.isFirstChild()) {
+					results.add(child);
+				}
+				child = child.getNextSibling();
+				subFormula = predicate.getSubFormula(child);
+			}
+		}
+		
+		return results; 
 	}
 	
 	@Override
@@ -62,9 +83,9 @@ public class FunSetMinusImg extends AbstractManualInference {
 	    %match (Expression expression) {
 			
 			/**
-	    	 * Set Theory: f[S ∖ T]
+	    	 * Set Theory: (f;...;g)(E)
 	    	 */
-			RelImage(_, SetMinus(_, _)) -> {
+			FunImage(Fcomp(_), _) -> {
 				return true;
 			}
 
@@ -74,7 +95,7 @@ public class FunSetMinusImg extends AbstractManualInference {
 
 	@Override
 	protected String getDisplayName() {
-		return "fun. set minus img.";
+		return "fun. comp. img.";
 	}
 
 	@Override
@@ -86,48 +107,76 @@ public class FunSetMinusImg extends AbstractManualInference {
 		else if (!seq.containsHypothesis(predicate)) {
 			return null;
 		}
-
-		Formula subFormula = predicate.getSubFormula(position);
-
-		// "subFormula" should have the form f[S ∖ T]
-		if (!isApplicable(subFormula))
+		
+		Formula subExp = predicate.getSubFormula(position);
+		if (position.isRoot())
 			return null;
-			
-		Expression expression = (Expression) subFormula;
 
-		Expression f = null;
-		Expression S = null;
-		Expression T = null;
+		IPosition parentPos = position.getParent();
+		if (parentPos.isRoot()) {
+			return null;
+		}
+		
+		IPosition replacedPos = parentPos.getParent();
+
+		Formula formula = predicate.getSubFormula(replacedPos);
+		
+		if (formula == null || !(formula instanceof Expression))
+			return null;
+		
+		Expression expression = (Expression) formula;
+		
+		Collection<Expression> firstHalf = new ArrayList<Expression>();
+		Collection<Expression> secondHalf = new ArrayList<Expression>();
+		Expression E = null;
+		
 	    %match (Expression expression) {
 
 			/**
-	    	 * Set Theory: f[S ∖ T]
+	    	 * Set Theory: (f;...;g;h;...;l)(E) and function compsition contains subExp
 	    	 */
-			RelImage(ff, SetMinus(SS, TT)) -> {
-				f = `ff;
-				S = `SS;
-				T = `TT;
+			FunImage(Fcomp(children), EE) -> {
+				if (subExp == `children[0])
+					return null;
+				boolean found = false;
+				for (Expression child : `children) {
+					if (found)
+						secondHalf.add(child);
+					else if (child == subExp) {
+						found = true;
+						secondHalf.add(child);
+					}
+					else
+						firstHalf.add(child);
+				}
+				E = `EE;
 			}
 
 	    }
-		if (f == null)
+		if (firstHalf.size() == 0 || secondHalf.size() == 0)
 			return null;
 		
 		// There will be 2 antecidents
 		IAntecedent[] antecidents = new IAntecedent[2];
 
-		// f : A +-> B (from type of f)
-		antecidents[0] = makeFunctionalAntecident(f, true, Expression.PFUN);
+		// (f;...;g)(E)
+		Expression fToGComp = makeCompIfNeccessary(firstHalf);
+		Expression funImg = ff.makeBinaryExpression(Expression.FUNIMAGE,
+				fToGComp, E, null);
 		
-		// f[S] ∖ f[T]
-		Expression exp1 = ff.makeBinaryExpression(Expression.RELIMAGE, f, S, null);
-		Expression exp2 = ff.makeBinaryExpression(Expression.RELIMAGE, f, T, null);
-		Expression exp = ff.makeBinaryExpression(Expression.SETMINUS, exp1, exp2, null);
-		
-		Predicate inferredPred = predicate.rewriteSubFormula(position,
-				exp, ff);
+		// (h;...;l)((f;...;g)(E))
+		Expression hToLComp = makeCompIfNeccessary(secondHalf);
+		Expression funImg2 = ff.makeBinaryExpression(Expression.FUNIMAGE,
+				hToLComp, funImg, null);
 
-		antecidents[1] = makeAntecedent(pred, inferredPred);
+		Predicate inferredPred = predicate.rewriteSubFormula(replacedPos,
+				funImg2, ff);
+
+		// Well-definedness
+		antecidents[0] = makeAntecedent(pred, inferredPred);
+
+		antecidents[1] = makeWD(inferredPred);
+
 		return antecidents;
 	}
 	

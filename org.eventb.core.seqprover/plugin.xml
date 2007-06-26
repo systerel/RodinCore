@@ -200,6 +200,10 @@
             id="funSingletonImg"
             name="%funSingletonImgName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FunCompImg"
+            id="funCompImg"
+            name="%funCompImgName"/>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ConvRewrites"
             id="convRewrites"
             name="%convRewritesName"/>
@@ -243,6 +247,18 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelOvrRewrites"
             id="relOvrRewrites"
             name="%relOvrRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewrites"
+            id="compImgRewrites"
+            name="%compImgRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomCompRewrites"
+            id="domCompRewrites"
+            name="%domCompRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanCompRewrites"
+            id="ranCompRewrites"
+            name="%ranCompRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

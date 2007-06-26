@@ -83,6 +83,9 @@ public class FunSingletonImg extends AbstractManualInference {
 		Predicate predicate = pred;
 		if (predicate == null)
 			predicate = seq.goal();
+		else if (!seq.containsHypothesis(predicate)) {
+			return null;
+		}
 
 		Formula subFormula = predicate.getSubFormula(position);
 

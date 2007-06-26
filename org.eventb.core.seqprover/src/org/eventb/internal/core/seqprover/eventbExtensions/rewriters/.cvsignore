@@ -1,13 +1,16 @@
 AutoRewriterImpl.java
 AndOrDistRewriterImpl.java
+CompImgRewriterImpl.java
 CompUnionDistRewriterImpl.java
 ConvRewriterImpl.java
+DomCompRewriterImpl.java
 DomDistLeftRewriterImpl.java
 DomDistRightRewriterImpl.java
 DomRanUnionDistRewriterImpl.java
 EqvRewriterImpl.java
 ImpAndRewriterImpl.java
 ImpOrRewriterImpl.java
+RanCompRewriterImpl.java
 RanDistLeftRewriterImpl.java
 RanDistRightRewriterImpl.java
 RelImgUnionLeftRewriterImpl.java
