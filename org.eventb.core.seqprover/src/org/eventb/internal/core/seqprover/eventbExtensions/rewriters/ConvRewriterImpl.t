@@ -109,6 +109,20 @@ public class ConvRewriterImpl extends DefaultRewriter {
 				return ff.makeBinaryExpression(
 						Expression.DOMSUB, `s, rConverse, null);
 			}
+
+			/**
+	    	 * Set Theory : (p;...;q)∼ == q∼;...;p∼
+	    	 */
+			Converse(Fcomp(children)) -> {
+				int length = `children.length;
+				Expression [] newChildren = new Expression[length];
+				for (int i = 0; i < length; ++i) {
+					newChildren[i] = ff.makeUnaryExpression(Expression.CONVERSE,
+							`children[length - 1 - i], null);
+				}
+				return ff.makeAssociativeExpression(
+						Expression.FCOMP, newChildren, null);
+			}
 	    }
 	    return expression;
 	}

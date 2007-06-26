@@ -95,14 +95,18 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Disjunction
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistLeftRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistRightRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomRanUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistLeftRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistRightRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnionLeftRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnionRightRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelOvrRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusionUniversal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites;
@@ -1745,6 +1749,10 @@ public class Tactics {
 							&& child.getTag() == Expression.BINTER) {
 						return true;
 					}
+					if (child instanceof AssociativeExpression
+							&& child.getTag() == Expression.FCOMP) {
+						return true;
+					}
 					if (child instanceof BinaryExpression
 							&& child.getTag() == Expression.DOMRES) {
 						return true;
@@ -2090,22 +2098,17 @@ public class Tactics {
 		for (IPosition position : positions) {
 			AssociativePredicate aPred = ((AssociativePredicate) predicate
 								.getSubFormula(position));
-			int length = aPred.getChildren().length;
 			int tag = aPred.getTag() == Predicate.LAND ? Predicate.LOR
 					: Predicate.LAND;
 			IPosition child = position.getFirstChild();
-			int i = 0;
-			while (child != null) {
-				Formula subFormula = predicate.getSubFormula(child);
+			Formula subFormula = predicate.getSubFormula(child);
+			while (subFormula != null) {
 				if (subFormula instanceof AssociativePredicate
 						&& subFormula.getTag() == tag) {
 					results.add(child);
 				}
-				++i;
-				if (i < length)
-					child = child.getNextSibling();
-				else
-					child = null;
+				child = child.getNextSibling();
+				subFormula = predicate.getSubFormula(child);
 			}
 		}
 		
@@ -2161,22 +2164,17 @@ public class Tactics {
 		for (IPosition position : positions) {
 			AssociativeExpression aExp = ((AssociativeExpression) predicate
 								.getSubFormula(position));
-			int length = aExp.getChildren().length;
 			int tag = aExp.getTag() == Expression.BUNION ? Expression.BINTER
 					: Expression.BUNION;
 			IPosition child = position.getFirstChild();
-			int i = 0;
-			while (child != null) {
-				Formula subFormula = predicate.getSubFormula(child);
+			Formula subFormula = predicate.getSubFormula(child);
+			while (subFormula != null) {
 				if (subFormula instanceof AssociativeExpression
 						&& subFormula.getTag() == tag) {
 					results.add(child);
 				}
-				++i;
-				if (i < length)
-					child = child.getNextSibling();
-				else
-					child = null;
+				child = child.getNextSibling();
+				subFormula = predicate.getSubFormula(child);
 			}
 		}
 		
@@ -2229,23 +2227,16 @@ public class Tactics {
 		
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
-			AssociativeExpression aExp = ((AssociativeExpression) predicate
-								.getSubFormula(position));
-			int length = aExp.getChildren().length;
 			int tag = Expression.BUNION;
 			IPosition child = position.getFirstChild();
-			int i = 0;
-			while (child != null) {
-				Formula subFormula = predicate.getSubFormula(child);
+			Formula subFormula = predicate.getSubFormula(child);
+			while (subFormula != null) {
 				if (subFormula instanceof AssociativeExpression
 						&& subFormula.getTag() == tag) {
 					results.add(child);
 				}
-				++i;
-				if (i < length)
-					child = child.getNextSibling();
-				else
-					child = null;
+				child = child.getNextSibling();
+				subFormula = predicate.getSubFormula(child);
 			}
 		}
 		
@@ -2270,6 +2261,207 @@ public class Tactics {
 	public static ITactic compUnionDistRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new CompUnionDistRewrites(),
 				new CompUnionDistRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "relational image
+	 * of an union rewrites" {@link RelImgUnionLeftRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> relImgUnionLeftGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(BinaryExpression expression) {
+				if (expression.getTag() == Expression.RELIMAGE) {
+					Expression left = expression.getLeft();
+					return left instanceof AssociativeExpression
+							&& left.getTag() == Expression.BUNION;
+				}
+				return super.select(expression);
+			}
+
+		});
+	}
+
+
+	/**
+	 * Return the tactic "relational image of an union rewrites"
+	 * {@link RelImgUnionLeftRewrites} which is applicable to a hypothesis at a
+	 * given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "relational image of an union rewrites"
+	 * @author htson
+	 */
+	public static ITactic relImgUnionLeftRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new RelImgUnionLeftRewrites(),
+				new RelImgUnionLeftRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "domain or range /
+	 * union distribution rewrites" {@link DomRanUnionDistRewrites} to a
+	 * predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> domRanUnionDistGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(UnaryExpression expression) {
+				if (expression.getTag() == Expression.KDOM
+						|| expression.getTag() == Expression.KRAN) {
+					Expression child = expression.getChild();
+					return child instanceof AssociativeExpression
+							&& child.getTag() == Expression.BUNION;
+				}
+				return super.select(expression);
+			}
+
+		});
+	}
+
+
+	/**
+	 * Return the tactic "domain or range with union distribution rewrites"
+	 * {@link DomRanUnionDistRewrites} which is applicable to a hypothesis at a
+	 * given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "domain or range with union distribution rewrites"
+	 * @author htson
+	 */
+	public static ITactic domRanUnionDistRewrites(Predicate hyp,
+			IPosition position) {
+		return BasicTactics.reasonerTac(new DomRanUnionDistRewrites(),
+				new DomRanUnionDistRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "remove inclusion
+	 * (universal) rewrites" {@link RemoveInclusionUniversalRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> riUniversalGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(RelationalPredicate predicate) {
+				if (predicate.getTag() == Predicate.SUBSETEQ) {
+					return true;
+				}
+				return super.select(predicate);
+			}
+
+		});
+	}
+
+
+	/**
+	 * Return the tactic "remove inclusion (universal) rewrites"
+	 * {@link RemoveInclusionUniversalRewrites} which is applicable to a
+	 * hypothesis at a given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "remove inclusion (universal) rewrites"
+	 * @author htson
+	 */
+	public static ITactic removeInclusionUniversal(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new RemoveInclusionUniversal(),
+				new RemoveInclusionUniversal.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "relation
+	 * overriding rewrites" {@link RelOvrRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> relOvrGetPositions(Predicate predicate) {
+		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(AssociativeExpression expression) {
+				if (expression.getTag() == Expression.OVR) {
+					return true;
+				}
+				return super.select(expression);
+			}
+
+		});
+		
+		List<IPosition> results = new ArrayList<IPosition>();
+		for (IPosition position : positions) {
+			IPosition child = position.getFirstChild();
+			Formula subFormula = predicate.getSubFormula(child);
+			while (subFormula != null) {
+				if (!child.isFirstChild()) {
+					results.add(child);
+				}
+				child = child.getNextSibling();
+				subFormula = predicate.getSubFormula(child);
+			}
+		}
+		
+		return results; 
+	}
+
+
+	/**
+	 * Return the tactic "relation overriding rewrites" {@link RelOvrRewrites}
+	 * which is applicable to a hypothesis at a given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "relation overriding rewrites"
+	 * @author htson
+	 */
+	public static ITactic relOvr(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new RelOvrRewrites(),
+				new RelOvrRewrites.Input(hyp, position));
 	}
 
 }

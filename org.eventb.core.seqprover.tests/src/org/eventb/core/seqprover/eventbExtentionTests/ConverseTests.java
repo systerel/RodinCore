@@ -98,6 +98,20 @@ public class ConverseTests extends AbstractManualRewriterTests {
 
 	String resultP18 = "∀x·x=0⇒{x,1} ⩤ r∼={x ↦ 1}";
 
+	
+	// (p;...;q)~ == q~;...;p~
+	String P19 = "(p;{2 ↦ x};{3 ↦ x})∼ = {x ↦ 1}";
+
+	String resultP19 = "{3 ↦ x}∼;{2 ↦ x}∼;p∼={x ↦ 1}";
+
+	String P20 = "(1 = x) ⇒ (p;{2 ↦ x};{3 ↦ x})∼ = {x ↦ 1}";
+
+	String resultP20 = "1=x⇒{3 ↦ x}∼;{2 ↦ x}∼;p∼={x ↦ 1}";
+
+	String P21 = "∀x·x = 0 ⇒ (p;{2 ↦ x};{3 ↦ x})∼ = {x ↦ 1}";
+
+	String resultP21 = "∀x·x=0⇒{3 ↦ x}∼;{2 ↦ x}∼;p∼={x ↦ 1}";
+	
 	@Override
 	public String getReasonerID() {
 		return "org.eventb.core.seqprover.convRewrites";
@@ -121,7 +135,16 @@ public class ConverseTests extends AbstractManualRewriterTests {
 				new SuccessfulTest(P9, "1.1.0", resultP9),
 				new SuccessfulTest(P10, "0", resultP10),
 				new SuccessfulTest(P11, "1.1", resultP11),
-				new SuccessfulTest(P12, "1.1.0", resultP12)
+				new SuccessfulTest(P12, "1.1.0", resultP12),
+				new SuccessfulTest(P13, "0", resultP13),
+				new SuccessfulTest(P14, "1.1", resultP14),
+				new SuccessfulTest(P15, "1.1.0", resultP15),
+				new SuccessfulTest(P16, "0", resultP16),
+				new SuccessfulTest(P17, "1.1", resultP17),
+				new SuccessfulTest(P18, "1.1.0", resultP18),
+				new SuccessfulTest(P19, "0", resultP19),
+				new SuccessfulTest(P20, "1.0", resultP20),
+				new SuccessfulTest(P21, "1.1.0", resultP21)
 		};
 	}
 
@@ -139,7 +162,16 @@ public class ConverseTests extends AbstractManualRewriterTests {
 				P9, "1.0.1",
 				P10, "1",
 				P11, "1.0",
-				P12, "1.0.1"
+				P12, "1.0.1",
+				P13, "1",
+				P14, "1.0",
+				P15, "1.0.1",
+				P16, "1",
+				P17, "1.0",
+				P18, "1.0.1",
+				P19, "1",
+				P20, "1.1",
+				P21, "1.0.1"
 		};
 	}
 
@@ -157,7 +189,16 @@ public class ConverseTests extends AbstractManualRewriterTests {
 				P9, "1.1.0",
 				P10, "0",
 				P11, "1.1",
-				P12, "1.1.0"
+				P12, "1.1.0",
+				P13, "0",
+				P14, "1.1",
+				P15, "1.1.0",
+				P16, "0",
+				P17, "1.1",
+				P18, "1.1.0",
+				P19, "0",
+				P20, "1.0",
+				P21, "1.1.0"
 		};
 	}
 

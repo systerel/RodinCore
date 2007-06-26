@@ -1389,6 +1389,24 @@
             target="goal"
             tooltip="%proofTactics.riGoal.tooltip"/>
       <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.riUnivHyp"
+            interrupt="false"
+            name="%proofTactics.riUnivHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusionUniversalHyp"
+            target="hypothesis"
+            tooltip="%proofTactics.riUnivHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.riUnivGoal"
+            interrupt="false"
+            name="%proofTactics.riUnivGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusionUniversalGoal"
+            target="goal"
+            tooltip="%proofTactics.riUnivGoal.tooltip"/>
+      <tactic
             icon="icons/full/ctool16/impI_prover.gif"
             id="org.eventb.ui.impI"
             interrupt="false"
@@ -1498,6 +1516,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionRightGoal"
             target="goal"
             tooltip="%proofTactic.relImgUnionRightGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.relImgUnionLeftHyp"
+            interrupt="false"
+            name="%proofTactic.relImgUnionLeftHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionLeftHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.relImgUnionLeftHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.relImgUnionLeftGoal"
+            interrupt="false"
+            name="%proofTactic.relImgUnionLeftGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionLeftGoal"
+            target="goal"
+            tooltip="%proofTactic.relImgUnionLeftGoal.tooltip"/>
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.setEqlHyp"
@@ -1750,6 +1786,42 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.CompUnionDistGoal"
             target="goal"
             tooltip="%proofTactic.compUnionDistGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.domRanUnionDistHyp"
+            interrupt="false"
+            name="%proofTactic.domRanUnionDistHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DomRanUnionDistHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.domRanUnionDistHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.domRanUnionDistGoal"
+            interrupt="false"
+            name="%proofTactic.domRanUnionDistGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DomRanUnionDistGoal"
+            target="goal"
+            tooltip="%proofTactic.domRanUnionDistGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.relOvrHyp"
+            interrupt="false"
+            name="%proofTactic.relOvrHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RelOvrHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.relOvrHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.relOvrGoal"
+            interrupt="false"
+            name="%proofTactic.relOvrGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RelOvrGoal"
+            target="goal"
+            tooltip="%proofTactic.relOvrGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">

@@ -144,6 +144,10 @@
             id="ri"
             name="%riName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusionUniversal"
+            id="riUniversal"
+            name="%riUniversalName"/>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF"
             id="autoImpE"
             name="%autoImpEname"/>
@@ -171,6 +175,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnionRightRewrites"
             id="relImgUnionRightRewrites"
             name="%relImgUnionRightRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnionLeftRewrites"
+            id="relImgUnionLeftRewrites"
+            name="%relImgUnionLeftRewritesName"/>
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites"
             id="setEqlRewrites"
@@ -227,6 +235,14 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites"
             id="compUnionDistRewrites"
             name="%compUnionDistRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomRanUnionDistRewrites"
+            id="domRanUnionDistRewrites"
+            name="%domRanUnionDistRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelOvrRewrites"
+            id="relOvrRewrites"
+            name="%relOvrRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">
