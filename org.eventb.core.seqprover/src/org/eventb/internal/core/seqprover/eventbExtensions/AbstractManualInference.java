@@ -302,7 +302,13 @@ public abstract class AbstractManualInference implements IReasoner {
 
 		if (topLevel)
 			return getTopLevelOnly(predicate, positions);
+		
+		return filter(predicate, positions);
+	}
 
+
+	protected List<IPosition> filter(Predicate predicate,
+			List<IPosition> positions) {
 		return positions;
 	}
 
@@ -352,5 +358,12 @@ public abstract class AbstractManualInference implements IReasoner {
 
 	protected IAntecedent makeWD(Predicate pred) {
 		return ProverFactory.makeAntecedent(Lib.WD(pred));
+	}
+
+	protected Expression makeCompIfNeccessary(Collection<Expression> children) {
+		if (children.size() == 1)
+			return children.iterator().next();
+		else
+			return ff.makeAssociativeExpression(Expression.FCOMP, children, null);	
 	}
 }
