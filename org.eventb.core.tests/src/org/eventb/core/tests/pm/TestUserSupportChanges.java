@@ -66,7 +66,7 @@ public class TestUserSupportChanges extends TestPM {
 				"f(x)∈ℕ", "x∈dom(f)");
 
 		// Turn on beginner mode
-		manager.getProvingMode().setExpertMode(false);
+		manager.getProvingMode().setPostTacticEnable(false);
 		manager.getProvingMode().setPostTactics(new String[0]);
 		userSupport = new UserSupport();
 	}

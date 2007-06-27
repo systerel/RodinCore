@@ -43,7 +43,7 @@ public class TestUserSupports extends TestPM {
 	protected void setUp() throws Exception {
 		super.setUp();
 		// Turn on beginner mode
-		manager.getProvingMode().setExpertMode(false);
+		manager.getProvingMode().setPostTacticEnable(false);
 	}
 
 	public void testSetInput() throws CoreException {

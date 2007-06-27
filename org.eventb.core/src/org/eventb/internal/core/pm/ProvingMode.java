@@ -12,7 +12,7 @@ import org.eventb.core.seqprover.SequentProver;
 
 public class ProvingMode implements IProvingMode {
 
-	private boolean expertMode = false;
+	private boolean postTacticEnabled = false;
 
 	private ITactic postTactic;
 	
@@ -22,16 +22,25 @@ public class ProvingMode implements IProvingMode {
 		setPostTactics(postTacticRegistry.getTacticIDs());
 	}
 	
+	@Deprecated
 	public boolean isExpertMode() {
-		return expertMode;
+		return (getPostTactic() == null);
 	}
 
+	@Deprecated
 	public void setExpertMode(boolean mode) {
-		expertMode = mode;
+		setPostTacticEnable(mode);
+	}
+
+	public void setPostTacticEnable(boolean enable) {
+		postTacticEnabled = enable;
 	}
 
 	public ITactic getPostTactic() {
-		return postTactic;
+		if (postTacticEnabled)
+			return postTactic;
+		else
+			return null;
 	}
 
 	private ITactic composeTactics(ITactic ... list) {

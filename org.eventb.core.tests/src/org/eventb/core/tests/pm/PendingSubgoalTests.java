@@ -117,7 +117,7 @@ public class PendingSubgoalTests extends TestPM {
 	protected void setUp() throws Exception {
 		super.setUp();
 		// Turn on beginner mode
-		manager.getProvingMode().setExpertMode(false);
+		manager.getProvingMode().setPostTacticEnable(false);
 
 		// Set norm as postactic
 		EventBPlugin.getDefault().getUserSupportManager().getProvingMode()

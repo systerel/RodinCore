@@ -143,7 +143,8 @@ public class ProofState implements IProofState {
 							.getUserSupportManager();
 					ITactic postTactic = usManager.getProvingMode()
 							.getPostTactic();
-					postTactic.apply(pt.getRoot(), new ProofMonitor(monitor));
+					if (postTactic != null)
+						postTactic.apply(pt.getRoot(), new ProofMonitor(monitor));
 				}
 				// Current node is the next pending subgoal or the root of the
 				// proof tree if there are no pending subgoal.
@@ -604,7 +605,8 @@ public class ProofState implements IProofState {
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 						.getUserSupportManager();
 				ITactic postTactic = usManager.getProvingMode().getPostTactic();
-				postTactic.apply(node, pm);
+				if (postTactic != null)
+					postTactic.apply(node, pm);
 			}
 			deltaProcessor.informationChanged(userSupport,
 					new UserSupportInformation(info,

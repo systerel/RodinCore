@@ -56,7 +56,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 				"f(x)∈ℕ", "x∈dom(f)");
 
 		// Turn on beginner mode
-		manager.getProvingMode().setExpertMode(false);
+		manager.getProvingMode().setPostTacticEnable(false);
 
 		userSupport = new UserSupport();
 	}
