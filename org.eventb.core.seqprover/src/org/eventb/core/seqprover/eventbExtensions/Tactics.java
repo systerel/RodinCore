@@ -2786,4 +2786,18 @@ public class Tactics {
 
 	}
 
+	/**
+	 * The class for "Failure tactic" that always fails.
+	 * <p>
+	 * 
+	 * @author htson
+	 */
+	public static class FailureTactic implements ITactic {
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			return "Not applicable";
+		}
+
+	}
+	
 }
