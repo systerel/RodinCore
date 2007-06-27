@@ -7,8 +7,8 @@ public class PreferenceConstants {
 
 	public static final String P_PROOFPAGE_AUTOLAYOUT = "Proofs page auto layout";
 
-	public static final String P_EXPERTMODE = "Expert mode";
+	public static final String P_PROVING_MODE = "Expert mode";
 
-	public static final String P_PROVINGMODE = "Proving mode";
+	public static final String P_POSTTACTIC_DETAILS = "Proving mode";
 
 }

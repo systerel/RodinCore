@@ -778,17 +778,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			@Override
 			public void run() {
 				boolean checked = expertMode.isChecked();
-				store.setValue(PreferenceConstants.P_EXPERTMODE,
+				store.setValue(PreferenceConstants.P_PROVING_MODE,
 						checked);
 			}
 		};
 		boolean b = store
-						.getBoolean(PreferenceConstants.P_EXPERTMODE);
+						.getBoolean(PreferenceConstants.P_PROVING_MODE);
 		expertMode.setChecked(b);
 		IUserSupportManager usManager = EventBPlugin.getDefault()
 				.getUserSupportManager();
 		IProvingMode provingMode = usManager.getProvingMode();
-		provingMode.setExpertMode(b);
+		provingMode.setPostTacticEnable(b);
 		expertMode.setToolTipText("Expert mode switch");
 
 		expertMode.setImageDescriptor(EventBImage
@@ -952,7 +952,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(
-				PreferenceConstants.P_EXPERTMODE)) {
+				PreferenceConstants.P_PROVING_MODE)) {
 			Object newValue = event.getNewValue();
 			assert newValue instanceof Boolean || newValue instanceof String;
 			if (newValue instanceof String) {
@@ -962,14 +962,14 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 				.getUserSupportManager();
 				IProvingMode provingMode = usManager.getProvingMode();
-				provingMode.setExpertMode(b);
+				provingMode.setPostTacticEnable(b);
 			} else {
 				Boolean b = (Boolean) newValue;
 				expertMode.setChecked(b);
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 					.getUserSupportManager();
 				IProvingMode provingMode = usManager.getProvingMode();
-				provingMode.setExpertMode(b);
+				provingMode.setPostTacticEnable(b);
 			}
 		}
 

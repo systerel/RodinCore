@@ -25,7 +25,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		// Default value for tactic registry
 		String [] tacticIDs = EventBPlugin.getDefault().getPostTacticRegistry()
 				.getTacticIDs();
-		store.setDefault(PreferenceConstants.P_PROVINGMODE, ProverUIUtils
+		store.setDefault(PreferenceConstants.P_POSTTACTIC_DETAILS, ProverUIUtils
 				.toCommaSeparatedList(tacticIDs));
 	}
 

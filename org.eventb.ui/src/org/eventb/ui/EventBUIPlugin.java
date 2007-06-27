@@ -152,7 +152,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		final IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
 
-		String s = store.getString(PreferenceConstants.P_PROVINGMODE);
+		String s = store.getString(PreferenceConstants.P_POSTTACTIC_DETAILS);
 		String [] tacticIDs = ProverUIUtils.parseString(s);
 		IProvingMode provingMode = EventBPlugin.getDefault()
 				.getUserSupportManager().getProvingMode();

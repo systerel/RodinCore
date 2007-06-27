@@ -2,6 +2,7 @@ package org.eventb.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eventb.core.EventBPlugin;
@@ -30,8 +31,14 @@ public class PostTacticPreferencePage
 
 	@Override
 	public void createFieldEditors() {
+		addField(
+				new BooleanFieldEditor(
+					PreferenceConstants.P_PROVING_MODE,
+					"Enable &post-tactic for proving",
+					getFieldEditorParent()));
+
 		tacticsEditor = new TwoListSelectionEditor(
-				PreferenceConstants.P_PROVINGMODE,
+				PreferenceConstants.P_POSTTACTIC_DETAILS,
 				"&Tactics are run as post-tactics", getFieldEditorParent()) {
 
 			@Override
@@ -72,6 +79,7 @@ public class PostTacticPreferencePage
 
 		};
 		addField(tacticsEditor);
+
 	}
 
 	@Override

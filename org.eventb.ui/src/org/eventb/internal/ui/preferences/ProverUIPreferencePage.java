@@ -45,12 +45,6 @@ public class ProverUIPreferencePage
 				"&Automatically layout in Proofs Page",
 				getFieldEditorParent()));
 
-		addField(
-				new BooleanFieldEditor(
-					PreferenceConstants.P_EXPERTMODE,
-					"&Expert mode for proving",
-					getFieldEditorParent()));
-
 //		addField(new RadioGroupFieldEditor(
 //				PreferenceConstants.P_CHOICE,
 //			"An example of a multiple-choice preference",
