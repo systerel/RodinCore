@@ -298,6 +298,14 @@
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$HypOrTac"
             id="autoHypOrTac"
             name="%autoHypOrTacName"/>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoImpAndHypTac"
+            id="autoImpAndHypTac"
+            name="%autoImpAndHypTacName"/>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoImpOrHypTac"
+            id="autoImpOrHypTac"
+            name="%autoImpOrHypTacName"/>
    </extension>
 
 </plugin>

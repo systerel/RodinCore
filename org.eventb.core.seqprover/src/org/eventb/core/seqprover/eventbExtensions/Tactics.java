@@ -2692,4 +2692,98 @@ public class Tactics {
 				new FunCompImg.Input(hyp, position));
 	}
 
+
+	/**
+	 * Return the tactic "Automatic implication hypothesis with conjunction
+	 * right" {@link ImpAndRewrites}.
+	 * <p>
+	 * 
+	 * @return The tactic "Automatic implication hypothesis with conjunction
+	 *         right"
+	 * @author htson
+	 */
+	public static ITactic autoImpAndRight() {
+		return new ITactic() {
+
+			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+					// Search for (P => Q /\ ... /\ R)
+					if (Lib.isImp(shyp)) {
+						Predicate right = ((BinaryPredicate) shyp)
+								.getRight();
+						if (Lib.isConj(right)) {
+							if (impAndRewrites(shyp, IPosition.ROOT).apply(
+									ptNode, pm) == null)
+								return null;
+						}
+					}
+				}
+				return "Selected hyps contain no appropriate hypotheses";
+			}
+		};
+	}
+
+
+	/**
+	 * The class for "Automatic implication hypothesis with conjunction
+	 * right" {@link ImpAndRewrites}.
+	 * <p>
+	 * 
+	 * @author htson
+	 */
+	public static class AutoImpAndHypTac implements ITactic {
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			return autoImpAndRight().apply(ptNode, pm);
+		}
+
+	}
+
+
+	/**
+	 * Return the tactic "Automatic implication hypothesis with disjunctive
+	 * left" {@link ImpOrRewrites}.
+	 * <p>
+	 * 
+	 * @return The tactic "Automatic implication hypothesis with disjunctive
+	 *         left"
+	 * @author htson
+	 */
+	public static ITactic autoImpOrRight() {
+		return new ITactic() {
+
+			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+					// Search for (P \/ ... \/ Q => R)
+					if (Lib.isImp(shyp)) {
+						Predicate left = ((BinaryPredicate) shyp)
+								.getLeft();
+						if (Lib.isDisj(left)) {
+							if (impOrRewrites(shyp, IPosition.ROOT).apply(
+									ptNode, pm) == null)
+								return null;
+						}
+					}
+				}
+				return "Selected hyps contain no appropriate hypotheses";
+			}
+		};
+	}
+
+
+	/**
+	 * The class for "Automatic implication hypothesis with disjunctive
+	 * left" {@link ImpOrRewrites}.
+	 * <p>
+	 * 
+	 * @author htson
+	 */
+	public static class AutoImpOrHypTac implements ITactic {
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			return autoImpOrRight().apply(ptNode, pm);
+		}
+
+	}
+
 }
