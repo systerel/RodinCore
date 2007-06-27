@@ -1140,6 +1140,8 @@
       <tactic id="org.eventb.core.seqprover.typeRewriteTac"/>
       <tactic id="org.eventb.core.seqprover.isFunGoalTac"/>
       <tactic id="org.eventb.core.seqprover.autoHypOrTac"/>
+      <tactic id="org.eventb.core.seqprover.autoImpAndHypTac"/>
+      <tactic id="org.eventb.core.seqprover.autoImpOrHypTac"/>
    </extension>
 
 </plugin>
