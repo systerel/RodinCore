@@ -24,6 +24,7 @@ import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCRefinesEvent;
+import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -220,6 +221,9 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 		
 		for (ISCRefinesEvent refinesEvent : scEvent.getSCRefinesClauses())
 			refinesEvent.delete(true, monitor);
+		
+		for (ISCWitness witness : scEvent.getSCWitnesses())
+			witness.delete(true, monitor);
 		
 		ISCRefinesEvent refinesEvent = scEvent.getSCRefinesClause(INHERITED_REFINES_NAME);
 		refinesEvent.create(null, monitor);

@@ -1480,4 +1480,57 @@ public class TestEventRefines extends BasicSCTest {
 		
 	}
 
+	/*
+	 * Check that there are no witnesses for an inherited event.
+	 */
+	public void testEvents_38_removeWitnessesFromInherited() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "x");
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		addInitialisation(abs, "x");
+		addEvent(abs, "evt", 
+				makeSList("a"), 
+				makeSList("G"), makeSList("a ∈ ℕ"), 
+				makeSList("A"), makeSList("x ≔ a"));
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "y");
+		addInvariants(ref, makeSList("J"), makeSList("x+y=2"));
+	
+		IEvent ini = addInitialisation(ref, "y");
+		addEventWitnesses(ini, makeSList("x'"), makeSList("y'=x'"));
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList("H"), makeSList("y=1"), 
+				makeSList(), makeSList());
+		addEventRefines(evt, "evt");
+		addEventWitnesses(evt, makeSList("a"), makeSList("a÷1=y'"));
+
+		ref.save(null, true);
+		
+		IMachineFile con = createMachine("con");
+		addMachineRefines(con, "ref");
+		addVariables(con, "y");
+	
+		addInheritedEvent(con, IEvent.INITIALISATION);
+		addInheritedEvent(con, "evt");
+
+		con.save(null, true);
+		
+		runBuilder();
+		
+		containsMarkers(abs, false);
+		containsMarkers(ref, false);
+		containsMarkers(con, false);
+		
+		ISCMachineFile file = con.getSCMachineFile();
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+
+		containsWitnesses(events[1], emptyEnv, makeSList(), makeSList());
+		
+	}
+
 }
