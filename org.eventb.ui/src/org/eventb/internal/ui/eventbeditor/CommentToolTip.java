@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ICommentedElement;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
@@ -407,7 +407,7 @@ public class CommentToolTip {
 			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
 					| GridData.VERTICAL_ALIGN_CENTER));
 
-			TextListener listener = new TextListener(new EventBMath(text),
+			TextListener listener = new TextListener(new EventBText(text),
 					1000, element);
 			text.addListener(SWT.FocusOut, listener);
 			text.addListener(SWT.Traverse, listener);
