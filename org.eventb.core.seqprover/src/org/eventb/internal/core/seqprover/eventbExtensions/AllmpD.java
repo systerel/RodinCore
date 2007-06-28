@@ -116,7 +116,6 @@ public class AllmpD extends AllD {
 		{
 			final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
 			addedHyps.addAll(WDpreds);
-			addedHyps.addAll(Lib.breakPossibleConjunct(impLeft));
 			addedHyps.addAll(Lib.breakPossibleConjunct(impRight));
 			
 			anticidents[2] = ProverFactory.makeAntecedent(
