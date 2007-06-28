@@ -1058,5 +1058,51 @@ public class TestMachineRefines extends EventBPOTest {
 		sequentHasIdentifiers(sequent, "x'", "y'", "a", "b", "c");
 		sequentHasGoal(sequent, environment, "c=a ∧ c=b");
 	}
+	
+	/*
+	 * Check if invariant preservation PO is generated for event with
+	 * empty list of actions (i.e. the concrete action is skip)
+	 */
+	public void testRefines_21() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "x");
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		addEvent(abs, "evt", 
+				makeSList("a"), 
+				makeSList("G"), makeSList("a ∈ ℕ"), 
+				makeSList("A"), makeSList("x ≔ a"));
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "y");
+		addInvariants(ref, makeSList("J"), makeSList("x+y=2"));
+	
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList("H"), makeSList("y=1"), 
+				makeSList(), makeSList());
+		addEventRefines(evt, "evt");
+		addEventWitnesses(evt, makeSList("a"), makeSList("a=y'"));
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		environment.addName("y", intType);
+		environment.addName("a", intType);
+
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po, "x", "y");
+		
+		IPOSequent 
+		sequent = getSequent(po, "evt/J/INV");
+		sequentHasIdentifiers(sequent, "x'", "a");
+		sequentHasHypotheses(sequent, environment, "y=1", "x+y=2");
+		sequentHasGoal(sequent, environment, "y+y=2");
+	}
 
 }

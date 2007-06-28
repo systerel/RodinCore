@@ -74,8 +74,11 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 			boolean commonIdents = false; // common identifiers?
 			for(FreeIdentifier identifier : freeIdentifiers) {
 				freeIdents.add(identifier);
-				if(!commonIdents && concreteEventActionTable.getAssignedVariables().contains(identifier))
-					commonIdents = true;
+				if(!commonIdents)
+					if (concreteEventActionTable.getAssignedVariables().contains(identifier))
+						commonIdents = true;
+					else if (abstractEventActionTable.getAssignedVariables().contains(identifier))
+						commonIdents = true;
 			}
 				
 			if (commonIdents || isInitialisation) {
