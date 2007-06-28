@@ -157,14 +157,28 @@ public class EventBImage {
 				"icons/full/elcl16/expanded.gif");
 		registerImage(registry, IEventBSharedImages.IMG_EXPANDED_HOVER,
 				"icons/full/elcl16/expandedHover.gif");
-		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED, "icons/full/elcl16/collapsed.gif");
-		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED_HOVER, "icons/full/elcl16/collapsedHover.gif");
-		registerImage(registry, IEventBSharedImages.IMG_EXPANDED, "icons/full/elcl16/expanded.gif");
-		registerImage(registry, IEventBSharedImages.IMG_EXPANDED_HOVER, "icons/full/elcl16/expandedHover.gif");
+		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED,
+				"icons/full/elcl16/collapsed.gif");
+		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED_HOVER,
+				"icons/full/elcl16/collapsedHover.gif");
+		registerImage(registry, IEventBSharedImages.IMG_EXPANDED,
+				"icons/full/elcl16/expanded.gif");
+		registerImage(registry, IEventBSharedImages.IMG_EXPANDED_HOVER,
+				"icons/full/elcl16/expandedHover.gif");
 
-		registerImage(registry, EventBImage.IMG_DISCHARGED_SMILEY, "icons/full/ctool16/wink-green.gif");
-		registerImage(registry, EventBImage.IMG_PENDING_SMILEY, "icons/full/ctool16/sad.gif");
-		registerImage(registry, EventBImage.IMG_REVIEW_SMILEY, "icons/full/ctool16/wink-blue.gif");
+		registerImage(registry, EventBImage.IMG_DISCHARGED_SMILEY,
+				"icons/full/ctool16/wink-green.gif");
+		registerImage(registry, EventBImage.IMG_PENDING_SMILEY,
+				"icons/full/ctool16/sad.gif");
+		registerImage(registry, EventBImage.IMG_REVIEW_SMILEY,
+				"icons/full/ctool16/wink-blue.gif");
+		
+		registerImage(registry, IEventBSharedImages.IMG_INVERSE,
+				"icons/full/ctool16/inv_prover.gif");
+		registerImage(registry, IEventBSharedImages.IMG_SELECT_ALL,
+		"icons/full/ctool16/select_all_prover.gif");
+		registerImage(registry, IEventBSharedImages.IMG_SELECT_NONE,
+		"icons/full/ctool16/select_none_prover.gif");
 	}
 
 	/**

@@ -468,4 +468,9 @@ public class HypothesisRow {
 		}
 
 	}
+
+	public void setSelected(boolean selected) {
+		checkBox.setSelection(selected);
+	}
+
 }

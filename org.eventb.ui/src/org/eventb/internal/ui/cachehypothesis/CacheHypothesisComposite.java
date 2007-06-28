@@ -28,6 +28,12 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 	
 	ToolItem removeItem;
 
+	ToolItem inverseSelection;
+
+	ToolItem selectAll;
+	
+	ToolItem selectNone;
+	
 	public CacheHypothesisComposite(IUserSupport userSupport) {
 		super(userSupport, IProofStateDelta.F_NODE
 				| IProofStateDelta.F_PROOFTREE | IProofStateDelta.F_CACHE);
@@ -72,6 +78,51 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 				
 				Set<Predicate> deselected = CacheHypothesisComposite.this.getSelectedHyps();
 				userSupport.removeCachedHypotheses(deselected);
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				widgetDefaultSelected(e);
+			}
+			
+		});
+		
+		selectAll = new ToolItem(toolBar, SWT.PUSH);
+		selectAll.setImage(EventBImage.getImage(IEventBSharedImages.IMG_SELECT_ALL));
+		selectAll.setToolTipText("Select all");
+		selectAll.addSelectionListener(new SelectionListener() {
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				CacheHypothesisComposite.this.selectAllHyps();
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				widgetDefaultSelected(e);
+			}
+			
+		});
+
+		inverseSelection = new ToolItem(toolBar, SWT.PUSH);
+		inverseSelection.setImage(EventBImage.getImage(IEventBSharedImages.IMG_INVERSE));
+		inverseSelection.setToolTipText("Inverse selection");
+		inverseSelection.addSelectionListener(new SelectionListener() {
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				CacheHypothesisComposite.this.inverseSelectedHyps();
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				widgetDefaultSelected(e);
+			}
+			
+		});
+
+		selectNone = new ToolItem(toolBar, SWT.PUSH);
+		selectNone.setImage(EventBImage.getImage(IEventBSharedImages.IMG_SELECT_NONE));
+		selectNone.setToolTipText("Deselect all");
+		selectNone.addSelectionListener(new SelectionListener() {
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				CacheHypothesisComposite.this.deselectAllHyps();
 			}
 
 			public void widgetSelected(SelectionEvent e) {

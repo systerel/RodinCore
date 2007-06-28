@@ -83,6 +83,12 @@ public interface IEventBSharedImages {
 	
 	public static final String IMG_EXPANDED_HOVER = "Expanded Hover";	
 	
+	public static final String IMG_INVERSE = "Inverse";
+
+	public static final String IMG_SELECT_ALL = "Select All";
+
+	public static final String IMG_SELECT_NONE = "Select None";
+	
 	/**
 	 * Paths to the icons for buttons, menus, etc.
 	 */
@@ -125,6 +131,8 @@ public interface IEventBSharedImages {
 	public static final String IMG_ERROR_OVERLAY_PATH = "icons/full/ovr16/error_ovr.gif";
 
 	public static final String IMG_EXPERT_MODE_PATH = "icons/full/ctool16/xp_prover.gif";
+
+	public static final String IMG_DISABLE_POST_TACTIC_PATH = "icons/full/ctool16/disable_xp_prover.gif";
 
 	public static final String IMG_PENDING_PATH = "icons/pending.gif";
 

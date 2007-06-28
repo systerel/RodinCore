@@ -28,6 +28,12 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 	
 	ToolItem removeItem;
 
+	ToolItem inverseSelection;
+
+	ToolItem selectAll;
+	
+	ToolItem selectNone;
+	
 	public SearchHypothesisComposite(IUserSupport userSupport) {
 		super(userSupport, IProofStateDelta.F_NODE
 				| IProofStateDelta.F_PROOFTREE | IProofStateDelta.F_SEARCH);
@@ -79,6 +85,52 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 			}
 			
 		});
+		
+		selectAll = new ToolItem(toolBar, SWT.PUSH);
+		selectAll.setImage(EventBImage.getImage(IEventBSharedImages.IMG_SELECT_ALL));
+		selectAll.setToolTipText("Select all");
+		selectAll.addSelectionListener(new SelectionListener() {
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				SearchHypothesisComposite.this.selectAllHyps();
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				widgetDefaultSelected(e);
+			}
+			
+		});
+
+		inverseSelection = new ToolItem(toolBar, SWT.PUSH);
+		inverseSelection.setImage(EventBImage.getImage(IEventBSharedImages.IMG_INVERSE));
+		inverseSelection.setToolTipText("Inverse selection");
+		inverseSelection.addSelectionListener(new SelectionListener() {
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				SearchHypothesisComposite.this.inverseSelectedHyps();
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				widgetDefaultSelected(e);
+			}
+			
+		});
+
+		selectNone = new ToolItem(toolBar, SWT.PUSH);
+		selectNone.setImage(EventBImage.getImage(IEventBSharedImages.IMG_SELECT_NONE));
+		selectNone.setToolTipText("Deselect all");
+		selectNone.addSelectionListener(new SelectionListener() {
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				SearchHypothesisComposite.this.deselectAllHyps();
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				widgetDefaultSelected(e);
+			}
+			
+		});
+
 	}
 
 	@Override

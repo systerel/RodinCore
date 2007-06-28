@@ -326,6 +326,40 @@ public abstract class HypothesisComposite implements
 		return selected;
 	}
 
+	protected Set<Predicate> getUnselectedHyps() {
+		Set<Predicate> unselected = new HashSet<Predicate>();
+		for (HypothesisRow hr : rows) {
+			if (!hr.isSelected()) {
+				unselected.add(hr.getHypothesis());
+			}
+		}
+		return unselected;
+	}
+
+	public void inverseSelectedHyps() {
+		for (HypothesisRow hr : rows) {
+			hr.setSelected(!hr.isSelected());
+		}
+		updateToolbarItems();
+	}
+
+
+	public void deselectAllHyps() {
+		for (HypothesisRow hr : rows) {
+			if (hr.isSelected())
+				hr.setSelected(false);
+		}
+		updateToolbarItems();
+	}
+
+	public void selectAllHyps() {
+		for (HypothesisRow hr : rows) {
+			if (!hr.isSelected())
+				hr.setSelected(true);
+		}
+		updateToolbarItems();
+	}
+
 	public void reflow(boolean flushCache) {
 		scrolledForm.reflow(flushCache);
 	}
