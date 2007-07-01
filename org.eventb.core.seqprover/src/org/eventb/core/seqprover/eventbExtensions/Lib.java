@@ -1,5 +1,6 @@
 package org.eventb.core.seqprover.eventbExtensions;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -1044,4 +1045,17 @@ public final class Lib {
 	// return makeConj(predicates);
 	// }
 
+	/**
+	 * Contruct an integer literal ({@link IntegerLiteral} from an integer.
+	 * <p>
+	 * 
+	 * @param n
+	 *            an integer to construct the integer literal
+	 * @return the literal with the value the same as the integer input. 
+	 * @author htson
+	 */
+	public static IntegerLiteral makeIntegerLiteral(int n) {
+		BigInteger literal = new BigInteger("" + n);
+		return ff.makeIntegerLiteral(literal, null);
+	}
 }
