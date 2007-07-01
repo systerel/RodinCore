@@ -67,9 +67,9 @@ public class AutoFormulaRewriterTests {
 	
 	protected static Expression powInteger = Lib.parseExpression("ℙ(ℤ)");
 	
-	protected static final Expression E = Lib.parseExpression("x ∗ 2");
+	protected static final Expression E = Lib.parseExpression("x ∗ 2 + 3");
 
-	protected static final Expression F = Lib.parseExpression("y ∗ 3");
+	protected static final Expression F = Lib.parseExpression("y ∗ 3 + 1");
 	
 	protected static final Expression bE = Lib.parseExpression("x");
 
@@ -1045,6 +1045,12 @@ public class AutoFormulaRewriterTests {
 				.makeUnaryExpression(Expression.UNMINUS, prod23, null),
 				Expression.MUL, numberMinus1, numberMinus2, numberMinus3);
 
+		// E / E == 1
+		assertBinaryExpression("2 ÷ 2 = 1", number1, number2, Expression.DIV,
+				number2);
+		assertBinaryExpression("E ÷ E = 1", number1, E, Expression.DIV,
+				E);
+
 		// E / 1 == E
 		assertBinaryExpression("E ÷ 1 = E", number2, number2, Expression.DIV,
 				number1);
@@ -1058,6 +1064,30 @@ public class AutoFormulaRewriterTests {
 				number2, null);
 		assertBinaryExpression("(−E) ÷ (−F) == E ÷ F", expected, numberMinus3,
 				Expression.DIV, numberMinus2);
+
+		// (X * ... * E * ... * Y)/E == X * ... * Y
+		assertBinaryExpression("(E * 2) / E = 2", number2, ff
+				.makeAssociativeExpression(Expression.MUL, new Expression[] {
+						E, number2 }, null), Expression.DIV, E);
+		assertBinaryExpression("(2 * E) / E = 2", number2, ff
+				.makeAssociativeExpression(Expression.MUL, new Expression[] {
+						number2, E }, null), Expression.DIV, E);		
+		assertBinaryExpression("(E * 2) / 2 = E", E, ff
+				.makeAssociativeExpression(Expression.MUL, new Expression[] {
+						E, number2 }, null), Expression.DIV, number2);
+		assertBinaryExpression("(2 * E) / 2 = E", E, ff
+				.makeAssociativeExpression(Expression.MUL, new Expression[] {
+						number2, E }, null), Expression.DIV, number2);		
+		assertBinaryExpression("(E * 2 * E) / E = 2 * E", ff
+				.makeAssociativeExpression(Expression.MUL, new Expression[] {
+						number2, E }, null), ff.makeAssociativeExpression(
+				Expression.MUL, new Expression[] { E, number2, E }, null),
+				Expression.DIV, E);
+		assertBinaryExpression("(E * 2 * E) / 2 = E * E", ff
+				.makeAssociativeExpression(Expression.MUL, new Expression[] {
+						E, E }, null), ff.makeAssociativeExpression(
+				Expression.MUL, new Expression[] { E, number2, E }, null),
+				Expression.DIV, number2);
 
 		// E^1 == E
 		assertBinaryExpression("E^1 == E", number2, number2, Expression.EXPN,

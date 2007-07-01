@@ -9,6 +9,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -86,6 +87,14 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return ff.makeEmptySet(type, null);
 	}
 		
+	private AssociativeExpression makeAssociativeExpression(int tag, Expression[] children) {
+		return ff.makeAssociativeExpression(tag, children, null);
+	}
+
+	private AssociativeExpression makeAssociativeExpression(int tag, Collection<Expression> children) {
+		return ff.makeAssociativeExpression(tag, children, null);
+	}
+
 	%include {Formula.tom}
 	
 	@Override
@@ -623,6 +632,36 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 */
 	    	Div(UnMinus(E), UnMinus(F)) -> {
 	    		return FormulaSimplification.getFaction(`E, `F);
+	    	}
+
+			/**
+	    	 * Arithmetic: E ÷ E = 1
+	    	 */
+	    	Div(E, E) -> {
+	    		return Lib.makeIntegerLiteral(1);
+	    	}
+
+			/**
+	    	 * Arithmetic: (X ∗ ... ∗ E ∗ ... ∗ Y) ÷ E == X ∗ ... ∗ Y
+	    	 */
+	    	Div(Mul(children), E) -> {
+	    		Collection<Expression> newChildren = new ArrayList<Expression>();
+
+				boolean found = false;
+				for (Expression child : `children) {
+					if (found)
+						newChildren.add(child);
+					else if (child.equals(`E))
+						found = true;
+					else
+						newChildren.add(child);
+				}
+	    		if (newChildren.size() < `children.length) {
+		    		if (newChildren.size() == 1) {
+		    			return newChildren.iterator().next();
+		    		}
+					return makeAssociativeExpression(Expression.MUL, newChildren);
+	    		}
 	    	}
 
 			/**
