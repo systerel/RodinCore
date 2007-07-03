@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Event-B Keyboard Tests
 Bundle-SymbolicName: org.eventb.eventBKeyboard.tests
-Bundle-Version: 2.7.3
+Bundle-Version: 2.7.4
 Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
 Require-Bundle: org.eventb.eventBKeyboard,
