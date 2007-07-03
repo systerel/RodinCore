@@ -4,6 +4,7 @@
 package org.eventb.core.tests.pm;
 
 import static org.eventb.core.seqprover.IConfidence.REVIEWED_MAX;
+import static org.eventb.core.ast.Formula.BTRUE;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -58,6 +59,8 @@ public class PendingSubgoalTests extends TestPM {
 	private static Predicate nP2 = ff.makeUnaryPredicate(
 			Predicate.NOT, P2, null);
 
+	private static Predicate btrue = ff.makeLiteralPredicate(BTRUE, null);
+	
 	private static Predicate[] mList(Predicate... preds) {
 		return preds;
 	}
@@ -192,7 +195,7 @@ public class PendingSubgoalTests extends TestPM {
 		
 		ITactic tac = Tactics.doCase(P1.toString());
 		userSupport.applyTactic(tac, true, null);
-		assertOpen(mList(P1), G);
+		assertOpen(mList(), btrue);
 	}
 
 	/**
@@ -205,31 +208,54 @@ public class PendingSubgoalTests extends TestPM {
 		
 		final ITactic tac = Tactics.doCase(P1.toString());
 		userSupport.applyTactic(tac, true, null);
-		assertOpen(mList(P1), G);
+		assertOpen(mList(), btrue);
 		
+		final ITactic tac2 = Tactics.review(REVIEWED_MAX);
+		userSupport.applyTactic(tac2, true, null);
+		assertOpen(mList(P1), G);
+	}
+
+	/**
+	 * Ensures that the current node after closing the second child is the third
+	 * child.
+	 */
+	public void testSecondThenThirdChild() throws CoreException {
+		setCurrentPO("PO1");
+		assertOpen(mList(), G);
+		
+		final ITactic tac = Tactics.doCase(P1.toString());
+		userSupport.applyTactic(tac, true, null);
+		assertOpen(mList(), btrue);
+		
+		gotoNextSibling();
+		assertOpen(mList(P1), G);
+
 		final ITactic tac2 = Tactics.review(REVIEWED_MAX);
 		userSupport.applyTactic(tac2, true, null);
 		assertOpen(mList(nP1), G);
 	}
 
 	/**
-	 * Ensures that the current node after closing the second child is the first
+	 * Ensures that the current node after closing the third child is the first
 	 * child.
 	 */
-	public void testSecondThenFirstChild() throws CoreException {
+	public void testThirdThenFirstChild() throws CoreException {
 		setCurrentPO("PO1");
 		assertOpen(mList(), G);
 		
 		final ITactic tac = Tactics.doCase(P1.toString());
 		userSupport.applyTactic(tac, true, null);
-		assertOpen(mList(P1), G);
+		assertOpen(mList(), btrue);
 		
+		gotoNextSibling();
+		assertOpen(mList(P1), G);
+
 		gotoNextSibling();
 		assertOpen(mList(nP1), G);
 
 		final ITactic tac2 = Tactics.review(REVIEWED_MAX);
 		userSupport.applyTactic(tac2, true, null);
-		assertOpen(mList(P1), G);
+		assertOpen(mList(), btrue);
 	}
 
 	/**
@@ -242,13 +268,16 @@ public class PendingSubgoalTests extends TestPM {
 		
 		final ITactic tac = Tactics.doCase(P1.toString());
 		userSupport.applyTactic(tac, true, null);
-		assertOpen(mList(P1), G);
+		assertOpen(mList(), btrue);
 		
+		gotoNextSibling();
+		assertOpen(mList(P1), G);
 		gotoNextSibling();
 		assertOpen(mList(nP1), G);
 
 		final ITactic tac2 = Tactics.doCase(P2.toString());
 		userSupport.applyTactic(tac2, true, null);
+		gotoNextSibling();
 		assertOpen(mList(nP1, P2), G);
 		
 		final ITactic tac3 = Tactics.review(REVIEWED_MAX);
@@ -266,6 +295,11 @@ public class PendingSubgoalTests extends TestPM {
 
 		final ITactic tac = Tactics.doCase(P1.toString());
 		userSupport.applyTactic(tac, true, null);
+		assertOpen(mList(), btrue);
+
+		// Clean up the WD lemma
+		final ITactic review = Tactics.review(REVIEWED_MAX);
+		userSupport.applyTactic(review, true, null);
 		assertOpen(mList(P1), G);
 
 		gotoNextSibling();
@@ -273,13 +307,12 @@ public class PendingSubgoalTests extends TestPM {
 
 		final ITactic tac2 = Tactics.doCase(P2.toString());
 		userSupport.applyTactic(tac2, true, null);
+		assertOpen(mList(nP1), btrue);
+		userSupport.applyTactic(review, true, null);
 		assertOpen(mList(nP1, P2), G);
-
-		gotoNextSibling();
+		userSupport.applyTactic(review, true, null);
 		assertOpen(mList(nP1, nP2), G);
-
-		final ITactic tac3 = Tactics.review(REVIEWED_MAX);
-		userSupport.applyTactic(tac3, true, null);
+		userSupport.applyTactic(review, true, null);
 		assertOpen(mList(P1), G);
 	}
 
