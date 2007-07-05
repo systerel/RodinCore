@@ -18,6 +18,7 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -1166,5 +1167,76 @@ public class AutoFormulaRewriterTests {
 		// E > E = false
 		assertRelationalPredicate("E > E == ⊥", Lib.False, E, Predicate.GT, E);
 		assertRelationalPredicate("F > F == ⊥", Lib.False, F, Predicate.GT, F);
+	}
+
+	@Test
+	public void testFinite() {
+		// finite({}) == true
+		assertSimplePredicate("finite(∅) = ⊤", Lib.True, Predicate.KFINITE, ff
+				.makeEmptySet(ff.makeGivenType("SET"), null));
+		
+		// finite({a, ..., b}) == true
+		assertSimplePredicate("finite(S) = ⊤", Lib.True, Predicate.KFINITE, S);
+		assertSimplePredicate("finite(T) = ⊤", Lib.True, Predicate.KFINITE, T);
+		assertSimplePredicate("finite(U) = ⊤", Lib.True, Predicate.KFINITE, U);
+		
+		// finite(S \/ ... \/ T) == finite(S) \/ ... \/ finite(T)
+		Expression setA = Lib.parseExpression("{x ∣ x > 0}");
+		Expression setB = Lib.parseExpression("{y ∣ y < 0}");
+		Expression setC = Lib.parseExpression("{z ∣ z = 0}");
+		setA.typeCheck(ff.makeTypeEnvironment());
+		setB.typeCheck(ff.makeTypeEnvironment());
+		setC.typeCheck(ff.makeTypeEnvironment());
+		SimplePredicate finiteA = ff.makeSimplePredicate(Predicate.KFINITE,
+				setA, null);
+		SimplePredicate finiteB = ff.makeSimplePredicate(Predicate.KFINITE,
+				setB, null);
+		SimplePredicate finiteC = ff.makeSimplePredicate(Predicate.KFINITE,
+				setC, null);
+		Predicate expected = ff.makeAssociativePredicate(Predicate.LAND,
+				new Predicate[] { finiteA, finiteB }, null);
+		Expression aExp = ff.makeAssociativeExpression(Expression.BUNION,
+				new Expression[] { setA, setB }, null);
+		assertSimplePredicate("finite(A ∪ B) = finite(A) ∧ finite(B)",
+				expected, Predicate.KFINITE, aExp);
+		expected = ff.makeAssociativePredicate(Predicate.LAND,
+				new Predicate[] { finiteA, finiteB, finiteC }, null);
+		aExp = ff.makeAssociativeExpression(Expression.BUNION, new Expression[] {
+				setA, setB, setC }, null);
+		assertSimplePredicate(
+				"finite(A ∪ B ∪ C) = finite(A) ∧ finite(B) ∧ finite(C)",
+				expected, Predicate.KFINITE, aExp);
+		
+		// finite(POW(S)) == finite(S)
+		assertSimplePredicate("finite(ℙ(S)) == finite(S)", ff
+				.makeSimplePredicate(Predicate.KFINITE, integer, null),
+				Predicate.KFINITE, powInteger);
+		
+		// finite(S ** T) == S = {} or T = {} or (finite(S) & finite(T))
+		expected = Lib.parsePredicate(setA + "= ∅ ∨ " + setB + "= ∅ ∨ (finite("
+				+ setA + ") ∧ finite(" + setB + "))");
+		expected.typeCheck(ff.makeTypeEnvironment());
+		assertSimplePredicate(
+				"finite(A × B) == A = ∅ ∨ B = ∅ ∨ (finite(A) ∧ finite(B))",
+				expected, Predicate.KFINITE, ff.makeBinaryExpression(
+						Expression.CPROD, setA, setB, null));
+		
+		// finite(r~) == finite(r)
+		Expression r = Lib.parseExpression("{x ↦ y ∣ x > 0 ∧ y < 2}");
+		r.typeCheck(ff.makeTypeEnvironment());
+		assertSimplePredicate("finite(r∼) == finite(r)", ff
+				.makeSimplePredicate(Predicate.KFINITE, r, null),
+				Predicate.KFINITE, ff.makeUnaryExpression(Expression.CONVERSE,
+						r, null));
+		
+		// finite(a..b) == true
+		assertSimplePredicate("finite(1‥2) == ⊤", Lib.True,
+				Predicate.KFINITE, Lib.parseExpression("1‥2"));
+	}
+
+	private void assertSimplePredicate(String message, Predicate expected,
+			int tag, Expression expression) {
+		SimplePredicate sPred = ff.makeSimplePredicate(tag, expression, null);
+		assertEquals(message, expected, sPred.rewrite(r));
 	}
 }

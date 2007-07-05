@@ -95,8 +95,84 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return ff.makeAssociativeExpression(tag, children, null);
 	}
 
+	private SimplePredicate makeSimplePredicate(int tag, Expression expression) {
+		return ff.makeSimplePredicate(tag, expression, null);
+	}
+
 	%include {Formula.tom}
 	
+	@Override
+	public Predicate rewrite(SimplePredicate predicate) {
+	    %match (Predicate predicate) {
+
+			/**
+	    	 * Finite: finite(∅) = ⊤
+	    	 */
+			Finite(EmptySet()) -> {
+				return Lib.True;
+			}
+
+			/**
+	    	 * Finite: finite({a, ..., b}) = ⊤
+	    	 */
+			Finite(SetExtension(_)) -> {
+				return Lib.True;
+			}
+
+			/**
+	    	 * Finite: finite(S ∪ ... ∪ ⊤) == finite(S) ∧ ... ∧ finite(T)
+	    	 */
+			Finite(BUnion(children)) -> {
+				Predicate [] newChildren = new Predicate[`children.length];
+				for (int i = 0; i < `children.length; ++i) {
+					newChildren[i] = makeSimplePredicate(Predicate.KFINITE,
+							`children[i]);
+				}
+				return makeAssociativePredicate(Predicate.LAND, newChildren);
+			}
+
+			/**
+	    	 * Finite: finite(ℙ(S)) == finite(S)
+	    	 */
+			Finite(Pow(S)) -> {
+				return makeSimplePredicate(Predicate.KFINITE, `S);
+			}
+
+			/**
+	    	 * Finite: finite(S × ⊤) == S = ∅ ∨ T = ∅ ∨ (finite(S) ∧ finite(T))
+	    	 */
+			Finite(Cprod(S, T)) -> {
+				Predicate [] children = new Predicate[3];
+				children[0] = makeRelationalPredicate(Predicate.EQUAL, `S,
+						makeEmptySet(`S.getType()));
+				children[1] = makeRelationalPredicate(Predicate.EQUAL, `T,
+						makeEmptySet(`T.getType()));
+				Predicate [] subChildren = new Predicate[2];
+				subChildren[0] = makeSimplePredicate(Predicate.KFINITE, `S);
+				subChildren[1] = makeSimplePredicate(Predicate.KFINITE, `T);
+				children[2] = makeAssociativePredicate(Predicate.LAND,
+						subChildren);
+				return makeAssociativePredicate(Predicate.LOR, children);
+			}
+
+			/**
+	    	 * Finite: finite(r∼) == finite(r)
+	    	 */
+			Finite(Converse(r)) -> {
+				return makeSimplePredicate(Predicate.KFINITE, `r);
+			}
+
+			/**
+	    	 * Finite: finite(a‥b) == ⊤
+	    	 */
+			Finite(UpTo(_,_)) -> {
+				return Lib.True;
+			}
+
+	    }
+	    return predicate;
+	}
+
 	@Override
 	public Predicate rewrite(AssociativePredicate predicate) {
 	    %match (Predicate predicate) {
