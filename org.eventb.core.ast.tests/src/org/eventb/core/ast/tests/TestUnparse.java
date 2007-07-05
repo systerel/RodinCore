@@ -129,11 +129,11 @@ public class TestUnparse extends TestCase {
 		TestPair(String image) {
 			this.image = image;
 		}
-		abstract Formula getFormula();
-		abstract Formula parseAndCheck(String input);
+		abstract Formula<?> getFormula();
+		abstract Formula<?> parseAndCheck(String input);
 		void verify(String input) {
 			checkUnneededParentheses(input);
-			Formula actual = parseAndCheck(input);
+			Formula<?> actual = parseAndCheck(input);
 			checkSourceLocations(input, actual);
 		}
 		void checkUnneededParentheses(String input) {
@@ -160,7 +160,7 @@ public class TestUnparse extends TestCase {
 			}
 			assertFalse("'" + input + "' contains unbalanced parentheses", true);
 		}
-		void checkSourceLocations(String input, Formula parsedFormula) {
+		void checkSourceLocations(String input, Formula<?> parsedFormula) {
 			// Verify that source locations are properly nested
 			parsedFormula.accept(slChecker);
 
@@ -601,7 +601,7 @@ public class TestUnparse extends TestCase {
 		return formulae;
 	}
 	
-	private Formula[] constructAssociativeAssociativeTrees() {
+	private Formula<?>[] constructAssociativeAssociativeTrees() {
 		// {BUNION, BINTER, BCOMP, FCOMP, OVR, PLUS, MUL}
 		int length = ASSOCIATIVE_EXPRESSION_LENGTH;
 		Expression[]  formulae = new Expression[3 * length * length];
@@ -1149,7 +1149,7 @@ public class TestUnparse extends TestCase {
 	}
 	
 	
-	private void routineTest (Formula[] formulae) {
+	private void routineTest (Formula<?>[] formulae) {
 		for (int i = 0; i < formulae.length; i++) {
 			TestPair pair;
 			if (formulae[i] instanceof Expression) {

@@ -52,12 +52,12 @@ public class SourceLocationChecker extends DefaultVisitor {
 		this.stack = new Stack<SourceLocation>();
 	}
 
-	private boolean enterFormula(Formula formula) {
+	private boolean enterFormula(Formula<?> formula) {
 		visitFormula(formula, true);
 		return true;
 	}
 
-	private boolean exitFormula(Formula formula) {
+	private boolean exitFormula(Formula<?> formula) {
 		SourceLocation currentLoc = formula.getSourceLocation();
 		if (currentLoc != null) {
 			stack.pop();
@@ -65,7 +65,7 @@ public class SourceLocationChecker extends DefaultVisitor {
 		return true;
 	}
 	
-	private boolean visitFormula(Formula formula, boolean push) {
+	private boolean visitFormula(Formula<?> formula, boolean push) {
 		SourceLocation currentLoc = formula.getSourceLocation();
 		if (currentLoc != null) {
 			Assert.assertTrue("Improper source location",

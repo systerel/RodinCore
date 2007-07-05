@@ -98,7 +98,7 @@ public class TestParser extends TestCase {
 			this.image = image;
 		}
 		final void verify() {
-			final Formula parsedFormula = parseAndCheck(image);
+			final Formula<?> parsedFormula = parseAndCheck(image);
 			
 			// Verify that source locations are properly nested
 			parsedFormula.accept(slChecker);
@@ -109,7 +109,7 @@ public class TestParser extends TestCase {
 			final String subImage = image.substring(loc.getStart(), loc.getEnd() + 1);
 			parseAndCheck(subImage);
 		}
-		abstract Formula parseAndCheck(String stringToParse);
+		abstract Formula<?> parseAndCheck(String stringToParse);
 	}
 	
 	private static class ExprTestPair extends TestPair {
@@ -119,7 +119,7 @@ public class TestParser extends TestCase {
 			this.formula = formula;
 		}
 		@Override 
-		Formula parseAndCheck(String image) {
+		Formula<?> parseAndCheck(String image) {
 			IParseResult result = ff.parseExpression(image);
 			assertTrue("Parse failed for " + image, result.isSuccess());
 			final Expression actual = result.getParsedExpression();
@@ -135,7 +135,7 @@ public class TestParser extends TestCase {
 			this.formula = formula;
 		}
 		@Override 
-		Formula parseAndCheck(String image) {
+		Formula<?> parseAndCheck(String image) {
 			IParseResult result = ff.parsePredicate(image);
 			assertTrue("Parse failed for " + image, result.isSuccess());
 			final Predicate actual = result.getParsedPredicate();
@@ -151,7 +151,7 @@ public class TestParser extends TestCase {
 			this.formula = formula;
 		}
 		@Override 
-		Formula parseAndCheck(String image) {
+		Formula<?> parseAndCheck(String image) {
 			IParseResult result = ff.parseAssignment(image);
 			assertTrue("Parse failed for " + image, result.isSuccess());
 			final Assignment actual = result.getParsedAssignment();

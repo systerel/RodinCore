@@ -1427,7 +1427,7 @@ public class TestTypeChecker extends TestCase {
 		}
 	}
 
-	private void doTest(TestItem item, Formula formula) {
+	private void doTest(TestItem item, Formula<?> formula) {
 		ITypeCheckResult result = formula.typeCheck(item.initialEnv);
 		
 		if (item.result && ! result.isSuccess()) {

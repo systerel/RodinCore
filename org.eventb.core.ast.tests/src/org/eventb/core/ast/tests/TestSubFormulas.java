@@ -74,12 +74,12 @@ import org.eventb.core.ast.QuantifiedExpression.Form;
 
 public class TestSubFormulas extends TestCase {
 
-	private static class FixedFilter implements IFormulaFilter {
+	private static class FixedFilter<T extends Formula<T>> implements IFormulaFilter {
 		
-		final Formula searched;
-		final Formula replacement;
+		final Formula<T> searched;
+		final Formula<T> replacement;
 		
-		public FixedFilter(Formula searched, Formula replacement) {
+		public FixedFilter(Formula<T> searched, Formula<T> replacement) {
 			this.searched = searched;
 			this.replacement = replacement;
 		}
@@ -158,19 +158,20 @@ public class TestSubFormulas extends TestCase {
 		
 	}
 
-	private static class FixedRewriter extends DefaultRewriter {
-		final Formula from;
-		final Formula to;
+	private static class FixedRewriter<T extends Formula<T>> extends DefaultRewriter {
+		final T from;
+		final T to;
 		
-		public FixedRewriter(Formula from, Formula to) {
+		public FixedRewriter(T from, T to) {
 			super(false, FastFactory.ff);
 			this.from = from;
 			this.to = to;
 		}
 
-		private Formula doRewrite(Formula expr) {
+		@SuppressWarnings("unchecked")
+		private <U extends Formula<U>> Formula<U> doRewrite(Formula<U> expr) {
 			if (expr.equals(from)) {
-				return to;
+				return (Formula<U>) to;
 			}
 			return expr;
 		}
@@ -294,9 +295,12 @@ public class TestSubFormulas extends TestCase {
 	private static RelationalPredicate equalsX =
 		mRelationalPredicate(EQUAL, id_X, id_X);
 
-	private static FixedFilter bdFilter = new FixedFilter(bd_x, bd_X);
-	private static FixedFilter idFilter = new FixedFilter(id_x, id_X);
-	private static FixedFilter equalsFilter = new FixedFilter(equals, equalsX);
+	private static FixedFilter<BoundIdentDecl> bdFilter
+			= new FixedFilter<BoundIdentDecl>(bd_x, bd_X);
+	private static FixedFilter<Expression> idFilter
+			= new FixedFilter<Expression>(id_x, id_X);
+	private static FixedFilter<Predicate> equalsFilter
+			= new FixedFilter<Predicate>(equals, equalsX);
 
 	private static final IFormulaFilter defaultFilter = new DefaultFilter();
 	
@@ -306,7 +310,7 @@ public class TestSubFormulas extends TestCase {
 				0, actualPositions.size());
 	}
 
-	private <T extends Formula<T>> void checkPositions(FixedFilter filter,
+	private <T extends Formula<T>> void checkPositions(FixedFilter<?> filter,
 			Formula<T> formula, final Object... args) {
 		
 		assertTrue(formula.isTypeChecked());
@@ -317,7 +321,7 @@ public class TestSubFormulas extends TestCase {
 				length / 2, actualPositions.size());
 		for (int i = 0; i < length; i += 2) {
 			String expectedPos = (String) args[i];
-			Formula expRewrite = (Formula) args[i+1];
+			Formula<?> expRewrite = (Formula<?>) args[i+1];
 			final IPosition actualPos = actualPositions.get(i/2);
 			assertEquals("Unexpected position",
 					expectedPos, actualPos.toString());
@@ -531,7 +535,7 @@ public class TestSubFormulas extends TestCase {
 				mSetExtension(id_x, id_y, id_X));
 		
 		checkPositions(idFilter, mSimplePredicate(id_S));
-		checkPositions(new FixedFilter(id_S, id_T),
+		checkPositions(new FixedFilter<Expression>(id_S, id_T),
 				mSimplePredicate(id_S),
 				"0",
 				mSimplePredicate(id_T));
@@ -643,7 +647,7 @@ public class TestSubFormulas extends TestCase {
 			Formula<T> f2) {
 		assertEquals(f1.getClass(), f2.getClass());
 		assertFalse(f1.equals(f2));
-		final FixedFilter filter = new FixedFilter(f1, f2);
+		final FixedFilter<T> filter = new FixedFilter<T>(f1, f2);
 		checkPositions(filter, f2);
 		checkPositions(filter, f1, "", f2);
 		
@@ -654,7 +658,7 @@ public class TestSubFormulas extends TestCase {
 	// (in preorder)
 	private <T extends Formula<T>> void checkAllPositions(Formula<T> f,
 			IPosition p) {
-		Formula s = f.getSubFormula(p);
+		Formula<?> s = f.getSubFormula(p);
 		if (s != null) {
 			checkAllPositions(f, p.getFirstChild());
 			if (! p.isRoot()) {
@@ -766,16 +770,16 @@ public class TestSubFormulas extends TestCase {
 	
 	private final IFormulaRewriter identity = new DefaultRewriter(false, ff);
 
-	private void checkIdentityRewriting(Formula formula) {
+	private void checkIdentityRewriting(Formula<?> formula) {
 		assertSame(formula, formula.rewrite(identity));
 	}
 
-	private void checkRewriting(Formula from, Formula to,
-			Formula before, Formula after) {
+	private <T extends Formula<T>> void checkRewriting(T from, T to,
+			Formula<?> before, Formula<?> after) {
 
 		// Actual rewriting
-		FixedRewriter rewriter = new FixedRewriter(from, to);
-		Formula actual = before.rewrite(rewriter);
+		FixedRewriter<T> rewriter = new FixedRewriter<T>(from, to);
+		Formula<?> actual = before.rewrite(rewriter);
 		assertEquals("Unexpected rewritten formula", after, actual);
 		
 		// Identity rewriting returns an identical formula
@@ -783,10 +787,10 @@ public class TestSubFormulas extends TestCase {
 		checkIdentityRewriting(after);
 	}
 
-	private void checkRootRewriting(Formula from, Formula to) {
+	private <T extends Formula<T>> void checkRootRewriting(T from, T to) {
 
-		FixedRewriter rewriter = new FixedRewriter(from, to);
-		Formula actual = from.rewrite(rewriter);
+		FixedRewriter<T> rewriter = new FixedRewriter<T>(from, to);
+		Formula<?> actual = from.rewrite(rewriter);
 		assertEquals("Unexpected rewritten formula", to, actual);
 		
 		// Identity rewriting returns an identical formula
@@ -973,66 +977,82 @@ public class TestSubFormulas extends TestCase {
 	 */
 	public void testRewritingAllClasses() throws Exception {
 		checkRootRewriting(
+				(Expression)
 				mAssociativeExpression(PLUS, id_x, id_x),
 				mAssociativeExpression(PLUS, id_x, id_y)
 		);
 		checkRootRewriting(
+				(Predicate)
 				mAssociativePredicate(LAND, btrue, equals),
 				mAssociativePredicate(LAND, btrue, btrue)
 		);
 		checkRootRewriting(
+				(Expression)
 				mBinaryExpression(MINUS, id_x, id_x),
 				mBinaryExpression(MINUS, id_x, id_y)
 		);
 		checkRootRewriting(
+				(Predicate)
 				mBinaryPredicate(LIMP, btrue, equals),
 				mBinaryPredicate(LIMP, btrue, btrue)
 		);
 		checkRootRewriting(
+				(Expression)
 				mBoolExpression(equals),
 				mBoolExpression(btrue)
 		);
 		checkRootRewriting(
+				(Expression)
 				mBoundIdentifier(0, INT),
 				mBoundIdentifier(1, INT)
 		);
 		checkRootRewriting(
+				(Expression)
 				mFreeIdentifier("x", INT),
 				mFreeIdentifier("y", INT)
 		);
 		checkRootRewriting(
+				(Expression)
 				mIntegerLiteral(0),
 				mIntegerLiteral(1)
 		);
 		checkRootRewriting(
+				(Predicate)
 				mLiteralPredicate(BTRUE),
 				mLiteralPredicate(BFALSE)
 		);
 		checkRootRewriting(
+				(Expression)
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_x),
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_y)
 		);
 		checkRootRewriting(
+				(Predicate)
 				mQuantifiedPredicate(FORALL, mList(bd_x), equals),
 				mQuantifiedPredicate(FORALL, mList(bd_x), btrue)
 		);
 		checkRootRewriting(
+				(Predicate)
 				mRelationalPredicate(EQUAL, id_x, id_x),
 				mRelationalPredicate(EQUAL, id_x, id_y)
 		);
 		checkRootRewriting(
+				(Expression)
 				mSetExtension(id_x),
 				mSetExtension(id_y)
 		);
 		checkRootRewriting(
+				(Predicate)
 				mSimplePredicate(id_S),
 				mSimplePredicate(id_T)
 		);
 		checkRootRewriting(
+				(Expression)
 				mUnaryExpression(UNMINUS, id_x),
 				mUnaryExpression(UNMINUS, id_y)
 		);
 		checkRootRewriting(
+				(Predicate)
 				mUnaryPredicate(NOT, equals),
 				mUnaryPredicate(NOT, btrue)
 		);

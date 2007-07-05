@@ -50,10 +50,10 @@ public class TestVisitor extends TestCase {
 	FormulaFactory ff = FormulaFactory.getDefault();
 	
 	private static class TestItem {
-		Formula formula;
+		Formula<?> formula;
 		int expectedCount;
 		
-		TestItem(Formula formula, int expectedCount) {
+		TestItem(Formula<?> formula, int expectedCount) {
 			this.formula = formula;
 			this.expectedCount = expectedCount;
 		}

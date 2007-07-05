@@ -70,8 +70,8 @@ public class TestDeBruijn extends TestCase {
 	public void testDeBruijn() {
 		for (TestItem item : testItems) {
 			for (int i = 0; i < item.size() - 1; i++) {
-				Formula form1 = formulaFactory.parsePredicate(item.get(i)).getParsedPredicate();
-				Formula form2 = formulaFactory.parsePredicate(item.get(i + 1))
+				Formula<?> form1 = formulaFactory.parsePredicate(item.get(i)).getParsedPredicate();
+				Formula<?> form2 = formulaFactory.parsePredicate(item.get(i + 1))
 						.getParsedPredicate();
 				assertEquals("\nFirst input: " + item.get(i) + "\nFirst tree: "
 						+ form1.getSyntaxTree() + "\nSecond input: "

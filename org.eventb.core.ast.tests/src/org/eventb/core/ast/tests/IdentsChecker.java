@@ -66,7 +66,7 @@ public class IdentsChecker implements IVisitor {
 		return set.equals(other);
 	}
 	
-	public static boolean check(Formula f, FormulaFactory factory) {
+	public static boolean check(Formula<?> f, FormulaFactory factory) {
 		IdentsChecker checker = new IdentsChecker(f, factory);
 		f.accept(checker);
 		if (checker.success) {
@@ -90,7 +90,7 @@ public class IdentsChecker implements IVisitor {
 	 * @return <code>true</code> iff the formula bears the expected set of
 	 *         cached identifiers
 	 */
-	private static boolean checkFormula(Formula formula,
+	private static boolean checkFormula(Formula<?> formula,
 			Set<FreeIdentifier> freeIdents, Set<BoundIdentifier> boundIdents) {
 		return areEqual(freeIdents, formula.getFreeIdentifiers())
 				&& areEqual(boundIdents, formula.getBoundIdentifiers());
@@ -127,16 +127,16 @@ public class IdentsChecker implements IVisitor {
 
 	final private FormulaFactory factory;
 
-	final private Stack<Formula> stack;
+	final private Stack<Formula<?>> stack;
 
 	private boolean success;
 
 	/**
 	 * Creates a new instance of this checker.
 	 */
-	private IdentsChecker(Formula f, FormulaFactory factory) {
+	private IdentsChecker(Formula<?> f, FormulaFactory factory) {
 		this.success = true;
-		this.stack = new Stack<Formula>();
+		this.stack = new Stack<Formula<?>>();
 		this.factory = factory;
 	}
 	
@@ -957,14 +957,14 @@ public class IdentsChecker implements IVisitor {
 	 *            number of identifiers bound by the given formula
 	 * @return <code>true</code> if successful
 	 */
-	private boolean quantifiedExit(Formula formula, int nbBoundIdentDecls) {
+	private boolean quantifiedExit(Formula<?> formula, int nbBoundIdentDecls) {
 		if (! success) {
 			return false;
 		}
 		final Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
 		Set<BoundIdentifier> boundIdents = new HashSet<BoundIdentifier>();
 		while (stack.peek() != formula) {
-			final Formula child = stack.pop();
+			final Formula<?> child = stack.pop();
 			freeIdents.addAll(Arrays.asList(child.getFreeIdentifiers()));
 			boundIdents.addAll(Arrays.asList(child.getBoundIdentifiers()));
 		}
@@ -986,7 +986,7 @@ public class IdentsChecker implements IVisitor {
 		return result;
 	}
 
-	private boolean standardEnter(Formula formula) {
+	private boolean standardEnter(Formula<?> formula) {
 		if (success) {
 			stack.push(formula);
 		}
@@ -999,21 +999,21 @@ public class IdentsChecker implements IVisitor {
 	 * @param formula the formula to check
 	 * @return <code>true</code> if successful
 	 */
-	private boolean standardExit(Formula formula) {
+	private boolean standardExit(Formula<?> formula) {
 		if (! success) {
 			return false;
 		}
 		final Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
 		final Set<BoundIdentifier> boundIdents = new HashSet<BoundIdentifier>();
 		while (stack.peek() != formula) {
-			final Formula child = stack.pop();
+			final Formula<?> child = stack.pop();
 			freeIdents.addAll(Arrays.asList(child.getFreeIdentifiers()));
 			boundIdents.addAll(Arrays.asList(child.getBoundIdentifiers()));
 		}
 		return success = checkFormula(formula, freeIdents, boundIdents);
 	}
 
-	private boolean standardVisit(Formula formula) {
+	private boolean standardVisit(Formula<?> formula) {
 		if (! success) {
 			return false;
 		}

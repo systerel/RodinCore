@@ -266,7 +266,7 @@ public class TestFlattener extends TestCase {
 		return ff.makeUnaryExpression(tag, expr, null);
 	}
 	
-	private void routineTest(Formula[] expressions, Formula[] norms) {
+	private void routineTest(Formula<?>[] expressions, Formula<?>[] norms) {
 		for (int i = 0; i < expressions.length; i++) {
 			assertEquals("\nTest failed:\nString to normalize: "
 					+ expressions[i] + "\nTree: "
@@ -299,9 +299,9 @@ public class TestFlattener extends TestCase {
 		assertNop(constructPredicates(normalizedPredicates,normalizedExpressions));
 	}
 
-	private void assertNop(Formula[] formulas) {
-		for (Formula formula : formulas) {
-			final Formula flattened = formula.flatten(ff);
+	private void assertNop(Formula<?>[] formulas) {
+		for (Formula<?> formula : formulas) {
+			final Formula<?> flattened = formula.flatten(ff);
 			assertEquals("Flattener not involutive for formula: " + formula, formula, flattened);
 			assertSame("Flattener created a copy of formula: " + formula, formula, flattened);
 		}

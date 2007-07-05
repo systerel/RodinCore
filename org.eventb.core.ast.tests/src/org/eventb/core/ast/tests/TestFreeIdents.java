@@ -65,13 +65,13 @@ public class TestFreeIdents extends TestCase {
 	private static final FreeIdentifier[] NO_FREE_IDENT = new FreeIdentifier[0];
 	
 	private static class TestItem {
-		Formula<? extends Formula> formula;
+		Formula<?> formula;
 		FreeIdentifier[] freeIdents;
-		Formula<? extends Formula> boundFormula;
+		Formula<?> boundFormula;
 		
-		TestItem(Formula<? extends Formula> formula,
+		TestItem(Formula<?> formula,
 				FreeIdentifier[] freeIdents,
-				Formula<? extends Formula> boundFormula) {
+				Formula<?> boundFormula) {
 			this.formula = formula;
 			this.freeIdents = freeIdents;
 			this.boundFormula = boundFormula;
@@ -468,7 +468,7 @@ public class TestFreeIdents extends TestCase {
 		for (TestItem testItem : testItemsBindAll) {
 			String msg = testItem.formula.toString();
 			List<BoundIdentDecl> actualIdents = new ArrayList<BoundIdentDecl>();
-			Formula result = testItem.formula.bindAllFreeIdents(actualIdents, ff);
+			Formula<?> result = testItem.formula.bindAllFreeIdents(actualIdents, ff);
 			assertEquals(msg, testItem.freeIdents, actualIdents);
 			assertEquals(msg, testItem.boundFormula, result);
 		}
@@ -481,7 +481,7 @@ public class TestFreeIdents extends TestCase {
 		for (TestItem testItem : testItemsBindPartial) {
 			List<FreeIdentifier> identsToBind = Arrays.asList(testItem.freeIdents);
 			String msg = "binding " + identsToBind + " in " + testItem.formula.toString();
-			Formula result = testItem.formula.bindTheseIdents(identsToBind, ff);
+			Formula<?> result = testItem.formula.bindTheseIdents(identsToBind, ff);
 			assertEquals(msg, testItem.boundFormula, result);
 		}
 	}
@@ -518,14 +518,14 @@ public class TestFreeIdents extends TestCase {
 	 */
 	public void testIsWellFormed() {
 		for (TestItem testItem : testItemsBindPartial) {
-			final Formula formula = testItem.formula;
+			final Formula<?> formula = testItem.formula;
 			assertTrue("Problem with idents cache", IdentsChecker.check(formula, ff));
 			assertTrue("Should be well-formed: " + formula, formula.isWellFormed());
 			FreeIdentifier[] result = formula.getSyntacticallyFreeIdentifiers();
 			TreeSet<String> freeIds = new TreeSet<String>(freeToString(result));
 			freeIds.removeAll(freeToString(testItem.freeIdents));
 			boolean varBound = freeIds.size() < result.length;
-			final Formula boundFormula = testItem.boundFormula;
+			final Formula<?> boundFormula = testItem.boundFormula;
 			assertTrue("Problem with idents cache", IdentsChecker.check(boundFormula, ff));
 			if (varBound)
 				assertFalse("Should not be well-formed: " + boundFormula, boundFormula.isWellFormed());
@@ -599,13 +599,13 @@ public class TestFreeIdents extends TestCase {
 		checkFreeIdent(idents[1], "x3", bd_x2.getType());
 	}
 	
-	private void typeCheck(Formula formula, ITypeEnvironment te) {
+	private void typeCheck(Formula<?> formula, ITypeEnvironment te) {
 		formula.typeCheck(te);
 		assertTrue("Formula " + formula + " should typecheck.", formula.isTypeChecked());
 	}
 	
-	private void typeCheck(Formula[] formulas, ITypeEnvironment te) {
-		for (Formula formula: formulas) {
+	private void typeCheck(Formula<?>[] formulas, ITypeEnvironment te) {
+		for (Formula<?> formula: formulas) {
 			typeCheck(formula, te);
 		}
 	}

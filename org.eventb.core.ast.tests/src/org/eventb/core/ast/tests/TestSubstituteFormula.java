@@ -17,6 +17,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BinaryPredicate;
@@ -55,7 +56,7 @@ public class TestSubstituteFormula extends TestCase {
 	static abstract class TestItem {
 		abstract void doTest();
 
-		protected void typeCheck(Formula form) {
+		protected <T extends Formula<T>>void typeCheck(T form) {
 			TestSubstituteFormula.typeCheck(form, tenv);
 		}
 		
@@ -109,7 +110,7 @@ public class TestSubstituteFormula extends TestCase {
 		
 		@Override
 		public void doTest() {
-			typeCheck(formula);
+			typeCheck((Predicate) formula);
 			
 			for (Predicate predicate : sbs) {
 				typeCheck(predicate);
@@ -458,11 +459,11 @@ public class TestSubstituteFormula extends TestCase {
 							mBinaryExpression(DIV, bd(1), id_a))
 			);
 		ITypeEnvironment te = mTypeEnvironment();
-		typeCheck(pred, te);
+		typeCheck((Predicate) pred, te);
 		
         Expression[] witnesses = mList(id_a, null);
         
-        QuantifiedPredicate expected = 
+        Predicate expected = 
         	mQuantifiedPredicate(EXISTS, BD("y"),
 					mRelationalPredicate(EQUAL, bd(0),
 							mBinaryExpression(DIV, id_a, id_a))
@@ -474,7 +475,7 @@ public class TestSubstituteFormula extends TestCase {
         assertEquals(pred.toString(), expected, result);
 	}
 
-	protected static void typeCheck(Formula formula, ITypeEnvironment te) {
+	protected static <T extends Formula<T>> void typeCheck(T formula, ITypeEnvironment te) {
 		formula.typeCheck(te);
 		assertTrue("Formula " + formula + " should typecheck.", formula.isTypeChecked());
 	}
@@ -490,7 +491,7 @@ public class TestSubstituteFormula extends TestCase {
 		
 		// First example
 		BecomesEqualTo assignment = ff.makeBecomesEqualTo(id_x, num(0), null);
-		typeCheck(assignment, te);
+		typeCheck((Assignment) assignment, te);
 		Expression expExpr = plus(num(0), id_y);
 		typeCheck(expExpr, te);
 		Expression actual = expr.applyAssignment(assignment, ff);
@@ -500,7 +501,7 @@ public class TestSubstituteFormula extends TestCase {
 		
 		// Second example
 		assignment = ff.makeBecomesEqualTo(id_x, plus(id_x, num(1)), null);
-		typeCheck(assignment, te);
+		typeCheck((Assignment) assignment, te);
 		expExpr = plus(plus(id_x, num(1)), id_y);
 		typeCheck(expExpr, te);
 		actual = expr.applyAssignment(assignment, ff);
@@ -510,7 +511,7 @@ public class TestSubstituteFormula extends TestCase {
 		
 		// Third example
 		assignment = ff.makeBecomesEqualTo(mList(id_x, id_y), mList(id_y, id_x), null);
-		typeCheck(assignment, te);
+		typeCheck((Assignment) assignment, te);
 		expExpr = plus(id_y, id_x);
 		typeCheck(expExpr, te);
 		actual = expr.applyAssignment(assignment, ff);
@@ -522,7 +523,7 @@ public class TestSubstituteFormula extends TestCase {
 		Predicate pred = forall(BD("y"), eq(bd(0), id_x));
 		typeCheck(pred, te);
 		assignment = ff.makeBecomesEqualTo(id_x, id_y, null);
-		typeCheck(assignment, te);
+		typeCheck((Assignment) assignment, te);
 		Predicate expPred = forall(BD("z"), eq(bd(0), id_y));
 		typeCheck(expPred, te);
 		Predicate actualPred = pred.applyAssignment(assignment, ff);
@@ -552,12 +553,12 @@ public class TestSubstituteFormula extends TestCase {
 		assertEquals("Wrong result of substitution", expected, actual);
 	}
 	
-	static class ShiftTestItem extends TestItem {
-		public final Formula formula;
+	static class ShiftTestItem<T extends Formula<T>> extends TestItem {
+		public final T formula;
 		public final int offset;
-		public final Formula expected;
+		public final T expected;
 		
-		public ShiftTestItem(Formula formula, int offset, Formula expected) {
+		public ShiftTestItem(T formula, int offset, T expected) {
 			this.formula = formula;
 			this.offset = offset;
 			this.expected = expected;
@@ -565,7 +566,7 @@ public class TestSubstituteFormula extends TestCase {
 		
 		@Override
 		public void doTest() {
-			Formula result = formula.shiftBoundIdentifiers(offset, ff);
+			Formula<?> result = formula.shiftBoundIdentifiers(offset, ff);
 			assertEquals(formula + "\n" + offset + "\n" , expected, result);
 		}
 		
@@ -575,35 +576,35 @@ public class TestSubstituteFormula extends TestCase {
 		}
 	}
 
-	ShiftTestItem[] shiftTestItems = new ShiftTestItem[] {
+	ShiftTestItem<?>[] shiftTestItems = new ShiftTestItem[] {
 		// Test on closed expression
-		new ShiftTestItem(
+		new ShiftTestItem<Expression>(
 			id_x,
 			1,
 			id_x
 		// Test on open expression (without internally bound)
-		), new ShiftTestItem(
+		), new ShiftTestItem<Expression>(
 			bd(0),
 			0,
 			bd(0)
-		), new ShiftTestItem(
+		), new ShiftTestItem<Expression>(
 			bd(0),
 			1,
 			bd(1)
-		), new ShiftTestItem(
+		), new ShiftTestItem<Expression>(
 			bd(1),
 			-1,
 			bd(0)
 		// Test on open expression (with internally bound)
-		), new ShiftTestItem(
+		), new ShiftTestItem<Predicate>(
 			exists(BD("x"), lt(bd(0), bd(1))),
 			0,
 			exists(BD("x"), lt(bd(0), bd(1)))
-		), new ShiftTestItem(
+		), new ShiftTestItem<Predicate>(
 			exists(BD("x"), lt(bd(0), bd(1))),
 			1,
 			exists(BD("x"), lt(bd(0), bd(2)))
-		), new ShiftTestItem(
+		), new ShiftTestItem<Predicate>(
 			exists(BD("x"), lt(bd(0), bd(2))),
 			-1,
 			exists(BD("x"), lt(bd(0), bd(1)))

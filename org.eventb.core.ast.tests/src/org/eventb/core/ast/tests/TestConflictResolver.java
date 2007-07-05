@@ -24,9 +24,9 @@ public class TestConflictResolver extends TestCase {
 	
 	private class TestItem {
 		final String input;
-		final Formula expectedTree;
+		final Formula<?> expectedTree;
 		
-		TestItem(String input, Formula expectedTree) {
+		TestItem(String input, Formula<?> expectedTree) {
 			this.expectedTree = expectedTree;
 			this.input = input;
 		}

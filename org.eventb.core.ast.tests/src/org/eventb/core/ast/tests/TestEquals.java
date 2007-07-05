@@ -48,7 +48,7 @@ public class TestEquals extends TestCase {
 	private BoundIdentifier b0 = ff.makeBoundIdentifier(0, null);
 	private BoundIdentifier b1 = ff.makeBoundIdentifier(1, null);
 	
-	private TestItem[] equals = {
+	private TestItem<?>[] equals = {
 		new TestItem<Expression>(id_x, id_x),
 		// Formulas are equal modulo alpha-conversion
 		new TestItem<Predicate>(
@@ -133,7 +133,7 @@ public class TestEquals extends TestCase {
 		),
 	};
 	
-	private TestItem[] notEquals = {
+	private TestItem<?>[] notEquals = {
 			new TestItem<Expression>(id_x, id_y),
 			// Bound occurences are interchanged
 			new TestItem<Predicate>(
@@ -180,15 +180,15 @@ public class TestEquals extends TestCase {
 	 * and 'org.eventb.core.ast.Formula.hashCode()'
 	 */
 	public final void testEquals() {
-		for (TestItem testItem : equals) {
-			Formula[] formulas = testItem.formulas;
+		for (TestItem<?> testItem : equals) {
+			Formula<?>[] formulas = testItem.formulas;
 			int length = formulas.length;
 			for (int i = 0; i < length; ++i) {
 				assertTrue("Reflexive equality for " + formulas[i],
 						formulas[i].equals(formulas[i]));
 				for (int j = i + 1; j < length; ++j) {
-					final Formula f1 = formulas[i];
-					final Formula f2 = formulas[j];
+					final Formula<?> f1 = formulas[i];
+					final Formula<?> f2 = formulas[j];
 					assertTrue("Equality of " + f1 + " and " + f2,
 							f1.equals(f2));
 					assertTrue("Equality of " + f2 + " and " + f1,
@@ -201,13 +201,13 @@ public class TestEquals extends TestCase {
 	}		
 	
 	public final void testNotEquals() {
-		for (TestItem testItem : notEquals) {
-			Formula[] formulas = testItem.formulas;
+		for (TestItem<?> testItem : notEquals) {
+			Formula<?>[] formulas = testItem.formulas;
 			int length = formulas.length;
 			for (int i = 0; i < length; ++i) {
 				for (int j = i + 1; j < length; ++j) {
-					final Formula f1 = formulas[i];
-					final Formula f2 = formulas[j];
+					final Formula<?> f1 = formulas[i];
+					final Formula<?> f2 = formulas[j];
 					assertFalse("Disequality of " + f1 + " and " + f2,
 							f1.equals(f2));
 					assertFalse("Disequality of " + f2 + " and " + f1,

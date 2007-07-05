@@ -75,7 +75,7 @@ public class TestSourceLocation extends TestCase {
 	/*
 	 * Parse the given formula.
 	 */
-	private Formula parseFormula(String input) {
+	private Formula<?> parseFormula(String input) {
 		IParseResult result = ff.parsePredicate(input);
 		if (result.isSuccess()) {
 			return result.getParsedPredicate();
@@ -88,8 +88,8 @@ public class TestSourceLocation extends TestCase {
 		return null;
 	}
 	
-	private void addAllPairs(HashMap<SourceLocation, Formula> pairs,
-			final int start, final int end, Formula sub) {
+	private void addAllPairs(HashMap<SourceLocation, Formula<?>> pairs,
+			final int start, final int end, Formula<?> sub) {
 
 		for (int i = start; i <= end; ++ i) {
 			for (int j = i; j <= end; ++j) {
@@ -98,8 +98,8 @@ public class TestSourceLocation extends TestCase {
 		}
 	}
 
-	private void testAllLocations(Formula formula, int max,
-			HashMap<SourceLocation, Formula> children) {
+	private void testAllLocations(Formula<?> formula, int max,
+			HashMap<SourceLocation, Formula<?>> children) {
 
 		// All locations inside the formula
 		for (int i = 0; i < max; ++i) {
@@ -107,9 +107,9 @@ public class TestSourceLocation extends TestCase {
 				final SourceLocation sloc = new SourceLocation(i, j);
 				final IPosition pos = formula.getPosition(sloc);
 				assertNotNull(pos);
-				final Formula actual = formula.getSubFormula(pos);
+				final Formula<?> actual = formula.getSubFormula(pos);
 				assertTrue(actual.getSourceLocation().contains(sloc));
-				Formula expected = children.get(sloc);
+				Formula<?> expected = children.get(sloc);
 				if (expected == null) expected = formula;
 				assertEquals("Wrong sub-formula",
 						expected, actual);
@@ -121,14 +121,14 @@ public class TestSourceLocation extends TestCase {
 		}
 	}
 
-	private void assertPositions(Formula formula, int max, Object... args) {
-		HashMap<SourceLocation, Formula> children =
-			new HashMap<SourceLocation, Formula>();
+	private void assertPositions(Formula<?> formula, int max, Object... args) {
+		HashMap<SourceLocation, Formula<?>> children =
+			new HashMap<SourceLocation, Formula<?>>();
 		int idx = 0;
 		while (idx < args.length) {
 			final int start = (Integer) args[idx++];
 			final int end = (Integer) args[idx++];
-			final Formula sub = (Formula) args[idx++];
+			final Formula<?> sub = (Formula<?>) args[idx++];
 			addAllPairs(children, start, end, sub);
 		}
 
@@ -136,14 +136,14 @@ public class TestSourceLocation extends TestCase {
 	}
 
 	private void assertPositions(String input, Object... args) {
-		Formula formula = parseFormula(input);
-		HashMap<SourceLocation, Formula> children =
-			new HashMap<SourceLocation, Formula>();
+		Formula<?> formula = parseFormula(input);
+		HashMap<SourceLocation, Formula<?>> children =
+			new HashMap<SourceLocation, Formula<?>>();
 		int idx = 0;
 		while (idx < args.length) {
 			final int start = (Integer) args[idx++];
 			final int end = (Integer) args[idx++];
-			final Formula sub = (Formula) args[idx++];
+			final Formula<?> sub = (Formula<?>) args[idx++];
 			addAllPairs(children, start, end, sub);
 		}
 

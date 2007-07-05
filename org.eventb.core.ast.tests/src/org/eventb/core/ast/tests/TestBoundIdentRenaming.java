@@ -50,7 +50,7 @@ public class TestBoundIdentRenaming extends TestCase {
 	
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 
-	private List<TestItem> testItems = new Vector<TestItem>();
+	private List<TestItem<?>> testItems = new Vector<TestItem<?>>();
 
 	private class TestItem<T extends Formula<T>> {
 		T formula;
@@ -283,7 +283,7 @@ public class TestBoundIdentRenaming extends TestCase {
 		
 	}
 
-	private void checkresult(TestItem testItem, String result) {
+	private void checkresult(TestItem<?> testItem, String result) {
 		Predicate expected;
 		String parserInput;
 		
@@ -312,7 +312,7 @@ public class TestBoundIdentRenaming extends TestCase {
 	 * Test method for 'org.eventb.core.ast.Formula.toString()'
 	 */
 	public final void testToString() {
-		for (TestItem testItem : testItems) {
+		for (TestItem<?> testItem : testItems) {
 			// Unparse the formula
 			String result = testItem.formula.toString();
 			checkresult(testItem, result);
@@ -323,7 +323,7 @@ public class TestBoundIdentRenaming extends TestCase {
 	 * Test method for 'org.eventb.core.ast.Formula.toStringFullyParenthesized()'
 	 */
 	public final void testToStringFullyParenthesized() {
-		for (TestItem testItem : testItems) {
+		for (TestItem<?> testItem : testItems) {
 			// Unparse the formula
 			String result = testItem.formula.toStringFullyParenthesized();
 			checkresult(testItem, result);

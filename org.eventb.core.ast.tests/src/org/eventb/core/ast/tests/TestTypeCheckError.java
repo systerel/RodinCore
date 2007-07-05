@@ -41,7 +41,7 @@ public class TestTypeCheckError extends TestCase {
 		doTest(pred, te, problems);
 	}
 	
-	private void doTest(Formula formula, ITypeEnvironment te, ProblemKind... problems) {
+	private void doTest(Formula<?> formula, ITypeEnvironment te, ProblemKind... problems) {
 		final ITypeCheckResult tcResult = formula.typeCheck(te);
 		assertFalse("Type checker succeeded unexpectedly", tcResult.isSuccess());
 		assertFalse("Predicate shouldn't be typechecked", formula.isTypeChecked());

@@ -75,7 +75,7 @@ public class TestLegibility extends TestCase {
 		}
 	}
 
-	private List<TestItem> testItems;
+	private List<TestItem<?>> testItems;
 
 	final FreeIdentifier id_x = mFreeIdentifier("x");
 	final FreeIdentifier id_y = mFreeIdentifier("y");
@@ -117,10 +117,10 @@ public class TestLegibility extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		testItems = new ArrayList<TestItem>(Arrays.asList(simpleTests));
+		testItems = new ArrayList<TestItem<?>>(Arrays.asList(simpleTests));
 		
 		// Implicit comprehension set with enclosed comprehension set on the right
-		TestItem item1 = new TestItem<Predicate>(
+		TestItem<Predicate> item1 = new TestItem<Predicate>(
 				mRelationalPredicate(EQUAL,
 						mQuantifiedExpression(CSET, Implicit,
 								mList(bd_y),
@@ -131,7 +131,7 @@ public class TestLegibility extends TestCase {
 		testItems.add(item1);
 		
 		// Implicit comprehension set with enclosed comprehension set on the left
-		TestItem item2 = new TestItem<Predicate>(
+		TestItem<Predicate> item2 = new TestItem<Predicate>(
 				mRelationalPredicate(EQUAL,
 						mQuantifiedExpression(CSET, Implicit,
 								mList(bd_y), 
@@ -145,7 +145,7 @@ public class TestLegibility extends TestCase {
 			mQuantifiedExpression(CSET, Implicit, 
 					mList(bd_x), mRelationalPredicate(IN, b0, b1), b0);
 
-		TestItem item3 = new TestItem<Predicate>(
+		TestItem<Predicate> item3 = new TestItem<Predicate>(
 				mRelationalPredicate(EQUAL,
 						mQuantifiedExpression(CSET, Implicit,
 							mList(bd_y), 
@@ -155,7 +155,7 @@ public class TestLegibility extends TestCase {
 				true);
 		testItems.add(item3);
 
-		TestItem item4 = new TestItem<Predicate>(
+		TestItem<Predicate> item4 = new TestItem<Predicate>(
 				mRelationalPredicate(EQUAL,
 						mQuantifiedExpression(CSET, Implicit,
 							mList(bd_y), 
@@ -170,7 +170,7 @@ public class TestLegibility extends TestCase {
 
 	
 	
-	private TestItem[] simpleTests = new TestItem[] {
+	private TestItem<?>[] simpleTests = new TestItem[] {
 			// Pred
 			new TestItem<Predicate>( 
 					bfalse,
