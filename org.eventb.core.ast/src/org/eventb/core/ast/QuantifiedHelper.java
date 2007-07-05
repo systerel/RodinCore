@@ -141,7 +141,7 @@ abstract class QuantifiedHelper {
 	
 	// Sets to true the element of <code>used</code> when the corresponding
 	// bound identifier occurs in the given formula.
-	protected static void addUsedBoundIdentifiers(boolean[] used, Formula formula) {
+	protected static void addUsedBoundIdentifiers(boolean[] used, Formula<?> formula) {
 		final int lastIndex = used.length - 1;
 		for (BoundIdentifier ident: formula.boundIdents) {
 			final int index = ident.getBoundIndex();

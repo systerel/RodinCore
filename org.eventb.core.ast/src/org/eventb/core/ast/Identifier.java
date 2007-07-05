@@ -30,7 +30,7 @@ public abstract class Identifier extends Expression {
 	}
 
 	@Override
-	protected final Formula getChild(int index) {
+	protected final Formula<?> getChild(int index) {
 		return null;
 	}
 

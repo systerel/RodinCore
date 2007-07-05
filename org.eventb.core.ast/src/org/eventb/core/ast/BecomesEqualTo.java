@@ -139,7 +139,7 @@ public class BecomesEqualTo extends Assignment {
 	}
 
 	@Override
-	protected boolean equals(Formula otherFormula, boolean withAlphaConversion) {
+	protected boolean equals(Formula<?> otherFormula, boolean withAlphaConversion) {
 		if (this.getTag() != otherFormula.getTag()) {
 			return false;
 		}

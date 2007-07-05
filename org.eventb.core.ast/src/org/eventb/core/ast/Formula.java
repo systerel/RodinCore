@@ -838,9 +838,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 *            some formulas
 	 * @return a combination of the formulas' hash codes
 	 */
-	protected static <S extends Formula> int combineHashCodes(S[] formulas) {
+	protected static <S extends Formula<?>> int combineHashCodes(S[] formulas) {
 		int result = 0;
-		for (Formula formula: formulas) {
+		for (Formula<?> formula: formulas) {
 			result = combineHashCodes(result, formula.hashCode);
 		}
 		return result;
@@ -853,9 +853,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 *            some formulas
 	 * @return a combination of the formulas' hash codes
 	 */
-	protected static int combineHashCodes(Collection<? extends Formula> formulas) {
+	protected static <T extends Formula<T>> int combineHashCodes(
+			Collection<? extends T> formulas) {
 		int result = 0;
-		for (Formula formula: formulas) {
+		for (T formula: formulas) {
 			result = combineHashCodes(result, formula.hashCode);
 		}
 		return result;
@@ -869,12 +870,12 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return a sorted merged array of identifiers or <code>null</code> if an
 	 *         error occurred
 	 */
-	protected static <S extends Formula> IdentListMerger mergeFreeIdentifiers(
+	protected static <S extends Formula<?>> IdentListMerger mergeFreeIdentifiers(
 			S... formulas) {
 		
 		ArrayList<FreeIdentifier[]> lists = 
 			new ArrayList<FreeIdentifier[]>(formulas.length);
-		for (Formula formula : formulas) {
+		for (Formula<?> formula : formulas) {
 			final FreeIdentifier[] freeIdents = formula.freeIdents;
 			if (freeIdents.length != 0)
 				lists.add(freeIdents);
@@ -893,12 +894,12 @@ public abstract class Formula<T extends Formula<T>> {
 	 *            formulas whose bound identifiers need to be merged
 	 * @return a merger for arrays of identifiers
 	 */
-	protected static <S extends Formula> IdentListMerger mergeBoundIdentifiers(
+	protected static <S extends Formula<?>> IdentListMerger mergeBoundIdentifiers(
 			S[] formulas) {
 		
 		ArrayList<BoundIdentifier[]> lists = 
 			new ArrayList<BoundIdentifier[]>(formulas.length);
-		for (Formula formula : formulas) {
+		for (Formula<?> formula : formulas) {
 			final BoundIdentifier[] boundIdents = formula.boundIdents;
 			if (boundIdents.length != 0)
 				lists.add(boundIdents);
@@ -1054,7 +1055,7 @@ public abstract class Formula<T extends Formula<T>> {
 		if (! (obj instanceof Formula)) {
 			return false;
 		}
-		Formula otherFormula = (Formula) obj;
+		Formula<?> otherFormula = (Formula<?>) obj;
 		if (hashCode != otherFormula.hashCode) {
 			return false;
 		}
@@ -1078,11 +1079,11 @@ public abstract class Formula<T extends Formula<T>> {
 		if (! (obj instanceof Formula)) {
 			return false;
 		}
-		Formula otherFormula = (Formula) obj;
+		Formula<?> otherFormula = (Formula<?>) obj;
 		if (getTag() != otherFormula.getTag()) {
 			return false;
 		}
-		return equals((Formula) obj, true);
+		return equals((Formula<?>) obj, true);
 	}
 
 	/**
@@ -1623,7 +1624,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * 
 	 * @return <code>true</code> if both objects are equal
 	 */
-	protected abstract boolean equals(Formula other, boolean withAlphaConversion);
+	protected abstract boolean equals(Formula<?> other, boolean withAlphaConversion);
 
 	/**
 	 * Internal methods that statically type-checks the formula.
@@ -1715,13 +1716,13 @@ public abstract class Formula<T extends Formula<T>> {
 		return formulaFactory.makeAssociativePredicate(LOR, children, null);
 	}
 	
-	protected static final <S extends Formula> Predicate getWDConjunction(FormulaFactory formulaFactory, S left, S right) {
+	protected static final <S extends Formula<?>> Predicate getWDConjunction(FormulaFactory formulaFactory, S left, S right) {
 		final Predicate conj0 = left.getWDPredicateRaw(formulaFactory);
 		final Predicate conj1 = right.getWDPredicateRaw(formulaFactory);
 		return getWDSimplifyC(formulaFactory, conj0, conj1);
 	}
 	
-	protected static final <S extends Formula> Predicate getWDConjunction(FormulaFactory formulaFactory, S[] children) {
+	protected static final <S extends Formula<?>> Predicate getWDConjunction(FormulaFactory formulaFactory, S[] children) {
 		final LinkedList<Predicate> conjuncts = new LinkedList<Predicate>();
 		for (S child: children) {
 			final Predicate conj = child.getWDPredicateRaw(formulaFactory);
@@ -1747,7 +1748,7 @@ public abstract class Formula<T extends Formula<T>> {
 		return formulaFactory.makeBinaryPredicate(LIMP, left, right, null);
 	}
 	
-	protected static final <S extends Formula> Predicate getWDImplication(FormulaFactory formulaFactory, S left, S right) {
+	protected static final <S extends Formula<?>> Predicate getWDImplication(FormulaFactory formulaFactory, S left, S right) {
 		Predicate antecedent = left.getWDPredicateRaw(formulaFactory);
 		Predicate consequent = right.getWDPredicateRaw(formulaFactory);
 		return getWDSimplifyI(formulaFactory, antecedent, consequent);
@@ -1926,8 +1927,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return the sub-formula at the given position in this formula, or
 	 *         <code>null</code> if there is none
 	 */
-	public final Formula getSubFormula(IPosition position) {
-		Formula formula = this;
+	public final Formula<?> getSubFormula(IPosition position) {
+		Formula<?> formula = this;
 		for (int index: ((Position) position).indexes) {
 			formula = formula.getChild(index);
 			if (formula == null) {
@@ -1939,7 +1940,7 @@ public abstract class Formula<T extends Formula<T>> {
 	
 	// Return the child of this formula at the given index, or <code>null</code>
 	// if none
-	protected abstract Formula getChild(int index);
+	protected abstract Formula<?> getChild(int index);
 
 	/**
 	 * Returns the positions of all sub-formulas of this formula that satisfy
@@ -2049,7 +2050,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 *             (different kind or different type).</li>
 	 *             </ul>
 	 */
-	public final T rewriteSubFormula(IPosition position, Formula newFormula,
+	public final T rewriteSubFormula(IPosition position, Formula<?> newFormula,
 			FormulaFactory factory) {
 
 		ensureTypeChecked();

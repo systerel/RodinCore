@@ -76,7 +76,12 @@ public abstract class Assignment extends Formula<Assignment> {
 	protected Assignment(int tag, SourceLocation location, int hashCode,
 			Collection<FreeIdentifier> assignedIdents) {
 		
-		super(tag, location, combineHashCodes(combineHashCodes(assignedIdents), hashCode));
+		super(
+				tag,
+				location,
+				combineHashCodes(
+						combineHashCodes((Collection<? extends Expression>) assignedIdents),
+						hashCode));
 		this.assignedIdents = assignedIdents.toArray(new FreeIdentifier[assignedIdents.size()]);
 	}
 
@@ -202,7 +207,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	}
 
 	@Override
-	protected final Formula getChild(int index) {
+	protected final Formula<?> getChild(int index) {
 		throw new UnsupportedOperationException(
 				"Assignments cannot be rewritten");
 	}

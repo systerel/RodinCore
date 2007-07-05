@@ -95,7 +95,7 @@ public class BecomesSuchThat extends Assignment {
 	@Override
 	protected void synthesizeType(FormulaFactory ff) {
 		final int length = assignedIdents.length;
-		final Formula[] children = new Formula[length + 1];
+		final Formula<?>[] children = new Formula[length + 1];
 		System.arraycopy(assignedIdents, 0, children, 0, length);
 		children[length] = condition;
 		
@@ -175,7 +175,7 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected boolean equals(Formula otherFormula, boolean withAlphaConversion) {
+	protected boolean equals(Formula<?> otherFormula, boolean withAlphaConversion) {
 		if (this.getTag() != otherFormula.getTag()) {
 			return false;
 		}

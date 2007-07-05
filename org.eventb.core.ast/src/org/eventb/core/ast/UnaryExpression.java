@@ -324,7 +324,7 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	protected boolean equals(Formula other, boolean withAlphaConversion) {
+	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
 			return false;
 		}
@@ -630,7 +630,7 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	protected Formula getChild(int index) {
+	protected Formula<?> getChild(int index) {
 		if (index == 0) {
 			return child;
 		}

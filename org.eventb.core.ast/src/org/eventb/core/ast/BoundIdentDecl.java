@@ -90,7 +90,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 	
 	@Override
-	protected boolean equals(Formula other, boolean withAlphaConversion) {
+	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
 			return false;
 		}
@@ -211,7 +211,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	@Override
-	protected Formula getChild(int index) {
+	protected Formula<?> getChild(int index) {
 		return null;
 	}
 

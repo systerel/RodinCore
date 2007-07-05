@@ -1,7 +1,6 @@
 package org.eventb.core.ast;
 
 import org.eventb.internal.core.typecheck.TypeCheckResult;
-import org.eventb.internal.core.typecheck.TypeEnvironment;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
 
@@ -57,7 +56,7 @@ public abstract class Expression extends Formula<Expression> {
 		return type != null ? " [type: " + type + "]" : "";
 	}
 
-	protected final boolean hasSameType(Formula other) {
+	protected final boolean hasSameType(Formula<?> other) {
 		// By construction, other is also an expression
 		Expression otherExpr = (Expression) other;
 		return type == null ? otherExpr.type == null : type.equals(otherExpr.type);
@@ -65,7 +64,7 @@ public abstract class Expression extends Formula<Expression> {
 	
 	/**
 	 * Sets a temporary type for this expression. This method should only be
-	 * used by method {@link Formula#typeCheck(TypeEnvironment)}.
+	 * used by method {@link Formula#typeCheck(ITypeEnvironment)}.
 	 * <p>
 	 * If the formula has already been type-checked, we just verify that the
 	 * given type is unifiable with the already set type.

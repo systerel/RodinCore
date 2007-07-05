@@ -110,7 +110,7 @@ public class BinaryPredicate extends Predicate {
 	}
 	
 	@Override
-	protected boolean equals(Formula other, boolean withAlphaConversion) {
+	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
 			return false;
 		}
@@ -282,7 +282,7 @@ public class BinaryPredicate extends Predicate {
 	}
 
 	@Override
-	protected Formula getChild(int index) {
+	protected Formula<Predicate> getChild(int index) {
 		switch (index) {
 		case 0:
 			return left;

@@ -14,10 +14,10 @@ import org.eventb.internal.core.ast.Position;
 	final IPosition position;
 	final int[] indexes;
 	int depth;
-	final Formula subFormula;
+	final Formula<?> subFormula;
 	final FormulaFactory factory;
 	
-	public SingleRewriter(IPosition position, Formula subFormula,
+	public SingleRewriter(IPosition position, Formula<?> subFormula,
 			FormulaFactory factory) {
 		
 		this.position = position;

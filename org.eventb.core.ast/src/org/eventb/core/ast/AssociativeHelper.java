@@ -18,7 +18,9 @@ import org.eventb.internal.core.ast.LegibilityResult;
  */
 /* package */ class AssociativeHelper {
 
-	protected static boolean equalsHelper(Formula[] list1, Formula[] list2, boolean withAlphaConversion) {
+	protected static boolean equalsHelper(Formula<?>[] list1,
+			Formula<?>[] list2, boolean withAlphaConversion) {
+
 		if (list1.length != list2.length) { 
 			return false;
 		}
@@ -36,26 +38,26 @@ import org.eventb.internal.core.ast.LegibilityResult;
 	 * @see Formula#getSyntaxTree(FreeIdentifier[], String)
 	 */
 	protected static String getSyntaxTreeHelper(String[] boundNames,
-			String tabs, Formula[] children, String tagOperator,
+			String tabs, Formula<?>[] children, String tagOperator,
 			String typeName, String className) {
 		StringBuilder str = new StringBuilder();
 		str.append(tabs + className + " [" + tagOperator + "]" + typeName
 				+ "\n");
 		String childIndent = tabs + "\t";
-		for (Formula child : children) {
+		for (Formula<?> child : children) {
 			str.append(child.getSyntaxTree(boundNames, childIndent));
 		}
 		return str.toString();
 	}
 
 	protected static void toStringHelper(StringBuilder builder,
-			String[] boundNames, boolean needsParen, Formula[] children,
+			String[] boundNames, boolean needsParen, Formula<?>[] children,
 			String tagOperator, int tag, boolean withTypes) {
 
 		if (needsParen)  builder.append('(');
 		boolean isRight = false;
 		String sep = "";
-		for (Formula child: children) {
+		for (Formula<?> child: children) {
 			builder.append(sep);
 			sep = tagOperator;
 			child.toString(builder, isRight, tag, boundNames, withTypes);
@@ -66,10 +68,10 @@ import org.eventb.internal.core.ast.LegibilityResult;
 	
 	protected static void toStringFullyParenthesizedHelper(
 			StringBuilder builder, String[] boundNames,
-			Formula[] children, String tagOperator) {
+			Formula<?>[] children, String tagOperator) {
 		
 		String sep = "";
-		for (Formula child : children) {
+		for (Formula<?> child : children) {
 			builder.append(sep);
 			sep = tagOperator;
 			builder.append('(');

@@ -185,7 +185,7 @@ public class FreeIdentifier extends Identifier {
 	}
 	
 	@Override
-	protected boolean equals(Formula other, boolean withAlphaConversion) {
+	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
 			return false;
 		}

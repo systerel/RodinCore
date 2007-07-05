@@ -22,7 +22,7 @@ import org.eventb.core.ast.Identifier;
  */
 public abstract class IdentListMerger {
 	
-	protected final Class itemClass;
+	protected final Class<?> itemClass;
 
 	protected boolean errorFound = false;
 	
@@ -31,7 +31,7 @@ public abstract class IdentListMerger {
 	 */
 	protected static final String infinity = "\uffff";
 
-	protected IdentListMerger(Class itemClass) {
+	protected IdentListMerger(Class<?> itemClass) {
 		this.itemClass = itemClass;
 	}
 	
