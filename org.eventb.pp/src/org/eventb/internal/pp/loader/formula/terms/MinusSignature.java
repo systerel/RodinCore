@@ -36,11 +36,16 @@ public class MinusSignature extends BinaryTermSignature {
 	@Override
 	public TermSignature getUnquantifiedTerm(int startOffset, int endOffset, List<TermSignature> termList) {
 		if (isQuantified(startOffset,endOffset)) {
-			return new MinusSignature(super.getUnquantifiedSignatureHelper(startOffset, endOffset, termList));
+			return new MinusSignature(super.getUnquantifiedTermHelper(startOffset, endOffset, termList));
 		} else {
-			addTerm(this.deepCopy(), termList);
+			addTermCopy(this, termList);
 			return new VariableHolder(sort);
 		}	
+	}
+	
+	@Override
+	public TermSignature getSimpleTerm(List<TermSignature> termList) {
+		return new MinusSignature(super.getSimpleTermHelper(termList));
 	}
 	
 	@Override

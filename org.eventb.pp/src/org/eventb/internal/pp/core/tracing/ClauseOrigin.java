@@ -3,11 +3,11 @@ package org.eventb.internal.pp.core.tracing;
 import java.util.List;
 
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.Clause;
 
 public class ClauseOrigin extends AbstractInferrenceOrigin {
 
-	public ClauseOrigin(List<IClause> parents) {
+	public ClauseOrigin(List<Clause> parents) {
 		super(parents);
 	}
 
@@ -16,7 +16,7 @@ public class ClauseOrigin extends AbstractInferrenceOrigin {
 		if (level != null) return level;
 		
 		Level result = null;
-		for (IClause clause : parents) {
+		for (Clause clause : parents) {
 			if (result == null || result.isAncestorOf(clause.getLevel())) {
 				result = clause.getLevel();
 			}

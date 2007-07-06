@@ -15,8 +15,8 @@ import java.util.ArrayList;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.VariableContext;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.ILiteral;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
 import org.eventb.pp.AbstractPPTest;
@@ -24,9 +24,9 @@ import org.eventb.pp.Util;
 
 public class TestLiteralSimplification extends AbstractPPTest {
 	private class TestPair {
-		IClause input, output;
+		Clause input, output;
 		
-		TestPair(IClause input, IClause output) {
+		TestPair(Clause input, Clause output) {
 			this.input = input;
 			this.output = output;
 		}
@@ -318,7 +318,7 @@ public class TestLiteralSimplification extends AbstractPPTest {
 		),
 		new TestPair(
 				cEqClause(mList(cProp(0),cNotProp(0)),cNEqual(a,b),cNEqual(a,b)),
-				cClause(new ArrayList<ILiteral>(),cNEqual(a, b))
+				cClause(new ArrayList<Literal>(),cNEqual(a, b))
 		),
 		
 		// Disjunctive with conditions
@@ -355,7 +355,7 @@ public class TestLiteralSimplification extends AbstractPPTest {
 		for (TestPair test : tests) {
 			LiteralSimplifier rule = new LiteralSimplifier(variableContext());
 			
-			IClause actual = test.input.simplify(rule);
+			Clause actual = test.input.simplify(rule);
 			assertEquals(test.input.toString(),test.output,actual);
 		}
 	}

@@ -9,13 +9,11 @@
 package org.eventb.internal.pp.core.elements.terms;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Sort;
 
-public class Constant extends Term {
+public final class Constant extends SimpleTerm {
 
 	private String name;
 	
@@ -54,10 +52,10 @@ public class Constant extends Term {
 		return true;
 	}
 
-	@Override
-	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
-		return this;
-	}
+//	@Override
+//	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
+//		return this;
+//	}
 
 	@Override
 	public boolean isQuantified() {
@@ -65,22 +63,7 @@ public class Constant extends Term {
 	}
 
 	@Override
-	public void collectLocalVariables(List<LocalVariable> existential) {
-		return;
-	}
-
-	@Override
-	public boolean contains(AbstractVariable variables) {
-		return false;
-	}
-
-	@Override
-	public void collectVariables(Set<Variable> variables) {
-		// no variables, do nothing
-	}
-
-	@Override
-	public boolean equalsWithDifferentVariables(Term term, HashMap<AbstractVariable, AbstractVariable> map) {
+	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
 		return equals(term);
 	}
 
@@ -104,5 +87,16 @@ public class Constant extends Term {
 		else if (o instanceof Constant) return name.compareTo(((Constant)o).name);
 		else return getPriority() - o.getPriority();
 	}
+
+	@Override
+	public void collectVariables(Set<Variable> variables) {
+		return;
+	}
+
+	@Override
+	public void collectLocalVariables(Set<LocalVariable> localVariables) {
+		return;
+	}
+
 
 }

@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.ILiteral;
+import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.tracing.DefinitionOrigin;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
@@ -23,20 +23,20 @@ public abstract class AbstractLabelizableFormula<T extends LiteralDescriptor> ex
 		super(terms, descriptor);
 	}
 
-	protected void getFinalClausesHelper(LabelManager manager, Collection<IClause> clauses, 
+	protected void getFinalClausesHelper(LabelManager manager, Collection<Clause> clauses, 
 			ClauseFactory factory, boolean positive1, boolean positive2, 
 			BooleanEqualityTable bool, VariableTable variableTable, IVariableContext variableContext) {
 		TermVisitorContext context = new TermVisitorContext(hasEquivalenceFirst());
 		// positive part of label
 		context.isPositive = positive1;
 		TermVisitorContext newContext = getNewContext(context);
-		List<List<ILiteral<?>>> positiveLiterals = getDefinitionClauses(manager, newContext, variableTable, bool);
+		List<List<Literal<?,?>>> positiveLiterals = getDefinitionClauses(manager, newContext, variableTable, bool);
 		context.isPositive = positive2;
 		newContext = getNewContext(context);
-		ILiteral<?> posLiteral = getLiteral(descriptor.getUnifiedResults(), newContext, variableTable, bool);
-		for (List<ILiteral<?>> positiveClause : positiveLiterals) {
+		Literal<?,?> posLiteral = getLiteral(descriptor.getUnifiedResults(), newContext, variableTable, bool);
+		for (List<Literal<?,?>> positiveClause : positiveLiterals) {
 			positiveClause.add(0, posLiteral);
-			IClause clause;
+			Clause clause;
 			if (context.isEquivalence && positiveClause.size() > 1) {
 				clause = factory.newEqClauseWithCopy(new DefinitionOrigin(), positiveClause,variableContext);
 			}
@@ -48,17 +48,17 @@ public abstract class AbstractLabelizableFormula<T extends LiteralDescriptor> ex
 		}
 	}
 	
-	protected List<List<ILiteral<?>>> getDefinitionClauses(LabelManager manager, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
-		List<List<ILiteral<?>>> prefix = new ArrayList<List<ILiteral<?>>>();
-		prefix.add(new ArrayList<ILiteral<?>>());
+	protected List<List<Literal<?,?>>> getDefinitionClauses(LabelManager manager, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+		List<List<Literal<?,?>>> prefix = new ArrayList<List<Literal<?,?>>>();
+		prefix.add(new ArrayList<Literal<?,?>>());
 		return getDefinitionClauses(descriptor.getUnifiedResults(), manager, prefix, context, table, bool);
 	}
 	
 	protected abstract boolean isLabelizable(LabelManager manager, TermVisitorContext context);
 	
-	public List<List<ILiteral<?>>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral<?>>> prefix, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+	public List<List<Literal<?,?>>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<Literal<?,?>>> prefix, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
 		ClauseBuilder.debugEnter(this);
-		List<List<ILiteral<?>>> result;
+		List<List<Literal<?,?>>> result;
 		if (isLabelizable(manager, context)) {
 			ClauseBuilder.debug(this + " cannot be simplified");
 			
@@ -73,8 +73,8 @@ public abstract class AbstractLabelizableFormula<T extends LiteralDescriptor> ex
 				manager.addLabel(this, false);
 			}
 			
-			ILiteral<?> literal = getLiteral(termList, context, table, bool);
-			for (List<ILiteral<?>> list : prefix) {
+			Literal<?,?> literal = getLiteral(termList, context, table, bool);
+			for (List<Literal<?,?>> list : prefix) {
 				list.add(literal);
 			}
 			result = prefix;

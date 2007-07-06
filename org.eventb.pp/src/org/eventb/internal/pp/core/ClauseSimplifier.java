@@ -3,7 +3,7 @@ package org.eventb.internal.pp.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 
 public class ClauseSimplifier {
@@ -23,9 +23,9 @@ public class ClauseSimplifier {
 		simplifiers.add(simplifier);
 	}
 	
-	public IClause run(IClause clause) {
+	public Clause run(Clause clause) {
 //		debug("Launching simplifiers");
-		IClause originalClause = clause;
+		Clause originalClause = clause;
 		for (ISimplifier simplifier : simplifiers) {
 			if (simplifier.canSimplify(clause)) {
 				clause = clause.simplify(simplifier);

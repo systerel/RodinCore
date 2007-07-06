@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.ILiteral;
+import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.clause.LabelManager;
@@ -23,9 +23,9 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 		super(children,terms,descriptor);
 	}
 
-	public List<List<ILiteral<?>>> getDefinitionClauses(List<TermSignature> termList,
-			LabelManager manager, List<List<ILiteral<?>>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
-		List<List<ILiteral<?>>> result = new ArrayList<List<ILiteral<?>>>();
+	public List<List<Literal<?,?>>> getDefinitionClauses(List<TermSignature> termList,
+			LabelManager manager, List<List<Literal<?,?>>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
+		List<List<Literal<?,?>>> result = new ArrayList<List<Literal<?,?>>>();
 		int start = 0;
 		if (flags.isPositive) {
 			for (ISignedFormula child : children) {
@@ -50,7 +50,7 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 		return result;
 	}
 
-	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext variableContext, boolean positive) {
+	public void getFinalClauses(Collection<Clause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext variableContext, boolean positive) {
 		ClauseBuilder.debug("----------------");
 		ClauseBuilder.debug("Equivalence definition:");
 		getFinalClausesHelper(manager, clauses, factory, true, true, bool, table, variableContext);

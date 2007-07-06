@@ -4,11 +4,10 @@ import static org.eventb.pp.Util.cClause;
 import static org.eventb.pp.Util.cEqClause;
 import static org.eventb.pp.Util.cEqual;
 import static org.eventb.pp.Util.cNEqual;
-import static org.eventb.pp.Util.cPlus;
 import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.mList;
 
-import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 import org.eventb.pp.AbstractPPTest;
@@ -48,10 +47,10 @@ public class TestOnePoint extends AbstractPPTest {
 			// no rule applies either, variable is in expression
 			// border case, see what to do with it
 			// TODO this test will change with arithmetic
-			testOnePoint(
-					cClause(cNEqual(var0, cPlus(var1,var0)), cPred(0, var0)),
-					cClause(cNEqual(var0, cPlus(var1,var0)), cPred(0, var0))
-			);
+//			testOnePoint(
+//					cClause(cNEqual(var0, cPlus(var1,var0)), cPred(0, var0)),
+//					cClause(cNEqual(var0, cPlus(var1,var0)), cPred(0, var0))
+//			);
 			testOnePoint(
 					cClause(cNEqual(var0, var00), cPred(0, var0)),
 					cClause(cPred(0, var00))
@@ -165,14 +164,14 @@ public class TestOnePoint extends AbstractPPTest {
 	
 	private OnePointRule rule = new OnePointRule();
 	
-	public void testOnePoint(IClause input, IClause output) {
-		IClause actual = input.simplify(rule);
+	public void testOnePoint(Clause input, Clause output) {
+		Clause actual = input.simplify(rule);
 		assertTrue(rule.canSimplify(input));
 		assertEquals(output,actual);
 	}
 	
-	public void testNotOnePoint(IClause input, IClause output) {
-		IClause actual = input.simplify(rule);
+	public void testNotOnePoint(Clause input, Clause output) {
+		Clause actual = input.simplify(rule);
 		assertTrue(rule.canSimplify(input));
 		assertEquals(output, actual);
 	}

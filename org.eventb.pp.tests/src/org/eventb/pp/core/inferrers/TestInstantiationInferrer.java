@@ -2,25 +2,24 @@ package org.eventb.pp.core.inferrers;
 
 import static org.eventb.pp.Util.cClause;
 import static org.eventb.pp.Util.cEqClause;
-import static org.eventb.pp.Util.cPlus;
 import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.cProp;
 
 import org.eventb.internal.pp.core.VariableContext;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.terms.Term;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.InstantiationInferrer;
 
 public class TestInstantiationInferrer extends AbstractInferrerTests {
 
 	private static class TestPair {
-		IClause input;
+		Clause input;
 		Variable var;
-		Term term;
-		IClause output;
+		SimpleTerm term;
+		Clause output;
 		
-		TestPair(IClause input, Variable var, Term term, IClause output) {
+		TestPair(Clause input, Variable var, SimpleTerm term, Clause output) {
 			this.input = input;
 			this.var = var;
 			this.term = term;
@@ -41,30 +40,30 @@ public class TestInstantiationInferrer extends AbstractInferrerTests {
 					a,
 					cClause(cPred(1,a))
 			),
-			new TestPair(
-					cClause(cPred(1,x)),
-					x,
-					cPlus(a,b,c),
-					cClause(cPred(1,cPlus(a,b,c)))
-			),
-			new TestPair(
-					cClause(cPred(1,x)),
-					x,
-					cPlus(a,y,c),
-					cClause(cPred(1,cPlus(a,y,c)))
-			),
-			new TestPair(
-					cClause(cPred(1,cPlus(x,y))),
-					x,
-					a,
-					cClause(cPred(1,cPlus(a,y)))
-			),
-			new TestPair(
-					cClause(cPred(1,cPlus(x,y))),
-					x,
-					cPlus(a,z),
-					cClause(cPred(1,cPlus(cPlus(a,z),y)))
-			),
+//			new TestPair(
+//					cClause(cPred(1,x)),
+//					x,
+//					cPlus(a,b,c),
+//					cClause(cPred(1,cPlus(a,b,c)))
+//			),
+//			new TestPair(
+//					cClause(cPred(1,x)),
+//					x,
+//					cPlus(a,y,c),
+//					cClause(cPred(1,cPlus(a,y,c)))
+//			),
+//			new TestPair(
+//					cClause(cPred(1,cPlus(x,y))),
+//					x,
+//					a,
+//					cClause(cPred(1,cPlus(a,y)))
+//			),
+//			new TestPair(
+//					cClause(cPred(1,cPlus(x,y))),
+//					x,
+//					cPlus(a,z),
+//					cClause(cPred(1,cPlus(cPlus(a,z),y)))
+//			),
 			new TestPair(
 					cClause(cPred(1,x),cPred(2,x,y)),
 					x,

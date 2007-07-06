@@ -12,9 +12,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.ILiteral;
+import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.LabelManager;
 import org.eventb.internal.pp.loader.clause.VariableTable;
@@ -24,7 +24,7 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 /**
  * Basic interface for all formulas that are labelizable. It consists
  * in the quantified literals and the clauses, respectively the classes
- * {@link DisjunctiveClause} and {@link QuantifiedLiteral}.
+ * {@link DisjunctiveClause} and {@link QuantifiedFormula}.
  *
  * @author François Terrier
  */
@@ -39,9 +39,9 @@ public interface ILabelizableFormula<T extends LiteralDescriptor> extends ISubFo
 //	 * @param table TODO
 //	 * @return the corresponding label
 //	 */
-//	public ILiteral getLiteral(boolean isPositive, VariableTable table);
+//	public Literal getLiteral(boolean isPositive, VariableTable table);
 	
-//	public List<List<ILiteral>> getDefinitionClauses(LabelManager manager,
+//	public List<List<Literal>> getDefinitionClauses(LabelManager manager,
 //			boolean isPositive, VariableTable table);
 //	/* ************************************/
 //	
@@ -57,9 +57,9 @@ public interface ILabelizableFormula<T extends LiteralDescriptor> extends ISubFo
 //	 * @param table TODO
 //	 * @return
 //	 */
-	public List<List<ILiteral<?>>> getDefinitionClauses(
+	public List<List<Literal<?,?>>> getDefinitionClauses(
 			List<TermSignature> termList, LabelManager manager,
-			List<List<ILiteral<?>>> prefix, TermVisitorContext flags,
+			List<List<Literal<?,?>>> prefix, TermVisitorContext flags,
 			VariableTable table, BooleanEqualityTable bool);
 	
 	public List<TermSignature> getTerms();
@@ -71,6 +71,6 @@ public interface ILabelizableFormula<T extends LiteralDescriptor> extends ISubFo
 //	 PUBLIC used by clausebuilder
 	// -when called on a labelizable formula, this method uses unified term list
 	// -when called on a signed formula, it uses terms recorded in the formula instance
-	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext variableContext, boolean positive);
+	public void getFinalClauses(Collection<Clause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext variableContext, boolean positive);
 	
 }

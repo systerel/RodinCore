@@ -2,20 +2,22 @@ package org.eventb.internal.pp.core.inferrers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.elements.IArithmetic;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
-import org.eventb.internal.pp.core.elements.ILiteral;
-import org.eventb.internal.pp.core.elements.IPredicate;
-import org.eventb.internal.pp.core.elements.PPDisjClause;
-import org.eventb.internal.pp.core.elements.PPEqClause;
-import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
+import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.DisjunctiveClause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.EquivalenceClause;
+import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
+import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.tracing.IOrigin;
@@ -42,38 +44,38 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 		this.parent = parent;
 	}
 	
-	public IClause getLeftCase() {
+	public Clause getLeftCase() {
 		return left;
 	}
 
-	public IClause getRightCase() {
+	public Clause getRightCase() {
 		return right;
 	}
 
-	private IClause left, right;
-	private List<IPredicate> leftPredicates = new ArrayList<IPredicate>();
-	private List<IEquality> leftEqualities = new ArrayList<IEquality>();
-	private List<IArithmetic> leftArithmetic = new ArrayList<IArithmetic>();
+	private Clause left, right;
+	private List<PredicateLiteral> leftPredicates = new ArrayList<PredicateLiteral>();
+	private List<EqualityLiteral> leftEqualities = new ArrayList<EqualityLiteral>();
+	private List<ArithmeticLiteral> leftArithmetic = new ArrayList<ArithmeticLiteral>();
 	
-	private List<IPredicate> rightPredicates = new ArrayList<IPredicate>();
-	private List<IEquality> rightEqualities = new ArrayList<IEquality>();
-	private List<IArithmetic> rightArithmetic = new ArrayList<IArithmetic>();
+	private List<PredicateLiteral> rightPredicates = new ArrayList<PredicateLiteral>();
+	private List<EqualityLiteral> rightEqualities = new ArrayList<EqualityLiteral>();
+	private List<ArithmeticLiteral> rightArithmetic = new ArrayList<ArithmeticLiteral>();
 	
 	private void splitLeftCase() {
 		// warning, both cases must have distinct variables
 		// for now if we do not split on variables it is no problem
-		if (predicates.size() >= 1) {
-			IPredicate literal = predicates.get(0);
+		if (hasConstantPredicate(predicates)) {
+			PredicateLiteral literal = getConstantLiteral(predicates);
 			leftPredicates.add(literal);
 			rightPredicates.add(inverseLiteral(literal));
 		}
-		else if (equalities.size() >= 1) {
-			IEquality literal = equalities.get(0);
+		else if (hasConstantPredicate(equalities)) {
+			EqualityLiteral literal = getConstantLiteral(equalities);
 			leftEqualities.add(literal);
 			rightEqualities.add(inverseLiteral(literal));
 		}
-		else if (arithmetic.size() >= 1) {
-			IArithmetic literal = arithmetic.get(0);
+		else if (hasConstantPredicate(arithmetic)) {
+			ArithmeticLiteral literal = getConstantLiteral(arithmetic);
 			leftArithmetic.add(literal);
 			rightArithmetic.add(inverseLiteral(literal));
 		}
@@ -82,13 +84,20 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 		}
 	}
 	
-	private <T extends ILiteral<T>> T inverseLiteral(T literal) {
-		ILiteral<T> result = literal.getInverse();
-		List<LocalVariable> variables = new ArrayList<LocalVariable>();
+	private <T extends Literal<T,?>> T getConstantLiteral(List<T> literals) {
+		for (T t : literals) {
+			if (t.isConstant()) return t;
+		}
+		return null;
+	}
+	
+	private <T extends Literal<T,?>> T inverseLiteral(T literal) {
+		Literal<T,?> result = literal.getInverse();
+		Set<LocalVariable> variables = new HashSet<LocalVariable>();
 		for (Term term : result.getTerms()) {
 			term.collectLocalVariables(variables);
 		}
-		Map<AbstractVariable, Term> map = new HashMap<AbstractVariable, Term>();
+		Map<SimpleTerm, SimpleTerm> map = new HashMap<SimpleTerm, SimpleTerm>();
 		for (LocalVariable variable : variables) {
 			if (variable.isForall()) map.put(variable, variable.getVariable(context));
 		}
@@ -96,36 +105,36 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 	}
 	
 	@Override
-	protected void inferFromDisjunctiveClauseHelper(IClause clause) {
+	protected void inferFromDisjunctiveClauseHelper(Clause clause) {
 		splitLeftCase();
-		left = new PPDisjClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic);
+		left = new DisjunctiveClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic);
 		// right case
-		right = new PPDisjClause(getOrigin(clause, parent.getRightBranch()),rightPredicates,rightEqualities,rightArithmetic);
+		right = new DisjunctiveClause(getOrigin(clause, parent.getRightBranch()),rightPredicates,rightEqualities,rightArithmetic);
 	}
 
 	@Override
-	protected void inferFromEquivalenceClauseHelper(IClause clause) {
+	protected void inferFromEquivalenceClauseHelper(Clause clause) {
 		splitLeftCase();
-		left = PPEqClause.newClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic,new ArrayList<IEquality>(),context);
+		left = EquivalenceClause.newClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic,new ArrayList<EqualityLiteral>(),context);
 		// right case
-//		PPEqClause.inverseOneliteral(predicates, equalities, arithmetic);
-		right = PPEqClause.newClause(getOrigin(clause, parent.getRightBranch()), rightPredicates, rightEqualities, rightArithmetic,new ArrayList<IEquality>(),context);
+//		EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
+		right = EquivalenceClause.newClause(getOrigin(clause, parent.getRightBranch()), rightPredicates, rightEqualities, rightArithmetic,new ArrayList<EqualityLiteral>(),context);
 	}
 
 	@Override
-	protected void initialize(IClause clause) throws IllegalStateException {
+	protected void initialize(Clause clause) throws IllegalStateException {
 		// we should do this, for performance reason we let it down
 		// if (!canInfer(clause)) throw new IllegalStateException(); 
 		if (parent == null) throw new IllegalStateException();
 
 		left = null;
 		right = null;
-		leftArithmetic = new ArrayList<IArithmetic>();
-		leftEqualities = new ArrayList<IEquality>();
-		leftPredicates = new ArrayList<IPredicate>();
-		rightArithmetic = new ArrayList<IArithmetic>();
-		rightEqualities = new ArrayList<IEquality>();
-		rightPredicates = new ArrayList<IPredicate>();
+		leftArithmetic = new ArrayList<ArithmeticLiteral>();
+		leftEqualities = new ArrayList<EqualityLiteral>();
+		leftPredicates = new ArrayList<PredicateLiteral>();
+		rightArithmetic = new ArrayList<ArithmeticLiteral>();
+		rightEqualities = new ArrayList<EqualityLiteral>();
+		rightPredicates = new ArrayList<PredicateLiteral>();
 	}
 
 	@Override
@@ -134,30 +143,45 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 		
 	}
 
-	protected IOrigin getOrigin(IClause clause, Level level) {
-		List<IClause> parents = new ArrayList<IClause>();
+	protected IOrigin getOrigin(Clause clause, Level level) {
+		List<Clause> parents = new ArrayList<Clause>();
 		parents.add(clause);
 		return new SplitOrigin(parents, level);
 	}
 
-	public boolean canInfer(IClause clause) {
+	private int MAX_SPLIT_SIZE = 3;
+	
+	public boolean canInfer(Clause clause) {
 		if (clause.isEmpty()) return false;
 		if (clause.isUnit()) return false;
 		if (clause.getOrigin().isDefinition()) return false;
 		if (clause.getConditions().size() > 0) return false;
 		
+		Set<Level> dependencies = new HashSet<Level>();
+		clause.getOrigin().getDependencies(dependencies);
+		if (dependencies.size() > MAX_SPLIT_SIZE) {
+			return false;
+		}
+		
+//		if (clause.getOrigin().getLevel().getHeight()>2) return false;
+		
+//		if (clause.getArithmeticLiterals().size()+clause.getEqualityLiterals().size()+clause.getPredicateLiterals().size()>2) return false;
 //		if (!clause.getOrigin().dependsOnGoal()) return false;
 		
-		if (!isConstant(clause.getPredicateLiterals()) || !isConstant(clause.getEqualityLiterals()) || !isConstant(clause.getArithmeticLiterals())) return false;
+		if (!(	hasConstantPredicate(clause.getPredicateLiterals())
+				|| hasConstantPredicate(clause.getArithmeticLiterals())
+				|| hasConstantPredicate(clause.getEqualityLiterals()))
+		) return false;
 		return true;
 	}
 	
-	private boolean isConstant(List<? extends ILiteral<?>> literals) {
-		for (ILiteral<?> lit : literals) {
-			if (!lit.isConstant()) return false;
+	private boolean hasConstantPredicate(List<? extends Literal<?,?>> literals) {
+		for (Literal<?,?> literal : literals) {
+			if (literal.isConstant()) return true;
 		}
-		return true;
+		return false;
 	}
+	
 
 
 }

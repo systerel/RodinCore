@@ -55,17 +55,21 @@ public abstract class AssociativeTerm extends Term {
 		return false;
 	}
 	
+	protected abstract String getSymbol();
+	
 	@Override
 	public String toString(HashMap<Variable, String> variable) {
 		StringBuffer str = new StringBuffer();
+		str.append(getSymbol() + "(");
 		for (Term term : children) {
 			str.append(term.toString(variable)+" ");
 		}
 		str.deleteCharAt(str.length()-1);
+		str.append(")");
 		return str.toString();
 	}
 	
-	protected List<Term> substituteHelper(Map<AbstractVariable, ? extends Term> map) {
+	protected <S extends Term> List<Term> substituteHelper(Map<SimpleTerm, S> map) {
 		List<Term> result = new ArrayList<Term>();
 		for (Term child : children) {
 			result.add(child.substitute(map));
@@ -83,7 +87,7 @@ public abstract class AssociativeTerm extends Term {
 	}
 
 	@Override
-	public void collectLocalVariables(List<LocalVariable> existential) {
+	public void collectLocalVariables(Set<LocalVariable> existential) {
 		for (Term child : children) {
 			child.collectLocalVariables(existential);
 		}
@@ -97,7 +101,7 @@ public abstract class AssociativeTerm extends Term {
 	}
 
 	@Override
-	public boolean contains(AbstractVariable variables) {
+	public boolean contains(SimpleTerm variables) {
 		for (Term child : children) {
 			if (child.contains(variables)) return true;
 		}
@@ -105,7 +109,7 @@ public abstract class AssociativeTerm extends Term {
 	}
 
 	@Override
-	public boolean equalsWithDifferentVariables(Term term, HashMap<AbstractVariable, AbstractVariable> map) {
+	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
 		if (term instanceof AssociativeTerm) {
 			AssociativeTerm temp = (AssociativeTerm)term;
 			if (temp.children.size() != children.size()) return false;

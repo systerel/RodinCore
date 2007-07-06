@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.internal.pp.core.elements.ILiteral;
+import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
@@ -69,7 +69,7 @@ public class TestOrderer extends TestCase {
 		env.addName("TT", ff.makePowerSetType(ff.makeProductType(ff.makeProductType(ff.makeIntegerType(),ff.makeIntegerType()), ff.makeIntegerType())));
 	}
 	
-	private static List<ILiteral> noLit = new ArrayList<ILiteral>();
+	private static List<Literal> noLit = new ArrayList<Literal>();
 	
 	TestPair[] testOrdering = new TestPair[] {
 			new TestPair(

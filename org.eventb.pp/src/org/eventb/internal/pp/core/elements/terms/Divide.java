@@ -33,7 +33,7 @@ public class Divide extends BinaryTerm {
 	}
 	
 	@Override
-	public boolean equalsWithDifferentVariables(Term term, HashMap<AbstractVariable, AbstractVariable> map) {
+	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
 		if (term instanceof Divide) {
 			return super.equalsWithDifferentVariables(term, map);
 		}
@@ -47,8 +47,13 @@ public class Divide extends BinaryTerm {
 
 	
 	@Override
-	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
+	protected <S extends Term> Term substitute(Map<SimpleTerm, S> map) {
 		return new Divide(substituteHelper(map));
+	}
+
+	@Override
+	protected String getSymbol() {
+		return "/";
 	}
 
 }

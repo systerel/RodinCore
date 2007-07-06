@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.ILiteral;
+import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.clause.LabelManager;
@@ -24,18 +24,18 @@ public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescripto
 	}
 	
 	
-	private List<List<ILiteral<?>>> copyClauseList(List<List<ILiteral<?>>> original, VariableTable table) {
-		List<List<ILiteral<?>>> result = new ArrayList<List<ILiteral<?>>>();
-		for (List<ILiteral<?>> list : original) {
-			result.add(new ArrayList<ILiteral<?>>(list));
+	private List<List<Literal<?,?>>> copyClauseList(List<List<Literal<?,?>>> original, VariableTable table) {
+		List<List<Literal<?,?>>> result = new ArrayList<List<Literal<?,?>>>();
+		for (List<Literal<?,?>> list : original) {
+			result.add(new ArrayList<Literal<?,?>>(list));
 		}
 		return result;
 	}
 
-	public List<List<ILiteral<?>>> getDefinitionClauses(List<TermSignature> terms,
-			LabelManager manager, List<List<ILiteral<?>>> prefix,
+	public List<List<Literal<?,?>>> getDefinitionClauses(List<TermSignature> terms,
+			LabelManager manager, List<List<Literal<?,?>>> prefix,
 			TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
-		List<List<ILiteral<?>>> result = new ArrayList<List<ILiteral<?>>>();
+		List<List<Literal<?,?>>> result = new ArrayList<List<Literal<?,?>>>();
 		int start = 0;
 		if (flags.isPositive) {
 			for (ISignedFormula child : children) {
@@ -48,7 +48,7 @@ public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescripto
 			// we split because it is a conjunction
 			for (ISignedFormula child : children) {
 				List<TermSignature> subIndex = terms.subList(start, start + child.getIndexSize());
-				List<List<ILiteral<?>>> copy = copyClauseList(prefix,table);
+				List<List<Literal<?,?>>> copy = copyClauseList(prefix,table);
 				result.addAll(child.getClauses(subIndex, manager, copy, table, flags, bool));
 				start += child.getIndexSize();
 			}
@@ -56,7 +56,7 @@ public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescripto
 		return result;
 	}
 	
-	public void getFinalClauses(Collection<IClause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext context, boolean positive) {
+	public void getFinalClauses(Collection<Clause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext context, boolean positive) {
 		if (positive) {
 			ClauseBuilder.debug("----------------");
 			ClauseBuilder.debug("Positive definition:");

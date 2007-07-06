@@ -3,8 +3,8 @@ package org.eventb.internal.pp.core.provers.equality.unionfind;
 // for facts inequalities and queries only
 public class Equality<T extends Source> {
 	
-	private T source;
-	private Node left,right;
+	private final T source;
+	private final Node left,right;
 	
 	public Equality(Node left, Node right, T source) {
 		this.right = right;

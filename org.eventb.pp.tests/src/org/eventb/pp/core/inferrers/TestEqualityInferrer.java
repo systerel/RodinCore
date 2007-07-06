@@ -10,8 +10,8 @@ import static org.eventb.pp.Util.mList;
 import java.util.List;
 
 import org.eventb.internal.pp.core.VariableContext;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.inferrers.EqualityInferrer;
 
 public class TestEqualityInferrer extends AbstractInferrerTests {
@@ -117,18 +117,18 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 
 
 	
-	public void doTest(IClause original, List<IEquality> trueEqualities,
-			List<IEquality> falseEqualities, List<IClause> parents, IClause expected) {
+	public void doTest(Clause original, List<EqualityLiteral> trueEqualities,
+			List<EqualityLiteral> falseEqualities, List<Clause> parents, Clause expected) {
 		EqualityInferrer inferrer = new EqualityInferrer(new VariableContext());
-		for (IEquality equality : trueEqualities) {
+		for (EqualityLiteral equality : trueEqualities) {
 			inferrer.addEquality(equality, true);
 		}
-		for (IEquality equality : falseEqualities) {
+		for (EqualityLiteral equality : falseEqualities) {
 			inferrer.addEquality(equality, false);
 		}
 		inferrer.addParentClauses(parents);
 		original.infer(inferrer);
-		IClause actual = inferrer.getResult();
+		Clause actual = inferrer.getResult();
 		assertEquals(expected, actual);
 
 		disjointVariables(original, actual);

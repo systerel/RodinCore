@@ -1,6 +1,6 @@
 package org.eventb.internal.pp.core.tracing;
 
-import java.util.Stack;
+import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.Level;
@@ -15,9 +15,9 @@ public class PredicateOrigin implements IOrigin {
 		this.isGoal = isGoal;
 	}
 
-	public void getDependencies(Stack<Level> dependencies) {
+	public void getDependencies(Set<Level> dependencies) {
 		if (!dependencies.contains(getLevel()))
-			dependencies.push(getLevel());
+			dependencies.add(getLevel());
 	}
 
 	public void trace(Tracer tracer) {

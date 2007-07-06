@@ -22,7 +22,6 @@ import org.eventb.internal.pp.loader.predicate.IContext;
  * are equal, they refer to the same quantified predicate in the table.
  *
  * @author François Terrier
- *
  */
 public class QuantifiedLiteralKey extends SymbolKey<QuantifiedDescriptor> {
 
@@ -76,7 +75,7 @@ public class QuantifiedLiteralKey extends SymbolKey<QuantifiedDescriptor> {
 
 	@Override
 	public QuantifiedDescriptor newDescriptor(IContext context) {
-		return new QuantifiedDescriptor(context, context.getNextLiteralIdentifier(),getTerms());
+		return new QuantifiedDescriptor(context, context.getNextLiteralIdentifier()/*,getTerms()*/);
 	}
 	
 }

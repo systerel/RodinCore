@@ -3,13 +3,13 @@ package org.eventb.internal.pp.core.provers.equality;
 import java.util.List;
 
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.Clause;
 
 public interface IFactResult {
 
 	public boolean hasContradiction();
 	
-	public List<IClause> getContradictionOrigin();
+	public List<Clause> getContradictionOrigin();
 	
 	public Level getContradictionLevel();
 	

@@ -35,11 +35,16 @@ public class ModSignature extends BinaryTermSignature {
 	@Override
 	public TermSignature getUnquantifiedTerm(int startOffset, int endOffset, List<TermSignature> termList) {
 		if (isQuantified(startOffset,endOffset)) {
-			return new ModSignature(super.getUnquantifiedSignatureHelper(startOffset, endOffset, termList));
+			return new ModSignature(super.getUnquantifiedTermHelper(startOffset, endOffset, termList));
 		} else {
-			addTerm(this.deepCopy(), termList);
+			addTermCopy(this, termList);
 			return new VariableHolder(sort);
 		}	
+	}
+	
+	@Override
+	public TermSignature getSimpleTerm(List<TermSignature> termList) {
+		return new ModSignature(super.getSimpleTermHelper(termList));
 	}
 	
 	@Override

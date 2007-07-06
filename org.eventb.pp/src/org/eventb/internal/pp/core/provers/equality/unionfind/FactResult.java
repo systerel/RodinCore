@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.provers.equality.IFactResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 
@@ -32,8 +32,8 @@ public class FactResult implements IFactResult {
 		this.queries = queries;
 	}
 	
-	public List<IClause> getContradictionOrigin() {
-		List<IClause> result = new ArrayList<IClause>();
+	public List<Clause> getContradictionOrigin() {
+		List<Clause> result = new ArrayList<Clause>();
 		for (FactSource s : source) {
 			result.add(s.getClause());
 		}

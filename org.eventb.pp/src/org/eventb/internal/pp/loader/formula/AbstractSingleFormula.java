@@ -2,7 +2,7 @@ package org.eventb.internal.pp.loader.formula;
 
 import java.util.List;
 
-import org.eventb.internal.pp.core.elements.ILiteral;
+import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.clause.LabelManager;
@@ -17,13 +17,13 @@ public abstract class AbstractSingleFormula<T extends LiteralDescriptor>
 		super(terms, descriptor);
 	}
 
-	public List<List<ILiteral<?>>> getClauses(List<TermSignature> termList,
-			LabelManager manager, List<List<ILiteral<?>>> prefix,
+	public List<List<Literal<?,?>>> getClauses(List<TermSignature> termList,
+			LabelManager manager, List<List<Literal<?,?>>> prefix,
 			TermVisitorContext flags, VariableTable table,
 			BooleanEqualityTable bool) {
 		ClauseBuilder.debugEnter(this);
-		ILiteral<?> literal = getLiteral(termList, flags, table, bool);
-		for (List<ILiteral<?>> list : prefix) {
+		Literal<?,?> literal = getLiteral(termList, flags, table, bool);
+		for (List<Literal<?,?>> list : prefix) {
 			list.add(literal);
 		}
 		ClauseBuilder.debugExit(this);

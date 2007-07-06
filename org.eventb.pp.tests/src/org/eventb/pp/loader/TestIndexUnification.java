@@ -7,7 +7,6 @@ import junit.framework.TestCase;
 
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
-import org.eventb.internal.pp.loader.ordering.TermOrderer;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 import org.eventb.internal.pp.loader.predicate.IntermediateResult;
@@ -39,7 +38,7 @@ public class TestIndexUnification extends TestCase {
 	TermSignature zz = Util.mVariable(0, -3);
 	
 	private static IIntermediateResult mList(TermSignature... terms) {
-		return new IntermediateResult(Arrays.asList(terms),new TermOrderer());
+		return new IntermediateResult(Arrays.asList(terms)/*,new TermOrderer()*/);
 	}
 	
 	TestPair[] tests = new TestPair[] {

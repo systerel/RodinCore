@@ -1,0 +1,137 @@
+package org.eventb.internal.pp.core.elements;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eventb.internal.pp.core.IVariableContext;
+import org.eventb.internal.pp.core.elements.terms.LocalVariable;
+import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
+import org.eventb.internal.pp.core.elements.terms.Term;
+import org.eventb.internal.pp.core.elements.terms.Variable;
+
+public abstract class Literal<S extends Literal<S,T>, T extends Term> {
+
+	final protected List<T> terms;
+	
+	public Literal(List<T> terms) {
+		this.terms = terms;
+	}
+
+	public List<T> getTerms() {
+		return terms;
+	}
+	
+	public boolean isQuantified() {
+		for (T term : terms) {
+			if (term.isQuantified()) return true;
+		}
+		return false;
+	}
+
+	public boolean isConstant() {
+		for (T term : terms) {
+			if (!term.isConstant()) return false;
+		}
+		return true;
+	}
+	
+	public boolean isForall() {
+		for (T term : terms) {
+			if (term.isForall()) return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return terms.hashCode();
+	}
+	
+	public int hashCodeWithDifferentVariables() {
+		int hashCode = 1;
+		for (T term : terms) {
+			hashCode = 31*hashCode + term.hashCodeWithDifferentVariables();
+		}
+		return hashCode;
+	}
+	
+	public S getCopyWithNewVariables(IVariableContext context, 
+			HashMap<SimpleTerm, SimpleTerm> substitutionsMap) {
+		Set<Variable> variables = new HashSet<Variable>();
+		Set<LocalVariable> localVariables = new HashSet<LocalVariable>();
+		for (Term term : terms) {
+			term.collectVariables(variables);
+			term.collectLocalVariables(localVariables);
+		}
+		for (Variable variable : variables) {
+			if (!substitutionsMap.containsKey(variable)) substitutionsMap.put(variable, context.getNextVariable(variable.getSort()));
+		}
+		for (LocalVariable variable : localVariables) {
+			if (!substitutionsMap.containsKey(variable)) substitutionsMap.put(variable, new LocalVariable(context.getNextLocalVariableID(),variable.isForall(),variable.getSort()));
+		}
+		return substitute(substitutionsMap);
+	}
+	
+	public abstract S substitute(Map<SimpleTerm, SimpleTerm> map);
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Literal) {
+			Literal<?, ?> temp = (Literal)obj;
+			return terms.equals(temp.terms);
+		}
+		return false;
+	}
+	
+	
+	public boolean equalsWithDifferentVariables(S literal, HashMap<SimpleTerm, SimpleTerm> map) {
+		if (terms.size() != literal.terms.size()) return false;
+		else {
+			for (int i = 0; i < terms.size(); i++) {
+				T term1 = terms.get(i);
+				Term term2 = literal.terms.get(i);
+				if (!term1.equalsWithDifferentVariables(term2, map)) return false;
+			}
+			return true;
+		}
+	}
+	
+	protected static <S extends Term> List<S> substituteHelper(Map<SimpleTerm, SimpleTerm> map, List<S> terms) {
+		List<S> result = new ArrayList<S>();
+		for (S term : terms) {
+			result.add(Term.substituteSimpleTerms(map, term));
+		}
+		return result;
+	}
+	
+	protected static <U extends Term> List<U> getInverseHelper(List<U> terms) {
+		List<U> result = new ArrayList<U>();
+		for (U term : terms) {
+			result.add(Term.getInverse(term));
+		}
+		return result;
+	}
+	
+	public abstract S getInverse();
+	
+	@Override
+	public String toString() {
+		return toString(new HashMap<Variable, String>());
+	}
+	
+	public String toString(HashMap<Variable, String> variableMap) {
+		StringBuffer str = new StringBuffer();
+		str.append("[");
+		for (T term : terms) {
+			str.append(term.toString(variableMap));
+			str.append(",");
+		}
+		str.deleteCharAt(str.length()-1);
+		str.append("]");
+		return str.toString();
+	}
+}

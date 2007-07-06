@@ -53,18 +53,18 @@
 //	private static FormulaFactory ff = FormulaFactory.getDefault();
 //	private static class TestPair {
 //		// for the readability of the test, use of string
-//		Predicate predicate;
+//		PredicateFormula predicate;
 //		List<ISubFormula> labels;
 //		List<ISubFormula> quantifiers;
 //		List<? extends LiteralDescriptor> sig;
 //		
-//		TestPair (Predicate predicate, List<? extends LiteralDescriptor> sig) {
+//		TestPair (PredicateFormula predicate, List<? extends LiteralDescriptor> sig) {
 //			this.predicate = predicate;
 //
 //			this.sig = sig;
 //		}
 //		TestPair (String strPredicate, List<? extends LiteralDescriptor> sig) {
-//			this.predicate = (Predicate)Util.parsePredicate(strPredicate);
+//			this.predicate = (PredicateFormula)Util.parsePredicate(strPredicate);
 //			predicate.typeCheck(env);
 //
 //			this.sig = sig;
@@ -762,7 +762,7 @@
 //			),
 //	};
 //
-//	public void doTest(Predicate predicate, List<? extends LiteralDescriptor> sigs) {
+//	public void doTest(PredicateFormula predicate, List<? extends LiteralDescriptor> sigs) {
 //		// we assume that the string is a relational predicate and more
 //		// precisely Formula.IN
 //		PredicateBuilder builder = new PredicateBuilder();

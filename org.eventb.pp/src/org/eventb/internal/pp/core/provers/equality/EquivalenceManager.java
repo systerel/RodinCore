@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Equality;
@@ -30,12 +30,12 @@ public class EquivalenceManager implements IEquivalenceManager {
 	private EqualitySolver solver;
 
 	// maps Constant -> Node
-	// 		IEquality -> Equality
-	//		IEquality -> Instantiation
+	// 		EqualityFormula -> EqualityFormula
+	//		EqualityFormula -> Instantiation
 	private Hashtable<Constant, Node> constantTable = new Hashtable<Constant, Node>();
-	private Hashtable<IEquality, Equality<FactSource>> factEqualityTable = new Hashtable<IEquality, Equality<FactSource>>();
-	private Hashtable<IEquality, Equality<QuerySource>> queryEqualityTable = new Hashtable<IEquality, Equality<QuerySource>>();
-	private Hashtable<IEquality, Instantiation> instantiationTable = new Hashtable<IEquality, Instantiation>();
+	private Hashtable<EqualityLiteral, Equality<FactSource>> factEqualityTable = new Hashtable<EqualityLiteral, Equality<FactSource>>();
+	private Hashtable<EqualityLiteral, Equality<QuerySource>> queryEqualityTable = new Hashtable<EqualityLiteral, Equality<QuerySource>>();
+	private Hashtable<EqualityLiteral, Instantiation> instantiationTable = new Hashtable<EqualityLiteral, Instantiation>();
 	
 	// for backtrack
 	private Set<Equality<FactSource>> equalities = new HashSet<Equality<FactSource>>();
@@ -45,7 +45,7 @@ public class EquivalenceManager implements IEquivalenceManager {
 		this.solver = new EqualitySolver(table);
 	}
 
-	public void removeInstantiation(IEquality equality, IClause clause) {
+	public void removeInstantiation(EqualityLiteral equality, Clause clause) {
 		assert !clause.isUnit() && !clause.isFalse();
 		
 		Instantiation instantiation = instantiationTable.get(equality);
@@ -60,7 +60,7 @@ public class EquivalenceManager implements IEquivalenceManager {
 		}
 	}
 	
-	public void removeQueryEquality(IEquality equality, IClause clause) {
+	public void removeQueryEquality(EqualityLiteral equality, Clause clause) {
 		// for queries only, facts are handled differently
 		// facts are never removed without being put back with a different level
 		assert !clause.isUnit() && !clause.isFalse();
@@ -87,13 +87,13 @@ public class EquivalenceManager implements IEquivalenceManager {
 		}
 	}
 	
-	private void removeQuery(IEquality equality) {
+	private void removeQuery(EqualityLiteral equality) {
 		// not for fact equalities
 		Equality<QuerySource> nodeEquality = queryEqualityTable.remove(equality);
 		removeEqualityFromNodes(nodeEquality, equality.isPositive());
 	}
 	
-	public FactResult addFactEquality(IEquality equality, IClause clause) {
+	public FactResult addFactEquality(EqualityLiteral equality, Clause clause) {
 		assert equality.getTerms().get(0) instanceof Constant && equality.getTerms().get(1) instanceof Constant;
 		
 		Node left = getNodeAndAddConstant((Constant)equality.getTerms().get(0));
@@ -142,7 +142,7 @@ public class EquivalenceManager implements IEquivalenceManager {
 		return result;
 	}
 	
-	public QueryResult addQueryEquality(IEquality equality, IClause clause) {
+	public QueryResult addQueryEquality(EqualityLiteral equality, Clause clause) {
 		assert equality.getTerms().get(0) instanceof Constant && equality.getTerms().get(1) instanceof Constant;
 		
 		Node left = getNodeAndAddConstant((Constant)equality.getTerms().get(0));
@@ -185,7 +185,7 @@ public class EquivalenceManager implements IEquivalenceManager {
 	}
 	
 	
-	public List<InstantiationResult> addInstantiationEquality(IEquality equality, IClause clause) {
+	public List<InstantiationResult> addInstantiationEquality(EqualityLiteral equality, Clause clause) {
 		assert !equality.isPositive()?clause.isEquivalence():true;
 		assert !clause.isUnit();
 		assert (equality.getTerms().get(0) instanceof Variable || equality.getTerms().get(1) instanceof Variable);
@@ -225,21 +225,21 @@ public class EquivalenceManager implements IEquivalenceManager {
 		// TODO lazy backtrack
 		
 		// 1 backtrack sources
-		for (Iterator<Entry<IEquality, Equality<FactSource>>> iter = factEqualityTable.entrySet().iterator(); iter.hasNext();) {
-			Entry<IEquality, Equality<FactSource>> entry = iter.next();
+		for (Iterator<Entry<EqualityLiteral, Equality<FactSource>>> iter = factEqualityTable.entrySet().iterator(); iter.hasNext();) {
+			Entry<EqualityLiteral, Equality<FactSource>> entry = iter.next();
 			FactSource source = entry.getValue().getSource();
 			source.backtrack(level);
 			if (!source.isValid()) iter.remove();
 		}
-		for (Iterator<Entry<IEquality, Equality<QuerySource>>> iter = queryEqualityTable.entrySet().iterator(); iter.hasNext();) {
-			Entry<IEquality, Equality<QuerySource>> entry = iter.next();
+		for (Iterator<Entry<EqualityLiteral, Equality<QuerySource>>> iter = queryEqualityTable.entrySet().iterator(); iter.hasNext();) {
+			Entry<EqualityLiteral, Equality<QuerySource>> entry = iter.next();
 			QuerySource source = entry.getValue().getSource();
 			source.backtrack(level);
 			if (!source.isValid()) iter.remove();
 		}
 		// instantiations
-		for (Iterator<Entry<IEquality, Instantiation>> iter = instantiationTable.entrySet().iterator(); iter.hasNext();) {
-			Entry<IEquality, Instantiation> entry = iter.next();
+		for (Iterator<Entry<EqualityLiteral, Instantiation>> iter = instantiationTable.entrySet().iterator(); iter.hasNext();) {
+			Entry<EqualityLiteral, Instantiation> entry = iter.next();
 			QuerySource source = entry.getValue().getSource();
 			source.backtrack(level);
 			if (!source.isValid()) iter.remove();
@@ -273,7 +273,7 @@ public class EquivalenceManager implements IEquivalenceManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T extends Source> Equality<T> addEquality(IEquality equality, Node node1, Node node2, Hashtable<IEquality, Equality<T>> table, boolean fact) {
+	private <T extends Source> Equality<T> addEquality(EqualityLiteral equality, Node node1, Node node2, Hashtable<EqualityLiteral, Equality<T>> table, boolean fact) {
 		assert !table.containsKey(equality);
 		
 		Source source = fact?new Source.FactSource(equality):new Source.QuerySource(equality);
@@ -281,5 +281,12 @@ public class EquivalenceManager implements IEquivalenceManager {
 		table.put(equality, nodeEquality);
 		return nodeEquality;
 	}
+	
+
+	@Override
+	public String toString() {
+		return solver.toString();
+	}
+
 }
  

@@ -19,7 +19,6 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
-import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.NormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.TermBuilder;
 import org.eventb.pp.Util;
@@ -125,7 +124,7 @@ public class TestTermBuilder extends TestCase {
 	public void doTest(Expression input, TermSignature expected) {
 		// we assume that the string is a relational predicate and more
 		// precisely Formula.IN
-		Stack<INormalizedFormula> result = new Stack<INormalizedFormula>();
+		Stack<NormalizedFormula> result = new Stack<NormalizedFormula>();
 		result.push(new NormalizedFormula(null,0,0,0,new BoundIdentDecl[0],null,false));
 		TermBuilder builder = new TermBuilder(result);
 		TermSignature actual = builder.buildTerm(input);

@@ -1,66 +1,105 @@
 package org.eventb.internal.pp.core.provers.predicate;
 
-import java.util.List;
+import java.util.Iterator;
 
-import org.eventb.internal.pp.core.ProofStrategy;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IPredicate;
+import org.eventb.internal.pp.core.ClauseDispatcher;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.inferrers.InferrenceResult;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
 
 /**
  * This class is responsible for applying the resolution rule between one
  * unit and one non-unit clause. It is initialized with a new pair of clauses
- * and then, each call of {@link #nextMatch(ProofStrategy)} returns a new inferred clause,
+ * and then, each call of {@link #nextMatch(ClauseDispatcher)} returns a new inferred clause,
  * until no more matches are available.
  *
  * @author François Terrier
  *
  */
-public class ResolutionResolver {
-	// STATELESS ?
-	private IClause unitClause;
-	private IClause clause;
-	private ResolutionInferrer inferrer;
-	
-	public ResolutionResolver(ResolutionInferrer inferrer) {
-		this.inferrer = inferrer;
-	}
-	
-	public void initialize(IClause unitClause, IClause clause) {
-		this.unitClause = unitClause;
-		this.clause = clause;
-		this.currentLiteral = 0;
-	}
-	
-	private int currentLiteral = 0;
-	
-	private void reset() {
-		this.unitClause = null;
-		this.clause = null;
-		this.currentLiteral = 0;
-	}
-	
-	public void removeClause(IClause clause) {
-		if (this.clause == clause || this.unitClause == clause) reset();
-	}
-	
-	public InferrenceResult next() {
-		if (unitClause == null || clause == null) return null;
-		
-		List<IPredicate> literals = clause.getPredicateLiterals();
+public class ResolutionResolver implements IResolver {
 
-		inferrer.setUnitClause(unitClause);
-		for (int i = currentLiteral;i<literals.size();i++) {
-			inferrer.setPosition(i);
-			if (inferrer.canInfer(clause)) {
-				currentLiteral = i+1;
-				clause.infer(inferrer);
-				return inferrer.getResult();
+	private ResolutionInferrer inferrer;
+	private IMatchIterator matchedClauses;
+	
+	public ResolutionResolver(ResolutionInferrer inferrer, IMatchIterator matchedClauses) {
+		this.inferrer = inferrer;
+		this.matchedClauses = matchedClauses;
+	}
+	
+	private Clause currentMatcher;
+	private Clause currentMatched;
+	private Iterator<Clause> currentMatchedIterator;
+	private int currentPosition;
+
+	public InferrenceResult next() {
+		if (!isInitialized()) throw new IllegalStateException();
+		if (nextPosition()) return doMatch();
+		while (nextMatchedClause()) {
+			if (nextPosition()) {
+				return doMatch();
 			}
 		}
 		return null;
 	}
 	
-
+	public boolean isInitialized() {
+		return currentMatchedIterator != null;
+	}
+	
+	public void initialize(Clause matcher) {
+		assert matcher.isUnit();
+		
+		currentMatcher = matcher;
+		currentMatched = null;
+		currentPosition = -1;
+		initMatchedIterator();
+	}
+	
+	private void initMatchedIterator() {
+		PredicateLiteral predicate = currentMatcher.getPredicateLiterals().get(0);
+		currentMatchedIterator = matchedClauses.iterator(predicate.getDescriptor());
+	}
+	
+	public void remove(Clause clause) {
+		if (currentMatched != null && clause.equalsWithLevel(currentMatched)) {
+			currentMatched = null;
+			currentPosition = -1;
+		}
+		if (currentMatcher != null && clause.equalsWithLevel(currentMatcher)) {
+			currentMatchedIterator = null;
+			currentMatched = null;
+			currentMatcher = null;
+			currentPosition = -1;
+		}
+	}
+	
+	private InferrenceResult doMatch() {
+		inferrer.setPosition(currentPosition);
+		inferrer.setUnitClause(currentMatcher);
+		currentMatched.infer(inferrer);
+		InferrenceResult result = inferrer.getResult();
+		PredicateProver.debug("Inferred clause: "+currentMatcher+" + "+currentMatched+" -> "+result.getClause());
+		return result;
+	}
+	
+	private boolean nextMatchedClause() {
+		if (!currentMatchedIterator.hasNext()) return false;
+		currentMatched = currentMatchedIterator.next();
+		currentPosition = -1;
+		return true;
+	}
+	
+	private boolean nextPosition() {
+		if (currentMatched == null) return false;
+		for (int i = currentPosition+1; i < currentMatched.getPredicateLiterals().size(); i++) {
+			PredicateLiteral matcherPredicate = currentMatcher.getPredicateLiterals().get(0);
+			if (currentMatched.matchesAtPosition(matcherPredicate.getDescriptor(), i)) {
+				currentPosition = i;
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

@@ -10,7 +10,7 @@ package org.eventb.internal.pp.loader.formula;
 
 import java.util.List;
 
-import org.eventb.internal.pp.core.elements.ILiteral;
+import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.LabelManager;
 import org.eventb.internal.pp.loader.clause.VariableTable;
@@ -36,9 +36,9 @@ public interface ISubFormula<T extends LiteralDescriptor> {
 //	 * @param table TODO
 //	 * @return the corresponding unit literal or <code>null</code> if none exists.
 //	 */
-	public List<List<ILiteral<?>>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<ILiteral<?>>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool);
+	public List<List<Literal<?,?>>> getClauses(List<TermSignature> termList, LabelManager manager, List<List<Literal<?,?>>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool);
 
-	public List<List<ILiteral<?>>> getClauses(List<TermSignature> terms, LabelManager manager, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool);
+	public List<List<Literal<?,?>>> getClauses(List<TermSignature> terms, LabelManager manager, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool);
 	
 //	/**
 //	 * Returns the literal representing this formula. If it is an atomic
@@ -46,7 +46,7 @@ public interface ISubFormula<T extends LiteralDescriptor> {
 //	 * complex formula, it returns the corresponding label.
 //	 * 
 //	 * For instance, if this subformula is a simple predicate (x ↦ y ∈ P), it
-//	 * returns the corresponding {@link PPPredicate}.
+//	 * returns the corresponding {@link ComplexPredicateLiteral}.
 //	 * If it is a clause Px ∨ ... ∨ Qy, it returns the corresponding label
 //	 * Lx...y ⇔ Px ∨ ... ∨ Qy.
 //	 * 
@@ -55,7 +55,7 @@ public interface ISubFormula<T extends LiteralDescriptor> {
 //	 * @param table TODO
 //	 * @return
 //	 */
-	public ILiteral<?> getLiteral(List<TermSignature> terms, TermVisitorContext flags, VariableTable table /*, context*/, BooleanEqualityTable bool);
+	public Literal<?,?> getLiteral(List<TermSignature> terms, TermVisitorContext flags, VariableTable table /*, context*/, BooleanEqualityTable bool);
 
     /**
      * Returns the size of the index list.

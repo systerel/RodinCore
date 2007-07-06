@@ -1,8 +1,6 @@
 package org.eventb.internal.pp.loader.predicate;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
@@ -18,25 +16,25 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
  */
 public class IntermediateResult implements IIntermediateResult {
 
-	@SuppressWarnings("unused")
-	private Comparator<TermSignature> orderer; 
+//	@SuppressWarnings("unused")
+//	private Comparator<TermSignature> orderer; 
 	
 	private List<TermSignature> results = new ArrayList<TermSignature>();
 	
-	public void orderList() {
-//		Collections.sort(results);
+//	public void orderList() {
+////		Collections.sort(results);
+//	}
+//	
+//	public void reverse() {
+//		Collections.reverse(results);
+//	}
+	
+	public IntermediateResult(/*Comparator<TermSignature> orderer*/) {
+//		this.orderer = orderer;
 	}
 	
-	public void reverse() {
-		Collections.reverse(results);
-	}
-	
-	public IntermediateResult(Comparator<TermSignature> orderer) {
-		this.orderer = orderer;
-	}
-	
-	public IntermediateResult(List<TermSignature> list, Comparator<TermSignature> orderer) {
-		this.orderer = orderer;
+	public IntermediateResult(List<TermSignature> list /*, Comparator<TermSignature> orderer */ ) {
+//		this.orderer = orderer;
 		this.results.addAll(list);
 	}
 	

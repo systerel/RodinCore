@@ -9,7 +9,7 @@
 package org.eventb.internal.pp.core.elements.terms;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Sort;
@@ -19,7 +19,7 @@ import org.eventb.internal.pp.core.elements.Sort;
  * @author François Terrier
  *
  */
-public class Variable extends AbstractVariable {
+public final class Variable extends SimpleTerm {
 //	protected int index;
 
 	public Variable(/* int index, */Sort sort) {
@@ -60,18 +60,7 @@ public class Variable extends AbstractVariable {
 	}
 
 	@Override
-	public void collectLocalVariables(List<LocalVariable> existential) {
-		return;
-	}
-
-	@Override
-	public void collectVariables(Set<Variable> variables) {
-		if (!variables.contains(this)) variables.add(this); 
-	}
-
-	
-	@Override
-	public boolean equalsWithDifferentVariables(Term term, HashMap<AbstractVariable, AbstractVariable> map) {
+	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
 		assert sort != null;
 		
 		if (map.containsKey(this)) return term.equals(map.get(this));
@@ -98,6 +87,26 @@ public class Variable extends AbstractVariable {
 		if (equals(o)) return 0;
 		else if (getPriority() == o.getPriority()) return hashCode()-o.hashCode();
 		else return getPriority() - o.getPriority();
+	}
+
+	@Override
+	public final int hashCodeWithDifferentVariables() {
+		return 1;
+	}
+
+	@Override
+	protected <S extends Term> Term substitute(Map<SimpleTerm, S> map) {
+		return map.containsKey(this)?map.get(this):this;
+	}
+
+	@Override
+	public void collectVariables(Set<Variable> variables) {
+		variables.add(this);
+	}
+
+	@Override
+	public void collectLocalVariables(Set<LocalVariable> localVariables) {
+		return;
 	}
 
 }

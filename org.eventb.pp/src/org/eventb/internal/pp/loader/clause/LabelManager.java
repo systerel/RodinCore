@@ -80,32 +80,6 @@ public class LabelManager {
 		return set.toArray(new ILabelizableFormula[set.size()])[index];
 	}
 	
-//	/**
-//	 * Sets the flag "force labelize" to the specified value.
-//	 * 
-//	 * This flag is set to <code>true</code> by a certain formula to enforce
-//	 * the labelization of its children. This is useful to enforce labelizing what
-//	 * follows an existential literal for instance.
-//	 * 
-//	 * It should be set to <code>false</code> each time a new formula is normalized.
-//	 * 
-//	 * @see LabelManager#isForceLabelize()
-//	 * @param forceLabelize the new value to set
-//	 */
-//	public void setForceLabelize(boolean forceLabelize) {
-//		this.forceLabelize = forceLabelize;
-//	}
-	
-//	/**
-//	 * Returns the value of the "force labelize" flag.
-//	 * 
-//	 * @return the value of the "force labelize" flag	
-//	 */
-//	public boolean isForceLabelize() {
-//		return this.forceLabelize;
-//	}
-//
-	
 	public boolean isGettingDefinitions() {
 		return gettingDefinitions;
 	}

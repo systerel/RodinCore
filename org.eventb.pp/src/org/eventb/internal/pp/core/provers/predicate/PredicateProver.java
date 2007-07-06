@@ -1,24 +1,25 @@
 package org.eventb.internal.pp.core.provers.predicate;
 
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.Stack;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
-import org.eventb.internal.pp.core.IDispatcher;
 import org.eventb.internal.pp.core.IProver;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.datastructure.DefaultChangeListener;
-import org.eventb.internal.pp.core.datastructure.IObservable;
-import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.ProverResult;
+import org.eventb.internal.pp.core.datastructure.DataStructureWrapper;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.inferrers.InferrenceResult;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
 import org.eventb.internal.pp.core.search.IterableHashSet;
 import org.eventb.internal.pp.core.search.ResetIterator;
+import org.eventb.internal.pp.core.tracing.AbstractInferrenceOrigin;
+import org.eventb.internal.pp.core.tracing.IOrigin;
 
-public class PredicateProver extends DefaultChangeListener implements IProver {
+public class PredicateProver implements IProver {
 
 	/**
 	 * Debug flag for <code>PROVER_CASESPLIT_TRACE</code>
@@ -29,216 +30,250 @@ public class PredicateProver extends DefaultChangeListener implements IProver {
 			System.out.println(message);
 	}
 	
-	private IterableHashSet<IClause> unitClauses;
-	private IterableHashSet<IClause> nonUnitClauses;
+	private DataStructureWrapper unitClausesWrapper;
+//	private DataStructureWrapper nonUnitClausesWrapper;
+	private IterableHashSet<Clause> unitClauses;
+	private ResetIterator<Clause> unitClausesIterator;
+	private IterableHashSet<Clause> nonUnitClauses;
 	
-	private IterableHashSet<IClause> generatedClauses; 
-	private ResetIterator<IClause> backtrackIterator;
-	private ResetIterator<IClause> dispatcherIterator;
+//	private IterableHashSet<Clause> generatedClauses; 
+//	private Set<Clause> subsumedClauses;
+	
+//	private ResetIterator<Clause> backtrackIterator;
+//	private ResetIterator<Clause> dispatcherIterator;
 	
 	private ResolutionInferrer inferrer;
-	private ResolutionResolver resolver;
+	private ResolutionResolver nonUnitResolver;
+	private ResolutionResolver unitResolver;
+	private ReverseResolutionResolver conditionResolver;
 	
-	private IDispatcher dispatcher;
 	private ClauseSimplifier simplifier;
-	private UnitInferenceIterator unitProver;
-	private NonUnitInferenceIterator nonUnitProver;
+	private UnitMatcher unitMatcher;
 	
 	public PredicateProver(IVariableContext context) {
 		this.inferrer = new ResolutionInferrer(context);
-		this.resolver = new ResolutionResolver(inferrer);
 		
-		unitClauses = new IterableHashSet<IClause>();
-		nonUnitClauses = new IterableHashSet<IClause>();
+		unitClauses = new IterableHashSet<Clause>();
+		unitClausesWrapper = new DataStructureWrapper(unitClauses);
+		nonUnitClauses = new IterableHashSet<Clause>();
+//		nonUnitClausesWrapper = new DataStructureWrapper(nonUnitClauses);
 		
-		unitProver = new UnitInferenceIterator();
-		nonUnitProver = new NonUnitInferenceIterator(unitClauses.iterator(),nonUnitClauses.iterator());
-	
+		unitMatcher = new UnitMatcher(unitClausesWrapper);
+		
+		nonUnitResolver = new ResolutionResolver(inferrer, new IteratorMatchIterator(nonUnitClauses.iterator()));
+		unitResolver = new ResolutionResolver(inferrer, new UnitMatchIterator(unitMatcher));
+		conditionResolver = new ReverseResolutionResolver(inferrer, new UnitMatchIterator(unitMatcher));
+		
 		unitClausesIterator = unitClauses.iterator();
-		nonUnitClausesIterator = nonUnitClauses.iterator();
 		
-		generatedClauses = new IterableHashSet<IClause>();
-		backtrackIterator = generatedClauses.iterator();
-		dispatcherIterator = generatedClauses.iterator();
+//		generatedClauses = new IterableHashSet<Clause>();
+//		subsumedClauses = new HashSet<Clause>();
+//		backtrackIterator = generatedClauses.iterator();
+//		dispatcherIterator = generatedClauses.iterator();
 	}
 	
-	public void initialize(IDispatcher dispatcher, IObservable clauses, ClauseSimplifier simplifier) {
-		this.dispatcher = dispatcher;
+	public void initialize(ClauseSimplifier simplifier) {
 		this.simplifier = simplifier;
-		clauses.addChangeListener(this);
 	}
 	
-	private IClause blockedClause = null;
+	private Clause blockedClause = null;
 	
 	public boolean isBlocked() {
 		return blockedClause != null;
 	}
 	
-	public IClause next() {
-		IClause result = null;
+	public ProverResult next() {
+		// TODO refactor this 
+		
+		if (simplifier == null) throw new IllegalStateException();
+		
+		ProverResult result = null;
 		if (isBlocked()) {
 			debug("Unblocking clause: "+blockedClause);
-			result = blockedClause;
+			result = new ProverResult(blockedClause);
 			blockedClause = null;
-			unblock();
 		}
 		else {
-			// TODO clean here
-			InferrenceResult nextClause = resolver.next();
-			if (nextClause == null) {
-				while (nextClause==null && nonUnitProver.next()) {
-					IClause nonUnitClause = nonUnitProver.getMatchingNonUnit();
-					// TODO record inferrence 
-					resolver.initialize(nonUnitProver.getMatchingUnit(), nonUnitClause);
-					nextClause = resolver.next();
-				}
+			if (!nonUnitResolver.isInitialized()) {
+				Clause unit = nextUnit();
+				if (unit == null) return null;
+				nonUnitResolver.initialize(unit);
+			}
+			InferrenceResult nextClause = nonUnitResolver.next();
+			while (nextClause == null) {
+				Clause unit = nextUnit();
+				if (unit == null) return null;
+				else newClause(unit, unitResolver);
+				nonUnitResolver.initialize(unit);
+				nextClause = nonUnitResolver.next();
 			}
 			if (nextClause != null) {
-				PredicateProver.debug("Inferred clause: "+nonUnitProver.getMatchingUnit()+" + "+nonUnitProver.getMatchingNonUnit()+" -> "+nextClause.getClause());
-				if (handleBlocking(nextClause)) {
-					debug("Clause blocked, returning null");
+				Clause clause = nextClause.getClause();
+				clause = simplifier.run(clause);
+				if (clause.isFalse()) {
+					result = new ProverResult(clause.getOrigin());
 				}
-				else {
-					result = nextClause.getClause();
-				}
+				else if (nextClause.isBlockedOnInferrence()) blockedClause = clause;
+				else result = new ProverResult(clause, nextClause.getSubsumedClauses());
 			}
 		}
-		
+		debug("PredicateProver, next clause: "+result);
 		return result;
 	}
 	
-	private boolean handleBlocking(InferrenceResult newClause) {
-		if (newClause.isBlockedOnInferrence()) {
-			blockedClause = newClause.getClause();
-			return true;
-		}
+	public boolean isSubsumed(Clause clause) {
 		return false;
 	}
 	
-	private ResetIterator<IClause> unitClausesIterator;
-	private ResetIterator<IClause> nonUnitClausesIterator;
-	private void unblock() {
-		unitClausesIterator.reset();
-		while (unitClausesIterator.hasNext()) {
-			unitClausesIterator.next().reset();
-		}
-		nonUnitClausesIterator.reset();
-		while (nonUnitClausesIterator.hasNext()) {
-			nonUnitClausesIterator.next().reset();
-		}
+	private Clause nextUnit() {
+		if (unitClausesIterator.hasNext()) return unitClausesIterator.next();
+		return null;
 	}
 	
-	public void newUnitClause(IClause clause) {
-		unitProver.initialize(clause);
-		IClause newClause;
+//	private static class NiceIterator extends ConditionIterator<Clause> {
+//		private PredicateFormula matched;
+//
+//		NiceIterator(PredicateFormula matched, Iterator<Clause> iterator) {
+//			super(iterator);
+//
+//			this.matched = matched;
+//		}
+//
+//		@Override
+//		public boolean isSelected(Clause element) {
+//			return ResolutionInferrer.canInfer(element.getPredicateLiterals().get(0),
+//					matched, element.isEquivalence());
+//		}
+//	}
+	
+	public ProverResult addClauseAndDetectContradiction(Clause clause) {
+		if (simplifier == null) throw new IllegalStateException();
 		
-		// TODO the main prover might have backtracked on a contradiction coming from here
-		// check if it is the case + document
-		while (	(newClause = unitProver.next()) != null
-				&& (Level.getHighest(dispatcher.getLevel(), clause.getLevel()).equals(dispatcher.getLevel()))) {
-			inferrer.setUnitClause(newClause);
-			inferrer.setPosition(0);
-			if (inferrer.canInfer(clause)) {
-				clause.infer(inferrer);
-				InferrenceResult result = inferrer.getResult();
-				// TODO can we block on unit clause inferrences ?
-
-				PredicateProver.debug("Unit-unit inference: "+clause+" + "+newClause+" -> "+result.getClause());
-				IClause inferredClause = result.getClause();
-				inferredClause = simplifier.run(inferredClause);
-				if (inferredClause.isFalse()) {
-					dispatcher.contradiction(inferredClause.getOrigin());
-					// we can stop here because all subsequent clauses will be lost
-					return;
-				}
-				if (!inferredClause.isTrue()) {
-					generatedClauses.appends(inferredClause);
-				}
-			}
-		}
-	}
-	
-	public boolean accepts(IClause clause) {
-		return clause.isUnit() && clause.getPredicateLiterals().size() > 0
-		&& !clause.getPredicateLiterals().get(0).isQuantified();
-	}
-	
-	public void addOwnClause(IClause clause) {
-		if (dispatcher != null) newUnitClause(clause);
-	}
-
-	@Override
-	public void newClause(IClause clause) {
 		if (accepts(clause)) {
-			unitClauses.appends(clause);
-			unitProver.newClause(clause);
-			nonUnitProver.newClause(clause);
+			unitClausesWrapper.add(clause);
 			
 			// we generate the clauses
-			addOwnClause(clause);
+			return newClause(clause, unitResolver);
 		}
 		else if (	clause.getPredicateLiterals().size()>0 
 					&& !clause.isUnit()
 					&& !clause.isBlockedOnConditions()) {
 			nonUnitClauses.appends(clause);
-			nonUnitProver.newClause(clause);
+			
+			if (hadConditions(clause)) return newClause(clause, conditionResolver);
 		}
+		return null;
 	}
 
-	@Override
-	public void removeClause(IClause clause) {
-		if (blockedClause == clause) blockedClause = null;
+	
+	public ProverResult newClause(Clause clause, IResolver resolver) {
+		Set<Clause> generatedClauses = new HashSet<Clause>();
+		Set<Clause> subsumedClauses = new HashSet<Clause>();
 		
+		resolver.initialize(clause);
+		InferrenceResult result = resolver.next();
+		while (result != null) {
+			subsumedClauses.addAll(result.getSubsumedClauses());
+			
+			Clause inferredClause = result.getClause();
+			inferredClause = simplifier.run(inferredClause);
+			if (inferredClause.isFalse()) {
+				// we can stop here because all subsequent clauses will be lost
+				return new ProverResult(inferredClause.getOrigin(), subsumedClauses);
+			}
+			if (!inferredClause.isTrue()) {
+				generatedClauses.add(inferredClause);
+			}
+			
+			result = resolver.next();
+		}
+		return new ProverResult(generatedClauses, subsumedClauses);
+	}
+	
+	public boolean accepts(Clause clause) {
+		return clause.isUnit() && clause.getPredicateLiterals().size() > 0
+		&& !clause.getPredicateLiterals().get(0).isQuantified();
+	}
+	
+	// TODO dirty
+	private boolean hadConditions(Clause clause) {
+		IOrigin origin = clause.getOrigin();
+		if (origin instanceof AbstractInferrenceOrigin) {
+			AbstractInferrenceOrigin tmp = (AbstractInferrenceOrigin)origin;
+			for (Clause parent : tmp.getClauses()) {
+				if (parent.isBlockedOnConditions()) return true;
+			}
+		}
+		return false;
+	}
+
+//	@Override
+//	public void newClause(Clause clause) {
+//		if (accepts(clause)) {
+//			unitClausesWrapper.add(clause);
+//			
+//			// we generate the clauses
+//			newClause(clause, unitResolver);
+//		}
+//		else if (	clause.getPredicateLiterals().size()>0 
+//					&& !clause.isUnit()
+//					&& !clause.isBlockedOnConditions()) {
+//			nonUnitClauses.appends(clause);
+//			
+//			if (hadConditions(clause)) newClause(clause, conditionResolver);
+//		}
+//	}
+
+	public void removeClause(Clause clause) {
 		if (accepts(clause)) {
-			unitClauses.remove(clause);
-			unitProver.removeClause(clause);
-			nonUnitProver.removeClause(clause);
+			unitClausesWrapper.remove(clause);
 		}
 		else if (	clause.getPredicateLiterals().size()>0
 					&& !clause.isUnit()
 					&& !clause.isBlockedOnConditions()) {
 			nonUnitClauses.remove(clause);
-			nonUnitProver.removeClause(clause);
 		}
-		
-		removeFromResolver(clause);
+		nonUnitResolver.remove(clause);
 	}
 	
-	private void removeFromResolver(IClause clause) {
-		resolver.removeClause(clause);
-	}
-	
-	public void contradiction(Level oldLevel, Level newLevel, Stack<Level> dependencies) {
+	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		// the blocked clauses are not in the search space of the main prover, so
 		// it is important to verify here that they can still exist
-		if (blockedClause != null && !Level.getHighest(blockedClause.getLevel(), newLevel).equals(newLevel)) {
+		if (blockedClause != null && newLevel.isAncestorOf(blockedClause.getLevel())) {
 			blockedClause = null;
 		}
 		
-		// TODO check if necessary
-		backtrackIterator.reset();
-		while (backtrackIterator.hasNext()) {
-			IClause clause = backtrackIterator.next();
-			if (newLevel.isAncestorOf(clause.getLevel())) generatedClauses.remove(clause);
-		}
+//		// TODO check if necessary
+//		backtrackIterator.reset();
+//		while (backtrackIterator.hasNext()) {
+//			Clause clause = backtrackIterator.next();
+//			if (dispatcher.getLevel().isAncestorOf(clause.getLevel())) generatedClauses.remove(clause);
+//		}
 	}
 
 	public void registerDumper(Dumper dumper) {
-		dumper.addDataStructure("Predicate unit clauses", unitClauses.iterator());
-		dumper.addDataStructure("Predicate non-unit clauses", nonUnitClauses.iterator());
+		dumper.addDataStructure("PredicateFormula unit clauses", unitClauses.iterator());
+		dumper.addDataStructure("PredicateFormula non-unit clauses", nonUnitClauses.iterator());
 	}
 	
-	public ResetIterator<IClause> getGeneratedClauses() {
-		return dispatcherIterator;
+	@Override
+	public String toString() {
+		return "PredicateProver";
 	}
-
-	public void clean() {
-		generatedClauses.clear();
-	}
-
-	public Set<IClause> getSubsumedClauses() {
-		return null;
-	}
+	
+//	public ResetIterator<Clause> getGeneratedClauses() {
+//		return dispatcherIterator;
+//	}
+//
+//	public void clean() {
+//		generatedClauses.clear();
+//	}
+//
+//	public Set<Clause> getSubsumedClauses() {
+//		Set<Clause> result = new HashSet<Clause>(subsumedClauses);
+//		subsumedClauses.clear();
+//		return result;
+//	}
 
 }
 

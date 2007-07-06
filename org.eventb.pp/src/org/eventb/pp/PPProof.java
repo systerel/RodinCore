@@ -8,8 +8,10 @@ import java.util.Set;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
-import org.eventb.internal.pp.core.ProofStrategy;
-import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.ClauseDispatcher;
+import org.eventb.internal.pp.core.IVariableContext;
+import org.eventb.internal.pp.core.VariableContext;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.provers.equality.EqualityProver;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
@@ -41,11 +43,13 @@ public class PPProof {
 	private Predicate goal;
 	private Predicate transformedGoal;
 	
+	private Set<Clause> clauses;
+	
 	private PPResult result;
 	
-	private PredicateBuilder pBuilder;
-	private ClauseBuilder cBuilder;
-	private ProofStrategy proofStrategy;
+//	private PredicateBuilder pBuilder;
+//	private ClauseBuilder cBuilder;
+	private ClauseDispatcher proofStrategy;
 	
 	public PPProof(Predicate[] hypotheses, Predicate goal) {
 		this.hypotheses = Arrays.asList(hypotheses);
@@ -64,7 +68,11 @@ public class PPProof {
 		}
 		this.goal = goal;
 	}
-
+	
+	public PPProof(Set<Clause> clauses) {
+		this.clauses = clauses;
+	}
+	
 	public PPResult getResult() {
 		return result;
 	}
@@ -81,10 +89,12 @@ public class PPProof {
 	private Predicate translate(Predicate predicate) {
 		assert predicate.isTypeChecked();
 		
-		Predicate newPredicate = Translator.decomposeIdentifiers(predicate, ff);
+		Predicate newPredicate;
+		
+		newPredicate = Translator.decomposeIdentifiers(predicate, ff);
 		newPredicate = Translator.reduceToPredicateCalulus(newPredicate, ff);
 		newPredicate = Translator.simplifyPredicate(newPredicate, ff);
-		
+
 		debug("Translated: "+predicate+" to: "+newPredicate);
 		return newPredicate;
 	}
@@ -94,33 +104,41 @@ public class PPProof {
 		if (transformedHypotheses==null) transformedHypotheses = hypotheses;
 		if (transformedGoal == null) transformedGoal = goal;
 		
-		initPredicateBuilder();
-		initClauseBuilder();
+		IVariableContext context;
+		if (clauses == null) {
+			PredicateBuilder pBuilder = new PredicateBuilder();
+			ClauseBuilder cBuilder = new ClauseBuilder();
 		
-		loadHypotheses();
-		loadGoal();
+			loadHypotheses(pBuilder);
+			loadGoal(pBuilder);
 		
-		if (result!=null) {
-			// proof has been found during translation
+			if (result!=null) {
+				// proof has been found during translation
+				debugResult();
+				return;
+			}
+			LoaderResult loaderResult = cBuilder.buildClauses(pBuilder.getContext());
+			
+			clauses = loaderResult.getClauses();
+			context = cBuilder.getVariableContext();
 		}
 		else {
-			LoaderResult loaderResult = cBuilder.buildClauses(pBuilder.getContext());
-			initProver();
-			
-			debug("==== Original clauses ====");
-			for (IClause clause : loaderResult.getClauses()) {
-				debug(clause.toString());
-			}
-			
-			proofStrategy.setClauses(loaderResult.getClauses());
-			try {
-				proofStrategy.mainLoop(timeout);
-				result = proofStrategy.getResult();
-			}
-			catch (InterruptedException e) {
-				result = new PPResult(Result.cancel,null);
-			}
-			
+			context = new VariableContext();
+		}
+		
+		initProver(context);
+		debug("==== Original clauses ====");
+		for (Clause clause : clauses) {
+			debug(clause.toString());
+		}
+
+		proofStrategy.setClauses(clauses);
+		try {
+			proofStrategy.mainLoop(timeout);
+			result = proofStrategy.getResult();
+		}
+		catch (InterruptedException e) {
+			result = new PPResult(Result.cancel,null);
 		}
 		debugResult();
 	}
@@ -130,6 +148,7 @@ public class PPProof {
 //			debug("** proof found, traced clauses **");
 //			debug(getResult().getTracer().getClauses().toString());
 			debug("** proof found **");
+			if (result.getTracer() instanceof org.eventb.internal.pp.core.tracing.Tracer) debug("closing clauses: "+((org.eventb.internal.pp.core.tracing.Tracer)result.getTracer()).getClosingOrigins());
 			debug("original hypotheses: "+result.getTracer().getOriginalPredicates().toString());
 			debug("goal needed: "+result.getTracer().isGoalNeeded());
 		}
@@ -138,7 +157,8 @@ public class PPProof {
 		}
 	}
 	
-	private void loadGoal() {
+	private void loadGoal(PredicateBuilder pBuilder) {
+		transformedGoal = transformedGoal.flatten(ff);
 		if (transformedGoal.getTag() == Formula.BTRUE) {
 			// proof done
 			result = new PPResult(Result.valid,new Tracer(true)); 
@@ -151,10 +171,12 @@ public class PPProof {
 		}
 	}
 	
-	private void loadHypotheses() {
+	
+	
+	private void loadHypotheses(PredicateBuilder pBuilder) {
 		for (int i=0;i<transformedHypotheses.size();i++) {
 			Predicate hypothesis = hypotheses.get(i);
-			Predicate transformedHypothesis = transformedHypotheses.get(i);
+			Predicate transformedHypothesis = transformedHypotheses.get(i).flatten(ff);
 			if (transformedHypothesis.getTag() == Formula.BTRUE) {
 				// ignore
 			}
@@ -169,7 +191,6 @@ public class PPProof {
 	}
 
 	private static class Tracer implements ITracer {
-
 		private List<Predicate> originalPredicates = new ArrayList<Predicate>();
 		private boolean goalNeeded;
 		
@@ -191,21 +212,14 @@ public class PPProof {
 		}
 	}
 	
-	private void initPredicateBuilder() {
-		pBuilder = new PredicateBuilder();
-	}
 	
-	private void initClauseBuilder() {
-		cBuilder = new ClauseBuilder();
-	}
-	
-	private void initProver() {
-		proofStrategy = new ProofStrategy();
+	private void initProver(IVariableContext context) {
+		proofStrategy = new ClauseDispatcher();
 		
-		PredicateProver prover = new PredicateProver(cBuilder.getVariableContext());
-		CaseSplitter casesplitter = new CaseSplitter(cBuilder.getVariableContext());
-		SeedSearchProver seedsearch = new SeedSearchProver(cBuilder.getVariableContext());
-		EqualityProver equalityprover = new EqualityProver(cBuilder.getVariableContext());
+		PredicateProver prover = new PredicateProver(context);
+		CaseSplitter casesplitter = new CaseSplitter(context, proofStrategy);
+		SeedSearchProver seedsearch = new SeedSearchProver(context);
+		EqualityProver equalityprover = new EqualityProver(context);
 		proofStrategy.setPredicateProver(prover);
 		proofStrategy.setCaseSplitter(casesplitter);
 		proofStrategy.setSeedSearch(seedsearch);
@@ -213,8 +227,8 @@ public class PPProof {
 		
 		OnePointRule onepoint = new OnePointRule();
 		ExistentialSimplifier existential = new ExistentialSimplifier();
-		LiteralSimplifier literal = new LiteralSimplifier(cBuilder.getVariableContext());
-		EqualitySimplifier equality = new EqualitySimplifier(cBuilder.getVariableContext());
+		LiteralSimplifier literal = new LiteralSimplifier(context);
+		EqualitySimplifier equality = new EqualitySimplifier(context);
 		
 		proofStrategy.addSimplifier(onepoint);
 		proofStrategy.addSimplifier(equality);

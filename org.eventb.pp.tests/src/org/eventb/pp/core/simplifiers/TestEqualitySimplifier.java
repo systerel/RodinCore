@@ -12,8 +12,8 @@ import java.util.ArrayList;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.VariableContext;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.ILiteral;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.EqualitySimplifier;
 import org.eventb.pp.AbstractPPTest;
@@ -24,9 +24,9 @@ public class TestEqualitySimplifier extends AbstractPPTest {
 
 	
 	private class TestPair {
-		IClause input, output;
+		Clause input, output;
 		
-		TestPair(IClause input, IClause output) {
+		TestPair(Clause input, Clause output) {
 			this.input = input;
 			this.output = output;
 		}
@@ -152,7 +152,7 @@ public class TestEqualitySimplifier extends AbstractPPTest {
 					cClause(cPred(0,a))
 			),
 			new TestPair(
-					cClause(new ArrayList<ILiteral>(),cNEqual(a,a)),
+					cClause(new ArrayList<Literal>(),cNEqual(a,a)),
 					FALSE
 			),
 			
@@ -170,7 +170,7 @@ public class TestEqualitySimplifier extends AbstractPPTest {
 			
 			
 			assertTrue(rule.canSimplify(test.input));
-			IClause actual = test.input.simplify(rule);
+			Clause actual = test.input.simplify(rule);
 			
 			assertEquals(test.input.toString(),test.output,actual);
 		}

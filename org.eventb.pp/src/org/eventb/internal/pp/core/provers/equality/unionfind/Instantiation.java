@@ -9,8 +9,8 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
 
 public class Instantiation {
-	private QuerySource source;
-	private Node node;
+	private final QuerySource source;
+	private final Node node;
 	
 	public Instantiation(Node node, QuerySource source) {
 		this.source = source;

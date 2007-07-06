@@ -2,7 +2,6 @@ package org.eventb.internal.pp.core.provers.seedsearch;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -10,23 +9,16 @@ import java.util.Stack;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
-import org.eventb.internal.pp.core.IDispatcher;
 import org.eventb.internal.pp.core.IProver;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.datastructure.DefaultChangeListener;
-import org.eventb.internal.pp.core.datastructure.IObservable;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IPredicate;
-import org.eventb.internal.pp.core.elements.terms.Term;
+import org.eventb.internal.pp.core.ProverResult;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.InstantiationInferrer;
-import org.eventb.internal.pp.core.provers.NonUnitMatcher;
-import org.eventb.internal.pp.core.search.IterableHashSet;
-import org.eventb.internal.pp.core.search.ResetIterator;
 
-
-public class SeedSearchProver extends DefaultChangeListener implements IProver {
+public class SeedSearchProver implements IProver {
 
 	/**
 	 * Debug flag for <code>PROVER_SEEDSEARCH_TRACE</code>
@@ -37,251 +29,133 @@ public class SeedSearchProver extends DefaultChangeListener implements IProver {
 			System.out.println(message);
 	}
 
-	private IterableHashSet<IClause> candidates;
-	private ResetIterator<IClause> candidatesIterator;
-	private IObservable clauses;
-	
+	private SeedSearchManager manager = new SeedSearchManager();
+	private ClauseSimplifier simplifier;
 	private InstantiationInferrer inferrer;
 	
 	public SeedSearchProver(IVariableContext context) {
 		this.inferrer = new InstantiationInferrer(context);
 	}
 	
-	public void contradiction(Level oldLevel, Level newLevel, Stack<Level> dependencies) {
-		// do nothing
+	private Stack<Set<Clause>> generatedClausesStack = new Stack<Set<Clause>>();
+	
+	public ProverResult addClauseAndDetectContradiction(Clause clause) {
+		List<SeedSearchResult> results = addArbitraryClause(clause);
+		Set<Clause> instantiatedClauses = new HashSet<Clause>();
+		for (SeedSearchResult result : results) {
+			Clause instantiatedClause = doInstantiation(result);
+			// we run the simplifier, since it is an instantiation, it is not possible
+			// to get a smaller clause than the original, given the fact that the
+			// original clause has been simplified
+			instantiatedClause = simplifier.run(instantiatedClause);
+			instantiatedClauses.add(instantiatedClause);
+		}
+		generatedClausesStack.add(instantiatedClauses);
+		return null;
+	}
+	
+	private Clause doInstantiation(SeedSearchResult result) {
+		PredicateLiteral literal = result.getInstantiableClause().getPredicateLiterals().get(result.getPredicatePosition());
+		Variable variable = (Variable)literal.getTerms().get(result.getPosition());
+		inferrer.addInstantiation(variable, result.getConstant());
+		result.getInstantiableClause().infer(inferrer);
+		return inferrer.getResult();
 	}
 
-	public void initialize(IDispatcher dispatcher,
-			IObservable clauses, ClauseSimplifier simplifier) {
-		this.clauses = clauses;
-		candidates = new IterableHashSet<IClause>();
-		candidatesIterator = candidates.iterator();
-		
-		clauses.addChangeListener(this);
-	}
+	private List<SeedSearchResult> addArbitraryClause(Clause clause) {
+		// TODO optimize
+		List<SeedSearchResult> result = new ArrayList<SeedSearchResult>();
+		if (clause.isBlockedOnConditions()) return result;
+		for (int i = 0; i < clause.getPredicateLiterals().size(); i++) {
+			PredicateLiteral literal1 = clause.getPredicateLiterals().get(i);
 
-	private IClause currentClause;
-	private List<Term> termList;
-	private Term term;
-	
-	private static final int ALLOWED_SEED_SEARCH = 2;
-	
-	private int currentSeedSearch = 0;
-	
-	private void nextClause() {
-		// for now we have only unit clauses
-		currentClause = candidatesIterator.next();
-		IPredicate predicate = currentClause.getPredicateLiterals().get(0);
-
-		int i = 0;
-		for (Term term : predicate.getTerms()) {
-			if (!term.isConstant()) {
-				termList = new ArrayList<Term>();
-				termList.addAll(seedSearch(predicate,i,new Hashtable<IPredicate, List<Integer>>(),0));
-				this.term = term;
-				return;
+			// equivalence clauses for constants
+			if (clause.isEquivalence() && !clause.isUnit()) { 
+				result.addAll(manager.addConstant(literal1.getInverse().getDescriptor(), literal1.getInverse().getTerms(), clause));
+				result.addAll(manager.addConstant(literal1.getDescriptor(), literal1.getTerms(), clause));
 			}
-			i++;
-		}
-	}
-	
-	public IClause next() {
-		if (ALLOWED_SEED_SEARCH == currentSeedSearch) {
-			currentSeedSearch = 0;
-			return null;
-		}
-		else currentSeedSearch++;
-		
-		debug("SeedSearch: initiating");
-		
-		while ((currentClause == null || termList.isEmpty()) && candidatesIterator.hasNext()) {
-			nextClause();
-		}
-		if (currentClause == null || termList.isEmpty()) {
-			debug("SeedSearch: nothing found");
-			return null;
-		}
-		debug("SeedSearch: seeds for "+currentClause+", "+termList);
-		
-		// TODO clean up this
-		Term newTerm = termList.remove(0);
-		Set<Variable> variables = new HashSet<Variable>();
-		term.collectVariables(variables);
-		Variable v = variables.iterator().next();
-		Term t = getTermForVariable(term, newTerm, v);
-		//////
-		
-		inferrer.addInstantiation(v, t);
-		
-		currentClause.infer(inferrer);
-		
-		IClause result = inferrer.getResult();
-		
-		debug("SeedSearch: final clause "+result);
-		return result;
-	}
-	
-	private Term getTermForVariable(Term originalTerm, Term newTerm, Variable v) {
-		return ( originalTerm == v ) ? newTerm : null;
-	}
-	
-	private boolean verifyAndAddToTable(IPredicate predicate, int position, Hashtable<IPredicate, List<Integer>> visitedPredicates) {
-		if (visitedPredicates.containsKey(predicate)) return visitedPredicates.get(predicate).contains(position);
-		else {
-			List<Integer> table = new ArrayList<Integer>();
-			table.add(position);
-			visitedPredicates.put(predicate, table);
-			return false;
-		}
-	}
-	
-	private Set<Term> seedSearch(IPredicate predicate, int position, Hashtable<IPredicate, List<Integer>> visitedPredicates, int count) {
-		if (verifyAndAddToTable(predicate, position, visitedPredicates)) return new HashSet<Term>();
-		if (count > 10) return new HashSet<Term>();
-		
-//		debug("SeedSearch: predicate "+predicate+" at pos "+position);
-		Set<Term> result = new HashSet<Term>();
-		ResetIterator<IClause> nonUnitIterator = clauses.iterator();
-		NonUnitMatcher matcher = new NonUnitMatcher(nonUnitIterator);
-		Iterator<IClause> iterator = matcher.iterator(predicate,true);
-		while (iterator.hasNext()) {
-			IClause clause = iterator.next();
-//			debug("SeedSearch: matching clause "+clause);
-			List<IPredicate> matchingPredicates = getMatchingPredicates(clause, predicate);
-			for (IPredicate matchingPredicate : matchingPredicates) {
-				Term t = matchingPredicate.getTerms().get(position);
-				if (t.isConstant() && !t.isQuantified()) result.add(t);
+			else {
+				result.addAll(manager.addConstant(literal1.getDescriptor(), literal1.getTerms(), clause));
+			}
+			
+			if (literal1.isQuantified()/* && clause.isUnit() */) { 
+				if (clause.isEquivalence()) {
+					result.addAll(manager.addInstantiable(literal1.getDescriptor(), literal1.getTerms(), i, clause));
+					result.addAll(manager.addInstantiable(literal1.getInverse().getDescriptor(), literal1.getInverse().getTerms(), i, clause));
+				}
 				else {
-					Set<Variable> variables = new HashSet<Variable>();
-					t.collectVariables(variables);
-					Hashtable<Variable, List<Term>> table = new Hashtable<Variable, List<Term>>();
-					for (Variable variable : variables) {
-						List<Term> values = new ArrayList<Term>();
-						for (IPredicate predicateWithVariable : getLiteralsWithVariable(variable, clause)) {
-							for (Integer i : getPositions(predicateWithVariable, variable)) {
-								// avoid looping on the matching predicates
-								if (i == position && matchingPredicates.contains(predicateWithVariable)) continue;
-								values.addAll(seedSearch(predicateWithVariable, i, visitedPredicates, ++count));
-							}
-						}
-						table.put(variable, values);
-					}
-					result.addAll(computeValues(t,table));
+					result.addAll(manager.addInstantiable(literal1.getDescriptor(), literal1.getTerms(), i, clause));
+				}
+			}
+			
+			for (int j = i+1; j < clause.getPredicateLiterals().size(); j++) {
+				PredicateLiteral literal2 = clause.getPredicateLiterals().get(j);
+				if (clause.isEquivalence() && clause.sizeWithoutConditions()==2) {
+					result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getInverse().getDescriptor(), 
+							literal1.getTerms(), literal2.getInverse().getTerms(), clause));
+					result.addAll(manager.addVariableLink(literal1.getInverse().getDescriptor(), literal2.getDescriptor(),
+							literal1.getInverse().getTerms(), literal2.getTerms(), clause));
+				}
+				else if (clause.isEquivalence()) {
+					result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getInverse().getDescriptor(), 
+							literal1.getTerms(), literal2.getInverse().getTerms(), clause));
+					result.addAll(manager.addVariableLink(literal1.getInverse().getDescriptor(), literal2.getDescriptor(),
+							literal1.getInverse().getTerms(), literal2.getTerms(), clause));
+					result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getDescriptor(),
+							literal1.getTerms(), literal2.getTerms(), clause));
+					result.addAll(manager.addVariableLink(literal1.getInverse().getDescriptor(), literal2.getInverse().getDescriptor(),
+							literal1.getInverse().getTerms(), literal2.getInverse().getTerms(), clause));
+				}
+				else {
+					result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getDescriptor(),
+							literal1.getTerms(), literal2.getTerms(), clause));
 				}
 			}
 		}
-		nonUnitIterator.delete();
 		return result;
 	}
 	
-	private List<Term> computeValues(Term t, Hashtable<Variable, List<Term>> table) {
-		return ( table.containsKey(t) ) ? table.get(t) : new ArrayList<Term>();
-	}
-	
-	private Set<Integer> getPositions(IPredicate predicate, Variable v) {
-		Set<Integer> result = new HashSet<Integer>();
-		int i = 0;
-		for (Term term : predicate.getTerms()) {
-			if (term.contains(v)) result.add(i);
-			i++;
-		}
-		return result;
-	}
-	
-	
-	// gets the literals with variable v occurring in it in clause 
-	// the result could also contain the predicates
-	private List<IPredicate> getLiteralsWithVariable(Variable v,
-			IClause clause) {
-		List<IPredicate> result = new ArrayList<IPredicate>();
-		for (IPredicate predicate : clause.getPredicateLiterals()) {
-			for (Term term : predicate.getTerms()) {
-				if (term.contains(v)) result.add(predicate);
-			}
-		}
-		return result;
-	}
-	
-	// TODO this code is also in ResolutionResolver
-	private List<IPredicate> getMatchingPredicates(IClause clause, IPredicate predicate) {
-		List<IPredicate> result = new ArrayList<IPredicate>();
-		List<IPredicate> literals = clause.getPredicateLiterals();
-		for (int i = 0;i<literals.size();i++) {
-			if (match(predicate, clause, i)) {
-				result.add(literals.get(i));
-			}
-		}
-		return result;
-	}
-	
-	private boolean match(IPredicate matcher, IClause clause, int position) {
-		IPredicate matched = clause.getPredicateLiterals().get(position);
-		// 1 test same index
-		if (matcher.getIndex() != matched.getIndex()) return false;
-		// 2 test matching signs
-		if (matcher.isPositive() == matched.isPositive() && !clause.isEquivalence()) return false;
-		// 3 test compatible terms
-		// we reject constant term in unit clause matching pseudo constant term in non-unit clause
-		for (int i=0;i<matcher.getTerms().size();i++) {
-			Term matcherTerm = matcher.getTerms().get(i);
-			Term matchedTerm = matched.getTerms().get(i);
-			if ((matcherTerm.isQuantified() || matcherTerm.isConstant()) && (matchedTerm.isQuantified() || matchedTerm.isConstant())) {
-				// we do not match on a locally quantified variable
-				if (matcherTerm.isQuantified()) return false;
-				if (matchedTerm.isQuantified() && !clause.isEquivalence()) return false;
-				if (matchedTerm.isQuantified() && clause.isEquivalence()) {
-					boolean forall = matchedTerm.isForall();
-					boolean sameSign = matcher.isPositive() == matched.isPositive();
-					if (forall == sameSign) return false;
+	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
+		// do nothing, we let the removeClause() do the job
+		for (Iterator<Set<Clause>> iter = generatedClausesStack.iterator(); iter.hasNext();) {
+			Set<Clause> clauses = iter.next();
+			for (Iterator<Clause> iter2 = clauses.iterator(); iter2.hasNext();) {
+				Clause clause = iter2.next();
+				if (newLevel.isAncestorOf(clause.getLevel())) {
+					iter2.remove();
+					if (clauses.isEmpty()) iter.remove();
 				}
 			}
 		}
-		return true;
 	}
-	
-	public void registerDumper(Dumper dumper) {
-		dumper.addDataStructure("seed search", candidates.iterator());
+
+	public void initialize(ClauseSimplifier simplifier) {
+		this.simplifier = simplifier;
 	}
-	
-	private boolean accepts(IClause clause) {
-		return clause.isUnit() 
-			&& clause.getPredicateLiterals().size() == 1 
-			&& isQuantified(clause);
-	}
-	
-	private boolean isQuantified(IClause clause) {
-		IPredicate predicate = clause.getPredicateLiterals().get(0);
-		for (Term term : predicate.getTerms()) {
-			if (term.isQuantified()) return true;
-		}
+
+	public boolean isSubsumed(Clause clause) {
 		return false;
 	}
+
+	public ProverResult next() {
+		if (generatedClausesStack.isEmpty()) return null;
+		Set<Clause> nextClauses = generatedClausesStack.pop();
+		ProverResult result = new ProverResult(nextClauses,new HashSet<Clause>());
+		debug("SeedSearchProver, next clauses: "+nextClauses+", remaining clauses: "+generatedClausesStack.size());
+		return result;
+	}
+
+	public void registerDumper(Dumper dumper) {
+		dumper.addObject("SeedSearch table", manager);
+	}
+
+	public void removeClause(Clause clause) {
+		manager.removeClause(clause);
+	}
 	
 	@Override
-	public void removeClause(IClause clause) {
-		if (clause.equals(currentClause)) {
-			currentClause = null;
-			termList = null;
-		}
-		
-		if (accepts(clause)) candidates.remove(clause);
+	public String toString() {
+		return "SeedSearchProver";
 	}
 
-	@Override
-	public void newClause(IClause clause) {
-		if (accepts(clause)) candidates.appends(clause);
-	}
-
-	public void clean() {
-		// do nothing
-	}
-
-	public ResetIterator<IClause> getGeneratedClauses() {
-		return null;
-	}
-
-	public Set<IClause> getSubsumedClauses() {
-		return null;
-	}
-	
 }

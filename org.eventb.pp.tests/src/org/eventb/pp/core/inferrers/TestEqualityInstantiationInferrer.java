@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.VariableContext;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.inferrers.EqualityInstantiationInferrer;
 
@@ -71,30 +71,30 @@ public class TestEqualityInstantiationInferrer extends AbstractInferrerTests {
 	}
 	
 	
-	private Map<IEquality, Constant> M(IEquality equality, Constant constant) {
-		Map<IEquality, Constant> map = new HashMap<IEquality, Constant>();
+	private Map<EqualityLiteral, Constant> M(EqualityLiteral equality, Constant constant) {
+		Map<EqualityLiteral, Constant> map = new HashMap<EqualityLiteral, Constant>();
 		map.put(equality, constant);
 		return map;
 	}
 	
-	private Map<IEquality, Constant> M(IEquality equality1, Constant constant1,
-			IEquality equality2, Constant constant2) {
-		Map<IEquality, Constant> map = new HashMap<IEquality, Constant>();
+	private Map<EqualityLiteral, Constant> M(EqualityLiteral equality1, Constant constant1,
+			EqualityLiteral equality2, Constant constant2) {
+		Map<EqualityLiteral, Constant> map = new HashMap<EqualityLiteral, Constant>();
 		map.put(equality1, constant1);
 		map.put(equality2, constant2);
 		return map;
 	}
 	
 	
-	public void doTest(IClause original, Map<IEquality, Constant> map, List<IClause> parents, IClause expected) {
+	public void doTest(Clause original, Map<EqualityLiteral, Constant> map, List<Clause> parents, Clause expected) {
 		EqualityInstantiationInferrer inferrer = new EqualityInstantiationInferrer(new VariableContext());
-		for (Entry<IEquality, Constant> entry : map.entrySet()) {
+		for (Entry<EqualityLiteral, Constant> entry : map.entrySet()) {
 			inferrer.addEqualityUnequal(entry.getKey(), entry.getValue());
 		}
 		
 		inferrer.addParentClauses(parents);
 		original.infer(inferrer);
-		IClause actual = inferrer.getResult();
+		Clause actual = inferrer.getResult();
 		assertEquals(expected, actual);
 
 		disjointVariables(original, actual);

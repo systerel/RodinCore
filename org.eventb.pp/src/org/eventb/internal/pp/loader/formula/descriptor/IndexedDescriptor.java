@@ -23,18 +23,18 @@ public abstract class IndexedDescriptor extends LiteralDescriptor {
 		this.index = index;
 	}
 	
-	@Override
-	public int hashCode() {
-		return index;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof IndexedDescriptor) {
-			IndexedDescriptor temp = (IndexedDescriptor) obj;
-			return temp.index == index;
-		}
-		return false;
-	}
+//	@Override
+//	public int hashCode() {
+//		return index;
+//	}
+//	
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (obj instanceof IndexedDescriptor) {
+//			IndexedDescriptor temp = (IndexedDescriptor) obj;
+//			return temp.index == index;
+//		}
+//		return false;
+//	}
 	
 }

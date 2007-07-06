@@ -36,7 +36,7 @@ public class Node implements Comparable<Node> {
 		return constant.getName();
 	}
 
-	private Constant constant;
+	private final Constant constant;
 	private Node parent;
 
 	public Node(Constant constant) {

@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
-import org.eventb.internal.pp.core.elements.PPDisjClause;
-import org.eventb.internal.pp.core.elements.PPEqClause;
-import org.eventb.internal.pp.core.elements.PPFalseClause;
-import org.eventb.internal.pp.core.elements.PPTrueClause;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.DisjunctiveClause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.EquivalenceClause;
+import org.eventb.internal.pp.core.elements.FalseClause;
+import org.eventb.internal.pp.core.elements.TrueClause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
@@ -17,8 +17,8 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public class EqualityInstantiationInferrer extends InstantiationInferrer {
 
-	private List<IEquality> instantiationEqualities = new ArrayList<IEquality>();
-	private List<IClause> parents = new ArrayList<IClause>();
+	private List<EqualityLiteral> instantiationEqualities = new ArrayList<EqualityLiteral>();
+	private List<Clause> parents = new ArrayList<Clause>();
 	
 	private boolean inverse;
 	private boolean hasTrueLiterals;
@@ -27,21 +27,21 @@ public class EqualityInstantiationInferrer extends InstantiationInferrer {
 		super(context);
 	}
 	
-	public void addEqualityEqual(IEquality equality, Constant constant) {
+	public void addEqualityEqual(EqualityLiteral equality, Constant constant) {
 		addEquality(equality, constant);
 		
 		if (equality.isPositive()) hasTrueLiterals = true;
 		else inverse = !inverse;
 	}
 	
-	public void addEqualityUnequal(IEquality equality, Constant constant) {
+	public void addEqualityUnequal(EqualityLiteral equality, Constant constant) {
 		addEquality(equality, constant);
 		
 		if (equality.isPositive()) inverse = !inverse;
 		else hasTrueLiterals = true;
 	}
 	
-	private void addEquality(IEquality equality, Constant constant) {
+	private void addEquality(EqualityLiteral equality, Constant constant) {
 		instantiationEqualities.add(equality);
 		
 		Variable variable = null;
@@ -53,37 +53,37 @@ public class EqualityInstantiationInferrer extends InstantiationInferrer {
 	}
 
 	@Override
-	protected void initialize(IClause clause) throws IllegalStateException {
+	protected void initialize(Clause clause) throws IllegalStateException {
 		super.initialize(clause);
 		if (instantiationEqualities.isEmpty()) throw new IllegalStateException();
 		
 		// remove equalities
-		for (IEquality equality : instantiationEqualities) {
+		for (EqualityLiteral equality : instantiationEqualities) {
 			conditions.remove(equality);
 			equalities.remove(equality);
 		}
 	}
 	
 	@Override
-	protected void inferFromEquivalenceClauseHelper(IClause clause) {
+	protected void inferFromEquivalenceClauseHelper(Clause clause) {
 		substitute();
-		if (isEmpty() && !inverse) result = new PPTrueClause(getOrigin(clause));
-		else if (isEmpty() && inverse) result = new PPFalseClause(getOrigin(clause));
+		if (isEmpty() && !inverse) result = new TrueClause(getOrigin(clause));
+		else if (isEmpty() && inverse) result = new FalseClause(getOrigin(clause));
 		else {
-			if (inverse) PPEqClause.inverseOneliteral(predicates, equalities, arithmetic);
-			result = PPEqClause.newClause(getOrigin(clause),predicates,equalities,arithmetic,conditions, context);
+			if (inverse) EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
+			result = EquivalenceClause.newClause(getOrigin(clause),predicates,equalities,arithmetic,conditions, context);
 		}
 	}
 
 	@Override
-	protected void inferFromDisjunctiveClauseHelper(IClause clause) {
+	protected void inferFromDisjunctiveClauseHelper(Clause clause) {
 		substitute();
-		if (hasTrueLiterals) result = new PPTrueClause(getOrigin(clause));
-		if (isEmpty()) result = new PPFalseClause(getOrigin(clause));
-		result = new PPDisjClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
+		if (hasTrueLiterals) result = new TrueClause(getOrigin(clause));
+		if (isEmpty()) result = new FalseClause(getOrigin(clause));
+		result = new DisjunctiveClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
 	}
 	
-	public void addParentClauses(List<IClause> clauses) {
+	public void addParentClauses(List<Clause> clauses) {
 		// these are the unit equality clauses
 		parents.addAll(clauses);
 	}
@@ -98,8 +98,8 @@ public class EqualityInstantiationInferrer extends InstantiationInferrer {
 	}
 	
 	@Override
-	protected IOrigin getOrigin(IClause clause) {
-		List<IClause> clauseParents = new ArrayList<IClause>();
+	protected IOrigin getOrigin(Clause clause) {
+		List<Clause> clauseParents = new ArrayList<Clause>();
 		clauseParents.addAll(parents);
 		clauseParents.add(clause);
 		return new ClauseOrigin(clauseParents);

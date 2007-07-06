@@ -2,33 +2,35 @@ package org.eventb.internal.pp.core.inferrers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
-import org.eventb.internal.pp.core.elements.IPredicate;
-import org.eventb.internal.pp.core.elements.PPDisjClause;
-import org.eventb.internal.pp.core.elements.PPEqClause;
-import org.eventb.internal.pp.core.elements.PPEquality;
-import org.eventb.internal.pp.core.elements.PPFalseClause;
-import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.DisjunctiveClause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.EquivalenceClause;
+import org.eventb.internal.pp.core.elements.FalseClause;
+import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
+import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public class ResolutionInferrer extends AbstractInferrer {
 
-	private IClause unitClause;
+	private Clause unitClause;
 	
-	private IPredicate predicate;
+	private PredicateLiteral predicate;
 	private int position;
 	
-	private IClause result;
+	private Clause result;
 	private boolean blocked;
+	private Clause subsumedClause;
+	private boolean hasInstantiations;
 	
 	public ResolutionInferrer(IVariableContext context) {
 		super(context);
@@ -38,26 +40,29 @@ public class ResolutionInferrer extends AbstractInferrer {
 		this.position = position;
 	}
 	
-	public void setUnitClause(IClause clause) {
+	public void setUnitClause(Clause clause) {
 		assert clause.isUnit() && clause.getPredicateLiterals().size() == 1;
 		
 		// we keep the original unit clause
 		unitClause = clause;
 		// we save a copy of the original predicate
-		predicate = clause.getPredicateLiterals().get(0).getCopyWithNewVariables(context, new HashMap<AbstractVariable, AbstractVariable>());
+		predicate = clause.getPredicateLiterals().get(0).getCopyWithNewVariables(context, new HashMap<SimpleTerm, SimpleTerm>());
 		
 //		// we do not accept existential unit clause
 //		assert !predicate.isQuantified();
 	}
 	
 	@Override
-	protected void initialize(IClause clause) throws IllegalStateException {
+	protected void initialize(Clause clause) throws IllegalStateException {
 		assert clause.getPredicateLiterals().size() > 0;
 		
-		if (position<0 || unitClause==null || predicate==null || !canInfer(clause)) {
+		if (position<0 || unitClause==null || predicate==null 
+				|| !clause.matchesAtPosition(predicate.getDescriptor(), position)) {
 			throw new IllegalStateException();
 		}
-		blocked = clause.getPredicateLiterals().get(position).updateInstantiationCount(predicate);
+		result = null;
+		subsumedClause = null;
+		hasInstantiations = false;
 	}
 	
 	@Override
@@ -67,89 +72,82 @@ public class ResolutionInferrer extends AbstractInferrer {
 		predicate = null;
 	}
 	
-	public boolean canInfer(IClause clause) {
-		if (position<0 || unitClause==null || predicate==null /* || clause.isBlocked() */ ) {
-			throw new IllegalStateException();
-		}
-		IPredicate matcher = predicate;
-		IPredicate matched = clause.getPredicateLiterals().get(position);
-		// 1 test same index
-		if (matcher.getIndex() != matched.getIndex()) return false;
-		// 2 test matching signs
-		if (matcher.isPositive() == matched.isPositive() && !clause.isEquivalence()) return false;
-		// 3 test compatible terms
-		// we reject constant term in unit clause matching pseudo constant term in non-unit clause
-		for (int i=0;i<matcher.getTerms().size();i++) {
-			Term matcherTerm = matcher.getTerms().get(i);
-			Term matchedTerm = matched.getTerms().get(i);
-			if ((matcherTerm.isQuantified() || matcherTerm.isConstant()) && (matchedTerm.isQuantified() || matchedTerm.isConstant())) {
-				// we do not match on a locally quantified variable
-				if (matcherTerm.isQuantified()) return false;
-				if (matchedTerm.isQuantified() && !clause.isEquivalence()) return false;
-				if (matchedTerm.isQuantified() && clause.isEquivalence()) {
-					boolean forall = matched.isForall();
-					boolean sameSign = matcher.isPositive() == matched.isPositive();
-					if (forall == sameSign) return false;
-				}
-			}
-		}
+	public InferrenceResult getResult() {
+		InferrenceResult infResult = new InferrenceResult(result,blocked);
+		if (subsumedClause!=null) infResult.addSubsumedClause(subsumedClause);
+		return infResult;
+	}
+	
+	private boolean isSubsumed(Clause clause) {
+		assert result != null;
+
+		if (hasInstantiations) return false;
+		if (clause.isEquivalence()) return false;
+		if (clause.getLevel().isAncestorOf(result.getLevel())) return false;
+//		if (clause.getPredicateLiterals().size() == 0) return false;
 		return true;
 	}
 	
-	public InferrenceResult getResult() {
-		return new InferrenceResult(result,blocked);
-	}
-	
-	private void preparePredicate(IPredicate matchingPredicate) {
+	private void preparePredicate(PredicateLiteral matchingPredicate) {
 		for (int i = 0; i < matchingPredicate.getTerms().size(); i++) {
-			Term matchingTerm = matchingPredicate.getTerms().get(i);
-			if (matchingTerm.isQuantified()) {
-				Term matcherTerm = predicate.getTerms().get(i);
+			SimpleTerm matchingTerm = matchingPredicate.getTerms().get(i);
+			SimpleTerm matcherTerm = predicate.getTerms().get(i);
+			
+			if (!matcherTerm.isConstant()) {
 				// for now only variables
-				if (matcherTerm instanceof Variable) {
-					HashMap<AbstractVariable, Term> map = new HashMap<AbstractVariable, Term>();
-					map.put((Variable)matcherTerm, matchingTerm);
-					predicate = predicate.substitute(map);
+				HashMap<SimpleTerm, SimpleTerm> map = new HashMap<SimpleTerm, SimpleTerm>();
+				map.put(matcherTerm, matchingTerm);
+				predicate = predicate.substitute(map);
+			}
+			else if (matcherTerm.isConstant()) {
+				// we might have to increment the instantiation count of the variable
+				if (!matchingTerm.isConstant()) {
+					matchingTerm.incrementInstantiationCount();
+					if (matchingTerm.isBlocked()) blocked = true;
 				}
 			}
 		}
 	}
 	
 	// MUST BE called on a unit-clause
-	private List<IEquality> getConditions(IPredicate matchingPredicate) {
+	private List<EqualityLiteral> getConditions(PredicateLiteral matchingPredicate) {
 		// We first do a copy of the predicate, in which we replace all
 		// local variables by a fresh existential variable and all
 		// variables by a fresh variable. This ensures invariant of variables
 		// and local variables which states that there must not be equal variables
 		// in 2 different clauses and no equal local variables in 2 different
 		// literals.
-		List<IEquality> result = new ArrayList<IEquality>();
+		List<EqualityLiteral> result = new ArrayList<EqualityLiteral>();
 		for (int i = 0; i < matchingPredicate.getTerms().size(); i++) {
-			Term term1 = matchingPredicate.getTerms().get(i);
-			Term term2 = predicate.getTerms().get(i);
-			result.add(new PPEquality(term1,term2,false));
+			SimpleTerm term1 = matchingPredicate.getTerms().get(i);
+			SimpleTerm term2 = predicate.getTerms().get(i);
+			// we set the instantiation flag for subsumption checking
+			if (!term1.equals(term2)) hasInstantiations = true;
+			result.add(new EqualityLiteral(term1,term2,false));
 		}
 		return result;
 	}
 	
 	@Override
-	protected void inferFromDisjunctiveClauseHelper(IClause clause) {
-		IPredicate matchingPredicate = predicates.remove(position);
+	protected void inferFromDisjunctiveClauseHelper(Clause clause) {
+		PredicateLiteral matchingPredicate = predicates.remove(position);
 		
 		// TODO check
 		preparePredicate(matchingPredicate);
 		
 		conditions.addAll(getConditions(matchingPredicate));
 		
-		if (isEmpty()) result = new PPFalseClause(getOrigin(clause));
-		else result = new PPDisjClause(getOrigin(clause),predicates,equalities,arithmetic,conditions); 
+		if (isEmpty()) result = new FalseClause(getOrigin(clause));
+		else result = new DisjunctiveClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
+		
+		if (isSubsumed(clause)) subsumedClause = clause;
 	}
 
 	@Override
-	protected void inferFromEquivalenceClauseHelper(IClause clause) {
-		IPredicate matchingPredicate = predicates.remove(position);
-		boolean sameSign = matchingPredicate.isPositive() == predicate.isPositive();
-		if (!sameSign) PPEqClause.inverseOneliteral(predicates, equalities, arithmetic);
+	protected void inferFromEquivalenceClauseHelper(Clause clause) {
+		PredicateLiteral matchingPredicate = predicates.remove(position);
+		boolean sameSign = sameSign(matchingPredicate, predicate);
+		if (!sameSign) EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
 		
 		if (matchingPredicate.isQuantified()) matchingPredicate = transformVariables(matchingPredicate);
 		
@@ -158,26 +156,28 @@ public class ResolutionInferrer extends AbstractInferrer {
 		
 		conditions.addAll(getConditions(matchingPredicate));
 		
-		if (isEmpty()) result = new PPFalseClause(getOrigin(clause));
-		else result = PPEqClause.newClause(getOrigin(clause), predicates, equalities, arithmetic, conditions, context);
+		if (isEmpty()) result = new FalseClause(getOrigin(clause));
+		else result = EquivalenceClause.newClause(getOrigin(clause), predicates, equalities, arithmetic, conditions, context);
+		
+		if (isSubsumed(clause)) subsumedClause = clause;
 	}
 	
 	///////////transforms the variable in the inequality//////////////
-	private IPredicate transformVariables(IPredicate matchingPredicate) {
+	private PredicateLiteral transformVariables(PredicateLiteral matchingPredicate) {
 		assert matchingPredicate.isQuantified();
 		
-		IPredicate result;
-		List<LocalVariable> pseudoConstants = new ArrayList<LocalVariable>();
+		PredicateLiteral result;
+		Set<LocalVariable> pseudoConstants = new HashSet<LocalVariable>();
 		for (Term term : matchingPredicate.getTerms()) {
 			term.collectLocalVariables(pseudoConstants);
 		}
 		if (pseudoConstants.isEmpty()) result = matchingPredicate;
 		else {
-			boolean forall = pseudoConstants.get(0).isForall();
-			boolean sameSign = matchingPredicate.isPositive() == predicate.isPositive();
+			boolean forall = pseudoConstants.iterator().next().isForall();
+			boolean sameSign = sameSign(matchingPredicate, predicate);
 			if (sameSign && forall) {
 				// replace forall by exist
-				Map<AbstractVariable, Term> map = new HashMap<AbstractVariable, Term>();
+				Map<SimpleTerm, SimpleTerm> map = new HashMap<SimpleTerm, SimpleTerm>();
 				for (LocalVariable variable : pseudoConstants) {
 					map.put(variable, variable.getInverseVariable());
 				}
@@ -185,7 +185,7 @@ public class ResolutionInferrer extends AbstractInferrer {
 			}
 			else if ((sameSign && !forall) || (!sameSign && forall)) {
 				// replace local variable by variable
-				Map<AbstractVariable, Term> map = new HashMap<AbstractVariable, Term>();
+				Map<SimpleTerm, SimpleTerm> map = new HashMap<SimpleTerm, SimpleTerm>();
 				for (LocalVariable variable : pseudoConstants) {
 					map.put(variable, variable.getVariable(context));
 				}
@@ -198,9 +198,13 @@ public class ResolutionInferrer extends AbstractInferrer {
 		}
 		return result;
 	}
+	
+	private boolean sameSign(PredicateLiteral literal1, PredicateLiteral literal2) {
+		return literal1.getDescriptor().isPositive() == literal2.getDescriptor().isPositive();
+	}
 
-	protected IOrigin getOrigin(IClause clause) {
-		List<IClause> parents = new ArrayList<IClause>();
+	protected IOrigin getOrigin(Clause clause) {
+		List<Clause> parents = new ArrayList<Clause>();
 		parents.add(clause);
 		parents.add(unitClause);
 		return new ClauseOrigin(parents);

@@ -75,18 +75,18 @@ public class TestSamePredicate extends TestCase {
 			new String[]{
 				"c ↦ d ∈ TT1", "d ↦ c ∈ TT1", "c ↦ d ∈ TT2", "d ↦ c ∈ TT2"
 			},
-			new String[]{
-				"k ↦ a ∈ NS", "k ↦ b ∈ NS", "k + 1 ↦ b ∈ NS", "k ∗ 1 ↦ b ∈ NS"
-			},
-			new String[]{
-				"k ↦ k ∈ NN", "k ↦ k + 1 ∈ NN"
-			},
-			new String[]{
-				"a ↦ k ∈ SN", "b ↦ k ∈ SN", "b ↦ k + 1 ∈ SN", "b ↦ k ∗ 1 ∈ SN"
-			},
-			new String[]{
-				"(a ↦ c) ↦ 1 ∈ STN", "(b ↦ d) ↦ k ∈ STN", "(a ↦ d) ↦ 1 ∈ STN", "(b ↦ c) ↦ k + 1 ∈ STN"
-			},
+//			new String[]{
+//				"k ↦ a ∈ NS", "k ↦ b ∈ NS", "k + 1 ↦ b ∈ NS", "k ∗ 1 ↦ b ∈ NS"
+//			},
+//			new String[]{
+//				"k ↦ k ∈ NN", "k ↦ k + 1 ∈ NN"
+//			},
+//			new String[]{
+//				"a ↦ k ∈ SN", "b ↦ k ∈ SN", "b ↦ k + 1 ∈ SN", "b ↦ k ∗ 1 ∈ SN"
+//			},
+//			new String[]{
+//				"(a ↦ c) ↦ 1 ∈ STN", "(b ↦ d) ↦ k ∈ STN", "(a ↦ d) ↦ 1 ∈ STN", "(b ↦ c) ↦ k + 1 ∈ STN"
+//			},
 
 			new String[]{
 				"e = f", "e = TRUE", "f = TRUE", "e = FALSE", "f = FALSE"

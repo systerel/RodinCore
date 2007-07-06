@@ -20,17 +20,17 @@ public class EquivalenceClauseDescriptor extends IndexedDescriptor {
 		return "Le"+index;
 	}
 
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof EquivalenceClauseDescriptor) {
-			EquivalenceClauseDescriptor temp = (EquivalenceClauseDescriptor) obj;
-			return super.equals(temp);
-		}
-		return false;
-	}
+//	@Override
+//	public int hashCode() {
+//		return super.hashCode();
+//	}
+//	
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (obj instanceof EquivalenceClauseDescriptor) {
+//			EquivalenceClauseDescriptor temp = (EquivalenceClauseDescriptor) obj;
+//			return super.equals(temp);
+//		}
+//		return false;
+//	}
 }

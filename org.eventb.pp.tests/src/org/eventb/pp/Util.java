@@ -3,6 +3,7 @@ package org.eventb.pp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import org.eventb.core.ast.BoundIdentifier;
@@ -15,23 +16,19 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.elements.AbstractPPClause;
-import org.eventb.internal.pp.core.elements.AbstractPPPredicate;
-import org.eventb.internal.pp.core.elements.IArithmetic;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
-import org.eventb.internal.pp.core.elements.ILiteral;
-import org.eventb.internal.pp.core.elements.IPredicate;
-import org.eventb.internal.pp.core.elements.PPArithmetic;
-import org.eventb.internal.pp.core.elements.PPDisjClause;
-import org.eventb.internal.pp.core.elements.PPEqClause;
-import org.eventb.internal.pp.core.elements.PPEquality;
-import org.eventb.internal.pp.core.elements.PPFalseClause;
-import org.eventb.internal.pp.core.elements.PPPredicate;
-import org.eventb.internal.pp.core.elements.PPProposition;
-import org.eventb.internal.pp.core.elements.PPTrueClause;
+import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
+import org.eventb.internal.pp.core.elements.AtomicPredicateLiteral;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
+import org.eventb.internal.pp.core.elements.DisjunctiveClause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.EquivalenceClause;
+import org.eventb.internal.pp.core.elements.FalseClause;
+import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.Sort;
-import org.eventb.internal.pp.core.elements.PPArithmetic.AType;
+import org.eventb.internal.pp.core.elements.TrueClause;
+import org.eventb.internal.pp.core.elements.ArithmeticLiteral.AType;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Divide;
 import org.eventb.internal.pp.core.elements.terms.Expn;
@@ -39,6 +36,7 @@ import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Minus;
 import org.eventb.internal.pp.core.elements.terms.Mod;
 import org.eventb.internal.pp.core.elements.terms.Plus;
+import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Times;
 import org.eventb.internal.pp.core.elements.terms.UnaryMinus;
@@ -63,7 +61,6 @@ import org.eventb.internal.pp.loader.formula.terms.TimesSignature;
 import org.eventb.internal.pp.loader.formula.terms.UnaryMinusSignature;
 import org.eventb.internal.pp.loader.formula.terms.VariableHolder;
 import org.eventb.internal.pp.loader.formula.terms.VariableSignature;
-import org.eventb.internal.pp.loader.ordering.TermOrderer;
 import org.eventb.internal.pp.loader.predicate.IContext;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 import org.eventb.internal.pp.loader.predicate.IntermediateResult;
@@ -126,11 +123,11 @@ public class Util {
 		return Sort.ARITHMETIC;
 	}
 	
-	public static ILiteral[] mArr(ILiteral... literals) {
+	public static Literal[] mArr(Literal... literals) {
 		return literals;
 	}
 	
-	public static ILiteral[][] mArr(ILiteral[]... literals) {
+	public static Literal[][] mArr(Literal[]... literals) {
 		return literals;
 	}
 	
@@ -140,8 +137,8 @@ public class Util {
 		return list;
 	}
 	
-	public static List<IClause> mList(IClause... clause) {
-		List<IClause> list = new ArrayList<IClause>();
+	public static List<Clause> mList(Clause... clause) {
+		List<Clause> list = new ArrayList<Clause>();
 		list.addAll(Arrays.asList(clause));
 		return list;
 	}
@@ -158,26 +155,26 @@ public class Util {
 		return list;
 	}
 	
-	public static <T extends ILiteral> List<T> mList(T... literals) {
+	public static <T extends Literal> List<T> mList(T... literals) {
 		List<T> list = new ArrayList<T>();
 		list.addAll(Arrays.asList(literals));
 		return list;
 	}
 	
-//	public static PredicateLiteral mPredicate() {
-//		return new PredicateLiteral(0);
+//	public static PredicateFormula mPredicate() {
+//		return new PredicateFormula(0);
 //	}
 //
-//	public static QuantifiedLiteral mQPredicate(QuantifiedLiteralKey sig) {
-//		return new QuantifiedLiteral(0, sig.isForall(),sig.getSignature(),sig.getTerms());
+//	public static QuantifiedFormula mQPredicate(QuantifiedLiteralKey sig) {
+//		return new QuantifiedFormula(0, sig.isForall(),sig.getSignature(),sig.getTerms());
 //	}
 //	
-//	public static PredicateLiteral mPredicate(int index) {
-//		return new PredicateLiteral(index);
+//	public static PredicateFormula mPredicate(int index) {
+//		return new PredicateFormula(index);
 //	}
 //	
-//	public static EqualityLiteral mEqualitySig(Sort sort) {
-//		return new EqualityLiteral(sort);
+//	public static EqualityFormula mEqualitySig(Sort sort) {
+//		return new EqualityFormula(sort);
 //	}
 //	
 //	public static DisjunctiveClause mSet(List<ISignedFormula> signatures) {
@@ -254,130 +251,134 @@ public class Util {
 		public Level getLevel() {
 			return level;
 		}
+
+		public void getDependencies(Set<Level> dependencies) {
+			
+		}
 		
 	}
 	
 	
-	public static IClause newDisjClause(IOrigin origin, List<ILiteral> literals) {
-		List<IPredicate> predicates = new ArrayList<IPredicate>();
-		List<IEquality> equalities = new ArrayList<IEquality>();
-		List<IArithmetic> arithmetic = new ArrayList<IArithmetic>();
-		for (ILiteral literal : literals) {
-			if (literal instanceof IPredicate) predicates.add((IPredicate)literal);
-			else if (literal instanceof IEquality) equalities.add((IEquality)literal);
-			else if (literal instanceof IArithmetic) arithmetic.add((IArithmetic)literal);
+	public static Clause newDisjClause(IOrigin origin, List<Literal> literals) {
+		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
+		List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
+		List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
+		for (Literal literal : literals) {
+			if (literal instanceof PredicateLiteral) predicates.add((PredicateLiteral)literal);
+			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
+			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
 		}
-		return new PPDisjClause(origin,predicates,equalities,arithmetic);
+		return new DisjunctiveClause(origin,predicates,equalities,arithmetic);
 	}
 	
-	public static IClause newEqClause(IOrigin origin, List<ILiteral> literals) {
+	public static Clause newEqClause(IOrigin origin, List<Literal> literals) {
 		assert literals.size() > 1;
 		
-		List<IPredicate> predicates = new ArrayList<IPredicate>();
-		List<IEquality> equalities = new ArrayList<IEquality>();
-		List<IArithmetic> arithmetic = new ArrayList<IArithmetic>();
-		for (ILiteral literal : literals) {
-			if (literal instanceof IPredicate) predicates.add((IPredicate)literal);
-			else if (literal instanceof IEquality) equalities.add((IEquality)literal);
-			else if (literal instanceof IArithmetic) arithmetic.add((IArithmetic)literal);
+		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
+		List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
+		List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
+		for (Literal literal : literals) {
+			if (literal instanceof PredicateLiteral) predicates.add((PredicateLiteral)literal);
+			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
+			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
 		}
-		return new PPEqClause(origin,predicates,equalities,arithmetic);
+		return new EquivalenceClause(origin,predicates,equalities,arithmetic);
 	}
 	
 	
-	public static IClause cClause(ILiteral... literals) {
-		IClause clause = newDisjClause(new DummyOrigin(Level.base), mList(literals));
+	public static Clause cClause(Literal... literals) {
+		Clause clause = newDisjClause(new DummyOrigin(Level.base), mList(literals));
 		return clause;
 	}
 	
 	
-	public static IClause TRUE(Level level) {
-		return new PPTrueClause(new DummyOrigin(level));
+	public static Clause TRUE(Level level) {
+		return new TrueClause(new DummyOrigin(level));
 	}
 	
-	public static IClause FALSE(Level level) {
-		return new PPFalseClause(new DummyOrigin(level));
+	public static Clause FALSE(Level level) {
+		return new FalseClause(new DummyOrigin(level));
 	}
 	
 	
-	public static IClause cClause(Level level, ILiteral... literals) {
-		IClause clause = newDisjClause(new DummyOrigin(level), mList(literals));
+	public static Clause cClause(Level level, Literal... literals) {
+		Clause clause = newDisjClause(new DummyOrigin(level), mList(literals));
 		return clause;
 	}
 	
-	public static AbstractPPClause cClause(List<? extends ILiteral> literals, IEquality... conditions) {
-		List<IPredicate> predicates = new ArrayList<IPredicate>();
-		List<IEquality> equalities = new ArrayList<IEquality>();
-		List<IArithmetic> arithmetic = new ArrayList<IArithmetic>();
-		for (ILiteral literal : literals) {
-			if (literal instanceof IPredicate) predicates.add((IPredicate)literal);
-			else if (literal instanceof IEquality) equalities.add((IEquality)literal);
-			else if (literal instanceof IArithmetic) arithmetic.add((IArithmetic)literal);
+	public static Clause cClause(List<? extends Literal> literals, EqualityLiteral... conditions) {
+		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
+		List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
+		List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
+		for (Literal literal : literals) {
+			if (literal instanceof PredicateLiteral) predicates.add((PredicateLiteral)literal);
+			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
+			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
 		}
-		return new PPDisjClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,(List)mList(conditions));
+		return new DisjunctiveClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,(List)mList(conditions));
 	}
 	
-	public static IClause cEqClause(ILiteral... literals) {
-		IClause clause = newEqClause(new DummyOrigin(Level.base),mList(literals));
+	public static Clause cEqClause(Literal... literals) {
+		Clause clause = newEqClause(new DummyOrigin(Level.base),mList(literals));
 		return clause;
 	}
 	
-	public static IClause cEqClause(Level level, ILiteral... literals) {
-		IClause clause = newEqClause(new DummyOrigin(level),mList(literals));
+	public static Clause cEqClause(Level level, Literal... literals) {
+		Clause clause = newEqClause(new DummyOrigin(level),mList(literals));
 		return clause;
 	}
 	
-	public static AbstractPPClause cEqClause(List<? extends ILiteral> literals, IEquality... conditions) {
-		List<IPredicate> predicates = new ArrayList<IPredicate>();
-		List<IEquality> equalities = new ArrayList<IEquality>();
-		List<IArithmetic> arithmetic = new ArrayList<IArithmetic>();
-		for (ILiteral literal : literals) {
-			if (literal instanceof IPredicate) predicates.add((IPredicate)literal);
-			else if (literal instanceof IEquality) equalities.add((IEquality)literal);
-			else if (literal instanceof IArithmetic) arithmetic.add((IArithmetic)literal);
+	public static Clause cEqClause(List<? extends Literal> literals, EqualityLiteral... conditions) {
+		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
+		List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
+		List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
+		for (Literal literal : literals) {
+			if (literal instanceof PredicateLiteral) predicates.add((PredicateLiteral)literal);
+			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
+			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
 		}
-		return new PPEqClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,(List)mList(conditions));
+		return new EquivalenceClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,(List)mList(conditions));
 	}
 	
-	public static PPPredicate cPred(int index, Term... terms) {
-		return new PPPredicate(index, true, Arrays.asList(terms));
+	public static ComplexPredicateLiteral cPred(int index, SimpleTerm... terms) {
+		return new ComplexPredicateLiteral(new org.eventb.internal.pp.core.elements.PredicateDescriptor(index, true), Arrays.asList(terms));
 	}
 	
-	public static PPPredicate cNotPred(int index, Term... terms) {
-		return new PPPredicate(index, false, Arrays.asList(terms));
+	public static ComplexPredicateLiteral cNotPred(int index, SimpleTerm... terms) {
+		return new ComplexPredicateLiteral(new org.eventb.internal.pp.core.elements.PredicateDescriptor(index, false), Arrays.asList(terms));
 	}
 	
-	public static AbstractPPPredicate cProp(int index) {
-		return new PPProposition(index, true);
+	public static PredicateLiteral cProp(int index) {
+		return new AtomicPredicateLiteral(new org.eventb.internal.pp.core.elements.PredicateDescriptor(index, true));
 	}
 	
-	public static AbstractPPPredicate cNotProp(int index) {
-		return new PPProposition(index, false);
+	public static PredicateLiteral cNotProp(int index) {
+		return new AtomicPredicateLiteral(new org.eventb.internal.pp.core.elements.PredicateDescriptor(index, false));
 	}
 	
-	public static PPEquality cEqual(Term term1, Term term2) {
-		return new PPEquality(term1, term2, true);
+	public static EqualityLiteral cEqual(SimpleTerm term1, SimpleTerm term2) {
+		return new EqualityLiteral(term1, term2, true);
 	}
 	
-	public static PPEquality cNEqual(Term term1, Term term2) {
-		return new PPEquality(term1, term2, false);
+	public static EqualityLiteral cNEqual(SimpleTerm term1, SimpleTerm term2) {
+		return new EqualityLiteral(term1, term2, false);
 	}
 	
 	
-	public static PPArithmetic cAEqual(Term term1, Term term2) {
-		return new PPArithmetic(term1,term2,AType.EQUAL);
+	public static ArithmeticLiteral cAEqual(Term term1, Term term2) {
+		return new ArithmeticLiteral(term1,term2,AType.EQUAL);
 	}
 	
-	public static PPArithmetic cANEqual(Term term1, Term term2) {
-		return new PPArithmetic(term1,term2,AType.UNEQUAL);
+	public static ArithmeticLiteral cANEqual(Term term1, Term term2) {
+		return new ArithmeticLiteral(term1,term2,AType.UNEQUAL);
 	}
 	
-	public static PPArithmetic cLess(Term term1, Term term2) {
-		return new PPArithmetic(term1,term2,AType.LESS);
+	public static ArithmeticLiteral cLess(Term term1, Term term2) {
+		return new ArithmeticLiteral(term1,term2,AType.LESS);
 	}
 	
-	public static PPArithmetic cLE(Term term1, Term term2) {
-		return new PPArithmetic(term1,term2,AType.LESS_EQUAL);
+	public static ArithmeticLiteral cLE(Term term1, Term term2) {
+		return new ArithmeticLiteral(term1,term2,AType.LESS_EQUAL);
 	}
 	
 	
@@ -440,7 +441,7 @@ public class Util {
 	}
 	
 	public static IIntermediateResult mIR(TermSignature... elements) {
-		IntermediateResult result = new IntermediateResult(Arrays.asList(elements), new TermOrderer());
+		IntermediateResult result = new IntermediateResult(Arrays.asList(elements));
 		return result;
 	}
 	
@@ -450,7 +451,7 @@ public class Util {
 	}
 	
 	public static QuantifiedDescriptor Q(IContext context, int index, String literal, List<TermSignature> terms, IIntermediateResult... ir) {
-		QuantifiedDescriptor desc = new QuantifiedDescriptor(context, index,terms);
+		QuantifiedDescriptor desc = new QuantifiedDescriptor(context,index);
 		for (IIntermediateResult list : ir) {
 			desc.addResult(list);
 		}

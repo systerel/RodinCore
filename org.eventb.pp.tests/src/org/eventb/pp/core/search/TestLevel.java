@@ -1,23 +1,11 @@
 package org.eventb.pp.core.search;
 
-import java.math.BigInteger;
-
-import junit.framework.TestCase;
-
 import org.eventb.internal.pp.core.Level;
+import org.eventb.pp.AbstractPPTest;
 
 
-public class TestLevel extends TestCase {
+public class TestLevel extends AbstractPPTest {
 
-	private static Level BASE = Level.base;
-	private static Level ONE = new Level(BigInteger.ONE);
-	private static Level TWO = new Level(BigInteger.valueOf(2));
-	private static Level THREE = new Level(BigInteger.valueOf(3));
-	private static Level FOUR = new Level(BigInteger.valueOf(4));
-	private static Level FIVE = new Level(BigInteger.valueOf(5));
-	private static Level SIX = new Level(BigInteger.valueOf(6));
-	private static Level SEVEN = new Level(BigInteger.valueOf(7));
-	
 	
 	public void testEquals() {
 		assertTrue(BASE.equals(Level.base));
@@ -82,6 +70,47 @@ public class TestLevel extends TestCase {
 		
 		assertTrue(SEVEN.getLeftBranch().getHeight() == 4);
 		assertTrue(SEVEN.getRightBranch().getHeight() == 4);
+	}
+	
+	public void testComparable() {
+		assertTrue(BASE.compareTo(ONE) <= 1);
+		assertTrue(BASE.compareTo(BASE) == 0);
+		assertTrue(ONE.compareTo(BASE) >= 1);
+		assertTrue(ONE.compareTo(ONE) == 0);
+		assertTrue(ONE.compareTo(TWO) <= 1);
+		assertTrue(TWO.compareTo(ONE) >= 1);
 		
+		assertEquals(Level.getHighest(ONE, BASE), ONE);
+	}
+	
+	public void testHighestOdd() {
+		assertEquals(THREE, Level.getHighestOdd(mSet(BASE,ONE,THREE)));
+		assertEquals(THREE, Level.getHighestOdd(mSet(ONE,BASE,THREE)));
+		assertEquals(THREE, Level.getHighestOdd(mSet(BASE,ONE,THREE)));
+		assertEquals(ONE, Level.getHighestOdd(mSet(BASE,ONE,FOUR)));
+		assertEquals(ONE, Level.getHighestOdd(mSet(ONE,BASE,FOUR)));
+		assertEquals(ONE, Level.getHighestOdd(mSet(BASE,ONE,FOUR)));
+	}
+	
+	public void testAncestorInSameTree() {
+		assertTrue(BASE.isAncestorInSameTree(ONE));
+		assertTrue(BASE.isAncestorInSameTree(TWO));
+		assertTrue(BASE.isAncestorInSameTree(THREE));
+		assertTrue(BASE.isAncestorInSameTree(FOUR));
+		
+		assertFalse(BASE.isAncestorInSameTree(BASE));
+		assertFalse(ONE.isAncestorInSameTree(ONE));
+		assertFalse(ONE.isAncestorInSameTree(BASE));
+		assertFalse(TWO.isAncestorInSameTree(BASE));
+		assertFalse(THREE.isAncestorInSameTree(BASE));
+		
+		
+		assertTrue(ONE.isAncestorInSameTree(THREE));
+		assertFalse(ONE.isAncestorInSameTree(FIVE));
+		assertTrue(ONE.isAncestorInSameTree(FOUR));
+		assertFalse(ONE.isAncestorInSameTree(SIX));
+		
+		assertFalse(ONE.isAncestorInSameTree(BASE));
+		assertFalse(FOUR.isAncestorInSameTree(ONE));
 	}
 }

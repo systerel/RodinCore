@@ -5,15 +5,15 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.elements.IArithmetic;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
-import org.eventb.internal.pp.core.elements.ILiteral;
-import org.eventb.internal.pp.core.elements.IPredicate;
-import org.eventb.internal.pp.core.elements.PPDisjClause;
-import org.eventb.internal.pp.core.elements.PPEqClause;
-import org.eventb.internal.pp.core.elements.PPFalseClause;
-import org.eventb.internal.pp.core.elements.PPTrueClause;
+import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.DisjunctiveClause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.EquivalenceClause;
+import org.eventb.internal.pp.core.elements.FalseClause;
+import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.PredicateLiteral;
+import org.eventb.internal.pp.core.elements.TrueClause;
 
 /**
  * This simplifier removes all duplicate predicate, arithmetic or equality literals in a clause.
@@ -30,78 +30,78 @@ public class LiteralSimplifier implements ISimplifier {
 		this.context = context;
 	}
 	
-	public boolean canSimplify(IClause clause) {
+	public boolean canSimplify(Clause clause) {
 		if (!clause.isUnit()) return true;
 		return false;
 	}
 
-	public IClause simplifyDisjunctiveClause(PPDisjClause clause) {
-		List<IPredicate> predicateLiterals = getDisjSimplifiedList(clause.getPredicateLiterals());
-		if (predicateLiterals == null) return new PPTrueClause(clause.getOrigin());
-		List<IEquality> equalityLiterals = getDisjSimplifiedList(clause.getEqualityLiterals());
-		if (equalityLiterals == null) return new PPTrueClause(clause.getOrigin());
-		List<IArithmetic> arithmeticLiterals = getDisjSimplifiedList(clause.getArithmeticLiterals());
-		if (arithmeticLiterals == null) return new PPTrueClause(clause.getOrigin());
-		List<IEquality> conditions = getDisjSimplifiedList(clause.getConditions());
+	public Clause simplifyDisjunctiveClause(DisjunctiveClause clause) {
+		List<PredicateLiteral> predicateLiterals = getDisjSimplifiedList(clause.getPredicateLiterals());
+		if (predicateLiterals == null) return new TrueClause(clause.getOrigin());
+		List<EqualityLiteral> equalityLiterals = getDisjSimplifiedList(clause.getEqualityLiterals());
+		if (equalityLiterals == null) return new TrueClause(clause.getOrigin());
+		List<ArithmeticLiteral> arithmeticLiterals = getDisjSimplifiedList(clause.getArithmeticLiterals());
+		if (arithmeticLiterals == null) return new TrueClause(clause.getOrigin());
+		List<EqualityLiteral> conditions = getDisjSimplifiedList(clause.getConditions());
 		
 		// we look for conditions that are in the equalities
 		conditions = getDisjSimplifiedConditions(equalityLiterals, conditions);
-		if (conditions == null) return new PPTrueClause(clause.getOrigin());
+		if (conditions == null) return new TrueClause(clause.getOrigin());
 		
-		if (predicateLiterals.size() + equalityLiterals.size() + arithmeticLiterals.size() + conditions.size() == 0) return new PPFalseClause(clause.getOrigin());
-		else return new PPDisjClause(clause.getOrigin(),predicateLiterals,equalityLiterals,arithmeticLiterals,conditions);
+		if (predicateLiterals.size() + equalityLiterals.size() + arithmeticLiterals.size() + conditions.size() == 0) return new FalseClause(clause.getOrigin());
+		else return new DisjunctiveClause(clause.getOrigin(),predicateLiterals,equalityLiterals,arithmeticLiterals,conditions);
 	}
 
-	public IClause simplifyEquivalenceClause(PPEqClause clause) {
-		List<IEquality> conditions = getDisjSimplifiedList(clause.getConditions());
+	public Clause simplifyEquivalenceClause(EquivalenceClause clause) {
+		List<EqualityLiteral> conditions = getDisjSimplifiedList(clause.getConditions());
 		
-		List<IPredicate> predicateLiterals = getEqSimplifiedList(clause.getPredicateLiterals());
-		List<IEquality> equalityLiterals = getEqSimplifiedList(clause.getEqualityLiterals());
-		List<IArithmetic> arithmeticLiterals = getEqSimplifiedList(clause.getArithmeticLiterals());
+		List<PredicateLiteral> predicateLiterals = getEqSimplifiedList(clause.getPredicateLiterals());
+		List<EqualityLiteral> equalityLiterals = getEqSimplifiedList(clause.getEqualityLiterals());
+		List<ArithmeticLiteral> arithmeticLiterals = getEqSimplifiedList(clause.getArithmeticLiterals());
 		
 		int numberOfFalse = 0;
 		if (predicateLiterals == null) {
 			numberOfFalse++;
-			predicateLiterals = new ArrayList<IPredicate>();
+			predicateLiterals = new ArrayList<PredicateLiteral>();
 		}
 		if (equalityLiterals == null) {
 			numberOfFalse++;
-			equalityLiterals = new ArrayList<IEquality>();
+			equalityLiterals = new ArrayList<EqualityLiteral>();
 		}
 		if (arithmeticLiterals == null) {
 			numberOfFalse++;
-			arithmeticLiterals = new ArrayList<IArithmetic>();
+			arithmeticLiterals = new ArrayList<ArithmeticLiteral>();
 		}
 		
 		if ((numberOfFalse == 0 || numberOfFalse == 2) && predicateLiterals.isEmpty() && equalityLiterals.isEmpty() && arithmeticLiterals.isEmpty()) {
-			return new PPTrueClause(clause.getOrigin());
+			return new TrueClause(clause.getOrigin());
 		}
 		
 		if (numberOfFalse == 1) {
 			// we inverse one
 			if (predicateLiterals.size() > 0) {
-				IPredicate literal = predicateLiterals.remove(0);
+				PredicateLiteral literal = predicateLiterals.remove(0);
 				predicateLiterals.add(0,literal.getInverse());
 			}
 			else if (equalityLiterals.size() > 0) {
-				IEquality literal = equalityLiterals.remove(0);
+				EqualityLiteral literal = equalityLiterals.remove(0);
 				equalityLiterals.add(0,literal.getInverse());
 			}
 			else if (arithmeticLiterals.size() > 0) {
-				IArithmetic literal = arithmeticLiterals.remove(0);
+				ArithmeticLiteral literal = arithmeticLiterals.remove(0);
 				arithmeticLiterals.add(0,literal.getInverse());
 			}
 		}
 		
-		if (predicateLiterals.size() + equalityLiterals.size() + arithmeticLiterals.size() + conditions.size() == 0) return new PPFalseClause(clause.getOrigin());
-		return PPEqClause.newClause(clause.getOrigin(), predicateLiterals, equalityLiterals, arithmeticLiterals,
+		if (predicateLiterals.size() + equalityLiterals.size() + arithmeticLiterals.size() + conditions.size() == 0) return new FalseClause(clause.getOrigin());
+		return EquivalenceClause.newClause(clause.getOrigin(), predicateLiterals, equalityLiterals, arithmeticLiterals,
 					conditions, context);
 	}
 	
-	private List<IEquality> getDisjSimplifiedConditions(List<IEquality> equalities, List<IEquality> conditions) {
-		List<IEquality> result = new ArrayList<IEquality>();
-		condloop: for (IEquality condition : conditions) {
-			for (IEquality equality : equalities) {
+	private List<EqualityLiteral> getDisjSimplifiedConditions(List<EqualityLiteral> equalities, List<EqualityLiteral> conditions) {
+		List<EqualityLiteral> result = new ArrayList<EqualityLiteral>();
+		condloop: for (EqualityLiteral condition : conditions) {
+			for (EqualityLiteral equality : equalities) {
 				if (condition.getInverse().equals(equality)) {
 					return null;
 				}
@@ -112,7 +112,7 @@ public class LiteralSimplifier implements ISimplifier {
 		return result;
 	}
 	
-	private <T extends ILiteral<?>> List<T> getDisjSimplifiedList(List<T> literals) {
+	private <T extends Literal<?,?>> List<T> getDisjSimplifiedList(List<T> literals) {
 		LinkedHashSet<T> set = new LinkedHashSet<T>();
 		for (int i = 0; i < literals.size(); i++) {
 			T literal1 = literals.get(i);
@@ -130,7 +130,7 @@ public class LiteralSimplifier implements ISimplifier {
 	}
 	
 	// a return value of null, means there was a contradiction
-	private <T extends ILiteral<T>> List<T> getEqSimplifiedList(List<T> literals) {
+	private <T extends Literal<T,?>> List<T> getEqSimplifiedList(List<T> literals) {
 		for (int i = 0; i < literals.size(); i++) {
 			T literal1 = literals.get(i);
 			for (int j = i+1; j < literals.size(); j++) {

@@ -9,7 +9,7 @@ import junit.framework.TestCase;
 
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.datastructure.DataStructureWrapper;
-import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.search.IterableHashSet;
 
 public class TestBacktracking extends TestCase {
@@ -23,7 +23,7 @@ public class TestBacktracking extends TestCase {
 	private static Level L5 = new Level(BigInteger.valueOf(5));
 	
 	
-	private IClause[] clauses1 = new IClause[]{
+	private Clause[] clauses1 = new Clause[]{
 		cClause(L0,cProp(0)),
 		cClause(L1,cProp(1)),
 		cClause(L2,cProp(2)),
@@ -32,7 +32,7 @@ public class TestBacktracking extends TestCase {
 		cClause(L5,cProp(5)),
 	};
 	
-//	private IClause[] clauses2 = new IClause[]{
+//	private Clause[] clauses2 = new Clause[]{
 //		cClause(L0,cProp(0)),
 //		cClause(L1,cProp(1)),
 //		cClause(L2,cProp(2)),
@@ -43,20 +43,20 @@ public class TestBacktracking extends TestCase {
 		
 		
 	
-	private DataStructureWrapper prepareProver(IClause[] clauses) {
-		IterableHashSet<IClause> set = new IterableHashSet<IClause>();
-		for (IClause clause : clauses) {
+	private DataStructureWrapper prepareProver(Clause[] clauses) {
+		IterableHashSet<Clause> set = new IterableHashSet<Clause>();
+		for (Clause clause : clauses) {
 			set.appends(clause);
 		}
 		DataStructureWrapper prover = new DataStructureWrapper(set);
 		return prover;
 	}
 	
-	private void doTest(IClause[] clauses, Level level) {
+	private void doTest(Clause[] clauses, Level level) {
 		DataStructureWrapper prover;
 		prover = prepareProver(clauses1);
 		prover.backtrack(level);
-		for (IClause clause : prover) {
+		for (Clause clause : prover) {
 			assertFalse(level.isAncestorOf(clause.getLevel()));
 		}
 	}

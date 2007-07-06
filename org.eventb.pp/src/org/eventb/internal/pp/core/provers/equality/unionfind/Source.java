@@ -8,23 +8,24 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
 
 public abstract class Source {
 	
-	private IEquality equality;
+	private final EqualityLiteral equality;
 	
 	protected Source(){
 		// for subclasses
+		equality = null;
 	}
 	
-	public Source(IEquality equality) {
+	public Source(EqualityLiteral equality) {
 		this.equality = equality;
 	}
 	
 	// common
-	public IEquality getEquality() {
+	public EqualityLiteral getEquality() {
 		return equality;
 	}
 	
@@ -43,21 +44,21 @@ public abstract class Source {
 	
 	public static class FactSource extends Source {
 
-		private IClause clause;
+		private Clause clause;
 		
 		protected FactSource() {
 			// for subclasses
 		}
 		
-		public FactSource(IEquality equality) {
+		public FactSource(EqualityLiteral equality) {
 			super(equality);
 		}
 
-		public void setClause(IClause clause) {
+		public void setClause(Clause clause) {
 			this.clause = clause;
 		}
 		
-		public IClause getClause() {
+		public Clause getClause() {
 			return clause;
 		}
 		
@@ -79,18 +80,18 @@ public abstract class Source {
 	
 	public static class QuerySource extends Source {
 		
-		private Map<IClause, Level> clauses = new HashMap<IClause, Level>();
+		private Map<Clause, Level> clauses = new HashMap<Clause, Level>();
 		
 		protected QuerySource() {
 			// for subclasses
 		}
 		
-		public QuerySource(IEquality equality) {
+		public QuerySource(EqualityLiteral equality) {
 			super(equality);
 		}
 
-		public Set<IClause> getClauses() {
-			return new HashSet<IClause>(clauses.keySet());
+		public Set<Clause> getClauses() {
+			return new HashSet<Clause>(clauses.keySet());
 		}
 		
 		@Override
@@ -98,7 +99,7 @@ public abstract class Source {
 			return !clauses.isEmpty();
 		}
 		
-		public void addClause(IClause clause) {
+		public void addClause(Clause clause) {
 			if (clauses.containsKey(clause)) {
 				Level oldLevel = clauses.get(clause);
 				if (clause.getLevel().isAncestorOf(oldLevel)) {
@@ -110,12 +111,12 @@ public abstract class Source {
 			}
 		}
 		
-		public void removeClause(IClause clause) {
+		public void removeClause(Clause clause) {
 			// if the clause exists, it should not be with a different level
 			// assumption done by proofstrategy, which removes clauses of a higher
 			// level before adding clauses of a lower level
-			for (Iterator<Entry<IClause,Level>> iter = clauses.entrySet().iterator(); iter.hasNext();) {
-				Entry<IClause,Level> entry = iter.next();
+			for (Iterator<Entry<Clause,Level>> iter = clauses.entrySet().iterator(); iter.hasNext();) {
+				Entry<Clause,Level> entry = iter.next();
 				if (entry.getKey().equalsWithLevel(clause)) {
 					iter.remove();
 					return;
@@ -125,8 +126,8 @@ public abstract class Source {
 		
 		@Override
 		public void backtrack(Level level) {
-			for (Iterator<Entry<IClause,Level>> iter = clauses.entrySet().iterator(); iter.hasNext();) {
-				Entry<IClause,Level> clause = iter.next();
+			for (Iterator<Entry<Clause,Level>> iter = clauses.entrySet().iterator(); iter.hasNext();) {
+				Entry<Clause,Level> clause = iter.next();
 				if (level.isAncestorOf(clause.getValue())) iter.remove();
 			}
 		}

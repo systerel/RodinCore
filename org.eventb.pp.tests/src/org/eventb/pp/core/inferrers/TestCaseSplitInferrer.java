@@ -10,7 +10,7 @@ import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.cProp;
 
 import org.eventb.internal.pp.core.VariableContext;
-import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.inferrers.CaseSplitNegationInferrer;
 import org.eventb.pp.AbstractPPTest;
 
@@ -70,7 +70,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 			
 	}
 
-	public void doTest(IClause original, IClause left, IClause right) {
+	public void doTest(Clause original, Clause left, Clause right) {
 		CaseSplitNegationInferrer inferrer = new CaseSplitNegationInferrer(new VariableContext());
 
 		inferrer.setLevel(original.getLevel());
@@ -82,7 +82,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 	public void testIllegal() {
 		CaseSplitNegationInferrer inferrer = new CaseSplitNegationInferrer(new VariableContext());
 
-		IClause clause = cClause(cProp(0),cProp(1));
+		Clause clause = cClause(cProp(0),cProp(1));
 		try {
 			clause.infer(inferrer);
 			fail();
@@ -95,7 +95,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 	public void testCanInfer() {
 		CaseSplitNegationInferrer inferrer = new CaseSplitNegationInferrer(new VariableContext());
 		
-		IClause[] canInfer = new IClause[]{
+		Clause[] canInfer = new Clause[]{
 				cClause(cProp(0),cProp(1)),
 				cClause(cPred(0,a),cPred(1,b)),
 				cClause(cPred(0,evar0),cPred(1,evar1)),
@@ -106,7 +106,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 				cEqClause(cEqual(a,b),cPred(0,a)),
 		};
 
-		for (IClause clause : canInfer) {
+		for (Clause clause : canInfer) {
 			assertTrue(inferrer.canInfer(clause));
 		}
 	}
@@ -114,7 +114,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 	public void testCannotInfer() {
 		CaseSplitNegationInferrer inferrer = new CaseSplitNegationInferrer(new VariableContext());
 		
-		IClause[] cannotInfer = new IClause[]{
+		Clause[] cannotInfer = new Clause[]{
 				cClause(cProp(0)),
 				cClause(cPred(0,x),cPred(0,x)),
 				cClause(cPred(0,x),cPred(1,x,y)),
@@ -123,7 +123,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 				cEqClause(cPred(0,x),cPred(1,x,y)),
 		};
 
-		for (IClause clause : cannotInfer) {
+		for (Clause clause : cannotInfer) {
 			assertFalse(inferrer.canInfer(clause));
 		}
 	}

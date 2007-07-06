@@ -8,14 +8,12 @@
 
 package org.eventb.internal.pp.core.elements.terms;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Sort;
-
 
 public abstract class Term implements Comparable<Term> {
 
@@ -26,15 +24,6 @@ public abstract class Term implements Comparable<Term> {
 		this.sort = sort;
 	}
 	
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (obj instanceof Term) {
-//			Term temp = (Term) obj;
-//			return true;
-//		}
-//		return false;
-//	}
-
 	public Sort getSort() {
 		return sort;
 	}
@@ -48,27 +37,34 @@ public abstract class Term implements Comparable<Term> {
 	// true if this term is quantified and is a forall
 	public abstract boolean isForall();
 	
-	public abstract Term substitute(Map<AbstractVariable, ? extends Term> map);
-	
-	public abstract boolean contains(AbstractVariable variables);
-	
-	public abstract void collectLocalVariables(List<LocalVariable> existential);
-	
-	public abstract void collectVariables(Set<Variable> variables);
-	
-	public Term getInverse() {
-		List<LocalVariable> variables = new ArrayList<LocalVariable>();
-		collectLocalVariables(variables);
-		Map<AbstractVariable, Term> map = new HashMap<AbstractVariable, Term>();
+	@SuppressWarnings("unchecked")
+	public static <T extends Term> T getInverse(T term) {
+		Set<LocalVariable> variables = new HashSet<LocalVariable>();
+		term.collectLocalVariables(variables);
+		Map<SimpleTerm, Term> map = new HashMap<SimpleTerm, Term>();
 		for (LocalVariable variable : variables) {
 			map.put(variable, variable.getInverseVariable());
 		}
-		return substitute(map);
+		return (T)term.substitute(map);
+	}
+	
+	/**
+	 * Substitutes variables and local variables in the term according
+	 * to the specified map. Does not work for constants.
+	 * 
+	 * @param <T>
+	 * @param map
+	 * @param term
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends Term> T substituteSimpleTerms(Map<SimpleTerm, SimpleTerm> map, T term) {
+		return (T)term.substitute(map);
 	}
 	
 	public abstract String toString(HashMap<Variable, String> variableMap);
 	
-	public abstract int getPriority();
+	protected abstract int getPriority();
 	
 	@Override
 	public String toString() {
@@ -76,17 +72,26 @@ public abstract class Term implements Comparable<Term> {
 		return toString(variableMap);
 	}
 	
-	public abstract boolean equalsWithDifferentVariables(Term term, HashMap<AbstractVariable, AbstractVariable> map);
+	public abstract boolean contains(SimpleTerm variable);
+	
+	public abstract void collectVariables(Set<Variable> variables);
+	
+	public abstract void collectLocalVariables(Set<LocalVariable> localVariables);
+	
+	protected abstract <S extends Term> Term substitute(Map<SimpleTerm, S> map);
+	
+	public abstract boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map);
 
 	public abstract int hashCodeWithDifferentVariables();
 	
 	public boolean isBlocked() {
-		return numberOfInferences == 0;
+		if (numberOfInferences == 0) {
+			numberOfInferences = Term.MAX_NUMBER_OF_INFERENCES;
+			return true;
+		}
+		return false;
 	}
-	public void resetInstantiationCount() {
-		this.numberOfInferences = Term.MAX_NUMBER_OF_INFERENCES;
-	}
-	private static final int MAX_NUMBER_OF_INFERENCES = 1;
+	private static final int MAX_NUMBER_OF_INFERENCES = 3;
 	protected int numberOfInferences = Term.MAX_NUMBER_OF_INFERENCES;
 	public void incrementInstantiationCount() {
 		this.numberOfInferences--;

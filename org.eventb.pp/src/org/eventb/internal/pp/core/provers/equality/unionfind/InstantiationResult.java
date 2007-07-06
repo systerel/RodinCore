@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.provers.equality.IInstantiationResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
@@ -27,7 +27,7 @@ public class InstantiationResult implements IInstantiationResult {
 		return Source.getLevel(solvedSource);
 	}
 
-	public IEquality getEquality() {
+	public EqualityLiteral getEquality() {
 		return source.getEquality();
 	}
 
@@ -35,12 +35,12 @@ public class InstantiationResult implements IInstantiationResult {
 		return proposedValue.getConstant();
 	}
 
-	public Set<IClause> getSolvedClauses() {
+	public Set<Clause> getSolvedClauses() {
 		return source.getClauses();
 	}
 
-	public Set<IClause> getSolvedValueOrigin() {
-		Set<IClause> result = new HashSet<IClause>();
+	public Set<Clause> getSolvedValueOrigin() {
+		Set<Clause> result = new HashSet<Clause>();
 		for (FactSource source : solvedSource) {
 			result.add(source.getClause());
 		}

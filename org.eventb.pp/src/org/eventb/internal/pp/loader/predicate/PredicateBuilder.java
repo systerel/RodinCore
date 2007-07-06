@@ -17,6 +17,7 @@ import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.DefaultVisitor;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
@@ -25,17 +26,17 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.loader.formula.AbstractClause;
-import org.eventb.internal.pp.loader.formula.ArithmeticLiteral;
-import org.eventb.internal.pp.loader.formula.BooleanEqualityLiteral;
+import org.eventb.internal.pp.loader.formula.ArithmeticFormula;
+import org.eventb.internal.pp.loader.formula.BooleanEqualityFormula;
 import org.eventb.internal.pp.loader.formula.DisjunctiveClause;
-import org.eventb.internal.pp.loader.formula.EqualityLiteral;
+import org.eventb.internal.pp.loader.formula.EqualityFormula;
 import org.eventb.internal.pp.loader.formula.EquivalenceClause;
 import org.eventb.internal.pp.loader.formula.ISignedFormula;
 import org.eventb.internal.pp.loader.formula.ISubFormula;
-import org.eventb.internal.pp.loader.formula.PredicateLiteral;
-import org.eventb.internal.pp.loader.formula.QuantifiedLiteral;
+import org.eventb.internal.pp.loader.formula.PredicateFormula;
+import org.eventb.internal.pp.loader.formula.QuantifiedFormula;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
-import org.eventb.internal.pp.loader.formula.ArithmeticLiteral.Type;
+import org.eventb.internal.pp.loader.formula.ArithmeticFormula.Type;
 import org.eventb.internal.pp.loader.formula.descriptor.ArithmeticDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.DisjunctiveClauseDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.EqualityDescriptor;
@@ -53,7 +54,6 @@ import org.eventb.internal.pp.loader.formula.key.SymbolKey;
 import org.eventb.internal.pp.loader.formula.key.SymbolTable;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.ordering.LiteralOrderer;
-import org.eventb.internal.pp.loader.ordering.TermOrderer;
 
 /**
  * This class is used to build predicate literals for the PP prover. Each time
@@ -95,7 +95,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	
 	public PredicateBuilder() {
 		// TODO remove this static call
-		ArithmeticKey.resetCounter();
+//		ArithmeticKey.resetCounter();
 		this.context = new AbstractContext();
 	}
 	
@@ -122,11 +122,10 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		
 		debug("========================================");
 		debug("Loading "+(isGoal?"goal":"hypothese")+": " + predicate);
-		
 	
 		this.result = new Stack<NormalizedFormula>();
 		this.termBuilder = new TermBuilder(result);
-		this.inRes = new IntermediateResult(new TermOrderer());
+		this.inRes = new IntermediateResult(/*new TermOrderer()*/);
 		this.isPositive = true;
 		this.isGoal = isGoal;
 		
@@ -159,7 +158,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	}
 
 	private void clean() {
-		this.inRes = new IntermediateResult(new TermOrderer());
+		this.inRes = new IntermediateResult(/*new TermOrderer()*/);
 	}
 	
 	public IContext getContext() {
@@ -189,11 +188,13 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		return true;
 	}
 
-	private void exitRelationalPredicate(RelationalPredicate pred) {
+	private void exitRelationalPredicate(RelationalPredicate pred, boolean arith) {
 		if (pred.getLeft().getTag() != Formula.MAPSTO) {
+			if (!arith) checkTag(pred.getLeft());
 			TermSignature term = termBuilder.buildTerm(pred.getLeft());
 			pushNewTerm(term);
 		}
+		if (!arith) checkTag(pred.getRight());
 		TermSignature term = termBuilder.buildTerm(pred.getRight());
 		pushNewTerm(term);
 	}
@@ -228,28 +229,28 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	
 	@Override
 	public boolean exitGE(RelationalPredicate pred) {
-		exitRelationalPredicate(pred);
+		exitRelationalPredicate(pred,true);
 		exitArithmetic(pred,Type.LESS,true);
 		return true;
 	}
 
 	@Override
 	public boolean exitGT(RelationalPredicate pred) {
-		exitRelationalPredicate(pred);
+		exitRelationalPredicate(pred,true);
 		exitArithmetic(pred,Type.LESS_EQUAL,true);
 		return true;
 	}
 
 	@Override
 	public boolean exitLE(RelationalPredicate pred) {
-		exitRelationalPredicate(pred);
+		exitRelationalPredicate(pred,true);
 		exitArithmetic(pred,Type.LESS_EQUAL,false);
 		return true;
 	}
 
 	@Override
 	public boolean exitLT(RelationalPredicate pred) {
-		exitRelationalPredicate(pred);
+		exitRelationalPredicate(pred,true);
 		exitArithmetic(pred,Type.LESS,false);
 		return true;
 	}
@@ -260,16 +261,32 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	}
 	
 	private void exitArithmeticLiteral(Type type, boolean inverseSign) {
-		// TODO think about normalization - not here, but in clause builder
-		ArithmeticDescriptor desc = new ArithmeticDescriptor(context);
-		desc.addResult(inRes);
-		ArithmeticLiteral sig = new ArithmeticLiteral(type,inRes.getTerms(),desc);
-		debug(prefix+"Adding terms to "+desc+": "+inRes);
+		assert inRes.getTerms().size() == 2;
+		// TODO normalize arithmetic and order terms
 		
-		result.peek().addResult(new SignedFormula<ArithmeticDescriptor>(sig,inverseSign?!isPositive:isPositive),inRes);
+		List<TermSignature> simpleTerms = new ArrayList<TermSignature>();
+		List<TermSignature> terms = getSimpleTerms(inRes.getTerms(), simpleTerms);
+		
+		IntermediateResult interRes = new IntermediateResult(simpleTerms/*, new TermOrderer()*/);
+		
+		ArithmeticKey key = new ArithmeticKey(terms,type);
+		ArithmeticDescriptor desc = updateDescriptor(key, context.getArithmeticTable(), interRes, "arithmetic");
+		desc.addResult(interRes);
+		ArithmeticFormula sig = new ArithmeticFormula(type,interRes.getTerms(),terms,desc);
+		debug(prefix+"Adding terms to "+desc+": "+interRes);
+		
+		result.peek().addResult(new SignedFormula<ArithmeticDescriptor>(sig,inverseSign?!isPositive:isPositive),interRes);
 		clean();
 	}
 
+	private List<TermSignature> getSimpleTerms(List<TermSignature> originalList, List<TermSignature> simpleTerms) {
+		List<TermSignature> result = new ArrayList<TermSignature>();
+		for (TermSignature signature : originalList) {
+			result.add(signature.getSimpleTerm(simpleTerms));
+		}
+		return result;
+	}
+	
 	@Override
 	public boolean enterIN(RelationalPredicate pred) {
 		debugEnter(pred);
@@ -278,13 +295,12 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	
 	@Override
 	public boolean exitIN(RelationalPredicate pred) {
-		exitRelationalPredicate(pred);
-		
+		exitRelationalPredicate(pred,false);
 		// construct literal
 		SymbolKey<PredicateDescriptor> key = new PredicateKey(new Sort(pred.getRight().getType()));
 		
 		PredicateDescriptor desc = updateDescriptor(key, context.getLiteralTable(), inRes, "predicate");
-		PredicateLiteral lit = new PredicateLiteral(inRes.getTerms(), desc);		
+		PredicateFormula lit = new PredicateFormula(inRes.getTerms(), desc);		
 
 		result.peek().addResult(new SignedFormula<PredicateDescriptor>(lit,isPositive),inRes);
 		clean();
@@ -292,9 +308,18 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		return true;
 	}
 
+	private void checkTag(Expression expr) {
+		if (	expr.getTag()!=Formula.BOUND_IDENT && 
+				expr.getTag()!=Formula.FREE_IDENT &&
+				expr.getTag()!=Formula.INTLIT) {
+			throw new IllegalArgumentException("Input not allowed at this position: "+expr);
+		}
+	}
+	
 	@Override
 	public boolean enterMAPSTO(BinaryExpression expr) {
 		if (expr.getLeft().getTag() != Formula.MAPSTO) {
+			checkTag(expr.getLeft());
 			TermSignature term = termBuilder.buildTerm(expr.getLeft());
 			pushNewTerm(term);
 		}
@@ -304,6 +329,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	@Override
 	public boolean exitMAPSTO(BinaryExpression expr) {
 		if (expr.getRight().getTag() != Formula.MAPSTO) {
+			checkTag(expr.getRight());
 			TermSignature term = termBuilder.buildTerm(expr.getRight());
 			pushNewTerm(term);
 		}
@@ -311,7 +337,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	}
 	
 	public boolean exitEquality (RelationalPredicate pred, boolean negative) {
-		exitRelationalPredicate(pred);
+		exitRelationalPredicate(pred,true);
 		// treat arithmetic equality as arithmetic literals
 		if (pred.getRight().getType().equals(FormulaFactory.getDefault().makeIntegerType())) {
 			exitArithmeticLiteral(Type.EQUAL, negative);
@@ -329,10 +355,10 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		
 		ISubFormula<EqualityDescriptor> sig;
 		if (sort.equals(Sort.BOOLEAN)) {
-			sig = new BooleanEqualityLiteral(inRes.getTerms(), desc);
+			sig = new BooleanEqualityFormula(inRes.getTerms(), desc);
 		}
 		else {
-			sig = new EqualityLiteral(inRes.getTerms(), desc);
+			sig = new EqualityFormula(inRes.getTerms(), desc);
 		}
 		// TODO implement an ordering on terms
 		// inRes.orderList();
@@ -564,11 +590,11 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		List<TermSignature> quantifiedTerms = new ArrayList<TermSignature>();		
 		List<TermSignature> unquantifiedTerms = getUnquantifiedTerms(res.getTerms(), quantifiedTerms, res.getStartOffset(), res.getEndOffset());
 		
-		IntermediateResult interRes = new IntermediateResult(quantifiedTerms,new TermOrderer());
+		IntermediateResult interRes = new IntermediateResult(quantifiedTerms/*,new TermOrderer()*/);
 		SymbolKey<QuantifiedDescriptor> key = new QuantifiedLiteralKey(quantified,unquantifiedTerms,isForall);
 		
 		QuantifiedDescriptor desc = updateDescriptor(key, context.getQuantifiedTable(), interRes, "quantified");
-		QuantifiedLiteral sig = new QuantifiedLiteral(isForall,quantified,unquantifiedTerms,interRes.getTerms(),desc,res.getStartOffset(),res.getEndOffset());
+		QuantifiedFormula sig = new QuantifiedFormula(isForall,quantified,unquantifiedTerms,interRes.getTerms(),desc,res.getStartOffset(),res.getEndOffset());
 		
 		result.peek().addResult(new SignedFormula<QuantifiedDescriptor>(sig, true), interRes);
 		clean();

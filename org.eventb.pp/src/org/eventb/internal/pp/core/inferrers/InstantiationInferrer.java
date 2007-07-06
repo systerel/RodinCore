@@ -7,27 +7,30 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.ILiteral;
-import org.eventb.internal.pp.core.elements.PPDisjClause;
-import org.eventb.internal.pp.core.elements.PPEqClause;
-import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
-import org.eventb.internal.pp.core.elements.terms.Term;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.DisjunctiveClause;
+import org.eventb.internal.pp.core.elements.EquivalenceClause;
+import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public class InstantiationInferrer extends AbstractInferrer {
 
-	private Map<Variable, Term> instantiationMap = new HashMap<Variable, Term>();
-	protected IClause result;
+	private Map<Variable, SimpleTerm> instantiationMap = new HashMap<Variable, SimpleTerm>();
+	protected Clause result;
 
-	public void addInstantiation(Variable variable, Term term) {
+	// variable must be the original variable of the clause, not a copy
+	// because we increment the instantiation count of the original variable
+	public void addInstantiation(Variable variable, SimpleTerm term) {
+		// TODO increment instantiation count and handle blocking
+		variable.incrementInstantiationCount();
 		if (instantiationMap.containsKey(variable)) throw new IllegalStateException();
 		instantiationMap.put(variable, term);
 	}
 	
-	public IClause getResult() {
+	public Clause getResult() {
 		return result;
 	}
 	
@@ -36,9 +39,9 @@ public class InstantiationInferrer extends AbstractInferrer {
 	}
 
 	protected void substitute() {
-		HashMap<AbstractVariable, Term> map = new HashMap<AbstractVariable, Term>();
-		for (Entry<Variable, Term> entry : instantiationMap.entrySet()) {
-			AbstractVariable variableInCopy = substitutionsMap.get(entry.getKey());
+		HashMap<SimpleTerm, SimpleTerm> map = new HashMap<SimpleTerm, SimpleTerm>();
+		for (Entry<Variable, SimpleTerm> entry : instantiationMap.entrySet()) {
+			SimpleTerm variableInCopy = substitutionsMap.get(entry.getKey());
 			map.put(variableInCopy, entry.getValue());
 		}
 		substituteInList(predicates, map);
@@ -46,8 +49,8 @@ public class InstantiationInferrer extends AbstractInferrer {
 		substituteInList(arithmetic, map);
 	}
 	
-	private <T extends ILiteral<T>> void substituteInList(List<T> literals, 
-			HashMap<AbstractVariable, Term> map) {
+	private <T extends Literal<T,?>> void substituteInList(List<T> literals, 
+			HashMap<SimpleTerm, SimpleTerm> map) {
 		List<T> newList = new ArrayList<T>();
 		for (T literal : literals) {
 			newList.add(literal.substitute(map));
@@ -57,19 +60,19 @@ public class InstantiationInferrer extends AbstractInferrer {
 	}
 	
 	@Override
-	protected void inferFromDisjunctiveClauseHelper(IClause clause) {
+	protected void inferFromDisjunctiveClauseHelper(Clause clause) {
 		substitute();
-		result = new PPDisjClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
+		result = new DisjunctiveClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
 	}
 
 	@Override
-	protected void inferFromEquivalenceClauseHelper(IClause clause) {
+	protected void inferFromEquivalenceClauseHelper(Clause clause) {
 		substitute();
-		result = new PPEqClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
+		result = new EquivalenceClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
 	}
 
 	@Override
-	protected void initialize(IClause clause) throws IllegalStateException {
+	protected void initialize(Clause clause) throws IllegalStateException {
 		if (instantiationMap.isEmpty()) throw new IllegalStateException();
 	}
 
@@ -78,8 +81,8 @@ public class InstantiationInferrer extends AbstractInferrer {
 		instantiationMap.clear();
 	}
 	
-	protected IOrigin getOrigin(IClause clause) {
-		List<IClause> parents = new ArrayList<IClause>();
+	protected IOrigin getOrigin(Clause clause) {
+		List<Clause> parents = new ArrayList<Clause>();
 		parents.add(clause);
 		return new ClauseOrigin(parents);
 	}

@@ -1,14 +1,14 @@
 package org.eventb.internal.pp.core.datastructure;
 
-import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.Clause;
 
 public abstract class DefaultChangeListener implements IChangeListener {
 
-	public void removeClause(IClause clause){
+	public void removeClause(Clause clause){
 		// do nothing
 	}
 	
-	public void newClause(IClause clause){
+	public void newClause(Clause clause){
 		//do nothing
 	}
 	

@@ -7,9 +7,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.internal.pp.core.ClauseSimplifier;
-import org.eventb.internal.pp.core.ProofStrategy;
-import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
 import org.eventb.pp.PPResult.Result;
 
 public class RodinTests extends AbstractPPTest {
@@ -55,16 +52,17 @@ public class RodinTests extends AbstractPPTest {
 		
 		env.addName("q", POW(ty_T));
 		env.addName("r", REL(ty_T,ty_T));
+		env.addName("s", REL(ty_T,ty_T));
+		
+		
+		env.addName("org", REL(ty_T,ty_S));
+		env.addName("sit", REL(ty_T,ty_S));
 		
 	}
 	
 	
 	public void testAll() {
-		ProofStrategy.DEBUG = true;
-		PPProof.DEBUG = true;
-		PredicateProver.DEBUG = true;
-		ClauseSimplifier.DEBUG = true;
-//		Dumper.DEBUG = true;
+		initDebug();
 		for (TestPair test : tests) {
 			doTest(test);
 		}
@@ -72,37 +70,142 @@ public class RodinTests extends AbstractPPTest {
 	
 	TestPair[] tests = new TestPair[]{
 			// translation
-//			new TestPair(mSet(
-//					"A = S",
-//					"C ⊆ S",
-//					"A ∈ U"
-//					),"C ∪ A ∈ U",true
+//			new TestPair(new HashSet<String>(),
+//					"((D=TRUE ⇔ E=TRUE) ⇔ F=TRUE) ⇔ (D=TRUE ⇔ (E=TRUE ⇔ F=TRUE))",true
 //			),
 //			new TestPair(mSet(
-//					"C ⊆ S",
-//					"S ∈ U"
-//					),"C ∪ S ∈ U",true
+//					"c^2 ∈ C",
+//					"c^2 ∉ C"
+//					),"⊥",false
 //			),
-			// modus ponens
+//			new TestPair(mSet(
+//					"∀x·x^2 ∈ C",
+//					"∀x·x^2 ∉ C"
+//					),"⊥",false
+//			),
+			new TestPair(mSet(
+				"r ∈ E ↔ E"
+				),"r ∈ E ↔ E",true
+			),
+			new TestPair(mSet(
+					"r ∈ E ↔ E",
+					"s ∈ E ↔ E"
+				),"r;s ⊆ E × E",true
+			),
+//			new TestPair(mSet(
+//					"r ∈ E ↔ E",
+//					"s ∈ E ↔ E"
+//				),"r;s ∈ E ↔ E",true
+//			),
+//			new TestPair(mSet(
+//						"r ∈ E ⇸ E",
+//						"s ∈ E ⇸ E"
+//					),"r;s ∈ E ⇸ E",true
+//			),
+//			new TestPair(mSet(
+//					"r ∈ E → E",
+//					"s ∈ E → E"
+//				),"r;s ∈ E → E",true
+//			),
+			// requires adding set hypothesis
+			new TestPair(mSet(
+					"A = S",
+					"C ⊆ S",
+					"A ∈ U"
+					),"C ∪ A ∈ U",true
+			),
+			// requires adding set membership hypothesis
+			new TestPair(mSet(
+					"C ⊆ S",
+					"S ∈ U"
+					),"C ∪ S ∈ U",true
+			),
+			new TestPair(mSet(
+					"C ⊆ B",
+					"B ∈ U"
+					),"C ∪ B ∈ U",true
+			),
+			new TestPair(mSet(
+					"A ⊆ B",
+					"B ⊆ C"
+					),"A ⊆ C",true
+			),
+			// fails at the moment
 //			new TestPair(mSet(
 //					"f ∈ S ⇸ T",
 //					"x ∉ dom(f)",
 //					"y ∈ T"
 //					),"f ∪ {x ↦ y} ∈ S ⇸ T",true
 //			),
+			new TestPair(mSet(
+					"f ∈ S ⇸ T"
+					),"f∼[C ∩ D] = f∼[C] ∩ f∼[D]", true
+			),
+			new TestPair(mSet(
+					"f ∈ S ⇸ T"
+					),"f∼[C ∖ D] = f∼[C] ∖ f∼[D]", true
+			),
+			new TestPair(mSet(
+					"f ∈ S ⤔ T"
+					),"f[C ∩ D] = f[C] ∩ f[D]", true
+			),
+			new TestPair(mSet(
+					"f ∈ S ↔ T"
+					),"f∼[C ∩ D] = f∼[C] ∩ f∼[D]", false
+			),
+			new TestPair(mSet(
+					"dap;org ⊆ sit",
+					"sit(p)=org(d)",
+//					"p ∈ dom(sit)", // unneeded
+//					"d ∈ dom(org)", // unneeded
+					"org ∈ D ⇸ L",
+					"sit ∈ P → L"
+				),"(dap ∪ {p↦d});org ⊆ sit",true
+			),
 //			new TestPair(mSet(
-//					"A∪B∈U",
-//					"A∪C∈U",
-//					"(A∪B)∩(A∪C)∈U"
-//					),"A∪(B∩C)∈U",true
+//					"dap;org ⊆ sit",
+//					"sit(p)=org(d)",
+////					"p ∈ dom(sit)",
+////					"d ∈ dom(org)",
+//					"org ∈ D ⇸ L",
+//					"sit ∈ P → L"
+//				),"(dap  {p↦d});org ⊆ sit",true
 //			),
-//			new TestPair(mSet(
-//					"∅∉U",
-//					"A∪B∈U",
-//					"A∪C∈U",
-//					"(A∪B)∩(A∪C)∈U"
-//					),"A∪(B∩C)=(A∪B)∩(A∪C)",true
-//			),
+			new TestPair(mSet(
+					"(A∪B)∩(A∪C)∈U"
+					),"A∪(B∩C)∈U",true
+			),
+			// fails at the moment
+			new TestPair(mSet(
+					"A∪B∈U",
+					"(A∪B)∩(A∪C)∈U"
+					),"A∪(B∩C)∈U",true
+			),
+			new TestPair(mSet(
+					"A∪B∈U",
+					"A∪C∈U",
+					"(A∪B)∩(A∪C)∈U"
+					),"A∪(B∩C)=(A∪B)∩(A∪C)",true
+			),
+			new TestPair(mSet(
+					"A∪B∈U",
+					"(A∪B)∩(A∪C)∈U"
+					),"A∪(B∩C)=(A∪B)∩(A∪C)",true
+			),
+			new TestPair(mSet(
+					"A∪B∈U",
+					"A∪C∈U",
+					"(A∪B)∩(A∪C)∈U"
+					),"A∪(B∩C)=(A∪B)∩(A∪C)",true
+			),
+			// fails
+			new TestPair(mSet(
+					"∅∉U",
+					"A∪B∈U",
+					"A∪C∈U",
+					"(A∪B)∩(A∪C)∈U"
+					),"A∪(B∩C)=(A∪B)∩(A∪C)",true
+			),
 			new TestPair(mSet(
 					"(A∪B)∩(A∪C)∈U"
 					),"A∪(B∩C)=(A∪B)∩(A∪C)",true
@@ -114,9 +217,9 @@ public class RodinTests extends AbstractPPTest {
 //					"ran(r)∖r∼[ran(r)∖q]⊆q",true),
 //			new TestPair(mSet("A = G"),"G ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)",true),
 //			new TestPair(mSet("q ⊆ R"),"R ∖ q ⊆ R",true),
-////			new TestPair(mSet("∀r·r∈R⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}","nxt∈R → (B ⤔ B)"),
-////					"∀r·r∈R⇒r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))∧r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))",true),
-//			new TestPair(mSet("R ⊆ C"),"r[R] ⊆ r[C]",true),
+//			new TestPair(mSet("∀r·r∈R⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}","nxt∈R → (B ⤔ B)"),
+//					"∀r·r∈R⇒r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))∧r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))",true),
+			new TestPair(mSet("R ⊆ C"),"r[R] ⊆ r[C]",true),
 //			new TestPair(mSet("a = c"),"a ∈ {c,d}",true),
 //			new TestPair(mSet("(∃x,y·f(x)=y ∧ g(y)=a)"),"(∃x·(g∘f)(x)=a)",true),
 //			new TestPair(mSet("(∀x·(∃x0·x ↦ x0∈SIG)⇒(∃x0·x0 ↦ x∈fst))" +

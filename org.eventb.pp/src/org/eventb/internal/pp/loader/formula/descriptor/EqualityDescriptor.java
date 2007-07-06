@@ -29,17 +29,17 @@ public class EqualityDescriptor extends LiteralDescriptor {
 		return "E" + sort.toString();
 	}
 
-	@Override
-	public int hashCode() {
-		return sort.hashCode();
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof EqualityDescriptor) {
-			EqualityDescriptor temp = (EqualityDescriptor) obj;
-			return super.equals(temp);
-		}
-		return false;
-	}
+//	@Override
+//	public int hashCode() {
+//		return sort.hashCode();
+//	}
+//	
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (obj instanceof EqualityDescriptor) {
+//			EqualityDescriptor temp = (EqualityDescriptor) obj;
+//			return super.equals(temp);
+//		}
+//		return false;
+//	}
 }

@@ -5,30 +5,30 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.search.ConditionIterator;
 import org.eventb.internal.pp.core.search.IterableHashSet;
 import org.eventb.internal.pp.core.search.ResetIterator;
 
-public class DataStructureWrapper implements IObservable, Iterable<IClause> {
+public class DataStructureWrapper implements IObservable, Iterable<Clause> {
 
-	private IterableHashSet<IClause> clauses;
-	private ResetIterator<IClause> clausesIterator;
+	private IterableHashSet<Clause> clauses;
+	private ResetIterator<Clause> clausesIterator;
 	
-	public DataStructureWrapper(IterableHashSet<IClause> clauses) {
+	public DataStructureWrapper(IterableHashSet<Clause> clauses) {
 		this.clauses = clauses;
 		this.clausesIterator = clauses.iterator();
 	}
 	
-	public ResetIterator<IClause> iterator() {
+	public ResetIterator<Clause> iterator() {
 		return clauses.iterator();
 	}
 	
-	public boolean contains(IClause clause) {
+	public boolean contains(Clause clause) {
 		return clauses.contains(clause);
 	}
 	
-	public IClause get(IClause clause) {
+	public Clause get(Clause clause) {
 		return clauses.get(clause);
 	}
 	
@@ -38,7 +38,7 @@ public class DataStructureWrapper implements IObservable, Iterable<IClause> {
 		BacktrackIterator it = new BacktrackIterator(clausesIterator, level);
 		
 		while (it.hasNext()) {
-			IClause toRemove = it.next();
+			Clause toRemove = it.next();
 		
 			remove(toRemove);
 		}
@@ -50,37 +50,37 @@ public class DataStructureWrapper implements IObservable, Iterable<IClause> {
 		listeners.add(listener);
 	}
 	
-	private void fireNew(IClause clause) {
+	private void fireNew(Clause clause) {
 		for (IChangeListener listener : listeners) {
 			listener.newClause(clause);
 		}
 	}
-	private void fireRemove(IClause clause) {
+	private void fireRemove(Clause clause) {
 		for (IChangeListener listener : listeners) {
 			listener.removeClause(clause);
 		}
 	}
 	
-	public void add(IClause clause) {
+	public void add(Clause clause) {
 		clauses.appends(clause);
 		fireNew(clause);
 	}
 
-	public void remove(IClause clause) {
+	public void remove(Clause clause) {
 		clauses.remove(clause);
 		fireRemove(clause);
 	}
 	
-	private class BacktrackIterator extends ConditionIterator<IClause> {
+	private class BacktrackIterator extends ConditionIterator<Clause> {
 		private Level level;
-		public BacktrackIterator(Iterator<IClause> clauses,
+		public BacktrackIterator(Iterator<Clause> clauses,
 				Level level) {
 			super(clauses);
 			
 			this.level = level;
 		}
 		@Override
-		public boolean isSelected(IClause element) {
+		public boolean isSelected(Clause element) {
 			return level.isAncestorOf(element.getLevel());
 		}
 	}

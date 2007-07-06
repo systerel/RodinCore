@@ -3,7 +3,7 @@ package org.eventb.internal.pp.loader.formula;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.elements.ILiteral;
+import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.clause.LabelManager;
@@ -44,14 +44,14 @@ public abstract class AbstractClause<T extends IndexedDescriptor> extends Abstra
 	
 	@Override
 	protected boolean isLabelizable(LabelManager manager, TermVisitorContext context) {
-		return (descriptor.getResults().size() > 1 
-			|| (context.isQuantified?!context.isForall:false)
+		return ( /*descriptor.getResults().size() > 1 
+			|| */ (context.isQuantified?!context.isForall:false)
 			|| (context.isEquivalence?!isEquivalence():isEquivalence())
 			|| (manager.isGettingDefinitions() && context.isQuantified)
-			);
+		);
 	}
 	
-	public ILiteral<?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+	public Literal<?,?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
 		return getLiteral(descriptor.getIndex(), terms, context, table);
 	}
 	

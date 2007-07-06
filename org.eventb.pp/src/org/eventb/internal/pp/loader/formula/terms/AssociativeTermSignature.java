@@ -73,16 +73,25 @@ public abstract class AssociativeTermSignature extends TermSignature {
 	 * @return a copy of this signature where free terms are replaced by {@link VariableHolder}
 	 * and quantified terms are replaced by {@link QuantifiedVariableHolder}
 	 */
-	protected List<TermSignature> getUnquantifiedSignatureHelper(int startOffset, int endOffset, List<TermSignature> termList) {
+	protected List<TermSignature> getUnquantifiedTermHelper(int startOffset, int endOffset, List<TermSignature> termList) {
 		List<TermSignature> signatures = new ArrayList<TermSignature>();
 		for (TermSignature term : terms) {
 			TermSignature sig;
 			if (term.isQuantified(startOffset,endOffset)) {
 				sig = term.getUnquantifiedTerm(startOffset, endOffset, termList);
 			} else {
-				addTerm(term.deepCopy(), termList);
+				addTermCopy(term, termList);
 				sig = new VariableHolder(sort); 
 			}
+			signatures.add(sig);
+		}
+		return signatures;
+	}
+	
+	protected List<TermSignature> getSimpleTermHelper(List<TermSignature> termList) {
+		List<TermSignature> signatures = new ArrayList<TermSignature>();
+		for (TermSignature term : terms) {
+			TermSignature sig = term.getSimpleTerm(termList);
 			signatures.add(sig);
 		}
 		return signatures;

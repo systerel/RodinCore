@@ -1,15 +1,15 @@
 package org.eventb.internal.pp.core.simplifiers;
 
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.PPDisjClause;
-import org.eventb.internal.pp.core.elements.PPEqClause;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.DisjunctiveClause;
+import org.eventb.internal.pp.core.elements.EquivalenceClause;
 
 public interface ISimplifier {
 
-	public IClause simplifyEquivalenceClause(PPEqClause clause);
+	public Clause simplifyEquivalenceClause(EquivalenceClause clause);
 	
-	public IClause simplifyDisjunctiveClause(PPDisjClause clause);
+	public Clause simplifyDisjunctiveClause(DisjunctiveClause clause);
 	
-	public boolean canSimplify(IClause clause);
+	public boolean canSimplify(Clause clause);
 	
 }

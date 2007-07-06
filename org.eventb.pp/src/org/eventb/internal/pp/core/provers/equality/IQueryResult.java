@@ -3,16 +3,16 @@ package org.eventb.internal.pp.core.provers.equality;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
 
 public interface IQueryResult {
 
 	public boolean getValue();
 	
-	public List<IClause> getSolvedValueOrigin();
+	public List<Clause> getSolvedValueOrigin();
 	
-	public Set<IClause> getSolvedClauses();
+	public Set<Clause> getSolvedClauses();
 
-	public IEquality getEquality();
+	public EqualityLiteral getEquality();
 }

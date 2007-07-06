@@ -4,7 +4,7 @@ import org.eventb.internal.pp.loader.predicate.IContext;
 
 public class PredicateDescriptor extends IndexedDescriptor {
 
-//	public PredicateDescriptor(IContext context, List<IIntermediateResult> termList, int index) {
+//	public ComplexPredicateDescriptor(IContext context, List<IIntermediateResult> termList, int index) {
 //		super(context, termList, index);
 //	}
 
@@ -17,18 +17,18 @@ public class PredicateDescriptor extends IndexedDescriptor {
 		return "P"+index;
 	}
 
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof PredicateDescriptor) {
-			PredicateDescriptor temp = (PredicateDescriptor) obj;
-			return super.equals(temp);
-		}
-		return false;
-	}
+//	@Override
+//	public int hashCode() {
+//		return super.hashCode();
+//	}
+//	
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (obj instanceof ComplexPredicateDescriptor) {
+//			ComplexPredicateDescriptor temp = (ComplexPredicateDescriptor) obj;
+//			return super.equals(temp);
+//		}
+//		return false;
+//	}
 	
 }

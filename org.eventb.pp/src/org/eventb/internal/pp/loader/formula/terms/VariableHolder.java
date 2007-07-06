@@ -77,4 +77,10 @@ public class VariableHolder extends TermSignature {
 		assert false;
 		return null;
 	}
+
+	@Override
+	public TermSignature getSimpleTerm(List<TermSignature> termList) {
+		assert false;
+		return null;
+	}
 }

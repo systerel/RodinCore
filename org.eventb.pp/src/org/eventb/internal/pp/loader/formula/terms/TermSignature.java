@@ -67,6 +67,9 @@ public abstract class TermSignature {
 	public abstract TermSignature getUnquantifiedTerm(
 			int startOffset, int endOffset, List<TermSignature> termList);
 	
+	
+	public abstract TermSignature getSimpleTerm(List<TermSignature> termList);
+	
 	/**
 	 * Adds copy to the symbol table, adds the corresponding index to indexList,
 	 * and adds the term to termList. This is an helper method intended to be called
@@ -76,26 +79,10 @@ public abstract class TermSignature {
 	 * @param termList the term list where the term is appended
 	 * @param indexList the index list where the new index is appended
 	 */
-	protected void addTerm(TermSignature copy, List<TermSignature> termList) {
-		termList.add(copy);
+	protected void addTermCopy(TermSignature term, List<TermSignature> termList) {
+		termList.add(term.deepCopy());
 	}
 	
-//	/**
-//	 * Appends to new list a copy of this term where each {@link VariableHolder} is
-//	 * replaced by its corresponding term, obtained from indexList.
-//	 * The size of the index list must be equivalent to the number of variable
-//	 * holders in this term.
-//	 * 
-//	 * This method is similar to {@link TermSignature#appendTermFromTermsList(List, List, boolean, boolean)}
-//	 * 
-//	 * @param indexList the list giving what should be put instead of the holders 
-//	 * @param newList the list where to append the obtained term
-//	 * @param isForall whether it is a forall or an exist
-//	 */
-//	protected void appendTermFromIndexList(List<Index> indexList, List<Term> newList, boolean isForall) {
-//		List<Term> termList = Index.getTerms(indexList);
-//		appendTermFromTermsList(termList, newList, isForall);
-//	}
 		
 	/**
 	 * Appends to new list a copy of this term where each {@link VariableHolder} is

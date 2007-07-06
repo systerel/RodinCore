@@ -3,6 +3,7 @@ package org.eventb.internal.pp.core.provers.equality.unionfind;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -140,7 +141,7 @@ public class EqualitySolver {
 		resultList.addAll(checkInequalityContradictionWithQuery(root1, root2, node1, node2, equality.getSource(), false));
 		resultList.addAll(checkInequalityContradictionWithQuery(root1, root2, node1, node2, equality.getSource(), true));
 		
-		// TODO check instantiations left and right
+		// check instantiations left and right
 		List<InstantiationResult> instantiationResults = new ArrayList<InstantiationResult>();
 		instantiationResults.addAll(checkInequalityInstantiation(root1, root2, node1, node2, equality.getSource()));
 		instantiationResults.addAll(checkInequalityInstantiation(root2, root1, node2, node1, equality.getSource()));
@@ -399,12 +400,22 @@ public class EqualitySolver {
 	}
 
 	public Set<String> dump(){
-		Set<String> result = new HashSet<String>();
+		Set<String> result = new LinkedHashSet<String>();
 		for (Node node : nodes) {
 			if (!node.isRoot()) result.add(node.toString()+"->"+node.getParent().toString());
 			if (!node.getRootFactsInequalities().isEmpty()) {
 				for (RootInfo<FactSource> info : node.getRootFactsInequalities()) {
 					result.add(node.toString()+"[F, ≠"+info.updateAndGetInequalNode()+"]");
+				}
+			}
+			if (!node.getRootQueryEqualities().isEmpty()) {
+				for (RootInfo<QuerySource> info : node.getRootQueryEqualities()) {
+					result.add(node.toString()+"[Q, ="+info.updateAndGetInequalNode()+"]");
+				}
+			}
+			if (!node.getRootQueryInequalities().isEmpty()) {
+				for (RootInfo<QuerySource> info : node.getRootQueryInequalities()) {
+					result.add(node.toString()+"[Q, ≠"+info.updateAndGetInequalNode()+"]");
 				}
 			}
 		}

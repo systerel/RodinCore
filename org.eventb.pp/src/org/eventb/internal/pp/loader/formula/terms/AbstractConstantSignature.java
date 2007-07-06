@@ -16,7 +16,7 @@ public abstract class AbstractConstantSignature extends TermSignature {
 
 	@Override
 	public TermSignature getUnquantifiedTerm(int startOffset, int endOffset, List<TermSignature> termList) {
-		addTerm(this.deepCopy(), termList);
+		addTermCopy(this, termList);
 		return new VariableHolder(sort);
 	}
 
@@ -36,6 +36,12 @@ public abstract class AbstractConstantSignature extends TermSignature {
 	@Override
 	public void appendTermFromTermList(List<TermSignature> indexList, List<TermSignature> newList, int startOffset, int endOffset) {
 		newList.add(this.deepCopy());
+	}
+
+	@Override
+	public TermSignature getSimpleTerm(List<TermSignature> termList) {
+		addTermCopy(this, termList);
+		return new VariableHolder(sort);
 	}
 
 }

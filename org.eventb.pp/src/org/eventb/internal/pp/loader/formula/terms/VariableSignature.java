@@ -36,7 +36,7 @@ public class VariableSignature extends TermSignature {
 	@Override
 	public TermSignature getUnquantifiedTerm(int startOffset, int endOffset, List<TermSignature> termList) {
 		if (!isQuantified(startOffset, endOffset)) {
-			addTerm(this.deepCopy(), termList);
+			addTermCopy(this, termList);
 			return new VariableHolder(sort);
 		}
 		return new VariableSignature(uniqueIndex, index, sort);
@@ -110,6 +110,12 @@ public class VariableSignature extends TermSignature {
 			}
 		}
 		return var;
+	}
+
+	@Override
+	public TermSignature getSimpleTerm(List<TermSignature> termList) {
+		addTermCopy(this, termList);
+		return new VariableHolder(sort);
 	}
 
 }

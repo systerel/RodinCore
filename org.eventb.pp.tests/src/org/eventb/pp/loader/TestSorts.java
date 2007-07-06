@@ -16,7 +16,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
-import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.NormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.TermBuilder;
 import org.eventb.pp.Util;
@@ -125,7 +124,7 @@ public class TestSorts extends TestCase {
 	};
 	
 	public void doTest(Expression expression, Sort expected) {
-		Stack<INormalizedFormula> result = new Stack<INormalizedFormula>();
+		Stack<NormalizedFormula> result = new Stack<NormalizedFormula>();
 		result.push(new NormalizedFormula(null,0,0,0,new BoundIdentDecl[0],null,false));
 		TermBuilder builder = new TermBuilder(result);
 		TermSignature term = builder.buildTerm(expression);

@@ -43,14 +43,14 @@ import org.eventb.internal.pp.loader.formula.terms.VariableSignature;
 public class TermBuilder extends DefaultVisitor {
 	
 	private Stack<TermSignature> terms;
-	private Stack<? extends INormalizedFormula> results;
+	private Stack<NormalizedFormula> results;
 	
 	private boolean invertSign = false;
 	public boolean invertSign() {
 		return invertSign;
 	}
 	
-	public TermBuilder(Stack<? extends INormalizedFormula> results) {
+	public TermBuilder(Stack<NormalizedFormula> results) {
 		assert results != null;
 
 		this.results = results;
@@ -65,7 +65,6 @@ public class TermBuilder extends DefaultVisitor {
 		expression.accept(this);
 		
 		assert terms.size() == 1;
-		
 		return terms.pop();
 	}
 	

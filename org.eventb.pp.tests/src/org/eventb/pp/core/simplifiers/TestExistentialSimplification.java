@@ -6,7 +6,7 @@ import static org.eventb.pp.Util.cEqual;
 import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.cProp;
 
-import org.eventb.internal.pp.core.elements.IClause;
+import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
@@ -16,9 +16,9 @@ import org.eventb.pp.Util;
 public class TestExistentialSimplification extends AbstractPPTest {
 	
 	private class TestPair {
-		IClause input, output;
+		Clause input, output;
 		
-		TestPair(IClause input, IClause output) {
+		TestPair(Clause input, Clause output) {
 			this.input = input;
 			this.output = output;
 		}
@@ -99,7 +99,7 @@ public class TestExistentialSimplification extends AbstractPPTest {
 	public void testExistential() {
 		for (TestPair test : tests) {
 			ExistentialSimplifier rule = new ExistentialSimplifier();
-			IClause actual = test.input.simplify(rule);
+			Clause actual = test.input.simplify(rule);
 			assertEquals(test.output,actual);
 		}
 	}

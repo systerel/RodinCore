@@ -18,9 +18,9 @@ import junit.framework.TestCase;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.pp.core.elements.Sort;
-import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
+import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
@@ -317,12 +317,12 @@ public class TestTermEquality extends TestCase {
 	};
 
 	public void testEqualWithDifferentVariables() {
-		HashMap<AbstractVariable, AbstractVariable> map;
+		HashMap<SimpleTerm, SimpleTerm> map;
 		for (Term[] terms : equalTerms) {
 			for (int i = 0; i < terms.length-1; i++) {
-				map = new HashMap<AbstractVariable, AbstractVariable>();
+				map = new HashMap<SimpleTerm, SimpleTerm>();
 				assertTrue(terms[i].equalsWithDifferentVariables(terms[i+1], map));
-				map = new HashMap<AbstractVariable, AbstractVariable>();
+				map = new HashMap<SimpleTerm, SimpleTerm>();
 				assertTrue(terms[i+1].equalsWithDifferentVariables(terms[i], map));
 			
 				assertEquals(""+terms[i]+","+terms[i+1],terms[i].hashCodeWithDifferentVariables(), terms[i+1].hashCodeWithDifferentVariables());
@@ -331,12 +331,12 @@ public class TestTermEquality extends TestCase {
 	}
 	
 	public void testUnEqual() {
-		HashMap<AbstractVariable, AbstractVariable> map;
+		HashMap<SimpleTerm, SimpleTerm> map;
 		for (Term[] terms : unequalTerms) {
 			for (int i = 0; i < terms.length-1; i++) {
-				map = new HashMap<AbstractVariable, AbstractVariable>();
+				map = new HashMap<SimpleTerm, SimpleTerm>();
 				assertFalse("Term1 : "+terms[i].toString()+", term2 : "+terms[i+1].toString(),terms[i].equalsWithDifferentVariables(terms[i+1], map));
-				map = new HashMap<AbstractVariable, AbstractVariable>();
+				map = new HashMap<SimpleTerm, SimpleTerm>();
 				assertFalse("Term1 : "+terms[i+1].toString()+", term2 : "+terms[i].toString(),terms[i+1].equalsWithDifferentVariables(terms[i], map));
 			}
 		}
@@ -371,10 +371,10 @@ public class TestTermEquality extends TestCase {
 	private static Sort B = new Sort(FormulaFactory.getDefault().makeGivenType("B"));
 	
 	public void testEqualSort() {
-		assertTrue(cVar(A).equalsWithDifferentVariables(cVar(A),new HashMap<AbstractVariable, AbstractVariable>()));
-		assertFalse(cVar(A).equalsWithDifferentVariables(cVar(B),new HashMap<AbstractVariable, AbstractVariable>()));
-		assertTrue(cELocVar(0,A).equalsWithDifferentVariables(cELocVar(0,A),new HashMap<AbstractVariable, AbstractVariable>()));
-		assertFalse(cELocVar(0,A).equalsWithDifferentVariables(cELocVar(0,B),new HashMap<AbstractVariable, AbstractVariable>()));
+		assertTrue(cVar(A).equalsWithDifferentVariables(cVar(A),new HashMap<SimpleTerm, SimpleTerm>()));
+		assertFalse(cVar(A).equalsWithDifferentVariables(cVar(B),new HashMap<SimpleTerm, SimpleTerm>()));
+		assertTrue(cELocVar(0,A).equalsWithDifferentVariables(cELocVar(0,A),new HashMap<SimpleTerm, SimpleTerm>()));
+		assertFalse(cELocVar(0,A).equalsWithDifferentVariables(cELocVar(0,B),new HashMap<SimpleTerm, SimpleTerm>()));
 		
 	}
 	

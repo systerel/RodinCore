@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eventb.internal.pp.loader.formula.descriptor.ArithmeticDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.DisjunctiveClauseDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.EqualityDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.EquivalenceClauseDescriptor;
@@ -38,7 +39,7 @@ public class AbstractContext implements IContext {
 	SymbolTable<DisjunctiveClauseDescriptor> cTable = new SymbolTable<DisjunctiveClauseDescriptor>();
 	SymbolTable<EquivalenceClauseDescriptor> eTable = new SymbolTable<EquivalenceClauseDescriptor>();
 	SymbolTable<EqualityDescriptor> equalityTable = new SymbolTable<EqualityDescriptor>();
-//	SymbolTable aTable = new SymbolTable();
+	SymbolTable<ArithmeticDescriptor> aTable = new SymbolTable<ArithmeticDescriptor>();
 	SymbolTable<QuantifiedDescriptor> qTable = new SymbolTable<QuantifiedDescriptor>();
 	
 	List<INormalizedFormula> results = new ArrayList<INormalizedFormula>();
@@ -86,6 +87,10 @@ public class AbstractContext implements IContext {
 		return equalityTable;
 	}
 
+	public SymbolTable<ArithmeticDescriptor> getArithmeticTable() {
+		return aTable;
+	}
+	
 	public List<INormalizedFormula> getResults() {
 		return results;
 	}

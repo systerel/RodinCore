@@ -6,7 +6,7 @@ import org.eventb.core.ast.Predicate;
 
 public interface ITracer {
 
-//	public abstract List<IClause> getClauses();
+//	public abstract List<Clause> getClauses();
 
 	public List<Predicate> getOriginalPredicates();
 

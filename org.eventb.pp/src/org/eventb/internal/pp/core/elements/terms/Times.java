@@ -28,7 +28,7 @@ public class Times extends AssociativeTerm {
 	}
 	
 	@Override
-	public boolean equalsWithDifferentVariables(Term term, HashMap<AbstractVariable, AbstractVariable> map) {
+	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
 		if (term instanceof Times) {
 			return super.equalsWithDifferentVariables(term, map);
 		}
@@ -42,7 +42,12 @@ public class Times extends AssociativeTerm {
 
 	
 	@Override
-	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
+	protected <S extends Term> Term substitute(Map<SimpleTerm, S> map) {
 		return new Times(substituteHelper(map));
+	}
+
+	@Override
+	protected String getSymbol() {
+		return "*";
 	}
 }

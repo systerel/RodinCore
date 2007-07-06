@@ -10,7 +10,6 @@ package org.eventb.internal.pp.loader.predicate;
 
 import java.util.List;
 
-import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.loader.formula.ISignedFormula;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
@@ -42,12 +41,4 @@ public interface INormalizedFormula {
 
 	public boolean isGoal();
 	
-	public int getEndOffset();
-	
-	public int getStartOffset();
-	
-	public int getStartAbsolute();
-	
-	public BoundIdentDecl[] getBoundIdentDecls();
-
 }

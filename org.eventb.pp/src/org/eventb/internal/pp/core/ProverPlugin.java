@@ -69,7 +69,7 @@ public class ProverPlugin extends Plugin {
 				PPProof.DEBUG = option.equalsIgnoreCase("true");
 			option = Platform.getDebugOption(PROVER_STRATEGY_TRACE);
 			if (option != null)
-				ProofStrategy.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				ClauseDispatcher.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(PROVER_INFERENCE_TRACE);
 			if (option != null) {
 				PredicateProver.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$

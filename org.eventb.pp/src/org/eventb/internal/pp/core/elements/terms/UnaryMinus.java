@@ -39,7 +39,7 @@ public class UnaryMinus extends AssociativeTerm {
 	}
 	
 	@Override
-	public boolean equalsWithDifferentVariables(Term term, HashMap<AbstractVariable, AbstractVariable> map) {
+	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
 		if (term instanceof UnaryMinus) {
 			return super.equalsWithDifferentVariables(term, map);
 		}
@@ -59,7 +59,12 @@ public class UnaryMinus extends AssociativeTerm {
 
 	
 	@Override
-	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
+	protected <S extends Term> Term substitute(Map<SimpleTerm, S> map) {
 		return new UnaryMinus(substituteHelper(map));
+	}
+
+	@Override
+	protected String getSymbol() {
+		return "-";
 	}
 }

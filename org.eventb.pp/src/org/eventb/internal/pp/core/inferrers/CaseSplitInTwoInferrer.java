@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.elements.IArithmetic;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
-import org.eventb.internal.pp.core.elements.ILiteral;
-import org.eventb.internal.pp.core.elements.IPredicate;
-import org.eventb.internal.pp.core.elements.PPDisjClause;
-import org.eventb.internal.pp.core.elements.PPEqClause;
+import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.DisjunctiveClause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.EquivalenceClause;
+import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.core.tracing.SplitOrigin;
@@ -37,32 +37,32 @@ public class CaseSplitInTwoInferrer extends AbstractInferrer {
 		this.parent = parent;
 	}
 	
-	public IClause getLeftCase() {
+	public Clause getLeftCase() {
 		return left;
 	}
 
-	public IClause getRightCase() {
+	public Clause getRightCase() {
 		return right;
 	}
 
-	private IClause left, right;
-	private List<IPredicate> leftPredicates;
-	private List<IEquality> leftEqualities;
-	private List<IArithmetic> leftArithmetic;
+	private Clause left, right;
+	private List<PredicateLiteral> leftPredicates;
+	private List<EqualityLiteral> leftEqualities;
+	private List<ArithmeticLiteral> leftArithmetic;
 	
 	private void splitLeftCase() {
 		// warning, both cases must have distinct variables
 		// for now if we do not split on variables it is no problem
 		if (predicates.size() >= 1) {
-			IPredicate literal = predicates.remove(0);
+			PredicateLiteral literal = predicates.remove(0);
 			leftPredicates.add(literal);
 		}
 		else if (equalities.size() >= 1) {
-			IEquality literal = equalities.remove(0);
+			EqualityLiteral literal = equalities.remove(0);
 			leftEqualities.add(literal);
 		}
 		else if (arithmetic.size() >= 1) {
-			IArithmetic literal = arithmetic.remove(0);
+			ArithmeticLiteral literal = arithmetic.remove(0);
 			leftArithmetic.add(literal);
 		}
 		else {
@@ -71,31 +71,31 @@ public class CaseSplitInTwoInferrer extends AbstractInferrer {
 	}
 	
 	@Override
-	protected void inferFromDisjunctiveClauseHelper(IClause clause) {
+	protected void inferFromDisjunctiveClauseHelper(Clause clause) {
 		splitLeftCase();
-		left = new PPDisjClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic);
+		left = new DisjunctiveClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic);
 		// right case
-		right = new PPDisjClause(getOrigin(clause, parent.getRightBranch()),predicates,equalities,arithmetic);
+		right = new DisjunctiveClause(getOrigin(clause, parent.getRightBranch()),predicates,equalities,arithmetic);
 	}
 
 	@Override
-	protected void inferFromEquivalenceClauseHelper(IClause clause) {
+	protected void inferFromEquivalenceClauseHelper(Clause clause) {
 		splitLeftCase();
-		left = PPEqClause.newClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic,new ArrayList<IEquality>(),context);
+		left = EquivalenceClause.newClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic,new ArrayList<EqualityLiteral>(),context);
 		// right case
-		PPEqClause.inverseOneliteral(predicates, equalities, arithmetic);
-		right = PPEqClause.newClause(getOrigin(clause, parent.getRightBranch()), predicates, equalities, arithmetic,new ArrayList<IEquality>(),context);
+		EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
+		right = EquivalenceClause.newClause(getOrigin(clause, parent.getRightBranch()), predicates, equalities, arithmetic,new ArrayList<EqualityLiteral>(),context);
 	}
 
 	@Override
-	protected void initialize(IClause clause) throws IllegalStateException {
+	protected void initialize(Clause clause) throws IllegalStateException {
 		// we should do this, for performance reason we let it down
 		// if (!canInfer(clause)) throw new IllegalStateException(); 
 		if (parent == null) throw new IllegalStateException();
 		
-		leftArithmetic = new ArrayList<IArithmetic>();
-		leftEqualities = new ArrayList<IEquality>();
-		leftPredicates = new ArrayList<IPredicate>();
+		leftArithmetic = new ArrayList<ArithmeticLiteral>();
+		leftEqualities = new ArrayList<EqualityLiteral>();
+		leftPredicates = new ArrayList<PredicateLiteral>();
 	}
 
 	@Override
@@ -103,13 +103,13 @@ public class CaseSplitInTwoInferrer extends AbstractInferrer {
 		parent = null;
 	}
 
-	protected IOrigin getOrigin(IClause clause, Level level) {
-		List<IClause> parents = new ArrayList<IClause>();
+	protected IOrigin getOrigin(Clause clause, Level level) {
+		List<Clause> parents = new ArrayList<Clause>();
 		parents.add(clause);
 		return new SplitOrigin(parents, level);
 	}
 
-	public boolean canInfer(IClause clause) {
+	public boolean canInfer(Clause clause) {
 		if (clause.isEmpty()) return false;
 		if (clause.isUnit()) return false;
 		if (clause.getOrigin().isDefinition()) return false;
@@ -121,8 +121,8 @@ public class CaseSplitInTwoInferrer extends AbstractInferrer {
 		return true;
 	}
 	
-	private boolean isConstant(List<? extends ILiteral<?>> literals) {
-		for (ILiteral<?> lit : literals) {
+	private boolean isConstant(List<? extends Literal<?,?>> literals) {
+		for (Literal<?,?> lit : literals) {
 			if (!lit.isConstant()) return false;
 		}
 		return true;

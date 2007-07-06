@@ -5,31 +5,31 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.elements.IArithmetic;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
-import org.eventb.internal.pp.core.elements.ILiteral;
-import org.eventb.internal.pp.core.elements.IPredicate;
-import org.eventb.internal.pp.core.elements.PPDisjClause;
-import org.eventb.internal.pp.core.elements.PPEqClause;
-import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
+import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.DisjunctiveClause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.EquivalenceClause;
+import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.PredicateLiteral;
+import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 
 public abstract class AbstractInferrer implements IInferrer {
 
-	protected List<IEquality> equalities;
-	protected List<IPredicate> predicates;
-	protected List<IArithmetic> arithmetic;
-	protected List<IEquality> conditions;
+	protected List<EqualityLiteral> equalities;
+	protected List<PredicateLiteral> predicates;
+	protected List<ArithmeticLiteral> arithmetic;
+	protected List<EqualityLiteral> conditions;
 	
 	protected IVariableContext context;
 	
-	protected HashMap<AbstractVariable, AbstractVariable> substitutionsMap;
+	protected HashMap<SimpleTerm, SimpleTerm> substitutionsMap;
 	
 	public AbstractInferrer(IVariableContext context) {
 		this.context = context;
 	}
 	
-	protected void init(IClause clause, HashMap<AbstractVariable, AbstractVariable> map) {
+	protected void init(Clause clause, HashMap<SimpleTerm, SimpleTerm> map) {
 		equalities = clause.getEqualityLiterals();
 		predicates = clause.getPredicateLiterals();
 		arithmetic = clause.getArithmeticLiterals();
@@ -43,41 +43,41 @@ public abstract class AbstractInferrer implements IInferrer {
 		conditions = getListCopy(conditions,map,context);
 	}
 	
-	protected void init(PPDisjClause clause) {
-		substitutionsMap = new HashMap<AbstractVariable, AbstractVariable>();
+	protected void init(DisjunctiveClause clause) {
+		substitutionsMap = new HashMap<SimpleTerm, SimpleTerm>();
 		init(clause,substitutionsMap);
 	}
 	
-	protected void init(PPEqClause clause) {
-		substitutionsMap = new HashMap<AbstractVariable, AbstractVariable>();
+	protected void init(EquivalenceClause clause) {
+		substitutionsMap = new HashMap<SimpleTerm, SimpleTerm>();
 		init(clause,substitutionsMap);
 	}
 	
-	protected <T extends ILiteral<T>> List<T> getListCopy(List<T> list,
-			HashMap<AbstractVariable, AbstractVariable> substitutionsMap, IVariableContext context) {
+	protected <T extends Literal<?,?>> List<T> getListCopy(List<T> list,
+			HashMap<SimpleTerm, SimpleTerm> substitutionsMap, IVariableContext context) {
 		List<T> result = new ArrayList<T>();
 		for (T pred : list) {
-			result.add(pred.getCopyWithNewVariables(context, substitutionsMap));
+			result.add((T)pred.getCopyWithNewVariables(context, substitutionsMap));
 		}
 		return result;
 	}
 	
-	protected abstract void initialize(IClause clause) throws IllegalStateException;
+	protected abstract void initialize(Clause clause) throws IllegalStateException;
 	
 	protected abstract void reset();
 
-	protected abstract void inferFromDisjunctiveClauseHelper(IClause clause);
+	protected abstract void inferFromDisjunctiveClauseHelper(Clause clause);
 
-	protected abstract void inferFromEquivalenceClauseHelper(IClause clause);
+	protected abstract void inferFromEquivalenceClauseHelper(Clause clause);
 
-	public void inferFromDisjunctiveClause(PPDisjClause clause) {
+	public void inferFromDisjunctiveClause(DisjunctiveClause clause) {
 		init(clause);
 		inferFromDisjunctiveClauseHelper(clause);
 //		setParents(clause);
 		reset();
 	}
 
-	public void inferFromEquivalenceClause(PPEqClause clause) {
+	public void inferFromEquivalenceClause(EquivalenceClause clause) {
 		init(clause);
 		inferFromEquivalenceClauseHelper(clause);
 //		setParents(clause);

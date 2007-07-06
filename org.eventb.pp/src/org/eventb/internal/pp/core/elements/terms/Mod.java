@@ -33,7 +33,7 @@ public class Mod extends BinaryTerm {
 	}
 
 	@Override
-	public boolean equalsWithDifferentVariables(Term term, HashMap<AbstractVariable, AbstractVariable> map) {
+	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
 		if (term instanceof Mod) {
 			return super.equalsWithDifferentVariables(term, map);
 		}
@@ -47,7 +47,12 @@ public class Mod extends BinaryTerm {
 
 	
 	@Override
-	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
+	protected <S extends Term> Term substitute(Map<SimpleTerm, S> map) {
 		return new Mod(substituteHelper(map));
+	}
+
+	@Override
+	protected String getSymbol() {
+		return "mod";
 	}
 }

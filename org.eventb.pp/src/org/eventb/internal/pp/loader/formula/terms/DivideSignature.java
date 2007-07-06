@@ -42,11 +42,17 @@ public class DivideSignature extends BinaryTermSignature {
 	@Override
 	public TermSignature getUnquantifiedTerm(int startOffset, int endOffset, List<TermSignature> termList) {
 		if (isQuantified(startOffset,endOffset)) {
-			return new DivideSignature(super.getUnquantifiedSignatureHelper(startOffset, endOffset, termList));
+			return new DivideSignature(super.getUnquantifiedTermHelper(startOffset, endOffset, termList));
 		} else {
-			addTerm(this.deepCopy(), termList);
+			addTermCopy(this, termList);
 			return new VariableHolder(sort);
 		}
+	}
+	
+
+	@Override
+	public TermSignature getSimpleTerm(List<TermSignature> termList) {
+		return new DivideSignature(super.getSimpleTermHelper(termList));
 	}
 	
 	@Override
@@ -81,4 +87,5 @@ public class DivideSignature extends BinaryTermSignature {
 	public Term getTerm(VariableTable table, TermVisitorContext context) {
 		return new Divide(super.getTermHelper(table, context));
 	}
+
 }

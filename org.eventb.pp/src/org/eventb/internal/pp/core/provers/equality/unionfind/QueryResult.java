@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.provers.equality.IQueryResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
 
 public class QueryResult implements IQueryResult {
 
-	private QuerySource querySource;
-	private Set<FactSource> factSource;
-	private boolean value;
+	private final QuerySource querySource;
+	private final Set<FactSource> factSource;
+	private final boolean value;
 	
 	public QueryResult(QuerySource querySource, Set<FactSource> factSource, boolean value) {
 		this.querySource = querySource;
@@ -22,19 +22,19 @@ public class QueryResult implements IQueryResult {
 		this.value = value;
 	}
 	
-//	public IEquality getEquality() {
+//	public EqualityFormula getEquality() {
 //		return querySource.getEquality();
 //	}
 
-	public List<IClause> getSolvedValueOrigin() {
-		List<IClause> result = new ArrayList<IClause>();
+	public List<Clause> getSolvedValueOrigin() {
+		List<Clause> result = new ArrayList<Clause>();
 		for (FactSource source : factSource) {
 			result.add(source.getClause());
 		}
 		return result;
 	}
 
-	public Set<IClause> getSolvedClauses() {
+	public Set<Clause> getSolvedClauses() {
 		return querySource.getClauses();
 	}
 	
@@ -50,7 +50,7 @@ public class QueryResult implements IQueryResult {
 		return querySource;
 	}
 
-	public IEquality getEquality() {
+	public EqualityLiteral getEquality() {
 		return querySource.getEquality();
 	}
 

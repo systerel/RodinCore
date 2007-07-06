@@ -2,70 +2,72 @@ package org.eventb.internal.pp.core.simplifiers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.eventb.internal.pp.core.elements.IArithmetic;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
-import org.eventb.internal.pp.core.elements.ILiteral;
-import org.eventb.internal.pp.core.elements.IPredicate;
-import org.eventb.internal.pp.core.elements.PPDisjClause;
-import org.eventb.internal.pp.core.elements.PPEqClause;
-import org.eventb.internal.pp.core.elements.terms.AbstractVariable;
+import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.DisjunctiveClause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.EquivalenceClause;
+import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
+import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 
 public class ExistentialSimplifier implements ISimplifier {
 
 	private int constantIdentifier = 0;
 	
-	private List<IPredicate> predicates;
-	private List<IEquality> equalities;
-	private List<IArithmetic> arithmetic;
-	private List<IEquality> conditions;
+	private List<PredicateLiteral> predicates;
+	private List<EqualityLiteral> equalities;
+	private List<ArithmeticLiteral> arithmetic;
+	private List<EqualityLiteral> conditions;
 	
-	private void init(IClause clause) {
+	private void init(Clause clause) {
 		predicates = clause.getPredicateLiterals();
 		equalities = clause.getEqualityLiterals();
 		arithmetic = clause.getArithmeticLiterals();
 		conditions = clause.getConditions();
 	}
 	
-	public IClause simplifyDisjunctiveClause(PPDisjClause clause) {
+	public Clause simplifyDisjunctiveClause(DisjunctiveClause clause) {
 		init(clause);
 		simplifyExistentialHelper(predicates);
 		simplifyExistentialHelper(equalities);
 		simplifyExistentialHelper(arithmetic);
 		simplifyExistentialHelper(conditions);
-		IClause result = new PPDisjClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
+		Clause result = new DisjunctiveClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 		return result;
 	}
 
 	
 	// TODO test !
-	public IClause simplifyEquivalenceClause(PPEqClause clause) {
+	public Clause simplifyEquivalenceClause(EquivalenceClause clause) {
 		init(clause);
 		simplifyExistentialHelper(conditions);
-		IClause result = new PPEqClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
+		Clause result = new EquivalenceClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 		return result;
 	}
 
 	
-	public <T extends ILiteral<T>> T simplifyExistential(ILiteral<T> literal) {
-		List<LocalVariable> existentials = new ArrayList<LocalVariable>();
+	public <T extends Literal<T,?>> T simplifyExistential(Literal<T,?> literal) {
+		Set<LocalVariable> existentials = new HashSet<LocalVariable>();
 		for (Term term : literal.getTerms()) {
 			term.collectLocalVariables(existentials);
 		}
-		Map<AbstractVariable, Term> map = new HashMap<AbstractVariable, Term>();
-		for (AbstractVariable variable : existentials) {
+		Map<SimpleTerm, SimpleTerm> map = new HashMap<SimpleTerm, SimpleTerm>();
+		for (SimpleTerm variable : existentials) {
 			map.put(variable, new Constant(String.valueOf(constantIdentifier++),variable.getSort()));
 		}
 		return literal.substitute(map);
 	}
 
-	protected <T extends ILiteral<T>> void simplifyExistentialHelper(List<T> list) {
+	protected <T extends Literal<T,?>> void simplifyExistentialHelper(List<T> list) {
 		ArrayList<T> tmp1 = new ArrayList<T>();
 		for (T literal : list) {
 			if (literal.isConstant()) {
@@ -79,7 +81,7 @@ public class ExistentialSimplifier implements ISimplifier {
 		list.addAll(tmp1);
 	}
 
-	public boolean canSimplify(IClause clause) {
+	public boolean canSimplify(Clause clause) {
 		return true;
 	}
 	

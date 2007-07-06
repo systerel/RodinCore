@@ -1,11 +1,8 @@
 package org.eventb.internal.pp.core;
 
 import java.util.Set;
-import java.util.Stack;
 
-import org.eventb.internal.pp.core.datastructure.IObservable;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.search.ResetIterator;
+import org.eventb.internal.pp.core.elements.Clause;
 
 public interface IProver {
 	
@@ -13,18 +10,18 @@ public interface IProver {
 	// if it cannot infer a new clause
 	// never calls IDispatcher.contradiction
 	// those clauses are not simplified
-	public IClause next();
+	
+	public ProverResult next();
 
-	// the set does not contain any true nor false clauses
-	public ResetIterator<IClause> getGeneratedClauses(); 
+	public boolean isSubsumed(Clause clause);
+
+	public ProverResult addClauseAndDetectContradiction(Clause clause);
+
+	public void removeClause(Clause clause);
 	
-	public Set<IClause> getSubsumedClauses();
+	public void initialize(ClauseSimplifier simplifier);
 	
-	public void clean();
-	
-	public void initialize(IDispatcher dispatcher, IObservable clauses, ClauseSimplifier simplifier);
-	
-	public void contradiction(Level oldLevel, Level newLevel, Stack<Level> dependencies);
+	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies);
 	
 	public void registerDumper(Dumper dumper);
 	

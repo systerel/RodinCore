@@ -11,9 +11,11 @@ package org.eventb.internal.pp.loader.formula;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.elements.ILiteral;
-import org.eventb.internal.pp.core.elements.PPPredicate;
-import org.eventb.internal.pp.core.elements.PPProposition;
+import org.eventb.internal.pp.core.elements.AtomicPredicateLiteral;
+import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
+import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.PredicateDescriptor;
+import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
@@ -80,18 +82,27 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> implements IS
 		return terms;
 	}
 	
-	protected ILiteral<?> getLiteral(int index, List<TermSignature> terms,
+	protected Literal<?,?> getLiteral(int index, List<TermSignature> terms,
 			TermVisitorContext context, VariableTable table) {
 		List<TermSignature> newList = descriptor.getSimplifiedList(terms);
 		ClauseBuilder.debug("Simplified term list for "+this+" is: "+newList);
-		ILiteral<?> result;
+		Literal<?,?> result;
 		if (newList.size() == 0) {
-			result = new PPProposition(index, context.isPositive);
+			result = new AtomicPredicateLiteral(new PredicateDescriptor(index, context.isPositive));
 		} else {
 			List<Term> newTerms = getTermsFromTermSignature(newList, context, table);
-			result = new PPPredicate(index, context.isPositive, newTerms);
+			result = new ComplexPredicateLiteral(new PredicateDescriptor(index, context.isPositive), getSimpleTermsFromTerms(newTerms));
 		}
 		ClauseBuilder.debug("Creating literal from "+this+": "+result);
+		return result;
+	}
+	
+	private List<SimpleTerm> getSimpleTermsFromTerms(List<Term> terms) {
+		// TODO find how to remove this ugly code
+		List<SimpleTerm> result = new ArrayList<SimpleTerm>();
+		for (Term term : terms) {
+			result.add((SimpleTerm)term);
+		}
 		return result;
 	}
 	
@@ -106,9 +117,9 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> implements IS
 		return terms;
 	}
 	
-	public List<List<ILiteral<?>>> getClauses(List<TermSignature> terms, LabelManager manager, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool) {
-		List<List<ILiteral<?>>> result = new ArrayList<List<ILiteral<?>>>();
-		result.add(new ArrayList<ILiteral<?>>());
+	public List<List<Literal<?,?>>> getClauses(List<TermSignature> terms, LabelManager manager, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool) {
+		List<List<Literal<?,?>>> result = new ArrayList<List<Literal<?,?>>>();
+		result.add(new ArrayList<Literal<?,?>>());
 		return getClauses(terms, manager, result, flags, table, bool);
 	}
 	
@@ -145,8 +156,8 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> implements IS
     	return descriptor.toString();
     }
 
-//    private Predicate originalPredicate;
-//    public Predicate getOriginalPredicate() {
+//    private PredicateFormula originalPredicate;
+//    public PredicateFormula getOriginalPredicate() {
 //    	return originalPredicate;
 //    }
     

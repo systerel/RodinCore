@@ -9,7 +9,6 @@
 package org.eventb.internal.pp.core.elements.terms;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.IVariableContext;
@@ -34,7 +33,7 @@ import org.eventb.internal.pp.core.elements.Sort;
  *  + invariant of AbstractVariable : no equal variable in different clauses
  * 
  */
-public class LocalVariable extends AbstractVariable {
+public final class LocalVariable extends SimpleTerm {
 
 	private int index;
 	private boolean isForall;
@@ -85,12 +84,6 @@ public class LocalVariable extends AbstractVariable {
 		return isForall;
 	}
 	
-	@Override
-	public void collectLocalVariables(List<LocalVariable> existential) {
-		if (!existential.contains(this)) existential.add(this);
-	}
-	
-	
 	private Variable varCache = null;
 	public Variable getVariable(IVariableContext context) {
 		if (varCache == null) {
@@ -106,10 +99,6 @@ public class LocalVariable extends AbstractVariable {
 		return inverseCache;
 	}
 
-	@Override
-	public void collectVariables(Set<Variable> variables) {
-		// no variables, do nothing
-	}
 	
 //	// FOR TESTING ONLY
 //	public void clean() {
@@ -118,7 +107,7 @@ public class LocalVariable extends AbstractVariable {
 //	}
 
 	@Override
-	public boolean equalsWithDifferentVariables(Term term, HashMap<AbstractVariable, AbstractVariable> map) {
+	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
 		if (map.containsKey(this)) return term.equals(map.get(this));
 		else if (term instanceof LocalVariable) {
 			if (isForall != ((LocalVariable)term).isForall || !sort.equals(term.sort)) return false;
@@ -138,6 +127,22 @@ public class LocalVariable extends AbstractVariable {
 		if (equals(0)) return 0;
 		else if (getPriority() == o.getPriority()) return index - ((LocalVariable)o).index;
 		else return getPriority() - o.getPriority();
+	}
+	
+	
+	@Override
+	public final int hashCodeWithDifferentVariables() {
+		return 1;
+	}
+
+	@Override
+	public void collectVariables(Set<Variable> variables) {
+		return;
+	}
+
+	@Override
+	public void collectLocalVariables(Set<LocalVariable> localVariables) {
+		localVariables.add(this);
 	}
 
 }

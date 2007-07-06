@@ -4,21 +4,21 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.elements.IArithmetic;
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
-import org.eventb.internal.pp.core.elements.IPredicate;
-import org.eventb.internal.pp.core.elements.PPDisjClause;
-import org.eventb.internal.pp.core.elements.PPEqClause;
-import org.eventb.internal.pp.core.elements.PPFalseClause;
-import org.eventb.internal.pp.core.elements.PPTrueClause;
+import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.DisjunctiveClause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.EquivalenceClause;
+import org.eventb.internal.pp.core.elements.FalseClause;
+import org.eventb.internal.pp.core.elements.PredicateLiteral;
+import org.eventb.internal.pp.core.elements.TrueClause;
 
 public class EqualitySimplifier implements ISimplifier {
 
-	private List<IEquality> equalities;
-	private List<IPredicate> predicates;
-	private List<IArithmetic> arithmetic;
-	private List<IEquality> conditions;
+	private List<EqualityLiteral> equalities;
+	private List<PredicateLiteral> predicates;
+	private List<ArithmeticLiteral> arithmetic;
+	private List<EqualityLiteral> conditions;
 	private boolean isEquivalence = false;
 	private IVariableContext context;
 	
@@ -26,7 +26,7 @@ public class EqualitySimplifier implements ISimplifier {
 		this.context = context;
 	}
 	
-	private void init(IClause clause) {
+	private void init(Clause clause) {
 		equalities = clause.getEqualityLiterals();
 		predicates = clause.getPredicateLiterals();
 		arithmetic = clause.getArithmeticLiterals();
@@ -37,50 +37,50 @@ public class EqualitySimplifier implements ISimplifier {
 		return conditions.size() + predicates.size() + arithmetic.size() + equalities.size() == 0;
 	}
 	
-	public IClause simplifyDisjunctiveClause(PPDisjClause clause) {
+	public Clause simplifyDisjunctiveClause(DisjunctiveClause clause) {
 		init(clause);
 		boolean ok = simplifyEquality(equalities);
 		if (!ok) {
-			return new PPTrueClause(clause.getOrigin());
+			return new TrueClause(clause.getOrigin());
 		}
 		ok = simplifyEquality(conditions);
 		if (!ok) {
-			return new PPTrueClause(clause.getOrigin());
+			return new TrueClause(clause.getOrigin());
 		}
 		
-		IClause result;
-		if (isEmpty()) result = new PPFalseClause(clause.getOrigin()); 
-		else result = new PPDisjClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
+		Clause result;
+		if (isEmpty()) result = new FalseClause(clause.getOrigin()); 
+		else result = new DisjunctiveClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 		return result;
 	}
 
 	// TODO redo with tests
-	public IClause simplifyEquivalenceClause(PPEqClause clause) {
+	public Clause simplifyEquivalenceClause(EquivalenceClause clause) {
 		init(clause);
 		isTrue = true;
 		isEquivalence = true;
 		simplifyEquality(equalities);
 		isEquivalence = false;
 		boolean ok = simplifyEquality(conditions);
-		if (!ok) return new PPTrueClause(clause.getOrigin());
+		if (!ok) return new TrueClause(clause.getOrigin());
 		if (!isTrue) {
 			// we must inverse one predicate
-			PPEqClause.inverseOneliteral(predicates, equalities, arithmetic);
+			EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
 		}
 		else if (predicates.size() + equalities.size() 
 				+ conditions.size() + arithmetic.size() == 0)
-				return new PPTrueClause(clause.getOrigin());
+				return new TrueClause(clause.getOrigin());
 
-		if (isEmpty()) return new PPFalseClause(clause.getOrigin());
-		else return PPEqClause.newClause(clause.getOrigin(),
+		if (isEmpty()) return new FalseClause(clause.getOrigin());
+		else return EquivalenceClause.newClause(clause.getOrigin(),
 				predicates, equalities, arithmetic, conditions, context);
 	}
 	
 	private boolean isTrue;
-	private boolean simplifyEquality(List<IEquality> list) {
+	private boolean simplifyEquality(List<EqualityLiteral> list) {
 		// TODO adapt to equivalenceClassManager
-		for (Iterator<IEquality> iter = list.iterator(); iter.hasNext();) {
-			IEquality equality = iter.next();
+		for (Iterator<EqualityLiteral> iter = list.iterator(); iter.hasNext();) {
+			EqualityLiteral equality = iter.next();
 			if (equal(equality)) {
 				if (!isEquivalence && !equality.isPositive()) iter.remove();
 				else if (!isEquivalence && equality.isPositive()) {
@@ -95,11 +95,11 @@ public class EqualitySimplifier implements ISimplifier {
 		return true;
 	}
 
-	public boolean equal(IEquality equality) {
+	public boolean equal(EqualityLiteral equality) {
 		return equality.getTerms().get(0).equals(equality.getTerms().get(1));
 	}
 
-	public boolean canSimplify(IClause clause) {
+	public boolean canSimplify(Clause clause) {
 		return clause.getEqualityLiterals().size() > 0 || clause.getConditions().size() > 0;
 	}
 }

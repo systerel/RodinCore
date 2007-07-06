@@ -3,16 +3,16 @@ package org.eventb.pp.core.inferrers;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.elements.IClause;
-import org.eventb.internal.pp.core.elements.IEquality;
-import org.eventb.internal.pp.core.elements.IPredicate;
+import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.pp.AbstractPPTest;
 
 public abstract class AbstractInferrerTests extends AbstractPPTest {
 
-	protected void disjointVariables(IClause clause1, IClause clause2) {
+	protected void disjointVariables(Clause clause1, Clause clause2) {
 		Set<Variable> vars1 = collectVariables(clause1);
 		Set<Variable> vars2 = collectVariables(clause2);
 		for (Variable variable : vars2) {
@@ -25,14 +25,14 @@ public abstract class AbstractInferrerTests extends AbstractPPTest {
 		}
 	}
 
-	private Set<Variable> collectVariables(IClause clause) {
+	private Set<Variable> collectVariables(Clause clause) {
 		Set<Variable> vars = new HashSet<Variable>();
-		for (IPredicate literal : clause.getPredicateLiterals()) {
+		for (PredicateLiteral literal : clause.getPredicateLiterals()) {
 			for (Term term : literal.getTerms()) {
 				term.collectVariables(vars);
 			}
 		}
-		for (IEquality equality : clause.getEqualityLiterals()) {
+		for (EqualityLiteral equality : clause.getEqualityLiterals()) {
 			for (Term term : equality.getTerms()) {
 				term.collectVariables(vars);
 			}
