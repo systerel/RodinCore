@@ -9,7 +9,9 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.core.IEventBProject;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -30,23 +32,29 @@ public class ShowSeesContextContribution extends ContributionItem {
 
 	@Override
 	public void fill(Menu menu, int index) {
-
+		IRodinElement[] elements;
 		try {
-			IRodinElement[] elements = file
-					.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
-			for (IRodinElement element : elements) {
+			elements = file.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
+		} catch (RodinDBException e) {
+			EventBUIExceptionHandler.handleGetChildrenException(e);
+			return;
+		}
+		for (IRodinElement element : elements) {
 				ISeesContext seesContext = (ISeesContext) element;
-				String name = seesContext.getSeenContextName();
+				String name;
+				try {
+					name = seesContext.getSeenContextName();
+				} catch (RodinDBException e) {
+					EventBUIExceptionHandler.handleGetAttributeException(e,
+						UserAwareness.IGNORE);
+					continue;
+				}
 				IRodinFile contextFile = evbProject.getContextFile(name);
 				if (contextFile != null & contextFile.exists()) {
 					createMenuItem(menu, contextFile);
 					// submenu.add(new ShowSeesContext(contextFile));
 				}
 			}
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	private void createMenuItem(Menu menu, final IRodinFile contextFile) {
