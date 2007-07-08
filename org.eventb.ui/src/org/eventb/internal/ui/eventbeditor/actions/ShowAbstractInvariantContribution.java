@@ -8,7 +8,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.core.IInvariant;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
@@ -25,9 +27,7 @@ public class ShowAbstractInvariantContribution extends ContributionItem {
 
 	@Override
 	public void fill(Menu menu, int index) {
-
 		try {
-
 			IRodinFile abstractFile = EventBEditorUtils.getAbstractFile(file);
 			while (abstractFile != null && abstractFile.exists()) {
 				createMenuItem(menu, abstractFile);
@@ -35,8 +35,8 @@ public class ShowAbstractInvariantContribution extends ContributionItem {
 			}
 
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EventBUIExceptionHandler.handleRodinException(e,
+					UserAwareness.IGNORE);
 		}
 	}
 
