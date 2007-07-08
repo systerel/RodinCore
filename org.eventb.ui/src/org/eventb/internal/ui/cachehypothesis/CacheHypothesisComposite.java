@@ -18,6 +18,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.prover.HypothesisComposite;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.RodinDBException;
@@ -55,9 +56,8 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 				try {
 					userSupport.applyTacticToHypotheses(t, selected, true,
 							new NullProgressMonitor());
-				} catch (RodinDBException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				} catch (RodinDBException exception) {
+					EventBUIExceptionHandler.handleApplyTacticException(exception);
 				}
 			}
 
