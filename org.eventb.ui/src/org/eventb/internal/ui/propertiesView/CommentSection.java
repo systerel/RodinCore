@@ -1,6 +1,6 @@
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eventb.core.ICommentedElement;
 import org.rodinp.core.RodinDBException;
@@ -14,10 +14,15 @@ public class CommentSection extends TextSection {
 
 	@Override
 	String getText() throws RodinDBException {
-		ICommentedElement cElement = (ICommentedElement) element;
-		if (cElement.exists() && cElement.hasComment())
-			return cElement.getComment();
-		return "";
+		if (element == null)
+			return null;
+		if (element instanceof ICommentedElement) {
+			ICommentedElement cElement = (ICommentedElement) element;
+			if (cElement.exists() && cElement.hasComment())
+				return cElement.getComment();
+			return "";
+		}
+		return null;
 	}
 
 	@Override
@@ -27,10 +32,12 @@ public class CommentSection extends TextSection {
 	}
 
 	@Override
-	void setText(String text) throws RodinDBException {
-		if (!getText().equals(text))
-			((ICommentedElement) element).setComment(text,
-					new NullProgressMonitor());
+	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
+		if (element instanceof ICommentedElement) {
+			String comment = getText();
+			if (comment != null && !comment.equals(text))
+				((ICommentedElement) element).setComment(text, monitor);
+		}
 	}
 
 }

@@ -1,6 +1,6 @@
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
@@ -22,7 +22,7 @@ public class RefinesMachineSection extends CComboSection {
 
 	@Override
 	void setData() {
-		final IRodinProject project = editor.getRodinInput().getRodinProject();
+		final IRodinProject project = element.getRodinProject();
 		final IMachineFile[] machines;
 		try {
 			machines = project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
@@ -37,7 +37,7 @@ public class RefinesMachineSection extends CComboSection {
 	}
 
 	@Override
-	void setText(String text) throws RodinDBException {
+	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
 		IRefinesMachine rElement = (IRefinesMachine) element;
 		String abstractMachineName = null;
 		try {
@@ -47,7 +47,7 @@ public class RefinesMachineSection extends CComboSection {
 			// Do nothing
 		}
 		if (abstractMachineName == null || !abstractMachineName.equals(text)) {
-			rElement.setAbstractMachineName(text, new NullProgressMonitor());
+			rElement.setAbstractMachineName(text, monitor);
 		}
 	}
 

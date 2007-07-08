@@ -1,6 +1,7 @@
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -16,9 +17,9 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -32,9 +33,7 @@ public abstract class TextSection extends AbstractPropertySection implements
 
 	IEventBInputText inputText;
 	
-	IInternalElement element;
-
-	IEventBEditor editor;
+	IInternalElement element; // This can be null
 
 	int style;
 
@@ -75,7 +74,7 @@ public abstract class TextSection extends AbstractPropertySection implements
 			@Override
 			protected void response() {
 				try {
-					setText(text.getText());
+					setText(text.getText(), new NullProgressMonitor());
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -107,7 +106,7 @@ public abstract class TextSection extends AbstractPropertySection implements
 
 	abstract String getLabel();
 
-	abstract void setText(String text) throws RodinDBException;
+	abstract void setText(String text, IProgressMonitor monitor) throws RodinDBException;
 
 	abstract String getText() throws RodinDBException;
 
@@ -118,11 +117,11 @@ public abstract class TextSection extends AbstractPropertySection implements
 		
 		try {
 			String text = getText();
-			if (!textWidget.getText().equals(text))
+			if (text != null && !textWidget.getText().equals(text))
 				textWidget.setText(text);
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EventBUIExceptionHandler.handleGetAttributeException(e,
+					EventBUIExceptionHandler.UserAwareness.IGNORE);		
 		}
 		super.refresh();
 	}
@@ -130,12 +129,12 @@ public abstract class TextSection extends AbstractPropertySection implements
 	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
-		Assert.isTrue(part instanceof IEventBEditor);
-		editor = (IEventBEditor) part;
-		Assert.isTrue(selection instanceof IStructuredSelection);
-		Object input = ((IStructuredSelection) selection).getFirstElement();
-		Assert.isTrue(input instanceof IInternalElement);
-		this.element = (IInternalElement) input;
+		if (selection instanceof IStructuredSelection) {
+			Object input = ((IStructuredSelection) selection).getFirstElement();
+			if (input instanceof IInternalElement) {
+				this.element = (IInternalElement) input;
+			}
+		}
 		refresh();
 	}
 

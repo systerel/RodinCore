@@ -1,6 +1,6 @@
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IContextFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
@@ -22,7 +22,7 @@ public class SeesContextSection extends CComboSection {
 
 	@Override
 	void setData() {
-		final IRodinProject project = editor.getRodinInput().getRodinProject();
+		final IRodinProject project = element.getRodinProject();
 		final IContextFile[] contexts;
 		try {
 			contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
@@ -37,7 +37,7 @@ public class SeesContextSection extends CComboSection {
 	}
 
 	@Override
-	void setText(String text) throws RodinDBException {
+	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
 		ISeesContext sElement = (ISeesContext) element;
 		String seenContextName = null;
 		try {
@@ -47,7 +47,7 @@ public class SeesContextSection extends CComboSection {
 			// Do nothing
 		}
 		if (seenContextName == null || !seenContextName.equals(text)) {
-			sElement.setSeenContextName(text, new NullProgressMonitor());
+			sElement.setSeenContextName(text, monitor);
 		}
 	}
 

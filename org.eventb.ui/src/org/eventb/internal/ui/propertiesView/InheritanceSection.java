@@ -1,5 +1,6 @@
 package org.eventb.internal.ui.propertiesView;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IEvent;
 import org.rodinp.core.RodinDBException;
@@ -31,7 +32,7 @@ public class InheritanceSection extends CComboSection {
 	}
 
 	@Override
-	void setText(String text) throws RodinDBException {
+	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
 		IEvent eElement = (IEvent) element;
 		boolean inherited;
 		try {
@@ -40,7 +41,7 @@ public class InheritanceSection extends CComboSection {
 			// Set the attribute anyway if there was a problem accessing the
 			// database
 			eElement.setInherited(text.equalsIgnoreCase(FALSE),
-					new NullProgressMonitor());
+					monitor);
 			return;
 		}
 		if (inherited && text.equalsIgnoreCase(FALSE)) {

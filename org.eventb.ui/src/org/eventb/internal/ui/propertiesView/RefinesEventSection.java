@@ -1,6 +1,6 @@
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesEvent;
@@ -22,7 +22,7 @@ public class RefinesEventSection extends CComboSection {
 
 	@Override
 	void setData() {
-		IMachineFile machine = (IMachineFile) editor.getRodinInput();
+		IMachineFile machine = (IMachineFile) element.getRodinFile();
 		final IEvent[] events;
 		try {
 			events = machine.getEvents();
@@ -41,7 +41,7 @@ public class RefinesEventSection extends CComboSection {
 	}
 
 	@Override
-	void setText(String text) throws RodinDBException {
+	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
 		IRefinesEvent rElement = (IRefinesEvent) element;
 		String abstractEventLabel = null;
 		try {
@@ -51,7 +51,7 @@ public class RefinesEventSection extends CComboSection {
 			// Do nothing
 		}
 		if (abstractEventLabel == null || !abstractEventLabel.equals(text)) {
-			rElement.setAbstractEventLabel(text, new NullProgressMonitor());
+			rElement.setAbstractEventLabel(text, monitor);
 		}
 	}
 

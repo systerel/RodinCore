@@ -1,6 +1,7 @@
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -17,7 +18,6 @@ import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -31,10 +31,8 @@ public abstract class CComboSection extends AbstractPropertySection implements
 
 	IInternalElement element;
 
-	IEventBEditor editor;
-
 	public CComboSection() {
-		// TODO Auto-generated constructor stub
+		// Do nothing
 	}
 
 	@Override
@@ -63,7 +61,7 @@ public abstract class CComboSection extends AbstractPropertySection implements
 
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					setText(comboWidget.getText());
+					setText(comboWidget.getText(), new NullProgressMonitor());
 				} catch (RodinDBException exception) {
 					EventBUIExceptionHandler
 							.handleSetAttributeException(exception);
@@ -84,7 +82,8 @@ public abstract class CComboSection extends AbstractPropertySection implements
 
 	abstract String getLabel();
 
-	abstract void setText(String text) throws RodinDBException;
+	abstract void setText(String text, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	abstract void setData();
 
@@ -108,12 +107,12 @@ public abstract class CComboSection extends AbstractPropertySection implements
 	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
-		Assert.isTrue(part instanceof IEventBEditor);
-		editor = (IEventBEditor) part;
-		Assert.isTrue(selection instanceof IStructuredSelection);
-		Object input = ((IStructuredSelection) selection).getFirstElement();
-		Assert.isTrue(input instanceof IInternalElement);
-		this.element = (IInternalElement) input;
+		if (selection instanceof IStructuredSelection) {
+			Object input = ((IStructuredSelection) selection).getFirstElement();
+			if (input instanceof IInternalElement) {
+				this.element = (IInternalElement) input;
+			}
+		}
 		refresh();
 	}
 

@@ -1,6 +1,6 @@
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
@@ -22,7 +22,7 @@ public class ExtendsContextSection extends CComboSection {
 
 	@Override
 	void setData() {
-		final IRodinProject project = editor.getRodinInput().getRodinProject();
+		final IRodinProject project = element.getRodinProject();
 		final IContextFile[] contexts;
 		try {
 			contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
@@ -37,7 +37,7 @@ public class ExtendsContextSection extends CComboSection {
 	}
 
 	@Override
-	void setText(String text) throws RodinDBException {
+	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
 		IExtendsContext eElement = (IExtendsContext) element;
 		String abstractContextName = null;
 		try {
@@ -46,7 +46,7 @@ public class ExtendsContextSection extends CComboSection {
 			// Do nothing
 		}
 		if (abstractContextName == null || !abstractContextName.equals(text)) {
-			eElement.setAbstractContextName(text, new NullProgressMonitor());
+			eElement.setAbstractContextName(text, monitor);
 		}
 	}
 
