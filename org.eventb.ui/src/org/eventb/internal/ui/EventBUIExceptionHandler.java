@@ -138,4 +138,22 @@ public class EventBUIExceptionHandler {
 				EventBUIExceptionHandler.UserAwareness.INFORM);
 	}
 
+	public static void handleGetAttributeException(RodinDBException e,
+			UserAwareness awareness) {
+		handleException(e,
+				"Exception throws when getting the value of an attribute",
+				awareness);
+	}
+
+	public static void handleApplyTacticException(Exception e) {
+		handleException(e,
+				"Exception throws when applying proof tactic",
+				EventBUIExceptionHandler.UserAwareness.INFORM);
+	}
+
+	public static void handleRodinException(RodinDBException e,
+			UserAwareness awareness) {
+		handleException(e, "Exception throws when accessing RodinDB", awareness);
+	}
+
 }
