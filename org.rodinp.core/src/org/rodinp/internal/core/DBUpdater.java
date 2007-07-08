@@ -68,7 +68,7 @@ public class DBUpdater {
 	 */
 	private void elementAdded(Openable element) {
 
-		IElementType elementType = element.getElementType();
+		IElementType<?> elementType = element.getElementType();
 		if (elementType == IRodinProject.ELEMENT_TYPE) {
 			// project add is handled by RodinProject.configure() because
 			// when a project is created, it does not yet have a Rodin nature
@@ -114,7 +114,7 @@ public class DBUpdater {
 			close(element);
 		}
 		removeFromParentInfo(element);
-		IElementType elementType = element.getElementType();
+		IElementType<?> elementType = element.getElementType();
 
 		if (elementType == IRodinDB.ELEMENT_TYPE) {
 			// RodinDBManager.getRodinDBManager().getIndexManager().reset();

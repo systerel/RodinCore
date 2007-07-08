@@ -53,7 +53,7 @@ public class ToolManager {
 	private HashMap<String, ExtractorDescription> extractors;
 	
 	// Map from input type to list of extractor description
-	private HashMap<IFileElementType, List<ExtractorDescription>> extractorsForType;
+	private HashMap<IFileElementType<?>, List<ExtractorDescription>> extractorsForType;
 	
 	// Map from tool id to tool description
 	private HashMap<String, ToolDescription> tools;
@@ -66,13 +66,13 @@ public class ToolManager {
 	private void add(ExtractorDescription extractorDesc) {
 		final String id = extractorDesc.getId();
 		extractors.put(id, extractorDesc);
-		for (IFileElementType inputType : extractorDesc.getInputTypes()) {
+		for (IFileElementType<?> inputType : extractorDesc.getInputTypes()) {
 			addExtractorForType(extractorDesc, inputType);
 		}
 	}
 	
 	private void addExtractorForType(ExtractorDescription extractorDesc,
-			IFileElementType inputType) {
+			IFileElementType<?> inputType) {
 
 		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
 		if (extractorSet == null) {
@@ -98,7 +98,7 @@ public class ToolManager {
 		
 		tools = new HashMap<String, ToolDescription>();
 		extractors = new HashMap<String, ExtractorDescription>();
-		extractorsForType = new HashMap<IFileElementType, List<ExtractorDescription>>();
+		extractorsForType = new HashMap<IFileElementType<?>, List<ExtractorDescription>>();
 		
 		// Read the extension point extensions.
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -130,7 +130,7 @@ public class ToolManager {
 		return result;
 	}
 
-	public ExtractorDescription[] getExtractorDescriptions(IFileElementType inputType) {
+	public ExtractorDescription[] getExtractorDescriptions(IFileElementType<?> inputType) {
 		computeToolList();
 		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
 		if (extractorSet == null || extractorSet.size() == 0) {
@@ -164,14 +164,14 @@ public class ToolManager {
 	private void removeExtractor(String id) {
 		final ExtractorDescription extractorDesc = extractors.get(id);
 		if (extractorDesc != null) {
-			for (IFileElementType inputType : extractorDesc.getInputTypes()) {
+			for (IFileElementType<?> inputType : extractorDesc.getInputTypes()) {
 				removeExtractorForType(inputType, extractorDesc);
 			}
 			extractors.remove(id);
 		}
 	}
 	
-	private void removeExtractorForType(IFileElementType inputType,
+	private void removeExtractorForType(IFileElementType<?> inputType,
 			ExtractorDescription extractorDesc) {
 
 		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);

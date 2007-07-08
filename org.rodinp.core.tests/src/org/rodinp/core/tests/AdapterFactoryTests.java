@@ -34,7 +34,7 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 	}
 
 	private static void assertAdapterPositive(Object adaptable,
-			Class adapterType, Object expected) {
+			Class<?> adapterType, Object expected) {
 
 		IAdapterManager adapterManager = Platform.getAdapterManager();
 		Object actual = adapterManager.getAdapter(adaptable, adapterType);
@@ -43,7 +43,7 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 	}
 	
 	private static void assertAdapterNegative(Object adaptable,
-			Class adapterType) {
+			Class<?> adapterType) {
 
 		IAdapterManager adapterManager = Platform.getAdapterManager();
 		Object actual = adapterManager.getAdapter(adaptable, adapterType);

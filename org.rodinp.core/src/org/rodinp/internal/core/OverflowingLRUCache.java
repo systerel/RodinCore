@@ -272,11 +272,11 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 
 		Enumeration<K> keys = fEntryTable.keys();
 		class Temp {
-			public Class fClass;
+			public Class<?> fClass;
 
 			public int fCount;
 
-			public Temp(Class aClass) {
+			public Temp(Class<?> aClass) {
 				fClass = aClass;
 				fCount = 1;
 			}
@@ -286,10 +286,10 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 				return "Class: " + fClass + " has " + fCount + " entries."; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-1$
 			}
 		}
-		HashMap<Class,Temp> classCounter = new HashMap<Class,Temp>();
+		HashMap<Class<?>,Temp> classCounter = new HashMap<Class<?>,Temp>();
 		while (keys.hasMoreElements()) {
 			entry = fEntryTable.get(keys.nextElement());
-			Class key = entry._fValue.getClass();
+			Class<?> key = entry._fValue.getClass();
 			Temp t = classCounter.get(key);
 			if (t == null) {
 				classCounter.put(key, new Temp(key));

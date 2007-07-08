@@ -159,7 +159,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		if (nextSibling != null) {
 			domNextSibling = getDOMElementCheckExists(nextSibling);
 		}		
-		final IInternalElementType type = newElement.getElementType();
+		final IInternalElementType<?> type = newElement.getElementType();
 		final String name = newElement.getElementName();
 		final Element domNewElement =
 			buffer.createElement(type, name, domParent, domNextSibling);

@@ -114,7 +114,7 @@ public class Buffer {
 		this.stamp = IResource.NULL_STAMP;
 	}
 	
-	public Element createElement(IInternalElementType type, String name, Element domParent,
+	public Element createElement(IInternalElementType<?> type, String name, Element domParent,
 			Element domNextSibling) {
 		
 		Element domNewElement = domDocument.createElementNS(null, type.getId());

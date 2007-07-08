@@ -205,11 +205,11 @@ public class RodinDBManager implements ISaveParticipant {
 		public IProject project;
 		public BuildState savedState;
 		public boolean triedRead;
-		public Map resolvedPathToRawEntries; // reverse map from resolved path to raw entries
+		public Map<?, ?> resolvedPathToRawEntries; // reverse map from resolved path to raw entries
 		public IPath outputLocation;
 		
 		public IEclipsePreferences preferences;
-		public Hashtable options;
+		public Hashtable<?, ?> options;
 		
 		public PerProjectInfo(IProject project) {
 			this.triedRead = false;
@@ -928,7 +928,7 @@ public class RodinDBManager implements ISaveParticipant {
 	
 		// wait for the initialization job to finish
 		try {
-			Platform.getJobManager().join(RodinCore.PLUGIN_ID, null);
+			Job.getJobManager().join(RodinCore.PLUGIN_ID, null);
 		} catch (InterruptedException e) {
 			// ignore
 		}

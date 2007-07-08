@@ -424,7 +424,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	 */
 	public IRodinFile getRodinFile(String fileName) {
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		FileElementType type = manager.getFileElementTypeFor(fileName);
+		FileElementType<?> type = manager.getFileElementTypeFor(fileName);
 		if (type == null) {
 			return null;		// Not a Rodin file.
 		}

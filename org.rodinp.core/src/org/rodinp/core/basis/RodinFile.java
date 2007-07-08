@@ -139,7 +139,7 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 	}
 
 	private final IRodinFile createNewHandle() {
-		final FileElementType type = (FileElementType) getElementType();
+		final FileElementType<?> type = (FileElementType<?>) getElementType();
 		return type.createInstance(file, (RodinProject) getParent());
 	}
 

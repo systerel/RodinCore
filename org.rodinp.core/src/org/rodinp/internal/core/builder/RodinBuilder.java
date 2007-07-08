@@ -121,7 +121,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	Node createNode(IResource resource) {
 		assert resource instanceof IFile;
 		IFile file = (IFile) resource;
-		IFileElementType elementType = 
+		IFileElementType<?> elementType = 
 			elementTypeManager.getFileElementType(file);
 		if(elementType == null)
 			return null;
@@ -151,6 +151,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException {
 		

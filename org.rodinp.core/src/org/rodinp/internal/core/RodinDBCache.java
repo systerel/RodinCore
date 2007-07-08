@@ -69,7 +69,7 @@ public class RodinDBCache {
 	 * Returns the info for the element.
 	 */
 	public OpenableElementInfo getInfo(Openable element) {
-		IElementType elementType = element.getElementType();
+		IElementType<?> elementType = element.getElementType();
 		if (elementType == IRodinDB.ELEMENT_TYPE) {
 			return this.modelInfo;
 		}
@@ -90,7 +90,7 @@ public class RodinDBCache {
 	 * Returns the info for this element without disturbing the cache ordering.
 	 */
 	public OpenableElementInfo peekAtInfo(Openable element) {
-		IElementType elementType = element.getElementType();
+		IElementType<?> elementType = element.getElementType();
 		if (elementType == IRodinDB.ELEMENT_TYPE) {
 			return this.modelInfo;
 		}
@@ -111,7 +111,7 @@ public class RodinDBCache {
 	 * Remember the info for the element.
 	 */
 	public void putInfo(Openable element, OpenableElementInfo info) {
-		IElementType elementType = element.getElementType();
+		IElementType<?> elementType = element.getElementType();
 		if (elementType == IRodinDB.ELEMENT_TYPE) {
 			this.modelInfo = (RodinDBInfo) info;
 		} else if (elementType == IRodinProject.ELEMENT_TYPE) {
@@ -128,7 +128,7 @@ public class RodinDBCache {
 	 * Removes the info of the element from the cache.
 	 */
 	public void removeInfo(Openable element) {
-		IElementType elementType = element.getElementType();
+		IElementType<?> elementType = element.getElementType();
 		if (elementType == IRodinDB.ELEMENT_TYPE) {
 			this.modelInfo = null;
 		} else if (elementType == IRodinProject.ELEMENT_TYPE) {

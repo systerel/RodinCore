@@ -4,7 +4,6 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.rodinp.core.tests; singleton:=true
 Bundle-Version: 0.7.4
 Bundle-Vendor: %providerName
-Bundle-Localization: plugin
 Require-Bundle: org.junit,
  org.rodinp.core,
  org.eclipse.core.resources,

@@ -248,7 +248,7 @@ public class DeltaProcessor {
 	 * Creates the openables corresponding to this resource.
 	 * Returns null if none was found.
 	 */
-	private Openable createElement(IResource resource, IElementType elementType) {
+	private Openable createElement(IResource resource, IElementType<?> elementType) {
 		if (resource == null) return null;
 		
 		IRodinElement element = null;
@@ -323,7 +323,7 @@ public class DeltaProcessor {
 	 * </ul>
 	 */
 	private void elementAdded(Openable element, IResourceDelta delta) {
-		IElementType elementType = element.getElementType();
+		IElementType<?> elementType = element.getElementType();
 		
 		if (elementType == IRodinProject.ELEMENT_TYPE) {
 			// project add is handled by RodinProject.configure() because
@@ -365,7 +365,7 @@ public class DeltaProcessor {
 				IPath movedFromPath = delta.getMovedFromPath();
 				IResource res = delta.getResource();
 				IFile movedFromFile = res.getWorkspace().getRoot().getFile(movedFromPath);
-				IElementType movedFromType = this.elementType(movedFromFile);
+				IElementType<?> movedFromType = this.elementType(movedFromFile);
 				Openable movedFromElement = this.createElement(movedFromFile, movedFromType);
 				if (movedFromElement == null) {
 					// moved from a non-Rodin file
@@ -391,7 +391,7 @@ public class DeltaProcessor {
 	 */
 	private void elementRemoved(Openable element, IResourceDelta delta) {
 		
-		IElementType elementType = element.getElementType();
+		IElementType<?> elementType = element.getElementType();
 		if (delta == null || (delta.getFlags() & IResourceDelta.MOVED_TO) == 0) {
 			// regular element removal
 			close(element);
@@ -422,7 +422,7 @@ public class DeltaProcessor {
 			}
 
 			// find the element type of the moved from element
-			IElementType movedToType = this.elementType(movedToRes);
+			IElementType<?> movedToType = this.elementType(movedToRes);
 
 			// reset current element as it might be inside a nested root (popUntilPrefixOf() may use the outer root)
 			this.currentElement = null;
@@ -454,7 +454,7 @@ public class DeltaProcessor {
 	 * Returns the type of the Rodin element the given delta matches to.
 	 * Returns <code>null</code> if unknown (e.g. a non-Rodin resource)
 	 */
-	private IElementType elementType(IResource res) {
+	private IElementType<?> elementType(IResource res) {
 		if (res instanceof IProject) {
 			return IRodinProject.ELEMENT_TYPE;
 		} else if (res.getType() == IResource.FILE) {
@@ -586,7 +586,7 @@ public class DeltaProcessor {
 			System.out.println("MERGING " + deltas.size() + " DELTAS ["+Thread.currentThread()+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
-		Iterator iterator = deltas.iterator();
+		Iterator<IRodinElementDelta> iterator = deltas.iterator();
 		RodinElementDelta rootDelta = new RodinElementDelta(this.manager.rodinDB);
 		boolean insertedTree = false;
 		while (iterator.hasNext()) {
@@ -699,7 +699,7 @@ public class DeltaProcessor {
 				IResource res = delta.getResource();
 				
 				// find out the element type
-				IElementType elementType;
+				IElementType<?> elementType;
 				IProject proj = (IProject) res;
 				boolean wasRodinProject = this.manager.getRodinDB().findOldRodinProject(proj) != null;
 				boolean isRodinProject = RodinProject.hasRodinNature(proj);
@@ -868,7 +868,7 @@ public class DeltaProcessor {
 	 * its children into the corresponding <code>IRodinElementDelta</code>s.
 	 */
 	private void traverseProjectDelta(IResourceDelta delta,
-			IElementType elementType) {
+			IElementType<?> elementType) {
 		
 		IProject project = (IProject) delta.getResource();
 		RodinProject rodinProject = (RodinProject) RodinCore.valueOf(project);
@@ -893,7 +893,7 @@ public class DeltaProcessor {
 		IResource res = delta.getResource();
 		switch (res.getType()) {
 		case IResource.FILE:
-			IElementType elementType = elementType(res);
+			IElementType<?> elementType = elementType(res);
 			if (elementType != null) {
 				this.updateCurrentDeltaAndIndex(delta, elementType);
 			} else {
@@ -924,7 +924,7 @@ public class DeltaProcessor {
 	 * @throws a RodinDBException if the delta doesn't correspond to a java element of the given type.
 	 */
 	public boolean updateCurrentDeltaAndIndex(IResourceDelta delta,
-			IElementType elementType) {
+			IElementType<?> elementType) {
 
 		Openable element;
 		switch (delta.getKind()) {

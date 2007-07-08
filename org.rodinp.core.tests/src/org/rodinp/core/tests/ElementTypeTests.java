@@ -19,13 +19,13 @@ import junit.framework.TestCase;
  */
 public class ElementTypeTests extends TestCase {
 
-	static void assertElementTypeId(IElementType type, String id) {
+	static void assertElementTypeId(IElementType<?> type, String id) {
 		assertEquals("Wrong id", id, type.getId());
 	}
 	
-	static void assertETypePos(IElementType expected) {
+	static void assertETypePos(IElementType<?> expected) {
 		String id = expected.getId();
-		IElementType actual = RodinCore.getElementType(id);
+		IElementType<?> actual = RodinCore.getElementType(id);
 		assertSame("Wrong elementType", expected, actual);
 	}
 	

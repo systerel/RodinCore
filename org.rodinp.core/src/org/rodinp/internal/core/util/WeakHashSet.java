@@ -35,7 +35,7 @@ public class WeakHashSet<T> {
 		public boolean equals(Object obj) {
 			if (!(obj instanceof HashableWeakReference)) return false;
 			Object referent = get();
-			Object other = ((HashableWeakReference) obj).get();
+			Object other = ((HashableWeakReference<?>) obj).get();
 			if (referent == null) return other == null;
 			return referent.equals(other);
 		}
@@ -100,7 +100,7 @@ public class WeakHashSet<T> {
 		if (obj == null) return;
 		int valuesLength = this.values.length;
 		int index = (value.hashCode & 0x7FFFFFFF) % valuesLength;
-		HashableWeakReference currentValue;
+		HashableWeakReference<?> currentValue;
 		while ((currentValue = this.values[index]) != null) {
 			if (obj.equals(currentValue.get())) {
 				return;

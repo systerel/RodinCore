@@ -16,6 +16,7 @@ import org.rodinp.core.IRodinElement;
  * 
  * @author Laurent Voisin
  */
+@SuppressWarnings("unchecked")
 public class RodinElementAdapterFactory implements IAdapterFactory {
 
 	private static final Class[] ADAPTERS = new Class[] {

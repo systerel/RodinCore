@@ -87,7 +87,7 @@ public class Node implements Serializable {
 	
 //	transient private IPath targetPath; // the path corresponding to target name (cache)
 //	transient private IPath sourcePath; // the path corresponding to source name (cache)
-	private transient IFileElementType fileElementType; // the element type of the resource (cache)
+	private transient IFileElementType<?> fileElementType; // the element type of the resource (cache)
 //	transient private IFile file; // the file corresponding to name (cache)
 	
 	public Node() {
@@ -353,7 +353,7 @@ public class Node implements Serializable {
 	/**
 	 * @return Returns the fileElementType.
 	 */
-	public IFileElementType getFileElementType() {
+	public IFileElementType<?> getFileElementType() {
 		
 		final IFile targetFile = target.getFile();
 		if (fileElementType == null && targetFile != null) {

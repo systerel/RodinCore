@@ -8,6 +8,7 @@
 package org.rodinp.internal.core;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
@@ -17,6 +18,7 @@ import org.rodinp.core.RodinCore;
  * 
  * @author Laurent Voisin
  */
+@SuppressWarnings("unchecked")
 public class ResourceAdapterFactory implements IAdapterFactory {
 
 	private static final Class[] ADAPTERS = new Class[] {
@@ -30,7 +32,7 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	public Class[] getAdapterList() {
+	public Class<IAdaptable>[] getAdapterList() {
 		return ADAPTERS;
 	}
 

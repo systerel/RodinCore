@@ -27,7 +27,7 @@ public class ExtractorDescription extends ExecutableExtensionDesc {
 	private final ToolDescription toolDescription;
 	
 	// List of file types that this extractor can parse.
-	private final IFileElementType[] inputTypes;
+	private final IFileElementType<?>[] inputTypes;
 
 	/**
 	 * Creates a new extractor decription.
@@ -75,7 +75,7 @@ public class ExtractorDescription extends ExecutableExtensionDesc {
 	 * 
 	 * @return Returns the input types known to this extractor.
 	 */
-	public IFileElementType[] getInputTypes() {
+	public IFileElementType<?>[] getInputTypes() {
 		return inputTypes;
 	}
 

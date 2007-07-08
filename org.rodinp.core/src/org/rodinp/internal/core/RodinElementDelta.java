@@ -265,7 +265,7 @@ public class RodinElementDelta extends SimpleDelta implements
 	protected RodinElementDelta createDeltaTree(IRodinElement element,
 			RodinElementDelta delta) {
 		RodinElementDelta childDelta = delta;
-		ArrayList ancestors = getAncestors(element);
+		ArrayList<IRodinElement> ancestors = getAncestors(element);
 		if (ancestors == null) {
 			if (this.equalsAndSameParent(delta.getElement(), getElement())) { // handle
 																				// case
@@ -290,7 +290,7 @@ public class RodinElementDelta extends SimpleDelta implements
 			}
 		} else {
 			for (int i = 0, size = ancestors.size(); i < size; i++) {
-				IRodinElement ancestor = (IRodinElement) ancestors.get(i);
+				IRodinElement ancestor = ancestors.get(i);
 				RodinElementDelta ancestorDelta = new RodinElementDelta(
 						ancestor);
 				ancestorDelta.addAffectedChild(childDelta);
@@ -353,7 +353,7 @@ public class RodinElementDelta extends SimpleDelta implements
 	 * is not a descendant of the root of this tree, <code>null</code> is
 	 * returned.
 	 */
-	private ArrayList getAncestors(IRodinElement element) {
+	private ArrayList<IRodinElement> getAncestors(IRodinElement element) {
 		IRodinElement parent = element.getParent();
 		if (parent == null) {
 			return null;

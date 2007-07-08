@@ -98,7 +98,7 @@ public class CreateRodinFileOperation extends RodinDBOperation {
 	}
 
 	private ByteArrayInputStream getInitialInputStream(RodinFile rodinFile) {
-		IElementType elementType = rodinFile.getElementType();
+		IElementType<?> elementType = rodinFile.getElementType();
 		StringBuilder buffer = new StringBuilder(
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		);
