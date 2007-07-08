@@ -12,7 +12,6 @@ import junit.framework.TestCase;
 import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.tool.FilterModuleDesc;
-import org.eventb.internal.core.tool.ModuleDesc;
 import org.eventb.internal.core.tool.ProcessorModuleDesc;
 import org.eventb.internal.core.tool.RootModuleDesc;
 import org.rodinp.core.IFileElementType;
@@ -47,8 +46,23 @@ public abstract class Declarations extends TestCase {
 		}
 
 		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getId().hashCode();
+			return result;
+		}
+
+		@Override
 		public boolean equals(Object obj) {
-			return getId().equals(((ModuleDesc) obj).getId());
+			if (this == obj)
+				return true;
+			if (!super.equals(obj))
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			final ProcDesc other = (ProcDesc) obj;
+			return getId().equals(other.getId());
 		}
 
 		@Override
@@ -97,8 +111,23 @@ public abstract class Declarations extends TestCase {
 		}
 
 		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getId().hashCode();
+			return result;
+		}
+
+		@Override
 		public boolean equals(Object obj) {
-			return getId().equals(((ModuleDesc) obj).getId());
+			if (this == obj)
+				return true;
+			if (!super.equals(obj))
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			final RootDesc other = (RootDesc) obj;
+			return getId().equals(other.getId());
 		}
 
 		@Override
@@ -161,8 +190,23 @@ public abstract class Declarations extends TestCase {
 		}
 
 		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getId().hashCode();
+			return result;
+		}
+
+		@Override
 		public boolean equals(Object obj) {
-			return getId().equals(((ModuleDesc) obj).getId());
+			if (this == obj)
+				return true;
+			if (!super.equals(obj))
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			final FilterDesc other = (FilterDesc) obj;
+			return getId().equals(other.getId());
 		}
 
 		@Override
