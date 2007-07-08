@@ -1239,4 +1239,79 @@ public class AutoFormulaRewriterTests {
 		SimplePredicate sPred = ff.makeSimplePredicate(tag, expression, null);
 		assertEquals(message, expected, sPred.rewrite(r));
 	}
+
+	@Test
+	public void testCardinality() {
+		// card({}) == 0
+		assertUnaryExpression("card(∅) == 0", number0, Expression.KCARD, ff
+				.makeEmptySet(S.getType(), null));
+		
+		
+		// card({E}) == 1
+		assertUnaryExpression("card({E}) == 1", number1, Expression.KCARD, S);
+		
+		// card(POW(S)) == 2^card(S)
+		Expression powA = Lib.parseExpression("ℙ({x ∣ x > 0})");
+		Expression expected = Lib.parseExpression(" 2^(card({x ∣ x > 0}))");
+		powA.typeCheck(ff.makeTypeEnvironment());
+		expected.typeCheck(ff.makeTypeEnvironment());
+		assertUnaryExpression("card(ℙ(A)) == 2^(card(A))", expected,
+				Expression.KCARD, powA);
+		
+		// card(S ** T) == card(S) * card(T)
+		Expression aCrossB = Lib.parseExpression("{x ∣ x > 0} × {y ∣ y < 0}");
+		expected = Lib.parseExpression("card({x ∣ x > 0}) ∗ card({y ∣ y < 0})");
+		aCrossB.typeCheck(ff.makeTypeEnvironment());
+		expected.typeCheck(ff.makeTypeEnvironment());
+		assertUnaryExpression("card(A × B) == card(A) ∗ card(B)", expected,
+				Expression.KCARD, aCrossB);
+		
+		// card(S \ T) == card(S) - card(S /\ T)
+		Expression input = Lib.parseExpression("{x ∣ x > 0} ∖ {y ∣ y < 0}");
+		expected = Lib
+				.parseExpression("card({x ∣ x > 0}) − card({x ∣ x > 0} ∩ {y ∣ y < 0})");
+		input.typeCheck(ff.makeTypeEnvironment());
+		expected.typeCheck(ff.makeTypeEnvironment());
+		assertUnaryExpression("card(A ∖ B) == card(A) − card(A ∩ B)", expected,
+				Expression.KCARD, input);
+		
+		// card(S) = 0  ==  S = {}
+		input = Lib.parseExpression("card({x ∣ x > 0})");
+		Predicate expectedPred = Lib.parsePredicate("{x ∣ x > 0} = ∅");
+		input.typeCheck(ff.makeTypeEnvironment());
+		expectedPred.typeCheck(ff.makeTypeEnvironment());
+		assertRelationalPredicate("card(S) = 0  ==  S = ∅", expectedPred,
+				input, Predicate.EQUAL, number0);
+
+		// 0 = card(S)  ==  S = {}
+		assertRelationalPredicate("0 = card(S)  ==  S = ∅", expectedPred,
+				number0, Predicate.EQUAL, input);
+
+		// not(card(S) = 0)  ==  not(S = {})
+		Predicate inputPred = Lib.parsePredicate("card({x ∣ x > 0}) = 0");
+		expectedPred = Lib.parsePredicate("¬({x ∣ x > 0} = ∅)");
+		inputPred.typeCheck(ff.makeTypeEnvironment());
+		expectedPred.typeCheck(ff.makeTypeEnvironment());
+		assertUnaryPredicate("card(S) ≠ 0  ==  ¬(S = ∅)", expectedPred,
+				Predicate.NOT, inputPred);
+
+		// not(0 = card(S))  ==  not(S = {})
+		inputPred = Lib.parsePredicate("0 = card({x ∣ x > 0})");
+		inputPred.typeCheck(ff.makeTypeEnvironment());
+		assertUnaryPredicate("0 ≠ card(S)  ==  ¬(S = ∅)", expectedPred,
+				Predicate.NOT, inputPred);
+
+		// card(S) > 0  ==  not(S = {})
+		input = Lib.parseExpression("card({x ∣ x > 0})");
+		expectedPred = Lib.parsePredicate("¬({x ∣ x > 0} = ∅)");
+		input.typeCheck(ff.makeTypeEnvironment());
+		expectedPred.typeCheck(ff.makeTypeEnvironment());
+		assertRelationalPredicate("card(S) > 0  ==  ¬(S = ∅)", expectedPred,
+				input, Predicate.GT, number0);
+
+		// not(0 = card(S))  ==  not(S = {})
+		assertRelationalPredicate("0 < card(S)  ==  ¬(S = ∅)", expectedPred,
+				number0, Predicate.LT, input);
+
+	}
 }
