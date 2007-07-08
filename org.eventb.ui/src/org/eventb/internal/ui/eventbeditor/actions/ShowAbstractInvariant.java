@@ -3,6 +3,7 @@ package org.eventb.internal.ui.eventbeditor.actions;
 import org.eclipse.jface.action.Action;
 import org.eventb.core.IInvariant;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
@@ -22,18 +23,18 @@ public class ShowAbstractInvariant extends Action {
 
 	@Override
 	public void run() {
+		IRodinElement[] elements;
 		try {
-			IRodinElement[] elements = abstractFile
-					.getChildrenOfType(IInvariant.ELEMENT_TYPE);
-
-			if (elements.length != 0) {
-				UIUtils.linkToEventBEditor(elements[0]);
-			} else
-				UIUtils.linkToEventBEditor(abstractFile);
-
+			elements = abstractFile.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
-			e.printStackTrace();
+			EventBUIExceptionHandler.handleGetChildrenException(e);
+			return;
 		}
+
+		if (elements.length != 0)
+			UIUtils.linkToEventBEditor(elements[0]);
+		else
+			UIUtils.linkToEventBEditor(abstractFile);
 
 	}
 
