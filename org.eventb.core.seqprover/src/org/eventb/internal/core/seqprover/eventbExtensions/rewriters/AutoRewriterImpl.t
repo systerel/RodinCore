@@ -50,6 +50,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	
 	private final IntegerLiteral number1 = ff.makeIntegerLiteral(new BigInteger("1"), null);
 
+	private final IntegerLiteral number2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
+
 	public AutoRewriterImpl() {
 		super(true, FormulaFactory.getDefault());
 	}
@@ -348,6 +350,29 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			Not(Equal(TRUE(), E)) -> {
 				return makeRelationalPredicate(Predicate.EQUAL, Lib.FALSE, `E);
 			}
+			
+	    	/**
+	    	 * Cardinality: ¬(card(S) = 0)  ==  ¬(S = ∅)
+	    	 */
+	    	Not(Equal(Card(S), E)) -> {
+	    		if (`E.equals(number0)) {
+	    			Expression emptySet = makeEmptySet(`S.getType());
+	    			Predicate equal = makeRelationalPredicate(Predicate.EQUAL, `S, emptySet);
+	    			return makeUnaryPredicate(Predicate.NOT, equal);
+	    		}
+	    	}
+
+	    	/**
+	    	 * Cardinality: ¬(0 = card(S))  ==  ¬(S = ∅)
+	    	 */
+	    	Not(Equal(E, Card(S))) -> {
+	    		if (`E.equals(number0)) {
+	    			Expression emptySet = makeEmptySet(`S.getType());
+	    			Predicate equal = makeRelationalPredicate(Predicate.EQUAL, `S, emptySet);
+	    			return makeUnaryPredicate(Predicate.NOT, equal);
+	    		}
+	    	}
+			
 	    }
 	    return predicate;
 	}
@@ -599,6 +624,49 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	Gt(IntegerLiteral(i), IntegerLiteral(j)) -> {
 	    		return `i.compareTo(`j) > 0 ? Lib.True : Lib.False;
 	    	}
+	    	
+	    	/**
+	    	 * Cardinality: card(S) = 0  ==  S = ∅
+	    	 */
+	    	Equal(Card(S), E) -> {
+	    		if (`E.equals(number0)) {
+	    			Expression emptySet = makeEmptySet(`S.getType());
+	    			return makeRelationalPredicate(Predicate.EQUAL, `S, emptySet);
+	    		}
+	    	}
+
+	    	/**
+	    	 * Cardinality: 0 = card(S)  ==  S = ∅
+	    	 */
+	    	Equal(E, Card(S)) -> {
+	    		if (`E.equals(number0)) {
+	    			Expression emptySet = makeEmptySet(`S.getType());
+	    			return makeRelationalPredicate(Predicate.EQUAL, `S, emptySet);
+	    		}
+	    	}
+
+	    	/**
+	    	 * Cardinality: card(S) > 0  ==  ¬(S = ∅)
+	    	 */
+	    	Gt(Card(S), E)-> {
+	    		if (`E.equals(number0)) {
+	    			Expression emptySet = makeEmptySet(`S.getType());
+	    			Predicate equal = makeRelationalPredicate(Predicate.EQUAL, `S, emptySet);
+	    			return makeUnaryPredicate(Predicate.NOT, equal);
+	    		}
+	    	}
+
+	    	/**
+	    	 * Cardinality: 0 < card(S)  ==  ¬(S = ∅)
+	    	 */
+	    	Lt(E, Card(S)) -> {
+	    		if (`E.equals(number0)) {
+	    			Expression emptySet = makeEmptySet(`S.getType());
+	    			Predicate equal = makeRelationalPredicate(Predicate.EQUAL, `S, emptySet);
+	    			return makeUnaryPredicate(Predicate.NOT, equal);
+	    		}
+	    	}
+
 	    }
 	    return predicate;
 	}
@@ -921,6 +989,53 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		return `E;
 	    	}
 			
+			/**
+	    	 * Cardinality: card(∅) == 0
+	    	 */
+			Card(EmptySet()) -> {
+				return number0;
+			}
+
+			/**
+	    	 * Cardinality: card({E}) == 1
+	    	 */
+			Card(SetExtension(children)) -> {
+				if (`children.length == 1)
+					return number1;
+			}
+
+			/**
+	    	 * Cardinality: card(ℙ(S)) == 2^(card(S))
+	    	 */
+			Card(Pow(S)) -> {
+				Expression cardS = makeUnaryExpression(Expression.KCARD, `S);
+				return makeBinaryExpression(Expression.EXPN, number2, cardS);
+			}
+			
+			/**
+	    	 * Cardinality: card(S × T) == card(S) ∗ card(T)
+	    	 */
+			Card(Cprod(S, T)) -> {
+				Expression [] cards = new Expression[2];
+				cards[0] = makeUnaryExpression(Expression.KCARD, `S);
+				cards[1] = makeUnaryExpression(Expression.KCARD, `T);
+				return makeAssociativeExpression(Expression.MUL, cards);
+			}
+			
+			/**
+	    	 * Cardinality: card(S ∖ T) = card(S) − card(S ∩ T)
+	    	 */
+			Card(SetMinus(S, T)) -> {
+				Expression cardS = makeUnaryExpression(Expression.KCARD, `S);
+				Expression [] children = new Expression[2];
+				children[0] = `S;
+				children[1] = `T;
+				Expression sInterT = makeAssociativeExpression(Expression.BINTER,
+						children);
+				Expression cardSInterT = makeUnaryExpression(Expression.KCARD,
+						sInterT);
+				return makeBinaryExpression(Expression.MINUS, cardS, cardSInterT);
+			}
 	    }
 	    return expression;
 	}
