@@ -96,7 +96,8 @@ public class Util {
 		PredicateBuilder pBuilder = new PredicateBuilder();
 		pBuilder.build(pred,false);
 		ClauseBuilder cBuilder = new ClauseBuilder();
-		return cBuilder.buildClauses(pBuilder.getContext());
+		cBuilder.buildClauses(pBuilder.getContext());
+		return cBuilder.getResult();
 	}
 	
 	public static LoaderResult doPhaseOneAndTwo(String predicate) {
@@ -104,7 +105,8 @@ public class Util {
 		PredicateBuilder pBuilder = new PredicateBuilder();
 		pBuilder.build(pred,false);
 		ClauseBuilder cBuilder = new ClauseBuilder();
-		return cBuilder.buildClauses(pBuilder.getContext());
+		cBuilder.buildClauses(pBuilder.getContext());
+		return cBuilder.getResult();
 	}
 	
 	
