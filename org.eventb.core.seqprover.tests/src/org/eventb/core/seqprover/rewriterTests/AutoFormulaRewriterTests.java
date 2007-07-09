@@ -1173,7 +1173,8 @@ public class AutoFormulaRewriterTests {
 	public void testFinite() {
 		// finite({}) == true
 		assertSimplePredicate("finite(∅) = ⊤", Lib.True, Predicate.KFINITE, ff
-				.makeEmptySet(ff.makeGivenType("SET"), null));
+				.makeEmptySet(ff.makePowerSetType(ff.makeGivenType("SET")),
+						null));
 		
 		// finite({a, ..., b}) == true
 		assertSimplePredicate("finite(S) = ⊤", Lib.True, Predicate.KFINITE, S);
