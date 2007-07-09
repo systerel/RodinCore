@@ -17,7 +17,7 @@ public abstract class ClauseKey<T extends IndexedDescriptor> extends SymbolKey<T
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (obj instanceof ClauseKey) {
-			ClauseKey<?> temp = (ClauseKey) obj;
+			ClauseKey<?> temp = (ClauseKey<?>) obj;
 			return signatures.equals(temp.signatures);
 		}
 		return false;

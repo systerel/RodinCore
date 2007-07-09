@@ -15,10 +15,12 @@ import org.eventb.internal.pp.core.elements.Sort;
 
 public final class Constant extends SimpleTerm {
 
+	private static final int PRIORITY = 2;
+	
 	private String name;
 	
 	public Constant(String name, Sort type) {
-		super(type);
+		super(type, PRIORITY, name.hashCode(), name.hashCode());
 		
 		this.name = name;
 	}
@@ -28,8 +30,8 @@ public final class Constant extends SimpleTerm {
 	}
 	
 	@Override
-	public int hashCode() {
-		return name.hashCode();
+	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
+		return equals(term);
 	}
 	
 	// TODO eventually same object ! -> not important for now
@@ -63,23 +65,8 @@ public final class Constant extends SimpleTerm {
 	}
 
 	@Override
-	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
-		return equals(term);
-	}
-
-	@Override
-	public int hashCodeWithDifferentVariables() {
-		return hashCode();
-	}
-
-	@Override
 	public boolean isForall() {
 		return false;
-	}
-	
-	@Override
-	public int getPriority() {
-		return 2;
 	}
 
 	public int compareTo(Term o) {

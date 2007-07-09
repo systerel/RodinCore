@@ -25,8 +25,7 @@ public class ClauseDispatcher implements IDispatcher {
 	 */
 	public static boolean DEBUG;
 	public static void debug(String message){
-		if (DEBUG)
-			System.out.println(message);
+		System.out.println(message);
 	}
 	
 	// the tracer
@@ -164,7 +163,7 @@ public class ClauseDispatcher implements IDispatcher {
 		provers.add(equality);
 		counter = 0;
 		
-		debug("=== ClauseDispatcher. Starting ===");
+		if (DEBUG) debug("=== ClauseDispatcher. Starting ===");
 		addOriginalClauses();
 		
 		while (!terminated) {
@@ -189,17 +188,17 @@ public class ClauseDispatcher implements IDispatcher {
 	}
 	
 	private boolean getNextClauseFromProvers(boolean tryAgain) {
-		debug("== Getting next clause from provers ==");
+		if (DEBUG) debug("== Getting next clause from provers ==");
 		ProverResult nextResult = null;
 		for (IProver prover : provers) {
 			nextResult = prover.next();
 			if (nextResult != null) {
-				debug("= Got result from "+prover.toString()+": "+nextResult.toString()+" =");
+				if (DEBUG) debug("= Got result from "+prover.toString()+": "+nextResult.toString()+" =");
 				break;
 			}
 		}
 		if (nextResult == null) {
-			debug("= Got no result this time =");
+			if (DEBUG) debug("= Got no result this time =");
 			// proof done
 			if (!tryAgain) noProofFound();
 			return false;
@@ -217,7 +216,7 @@ public class ClauseDispatcher implements IDispatcher {
 	}
 	
 	private boolean treatNondispatchedClausesAndCheckContradiction() {
-		debug("== Treating non dispatched clauses ==");
+		if (DEBUG) debug("== Treating non dispatched clauses ==");
 		nonDispatchedClausesIterator.reset();
 		while (nonDispatchedClausesIterator.hasNext()) {
 			Clause clause = nonDispatchedClausesIterator.next();
@@ -240,7 +239,7 @@ public class ClauseDispatcher implements IDispatcher {
 			noProofFound();
 			return true;
 		}
-		debug("=== ClauseDispatcher. Step "+counter+". Level "+level+" ===");
+		if (DEBUG) debug("=== ClauseDispatcher. Step "+counter+". Level "+level+" ===");
 		dumper.dump();
 		return false;
 	}
@@ -255,7 +254,7 @@ public class ClauseDispatcher implements IDispatcher {
 	private boolean checkContradictionAndAddNondispatchedClause(Clause clause, IProver prover) {
 		ProverResult result = prover.addClauseAndDetectContradiction(clause);
 		if (result == null) return false;
-		debug("= Got result from "+prover.toString()+": "+result.toString()+" =");
+		if (DEBUG) debug("= Got result from "+prover.toString()+": "+result.toString()+" =");
 		removeClauses(result.getSubsumedClauses());
 		if (result.isContradiction()) {
 			internalContradiction(result.getContradictionOrigin());
@@ -308,26 +307,26 @@ public class ClauseDispatcher implements IDispatcher {
 	
 	
 	private void internalContradiction(IOrigin origin) {
-		debug("= Contradiction found on: "+origin+" =");
+		if (DEBUG) debug("= Contradiction found on: "+origin+" =");
 		Level oldLevel = level;
 		
 		// contradiction has been found, backtrack
 		Set<Level> dependencies = new HashSet<Level>();
 		origin.getDependencies(dependencies);
-		debug("= Level dependencies: "+dependencies+" =");
+		if (DEBUG) debug("= Level dependencies: "+dependencies+" =");
 		
 		adjustLevel(origin);
 		if (terminated) return;
 		
-		debug("= Closing level: "+tracer.getLastClosedLevel()+", old level was: "+oldLevel+", new level is: "+level+" =");
+		if (DEBUG) debug("= Closing level: "+tracer.getLastClosedLevel()+", old level was: "+oldLevel+", new level is: "+level+" =");
 		
-		debug("= Dispatching contradiction to subprovers =");
+		if (DEBUG) debug("= Dispatching contradiction to subprovers =");
 		for (IProver prover : provers) {
 			prover.contradiction(oldLevel, level, dependencies);
 		}	
 		
 		// we backtrack our own datastructure
-		debug("= Done dispatching, backtracking datastructures =");
+		if (DEBUG) debug("= Done dispatching, backtracking datastructures =");
 		
 		backtrack(level, alreadyDispatchedBacktrackClausesIterator, alreadyDispatchedClauses);
 		backtrack(level, nonDispatchedBacktrackClausesIterator, nonDispatchedClauses);

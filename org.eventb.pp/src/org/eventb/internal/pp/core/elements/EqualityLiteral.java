@@ -19,11 +19,13 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
 
 public class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
 
+	private static final int BASE_HASHCODE = 37;
+	
 	private boolean isPositive;
 	
 	public EqualityLiteral (SimpleTerm term1, SimpleTerm term2, boolean isPositive) {
 //		super(Arrays.asList(new Term[]{term1,term2}));
-		super(Arrays.asList(term1.compareTo(term2)<0?new SimpleTerm[]{term1,term2}:new SimpleTerm[]{term2,term1}));
+		super(Arrays.asList(term1.compareTo(term2)<0?new SimpleTerm[]{term1,term2}:new SimpleTerm[]{term2,term1}), BASE_HASHCODE);
 		// TODO term must be ordered
 		
 		if (term1.getSort() != null && term2.getSort()!=null) {
@@ -34,7 +36,7 @@ public class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
 	}
 	
 	private EqualityLiteral(List<SimpleTerm> terms, boolean isPositive) {
-		super(Arrays.asList(terms.get(0).compareTo(terms.get(1))<0?new SimpleTerm[]{terms.get(0),terms.get(1)}:new SimpleTerm[]{terms.get(1),terms.get(0)}));
+		super(Arrays.asList(terms.get(0).compareTo(terms.get(1))<0?new SimpleTerm[]{terms.get(0),terms.get(1)}:new SimpleTerm[]{terms.get(1),terms.get(0)}), BASE_HASHCODE);
 		
 		this.isPositive = isPositive;
 	}
@@ -87,7 +89,6 @@ public class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
 		
 		return new EqualityLiteral(substituteHelper(map,terms),isPositive);
 	}
-
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -121,9 +122,4 @@ public class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
 		return (isPositive == literal.isPositive) && super.equalsWithDifferentVariables(literal, map);
 	}
 	
-	@Override
-	public int hashCodeWithDifferentVariables() {
-		return super.hashCodeWithDifferentVariables() + (isPositive?1:2);
-	}
-
 }

@@ -39,10 +39,10 @@ public class TestComparable extends AbstractPPTest {
 
 	public void testVariables() {
 		doTest(new TestPair(
-				x,y,1
+				x,y,-1
 		));
 		doTest(new TestPair(
-				y,x,-1
+				y,x,1
 		));
 		doTest(new TestPair(
 				x,x,0

@@ -66,7 +66,7 @@ public abstract class AbstractClause<T extends IndexedDescriptor> extends Abstra
 			}
 		}
 		if (result.size() != descriptor.getResults().size()) {
-			ClauseBuilder.debug("Splitting "+this+", terms remaining: "+result.toString());
+			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Splitting "+this+", terms remaining: "+result.toString());
 		}
 		descriptor = getNewDescriptor(result, descriptor.getIndex());	
 	}

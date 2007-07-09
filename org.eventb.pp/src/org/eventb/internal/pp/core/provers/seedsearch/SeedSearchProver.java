@@ -25,8 +25,7 @@ public class SeedSearchProver implements IProver {
 	 */
 	public static boolean DEBUG;
 	public static void debug(String message){
-		if (DEBUG)
-			System.out.println(message);
+		System.out.println(message);
 	}
 
 	private SeedSearchManager manager = new SeedSearchManager();
@@ -141,7 +140,7 @@ public class SeedSearchProver implements IProver {
 		if (generatedClausesStack.isEmpty()) return null;
 		Set<Clause> nextClauses = generatedClausesStack.pop();
 		ProverResult result = new ProverResult(nextClauses,new HashSet<Clause>());
-		debug("SeedSearchProver, next clauses: "+nextClauses+", remaining clauses: "+generatedClausesStack.size());
+		if (DEBUG) debug("SeedSearchProver, next clauses: "+nextClauses+", remaining clauses: "+generatedClausesStack.size());
 		return result;
 	}
 

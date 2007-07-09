@@ -15,43 +15,31 @@ import java.util.Set;
 import org.eventb.internal.pp.core.elements.Sort;
 
 /**
+ * The same instance of one variable exists for the same variable in the scope
+ * of one clause. In two different clauses, variable instances are always disjoint.
+ * This means {@link #equals(Object)} always return false for variables that are in
+ * two different clauses.
  * 
  * @author François Terrier
  *
  */
 public final class Variable extends SimpleTerm {
-//	protected int index;
 
-	public Variable(/* int index, */Sort sort) {
-		super(sort);
+	private static final int PRIORITY = 0;
+	
+	// only for toString, does not
+	@SuppressWarnings("unused")
+	private final int index;
+	
+	public Variable(int index, Sort sort) {
+		super(sort, PRIORITY, index, 1);
 		
-//		this.index = index;
+		this.index = index;
 	}
 	
-	// in a same clause, a same variable is represented by the same object
-	// in 2 different clauses, variables are different objects
-	
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (obj instanceof Variable) {
-//			Variable temp = (Variable) obj;
-//			return index == temp.index && super.equals(temp);
-//		}
-//		return false;
-//	}
-
 	@Override
 	public boolean isConstant() {
 		return false;
-	}
-
-	
-	@Override
-	public String toString(HashMap<Variable, String> variableMap) {
-		if (!variableMap.containsKey(this)) {
-			variableMap.put(this,"x"+variableMap.size() + "["+numberOfInferences+"]" );
-		}
-		return variableMap.get(this);
 	}
 
 	@Override
@@ -73,25 +61,19 @@ public final class Variable extends SimpleTerm {
 	}
 
 	@Override
-	public boolean isForall() {
-		return false;
+	public boolean equals(Object obj) {
+		return super.equals(obj);
 	}
 	
 	@Override
-	public int getPriority() {
-		return 0;
+	public boolean isForall() {
+		return false;
 	}
-
 
 	public int compareTo(Term o) {
 		if (equals(o)) return 0;
 		else if (getPriority() == o.getPriority()) return hashCode()-o.hashCode();
 		else return getPriority() - o.getPriority();
-	}
-
-	@Override
-	public final int hashCodeWithDifferentVariables() {
-		return 1;
 	}
 
 	@Override
@@ -108,5 +90,15 @@ public final class Variable extends SimpleTerm {
 	public void collectLocalVariables(Set<LocalVariable> localVariables) {
 		return;
 	}
+	
+	
+	@Override
+	public String toString(HashMap<Variable, String> variableMap) {
+		if (!variableMap.containsKey(this)) {
+			variableMap.put(this,"x"+variableMap.size() + "["+numberOfInferences+"]" );
+		}
+		return variableMap.get(this);
+	}
+
 
 }

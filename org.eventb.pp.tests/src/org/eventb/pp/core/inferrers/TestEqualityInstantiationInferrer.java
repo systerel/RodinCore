@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.inferrers.EqualityInstantiationInferrer;
+import org.eventb.internal.pp.loader.clause.VariableContext;
 
 public class TestEqualityInstantiationInferrer extends AbstractInferrerTests {
 

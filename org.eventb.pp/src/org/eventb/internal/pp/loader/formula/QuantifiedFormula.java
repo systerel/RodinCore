@@ -106,12 +106,12 @@ public class QuantifiedFormula extends AbstractLabelizableFormula<QuantifiedDesc
 
 	public void getFinalClauses(Collection<Clause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext variableContext, boolean positive) {
 		if (positive) {
-			ClauseBuilder.debug("----------------");
-			ClauseBuilder.debug("Positive definition:");
+			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("----------------");
+			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Positive definition:");
 			getFinalClausesHelper(manager, clauses, factory, false, true, bool, table, variableContext);
 		} else {
-			ClauseBuilder.debug("----------------");
-			ClauseBuilder.debug("Negative definition:");
+			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("----------------");
+			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Negative definition:");
 			getFinalClausesHelper(manager, clauses, factory, true, false, bool, table, variableContext);
 		}
 	}

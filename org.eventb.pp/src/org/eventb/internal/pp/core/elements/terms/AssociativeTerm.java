@@ -19,15 +19,107 @@ import org.eventb.internal.pp.core.elements.Sort;
 public abstract class AssociativeTerm extends Term {
 
 	final protected List<Term> children;
-	
-	public AssociativeTerm(List<Term> children) {
-		super(Sort.ARITHMETIC);
-		
+
+	public AssociativeTerm(List<Term> children, int priority) {
+		super(Sort.ARITHMETIC, priority, combineHashCodesWithSameVariables(children),
+				combineHashCodesWithDifferentVariables(children));
+
 		this.children = children;
 	}
-	
+
 	public List<Term> getChildren() {
 		return children;
+	}
+
+	@Override
+	public boolean isConstant() {
+		for (Term term : children) {
+			if (!term.isConstant())
+				return false;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean isForall() {
+		for (Term term : children) {
+			if (term.isForall())
+				return true;
+		}
+		return false;
+	}
+
+	protected abstract String getSymbol();
+
+	@Override
+	public String toString(HashMap<Variable, String> variable) {
+		StringBuffer str = new StringBuffer();
+		str.append(getSymbol() + "(");
+		for (Term term : children) {
+			str.append(term.toString(variable) + " ");
+		}
+		str.deleteCharAt(str.length() - 1);
+		str.append(")");
+		return str.toString();
+	}
+
+	protected <S extends Term> List<Term> substituteHelper(
+			Map<SimpleTerm, S> map) {
+		List<Term> result = new ArrayList<Term>();
+		for (Term child : children) {
+			result.add(child.substitute(map));
+		}
+		return result;
+	}
+
+	@Override
+	public boolean isQuantified() {
+		for (Term child : children) {
+			if (child.isQuantified())
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void collectLocalVariables(Set<LocalVariable> existential) {
+		for (Term child : children) {
+			child.collectLocalVariables(existential);
+		}
+	}
+
+	@Override
+	public void collectVariables(Set<Variable> variables) {
+		for (Term child : children) {
+			child.collectVariables(variables);
+		}
+	}
+
+	@Override
+	public boolean contains(SimpleTerm variables) {
+		for (Term child : children) {
+			if (child.contains(variables))
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean equalsWithDifferentVariables(Term term,
+			HashMap<SimpleTerm, SimpleTerm> map) {
+		if (term instanceof AssociativeTerm) {
+			AssociativeTerm temp = (AssociativeTerm) term;
+			if (temp.children.size() != children.size())
+				return false;
+			for (int i = 0; i < children.size(); i++) {
+				Term term1 = children.get(i);
+				Term term2 = temp.children.get(i);
+				if (!term1.equalsWithDifferentVariables(term2, map))
+					return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -39,118 +131,27 @@ public abstract class AssociativeTerm extends Term {
 		return false;
 	}
 
-	@Override
-	public boolean isConstant() {
-		for (Term term : children) {
-			if (!term.isConstant()) return false;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean isForall() {
-		for (Term term : children) {
-			if (term.isForall()) return true;
-		}
-		return false;
-	}
-	
-	protected abstract String getSymbol();
-	
-	@Override
-	public String toString(HashMap<Variable, String> variable) {
-		StringBuffer str = new StringBuffer();
-		str.append(getSymbol() + "(");
-		for (Term term : children) {
-			str.append(term.toString(variable)+" ");
-		}
-		str.deleteCharAt(str.length()-1);
-		str.append(")");
-		return str.toString();
-	}
-	
-	protected <S extends Term> List<Term> substituteHelper(Map<SimpleTerm, S> map) {
-		List<Term> result = new ArrayList<Term>();
-		for (Term child : children) {
-			result.add(child.substitute(map));
-		}
-		return result;
-	}
-	
-	
-	@Override
-	public boolean isQuantified() {
-		for (Term child : children) {
-			if (child.isQuantified()) return true;
-		}
-		return false;
-	}
-
-	@Override
-	public void collectLocalVariables(Set<LocalVariable> existential) {
-		for (Term child : children) {
-			child.collectLocalVariables(existential);
-		}
-	}
-	
-	@Override
-	public void collectVariables(Set<Variable> variables) {
-		for (Term child : children) {
-			child.collectVariables(variables);
-		}
-	}
-
-	@Override
-	public boolean contains(SimpleTerm variables) {
-		for (Term child : children) {
-			if (child.contains(variables)) return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
-		if (term instanceof AssociativeTerm) {
-			AssociativeTerm temp = (AssociativeTerm)term;
-			if (temp.children.size() != children.size()) return false;
-			for (int i = 0; i < children.size(); i++) {
-				Term term1 = children.get(i);
-				Term term2 = temp.children.get(i);
-				if (!term1.equalsWithDifferentVariables(term2, map)) return false;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCodeWithDifferentVariables() {
-		int hashCode = 1;
-		for (Term term : children) {
-			hashCode = hashCode * 31 + term.hashCodeWithDifferentVariables();
-		}
-		return hashCode;
-	}
-
 	public int compareTo(Term o) {
-		if (equals(o)) return 0;
+		if (equals(o))
+			return 0;
 		else if (getPriority() == o.getPriority()) {
-			AssociativeTerm term = (AssociativeTerm)o;
+			AssociativeTerm term = (AssociativeTerm) o;
 			if (getPriority() == term.getPriority()) {
 				if (children.size() == term.children.size()) {
 					for (int i = 0; i < children.size(); i++) {
 						int c = children.get(i).compareTo(term.children.get(i));
-						if (c != 0) return c;
+						if (c != 0)
+							return c;
 					}
-				}
-				else return children.size()-term.children.size();
-			}
-			else return getPriority()-term.getPriority();
-		}
-		else return getPriority() - o.getPriority();
-		
+				} else
+					return children.size() - term.children.size();
+			} else
+				return getPriority() - term.getPriority();
+		} else
+			return getPriority() - o.getPriority();
+
 		assert false;
 		return 1;
 	}
-	
+
 }

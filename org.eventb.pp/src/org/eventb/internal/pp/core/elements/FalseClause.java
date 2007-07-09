@@ -8,8 +8,10 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public class FalseClause extends Clause {
 
+	private static final int BASE_HASHCODE = 11;
+	
 	public FalseClause(IOrigin origin) {
-		super(origin, new ArrayList<PredicateLiteral>(), new ArrayList<EqualityLiteral>(), new ArrayList<ArithmeticLiteral>());
+		super(origin, new ArrayList<PredicateLiteral>(), new ArrayList<EqualityLiteral>(), new ArrayList<ArithmeticLiteral>(), BASE_HASHCODE);
 	}
 
 	@Override

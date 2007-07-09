@@ -60,11 +60,10 @@ public class TestClauseBuilder extends TestCase {
 		}
 	}
 	
-	private static SimpleTerm x = cVar();
-	private static SimpleTerm y = cVar();
-	private static SimpleTerm z = cVar();
-	private static SimpleTerm t = cVar();
-	
+	private static SimpleTerm x = cVar(0);
+	private static SimpleTerm y = cVar(1);
+	private static SimpleTerm z = cVar(2);
+	private static SimpleTerm t = cVar(3);
 	
 	private static SimpleTerm a = cCons("a");
 	private static SimpleTerm b = cCons("b");
@@ -96,6 +95,9 @@ public class TestClauseBuilder extends TestCase {
 	private static Sort Usort = new Sort(ff.makeGivenType("U"));
 	
 	private static Sort INT = Sort.ARITHMETIC;
+	
+	
+	private static SimpleTerm evar0 = cELocVar(0, INT);
 	
 	private static SimpleTerm wInt = cVar(INT);
 	private static SimpleTerm xInt = cVar(INT);
@@ -555,7 +557,7 @@ public class TestClauseBuilder extends TestCase {
 				mList(	"∀x,y,z·x ↦ y ∈ T ∧ y ↦ z ∈ T ⇒ x ↦ z ∈ T",
 						"∀x,y·x ↦ y ∈ T ⇒ y ↦ x ∈ T",
 						"¬((∀x·∃y·x ↦ y ∈ T) ⇒ (∀x·x ↦ x ∈ T))"),
-				mList(	cNotPred(0,cELocVar(0,INT),cELocVar(0,INT)),
+				mList(	cNotPred(0,evar0,evar0),
 						cPred(0,xInt,cELocVar(1,INT))),
 						cClause(cPred(0,xInt,yInt),cNotPred(0,xInt,zInt),cNotPred(0,zInt,yInt)),
 						cClause(cPred(0,xInt,yInt),cNotPred(0,yInt,xInt))
@@ -1187,7 +1189,7 @@ public class TestClauseBuilder extends TestCase {
 		new TestPair(
 				mList(
 						"(∀x·∃y·x ↦ y ∈ T) ⇒ (∀x·x ↦ x ∈ T)"),
-				mList(	cNotPred(0,cELocVar(0,INT),cELocVar(0,INT)),
+				mList(	cNotPred(0,evar0,evar0),
 						cPred(0,xInt,cELocVar(1,INT)))
 		),
 		new TestPair(

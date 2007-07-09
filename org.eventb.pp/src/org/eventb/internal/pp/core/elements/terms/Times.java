@@ -12,10 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Times extends AssociativeTerm {
+public final class Times extends AssociativeTerm {
 
+	private static final int PRIORITY = 4;
+	
 	public Times (List<Term> children) {
-		super(children);
+		super(children, PRIORITY);
 	}
 	
 	@Override
@@ -34,12 +36,6 @@ public class Times extends AssociativeTerm {
 		}
 		return false;
 	}
-	
-	@Override
-	public int getPriority() {
-		return 4;
-	}
-
 	
 	@Override
 	protected <S extends Term> Term substitute(Map<SimpleTerm, S> map) {

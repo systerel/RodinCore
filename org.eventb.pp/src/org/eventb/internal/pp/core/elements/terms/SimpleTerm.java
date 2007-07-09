@@ -6,13 +6,8 @@ import org.eventb.internal.pp.core.elements.Sort;
 
 public abstract class SimpleTerm extends Term {
 
-	protected SimpleTerm(Sort sort) {
-		super(sort);
-	}
-	
-	@Override
-	public int hashCodeWithDifferentVariables() {
-		return 1;
+	protected SimpleTerm(Sort sort, int priority, int hashCode, int hashCodeWithDifferentVariables) {
+		super(sort, priority, hashCode, hashCodeWithDifferentVariables);
 	}
 	
 	@Override

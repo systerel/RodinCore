@@ -15,7 +15,10 @@ import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Sort;
 
 /**
- * TODO comment
+ * The same instance of one variable exists for the same variable in the scope
+ * of one predicate. In two different predicates, variable instances are always disjoint.
+ * This means {@link #equals(Object)} always return false for variables that are in
+ * two different predicates.
  *
  * @author François Terrier
  *
@@ -34,12 +37,16 @@ import org.eventb.internal.pp.core.elements.Sort;
  * 
  */
 public final class LocalVariable extends SimpleTerm {
-
+	private static final int PRIORITY = 1;
+	
+	// used only for toString(), does not enter into account for other calculations
 	private int index;
+	
+	
 	private boolean isForall;
 	
 	public LocalVariable(int index, boolean isForall, Sort sort) {
-		super(sort);
+		super(sort, PRIORITY, index+(isForall?1:0), 2+(isForall?1:0));
 		
 		this.index = index;
 		this.isForall = isForall;
@@ -51,21 +58,23 @@ public final class LocalVariable extends SimpleTerm {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof LocalVariable) {
-			LocalVariable temp = (LocalVariable) obj;
-			return index == temp.index && isForall == temp.isForall;
+		return super.equals(obj);
+	}
+	
+	@Override
+	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
+		if (map.containsKey(this)) return term.equals(map.get(this));
+		else if (term instanceof LocalVariable) {
+			if (isForall != ((LocalVariable)term).isForall || !sort.equals(term.sort)) return false;
+			if (map.containsValue(term)) return false;
+			map.put(this, (LocalVariable)term);
+			return true;
 		}
 		return false;
 	}
 	
 	@Override
-	public int hashCode() {
-		return index;
-	}
-	
-	@Override
 	public boolean isConstant() {
-		// TODO think about this
 		return true;
 	}
 
@@ -84,6 +93,7 @@ public final class LocalVariable extends SimpleTerm {
 		return isForall;
 	}
 	
+	// returns the variable corresponding to this local variable
 	private Variable varCache = null;
 	public Variable getVariable(IVariableContext context) {
 		if (varCache == null) {
@@ -98,43 +108,13 @@ public final class LocalVariable extends SimpleTerm {
 		}
 		return inverseCache;
 	}
-
-	
-//	// FOR TESTING ONLY
-//	public void clean() {
-//		varCache = null;
-//		inverseCache = null;
-//	}
-
-	@Override
-	public boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map) {
-		if (map.containsKey(this)) return term.equals(map.get(this));
-		else if (term instanceof LocalVariable) {
-			if (isForall != ((LocalVariable)term).isForall || !sort.equals(term.sort)) return false;
-			if (map.containsValue(term)) return false;
-			map.put(this, (LocalVariable)term);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public int getPriority() {
-		return 1;
-	}
 	
 	public int compareTo(Term o) {
 		if (equals(0)) return 0;
-		else if (getPriority() == o.getPriority()) return index - ((LocalVariable)o).index;
+		else if (getPriority() == o.getPriority()) return hashCode() - o.hashCode();
 		else return getPriority() - o.getPriority();
 	}
 	
-	
-	@Override
-	public final int hashCodeWithDifferentVariables() {
-		return 1;
-	}
-
 	@Override
 	public void collectVariables(Set<Variable> variables) {
 		return;

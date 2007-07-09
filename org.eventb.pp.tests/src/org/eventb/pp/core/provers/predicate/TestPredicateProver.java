@@ -19,9 +19,9 @@ import junit.framework.TestCase;
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.IProver;
 import org.eventb.internal.pp.core.ProverResult;
-import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
+import org.eventb.internal.pp.loader.clause.VariableContext;
 
 /**
  * TODO Comment

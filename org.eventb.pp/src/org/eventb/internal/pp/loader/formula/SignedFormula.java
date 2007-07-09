@@ -45,7 +45,7 @@ public class SignedFormula<T extends LiteralDescriptor> implements ISignedFormul
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (obj instanceof SignedFormula) {
-			SignedFormula<?> temp = (SignedFormula) obj;
+			SignedFormula<?> temp = (SignedFormula<?>) obj;
 			return isPositive == temp.isPositive && child.equals(temp.child);
 		}
 		return false;
@@ -91,7 +91,7 @@ public class SignedFormula<T extends LiteralDescriptor> implements ISignedFormul
 			else clause = factory.newDisjClauseWithCopy(origin,list, context);
 			// we set the original predicate as this is not a definition
 			clauses.add(clause);
-			ClauseBuilder.debug("New clause: "+clause);
+			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("New clause: "+clause);
 		}
 	}
 

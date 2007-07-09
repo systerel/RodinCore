@@ -12,15 +12,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+public final class Divide extends BinaryTerm {
 
-public class Divide extends BinaryTerm {
-
+	private static final int PRIORITY = 5;
+	
 	public Divide(Term left, Term right) {
-		super(left, right);
+		super(left, right, PRIORITY);
 	}
 	
 	public Divide(List<Term> terms) {
-		super(terms);
+		super(terms, PRIORITY);
 	}
 
 	@Override
@@ -39,13 +40,7 @@ public class Divide extends BinaryTerm {
 		}
 		return false;
 	}
-	
-	@Override
-	public int getPriority() {
-		return 5;
-	}
 
-	
 	@Override
 	protected <S extends Term> Term substitute(Map<SimpleTerm, S> map) {
 		return new Divide(substituteHelper(map));

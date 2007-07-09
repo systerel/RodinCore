@@ -8,20 +8,22 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public final class DisjunctiveClause extends Clause {
 
+	private static final int BASE_HASHCODE = 3;
+	
 //	@Deprecated
 //	public DisjunctiveClause(int level, List<PredicateFormula> predicates, List<Literal> others) {
 //		super(level, predicates, others);
 //	}
 
 	public DisjunctiveClause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, List<EqualityLiteral> conditions) {
-		super(origin, predicates, equalities, arithmetic, conditions);
+		super(origin, predicates, equalities, arithmetic, conditions, BASE_HASHCODE);
 		
 		assert predicates != null && equalities != null && arithmetic != null && conditions != null;
 		assert !isEmpty();
 	}
 	
 	public DisjunctiveClause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic) {
-		super(origin, predicates, equalities, arithmetic);
+		super(origin, predicates, equalities, arithmetic, BASE_HASHCODE);
 		
 		assert predicates != null && equalities != null && arithmetic != null;
 		assert !isEmpty();

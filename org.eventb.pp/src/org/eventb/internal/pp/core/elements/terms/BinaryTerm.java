@@ -14,15 +14,15 @@ import java.util.List;
 
 public abstract class BinaryTerm extends AssociativeTerm {
 	
-	public BinaryTerm(Term left, Term right) {
-		super(Arrays.asList(new Term[]{left, right}));
+	public BinaryTerm(Term left, Term right, int priority) {
+		super(Arrays.asList(new Term[]{left, right}), priority);
 		
 		assert left != null && right != null;
 		
 	}
 	
-	protected BinaryTerm(List<Term> terms) {
-		super(terms);
+	protected BinaryTerm(List<Term> terms, int priority) {
+		super(terms, priority);
 	}
 	
 	public Term getLeft() {
@@ -33,13 +33,4 @@ public abstract class BinaryTerm extends AssociativeTerm {
 		return children.get(1);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof BinaryTerm) {
-			BinaryTerm temp = (BinaryTerm) obj;
-			return super.equals(temp);
-		}
-		return false;
-	}
-	
 }

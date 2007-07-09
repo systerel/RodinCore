@@ -13,8 +13,7 @@ public class ClauseSimplifier {
 	 */
 	public static boolean DEBUG;
 	public static void debug(String message){
-		if (DEBUG)
-			System.out.println(message);
+		System.out.println(message);
 	}
 	
 	private List<ISimplifier> simplifiers = new ArrayList<ISimplifier>();
@@ -30,12 +29,12 @@ public class ClauseSimplifier {
 			if (simplifier.canSimplify(clause)) {
 				clause = clause.simplify(simplifier);
 				if (clause.isEmpty()) {
-					debug("Simplified: "+originalClause.toString()+" -> "+clause.toString());
+					if (DEBUG) debug("Simplified: "+originalClause.toString()+" -> "+clause.toString());
 					return clause;
 				}
 			}
 		}
-		debug("Simplified: "+originalClause.toString()+" -> "+clause.toString());
+		if (DEBUG) debug("Simplified: "+originalClause.toString()+" -> "+clause.toString());
 		return clause;
 	}
 	

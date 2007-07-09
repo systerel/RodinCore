@@ -13,15 +13,21 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.pp.core.elements.Hashable;
 import org.eventb.internal.pp.core.elements.Sort;
 
-public abstract class Term implements Comparable<Term> {
+public abstract class Term extends Hashable implements Comparable<Term> {
 
 	final protected Sort sort;
 	// position of the term inside a literal
 	
-	protected Term(Sort sort) {
+	final protected int priority;
+	
+	protected Term(Sort sort, int priority, int hashCode, int hashCodeWithDifferentVariables) {
+		super(combineHashCodes(priority, hashCode), combineHashCodes(priority, hashCodeWithDifferentVariables));
+		
 		this.sort = sort;
+		this.priority = priority;
 	}
 	
 	public Sort getSort() {
@@ -64,7 +70,9 @@ public abstract class Term implements Comparable<Term> {
 	
 	public abstract String toString(HashMap<Variable, String> variableMap);
 	
-	protected abstract int getPriority();
+	protected int getPriority() {
+		return priority;
+	}
 	
 	@Override
 	public String toString() {
@@ -82,8 +90,6 @@ public abstract class Term implements Comparable<Term> {
 	
 	public abstract boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map);
 
-	public abstract int hashCodeWithDifferentVariables();
-	
 	public boolean isBlocked() {
 		if (numberOfInferences == 0) {
 			numberOfInferences = Term.MAX_NUMBER_OF_INFERENCES;

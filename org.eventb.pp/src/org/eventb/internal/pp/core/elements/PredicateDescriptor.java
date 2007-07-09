@@ -4,10 +4,13 @@ public final class PredicateDescriptor {
 	
 	final private int index;
 	final private boolean positive;
+	final private int hashCode;
 	
 	public PredicateDescriptor(int index, boolean positive) {
 		this.index = index;
 		this.positive = positive;
+		
+		this.hashCode = 37*index + (positive?1:0);
 	}
 	
 	public boolean isPositive() {
@@ -33,7 +36,7 @@ public final class PredicateDescriptor {
 
 	@Override
 	public int hashCode() {
-		return 7*index + (positive?1:0);
+		return hashCode;
 	}
 	
 	@Override

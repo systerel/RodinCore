@@ -26,12 +26,13 @@ public abstract class Clause {
 	final protected List<ArithmeticLiteral> arithmetic;
 	final protected List<EqualityLiteral> equalities;
 	final protected List<PredicateLiteral> predicates;
-
 	final protected List<EqualityLiteral> conditions;
 	
 	final protected IOrigin origin;
 	
-	public Clause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, List<EqualityLiteral> conditions) {
+	private int hashCode;
+	
+	public Clause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, List<EqualityLiteral> conditions, int hashCode) {
 		this.origin = origin;
 		this.predicates = predicates;
 		this.equalities = equalities;
@@ -39,9 +40,10 @@ public abstract class Clause {
 		this.conditions = conditions;
 		
 		computeBitSets();
+		computeHashCode(hashCode);
 	}
-	
-	public Clause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic) {
+
+	public Clause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, int hashCode) {
 		this.origin = origin;
 		this.predicates = predicates;
 		this.equalities = equalities;
@@ -49,6 +51,7 @@ public abstract class Clause {
 		this.conditions = new ArrayList<EqualityLiteral>();
 		
 		computeBitSets();
+		computeHashCode(hashCode);
 	}
 	
 	protected boolean equalsWithDifferentVariables(Clause clause, HashMap<SimpleTerm, SimpleTerm> map) {
@@ -57,20 +60,25 @@ public abstract class Clause {
 			&& listEquals(arithmetic, clause.arithmetic, map) && listEquals(conditions, clause.conditions, map);
 	}
 	
-	protected int hashCodeWithDifferentVariables() {
-		int hashCode = 1;
-		hashCode = 31*hashCode + hashCode(predicates);
-		hashCode = 31*hashCode + hashCode(equalities);
-		hashCode = 31*hashCode + hashCode(arithmetic);
-		hashCode = 31*hashCode + hashCode(conditions);
-		return hashCode;
-	}
 	
+	private void computeHashCode(int hashCode) {
+		hashCode = 37*hashCode + hashCode(predicates);
+		hashCode = 37*hashCode + hashCode(equalities);
+		hashCode = 37*hashCode + hashCode(arithmetic);
+		hashCode = 37*hashCode + hashCode(conditions);
+		this.hashCode = hashCode;
+	}
+
 	protected int hashCode(List<? extends Literal<?,?>> list) {
 		int hashCode = 1;
 		for (Literal<?,?> literal : list) {
-			hashCode = 31*hashCode + (literal==null ? 0 : literal.hashCodeWithDifferentVariables());
+			hashCode = 37*hashCode + (literal==null ? 0 : literal.hashCodeWithDifferentVariables());
 		}
+		return hashCode;
+	}
+	
+	@Override
+	public final int hashCode() {
 		return hashCode;
 	}
 	
@@ -93,11 +101,6 @@ public abstract class Clause {
 			return equalsWithDifferentVariables(tmp,map);
 		}
 		return false;
-	}
-	
-	@Override
-	public int hashCode() {
-		return hashCodeWithDifferentVariables();
 	}
 	
 	public boolean isBlockedOnConditions() {

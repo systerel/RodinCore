@@ -11,11 +11,11 @@ import static org.eventb.pp.Util.mList;
 import java.util.ArrayList;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.EqualitySimplifier;
+import org.eventb.internal.pp.loader.clause.VariableContext;
 import org.eventb.pp.AbstractPPTest;
 import org.eventb.pp.Util;
 
@@ -33,9 +33,9 @@ public class TestEqualitySimplifier extends AbstractPPTest {
 	}
 	
 	
-	private static Variable var0 = Util.cVar();
-	private static Variable var00 = Util.cVar();
-	private static Variable var1 = Util.cVar();
+	private static Variable var0 = Util.cVar(0);
+	private static Variable var00 = Util.cVar(1);
+	private static Variable var1 = Util.cVar(2);
 	
 	
 	TestPair[] tests = new TestPair[] {

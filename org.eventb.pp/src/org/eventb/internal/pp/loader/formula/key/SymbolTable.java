@@ -45,7 +45,7 @@ public class SymbolTable<T extends LiteralDescriptor> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SymbolTable) {
-			SymbolTable<?> temp = (SymbolTable) obj;
+			SymbolTable<?> temp = (SymbolTable<?>) obj;
 			return table.equals(temp.table);
 		}
 		return false;

@@ -14,17 +14,18 @@ import java.util.Map;
 
 import org.eventb.internal.pp.core.elements.Sort;
 
-public class Expn extends BinaryTerm {
+public final class Expn extends BinaryTerm {
 
+	private static final int PRIORITY = 9;
+	
 	public Expn(Term left, Term right, Sort type) {
-		super(left, right);
+		super(left, right, PRIORITY);
 	}
 
 	public Expn(List<Term> terms) {
-		super(terms);
+		super(terms, PRIORITY);
 	}
 
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Expn) {
@@ -41,12 +42,6 @@ public class Expn extends BinaryTerm {
 		}
 		return false;
 	}
-	
-	@Override
-	public int getPriority() {
-		return 9;
-	}
-
 	
 	@Override
 	protected <S extends Term> Term substitute(Map<SimpleTerm, S> map) {

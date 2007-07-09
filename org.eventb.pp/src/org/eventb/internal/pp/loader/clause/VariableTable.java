@@ -12,30 +12,30 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
  * @author François Terrier
  *
  */
-public class VariableTable {
+public final class VariableTable {
 
-	private Hashtable<Integer, Variable> variableTable = new Hashtable<Integer, Variable>();
-	private Hashtable<Integer, LocalVariable> localVariableTable = new Hashtable<Integer, LocalVariable>();
+	private final Hashtable<Integer, Variable> variableTable = new Hashtable<Integer, Variable>();
+	private final Hashtable<Integer, LocalVariable> localVariableTable = new Hashtable<Integer, LocalVariable>();
 	
-	public VariableTable(){
-		// do nothing
+	private final VariableContext context;
+	
+	public VariableTable(VariableContext context){
+		this.context = context;
 	}
 	
 	public Variable getVariable(int index, Sort sort) {
 		Variable var = variableTable.get(index);
 		if (var == null) {
-			var = new Variable(sort);
+			var = new Variable(context.getAndIncrementGlobalVariableID(), sort);
 			variableTable.put(index, var);
 		}
 		return var;
 	}
 	
-	private int localVariableID = 0;
-	
 	public LocalVariable getLocalVariable(int index, boolean isForall, Sort sort) {
 		LocalVariable var = localVariableTable.get(index);
 		if (var == null) {
-			var = new LocalVariable(localVariableID++,isForall,sort);
+			var = new LocalVariable(context.getAndIncrementLocalVariableID(),isForall,sort);
 			localVariableTable.put(index, var);
 		}
 		return var;

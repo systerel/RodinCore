@@ -8,7 +8,6 @@ import static org.eventb.pp.Util.cVar;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.ProverResult;
-import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
@@ -16,6 +15,7 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
 import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
+import org.eventb.internal.pp.loader.clause.VariableContext;
 import org.eventb.pp.AbstractPPTest;
 import org.eventb.pp.Util;
 
@@ -39,15 +39,15 @@ public class TestInstantiationBlocker extends AbstractPPTest {
 	private static Constant a = Util.cCons("a");
 	
 	private static void initVars() {
-		x1 = cVar();
-		x2 = cVar();
-		x3 = cVar();
-		y1 = cVar();
-		y2 = cVar();
-		y3 = cVar();
-		z1 = cVar();
-		z2 = cVar();
-		z3 = cVar();
+		x1 = cVar(1);
+		x2 = cVar(2);
+		x3 = cVar(3);
+		y1 = cVar(4);
+		y2 = cVar(5);
+		y3 = cVar(6);
+		z1 = cVar(7);
+		z2 = cVar(8);
+		z3 = cVar(9);
 	}
 	
 	// this is not permitted any more

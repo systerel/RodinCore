@@ -26,8 +26,7 @@ public class PredicateProver implements IProver {
 	 */
 	public static boolean DEBUG;
 	public static void debug(String message){
-		if (DEBUG)
-			System.out.println(message);
+		System.out.println(message);
 	}
 	
 	private DataStructureWrapper unitClausesWrapper;
@@ -89,7 +88,7 @@ public class PredicateProver implements IProver {
 		
 		ProverResult result = null;
 		if (isBlocked()) {
-			debug("Unblocking clause: "+blockedClause);
+			if (DEBUG) debug("Unblocking clause: "+blockedClause);
 			result = new ProverResult(blockedClause);
 			blockedClause = null;
 		}
@@ -117,7 +116,7 @@ public class PredicateProver implements IProver {
 				else result = new ProverResult(clause, nextClause.getSubsumedClauses());
 			}
 		}
-		debug("PredicateProver, next clause: "+result);
+		if (DEBUG) debug("PredicateProver, next clause: "+result);
 		return result;
 	}
 	

@@ -9,10 +9,10 @@ import static org.eventb.pp.Util.mList;
 
 import java.util.List;
 
-import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.inferrers.EqualityInferrer;
+import org.eventb.internal.pp.loader.clause.VariableContext;
 
 public class TestEqualityInferrer extends AbstractInferrerTests {
 

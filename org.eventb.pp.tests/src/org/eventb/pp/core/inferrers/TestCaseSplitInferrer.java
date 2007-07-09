@@ -9,9 +9,9 @@ import static org.eventb.pp.Util.cNotProp;
 import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.cProp;
 
-import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.inferrers.CaseSplitNegationInferrer;
+import org.eventb.internal.pp.loader.clause.VariableContext;
 import org.eventb.pp.AbstractPPTest;
 
 /**

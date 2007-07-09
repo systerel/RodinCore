@@ -1,33 +1,29 @@
-package org.eventb.internal.pp.core;
+package org.eventb.internal.pp.loader.clause;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Sort;
+import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
-public class VariableContext implements IVariableContext {
+public final class VariableContext implements IVariableContext {
 
-	private int currentVariableID = 0;
+	private int currentLocalVariableID = 0;
+	private int currentGlobalVariableID = 0;
 	
-	public VariableContext(){
+	public VariableContext() {
 		// do nothing
 	}
 	
-//	public void setStartID(int startID) {
-//		this.currentVariableID = startID;
-//	}
+	int getAndIncrementGlobalVariableID() {
+		return currentGlobalVariableID++;
+	}
 	
-//	public int getNextVariableID() {
-//		return currentVariableID++;
-//	}
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.pp.core.elements.IVariableContext#getNextLocalVariable(boolean, org.eventb.internal.pp.core.elements.Sort)
-	 */
-	public int getNextLocalVariableID() {
-		return currentVariableID++;
+	int getAndIncrementLocalVariableID() {
+		return currentLocalVariableID++;
 	}
 	
 	private Hashtable<Sort,List<Variable>> variableCache = new Hashtable<Sort, List<Variable>>();
@@ -56,7 +52,11 @@ public class VariableContext implements IVariableContext {
 	}
 	
 	private Variable newVariable(Sort sort) {
-		return new Variable(sort);
+		return new Variable(currentGlobalVariableID++,sort);
+	}
+
+	public LocalVariable getNextLocalVariable(boolean isForall, Sort sort) {
+		return new LocalVariable(currentLocalVariableID++, isForall, sort);
 	}
 	
 }

@@ -389,7 +389,7 @@ public class Util {
 	}
 	
 	public static Variable cVar(Sort sort) {
-		return new Variable(sort);
+		return new Variable(1,sort);
 	}
 	
 	public static LocalVariable cFLocVar(int index, Sort sort) {
@@ -402,8 +402,8 @@ public class Util {
 	
 	
 	private static Sort A = new Sort(ff.makeGivenType("A"));
-	public static Variable cVar() {
-		return new Variable(A);
+	public static Variable cVar(int index) {
+		return new Variable(index, A);
 	}
 	
 	public static LocalVariable cFLocVar(int index) {

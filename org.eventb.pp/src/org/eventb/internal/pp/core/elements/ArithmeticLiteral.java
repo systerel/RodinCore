@@ -10,18 +10,21 @@ import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
 public class ArithmeticLiteral extends Literal<ArithmeticLiteral,Term> {
+	
+	private static final int BASE_HASHCODE = 17;
+	
 	final private AType type;
 	
 	// TODO get rid of this when normalizing
 	public enum AType {LESS, LESS_EQUAL, EQUAL, UNEQUAL} 
 	
 	public ArithmeticLiteral(Term left, Term right, AType type) {
-		super(Arrays.asList(new Term[]{left,right}));
+		super(Arrays.asList(new Term[]{left,right}), BASE_HASHCODE);
 		this.type = type;
 	}
 	
 	private ArithmeticLiteral(List<Term> terms, AType type) {
-		super(terms);
+		super(terms, BASE_HASHCODE);
 		this.type = type;
 	}
 	
@@ -81,11 +84,6 @@ public class ArithmeticLiteral extends Literal<ArithmeticLiteral,Term> {
 	public ArithmeticLiteral getInverse() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public int hashCodeWithDifferentVariables() {
-		return super.hashCodeWithDifferentVariables() + type.hashCode();
 	}
 
 }

@@ -16,8 +16,10 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public final class EquivalenceClause extends Clause {
 	
+	private static final int BASE_HASHCODE = 5;
+	
 	public EquivalenceClause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic) {
-		super(origin, predicates, equalities, arithmetic);
+		super(origin, predicates, equalities, arithmetic, BASE_HASHCODE);
 		
 		// not a unit clause. unit clauses are disjunctive clauses
 		assert !isUnit();
@@ -26,7 +28,7 @@ public final class EquivalenceClause extends Clause {
 	}
 
 	public EquivalenceClause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, List<EqualityLiteral> conditions) {
-		super(origin, predicates, equalities, arithmetic, conditions);
+		super(origin, predicates, equalities, arithmetic, conditions, BASE_HASHCODE);
 		
 		// not a unit clause. unit clauses are disjunctive clauses
 		assert !isUnit();

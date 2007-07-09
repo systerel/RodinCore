@@ -26,13 +26,11 @@ public class CaseSplitter implements IProver {
 	 */
 	public static boolean DEBUG;
 	public static void debug(String message){
-		if (DEBUG) {
 			String prefix = "";
 //			for (int i = 0; i < currentLevel.getHeight(); i++) {
 //				prefix += " ";
 //			}
 			System.out.println(prefix+message);
-		}
 	}
 	
 	private Stack<SplitPair> splits = new Stack<SplitPair>();
@@ -78,7 +76,7 @@ public class CaseSplitter implements IProver {
 			dispatcher.nextLevel();
 			result = nextCase();
 		}
-		debug("CaseSplitter, next clause: "+result);
+		if (DEBUG) debug("CaseSplitter, next clause: "+result);
 		
 		result = simplifier.run(result);
 		
@@ -87,7 +85,7 @@ public class CaseSplitter implements IProver {
 	}
 	
 	private Clause nextCase() {
-		debug("Following case on "+nextCase.original+", size of split stack: "+splits.size());
+		if (DEBUG) debug("Following case on "+nextCase.original+", size of split stack: "+splits.size());
 		Clause result = nextCase.right;
 		splits.push(nextCase);
 		nextCase = null;
@@ -103,7 +101,7 @@ public class CaseSplitter implements IProver {
 		assert !dispatcher.getLevel().isAncestorOf(clause.getLevel()):"Splitting on clause: "+clause+", but level: "+dispatcher.getLevel();
 		
 		splits.push(split(clause));
-		debug("New case split on "+clause+", size of split stack: "+splits.size());
+		if (DEBUG) debug("New case split on "+clause+", size of split stack: "+splits.size());
 		return splits.peek().left;
 	}
 	
@@ -119,7 +117,7 @@ public class CaseSplitter implements IProver {
 	 * @param oldLevel the level which must be backtracked
 	 */
 	private void backtrack(Level oldLevel, Set<Level> dependencies) {
-		debug("CaseSplitter: Backtracking datastructures, size of split stack: "+splits.size());
+		if (DEBUG) debug("CaseSplitter: Backtracking datastructures, size of split stack: "+splits.size());
 		
 		Set<Clause> putBackList = new LinkedHashSet<Clause>();
 		if (	nextCase != null
@@ -128,7 +126,7 @@ public class CaseSplitter implements IProver {
 			putBackList.add(nextCase.original);
 		}
 		
-		debug("CaseSplitter: Backtracking from: "+oldLevel+", to: "+dispatcher.getLevel());
+		if (DEBUG) debug("CaseSplitter: Backtracking from: "+oldLevel+", to: "+dispatcher.getLevel());
 		Level tmp = oldLevel;
 
 		while (!tmp.getParent().equals(dispatcher.getLevel())) {
@@ -141,7 +139,7 @@ public class CaseSplitter implements IProver {
 			
 			assert tmp.equals(pair.level);
 		}
-		debug("CaseSplitter: Backtracking done, size of split stack: "+splits.size());
+		if (DEBUG) debug("CaseSplitter: Backtracking done, size of split stack: "+splits.size());
 		nextCase = splits.pop();
 		
 		List<Clause> reversePutBackList = new ArrayList<Clause>(putBackList);

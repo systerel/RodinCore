@@ -85,7 +85,7 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> implements IS
 	protected Literal<?,?> getLiteral(int index, List<TermSignature> terms,
 			TermVisitorContext context, VariableTable table) {
 		List<TermSignature> newList = descriptor.getSimplifiedList(terms);
-		ClauseBuilder.debug("Simplified term list for "+this+" is: "+newList);
+		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Simplified term list for "+this+" is: "+newList);
 		Literal<?,?> result;
 		if (newList.size() == 0) {
 			result = new AtomicPredicateLiteral(new PredicateDescriptor(index, context.isPositive));
@@ -93,7 +93,7 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> implements IS
 			List<Term> newTerms = getTermsFromTermSignature(newList, context, table);
 			result = new ComplexPredicateLiteral(new PredicateDescriptor(index, context.isPositive), getSimpleTermsFromTerms(newTerms));
 		}
-		ClauseBuilder.debug("Creating literal from "+this+": "+result);
+		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Creating literal from "+this+": "+result);
 		return result;
 	}
 	
@@ -137,7 +137,7 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> implements IS
     @Override
     public boolean equals(Object obj) {
     	if (obj instanceof AbstractFormula) {
-    		AbstractFormula<?> temp = (AbstractFormula)obj;
+    		AbstractFormula<?> temp = (AbstractFormula<?>)obj;
     		return descriptor.equals(temp.descriptor);
     	}
     	return false;

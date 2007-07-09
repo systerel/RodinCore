@@ -49,7 +49,7 @@ public class EqualityFormula extends AbstractSingleFormula<EqualityDescriptor> {
 		SimpleTerm term2 = (SimpleTerm)terms.get(1);
 		
 		Literal<?,?> result = new EqualityLiteral(term1,term2,flags.isPositive);
-		ClauseBuilder.debug("Creating literal from "+this+": "+result);
+		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Creating literal from "+this+": "+result);
 		return result;
 	}
 

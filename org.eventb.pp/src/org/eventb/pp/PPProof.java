@@ -10,7 +10,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.provers.equality.EqualityProver;
@@ -22,6 +21,7 @@ import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.clause.LoaderResult;
+import org.eventb.internal.pp.loader.clause.VariableContext;
 import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
 import org.eventb.pp.PPResult.Result;
 import org.eventb.pptrans.Translator;
@@ -34,8 +34,7 @@ public class PPProof {
 	 */
 	public static boolean DEBUG;
 	public static void debug(String message){
-		if (DEBUG)
-			System.out.println(message);
+		System.out.println(message);
 	}
 	
 	private List<Predicate> hypotheses; 
@@ -95,7 +94,7 @@ public class PPProof {
 		newPredicate = Translator.reduceToPredicateCalulus(newPredicate, ff);
 		newPredicate = Translator.simplifyPredicate(newPredicate, ff);
 
-		debug("Translated: "+predicate+" to: "+newPredicate);
+		if (DEBUG) debug("Translated: "+predicate+" to: "+newPredicate);
 		return newPredicate;
 	}
 	
@@ -129,9 +128,9 @@ public class PPProof {
 		}
 		
 		initProver(context);
-		debug("==== Original clauses ====");
+		if (DEBUG) debug("==== Original clauses ====");
 		for (Clause clause : clauses) {
-			debug(clause.toString());
+			if (DEBUG) debug(clause.toString());
 		}
 
 		proofStrategy.setClauses(clauses);
@@ -147,15 +146,15 @@ public class PPProof {
 	
 	private void debugResult() {
 		if (result.getResult()==Result.valid) {
-//			debug("** proof found, traced clauses **");
-//			debug(getResult().getTracer().getClauses().toString());
-			debug("** proof found **");
-			if (result.getTracer() instanceof org.eventb.internal.pp.core.tracing.Tracer) debug("closing clauses: "+((org.eventb.internal.pp.core.tracing.Tracer)result.getTracer()).getClosingOrigins());
-			debug("original hypotheses: "+result.getTracer().getOriginalPredicates().toString());
-			debug("goal needed: "+result.getTracer().isGoalNeeded());
+//			if (DEBUG) debug("** proof found, traced clauses **");
+//			if (DEBUG) debug(getResult().getTracer().getClauses().toString());
+			if (DEBUG) debug("** proof found **");
+			if (result.getTracer() instanceof org.eventb.internal.pp.core.tracing.Tracer) if (DEBUG) debug("closing clauses: "+((org.eventb.internal.pp.core.tracing.Tracer)result.getTracer()).getClosingOrigins());
+			if (DEBUG) debug("original hypotheses: "+result.getTracer().getOriginalPredicates().toString());
+			if (DEBUG) debug("goal needed: "+result.getTracer().isGoalNeeded());
 		}
 		else {
-			debug("** no proof found **");
+			if (DEBUG) debug("** no proof found **");
 		}
 	}
 	

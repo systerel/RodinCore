@@ -13,8 +13,7 @@ public class Dumper {
 	 */
 	public static boolean DEBUG;
 	public static void debug(String message){
-		if (DEBUG)
-			System.out.println(message);
+		System.out.println(message);
 	}
 	
 	private List<DumpableDataStructure> dataStructures = new ArrayList<DumpableDataStructure>(); 
@@ -49,19 +48,21 @@ public class Dumper {
 	}
 	
 	public void dump() {
-		debug("== Dumping datastructures ==");
-		for (DumpableDataStructure ds : dataStructures) {
-			debug("---- "+ds.name+" ----");
-			ds.iterator.reset();
-			while (ds.iterator.hasNext()) {
-				debug(ds.iterator.next().toString());
+		if (DEBUG) {
+			debug("== Dumping datastructures ==");
+			for (DumpableDataStructure ds : dataStructures) {
+				debug("---- "+ds.name+" ----");
+				ds.iterator.reset();
+				while (ds.iterator.hasNext()) {
+					debug(ds.iterator.next().toString());
+				}
 			}
+			for (DumpableObject object : objects) {
+				debug("---- "+object.name+" ----");
+				debug(object.object.toString());
+			}
+			debug("======= End of dump ========");
 		}
-		for (DumpableObject object : objects) {
-			debug("---- "+object.name+" ----");
-			debug(object.object.toString());
-		}
-		debug("======= End of dump ========");
 	}
 	
 }

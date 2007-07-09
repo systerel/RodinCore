@@ -51,8 +51,8 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 	}
 
 	public void getFinalClauses(Collection<Clause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext variableContext, boolean positive) {
-		ClauseBuilder.debug("----------------");
-		ClauseBuilder.debug("Equivalence definition:");
+		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("----------------");
+		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Equivalence definition:");
 		getFinalClausesHelper(manager, clauses, factory, true, true, bool, table, variableContext);
 	}
 	

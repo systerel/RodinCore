@@ -44,7 +44,7 @@ public abstract class AbstractLabelizableFormula<T extends LiteralDescriptor> ex
 				clause = factory.newDisjClauseWithCopy(new DefinitionOrigin(), positiveClause,variableContext);	
 			}
 			clauses.add(clause);
-			ClauseBuilder.debug("New clause: "+clause);
+			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("New clause: "+clause);
 		}
 	}
 	
@@ -60,7 +60,7 @@ public abstract class AbstractLabelizableFormula<T extends LiteralDescriptor> ex
 		ClauseBuilder.debugEnter(this);
 		List<List<Literal<?,?>>> result;
 		if (isLabelizable(manager, context)) {
-			ClauseBuilder.debug(this + " cannot be simplified");
+			if (ClauseBuilder.DEBUG) ClauseBuilder.debug(this + " cannot be simplified");
 			
 			if (isEquivalence()) manager.addEquivalenceLabel(this);
 			// if it is used only once, we labelize only one
@@ -81,7 +81,7 @@ public abstract class AbstractLabelizableFormula<T extends LiteralDescriptor> ex
 		}
 		else {
 			TermVisitorContext newContext = getNewContext(context);
-			ClauseBuilder.debug(this + " can be simplified");
+			if (ClauseBuilder.DEBUG) ClauseBuilder.debug(this + " can be simplified");
 			result = getDefinitionClauses(termList, manager, prefix, newContext, table, bool);
 		}
 		ClauseBuilder.debugExit(this);

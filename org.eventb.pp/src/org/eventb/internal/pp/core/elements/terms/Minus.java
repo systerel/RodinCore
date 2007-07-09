@@ -12,14 +12,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Minus extends BinaryTerm {
+public final class Minus extends BinaryTerm {
 
+	private static final int PRIORITY = 7;
+	
+	
 	public Minus(Term left, Term right) {
-		super(left, right);
+		super(left, right, PRIORITY);
 	}
 	
 	public Minus(List<Term> terms) {
-		super(terms);
+		super(terms, PRIORITY);
 	}
 
 
@@ -39,12 +42,6 @@ public class Minus extends BinaryTerm {
 		}
 		return false;
 	}
-	
-	@Override
-	public int getPriority() {
-		return 7;
-	}
-
 	
 	@Override
 	protected <S extends Term> Term substitute(Map<SimpleTerm, S> map) {

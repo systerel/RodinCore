@@ -79,7 +79,7 @@ public class ResolutionResolver implements IResolver {
 		inferrer.setUnitClause(currentMatcher);
 		currentMatched.infer(inferrer);
 		InferrenceResult result = inferrer.getResult();
-		PredicateProver.debug("Inferred clause: "+currentMatcher+" + "+currentMatched+" -> "+result.getClause());
+		if (PredicateProver.DEBUG) PredicateProver.debug("Inferred clause: "+currentMatcher+" + "+currentMatched+" -> "+result.getClause());
 		return result;
 	}
 	

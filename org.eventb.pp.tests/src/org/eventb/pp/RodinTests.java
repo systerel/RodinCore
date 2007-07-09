@@ -68,6 +68,7 @@ public class RodinTests extends AbstractPPTest {
 		}
 	}
 	
+	
 	TestPair[] tests = new TestPair[]{
 			// translation
 //			new TestPair(new HashSet<String>(),
@@ -78,30 +79,56 @@ public class RodinTests extends AbstractPPTest {
 //					"c^2 ∉ C"
 //					),"⊥",false
 //			),
+			
+			
+//			 r : a<->b
+//			 c <: a
+//			|---
+//			 r[c]<:b
+//			new TestPair(mSet(
+//					"r ∈ d↔e",
+//					"c ⊆ d"
+//					), "r[c] ⊆ e", true
+//			),
+//			
+////			  x|->y : r
+////			  !x,y. y|->x : r => x : b
+////			 |---
+////			  y:b
+//			
+//			new TestPair(mSet(
+//					"x↦y ∈ r",
+//					"∀x,y· y↦x ∈ r ⇒ x∈b"
+//					), "y∈b", true
+//			),
+			
 //			new TestPair(mSet(
 //					"∀x·x^2 ∈ C",
 //					"∀x·x^2 ∉ C"
 //					),"⊥",false
 //			),
-			new TestPair(mSet(
-				"r ∈ E ↔ E"
-				),"r ∈ E ↔ E",true
-			),
-			new TestPair(mSet(
-					"r ∈ E ↔ E",
-					"s ∈ E ↔ E"
-				),"r;s ⊆ E × E",true
-			),
+//			new TestPair(mSet(
+//				"r ∈ E ↔ E"
+//				),"r ∈ E ↔ E",true
+//			),
+//			new TestPair(mSet(
+//					"r ∈ E ↔ E",
+//					"s ∈ E ↔ E"
+//				),"r;s ⊆ E × E",true
+//			),
+			//fails
 //			new TestPair(mSet(
 //					"r ∈ E ↔ E",
 //					"s ∈ E ↔ E"
 //				),"r;s ∈ E ↔ E",true
 //			),
+			//fails
 //			new TestPair(mSet(
 //						"r ∈ E ⇸ E",
 //						"s ∈ E ⇸ E"
 //					),"r;s ∈ E ⇸ E",true
 //			),
+			//fails
 //			new TestPair(mSet(
 //					"r ∈ E → E",
 //					"s ∈ E → E"
@@ -153,15 +180,15 @@ public class RodinTests extends AbstractPPTest {
 					"f ∈ S ↔ T"
 					),"f∼[C ∩ D] = f∼[C] ∩ f∼[D]", false
 			),
-			new TestPair(mSet(
-					"dap;org ⊆ sit",
-					"sit(p)=org(d)",
-//					"p ∈ dom(sit)", // unneeded
-//					"d ∈ dom(org)", // unneeded
-					"org ∈ D ⇸ L",
-					"sit ∈ P → L"
-				),"(dap ∪ {p↦d});org ⊆ sit",true
-			),
+//			new TestPair(mSet(
+//					"dap;org ⊆ sit",
+//					"sit(p)=org(d)",
+////					"p ∈ dom(sit)", // unneeded
+////					"d ∈ dom(org)", // unneeded
+//					"org ∈ D ⇸ L",
+//					"sit ∈ P → L"
+//				),"(dap ∪ {p↦d});org ⊆ sit",true
+//			),
 //			new TestPair(mSet(
 //					"dap;org ⊆ sit",
 //					"sit(p)=org(d)",
@@ -175,7 +202,6 @@ public class RodinTests extends AbstractPPTest {
 					"(A∪B)∩(A∪C)∈U"
 					),"A∪(B∩C)∈U",true
 			),
-			// fails at the moment
 			new TestPair(mSet(
 					"A∪B∈U",
 					"(A∪B)∩(A∪C)∈U"
@@ -198,7 +224,6 @@ public class RodinTests extends AbstractPPTest {
 					"(A∪B)∩(A∪C)∈U"
 					),"A∪(B∩C)=(A∪B)∩(A∪C)",true
 			),
-			// fails
 			new TestPair(mSet(
 					"∅∉U",
 					"A∪B∈U",
@@ -210,16 +235,16 @@ public class RodinTests extends AbstractPPTest {
 					"(A∪B)∩(A∪C)∈U"
 					),"A∪(B∩C)=(A∪B)∩(A∪C)",true
 			),
-//			new TestPair(mSet(
-//					"(A∪B)∈U"
-//					),"A∈U",false),
+			new TestPair(mSet(
+					"(A∪B)∈U"
+					),"A∈U",false),
 //			new TestPair(mSet("r ∈ ran(r)∖{x} → ran(r)","r∼[q]⊆q","x∈q"),
 //					"ran(r)∖r∼[ran(r)∖q]⊆q",true),
 //			new TestPair(mSet("A = G"),"G ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)",true),
 //			new TestPair(mSet("q ⊆ R"),"R ∖ q ⊆ R",true),
 //			new TestPair(mSet("∀r·r∈R⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}","nxt∈R → (B ⤔ B)"),
 //					"∀r·r∈R⇒r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))∧r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))",true),
-			new TestPair(mSet("R ⊆ C"),"r[R] ⊆ r[C]",true),
+//			new TestPair(mSet("R ⊆ C"),"r[R] ⊆ r[C]",true),
 //			new TestPair(mSet("a = c"),"a ∈ {c,d}",true),
 //			new TestPair(mSet("(∃x,y·f(x)=y ∧ g(y)=a)"),"(∃x·(g∘f)(x)=a)",true),
 //			new TestPair(mSet("(∀x·(∃x0·x ↦ x0∈SIG)⇒(∃x0·x0 ↦ x∈fst))" +

@@ -74,8 +74,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	public static boolean DEBUG;
 	
 	public static void debug(String message){
-		if (DEBUG)
-			System.out.println(message);
+		System.out.println(message);
 	}
 	
 	private TermBuilder termBuilder;
@@ -120,8 +119,8 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 			|| predicate.getTag() == Formula.GT) : "Unexpected operator: "+predicate+"";
 		assert predicate.isTypeChecked();
 		
-		debug("========================================");
-		debug("Loading "+(isGoal?"goal":"hypothese")+": " + predicate);
+		if (DEBUG) debug("========================================");
+		if (DEBUG) debug("Loading "+(isGoal?"goal":"hypothese")+": " + predicate);
 	
 		this.result = new Stack<NormalizedFormula>();
 		this.termBuilder = new TermBuilder(result);
@@ -273,7 +272,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		ArithmeticDescriptor desc = updateDescriptor(key, context.getArithmeticTable(), interRes, "arithmetic");
 		desc.addResult(interRes);
 		ArithmeticFormula sig = new ArithmeticFormula(type,interRes.getTerms(),terms,desc);
-		debug(prefix+"Adding terms to "+desc+": "+interRes);
+		if (DEBUG) debug(prefix+"Adding terms to "+desc+": "+interRes);
 		
 		result.peek().addResult(new SignedFormula<ArithmeticDescriptor>(sig,inverseSign?!isPositive:isPositive),interRes);
 		clean();
@@ -401,7 +400,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	
 	private StringBuilder prefix = new StringBuilder("");
 	private void debugEnter(Predicate pred) {
-		debug(prefix+"Entering "+pred);
+		if (DEBUG) debug(prefix+"Entering "+pred);
 		prefix.append("  ");
 	}
 	
@@ -415,10 +414,10 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		if (desc == null) {
 			desc = key.newDescriptor(context);
 			table.add(key, desc);
-			debug(prefix+"New "+debug+" with "+key+", becomes: "+desc.toString());
+			if (DEBUG) debug(prefix+"New "+debug+" with "+key+", becomes: "+desc.toString());
 		}
 		desc.addResult(res);
-		debug(prefix+"Adding terms to "+desc+": "+res);
+		if (DEBUG) debug(prefix+"Adding terms to "+desc+": "+res);
 		return desc;
 	}
 	

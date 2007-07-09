@@ -38,7 +38,7 @@ public class BooleanEqualityFormula extends EqualityFormula {
 		}
 		
 		if (result.size() != descriptor.getResults().size()) {
-			ClauseBuilder.debug("Splitting "+this+", terms remaining: "+result.toString());
+			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Splitting "+this+", terms remaining: "+result.toString());
 		}
 
 		descriptor = new EqualityDescriptor(descriptor.getContext(), result, descriptor.getSort());
@@ -71,7 +71,7 @@ public class BooleanEqualityFormula extends EqualityFormula {
 			
 			result = new EqualityLiteral(term1,term2, context.isPositive);
 		}
-		ClauseBuilder.debug("Creating literal from "+this+": "+result);
+		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Creating literal from "+this+": "+result);
 		return result;
 	}
 	

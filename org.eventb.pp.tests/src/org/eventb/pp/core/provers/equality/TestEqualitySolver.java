@@ -789,14 +789,14 @@ public class TestEqualitySolver extends AbstractPPTest {
 		List<InstantiationResult> results = solver.addInstantiation(I(a, R6L0q));
 		assertNotNull(results);
 		assertEquals(2, results.size());
-		InstantiationResult result1 = results.get(0);
-		assertEquals(d, result1.getProposedValue());
-		assertEquals(R6L0q, result1.getSolvedSource());
-		assertEquals(mSet(R1L1, R3L1), result1.getSolvedValueSource());
-		InstantiationResult result2 = results.get(1);
+		InstantiationResult result2 = results.get(0);
 		assertEquals(e, result2.getProposedValue());
 		assertEquals(R6L0q, result2.getSolvedSource());
 		assertEquals(mSet(R2L0, R4L0), result2.getSolvedValueSource());
+		InstantiationResult result1 = results.get(1);
+		assertEquals(d, result1.getProposedValue());
+		assertEquals(R6L0q, result1.getSolvedSource());
+		assertEquals(mSet(R1L1, R3L1), result1.getSolvedValueSource());
 	}
 	
 	public void testMultipleInstantiation2() {

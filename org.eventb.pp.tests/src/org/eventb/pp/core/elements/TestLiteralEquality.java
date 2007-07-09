@@ -56,6 +56,8 @@ public class TestLiteralEquality extends AbstractPPTest {
 		
 		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(0, x, evar0), cPred(0, x, evar0));
 		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(0, x, evar0), cNotPred(0, x, evar0));
+		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(0, x, evar0, evar0), cPred(0, x, evar0, evar0));
+		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(0, x, evar0, evar0), cNotPred(0, x, evar0, evar0));
 		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(0, x, fvar0), cPred(0, x, fvar0));
 		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(0, x, fvar0), cNotPred(0, x, fvar0));
 		
@@ -63,7 +65,11 @@ public class TestLiteralEquality extends AbstractPPTest {
 		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, evar0), cNotPred(0, x, evar1), false);
 		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, evar0), cPred(0, x, fvar0), true);
 		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, evar0), cNotPred(0, x, fvar0), true);
-
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, evar0, evar1), cPred(0, x, evar0, evar0), false);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, evar0, evar1), cNotPred(0, x, evar0, evar0), false);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, evar0, evar0), cPred(0, x, evar0, fvar0), false);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, evar0, evar0), cNotPred(0, x, evar0, fvar0), false);
+		
 		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, x), cPred(0, x, evar0), true);
 		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, x), cNotPred(0, x, evar0), true);
 		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, x), cPred(0, x, fvar0), true);

@@ -50,8 +50,8 @@ public class LiteralOrderer implements Comparator<ISignedFormula> {
 		// from here, neither o1 nor o2 is an arithmetic literal
 		if (o1.getFormula() instanceof AbstractClause) {
 			if (o2.getFormula() instanceof AbstractClause) {
-				AbstractClause<?> c1 = (AbstractClause)o1.getFormula();
-				AbstractClause<?> c2 = (AbstractClause)o2.getFormula();
+				AbstractClause<?> c1 = (AbstractClause<?>)o1.getFormula();
+				AbstractClause<?> c2 = (AbstractClause<?>)o2.getFormula();
 				return compare(c1, c2, signComp);
 			}
 			else return -1;

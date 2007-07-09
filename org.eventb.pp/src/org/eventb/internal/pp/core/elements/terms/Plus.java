@@ -18,10 +18,13 @@ import java.util.Map;
  * @author François Terrier
  *
  */
-public class Plus extends AssociativeTerm {
+public final class Plus extends AssociativeTerm {
 
+	private static final int PRIORITY = 6;
+	
+	
 	public Plus (List<Term> children) {
-		super(children);
+		super(children, PRIORITY);
 	}
 	
 	@Override
@@ -45,12 +48,6 @@ public class Plus extends AssociativeTerm {
 	public String toString() {
 		return "+ (" + super.toString() + ")";
 	}
-	
-	@Override
-	public int getPriority() {
-		return 6;
-	}
-
 	
 	@Override
 	protected <S extends Term> Term substitute(Map<SimpleTerm, S> map) {

@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateDescriptor;
 import org.eventb.internal.pp.core.elements.Sort;
@@ -24,6 +23,7 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
 import org.eventb.internal.pp.core.provers.predicate.IMatchIterator;
 import org.eventb.internal.pp.core.provers.predicate.ResolutionResolver;
+import org.eventb.internal.pp.loader.clause.VariableContext;
 import org.eventb.pp.Util;
 
 /**

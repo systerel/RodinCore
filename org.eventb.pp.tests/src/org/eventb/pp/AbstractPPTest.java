@@ -77,9 +77,9 @@ public abstract class AbstractPPTest extends TestCase {
 	
 	
 	
-	protected static Variable x = cVar();
-	protected static Variable y = cVar();
-	protected static Variable z = cVar();
+	protected static Variable x = cVar(1);
+	protected static Variable y = cVar(2);
+	protected static Variable z = cVar(3);
 	protected static Constant a = cCons("a");
 	protected static Constant b = cCons("b");
 	protected static Constant c = cCons("c");
@@ -87,11 +87,11 @@ public abstract class AbstractPPTest extends TestCase {
 	protected static Constant e = cCons("e");
 	protected static Constant f = cCons("f");
 	
-	protected static Variable var0 = Util.cVar();
-	protected static Variable var1 = Util.cVar();
-	protected static Variable var2 = Util.cVar();
-	protected static Variable var3 = Util.cVar();
-	protected static Variable var4 = Util.cVar();
+	protected static Variable var0 = Util.cVar(4);
+	protected static Variable var1 = Util.cVar(5);
+	protected static Variable var2 = Util.cVar(6);
+	protected static Variable var3 = Util.cVar(7);
+	protected static Variable var4 = Util.cVar(8);
 	
 	protected static LocalVariable evar0 = cELocVar(0);
 	protected static LocalVariable evar1 = cELocVar(1);
@@ -126,11 +126,11 @@ public abstract class AbstractPPTest extends TestCase {
 //		PredicateBuilder.DEBUG = true;
 //		ClauseBuilder.DEBUG = true;
 		
-		PPProof.DEBUG = true;
-		ClauseDispatcher.DEBUG = true;
-		PredicateProver.DEBUG = true;
-		ClauseSimplifier.DEBUG = true;
-		CaseSplitter.DEBUG = true;
+//		PPProof.DEBUG = true;
+//		ClauseDispatcher.DEBUG = true;
+//		PredicateProver.DEBUG = true;
+//		ClauseSimplifier.DEBUG = true;
+//		CaseSplitter.DEBUG = true;
 //		Dumper.DEBUG = true;
 	}
 }

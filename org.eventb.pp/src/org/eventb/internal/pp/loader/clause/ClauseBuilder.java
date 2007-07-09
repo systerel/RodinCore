@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
@@ -57,12 +56,11 @@ public class ClauseBuilder {
 	public static boolean DEBUG;
 	
 	public static void debug(String message){
-		if (DEBUG)
-			System.out.println(prefix+message);
+		System.out.println(prefix+message);
 	}
 	private static StringBuilder prefix = new StringBuilder("");
 	public static void debugEnter(AbstractFormula<?> pred) {
-		debug("Entering "+pred+": "+pred.getStringDeps());
+		if (DEBUG) debug("Entering "+pred+": "+pred.getStringDeps());
 		prefix.append("  ");
 	}
 	public static void debugExit(ISubFormula<?> pred) {
@@ -71,7 +69,7 @@ public class ClauseBuilder {
 	}
 	
 	private Set<Clause> clauses;
-	private IVariableContext variableContext;
+	private VariableContext variableContext;
 	
 	private ClauseFactory cf = ClauseFactory.getDefault();
 	
@@ -93,15 +91,15 @@ public class ClauseBuilder {
 		debugContext(context);
 		
 		variableContext = new VariableContext();
-		variableTable = new VariableTable();
+		variableTable = new VariableTable(variableContext);
 		bool = new BooleanEqualityTable(context.getNextLiteralIdentifier());
 
 		clauses = new LinkedHashSet<Clause>();
 		manager = new LabelManager();
 		
 		for (INormalizedFormula signature : context.getResults()) {
-			debug("========================================");
-			debug("Getting clauses for original formula: " + signature);
+			if (DEBUG) debug("========================================");
+			if (DEBUG) debug("Getting clauses for original formula: " + signature);
 //			manager.setForceLabelize(false);
 			buildNormalizedFormulas(signature);
 		}
@@ -112,10 +110,10 @@ public class ClauseBuilder {
 		// get type informations
 //		buildPredicateTypeInformation(context.getAllPredicateDescriptors());
 		
-		debug("========================================");
-		debug("End of loading phase, clauses:");
+		if (DEBUG) debug("========================================");
+		if (DEBUG) debug("End of loading phase, clauses:");
 		for (Clause clause : clauses) {
-			debug(clause.toString());
+			if (DEBUG) debug(clause.toString());
 		}
 	}
 	
@@ -123,8 +121,8 @@ public class ClauseBuilder {
 		manager.nextLabelizableFormula();
 		ILabelizableFormula<?> formula = manager.getNextFormula();
 		while (formula != null) {
-			debug("========================================");
-			debug("Getting definition clauses for label: " + formula + ": " + formula.getStringDeps());
+			if (DEBUG) debug("========================================");
+			if (DEBUG) debug("Getting definition clauses for label: " + formula + ": " + formula.getStringDeps());
 			formula.split();
 //			manager.setForceLabelize(false);
 			

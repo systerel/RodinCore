@@ -28,7 +28,7 @@ public class TestExistentialSimplification extends AbstractPPTest {
 	private static Constant newCons0 = Util.cCons("0");
 	private static Constant newCons1 = Util.cCons("1");
 	
-	private static Variable var0 = Util.cVar();
+	private static Variable var0 = Util.cVar(0);
 	
 	
 	TestPair[] tests = new TestPair[] {

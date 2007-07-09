@@ -28,7 +28,7 @@ public class RootInfo<T extends Source> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof RootInfo) {
-			RootInfo<?> temp = (RootInfo) obj;
+			RootInfo<?> temp = (RootInfo<?>) obj;
 			return equality.equals(temp.equality);
 		}
 		return false;

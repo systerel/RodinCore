@@ -19,7 +19,7 @@ public abstract class PredicateLiteral extends Literal<PredicateLiteral,SimpleTe
 	final protected PredicateDescriptor descriptor;
 	
 	public PredicateLiteral(PredicateDescriptor descriptor, List<SimpleTerm> terms) {
-		super(terms);
+		super(terms, descriptor.hashCode());
 		
 		this.descriptor = descriptor;
 	}
@@ -36,16 +36,6 @@ public abstract class PredicateLiteral extends Literal<PredicateLiteral,SimpleTe
 	@Override
 	public boolean equalsWithDifferentVariables(PredicateLiteral literal, HashMap<SimpleTerm, SimpleTerm> map) {
 		return descriptor.equals(literal.descriptor) && super.equalsWithDifferentVariables(literal, map);
-	}
-	
-	@Override
-	public int hashCodeWithDifferentVariables() {
-		return super.hashCodeWithDifferentVariables() + descriptor.hashCode();
-	}
-	
-	@Override
-	public int hashCode() {
-		return super.hashCode() + descriptor.hashCode();
 	}
 	
 //	public boolean isPositive() {

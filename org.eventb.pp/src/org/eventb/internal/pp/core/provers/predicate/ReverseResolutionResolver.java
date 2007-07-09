@@ -61,7 +61,7 @@ public class ReverseResolutionResolver implements IResolver {
 		inferrer.setUnitClause(currentUnit);
 		currentNonUnit.infer(inferrer);
 		InferrenceResult result = inferrer.getResult();
-		PredicateProver.debug("Inferred clause: "+currentUnit+" + "+currentNonUnit+" -> "+result.getClause());
+		if (PredicateProver.DEBUG) PredicateProver.debug("Inferred clause: "+currentUnit+" + "+currentNonUnit+" -> "+result.getClause());
 		return result;
 	}
 

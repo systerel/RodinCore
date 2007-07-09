@@ -13,14 +13,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UnaryMinus extends AssociativeTerm {
+public final class UnaryMinus extends AssociativeTerm {
 
+	private static final int PRIORITY = 3;
+	
 	public UnaryMinus(Term child) {
-		super(Arrays.asList(new Term[]{child}));
+		super(Arrays.asList(new Term[]{child}), PRIORITY);
 	}
 	
 	public UnaryMinus(List<Term> child) {
-		super(child);
+		super(child, PRIORITY);
 		assert child.size() == 1;
 	}
 	
@@ -51,12 +53,6 @@ public class UnaryMinus extends AssociativeTerm {
 		if (!getChild().isConstant()) return false;
 		return true;
 	}
-	
-	@Override
-	public int getPriority() {
-		return 3;
-	}
-
 	
 	@Override
 	protected <S extends Term> Term substitute(Map<SimpleTerm, S> map) {

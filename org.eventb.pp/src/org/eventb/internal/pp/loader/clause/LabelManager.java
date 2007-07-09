@@ -34,7 +34,7 @@ public class LabelManager {
 	
 	private void addLabel(ILabelizableFormula<?> formula, LinkedHashSet<ILabelizableFormula<?>> set) {
 		if (!set.contains(formula)) {
-			ClauseBuilder.debug("Adding "+formula+" to list of clauses that must be labelized");
+			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Adding "+formula+" to list of clauses that must be labelized");
 			set.add(formula);
 		}
 	}

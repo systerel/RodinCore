@@ -13,11 +13,16 @@ import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
-public abstract class Literal<S extends Literal<S,T>, T extends Term> {
+public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Hashable {
 
 	final protected List<T> terms;
 	
-	public Literal(List<T> terms) {
+	public Literal(List<T> terms, int hashCode) {
+		super( 
+				combineHashCodes(combineHashCodesWithSameVariables(terms),hashCode),
+				combineHashCodes(combineHashCodesWithDifferentVariables(terms),hashCode)
+		);
+		
 		this.terms = terms;
 	}
 
@@ -46,19 +51,6 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> {
 		return false;
 	}
 	
-	@Override
-	public int hashCode() {
-		return terms.hashCode();
-	}
-	
-	public int hashCodeWithDifferentVariables() {
-		int hashCode = 1;
-		for (T term : terms) {
-			hashCode = 31*hashCode + term.hashCodeWithDifferentVariables();
-		}
-		return hashCode;
-	}
-	
 	public S getCopyWithNewVariables(IVariableContext context, 
 			HashMap<SimpleTerm, SimpleTerm> substitutionsMap) {
 		Set<Variable> variables = new HashSet<Variable>();
@@ -71,7 +63,7 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> {
 			if (!substitutionsMap.containsKey(variable)) substitutionsMap.put(variable, context.getNextVariable(variable.getSort()));
 		}
 		for (LocalVariable variable : localVariables) {
-			if (!substitutionsMap.containsKey(variable)) substitutionsMap.put(variable, new LocalVariable(context.getNextLocalVariableID(),variable.isForall(),variable.getSort()));
+			if (!substitutionsMap.containsKey(variable)) substitutionsMap.put(variable, context.getNextLocalVariable(variable.isForall(),variable.getSort()));
 		}
 		return substitute(substitutionsMap);
 	}
@@ -81,7 +73,7 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Literal) {
-			Literal<?, ?> temp = (Literal)obj;
+			Literal<?, ?> temp = (Literal<?,?>)obj;
 			return terms.equals(temp.terms);
 		}
 		return false;
