@@ -17,6 +17,7 @@ import org.eventb.ui.prover.DefaultTacticProvider;
 public class DomDistRightHyp extends DefaultTacticProvider {
 
 	@Override
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.domDistRightRewrites(hyp, position);

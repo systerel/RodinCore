@@ -14,8 +14,8 @@ public class AbstrExpr extends DefaultTacticProvider {
 
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
-			IPosition position, String[] inputs) {
-		return Tactics.abstrExprThenEq(inputs[0]);
+			IPosition position, String[] inputs, String globalInput) {
+		return Tactics.abstrExprThenEq(globalInput);
 	}
 
 	@Override

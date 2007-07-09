@@ -12,6 +12,7 @@ import org.eventb.ui.prover.DefaultTacticProvider;
 public class FunSingletonImgHyp extends DefaultTacticProvider {
 
 	@Override
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.funSingletonImg(hyp, position);

@@ -12,6 +12,7 @@ import org.eventb.ui.prover.DefaultTacticProvider;
 public class AndOrDistGoal extends DefaultTacticProvider {
 
 	@Override
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.andOrDistRewrites(null, position);

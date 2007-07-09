@@ -14,8 +14,8 @@ public class AddHypothesis extends DefaultTacticProvider {
 
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
-			IPosition position, String[] inputs) {
-		return Tactics.insertLemma(inputs[0]);
+			IPosition position, String[] inputs, String globalInput) {
+		return Tactics.insertLemma(globalInput);
 	}
 
 	@Override

@@ -16,6 +16,7 @@ public class ContImpHyp extends DefaultTacticProvider {
 	private List<IPosition> positions = null;
 
 	@Override
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.contImpHyp(hyp, position); // Second level

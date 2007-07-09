@@ -14,6 +14,7 @@ public class RemoveMembershipGoal extends DefaultTacticProvider implements
 		ITacticProvider {
 
 	@Override
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.removeMembership(null, position);

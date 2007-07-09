@@ -14,6 +14,7 @@ import org.eventb.ui.prover.DefaultTacticProvider;
 public class RelOvrGoal extends DefaultTacticProvider {
 
 	@Override
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		// Do not need to pass the sequent

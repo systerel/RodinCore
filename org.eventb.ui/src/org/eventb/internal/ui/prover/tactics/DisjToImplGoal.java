@@ -17,6 +17,7 @@ public class DisjToImplGoal extends DefaultTacticProvider implements
 		ITacticProvider {
 
 	@Override
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.disjToImpl(null, position);

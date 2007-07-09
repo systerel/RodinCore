@@ -14,6 +14,7 @@ public class RemoveInclusionUniversalGoal extends DefaultTacticProvider implemen
 		ITacticProvider {
 
 	@Override
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.removeInclusionUniversal(null, position);

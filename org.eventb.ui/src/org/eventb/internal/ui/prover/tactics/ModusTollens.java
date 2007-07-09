@@ -13,9 +13,8 @@ import org.eventb.ui.prover.DefaultTacticProvider;
 
 public class ModusTollens extends DefaultTacticProvider {
 
-	private List<IPosition> positions;
-
 	@Override
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.modusTollens(hyp);
@@ -25,7 +24,7 @@ public class ModusTollens extends DefaultTacticProvider {
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (node != null && Lib.isImp(hyp)) {
-			positions = new ArrayList<IPosition>();
+			List<IPosition> positions = new ArrayList<IPosition>();
 			positions.add(IPosition.ROOT);
 			return positions;
 		}

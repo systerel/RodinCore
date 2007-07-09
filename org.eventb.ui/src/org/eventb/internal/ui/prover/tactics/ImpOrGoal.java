@@ -12,6 +12,7 @@ import org.eventb.ui.prover.DefaultTacticProvider;
 public class ImpOrGoal extends DefaultTacticProvider {
 
 	@Override
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.impOrRewrites(null, position);

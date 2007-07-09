@@ -12,6 +12,7 @@ import org.eventb.ui.prover.DefaultTacticProvider;
 public class DomCompGoal extends DefaultTacticProvider {
 
 	@Override
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.domComp(null, position);

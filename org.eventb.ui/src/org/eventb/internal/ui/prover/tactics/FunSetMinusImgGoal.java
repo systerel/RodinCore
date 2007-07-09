@@ -16,6 +16,7 @@ import org.eventb.ui.prover.DefaultTacticProvider;
 public class FunSetMinusImgGoal extends DefaultTacticProvider {
 
 	@Override
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return Tactics.funSetMinusImg(null, position);
