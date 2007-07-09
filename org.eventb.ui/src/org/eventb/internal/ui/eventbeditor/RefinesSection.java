@@ -60,7 +60,7 @@ public class RefinesSection extends SectionPart implements
 	private static final String SECTION_DESCRIPTION = "Select the abstraction of this machine";
 
 	// The Event B Editor contains this section.
-	IEventBEditor editor;
+	IEventBEditor<?> editor;
 
 	private final static String NULL_VALUE = "--- None ---";
 
@@ -91,7 +91,7 @@ public class RefinesSection extends SectionPart implements
 	 * @param parent
 	 *            The composite parent
 	 */
-	public RefinesSection(IEventBEditor editor, FormToolkit toolkit,
+	public RefinesSection(IEventBEditor<?> editor, FormToolkit toolkit,
 			Composite parent) {
 		super(parent, toolkit, ExpandableComposite.TITLE_BAR
 				| Section.DESCRIPTION);

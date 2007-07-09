@@ -140,7 +140,7 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @param style
 	 *            the style to create the tree viewer
 	 */
-	public InvariantEditableTreeViewer(IEventBEditor editor, Composite parent,
+	public InvariantEditableTreeViewer(IEventBEditor<IMachineFile> editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new InvariantContentProvider());

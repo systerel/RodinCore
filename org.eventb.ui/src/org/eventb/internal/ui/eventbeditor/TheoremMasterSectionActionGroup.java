@@ -34,7 +34,7 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 public class TheoremMasterSectionActionGroup extends ActionGroup {
 
 	// The Event-B Editor.
-	IEventBEditor editor;
+	IEventBEditor<?> editor;
 
 	// The tree viewer in the master section
 	TreeViewer viewer;
@@ -57,7 +57,7 @@ public class TheoremMasterSectionActionGroup extends ActionGroup {
 	 * @param treeViewer
 	 *            The tree viewer associated with this action group
 	 */
-	public TheoremMasterSectionActionGroup(IEventBEditor eventBEditor,
+	public TheoremMasterSectionActionGroup(IEventBEditor<?> eventBEditor,
 			TreeViewer treeViewer) {
 		this.editor = eventBEditor;
 		this.viewer = treeViewer;

@@ -105,7 +105,7 @@ public abstract class EventBFormPage extends EventBEditorPage {
 	 */
 	protected abstract EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
-			IEventBEditor editor);
+			IEventBEditor<?> editor);
 
 	/**
 	 * Setting the selection within the page.

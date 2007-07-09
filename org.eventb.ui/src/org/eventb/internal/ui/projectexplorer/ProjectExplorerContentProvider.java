@@ -14,8 +14,6 @@ package org.eventb.internal.ui.projectexplorer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -64,7 +62,7 @@ public class ProjectExplorerContentProvider implements
 	ProjectExplorer explorer;
 
 	// List of elements need to be refresh (when processing Delta of changes).
-	private List<Object> toRefresh;
+	private ArrayList<Object> toRefresh;
 
 	/**
 	 * Constructor.
@@ -154,20 +152,20 @@ public class ProjectExplorerContentProvider implements
 	 * Refresh the nodes.
 	 * <p>
 	 * 
-	 * @param refreshes
+	 * @param toRefresh2
 	 *            List of node to refresh
 	 * @param updateLabels
 	 *            <code>true</code> if the label need to be updated as well
 	 */
-	private void postRefresh(final List refreshes, final boolean updateLabels) {
+	private void postRefresh(final ArrayList<Object> toRefresh2, final boolean updateLabels) {
 		UIUtils.asyncPostRunnable(new Runnable() {
 			public void run() {
 				TreeViewer viewer = explorer.getTreeViewer();
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
 					Object[] objects = viewer.getExpandedElements();
-					for (Iterator iter = refreshes.iterator(); iter.hasNext();) {
-						viewer.refresh(iter.next(), updateLabels);
+					for (Object elem : toRefresh2) {
+						viewer.refresh(elem, updateLabels);
 					}
 					viewer.setExpandedElements(objects);
 				}
@@ -220,7 +218,7 @@ public class ProjectExplorerContentProvider implements
 		// TODO need to get the right parent for internal elements
 
 		if (child instanceof TreeNode)
-			return ((TreeNode) child).getParent();
+			return ((TreeNode<?>) child).getParent();
 		if (child instanceof IRodinElement)
 			return ((IRodinElement) child).getParent();
 		return null;
@@ -237,7 +235,7 @@ public class ProjectExplorerContentProvider implements
 			if (elementsMap.containsKey(mch)) {
 				return elementsMap.get(mch);
 			} else {
-				ArrayList<TreeNode> list = new ArrayList<TreeNode>();
+				ArrayList<TreeNode<?>> list = new ArrayList<TreeNode<?>>();
 				list.add(new TreeNode<IVariable>("Variables", mch,
 						IVariable.ELEMENT_TYPE));
 				list.add(new TreeNode<IInvariant>("Invariants", mch,
@@ -258,7 +256,7 @@ public class ProjectExplorerContentProvider implements
 			if (elementsMap.containsKey(ctx)) {
 				return elementsMap.get(ctx);
 			} else {
-				ArrayList<TreeNode> list = new ArrayList<TreeNode>();
+				ArrayList<TreeNode<?>> list = new ArrayList<TreeNode<?>>();
 				list.add(new TreeNode<ICarrierSet>("Carrier Sets", ctx,
 						ICarrierSet.ELEMENT_TYPE));
 				list.add(new TreeNode<IConstant>("Constants", ctx,
@@ -335,7 +333,7 @@ public class ProjectExplorerContentProvider implements
 		}
 
 		if (parent instanceof TreeNode) {
-			return ((TreeNode) parent).getChildren();
+			return ((TreeNode<?>) parent).getChildren();
 		}
 		return new Object[0];
 	}
@@ -352,7 +350,7 @@ public class ProjectExplorerContentProvider implements
 			if (parent instanceof IParent)
 				return ((IParent) parent).hasChildren();
 			if (parent instanceof TreeNode)
-				return ((TreeNode) parent).hasChildren();
+				return ((TreeNode<?>) parent).hasChildren();
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}

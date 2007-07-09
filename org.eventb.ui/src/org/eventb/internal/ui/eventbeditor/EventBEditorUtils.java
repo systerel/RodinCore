@@ -116,7 +116,7 @@ public class EventBEditorUtils {
 							.getSelection();
 					IRodinElement[] elements = new IRodinElement[ssel.size()];
 					int i = 0;
-					for (Iterator it = ssel.iterator(); it.hasNext(); i++) {
+					for (Iterator<?> it = ssel.iterator(); it.hasNext(); i++) {
 						elements[i] = (IRodinElement) it.next();
 					}
 					EventBUIPlugin.getRodinDatabase().delete(elements, true,
@@ -199,7 +199,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addAction(final IEventBEditor editor,
+	public static void addAction(final IEventBEditor<IMachineFile> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -253,7 +253,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addRefinesEvent(final IEventBEditor editor,
+	public static void addRefinesEvent(final IEventBEditor<IMachineFile> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -304,7 +304,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addWitness(final IEventBEditor editor,
+	public static void addWitness(final IEventBEditor<IMachineFile> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -357,7 +357,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addGuard(final IEventBEditor editor,
+	public static void addGuard(final IEventBEditor<IMachineFile> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -410,7 +410,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addLocalVariable(final IEventBEditor editor,
+	public static void addLocalVariable(final IEventBEditor<IMachineFile> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -463,7 +463,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addVariable(final IEventBEditor editor,
+	public static void addVariable(final IEventBEditor<IMachineFile> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -507,7 +507,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addInvariant(final IEventBEditor editor,
+	public static void addInvariant(final IEventBEditor<IMachineFile> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -552,7 +552,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addTheorem(final IEventBEditor editor,
+	public static void addTheorem(final IEventBEditor<?> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -597,7 +597,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addEvent(final IEventBEditor editor,
+	public static void addEvent(final IEventBEditor<IMachineFile> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -738,7 +738,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addAxiom(final IEventBEditor editor,
+	public static void addAxiom(final IEventBEditor<IContextFile> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -782,7 +782,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addConstant(final IEventBEditor editor,
+	public static void addConstant(final IEventBEditor<IContextFile> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -826,7 +826,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addSet(final IEventBEditor editor,
+	public static void addSet(final IEventBEditor<IContextFile> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -895,7 +895,7 @@ public class EventBEditorUtils {
 	 *            the Rodin file that the variable and its invariant,
 	 *            initialisation will be created in
 	 */
-	public static void intelligentNewVariable(final IEventBEditor editor,
+	public static void intelligentNewVariable(final IEventBEditor<IMachineFile> editor,
 			final IRodinFile rodinFile) {
 		try {
 
@@ -932,7 +932,7 @@ public class EventBEditorUtils {
 		}
 	}
 
-	protected static void createNewInitialisationAction(final IEventBEditor editor,
+	protected static void createNewInitialisationAction(final IEventBEditor<IMachineFile> editor,
 			final String actLabel, final String actSub, final IProgressMonitor monitor)
 			throws CoreException {
 		RodinCore.run(new IWorkspaceRunnable() {
@@ -987,8 +987,8 @@ public class EventBEditorUtils {
 		}, monitor);
 	}
 
-	protected static void createNewInvariant(final IEventBEditor editor,
-			final Collection<Pair> invariants, final IProgressMonitor monitor)
+	protected static void createNewInvariant(final IEventBEditor<IMachineFile> editor,
+			final Collection<Pair<String, String>> invariants, final IProgressMonitor monitor)
 			throws CoreException {
 		RodinCore.run(new IWorkspaceRunnable() {
 
@@ -999,7 +999,7 @@ public class EventBEditorUtils {
 				int invIndex = UIUtils.getFreeElementNameIndex(editor,
 						rodinFile, IInvariant.ELEMENT_TYPE, invPrefix);
 				if (invariants != null) {
-					for (Pair pair : invariants) {
+					for (Pair<String, String> pair : invariants) {
 						newInv = rodinFile.getInternalElement(
 								IInvariant.ELEMENT_TYPE, invPrefix + invIndex);
 						assert !newInv.exists();
@@ -1007,8 +1007,8 @@ public class EventBEditorUtils {
 						invIndex = UIUtils.getFreeElementNameIndex(rodinFile,
 								IInvariant.ELEMENT_TYPE, invPrefix,
 								invIndex + 1);
-						newInv.setLabel((String) pair.getFirst(), m);
-						newInv.setPredicateString((String) pair.getSecond(),
+						newInv.setLabel(pair.getFirst(), m);
+						newInv.setPredicateString(pair.getSecond(),
 								null);
 						editor.addNewElement(newInv);
 					}
@@ -1018,7 +1018,7 @@ public class EventBEditorUtils {
 		}, monitor);
 	}
 
-	public static void createNewVariable(final IEventBEditor editor, final String name,
+	public static void createNewVariable(final IEventBEditor<IMachineFile> editor, final String name,
 			final IProgressMonitor monitor) throws CoreException {
 		RodinCore.run(new IWorkspaceRunnable() {
 
@@ -1050,7 +1050,7 @@ public class EventBEditorUtils {
 	 *            the Rodin file that the variable and its invariant,
 	 *            initialisation will be created in
 	 */
-	public static void intelligentNewConstant(final IEventBEditor editor,
+	public static void intelligentNewConstant(final IEventBEditor<IContextFile> editor,
 			final IRodinFile rodinFile) {
 		try {
 			final IntelligentNewConstantInputDialog dialog = new IntelligentNewConstantInputDialog(
@@ -1081,7 +1081,7 @@ public class EventBEditorUtils {
 		}
 	}
 
-	protected static void createNewAxioms(final IEventBEditor editor,
+	protected static void createNewAxioms(final IEventBEditor<IContextFile> editor,
 			final String[] axmNames, final String[] axmSubs,
 			IProgressMonitor monitor) throws CoreException {
 		RodinCore.run(new IWorkspaceRunnable() {
@@ -1108,7 +1108,7 @@ public class EventBEditorUtils {
 		}, monitor);
 	}
 
-	protected static void createNewConstant(final IEventBEditor editor,
+	protected static void createNewConstant(final IEventBEditor<IContextFile> editor,
 			final String name, IProgressMonitor monitor) throws CoreException {
 		RodinCore.run(new IWorkspaceRunnable() {
 
@@ -1150,7 +1150,7 @@ public class EventBEditorUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new invariants will be created in
 	 */
-	public static void newInvariants(final IEventBEditor editor,
+	public static void newInvariants(final IEventBEditor<IMachineFile> editor,
 			final IRodinFile rodinFile) {
 		try {
 			String invPrefix = UIUtils.getPrefix(editor,
@@ -1158,7 +1158,7 @@ public class EventBEditorUtils {
 
 			int invIndex = UIUtils.getFreeElementLabelIndex(editor, rodinFile,
 					IInvariant.ELEMENT_TYPE, invPrefix);
-			final ElementNameContentInputDialog dialog =
+			final ElementNameContentInputDialog<IInvariant> dialog =
 				new ElementNameContentInputDialog<IInvariant>(
 					Display.getCurrent().getActiveShell(), "New Invariants",
 					"Label(s) and predicate(s)", editor, IInvariant.ELEMENT_TYPE,
@@ -1210,7 +1210,7 @@ public class EventBEditorUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new invariants will be created in
 	 */
-	public static void newVariant(final IEventBEditor editor,
+	public static void newVariant(final IEventBEditor<IMachineFile> editor,
 			final IRodinFile rodinFile) {
 		try {
 			final NewVariantInputDialog dialog = new NewVariantInputDialog(
@@ -1252,14 +1252,14 @@ public class EventBEditorUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new theorems will be created in
 	 */
-	public static void newTheorems(final IEventBEditor editor,
+	public static void newTheorems(final IEventBEditor<?> editor,
 			final IRodinFile rodinFile) {
 		try {
 			String thmPrefix = UIUtils.getPrefix(editor,
 					ITheorem.ELEMENT_TYPE, PrefixThmName.DEFAULT_PREFIX);
 			int thmIndex = UIUtils.getFreeElementLabelIndex(editor, editor
 					.getRodinInput(), ITheorem.ELEMENT_TYPE, thmPrefix);
-			final ElementNameContentInputDialog dialog =
+			final ElementNameContentInputDialog<ITheorem> dialog =
 				new ElementNameContentInputDialog<ITheorem>(
 					Display.getCurrent().getActiveShell(), "New Theorems",
 					"Label(s) and predicate(s)", editor, ITheorem.ELEMENT_TYPE,
@@ -1344,7 +1344,7 @@ public class EventBEditorUtils {
 		}
 	}
 
-	protected static void createNewActions(IEventBEditor editor,
+	protected static void createNewActions(IEventBEditor<IMachineFile> editor,
 			IEvent evt, String[] actNames, String[] actSubstitutions,
 			IProgressMonitor pm) throws RodinDBException {
 		String actPrefix = UIUtils.getNamePrefix(editor, IAction.ELEMENT_TYPE,
@@ -1362,7 +1362,7 @@ public class EventBEditorUtils {
 		}
 	}
 
-	protected static void createNewGuards(IEventBEditor editor,
+	protected static void createNewGuards(IEventBEditor<IMachineFile> editor,
 			IEvent evt, String[] grdNames, String[] grdPredicates,
 			IProgressMonitor pm) throws RodinDBException {
 		String grdPrefix = UIUtils.getNamePrefix(editor, IGuard.ELEMENT_TYPE,
@@ -1380,7 +1380,7 @@ public class EventBEditorUtils {
 		}
 	}
 
-	protected static void createNewParameters(IEventBEditor editor,
+	protected static void createNewParameters(IEventBEditor<IMachineFile> editor,
 			IEvent evt, String[] identifiers, IProgressMonitor pm)
 			throws RodinDBException {
 		String varPrefix = UIUtils.getNamePrefix(editor,
@@ -1567,14 +1567,14 @@ public class EventBEditorUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new axioms will be created in
 	 */
-	public static void newAxioms(final IEventBEditor editor,
+	public static void newAxioms(final IEventBEditor<IContextFile> editor,
 			final IRodinFile rodinFile) {
 		try {
 			String axmPrefix = UIUtils.getPrefix(editor,
 					IAxiom.ELEMENT_TYPE, PrefixAxmName.DEFAULT_PREFIX);
 			int axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor
 					.getRodinInput(), IAxiom.ELEMENT_TYPE, axmPrefix);
-			final ElementNameContentInputDialog dialog =
+			final ElementNameContentInputDialog<IAxiom> dialog =
 				new ElementNameContentInputDialog<IAxiom>(
 					Display.getCurrent().getActiveShell(), "New Axioms",
 					"Label(s) and predicate(s)", editor, IAxiom.ELEMENT_TYPE,
@@ -1693,7 +1693,7 @@ public class EventBEditorUtils {
 		}
 	}
 	
-	public static String getFreeInitialisationActionName(IEventBEditor editor)
+	public static String getFreeInitialisationActionName(IEventBEditor<IMachineFile> editor)
 			throws RodinDBException {
 		IRodinFile rodinFile = editor.getRodinInput();
 
@@ -1709,7 +1709,7 @@ public class EventBEditorUtils {
 	}
 
 	
-	public static IEvent createNewEvent(final IEventBEditor editor, final String label,
+	public static IEvent createNewEvent(final IEventBEditor<IMachineFile> editor, final String label,
 			IProgressMonitor monitor) throws CoreException {
 		RodinCore.run(new IWorkspaceRunnable() {
 

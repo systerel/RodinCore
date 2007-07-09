@@ -43,7 +43,7 @@ public abstract class EventBPartWithButtons extends SectionPart implements
 	private Button[] buttons;
 
 	// The associated Event-B Editor
-	protected IEventBEditor editor;
+	protected IEventBEditor<?> editor;
 
 	// A viewer.
 	private Viewer viewer;
@@ -117,7 +117,7 @@ public abstract class EventBPartWithButtons extends SectionPart implements
 	 */
 	public EventBPartWithButtons(final IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit, int style,
-			IEventBEditor editor, String[] buttonLabels, String title,
+			IEventBEditor<?> editor, String[] buttonLabels, String title,
 			String description) {
 		super(parent, toolkit, style);
 		this.editor = editor;

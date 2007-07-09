@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.core.IContextFile;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
@@ -67,7 +68,7 @@ public class ConstantMasterSection extends EventBTreePartWithButtons {
 	 *            The Event-B Editor
 	 */
 	public ConstantMasterSection(IManagedForm managedForm, Composite parent,
-			FormToolkit toolkit, int style, IEventBEditor editor) {
+			FormToolkit toolkit, int style, IEventBEditor<?> editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 	}
@@ -187,8 +188,9 @@ public class ConstantMasterSection extends EventBTreePartWithButtons {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	protected ActionGroup createActionGroup() {
-		return new ConstantMasterSectionActionGroup(editor, (TreeViewer) this
+		return new ConstantMasterSectionActionGroup((IEventBEditor<IContextFile>) editor, (TreeViewer) this
 				.getViewer());
 	}
 

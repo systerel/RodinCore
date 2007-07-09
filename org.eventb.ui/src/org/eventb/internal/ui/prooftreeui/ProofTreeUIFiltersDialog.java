@@ -201,7 +201,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		if (filters != null)
 			setInitialSelections(filters);
 
-		List initialSelection = getInitialElementSelections();
+		List<?> initialSelection = getInitialElementSelections();
 		if (initialSelection != null && !initialSelection.isEmpty())
 			checkInitialSelections();
 
@@ -292,7 +292,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 	}
 
 	private void checkInitialSelections() {
-		Iterator itemsToCheck = getInitialElementSelections().iterator();
+		Iterator<?> itemsToCheck = getInitialElementSelections().iterator();
 		while (itemsToCheck.hasNext())
 			fCheckBoxList.setChecked(itemsToCheck.next(), true);
 	}
@@ -332,7 +332,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 	 * @return a stack with the filter descriptor check history
 	 * @since 3.0
 	 */
-	public Stack getFilterDescriptorChangeHistory() {
+	public Stack<ViewerFilter> getFilterDescriptorChangeHistory() {
 		return fFilterDescriptorChangeHistory;
 	}
 

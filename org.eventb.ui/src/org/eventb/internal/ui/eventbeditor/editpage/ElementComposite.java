@@ -210,7 +210,7 @@ public class ElementComposite implements IElementComposite {
 		return isExpanded;
 	}
 
-	public void childrenChanged(IRodinElement element, IElementType childrenType) {
+	public void childrenChanged(IRodinElement element, IElementType<?> childrenType) {
 		if (!rElement.exists())
 			return;
 

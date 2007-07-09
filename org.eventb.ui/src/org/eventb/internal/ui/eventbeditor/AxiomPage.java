@@ -54,7 +54,7 @@ public class AxiomPage extends EventBFormPage {
 	@Override
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
-			IEventBEditor editor) {
+			IEventBEditor<?> editor) {
 		AxiomMasterSection part = new AxiomMasterSection(managedForm, parent,
 				managedForm.getToolkit(), Section.NO_TITLE, getEventBEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);

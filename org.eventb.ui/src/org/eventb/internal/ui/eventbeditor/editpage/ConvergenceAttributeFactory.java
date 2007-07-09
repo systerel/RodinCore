@@ -8,7 +8,7 @@ import org.rodinp.core.RodinDBException;
 
 public class ConvergenceAttributeFactory implements IAttributeFactory {
 
-	public void createDefaulAttribute(IEventBEditor editor,
+	public void createDefaulAttribute(IEventBEditor<?> editor,
 			IInternalElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		if (!(element instanceof IConvergenceElement)) {

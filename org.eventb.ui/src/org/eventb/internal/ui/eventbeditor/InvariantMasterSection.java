@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.core.IMachineFile;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
@@ -67,7 +68,7 @@ public class InvariantMasterSection extends EventBTreePartWithButtons {
 	 *            an Event-B Editor
 	 */
 	public InvariantMasterSection(IManagedForm managedForm, Composite parent,
-			FormToolkit toolkit, int style, IEventBEditor editor) {
+			FormToolkit toolkit, int style, IEventBEditor<?> editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 	}
@@ -84,9 +85,10 @@ public class InvariantMasterSection extends EventBTreePartWithButtons {
 	 *            The composite parent
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	protected EventBEditableTreeViewer createTreeViewer(
 			IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
-		return new InvariantEditableTreeViewer(editor, parent, SWT.MULTI
+		return new InvariantEditableTreeViewer((IEventBEditor<IMachineFile>) editor, parent, SWT.MULTI
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	}
 
@@ -189,8 +191,9 @@ public class InvariantMasterSection extends EventBTreePartWithButtons {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	protected ActionGroup createActionGroup() {
-		return new InvariantMasterSectionActionGroup(editor, (TreeViewer) this
+		return new InvariantMasterSectionActionGroup((IEventBEditor<IMachineFile>) editor, (TreeViewer) this
 				.getViewer());
 	}
 

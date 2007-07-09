@@ -90,7 +90,7 @@ public class ElementLabelProvider extends LabelProvider implements
 	@Override
 	public Image getImage(Object obj) {
 		if (obj instanceof TreeNode)
-			return getTreeNodeImage((TreeNode) obj);
+			return getTreeNodeImage((TreeNode<?>) obj);
 		if (obj instanceof IRodinElement)
 			return EventBImage.getRodinImage((IRodinElement) obj);
 		return null;
@@ -102,7 +102,7 @@ public class ElementLabelProvider extends LabelProvider implements
 	 * @param element a tree node @return the image for displaying corresponding
 	 * to the tree node
 	 */
-	private Image getTreeNodeImage(TreeNode node) {
+	private Image getTreeNodeImage(TreeNode<?> node) {
 
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
 

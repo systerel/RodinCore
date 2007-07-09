@@ -57,7 +57,7 @@ public class ElementNameContentInputDialog<T extends ILabeledElement> extends
 
 	private int index;
 
-	private IEventBEditor editor;
+	private IEventBEditor<?> editor;
 
 	private IInternalElementType<T> type;
 
@@ -77,7 +77,7 @@ public class ElementNameContentInputDialog<T extends ILabeledElement> extends
 	 *            The start counter for the elements.
 	 */
 	public ElementNameContentInputDialog(Shell parentShell, String title,
-			String message, IEventBEditor editor, IInternalElementType<T> type,
+			String message, IEventBEditor<?> editor, IInternalElementType<T> type,
 			String prefix, int index) {
 		super(parentShell, title);
 		this.message = message;

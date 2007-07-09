@@ -219,7 +219,7 @@ public class NewComponentWizardPage extends WizardPage {
 			if (element instanceof IRodinElement) {
 				curr = (IRodinElement) element;
 			} else if (element instanceof TreeNode) {
-				curr = (IRodinElement) ((TreeNode) element).getParent();
+				curr = (IRodinElement) ((TreeNode<?>) element).getParent();
 			} else
 				curr = null;
 			while (!(curr instanceof IRodinProject || curr == null)) {

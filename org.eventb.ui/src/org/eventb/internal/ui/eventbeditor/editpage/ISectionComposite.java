@@ -9,14 +9,14 @@ public interface ISectionComposite {
 
 	void refresh(IRodinElement element);
 
-	IElementType getElementType();
+	IElementType<?> getElementType();
 
 	void elementRemoved(IRodinElement element);
 
 	void elementAdded(IRodinElement element);
 
 	void childrenChanged(IRodinElement element,
-			IElementType type);
+			IElementType<?> type);
 
 	void select(IRodinElement element, boolean select);
 

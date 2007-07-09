@@ -67,7 +67,7 @@ public class TheoremMasterSection extends EventBTreePartWithButtons {
 	 *            an EventB-Editor
 	 */
 	public TheoremMasterSection(IManagedForm managedForm, Composite parent,
-			FormToolkit toolkit, int style, IEventBEditor editor) {
+			FormToolkit toolkit, int style, IEventBEditor<?> editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 	}

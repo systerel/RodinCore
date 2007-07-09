@@ -44,7 +44,7 @@ public class MainActionGroup extends EventBEditableTreeViewerActionGroup {
 	 * @param viewer
 	 * 			  an editable tree viewer
 	 */
-	public MainActionGroup(IEventBEditor editor, EventBEditableTreeViewer viewer) {
+	public MainActionGroup(IEventBEditor<?> editor, EventBEditableTreeViewer viewer) {
 		// super(navigator);
 		// resourceChangeListener = new IResourceChangeListener() {
 		// public void resourceChanged(IResourceChangeEvent event) {

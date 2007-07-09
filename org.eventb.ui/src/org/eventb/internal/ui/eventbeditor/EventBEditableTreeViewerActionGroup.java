@@ -20,7 +20,7 @@ public abstract class EventBEditableTreeViewerActionGroup extends ActionGroup {
 	// The project explorer.
 	protected EventBEditableTreeViewer viewer;
 
-	protected IEventBEditor editor;
+	protected IEventBEditor<?> editor;
 
 	/**
 	 * Dynamically fill the context menu (depends on the selection).
@@ -51,7 +51,7 @@ public abstract class EventBEditableTreeViewerActionGroup extends ActionGroup {
 	 * @param viewer
 	 *            the resource navigator
 	 */
-	public EventBEditableTreeViewerActionGroup(IEventBEditor editor,
+	public EventBEditableTreeViewerActionGroup(IEventBEditor<?> editor,
 			EventBEditableTreeViewer viewer) {
 		this.viewer = viewer;
 

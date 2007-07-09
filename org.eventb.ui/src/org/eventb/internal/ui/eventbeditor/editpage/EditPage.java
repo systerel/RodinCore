@@ -94,7 +94,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	@Override
 	public void initialize(FormEditor editor) {
 		super.initialize(editor);
-		((IEventBEditor) editor).addElementChangedListener(this);
+		((IEventBEditor<?>) editor).addElementChangedListener(this);
 	}
 
 	/*
@@ -208,7 +208,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 	private void createDeclaration(Composite parent) {
 		FormToolkit toolkit = this.getManagedForm().getToolkit();
-		EventBEditor editor = (EventBEditor) this.getEditor();
+		EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
 		final Composite comp = toolkit.createComposite(parent);
 		if (EventBEditorUtils.DEBUG) {
 			comp.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_CYAN));
@@ -238,7 +238,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	}
 
 	public void createSections(final Composite parent) {
-		EventBEditor editor = (EventBEditor) this.getEditor();
+		EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
 		IRodinFile rodinInput = editor.getRodinInput();
 		EditSectionRegistry editSectionRegistry = EditSectionRegistry
 				.getDefault();
@@ -275,7 +275,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 	Set<IRodinElement> isAdded;
 
-	Set<Pair<IRodinElement, IElementType>> childrenHasChanged;
+	Set<Pair<IRodinElement, IElementType<?>>> childrenHasChanged;
 
 	/*
 	 * (non-Javadoc)
@@ -287,7 +287,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		isChanged = new HashSet<IRodinElement>();
 		isRemoved = new HashSet<IRodinElement>();
 		isAdded = new HashSet<IRodinElement>();
-		childrenHasChanged = new HashSet<Pair<IRodinElement, IElementType>>();
+		childrenHasChanged = new HashSet<Pair<IRodinElement, IElementType<?>>>();
 		processDelta(event.getDelta());
 		postRefresh();
 		long afterTime = System.currentTimeMillis();
@@ -329,7 +329,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 					}
 				}
 			
-				for (Pair<IRodinElement, IElementType> pair : childrenHasChanged) {
+				for (Pair<IRodinElement, IElementType<?>> pair : childrenHasChanged) {
 					for (ISectionComposite sectionComp : sectionComps) {
 						sectionComp.childrenChanged(pair.getFirst(), pair
 								.getSecond());
@@ -345,7 +345,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	protected boolean isSelected(IRodinElement element) {
 		if (globalSelection instanceof StructuredSelection) {
 			StructuredSelection ssel = (StructuredSelection) globalSelection;
-			for (Iterator it = ssel.iterator(); it.hasNext();) {
+			for (Iterator<?> it = ssel.iterator(); it.hasNext();) {
 				if (it.next().equals(element))
 					return true;
 			}
@@ -365,13 +365,13 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 		if (kind == IRodinElementDelta.ADDED) {
 			isAdded.add(element);
-			childrenHasChanged.add(new Pair<IRodinElement, IElementType>(
+			childrenHasChanged.add(new Pair<IRodinElement, IElementType<?>>(
 					element.getParent(), element.getElementType()));
 			return;
 		}
 		if (kind == IRodinElementDelta.REMOVED) {
 			isRemoved.add(element);
-			childrenHasChanged.add(new Pair<IRodinElement, IElementType>(
+			childrenHasChanged.add(new Pair<IRodinElement, IElementType<?>>(
 					element.getParent(), element.getElementType()));
 			return;
 		} else { // kind == CHANGED
@@ -379,7 +379,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
 				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("REORDERED");
-				childrenHasChanged.add(new Pair<IRodinElement, IElementType>(
+				childrenHasChanged.add(new Pair<IRodinElement, IElementType<?>>(
 						element.getParent(), element.getElementType()));
 				return;
 			} else if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
@@ -388,7 +388,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 				}
 			} else if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
 				isChanged.add(element);
-				childrenHasChanged.add(new Pair<IRodinElement, IElementType>(
+				childrenHasChanged.add(new Pair<IRodinElement, IElementType<?>>(
 						element.getParent(), element.getElementType()));
 			}
 			return;
@@ -398,7 +398,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 	@Override
 	public void dispose() {
-		IEventBEditor editor = this.getEventBEditor();
+		IEventBEditor<?> editor = this.getEventBEditor();
 		editor.removeElementChangedListener(this);
 		activateContext.getContextService().deactivateContext(activateContext);
 		deactivateHandlers();
@@ -438,7 +438,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	public void setSelection(ISelection selection) {
 		this.globalSelection = selection;
 		fireSelectionChanged(new SelectionChangedEvent(this, globalSelection));
-		IEventBEditor editor = (IEventBEditor) this.getEditor();
+		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
 		ISelectionProvider selectionProvider = editor.getSite()
 				.getSelectionProvider();
 		selectionProvider.setSelection(selection);
@@ -536,7 +536,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 	void deselect(ISelection ssel) {
 		if (ssel instanceof StructuredSelection) {
-			for (Iterator it = ((StructuredSelection) ssel).iterator(); it
+			for (Iterator<?> it = ((StructuredSelection) ssel).iterator(); it
 					.hasNext();) {
 				Object obj = it.next();
 				if (obj instanceof IRodinElement) {

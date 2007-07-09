@@ -177,7 +177,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 	private Object fInput;
 
 	// The current associated editor.
-	IEventBEditor fEditor;
+	IEventBEditor<?> fEditor;
 
 	/**
 	 * Creates a content outline page using the given editor. Register as a
@@ -187,7 +187,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 	 * @param editor
 	 *            the editor
 	 */
-	public EventBContentOutlinePage(IEventBEditor editor) {
+	public EventBContentOutlinePage(IEventBEditor<?> editor) {
 		super();
 		fEditor = editor;
 	}

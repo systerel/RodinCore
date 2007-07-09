@@ -13,7 +13,6 @@
 package org.eventb.internal.ui.obligationexplorer;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -22,8 +21,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
-import org.eventb.core.IPSFile;
 import org.eventb.core.IPRProof;
+import org.eventb.core.IPSFile;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.ElementChangedEvent;
@@ -145,16 +144,15 @@ public class ObligationExplorerContentProvider implements
 	 * @param updateLabels
 	 *            <code>true</code> if the label need to be updated as well
 	 */
-	private void postRefresh(final List refreshes, final boolean updateLabels) {
+	private void postRefresh(final List<IRodinElement> refreshes, final boolean updateLabels) {
 		UIUtils.syncPostRunnable(new Runnable() {
 			public void run() {
 				TreeViewer viewer = explorer.getTreeViewer();
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
 					Object[] objects = viewer.getExpandedElements();
-					for (Iterator iter = refreshes.iterator(); iter.hasNext();) {
-						Object obj = iter.next();
-						viewer.refresh(obj, updateLabels);
+					for (IRodinElement elem : refreshes) {
+						viewer.refresh(elem, updateLabels);
 					}
 					viewer.setExpandedElements(objects);
 				}

@@ -28,7 +28,6 @@ import org.eventb.internal.ui.eventbeditor.actions.ShowAbstractEventContribution
 import org.eventb.internal.ui.eventbeditor.actions.ShowAbstractInvariantContribution;
 import org.eventb.internal.ui.eventbeditor.actions.ShowSeesContextContribution;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 
@@ -38,7 +37,8 @@ import org.rodinp.core.IRodinFile;
  *         This class provides the actions that will be used with the Event
  *         Editable Tree Viewer.
  */
-public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
+public class EventMasterSectionActionGroup extends
+		MasterSectionActionGroup<EventBMachineEditor> {
 
 	// Some actions
 	protected Action addEvent;
@@ -68,7 +68,7 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 	 * @param treeViewer
 	 *            The tree viewer associated with this action group
 	 */
-	public EventMasterSectionActionGroup(IEventBEditor eventBEditor,
+	public EventMasterSectionActionGroup(EventBMachineEditor eventBEditor,
 			TreeViewer treeViewer) {
 		super(eventBEditor, treeViewer);
 

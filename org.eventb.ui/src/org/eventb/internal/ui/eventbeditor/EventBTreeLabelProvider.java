@@ -40,7 +40,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 		ITableFontProvider, ITableColorProvider, IPropertyChangeListener {
 
 	// The associated Event-B Editor
-	private IEventBEditor editor;
+	private IEventBEditor<?> editor;
 
 	// The font used in the tree viewer
 	private Font font = null;
@@ -54,7 +54,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @param editor
 	 *            An Event-B Editor
 	 */
-	public EventBTreeLabelProvider(IEventBEditor editor, EventBEditableTreeViewer viewer) {
+	public EventBTreeLabelProvider(IEventBEditor<?> editor, EventBEditableTreeViewer viewer) {
 		this.editor = editor;
 		this.viewer = viewer;
 		JFaceResources.getFontRegistry().addListener(this);

@@ -219,7 +219,7 @@ public abstract class AbstractContextsSection<F extends IRodinFile> extends
 			throws RodinDBException {
 
 		final ArrayList<IInternalElement> elementList = new ArrayList<IInternalElement>();
-		final Iterator it = ssel.iterator();
+		final Iterator<?> it = ssel.iterator();
 		while (it.hasNext()) {
 			Object obj = it.next();
 			if (obj instanceof IInternalElement) {

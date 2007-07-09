@@ -223,6 +223,7 @@ public class ProverUI extends FormEditor implements
 	 * @return an adapter for the required type or <code>null</code>
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class required) {
 		if (IProofTreeUIPage.class.equals(required)) {
 			if (fProofTreeUI == null) {

@@ -433,6 +433,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 	 * @return an adapter for the required type or <code>null</code>
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
 			if (fOutlinePage == null) {
@@ -581,7 +582,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		}
 
 		if (ssel instanceof TreeNode) { // For tree node, just select the node.
-			setTreeNodeSelection((TreeNode) ssel);
+			setTreeNodeSelection((TreeNode<?>) ssel);
 			return;
 		}
 		return;
@@ -594,7 +595,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 	 * @param node
 	 *            instance of TreeNode
 	 */
-	private void setTreeNodeSelection(TreeNode node) {
+	private void setTreeNodeSelection(TreeNode<?> node) {
 		if (node.isType(IVariable.ELEMENT_TYPE)) {
 			this.setActivePage(VariablePage.PAGE_ID);
 			return;

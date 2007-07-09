@@ -4,17 +4,19 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
+import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinFile;
 
 public class NewInvariants implements IEditorActionDelegate {
 
-	IEventBEditor editor;
+	IEventBEditor<IMachineFile> editor;
 	
+	@SuppressWarnings("unchecked")
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof IEventBEditor)
-			editor = (IEventBEditor) targetEditor;
+			editor = (IEventBEditor<IMachineFile>) targetEditor;
 	}
 
 	public void run(IAction action) {

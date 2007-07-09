@@ -54,9 +54,10 @@ public class VariablePage extends EventBFormPage {
 	@Override
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
-			IEventBEditor editor) {
+			IEventBEditor<?> editor) {
 		VariableMasterSection part = new VariableMasterSection(managedForm,
-				parent, managedForm.getToolkit(), Section.NO_TITLE, editor);
+				parent, managedForm.getToolkit(), Section.NO_TITLE,
+				(EventBMachineEditor) editor);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

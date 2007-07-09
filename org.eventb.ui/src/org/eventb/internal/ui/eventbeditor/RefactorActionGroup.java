@@ -24,7 +24,7 @@ public class RefactorActionGroup extends EventBEditableTreeViewerActionGroup {
 
 	private TextActionHandler textActionHandler;
 
-	public RefactorActionGroup(IEventBEditor editor, EventBEditableTreeViewer explorer) {
+	public RefactorActionGroup(IEventBEditor<?> editor, EventBEditableTreeViewer explorer) {
 		super(editor, explorer);
 	}
 

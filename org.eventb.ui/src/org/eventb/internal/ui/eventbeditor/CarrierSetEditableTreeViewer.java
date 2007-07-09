@@ -140,7 +140,7 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @param style
 	 *            The style used to create this tree viewer
 	 */
-	public CarrierSetEditableTreeViewer(IEventBEditor editor, Composite parent,
+	public CarrierSetEditableTreeViewer(IEventBEditor<?> editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new CarrierSetContentProvider());

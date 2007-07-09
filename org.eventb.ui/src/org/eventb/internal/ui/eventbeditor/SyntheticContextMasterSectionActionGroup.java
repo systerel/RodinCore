@@ -22,7 +22,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
  * @author htson
@@ -31,7 +30,7 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
  *         Context Editable Tree Viewer.
  */
 public class SyntheticContextMasterSectionActionGroup extends
-		MasterSectionActionGroup {
+		MasterSectionActionGroup<EventBContextEditor> {
 
 	// Some actions
 	protected Action addTheorem;
@@ -57,7 +56,7 @@ public class SyntheticContextMasterSectionActionGroup extends
 	 * @param treeViewer
 	 *            The tree viewer associated with this action group
 	 */
-	public SyntheticContextMasterSectionActionGroup(IEventBEditor eventBEditor,
+	public SyntheticContextMasterSectionActionGroup(EventBContextEditor eventBEditor,
 			TreeViewer treeViewer) {
 		super(eventBEditor, treeViewer);
 		

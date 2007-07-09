@@ -140,7 +140,7 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @param style
 	 *            The style used to create the tree viewer
 	 */
-	public AxiomEditableTreeViewer(IEventBEditor editor, Composite parent,
+	public AxiomEditableTreeViewer(IEventBEditor<?> editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new AxiomContentProvider());

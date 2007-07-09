@@ -22,7 +22,7 @@ public interface IElementComposite {
 
 	boolean isExpanded();
 
-	void childrenChanged(IRodinElement element, IElementType type);
+	void childrenChanged(IRodinElement element, IElementType<?> type);
 
 	Composite getComposite();
 

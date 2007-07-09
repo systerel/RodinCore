@@ -60,8 +60,8 @@ public abstract class EventBEditorPage extends FormPage {
 	 * 
 	 * @return parent editor instance
 	 */
-	protected IEventBEditor getEventBEditor() {
-		return (IEventBEditor) this.getEditor();
+	protected IEventBEditor<?> getEventBEditor() {
+		return (IEventBEditor<?>) this.getEditor();
 	}
 	
 }

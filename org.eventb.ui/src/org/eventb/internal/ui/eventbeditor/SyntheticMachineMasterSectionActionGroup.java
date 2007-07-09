@@ -31,7 +31,6 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -44,7 +43,7 @@ import org.rodinp.core.RodinDBException;
  *         Machine Editable Tree Viewer.
  */
 public class SyntheticMachineMasterSectionActionGroup extends
-		MasterSectionActionGroup {
+		MasterSectionActionGroup<EventBMachineEditor> {
 
 	// Some actions
 	protected Action addVariable;
@@ -78,7 +77,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 	 * @param treeViewer
 	 *            The tree viewer associated with this action group
 	 */
-	public SyntheticMachineMasterSectionActionGroup(IEventBEditor eventBEditor,
+	public SyntheticMachineMasterSectionActionGroup(EventBMachineEditor eventBEditor,
 			TreeViewer treeViewer) {
 		super(eventBEditor, treeViewer);
 
@@ -215,7 +214,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 					Object obj = ssel.getFirstElement();
 					IInternalElement event = TreeSupports.getEvent(obj);
 
-					IMachineFile file = (IMachineFile) editor.getRodinInput();
+					IMachineFile file = editor.getRodinInput();
 					try {
 						IRodinElement[] refines = file
 								.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
@@ -326,7 +325,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 						&& ((IVariable) obj).getParent() instanceof IEvent) {
 
 					IRodinElement[] refines;
-					IMachineFile file = (IMachineFile) editor.getRodinInput();
+					IMachineFile file = editor.getRodinInput();
 					try {
 						refines = file
 								.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);

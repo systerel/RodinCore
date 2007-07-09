@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IConstant;
+import org.eventb.core.IContextFile;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
@@ -60,9 +61,9 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	
 	Collection<String> axmSubs;
 	
-	private Collection<Pair> axiomPairTexts;
+	private Collection<Pair<IEventBInputText, IEventBInputText>> axiomPairTexts;
 
-	IEventBEditor editor;
+	IEventBEditor<IContextFile> editor;
 
 	private Composite composite;
 	
@@ -75,7 +76,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	 * @param title
 	 *            the title of the dialog
 	 */
-	public IntelligentNewConstantInputDialog(IEventBEditor editor,
+	public IntelligentNewConstantInputDialog(IEventBEditor<IContextFile> editor,
 			Shell parentShell, String title) {
 		super(parentShell, title);
 		this.editor = editor;
@@ -118,7 +119,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 			composite.setBackground(composite.getDisplay().getSystemColor(
 					SWT.COLOR_CYAN));
 
-		axiomPairTexts = new ArrayList<Pair>();
+		axiomPairTexts = new ArrayList<Pair<IEventBInputText, IEventBInputText>>();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.verticalSpacing = 10;
@@ -275,11 +276,9 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
 		axmLabels = new ArrayList<String>();
 		axmSubs = new ArrayList<String>();
-		for (Pair pair : axiomPairTexts) {
-			IEventBInputText axiomPredicateText = (IEventBInputText) pair
-					.getSecond();
-			IEventBInputText axiomNameText = (IEventBInputText) pair
-					.getFirst();
+		for (Pair<IEventBInputText, IEventBInputText> pair : axiomPairTexts) {
+			IEventBInputText axiomPredicateText = pair.getSecond();
+			IEventBInputText axiomNameText = pair.getFirst();
 			if (dirtyTexts.contains(axiomPredicateText.getTextWidget())) {
 				String axmName = axiomNameText.getTextWidget().getText();
 				String sub = Text2EventBMathTranslator
@@ -304,10 +303,9 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	@Override
 	public boolean close() {
 		identifierText.dispose();
-		for (Pair pair : axiomPairTexts) {
-			IEventBInputText axiomPredicateText = (IEventBInputText) pair
-					.getSecond();
-			IEventBInputText axiomNameText = (IEventBInputText) pair.getFirst();
+		for (Pair<IEventBInputText, IEventBInputText> pair : axiomPairTexts) {
+			IEventBInputText axiomPredicateText = pair.getSecond();
+			IEventBInputText axiomNameText = pair.getFirst();
 			axiomNameText.dispose();
 			axiomPredicateText.dispose();
 		}

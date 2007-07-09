@@ -146,7 +146,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @param style
 	 *            the style to create the viewer
 	 */
-	public SyntheticEditableTreeViewer(IEventBEditor editor, Composite parent,
+	public SyntheticEditableTreeViewer(IEventBEditor<?> editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new SyntheticContentProvider());

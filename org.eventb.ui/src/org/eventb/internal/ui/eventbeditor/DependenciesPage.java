@@ -56,6 +56,7 @@ public class DependenciesPage extends EventBEditorPage {
 	 * @see org.eclipse.ui.forms.editor.FormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -68,7 +69,7 @@ public class DependenciesPage extends EventBEditorPage {
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
-		final IEventBEditor eventBEditor = getEventBEditor();
+		final IEventBEditor<?> eventBEditor = getEventBEditor();
 		final IRodinFile rodinFile = eventBEditor.getRodinInput();
 		final FormToolkit toolkit = getManagedForm().getToolkit();
 		if (rodinFile instanceof IMachineFile) {
@@ -78,7 +79,7 @@ public class DependenciesPage extends EventBEditorPage {
 			part.getSection().setLayoutData(gd);
 			managedForm.addPart(part);
 
-			part = new SeesSection(eventBEditor, toolkit, body);
+			part = new SeesSection((IEventBEditor<IMachineFile>) eventBEditor, toolkit, body);
 			gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 250;
 
@@ -86,7 +87,7 @@ public class DependenciesPage extends EventBEditorPage {
 			managedForm.addPart(part);
 
 		} else if (rodinFile instanceof IContextFile) {
-			SectionPart part = new ExtendsSection(eventBEditor, toolkit, body);
+			SectionPart part = new ExtendsSection((IEventBEditor<IContextFile>) eventBEditor, toolkit, body);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 250;
 

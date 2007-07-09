@@ -10,11 +10,11 @@ import org.rodinp.core.IRodinFile;
 
 public class NewTheorems implements IEditorActionDelegate {
 
-	IEventBEditor editor;
+	IEventBEditor<?> editor;
 	
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof IEventBEditor)
-			editor = (IEventBEditor) targetEditor;
+			editor = (IEventBEditor<?>) targetEditor;
 	}
 
 	public void run(IAction action) {

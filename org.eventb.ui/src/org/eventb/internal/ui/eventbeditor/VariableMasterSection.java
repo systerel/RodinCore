@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
 
@@ -67,7 +66,7 @@ public class VariableMasterSection extends EventBTreePartWithButtons {
 	 *            an Event-B Editor
 	 */
 	public VariableMasterSection(IManagedForm managedForm, Composite parent,
-			FormToolkit toolkit, int style, IEventBEditor editor) {
+			FormToolkit toolkit, int style, EventBMachineEditor editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 	}
@@ -186,8 +185,9 @@ public class VariableMasterSection extends EventBTreePartWithButtons {
 	 */
 	@Override
 	protected ActionGroup createActionGroup() {
-		return new VariableMasterSectionActionGroup(editor, (TreeViewer) this
-				.getViewer());
+		return new VariableMasterSectionActionGroup(
+				(EventBMachineEditor) editor, (TreeViewer) this
+						.getViewer());
 	}
 
 }

@@ -141,7 +141,7 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @param style
 	 *            the style used to create the viewer
 	 */
-	public TheoremEditableTreeViewer(IEventBEditor editor, Composite parent,
+	public TheoremEditableTreeViewer(IEventBEditor<?> editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new TheoremContentProvider());

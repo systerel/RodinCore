@@ -7,7 +7,7 @@ import org.rodinp.core.RodinDBException;
 
 public interface IAttributeFactory {
 
-	void createDefaulAttribute(IEventBEditor editor, IInternalElement element,
+	void createDefaulAttribute(IEventBEditor<?> editor, IInternalElement element,
 			IProgressMonitor monitor) throws RodinDBException;
 
 }

@@ -45,7 +45,7 @@ public class EditSectionRegistry {
 	}
 
 	// Map from element types to list of sections
-	private Map<IElementType, SectionsInfo> sectionRegistry = null;
+	private Map<IElementType<?>, SectionsInfo> sectionRegistry = null;
 
 	private static final String EDITSECTIONS_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".editSections";
@@ -54,7 +54,7 @@ public class EditSectionRegistry {
 		// Map from element types to list of sections
 		List<SectionInfo> unsortedSections;
 
-		LinkedHashMap<IElementType, SectionInfo> sections;
+		LinkedHashMap<IElementType<?>, SectionInfo> sections;
 
 		public SectionsInfo() {
 			unsortedSections = new ArrayList<SectionInfo>();
@@ -81,7 +81,7 @@ public class EditSectionRegistry {
 				}
 			}
 
-			sections = new LinkedHashMap<IElementType, SectionInfo>(
+			sections = new LinkedHashMap<IElementType<?>, SectionInfo>(
 					unsortedSections.size());
 			for (SectionInfo info : unsortedSections) {
 				sections.put(info.getType(), info);
@@ -90,21 +90,21 @@ public class EditSectionRegistry {
 
 		public IInternalElementType<?>[] getChildrenTypes(
 				IElementType<?> parentType) {
-			Set<IElementType> types = sections.keySet();
+			Set<IElementType<?>> types = sections.keySet();
 			return types.toArray(new IInternalElementType<?>[types.size()]);
 		}
 
-		public String getPrefix(IElementType type) {
+		public String getPrefix(IElementType<?> type) {
 			SectionInfo info = sections.get(type);
 			return info.getPrefix();
 		}
 
-		public String getPostfix(IElementType type) {
+		public String getPostfix(IElementType<?> type) {
 			SectionInfo info = sections.get(type);
 			return info.getPostfix();
 		}
 
-		public boolean isEnable(IRodinElement parent, IElementType type) {
+		public boolean isEnable(IRodinElement parent, IElementType<?> type) {
 			SectionInfo info = sections.get(type);
 			return info.isEnable(parent);
 		}
@@ -138,7 +138,7 @@ public class EditSectionRegistry {
 			return config.getAttribute("postfix");
 		}
 
-		public IElementType getType() {
+		public IElementType<?> getType() {
 			String typeStr = config.getAttribute("type");
 			return RodinCore.getElementType(typeStr);
 		}
@@ -172,7 +172,7 @@ public class EditSectionRegistry {
 			return;
 		}
 
-		sectionRegistry = new HashMap<IElementType, SectionsInfo>();
+		sectionRegistry = new HashMap<IElementType<?>, SectionsInfo>();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = reg.getExtensionPoint(EDITSECTIONS_ID);
@@ -184,7 +184,7 @@ public class EditSectionRegistry {
 
 			SectionInfo info = new SectionInfo(configuration);
 			String parentTypeStr = configuration.getAttribute("parentType");
-			IElementType parentType = RodinCore.getElementType(parentTypeStr);
+			IElementType<?> parentType = RodinCore.getElementType(parentTypeStr);
 			addSection(parentType, info);
 		}
 
@@ -194,7 +194,7 @@ public class EditSectionRegistry {
 	private void sortSections() {
 		assert sectionRegistry != null;
 
-		for (IElementType parentType : sectionRegistry.keySet()) {
+		for (IElementType<?> parentType : sectionRegistry.keySet()) {
 			SectionsInfo infos = sectionRegistry.get(parentType);
 			infos.sortSections();
 		}
@@ -204,7 +204,7 @@ public class EditSectionRegistry {
 		return section.getAttribute("id");
 	}
 
-	private synchronized void addSection(IElementType parentType,
+	private synchronized void addSection(IElementType<?> parentType,
 			SectionInfo info) {
 		assert sectionRegistry != null;
 
@@ -217,7 +217,7 @@ public class EditSectionRegistry {
 	}
 
 	public synchronized IInternalElementType<? extends IInternalElement>[] getChildrenTypes(
-			IElementType<? extends IRodinElement> parentType) {
+			IElementType<?> parentType) {
 		if (sectionRegistry == null)
 			loadSectionRegistry();
 
@@ -228,8 +228,8 @@ public class EditSectionRegistry {
 		return new IInternalElementType<?>[0];
 	}
 
-	public synchronized String getPrefix(IElementType parentType,
-			IElementType type) {
+	public synchronized String getPrefix(IElementType<?> parentType,
+			IElementType<?> type) {
 		if (sectionRegistry == null)
 			loadSectionRegistry();
 
@@ -240,8 +240,8 @@ public class EditSectionRegistry {
 		return null;
 	}
 
-	public synchronized String getPostfix(IElementType parentType,
-			IElementType type) {
+	public synchronized String getPostfix(IElementType<?> parentType,
+			IElementType<?> type) {
 		if (sectionRegistry == null)
 			loadSectionRegistry();
 
@@ -252,7 +252,7 @@ public class EditSectionRegistry {
 		return null;
 	}
 
-	public synchronized boolean isEnable(IRodinElement parent, IElementType type) {
+	public synchronized boolean isEnable(IRodinElement parent, IElementType<?> type) {
 		if (sectionRegistry == null)
 			loadSectionRegistry();
 
@@ -263,7 +263,7 @@ public class EditSectionRegistry {
 		return false;
 	}
 
-	Map<IElementType, AttributesInfo> attributeRegistry;
+	Map<IElementType<?>, AttributesInfo> attributeRegistry;
 
 	class AttributesInfo {
 		List<AttributeInfo> attributeInfos;
@@ -288,14 +288,14 @@ public class EditSectionRegistry {
 			return result;
 		}
 
-		public void createDefaultAttributes(IEventBEditor editor,
+		public void createDefaultAttributes(IEventBEditor<?> editor,
 				IInternalElement element, IProgressMonitor monitor) throws RodinDBException {
 			for (AttributeInfo attributeInfo : attributeInfos) {
 				attributeInfo.createDefaultAttribute(editor, element, monitor);
 			}
 		}
 
-		public String getDefaultPrefix(IInternalElementType type, String attributeID) {
+		public String getDefaultPrefix(IInternalElementType<?> type, String attributeID) {
 			for (AttributeInfo attributeInfo : attributeInfos) {
 				if (attributeID.equals(attributeInfo.getAttributeId())) {
 					return attributeInfo.getDefaultPrefix(type); 
@@ -308,8 +308,8 @@ public class EditSectionRegistry {
 
 	private class AttributeInfo {
 		private IConfigurationElement config;
-		private Map<IElementType, IAttributeFactory> factories = null;
-		private Map<IElementType, String> defaultPrefixes = null;
+		private Map<IElementType<?>, IAttributeFactory> factories = null;
+		private Map<IElementType<?>, String> defaultPrefixes = null;
 
 		private IAttributeEditor attributeEditor = null;
 		
@@ -317,7 +317,7 @@ public class EditSectionRegistry {
 			this.config = config;
 		}
 
-		public String getDefaultPrefix(IInternalElementType type) {
+		public String getDefaultPrefix(IInternalElementType<?> type) {
 			if (defaultPrefixes == null) {
 				loadPrefixes();
 			}
@@ -326,13 +326,13 @@ public class EditSectionRegistry {
 		}
 
 		private void loadPrefixes() {
-			defaultPrefixes = new HashMap<IElementType, String>();
+			defaultPrefixes = new HashMap<IElementType<?>, String>();
 			
 			IConfigurationElement[] typeIDs = config.getChildren("type");
 			for (IConfigurationElement typeID : typeIDs) {
 				String id = typeID.getAttribute("id");
 				try {
-					IElementType type = RodinCore.getElementType(id);
+					IElementType<?> type = RodinCore.getElementType(id);
 					String defaultPrefix = typeID.getAttribute("defaultPrefix");
 					defaultPrefixes.put(type, defaultPrefix);
 				} catch (IllegalArgumentException e) {
@@ -347,7 +347,7 @@ public class EditSectionRegistry {
 			}
 		}
 
-		public void createDefaultAttribute(IEventBEditor editor,
+		public void createDefaultAttribute(IEventBEditor<?> editor,
 				IInternalElement element,
 				IProgressMonitor monitor) throws RodinDBException {
 			if (factories == null) {
@@ -360,13 +360,13 @@ public class EditSectionRegistry {
 		}
 
 		private void loadFactory() {
-			factories = new HashMap<IElementType, IAttributeFactory>();
+			factories = new HashMap<IElementType<?>, IAttributeFactory>();
 			
 			IConfigurationElement[] typeIDs = config.getChildren("type");
 			for (IConfigurationElement typeID : typeIDs) {
 				String id = typeID.getAttribute("id");
 				try {
-					IElementType type = RodinCore.getElementType(id);
+					IElementType<?> type = RodinCore.getElementType(id);
 					try {
 						IAttributeFactory factory = (IAttributeFactory) typeID
 								.createExecutableExtension("defaultValue");
@@ -434,7 +434,7 @@ public class EditSectionRegistry {
 			return;
 		}
 
-		attributeRegistry = new HashMap<IElementType, AttributesInfo>();
+		attributeRegistry = new HashMap<IElementType<?>, AttributesInfo>();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = reg.getExtensionPoint(EDITSECTIONS_ID);
@@ -447,7 +447,7 @@ public class EditSectionRegistry {
 			IConfigurationElement[] types = configuration.getChildren("type");
 			for (IConfigurationElement type : types) {
 				String id = type.getAttribute("id");
-				IElementType elementType;
+				IElementType<?> elementType;
 				try {
 					elementType = RodinCore.getElementType(id);
 				} catch (IllegalArgumentException e) {
@@ -464,7 +464,7 @@ public class EditSectionRegistry {
 		}
 	}
 
-	private void addAttribute(IElementType elementType, AttributeInfo info) {
+	private void addAttribute(IElementType<?> elementType, AttributeInfo info) {
 		assert attributeRegistry != null;
 
 		AttributesInfo infos = attributeRegistry.get(elementType);
@@ -475,7 +475,7 @@ public class EditSectionRegistry {
 		infos.addAttribute(info);
 	}
 
-	public synchronized int getNumAttributes(IElementType type) {
+	public synchronized int getNumAttributes(IElementType<?> type) {
 		if (attributeRegistry == null)
 			loadAttributeRegistry();
 
@@ -487,7 +487,7 @@ public class EditSectionRegistry {
 		return info.getNumAttributes();
 	}
 
-	public synchronized IEditComposite[] createAttributeComposites(IElementType type) {
+	public synchronized IEditComposite[] createAttributeComposites(IElementType<?> type) {
 		if (attributeRegistry == null)
 			loadAttributeRegistry();
 
@@ -500,7 +500,7 @@ public class EditSectionRegistry {
 				.createAttributeComposites();
 	}
 
-	private Map<IElementType, ActionsInfo> actionRegistry;
+	private Map<IElementType<?>, ActionsInfo> actionRegistry;
 
 	class ActionsInfo {
 		Map<String, ActionInfo> actions;
@@ -518,7 +518,7 @@ public class EditSectionRegistry {
 			return actionIDs.toArray(new String[actionIDs.size()]);
 		}
 
-		public void run(String actionID, IEventBEditor editor,
+		public void run(String actionID, IEventBEditor<?> editor,
 				IInternalParent parent, IInternalElement element,
 				IInternalElementType<IInternalElement> type)
 				throws CoreException {
@@ -552,7 +552,7 @@ public class EditSectionRegistry {
 			return;
 		}
 
-		actionRegistry = new HashMap<IElementType, ActionsInfo>();
+		actionRegistry = new HashMap<IElementType<?>, ActionsInfo>();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = reg.getExtensionPoint(EDITSECTIONS_ID);
@@ -566,7 +566,7 @@ public class EditSectionRegistry {
 			IConfigurationElement[] types = configuration.getChildren("type");
 			for (IConfigurationElement type : types) {
 				String id = type.getAttribute("id");
-				IElementType elementType;
+				IElementType<?> elementType;
 				try {
 					elementType = RodinCore.getElementType(id);
 				} catch (IllegalArgumentException e) {
@@ -610,7 +610,7 @@ public class EditSectionRegistry {
 			return config.getAttribute("tooltip");
 		}
 
-		public void run(IEventBEditor editor, IInternalParent parent,
+		public void run(IEventBEditor<?> editor, IInternalParent parent,
 				IInternalElement element,
 				IInternalElementType<IInternalElement> type)
 				throws CoreException {
@@ -626,7 +626,7 @@ public class EditSectionRegistry {
 
 	}
 
-	public synchronized String[] getActions(IElementType type) {
+	public synchronized String[] getActions(IElementType<?> type) {
 		if (actionRegistry == null)
 			loadActionRegistry();
 
@@ -638,7 +638,7 @@ public class EditSectionRegistry {
 		return info.getActions();
 	}
 
-	private synchronized void addAction(IElementType type, String id,
+	private synchronized void addAction(IElementType<?> type, String id,
 			ActionInfo info) {
 		assert actionRegistry != null;
 
@@ -650,7 +650,7 @@ public class EditSectionRegistry {
 		infos.addAction(id, info);
 	}
 
-	public void run(String actionID, IEventBEditor editor,
+	public void run(String actionID, IEventBEditor<?> editor,
 			IInternalParent parent, IInternalElement element,
 			IInternalElementType<IInternalElement> type) throws CoreException {
 		if (actionRegistry == null)
@@ -664,7 +664,7 @@ public class EditSectionRegistry {
 		info.run(actionID, editor, parent, element, type);
 	}
 
-	public synchronized String getToolTip(String actionID, IElementType type) {
+	public synchronized String getToolTip(String actionID, IElementType<?> type) {
 		if (actionRegistry == null)
 			loadActionRegistry();
 		ActionsInfo info = actionRegistry.get(type);
@@ -675,7 +675,7 @@ public class EditSectionRegistry {
 		return info.getToolTip(actionID);
 	}
 
-	public synchronized String getName(String actionID, IElementType type) {
+	public synchronized String getName(String actionID, IElementType<?> type) {
 		if (actionRegistry == null)
 			loadActionRegistry();
 		ActionsInfo info = actionRegistry.get(type);
@@ -699,7 +699,7 @@ public class EditSectionRegistry {
 		return info.isApplicable(actionID, parent, element, type);
 	}
 
-	public synchronized IRodinElement createElement(final IEventBEditor editor,
+	public synchronized IRodinElement createElement(final IEventBEditor<?> editor,
 			final IInternalParent parent,
 			final IInternalElementType<? extends IInternalElement> type,
 			final IInternalElement sibling) throws CoreException {
@@ -723,7 +723,7 @@ public class EditSectionRegistry {
 		return newElement;
 	}
 
-	public synchronized String getDefaultPrefix(IInternalElementType type, String attributeID) {
+	public synchronized String getDefaultPrefix(IInternalElementType<?> type, String attributeID) {
 		if (attributeRegistry == null)
 			loadAttributeRegistry();
 

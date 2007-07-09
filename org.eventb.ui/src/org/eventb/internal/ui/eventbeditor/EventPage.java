@@ -54,7 +54,7 @@ public class EventPage extends EventBFormPage {
 	@Override
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
-			IEventBEditor editor) {
+			IEventBEditor<?> editor) {
 		EventMasterSection part = new EventMasterSection(managedForm, parent,
 				managedForm.getToolkit(), Section.NO_TITLE, editor);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);

@@ -58,7 +58,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 		ISelectionChangedListener {
 	TreeEditor treeEditor;
 
-	protected IEventBEditor editor;
+	protected IEventBEditor<?> editor;
 
 	// Number of columns for this Tree Viewer. Should be consistance with the
 	// abstract method createTreeColumns().
@@ -221,7 +221,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 	 * @param style
 	 *            The style used to creat the part
 	 */
-	public EventBEditableTreeViewer(IEventBEditor editor, Composite parent,
+	public EventBEditableTreeViewer(IEventBEditor<?> editor, Composite parent,
 			int style) {
 		super(parent, style);
 		this.editor = editor;

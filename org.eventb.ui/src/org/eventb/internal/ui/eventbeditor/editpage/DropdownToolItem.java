@@ -42,7 +42,7 @@ public class DropdownToolItem {
 
 	String active = null;
 
-	private IEventBEditor editor;
+	private IEventBEditor<?> editor;
 
 	private IInternalParent parent;
 
@@ -138,7 +138,7 @@ public class DropdownToolItem {
 	 * @param item
 	 *            The tool item to be used as a dropdown
 	 */
-	public DropdownToolItem(IEventBEditor editor, ToolItem item,
+	public DropdownToolItem(IEventBEditor<?> editor, ToolItem item,
 			IInternalParent parent, IInternalElement element,
 			IInternalElementType<IInternalElement> type) {
 		this.item = item;

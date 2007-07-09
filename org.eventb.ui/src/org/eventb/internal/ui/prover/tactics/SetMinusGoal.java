@@ -39,7 +39,7 @@ public class SetMinusGoal extends DefaultTacticProvider {
 	@Override
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
-		Formula subFormula = predicate.getSubFormula(position);
+		Formula<?> subFormula = predicate.getSubFormula(position);
 		assert subFormula instanceof BinaryExpression;
 		Expression right = ((BinaryExpression) subFormula).getRight();
 		if (right instanceof AssociativeExpression) {

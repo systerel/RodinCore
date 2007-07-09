@@ -80,7 +80,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 	@Override
 	public void initialize(FormEditor editor) {
 		super.initialize(editor);
-		((IEventBEditor) editor).addElementChangedListener(this);
+		((IEventBEditor<?>) editor).addElementChangedListener(this);
 	}
 
 	/*

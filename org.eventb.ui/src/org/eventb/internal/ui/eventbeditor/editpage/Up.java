@@ -10,7 +10,7 @@ import org.rodinp.core.RodinDBException;
 
 public class Up implements IEditAction {
 
-	public void run(IEventBEditor editor, final IInternalParent parent,
+	public void run(IEventBEditor<?> editor, final IInternalParent parent,
 			final IInternalElement element,
 			IInternalElementType<IInternalElement> type) throws CoreException {
 

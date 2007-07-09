@@ -57,7 +57,7 @@ public class ElementUIRegistry {
 	private static ElementUIRegistry instance;
 
 	// The registry stored Element UI information
-	private Map<IElementType, ElementUIInfo> registry;
+	private Map<IElementType<?>, ElementUIInfo> registry;
 
 	/**
 	 * @author htson
@@ -341,7 +341,7 @@ public class ElementUIRegistry {
 			return;
 		}
 
-		registry = new HashMap<IElementType, ElementUIInfo>();
+		registry = new HashMap<IElementType<?>, ElementUIInfo>();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = reg.getExtensionPoint(ELEMENTUI_ID);
@@ -351,7 +351,7 @@ public class ElementUIRegistry {
 		for (IConfigurationElement configuration : configurations) {
 			String type = configuration.getAttribute("type"); //$NON-NLS-1$
 
-			IElementType elementType;
+			IElementType<?> elementType;
 			try {
 				elementType = RodinCore.getElementType(type);
 			} catch (IllegalArgumentException e) {
@@ -420,7 +420,7 @@ public class ElementUIRegistry {
 			loadRegistry();
 
 		if (obj instanceof IRodinElement) {
-			IElementType elementType = ((IRodinElement) obj)
+			IElementType<?> elementType = ((IRodinElement) obj)
 								.getElementType();
 			ElementUIInfo info = registry.get(elementType);
 			if (info != null)

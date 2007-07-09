@@ -16,7 +16,7 @@ public class DragAndCopyUtil {
 		Collection<IRodinElement> elements = new ArrayList<IRodinElement>();
 
 		// Added to list of parent only.
-		for (Iterator it = selection.iterator(); it.hasNext();) {
+		for (Iterator<?> it = selection.iterator(); it.hasNext();) {
 			Object obj = it.next();
 			IRodinElement element = null;
 			if (obj instanceof IRodinElement) {
@@ -38,7 +38,7 @@ public class DragAndCopyUtil {
 		// must have a common parent if not project selected
 		if (!projSelected) {
 			IRodinElement parent = null;
-			for (Iterator it = selection.iterator(); it.hasNext();) {
+			for (Iterator<?> it = selection.iterator(); it.hasNext();) {
 				IRodinElement c_parent = null;
 				Object obj = it.next();
 				if (obj instanceof IRodinElement) {

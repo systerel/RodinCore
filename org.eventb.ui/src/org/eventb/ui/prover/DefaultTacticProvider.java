@@ -103,7 +103,7 @@ public class DefaultTacticProvider implements ITacticProvider {
 	 */
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
-		Formula subFormula = predicate.getSubFormula(position);
+		Formula<?> subFormula = predicate.getSubFormula(position);
 		if (subFormula instanceof AssociativePredicate) {
 			// Return the operator between the first and second child
 			Predicate[] children = ((AssociativePredicate) subFormula)

@@ -46,7 +46,7 @@ public class Delete implements IViewActionDelegate {
 
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 
-			for (Iterator it = ssel.iterator(); it.hasNext();) {
+			for (Iterator<?> it = ssel.iterator(); it.hasNext();) {
 				Object obj = it.next();
 				// Ignore element which is not Rodin Element
 				if (!(obj instanceof IRodinElement))

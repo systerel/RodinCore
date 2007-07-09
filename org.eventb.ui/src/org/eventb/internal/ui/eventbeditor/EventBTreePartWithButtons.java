@@ -77,7 +77,7 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 	 */
 	public EventBTreePartWithButtons(final IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit, int style,
-			IEventBEditor editor, String[] buttonLabels, String title,
+			IEventBEditor<?> editor, String[] buttonLabels, String title,
 			String description) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels, title,
 				description);

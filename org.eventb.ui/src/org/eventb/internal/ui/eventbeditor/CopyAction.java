@@ -19,7 +19,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
@@ -109,7 +109,7 @@ public class CopyAction extends SelectionListenerAction {
 		Collection<IRodinElement> elements = new ArrayList<IRodinElement>();
 
 		// Added to list of parent only.
-		for (Iterator it = selection.iterator(); it.hasNext();) {
+		for (Iterator<?> it = selection.iterator(); it.hasNext();) {
 			Object obj = it.next();
 			IRodinElement element = null;
 			if (obj instanceof IRodinElement) {
@@ -132,7 +132,7 @@ public class CopyAction extends SelectionListenerAction {
 			IResource[] resources = new IResource[length];
 			int i = 0;
 			StringBuffer buf = new StringBuffer();
-			for (Iterator it = selection.iterator(); it.hasNext();) {
+			for (Iterator<?> it = selection.iterator(); it.hasNext();) {
 				IRodinProject prj = (IRodinProject) it.next();
 				resources[i] = prj.getResource();
 				if (i > 0)
@@ -155,7 +155,7 @@ public class CopyAction extends SelectionListenerAction {
 			int actualLength = 0;
 			int i = 0;
 			StringBuffer buf = new StringBuffer();
-			for (Iterator it = selection.iterator(); it.hasNext();) {
+			for (Iterator<?> it = selection.iterator(); it.hasNext();) {
 				IRodinFile file = (IRodinFile) it.next();
 				resources[i] = file.getResource();
 				IPath location = resources[i].getLocation();

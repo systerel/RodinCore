@@ -33,7 +33,6 @@ import org.eventb.core.IConstant;
 import org.eventb.core.ITheorem;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
 
@@ -74,7 +73,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 	 */
 	public SyntheticContextViewSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit, int style,
-			IEventBEditor editor) {
+			EventBContextEditor editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 
@@ -375,8 +374,8 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 	 */
 	@Override
 	protected ActionGroup createActionGroup() {
-		return new SyntheticContextMasterSectionActionGroup(editor,
-				(TreeViewer) this.getViewer());
+		return new SyntheticContextMasterSectionActionGroup(
+				(EventBContextEditor) editor, (TreeViewer) this.getViewer());
 	}
 
 }

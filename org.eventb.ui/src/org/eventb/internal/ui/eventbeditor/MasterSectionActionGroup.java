@@ -11,7 +11,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 
-public class MasterSectionActionGroup extends ActionGroup {
+public class MasterSectionActionGroup<E extends IEventBEditor<?>> extends ActionGroup {
 	private Clipboard clipboard;
 
 	protected CopyAction copyAction;
@@ -19,12 +19,12 @@ public class MasterSectionActionGroup extends ActionGroup {
 	protected PasteAction pasteAction;
 
 	// The Event-B Editor.
-	protected IEventBEditor editor;
+	protected E editor;
 
 	// The tree viewer in the master section
 	protected TreeViewer viewer;
 
-	public MasterSectionActionGroup(IEventBEditor eventBEditor,
+	public MasterSectionActionGroup(E eventBEditor,
 			TreeViewer treeViewer) {
 		this.editor = eventBEditor;
 		this.viewer = treeViewer;

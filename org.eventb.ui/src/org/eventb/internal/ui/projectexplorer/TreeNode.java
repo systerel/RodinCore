@@ -123,7 +123,7 @@ public class TreeNode<T extends IInternalElement> {
 	 * @return <code>true</code> if the children of the node has the specified
 	 *         type
 	 */
-	public boolean isType(IInternalElementType type) {
+	public boolean isType(IInternalElementType<?> type) {
 		return childrenType == type;
 	}
 

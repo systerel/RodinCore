@@ -296,7 +296,7 @@ public class SectionComposite implements ISectionComposite {
 			}
 	}
 
-	public IElementType getElementType() {
+	public IElementType<?> getElementType() {
 		return type;
 	}
 
@@ -354,7 +354,7 @@ public class SectionComposite implements ISectionComposite {
 		updateHyperlink();
 	}
 
-	public void childrenChanged(IRodinElement element, IElementType childrenType) {
+	public void childrenChanged(IRodinElement element, IElementType<?> childrenType) {
 		if (elementComps == null)
 			return;
 

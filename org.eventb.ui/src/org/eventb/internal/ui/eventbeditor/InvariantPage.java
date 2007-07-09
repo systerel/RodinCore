@@ -56,7 +56,7 @@ public class InvariantPage extends EventBFormPage {
 	@Override
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
-			IEventBEditor editor) {
+			IEventBEditor<?> editor) {
 		InvariantMasterSection part = new InvariantMasterSection(managedForm,
 				parent, managedForm.getToolkit(), Section.NO_TITLE, editor);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);

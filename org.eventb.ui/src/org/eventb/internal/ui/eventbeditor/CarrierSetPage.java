@@ -54,7 +54,7 @@ public class CarrierSetPage extends EventBFormPage {
 	@Override
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
-			IEventBEditor editor) {
+			IEventBEditor<?> editor) {
 		CarrierSetMasterSection part = new CarrierSetMasterSection(managedForm,
 				parent, managedForm.getToolkit(), Section.NO_TITLE,
 				editor);

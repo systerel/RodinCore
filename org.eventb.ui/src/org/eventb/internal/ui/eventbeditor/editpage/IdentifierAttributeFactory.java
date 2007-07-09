@@ -14,7 +14,7 @@ public abstract class IdentifierAttributeFactory implements IAttributeFactory {
 
 	public abstract void setPrefix();
 
-	public void createDefaulAttribute(IEventBEditor editor,
+	public void createDefaulAttribute(IEventBEditor<?> editor,
 			IInternalElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		if (!(element instanceof IIdentifierElement)) {

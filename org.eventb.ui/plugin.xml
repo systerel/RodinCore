@@ -1126,6 +1126,9 @@
       <propertyContributor contributorId="org.eventb.ui.editors.machine">
          <propertyCategory category="eventB"/>
       </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor contributorId="org.eventb.ui.editors.context">
          <propertyCategory category="eventB"/>
       </propertyContributor>
@@ -1138,6 +1141,9 @@
                id="org.eventb.ui.basicTab"
                label="Basic"/>
       </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
       <propertyTabs contributorId="org.eventb.ui.editors.context">
          <propertyTab
                category="eventB"
@@ -1231,6 +1237,9 @@
             <input type="org.eventb.core.IAssignmentElement"/>
          </propertySection>
       </propertySections>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
       <propertySections contributorId="org.eventb.ui.editors.context">
          <propertySection
                class="org.eventb.internal.ui.propertiesView.LabelSection"

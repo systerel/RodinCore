@@ -140,7 +140,7 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @param style
 	 *            The style used to create the tree viewer
 	 */
-	public ConstantEditableTreeViewer(IEventBEditor editor, Composite parent,
+	public ConstantEditableTreeViewer(IEventBEditor<?> editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new CarrierSetContentProvider());

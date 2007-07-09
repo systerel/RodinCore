@@ -139,7 +139,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @param style
 	 *            the style used to create the tree viewer
 	 */
-	public EventEditableTreeViewer(IEventBEditor editor, Composite parent,
+	public EventEditableTreeViewer(IEventBEditor<?> editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new EventContentProvider());

@@ -17,7 +17,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -55,16 +54,16 @@ public class SyntheticViewPage extends EventBFormPage {
 	@Override
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
-			IEventBEditor editor) {
+			IEventBEditor<?> editor) {
 		EventBPartWithButtons part;
-		if (editor.getRodinInput() instanceof IMachineFile)
+		if (editor instanceof EventBMachineEditor)
 			part = new SyntheticMachineViewSection(managedForm, parent,
 					managedForm.getToolkit(), Section.NO_TITLE,
-					editor);
+					(EventBMachineEditor) editor);
 		else
 			part = new SyntheticContextViewSection(managedForm, parent,
 					managedForm.getToolkit(), Section.NO_TITLE,
-					editor);
+					(EventBContextEditor) editor);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

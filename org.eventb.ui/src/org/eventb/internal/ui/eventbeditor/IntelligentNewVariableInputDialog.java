@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.IInvariant;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
@@ -55,7 +56,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 	private String identifier;
 
-	private Collection<Pair> invariants;
+	private Collection<Pair<String, String>> invariants;
 
 	private String initLabel;
 
@@ -63,13 +64,13 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 	private IEventBInputText identifierText;
 
-	private Collection<Pair> invariantPairTexts;
+	private Collection<Pair<IEventBInputText, IEventBInputText>> invariantPairTexts;
 
 	private IEventBInputText initLabelText;
 
 	private IEventBInputText initSubstitutionText;
 
-	IEventBEditor editor;
+	IEventBEditor<IMachineFile> editor;
 
 	/**
 	 * Constructor.
@@ -80,14 +81,14 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 * @param title
 	 *            the title of the dialog
 	 */
-	public IntelligentNewVariableInputDialog(IEventBEditor editor,
+	public IntelligentNewVariableInputDialog(IEventBEditor<IMachineFile> editor,
 			Shell parentShell, String title,
 			String invPrefix, int invIndex) {
 		super(parentShell, title);
 		this.editor = editor;
 		this.invIndex = invIndex;
 		this.invPrefix = invPrefix;
-		invariantPairTexts = new ArrayList<Pair>();
+		invariantPairTexts = new ArrayList<Pair<IEventBInputText, IEventBInputText>>();
 	}
 
 	/*
@@ -286,11 +287,9 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 	private void initialise() {
 		clearDirtyTexts();
-		for (Pair pair : invariantPairTexts) {
-			IEventBInputText invariantPredicateText = (IEventBInputText) pair
-					.getSecond();
-			IEventBInputText invariantNameText = (IEventBInputText) pair
-					.getFirst();
+		for (Pair<IEventBInputText, IEventBInputText> pair : invariantPairTexts) {
+			IEventBInputText invariantPredicateText = pair.getSecond();
+			IEventBInputText invariantNameText = pair.getFirst();
 			try {
 				invIndex = UIUtils.getFreeElementLabelIndex(editor, editor
 						.getRodinInput(), IInvariant.ELEMENT_TYPE, invPrefix,
@@ -329,12 +328,10 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	private void setFieldValues() {
 		identifier = identifierText.getTextWidget().getText();
 
-		invariants = new ArrayList<Pair>();
-		for (Pair pair : invariantPairTexts) {
-			IEventBInputText invariantPredicateText = (IEventBInputText) pair
-					.getSecond();
-			IEventBInputText invariantNameText = (IEventBInputText) pair
-					.getFirst();
+		invariants = new ArrayList<Pair<String, String>>();
+		for (Pair<IEventBInputText, IEventBInputText> pair : invariantPairTexts) {
+			IEventBInputText invariantPredicateText = pair.getSecond();
+			IEventBInputText invariantNameText = pair.getFirst();
 			if (dirtyTexts.contains(invariantPredicateText.getTextWidget())) {
 				String invName = invariantNameText.getTextWidget()
 						.getText();
@@ -370,7 +367,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 * 
 	 * @return the invariant name as input by the user
 	 */
-	public Collection<Pair> getInvariants() {
+	public Collection<Pair<String, String>> getInvariants() {
 		return invariants;
 	}
 
@@ -391,11 +388,9 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	@Override
 	public boolean close() {
 		identifierText.dispose();
-		for (Pair pair : invariantPairTexts) {
-			IEventBInputText invariantPredicateText = (IEventBInputText) pair
-					.getSecond();
-			IEventBInputText invariantNameText = (IEventBInputText) pair
-					.getFirst();
+		for (Pair<IEventBInputText, IEventBInputText> pair : invariantPairTexts) {
+			IEventBInputText invariantPredicateText = pair.getSecond();
+			IEventBInputText invariantNameText = pair.getFirst();
 			invariantNameText.dispose();
 			invariantPredicateText.dispose();
 		}

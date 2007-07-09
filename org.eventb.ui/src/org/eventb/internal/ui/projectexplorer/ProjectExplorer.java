@@ -253,7 +253,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 		if (root instanceof IRodinElement) {
 			curr = (IRodinElement) root;
 		} else if (root instanceof TreeNode) {
-			curr = (IRodinElement) ((TreeNode) root).getParent();
+			curr = (IRodinElement) ((TreeNode<?>) root).getParent();
 		} else
 			curr = null;
 		while (!(curr instanceof IRodinProject || curr == null)) {
@@ -300,6 +300,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		if (adapter == IPropertySheetPage.class)
 			return new TabbedPropertySheetPage(this);

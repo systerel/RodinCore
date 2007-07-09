@@ -43,7 +43,7 @@ public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				IEventBEditor editor = (IEventBEditor) page.getEditor();
+				IEventBEditor<?> editor = (IEventBEditor<?>) page.getEditor();
 				try {
 					IRodinElement element = EditSectionRegistry.getDefault()
 							.createElement(editor, parent, type, null);

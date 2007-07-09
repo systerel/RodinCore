@@ -38,7 +38,7 @@ public class FunSetMinusImgGoal extends DefaultTacticProvider {
 	@Override
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
-		Formula subFormula = predicate.getSubFormula(position);
+		Formula<?> subFormula = predicate.getSubFormula(position);
 		assert subFormula instanceof BinaryExpression;
 		Expression setMinus = ((BinaryExpression) subFormula).getRight();
 		Expression first = ((BinaryExpression) setMinus).getLeft();

@@ -132,7 +132,7 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 
 	}
 
-	public VariableEditableTreeViewer(IEventBEditor editor, Composite parent,
+	public VariableEditableTreeViewer(IEventBEditor<?> editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new VariableContentProvider());

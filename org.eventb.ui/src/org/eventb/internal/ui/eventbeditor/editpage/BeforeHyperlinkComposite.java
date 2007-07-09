@@ -43,7 +43,7 @@ public class BeforeHyperlinkComposite extends AbstractHyperlinkComposite {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				IEventBEditor editor = (IEventBEditor) page.getEditor();
+				IEventBEditor<?> editor = (IEventBEditor<?>) page.getEditor();
 				try {
 					IInternalElement[] children = parent
 							.getChildrenOfType(type);

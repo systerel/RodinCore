@@ -9,7 +9,7 @@ import org.rodinp.core.RodinDBException;
 
 public interface IEditAction {
 
-	void run(IEventBEditor editor, IInternalParent parent,
+	void run(IEventBEditor<?> editor, IInternalParent parent,
 			IInternalElement element, IInternalElementType<IInternalElement> type) throws CoreException;
 
 	boolean isApplicable(IInternalParent parent, IInternalElement element,

@@ -81,7 +81,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 *            an Event-B Editor
 	 */
 	public EventMasterSection(IManagedForm managedForm, Composite parent,
-			FormToolkit toolkit, int style, IEventBEditor editor) {
+			FormToolkit toolkit, int style, IEventBEditor<?> editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 
@@ -320,8 +320,8 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 */
 	@Override
 	protected ActionGroup createActionGroup() {
-		return new EventMasterSectionActionGroup(editor, (TreeViewer) this
-				.getViewer());
+		return new EventMasterSectionActionGroup((EventBMachineEditor) editor,
+				(TreeViewer) this.getViewer());
 	}
 
 }

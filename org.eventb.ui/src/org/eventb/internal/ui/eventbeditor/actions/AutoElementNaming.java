@@ -23,11 +23,11 @@ import org.rodinp.core.RodinCore;
 public abstract class AutoElementNaming<T extends IInternalElement>
 		implements IEditorActionDelegate {
 
-	IEventBEditor editor;
+	IEventBEditor<?> editor;
 
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof IEventBEditor)
-			editor = (IEventBEditor) targetEditor;
+			editor = (IEventBEditor<?>) targetEditor;
 	}
 
 	public void rename(final IInternalElementType<T> type, final String prefix,

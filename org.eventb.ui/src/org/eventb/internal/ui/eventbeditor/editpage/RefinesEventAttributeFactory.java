@@ -9,7 +9,7 @@ import org.rodinp.core.RodinDBException;
 
 public class RefinesEventAttributeFactory implements IAttributeFactory {
 
-	public void createDefaulAttribute(IEventBEditor editor,
+	public void createDefaulAttribute(IEventBEditor<?> editor,
 			IInternalElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		if (!(element instanceof IRefinesEvent)) {

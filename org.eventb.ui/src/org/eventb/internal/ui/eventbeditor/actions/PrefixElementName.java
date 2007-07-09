@@ -17,10 +17,10 @@ import org.rodinp.core.IRodinFile;
 
 public abstract class PrefixElementName<T extends IInternalElement> implements IEditorActionDelegate {
 
-	IEventBEditor editor;
+	IEventBEditor<?> editor;
 
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		editor = (IEventBEditor) targetEditor;
+		editor = (IEventBEditor<?>) targetEditor;
 	}
 
 	public void setPrefix(IInternalElementType<T> type, String attributeID,

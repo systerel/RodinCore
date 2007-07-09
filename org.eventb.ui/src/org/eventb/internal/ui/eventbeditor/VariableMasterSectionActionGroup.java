@@ -21,6 +21,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -34,7 +35,7 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 public class VariableMasterSectionActionGroup extends ActionGroup {
 
 	// The Event-B Editor.
-	IEventBEditor editor;
+	IEventBEditor<IMachineFile> editor;
 
 	// The tree viewer in the master section
 	TreeViewer viewer;
@@ -57,7 +58,7 @@ public class VariableMasterSectionActionGroup extends ActionGroup {
 	 * @param treeViewer
 	 *            The tree viewer associated with this action group
 	 */
-	public VariableMasterSectionActionGroup(IEventBEditor eventBEditor,
+	public VariableMasterSectionActionGroup(IEventBEditor<IMachineFile> eventBEditor,
 			TreeViewer treeViewer) {
 		this.editor = eventBEditor;
 		this.viewer = treeViewer;
