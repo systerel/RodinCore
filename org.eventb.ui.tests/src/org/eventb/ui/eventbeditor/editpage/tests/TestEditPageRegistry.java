@@ -24,7 +24,7 @@ public class TestEditPageRegistry extends TestCase {
 		EditSectionRegistry editSectionRegistry = EditSectionRegistry
 				.getDefault();
 
-		IElementType[] types = editSectionRegistry
+		IElementType<?>[] types = editSectionRegistry
 				.getChildrenTypes(IMachineFile.ELEMENT_TYPE);
 
 		assertChildrenTypes(
@@ -142,10 +142,10 @@ public class TestEditPageRegistry extends TestCase {
 	}
 
 	void assertChildrenTypes(String message, String expected,
-			IElementType[] types) {
+			IElementType<?>[] types) {
 		StringBuilder builder = new StringBuilder();
 		boolean sep = false;
-		for (IElementType type : types) {
+		for (IElementType<?> type : types) {
 			if (sep)
 				builder.append('\n');
 			builder.append(type);
