@@ -15,6 +15,7 @@ package org.eventb.internal.ui.cachehypothesis;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.prover.HypothesisComposite;
 import org.eventb.internal.ui.prover.HypothesisPage;
+import org.eventb.internal.ui.prover.ProverUI;
 
 /**
  * @author htson
@@ -31,13 +32,14 @@ public class CacheHypothesisPage extends HypothesisPage implements
 	 * @param userSupport
 	 *            the User Support associated with this Hypothesis Page.
 	 */
-	public CacheHypothesisPage(IUserSupport userSupport) {
-		super(userSupport);
+	public CacheHypothesisPage(IUserSupport userSupport,
+			ProverUI proverUI) {
+		super(userSupport, proverUI);
 	}
 
 	@Override
 	public HypothesisComposite getHypypothesisCompsite() {
-		return new CacheHypothesisComposite(userSupport);
+		return new CacheHypothesisComposite(userSupport, proverUI);
 	}
 	
 }

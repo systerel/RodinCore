@@ -15,6 +15,7 @@ package org.eventb.internal.ui.searchhypothesis;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.prover.HypothesisComposite;
 import org.eventb.internal.ui.prover.HypothesisPage;
+import org.eventb.internal.ui.prover.ProverUI;
 
 /**
  * @author htson
@@ -31,13 +32,13 @@ public class SearchHypothesisPage extends HypothesisPage implements
 	 * @param userSupport
 	 *            the User Support associated with this Hypothesis Page.
 	 */
-	public SearchHypothesisPage(IUserSupport userSupport) {
-		super(userSupport);
+	public SearchHypothesisPage(IUserSupport userSupport, ProverUI proverUI) {
+		super(userSupport, proverUI);
 	}
 
 	@Override
 	public HypothesisComposite getHypypothesisCompsite() {
-		return new SearchHypothesisComposite(userSupport);
+		return new SearchHypothesisComposite(userSupport, proverUI);
 	}
 
 }

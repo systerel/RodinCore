@@ -130,8 +130,9 @@ public class ProofsPage extends FormPage implements
 		gridData.heightHint = 0;
 		gridData.widthHint = 0;
 		tmpComp.setLayoutData(gridData);
-		
-		hypComposite = new SelectedHypothesisComposite(userSupport, form);
+
+		hypComposite = new SelectedHypothesisComposite(userSupport, form,
+				(ProverUI) this.getEditor());
 		hypComposite.createControl(control);
 		hypComposite.getControl().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, false, false));

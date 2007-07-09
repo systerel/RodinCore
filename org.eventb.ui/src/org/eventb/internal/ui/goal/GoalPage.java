@@ -58,10 +58,12 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.TacticPositionUI;
+import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.prover.EventBPredicateText;
 import org.eventb.internal.ui.prover.PredicateUtil;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
+import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.IEventBSharedImages;
@@ -99,6 +101,8 @@ public class GoalPage extends Page implements
 
 	private ProofStatusLineManager statusManager;
 
+	private ProverUI proverUI;
+	
 	/**
 	 * Constructor.
 	 * <p>
@@ -106,8 +110,9 @@ public class GoalPage extends Page implements
 	 * @param userSupport
 	 *            the User Support associated with this Goal Page.
 	 */
-	public GoalPage(IUserSupport userSupport) {
+	public GoalPage(ProverUI proverUI, IUserSupport userSupport) {
 		super();
+		this.proverUI = proverUI;
 		this.userSupport = userSupport;
 		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
 				this);
@@ -253,7 +258,7 @@ public class GoalPage extends Page implements
 		Color color = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 		if (goalText != null)
 			goalText.dispose();
-		goalText = new EventBPredicateText(toolkit, goalComposite);
+		goalText = new EventBPredicateText(toolkit, goalComposite, proverUI);
 		final StyledText styledText = goalText.getMainTextWidget();
 		// styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 		// true));
@@ -416,10 +421,14 @@ public class GoalPage extends Page implements
 				ProverUIUtils.debug("Input: \"" + input + "\"");
 
 		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
+		IProofControlPage proofControlPage = (IProofControlPage) this.proverUI
+				.getAdapter(IProofControlPage.class);
+		String globalInput = proofControlPage.getInput();
 		if (provider != null)
 			try {
 				userSupport.applyTactic(
-						provider.getTactic(node, null, position, inputs), true,
+						provider.getTactic(node, null,
+						position, inputs, globalInput), true,
 						new NullProgressMonitor());
 			} catch (RodinDBException e2) {
 				// TODO Auto-generated catch block

@@ -19,6 +19,7 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.HypothesisComposite;
+import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.RodinDBException;
 
@@ -34,9 +35,11 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 	
 	ToolItem selectNone;
 	
-	public SearchHypothesisComposite(IUserSupport userSupport) {
+	public SearchHypothesisComposite(IUserSupport userSupport,
+			ProverUI proverUI) {
 		super(userSupport, IProofStateDelta.F_NODE
-				| IProofStateDelta.F_PROOFTREE | IProofStateDelta.F_SEARCH);
+				| IProofStateDelta.F_PROOFTREE | IProofStateDelta.F_SEARCH,
+				proverUI);
 	}
 
 	@Override

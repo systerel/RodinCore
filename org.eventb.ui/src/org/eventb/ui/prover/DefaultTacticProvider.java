@@ -62,11 +62,26 @@ public class DefaultTacticProvider implements ITacticProvider {
 	/* (non-Javadoc)
 	 * @see org.eventb.ui.prover.ITacticProvider#getTactic(org.eventb.core.seqprover.IProofTreeNode, org.eventb.core.ast.Predicate, org.eventb.core.ast.IPosition, java.lang.String[])
 	 */
+	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
 		return null;
 	}
 
+	/**
+	 * By default call
+	 * {@link #getTactic(IProofTreeNode, Predicate, IPosition, String[])}
+	 * without the global input.
+	 * <p>
+	 * 
+	 * @see org.eventb.ui.prover.ITacticProvider#getTactic(IProofTreeNode,
+	 *      Predicate, IPosition, String[], String)
+	 */
+	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
+			IPosition position, String[] inputs, String globalInput) {
+		return getTactic(node, hyp, position, inputs);
+	}
+	
 	/**
 	 * @deprecated Use
 	 *             {@link #getApplicablePositions(IProofTreeNode,Predicate,String)}
@@ -119,9 +134,6 @@ public class DefaultTacticProvider implements ITacticProvider {
 			return getOperatorPosition(predStr, left.getSourceLocation()
 					.getEnd() + 1, right.getSourceLocation().getStart());
 		}
-		if (subFormula instanceof SimplePredicate) {
-			return new Point(0, 1);
-		}
 		if (subFormula instanceof UnaryPredicate) {
 			UnaryPredicate uPred = (UnaryPredicate) subFormula;
 			Predicate child = uPred.getChild();
@@ -156,6 +168,12 @@ public class DefaultTacticProvider implements ITacticProvider {
 			Expression child = uPred.getChild();
 			return getOperatorPosition(predStr, subFormula.getSourceLocation()
 					.getStart(), child.getSourceLocation().getStart());
+		}
+		if (subFormula instanceof SimplePredicate) {
+			SimplePredicate sPred = (SimplePredicate) subFormula;
+			Expression expression = sPred.getExpression();
+			return getOperatorPosition(predStr, subFormula.getSourceLocation()
+					.getStart(), expression.getSourceLocation().getStart());
 		}
 		if (subFormula instanceof BoolExpression) {
 			return new Point(0, 1);

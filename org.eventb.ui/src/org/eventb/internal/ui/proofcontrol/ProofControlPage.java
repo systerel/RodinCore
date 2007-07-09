@@ -379,8 +379,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			final IUserSupport userSupport, boolean interruptable) {
 
 		IProofTreeNode node = userSupport.getCurrentPO().getCurrentNode();
-		String[] inputs = { currentInput };
-		final ITactic tactic = provider.getTactic(node, null, null, inputs);
+		final ITactic tactic = provider.getTactic(node, null, null, null,
+				currentInput);
 		if (interruptable) {
 			applyTacticWithProgress(new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm)
@@ -973,5 +973,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			}
 		}
 
+	}
+
+	public String getInput() {
+		return textInput.getTextWidget().getText();
 	}
 }

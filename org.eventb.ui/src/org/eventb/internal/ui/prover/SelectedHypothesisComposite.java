@@ -33,9 +33,10 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 	ToolItem selectNone;
 	
 	ScrolledForm parentForm;
-	public SelectedHypothesisComposite(IUserSupport userSupport, ScrolledForm parentForm) {
+	public SelectedHypothesisComposite(IUserSupport userSupport,
+			ScrolledForm parentForm, ProverUI proverUI) {
 		super(userSupport, IProofStateDelta.F_NODE
-				| IProofStateDelta.F_PROOFTREE);
+				| IProofStateDelta.F_PROOFTREE, proverUI);
 		this.parentForm = parentForm;
 	}
 

@@ -31,6 +31,7 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.TacticPositionUI;
+import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
 import org.rodinp.core.RodinDBException;
@@ -60,9 +61,12 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	private int currSize;
 
+	private ProverUI proverUI;
+	
 	Collection<Point> dirtyStates;
 
-	public EventBPredicateText(FormToolkit toolkit, final Composite parent) {
+	public EventBPredicateText(FormToolkit toolkit, final Composite parent, ProverUI proverUI) {
+		this.proverUI = proverUI;
 		dirtyStates = new ArrayList<Point>();
 		text = new StyledText(parent, SWT.MULTI | SWT.FULL_SELECTION);
 		Font font = JFaceResources
@@ -305,12 +309,15 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			for (String input : inputs)
 				ProverUIUtils.debug("Input: \"" + input + "\"");
 
+		IProofControlPage proofControlPage = this.proverUI.getProofControl();
+		String globalInput = proofControlPage.getInput();
+		
 		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
 		if (provider != null)
 			try {
 				us.applyTacticToHypotheses(provider.getTactic(us.getCurrentPO()
-						.getCurrentNode(), hyp, position, inputs), hypSet, true,
-						new NullProgressMonitor());
+						.getCurrentNode(), hyp, position, inputs, globalInput),
+						hypSet, true, new NullProgressMonitor());
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

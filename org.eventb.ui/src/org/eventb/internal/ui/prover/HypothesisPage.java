@@ -32,6 +32,8 @@ public abstract class HypothesisPage extends Page implements
 
 	protected IUserSupport userSupport;
 
+	protected ProverUI proverUI;
+
 	HypothesisComposite hypComp;
 	
 	/**
@@ -41,8 +43,10 @@ public abstract class HypothesisPage extends Page implements
 	 * @param userSupport
 	 *            the User Support associated with this Hypothesis Page.
 	 */
-	public HypothesisPage(IUserSupport userSupport) {
+	public HypothesisPage(IUserSupport userSupport,
+			ProverUI proverUI) {
 		this.userSupport = userSupport;
+		this.proverUI = proverUI;
 		hypComp = getHypypothesisCompsite();
 	}
 

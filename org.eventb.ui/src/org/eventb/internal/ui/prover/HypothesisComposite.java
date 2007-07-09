@@ -63,6 +63,8 @@ public abstract class HypothesisComposite implements
 	private FormToolkit toolkit;
 
 	private Composite control;
+	
+	private ProverUI proverUI;
 
 	int flags;
 
@@ -79,8 +81,10 @@ public abstract class HypothesisComposite implements
 	 *            specify that the page is refresh when the current node or the
 	 *            search hypothesis has been changed
 	 */
-	public HypothesisComposite(IUserSupport userSupport, int flags) {
+	public HypothesisComposite(IUserSupport userSupport, int flags,
+			ProverUI proverUI) {
 		this.userSupport = userSupport;
+		this.proverUI = proverUI;
 		this.flags = flags;
 		rows = new ArrayList<HypothesisRow>();
 		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
@@ -204,7 +208,7 @@ public abstract class HypothesisComposite implements
 		for (Predicate hyp : hyps) {
 			HypothesisRow row = new HypothesisRow(toolkit, scrolledForm
 					.getBody(), hyp, userSupport, i % 2 != 0,
-					enable, this);
+					enable, this, proverUI);
 			rows.add(row);
 			i++;
 		}

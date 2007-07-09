@@ -251,7 +251,7 @@ public class ProverUI extends FormEditor implements
 		if (ISearchHypothesisPage.class.equals(required)) {
 			if (fSearchHypothesisPage == null) {
 				fSearchHypothesisPage = new SearchHypothesisPage(this
-						.getUserSupport());
+						.getUserSupport(), this);
 			}
 			return fSearchHypothesisPage;
 		}
@@ -259,14 +259,14 @@ public class ProverUI extends FormEditor implements
 		if (ICacheHypothesisPage.class.equals(required)) {
 			if (fCacheHypothesisPage == null) {
 				fCacheHypothesisPage = new CacheHypothesisPage(this
-						.getUserSupport());
+						.getUserSupport(), this);
 			}
 			return fCacheHypothesisPage;
 		}
 
 		if (IGoalPage.class.equals(required)) {
 			if (fGoalPage == null) {
-				fGoalPage = new GoalPage(this
+				fGoalPage = new GoalPage(this, this
 						.getUserSupport());
 			}
 			return fGoalPage;
@@ -599,6 +599,10 @@ public class ProverUI extends FormEditor implements
 		}
 		statusManager.setProofInformation(information);
 		return;
+	}
+
+	public IProofControlPage getProofControl() {
+		return fProofControlPage;
 	}
 
 }

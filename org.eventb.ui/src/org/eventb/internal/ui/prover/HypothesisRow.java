@@ -47,6 +47,7 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.TacticPositionUI;
+import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
@@ -70,6 +71,8 @@ public class HypothesisRow {
 
 	private Composite hypothesisComposite;
 
+	private ProverUI proverUI;
+	
 	EventBPredicateText hypothesisText;
 
 	// The UserSupport associated with this instance of the editor.
@@ -109,13 +112,15 @@ public class HypothesisRow {
 	 */
 	public HypothesisRow(FormToolkit toolkit, Composite parent, Predicate hyp,
 			IUserSupport userSupport, boolean odd,
-			boolean enable, SelectionListener listener) {
+			boolean enable,
+			SelectionListener listener, ProverUI proverUI) {
 		GridData gd;
 		this.hyp = hyp;
 		this.listener = listener;
 		this.userSupport = userSupport;
 		this.enable = enable;
-		
+		this.proverUI = proverUI;
+
 		this.toolkit = toolkit;
 		if (odd)
 			background = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
@@ -174,7 +179,8 @@ public class HypothesisRow {
 	public void createHypothesisText() {
 		if (hypothesisText != null)
 			hypothesisText.dispose();
-		hypothesisText = new EventBPredicateText(toolkit, hypothesisComposite);
+		hypothesisText = new EventBPredicateText(toolkit, hypothesisComposite,
+				proverUI);
 		StyledText textWidget = hypothesisText.getMainTextWidget();
 		textWidget.setBackground(background);
 		textWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -420,11 +426,14 @@ public class HypothesisRow {
 			for (String input : inputs)
 				ProverUIUtils.debug("Input: \"" + input + "\"");
 
+		IProofControlPage proofControlPage = this.proverUI.getProofControl();
+		String globalInput = proofControlPage.getInput();
+
 		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
 		if (provider != null)
 			try {
 				userSupport.applyTacticToHypotheses(provider.getTactic(node,
-						hyp, position, inputs), hypSet, true,
+						hyp, position, inputs, globalInput), hypSet, true,
 						new NullProgressMonitor());
 			} catch (RodinDBException e2) {
 				// TODO Auto-generated catch block

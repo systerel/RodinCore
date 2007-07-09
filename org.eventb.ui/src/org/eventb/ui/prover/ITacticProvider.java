@@ -57,21 +57,48 @@ public interface ITacticProvider {
 	 * @param position
 	 *            the position to apply this tactic
 	 * @param inputs
-	 *            the inputs of the tactic which are an array of strings, there
-	 *            are several possibilities for different types of tactics
-	 *            <ul>
-	 *            <li>Global tactic: The input is an array contains a single
-	 *            string taken from the input area in the Proof Control View.</li>
-	 *            <li>Goal/Hypothesis tactics: This inputs only applied to
-	 *            instantiate quantified predicates. This is the list of string
-	 *            used to instantiate taken from the Proving User Interface.</li>
-	 *            </ul>
+	 *            the inputs of the Goal/Hypothesis tactic which are an array of
+	 *            strings. This inputs only applied to instantiate quantified
+	 *            predicates. This is the list of string used to instantiate
+	 *            taken from the Proving User Interface. <br>
+	 *            For global tactic, clients must use
+	 *            {@link #getTactic(IProofTreeNode, Predicate, IPosition, String[], String)}.
+	 * @return the actual {@link org.eventb.core.seqprover.ITactic} that
+	 *         provides by this class
+	 * @deprecated use
+	 *             {@link #getTactic(IProofTreeNode, Predicate, IPosition, String[], String)}
+	 *             instead.
+	 */
+	@Deprecated
+	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
+			IPosition position, String[] inputs);
+
+	/**
+	 * Return the actual tactic provides by this class.
+	 * <p>
+	 * 
+	 * @param node
+	 *            the current proof tree node.
+	 * @param hyp
+	 *            the hypothesis or <code>null</code> if the goal is in
+	 *            consideration.
+	 * @param position
+	 *            the position to apply this tactic
+	 * @param inputs
+	 *            the inputs of the Goal/Hypothesis tactic which are an array of
+	 *            strings. This inputs only applied to instantiate quantified
+	 *            predicates. This is the list of string used to instantiate
+	 *            taken from the Proving User Interface. <br>
+	 * @param globalInput
+	 *            The input is single string taken from the input area in the 
+	 *            Proof Control View. 
 	 * @return the actual {@link org.eventb.core.seqprover.ITactic} that
 	 *         provides by this class
 	 */
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
-			IPosition position, String[] inputs);
-
+			IPosition position, String[] inputs, String globalInput);
+	
+	
 	/**
 	 * @deprecated Use
 	 *             {@link #getApplicablePositions(IProofTreeNode,Predicate,String)}
