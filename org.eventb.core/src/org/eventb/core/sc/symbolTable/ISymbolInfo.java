@@ -21,7 +21,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public interface ISymbolInfo extends Comparable {
+public interface ISymbolInfo extends Comparable<ISymbolInfo> {
 	
 	/**
 	 * Returns the symbol sting of this symbol info.

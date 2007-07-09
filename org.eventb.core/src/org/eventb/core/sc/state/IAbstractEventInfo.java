@@ -34,7 +34,8 @@ import org.eventb.core.tool.state.IStateType;
  * @author Stefan Hallerstede
  *
  */
-public interface IAbstractEventInfo extends ISCState, IConvergenceInfo, Comparable {
+public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
+		Comparable<IAbstractEventInfo> {
 	
 	final static IStateType<IAbstractEventInfo> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".abstractEventInfo");

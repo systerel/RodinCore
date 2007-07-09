@@ -8,6 +8,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Rewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypePredRewriter;
 import org.junit.Test;
 
+@SuppressWarnings("deprecation")
 public class TypePredRewriterTests {
 
 	private Rewriter r = new TypePredRewriter();

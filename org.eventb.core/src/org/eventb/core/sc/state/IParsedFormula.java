@@ -33,5 +33,5 @@ public interface IParsedFormula extends ISCState {
 	 * 
 	 * @return the current parsed but not type-checked formula
 	 */
-	Formula getFormula();
+	Formula<?> getFormula();
 }

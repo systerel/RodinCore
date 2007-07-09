@@ -39,9 +39,9 @@ public class RemoveMembership extends AbstractManualRewrites implements
 		IFormulaRewriter rewriter = new RemoveMembershipRewriterImpl();
 
 		FormulaFactory ff = FormulaFactory.getDefault();
-		Formula predicate = pred.getSubFormula(position);
+		Formula<?> predicate = pred.getSubFormula(position);
 
-		Formula newSubPredicate = null;
+		Formula<?> newSubPredicate = null;
 		if (predicate instanceof Predicate
 				&& Lib.isInclusion((Predicate) predicate))
 			newSubPredicate = rewriter.rewrite((RelationalPredicate) predicate);

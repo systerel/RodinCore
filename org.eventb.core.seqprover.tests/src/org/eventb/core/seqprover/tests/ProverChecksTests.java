@@ -54,8 +54,8 @@ public class ProverChecksTests extends TestCase{
 	 */
 	@Test
 	public void testCheckFormula(){
-		Formula illFormed = factory.makeBoundIdentifier(0, null);
-		Formula unTyped = factory.makeFreeIdentifier("ident", null);
+		Formula<?> illFormed = factory.makeBoundIdentifier(0, null);
+		Formula<?> unTyped = factory.makeFreeIdentifier("ident", null);
 		assertFalse(ProverChecks.checkFormula(illFormed));
 		assertFalse(ProverChecks.checkFormula(unTyped));
 		assertTrue(ProverChecks.checkFormula(p1));

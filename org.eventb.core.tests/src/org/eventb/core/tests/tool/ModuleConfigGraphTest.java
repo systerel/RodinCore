@@ -98,7 +98,7 @@ public class ModuleConfigGraphTest extends Declarations {
 		}
 	}
 	
-	private static ModuleDesc[][] modules = new ModuleDesc[][] {
+	private static ModuleDesc<?>[][] modules = new ModuleDesc[][] {
 		new ModuleDesc[] {
 				new ShortProcDesc("x")
 		},

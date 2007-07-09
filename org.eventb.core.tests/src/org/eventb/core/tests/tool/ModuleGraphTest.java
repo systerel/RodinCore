@@ -168,7 +168,7 @@ public class ModuleGraphTest extends Declarations {
 		
 	}
 	
-	private static final IFileElementType[][] types = 
+	private static final IFileElementType<?>[][] types = 
 		new IFileElementType[][] {
 			new IFileElementType[] {
 			},
@@ -197,7 +197,7 @@ public class ModuleGraphTest extends Declarations {
 		
 	};
 	
-	private static final IModuleType[][] mTypes = 
+	private static final IModuleType<?>[][] mTypes = 
 		new IModuleType[][] {
 			new IModuleType[] {
 			},
@@ -210,7 +210,7 @@ public class ModuleGraphTest extends Declarations {
 			}
 	};
 	
-	private static final ModuleDesc[][] moduleDescs = new ModuleDesc[][] {
+	private static final ModuleDesc<?>[][] moduleDescs = new ModuleDesc[][] {
 		new ModuleDesc[] {
 		},
 		new ModuleDesc[] {

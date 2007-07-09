@@ -16,6 +16,7 @@ import org.rodinp.core.IRodinProject;
  * 
  * @author Laurent Voisin
  */
+@SuppressWarnings("unchecked")
 public class EventBProjectAdapterFactory implements IAdapterFactory {
 
 	private static final Class[] ADAPTERS = new Class[] {

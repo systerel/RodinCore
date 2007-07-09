@@ -41,9 +41,9 @@ public class SetEqlRewrites extends AbstractManualRewrites {
 		IFormulaRewriter rewriter = new SetEqlRewriterImpl();
 		
 		FormulaFactory ff = FormulaFactory.getDefault();
-		Formula subFormula = pred.getSubFormula(position);
+		Formula<?> subFormula = pred.getSubFormula(position);
 		
-		Formula newSubFormula = null;
+		Formula<?> newSubFormula = null;
 		if (subFormula instanceof RelationalPredicate) {
 			newSubFormula = rewriter
 				.rewrite((RelationalPredicate) subFormula);

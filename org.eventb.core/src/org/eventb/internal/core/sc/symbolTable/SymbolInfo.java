@@ -94,9 +94,8 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(T)
 	 */
-	public final int compareTo(Object o) {
-		SymbolInfo that = (SymbolInfo) o;
-		return this.symbol.compareTo(that.symbol);
+	public final int compareTo(ISymbolInfo that) {
+		return this.symbol.compareTo(that.getSymbol());
 	}
 	
 	@Override

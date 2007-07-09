@@ -41,9 +41,9 @@ public class ImpOrRewrites extends AbstractManualRewrites {
 		IFormulaRewriter rewriter = new ImpOrRewriterImpl();
 		
 		FormulaFactory ff = FormulaFactory.getDefault();
-		Formula subFormula = pred.getSubFormula(position);
+		Formula<?> subFormula = pred.getSubFormula(position);
 		
-		Formula newSubFormula = null;
+		Formula<?> newSubFormula = null;
 		if (subFormula instanceof BinaryPredicate) {
 			newSubFormula = rewriter
 				.rewrite((BinaryPredicate) subFormula);

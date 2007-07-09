@@ -41,9 +41,9 @@ public class RelImgUnionLeftRewrites extends AbstractManualRewrites {
 		IFormulaRewriter rewriter = new RelImgUnionLeftRewriterImpl();
 		
 		FormulaFactory ff = FormulaFactory.getDefault();
-		Formula subFormula = pred.getSubFormula(position);
+		Formula<?> subFormula = pred.getSubFormula(position);
 		
-		Formula newSubFormula = null;
+		Formula<?> newSubFormula = null;
 		if (subFormula instanceof BinaryExpression) {
 			newSubFormula = rewriter
 				.rewrite((BinaryExpression) subFormula);

@@ -23,19 +23,19 @@ public class ParsedFormula extends State implements IParsedFormula {
 		return formula.toString();
 	}
 
-	private Formula formula;
+	private Formula<?> formula;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IParsedFormula#setFormula(Formula)
 	 */
-	public void setFormula(Formula f) {
+	public void setFormula(Formula<?> f) {
 		formula = f;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IParsedFormula#getFormula()
 	 */
-	public Formula getFormula() {
+	public Formula<?> getFormula() {
 		return formula;
 	}
 

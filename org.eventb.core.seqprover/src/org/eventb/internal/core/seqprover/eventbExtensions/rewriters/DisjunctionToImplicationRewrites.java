@@ -39,7 +39,7 @@ public class DisjunctionToImplicationRewrites extends AbstractManualRewrites {
 	@Override
 	protected Predicate rewrite(Predicate pred, IPosition position) {
 		FormulaFactory ff = FormulaFactory.getDefault();
-		Formula subFormula = pred
+		Formula<?> subFormula = pred
 						.getSubFormula(position);
 		if (subFormula == null || !(subFormula instanceof AssociativePredicate)) 
 			return null;

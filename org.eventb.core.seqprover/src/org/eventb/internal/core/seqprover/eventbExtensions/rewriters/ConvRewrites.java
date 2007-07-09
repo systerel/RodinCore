@@ -41,9 +41,9 @@ public class ConvRewrites extends AbstractManualRewrites {
 		IFormulaRewriter rewriter = new ConvRewriterImpl();
 		
 		FormulaFactory ff = FormulaFactory.getDefault();
-		Formula subFormula = pred.getSubFormula(position);
+		Formula<?> subFormula = pred.getSubFormula(position);
 		
-		Formula newSubFormula = null;
+		Formula<?> newSubFormula = null;
 		if (subFormula instanceof UnaryExpression) {
 			newSubFormula = rewriter
 				.rewrite((UnaryExpression) subFormula);

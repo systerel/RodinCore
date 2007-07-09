@@ -116,8 +116,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 		return label.hashCode();
 	}
 
-	public int compareTo(Object o) {
-		IAbstractEventInfo info = (IAbstractEventInfo) o;
+	public int compareTo(IAbstractEventInfo info) {
 		return label.compareTo(info.getEventLabel());
 	}
 	

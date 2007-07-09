@@ -369,7 +369,7 @@ extends LabeledElementModule {
 		repository.setState(parsedFormula);
 	}
 	
-	private void setParsedState(Formula formula) throws CoreException {
+	private void setParsedState(Formula<?> formula) throws CoreException {
 		parsedFormula.setFormula(formula);
 	}
 	

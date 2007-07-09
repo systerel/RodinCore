@@ -40,18 +40,18 @@ public class DomCompRewrites extends AbstractManualRewrites {
 
 	@Override
 	protected Predicate rewrite(Predicate pred, IPosition position) {
-		Formula subFormula = pred.getSubFormula(position);
+		Formula<?> subFormula = pred.getSubFormula(position);
 		if (!(subFormula instanceof BinaryExpression))
 			return null;
 		
 		IPosition parentPos = position.getParent();
-		Formula formula = pred.getSubFormula(parentPos);
+		Formula<?> formula = pred.getSubFormula(parentPos);
 		
 		if (formula != null && formula.getTag() == Expression.FCOMP) {
 			IFormulaRewriter rewriter = new DomCompRewriterImpl(
 					(BinaryExpression) subFormula);
 
-			Formula newSubFormula = rewriter
+			Formula<?> newSubFormula = rewriter
 					.rewrite((AssociativeExpression) formula);
 
 			if (newSubFormula == formula) // No rewrite occurs

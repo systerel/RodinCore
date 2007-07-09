@@ -78,17 +78,17 @@ public class MachineEventInheritedModule extends SCFilterModule {
 			&& checkFormula(event, eventSymbolInfo, abstractEventInfo, abstractEventInfo.getActions());
 	}
 	
-	private boolean checkFormula(
+	private <T extends Formula<T>> boolean checkFormula(
 			IEvent event,
 			IEventSymbolInfo eventSymbolInfo, 
 			IAbstractEventInfo abstractEventInfo, 
-			List<? extends Formula> formulas) throws CoreException {
+			List<T> formulas) throws CoreException {
 		
 		boolean ok = true;
 		
 		LinkedList<String> seenFaultyIdents = new LinkedList<String>();
 		
-		for (Formula formula : formulas) {
+		for (T formula : formulas) {
 			for (FreeIdentifier identifier : formula.getFreeIdentifiers()) {
 				String name = identifier.getName();
 				boolean found = abstractEventInfo.getVariable(name) != null;

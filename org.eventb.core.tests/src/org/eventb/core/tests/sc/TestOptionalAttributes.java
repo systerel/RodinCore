@@ -121,7 +121,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 		containsMarkers(c, false);
 	}
 	
-	private OptAttrTest[] tests = new OptAttrTest[] {
+	private OptAttrTest<?>[] tests = new OptAttrTest[] {
 			new MachineOptAttrTest() {
 
 				@Override
@@ -490,7 +490,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 	
 	public void test() throws Exception {
 		
-		for (OptAttrTest test : tests) {
+		for (OptAttrTest<?> test : tests) {
 			test.createFile();
 			test.removeAttr();
 			test.saveFile();

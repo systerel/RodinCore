@@ -68,7 +68,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 
 	// TODO : Make this efficient; At the moment this is not possible since once
 	// cannot overwrite a type environment.
-	private FreeIdentifier[] getIdentsNotInBase(Formula formula){
+	private FreeIdentifier[] getIdentsNotInBase(Formula<?> formula){
 		FreeIdentifier[] freeIdents = formula.getFreeIdentifiers();
 		ArrayList<FreeIdentifier> absent = new ArrayList<FreeIdentifier>();
 		for (FreeIdentifier ident : freeIdents) {

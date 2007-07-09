@@ -39,11 +39,11 @@ public class CompUnionDistRewrites extends AbstractManualRewrites {
 
 	@Override
 	protected Predicate rewrite(Predicate pred, IPosition position) {
-		Formula subFormula = pred.getSubFormula(position);
+		Formula<?> subFormula = pred.getSubFormula(position);
 		if (!(subFormula instanceof AssociativeExpression))
 			return null;
 		
-		Formula formula = pred.getSubFormula(position.getParent());
+		Formula<?> formula = pred.getSubFormula(position.getParent());
 		
 		if (subFormula.getTag() == Expression.BUNION
 				&& formula.getTag() == Expression.FCOMP) {
@@ -51,7 +51,7 @@ public class CompUnionDistRewrites extends AbstractManualRewrites {
 			IFormulaRewriter rewriter = new CompUnionDistRewriterImpl(
 					(AssociativeExpression) subFormula);
 
-			Formula newSubFormula = rewriter
+			Formula<?> newSubFormula = rewriter
 					.rewrite((AssociativeExpression) formula);
 
 			if (newSubFormula == formula) // No rewrite occurs

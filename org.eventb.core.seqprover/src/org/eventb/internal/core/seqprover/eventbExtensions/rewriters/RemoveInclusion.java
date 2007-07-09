@@ -38,9 +38,9 @@ public class RemoveInclusion extends AbstractManualRewrites implements
 		IFormulaRewriter rewriter = new RemoveInclusionRewriterImpl();
 
 		FormulaFactory ff = FormulaFactory.getDefault();
-		Formula predicate = pred.getSubFormula(position);
+		Formula<?> predicate = pred.getSubFormula(position);
 
-		Formula newSubPredicate = null;
+		Formula<?> newSubPredicate = null;
 		if (predicate instanceof Predicate
 				&& predicate.getTag() == Predicate.SUBSETEQ)
 			newSubPredicate = rewriter.rewrite((RelationalPredicate) predicate);

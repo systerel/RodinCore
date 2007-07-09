@@ -26,7 +26,7 @@ public class Node<T> implements Iterable<Node<T>> {
 
 	@Override
 	public boolean equals(Object obj) {
-		return id.equals(((Node) obj).id);
+		return id.equals(((Node<?>) obj).id);
 	}
 
 	@Override

@@ -4,7 +4,6 @@ Bundle-Name: Event-B Sequent Prover Tests
 Bundle-SymbolicName: org.eventb.core.seqprover.tests; singleton:=true
 Bundle-Version: 0.7.5
 Bundle-Vendor: ETH Zurich
-Bundle-Localization: plugin
 Require-Bundle: org.junit4,
  org.eventb.core.seqprover,
  org.eclipse.core.runtime,

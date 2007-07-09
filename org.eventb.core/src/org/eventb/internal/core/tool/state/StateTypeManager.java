@@ -60,7 +60,7 @@ public abstract class StateTypeManager extends SortingUtil {
 			System.out.println("---------------------------------------------------");
 			System.out.println(state_types_id + " registered:");
 			for (String id: getSortedIds(stateTypeIds)) {
-				StateType type = stateTypeIds.get(id);
+				StateType<?> type = stateTypeIds.get(id);
 				System.out.println("  " + type.getId());
 				System.out.println("    name: " + type.getName());
 				System.out.println("    class: " + type.getClassName());

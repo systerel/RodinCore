@@ -39,17 +39,17 @@ public class RelOvrRewrites extends AbstractManualRewrites {
 
 	@Override
 	protected Predicate rewrite(Predicate pred, IPosition position) {
-		Formula subFormula = pred.getSubFormula(position);
+		Formula<?> subFormula = pred.getSubFormula(position);
 		if (!(subFormula instanceof Expression))
 			return null;
 		
-		Formula formula = pred.getSubFormula(position.getParent());
+		Formula<?> formula = pred.getSubFormula(position.getParent());
 		
 		if (formula.getTag() == Expression.OVR) {
 			IFormulaRewriter rewriter = new RelOvrRewriterImpl(
 					(Expression) subFormula);
 
-			Formula newSubFormula = rewriter
+			Formula<?> newSubFormula = rewriter
 					.rewrite((AssociativeExpression) formula);
 
 			if (newSubFormula == formula) // No rewrite occurs

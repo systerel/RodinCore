@@ -39,12 +39,12 @@ public class CompImgRewrites extends AbstractManualRewrites {
 
 	@Override
 	protected Predicate rewrite(Predicate pred, IPosition position) {
-		Formula subFormula = pred.getSubFormula(position);
+		Formula<?> subFormula = pred.getSubFormula(position);
 		if (!(subFormula instanceof Expression))
 			return null;
 		
 		IPosition parentPos = position.getParent();
-		Formula formula = pred.getSubFormula(parentPos);
+		Formula<?> formula = pred.getSubFormula(parentPos);
 		
 		if (formula != null && formula.getTag() == Expression.FCOMP) {
 			formula = pred.getSubFormula(parentPos.getParent());
@@ -52,7 +52,7 @@ public class CompImgRewrites extends AbstractManualRewrites {
 				IFormulaRewriter rewriter = new CompImgRewriterImpl(
 						(Expression) subFormula);
 
-				Formula newSubFormula = rewriter
+				Formula<?> newSubFormula = rewriter
 						.rewrite((BinaryExpression) formula);
 
 				if (newSubFormula == formula) // No rewrite occurs
