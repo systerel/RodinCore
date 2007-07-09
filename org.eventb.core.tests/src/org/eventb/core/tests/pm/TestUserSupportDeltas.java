@@ -303,11 +303,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport.setInput(psFile, monitor);
 
 		userSupport.applyTactic(Tactics.lemma("1 = 1"), true, monitor);
-		userSupport.applyTactic(Tactics.norm(), true, monitor);
-		userSupport.applyTactic(Tactics.norm(), true, monitor);
+		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor);
+		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor);
 		userSupport.applyTactic(Tactics.lemma("2 = 2"), true, monitor);
-		userSupport.applyTactic(Tactics.norm(), true, monitor);
-		userSupport.applyTactic(Tactics.norm(), true, monitor);
+		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor);
+		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor);
 		IProofState currentPO = userSupport.getCurrentPO();
 		
 		IProverSequent sequent = currentPO.getCurrentNode().getSequent();
@@ -462,7 +462,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 				"[*] x.bps [INFORMATION]\n"
 						+ "Not a new proof node (priority 1)");
 
-		userSupport.applyTactic(Tactics.norm(), true, monitor);
+		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor);
 		clearDeltas();
 		userSupport.selectNode(node1);
 
