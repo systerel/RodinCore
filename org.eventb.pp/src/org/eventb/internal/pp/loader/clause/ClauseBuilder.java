@@ -80,13 +80,17 @@ public class ClauseBuilder {
 	private LabelManager manager;
 	
 	private VariableTable variableTable;
+
+	public LoaderResult getResult() {
+		return new LoaderResult(clauses);
+	}
 	
 	/**
 	 * Returns the result of this phase.
 	 * 
 	 * @return the result of this phase
 	 */
-	public LoaderResult buildClauses(IContext context) {
+	public void buildClauses(IContext context) {
 		debugContext(context);
 		
 		variableContext = new VariableContext();
@@ -107,14 +111,13 @@ public class ClauseBuilder {
 		getDefinitions();
 
 		// get type informations
-		buildPredicateTypeInformation(context.getAllPredicateDescriptors());
+//		buildPredicateTypeInformation(context.getAllPredicateDescriptors());
 		
 		debug("========================================");
 		debug("End of loading phase, clauses:");
 		for (Clause clause : clauses) {
 			debug(clause.toString());
 		}
-		return new LoaderResult(clauses);
 	}
 	
 	private void getDefinitions() {
@@ -167,8 +170,8 @@ public class ClauseBuilder {
 	}
 	
 	@SuppressWarnings("unused")
-	private void buildPredicateTypeInformation(Collection<PredicateDescriptor> descriptors) {
-		for (PredicateDescriptor descriptor : descriptors) {
+	public void buildPredicateTypeInformation(IContext context) {
+		for (PredicateDescriptor descriptor : context.getAllPredicateDescriptors()) {
 			List<TermSignature> unifiedTerms = descriptor.getUnifiedResults();
 			if (unifiedTerms.size() == 2 && !unifiedTerms.get(1).isConstant()) {
 				TermSignature term1 = unifiedTerms.get(0);

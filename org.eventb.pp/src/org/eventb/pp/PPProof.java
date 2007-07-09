@@ -117,7 +117,9 @@ public class PPProof {
 				debugResult();
 				return;
 			}
-			LoaderResult loaderResult = cBuilder.buildClauses(pBuilder.getContext());
+			cBuilder.buildClauses(pBuilder.getContext());
+			cBuilder.buildPredicateTypeInformation(pBuilder.getContext());
+			LoaderResult loaderResult = cBuilder.getResult();
 			
 			clauses = loaderResult.getClauses();
 			context = cBuilder.getVariableContext();
