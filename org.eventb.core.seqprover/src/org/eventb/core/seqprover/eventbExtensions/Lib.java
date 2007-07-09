@@ -1071,7 +1071,7 @@ public final class Lib {
 	 *         Return <code>false</code> otherwise.
 	 * @author htson
 	 */
-	public static boolean isFinite(Formula formula) {
+	public static boolean isFinite(Formula<?> formula) {
 		return (formula instanceof SimplePredicate && formula.getTag() == Predicate.KFINITE);
 	}
 }
