@@ -78,7 +78,7 @@ public class ProverChecks {
 	 * @return
 	 * 			<code>true</code> iff the given formula is well formed and type checked
 	 */
-	public static boolean checkFormula(Formula formula){
+	public static boolean checkFormula(Formula<?> formula){
 		if (! formula.isWellFormed()) {
 			checkFailure(" Formula " + formula + " is not well formed.");
 			return false;
@@ -108,7 +108,7 @@ public class ProverChecks {
 	 * @return
 	 * 			<code>true</code> iff the given predicate is well formed and well typed
 	 */
-	public static boolean checkTyping(Formula formula, ITypeEnvironment typeEnv){
+	public static boolean checkTyping(Formula<?> formula, ITypeEnvironment typeEnv){
 
 		for (FreeIdentifier freeIdent : formula.getFreeIdentifiers()) {
 			if (! typeEnv.contains(freeIdent.getName())) {
@@ -497,8 +497,8 @@ public class ProverChecks {
 	/**
 	 * Collection version of {@link #checkTyping(Formula, ITypeEnvironment)}
 	 */
-	private static boolean checkTyping(Collection<? extends Formula> formulae, ITypeEnvironment typeEnv){
-		for (Formula formula : formulae) {
+	private static boolean checkTyping(Collection<? extends Formula<?>> formulae, ITypeEnvironment typeEnv){
+		for (Formula<?> formula : formulae) {
 			if (!checkTyping(formula, typeEnv)) return false;
 		}
 		return true;

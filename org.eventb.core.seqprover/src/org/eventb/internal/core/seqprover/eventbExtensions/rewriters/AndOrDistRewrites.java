@@ -38,18 +38,18 @@ public class AndOrDistRewrites extends AbstractManualRewrites {
 
 	@Override
 	protected Predicate rewrite(Predicate pred, IPosition position) {
-		Formula subFormula = pred.getSubFormula(position);
+		Formula<?> subFormula = pred.getSubFormula(position);
 		if (!(subFormula instanceof AssociativePredicate))
 			return null;
 		
-		Formula formula = pred.getSubFormula(position.getParent());
+		Formula<?> formula = pred.getSubFormula(position.getParent());
 		if ((subFormula.getTag() == Predicate.LAND && formula.getTag() == Predicate.LOR)
 				|| (subFormula.getTag() == Predicate.LOR && formula.getTag() == Predicate.LAND)) {
 
 			IFormulaRewriter rewriter = new AndOrDistRewriterImpl(
 					(AssociativePredicate) subFormula);
 
-			Formula newSubFormula = rewriter
+			Formula<?> newSubFormula = rewriter
 					.rewrite((AssociativePredicate) formula);
 
 			if (newSubFormula == formula) // No rewrite occurs

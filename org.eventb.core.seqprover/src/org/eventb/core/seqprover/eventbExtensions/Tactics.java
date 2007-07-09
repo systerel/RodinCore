@@ -127,6 +127,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.UnionInterD
  * 
  * TODO : complete comments.
  */
+@SuppressWarnings("deprecation")
 public class Tactics {
 
 	// Globally applicable tactics
@@ -944,7 +945,7 @@ public class Tactics {
 				new ContImplHypRewrites.Input(hyp, position));
 	}
 
-	public static boolean isFunOvrApp(Formula subFormula) {
+	public static boolean isFunOvrApp(Formula<?> subFormula) {
 		if (Lib.isFunApp(subFormula)) {
 			Expression left = ((BinaryExpression) subFormula).getLeft();
 			if (Lib.isOvr(left)) {
@@ -1000,7 +1001,7 @@ public class Tactics {
 		IPosition tmp = pos.getParent();
 
 		while (!tmp.isRoot()) {
-			Formula subFormula = pred.getSubFormula(tmp);
+			Formula<?> subFormula = pred.getSubFormula(tmp);
 			if (subFormula instanceof QuantifiedExpression)
 				return false;
 			if (subFormula instanceof Predicate) {
@@ -1603,7 +1604,7 @@ public class Tactics {
 	 *         <code>false</code> otherwise.
 	 * @author htson
 	 */
-	public static boolean isFunInterImgApp(Formula formula) {
+	public static boolean isFunInterImgApp(Formula<?> formula) {
 		return new FunInterImg().isApplicable(formula);
 	}
 
@@ -1654,7 +1655,7 @@ public class Tactics {
 	 *         <code>false</code> otherwise.
 	 * @author htson
 	 */
-	public static boolean isFunSetMinusImgApp(Formula formula) {
+	public static boolean isFunSetMinusImgApp(Formula<?> formula) {
 		return new FunSetMinusImg().isApplicable(formula);
 	}
 
@@ -2105,7 +2106,7 @@ public class Tactics {
 			int tag = aPred.getTag() == Predicate.LAND ? Predicate.LOR
 					: Predicate.LAND;
 			IPosition child = position.getFirstChild();
-			Formula subFormula = predicate.getSubFormula(child);
+			Formula<?> subFormula = predicate.getSubFormula(child);
 			while (subFormula != null) {
 				if (subFormula instanceof AssociativePredicate
 						&& subFormula.getTag() == tag) {
@@ -2171,7 +2172,7 @@ public class Tactics {
 			int tag = aExp.getTag() == Expression.BUNION ? Expression.BINTER
 					: Expression.BUNION;
 			IPosition child = position.getFirstChild();
-			Formula subFormula = predicate.getSubFormula(child);
+			Formula<?> subFormula = predicate.getSubFormula(child);
 			while (subFormula != null) {
 				if (subFormula instanceof AssociativeExpression
 						&& subFormula.getTag() == tag) {
@@ -2233,7 +2234,7 @@ public class Tactics {
 		for (IPosition position : positions) {
 			int tag = Expression.BUNION;
 			IPosition child = position.getFirstChild();
-			Formula subFormula = predicate.getSubFormula(child);
+			Formula<?> subFormula = predicate.getSubFormula(child);
 			while (subFormula != null) {
 				if (subFormula instanceof AssociativeExpression
 						&& subFormula.getTag() == tag) {
@@ -2436,7 +2437,7 @@ public class Tactics {
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
 			IPosition child = position.getFirstChild();
-			Formula subFormula = predicate.getSubFormula(child);
+			Formula<?> subFormula = predicate.getSubFormula(child);
 			while (subFormula != null) {
 				if (!child.isFirstChild()) {
 					results.add(child);
@@ -2495,10 +2496,10 @@ public class Tactics {
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
 			IPosition firstChild = position.getFirstChild();  // Child on the left
-			Formula left = predicate.getSubFormula(firstChild);
+			Formula<?> left = predicate.getSubFormula(firstChild);
 			if (left.getTag() == Expression.FCOMP) {
 				IPosition child = firstChild.getFirstChild();
-				Formula subFormula = predicate.getSubFormula(child);
+				Formula<?> subFormula = predicate.getSubFormula(child);
 				while (subFormula != null) {
 					if (!child.isFirstChild()) {
 						results.add(child);
@@ -2559,10 +2560,10 @@ public class Tactics {
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
 			IPosition child = position.getFirstChild();
-			Formula subFormula = predicate.getSubFormula(child);
+			Formula<?> subFormula = predicate.getSubFormula(child);
 			while (subFormula != null) {
 				child = child.getNextSibling();
-				Formula nextFormula = predicate.getSubFormula(child);
+				Formula<?> nextFormula = predicate.getSubFormula(child);
 				if (nextFormula != null
 						&& (subFormula.getTag() == Expression.DOMRES || subFormula
 								.getTag() == Expression.DOMSUB)) {
@@ -2623,7 +2624,7 @@ public class Tactics {
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
 			IPosition child = position.getFirstChild();
-			Formula subFormula = predicate.getSubFormula(child);
+			Formula<?> subFormula = predicate.getSubFormula(child);
 			while (subFormula != null) {
 				if (!child.isFirstChild()
 						&& (subFormula.getTag() == Expression.RANRES || subFormula

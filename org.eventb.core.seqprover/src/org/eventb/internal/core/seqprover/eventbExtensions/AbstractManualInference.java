@@ -177,7 +177,7 @@ public abstract class AbstractManualInference implements IReasoner {
 		}
 	}
 
-	public boolean isApplicable(Formula formula) {
+	public boolean isApplicable(Formula<?> formula) {
 		if (formula instanceof Expression)
 			return isExpressionApplicable((Expression) formula);
 		if (formula instanceof Predicate)

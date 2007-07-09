@@ -34,7 +34,7 @@ public class FunOvr extends AbstractManualInference {
 		if (predicate == null)
 			predicate = seq.goal();
 
-		Formula subFormula = predicate.getSubFormula(position);
+		Formula<?> subFormula = predicate.getSubFormula(position);
 
 		// "subFormula" should have the form (f <+ ... <+ h)(G)
 		if (!Tactics.isFunOvrApp(subFormula))

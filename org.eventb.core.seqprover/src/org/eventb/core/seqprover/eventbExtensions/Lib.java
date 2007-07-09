@@ -267,7 +267,7 @@ public final class Lib {
 		return ((RelationalPredicate) P).getLeft();
 	}
 
-	private static void postConstructionCheck(Formula f) {
+	private static void postConstructionCheck(Formula<?> f) {
 		assert f.isTypeChecked();
 	}
 
@@ -489,23 +489,23 @@ public final class Lib {
 		return makeExQuant(boundIdentDecls, boundPred);
 	}
 
-	public static Predicate WD(Formula f) {
+	public static Predicate WD(Formula<?> f) {
 		Predicate result = f.getWDPredicate(ff);
 		postConstructionCheck(result);
 		return result;
 	}
 
-	public static Predicate WD(Collection<? extends Formula> formulae) {
+	public static Predicate WD(Collection<Formula<?>> formulae) {
 		Set<Predicate> WD = new HashSet<Predicate>(formulae.size());
-		for (Formula formula : formulae) {
+		for (Formula<?> formula : formulae) {
 			WD.add(WD(formula));
 		}
 		return makeConj(WD);
 	}
 
-	public static Predicate WD(Formula[] formulae) {
+	public static Predicate WD(Formula<?>[] formulae) {
 		Set<Predicate> WD = new HashSet<Predicate>(formulae.length);
-		for (Formula formula : formulae) {
+		for (Formula<?> formula : formulae) {
 			if (formula != null)
 				WD.add(WD(formula));
 		}
@@ -565,9 +565,9 @@ public final class Lib {
 		return P.rewrite(rewriter);
 	}
 
-	private static class EqualityRewriter extends FixedRewriter {
+	private static class EqualityRewriter extends FixedRewriter<Expression> {
 
-		public EqualityRewriter(Formula from, Formula to) {
+		public EqualityRewriter(Expression from, Expression to) {
 			super(from, to);
 		}
 
@@ -617,109 +617,110 @@ public final class Lib {
 
 	}
 
-	private static class FixedRewriter extends DefaultRewriter {
-		final Formula from;
+	private static class FixedRewriter<T extends Formula<T>> extends DefaultRewriter {
+		final T from;
 
-		final Formula to;
+		final T to;
 
 		// TODO add check of compatibility between from and to
 		// rather than breaking later when the rewriting is done.
-		public FixedRewriter(Formula from, Formula to) {
+		public FixedRewriter(T from, T to) {
 			super(true, Lib.ff);
 			this.from = from;
 			this.to = to;
 		}
 
-		private Formula doRewrite(Formula formula) {
+		@SuppressWarnings("unchecked")
+		private <U extends Formula<U>> U doRewrite(U formula) {
 			if (formula.equals(from)) {
-				return to;
+				return (U) to;
 			}
 			return formula;
 		}
 
 		@Override
 		public Expression rewrite(AssociativeExpression expression) {
-			return (Expression) doRewrite(expression);
+			return doRewrite((Expression) expression);
 		}
 
 		@Override
 		public Predicate rewrite(AssociativePredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return doRewrite((Predicate) predicate);
 		}
 
 		@Override
 		public Expression rewrite(AtomicExpression expression) {
-			return (Expression) doRewrite(expression);
+			return doRewrite((Expression) expression);
 		}
 
 		@Override
 		public Expression rewrite(BinaryExpression expression) {
-			return (Expression) doRewrite(expression);
+			return doRewrite((Expression) expression);
 		}
 
 		@Override
 		public Predicate rewrite(BinaryPredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return doRewrite((Predicate) predicate);
 		}
 
 		@Override
 		public Expression rewrite(BoolExpression expression) {
-			return (Expression) doRewrite(expression);
+			return doRewrite((Expression) expression);
 		}
 
 		@Override
 		public Expression rewrite(BoundIdentifier identifier) {
-			return (Expression) doRewrite(identifier);
+			return doRewrite((Expression) identifier);
 		}
 
 		@Override
 		public Expression rewrite(FreeIdentifier identifier) {
-			return (Expression) doRewrite(identifier);
+			return doRewrite((Expression) identifier);
 		}
 
 		@Override
 		public Expression rewrite(IntegerLiteral literal) {
-			return (Expression) doRewrite(literal);
+			return doRewrite((Expression) literal);
 		}
 
 		@Override
 		public Predicate rewrite(LiteralPredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return doRewrite((Predicate) predicate);
 		}
 
 		@Override
 		public Expression rewrite(QuantifiedExpression expression) {
-			return (Expression) doRewrite(expression);
+			return doRewrite((Expression) expression);
 		}
 
 		@Override
 		public Predicate rewrite(QuantifiedPredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return doRewrite((Predicate) predicate);
 		}
 
 		@Override
 		public Predicate rewrite(RelationalPredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return doRewrite((Predicate) predicate);
 		}
 
 		@Override
 		public Expression rewrite(SetExtension expression) {
-			return (Expression) doRewrite(expression);
+			return doRewrite((Expression) expression);
 		}
 
 		@Override
 		public Predicate rewrite(SimplePredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return doRewrite((Predicate) predicate);
 		}
 
 		@Override
 		public Expression rewrite(UnaryExpression expression) {
-			return (Expression) doRewrite(expression);
+			return doRewrite((Expression) expression);
 		}
 
 		@Override
 		public Predicate rewrite(UnaryPredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return doRewrite((Predicate) predicate);
 		}
 	}
 
@@ -735,7 +736,7 @@ public final class Lib {
 	 * @return <code>true</code> iff the type check was successful and no new
 	 *         type information was infered from this type check
 	 */
-	public static boolean typeCheckClosed(Formula formula,
+	public static boolean typeCheckClosed(Formula<?> formula,
 			ITypeEnvironment typEnv) {
 		ITypeCheckResult tcr = formula.typeCheck(typEnv);
 		// new free variables introduced?
@@ -767,7 +768,7 @@ public final class Lib {
 	 * empty type environment, or the AST methods directly instead.
 	 */
 	@Deprecated
-	public static ITypeEnvironment typeCheck(Formula formula) {
+	public static ITypeEnvironment typeCheck(Formula<?> formula) {
 		ITypeCheckResult tcr = formula.typeCheck(ff.makeTypeEnvironment());
 		if (!tcr.isSuccess())
 			return null;
@@ -778,7 +779,7 @@ public final class Lib {
 		return ff.makeTypeEnvironment();
 	}
 
-	public static boolean isFunApp(Formula formula) {
+	public static boolean isFunApp(Formula<?> formula) {
 		if (formula instanceof BinaryExpression
 				&& formula.getTag() == Expression.FUNIMAGE) {
 			return true;
@@ -922,7 +923,7 @@ public final class Lib {
 				&& expression.getTag() == Expression.CONVERSE;
 	}
 
-	public static boolean isRelImg(Formula formula) {
+	public static boolean isRelImg(Formula<?> formula) {
 		if (formula instanceof BinaryExpression
 				&& formula.getTag() == Expression.RELIMAGE) {
 			return true;
@@ -930,7 +931,7 @@ public final class Lib {
 		return false;
 	}
 
-	public static boolean isSetMinus(Formula formula) {
+	public static boolean isSetMinus(Formula<?> formula) {
 		return formula instanceof BinaryExpression
 				&& formula.getTag() == Expression.SETMINUS;
 	}
@@ -945,7 +946,7 @@ public final class Lib {
 	 *         <code>false</code> otherwise.
 	 * @author htson
 	 */
-	public static boolean isMapping(Formula formula) {
+	public static boolean isMapping(Formula<?> formula) {
 		return formula instanceof BinaryExpression
 				&& formula.getTag() == Expression.MAPSTO;
 	}
@@ -979,7 +980,7 @@ public final class Lib {
 	 *         Return <code>false</code> otherwise.
 	 * @author htson
 	 */
-	public static boolean isDirectProduct(Formula formula) {
+	public static boolean isDirectProduct(Formula<?> formula) {
 		return formula instanceof BinaryExpression
 				&& formula.getTag() == Expression.DPROD;
 	}
@@ -995,7 +996,7 @@ public final class Lib {
 	 *         Return <code>false</code> otherwise.
 	 * @author htson
 	 */
-	public static boolean isParallelProduct(Formula formula) {
+	public static boolean isParallelProduct(Formula<?> formula) {
 		return formula instanceof BinaryExpression
 				&& formula.getTag() == Expression.PPROD;
 	}
