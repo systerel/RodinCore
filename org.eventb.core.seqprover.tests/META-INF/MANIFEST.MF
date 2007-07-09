@@ -5,6 +5,7 @@ Bundle-SymbolicName: org.eventb.core.seqprover.tests; singleton:=true
 Bundle-Version: 0.7.5
 Bundle-Vendor: ETH Zurich
 Require-Bundle: org.junit4,
+ org.eclipse.jdt.junit4.runtime,
  org.eventb.core.seqprover,
  org.eclipse.core.runtime,
  com.b4free.rodin.core
