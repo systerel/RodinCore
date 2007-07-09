@@ -13,6 +13,7 @@ import junit.framework.TestCase;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.IVariableContext;
+import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.VariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
@@ -102,16 +103,22 @@ public class TestSeedSearch extends TestCase {
 		
 		prover.initialize(simplifier);
 		prover.addClauseAndDetectContradiction(pair.unitClause);
-		for (Clause clause : pair.result) {
-			assertEquals(clause,prover.next().getGeneratedClauses().iterator().next());
+		ProverResult result = prover.next();
+		int i = 0;
+		while (result != null) {
+			for (Clause clause : result.getGeneratedClauses()) {
+				assertEquals(pair.result.get(i),clause);
+				i++;
+			}
+			result = prover.next();
 		}
 		assertNull(prover.next());
 	}
 	
-//	public void test() {
-//		for (TestPair test : tests) {
-//			doTest(test);
-//		}
-//	}
+	public void test() {
+		for (TestPair test : tests) {
+			doTest(test);
+		}
+	}
 	
 }

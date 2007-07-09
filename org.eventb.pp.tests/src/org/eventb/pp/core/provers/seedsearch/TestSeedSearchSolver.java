@@ -73,6 +73,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 	private Instantiable nPxe;
 	private Instantiable Qex;
 	private Instantiable nQex;
+	private Instantiable nRex;
 	private Instantiable Qxe;
 	private Instantiable nQxe;
 	private Instantiable Rexx;
@@ -172,6 +173,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		nPxe = I("¬Pxe",nPcx);
 		Qex = I("Qex",Qxc);
 		nQex = I("¬Qex",nQxc);
+		nRex = I("¬Rex",nRxc);
 		Qxe = I("Qxe",Qcx);
 		nQxe = I("¬Qxe",nQcx);
 		Rexx = I("Rexx",Rxcx);
@@ -443,48 +445,45 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 	public void testRemoveVariableLink() {
 		solver.addVariableLink(PQxc);
 		solver.addVariableLink(nPnQxc);
-		InstantiationValue Ia1 = new InstantiationValue(a, Pxc);
-		solver.addInstantiationValue(Ia1);
-		InstantiationValue Ia2 = new InstantiationValue(a, nQxc);
-		solver.addInstantiationValue(Ia2);
+		solver.addInstantiable(Pex);
+		solver.addInstantiable(nQex);
 		assertEquals(mSet(
-				"Pxc[V=[->Qxc],C=[a],]",
-				"Qxc[V=[->Pxc],]",
-				"¬Pxc[V=[->¬Qxc],C=[a],]",
+				"Pxc[V=[->Qxc],]",
+				"Qxc[V=[->Pxc],I=[¬Qex, Pex],]",
+				"¬Pxc[V=[->¬Qxc],I=[¬Qex, Pex],]",
 				"¬Qxc[V=[->¬Pxc],]"
 		), dump(nQxc,nPxc,Pxc,Qxc));
 
 		solver.removeVariableLink(nPnQxc);
 		assertEquals(mSet(
 				"Pxc[V=[->Qxc],]",
-				"Qxc[V=[->Pxc],C=[a],]",
-				"¬Pxc[C=[a],]",
+				"Qxc[V=[->Pxc],I=[¬Qex],]",
+				"¬Pxc[I=[¬Qex, Pex],]",
 				"¬Qxc[]"
 		), dump(nQxc,nPxc,Pxc,Qxc));
 	}
 	
 	public void testRemoveVariableLinkComplexGraphWithConstantFirst() {
-		Ia = new InstantiationValue(a, Qxc);
-		solver.addInstantiationValue(Ia);
+		solver.addInstantiable(Qex);
 		solver.addVariableLink(PRxc);
 		solver.addVariableLink(nQnRxc);
 		solver.addVariableLink(RSxc);
 		assertEquals(mSet(
-				"¬Pxc[C=[a],]",
+				"¬Pxc[I=[Qex],]",
 				"Pxc[V=[->Rxc],]",
 				"¬Rxc[V=[->¬Qxc],]",
-				"¬Qxc[V=[->¬Rxc],C=[a],]",
-				"Rxc[V=[->Sxc,->Pxc],C=[a],]",
+				"¬Qxc[V=[->¬Rxc],I=[Qex],]",
+				"Rxc[V=[->Pxc,->Sxc],I=[Qex],]",
 				"Sxc[V=[->Rxc],]",
-				"¬Sxc[C=[a],]"
+				"¬Sxc[I=[Qex],]"
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
 		solver.removeVariableLink(RSxc);
 		assertEquals(mSet(
-				"¬Pxc[C=[a],]",
+				"¬Pxc[I=[Qex],]",
 				"Pxc[V=[->Rxc],]",
 				"¬Rxc[V=[->¬Qxc],]",
-				"¬Qxc[V=[->¬Rxc],C=[a],]",
-				"Rxc[V=[->Pxc],C=[a],]",
+				"¬Qxc[V=[->¬Rxc],I=[Qex],]",
+				"Rxc[V=[->Pxc],I=[Qex],]",
 				"Sxc[]",
 				"¬Sxc[]"
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
@@ -499,28 +498,27 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 				"Pxc[V=[->Rxc],]",
 				"¬Rxc[V=[->¬Qxc],]",
 				"¬Qxc[V=[->¬Rxc],]",
-				"Rxc[V=[->Sxc,->Pxc],]",
+				"Rxc[V=[->Pxc,->Sxc],]",
 				"Sxc[V=[->Rxc],]",
 				"¬Sxc[]"
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
-		Ia = new InstantiationValue(a, Qxc);
-		solver.addInstantiationValue(Ia);
+		solver.addInstantiable(Qex);
 		assertEquals(mSet(
-				"¬Pxc[C=[a],]",
+				"¬Pxc[I=[Qex],]",
 				"Pxc[V=[->Rxc],]",
 				"¬Rxc[V=[->¬Qxc],]",
-				"¬Qxc[V=[->¬Rxc],C=[a],]",
-				"Rxc[V=[->Sxc,->Pxc],C=[a],]",
+				"¬Qxc[V=[->¬Rxc],I=[Qex],]",
+				"Rxc[V=[->Pxc,->Sxc],I=[Qex],]",
 				"Sxc[V=[->Rxc],]",
-				"¬Sxc[C=[a],]"
+				"¬Sxc[I=[Qex],]"
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
 		solver.removeVariableLink(RSxc);
 		assertEquals(mSet(
-				"¬Pxc[C=[a],]",
+				"¬Pxc[I=[Qex],]",
 				"Pxc[V=[->Rxc],]",
 				"¬Rxc[V=[->¬Qxc],]",
-				"¬Qxc[V=[->¬Rxc],C=[a],]",
-				"Rxc[V=[->Pxc],C=[a],]",
+				"¬Qxc[V=[->¬Rxc],I=[Qex],]",
+				"Rxc[V=[->Pxc],I=[Qex],]",
 				"Sxc[]",
 				"¬Sxc[]"
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
@@ -537,30 +535,29 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 				"Pxc[V=[->Rxc],]",
 				"¬Rxc[V=[->¬Qxc],]",
 				"¬Qxc[V=[->¬Rxc],]",
-				"Rxc[V=[->Sxc,->Pxc],]",
-				"Sxc[V=[->¬Pxc,->Rxc],]",
+				"Rxc[V=[->Pxc,->Sxc],]",
+				"Sxc[V=[->Rxc,->¬Pxc],]",
 				"¬Sxc[]"
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
-		Ia = new InstantiationValue(a, Qxc);
-		solver.addInstantiationValue(Ia);
+		solver.addInstantiable(Qex);
 		assertEquals(mSet(
-				"¬Pxc[V=[->Sxc],C=[a],]",
+				"¬Pxc[V=[->Sxc],I=[Qex],]",
 				"Pxc[V=[->Rxc],]",
 				"¬Rxc[V=[->¬Qxc],]",
-				"¬Qxc[V=[->¬Rxc],C=[a],]",
-				"Rxc[V=[->Sxc,->Pxc],C=[a],]",
-				"Sxc[V=[->¬Pxc,->Rxc],]",
-				"¬Sxc[C=[a],]"
+				"¬Qxc[V=[->¬Rxc],I=[Qex],]",
+				"Rxc[V=[->Pxc,->Sxc],I=[Qex],]",
+				"Sxc[V=[->Rxc,->¬Pxc],]",
+				"¬Sxc[I=[Qex],]"
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
 		solver.removeVariableLink(RSxc);
 		assertEquals(mSet(
-				"¬Pxc[V=[->Sxc],C=[a],]",
+				"¬Pxc[V=[->Sxc],I=[Qex],]",
 				"Pxc[V=[->Rxc],]",
 				"¬Rxc[V=[->¬Qxc],]",
-				"¬Qxc[V=[->¬Rxc],C=[a],]",
-				"Rxc[V=[->Pxc],C=[a],]",
+				"¬Qxc[V=[->¬Rxc],I=[Qex],]",
+				"Rxc[V=[->Pxc],I=[Qex],]",
 				"Sxc[V=[->¬Pxc],]",
-				"¬Sxc[C=[a],]"
+				"¬Sxc[I=[Qex],]"
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
 	}
 	
@@ -573,32 +570,30 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 				"Pxc[V=[->Rxc],]",
 				"¬Rxc[V=[->¬Qxc],]",
 				"¬Qxc[V=[->¬Rxc],]",
-				"Rxc[V=[->Sxc,->Pxc],]",
+				"Rxc[V=[->Pxc,->Sxc],]",
 				"Sxc[V=[->Rxc],]",
 				"¬Sxc[]"
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
-		InstantiationValue Ia1 = new InstantiationValue(a, Qxc);
-		solver.addInstantiationValue(Ia1);
-		InstantiationValue Ia2 = new InstantiationValue(a, nRxc);
-		solver.addInstantiationValue(Ia2);
+		solver.addInstantiable(Qex);
+		solver.addInstantiable(nRex);
 		assertEquals(mSet(
-				"¬Pxc[C=[a],]",
+				"¬Pxc[I=[¬Rex, Qex],]",
 				"Pxc[V=[->Rxc],]",
 				"¬Rxc[V=[->¬Qxc],]",
-				"¬Qxc[V=[->¬Rxc],C=[a],]",
-				"Rxc[V=[->Sxc,->Pxc],C=[a],]",
+				"¬Qxc[V=[->¬Rxc],I=[Qex],]",
+				"Rxc[V=[->Pxc,->Sxc],I=[¬Rex, Qex],]",
 				"Sxc[V=[->Rxc],]",
-				"¬Sxc[C=[a],]"
+				"¬Sxc[I=[¬Rex, Qex],]"
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
 		solver.removeVariableLink(nQnRxc);
 		assertEquals(mSet(
-				"¬Pxc[C=[a],]",
+				"¬Pxc[I=[¬Rex],]",
 				"Pxc[V=[->Rxc],]",
 				"¬Rxc[]",
-				"¬Qxc[C=[a],]",
-				"Rxc[V=[->Sxc,->Pxc],C=[a],]",
+				"¬Qxc[I=[Qex],]",
+				"Rxc[V=[->Pxc,->Sxc],I=[¬Rex],]",
 				"Sxc[V=[->Rxc],]",
-				"¬Sxc[C=[a],]"
+				"¬Sxc[I=[¬Rex],]"
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
 	}
 }

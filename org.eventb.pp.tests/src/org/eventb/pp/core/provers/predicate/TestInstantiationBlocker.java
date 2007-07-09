@@ -74,7 +74,7 @@ public class TestInstantiationBlocker extends AbstractPPTest {
 				cEqClause(cNotPred(0,x1),cNotPred(1,x1,b)),
 				cClause(cNotPred(0,a)),
 				cEqClause(cNotPred(1,y1,y2),cNotPred(0,y2))
-			},cClause(cNotPred(1,a,b)));
+			},cClause(cNotPred(1,a,b)), cClause(cPred(1,a,b)), cClause(cNotPred(1,y1,a)));
 	}
 	
 //	public void testWithExistential() {
