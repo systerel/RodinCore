@@ -1059,4 +1059,19 @@ public final class Lib {
 		BigInteger literal = new BigInteger("" + n);
 		return ff.makeIntegerLiteral(literal, null);
 	}
+
+
+	/**
+	 * Test if the formula is a finiteness "finite(S)".
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is a finiteness.
+	 *         Return <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isFinite(Formula formula) {
+		return (formula instanceof SimplePredicate && formula.getTag() == Predicate.KFINITE);
+	}
 }
