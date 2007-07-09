@@ -442,11 +442,11 @@ public class TestUserSupports extends TestPM {
 		userSupport.setInput(psFile, monitor);
 
 		userSupport.applyTactic(Tactics.lemma("1 = 1"), true, monitor);
-		userSupport.applyTactic(Tactics.norm(), true, monitor); // Discharge true goal
-		userSupport.applyTactic(Tactics.norm(), true, monitor); // Discharge 1 = 1
+		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor); // Discharge true goal
+		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor); // Discharge 1 = 1
 		userSupport.applyTactic(Tactics.lemma("2 = 2"), true, monitor);
-		userSupport.applyTactic(Tactics.norm(), true, monitor); // Discharge true goal
-		userSupport.applyTactic(Tactics.norm(), true, monitor); // Discharge 2 = 2
+		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor); // Discharge true goal
+		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor); // Discharge 2 = 2
 		IProofState currentPO = userSupport.getCurrentPO();
 		Iterable<Predicate> selectedHyps = currentPO.getCurrentNode().getSequent()
 				.selectedHypIterable();
@@ -588,7 +588,7 @@ public class TestUserSupports extends TestPM {
 		assertEquals("Select node 2 again has no effect ", node2, currentPO
 				.getCurrentNode());
 
-		userSupport.applyTactic(Tactics.norm(), true, monitor);
+		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor);
 
 		userSupport.selectNode(node1);
 
