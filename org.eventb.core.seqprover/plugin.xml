@@ -259,6 +259,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanCompRewrites"
             id="ranCompRewrites"
             name="%ranCompRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet"
+            id="finiteSet"
+            name="%finiteSetName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

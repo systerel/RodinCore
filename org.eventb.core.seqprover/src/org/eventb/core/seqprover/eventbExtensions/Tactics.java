@@ -70,6 +70,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunCompImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
@@ -2799,6 +2800,40 @@ public class Tactics {
 			return "Not applicable";
 		}
 
+	}
+
+	/**
+	 * Return the list of applicable positions of the tactic "finite Set"
+	 * {@link FiniteSet} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteSetGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate))
+			return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		else
+			return new ArrayList<IPosition>();
+	}
+
+
+	/**
+	 * Return the tactic "Finite Set" {@link FiniteSet} which
+	 * has the input expression.
+	 * <p>
+	 * 
+	 * @param expression
+	 *            an expression which is the input of the tactic
+	 * @return The tactic "finite set"
+	 * @author htson
+	 */
+	public static ITactic finiteSet(IProverSequent sequent,
+			String expressionImage) {
+		return BasicTactics.reasonerTac(new FiniteSet(), new SingleExprInput(
+				expressionImage, sequent.typeEnvironment()));
 	}
 	
 }
