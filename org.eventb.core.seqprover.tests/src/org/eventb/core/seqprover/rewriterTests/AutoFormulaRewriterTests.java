@@ -1314,5 +1314,35 @@ public class AutoFormulaRewriterTests {
 		assertRelationalPredicate("0 < card(S)  ==  ¬(S = ∅)", expectedPred,
 				number0, Predicate.LT, input);
 
+		// card(S) = 1 == #x.S = {x}
+		input = Lib.parseExpression("card({x ∣ x > 0})");
+		input.typeCheck(ff.makeTypeEnvironment());
+		expectedPred = Lib.parsePredicate("∃y·{x ∣ x > 0} = {y}");
+		expectedPred.typeCheck(ff.makeTypeEnvironment());
+		assertRelationalPredicate("card(S) = 1  ==  ∃x·S = {x}", expectedPred,
+				input, Predicate.EQUAL, number1);
+		
+		input = Lib.parseExpression("card({x ↦ (y ↦ z) ∣ x > 0 ∧ y ∈ BOOL ∧ z < 0})");
+		input.typeCheck(ff.makeTypeEnvironment());
+		expectedPred = Lib.parsePredicate("∃x1,x2,x3·{x ↦ (y ↦ z) ∣ x > 0 ∧ y ∈ BOOL ∧ z < 0} = {x1 ↦ (x2 ↦ x3)}");
+		expectedPred.typeCheck(ff.makeTypeEnvironment());
+		assertRelationalPredicate("card(S) = 1  ==  ∃x·S = {x}", expectedPred,
+				input, Predicate.EQUAL, number1);
+
+		// 1 = card(S) == #x.S = {x}
+		input = Lib.parseExpression("card({x ∣ x > 0})");
+		input.typeCheck(ff.makeTypeEnvironment());
+		expectedPred = Lib.parsePredicate("∃y·{x ∣ x > 0} = {y}");
+		expectedPred.typeCheck(ff.makeTypeEnvironment());
+		assertRelationalPredicate("card(S) = 1  ==  ∃x·S = {x}", expectedPred,
+				number1, Predicate.EQUAL, input);
+		
+		input = Lib.parseExpression("card({x ↦ (y ↦ z) ∣ x > 0 ∧ y ∈ BOOL ∧ z < 0})");
+		input.typeCheck(ff.makeTypeEnvironment());
+		expectedPred = Lib.parsePredicate("∃x1,x2,x3·{x ↦ (y ↦ z) ∣ x > 0 ∧ y ∈ BOOL ∧ z < 0} = {x1 ↦ (x2 ↦ x3)}");
+		expectedPred.typeCheck(ff.makeTypeEnvironment());
+		assertRelationalPredicate("card(S) = 1  ==  ∃x·S = {x}", expectedPred,
+				number1, Predicate.EQUAL, input);
+
 	}
 }

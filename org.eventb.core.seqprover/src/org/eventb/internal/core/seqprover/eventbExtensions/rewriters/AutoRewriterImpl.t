@@ -627,21 +627,29 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	
 	    	/**
 	    	 * Cardinality: card(S) = 0  ==  S = ∅
+	    	 *              card(S) = 1  ==  ∃x·S = {x}
 	    	 */
 	    	Equal(Card(S), E) -> {
 	    		if (`E.equals(number0)) {
 	    			Expression emptySet = makeEmptySet(`S.getType());
 	    			return makeRelationalPredicate(Predicate.EQUAL, `S, emptySet);
 	    		}
+	    		else if (`E.equals(number1)) {
+	    			return FormulaUnfold.makeExistSingletonSet(`S);
+	    		}
 	    	}
 
 	    	/**
 	    	 * Cardinality: 0 = card(S)  ==  S = ∅
+	    	 *              1 = card(S)  ==  ∃x·S = {x}
 	    	 */
 	    	Equal(E, Card(S)) -> {
 	    		if (`E.equals(number0)) {
 	    			Expression emptySet = makeEmptySet(`S.getType());
 	    			return makeRelationalPredicate(Predicate.EQUAL, `S, emptySet);
+	    		}
+	    		else if (`E.equals(number1)) {
+	    			return FormulaUnfold.makeExistSingletonSet(`S);
 	    		}
 	    	}
 

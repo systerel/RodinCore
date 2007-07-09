@@ -398,4 +398,22 @@ public class FormulaUnfold {
 		return aPred;
 	}
 
+
+	public static Predicate makeExistSingletonSet(Expression S) {
+		Type type = S.getType();
+		assert type instanceof PowerSetType;
+		Type baseType = type.getBaseType();
+
+		BoundIdentDecl[] identDecls = getBoundIdentDecls(baseType);
+
+		Expression exp = getExpression(identDecls.length - 1, baseType);
+
+		Expression singleton = ff.makeSetExtension(exp, null);
+		Predicate pred = ff.makeRelationalPredicate(Predicate.EQUAL, S
+				.shiftBoundIdentifiers(identDecls.length, ff), singleton, null);
+		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
+				Predicate.EXISTS, identDecls, pred, null);
+		return qPred;
+	}
+
 }
