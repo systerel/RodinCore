@@ -114,6 +114,8 @@ public abstract class TacticHyperlinkManager {
 
 	public Point getLink(Point location) {
 		int offset = getCharacterOffset(location);
+		if (offset == -1)
+			return null;
 		for (TacticPositionUI link : links) {
 			Point index = link.getPoint();
 			if (index.x <= offset && offset < index.y)
@@ -250,7 +252,13 @@ public abstract class TacticHyperlinkManager {
 	}
 
 	int getCharacterOffset(Point pt) {
-		int offset = text.getOffsetAtLocation(pt);
+		int offset;
+		try {
+			offset = text.getOffsetAtLocation(pt);
+		}
+		catch (IllegalArgumentException e) {
+			return -1;
+		}
 		Point location = text.getLocationAtOffset(offset);
 
 		// From the caret offset to the character offset.
