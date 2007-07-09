@@ -1894,6 +1894,15 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.FunCompImgGoal"
             target="goal"
             tooltip="%proofTactic.funCompImgGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteSetGoal"
+            interrupt="false"
+            name="%proofTactic.finiteSetGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteSetGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteSetGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
