@@ -1,7 +1,8 @@
-#Thu Apr 12 15:54:57 CEST 2007
+#Mon Jul 09 23:49:14 CEST 2007
 compilers.incompatible-environment=1
 compilers.p.build=1
 compilers.p.deprecated=1
+compilers.p.missing-packages=2
 compilers.p.no-required-att=0
 compilers.p.not-externalized-att=1
 compilers.p.unknown-attribute=0

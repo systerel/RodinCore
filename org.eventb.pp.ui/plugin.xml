@@ -37,7 +37,7 @@
             interrupt="true"
             name="NewPP (with lasso)"
             priorty="9"
-            tacticProvider="org.eventb.internal.pp.ui.PPTacticProviderWithLasso"
+            tacticProvider="org.eventb.internal.pp.ui.PPTacticProviderRestricted"
             target="global"
             tooltip="Launch NewPP (with lasso)"/>
       <dropdown

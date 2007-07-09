@@ -16,7 +16,8 @@ public class PPTacticProvider extends DefaultTacticProvider implements
 		ITacticProvider {
 
 	@Override
-	public ITactic getTactic(IProofTreeNode node, Predicate hyp, IPosition position, String[] inputs) {
+	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
+			IPosition position, String[] inputs, String globalInput) {
 		return BasicTactics.reasonerTac(
 				new PPReasoner(),
 				new XProverInput(false,0));

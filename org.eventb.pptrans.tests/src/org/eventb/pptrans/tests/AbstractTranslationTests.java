@@ -54,7 +54,7 @@ public abstract class AbstractTranslationTests extends TestCase {
 		return parse(string, ff.makeTypeEnvironment());
 	}
 
-	public static void assertTypeChecked(Formula formula) {
+	public static void assertTypeChecked(Formula<?> formula) {
 		assertTrue("Formula is not typed: " + formula, formula.isTypeChecked());
 	}
 

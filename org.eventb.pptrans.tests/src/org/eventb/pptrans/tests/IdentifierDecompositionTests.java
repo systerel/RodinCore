@@ -152,7 +152,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 		);
 	}
 	
-	private static class DecompositionChecker extends DefaultVisitor {
+	static class DecompositionChecker extends DefaultVisitor {
 		
 		@Override
 		public boolean visitBOUND_IDENT_DECL(BoundIdentDecl ident) {
