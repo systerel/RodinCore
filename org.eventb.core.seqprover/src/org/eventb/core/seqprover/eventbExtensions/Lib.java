@@ -29,7 +29,9 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -1073,5 +1075,46 @@ public final class Lib {
 	 */
 	public static boolean isFinite(Formula<?> formula) {
 		return (formula instanceof SimplePredicate && formula.getTag() == Predicate.KFINITE);
+	}
+
+
+	/**
+	 * Test if the formula is a relation "r" (i.e. formula of type ℙ(S × T) for
+	 * some S and T
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is a relation. Return
+	 *         <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isRelation(Formula<?> formula) {
+		if (formula instanceof Expression) {
+			Expression r = (Expression) formula;
+			Type type = r.getType();
+			if (type instanceof PowerSetType) {
+				Type baseType = type.getBaseType();
+				if (baseType instanceof ProductType) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+
+	/**
+	 * Test if the formula is a set of all relation "S ↔ T" for some S and T
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is a set of all
+	 *         relations. Return <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isSetOfRelation(Formula<?> formula) {
+		return (formula instanceof BinaryExpression && formula.getTag() == Expression.REL);
 	}
 }
