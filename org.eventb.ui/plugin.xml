@@ -1912,6 +1912,15 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteSetGoal"
             target="goal"
             tooltip="%proofTactic.finiteSetGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteInterGoal"
+            interrupt="false"
+            name="%proofTactic.finiteInterGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteInterGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteInterGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
