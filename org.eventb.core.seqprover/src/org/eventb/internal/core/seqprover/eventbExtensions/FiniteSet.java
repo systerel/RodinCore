@@ -16,7 +16,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInputReasoner;
 
-public class FiniteSet extends SingleExprInputReasoner{
+public class FiniteSet extends SingleExprInputReasoner {
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteSet";
 	

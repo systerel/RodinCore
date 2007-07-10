@@ -1930,6 +1930,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteSetMinusGoal"
             target="goal"
             tooltip="%proofTactic.finiteSetMinusGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteRelationGoal"
+            interrupt="false"
+            name="%proofTactic.finiteRelationGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteRelationGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteRelationGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteRelImgGoal"
+            interrupt="false"
+            name="%proofTactic.finiteRelImgGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteRelImgGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteRelImgGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">

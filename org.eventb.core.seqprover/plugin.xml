@@ -271,6 +271,14 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus"
             id="finiteSetMinus"
             name="%finiteSetMinusName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelation"
+            id="finiteRelation"
+            name="%finiteRelationName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelImg"
+            id="finiteRelImg"
+            name="%finiteRelImgName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

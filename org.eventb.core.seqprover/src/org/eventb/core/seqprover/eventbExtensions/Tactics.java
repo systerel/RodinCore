@@ -72,6 +72,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelImg;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelation;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunCompImg;
@@ -2824,12 +2826,14 @@ public class Tactics {
 
 
 	/**
-	 * Return the tactic "Finite Set" {@link FiniteSet} which
-	 * has the input expression.
+	 * Return the tactic "Finite Set" {@link FiniteSet} which has the input
+	 * expression.
 	 * <p>
 	 * 
-	 * @param expression
-	 *            an expression which is the input of the tactic
+	 * @param sequent
+	 *            the current prover sequent
+	 * @param expressionImage
+	 *            the global input from the Proof Control View
 	 * @return The tactic "finite set"
 	 * @author htson
 	 */
@@ -2860,12 +2864,10 @@ public class Tactics {
 
 
 	/**
-	 * Return the tactic "Finite of Intersection" {@link FiniteInter} which
-	 * has the input expression.
+	 * Return the tactic "Finite of Intersection" {@link FiniteInter} which has
+	 * the input expression.
 	 * <p>
 	 * 
-	 * @param expression
-	 *            an expression which is the input of the tactic
 	 * @return The tactic "finite of intersection"
 	 * @author htson
 	 */
@@ -2894,17 +2896,86 @@ public class Tactics {
 
 
 	/**
-	 * Return the tactic "Finite of Intersection" {@link FiniteSetMinus} which
+	 * Return the tactic "Finite of set minus" {@link FiniteSetMinus} which
 	 * has the input expression.
 	 * <p>
 	 * 
-	 * @param expression
-	 *            an expression which is the input of the tactic
 	 * @return The tactic "finite of set minus"
 	 * @author htson
 	 */
 	public static ITactic finiteSetMinus() {
 		return BasicTactics.reasonerTac(new FiniteSetMinus(), new EmptyInput());
+	}
+
+	/**
+	 * Return the list of applicable positions of the tactic "finite of
+	 * relation" {@link FiniteRelation} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteRelationGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isRelation(((SimplePredicate) predicate).getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+
+
+	/**
+	 * Return the tactic "Finite of relation" {@link FiniteRelation} which has
+	 * the input expression.
+	 * <p>
+	 * 
+	 * @param sequent
+	 *            the current prover sequent
+	 * @param expressionImage
+	 *            the global input from the Proof Control View
+	 * @return The tactic "finite of relation"
+	 * @author htson
+	 */
+	public static ITactic finiteRelation(IProverSequent sequent,
+			String expressionImage) {
+		return BasicTactics
+				.reasonerTac(new FiniteRelation(), new SingleExprInput(
+						expressionImage, sequent.typeEnvironment()));
+	}
+
+	
+	/**
+	 * Return the list of applicable positions of the tactic "finite of
+	 * relational image" {@link FiniteRelImg} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteRelImgGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isRelImg(((SimplePredicate) predicate).getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+
+	/**
+	 * Return the tactic "Finite of relational image" {@link FiniteRelImg} which
+	 * has the input expression.
+	 * <p>
+	 * 
+	 * @return The tactic "finite of relational image"
+	 * @author htson
+	 */
+	public static ITactic finiteRelImg() {
+		return BasicTactics.reasonerTac(new FiniteRelImg(), new EmptyInput());
 	}
 	
 }
