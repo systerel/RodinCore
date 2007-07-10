@@ -30,16 +30,9 @@ public class PredicateProver implements IProver {
 	}
 	
 	private DataStructureWrapper unitClausesWrapper;
-//	private DataStructureWrapper nonUnitClausesWrapper;
 	private IterableHashSet<Clause> unitClauses;
 	private ResetIterator<Clause> unitClausesIterator;
 	private IterableHashSet<Clause> nonUnitClauses;
-	
-//	private IterableHashSet<Clause> generatedClauses; 
-//	private Set<Clause> subsumedClauses;
-	
-//	private ResetIterator<Clause> backtrackIterator;
-//	private ResetIterator<Clause> dispatcherIterator;
 	
 	private ResolutionInferrer inferrer;
 	private ResolutionResolver nonUnitResolver;
@@ -55,7 +48,6 @@ public class PredicateProver implements IProver {
 		unitClauses = new IterableHashSet<Clause>();
 		unitClausesWrapper = new DataStructureWrapper(unitClauses);
 		nonUnitClauses = new IterableHashSet<Clause>();
-//		nonUnitClausesWrapper = new DataStructureWrapper(nonUnitClauses);
 		
 		unitMatcher = new UnitMatcher(unitClausesWrapper);
 		
@@ -64,11 +56,6 @@ public class PredicateProver implements IProver {
 		conditionResolver = new ReverseResolutionResolver(inferrer, new UnitMatchIterator(unitMatcher));
 		
 		unitClausesIterator = unitClauses.iterator();
-		
-//		generatedClauses = new IterableHashSet<Clause>();
-//		subsumedClauses = new HashSet<Clause>();
-//		backtrackIterator = generatedClauses.iterator();
-//		dispatcherIterator = generatedClauses.iterator();
 	}
 	
 	public void initialize(ClauseSimplifier simplifier) {
@@ -129,42 +116,6 @@ public class PredicateProver implements IProver {
 		return null;
 	}
 	
-//	private static class NiceIterator extends ConditionIterator<Clause> {
-//		private PredicateFormula matched;
-//
-//		NiceIterator(PredicateFormula matched, Iterator<Clause> iterator) {
-//			super(iterator);
-//
-//			this.matched = matched;
-//		}
-//
-//		@Override
-//		public boolean isSelected(Clause element) {
-//			return ResolutionInferrer.canInfer(element.getPredicateLiterals().get(0),
-//					matched, element.isEquivalence());
-//		}
-//	}
-	
-	public ProverResult addClauseAndDetectContradiction(Clause clause) {
-		if (simplifier == null) throw new IllegalStateException();
-		
-		if (accepts(clause)) {
-			unitClausesWrapper.add(clause);
-			
-			// we generate the clauses
-			return newClause(clause, unitResolver);
-		}
-		else if (	clause.getPredicateLiterals().size()>0 
-					&& !clause.isUnit()
-					&& !clause.isBlockedOnConditions()) {
-			nonUnitClauses.appends(clause);
-			
-			if (hadConditions(clause)) return newClause(clause, conditionResolver);
-		}
-		return null;
-	}
-
-	
 	public ProverResult newClause(Clause clause, IResolver resolver) {
 		Set<Clause> generatedClauses = new HashSet<Clause>();
 		Set<Clause> subsumedClauses = new HashSet<Clause>();
@@ -189,11 +140,43 @@ public class PredicateProver implements IProver {
 		return new ProverResult(generatedClauses, subsumedClauses);
 	}
 	
-	public boolean accepts(Clause clause) {
+	
+	private boolean isAcceptedUnitClause(Clause clause) {
 		return clause.isUnit() && clause.getPredicateLiterals().size() > 0
 		&& !clause.getPredicateLiterals().get(0).isQuantified();
 	}
 	
+	private boolean isAcceptedNonUnitClause(Clause clause) {
+		 return	clause.getPredicateLiterals().size()>0 
+				&& !clause.isUnit()
+				&& !clause.isBlockedOnConditions();
+	}
+	
+	public ProverResult addClauseAndDetectContradiction(Clause clause) {
+		if (simplifier == null) throw new IllegalStateException();
+		
+		if (isAcceptedUnitClause(clause)) {
+			unitClausesWrapper.add(clause);
+			// we generate the clauses
+			return newClause(clause, unitResolver);
+		}
+		else if (isAcceptedNonUnitClause(clause)) {
+			nonUnitClauses.appends(clause);
+			if (hadConditions(clause)) return newClause(clause, conditionResolver);
+		}
+		return null;
+	}
+
+	public void removeClause(Clause clause) {
+		if (isAcceptedUnitClause(clause)) {
+			unitClausesWrapper.remove(clause);
+		}
+		else if (isAcceptedNonUnitClause(clause)) {
+			nonUnitClauses.remove(clause);
+		}
+		nonUnitResolver.remove(clause);
+	}
+
 	// TODO dirty
 	private boolean hadConditions(Clause clause) {
 		IOrigin origin = clause.getOrigin();
@@ -206,35 +189,6 @@ public class PredicateProver implements IProver {
 		return false;
 	}
 
-//	@Override
-//	public void newClause(Clause clause) {
-//		if (accepts(clause)) {
-//			unitClausesWrapper.add(clause);
-//			
-//			// we generate the clauses
-//			newClause(clause, unitResolver);
-//		}
-//		else if (	clause.getPredicateLiterals().size()>0 
-//					&& !clause.isUnit()
-//					&& !clause.isBlockedOnConditions()) {
-//			nonUnitClauses.appends(clause);
-//			
-//			if (hadConditions(clause)) newClause(clause, conditionResolver);
-//		}
-//	}
-
-	public void removeClause(Clause clause) {
-		if (accepts(clause)) {
-			unitClausesWrapper.remove(clause);
-		}
-		else if (	clause.getPredicateLiterals().size()>0
-					&& !clause.isUnit()
-					&& !clause.isBlockedOnConditions()) {
-			nonUnitClauses.remove(clause);
-		}
-		nonUnitResolver.remove(clause);
-	}
-	
 	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		// the blocked clauses are not in the search space of the main prover, so
 		// it is important to verify here that they can still exist
@@ -260,20 +214,6 @@ public class PredicateProver implements IProver {
 		return "PredicateProver";
 	}
 	
-//	public ResetIterator<Clause> getGeneratedClauses() {
-//		return dispatcherIterator;
-//	}
-//
-//	public void clean() {
-//		generatedClauses.clear();
-//	}
-//
-//	public Set<Clause> getSubsumedClauses() {
-//		Set<Clause> result = new HashSet<Clause>(subsumedClauses);
-//		subsumedClauses.clear();
-//		return result;
-//	}
-
 }
 
 

@@ -9,19 +9,14 @@ import static org.eventb.pp.Util.mList;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.terms.Constant;
-import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.provers.seedsearch.SeedSearchProver;
 import org.eventb.internal.pp.core.search.IterableHashSet;
 import org.eventb.internal.pp.loader.clause.VariableContext;
 import org.eventb.pp.AbstractPPTest;
-import org.eventb.pp.Util;
 
 public class TestSeedSearch extends AbstractPPTest {
 

@@ -7,6 +7,7 @@ import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.cVar;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
+import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
@@ -83,9 +84,10 @@ public class TestInstantiationBlocker extends AbstractPPTest {
 //	}
 	
 	public void doTest(Clause[] clauses, Clause... nextClauses) {
-		PredicateProver prover = new PredicateProver(new VariableContext());
+		IVariableContext context = new VariableContext();
+		PredicateProver prover = new PredicateProver(context);
 		OnePointRule simp1 = new OnePointRule();
-		ExistentialSimplifier simp2 = new ExistentialSimplifier();
+		ExistentialSimplifier simp2 = new ExistentialSimplifier(context);
 		ClauseSimplifier simplifier = new ClauseSimplifier();
 		simplifier.addSimplifier(simp1);
 		simplifier.addSimplifier(simp2);

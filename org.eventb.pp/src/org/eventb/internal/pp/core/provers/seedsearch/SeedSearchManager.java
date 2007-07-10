@@ -6,9 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateDescriptor;
+import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.provers.seedsearch.solver.Instantiable;
@@ -32,10 +34,11 @@ public class SeedSearchManager {
 	// map of clause-constants for clause removal
 	private HashMap<Clause, Set<ConstantDescriptor>> clauseInstantiationValuesCache;
 	
-	// instantiables, no need for a descriptor since instantiables are unique - ok
-	// map of clause-instantiables for clause removal
-	private HashMap<Clause, Set<Instantiable>> instantiables;
-
+	// instantiablesCache, no need for a descriptor since instantiablesCache are unique - ok
+	// map of clause-instantiablesCache for clause removal
+	private Set<Instantiable> instantiables;
+	private HashMap<Clause, Set<Instantiable>> instantiablesCache;
+	
 	private SeedSearchSolver solver;
 	
 	public SeedSearchManager() {
@@ -44,21 +47,42 @@ public class SeedSearchManager {
 		this.signatures = new HashMap<SignatureDescriptor, LiteralSignature>();
 		this.links = new HashMap<LinkDescriptor, VariableLink>();
 		this.instantiationValues = new HashMap<ConstantDescriptor, InstantiationValue>();
-		this.instantiables = new HashMap<Clause, Set<Instantiable>>();
+		this.instantiables = new HashSet<Instantiable>();
+		this.instantiablesCache = new HashMap<Clause, Set<Instantiable>>();
 		this.solver = new SeedSearchSolver();
+	}
+	
+	public SeedSearchResult getArbitraryInstantiation(IVariableContext context) {
+		Instantiable currentInstantiable = null;
+		int currentInstantiationCount = -1;
+		for (Instantiable instantiable : instantiables) {
+			if (currentInstantiationCount==-1 || instantiable.getInstantiationCount() < currentInstantiationCount) {
+				currentInstantiable = instantiable;
+				currentInstantiationCount = instantiable.getInstantiationCount();
+			}
+		}
+		if (currentInstantiable != null) {
+			currentInstantiable.incrementInstantiationCount();
+			// TODO change !
+			Sort sort = currentInstantiable.getClause().getPredicateLiterals()
+					.get(currentInstantiable.getPredicatePosition()).getTerms()
+					.get(currentInstantiable.getPosition()).getSort();
+			return new SeedSearchResult(context.getNextFreshConstant(sort), currentInstantiable.getPosition(), currentInstantiable.getPredicatePosition(), currentInstantiable.getClause(), new HashSet<Clause>());
+		}
+		return null;
 	}
 	
 	public List<SeedSearchResult> addInstantiable(PredicateDescriptor descriptor, List<SimpleTerm> terms,
 			int predicatePosition, Clause clause) {
 		List<SolverResult> result = new ArrayList<SolverResult>();
-		// if this clause exists in the instantiables map, it is with the same level
+		// if this clause exists in the instantiablesCache map, it is with the same level
 		// otherwise it means there are two clauses with the same level, which is 
 		// impossible since the clause dispatcher removes all clauses with a higher level
 		// before adding the same clause with a lower level
-		Set<Instantiable> existingInstantiables = instantiables.get(clause);
+		Set<Instantiable> existingInstantiables = instantiablesCache.get(clause);
 		if (existingInstantiables == null) {
 			existingInstantiables = new HashSet<Instantiable>();
-			instantiables.put(clause, existingInstantiables);
+			instantiablesCache.put(clause, existingInstantiables);
 		}
 		for (int i=0;i<terms.size();i++) {
 			SimpleTerm term = terms.get(i);
@@ -67,6 +91,7 @@ public class SeedSearchManager {
 				Instantiable instantiable = new Instantiable(signature,clause,predicatePosition);
 				if (!existingInstantiables.contains(instantiable)) {
 					existingInstantiables.add(instantiable);
+					instantiables.add(instantiable);
 					List<SolverResult> instantiableResult = solver.addInstantiable(instantiable);
 					result.addAll(instantiableResult);
 				}
@@ -118,11 +143,8 @@ public class SeedSearchManager {
 		for (SolverResult solverResult : solverResults) {
 			Instantiable instantiable = solverResult.getInstantiable();
 			InstantiationValue value = solverResult.getInstantiationValue();
-			if (!instantiable.hasInstantiation(value.getConstant())) {
-				instantiable.addDoneInstantiation(value.getConstant());
-				result.add(new SeedSearchResult(value.getConstant(), instantiable.getPosition(),
-							instantiable.getPredicatePosition(), instantiable.getClause()));
-			}
+			instantiable.incrementInstantiationCount();
+			result.add(new SeedSearchResult(value.getConstant(), instantiable.getPosition(), instantiable.getPredicatePosition(), instantiable.getClause(), value.getClauses()));
 		}
 		return result;
 	}
@@ -207,12 +229,13 @@ public class SeedSearchManager {
 			}
 		}
 		
-		// 2) for instantiables
+		// 2) for instantiablesCache
 		// we use the clause -> instantiable hash table
-		Set<Instantiable> instantiableDescriptors = instantiables.remove(clause);
+		Set<Instantiable> instantiableDescriptors = instantiablesCache.remove(clause);
 		if (instantiableDescriptors != null) {
 			for (Instantiable instantiable : instantiableDescriptors) {
 				solver.removeInstantiable(instantiable);
+				instantiables.remove(instantiable);
 			}
 		}
 		
@@ -234,6 +257,34 @@ public class SeedSearchManager {
 		}
 		return result;
 	}
+	
+//	private static class InstantiableDescriptor {
+//		final LiteralSignature signature;
+//		final Clause clause;
+//		final int predicatePosition;
+//		public InstantiableDescriptor(LiteralSignature signature, Clause clause, int predicatePosition) {
+//			this.signature = signature;
+//			this.clause = clause;
+//			this.predicatePosition = predicatePosition;
+//		}
+//		@Override
+//		public boolean equals(Object obj) {
+//			if (obj instanceof InstantiableDescriptor) {
+//				InstantiableDescriptor tmp = (InstantiableDescriptor) obj;
+//				return predicatePosition == tmp.predicatePosition && signature.equals(tmp.signature)
+//					&& clause.equalsWithLevel(tmp.clause);
+//			}
+//			return false;
+//		}
+//		@Override
+//		public int hashCode() {
+//			return 37 * (37 * signature.hashCode() + clause.hashCode()) + predicatePosition; 
+//		}
+//		@Override
+//		public String toString() {
+//			return signature.toString() + " " + clause.toString();
+//		}
+//	}
 	
 	private static class SignatureDescriptor {
 		PredicateDescriptor descriptor;

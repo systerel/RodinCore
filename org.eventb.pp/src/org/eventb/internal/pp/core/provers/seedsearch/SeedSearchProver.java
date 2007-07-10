@@ -1,11 +1,14 @@
 package org.eventb.internal.pp.core.provers.seedsearch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
@@ -15,6 +18,7 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
+import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.InstantiationInferrer;
 
@@ -28,37 +32,71 @@ public class SeedSearchProver implements IProver {
 		System.out.println(message);
 	}
 
+	private static final int ARBITRARY_SEARCH = 2;
+	
+	private double currentNumberOfArbitrary = 0;
+	private double currentCounter = ARBITRARY_SEARCH;
+
 	private SeedSearchManager manager = new SeedSearchManager();
 	private ClauseSimplifier simplifier;
 	private InstantiationInferrer inferrer;
+	private IVariableContext context;
 	
 	public SeedSearchProver(IVariableContext context) {
+		this.context = context;
 		this.inferrer = new InstantiationInferrer(context);
 	}
 	
 	private Stack<Set<Clause>> generatedClausesStack = new Stack<Set<Clause>>();
+	
 	
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
 		List<SeedSearchResult> results = addArbitraryClause(clause);
 		Set<Clause> instantiatedClauses = new HashSet<Clause>();
 		for (SeedSearchResult result : results) {
 			Clause instantiatedClause = doInstantiation(result);
-			// we run the simplifier, since it is an instantiation, it is not possible
-			// to get a smaller clause than the original, given the fact that the
-			// original clause has been simplified
-			instantiatedClause = simplifier.run(instantiatedClause);
-			instantiatedClauses.add(instantiatedClause);
+			if (instantiatedClause != null) {
+				instantiatedClauses.add(instantiatedClause);
+			}
 		}
 		generatedClausesStack.add(instantiatedClauses);
 		return null;
 	}
 	
+	private Clause simplify(Clause clause){
+		// we run the simplifier, since it is an instantiation, it is not possible
+		// to get a smaller clause than the original, given the fact that the
+		// original clause has been simplified
+		return simplifier.run(clause);
+	}
+	
+	private Map<Clause, Map<Variable, Set<Constant>>> instantiationMaps = new HashMap<Clause, Map<Variable,Set<Constant>>>();
+	
+	private boolean checkAndAddInstantiation(Clause clause, Variable variable, Constant constant) {
+		Map<Variable, Set<Constant>> instantiationMap = instantiationMaps.get(clause);
+		if (instantiationMap == null) {
+			instantiationMap = new HashMap<Variable, Set<Constant>>();
+			instantiationMaps.put(clause, instantiationMap);
+		}
+		Set<Constant> constants = instantiationMap.get(variable);
+		if (constants == null) {
+			constants = new HashSet<Constant>();
+			instantiationMap.put(variable, constants);
+		}
+		if (constants.contains(constant)) return true;
+		else {
+			constants.add(constant);
+			return false;
+		}
+	}
+	
 	private Clause doInstantiation(SeedSearchResult result) {
 		PredicateLiteral literal = result.getInstantiableClause().getPredicateLiterals().get(result.getPredicatePosition());
 		Variable variable = (Variable)literal.getTerms().get(result.getPosition());
+		if (checkAndAddInstantiation(result.getInstantiableClause(), variable, result.getConstant())) return null;
 		inferrer.addInstantiation(variable, result.getConstant());
 		result.getInstantiableClause().infer(inferrer);
-		return inferrer.getResult();
+		return simplify(inferrer.getResult());
 	}
 
 	private List<SeedSearchResult> addArbitraryClause(Clause clause) {
@@ -69,7 +107,7 @@ public class SeedSearchProver implements IProver {
 			PredicateLiteral literal1 = clause.getPredicateLiterals().get(i);
 
 			// equivalence clauses for constants
-			if (clause.isEquivalence() && !clause.isUnit()) { 
+			if (clause.isEquivalence()) { 
 				result.addAll(manager.addConstant(literal1.getInverse().getDescriptor(), literal1.getInverse().getTerms(), clause));
 				result.addAll(manager.addConstant(literal1.getDescriptor(), literal1.getTerms(), clause));
 			}
@@ -126,6 +164,11 @@ public class SeedSearchProver implements IProver {
 				}
 			}
 		}
+		
+		for (Iterator<Entry<Clause,Map<Variable, Set<Constant>>>> iter = instantiationMaps.entrySet().iterator(); iter.hasNext();) {
+			Entry<Clause,?> element = iter.next();
+			if (newLevel.isAncestorOf(element.getKey().getLevel())) iter.remove();
+		}
 	}
 
 	public void initialize(ClauseSimplifier simplifier) {
@@ -136,9 +179,36 @@ public class SeedSearchProver implements IProver {
 		return false;
 	}
 
+	private void resetCounter() {
+		this.currentCounter = ARBITRARY_SEARCH * Math.pow(2, currentNumberOfArbitrary);
+	}
+	
+	private boolean checkAndUpdateCounter() {
+		currentCounter--;
+		if (currentCounter == 0) {
+			currentNumberOfArbitrary++;
+			resetCounter();
+			return true;
+		}
+		return false;
+	}
+	
 	public ProverResult next() {
-		if (generatedClausesStack.isEmpty()) return null;
-		Set<Clause> nextClauses = generatedClausesStack.pop();
+		Set<Clause> nextClauses = null;
+		if (generatedClausesStack.isEmpty()) {
+			if (checkAndUpdateCounter()) {
+				SeedSearchResult result = manager.getArbitraryInstantiation(context);
+				if (result == null) return null;
+				Clause clause = doInstantiation(result);
+				nextClauses = new HashSet<Clause>();
+				nextClauses.add(clause);
+			}
+			else
+				return null;
+		}
+		else {
+			nextClauses = generatedClausesStack.pop();
+		}
 		ProverResult result = new ProverResult(nextClauses,new HashSet<Clause>());
 		if (DEBUG) debug("SeedSearchProver, next clauses: "+nextClauses+", remaining clauses: "+generatedClausesStack.size());
 		return result;
@@ -150,6 +220,14 @@ public class SeedSearchProver implements IProver {
 
 	public void removeClause(Clause clause) {
 		manager.removeClause(clause);
+		
+		if (instantiationMaps.containsKey(clause)) {
+			for (Iterator<Entry<Clause,Map<Variable, Set<Constant>>>> iter = instantiationMaps.entrySet().iterator(); iter.hasNext();) {
+				Entry<Clause,?> element = iter.next();
+				if (element.getKey().equalsWithLevel(clause)) iter.remove();
+				else assert false;
+			}
+		}
 	}
 	
 	@Override

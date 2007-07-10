@@ -1,10 +1,12 @@
 package org.eventb.internal.pp.core.provers.casesplit;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import java.util.Vector;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
@@ -15,9 +17,6 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.inferrers.CaseSplitNegationInferrer;
-import org.eventb.internal.pp.core.search.ConditionIterator;
-import org.eventb.internal.pp.core.search.IterableHashSet;
-import org.eventb.internal.pp.core.search.ResetIterator;
 
 public class CaseSplitter implements IProver {
 	
@@ -36,8 +35,7 @@ public class CaseSplitter implements IProver {
 	private Stack<SplitPair> splits = new Stack<SplitPair>();
 	private SplitPair nextCase;
 	
-	private IterableHashSet<Clause> candidates;
-	private CaseSplitIterator splitIterator;
+	private Vector<Clause> candidates;
 	private CaseSplitNegationInferrer inferrer;
 	
 	private IDispatcher dispatcher;
@@ -50,9 +48,7 @@ public class CaseSplitter implements IProver {
 	
 	public void initialize(ClauseSimplifier simplifier) {
 		this.simplifier = simplifier;
-		candidates = new IterableHashSet<Clause>();
-		
-		splitIterator = new CaseSplitIterator(candidates.iterator(),inferrer);
+		candidates = new Stack<Clause>();
 	}
 	
 	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
@@ -68,7 +64,7 @@ public class CaseSplitter implements IProver {
 //		assert splits.size() == dispatcher.getLevel().getHeight();
 		Clause result;
 		if (nextCase == null) {
-			if (!splitIterator.hasNext()) return null;
+			if (candidates.isEmpty()) return null;
 			dispatcher.nextLevel();
 			result = newCaseSplit();
 		}
@@ -93,7 +89,7 @@ public class CaseSplitter implements IProver {
 	}
 	
 	private Clause newCaseSplit() {
-		Clause clause = splitIterator.next();
+		Clause clause = candidates.remove(0);
 		
 		if (clause == null) throw new IllegalStateException();
 		candidates.remove(clause);
@@ -101,7 +97,7 @@ public class CaseSplitter implements IProver {
 		assert !dispatcher.getLevel().isAncestorOf(clause.getLevel()):"Splitting on clause: "+clause+", but level: "+dispatcher.getLevel();
 		
 		splits.push(split(clause));
-		if (DEBUG) debug("New case split on "+clause+", size of split stack: "+splits.size());
+		if (DEBUG) debug("New case split on "+clause+", size of split stack: "+splits.size()+", remaining candidates: "+candidates.size());
 		return splits.peek().left;
 	}
 	
@@ -146,7 +142,7 @@ public class CaseSplitter implements IProver {
 //		Collections.reverse(reversePutBackList);
 		for (Clause clause : reversePutBackList) {
 			if (dispatcher.contains(clause)) {
-				candidates.appends(clause);
+				candidates.add(clause);
 			}
 		}
 		
@@ -154,7 +150,7 @@ public class CaseSplitter implements IProver {
 	}
 	
 	public void registerDumper(Dumper dumper) {
-		dumper.addDataStructure("CaseSplit", candidates.iterator());
+		dumper.addObject("CaseSplitter", candidates);
 	} 
 	
 	private boolean accepts(Clause clause) {
@@ -165,29 +161,24 @@ public class CaseSplitter implements IProver {
 		assert !candidates.contains(clause);
 		assert !dispatcher.getLevel().isAncestorOf(clause.getLevel());
 		
-		if (accepts(clause)) candidates.appends(clause);
+		if (accepts(clause)) candidates.add(clause);
 		return null;
 	}
 
 	public void removeClause(Clause clause) {
-		candidates.remove(clause);
+		for (Iterator<Clause> iter = candidates.iterator(); iter.hasNext();) {
+			Clause existingClause = iter.next();
+			if (existingClause.equals(clause)) {
+				assert existingClause.equalsWithLevel(clause);
+				iter.remove();
+			}
+		}
+	}
+
+	public boolean isSubsumed(Clause clause) {
+		return false;
 	}
 	
-	private class CaseSplitIterator extends ConditionIterator<Clause> {
-		private CaseSplitNegationInferrer inferrer;
-		
-		public CaseSplitIterator(ResetIterator<Clause> iterator, CaseSplitNegationInferrer inferrer) {
-			super(iterator);
-			this.inferrer = inferrer;
-		}
-
-		@Override
-		public boolean isSelected(Clause clause) {
-			assert inferrer.canInfer(clause);
-			
-			return true;
-		}
-	}
 
 	private static class SplitPair {
 		Clause original;
@@ -202,10 +193,6 @@ public class CaseSplitter implements IProver {
 		}
 	}
 
-	public boolean isSubsumed(Clause clause) {
-		return false;
-	}
-	
 	@Override
 	public String toString() {
 		return "CaseSplitter";

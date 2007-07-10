@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Sort;
+import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
@@ -13,6 +14,7 @@ public final class VariableContext implements IVariableContext {
 
 	private int currentLocalVariableID = 0;
 	private int currentGlobalVariableID = 0;
+	private int currentConstantID = 0;
 	
 	public VariableContext() {
 		// do nothing
@@ -57,6 +59,10 @@ public final class VariableContext implements IVariableContext {
 
 	public LocalVariable getNextLocalVariable(boolean isForall, Sort sort) {
 		return new LocalVariable(currentLocalVariableID++, isForall, sort);
+	}
+
+	public Constant getNextFreshConstant(Sort sort) {
+		return new Constant(Integer.toString(currentConstantID++),sort);
 	}
 	
 }

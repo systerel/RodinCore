@@ -43,6 +43,7 @@ public class TestResolution extends AbstractInferrerTests {
 
 	private static Variable var0 = Util.cVar(A);
 	private static Variable var1 = Util.cVar(A);
+	private static Variable var2 = Util.cVar(A);
 
 	private static Variable var00 = Util.cVar(A);
 	private static Variable var11 = Util.cVar(A);
@@ -159,6 +160,11 @@ public class TestResolution extends AbstractInferrerTests {
 				cClause(cPred(0,evar0,evar1),cPred(1,var0)),
 				cClause(cNotPred(0,var1,var0)),
 				cClause(mList(cPred(1,var0)),cNEqual(evar0, evar0), cNEqual(evar1, evar1))
+		);
+		doTest(
+				cClause(cPred(0,evar0,var0),cPred(1,var1)),
+				cClause(cNotPred(0,var1,var0)),
+				cClause(mList(cPred(1,var1)),cNEqual(evar0, evar0), cNEqual(var0, var0))
 		);
 		doTest(
 				cClause(cPred(0,evar0,evar1),cPred(1,var0)),
@@ -329,19 +335,60 @@ public class TestResolution extends AbstractInferrerTests {
 				cClause(cNotPred(0,evar1)),
 				cClause(mList(cProp(1)),cNEqual(evar1,var0))
 		);
+		doTest(
+				cEqClause(cNotPred(0,var0,var1),cPred(1,var1)),
+				cClause(cNotPred(0,evar0,var1)),
+				cClause(mList(cPred(1,var1)),cNEqual(evar1,var0), cNEqual(var1, var1))
+		);
+		doTest(
+				cEqClause(cNotPred(0,var0,var1),cPred(1,var2)),
+				cClause(cNotPred(0,evar0,var1)),
+				cClause(mList(cPred(1,var1)),cNEqual(evar0,var0), cNEqual(var2, var2))
+		);
+		// TODO document those rules
+		doTest(
+				cClause(cNotPred(0,var0,var1),cPred(1,var1)),
+				cClause(cPred(0,evar0,var1)),
+				cClause(mList(cPred(1,var1)),cNEqual(evar1,var0), cNEqual(var1, var1))
+		);
+		doTest(
+				cClause(cNotPred(0,var0,var1),cPred(1,var2)),
+				cClause(cPred(0,evar0,var1)),
+				cClause(mList(cPred(1,var1)),cNEqual(evar0,var0), cNEqual(var2, var2))
+		);
+		doTest(
+				cClause(cNotPred(0,var0,var1),cPred(1,var0,var1)),
+				cClause(cPred(0,evar0,var1)),
+				cClause(mList(cPred(1,var0,var1)),cNEqual(evar0,var0), cNEqual(var1, var1))
+		);
+		doTest(
+				cClause(cNotPred(0,var0,var0,var1),cPred(1,var0,var1)),
+				cClause(cPred(0,evar0,evar1,var1)),
+				cClause(mList(cPred(1,var0,var1)),cNEqual(evar0,var0), cNEqual(evar1,var0), cNEqual(var1, var1))
+		);
+		doTest(
+				cClause(cNotPred(0,var0,var0,var1),cPred(1,var1)),
+				cClause(cPred(0,evar0,evar1,var1)),
+				cClause(mList(cPred(1,var1)),cNEqual(evar0,var0), cNEqual(evar1,var0), cNEqual(var1, var1))
+		);
+		doTest(
+				cClause(cNotPred(0,var0,var0),cPred(1,var1)),
+				cClause(cPred(0,evar0,var1)),
+				cClause(mList(cPred(1,var0)),cNEqual(evar0,var1),cNEqual(var1, var1))
+		);
 	}
 	
 	// constants + pseudo constant
-//	doTest(
-//	cClause(cPred(0,evar1),cProp(1)),
-//	cClause(cNotPred(0,a)),
-//	cClause(mList(cProp(1)),cNEqual(evar1, a))
-//	);
-//	doTest(
-//	cClause(cNotPred(0,evar1),cProp(1)),
-//	cClause(cPred(0,a)),
-//	cClause(mList(cProp(1)),cNEqual(evar1, a))
-//	);
+	//	doTest(
+	//	cClause(cPred(0,evar1),cProp(1)),
+	//	cClause(cNotPred(0,a)),
+	//	cClause(mList(cProp(1)),cNEqual(evar1, a))
+	//	);
+	//	doTest(
+	//	cClause(cNotPred(0,evar1),cProp(1)),
+	//	cClause(cPred(0,a)),
+	//	cClause(mList(cProp(1)),cNEqual(evar1, a))
+	//	);
 
 	public void testRuleDoNotApply() {
 		// disjunctive clauses

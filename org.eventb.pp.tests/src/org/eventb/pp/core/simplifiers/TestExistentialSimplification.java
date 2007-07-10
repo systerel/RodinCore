@@ -10,6 +10,7 @@ import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
+import org.eventb.internal.pp.loader.clause.VariableContext;
 import org.eventb.pp.AbstractPPTest;
 import org.eventb.pp.Util;
 
@@ -98,7 +99,7 @@ public class TestExistentialSimplification extends AbstractPPTest {
 	
 	public void testExistential() {
 		for (TestPair test : tests) {
-			ExistentialSimplifier rule = new ExistentialSimplifier();
+			ExistentialSimplifier rule = new ExistentialSimplifier(new VariableContext());
 			Clause actual = test.input.simplify(rule);
 			assertEquals(test.output,actual);
 		}

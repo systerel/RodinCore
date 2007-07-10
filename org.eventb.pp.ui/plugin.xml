@@ -32,7 +32,7 @@
             tooltip="Launch NewPP (restricted)"/>
       <tactic
             dropdown="org.eventb.protopp.ui.NewPPDropdown"
-            icon="icons/nppr.gif"
+            icon="icons/npplassoo.gif"
             id="org.eventb.protopp.pplasso"
             interrupt="true"
             name="NewPP (with lasso)"

@@ -15,13 +15,11 @@ import org.eventb.pp.PPResult.Result;
 public class PPProverCall extends XProverCall {
 
 	private PPProof prover; 
-	private XProverInput input;
 	
 	public PPProverCall(XProverInput input, Iterable<Predicate> hypothesis, Predicate goal, IProofMonitor pm) {
 		super(hypothesis,goal,pm);
 		
 		this.prover = new PPProof(hypotheses,this.goal);
-		this.input = input;
 	}
 	
 	@Override

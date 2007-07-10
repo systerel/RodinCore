@@ -82,8 +82,29 @@ public class ArithmeticLiteral extends Literal<ArithmeticLiteral,Term> {
 
 	@Override
 	public ArithmeticLiteral getInverse() {
-		// TODO Auto-generated method stub
-		return null;
+		boolean inverse = false;
+		AType newtype = null;
+		switch (this.type) {
+		case EQUAL:
+			newtype = AType.UNEQUAL;
+			break;
+		case UNEQUAL:
+			newtype = AType.EQUAL;
+			break;
+		case LESS:
+			newtype = AType.LESS_EQUAL;
+			inverse = true;
+			break;
+		case LESS_EQUAL:
+			newtype = AType.LESS;
+			inverse = true;
+			break;
+		default:
+			assert false;
+		}
+		List<Term> newterms = getInverseHelper(terms);
+		if (inverse) return new ArithmeticLiteral(newterms.get(1),newterms.get(0),newtype);
+		else return new ArithmeticLiteral(newterms, newtype);
 	}
 
 }

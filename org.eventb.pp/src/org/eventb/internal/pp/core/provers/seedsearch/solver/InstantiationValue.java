@@ -35,6 +35,10 @@ public class InstantiationValue {
 		clauses.add(clause);
 	}
 	
+	public Set<Clause> getClauses() {
+		return clauses;
+	}
+	
 	public void removeClause(Clause clause) {
 		for (Iterator<Clause> iter = clauses.iterator(); iter.hasNext();) {
 			Clause current = iter.next();

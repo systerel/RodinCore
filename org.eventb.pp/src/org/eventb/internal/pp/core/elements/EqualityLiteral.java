@@ -86,7 +86,6 @@ public class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
 
 	@Override
 	public EqualityLiteral substitute(Map<SimpleTerm, SimpleTerm> map) {
-		
 		return new EqualityLiteral(substituteHelper(map,terms),isPositive);
 	}
 	

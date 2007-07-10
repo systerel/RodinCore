@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.DisjunctiveClause;
@@ -14,19 +15,22 @@ import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
-import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 
 public class ExistentialSimplifier implements ISimplifier {
 
-	private int constantIdentifier = 0;
-	
 	private List<PredicateLiteral> predicates;
 	private List<EqualityLiteral> equalities;
 	private List<ArithmeticLiteral> arithmetic;
 	private List<EqualityLiteral> conditions;
+	
+	private final IVariableContext context;
+	
+	public ExistentialSimplifier(IVariableContext context) {
+		this.context = context;
+	}
 	
 	private void init(Clause clause) {
 		predicates = clause.getPredicateLiterals();
@@ -62,7 +66,7 @@ public class ExistentialSimplifier implements ISimplifier {
 		}
 		Map<SimpleTerm, SimpleTerm> map = new HashMap<SimpleTerm, SimpleTerm>();
 		for (SimpleTerm variable : existentials) {
-			map.put(variable, new Constant(String.valueOf(constantIdentifier++),variable.getSort()));
+			map.put(variable, context.getNextFreshConstant(variable.getSort()));
 		}
 		return literal.substitute(map);
 	}

@@ -14,15 +14,12 @@ import static org.eventb.pp.Util.cVar;
 
 import java.util.HashMap;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.pp.AbstractPPTest;
 
 public class TestTermEquality extends AbstractPPTest {

@@ -142,7 +142,7 @@ public abstract class Clause {
 		return str.toString();
 	}
 	
-
+	
 	public Level getLevel() {
 		return origin.getLevel();
 	}

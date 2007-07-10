@@ -9,7 +9,6 @@ import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.loader.clause.VariableContext;
 import org.eventb.pp.AbstractPPTest;
-import org.eventb.pp.Util;
 
 public class TestLiteralCopy extends AbstractPPTest {
 

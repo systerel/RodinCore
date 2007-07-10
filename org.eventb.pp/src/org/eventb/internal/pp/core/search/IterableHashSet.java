@@ -70,6 +70,10 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 		last = null;
 	}
 	
+	public int size() {
+		return list.size();
+	}
+	
 //	public void resetIterator() {
 //		current = null;
 //		canRemove = false;

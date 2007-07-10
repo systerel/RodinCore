@@ -227,7 +227,7 @@ public class PPProof {
 		proofStrategy.setEqualityProver(equalityprover);
 		
 		OnePointRule onepoint = new OnePointRule();
-		ExistentialSimplifier existential = new ExistentialSimplifier();
+		ExistentialSimplifier existential = new ExistentialSimplifier(context);
 		LiteralSimplifier literal = new LiteralSimplifier(context);
 		EqualitySimplifier equality = new EqualitySimplifier(context);
 		

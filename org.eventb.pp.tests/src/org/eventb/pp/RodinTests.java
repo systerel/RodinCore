@@ -57,7 +57,6 @@ public class RodinTests extends AbstractPPTest {
 		
 		env.addName("org", REL(ty_T,ty_S));
 		env.addName("sit", REL(ty_T,ty_S));
-		
 	}
 	
 	
@@ -116,32 +115,42 @@ public class RodinTests extends AbstractPPTest {
 //					"s ∈ E ↔ E"
 //				),"r;s ⊆ E × E",true
 //			),
-			//fails
+			
 //			new TestPair(mSet(
+//					"∀x,y·x ↦ y ∈ s ⇒ (x∈E ∧ y∈E)",
+//					"∀x,y·x ↦ y ∈ r ⇒ (x∈E ∧ y∈E)"
+//					),"∀x,y·(∃z·x ↦ z ∈ r ∧ z ↦ y ∈ r) ⇒ (x∈E ∧ y∈E)",true
+//			),
+			
+//			fails
+//			new TestPair(
+//				mSet(
 //					"r ∈ E ↔ E",
 //					"s ∈ E ↔ E"
-//				),"r;s ∈ E ↔ E",true
+//				),
+////				new HashSet<String>(),
+//				"r;s ∈ E ↔ E",true
 //			),
-			//fails
+//			fails
 //			new TestPair(mSet(
 //						"r ∈ E ⇸ E",
 //						"s ∈ E ⇸ E"
 //					),"r;s ∈ E ⇸ E",true
 //			),
-			//fails
+//			fails
 //			new TestPair(mSet(
 //					"r ∈ E → E",
 //					"s ∈ E → E"
 //				),"r;s ∈ E → E",true
 //			),
-			// requires adding set hypothesis
+//			// requires adding set hypothesis
 			new TestPair(mSet(
 					"A = S",
 					"C ⊆ S",
 					"A ∈ U"
 					),"C ∪ A ∈ U",true
 			),
-			// requires adding set membership hypothesis
+//			// requires adding set membership hypothesis
 			new TestPair(mSet(
 					"C ⊆ S",
 					"S ∈ U"
@@ -202,6 +211,7 @@ public class RodinTests extends AbstractPPTest {
 					"(A∪B)∩(A∪C)∈U"
 					),"A∪(B∩C)∈U",true
 			),
+			// fails when instantiationcount = 1
 			new TestPair(mSet(
 					"A∪B∈U",
 					"(A∪B)∩(A∪C)∈U"
