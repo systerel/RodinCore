@@ -31,6 +31,7 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
@@ -70,6 +71,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunCompImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
@@ -2834,6 +2836,40 @@ public class Tactics {
 			String expressionImage) {
 		return BasicTactics.reasonerTac(new FiniteSet(), new SingleExprInput(
 				expressionImage, sequent.typeEnvironment()));
+	}
+
+	
+	/**
+	 * Return the list of applicable positions of the tactic "finite of
+	 * intersection" {@link FiniteInter} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteInterGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isInter(((SimplePredicate) predicate).getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+
+	/**
+	 * Return the tactic "Finite of Intersection" {@link FiniteInter} which
+	 * has the input expression.
+	 * <p>
+	 * 
+	 * @param expression
+	 *            an expression which is the input of the tactic
+	 * @return The tactic "finite of intersection"
+	 * @author htson
+	 */
+	public static ITactic finiteInter() {
+		return BasicTactics.reasonerTac(new FiniteInter(), new EmptyInput());
 	}
 	
 }
