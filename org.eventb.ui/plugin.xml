@@ -1921,6 +1921,15 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteInterGoal"
             target="goal"
             tooltip="%proofTactic.finiteInterGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteSetMinusGoal"
+            interrupt="false"
+            name="%proofTactic.finiteSetMinusGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteSetMinusGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteSetMinusGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">

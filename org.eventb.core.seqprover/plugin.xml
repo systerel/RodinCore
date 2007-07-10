@@ -267,6 +267,10 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter"
             id="finiteInter"
             name="%finiteInterName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus"
+            id="finiteSetMinus"
+            name="%finiteSetMinusName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

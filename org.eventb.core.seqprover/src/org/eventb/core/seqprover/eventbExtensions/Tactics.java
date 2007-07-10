@@ -73,6 +73,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunCompImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
@@ -2870,6 +2871,40 @@ public class Tactics {
 	 */
 	public static ITactic finiteInter() {
 		return BasicTactics.reasonerTac(new FiniteInter(), new EmptyInput());
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "finite of set
+	 * minus" {@link FiniteSetMinus} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteSetMinusGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isSetMinus(((SimplePredicate) predicate).getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+
+	/**
+	 * Return the tactic "Finite of Intersection" {@link FiniteSetMinus} which
+	 * has the input expression.
+	 * <p>
+	 * 
+	 * @param expression
+	 *            an expression which is the input of the tactic
+	 * @return The tactic "finite of set minus"
+	 * @author htson
+	 */
+	public static ITactic finiteSetMinus() {
+		return BasicTactics.reasonerTac(new FiniteSetMinus(), new EmptyInput());
 	}
 	
 }
