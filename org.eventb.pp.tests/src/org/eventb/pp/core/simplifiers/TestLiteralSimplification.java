@@ -318,7 +318,7 @@ public class TestLiteralSimplification extends AbstractPPTest {
 		),
 		new TestPair(
 				cEqClause(mList(cProp(0),cNotProp(0)),cNEqual(a,b),cNEqual(a,b)),
-				cClause(new ArrayList<Literal>(),cNEqual(a, b))
+				cClause(new ArrayList<Literal<?, ?>>(),cNEqual(a, b))
 		),
 		
 		// Disjunctive with conditions
