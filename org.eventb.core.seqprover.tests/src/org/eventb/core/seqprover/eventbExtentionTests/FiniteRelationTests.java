@@ -59,6 +59,11 @@ public class FiniteRelationTests extends AbstractSingleExpressionInputReasonerTe
 				null,
 				"ℕ × BOOL × ℕ",
 				"Expected a set of all relations S ↔ T",
+				// P1 in goal
+				" ⊤ |- " + P1,
+				null,
+				"ℕ ↔ BOOL × ℕ",
+				"Type check failed for " + "{0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)}∈ℕ ↔ BOOL × ℕ",
 				// P2 in goal
 				" ⊤ |- " + P2,
 				null,
