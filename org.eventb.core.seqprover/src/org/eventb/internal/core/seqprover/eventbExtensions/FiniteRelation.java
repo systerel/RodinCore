@@ -3,11 +3,9 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.PowerSetType;
+import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
@@ -28,41 +26,6 @@ public class FiniteRelation extends SingleExprInputReasoner {
 	
 	public String getReasonerID() {
 		return REASONER_ID;
-	}
-
-	protected IAntecedent[] getAntecedents(IProverSequent seq) {
-		Predicate goal = seq.goal();
-
-		// goal should have the form finite(r) where r is a relation
-		if (!Lib.isFinite(goal))
-			return null;
-		SimplePredicate sPred = (SimplePredicate) goal;
-		if (!Lib.isRelation(sPred.getExpression()))
-			return null;
-		
-		// There will be 2 antecidents
-		IAntecedent[] antecidents = new IAntecedent[2];
-		
-		Expression r = sPred.getExpression();
-		Type type = r.getType();
-		assert type instanceof PowerSetType;
-		Type baseType = type.getBaseType();
-		assert baseType instanceof ProductType;
-		ProductType productType = (ProductType) baseType;
-		Type S = productType.getLeft();
-		Type T = productType.getRight();
-		
-		// finite(S)
-		Predicate newGoal0 = ff.makeSimplePredicate(Predicate.KFINITE, S
-				.toExpression(ff), null);
-		antecidents[0] = ProverFactory.makeAntecedent(newGoal0);
-
-		// finite(S)
-		Predicate newGoal1 = ff.makeSimplePredicate(Predicate.KFINITE, T
-				.toExpression(ff), null);
-		antecidents[1] = ProverFactory.makeAntecedent(newGoal1);
-
-		return antecidents;
 	}
 
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
@@ -103,6 +66,11 @@ public class FiniteRelation extends SingleExprInputReasoner {
 		// r : S <-> T
 		Predicate newGoal0 = ff.makeRelationalPredicate(Predicate.IN, r,
 				relation, null);
+		ITypeCheckResult typeCheck = newGoal0.typeCheck(ff.makeTypeEnvironment());
+		if (!typeCheck.isSuccess()) {
+			return ProverFactory.reasonerFailure(this, input,
+					"Type check failed for " + newGoal0);			
+		}
 		antecidents[0] = ProverFactory.makeAntecedent(newGoal0);
 		
 		// finite(S)
