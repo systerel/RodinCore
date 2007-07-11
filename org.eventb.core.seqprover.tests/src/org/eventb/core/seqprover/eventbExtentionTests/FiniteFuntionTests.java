@@ -55,7 +55,7 @@ public class FiniteFuntionTests extends AbstractSingleExpressionInputReasonerTes
 				" ⊤ |- " + P1,
 				null,
 				"ℕ ↔ BOOL × ℕ",
-				"Expected a set of all relations S ⇸ T",
+				"Expected a set of all partial functions S ⇸ T",
 				// P1 in goal
 				" ⊤ |- " + P1,
 				null,
