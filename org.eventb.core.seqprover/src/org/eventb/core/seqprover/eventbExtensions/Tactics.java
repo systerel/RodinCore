@@ -73,6 +73,9 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteDom;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunConv;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunDom;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunRan;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunRelImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunction;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRan;
@@ -3070,7 +3073,7 @@ public class Tactics {
 	 *            the current prover sequent
 	 * @param expressionImage
 	 *            the global input from the Proof Control View
-	 * @return The tactic "finite of relation"
+	 * @return The tactic "finite of function"
 	 * @author htson
 	 */
 	public static ITactic finiteFunction(IProverSequent sequent,
@@ -3109,7 +3112,7 @@ public class Tactics {
 	 *            the current prover sequent
 	 * @param expressionImage
 	 *            the global input from the Proof Control View
-	 * @return The tactic "finite of relation"
+	 * @return The tactic "finite of function converse"
 	 * @author htson
 	 */
 	public static ITactic finiteFunConv(IProverSequent sequent,
@@ -3118,5 +3121,117 @@ public class Tactics {
 				.reasonerTac(new FiniteFunConv(), new SingleExprInput(
 						expressionImage, sequent.typeEnvironment()));
 	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "finite of
+	 * relational image of a function " {@link FiniteFunRelImg} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteFunRelImgGetPositions(
+			Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isRelImg(((SimplePredicate) predicate).getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+
+	/**
+	 * Return the tactic "Finite of relational image of a function "
+	 * {@link FiniteFunRelImg}.
+	 * <p>
+	 * 
+	 * @return The tactic "finite of relational image of a function"
+	 * @author htson
+	 */
+	public static ITactic finiteFunRelImg() {
+		return BasicTactics
+				.reasonerTac(new FiniteFunRelImg(), new EmptyInput());
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "finite of
+	 * range of a function" {@link FiniteFunRan} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteFunRanGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isRan(((SimplePredicate) predicate).getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+	/**
+	 * Return the tactic "Finite of range of a function" {@link FiniteFunRan}
+	 * which has the input expression.
+	 * <p>
+	 * 
+	 * @param sequent
+	 *            the current prover sequent
+	 * @param expressionImage
+	 *            the global input from the Proof Control View
+	 * @return The tactic "finite of range of a function"
+	 * @author htson
+	 */
+	public static ITactic finiteFunRan(IProverSequent sequent,
+			String expressionImage) {
+		return BasicTactics
+			.reasonerTac(new FiniteFunRan(), new SingleExprInput(
+				expressionImage, sequent.typeEnvironment()));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "finite of
+	 * domain of a function" {@link FiniteFunDom} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteFunDomGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isDom(((SimplePredicate) predicate).getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
 	
+	/**
+	 * Return the tactic "Finite of domain of a function" {@link FiniteFunDom}
+	 * which has the input expression.
+	 * <p>
+	 * 
+	 * @param sequent
+	 *            the current prover sequent
+	 * @param expressionImage
+	 *            the global input from the Proof Control View
+	 * @return The tactic "finite of domain of a function"
+	 * @author htson
+	 */
+	public static ITactic finiteFunDom(IProverSequent sequent,
+			String expressionImage) {
+		return BasicTactics
+			.reasonerTac(new FiniteFunDom(), new SingleExprInput(
+				expressionImage, sequent.typeEnvironment()));
+	}
+
+
 }

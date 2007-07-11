@@ -1984,6 +1984,33 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteFunConvGoal"
             target="goal"
             tooltip="%proofTactic.finiteFunConvGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteFunRelImgGoal"
+            interrupt="false"
+            name="%proofTactic.finiteFunRelImgGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteFunRelImgGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteFunRelImgGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteFunRanGoal"
+            interrupt="false"
+            name="%proofTactic.finiteFunRanGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteFunRanGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteFunRanGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteFunDomGoal"
+            interrupt="false"
+            name="%proofTactic.finiteFunDomGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteFunDomGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteFunDomGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
