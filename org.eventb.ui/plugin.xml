@@ -1948,6 +1948,42 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteRelImgGoal"
             target="goal"
             tooltip="%proofTactic.finiteRelImgGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteDomGoal"
+            interrupt="false"
+            name="%proofTactic.finiteDomGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteDomGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteDomGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteRanGoal"
+            interrupt="false"
+            name="%proofTactic.finiteRanGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteRanGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteRanGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteFunctionGoal"
+            interrupt="false"
+            name="%proofTactic.finiteFunctionGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteFunctionGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteFunctionGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteFunConvGoal"
+            interrupt="false"
+            name="%proofTactic.finiteFunConvGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteFunConvGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteFunConvGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">

@@ -279,6 +279,22 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelImg"
             id="finiteRelImg"
             name="%finiteRelImgName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteDom"
+            id="finiteDom"
+            name="%finiteDomName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteRan"
+            id="finiteRan"
+            name="%finiteRanName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunction"
+            id="finiteFunction"
+            name="%finiteFunctionName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunConv"
+            id="finiteFunConv"
+            name="%finiteFunConvName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

@@ -71,7 +71,11 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteDom;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunConv;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunction;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRan;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelation;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
@@ -2864,8 +2868,7 @@ public class Tactics {
 
 
 	/**
-	 * Return the tactic "Finite of Intersection" {@link FiniteInter} which has
-	 * the input expression.
+	 * Return the tactic "Finite of Intersection" {@link FiniteInter}.
 	 * <p>
 	 * 
 	 * @return The tactic "finite of intersection"
@@ -2896,8 +2899,7 @@ public class Tactics {
 
 
 	/**
-	 * Return the tactic "Finite of set minus" {@link FiniteSetMinus} which
-	 * has the input expression.
+	 * Return the tactic "Finite of set minus" {@link FiniteSetMinus}.
 	 * <p>
 	 * 
 	 * @return The tactic "finite of set minus"
@@ -2967,8 +2969,7 @@ public class Tactics {
 
 
 	/**
-	 * Return the tactic "Finite of relational image" {@link FiniteRelImg} which
-	 * has the input expression.
+	 * Return the tactic "Finite of relational image" {@link FiniteRelImg}.
 	 * <p>
 	 * 
 	 * @return The tactic "finite of relational image"
@@ -2976,6 +2977,146 @@ public class Tactics {
 	 */
 	public static ITactic finiteRelImg() {
 		return BasicTactics.reasonerTac(new FiniteRelImg(), new EmptyInput());
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "finite of
+	 * range of a relation" {@link FiniteRan} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteRanGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isRan(((SimplePredicate) predicate).getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+	
+	/**
+	 * Return the tactic "Finite of range of a relation" {@link FiniteRan}.
+	 * <p>
+	 * 
+	 * @return The tactic "finite of range of a relation"
+	 * @author htson
+	 */
+	public static ITactic finiteRan() {
+		return BasicTactics.reasonerTac(new FiniteRan(), new EmptyInput());
+	}
+
+	
+	/**
+	 * Return the list of applicable positions of the tactic "finite of
+	 * domain of a relation" {@link FiniteRan} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteDomGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isDom(((SimplePredicate) predicate).getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+
+	/**
+	 * Return the tactic "Finite of domain of a relation" {@link FiniteDom}.
+	 * <p>
+	 * 
+	 * @return The tactic "finite of domain of a relation"
+	 * @author htson
+	 */
+	public static ITactic finiteDom() {
+		return BasicTactics.reasonerTac(new FiniteDom(), new EmptyInput());
+	}
+
+	
+	/**
+	 * Return the list of applicable positions of the tactic "finite of
+	 * function" {@link FiniteFunction} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteFunctionGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isRelation(((SimplePredicate) predicate).getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+
+	/**
+	 * Return the tactic "Finite of function" {@link FiniteFunction} which has
+	 * the input expression.
+	 * <p>
+	 * 
+	 * @param sequent
+	 *            the current prover sequent
+	 * @param expressionImage
+	 *            the global input from the Proof Control View
+	 * @return The tactic "finite of relation"
+	 * @author htson
+	 */
+	public static ITactic finiteFunction(IProverSequent sequent,
+			String expressionImage) {
+		return BasicTactics
+				.reasonerTac(new FiniteFunction(), new SingleExprInput(
+						expressionImage, sequent.typeEnvironment()));
+	}
+
+	
+	/**
+	 * Return the list of applicable positions of the tactic "finite of
+	 * function converse" {@link FiniteFunConv} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteFunConvGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isRelation(((SimplePredicate) predicate).getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+	
+	/**
+	 * Return the tactic "Finite of function converse" {@link FiniteFunConv}
+	 * which has the input expression.
+	 * <p>
+	 * 
+	 * @param sequent
+	 *            the current prover sequent
+	 * @param expressionImage
+	 *            the global input from the Proof Control View
+	 * @return The tactic "finite of relation"
+	 * @author htson
+	 */
+	public static ITactic finiteFunConv(IProverSequent sequent,
+			String expressionImage) {
+		return BasicTactics
+				.reasonerTac(new FiniteFunConv(), new SingleExprInput(
+						expressionImage, sequent.typeEnvironment()));
 	}
 	
 }

@@ -1117,4 +1117,50 @@ public final class Lib {
 	public static boolean isSetOfRelation(Formula<?> formula) {
 		return (formula instanceof BinaryExpression && formula.getTag() == Expression.REL);
 	}
+
+
+	/**
+	 * Test if the formula is the range of a relation "ran(r)"
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is the range of a
+	 *         relation. Return <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isRan(Formula<?> formula) {
+		return (formula instanceof UnaryExpression && formula.getTag() == Expression.KRAN);
+	}
+
+	
+	/**
+	 * Test if the formula is the domain of a relation "dom(r)"
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is the domain of a
+	 *         relation. Return <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isDom(Formula<?> formula) {
+		return (formula instanceof UnaryExpression && formula.getTag() == Expression.KDOM);
+	}
+
+
+	/**
+	 * Test if the formula is a set of all partial functions "S ⇸ T" for some S
+	 * and T
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is a set of all partial
+	 *         functions. Return <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isSetOfPartialFunction(Formula<?> formula) {
+		return (formula instanceof BinaryExpression && formula.getTag() == Expression.PFUN);
+	}
 }
