@@ -54,7 +54,7 @@ public class FiniteFunction extends SingleExprInputReasoner {
 
 		if (!Lib.isSetOfPartialFunction(relation)) {
 			return ProverFactory.reasonerFailure(this, input,
-				"Expected a set of all relations S ⇸ T");
+				"Expected a set of all partial functions S ⇸ T");
 		}
 
 		// There will be 2 antecidents
