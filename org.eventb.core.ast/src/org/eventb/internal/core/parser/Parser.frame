@@ -54,7 +54,7 @@ public class Parser {
 	
 	// this field configures the parser to parse some kind of formula,
 	// viz. Expression, Predicate, Assignment, or Type.
-	private Class clazz;
+	private Class<?> clazz;
 	
 	private ParseResult result;
 	private FormulaFactory factory;
@@ -79,7 +79,7 @@ public class Parser {
 	 * @param scanner the scanner to get input tokens from
 	 * @param result the result of scan and parse
 	 */
-	public Parser(Class clazz, Scanner scanner, ParseResult result) {
+	public Parser(Class<?> clazz, Scanner scanner, ParseResult result) {
 		this.scanner = scanner;
 		this.factory = result.factory;
 		this.clazz = clazz;
