@@ -35,7 +35,7 @@
             priority="normal"/>
       <content-type
             base-type="org.rodinp.core.rodin"
-            file-extensions="bpo"
+            file-extensions="bpo, bpo_tmp"
             id="poFile"
             name="%eventBpoFile"
             priority="normal"/>
@@ -468,6 +468,10 @@
             id="accurate"
             kind="boolean"
             name="%eventBaccuracy"/>
+      <attributeType
+            id="poStamp"
+            kind="long"
+            name="%eventBpoStamp"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

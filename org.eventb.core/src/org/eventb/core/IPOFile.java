@@ -11,23 +11,37 @@ package org.eventb.core;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.InternalElement;
 
 /**
  * Common protocol for Event-B Proof Obligation (PO) files.
  * <p>
  * A proof obligation file contains two kinds of elements:
  * <ul>
- * <li>Predicate sets contain hypotheses that are common to several
- * proof obligations.</li>
+ * <li>Predicate sets contain hypotheses that are common to several proof
+ * obligations.</li>
  * <li>Sequents are the proof obligations themselves.</li>
  * </ul>
+ * <p>
+ * <b>NOTE and WARNING</b>: Proof obligations files contain internal references
+ * to handles, e.g., to link predicate sets into a tree structure. There are
+ * different kinds of proof obligation files: plain files (extension:
+ * <code>po</code>), temporary files (extension <code>po_tmp</code>).
+ * Internal references within any of these files are always stored relative to
+ * the plain files and automatically translated back and forth when they appear
+ * in temporary files. The translation is done by means of
+ * {@link InternalElement#getSimilarElement(org.rodinp.core.IRodinFile)}.
+ * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @see IPOPredicateSet
+ * @see IPOSelectionHint
+ * 
  * @author Stefan Hallerstede
  */
-public interface IPOFile extends IEventBFile {
+public interface IPOFile extends IEventBFile, IPOStamp {
 
 	public IFileElementType<IPOFile> ELEMENT_TYPE = RodinCore
 			.getFileElementType(EventBPlugin.PLUGIN_ID + ".poFile"); //$NON-NLS-1$

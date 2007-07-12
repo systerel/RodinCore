@@ -75,8 +75,8 @@ public final class EventBAttributes {
 	public static IAttributeType.Handle POSELHINT_SND_ATTRIBUTE =
 		RodinCore.getHandleAttrType(EventBPlugin.PLUGIN_ID + ".poSelHintSnd");
 	
-//	public static IAttributeType.String POSTAMP_ATTRIBUTE =
-//		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".poStamp");
+	public static IAttributeType.Long POSTAMP_ATTRIBUTE =
+		RodinCore.getLongAttrType(EventBPlugin.PLUGIN_ID + ".poStamp");
 	
 	public static IAttributeType.Handle PARENT_SET_ATTRIBUTE =
 		RodinCore.getHandleAttrType(EventBPlugin.PLUGIN_ID + ".parentSet");

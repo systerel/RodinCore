@@ -15,7 +15,6 @@ import org.eventb.core.IPOPredicateSet;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B PO predicate set as an extension of the Rodin database.
@@ -32,7 +31,7 @@ import org.rodinp.core.basis.InternalElement;
  * @author Stefan Hallerstede
  *
  */
-public class POPredicateSet extends InternalElement implements IPOPredicateSet {
+public class POPredicateSet extends EventBPOElement implements IPOPredicateSet {
 
 	public POPredicateSet(String name, IRodinElement parent) {
 		super(name, parent);
@@ -62,7 +61,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 	public IPOPredicateSet getParentPredicateSet() 
 	throws RodinDBException {
 		if (hasAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE))
-			return (IPOPredicateSet) getAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE);
+			return (IPOPredicateSet) getTranslatedAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE);
 		else 
 			return null;
 	}
@@ -90,7 +89,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 		if (predicateSet == null)
 			removeAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor);
 		else
-			setAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, predicateSet, monitor);
+			setTranslatedAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, predicateSet, monitor);
 	}
 
 }

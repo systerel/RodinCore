@@ -33,7 +33,9 @@ public class ContextProofObligationGenerator extends ProofObligationGenerator {
 		
 		IPOFile poFile = (IPOFile) RodinCore.valueOf(target).getMutableCopy();
 		ISCContextFile scContextFile = (ISCContextFile) poFile.getSCContextFile().getSnapshot();
-
+		final IPOFile poTmpFile = getTmpPOFile(poFile);
+		
+		// TODO progress monitor
 		try {
 		
 			monitor.beginTask(
@@ -42,9 +44,9 @@ public class ContextProofObligationGenerator extends ProofObligationGenerator {
 							poFile.getComponentName()),
 					1);
 			
-			poFile.create(true, monitor);
+			poTmpFile.create(true, monitor);
 		
-			IPOGStateRepository repository = createRepository(poFile, monitor);
+			IPOGStateRepository repository = createRepository(poTmpFile, monitor);
 			
 			IModuleFactory moduleFactory = 
 				POGModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
@@ -59,10 +61,8 @@ public class ContextProofObligationGenerator extends ProofObligationGenerator {
 					scContextFile, 
 					repository,
 					monitor);
-		
-			poFile.save(monitor, true, false);
 			
-			return true;
+			return compareAndSave(poFile, poTmpFile, monitor);
 		} finally {
 			monitor.done();
 			poFile.makeConsistent(null);

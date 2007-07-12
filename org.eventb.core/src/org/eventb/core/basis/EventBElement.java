@@ -134,6 +134,14 @@ public abstract class EventBElement extends InternalElement {
 		setAttributeValue(EventBAttributes.ACCURACY_ATTRIBUTE, accurate, monitor);
 	}
 	
+	public long getStamp() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.POSTAMP_ATTRIBUTE);
+	}
+	
+	public void setStamp(long stamp, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(EventBAttributes.POSTAMP_ATTRIBUTE, stamp, monitor);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

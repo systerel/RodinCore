@@ -34,7 +34,9 @@ public class MachineProofObligationGenerator extends ProofObligationGenerator {
 
 		IPOFile poFile = (IPOFile) RodinCore.valueOf(target).getMutableCopy();
 		ISCMachineFile scMachineFile = (ISCMachineFile) poFile.getSCMachineFile().getSnapshot();
+		final IPOFile poTmpFile = getTmpPOFile(poFile);
 		
+		// TODO progress monitor
 		try {
 			
 			monitor.beginTask(
@@ -43,9 +45,9 @@ public class MachineProofObligationGenerator extends ProofObligationGenerator {
 							poFile.getComponentName()),
 					10);
 			
-			poFile.create(true, null);
+			poTmpFile.create(true, null);
 
-			IPOGStateRepository repository = createRepository(poFile, monitor);
+			IPOGStateRepository repository = createRepository(poTmpFile, monitor);
 		
 			IModuleFactory moduleFactory = 
 				POGModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
@@ -61,12 +63,7 @@ public class MachineProofObligationGenerator extends ProofObligationGenerator {
 					repository,
 					monitor);
 		
-			poFile.save(monitor, true, false);
-		
-			// TODO delta checking
-			// return repository.targetHasChanged();
-
-			return true;
+			return compareAndSave(poFile, poTmpFile, monitor);
 		} finally {
 			monitor.done();
 			poFile.makeConsistent(null);

@@ -7,20 +7,11 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
-import java.util.ArrayList;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCMachineFile;
-import org.rodinp.core.ElementChangedEvent;
-import org.rodinp.core.IElementChangedListener;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinElementDelta;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinCore;
 
 /**
  * Tests of the delta-checking facility of the Static Checker.
@@ -29,50 +20,8 @@ import org.rodinp.core.RodinCore;
  */
 public class DeltaCheckingTests extends BasicSCTest {
 
-	public class DeltaListener implements IElementChangedListener {
-
-		final ArrayList<IRodinElementDelta> deltas;
-
-		public DeltaListener() {
-			deltas = new ArrayList<IRodinElementDelta>();
-		}
-
-		public void elementChanged(ElementChangedEvent event) {
-			deltas.add(event.getDelta());
-		}
-
-		public void assertNotChanged(IRodinFile... rfs) {
-			for (IRodinFile rf : rfs) {
-				for (IRodinElementDelta delta : deltas) {
-					assertNotChanged(delta, rf);
-				}
-			}
-		}
-
-		public void assertNotChanged(IRodinElementDelta delta, IRodinFile rf) {
-			final IRodinElement elem = delta.getElement();
-			if (elem.equals(rf)) {
-				fail("File " + rf + " should not have changed.");
-			}
-			if (elem.isAncestorOf(rf)) {
-				for (IRodinElementDelta child : delta.getAffectedChildren()) {
-					assertNotChanged(child, rf);
-				}
-			}
-
-		}
-	}
-
-	protected void runBuilderNotChanged(IRodinFile... rfs) throws CoreException {
-		final DeltaListener listener = new DeltaListener();
-		RodinCore.addElementChangedListener(listener);
-		super.runBuilder();
-		RodinCore.removeElementChangedListener(listener);
-		listener.assertNotChanged(rfs);
-	}
-
 	/**
-	 * Ensures that the statically-checked file of a context is modifed only
+	 * Ensures that the statically-checked file of a context is modified only
 	 * when needed.
 	 */
 	public void testDeltaContext() throws Exception {
@@ -92,7 +41,7 @@ public class DeltaCheckingTests extends BasicSCTest {
 	}
 
 	/**
-	 * Ensures that the statically-checked file of a context is modifed only
+	 * Ensures that the statically-checked file of a context is modified only
 	 * when needed, when another context (for instance an ancestor) has changed.
 	 */
 	public void testDeltaContextIndirect() throws Exception {
@@ -118,7 +67,7 @@ public class DeltaCheckingTests extends BasicSCTest {
 	}
 
 	/**
-	 * Ensures that the statically-checked file of a machine is modifed only
+	 * Ensures that the statically-checked file of a machine is modified only
 	 * when needed.
 	 */
 	public void testDeltaMachine() throws Exception {
@@ -139,7 +88,7 @@ public class DeltaCheckingTests extends BasicSCTest {
 	}
 
 	/**
-	 * Ensures that the statically-checked file of a machine is modifed only
+	 * Ensures that the statically-checked file of a machine is modified only
 	 * when needed, when another machine (for instance an ancestor) has changed.
 	 */
 	public void testDeltaMachineIndirect() throws Exception {

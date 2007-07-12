@@ -3,8 +3,8 @@
  */
 package org.eventb.core.tests.pm;
 
-import static org.eventb.core.seqprover.IConfidence.REVIEWED_MAX;
 import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.seqprover.IConfidence.REVIEWED_MAX;
 
 import java.math.BigInteger;
 import java.util.Arrays;

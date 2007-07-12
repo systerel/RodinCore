@@ -80,6 +80,14 @@ public abstract class EventBFile extends RodinFile implements IEventBFile {
 		final String name = EventBPlugin.getPSFileName(getComponentName());
 		return (IPSFile) getRodinProject().getRodinFile(name);
 	}
+	
+	public long getStamp() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.POSTAMP_ATTRIBUTE);
+	}
+	
+	public void setStamp(long stamp, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(EventBAttributes.POSTAMP_ATTRIBUTE, stamp, monitor);
+	}
 
 	public boolean isAccurate() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.ACCURACY_ATTRIBUTE);

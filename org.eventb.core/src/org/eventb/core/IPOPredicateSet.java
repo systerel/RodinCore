@@ -20,15 +20,20 @@ import org.rodinp.core.RodinDBException;
  * This interface is not intended to be implemented by clients.
  * </p>
  * <p>
- * A predicate set consists of predicates <code>getPredicates()</code> and perhaps a predicate set 
- * <code>getParentPredicateSet()</code>.
- * Predicate sets are stored in a tree structure. A predicate set without a parent predicate set
- * is the root of the tree.
+ * A predicate set consists of predicates <code>getPredicates()</code> and
+ * perhaps a predicate set <code>getParentPredicateSet()</code>. Predicate
+ * sets are stored in a tree structure. A predicate set without a parent
+ * predicate set is the root of the tree.
  * </p>
+ * <p>
+ * References to predicate sets are stored relative to plain PO files and
+ * translated back and forth, see {@link IPOFile}.
+ * </p>
+ * 
  * @author Stefan Hallerstede
- *
+ * 
  */
-public interface IPOPredicateSet extends IInternalElement {
+public interface IPOPredicateSet extends IInternalElement, IPOStamp {
 	
 	IInternalElementType<IPOPredicateSet> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poPredicateSet"); //$NON-NLS-1$

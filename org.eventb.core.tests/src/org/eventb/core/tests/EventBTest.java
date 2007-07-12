@@ -34,9 +34,13 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -325,6 +329,48 @@ public abstract class EventBTest extends BuilderTest {
 		super.runBuilder();
 		checkSources();
 		files = new ArrayList<IRodinFile>(); // forget
+	}
+
+	public static class DeltaListener implements IElementChangedListener {
+
+		final ArrayList<IRodinElementDelta> deltas;
+
+		public DeltaListener() {
+			deltas = new ArrayList<IRodinElementDelta>();
+		}
+
+		public void elementChanged(ElementChangedEvent event) {
+			deltas.add(event.getDelta());
+		}
+
+		public void assertNotChanged(IRodinFile... rfs) {
+			for (IRodinFile rf : rfs) {
+				for (IRodinElementDelta delta : deltas) {
+					assertNotChanged(delta, rf);
+				}
+			}
+		}
+
+		public void assertNotChanged(IRodinElementDelta delta, IRodinFile rf) {
+			final IRodinElement elem = delta.getElement();
+			if (elem.equals(rf)) {
+				fail("File " + rf + " should not have changed.");
+			}
+			if (elem.isAncestorOf(rf)) {
+				for (IRodinElementDelta child : delta.getAffectedChildren()) {
+					assertNotChanged(child, rf);
+				}
+			}
+
+		}
+	}
+
+	protected void runBuilderNotChanged(IRodinFile... rfs) throws CoreException {
+		final DeltaListener listener = new DeltaListener();
+		RodinCore.addElementChangedListener(listener);
+		super.runBuilder();
+		RodinCore.removeElementChangedListener(listener);
+		listener.assertNotChanged(rfs);
 	}
 
 	private void checkSources() throws RodinDBException {

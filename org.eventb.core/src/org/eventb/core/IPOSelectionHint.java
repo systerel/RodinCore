@@ -42,7 +42,11 @@ import org.rodinp.core.RodinDBException;
  *			endP = endP.getParentPredicateSet();
  *		}
  *	}
- *</pre>
+ * </pre>
+ * <p>
+ * References to predicates and predicate sets are stored relative to plain PO files
+ * and translated back and forth, see {@link IPOFile}.
+ * </p>
  * 
  * @author Stefan Hallerstede
  *

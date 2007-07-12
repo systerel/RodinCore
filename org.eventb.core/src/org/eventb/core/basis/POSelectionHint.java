@@ -23,7 +23,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class POSelectionHint extends EventBElement implements IPOSelectionHint {
+public class POSelectionHint extends EventBPOElement implements IPOSelectionHint {
 
 	public POSelectionHint(String name, IRodinElement parent) {
 		super(name, parent);
@@ -39,13 +39,13 @@ public class POSelectionHint extends EventBElement implements IPOSelectionHint {
 
 	public IPOPredicateSet getEnd() throws RodinDBException {
 		if (hasAttribute(EventBAttributes.POSELHINT_SND_ATTRIBUTE))
-			return (IPOPredicateSet) getAttributeValue(EventBAttributes.POSELHINT_SND_ATTRIBUTE);
+			return (IPOPredicateSet) getTranslatedAttributeValue(EventBAttributes.POSELHINT_SND_ATTRIBUTE);
 		else
 			return null;
 	}
 
 	public IPOPredicate getPredicate() throws RodinDBException {
-		IRodinElement element = getAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE);
+		IRodinElement element = getTranslatedAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE);
 		if (element instanceof IPOPredicate)
 			return (IPOPredicate) element;
 		else
@@ -53,7 +53,7 @@ public class POSelectionHint extends EventBElement implements IPOSelectionHint {
 	}
 
 	public IPOPredicateSet getStart() throws RodinDBException {
-		IRodinElement element = getAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE);
+		IRodinElement element = getTranslatedAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE);
 		if (element instanceof IPOPredicateSet)
 			return (IPOPredicateSet) element;
 		else
@@ -62,12 +62,12 @@ public class POSelectionHint extends EventBElement implements IPOSelectionHint {
 
 	public void setInterval(IPOPredicateSet start, IPOPredicateSet end, IProgressMonitor monitor) 
 	throws RodinDBException{
-		setAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE, start, monitor);
-		setAttributeValue(EventBAttributes.POSELHINT_SND_ATTRIBUTE, end, null);
+		setTranslatedAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE, start, monitor);
+		setTranslatedAttributeValue(EventBAttributes.POSELHINT_SND_ATTRIBUTE, end, null);
 	}
 
 	public void setPredicate(IPOPredicate predicate, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE, predicate, monitor);
+		setTranslatedAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE, predicate, monitor);
 		removeAttribute(EventBAttributes.POSELHINT_SND_ATTRIBUTE, null);
 	}
 	

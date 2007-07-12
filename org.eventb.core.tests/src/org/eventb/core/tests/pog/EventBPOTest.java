@@ -20,9 +20,11 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSelectionHint;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.IPOStamp;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.tests.EventBTest;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -266,4 +268,14 @@ public abstract class EventBPOTest extends EventBTest {
 		assertFalse("sequent should not be accurate", seq.isAccurate());
 	}
 	
+	public void hasStamp(IPOStamp stampedElem, long value) throws Exception {
+		long stamp = stampedElem.getStamp();
+		assertEquals("Unexpected stamp", value, stamp);
+	}
+	
+	public void hasNewStamp(IInternalElement stampedElem) throws Exception {
+		long value = ((IPOFile) stampedElem.getRodinFile()).getStamp();
+		hasStamp((IPOStamp) stampedElem, value);
+	}
+
 }
