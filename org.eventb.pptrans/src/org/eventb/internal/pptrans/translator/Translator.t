@@ -635,20 +635,12 @@ public class Translator extends IdentityTranslator {
 	         *	  			dom(e)⊆s ∧ ran(e)⊆t
 	         */
 			Rel(s, t) -> {
-				return FormulaConstructor.makeLandPredicate(
-						ff,
-						translate(
-							ff.makeRelationalPredicate(
-								Formula.SUBSETEQ, 
-								ff.makeUnaryExpression(Formula.KDOM, e, loc),
-								`s,
-								loc)),
-						translate(
-							ff.makeRelationalPredicate(
-								Formula.SUBSETEQ, 
-								ff.makeUnaryExpression(Formula.KRAN, e, loc),
-								`t,
-								loc)),
+				return translateIn(
+						e,
+						ff.makeUnaryExpression(
+							Formula.POW,
+							ff.makeBinaryExpression(Formula.CPROD, `s, `t, loc),
+							loc),
 						loc);
 			}
 	        /**

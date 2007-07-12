@@ -994,7 +994,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	public void testIR22_simple() {
 
 		doTest( "e ∈ s↔t", 
-				"dom(e)⊆s ∧ ran(e)⊆t", 
+				"e ∈ ℙ(s×t)", 
 				true, 
 				te_irRels);
 	}
@@ -1002,7 +1002,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	public void testIR22_recursive() {
 
 		doTest( "e ∈ s∪v↔t∪w", 
-				"dom(e)⊆s∪v ∧ ran(e)⊆t∪w", 
+				"e ∈ ℙ((s∪v)×(t∪w))", 
 				true, 
 				te_irRels);
 	}
