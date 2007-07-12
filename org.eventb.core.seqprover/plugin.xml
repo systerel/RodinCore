@@ -307,6 +307,14 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunRan"
             id="finiteFunRan"
             name="%finiteFunRanName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteMin"
+            id="finiteMin"
+            name="%finiteMinName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteMax"
+            id="finiteMax"
+            name="%finiteMaxName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">

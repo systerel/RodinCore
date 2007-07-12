@@ -1163,4 +1163,19 @@ public final class Lib {
 	public static boolean isSetOfPartialFunction(Formula<?> formula) {
 		return (formula instanceof BinaryExpression && formula.getTag() == Expression.PFUN);
 	}
+
+	
+	/**
+	 * Test if the formula is a bound identifier
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is bound identifier.
+	 *         Return <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isBoundIdentifier(Formula<?> formula) {
+		return (formula instanceof BoundIdentifier);
+	}
 }

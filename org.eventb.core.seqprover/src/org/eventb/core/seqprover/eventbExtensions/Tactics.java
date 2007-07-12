@@ -78,6 +78,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunRan;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunRelImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunction;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteMax;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteMin;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRan;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelation;
@@ -3233,5 +3235,66 @@ public class Tactics {
 				expressionImage, sequent.typeEnvironment()));
 	}
 
+	
+	/**
+	 * Return the list of applicable positions of the tactic "finite minimum"
+	 * {@link FiniteMin} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteMinGetPositions(Predicate predicate) {
+		if (new FiniteMin().isApplicable(predicate)) {
+			return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+	
+	/**
+	 * Return the tactic "Finite minimum" {@link FiniteMin} which has the input
+	 * expression.
+	 * <p>
+	 * 
+	 * @return The tactic "finite minimum"
+	 * @author htson
+	 */
+	public static ITactic finiteMin() {
+		return BasicTactics.reasonerTac(new FiniteMin(), new EmptyInput());
+	}
+
+	
+	/**
+	 * Return the list of applicable positions of the tactic "finite maximum"
+	 * {@link FiniteMax} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteMaxGetPositions(Predicate predicate) {
+		if (new FiniteMax().isApplicable(predicate)) {
+			return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+
+	/**
+	 * Return the tactic "Finite maximum" {@link FiniteMax} which has the input
+	 * expression.
+	 * <p>
+	 * 
+	 * @return The tactic "finite maximum"
+	 * @author htson
+	 */
+	public static ITactic finiteMax() {
+		return BasicTactics.reasonerTac(new FiniteMax(), new EmptyInput());
+	}
 
 }
