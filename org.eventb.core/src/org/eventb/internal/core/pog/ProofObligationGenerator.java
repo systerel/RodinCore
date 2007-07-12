@@ -22,7 +22,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IPOStamp;
+import org.eventb.core.IPOStampedElement;
 import org.eventb.core.pog.IPOGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.internal.core.Util;
@@ -98,7 +98,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 			freshStamp = oldFile.getStamp();
 			freshStamp++;
 		} else
-			freshStamp = IPOStamp.INIT_STAMP;
+			freshStamp = IPOStampedElement.INIT_STAMP;
 		
 		IPOPredicateSet[] predSets = newFile.getPredicateSets();
 		Set<IPOPredicateSet> chPrdSets = comparePredicateSets(oldFile, predSets, freshStamp, null);
@@ -206,7 +206,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 					done.add(newSet);
 				}
 			} else {
-				newSet.setStamp(IPOStamp.INIT_STAMP, monitor);
+				newSet.setStamp(IPOStampedElement.INIT_STAMP, monitor);
 				done.add(newSet);
 			}
 		}

@@ -33,7 +33,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  * 
  */
-public interface IPOStamp {
+public interface IPOStampedElement {
 	
 	/**
 	 * The initial value to be used for stamps. That is, initially the stamp of

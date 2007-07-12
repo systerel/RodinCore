@@ -33,7 +33,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  * 
  */
-public interface IPOPredicateSet extends IInternalElement, IPOStamp {
+public interface IPOPredicateSet extends IInternalElement, IPOStampedElement {
 	
 	IInternalElementType<IPOPredicateSet> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poPredicateSet"); //$NON-NLS-1$

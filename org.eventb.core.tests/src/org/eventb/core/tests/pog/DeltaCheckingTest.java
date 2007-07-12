@@ -10,7 +10,7 @@ package org.eventb.core.tests.pog;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
-import org.eventb.core.IPOStamp;
+import org.eventb.core.IPOStampedElement;
 
 /**
  * @author Stefan Hallerstede
@@ -30,8 +30,8 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 		
-		hasStamp(con.getPOFile(), IPOStamp.INIT_STAMP);
-		hasStamp(mac.getPOFile(), IPOStamp.INIT_STAMP);
+		hasStamp(con.getPOFile(), IPOStampedElement.INIT_STAMP);
+		hasStamp(mac.getPOFile(), IPOStampedElement.INIT_STAMP);
 	}
 	
 	/**
@@ -45,8 +45,8 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 		
-		hasStamp(con.getPOFile().getPredicateSets()[0], IPOStamp.INIT_STAMP);
-		hasStamp(con.getPOFile().getPredicateSets()[1], IPOStamp.INIT_STAMP);
+		hasStamp(con.getPOFile().getPredicateSets()[0], IPOStampedElement.INIT_STAMP);
+		hasStamp(con.getPOFile().getPredicateSets()[1], IPOStampedElement.INIT_STAMP);
 		
 	}
 	
@@ -61,7 +61,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	
 		runBuilder();
 		
-		hasStamp(con.getPOFile().getSequents()[0], IPOStamp.INIT_STAMP);
+		hasStamp(con.getPOFile().getSequents()[0], IPOStampedElement.INIT_STAMP);
 		
 	}
 	
@@ -76,9 +76,9 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 		
-		hasStamp(mac.getPOFile().getPredicateSets()[0], IPOStamp.INIT_STAMP);
-		hasStamp(mac.getPOFile().getPredicateSets()[1], IPOStamp.INIT_STAMP);
-		hasStamp(mac.getPOFile().getPredicateSets()[2], IPOStamp.INIT_STAMP);
+		hasStamp(mac.getPOFile().getPredicateSets()[0], IPOStampedElement.INIT_STAMP);
+		hasStamp(mac.getPOFile().getPredicateSets()[1], IPOStampedElement.INIT_STAMP);
+		hasStamp(mac.getPOFile().getPredicateSets()[2], IPOStampedElement.INIT_STAMP);
 		
 	}
 	
@@ -93,7 +93,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 		
-		hasStamp(mac.getPOFile().getPredicateSets()[0], IPOStamp.INIT_STAMP);
+		hasStamp(mac.getPOFile().getPredicateSets()[0], IPOStampedElement.INIT_STAMP);
 		
 	}
 	
@@ -113,11 +113,11 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 		
-		hasStamp(con.getPOFile().getPredicateSets()[0], IPOStamp.INIT_STAMP);
-		hasStamp(con.getPOFile().getPredicateSets()[1], IPOStamp.INIT_STAMP);
-		hasStamp(con.getPOFile().getPredicateSets()[2], IPOStamp.INIT_STAMP+1);
+		hasStamp(con.getPOFile().getPredicateSets()[0], IPOStampedElement.INIT_STAMP);
+		hasStamp(con.getPOFile().getPredicateSets()[1], IPOStampedElement.INIT_STAMP);
+		hasStamp(con.getPOFile().getPredicateSets()[2], IPOStampedElement.INIT_STAMP+1);
 
-		hasStamp(con.getPOFile().getSequents()[0], IPOStamp.INIT_STAMP+1);
+		hasStamp(con.getPOFile().getSequents()[0], IPOStampedElement.INIT_STAMP+1);
 	}
 	
 	/**
@@ -136,12 +136,12 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 		
-		hasStamp(mac.getPOFile().getPredicateSets()[0], IPOStamp.INIT_STAMP);
-		hasStamp(mac.getPOFile().getPredicateSets()[1], IPOStamp.INIT_STAMP);
-		hasStamp(mac.getPOFile().getPredicateSets()[2], IPOStamp.INIT_STAMP);
-		hasStamp(mac.getPOFile().getPredicateSets()[3], IPOStamp.INIT_STAMP+1);
+		hasStamp(mac.getPOFile().getPredicateSets()[0], IPOStampedElement.INIT_STAMP);
+		hasStamp(mac.getPOFile().getPredicateSets()[1], IPOStampedElement.INIT_STAMP);
+		hasStamp(mac.getPOFile().getPredicateSets()[2], IPOStampedElement.INIT_STAMP);
+		hasStamp(mac.getPOFile().getPredicateSets()[3], IPOStampedElement.INIT_STAMP+1);
 
-		hasStamp(mac.getPOFile().getSequents()[0], IPOStamp.INIT_STAMP+1);
+		hasStamp(mac.getPOFile().getSequents()[0], IPOStampedElement.INIT_STAMP+1);
 		
 	}
 	
@@ -156,7 +156,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 		
-		hasStamp(con.getPOFile().getSequents()[0], IPOStamp.INIT_STAMP);
+		hasStamp(con.getPOFile().getSequents()[0], IPOStampedElement.INIT_STAMP);
 		
 		con = createContext("ctx");
 		addAxioms(con, makeSList("B"), makeSList("∀x·x÷x=1"));
@@ -164,10 +164,10 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 		
-		hasStamp(con.getPOFile().getPredicateSets()[0], IPOStamp.INIT_STAMP);
-		hasStamp(con.getPOFile().getPredicateSets()[1], IPOStamp.INIT_STAMP+1);
+		hasStamp(con.getPOFile().getPredicateSets()[0], IPOStampedElement.INIT_STAMP);
+		hasStamp(con.getPOFile().getPredicateSets()[1], IPOStampedElement.INIT_STAMP+1);
 
-		hasStamp(con.getPOFile().getSequents()[0], IPOStamp.INIT_STAMP+1);
+		hasStamp(con.getPOFile().getSequents()[0], IPOStampedElement.INIT_STAMP+1);
 	}
 	
 	/**
@@ -181,7 +181,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 		
-		hasStamp(mac.getPOFile().getSequents()[0], IPOStamp.INIT_STAMP);
+		hasStamp(mac.getPOFile().getSequents()[0], IPOStampedElement.INIT_STAMP);
 		
 		mac = createMachine("mch");
 		addInvariants(mac, makeSList("B"), makeSList("∀x·x÷x=1"));
@@ -189,11 +189,11 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 		
-		hasStamp(mac.getPOFile().getPredicateSets()[0], IPOStamp.INIT_STAMP);
-		hasStamp(mac.getPOFile().getPredicateSets()[1], IPOStamp.INIT_STAMP);
-		hasStamp(mac.getPOFile().getPredicateSets()[2], IPOStamp.INIT_STAMP+1);
+		hasStamp(mac.getPOFile().getPredicateSets()[0], IPOStampedElement.INIT_STAMP);
+		hasStamp(mac.getPOFile().getPredicateSets()[1], IPOStampedElement.INIT_STAMP);
+		hasStamp(mac.getPOFile().getPredicateSets()[2], IPOStampedElement.INIT_STAMP+1);
 
-		hasStamp(mac.getPOFile().getSequents()[0], IPOStamp.INIT_STAMP+1);
+		hasStamp(mac.getPOFile().getSequents()[0], IPOStampedElement.INIT_STAMP+1);
 		
 	}
 
@@ -208,14 +208,14 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 
-		hasStamp(con.getPOFile(), IPOStamp.INIT_STAMP);
+		hasStamp(con.getPOFile(), IPOStampedElement.INIT_STAMP);
 		
 		con = createContext("ctx");
 		con.save(null, true);
 		
 		runBuilder();
 		
-		hasStamp(con.getPOFile(), IPOStamp.INIT_STAMP+1);
+		hasStamp(con.getPOFile(), IPOStampedElement.INIT_STAMP+1);
 		
 	}
 
@@ -230,14 +230,14 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 
-		hasStamp(mch.getPOFile(), IPOStamp.INIT_STAMP);
+		hasStamp(mch.getPOFile(), IPOStampedElement.INIT_STAMP);
 		
 		mch = createMachine("mch");
 		mch.save(null, true);
 		
 		runBuilder();
 		
-		hasStamp(mch.getPOFile(), IPOStamp.INIT_STAMP+1);
+		hasStamp(mch.getPOFile(), IPOStampedElement.INIT_STAMP+1);
 		
 	}
 
@@ -257,16 +257,16 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 
-		hasStamp(con.getPOFile(), IPOStamp.INIT_STAMP);
+		hasStamp(con.getPOFile(), IPOStampedElement.INIT_STAMP);
 		
 		abs = createContext("abs");
 		abs.save(null, true);
 		
 		runBuilder();
 		
-		hasStamp(con.getPOFile(), IPOStamp.INIT_STAMP+1);
+		hasStamp(con.getPOFile(), IPOStampedElement.INIT_STAMP+1);
 		
-		hasStamp(con.getPOFile().getPredicateSets()[1], IPOStamp.INIT_STAMP+1);
+		hasStamp(con.getPOFile().getPredicateSets()[1], IPOStampedElement.INIT_STAMP+1);
 	}
 	
 	/**
@@ -285,16 +285,16 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 
-		hasStamp(mch.getPOFile(), IPOStamp.INIT_STAMP);
+		hasStamp(mch.getPOFile(), IPOStampedElement.INIT_STAMP);
 		
 		abs = createMachine("abs");
 		abs.save(null, true);
 		
 		runBuilder();
 		
-		hasStamp(mch.getPOFile(), IPOStamp.INIT_STAMP+1);
+		hasStamp(mch.getPOFile(), IPOStampedElement.INIT_STAMP+1);
 		
-		hasStamp(mch.getPOFile().getPredicateSets()[2], IPOStamp.INIT_STAMP+1);
+		hasStamp(mch.getPOFile().getPredicateSets()[2], IPOStampedElement.INIT_STAMP+1);
 	}
 	
 	/**
@@ -309,8 +309,8 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 			runBuilder();
 		
-			hasStamp(con.getPOFile().getPredicateSets()[0], IPOStamp.INIT_STAMP);
-			hasStamp(con.getPOFile().getPredicateSets()[1], IPOStamp.INIT_STAMP+i);
+			hasStamp(con.getPOFile().getPredicateSets()[0], IPOStampedElement.INIT_STAMP);
+			hasStamp(con.getPOFile().getPredicateSets()[1], IPOStampedElement.INIT_STAMP+i);
 		}
 		
 	}
@@ -329,20 +329,20 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		runBuilder();
 		
-		hasStamp(con.getPOFile(), IPOStamp.INIT_STAMP);
-		hasStamp(con.getPOFile().getSequents()[0], IPOStamp.INIT_STAMP);
-		hasStamp(mac.getPOFile(), IPOStamp.INIT_STAMP);
-		hasStamp(mac.getPOFile().getSequents()[0], IPOStamp.INIT_STAMP);
+		hasStamp(con.getPOFile(), IPOStampedElement.INIT_STAMP);
+		hasStamp(con.getPOFile().getSequents()[0], IPOStampedElement.INIT_STAMP);
+		hasStamp(mac.getPOFile(), IPOStampedElement.INIT_STAMP);
+		hasStamp(mac.getPOFile().getSequents()[0], IPOStampedElement.INIT_STAMP);
 		
 		con.getResource().touch(null);
 		mac.getResource().touch(null);
 		
 		runBuilder();
 		
-		hasStamp(con.getPOFile(), IPOStamp.INIT_STAMP);
-		hasStamp(con.getPOFile().getSequents()[0], IPOStamp.INIT_STAMP);
-		hasStamp(mac.getPOFile(), IPOStamp.INIT_STAMP);
-		hasStamp(mac.getPOFile().getSequents()[0], IPOStamp.INIT_STAMP);
+		hasStamp(con.getPOFile(), IPOStampedElement.INIT_STAMP);
+		hasStamp(con.getPOFile().getSequents()[0], IPOStampedElement.INIT_STAMP);
+		hasStamp(mac.getPOFile(), IPOStampedElement.INIT_STAMP);
+		hasStamp(mac.getPOFile().getSequents()[0], IPOStampedElement.INIT_STAMP);
 		
 	}
 	

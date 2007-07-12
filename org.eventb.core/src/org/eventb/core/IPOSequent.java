@@ -33,7 +33,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public interface IPOSequent extends IInternalElement, IPOStamp, IAccuracyElement {
+public interface IPOSequent extends IInternalElement, IPOStampedElement, IAccuracyElement {
 	
 	IInternalElementType<IPOSequent> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poSequent"); //$NON-NLS-1$

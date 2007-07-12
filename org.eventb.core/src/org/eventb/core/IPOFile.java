@@ -41,7 +41,7 @@ import org.rodinp.core.basis.InternalElement;
  * 
  * @author Stefan Hallerstede
  */
-public interface IPOFile extends IEventBFile, IPOStamp {
+public interface IPOFile extends IEventBFile, IPOStampedElement {
 
 	public IFileElementType<IPOFile> ELEMENT_TYPE = RodinCore
 			.getFileElementType(EventBPlugin.PLUGIN_ID + ".poFile"); //$NON-NLS-1$
