@@ -22,7 +22,7 @@ import org.eventb.core.ast.*;
  * 				
  * @author Matthias Konrad
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class BoundIdentifierDecomposition extends IdentityTranslator {
 
 	private static class Substitute {

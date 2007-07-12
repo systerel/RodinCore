@@ -46,7 +46,7 @@ import org.eventb.core.ast.UnaryPredicate;
  * to the IdentityTranslator.
  * @author Matthias Konrad
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class IdentityTranslator extends IdentityTranslatorBase {
 
 	protected IdentityTranslator(FormulaFactory ff) {

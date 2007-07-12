@@ -42,7 +42,7 @@ import org.eventb.core.ast.UnaryPredicate;
  * 
  * @author Matthias Konrad
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class PredicateSimplification extends IdentityTranslator  {
 	
 	/**

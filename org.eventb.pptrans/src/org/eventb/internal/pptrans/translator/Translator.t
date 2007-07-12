@@ -19,7 +19,7 @@ import org.eventb.core.ast.*;
  * 
  * @author Matthias Konrad
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class Translator extends IdentityTranslator {
 	
 	public static Predicate reduceToPredCalc(Predicate pred, FormulaFactory ff) {

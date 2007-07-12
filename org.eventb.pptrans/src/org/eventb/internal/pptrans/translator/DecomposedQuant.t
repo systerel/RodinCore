@@ -34,7 +34,7 @@ import org.eventb.core.ast.Type;
  * 
  * @author Matthias Konrad
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class DecomposedQuant {
 
 	%include {Type.tom}

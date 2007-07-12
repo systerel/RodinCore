@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Predicate Prover
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.pptrans
 Bundle-Version: 0.0.1
-Bundle-Vendor: ETH Zurich
+Bundle-Vendor: %pluginProvider
 Bundle-Localization: plugin
-Require-Bundle: org.eventb.core.ast;visibility:=reexport
+Require-Bundle: org.eventb.core.ast
 Export-Package: org.eventb.pptrans
