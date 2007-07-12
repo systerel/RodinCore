@@ -246,7 +246,11 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 		result.snapshot = true;
 		return result;
 	}
-	
+
+	public final IRodinFile getSimilarElement(IRodinFile newFile) {
+		return newFile;
+	}
+
 	public final IFile getUnderlyingResource() {
 		return file;
 	}

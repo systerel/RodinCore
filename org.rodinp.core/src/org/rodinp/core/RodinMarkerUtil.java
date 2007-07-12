@@ -291,7 +291,7 @@ public final class RodinMarkerUtil {
 		// Transpose element to correct file (marker has moved)
 		final IRodinElement dest = RodinCore.valueOf(resource);
 		if (dest instanceof IRodinFile) {
-			return Util.getSimilarElement(ie, (IRodinFile) dest);
+			return (IInternalElement) ie.getSimilarElement((IRodinFile) dest);
 		}
 		return null;
 	}

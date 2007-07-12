@@ -218,5 +218,20 @@ public interface IInternalParent extends IParent, IAttributedElement {
 	 *         to the stable snapshot of a Rodin file
 	 */
 	boolean isSnapshot();
-	
+
+	/**
+	 * Returns a handle to the element which has the same relative path as this
+	 * element, but relative to the given file. In particular, if this element
+	 * is a file, then the given file is returned.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @param newFile
+	 *            file in which to construct the new handle
+	 * @return an element with the same path relative to the given file as this
+	 *         element
+	 */
+	IInternalParent getSimilarElement(IRodinFile newFile);
+
 }

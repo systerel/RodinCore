@@ -428,5 +428,44 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		assertEquals("Array should contain one element", 1, children.length);
 		assertEquals("Wrong element", ne, children[0]);
 	}
+
+	/**
+	 * Ensures that a similar element for a Rodin file element is constructed
+	 * correctly.
+	 */
+	public void testSimilarFile() {
+		final IRodinFile rf1 = getRodinFile("P/X.test");
+		final IRodinFile rf2 = getRodinFile("P/Y.test");
+		assertEquals(rf1, rf1.getSimilarElement(rf1));
+		assertEquals(rf2, rf1.getSimilarElement(rf2));
+	}
+
+	/**
+	 * Ensures that a similar element for a top-level element is constructed
+	 * correctly.
+	 */
+	public void testSimilarTop() {
+		final IRodinFile rf1 = getRodinFile("P/X.test");
+		final NamedElement ie1 = getNamedElement(rf1, "foo");
+		final IRodinFile rf2 = getRodinFile("P/Y.test");
+		final NamedElement ie2 = getNamedElement(rf2, ie1.getElementName());
+		assertEquals(ie1, ie1.getSimilarElement(rf1));
+		assertEquals(ie2, ie1.getSimilarElement(rf2));
+	}
+
+	/**
+	 * Ensures that a similar element for a non top-level element is constructed
+	 * correctly.
+	 */
+	public void testSimilarInt() {
+		final IRodinFile rf1 = getRodinFile("P/X.test");
+		final NamedElement ie1 = getNamedElement(rf1, "foo");
+		final NamedElement ie11 = getNamedElement(ie1, "bar");
+		final IRodinFile rf2 = getRodinFile("P/Y.test");
+		final NamedElement ie2 = getNamedElement(rf2, ie1.getElementName());
+		final NamedElement ie21 = getNamedElement(ie2, ie11.getElementName());
+		assertEquals(ie11, ie11.getSimilarElement(rf1));
+		assertEquals(ie21, ie11.getSimilarElement(rf2));
+	}
 	
 }

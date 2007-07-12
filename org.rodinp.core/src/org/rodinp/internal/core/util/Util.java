@@ -12,13 +12,8 @@ package org.rodinp.internal.core.util;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.RodinFile;
 
 /**
  * Provides convenient utility methods to other types in this package.
@@ -58,7 +53,7 @@ public class Util {
 	}
 	
 	/**
-	 * Trims leading and trailing Unicode space chararacters from the given
+	 * Trims leading and trailing Unicode space characters from the given
 	 * string.
 	 * <p>
 	 * Unicode space characters are detected using
@@ -87,35 +82,4 @@ public class Util {
 		return string.trim();
 	}
 
-	@SuppressWarnings("unchecked")
-	private static final IInternalParent internGetSimilarElement(
-			IInternalParent element, IRodinFile newFile) {
-		if (element instanceof RodinFile) {
-			return newFile;
-		}
-		final IInternalParent parent = (IInternalParent) element.getParent();
-		final IInternalParent newParent = 
-			internGetSimilarElement(parent, newFile);
-		final IInternalElementType type = 
-			(IInternalElementType) element.getElementType();
-		final String name = element.getElementName();
-		return newParent.getInternalElement(type, name);
-	}
-
-	/**
-	 * Returns a handle to the an internal element which has the same relative
-	 * path as the given one, but relative to the given file.
-	 * 
-	 * @param element
-	 *            source element
-	 * @param newFile
-	 *            file in which to construct the new handle
-	 * @return the element in the given file and with the same relative path
-	 *         inside its file as the given element
-	 */
-	public static final IInternalElement getSimilarElement(
-			IInternalElement element, IRodinFile newFile) {
-		
-		return (IInternalElement) internGetSimilarElement(element, newFile);
-	}
 }

@@ -261,7 +261,7 @@ public abstract class InternalElement extends RodinElement implements
 		
 		// Recreate this handle in the mutable version of its file.
 		final IRodinFile newFile = file.getMutableCopy();
-		return (InternalElement) Util.getSimilarElement(this, newFile);
+		return (InternalElement) getSimilarElement(newFile);
 	}
 
 	@Deprecated
@@ -302,7 +302,15 @@ public abstract class InternalElement extends RodinElement implements
 		
 		// Recreate this handle in the snapshot version of its file.
 		final IRodinFile newFile = file.getSnapshot();
-		return (InternalElement) Util.getSimilarElement(this, newFile);
+		return (InternalElement) getSimilarElement(newFile);
+	}
+
+	public final IInternalElement getSimilarElement(IRodinFile newFile) {
+		final IInternalParent myParent = (IInternalParent) getParent();
+		final IInternalParent newParent = myParent.getSimilarElement(newFile);
+		final IInternalElementType<?> newType = getElementType();
+		final String newName = getElementName();
+		return newParent.getInternalElement(newType, newName);
 	}
 
 	public IFile getUnderlyingResource() {
