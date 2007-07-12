@@ -65,7 +65,7 @@ public class FunCompImg extends AbstractManualInference {
 		for (IPosition position : positions) {
 			IPosition leftChild = position.getFirstChild();
 			IPosition child = leftChild.getFirstChild();
-			Formula subFormula = predicate.getSubFormula(child);
+			Formula<?> subFormula = predicate.getSubFormula(child);
 			while (subFormula != null) {
 				if (!child.isFirstChild()) {
 					results.add(child);
@@ -108,7 +108,7 @@ public class FunCompImg extends AbstractManualInference {
 			return null;
 		}
 		
-		Formula subExp = predicate.getSubFormula(position);
+		Formula<?> subExp = predicate.getSubFormula(position);
 		if (position.isRoot())
 			return null;
 
@@ -119,7 +119,7 @@ public class FunCompImg extends AbstractManualInference {
 		
 		IPosition replacedPos = parentPos.getParent();
 
-		Formula formula = predicate.getSubFormula(replacedPos);
+		Formula<?> formula = predicate.getSubFormula(replacedPos);
 		
 		if (formula == null || !(formula instanceof Expression))
 			return null;

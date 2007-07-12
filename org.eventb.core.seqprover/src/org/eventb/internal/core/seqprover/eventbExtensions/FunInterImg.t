@@ -87,7 +87,7 @@ public class FunInterImg extends AbstractManualInference {
 			return null;
 		}
 
-		Formula subFormula = predicate.getSubFormula(position);
+		Formula<?> subFormula = predicate.getSubFormula(position);
 
 		// "subFormula" should have the form f[S ∩ ... ∩ T]
 		if (!isApplicable(subFormula))

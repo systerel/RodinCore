@@ -87,7 +87,7 @@ public class FunSingletonImg extends AbstractManualInference {
 			return null;
 		}
 
-		Formula subFormula = predicate.getSubFormula(position);
+		Formula<?> subFormula = predicate.getSubFormula(position);
 
 		// "subFormula" should have the form f[{E}]
 		if (!isApplicable(subFormula))
