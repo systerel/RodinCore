@@ -18,9 +18,24 @@ public interface IPSWrapper {
 
 	public IProofSkeleton getProofSkeleton(IPSStatus psStatus, IProgressMonitor monitor) throws RodinDBException;
 	
-	public void setProofTree(IPSStatus status, IProofTree pt,
-			IProgressMonitor monitor) throws CoreException;
+	/**
+	 * @Deprecated use {@link #setProofTree(IPSStatus, IProofTree, boolean, IProgressMonitor)} instead.
+	 */
+	@Deprecated
+	public void setProofTree(IPSStatus status, IProofTree pt, IProgressMonitor monitor) throws CoreException;
 
+	/**
+	 * Serializes the given proof tree into the corresponding {@link IPRProof} of the given status and sets the
+	 * hasManualProof attribute with the given value.
+	 * 
+	 * @param status
+	 * @param pt
+	 * @param hasManualProof
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	public void setProofTree(IPSStatus status, IProofTree pt, boolean hasManualProof, IProgressMonitor monitor) throws CoreException;
+	
 	public void save(IProgressMonitor monitor, boolean force) throws RodinDBException;
 	
 }

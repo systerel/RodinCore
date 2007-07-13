@@ -591,7 +591,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 			throws CoreException {
 		for (IProofState state : states) {
 			state.setProofTree(monitor);
-			state.getPSStatus().setManualProof(true, monitor);
+			// state.getPSStatus().setManualProof(true, monitor);
 		}
 		this.getPSWrapper().save(monitor, true);
 		for (IProofState state : states) {

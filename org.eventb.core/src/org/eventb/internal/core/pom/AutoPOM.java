@@ -199,7 +199,8 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		} else {
 			broken = false;
 		}
-		status.setProofConfidence(null);
+		// status.setProofConfidence(null);
+		status.copyProofInfo(null);
 		status.setBroken(broken, null);
 	}
 	

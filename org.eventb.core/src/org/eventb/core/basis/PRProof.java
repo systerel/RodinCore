@@ -50,11 +50,11 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		return ELEMENT_TYPE;
 	}
 	
-	@Override
-	public int getConfidence() throws RodinDBException {
-		if (!hasConfidence()) return IConfidence.UNATTEMPTED;
-		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE);
-	}
+//	@Override
+//	public int getConfidence() throws RodinDBException {
+//		if (!hasConfidence()) return IConfidence.UNATTEMPTED;
+//		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE);
+//	}
 	
 	// TODO fix usage of monitor.
 	public void setProofTree(IProofTree pt, IProgressMonitor monitor) throws RodinDBException {

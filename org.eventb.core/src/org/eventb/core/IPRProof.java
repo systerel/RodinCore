@@ -57,24 +57,10 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  * 
  */
-public interface IPRProof extends IInternalElement {
+public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 
 	IInternalElementType<IPRProof> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProof"); //$NON-NLS-1$
-
-	/**
-	 * Sets the proof tree of this proof element by serializing the given proof
-	 * tree into the database.
-	 * 
-	 * @param proofTree
-	 *            The proof tree to set
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @throws RodinDBException
-	 */
-	public void setProofTree(IProofTree proofTree, IProgressMonitor monitor)
-			throws RodinDBException;
 
 	/**
 	 * Returns the confidence of proof tree stored in this proof element.
@@ -88,6 +74,53 @@ public interface IPRProof extends IInternalElement {
 	 * @throws RodinDBException
 	 */
 	int getConfidence() throws RodinDBException;
+
+	/**
+	 * Returns whether this proof obligation has been discharged manually. A
+	 * proof obligation is considered as manually discharged if the end user
+	 * entered manually its associated proof (even partially).
+	 * <p>
+	 * The returned value is <code>true</code> iff the corresponding attribute
+	 * contains <code>true</code>. Hence, if the attribute is absent,
+	 * <code>false</code> is returned.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if the user contributed to the proof of this
+	 *         proof obligation
+	 * 
+	 * @throws RodinDBException
+	 * @see #setHasManualProof(boolean, IProgressMonitor)
+	 */
+	boolean getHasManualProof() throws RodinDBException;
+
+	/**
+	 * Sets whether this proof obligation has been discharged manually.
+	 * 
+	 * @param value
+	 *            The value to set to
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @throws RodinDBException
+	 * @see #getHasManualProof()
+	 */
+	void setHasManualProof(boolean value, IProgressMonitor monitor)
+			throws RodinDBException;
+	
+	/**
+	 * Sets the proof tree of this proof element by serializing the given proof
+	 * tree into the database.
+	 * 
+	 * @param proofTree
+	 *            The proof tree to set
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException
+	 */
+	public void setProofTree(IProofTree proofTree, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	/**
 	 * Returns the proof dependencies for proof tree stored in this proof

@@ -83,12 +83,14 @@ public final class EventBAttributes {
 
 	// Attributes related to the PR and PS files
 
+	// TODO : rename to .prConfidence
 	public static IAttributeType.Integer CONFIDENCE_ATTRIBUTE =
 		RodinCore.getIntegerAttrType(EventBPlugin.PLUGIN_ID + ".confidence");
 
 	public static IAttributeType.Boolean PROOF_BROKEN_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".psBroken");
-
+	
+	// TODO : rename to .prManual
 	public static IAttributeType.Boolean MANUAL_PROOF_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".psManual");
 	

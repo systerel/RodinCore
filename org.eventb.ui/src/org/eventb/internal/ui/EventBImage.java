@@ -405,7 +405,7 @@ public class EventBImage {
 		
 		int confidence;
 		try {
-			confidence = status.getProofConfidence();
+			confidence = status.getConfidence();
 		} catch (RodinDBException e) {
 			String message = "Cannot get the confidence from the status of"
 					+ status.getElementName();
@@ -419,7 +419,7 @@ public class EventBImage {
 
 		boolean isAttempted = confidence > IConfidence.UNATTEMPTED;
 		if (!isAttempted)
-			base_path = IEventBSharedImages.IMG_UNATTEMPTED_PATH;
+			base_path = IEventBSharedImages.IMG_PENDING_PATH;
 		else {
 			boolean isProofBroken;
 			try {
@@ -455,7 +455,7 @@ public class EventBImage {
 
 		boolean isAutomatic = false;
 		try {
-			isAutomatic = ! status.hasManualProof();
+			isAutomatic = ! status.getHasManualProof();
 		} catch (RodinDBException e) {
 			String message = "Cannot check if the proof tree of the sequent "
 				+ status.getElementName()
@@ -465,7 +465,7 @@ public class EventBImage {
 				e.printStackTrace();
 			}
 		}
-		if (isAutomatic) {
+		if (isAutomatic && isAttempted) {
 			overlay = overlay | F_AUTO;
 		}
 

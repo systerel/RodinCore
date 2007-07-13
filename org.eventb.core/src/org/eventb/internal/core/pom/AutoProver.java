@@ -90,7 +90,7 @@ public class AutoProver {
 			pm.beginTask(status.getElementName() + ":", 3);
 			
 			final boolean proofValid = ! status.isBroken();
-			final int proofConfidence = status.getProofConfidence();
+			final int proofConfidence = status.getConfidence();
 			
 			// TODO: should also test for attempts
 			if (proofValid && proofConfidence > IConfidence.PENDING) {
@@ -116,7 +116,7 @@ public class AutoProver {
 			if (autoProofTree.isClosed()) {
 				prProof.setProofTree(autoProofTree, null);
 				AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
-				status.setManualProof(false,null);
+				status.setHasManualProof(false,null);
 				prFile.save(null, false, true);
 				return true;
 			}
@@ -125,13 +125,13 @@ public class AutoProver {
 			if (autoProofTree.getRoot().hasChildren() && 
 					(
 							// ( status.getProofConfidence() > IConfidence.UNATTEMPTED) || 
-							(! status.hasManualProof() && !(proofConfidence > IConfidence.PENDING))
+							(! status.getHasManualProof() && !(proofConfidence > IConfidence.PENDING))
 					))	
 
 			{
 				prProof.setProofTree(autoProofTree, null);
 				AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
-				status.setManualProof(false,null);
+				status.setHasManualProof(false,null);
 				// in this case no need to save immediately.
 				return true;
 			}

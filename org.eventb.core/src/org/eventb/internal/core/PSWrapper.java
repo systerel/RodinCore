@@ -59,8 +59,10 @@ public class PSWrapper implements IPSWrapper {
 		return ProverFactory.makeProofTree(newSeq, poSequent);
 	}
 
+	
 	public void setProofTree(final IPSStatus status, final IProofTree pt,
-			IProgressMonitor monitor) throws CoreException {
+			final boolean hasManualProof, IProgressMonitor monitor)
+			throws CoreException {
 		// TODO add lock for po and pr file
 		RodinCore.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor mon) throws CoreException {
@@ -68,14 +70,21 @@ public class PSWrapper implements IPSWrapper {
 					mon.beginTask("Saving Proof", 2);
 					status.getProof().setProofTree(pt,
 							new SubProgressMonitor(mon, 1));
+					status.getProof().setHasManualProof(hasManualProof, mon);
 					AutoPOM.updateStatus(((IPSStatus) status.getMutableCopy()),
 							new SubProgressMonitor(mon, 1));
 				} finally {
 					mon.done();
 				}
 			}
-		}, status.getSchedulingRule(), monitor);
+		}, status.getSchedulingRule(), monitor);	
 	}
+	
+	@Deprecated
+	public void setProofTree(final IPSStatus status, final IProofTree pt,
+			IProgressMonitor monitor) throws CoreException {
+			setProofTree(status, pt, true, monitor);
+		}
 
 	public void makeFresh(IProgressMonitor monitor) throws RodinDBException {
 
@@ -135,7 +144,8 @@ public class PSWrapper implements IPSWrapper {
 		} else {
 			broken = false;
 		}
-		status.setProofConfidence(null);
+		// status.setProofConfidence(null);
+		status.copyProofInfo(null);
 		status.setBroken(broken, null);
 	}
 

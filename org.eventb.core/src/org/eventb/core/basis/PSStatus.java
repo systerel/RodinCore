@@ -18,12 +18,9 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.seqprover.IConfidence;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B proof obligation status as an extension of the Rodin database.
@@ -40,7 +37,7 @@ import org.rodinp.core.basis.InternalElement;
  * @author Farhad Mehta
  *
  */
-public class PSStatus extends InternalElement implements IPSStatus {
+public class PSStatus extends EventBProofElement implements IPSStatus {
 
 	public PSStatus(String name, IRodinElement parent) {
 		super(name, parent);
@@ -71,14 +68,14 @@ public class PSStatus extends InternalElement implements IPSStatus {
 
 		setAttributeTrue(PROOF_BROKEN_ATTRIBUTE, value, monitor);
 	}
-		
+	
+	
+	@Deprecated
 	public int getProofConfidence() throws RodinDBException {
-		if (hasAttribute(CONFIDENCE_ATTRIBUTE)) {
-			return getAttributeValue(CONFIDENCE_ATTRIBUTE);
-		}
-		return IConfidence.UNATTEMPTED;
+		return getConfidence();
 	}
 	
+	@Deprecated
 	public void setProofConfidence(IProgressMonitor monitor) throws RodinDBException {
 		IPRProof proof = getProof();
 		if (proof.exists()) {
@@ -88,57 +85,79 @@ public class PSStatus extends InternalElement implements IPSStatus {
 		}
 	}
 	
+	public void copyProofInfo(IProgressMonitor monitor) throws RodinDBException {
+		IPRProof proof = getProof();
+		if (proof.exists()) {
+			setAttributeValue(CONFIDENCE_ATTRIBUTE, proof.getConfidence(), monitor);
+			setAttributeValue(MANUAL_PROOF_ATTRIBUTE, proof.getHasManualProof(), monitor);
+		} else {
+			removeAttribute(CONFIDENCE_ATTRIBUTE, monitor);
+			removeAttribute(MANUAL_PROOF_ATTRIBUTE, monitor);
+		}
+	}
+	
 	public IPOSequent getPOSequent() {
 		final IPSFile psFile = (IPSFile) getRodinFile();
 		final IPOFile poFile = psFile.getPOFile();
 		return poFile.getSequent(getElementName());
 	}
 
+	@Deprecated
 	public boolean hasManualProof() throws RodinDBException {
-		return isAttributeTrue(MANUAL_PROOF_ATTRIBUTE);
+		return getHasManualProof();
 	}
-	
+
+	@Deprecated
 	public void setManualProof(boolean value, IProgressMonitor monitor)
 			throws RodinDBException {
-
-		setAttributeTrue(MANUAL_PROOF_ATTRIBUTE, value, monitor);
+		setHasManualProof(value, monitor);
 	}
 
-	/**
-	 * Returns whether this attribute exists and has a <code>true</code> value.
-	 * 
-	 * @param attrType
-	 *    attribute to test
-	 * @return <code>true</code> iff both the attribute exists and is true
-	 * @throws RodinDBException
-	 */
-	private boolean isAttributeTrue(IAttributeType.Boolean attrType)
-			throws RodinDBException {
-		return hasAttribute(attrType) && getAttributeValue(attrType);
-	}
-	
-	/**
-	 * Sets the given attribute to the given value, removing the attribute if
-	 * this would result in setting it to its default value (<code>true</code>).
-	 * 
-	 * @param attrType
-	 *            attribute to set
-	 * @param value
-	 *            value to set
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @throws RodinDBException
-	 */
-	private void setAttributeTrue(final IAttributeType.Boolean attrType,
-			boolean value, IProgressMonitor monitor) throws RodinDBException {
-
-		if (value) {
-			setAttributeValue(attrType, true, monitor);
-		} else {
-			removeAttribute(attrType, monitor);
-		}
-	}
+//	public boolean getHasManualProof() throws RodinDBException {
+//		return isAttributeTrue(MANUAL_PROOF_ATTRIBUTE);
+//	}
+//	
+//	public void setManualProof(boolean value, IProgressMonitor monitor)
+//			throws RodinDBException {
+//
+//		setAttributeTrue(MANUAL_PROOF_ATTRIBUTE, value, monitor);
+//	}
+//
+//	/**
+//	 * Returns whether this attribute exists and has a <code>true</code> value.
+//	 * 
+//	 * @param attrType
+//	 *    attribute to test
+//	 * @return <code>true</code> iff both the attribute exists and is true
+//	 * @throws RodinDBException
+//	 */
+//	private boolean isAttributeTrue(IAttributeType.Boolean attrType)
+//			throws RodinDBException {
+//		return hasAttribute(attrType) && getAttributeValue(attrType);
+//	}
+//	
+//	/**
+//	 * Sets the given attribute to the given value, removing the attribute if
+//	 * this would result in setting it to its default value (<code>true</code>).
+//	 * 
+//	 * @param attrType
+//	 *            attribute to set
+//	 * @param value
+//	 *            value to set
+//	 * @param monitor
+//	 *            a progress monitor, or <code>null</code> if progress
+//	 *            reporting is not desired
+//	 * @throws RodinDBException
+//	 */
+//	private void setAttributeTrue(final IAttributeType.Boolean attrType,
+//			boolean value, IProgressMonitor monitor) throws RodinDBException {
+//
+//		if (value) {
+//			setAttributeValue(attrType, true, monitor);
+//		} else {
+//			removeAttribute(attrType, monitor);
+//		}
+//	}
 	
 }
 

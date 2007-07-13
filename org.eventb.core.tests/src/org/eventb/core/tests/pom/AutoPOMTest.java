@@ -8,22 +8,16 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IConfidence;
-import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
-import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.core.tests.BuilderTest;
-import org.eventb.internal.core.pom.AutoPOM;
+import org.eventb.internal.core.PSWrapper;
 import org.eventb.internal.core.pom.AutoProver;
-import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -122,9 +116,7 @@ public class AutoPOMTest extends BuilderTest {
 		runBuilder();
 		
 		// Checks that status in PS file corresponds POs in PO file.
-		checkPOsConsistent(poFile, psFile);
-
-		
+		checkPOsConsistent(poFile, psFile);		
 		// Checks that status in PS file corresponds Proofs in PR file.
 		checkProofsConsistent(prFile, psFile);
 		
@@ -136,42 +128,37 @@ public class AutoPOMTest extends BuilderTest {
 		}
 		assertNotDischarged(prs[prs.length-1]);
 		
-		// Try an interactive proof on the last one
-		IProverSequent seq = POLoader.readPO(prs[prs.length-1].getPOSequent());
-		IProofTree proofTree = ProverFactory.makeProofTree(seq, null);
-		
-		Tactics.lasoo().apply(proofTree.getRoot(), null);
+		// Try an interactive proof on the last one via the PSWrapper
+		IPSWrapper psWrapper= new PSWrapper(psFile);
+		IProofTree proofTree = psWrapper.getFreshProofTree(prs[prs.length-1]);		
+		// Tactics.lasoo().apply(proofTree.getRoot(), null);
 		Tactics.lemma("∀x· x∈ℤ ⇒ x=x").apply(proofTree.getRoot().getFirstOpenDescendant(), null);
-		Tactics.norm().apply(proofTree.getRoot(), null);
+		// Tactics.norm().apply(proofTree.getRoot(), null);
 		// System.out.println(proofTree.getRoot());
-		prs[prs.length-1].getProof().setProofTree(proofTree, null);
-		AutoPOM.updateStatus(prs[prs.length-1],null);
 		
-		IProofSkeleton skel = prs[prs.length-1].getProof().getSkeleton(FormulaFactory.getDefault(), null);
-		IProofTree loadedProofTree = ProverFactory.makeProofTree(seq, null);
-		// ProofBuilder.rebuild(loadedProofTree.getRoot(),skel);
-		BasicTactics.rebuildTac(skel).apply(loadedProofTree.getRoot(), null);
+		psWrapper.setProofTree(prs[prs.length-1], proofTree, true, null);
 		
-		// System.out.println(loadedProofTree.getRoot());
-		assertTrue(ProverLib.deepEquals(proofTree,loadedProofTree));
-		loadedProofTree.getRoot().pruneChildren();
-		assertFalse(ProverLib.deepEquals(proofTree,loadedProofTree));
-		assertTrue(ProverLib.deepEquals(
-				ProverFactory.makeProofTree(seq, null),
-				loadedProofTree)
-		);
+		// Checks that proof is marked as manual
+		assertManualProof(prs[prs.length-1]);
+		
+		// Checks that status in PS file corresponds POs in PO file.
+		checkPOsConsistent(poFile, psFile);		
+		// Checks that status in PS file corresponds Proofs in PR file.
+		checkProofsConsistent(prFile, psFile);
+		
 	}
 	
 
 	private void checkProofsConsistent(IPRFile prFile, IPSFile psFile) throws RodinDBException {
 		IPSStatus[] statuses = psFile.getStatuses();
 		for (IPSStatus status : statuses) {
-			if (status.getProofConfidence() > IConfidence.UNATTEMPTED)
+			if (status.getConfidence() > IConfidence.UNATTEMPTED)
 			{
 				IPRProof prProofTree = status.getProof();
 				String name = status.getElementName();
 				assertTrue("Proof absent for "+name , prProofTree.exists());
-				assertEquals("Proof confidence different for "+name, prProofTree.getConfidence(), status.getProofConfidence());
+				assertEquals("Proof confidence different for " + name, prProofTree.getConfidence(), status.getConfidence());
+				assertEquals("hasManualProof attribute different for " + name, prProofTree.getHasManualProof(), status.getHasManualProof());
 			}
 		}
 		
@@ -221,13 +208,16 @@ public class AutoPOMTest extends BuilderTest {
 				status.isBroken());
 		assertTrue("PO " + status.getElementName() + " should be closed",
 				IConfidence.PENDING <
-				status.getProofConfidence());
+				status.getConfidence());
 		assertFalse("PR " + status.getElementName() + " should be auto proven",
-				status.hasManualProof());
-// TODO fix assertion below with attempts attribute 
-//		assertTrue("PR " + status.getElementName() + " should be attempted by the auto prover",
-//				status.hasAutoProofAttribute());
-		
+				status.getHasManualProof());
+	}
+	
+	private void assertManualProof(IPSStatus status) throws RodinDBException {
+		assertFalse("PR " + status.getElementName() + " should be valid",
+				status.isBroken());
+		assertTrue("PR " + status.getElementName() + " should not be marked as a manual proof",
+				status.getHasManualProof());
 	}
 	
 	private void assertNotDischarged(IPSStatus status) throws RodinDBException {
@@ -235,12 +225,9 @@ public class AutoPOMTest extends BuilderTest {
 				status.isBroken());
 		assertTrue("PO " + status.getElementName() + " should not be closed",
 				IConfidence.PENDING >=
-				status.getProofConfidence());
+				status.getConfidence());
 		assertFalse("PR " + status.getElementName() + " should be auto proven",
-				status.hasManualProof());
-//		 TODO fix assertion below with attempts attribute 
-//		assertTrue("PR " + status.getElementName() + " should be attempted by the auto prover",
-//				status.hasAutoProofAttribute());
+				status.getHasManualProof());
 	}
 	
 	public static String[] mp(String... strings) {

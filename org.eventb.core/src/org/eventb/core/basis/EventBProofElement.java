@@ -13,22 +13,27 @@ import static org.eventb.core.EventBAttributes.CONFIDENCE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.GOAL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.INF_HYPS_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.MANUAL_PROOF_ATTRIBUTE;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRIdentifier;
+import org.eventb.core.IPRProofInfoElement;
 import org.eventb.core.IPRProofRule;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.internal.core.Util;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -43,7 +48,7 @@ import org.rodinp.core.basis.InternalElement;
  * @author Farhad Mehta
  * 
  */
-public abstract class EventBProofElement extends InternalElement {
+public abstract class EventBProofElement extends InternalElement implements IPRProofInfoElement{
 
 	protected static final String[] NO_STRINGS = new String[0];
 	protected static final IProofSkeleton[] NO_CHILDREN = new IProofSkeleton[0];
@@ -69,15 +74,66 @@ public abstract class EventBProofElement extends InternalElement {
 	}
 
 	public void setConfidence(int confidence, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(CONFIDENCE_ATTRIBUTE, confidence, monitor);
+		if (confidence != IConfidence.UNATTEMPTED) {
+			setAttributeValue(CONFIDENCE_ATTRIBUTE, confidence, monitor);
+		} else {
+			removeAttribute(CONFIDENCE_ATTRIBUTE, monitor);
+		}
 	}
 	
 	public int getConfidence() throws RodinDBException {
-		return getAttributeValue(CONFIDENCE_ATTRIBUTE);
+		if (!hasConfidence()) return IConfidence.UNATTEMPTED;
+		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE);
 	}
 	
-	public boolean hasConfidence() throws RodinDBException {
+	private boolean hasConfidence() throws RodinDBException {
 		return hasAttribute(CONFIDENCE_ATTRIBUTE);
+	}
+	
+	public boolean getHasManualProof() throws RodinDBException {
+		return isAttributeTrue(MANUAL_PROOF_ATTRIBUTE);
+	}
+	
+	public void setHasManualProof(boolean value, IProgressMonitor monitor)
+			throws RodinDBException {
+
+		setAttributeTrue(MANUAL_PROOF_ATTRIBUTE, value, monitor);
+	}
+
+	/**
+	 * Returns whether this attribute exists and has a <code>true</code> value.
+	 * 
+	 * @param attrType
+	 *    attribute to test
+	 * @return <code>true</code> iff both the attribute exists and is true
+	 * @throws RodinDBException
+	 */
+	public boolean isAttributeTrue(IAttributeType.Boolean attrType)
+			throws RodinDBException {
+		return hasAttribute(attrType) && getAttributeValue(attrType);
+	}
+	
+	/**
+	 * Sets the given attribute to the given value, removing the attribute if
+	 * this would result in setting it to its default value (<code>false</code>).
+	 * 
+	 * @param attrType
+	 *            attribute to set
+	 * @param value
+	 *            value to set
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException
+	 */
+	public void setAttributeTrue(final IAttributeType.Boolean attrType,
+			boolean value, IProgressMonitor monitor) throws RodinDBException {
+
+		if (value) {
+			setAttributeValue(attrType, true, monitor);
+		} else {
+			removeAttribute(attrType, monitor);
+		}
 	}
 	
 	public void setGoal(Predicate goal, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
