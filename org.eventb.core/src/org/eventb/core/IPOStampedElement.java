@@ -14,8 +14,8 @@ import org.rodinp.core.RodinDBException;
  * Proof obligation stamps signal changes in PO sequents (i.e. proof
  * obligations) and predicate sets (i.e. hypotheses). One stamp is associated
  * with a PO file. If any sequent or predicate set has changed, the PO file
- * stamp is changed too. Deletion of a predicate set or sequent alone does not
- * affect the PO file stamp, insertion does (and is treated like a change).
+ * stamp is changed too. Deletion and insertion do both increase the PO file
+ * stamp.
  * <p>
  * The PO file stamp is related to the maximal stamp used in the PO file: If
  * some sequent or predicate sets changes, the PO file stamp is incremented.
