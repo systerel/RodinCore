@@ -40,7 +40,7 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  * 
  */
-public interface IPSStatus extends IInternalElement, IPRProofInfoElement {
+public interface IPSStatus extends IInternalElement, IPRProofInfoElement, IPOStampedElement, IPRStampedElement {
 
 	IInternalElementType<IPSStatus> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(EventBPlugin.PLUGIN_ID + ".psStatus"); //$NON-NLS-1$

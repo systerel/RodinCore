@@ -11,31 +11,30 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Proof obligation stamps signal changes in PO sequents (i.e. proof
- * obligations) and predicate sets (i.e. hypotheses). One stamp is associated
- * with a PO file. If any sequent or predicate set has changed, the PO file
- * stamp is changed too. Deletion and insertion do both increase the PO file
- * stamp.
+ * Proof obligation stamps signal changes in {@link IPRFile} and {@link IPRProof}
+ * elements.
  * <p>
- * The PO file stamp is related to the maximal stamp used in the PO file: If
- * some sequent or predicate sets changes, the PO file stamp is incremented.
- * This same stamp is then used for all changed sequents and predicate sets. Any
- * change in a PO file increases the PO file stamp, even if none of the
- * remaining proof obligations (or predicate sets) have changed, e.g., after a
- * deletion. This means, the PO file stamp my be larger than any other stamp
- * used in the PO file.
+ * When a {@link IPRProof} changes, its stamp is changed and the stamp of a 
+ * {@link IPRFile} is also changed. The stamp of a {@link IPRFile} may also
+ * independently change in case there is a change in the file such as deletion
+ * of a proof.
  * </p>
  * 
- * @see IPOFile
- * @see IPOSequent
- * @see IPOPredicateSet
+ * <p>
+ * Although stamps are represented as longs, they may not be used for comparison 
+ * (i.e. using > or <), but only be subjected to equality checks. Even if the implementation
+ * increments stamp values, they may overflow and loop back to the minimum value.
+ * </p>
+ * 
+ * @see IPRFile
+ * @see IPRProof
  * @see IPSFile
  * @see IPSStatus
  * 
- * @author Stefan Hallerstede
+ * @author Farhad Mehta
  * 
  */
-public interface IPOStampedElement {
+public interface IPRStampedElement {
 	
 	/**
 	 * The initial value to be used for stamps. That is, initially the stamp of
@@ -48,7 +47,7 @@ public interface IPOStampedElement {
 	static long INIT_STAMP = Long.MIN_VALUE;
 	
 	/**
-	 * Sets the stamp of this element.
+	 * Sets the prStamp of this element.
 	 * 
 	 * @param stamp the stamp to set
 	 * @param monitor
@@ -57,15 +56,16 @@ public interface IPOStampedElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	void setPOStamp(long stamp, IProgressMonitor monitor) throws RodinDBException;
+	void setPRStamp(long stamp, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
-	 * Returns the stamp of this element.
+	 * Returns the PRStamp of this element. In case this element does not have a
+	 * PRstamp, the {@link #INIT_STAMP} is returned.
 	 * 
 	 * @return the stamp of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	long getPOStamp() throws RodinDBException;
+	long getPRStamp() throws RodinDBException;
 
 }

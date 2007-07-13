@@ -82,6 +82,9 @@ public final class EventBAttributes {
 		RodinCore.getHandleAttrType(EventBPlugin.PLUGIN_ID + ".parentSet");
 
 	// Attributes related to the PR and PS files
+	
+	public static IAttributeType.Long PRSTAMP_ATTRIBUTE =
+		RodinCore.getLongAttrType(EventBPlugin.PLUGIN_ID + ".prStamp");
 
 	// TODO : rename to .prConfidence
 	public static IAttributeType.Integer CONFIDENCE_ATTRIBUTE =

@@ -57,7 +57,7 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  * 
  */
-public interface IPRProof extends IInternalElement, IPRProofInfoElement {
+public interface IPRProof extends IInternalElement, IPRProofInfoElement, IPRStampedElement {
 
 	IInternalElementType<IPRProof> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProof"); //$NON-NLS-1$

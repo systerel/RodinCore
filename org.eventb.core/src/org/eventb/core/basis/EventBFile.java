@@ -16,7 +16,9 @@ import org.eventb.core.IEventBFile;
 import org.eventb.core.IEventBProject;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOStampedElement;
 import org.eventb.core.IPRFile;
+import org.eventb.core.IPRStampedElement;
 import org.eventb.core.IPSFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCMachineFile;
@@ -32,7 +34,7 @@ import org.rodinp.core.basis.RodinFile;
  * @author Stefan Hallerstede
  * @author Laurent Voisin
  */
-public abstract class EventBFile extends RodinFile implements IEventBFile {
+public abstract class EventBFile extends RodinFile implements IEventBFile, IPOStampedElement, IPRStampedElement {
 
 	protected EventBFile(IFile file, IRodinElement parent) {
 		super(file, parent);
@@ -88,6 +90,18 @@ public abstract class EventBFile extends RodinFile implements IEventBFile {
 	public void setPOStamp(long stamp, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.POSTAMP_ATTRIBUTE, stamp, monitor);
 	}
+	
+	public long getPRStamp() throws RodinDBException {
+		if (! hasAttribute(EventBAttributes.PRSTAMP_ATTRIBUTE))
+			return IPRStampedElement.INIT_STAMP;
+		else
+			return getAttributeValue(EventBAttributes.PRSTAMP_ATTRIBUTE);
+	}
+	
+	public void setPRStamp(long stamp, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(EventBAttributes.PRSTAMP_ATTRIBUTE, stamp, monitor);
+	}
+	
 
 	public boolean isAccurate() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.ACCURACY_ATTRIBUTE);
