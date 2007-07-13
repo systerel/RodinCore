@@ -50,7 +50,7 @@ public class FiniteDom extends EmptyInputReasoner {
 	}
 
 	protected String getDisplayName() {
-		return "finite of range of a relation";
+		return "finite of domain of a relation";
 	}
 
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
