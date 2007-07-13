@@ -54,7 +54,7 @@ public class ContextAxiomModule extends PredicateModule<ISCAxiom> {
 	 */
 	@Override
 	protected String getWDProofObligationDescription() {
-		return "Well-definedness of Invariant";
+		return "Well-definedness of Axiom";
 	}
 
 	/* (non-Javadoc)

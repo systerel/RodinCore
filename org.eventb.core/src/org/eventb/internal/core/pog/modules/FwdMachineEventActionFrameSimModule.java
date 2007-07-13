@@ -124,7 +124,7 @@ public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementM
 			createPO(
 					target, 
 					sequentName, 
-					"Equality " + (isInitialisation ? " establishment" : " preservation"),
+					"Equality of common variables",
 					fullHypothesis,
 					hyp,
 					makePredicate(predicate, action.getSource()),
