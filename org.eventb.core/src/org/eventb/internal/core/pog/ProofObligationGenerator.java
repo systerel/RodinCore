@@ -95,7 +95,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		long freshStamp;
 		boolean oldExists = oldFile.exists();
 		if (oldExists) {
-			freshStamp = oldFile.getStamp();
+			freshStamp = oldFile.getPOStamp();
 			freshStamp++;
 		} else
 			freshStamp = IPOStampedElement.INIT_STAMP;
@@ -120,7 +120,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		changed |= sequents.length != (oldExists ? oldFile.getSequents().length : -1);
 		
 		if (changed) {
-			newFile.setStamp(freshStamp, null);
+			newFile.setPOStamp(freshStamp, null);
 			newFile.save(new SubProgressMonitor(monitor, 1), true, false);
 			final IRodinElement project = oldFile.getParent();
 			final String name = oldFile.getElementName();
@@ -145,7 +145,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 			
 			IPOPredicateSet hyp = sequent.getHypotheses()[0];
 			if (chPrdSets.contains(hyp)) {
-				sequent.setStamp(freshStamp, monitor);
+				sequent.setPOStamp(freshStamp, monitor);
 				changed = true;
 			} else {
 
@@ -154,15 +154,15 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 
 				assert oldSequent != null;
 				if (oldSequent.exists()) {
-					long oldStamp = oldSequent.getStamp();
-					sequent.setStamp(oldStamp, monitor);
+					long oldStamp = oldSequent.getPOStamp();
+					sequent.setPOStamp(oldStamp, monitor);
 					if (!sequent.hasSameAttributes(oldSequent)
 							|| !sequent.hasSameChildren(oldSequent)) {
-						sequent.setStamp(freshStamp, monitor);
+						sequent.setPOStamp(freshStamp, monitor);
 						changed = true;
 					}
 				} else {
-					sequent.setStamp(freshStamp, monitor);
+					sequent.setPOStamp(freshStamp, monitor);
 					changed = true;
 				}
 			}
@@ -185,8 +185,8 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 			IPOPredicateSet oldSet = oldFile.getPredicateSet(name);
 			assert oldSet != null;
 			if (oldSet.exists()) {
-				long oldStamp = oldSet.getStamp();
-				newSet.setStamp(oldStamp, monitor);
+				long oldStamp = oldSet.getPOStamp();
+				newSet.setPOStamp(oldStamp, monitor);
 				if (newSet.hasSameAttributes(oldSet) 
 						&& newSet.hasSameChildren(oldSet)) {
 					IPOPredicateSet parentSet = newSet.getParentPredicateSet();
@@ -201,12 +201,12 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 					// cleaning the workspace
 					assert oldStamp != freshStamp;
 					
-					newSet.setStamp(freshStamp, monitor);
+					newSet.setPOStamp(freshStamp, monitor);
 					chPrdSets.add(newSet);
 					done.add(newSet);
 				}
 			} else {
-				newSet.setStamp(IPOStampedElement.INIT_STAMP, monitor);
+				newSet.setPOStamp(IPOStampedElement.INIT_STAMP, monitor);
 				done.add(newSet);
 			}
 		}
@@ -225,7 +225,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 			}
 			if (chPrdSets.contains(pSet)) {
 				for (IPOPredicateSet cSet : list) {
-					cSet.setStamp(freshStamp, monitor);
+					cSet.setPOStamp(freshStamp, monitor);
 					done.add(cSet);
 				}
 			} else {

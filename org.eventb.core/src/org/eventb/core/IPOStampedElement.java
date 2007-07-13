@@ -55,7 +55,7 @@ public interface IPOStampedElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	void setStamp(long stamp, IProgressMonitor monitor) throws RodinDBException;
+	void setPOStamp(long stamp, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns the stamp of this element.
@@ -64,6 +64,6 @@ public interface IPOStampedElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	long getStamp() throws RodinDBException;
+	long getPOStamp() throws RodinDBException;
 
 }

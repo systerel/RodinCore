@@ -269,12 +269,12 @@ public abstract class EventBPOTest extends EventBTest {
 	}
 	
 	public void hasStamp(IPOStampedElement stampedElem, long value) throws Exception {
-		long stamp = stampedElem.getStamp();
+		long stamp = stampedElem.getPOStamp();
 		assertEquals("Unexpected stamp", value, stamp);
 	}
 	
 	public void hasNewStamp(IInternalElement stampedElem) throws Exception {
-		long value = ((IPOFile) stampedElem.getRodinFile()).getStamp();
+		long value = ((IPOFile) stampedElem.getRodinFile()).getPOStamp();
 		hasStamp((IPOStampedElement) stampedElem, value);
 	}
 
