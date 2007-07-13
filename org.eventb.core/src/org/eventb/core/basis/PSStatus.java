@@ -12,6 +12,7 @@ import static org.eventb.core.EventBAttributes.MANUAL_PROOF_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PROOF_BROKEN_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
@@ -93,6 +94,19 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 		} else {
 			removeAttribute(CONFIDENCE_ATTRIBUTE, monitor);
 			removeAttribute(MANUAL_PROOF_ATTRIBUTE, monitor);
+		}
+	}
+	
+	public void copyStamps(IProgressMonitor monitor) throws RodinDBException {
+		IPRProof proof = getProof();
+		IPOSequent poSeq = getPOSequent();
+		
+		if (proof.exists() && poSeq.exists()) {
+			setPRStamp(proof.getPRStamp(), monitor);
+			setPOStamp(poSeq.getPOStamp(), monitor);			
+		} else {
+			removeAttribute(EventBAttributes.POSTAMP_ATTRIBUTE, monitor);
+			removeAttribute(EventBAttributes.PRSTAMP_ATTRIBUTE, monitor);
 		}
 	}
 	

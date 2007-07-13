@@ -152,18 +152,16 @@ public class AutoPOMTest extends BuilderTest {
 	private void checkProofsConsistent(IPRFile prFile, IPSFile psFile) throws RodinDBException {
 		IPSStatus[] statuses = psFile.getStatuses();
 		for (IPSStatus status : statuses) {
-			if (status.getConfidence() > IConfidence.UNATTEMPTED)
-			{
-				IPRProof prProofTree = status.getProof();
-				String name = status.getElementName();
-				assertTrue("Proof absent for "+name , prProofTree.exists());
-				assertEquals("Proof confidence different for " + name, prProofTree.getConfidence(), status.getConfidence());
-				assertEquals("hasManualProof attribute different for " + name, prProofTree.getHasManualProof(), status.getHasManualProof());
-			}
+			IPRProof prProofTree = status.getProof();
+			String name = status.getElementName();
+			assertTrue("Proof absent for "+name , prProofTree.exists());
+			assertEquals("Proof confidence different for " + name, prProofTree.getConfidence(), status.getConfidence());
+			assertEquals("hasManualProof attribute different for " + name, prProofTree.getHasManualProof(), status.getHasManualProof());
+			assertEquals("PR stamp different for " + name, prProofTree.getPRStamp(), status.getPRStamp());
 		}
-		
 	}
 
+	// TODO : make simpler and add check for PO stamps
 	private void checkPOsConsistent(
 			IInternalParent poElement,
 			IInternalParent prElement) throws RodinDBException {

@@ -46,6 +46,7 @@ import org.rodinp.core.RodinDBException;
  * sets used in the proof (set names separated by commas).
  * </p>
  * 
+ * 
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -96,6 +97,7 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement, IPRStam
 	/**
 	 * Sets whether this proof obligation has been discharged manually.
 	 * 
+	 * 
 	 * @param value
 	 *            The value to set to
 	 * @param monitor
@@ -109,8 +111,38 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement, IPRStam
 			throws RodinDBException;
 	
 	/**
+	 * Identical to {@link IInternalElement#create(IInternalElement, IProgressMonitor)} except
+	 * that this method also recomputes the prStamp for the created element and its file appropriately.
+	 * 
+	 * 
+	 * @param nextSibling
+	 * @param monitor
+	 * @throws RodinDBException
+	 */
+	public void createPRProof(IInternalElement nextSibling, IProgressMonitor monitor)
+			throws RodinDBException;
+	
+	/**
+	 * Identical to {@link IInternalElement#delete(boolean, IProgressMonitor)} except
+	 * that this method also recomputes the prStamp for file that used to contain this deleted
+	 * internal element.
+	 * 
+	 *
+	 * @param force
+	 * @param monitor
+	 * @throws RodinDBException
+	 */
+	public void deletePRProof(boolean force, IProgressMonitor monitor)
+			throws RodinDBException;
+	
+	/**
 	 * Sets the proof tree of this proof element by serializing the given proof
 	 * tree into the database.
+	 * 
+	 * <p>
+	 * This method also increments the PR stamp for this element, as well as the
+	 * file that contains it.
+	 * </p>
 	 * 
 	 * @param proofTree
 	 *            The proof tree to set

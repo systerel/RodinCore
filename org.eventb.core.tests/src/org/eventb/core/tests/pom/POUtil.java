@@ -15,6 +15,7 @@ import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.IPOStampedElement;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.RodinDBException;
 
@@ -68,13 +69,13 @@ public class POUtil {
 	 *            local hypotheses as strings
 	 * @throws RodinDBException
 	 */
-	public static void addSequent(IPOFile poFile, String poName, String goalString,
-			IPOPredicateSet globalSet, ITypeEnvironment typEnv,
+	public static void addSequent(IPOFile poFile, String poName, long poStamp,
+			String goalString, IPOPredicateSet globalSet, ITypeEnvironment typEnv,
 			String... localHypStrings) throws RodinDBException {
 		
 		IPOSequent poSeq = poFile.getSequent(poName);
 		poSeq.create(null, null);
-		
+		poSeq.setPOStamp(poStamp, null);
 		IPOPredicate poGoal = poSeq.getGoal("goal");
 		poGoal.create(null, null);
 		poGoal.setPredicateString(goalString, null);
@@ -82,6 +83,30 @@ public class POUtil {
 		IPOPredicateSet poSet = poSeq.getHypothesis("local");
 		createPredicateSet(poSet, globalSet, typEnv, localHypStrings);
 	}
+	
+	/**
+	 * Adds a PO to the given PO file with the supplied information.
+	 * 
+	 * @param poFile
+	 *            file where to create the PO
+	 * @param poName
+	 *            name of the PO
+	 * @param goalString
+	 *            goal of the PO
+	 * @param globalSet
+	 *            handle to the set of global hypotheses
+	 * @param typEnv
+	 *            local type environment
+	 * @param localHypStrings
+	 *            local hypotheses as strings
+	 * @throws RodinDBException
+	 */
+	public static void addSequent(IPOFile poFile, String poName,
+			String goalString, IPOPredicateSet globalSet, ITypeEnvironment typEnv,
+			String... localHypStrings) throws RodinDBException {
+		addSequent(poFile, poName, IPOStampedElement.INIT_STAMP, goalString, globalSet, typEnv, localHypStrings);
+	}
+
 
 	/**
 	 * Creates and populates the given predicate set with the supplied information.

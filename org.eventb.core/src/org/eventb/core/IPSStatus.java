@@ -9,6 +9,8 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.basis.POSequent;
+import org.eventb.core.basis.PRProof;
 import org.eventb.core.seqprover.IConfidence;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -143,7 +145,11 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement, IPOSta
 	/**
 	 * Copies the cached proof information attributes described in {@link IPRProofInfoElement}
 	 * from the associated proof in case it exists.
-	 * 
+	 *
+ 	 * <p>
+	 * In case the associated proof does not exist, all proof information attributes are removed.
+	 * </p>
+	 *
 	 * 
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
@@ -154,6 +160,22 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement, IPOSta
 	 */
 	void copyProofInfo(IProgressMonitor monitor) throws RodinDBException;
 
+	/**
+	 * Copies the PO and PR stamps for the associated {@link POSequent} and
+	 * {@link PRProof} so that they can be used later for delta checking.
+	 * 
+	 * <p>
+	 * In case the associated elements do not exist, both stamp attributes are removed.
+	 * </p>
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @throws RodinDBException
+	 * @see IPRProofInfoElement
+	 */
+	void copyStamps(IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns whether this proof obligation has been discharged manually. A

@@ -25,22 +25,22 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
+/**
+ * Class containing unit tests to test the proper serialization and deserialization of proof trees.
+ * 
+ * @author Farhad Mehta
+ *
+ */
 public class ProofSerializationTests extends TestCase {
 	
 	protected IRodinProject rodinProject;
-
 	protected IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	
-
 	private FormulaFactory factory = FormulaFactory.getDefault();
+
+	private IPRFile prFile;
+	
 	
 	public final void test() throws RodinDBException{
-		IPRFile prFile = (IPRFile) rodinProject.getRodinFile("x.bpr");
-		prFile.create(true, null);
-		
-		assertTrue(prFile.exists());
-		assertEquals(0, prFile.getProofs().length);
-		
 		IPRProof proof1 = prFile.getProof("proof1");
 		proof1.create(null, null);
 
@@ -76,7 +76,6 @@ public class ProofSerializationTests extends TestCase {
 		
 		sequent = TestLib.genSeq("⊤ |- ⊤ ∧ ⊤");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
-		
 		Tactics.norm().apply(proofTree.getRoot(), null);
 		proof1.setProofTree(proofTree, null);
 		// The next check is to see if the prover is behaving itself.
@@ -151,6 +150,13 @@ public class ProofSerializationTests extends TestCase {
 		pDescription.setNatureIds(new String[] {RodinCore.NATURE_ID});
 		project.setDescription(pDescription, null);
 		rodinProject = RodinCore.valueOf(project);
+		
+		// Create a new proof file
+		prFile = (IPRFile) rodinProject.getRodinFile("x.bpr");
+		prFile.create(true, null);
+		
+		assertTrue(prFile.exists());
+		assertEquals(0, prFile.getProofs().length);
 	}
 	
 	

@@ -73,7 +73,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				final IPRProof prProof = prFile.getProof(name);
 				
 				if (! prProof.exists()) {
-					prProof.create(null, null);
+					prProof.createPRProof(null, null);
 					// prProof.initialize(null);
 				}
 				
@@ -201,6 +201,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 		// status.setProofConfidence(null);
 		status.copyProofInfo(null);
+		status.copyStamps(null);
 		status.setBroken(broken, null);
 	}
 	
