@@ -80,6 +80,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunction;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteMax;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteMin;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteNegative;
+import org.eventb.internal.core.seqprover.eventbExtensions.FinitePositive;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRan;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelation;
@@ -3255,8 +3257,7 @@ public class Tactics {
 
 	
 	/**
-	 * Return the tactic "Finite minimum" {@link FiniteMin} which has the input
-	 * expression.
+	 * Return the tactic "Finite minimum" {@link FiniteMin}.
 	 * <p>
 	 * 
 	 * @return The tactic "finite minimum"
@@ -3286,8 +3287,7 @@ public class Tactics {
 
 
 	/**
-	 * Return the tactic "Finite maximum" {@link FiniteMax} which has the input
-	 * expression.
+	 * Return the tactic "Finite maximum" {@link FiniteMax}.
 	 * <p>
 	 * 
 	 * @return The tactic "finite maximum"
@@ -3295,6 +3295,72 @@ public class Tactics {
 	 */
 	public static ITactic finiteMax() {
 		return BasicTactics.reasonerTac(new FiniteMax(), new EmptyInput());
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "finite of
+	 * set of non-positive numbers" {@link FiniteNegative} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finiteNegativeGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isSetOfIntergers(((SimplePredicate) predicate)
+					.getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+	
+	/**
+	 * Return the tactic "Finite of set of non-positive numbers"
+	 * {@link FiniteNegative}.
+	 * <p>
+	 * 
+	 * @return The tactic "finite of set of non-positive numbers"
+	 * @author htson
+	 */
+	public static ITactic finiteNegative() {
+		return BasicTactics.reasonerTac(new FiniteNegative(), new EmptyInput());
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "finite of
+	 * set of non-negative numbers" {@link FinitePositive} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> finitePositiveGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			if (Lib.isSetOfIntergers(((SimplePredicate) predicate)
+					.getExpression()))
+				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+		}
+		return new ArrayList<IPosition>();
+	}
+
+
+	/**
+	 * Return the tactic "Finite of set of non-negative numbers"
+	 * {@link FinitePositive}.
+	 * <p>
+	 * 
+	 * @return The tactic "finite of set of non-negative numbers"
+	 * @author htson
+	 */
+	public static ITactic finitePositive() {
+		return BasicTactics.reasonerTac(new FinitePositive(), new EmptyInput());
 	}
 
 }

@@ -2029,6 +2029,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteMaxGoal"
             target="goal"
             tooltip="%proofTactic.finiteMaxGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteNegativeGoal"
+            interrupt="false"
+            name="%proofTactic.finiteNegativeGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteNegativeGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteNegativeGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finitePositiveGoal"
+            interrupt="false"
+            name="%proofTactic.finitePositiveGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FinitePositiveGoal"
+            target="goal"
+            tooltip="%proofTactic.finitePositiveGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">

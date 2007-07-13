@@ -315,6 +315,14 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteMax"
             id="finiteMax"
             name="%finiteMaxName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteNegative"
+            id="finiteNegative"
+            name="%finiteNegativeName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FinitePositive"
+            id="finitePositive"
+            name="%finitePositiveName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tactics">
