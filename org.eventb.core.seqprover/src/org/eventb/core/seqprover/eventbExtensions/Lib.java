@@ -1178,4 +1178,31 @@ public final class Lib {
 	public static boolean isBoundIdentifier(Formula<?> formula) {
 		return (formula instanceof BoundIdentifier);
 	}
+
+
+	/**
+	 * Test if the formula is a bound identifier
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is bound identifier.
+	 *         Return <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isSetOfIntergers(Formula<?> formula) {
+		if (formula instanceof Expression) {
+			Expression expression = (Expression) formula;
+			Type type = expression.getType();
+			if (type instanceof PowerSetType) {
+				Type baseType = type.getBaseType();
+				AtomicExpression integer = ff.makeAtomicExpression(
+						Expression.INTEGER, null);
+				integer.typeCheck(ff.makeTypeEnvironment());
+				return baseType.toExpression(ff).equals(integer);
+			}
+		}
+		return false;
+	}
+
 }
