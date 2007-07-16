@@ -96,7 +96,7 @@ public class BundledFileExtractor {
 						+ bundle.getSymbolicName(), e);
 				return null;
 			}
-			if (executable) {
+			if (executable && ! Platform.getOS().equals(Platform.OS_WIN32)) {
 				makeExecutable(url);
 			}
 			return new Path(url.getPath());
