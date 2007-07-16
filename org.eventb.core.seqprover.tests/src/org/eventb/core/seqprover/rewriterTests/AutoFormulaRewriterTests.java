@@ -1,6 +1,6 @@
 package org.eventb.core.seqprover.rewriterTests;
 
-import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.*;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigInteger;
@@ -13,6 +13,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -30,6 +31,9 @@ import org.junit.Test;
 public class AutoFormulaRewriterTests {
 
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
+	
+	protected static final LiteralPredicate btrue = ff.makeLiteralPredicate(
+			BTRUE, null);
 	
 	protected static Expression emptySet = ff.makeEmptySet(ff.makePowerSetType(ff
 			.makeIntegerType()), null);
@@ -475,6 +479,34 @@ public class AutoFormulaRewriterTests {
 						.makeAssociativePredicate(Predicate.LOR,
 								new Predicate[] { P, Q, R }, null));
 
+		// Ensures that one-point rule detection code doesn't break
+		Predicate input = Lib.parsePredicate(
+				"∀x·x ∈ ℕ ⇒ (∀y·y ∈ ℕ ∧ x = −1 ⇒ y ∈ ℕ1)");
+			
+			
+			
+			
+			
+//			ff.makeQuantifiedPredicate(Predicate.FORALL,
+//				new BoundIdentDecl[] { x },
+//				ff.makeBinaryPredicate(Predicate.LIMP,
+//						Q,
+//						ff.makeQuantifiedPredicate(Predicate.FORALL,
+//								new BoundIdentDecl[] {y},
+//								ff.makeBinaryPredicate(LIMP,
+//										left, right, location)
+//								ff.makeRelationalPredicate(Predicate.EQUAL,
+//										ff.makeBoundIdentifier(1, null),
+//										number0,
+//										null
+//								),
+//								null
+//						),
+//						null
+//				),
+//				null
+//		);
+		assertEquals("One-point rule", input, input.rewrite(r));
 	}
 
 	protected void assertRelationalPredicate(String message, Predicate expected,

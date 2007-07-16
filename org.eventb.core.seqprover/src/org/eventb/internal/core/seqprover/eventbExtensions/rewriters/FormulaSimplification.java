@@ -254,7 +254,7 @@ public class FormulaSimplification {
 					Expression right = rPred.getRight();
 					BoundIdentifier[] boundIdentifiers = right
 							.getBoundIdentifiers();
-					if (contain(identDecls, y.getDeclaration(identDecls))
+					if (y.getBoundIndex() < identDecls.length
 							&& !contain(boundIdentifiers, y)) {
 						// TODO Do the subtitution here
 						return predicate;
