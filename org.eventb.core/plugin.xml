@@ -472,11 +472,6 @@
             id="poStamp"
             kind="long"
             name="%eventBpoStamp"/>
-      <attributeType
-            id="prStamp"
-            kind="long"
-            name="%eventBprStamp">
-      </attributeType>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
