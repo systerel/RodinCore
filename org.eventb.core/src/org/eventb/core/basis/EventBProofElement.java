@@ -25,7 +25,6 @@ import org.eventb.core.IPOStampedElement;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRProofInfoElement;
 import org.eventb.core.IPRProofRule;
-import org.eventb.core.IPRStampedElement;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.FormulaFactory;
@@ -50,7 +49,8 @@ import org.rodinp.core.basis.InternalElement;
  * @author Farhad Mehta
  * 
  */
-public abstract class EventBProofElement extends InternalElement implements IPRProofInfoElement, IPRStampedElement, IPOStampedElement{
+public abstract class EventBProofElement extends InternalElement implements
+		IPRProofInfoElement, IPOStampedElement {
 
 	protected static final String[] NO_STRINGS = new String[0];
 	protected static final IProofSkeleton[] NO_CHILDREN = new IProofSkeleton[0];
@@ -138,15 +138,8 @@ public abstract class EventBProofElement extends InternalElement implements IPRP
 		}
 	}
 	
-	public long getPRStamp() throws RodinDBException {
-		if (! hasAttribute(EventBAttributes.PRSTAMP_ATTRIBUTE))
-			return IPRStampedElement.INIT_STAMP;
-		else
-			return getAttributeValue(EventBAttributes.PRSTAMP_ATTRIBUTE);
-	}
-	
-	public void setPRStamp(long stamp, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.PRSTAMP_ATTRIBUTE, stamp, monitor);
+	public boolean hasPOStamp() throws RodinDBException {
+		return hasAttribute(EventBAttributes.POSTAMP_ATTRIBUTE);
 	}
 	
 	public long getPOStamp() throws RodinDBException {
