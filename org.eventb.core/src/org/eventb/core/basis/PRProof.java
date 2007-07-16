@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRProof;
-import org.eventb.core.IPRStampedElement;
 import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IProofStoreCollector;
@@ -32,7 +31,6 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ProverFactory;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -64,8 +62,8 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		// Delete the previous proof and creates a new proof
 		// (the next delete can be a simple delete() since the stamp does not need to jump by 2)
 		// (but this way is safer in case create is canceled)
-		deletePRProof(false, monitor);
-		createPRProof(null, monitor);
+		delete(false, monitor);
+		create(null, monitor);
 		
 		
 		if (pt.getConfidence() <= IConfidence.UNATTEMPTED) return;
@@ -92,29 +90,6 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		store.writeOut(this, monitor);
 	}
 	
-	public void createPRProof(IInternalElement nextSibling, IProgressMonitor monitor)
-	throws RodinDBException {
-		
-		IPRStampedElement file = ((EventBFile)getOpenable());
-		long prStamp = file.getPRStamp() + 1;
-		
-		create(nextSibling, monitor);
-		
-		setPRStamp(prStamp, monitor);
-		file.setPRStamp(prStamp, monitor);
-	}
-	
-	public void deletePRProof(boolean force, IProgressMonitor monitor)
-	throws RodinDBException {
-		
-		IPRStampedElement file = ((EventBFile)getOpenable());
-		long prStamp = file.getPRStamp() + 1;
-		
-		delete(force, monitor);
-		
-		file.setPRStamp(prStamp, monitor);
-	}
-
 	public IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException{
 		if (getConfidence() <= IConfidence.UNATTEMPTED) return unattemptedProofDeps;
 		IProofStoreReader store = new ProofStoreReader(this, factory);
