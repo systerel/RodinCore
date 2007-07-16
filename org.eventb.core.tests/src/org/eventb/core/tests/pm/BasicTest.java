@@ -37,6 +37,9 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IPOSequent;
+import org.eventb.core.IPSFile;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCAction;
@@ -120,6 +123,24 @@ public abstract class BasicTest extends TestCase {
 				System.out.println("  " + marker.getAttribute(IMarker.MESSAGE));
 			}
 			fail("Build produced build problems, see console");
+		}
+		checkPSFiles();
+	}
+
+	private void checkPSFiles() throws RodinDBException {
+		IRodinFile[] files = rodinProject.getRodinFiles(); 
+		for (IRodinFile file: files) {
+			if (file instanceof IPSFile) {
+				checkPSFile((IPSFile) file);
+			}
+		}
+	}
+
+	private void checkPSFile(IPSFile file) throws RodinDBException {
+		for (IPSStatus psStatus: file.getStatuses()) {
+			final IPOSequent poSequent = psStatus.getPOSequent();
+			assertEquals("PS file not in sync with PO file",
+					poSequent.getPOStamp(), psStatus.getPOStamp());
 		}
 	}
 
