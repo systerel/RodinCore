@@ -79,8 +79,6 @@ public class BundledFileExtractor {
 				return false;
 			if (!path.equals(other.path))
 				return false;
-			if (executable != other.executable)
-				return false;
 			return true;
 		}
 		
