@@ -136,7 +136,7 @@ public class AutoPOMTest extends BuilderTest {
 		// Tactics.norm().apply(proofTree.getRoot(), null);
 		// System.out.println(proofTree.getRoot());
 		
-		psWrapper.setProofTree(prs[prs.length-1], proofTree, true, null);
+		psWrapper.updateStatus(prs[prs.length-1], true, null);
 		
 		// Checks that proof is marked as manual
 		assertManualProof(prs[prs.length-1]);
@@ -157,7 +157,6 @@ public class AutoPOMTest extends BuilderTest {
 			assertTrue("Proof absent for "+name , prProofTree.exists());
 			assertEquals("Proof confidence different for " + name, prProofTree.getConfidence(), status.getConfidence());
 			assertEquals("hasManualProof attribute different for " + name, prProofTree.getHasManualProof(), status.getHasManualProof());
-			assertEquals("PR stamp different for " + name, prProofTree.getPRStamp(), status.getPRStamp());
 		}
 	}
 
