@@ -26,7 +26,7 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  */
-public interface IPRFile extends IEventBFile, IPRStampedElement{
+public interface IPRFile extends IEventBFile {
 
 	IFileElementType<IPRFile> ELEMENT_TYPE = 
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".prFile"); //$NON-NLS-1$

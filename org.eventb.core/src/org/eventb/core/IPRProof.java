@@ -58,7 +58,7 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  * 
  */
-public interface IPRProof extends IInternalElement, IPRProofInfoElement, IPRStampedElement {
+public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 
 	IInternalElementType<IPRProof> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProof"); //$NON-NLS-1$
@@ -108,31 +108,6 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement, IPRStam
 	 * @see #getHasManualProof()
 	 */
 	void setHasManualProof(boolean value, IProgressMonitor monitor)
-			throws RodinDBException;
-	
-	/**
-	 * Identical to {@link IInternalElement#create(IInternalElement, IProgressMonitor)} except
-	 * that this method also recomputes the prStamp for the created element and its file appropriately.
-	 * 
-	 * 
-	 * @param nextSibling
-	 * @param monitor
-	 * @throws RodinDBException
-	 */
-	public void createPRProof(IInternalElement nextSibling, IProgressMonitor monitor)
-			throws RodinDBException;
-	
-	/**
-	 * Identical to {@link IInternalElement#delete(boolean, IProgressMonitor)} except
-	 * that this method also recomputes the prStamp for file that used to contain this deleted
-	 * internal element.
-	 * 
-	 *
-	 * @param force
-	 * @param monitor
-	 * @throws RodinDBException
-	 */
-	public void deletePRProof(boolean force, IProgressMonitor monitor)
 			throws RodinDBException;
 	
 	/**
