@@ -362,7 +362,7 @@ public class ProofState implements IProofState {
 		if (UserSupportUtils.DEBUG)
 			UserSupportUtils.debug("Saving: " + status.getElementName());
 
-		userSupport.getPSWrapper().setProofTree(status, pt, true,monitor);
+		userSupport.getPSWrapper().updateStatus(status, true, monitor);
 		setDirty(false);
 	}
 

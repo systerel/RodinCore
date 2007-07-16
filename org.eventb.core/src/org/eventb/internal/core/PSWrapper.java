@@ -3,10 +3,15 @@
  */
 package org.eventb.internal.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
@@ -30,62 +35,89 @@ import org.rodinp.core.RodinDBException;
  * 
  */
 public class PSWrapper implements IPSWrapper {
+	
+	private static class StampedProofTree {
+		long poStamp;
+		IProofTree tree;
 
-	private final IPSFile psFile;
+		StampedProofTree(long poStamp, IProofTree tree) {
+			this.poStamp = poStamp;
+			this.tree = tree;
+		}
+	}
 
-	private final IPRFile prFile;
+	final IPSFile psFile;
+
+	final IPRFile prFile;
+	
+	final Map<IPSStatus, StampedProofTree> loadedTrees;
 
 	public PSWrapper(IPSFile psFile) {
 		this.psFile = psFile;
-		prFile = psFile.getPRFile();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IProofLoader#getPSStatuses()
-	 */
-	public IPSStatus[] getPSStatuses() throws RodinDBException {
-		return psFile.getStatuses();
+		this.prFile = psFile.getPRFile();
+		this.loadedTrees = new HashMap<IPSStatus, StampedProofTree>();
 	}
 
 	public IPSFile getPSFile() {
 		return psFile;
 	}
 
-	public IProofTree getFreshProofTree(IPSStatus psStatus) throws RodinDBException {
-		final IPOSequent poSequent = psStatus.getPOSequent();
-		IProverSequent newSeq = POLoader.readPO(poSequent);
-		return ProverFactory.makeProofTree(newSeq, poSequent);
+	public IPSStatus[] getPSStatuses() throws RodinDBException {
+		return psFile.getStatuses();
 	}
 
-	
-	public void setProofTree(final IPSStatus status, final IProofTree pt,
-			final boolean hasManualProof, IProgressMonitor monitor)
-			throws CoreException {
-		// TODO add lock for po and pr file
-		RodinCore.run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor mon) throws CoreException {
-				try {
-					mon.beginTask("Saving Proof", 2);
-					status.getProof().setProofTree(pt,
-							new SubProgressMonitor(mon, 1));
-					status.getProof().setHasManualProof(hasManualProof, mon);
-					AutoPOM.updateStatus(((IPSStatus) status.getMutableCopy()),
-							new SubProgressMonitor(mon, 1));
-				} finally {
-					mon.done();
-				}
-			}
-		}, status.getSchedulingRule(), monitor);	
+	private void createFreshProofTree(IPSStatus psStatus)
+			throws RodinDBException {
+		final IPOSequent poSequent = psStatus.getPOSequent();
+		final long poStamp = poSequent.getPOStamp(); 
+		final IProverSequent rootSeq = POLoader.readPO(poSequent);
+		final IProofTree pt = ProverFactory.makeProofTree(rootSeq, poSequent);
+		loadedTrees.put(psStatus, new StampedProofTree(poStamp, pt));
 	}
 	
+	public IProofTree getProofTree(IPSStatus psStatus) {
+		StampedProofTree ps = loadedTrees.get(psStatus);
+		if (ps == null) {
+			return null;
+		}
+		return ps.tree;
+	}
+
+	public IProofTree getFreshProofTree(IPSStatus psStatus)
+			throws RodinDBException {
+		createFreshProofTree(psStatus);
+		return getProofTree(psStatus);
+	}
+
+	public IProofSkeleton getProofSkeleton(IPSStatus status,
+			IProgressMonitor monitor) throws RodinDBException {
+		final IPRProof prProof = status.getProof();
+		if (prProof.exists()) {
+			final IProofSkeleton proofSkeleton = prProof.getSkeleton(
+					FormulaFactory.getDefault(), monitor);
+			return proofSkeleton;
+		}
+		return null;
+	}
+
 	@Deprecated
 	public void setProofTree(final IPSStatus status, final IProofTree pt,
 			IProgressMonitor monitor) throws CoreException {
 			setProofTree(status, pt, true, monitor);
 		}
 
+	@Deprecated
+	public void setProofTree(final IPSStatus status, final IProofTree pt,
+			final boolean hasManualProof, IProgressMonitor monitor)
+			throws CoreException {
+		
+		StampedProofTree spt = loadedTrees.get(status);
+		if (spt == null || spt.tree != pt) {
+			throw new IllegalArgumentException("Unexpected proof tree");
+		}
+		updateStatus(status, hasManualProof, monitor);
+	}
+	
 	public void makeFresh(IProgressMonitor monitor) throws RodinDBException {
 
 		if (!prFile.exists())
@@ -149,14 +181,37 @@ public class PSWrapper implements IPSWrapper {
 		status.setBroken(broken, null);
 	}
 
-	public IProofSkeleton getProofSkeleton(IPSStatus status, IProgressMonitor monitor) throws RodinDBException {
-		final IPRProof prProof = status.getProof();
-		if (prProof.exists()) {
-			final IProofSkeleton proofSkeleton = prProof.getSkeleton(
-					FormulaFactory.getDefault(), monitor);
-			return proofSkeleton;
+	public void updateStatus(final IPSStatus psStatus,
+			final boolean hasManualProof, final IProgressMonitor monitor)
+			throws CoreException {
+
+		final StampedProofTree spt = loadedTrees.get(psStatus);
+		if (spt == null) {
+			return;
 		}
-		return null;
+
+		final IPSStatus psHandle = (IPSStatus) psStatus.getMutableCopy();
+		final IPRProof proof = psStatus.getProof();
+		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor pm) throws CoreException {
+				try {
+					pm.beginTask("Saving Proof", 4);
+					proof.setProofTree(spt.tree, new SubProgressMonitor(pm, 1));
+					proof.setHasManualProof(hasManualProof,
+							new SubProgressMonitor(pm, 1));
+					AutoPOM.updateStatus(psHandle,
+							new SubProgressMonitor(pm, 1));
+					psHandle.setPOStamp(spt.poStamp, new SubProgressMonitor(pm,
+							1));
+				} finally {
+					pm.done();
+				}
+			}
+		};
+		final ISchedulingRule rule = MultiRule.combine(psFile
+				.getSchedulingRule(), prFile.getSchedulingRule());
+
+		RodinCore.run(runnable, rule, monitor);	
 	}
 
 }

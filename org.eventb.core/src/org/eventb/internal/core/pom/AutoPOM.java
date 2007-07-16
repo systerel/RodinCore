@@ -67,32 +67,32 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			// create new proof status
 			for (int i = 0; i < pos.length; i++) {
 				
-				final String name = pos[i].getElementName();
+				final IPOSequent poSequent = pos[i];
+				final String name = poSequent.getElementName();
 				monitor.subTask("updating status for " + name);
 				
 				final IPRProof prProof = prFile.getProof(name);
 				
 				if (! prProof.exists()) {
-					prProof.createPRProof(null, null);
+					prProof.create(null, null);
 					// prProof.initialize(null);
 				}
 				
 				
-				final IPSStatus oldStatus = ((IPSFile) psFile.getSnapshot()).getStatus(name);
-				IPSStatus status = psFile.getStatus(name);
-				// TODO : for some reason, oldStatus never exists
-				if (oldStatus.exists())
-				{
+				final IPSStatus status = psFile.getStatus(name);
+				final IPSStatus oldStatus = (IPSStatus) status.getSnapshot();
+				if (oldStatus.exists()) {
 					oldStatus.copy(psFile, null, null, true, null);
-				}
-				else
-				{
-					status.create(null, monitor);					
+				} else {
+					status.create(null, monitor);
 				}
 				try {
-					updateStatus(status,monitor);
+					if (!hasSameStampAsPo(status)) {
+						updateStatus(status, monitor);
+					}
 				} catch (Exception e) {
-					Util.log(e, "Exception thrown while updating ststus for "+status.getElementName());
+					Util.log(e, "Exception thrown while updating status for "
+							+ status);
 				}
 				
 				monitor.worked(1);
@@ -115,7 +115,16 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 
-	
+	// Returns true if the both the status and the corresponding PO sequent
+	// carry the same stamp.
+	private boolean hasSameStampAsPo(IPSStatus psStatus) throws RodinDBException {
+		final IPOSequent poSequent = psStatus.getPOSequent();
+		if (poSequent.hasPOStamp() && psStatus.hasPOStamp()) {
+			return poSequent.getPOStamp() == psStatus.getPOStamp();
+		}
+		return false;
+	}
+
 	private void checkCancellation(IProgressMonitor monitor, IPRFile prFile, IPSFile psFile) {
 //		 TODO harmonize cleanup after cancellation
 		if (monitor.isCanceled()) {
@@ -190,7 +199,8 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	public static void updateStatus(IPSStatus status, IProgressMonitor monitor)
 			throws RodinDBException {
 
-		IProverSequent seq =  POLoader.readPO(status.getPOSequent());
+		final IPOSequent poSequent = status.getPOSequent();
+		final IProverSequent seq =  POLoader.readPO(poSequent);
 		final IPRProof prProof = status.getProof();
 		final boolean broken;
 		if (prProof.exists()) {
@@ -201,7 +211,9 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 		// status.setProofConfidence(null);
 		status.copyProofInfo(null);
-		status.copyStamps(null);
+		if (poSequent.hasPOStamp()) {
+			status.setPOStamp(poSequent.getPOStamp(), null);
+		}
 		status.setBroken(broken, null);
 	}
 	
