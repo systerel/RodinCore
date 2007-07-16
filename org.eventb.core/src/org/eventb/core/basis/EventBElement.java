@@ -134,6 +134,10 @@ public abstract class EventBElement extends InternalElement {
 		setAttributeValue(EventBAttributes.ACCURACY_ATTRIBUTE, accurate, monitor);
 	}
 	
+	public boolean hasPOStamp() throws RodinDBException {
+		return hasAttribute(EventBAttributes.POSTAMP_ATTRIBUTE);
+	}
+	
 	public long getPOStamp() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.POSTAMP_ATTRIBUTE);
 	}

@@ -60,6 +60,15 @@ public interface IPOStampedElement {
 	void setPOStamp(long stamp, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
+	 * Tells whether this element is stamped.
+	 * 
+	 * @return <code>true</code> iff this element has a stamp
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	boolean hasPOStamp() throws RodinDBException;
+
+	/**
 	 * Returns the stamp of this element.
 	 * 
 	 * @return the stamp of this element
