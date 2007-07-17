@@ -403,7 +403,12 @@ public class EventBImage {
 		
 		int F_INACCURATE = 0x00002;
 		
+		int F_REVIEWED_BROKEN = 0x00004;
+		
+		int F_DISCHARGED_BROKEN = 0x00008;
+
 		int confidence;
+		
 		try {
 			confidence = status.getConfidence();
 		} catch (RodinDBException e) {
@@ -417,11 +422,13 @@ public class EventBImage {
 			return null;
 		}
 
+		int overlay = 0;
+
 		boolean isAttempted = confidence > IConfidence.UNATTEMPTED;
 		if (!isAttempted)
 			base_path = IEventBSharedImages.IMG_PENDING_PATH;
 		else {
-			boolean isProofBroken;
+			boolean isProofBroken = false;
 			try {
 				isProofBroken = status.isBroken();
 			} catch (RodinDBException e) {
@@ -435,12 +442,14 @@ public class EventBImage {
 				return null;
 			}
 			if (isProofBroken) {
-				if (confidence == IConfidence.PENDING)
-					base_path = IEventBSharedImages.IMG_PENDING_BROKEN_PATH;
+				if (confidence == IConfidence.PENDING) {
+					// Do nothing
+				}
 				else if (confidence <= IConfidence.REVIEWED_MAX)
-					base_path = IEventBSharedImages.IMG_REVIEWED_BROKEN_PATH;
+					overlay = overlay | F_REVIEWED_BROKEN;
 				else if (confidence <= IConfidence.DISCHARGED_MAX)
-					base_path = IEventBSharedImages.IMG_DISCHARGED_BROKEN_PATH;
+					overlay = overlay | F_DISCHARGED_BROKEN;
+				base_path = IEventBSharedImages.IMG_PENDING_PATH;
 			} else {
 				if (confidence == IConfidence.PENDING)
 					base_path = IEventBSharedImages.IMG_PENDING_PATH;
@@ -450,8 +459,6 @@ public class EventBImage {
 					base_path = IEventBSharedImages.IMG_DISCHARGED_PATH;
 			}
 		}
-
-		int overlay = 0;
 
 		boolean isAutomatic = false;
 		try {
@@ -497,6 +504,14 @@ public class EventBImage {
 			if ((overlay & F_INACCURATE) != 0)
 				icon
 						.addBottomLeft(getImageDescriptor(IEventBSharedImages.IMG_WARNING_OVERLAY_PATH));
+			if ((overlay & F_REVIEWED_BROKEN) != 0) {
+				icon
+						.addBottomRight(getImageDescriptor(IEventBSharedImages.IMG_REVIEWED_OVERLAY_PATH));
+			}
+			if ((overlay & F_DISCHARGED_BROKEN) != 0) {
+				icon
+						.addBottomRight(getImageDescriptor(IEventBSharedImages.IMG_DISCHARGED_OVERLAY_PATH));
+			}
 			image = icon.createImage();
 			registry.put(key, image);
 		}
