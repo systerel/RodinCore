@@ -38,6 +38,10 @@ public abstract class AbstractTranslationTests extends TestCase {
 		return ff.makeRelationalType(left, right);
 	}
 
+	protected static Type mGivenSet(String name) {
+		return ff.makeGivenType(name);
+	}
+
 	public static Predicate parse(String string, ITypeEnvironment te) {
 		IParseResult parseResult = ff.parsePredicate(string);
 		assertTrue("Parse error for: " + string +
