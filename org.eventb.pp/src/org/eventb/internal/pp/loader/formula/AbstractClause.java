@@ -6,7 +6,6 @@ import java.util.List;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
-import org.eventb.internal.pp.loader.clause.LabelManager;
 import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.IndexedDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
@@ -14,9 +13,9 @@ import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 
 public abstract class AbstractClause<T extends IndexedDescriptor> extends AbstractLabelizableFormula<T> {
 
-	protected List<ISignedFormula> children;
+	protected List<SignedFormula<?>> children;
 	
-	public AbstractClause(List<ISignedFormula> children,
+	public AbstractClause(List<SignedFormula<?>> children,
 			List<TermSignature> terms, T descriptor) {
 		super(terms,descriptor);
 		this.children = children;
@@ -30,33 +29,24 @@ public abstract class AbstractClause<T extends IndexedDescriptor> extends Abstra
 	@Override
 	public String getStringDeps() {
 		StringBuffer str = new StringBuffer();
-		for (ISignedFormula child : children) {
+		for (SignedFormula<?> child : children) {
 			str.append("["+child.toString()+"] ");
 		}
 		return str.toString();
 	}
 	
-	public List<ISignedFormula> getChildren() {
+	public List<SignedFormula<?>> getChildren() {
 		return children;
 	}
 	
-	public abstract boolean isEquivalence();
-	
 	@Override
-	protected boolean isLabelizable(LabelManager manager, TermVisitorContext context) {
-		return ( /*descriptor.getResults().size() > 1 
-			|| */ (context.isQuantified?!context.isForall:false)
-			|| (context.isEquivalence?!isEquivalence():isEquivalence())
-			|| (manager.isGettingDefinitions() && context.isQuantified)
-		);
-	}
-	
-	public Literal<?,?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+	Literal<?,?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
 		return getLiteral(descriptor.getIndex(), terms, context, table);
 	}
 	
-	public void split() {
-		for (ISignedFormula child : children) {
+	@Override
+	final void split() {
+		for (SignedFormula<?> child : children) {
 			child.split();
 		}
 		List<IIntermediateResult> result = new ArrayList<IIntermediateResult>(getLiteralDescriptor().getResults());
@@ -71,7 +61,7 @@ public abstract class AbstractClause<T extends IndexedDescriptor> extends Abstra
 		descriptor = getNewDescriptor(result, descriptor.getIndex());	
 	}
 	
-	protected abstract T getNewDescriptor(List<IIntermediateResult> result, int index);
+	abstract T getNewDescriptor(List<IIntermediateResult> result, int index);
 	
 	private boolean contains(IIntermediateResult original, List<IIntermediateResult> child, int position) {
 		for (IIntermediateResult result : child) {
@@ -80,7 +70,19 @@ public abstract class AbstractClause<T extends IndexedDescriptor> extends Abstra
 		return false;
 	}
 	
-	public TermVisitorContext getNewContext(TermVisitorContext context) {
+	@Override
+	String toTreeForm(String prefix) {
+		StringBuilder str = new StringBuilder();
+		str.append(toString()+getTerms()+"\n");
+		for (SignedFormula<?> child : children) {
+			str.append(child.toTreeForm(prefix+" ")+"\n");
+		}
+		str.deleteCharAt(str.length()-1);
+		return str.toString();
+	}
+	
+	@Override
+	TermVisitorContext getNewContext(TermVisitorContext context) {
 		TermVisitorContext newContext = new TermVisitorContext(context.isEquivalence);
 		
 		newContext.isQuantified = false;
@@ -88,16 +90,6 @@ public abstract class AbstractClause<T extends IndexedDescriptor> extends Abstra
 		
 		return newContext;
 	}
-	
-	
-	public String toTreeForm(String prefix) {
-		StringBuilder str = new StringBuilder();
-		str.append(toString()+getTerms()+"\n");
-		for (ISignedFormula child : children) {
-			str.append(child.toTreeForm(prefix+" ")+"\n");
-		}
-		str.deleteCharAt(str.length()-1);
-		return str.toString();
-	}
+
 
 }

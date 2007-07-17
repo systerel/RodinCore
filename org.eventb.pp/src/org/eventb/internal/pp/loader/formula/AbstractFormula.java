@@ -26,139 +26,118 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
 /**
  * Abstract class for formulas that have a term index.
- *
+ * 
  * @author François Terrier
  */
-public abstract class AbstractFormula<T extends LiteralDescriptor> implements ISubFormula<T> {
+public abstract class AbstractFormula<T extends LiteralDescriptor> {
+
+	protected List<TermSignature> terms;
+	protected T descriptor;
 
 	public int getIndexSize() {
 		return descriptor.getResults().get(0).getTerms().size();
 	}
 
-//	/**
-//	 * Returns the factored term list of this literal, 
-//	 * 
-//	 * Precondition to this method is that the term list passed as a parameter must
-//	 * correspond to the index list of this signature, i.e. if two indexes are equal in
-//	 * the index list, the two corresponding terms are equal in the term list.
-//	 * @param indexList TODO
-//	 * @param termList
-//	 * @param indexList
-//	 * 
-//	 * @return 
-//	 */
-//	protected static List<Term> getSimplifiedTerms(List<Index> indexList, List<Term> termList) {
-//		HashSet<Index> set = new HashSet<Index>();
-//		List<Term> result = new ArrayList<Term>();
-//		for (int i = 0; i < indexList.size(); i++) {
-//			Index key = indexList.get(i);
-//			if (!(key instanceof ConstantIndex) && !set.contains(key)) {
-//				set.add(key);
-//				result.add(termList.get(i));
-//			}
-//		}
-//		return result;
-//	}
-	
-	protected List<TermSignature> terms;
-	protected T descriptor;
-	
 	public AbstractFormula(List<TermSignature> terms, T descriptor) {
 		this.descriptor = descriptor;
 		this.terms = terms;
 	}
-	
-//	@Deprecated
-//	public AbstractFormula(List<TermSignature> terms, T descriptor) {
-//		this.descriptor = descriptor;
-//		this.terms = terms;
-//	}
 
 	public T getLiteralDescriptor() {
 		return descriptor;
 	}
-	
+
 	public List<TermSignature> getTerms() {
 		return terms;
 	}
 	
-	protected Literal<?,?> getLiteral(int index, List<TermSignature> terms,
+	abstract boolean getContextAndSetLabels(LabelVisitor context,
+			LabelManager manager);
+	
+	
+	final Literal<?, ?> getLiteral(int index, List<TermSignature> terms,
 			TermVisitorContext context, VariableTable table) {
 		List<TermSignature> newList = descriptor.getSimplifiedList(terms);
-		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Simplified term list for "+this+" is: "+newList);
-		Literal<?,?> result;
+		if (ClauseBuilder.DEBUG)
+			ClauseBuilder.debug("Simplified term list for " + this + " is: " + newList);
+		Literal<?, ?> result;
 		if (newList.size() == 0) {
-			result = new AtomicPredicateLiteral(new PredicateDescriptor(index, context.isPositive));
+			result = new AtomicPredicateLiteral(new PredicateDescriptor(index, 
+					context.isPositive));
 		} else {
 			List<Term> newTerms = getTermsFromTermSignature(newList, context, table);
-			result = new ComplexPredicateLiteral(new PredicateDescriptor(index, context.isPositive), getSimpleTermsFromTerms(newTerms));
+			result = new ComplexPredicateLiteral(new PredicateDescriptor(index, 
+					context.isPositive), getSimpleTermsFromTerms(newTerms));
 		}
-		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Creating literal from "+this+": "+result);
+		if (ClauseBuilder.DEBUG)
+			ClauseBuilder.debug("Creating literal from " + this + ": " + result);
 		return result;
 	}
-	
-	private List<SimpleTerm> getSimpleTermsFromTerms(List<Term> terms) {
+
+	final List<SimpleTerm> getSimpleTermsFromTerms(List<Term> terms) {
 		// TODO find how to remove this ugly code
 		List<SimpleTerm> result = new ArrayList<SimpleTerm>();
 		for (Term term : terms) {
-			result.add((SimpleTerm)term);
+			result.add((SimpleTerm) term);
 		}
 		return result;
 	}
-	
-	protected List<Term> getTermsFromTermSignature(List<TermSignature> termList, TermVisitorContext context, VariableTable table) {
+
+	final List<Term> getTermsFromTermSignature(
+			List<TermSignature> termList, TermVisitorContext context,
+			VariableTable table) {
 		// transform the terms
-//		table.pushTable();
 		List<Term> terms = new ArrayList<Term>();
 		for (TermSignature term : termList) {
 			terms.add(term.getTerm(table, context));
 		}
-//		table.popTable();
 		return terms;
 	}
-	
-	public List<List<Literal<?,?>>> getClauses(List<TermSignature> terms, LabelManager manager, VariableTable table, TermVisitorContext flags, BooleanEqualityTable bool) {
-		List<List<Literal<?,?>>> result = new ArrayList<List<Literal<?,?>>>();
-		result.add(new ArrayList<Literal<?,?>>());
-		return getClauses(terms, manager, result, flags, table, bool);
+
+	abstract List<List<Literal<?, ?>>> getClauses(
+			List<TermSignature> termList, LabelManager manager,
+			List<List<Literal<?, ?>>> prefix, TermVisitorContext flags,
+			VariableTable table, BooleanEqualityTable bool);
+
+	abstract Literal<?, ?> getLiteral(List<TermSignature> terms,
+			TermVisitorContext flags, VariableTable table /* , context */,
+			BooleanEqualityTable bool);
+
+	abstract void split();
+
+	/**
+	 * Returns the string representation of the dependencies of this signature.
+	 * Used by the {@link Object#toString()} method.
+	 * 
+	 * @return the string representation of the dependencies of this signature
+	 */
+	public String getStringDeps() {
+		return "";
 	}
-	
-    /**
-     * Returns the string representation of the dependencies of this
-     * signature. Used by the {@link Object#toString()} method.
-     *
-     * @return the string representation of the dependencies of this
-     * signature
-     */
-    public String getStringDeps() {
-    	return "";
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-    	if (obj instanceof AbstractFormula) {
-    		AbstractFormula<?> temp = (AbstractFormula<?>)obj;
-    		return descriptor.equals(temp.descriptor);
-    	}
-    	return false;
-    }
-    
-    // terms are not taken into account for the computation of the hashcode and
-    // for the equals method. This is because AbstractFormulas are used in ClauseKey
-    // for the clause hash key, which does must not take terms into account
-    @Override
-    public int hashCode() {
-    	return descriptor.hashCode();
-    }
 
-    @Override 
-    public String toString() {
-    	return descriptor.toString();
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof AbstractFormula) {
+			AbstractFormula<?> temp = (AbstractFormula<?>) obj;
+			return descriptor.equals(temp.descriptor);
+		}
+		return false;
+	}
 
-//    private PredicateFormula originalPredicate;
-//    public PredicateFormula getOriginalPredicate() {
-//    	return originalPredicate;
-//    }
-    
+	// terms are not taken into account for the computation of the hashcode and
+	// for the equals method. This is because AbstractFormulas are used in
+	// ClauseKey
+	// for the clause hash key, which does must not take terms into account
+	@Override
+	public int hashCode() {
+		return descriptor.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return descriptor.toString();
+	}
+
+	abstract String toTreeForm(String prefix);
+
 }

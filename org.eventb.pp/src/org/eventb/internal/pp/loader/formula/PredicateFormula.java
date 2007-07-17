@@ -22,12 +22,14 @@ public class PredicateFormula extends AbstractSingleFormula<PredicateDescriptor>
 		super(terms,descriptor);
 	}
 	 
-	public Literal<?,?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+	@Override
+	Literal<?,?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
 		Literal<?,?> result = getLiteral(descriptor.getIndex(), terms, context, table);
         return result;
 	}
 
-	public boolean hasEquivalenceFirst() {
-		return false;
+	@Override
+	void split() {
+		return;
 	}
 }

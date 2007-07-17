@@ -10,17 +10,17 @@ import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
-public abstract class AbstractSingleFormula<T extends LiteralDescriptor>
-		extends AbstractFormula<T> {
+public abstract class AbstractSingleFormula<T extends LiteralDescriptor> extends AbstractFormula<T> {
+
 
 	public AbstractSingleFormula(List<TermSignature> terms, T descriptor) {
 		super(terms, descriptor);
 	}
 
-	public List<List<Literal<?,?>>> getClauses(List<TermSignature> termList,
+	@Override
+	List<List<Literal<?,?>>> getClauses(List<TermSignature> termList,
 			LabelManager manager, List<List<Literal<?,?>>> prefix,
-			TermVisitorContext flags, VariableTable table,
-			BooleanEqualityTable bool) {
+			TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
 		ClauseBuilder.debugEnter(this);
 		Literal<?,?> literal = getLiteral(termList, flags, table, bool);
 		for (List<Literal<?,?>> list : prefix) {
@@ -30,16 +30,14 @@ public abstract class AbstractSingleFormula<T extends LiteralDescriptor>
 		return prefix;
 	}
 
-	public void split() {
-		return;
-	}
-
-	public TermVisitorContext getNewContext(TermVisitorContext context) {
-		return context;
-	}
-
-	public String toTreeForm(String prefix) {
+	@Override
+	String toTreeForm(String prefix) {
 		return toString() + getTerms().toString();
 	}
 
+	@Override
+	protected boolean getContextAndSetLabels(LabelVisitor context, LabelManager manager) {
+		return false;
+	}
+	
 }

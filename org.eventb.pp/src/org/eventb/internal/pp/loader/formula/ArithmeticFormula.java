@@ -58,7 +58,8 @@ public class ArithmeticFormula extends AbstractSingleFormula<ArithmeticDescripto
 		return result;
 	}
 
-	public Literal<?,?> getLiteral(List<TermSignature> termList, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
+	@Override
+	Literal<?,?> getLiteral(List<TermSignature> termList, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
 		List<TermSignature> newTerms = transform(termList);
 		List<Term> terms = getTermsFromTermSignature(newTerms, flags, table);
 		// normalize terms here
@@ -76,8 +77,9 @@ public class ArithmeticFormula extends AbstractSingleFormula<ArithmeticDescripto
 		}
 	}
 
-	public boolean hasEquivalenceFirst() {
-		return false;
+	@Override
+	void split() {
+		return;
 	}
 
 }

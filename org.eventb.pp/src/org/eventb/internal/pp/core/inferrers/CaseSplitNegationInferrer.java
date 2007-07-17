@@ -64,17 +64,17 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 	private void splitLeftCase() {
 		// warning, both cases must have distinct variables
 		// for now if we do not split on variables it is no problem
-		if (hasConstantPredicate(predicates)) {
+		if (hasConstantLiteral(predicates)) {
 			PredicateLiteral literal = getConstantLiteral(predicates);
 			leftPredicates.add(literal);
 			rightPredicates.add(inverseLiteral(literal));
 		}
-		else if (hasConstantPredicate(equalities)) {
+		else if (hasConstantLiteral(equalities)) {
 			EqualityLiteral literal = getConstantLiteral(equalities);
 			leftEqualities.add(literal);
 			rightEqualities.add(inverseLiteral(literal));
 		}
-		else if (hasConstantPredicate(arithmetic)) {
+		else if (hasConstantLiteral(arithmetic)) {
 			ArithmeticLiteral literal = getConstantLiteral(arithmetic);
 			leftArithmetic.add(literal);
 			rightArithmetic.add(inverseLiteral(literal));
@@ -164,24 +164,21 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 		}
 		
 //		if (clause.getOrigin().getLevel().getHeight()>2) return false;
-		
 //		if (clause.getArithmeticLiterals().size()+clause.getEqualityLiterals().size()+clause.getPredicateLiterals().size()>2) return false;
 //		if (!clause.getOrigin().dependsOnGoal()) return false;
 		
-		if (!(	hasConstantPredicate(clause.getPredicateLiterals())
-				|| hasConstantPredicate(clause.getArithmeticLiterals())
-				|| hasConstantPredicate(clause.getEqualityLiterals()))
+		if (!(	hasConstantLiteral(clause.getPredicateLiterals())
+				|| hasConstantLiteral(clause.getArithmeticLiterals())
+				|| hasConstantLiteral(clause.getEqualityLiterals()))
 		) return false;
 		return true;
 	}
 	
-	private boolean hasConstantPredicate(List<? extends Literal<?,?>> literals) {
+	private boolean hasConstantLiteral(List<? extends Literal<?,?>> literals) {
 		for (Literal<?,?> literal : literals) {
 			if (literal.isConstant()) return true;
 		}
 		return false;
 	}
 	
-
-
 }

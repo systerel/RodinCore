@@ -4,10 +4,10 @@ package org.eventb.internal.pp.loader.formula;
 public class TermVisitorContext {
 
 	// set before starting visiting
-	public final boolean isEquivalence;
+	public boolean isEquivalence;
 	
-	public TermVisitorContext(boolean equivalence) {
-		this.isEquivalence = equivalence;
+	TermVisitorContext(boolean isEquivalence) {
+		this.isEquivalence = isEquivalence;
 	}
 	
 	// set before and changed during visiting
@@ -18,5 +18,4 @@ public class TermVisitorContext {
 	public boolean isForall = true;
 	public int startOffset;
 	public int endOffset;
-	
 }

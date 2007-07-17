@@ -26,13 +26,12 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.loader.formula.AbstractClause;
+import org.eventb.internal.pp.loader.formula.AbstractFormula;
 import org.eventb.internal.pp.loader.formula.ArithmeticFormula;
 import org.eventb.internal.pp.loader.formula.BooleanEqualityFormula;
 import org.eventb.internal.pp.loader.formula.DisjunctiveClause;
 import org.eventb.internal.pp.loader.formula.EqualityFormula;
 import org.eventb.internal.pp.loader.formula.EquivalenceClause;
-import org.eventb.internal.pp.loader.formula.ISignedFormula;
-import org.eventb.internal.pp.loader.formula.ISubFormula;
 import org.eventb.internal.pp.loader.formula.PredicateFormula;
 import org.eventb.internal.pp.loader.formula.QuantifiedFormula;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
@@ -352,7 +351,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		SymbolKey<EqualityDescriptor> key = new EqualityKey(sort);
 		EqualityDescriptor desc = updateDescriptor(key, context.getEqualityTable(), inRes, "equality");
 		
-		ISubFormula<EqualityDescriptor> sig;
+		AbstractFormula<EqualityDescriptor> sig;
 		if (sort.equals(Sort.BOOLEAN)) {
 			sig = new BooleanEqualityFormula(inRes.getTerms(), desc);
 		}
@@ -431,7 +430,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 			// the key is created, ensuring a correct factorization
 			res.reduceNegations();
 		}
-		List<ISignedFormula> literals = res.getLiterals();
+		List<SignedFormula<?>> literals = res.getLiterals();
 		IIntermediateResult iRes = res.getNewIntermediateResult();
 		
 		AbstractClause<?> sig;
@@ -447,7 +446,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 
 		// we create the new signature
 		@SuppressWarnings("unchecked")
-		SignedFormula lit = new SignedFormula(sig,res.isPositive());
+		SignedFormula<?> lit = new SignedFormula(sig,res.isPositive());
 		
 		// we append the new literal to the result before
 		result.peek().addResult(lit, iRes);
@@ -584,7 +583,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		context.decrementQuantifierOffset(pred.getBoundIdentDecls().length);
 		
 		NormalizedFormula res = result.pop();
-		ISignedFormula quantified = res.getLiterals().get(0);
+		SignedFormula<?> quantified = res.getLiterals().get(0);
 		
 		List<TermSignature> quantifiedTerms = new ArrayList<TermSignature>();		
 		List<TermSignature> unquantifiedTerms = getUnquantifiedTerms(res.getTerms(), quantifiedTerms, res.getStartOffset(), res.getEndOffset());

@@ -28,7 +28,7 @@ public class BooleanEqualityFormula extends EqualityFormula {
 	}
 	
 	@Override
-	public void split() {
+	void split() {
 		List<IIntermediateResult> result = new ArrayList<IIntermediateResult>();
 		for (IIntermediateResult res : getLiteralDescriptor().getResults()) {
 			if (contains(res.getTerms(), getTerms().get(0)) ||
@@ -49,7 +49,7 @@ public class BooleanEqualityFormula extends EqualityFormula {
 	}
 	
 	@Override
-	public Literal<?,?> getLiteral(List<TermSignature> termList, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+	Literal<?,?> getLiteral(List<TermSignature> termList, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
 		List<TermSignature> newList = descriptor.getUnifiedResults();
 		Literal<?,?> result;
 		if (newList.get(1) instanceof TrueConstantSignature) {

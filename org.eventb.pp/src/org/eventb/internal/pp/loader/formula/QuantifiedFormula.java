@@ -9,12 +9,8 @@
 package org.eventb.internal.pp.loader.formula;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
@@ -25,12 +21,12 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
 public class QuantifiedFormula extends AbstractLabelizableFormula<QuantifiedDescriptor> {
 	private boolean isForall;
-	private ISignedFormula child;
+	private SignedFormula<?> child;
 	private List<TermSignature> definingTerms;
 	private int startOffset, endOffset;
 	
 	public QuantifiedFormula (boolean isForall, 
-			ISignedFormula child, List<TermSignature> definingTerms, List<TermSignature> instanceTerms,
+			SignedFormula<?> child, List<TermSignature> definingTerms, List<TermSignature> instanceTerms,
 			QuantifiedDescriptor descriptor,
 			int startOffset, int endOffset) {
 		super (instanceTerms, descriptor);
@@ -40,7 +36,6 @@ public class QuantifiedFormula extends AbstractLabelizableFormula<QuantifiedDesc
 		this.startOffset = startOffset;
 		this.endOffset = endOffset;
 	}
-	
 	
 	public boolean isForall() {
 		return isForall;
@@ -78,12 +73,7 @@ public class QuantifiedFormula extends AbstractLabelizableFormula<QuantifiedDesc
 	}
 
 	@Override
-	protected boolean isLabelizable(LabelManager manager, TermVisitorContext context) {
-		return (context.isQuantified?!context.isForall:false)
-			|| (manager.isGettingDefinitions()&&context.isQuantified);
-	}
-
-	public List<List<Literal<?,?>>> getDefinitionClauses(List<TermSignature> termList, LabelManager manager, List<List<Literal<?,?>>> prefix, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+	List<List<Literal<?,?>>> getDefinitionClauses(List<TermSignature> termList, LabelManager manager, List<List<Literal<?,?>>> prefix, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
 //		TermVisitorContext newContext = new TermVisitorContext();
 //		
 //		newContext.isForall = context.isPositive?isForall:!isForall;
@@ -98,29 +88,87 @@ public class QuantifiedFormula extends AbstractLabelizableFormula<QuantifiedDesc
 		return child.getClauses(quantifiedTermList, manager, prefix, table, context, bool);
 	}
 	
-	public Literal<?,?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+	@Override
+	Literal<?,?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
 		Literal<?,?> result = getLiteral(descriptor.getIndex(), terms, context, table);
 		return result;
 	}
 	
-
-	public void getFinalClauses(Collection<Clause> clauses, LabelManager manager, ClauseFactory factory, BooleanEqualityTable bool, VariableTable table, IVariableContext variableContext, boolean positive) {
+	@Override
+	public ClauseResult getFinalClauses(LabelManager manager, BooleanEqualityTable bool, VariableTable table, boolean positive, boolean equivalence) {
 		if (positive) {
 			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("----------------");
 			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Positive definition:");
-			getFinalClausesHelper(manager, clauses, factory, false, true, bool, table, variableContext);
+			return getFinalClausesHelper(manager, false, true, equivalence, bool, table);
 		} else {
 			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("----------------");
 			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Negative definition:");
-			getFinalClausesHelper(manager, clauses, factory, true, false, bool, table, variableContext);
+			return getFinalClausesHelper(manager, true, false, equivalence, bool, table);
 		}
 	}
 
-	public void split() {
+	@Override
+	void split() {
 		child.split();
 	}
 
-	public TermVisitorContext getNewContext(TermVisitorContext context) {
+	private boolean isLabelizable(LabelVisitor context) {
+		if (context.isQuantified) {
+			if (!context.isForall) return true;
+			else if (context.isNegativeLabel || context.isPositiveLabel) return true;
+		}
+		return false;
+	}
+	
+	@Override
+	boolean getContextAndSetLabels(LabelVisitor context, LabelManager manager) {
+		LabelVisitor newContext = new LabelVisitor();
+		if (isLabelizable(context)) {
+			if (context.isPositiveLabel || context.equivalenceCount > 0) manager.addLabel(this, context.isPositive);
+			if (context.isNegativeLabel || context.equivalenceCount > 0) manager.addLabel(this, !context.isPositive);
+			if (!context.isPositiveLabel && !context.isNegativeLabel && context.equivalenceCount == 0) manager.addLabel(this, context.isPositive);
+			
+			// this becomes a label
+			// we construct labels below
+			if (context.equivalenceCount > 0) {
+				newContext.isNegativeLabel = true;
+				newContext.isPositiveLabel = true;
+			}
+			else {
+				if (context.isPositive) {
+					newContext.isPositiveLabel = true;
+					newContext.isNegativeLabel = context.isNegativeLabel;
+				}
+				else {
+					newContext.isNegativeLabel = true;
+					newContext.isPositiveLabel = context.isNegativeLabel;
+				}
+			}
+		}
+		newContext.isPositive = context.isPositive;
+		
+		newContext.isDisjunction = context.isDisjunction;
+		newContext.isQuantified = true;
+		newContext.equivalenceCount = context.equivalenceCount;
+		newContext.isForall = context.isPositive?isForall:!isForall;
+		return child.getContextAndSetLabels(newContext, manager);
+	}
+	
+	@Override
+	String toTreeForm(String prefix) {
+		StringBuilder str = new StringBuilder();
+		str.append(toString()+definingTerms.toString()+getTerms().toString()+"\n");
+		str.append(child.toTreeForm(prefix+"  "));
+		return str.toString();
+	}
+
+	void switchSign() {
+		this.isForall = !this.isForall;
+		child.switchSign();
+	}
+	
+	@Override
+	TermVisitorContext getNewContext(TermVisitorContext context) {
 		TermVisitorContext newContext = new TermVisitorContext(context.isEquivalence);
 		
 		newContext.isForall = context.isPositive?isForall:!isForall;
@@ -137,22 +185,5 @@ public class QuantifiedFormula extends AbstractLabelizableFormula<QuantifiedDesc
 //		context.quantifierOffset = lastQuantifiedOffset;
 	}
 
-	
-	public String toTreeForm(String prefix) {
-		StringBuilder str = new StringBuilder();
-		str.append(toString()+definingTerms.toString()+getTerms().toString()+"\n");
-		str.append(child.toTreeForm(prefix+"  "));
-		return str.toString();
-	}
-
-
-	public boolean isEquivalence() {
-		return false;
-	}
-
-
-	public boolean hasEquivalenceFirst() {
-		return child.hasEquivalenceFirst();
-	}
 
 }

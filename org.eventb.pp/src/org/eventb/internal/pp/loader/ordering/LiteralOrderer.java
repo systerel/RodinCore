@@ -5,13 +5,13 @@ import java.util.Comparator;
 import org.eventb.internal.pp.loader.formula.AbstractClause;
 import org.eventb.internal.pp.loader.formula.ArithmeticFormula;
 import org.eventb.internal.pp.loader.formula.EqualityFormula;
-import org.eventb.internal.pp.loader.formula.ISignedFormula;
 import org.eventb.internal.pp.loader.formula.PredicateFormula;
 import org.eventb.internal.pp.loader.formula.QuantifiedFormula;
+import org.eventb.internal.pp.loader.formula.SignedFormula;
 
-public class LiteralOrderer implements Comparator<ISignedFormula> {
+public class LiteralOrderer implements Comparator<SignedFormula<?>> {
 
-	public int compare(ISignedFormula o1, ISignedFormula o2) {
+	public int compare(SignedFormula<?> o1, SignedFormula<?> o2) {
 //		if (o1.equals(o2)) return 0;
 			
 //		System.out.println(o1.getFormula().getClass());
@@ -69,8 +69,10 @@ public class LiteralOrderer implements Comparator<ISignedFormula> {
 		if (o2.getFormula() instanceof QuantifiedFormula) return 1;
 		
 //		assert o1 instanceof QuantifiedFormula && o2 instanceof QuantifiedFormula;
-		return compare((ISignedFormula)o1.getFormula(), (ISignedFormula)o2.getFormula());
-		
+//		return compare((SignedFormula)(o1.getFormula()), (SignedFormula)(o2.getFormula()));
+		// TODO
+		assert false;
+		return 0;
 	}
 	
 	private int compare(QuantifiedFormula p1, QuantifiedFormula p2, int sign) {

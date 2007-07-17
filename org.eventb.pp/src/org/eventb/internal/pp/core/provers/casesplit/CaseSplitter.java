@@ -72,7 +72,7 @@ public class CaseSplitter implements IProver {
 			dispatcher.nextLevel();
 			result = nextCase();
 		}
-		if (DEBUG) debug("CaseSplitter, next clause: "+result);
+//		if (DEBUG) debug("CaseSplitter, next clause: "+result);
 		
 		result = simplifier.run(result);
 		

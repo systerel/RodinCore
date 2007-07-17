@@ -35,13 +35,13 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
  */
 public class EqualityFormula extends AbstractSingleFormula<EqualityDescriptor> {
 
-	
 	public EqualityFormula(List<TermSignature> terms,
 			EqualityDescriptor descriptor) {
 		super(terms,descriptor);
 	}
 
-	public Literal<?,?> getLiteral(List<TermSignature> termList, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
+	@Override
+	Literal<?,?> getLiteral(List<TermSignature> termList, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
 		assert termList.size() == 2;
 		// TODO check those casts - eventually issue an exception
 		List<Term> terms = getTermsFromTermSignature(termList, flags, table);
@@ -53,7 +53,9 @@ public class EqualityFormula extends AbstractSingleFormula<EqualityDescriptor> {
 		return result;
 	}
 
-	public boolean hasEquivalenceFirst() {
-		return false;
+	@Override
+	void split() {
+		return;
 	}
+
 }

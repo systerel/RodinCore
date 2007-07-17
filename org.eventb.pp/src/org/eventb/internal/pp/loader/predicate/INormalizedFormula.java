@@ -11,7 +11,7 @@ package org.eventb.internal.pp.loader.predicate;
 import java.util.List;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.internal.pp.loader.formula.ISignedFormula;
+import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
 /**
@@ -27,7 +27,7 @@ public interface INormalizedFormula {
 	 * 
 	 * @return the signature of this formula
 	 */
-	public ISignedFormula getSignature();
+	public SignedFormula<?> getSignature();
 	
 	/**
 	 * Returns the list of terms appearing in this formula.

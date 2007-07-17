@@ -10,44 +10,51 @@ package org.eventb.internal.pp.loader.clause;
 
 import java.util.LinkedHashSet;
 
-import org.eventb.internal.pp.loader.formula.ILabelizableFormula;
+import org.eventb.internal.pp.loader.formula.AbstractLabelizableFormula;
 
 public class LabelManager {
 
-	private boolean gettingDefinitions = false;
-	private LinkedHashSet<ILabelizableFormula<?>> toLabelizeNeg = new LinkedHashSet<ILabelizableFormula<?>>();
-	private LinkedHashSet<ILabelizableFormula<?>> toLabelizePos = new LinkedHashSet<ILabelizableFormula<?>>();
-	private LinkedHashSet<ILabelizableFormula<?>> toLabelizeEq = new LinkedHashSet<ILabelizableFormula<?>>();
+//	private boolean gettingDefinitions = false;
+	private LinkedHashSet<AbstractLabelizableFormula<?>> toLabelizeNeg = new LinkedHashSet<AbstractLabelizableFormula<?>>();
+	private LinkedHashSet<AbstractLabelizableFormula<?>> toLabelizePos = new LinkedHashSet<AbstractLabelizableFormula<?>>();
+	private LinkedHashSet<AbstractLabelizableFormula<?>> toLabelizeEq = new LinkedHashSet<AbstractLabelizableFormula<?>>();
 	
 	public LabelManager() {
 		// do nothing
 	}
 	
-	public void addLabel(ILabelizableFormula<?> formula, boolean pos) {
+	public void addLabel(AbstractLabelizableFormula<?> formula, boolean pos) {
 		if (pos) addLabel(formula, toLabelizePos);
 		else addLabel(formula, toLabelizeNeg);
 	}
 	
-	public void addEquivalenceLabel(ILabelizableFormula<?> formula) {
+	public void addEquivalenceLabel(AbstractLabelizableFormula<?> formula) {
 		addLabel(formula, toLabelizeEq);
 	}
 	
-	private void addLabel(ILabelizableFormula<?> formula, LinkedHashSet<ILabelizableFormula<?>> set) {
+	private void addLabel(AbstractLabelizableFormula<?> formula, LinkedHashSet<AbstractLabelizableFormula<?>> set) {
 		if (!set.contains(formula)) {
 			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Adding "+formula+" to list of clauses that must be labelized");
 			set.add(formula);
 		}
+	}
+	
+	public boolean hasLabel(AbstractLabelizableFormula<?> formula) {
+		return toLabelizeEq.contains(formula) 
+			|| toLabelizePos.contains(formula) 
+			|| toLabelizeNeg.contains(formula);
 	}
 
 	private int currentIndexPos = 0;
 	private int currentIndexNeg = 0;
 	private int currentIndexEq = 0;
 	
-	private ILabelizableFormula<?> nextFormula;
+	private AbstractLabelizableFormula<?> nextFormula;
 	private boolean isNextPositive;
-//	private boolean isNextEquivalence;
+	private boolean isNextEquivalence;
 	public void nextLabelizableFormula() {
 		nextFormula = null;
+		isNextEquivalence = false;
 		if (currentIndexPos != toLabelizePos.size()) {
 			nextFormula = getLabelizableFormula(toLabelizePos, currentIndexPos);
 			currentIndexPos++;
@@ -61,39 +68,40 @@ public class LabelManager {
 		else if (currentIndexEq != toLabelizeEq.size()) {
 			nextFormula = getLabelizableFormula(toLabelizeEq, currentIndexEq);
 			currentIndexEq++;
+			isNextEquivalence = true;
 		}
 	}
 	
-	public ILabelizableFormula<?> getNextFormula() {
+	public AbstractLabelizableFormula<?> getNextFormula() {
 		return nextFormula;
 	}
 	
-//	public boolean isNextEquivalence() {
-//		return isNextEquivalence;
-//	}
+	public boolean isNextEquivalence() {
+		return isNextEquivalence;
+	}
 	
 	public boolean isNextPositive() {
 		return isNextPositive;
 	}
 	
-	private ILabelizableFormula<?> getLabelizableFormula(LinkedHashSet<ILabelizableFormula<?>> set, int index) {
-		return set.toArray(new ILabelizableFormula[set.size()])[index];
+	private AbstractLabelizableFormula<?> getLabelizableFormula(LinkedHashSet<AbstractLabelizableFormula<?>> set, int index) {
+		return set.toArray(new AbstractLabelizableFormula[set.size()])[index];
 	}
 	
-	public boolean isGettingDefinitions() {
-		return gettingDefinitions;
-	}
+//	public boolean isGettingDefinitions() {
+//		return gettingDefinitions;
+//	}
 	
-	/**
-	 * Sets the value of the "getting definitions" flag.
-	 * 
-	 * This flag should be set to <code>true</code> when the normalizer
-	 * is getting the definition of a formula.
-	 * 
-	 * @param gettingDefinitions the new value for the flag
-	 */
-	public void setGettingDefinitions(boolean gettingDefinitions) {
-		this.gettingDefinitions = gettingDefinitions;
-	}
+//	/**
+//	 * Sets the value of the "getting definitions" flag.
+//	 * 
+//	 * This flag should be set to <code>true</code> when the normalizer
+//	 * is getting the definition of a formula.
+//	 * 
+//	 * @param gettingDefinitions the new value for the flag
+//	 */
+//	public void setGettingDefinitions(boolean gettingDefinitions) {
+//		this.gettingDefinitions = gettingDefinitions;
+//	}
 	
 }

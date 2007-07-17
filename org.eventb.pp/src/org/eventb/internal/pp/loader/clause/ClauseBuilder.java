@@ -20,16 +20,19 @@ import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
 import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
+import org.eventb.internal.pp.core.tracing.DefinitionOrigin;
+import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.core.tracing.PredicateOrigin;
 import org.eventb.internal.pp.core.tracing.TypingOrigin;
 import org.eventb.internal.pp.loader.formula.AbstractFormula;
-import org.eventb.internal.pp.loader.formula.ILabelizableFormula;
-import org.eventb.internal.pp.loader.formula.ISignedFormula;
-import org.eventb.internal.pp.loader.formula.ISubFormula;
+import org.eventb.internal.pp.loader.formula.AbstractLabelizableFormula;
+import org.eventb.internal.pp.loader.formula.ClauseResult;
+import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
@@ -63,7 +66,7 @@ public class ClauseBuilder {
 		if (DEBUG) debug("Entering "+pred+": "+pred.getStringDeps());
 		prefix.append("  ");
 	}
-	public static void debugExit(ISubFormula<?> pred) {
+	public static void debugExit(AbstractFormula<?> pred) {
 		prefix.deleteCharAt(prefix.length()-1);
 		prefix.deleteCharAt(prefix.length()-1);
 	}
@@ -104,7 +107,6 @@ public class ClauseBuilder {
 			buildNormalizedFormulas(signature);
 		}
 		
-		manager.setGettingDefinitions(true);
 		getDefinitions();
 
 		// get type informations
@@ -119,25 +121,31 @@ public class ClauseBuilder {
 	
 	private void getDefinitions() {
 		manager.nextLabelizableFormula();
-		ILabelizableFormula<?> formula = manager.getNextFormula();
+		AbstractLabelizableFormula<?> formula = manager.getNextFormula();
 		while (formula != null) {
 			if (DEBUG) debug("========================================");
 			if (DEBUG) debug("Getting definition clauses for label: " + formula + ": " + formula.getStringDeps());
-			formula.split();
 //			manager.setForceLabelize(false);
 			
-//			if (manager.isNextEquivalence()) {
-//				formula.getFinalClauses(clauses, manager, cf, bool, variableTable, true);
-//			}
-			if (manager.isNextPositive()) {
-				formula.getFinalClauses(clauses, manager, cf, bool, variableTable, variableContext, false);
+			if (manager.isNextEquivalence()) {
+				getClause(formula.getFinalClauses(manager, bool, variableTable, false, true), new DefinitionOrigin());
+			}
+			else if (manager.isNextPositive()) {
+				getClause(formula.getFinalClauses(manager, bool, variableTable, false, false), new DefinitionOrigin());
 			}
 			else {
-				formula.getFinalClauses(clauses, manager, cf, bool, variableTable, variableContext, true);
+				getClause(formula.getFinalClauses(manager, bool, variableTable, true, false), new DefinitionOrigin());
 			}
 			
 			manager.nextLabelizableFormula();
 			formula = manager.getNextFormula();
+		}
+	}
+	
+	private void getClause(ClauseResult result, IOrigin origin) {
+		for (List<Literal<?,?>> literalList : result.getLiteralLists()) {
+			if (result.isEquivalence() && literalList.size() > 1) clauses.add(cf.newEqClauseWithCopy(origin, literalList, variableContext));
+			else clauses.add(cf.newDisjClauseWithCopy(origin, literalList, variableContext));
 		}
 	}
 	
@@ -161,9 +169,8 @@ public class ClauseBuilder {
 	 * @param result
 	 */
 	private void buildNormalizedFormulas(INormalizedFormula result) {
-		ISignedFormula sig = result.getSignature();
-		sig.split();
-		sig.getFinalClauses(clauses, manager, cf, bool, variableTable, variableContext, new PredicateOrigin(result.getOriginalPredicate(), result.isGoal()));
+		SignedFormula<?> sig = result.getSignature();
+		getClause(sig.getFinalClauses(manager, bool, variableTable), new PredicateOrigin(result.getOriginalPredicate(),result.isGoal()));
 	}
 	
 	@SuppressWarnings("unused")

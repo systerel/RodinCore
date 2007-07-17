@@ -32,7 +32,7 @@ public interface IContext {
 	 * @return all the signatures created by the normalizer. The list can
 	 * be empty.
 	 */
-//	public Collection<ISubFormula> getAllSignatures();
+//	public Collection<AbstractFormula> getAllSignatures();
 	
 	public Collection<PredicateDescriptor> getAllPredicateDescriptors();
 	

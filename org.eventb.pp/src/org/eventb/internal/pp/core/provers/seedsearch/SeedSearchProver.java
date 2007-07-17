@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
+import java.util.Vector;
 import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
@@ -47,7 +47,7 @@ public class SeedSearchProver implements IProver {
 		this.inferrer = new InstantiationInferrer(context);
 	}
 	
-	private Stack<Set<Clause>> generatedClausesStack = new Stack<Set<Clause>>();
+	private Vector<Set<Clause>> generatedClausesStack = new Vector<Set<Clause>>();
 	
 	
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
@@ -59,7 +59,7 @@ public class SeedSearchProver implements IProver {
 				instantiatedClauses.add(instantiatedClause);
 			}
 		}
-		generatedClausesStack.add(instantiatedClauses);
+		if (!instantiatedClauses.isEmpty()) generatedClausesStack.add(instantiatedClauses);
 		return null;
 	}
 	
@@ -193,21 +193,27 @@ public class SeedSearchProver implements IProver {
 		return false;
 	}
 	
-	public ProverResult next() {
-		Set<Clause> nextClauses = null;
-		if (generatedClausesStack.isEmpty()) {
-			if (checkAndUpdateCounter()) {
-				SeedSearchResult result = manager.getArbitraryInstantiation(context);
-				if (result == null) return null;
-				Clause clause = doInstantiation(result);
-				nextClauses = new HashSet<Clause>();
-				nextClauses.add(clause);
-			}
-			else
-				return null;
+	private Clause nextArbitraryInstantiation() {
+		Clause nextClause = null;
+		if (checkAndUpdateCounter()) {
+			SeedSearchResult result = manager.getArbitraryInstantiation(context);
+			if (result == null) return null;
+			nextClause = doInstantiation(result);
 		}
-		else {
-			nextClauses = generatedClausesStack.pop();
+		return nextClause;
+	}
+	
+	public ProverResult next() {
+		Set<Clause> nextClauses = new HashSet<Clause>();
+		while (nextClauses.isEmpty()) {
+			if (generatedClausesStack.isEmpty()) {
+				Clause nextClause = nextArbitraryInstantiation();
+				if (nextClause == null) return null;
+				else nextClauses.add(nextClause);
+			}
+			else {
+				nextClauses.addAll(generatedClausesStack.remove(0));
+			}
 		}
 		ProverResult result = new ProverResult(nextClauses,new HashSet<Clause>());
 		if (DEBUG) debug("SeedSearchProver, next clauses: "+nextClauses+", remaining clauses: "+generatedClausesStack.size());

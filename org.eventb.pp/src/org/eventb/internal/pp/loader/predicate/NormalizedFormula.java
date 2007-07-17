@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Predicate;
-import org.eventb.internal.pp.loader.formula.ISignedFormula;
+import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
 /**
@@ -32,14 +32,14 @@ public class NormalizedFormula implements INormalizedFormula {
 	private List<ResultPair> list = new ArrayList<ResultPair>();
 	
 	private boolean isPositive = false;
-	protected Comparator<ISignedFormula> orderer;
+	protected Comparator<SignedFormula<?>> orderer;
 	private int startOffset, endOffset;
 	private int startAbsolute;
 	private BoundIdentDecl[] boundIdentDecls;
 	private Predicate originalPredicate;
 	private boolean isGoal;
 	
-	public NormalizedFormula(Comparator<ISignedFormula> orderer, int startAbsolute, int startOffset,
+	public NormalizedFormula(Comparator<SignedFormula<?>> orderer, int startAbsolute, int startOffset,
 			int endOffset, BoundIdentDecl[] boundIdentDecls, Predicate originalPredicate, boolean isGoal) {
 		this.orderer = orderer;
 		this.boundIdentDecls = boundIdentDecls;
@@ -92,12 +92,12 @@ public class NormalizedFormula implements INormalizedFormula {
 		}
 	}
 	
-	public void addResult(ISignedFormula signature, IIntermediateResult inRes) {
+	public void addResult(SignedFormula<?> signature, IIntermediateResult inRes) {
 		list.add(new ResultPair(signature, inRes));
 	}
 
-	public List<ISignedFormula> getLiterals() {
-		List<ISignedFormula> result = new ArrayList<ISignedFormula>();
+	public List<SignedFormula<?>> getLiterals() {
+		List<SignedFormula<?>> result = new ArrayList<SignedFormula<?>>();
 		for (ResultPair pair : list) {
 			result.add(pair.signature);
 		}
@@ -120,7 +120,7 @@ public class NormalizedFormula implements INormalizedFormula {
 		return isPositive;
 	}
 	
-	public ISignedFormula getSignature() {
+	public SignedFormula<?> getSignature() {
 		return list.get(0).signature;
 	}
 
@@ -139,9 +139,9 @@ public class NormalizedFormula implements INormalizedFormula {
 
 	private class ResultPair implements Comparable<ResultPair> {
 		IIntermediateResult result;
-		ISignedFormula signature;
+		SignedFormula<?> signature;
 		
-		ResultPair(ISignedFormula signature, IIntermediateResult result) {
+		ResultPair(SignedFormula<?> signature, IIntermediateResult result) {
 			this.result = result;
 			this.signature = signature;
 		}
