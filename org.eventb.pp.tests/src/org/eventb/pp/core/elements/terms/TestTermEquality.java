@@ -335,7 +335,7 @@ public class TestTermEquality extends AbstractPPTest {
 	}
 	
 	public void testUnEqual() {
-		HashMap<SimpleTerm, SimpleTerm> map;
+//		HashMap<SimpleTerm, SimpleTerm> map;
 		for (Term[] terms : unequalTerms) {
 			for (int i = 0; i < terms.length-1; i++) {
 				assertFalse("Term1 : "+terms[i].toString()+", term2 : "+terms[i+1].toString(),terms[i].equals(terms[i+1]));

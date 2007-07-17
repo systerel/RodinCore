@@ -55,16 +55,16 @@ public class TestTracer extends AbstractPPTest {
 	private static IOrigin o2 = new MyOrigin(TWO, mSet(BASE, TWO));
 	private static IOrigin o3 = new MyOrigin(THREE, mSet(BASE, THREE));
 	private static IOrigin o4 = new MyOrigin(FOUR, mSet(BASE, FOUR));
-	private static IOrigin o5 = new MyOrigin(FIVE, mSet(BASE, FIVE));
+//	private static IOrigin o5 = new MyOrigin(FIVE, mSet(BASE, FIVE));
 	private static IOrigin o7 = new MyOrigin(SEVEN, mSet(BASE, SEVEN));
 	private static IOrigin o8 = new MyOrigin(EIGHT, mSet(BASE, EIGHT));
 	private static IOrigin o9 = new MyOrigin(NINE, mSet(BASE, NINE));
 	private static IOrigin o10 = new MyOrigin(TEN, mSet(BASE, TEN));
 	
-	private static IOrigin o13 = new MyOrigin(ONE, mSet(BASE, ONE, THREE));
-	private static IOrigin o14 = new MyOrigin(ONE, mSet(BASE, ONE, FOUR));
-	private static IOrigin o25 = new MyOrigin(TWO, mSet(BASE, TWO, FIVE));
-	private static IOrigin o26 = new MyOrigin(TWO, mSet(BASE, TWO, SIX));
+//	private static IOrigin o13 = new MyOrigin(ONE, mSet(BASE, ONE, THREE));
+//	private static IOrigin o14 = new MyOrigin(ONE, mSet(BASE, ONE, FOUR));
+//	private static IOrigin o25 = new MyOrigin(TWO, mSet(BASE, TWO, FIVE));
+//	private static IOrigin o26 = new MyOrigin(TWO, mSet(BASE, TWO, SIX));
 	
 	private static IOrigin o31 = new MyOrigin(THREE, mSet(BASE, ONE, THREE));
 	private static IOrigin o41 = new MyOrigin(FOUR, mSet(BASE, ONE, FOUR));
@@ -81,14 +81,24 @@ public class TestTracer extends AbstractPPTest {
 	private static IOrigin o91 = new MyOrigin(NINE, mSet(BASE, ONE, NINE));
 	private static IOrigin o94 = new MyOrigin(NINE, mSet(BASE, FOUR, NINE));
 	
-	private static IOrigin o10_4_1 = new MyOrigin(TEN, mSet(BASE, ONE, FOUR, TEN));
+//	private static IOrigin o10_4_1 = new MyOrigin(TEN, mSet(BASE, ONE, FOUR, TEN));
 	private static IOrigin o10_4 = new MyOrigin(TEN, mSet(BASE, FOUR, TEN));
 	private static IOrigin o10_1 = new MyOrigin(TEN, mSet(BASE, ONE, TEN));
 	
 	private static IOrigin o19 = new MyOrigin(NINETEEN, mSet(NINETEEN));
 	private static IOrigin o20_4 = new MyOrigin(TWENTY, mSet(FOUR, TWENTY));
 	
-	private Tracer tracer = new Tracer();
+	private final Tracer tracer = new Tracer();
+	
+	private void assertAddClosingClauseFails(IOrigin origin) {
+		try {
+			tracer.addClosingClause(origin);
+			fail();
+		}
+		catch (Throwable e) {
+			assertTrue(e instanceof IllegalStateException);
+		}
+	}
 	
 	public void testSimpleTracer() {
 		tracer.addClosingClause(o0);
@@ -131,11 +141,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(tracer.getLastClosedLevel(), NINE);
 		tracer.addClosingClause(o10_4);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
-		try {
-			tracer.addClosingClause(o2);
-			fail();
-		}
-		catch (IllegalStateException e) {}
+		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o3, o94, o10_4), tracer.getClosingOrigins());
 	}
 	
@@ -158,11 +164,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(tracer.getLastClosedLevel(), NINE);
 		tracer.addClosingClause(o10);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
-		try {
-			tracer.addClosingClause(o2);
-			fail();
-		}
-		catch (IllegalStateException e) {}
+		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o3, o94, o10), tracer.getClosingOrigins());
 	}
 	
@@ -211,11 +213,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(tracer.getLastClosedLevel(), NINE);
 		tracer.addClosingClause(o10_4);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
-		try {
-			tracer.addClosingClause(o2);
-			fail();
-		}
-		catch (IllegalStateException e) {}
+		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o3, o9, o10_4), tracer.getClosingOrigins());
 	}
 	
@@ -238,11 +236,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(tracer.getLastClosedLevel(), NINE);
 		tracer.addClosingClause(o10);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
-		try {
-			tracer.addClosingClause(o2);
-			fail();
-		}
-		catch (IllegalStateException e) {}	
+		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o9, o10), tracer.getClosingOrigins());
 	}
 	
@@ -253,11 +247,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(tracer.getLastClosedLevel(), NINE);
 		tracer.addClosingClause(o4);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
-		try {
-			tracer.addClosingClause(o2);
-			fail();
-		}
-		catch (IllegalStateException e) {}	
+		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o3, o4), tracer.getClosingOrigins());
 	}
 	
@@ -268,11 +258,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(tracer.getLastClosedLevel(), NINE);
 		tracer.addClosingClause(o4);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
-		try {
-			tracer.addClosingClause(o2);
-			fail();
-		}
-		catch (IllegalStateException e) {}
+		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o3, o4), tracer.getClosingOrigins());
 	}
 	
@@ -402,11 +388,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
 		tracer.addClosingClause(o81);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		try {
-			tracer.addClosingClause(o41);
-			fail();
-		}
-		catch (IllegalStateException e) {}
+		assertAddClosingClauseFails(o41);
 		tracer.addClosingClause(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o71, o81, o2), tracer.getClosingOrigins());
@@ -469,11 +451,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(tracer.getLastClosedLevel(), THREE);
 		tracer.addClosingClause(o4);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
-		try {
-			tracer.addClosingClause(o2);
-			fail();
-		}
-		catch (IllegalStateException e) {}
+		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o73, o83, o4), tracer.getClosingOrigins());
 	}
 	
@@ -518,11 +496,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
 		tracer.addClosingClause(o81);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		try {
-			tracer.addClosingClause(o4);
-			fail();
-		}
-		catch (IllegalStateException e) {}
+		assertAddClosingClauseFails(o4);
 		tracer.addClosingClause(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o71, o81, o2), tracer.getClosingOrigins());
@@ -534,35 +508,18 @@ public class TestTracer extends AbstractPPTest {
 		tracer.addClosingClause(o8);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		// here
-		try {
-			tracer.addClosingClause(o4);
-			fail();
-		}
-		catch (IllegalStateException e) {}
-		try {
-			tracer.addClosingClause(o2);
-			fail();
-		}
-		catch (IllegalStateException e) {}
+		assertAddClosingClauseFails(o4);
+		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o7, o8), tracer.getClosingOrigins());
 	}
-	
-	
+
 	public void testSameSplitTwice() {
 		tracer.addClosingClause(o31);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
 		tracer.addClosingClause(o41);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		try {
-			tracer.addClosingClause(o7);
-			fail();
-		}
-		catch (IllegalStateException e) {}
-		try {
-			tracer.addClosingClause(o8);
-			fail();
-		}
-		catch (IllegalStateException e) {}
+		assertAddClosingClauseFails(o7);
+		assertAddClosingClauseFails(o8);
 		assertEquals(mSet(o31, o41), tracer.getClosingOrigins());
 	}
 	

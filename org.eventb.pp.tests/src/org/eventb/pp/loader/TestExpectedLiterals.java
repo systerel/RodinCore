@@ -87,7 +87,7 @@ public class TestExpectedLiterals extends TestCase {
 		doTest(testPredicates, PredicateFormula.class);
 	}
 	
-	public void doTest(String[] tests, Class expectedClass) {
+	public void doTest(String[] tests, Class<?> expectedClass) {
 		for (String string : tests) {
 			PredicateBuilder builder = new PredicateBuilder();
 			Predicate predicate = Util.parsePredicate(string);

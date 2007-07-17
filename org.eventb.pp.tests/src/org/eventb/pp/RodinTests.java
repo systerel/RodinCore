@@ -289,7 +289,7 @@ public class RodinTests extends AbstractPPTest {
 	};
 	
 	public void testTrueGoal() {
-		doTest(new TestPair(new HashSet(),"⊤",true));
+		doTest(new TestPair(new HashSet<String>(),"⊤",true));
 	}
 	
 	public void testFalseHypothesis() {

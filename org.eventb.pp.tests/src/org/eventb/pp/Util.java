@@ -45,7 +45,6 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.core.tracing.Tracer;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.clause.LoaderResult;
-import org.eventb.internal.pp.loader.formula.AbstractFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.DisjunctiveClauseDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.EqualityDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
@@ -125,42 +124,20 @@ public class Util {
 		return Sort.ARITHMETIC;
 	}
 	
-	public static Literal[] mArr(Literal... literals) {
+	public static Literal<?,?>[] mArr(Literal<?,?>... literals) {
 		return literals;
 	}
 	
-	public static Literal[][] mArr(Literal[]... literals) {
+	public static Literal<?,?>[][] mArr(Literal<?,?>[]... literals) {
 		return literals;
 	}
 	
 	public static <T> List<T> mList(T... elements) {
-		List<T> list = new ArrayList<T>();
-		list.addAll(Arrays.asList(elements));
-		return list;
+		return new ArrayList<T>(Arrays.asList(elements));
 	}
 	
-	public static List<Clause> mList(Clause... clause) {
-		List<Clause> list = new ArrayList<Clause>();
-		list.addAll(Arrays.asList(clause));
-		return list;
-	}
-	
-	public static List<TermSignature> mList(TermSignature... terms) {
-		List<TermSignature> list = new ArrayList<TermSignature>();
-		list.addAll(Arrays.asList(terms));
-		return list;
-	}
-	
-	public static List<AbstractFormula> mList(AbstractFormula... sigs) {
-		List<AbstractFormula> list = new ArrayList<AbstractFormula>();
-		list.addAll(Arrays.asList(sigs));
-		return list;
-	}
-	
-	public static <T extends Literal> List<T> mList(T... literals) {
-		List<T> list = new ArrayList<T>();
-		list.addAll(Arrays.asList(literals));
-		return list;
+	public static <S extends Literal<?,?>> List<S> mLiteralList(S... literals) {
+		return new ArrayList<S>(Arrays.asList(literals));
 	}
 	
 //	public static PredicateFormula mPredicate() {
@@ -241,6 +218,7 @@ public class Util {
 		}
 
 		public void getDependencies(Stack<Level> dependencies) {
+			// skip
 		}
 
 		public boolean isDefinition() {
@@ -248,6 +226,7 @@ public class Util {
 		}
 
 		public void trace(Tracer tracer) {
+			// skip
 		}
 
 		public Level getLevel() {
@@ -255,17 +234,17 @@ public class Util {
 		}
 
 		public void getDependencies(Set<Level> dependencies) {
-			
+			// skip
 		}
 		
 	}
 	
 	
-	public static Clause newDisjClause(IOrigin origin, List<Literal> literals) {
+	public static Clause newDisjClause(IOrigin origin, List<Literal<?,?>> literals) {
 		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
 		List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
 		List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
-		for (Literal literal : literals) {
+		for (Literal<?,?> literal : literals) {
 			if (literal instanceof PredicateLiteral) predicates.add((PredicateLiteral)literal);
 			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
 			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
@@ -273,13 +252,13 @@ public class Util {
 		return new DisjunctiveClause(origin,predicates,equalities,arithmetic);
 	}
 	
-	public static Clause newEqClause(IOrigin origin, List<Literal> literals) {
+	public static Clause newEqClause(IOrigin origin, List<Literal<?,?>> literals) {
 		assert literals.size() > 1;
 		
 		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
 		List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
 		List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
-		for (Literal literal : literals) {
+		for (Literal<?,?> literal : literals) {
 			if (literal instanceof PredicateLiteral) predicates.add((PredicateLiteral)literal);
 			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
 			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
@@ -288,7 +267,7 @@ public class Util {
 	}
 	
 	
-	public static Clause cClause(Literal... literals) {
+	public static Clause cClause(Literal<?,?>... literals) {
 		Clause clause = newDisjClause(new DummyOrigin(Level.base), mList(literals));
 		return clause;
 	}
@@ -303,43 +282,43 @@ public class Util {
 	}
 	
 	
-	public static Clause cClause(Level level, Literal... literals) {
+	public static Clause cClause(Level level, Literal<?,?>... literals) {
 		Clause clause = newDisjClause(new DummyOrigin(level), mList(literals));
 		return clause;
 	}
 	
-	public static Clause cClause(List<? extends Literal> literals, EqualityLiteral... conditions) {
+	public static Clause cClause(List<? extends Literal<?,?>> literals, EqualityLiteral... conditions) {
 		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
 		List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
 		List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
-		for (Literal literal : literals) {
+		for (Literal<?,?> literal : literals) {
 			if (literal instanceof PredicateLiteral) predicates.add((PredicateLiteral)literal);
 			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
 			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
 		}
-		return new DisjunctiveClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,(List)mList(conditions));
+		return new DisjunctiveClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,mList(conditions));
 	}
 	
-	public static Clause cEqClause(Literal... literals) {
+	public static Clause cEqClause(Literal<?,?>... literals) {
 		Clause clause = newEqClause(new DummyOrigin(Level.base),mList(literals));
 		return clause;
 	}
 	
-	public static Clause cEqClause(Level level, Literal... literals) {
+	public static Clause cEqClause(Level level, Literal<?,?>... literals) {
 		Clause clause = newEqClause(new DummyOrigin(level),mList(literals));
 		return clause;
 	}
 	
-	public static Clause cEqClause(List<? extends Literal> literals, EqualityLiteral... conditions) {
+	public static Clause cEqClause(List<? extends Literal<?,?>> literals, EqualityLiteral... conditions) {
 		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
 		List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
 		List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
-		for (Literal literal : literals) {
+		for (Literal<?,?> literal : literals) {
 			if (literal instanceof PredicateLiteral) predicates.add((PredicateLiteral)literal);
 			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
 			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
 		}
-		return new EquivalenceClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,(List)mList(conditions));
+		return new EquivalenceClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,mList(conditions));
 	}
 	
 	public static ComplexPredicateLiteral cPred(int index, SimpleTerm... terms) {

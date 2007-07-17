@@ -21,7 +21,7 @@ import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.cProp;
 import static org.eventb.pp.Util.cTimes;
 import static org.eventb.pp.Util.cVar;
-import static org.eventb.pp.Util.mList;
+import static org.eventb.pp.Util.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,19 +51,19 @@ public class TestClauseBuilder extends TestCase {
 	class TestPair {
 		List<String> predicate;
 		Collection<Clause> clauses;
-		Collection<? extends Literal> unitClauses;
+		Collection<? extends Literal<?,?>> unitClauses;
 		
-		TestPair (List<String> predicate, Collection<? extends Literal> unitClauses, Clause... clauses) {
+		TestPair (List<String> predicate, Collection<? extends Literal<?,?>> unitClauses, Clause... clauses) {
 			this.predicate = predicate;
 			this.unitClauses = unitClauses;
 			this.clauses = Arrays.asList(clauses);
 		}
 	}
 	
-	private static SimpleTerm x = cVar(0);
-	private static SimpleTerm y = cVar(1);
-	private static SimpleTerm z = cVar(2);
-	private static SimpleTerm t = cVar(3);
+//	private static SimpleTerm x = cVar(0);
+//	private static SimpleTerm y = cVar(1);
+//	private static SimpleTerm z = cVar(2);
+//	private static SimpleTerm t = cVar(3);
 	
 	private static SimpleTerm a = cCons("a");
 	private static SimpleTerm b = cCons("b");
@@ -72,15 +72,15 @@ public class TestClauseBuilder extends TestCase {
 	private static SimpleTerm e = cCons("e");
 	private static SimpleTerm n = cCons("n");
 	private static SimpleTerm m = cCons("m");
-	private static SimpleTerm D = cCons("D");
-	private static SimpleTerm M = cCons("M");
-	private static SimpleTerm P = cCons("P");
-	private static SimpleTerm Q = cCons("Q");
-	private static SimpleTerm R = cCons("R");
+//	private static SimpleTerm D = cCons("D");
+//	private static SimpleTerm M = cCons("M");
+//	private static SimpleTerm P = cCons("P");
+//	private static SimpleTerm Q = cCons("Q");
+//	private static SimpleTerm R = cCons("R");
 	private static SimpleTerm S = cCons("S");
 	private static SimpleTerm SS = cCons("SS");
-	private static SimpleTerm T = cCons("T");
-	private static SimpleTerm U = cCons("U");
+//	private static SimpleTerm T = cCons("T");
+//	private static SimpleTerm U = cCons("U");
 	private static SimpleTerm one = cCons("1");
 	private static SimpleTerm zero = cCons("0");
 	private static SimpleTerm TRUE = cCons("TRUE");
@@ -106,16 +106,16 @@ public class TestClauseBuilder extends TestCase {
 	
 	private static SimpleTerm zA = cVar(A);
 	private static SimpleTerm zB = cVar(B);
-	private static SimpleTerm zC = cVar(C);
+//	private static SimpleTerm zC = cVar(C);
 	
 	private static SimpleTerm tA = cVar(A);
-	private static SimpleTerm tC = cVar(C);
+//	private static SimpleTerm tC = cVar(C);
 	private static SimpleTerm tPAB = cVar(PAB); 
 	
 	private static SimpleTerm xA = cVar(A);
 	private static SimpleTerm xB = cVar(B);
 	private static SimpleTerm xS = cVar(Ssort);
-	private static SimpleTerm xPA = cVar(PA);
+//	private static SimpleTerm xPA = cVar(PA);
 	
 	private static SimpleTerm yA = cVar(A);
 	private static SimpleTerm yPA = cVar(PA);
@@ -156,7 +156,7 @@ public class TestClauseBuilder extends TestCase {
 		env.addName("TT", ff.makePowerSetType(ff.makeProductType(ff.makeProductType(ff.makeIntegerType(),ff.makeIntegerType()), ff.makeIntegerType())));
 	}
 	
-	private static List<Literal> noLit = new ArrayList<Literal>();
+	private static List<Literal<?,?>> noLit = new ArrayList<Literal<?,?>>();
 	
 	TestPair[] tests1 = new TestPair[]{
 			new TestPair(
@@ -1204,7 +1204,8 @@ public class TestClauseBuilder extends TestCase {
 			),
 			new TestPair(
 					mList("b = TRUE","c = e"),
-					mList(	cProp(0),
+					Util.<Literal<?,?>>mList(
+							cProp(0),
 							cEqual(c, e))
 			),
 			
@@ -1316,11 +1317,11 @@ public class TestClauseBuilder extends TestCase {
 			),
 	};
 	
-	public void doTest(List<String> strPredicate, Collection<? extends Literal> literals, Collection<Clause> clauses, boolean goal) {
+	public void doTest(List<String> strPredicate, Collection<? extends Literal<?,?>> literals, Collection<Clause> clauses, boolean goal) {
 		LoaderResult result = load(strPredicate, goal);
 		List<Clause> allClauses = new ArrayList<Clause>();
 		allClauses.addAll(clauses);
-		for (Literal lit : literals) {
+		for (Literal<?,?> lit : literals) {
 			allClauses.add(cClause(lit));
 		}
 		

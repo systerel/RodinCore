@@ -1,6 +1,5 @@
 package org.eventb.pp.loader;
 
-import static org.eventb.pp.Util.mBoundIdentifier;
 import static org.eventb.pp.Util.mConstant;
 import static org.eventb.pp.Util.mDivide;
 import static org.eventb.pp.Util.mExpn;
@@ -9,14 +8,12 @@ import static org.eventb.pp.Util.mMod;
 import static org.eventb.pp.Util.mPlus;
 import static org.eventb.pp.Util.mTimes;
 import static org.eventb.pp.Util.mUnaryMinus;
-import static org.eventb.pp.Util.mVariable;
 
 import java.util.Stack;
 
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.NormalizedFormula;
@@ -32,7 +29,7 @@ public class TestTermBuilder extends TestCase {
 		TermSignature expected;
 		
 		TestPair (String expression, TermSignature expected) {
-			this.expression = (Expression)Util.parseExpression(expression);
+			this.expression = Util.parseExpression(expression);
 			this.expected = expected;
 		}
 		
@@ -43,14 +40,14 @@ public class TestTermBuilder extends TestCase {
 		
 	}
 	
-	private static BoundIdentifier b0 = mBoundIdentifier(0);
+//	private static BoundIdentifier b0 = mBoundIdentifier(0);
 	
 	private static TermSignature a = mConstant("a");
 	private static TermSignature b = mConstant("b");
 	private static TermSignature c = mConstant("c");
 	private static TermSignature one = mConstant("1");
 	
-	private static TermSignature var0 = mVariable(0,0);
+//	private static TermSignature var0 = mVariable(0,0);
 	
 	TestPair[] tests = new TestPair[]{
 			new TestPair("a",

@@ -56,9 +56,9 @@ public class TestResolution extends AbstractInferrerTests {
 	private static LocalVariable evar2 = Util.cELocVar(2,A);
 
 
-	private Clause[] noClause() {
-		return new Clause[0];
-	}
+//	private Clause[] noClause() {
+//		return new Clause[0];
+//	}
 
 	public void testSimple() {
 		// normal case

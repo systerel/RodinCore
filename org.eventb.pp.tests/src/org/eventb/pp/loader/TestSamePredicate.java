@@ -104,7 +104,7 @@ public class TestSamePredicate extends TestCase {
 			// TODO clauses !
 	};
 	
-	private SignedFormula build(PredicateBuilder builder, String test) {
+	private SignedFormula<?> build(PredicateBuilder builder, String test) {
 		Predicate expr = ff.parsePredicate(test).getParsedPredicate();
 		ITypeCheckResult result = expr.typeCheck(env);
 		System.out.println(result.toString());
@@ -117,7 +117,7 @@ public class TestSamePredicate extends TestCase {
 			PredicateBuilder builder = new PredicateBuilder();
 			LiteralDescriptor desc = null;
 			for (String test : tests) {
-				AbstractFormula pp = (AbstractFormula)((SignedFormula)build(builder, test)).getFormula();
+				AbstractFormula<?> pp = ((SignedFormula<?>)build(builder, test)).getFormula();
 				if (desc == null) desc = pp.getLiteralDescriptor();
 				else assertEquals(desc, pp.getLiteralDescriptor());
 			}
@@ -129,7 +129,8 @@ public class TestSamePredicate extends TestCase {
 		List<LiteralDescriptor> desc = new ArrayList<LiteralDescriptor>();
 		for (String[] tests : test1) {
 			String test = tests[0];
-			AbstractFormula pp = (AbstractFormula)((SignedFormula)build(builder, test)).getFormula();
+			AbstractFormula<?> pp = ((SignedFormula<?>)build(builder, test)).getFormula();
+			// TODO: document while a loop below?
 			for (LiteralDescriptor lit : desc) {
 				assertNotSame(desc.toString() + " " + pp.getLiteralDescriptor(), desc, pp.getLiteralDescriptor());
 			}

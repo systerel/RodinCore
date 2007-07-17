@@ -169,12 +169,12 @@ public class TestEqualitySolver extends AbstractPPTest {
 	private void init() {
 		solver = new EqualitySolver(new SourceTable());
 
-		a = new Node(super.a);
-		b = new Node(super.b);
-		c = new Node(super.c);
-		d = new Node(super.d);
-		e = new Node(super.e);
-		f = new Node(super.f);
+		a = new Node(AbstractPPTest.a);
+		b = new Node(AbstractPPTest.b);
+		c = new Node(AbstractPPTest.c);
+		d = new Node(AbstractPPTest.d);
+		e = new Node(AbstractPPTest.e);
+		f = new Node(AbstractPPTest.f);
 	}
 
 	// deductions

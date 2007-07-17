@@ -36,7 +36,7 @@ import org.eventb.pp.Util;
  */
 public class TestSorts extends TestCase {
 
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+	static FormulaFactory ff = FormulaFactory.getDefault();
 	
 	static Type S = ff.makeGivenType("S");
 	static Type T = ff.makeGivenType("T");
@@ -74,7 +74,7 @@ public class TestSorts extends TestCase {
 		}
 		
 		TestPair (String expression, Sort expected) {
-			this.expression = (Expression)Util.parseExpression(expression);
+			this.expression = Util.parseExpression(expression);
 			this.expression.typeCheck(ff.makeTypeEnvironment());
 			this.expected = expected;
 		}

@@ -1,8 +1,5 @@
 package org.eventb.pp.loader;
 
-import static org.eventb.pp.Util.cCons;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,8 +7,6 @@ import junit.framework.TestCase;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
 import org.eventb.pp.Util;
@@ -28,23 +23,23 @@ public class TestOrderer extends TestCase {
 		}
 	}
 	
-	private static Term a = cCons("a");
-	private static Term b = cCons("b");
-	private static Term c = cCons("c");
-	private static Term d = cCons("d");
-	private static Term e = cCons("e");
-	private static Term n = cCons("n");
-	private static Term D = cCons("D");
-	private static Term M = cCons("M");
-	private static Term P = cCons("P");
-	private static Term Q = cCons("Q");
-	private static Term R = cCons("R");
-	private static Term S = cCons("S");
-	private static Term SS = cCons("SS");
-	private static Term T = cCons("T");
-	private static Term U = cCons("U");
-	private static Term one = cCons("1");
-	private static Term TRUE = cCons("TRUE");
+//	private static Term a = cCons("a");
+//	private static Term b = cCons("b");
+//	private static Term c = cCons("c");
+//	private static Term d = cCons("d");
+//	private static Term e = cCons("e");
+//	private static Term n = cCons("n");
+//	private static Term D = cCons("D");
+//	private static Term M = cCons("M");
+//	private static Term P = cCons("P");
+//	private static Term Q = cCons("Q");
+//	private static Term R = cCons("R");
+//	private static Term S = cCons("S");
+//	private static Term SS = cCons("SS");
+//	private static Term T = cCons("T");
+//	private static Term U = cCons("U");
+//	private static Term one = cCons("1");
+//	private static Term TRUE = cCons("TRUE");
 
 	private static ITypeEnvironment env = ff.makeTypeEnvironment();
 	static {
@@ -69,7 +64,7 @@ public class TestOrderer extends TestCase {
 		env.addName("TT", ff.makePowerSetType(ff.makeProductType(ff.makeProductType(ff.makeIntegerType(),ff.makeIntegerType()), ff.makeIntegerType())));
 	}
 	
-	private static List<Literal> noLit = new ArrayList<Literal>();
+//	private static List<Literal<?,?>> noLit = new ArrayList<Literal<?,?>>();
 	
 	TestPair[] testOrdering = new TestPair[] {
 			new TestPair(

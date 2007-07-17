@@ -152,7 +152,7 @@ public class TestEqualitySimplifier extends AbstractPPTest {
 					cClause(cPred(0,a))
 			),
 			new TestPair(
-					cClause(new ArrayList<Literal>(),cNEqual(a,a)),
+					cClause(new ArrayList<Literal<?,?>>(),cNEqual(a,a)),
 					FALSE
 			),
 			
