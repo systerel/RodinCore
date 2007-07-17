@@ -16,8 +16,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  * A tool must register an extractor <code>IExtractor</code> and a tool <code>IAutomaticTool</code>.
  * An automatic tool is the actual tool to be run, whereas the extractor specifies when it is to be run.
- * A tool must react to cancelation requests from a progress monitor. As specified for
- * progress monitors, on a cancelation request the tool must throw an <code>OperationCanceledException</code>.
+ * A tool must react to cancellation requests from a progress monitor. As specified for
+ * progress monitors, on a cancellation request the tool must throw an <code>OperationCanceledException</code>.
  * The builder may or may not accept a completed operation in either case, but it should be assumed
  * that the entire work of the tool will be discarded.
  * A producer supplies to operations:
