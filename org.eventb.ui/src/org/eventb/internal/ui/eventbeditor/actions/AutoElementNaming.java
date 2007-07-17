@@ -19,6 +19,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 public abstract class AutoElementNaming<T extends IInternalElement>
 		implements IEditorActionDelegate {
@@ -35,7 +36,7 @@ public abstract class AutoElementNaming<T extends IInternalElement>
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) throws RodinDBException {
 					IRodinFile file = editor.getRodinInput();
 					T[] elements = file.getChildrenOfType(type);
 
@@ -68,7 +69,7 @@ public abstract class AutoElementNaming<T extends IInternalElement>
 				}
 
 			}, null);
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			EventBUIExceptionHandler.handleSetAttributeException(e);
 		}
 

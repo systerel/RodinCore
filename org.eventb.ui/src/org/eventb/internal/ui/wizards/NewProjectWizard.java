@@ -34,6 +34,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -121,7 +122,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	 *            the name of the project
 	 * @param monitor
 	 *            a progress monitor
-	 * @throws CoreException
+	 * @throws RodinDBException
 	 *             a core exception throws when creating a new project
 	 */
 	void doFinish(String projectName, IProgressMonitor monitor)
@@ -133,7 +134,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 
 		if (resource != null) {
 			throwCoreException("Project \"" + projectName
-					+ "\" is already existed.");
+					+ "\" already exists.");
 			return;
 		}
 
@@ -156,7 +157,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 			}, monitor);
 			
 			monitor.worked(1);
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 			throw e;
 		}

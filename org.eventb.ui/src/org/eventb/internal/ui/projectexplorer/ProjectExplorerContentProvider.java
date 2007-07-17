@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -351,7 +350,7 @@ public class ProjectExplorerContentProvider implements
 				return ((IParent) parent).hasChildren();
 			if (parent instanceof TreeNode)
 				return ((TreeNode<?>) parent).hasChildren();
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 		return false;

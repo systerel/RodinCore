@@ -39,7 +39,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 
-	public boolean run(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
+	public boolean run(IFile source, IFile file, IProgressMonitor monitor) throws RodinDBException {
 		
 		IPSFile psFile = (IPSFile) RodinCore.valueOf(file).getMutableCopy();
 		IPRFile prFile = (IPRFile) psFile.getPRFile().getMutableCopy();
@@ -140,7 +140,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 	
-	public void clean(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
+	public void clean(IFile source, IFile file, IProgressMonitor monitor) throws RodinDBException {
 		
 		IPSFile psFile = (IPSFile) RodinCore.valueOf(file);
 		if (psFile.exists()) {

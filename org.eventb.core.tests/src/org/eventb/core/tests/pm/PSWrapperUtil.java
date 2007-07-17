@@ -19,6 +19,7 @@ import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -88,7 +89,7 @@ public class PSWrapperUtil {
 				}
 
 			}, monitor);
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 

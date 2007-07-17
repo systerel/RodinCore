@@ -11,7 +11,6 @@ package org.eventb.core.pm;
 import java.util.Collection;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
@@ -295,7 +294,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 * <p>
 	 * 
 	 * @param text
-	 *            a Sring (comment)
+	 *            a String (comment)
 	 * @param node
 	 *            a proof tree node
 	 * @throws RodinDBException
@@ -304,17 +303,17 @@ public interface IUserSupport extends IElementChangedListener {
 			throws RodinDBException;
 
 	/**
-	 * Save the set of inputproof obligations to disk.
+	 * Save the set of input proof obligations to disk.
 	 * <p>
 	 * @param states
 	 *        an array of proof states to be saved
 	 * @param monitor
 	 *        a Progress Monitor
-	 * @throws CoreException
-	 *        a Core Exception if some errors occured while saving
+	 * @throws RodinDBException
+	 *        if some error occurred while saving
 	 */
 	public abstract void doSave(IProofState[] states, IProgressMonitor monitor)
-			throws CoreException;
+			throws RodinDBException;
 
 	/**
 	 * For the current proof state, select the next subgoal satisfies the
@@ -328,7 +327,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 *            a proof tree node filter
 	 * 
 	 * @throws RodinDBException
-	 *             throws exception if some errors occured
+	 *            if some error occurred
 	 */
 	public abstract void selectNextSubgoal(boolean rootIncluded,
 			IProofTreeNodeFilter filter)

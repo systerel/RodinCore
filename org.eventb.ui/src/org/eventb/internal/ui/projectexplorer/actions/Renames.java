@@ -1,7 +1,6 @@
 package org.eventb.internal.ui.projectexplorer.actions;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -16,6 +15,7 @@ import org.eventb.core.IMachineFile;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 public class Renames implements IObjectActionDelegate {
 
@@ -68,7 +68,7 @@ public class Renames implements IObjectActionDelegate {
 					RodinCore.run(new IWorkspaceRunnable() {
 
 						public void run(IProgressMonitor monitor)
-								throws CoreException {
+								throws RodinDBException {
 							String newName = null;
 							if (file instanceof IContextFile)
 								newName = EventBPlugin
@@ -82,7 +82,7 @@ public class Renames implements IObjectActionDelegate {
 						}
 
 					}, null);
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

@@ -16,7 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -322,11 +321,11 @@ public class ProverUI extends FormEditor implements
 
 			try {
 				RodinCore.run(new IWorkspaceRunnable() {
-					public void run(IProgressMonitor pm) throws CoreException {
+					public void run(IProgressMonitor pm) throws RodinDBException {
 						userSupport.doSave(results, pm);
 					}
 				}, null);
-			} catch (CoreException e) {
+			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

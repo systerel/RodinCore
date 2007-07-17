@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -54,7 +53,7 @@ public class AutoProver {
 		// Nothing to do.
 	}
 	
-	protected static void run(IPRFile prFile, IPSFile psFile, IProgressMonitor monitor) throws CoreException {
+	protected static void run(IPRFile prFile, IPSFile psFile, IProgressMonitor monitor) throws RodinDBException {
 		if (! enabled)
 			return;
 		final IPSStatus[] pos = psFile.getStatuses();

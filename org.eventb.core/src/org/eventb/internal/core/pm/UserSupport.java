@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -588,7 +587,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	}
 
 	public void doSave(IProofState[] states, IProgressMonitor monitor)
-			throws CoreException {
+			throws RodinDBException {
 		for (IProofState state : states) {
 			state.setProofTree(monitor);
 			// state.getPSStatus().setManualProof(true, monitor);

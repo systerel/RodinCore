@@ -1,7 +1,6 @@
 package org.eventb.internal.ui.projectexplorer.actions;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -17,6 +16,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 public class Extends implements IObjectActionDelegate {
 
@@ -68,7 +68,7 @@ public class Extends implements IObjectActionDelegate {
 					RodinCore.run(new IWorkspaceRunnable() {
 
 						public void run(IProgressMonitor monitor)
-								throws CoreException {
+								throws RodinDBException {
 							newFile = prj.getRodinFile(EventBPlugin
 									.getContextFileName(bareName));
 							newFile.create(true, monitor);
@@ -84,7 +84,7 @@ public class Extends implements IObjectActionDelegate {
 						}
 
 					}, null);
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					newFile = null;

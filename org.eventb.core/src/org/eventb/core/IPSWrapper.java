@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.core;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
@@ -82,7 +81,7 @@ public interface IPSWrapper {
 	 */
 	@Deprecated
 	public void setProofTree(IPSStatus status, IProofTree pt,
-			IProgressMonitor monitor) throws CoreException;
+			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Serializes the given proof tree into the corresponding {@link IPRProof}
@@ -95,7 +94,7 @@ public interface IPSWrapper {
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
-	 * @throws CoreException
+	 * @throws RodinDBException
 	 *             if an error occurs accessing the Rodin database
 	 * @deprecated use
 	 *             {@link #updateStatus(IPSStatus, boolean, IProgressMonitor)}
@@ -104,7 +103,7 @@ public interface IPSWrapper {
 	@Deprecated
 	public void setProofTree(IPSStatus status, IProofTree pt,
 			boolean hasManualProof, IProgressMonitor monitor)
-			throws CoreException;
+			throws RodinDBException;
 
 	/**
 	 * Updates the given status and associated proof using the state of the last
@@ -124,11 +123,11 @@ public interface IPSWrapper {
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
-	 * @throws CoreException
-	 *             if an error occurs accessing the Rodin database
+	 * @throws RodinDBException
+	 *             if an error occurred accessing the Rodin database
 	 */
 	void updateStatus(IPSStatus psStatus, boolean hasManualProof,
-			IProgressMonitor monitor) throws CoreException;
+			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Save both the PR and PS files encapsulated by this wrapper.
@@ -140,6 +139,7 @@ public interface IPSWrapper {
 	 *            controls how this method deals with cases where the workbench
 	 *            is not completely in sync with the local file system
 	 * @throws RodinDBException
+	 *             if an error occurred accessing the Rodin database
 	 * @see IOpenable#save(IProgressMonitor, boolean, boolean)
 	 */
 	public void save(IProgressMonitor monitor, boolean force)

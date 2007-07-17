@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
@@ -702,7 +701,7 @@ public class EditSectionRegistry {
 	public synchronized IRodinElement createElement(final IEventBEditor<?> editor,
 			final IInternalParent parent,
 			final IInternalElementType<? extends IInternalElement> type,
-			final IInternalElement sibling) throws CoreException {
+			final IInternalElement sibling) throws RodinDBException {
 		if (attributeRegistry == null)
 			loadAttributeRegistry();
 
@@ -711,14 +710,14 @@ public class EditSectionRegistry {
 				(IInternalElementType<? extends IRodinElement>) type, newName);
 		RodinCore.run(new IWorkspaceRunnable() {
 
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor monitor) throws RodinDBException {
 				newElement.create(sibling, monitor);
 				AttributesInfo attributesInfo = attributeRegistry.get(type);
 				attributesInfo.createDefaultAttributes(editor, newElement,
 						monitor);
 			}
 			
-		}, new NullProgressMonitor());
+		}, null);
 
 		return newElement;
 	}

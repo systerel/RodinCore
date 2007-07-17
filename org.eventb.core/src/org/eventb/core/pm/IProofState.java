@@ -3,7 +3,6 @@ package org.eventb.core.pm;
 import java.util.Collection;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.Predicate;
@@ -47,7 +46,7 @@ public interface IProofState extends IProofTreeChangedListener {
 
 	public abstract boolean isDirty();
 
-	public abstract void setProofTree(IProgressMonitor monitor) throws CoreException;
+	public abstract void setProofTree(IProgressMonitor monitor) throws RodinDBException;
 
 	public abstract void setDirty(boolean dirty);
 

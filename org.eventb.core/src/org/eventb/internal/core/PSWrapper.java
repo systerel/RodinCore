@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -102,14 +101,14 @@ public class PSWrapper implements IPSWrapper {
 
 	@Deprecated
 	public void setProofTree(final IPSStatus status, final IProofTree pt,
-			IProgressMonitor monitor) throws CoreException {
+			IProgressMonitor monitor) throws RodinDBException {
 			setProofTree(status, pt, true, monitor);
 		}
 
 	@Deprecated
 	public void setProofTree(final IPSStatus status, final IProofTree pt,
 			final boolean hasManualProof, IProgressMonitor monitor)
-			throws CoreException {
+			throws RodinDBException {
 		
 		StampedProofTree spt = loadedTrees.get(status);
 		if (spt == null || spt.tree != pt) {
@@ -183,7 +182,7 @@ public class PSWrapper implements IPSWrapper {
 
 	public void updateStatus(final IPSStatus psStatus,
 			final boolean hasManualProof, final IProgressMonitor monitor)
-			throws CoreException {
+			throws RodinDBException {
 
 		final StampedProofTree spt = loadedTrees.get(psStatus);
 		if (spt == null) {
@@ -193,7 +192,7 @@ public class PSWrapper implements IPSWrapper {
 		final IPSStatus psHandle = (IPSStatus) psStatus.getMutableCopy();
 		final IPRProof proof = psStatus.getProof();
 		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor pm) throws CoreException {
+			public void run(IProgressMonitor pm) throws RodinDBException {
 				try {
 					pm.beginTask("Saving Proof", 4);
 					proof.setProofTree(spt.tree, new SubProgressMonitor(pm, 1));

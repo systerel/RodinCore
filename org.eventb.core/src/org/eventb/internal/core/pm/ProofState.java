@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
@@ -358,7 +357,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void setProofTree(IProgressMonitor monitor) throws CoreException {
+	public void setProofTree(IProgressMonitor monitor) throws RodinDBException {
 		if (UserSupportUtils.DEBUG)
 			UserSupportUtils.debug("Saving: " + status.getElementName());
 

@@ -1,6 +1,5 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
@@ -12,7 +11,7 @@ public class Up implements IEditAction {
 
 	public void run(IEventBEditor<?> editor, final IInternalParent parent,
 			final IInternalElement element,
-			IInternalElementType<IInternalElement> type) throws CoreException {
+			IInternalElementType<IInternalElement> type) throws RodinDBException {
 
 		// Trying to find the previous element
 		IInternalElement[] children = parent.getChildrenOfType(element
