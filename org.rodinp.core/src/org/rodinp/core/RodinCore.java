@@ -13,6 +13,7 @@ package org.rodinp.core;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -496,9 +497,10 @@ public class RodinCore extends Plugin {
 	 * @param action the action to perform
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
-	 * @exception CoreException if the operation failed.
+	 * @exception RodinDBException if the operation failed.
 	 */
-	public static void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException {
+	public static void run(IWorkspaceRunnable action, IProgressMonitor monitor)
+			throws RodinDBException {
 		run(action, ResourcesPlugin.getWorkspace().getRoot(), monitor);
 	}
 
@@ -534,15 +536,31 @@ public class RodinCore extends Plugin {
 	 * <code>null</code> if there are no scheduling restrictions for this operation.
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
-	 * @exception CoreException if the operation failed.
+	 * @exception RodinDBException if the operation failed.
 	 */
-	public static void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	// TODO throw a Rodin DB Exception instead (possibly encapsulating the core exception)
+	public static void run(IWorkspaceRunnable action, ISchedulingRule rule,
+			IProgressMonitor monitor) throws RodinDBException {
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		if (workspace.isTreeLocked()) {
 			new BatchOperation(action).run(monitor);
 		} else {
-			// use IWorkspace.run(...) to ensure that a build will be done in autobuild mode
-			workspace.run(new BatchOperation(action), rule, IWorkspace.AVOID_UPDATE, monitor);
+			// use IWorkspace.run(...) to ensure that a build will be done in
+			// autobuild mode
+			try {
+				workspace.run(new BatchOperation(action), rule,
+						IWorkspace.AVOID_UPDATE, monitor);
+			} catch (RodinDBException re) {
+				throw re;
+			} catch (CoreException ce) {
+				if (ce.getStatus().getCode() == IResourceStatus.OPERATION_FAILED) {
+					Throwable e = ce.getStatus().getException();
+					if (e instanceof RodinDBException) {
+						throw (RodinDBException) e;
+					}
+				}
+				throw new RodinDBException(ce);
+			}
 		}
 	}	
 
