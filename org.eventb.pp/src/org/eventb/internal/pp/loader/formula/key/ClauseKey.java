@@ -2,14 +2,14 @@ package org.eventb.internal.pp.loader.formula.key;
 
 import java.util.List;
 
-import org.eventb.internal.pp.loader.formula.ISignedFormula;
+import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.IndexedDescriptor;
 
 public abstract class ClauseKey<T extends IndexedDescriptor> extends SymbolKey<T> {
 
-	private List<ISignedFormula> signatures;
+	private List<SignedFormula<?>> signatures;
 	
-	public ClauseKey(List<ISignedFormula> signatures) {
+	public ClauseKey(List<SignedFormula<?>> signatures) {
 		this.signatures = signatures;
 	}
 	

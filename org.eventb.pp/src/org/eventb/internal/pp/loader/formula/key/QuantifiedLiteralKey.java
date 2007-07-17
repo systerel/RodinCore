@@ -10,7 +10,7 @@ package org.eventb.internal.pp.loader.formula.key;
 
 import java.util.List;
 
-import org.eventb.internal.pp.loader.formula.ISignedFormula;
+import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.QuantifiedDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.IContext;
@@ -30,16 +30,16 @@ public class QuantifiedLiteralKey extends SymbolKey<QuantifiedDescriptor> {
 	 * <code>false</code> otherwise.
 	 */
 	private boolean isForall;
-	private ISignedFormula signature;
+	private SignedFormula<?> signature;
 	private List<TermSignature> terms;
 
-	public QuantifiedLiteralKey(ISignedFormula signature, List<TermSignature> terms, boolean isForall) {
+	public QuantifiedLiteralKey(SignedFormula<?> signature, List<TermSignature> terms, boolean isForall) {
 		this.isForall = isForall;
 		this.signature = signature;
 		this.terms = terms;
 	}
 	
-	public ISignedFormula getSignature() {
+	public SignedFormula<?> getSignature() {
 		return signature;
 	}
 	
