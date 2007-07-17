@@ -4,11 +4,9 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -37,6 +35,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
 public class PasteAction extends SelectionListenerAction {
@@ -140,7 +139,7 @@ public class PasteAction extends SelectionListenerAction {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) throws RodinDBException {
 					for (IRodinElement element : handleData) {
 						IRodinFile pasteInto;
 						if (parent != null)
@@ -154,7 +153,7 @@ public class PasteAction extends SelectionListenerAction {
 													pasteInto,
 													IEvent.ELEMENT_TYPE, "evt",
 													0), false,
-									new NullProgressMonitor());
+									null);
 						else if (element instanceof IInvariant)
 							((IInternalElement) element).copy(
 									pasteInto, null, "inv"
@@ -162,7 +161,7 @@ public class PasteAction extends SelectionListenerAction {
 													pasteInto,
 													IInvariant.ELEMENT_TYPE,
 													"inv", 0), false,
-									new NullProgressMonitor());
+									null);
 						else if (element instanceof ITheorem)
 							((IInternalElement) element).copy(
 									pasteInto, null, "thm"
@@ -170,7 +169,7 @@ public class PasteAction extends SelectionListenerAction {
 													pasteInto,
 													ITheorem.ELEMENT_TYPE,
 													"thm", 0), false,
-									new NullProgressMonitor());
+									null);
 						else if (element instanceof IVariant)
 							((IInternalElement) element).copy(
 									pasteInto, null, "variant"
@@ -178,7 +177,7 @@ public class PasteAction extends SelectionListenerAction {
 													pasteInto,
 													IVariant.ELEMENT_TYPE,
 													"variant", 0), false,
-									new NullProgressMonitor());
+									null);
 						else if (element instanceof IAxiom)
 							((IInternalElement) element).copy(
 									pasteInto, null, "axm"
@@ -186,7 +185,7 @@ public class PasteAction extends SelectionListenerAction {
 													pasteInto,
 													IAxiom.ELEMENT_TYPE, "axm",
 													0), false,
-									new NullProgressMonitor());
+									null);
 						else if (element instanceof IConstant)
 							((IInternalElement) element).copy(
 									pasteInto, null, "cst"
@@ -194,7 +193,7 @@ public class PasteAction extends SelectionListenerAction {
 													pasteInto,
 													IConstant.ELEMENT_TYPE,
 													"cst", 0), false,
-									new NullProgressMonitor());
+									null);
 						else if (element instanceof ICarrierSet)
 							((IInternalElement) element).copy(
 									pasteInto, null, "set"
@@ -202,7 +201,7 @@ public class PasteAction extends SelectionListenerAction {
 													pasteInto,
 													ICarrierSet.ELEMENT_TYPE,
 													"set", 0), false,
-									new NullProgressMonitor());
+									null);
 						else
 							((IInternalElement) element).copy(parent, null,
 									"element"
@@ -210,12 +209,12 @@ public class PasteAction extends SelectionListenerAction {
 													(IInternalParent) parent,
 													((InternalElement) element).getElementType(),
 													"element", 1), false,
-									new NullProgressMonitor());
+									null);
 					}
 				}
 
-			}, new NullProgressMonitor());
-		} catch (CoreException e) {
+			}, null);
+		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -16,9 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -444,7 +442,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor pm) throws CoreException {
+				public void run(IProgressMonitor pm) throws RodinDBException {
 					IEvent evt = EventBEditorUtils.createNewEvent(editor, label,
 							pm);
 
@@ -467,9 +465,9 @@ public class NewEventInputDialog extends EventBInputDialog {
 													.size()]), pm);
 				}
 
-			}, new NullProgressMonitor());
+			}, null);
 
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -214,7 +213,7 @@ public class EventBEditorUtils {
 						RodinCore.run(new IWorkspaceRunnable() {
 
 							public void run(IProgressMonitor monitor)
-									throws CoreException {
+									throws RodinDBException {
 								String name = UIUtils.getFreeElementName(
 										editor, event, IAction.ELEMENT_TYPE,
 										PrefixActName.DEFAULT_PREFIX);
@@ -237,7 +236,7 @@ public class EventBEditorUtils {
 								viewer.getTree(), event).getData(), true);
 						select((EventBEditableTreeViewer) viewer, newAct, 1);
 					}
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -268,7 +267,7 @@ public class EventBEditorUtils {
 						RodinCore.run(new IWorkspaceRunnable() {
 
 							public void run(IProgressMonitor monitor)
-									throws CoreException {
+									throws RodinDBException {
 								String name = UIUtils.getFreeElementName(
 										editor, event,
 										IRefinesEvent.ELEMENT_TYPE,
@@ -288,7 +287,7 @@ public class EventBEditorUtils {
 								viewer.getTree(), event).getData(), true);
 						select((EventBEditableTreeViewer) viewer, newRefEvt, 0);
 					}
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -319,7 +318,7 @@ public class EventBEditorUtils {
 						RodinCore.run(new IWorkspaceRunnable() {
 
 							public void run(IProgressMonitor monitor)
-									throws CoreException {
+									throws RodinDBException {
 								String name = UIUtils.getFreeElementName(
 										editor, event, IWitness.ELEMENT_TYPE,
 										PrefixWitName.DEFAULT_PREFIX);
@@ -341,7 +340,7 @@ public class EventBEditorUtils {
 								viewer.getTree(), event).getData(), true);
 						select((EventBEditableTreeViewer) viewer, newWit, 0);
 					}
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -372,7 +371,7 @@ public class EventBEditorUtils {
 						RodinCore.run(new IWorkspaceRunnable() {
 
 							public void run(IProgressMonitor monitor)
-									throws CoreException {
+									throws RodinDBException {
 								String label = UIUtils.getFreeElementLabel(
 										editor, event, IGuard.ELEMENT_TYPE,
 										PrefixGrdName.DEFAULT_PREFIX);
@@ -394,7 +393,7 @@ public class EventBEditorUtils {
 								viewer.getTree(), event).getData(), true);
 						select((EventBEditableTreeViewer) viewer, newGrd, 1);
 					}
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -425,7 +424,7 @@ public class EventBEditorUtils {
 						RodinCore.run(new IWorkspaceRunnable() {
 
 							public void run(IProgressMonitor monitor)
-									throws CoreException {
+									throws RodinDBException {
 								String identifier = UIUtils
 										.getFreeElementIdentifier(editor,
 												event, IVariable.ELEMENT_TYPE,
@@ -447,7 +446,7 @@ public class EventBEditorUtils {
 								viewer.getTree(), event).getData(), true);
 						select((EventBEditableTreeViewer) viewer, newVar, 0);
 					}
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -472,7 +471,7 @@ public class EventBEditorUtils {
 					RodinCore.run(new IWorkspaceRunnable() {
 
 						public void run(IProgressMonitor monitor)
-								throws CoreException {
+								throws RodinDBException {
 							String name = UIUtils.getFreeElementName(editor,
 									rodinFile, IVariable.ELEMENT_TYPE,
 									PrefixVarName.DEFAULT_PREFIX);
@@ -491,7 +490,7 @@ public class EventBEditorUtils {
 
 					}, null);
 					((EventBEditableTreeViewer) viewer).edit(newVar);
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -516,7 +515,7 @@ public class EventBEditorUtils {
 					RodinCore.run(new IWorkspaceRunnable() {
 
 						public void run(IProgressMonitor monitor)
-								throws CoreException {
+								throws RodinDBException {
 							String label = UIUtils.getFreeElementLabel(editor,
 									rodinFile, IInvariant.ELEMENT_TYPE,
 									PrefixInvName.DEFAULT_PREFIX);
@@ -536,7 +535,7 @@ public class EventBEditorUtils {
 					}, null);
 					((EventBEditableTreeViewer) viewer).edit(newInv);
 
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -561,7 +560,7 @@ public class EventBEditorUtils {
 					RodinCore.run(new IWorkspaceRunnable() {
 
 						public void run(IProgressMonitor monitor)
-								throws CoreException {
+								throws RodinDBException {
 							String label = UIUtils.getFreeElementLabel(editor,
 									rodinFile, ITheorem.ELEMENT_TYPE,
 									PrefixThmName.DEFAULT_PREFIX);
@@ -581,7 +580,7 @@ public class EventBEditorUtils {
 					}, null);
 					((EventBEditableTreeViewer) viewer).edit(newThm);
 
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -607,7 +606,7 @@ public class EventBEditorUtils {
 					RodinCore.run(new IWorkspaceRunnable() {
 
 						public void run(IProgressMonitor monitor)
-								throws CoreException {
+								throws RodinDBException {
 							String evtName = UIUtils.getFreeElementName(editor,
 									rodinFile, IEvent.ELEMENT_TYPE,
 									PrefixEvtName.DEFAULT_PREFIX);
@@ -722,7 +721,7 @@ public class EventBEditorUtils {
 					viewer.setExpandedState(newEvt, true);
 					viewer.reveal(newAct);
 					((EventBEditableTreeViewer) viewer).edit(newEvt);
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -747,7 +746,7 @@ public class EventBEditorUtils {
 					RodinCore.run(new IWorkspaceRunnable() {
 
 						public void run(IProgressMonitor monitor)
-								throws CoreException {
+								throws RodinDBException {
 							String label = UIUtils.getFreeElementLabel(editor,
 									rodinFile, IAxiom.ELEMENT_TYPE,
 									PrefixAxmName.DEFAULT_PREFIX);
@@ -766,7 +765,7 @@ public class EventBEditorUtils {
 
 					}, null);
 					((EventBEditableTreeViewer) viewer).edit(newAxm);
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -791,7 +790,7 @@ public class EventBEditorUtils {
 					RodinCore.run(new IWorkspaceRunnable() {
 
 						public void run(IProgressMonitor monitor)
-								throws CoreException {
+								throws RodinDBException {
 							String name = UIUtils.getFreeElementName(editor,
 									rodinFile, IConstant.ELEMENT_TYPE,
 									PrefixCstName.DEFAULT_PREFIX);
@@ -810,7 +809,7 @@ public class EventBEditorUtils {
 
 					}, null);
 					((EventBEditableTreeViewer) viewer).edit(newCst);
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -835,7 +834,7 @@ public class EventBEditorUtils {
 					RodinCore.run(new IWorkspaceRunnable() {
 
 						public void run(IProgressMonitor monitor)
-								throws CoreException {
+								throws RodinDBException {
 							String name = UIUtils.getFreeElementName(editor,
 									rodinFile, ICarrierSet.ELEMENT_TYPE,
 									PrefixSetName.DEFAULT_PREFIX);
@@ -856,7 +855,7 @@ public class EventBEditorUtils {
 
 					}, null);
 					((EventBEditableTreeViewer) viewer).edit(newSet);
-				} catch (CoreException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -916,7 +915,7 @@ public class EventBEditorUtils {
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) throws RodinDBException {
 					createNewVariable(editor, dialog.getName(), monitor);
 					createNewInvariant(editor, dialog.getInvariants(), monitor);
 					
@@ -927,17 +926,17 @@ public class EventBEditorUtils {
 
 			}, new NullProgressMonitor());
 
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 	}
 
 	protected static void createNewInitialisationAction(final IEventBEditor<IMachineFile> editor,
 			final String actLabel, final String actSub, final IProgressMonitor monitor)
-			throws CoreException {
+			throws RodinDBException {
 		RodinCore.run(new IWorkspaceRunnable() {
 
-			public void run(IProgressMonitor m) throws CoreException {
+			public void run(IProgressMonitor m) throws RodinDBException {
 				IRodinFile rodinFile = editor.getRodinInput();
 				if (actSub != null) {
 					IRodinElement[] events = rodinFile
@@ -989,10 +988,10 @@ public class EventBEditorUtils {
 
 	protected static void createNewInvariant(final IEventBEditor<IMachineFile> editor,
 			final Collection<Pair<String, String>> invariants, final IProgressMonitor monitor)
-			throws CoreException {
+			throws RodinDBException {
 		RodinCore.run(new IWorkspaceRunnable() {
 
-			public void run(IProgressMonitor m) throws CoreException {
+			public void run(IProgressMonitor m) throws RodinDBException {
 				IRodinFile rodinFile = editor.getRodinInput();
 				String invPrefix = UIUtils.getNamePrefix(editor,
 						IInvariant.ELEMENT_TYPE, PrefixInvName.DEFAULT_PREFIX);
@@ -1019,10 +1018,10 @@ public class EventBEditorUtils {
 	}
 
 	public static void createNewVariable(final IEventBEditor<IMachineFile> editor, final String name,
-			final IProgressMonitor monitor) throws CoreException {
+			final IProgressMonitor monitor) throws RodinDBException {
 		RodinCore.run(new IWorkspaceRunnable() {
 
-			public void run(IProgressMonitor m) throws CoreException {
+			public void run(IProgressMonitor m) throws RodinDBException {
 				IRodinFile rodinFile = editor.getRodinInput();
 				newVar = rodinFile.getInternalElement(
 						IVariable.ELEMENT_TYPE, UIUtils.getFreeElementName(
@@ -1064,7 +1063,7 @@ public class EventBEditorUtils {
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) throws RodinDBException {
 
 					String identifier = dialog.getIdentifier();
 					createNewConstant(editor, identifier, monitor);
@@ -1076,17 +1075,17 @@ public class EventBEditorUtils {
 
 			}, new NullProgressMonitor());
 
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 	}
 
 	protected static void createNewAxioms(final IEventBEditor<IContextFile> editor,
 			final String[] axmNames, final String[] axmSubs,
-			IProgressMonitor monitor) throws CoreException {
+			IProgressMonitor monitor) throws RodinDBException {
 		RodinCore.run(new IWorkspaceRunnable() {
 
-			public void run(IProgressMonitor pm) throws CoreException {
+			public void run(IProgressMonitor pm) throws RodinDBException {
 				IRodinFile rodinFile = editor.getRodinInput();
 				String axmName = UIUtils.getNamePrefix(editor,
 						IAxiom.ELEMENT_TYPE, PrefixAxmName.DEFAULT_PREFIX);
@@ -1109,10 +1108,10 @@ public class EventBEditorUtils {
 	}
 
 	protected static void createNewConstant(final IEventBEditor<IContextFile> editor,
-			final String name, IProgressMonitor monitor) throws CoreException {
+			final String name, IProgressMonitor monitor) throws RodinDBException {
 		RodinCore.run(new IWorkspaceRunnable() {
 
-			public void run(IProgressMonitor pm) throws CoreException {
+			public void run(IProgressMonitor pm) throws RodinDBException {
 				IRodinFile rodinFile = editor.getRodinInput();
 				newCst = rodinFile.getInternalElement(IConstant.ELEMENT_TYPE,
 						UIUtils.getFreeElementName(editor, rodinFile,
@@ -1171,7 +1170,7 @@ public class EventBEditorUtils {
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) throws RodinDBException {
 
 					String prefix = UIUtils.getNamePrefix(editor,
 							IInvariant.ELEMENT_TYPE,
@@ -1196,7 +1195,7 @@ public class EventBEditorUtils {
 				}
 
 			}, null);
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 	}
@@ -1222,7 +1221,7 @@ public class EventBEditorUtils {
 				return; // Cancel
 
 			RodinCore.run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) throws RodinDBException {
 					String prefix = UIUtils.getNamePrefix(editor,
 							IVariant.ELEMENT_TYPE,
 							"variant");
@@ -1238,7 +1237,7 @@ public class EventBEditorUtils {
 					editor.addNewElement(newVariant);
 				}
 			}, null);
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 	}
@@ -1270,7 +1269,7 @@ public class EventBEditorUtils {
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) throws RodinDBException {
 					String prefix = UIUtils.getNamePrefix(editor,
 							ITheorem.ELEMENT_TYPE,
 							PrefixThmName.DEFAULT_PREFIX);
@@ -1294,7 +1293,7 @@ public class EventBEditorUtils {
 				}
 
 			}, null);
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 	}
@@ -1320,7 +1319,7 @@ public class EventBEditorUtils {
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor pm) throws CoreException {
+				public void run(IProgressMonitor pm) throws RodinDBException {
 					String name = dialog.getLabel();
 					IEvent evt = createNewEvent(editor, name, pm);
 
@@ -1339,7 +1338,7 @@ public class EventBEditorUtils {
 
 			}, monitor);
 
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 	}
@@ -1425,7 +1424,7 @@ public class EventBEditorUtils {
 			
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor pm) throws CoreException {
+				public void run(IProgressMonitor pm) throws RodinDBException {
 					String setPrefix = UIUtils.getNamePrefix(editor,
 							IConstant.ELEMENT_TYPE,
 							PrefixCstName.DEFAULT_PREFIX);
@@ -1446,7 +1445,7 @@ public class EventBEditorUtils {
 				}
 
 			}, monitor);
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 	}
@@ -1476,7 +1475,7 @@ public class EventBEditorUtils {
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor pm) throws CoreException {
+				public void run(IProgressMonitor pm) throws RodinDBException {
 					String[] elements = dialog.getElements();
 
 					final String setName = UIUtils.getFreeElementName(editor, ctxFile,
@@ -1552,7 +1551,7 @@ public class EventBEditorUtils {
 				}
 
 			}, monitor);
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -1585,7 +1584,7 @@ public class EventBEditorUtils {
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) throws RodinDBException {
 					String prefix = UIUtils.getNamePrefix(editor,
 							IAxiom.ELEMENT_TYPE,
 							PrefixAxmName.DEFAULT_PREFIX);
@@ -1611,7 +1610,7 @@ public class EventBEditorUtils {
 
 			}, null);
 
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 	}
@@ -1710,10 +1709,10 @@ public class EventBEditorUtils {
 
 	
 	public static IEvent createNewEvent(final IEventBEditor<IMachineFile> editor, final String label,
-			IProgressMonitor monitor) throws CoreException {
+			IProgressMonitor monitor) throws RodinDBException {
 		RodinCore.run(new IWorkspaceRunnable() {
 
-			public void run(IProgressMonitor pm) throws CoreException {
+			public void run(IProgressMonitor pm) throws RodinDBException {
 				IRodinFile rodinFile = editor.getRodinInput();
 				String evtName = UIUtils.getFreeElementName(editor, rodinFile,
 						IEvent.ELEMENT_TYPE, PrefixEvtName.DEFAULT_PREFIX);

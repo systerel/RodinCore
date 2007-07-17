@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -96,11 +95,11 @@ public abstract class AbstractContextsSection<F extends IRodinFile> extends
 	protected final void addClauseInRunnable(final String contextName) {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) throws RodinDBException {
 					addClause(contextName);
 				}
 			}, null);
-		} catch (CoreException e) {
+		} catch (RodinDBException e) {
 			UIUtils.log(e, "when creating a clause");
 		}
 	}

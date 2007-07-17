@@ -16,9 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -248,7 +246,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) throws RodinDBException {
 					EventBEditorUtils
 							.createNewConstant(editor, identifier, monitor);
 
@@ -257,8 +255,8 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 							.toArray(new String[axmSubs.size()]), monitor);
 				}
 
-			}, new NullProgressMonitor());
-		} catch (CoreException e) {
+			}, null);
+		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

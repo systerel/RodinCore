@@ -13,7 +13,6 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
@@ -311,7 +310,7 @@ public class RefinesSection extends SectionPart implements
 					RodinCore.run(new IWorkspaceRunnable() { // Batch the
 								// creation
 								public void run(IProgressMonitor monitor)
-										throws CoreException {
+										throws RodinDBException {
 									refined = rodinFile
 											.getInternalElement(
 													IRefinesMachine.ELEMENT_TYPE,
@@ -328,9 +327,6 @@ public class RefinesSection extends SectionPart implements
 							}, null);
 				} catch (RodinDBException exception) {
 					exception.printStackTrace();
-					refined = null;
-				} catch (CoreException e) {
-					e.printStackTrace();
 					refined = null;
 				}
 			} else { // Change the element
