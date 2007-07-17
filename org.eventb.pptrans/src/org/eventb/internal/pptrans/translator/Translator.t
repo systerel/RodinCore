@@ -31,6 +31,21 @@ public class Translator extends IdentityTranslator {
 		super(ff);
 	}
 
+	private Predicate translateInPow(Expression e, Expression t,
+			SourceLocation loc) {
+		final DecomposedQuant forall = new DecomposedQuant(ff);
+		final Expression x = forall.addQuantifier(e.getType().getBaseType(), loc);
+
+		return forall.makeQuantifiedPredicate(
+			Formula.FORALL,
+			ff.makeBinaryPredicate(
+				Formula.LIMP,
+				translateIn(x, forall.push(e), loc),
+				translateIn(x, forall.push(t), loc), 
+				loc),
+		loc);
+	}
+	
 	%include {Formula.tom}
 
 	@Override
@@ -70,7 +85,7 @@ public class Translator extends IdentityTranslator {
 	    	}
 	        /**
 	 		*  RULE BR3:	s ⊂ t
-	 		* 				s ∈ ℙ(t) ∧ ¬�(t ∈ ℙ(s))
+	 		* 				s ∈ ℙ(t) ∧ ¬(t ∈ ℙ(s))
 	 		*/	   		      	
 	    	Subset(s, t) -> {
 				return FormulaConstructor.makeLandPredicate(
@@ -84,7 +99,7 @@ public class Translator extends IdentityTranslator {
 	    	}
 	        /**
 	 		*  RULE BR4: 	s ⊄ t
-	 		* 				�¬�(s ∈ ℙ(t)) ∨ t ∈ ℙ(s)
+	 		* 				¬(s ∈ ℙ(t)) ∨ t ∈ ℙ(s)
 	 		*/	   		      	
 	    	NotSubset(s, t) -> {
 				return FormulaConstructor.makeLorPredicate(
@@ -301,20 +316,19 @@ public class Translator extends IdentityTranslator {
 			}
 	        /**
 	         * RULE IR2: 	e ∈ ℙ(t)
-	         *	  			∀X_T·X∈e' ⇒ X∈t'	whereas ℙ(T) = type(e)
+	         *	  			∀X_T·X∈e' ⇒ X∈t'	where ℙ(T) = type(e)
 	         */
 			Pow(t) -> {
-				final DecomposedQuant forall = new DecomposedQuant(ff);
-				final Expression x = forall.addQuantifier(e.getType().getBaseType(), loc);
-	
-	    		return forall.makeQuantifiedPredicate(
-					Formula.FORALL,
-					ff.makeBinaryPredicate(
-						Formula.LIMP,
-						translateIn(x, forall.push(e), loc),
-						translateIn(x, forall.push(`t), loc), 
-						loc),
-				loc);
+				return translateInPow(e, `t, loc);
+			}
+	        /**
+	         * RULE IR2': 	e ∈ s↔t)
+	         *	  			∀X_T·X∈e' ⇒ X∈s'×t' 	where ℙ(T) = type(e)
+	         */
+			Rel(s, t) -> {
+				final Expression rhs =
+						ff.makeBinaryExpression(Formula.CPROD, `s, `t, loc);
+				return translateInPow(e, rhs, loc);
 			}
 	        /**
 	         * RULE IR3: 	e ∈ f
@@ -629,19 +643,6 @@ public class Translator extends IdentityTranslator {
 						translateIn(e, child, loc));
 				}
 				return FormulaConstructor.makeAssociativePredicate(ff, tag, preds, loc);
-			}
-	        /**
-	         * RULE IR22:	e ∈ s↔t 	 
-	         *	  			dom(e)⊆s ∧ ran(e)⊆t
-	         */
-			Rel(s, t) -> {
-				return translateIn(
-						e,
-						ff.makeUnaryExpression(
-							Formula.POW,
-							ff.makeBinaryExpression(Formula.CPROD, `s, `t, loc),
-							loc),
-						loc);
 			}
 	        /**
 	         * RULE IR23:	e ∈ st 	 

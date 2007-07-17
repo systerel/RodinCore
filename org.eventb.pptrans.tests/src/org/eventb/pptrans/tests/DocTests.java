@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
@@ -102,4 +103,29 @@ public class DocTests extends AbstractTranslationTests {
 								mList("a", "b", "r"),
 								mList(INT_SET, INT_SET, REL(INT, BOOL))));
 	}
+
+	public void testUseCase1() {
+
+		final ITypeEnvironment te = ff.makeTypeEnvironment();
+		te.addGivenSet("GS");
+		te.addGivenSet("GT");
+		te.addName("S", POW(mGivenSet("GS")));
+		te.addName("T", POW(mGivenSet("GT")));
+
+		doTransTest("r ∈ S↔T", "∀x,y·x↦y∈r ⇒ x∈S ∧ y∈T", false, te);
+	}
+
+	public void testUseCase2() {
+
+		final ITypeEnvironment te = ff.makeTypeEnvironment();
+		te.addGivenSet("GS");
+		te.addName("S", POW(mGivenSet("GS")));
+		te.addGivenSet("GT");
+		te.addName("T", POW(mGivenSet("GT")));
+		te.addGivenSet("GU");
+		te.add(mFreeIdentifier("r", REL(mGivenSet("GS"), mGivenSet("GU"))));
+
+		doTransTest("r;s ∈ S↔T", "∀x,y·(∃z·x↦z∈r ∧ z↦y∈s) ⇒ x∈S ∧ y∈T", false, te);
+	}
+
 }

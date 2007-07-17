@@ -367,6 +367,9 @@ public class TranslationTests extends AbstractTranslationTests {
 	private static ITypeEnvironment cr_te = mTypeEnvironment(
 			mList( "s", "t"), mList(INT_SET, INT_SET));
 
+	private static ITypeEnvironment cr_ste = mTypeEnvironment(
+			mList( "s", "t"), mList(POW(BOOL), INT_SET));
+
 	/**
 	 * Tests for CR1
 	 */
@@ -490,6 +493,21 @@ public class TranslationTests extends AbstractTranslationTests {
 
 		doTest( "∀f,t·e∪f∈ℙ(s∪t)", 
 				"∀f,t·∀x·x∈e∪f ⇒ x∈s∪t", true, cr_te);
+	}	
+	
+	/**
+	 * Tests for IR2'
+	 */
+	public void testIR2prime_simple() {
+		
+		doTest( "e∈s↔t", 
+				"∀xs,xt·xs↦xt∈e ⇒ xs∈s ∧ xt∈t", true, cr_ste);
+	}
+	
+	public void testIR2prime_complex() {
+
+		doTest( "∀f⦂ℤ↔ℤ,t·e;f ∈ s↔t", 
+				"∀f⦂ℤ↔ℤ,t·∀xs,xt·xs↦xt∈e;f ⇒ xs∈s ∧ xt∈t", true, cr_ste);
 	}	
 	
 	/**
@@ -988,24 +1006,6 @@ public class TranslationTests extends AbstractTranslationTests {
 
 	ITypeEnvironment te_irRels = mTypeEnvironment(
 			new String[]{"s", "t"}, new Type[]{POW(S), POW(T)});
-	/**
-	 * Tests for IR22
-	 */
-	public void testIR22_simple() {
-
-		doTest( "e ∈ s↔t", 
-				"e ∈ ℙ(s×t)", 
-				true, 
-				te_irRels);
-	}
-	
-	public void testIR22_recursive() {
-
-		doTest( "e ∈ s∪v↔t∪w", 
-				"e ∈ ℙ((s∪v)×(t∪w))", 
-				true, 
-				te_irRels);
-	}
 
 	/**
 	 * Tests for IR23
