@@ -2,7 +2,8 @@ package org.eventb.internal.pp.loader.formula;
 
 
 public class TermVisitorContext {
-
+	// TODO remove this class
+	
 	// set before starting visiting
 	public boolean isEquivalence;
 	

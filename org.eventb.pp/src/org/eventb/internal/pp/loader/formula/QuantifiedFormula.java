@@ -74,16 +74,6 @@ public class QuantifiedFormula extends AbstractLabelizableFormula<QuantifiedDesc
 
 	@Override
 	List<List<Literal<?,?>>> getDefinitionClauses(List<TermSignature> termList, LabelManager manager, List<List<Literal<?,?>>> prefix, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
-//		TermVisitorContext newContext = new TermVisitorContext();
-//		
-//		newContext.isForall = context.isPositive?isForall:!isForall;
-//		newContext.isPositive = context.isPositive;
-//		newContext.startOffset = startOffset;
-//		newContext.endOffset = endOffset;
-//		
-//		newContext.isQuantified = true;
-//		if (manager.isGettingDefinitions() || !context.isForall) manager.setForceLabelize(true);
-
 		List<TermSignature> quantifiedTermList = transform(termList);
 		return child.getClauses(quantifiedTermList, manager, prefix, table, context, bool);
 	}
@@ -178,12 +168,6 @@ public class QuantifiedFormula extends AbstractLabelizableFormula<QuantifiedDesc
 		newContext.isQuantified = true;
 		
 		return newContext;
-		
-//		child.setFlags(context);
-//		context.isQuantified = true;
-//		context.isForall = isForall;
-//		context.quantifierOffset = lastQuantifiedOffset;
 	}
-
 
 }

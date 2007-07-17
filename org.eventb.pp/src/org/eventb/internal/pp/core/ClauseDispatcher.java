@@ -221,14 +221,14 @@ public class ClauseDispatcher implements IDispatcher {
 		while (nonDispatchedClausesIterator.hasNext()) {
 			Clause clause = nonDispatchedClausesIterator.next();
 			assert getLevel().compareTo(clause.getLevel()) >= 0;
-			nonDispatchedClauses.remove(clause);
 			// necessary ?
 			if (!isSubsumedByProvers(clause)) {
-				alreadyDispatchedClauses.appends(clause);
 				for (IProver prover : provers) {
 					if (checkContradictionAndAddNondispatchedClause(clause, prover)) return true;
 				}
+				alreadyDispatchedClauses.appends(clause);
 			}
+			nonDispatchedClauses.remove(clause);
 		}
 		return false;
 	}
@@ -260,7 +260,7 @@ public class ClauseDispatcher implements IDispatcher {
 			internalContradiction(result.getContradictionOrigin());
 			return true;
 		}
-		addNonDispatchedClauses(result.getGeneratedClauses());
+		else addNonDispatchedClauses(result.getGeneratedClauses());
 		return false;
 	}
 	
@@ -272,7 +272,11 @@ public class ClauseDispatcher implements IDispatcher {
 	}
 	
 	private void addNonDispatchedClause(Clause clause) {
+		assert !clause.isFalse();
+		
 		if (!clause.isTrue() && !checkAndRemoveAlreadyExistingClause(clause)) {
+			assert !alreadyDispatchedClauses.contains(clause);
+			
 			// we check if it is there
 			if (nonDispatchedClauses.contains(clause)) {
 				Clause existingClause = nonDispatchedClauses.get(clause);
@@ -282,6 +286,7 @@ public class ClauseDispatcher implements IDispatcher {
 				}
 				else return; // clause had a lower level, we forget the new clause
 			}
+			assert !nonDispatchedClauses.contains(clause);
 			nonDispatchedClauses.appends(clause);
 		}
 	}

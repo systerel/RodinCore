@@ -51,9 +51,7 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> {
 		return terms;
 	}
 	
-	abstract boolean getContextAndSetLabels(LabelVisitor context,
-			LabelManager manager);
-	
+	abstract boolean getContextAndSetLabels(LabelVisitor context, LabelManager manager);
 	
 	final Literal<?, ?> getLiteral(int index, List<TermSignature> terms,
 			TermVisitorContext context, VariableTable table) {

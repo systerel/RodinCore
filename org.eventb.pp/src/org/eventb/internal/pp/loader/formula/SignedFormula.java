@@ -109,11 +109,6 @@ public class SignedFormula<T extends LiteralDescriptor> {
 		return (isPositive ? "" : "not ") + child.toString();
 	}
 
-	// public void setFlags(TermVisitorContext context) {
-	// child.getNewContext(context);
-	// context.isPositive = isPositive;
-	// }
-
 	boolean getContextAndSetLabels(LabelVisitor context, LabelManager manager) {
 		if (!isPositive) {
 			context.isPositive = !context.isPositive;

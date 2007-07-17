@@ -3,6 +3,8 @@ package org.eventb.internal.pp.core.provers.equality;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,44 +39,41 @@ public class EqualityProver implements IProver {
 	
 	private IEquivalenceManager manager = new EquivalenceManager();
 	
-//	private IterableHashSet<Clause> generatedClauses;
-//	private ResetIterator<Clause> backtrackIterator;
-//	private ResetIterator<Clause> dispatcherIterator;
-//	
-//	private Set<Clause> subsumedClauses; 
-	
 	private ClauseSimplifier simplifier;
 	private EqualityInferrer inferrer;
 	private EqualityInstantiationInferrer instantiationInferrer;
 	
+	private HashSet<Clause> equalityInstantiations;
+	
 	public EqualityProver(IVariableContext context) {
-//		this.generatedClauses = new IterableHashSet<Clause>();
 		this.inferrer = new EqualityInferrer(context);
 		this.instantiationInferrer = new EqualityInstantiationInferrer(context);
-		
-//		backtrackIterator = generatedClauses.iterator();
-//		dispatcherIterator = generatedClauses.iterator();
-//		
-//		subsumedClauses = new HashSet<Clause>();
+		this.equalityInstantiations = new LinkedHashSet<Clause>();
 	}
 	
 	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		manager.backtrack(newLevel);
 		
-//		// TODO check if necessary
-//		backtrackIterator.reset();
-//		while (backtrackIterator.hasNext()) {
-//			Clause clause = backtrackIterator.next();
-//			if (dispatcher.getLevel().isAncestorOf(clause.getLevel())) generatedClauses.remove(clause);
-//		}
+		backtrackInstantiations(newLevel);
 	}
 
+	private void backtrackInstantiations(Level level) {
+		for (Iterator<Clause> iterator = equalityInstantiations.iterator(); iterator.hasNext();) {
+			Clause clause = iterator.next();
+			if (level.isAncestorOf(clause.getLevel())) iterator.remove();
+		}
+	}
+	
 	public void initialize(ClauseSimplifier simplifier) {
 		this.simplifier = simplifier;
 	}
 
 	public ProverResult next() {
-		return null;
+		// return equality instantiations here, if not, it loops
+		if (equalityInstantiations.isEmpty()) return null;
+		Set<Clause> result = new HashSet<Clause>(equalityInstantiations);
+		equalityInstantiations.clear();
+		return new ProverResult(result, new HashSet<Clause>());
 	}
 
 	public void registerDumper(Dumper dumper) {
@@ -142,7 +141,7 @@ public class EqualityProver implements IProver {
 					queryResult, instantiationResult, true);
 			newOrigin = handleQueryResult(queryResult, generatedClauses, subsumedClauses);
 			origin = getLowerLevelOrigin(origin, newOrigin);
-			newOrigin = handleInstantiationResult(instantiationResult, generatedClauses, subsumedClauses);
+			newOrigin = handleInstantiationResult(instantiationResult, equalityInstantiations);
 			origin = getLowerLevelOrigin(origin, newOrigin);
 			return origin;
 		}
@@ -201,7 +200,7 @@ public class EqualityProver implements IProver {
 		if (result == null) return null;
 		if (!result.hasContradiction()) {
 			if (result.getSolvedQueries() != null) return handleQueryResult(result.getSolvedQueries(), generatedClauses, subsumedClauses);
-			if (result.getSolvedInstantiations() != null) return handleInstantiationResult(result.getSolvedInstantiations(), generatedClauses, subsumedClauses);
+			if (result.getSolvedInstantiations() != null) return handleInstantiationResult(result.getSolvedInstantiations(), equalityInstantiations);
 			else return null;
 		}
 		else {
@@ -220,7 +219,7 @@ public class EqualityProver implements IProver {
 	}
 	
 	private IOrigin handleInstantiationResult(List<? extends IInstantiationResult> result,
-			Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
+			Set<Clause> generatedClauses) {
 		if (result == null) return null;
 		for (IInstantiationResult insRes : result) {
 			for (Clause clause : insRes.getSolvedClauses()) {
@@ -328,17 +327,4 @@ public class EqualityProver implements IProver {
 		return "EqualityProver";
 	}
 
-//	public ResetIterator<Clause> getGeneratedClauses() {
-//		return dispatcherIterator;
-//	}
-//	
-//	public void clean() {
-//		generatedClauses.clear();
-//	}
-//
-//	public Set<Clause> getSubsumedClauses() {
-//		Set<Clause> result = new HashSet<Clause>(subsumedClauses);
-//		subsumedClauses.clear();
-//		return result;
-//	}
 }

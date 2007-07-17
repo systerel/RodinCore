@@ -64,7 +64,7 @@ public class EqualitySimplifier implements ISimplifier {
 		boolean ok = simplifyEquality(conditions);
 		if (!ok) return new TrueClause(clause.getOrigin());
 		if (!isTrue) {
-			// we must inverse one predicate
+			// we must inverse one literal
 			EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
 		}
 		else if (predicates.size() + equalities.size() 

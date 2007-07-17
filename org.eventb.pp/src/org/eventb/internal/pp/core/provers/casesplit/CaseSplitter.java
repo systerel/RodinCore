@@ -156,7 +156,7 @@ public class CaseSplitter implements IProver {
 	private boolean accepts(Clause clause) {
 		return inferrer.canInfer(clause);
 	}
-	
+
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
 		assert !candidates.contains(clause);
 		assert !dispatcher.getLevel().isAncestorOf(clause.getLevel());
@@ -179,7 +179,6 @@ public class CaseSplitter implements IProver {
 		return false;
 	}
 	
-
 	private static class SplitPair {
 		Clause original;
 		Clause left,right;

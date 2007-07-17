@@ -46,6 +46,7 @@ public class PredicateProver implements IProver {
 		this.inferrer = new ResolutionInferrer(context);
 		
 		unitClauses = new IterableHashSet<Clause>();
+		// TODO remove
 		unitClausesWrapper = new DataStructureWrapper(unitClauses);
 		nonUnitClauses = new IterableHashSet<Clause>();
 		
@@ -175,6 +176,7 @@ public class PredicateProver implements IProver {
 			nonUnitClauses.remove(clause);
 		}
 		nonUnitResolver.remove(clause);
+		unitResolver.remove(clause);
 	}
 
 	// TODO dirty

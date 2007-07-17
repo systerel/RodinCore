@@ -106,7 +106,6 @@ public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescripto
 			}
 		}
 		newContext.isPositive = context.isPositive;
-		
 		newContext.isDisjunction = true;
 		newContext.isQuantified = false;
 		
