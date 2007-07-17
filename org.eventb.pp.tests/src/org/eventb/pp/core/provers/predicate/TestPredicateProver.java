@@ -314,12 +314,14 @@ public class TestPredicateProver extends TestCase {
 			fail();
 		}
 		catch (IllegalStateException e) {
+			// expected
 		}
 		try {
 			predicateProver.addClauseAndDetectContradiction(null);
 			fail();
 		}
 		catch (IllegalStateException e) {
+			// expected
 		}
 	}
 	
