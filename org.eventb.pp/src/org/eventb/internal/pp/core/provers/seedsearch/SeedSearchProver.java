@@ -231,7 +231,6 @@ public class SeedSearchProver implements IProver {
 			for (Iterator<Entry<Clause,Map<Variable, Set<Constant>>>> iter = instantiationMaps.entrySet().iterator(); iter.hasNext();) {
 				Entry<Clause,?> element = iter.next();
 				if (element.getKey().equalsWithLevel(clause)) iter.remove();
-				else assert false;
 			}
 		}
 	}
