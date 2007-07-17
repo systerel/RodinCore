@@ -45,7 +45,7 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.core.tracing.Tracer;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.clause.LoaderResult;
-import org.eventb.internal.pp.loader.formula.ISubFormula;
+import org.eventb.internal.pp.loader.formula.AbstractFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.DisjunctiveClauseDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.EqualityDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
@@ -151,8 +151,8 @@ public class Util {
 		return list;
 	}
 	
-	public static List<ISubFormula> mList(ISubFormula... sigs) {
-		List<ISubFormula> list = new ArrayList<ISubFormula>();
+	public static List<AbstractFormula> mList(AbstractFormula... sigs) {
+		List<AbstractFormula> list = new ArrayList<AbstractFormula>();
 		list.addAll(Arrays.asList(sigs));
 		return list;
 	}

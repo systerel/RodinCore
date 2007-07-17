@@ -100,10 +100,12 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 				cClause(cPred(0,a),cPred(1,b)),
 				cClause(cPred(0,evar0),cPred(1,evar1)),
 				cClause(cEqual(a,b),cPred(0,a)),
+				cClause(cPred(0,evar0),cPred(1,var1)),
 				cEqClause(cProp(0),cProp(1)),
 				cEqClause(cPred(0,a),cPred(1,b)),
 				cEqClause(cPred(0,evar0),cPred(1,evar1)),
 				cEqClause(cEqual(a,b),cPred(0,a)),
+				cEqClause(cPred(0,evar0),cPred(1,var1)),
 		};
 
 		for (Clause clause : canInfer) {

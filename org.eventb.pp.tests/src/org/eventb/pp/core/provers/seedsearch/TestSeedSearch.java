@@ -103,7 +103,6 @@ public class TestSeedSearch extends AbstractPPTest {
 			}
 			result = prover.next();
 		}
-		assertNull(prover.next());
 	}
 	
 	public void test() {

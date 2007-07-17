@@ -116,6 +116,12 @@ public class RodinTests extends AbstractPPTest {
 //				),"r;s ⊆ E × E",true
 //			),
 			
+			new TestPair(mSet(
+					"r ∈ E ↔ E",
+					"s ∈ E ↔ E"
+				),"r;s ∈ ℙ(E × E)",true
+			),
+			
 //			new TestPair(mSet(
 //					"∀x,y·x ↦ y ∈ s ⇒ (x∈E ∧ y∈E)",
 //					"∀x,y·x ↦ y ∈ r ⇒ (x∈E ∧ y∈E)"
@@ -131,11 +137,23 @@ public class RodinTests extends AbstractPPTest {
 ////				new HashSet<String>(),
 //				"r;s ∈ E ↔ E",true
 //			),
+//			new TestPair(
+//					mSet(
+//						"r ∈ T ↔ T",
+//						"s ∈ T ↔ T"
+//					),
+//					"r;s ∈ T ↔ T",true
+//				),
 //			fails
 //			new TestPair(mSet(
 //						"r ∈ E ⇸ E",
 //						"s ∈ E ⇸ E"
 //					),"r;s ∈ E ⇸ E",true
+//			),
+//			new TestPair(mSet(
+//					"r ∈ T ⇸ T",
+//					"s ∈ T ⇸ T"
+//				),	"r;s ∈ T ⇸ T",true
 //			),
 //			fails
 //			new TestPair(mSet(

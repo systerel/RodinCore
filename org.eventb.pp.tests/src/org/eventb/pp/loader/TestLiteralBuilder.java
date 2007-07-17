@@ -31,7 +31,7 @@
 //import org.eventb.core.ast.ITypeEnvironment;
 //import org.eventb.core.ast.Predicate;
 //import org.eventb.internal.pp.core.elements.Sort;
-//import org.eventb.internal.pp.loader.formula.ISubFormula;
+//import org.eventb.internal.pp.loader.formula.AbstractFormula;
 //import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 //import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 //import org.eventb.internal.pp.loader.predicate.IContext;
@@ -54,8 +54,8 @@
 //	private static class TestPair {
 //		// for the readability of the test, use of string
 //		PredicateFormula predicate;
-//		List<ISubFormula> labels;
-//		List<ISubFormula> quantifiers;
+//		List<AbstractFormula> labels;
+//		List<AbstractFormula> quantifiers;
 //		List<? extends LiteralDescriptor> sig;
 //		
 //		TestPair (PredicateFormula predicate, List<? extends LiteralDescriptor> sig) {

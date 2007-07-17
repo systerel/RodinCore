@@ -66,7 +66,7 @@ public class TestTermEquality extends AbstractPPTest {
 					cMod(x,x),cMod(x,x)
 			},
 			new Term[]{
-					cUnMin(x,x),cUnMin(x,x)
+					cUnMin(x),cUnMin(x)
 			},
 			new Term[]{
 					cDiv(x,x),cDiv(x,x)
@@ -338,10 +338,8 @@ public class TestTermEquality extends AbstractPPTest {
 		HashMap<SimpleTerm, SimpleTerm> map;
 		for (Term[] terms : unequalTerms) {
 			for (int i = 0; i < terms.length-1; i++) {
-//				map = new HashMap<SimpleTerm, SimpleTerm>();
-//				assertFalse("Term1 : "+terms[i].toString()+", term2 : "+terms[i+1].toString(),terms[i].equalsWithDifferentVariables(terms[i+1], map));
-//				map = new HashMap<SimpleTerm, SimpleTerm>();
-//				assertFalse("Term1 : "+terms[i+1].toString()+", term2 : "+terms[i].toString(),terms[i+1].equalsWithDifferentVariables(terms[i], map));
+				assertFalse("Term1 : "+terms[i].toString()+", term2 : "+terms[i+1].toString(),terms[i].equals(terms[i+1]));
+				assertFalse("Term1 : "+terms[i+1].toString()+", term2 : "+terms[i].toString(),terms[i+1].equals(terms[i]));
 			}
 		}
 	}

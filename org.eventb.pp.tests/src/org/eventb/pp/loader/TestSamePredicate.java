@@ -11,7 +11,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.loader.formula.AbstractFormula;
-import org.eventb.internal.pp.loader.formula.ISignedFormula;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
@@ -105,7 +104,7 @@ public class TestSamePredicate extends TestCase {
 			// TODO clauses !
 	};
 	
-	private ISignedFormula build(PredicateBuilder builder, String test) {
+	private SignedFormula build(PredicateBuilder builder, String test) {
 		Predicate expr = ff.parsePredicate(test).getParsedPredicate();
 		ITypeCheckResult result = expr.typeCheck(env);
 		System.out.println(result.toString());
