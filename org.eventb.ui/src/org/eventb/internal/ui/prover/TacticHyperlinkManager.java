@@ -7,6 +7,8 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -158,6 +160,17 @@ public abstract class TacticHyperlinkManager {
 		setMenuLocation(tipMenu, tipPosition);
 		disableCurrentLink();
 		text.setCursor(arrowCursor);
+		tipMenu.addMenuListener(new MenuListener() {
+
+			public void menuHidden(MenuEvent e) {
+				enableListeners();
+			}
+
+			public void menuShown(MenuEvent e) {
+				disableListeners();
+			}
+			
+		});
 		tipMenu.setVisible(true);
 	}
 
@@ -165,13 +178,13 @@ public abstract class TacticHyperlinkManager {
 		if (currentLink == null)
 			return;
 		TacticPositionUI tacticPositionUI = getTacticPositionUI(currentLink);
-		disableListeners();
 		showToolTip(tacticPositionUI, widgetPosition);
 	}
 
 	protected abstract void disableListeners();
 	
 	protected abstract void enableListeners();
+	
 	/**
 	 * Sets the location for a hovering shell
 	 * 
@@ -207,8 +220,9 @@ public abstract class TacticHyperlinkManager {
 	}
 
 	public void disposeMenu() {
-		if (tipMenu != null && !tipMenu.isDisposed())
+		if (tipMenu != null && !tipMenu.isDisposed()) {
 			tipMenu.dispose();
+		}
 	}
 
 	public void disableCurrentLink() {
