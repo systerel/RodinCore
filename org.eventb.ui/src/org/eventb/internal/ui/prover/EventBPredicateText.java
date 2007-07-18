@@ -65,6 +65,16 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	
 	Collection<Point> dirtyStates;
 
+	MouseDownListener mouseDownListener = new MouseDownListener();
+
+	MouseMoveListener mouseMoveListener = new MouseMoveListener();
+
+	MouseHoverListener mouseHoverListener = new MouseHoverListener();
+
+	MouseExitListener mouseExitListener = new MouseExitListener();
+
+	MouseEnterListener mouseEnterListener = new MouseEnterListener();
+
 	public EventBPredicateText(FormToolkit toolkit, final Composite parent, ProverUI proverUI) {
 		this.proverUI = proverUI;
 		dirtyStates = new ArrayList<Point>();
@@ -75,16 +85,34 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		handCursor = new Cursor(text.getDisplay(), SWT.CURSOR_HAND);
 		arrowCursor = new Cursor(text.getDisplay(), SWT.CURSOR_ARROW);
 		JFaceResources.getFontRegistry().addListener(this);
-		text.addListener(SWT.MouseDown, new MouseDownListener());
-		text.addListener(SWT.MouseMove, new MouseMoveListener());
-		text.addListener(SWT.MouseHover, new MouseHoverListener());
-		text.addListener(SWT.MouseExit, new MouseExitListener());
-		text.addListener(SWT.MouseEnter, new MouseEnterListener());
+		text.addListener(SWT.MouseDown, mouseDownListener);
+		text.addListener(SWT.MouseMove, mouseMoveListener);
+		text.addListener(SWT.MouseHover, mouseHoverListener);
+		text.addListener(SWT.MouseExit, mouseExitListener);
+		text.addListener(SWT.MouseEnter, mouseEnterListener);
 		manager = new TacticHyperlinkManager(text) {
 
 			@Override
 			protected void applyTactic(String tacticID, IPosition position) {
 				EventBPredicateText.this.applyTactic(tacticID, position);
+			}
+
+			@Override
+			protected void disableListeners() {
+				text.removeListener(SWT.MouseDown, mouseDownListener);
+				text.removeListener(SWT.MouseMove, mouseMoveListener);
+				text.removeListener(SWT.MouseHover, mouseHoverListener);
+				text.removeListener(SWT.MouseExit, mouseExitListener);
+				text.removeListener(SWT.MouseEnter, mouseEnterListener);
+			}
+
+			@Override
+			protected void enableListeners() {
+				text.addListener(SWT.MouseDown, mouseDownListener);
+				text.addListener(SWT.MouseMove, mouseMoveListener);
+				text.addListener(SWT.MouseHover, mouseHoverListener);
+				text.addListener(SWT.MouseExit, mouseExitListener);
+				text.addListener(SWT.MouseEnter, mouseEnterListener);
 			}
 			
 		};

@@ -137,7 +137,7 @@ public abstract class TacticHyperlinkManager {
 			final String tacticID = tacticPosition.getFirst();
 			final IPosition position = tacticPosition.getSecond();
 
-			MenuItem item = new MenuItem(tipMenu, SWT.DEFAULT);
+			MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
 			TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 			item.setText(tacticUIRegistry.getTip(tacticID));
 			item.addSelectionListener(new SelectionListener() {
@@ -148,6 +148,7 @@ public abstract class TacticHyperlinkManager {
 
 				public void widgetSelected(SelectionEvent se) {
 					applyTactic(tacticID, position);
+					enableListeners();
 				}
 
 			});
@@ -164,9 +165,13 @@ public abstract class TacticHyperlinkManager {
 		if (currentLink == null)
 			return;
 		TacticPositionUI tacticPositionUI = getTacticPositionUI(currentLink);
+		disableListeners();
 		showToolTip(tacticPositionUI, widgetPosition);
 	}
 
+	protected abstract void disableListeners();
+	
+	protected abstract void enableListeners();
 	/**
 	 * Sets the location for a hovering shell
 	 * 
