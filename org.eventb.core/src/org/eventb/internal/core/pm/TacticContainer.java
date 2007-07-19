@@ -45,7 +45,7 @@ public class TacticContainer implements ITacticContainer {
 		return tactic;
 	}
 
-	private ITactic composeTactics(ArrayList<ITactic> list) {
+	protected ITactic composeTactics(ArrayList<ITactic> list) {
 		return repeat(composeOnAllPending(list
 				.toArray(new ITactic[list.size()])));
 	}
