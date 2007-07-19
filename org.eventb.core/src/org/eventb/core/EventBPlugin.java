@@ -248,10 +248,26 @@ public class EventBPlugin extends Plugin {
 		}
 	}
 
+	/**
+	 * Return the default user support manager.
+	 * <p>
+	 * 
+	 * @return the default user support manager
+	 * @author htson
+	 */
 	public IUserSupportManager getUserSupportManager() {
 		return UserSupportManager.getDefault();
 	}
 
+	/**
+	 * Return the post-tactic registry.
+	 * <p>
+	 * 
+	 * @return the default post-tactic registry
+	 * @deprecated use ITacticContainer IUserSupportManager.getPostTacticContainer()
+	 * @author htson
+	 */
+	@Deprecated
 	public IPostTacticRegistry getPostTacticRegistry() {
 		return PostTacticRegistry.getDefault();
 	}
