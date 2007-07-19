@@ -125,4 +125,10 @@ public class RemoveInclusionTests extends AbstractManualRewriterTests {
 		};
 	}
 
+	// Commented out, but makes the tests succeed
+//	@Override
+//	public ITactic getJustDischTactic() {
+//		return B4freeCore.externalPP(false);
+//	}
+
 }

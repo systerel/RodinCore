@@ -133,4 +133,11 @@ public class DomDistLeftTests extends AbstractManualRewriterTests {
 		};
 	}
 
+	// Commented out, makes the tests NOT succeed
+	// TODO: Verify with another external prover
+//	@Override
+//	public ITactic getJustDischTactic() {
+//		return B4freeCore.externalPP(false);
+//	}
+
 }

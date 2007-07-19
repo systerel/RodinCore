@@ -18,7 +18,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Disjunction
 import org.junit.Test;
 
 /**
- * Unit tests for the rn reasoner
+ * Unit tests for the disjunction to implication reasoner
  * 
  * @author htson
  */
@@ -185,5 +185,11 @@ public class DisjToImplTests extends AbstractTests {
 				"{}[∀x·x=0⇒x=2∨x=3∨x=4][][∀x·x=0⇒(¬x=2⇒x=3∨x=4)] |- ⊤", newSeqs);
 
 	}
+
+	// Commented out, but makes the tests succeed
+//	@Override
+//	public ITactic getJustDischTactic() {
+//		return B4freeCore.externalPP(false);
+//	}
 
 }
