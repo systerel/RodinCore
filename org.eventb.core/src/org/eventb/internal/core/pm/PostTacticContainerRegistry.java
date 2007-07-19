@@ -22,7 +22,7 @@ public class PostTacticContainerRegistry extends TacticContainerRegistry
 	 */
 	private PostTacticContainerRegistry() {
 		// Singleton to hide the constructor
-		// Must call super()
+		// Must call super(String registryID)
 		super(POSTTACTICS_ID);
 	}
 
@@ -41,17 +41,17 @@ public class PostTacticContainerRegistry extends TacticContainerRegistry
 
 	public String[] getDefaultTacticIDs() {
 		return new String[] {
-//		            "org.eventb.core.seqprover.normTac",
-//		            "org.eventb.core.seqprover.autoRewriteTac",
-		            "org.eventb.core.seqprover.autoImpETac",
-		            "org.eventb.core.seqprover.autoFalsifyHypTac",
-		            "org.eventb.core.seqprover.autoEqETac",
-		            "org.eventb.core.seqprover.autoExFTac",
-		            "org.eventb.core.seqprover.autoNegEnumTac",
-		            "org.eventb.core.seqprover.isFunGoalTac",
-		            "org.eventb.core.seqprover.autoHypOrTac",
-		            "org.eventb.core.seqprover.autoImpAndHypTac",
-		            "org.eventb.core.seqprover.autoImpOrHypTac"
+	            "org.eventb.core.seqprover.autoFalsifyHypTac",
+				"org.eventb.core.seqprover.autoHypOrTac",
+				"org.eventb.core.seqprover.isFunGoalTac",
+				"org.eventb.core.seqprover.autoRewriteTac",
+				"org.eventb.core.seqprover.autoExFTac",
+				"org.eventb.core.seqprover.autoNegEnumTac",
+				"org.eventb.core.seqprover.autoImpAndHypTac",
+				"org.eventb.core.seqprover.autoImpOrHypTac",
+				"org.eventb.core.seqprover.autoImpETac",
+				"org.eventb.core.seqprover.autoEqETac",
+				"org.eventb.core.seqprover.normTac"
 		};
 	}
 	
