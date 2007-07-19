@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.fieldassist.FieldAssistColors;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -235,7 +234,7 @@ public class RodinProjectSelectionGroup extends Composite {
 			projectNameField.addListener(SWT.Modify, listener);
 			projectNameField.setFont(this.getFont());
 			// Mark as required field.
-			projectNameField.setBackground(FieldAssistColors
+			projectNameField.setBackground(EventBSharedColor
 					.getRequiredFieldBackgroundColor(projectNameField));
 		} else {
 			// filler...
