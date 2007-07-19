@@ -70,9 +70,9 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.pm.IPostTacticContainer;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
-import org.eventb.core.pm.IProvingMode;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportInformation;
@@ -778,17 +778,18 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			@Override
 			public void run() {
 				boolean checked = !expertMode.isChecked();
-				store.setValue(PreferenceConstants.P_PROVING_MODE,
+				store.setValue(PreferenceConstants.P_POSTTACTIC_ENABLE,
 						checked);
 			}
 		};
 		boolean b = store
-						.getBoolean(PreferenceConstants.P_PROVING_MODE);
+						.getBoolean(PreferenceConstants.P_POSTTACTIC_ENABLE);
 		expertMode.setChecked(!b);
 		IUserSupportManager usManager = EventBPlugin.getDefault()
 				.getUserSupportManager();
-		IProvingMode provingMode = usManager.getProvingMode();
-		provingMode.setPostTacticEnable(b);
+		IPostTacticContainer postTacticContainer = usManager
+				.getPostTacticContainer();
+		postTacticContainer.setEnable(b);
 		expertMode.setToolTipText("Disable post-tactic");
 
 		expertMode.setImageDescriptor(EventBImage
@@ -952,7 +953,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(
-				PreferenceConstants.P_PROVING_MODE)) {
+				PreferenceConstants.P_POSTTACTIC_ENABLE)) {
 			Object newValue = event.getNewValue();
 			assert newValue instanceof Boolean || newValue instanceof String;
 			if (newValue instanceof String) {
@@ -961,15 +962,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				expertMode.setChecked(!b);
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 				.getUserSupportManager();
-				IProvingMode provingMode = usManager.getProvingMode();
-				provingMode.setPostTacticEnable(b);
+				IPostTacticContainer postTacticContainer = usManager
+						.getPostTacticContainer();
+				postTacticContainer.setEnable(b);
 			} else {
 				Boolean b = (Boolean) newValue;
 				expertMode.setChecked(!b);
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 					.getUserSupportManager();
-				IProvingMode provingMode = usManager.getProvingMode();
-				provingMode.setPostTacticEnable(b);
+				IPostTacticContainer postTacticContainer = usManager
+						.getPostTacticContainer();
+				postTacticContainer.setEnable(b);
 			}
 		}
 

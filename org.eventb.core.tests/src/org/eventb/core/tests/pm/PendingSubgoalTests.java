@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPRFile;
@@ -119,13 +118,14 @@ public class PendingSubgoalTests extends TestPM {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		
 		// Turn on beginner mode
-		manager.getProvingMode().setPostTacticEnable(false);
+		manager.getPostTacticContainer().setEnable(false);
 
 		// Set norm as postactic
-		EventBPlugin.getDefault().getUserSupportManager().getProvingMode()
-				.setPostTactics(
-						new String[] { "org.eventb.core.seqprover.normTac" });
+//		EventBPlugin.getDefault().getUserSupportManager().getProvingMode()
+//				.setPostTactics(
+//						new String[] { "org.eventb.core.seqprover.normTac" });
 
 		poFile = createPOFile();
 		prFile = poFile.getPRFile();

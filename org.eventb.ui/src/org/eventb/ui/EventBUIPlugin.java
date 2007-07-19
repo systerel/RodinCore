@@ -24,7 +24,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.pm.IProvingMode;
+import org.eventb.core.pm.IPostTacticContainer;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
@@ -152,11 +152,12 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		final IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
 
-		String s = store.getString(PreferenceConstants.P_POSTTACTIC_DETAILS);
-		String [] tacticIDs = ProverUIUtils.parseString(s);
-		IProvingMode provingMode = EventBPlugin.getDefault()
-				.getUserSupportManager().getProvingMode();
-		provingMode.setPostTactics(tacticIDs);
+		// Initialise the post-tactics
+		String s = store.getString(PreferenceConstants.P_POSTTACTICS);
+		String[] tacticIDs = ProverUIUtils.parseString(s);
+		IPostTacticContainer postTacticContainer = EventBPlugin.getDefault()
+				.getUserSupportManager().getPostTacticContainer();
+		postTacticContainer.setTactics(tacticIDs);
 	}
 
 	/**

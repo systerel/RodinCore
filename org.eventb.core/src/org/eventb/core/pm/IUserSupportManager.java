@@ -81,9 +81,19 @@ public interface IUserSupportManager {
 	 * <p>
 	 * 
 	 * @return the current proving mode
+	 * @deprecated use {@link #getPostTacticContainer()} instead.
 	 */
+	@Deprecated
 	public abstract IProvingMode getProvingMode();
 
+	/**
+	 * Return the post-tactic container
+	 * <p>
+	 * 
+	 * @return the post-tactic container
+	 */
+	public abstract IPostTacticContainer getPostTacticContainer();
+	
 	/**
 	 * Run the give action as an atomic User Support Manager operation.
 	 * <p>

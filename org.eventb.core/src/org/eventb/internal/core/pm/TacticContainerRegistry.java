@@ -7,47 +7,24 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eventb.core.EventBPlugin;
-import org.eventb.core.pm.IPostTacticRegistry;
+import org.eventb.core.ITacticContainerRegistry;
 import org.eventb.core.seqprover.ITacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
 
-@Deprecated
-public class PostTacticRegistry implements IPostTacticRegistry {
+public abstract class TacticContainerRegistry implements ITacticContainerRegistry {
 
 	// The identifier of the extension point (value
 	// <code>"org.eventb.core.postTactics"</code>).
-	private final static String POSTTACTICS_ID = EventBPlugin.PLUGIN_ID
-			+ ".postTactics";
+	protected String registryID;
 
 	// The static instance of this singleton class
-	private static IPostTacticRegistry instance;
+	protected static ITacticContainerRegistry instance;
 
 	private List<String> tacticIDs = null;
 	
-	/**
-	 * Constructor.
-	 * <p>
-	 * A private constructor to prevent creating an instance of this class
-	 * directly
-	 */
-	private PostTacticRegistry() {
-		// Singleton to hide the constructor
+	protected TacticContainerRegistry(String registryID) {
+		this.registryID = registryID;
 	}
-
-	/**
-	 * Getting the default instance of this class (create a new instance of it
-	 * does not exist before)
-	 * <p>
-	 * 
-	 * @return An instance of this class
-	 */
-	public static IPostTacticRegistry getDefault() {
-		if (instance == null)
-			instance = new PostTacticRegistry();
-		return instance;
-	}
-	
 	
 	/**
 	 * Initialises the registry using extensions to the element UI extension
@@ -61,7 +38,7 @@ public class PostTacticRegistry implements IPostTacticRegistry {
 		tacticIDs = new ArrayList<String>();
 		
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint extensionPoint = reg.getExtensionPoint(POSTTACTICS_ID);
+		IExtensionPoint extensionPoint = reg.getExtensionPoint(registryID);
 		IConfigurationElement[] configurations = extensionPoint
 				.getConfigurationElements();
 		for (IConfigurationElement configuration : configurations) {
@@ -73,10 +50,9 @@ public class PostTacticRegistry implements IPostTacticRegistry {
 					System.out
 							.println("Tactic "
 									+ id
-									+ " is already registered, ignore this configuration.");
+									+ " is already declared, ignore this configuration.");
 				}
-			}
-			else if (tacticRegistry.isRegistered(id)) {
+			} else if (tacticRegistry.isRegistered(id)) {
 				tacticIDs.add(id);
 			} else {
 				if (UserSupportUtils.DEBUG) {

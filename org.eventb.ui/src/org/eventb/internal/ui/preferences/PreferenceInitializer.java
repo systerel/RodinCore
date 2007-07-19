@@ -23,10 +23,13 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_PROOFPAGE_AUTOLAYOUT, true);
 		
 		// Default value for tactic registry
-		String [] tacticIDs = EventBPlugin.getDefault().getPostTacticRegistry()
-				.getTacticIDs();
-		store.setDefault(PreferenceConstants.P_POSTTACTIC_DETAILS, ProverUIUtils
+		String[] tacticIDs = EventBPlugin.getDefault().getUserSupportManager()
+				.getPostTacticContainer().getTacticContainerRegistry()
+				.getDefaultTacticIDs();
+				
+		store.setDefault(PreferenceConstants.P_POSTTACTICS, ProverUIUtils
 				.toCommaSeparatedList(tacticIDs));
+		store.setDefault(PreferenceConstants.P_POSTTACTIC_ENABLE, true);
 	}
 
 }

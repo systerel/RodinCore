@@ -23,6 +23,7 @@ import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IPostTacticContainer;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManager;
@@ -140,10 +141,13 @@ public class ProofState implements IProofState {
 					// Run Post tactic at the root of the tree
 					IUserSupportManager usManager = EventBPlugin.getDefault()
 							.getUserSupportManager();
-					ITactic postTactic = usManager.getProvingMode()
-							.getPostTactic();
-					if (postTactic != null)
-						postTactic.apply(pt.getRoot(), new ProofMonitor(monitor));
+					IPostTacticContainer postTacticContainer = usManager
+							.getPostTacticContainer();
+					if (postTacticContainer.isEnable()) {
+						ITactic postTactic = postTacticContainer.getTactic();
+						postTactic.apply(pt.getRoot(),
+								new ProofMonitor(monitor));
+					}
 				}
 				// Current node is the next pending subgoal or the root of the
 				// proof tree if there are no pending subgoal.
@@ -603,9 +607,11 @@ public class ProofState implements IProofState {
 			if (applyPostTactic) {
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 						.getUserSupportManager();
-				ITactic postTactic = usManager.getProvingMode().getPostTactic();
-				if (postTactic != null)
+				IPostTacticContainer postTacticContainer = usManager.getPostTacticContainer();
+				if (postTacticContainer.isEnable()) {
+					ITactic postTactic = postTacticContainer.getTactic();
 					postTactic.apply(node, pm);
+				}
 			}
 			deltaProcessor.informationChanged(userSupport,
 					new UserSupportInformation(info,

@@ -10,6 +10,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
 
+@Deprecated
 public class ProvingMode implements IProvingMode {
 
 	private boolean postTacticEnabled = false;

@@ -15,6 +15,8 @@ package org.eventb.internal.core.pm;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eventb.core.pm.IPostTacticContainer;
+import org.eventb.core.pm.IPostTacticContainerRegistry;
 import org.eventb.core.pm.IProvingMode;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
@@ -24,8 +26,11 @@ public class UserSupportManager implements IUserSupportManager {
 
 	private Collection<IUserSupport> userSupports = new ArrayList<IUserSupport>();
 
+	@Deprecated
 	private static IProvingMode provingMode;
 
+	private static IPostTacticContainer postTacticContainer;
+	
 	private static IUserSupportManager instance;
 	
 	private DeltaProcessor deltaProcessor;
@@ -69,10 +74,23 @@ public class UserSupportManager implements IUserSupportManager {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IUserSupportManager#getProvingMode()
 	 */
+	@Deprecated
 	public IProvingMode getProvingMode() {
 		if (provingMode == null)
 			provingMode = new ProvingMode();
 		return provingMode;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IUserSupportManager#getPostTacticContainer()
+	 */
+	public IPostTacticContainer getPostTacticContainer() {
+		if (postTacticContainer == null) {
+			IPostTacticContainerRegistry registry = PostTacticContainerRegistry
+					.getDefault();
+			postTacticContainer = new PostTacticContainer(registry);
+		}
+		return postTacticContainer;
 	}
 
 	public DeltaProcessor getDeltaProcessor() {

@@ -2,6 +2,12 @@ package org.eventb.core.pm;
 
 import org.eventb.core.seqprover.ITactic;
 
+/**
+ * @author htson
+ * <p>
+ * @deprecated use IPostTacticContainer instead.
+ */
+@Deprecated
 public interface IProvingMode {
 	
 	/**

@@ -18,8 +18,8 @@ public abstract class TestPM extends BasicTest {
 		super.setUp();
 		manager = EventBPlugin.getPlugin().getUserSupportManager();
 		// Disable the Post tactic
-		EventBPlugin.getDefault().getUserSupportManager().getProvingMode()
-				.setPostTactics(new String[0]);
+		EventBPlugin.getDefault().getUserSupportManager()
+				.getPostTacticContainer().setEnable(false);
 	}
 
 	@Override
