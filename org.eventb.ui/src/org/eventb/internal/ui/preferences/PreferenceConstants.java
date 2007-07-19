@@ -11,4 +11,7 @@ public class PreferenceConstants {
 
 	public static final String P_POSTTACTICS = "Post-Tactics";
 
+	public static final String P_AUTOTACTIC_ENABLE = "Auto-Tactic enable";
+
+	public static final String P_AUTOTACTICS = "Auto-Tactics";
 }

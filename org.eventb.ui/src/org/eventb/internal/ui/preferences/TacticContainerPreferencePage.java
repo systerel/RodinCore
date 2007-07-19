@@ -96,6 +96,12 @@ public abstract class TacticContainerPreferencePage
 						(String) object);
 			}
 
+			@Override
+			protected String[] getDeclaredObjects() {
+				return tacticContainer.getTacticContainerRegistry()
+						.getTacticIDs();
+			}
+
 		};
 		addField(tacticsEditor);
 

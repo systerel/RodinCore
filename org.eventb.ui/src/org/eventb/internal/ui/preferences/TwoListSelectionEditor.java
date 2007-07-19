@@ -340,22 +340,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
 		if (left != null) {
 			if (getPreferenceStore().contains(getPreferenceName())) {
 				String s = getPreferenceStore().getString(getPreferenceName());
-				left.removeAll();
-				leftElements = parseString(s);
-				for (Object object : leftElements) {
-					left.add(getLabel(object));
-				}
-
-				s = getPreferenceStore().getDefaultString(getPreferenceName());
-				ArrayList<Object> defaultElements = parseString(s);
-				rightElements.clear();
-				right.removeAll();
-				for (Object object : defaultElements) {
-					if (!leftElements.contains(object)) {
-						rightElements.add(object);
-						right.add(getLabel(object));
-					}
-				}
+				setPreference(s);
 			}
 			else {
 				doLoadDefault();
@@ -363,17 +348,31 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
         }
 	}
 
+	private void setPreference(String preference) {
+		left.removeAll();
+		leftElements = parseString(preference);
+		for (Object object : leftElements) {
+			left.add(getLabel(object));
+		}
+
+		String [] declaredElements = getDeclaredObjects();
+		rightElements.clear();
+		right.removeAll();
+		for (Object object : declaredElements) {
+			if (!leftElements.contains(object)) {
+				rightElements.add(object);
+				right.add(getLabel(object));
+			}
+		}		
+	}
+	protected abstract String [] getDeclaredObjects();
+	
+	
 	@Override
 	protected void doLoadDefault() {
 		if (left != null) {
             String s = getPreferenceStore().getDefaultString(getPreferenceName());
-            left.removeAll();
-            leftElements = parseString(s);
-            for (Object object : leftElements) {
-                left.add(getLabel(object));
-            }
-            right.removeAll();
-            rightElements.clear();
+            setPreference(s);
         }
 	}
 

@@ -1,15 +1,18 @@
 package org.eventb.internal.core.pm;
 
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.pm.IPostTacticContainerRegistry;
+import org.eventb.core.ITacticContainerRegistry;
 
 public class PostTacticContainerRegistry extends TacticContainerRegistry
-		implements IPostTacticContainerRegistry {
+		implements ITacticContainerRegistry {
 
 	// The identifier of the extension point (value
 	// <code>"org.eventb.core.postTactics"</code>).
 	private final static String POSTTACTICS_ID = EventBPlugin.PLUGIN_ID
 			+ ".postTactics";	
+
+	// The static instance of this singleton class
+	private static ITacticContainerRegistry instance;
 
 	/**
 	 * Constructor.
@@ -30,16 +33,16 @@ public class PostTacticContainerRegistry extends TacticContainerRegistry
 	 * 
 	 * @return An instance of this class
 	 */
-	public static IPostTacticContainerRegistry getDefault() {
+	public static ITacticContainerRegistry getDefault() {
 		if (instance == null)
 			instance = new PostTacticContainerRegistry();
-		return (PostTacticContainerRegistry) instance;
+		return instance;
 	}
 
 	public String[] getDefaultTacticIDs() {
 		return new String[] {
-		            "org.eventb.core.seqprover.normTac",
-		            "org.eventb.core.seqprover.autoRewriteTac",
+//		            "org.eventb.core.seqprover.normTac",
+//		            "org.eventb.core.seqprover.autoRewriteTac",
 		            "org.eventb.core.seqprover.autoImpETac",
 		            "org.eventb.core.seqprover.autoFalsifyHypTac",
 		            "org.eventb.core.seqprover.autoEqETac",

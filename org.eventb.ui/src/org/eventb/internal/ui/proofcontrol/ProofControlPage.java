@@ -70,7 +70,7 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.pm.IPostTacticContainer;
+import org.eventb.core.ITacticContainer;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
@@ -787,7 +787,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		expertMode.setChecked(!b);
 		IUserSupportManager usManager = EventBPlugin.getDefault()
 				.getUserSupportManager();
-		IPostTacticContainer postTacticContainer = usManager
+		ITacticContainer postTacticContainer = usManager
 				.getPostTacticContainer();
 		postTacticContainer.setEnable(b);
 		expertMode.setToolTipText("Disable post-tactic");
@@ -962,7 +962,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				expertMode.setChecked(!b);
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 				.getUserSupportManager();
-				IPostTacticContainer postTacticContainer = usManager
+				ITacticContainer postTacticContainer = usManager
 						.getPostTacticContainer();
 				postTacticContainer.setEnable(b);
 			} else {
@@ -970,7 +970,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				expertMode.setChecked(!b);
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 					.getUserSupportManager();
-				IPostTacticContainer postTacticContainer = usManager
+				ITacticContainer postTacticContainer = usManager
 						.getPostTacticContainer();
 				postTacticContainer.setEnable(b);
 			}

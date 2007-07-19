@@ -22,8 +22,8 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IPSWrapper;
+import org.eventb.core.ITacticContainer;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pm.IPostTacticContainer;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManager;
@@ -141,7 +141,7 @@ public class ProofState implements IProofState {
 					// Run Post tactic at the root of the tree
 					IUserSupportManager usManager = EventBPlugin.getDefault()
 							.getUserSupportManager();
-					IPostTacticContainer postTacticContainer = usManager
+					ITacticContainer postTacticContainer = usManager
 							.getPostTacticContainer();
 					if (postTacticContainer.isEnable()) {
 						ITactic postTactic = postTacticContainer.getTactic();
@@ -607,7 +607,7 @@ public class ProofState implements IProofState {
 			if (applyPostTactic) {
 				IUserSupportManager usManager = EventBPlugin.getDefault()
 						.getUserSupportManager();
-				IPostTacticContainer postTacticContainer = usManager.getPostTacticContainer();
+				ITacticContainer postTacticContainer = usManager.getPostTacticContainer();
 				if (postTacticContainer.isEnable()) {
 					ITactic postTactic = postTacticContainer.getTactic();
 					postTactic.apply(node, pm);

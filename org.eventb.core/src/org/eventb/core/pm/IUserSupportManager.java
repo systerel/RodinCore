@@ -15,6 +15,7 @@ package org.eventb.core.pm;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eventb.core.ITacticContainer;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -92,8 +93,16 @@ public interface IUserSupportManager {
 	 * 
 	 * @return the post-tactic container
 	 */
-	public abstract IPostTacticContainer getPostTacticContainer();
+	public abstract ITacticContainer getPostTacticContainer();
 	
+	/**
+	 * Return the auto-tactic container
+	 * <p>
+	 * 
+	 * @return the auto-tactic container
+	 */
+	public abstract ITacticContainer getAutoTacticContainer();
+
 	/**
 	 * Run the give action as an atomic User Support Manager operation.
 	 * <p>

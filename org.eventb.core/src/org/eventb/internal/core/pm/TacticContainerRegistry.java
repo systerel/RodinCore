@@ -13,12 +13,8 @@ import org.eventb.core.seqprover.SequentProver;
 
 public abstract class TacticContainerRegistry implements ITacticContainerRegistry {
 
-	// The identifier of the extension point (value
-	// <code>"org.eventb.core.postTactics"</code>).
+	// The identifier of the extension point.
 	protected String registryID;
-
-	// The static instance of this singleton class
-	protected static ITacticContainerRegistry instance;
 
 	private List<String> tacticIDs = null;
 	

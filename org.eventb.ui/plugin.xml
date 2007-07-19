@@ -1300,6 +1300,11 @@
             class="org.eventb.internal.ui.preferences.PostTacticPreferencePage"
             id="org.eventb.ui.preferences.postTactic"
             name="%preferencePage.postTacticPage.name"/>
+      <page
+            category="org.eventb.ui.preferences.seqProver"
+            class="org.eventb.internal.ui.preferences.AutoTacticPreferencePage"
+            id="org.eventb.ui.preferences.autoTactic"
+            name="%preferencePage.autoTacticPage.name"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

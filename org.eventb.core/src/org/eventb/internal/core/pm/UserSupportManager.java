@@ -15,12 +15,13 @@ package org.eventb.internal.core.pm;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eventb.core.pm.IPostTacticContainer;
-import org.eventb.core.pm.IPostTacticContainerRegistry;
+import org.eventb.core.ITacticContainer;
+import org.eventb.core.ITacticContainerRegistry;
 import org.eventb.core.pm.IProvingMode;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
+import org.eventb.internal.core.pom.AutoTacticContainerRegistry;
 
 public class UserSupportManager implements IUserSupportManager {
 
@@ -29,8 +30,10 @@ public class UserSupportManager implements IUserSupportManager {
 	@Deprecated
 	private static IProvingMode provingMode;
 
-	private static IPostTacticContainer postTacticContainer;
+	private static ITacticContainer postTacticContainer;
 	
+	private static ITacticContainer autoTacticContainer;
+
 	private static IUserSupportManager instance;
 	
 	private DeltaProcessor deltaProcessor;
@@ -84,15 +87,27 @@ public class UserSupportManager implements IUserSupportManager {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IUserSupportManager#getPostTacticContainer()
 	 */
-	public IPostTacticContainer getPostTacticContainer() {
+	public ITacticContainer getPostTacticContainer() {
 		if (postTacticContainer == null) {
-			IPostTacticContainerRegistry registry = PostTacticContainerRegistry
+			ITacticContainerRegistry registry = PostTacticContainerRegistry
 					.getDefault();
-			postTacticContainer = new PostTacticContainer(registry);
+			postTacticContainer = new TacticContainer(registry);
 		}
 		return postTacticContainer;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IUserSupportManager#getAutoTacticContainer()
+	 */
+	public ITacticContainer getAutoTacticContainer() {
+		if (autoTacticContainer == null) {
+			ITacticContainerRegistry registry = AutoTacticContainerRegistry
+					.getDefault();
+			autoTacticContainer = new TacticContainer(registry);
+		}
+		return autoTacticContainer;
+	}
+	
 	public DeltaProcessor getDeltaProcessor() {
 		return deltaProcessor;
 	}
