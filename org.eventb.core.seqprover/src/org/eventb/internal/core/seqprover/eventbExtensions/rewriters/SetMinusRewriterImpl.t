@@ -57,26 +57,26 @@ public class SetMinusRewriterImpl extends DefaultRewriter {
 	    %match (Expression expression) {
 
 			/**
-	    	 * Set Theory : U ∖ (S ∩ ... ∩ T) == (U ∖ S) ∩ ... ∩ (U ∖ T)
+	    	 * Set Theory : U ∖ (S ∩ ... ∩ T) == (U ∖ S) ∪ ... ∪ (U ∖ T)
 	    	 */
 			SetMinus(U, BInter(children)) -> {
 				PowerSetType type = (PowerSetType) `U.getType();
 
 				if (`U.equals(type.getBaseType().toExpression(ff))) {
-					return makeSetMinusAssociative(Expression.BINTER, `U,
+					return makeSetMinusAssociative(Expression.BUNION, `U,
 							`children);
 				}
 				return expression;
 			}
 
 			/**
-	    	 * Set Theory : U ∖ (S ∪ ... ∪ T) == (U ∖ S) ∪ ... ∪ (U ∖ T)
+	    	 * Set Theory : U ∖ (S ∪ ... ∪ T) == (U ∖ S) ∩ ... ∩ (U ∖ T)
 	    	 */
 			SetMinus(U, BUnion(children)) -> {
 				PowerSetType type = (PowerSetType) `U.getType();
 
 				if (`U.equals(type.getBaseType().toExpression(ff))) {
-					return makeSetMinusAssociative(Expression.BUNION, `U,
+					return makeSetMinusAssociative(Expression.BINTER, `U,
 							`children);
 				}
 				return expression;

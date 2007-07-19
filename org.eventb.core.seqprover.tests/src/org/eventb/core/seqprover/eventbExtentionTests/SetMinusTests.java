@@ -15,32 +15,32 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ConvRewrite
  */
 public class SetMinusTests extends AbstractManualRewriterTests {
 
-	// U \ (S /\ ... /\ T) == (U \ S) /\ ... /\ (S \ T)
+	// U \ (S /\ ... /\ T) == (U \ S) \/ ... \/ (S \ T)
 	String P1 = "ℤ ∖ ({1,x} ∩ {2} ∩ {3,x}) = {2}";
 
-	String resultP1 = "(ℤ ∖ {1,x})∩(ℤ ∖ {2})∩(ℤ ∖ {3,x})={2}";
+	String resultP1 = "(ℤ ∖ {1,x})∪(ℤ ∖ {2})∪(ℤ ∖ {3,x})={2}";
 
 	String P2 = "(1 = x) ⇒ {2} = ℤ ∖ ({1,x} ∩ {2} ∩ {3,x})";
 
-	String resultP2 = "1=x⇒{2}=(ℤ ∖ {1,x})∩(ℤ ∖ {2})∩(ℤ ∖ {3,x})";
+	String resultP2 = "1=x⇒{2}=(ℤ ∖ {1,x})∪(ℤ ∖ {2})∪(ℤ ∖ {3,x})";
 
 	String P3 = "∀x·x = 0 ⇒ ℤ ∖ ({1,x} ∩ {2} ∩ {3,x}) = {2}";
 
-	String resultP3 = "∀x·x=0⇒(ℤ ∖ {1,x})∩(ℤ ∖ {2})∩(ℤ ∖ {3,x})={2}";
+	String resultP3 = "∀x·x=0⇒(ℤ ∖ {1,x})∪(ℤ ∖ {2})∪(ℤ ∖ {3,x})={2}";
 
 
-	// U \ (S \/ ... \/ T) == (U \ S) \/ ... \/ (S \ T)
+	// U \ (S \/ ... \/ T) == (U \ S) /\ ... /\ (S \ T)
 	String P4 = "ℤ ∖ ({1,x} ∪ {2} ∪ {3,x}) = {2}";
 
-	String resultP4 = "(ℤ ∖ {1,x})∪(ℤ ∖ {2})∪(ℤ ∖ {3,x})={2}";
+	String resultP4 = "(ℤ ∖ {1,x})∩(ℤ ∖ {2})∩(ℤ ∖ {3,x})={2}";
 
 	String P5 = "(1 = x) ⇒ {2} = ℤ ∖ ({1,x} ∪ {2} ∪ {3,x})";
 
-	String resultP5 = "1=x⇒{2}=(ℤ ∖ {1,x})∪(ℤ ∖ {2})∪(ℤ ∖ {3,x})";
+	String resultP5 = "1=x⇒{2}=(ℤ ∖ {1,x})∩(ℤ ∖ {2})∩(ℤ ∖ {3,x})";
 
 	String P6 = "∀x·x = 0 ⇒ ℤ ∖ ({1,x} ∪ {2} ∪ {3,x}) = {2}";
 
-	String resultP6 = "∀x·x=0⇒(ℤ ∖ {1,x})∪(ℤ ∖ {2})∪(ℤ ∖ {3,x})={2}";
+	String resultP6 = "∀x·x=0⇒(ℤ ∖ {1,x})∩(ℤ ∖ {2})∩(ℤ ∖ {3,x})={2}";
 
 
 	// U \ (S \ T) == (U \ S) \/ T
