@@ -143,4 +143,9 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 		return unsuccessfullReasonerApps;
 	}
 
+//	@Override
+//	public ITactic getJustDischTactic() {
+//		return B4freeCore.externalPP(false);
+//	}
+
 }

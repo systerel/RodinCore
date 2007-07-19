@@ -102,4 +102,9 @@ public abstract class AbstractEmptyInputReasonerTests extends
 		return unsuccessfullReasonerApps;
 	}
 
+//	@Override
+//	public ITactic getJustDischTactic() {
+//		return B4freeCore.externalPP(false);
+//	}
+
 }
