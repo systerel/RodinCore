@@ -41,4 +41,10 @@ public class NewEhTests extends AbstractReasonerTests {
 		};
 	}
 
+	// Commented out, but makes the tests successful
+//	@Override
+//	public ITactic getJustDischTactic() {
+//		return B4freeCore.externalPP(false);
+//	}
+
 }
