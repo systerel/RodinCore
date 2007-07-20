@@ -682,6 +682,50 @@ public class AutoFormulaRewriterTests {
 		assertRelationalPredicate("S ∩ T ∩ U ⊆ U == ⊤", Lib.True, interExp,
 				Expression.SUBSETEQ, U);
 
+		// A \/ ... \/ B <: S == A <: S & ... & B <: S
+		Predicate expectedPred = Lib
+				.parsePredicate("{1,x} ⊆ {1,2,3} ∧ {y} ⊆ {1,2,3} ∧ {z} ⊆ {1,2,3}");
+		Expression inputLeft = Lib.parseExpression("{1,x} ∪ {y} ∪ {z}");
+		Expression inputRight = Lib.parseExpression("{1,2,3}");
+		inputLeft.typeCheck(ff.makeTypeEnvironment());
+		inputRight.typeCheck(ff.makeTypeEnvironment());
+		expectedPred.typeCheck(ff.makeTypeEnvironment());
+		assertRelationalPredicate("", expectedPred, inputLeft,
+				Predicate.SUBSETEQ, inputRight);
+		
+		// S <: A /\ ... /\ B == S <: A & ... & S <: B
+		expectedPred = Lib
+				.parsePredicate("{1,2,3} ⊆ {1,x} ∧ {1,2,3} ⊆ {y} ∧ {1,2,3} ⊆ {z}");
+		inputRight = Lib.parseExpression("{1,x} ∩ {y} ∩ {z}");
+		inputLeft = Lib.parseExpression("{1,2,3}");
+		inputLeft.typeCheck(ff.makeTypeEnvironment());
+		inputRight.typeCheck(ff.makeTypeEnvironment());
+		expectedPred.typeCheck(ff.makeTypeEnvironment());
+		assertRelationalPredicate("", expectedPred, inputLeft,
+				Predicate.SUBSETEQ, inputRight);
+
+		// A \/ ... \/ B <<: S == A <<: S & ... & B <<: S
+		expectedPred = Lib
+				.parsePredicate("{1,x} ⊂ {1,2,3} ∧ {y} ⊂ {1,2,3} ∧ {z} ⊂ {1,2,3}");
+		inputLeft = Lib.parseExpression("{1,x} ∪ {y} ∪ {z}");
+		inputRight = Lib.parseExpression("{1,2,3}");
+		inputLeft.typeCheck(ff.makeTypeEnvironment());
+		inputRight.typeCheck(ff.makeTypeEnvironment());
+		expectedPred.typeCheck(ff.makeTypeEnvironment());
+		assertRelationalPredicate("", expectedPred, inputLeft,
+				Predicate.SUBSET, inputRight);
+		
+		// S <<: A /\ ... /\ B == S <<: A & ... & S <<: B
+		expectedPred = Lib
+				.parsePredicate("{1,2,3} ⊂ {1,x} ∧ {1,2,3} ⊂ {y} ∧ {1,2,3} ⊂ {z}");
+		inputRight = Lib.parseExpression("{1,x} ∩ {y} ∩ {z}");
+		inputLeft = Lib.parseExpression("{1,2,3}");
+		inputLeft.typeCheck(ff.makeTypeEnvironment());
+		inputRight.typeCheck(ff.makeTypeEnvironment());
+		expectedPred.typeCheck(ff.makeTypeEnvironment());
+		assertRelationalPredicate("", expectedPred, inputLeft,
+				Predicate.SUBSET, inputRight);
+
 		// E : {} == false
 		assertRelationalPredicate("E ∈ ∅ == ⊥", Lib.False, E,
 				Expression.IN, emptySet);
