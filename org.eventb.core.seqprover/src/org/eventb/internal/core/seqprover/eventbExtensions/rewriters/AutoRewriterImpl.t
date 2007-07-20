@@ -530,10 +530,30 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 	    	
 	    	/**
-	    	 * Set Theory 6: S ⊆ S == ⊤
+	    	 * Set Theory: S ⊆ S == ⊤
 	    	 */
 	    	SubsetEq(S, S) -> {
 	    		return Lib.True;
+	    	}
+			
+	    	/**
+	    	 * Set Theory: S ⊆ A ∪ ... ∪ S ∪ ... ∪ B == ⊤
+	    	 */
+	    	SubsetEq(S, BUnion(children)) -> {
+	    		for (Expression child : `children) {
+	    			if (child.equals(`S))
+	    				return Lib.True;
+	    		}
+	    	}
+			
+	    	/**
+	    	 * Set Theory: A ∩ ... ∩ S ∩ ... ∩ B ⊆ S == ⊤
+	    	 */
+	    	SubsetEq(BInter(children), S) -> {
+	    		for (Expression child : `children) {
+	    			if (child.equals(`S))
+	    				return Lib.True;
+	    		}
 	    	}
 			
 			/**
