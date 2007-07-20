@@ -1205,4 +1205,19 @@ public final class Lib {
 		return false;
 	}
 
+
+	/**
+	 * Test if the formula is a cardinality expression (card(S))
+	 * <p>
+	 * 
+	 * @param formula
+	 *            any formula
+	 * @return <code>true</code> if the input formula is a cardinality expression.
+	 *         Return <code>false</code> otherwise.
+	 * @author htson
+	 */
+	public static boolean isCardinality(Formula<?> formula) {
+		return formula.getTag() == Expression.KCARD;
+	}
+
 }
