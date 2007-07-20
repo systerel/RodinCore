@@ -277,7 +277,7 @@ public class GoalPage extends Page implements
 		// max_length = 30;
 
 		if (node == null) {
-			goalText.setText("No current goal", userSupport, null, null, null);
+			goalText.setText("No current goal", userSupport, null, null, new ArrayList<TacticPositionUI>());
 			styledText.setBackground(color);
 		} else {
 			Predicate goal = node.getSequent().goal();
