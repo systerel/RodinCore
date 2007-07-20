@@ -614,8 +614,8 @@ public class AutoFormulaRewriterTests {
 				Expression.BINTER, S, T, U, T, U);
 
 		// S \/ ... \/ {} \/ ... \/ T == S ... \/ ... \/ T
-		expected = ff.makeAssociativeExpression(Expression.BUNION,
-				new Expression[] { S, T, U }, null);
+		expected = ff.makeAssociativeExpression(
+				Expression.BUNION, new Expression[] { S, T, U }, null);;
 		assertAssociativeExpression("S ∪ ∅ == S", S, Expression.BUNION, S,
 				emptySet);
 		assertAssociativeExpression("∅ ∪ S == S", S, Expression.BUNION,
@@ -661,6 +661,26 @@ public class AutoFormulaRewriterTests {
 		// S <: S == true
 		assertRelationalPredicate("S ⊆ S == ⊤", Lib.True, S,
 				Expression.SUBSETEQ, S);
+
+		// S <: A \/ ... \/ S \/ ... \/ B == true
+		AssociativeExpression unionExp = ff.makeAssociativeExpression(
+				Expression.BUNION, new Expression[] { S, T, U }, null);
+		assertRelationalPredicate("S ⊆ S ∪ T ∪ U == ⊤", Lib.True, S,
+				Expression.SUBSETEQ, unionExp);
+		assertRelationalPredicate("T ⊆ S ∪ T ∪ U == ⊤", Lib.True, T,
+				Expression.SUBSETEQ, unionExp);
+		assertRelationalPredicate("U ⊆ S ∪ T ∪ U == ⊤", Lib.True, U,
+				Expression.SUBSETEQ, unionExp);
+		
+		// A /\ ... /\ S /\ ... /\ B <: S == true
+		AssociativeExpression interExp = ff.makeAssociativeExpression(
+				Expression.BINTER, new Expression[] { S, T, U }, null);
+		assertRelationalPredicate("S ∩ T ∩ U ⊆ S == ⊤", Lib.True, interExp,
+				Expression.SUBSETEQ, S);
+		assertRelationalPredicate("S ∩ T ∩ U ⊆ T == ⊤", Lib.True, interExp,
+				Expression.SUBSETEQ, T);
+		assertRelationalPredicate("S ∩ T ∩ U ⊆ U == ⊤", Lib.True, interExp,
+				Expression.SUBSETEQ, U);
 
 		// E : {} == false
 		assertRelationalPredicate("E ∈ ∅ == ⊥", Lib.False, E,
