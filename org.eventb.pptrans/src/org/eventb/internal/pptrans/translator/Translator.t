@@ -46,6 +46,21 @@ public class Translator extends IdentityTranslator {
 		loc);
 	}
 	
+	private Predicate translateSetEq(Expression s, Expression t,
+			SourceLocation loc) {
+		final DecomposedQuant forall = new DecomposedQuant(ff);
+		final Expression x = forall.addQuantifier(s.getType().getBaseType(), loc);
+
+		return forall.makeQuantifiedPredicate(
+			Formula.FORALL,
+			ff.makeBinaryPredicate(
+				Formula.LEQV,
+				translateIn(x, forall.push(s), loc),
+				translateIn(x, forall.push(t), loc), 
+				loc),
+		loc);
+	}
+	
 	%include {Formula.tom}
 
 	@Override
@@ -1287,26 +1302,13 @@ public class Translator extends IdentityTranslator {
 			}
 	        /**
 	        * RULE ER9: 	s = t
-	        *	  			s ⊆ t ∧ t ⊆ s
+	        *	  			∀x·x∈s ⇔ x∈t
 	        */
 			Equal(s, t) -> {
-				if(GoalChecker.isInGoal(pred)) return pred;
-				else if(`s.getType() instanceof PowerSetType) {
-					return FormulaConstructor.makeLandPredicate(
-						ff,
-						translate(
-							ff.makeRelationalPredicate(
-								Formula.SUBSETEQ,
-								`s,
-								`t,
-								loc)),
-						translate(
-							ff.makeRelationalPredicate(
-								Formula.SUBSETEQ,
-								`t,
-								`s,
-								loc)),
-						loc);						
+				if (GoalChecker.isInGoal(pred)) {
+					return pred;
+				} else if (`s.getType() instanceof PowerSetType) {
+				    return translateSetEq(`s, `t, loc);
 				}
 			}		 
 	        /**

@@ -87,8 +87,8 @@ public class DocTests extends AbstractTranslationTests {
 	public void testDoc5() {
 		
 		doTransTest(	"(S ◁ r)∼  =r∼  ▷ S",
-						"(∀x,y·y↦x ∈ r ∧ y∈S  ⇒ y↦x ∈ r ∧ y∈S) ∧ (∀x,y·y↦x ∈ r ∧ y∈S ⇒ y↦x ∈ r ∧ y ∈ S )",
-						false,
+						"(∀x,y·y↦x ∈ r ∧ y∈S  ⇔ y↦x ∈ r ∧ y∈S)",
+						true,
 						mTypeEnvironment(
 								mList("S", "r"),
 								mList(INT_SET, REL(INT, BOOL))));

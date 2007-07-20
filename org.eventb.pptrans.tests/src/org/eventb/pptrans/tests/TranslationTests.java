@@ -303,15 +303,21 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER9
 	 */
-	public void testER9_simple() {
+	public void testER9_simple_inGoal() {
 		
 		doTest( "s = t", 
 				"s = t", false, er_te);
 	}
 	
+	public void testER9_simple() {
+		
+		doTest( "is = ℕ", 
+				"∀x·x∈is ⇔ x∈ℕ", true, er_te);
+	}
+	
 	public void testER9_recursive() {
 		doTest( "s∪v = t∪w", 
-				"s∪v ⊆ t∪w ∧ t∪w ⊆ s∪v", true, er_te);
+				"∀x·x∈s∪v ⇔ x∈t∪w", true, er_te);
 	}
 	
 	/**
