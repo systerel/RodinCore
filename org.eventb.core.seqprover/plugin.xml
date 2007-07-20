@@ -108,6 +108,10 @@
              class="org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal"
              id="isFunGoal"
              name="%isFunGoalName"/>
+       <reasoner
+             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardComparisonRewrites"
+             id="cardComparisonRewrites"
+             name="%cardComparisonRewritesName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.reasoners">

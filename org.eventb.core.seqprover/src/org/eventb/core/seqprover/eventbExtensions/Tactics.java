@@ -106,6 +106,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivia
 import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardComparisonRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
@@ -3361,6 +3362,56 @@ public class Tactics {
 	 */
 	public static ITactic finitePositive() {
 		return BasicTactics.reasonerTac(new FinitePositive(), new EmptyInput());
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "cardinality
+	 * arithmetic comparison" {@link CardComparison} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> cardComparisonGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(RelationalPredicate predicate) {
+				if (predicate.getTag() == Predicate.LE
+						|| predicate.getTag() == Predicate.GE
+						|| predicate.getTag() == Predicate.LT
+						|| predicate.getTag() == Predicate.GT
+						|| predicate.getTag() == Predicate.EQUAL) {
+					Expression left = predicate.getLeft();
+					Expression right = predicate.getRight();
+					return (Lib.isCardinality(left) && Lib.isCardinality(right));
+				}
+				return super.select(predicate);
+			}
+
+		});
+	}
+
+	/**
+	 * Return the tactic "arithmetic comparison of cardinality rewrites"
+	 * {@link CardComparisonRewrites} which is applicable to a hypothesis at a
+	 * given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "arithmetic comparison of cardinality rewrites"
+	 * @author htson
+	 */
+	public static ITactic cardComparisonRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new CardComparisonRewrites(),
+				new CardComparisonRewrites.Input(hyp, position));
 	}
 
 }

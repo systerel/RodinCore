@@ -2052,6 +2052,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.FinitePositiveGoal"
             target="goal"
             tooltip="%proofTactic.finitePositiveGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.cardComparisonHyp"
+            interrupt="false"
+            name="%proofTactic.cardComparisonHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.CardComparisonHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.cardComparisonHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.cardComparisonGoal"
+            interrupt="false"
+            name="%proofTactic.cardComparisonGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.CardComparisonGoal"
+            target="goal"
+            tooltip="%proofTactic.cardComparisonGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
