@@ -242,7 +242,7 @@ public class TestUserSupports extends TestPM {
 		assertNull("Current PO is null", userSupport.getCurrentPO());
 
 		Set<Predicate> hyps = new HashSet<Predicate>();
-		Predicate hypothesis = (Predicate) hypotheses.toArray()[0];
+		Predicate hypothesis = hypotheses.iterator().next();
 		hyps.add(hypothesis);
 
 		// Prune the last PO
