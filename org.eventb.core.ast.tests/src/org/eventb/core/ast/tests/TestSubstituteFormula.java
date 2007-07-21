@@ -17,7 +17,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BinaryPredicate;
@@ -56,7 +55,7 @@ public class TestSubstituteFormula extends TestCase {
 	static abstract class TestItem {
 		abstract void doTest();
 
-		protected <T extends Formula<T>>void typeCheck(T form) {
+		protected void typeCheck(Formula<?> form) {
 			TestSubstituteFormula.typeCheck(form, tenv);
 		}
 		
@@ -110,7 +109,7 @@ public class TestSubstituteFormula extends TestCase {
 		
 		@Override
 		public void doTest() {
-			typeCheck((Predicate) formula);
+			typeCheck(formula);
 			
 			for (Predicate predicate : sbs) {
 				typeCheck(predicate);
@@ -459,7 +458,7 @@ public class TestSubstituteFormula extends TestCase {
 							mBinaryExpression(DIV, bd(1), id_a))
 			);
 		ITypeEnvironment te = mTypeEnvironment();
-		typeCheck((Predicate) pred, te);
+		typeCheck(pred, te);
 		
         Expression[] witnesses = mList(id_a, null);
         
@@ -475,7 +474,7 @@ public class TestSubstituteFormula extends TestCase {
         assertEquals(pred.toString(), expected, result);
 	}
 
-	protected static <T extends Formula<T>> void typeCheck(T formula, ITypeEnvironment te) {
+	protected static void typeCheck(Formula<?> formula, ITypeEnvironment te) {
 		formula.typeCheck(te);
 		assertTrue("Formula " + formula + " should typecheck.", formula.isTypeChecked());
 	}
@@ -491,7 +490,7 @@ public class TestSubstituteFormula extends TestCase {
 		
 		// First example
 		BecomesEqualTo assignment = ff.makeBecomesEqualTo(id_x, num(0), null);
-		typeCheck((Assignment) assignment, te);
+		typeCheck(assignment, te);
 		Expression expExpr = plus(num(0), id_y);
 		typeCheck(expExpr, te);
 		Expression actual = expr.applyAssignment(assignment, ff);
@@ -501,7 +500,7 @@ public class TestSubstituteFormula extends TestCase {
 		
 		// Second example
 		assignment = ff.makeBecomesEqualTo(id_x, plus(id_x, num(1)), null);
-		typeCheck((Assignment) assignment, te);
+		typeCheck(assignment, te);
 		expExpr = plus(plus(id_x, num(1)), id_y);
 		typeCheck(expExpr, te);
 		actual = expr.applyAssignment(assignment, ff);
@@ -511,7 +510,7 @@ public class TestSubstituteFormula extends TestCase {
 		
 		// Third example
 		assignment = ff.makeBecomesEqualTo(mList(id_x, id_y), mList(id_y, id_x), null);
-		typeCheck((Assignment) assignment, te);
+		typeCheck(assignment, te);
 		expExpr = plus(id_y, id_x);
 		typeCheck(expExpr, te);
 		actual = expr.applyAssignment(assignment, ff);
@@ -523,7 +522,7 @@ public class TestSubstituteFormula extends TestCase {
 		Predicate pred = forall(BD("y"), eq(bd(0), id_x));
 		typeCheck(pred, te);
 		assignment = ff.makeBecomesEqualTo(id_x, id_y, null);
-		typeCheck((Assignment) assignment, te);
+		typeCheck(assignment, te);
 		Predicate expPred = forall(BD("z"), eq(bd(0), id_y));
 		typeCheck(expPred, te);
 		Predicate actualPred = pred.applyAssignment(assignment, ff);
