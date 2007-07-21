@@ -603,7 +603,7 @@ public final class Lib {
 				Expression[] newChildren = new Expression[children.length
 						- rewriteChildren.length + 1];
 				System.arraycopy(children, 0, newChildren, 0, i);
-				newChildren[i] = (Expression) to;
+				newChildren[i] = to;
 				System.arraycopy(children, i + rewriteChildren.length,
 						newChildren, i + 1, children.length - i
 								- rewriteChildren.length);
@@ -642,87 +642,87 @@ public final class Lib {
 
 		@Override
 		public Expression rewrite(AssociativeExpression expression) {
-			return doRewrite((Expression) expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(AssociativePredicate predicate) {
-			return doRewrite((Predicate) predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(AtomicExpression expression) {
-			return doRewrite((Expression) expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Expression rewrite(BinaryExpression expression) {
-			return doRewrite((Expression) expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(BinaryPredicate predicate) {
-			return doRewrite((Predicate) predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(BoolExpression expression) {
-			return doRewrite((Expression) expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Expression rewrite(BoundIdentifier identifier) {
-			return doRewrite((Expression) identifier);
+			return this.<Expression>doRewrite(identifier);
 		}
 
 		@Override
 		public Expression rewrite(FreeIdentifier identifier) {
-			return doRewrite((Expression) identifier);
+			return this.<Expression>doRewrite(identifier);
 		}
 
 		@Override
 		public Expression rewrite(IntegerLiteral literal) {
-			return doRewrite((Expression) literal);
+			return this.<Expression>doRewrite(literal);
 		}
 
 		@Override
 		public Predicate rewrite(LiteralPredicate predicate) {
-			return doRewrite((Predicate) predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(QuantifiedExpression expression) {
-			return doRewrite((Expression) expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(QuantifiedPredicate predicate) {
-			return doRewrite((Predicate) predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
 		public Predicate rewrite(RelationalPredicate predicate) {
-			return doRewrite((Predicate) predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(SetExtension expression) {
-			return doRewrite((Expression) expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(SimplePredicate predicate) {
-			return doRewrite((Predicate) predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(UnaryExpression expression) {
-			return doRewrite((Expression) expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(UnaryPredicate predicate) {
-			return doRewrite((Predicate) predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 	}
 
