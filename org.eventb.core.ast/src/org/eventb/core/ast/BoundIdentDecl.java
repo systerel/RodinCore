@@ -94,9 +94,10 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		if (this.getTag() != other.getTag()) {
 			return false;
 		}
-		BoundIdentDecl otherDecl = (BoundIdentDecl) other;
-		boolean result = type == null ? otherDecl.type == null : type.equals(otherDecl.type);
-		return result && name.equals(((BoundIdentDecl) other).name);
+		final BoundIdentDecl otherDecl = (BoundIdentDecl) other;
+		final boolean sameType = type == null ? otherDecl.type == null :
+			type.equals(otherDecl.type);
+		return sameType && name.equals(otherDecl.name);
 	}
 	
 	/*
