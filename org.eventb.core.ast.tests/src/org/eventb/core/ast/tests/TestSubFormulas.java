@@ -169,96 +169,96 @@ public class TestSubFormulas extends TestCase {
 		}
 
 		@SuppressWarnings("unchecked")
-		private <U extends Formula<U>> Formula<U> doRewrite(Formula<U> expr) {
-			if (expr.equals(from)) {
-				return (Formula<U>) to;
+		private <U extends Formula<U>> U doRewrite(U formula) {
+			if (formula.equals(from)) {
+				return (U) to;
 			}
-			return expr;
+			return formula;
 		}
 		
 		@Override
 		public Expression rewrite(AssociativeExpression expression) {
-			return (Expression) doRewrite(expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(AssociativePredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(AtomicExpression expression) {
-			return (Expression) doRewrite(expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Expression rewrite(BinaryExpression expression) {
-			return (Expression) doRewrite(expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(BinaryPredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(BoolExpression expression) {
-			return (Expression) doRewrite(expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Expression rewrite(BoundIdentifier identifier) {
-			return (Expression) doRewrite(identifier);
+			return this.<Expression>doRewrite(identifier);
 		}
 
 		@Override
 		public Expression rewrite(FreeIdentifier identifier) {
-			return (Expression) doRewrite(identifier);
+			return this.<Expression>doRewrite(identifier);
 		}
 
 		@Override
 		public Expression rewrite(IntegerLiteral literal) {
-			return (Expression) doRewrite(literal);
+			return this.<Expression>doRewrite(literal);
 		}
 
 		@Override
 		public Predicate rewrite(LiteralPredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(QuantifiedExpression expression) {
-			return (Expression) doRewrite(expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(QuantifiedPredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
 		public Predicate rewrite(RelationalPredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(SetExtension expression) {
-			return (Expression) doRewrite(expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(SimplePredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(UnaryExpression expression) {
-			return (Expression) doRewrite(expression);
+			return this.<Expression>doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(UnaryPredicate predicate) {
-			return (Predicate) doRewrite(predicate);
+			return this.<Predicate>doRewrite(predicate);
 		}
 	}
 
@@ -976,83 +976,67 @@ public class TestSubFormulas extends TestCase {
 	 * Ensures that rewriting is implemented for all kinds of formulas.
 	 */
 	public void testRewritingAllClasses() throws Exception {
-		checkRootRewriting(
-				(Expression)
+		this.<Expression>checkRootRewriting(
 				mAssociativeExpression(PLUS, id_x, id_x),
 				mAssociativeExpression(PLUS, id_x, id_y)
 		);
-		checkRootRewriting(
-				(Predicate)
+		this.<Predicate>checkRootRewriting(
 				mAssociativePredicate(LAND, btrue, equals),
 				mAssociativePredicate(LAND, btrue, btrue)
 		);
-		checkRootRewriting(
-				(Expression)
+		this.<Expression>checkRootRewriting(
 				mBinaryExpression(MINUS, id_x, id_x),
 				mBinaryExpression(MINUS, id_x, id_y)
 		);
-		checkRootRewriting(
-				(Predicate)
+		this.<Predicate>checkRootRewriting(
 				mBinaryPredicate(LIMP, btrue, equals),
 				mBinaryPredicate(LIMP, btrue, btrue)
 		);
-		checkRootRewriting(
-				(Expression)
+		this.<Expression>checkRootRewriting(
 				mBoolExpression(equals),
 				mBoolExpression(btrue)
 		);
-		checkRootRewriting(
-				(Expression)
+		this.<Expression>checkRootRewriting(
 				mBoundIdentifier(0, INT),
 				mBoundIdentifier(1, INT)
 		);
-		checkRootRewriting(
-				(Expression)
+		this.<Expression>checkRootRewriting(
 				mFreeIdentifier("x", INT),
 				mFreeIdentifier("y", INT)
 		);
-		checkRootRewriting(
-				(Expression)
+		this.<Expression>checkRootRewriting(
 				mIntegerLiteral(0),
 				mIntegerLiteral(1)
 		);
-		checkRootRewriting(
-				(Predicate)
+		this.<Predicate>checkRootRewriting(
 				mLiteralPredicate(BTRUE),
 				mLiteralPredicate(BFALSE)
 		);
-		checkRootRewriting(
-				(Expression)
+		this.<Expression>checkRootRewriting(
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_x),
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_y)
 		);
-		checkRootRewriting(
-				(Predicate)
+		this.<Predicate>checkRootRewriting(
 				mQuantifiedPredicate(FORALL, mList(bd_x), equals),
 				mQuantifiedPredicate(FORALL, mList(bd_x), btrue)
 		);
-		checkRootRewriting(
-				(Predicate)
+		this.<Predicate>checkRootRewriting(
 				mRelationalPredicate(EQUAL, id_x, id_x),
 				mRelationalPredicate(EQUAL, id_x, id_y)
 		);
-		checkRootRewriting(
-				(Expression)
+		this.<Expression>checkRootRewriting(
 				mSetExtension(id_x),
 				mSetExtension(id_y)
 		);
-		checkRootRewriting(
-				(Predicate)
+		this.<Predicate>checkRootRewriting(
 				mSimplePredicate(id_S),
 				mSimplePredicate(id_T)
 		);
-		checkRootRewriting(
-				(Expression)
+		this.<Expression>checkRootRewriting(
 				mUnaryExpression(UNMINUS, id_x),
 				mUnaryExpression(UNMINUS, id_y)
 		);
-		checkRootRewriting(
-				(Predicate)
+		this.<Predicate>checkRootRewriting(
 				mUnaryPredicate(NOT, equals),
 				mUnaryPredicate(NOT, btrue)
 		);
