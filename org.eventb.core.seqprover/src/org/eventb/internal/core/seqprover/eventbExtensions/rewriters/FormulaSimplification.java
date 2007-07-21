@@ -39,14 +39,14 @@ public class FormulaSimplification {
 
 			if (!child.equals(neutral)) {
 				if (child instanceof Predicate) {
-					Predicate pred = (Predicate) child;
-					Predicate negation;
+					final Predicate pred = (Predicate) child;
+					final Predicate negation;
 					if (pred instanceof UnaryPredicate
 							&& pred.getTag() == Predicate.NOT) {
 						negation = ((UnaryPredicate) pred).getChild();
 					} else {
 						negation = ff.makeUnaryPredicate(Predicate.NOT,
-								(Predicate) child, null);
+								pred, null);
 					}
 					if (formulas.contains(negation)) {
 						formulas = new ArrayList<T>();
