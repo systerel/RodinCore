@@ -60,6 +60,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllmpD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
+import org.eventb.internal.core.seqprover.eventbExtensions.CardUpTo;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.ConjF;
 import org.eventb.internal.core.seqprover.eventbExtensions.Contr;
@@ -3412,6 +3413,40 @@ public class Tactics {
 	public static ITactic cardComparisonRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new CardComparisonRewrites(),
 				new CardComparisonRewrites.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "cardinality of
+	 * range of numbers" {@link CardUpTo} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> cardUpToGetPositions(Predicate predicate) {
+		return new CardUpTo().getPositions(predicate, true);
+	}
+
+	
+	/**
+	 * Return the tactic "cardinality of range of numbers" {@link CardUpTo}
+	 * which is applicable to a hypothesis at a given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "cardinality of range of numbers"
+	 * @author htson
+	 */
+	public static ITactic cardUpToRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new CardUpTo(),
+				new CardUpTo.Input(hyp, position));
 	}
 
 }

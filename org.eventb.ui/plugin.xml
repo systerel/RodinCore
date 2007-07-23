@@ -2070,6 +2070,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.CardComparisonGoal"
             target="goal"
             tooltip="%proofTactic.cardComparisonGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.cardUpToHyp"
+            interrupt="false"
+            name="%proofTactic.cardUpToHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.CardUpToHyp"
+            target="hypothesis"
+            tooltip="%proofTactic.cardUpToHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.cardUpToGoal"
+            interrupt="false"
+            name="%proofTactic.cardUpToGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.CardUpToGoal"
+            target="goal"
+            tooltip="%proofTactic.cardUpToGoal.tooltip"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">

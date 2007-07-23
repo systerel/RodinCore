@@ -112,6 +112,10 @@
              class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardComparisonRewrites"
              id="cardComparisonRewrites"
              name="%cardComparisonRewritesName"/>
+       <reasoner
+             class="org.eventb.internal.core.seqprover.eventbExtensions.CardUpTo"
+             id="cardUpTo"
+             name="%cardUpToName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.reasoners">
