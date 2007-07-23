@@ -57,35 +57,50 @@ public class CardComparisonRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory: card(S) ≤ card(T)
 	    	 */
 			Le(Card(S), Card(T)) -> {
-				return ff.makeRelationalPredicate(Predicate.SUBSETEQ, `S, `T, null);
+				if (`S.getType().equals(`T.getType()))
+					return ff.makeRelationalPredicate(Predicate.SUBSETEQ, `S, `T, null);
+				else
+					return predicate;
 			}
 
 			/**
 	    	 * Set Theory: card(S) ≥ card(T)
 	    	 */
 			Ge(Card(S), Card(T)) -> {
-				return ff.makeRelationalPredicate(Predicate.SUBSETEQ, `T, `S, null);
+				if (`S.getType().equals(`T.getType()))
+					return ff.makeRelationalPredicate(Predicate.SUBSETEQ, `T, `S, null);
+				else
+					return predicate;
 			}
 
 			/**
 	    	 * Set Theory: card(S) < card(T)
 	    	 */
 			Lt(Card(S), Card(T)) -> {
-				return ff.makeRelationalPredicate(Predicate.SUBSET, `S, `T, null);
+				if (`S.getType().equals(`T.getType()))
+					return ff.makeRelationalPredicate(Predicate.SUBSET, `S, `T, null);
+				else
+					return predicate;
 			}
 
 			/**
 	    	 * Set Theory: card(S) > card(T)
 	    	 */
 			Gt(Card(S), Card(T)) -> {
-				return ff.makeRelationalPredicate(Predicate.SUBSET, `T, `S, null);
+				if (`S.getType().equals(`T.getType()))
+					return ff.makeRelationalPredicate(Predicate.SUBSET, `T, `S, null);
+				else
+					return predicate;
 			}
 
 			/**
 	    	 * Set Theory: card(S) = card(T)
 	    	 */
 			Equal(Card(S), Card(T)) -> {
-				return ff.makeRelationalPredicate(Predicate.EQUAL, `S, `T, null);
+				if (`S.getType().equals(`T.getType()))
+					return ff.makeRelationalPredicate(Predicate.EQUAL, `S, `T, null);
+				else
+					return predicate;
 			}
 	    }
 	    return predicate;
