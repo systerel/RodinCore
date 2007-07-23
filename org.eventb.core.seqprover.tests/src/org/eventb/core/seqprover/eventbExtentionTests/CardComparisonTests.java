@@ -85,6 +85,37 @@ public class CardComparisonTests extends AbstractManualRewriterTests {
 	String resultP15 = "∀x·x=0⇒{2,x}={1,x}";
 
 	
+	// Failure
+	String P16 = "card(BOOL) ≤ card({1,x})";
+
+	String P17 = "(1 = x) ⇒ card({2,x}) ≤ card(BOOL)";
+
+	String P18 = "∀x·x = 0 ⇒ card(BOOL) ≤ card({1,x})";
+
+	String P19 = "card(BOOL) ≥ card({1,x})";
+
+	String P20 = "(1 = x) ⇒ card({2,x}) ≥ card(BOOL)";
+
+	String P21 = "∀x·x = 0 ⇒ card(BOOL) ≥ card({1,x})";
+
+	String P22 = "card(BOOL) < card({1,x})";
+
+	String P23 = "(1 = x) ⇒ card({2,x}) < card(BOOL)";
+
+	String P24 = "∀x·x = 0 ⇒ card(BOOL) < card({1,x})";
+
+	String P25 = "card(BOOL) > card({1,x})";
+
+	String P26 = "(1 = x) ⇒ card({2,x}) > card(BOOL)";
+
+	String P27 = "∀x·x = 0 ⇒ card(BOOL) > card({1,x})";
+
+	String P28 = "card(BOOL) = card({1,x})";
+
+	String P29 = "(1 = x) ⇒ card({2,x}) = card(BOOL)";
+
+	String P30 = "∀x·x = 0 ⇒ card(BOOL) = card({1,x})";
+
 	@Override
 	public String getReasonerID() {
 		return "org.eventb.core.seqprover.cardComparisonRewrites";
@@ -153,7 +184,22 @@ public class CardComparisonTests extends AbstractManualRewriterTests {
 				P12, "1.1",
 				P13, "",
 				P14, "1",
-				P15, "1.1"
+				P15, "1.1",
+				P16, "",
+				P17, "1",
+				P18, "1.1",
+				P19, "",
+				P20, "1",
+				P21, "1.1",
+				P22, "",
+				P23, "1",
+				P24, "1.1",
+				P25, "",
+				P26, "1",
+				P27, "1.1",
+				P28, "",
+				P29, "1",
+				P30, "1.1"
 		};
 	}
 
