@@ -8,9 +8,10 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -1112,8 +1113,78 @@ public class AutoRewriterImpl extends DefaultRewriter {
 						sInterT);
 				return makeBinaryExpression(Expression.MINUS, cardS, cardSInterT);
 			}
+			
+			/**
+	    	 * Cardinality:    card(S(1) ∪ ... ∪ S(n))
+	    	 *               = card(S(1)) + ...  + card(S(n))
+             *                 − (card(S(1) ∩ S(2)) + ... + card(S(n−1) ∩ S(n)))
+             *                 + (card(S(1) ∩ S(2) ∩ S(3)) + ... + card(S(n−2) ∩ S(n−1) ∩ S(n)))
+             *                 − ...                         
+             *                 + ((−1)^(n-1) ∗ card(S(1) ∩ ... ∩ S(n)))
+	    	 */
+	    	Card(BUnion(children)) -> {
+	    		int length = `children.length;
+	    		Expression [] subFormulas = new Expression[length];
+	    		for (int i = 1; i <= length; ++i) {
+					List<List<Expression>> expressions = getExpressions(`children, 0, i);
+					
+					List<Expression> newChildren = new ArrayList<Expression>(expressions.size());
+					for (List<Expression> list : expressions) {
+						Expression inter;
+						if (list.size() == 1)
+							inter = list.iterator().next();
+						else
+							inter = makeAssociativeExpression(
+									Expression.BINTER, list);
+						Expression card = makeUnaryExpression(Expression.KCARD,
+								inter);
+						newChildren.add(card);
+					}
+					if (newChildren.size() != 1) 
+						subFormulas[i-1] = makeAssociativeExpression(
+								Expression.PLUS, newChildren);
+					else
+						subFormulas[i-1] = newChildren.iterator().next();
+	    		} 
+	    		Expression result = subFormulas[0];
+	    		boolean positive = false;
+	    		for (int i = 1; i < length; ++i) {
+	    			if (positive) {
+						Expression [] newChildren = new Expression[2];
+						newChildren[0] = result;
+						newChildren[1] = subFormulas[i];
+						result = makeAssociativeExpression(Expression.PLUS,
+								newChildren);
+	    			}
+	    			else {
+	    				result = makeBinaryExpression(Expression.MINUS,
+	    						result, subFormulas[i]);
+	    			}
+	    			positive = !positive;
+	    		}
+	    		return result;
+	    	}
 	    }
 	    return expression;
+	}
+
+	private List<List<Expression>> getExpressions(Expression [] array, int from, int size) {
+		List<List<Expression>> result = new ArrayList<List<Expression>>();
+		if (size == 0) {
+			result.add(new ArrayList<Expression>());
+		}
+		else {
+			for (int i = from; i <= array.length - size; ++i) {
+				List<List<Expression>> lists = getExpressions(array, i + 1, size - 1);
+				for (List<Expression> list : lists) {
+					List<Expression> newList = new ArrayList<Expression>();
+					newList.add(array[i]);
+					newList.addAll(list);
+					result.add(newList);
+				}
+			}
+		}
+		return result;
 	}
 
 	@Override

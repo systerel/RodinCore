@@ -42,7 +42,7 @@ public class AutoFormulaRewriterTests {
 			"0"), null);
 
 	protected static Expression number1 = ff.makeIntegerLiteral(new BigInteger(
-			"1"), null);;
+			"1"), null);
 
 	protected static Expression number2 = ff.makeIntegerLiteral(new BigInteger(
 			"2"), null);
@@ -51,7 +51,7 @@ public class AutoFormulaRewriterTests {
 			"3"), null);
 
 	protected static Expression numberMinus1 = ff.makeIntegerLiteral(new BigInteger(
-			"-1"), null);;
+			"-1"), null);
 
 	protected static Expression numberMinus2 = ff.makeIntegerLiteral(new BigInteger(
 			"-2"), null);
@@ -615,7 +615,7 @@ public class AutoFormulaRewriterTests {
 
 		// S \/ ... \/ {} \/ ... \/ T == S ... \/ ... \/ T
 		expected = ff.makeAssociativeExpression(
-				Expression.BUNION, new Expression[] { S, T, U }, null);;
+				Expression.BUNION, new Expression[] { S, T, U }, null);
 		assertAssociativeExpression("S ∪ ∅ == S", S, Expression.BUNION, S,
 				emptySet);
 		assertAssociativeExpression("∅ ∪ S == S", S, Expression.BUNION,
@@ -1440,5 +1440,37 @@ public class AutoFormulaRewriterTests {
 		assertRelationalPredicate("card(S) = 1  ==  ∃x·S = {x}", expectedPred,
 				number1, Predicate.EQUAL, input);
 
+		// card(S(1) \/ ... \/ S(n)) == card(S(1)) + ... card(S(2)) -
+		//	                            - ... 
+		//                              + (-1)^(n-1)card(S(1) /\ ... card(S(n)))
+		input = Lib.parseExpression("{x ∣ x ∈ BOOL} ∪ S");
+		input.typeCheck(ff.makeTypeEnvironment());
+		Expression expectedExp = Lib.parseExpression("card({x ∣ x ∈ BOOL}) + card(S) − card({x ∣ x ∈ BOOL} ∩ S)");
+		expectedExp.typeCheck(ff.makeTypeEnvironment());
+		assertUnaryExpression("card(S ∪ T) == card(S) + card(T) − card(S ∩ T)", expectedExp, Expression.KCARD, input);
+
+		input = Lib.parseExpression("{x ∣ x ∈ BOOL} ∪ S ∪ T");
+		input.typeCheck(ff.makeTypeEnvironment());
+		expectedExp = Lib.parseExpression("card({x ∣ x ∈ BOOL}) + card(S) + card(T) − " +
+				"(card({x ∣ x ∈ BOOL} ∩ S) + card({x ∣ x ∈ BOOL} ∩ T) + card(S ∩ T)) + " + 
+				"card({x ∣ x ∈ BOOL} ∩ S ∩ T)");
+		expectedExp.typeCheck(ff.makeTypeEnvironment());
+		assertUnaryExpression(
+				"card(S ∪ T ∪ R) == card(S) + card(T) + card(R)"
+						+ " − (card(S ∩ T) + card(S ∩ R) + card(T ∩ R)) + card(S ∩ T ∩ R)",
+				expectedExp, Expression.KCARD, input);
+
+		input = Lib.parseExpression("{x ∣ x ∈ BOOL} ∪ S ∪ T ∪ R");
+		input.typeCheck(ff.makeTypeEnvironment());
+		expectedExp = Lib.parseExpression("card({x ∣ x ∈ BOOL}) + card(S) + card(T) + card(R) − " +
+				"(card({x ∣ x ∈ BOOL} ∩ S) + card({x ∣ x ∈ BOOL} ∩ T) + card({x ∣ x ∈ BOOL} ∩ R) + card(S ∩ T) + card(S ∩ R) + card(T ∩ R)) + " + 
+				"(card({x ∣ x ∈ BOOL} ∩ S ∩ T) + card({x ∣ x ∈ BOOL} ∩ S ∩ R) + card({x ∣ x ∈ BOOL} ∩ T ∩ R) + card(S ∩ T ∩ R)) − " +
+				"card({x ∣ x ∈ BOOL} ∩ S ∩ T ∩ R)");
+		expectedExp.typeCheck(ff.makeTypeEnvironment());
+		assertUnaryExpression(
+				"card(S ∪ T ∪ R ∪ U) == card(S) + card(T) + card(R) + card(U)"
+						+ " − (card(S ∩ T) + card(S ∩ R) + card(S ∩ U) + card(T ∩ R) + card(T ∩ U)+ card(R ∩ U)) + " +
+								"(card(S ∩ T ∩ R) + card(S ∩ T ∩ U) + card(S ∩ R ∩ U) + card(T ∩ R ∩ U)) − card(S ∩ T ∩ R ∩ U)",
+				expectedExp, Expression.KCARD, input);
 	}
 }
