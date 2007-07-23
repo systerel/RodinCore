@@ -172,9 +172,9 @@ public class FunCompImg extends AbstractManualInference {
 		Predicate inferredPred = predicate.rewriteSubFormula(replacedPos,
 				funImg2, ff);
 
-		// Well-definedness
 		antecidents[0] = makeAntecedent(pred, inferredPred);
 
+		// Well-definedness
 		antecidents[1] = makeWD(inferredPred);
 
 		return antecidents;
