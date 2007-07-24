@@ -1,7 +1,8 @@
-package org.eventb.core.seqprover.reasonerExtentionTests;
+package org.eventb.core.seqprover.eventbExtentionTests;
 
 import org.eventb.core.seqprover.IReasonerInput;
 //import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tests.TestLib;
 
