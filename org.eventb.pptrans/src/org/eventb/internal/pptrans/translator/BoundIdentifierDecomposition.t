@@ -8,18 +8,54 @@
 
 package org.eventb.internal.pptrans.translator;
 
-import java.math.BigInteger;
-import java.util.*;
+import static org.eventb.core.ast.Formula.EXISTS;
+import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.CSET;
+import static org.eventb.core.ast.Formula.QINTER;
+import static org.eventb.core.ast.Formula.QUNION;
 
-import org.eventb.core.ast.*;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eventb.core.ast.AssociativeExpression;
+import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.BoolExpression;
+import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.Identifier;
+import org.eventb.core.ast.IntegerLiteral;
+import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.SimplePredicate;
+import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.UnaryExpression;
+import org.eventb.core.ast.UnaryPredicate;
 
 
 /**
- * Implements the Bound Identifier Decomposition.
- * The method decomposeBoundIdentifiers decomposes all bound identifiers of a predicate,
- * such that after the decomposition there are no bound identifiers of cartesian product type.
+ * Implements Bound Identifier Decomposition.
+ * The method decomposeBoundIdentifiers decomposes all bound identifiers of a
+ * predicate, such that after decomposition there is no bound identifier of a
+ * cartesian product type.
+ * <p>
  * Example:		∀x·x=1↦2 ⇒ x∈S	becomes: ∀x0,x1·x0↦x1=1↦2 ⇒ x0↦x1∈S
- * 				
+ * </p>
+ * 			
  * @author Matthias Konrad
  */
 @SuppressWarnings({"unused", "cast"})
@@ -36,6 +72,21 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 
 	}
 
+	/**
+	 * Implements Bound Identifier Decomposition.
+	 * <p>
+ 	 * Example:	∀x·x=1↦2 ⇒ x∈S	becomes: ∀x0,x1·x0↦x1=1↦2 ⇒ x0↦x1∈S
+ 	 * </p>	
+ 	 * @param pred the predicate to decomposed
+	 * @param ff formula factory used during the decomposition
+	 * @return a new predicate, which is the decomposed version of the given
+	 * predicate
+	 */
+	public static Predicate decomposeBoundIdentifiers(Predicate pred,
+			FormulaFactory ff) {
+		return new BoundIdentifierDecomposition(ff).translate(pred);
+	}
+	
 	%include {Formula.tom}
 	
 	private final List<Substitute> mapletOffsets;
@@ -47,49 +98,48 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 		count = 0;
 	}
 	
-	private BoundIdentifierDecomposition(FormulaFactory ff, List<Substitute> mapletOffsets, int count) {
+	private BoundIdentifierDecomposition(FormulaFactory ff, List<Substitute>
+			mapletOffsets, int count) {
 		super(ff);
 		this.mapletOffsets = new LinkedList<Substitute>(mapletOffsets);
 		this.count = count;
 	}
 	
-	/**
-	 * Implements the Bound Identifier Decomposition
- 	 * Example:	∀x·x=1↦2 ⇒ x∈S	becomes: ∀x0,x1·x0↦x1=1↦2 ⇒ x0↦x1∈S	
- 	 * @param pred the predicate that is decomposed
-	 * @param ff the Formula Factory used during the decomposition
-	 * @return a new predicate, which is the decomposed version of pred
-	 */
-	public static Predicate decomposeBoundIdentifiers(Predicate pred, FormulaFactory ff) {
-		pred = new BoundIdentifierDecomposition(ff).translate(pred);
-		
-		return pred;
+	private Expression translateQExpr(int tag, BoundIdentDecl[] is,
+			Predicate pred, Expression expr, SourceLocation loc) {
+		final BoundIdentifierDecomposition ic =
+				new BoundIdentifierDecomposition(ff, mapletOffsets, count);
+		final DecomposedQuant quant = new DecomposedQuant(ff);
+		Collections.reverse(Arrays.asList(is));
+		final List<Expression> quantifiers = new LinkedList<Expression>();
+		for (BoundIdentDecl decl: is) {
+			quantifiers.add(0,  
+				quant.addQuantifier(decl.getType(), decl.getName(), decl.getSourceLocation()));
+		}
+		for (Expression quantifier: quantifiers) {
+			ic.mapletOffsets.add(0, 
+				new Substitute(quantifier, ic.count + quant.offset()));
+		} 	
+		ic.count += quant.offset();
+		return quant.makeQuantifiedExpression(
+			tag,
+			ic.translate(pred),
+			ic.translate(expr),
+			loc);
 	}
 	
 	@Override
 	protected Expression translate(Expression expr){
 		SourceLocation loc = expr.getSourceLocation();		
 		%match (Expression expr) {
-			Cset(is, P, E) | Qunion(is, P, E) | Qinter(is, P, E) -> {
-				BoundIdentifierDecomposition ic =
-						new BoundIdentifierDecomposition(ff, mapletOffsets, count);
-				DecomposedQuant quant = new DecomposedQuant(ff);
-				Collections.reverse(Arrays.asList(`is));
-				List<Expression> quantifiers = new LinkedList<Expression>();
-				for (BoundIdentDecl decl: `is) {
-					quantifiers.add(0,  
-						quant.addQuantifier(decl.getType(), decl.getName(), decl.getSourceLocation()));
-				}
-				for (Expression quantifier: quantifiers) {
-					ic.mapletOffsets.add(0, 
-						new Substitute(quantifier, ic.count + quant.offset()));
-				} 	
-				ic.count += quant.offset();
-				return quant.makeQuantifiedExpression(
-					expr.getTag(),
-					ic.translate(`P),
-					ic.translate(`E),
-					loc);
+			Cset(is, P, E) -> {
+				return translateQExpr(CSET, `is, `P, `E, loc);
+			}
+			Qunion(is, P, E) -> {
+				return translateQExpr(QUNION, `is, `P, `E, loc);
+			}
+			Qinter(is, P, E) -> {
+				return translateQExpr(QINTER, `is, `P, `E, loc);
 			}
 			BoundIdentifier(idx) -> {
 				Substitute p = mapletOffsets.get(`idx);
@@ -101,29 +151,34 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 		}
 	}
 	
+	private Predicate translateQPred(int tag, BoundIdentDecl[] is,
+			Predicate pred, SourceLocation loc) {
+		BoundIdentifierDecomposition ic = 
+				new BoundIdentifierDecomposition(ff, mapletOffsets, count);
+		DecomposedQuant quant = new DecomposedQuant(ff);
+		Collections.reverse(Arrays.asList(is));
+		List<Expression> quantifiers = new LinkedList<Expression>();
+		for (BoundIdentDecl decl: is) {
+			quantifiers.add(0,  
+				quant.addQuantifier(decl.getType(), decl.getName(), decl.getSourceLocation()));
+		}
+		for (Expression quantifier: quantifiers) {
+			ic.mapletOffsets.add(0,
+				new Substitute(quantifier, ic.count + quant.offset()));
+		} 	
+		ic.count += quant.offset();
+		return quant.makeQuantifiedPredicate(tag, ic.translate(pred), loc);
+	}
+
 	@Override
 	protected Predicate translate(Predicate pred) {
 		SourceLocation loc = pred.getSourceLocation();		
 		%match (Predicate pred) {
-			ForAll(is, P) | Exists(is, P) -> {
-				BoundIdentifierDecomposition ic = 
-						new BoundIdentifierDecomposition(ff, mapletOffsets, count);
-				DecomposedQuant quant = new DecomposedQuant(ff);
-				Collections.reverse(Arrays.asList(`is));
-				List<Expression> quantifiers = new LinkedList<Expression>();
-				for (BoundIdentDecl decl: `is) {
-					quantifiers.add(0,  
-						quant.addQuantifier(decl.getType(), decl.getName(), decl.getSourceLocation()));
-				}
-				for (Expression quantifier: quantifiers) {
-					ic.mapletOffsets.add(0,
-						new Substitute(quantifier, ic.count + quant.offset()));
-				} 	
-				ic.count += quant.offset();
-				return quant.makeQuantifiedPredicate(
-					pred.getTag(),
-					ic.translate(`P),
-					loc);
+			ForAll(is, P) -> {
+				return translateQPred(FORALL, `is, `P, loc);
+			}
+			Exists(is, P) -> {
+				return translateQPred(EXISTS, `is, `P, loc);
 			}
 			_ -> {
 				return super.translate(pred);

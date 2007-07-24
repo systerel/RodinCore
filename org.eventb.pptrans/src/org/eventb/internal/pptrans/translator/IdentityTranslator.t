@@ -62,7 +62,13 @@ public class IdentityTranslator extends IdentityTranslatorBase {
 	    	AssociativeExpression(children) -> {
 	    		return idTransAssociativeExpression(expr, `children);
 	    	}
-	    	AtomicExpression() | Identifier() | IntegerLiteral(_) -> { 
+	    	AtomicExpression() -> { 
+	    		return expr; 
+	    	}
+			Identifier() -> { 
+	    		return expr; 
+	    	}
+	    	IntegerLiteral(_) -> { 
 	    		return expr; 
 	    	}
 	    	BinaryExpression(l, r) -> {
@@ -71,7 +77,13 @@ public class IdentityTranslator extends IdentityTranslatorBase {
 	    	Bool(P) -> {
 	    		return idTransBoolExpression(expr, `P);
 	    	}
-	    	Cset(is, P, E) | Qinter(is, P, E) | Qunion(is, P, E) -> {
+	    	Cset(is, P, E) -> {
+	    		return idTransQuantifiedExpression(expr, `is, `P, `E);
+	    	}
+	    	Qinter(is, P, E) -> {
+	    		return idTransQuantifiedExpression(expr, `is, `P, `E);
+	    	}
+	    	Qunion(is, P, E) -> {
 	    		return idTransQuantifiedExpression(expr, `is, `P, `E);
 	    	}
 	    	SetExtension(children) -> {
@@ -90,10 +102,16 @@ public class IdentityTranslator extends IdentityTranslatorBase {
 	protected Predicate translate(Predicate pred) {
 		SourceLocation loc = pred.getSourceLocation();
 	    %match (Predicate pred) {
-	    	Land(children) | Lor(children) -> {
+	    	Land(children) -> {
 	    		return idTransAssociativePredicate(pred, `children);
 	    	}
-	    	Limp(l, r) | Leqv(l, r)  -> {
+	    	Lor(children) -> {
+	    		return idTransAssociativePredicate(pred, `children);
+	    	}
+	    	Limp(l, r) -> {
+	    		return idTransBinaryPredicate(pred, `l, `r);
+	    	}
+	      	Leqv(l, r) -> {
 	    		return idTransBinaryPredicate(pred, `l, `r);
 	    	}
 	      	Not(P)-> {
@@ -106,10 +124,16 @@ public class IdentityTranslator extends IdentityTranslatorBase {
 			{
 	    		return idTransRelationalPredicate(pred, `l, `r);
 	    	}
-	    	ForAll(is, P) | Exists(is, P) -> {
+	    	ForAll(is, P) -> {
 	    		return idTransQuantifiedPredicate(pred, `is, `P);
 	    	}
-	    	BTRUE() | BFALSE() -> {
+	    	Exists(is, P) -> {
+	    		return idTransQuantifiedPredicate(pred, `is, `P);
+	    	}
+	    	BTRUE() -> {
+	    		return pred;
+	    	}
+	       	BFALSE() -> {
 	    		return pred;
 	    	}
 	       	_ -> {

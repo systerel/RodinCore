@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006-2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,13 @@
 
 package org.eventb.internal.pptrans.translator;
 
+import static org.eventb.core.ast.Formula.BFALSE;
+import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.ast.Formula.LAND;
+
 import java.math.BigInteger;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -65,6 +70,49 @@ public class PredicateSimplification extends IdentityTranslator  {
 		super(ff);
 	}
 
+	private Predicate mBTRUE(SourceLocation loc) {
+		return ff.makeLiteralPredicate(BTRUE, loc);
+	}
+
+	private Predicate mBFALSE(SourceLocation loc) {
+		return ff.makeLiteralPredicate(BFALSE, loc);
+	}
+
+	private Predicate simplify(AssociativePredicate pred) {
+		final int tag = pred.getTag();
+		final Predicate[] children = pred.getChildren();
+		final SourceLocation loc = pred.getSourceLocation();
+		final Predicate identity = tag == LAND ? mBTRUE(loc) : mBFALSE(loc); 
+		final Predicate bound = tag == LAND ? mBFALSE(loc) : mBTRUE(loc);
+		final int length = children.length;
+		final List<Predicate> newChildren = new ArrayList<Predicate>(length);
+		
+		boolean hasChanged = false;
+		for (final Predicate child : children) {
+			final Predicate newChild = translate(child);
+			if (newChild.equals(bound)) {
+				return bound;
+			}
+			if (!newChild.equals(identity)) {
+				newChildren.add(newChild);
+				hasChanged |= newChild != child;
+			} else {
+				hasChanged = true;
+			}
+		}
+
+		if (newChildren.size() == 0) {
+			return identity;
+		}
+		if (newChildren.size() == 1) {
+			return newChildren.get(0);
+		}
+		if (hasChanged) {
+			return ff.makeAssociativePredicate(tag, newChildren, loc);
+		}
+		return pred;
+	}
+
 	%include {Formula.tom}
 
 	@Override
@@ -81,36 +129,27 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    	 *	RULE PR4:	... ∨ c(k−1) ∨ ⊥ ∨ c(k+1) ∨ ...
 	    	 *				... ∨ c(k−1) ∨ c(k+1) ∨ ...
 	    	 */
-	    	Land(children) | Lor(children) -> {
-	    		LinkedList<Predicate> newChilds = new LinkedList<Predicate>();
-	    		boolean hasChanged = false;
-	    		for (Predicate child: `children) {
-	    			Predicate newChild = translate(child);
-	    			newChilds.add(newChild);
-	    			hasChanged |= newChild != child;
-	    		}
-				boolean isAnd = pred.getTag() == Formula.LAND;
-				Predicate btrue = ff.makeLiteralPredicate(Formula.BTRUE, loc);
-				Predicate bfalse = ff.makeLiteralPredicate(Formula.BFALSE, loc);	
-							
-    			return FormulaConstructor.makeSimplifiedAssociativePredicate(
-    				ff, 
-    				pred.getTag(), 
-    				newChilds, 
-    				isAnd ? btrue : bfalse,
-    				isAnd ? bfalse : btrue,
-    				loc, 
-    				hasChanged ? null : pred);
+	    	Land(_) -> {
+	    		return simplify((AssociativePredicate) pred);
+	    	}
+	    	Lor(_) -> {
+	    		return simplify((AssociativePredicate) pred);
 	    	}
 
-	    	/**
+	    	/*
 	    	 *	RULE PR5:	P ⇒ ⊤
 	    	 *				⊤
+	    	 */
+	    	Limp(_, BTRUE()) -> {
+	    		return mBTRUE(loc);
+	    	}
+
+	    	/*
 	    	 *	RULE PR6:	⊥ ⇒ P	
 	    	 *				⊤
 	    	 */
-	    	Limp(_, BTRUE()) | Limp(BFALSE(), _) -> {
-	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
+	    	Limp(BFALSE(), _) -> {
+	    		return mBTRUE(loc);
 	    	}
 
 	    	/**
@@ -136,7 +175,7 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    	 *				⊥
 	    	 */
 	    	Not(BTRUE()) -> {
-	    		return ff.makeLiteralPredicate(Formula.BFALSE, loc);
+	    		return mBFALSE(loc);
 	    	}
 
 	    	/**
@@ -144,7 +183,7 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    	 *				⊤
 	    	 */
 	    	Not(BFALSE()) -> {
-	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
+	    		return mBTRUE(loc);
 	    	}
 
 	    	/**
@@ -160,14 +199,18 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    	 *				⊤
 	    	 */
 	    	Leqv(P, P) -> {
-	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
+	    		return mBTRUE(loc);
 	    	}
 
 	    	/**
 	    	 *	RULE PR13: 	P ⇔ ⊤
 	    	 *				P
 	    	 */
-	    	Leqv(P, BTRUE()) | Leqv(BTRUE(), P) -> {
+	    	Leqv(P, BTRUE()) -> {
+	    		return translate(`P);
+	    	}
+
+	    	Leqv(BTRUE(), P) -> {
 	    		return translate(`P);
 	    	}
 
@@ -175,7 +218,12 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    	 *	RULE PR14: 	P ⇔ ⊥
 	    	 *				¬P
 	    	 */
-	    	Leqv(P, BFALSE()) | Leqv(BFALSE(), P) -> {
+	    	Leqv(P, BFALSE()) -> {
+	    		return translate(
+	    			ff.makeUnaryPredicate(Formula.NOT, `P, loc));
+	    	}
+
+	    	Leqv(BFALSE(), P) -> {
 	    		return translate(
 	    			ff.makeUnaryPredicate(Formula.NOT, `P, loc));
 	    	}
@@ -184,17 +232,26 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    	 *	RULE PR15: 	∀/∃x1,...,xn·⊤
 	    	 *				⊤
 	    	 */
-	    	ForAll(_, BTRUE()) | Exists(_, BTRUE()) -> {
-	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
+	    	ForAll(_, BTRUE()) -> {
+	    		return mBTRUE(loc);
+	    	}
+
+	    	Exists(_, BTRUE()) -> {
+	    		return mBTRUE(loc);
 	    	}
 
 	    	/**
 	    	 *	RULE PR16: 	∀/∃x1,...,xn·⊥
 	    	 *				⊥
 	    	 */
-	    	ForAll(_, BFALSE()) | Exists(_, BFALSE()) -> {
-	    		return ff.makeLiteralPredicate(Formula.BFALSE, loc);
+	    	ForAll(_, BFALSE()) -> {
+	    		return mBFALSE(loc);
 	    	}
+
+	    	Exists(_, BFALSE()) -> {
+	    		return mBFALSE(loc);
+	    	}
+
 	    	_ -> {
 	    		return super.translate(pred);
 	    	}
