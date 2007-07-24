@@ -25,7 +25,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 /**
  * This class contains a collection of static methods that clients can use to check that the input they provide to
- * the sequent prover fulfills the expectations the sequent prover has on them. 
+ * the sequent prover fulfils the expectations the sequent prover has on them. 
  * 
  * <p>
  * The intention of this class is to make explicit (programatically) the assumptions that the sequent prover makes on
@@ -38,7 +38,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
  * </p>
  * 
  * <p>
- * For the moment clients are requsted not to depend on the code here since it is currently not entirely stable.
+ * For the moment clients are requested not to depend on the code here since it is currently not entirely stable.
  * </p>
  * 
  * @author Farhad Mehta
@@ -91,7 +91,7 @@ public class ProverChecks {
 	}
 
 	/**
-	 * Checks that all free identifiers defined in a predicate are present and aggree in type with the
+	 * Checks that all free identifiers defined in a predicate are present and agree in type with the
 	 * identifiers present in the given type environment.
 	 * 
 	 * <p>
@@ -170,7 +170,7 @@ public class ProverChecks {
 		// 		all free identifiers encountered have a unique type), and that all predicates are well formed and type
 		//		checked. It is also checked that a goal dependent rule has no goal independent antecedents.
 		// * In the second pass it is checked that all free variables contained in all predicates are present and agree
-		//		in type with the type environment that is relevent in their respective contexts.
+		//		in type with the type environment that is relevant in their respective contexts.
 		//
 		//	Two passes through the antecedents of the rule are needed since the type environment that the rule expects
 		//  from its consequent sequent is not known a priori since this information is scattered across all antecedents.
@@ -305,7 +305,7 @@ public class ProverChecks {
 			// Check all hyp actions
 
 			// The type environment that is progressively built using forward inferences
-			// Note : since forward inferences are skippable, the typing check only assumes
+			// Note : since forward inferences are skip-able, the typing check only assumes
 			// the original antecedent type environment, but the non freeness check needs to
 			// check that all added free identifiers are unique.
 			final ITypeEnvironment fwdInfTypeEnv = antecedentTypeEnv.clone();
@@ -334,11 +334,11 @@ public class ProverChecks {
 	}
 	
 	/**
-	 * Generates the logical justificatons for the given proof rule.
+	 * Generates the logical justifications for the given proof rule.
 	 * 
 	 * <p>
-	 * The justifications of a proof rule are expressed as a list of sequents. The first justifcation in this
-	 * list is the <em>main</em> justification for the rule ans is always present. The rest of the justifications
+	 * The justifications of a proof rule are expressed as a list of sequents. The first justification in this
+	 * list is the <em>main</em> justification for the rule and is always present. The rest of the justifications
 	 * relate to {@link IForwardInfHypAction}s and occur in the same order of the antecedents, and within each antecedent,
 	 * in the same order which they appear. 
 	 * </p>
@@ -348,12 +348,12 @@ public class ProverChecks {
 	 * </p>
 	 * 
 	 * <p>
-	 * The sequent prover, and clients providing Reasoners may use this method to generate logical justifications for the proof 
-	 * rules they generate in order to re-check their logical content independently.
+	 * The sequent prover, and clients providing Reasoners may use this method to generate logical and WD justifications for 
+	 * the proof rules they generate in order to re-check their logical content independently.
 	 * </p>
 	 * 
 	 * <p>
-	 * WARINING : The rturn tyoe of this method is subject to change in the near future. 
+	 * WARINING : The return type of this method is subject to change in the near future. 
 	 * </p>
 	 * 
 	 * @param rule
@@ -434,7 +434,7 @@ public class ProverChecks {
 	}	
 
 	// *******************************************************************************************
-	// Provate Methods :
+	// Private Methods :
 	// *******************************************************************************************
 
 	/**
@@ -511,7 +511,7 @@ public class ProverChecks {
 	 * 
 	 * <p>
 	 * If all checks are successful, this method returns <code>true</code> and adds the given free identifiers
-	 * to the given type environemnt. If a check fails, the method returns <code>false</code> it means one of the checks 
+	 * to the given type environment. If a check fails, the method returns <code>false</code> it means one of the checks 
 	 * failed, and only those free identifiers that could successfully be added are adeed to the type environment. The free
 	 * identifiers are processed in the order in which they occur.
 	 * <p>
