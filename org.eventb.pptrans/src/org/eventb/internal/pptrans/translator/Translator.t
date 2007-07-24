@@ -31,6 +31,19 @@ public class Translator extends IdentityTranslator {
 		super(ff);
 	}
 
+	private Predicate mNot(Predicate pred, SourceLocation loc) {
+		return ff.makeUnaryPredicate(Formula.NOT, pred, loc);
+	}
+
+	private Predicate translateEqualsTRUE(Expression e, SourceLocation loc) {
+		return translateEqual(
+				ff.makeRelationalPredicate(
+						Formula.EQUAL,
+						e,
+						ff.makeAtomicExpression(Formula.TRUE, loc),
+						loc));
+	}
+
 	private Predicate translateInPow(Expression e, Expression t,
 			SourceLocation loc) {
 		final DecomposedQuant forall = new DecomposedQuant(ff);
@@ -61,6 +74,109 @@ public class Translator extends IdentityTranslator {
 		loc);
 	}
 	
+	private Predicate translateLessMin(int tag, Expression left,
+			Expression rightSet, SourceLocation loc) {
+		final DecomposedQuant forall = new DecomposedQuant(ff);
+		final Expression x = forall.addQuantifier(left.getType(), loc);
+
+		return forall.makeQuantifiedPredicate(
+			Formula.FORALL,
+			ff.makeBinaryPredicate(
+				Formula.LIMP,
+				translateIn(x, forall.push(rightSet),	loc),
+				translate(
+					ff.makeRelationalPredicate(tag, forall.push(left), x, loc)
+				),
+				loc),
+			loc);
+	}
+
+	private Predicate translateLessMax(int tag, Expression left,
+			Expression rightSet, SourceLocation loc) {
+    	final DecomposedQuant exists = new DecomposedQuant(ff);
+		final Expression x = exists.addQuantifier(left.getType(), loc);
+    	
+    	return exists.makeQuantifiedPredicate(
+    		Formula.EXISTS,
+    		FormulaConstructor.makeLandPredicate(
+    			ff,
+    			translateIn (x, exists.push(rightSet), loc),
+    			translate(
+    				ff.makeRelationalPredicate(tag, exists.push(left), x, loc)
+    			),
+    			loc),
+    		loc);
+	}
+
+	private Predicate translateMinLess(int tag, Expression leftSet,
+			Expression right, SourceLocation loc) {
+    	final DecomposedQuant exists = new DecomposedQuant(ff);
+		final Expression x = exists.addQuantifier(right.getType(), loc);
+    	
+    	return exists.makeQuantifiedPredicate(
+    		Formula.EXISTS,
+    		FormulaConstructor.makeLandPredicate(
+    			ff,
+    			translateIn (x, exists.push(leftSet), loc),
+    			translate(
+    				ff.makeRelationalPredicate(tag, x, exists.push(right), loc)
+    			),
+    			loc),
+    		loc);
+	}
+
+	private Predicate translateMaxLess(int tag, Expression leftSet,
+			Expression right, SourceLocation loc) {
+    	final DecomposedQuant forall = new DecomposedQuant(ff);
+		final Expression x = forall.addQuantifier(right.getType(), loc);
+
+    	return forall.makeQuantifiedPredicate(
+    		Formula.FORALL,
+    		ff.makeBinaryPredicate(
+    			Formula.LIMP,
+    			translateIn(x, forall.push(leftSet),	loc),
+    			translate(
+	    			ff.makeRelationalPredicate(tag, x, forall.push(right), loc)
+    			),
+    			loc),
+    		loc);	   
+	}
+
+	private Predicate translateEqualsCard(Expression n, Expression s,
+			SourceLocation loc) {
+		final DecomposedQuant exists = new DecomposedQuant(ff);
+		final Expression bij = ff.makeBinaryExpression(
+				Formula.TBIJ,
+				s,
+				ff.makeBinaryExpression(
+						Formula.UPTO,
+						ff.makeIntegerLiteral(BigInteger.ONE, null),
+						n,
+						loc),
+				loc);
+		final Expression f = 
+			exists.addQuantifier(bij.getType().getBaseType(), "f", loc);
+		return exists.makeQuantifiedPredicate(
+			Formula.EXISTS,
+			translateIn(f, exists.push(bij), loc),
+			loc);
+	}
+
+	private Predicate translateEqualsMinMax(Expression n, Expression minMax,
+			Expression s, SourceLocation loc) {
+		final Predicate rel;
+		if (minMax.getTag() == Formula.KMIN) {
+			rel = ff.makeRelationalPredicate(Formula.LE, n, minMax, loc);
+		} else {
+			rel = ff.makeRelationalPredicate(Formula.LE, minMax, n, loc);
+		}
+		return FormulaConstructor.makeLandPredicate(
+			ff,
+			translateIn(n, s, loc),
+			translate(rel),
+			loc);
+	}
+
 	%include {Formula.tom}
 
 	@Override
@@ -189,87 +305,35 @@ public class Translator extends IdentityTranslator {
 	 		 *  RULE CR1: 	a <∣≤ min(s) 
 	 		 * 				∀x·x∈s' ⇒ a' <∣≤ x
 	 		 */
-	 		Le(a, Min(s)) | Lt(a, Min(s)) -> {
-	        	
-	        	final DecomposedQuant forall = new DecomposedQuant(ff);
-				final Expression x = forall.addQuantifier(`a.getType(), loc);
-
-		    	return forall.makeQuantifiedPredicate(
-		    		Formula.FORALL,
-		    		ff.makeBinaryPredicate(
-		    			Formula.LIMP,
-		    			translateIn(x, forall.push(`s),	loc),
-		    			translate(
-			    			ff.makeRelationalPredicate(pred.getTag(), forall.push(`a), x, loc)
-			    		),
-		    			loc),
-		    		loc);	   
+	 		(Le|Lt)(a, Min(s)) -> {
+	        	return translateLessMin(pred.getTag(), `a, `s, loc);
 	        }
 	 		/**
 	 		 *  RULE CR2:	max(s) <∣≤ a
 			 *				∀x·x∈s' ⇒ x <∣≤ a'
-	 		 */	   		      	
-	        Le(Max(s), a) | Lt(Max(s), a) -> {
-	        	
-	        	final DecomposedQuant forall = new DecomposedQuant(ff);
-				final Expression x = forall.addQuantifier(`a.getType(), loc);
-
-		    	return forall.makeQuantifiedPredicate(
-		    		Formula.FORALL,
-		    		ff.makeBinaryPredicate(
-		    			Formula.LIMP,
-		    			translateIn(x, forall.push(`s),	loc),
-		    			translate(
-			    			ff.makeRelationalPredicate(pred.getTag(), x, forall.push(`a), loc)
-		    			),
-		    			loc),
-		    		loc);	   
+	 		 */
+	        (Le|Lt)(Max(s), a) -> {
+	        	return translateMaxLess(pred.getTag(), `s, `a, loc);
 	        }
 	 		/**
 	 		 *  RULE CR3:   min(s) <∣≤  a
 			 *				∃x·x∈s' ∧ x <∣≤ a'
 	 		 */	   		      	
-	        Le(Min(s), a) | Lt(Min(s), a) -> {
-	        	
-	        	final DecomposedQuant exists = new DecomposedQuant(ff);
-				final Expression x = exists.addQuantifier(`a.getType(), loc);
-		    	
-		    	return exists.makeQuantifiedPredicate(
-		    		Formula.EXISTS,
-		    		FormulaConstructor.makeLandPredicate(
-		    			ff,
-		    			translateIn (x, exists.push(`s), loc),
-		    			translate(
-		    				ff.makeRelationalPredicate(pred.getTag(), x, exists.push(`a), loc)
-		    			),
-		    			loc),
-		    		loc);
+	        (Le|Lt)(Min(s), a) -> {
+	        	return translateMinLess(pred.getTag(), `s, `a, loc);
 	        }
 	        /**
  	 		 *  RULE CR4: 	a <∣≤ max(s) 
 	 		 * 				∃x·x∈s' ∧ a' <∣≤ x
 	 		 */
-	 	    Le(a, Max(s)) | Lt(a, Max(s)) -> {
-	        	
-	        	final DecomposedQuant exists = new DecomposedQuant(ff);
-				final Expression x = exists.addQuantifier(`a.getType(), loc);
-		    	
-		    	return exists.makeQuantifiedPredicate(
-		    		Formula.EXISTS,
-		    		FormulaConstructor.makeLandPredicate(
-		    			ff,
-		    			translateIn (x, exists.push(`s), loc),
-		    			translate(
-		    				ff.makeRelationalPredicate(pred.getTag(), exists.push(`a), x, loc)
-		    			),
-		    			loc),
-		    		loc);
+	 	    (Le|Lt)(a, Max(s)) -> {
+	        	return translateLessMax(pred.getTag(), `a, `s, loc);
 	        }
 	        /**
 	         * RULE CR5:	a >|≥ b
 	         *				b <|≤ a
 	         */
-	        Ge(a, b) | Gt(a, b) -> {
+	        (Ge|Gt)(a, b) -> {
 	        	return translate(
 	        		ff.makeRelationalPredicate(
 		        		pred.getTag() == Formula.GE ? Formula.LE : Formula.LT,
@@ -285,12 +349,13 @@ public class Translator extends IdentityTranslator {
 	         *				c∀ a <|≤ b(bop(s)∗) 
 	         */
 	        
-	    	Le(_, _) | Lt(_, _) -> {
+	    	(Le|Lt)(_, _) -> {
 	    		Predicate newPred = Reorganizer.reorganize((RelationalPredicate)pred, ff);
-				if(newPred != pred)
+				if (newPred != pred) {
 					return translate(newPred);
-				else
+				} else {
 					return super.translate(pred);
+				}
 	    	}
 	    	_ -> {
 	    		return super.translate(pred);
@@ -480,7 +545,10 @@ public class Translator extends IdentityTranslator {
 	         *				e ∈ {}
 	         *	  			⊥ 
 	         */
-			EmptySet() | SetExtension(()) -> {
+			EmptySet() -> {
+				return ff.makeLiteralPredicate(Formula.BFALSE, loc);
+			}
+			SetExtension(()) -> {
 				return ff.makeLiteralPredicate(Formula.BFALSE, loc);
 			}
 			/**
@@ -648,7 +716,7 @@ public class Translator extends IdentityTranslator {
 	         * RULE IR21:	e ∈ s1 ∪ ... ∪ sn
 	         * 				e∈s1 ∨ ... ∨ e∈sn
 	         */
-			BInter(children) | BUnion(children) -> {
+			(BInter|BUnion)(children) -> {
 				final LinkedList<Predicate> preds = new LinkedList<Predicate>();
 								
 				int tag = right.getTag() == Formula.BINTER ? Formula.LAND : Formula.LOR;
@@ -1251,44 +1319,47 @@ public class Translator extends IdentityTranslator {
 	        * RULE ER4: 	bool(P) = TRUE  
 	        *	  			P
 	        */
-			Equal(TRUE(), Bool(P)) | Equal(Bool(P), TRUE()) -> {
+			Equal(TRUE(), Bool(P)) -> {
+				return translate(`P);
+			}
+			Equal(Bool(P), TRUE()) -> {
 				return translate(`P);
 			}
 			/**
 	        * RULE ER5: 	bool(P) = FALSE  
 	        *	  			¬P
 	        */
-			Equal(FALSE(), Bool(P)) | Equal(Bool(P), FALSE()) -> {
+			Equal(FALSE(), Bool(P)) -> {
+				return ff.makeUnaryPredicate(Formula.NOT, translate(`P), loc);
+			}
+			Equal(Bool(P), FALSE()) -> {
 				return ff.makeUnaryPredicate(Formula.NOT, translate(`P), loc);
 			}
 			/**
 	        * RULE ER6: 	x = FALSE  
 	        *	  			¬(x = TRUE)
 	        */
-			Equal(FALSE(), x) | Equal(x, FALSE()) -> {
-				return ff.makeUnaryPredicate(
-					Formula.NOT,
-					translateEqual(
-						ff.makeRelationalPredicate(
-							Formula.EQUAL,
-							`x,
-							ff.makeAtomicExpression(Formula.TRUE, loc),
-							loc)),
-					loc);						
+			Equal(FALSE(), x) -> {
+				return mNot(translateEqualsTRUE(`x, loc), loc);
+			}
+			Equal(x, FALSE()) -> {
+				return mNot(translateEqualsTRUE(`x, loc), loc);
 			}
 			/**
 	        * RULE ER7: 	x = bool(P)  
 	        *	  			x = TRUE ⇔ P
 	        */
-	        Equal(x@Identifier(), Bool(P)) | Equal(Bool(P), x@Identifier())-> {
-				
+	        Equal(x@Identifier(), Bool(P)) -> {
 				return ff.makeBinaryPredicate(
 					Formula.LEQV,
-					ff.makeRelationalPredicate(
-						Formula.EQUAL,
-						`x,
-						ff.makeAtomicExpression(Formula.TRUE, loc),
-						loc),
+					translateEqualsTRUE(`x, loc),
+					translate(`P),
+					loc);
+			}
+	        Equal(Bool(P), x@Identifier())-> {
+				return ff.makeBinaryPredicate(
+					Formula.LEQV,
+					translateEqualsTRUE(`x, loc),
 					translate(`P),
 					loc);
 			}
@@ -1296,7 +1367,11 @@ public class Translator extends IdentityTranslator {
 	        * RULE ER8: 	x = f(y)  
 	        *	  			y↦x ∈ f
 	        */
-			Equal(FunImage(f, y), x) | Equal(x, FunImage(f, y)) -> {
+			Equal(FunImage(f, y), x) -> {
+				return translateIn(
+					ff.makeBinaryExpression(Formula.MAPSTO, `y, `x, loc), `f, loc);
+			}
+			Equal(x, FunImage(f, y)) -> {
 				return translateIn(
 					ff.makeBinaryExpression(Formula.MAPSTO, `y, `x, loc), `f, loc);
 			}
@@ -1315,54 +1390,31 @@ public class Translator extends IdentityTranslator {
 	        * RULE ER10: 	n = card(s)  
 	        *	  			∃f·f ∈ s'⤖1‥n'
 	        */
-			Equal(n@Identifier(), Card(s)) | Equal(Card(s), n@Identifier())-> {
-				
-				final DecomposedQuant exists = new DecomposedQuant(ff);
-	
-				final Expression bij = ff.makeBinaryExpression(
-						Formula.TBIJ,
-						`s,
-						ff.makeBinaryExpression(
-								Formula.UPTO,
-								ff.makeIntegerLiteral(BigInteger.ONE, null),
-								`n,
-								loc),
-						loc);
-
-				final Expression f = 
-					exists.addQuantifier(bij.getType().getBaseType(), "f", loc);
-				
-	    		return exists.makeQuantifiedPredicate(
-					Formula.EXISTS,
-					translateIn(f, exists.push(bij), loc),
-					loc);
+			Equal(n@Identifier(), Card(s)) -> {
+				return translateEqualsCard(`n, `s, loc);
+			}
+			Equal(Card(s), n@Identifier()) -> {
+				return translateEqualsCard(`n, `s, loc);
 			}
 	        /**
 	        * RULE ER11: 	n = min(s)  
 	        *	  			n∈s ∧ n≤min(s)
 	        */
-   			Equal(n@Identifier(), min@Min(s)) 
-   			| Equal(min@Min(s), n@Identifier()) -> {
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(`n, `s, loc),
-					translate(
-						ff.makeRelationalPredicate(Formula.LE, `n, `min, loc)),
-					loc);
+   			Equal(n@Identifier(), min@Min(s)) -> {
+   				return translateEqualsMinMax(`n, `min, `s, loc);
+   			}
+   			Equal(min@Min(s), n@Identifier()) -> {
+   				return translateEqualsMinMax(`n, `min, `s, loc);
 			}
 	        /**
 	        * RULE ER12: 	n = max(s)  
 	        *	  			n∈s ∧ max(s)≤n
 	        */
-			Equal(n@Identifier(), max@Max(s)) 
-			| Equal(max@Max(s), n@Identifier()) -> {
-   				
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(`n, `s, loc),
-					translate(
-						ff.makeRelationalPredicate(Formula.LE, `max, `n, loc)),
-					loc);
+			Equal(n@Identifier(), max@Max(s)) -> {
+   				return translateEqualsMinMax(`n, `max, `s, loc);
+			}
+			Equal(max@Max(s), n@Identifier()) -> {
+   				return translateEqualsMinMax(`n, `max, `s, loc);
 			}
 	        /**
 	        * RULE ER13: 	el(bop(s)) = er  
@@ -1371,7 +1423,7 @@ public class Translator extends IdentityTranslator {
 			_ -> {
 				Predicate newPred = Reorganizer.reorganize((RelationalPredicate)pred, ff);
 
-				if(newPred != pred)
+				if (newPred != pred)
 					return translate(newPred);
 				else
 					return super.translate(pred);
