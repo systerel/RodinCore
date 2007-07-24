@@ -7,8 +7,13 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IRefinesEvent;
+import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.core.IVariant;
+import org.eventb.core.IWitness;
 import org.eventb.internal.ui.eventbeditor.editpage.EditSectionRegistry;
 import org.eventb.ui.tests.utils.Util;
 import org.rodinp.core.IElementType;
@@ -29,35 +34,55 @@ public class TestEditPageRegistry extends TestCase {
 
 		assertChildrenTypes(
 				"Children types of Machine File ",
-				"org.eventb.core.variable\n" + "org.eventb.core.invariant\n"
-						+ "org.eventb.core.theorem\n" + "org.eventb.core.event",
+				"org.eventb.core.refinesMachine\n" + 
+				"org.eventb.core.seesContext\n" + 
+				"org.eventb.core.variable\n" + 
+				"org.eventb.core.invariant\n" + 
+				"org.eventb.core.theorem\n" + 
+				"org.eventb.core.variant\n" + 
+				"org.eventb.core.event",
 				types);
 
-		types = editSectionRegistry.getChildrenTypes(IVariable.ELEMENT_TYPE);
+		types = editSectionRegistry.getChildrenTypes(IRefinesMachine.ELEMENT_TYPE);
+		assertChildrenTypes("Children types of RefinesMachine ", "", types);
 
+		types = editSectionRegistry.getChildrenTypes(ISeesContext.ELEMENT_TYPE);
+		assertChildrenTypes("Children types of SeesContext ", "", types);
+
+		types = editSectionRegistry.getChildrenTypes(IVariable.ELEMENT_TYPE);
 		assertChildrenTypes("Children types of Variable ", "", types);
 
 		types = editSectionRegistry.getChildrenTypes(IInvariant.ELEMENT_TYPE);
-
 		assertChildrenTypes("Children types of Invariant ", "", types);
 
 		types = editSectionRegistry.getChildrenTypes(ITheorem.ELEMENT_TYPE);
-
 		assertChildrenTypes("Children types of Theorem ", "", types);
 
-		types = editSectionRegistry.getChildrenTypes(IEvent.ELEMENT_TYPE);
+		types = editSectionRegistry.getChildrenTypes(IVariant.ELEMENT_TYPE);
+		assertChildrenTypes("Children types of Variant ", "", types);
 
+		types = editSectionRegistry.getChildrenTypes(IEvent.ELEMENT_TYPE);
 		assertChildrenTypes("Children types of Event ",
-				"org.eventb.core.refinesEvent\n" + "org.eventb.core.variable\n"
-						+ "org.eventb.core.guard\n" + "org.eventb.core.action",
+				"org.eventb.core.refinesEvent\n" + 
+				"org.eventb.core.variable\n" + 
+				"org.eventb.core.guard\n" + 
+				"org.eventb.core.witness\n" + 
+				"org.eventb.core.action",
 				types);
 
-		types = editSectionRegistry.getChildrenTypes(IGuard.ELEMENT_TYPE);
+		types = editSectionRegistry.getChildrenTypes(IRefinesEvent.ELEMENT_TYPE);
+		assertChildrenTypes("Children types of RefinesEvent ", "", types);
 
+		types = editSectionRegistry.getChildrenTypes(IVariable.ELEMENT_TYPE);
+		assertChildrenTypes("Children types of Variable ", "", types);
+
+		types = editSectionRegistry.getChildrenTypes(IGuard.ELEMENT_TYPE);
 		assertChildrenTypes("Children types of Guard ", "", types);
 
-		types = editSectionRegistry.getChildrenTypes(IAction.ELEMENT_TYPE);
+		types = editSectionRegistry.getChildrenTypes(IWitness.ELEMENT_TYPE);
+		assertChildrenTypes("Children types of Witness ", "", types);
 
+		types = editSectionRegistry.getChildrenTypes(IAction.ELEMENT_TYPE);
 		assertChildrenTypes("Children types of Action ", "", types);
 	}
 
