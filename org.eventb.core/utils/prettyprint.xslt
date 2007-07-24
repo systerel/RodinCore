@@ -16,363 +16,293 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 <xsl:output encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"/>
 
 <xsl:param name="name"/>
-	
+
 <xsl:template match="/">
 	<html>
-	<head>
-		<link type="text/css" rel="stylesheet" href="style.css"/>
-		<title><xsl:value-of select="$name"/></title>
-	</head>
-	<body>
-	<div class="main">
-		<!-- COMMON CODE -->
-		<xsl:if test="/org.eventb.core.machineFile">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">MACHINE</xsl:with-param>
-			</xsl:call-template>
-		</xsl:if>
-		<xsl:if test="/org.eventb.core.contextFile">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">CONTEXT</xsl:with-param>
-			</xsl:call-template>
-		</xsl:if>
-		<table class="body" cellspacing="0" cellpadding="0">
-			<tr class="line">
-				<td align="left" valign="top">
-					<xsl:value-of select="$name"/>
-				</td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</table>
+		<head>
+			<link type="text/css" rel="stylesheet" href="style.css"/>
+			<title><xsl:value-of select="$name"/></title>
+		</head>
+		<body>
+		<div class="main">
+			<xsl:if test="/org.eventb.core.machineFile">
+				<div class="level1_keyword">MACHINE</div>
+				<table class="level1_table" cellspacing="0" cellpadding="0">
+					<xsl:apply-templates select="/org.eventb.core.machineFile"/>
+				</table>
+			</xsl:if>
+			
+			<xsl:if test="/org.eventb.core.contextFile">
+				<div class="level1_keyword">CONTEXT</div>
+				<table class="level1_table" cellspacing="0" cellpadding="0">
+					<xsl:apply-templates select="/org.eventb.core.contextFile"/>
+				</table>
+			</xsl:if>
+		</div>
+		</body>
+	</html>
+</xsl:template>
+		
+<xsl:template match="/org.eventb.core.machineFile">
+	<tr class="level1_row">
+		<td class="file_content" align="left" valign="top"><xsl:value-of select="$name"/>
+		<xsl:call-template name="tdcomment"/>
 		
 		<!-- MACHINE -->
-		<xsl:if test="//org.eventb.core.refinesMachine">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">REFINES</xsl:with-param>
-			</xsl:call-template>
-			<xsl:call-template name="mrefines"/>
+		<xsl:if test="/*/org.eventb.core.refinesMachine">
+			<div class="level2_keyword">REFINES</div>
+			<table class="level2_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="/*/org.eventb.core.refinesMachine"/>
+			</table>
 		</xsl:if>
-		<xsl:if test="//org.eventb.core.seesContext">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">SEES</xsl:with-param>
-			</xsl:call-template>
-			<xsl:call-template name="sees"/>
+		<xsl:if test="/*/org.eventb.core.seesContext">
+			<div class="level2_keyword">SEES</div>
+			<table class="level2_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="/*/org.eventb.core.seesContext"/>
+			</table>
 		</xsl:if>
 		<xsl:if test="/*/org.eventb.core.variable">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">VARIABLES</xsl:with-param>
-			</xsl:call-template>
-			<xsl:call-template name="variables_global"/>
+			<div class="level2_keyword">VARIABLES</div>
+			<table class="level2_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="/*/org.eventb.core.variable"/>
+			</table>
 		</xsl:if>
-		<xsl:if test="//org.eventb.core.invariant">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">INVARIANTS</xsl:with-param>
-			</xsl:call-template>
-			<xsl:call-template name="invariants"/>
+		<xsl:if test="/*/org.eventb.core.invariant">
+			<div class="level2_keyword">INVARIANTS</div>
+			<table class="level2_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="/*/org.eventb.core.invariant"/>
+			</table>
 		</xsl:if>
-		<xsl:if test="//org.eventb.core.variant">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">VARIANT</xsl:with-param>
-			</xsl:call-template>
-			<xsl:call-template name="variants"/>
+		<xsl:if test="/*/org.eventb.core.variant">
+			<div class="level2_keyword">VARIANT</div>
+			<table class="level2_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="/*/org.eventb.core.variant"/>
+			</table>
 		</xsl:if>
-		<xsl:if test="//org.eventb.core.event">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">EVENTS</xsl:with-param>
-			</xsl:call-template>
-			<xsl:call-template name="events"/>
+		<xsl:if test="/*/org.eventb.core.event">
+			<div class="level2_keyword">EVENTS</div>
+			<table class="level2_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="/*/org.eventb.core.event"/>
+			</table>
 		</xsl:if>
+		
+		<div class="level2_keyword">END</div>
+	</td></tr>
+</xsl:template>
+
+		
+<xsl:template match="/org.eventb.core.contextFile">
+	<tr class="level1_row">
+		<td class="file_content" align="left" valign="top"><xsl:value-of select="$name"/>
+		<xsl:call-template name="tdcomment"/>
 		
 		<!-- CONTEXT -->
-		<xsl:if test="//org.eventb.core.extendsContext">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">EXTENDS</xsl:with-param>
-			</xsl:call-template>
-			<xsl:call-template name="cextends"/>
+		<xsl:if test="/*/org.eventb.core.extendsContext">
+			<div class="level2_keyword">EXTENDS</div>
+			<table class="level2_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="/*/org.eventb.core.extendsContext"/>
+			</table>
 		</xsl:if>
-		<xsl:if test="//org.eventb.core.carrierSet">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">SETS</xsl:with-param>
-			</xsl:call-template>
-			<xsl:call-template name="sets"/>
+		<xsl:if test="/*/org.eventb.core.carrierSet">
+			<div class="level2_keyword">SETS</div>
+			<table class="level2_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="/*/org.eventb.core.carrierSet"/>
+			</table>
 		</xsl:if>
-		<xsl:if test="//org.eventb.core.constant">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">CONSTANTS</xsl:with-param>
-			</xsl:call-template>
-			<xsl:call-template name="constants"/>
+		<xsl:if test="/*/org.eventb.core.constant">
+			<div class="level2_keyword">CONSTANTS</div>
+			<table class="level2_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="/*/org.eventb.core.constant"/>
+			</table>
 		</xsl:if>
-		<xsl:if test="//org.eventb.core.axiom">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">AXIOMS</xsl:with-param>
-			</xsl:call-template>
-			<xsl:call-template name="axioms"/>
+		<xsl:if test="/*/org.eventb.core.axiom">
+			<div class="level2_keyword">AXIOMS</div>
+			<table class="level2_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="/*/org.eventb.core.axiom"/>
+			</table>
 		</xsl:if>
-		<xsl:if test="//org.eventb.core.theorem">
-			<xsl:call-template name="title1">
-				<xsl:with-param name="param1">THEOREMS</xsl:with-param>
-			</xsl:call-template>
-			<xsl:call-template name="theorems"/>
+		<xsl:if test="/*/org.eventb.core.theorem">
+			<div class="level2_keyword">THEOREMS</div>
+			<table class="level2_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="/*/org.eventb.core.theorem"/>
+			</table>
 		</xsl:if>
 		
-		<!-- COMMON CODE -->
-		<xsl:call-template name="title1">
-			<xsl:with-param name="param1">END</xsl:with-param>
-		</xsl:call-template>
-	</div>
-	</body>
-	</html>
+		<div class="level2_keyword">END</div>
+	</td></tr>
 </xsl:template>
 	
 <!-- MACHINE -->
-<xsl:template name="mrefines">
-	<table class="body" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="//org.eventb.core.refinesMachine">
-			<tr class="line">
-				<td align="left" valign="top"><xsl:value-of select="@org.eventb.core.target"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+<xsl:template match="/*/org.eventb.core.refinesMachine">
+	<tr class="level2_row">
+		<td class="single_content" align="left" valign="top"><xsl:value-of select="@org.eventb.core.target"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 
-<xsl:template name="sees">
-	<table class="body" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="//org.eventb.core.seesContext">
-			<tr class="line">
-				<td align="left" valign="top"><xsl:value-of select="@org.eventb.core.target"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+<xsl:template match="/*/org.eventb.core.seesContext">
+	<tr class="level2_row">
+		<td class="single_content" align="left" valign="top"><xsl:value-of select="@org.eventb.core.target"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 
-<xsl:template name="variables_global">
-	<table class="body" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="/*/org.eventb.core.variable">
-			<tr class="line">
-				<td align="left" valign="top"><xsl:value-of select="@org.eventb.core.identifier"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+<xsl:template match="/*/org.eventb.core.variable">
+	<tr class="level2_row">
+		<td class="single_content" align="left" valign="top"><xsl:value-of select="@org.eventb.core.identifier"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 	
-<xsl:template name="invariants">
-	<table class="body" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="//org.eventb.core.invariant">
-			<tr class="line">
-				<td class="label" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>:</td><td class="tab" valign="top"><xsl:value-of select="@org.eventb.core.predicate"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+<xsl:template match="/*/org.eventb.core.invariant">
+	<tr class="level2_row">
+		<td class="single_label" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>:</td><td class="single_content" valign="top"><xsl:value-of select="@org.eventb.core.predicate"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 
-<xsl:template name="variants">
-	<table class="body" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="//org.eventb.core.variant">
-			<tr class="line">
-				<td align="left" valign="top"><xsl:value-of select="@org.eventb.core.expression"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+<xsl:template match="/*/org.eventb.core.variant">
+	<tr class="level2_row">
+		<td class="single_content" align="left" valign="top"><xsl:value-of select="@org.eventb.core.expression"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 
-<xsl:template name="events">
-	<table class="body" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="//org.eventb.core.event">
-			<tr class="line">
-				<td align="left" valign="top"><xsl:call-template name="event"/></td>
-				<!-- no comment here for events -->
-			</tr>
-		</xsl:for-each>
-	</table>
-</xsl:template>
-	
-<xsl:template name="event">
-	<div class="eventname">
-		<xsl:value-of select="@org.eventb.core.label"/>
-	</div>
-	<xsl:call-template name="comment"/>
-	<div class="eventmain">
+<xsl:template match="/*/org.eventb.core.event">
+	<tr class="level2_row">
+		<td class="event_content" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>
+		<xsl:call-template name="comment"/>
+
 		<xsl:if test="org.eventb.core.refinesEvent">
-			<xsl:call-template name="refines_event"/>
+			<div class="level3_keyword">REFINES</div>
+			<table class="level3_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="org.eventb.core.refinesEvent"/>
+			</table>
 		</xsl:if>
+		<xsl:if test="org.eventb.core.variable">
+			<div class="level3_keyword">ANY</div>
+			<table class="level3_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="org.eventb.core.variable"/>
+			</table>
+		</xsl:if>
+		<xsl:if test="org.eventb.core.guard">
+			<xsl:choose>		
+				<xsl:when test="org.eventb.core.variable">
+					<div class="level3_keyword">WHERE</div>
+				</xsl:when>
+				<xsl:otherwise>
+					<div class="level3_keyword">WHEN</div>
+				</xsl:otherwise>
+			</xsl:choose>
+			<table class="level3_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="org.eventb.core.guard"/>
+			</table>
+		</xsl:if>
+		<xsl:if test="org.eventb.core.witness">
+			<div class="level3_keyword">WITNESSES</div>
+			<table class="level3_table" cellspacing="0" cellpadding="0">
+				<xsl:apply-templates select="org.eventb.core.witness"/>
+			</table>
+		</xsl:if>
+		
 		<xsl:choose>
-			<xsl:when test="org.eventb.core.variable">
-				<xsl:call-template name="any_event"/>
-			</xsl:when>
 			<xsl:when test="org.eventb.core.guard">
-				<xsl:call-template name="select_event"/>
+				<div class="level3_keyword">THEN</div>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:call-template name="begin_event"/>
+				<div class="level3_keyword">BEGIN</div>
 			</xsl:otherwise>
 		</xsl:choose>
-		<xsl:choose>
-			<xsl:when test="org.eventb.core.action">
-				<xsl:call-template name="actions"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:call-template name="skip"/>
-			</xsl:otherwise>
-		</xsl:choose>
-		<xsl:call-template name="title2"><xsl:with-param name="param1">END</xsl:with-param></xsl:call-template>
-	</div>
-</xsl:template>
+		<table class="level3_table" cellspacing="0" cellpadding="0">
+			<xsl:choose>
+				<xsl:when test="org.eventb.core.action">
+					<xsl:apply-templates select="org.eventb.core.action" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:call-template name="skip" />
+				</xsl:otherwise>
+			</xsl:choose>
+		</table>
 
-<xsl:template name="any_event">
-	<xsl:call-template name="title2"><xsl:with-param name="param1">ANY</xsl:with-param></xsl:call-template>
-	<xsl:call-template name="variables_event"/>
-	<xsl:call-template name="title2"><xsl:with-param name="param1">WHERE</xsl:with-param></xsl:call-template>
-	<xsl:call-template name="guards"/>
-	<xsl:call-template name="witness_event"/>
-	<xsl:call-template name="title2"><xsl:with-param name="param1">THEN</xsl:with-param></xsl:call-template>
+		<div class="level3_keyword">END</div>
+	</td></tr>
 </xsl:template>
 	
-<xsl:template name="select_event">
-	<xsl:call-template name="title2"><xsl:with-param name="param1">WHEN</xsl:with-param></xsl:call-template>
-	<xsl:call-template name="guards"/>
-	<xsl:call-template name="witness_event"/>
-	<xsl:call-template name="title2"><xsl:with-param name="param1">THEN</xsl:with-param></xsl:call-template>
+<xsl:template match="org.eventb.core.witness">
+	<tr class="level3_row">
+		<td class="event_single_label" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>:</td><td class="event_single_content" valign="top"><xsl:value-of select="@org.eventb.core.predicate"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 	
-<xsl:template name="begin_event">
-	<xsl:call-template name="witness_event"/>
-	<xsl:call-template name="title2"><xsl:with-param name="param1">BEGIN</xsl:with-param></xsl:call-template>
+<xsl:template match="org.eventb.core.refinesEvent">
+	<tr class="level3_row">
+		<td class="event_single_content" align="left" valign="top"><xsl:value-of select="@org.eventb.core.target"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 	
-<xsl:template name="refines_event">
-	<xsl:call-template name="title2"><xsl:with-param name="param1">REFINES</xsl:with-param></xsl:call-template>
-	<xsl:call-template name="erefines"/>
-</xsl:template>
-	
-<xsl:template name="witness_event">
-	<xsl:if test="org.eventb.core.witness">
-		<xsl:call-template name="title2"><xsl:with-param name="param1">WITNESSES</xsl:with-param></xsl:call-template>
-		<xsl:call-template name="witnesses"/>
-	</xsl:if>
-</xsl:template>
-	
-<xsl:template name="witnesses">
-	<table class="eventbody" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="org.eventb.core.witness">
-			<tr class="eventline">
-				<td class="label" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>:</td><td class="tab" valign="top"><xsl:value-of select="@org.eventb.core.predicate"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
-</xsl:template>
-	
-<xsl:template name="erefines">
-	<table class="eventbody" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="org.eventb.core.refinesEvent">
-			<tr class="eventline">
-				<td align="left" valign="top"><xsl:value-of select="@org.eventb.core.target"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
-</xsl:template>
-	
-<xsl:template name="variables_event">
-	<table class="eventbody" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="org.eventb.core.variable">
-			<tr class="eventline">
-				<td align="left" valign="top"><xsl:value-of select="@org.eventb.core.identifier"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+<xsl:template match="org.eventb.core.variable">
+	<tr class="level3_row">
+		<td class="event_single_content" align="left" valign="top"><xsl:value-of select="@org.eventb.core.identifier"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>	
 
-<xsl:template name="guards">
-	<table class="eventbody" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="org.eventb.core.guard">
-			<tr class="eventline">
-				<td class="label" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>:</td><td class="tab" valign="top"><xsl:value-of select="@org.eventb.core.predicate"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+<xsl:template match="org.eventb.core.guard">
+	<tr class="level3_row">
+		<td class="event_single_label" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>:</td><td class="event_single_content" valign="top"><xsl:value-of select="@org.eventb.core.predicate"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 	
+<xsl:template match="org.eventb.core.action">
+	<tr class="level3_row">
+		<td class="event_single_label" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>:</td><td class="event_single_content" valign="top"><xsl:value-of select="@org.eventb.core.assignment"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
+</xsl:template>
+
 <xsl:template name="skip">
-	<table class="eventbody" cellspacing="0" cellpadding="0">
-		<tr class="eventline">
-			<td class="label" align="left" valign="top">skip</td>
-		</tr>
-	</table>
-</xsl:template>
-	
-<xsl:template name="actions">
-	<table class="eventbody" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="org.eventb.core.action">
-			<tr class="eventline">
-				<td class="label" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>:</td><td class="tab" valign="top"><xsl:value-of select="@org.eventb.core.assignment"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+	<tr class="level3_row">
+		<td class="event_single_content" align="left" valign="top">skip</td>
+	</tr>
 </xsl:template>
 	
 <!-- CONTEXTS -->
-<xsl:template name="cextends">
-	<table class="body" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="//org.eventb.core.extendsContext">
-			<tr class="line">
-				<td align="left" valign="top"><xsl:value-of select="@org.eventb.core.target"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+<xsl:template match="/*/org.eventb.core.extendsContext">
+	<tr class="level2_row">
+		<td class="single_content" align="left" valign="top"><xsl:value-of select="@org.eventb.core.target"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 
-<xsl:template name="constants">
-	<table class="body" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="//org.eventb.core.constant">
-			<tr class="line">
-				<td align="left" valign="top"><xsl:value-of select="@org.eventb.core.identifier"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+<xsl:template match="/*/org.eventb.core.constant">
+	<tr class="level2_row">
+		<td class="single_content" align="left" valign="top"><xsl:value-of select="@org.eventb.core.identifier"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 	
-<xsl:template name="sets">
-	<table class="body" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="//org.eventb.core.carrierSet">
-			<tr class="line">
-				<td align="left" valign="top"><xsl:value-of select="@org.eventb.core.identifier"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+<xsl:template match="/*/org.eventb.core.carrierSet">
+	<tr class="level2_row">
+		<td class="single_content" align="left" valign="top"><xsl:value-of select="@org.eventb.core.identifier"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 	
-<xsl:template name="axioms">
-	<table class="body" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="//org.eventb.core.axiom">
-			<tr class="line">
-				<td class="label" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>:</td><td class="tab" valign="top"><xsl:value-of select="@org.eventb.core.predicate"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+<xsl:template match="/*/org.eventb.core.axiom">
+	<tr class="level2_row">
+		<td class="single_label" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>:</td><td class="single_content" valign="top"><xsl:value-of select="@org.eventb.core.predicate"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 	
-<xsl:template name="theorems">
-	<table class="body" cellspacing="0" cellpadding="0">
-		<xsl:for-each select="//org.eventb.core.theorem">
-			<tr class="line">
-				<td class="label" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>:</td><td class="tab" valign="top"><xsl:value-of select="@org.eventb.core.predicate"/></td>
-				<xsl:call-template name="tdcomment"/>
-			</tr>
-		</xsl:for-each>
-	</table>
+<xsl:template match="/*/org.eventb.core.theorem">
+	<tr class="level2_row">
+		<td class="single_label" align="left" valign="top"><xsl:value-of select="@org.eventb.core.label"/>:</td><td class="single_content" valign="top"><xsl:value-of select="@org.eventb.core.predicate"/></td>
+		<xsl:call-template name="tdcomment"/>
+	</tr>
 </xsl:template>
 	
 <!-- COMMON CODE -->
@@ -441,16 +371,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 			<tr><td/><td><xsl:value-of select="$comment"/></td><td class="endcomment">*/</td></tr>
 		</xsl:otherwise>
 	</xsl:choose>
-</xsl:template>
-	
-<xsl:template name="title1">
-	<xsl:param name="param1"/>
-	<div class="keyword"><xsl:value-of select="$param1"/></div>
-</xsl:template>
-	
-<xsl:template name="title2">
-	<xsl:param name="param1"/>
-	<div class="eventkeyword"><xsl:value-of select="$param1"/></div>
 </xsl:template>
 	
 </xsl:transform>

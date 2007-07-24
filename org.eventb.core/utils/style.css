@@ -8,20 +8,25 @@
  
  // Stylesheet for the XSL pretty printer
  
-.main 		{font-size:14px;}
-.keyword	{color:red; margin-left:10px; font-weight:bold; margin-bottom:5px; margin-top:15px;}
-.body 		{margin-left: 30px;}
-.line 		{}
+.main 			{font-size:14px;}
 
-.eventname 	{font-style:italic;}
-.eventmain 	{margin-left:20px; margin-bottom:15px; margin-top:5px;}
-.eventkeyword	{color:blue; margin-left:-10px; font-weight: bold;}
-.eventbody 	{margin-left:10px;}
-.eventline 	{}
+.level1_keyword	{color:red; }
+.level1_table	{margin-left:10px;}
+.level1_row		{}
 
-.label		{font-weight:bold;}
-.tab		{padding-left:10px;}
+.level2_keyword {color:red; margin-left:-10px; margin-top: 10px;}
+.level2_table	{}
+.level2_row		{}
 
-.comment	{color:green; padding-left:25px;}
-.begincomment	{width:12px;}
-.endcomment	{width:15px; text-align:right;}
+.level3_keyword	{color:blue; margin-left:10px; padding-top: 5px; font-style:normal; font-weight: normal;}
+.level3_table	{margin-left:20px; font-weight: normal; font-style:normal; }
+.level3_row		{}
+
+.file_content							{}
+.single_label,.event_single_label		{padding-right:10px; font-weight:bold;}
+.single_content,.event_single_content	{}
+.event_content 							{font-style:italic; padding-top:20px; font-weight: bold;}
+
+.comment		{color:green; padding-left:25px; font-weight:normal; font-style:normal;}
+.begincomment	{width:15px;}
+.endcomment		{width:15px; text-align:right;}
