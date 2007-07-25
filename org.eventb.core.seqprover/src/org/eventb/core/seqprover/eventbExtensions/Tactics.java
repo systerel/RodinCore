@@ -68,7 +68,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.Cut;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.DoCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
-import org.eventb.internal.core.seqprover.eventbExtensions.ExE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
@@ -100,11 +99,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
 import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
-import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.DisjToImpl;
-import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.Trivial;
-import org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter.TypePred;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardComparisonRewrites;
@@ -112,7 +107,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewr
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ConvRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomCompRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistLeftRewrites;
@@ -134,7 +128,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembe
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetMinusRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.UnionInterDistRewrites;
 
 /**
@@ -148,6 +141,9 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.UnionInterD
  */
 @SuppressWarnings("deprecation")
 public class Tactics {
+
+	private static final EmptyInput EMPTY_INPUT = new EmptyInput();
+
 
 	// Globally applicable tactics
 
@@ -352,8 +348,8 @@ public class Tactics {
 	 */
 	public static ITactic norm() {
 		ITactic Ti = repeat(compose(conjI(), allI(), impI()));
-		ITactic T = repeat(compose(hyp(), trivialGoalRewrite(), tautology(),
-				contradiction(), hyp(), Ti));
+		ITactic T = repeat(compose(hyp(), tautology(),
+				contradiction(), Ti));
 		return repeat(onAllPending(T));
 	}
 
@@ -445,7 +441,7 @@ public class Tactics {
 	}
 
 	public static ITactic impI() {
-		return BasicTactics.reasonerTac(new ImpI(), new EmptyInput());
+		return BasicTactics.reasonerTac(new ImpI(), EMPTY_INPUT);
 	}
 
 	public static boolean impI_applicable(Predicate goal) {
@@ -461,7 +457,7 @@ public class Tactics {
 	}
 
 	public static ITactic allI() {
-		return BasicTactics.reasonerTac(new AllI(), new EmptyInput());
+		return BasicTactics.reasonerTac(new AllI(), EMPTY_INPUT);
 	}
 
 	public static boolean allI_applicable(Predicate goal) {
@@ -487,37 +483,37 @@ public class Tactics {
 		return Lib.isExQuant(goal);
 	}
 
-	/**
-	 * Returns a tactic to remove a top-level negation operator in the current
-	 * goal.
-	 * 
-	 * @return a tactic to remove a top-level negation operator in the current
-	 *         goal.
-	 * @deprecated use <code>removeNegGoal(IPosition.ROOT)</code> instead.
-	 * @see #removeNegGoal(IPosition)
-	 */
-	@Deprecated
-	public static ITactic removeNegGoal() {
-		return BasicTactics.reasonerTac(new SimpleRewriter.RemoveNegation(),
-				new SimpleRewriter.RemoveNegation.Input(null));
-	}
-
-	/**
-	 * Tells whether the <code>removeNegGoal()</code> tactic is applicable to
-	 * the given goal.
-	 * 
-	 * @param goal
-	 *            the goal to test for applicability
-	 * @return <code>true</code> iff the <code>removeNegGoal()</code> tactic
-	 *         is applicable
-	 * @deprecated use
-	 *             <code>rnGetPositions(goal).contains(IPosition.ROOT)</code>
-	 * @see #rnGetPositions(Predicate)
-	 */
-	@Deprecated
-	public static boolean removeNegGoal_applicable(Predicate goal) {
-		return (new SimpleRewriter.RemoveNegation()).isApplicable(goal);
-	}
+//	/**
+//	 * Returns a tactic to remove a top-level negation operator in the current
+//	 * goal.
+//	 * 
+//	 * @return a tactic to remove a top-level negation operator in the current
+//	 *         goal.
+//	 * @deprecated use <code>removeNegGoal(IPosition.ROOT)</code> instead.
+//	 * @see #removeNegGoal(IPosition)
+//	 */
+//	@Deprecated
+//	public static ITactic removeNegGoal() {
+//		return BasicTactics.reasonerTac(new SimpleRewriter.RemoveNegation(),
+//				new SimpleRewriter.RemoveNegation.Input(null));
+//	}
+//
+//	/**
+//	 * Tells whether the <code>removeNegGoal()</code> tactic is applicable to
+//	 * the given goal.
+//	 * 
+//	 * @param goal
+//	 *            the goal to test for applicability
+//	 * @return <code>true</code> iff the <code>removeNegGoal()</code> tactic
+//	 *         is applicable
+//	 * @deprecated use
+//	 *             <code>rnGetPositions(goal).contains(IPosition.ROOT)</code>
+//	 * @see #rnGetPositions(Predicate)
+//	 */
+//	@Deprecated
+//	public static boolean removeNegGoal_applicable(Predicate goal) {
+//		return (new SimpleRewriter.RemoveNegation()).isApplicable(goal);
+//	}
 	
 	public static ITactic removeNegGoal(IPosition position) {
 		return BasicTactics.reasonerTac(new RemoveNegation(),
@@ -525,20 +521,20 @@ public class Tactics {
 	}
 
 	
-	/**
-	 * @deprecated use {@link DisjunctionToImplicationRewriter} instead
-	 */
-	public static ITactic disjToImpGoal() {
-		return BasicTactics.reasonerTac(new DisjToImpl(), new DisjToImpl.Input(
-				null));
-	}
-
-	/**
-	 * @deprecated use {@link DisjunctionToImplicationRewriter} instead
-	 */
-	public static boolean disjToImpGoal_applicable(Predicate goal) {
-		return (new DisjToImpl()).isApplicable(goal);
-	}
+//	/**
+//	 * @deprecated use {@link DisjunctionToImplicationRewriter} instead
+//	 */
+//	public static ITactic disjToImpGoal() {
+//		return BasicTactics.reasonerTac(new DisjToImpl(), new DisjToImpl.Input(
+//				null));
+//	}
+//
+//	/**
+//	 * @deprecated use {@link DisjunctionToImplicationRewriter} instead
+//	 */
+//	public static boolean disjToImpGoal_applicable(Predicate goal) {
+//		return (new DisjToImpl()).isApplicable(goal);
+//	}
 
 	// Tactics applicable on a hypothesis
 
@@ -579,54 +575,6 @@ public class Tactics {
 			}
 		};
 	}
-
-//	/**
-//	 * 
-//	 * @deprecated This does not work any more since the antecedents generated by allD have changed. It is 
-//	 * no more possible to isolate the instantiated hypothesis. In general, this way of combining reasoners is
-//	 * quite brittle. Use {@link #allD(Predicate, String[])} instead for the time being till a better solution is found.
-//	 * 
-//	 */
-//	@Deprecated
-//	public static ITactic allDThenImpE(final Predicate univHyp,
-//			final String... instantiations) {
-//		final Predicate pred = univHyp;
-//		return new ITactic() {
-//
-//			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
-//				IProverSequent seq = pt.getSequent();
-//				ITypeEnvironment typeEnv = seq.typeEnvironment();
-//				BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(pred);
-//				final AllD.Input input = new AllD.Input(instantiations,
-//						boundIdentDecls, typeEnv, pred);
-//
-//				AllD allD = new AllD();
-//				IReasonerOutput output = allD.apply(seq, input, pm);
-//
-//				if (output instanceof IReasonerFailure) {
-//					return output;
-//				}
-//				if (output == null)
-//					return "! Plugin returned null !";
-//				if (!(output instanceof IProofRule))
-//					return output;
-//				IAntecedent[] antecedents = ((IProofRule) output)
-//						.getAntecedents();
-//				assert antecedents.length == 2;
-//				Set<Predicate> addedHyps = antecedents[1].getAddedHyps();
-//				assert addedHyps.size() == 1;
-//				if (!pt.isOpen()) return "Root already has children";
-//				if (!pt.applyRule((IProofRule) output)) 
-//					return "Rule "+((IProofRule) output).getDisplayName()+" is not applicable";
-//
-//				// Find the new hypothesis and try to apply impE.
-//				IProofTreeNode[] openDescendants = pt.getOpenDescendants();
-//				IProofTreeNode node = openDescendants[openDescendants.length - 1];
-//				return impE(addedHyps.iterator().next()).apply(node, pm);
-//			}
-//
-//		};
-//	}
 
 	public static boolean allD_applicable(Predicate hyp) {
 		return Lib.isUnivQuant(hyp);
@@ -677,26 +625,26 @@ public class Tactics {
 		return Lib.isImp(hyp);
 	}
 	
-	/**
-	 * This tactic tries to automatically apply an impE or he for an implicative selected hyp 
-	 * where the right hand side of the implication is contained in the hyps.
-	 *  
-	 * @return the tactic
-	 */
-	public static ITactic impE_auto(){
-		return new ITactic(){
-			
-			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-					if (Lib.isImp(shyp) &&
-							ptNode.getSequent().containsHypotheses(Lib.breakPossibleConjunct(Lib.impLeft(shyp)))){
-						return impE(shyp).apply(ptNode, pm);
-					}
-				}
-				return "Selected hyps contain no appropriate implications";
-			}
-		};
-	}
+//	/**
+//	 * This tactic tries to automatically apply an impE or he for an implicative selected hyp 
+//	 * where the right hand side of the implication is contained in the hyps.
+//	 *  
+//	 * @return the tactic
+//	 */
+//	public static ITactic impE_auto(){
+//		return new ITactic(){
+//			
+//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+//					if (Lib.isImp(shyp) &&
+//							ptNode.getSequent().containsHypotheses(Lib.breakPossibleConjunct(Lib.impLeft(shyp)))){
+//						return impE(shyp).apply(ptNode, pm);
+//					}
+//				}
+//				return "Selected hyps contain no appropriate implications";
+//			}
+//		};
+//	}
 
 	public static ITactic disjE(Predicate disjHyp) {
 		return BasicTactics.reasonerTac(new DisjE(), new DisjE.Input(disjHyp));
@@ -744,16 +692,16 @@ public class Tactics {
 		};
 	}
 	
-	/**
-	 * @param exHyp
-	 * @return
-	 * 
-	 * @deprecated use {@link #exF(Predicate)} instead.
-	 */
-	@Deprecated
-	public static ITactic exE(Predicate exHyp) {
-		return BasicTactics.reasonerTac(new ExE(), new ExE.Input(exHyp));
-	}
+//	/**
+//	 * @param exHyp
+//	 * @return
+//	 * 
+//	 * @deprecated use {@link #exF(Predicate)} instead.
+//	 */
+//	@Deprecated
+//	public static ITactic exE(Predicate exHyp) {
+//		return BasicTactics.reasonerTac(new ExE(), new ExE.Input(exHyp));
+//	}
 
 	public static boolean exF_applicable(Predicate hyp) {
 		return Lib.isExQuant(hyp);
@@ -763,36 +711,36 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new ExF(), new ExF.Input(exHyp));
 	}
 
-	/**
-	 * Returns a tactic to remove a top-level negation operator in the given
-	 * hypothesis.
-	 * 
-	 * @return a tactic to remove a top-level negation operator in the given
-	 *         hypothesis
-	 * @deprecated use <code>removeNegHyp(IPosition.ROOT)</code> instead.
-	 * @see #removeNegHyp(IPosition)
-	 */
-	@Deprecated
-	public static ITactic removeNegHyp(Predicate hyp) {
-		return BasicTactics.reasonerTac(new SimpleRewriter.RemoveNegation(),
-				new SimpleRewriter.RemoveNegation.Input(hyp));
-	}
-
-	/**
-	 * Tells whether the <code>removeNegHyp()</code> tactic is applicable to
-	 * the given hypothesis.
-	 * 
-	 * @param hyp
-	 *            the hypothesis to test for applicability
-	 * @return <code>true</code> iff the <code>removeNegHyp()</code> tactic
-	 *         is applicable
-	 * @deprecated use <code>rnGetPositions(hyp).contains(IPosition.ROOT)</code>
-	 * @see #rnGetPositions(Predicate)
-	 */
-	@Deprecated
-	public static boolean removeNegHyp_applicable(Predicate hyp) {
-		return (new SimpleRewriter.RemoveNegation()).isApplicable(hyp);
-	}
+//	/**
+//	 * Returns a tactic to remove a top-level negation operator in the given
+//	 * hypothesis.
+//	 * 
+//	 * @return a tactic to remove a top-level negation operator in the given
+//	 *         hypothesis
+//	 * @deprecated use <code>removeNegHyp(IPosition.ROOT)</code> instead.
+//	 * @see #removeNegHyp(IPosition)
+//	 */
+//	@Deprecated
+//	public static ITactic removeNegHyp(Predicate hyp) {
+//		return BasicTactics.reasonerTac(new SimpleRewriter.RemoveNegation(),
+//				new SimpleRewriter.RemoveNegation.Input(hyp));
+//	}
+//
+//	/**
+//	 * Tells whether the <code>removeNegHyp()</code> tactic is applicable to
+//	 * the given hypothesis.
+//	 * 
+//	 * @param hyp
+//	 *            the hypothesis to test for applicability
+//	 * @return <code>true</code> iff the <code>removeNegHyp()</code> tactic
+//	 *         is applicable
+//	 * @deprecated use <code>rnGetPositions(hyp).contains(IPosition.ROOT)</code>
+//	 * @see #rnGetPositions(Predicate)
+//	 */
+//	@Deprecated
+//	public static boolean removeNegHyp_applicable(Predicate hyp) {
+//		return (new SimpleRewriter.RemoveNegation()).isApplicable(hyp);
+//	}
 
 	public static ITactic removeNegHyp(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new RemoveNegation(),
@@ -832,41 +780,41 @@ public class Tactics {
 	// Misc tactics
 
 	public static ITactic hyp() {
-		return BasicTactics.reasonerTac(new Hyp(), new EmptyInput());
+		return BasicTactics.reasonerTac(new Hyp(), EMPTY_INPUT);
 	}
 
 	public static ITactic tautology() {
-		return BasicTactics.reasonerTac(new TrueGoal(), new EmptyInput());
+		return BasicTactics.reasonerTac(new TrueGoal(), EMPTY_INPUT);
 	}
 
 	public static ITactic contradiction() {
-		return BasicTactics.reasonerTac(new FalseHyp(), new EmptyInput());
+		return BasicTactics.reasonerTac(new FalseHyp(), EMPTY_INPUT);
 	}
 
-	/**
-	 * @deprecated should be done with user defined postTac
-	 */
-	public static ITactic trivial() {
-		return compose(hyp(), trivialGoalRewrite(), tautology(), hyp());
-	}
-
-	
-	/**
-	 * @deprecated should be done with user defined postTac
-	 */
-	public static ITactic trivialGoalRewrite() {
-		return compose(BasicTactics.reasonerTac(new Trivial(),
-				new Trivial.Input(null)), BasicTactics.reasonerTac(
-				new TypePred(), new TypePred.Input(null)));
-	}
+//	/**
+//	 * @deprecated should be done with user defined postTac
+//	 */
+//	public static ITactic trivial() {
+//		return compose(hyp(), trivialGoalRewrite(), tautology(), hyp());
+//	}
+//
+//	
+//	/**
+//	 * @deprecated should be done with user defined postTac
+//	 */
+//	public static ITactic trivialGoalRewrite() {
+//		return compose(BasicTactics.reasonerTac(new Trivial(),
+//				new Trivial.Input(null)), BasicTactics.reasonerTac(
+//				new TypePred(), new TypePred.Input(null)));
+//	}
 
 	public static ITactic autoRewriteRules() {
-		return BasicTactics.reasonerTac(new AutoRewrites(),new EmptyInput());
+		return BasicTactics.reasonerTac(new AutoRewrites(),EMPTY_INPUT);
 	}
 
-	public static ITactic typeRewriteRules() {
-		return BasicTactics.reasonerTac(new TypeRewrites(),new EmptyInput());
-	}
+//	public static ITactic typeRewriteRules() {
+//		return BasicTactics.reasonerTac(new TypeRewrites(),new EmptyInput());
+//	}
 
 	public static ITactic prune() {
 		return BasicTactics.prune();
@@ -876,8 +824,15 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new MngHyp(), new MngHyp.Input(hypAction));
 	}
 
-	// It is important that conjD_auto() is called sometime before falsifyHyp_auto()
-	// and impE_auto()
+	/**
+	 * 	It is important that conjD_auto() is called sometime before falsifyHyp_auto()
+	 *  and impE_auto()
+	 * 
+	 * @return
+	 * 
+	 * @deprecated Use the post tactic constructed from user preferences instead.
+	 */
+	@Deprecated
 	public static ITactic postProcessExpert() {
 		return repeat(composeOnAllPending(
 				new AutoRewriteTac(),
@@ -940,6 +895,7 @@ public class Tactics {
 		return false;
 	}
 
+
 	/**
 	 * Returns a tactic to rewrite an implicative sub-predicate, occurring in an
 	 * hypothesis, to its contrapositive.
@@ -951,14 +907,7 @@ public class Tactics {
 	 *            position of the sub-predicate to rewrite
 	 * @return a tactic to rewrite an implicative sub-predicate to its
 	 *         contrapositive
-	 * @deprecated use <code>contImpHyp(hyp, position)</code> instead. The
-	 *             change was caused by this method having a weird name.
 	 */
-	@Deprecated
-	public static ITactic mpImpHyp(Predicate hyp, IPosition position) {
-		return contImpHyp(hyp, position);
-	}
-
 	public static ITactic contImpHyp(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new ContImplHypRewrites(),
 				new ContImplHypRewrites.Input(hyp, position));
@@ -1280,18 +1229,18 @@ public class Tactics {
 		
 	}
 	
-	public static class TypeRewriteTac implements ITactic{
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return typeRewriteRules().apply(ptNode, pm);
-		}
-		
-	}
+//	public static class TypeRewriteTac implements ITactic{
+//
+//		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+//			return typeRewriteRules().apply(ptNode, pm);
+//		}
+//		
+//	}
 	
 	public static class AutoImpFTac implements ITactic{
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return BasicTactics.reasonerTac(new AutoImpF(), new EmptyInput()).apply(ptNode, pm);
+			return BasicTactics.reasonerTac(new AutoImpF(), EMPTY_INPUT).apply(ptNode, pm);
 		}	
 	}
 	
@@ -1373,14 +1322,14 @@ public class Tactics {
 	public static class IsFunGoalTac implements ITactic{
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return BasicTactics.reasonerTac(new IsFunGoal(), new EmptyInput()).apply(ptNode, pm);
+			return BasicTactics.reasonerTac(new IsFunGoal(), EMPTY_INPUT).apply(ptNode, pm);
 		}	
 	}
 
 	public static class HypOrTac implements ITactic {
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return BasicTactics.reasonerTac(new HypOr(), new EmptyInput())
+			return BasicTactics.reasonerTac(new HypOr(), EMPTY_INPUT)
 				.apply(ptNode, pm);
 		}
 
@@ -2884,7 +2833,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static ITactic finiteInter() {
-		return BasicTactics.reasonerTac(new FiniteInter(), new EmptyInput());
+		return BasicTactics.reasonerTac(new FiniteInter(), EMPTY_INPUT);
 	}
 
 
@@ -2915,7 +2864,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static ITactic finiteSetMinus() {
-		return BasicTactics.reasonerTac(new FiniteSetMinus(), new EmptyInput());
+		return BasicTactics.reasonerTac(new FiniteSetMinus(), EMPTY_INPUT);
 	}
 
 	/**
@@ -2985,7 +2934,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static ITactic finiteRelImg() {
-		return BasicTactics.reasonerTac(new FiniteRelImg(), new EmptyInput());
+		return BasicTactics.reasonerTac(new FiniteRelImg(), EMPTY_INPUT);
 	}
 
 
@@ -3016,7 +2965,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static ITactic finiteRan() {
-		return BasicTactics.reasonerTac(new FiniteRan(), new EmptyInput());
+		return BasicTactics.reasonerTac(new FiniteRan(), EMPTY_INPUT);
 	}
 
 	
@@ -3047,7 +2996,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static ITactic finiteDom() {
-		return BasicTactics.reasonerTac(new FiniteDom(), new EmptyInput());
+		return BasicTactics.reasonerTac(new FiniteDom(), EMPTY_INPUT);
 	}
 
 	
@@ -3159,7 +3108,7 @@ public class Tactics {
 	 */
 	public static ITactic finiteFunRelImg() {
 		return BasicTactics
-				.reasonerTac(new FiniteFunRelImg(), new EmptyInput());
+				.reasonerTac(new FiniteFunRelImg(), EMPTY_INPUT);
 	}
 
 
@@ -3266,7 +3215,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static ITactic finiteMin() {
-		return BasicTactics.reasonerTac(new FiniteMin(), new EmptyInput());
+		return BasicTactics.reasonerTac(new FiniteMin(), EMPTY_INPUT);
 	}
 
 	
@@ -3296,7 +3245,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static ITactic finiteMax() {
-		return BasicTactics.reasonerTac(new FiniteMax(), new EmptyInput());
+		return BasicTactics.reasonerTac(new FiniteMax(), EMPTY_INPUT);
 	}
 
 
@@ -3329,7 +3278,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static ITactic finiteNegative() {
-		return BasicTactics.reasonerTac(new FiniteNegative(), new EmptyInput());
+		return BasicTactics.reasonerTac(new FiniteNegative(), EMPTY_INPUT);
 	}
 
 
@@ -3362,7 +3311,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static ITactic finitePositive() {
-		return BasicTactics.reasonerTac(new FinitePositive(), new EmptyInput());
+		return BasicTactics.reasonerTac(new FinitePositive(), EMPTY_INPUT);
 	}
 
 
