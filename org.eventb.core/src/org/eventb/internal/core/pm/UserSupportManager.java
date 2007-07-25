@@ -17,7 +17,6 @@ import java.util.Collection;
 
 import org.eventb.core.ITacticContainer;
 import org.eventb.core.ITacticContainerRegistry;
-import org.eventb.core.pm.IProvingMode;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
@@ -28,7 +27,7 @@ public class UserSupportManager implements IUserSupportManager {
 	private Collection<IUserSupport> userSupports = new ArrayList<IUserSupport>();
 
 	@Deprecated
-	private static IProvingMode provingMode;
+	private static org.eventb.core.pm.IProvingMode provingMode;
 
 	private static ITacticContainer postTacticContainer;
 	
@@ -78,9 +77,9 @@ public class UserSupportManager implements IUserSupportManager {
 	 * @see org.eventb.core.pm.IUserSupportManager#getProvingMode()
 	 */
 	@Deprecated
-	public IProvingMode getProvingMode() {
+	public org.eventb.core.pm.IProvingMode getProvingMode() {
 		if (provingMode == null)
-			provingMode = new ProvingMode();
+			provingMode = new org.eventb.internal.core.pm.ProvingMode();
 		return provingMode;
 	}
 

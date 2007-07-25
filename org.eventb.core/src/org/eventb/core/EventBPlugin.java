@@ -9,11 +9,9 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eventb.core.pm.IPostTacticRegistry;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
 import org.eventb.core.sc.SCModule;
-import org.eventb.internal.core.pm.PostTacticRegistry;
 import org.eventb.internal.core.pm.UserSupportManager;
 import org.eventb.internal.core.pm.UserSupportUtils;
 import org.eventb.internal.core.pog.ProofObligationGenerator;
@@ -268,7 +266,7 @@ public class EventBPlugin extends Plugin {
 	 * @author htson
 	 */
 	@Deprecated
-	public IPostTacticRegistry getPostTacticRegistry() {
-		return PostTacticRegistry.getDefault();
+	public org.eventb.core.pm.IPostTacticRegistry getPostTacticRegistry() {
+		return org.eventb.internal.core.pm.PostTacticRegistry.getDefault();
 	}
 }
