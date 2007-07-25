@@ -400,7 +400,8 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	public void dispose() {
 		IEventBEditor<?> editor = this.getEventBEditor();
 		editor.removeElementChangedListener(this);
-		activateContext.getContextService().deactivateContext(activateContext);
+		if (activateContext != null)
+			activateContext.getContextService().deactivateContext(activateContext);
 		deactivateHandlers();
 
 		super.dispose();
@@ -411,8 +412,10 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 				.getDefault().getWorkbench().getAdapter(IHandlerService.class);
 
 		if (handlerService != null) {
-			handlerService.deactivateHandler(moveUpHandlerActivation);
-			handlerService.deactivateHandler(moveDownHandlerActivation);
+			if (moveUpHandlerActivation != null)
+				handlerService.deactivateHandler(moveUpHandlerActivation);
+			if (moveDownHandlerActivation != null)
+				handlerService.deactivateHandler(moveDownHandlerActivation);
 		}
 		moveUpHandlerActivation = null;
 		moveDownHandlerActivation = null;

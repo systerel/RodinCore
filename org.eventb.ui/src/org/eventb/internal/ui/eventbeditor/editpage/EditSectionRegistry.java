@@ -83,7 +83,10 @@ public class EditSectionRegistry {
 			sections = new LinkedHashMap<IElementType<?>, SectionInfo>(
 					unsortedSections.size());
 			for (SectionInfo info : unsortedSections) {
-				sections.put(info.getType(), info);
+				IElementType<?> type = info.getType();
+				// check if the type is well-defined
+				if (type != null)
+					sections.put(type, info);
 			}
 		}
 
@@ -139,7 +142,12 @@ public class EditSectionRegistry {
 
 		public IElementType<?> getType() {
 			String typeStr = config.getAttribute("type");
-			return RodinCore.getElementType(typeStr);
+			try {
+				return RodinCore.getElementType(typeStr);
+			}
+			catch (IllegalArgumentException e) {
+				return null;
+			}
 		}
 
 		private int readPriority() {

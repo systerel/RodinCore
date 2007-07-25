@@ -184,7 +184,20 @@
             id="org.eventb.ui.Edit"
             name="%editorPage.edit"
             priority="9">
-         <target id="org.eventb.ui.editors.machine"/>
+         <target
+         		id="org.eventb.ui.editors.machine"/>
+         <target
+         		id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.htmlpage.HTMLPage"
+            id="org.eventb.ui.html"
+            name="%editorPage.html"
+            priority="7">
+         <target
+         		id="org.eventb.ui.editors.machine"/>
+         <target
+         		id="org.eventb.ui.editors.context"/>
       </page>
    -->
    </extension>
@@ -2122,7 +2135,7 @@
             type="org.eventb.core.invariant">
       </section>
       <section
-            id="org.event.ui.sections.theorem"
+            id="org.event.ui.sections.machineTheorem"
             name="Theorems"
             parentType="org.eventb.core.machineFile"
             prefix="THEOREMS"
@@ -2181,6 +2194,43 @@
             prefix="THEN"
             priority="9"
             type="org.eventb.core.action"/>
+      <section
+            id="org.event.ui.sections.extendsContext"
+            name="Extends Context"
+            parentType="org.eventb.core.contextFile"
+            prefix="EXTENDS"
+            priority="1"
+            type="org.eventb.core.extendsContext"/>
+      <section
+            id="org.event.ui.section.carrierSet"
+            name="Carrier Set"
+            parentType="org.eventb.core.contextFile"
+            prefix="SETS"
+            priority="2"
+            type="org.eventb.core.carrierSet">
+      </section>
+      <section
+            id="org.eventb.ui.section.constant"
+            name="Constants"
+            parentType="org.eventb.core.contextFile"
+            prefix="CONSTANTS"
+            priority="3"
+            type="org.eventb.core.constant">
+      </section>
+      <section
+            id="org.event.ui.sections.axiom"
+            name="Axioms"
+            parentType="org.eventb.core.contextFile"
+            prefix="AXIOMS"
+            priority="4"
+            type="org.eventb.core.axiom"/>
+      <section
+            id="org.event.ui.sections.contextTheorem"
+            name="Theorems"
+            parentType="org.eventb.core.contextFile"
+            prefix="THEOREMS"
+            priority="5"
+            type="org.eventb.core.theorem"/>
    </extension>
    <extension
          point="org.eventb.ui.editSections">
@@ -2195,6 +2245,12 @@
          <type
                defaultPrefix="var"
                id="org.eventb.core.variable"/>
+         <type
+               id="org.eventb.core.carrierSet">
+         </type>
+         <type
+               id="org.eventb.core.constant">
+         </type>
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.LabelEditComposite"
@@ -2226,6 +2282,7 @@
                id="org.eventb.core.action"/>
          <type
                defaultPrefix="axm"
+               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.AxiomLabelAttributeFactory"
                id="org.eventb.core.axiom"/>
          <type id="org.eventb.core.witness"/>
       </attribute>
@@ -2241,6 +2298,9 @@
          <type id="org.eventb.core.theorem"/>
          <type id="org.eventb.core.guard"/>
          <type id="org.eventb.core.witness"/>
+         <type
+               id="org.eventb.core.axiom">
+         </type>
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.InheritedEditComposite"
@@ -2300,6 +2360,15 @@
          <type id="org.eventb.core.event"/>
          <type id="org.eventb.core.guard"/>
          <type id="org.eventb.core.action"/>
+         <type
+               id="org.eventb.core.carrierSet">
+         </type>
+         <type
+               id="org.eventb.core.constant">
+         </type>
+         <type
+               id="org.eventb.core.axiom">
+         </type>
       </attribute>
       <attribute
             class="org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineEditComposite"
@@ -2328,6 +2397,15 @@
             style="multi"
             widget="text">
          <type id="org.eventb.core.variant"/>
+      </attribute>
+      <attribute
+            class="org.eventb.internal.ui.eventbeditor.editpage.ExtendsContextEditComposite"
+            horizontalExpand="false"
+            id="org.eventb.ui.extendsContext"
+            name="Extends Context"
+            priority="1"
+            widget="combo">
+         <type id="org.eventb.core.extendsContext"/>
       </attribute>
    </extension>
    <extension

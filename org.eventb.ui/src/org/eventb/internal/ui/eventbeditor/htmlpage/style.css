@@ -1,0 +1,28 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+ 
+ // Stylesheet for the XSL pretty printer
+ 
+.main 		{font-size:14px;}
+.keyword0	{color:red; margin-left:10px; font-weight:bold; margin-bottom:5px; margin-top:15px;}
+.keyword1	{color:red; margin-left:20px; font-weight:bold; margin-bottom:2px; margin-top:5px;}
+.keyword2	{color:red; margin-left:30px; font-weight:bold; margin-bottom:2px; margin-top:5px;}
+.keyword3	{color:red; margin-left:40px; font-weight:bold; margin-bottom:2px; margin-top:5px;}
+.body 		{margin-left: 30px;}
+.line 		{}
+
+.label		{font-weight:bold;}
+.tab		{padding-left:10px;}
+
+.comment	{color:green; padding-left:25px;}
+.begincomment	{width:12px;}
+.endcomment	{width:15px; text-align:right;}
+.level1         {color:blue; margin-left:20px; margin-bottom:2px; margin-top:2px;}
+.level2         {color:blue; margin-left:30px; margin-bottom:2px; margin-top:2px;}
+.level3         {color:blue; margin-left:40px; margin-bottom:2px; margin-top:2px;}
+.attribute	{color:green; padding-left:5px;}
