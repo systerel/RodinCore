@@ -360,7 +360,8 @@ public class ProverChecks {
 	 * 			the proof rule for which justifications to be generated.
 	 * @return
 	 * 			the generated justifications.
-	 * TODO : Generate WD justifications too
+	 * TODO : Generate WD justifications too. This required that the weaker well definedness operator 'D' is
+	 * 			implemented in the AST.
 	 * TODO : Maybe choose a better structure for returning justifications 
 	 */
 	public static List<IProverSequent> genRuleJustifications(IProofRule rule){
