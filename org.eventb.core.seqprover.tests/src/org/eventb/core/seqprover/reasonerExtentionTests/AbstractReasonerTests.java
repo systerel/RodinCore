@@ -28,6 +28,8 @@ import org.eventb.internal.core.seqprover.ProverChecks;
 import org.junit.Before;
 import org.junit.Test;
 
+//import com.b4free.rodin.core.B4freeCore;
+
 /**
  * An abstract class that can be extended in order to be used to test reasoner extensions.
  * 
@@ -90,6 +92,10 @@ public abstract class AbstractReasonerTests extends TestCase {
 	 */
 	public ITactic getJustDischTactic(){
 		return null;
+//		The following line can be committed in to run PP or ML as the justification tactic for all clients that 
+//		do not override this method
+//		return B4freeCore.externalPP(false);
+//		return B4freeCore.externalML(B4freeCore.ML_FORCE_0);
 	}
 	
 	private IReasoner reasoner;
