@@ -35,7 +35,7 @@ public class TacticRegistry implements ITacticRegistry {
 	 */
 	public static boolean DEBUG;
 	
-	private Map<String,TacticInfo> registry;
+	private Map<String,TacticDescriptor> registry;
 	
 	/**
 	 * Private default constructor enforces that only one instance of this class
@@ -63,29 +63,32 @@ public class TacticRegistry implements ITacticRegistry {
 		return registry.keySet().toArray(NO_STRING);
 	}
 	
+	@Deprecated
 	public ITactic getTacticInstance(String id) throws IllegalArgumentException{
-		return getInfo(id).getTacticInstance();
+		return getTacticDescriptor(id).getTacticInstance();
 	}
 	
+	@Deprecated
 	public String getTacticName(String id) throws IllegalArgumentException{
-		return getInfo(id).getTacticName();
+		return getTacticDescriptor(id).getTacticName();
 	}
 	
 
+	@Deprecated
 	public String getTacticDescription(String id) throws IllegalArgumentException {
-		return getInfo(id).getTacticDescription();
+		return getTacticDescriptor(id).getTacticDescription();
 	}
 
-	private synchronized TacticInfo getInfo(String id) throws IllegalArgumentException{
+	public  synchronized TacticDescriptor getTacticDescriptor(String id) throws IllegalArgumentException{
 		if (registry == null) {
 			loadRegistry();
 		}
-		TacticInfo info = registry.get(id);
-		if (info == null) {
-			// Unknown tactic, throw exception.
+		TacticDescriptor tacticDesc = registry.get(id);
+		if (tacticDesc == null) {
+			// Unknown tactic id, throw exception.
 			throw new IllegalArgumentException("Tactic with id:" + id + "not registered.");
 		}
-		return info;
+		return tacticDesc;
 	}
 	
 	/**
@@ -96,14 +99,14 @@ public class TacticRegistry implements ITacticRegistry {
 			// Prevents loading by two thread in parallel
 			return;
 		}
-		registry = new HashMap<String, TacticInfo>();
+		registry = new HashMap<String, TacticDescriptor>();
 		final IExtensionRegistry xRegistry = Platform.getExtensionRegistry();
 		final IExtensionPoint xPoint = xRegistry.getExtensionPoint(TACTICS_ID);
 		for (IConfigurationElement element: xPoint.getConfigurationElements()) {
-			final TacticInfo info = new TacticInfo(element);
-			final String id = info.getTacticID();
+			final TacticDescriptor tacticDesc = new TacticDescriptor(element);
+			final String id = tacticDesc.getTacticID();
 			if (id != null) {
-				TacticInfo oldInfo = registry.put(id, info);
+				TacticDescriptor oldInfo = registry.put(id, tacticDesc);
 				if (oldInfo != null) {
 					registry.put(id, oldInfo);
 					Util.log(null,
@@ -120,7 +123,7 @@ public class TacticRegistry implements ITacticRegistry {
 	/**
 	 * Private helper class implementing lazy loading of tactic instances
 	 */
-	private static class TacticInfo{
+	private static class TacticDescriptor implements ITacticDescriptor{
 
 		private final IConfigurationElement configurationElement;
 		private final String id;
@@ -132,7 +135,7 @@ public class TacticRegistry implements ITacticRegistry {
 		private ITactic instance;
 		private String description;
 		
-		public TacticInfo(IConfigurationElement element) {
+		protected TacticDescriptor(IConfigurationElement element) {
 			this.configurationElement = element;
 			final String localId = element.getAttribute("id");
 			if (localId.indexOf('.') != -1) {

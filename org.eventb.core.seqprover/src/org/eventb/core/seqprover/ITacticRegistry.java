@@ -28,6 +28,8 @@ package org.eventb.core.seqprover;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @see SequentProver#getTacticRegistry()
+ * 
  * @author Farhad Mehta
  */
 public interface ITacticRegistry {
@@ -60,6 +62,25 @@ public interface ITacticRegistry {
 	String[] getRegisteredIDs();
 
 	/**
+	 * Returns the tactic descriptor of the tactic extension with the given id.
+	 * <p>
+	 * Clients should first use {@link #isRegistered(String)} to check if a tactic extension with the
+	 * given id is registered.
+	 * In case no tactic extension with the given id has been registered an {@link IllegalArgumentException}
+	 * is thrown.
+	 * </p>
+	 * 
+	 * @param tacticID
+	 *            the id of the tactic
+	 * @return the tactic descriptor of the tactic with the given id
+	 * 
+	 * @throws IllegalArgumentException
+	 * 			in case no tactic extension with the given id has been registered
+	 */
+	ITacticDescriptor getTacticDescriptor(String tacticID) throws IllegalArgumentException;
+
+	
+	/**
 	 * Returns an instance of the tactic extension with the given id.
 	 * <p>
 	 * Clients should first use {@link #isRegistered(String)} to check if a tactic extension with the
@@ -75,7 +96,10 @@ public interface ITacticRegistry {
 	 * 
 	 * @throws IllegalArgumentException
 	 * 			in case no tactic extension with the given id has been registered
+	 * 
+	 * @deprecated use {@link #getTacticDescriptor(String))} and the methods in {@link ITacticDescriptor} instead.
 	 */
+	@Deprecated
 	ITactic getTacticInstance(String tacticID) throws IllegalArgumentException;
 
 	/**
@@ -94,7 +118,10 @@ public interface ITacticRegistry {
 	 * 
 	 * @throws IllegalArgumentException
 	 * 			in case no tactic extension with the given id has been registered
+	 * 
+	 * @deprecated use {@link #getTacticDescriptor(String))} and the methods in {@link ITacticDescriptor} instead.
 	 */
+	@Deprecated
 	String getTacticName(String tacticID) throws IllegalArgumentException;
 	
 	/**
@@ -114,8 +141,69 @@ public interface ITacticRegistry {
 	 * 
 	 * @throws IllegalArgumentException
 	 * 			in case no tactic extension with the given id has been registered
+	 * @deprecated use {@link #getTacticDescriptor(String))} and the methods in {@link ITacticDescriptor} instead.
+	 */ 
+	@Deprecated
+	String getTacticDescription(String tacticID) throws IllegalArgumentException;	
+	
+	
+	
+	/**
+	 * An {@link ITacticDescriptor} provides a wrapper around the information contained in 
+	 * a tactic extension.
+	 * 
+	 * <p>
+	 * Each tactic extension corresponds to a tactic descriptor.
+	 * The tactic descriptor for a tactic extension can be obtained using the 
+	 * {@link ITacticRegistry#getTacticDescriptor(String)} method. 
+	 * </p>
+	 * 
+	 * @author Farhad Mehta
+	 *
 	 */
-	String getTacticDescription(String tacticID) throws IllegalArgumentException;
+	public interface ITacticDescriptor{
+		
+		/**
+		 * Returns the id of the tactic extension.
+		 * 
+		 * @return the id of the tactic extention
+		 */
+		String getTacticID();
+		
+		/**
+		 * Returns the name of the tactic extension.
+		 * 
+		 * @return the name of the tactic extention
+		 */
+		String getTacticName();
+		
+		/**
+		 * Returns the description of the tactic extension.
+		 * 
+		 * <p>
+		 * In case no description is provided for a registered tactic, the empty string is returned.
+		 * </p>
+		 * 
+		 * @return the description of the tactic with the given id, or the empty string if no description is provided.
+		 * 
+		 */
+		String getTacticDescription();
+
+		/**
+		 * Returns the singeleton instance of the tactic corresponding to the tactic extension.
+		 * <p>
+		 * In case there is a problem instantiating the tactic class, an {@link IllegalArgumentException}
+		 * is thrown.
+		 * </p>
+		 * 
+		 * @return an instance of the tactic
+		 * 
+		 * @throws IllegalArgumentException
+		 * 			in case there is a problem instantiating the tactic
+		 */
+		ITactic getTacticInstance() throws IllegalArgumentException;
+		
+	}
 	
 	
 
