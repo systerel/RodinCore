@@ -9,6 +9,7 @@ import java.util.Arrays;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.tacticExtentionTests.IdentityTactic.FailTactic;
 import org.junit.Test;
 
@@ -72,42 +73,99 @@ public class TacticRegistryTest {
 	}
 
 	/**
-	 * Test method for {@link ITacticRegistry#getTacticInstance(String)}.
+	 * Test method for {@link ITacticRegistry#getTacticDescriptor(String)}.
+	 * 
+	 * Registered IDs
 	 */
-	@Test(expected=IllegalArgumentException.class)
-	public void testGetTacticInstance() {
-		ITactic tactic = registry.getTacticInstance(IdentityTactic.TACTIC_ID);
-		assertTrue(tactic instanceof IdentityTactic);
-		
-		tactic = registry.getTacticInstance(FailTactic.TACTIC_ID);
-		assertTrue(tactic instanceof FailTactic);
-		
-		// Should throw an exception
-		tactic = registry.getTacticInstance(unrigisteredId);
+	@Test
+	public void testGetTacticDescriptorRegistered() {
+		ITacticDescriptor tacticDescIdentity = registry.getTacticDescriptor(IdentityTactic.TACTIC_ID);
+		assertNotNull(tacticDescIdentity);
+				
+		ITacticDescriptor tacticDescFail = registry.getTacticDescriptor(FailTactic.TACTIC_ID);
+		assertNotNull(tacticDescFail);
 	}
 	
+	/**
+	 * Test method for {@link ITacticRegistry#getTacticDescriptor(String)}.
+	 * 
+	 * Unregistered ID
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testGetTacticDescriptorUnregistered() {
+		// Should throw an exception
+		registry.getTacticDescriptor(unrigisteredId);
+	}
+	
+	/**
+	 * Test method for {@link ITacticDescriptor#getTacticID()}.
+	 * 
+	 */
+	@Test
+	public void testGetTacticDecsrID() {
+		ITacticDescriptor tacticDescIdentity = registry.getTacticDescriptor(IdentityTactic.TACTIC_ID);				
+		ITacticDescriptor tacticDescFail = registry.getTacticDescriptor(FailTactic.TACTIC_ID);
+
+		String tacticID;
+		
+		tacticID = tacticDescIdentity.getTacticID();
+		assertTrue(tacticID.equals(IdentityTactic.TACTIC_ID));
+
+		tacticID = tacticDescFail.getTacticID();
+		assertTrue(tacticID.equals(FailTactic.TACTIC_ID));
+	}
 
 	/**
-	 * Test method for {@link ITacticRegistry#getTacticName(String)}.
+	 * Test method for {@link ITacticDescriptor#getTacticName()}.
+	 * 
 	 */
-	@Test(expected=IllegalArgumentException.class)
-	public void testGetTacticName() {
-		assertTrue(registry.getTacticName(IdentityTactic.TACTIC_ID).equals("Identity Tactic"));
-		assertTrue(registry.getTacticName(FailTactic.TACTIC_ID).equals("Fail Tactic"));
-		// Should throw an exception
-		registry.getTacticName(unrigisteredId);
+	@Test
+	public void testGetTacticDecsrName() {
+		ITacticDescriptor tacticDescIdentity = registry.getTacticDescriptor(IdentityTactic.TACTIC_ID);				
+		ITacticDescriptor tacticDescFail = registry.getTacticDescriptor(FailTactic.TACTIC_ID);
+
+		String tacticName;
+		
+		tacticName = tacticDescIdentity.getTacticName();
+		assertTrue(tacticName.equals(IdentityTactic.TACTIC_NAME));
+
+		tacticName = tacticDescFail.getTacticName();
+		assertTrue(tacticName.equals(FailTactic.TACTIC_NAME));
 	}
 	
 	/**
-	 * Test method for {@link ITacticRegistry#getTacticDescription(String)}.
+	 * Test method for {@link ITacticDescriptor#getTacticDescription()}.
+	 * 
 	 */
-	@Test(expected=IllegalArgumentException.class)
-	public void testGetTacticDescription() {
-		assertTrue(registry.getTacticDescription(IdentityTactic.TACTIC_ID).equals("This tactic does nothing but succeeds"));
-		assertNotNull(registry.getTacticDescription(FailTactic.TACTIC_ID));
-		assertTrue(registry.getTacticDescription(FailTactic.TACTIC_ID).equals(""));
-		// Should throw an exception
-		registry.getTacticDescription(unrigisteredId);
+	@Test
+	public void testGetTacticDecsrDesc() {
+		ITacticDescriptor tacticDescIdentity = registry.getTacticDescriptor(IdentityTactic.TACTIC_ID);				
+		ITacticDescriptor tacticDescFail = registry.getTacticDescriptor(FailTactic.TACTIC_ID);
+
+		String tacticName;
+		
+		tacticName = tacticDescIdentity.getTacticDescription();
+		assertTrue(tacticName.equals(IdentityTactic.TACTIC_DESC));
+
+		tacticName = tacticDescFail.getTacticDescription();
+		assertTrue(tacticName.equals(""));
+	}
+
+	
+	/**
+	 * Test method for {@link ITacticDescriptor#getTacticInstance()}.
+	 * 
+	 */
+	@Test
+	public void testGetTacticDecsrInstance() {
+		ITacticDescriptor tacticDescIdentity = registry.getTacticDescriptor(IdentityTactic.TACTIC_ID);				
+		ITacticDescriptor tacticDescFail = registry.getTacticDescriptor(FailTactic.TACTIC_ID);
+
+		ITactic tactic = tacticDescIdentity.getTacticInstance();
+		assertTrue(tactic instanceof IdentityTactic);
+		
+		tactic = tacticDescFail.getTacticInstance();
+		assertTrue(tactic instanceof FailTactic);
 	}
 
 	/**

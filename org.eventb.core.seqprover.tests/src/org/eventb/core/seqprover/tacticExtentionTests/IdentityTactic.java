@@ -15,6 +15,12 @@ public class IdentityTactic implements ITactic {
 	
 	public static final String TACTIC_ID = "org.eventb.core.seqprover.tests.identityTac";
 
+	// This is the same as the name declared in the extension point
+	public static final String TACTIC_NAME = "Identity Tactic";
+	
+	// This is the same as the description declared in the extension point
+	public static final String TACTIC_DESC = "This tactic does nothing but succeeds";
+	
 	public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 		// Do nothing
 		return null;
@@ -30,6 +36,9 @@ public class IdentityTactic implements ITactic {
 	public static class FailTactic implements ITactic{
 		
 		public static final String TACTIC_ID = "org.eventb.core.seqprover.tests.failTac";
+
+		// This is the same as the name declared in the extension point
+		public static final String TACTIC_NAME = "Fail Tactic";
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			// Do nothing
