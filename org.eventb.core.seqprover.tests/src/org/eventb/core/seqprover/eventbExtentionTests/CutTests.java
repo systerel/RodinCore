@@ -1,18 +1,14 @@
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import org.eventb.core.seqprover.IReasonerInput;
+
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.tests.TestLib;
 
+//import org.eventb.core.seqprover.ITactic;
 //import com.b4free.rodin.core.B4freeCore;
 
 public class CutTests extends AbstractReasonerTests {
-
-//	private static final IReasonerInput input = new SinglePredInput(TestLib.genPred("3∈P"));
-//	private static final IReasonerInput input_x_WD = new SinglePredInput(TestLib.genPred("x∈P"));
-//	private static final IReasonerInput input_x_NotWD = new SinglePredInput(TestLib.genPred("x÷x∈P"));
 
 	@Override
 	public String getReasonerID() {
@@ -35,8 +31,15 @@ public class CutTests extends AbstractReasonerTests {
 						new SinglePredInput(TestLib.genPred("0÷0∈P")),
 						"[{P=ℙ(ℤ)}[][][1∈P] |- 0≠0," +
 						" {P=ℙ(ℤ)}[][][1∈P, 0≠0] |- 0 ÷ 0∈P," +
-						" {P=ℙ(ℤ)}[][][1∈P, 0≠0, 0 ÷ 0∈P] |- 2∈P]")
-				};
+						" {P=ℙ(ℤ)}[][][1∈P, 0≠0, 0 ÷ 0∈P] |- 2∈P]"),
+				// With WD and variable
+				new SuccessfullReasonerApplication(
+						TestLib.genSeq(" 1∈P |- x∈P "),
+						new SinglePredInput(TestLib.genPred("x÷x∈P")),
+						"[{P=ℙ(ℤ), x=ℤ}[][][1∈P] |- x≠0," +
+						" {P=ℙ(ℤ), x=ℤ}[][][1∈P, x≠0] |- x ÷ x∈P," +
+						" {P=ℙ(ℤ), x=ℤ}[][][1∈P, x≠0, x ÷ x∈P] |- x∈P]")
+		};
 	}
 
 	@Override
@@ -61,6 +64,7 @@ public class CutTests extends AbstractReasonerTests {
 				};
 	}
 
+// Commented out, but makes the tests succeed
 //	@Override
 //	public ITactic getJustDischTactic() {
 //		return B4freeCore.externalPP(false);
