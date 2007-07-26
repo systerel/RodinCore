@@ -17,6 +17,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
@@ -245,6 +246,19 @@ public class FastFactory {
 			result.addName(names[i], types[i]);
 		}
 		return result;
+	}
+
+	public static ITypeEnvironment mTypeEnvironment(String... strs) {
+		assert (strs.length & 1) == 0;
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+		for (int i = 0; i < strs.length; i += 2) {
+			final String name = strs[i];
+			final IParseResult res = ff.parseType(strs[i+1]);
+			assert res.isSuccess();
+			final Type type = res.getParsedType();
+			te.addName(name, type);
+		}
+		return te;
 	}
 
 	public static ITypeEnvironment mTypeEnvironment(Object... objs) {
