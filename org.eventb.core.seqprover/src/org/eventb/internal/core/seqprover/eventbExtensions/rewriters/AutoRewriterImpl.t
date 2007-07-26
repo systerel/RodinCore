@@ -538,6 +538,18 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 			
 	    	/**
+	    	 * Set Theory: A ∖ B ⊆ S == A ⊆ S ∪ B
+	    	 */
+	    	SubsetEq(SetMinus(A, B), S) -> {
+	    		Expression [] children = new Expression[2];
+	    		children[0] = `S;
+	    		children[1] = `B;
+	    		Expression union = makeAssociativeExpression(Expression.BUNION,
+	    				children);
+	    		return makeRelationalPredicate(Predicate.SUBSETEQ, `A, union);
+	    	}
+	    	
+	    	/**
 	    	 * Set Theory: S ⊆ A ∪ ... ∪ S ∪ ... ∪ B == ⊤
 	    	 */
 	    	SubsetEq(S, BUnion(children)) -> {

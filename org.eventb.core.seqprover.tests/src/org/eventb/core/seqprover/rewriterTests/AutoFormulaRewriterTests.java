@@ -1036,6 +1036,14 @@ public class AutoFormulaRewriterTests {
 				Expression.BINTER, integer, S, T, U);
 		assertAssociativeExpression("S ∩ T ∩ U ∩ ℤ == S ∩ T ∩ U", resultExp,
 				Expression.BINTER, S, T, U, integer);
+		
+		// A \ B <: S == A <: S \/ B
+		Expression input = Lib.parseExpression("{1,2}∖{2,3}");
+		input.typeCheck(ff.makeTypeEnvironment());
+		expectedPred = Lib.parsePredicate("{1,2} ⊆ {1} ∪ {2,3}");
+		expectedPred.typeCheck(ff.makeTypeEnvironment());
+		assertRelationalPredicate("A ∖ B ⊆ S == A ⊆ S ∪ B", expectedPred, input, Predicate.SUBSETEQ, S);
+
 	}
 
 	private void assertSetExtension(String message, Expression expected,
