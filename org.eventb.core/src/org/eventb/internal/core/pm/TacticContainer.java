@@ -1,7 +1,6 @@
 package org.eventb.internal.core.pm;
 
-import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
-import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
+import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 
 import java.util.ArrayList;
 
@@ -46,8 +45,8 @@ public class TacticContainer implements ITacticContainer {
 	}
 
 	protected ITactic composeTactics(ArrayList<ITactic> list) {
-		return repeat(composeOnAllPending(list
-				.toArray(new ITactic[list.size()])));
+		return loopOnAllPending(list
+				.toArray(new ITactic[list.size()]));
 	}
 
 	/* (non-Javadoc)

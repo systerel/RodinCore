@@ -1,7 +1,6 @@
 package org.eventb.internal.core.pm;
 
-import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
-import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
+import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IPostTacticRegistry;
@@ -45,7 +44,7 @@ public class ProvingMode implements IProvingMode {
 	}
 
 	private ITactic composeTactics(ITactic ... list) {
-		return repeat(composeOnAllPending(list));
+		return loopOnAllPending(list);
 	}
 
 	public void setPostTactics(String ... tacticIDs) {

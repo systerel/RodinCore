@@ -1,7 +1,7 @@
 package org.eventb.core.seqprover.eventbExtensions;
 
 import static org.eventb.core.seqprover.tactics.BasicTactics.compose;
-import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
+import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.onAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
 
@@ -834,7 +834,8 @@ public class Tactics {
 	 */
 	@Deprecated
 	public static ITactic postProcessExpert() {
-		return repeat(composeOnAllPending(
+		return loopOnAllPending(
+				new AutoTactics.ClarifyGoalTac(),
 				new AutoRewriteTac(),
 				// autoRewriteRules() already incorporates what conjD_auto() does
 				// conjD_auto(),
@@ -842,9 +843,8 @@ public class Tactics {
 				eqE_auto(),
 				// impE_auto(),
 				new AutoImpFTac(),
-				new AutoExFTac(),
-				new NormTac()
-				));
+				new AutoExFTac()
+				);
 	}
 
 	public static ITactic afterLasoo(final ITactic tactic) {

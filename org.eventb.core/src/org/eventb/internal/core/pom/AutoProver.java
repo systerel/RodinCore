@@ -144,7 +144,7 @@ public class AutoProver {
 		final int MLforces = 
 			B4freeCore.ML_FORCE_0 |
 			B4freeCore.ML_FORCE_1;
-		return BasicTactics.composeOnAllPending(
+		return BasicTactics.loopOnAllPending(
 				// Tactics.lasoo(),
 				// Tactics.norm(),
 				Tactics.postProcessExpert(),

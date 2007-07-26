@@ -1,7 +1,7 @@
 package org.eventb.core.seqprover.eventbExtensions;
 
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
-import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
+import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -179,10 +179,10 @@ public class AutoTactics {
 					new ImpGoalTac(),
 					new ForallGoalTac());
 			ITactic outerLoop =
-				repeat(composeOnAllPending(
+				loopOnAllPending(
 						new TrueGoalTac(),
 						new FalseHypTac(),
-						innerLoop));
+						innerLoop);
 			return outerLoop;
 		}
 	}
