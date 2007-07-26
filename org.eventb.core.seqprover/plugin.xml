@@ -335,6 +335,12 @@
    <extension
          point="org.eventb.core.seqprover.tactics">
       <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$HypTac"
+            description="%hypTacDesc"
+            id="hypTac"
+            name="%hypTacName">
+      </tactic>
+      <tactic
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$NormTac"
             id="normTac"
             name="%normTacName"/>
@@ -378,6 +384,19 @@
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoImpOrHypTac"
             id="autoImpOrHypTac"
             name="%autoImpOrHypTacName"/>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$TrueGoalTac"
+            description="%trueGoalTacDesc"
+            id="trueGoalTac"
+            name="%trueGoalTacName">
+      </tactic>
+      <tactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$FalseHypTac"
+            description="%falseHypTacDesc"
+            id="falseHypTac"
+            name="%falseHypTacName">
+      </tactic>
+
    </extension>
 
 </plugin>

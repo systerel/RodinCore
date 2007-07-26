@@ -1147,6 +1147,9 @@
       <tactic id="org.eventb.core.seqprover.autoHypOrTac"/>
       <tactic id="org.eventb.core.seqprover.autoImpAndHypTac"/>
       <tactic id="org.eventb.core.seqprover.autoImpOrHypTac"/>
+      <tactic id="org.eventb.core.seqprover.hypTac"/>
+      <tactic id="org.eventb.core.seqprover.trueGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.falseHypTac"/>
    </extension>
    <extension
          point="org.eventb.core.autoTactics">
