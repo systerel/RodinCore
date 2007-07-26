@@ -116,6 +116,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplH
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusRightRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanCompRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistLeftRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistRightRewrites;
@@ -3396,6 +3397,55 @@ public class Tactics {
 	public static ITactic cardUpToRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new CardUpTo(),
 				new CardUpTo.Input(hyp, position));
+	}
+
+
+	/**
+	 * Return the list of applicable positions of the tactic "rewrite inclusion
+	 * with set minus on the right" {@link InclusionSetMinusRightRewrites} to a
+	 * predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 */
+	public static List<IPosition> inclusionSetMinusRightRewritesGetPositions(
+			Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(RelationalPredicate predicate) {
+				if (predicate.getTag() == Predicate.SUBSETEQ) {
+					if (Lib.isSetMinus(predicate.getRight()))
+						return true;
+				}
+				return super.select(predicate);
+			}
+
+		});
+	}
+
+
+	/**
+	 * Return the tactic "rewrites inclusion with set minus on the right"
+	 * {@link InclusionSetMinusRightRewrites} which is applicable to a
+	 * hypothesis at a given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "rewrites inclusion with set minus on the right"
+	 * @author htson
+	 */
+	public static ITactic inclusionSetMinusRightRewrites(Predicate hyp,
+			IPosition position) {
+		return BasicTactics.reasonerTac(new InclusionSetMinusRightRewrites(),
+				new InclusionSetMinusRightRewrites.Input(hyp, position));
 	}
 
 }

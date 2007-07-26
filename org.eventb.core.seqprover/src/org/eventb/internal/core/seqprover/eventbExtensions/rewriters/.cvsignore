@@ -11,6 +11,7 @@ DomRanUnionDistRewriterImpl.java
 EqvRewriterImpl.java
 ImpAndRewriterImpl.java
 ImpOrRewriterImpl.java
+InclusionSetMinusRightRewriterImpl.java
 RanCompRewriterImpl.java
 RanDistLeftRewriterImpl.java
 RanDistRightRewriterImpl.java
