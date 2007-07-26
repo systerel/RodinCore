@@ -117,13 +117,8 @@ public class DocTests extends AbstractTranslationTests {
 
 	public void testUseCase2() {
 
-		final ITypeEnvironment te = ff.makeTypeEnvironment();
-		te.addGivenSet("GS");
-		te.addName("S", POW(mGivenSet("GS")));
-		te.addGivenSet("GT");
-		te.addName("T", POW(mGivenSet("GT")));
-		te.addGivenSet("GU");
-		te.add(mFreeIdentifier("r", REL(mGivenSet("GS"), mGivenSet("GU"))));
+		final ITypeEnvironment te = mTypeEnvironment(
+		"r", "GS ↔ GU", "s", "GU ↔ GT");
 
 		doTransTest("r;s ∈ S↔T",
 				"∀x,y·(∃z·x↦z∈r ∧ z↦y∈s) ⇒ x∈S ∧ y∈T",
@@ -132,7 +127,7 @@ public class DocTests extends AbstractTranslationTests {
 	}
 
 	public void testIR34_full() {
-		final ITypeEnvironment te = mTypeEnvironment("r", "S↔T", "s", "S↔T");
+		final ITypeEnvironment te = mTypeEnvironment("r", "S↔T");
 		doTransTest("e↦f ∈ rs",
 				"(e↦f ∈ r ∧ ¬(∃x·e↦x ∈ s)) ∨ e↦f ∈ s",
 				false, 
@@ -140,10 +135,9 @@ public class DocTests extends AbstractTranslationTests {
 	}
 
 	public void testIR34_full2() {
-		final ITypeEnvironment te = mTypeEnvironment("A", "ℙ(S)", "B", "ℙ(T)",
-				"r", "S↔T", "s", "S↔T");
+		final ITypeEnvironment te = mTypeEnvironment("r", "S↔T");
 		doTransTest("rs ∈ A↔B",
-				"∀x,y·(x↦y ∈ r ∧ ¬(∃z·x↦z ∈ s)) ∨ x↦y ∈ s ⇒ x∈A ∧ z∈B",
+				"∀x,y·(x↦y ∈ r ∧ ¬(∃z·x↦z ∈ s)) ∨ x↦y ∈ s ⇒ x ∈ A ∧ y ∈ B",
 				false, 
 				te);
 	}
