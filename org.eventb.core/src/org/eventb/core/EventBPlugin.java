@@ -265,7 +265,7 @@ public class EventBPlugin extends Plugin {
 	 * <p>
 	 * 
 	 * @return the default post-tactic registry
-	 * @deprecated use ITacticContainer IUserSupportManager.getPostTacticContainer()
+	 * @deprecated use {@link #getPostTacticPreference()} 
 	 * @author htson
 	 */
 	@Deprecated
@@ -273,10 +273,24 @@ public class EventBPlugin extends Plugin {
 		return org.eventb.internal.core.pm.PostTacticRegistry.getDefault();
 	}
 
-	public static ITacticPreference getAutoTacticPreference() {
+	/**
+	 * Return the POM-tactic preference
+	 * <p>
+	 * 
+	 * @return the default POM-tactic preference
+	 * @author htson
+	 */
+	public static ITacticPreference getPOMTacticPreference() {
 		return POMTacticPreference.getDefault();
 	}
 
+	/**
+	 * Return the post-tactic preference
+	 * <p>
+	 * 
+	 * @return the default post-tactic preference
+	 * @author htson
+	 */
 	public static ITacticPreference getPostTacticPreference() {
 		return PostTacticPreference.getDefault();
 	}

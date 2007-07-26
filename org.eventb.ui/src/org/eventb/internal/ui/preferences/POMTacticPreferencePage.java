@@ -7,12 +7,12 @@ import org.eventb.core.EventBPlugin;
  * @author htson
  *         <p>
  */
-public class AutoTacticPreferencePage
+public class POMTacticPreferencePage
 	extends TacticPreferencePage
 	implements
 		IWorkbenchPreferencePage {
 
-	public AutoTacticPreferencePage() {
+	public POMTacticPreferencePage() {
 		super("Preferences for the Automatic Tactic",
 				PreferenceConstants.P_AUTOTACTIC_ENABLE, "&Enable auto-tactic for proving",
 				PreferenceConstants.P_AUTOTACTICS,"&Tactics are run as auto-tactics");
@@ -20,7 +20,7 @@ public class AutoTacticPreferencePage
 
 	@Override
 	protected void setTacticPreference() {
-		tacticPreference = EventBPlugin.getAutoTacticPreference();
+		tacticPreference = EventBPlugin.getPOMTacticPreference();
 	}
 
 }

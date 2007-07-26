@@ -40,7 +40,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// Default value for auto-tactic registry			
 		List<ITacticDescriptor> defaultAutoTacticDescriptors = EventBPlugin
-				.getAutoTacticPreference().getDefaultDescriptors();
+				.getPOMTacticPreference().getDefaultDescriptors();
 		String[] autoTacticIDs = new String[defaultAutoTacticDescriptors.size()];
 		i = 0;
 		for (ITacticDescriptor tacticDesc : defaultAutoTacticDescriptors) {

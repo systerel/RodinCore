@@ -1315,7 +1315,7 @@
             name="%preferencePage.postTacticPage.name"/>
       <page
             category="org.eventb.ui.preferences.seqProver"
-            class="org.eventb.internal.ui.preferences.AutoTacticPreferencePage"
+            class="org.eventb.internal.ui.preferences.POMTacticPreferencePage"
             id="org.eventb.ui.preferences.autoTactic"
             name="%preferencePage.autoTacticPage.name"/>
    </extension>

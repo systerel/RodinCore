@@ -16,7 +16,7 @@ public class AutoProver extends DefaultTacticProvider {
 	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		return EventBPlugin.getAutoTacticPreference()
+		return EventBPlugin.getPOMTacticPreference()
 				.getSelectedComposedTactic();
 	}
 
