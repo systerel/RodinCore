@@ -13,6 +13,10 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ITacticRegistry;
+import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.tacticPreference.ITacticPreference;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
@@ -113,6 +117,36 @@ public class ProverUIUtils {
 			buffer.append(item);
 		}
 		return buffer.toString();
+	}
+
+	public static ArrayList<ITacticDescriptor> stringsToTacticDescriptors(
+			ITacticPreference tacticPreference, String[] tacticIDs) {
+		ArrayList<ITacticDescriptor> result = new ArrayList<ITacticDescriptor>();
+		for (String tacticID : tacticIDs) {
+			ITacticRegistry tacticRegistry = SequentProver.getTacticRegistry();
+			if (!tacticRegistry.isRegistered(tacticID)) {
+				if (UIUtils.DEBUG) {
+					System.out.println("Tactic " + tacticID
+							+ " is not registered.");
+				}
+				continue;
+			}
+			
+			ITacticDescriptor tacticDescriptor = tacticRegistry
+					.getTacticDescriptor(tacticID);
+			if (!tacticPreference.isDeclared(tacticDescriptor)) {
+				if (UIUtils.DEBUG) {
+					System.out
+							.println("Tactic "
+									+ tacticID
+									+ " is not declared for using within this tactic container.");
+				}
+			}
+			else {
+				result.add(tacticDescriptor);
+			}
+		}
+		return result;
 	}
 
 }

@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.ast.Predicate;
@@ -16,6 +17,7 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.pm.UserSupport;
 import org.eventb.internal.core.pom.AutoProver;
@@ -32,7 +34,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	protected void setUp() throws Exception {
 		super.setUp();
 		// Turn on beginner mode
-		manager.getPostTacticContainer().setEnable(false);
+		EventBPlugin.getPostTacticPreference().setEnabled(false);
 	}
 
 	public void testSetInput() throws CoreException {
@@ -303,11 +305,13 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport.setInput(psFile, monitor);
 
 		userSupport.applyTactic(Tactics.lemma("1 = 1"), true, monitor);
-		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor);
-		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor);
+		ITactic defaultPostTactic = EventBPlugin.getPostTacticPreference()
+				.getDefaultComposedTactic();
+		userSupport.applyTactic(defaultPostTactic, true, monitor);
+		userSupport.applyTactic(defaultPostTactic, true, monitor);
 		userSupport.applyTactic(Tactics.lemma("2 = 2"), true, monitor);
-		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor);
-		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor);
+		userSupport.applyTactic(defaultPostTactic, true, monitor);
+		userSupport.applyTactic(defaultPostTactic, true, monitor);
 		IProofState currentPO = userSupport.getCurrentPO();
 		
 		IProverSequent sequent = currentPO.getCurrentNode().getSequent();
@@ -462,7 +466,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 				"[*] x.bps [INFORMATION]\n"
 						+ "Not a new proof node (priority 1)");
 
-		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor);
+		userSupport.applyTactic(EventBPlugin.getPostTacticPreference()
+				.getDefaultComposedTactic(), true, monitor);
 		clearDeltas();
 		userSupport.selectNode(node1);
 

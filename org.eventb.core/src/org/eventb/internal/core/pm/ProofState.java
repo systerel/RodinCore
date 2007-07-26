@@ -22,11 +22,9 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IPSWrapper;
-import org.eventb.core.ITacticContainer;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupportInformation;
-import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofSkeleton;
@@ -38,6 +36,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.tacticPreference.ITacticPreference;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
 import org.eventb.internal.core.pom.POLoader;
@@ -139,12 +138,11 @@ public class ProofState implements IProofState {
 				
 				if (!pt.getRoot().isClosed()) {
 					// Run Post tactic at the root of the tree
-					IUserSupportManager usManager = EventBPlugin.getDefault()
-							.getUserSupportManager();
-					ITacticContainer postTacticContainer = usManager
-							.getPostTacticContainer();
-					if (postTacticContainer.isEnable()) {
-						ITactic postTactic = postTacticContainer.getTactic();
+					ITacticPreference postTacticPreference = EventBPlugin
+							.getPostTacticPreference();
+					if (postTacticPreference.isEnabled()) {
+						ITactic postTactic = postTacticPreference
+								.getSelectedComposedTactic();
 						postTactic.apply(pt.getRoot(),
 								new ProofMonitor(monitor));
 					}
@@ -605,11 +603,10 @@ public class ProofState implements IProofState {
 		if (info == null) {
 			info = "Tactic applied successfully";
 			if (applyPostTactic) {
-				IUserSupportManager usManager = EventBPlugin.getDefault()
-						.getUserSupportManager();
-				ITacticContainer postTacticContainer = usManager.getPostTacticContainer();
-				if (postTacticContainer.isEnable()) {
-					ITactic postTactic = postTacticContainer.getTactic();
+				ITacticPreference postTacticPreference = EventBPlugin
+						.getPostTacticPreference();
+				if (postTacticPreference.isEnabled()) {
+					ITactic postTactic = postTacticPreference.getSelectedComposedTactic();
 					postTactic.apply(node, pm);
 				}
 			}

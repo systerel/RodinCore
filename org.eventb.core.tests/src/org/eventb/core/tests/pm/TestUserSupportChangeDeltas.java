@@ -1,6 +1,7 @@
 package org.eventb.core.tests.pm;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPRFile;
@@ -56,7 +57,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 				"f(x)∈ℕ", "x∈dom(f)");
 
 		// Turn on beginner mode
-		manager.getPostTacticContainer().setEnable(false);
+		EventBPlugin.getPostTacticPreference().setEnabled(false);
 
 		userSupport = new UserSupport();
 	}

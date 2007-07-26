@@ -832,6 +832,7 @@ public class Tactics {
 	 * @return
 	 * 
 	 * @deprecated Use the post tactic constructed from user preferences instead.
+	 * 		{@link EventBPlugin#getPostTacticPreference()}
 	 */
 	@Deprecated
 	public static ITactic postProcessExpert() {

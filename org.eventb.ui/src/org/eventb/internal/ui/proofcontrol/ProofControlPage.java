@@ -70,18 +70,17 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.ITacticContainer;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportInformation;
-import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.tacticPreference.ITacticPreference;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBMath;
@@ -785,11 +784,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		boolean b = store
 						.getBoolean(PreferenceConstants.P_POSTTACTIC_ENABLE);
 		expertMode.setChecked(!b);
-		IUserSupportManager usManager = EventBPlugin.getDefault()
-				.getUserSupportManager();
-		ITacticContainer postTacticContainer = usManager
-				.getPostTacticContainer();
-		postTacticContainer.setEnable(b);
+
+		ITacticPreference postTacticPreference = EventBPlugin
+				.getPostTacticPreference();
+		postTacticPreference.setEnabled(b);
 		expertMode.setToolTipText("Disable post-tactic");
 
 		expertMode.setImageDescriptor(EventBImage
@@ -960,19 +958,15 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				boolean b = ((String) newValue)
 										.compareToIgnoreCase("true") == 0;
 				expertMode.setChecked(!b);
-				IUserSupportManager usManager = EventBPlugin.getDefault()
-				.getUserSupportManager();
-				ITacticContainer postTacticContainer = usManager
-						.getPostTacticContainer();
-				postTacticContainer.setEnable(b);
+				ITacticPreference postTacticPreference = EventBPlugin
+						.getPostTacticPreference();
+				postTacticPreference.setEnabled(b);
 			} else {
 				Boolean b = (Boolean) newValue;
 				expertMode.setChecked(!b);
-				IUserSupportManager usManager = EventBPlugin.getDefault()
-					.getUserSupportManager();
-				ITacticContainer postTacticContainer = usManager
-						.getPostTacticContainer();
-				postTacticContainer.setEnable(b);
+				ITacticPreference postTacticPreference = EventBPlugin
+						.getPostTacticPreference();
+				postTacticPreference.setEnabled(b);
 			}
 		}
 

@@ -22,9 +22,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.ITacticContainer;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.seqprover.tacticPreference.ITacticPreference;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
@@ -155,16 +155,23 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		// Initialise the post-tactics
 		String s = store.getString(PreferenceConstants.P_POSTTACTICS);
 		String[] postTacticIDs = ProverUIUtils.parseString(s);
-		ITacticContainer postTacticContainer = EventBPlugin.getDefault()
-				.getUserSupportManager().getPostTacticContainer();
-		postTacticContainer.setTactics(postTacticIDs);
+		
+		ITacticPreference postTacticPreference = EventBPlugin
+				.getPostTacticPreference();
+		postTacticPreference
+				.setSelectedDescriptors(ProverUIUtils
+						.stringsToTacticDescriptors(postTacticPreference,
+								postTacticIDs));
 
 		// Initialise the auto-tactics
 		s = store.getString(PreferenceConstants.P_AUTOTACTICS);
 		String[] autoTacticIDs = ProverUIUtils.parseString(s);
-		ITacticContainer autoTacticContainer = EventBPlugin.getDefault()
-				.getUserSupportManager().getAutoTacticContainer();
-		autoTacticContainer.setTactics(autoTacticIDs);
+		ITacticPreference autoTacticPreference = EventBPlugin
+				.getAutoTacticPreference();
+		autoTacticPreference
+				.setSelectedDescriptors(ProverUIUtils
+						.stringsToTacticDescriptors(autoTacticPreference,
+								autoTacticIDs));
 	}
 
 	/**

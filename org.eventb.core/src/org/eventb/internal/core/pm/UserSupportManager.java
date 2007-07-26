@@ -15,12 +15,9 @@ package org.eventb.internal.core.pm;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eventb.core.ITacticContainer;
-import org.eventb.core.ITacticContainerRegistry;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
-import org.eventb.internal.core.pom.AutoTacticContainerRegistry;
 
 public class UserSupportManager implements IUserSupportManager {
 
@@ -28,10 +25,6 @@ public class UserSupportManager implements IUserSupportManager {
 
 	@Deprecated
 	private static org.eventb.core.pm.IProvingMode provingMode;
-
-	private static ITacticContainer postTacticContainer;
-	
-	private static ITacticContainer autoTacticContainer;
 
 	private static IUserSupportManager instance;
 	
@@ -83,30 +76,6 @@ public class UserSupportManager implements IUserSupportManager {
 		return provingMode;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupportManager#getPostTacticContainer()
-	 */
-	public ITacticContainer getPostTacticContainer() {
-		if (postTacticContainer == null) {
-			ITacticContainerRegistry registry = PostTacticContainerRegistry
-					.getDefault();
-			postTacticContainer = new TacticContainer(registry);
-		}
-		return postTacticContainer;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupportManager#getAutoTacticContainer()
-	 */
-	public ITacticContainer getAutoTacticContainer() {
-		if (autoTacticContainer == null) {
-			ITacticContainerRegistry registry = AutoTacticContainerRegistry
-					.getDefault();
-			autoTacticContainer = new TacticContainer(registry);
-		}
-		return autoTacticContainer;
-	}
-	
 	public DeltaProcessor getDeltaProcessor() {
 		return deltaProcessor;
 	}

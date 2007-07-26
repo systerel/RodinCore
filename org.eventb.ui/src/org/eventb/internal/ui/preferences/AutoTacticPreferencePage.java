@@ -8,7 +8,7 @@ import org.eventb.core.EventBPlugin;
  *         <p>
  */
 public class AutoTacticPreferencePage
-	extends TacticContainerPreferencePage
+	extends TacticPreferencePage
 	implements
 		IWorkbenchPreferencePage {
 
@@ -19,9 +19,8 @@ public class AutoTacticPreferencePage
 	}
 
 	@Override
-	protected void setTacticContainer() {
-		tacticContainer = EventBPlugin.getDefault().getUserSupportManager()
-				.getAutoTacticContainer();
+	protected void setTacticPreference() {
+		tacticPreference = EventBPlugin.getAutoTacticPreference();
 	}
 
 }

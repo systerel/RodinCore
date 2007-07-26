@@ -1,12 +1,16 @@
 package org.eventb.internal.ui.preferences;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eventb.core.ITacticContainer;
+import org.eventb.core.seqprover.ITacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.tacticPreference.ITacticPreference;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBUIPlugin;
@@ -15,7 +19,7 @@ import org.eventb.ui.EventBUIPlugin;
  * @author htson
  *         <p>
  */
-public abstract class TacticContainerPreferencePage
+public abstract class TacticPreferencePage
 	extends PreferencePage
 	implements
 		IWorkbenchPreferencePage {
@@ -30,9 +34,9 @@ public abstract class TacticContainerPreferencePage
 	
 	String tacticsFieldDescription;
 
-	ITacticContainer tacticContainer = null;
+	ITacticPreference tacticPreference = null;
 	
-	public TacticContainerPreferencePage(String description,
+	public TacticPreferencePage(String description,
 			String enableFieldName, String enableFieldDescription,
 			String tacticsFieldName, String tacticsFieldDescription) {
 		super();
@@ -40,12 +44,12 @@ public abstract class TacticContainerPreferencePage
 		this.enableFieldDescription = enableFieldDescription;
 		this.tacticsFieldName = tacticsFieldName;
 		this.tacticsFieldDescription = tacticsFieldDescription;
-		setTacticContainer();
+		setTacticPreference();
 		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
 		setDescription(description);
 	}
 
-	protected abstract void setTacticContainer();
+	protected abstract void setTacticPreference();
 
 	@Override
 	public void createFieldEditors() {
@@ -70,21 +74,28 @@ public abstract class TacticContainerPreferencePage
 				String [] tacticIDs = ProverUIUtils
 						.parseString(stringList);
 				ArrayList<Object> result = new ArrayList<Object>();
-				for (String string : tacticIDs) {
-					if (!SequentProver.getTacticRegistry().isRegistered(string)) {
+				for (String tacticID : tacticIDs) {
+					ITacticRegistry tacticRegistry = SequentProver.getTacticRegistry();
+					if (!tacticRegistry.isRegistered(tacticID)) {
 						if (UIUtils.DEBUG) {
-							System.out.println("Tactic " + string
+							System.out.println("Tactic " + tacticID
 									+ " is not registered.");
 						}
-					} else if (!tacticContainer.getTacticContainerRegistry()
-							.isDeclared(string)) {
+						continue;
+					}
+					
+					ITacticDescriptor tacticDescriptor = tacticRegistry
+							.getTacticDescriptor(tacticID);
+					if (!tacticPreference.isDeclared(tacticDescriptor)) {
 						if (UIUtils.DEBUG) {
-							System.out.println("Tactic " + string
-									+ " is not declared for using within this tactic container.");
+							System.out
+									.println("Tactic "
+											+ tacticID
+											+ " is not declared for using within this tactic preference.");
 						}
 					}
 					else {
-						result.add(string);
+						result.add(tacticDescriptor);
 					}
 				}
 				return result;
@@ -92,14 +103,17 @@ public abstract class TacticContainerPreferencePage
 
 			@Override
 			protected String getLabel(Object object) {
-				return SequentProver.getTacticRegistry().getTacticName(
-						(String) object);
+				return ((ITacticDescriptor) object).getTacticName();
 			}
 
 			@Override
-			protected String[] getDeclaredObjects() {
-				return tacticContainer.getTacticContainerRegistry()
-						.getTacticIDs();
+			protected Collection<Object> getDeclaredObjects() {
+				Collection<ITacticDescriptor> declaredDescriptors = tacticPreference
+						.getDeclaredDescriptors();
+				Collection<Object> result = new ArrayList<Object>(
+						declaredDescriptors.size());
+				result.addAll(declaredDescriptors);
+				return result;
 			}
 
 		};
@@ -120,14 +134,13 @@ public abstract class TacticContainerPreferencePage
 
 	private void setTactics() {
 		ArrayList<Object> objects = tacticsEditor.getSelectedObjects();
-		String[] tacticIDs = new String[objects.size()];
-		int i = 0;
+		List<ITacticDescriptor> tacticDescs = new ArrayList<ITacticDescriptor>(
+				objects.size());
 		for (Object object : objects) {
-			tacticIDs[i] = (String) object;
-			++i;
+			tacticDescs.add((ITacticDescriptor) object);
 		}
 		
-		tacticContainer.setTactics(tacticIDs);
+		tacticPreference.setSelectedDescriptors(tacticDescs);
 	}
 
 }

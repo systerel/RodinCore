@@ -1,6 +1,7 @@
 package org.eventb.internal.ui.preferences;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.FieldEditor;
@@ -355,7 +356,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
 			left.add(getLabel(object));
 		}
 
-		String [] declaredElements = getDeclaredObjects();
+		Collection<Object> declaredElements = getDeclaredObjects();
 		rightElements.clear();
 		right.removeAll();
 		for (Object object : declaredElements) {
@@ -365,8 +366,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
 			}
 		}		
 	}
-	protected abstract String [] getDeclaredObjects();
-	
+	protected abstract Collection<Object> getDeclaredObjects();
 	
 	@Override
 	protected void doLoadDefault() {

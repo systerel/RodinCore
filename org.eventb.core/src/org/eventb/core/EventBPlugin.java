@@ -12,11 +12,14 @@ import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
 import org.eventb.core.sc.SCModule;
+import org.eventb.core.seqprover.tacticPreference.ITacticPreference;
+import org.eventb.internal.core.pm.PostTacticPreference;
 import org.eventb.internal.core.pm.UserSupportManager;
 import org.eventb.internal.core.pm.UserSupportUtils;
 import org.eventb.internal.core.pog.ProofObligationGenerator;
 import org.eventb.internal.core.pog.modules.UtilityModule;
 import org.eventb.internal.core.pom.AutoPOM;
+import org.eventb.internal.core.pom.POMTacticPreference;
 import org.eventb.internal.core.pom.POLoader;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.osgi.framework.BundleContext;
@@ -269,4 +272,13 @@ public class EventBPlugin extends Plugin {
 	public org.eventb.core.pm.IPostTacticRegistry getPostTacticRegistry() {
 		return org.eventb.internal.core.pm.PostTacticRegistry.getDefault();
 	}
+
+	public static ITacticPreference getAutoTacticPreference() {
+		return POMTacticPreference.getDefault();
+	}
+
+	public static ITacticPreference getPostTacticPreference() {
+		return PostTacticPreference.getDefault();
+	}
+
 }

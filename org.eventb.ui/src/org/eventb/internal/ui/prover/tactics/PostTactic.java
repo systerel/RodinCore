@@ -16,8 +16,8 @@ public class PostTactic extends DefaultTacticProvider {
 	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		ITactic postTactic = EventBPlugin.getDefault().getUserSupportManager()
-								.getPostTacticContainer().getTactic();
+		ITactic postTactic = EventBPlugin.getPostTacticPreference()
+				.getSelectedComposedTactic();
 		return postTactic;
 	}
 

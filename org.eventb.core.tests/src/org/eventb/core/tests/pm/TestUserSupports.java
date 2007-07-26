@@ -11,12 +11,14 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.pm.UserSupport;
 import org.eventb.internal.core.pom.AutoProver;
@@ -43,7 +45,7 @@ public class TestUserSupports extends TestPM {
 	protected void setUp() throws Exception {
 		super.setUp();
 		// Turn on beginner mode
-		manager.getPostTacticContainer().setEnable(false);
+		EventBPlugin.getPostTacticPreference().setEnabled(false);
 	}
 
 	public void testSetInput() throws CoreException {
@@ -442,11 +444,12 @@ public class TestUserSupports extends TestPM {
 		userSupport.setInput(psFile, monitor);
 
 		userSupport.applyTactic(Tactics.lemma("1 = 1"), true, monitor);
-		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor); // Discharge true goal
-		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor); // Discharge 1 = 1
+		ITactic defaultPostTactic = EventBPlugin.getPostTacticPreference().getDefaultComposedTactic();
+		userSupport.applyTactic(defaultPostTactic, true, monitor); // Discharge true goal
+		userSupport.applyTactic(defaultPostTactic, true, monitor); // Discharge 1 = 1
 		userSupport.applyTactic(Tactics.lemma("2 = 2"), true, monitor);
-		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor); // Discharge true goal
-		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor); // Discharge 2 = 2
+		userSupport.applyTactic(defaultPostTactic, true, monitor); // Discharge true goal
+		userSupport.applyTactic(defaultPostTactic, true, monitor); // Discharge 2 = 2
 		IProofState currentPO = userSupport.getCurrentPO();
 		Iterable<Predicate> selectedHyps = currentPO.getCurrentNode().getSequent()
 				.selectedHypIterable();
@@ -588,7 +591,8 @@ public class TestUserSupports extends TestPM {
 		assertEquals("Select node 2 again has no effect ", node2, currentPO
 				.getCurrentNode());
 
-		userSupport.applyTactic(Tactics.postProcessExpert(), true, monitor);
+		userSupport.applyTactic(EventBPlugin.getPostTacticPreference()
+				.getDefaultComposedTactic(), true, monitor);
 
 		userSupport.selectNode(node1);
 

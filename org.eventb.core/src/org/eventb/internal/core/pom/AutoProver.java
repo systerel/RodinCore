@@ -10,6 +10,7 @@ package org.eventb.internal.core.pom;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
@@ -147,7 +148,7 @@ public class AutoProver {
 		return BasicTactics.loopOnAllPending(
 				// Tactics.lasoo(),
 				// Tactics.norm(),
-				Tactics.postProcessExpert(),
+				EventBPlugin.getPostTacticPreference().getDefaultComposedTactic(),
 				new Tactics.IsFunGoalTac(),
 				B4freeCore.externalML(MLforces, timeOutDelay) // ML
 //				B4freeCore.externalPP(true, timeOutDelay), // P0
