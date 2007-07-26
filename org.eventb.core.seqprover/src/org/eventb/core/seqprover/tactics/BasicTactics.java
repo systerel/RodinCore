@@ -25,7 +25,7 @@ import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
  * </p>
  * 
  * <p>
- * These tactics are independant of Event-B extensions.
+ * These tactics are independent of Event-B extensions.
  * </p>
  * 
  * @author Farhad Mehta
@@ -196,6 +196,22 @@ public class BasicTactics {
 			}
 		};
 	}
+	
+	//************************************************************************
+	// Note : 	repeat(onAllPending(t)) is not the same as
+	// 			onAllPending(repeat(t))
+	//
+	//	The first version applies t to leave nodes only.
+	//	The second one may apply t to an internal node in case it adds some 
+	//	nodes the first time around.
+	//
+	// Similarly : 	compose(onAllPending(t)) is not the same as
+	//				onAllPending(compose(t))
+	//
+	// In general, tactics that need to be applied only to open nodes should be
+	// wrapped by a onAllPending.
+	//*************************************************************************
+	
 
 	/**
 	 * Composes a sequence of tactics.
@@ -233,7 +249,7 @@ public class BasicTactics {
 	 * Composes a sequence of tactics that are intended to be applied on open proof tree nodes.
 	 * 
 	 * <p>
-	 * The behavoiur of the constructed tactic is identical to <code>compose(onAllPending(t1)... onAllPending(tn))</code>.
+	 * The behaviour of the constructed tactic is identical to <code>compose(onAllPending(t1)... onAllPending(tn))</code>.
 	 * </p>
 	 * 
 	 * <p>
@@ -264,9 +280,36 @@ public class BasicTactics {
 			}
 		};
 	}
+
+	/**
+	 * Loops a sequence of tactics that are intended to be applied on open proof tree nodes.
+	 * 
+	 * <p>
+	 * The behaviour of the constructed tactic is identical to <code>repeat(onAllPending(composeUntilSuccess(t1..tn)))</code>
+	 * but more efficient.
+	 * </p>
+	 * 
+	 * <p>
+	 * Applying the resulting tactic applies ALL given tactics on ALL pending proof tree nodes, in the given order,
+	 * irrespective of whether they succeed or fail.
+	 * </p>
+	 * <p>
+	 * The resulting tactic application succeeds iff at least one tactic application succeeded.
+	 * </p>
+	 * 
+	 * @param tactics
+	 * 			Array of tactics to compose
+	 * @return
+	 * 			The resulting tactic.
+	 */
+	public static ITactic loopOnAllPending(final ITactic ... tactics){
+		// TODO : implement more efficiently
+		return repeat(onAllPending(composeUntilSuccess(tactics)));
+	}
+
 	
 	/**
-	 * Strict composition of a sequence of tactics.
+	 * Composition of a sequence of tactics till failure
 	 * 
 	 * <p>
 	 * Applying the resulting tactic applies the given tactics in their given order,
@@ -281,7 +324,7 @@ public class BasicTactics {
 	 * @return
 	 * 			The resulting tactic.
 	 */
-	public static ITactic composeStrict(final ITactic ... tactics){
+	public static ITactic composeUntilFailure(final ITactic ... tactics){
 		return new ITactic(){
 	
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
@@ -293,7 +336,36 @@ public class BasicTactics {
 			}
 		};
 	}
+
+	/**
+	 * Composition of a sequence of tactics till success.
+	 * 
+	 * <p>
+	 * Applying the resulting tactic applies the given tactics in their given order,
+	 * until a tactic succeeds.
+	 * </p>
+	 * <p>
+	 * The resulting tactic fails iff all tactics failed.
+	 * </p>
+	 * 
+	 * @param tactics
+	 * 			Array of tactics to compose
+	 * @return
+	 * 			The resulting tactic.
+	 */
+	public static ITactic composeUntilSuccess(final ITactic ... tactics){
+		return new ITactic(){
 	
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
+				for (ITactic tactic : tactics){
+					Object tacticApp = tactic.apply(pt, pm);
+					if (tacticApp == null) return null; 
+				}
+				return "All composed tactics failed";
+			}
+		};
+	}
+
 
 	/**
 	 * Proof Reconstruction Tactics
