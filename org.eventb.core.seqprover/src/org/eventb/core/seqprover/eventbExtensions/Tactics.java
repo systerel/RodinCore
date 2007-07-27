@@ -59,7 +59,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AbstrExpr;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllmpD;
-import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
 import org.eventb.internal.core.seqprover.eventbExtensions.CardUpTo;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.ConjF;
@@ -93,10 +92,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunSetMinusImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunSingletonImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
-import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
-import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
 import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
@@ -761,6 +758,7 @@ public class Tactics {
 	 * This tactic tries to find a contradiction for a negated hyp in the selected hyps.
 	 * 
 	 * @return the tactic
+	 * @deprecated
 	 */
 	public static ITactic falsifyHyp_auto(){
 		return new ITactic(){
@@ -809,9 +807,9 @@ public class Tactics {
 //				new TypePred(), new TypePred.Input(null)));
 //	}
 
-	public static ITactic autoRewriteRules() {
-		return BasicTactics.reasonerTac(new AutoRewrites(),EMPTY_INPUT);
-	}
+//	public static ITactic autoRewriteRules() {
+//		return BasicTactics.reasonerTac(new AutoRewrites(),EMPTY_INPUT);
+//	}
 
 //	public static ITactic typeRewriteRules() {
 //		return BasicTactics.reasonerTac(new TypeRewrites(),new EmptyInput());
@@ -838,14 +836,14 @@ public class Tactics {
 	public static ITactic postProcessExpert() {
 		return loopOnAllPending(
 				new AutoTactics.ClarifyGoalTac(),
-				new AutoRewriteTac(),
+				new AutoTactics.AutoRewriteTac(),
 				// autoRewriteRules() already incorporates what conjD_auto() does
 				// conjD_auto(),
 				falsifyHyp_auto(),
 				eqE_auto(),
 				// impE_auto(),
-				new AutoImpFTac(),
-				new AutoExFTac()
+				new AutoTactics.AutoImpFTac(),
+				new AutoTactics.AutoExFTac()
 				);
 	}
 
@@ -1223,66 +1221,6 @@ public class Tactics {
 		
 	}
 	
-	public static class AutoRewriteTac implements ITactic{
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return autoRewriteRules().apply(ptNode, pm);
-		}
-		
-	}
-	
-//	public static class TypeRewriteTac implements ITactic{
-//
-//		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-//			return typeRewriteRules().apply(ptNode, pm);
-//		}
-//		
-//	}
-	
-	public static class AutoImpFTac implements ITactic{
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return BasicTactics.reasonerTac(new AutoImpF(), EMPTY_INPUT).apply(ptNode, pm);
-		}	
-	}
-	
-	public static class AutoExFTac implements ITactic{
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-				if (exF_applicable(shyp)){
-					return exF(shyp).apply(ptNode, pm);
-				}
-			}
-			return "Selected hyps contain no existential hyps";
-		}
-		
-	}
-
-	public static class AutoFalsifyHypTac implements ITactic{
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return falsifyHyp_auto().apply(ptNode, pm);
-		}
-		
-	}
-
-	public static class AutoEqETac implements ITactic{
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return eqE_auto().apply(ptNode, pm);
-		}
-		
-	}
-
-	public static class AutoNegEnumTac implements ITactic {
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return negEnum_auto().apply(ptNode, pm);
-		}
-
-	}
-
 	public static ITactic negEnum_auto() {
 		return new ITactic() {
 
@@ -1321,23 +1259,6 @@ public class Tactics {
 				new Predicate[] { shyp, hyp }));
 	}
 	
-	public static class IsFunGoalTac implements ITactic{
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return BasicTactics.reasonerTac(new IsFunGoal(), EMPTY_INPUT).apply(ptNode, pm);
-		}	
-	}
-
-	public static class HypOrTac implements ITactic {
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return BasicTactics.reasonerTac(new HypOr(), EMPTY_INPUT)
-				.apply(ptNode, pm);
-		}
-
-	}
-
-
 	/**
 	 * Return the tactic "implication with conjunction rewrites"
 	 * {@link ImpAndRewrites} which is applicable to a hypothesis at a
@@ -2696,22 +2617,6 @@ public class Tactics {
 
 
 	/**
-	 * The class for "Automatic implication hypothesis with conjunction
-	 * right" {@link ImpAndRewrites}.
-	 * <p>
-	 * 
-	 * @author htson
-	 */
-	public static class AutoImpAndHypTac implements ITactic {
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return autoImpAndRight().apply(ptNode, pm);
-		}
-
-	}
-
-
-	/**
 	 * Return the tactic "Automatic implication hypothesis with disjunctive
 	 * left" {@link ImpOrRewrites}.
 	 * <p>
@@ -2741,21 +2646,6 @@ public class Tactics {
 		};
 	}
 
-
-	/**
-	 * The class for "Automatic implication hypothesis with disjunctive
-	 * left" {@link ImpOrRewrites}.
-	 * <p>
-	 * 
-	 * @author htson
-	 */
-	public static class AutoImpOrHypTac implements ITactic {
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return autoImpOrRight().apply(ptNode, pm);
-		}
-
-	}
 
 	/**
 	 * The class for "Failure tactic" that always fails.

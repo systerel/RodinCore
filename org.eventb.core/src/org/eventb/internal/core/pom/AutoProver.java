@@ -20,7 +20,7 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
@@ -149,7 +149,7 @@ public class AutoProver {
 				// Tactics.lasoo(),
 				// Tactics.norm(),
 				EventBPlugin.getPostTacticPreference().getDefaultComposedTactic(),
-				new Tactics.IsFunGoalTac(),
+				new AutoTactics.FunGoalTac(),
 				B4freeCore.externalML(MLforces, timeOutDelay) // ML
 //				B4freeCore.externalPP(true, timeOutDelay), // P0
 //				B4freeCore.externalP1(timeOutDelay) // P1
