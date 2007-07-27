@@ -202,8 +202,10 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 			proofDeps.getIntroducedFreeIdents().addAll(subProofDeps.getIntroducedFreeIdents());
 			
 			// update depGoal
-			if (antecedent.getGoal() == null){
-				// Check for non-equal instantiations
+			// in case the antecedent is the variable goal, and the proof above it has
+			// an instantiation for it, make it the new depGoal
+			if (antecedent.getGoal() == null && subProofDeps.getGoal() != null){
+				// Check for non-equal instantiations of the goal
 				assert (depGoal == null || depGoal.equals(subProofDeps.getGoal()));
 				depGoal = subProofDeps.getGoal();
 			}
