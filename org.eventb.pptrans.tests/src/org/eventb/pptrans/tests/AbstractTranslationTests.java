@@ -51,6 +51,7 @@ public abstract class AbstractTranslationTests extends TestCase {
 		ITypeCheckResult tcResult = pred.typeCheck(te);
 		assertTrue(string + " is not typed. Problems: " + tcResult.getProblems(),
 				pred.isTypeChecked());
+		te.addAll(tcResult.getInferredEnvironment());
 		return pred;
 	}
 
