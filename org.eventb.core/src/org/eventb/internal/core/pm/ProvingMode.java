@@ -6,7 +6,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IPostTacticRegistry;
 import org.eventb.core.pm.IProvingMode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.ITacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
 
 @Deprecated
@@ -48,7 +48,7 @@ public class ProvingMode implements IProvingMode {
 	}
 
 	public void setPostTactics(String ... tacticIDs) {
-		ITacticRegistry tacticRegistry = SequentProver.getTacticRegistry();
+		IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
 		int size = tacticIDs.length;
 		ITactic [] tactics = new ITactic[size];
 		int i = 0;

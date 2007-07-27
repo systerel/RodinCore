@@ -24,7 +24,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.seqprover.tacticPreference.ITacticPreference;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
@@ -156,7 +156,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		String s = store.getString(PreferenceConstants.P_POSTTACTICS);
 		String[] postTacticIDs = ProverUIUtils.parseString(s);
 		
-		ITacticPreference postTacticPreference = EventBPlugin
+		IAutoTacticPreference postTacticPreference = EventBPlugin
 				.getPostTacticPreference();
 		postTacticPreference
 				.setSelectedDescriptors(ProverUIUtils
@@ -166,7 +166,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		// Initialise the auto-tactics
 		s = store.getString(PreferenceConstants.P_AUTOTACTICS);
 		String[] autoTacticIDs = ProverUIUtils.parseString(s);
-		ITacticPreference autoTacticPreference = EventBPlugin
+		IAutoTacticPreference autoTacticPreference = EventBPlugin
 				.getPOMTacticPreference();
 		autoTacticPreference
 				.setSelectedDescriptors(ProverUIUtils

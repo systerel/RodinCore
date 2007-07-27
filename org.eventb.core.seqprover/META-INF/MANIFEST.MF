@@ -11,10 +11,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eventb.core.ast;visibility:=reexport
 Eclipse-LazyStart: true
 Export-Package: org.eventb.core.seqprover,
+ org.eventb.core.seqprover.autoTacticPreference,
  org.eventb.core.seqprover.eventbExtensions,
  org.eventb.core.seqprover.proofBuilder,
  org.eventb.core.seqprover.reasonerInputs,
- org.eventb.core.seqprover.tacticPreference,
  org.eventb.core.seqprover.tactics,
  org.eventb.core.seqprover.xprover,
  org.eventb.internal.core.seqprover;x-friends:="org.eventb.core.seqprover.tests",

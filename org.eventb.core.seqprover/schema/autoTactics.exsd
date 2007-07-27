@@ -3,17 +3,17 @@
 <schema targetNamespace="org.eventb.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eventb.core" id="tactics" name="%point.tactics"/>
+         <meta.schema plugin="org.eventb.core" id="autoTactics" name="%point.autoTactics"/>
       </appInfo>
       <documentation>
-         This extension point accepts tactic extensions.
+         This extension point accepts auto tactic extensions.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="tactic" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="autoTactic" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -42,13 +42,12 @@
       </complexType>
    </element>
 
-   <element name="tactic">
+   <element name="autoTactic">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the unique identifier for this tactic (simple id token, unique
-for tactics within the extension namespace). The token cannot contain a dot (.) or whitespace.
+                  the unique identifier for this tactic (simple id token, unique for tactics within the extension namespace). The token cannot contain a dot (.) or whitespace. The unique identifier is internally prepended with the id of the plugin that contributes it.
                </documentation>
             </annotation>
          </attribute>
@@ -75,7 +74,7 @@ for tactics within the extension namespace). The token cannot contain a dot (.) 
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  
+                  a description of what this auto tactic does
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>

@@ -35,8 +35,8 @@ import org.eventb.core.seqprover.IProofTreeNodeFilter;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.tacticPreference.ITacticPreference;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
 import org.eventb.internal.core.pom.POLoader;
@@ -138,7 +138,7 @@ public class ProofState implements IProofState {
 				
 				if (!pt.getRoot().isClosed()) {
 					// Run Post tactic at the root of the tree
-					ITacticPreference postTacticPreference = EventBPlugin
+					IAutoTacticPreference postTacticPreference = EventBPlugin
 							.getPostTacticPreference();
 					if (postTacticPreference.isEnabled()) {
 						ITactic postTactic = postTacticPreference
@@ -603,7 +603,7 @@ public class ProofState implements IProofState {
 		if (info == null) {
 			info = "Tactic applied successfully";
 			if (applyPostTactic) {
-				ITacticPreference postTacticPreference = EventBPlugin
+				IAutoTacticPreference postTacticPreference = EventBPlugin
 						.getPostTacticPreference();
 				if (postTacticPreference.isEnabled()) {
 					ITactic postTactic = postTacticPreference.getSelectedComposedTactic();

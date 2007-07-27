@@ -1,9 +1,9 @@
 package org.eventb.internal.core.pm;
 
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.seqprover.tacticPreference.TacticPreference;
+import org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference;
 
-public class PostTacticPreference extends TacticPreference {
+public class PostTacticPreference extends AutoTacticPreference {
 
 	// The identifier of the extension point (value
 	// <code>"org.eventb.core.postTactics"</code>).

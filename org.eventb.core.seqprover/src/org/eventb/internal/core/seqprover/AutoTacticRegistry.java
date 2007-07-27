@@ -8,25 +8,24 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.ITacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
 
 /**
- * Singeleton class implementing the tactic registry.
+ * Singeleton class implementing the auto tactic registry.
  * 
- * Implimentation similar to {@link ReasonerRegistry}.
  * 
- * @see org.eventb.core.seqprover.ITacticRegistry
+ * @see org.eventb.core.seqprover.IAutoTacticRegistry
  * 
  * 
  * @author Farhad Mehta
  */
-public class TacticRegistry implements ITacticRegistry {
+public class AutoTacticRegistry implements IAutoTacticRegistry {
 	
 	private static String TACTICS_ID =
-		SequentProver.PLUGIN_ID + ".tactics";
+		SequentProver.PLUGIN_ID + ".autoTactics";
 
-	private static ITacticRegistry SINGLETON_INSTANCE = new TacticRegistry();
+	private static IAutoTacticRegistry SINGLETON_INSTANCE = new AutoTacticRegistry();
 
 	private static final String[] NO_STRING = new String[0];
 	
@@ -41,11 +40,11 @@ public class TacticRegistry implements ITacticRegistry {
 	 * Private default constructor enforces that only one instance of this class
 	 * is present.
 	 */
-	private TacticRegistry() {
+	private AutoTacticRegistry() {
 		// Singleton implementation
 	}
 	
-	public static ITacticRegistry getTacticRegistry() {
+	public static IAutoTacticRegistry getTacticRegistry() {
 		return SINGLETON_INSTANCE;
 	}
 	

@@ -8,19 +8,20 @@
 package org.eventb.core.seqprover;
 
 /**
- * Common protocol for accessing the Tactic Registry.
+ * Common protocol for accessing the Auto Tactic Registry.
  * <p>
- * The Tactic Registry manages Tactic ids that are known to the Sequent
- * Prover. A tactic id gets registered only if it has been registered through 
- * the <code>tactics</code> extension point.
+ * The Auto Tactic Registry manages tactic ids that are known to the Sequent
+ * Prover. A tactic id is registered only if it has been registered through 
+ * the <code>autoTactics</code> extension point.
  * </p>
  * 
  * <p>
- * This registry is not used by the sequent prover iteself, but is provided as a service
- * to clients that want to register and retreive stateless tactics.
+ * This registry is not used by the sequent prover itself, but is provided as a service
+ * to clients that want to register and retrieve auto tactics.
  * </p>
  * <p>
- * The tactics that are registered using this registry are stateless. They are constructed using the
+ * An auto tactic is a tactic that does not depend on user inputs.
+ * All auto tactics that are registered using this registry are stateless. They are constructed using the
  * default constructor. 
  * </p>
  * 
@@ -28,15 +29,15 @@ package org.eventb.core.seqprover;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see SequentProver#getTacticRegistry()
+ * @see SequentProver#getAutoTacticRegistry()
  * 
  * @author Farhad Mehta
  */
-public interface ITacticRegistry {
+public interface IAutoTacticRegistry {
 
 	/**
 	 * Checks if a tactic extension with the given tactic id is present in
-	 * the tactic registry.
+	 * the auto tactic registry.
 	 * <p>
 	 * This is fully equivalent to
 	 * <code>Arrays.asList(getTacticIDs()).contains(tacticID)</code>,
@@ -155,7 +156,7 @@ public interface ITacticRegistry {
 	 * <p>
 	 * Each tactic extension corresponds to a tactic descriptor.
 	 * The tactic descriptor for a tactic extension can be obtained using the 
-	 * {@link ITacticRegistry#getTacticDescriptor(String)} method. 
+	 * {@link IAutoTacticRegistry#getTacticDescriptor(String)} method. 
 	 * </p>
 	 * 
 	 * @author Farhad Mehta
@@ -166,14 +167,14 @@ public interface ITacticRegistry {
 		/**
 		 * Returns the id of the tactic extension.
 		 * 
-		 * @return the id of the tactic extention
+		 * @return the id of the tactic extension
 		 */
 		String getTacticID();
 		
 		/**
 		 * Returns the name of the tactic extension.
 		 * 
-		 * @return the name of the tactic extention
+		 * @return the name of the tactic extension
 		 */
 		String getTacticName();
 		

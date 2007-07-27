@@ -1,4 +1,4 @@
-package org.eventb.core.seqprover.tacticPreference;
+package org.eventb.core.seqprover.autoTacticPreference;
 
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
@@ -11,12 +11,12 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.ITacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.internal.core.seqprover.tacticPreference.TacticPreferenceUtils;
 
-public abstract class TacticPreference implements ITacticPreference {
+public abstract class AutoTacticPreference implements IAutoTacticPreference {
 
 	private boolean enabled = false;
 
@@ -31,7 +31,7 @@ public abstract class TacticPreference implements ITacticPreference {
 	// The identifier of the extension point.
 	private String registryID;
 
-	public TacticPreference(String registryID) {
+	public AutoTacticPreference(String registryID) {
 		this.registryID = registryID;
 		setSelectedDescriptors(getDeclaredDescriptors());
 	}
@@ -56,7 +56,7 @@ public abstract class TacticPreference implements ITacticPreference {
 				.getConfigurationElements();
 		for (IConfigurationElement configuration : configurations) {
 			String tacticID = configuration.getAttribute("id"); //$NON-NLS-1$
-			ITacticRegistry tacticRegistry = SequentProver.getTacticRegistry();
+			IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
 			
 			// Check if the id is registered as a tactic
 			if (!tacticRegistry.isRegistered(tacticID)) {
@@ -175,7 +175,7 @@ public abstract class TacticPreference implements ITacticPreference {
 			String[] tacticIDs) {
 		ArrayList<ITacticDescriptor> result = new ArrayList<ITacticDescriptor>();
 		for (String tacticID : tacticIDs) {
-			ITacticRegistry tacticRegistry = SequentProver.getTacticRegistry();
+			IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
 			if (!tacticRegistry.isRegistered(tacticID)) {
 				continue;
 			}

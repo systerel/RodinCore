@@ -80,7 +80,7 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.tacticPreference.ITacticPreference;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBMath;
@@ -785,7 +785,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						.getBoolean(PreferenceConstants.P_POSTTACTIC_ENABLE);
 		expertMode.setChecked(!b);
 
-		ITacticPreference postTacticPreference = EventBPlugin
+		IAutoTacticPreference postTacticPreference = EventBPlugin
 				.getPostTacticPreference();
 		postTacticPreference.setEnabled(b);
 		expertMode.setToolTipText("Disable post-tactic");
@@ -958,13 +958,13 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				boolean b = ((String) newValue)
 										.compareToIgnoreCase("true") == 0;
 				expertMode.setChecked(!b);
-				ITacticPreference postTacticPreference = EventBPlugin
+				IAutoTacticPreference postTacticPreference = EventBPlugin
 						.getPostTacticPreference();
 				postTacticPreference.setEnabled(b);
 			} else {
 				Boolean b = (Boolean) newValue;
 				expertMode.setChecked(!b);
-				ITacticPreference postTacticPreference = EventBPlugin
+				IAutoTacticPreference postTacticPreference = EventBPlugin
 						.getPostTacticPreference();
 				postTacticPreference.setEnabled(b);
 			}

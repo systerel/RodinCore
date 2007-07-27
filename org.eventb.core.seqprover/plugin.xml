@@ -5,7 +5,7 @@
          id="reasoners" 
          name="%point.reasoners" 
          schema="schema/reasoners.exsd"/>
-   <extension-point id="tactics" name="%point.tactics" schema="schema/tactics.exsd"/>
+   <extension-point id="autoTactics" name="%point.autoTactics" schema="schema/autoTactics.exsd"/>
    <extension
          point="org.eventb.core.seqprover.reasoners">
       <reasoner
@@ -116,9 +116,6 @@
              class="org.eventb.internal.core.seqprover.eventbExtensions.CardUpTo"
              id="cardUpTo"
              name="%cardUpToName"/>
-   </extension>
-   <extension
-         point="org.eventb.core.seqprover.reasoners">
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites"
             id="autoRewrites"
@@ -337,69 +334,69 @@
             name="%finitePositiveName"/>
    </extension>
    <extension
-         point="org.eventb.core.seqprover.tactics">
-      <tactic
+         point="org.eventb.core.seqprover.autoTactics">
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$HypTac"
             description="%hypTacDesc"
             id="hypTac"
             name="%hypTacName">
-      </tactic>
-      <tactic
+      </autoTactic>
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$NormTac"
             id="normTac"
             name="%normTacName"/>
-      <tactic
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoRewriteTac"
             id="autoRewriteTac"
             name="%autoRewriteTacName"/>
-      <tactic
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoImpFTac"
             id="autoImpETac"
             name="%autoImpETacName"/>
-      <tactic
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoFalsifyHypTac"
             id="autoFalsifyHypTac"
             name="%autoFalsifyHypTacName"/>
-      <tactic
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoEqETac"
             id="autoEqETac"
             name="%autoEqETacName"/>
-      <tactic
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoExFTac"
             id="autoExFTac"
             name="%autoExFTacName"/>
-      <tactic
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoNegEnumTac"
             id="autoNegEnumTac"
             name="%autoNegEnumTacName"/>
-      <tactic
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$IsFunGoalTac"
             id="isFunGoalTac"
             name="%isFunGoalTacName"/>
-      <tactic
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$HypOrTac"
             id="autoHypOrTac"
             name="%autoHypOrTacName"/>
-      <tactic
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoImpAndHypTac"
             id="autoImpAndHypTac"
             name="%autoImpAndHypTacName"/>
-      <tactic
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.Tactics$AutoImpOrHypTac"
             id="autoImpOrHypTac"
             name="%autoImpOrHypTacName"/>
-      <tactic
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$TrueGoalTac"
             description="%trueGoalTacDesc"
             id="trueGoalTac"
             name="%trueGoalTacName">
-      </tactic>
-      <tactic
+      </autoTactic>
+      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$FalseHypTac"
             description="%falseHypTacDesc"
             id="falseHypTac"
             name="%falseHypTacName">
-      </tactic>
+      </autoTactic>
 
    </extension>
 

@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IPostTacticRegistry;
-import org.eventb.core.seqprover.ITacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
 
 @Deprecated
@@ -66,7 +66,7 @@ public class PostTacticRegistry implements IPostTacticRegistry {
 				.getConfigurationElements();
 		for (IConfigurationElement configuration : configurations) {
 			String id = configuration.getAttribute("id"); //$NON-NLS-1$
-			ITacticRegistry tacticRegistry = SequentProver.getTacticRegistry();
+			IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
 			// Check if the id is registered
 			if (tacticIDs.contains(id)) {
 				if (UserSupportUtils.DEBUG) {

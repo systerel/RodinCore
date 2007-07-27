@@ -1,4 +1,4 @@
-package org.eventb.core.seqprover.tacticExtentionTests;
+package org.eventb.core.seqprover.autoTacticExtentionTests;
 
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;

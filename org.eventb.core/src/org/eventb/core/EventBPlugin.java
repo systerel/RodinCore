@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
 import org.eventb.core.sc.SCModule;
-import org.eventb.core.seqprover.tacticPreference.ITacticPreference;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.core.pm.PostTacticPreference;
 import org.eventb.internal.core.pm.UserSupportManager;
 import org.eventb.internal.core.pm.UserSupportUtils;
@@ -280,7 +280,7 @@ public class EventBPlugin extends Plugin {
 	 * @return the default POM-tactic preference
 	 * @author htson
 	 */
-	public static ITacticPreference getPOMTacticPreference() {
+	public static IAutoTacticPreference getPOMTacticPreference() {
 		return POMTacticPreference.getDefault();
 	}
 
@@ -291,7 +291,7 @@ public class EventBPlugin extends Plugin {
 	 * @return the default post-tactic preference
 	 * @author htson
 	 */
-	public static ITacticPreference getPostTacticPreference() {
+	public static IAutoTacticPreference getPostTacticPreference() {
 		return PostTacticPreference.getDefault();
 	}
 

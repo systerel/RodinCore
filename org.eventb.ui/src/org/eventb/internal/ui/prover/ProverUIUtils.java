@@ -13,10 +13,10 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.ITacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.tacticPreference.ITacticPreference;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
@@ -120,10 +120,10 @@ public class ProverUIUtils {
 	}
 
 	public static ArrayList<ITacticDescriptor> stringsToTacticDescriptors(
-			ITacticPreference tacticPreference, String[] tacticIDs) {
+			IAutoTacticPreference tacticPreference, String[] tacticIDs) {
 		ArrayList<ITacticDescriptor> result = new ArrayList<ITacticDescriptor>();
 		for (String tacticID : tacticIDs) {
-			ITacticRegistry tacticRegistry = SequentProver.getTacticRegistry();
+			IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
 			if (!tacticRegistry.isRegistered(tacticID)) {
 				if (UIUtils.DEBUG) {
 					System.out.println("Tactic " + tacticID

@@ -7,10 +7,10 @@ import java.util.List;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eventb.core.seqprover.ITacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.tacticPreference.ITacticPreference;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBUIPlugin;
@@ -34,7 +34,7 @@ public abstract class TacticPreferencePage
 	
 	String tacticsFieldDescription;
 
-	ITacticPreference tacticPreference = null;
+	IAutoTacticPreference tacticPreference = null;
 	
 	public TacticPreferencePage(String description,
 			String enableFieldName, String enableFieldDescription,
@@ -75,7 +75,7 @@ public abstract class TacticPreferencePage
 						.parseString(stringList);
 				ArrayList<Object> result = new ArrayList<Object>();
 				for (String tacticID : tacticIDs) {
-					ITacticRegistry tacticRegistry = SequentProver.getTacticRegistry();
+					IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
 					if (!tacticRegistry.isRegistered(tacticID)) {
 						if (UIUtils.DEBUG) {
 							System.out.println("Tactic " + tacticID

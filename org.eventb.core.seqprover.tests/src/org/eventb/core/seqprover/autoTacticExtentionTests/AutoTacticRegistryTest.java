@@ -1,4 +1,4 @@
-package org.eventb.core.seqprover.tacticExtentionTests;
+package org.eventb.core.seqprover.autoTacticExtentionTests;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -7,30 +7,30 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.ITacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.tacticExtentionTests.IdentityTactic.FailTactic;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.autoTacticExtentionTests.IdentityTactic.FailTactic;
 import org.junit.Test;
 
 /**
  * Unit tests for the tactic registry
  * 
- * @see org.eventb.core.seqprover.ITacticRegistry
+ * @see org.eventb.core.seqprover.IAutoTacticRegistry
  * 
  * @author Farhad Mehta
  * @author Laurent Voisin
  */
-public class TacticRegistryTest {
+public class AutoTacticRegistryTest {
 
 	private static final String unrigisteredId = "unregistered";
 	
-	private final ITacticRegistry registry = SequentProver.getTacticRegistry();
+	private final IAutoTacticRegistry registry = SequentProver.getAutoTacticRegistry();
 
 	/**
 	 * Asserts that the given tactic id has been registered. This is checked
-	 * using both inquiry methods {@link ITacticRegistry#isRegistered(String)}
-	 * and {@link ITacticRegistry#getRegisteredIDs()}.
+	 * using both inquiry methods {@link IAutoTacticRegistry#isRegistered(String)}
+	 * and {@link IAutoTacticRegistry#getRegisteredIDs()}.
 	 * 
 	 * @param id
 	 *            the tactic id to check
@@ -46,8 +46,8 @@ public class TacticRegistryTest {
 	/**
 	 * Asserts that the given tactic id has not been registered yet. This is
 	 * checked using both inquiry methods
-	 * {@link ITacticRegistry#isRegistered(String)} and
-	 * {@link ITacticRegistry#getRegisteredIDs()}.
+	 * {@link IAutoTacticRegistry#isRegistered(String)} and
+	 * {@link IAutoTacticRegistry#getRegisteredIDs()}.
 	 * 
 	 * @param id
 	 *            the tactic id to check
@@ -61,8 +61,8 @@ public class TacticRegistryTest {
 	}
 	
 	/**
-	 * Test method for {@link ITacticRegistry#isRegistered(String)} and
-	 * {@link ITacticRegistry#getRegisteredIDs()}.
+	 * Test method for {@link IAutoTacticRegistry#isRegistered(String)} and
+	 * {@link IAutoTacticRegistry#getRegisteredIDs()}.
 	 */
 	@Test
 	public void testRegisteredTactics() {		
@@ -73,7 +73,7 @@ public class TacticRegistryTest {
 	}
 
 	/**
-	 * Test method for {@link ITacticRegistry#getTacticDescriptor(String)}.
+	 * Test method for {@link IAutoTacticRegistry#getTacticDescriptor(String)}.
 	 * 
 	 * Registered IDs
 	 */
@@ -87,7 +87,7 @@ public class TacticRegistryTest {
 	}
 	
 	/**
-	 * Test method for {@link ITacticRegistry#getTacticDescriptor(String)}.
+	 * Test method for {@link IAutoTacticRegistry#getTacticDescriptor(String)}.
 	 * 
 	 * Unregistered ID
 	 */

@@ -25,22 +25,22 @@
             name="%reasoner.extended.name"/>
    </extension>
    <extension
-         point="org.eventb.core.seqprover.tactics">
-      <tactic
-            class="org.eventb.core.seqprover.tacticExtentionTests.IdentityTactic"
+         point="org.eventb.core.seqprover.autoTactics">
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.IdentityTactic"
             description="This tactic does nothing but succeeds"
             id="identityTac"
             name="Identity Tactic"/>
-      <tactic
-            class="org.eventb.core.seqprover.tacticExtentionTests.IdentityTactic$FailTactic"
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.IdentityTactic$FailTactic"
             id="failTac"
             name="Fail Tactic"/>
-      <tactic
-            class="org.eventb.core.seqprover.tacticExtentionTests.IdentityTactic"
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.IdentityTactic"
             id="erroneous.id"
             name="Erroneous id (contains a dot)"/>
-      <tactic
-            class="org.eventb.core.seqprover.tacticExtentionTests.IdentityTactic"
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.IdentityTactic"
             id="erroneous id"
             name="Erroneous id (contains a whitespace)"/>
    </extension>

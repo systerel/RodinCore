@@ -1,11 +1,10 @@
 package org.eventb.core.seqprover;
 
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eventb.internal.core.seqprover.ProverChecks;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
-import org.eventb.internal.core.seqprover.TacticRegistry;
+import org.eventb.internal.core.seqprover.AutoTacticRegistry;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -14,15 +13,19 @@ import org.osgi.framework.BundleContext;
 public class SequentProver extends Plugin {
 
 	public static final String PLUGIN_ID = "org.eventb.core.seqprover"; //$NON-NLS-1$
-	
+
 	/**
 	 * debugging/tracing option names
 	 */
-	private static final String SEQPROVER_TRACE = PLUGIN_ID + "/debug/seqProver"; //$NON-NLS-1$
-	private static final String PROVER_CHECKS_TRACE = PLUGIN_ID + "/debug/proverChecks"; //$NON-NLS-1$
-	private static final String REASONER_REGISTRY_TRACE = PLUGIN_ID + "/debug/reasonerRegistry"; //$NON-NLS-1$	
-	private static final String TACTIC_REGISTRY_TRACE = PLUGIN_ID + "/debug/tacticRegistry"; //$NON-NLS-1$
-	
+	private static final String SEQPROVER_TRACE = PLUGIN_ID
+			+ "/debug/seqProver"; //$NON-NLS-1$
+	private static final String PROVER_CHECKS_TRACE = PLUGIN_ID
+			+ "/debug/proverChecks"; //$NON-NLS-1$
+	private static final String REASONER_REGISTRY_TRACE = PLUGIN_ID
+			+ "/debug/reasonerRegistry"; //$NON-NLS-1$	
+	private static final String TACTIC_REGISTRY_TRACE = PLUGIN_ID
+			+ "/debug/tacticRegistry"; //$NON-NLS-1$
+
 	/**
 	 * The shared instance.
 	 */
@@ -32,7 +35,7 @@ public class SequentProver extends Plugin {
 	 * Debug flag for <code>SEQPROVER_TRACE</code>
 	 */
 	private static boolean DEBUG;
-	
+
 	/**
 	 * Creates the Sequent Prover plug-in.
 	 * <p>
@@ -50,7 +53,7 @@ public class SequentProver extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+
 		configureDebugOptions();
 	}
 
@@ -71,7 +74,7 @@ public class SequentProver extends Plugin {
 				ReasonerRegistry.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(TACTIC_REGISTRY_TRACE);
 			if (option != null)
-				TacticRegistry.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				AutoTacticRegistry.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 
@@ -90,17 +93,45 @@ public class SequentProver extends Plugin {
 		return plugin;
 	}
 
-	public static IReasonerRegistry getReasonerRegistry(){
+	/**
+	 * Returns the Reasoner registry managed by the sequent prover
+	 * 
+	 * @see IReasonerRegistry
+	 * 
+	 * @return the Reasoner registry managed by the sequent prover
+	 */
+	public static IReasonerRegistry getReasonerRegistry() {
 		return ReasonerRegistry.getReasonerRegistry();
 	}
-	
-	public static ITacticRegistry getTacticRegistry(){
-		return TacticRegistry.getTacticRegistry();
+
+	/**
+	 * Returns the AutoTactic registry managed by the sequent prover
+	 * 
+	 * @see IAutoTacticRegistry
+	 * 
+	 * @return the AutoTactic registry managed by the sequent prover
+	 */
+	public static IAutoTacticRegistry getAutoTacticRegistry() {
+		return AutoTacticRegistry.getTacticRegistry();
 	}
-	
-	public static void debugOut(String message){
+
+	/**
+	 * @deprecated use {@link #getAutoTacticRegistry()} instead
+	 */
+	public static IAutoTacticRegistry getTacticRegistry() {
+		return AutoTacticRegistry.getTacticRegistry();
+	}
+
+	/**
+	 * Prints the given message to the console in case the debug flag is
+	 * switched on
+	 * 
+	 * @param message
+	 *            The message to print out to the console
+	 */
+	public static void debugOut(String message) {
 		if (DEBUG)
 			System.out.println(message);
 	}
-	
+
 }

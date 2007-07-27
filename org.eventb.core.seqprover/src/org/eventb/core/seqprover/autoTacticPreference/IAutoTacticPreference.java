@@ -9,13 +9,13 @@
  *     Rodin @ ETH Zurich
  *******************************************************************************/
 
-package org.eventb.core.seqprover.tacticPreference;
+package org.eventb.core.seqprover.autoTacticPreference;
 
 import java.util.Collection;
 import java.util.List;
 
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
  * @author htson
@@ -32,7 +32,7 @@ import org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor;
  *         </ul>
  * 
  */
-public interface ITacticPreference {
+public interface IAutoTacticPreference {
 
 	/**
 	 * Checked if a tactic is declared for using with the tactic container.
