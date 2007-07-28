@@ -8,7 +8,7 @@ public class POMTacticPreference extends AutoTacticPreference {
 	// The identifier of the extension point (value
 	// <code>"org.eventb.core.autoTactics"</code>).
 	private final static String AUTOTACTICS_ID = EventBPlugin.PLUGIN_ID
-			+ ".autoTactics";	
+			+ ".pomTactics";	
 
 	private static POMTacticPreference instance;
 
