@@ -76,6 +76,8 @@ public class ProofState implements IProofState {
 	UserSupport userSupport;
 
 	public ProofState(UserSupport userSupport, IPSStatus ps) {
+		assert userSupport != null;
+		assert ps != null;
 		this.userSupport = userSupport;
 		this.status = ps;
 		cached = new ArrayList<Predicate>();
@@ -211,7 +213,9 @@ public class ProofState implements IProofState {
 	 * @see org.eventb.core.pm.IProofState#getCurrentNode()
 	 */
 	public IProofTreeNode getCurrentNode() {
-		return current;
+		if (pt != null)
+			return current;
+		return null;
 	}
 
 	/*
@@ -221,6 +225,9 @@ public class ProofState implements IProofState {
 	 */
 	public void setCurrentNode(final IProofTreeNode newNode)
 			throws RodinDBException {
+		if (newNode.getProofTree() != pt)
+			return;
+
 		UserSupportManager.getDefault().run(new Runnable() {
 			public void run() {
 				if (current != newNode) {
@@ -393,17 +400,13 @@ public class ProofState implements IProofState {
 
 	}
 
-	// Pre: Must be initalised and not currently saving.
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * 
 	 * @see org.eventb.core.pm.IProofState#proofReuse(org.eventb.core.seqprover.IProofMonitor)
 	 * 
-	 * Not currently used : Used before for supporting copy&paste.
-	 * This is now supported using proofSkeletons & rebuildTac()
-	 * TODO : See if this method is really needed, and if so, remove the call to
-	 * the deprecated method.
+	 * Not currently used : Used before for supporting copy&paste. This is now
+	 * supported using proofSkeletons & rebuildTac()
 	 */
 	public void proofReuse(IProofMonitor monitor) throws RodinDBException {
 		IProofTree newTree = userSupport.getPSWrapper().getFreshProofTree(

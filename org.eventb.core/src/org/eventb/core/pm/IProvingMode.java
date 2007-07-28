@@ -1,11 +1,12 @@
 package org.eventb.core.pm;
 
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 
 /**
  * @author htson
  * <p>
- * @deprecated use IPostTacticContainer instead.
+ * @deprecated use {@link IAutoTacticPreference} instead.
  */
 @Deprecated
 public interface IProvingMode {
