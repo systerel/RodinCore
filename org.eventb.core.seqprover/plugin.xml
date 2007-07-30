@@ -375,7 +375,7 @@
             name="%impGoalTacName">
       </autoTactic>
       <autoTactic
-            class="com.sun.tools.javac.code.Type$ForAll"
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$ForallGoalTac"
             description="%forallGoalTacDesc"
             id="forallGoalTac"
             name="%forallGoalTacName">
