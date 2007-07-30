@@ -63,6 +63,15 @@ public class ProofRuleTests {
 	private final static IProofRule  falseHyp= 
 		ProverFactory.makeProofRule(null, null, null, False, "falseHyp", NO_ANTECEDENTS);
 	
+	/**
+	 * Rule that duplicates a sequent.
+	 * 
+	 * Non-Discharging
+	 * Goal independent.
+	 */
+	protected final static IProofRule  duplicate= 
+		ProverFactory.makeProofRule(null,null,null,null,IConfidence.DISCHARGED_MAX,"duplicate", 
+				new IAntecedent[]{ProverFactory.makeAntecedent(null),ProverFactory.makeAntecedent(null)});
 
 	/**
 	 * Generates a cut rule with the given predicate

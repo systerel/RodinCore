@@ -23,6 +23,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.junit.Test;
 
 /**
@@ -417,6 +418,20 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds()));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv()));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().contains("x"));
+		
+		// test getGoal
+		sequent = TestLib.genSeq("1=2 |- 1=2");
+		proofTree = ProverFactory.makeProofTree(sequent, null);
+		BasicTactics.ruleTac(ProofRuleTests.duplicate).apply(proofTree.getRoot(), null);
+		BasicTactics.onPending(0, Tactics.hyp()).apply(proofTree.getRoot(), null);
+		
+		proofDependencies = proofTree.getProofDependencies();
+		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
+		assertNotNull(proofDependencies.getGoal());
+		assertTrue(proofDependencies.getGoal().equals(TestLib.genPred("1=2")));
+		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds("1=2")));
+		assertTrue(proofDependencies.getUsedFreeIdents().isEmpty());
+		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 	}
 
 	/**
