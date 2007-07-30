@@ -406,8 +406,11 @@ public class ObligationExplorer extends ViewPart implements
 					ObligationExplorerUtils.debug("Project: "
 							+ ((IRodinProject) obj).getElementName());
 				return ((IRodinProject) obj).getElementName();
-			} else if (obj instanceof IRodinFile) {
-				return ((IRodinFile) obj).getBareName();
+			} else if (obj instanceof IPSFile) {
+				IPSFile psFile = (IPSFile) obj;
+				String bareName = psFile.getBareName();
+				ProofStatus proofStatus = new ProofStatus(psFile);
+				return bareName + proofStatus;
 			} else if (obj instanceof IPSStatus) {
 				final IPSStatus psStatus = (IPSStatus) obj;
 				final String poName = psStatus.getElementName();
