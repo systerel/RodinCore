@@ -1135,26 +1135,62 @@
    </extension>
    <extension
          point="org.eventb.core.postTactics">
-      <tactic id="org.eventb.core.seqprover.autoRewriteTac"/>
-      <tactic id="org.eventb.core.seqprover.autoImpETac"/>
-      <tactic id="org.eventb.core.seqprover.autoFalsifyHypTac"/>
-      <tactic id="org.eventb.core.seqprover.autoEqETac"/>
-      <tactic id="org.eventb.core.seqprover.autoExFTac"/>
-      <tactic id="org.eventb.core.seqprover.normTac"/>
-      <tactic id="org.eventb.core.seqprover.autoNegEnumTac"/>
-      <tactic id="org.eventb.core.seqprover.typeRewriteTac"/>
-      <tactic id="org.eventb.core.seqprover.isFunGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.autoHypOrTac"/>
-      <tactic id="org.eventb.core.seqprover.autoImpAndHypTac"/>
-      <tactic id="org.eventb.core.seqprover.autoImpOrHypTac"/>
-      <tactic id="org.eventb.core.seqprover.hypTac"/>
       <tactic id="org.eventb.core.seqprover.trueGoalTac"/>
       <tactic id="org.eventb.core.seqprover.falseHypTac"/>
+      <tactic id="org.eventb.core.seqprover.goalInHypTac"/>
+      <tactic id="org.eventb.core.seqprover.goalDisjInHypTac"/>
+      <tactic id="org.eventb.core.seqprover.funGoalTac"/>
+      <tactic id="com.b4free.rodin.core.ml"/>
+      <tactic id="org.eventb.core.seqprover.autoRewriteTac"/>
+      <tactic id="org.eventb.core.seqprover.impGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.forallGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.existsHypTac"/>
+      <tactic id="org.eventb.core.seqprover.findContrHypsTac"/>
+      <tactic id="org.eventb.core.seqprover.eqHypTac"/>
+      <tactic id="org.eventb.core.seqprover.shrinkImpHypTac"/>
+      <tactic id="org.eventb.core.seqprover.shrinkEnumHypTac"/>
+      <tactic id="org.eventb.core.seqprover.splitRightConjImpHypTac"/>
+      <tactic
+            id="org.eventb.core.seqprover.splitLeftDisjImpHypTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.conjGoalTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.clarifyGoalTac">
+      </tactic>
    </extension>
    <extension
          point="org.eventb.core.pomTactics">
-      <tactic id="org.eventb.core.seqprover.autoRewriteTac"/>
-      <tactic id="org.eventb.core.seqprover.normTac"/>
+      <tactic id="org.eventb.core.seqprover.trueGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.falseHypac"/>
+      <tactic
+            id="org.eventb.core.seqprover.goalInHypTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.funGoalTac">
+      </tactic>
+      <tactic
+            id="com.b4free.rodin.core.ml">
+      </tactic>
+      <tactic
+            id="com.b4free.rodin.core.p0">
+      </tactic>
+      <tactic
+            id="com.b4free.rodin.core.p1">
+      </tactic>
+      <tactic
+            id="com.b4free.rodin.core.pp">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.autoRewriteTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.eqHypTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.shrinkImpHypTac">
+      </tactic>
    </extension>
 
 </plugin>

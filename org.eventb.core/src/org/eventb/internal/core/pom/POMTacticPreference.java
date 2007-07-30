@@ -29,7 +29,14 @@ public class POMTacticPreference extends AutoTacticPreference {
 	@Override
 	protected String [] getDefaultIDs() {
 		return new String[] {
-				"org.eventb.core.seqprover.autoRewriteTac",
+	            "org.eventb.core.seqprover.trueGoalTac",
+	            "org.eventb.core.seqprover.falseHypTac",
+	            "org.eventb.core.seqprover.goalInHypTac",
+	            "org.eventb.core.seqprover.funGoalTac",
+	            "com.b4free.rodin.core.ml",
+	            "org.eventb.core.seqprover.eqHypTac",
+	            "org.eventb.core.seqprover.shrinkImpHypTac",
+	            "org.eventb.core.seqprover.clarifyGoalTac"
 		};
 	}
 

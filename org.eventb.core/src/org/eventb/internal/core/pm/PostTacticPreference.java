@@ -29,17 +29,18 @@ public class PostTacticPreference extends AutoTacticPreference {
 	@Override
 	protected String [] getDefaultIDs() {
 		return new String[] {
-	            "org.eventb.core.seqprover.autoFalsifyHypTac",
-				"org.eventb.core.seqprover.autoHypOrTac",
-				"org.eventb.core.seqprover.isFunGoalTac",
-				"org.eventb.core.seqprover.autoRewriteTac",
-				"org.eventb.core.seqprover.autoExFTac",
-				"org.eventb.core.seqprover.autoNegEnumTac",
-				"org.eventb.core.seqprover.autoImpAndHypTac",
-				"org.eventb.core.seqprover.autoImpOrHypTac",
-				"org.eventb.core.seqprover.autoImpETac",
-				"org.eventb.core.seqprover.autoEqETac",
-				"org.eventb.core.seqprover.normTac"
+	            "org.eventb.core.seqprover.trueGoalTac",
+	            "org.eventb.core.seqprover.falseHypTac",
+	            "org.eventb.core.seqprover.goalInHypTac",
+	            "org.eventb.core.seqprover.goalDisjInHypTac",
+	            "org.eventb.core.seqprover.funGoalTac",
+	            "org.eventb.core.seqprover.autoRewriteTac",
+	            "org.eventb.core.seqprover.existsHypTac",
+	            "org.eventb.core.seqprover.findContrHypsTac",
+	            "org.eventb.core.seqprover.eqHypTac",
+	            "org.eventb.core.seqprover.shrinkImpHypTac",
+	            "org.eventb.core.seqprover.shrinkEnumHypTac",
+	            "org.eventb.core.seqprover.clarifyGoalTac"
 		};
 
 	}
