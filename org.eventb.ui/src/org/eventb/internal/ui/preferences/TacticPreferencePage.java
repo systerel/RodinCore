@@ -66,7 +66,12 @@ public abstract class TacticPreferencePage
 
 			@Override
 			protected String createList(ArrayList<Object> objects) {
-				return ProverUIUtils.toCommaSeparatedList(objects);
+				ArrayList<Object> tacticIDs = new ArrayList<Object>();
+				for (Object obj : objects) {
+					assert obj instanceof ITacticDescriptor;
+					tacticIDs.add(((ITacticDescriptor) obj).getTacticID());
+				}
+				return ProverUIUtils.toCommaSeparatedList(tacticIDs);
 			}
 
 			@Override
