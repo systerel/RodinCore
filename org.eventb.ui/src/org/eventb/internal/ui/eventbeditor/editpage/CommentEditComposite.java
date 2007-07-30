@@ -11,10 +11,15 @@ public class CommentEditComposite extends DefaultAttributeEditor implements IAtt
 
 	@Override
 	public String getAttribute(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) {
 		assert element instanceof ICommentedElement;
 		final ICommentedElement cElement = (ICommentedElement) element;
-		return cElement.getComment();
+		try {
+			return cElement.getComment();
+		}
+		catch (RodinDBException e) {
+			return "";
+		}
 	}
 
 	@Override
@@ -23,13 +28,8 @@ public class CommentEditComposite extends DefaultAttributeEditor implements IAtt
 		assert element instanceof ICommentedElement;
 		final ICommentedElement cElement = (ICommentedElement) element;
 
-		String value;
-		try {
-			value = getAttribute(element, monitor);
-		} catch (RodinDBException e) {
-			value = null;
-		}
-		if (value == null || !value.equals(newValue)) {
+		String value = getAttribute(element, monitor);
+		if (!value.equals(newValue)) {
 			cElement.setComment(newValue, monitor);
 		}
 	}
