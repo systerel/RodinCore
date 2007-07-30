@@ -89,12 +89,12 @@ public class EventBUIExceptionHandler {
 						.getMessage());
 				break;
 			}
+			if (UIUtils.DEBUG) {
+				System.out.println(msg);
+				exception.printStackTrace();
+			}
+			UIUtils.log(exception, msg);
 		}
-		if (UIUtils.DEBUG) {
-			System.out.println(msg);
-			exception.printStackTrace();
-		}
-		UIUtils.log(exception, msg);
 	}
 
 	public static void handleCreateElementException(Exception e) {
@@ -154,6 +154,12 @@ public class EventBUIExceptionHandler {
 	public static void handleRodinException(RodinDBException e,
 			UserAwareness awareness) {
 		handleException(e, "Exception throws when accessing RodinDB", awareness);
+	}
+
+	public static void handleGetChildrenException(RodinDBException e,
+			UserAwareness awareness) {
+		handleException(e, "Exception throws when getting child elements",
+				awareness);
 	}
 
 }
