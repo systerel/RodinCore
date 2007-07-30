@@ -7,11 +7,13 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerDelta;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
@@ -147,6 +149,14 @@ public class ProverUIUtils {
 			}
 		}
 		return result;
+	}
+
+	public static boolean isDischarged(IPSStatus status) throws RodinDBException {
+		return (status.getConfidence() >= IConfidence.DISCHARGED_MAX);
+	}
+
+	public static boolean isAutomatic(IPSStatus status) throws RodinDBException {
+		return !status.getHasManualProof();
 	}
 
 }
