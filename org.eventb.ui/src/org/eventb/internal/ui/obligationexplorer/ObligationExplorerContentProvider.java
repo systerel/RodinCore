@@ -124,7 +124,21 @@ public class ObligationExplorerContentProvider implements
 			}
 
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				toRefresh.add(element.getParent());
+				IRodinElement rElement = element.getParent();
+				if (rElement instanceof IPSFile) {
+					IPSFile psFile = (IPSFile) rElement;
+					IMachineFile machineFile = psFile.getMachineFile();
+					if (machineFile.exists()) {
+						toRefresh.add(machineFile);
+						return;
+					}
+					IContextFile contextFile = psFile.getContextFile();
+					if (contextFile.exists()) {
+						toRefresh.add(contextFile);
+						return;
+					}
+				}
+				toRefresh.add(rElement);
 				return;
 			}
 

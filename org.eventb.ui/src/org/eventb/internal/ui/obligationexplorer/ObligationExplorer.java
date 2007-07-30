@@ -858,7 +858,18 @@ public class ObligationExplorer extends ViewPart implements
 			public void run() {
 				IUserSupportDelta[] affectedUserSupports = delta.getAffectedUserSupports();
 				for (IUserSupportDelta affectedUserSupport : affectedUserSupports) {
-					fViewer.refresh(affectedUserSupport.getUserSupport().getInput());
+					IPSFile psFile = affectedUserSupport.getUserSupport().getInput();
+					if (psFile != null) {
+						IMachineFile machineFile = psFile.getMachineFile();
+						if (machineFile.exists()) {
+							fViewer.refresh(machineFile);
+						} else {
+							IContextFile contextFile = psFile.getContextFile();
+							if (contextFile.exists()) {
+								fViewer.refresh(contextFile);
+							}
+						}
+					}
 					int kind = affectedUserSupport.getKind();
 					if (kind == IUserSupportDelta.CHANGED) {
 						int flags = affectedUserSupport.getFlags();
