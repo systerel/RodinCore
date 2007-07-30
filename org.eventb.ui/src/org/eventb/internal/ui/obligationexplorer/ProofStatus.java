@@ -11,8 +11,11 @@ public class ProofStatus {
 
 	IPSFile psFile;
 	
-	public ProofStatus(IPSFile psFile) {
+	boolean fullStatistics;
+	
+	public ProofStatus(IPSFile psFile, boolean fullStatistics) {
 		this.psFile = psFile;
+		this.fullStatistics = fullStatistics;
 	}
 
 	@Override
@@ -78,8 +81,16 @@ public class ProofStatus {
 		stringBuilder.append(reviewed);
 		stringBuilder.append(",");
 		stringBuilder.append(remaining);
-		
 		stringBuilder.append(')');
+		if (fullStatistics) {
+			stringBuilder.append("\n");
+			stringBuilder.append("-----\n");
+			stringBuilder.append("Total POs: " + statuses.length + " \n");
+			stringBuilder.append("Auto. discharged: " + auto + " \n");
+			stringBuilder.append("Manual discharged: " + manual + " \n");
+			stringBuilder.append("Reviewed: " + reviewed + " \n");
+			stringBuilder.append("Undischarged: " + remaining + " ");
+		}
 		return stringBuilder.toString();
 	}
 	

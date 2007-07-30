@@ -139,6 +139,8 @@ public class ObligationExplorer extends ViewPart implements
 
 	Text filterText;
 
+	ProofStatusToolTip handler;
+	
 	// Proof states
 
 	static int UNKNOWN = -1;
@@ -404,12 +406,12 @@ public class ObligationExplorer extends ViewPart implements
 			} else if (obj instanceof IMachineFile) {
 				IPSFile psFile = ((IMachineFile) obj).getPSFile();
 				String bareName = psFile.getBareName();
-				ProofStatus proofStatus = new ProofStatus(psFile);
+				ProofStatus proofStatus = new ProofStatus(psFile, false);
 				return bareName + proofStatus;
 			} else if (obj instanceof IContextFile) {
 				IPSFile psFile = ((IContextFile) obj).getPSFile();
 				String bareName = psFile.getBareName();
-				ProofStatus proofStatus = new ProofStatus(psFile);
+				ProofStatus proofStatus = new ProofStatus(psFile, false);
 				return bareName + proofStatus;
 			} else if (obj instanceof IPSStatus) {
 				final IPSStatus psStatus = (IPSStatus) obj;
@@ -669,6 +671,9 @@ public class ObligationExplorer extends ViewPart implements
 		hookDoubleClickAction();
 		contributeToActionBars();
 		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(this);
+		handler = new ProofStatusToolTip(fViewer.getControl().getShell());
+		handler.activateHoverHelp(fViewer.getControl());
+
 	}
 
 	/**
