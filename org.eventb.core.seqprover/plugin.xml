@@ -356,7 +356,7 @@
       <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$GoalDisjInHypTac"
             description="%goalDisjInHypDesc"
-            id="goalDisjInHyp"
+            id="goalDisjInHypTac"
             name="%goalDisjInHypName">
       </autoTactic>
       <autoTactic
@@ -398,7 +398,7 @@
       <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$ShrinkImpHypTac"
             description="%shrinkImpHypTacDesc"
-            id="shrinkImpHyp"
+            id="shrinkImpHypTac"
             name="%shrinkImpHypTacName"/>
       <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$ShrinkEnumHypTac"
