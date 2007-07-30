@@ -292,6 +292,10 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	
 	String resultP54 = "∀x·x=0⇒(∃x0,x1,x2,x3·x ↦ (x0 ↦ x1)∈{0 ↦ (TRUE ↦ 1),1 ↦ (FALSE ↦ 1)}∧x0 ↦ x1 ↦ x2∈{TRUE ↦ 1 ↦ 1,FALSE ↦ 0 ↦ 0}∧x2 ↦ x3∈{0 ↦ FALSE,1 ↦ TRUE}∧x3 ↦ (0 ↦ 1)∈{TRUE ↦ (0 ↦ 1)})";
 
+	String P85 = "∀x, x0 · x ↦ x0 ∈ t ⇒ x ↦ x0 ∈ ℕ × ℕ ∧ x ↦ x0 ∈ t∼;((ℕ × ℕ) ∖ t)";
+	
+	String resultP85 = "∀x,x0·x ↦ x0∈t⇒x ↦ x0∈ℕ × ℕ∧(∃x1·x ↦ x1∈t∼∧x1 ↦ x0∈(ℕ × ℕ) ∖ t)";
+	
 	
 	// r : S <<-> T == r : S <-> T & dom(r) = S
 	String P55 = "(0 = 1) ⇒ r ∈ ℕ×BOOL  ℕ";
@@ -485,6 +489,7 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				P52, "1.1",
 				P53, "1",
 				P54, "1.1",
+				P85, "2.1.0\n" + "2.1.1",
 				P55, "1",
 				P56, "1.1",
 				P57, "1",
@@ -579,6 +584,7 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				new SuccessfulTest(P52, "1.1", resultP52),
 				new SuccessfulTest(P53, "1", resultP53),
 				new SuccessfulTest(P54, "1.1", resultP54),
+				new SuccessfulTest(P85, "2.1.1", resultP85),
 				new SuccessfulTest(P55, "1", resultP55),
 				new SuccessfulTest(P56, "1.1", resultP56),
 				new SuccessfulTest(P57, "1", resultP57),
@@ -670,6 +676,7 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				P52, "1.0",
 				P53, "0",
 				P54, "1.0",
+				P85, "2.0.0",
 				P55, "0",
 				P56, "1.0",
 				P57, "0",

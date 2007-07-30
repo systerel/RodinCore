@@ -318,7 +318,8 @@ public class FormulaUnfold {
 		// Create the predicates
 		Collection<Predicate> newChildren = new ArrayList<Predicate>();
 		int size = identDecls.size();
-		Expression prev = E.shiftBoundIdentifiers(size, ff);
+		final int maxSize = size;
+		Expression prev = E.shiftBoundIdentifiers(maxSize, ff);
 		for (int i = 0; i < rels.length - 1; i++) {
 			Expression rel = rels[i];
 			Type type = rel.getType();
@@ -333,14 +334,14 @@ public class FormulaUnfold {
 			size = size - boundIdentDecls.length;
 			BinaryExpression map = ff.makeBinaryExpression(Expression.MAPSTO,
 					prev, expression, null);
-			newChildren.add(ff.makeRelationalPredicate(Predicate.IN, map, rel,
-					null));
+			newChildren.add(ff.makeRelationalPredicate(Predicate.IN, map, rel
+					.shiftBoundIdentifiers(maxSize, ff), null));
 			prev = expression;
 		}
 		BinaryExpression map = ff.makeBinaryExpression(Expression.MAPSTO, prev,
-				F.shiftBoundIdentifiers(rels.length, ff), null);
+				F.shiftBoundIdentifiers(maxSize, ff), null);
 		newChildren.add(ff.makeRelationalPredicate(Predicate.IN, map,
-				rels[rels.length - 1], null));
+				rels[rels.length - 1].shiftBoundIdentifiers(maxSize, ff), null));
 
 		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
 				Predicate.EXISTS, identDecls, ff.makeAssociativePredicate(
