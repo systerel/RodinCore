@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -33,7 +34,9 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -110,6 +113,9 @@ import org.rodinp.core.RodinMarkerUtil;
  */
 public class ObligationExplorer extends ViewPart implements
 		ISelectionChangedListener, IUserSupportManagerChangedListener {
+
+	// Action when double clicking.
+	Action doubleClickAction;
 
 	/**
 	 * The plug-in identifier of the Obligation Explorer (value
@@ -381,17 +387,6 @@ public class ObligationExplorer extends ViewPart implements
 					e.printStackTrace();
 				}
 			}
-			if (element instanceof IPSFile) {
-				IPSFile psFile = (IPSFile) element;
-				IMachineFile machineFile = psFile.getMachineFile();
-				if (machineFile.exists()) {
-					return EventBImage.getRodinImage(machineFile);
-				} else {
-					IContextFile contextFile = psFile.getContextFile();
-					if (contextFile.exists())
-						return EventBImage.getRodinImage(contextFile);
-				}
-			}
 			if (element instanceof IRodinElement)
 				return EventBImage.getRodinImage((IRodinElement) element);
 			return null;
@@ -406,8 +401,13 @@ public class ObligationExplorer extends ViewPart implements
 					ObligationExplorerUtils.debug("Project: "
 							+ ((IRodinProject) obj).getElementName());
 				return ((IRodinProject) obj).getElementName();
-			} else if (obj instanceof IPSFile) {
-				IPSFile psFile = (IPSFile) obj;
+			} else if (obj instanceof IMachineFile) {
+				IPSFile psFile = ((IMachineFile) obj).getPSFile();
+				String bareName = psFile.getBareName();
+				ProofStatus proofStatus = new ProofStatus(psFile);
+				return bareName + proofStatus;
+			} else if (obj instanceof IContextFile) {
+				IPSFile psFile = ((IContextFile) obj).getPSFile();
 				String bareName = psFile.getBareName();
 				ProofStatus proofStatus = new ProofStatus(psFile);
 				return bareName + proofStatus;
@@ -569,8 +569,6 @@ public class ObligationExplorer extends ViewPart implements
 							+ exclude.getSelection());
 				}
 				fViewer.refresh();
-//				column.pack();
-//				column.setWidth(MAX_WIDTH);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -668,6 +666,7 @@ public class ObligationExplorer extends ViewPart implements
 		fViewer.addSelectionChangedListener(this);
 		makeActions();
 		hookContextMenu();
+		hookDoubleClickAction();
 		contributeToActionBars();
 		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(this);
 	}
@@ -732,6 +731,31 @@ public class ObligationExplorer extends ViewPart implements
 	 */
 	private void makeActions() {
 		groupActionSet = new ObligationExplorerActionGroup(this);
+		// Double click to link with editor
+		doubleClickAction = new Action() {
+			@Override
+			public void run() {
+				ISelection selection = fViewer.getSelection();
+				Object obj = ((IStructuredSelection) selection)
+						.getFirstElement();
+
+				if (obj instanceof IRodinFile) {
+					UIUtils.linkToEventBEditor(obj);
+				}
+			}
+		};
+
+	}
+
+	/**
+	 * Associate the double click action.
+	 */
+	private void hookDoubleClickAction() {
+		fViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				doubleClickAction.run();
+			}
+		});
 	}
 
 	/**

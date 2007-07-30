@@ -15,15 +15,19 @@ package org.eventb.internal.ui.obligationexplorer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.projectexplorer.ProjectExplorerActionGroup;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -205,25 +209,50 @@ public class ObligationExplorerContentProvider implements
 		if (parent instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) parent;
 			try {
-				return prj.getChildrenOfType(IPSFile.ELEMENT_TYPE);
+				IRodinElement[] machines = prj
+						.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
+				IRodinElement[] contexts = prj
+						.getChildrenOfType(IContextFile.ELEMENT_TYPE);
+
+				IRodinElement[] results = new IRodinElement[machines.length
+						+ contexts.length];
+				System.arraycopy(machines, 0, results, 0, machines.length);
+				System.arraycopy(contexts, 0, results, machines.length,
+						contexts.length);
+
+				return results;
 			} catch (RodinDBException e) {
-				e.printStackTrace();
-				MessageDialog
-						.openWarning(
-								EventBUIPlugin.getActiveWorkbenchShell(),
-								"Resource out of date",
-								"Project "
-										+ ((IRodinProject) parent)
-												.getElementName()
-										+ " is out of date with the file system and will be refresh.");
-				ObligationExplorerActionGroup.refreshAction.refreshAll();
+				// If it is out of date then prompt the user to refresh
+				if (!prj.getResource().isSynchronized(IResource.DEPTH_INFINITE)) {
+					MessageDialog
+							.openWarning(
+									EventBUIPlugin.getActiveWorkbenchShell(),
+									"Resource out of date",
+									"Project "
+											+ ((IRodinProject) parent)
+													.getElementName()
+											+ " is out of date with the file system and will be refresh.");
+					ProjectExplorerActionGroup.refreshAction.refreshAll();
+				} else { // Otherwise, there are problems, log an error
+					// message
+					e.printStackTrace();
+					UIUtils.log(e, "Cannot read the Rodin project "
+							+ prj.getElementName());
+					return new Object[0];
+				}
 			}
 		}
 
 		try {
-			if (parent instanceof IPSFile) {
-				IPSFile psFile = (IPSFile) parent;
-				if (psFile.exists()) return psFile.getStatuses();
+			if (parent instanceof IMachineFile) {
+				IPSFile psFile = ((IMachineFile) parent).getPSFile();
+				if (psFile.exists())
+					return psFile.getStatuses();
+			}
+			if (parent instanceof IContextFile) {
+				IPSFile psFile = ((IContextFile) parent).getPSFile();
+				if (psFile.exists())
+					return psFile.getStatuses();
 			}
 			if (parent instanceof IRodinDB) {
 				return ((IRodinDB) parent).getChildren();
