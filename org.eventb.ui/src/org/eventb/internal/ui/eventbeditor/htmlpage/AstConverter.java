@@ -143,6 +143,9 @@ public abstract class AstConverter {
 		final String handle = rodinFile.getHandleIdentifier();
 		final String bareName = rodinFile.getBareName();
 		appendName(makeHyperlink(handle, bareName));
+		if (rodinFile instanceof ICommentedElement) {
+			addComment((ICommentedElement) rodinFile);
+		}
 		endLevel1();
 		return;
 	}

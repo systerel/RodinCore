@@ -9,6 +9,8 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
@@ -81,6 +83,35 @@ public class ContextFile extends EventBFile implements IContextFile {
 
 	public IExtendsContext[] getExtendsClauses() throws RodinDBException {
 		return getChildrenOfType(IExtendsContext.ELEMENT_TYPE); 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.ICommentedElement#setComment(java.lang.String,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void setComment(String comment, IProgressMonitor monitor)
+			throws RodinDBException {
+		setAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE, comment, monitor);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.ICommentedElement#hasComment()
+	 */
+	public boolean hasComment() throws RodinDBException {
+		return hasAttribute(EventBAttributes.COMMENT_ATTRIBUTE);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.ICommentedElement#getComment(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public String getComment() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE);
 	}
 
 }

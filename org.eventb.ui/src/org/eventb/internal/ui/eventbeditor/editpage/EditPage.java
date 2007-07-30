@@ -22,10 +22,14 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.IManagedForm;
@@ -36,9 +40,13 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ICommentedElement;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
+import org.eventb.internal.ui.EventBText;
+import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
+import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.utils.Messages;
@@ -78,6 +86,8 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	
 	IContextActivation activateContext;
 	
+	IEventBInputText commentText;
+
 	/**
 	 * Constructor: This default constructor will be used to create the page
 	 */
@@ -215,25 +225,53 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		}
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 2;
+		gridLayout.numColumns = 3;
 		comp.setLayout(gridLayout);
 		FormText widget = toolkit.createFormText(comp, true);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 		widget.setLayoutData(gd);
 		new EventBFormText(widget);
-		IRodinFile rodinInput = editor.getRodinInput();
+		final IRodinFile rodinInput = editor.getRodinInput();
 		String declaration = "";
 		if (rodinInput instanceof IMachineFile)
 			declaration = "MACHINE";
 		else if (rodinInput instanceof IContextFile)
 			declaration = "CONTEXT";
 
+		Label label = toolkit.createLabel(comp, "//");
+		label.setLayoutData(new GridData());
+		
 		String text = "<form><li style=\"text\" bindent = \"-20\"><b>"
 				+ declaration + "</b> "
 				+ EventBPlugin.getComponentName(rodinInput.getElementName())
 				+ "</li></form>";
 		widget.setText(text, true, true);
 
+		final Text commentWidget = toolkit.createText(comp, "", SWT.MULTI);
+		commentWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				false));
+		commentText = new EventBText(commentWidget);
+		new TimerText(commentWidget, 1000) {
+
+			@Override
+			protected void response() {
+				if (rodinInput instanceof ICommentedElement) {
+					ICommentedElement cElement = (ICommentedElement) rodinInput;
+					try {
+						if (!cElement.hasComment()
+								|| !cElement.getComment().equals(
+										commentWidget.getText())) {
+							cElement.setComment(commentWidget.getText(),
+									new NullProgressMonitor());
+						}
+					} catch (RodinDBException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		
 		toolkit.paintBordersFor(comp);
 	}
 
@@ -294,6 +332,37 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		if (EventBEditorUtils.DEBUG)
 			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
 					+ " ms");
+		updateComment();
+	}
+
+	private void updateComment() {
+		final Text commentWidget = commentText.getTextWidget();
+		String text = commentWidget.getText();
+		IRodinFile rodinInput = this.getEventBEditor().getRodinInput();
+		if (rodinInput instanceof ICommentedElement) {
+			final ICommentedElement cElement = (ICommentedElement) rodinInput;
+			try {
+				if (cElement.hasComment()) {
+					final String comment = cElement.getComment();
+					if (!comment.equals(text)) {
+						Display display = commentWidget.getDisplay();
+						if (!display.isDisposed()) {
+							display.asyncExec(new Runnable() {
+
+								public void run() {
+									commentWidget.setText(comment);
+								}
+
+							});
+						}
+					}
+				}
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			internalPack(commentWidget.getParent());
+		}
 	}
 
 	private void postRefresh() {
@@ -403,7 +472,9 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		if (activateContext != null)
 			activateContext.getContextService().deactivateContext(activateContext);
 		deactivateHandlers();
-
+		if (commentText != null) {
+			commentText.dispose();
+		}
 		super.dispose();
 	}
 
@@ -558,6 +629,23 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	public void recursiveExpand(IRodinElement element) {
 		for (ISectionComposite sectionComp : sectionComps) {
 			sectionComp.recursiveExpand(element);
+		}
+	}
+
+	void internalPack(Composite c) {
+		if (c.equals(form.getBody())) {
+			if (EventBEditorUtils.DEBUG)
+				EventBEditorUtils.debug("Full resize");
+			form.reflow(true);			
+		}
+		Rectangle bounds = c.getBounds();
+		Point preferredSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+		if (preferredSize.x > bounds.width || preferredSize.y > bounds.height) {
+			internalPack(c.getParent());
+		} else {
+			c.layout(true);
+			c.setBounds(bounds);
 		}
 	}
 

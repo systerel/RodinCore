@@ -10,6 +10,7 @@ package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
@@ -119,5 +120,35 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	public IVariant getVariant(String elementName) {
 		return getInternalElement(IVariant.ELEMENT_TYPE, elementName);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.ICommentedElement#setComment(java.lang.String,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void setComment(String comment, IProgressMonitor monitor)
+			throws RodinDBException {
+		setAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE, comment, monitor);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.ICommentedElement#hasComment()
+	 */
+	public boolean hasComment() throws RodinDBException {
+		return hasAttribute(EventBAttributes.COMMENT_ATTRIBUTE);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.ICommentedElement#getComment(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public String getComment() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE);
+	}
+	
 
 }
