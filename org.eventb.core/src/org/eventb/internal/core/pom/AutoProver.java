@@ -20,34 +20,21 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
-import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
 
-import com.b4free.rodin.core.B4freeCore;
-
 public class AutoProver {
 	
-	private static boolean enabled = true;
-	
-	// Default delay for automatic proofs: 2 seconds
-	private static long timeOutDelay = 2 * 1000;
-	
 	public static void disable() {
-		enabled = false;
+		EventBPlugin.getPOMTacticPreference().setEnabled(false);
 	}
 	
 	public static void enable() {
-		enabled = true;
+		EventBPlugin.getPOMTacticPreference().setEnabled(true);
 	}
 
 	public static boolean isEnabled() {
-		return enabled;
-	}
-
-	public static void setTimeOutDelay(long value) {
-		timeOutDelay = value;
+		return EventBPlugin.getPOMTacticPreference().isEnabled();
 	}
 
 	private AutoProver() {
@@ -55,7 +42,7 @@ public class AutoProver {
 	}
 	
 	protected static void run(IPRFile prFile, IPSFile psFile, IProgressMonitor monitor) throws RodinDBException {
-		if (! enabled)
+		if (!isEnabled())
 			return;
 		final IPSStatus[] pos = psFile.getStatuses();
 		boolean dirty = false;
@@ -141,22 +128,9 @@ public class AutoProver {
 		}
 	}
 	
-	public static ITactic autoTactic(){
-		final int MLforces = 
-			B4freeCore.ML_FORCE_0 |
-			B4freeCore.ML_FORCE_1;
-		return BasicTactics.loopOnAllPending(
-				// Tactics.lasoo(),
-				// Tactics.norm(),
-				EventBPlugin.getPostTacticPreference().getDefaultComposedTactic(),
-				new AutoTactics.FunGoalTac(),
-				B4freeCore.externalML(MLforces, timeOutDelay) // ML
-//				B4freeCore.externalPP(true, timeOutDelay), // P0
-//				B4freeCore.externalP1(timeOutDelay) // P1
-//				BasicTactics.onAllPending(
-//						B4freeCore.externalPP(false, timeOutDelay)) // PP
-				);
+	private static ITactic autoTactic(){
+		return EventBPlugin.getPOMTacticPreference()
+				.getSelectedComposedTactic();
 	}
-
 
 }
