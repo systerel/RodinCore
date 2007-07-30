@@ -3,11 +3,19 @@ package org.eventb.core.seqprover.eventbExtensions;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 
+import java.util.Arrays;
+
+import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
+import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasoners.Hyp;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
@@ -17,10 +25,9 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
+import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrites;
 
 
 /**
@@ -139,7 +146,21 @@ public class AutoTactics {
 	//				Simplifying Auto tactics
 	//
 	//*************************************************
+	
+	/**
+	 * Tries to simplify all predicates in a sequent using pre-defined simplification rewritings.
+	 * 
+	 * @author Farhad Mehta
+	 *
+	 */
+	public static class AutoRewriteTac  extends AbsractLazilyConstrTactic{
 
+		@Override
+		protected ITactic getSingInstance() {
+			return BasicTactics.reasonerTac(new AutoRewrites(),EMPTY_INPUT);
+		}
+	}
+	
 	/**
 	 * Simplifies any sequent with an implicative goal by adding the left hand side of the implication to the hypotheses and making its 
 	 * right hand side the new goal.
@@ -157,7 +178,7 @@ public class AutoTactics {
 	
 	
 	/**
-	 * Simplifies any sequent with a universally quantified goal by freeing all universally quantified variables.
+	 * Simplifies any sequent with a universally quantified goal by freeing all its bound variables.
 	 * 
 	 * @author Farhad Mehta
 	 *
@@ -169,19 +190,24 @@ public class AutoTactics {
 			return BasicTactics.reasonerTac(new AllI(), EMPTY_INPUT);
 		}
 	}
-
+	
 	/**
-	 * Tries to simplify all predicates in a sequent using some pre-defined simplification rewritings.
+	 * Simplifies a sequent containing existentially quantified hypotheses by freeing their bound variables.
 	 * 
 	 * @author Farhad Mehta
 	 *
 	 */
-	public static class AutoRewriteTac  extends AbsractLazilyConstrTactic{
-
-		@Override
-		protected ITactic getSingInstance() {
-			return BasicTactics.reasonerTac(new AutoRewrites(),EMPTY_INPUT);
+	public static class ExistsHypTac implements ITactic{
+	
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+				if (Tactics.exF_applicable(shyp)){
+					return Tactics.exF(shyp).apply(ptNode, pm);
+				}
+			}
+			return "Selected hyps contain no existential hyps";
 		}
+		
 	}
 
 	
@@ -205,12 +231,44 @@ public class AutoTactics {
 		};
 	}
 
-	
 	/**
+	 * Simplifies a sequent by rewriting all selected hypotheses and the goal using a (selected) hypothesis that is an equality
+	 * between a free variable and an expression that does not contain the free variable. The used equality remains in the
+	 * selected hypotheses to be used again.
+	 * 
 	 * @author Farhad Mehta
 	 *
 	 */
-	public static class AutoImpFTac extends AbsractLazilyConstrTactic{
+	public static class EqHypTac implements ITactic{
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+				if (Lib.isEq(shyp)){
+					if (Lib.isFreeIdent(Lib.eqLeft(shyp)) &&
+							! Arrays.asList(Lib.eqRight(shyp).getFreeIdentifiers()).contains(Lib.eqLeft(shyp))){
+						// Try eq and return only if the tactic actually did something.
+						if (Tactics.eqE(shyp).apply(ptNode, pm) == null) return null;
+					} else if (Lib.isFreeIdent(Lib.eqRight(shyp)) &&
+							! Arrays.asList(Lib.eqLeft(shyp).getFreeIdentifiers()).contains(Lib.eqRight(shyp))){
+						// Try he and return only if the tactic actually did something.
+						if (Tactics.he(shyp).apply(ptNode, pm) == null) return null;
+					}
+				}
+
+			}
+			return "Selected hyps contain no appropriate equalities";
+		}
+	}
+	
+	
+	/**
+	 * Simplifies the (visible) implicative hypotheses in a sequent by removing predicates from their left hand sides that are
+	 * (selected) hypotheses. 
+	 * 
+	 * @author Farhad Mehta
+	 *
+	 */
+	public static class ShrinkImpHypTac extends AbsractLazilyConstrTactic{
 
 		@Override
 		protected ITactic getSingInstance() {
@@ -218,70 +276,100 @@ public class AutoTactics {
 		}
 	}
 	
-	// *********************
-	
+	/**
+	 * Simplifies (selected) hypotheses of the form 'E={a,b,c}' to 'E={a,c}' after finding the hypothesis 'not(E=b)'.
+	 * 
+	 * 
+	 * @author htson, Farhad Mehta
+	 *
+	 * TODO : do search in reasoner instead of tactic
+	 */
+	public static class ShrinkEnumHypTac implements ITactic  {
 
-	public static class AutoExFTac implements ITactic{
-	
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-				if (Tactics.exF_applicable(shyp)){
-					return Tactics.exF(shyp).apply(ptNode, pm);
+				// Search for E : {a, ... ,c}
+				if (Lib.isInclusion(shyp)) {
+					Expression right = ((RelationalPredicate) shyp)
+							.getRight();
+					if (Lib.isSetExtension(right)) {
+						// Looking for not(E = b)
+						for (Predicate hyp : ptNode.getSequent()
+								.selectedHypIterable()) {
+							if (Lib.isNeg(hyp)) {
+								Predicate child = ((UnaryPredicate) hyp)
+										.getChild();
+								if (Lib.isEq(child)) {
+									if (negEnum(shyp, hyp)
+											.apply(ptNode, pm) == null)
+										return null;
+								}
+
+							}
+						}
+					}
 				}
 			}
-			return "Selected hyps contain no existential hyps";
+
+			return "Selected hyps contain no appropriate hypotheses";
 		}
 		
-	}
-
-	public static class AutoEqETac implements ITactic{
-	
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return Tactics.eqE_auto().apply(ptNode, pm);
-		}
-		
-	}
-
-	public static class AutoNegEnumTac implements ITactic {
-	
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return Tactics.negEnum_auto().apply(ptNode, pm);
+		private static ITactic negEnum(Predicate shyp, Predicate hyp) {
+			return BasicTactics.reasonerTac(new NegEnum(), new MultiplePredInput(
+					new Predicate[] { shyp, hyp }));
 		}
 	
+	}	
+	
+	/**
+	 * Simplifies all (selected) hypotheses of the form 'P => Q /\ R' into multiple
+	 * implications 'P => Q' , 'P => R'.
+	 * 
+	 * @author htson, Farhad Mehta
+	 */
+	public static class SplitRightConjImpHypTac implements ITactic {
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+				// Search for (P => Q /\ ... /\ R)
+				if (Lib.isImp(shyp)) {
+					Predicate right = ((BinaryPredicate) shyp)
+							.getRight();
+					if (Lib.isConj(right)) {
+						if (Tactics.impAndRewrites(shyp, IPosition.ROOT).apply(
+								ptNode, pm) == null)
+							return null;
+					}
+				}
+			}
+			return "Selected hyps contain no appropriate hypotheses";
+		}
 	}
 
 	/**
-	 * The class for "Automatic implication hypothesis with conjunction
-	 * right" {@link ImpAndRewrites}.
-	 * <p>
+	 * Simplifies all (selected) hypotheses of the form 'P \/ Q => R' into multiple
+	 * implications 'P => R' , 'Q => R'.
 	 * 
-	 * @author htson
+	 * @author htson, Farhad Mehta
 	 */
-	public static class AutoImpAndHypTac implements ITactic {
-	
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return Tactics.autoImpAndRight().apply(ptNode, pm);
-		}
-	
-	}
+	public static class SplitLeftDisjImpHypTac implements ITactic {
 
-	/**
-	 * The class for "Automatic implication hypothesis with disjunctive
-	 * left" {@link ImpOrRewrites}.
-	 * <p>
-	 * 
-	 * @author htson
-	 */
-	public static class AutoImpOrHypTac implements ITactic {
-	
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return Tactics.autoImpOrRight().apply(ptNode, pm);
+			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+				// Search for (P \/ ... \/ Q => R)
+				if (Lib.isImp(shyp)) {
+					Predicate left = ((BinaryPredicate) shyp)
+							.getLeft();
+					if (Lib.isDisj(left)) {
+						if (Tactics.impOrRewrites(shyp, IPosition.ROOT).apply(
+								ptNode, pm) == null)
+							return null;
+					}
+				}
+			}
+			return "Selected hyps contain no appropriate hypotheses";
 		}
-	
 	}
-
-	
-	
 
 	
 	//*************************************************
@@ -292,7 +380,7 @@ public class AutoTactics {
 
 
 	/**
-	 * Splits a sequent with a conjunctive goal using the conjunction introduction rule.
+	 * Splits a sequent with a conjunctive goal into multiple subgoals.
 	 * 
 	 * @author Farhad Mehta
 	 *
@@ -308,7 +396,7 @@ public class AutoTactics {
 	
 	//*************************************************
 	//
-	//				Misc
+	//				Mixed
 	//
 	//*************************************************
 
@@ -317,7 +405,7 @@ public class AutoTactics {
 	 * Clarifies the goal of the sequent by repeatedly :
 	 * - splitting conjunctions
 	 * - simplifying implications and universal quantifiers
-	 * - discharging sequents with a true goal, a false hyposis, and where the goal is contained in the hypotheses
+	 * - discharging sequents with a true goal, a false hypothesis, and where the goal is contained in the hypotheses
 	 * 
 	 * @author Farhad Mehta
 	 *
@@ -360,7 +448,7 @@ public class AutoTactics {
 	 * @author Farhad Mehta
 	 *
 	 */
-	private static abstract class AbsractLazilyConstrTactic implements ITactic{
+	public static abstract class AbsractLazilyConstrTactic implements ITactic{
 		
 		private ITactic instance = null;
 				

@@ -365,45 +365,67 @@
             id="funGoalTac"
             name="%funGoalTacName"/>
       <autoTactic
-            class="org.eventb.core.seqprover.eventbExtensions.Tactics$NormTac"
-            id="normTac"
-            name="%normTacName"/>
-      <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$AutoRewriteTac"
             id="autoRewriteTac"
             name="%autoRewriteTacName"/>
       <autoTactic
-            class="org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF"
-            id="autoImpETac"
-            name="%autoImpETacName"/>
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$ImpGoalTac"
+            description="%impGoalTacDesc"
+            id="impGoalTac"
+            name="%impGoalTacName">
+      </autoTactic>
+      <autoTactic
+            class="com.sun.tools.javac.code.Type$ForAll"
+            description="%forallGoalTacDesc"
+            id="forallGoalTac"
+            name="%forallGoalTacName">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$ExistsHypTac"
+            description="%existsHypTacDesc"
+            id="existsHypTac"
+            name="%existsHypTacName"/>
       <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$FindContrHypsTac"
-            id="autoFalsifyHypTac"
-            name="%autoFalsifyHypTacName"/>
+            description="%findContrHypsTacDesc"
+            id="findContrHypsTac"
+            name="%findContrHypsTacName"/>
       <autoTactic
-            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$AutoEqETac"
-            id="autoEqETac"
-            name="%autoEqETacName"/>
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$EqHypTac"
+            description="%eqHypTacDesc"
+            id="eqHypTac"
+            name="%eqHypTacName"/>
       <autoTactic
-            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$AutoExFTac"
-            id="autoExFTac"
-            name="%autoExFTacName"/>
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$ShrinkImpHypTac"
+            description="%shrinkImpHypTacDesc"
+            id="shrinkImpHyp"
+            name="%shrinkImpHypTacName"/>
       <autoTactic
-            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$AutoNegEnumTac"
-            id="autoNegEnumTac"
-            name="%autoNegEnumTacName"/>
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$ShrinkEnumHypTac"
+            description="%shrinkEnumHypTacDesc"
+            id="shrinkEnumHypTac"
+            name="%shrinkEnumHypTacName"/>
       <autoTactic
-            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$GoalDisjInHypTac"
-            id="autoHypOrTac"
-            name="%autoHypOrTacName"/>
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$SplitRightConjImpHypTac"
+            description="%splitRightConjImpHypTacDesc"
+            id="splitRightConjImpHypTac"
+            name="%splitRightConjImpHypTacName"/>
       <autoTactic
-            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$AutoImpAndHypTac"
-            id="autoImpAndHypTac"
-            name="%autoImpAndHypTacName"/>
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$SplitLeftDisjImpHypTac"
+            description="%splitLeftDisjImpHypTacDesc"
+            id="splitLeftDisjImpHypTac"
+            name="%splitLeftDisjImpHypTacName"/>
       <autoTactic
-            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$AutoImpOrHypTac"
-            id="autoImpOrHypTac"
-            name="%autoImpOrHypTacName"/>
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$ConjGoalTac"
+            description="%conjGoalTacDesc"
+            id="conjGoalTac"
+            name="%conjGoalTacName">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$ClarifyGoalTac"
+            description="%clarifyGoalTacDesc"
+            id="clarifyGoalTac"
+            name="%clarifyGoalTacName"/>
 
    </extension>
 

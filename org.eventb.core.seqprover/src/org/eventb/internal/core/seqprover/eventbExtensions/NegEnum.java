@@ -27,6 +27,13 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasonerInputs.MultiplePredInputReasoner;
 
+/**
+ * 
+ * @author htson, Farhad Mehta
+ * 
+ * TODO : make this an empty input reasoner, similar to AutoImpF
+ *
+ */
 public class NegEnum extends MultiplePredInputReasoner implements IReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".negEnum";

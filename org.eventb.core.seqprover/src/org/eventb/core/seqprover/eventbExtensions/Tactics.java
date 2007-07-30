@@ -48,7 +48,6 @@ import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
-import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasoners.Hyp;
@@ -95,10 +94,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
-import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardComparisonRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites;
@@ -660,35 +657,35 @@ public class Tactics {
 		return Lib.isEq(hyp);
 	}
 
-	/**
-	 * This tactic tries to automatically apply an eqE or he for an equality selected hyp 
-	 * where one side of the equality is a free variable and the other side is an expression
-	 * that doesn't contain the free variable.
-	 *  
-	 * @return the tactic
-	 */
-	public static ITactic eqE_auto(){
-		return new ITactic(){
-
-			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-					if (Lib.isEq(shyp)){
-						if (Lib.isFreeIdent(Lib.eqLeft(shyp)) &&
-								! Arrays.asList(Lib.eqRight(shyp).getFreeIdentifiers()).contains(Lib.eqLeft(shyp))){
-							// Try eq and return only if the tactic actually did something.
-							if (eqE(shyp).apply(ptNode, pm) == null) return null;
-						} else if (Lib.isFreeIdent(Lib.eqRight(shyp)) &&
-								! Arrays.asList(Lib.eqLeft(shyp).getFreeIdentifiers()).contains(Lib.eqRight(shyp))){
-							// Try he and return only if the tactic actually did something.
-							if (he(shyp).apply(ptNode, pm) == null) return null;
-						}
-					}
-					
-				}
-				return "Selected hyps contain no appropriate equalities";
-			}
-		};
-	}
+//	/**
+//	 * This tactic tries to automatically apply an eqE or he for an equality selected hyp 
+//	 * where one side of the equality is a free variable and the other side is an expression
+//	 * that doesn't contain the free variable.
+//	 *  
+//	 * @return the tactic
+//	 */
+//	public static ITactic eqE_auto(){
+//		return new ITactic(){
+//
+//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+//					if (Lib.isEq(shyp)){
+//						if (Lib.isFreeIdent(Lib.eqLeft(shyp)) &&
+//								! Arrays.asList(Lib.eqRight(shyp).getFreeIdentifiers()).contains(Lib.eqLeft(shyp))){
+//							// Try eq and return only if the tactic actually did something.
+//							if (eqE(shyp).apply(ptNode, pm) == null) return null;
+//						} else if (Lib.isFreeIdent(Lib.eqRight(shyp)) &&
+//								! Arrays.asList(Lib.eqLeft(shyp).getFreeIdentifiers()).contains(Lib.eqRight(shyp))){
+//							// Try he and return only if the tactic actually did something.
+//							if (he(shyp).apply(ptNode, pm) == null) return null;
+//						}
+//					}
+//					
+//				}
+//				return "Selected hyps contain no appropriate equalities";
+//			}
+//		};
+//	}
 	
 //	/**
 //	 * @param exHyp
@@ -840,10 +837,10 @@ public class Tactics {
 				// autoRewriteRules() already incorporates what conjD_auto() does
 				// conjD_auto(),
 				falsifyHyp_auto(),
-				eqE_auto(),
+				new AutoTactics.EqHypTac(),
 				// impE_auto(),
-				new AutoTactics.AutoImpFTac(),
-				new AutoTactics.AutoExFTac()
+				new AutoTactics.ShrinkImpHypTac(),
+				new AutoTactics.ExistsHypTac()
 				);
 	}
 
@@ -1221,43 +1218,43 @@ public class Tactics {
 		
 	}
 	
-	public static ITactic negEnum_auto() {
-		return new ITactic() {
+//	public static ITactic negEnum_auto() {
+//		return new ITactic() {
+//
+//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+//					// Search for E : {a, ... ,c}
+//					if (Lib.isInclusion(shyp)) {
+//						Expression right = ((RelationalPredicate) shyp)
+//								.getRight();
+//						if (Lib.isSetExtension(right)) {
+//							// Looking for not(E = b)
+//							for (Predicate hyp : ptNode.getSequent()
+//									.selectedHypIterable()) {
+//								if (Lib.isNeg(hyp)) {
+//									Predicate child = ((UnaryPredicate) hyp)
+//											.getChild();
+//									if (Lib.isEq(child)) {
+//										if (negEnum(shyp, hyp)
+//												.apply(ptNode, pm) == null)
+//											return null;
+//									}
+//
+//								}
+//							}
+//						}
+//					}
+//				}
+//
+//				return "Selected hyps contain no appropriate hypotheses";
+//			}
+//		};
+//	}
 
-			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-					// Search for E : {a, ... ,c}
-					if (Lib.isInclusion(shyp)) {
-						Expression right = ((RelationalPredicate) shyp)
-								.getRight();
-						if (Lib.isSetExtension(right)) {
-							// Looking for not(E = b)
-							for (Predicate hyp : ptNode.getSequent()
-									.selectedHypIterable()) {
-								if (Lib.isNeg(hyp)) {
-									Predicate child = ((UnaryPredicate) hyp)
-											.getChild();
-									if (Lib.isEq(child)) {
-										if (negEnum(shyp, hyp)
-												.apply(ptNode, pm) == null)
-											return null;
-									}
-
-								}
-							}
-						}
-					}
-				}
-
-				return "Selected hyps contain no appropriate hypotheses";
-			}
-		};
-	}
-
-	protected static ITactic negEnum(Predicate shyp, Predicate hyp) {
-		return BasicTactics.reasonerTac(new NegEnum(), new MultiplePredInput(
-				new Predicate[] { shyp, hyp }));
-	}
+//	protected static ITactic negEnum(Predicate shyp, Predicate hyp) {
+//		return BasicTactics.reasonerTac(new NegEnum(), new MultiplePredInput(
+//				new Predicate[] { shyp, hyp }));
+//	}
 	
 	/**
 	 * Return the tactic "implication with conjunction rewrites"
@@ -2585,66 +2582,66 @@ public class Tactics {
 	}
 
 
-	/**
-	 * Return the tactic "Automatic implication hypothesis with conjunction
-	 * right" {@link ImpAndRewrites}.
-	 * <p>
-	 * 
-	 * @return The tactic "Automatic implication hypothesis with conjunction
-	 *         right"
-	 * @author htson
-	 */
-	public static ITactic autoImpAndRight() {
-		return new ITactic() {
-
-			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-					// Search for (P => Q /\ ... /\ R)
-					if (Lib.isImp(shyp)) {
-						Predicate right = ((BinaryPredicate) shyp)
-								.getRight();
-						if (Lib.isConj(right)) {
-							if (impAndRewrites(shyp, IPosition.ROOT).apply(
-									ptNode, pm) == null)
-								return null;
-						}
-					}
-				}
-				return "Selected hyps contain no appropriate hypotheses";
-			}
-		};
-	}
-
-
-	/**
-	 * Return the tactic "Automatic implication hypothesis with disjunctive
-	 * left" {@link ImpOrRewrites}.
-	 * <p>
-	 * 
-	 * @return The tactic "Automatic implication hypothesis with disjunctive
-	 *         left"
-	 * @author htson
-	 */
-	public static ITactic autoImpOrRight() {
-		return new ITactic() {
-
-			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-					// Search for (P \/ ... \/ Q => R)
-					if (Lib.isImp(shyp)) {
-						Predicate left = ((BinaryPredicate) shyp)
-								.getLeft();
-						if (Lib.isDisj(left)) {
-							if (impOrRewrites(shyp, IPosition.ROOT).apply(
-									ptNode, pm) == null)
-								return null;
-						}
-					}
-				}
-				return "Selected hyps contain no appropriate hypotheses";
-			}
-		};
-	}
+//	/**
+//	 * Return the tactic "Automatic implication hypothesis with conjunction
+//	 * right" {@link ImpAndRewrites}.
+//	 * <p>
+//	 * 
+//	 * @return The tactic "Automatic implication hypothesis with conjunction
+//	 *         right"
+//	 * @author htson
+//	 */
+//	public static ITactic autoImpAndRight() {
+//		return new ITactic() {
+//
+//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+//					// Search for (P => Q /\ ... /\ R)
+//					if (Lib.isImp(shyp)) {
+//						Predicate right = ((BinaryPredicate) shyp)
+//								.getRight();
+//						if (Lib.isConj(right)) {
+//							if (impAndRewrites(shyp, IPosition.ROOT).apply(
+//									ptNode, pm) == null)
+//								return null;
+//						}
+//					}
+//				}
+//				return "Selected hyps contain no appropriate hypotheses";
+//			}
+//		};
+//	}
+//
+//
+//	/**
+//	 * Return the tactic "Automatic implication hypothesis with disjunctive
+//	 * left" {@link ImpOrRewrites}.
+//	 * <p>
+//	 * 
+//	 * @return The tactic "Automatic implication hypothesis with disjunctive
+//	 *         left"
+//	 * @author htson
+//	 */
+//	public static ITactic autoImpOrRight() {
+//		return new ITactic() {
+//
+//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+//					// Search for (P \/ ... \/ Q => R)
+//					if (Lib.isImp(shyp)) {
+//						Predicate left = ((BinaryPredicate) shyp)
+//								.getLeft();
+//						if (Lib.isDisj(left)) {
+//							if (impOrRewrites(shyp, IPosition.ROOT).apply(
+//									ptNode, pm) == null)
+//								return null;
+//						}
+//					}
+//				}
+//				return "Selected hyps contain no appropriate hypotheses";
+//			}
+//		};
+//	}
 
 
 	/**
