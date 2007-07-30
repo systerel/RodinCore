@@ -27,8 +27,10 @@ public class ProofStatus {
 			return stringBuilder.toString();
 		}
 		
-		int discharged = 0;
-		int autoDischarged = 0;
+		int auto = 0;
+		int manual = 0;
+		int reviewed = 0;
+		int remaining = 0;
 		for (IPSStatus status : statuses) {
 			boolean isDischarged;
 			try {
@@ -38,7 +40,6 @@ public class ProofStatus {
 				continue;
 			}
 			if (isDischarged) {
-				discharged += 1;
 				boolean isAutomatic;
 				try {
 					isAutomatic = ProverUIUtils.isAutomatic(status);
@@ -47,15 +48,36 @@ public class ProofStatus {
 					continue;
 				}
 				if (isAutomatic) {
-					autoDischarged += 1;
+					auto += 1;
+				}
+				else {
+					manual += 1;
+				}
+			}
+			else {
+				boolean isReviewed;
+				try {
+					isReviewed = ProverUIUtils.isReviewed(status);
+				} catch (RodinDBException e) {
+					EventBUIExceptionHandler.handleGetAttributeException(e, UserAwareness.IGNORE);
+					continue;
+				}
+				if (isReviewed)
+					reviewed += 1;
+				else {
+					remaining += 1;
 				}
 			}
 		}
 		stringBuilder.append(statuses.length);
+		stringBuilder.append("|");
+		stringBuilder.append(auto);
 		stringBuilder.append("/");
-		stringBuilder.append(discharged);
+		stringBuilder.append(manual);
+		stringBuilder.append("|");
+		stringBuilder.append(reviewed);
 		stringBuilder.append("/");
-		stringBuilder.append(autoDischarged);
+		stringBuilder.append(remaining);
 		
 		stringBuilder.append(')');
 		return stringBuilder.toString();
