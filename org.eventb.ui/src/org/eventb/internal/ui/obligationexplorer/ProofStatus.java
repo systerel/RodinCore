@@ -72,11 +72,11 @@ public class ProofStatus {
 		stringBuilder.append(statuses.length);
 		stringBuilder.append("|");
 		stringBuilder.append(auto);
-		stringBuilder.append("/");
+		stringBuilder.append(",");
 		stringBuilder.append(manual);
 		stringBuilder.append("|");
 		stringBuilder.append(reviewed);
-		stringBuilder.append("/");
+		stringBuilder.append(",");
 		stringBuilder.append(remaining);
 		
 		stringBuilder.append(')');
