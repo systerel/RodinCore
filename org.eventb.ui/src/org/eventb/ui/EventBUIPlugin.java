@@ -162,6 +162,8 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 				.setSelectedDescriptors(ProverUIUtils
 						.stringsToTacticDescriptors(postTacticPreference,
 								postTacticIDs));
+		boolean b = store.getBoolean(PreferenceConstants.P_POSTTACTIC_ENABLE);
+		postTacticPreference.setEnabled(b);
 
 		// Initialise the auto-tactics
 		s = store.getString(PreferenceConstants.P_AUTOTACTICS);
@@ -172,6 +174,8 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 				.setSelectedDescriptors(ProverUIUtils
 						.stringsToTacticDescriptors(autoTacticPreference,
 								autoTacticIDs));
+		b = store.getBoolean(PreferenceConstants.P_AUTOTACTIC_ENABLE);
+		autoTacticPreference.setEnabled(b);
 	}
 
 	/**
