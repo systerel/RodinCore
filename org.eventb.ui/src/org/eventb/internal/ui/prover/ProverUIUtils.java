@@ -159,4 +159,10 @@ public class ProverUIUtils {
 		return !status.getHasManualProof();
 	}
 
+	public static boolean isReviewed(IPSStatus status) throws RodinDBException {
+		int confidence = status.getConfidence();
+		return confidence > IConfidence.PENDING
+				&& confidence <= IConfidence.REVIEWED_MAX;
+	}
+
 }
