@@ -1,5 +1,8 @@
 package org.eventb.core.seqprover.tactics;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
@@ -303,10 +306,38 @@ public class BasicTactics {
 	 * 			The resulting tactic.
 	 */
 	public static ITactic loopOnAllPending(final ITactic ... tactics){
-		// TODO : implement more efficiently
-		return repeat(onAllPending(composeUntilSuccess(tactics)));
-	}
+		// return repeat(onAllPending(composeUntilSuccess(tactics)));
+		return new ITactic(){
 
+			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+				boolean modified = false;
+				
+				LinkedList<IProofTreeNode> nodes = new LinkedList<IProofTreeNode>(Arrays.asList(ptNode.getOpenDescendants()));
+				
+				while (! nodes.isEmpty()) {
+					IProofTreeNode node = nodes.removeFirst();
+					for (ITactic tactic : tactics) {
+						tactic.apply(node, pm);
+						if (! node.isOpen())
+						{
+							// tactic made some progress on node
+							modified = true;
+							nodes.addAll(Arrays.asList(node.getOpenDescendants()));
+							break;
+						}
+					}
+				}
+				
+				if (modified){
+					return null;
+				} else
+				{
+					return "loopOnAllPending: All tactics failed";
+				}
+			}
+		};
+		
+	}
 	
 	/**
 	 * Composition of a sequence of tactics till failure
