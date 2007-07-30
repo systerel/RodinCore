@@ -13,7 +13,7 @@ import org.rodinp.core.RodinDBException;
 public class CComboEditComposite extends DefaultEditComposite implements
 		IEditComposite {
 
-	protected final String UNDEFINED = "----- UNDEFINED -----";
+	protected final String UNDEFINED = "--undef--";
 	
 	protected CCombo combo;
 	protected Button undefinedButton;
