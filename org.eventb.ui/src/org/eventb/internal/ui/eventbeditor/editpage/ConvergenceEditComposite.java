@@ -11,11 +11,11 @@ import org.rodinp.core.RodinDBException;
 public class ConvergenceEditComposite extends DefaultAttributeEditor implements
 		IAttributeEditor {
 
-	private final String ORDINARY = "ORDINARY";
+	private final String ORDINARY = "ordinary";
 
-	private final String CONVERGENT = "CONVERGENT";
+	private final String CONVERGENT = "convergent";
 
-	private final String ANTICIPATED = "ANTICIPATED";
+	private final String ANTICIPATED = "anticipated";
 
 	@Override
 	public String getAttribute(IAttributedElement element,
