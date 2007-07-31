@@ -686,7 +686,7 @@ public abstract class AstConverter {
 					}
 				}
 
-				if (actions.length != 0 || guards.length != 0
+				if (params.length != 0 || guards.length != 0
 						|| witnesses.length != 0) {
 					keyword("THEN", 1);
 				}
