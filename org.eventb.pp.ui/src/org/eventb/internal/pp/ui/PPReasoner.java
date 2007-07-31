@@ -1,5 +1,10 @@
 package org.eventb.internal.pp.ui;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -9,10 +14,17 @@ import org.eventb.core.seqprover.xprover.XProverReasoner;
 
 public class PPReasoner extends XProverReasoner {
 
-	private static String REASONER_ID = "org.eventb.internal.pp.ui.PPReasoner";
+	public static String REASONER_ID = "org.eventb.internal.pp.ui.PPReasoner";
+	
+	static boolean DEBUG;
+	private static void debug(String msg) {
+		System.out.println(msg);
+	}
 	
 	@Override
 	public XProverCall newProverCall(IReasonerInput input, Iterable<Predicate> hypotheses, Predicate goal, IProofMonitor pm) {
+		if (PPReasoner.DEBUG) PPReasoner.constructTest(hypotheses, goal);
+		
 		return new PPProverCall((XProverInput)input,hypotheses,goal,pm);
 	}
 
@@ -21,5 +33,40 @@ public class PPReasoner extends XProverReasoner {
 	}
 
 
+	public static void constructTest(Iterable<Predicate> hypotheses, Predicate goal) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("doTest(\n");
+		builder.append("mList(\n");
+		for (FreeIdentifier identifier : collectFreeIdentifiers(hypotheses, goal)) {
+			builder.append("\""+identifier.getName()+"\",");
+			builder.append("\""+identifier.getType().toString()+"\",");
+			builder.append("\n");
+		}
+		builder.delete(builder.length()-2, builder.length());
+		builder.append("\n");
+		
+		builder.append("),\n mSet(\n");
+		for (Predicate predicate : hypotheses) {
+			builder.append("\""+predicate.toString()+"\",");
+			builder.append("\n");
+		}
+		builder.delete(builder.length()-2, builder.length());
+		builder.append("\n");
+		
+		builder.append("),");
+		builder.append("\""+goal.toString()+"\"");
+		
+		builder.append(",true);");
+		debug(builder.toString());
+	}
+	
+	private static Set<FreeIdentifier> collectFreeIdentifiers(Iterable<Predicate> hypotheses, Predicate goal) {
+		Set<FreeIdentifier> result = new HashSet<FreeIdentifier>();
+		for (Predicate predicate : hypotheses) {
+			result.addAll(Arrays.asList(predicate.getFreeIdentifiers()));
+		}
+		result.addAll(Arrays.asList(goal.getFreeIdentifiers()));
+		return result;
+	}
 
 }

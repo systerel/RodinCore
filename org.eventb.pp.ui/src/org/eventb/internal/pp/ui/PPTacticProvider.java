@@ -30,5 +30,6 @@ public class PPTacticProvider extends DefaultTacticProvider implements
 			return new ArrayList<IPosition>();
 		return null;
 	}
-
+	
+	
 }

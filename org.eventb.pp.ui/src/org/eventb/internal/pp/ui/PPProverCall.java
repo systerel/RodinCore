@@ -55,8 +55,8 @@ public class PPProverCall extends XProverCall {
 		}, DEFAULT_PERIOD, DEFAULT_PERIOD);
 		
 		prover.translate();
+		prover.load();
 		prover.prove(-1);
-
 	}
 	
 	@Override
@@ -68,5 +68,7 @@ public class PPProverCall extends XProverCall {
 	public Set<Predicate> neededHypotheses() {
 		return new HashSet<Predicate>(prover.getResult().getTracer().getOriginalPredicates());
 	}
+	
+	
 
 }
