@@ -12,6 +12,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBFormText;
@@ -45,6 +46,8 @@ public class HTMLPage extends EventBEditorPage implements
 
 	private Browser browser;
 
+	private EventBControl eventBBrowser;
+	
 	/**
 	 * Constructor: This default constructor will be used to create the page
 	 */
@@ -90,6 +93,7 @@ public class HTMLPage extends EventBEditorPage implements
 		}
 		if (browser != null) {
 			/* The Browser widget can be used */
+			eventBBrowser = new EventBControl(browser);
 			setFormText(new NullProgressMonitor());
 		}
 		else {
@@ -102,7 +106,6 @@ public class HTMLPage extends EventBEditorPage implements
 			formText = new EventBFormText(widget);
 			widget.setWhitespaceNormalized(false);
 		}
-
 
 	}
 
@@ -131,8 +134,10 @@ public class HTMLPage extends EventBEditorPage implements
 	 */
 	@Override
 	public void dispose() {
-		if (browser != null)
+		if (browser != null) {
+			eventBBrowser.dispose();
 			browser.dispose();
+		}
 		if (formText != null)
 			formText.dispose();
 		getEventBEditor().removeElementChangedListener(this);
