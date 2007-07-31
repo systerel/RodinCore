@@ -212,6 +212,24 @@ public class UIUtils {
 	}
 
 	/**
+	 * Convert a string input to HTML format by replacing special characters (&, <,
+	 * >, space, tab).
+	 * <p>
+	 * 
+	 * @param input
+	 *            the input string
+	 * @return a string corresponding to the input in XML format
+	 */
+	public static String HTMLWrapUp(String input) {
+		String output = input;
+		output = output.replaceAll("&", "&amp;");
+		output = output.replaceAll("<", "&lt;");
+		output = output.replaceAll(">", "&gt;");
+		output = output.replaceAll(" ", "&nbsp;");
+		return output;
+	}
+	
+	/**
 	 * Utitlity method to create a text and link with the same label
 	 * <p>
 	 * 
