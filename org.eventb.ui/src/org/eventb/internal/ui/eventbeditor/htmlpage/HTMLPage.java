@@ -10,10 +10,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.utils.Messages;
+import org.eventb.ui.EventBFormText;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IEventBFormText;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -34,7 +37,7 @@ public class HTMLPage extends EventBEditorPage implements
 	private ScrolledForm form;
 
 	// The form text
-//	private IEventBFormText formText;
+	private IEventBFormText formText;
 
 	private boolean needsUpdate;
 
@@ -89,25 +92,16 @@ public class HTMLPage extends EventBEditorPage implements
 			/* The Browser widget can be used */
 			setFormText(new NullProgressMonitor());
 		}
-//		FormText widget = managedForm.getToolkit().createFormText(body, true);
-//
-//		widget.addHyperlinkListener(new HyperlinkAdapter() {
-//			/*
-//			 * (non-Javadoc)
-//			 * 
-//			 * @see org.eclipse.ui.forms.events.HyperlinkAdapter#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
-//			 */
-//			@Override
-//			public void linkActivated(HyperlinkEvent e) {
-//				String id = (String) e.getHref();
-//				IRodinElement element = RodinCore.valueOf(id);
-//				if (element != null && element.exists())
-//					UIUtils.linkToEventBEditor(element);
-//			}
-//		});
-//
-//		formText = new EventBFormText(widget);
-//		widget.setWhitespaceNormalized(false);
+		else {
+			FormText widget = managedForm.getToolkit().createFormText(body,
+					true);
+			widget
+					.setText(
+							"<form>Your platform does not support SWT Browser widget. Platform requirements for the widget are available from the SWT FAQ website</form>",
+							true, false);
+			formText = new EventBFormText(widget);
+			widget.setWhitespaceNormalized(false);
+		}
 
 
 	}
@@ -139,6 +133,8 @@ public class HTMLPage extends EventBEditorPage implements
 	public void dispose() {
 		if (browser != null)
 			browser.dispose();
+		if (formText != null)
+			formText.dispose();
 		getEventBEditor().removeElementChangedListener(this);
 		super.dispose();
 	}
