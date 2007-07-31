@@ -1163,7 +1163,7 @@
    <extension
          point="org.eventb.core.pomTactics">
       <tactic id="org.eventb.core.seqprover.trueGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.falseHypac"/>
+      <tactic id="org.eventb.core.seqprover.falseHypTac"/>
       <tactic
             id="org.eventb.core.seqprover.goalInHypTac">
       </tactic>
@@ -1190,6 +1190,9 @@
       </tactic>
       <tactic
             id="org.eventb.core.seqprover.shrinkImpHypTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.clarifyGoalTac">
       </tactic>
    </extension>
 
