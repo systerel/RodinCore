@@ -14,6 +14,7 @@ package org.eventb.internal.ui.eventbeditor.htmlpage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eventb.internal.ui.BundledFileExtractor;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.osgi.framework.Bundle;
 
@@ -34,14 +35,10 @@ public class Ast2HtmlConverter extends AstConverter {
 			"</head>" +
 			"<body><div class=\"main\">";
 		FOOTER = "</div></body></html>";
-		BEGIN_KEYWORD_0 = "<div class=\"keyword0\">";
-		BEGIN_KEYWORD_1 = "<div class=\"keyword1\">";
-		BEGIN_KEYWORD_2 = "<div class=\"keyword2\">";
-		BEGIN_KEYWORD_3 = "<div class=\"keyword3\">";
-		END_KEYWORD_0 = "</div>";
+		BEGIN_MASTER_KEYWORD = "<div class=\"masterKeyword\">";
+		BEGIN_KEYWORD_1 = "<div class=\"secondaryKeyword\">";
+		END_MASTER_KEYWORD = "</div>";
 		END_KEYWORD_1 = "</div>";
-		END_KEYWORD_2 = "</div>";
-		END_KEYWORD_3 = "</div>";
 		BEGIN_LEVEL_0 = "";
 		BEGIN_LEVEL_1 = "<table class=\"level1\" cellspacing=\"0\" cellpadding=\"0\"><tr>";
 		BEGIN_LEVEL_2 = "<table class=\"level2\" cellspacing=\"0\" cellpadding=\"0\"><tr>";
@@ -51,18 +48,66 @@ public class Ast2HtmlConverter extends AstConverter {
 		END_LEVEL_2 = "</tr></table>";
 		END_LEVEL_3 = "</tr></table>";
 		EMPTY_LINE = "<br>";
-		BEGIN_ATTRIBUTE = "<td class=\"attribute\" align=\"left\" valign=\"top\">";
-		END_ATTRIBUTE = "</td>";
-		BEGIN_MULTILINE = "<table class=\"multiline\" cellspacing=\"0\" cellpadding=\"0\">";
-		END_MULTILINE = "</table>";
-		BEGIN_LINE = "<tr><td>";
-		END_LINE = "</td></tr>";
+		BEGIN_MULTILINE = "<td><table class=\"multiline\" cellspacing=\"0\" cellpadding=\"0\">";
+		END_MULTILINE = "</table></td>";
+		BEGIN_LINE = "<tr>";
+		END_LINE = "</tr>";
+		BEGIN_COMPONENT_NAME = "<td class=\"componentName\" align=\"left\" valign=\"center\">";
+		END_COMPONENT_NAME = "</td>";
+		BEGIN_COMMENT = "<td class=\"comment\" align=\"left\" valign=\"top\">";
+		END_COMMENT = "</td>";
+		BEGIN_VARIABLE_IDENTIFIER = "<td class=\"variableIdentifier\" align=\"left\" valign=\"center\">";
+		END_VARIABLE_IDENTIFIER = "</td>";
+		BEGIN_INVARIANT_LABEL = "<td class=\"invariantLabel\" align=\"left\" valign=\"center\">";
+		END_INVARIANT_LABEL = "</td>";
+		BEGIN_INVARIANT_PREDICATE = "<td class=\"invariantPredicate\" align=\"left\" valign=\"center\">";
+		END_INVARIANT_PREDICATE = "</td>";
+		BEGIN_THEOREM_LABEL = "<td class=\"theoremLabel\" align=\"left\" valign=\"center\">";
+		END_THEOREM_LABEL = "</td>";
+		BEGIN_THEOREM_PREDICATE = "<td class=\"theoremPredicate\" align=\"left\" valign=\"center\">";
+		END_THEOREM_PREDICATE = "</td>";
+		BEGIN_EVENT_LABEL = "<td class=\"eventLabel\" align=\"left\" valign=\"center\">";
+		END_EVENT_LABEL = "</td>";
+		BEGIN_INHERITED = "<td class=\"inherited\" align=\"left\" valign=\"center\">";
+		END_INHERITED = "</td>";
+		BEGIN_ABSTRACT_EVENT_LABEL = "<td class=\"abstractEventLabel\" align=\"left\" valign=\"center\">";
+		END_ABSTRACT_EVENT_LABEL = "</td>";
+		BEGIN_PARAMETER_IDENTIFIER = "<td class=\"parameterIdentifier\" align=\"left\" valign=\"center\">";
+		END_PARAMETER_IDENTIFIER = "</td>";
+		BEGIN_GUARD_LABEL = "<td class=\"guardLabel\" align=\"left\" valign=\"center\">";
+		END_GUARD_LABEL = "</td>";
+		BEGIN_GUARD_PREDICATE = "<td class=\"guardPredicate\" align=\"left\" valign=\"center\">";
+		END_GUARD_PREDICATE = "</td>";
+		BEGIN_WITNESS_LABEL = "<td class=\"witnessLabel\" align=\"left\" valign=\"center\">";
+		END_WITNESS_LABEL = "</td>";
+		BEGIN_WITNESS_PREDICATE = "<td class=\"witnessPredicate\" align=\"left\" valign=\"center\">";
+		END_WITNESS_PREDICATE = "</td>";
+		BEGIN_ACTION_LABEL = "<td class=\"actionLabel\" align=\"left\" valign=\"center\">";
+		END_ACTION_LABEL = "</td>";
+		BEGIN_ACTION_ASSIGNMENT = "<td class=\"actionAssignment\" align=\"left\" valign=\"center\">";
+		END_ACTION_ASSIGNMENT = "</td>";
+		BEGIN_VARIANT_EXPRESSION = "<td class=\"variantExpression\" align=\"left\" valign=\"center\">";
+		END_VARIANT_EXPRESSION = "</td>";
+		BEGIN_SET_IDENTIFIER = "<td class=\"setIdentifier\" align=\"left\" valign=\"center\">";
+		END_SET_IDENTIFIER = "</td>";
+		BEGIN_AXIOM_LABEL = "<td class=\"axiomLabel\" align=\"left\" valign=\"center\">";
+		END_AXIOM_LABEL = "</td>";
+		BEGIN_AXIOM_PREDICATE = "<td class=\"axiomPredicate\" align=\"left\" valign=\"center\">";
+		END_AXIOM_PREDICATE = "</td>";
+		BEGIN_CONSTANT_IDENTIFIER = "<td class=\"constantIdentifier\" align=\"left\" valign=\"center\">";
+		END_CONSTANT_IDENTIFIER = "</td>";
+
 		SPACE = "&nbsp;&nbsp;&nbsp;";
 	}
 	
 	@Override
-	protected String makeHyperlink(String link, String text) {
+	protected String makeHyperlink(String hyperlink, String text) {
 		return text;
+	}
+
+	@Override
+	protected String wrapString(String text) {
+		return UIUtils.HTMLWrapUp(text);
 	}
 
 }

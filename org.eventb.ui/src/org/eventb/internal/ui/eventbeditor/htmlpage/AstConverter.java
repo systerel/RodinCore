@@ -50,19 +50,12 @@ import org.rodinp.core.RodinDBException;
 public abstract class AstConverter {
 	
 	protected String SPACE = "";
-
 	protected String HEADER = "";
 	protected String FOOTER = "";
-	protected String BEGIN_KEYWORD_0 = "";
+	protected String BEGIN_MASTER_KEYWORD = "";
 	protected String BEGIN_KEYWORD_1 = "";
-	protected String BEGIN_KEYWORD_2 = "";
-	protected String BEGIN_KEYWORD_3 = "";
-	protected String END_KEYWORD_0 = "";
+	protected String END_MASTER_KEYWORD = "";
 	protected String END_KEYWORD_1 = "";
-	protected String END_KEYWORD_2 = "";
-	protected String END_KEYWORD_3 = "";
-	protected String ITALIC = "";
-	protected String END_ITALIC = "";
 	protected String BEGIN_LEVEL_0 = "";
 	protected String BEGIN_LEVEL_1 = "";
 	protected String BEGIN_LEVEL_2 = "";
@@ -72,24 +65,98 @@ public abstract class AstConverter {
 	protected String END_LEVEL_2 = "";
 	protected String END_LEVEL_3 = "";
 	protected String EMPTY_LINE = "";
-	protected String BEGIN_ATTRIBUTE = "";
-	protected String END_ATTRIBUTE = "";
 	protected String BEGIN_MULTILINE = "";
 	protected String END_MULTILINE = "";
 	protected String BEGIN_LINE = "";
 	protected String END_LINE = "";
-	protected String BEGIN_NAME_SEPARATOR = null;
-	protected String END_NAME_SEPARATOR = null;
-	protected String BEGIN_LABEL_SEPARATOR = null;
-	protected String END_LABEL_SEPARATOR = ":";
-	protected String BEGIN_PREDICATE_SEPARATOR = null;
-	protected String END_PREDICATE_SEPARATOR = null;
-	protected String BEGIN_ASSIGNMENT_SEPARATOR = null;
-	protected String END_ASSIGNMENT_SEPARATOR = null;
-	protected String BEGIN_EXPRESSION_SEPARATOR = null;
-	protected String END_EXPRESSION_SEPARATOR = null;
+	protected String BEGIN_COMPONENT_NAME = "";
+	protected String END_COMPONENT_NAME = "";
+	protected String BEGIN_COMPONENT_NAME_SEPARATOR = null;
+	protected String END_COMPONENT_NAME_SEPARATOR = null;
+	protected String BEGIN_COMMENT = "";
+	protected String END_COMMENT = "";
 	protected String BEGIN_COMMENT_SEPARATOR = "//";
 	protected String END_COMMENT_SEPARATOR = null;
+	protected String BEGIN_VARIABLE_IDENTIFIER = "";
+	protected String END_VARIABLE_IDENTIFIER = "";
+	protected String BEGIN_VARIABLE_IDENTIFIER_SEPARATOR = null;
+	protected String END_VARIABLE_IDENTIFIER_SEPARATOR = null;
+	protected String BEGIN_INVARIANT_LABEL = "";
+	protected String END_INVARIANT_LABEL = "";
+	protected String BEGIN_INVARIANT_LABEL_SEPARATOR = null;
+	protected String END_INVARIANT_LABEL_SEPARATOR = ":";
+	protected String BEGIN_INVARIANT_PREDICATE = "";
+	protected String END_INVARIANT_PREDICATE = "";
+	protected String BEGIN_INVARIANT_PREDICATE_SEPARATOR = null;
+	protected String END_INVARIANT_PREDICATE_SEPARATOR = null;
+	protected String BEGIN_THEOREM_LABEL = "";
+	protected String END_THEOREM_LABEL = "";
+	protected String BEGIN_THEOREM_LABEL_SEPARATOR = null;
+	protected String END_THEOREM_LABEL_SEPARATOR = ":";
+	protected String BEGIN_THEOREM_PREDICATE = "";
+	protected String END_THEOREM_PREDICATE = "";
+	protected String BEGIN_THEOREM_PREDICATE_SEPARATOR = null;
+	protected String END_THEOREM_PREDICATE_SEPARATOR = null;
+	protected String BEGIN_EVENT_LABEL = "";
+	protected String END_EVENT_LABEL = "";
+	protected String BEGIN_EVENT_LABEL_SEPARATOR = null;
+	protected String END_EVENT_LABEL_SEPARATOR = "\u2259";
+	protected String BEGIN_ABSTRACT_EVENT_LABEL = "";
+	protected String END_ABSTRACT_EVENT_LABEL = "";
+	protected String BEGIN_ABSTRACT_EVENT_LABEL_SEPARATOR = null;
+	protected String END_ABSTRACT_EVENT_LABEL_SEPARATOR = null;
+	protected String BEGIN_INHERITED = "";
+	protected String END_INHERITED = "";
+	protected String BEGIN_INHERITED_SEPARATOR = null;
+	protected String END_INHERITED_SEPARATOR = null;
+	protected String BEGIN_PARAMETER_IDENTIFIER = "";
+	protected String END_PARAMETER_IDENTIFIER = "";
+	protected String BEGIN_PARAMETER_IDENTIFIER_SEPARATOR = null;
+	protected String END_PARAMETER_IDENTIFIER_SEPARATOR = null;
+	protected String BEGIN_GUARD_LABEL = "";
+	protected String END_GUARD_LABEL = "";
+	protected String BEGIN_GUARD_LABEL_SEPARATOR = null;
+	protected String END_GUARD_LABEL_SEPARATOR = ":";
+	protected String BEGIN_GUARD_PREDICATE = "";
+	protected String END_GUARD_PREDICATE = "";
+	protected String BEGIN_GUARD_PREDICATE_SEPARATOR = null;
+	protected String END_GUARD_PREDICATE_SEPARATOR = null;
+	protected String BEGIN_WITNESS_LABEL = "";
+	protected String END_WITNESS_LABEL = "";
+	protected String BEGIN_WITNESS_LABEL_SEPARATOR = null;
+	protected String END_WITNESS_LABEL_SEPARATOR = ":";
+	protected String BEGIN_WITNESS_PREDICATE = "";
+	protected String END_WITNESS_PREDICATE = "";
+	protected String BEGIN_WITNESS_PREDICATE_SEPARATOR = null;
+	protected String END_WITNESS_PREDICATE_SEPARATOR = null;
+	protected String BEGIN_ACTION_LABEL = "";
+	protected String END_ACTION_LABEL = "";
+	protected String BEGIN_ACTION_LABEL_SEPARATOR = null;
+	protected String END_ACTION_LABEL_SEPARATOR = ":";
+	protected String BEGIN_ACTION_ASSIGNMENT = "";
+	protected String END_ACTION_ASSIGNMENT = "";
+	protected String BEGIN_ACTION_ASSIGNMENT_SEPARATOR = null;
+	protected String END_ACTION_ASSIGNMENT_SEPARATOR = null;
+	protected String BEGIN_VARIANT_EXPRESSION = "";
+	protected String END_VARIANT_EXPRESSION = "";
+	protected String BEGIN_VARIANT_EXPRESSION_SEPARATOR = null;
+	protected String END_VARIANT_EXPRESSION_SEPARATOR = null;
+	protected String BEGIN_SET_IDENTIFIER = "";
+	protected String END_SET_IDENTIFIER = "";
+	protected String BEGIN_SET_IDENTIFIER_SEPARATOR = null;
+	protected String END_SET_IDENTIFIER_SEPARATOR = null;
+	protected String BEGIN_AXIOM_LABEL = "";
+	protected String END_AXIOM_LABEL = "";
+	protected String BEGIN_AXIOM_LABEL_SEPARATOR = null;
+	protected String END_AXIOM_LABEL_SEPARATOR = ":";
+	protected String BEGIN_AXIOM_PREDICATE = "";
+	protected String END_AXIOM_PREDICATE = "";
+	protected String BEGIN_AXIOM_PREDICATE_SEPARATOR = null;
+	protected String END_AXIOM_PREDICATE_SEPARATOR = null;
+	protected String BEGIN_CONSTANT_IDENTIFIER = "";
+	protected String END_CONSTANT_IDENTIFIER = "";
+	protected String BEGIN_CONSTANT_IDENTIFIER_SEPARATOR = null;
+	protected String END_CONSTANT_IDENTIFIER_SEPARATOR = null;
 	
 	// The content string of the form text
 	private StringBuilder htmlString;
@@ -102,8 +169,8 @@ public abstract class AstConverter {
 	public String getText(IProgressMonitor monitor, IRodinFile rodinFile) {
 		htmlString.setLength(0);
 		htmlString.append(HEADER);
-		addComponentName(rodinFile);
-		addComponentDependencies(rodinFile, monitor);
+		addDeclaration(rodinFile);
+		addDependencies(rodinFile, monitor);
 		if (rodinFile instanceof IMachineFile) {
 			addVariables(rodinFile, monitor);
 			addInvariants(rodinFile, monitor);
@@ -116,7 +183,7 @@ public abstract class AstConverter {
 			addAxioms(rodinFile, monitor);
 			addTheorems(rodinFile, monitor);
 		}
-		section("END");
+		masterKeyword("END");
 		htmlString.append(FOOTER);
 
 		return htmlString.toString();
@@ -130,19 +197,19 @@ public abstract class AstConverter {
 	 * @param rodinFile
 	 *            the rodin input file
 	 */
-	private void addComponentName(IRodinFile rodinFile) {
+	private void addDeclaration(IRodinFile rodinFile) {
 		// Print the Machine/Context name
 		beginLevel0();
 		if (rodinFile instanceof IMachineFile) {
-			keyword("MACHINE", 0);
+			masterKeyword("MACHINE");
 		} else if (rodinFile instanceof IContextFile) {
-			keyword("CONTEXT", 0);
+			masterKeyword("CONTEXT");
 		}
 		endLevel0();
 		beginLevel1();
 		final String handle = rodinFile.getHandleIdentifier();
 		final String bareName = rodinFile.getBareName();
-		appendName(makeHyperlink(handle, bareName));
+		appendComponentName(makeHyperlink(handle, wrapString(bareName)));
 		if (rodinFile instanceof ICommentedElement) {
 			addComment((ICommentedElement) rodinFile);
 		}
@@ -160,7 +227,7 @@ public abstract class AstConverter {
 	 * @param monitor
 	 *            a progress monitor
 	 */
-	private void addComponentDependencies(IRodinFile rodinFile,
+	private void addDependencies(IRodinFile rodinFile,
 			IProgressMonitor monitor) {
 		if (rodinFile instanceof IMachineFile) {
 			// REFINES clause
@@ -171,10 +238,10 @@ public abstract class AstConverter {
 				if (refines.length != 0) {
 					IRefinesMachine refine = (IRefinesMachine) refines[0];
 					String name = refine.getAbstractMachineName();
-					section("REFINES");
+					masterKeyword("REFINES");
 					beginLevel1();
-					appendName(makeHyperlink(EventBPlugin
-							.getMachineFileName(name), name));
+					appendComponentName(makeHyperlink(EventBPlugin
+							.getMachineFileName(name), wrapString(name)));
 					endLevel1();
 				}
 			} catch (RodinDBException e) {
@@ -192,10 +259,10 @@ public abstract class AstConverter {
 				if (extendz.length != 0) {
 					IExtendsContext extend = (IExtendsContext) extendz[0];
 					String name = extend.getAbstractContextName();
-					section("EXTENDS");
+					masterKeyword("EXTENDS");
 					beginLevel1();
-					appendName(makeHyperlink(EventBPlugin
-							.getContextFileName(name), name));
+					appendComponentName(makeHyperlink(EventBPlugin
+							.getContextFileName(name), wrapString(name)));
 					endLevel1();
 				}
 			} catch (RodinDBException e) {
@@ -219,14 +286,14 @@ public abstract class AstConverter {
 
 		int length = seeContexts.length;
 		if (length != 0) {
-			section("SEES");
+			masterKeyword("SEES");
 			for (int i = 0; i < length; i++) {
 				try {
 					beginLevel1();
-					appendName(
+					appendComponentName(
 							makeHyperlink(rodinFile.getHandleIdentifier(),
-									((SeesContext) seeContexts[i])
-											.getSeenContextName()));
+									wrapString(((SeesContext) seeContexts[i])
+											.getSeenContextName())));
 					endLevel1();
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
@@ -235,10 +302,6 @@ public abstract class AstConverter {
 				}
 			}
 		}
-	}
-
-	private void section(String s) {
-		keyword(s, 0);
 	}
 
 	/**
@@ -261,12 +324,13 @@ public abstract class AstConverter {
 			return;
 		}
 		if (vars.length != 0) {
-			section("VARIABLES");
-			for (IVariable var: vars) {
+			masterKeyword("VARIABLES");
+			for (IVariable var : vars) {
 				beginLevel1();
 				try {
-					appendName(makeHyperlink(var.getHandleIdentifier(), var
-							.getIdentifierString()));
+					appendVariableIdentifier(makeHyperlink(var
+							.getHandleIdentifier(), wrapString(var
+							.getIdentifierString())));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get the identifier string for variable "
@@ -298,13 +362,13 @@ public abstract class AstConverter {
 			return;
 		}
 		if (invs.length != 0) {
-			section("INVARIANTS");
+			masterKeyword("INVARIANTS");
 			for (IInvariant inv: invs) {
 				beginLevel1();
 				try {
-					appendLabel(makeHyperlink(inv.getHandleIdentifier(), inv
-							.getLabel()));
-					appendPredicate(UIUtils.XMLWrapUp(inv.getPredicateString()));
+					appendInvariantLabel(makeHyperlink(inv.getHandleIdentifier(), wrapString(inv
+							.getLabel())));
+					appendInvariantPredicate(wrapString(inv.getPredicateString()));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get details for invariant "
@@ -337,12 +401,13 @@ public abstract class AstConverter {
 			return;
 		}
 		if (sets.length != 0) {
-			section("SETS");
+			masterKeyword("SETS");
 			for (ICarrierSet set: sets) {
 				beginLevel1();
 				try {
-					appendName(makeHyperlink(set.getHandleIdentifier(), set
-							.getIdentifierString()));
+					appendSetIdentifier(makeHyperlink(
+							set.getHandleIdentifier(), wrapString(set
+									.getIdentifierString())));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get the identifier string for carrier set "
@@ -375,12 +440,12 @@ public abstract class AstConverter {
 			return;
 		}
 		if (csts.length != 0) {
-			section("CONSTANTS");
+			masterKeyword("CONSTANTS");
 			for (IConstant cst: csts) {
 				beginLevel1();
 				try {
-					appendName(makeHyperlink(cst.getHandleIdentifier(), cst
-							.getIdentifierString()));
+					appendConstantIdentifier(makeHyperlink(cst.getHandleIdentifier(), wrapString(cst
+							.getIdentifierString())));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get the identifier string for constant "
@@ -413,13 +478,13 @@ public abstract class AstConverter {
 			return;
 		}
 		if (axms.length != 0) {
-			section("AXIOMS");
+			masterKeyword("AXIOMS");
 			for (IAxiom axm: axms) {
 				beginLevel1();
 				try {
-					appendLabel(makeHyperlink(axm.getHandleIdentifier(), axm
-							.getLabel()));
-					appendPredicate(UIUtils.XMLWrapUp(axm.getPredicateString()));
+					appendAxiomLabel(makeHyperlink(axm.getHandleIdentifier(), wrapString(axm
+							.getLabel())));
+					appendAxiomPredicate(wrapString(axm.getPredicateString()));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get details for axiom "
@@ -452,13 +517,13 @@ public abstract class AstConverter {
 			return;
 		}
 		if (thms.length != 0) {
-			section("THEOREMS");
+			masterKeyword("THEOREMS");
 			for (ITheorem thm: thms) {
 				beginLevel1();
 				try {
-					appendLabel(makeHyperlink(thm.getHandleIdentifier(), thm
-							.getLabel()));
-					appendPredicate(UIUtils.XMLWrapUp(thm.getPredicateString()));
+					appendTheoremLabel(makeHyperlink(thm.getHandleIdentifier(),
+							wrapString(thm.getLabel())));
+					appendTheoremPredicate(wrapString(thm.getPredicateString()));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get details for theorem "
@@ -491,13 +556,13 @@ public abstract class AstConverter {
 		}
 
 		if (evts.length != 0) {
-			section("EVENTS");
+			masterKeyword("EVENTS");
 			for (IEvent evt: evts) {
 				try {
 					emptyLine();
 					beginLevel1();
-					appendName(makeHyperlink(evt.getHandleIdentifier(), evt
-							.getLabel()));
+					appendEventLabel(makeHyperlink(evt.getHandleIdentifier(),
+							wrapString(evt.getLabel())));
 					addComment(evt);
 					endLevel1();
 				} catch (RodinDBException e) {
@@ -510,7 +575,7 @@ public abstract class AstConverter {
 				try {
 					if (evt.isInherited()) {
 						beginLevel2();
-						append("inherited", "", "");
+						appendInherited();
 						endLevel2();
 						continue;
 					}
@@ -518,7 +583,7 @@ public abstract class AstConverter {
 					EventBUIExceptionHandler.handleGetAttributeException(e);
 					continue;
 				}
-				IVariable[] lvars;
+				IVariable[] params;
 				IGuard[] guards;
 				IAction[] actions;
 				IRefinesEvent[] refinesEvents;
@@ -526,7 +591,7 @@ public abstract class AstConverter {
 				try {
 					refinesEvents = evt
 							.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
-					lvars = evt.getChildrenOfType(IVariable.ELEMENT_TYPE);
+					params = evt.getChildrenOfType(IVariable.ELEMENT_TYPE);
 					guards = evt.getChildrenOfType(IGuard.ELEMENT_TYPE);
 					witnesses = evt.getChildrenOfType(IWitness.ELEMENT_TYPE);
 					actions = evt.getChildrenOfType(IAction.ELEMENT_TYPE);
@@ -538,13 +603,13 @@ public abstract class AstConverter {
 				}
 
 				if (refinesEvents.length != 0) {
-					keyword("REFINES", 2);
+					keyword("REFINES", 1);
 					for (IRefinesEvent refinesEvent: refinesEvents) {
 						beginLevel3();
 						try {
-							appendName(makeHyperlink(refinesEvent
-									.getHandleIdentifier(), refinesEvent
-									.getAbstractEventLabel()));
+							appendAbstractEventLabel(makeHyperlink(refinesEvent
+									.getHandleIdentifier(), wrapString(refinesEvent
+									.getAbstractEventLabel())));
 						} catch (RodinDBException e) {
 							EventBEditorUtils.debugAndLogError(e,
 									"Cannot get the abstract event label for refines event "
@@ -555,38 +620,41 @@ public abstract class AstConverter {
 					}
 				}
 
-				if (lvars.length != 0) {
-					keyword("ANY", 2);
-					for (IVariable var: lvars) {
+				if (params.length != 0) {
+					keyword("ANY", 1);
+					for (IVariable param: params) {
 						beginLevel3();
 						try {
-							appendName(makeHyperlink(var
-									.getHandleIdentifier(), var
-									.getIdentifierString()));
+							appendParameterIdentifier(makeHyperlink(param
+									.getHandleIdentifier(), wrapString(param
+									.getIdentifierString())));
 						} catch (RodinDBException e) {
 							EventBEditorUtils.debugAndLogError(e,
 									"Cannot get the identifier string for local variable "
-											+ var.getElementName());
+											+ param.getElementName());
 						}
-						addComment(var);
+						addComment(param);
 						endLevel3();
 					}
-					keyword("WHERE", 2);
+					keyword("WHERE", 1);
 				} else {
 					if (guards.length != 0) {
-						keyword("WHEN", 2);
+						keyword("WHEN", 1);
+					} else if (witnesses.length != 0) {
+						keyword("WITH", 1);
 					} else {
-						keyword("BEGIN", 2);
+						keyword("BEGIN", 1);
 					}
+					
 				}
 
 				for (IGuard guard: guards) {
 					beginLevel3();
 					try {
-						appendLabel(makeHyperlink(guard
-										.getHandleIdentifier(), guard
-										.getLabel()));
-						appendPredicate(UIUtils.XMLWrapUp(guard
+						appendGuardLabel(makeHyperlink(guard
+										.getHandleIdentifier(), wrapString(guard
+										.getLabel())));
+						appendGuardPredicate(wrapString(guard
 												.getPredicateString()));
 					} catch (RodinDBException e) {
 						EventBEditorUtils.debugAndLogError(e,
@@ -598,13 +666,15 @@ public abstract class AstConverter {
 				}
 
 				if (witnesses.length != 0) {
-					keyword("WITH", 2);
+					if (params.length != 0 || guards.length != 0) {
+						keyword("WITH", 1);
+					}
 					for (IWitness witness: witnesses) {
 						beginLevel3();
 						try {
-							appendLabel(makeHyperlink(witness
-									.getHandleIdentifier(), witness.getLabel()));
-							appendPredicate(UIUtils.XMLWrapUp(witness
+							appendWitnessLabel(makeHyperlink(witness
+									.getHandleIdentifier(), wrapString(witness.getLabel())));
+							appendWitnessPredicate(wrapString(witness
 											.getPredicateString()));
 						} catch (RodinDBException e) {
 							EventBEditorUtils.debugAndLogError(e,
@@ -616,22 +686,24 @@ public abstract class AstConverter {
 					}
 				}
 
-				if (guards.length != 0) {
-					keyword("THEN", 2);
+				if (actions.length != 0 || guards.length != 0
+						|| witnesses.length != 0) {
+					keyword("THEN", 1);
 				}
 
 				if (actions.length == 0) {
 					beginLevel3();
-					appendAssignment("skip");
+					appendActionAssignment("skip");
 					endLevel3();
 				} else {
 					for (IAction action: actions) {
 						beginLevel3();
 						try {
-							appendLabel(makeHyperlink(action
-									.getHandleIdentifier(), action.getLabel()));
-							appendAssignment(UIUtils.XMLWrapUp(action
-											.getAssignmentString()));
+							appendActionLabel(makeHyperlink(action
+									.getHandleIdentifier(), wrapString(action
+									.getLabel())));
+							appendActionAssignment(wrapString(action
+									.getAssignmentString()));
 						} catch (RodinDBException e) {
 							EventBEditorUtils.debugAndLogError(e,
 									"Cannot get details for action "
@@ -641,7 +713,7 @@ public abstract class AstConverter {
 						endLevel3();
 					}
 				}
-				keyword("END", 2);
+				keyword("END", 1);
 			}
 		}
 	}
@@ -668,12 +740,12 @@ public abstract class AstConverter {
 			return;
 		}
 		if (variants.length != 0) {
-			section("VARIANT");
+			masterKeyword("VARIANT");
 			for (IVariant variant: variants) {
 				beginLevel1();
 				try {
-					appendExpression(makeHyperlink(variant.getHandleIdentifier(),
-							variant.getExpressionString()));
+					appendVariantExpression(makeHyperlink(variant.getHandleIdentifier(),
+							wrapString(variant.getExpressionString())));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get the expression string for variant "
@@ -695,11 +767,12 @@ public abstract class AstConverter {
 			if (element.hasComment()) {
 				String comment = element.getComment();
 				if (comment.length() != 0)
-					appendComment(UIUtils.XMLWrapUp(comment));
+					appendComment(wrapString(comment));
 			}
 		} catch (RodinDBException e) {
 			// ignore
-			if (UIUtils.DEBUG) e.printStackTrace();
+			if (UIUtils.DEBUG)
+				e.printStackTrace();
 		}
 	}
 
@@ -739,19 +812,19 @@ public abstract class AstConverter {
 		htmlString.append(EMPTY_LINE);
 	}
 	
+	private void masterKeyword(String str) {
+		htmlString.append(BEGIN_MASTER_KEYWORD);
+		htmlString.append(str);
+		htmlString.append(END_MASTER_KEYWORD);
+	}
+	
 	private void keyword(String str, int level) {
 		switch (level) {
 		case 0:
-			htmlString.append(BEGIN_KEYWORD_0);
+			htmlString.append(BEGIN_MASTER_KEYWORD);
 			break;
 		case 1:
 			htmlString.append(BEGIN_KEYWORD_1);
-			break;
-		case 2:
-			htmlString.append(BEGIN_KEYWORD_2);
-			break;
-		case 3:
-			htmlString.append(BEGIN_KEYWORD_3);
 			break;
 		}
 		
@@ -759,49 +832,140 @@ public abstract class AstConverter {
 		
 		switch (level) {
 		case 0:
-			htmlString.append(END_KEYWORD_0);
+			htmlString.append(END_MASTER_KEYWORD);
 			break;
 		case 1:
 			htmlString.append(END_KEYWORD_1);
 			break;
-		case 2:
-			htmlString.append(END_KEYWORD_2);
-			break;
-		case 3:
-			htmlString.append(END_KEYWORD_3);
-			break;
 		}
 	}
-	
-	private void appendName(String label) {
-		append(label, BEGIN_NAME_SEPARATOR, END_NAME_SEPARATOR); 
+
+	private void appendComponentName(String label) {
+		append(label, BEGIN_COMPONENT_NAME, END_COMPONENT_NAME,
+				BEGIN_COMPONENT_NAME_SEPARATOR, END_COMPONENT_NAME_SEPARATOR);
 	}
 
-	private void appendLabel(String label) {
-		append(label, BEGIN_LABEL_SEPARATOR, END_LABEL_SEPARATOR); 
-	}
-	
-	private void appendPredicate(String predicate) {
-		append(predicate, BEGIN_PREDICATE_SEPARATOR, END_PREDICATE_SEPARATOR); 
+	private void appendVariableIdentifier(String identifier) {
+		append(identifier, BEGIN_VARIABLE_IDENTIFIER, END_VARIABLE_IDENTIFIER,
+				BEGIN_VARIABLE_IDENTIFIER_SEPARATOR,
+				END_VARIABLE_IDENTIFIER_SEPARATOR);
 	}
 
-	private void appendAssignment(String predicate) {
-		append(predicate, BEGIN_ASSIGNMENT_SEPARATOR, END_ASSIGNMENT_SEPARATOR); 
+	private void appendParameterIdentifier(String identifier) {
+		append(identifier, BEGIN_PARAMETER_IDENTIFIER, END_PARAMETER_IDENTIFIER,
+				BEGIN_PARAMETER_IDENTIFIER_SEPARATOR,
+				END_PARAMETER_IDENTIFIER_SEPARATOR); 
 	}
 
-	private void appendExpression(String predicate) {
-		append(predicate, BEGIN_EXPRESSION_SEPARATOR, END_EXPRESSION_SEPARATOR); 
+	private void appendSetIdentifier(String identifier) {
+		append(identifier, BEGIN_SET_IDENTIFIER, END_SET_IDENTIFIER,
+				BEGIN_SET_IDENTIFIER_SEPARATOR,
+				END_SET_IDENTIFIER_SEPARATOR);
 	}
 
-	private void appendComment(String predicate) {
-		append(predicate, BEGIN_COMMENT_SEPARATOR, END_COMMENT_SEPARATOR); 
+	private void appendConstantIdentifier(String identifier) {
+		append(identifier, BEGIN_CONSTANT_IDENTIFIER, END_CONSTANT_IDENTIFIER,
+				BEGIN_CONSTANT_IDENTIFIER_SEPARATOR,
+				END_CONSTANT_IDENTIFIER_SEPARATOR); 
 	}
 
-	private void append(String s, String beginSeparator, String endSeparator) {
-		htmlString.append(BEGIN_ATTRIBUTE);
-		// Printing multi-line
+	private void appendInvariantLabel(String label) {
+		append(label, BEGIN_INVARIANT_LABEL, END_INVARIANT_LABEL,
+				BEGIN_INVARIANT_LABEL_SEPARATOR, END_INVARIANT_LABEL_SEPARATOR);
+	}
+
+	private void appendTheoremLabel(String label) {
+		append(label, BEGIN_THEOREM_LABEL, END_THEOREM_LABEL,
+				BEGIN_THEOREM_LABEL_SEPARATOR, END_THEOREM_LABEL_SEPARATOR);
+	}
+
+	private void appendEventLabel(String label) {
+		append(label, BEGIN_EVENT_LABEL, END_EVENT_LABEL,
+				BEGIN_EVENT_LABEL_SEPARATOR, END_EVENT_LABEL_SEPARATOR);
+	}
+
+	private void appendGuardLabel(String label) {
+		append(label, BEGIN_GUARD_LABEL, END_GUARD_LABEL,
+				BEGIN_GUARD_LABEL_SEPARATOR, END_GUARD_LABEL_SEPARATOR);
+	}
+
+	private void appendWitnessLabel(String label) {
+		append(label, BEGIN_WITNESS_LABEL, END_WITNESS_LABEL,
+				BEGIN_WITNESS_LABEL_SEPARATOR, END_WITNESS_LABEL_SEPARATOR);
+	}
+
+	private void appendAxiomLabel(String label) {
+		append(label, BEGIN_AXIOM_LABEL, END_AXIOM_LABEL,
+				BEGIN_AXIOM_LABEL_SEPARATOR, END_AXIOM_LABEL_SEPARATOR);
+	}
+
+	private void appendAbstractEventLabel(String label) {
+		append(label, BEGIN_ABSTRACT_EVENT_LABEL, END_ABSTRACT_EVENT_LABEL,
+				BEGIN_ABSTRACT_EVENT_LABEL_SEPARATOR,
+				END_ABSTRACT_EVENT_LABEL_SEPARATOR);
+	}
+
+	private void appendActionLabel(String label) {
+		append(label, BEGIN_ACTION_LABEL, END_ACTION_LABEL,
+				BEGIN_ACTION_LABEL_SEPARATOR, END_ACTION_LABEL_SEPARATOR);
+	}
+
+	private void appendInvariantPredicate(String predicate) {
+		append(predicate, BEGIN_INVARIANT_PREDICATE, END_INVARIANT_PREDICATE,
+				BEGIN_INVARIANT_PREDICATE_SEPARATOR,
+				END_INVARIANT_PREDICATE_SEPARATOR);
+	}
+
+	private void appendTheoremPredicate(String predicate) {
+		append(predicate, BEGIN_THEOREM_PREDICATE, END_THEOREM_PREDICATE,
+				BEGIN_THEOREM_PREDICATE_SEPARATOR,
+				END_THEOREM_PREDICATE_SEPARATOR);
+	}
+
+	private void appendGuardPredicate(String predicate) {
+		append(predicate, BEGIN_GUARD_PREDICATE, END_GUARD_PREDICATE,
+				BEGIN_GUARD_PREDICATE_SEPARATOR,
+				END_GUARD_PREDICATE_SEPARATOR);
+	}
+
+	private void appendWitnessPredicate(String predicate) {
+		append(predicate, BEGIN_WITNESS_PREDICATE, END_WITNESS_PREDICATE,
+				BEGIN_WITNESS_PREDICATE_SEPARATOR,
+				END_WITNESS_PREDICATE_SEPARATOR);
+	}
+
+	private void appendAxiomPredicate(String predicate) {
+		append(predicate, BEGIN_AXIOM_PREDICATE, END_AXIOM_PREDICATE,
+				BEGIN_AXIOM_PREDICATE_SEPARATOR,
+				END_AXIOM_PREDICATE_SEPARATOR);
+	}
+
+	private void appendActionAssignment(String assignment) {
+		append(assignment, BEGIN_ACTION_ASSIGNMENT, END_ACTION_ASSIGNMENT, BEGIN_ACTION_ASSIGNMENT_SEPARATOR,
+				END_ACTION_ASSIGNMENT_SEPARATOR); 
+	}
+
+	private void appendVariantExpression(String predicate) {
+		append(predicate, BEGIN_VARIANT_EXPRESSION, END_VARIANT_EXPRESSION,
+				BEGIN_VARIANT_EXPRESSION_SEPARATOR,
+				END_VARIANT_EXPRESSION_SEPARATOR);
+	}
+
+	private void appendComment(String comment) {
+		append(comment, BEGIN_COMMENT, END_COMMENT, BEGIN_COMMENT_SEPARATOR,
+				END_COMMENT_SEPARATOR);
+	}
+
+	private void appendInherited() {
+		append("inherited", BEGIN_INHERITED, END_INHERITED,
+				BEGIN_INHERITED_SEPARATOR, END_INHERITED_SEPARATOR);
+	}
+
+	private void append(String s, String begin, String end,
+			String beginSeparator, String endSeparator) {
 		StringTokenizer stringTokenizer = new StringTokenizer(s, "\n");
 		if (stringTokenizer.countTokens() <= 1) {
+			htmlString.append(begin);
 			if (beginSeparator != null) {
 				htmlString.append(SPACE);
 				htmlString.append(beginSeparator);
@@ -813,12 +977,15 @@ public abstract class AstConverter {
 				htmlString.append(endSeparator);
 				htmlString.append(SPACE);
 			}
+			htmlString.append(end);
 		}
 		else {
+			// Printing multi-line
 			htmlString.append(BEGIN_MULTILINE);
 			while (stringTokenizer.hasMoreTokens()) {
 				String text = stringTokenizer.nextToken();
 				htmlString.append(BEGIN_LINE);
+				htmlString.append(begin);
 				if (beginSeparator != null) {
 					htmlString.append(SPACE);
 					htmlString.append(beginSeparator);
@@ -830,14 +997,16 @@ public abstract class AstConverter {
 					htmlString.append(endSeparator);
 					htmlString.append(SPACE);
 				}
+				htmlString.append(end);
 				htmlString.append(END_LINE);
 			}
 			htmlString.append(END_MULTILINE);
 		}
 		
-		htmlString.append(END_ATTRIBUTE);
-		
 	}
 	
 	protected abstract String makeHyperlink(String link, String text);
+
+	protected abstract String wrapString(String text);
+
 }
