@@ -47,6 +47,8 @@ public final class VariableContext implements IVariableContext {
 	 * @see org.eventb.internal.pp.core.elements.IVariableContext#getNextVariable(org.eventb.internal.pp.core.elements.Sort)
 	 */
 	public Variable getNextVariable(Sort sort) {
+		assert sort != null;
+		
 		if (!variableCache.containsKey(sort)) return newVariable(sort);
 		List<Variable> variables = variableCache.get(sort);
 		if (variables.isEmpty()) return newVariable(sort);
@@ -54,14 +56,20 @@ public final class VariableContext implements IVariableContext {
 	}
 	
 	private Variable newVariable(Sort sort) {
+		assert sort != null;
+		
 		return new Variable(currentGlobalVariableID++,sort);
 	}
 
 	public LocalVariable getNextLocalVariable(boolean isForall, Sort sort) {
+		assert sort != null;
+		
 		return new LocalVariable(currentLocalVariableID++, isForall, sort);
 	}
 
 	public Constant getNextFreshConstant(Sort sort) {
+		assert sort != null;
+		
 		return new Constant(Integer.toString(currentConstantID++),sort);
 	}
 	

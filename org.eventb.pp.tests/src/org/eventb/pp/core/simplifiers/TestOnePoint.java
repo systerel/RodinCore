@@ -167,7 +167,10 @@ public class TestOnePoint extends AbstractPPTest {
 	public void testOnePoint(Clause input, Clause output) {
 		Clause actual = input.simplify(rule);
 		assertTrue(rule.canSimplify(input));
-		assertEquals(output,actual);
+		
+		if (actual.isFalse()) assertTrue(output.isFalse());
+		else if (actual.isTrue()) assertTrue(output.isTrue());
+		else assertEquals(output,actual);
 	}
 	
 	public void testNotOnePoint(Clause input, Clause output) {

@@ -29,7 +29,7 @@ public class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
 		// TODO term must be ordered
 		
 		if (term1.getSort() != null && term2.getSort()!=null) {
-			assert term1.getSort().equals(term2.getSort());
+			assert term1.getSort().equals(term2.getSort()):"incompatible terms: "+term1+", "+term2;
 		}
 		
 		this.isPositive = isPositive;

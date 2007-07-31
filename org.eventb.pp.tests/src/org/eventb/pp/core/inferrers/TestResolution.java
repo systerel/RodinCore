@@ -13,11 +13,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateDescriptor;
-import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
@@ -39,21 +37,19 @@ import org.eventb.pp.Util;
  */
 public class TestResolution extends AbstractInferrerTests {
 
-	private static Sort A = new Sort(FormulaFactory.getDefault().makeIntegerType());
+	private static Variable var0 = Util.cVar(0);
+	private static Variable var1 = Util.cVar(1);
+	private static Variable var2 = Util.cVar(2);
 
-	private static Variable var0 = Util.cVar(A);
-	private static Variable var1 = Util.cVar(A);
-	private static Variable var2 = Util.cVar(A);
+	private static Variable var00 = Util.cVar(3);
+	private static Variable var11 = Util.cVar(4);
 
-	private static Variable var00 = Util.cVar(A);
-	private static Variable var11 = Util.cVar(A);
-
-	private static LocalVariable fvar0 = Util.cFLocVar(0,A);
+	private static LocalVariable fvar0 = Util.cFLocVar(0);
 //	private static LocalVariable fvar1 = Util.cFLocVar(1,A);
-	private static LocalVariable fvar2 = Util.cFLocVar(2,A);
-	private static LocalVariable evar0 = Util.cELocVar(0,A);
-	private static LocalVariable evar1 = Util.cELocVar(1,A);
-	private static LocalVariable evar2 = Util.cELocVar(2,A);
+	private static LocalVariable fvar2 = Util.cFLocVar(2);
+	private static LocalVariable evar0 = Util.cELocVar(0);
+	private static LocalVariable evar1 = Util.cELocVar(1);
+	private static LocalVariable evar2 = Util.cELocVar(2);
 
 
 //	private Clause[] noClause() {
@@ -480,6 +476,9 @@ public class TestResolution extends AbstractInferrerTests {
 	}
 
 	public void doTest(Clause nonUnit, Clause unit, Clause... result) {
+		nonUnit.checkIsBlockedOnInstantiationsAndUnblock();
+		unit.checkIsBlockedOnInstantiationsAndUnblock();
+		
 		IVariableContext context = new VariableContext();
 		ResolutionInferrer inferrer = new ResolutionInferrer(context);
 		ResolutionResolver resolution = new ResolutionResolver(inferrer, new MyMatcher(nonUnit));
@@ -487,12 +486,12 @@ public class TestResolution extends AbstractInferrerTests {
 //		cleanVariables();
 
 		for (Clause clause : result) {
-			Clause inferredClause = resolution.next().getClause();
+			Clause inferredClause = resolution.next(false).getClause();
 			assertEquals(clause, inferredClause);
 			disjointVariables(inferredClause, unit);
 			disjointVariables(inferredClause, nonUnit);
 		}
-		assertNull("\nUnit: " + unit + "NonUnit: " + nonUnit, resolution.next());
+		assertNull("\nUnit: " + unit + "NonUnit: " + nonUnit, resolution.next(false));
 	}
 	
 	public void testSubsumption() {

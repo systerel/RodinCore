@@ -4,18 +4,17 @@ import static org.eventb.pp.Util.cClause;
 import static org.eventb.pp.Util.cEqClause;
 import static org.eventb.pp.Util.cNotPred;
 import static org.eventb.pp.Util.cPred;
+import static org.eventb.pp.Util.cProp;
 import static org.eventb.pp.Util.cVar;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
-import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
-import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 import org.eventb.internal.pp.loader.clause.VariableContext;
 import org.eventb.pp.AbstractPPTest;
 import org.eventb.pp.Util;
@@ -62,59 +61,51 @@ public class TestInstantiationBlocker extends AbstractPPTest {
 		
 	public void testDisjunctive() {
 		initVars();
-		doTest(new Clause[] {
-				cClause(cPred(0,x1),cNotPred(1,x1,b)),
-				cClause(cNotPred(0,a)),
-				cClause(cPred(1,y1,y2),cPred(0,y2))
-			},cClause(cNotPred(1,a,b)));
+		doTest(	cClause(cPred(0,x1),cNotPred(1,x1,b)), 0,
+				cClause(cNotPred(0,a)));
 	}
 	
 	public void testEquivalence() {
 		initVars();
-		doTest(new Clause[] {
-				cEqClause(cNotPred(0,x1),cNotPred(1,x1,b)),
-				cClause(cNotPred(0,a)),
-				cEqClause(cNotPred(1,y1,y2),cNotPred(0,y2))
-			},cClause(cNotPred(1,a,b)), cClause(cPred(1,a,b)), cClause(cNotPred(1,y1,a)));
+		doTest(	cEqClause(cNotPred(0,x1),cNotPred(1,x1,b)), 0,
+				cClause(cNotPred(0,a)));
 	}
 	
-//	public void testWithExistential() {
-//		initVars();
-//		doTest(inputClauses3());
-//	}
+	public void doTest(Clause clause, int position, Clause unitClause) {
+		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
+		
+		int i = 0;
+		while (!clause.checkIsBlockedOnInstantiationsAndUnblock()) {
+			inferrer.setUnitClause(unitClause);
+			inferrer.setPosition(position);
+			clause.infer(inferrer);
+			i++;
+		}
+		
+		assertTrue(i>0);
+		inferrer.setUnitClause(unitClause);
+		inferrer.setPosition(position);
+		clause.infer(inferrer);
+		assertFalse(clause.checkIsBlockedOnInstantiationsAndUnblock());
+	}
 	
-	public void doTest(Clause[] clauses, Clause... nextClauses) {
-		IVariableContext context = new VariableContext();
-		PredicateProver prover = new PredicateProver(context);
-		OnePointRule simp1 = new OnePointRule();
-		ExistentialSimplifier simp2 = new ExistentialSimplifier(context);
-		ClauseSimplifier simplifier = new ClauseSimplifier();
-		simplifier.addSimplifier(simp1);
-		simplifier.addSimplifier(simp2);
-		prover.initialize(simplifier);
+	
+	public void testWithPredicateProver() {
+		PredicateProver prover = new PredicateProver(new VariableContext());
+		prover.initialize(new ClauseSimplifier());
+		Clause unitClause = cClause(cNotPred(0,a));
 		
-		for (Clause clause : clauses) {
-			prover.addClauseAndDetectContradiction(clause);
-		}
+		prover.addClauseAndDetectContradiction(cClause(cPred(0,x1),cProp(1)));
+		prover.addClauseAndDetectContradiction(unitClause);
 		
-		boolean stop = false;
-		while (!stop) {
-			ProverResult result = prover.next();
-			if (result == null) {
-				stop = true;
-			}
-			else {
-				Clause clause = result.getGeneratedClauses().iterator().next();
-				prover.addClauseAndDetectContradiction(clause);
-			}
+		int i = 0;
+		ProverResult newClause = prover.next(false);
+		while (!newClause.equals(ProverResult.EMPTY_RESULT)) {
+			prover.addClauseAndDetectContradiction(unitClause);
+			newClause = prover.next(false);
+			i++;
 		}
-		assertTrue(prover.isBlocked());
-		for (Clause clause : nextClauses) {
-			assertEquals(prover.next().getGeneratedClauses().iterator().next(), clause);
-			assertNull(prover.next());
-			assertTrue(prover.isBlocked());
-		}
-		
+		assertTrue(i > 0);
 	}
 	
 }

@@ -167,6 +167,10 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 		public void reset() {
 			current = null;
 		}
+
+		public T current() {
+			return current==null?null:current.clause;
+		}
 		
 	}
 	

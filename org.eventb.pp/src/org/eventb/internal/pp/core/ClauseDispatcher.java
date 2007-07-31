@@ -3,6 +3,7 @@ package org.eventb.internal.pp.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -92,55 +93,6 @@ public class ClauseDispatcher implements IDispatcher {
 		this.simplifier.addSimplifier(simplifier);
 	}
 	
-//	private IOrigin externalContradictionOrigin = null;
-//	public void contradiction(IOrigin origin) {
-//		externalContradictionOrigin = origin;
-//	}
-	
-	
-	
-//	// new clause :
-//	// 1 simplify
-//	// 2 dispatch to provers
-//	public void newClause(Clause clause) {
-//		assert clause.getLevel().isAncestorOf(level) || clause.getLevel().equals(level);
-//		
-//		// simplify
-//		clause = simplifier.run(clause);
-//		
-//		if (clause.isTrue()) return;
-//		
-//		// dispatch to corresponding prover
-//		if (clause.isFalse()) {
-//			internalContradiction(clause.getOrigin());
-//			return;
-//		}
-//		
-//		// all clauses are put here
-//		// this should add the clause in all datastructures of all provers
-//		addClauseAndCheckContradiction(clause);
-//		// TODO forward subsumption
-//		// TODO this code calls back into the mainloop - think of another way
-//		// TODO do not do this, let the predicate prover do the instantiations
-//		// and call it back like the equality
-//		// give to predicate prover
-//		
-////		if (prover.accepts(clause)) {
-////			prover.addOwnClause(clause);
-////		}
-//
-//	}
-	
-//	private void addClauseAndCheckContradiction(Clause clause) {
-//		if (!isSubsumed(clause)) {
-//			dsWrapper.add(clause);
-//			if (externalContradictionOrigin != null) {
-//				internalContradiction(externalContradictionOrigin);
-//				externalContradictionOrigin = null;
-//			}
-//		}
-//	}
-	
 	public ITracer getTracer() {
 		return tracer;
 	}
@@ -155,7 +107,7 @@ public class ClauseDispatcher implements IDispatcher {
 	private ResetIterator<Clause> nonDispatchedBacktrackClausesIterator;
 	
 	public void mainLoop(long nofSteps) throws InterruptedException {
-		boolean tryAgain = true;
+		boolean force = false;
 		provers = new ArrayList<IProver>();
 		provers.add(predicateprover);
 		provers.add(casesplitter);
@@ -165,6 +117,14 @@ public class ClauseDispatcher implements IDispatcher {
 		
 		if (DEBUG) debug("=== ClauseDispatcher. Starting ===");
 		addOriginalClauses();
+		if (DEBUG) debug("= Clauses =");
+		if (DEBUG) {
+			ResetIterator<Clause> iterator = nonDispatchedClauses.iterator();
+			while (iterator.hasNext()) {
+				debug(iterator.next().toString());
+			}
+			iterator.delete();
+		}
 		
 		while (!terminated) {
 			if (Thread.interrupted()) throw new InterruptedException();
@@ -172,7 +132,7 @@ public class ClauseDispatcher implements IDispatcher {
 				// first phase, treat non dispatched clauses
 				if (!treatNondispatchedClausesAndCheckContradiction()) {
 					// second phase, all clauses have been treated
-					tryAgain = getNextClauseFromProvers(tryAgain);
+					force = getNextClauseFromProvers(force);
 				}
 			}
 		}
@@ -187,31 +147,27 @@ public class ClauseDispatcher implements IDispatcher {
 		}
 	}
 	
-	private boolean getNextClauseFromProvers(boolean tryAgain) {
+	private boolean getNextClauseFromProvers(boolean force) {
 		if (DEBUG) debug("== Getting next clause from provers ==");
 		ProverResult nextResult = null;
 		for (IProver prover : provers) {
-			nextResult = prover.next();
-			if (nextResult != null) {
+			nextResult = prover.next(force);
+			if (!nextResult.isEmpty()) {
 				if (DEBUG) debug("= Got result from "+prover.toString()+": "+nextResult.toString()+" =");
 				break;
 			}
 		}
-		if (nextResult == null) {
+		if (nextResult.isEmpty()) {
 			if (DEBUG) debug("= Got no result this time =");
 			// proof done
-			if (!tryAgain) noProofFound();
-			return false;
+			if (force) noProofFound();
+			return true;
 		}
 		else {
-			removeClauses(nextResult.getSubsumedClauses());
-			if (nextResult.isContradiction()) {
-				internalContradiction(nextResult.getContradictionOrigin());
-			}
-			else {
-				addNonDispatchedClauses(nextResult.getGeneratedClauses());
-			}
-			return true;
+			Set<IOrigin> contradictions = new HashSet<IOrigin>();
+			treatProverResultAndCheckContradiction(nextResult, contradictions);
+			if (!contradictions.isEmpty()) handleContradictions(contradictions);
+			return false;
 		}
 	}
 	
@@ -221,14 +177,20 @@ public class ClauseDispatcher implements IDispatcher {
 		while (nonDispatchedClausesIterator.hasNext()) {
 			Clause clause = nonDispatchedClausesIterator.next();
 			assert getLevel().compareTo(clause.getLevel()) >= 0;
-			// necessary ?
-			if (!isSubsumedByProvers(clause)) {
-				for (IProver prover : provers) {
-					if (checkContradictionAndAddNondispatchedClause(clause, prover)) return true;
-				}
-				alreadyDispatchedClauses.appends(clause);
+
+			Set<IOrigin> contradictions = new HashSet<IOrigin>();
+			for (IProver prover : provers) {
+				ProverResult result = prover.addClauseAndDetectContradiction(clause);
+				if (DEBUG) debug("= Got result from "+prover.toString()+": "+result.toString()+" =");
+				treatProverResultAndCheckContradiction(result, contradictions);
 			}
+			alreadyDispatchedClauses.appends(clause);
 			nonDispatchedClauses.remove(clause);
+			
+			if (!contradictions.isEmpty()) {
+				handleContradictions(contradictions);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -244,32 +206,53 @@ public class ClauseDispatcher implements IDispatcher {
 		return false;
 	}
 	
-	private boolean isSubsumedByProvers(Clause clause) {
-		for (IProver prover : provers) {
-			if (prover.isSubsumed(clause)) return true;
-		}
-		return false;
+	private void treatProverResultAndCheckContradiction(ProverResult result, Set<IOrigin> contradictions) {
+		removeClauses(result.getSubsumedClauses());
+		Set<Clause> generatedClauses = result.getGeneratedClauses();
+		splitResultAndGetContradiction(generatedClauses, contradictions);
+		addNonDispatchedClauses(generatedClauses);
 	}
 	
-	private boolean checkContradictionAndAddNondispatchedClause(Clause clause, IProver prover) {
-		ProverResult result = prover.addClauseAndDetectContradiction(clause);
-		if (result == null) return false;
-		if (DEBUG) debug("= Got result from "+prover.toString()+": "+result.toString()+" =");
-		removeClauses(result.getSubsumedClauses());
-		if (result.isContradiction()) {
-			internalContradiction(result.getContradictionOrigin());
-			return true;
+	private void splitResultAndGetContradiction(Set<Clause> generatedClauses, Set<IOrigin> contradictions) {
+		for (Iterator<Clause> iter = generatedClauses.iterator(); iter.hasNext();) {
+			Clause clause = iter.next();
+			if (clause.isFalse()) {
+				iter.remove();
+				contradictions.add(clause.getOrigin());
+			}
+			if (clause.isTrue()) iter.remove();
 		}
-		else addNonDispatchedClauses(result.getGeneratedClauses());
-		return false;
 	}
+	
+	private void handleContradictions(Set<IOrigin> contradictions) {
+		if (contradictions.size() > 1) if (DEBUG) debug(" Several contradictions detected: " +contradictions);
+		
+		IOrigin oldOrigin = null;
+		for (IOrigin origin : contradictions) {
+			if (oldOrigin == null) oldOrigin = origin;
+			else {
+				oldOrigin = getLowerLevelOrigin(oldOrigin, origin);
+			}
+		}
+		internalContradiction(oldOrigin);
+	}
+	
+	private static IOrigin getLowerLevelOrigin(IOrigin origin1, IOrigin origin2) {
+		if (origin1 == null) return origin2;
+		if (origin2 == null) return origin1;
+		return origin1.getLevel().isAncestorOf(origin2.getLevel())?origin1:origin2;
+	}
+	
 	
 	private void addNonDispatchedClauses(Set<Clause> clauses) {
 		for (Clause generatedClause : clauses) {
 			assert getLevel().compareTo(generatedClause.getLevel()) >= 0;
+			assert !generatedClause.isFalse();
+			assert !generatedClause.isTrue();
 			addNonDispatchedClause(generatedClause);
 		}
 	}
+	
 	
 	private void addNonDispatchedClause(Clause clause) {
 		assert !clause.isFalse();
@@ -282,7 +265,7 @@ public class ClauseDispatcher implements IDispatcher {
 				Clause existingClause = nonDispatchedClauses.get(clause);
 				if (clause.getLevel().isAncestorOf(existingClause.getLevel())) {
 					// we replace the clause by the new one
-					nonDispatchedClauses.remove(clause);
+					nonDispatchedClauses.remove(existingClause);
 				}
 				else return; // clause had a lower level, we forget the new clause
 			}
@@ -301,8 +284,8 @@ public class ClauseDispatcher implements IDispatcher {
 			Clause existingClause = alreadyDispatchedClauses.get(clause);
 			if (clause.getLevel().isAncestorOf(existingClause.getLevel())) {
 				// we replace the clause by the new one
-				alreadyDispatchedClauses.remove(clause);
-				removeClauseFromProvers(clause);
+				alreadyDispatchedClauses.remove(existingClause);
+				removeClauseFromProvers(existingClause);
 				return false;
 			}
 			return true;
@@ -350,7 +333,6 @@ public class ClauseDispatcher implements IDispatcher {
 	}
 	
 	private void removeClauses(Set<Clause> subsumedClauses) {
-		if (subsumedClauses == null) return;
 		for (Clause subsumedClause : subsumedClauses) {
 			alreadyDispatchedClauses.remove(subsumedClause);
 			removeClauseFromProvers(subsumedClause);
@@ -405,8 +387,8 @@ public class ClauseDispatcher implements IDispatcher {
 	}
 
 	public boolean contains(Clause clause) {
-		if (nonDispatchedClauses.contains(clause)) {
-			Clause existingClause = nonDispatchedClauses.get(clause);
+		if (alreadyDispatchedClauses.contains(clause)) {
+			Clause existingClause = alreadyDispatchedClauses.get(clause);
 			if (existingClause.equalsWithLevel(clause)) return true;
 		}
 		return false;

@@ -126,4 +126,13 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 		str.append("]");
 		return str.toString();
 	}
+	
+	
+	public boolean checkIsBlockedOnInstantiationsAndUnblock() {
+		boolean result = false;
+		for (Term term : terms) {
+			if (term.checkIfBlockedAndUnblock()) result = true;
+		}
+		return result;
+	}
 }

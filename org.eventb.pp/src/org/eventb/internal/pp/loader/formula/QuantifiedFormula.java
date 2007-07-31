@@ -117,6 +117,8 @@ public class QuantifiedFormula extends AbstractLabelizableFormula<QuantifiedDesc
 			if (context.isPositiveLabel || context.equivalenceCount > 0) manager.addLabel(this, context.isPositive);
 			if (context.isNegativeLabel || context.equivalenceCount > 0) manager.addLabel(this, !context.isPositive);
 			if (!context.isPositiveLabel && !context.isNegativeLabel && context.equivalenceCount == 0) manager.addLabel(this, context.isPositive);
+//			manager.addLabel(this, true);
+//			manager.addLabel(this, false);
 			
 			// this becomes a label
 			// we construct labels below

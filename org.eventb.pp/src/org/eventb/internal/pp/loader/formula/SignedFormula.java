@@ -78,7 +78,10 @@ public class SignedFormula<T extends LiteralDescriptor> {
 	}
 
 	public void switchSign() {
-		if (child instanceof QuantifiedFormula) ((QuantifiedFormula)child).switchSign();
+		if (child instanceof QuantifiedFormula) {
+			assert isPositive;
+			((QuantifiedFormula)child).switchSign();
+		}
 		else isPositive = !isPositive;
 	}
 

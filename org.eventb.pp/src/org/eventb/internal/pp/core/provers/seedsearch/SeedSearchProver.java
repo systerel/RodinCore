@@ -17,8 +17,10 @@ import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
+import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.InstantiationInferrer;
 
@@ -49,20 +51,30 @@ public class SeedSearchProver implements IProver {
 	
 	private Vector<Set<Clause>> generatedClausesStack = new Vector<Set<Clause>>();
 	
-	
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
-		List<SeedSearchResult> results = addArbitraryClause(clause);
-		Set<Clause> instantiatedClauses = new HashSet<Clause>();
-		for (SeedSearchResult result : results) {
-			Clause instantiatedClause = doInstantiation(result);
-			if (instantiatedClause != null) {
-				instantiatedClauses.add(instantiatedClause);
+		if (accept(clause)) {
+			List<SeedSearchResult> results = addArbitraryClause(clause);
+			
+			// TODO testing 
+//			results.addAll(addEqualityClause(clause));
+			
+			Set<Clause> instantiatedClauses = new HashSet<Clause>();
+			for (SeedSearchResult result : results) {
+				Clause instantiatedClause = doInstantiation(result);
+				if (instantiatedClause != null) {
+					instantiatedClauses.add(instantiatedClause);
+				}
 			}
+			if (!instantiatedClauses.isEmpty()) generatedClausesStack.add(instantiatedClauses);
 		}
-		if (!instantiatedClauses.isEmpty()) generatedClausesStack.add(instantiatedClauses);
-		return null;
+		return ProverResult.EMPTY_RESULT;
 	}
 	
+	private boolean accept(Clause clause) {
+		if (clause.isBlockedOnConditions()) return false;
+		return true;
+	}
+
 	private Clause simplify(Clause clause){
 		// we run the simplifier, since it is an instantiation, it is not possible
 		// to get a smaller clause than the original, given the fact that the
@@ -89,7 +101,7 @@ public class SeedSearchProver implements IProver {
 			return false;
 		}
 	}
-	
+
 	private Clause doInstantiation(SeedSearchResult result) {
 		PredicateLiteral literal = result.getInstantiableClause().getPredicateLiterals().get(result.getPredicatePosition());
 		Variable variable = (Variable)literal.getTerms().get(result.getPosition());
@@ -97,6 +109,61 @@ public class SeedSearchProver implements IProver {
 		inferrer.addInstantiation(variable, result.getConstant());
 		result.getInstantiableClause().infer(inferrer);
 		return simplify(inferrer.getResult());
+	}
+	
+	private void addConstants(Clause clause, PredicateLiteral literal1, List<SeedSearchResult> result) {
+		// equivalence clauses for constants
+		if (clause.isEquivalence()) { 
+			result.addAll(manager.addConstant(literal1.getInverse().getDescriptor(), literal1.getInverse().getTerms(), clause));
+			result.addAll(manager.addConstant(literal1.getDescriptor(), literal1.getTerms(), clause));
+		}
+		else {
+			result.addAll(manager.addConstant(literal1.getDescriptor(), literal1.getTerms(), clause));
+		}
+	}
+	
+	private void addInstantiable(Clause clause, PredicateLiteral literal1, int position, List<SeedSearchResult> result) {
+		// we do not instantiate definitions with the seed search module
+		// TODO is this a good idea ?
+		if (clause.getOrigin().isDefinition()) return;
+		
+		if (literal1.isQuantified()/* && clause.isUnit() */) { 
+			for (int i = 0; i < literal1.getTerms().size(); i++) {
+				SimpleTerm term = literal1.getTerms().get(i);
+				if (!term.isConstant()) {
+					if (clause.isEquivalence()) {
+						result.addAll(manager.addInstantiable(literal1.getDescriptor(), position, literal1.getTerms(), i, clause));
+						result.addAll(manager.addInstantiable(literal1.getInverse().getDescriptor(), position, literal1.getInverse().getTerms(), i, clause));
+					}
+					else {
+						result.addAll(manager.addInstantiable(literal1.getDescriptor(), position, literal1.getTerms(), i, clause));
+					}
+				}
+			}
+		}
+	}
+	
+	private void addVariableLink(Clause clause, PredicateLiteral literal1, PredicateLiteral literal2, List<SeedSearchResult> result) {
+		if (clause.isEquivalence() && clause.sizeWithoutConditions()==2) {
+			result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getInverse().getDescriptor(), 
+					literal1.getTerms(), literal2.getInverse().getTerms(), clause));
+			result.addAll(manager.addVariableLink(literal1.getInverse().getDescriptor(), literal2.getDescriptor(),
+					literal1.getInverse().getTerms(), literal2.getTerms(), clause));
+		}
+		else if (clause.isEquivalence()) {
+			result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getInverse().getDescriptor(), 
+					literal1.getTerms(), literal2.getInverse().getTerms(), clause));
+			result.addAll(manager.addVariableLink(literal1.getInverse().getDescriptor(), literal2.getDescriptor(),
+					literal1.getInverse().getTerms(), literal2.getTerms(), clause));
+			result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getDescriptor(),
+					literal1.getTerms(), literal2.getTerms(), clause));
+			result.addAll(manager.addVariableLink(literal1.getInverse().getDescriptor(), literal2.getInverse().getDescriptor(),
+					literal1.getInverse().getTerms(), literal2.getInverse().getTerms(), clause));
+		}
+		else {
+			result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getDescriptor(),
+					literal1.getTerms(), literal2.getTerms(), clause));
+		}
 	}
 
 	private List<SeedSearchResult> addArbitraryClause(Clause clause) {
@@ -106,46 +173,34 @@ public class SeedSearchProver implements IProver {
 		for (int i = 0; i < clause.getPredicateLiterals().size(); i++) {
 			PredicateLiteral literal1 = clause.getPredicateLiterals().get(i);
 
-			// equivalence clauses for constants
-			if (clause.isEquivalence()) { 
-				result.addAll(manager.addConstant(literal1.getInverse().getDescriptor(), literal1.getInverse().getTerms(), clause));
-				result.addAll(manager.addConstant(literal1.getDescriptor(), literal1.getTerms(), clause));
-			}
-			else {
-				result.addAll(manager.addConstant(literal1.getDescriptor(), literal1.getTerms(), clause));
-			}
-			
-			if (literal1.isQuantified()/* && clause.isUnit() */) { 
-				if (clause.isEquivalence()) {
-					result.addAll(manager.addInstantiable(literal1.getDescriptor(), literal1.getTerms(), i, clause));
-					result.addAll(manager.addInstantiable(literal1.getInverse().getDescriptor(), literal1.getInverse().getTerms(), i, clause));
-				}
-				else {
-					result.addAll(manager.addInstantiable(literal1.getDescriptor(), literal1.getTerms(), i, clause));
-				}
-			}
+			addConstants(clause, literal1, result);
+			addInstantiable(clause, literal1, i, result);
 			
 			for (int j = i+1; j < clause.getPredicateLiterals().size(); j++) {
 				PredicateLiteral literal2 = clause.getPredicateLiterals().get(j);
-				if (clause.isEquivalence() && clause.sizeWithoutConditions()==2) {
-					result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getInverse().getDescriptor(), 
-							literal1.getTerms(), literal2.getInverse().getTerms(), clause));
-					result.addAll(manager.addVariableLink(literal1.getInverse().getDescriptor(), literal2.getDescriptor(),
-							literal1.getInverse().getTerms(), literal2.getTerms(), clause));
-				}
-				else if (clause.isEquivalence()) {
-					result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getInverse().getDescriptor(), 
-							literal1.getTerms(), literal2.getInverse().getTerms(), clause));
-					result.addAll(manager.addVariableLink(literal1.getInverse().getDescriptor(), literal2.getDescriptor(),
-							literal1.getInverse().getTerms(), literal2.getTerms(), clause));
-					result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getDescriptor(),
-							literal1.getTerms(), literal2.getTerms(), clause));
-					result.addAll(manager.addVariableLink(literal1.getInverse().getDescriptor(), literal2.getInverse().getDescriptor(),
-							literal1.getInverse().getTerms(), literal2.getInverse().getTerms(), clause));
-				}
-				else {
-					result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getDescriptor(),
-							literal1.getTerms(), literal2.getTerms(), clause));
+				addVariableLink(clause, literal1, literal2, result);
+			}
+		}
+		return result;
+	}
+	
+	@SuppressWarnings("unused")
+	private List<SeedSearchResult> addEqualityClause(Clause clause) {
+		List<SeedSearchResult> result = new ArrayList<SeedSearchResult>();
+		for (EqualityLiteral equality : clause.getEqualityLiterals()) {
+			if (!equality.getTerm1().isConstant() && !equality.getTerm2().isConstant()) {
+				Variable variable1 = (Variable)equality.getTerm1();
+				Variable variable2 = (Variable)equality.getTerm2();
+				for (int i = 0; i<clause.getPredicateLiterals().size();i++) {
+					PredicateLiteral predicate = clause.getPredicateLiterals().get(i);
+					if (predicate.getTerms().contains(variable1) || predicate.getTerms().contains(variable2)) {
+						for (int j = 0; j < predicate.getTerms().size(); j++) {
+							SimpleTerm term = predicate.getTerms().get(j);
+							if (term == variable1 || term == variable2) {
+								result.addAll(manager.addInstantiable(predicate.getDescriptor(), i, predicate.getTerms(), j, clause));
+							}
+						}
+					}
 				}
 			}
 		}
@@ -175,10 +230,6 @@ public class SeedSearchProver implements IProver {
 		this.simplifier = simplifier;
 	}
 
-	public boolean isSubsumed(Clause clause) {
-		return false;
-	}
-
 	private void resetCounter() {
 		this.currentCounter = ARBITRARY_SEARCH * Math.pow(2, currentNumberOfArbitrary);
 	}
@@ -193,9 +244,9 @@ public class SeedSearchProver implements IProver {
 		return false;
 	}
 	
-	private Clause nextArbitraryInstantiation() {
+	private Clause nextArbitraryInstantiation(boolean force) {
 		Clause nextClause = null;
-		if (checkAndUpdateCounter()) {
+		if (force || checkAndUpdateCounter()) {
 			SeedSearchResult result = manager.getArbitraryInstantiation(context);
 			if (result == null) return null;
 			nextClause = doInstantiation(result);
@@ -203,12 +254,27 @@ public class SeedSearchProver implements IProver {
 		return nextClause;
 	}
 	
-	public ProverResult next() {
+	
+	private int counter = 0;
+	private boolean isNextAvailable() {
+		if (counter > 0) {
+			counter--;
+			return false;
+		}
+		else {
+			counter = generatedClausesStack.size()/2;
+			return true;
+		}
+	}
+	
+	public ProverResult next(boolean force) {
+		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT; 
+		
 		Set<Clause> nextClauses = new HashSet<Clause>();
 		while (nextClauses.isEmpty()) {
 			if (generatedClausesStack.isEmpty()) {
-				Clause nextClause = nextArbitraryInstantiation();
-				if (nextClause == null) return null;
+				Clause nextClause = nextArbitraryInstantiation(force);
+				if (nextClause == null) return ProverResult.EMPTY_RESULT;
 				else nextClauses.add(nextClause);
 			}
 			else {

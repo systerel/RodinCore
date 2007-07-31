@@ -8,4 +8,5 @@ public interface ResetIterator<T> extends Iterator<T> {
 	
 	public void delete();
 	
+	public T current();
 }

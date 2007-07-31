@@ -1,9 +1,11 @@
 package org.eventb.internal.pp.core.provers.equality;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -285,8 +287,41 @@ public class EquivalenceManager implements IEquivalenceManager {
 
 	@Override
 	public String toString() {
-		return solver.toString();
+		StringBuilder builder = new StringBuilder();
+		for (Entry<Node,Set<Node>> equivalenceClass : getEquivalenceClasses().entrySet()) {
+			builder.append(equivalenceClass.getValue().toString());
+			if (equivalenceClass.getKey().getRootFactsInequalities().size()>0) {
+				builder.append(", F≠");
+				builder.append(equivalenceClass.getKey().getRootFactsInequalities());
+			}
+			if (equivalenceClass.getKey().getRootQueryEqualities().size()>0) {
+				builder.append(", Q=");
+				builder.append(equivalenceClass.getKey().getRootQueryEqualities());
+			}
+			if (equivalenceClass.getKey().getRootQueryInequalities().size()>0) {
+				builder.append(", Q≠");
+				builder.append(equivalenceClass.getKey().getRootQueryInequalities());
+			}
+			if (equivalenceClass.getKey().getRootInstantiations().size()>0) {
+				builder.append(", I");
+				builder.append(equivalenceClass.getKey().getRootInstantiations());
+			}
+			builder.append("\n");
+		}
+		return builder.toString();
 	}
+
+	private Map<Node, Set<Node>> getEquivalenceClasses() {
+		Map<Node, Set<Node>> result = new HashMap<Node, Set<Node>>();
+		for (Node node : constantTable.values()) {
+			Node root = node.getRoot();
+			if (!result.containsKey(root)) result.put(root, new HashSet<Node>());
+			Set<Node> nodes = result.get(root);
+			nodes.add(node);
+		}
+		return result;
+	}
+	
 
 }
  

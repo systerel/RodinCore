@@ -245,7 +245,7 @@ public class EqualitySolver {
 		
 		addNode(node1);
 		addNode(node2);
-		assert node1.compareTo(node2) < 0;
+		assert node1.compareTo(node2) < 0:"wrong order: "+node1+"="+node2;
 		
 		Set<FactSource> sourceToRoot1 = new HashSet<FactSource>();
 		Node root1 = find(node1, sourceToRoot1);

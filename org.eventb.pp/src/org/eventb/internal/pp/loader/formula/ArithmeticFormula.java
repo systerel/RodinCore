@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
+import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral.AType;
+import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.VariableTable;
@@ -66,7 +68,12 @@ public class ArithmeticFormula extends AbstractSingleFormula<ArithmeticDescripto
 		Term left = terms.get(0);
 		Term right = terms.get(1);
 		if (type == Type.EQUAL) {
-			return new ArithmeticLiteral(left,right,flags.isPositive?AType.EQUAL:AType.UNEQUAL);
+			if (left instanceof SimpleTerm && right instanceof SimpleTerm) {
+				return new EqualityLiteral((SimpleTerm)left,(SimpleTerm)right,flags.isPositive);
+			}
+			else {
+				return new ArithmeticLiteral(left,right,flags.isPositive?AType.EQUAL:AType.UNEQUAL);
+			}
 		}
 		if (flags.isPositive) {
 			return new ArithmeticLiteral(left,right,type == Type.LESS?AType.LESS:AType.LESS_EQUAL);

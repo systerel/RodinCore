@@ -1,7 +1,9 @@
 package org.eventb.internal.pp.core;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
 import org.eventb.internal.pp.core.provers.seedsearch.SeedSearchProver;
@@ -33,10 +35,10 @@ public class ProverPlugin extends Plugin {
 		// TODO Auto-generated constructor stub
 	}
 	
-//	/**
-//	 * The shared instance.
-//	 */
-//	private static ProverPlugin plugin;
+	/**
+	 * The shared instance.
+	 */
+	private static ProverPlugin plugin;
 	
 	/**
 	 * This method is called upon plug-in activation
@@ -44,7 +46,7 @@ public class ProverPlugin extends Plugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-//		plugin = this;
+		plugin = this;
 		
 		configureDebugOptions();
 	}
@@ -96,6 +98,23 @@ public class ProverPlugin extends Plugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
-//		plugin = null;
+		plugin = null;
+	}
+	
+	/**
+	 * Logs an error message to the Rodin core plug-in log.
+	 * 
+	 * @param exc
+	 *            a low-level exception, or <code>null</code> if not
+	 *            applicable
+	 * @param message
+	 *            a message describing the error
+	 */
+	public static void log(String message) {
+		IStatus status= new Status(
+			IStatus.ERROR, 
+			ProverPlugin.PLUGIN_ID,
+			message); 
+		ProverPlugin.plugin.getLog().log(status);
 	}
 }

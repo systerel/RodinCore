@@ -25,4 +25,9 @@ public class Equality<T extends Source> {
 		return right;
 	}
 	
+	@Override
+	public String toString() {
+		return "<"+left+","+right+">";
+	}
+	
 }

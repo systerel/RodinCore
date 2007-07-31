@@ -1,7 +1,9 @@
 package org.eventb.internal.pp.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
@@ -28,14 +30,19 @@ public class ClauseSimplifier {
 		for (ISimplifier simplifier : simplifiers) {
 			if (simplifier.canSimplify(clause)) {
 				clause = clause.simplify(simplifier);
-				if (clause.isEmpty()) {
-					if (DEBUG) debug("Simplified: "+originalClause.toString()+" -> "+clause.toString());
-					return clause;
-				}
 			}
 		}
 		if (DEBUG) debug("Simplified: "+originalClause.toString()+" -> "+clause.toString());
 		return clause;
+	}
+
+	public void run(Set<Clause> clauses) {
+		Set<Clause> tmp = new HashSet<Clause>();
+		for (Clause clause : clauses) {
+			tmp.add(run(clause));
+		}
+		clauses.clear();
+		clauses.addAll(tmp);
 	}
 	
 }

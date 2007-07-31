@@ -24,7 +24,6 @@ public final class EquivalenceClause extends Clause {
 		// not a unit clause. unit clauses are disjunctive clauses
 		assert !isUnit();
 		assert predicates != null && equalities != null && arithmetic != null;
-		assert !isEmpty();
 	}
 
 	public EquivalenceClause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, List<EqualityLiteral> conditions) {
@@ -33,7 +32,6 @@ public final class EquivalenceClause extends Clause {
 		// not a unit clause. unit clauses are disjunctive clauses
 		assert !isUnit();
 		assert predicates != null && equalities != null && arithmetic != null && conditions != null;
-		assert !isEmpty();
 	}
 	
 	

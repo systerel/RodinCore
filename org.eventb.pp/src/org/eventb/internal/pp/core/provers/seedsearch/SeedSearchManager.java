@@ -72,8 +72,8 @@ public class SeedSearchManager {
 		return null;
 	}
 	
-	public List<SeedSearchResult> addInstantiable(PredicateDescriptor descriptor, List<SimpleTerm> terms,
-			int predicatePosition, Clause clause) {
+	public List<SeedSearchResult> addInstantiable(PredicateDescriptor descriptor, int predicatePosition,
+			List<SimpleTerm> terms, int termPosition, Clause clause) {
 		List<SolverResult> result = new ArrayList<SolverResult>();
 		// if this clause exists in the instantiablesCache map, it is with the same level
 		// otherwise it means there are two clauses with the same level, which is 
@@ -84,18 +84,13 @@ public class SeedSearchManager {
 			existingInstantiables = new HashSet<Instantiable>();
 			instantiablesCache.put(clause, existingInstantiables);
 		}
-		for (int i=0;i<terms.size();i++) {
-			SimpleTerm term = terms.get(i);
-			if (!term.isConstant()) {
-				LiteralSignature signature = getAndAddLiteralSignature(descriptor, i);
-				Instantiable instantiable = new Instantiable(signature,clause,predicatePosition);
-				if (!existingInstantiables.contains(instantiable)) {
-					existingInstantiables.add(instantiable);
-					instantiables.add(instantiable);
-					List<SolverResult> instantiableResult = solver.addInstantiable(instantiable);
-					result.addAll(instantiableResult);
-				}
-			}
+		LiteralSignature signature = getAndAddLiteralSignature(descriptor, termPosition);
+		Instantiable instantiable = new Instantiable(signature,clause,predicatePosition);
+		if (!existingInstantiables.contains(instantiable)) {
+			existingInstantiables.add(instantiable);
+			instantiables.add(instantiable);
+			List<SolverResult> instantiableResult = solver.addInstantiable(instantiable);
+			result.addAll(instantiableResult);
 		}
 		return compileResults(result);
 	}

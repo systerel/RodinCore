@@ -16,18 +16,22 @@ public class Dumper {
 		System.out.println(message);
 	}
 	
-	private List<DumpableDataStructure> dataStructures = new ArrayList<DumpableDataStructure>(); 
-	private List<DumpableObject> objects = new ArrayList<DumpableObject>();
+	private List<Dumpable> dumpables = new ArrayList<Dumpable>(); 
 	
 	public void addDataStructure(String name, ResetIterator<Clause> iterator) {
-		dataStructures.add(new DumpableDataStructure(name,iterator));
+		dumpables.add(new DumpableDataStructure(name,iterator));
 	}
 	
 	public void addObject(String name, Object object) {
-		objects.add(new DumpableObject(name,object));
+		dumpables.add(new DumpableObject(name,object));
 	}
 	
-	private static class DumpableObject {
+	private static interface Dumpable {
+		public String getName();
+		public void output();
+	}
+	
+	private static class DumpableObject implements Dumpable {
 		Object object;
 		String name;
 		
@@ -35,9 +39,17 @@ public class Dumper {
 			this.name = name;
 			this.object = object;
 		}
+		
+		public String getName() {
+			return name;
+		}
+
+		public void output() {
+			debug(object.toString());
+		}
 	}
 	
-	private static class DumpableDataStructure {
+	private static class DumpableDataStructure implements Dumpable {
 		ResetIterator<Clause> iterator;
 		String name;
 		
@@ -45,21 +57,25 @@ public class Dumper {
 			this.name = name;
 			this.iterator = iterator;
 		}
+		
+		public void output() {
+			iterator.reset();
+			while (iterator.hasNext()) {
+				debug(iterator.next().toString());
+			}
+		}
+
+		public String getName() {
+			return name;
+		}
 	}
 	
 	public void dump() {
 		if (DEBUG) {
 			debug("== Dumping datastructures ==");
-			for (DumpableDataStructure ds : dataStructures) {
-				debug("---- "+ds.name+" ----");
-				ds.iterator.reset();
-				while (ds.iterator.hasNext()) {
-					debug(ds.iterator.next().toString());
-				}
-			}
-			for (DumpableObject object : objects) {
-				debug("---- "+object.name+" ----");
-				debug(object.object.toString());
+			for (Dumpable ds : dumpables) {
+				debug("---- "+ds.getName()+" ----");
+				ds.output();
 			}
 			debug("======= End of dump ========");
 		}

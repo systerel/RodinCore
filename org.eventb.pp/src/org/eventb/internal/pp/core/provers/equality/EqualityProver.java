@@ -18,6 +18,7 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.FalseClause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.EqualityInferrer;
@@ -68,9 +69,9 @@ public class EqualityProver implements IProver {
 		this.simplifier = simplifier;
 	}
 
-	public ProverResult next() {
+	public ProverResult next(boolean force) {
 		// return equality instantiations here, if not, it loops
-		if (equalityInstantiations.isEmpty()) return null;
+		if (equalityInstantiations.isEmpty()) return ProverResult.EMPTY_RESULT;
 		Set<Clause> result = new HashSet<Clause>(equalityInstantiations);
 		equalityInstantiations.clear();
 		return new ProverResult(result, new HashSet<Clause>());
@@ -84,9 +85,12 @@ public class EqualityProver implements IProver {
 		Set<Clause> generatedClauses = new HashSet<Clause>();
 		Set<Clause> subsumedClauses = new HashSet<Clause>();
 		
-		IOrigin origin = addClause(clause, generatedClauses, subsumedClauses);
-		if (origin != null) return new ProverResult(origin);
-		else return new ProverResult(generatedClauses, subsumedClauses);
+		addClause(clause, generatedClauses, subsumedClauses);
+//		if (origin != null) return new ProverResult(origin);
+//		else {
+//			if (generatedClauses.isEmpty() && subsumedClauses.isEmpty()) return null;
+		return new ProverResult(generatedClauses, subsumedClauses);
+//		}
 	}
 	
 	public void removeClause(Clause clause) {
@@ -109,7 +113,7 @@ public class EqualityProver implements IProver {
 		return false;
 	}
 	
-	private IOrigin addClause(Clause clause, Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
+	private void addClause(Clause clause, Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
 		if (clause.isUnit() && (clause.getEqualityLiterals().size()>0 || clause.getConditions().size()>0)) {
 			EqualityLiteral equality = null;
 			if (clause.getConditions().size()==1) equality = clause.getConditions().get(0);
@@ -117,11 +121,11 @@ public class EqualityProver implements IProver {
 			
 			if (!equality.isConstant()) {
 				// TODO handle this case, x = a or x = y
-				return null;
+				return;
 			}
 			
 			IFactResult result = manager.addFactEquality(equality, clause);
-			return handleFactResult(result, generatedClauses, subsumedClauses);
+			handleFactResult(result, generatedClauses, subsumedClauses);
 		}
 		else if (clause.getEqualityLiterals().size()>0 || clause.getConditions().size()>0) {
 			ArrayList<IQueryResult> queryResult = new ArrayList<IQueryResult>();
@@ -129,31 +133,18 @@ public class EqualityProver implements IProver {
 
 			// if equivalence, then we do the standard instantiations
 			// x=a -> x/a, x\=a -> x/a
-			IOrigin origin = null;
-			IOrigin newOrigin = null;
 			if (clause.isEquivalence())
-				newOrigin = doTrivialInstantiations(clause, generatedClauses, subsumedClauses);
-			origin = getLowerLevelOrigin(origin, newOrigin);
+				doTrivialInstantiations(clause, generatedClauses, subsumedClauses);
 			
 			handleEqualityList(clause.getEqualityLiterals(), clause,
 					queryResult, instantiationResult, !clause.isEquivalence());
 			handleEqualityList(clause.getConditions(), clause,
 					queryResult, instantiationResult, true);
-			newOrigin = handleQueryResult(queryResult, generatedClauses, subsumedClauses);
-			origin = getLowerLevelOrigin(origin, newOrigin);
-			newOrigin = handleInstantiationResult(instantiationResult, equalityInstantiations);
-			origin = getLowerLevelOrigin(origin, newOrigin);
-			return origin;
+			handleQueryResult(queryResult, generatedClauses, subsumedClauses);
+			handleInstantiationResult(instantiationResult, equalityInstantiations);
 		}
-		return null;
 	}
-	
-	private static IOrigin getLowerLevelOrigin(IOrigin origin1, IOrigin origin2) {
-		if (origin1 == null) return origin2;
-		if (origin2 == null) return origin1;
-		return origin1.getLevel().isAncestorOf(origin2.getLevel())?origin1:origin2;
-	}
-	
+
 	private void handleEqualityList(List<EqualityLiteral> equalityList, Clause clause,
 			List<IQueryResult> queryResult, List<IInstantiationResult> instantiationResult,
 			boolean handleOnlyPositives) {
@@ -173,7 +164,7 @@ public class EqualityProver implements IProver {
 		}
 	}
 	
-	private IOrigin doTrivialInstantiations(Clause clause,
+	private void doTrivialInstantiations(Clause clause,
 			Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
 		for (EqualityLiteral equality : clause.getEqualityLiterals()) {
 			if (isInstantiationCandidate(equality)) {
@@ -186,27 +177,26 @@ public class EqualityProver implements IProver {
 				Clause inferredClause = instantiationInferrer.getResult();
 				
 				inferredClause = simplifier.run(inferredClause);
-				if (inferredClause.isFalse()) {
-					return inferredClause.getOrigin();
-				}
-				if (!inferredClause.isTrue()) generatedClauses.add(inferredClause);
+//				if (inferredClause.isFalse()) {
+//					return inferredClause.getOrigin();
+//				}
+//				if (!inferredClause.isTrue()) 
+				generatedClauses.add(inferredClause);
 			}
 		}
-		return null;
 	}
 
-	private IOrigin handleFactResult(IFactResult result,
+	private void handleFactResult(IFactResult result,
 			Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
-		if (result == null) return null;
+		if (result == null) return;
 		if (!result.hasContradiction()) {
-			if (result.getSolvedQueries() != null) return handleQueryResult(result.getSolvedQueries(), generatedClauses, subsumedClauses);
-			if (result.getSolvedInstantiations() != null) return handleInstantiationResult(result.getSolvedInstantiations(), equalityInstantiations);
-			else return null;
+			if (result.getSolvedQueries() != null) handleQueryResult(result.getSolvedQueries(), generatedClauses, subsumedClauses);
+			if (result.getSolvedInstantiations() != null) handleInstantiationResult(result.getSolvedInstantiations(), equalityInstantiations);
 		}
 		else {
 			List<Clause> contradictionOrigin = result.getContradictionOrigin();
 			IOrigin origin = new ClauseOrigin(contradictionOrigin);
-			return origin;
+			generatedClauses.add(new FalseClause(origin));
 		}
 	}
 	
@@ -218,9 +208,9 @@ public class EqualityProver implements IProver {
 		values.get(clause).add(equality);
 	}
 	
-	private IOrigin handleInstantiationResult(List<? extends IInstantiationResult> result,
+	private void handleInstantiationResult(List<? extends IInstantiationResult> result,
 			Set<Clause> generatedClauses) {
-		if (result == null) return null;
+		if (result == null) return;
 		for (IInstantiationResult insRes : result) {
 			for (Clause clause : insRes.getSolvedClauses()) {
 				instantiationInferrer.addEqualityUnequal(insRes.getEquality(), insRes.getInstantiationValue());
@@ -229,13 +219,13 @@ public class EqualityProver implements IProver {
 				Clause inferredClause = instantiationInferrer.getResult();
 				
 				inferredClause = simplifier.run(inferredClause);
-				if (inferredClause.isFalse()) {
-					return inferredClause.getOrigin();
-				}
-				if (!inferredClause.isTrue()) generatedClauses.add(inferredClause);
+//				if (inferredClause.isFalse()) {
+//					return inferredClause.getOrigin();
+//				}
+//				if (!inferredClause.isTrue()) 
+				generatedClauses.add(inferredClause);
 			}
 		}
-		return null;
 	}
 	
 //	private void handleInstantiationResult(List<? extends IInstantiationResult> result) {
@@ -274,9 +264,9 @@ public class EqualityProver implements IProver {
 //	}
 	
 	// takes a query result
-	private IOrigin handleQueryResult(List<? extends IQueryResult> result,
+	private void handleQueryResult(List<? extends IQueryResult> result,
 			Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
-		if (result == null) return null;
+		if (result == null) return;
 		Map<Clause, Set<EqualityLiteral>> trueValues = new HashMap<Clause, Set<EqualityLiteral>>();
 		Map<Clause, Set<EqualityLiteral>> falseValues = new HashMap<Clause, Set<EqualityLiteral>>();
 		Map<Clause, Set<Clause>> clauses = new HashMap<Clause, Set<Clause>>();
@@ -307,21 +297,17 @@ public class EqualityProver implements IProver {
 			inferrer.addParentClauses(new ArrayList<Clause>(entry.getValue()));
 			entry.getKey().infer(inferrer);
 			Clause inferredClause = inferrer.getResult();
-//			inferredClause = simplifier.run(inferredClause);
-			if (inferredClause.isFalse()) {
-				return inferredClause.getOrigin();
-			}
-			if (!inferredClause.isTrue()) generatedClauses.add(inferredClause);
-			if (!entry.getKey().getLevel().isAncestorOf(inferredClause.getLevel())) 
+			inferredClause = simplifier.run(inferredClause);
+//			if (inferredClause.isFalse()) {
+//				return inferredClause.getOrigin();
+//			}
+//			if (!inferredClause.isTrue()) 
+			generatedClauses.add(inferredClause);
+			if (inferredClause.getLevel().compareTo(entry.getKey().getLevel()) <= 0) 
 				subsumedClauses.add(entry.getKey());
 		}
-		return null;
 	}
 
-	public boolean isSubsumed(Clause clause) {
-		return false;
-	}
-	
 	@Override
 	public String toString() {
 		return "EqualityProver";

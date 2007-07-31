@@ -19,14 +19,12 @@ public final class DisjunctiveClause extends Clause {
 		super(origin, predicates, equalities, arithmetic, conditions, BASE_HASHCODE);
 		
 		assert predicates != null && equalities != null && arithmetic != null && conditions != null;
-		assert !isEmpty();
 	}
 	
 	public DisjunctiveClause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic) {
 		super(origin, predicates, equalities, arithmetic, BASE_HASHCODE);
 		
 		assert predicates != null && equalities != null && arithmetic != null;
-		assert !isEmpty();
 	}
 	
 	@Override

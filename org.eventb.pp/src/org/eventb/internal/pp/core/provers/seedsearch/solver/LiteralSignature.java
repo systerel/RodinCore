@@ -1,6 +1,7 @@
 package org.eventb.internal.pp.core.provers.seedsearch.solver;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class LiteralSignature {
 	}
 
 	Set<VariableLink> getVariableLinks() {
-		return variableLinks;
+		return new HashSet<VariableLink>(variableLinks);
 	}
 	
 	void addVariableLink(VariableLink link) {
@@ -72,7 +73,7 @@ public class LiteralSignature {
 	}
 	
 	Iterable<Instantiable> getInstantiables() {
-		return instantiables.keySet();
+		return new HashSet<Instantiable>(instantiables.keySet());
 	}
 	
 	void removeInstantiable(Instantiable value) {
@@ -84,7 +85,7 @@ public class LiteralSignature {
 	}
 	
 	Set<InstantiationValue> getInstantiationValues() {
-		return instantiationValues;
+		return new HashSet<InstantiationValue>(instantiationValues);
 	}
 
 	void removeInstantiationValue(InstantiationValue value) {

@@ -78,7 +78,7 @@ public abstract class Clause {
 	}
 	
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		return hashCode;
 	}
 	
@@ -107,6 +107,23 @@ public abstract class Clause {
 		return conditions.size() > 0;
 	}
 
+	public boolean checkIsBlockedOnInstantiationsAndUnblock() {
+		boolean result = false;
+		if (checkIsBlockedOnInstantiationsAndUnblock(predicates)) result = true;
+		else if (checkIsBlockedOnInstantiationsAndUnblock(arithmetic)) result = true;
+		else if (checkIsBlockedOnInstantiationsAndUnblock(equalities)) result = true;
+		else if (checkIsBlockedOnInstantiationsAndUnblock(conditions)) result = true;
+		return result;
+	}
+	
+	private <T extends Literal<T,?>> boolean checkIsBlockedOnInstantiationsAndUnblock(List<T> list) {
+		boolean result = false;
+		for (T t : list) {
+			if (t.checkIsBlockedOnInstantiationsAndUnblock()) result = true;
+		}
+		return result;
+	}
+	
 	@Override
 	public String toString() {
 		HashMap<Variable, String> variableMap = new HashMap<Variable, String>();
@@ -206,10 +223,10 @@ public abstract class Clause {
 		return false;
 	}
 
-	public boolean isEmpty() {
-		if (equalities.size() + predicates.size() + arithmetic.size() + conditions.size() == 0) return true;
-		return false;
-	}
+//	public boolean isEmpty() {
+//		if (equalities.size() + predicates.size() + arithmetic.size() + conditions.size() == 0) return true;
+//		return false;
+//	}
 	
 	public int sizeWithoutConditions() {
 		return equalities.size() + predicates.size() + arithmetic.size();
@@ -221,6 +238,21 @@ public abstract class Clause {
 
 	public IOrigin getOrigin() {
 		return origin;
+	}
+	
+	public boolean hasQuantifiedLiteral() {
+		if (hasQuantifiedLiteral(predicates)) return true;
+		if (hasQuantifiedLiteral(equalities)) return true;
+		if (hasQuantifiedLiteral(arithmetic)) return true;
+		if (hasQuantifiedLiteral(conditions)) return true;
+		return false;
+	}
+	
+	private <T extends Literal<?,?>> boolean hasQuantifiedLiteral(List<T> list) {
+		for (T t : list) {
+			if (t.isQuantified()) return true;
+		}
+		return false;
 	}
 	
 	public abstract boolean isEquivalence();

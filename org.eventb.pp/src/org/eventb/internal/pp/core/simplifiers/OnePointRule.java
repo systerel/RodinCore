@@ -54,8 +54,7 @@ public class OnePointRule implements ISimplifier {
 		init(clause);
 		onePointLoop(conditions);
 		
-		// never empty, commented out
-		// if (isEmpty()) return new FalseClause(clause.getOrigin());
+		// never empty
 		return new EquivalenceClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 	}
 	

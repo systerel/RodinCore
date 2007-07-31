@@ -84,10 +84,12 @@ public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescripto
 	boolean getContextAndSetLabels(LabelVisitor context, LabelManager manager) {
 		LabelVisitor newContext = new LabelVisitor();
 		if (isLabelizable(context)) {
-			if (context.isPositiveLabel || context.equivalenceCount > 0) manager.addLabel(this, context.isPositive);
-			if (context.isNegativeLabel || context.equivalenceCount > 0) manager.addLabel(this, !context.isPositive);
-			if (!context.isPositiveLabel && !context.isNegativeLabel && context.equivalenceCount == 0) manager.addLabel(this, context.isPositive);
-				
+//			if (context.isPositiveLabel || context.equivalenceCount > 0) manager.addLabel(this, context.isPositive);
+//			if (context.isNegativeLabel || context.equivalenceCount > 0) manager.addLabel(this, !context.isPositive);
+//			if (!context.isPositiveLabel && !context.isNegativeLabel && context.equivalenceCount == 0) manager.addLabel(this, context.isPositive);
+			manager.addLabel(this, true);
+			manager.addLabel(this, false);
+			
 			// this becomes a label
 			// we construct labels below
 			if (context.equivalenceCount > 0) {

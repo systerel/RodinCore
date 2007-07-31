@@ -20,6 +20,7 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
@@ -30,7 +31,7 @@ public abstract class AbstractPPTest extends TestCase {
 
 	protected List<EqualityLiteral> EMPTY = new ArrayList<EqualityLiteral>(); 
 
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+	protected static FormulaFactory ff = FormulaFactory.getDefault();
 	// Types used in these tests
 	protected static IntegerType INT = ff.makeIntegerType();
 	protected static BooleanType BOOL = ff.makeBooleanType();
@@ -38,11 +39,11 @@ public abstract class AbstractPPTest extends TestCase {
 	protected static Clause TRUE = Util.TRUE(Level.base);
 	protected static Clause FALSE = Util.FALSE(Level.base);
 	
-	
 	protected static GivenType ty_S = ff.makeGivenType("S");
 	protected static GivenType ty_T = ff.makeGivenType("T");
 	protected static GivenType ty_U = ff.makeGivenType("U");
 	protected static GivenType ty_V = ff.makeGivenType("V");
+	protected static GivenType ty_M = ff.makeGivenType("M");
 
 	protected static Type POW(Type base) {
 		return ff.makePowerSetType(base);
@@ -70,8 +71,6 @@ public abstract class AbstractPPTest extends TestCase {
 	protected static Level ELEVEN = new Level(BigInteger.valueOf(11));
 	protected static Level NINETEEN = new Level(BigInteger.valueOf(19));
 	protected static Level TWENTY = new Level(BigInteger.valueOf(20));
-	
-	
 	
 	protected static Variable x = cVar(1);
 	protected static Variable y = cVar(2);
@@ -104,7 +103,6 @@ public abstract class AbstractPPTest extends TestCase {
 	protected static EqualityLiteral nbd = Util.cNEqual(b, d);
 	protected static EqualityLiteral nac = Util.cNEqual(a, c);
 	
-	
 	protected static EqualityLiteral xa = Util.cEqual(x, a);
 	protected static EqualityLiteral xb = Util.cEqual(x, b);
 	protected static EqualityLiteral yb = Util.cEqual(y, b);
@@ -113,6 +111,15 @@ public abstract class AbstractPPTest extends TestCase {
 	protected static EqualityLiteral xc = Util.cEqual(x, c);
 	protected static EqualityLiteral xd = Util.cEqual(x, d);
 	
+	protected static void assertFalse(ProverResult result) {
+		assertEquals(result.getGeneratedClauses().size(), 1);
+		assertTrue(result.getGeneratedClauses().iterator().next().isFalse());
+	}
+	
+	protected static void assertTrue(ProverResult result) {
+		assertEquals(result.getGeneratedClauses().size(), 1);
+		assertTrue(result.getGeneratedClauses().iterator().next().isTrue());
+	}
 	
 	protected static <T> Set<T> mSet(T... elements) {
 		return new LinkedHashSet<T>(Arrays.asList(elements));

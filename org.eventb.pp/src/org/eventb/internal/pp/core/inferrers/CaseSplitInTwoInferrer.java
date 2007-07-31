@@ -110,23 +110,27 @@ public class CaseSplitInTwoInferrer extends AbstractInferrer {
 	}
 
 	public boolean canInfer(Clause clause) {
-		if (clause.isEmpty()) return false;
 		if (clause.isUnit()) return false;
 		if (clause.getOrigin().isDefinition()) return false;
-		if (clause.getConditions().size() > 0) return false;
+		if (clause.isBlockedOnConditions()) return false;
+		
+		if (!(	hasConstantLiteral(clause.getPredicateLiterals())
+				|| hasConstantLiteral(clause.getArithmeticLiterals())
+				|| hasConstantLiteral(clause.getEqualityLiterals())
+				|| hasConstantLiteral(clause.getConditions()))
+		) return false;
 		
 //		if (!clause.getOrigin().dependsOnGoal()) return false;
 		
-		if (!isConstant(clause.getPredicateLiterals()) || !isConstant(clause.getEqualityLiterals()) || !isConstant(clause.getArithmeticLiterals())) return false;
 		return true;
 	}
 	
-	private boolean isConstant(List<? extends Literal<?,?>> literals) {
-		for (Literal<?,?> lit : literals) {
-			if (!lit.isConstant()) return false;
+	private boolean hasConstantLiteral(List<? extends Literal<?,?>> literals) {
+		for (Literal<?,?> literal : literals) {
+			if (literal.isConstant()) return true;
 		}
-		return true;
+		return false;
 	}
-
+	
 
 }

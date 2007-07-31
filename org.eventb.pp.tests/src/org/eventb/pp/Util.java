@@ -362,9 +362,12 @@ public class Util {
 		return new ArithmeticLiteral(term1,term2,AType.LESS_EQUAL);
 	}
 	
+	public static Constant cCons(String name, Sort sort) {
+		return new Constant(name, sort);
+	}
 	
 	public static Constant cCons(String name) {
-		return new Constant(name, null);
+		return new Constant(name, A);
 	}
 	
 	public static Variable cVar(Sort sort) {

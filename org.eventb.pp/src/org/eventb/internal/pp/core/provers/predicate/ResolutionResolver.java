@@ -32,15 +32,28 @@ public class ResolutionResolver implements IResolver {
 	private Iterator<Clause> currentMatchedIterator;
 	private int currentPosition;
 
-	public InferrenceResult next() {
+	public InferrenceResult next(boolean force) {
 		if (!isInitialized()) throw new IllegalStateException();
+		
+//		if (isBlocked()) return new InferrenceResult(true); 
+		
 		if (nextPosition()) return doMatch();
 		while (nextMatchedClause()) {
+			
+			if (isBlocked() && !force) return InferrenceResult.BLOCKED_RESULT; 
+			
 			if (nextPosition()) {
 				return doMatch();
 			}
 		}
 		return null;
+	}
+	
+	private boolean isBlocked() {
+		if (currentMatched!=null && currentMatched.checkIsBlockedOnInstantiationsAndUnblock())
+			return true;
+		return false;
+		
 	}
 	
 	public boolean isInitialized() {

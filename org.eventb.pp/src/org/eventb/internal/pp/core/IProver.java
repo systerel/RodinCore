@@ -11,9 +11,9 @@ public interface IProver {
 	// never calls IDispatcher.contradiction
 	// those clauses are not simplified
 	
-	public ProverResult next();
+	public ProverResult next(boolean force);
 
-	public boolean isSubsumed(Clause clause);
+//	public boolean isSubsumed(Clause clause);
 
 	public ProverResult addClauseAndDetectContradiction(Clause clause);
 

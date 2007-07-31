@@ -25,7 +25,7 @@ public class InstantiationInferrer extends AbstractInferrer {
 	// because we increment the instantiation count of the original variable
 	public void addInstantiation(Variable variable, SimpleTerm term) {
 		// TODO increment instantiation count and handle blocking
-		variable.incrementInstantiationCount();
+//		variable.incrementInstantiationCount();
 		if (instantiationMap.containsKey(variable)) throw new IllegalStateException();
 		instantiationMap.put(variable, term);
 	}

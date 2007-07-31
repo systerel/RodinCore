@@ -22,7 +22,6 @@ public class EqualityInferrer extends AbstractInferrer {
 	
 	// opitmization for disjunctive clauses only
 	private boolean hasTrueEquality = false;
-	
 	private Clause result;
 	
 	public EqualityInferrer(IVariableContext context) {
@@ -31,6 +30,8 @@ public class EqualityInferrer extends AbstractInferrer {
 	
 	@Override
 	protected void inferFromDisjunctiveClauseHelper(Clause clause) {
+		assertContainsEqualities(clause);
+		
 		if (hasTrueEquality) {
 			// we have a true equality -> result = TRUE
 			result = new TrueClause(getOrigin(clause));
@@ -48,6 +49,8 @@ public class EqualityInferrer extends AbstractInferrer {
 
 	@Override
 	protected void inferFromEquivalenceClauseHelper(Clause clause) {
+		assertContainsEqualities(clause);
+		
 		boolean inverse = false;
 		for (Entry<EqualityLiteral, Boolean> entry : equalityMap.entrySet()) {
 			if (conditions.contains(entry.getKey())) {
@@ -67,6 +70,12 @@ public class EqualityInferrer extends AbstractInferrer {
 		
 		if (isEmpty()) result = new FalseClause(getOrigin(clause));
 		else result = EquivalenceClause.newClause(getOrigin(clause), predicates, equalities, arithmetic, conditions, context);
+	}
+
+	private void assertContainsEqualities(Clause clause) {
+		for (EqualityLiteral equality : equalityMap.keySet()) {
+			assert clause.getEqualityLiterals().contains(equality) || clause.getConditions().contains(equality);
+		}
 	}
 
 	public void addParentClauses(List<Clause> clauses) {

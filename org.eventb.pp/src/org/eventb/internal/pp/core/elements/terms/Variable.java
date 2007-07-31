@@ -9,6 +9,7 @@
 package org.eventb.internal.pp.core.elements.terms;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -101,4 +102,14 @@ public final class Variable extends SimpleTerm {
 	}
 
 
+	private Set<Constant> instantiationValues = new HashSet<Constant>();
+	
+	public void addInstantiationValue(Constant constant) {
+		instantiationValues.add(constant);
+	}
+	
+	public boolean hasInstantiation(Constant constant) {
+		return instantiationValues.contains(constant);
+	}
+	
 }

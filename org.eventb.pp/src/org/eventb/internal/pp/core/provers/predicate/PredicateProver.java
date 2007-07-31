@@ -63,53 +63,51 @@ public class PredicateProver implements IProver {
 		this.simplifier = simplifier;
 	}
 	
-	private Clause blockedClause = null;
+//	private Clause blockedClause = null;
 	
-	public boolean isBlocked() {
-		return blockedClause != null;
-	}
+//	public boolean isBlocked() {
+//		return blockedClause != null;
+//	}
 	
-	public ProverResult next() {
+	public ProverResult next(boolean force) {
 		// TODO refactor this 
 		
 		if (simplifier == null) throw new IllegalStateException();
 		
 		ProverResult result = null;
-		if (isBlocked()) {
-			if (DEBUG) debug("Unblocking clause: "+blockedClause);
-			result = new ProverResult(blockedClause);
-			blockedClause = null;
-		}
-		else {
+//		if (isBlocked()) {
+//			if (DEBUG) debug("Unblocking clause: "+blockedClause);
+//			result = new ProverResult(blockedClause);
+//			blockedClause = null;
+//		}
+//		else {
 			if (!nonUnitResolver.isInitialized()) {
 				Clause unit = nextUnit();
-				if (unit == null) return null;
+				if (unit == null) return ProverResult.EMPTY_RESULT;
 				nonUnitResolver.initialize(unit);
 			}
-			InferrenceResult nextClause = nonUnitResolver.next();
+			InferrenceResult nextClause = nonUnitResolver.next(force);
 			while (nextClause == null) {
 				Clause unit = nextUnit();
-				if (unit == null) return null;
+				if (unit == null) return ProverResult.EMPTY_RESULT;
 				else newClause(unit, unitResolver);
 				nonUnitResolver.initialize(unit);
-				nextClause = nonUnitResolver.next();
+				nextClause = nonUnitResolver.next(force);
 			}
 			if (nextClause != null) {
+				if (nextClause.isBlocked()) return ProverResult.EMPTY_RESULT;
+				
 				Clause clause = nextClause.getClause();
 				clause = simplifier.run(clause);
-				if (clause.isFalse()) {
-					result = new ProverResult(clause.getOrigin());
-				}
-				else if (nextClause.isBlockedOnInferrence()) blockedClause = clause;
-				else result = new ProverResult(clause, nextClause.getSubsumedClauses());
+//				if (clause.isFalse()) {
+//					result = new ProverResult(clause.getOrigin());
+//				}
+//				else if (clause.checkIsBlockedOnInstantiationsAndUnblock()) blockedClause = clause;
+				result = new ProverResult(clause, nextClause.getSubsumedClauses());
 			}
-		}
+//		}
 		if (DEBUG) debug("PredicateProver, next clause: "+result);
 		return result;
-	}
-	
-	public boolean isSubsumed(Clause clause) {
-		return false;
 	}
 	
 	private Clause nextUnit() {
@@ -122,21 +120,23 @@ public class PredicateProver implements IProver {
 		Set<Clause> subsumedClauses = new HashSet<Clause>();
 		
 		resolver.initialize(clause);
-		InferrenceResult result = resolver.next();
+		InferrenceResult result = resolver.next(true);
 		while (result != null) {
+			assert !result.isBlocked();
+			
 			subsumedClauses.addAll(result.getSubsumedClauses());
 			
 			Clause inferredClause = result.getClause();
 			inferredClause = simplifier.run(inferredClause);
-			if (inferredClause.isFalse()) {
-				// we can stop here because all subsequent clauses will be lost
-				return new ProverResult(inferredClause.getOrigin(), subsumedClauses);
-			}
-			if (!inferredClause.isTrue()) {
+//			if (inferredClause.isFalse()) {
+//				// we can stop here because all subsequent clauses will be lost
+//				return new ProverResult(inferredClause.getOrigin(), subsumedClauses);
+//			}
+//			if (!inferredClause.isTrue()) {
 				generatedClauses.add(inferredClause);
-			}
+//			}
 			
-			result = resolver.next();
+			result = resolver.next(true);
 		}
 		return new ProverResult(generatedClauses, subsumedClauses);
 	}
@@ -144,14 +144,16 @@ public class PredicateProver implements IProver {
 	
 	private boolean isAcceptedUnitClause(Clause clause) {
 		return clause.isUnit() && clause.getPredicateLiterals().size() > 0
-		&& !clause.getPredicateLiterals().get(0).isQuantified();
+		&& !clause.hasQuantifiedLiteral();
 	}
 	
 	private boolean isAcceptedNonUnitClause(Clause clause) {
 		 return	clause.getPredicateLiterals().size()>0 
 				&& !clause.isUnit()
 				&& !clause.isBlockedOnConditions();
+//				&& !clause.hasQuantifiedLiteral();
 	}
+	
 	
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
 		if (simplifier == null) throw new IllegalStateException();
@@ -163,9 +165,9 @@ public class PredicateProver implements IProver {
 		}
 		else if (isAcceptedNonUnitClause(clause)) {
 			nonUnitClauses.appends(clause);
-			if (hadConditions(clause)) return newClause(clause, conditionResolver);
+			if (hadConditions(clause) /* || hadQuantifier(clause) */) return newClause(clause, conditionResolver);
 		}
-		return null;
+		return ProverResult.EMPTY_RESULT;
 	}
 
 	public void removeClause(Clause clause) {
@@ -178,6 +180,17 @@ public class PredicateProver implements IProver {
 		nonUnitResolver.remove(clause);
 		unitResolver.remove(clause);
 	}
+	
+//	private boolean hadQuantifier(Clause clause) {
+//		IOrigin origin = clause.getOrigin();
+//		if (origin instanceof AbstractInferrenceOrigin) {
+//			AbstractInferrenceOrigin tmp = (AbstractInferrenceOrigin)origin;
+//			for (Clause parent : tmp.getClauses()) {
+//				if (parent.hasQuantifiedLiteral()) return true;
+//			}
+//		}
+//		return false;
+//	}
 
 	// TODO dirty
 	private boolean hadConditions(Clause clause) {
@@ -194,9 +207,9 @@ public class PredicateProver implements IProver {
 	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		// the blocked clauses are not in the search space of the main prover, so
 		// it is important to verify here that they can still exist
-		if (blockedClause != null && newLevel.isAncestorOf(blockedClause.getLevel())) {
-			blockedClause = null;
-		}
+//		if (blockedClause != null && newLevel.isAncestorOf(blockedClause.getLevel())) {
+//			blockedClause = null;
+//		}
 		
 //		// TODO check if necessary
 //		backtrackIterator.reset();
@@ -208,6 +221,13 @@ public class PredicateProver implements IProver {
 
 	public void registerDumper(Dumper dumper) {
 		dumper.addDataStructure("PredicateFormula unit clauses", unitClauses.iterator());
+		dumper.addObject("Current unit clause", new Object(){
+			@SuppressWarnings("synthetic-access")
+			@Override
+			public String toString() {
+				return unitClausesIterator.current()==null?"no current unit clause":unitClausesIterator.current().toString();
+			}
+		});
 		dumper.addDataStructure("PredicateFormula non-unit clauses", nonUnitClauses.iterator());
 	}
 	
@@ -215,6 +235,7 @@ public class PredicateProver implements IProver {
 	public String toString() {
 		return "PredicateProver";
 	}
+	
 	
 }
 

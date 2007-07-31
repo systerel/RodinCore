@@ -356,7 +356,9 @@ public class TestLiteralSimplification extends AbstractPPTest {
 			LiteralSimplifier rule = new LiteralSimplifier(variableContext());
 			
 			Clause actual = test.input.simplify(rule);
-			assertEquals(test.input.toString(),test.output,actual);
+			if (actual.isTrue()) assertTrue(test.output.isTrue());
+			else if (actual.isFalse()) assertTrue(test.output.isFalse());
+			else assertEquals(test.input.toString(),test.output,actual);
 		}
 	}
 }

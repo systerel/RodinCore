@@ -6,7 +6,7 @@ import org.eventb.internal.pp.core.inferrers.IInferrer;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
-public class FalseClause extends Clause {
+public final class FalseClause extends Clause {
 
 	private static final int BASE_HASHCODE = 11;
 	
@@ -57,6 +57,16 @@ public class FalseClause extends Clause {
 	@Override
 	public boolean matchesAtPosition(PredicateDescriptor predicate, int position) {
 		return false;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return obj == this;
+	}
+
+	@Override
+	public int hashCode() {
+		return System.identityHashCode(this);
 	}
 
 }

@@ -5,7 +5,7 @@ import org.eventb.internal.pp.core.inferrers.InferrenceResult;
 
 public interface IResolver {
 
-	public InferrenceResult next();	
+	public InferrenceResult next(boolean force);	
 
 	public boolean isInitialized();
 	

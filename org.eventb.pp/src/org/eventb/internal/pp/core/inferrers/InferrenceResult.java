@@ -7,12 +7,19 @@ import org.eventb.internal.pp.core.elements.Clause;
 
 public class InferrenceResult {
 
+	public static final InferrenceResult BLOCKED_RESULT = new InferrenceResult(true);
+	
 	private Clause clause;
 	private boolean isBlocked;
 	private Set<Clause> subsumedClauses = new HashSet<Clause>();
 	
-	public InferrenceResult(Clause clause, boolean isBlocked) {
+	public InferrenceResult(Clause clause /*, boolean isBlocked */) {
 		this.clause = clause;
+		this.isBlocked = false;
+//		this.isBlocked = isBlocked;
+	}
+	
+	private InferrenceResult(boolean isBlocked) {
 		this.isBlocked = isBlocked;
 	}
 	
@@ -20,9 +27,13 @@ public class InferrenceResult {
 		return clause;
 	}
 	
-	public boolean isBlockedOnInferrence() {
+	public boolean isBlocked() {
 		return isBlocked;
 	}
+	
+//	public boolean isBlockedOnInferrence() {
+//		return isBlocked;
+//	}
 
 	public Set<Clause> getSubsumedClauses() {
 		return subsumedClauses;

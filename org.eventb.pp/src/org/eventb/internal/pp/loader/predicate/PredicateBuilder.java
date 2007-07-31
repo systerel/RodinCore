@@ -116,7 +116,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 			|| predicate.getTag() == Formula.LEQV || predicate.getTag() == Formula.LE
 			|| predicate.getTag() == Formula.LT || predicate.getTag() == Formula.GE
 			|| predicate.getTag() == Formula.GT) : "Unexpected operator: "+predicate+"";
-		assert predicate.isTypeChecked();
+		assert predicate.isTypeChecked():predicate+"";
 		
 		if (DEBUG) debug("========================================");
 		if (DEBUG) debug("Loading "+(isGoal?"goal":"hypothese")+": " + predicate);

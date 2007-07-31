@@ -30,6 +30,7 @@ public class TestConditions extends AbstractPPTest {
 		);
 		
 		PPProof proof = new PPProof(clauses);
+		proof.load();
 		proof.prove(-1);
 		PPResult result =  proof.getResult();
 		assertTrue(result.getResult() == Result.valid);

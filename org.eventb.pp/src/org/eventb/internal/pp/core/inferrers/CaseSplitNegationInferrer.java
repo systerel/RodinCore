@@ -44,15 +44,15 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 		this.parent = parent;
 	}
 	
-	public Clause getLeftCase() {
+	public Set<Clause> getLeftCase() {
 		return left;
 	}
 
-	public Clause getRightCase() {
+	public Set<Clause> getRightCase() {
 		return right;
 	}
 
-	private Clause left, right;
+	private Set<Clause> left, right;
 	private List<PredicateLiteral> leftPredicates = new ArrayList<PredicateLiteral>();
 	private List<EqualityLiteral> leftEqualities = new ArrayList<EqualityLiteral>();
 	private List<ArithmeticLiteral> leftArithmetic = new ArrayList<ArithmeticLiteral>();
@@ -66,16 +66,19 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 		// for now if we do not split on variables it is no problem
 		if (hasConstantLiteral(predicates)) {
 			PredicateLiteral literal = getConstantLiteral(predicates);
+			predicates.remove(literal);
 			leftPredicates.add(literal);
 			rightPredicates.add(inverseLiteral(literal));
 		}
 		else if (hasConstantLiteral(equalities)) {
 			EqualityLiteral literal = getConstantLiteral(equalities);
+			equalities.remove(literal);
 			leftEqualities.add(literal);
 			rightEqualities.add(inverseLiteral(literal));
 		}
 		else if (hasConstantLiteral(arithmetic)) {
 			ArithmeticLiteral literal = getConstantLiteral(arithmetic);
+			arithmetic.remove(literal);
 			leftArithmetic.add(literal);
 			rightArithmetic.add(inverseLiteral(literal));
 		}
@@ -107,18 +110,26 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 	@Override
 	protected void inferFromDisjunctiveClauseHelper(Clause clause) {
 		splitLeftCase();
-		left = new DisjunctiveClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic);
+		left.add(new DisjunctiveClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic));
 		// right case
-		right = new DisjunctiveClause(getOrigin(clause, parent.getRightBranch()),rightPredicates,rightEqualities,rightArithmetic);
+		right.add(new DisjunctiveClause(getOrigin(clause, parent.getRightBranch()),rightPredicates,rightEqualities,rightArithmetic));
+		right.add(new DisjunctiveClause(getOrigin(clause, parent.getRightBranch()),predicates,equalities,arithmetic));
 	}
 
 	@Override
 	protected void inferFromEquivalenceClauseHelper(Clause clause) {
 		splitLeftCase();
-		left = EquivalenceClause.newClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic,new ArrayList<EqualityLiteral>(),context);
+		left.add(EquivalenceClause.newClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic,new ArrayList<EqualityLiteral>(),context));
+		HashMap<SimpleTerm, SimpleTerm> map = new HashMap<SimpleTerm, SimpleTerm>();
+		List<PredicateLiteral> predicates = getListCopy(this.predicates, map, context);	
+		List<EqualityLiteral> equalities = getListCopy(this.equalities, map, context);
+		List<ArithmeticLiteral> arithmetic = getListCopy(this.arithmetic, map, context);
+		left.add(EquivalenceClause.newClause(getOrigin(clause, parent.getLeftBranch()), predicates, equalities, arithmetic, new ArrayList<EqualityLiteral>(), context));
+		
 		// right case
-//		EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
-		right = EquivalenceClause.newClause(getOrigin(clause, parent.getRightBranch()), rightPredicates, rightEqualities, rightArithmetic,new ArrayList<EqualityLiteral>(),context);
+		right.add(EquivalenceClause.newClause(getOrigin(clause, parent.getRightBranch()), rightPredicates, rightEqualities, rightArithmetic,new ArrayList<EqualityLiteral>(),context));
+		EquivalenceClause.inverseOneliteral(this.predicates, this.equalities, this.arithmetic);
+		right.add(EquivalenceClause.newClause(getOrigin(clause, parent.getRightBranch()), this.predicates, this.equalities, this.arithmetic, new ArrayList<EqualityLiteral>(), context));
 	}
 
 	@Override
@@ -127,8 +138,8 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 		// if (!canInfer(clause)) throw new IllegalStateException(); 
 		if (parent == null) throw new IllegalStateException();
 
-		left = null;
-		right = null;
+		left = new HashSet<Clause>();
+		right = new HashSet<Clause>();
 		leftArithmetic = new ArrayList<ArithmeticLiteral>();
 		leftEqualities = new ArrayList<EqualityLiteral>();
 		leftPredicates = new ArrayList<PredicateLiteral>();
@@ -149,28 +160,22 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 		return new SplitOrigin(parents, level);
 	}
 
-	private int MAX_SPLIT_SIZE = 3;
 	
 	public boolean canInfer(Clause clause) {
-		if (clause.isEmpty()) return false;
 		if (clause.isUnit()) return false;
 		if (clause.getOrigin().isDefinition()) return false;
-		if (clause.getConditions().size() > 0) return false;
+		if (clause.isBlockedOnConditions()) return false;
 		
-		Set<Level> dependencies = new HashSet<Level>();
-		clause.getOrigin().getDependencies(dependencies);
-		if (dependencies.size() > MAX_SPLIT_SIZE) {
-			return false;
-		}
+		if (!(	hasConstantLiteral(clause.getPredicateLiterals())
+				|| hasConstantLiteral(clause.getArithmeticLiterals())
+				|| hasConstantLiteral(clause.getEqualityLiterals())
+				|| hasConstantLiteral(clause.getConditions()))
+		) return false;
 		
 //		if (clause.getOrigin().getLevel().getHeight()>2) return false;
 //		if (clause.getArithmeticLiterals().size()+clause.getEqualityLiterals().size()+clause.getPredicateLiterals().size()>2) return false;
 //		if (!clause.getOrigin().dependsOnGoal()) return false;
-		
-		if (!(	hasConstantLiteral(clause.getPredicateLiterals())
-				|| hasConstantLiteral(clause.getArithmeticLiterals())
-				|| hasConstantLiteral(clause.getEqualityLiterals()))
-		) return false;
+
 		return true;
 	}
 	

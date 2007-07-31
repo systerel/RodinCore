@@ -23,7 +23,7 @@ public class ReverseResolutionResolver implements IResolver {
 	private Clause currentUnit;
 	private Iterator<Clause> currentMatchIterator;
 	
-	public InferrenceResult next() {
+	public InferrenceResult next(boolean force) {
 		if (setUnit()) return doMatch();
 		while (setNonUnit()) {
 			initMatchIterator();

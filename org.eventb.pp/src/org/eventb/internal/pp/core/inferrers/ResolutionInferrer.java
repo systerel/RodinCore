@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
@@ -17,6 +18,7 @@ import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
+import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
@@ -28,7 +30,7 @@ public class ResolutionInferrer extends AbstractInferrer {
 	private int position;
 	
 	private Clause result;
-	private boolean blocked;
+//	private boolean blocked;
 	private Clause subsumedClause;
 	private boolean hasInstantiations;
 	
@@ -73,8 +75,8 @@ public class ResolutionInferrer extends AbstractInferrer {
 	}
 	
 	public InferrenceResult getResult() {
-		InferrenceResult infResult = new InferrenceResult(result,blocked);
-		if (subsumedClause!=null) infResult.addSubsumedClause(subsumedClause);
+		InferrenceResult infResult = new InferrenceResult(result);
+		if (subsumedClause != null) infResult.addSubsumedClause(subsumedClause);
 		return infResult;
 	}
 	
@@ -99,14 +101,32 @@ public class ResolutionInferrer extends AbstractInferrer {
 				map.put(matcherTerm, matchingTerm);
 				predicate = predicate.substitute(map);
 			}
-			else if (matcherTerm.isConstant()) {
-				// we might have to increment the instantiation count of the variable
-				if (!matchingTerm.isConstant()) {
-					matchingTerm.incrementInstantiationCount();
-					if (matchingTerm.isBlocked()) blocked = true;
+		}
+	}
+	
+	private void updateInstantiationCount(PredicateLiteral matchingPredicate) {
+		for (int i = 0; i < matchingPredicate.getTerms().size(); i++) {
+			SimpleTerm matchingTerm = matchingPredicate.getTerms().get(i);
+			SimpleTerm matcherTerm = predicate.getTerms().get(i);
+			
+			Set<SimpleTerm> alreadyIncremented = new HashSet<SimpleTerm>();
+			if (matcherTerm.isConstant()) {
+				// we have to increment the instantiation count of the variable
+				if (!matchingTerm.isConstant() && !alreadyIncremented.contains(matchingTerm)) {
+					Variable variable = getOriginalVariable((Variable)matchingTerm);
+					variable.incrementInstantiationCount();
+					alreadyIncremented.add(matchingTerm);
 				}
 			}
 		}
+	}
+	
+	private Variable getOriginalVariable(Variable variable) {
+		for (Entry<SimpleTerm, SimpleTerm> map : substitutionsMap.entrySet()) {
+			// this cast works since there are pair of the same kind
+			if (map.getValue() == variable) return (Variable)map.getKey();
+		}
+		return null;
 	}
 	
 	// MUST BE called on a unit-clause
@@ -133,6 +153,7 @@ public class ResolutionInferrer extends AbstractInferrer {
 		PredicateLiteral matchingPredicate = predicates.remove(position);
 		
 		// TODO check
+		updateInstantiationCount(matchingPredicate);
 		preparePredicate(matchingPredicate);
 		
 		conditions.addAll(getConditions(matchingPredicate));
@@ -148,6 +169,8 @@ public class ResolutionInferrer extends AbstractInferrer {
 		PredicateLiteral matchingPredicate = predicates.remove(position);
 		boolean sameSign = sameSign(matchingPredicate, predicate);
 		if (!sameSign) EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
+		
+		updateInstantiationCount(matchingPredicate);
 		
 		if (matchingPredicate.isQuantified()) matchingPredicate = transformVariables(matchingPredicate);
 		

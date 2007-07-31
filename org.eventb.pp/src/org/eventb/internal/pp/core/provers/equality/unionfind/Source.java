@@ -76,6 +76,11 @@ public abstract class Source {
 			return clause != null;
 		}
 		
+		@Override
+		public String toString() {
+			return clause.toString();
+		}
+		
 	}	
 	
 	public static class QuerySource extends Source {
@@ -130,6 +135,11 @@ public abstract class Source {
 				Entry<Clause,Level> clause = iter.next();
 				if (level.isAncestorOf(clause.getValue())) iter.remove();
 			}
+		}
+		
+		@Override
+		public String toString() {
+			return clauses.keySet().toString();
 		}
 	}	
 }

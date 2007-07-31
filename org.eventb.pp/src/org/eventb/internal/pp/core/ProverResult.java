@@ -4,23 +4,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public class ProverResult {
 
+	public static ProverResult EMPTY_RESULT = new ProverResult();
+	
 	private Set<Clause> generatedClauses;
 	private Set<Clause> subsumedClauses;
-	private IOrigin origin = null;
-	
-	public ProverResult(IOrigin origin) {
-		this.origin = origin;
-		this.subsumedClauses = new HashSet<Clause>();
-	}
-	
-	public ProverResult(IOrigin origin, Set<Clause> subsumedClauses) {
-		this.origin = origin;
-		this.subsumedClauses = subsumedClauses;
-	}
 	
 	public ProverResult(Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
 		this.generatedClauses = generatedClauses;
@@ -39,6 +29,11 @@ public class ProverResult {
 		generatedClauses.add(clause);
 	}
 	
+	private ProverResult() {
+		this.generatedClauses = new HashSet<Clause>();
+		this.subsumedClauses = new HashSet<Clause>();
+	}
+
 	public Set<Clause> getGeneratedClauses() {
 		return generatedClauses;
 	}
@@ -47,17 +42,29 @@ public class ProverResult {
 		return subsumedClauses;
 	}
 	
-	public boolean isContradiction() {
-		return origin != null;
-	}
-	
-	public IOrigin getContradictionOrigin() {
-		return origin;
+	public boolean isEmpty() {
+		return generatedClauses.isEmpty() && subsumedClauses.isEmpty();
 	}
 	
 	@Override
 	public String toString() {
-		if (isContradiction()) return "contradiction on: "+origin;
+		if (isEmpty()) return "EMPTY RESULT";
 		return "new clauses: "+generatedClauses+", subsumed clauses: "+subsumedClauses;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ProverResult) {
+			ProverResult tmp = (ProverResult) obj;
+			return generatedClauses.equals(tmp.generatedClauses) && subsumedClauses.equals(tmp.subsumedClauses);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return generatedClauses.hashCode() * 37 + subsumedClauses.hashCode();
+	}
+
 }
+

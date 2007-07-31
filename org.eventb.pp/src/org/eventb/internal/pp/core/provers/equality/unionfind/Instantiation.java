@@ -9,6 +9,7 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
 
 public class Instantiation {
+
 	private final QuerySource source;
 	private final Node node;
 	
@@ -40,6 +41,11 @@ public class Instantiation {
 			Entry<Node, Level> entry = iter.next();
 			if (level.isAncestorOf(entry.getValue())) iter.remove();
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return node.toString()/*+"{"+source.toString()+"}"*/;
 	}
 	
 }

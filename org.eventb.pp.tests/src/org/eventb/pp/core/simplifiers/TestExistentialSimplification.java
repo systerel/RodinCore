@@ -104,4 +104,9 @@ public class TestExistentialSimplification extends AbstractPPTest {
 			assertEquals(test.output,actual);
 		}
 	}
+	
+	
+//	public void testExistentialBlocking() {
+//		Clause clause = cClause(cPred(0, var0, evar0));
+//	}
 }

@@ -172,7 +172,9 @@ public class TestEqualitySimplifier extends AbstractPPTest {
 			assertTrue(rule.canSimplify(test.input));
 			Clause actual = test.input.simplify(rule);
 			
-			assertEquals(test.input.toString(),test.output,actual);
+			if (actual.isFalse()) assertTrue(test.output.isFalse());
+			else if (actual.isTrue()) assertTrue(test.output.isTrue());
+			else assertEquals(test.input.toString(),test.output,actual);
 		}
 	}
 }

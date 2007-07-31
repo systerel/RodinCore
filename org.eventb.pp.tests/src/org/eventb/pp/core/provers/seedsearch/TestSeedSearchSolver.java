@@ -449,8 +449,8 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		solver.addInstantiable(nQex);
 		assertEquals(mSet(
 				"Pxc[V=[->Qxc],]",
-				"Qxc[V=[->Pxc],I=[¬Qex, Pex],]",
-				"¬Pxc[V=[->¬Qxc],I=[¬Qex, Pex],]",
+				"Qxc[V=[->Pxc],I=[Pex, ¬Qex],]",
+				"¬Pxc[V=[->¬Qxc],I=[Pex, ¬Qex],]",
 				"¬Qxc[V=[->¬Pxc],]"
 		), dump(nQxc,nPxc,Pxc,Qxc));
 
@@ -458,7 +458,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		assertEquals(mSet(
 				"Pxc[V=[->Qxc],]",
 				"Qxc[V=[->Pxc],I=[¬Qex],]",
-				"¬Pxc[I=[¬Qex, Pex],]",
+				"¬Pxc[I=[Pex, ¬Qex],]",
 				"¬Qxc[]"
 		), dump(nQxc,nPxc,Pxc,Qxc));
 	}
@@ -577,13 +577,13 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		solver.addInstantiable(Qex);
 		solver.addInstantiable(nRex);
 		assertEquals(mSet(
-				"¬Pxc[I=[¬Rex, Qex],]",
+				"¬Pxc[I=[Qex, ¬Rex],]",
 				"Pxc[V=[->Rxc],]",
 				"¬Rxc[V=[->¬Qxc],]",
 				"¬Qxc[V=[->¬Rxc],I=[Qex],]",
-				"Rxc[V=[->Pxc,->Sxc],I=[¬Rex, Qex],]",
+				"Rxc[V=[->Pxc,->Sxc],I=[Qex, ¬Rex],]",
 				"Sxc[V=[->Rxc],]",
-				"¬Sxc[I=[¬Rex, Qex],]"
+				"¬Sxc[I=[Qex, ¬Rex],]"
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
 		solver.removeVariableLink(nQnRxc);
 		assertEquals(mSet(

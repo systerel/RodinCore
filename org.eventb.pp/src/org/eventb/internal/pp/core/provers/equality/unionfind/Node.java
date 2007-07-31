@@ -217,5 +217,13 @@ public class Node implements Comparable<Node> {
 	public int compareTo(Node o) {
 		return constant.compareTo(o.constant);
 	}
+
 	
+	public Node getRoot() {
+		Node tmp = this;
+		while (!tmp.isRoot()) {
+			tmp = tmp.getParent();
+		}
+		return tmp;
+	}
 }

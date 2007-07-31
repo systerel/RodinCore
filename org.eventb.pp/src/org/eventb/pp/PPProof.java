@@ -5,11 +5,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeCheckResult;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.IVariableContext;
+import org.eventb.internal.pp.core.ProverPlugin;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.provers.equality.EqualityProver;
@@ -37,85 +44,95 @@ public class PPProof {
 		System.out.println(message);
 	}
 	
-	private List<Predicate> hypotheses; 
-	private List<Predicate> transformedHypotheses;
-	private Predicate goal;
-	private Predicate transformedGoal;
+	private List<InputPredicate> hypotheses = new ArrayList<InputPredicate>();
+	private InputPredicate goal;
 	
+	private IVariableContext context;
 	private Set<Clause> clauses;
 	
 	private PPResult result;
 	
-//	private PredicateBuilder pBuilder;
-//	private ClauseBuilder cBuilder;
 	private ClauseDispatcher proofStrategy;
 	
 	public PPProof(Predicate[] hypotheses, Predicate goal) {
-		this.hypotheses = Arrays.asList(hypotheses);
-		this.goal = goal;
+		setHypotheses(Arrays.asList(hypotheses));
+		this.goal = new InputPredicate(goal,true);
 	}
 	
 	public PPProof(Set<Predicate> hypotheses, Predicate goal) {
-		this.hypotheses = new ArrayList<Predicate>(hypotheses);
-		this.goal = goal;
+		setHypotheses(hypotheses);
+		this.goal = new InputPredicate(goal,true);
 	}
 
 	public PPProof(Iterable<Predicate> hypotheses, Predicate goal) {
-		this.hypotheses = new ArrayList<Predicate>();
-		for (Predicate predicate : hypotheses) {
-			this.hypotheses.add(predicate);
+		setHypotheses(hypotheses);
+		this.goal = new InputPredicate(goal,true);
+	}
+	
+	private void setHypotheses(Iterable<Predicate> predicates) {
+		for (Predicate predicate : predicates) {
+			this.hypotheses.add(new InputPredicate(predicate,false));
 		}
-		this.goal = goal;
 	}
 	
 	public PPProof(Set<Clause> clauses) {
 		this.clauses = clauses;
 	}
-	
+		
 	public PPResult getResult() {
 		return result;
 	}
 	
-	public void translate() {
-		transformedHypotheses = new ArrayList<Predicate>();
-		for (Predicate hypothesis : hypotheses) {
-			transformedHypotheses.add(translate(hypothesis));
+	private void proofFound(InputPredicate predicate) {
+		Tracer tracer;
+		if (predicate.isGoal) tracer = new Tracer(true); 
+		else tracer = new Tracer(predicate.originalPredicate, false);
+		result = new PPResult(Result.valid, tracer);
+	}
+	
+	public Set<Clause> getClauses() {
+		return clauses;
+	}
+	
+	public List<Predicate> getTranslatedHypotheses() {
+		List<Predicate> result = new ArrayList<Predicate>();
+		for (InputPredicate hypothesis : hypotheses) {
+			result.addAll(hypothesis.translatedPredicates);
 		}
-		this.transformedGoal = translate(goal);
+		return result;
 	}
 	
-	private static FormulaFactory ff = FormulaFactory.getDefault();
-	private Predicate translate(Predicate predicate) {
-		assert predicate.isTypeChecked();
-		
-		Predicate newPredicate;
-		
-		newPredicate = Translator.decomposeIdentifiers(predicate, ff);
-		newPredicate = Translator.reduceToPredicateCalulus(newPredicate, ff);
-		newPredicate = Translator.simplifyPredicate(newPredicate, ff);
-
-		if (DEBUG) debug("Translated: "+predicate+" to: "+newPredicate);
-		return newPredicate;
+	public List<Predicate> getTranslatedGoal() {
+		return new ArrayList<Predicate>(goal.translatedPredicates);
 	}
 	
-	// sequent must be type-checked
-	public void prove(long timeout) {
-		if (transformedHypotheses==null) transformedHypotheses = hypotheses;
-		if (transformedGoal == null) transformedGoal = goal;
-		
-		IVariableContext context;
+	public void translate() {
+		for (InputPredicate predicate : hypotheses) {
+			predicate.deriveUsefulPredicates();
+			predicate.translate();
+		}
+		goal.deriveUsefulPredicates();
+		goal.translate();
+	}
+	
+	public void load() {
 		if (clauses == null) {
 			PredicateBuilder pBuilder = new PredicateBuilder();
 			ClauseBuilder cBuilder = new ClauseBuilder();
 		
-			loadHypotheses(pBuilder);
-			loadGoal(pBuilder);
-		
-			if (result!=null) {
-				// proof has been found during translation
+			for (InputPredicate predicate : hypotheses) {
+				if (predicate.loadPhaseOne(pBuilder)) {
+					proofFound(predicate);
+					debugResult();
+					return;
+				}
+			}
+			if (goal.loadPhaseOne(pBuilder)) {
+				proofFound(goal);
 				debugResult();
 				return;
 			}
+
 			cBuilder.buildClauses(pBuilder.getContext());
 			cBuilder.buildPredicateTypeInformation(pBuilder.getContext());
 			LoaderResult loaderResult = cBuilder.getResult();
@@ -126,6 +143,12 @@ public class PPProof {
 		else {
 			context = new VariableContext();
 		}
+	}
+	
+	// sequent must be type-checked
+	public void prove(long timeout) {
+		if (result != null) return;
+		if (context == null) throw new IllegalStateException("Loader must be preliminary invoked");
 		
 		initProver(context);
 		if (DEBUG) debug("==== Original clauses ====");
@@ -158,39 +181,133 @@ public class PPProof {
 		}
 	}
 	
-	private void loadGoal(PredicateBuilder pBuilder) {
-		transformedGoal = transformedGoal.flatten(ff);
-		if (transformedGoal.getTag() == Formula.BTRUE) {
-			// proof done
-			result = new PPResult(Result.valid,new Tracer(true)); 
+	private static class InputPredicate {
+		private static FormulaFactory ff = FormulaFactory.getDefault();
+
+		boolean isGoal;
+		Predicate originalPredicate;
+		List<Predicate> derivedPredicates;
+		List<Predicate> translatedPredicates;
+		
+		public InputPredicate(Predicate originalPredicate, boolean isGoal) {
+			this.originalPredicate = originalPredicate;
+			this.isGoal = isGoal;
 		}
-		else if (transformedGoal.getTag() == Formula.BFALSE) {
-			// ignore
-		}
-		else {
-			pBuilder.build(transformedGoal, goal, true);
-		}
-	}
-	
-	
-	
-	private void loadHypotheses(PredicateBuilder pBuilder) {
-		for (int i=0;i<transformedHypotheses.size();i++) {
-			Predicate hypothesis = hypotheses.get(i);
-			Predicate transformedHypothesis = transformedHypotheses.get(i).flatten(ff);
-			if (transformedHypothesis.getTag() == Formula.BTRUE) {
-				// ignore
+		
+		public boolean loadPhaseOne(PredicateBuilder builder) {
+			if (translatedPredicates == null) throw new IllegalStateException("Translator should be invoked first");
+			
+			for (Predicate translatedPredicate : translatedPredicates) {
+				assert translatedPredicate.isTypeChecked();
+				
+				if (translatedPredicate.getTag() == Formula.BTRUE && isGoal) {
+					return true;
+				}
+				if (translatedPredicate.getTag() == Formula.BFALSE && !isGoal) {
+					return true;
+				}
+				if (translatedPredicate.getTag() == Formula.BTRUE && !isGoal) {
+					return false;
+				}
+				if (translatedPredicate.getTag() == Formula.BFALSE && isGoal) {
+					return false;
+				}
+				builder.build(translatedPredicate, originalPredicate, isGoal);
 			}
-			else if (transformedHypothesis.getTag() == Formula.BFALSE) {
-				// proof done
-				result = new PPResult(Result.valid,new Tracer(hypothesis, false)); 
+			return false;
+		}
+		
+		public void translate() {
+			this.translatedPredicates = new ArrayList<Predicate>();
+			for (Predicate derivedPredicate : derivedPredicates) {
+				translate(derivedPredicate);
+			}
+		}
+		
+		private void translate(Predicate predicate) {
+			assert predicate.isTypeChecked();
+			
+			Predicate newPredicate;
+			newPredicate = Translator.decomposeIdentifiers(predicate, ff);
+			newPredicate = Translator.reduceToPredicateCalulus(newPredicate, ff);
+			newPredicate = Translator.simplifyPredicate(newPredicate, ff);
+			newPredicate = newPredicate.flatten(ff);
+			
+//			if (!typeCheck(newPredicate)) ProverPlugin.log("Could not type check generated predicate "+newPredicate);
+//			else 
+			if (!newPredicate.isTypeChecked()) {
+				ProverPlugin.log("Translator generetad untyped predicate " + newPredicate);
+				if (DEBUG) debug("Translator generated untype-checked predicate: "+ newPredicate);
 			}
 			else {
-				pBuilder.build(transformedHypothesis, hypothesis, false);
+				translatedPredicates.add(newPredicate);
+				if (DEBUG) debug("Translated: "+predicate+" to: "+newPredicate);
 			}
 		}
+		
+		private boolean typeCheck(Predicate predicate) {
+			ITypeEnvironment env = ff.makeTypeEnvironment();
+			for (FreeIdentifier ident : originalPredicate.getFreeIdentifiers()) {
+				env.add(ident);
+			}
+			ITypeCheckResult result = predicate.typeCheck(env);
+			if (!result.isSuccess()) {
+//				System.out.println(result);
+				return false;
+			}
+			return true;
+		}
+	
+		public void deriveUsefulPredicates() {
+			this.derivedPredicates = new ArrayList<Predicate>();
+			Predicate setEquivalencePredicate = getSetMembershipEquivalenceForEquality();
+			if (setEquivalencePredicate != null) {
+				if (!typeCheck(setEquivalencePredicate)) {
+					if (DEBUG) debug("Could not type check derived predicate "+setEquivalencePredicate);
+					ProverPlugin.log("Could not type check generated predicate "+setEquivalencePredicate);
+				}
+				else {
+					derivedPredicates.add(setEquivalencePredicate);
+					if (DEBUG) debug("Adding derived predicate "+setEquivalencePredicate+" for "+originalPredicate);
+				}
+			}
+//			if (setEquivalencePredicate == null /* || !isGoal */) {
+				if (DEBUG) debug("Keeping original predicate "+originalPredicate);
+				derivedPredicates.add(originalPredicate);
+//			}
+		}
+		
+		private Predicate getSetMembershipEquivalenceForEquality() {
+			if (isSetEquality(originalPredicate)) {
+				Expression left = getEquality(originalPredicate).getLeft();
+				Expression right = getEquality(originalPredicate).getRight();
+				
+				return 
+				ff.makeQuantifiedPredicate(Formula.FORALL, new BoundIdentDecl[]{ff.makeBoundIdentDecl("x", null)},
+					ff.makeBinaryPredicate(Formula.LEQV, 
+						ff.makeRelationalPredicate(Formula.IN, ff.makeBoundIdentifier(0, null), left, null), 
+						ff.makeRelationalPredicate(Formula.IN, ff.makeBoundIdentifier(0, null), right, null), 
+					null),
+				null);
+			}
+			return null;
+		}
+		
+		private RelationalPredicate getEquality(Predicate predicate) {
+			return (RelationalPredicate)predicate;
+		}
+		
+		private boolean isSetEquality(Predicate predicate) {
+			if (predicate.getTag() == Formula.EQUAL) {
+				RelationalPredicate equality = getEquality(predicate);
+				if (((equality.getLeft()).getType().toExpression(ff).getTag() == Formula.POW)) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
-
+	
 	private static class Tracer implements ITracer {
 		private List<Predicate> originalPredicates = new ArrayList<Predicate>();
 		private boolean goalNeeded;

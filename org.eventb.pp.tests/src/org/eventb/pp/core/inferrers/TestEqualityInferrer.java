@@ -19,7 +19,7 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 	public void testSimpleDisjunctiveClauses() {
 		doTest(
 				cClause(cProp(0),ab), mList(ab), EMPTY, mList(cClause(ab)), 
-				FALSE
+				TRUE
 		);
 		doTest(
 				cClause(cProp(0),ab), EMPTY, mList(ab), mList(cClause(ab)), 
@@ -27,18 +27,22 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 		);
 		doTest(
 				cClause(cProp(0),nab), mList(nab), EMPTY, mList(cClause(nab)),
-				FALSE
+				TRUE
 		);
 		doTest(
 				cClause(cProp(0),nab), EMPTY, mList(nab), mList(cClause(nab)), 
 				cClause(cProp(0))
 		);		
+		doTest(
+				cClause(ab,bc), EMPTY, mList(ab, bc), mList(cClause(ab)),
+				FALSE
+		);
 	}
 	
 	public void testSimpleDisjunctiveClausesWithVariables() {
 		doTest(
 				cClause(cPred(0,x),ab), mList(ab), EMPTY, mList(cClause(ab)), 
-				FALSE
+				TRUE
 		);
 		doTest(
 				cClause(cPred(0,x),ab), EMPTY, mList(ab), mList(cClause(ab)), 
@@ -46,7 +50,7 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 		);
 		doTest(
 				cClause(cPred(0,x),nab), mList(nab), EMPTY, mList(cClause(nab)),
-				FALSE
+				TRUE
 		);
 		doTest(
 				cClause(cPred(0,x),nab), EMPTY, mList(nab), mList(cClause(nab)), 
@@ -77,7 +81,7 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 		// conditions
 		doTest(
 				cEqClause(mList(cProp(0),cProp(1)),ab), mList(ab), EMPTY, mList(cClause(ab)), 
-				FALSE
+				TRUE
 		);
 		doTest(
 				cEqClause(mList(cProp(0),cProp(1)),ab), EMPTY, mList(ab), mList(cClause(ab)), 
@@ -85,7 +89,7 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 		);
 		doTest(
 				cEqClause(mList(cProp(0),cProp(1)),nab), mList(nab), EMPTY, mList(cClause(nab)),
-				FALSE
+				TRUE
 		);
 		doTest(
 				cEqClause(mList(cProp(0),cProp(1)),nab), EMPTY, mList(nab), mList(cClause(nab)), 
@@ -129,7 +133,9 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 		inferrer.addParentClauses(parents);
 		original.infer(inferrer);
 		Clause actual = inferrer.getResult();
-		assertEquals(expected, actual);
+		if (actual.isTrue()) assertTrue(expected.isTrue());
+		else if (actual.isFalse()) assertTrue(expected.isFalse());
+		else assertEquals(expected, actual);
 
 		disjointVariables(original, actual);
 	}

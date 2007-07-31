@@ -14,14 +14,13 @@ import static org.eventb.pp.Util.mList;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.IProver;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
 import org.eventb.internal.pp.loader.clause.VariableContext;
+import org.eventb.pp.AbstractPPTest;
 
 /**
  * TODO Comment
@@ -29,7 +28,7 @@ import org.eventb.internal.pp.loader.clause.VariableContext;
  * @author François Terrier
  *
  */
-public class TestPredicateProver extends TestCase {
+public class TestPredicateProver extends AbstractPPTest {
 
 	private class TestPair {
 		List<Clause> unit, nonUnit;
@@ -286,8 +285,7 @@ public class TestPredicateProver extends TestCase {
 	}
 	
 	public void doTest(TestPair test) {
-			PredicateProver prover = new PredicateProver(new VariableContext());
-			prover.initialize(new ClauseSimplifier());
+			IProver prover = getProver();
 			
 			for (Clause clause : test.nonUnit) {
 				prover.addClauseAndDetectContradiction(clause);
@@ -298,19 +296,19 @@ public class TestPredicateProver extends TestCase {
 			
 			int i=0;
 			for (Clause clause : test.result) {
-				ProverResult result = prover.next();
+				ProverResult result = prover.next(false);
 				assertEquals(1, result.getGeneratedClauses().size());
 				assertEquals(clause, result.getGeneratedClauses().iterator().next());
 				i++;
 			}
-			assertNull("\nUnit: " + test.unit + "NonUnit: " + test.nonUnit, prover.next());
+			assertEquals("\nUnit: " + test.unit + "NonUnit: " + test.nonUnit, prover.next(false), ProverResult.EMPTY_RESULT);
 			assertEquals(test.result.length, i);
 	}
 	
 	public void testInitialization() {
 		IProver predicateProver = new PredicateProver(new VariableContext());
 		try {
-			predicateProver.next();
+			predicateProver.next(false);
 			fail();
 		}
 		catch (IllegalStateException e) {
@@ -324,5 +322,35 @@ public class TestPredicateProver extends TestCase {
 			// expected
 		}
 	}
+	
+	public void testEmptyResult() {
+		IProver predicateProver = getProver();
+		
+		assertEquals(predicateProver.next(false), ProverResult.EMPTY_RESULT);
+	}
+	
+	public void testEmptyResultWithClauses() {
+		IProver predicateProver = getProver();
+		
+		assertEquals(predicateProver.addClauseAndDetectContradiction(cClause(cProp(0))),ProverResult.EMPTY_RESULT);
+		assertEquals(predicateProver.next(false), ProverResult.EMPTY_RESULT);
+	}
+	
+	public void testContradictionResult() {
+		IProver prover = getProver();
+		
+		prover.addClauseAndDetectContradiction(cClause(cProp(0)));
+		ProverResult result = prover.addClauseAndDetectContradiction(cClause(cNotProp(0)));
+		assertEquals(result.getGeneratedClauses().size(), 1);
+		assertTrue(result.getGeneratedClauses().iterator().next().isFalse());
+	}
+
+	
+	private IProver getProver() {
+		IProver predicateProver = new PredicateProver(new VariableContext());
+		predicateProver.initialize(new ClauseSimplifier());
+		return predicateProver;
+	}
+	
 	
 }
