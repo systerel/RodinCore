@@ -34,10 +34,10 @@ public class SeedSearchProver implements IProver {
 		System.out.println(message);
 	}
 
-	private static final int ARBITRARY_SEARCH = 2;
+//	private static final int ARBITRARY_SEARCH = 2;
 	
-	private double currentNumberOfArbitrary = 0;
-	private double currentCounter = ARBITRARY_SEARCH;
+//	private double currentNumberOfArbitrary = 0;
+//	private double currentCounter = ARBITRARY_SEARCH;
 
 	private SeedSearchManager manager = new SeedSearchManager();
 	private ClauseSimplifier simplifier;
@@ -230,30 +230,32 @@ public class SeedSearchProver implements IProver {
 		this.simplifier = simplifier;
 	}
 
-	private void resetCounter() {
-		this.currentCounter = ARBITRARY_SEARCH * Math.pow(2, currentNumberOfArbitrary);
-	}
+//	private void resetCounter() {
+//		this.currentCounter = ARBITRARY_SEARCH * Math.pow(2, currentNumberOfArbitrary);
+//	}
 	
-	private boolean checkAndUpdateCounter() {
-		currentCounter--;
-		if (currentCounter == 0) {
-			currentNumberOfArbitrary++;
-			resetCounter();
-			return true;
-		}
-		return false;
-	}
+//	private boolean checkAndUpdateCounter() {
+//		currentCounter--;
+//		if (currentCounter == 0) {
+//			currentNumberOfArbitrary++;
+//			resetCounter();
+//			return true;
+//		}
+//		return false;
+//	}
 	
-	private Clause nextArbitraryInstantiation(boolean force) {
-		Clause nextClause = null;
-		if (force || checkAndUpdateCounter()) {
-			SeedSearchResult result = manager.getArbitraryInstantiation(context);
-			if (result == null) return null;
-			nextClause = doInstantiation(result);
-		}
-		return nextClause;
+	private List<Clause> nextArbitraryInstantiation() {
+		List<Clause> result = new ArrayList<Clause>();
+//		if (force || checkAndUpdateCounter()) {
+			List<SeedSearchResult> seedSearchResults = manager.getArbitraryInstantiation(context);
+//			if (result == null) return null;
+			for (SeedSearchResult seedSearchResult : seedSearchResults) {
+				Clause nextClause = doInstantiation(seedSearchResult);
+				result.add(nextClause);
+			}
+//		}
+		return result;
 	}
-	
 	
 	private int counter = 0;
 	private boolean isNextAvailable() {
@@ -262,7 +264,7 @@ public class SeedSearchProver implements IProver {
 			return false;
 		}
 		else {
-			counter = generatedClausesStack.size()/2;
+			counter = generatedClausesStack.size();
 			return true;
 		}
 	}
@@ -271,16 +273,20 @@ public class SeedSearchProver implements IProver {
 		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT; 
 		
 		Set<Clause> nextClauses = new HashSet<Clause>();
-		while (nextClauses.isEmpty()) {
-			if (generatedClausesStack.isEmpty()) {
-				Clause nextClause = nextArbitraryInstantiation(force);
-				if (nextClause == null) return ProverResult.EMPTY_RESULT;
-				else nextClauses.add(nextClause);
-			}
-			else {
-				nextClauses.addAll(generatedClausesStack.remove(0));
-			}
-		}
+//		while (nextClauses.isEmpty()) {
+//			if (generatedClausesStack.isEmpty()) {
+//				List<Clause> nextClause = nextArbitraryInstantiation(force);
+//				if (nextClause.isEmpty()) return ProverResult.EMPTY_RESULT;
+//				else nextClauses.addAll(nextClause);
+//			}
+//			else {
+//				nextClauses.addAll(generatedClausesStack.remove(0));
+//			}
+//		}
+		
+		if (!generatedClausesStack.isEmpty()) nextClauses.addAll(generatedClausesStack.remove(0));
+		if (force) nextClauses.addAll(nextArbitraryInstantiation());
+		
 		ProverResult result = new ProverResult(nextClauses,new HashSet<Clause>());
 		if (DEBUG) debug("SeedSearchProver, next clauses: "+nextClauses+", remaining clauses: "+generatedClausesStack.size());
 		return result;

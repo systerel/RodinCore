@@ -2,13 +2,6 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="org.eventb.core.seqprover.reasoners">
-      <reasoner
-            class="org.eventb.internal.pp.ui.PPReasoner"
-            id="PPReasoner"
-            name="PP Reasoner"/>
-   </extension>
-   <extension
          point="org.eventb.ui.proofTactics">
       <tactic
             dropdown="org.eventb.protopp.ui.NewPPDropdown"

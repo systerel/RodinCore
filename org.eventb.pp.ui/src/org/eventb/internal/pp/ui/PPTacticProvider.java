@@ -9,6 +9,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.core.seqprover.xprover.XProverInput;
+import org.eventb.internal.pp.PPReasoner;
 import org.eventb.ui.prover.DefaultTacticProvider;
 import org.eventb.ui.prover.ITacticProvider;
 

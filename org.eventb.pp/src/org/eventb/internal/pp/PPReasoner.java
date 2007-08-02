@@ -1,4 +1,4 @@
-package org.eventb.internal.pp.ui;
+package org.eventb.internal.pp;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,9 +14,9 @@ import org.eventb.core.seqprover.xprover.XProverReasoner;
 
 public class PPReasoner extends XProverReasoner {
 
-	public static String REASONER_ID = "org.eventb.internal.pp.ui.PPReasoner";
+	public static String REASONER_ID = "org.eventb.internal.pp.newPP";
 	
-	static boolean DEBUG;
+	public static boolean DEBUG;
 	private static void debug(String msg) {
 		System.out.println(msg);
 	}

@@ -52,25 +52,36 @@ public class SeedSearchManager {
 		this.solver = new SeedSearchSolver();
 	}
 	
-	public SeedSearchResult getArbitraryInstantiation(IVariableContext context) {
-		Instantiable currentInstantiable = null;
+	public List<SeedSearchResult> getArbitraryInstantiation(IVariableContext context) {
 		int currentInstantiationCount = -1;
 		for (Instantiable instantiable : instantiables) {
 			if (currentInstantiationCount==-1 || instantiable.getInstantiationCount() < currentInstantiationCount) {
-				currentInstantiable = instantiable;
 				currentInstantiationCount = instantiable.getInstantiationCount();
 			}
 		}
-		if (currentInstantiable != null) {
+		Set<Instantiable> currentInstantiables = new HashSet<Instantiable>();
+		for (Instantiable instantiable : instantiables) {
+			if (instantiable.getInstantiationCount() == currentInstantiationCount) {
+				currentInstantiables.add(instantiable);
+			}
+		}
+		
+		return doArbitraryInstantiation(currentInstantiables, context);
+	}
+	
+	private List<SeedSearchResult> doArbitraryInstantiation(Set<Instantiable> instantiables, IVariableContext context) {
+		List<SeedSearchResult> result = new ArrayList<SeedSearchResult>();
+		for (Instantiable currentInstantiable : instantiables) {
 			currentInstantiable.incrementInstantiationCount();
 			// TODO change !
 			Sort sort = currentInstantiable.getClause().getPredicateLiterals()
 					.get(currentInstantiable.getPredicatePosition()).getTerms()
 					.get(currentInstantiable.getPosition()).getSort();
-			return new SeedSearchResult(context.getNextFreshConstant(sort), currentInstantiable.getPosition(), currentInstantiable.getPredicatePosition(), currentInstantiable.getClause(), new HashSet<Clause>());
+			result.add(new SeedSearchResult(context.getNextFreshConstant(sort), currentInstantiable.getPosition(), currentInstantiable.getPredicatePosition(), currentInstantiable.getClause(), new HashSet<Clause>()));
 		}
-		return null;
+		return result;
 	}
+	
 	
 	public List<SeedSearchResult> addInstantiable(PredicateDescriptor descriptor, int predicatePosition,
 			List<SimpleTerm> terms, int termPosition, Clause clause) {

@@ -1,6 +1,7 @@
 package org.eventb.internal.pp.ui;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eventb.internal.pp.PPReasoner;
 import org.osgi.framework.BundleContext;
 
 public class PPUIPlugin extends Plugin {

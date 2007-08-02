@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+	<extension
+         point="org.eventb.core.seqprover.reasoners">
+      <reasoner
+            class="org.eventb.internal.pp.PPReasoner"
+            id="newPP"
+            name="%reasonerName"/>
+   </extension>
+
+</plugin>

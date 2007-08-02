@@ -112,7 +112,7 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 		splitLeftCase();
 		left.add(new DisjunctiveClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic));
 		// right case
-		right.add(new DisjunctiveClause(getOrigin(clause, parent.getRightBranch()),rightPredicates,rightEqualities,rightArithmetic));
+//		right.add(new DisjunctiveClause(getOrigin(clause, parent.getRightBranch()),rightPredicates,rightEqualities,rightArithmetic));
 		right.add(new DisjunctiveClause(getOrigin(clause, parent.getRightBranch()),predicates,equalities,arithmetic));
 	}
 

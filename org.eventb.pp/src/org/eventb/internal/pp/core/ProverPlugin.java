@@ -114,7 +114,8 @@ public class ProverPlugin extends Plugin {
 		IStatus status= new Status(
 			IStatus.ERROR, 
 			ProverPlugin.PLUGIN_ID,
-			message); 
+			Status.OK,
+			message,null); 
 		ProverPlugin.plugin.getLog().log(status);
 	}
 }

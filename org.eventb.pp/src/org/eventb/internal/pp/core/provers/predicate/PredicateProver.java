@@ -143,8 +143,9 @@ public class PredicateProver implements IProver {
 	
 	
 	private boolean isAcceptedUnitClause(Clause clause) {
-		return clause.isUnit() && clause.getPredicateLiterals().size() > 0
-		&& !clause.hasQuantifiedLiteral();
+		return 	clause.isUnit() 
+				&& clause.getPredicateLiterals().size() > 0;
+//				&& !clause.hasQuantifiedLiteral();
 	}
 	
 	private boolean isAcceptedNonUnitClause(Clause clause) {
@@ -161,7 +162,7 @@ public class PredicateProver implements IProver {
 		if (isAcceptedUnitClause(clause)) {
 			unitClausesWrapper.add(clause);
 			// we generate the clauses
-			return newClause(clause, unitResolver);
+			if (!clause.hasQuantifiedLiteral()) return newClause(clause, unitResolver);
 		}
 		else if (isAcceptedNonUnitClause(clause)) {
 			nonUnitClauses.appends(clause);

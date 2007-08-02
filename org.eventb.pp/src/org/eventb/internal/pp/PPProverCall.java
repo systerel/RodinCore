@@ -1,4 +1,4 @@
-package org.eventb.internal.pp.ui;
+package org.eventb.internal.pp;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -68,7 +68,5 @@ public class PPProverCall extends XProverCall {
 	public Set<Predicate> neededHypotheses() {
 		return new HashSet<Predicate>(prover.getResult().getTracer().getOriginalPredicates());
 	}
-	
-	
 
 }

@@ -176,6 +176,8 @@ public class ClauseDispatcher implements IDispatcher {
 		nonDispatchedClausesIterator.reset();
 		while (nonDispatchedClausesIterator.hasNext()) {
 			Clause clause = nonDispatchedClausesIterator.next();
+			if (DEBUG) debug("== Next clause: "+clause+" ==");
+			
 			assert getLevel().compareTo(clause.getLevel()) >= 0;
 
 			Set<IOrigin> contradictions = new HashSet<IOrigin>();
