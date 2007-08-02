@@ -121,6 +121,10 @@
             id="autoRewrites"
             name="%autoRewritesName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites"
+            id="typeRewrites"
+            name="%typeRewritesName"/>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites"
             id="doubleImplHypRewrites"
             name="%doubleImplHypRewritesName"/>
@@ -368,6 +372,11 @@
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$AutoRewriteTac"
             id="autoRewriteTac"
             name="%autoRewriteTacName"/>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$TypeRewriteTac"
+            description="%typeRewriteTacDesc"
+            id="typeRewriteTac"
+            name="%typeRewriteTacName"/>
       <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$ImpGoalTac"
             description="%impGoalTacDesc"

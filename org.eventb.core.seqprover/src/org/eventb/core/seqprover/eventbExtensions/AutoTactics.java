@@ -28,6 +28,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 
 
 /**
@@ -158,6 +159,20 @@ public class AutoTactics {
 		@Override
 		protected ITactic getSingInstance() {
 			return BasicTactics.reasonerTac(new AutoRewrites(),EMPTY_INPUT);
+		}
+	}
+	
+	/**
+	 * Tries to simplify predicates related to types using pre-defined simplification rewritings.
+	 * 
+	 * @author htson
+	 *
+	 */
+	public static class TypeRewriteTac  extends AbsractLazilyConstrTactic{
+
+		@Override
+		protected ITactic getSingInstance() {
+			return BasicTactics.reasonerTac(new TypeRewrites(),EMPTY_INPUT);
 		}
 	}
 	

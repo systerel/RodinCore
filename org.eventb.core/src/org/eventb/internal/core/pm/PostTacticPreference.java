@@ -34,6 +34,7 @@ public class PostTacticPreference extends AutoTacticPreference {
 	            "org.eventb.core.seqprover.goalInHypTac",
 	            "org.eventb.core.seqprover.goalDisjInHypTac",
 	            "org.eventb.core.seqprover.funGoalTac",
+	            "org.eventb.core.seqprover.typeRewriteTac",
 	            "org.eventb.core.seqprover.autoRewriteTac",
 	            "org.eventb.core.seqprover.existsHypTac",
 	            "org.eventb.core.seqprover.findContrHypsTac",
