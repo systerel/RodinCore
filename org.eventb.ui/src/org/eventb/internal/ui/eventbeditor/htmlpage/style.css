@@ -8,35 +8,35 @@
  
  // Stylesheet for the XSL pretty printer
  
-.main 		{font-size:16px;}
-.body 		{margin-left: 30px;}
+.main 		{font-size:16px;font-family:"Brave Sans Mono";}
+.body 		{margin-left:30px;font-family:"Brave Sans Mono";}
 
-.masterKeyword	{font-size:18px; color:red; margin-left:10px; font-weight:bold; margin-bottom:5px; margin-top:15px;}
-.secondaryKeyword {font-size:16px; color:blue; margin-left:20px; font-weight:bold; margin-bottom:2px; margin-top:5px;}
-.componentName {font-size:16px; color:black; font-weight:bold;}
-.comment	{font-size:16px; color:green; padding-left:25px; font-weight:italic;}
-.variableIdentifier {font-size:16px; color:black;}
-.invariantLabel {font-size:16px; color:green;}
-.invariantPredicate {font-size:16px; color:black;}
-.theoremLabel {font-size:16px; color:green;}
-.theoremPredicate {font-size:16px; color:black;}
-.eventLabel {font-size:16px; color:green; font-weight:bold;}
-.inherited  {font-size:16px; color:black; font-weight:bold;}
-.abstractEventLabel {font-size:16px; color:black;}
-.parameterIdentifier {font-size:16px; color:black;}
-.guardLabel {font-size:16px; color:green;}
-.guardPredicate {font-size:16px; color:black;}
-.witnessLabel {font-size:16px; color:green;}
-.witnessPredicate {font-size:16px; color:black;}
-.actionLabel {font-size:16px; color:green;}
-.actionAssignment {font-size:16px; color:black;}
-.variantExpression {font-size:16px; color:green;}
-.setIdentifier {font-size:16px; color:black;}
-.axiomLabel {font-size:16px; color:green;}
-.axiomPredicate {font-size:16px; color:black;}
-.constantIdentifier {font-size:16px; color:black;}
-.multiline {margin-top: 5px}
+.masterKeyword	{font-size:18px; color:red; margin-left:10px; font-weight:bold; margin-bottom:5px; margin-top:15px;font-family:"Brave Sans Mono";}
+.secondaryKeyword {font-size:16px; color:blue; margin-left:30px; font-weight:bold; margin-bottom:2px; margin-top:5px;font-family:"Brave Sans Mono";}
+.componentName {font-size:16px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}
+.comment	{font-size:16px; color:green; padding-left:25px; font-weight:italic;font-family:"Brave Sans Mono";}
+.variableIdentifier {font-size:16px; color:black;font-family:"Brave Sans Mono";}
+.invariantLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
+.invariantPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
+.theoremLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
+.theoremPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
+.eventLabel {font-size:16px; color:green; font-weight:bold;font-family:"Brave Sans Mono";}
+.inherited  {font-size:16px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}
+.abstractEventLabel {font-size:16px; color:black;font-family:"Brave Sans Mono";}
+.parameterIdentifier {font-size:16px; color:black;font-family:"Brave Sans Mono";}
+.guardLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
+.guardPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
+.witnessLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
+.witnessPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
+.actionLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
+.actionAssignment {font-size:16px; color:black;}font-family:"Brave Sans Mono";
+.variantExpression {font-size:16px; color:green;font-family:"Brave Sans Mono";}
+.setIdentifier {font-size:16px; color:black;font-family:"Brave Sans Mono";}
+.axiomLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
+.axiomPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
+.constantIdentifier {font-size:16px; color:black;font-family:"Brave Sans Mono";}
+.multiline {margin-top: 5px;}
 
-.level1         {color:blue; margin-left:20px; margin-bottom:2px; margin-top:2px;}
-.level2         {color:blue; margin-left:30px; margin-bottom:2px; margin-top:2px;}
-.level3         {color:blue; margin-left:40px; margin-bottom:2px; margin-top:2px;}
+.level1         {color:blue; margin-left:30px; margin-bottom:2px; margin-top:2px;}
+.level2         {color:blue; margin-left:40px; margin-bottom:2px; margin-top:2px;}
+.level3         {color:blue; margin-left:50px; margin-bottom:2px; margin-top:2px;}
