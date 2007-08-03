@@ -2,7 +2,7 @@ package org.eventb.core.seqprover.reasonerExtentionTests;
 
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tests.TestLib;
 
@@ -24,7 +24,7 @@ public class ConcreteReasonerTestsExample extends AbstractReasonerTests {
 	
 	@Override
 	public ITactic getJustDischTactic() {
-		return Tactics.tautology();
+		return new AutoTactics.TrueGoalTac();
 	}
 
 	@Override

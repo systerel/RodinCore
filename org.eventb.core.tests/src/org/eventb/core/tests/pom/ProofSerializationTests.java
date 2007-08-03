@@ -20,6 +20,7 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -59,12 +60,12 @@ public class ProofSerializationTests extends TestCase {
 		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence());
 		assertFalse(proof1.getProofDependencies(factory, null).hasDeps());
 		
-		Tactics.impI().apply(proofTree.getRoot(), null);
+		(new AutoTactics.ImpGoalTac()).apply(proofTree.getRoot(), null);
 		proof1.setProofTree(proofTree, null);
 		assertEquals(IConfidence.PENDING, proof1.getConfidence());
 		assertTrue(proof1.getProofDependencies(factory, null).hasDeps());
 		
-		Tactics.tautology().apply(proofTree.getRoot().getFirstOpenDescendant(),null);
+		(new AutoTactics.TrueGoalTac()).apply(proofTree.getRoot().getFirstOpenDescendant(),null);
 		// The next check is to see if the prover is behaving itself.
 		assertTrue(proofTree.isClosed());
 		proof1.setProofTree(proofTree, null);
@@ -76,7 +77,7 @@ public class ProofSerializationTests extends TestCase {
 		
 		sequent = TestLib.genSeq("⊤ |- ⊤ ∧ ⊤");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
-		Tactics.norm().apply(proofTree.getRoot(), null);
+		(new AutoTactics.ClarifyGoalTac()).apply(proofTree.getRoot(), null);
 		proof1.setProofTree(proofTree, null);
 		// The next check is to see if the prover is behaving itself.
 		assertTrue(proofTree.isClosed());
@@ -93,7 +94,7 @@ public class ProofSerializationTests extends TestCase {
 		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence());
 		assertFalse(proof1.getProofDependencies(factory, null).hasDeps());
 		
-		Tactics.norm().apply(proofTree.getRoot(), null);
+		(new AutoTactics.ClarifyGoalTac()).apply(proofTree.getRoot(), null);
 		proof1.setProofTree(proofTree, null);
 		assertEquals(proofTree.getConfidence(), proof1.getConfidence());
 		assertTrue(proof1.getProofDependencies(factory, null).hasDeps());
@@ -123,7 +124,7 @@ public class ProofSerializationTests extends TestCase {
 		proof1.setProofTree(proofTree, null);
 		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence());
 		assertFalse(proof1.getProofDependencies(factory, null).hasDeps());		
-		Tactics.contradiction().apply(proofTree.getRoot(), null);
+		(new AutoTactics.FalseHypTac()).apply(proofTree.getRoot(), null);
 		proof1.setProofTree(proofTree, null);
 		assertEquals(proofTree.getConfidence(), proof1.getConfidence());
 		assertTrue(proof1.getProofDependencies(factory, null).hasDeps());
@@ -135,7 +136,7 @@ public class ProofSerializationTests extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		// ensure autobuilding is turned off
+		// ensure auto-building is turned off
 		IWorkspaceDescription wsDescription = workspace.getDescription();
 		if (wsDescription.isAutoBuilding()) {
 			wsDescription.setAutoBuilding(false);

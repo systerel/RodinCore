@@ -1,10 +1,5 @@
 package org.eventb.core.seqprover.eventbExtensions;
 
-import static org.eventb.core.seqprover.tactics.BasicTactics.compose;
-import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
-import static org.eventb.core.seqprover.tactics.BasicTactics.onAllPending;
-import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,7 +63,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.DoCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
-import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteDom;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunConv;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunDom;
@@ -94,7 +88,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
-import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardComparisonRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewrites;
@@ -329,24 +322,24 @@ public class Tactics {
 		return last;
 	}
 
-	/**
-	 * The normalize tactic.
-	 * 
-	 * This is a combination of applying some simple tactics (conjI,allI,impI,hyp...)
-	 * repeatedly in order to simplify the structure of a subgoal.
-	 * 
-	 * @return
-	 * 		The normalize tactic.
-	 * 
-	 * @deprecated maybe split the tactics here into individual post tactics 
-	 * 
-	 */
-	public static ITactic norm() {
-		ITactic Ti = repeat(compose(conjI(), allI(), impI()));
-		ITactic T = repeat(compose(hyp(), tautology(),
-				contradiction(), Ti));
-		return repeat(onAllPending(T));
-	}
+//	/**
+//	 * The normalize tactic.
+//	 * 
+//	 * This is a combination of applying some simple tactics (conjI,allI,impI,hyp...)
+//	 * repeatedly in order to simplify the structure of a subgoal.
+//	 * 
+//	 * @return
+//	 * 		The normalize tactic.
+//	 * 
+//	 * @deprecated maybe split the tactics here into individual post tactics 
+//	 * 
+//	 */
+//	public static ITactic norm() {
+//		ITactic Ti = repeat(compose(conjI(), allI(), impI()));
+//		ITactic T = repeat(compose(hyp(), tautology(),
+//				contradiction(), Ti));
+//		return repeat(onAllPending(T));
+//	}
 
 	/**
 	 * The do case tactic.
@@ -751,26 +744,26 @@ public class Tactics {
 		return (!seq.goal().equals(Lib.makeNeg(hyp)));
 	}
 	
-	/**
-	 * This tactic tries to find a contradiction for a negated hyp in the selected hyps.
-	 * 
-	 * @return the tactic
-	 * @deprecated
-	 */
-	public static ITactic falsifyHyp_auto(){
-		return new ITactic(){
-
-			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-					if (Lib.isNeg(shyp) &&
-							ptNode.getSequent().containsHypotheses(Lib.breakPossibleConjunct(Lib.negPred(shyp)))){
-						return falsifyHyp(shyp).apply(ptNode, pm);
-					}
-				}
-				return "Selected hyps contain no contradicting negations";
-			}
-		};
-	}
+//	/**
+//	 * This tactic tries to find a contradiction for a negated hyp in the selected hyps.
+//	 * 
+//	 * @return the tactic
+//	 * @deprecated
+//	 */
+//	public static ITactic falsifyHyp_auto(){
+//		return new ITactic(){
+//
+//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+//					if (Lib.isNeg(shyp) &&
+//							ptNode.getSequent().containsHypotheses(Lib.breakPossibleConjunct(Lib.negPred(shyp)))){
+//						return falsifyHyp(shyp).apply(ptNode, pm);
+//					}
+//				}
+//				return "Selected hyps contain no contradicting negations";
+//			}
+//		};
+//	}
 
 
 	// Misc tactics
@@ -779,13 +772,13 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new Hyp(), EMPTY_INPUT);
 	}
 
-	public static ITactic tautology() {
-		return BasicTactics.reasonerTac(new TrueGoal(), EMPTY_INPUT);
-	}
+//	public static ITactic tautology() {
+//		return BasicTactics.reasonerTac(new TrueGoal(), EMPTY_INPUT);
+//	}
 
-	public static ITactic contradiction() {
-		return BasicTactics.reasonerTac(new FalseHyp(), EMPTY_INPUT);
-	}
+//	public static ITactic contradiction() {
+//		return BasicTactics.reasonerTac(new FalseHyp(), EMPTY_INPUT);
+//	}
 
 //	/**
 //	 * @deprecated should be done with user defined postTac
@@ -820,29 +813,29 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new MngHyp(), new MngHyp.Input(hypAction));
 	}
 
-	/**
-	 * 	It is important that conjD_auto() is called sometime before falsifyHyp_auto()
-	 *  and impE_auto()
-	 * 
-	 * @return
-	 * 
-	 * @deprecated Use the post tactic constructed from user preferences instead.
-	 * 		{@link EventBPlugin#getPostTacticPreference()}
-	 */
-	@Deprecated
-	public static ITactic postProcessExpert() {
-		return loopOnAllPending(
-				new AutoTactics.ClarifyGoalTac(),
-				new AutoTactics.AutoRewriteTac(),
-				// autoRewriteRules() already incorporates what conjD_auto() does
-				// conjD_auto(),
-				falsifyHyp_auto(),
-				new AutoTactics.EqHypTac(),
-				// impE_auto(),
-				new AutoTactics.ShrinkImpHypTac(),
-				new AutoTactics.ExistsHypTac()
-				);
-	}
+//	/**
+//	 * 	It is important that conjD_auto() is called sometime before falsifyHyp_auto()
+//	 *  and impE_auto()
+//	 * 
+//	 * @return
+//	 * 
+//	 * @deprecated Use the post tactic constructed from user preferences instead.
+//	 * 		{@link EventBPlugin#getPostTacticPreference()}
+//	 */
+//	@Deprecated
+//	public static ITactic postProcessExpert() {
+//		return loopOnAllPending(
+//				new AutoTactics.ClarifyGoalTac(),
+//				new AutoTactics.AutoRewriteTac(),
+//				// autoRewriteRules() already incorporates what conjD_auto() does
+//				// conjD_auto(),
+//				falsifyHyp_auto(),
+//				new AutoTactics.EqHypTac(),
+//				// impE_auto(),
+//				new AutoTactics.ShrinkImpHypTac(),
+//				new AutoTactics.ExistsHypTac()
+//				);
+//	}
 
 	public static ITactic afterLasoo(final ITactic tactic) {
 		return new ITactic() {
@@ -1204,19 +1197,19 @@ public class Tactics {
 				new DisjunctionToImplicationRewrites.Input(hyp, position));
 	}
 
-	/**
-	 * @author fmehta
-	 * 
-	 * @deprecated split into smaller tactics for the post tactic
-	 *
-	 */
-	public static class NormTac implements ITactic{
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return norm().apply(ptNode, pm);
-		}
-		
-	}
+//	/**
+//	 * @author fmehta
+//	 * 
+//	 * @deprecated split into smaller tactics for the post tactic
+//	 *
+//	 */
+//	public static class NormTac implements ITactic{
+//
+//		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+//			return norm().apply(ptNode, pm);
+//		}
+//		
+//	}
 	
 //	public static ITactic negEnum_auto() {
 //		return new ITactic() {

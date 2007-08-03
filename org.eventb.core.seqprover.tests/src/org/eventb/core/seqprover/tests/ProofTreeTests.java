@@ -22,6 +22,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.junit.Test;
@@ -142,7 +143,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode root = tree.getRoot();
 		
-		Object error = Tactics.tautology().apply(root, null);
+		Object error = (new AutoTactics.TrueGoalTac()).apply(root, null);
 		assertNotNull(error);
 		assertNodeOpen(root);
 	}
