@@ -3,13 +3,13 @@ package org.eventb.pp;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.core.seqprover.xprover.XProverInput;
+import org.eventb.internal.pp.PPInput;
 
 //import com.b4free.rodin.core.B4freeCore;
 
 public class ReasonerExtensionTests extends AbstractReasonerTests {
 
-	private static final IReasonerInput input = new XProverInput(true,3000);
+	private static final IReasonerInput input = new PPInput(true,3000,1000);
 
 	@Override
 	public String getReasonerID() {

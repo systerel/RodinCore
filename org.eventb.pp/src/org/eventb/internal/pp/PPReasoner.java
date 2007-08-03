@@ -8,6 +8,8 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.xprover.XProverCall;
 import org.eventb.core.seqprover.xprover.XProverInput;
 import org.eventb.core.seqprover.xprover.XProverReasoner;
@@ -32,6 +34,12 @@ public class PPReasoner extends XProverReasoner {
 		return REASONER_ID;
 	}
 
+
+	@Override
+	public IReasonerInput deserializeInput(IReasonerInputReader reader)
+			throws SerializeException {
+		return new PPInput(reader);
+	}
 
 	public static void constructTest(Iterable<Predicate> hypotheses, Predicate goal) {
 		StringBuilder builder = new StringBuilder();

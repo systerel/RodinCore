@@ -8,5 +8,47 @@
             id="pp"
             name="%reasonerName"/>
    </extension>
+ <extension
+       point="org.eventb.core.seqprover.autoTactics">
+    <autoTactic
+          class="org.eventb.internal.pp.AutoTactics$PPrestricted"
+          id="ppRestricted"
+          name="%ppRestrictedName">
+    </autoTactic>
+    <autoTactic
+          class="org.eventb.internal.pp.AutoTactics$PPunrestricted"
+          id="ppUnrestricted"
+          name="%ppUnrestrictedName">
+    </autoTactic>
+    <autoTactic
+          class="org.eventb.internal.pp.AutoTactics$PPlasoo"
+          id="ppLasoo"
+          name="%ppLasooName">
+    </autoTactic>
+ </extension>
+ <extension
+       point="org.eventb.core.pomTactics">
+    <tactic
+          id="org.eventb.pp.ppRestricted">
+    </tactic>
+    <tactic
+          id="org.eventb.pp.ppLasoo">
+    </tactic>
+    <tactic
+          id="org.eventb.pp.ppUnrestricted">
+    </tactic>
+ </extension>
+ <extension
+       point="org.eventb.core.postTactics">
+    <tactic
+          id="org.eventb.pp.ppRestricted">
+    </tactic>
+    <tactic
+          id="org.eventb.pp.ppLasoo">
+    </tactic>
+    <tactic
+          id="org.eventb.pp.ppUnrestricted">
+    </tactic>
+ </extension>
 
 </plugin>

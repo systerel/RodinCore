@@ -7,10 +7,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.core.seqprover.xprover.XProverInput;
-import org.eventb.internal.pp.PPReasoner;
+import org.eventb.internal.pp.AutoTactics;
 import org.eventb.ui.prover.DefaultTacticProvider;
 import org.eventb.ui.prover.ITacticProvider;
 
@@ -20,9 +17,7 @@ public class PPTacticProviderWithLasso extends DefaultTacticProvider implements
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs, String globalInput) {
-		return Tactics.afterLasoo(BasicTactics.reasonerTac(
-				new PPReasoner(),
-				new XProverInput(true,0)));
+		return new AutoTactics.PPlasoo();
 	}
 
 	@Override

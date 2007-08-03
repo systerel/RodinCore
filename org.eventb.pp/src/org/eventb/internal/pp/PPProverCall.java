@@ -15,10 +15,12 @@ import org.eventb.pp.PPResult.Result;
 public class PPProverCall extends XProverCall {
 
 	private PPProof prover; 
+	private int maxSteps;
 	
 	public PPProverCall(XProverInput input, Iterable<Predicate> hypothesis, Predicate goal, IProofMonitor pm) {
 		super(hypothesis,goal,pm);
 		
+		maxSteps = ((PPInput)input).getMaxSteps();
 		this.prover = new PPProof(hypotheses,this.goal);
 	}
 	
@@ -29,7 +31,7 @@ public class PPProverCall extends XProverCall {
 
 	@Override
 	public String displayMessage() {
-		return "newPP";
+		return "Predicate Prover";
 	}
 
 	@Override
@@ -56,7 +58,7 @@ public class PPProverCall extends XProverCall {
 		
 		prover.translate();
 		prover.load();
-		prover.prove(-1);
+		prover.prove(maxSteps);
 	}
 	
 	@Override

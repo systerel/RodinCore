@@ -233,20 +233,20 @@ public class RodinTests extends AbstractPPTest {
 				),"r∈S ⇸ S⇒(∀q·q⊆S∧S ∖ dom(r)⊆q∧r∼[q]⊆q⇒S⊆q)",true);
 	}
 	
-	public void testLoop() {
-		doTest(
-				mList(
-				"q","ℙ(S)",
-				"r","ℙ(S×S)"
-				),
-				 mSet(
-				"∀q·q⊆ran(r)∧ran(r) ∖ r∼[ran(r) ∖ q]⊆q⇒ran(r)⊆q",
-				"r∈ran(r) ⇸ ran(r)",
-				"r∼[q]⊆q",
-				"ran(r) ∖ dom(r)⊆q",
-				"q⊆ran(r)"
-				),"ran(r)⊆q",true);	
-	}
+//	public void testLoop() {
+//		doTest(
+//				mList(
+//				"q","ℙ(S)",
+//				"r","ℙ(S×S)"
+//				),
+//				 mSet(
+//				"∀q·q⊆ran(r)∧ran(r) ∖ r∼[ran(r) ∖ q]⊆q⇒ran(r)⊆q",
+//				"r∈ran(r) ⇸ ran(r)",
+//				"r∼[q]⊆q",
+//				"ran(r) ∖ dom(r)⊆q",
+//				"q⊆ran(r)"
+//				),"ran(r)⊆q",true);	
+//	}
 	
 	
 	public void testProfile() {
@@ -299,17 +299,17 @@ public class RodinTests extends AbstractPPTest {
 //		∧
 //		(∀x,x0,x1·(∃x1·x0 ↦ x1∈r∧x1 ↦ x∈s)∧(∃x0·x1 ↦ x0∈r∧x0 ↦ x∈s)⇒x0=x1)
 		
-//		doTest(
-//				mList(
-//				"S","ℙ(S)",
-//				"r","ℙ(S×S)",
-//				"s","ℙ(S×S)"
-//				),
-//				 mSet(
-//				"r∈S ↣ S",
-//				"s∈S ↣ S"
-//				),"(∀x,x0,x1·(∃x1·x ↦ x1∈r∧x1 ↦ x0∈s)∧(∃x0·x ↦ x0∈r∧x0 ↦ x1∈s)⇒x0=x1)",true);
-//		
+		doTest(
+				mList(
+				"S","ℙ(S)",
+				"r","ℙ(S×S)",
+				"s","ℙ(S×S)"
+				),
+				 mSet(
+				"r∈S ↣ S",
+				"s∈S ↣ S"
+				),"(∀x,x0,x1·(∃x1·x ↦ x1∈r∧x1 ↦ x0∈s)∧(∃x0·x ↦ x0∈r∧x0 ↦ x1∈s)⇒x0=x1)",true);
+		
 		doTest(
 				mList(
 				"S","ℙ(S)",
@@ -320,41 +320,41 @@ public class RodinTests extends AbstractPPTest {
 				"r∈S ↣ S",
 				"s∈S ↣ S"
 				),"(∀x·∃x0,x1·x ↦ x1∈r∧x1 ↦ x0∈s)",true);
-//		
-//		doTest(
-//				mList(
-//				"S","ℙ(S)",
-//				"r","ℙ(S×S)",
-//				"s","ℙ(S×S)"
-//				),
-//				 mSet(
-//				"r∈S ↣ S",
-//				"s∈S ↣ S"
-//				),"(∀x,x0,x1·(∃x1·x0 ↦ x1∈r∧x1 ↦ x∈s)∧(∃x0·x1 ↦ x0∈r∧x0 ↦ x∈s)⇒x0=x1)",true);
+		
+		doTest(
+				mList(
+				"S","ℙ(S)",
+				"r","ℙ(S×S)",
+				"s","ℙ(S×S)"
+				),
+				 mSet(
+				"r∈S ↣ S",
+				"s∈S ↣ S"
+				),"(∀x,x0,x1·(∃x1·x0 ↦ x1∈r∧x1 ↦ x∈s)∧(∃x0·x1 ↦ x0∈r∧x0 ↦ x∈s)⇒x0=x1)",true);
 
-//		doTest(
-//				mList(
-//				"S","ℙ(S)",
-//				"r","ℙ(S×S)",
-//				"s","ℙ(S×S)"
-//				),
-//				 mSet(
-//				"r∈S ↣ S",
-//				"s∈S ↣ S"
-//				),"(∀x·∃x0,x1·x ↦ x1∈r∧x1 ↦ x0∈s)"+
-//					"∧(∀x,x0,x1·(∃x1·x0 ↦ x1∈r∧x1 ↦ x∈s)∧(∃x0·x1 ↦ x0∈r∧x0 ↦ x∈s)⇒x0=x1)",true);
+		doTest(
+				mList(
+				"S","ℙ(S)",
+				"r","ℙ(S×S)",
+				"s","ℙ(S×S)"
+				),
+				 mSet(
+				"r∈S ↣ S",
+				"s∈S ↣ S"
+				),"(∀x·∃x0,x1·x ↦ x1∈r∧x1 ↦ x0∈s)"+
+					"∧(∀x,x0,x1·(∃x1·x0 ↦ x1∈r∧x1 ↦ x∈s)∧(∃x0·x1 ↦ x0∈r∧x0 ↦ x∈s)⇒x0=x1)",true);
 
-//		doTest(
-//				mList(
-//				"S","ℙ(S)",
-//				"r","ℙ(S×S)",
-//				"s","ℙ(S×S)"
-//				),
-//				 mSet(
-//				"r∈S ↣ S",
-//				"s∈S ↣ S"
-//				),"(∀x,x0,x1·(∃x1·x ↦ x1∈r∧x1 ↦ x0∈s)∧(∃x0·x ↦ x0∈r∧x0 ↦ x1∈s)⇒x0=x1)"+
-//					"∧(∀x,x0,x1·(∃x1·x0 ↦ x1∈r∧x1 ↦ x∈s)∧(∃x0·x1 ↦ x0∈r∧x0 ↦ x∈s)⇒x0=x1)",true);
+		doTest(
+				mList(
+				"S","ℙ(S)",
+				"r","ℙ(S×S)",
+				"s","ℙ(S×S)"
+				),
+				 mSet(
+				"r∈S ↣ S",
+				"s∈S ↣ S"
+				),"(∀x,x0,x1·(∃x1·x ↦ x1∈r∧x1 ↦ x0∈s)∧(∃x0·x ↦ x0∈r∧x0 ↦ x1∈s)⇒x0=x1)"+
+					"∧(∀x,x0,x1·(∃x1·x0 ↦ x1∈r∧x1 ↦ x∈s)∧(∃x0·x1 ↦ x0∈r∧x0 ↦ x∈s)⇒x0=x1)",true);
 		
 		doTest(
 				mList(
@@ -369,12 +369,39 @@ public class RodinTests extends AbstractPPTest {
 					"∧(∀x·∃x0,x1·x ↦ x1∈r∧x1 ↦ x0∈s)",true);
 		
 		
-//		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
-//				"r∈S ↣ S", "s∈S ↣ S"), "r;s∈S ↣ S",true);
+		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
+				"r∈S ↣ S", "s∈S ↣ S"),
+				"r;s∈S ↣ S",true);
 	}
 	
 	public void testFunction() {
 		doTest(mSet("r ∈ E → E", "s ∈ E → E"), "r;s ∈ E → E", true);
+	}
+	
+	public void testAllFunctionSameType() {
+		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
+				"r∈S ↣ S", "s∈S ↣ S"),
+				"r;s∈S ↣ S",true);
+		
+		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
+				"r∈S ⤖ S", "s∈S ⤖ S"),
+				"r;s∈S ⤖ S",true);
+		
+		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
+				"r∈S ↠ S", "s∈S ↠ S"),
+				"r;s∈S ↠ S",true);
+		
+		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
+				"r∈S ⤔ S", "s∈S ⤔ S"),
+				"r;s∈S ⤔ S",true);
+
+		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
+				"r∈S ⤀ S", "s∈S ⤀ S"),
+				"r;s∈S ⤀ S",true);
+		
+		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
+				"r∈S → S", "s∈S → S"),
+				"r;s∈S → S",true);
 	}
 	
 	public void testSurjection() {
@@ -470,9 +497,7 @@ public class RodinTests extends AbstractPPTest {
 		doTest(mSet("r ∈ E ↠ E", "s ∈ E ↠ E"), "r;s ∈ E ↠ E", true);
 		doTest(mSet("r ∈ E ⤖ E", "s ∈ E ⤖ E"), "r;s ∈ E ⤖ E", true);
 		
-		
-		
-		// work
+		// works
 		doTest(mSet("r ∈ E ⤔ E", "s ∈ E ⤔ E"), "r;s ∈ E ⤔ E", true);
 		doTest(mSet("r ∈ E ⤀ E", "s ∈ E ⤀ E"), "r;s ∈ E ⤀ E", true);
 	}

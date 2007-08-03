@@ -1,9 +1,14 @@
-package org.eventb.internal.pp.core;
+package org.eventb.internal.pp;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.internal.pp.core.ClauseDispatcher;
+import org.eventb.internal.pp.core.ClauseSimplifier;
+import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
 import org.eventb.internal.pp.core.provers.seedsearch.SeedSearchProver;
@@ -12,7 +17,7 @@ import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
 import org.eventb.pp.PPProof;
 import org.osgi.framework.BundleContext;
 
-public class ProverPlugin extends Plugin {
+public class PPCore extends Plugin {
 
 	public static final String PLUGIN_ID = "org.eventb.pp"; //$NON-NLS-1$
 	
@@ -31,14 +36,14 @@ public class ProverPlugin extends Plugin {
 	private static final String PROVER_DUMPING_TRACE = PLUGIN_ID + "/debug/prover/dumping"; //$NON-NLS-1$
 	private static final String PROVER_SEEDSEARCH_TRACE = PLUGIN_ID + "/debug/prover/seedsearch"; //$NON-NLS-1$
 	
-	public ProverPlugin() {
+	public PPCore() {
 		// TODO Auto-generated constructor stub
 	}
 	
 	/**
 	 * The shared instance.
 	 */
-	private static ProverPlugin plugin;
+	private static PPCore plugin;
 	
 	/**
 	 * This method is called upon plug-in activation
@@ -113,9 +118,25 @@ public class ProverPlugin extends Plugin {
 	public static void log(String message) {
 		IStatus status= new Status(
 			IStatus.ERROR, 
-			ProverPlugin.PLUGIN_ID,
+			PPCore.PLUGIN_ID,
 			Status.OK,
 			message,null); 
-		ProverPlugin.plugin.getLog().log(status);
+		PPCore.plugin.getLog().log(status);
 	}
+	
+	
+	/**
+	 * Returns a tactic that calls PP with the given parameters.
+	 * 
+	 * @param restricted <code>true</code> iff only selected hypotheses should be considered
+	 * @param timeout timeout in milliseconds
+	 * @param maxSteps maximum number of steps after which PP stops or -1 for no limit
+	 * @return a tactic that calls PP with the given parameters
+	 */
+	public static ITactic pp(boolean restricted, long timeout, int maxSteps) {
+		return BasicTactics.reasonerTac(
+				new PPReasoner(),
+				new PPInput(restricted,timeout,maxSteps));
+	}
+	
 }

@@ -14,9 +14,9 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.internal.pp.PPCore;
 import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.ProverPlugin;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.provers.equality.EqualityProver;
@@ -236,7 +236,7 @@ public class PPProof {
 //			if (!typeCheck(newPredicate)) ProverPlugin.log("Could not type check generated predicate "+newPredicate);
 //			else 
 			if (!newPredicate.isTypeChecked()) {
-				ProverPlugin.log("Translator generetad untyped predicate " + newPredicate);
+				PPCore.log("Translator generetad untyped predicate " + newPredicate);
 				if (DEBUG) debug("Translator generated untype-checked predicate: "+ newPredicate);
 			}
 			else {
@@ -264,7 +264,7 @@ public class PPProof {
 			if (setEquivalencePredicate != null) {
 				if (!typeCheck(setEquivalencePredicate)) {
 					if (DEBUG) debug("Could not type check derived predicate "+setEquivalencePredicate);
-					ProverPlugin.log("Could not type check generated predicate "+setEquivalencePredicate);
+					PPCore.log("Could not type check generated predicate "+setEquivalencePredicate);
 				}
 				else {
 					derivedPredicates.add(setEquivalencePredicate);
