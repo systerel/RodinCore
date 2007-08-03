@@ -69,10 +69,24 @@ public class PredicateProver implements IProver {
 //		return blockedClause != null;
 //	}
 	
+	private int counter = 0;
+	private boolean isNextAvailable() {
+		if (counter > 0) {
+			counter--;
+			return true;
+		}
+		else {
+			counter = unitClauses.size()*10;
+			return false;
+		}
+	}
+	
 	public ProverResult next(boolean force) {
 		// TODO refactor this 
 		
 		if (simplifier == null) throw new IllegalStateException();
+		
+		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT; 
 		
 		ProverResult result = null;
 //		if (isBlocked()) {

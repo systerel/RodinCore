@@ -27,4 +27,8 @@ public class TypingOrigin implements IOrigin {
 		// do nothing
 	}
 
+	public int getDepth() {
+		return 0;
+	}
+
 }

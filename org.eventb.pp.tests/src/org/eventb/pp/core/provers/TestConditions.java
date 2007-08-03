@@ -5,7 +5,9 @@ import static org.eventb.pp.Util.cNotPred;
 import static org.eventb.pp.Util.cNotProp;
 import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.cProp;
+import static org.eventb.pp.Util.mList;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Clause;
@@ -20,7 +22,7 @@ public class TestConditions extends AbstractPPTest {
 	public void testConditions() {
 		initDebug();
 		
-		Set<Clause> clauses = mSet(
+		List<Clause> clauses = mList(
 				cClause(cPred(0, a), cPred(1, a), cPred(2, a)),
 				cClause(cProp(3), Util.cEqual(a, b)),
 				cClause(cNotPred(0, b)),

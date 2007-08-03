@@ -296,7 +296,7 @@ public class TestPredicateProver extends AbstractPPTest {
 			
 			int i=0;
 			for (Clause clause : test.result) {
-				ProverResult result = prover.next(false);
+				ProverResult result = prover.next(true);
 				assertEquals(1, result.getGeneratedClauses().size());
 				assertEquals(clause, result.getGeneratedClauses().iterator().next());
 				i++;

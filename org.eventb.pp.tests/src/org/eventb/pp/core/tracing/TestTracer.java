@@ -48,6 +48,11 @@ public class TestTracer extends AbstractPPTest {
 		public String toString() {
 			return level+"";
 		}
+
+		public int getDepth() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
 	}
 	
 	private static IOrigin o0 = new MyOrigin(BASE, mSet(BASE));

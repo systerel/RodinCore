@@ -60,7 +60,9 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 			term.collectLocalVariables(localVariables);
 		}
 		for (Variable variable : variables) {
-			if (!substitutionsMap.containsKey(variable)) substitutionsMap.put(variable, context.getNextVariable(variable.getSort()));
+			Variable copy = context.getNextVariable(variable.getSort());
+			copy.setInstantiationCount(variable.getInstantiationCount());
+			if (!substitutionsMap.containsKey(variable)) substitutionsMap.put(variable, copy);
 		}
 		for (LocalVariable variable : localVariables) {
 			if (!substitutionsMap.containsKey(variable)) substitutionsMap.put(variable, context.getNextLocalVariable(variable.isForall(),variable.getSort()));

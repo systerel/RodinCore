@@ -40,7 +40,7 @@ public class ResolutionResolver implements IResolver {
 		if (nextPosition()) return doMatch();
 		while (nextMatchedClause()) {
 			
-			if (isBlocked() && !force) return InferrenceResult.BLOCKED_RESULT; 
+//			if (isBlocked() && !force) return InferrenceResult.BLOCKED_RESULT; 
 			
 			if (nextPosition()) {
 				return doMatch();
@@ -49,12 +49,12 @@ public class ResolutionResolver implements IResolver {
 		return null;
 	}
 	
-	private boolean isBlocked() {
-		if (currentMatched!=null && currentMatched.checkIsBlockedOnInstantiationsAndUnblock())
-			return true;
-		return false;
-		
-	}
+//	private boolean isBlocked() {
+//		if (currentMatched!=null && currentMatched.checkIsBlockedOnInstantiationsAndUnblock())
+//			return true;
+//		return false;
+//		
+//	}
 	
 	public boolean isInitialized() {
 		return currentMatchedIterator != null;

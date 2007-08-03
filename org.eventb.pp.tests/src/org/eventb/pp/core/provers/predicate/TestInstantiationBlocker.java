@@ -90,22 +90,22 @@ public class TestInstantiationBlocker extends AbstractPPTest {
 	}
 	
 	
-	public void testWithPredicateProver() {
-		PredicateProver prover = new PredicateProver(new VariableContext());
-		prover.initialize(new ClauseSimplifier());
-		Clause unitClause = cClause(cNotPred(0,a));
-		
-		prover.addClauseAndDetectContradiction(cClause(cPred(0,x1),cProp(1)));
-		prover.addClauseAndDetectContradiction(unitClause);
-		
-		int i = 0;
-		ProverResult newClause = prover.next(false);
-		while (!newClause.equals(ProverResult.EMPTY_RESULT)) {
-			prover.addClauseAndDetectContradiction(unitClause);
-			newClause = prover.next(false);
-			i++;
-		}
-		assertTrue(i > 0);
-	}
+//	public void testWithPredicateProver() {
+//		PredicateProver prover = new PredicateProver(new VariableContext());
+//		prover.initialize(new ClauseSimplifier());
+//		Clause unitClause = cClause(cNotPred(0,a));
+//		
+//		prover.addClauseAndDetectContradiction(cClause(cPred(0,x1),cProp(1)));
+//		prover.addClauseAndDetectContradiction(unitClause);
+//		
+//		int i = 0;
+//		ProverResult newClause = prover.next(false);
+//		while (!newClause.equals(ProverResult.EMPTY_RESULT)) {
+//			prover.addClauseAndDetectContradiction(unitClause);
+//			newClause = prover.next(false);
+//			i++;
+//		}
+//		assertTrue(i > 0);
+//	}
 	
 }

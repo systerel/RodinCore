@@ -171,7 +171,7 @@ public class TestClauseBuilder extends TestCase {
 			),
 			new TestPair(
 					mList("a ∈ S","a ∈ S"),
-					mList(cProp(0))
+					mList(cProp(0),cProp(0))
 			),
 			new TestPair(
 					mList("a ∈ S ∨ d ∈ U"),
@@ -198,7 +198,7 @@ public class TestClauseBuilder extends TestCase {
 			),
 			new TestPair(
 					mList("(a ∈ S ∧ d ∈ U) ∧ d ∈ U"),
-					mList(cProp(0),cProp(1))
+					mList(cProp(0),cProp(1),cProp(1))
 			),
 			
 			new TestPair(
@@ -378,6 +378,9 @@ public class TestClauseBuilder extends TestCase {
 							// unneeded definitions
 							cClause(cNotPred(4,xA,yPA,zB,tA),cNotPred(1,xA,yPA),cNotPred(3,zB,tA,xA)),
 							cClause(cNotPred(12,xB),cNotPred(0,xB),cPred(1,xA,cCons("R"))),
+							cClause(cNotPred(12,xB),cNotPred(0,xB),cPred(4,yA,cCons("Q"),xB,xA)),
+							cClause(cNotPred(4,xA,yPA,zB,tA),cNotPred(1,xA,yPA),cNotPred(3,zB,tA,xA)),
+							cClause(cNotPred(12,xB),cNotPred(0,xB),cPred(1,xA,cCons("R"))),
 							cClause(cNotPred(12,xB),cNotPred(0,xB),cPred(4,yA,cCons("Q"),xB,xA))
 			),
 			new TestPair(
@@ -387,6 +390,7 @@ public class TestClauseBuilder extends TestCase {
 					cClause(cPred(6,tPAB),cPred(0,xA,cELocVar(1,B),tPAB)),
 					
 					cClause(cNotPred(6,tPAB),cNotPred(0,xA,yB,tPAB),cNEqual(xB,zB)),
+					cClause(cNotPred(6,tPAB),cNotPred(0,xA,yB,tPAB),cPred(0,zA,xB,tPAB)),
 					cClause(cNotPred(6,tPAB),cNotPred(0,xA,yB,tPAB),cPred(0,zA,xB,tPAB))
 			),
 //			new TestPair(
@@ -466,6 +470,7 @@ public class TestClauseBuilder extends TestCase {
 		new TestPair(
 				mList("∀x·(a ∈ S ∨ x ∈ S) ∧ (∀y·a ∈ S ∨ y ∈ S)"),
 				noLit,
+				cClause(cPred(0,a),cPred(0,xS)),
 				cClause(cPred(0,a),cPred(0,xS))
 		),
 		new TestPair(
@@ -491,11 +496,11 @@ public class TestClauseBuilder extends TestCase {
 		),
 		new TestPair(
 				mList("∀x·¬(¬x ∈ S ∨ ¬x ∈ S)"),
-				mList(cPred(0,xS))
+				mList(cPred(0,xS),cPred(0,xS))
 		),
 		new TestPair(
 				mList("∀x·x ∈ S ∧ x ∈ S"),
-				mList(cPred(0,xS))
+				mList(cPred(0,xS),cPred(0,xS))
 		),
 //		new TestPair(
 //				mList("(∀x·x + 1 ∈ N)", "n + 1 ∈ N"),
@@ -723,7 +728,7 @@ public class TestClauseBuilder extends TestCase {
 				noLit,
 				cEqClause(cProp(0),cProp(1)),
 				cClause(cNotProp(1),cProp(0),cProp(0)),
-//				cClause(cProp(1),cNotProp(0)),
+				cClause(cProp(1),cNotProp(0)),
 				cClause(cProp(1),cNotProp(0))
 		),
 		new TestPair(
@@ -736,12 +741,16 @@ public class TestClauseBuilder extends TestCase {
 				mList("¬(d ∈ U ⇔ c ∈ P) ∨ (d ∈ U ⇔ c ∈ P)"),
 				noLit,
 				cEqClause(cProp(2),cProp(0),cProp(1)),
+				cEqClause(cProp(2),cProp(0),cProp(1)),
 				cClause(cNotProp(2),cProp(2))
 		),
 		new TestPair(
 				mList("¬(d ∈ U ∨ c ∈ P) ⇔ (d ∈ U ∨ c ∈ P)"),
 				noLit,
 				cEqClause(cNotProp(2),cProp(2)),
+				cClause(cNotProp(2),cProp(0),cProp(1)),
+				cClause(cProp(2),cNotProp(0)),
+				cClause(cProp(2),cNotProp(1)),
 				cClause(cNotProp(2),cProp(0),cProp(1)),
 				cClause(cProp(2),cNotProp(0)),
 				cClause(cProp(2),cNotProp(1))
@@ -787,6 +796,11 @@ public class TestClauseBuilder extends TestCase {
 				mList(	"(d ∈ U ∨ (c ∈ P ⇔ c ∈ P)) ⇔ a ∈ S",
 						"a ∈ S ⇔ (d ∈ U ∨ (c ∈ P ⇔ c ∈ P))"),
 				noLit,
+				cClause(cNotProp(3),cProp(0),cProp(2)),
+				cClause(cProp(3),cNotProp(0)),
+				cClause(cProp(3),cNotProp(2)),
+				cEqClause(cProp(2),cProp(1),cProp(1)),
+				cEqClause(cProp(4),cProp(3)),
 				cClause(cNotProp(3),cProp(0),cProp(2)),
 				cClause(cProp(3),cNotProp(0)),
 				cClause(cProp(3),cNotProp(2)),
@@ -1192,7 +1206,7 @@ public class TestClauseBuilder extends TestCase {
 			),
 			new TestPair(
 					mList("b = TRUE","b = TRUE"),
-					mList(cProp(0))
+					mList(cProp(0),cProp(0))
 			),
 			new TestPair(
 					mList("b = TRUE","b = FALSE"),
@@ -1245,7 +1259,7 @@ public class TestClauseBuilder extends TestCase {
 				mList(cNotPred(3, cELocVar(0,A),cELocVar(1,B))),
 				cClause(cPred(3, xA, yB),cNotPred(0,xA,yB)),
 				cClause(cPred(3, xA, yB),cNotPred(1,xA,yB,cELocVar(2,C))),
-//				cClause(cPred(3, xA, yB),cNotPred(1,xA,yB,cELocVar(3,C)))
+				cClause(cPred(3, xA, yB),cNotPred(1,xA,yB,cELocVar(3,C))),
 				cClause(cNotPred(3, xA, yB),cPred(0,xA,yB),cPred(1,xA,yB,zC),cPred(1,xA,yB,tC))
 		),
 		new TestPair(

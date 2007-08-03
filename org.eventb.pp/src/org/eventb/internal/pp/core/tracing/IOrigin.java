@@ -17,4 +17,6 @@ public interface IOrigin {
 	
 	public Level getLevel();
 	
+	
+	public int getDepth();
 }

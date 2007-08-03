@@ -236,6 +236,11 @@ public class Util {
 		public void getDependencies(Set<Level> dependencies) {
 			// skip
 		}
+
+		public int getDepth() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
 		
 	}
 	

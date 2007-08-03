@@ -2,6 +2,7 @@ package org.eventb.pp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -48,7 +49,7 @@ public class PPProof {
 	private InputPredicate goal;
 	
 	private IVariableContext context;
-	private Set<Clause> clauses;
+	private List<Clause> clauses;
 	
 	private PPResult result;
 	
@@ -75,7 +76,7 @@ public class PPProof {
 		}
 	}
 	
-	public PPProof(Set<Clause> clauses) {
+	public PPProof(List<Clause> clauses) {
 		this.clauses = clauses;
 	}
 		
@@ -90,7 +91,7 @@ public class PPProof {
 		result = new PPResult(Result.valid, tracer);
 	}
 	
-	public Set<Clause> getClauses() {
+	public Collection<Clause> getClauses() {
 		return clauses;
 	}
 	

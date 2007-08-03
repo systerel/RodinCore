@@ -31,4 +31,8 @@ public class DefinitionOrigin implements IOrigin {
 	public String toString() {
 		return getLevel().toString();
 	}
+
+	public int getDepth() {
+		return 0;
+	}
 }

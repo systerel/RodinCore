@@ -233,20 +233,43 @@ public class RodinTests extends AbstractPPTest {
 				),"r∈S ⇸ S⇒(∀q·q⊆S∧S ∖ dom(r)⊆q∧r∼[q]⊆q⇒S⊆q)",true);
 	}
 	
-//	public void testLoop() {
-//		doTest(
-//				mList(
-//				"q","ℙ(S)",
-//				"r","ℙ(S×S)"
-//				),
-//				 mSet(
-//				"∀q·q⊆ran(r)∧ran(r) ∖ r∼[ran(r) ∖ q]⊆q⇒ran(r)⊆q",
-//				"r∈ran(r) ⇸ ran(r)",
-//				"r∼[q]⊆q",
-//				"ran(r) ∖ dom(r)⊆q",
-//				"q⊆ran(r)"
-//				),"ran(r)⊆q",true);	
-//	}
+	public void testfifth() {
+		initDebug();
+		
+		doTest(
+				mList(
+				"T","ℙ(T)",
+				"A","ℙ(S)",
+				"B","ℙ(T)",
+				"S","ℙ(S)",
+				"b","T",
+				"a","S",
+				"f","ℙ(S×T)"
+				),
+				 mSet(
+				"A⊆S",
+				"B⊆T",
+				"f∈A ⇸ B",
+				"¬a∈A",
+				"¬b∈B"
+				),"f∪{a ↦ b}∈A∪{a} ⇸ B∪{b}",true);
+	}
+	
+	
+	public void testLoop() {
+		doTest(
+				mList(
+				"q","ℙ(S)",
+				"r","ℙ(S×S)"
+				),
+				 mSet(
+				"∀q·q⊆ran(r)∧ran(r) ∖ r∼[ran(r) ∖ q]⊆q⇒ran(r)⊆q",
+				"r∈ran(r) ⇸ ran(r)",
+				"r∼[q]⊆q",
+				"ran(r) ∖ dom(r)⊆q",
+				"q⊆ran(r)"
+				),"ran(r)⊆q",true);	
+	}
 	
 	
 	public void testProfile() {
@@ -376,6 +399,26 @@ public class RodinTests extends AbstractPPTest {
 	
 	public void testFunction() {
 		doTest(mSet("r ∈ E → E", "s ∈ E → E"), "r;s ∈ E → E", true);
+	}
+	
+	public void testFunctionWithExtraHypotheses() {
+		initDebug();
+		
+		doTest(
+				mList(
+				"h","ℙ(S×S)",
+				"S","ℙ(S)",
+				"k","ℙ(S×S)",
+				"f","ℙ(S×S)",
+				"g","ℙ(S×S)"
+				),
+				 mSet(
+				"f∈S ↣ S",
+				"g∈S ↣ S",
+				"h∈S → S",
+				"k∈S → S",
+				"f;g∈S ↣ S"
+				),"h;k∈S → S",true);
 	}
 	
 	public void testAllFunctionSameType() {

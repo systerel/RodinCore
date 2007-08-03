@@ -19,6 +19,8 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Type;
+import org.eventb.internal.pp.core.ClauseDispatcher;
+import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
@@ -26,6 +28,7 @@ import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 
 public abstract class AbstractPPTest extends TestCase {
 

@@ -336,4 +336,10 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(mSet(cClause(bc),cClause(nbd)), result1.getSolvedValueOrigin());
 	}	
 	
+//	public void testRemoveQueryEqualityWithLevels() {
+//		manager.addQueryEquality(ab, cClause(ONE,ab));
+//		manager.addFactEquality(nab, cClause(THREE,nab));
+//		
+//	}
+	
 }

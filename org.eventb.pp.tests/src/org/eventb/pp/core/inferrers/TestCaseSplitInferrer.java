@@ -32,7 +32,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 			doTest(
 					cClause(BASE, cProp(0),cProp(1)),
 					mSet(cClause(ONE, cProp(0))),
-					mSet(cClause(TWO, cNotProp(0)),cClause(TWO,cProp(1)))
+					mSet(cClause(TWO,cProp(1)))
 			);
 			doTest(
 					cEqClause(BASE, cProp(0),cProp(1)),
@@ -42,12 +42,12 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 			doTest(
 					cClause(BASE, cEqual(a,b),cPred(0,a)),
 					mSet(cClause(ONE, cPred(0,a))),
-					mSet(cClause(TWO, cNotPred(0,a)),cClause(TWO, cEqual(a,b)))
+					mSet(cClause(TWO, cEqual(a,b)))
 			);
 			doTest(
 					cClause(BASE, cEqual(a,b),cEqual(b,c)),
 					mSet(cClause(ONE, cEqual(a,b))),
-					mSet(cClause(TWO, cNEqual(a,b)),cClause(TWO,cEqual(b,c)))
+					mSet(cClause(TWO,cEqual(b,c)))
 			);
 			doTest(
 					cEqClause(BASE, cPred(0,fvar0), cPred(0,a)),
@@ -57,7 +57,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 			doTest(
 					cClause(BASE, cPred(0,evar0), cPred(0,a)),
 					mSet(cClause(ONE, cPred(0,evar0))),
-					mSet(cClause(TWO, cNotPred(0,x)),cClause(TWO, cPred(0,a)))
+					mSet(cClause(TWO, cPred(0,a)))
 			);
 			doTest(
 					cEqClause(BASE, cPred(0,evar0), cPred(0,a)),

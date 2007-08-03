@@ -112,6 +112,7 @@ public class SeedSearchProver implements IProver {
 	}
 	
 	private void addConstants(Clause clause, PredicateLiteral literal1, List<SeedSearchResult> result) {
+		
 		// equivalence clauses for constants
 		if (clause.isEquivalence()) { 
 			result.addAll(manager.addConstant(literal1.getInverse().getDescriptor(), literal1.getInverse().getTerms(), clause));

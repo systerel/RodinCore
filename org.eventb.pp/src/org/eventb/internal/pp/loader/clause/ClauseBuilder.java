@@ -9,9 +9,7 @@
 package org.eventb.internal.pp.loader.clause;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
@@ -71,7 +69,7 @@ public class ClauseBuilder {
 		prefix.deleteCharAt(prefix.length()-1);
 	}
 	
-	private Set<Clause> clauses;
+	private List<Clause> clauses;
 	private VariableContext variableContext;
 	
 	private ClauseFactory cf = ClauseFactory.getDefault();
@@ -97,7 +95,7 @@ public class ClauseBuilder {
 		variableTable = new VariableTable(variableContext);
 		bool = new BooleanEqualityTable(context.getNextLiteralIdentifier());
 
-		clauses = new LinkedHashSet<Clause>();
+		clauses = new ArrayList<Clause>();
 		manager = new LabelManager();
 		
 		for (INormalizedFormula signature : context.getResults()) {

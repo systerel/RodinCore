@@ -10,14 +10,16 @@ public abstract class AbstractInferrenceOrigin implements IOrigin {
 
 	protected List<Clause> parents;
 	protected boolean dependsOnGoal;
-
+	private int depth;
+	
 	public AbstractInferrenceOrigin(List<Clause> parents) {
 		this.parents = parents;
 		
 		for (Clause clause : parents) {
+			if (clause.getOrigin().getDepth() > depth) depth = clause.getOrigin().getDepth();
 			if (clause.getOrigin().dependsOnGoal()) dependsOnGoal = true;
-			break;
 		}
+		this.depth++;
 	}
 	
 	public List<Clause> getClauses() {
@@ -49,6 +51,10 @@ public abstract class AbstractInferrenceOrigin implements IOrigin {
 	@Override
 	public String toString() {
 		return getLevel().toString();
+	}
+	
+	public int getDepth() {
+		return depth;
 	}
 
 }

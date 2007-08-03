@@ -104,12 +104,26 @@ public class CaseSplitter implements IProver {
 	}
 	
 	private Clause nextCandidate() {
-		for (Clause clause : candidates) {
-			if (clause.getOrigin().dependsOnGoal()) {
-				return clause;
+		List<Clause> restrictedCandidates = getCandidatesDependingOnGoal();
+		if (restrictedCandidates.isEmpty()) restrictedCandidates = candidates;
+		int depth = -1;
+		Clause currentClause = null;
+		for (Clause clause : restrictedCandidates) {
+			if (depth == -1 || clause.getOrigin().getDepth() < depth) {
+				depth = clause.getOrigin().getDepth();
+				currentClause = clause;
 			}
 		}
-		return candidates.get(0);
+		return currentClause;
+	}
+	
+	
+	private List<Clause> getCandidatesDependingOnGoal() {
+		List<Clause> result = new ArrayList<Clause>();
+		for (Clause clause : candidates) {
+			if (clause.getOrigin().dependsOnGoal()) result.add(clause);
+		}
+		return result;
 	}
 
 	private SplitPair split(Clause clause) {
@@ -157,7 +171,6 @@ public class CaseSplitter implements IProver {
 				candidates.add(clause);
 			}
 		}
-		
 //		assert splits.size() == dispatcher.getLevel().getHeight() : "Splits: "+splits.size();
 	}
 	

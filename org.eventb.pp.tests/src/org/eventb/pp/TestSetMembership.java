@@ -9,12 +9,14 @@ import static org.eventb.pp.Util.cNotPred;
 import static org.eventb.pp.Util.cPred;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 
 public class TestSetMembership extends AbstractPPTest {
@@ -28,7 +30,7 @@ public class TestSetMembership extends AbstractPPTest {
 	private static class TestPair {
 		Set<Predicate> hypotheses;
 		Predicate goal;
-		Set<Clause> result;
+		Collection<Clause> result;
 		
 		public TestPair(Set<String> hypotheses, String goal, Clause... result) {
 			this.hypotheses = new HashSet<Predicate>();
@@ -57,8 +59,8 @@ public class TestSetMembership extends AbstractPPTest {
 	public void testEqualityInGoal() {
 		doTest(new TestPair(new HashSet<String>(),
 				"C = B",
-				cClause(cNEqual(cCons("B"),cCons("C"))),
 				cClause(cNotPred(1,cELocVar(1))),
+				cClause(cNEqual(cCons("B"),cCons("C"))),
 				cEqClause(cPred(1,x), cPred(0, x, cCons("C")), cPred(0, x, cCons("B"))),
 				cClause(cPred(0,x,cCons("A")))
 		));
@@ -74,7 +76,9 @@ public class TestSetMembership extends AbstractPPTest {
 		proof.translate();
 		proof.load();
 		
-		assertEquals(proof.getClauses(), test.result);
+		assertTrue(test.result.containsAll(proof.getClauses()));
+		assertTrue(proof.getClauses().containsAll(test.result));
+		
 	}
 	
 }

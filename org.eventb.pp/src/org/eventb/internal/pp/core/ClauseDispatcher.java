@@ -265,7 +265,8 @@ public class ClauseDispatcher implements IDispatcher {
 			// we check if it is there
 			if (nonDispatchedClauses.contains(clause)) {
 				Clause existingClause = nonDispatchedClauses.get(clause);
-				if (clause.getLevel().isAncestorOf(existingClause.getLevel())) {
+				if (	clause.getLevel().isAncestorOf(existingClause.getLevel())
+						|| clause.getOrigin().dependsOnGoal()) {
 					// we replace the clause by the new one
 					nonDispatchedClauses.remove(existingClause);
 				}

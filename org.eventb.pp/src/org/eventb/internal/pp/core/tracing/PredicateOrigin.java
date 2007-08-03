@@ -42,4 +42,8 @@ public class PredicateOrigin implements IOrigin {
 		return getLevel().toString();
 	}
 
+	public int getDepth() {
+		return 0;
+	}
+
 }

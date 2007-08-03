@@ -1,6 +1,6 @@
 package org.eventb.internal.pp.loader.clause;
 
-import java.util.Set;
+import java.util.List;
 
 import org.eventb.internal.pp.core.elements.Clause;
 
@@ -14,10 +14,10 @@ public class LoaderResult {
 
 	// TODO it is questionable whether we already separate this here
 	// unit clauses are also clauses
-	private Set<Clause> clauses;
+	private List<Clause> clauses;
 //	private Collection<Clause> unitClauses;
 	
-	protected LoaderResult(Set<Clause> clauses) {
+	protected LoaderResult(List<Clause> clauses) {
 		this.clauses = clauses;
 //		this.unitClauses = unitClauses;
 	}
@@ -27,7 +27,7 @@ public class LoaderResult {
 	 * 
 	 * @return the non-unit clauses
 	 */
-	public Set<Clause> getClauses() {
+	public List<Clause> getClauses() {
 		return clauses;
 	}
 	
