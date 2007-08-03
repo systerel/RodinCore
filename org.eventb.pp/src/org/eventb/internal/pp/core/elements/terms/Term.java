@@ -97,7 +97,7 @@ public abstract class Term extends Hashable implements Comparable<Term> {
 		}
 		return false;
 	}
-	private static final int MAX_NUMBER_OF_INFERENCES = 3;
+	private static final int MAX_NUMBER_OF_INFERENCES = 8;
 	protected int numberOfInferences = Term.MAX_NUMBER_OF_INFERENCES;
 	public void incrementInstantiationCount() {
 		this.numberOfInferences--;
