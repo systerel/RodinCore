@@ -10,3 +10,5 @@ Require-Bundle: org.junit4,
  org.eclipse.core.runtime,
  com.b4free.rodin.core
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: org.eventb.core.seqprover.reasonerExtentionTests,
+ org.eventb.core.seqprover.tests
