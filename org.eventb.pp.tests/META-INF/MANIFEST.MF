@@ -13,5 +13,6 @@ Require-Bundle: org.eventb.pp,
  org.rodinp.core,
  org.eclipse.core.runtime,
  org.eventb.core,
- org.eventb.pp.ui
+ org.eventb.pp.ui,
+ org.eventb.core.seqprover.tests
 Eclipse-LazyStart: false

@@ -5,7 +5,7 @@
          point="org.eventb.core.seqprover.reasoners">
       <reasoner
             class="org.eventb.internal.pp.PPReasoner"
-            id="newPP"
+            id="pp"
             name="%reasonerName"/>
    </extension>
 

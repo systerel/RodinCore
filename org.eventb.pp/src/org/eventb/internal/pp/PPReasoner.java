@@ -14,7 +14,7 @@ import org.eventb.core.seqprover.xprover.XProverReasoner;
 
 public class PPReasoner extends XProverReasoner {
 
-	public static String REASONER_ID = "org.eventb.internal.pp.newPP";
+	public static String REASONER_ID = "org.eventb.pp.pp";
 	
 	public static boolean DEBUG;
 	private static void debug(String msg) {
