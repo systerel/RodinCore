@@ -207,7 +207,7 @@ public class AutoTactics {
 	}
 	
 	/**
-	 * Simplifies a sequent containing existentially quantified hypotheses by freeing their bound variables.
+	 * Simplifies a sequent containing (selected) existentially quantified hypotheses by freeing their bound variables.
 	 * 
 	 * @author Farhad Mehta
 	 *
@@ -225,6 +225,24 @@ public class AutoTactics {
 		
 	}
 
+	/**
+	 * Simplifies a sequent containing (selected) conjunctive hypotheses by separating them.
+	 * 
+	 * @author Farhad Mehta
+	 *
+	 */
+	public static class ConjHypTac implements ITactic{
+	
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+				if (Tactics.conjF_applicable(shyp)){
+					return Tactics.conjF(shyp).apply(ptNode, pm);
+				}
+			}
+			return "Selected hypotheses contain no conjunctions";
+		}
+		
+	}
 	
 	/**
 	 * Simplifies a sequent by finding contradictory hypotheses and initiating a proof by contradiction.

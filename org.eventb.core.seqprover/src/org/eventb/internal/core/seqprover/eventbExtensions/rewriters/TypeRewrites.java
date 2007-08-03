@@ -22,4 +22,9 @@ public class TypeRewrites extends AbstractAutoRewrites {
 		return apply(seq, input, rewriter, false, pm);
 	}
 
+	@Override
+	protected String getDisplayName() {
+		return "type rewrites";
+	}
+
 }

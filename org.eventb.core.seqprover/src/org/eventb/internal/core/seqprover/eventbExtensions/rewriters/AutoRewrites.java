@@ -23,4 +23,9 @@ public class AutoRewrites extends AbstractAutoRewrites {
 		return apply(seq, input, rewriter, true, pm);
 	}
 
+	@Override
+	protected String getDisplayName() {
+		return "simplification rewrites";
+	}
+
 }

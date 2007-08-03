@@ -27,6 +27,10 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 			
 			// Rewrite the hypothesis
 			Predicate inferredHyp = recursiveRewrite(hyp, rewriter);
+			
+//			if (inferredHyp == hyp)
+//				continue;
+			
 			Collection<Predicate> inferredHyps = Lib
 					.breakPossibleConjunct(inferredHyp);
 
@@ -74,14 +78,14 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 			IAntecedent[] antecedent = new IAntecedent[] { ProverFactory
 					.makeAntecedent(newGoal, null, null, hypActions) };
 			return ProverFactory.makeProofRule(this, input, goal, null, null,
-					"auto rewrite", antecedent);
+					getDisplayName(), antecedent);
 		}
 		if (!hypActions.isEmpty()) {
-			return ProverFactory.makeProofRule(this, input, "auto rewrite",
+			return ProverFactory.makeProofRule(this, input, getDisplayName(),
 					hypActions);
 		}
 		return ProverFactory.reasonerFailure(this, input,
-				"No auto rewrites applicable");
+				"No rewrites applicable");
 	}
 
 	/**
@@ -111,5 +115,7 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 		}
 		return resultPred;
 	}
+	
+	protected abstract String getDisplayName();
 
 }

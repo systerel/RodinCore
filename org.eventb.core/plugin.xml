@@ -1190,6 +1190,9 @@
             id="org.eventb.core.seqprover.autoRewriteTac">
       </tactic>
       <tactic
+            id="org.eventb.core.seqprover.findContrHypsTac">
+      </tactic>
+      <tactic
             id="org.eventb.core.seqprover.eqHypTac">
       </tactic>
       <tactic
