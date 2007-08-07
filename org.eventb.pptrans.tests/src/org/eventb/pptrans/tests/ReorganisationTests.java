@@ -39,13 +39,16 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	}
 
 	private static void doTest(String input, String expected) {
-		doTest(input, expected, false, defaultTe);
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+		te.addAll(defaultTe);
+		doTest(input, expected, false, te);
 	}
 	
 	private static void doTest(String input, String expected,
 			boolean transformExpected) {
-		
-		doTest(input, expected, transformExpected, defaultTe);
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+		te.addAll(defaultTe);
+		doTest(input, expected, transformExpected, te);
 	}
 	
 	private static void doTest(String input, String expected,
