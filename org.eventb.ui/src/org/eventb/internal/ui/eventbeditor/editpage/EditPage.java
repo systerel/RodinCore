@@ -271,7 +271,17 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 				}
 			}
 		};
-		
+		if (rodinInput instanceof ICommentedElement) {
+			ICommentedElement cElement = (ICommentedElement) rodinInput;
+			try {
+				if (cElement.hasComment()) {
+					commentWidget.setText(cElement.getComment());
+				}
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		toolkit.paintBordersFor(comp);
 	}
 
