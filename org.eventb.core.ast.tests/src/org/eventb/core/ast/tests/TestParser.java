@@ -1029,6 +1029,29 @@ public class TestParser extends TestCase {
 					"(\u2205\u2982\u2119(\u2119(\u2124)))", 
 					mEmptySet(POW(POW(INT)))
 			),
+			
+			// Misc.
+			new ExprTestPair(
+					"f∼(x)", 
+					mBinaryExpression(Formula.FUNIMAGE,
+							mUnaryExpression(Formula.CONVERSE,
+									id_f),
+							id_x)
+			), new ExprTestPair(
+					"f∼[x]", 
+					mBinaryExpression(Formula.RELIMAGE,
+							mUnaryExpression(Formula.CONVERSE,
+									id_f),
+							id_x)
+			), new ExprTestPair(
+					"(f(x))∼[y]", 
+					mBinaryExpression(Formula.RELIMAGE,
+							mUnaryExpression(Formula.CONVERSE,
+									mBinaryExpression(Formula.FUNIMAGE,
+											id_f, id_x)),
+							id_y)
+			),
+			
 	};
 	
 	String[] invalidExprs = new String[]{
@@ -1038,7 +1061,8 @@ public class TestParser extends TestCase {
 			"x setminus y inter z", 
 			"x\u2225y\u2225z",
 			"(\u2205\u2982x\u21a6y)",	// rhs is not a type 
-			"(\u2205\u2982\u2124)",		// type is not a set type 
+			"(\u2205\u2982\u2124)",		// type is not a set type
+			"f(x)∼",
 	};
 
 	AssignmentTestPair[] assigns = new AssignmentTestPair[] {
