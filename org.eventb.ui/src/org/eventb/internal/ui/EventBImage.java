@@ -139,10 +139,13 @@ public class EventBImage {
 				"icons/full/ctool16/refines.gif");
 
 		registerImage(registry, IMG_PENGUIN, "icons/penguins-dancing.gif");
-		registerImage(registry, IEventBSharedImages.IMG_NULL, "icons/full/ctool16/null.gif");
-		
-		registerImage(registry, IEventBSharedImages.IMG_ADD, "icons/full/ctool16/add.gif");
-		registerImage(registry, IEventBSharedImages.IMG_REMOVE, "icons/full/ctool16/remove.gif");
+		registerImage(registry, IEventBSharedImages.IMG_NULL,
+				"icons/full/ctool16/null.gif");
+
+		registerImage(registry, IEventBSharedImages.IMG_ADD,
+				"icons/full/ctool16/add.gif");
+		registerImage(registry, IEventBSharedImages.IMG_REMOVE,
+				"icons/full/ctool16/remove.gif");
 
 		registerImage(registry, IEventBSharedImages.IMG_ADD,
 				"icons/full/ctool16/add.gif");
@@ -176,9 +179,14 @@ public class EventBImage {
 		registerImage(registry, IEventBSharedImages.IMG_INVERSE,
 				"icons/full/ctool16/inv_prover.gif");
 		registerImage(registry, IEventBSharedImages.IMG_SELECT_ALL,
-		"icons/full/ctool16/select_all_prover.gif");
+				"icons/full/ctool16/select_all_prover.gif");
 		registerImage(registry, IEventBSharedImages.IMG_SELECT_NONE,
-		"icons/full/ctool16/select_none_prover.gif");
+				"icons/full/ctool16/select_none_prover.gif");
+
+		registerImage(registry, IEventBSharedImages.IMG_UP,
+				"icons/full/ctool16/up_edit.gif");
+		registerImage(registry, IEventBSharedImages.IMG_DOWN,
+				"icons/full/ctool16/down_edit.gif");
 	}
 
 	/**

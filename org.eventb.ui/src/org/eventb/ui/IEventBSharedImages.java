@@ -89,6 +89,10 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_SELECT_NONE = "Select None";
 	
+	public static final String IMG_UP = "Up";
+
+	public static final String IMG_DOWN = "Down";
+	
 	/**
 	 * Paths to the icons for buttons, menus, etc.
 	 */
