@@ -29,7 +29,7 @@
 .witnessLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
 .witnessPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
 .actionLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
-.actionAssignment {font-size:16px; color:black;}font-family:"Brave Sans Mono";
+.actionAssignment {font-size:16px; color:black;font-family:"Brave Sans Mono";}
 .variantExpression {font-size:16px; color:green;font-family:"Brave Sans Mono";}
 .setIdentifier {font-size:16px; color:black;font-family:"Brave Sans Mono";}
 .axiomLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
