@@ -1305,6 +1305,7 @@
             id="org.eventb.ui.preferences.eventB"
             name="%preferencePage.eventBCategory.name"/>
       <page
+            category="org.eventb.ui.preferences.eventB"
             class="org.eventb.internal.ui.preferences.SeqProverPreferencePage"
             id="org.eventb.ui.preferences.seqProver"
             name="%preferencePage.seqProverPage.name"/>
