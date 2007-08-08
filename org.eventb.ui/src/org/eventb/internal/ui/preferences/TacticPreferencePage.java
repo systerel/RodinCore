@@ -25,6 +25,8 @@ public abstract class TacticPreferencePage
 		IWorkbenchPreferencePage {
 
 	TwoListSelectionEditor tacticsEditor;
+	
+	BooleanFieldEditor enablementEditor;
 
 	String enableFieldName;
 	
@@ -53,11 +55,12 @@ public abstract class TacticPreferencePage
 
 	@Override
 	public void createFieldEditors() {
+		enablementEditor = new BooleanFieldEditor(
+			enableFieldName,
+			enableFieldDescription,
+			getFieldEditorParent());
 		addField(
-				new BooleanFieldEditor(
-					enableFieldName,
-					enableFieldDescription,
-					getFieldEditorParent()));
+				enablementEditor);
 
 		tacticsEditor = new TwoListSelectionEditor(
 				tacticsFieldName,
@@ -134,7 +137,12 @@ public abstract class TacticPreferencePage
 	@Override
 	public boolean performOk() {
 		setTactics();
+		setEnablement();
 		return super.performOk();
+	}
+
+	private void setEnablement() {
+		tacticPreference.setEnabled(enablementEditor.getBooleanValue());
 	}
 
 	private void setTactics() {

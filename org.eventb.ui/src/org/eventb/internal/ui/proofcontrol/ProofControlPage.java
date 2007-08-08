@@ -958,15 +958,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				boolean b = ((String) newValue)
 										.compareToIgnoreCase("true") == 0;
 				expertMode.setChecked(!b);
-				IAutoTacticPreference postTacticPreference = EventBPlugin
-						.getPostTacticPreference();
-				postTacticPreference.setEnabled(b);
 			} else {
 				Boolean b = (Boolean) newValue;
 				expertMode.setChecked(!b);
-				IAutoTacticPreference postTacticPreference = EventBPlugin
-						.getPostTacticPreference();
-				postTacticPreference.setEnabled(b);
 			}
 		}
 
