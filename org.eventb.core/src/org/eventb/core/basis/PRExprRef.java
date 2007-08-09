@@ -27,11 +27,16 @@ public class PRExprRef extends InternalElement implements IPRExprRef{
 			throws RodinDBException {
 
 		final String value = getAttributeValue(STORE_REF_ATTRIBUTE);
-		final String[] refs = value.split(",");
+		final String[] refs = value.split(",", -1);
 		final int length = refs.length;
 		final Expression[] exprs = new Expression[length];
 		for (int i = 0; i < exprs.length; i++) {
-			exprs[i] = store.getExpression(refs[i]);
+			final String ref = refs[i];
+			if (ref.length() == 0) {
+				exprs[i] = null;
+			} else {
+				exprs[i] = store.getExpression(ref);
+			}
 		}
 		return exprs;
 	}
@@ -44,7 +49,9 @@ public class PRExprRef extends InternalElement implements IPRExprRef{
 		for (Expression expr: exprs) {
 			builder.append(sep);
 			sep = ",";
-			builder.append(store.putExpression(expr));
+			if (expr != null) {
+				builder.append(store.putExpression(expr));
+			}
 		}
 		setAttributeValue(STORE_REF_ATTRIBUTE, builder.toString(), monitor);
 	}

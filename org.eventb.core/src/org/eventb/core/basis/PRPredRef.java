@@ -27,11 +27,16 @@ public class PRPredRef extends InternalElement implements IPRPredRef{
 			throws RodinDBException {
 
 		final String value = getAttributeValue(STORE_REF_ATTRIBUTE);
-		final String[] refs = value.split(",");
+		final String[] refs = value.split(",", -1);
 		final int length = refs.length;
 		final Predicate[] preds = new Predicate[length];
 		for (int i = 0; i < preds.length; i++) {
-			preds[i] = store.getPredicate(refs[i]);
+			final String ref = refs[i];
+			if (ref.length() == 0) {
+				preds[i] = null;
+			} else {
+				preds[i] = store.getPredicate(ref);
+			}
 		}
 		return preds;
 	}
@@ -44,7 +49,9 @@ public class PRPredRef extends InternalElement implements IPRPredRef{
 		for (Predicate pred: preds) {
 			builder.append(sep);
 			sep = ",";
-			builder.append(store.putPredicate(pred));
+			if (pred != null) {
+				builder.append(store.putPredicate(pred));
+			}
 		}
 		setAttributeValue(STORE_REF_ATTRIBUTE, builder.toString(), monitor);
 	}
