@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core;
 
 import java.util.ArrayList;
@@ -24,7 +32,7 @@ public class ClauseDispatcher implements IDispatcher {
 	/**
 	 * Debug flag for <code>PROVER_TRACE</code>
 	 */
-	public static boolean DEBUG;
+	public static boolean DEBUG = false;
 	public static void debug(String message){
 		System.out.println(message);
 	}
@@ -141,9 +149,8 @@ public class ClauseDispatcher implements IDispatcher {
 	private void addOriginalClauses() {
 		for (Clause clause : originalClauses) {
 			clause = simplifier.run(clause);
-			if (clause.isTrue()) continue;
 			if (clause.isFalse()) internalContradiction(clause.getOrigin());
-			else addNonDispatchedClause(clause);
+			else if (!clause.isTrue()) addNonDispatchedClause(clause);
 		}
 	}
 	

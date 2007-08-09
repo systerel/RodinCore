@@ -96,7 +96,7 @@ public final class Variable extends SimpleTerm {
 	@Override
 	public String toString(HashMap<Variable, String> variableMap) {
 		if (!variableMap.containsKey(this)) {
-			variableMap.put(this,"x"+variableMap.size() + "["+numberOfInferences+"]" );
+			variableMap.put(this,"$x"+variableMap.size() /* + "["+numberOfInferences+"]" */);
 		}
 		return variableMap.get(this);
 	}

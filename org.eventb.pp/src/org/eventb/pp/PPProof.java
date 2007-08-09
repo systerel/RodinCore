@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.pp;
 
 import java.util.ArrayList;
@@ -40,7 +48,7 @@ public class PPProof {
 	/**
 	 * Debug flag for <code>PROVER_TRACE</code>
 	 */
-	public static boolean DEBUG;
+	public static boolean DEBUG = false;
 	public static void debug(String message){
 		System.out.println(message);
 	}
@@ -236,13 +244,12 @@ public class PPProof {
 			
 //			if (!typeCheck(newPredicate)) ProverPlugin.log("Could not type check generated predicate "+newPredicate);
 //			else 
-			if (!newPredicate.isTypeChecked()) {
-				PPCore.log("Translator generetad untyped predicate " + newPredicate);
-				if (DEBUG) debug("Translator generated untype-checked predicate: "+ newPredicate);
-			}
-			else {
+			if (newPredicate.isTypeChecked()) {
 				translatedPredicates.add(newPredicate);
 				if (DEBUG) debug("Translated: "+predicate+" to: "+newPredicate);
+			} else {
+				PPCore.log("Translator generetad untyped predicate " + newPredicate);
+				if (DEBUG) debug("Translator generated untype-checked predicate: "+ newPredicate);
 			}
 		}
 		
@@ -263,13 +270,12 @@ public class PPProof {
 			this.derivedPredicates = new ArrayList<Predicate>();
 			Predicate setEquivalencePredicate = getSetMembershipEquivalenceForEquality();
 			if (setEquivalencePredicate != null) {
-				if (!typeCheck(setEquivalencePredicate)) {
-					if (DEBUG) debug("Could not type check derived predicate "+setEquivalencePredicate);
-					PPCore.log("Could not type check generated predicate "+setEquivalencePredicate);
-				}
-				else {
+				if (typeCheck(setEquivalencePredicate)) {
 					derivedPredicates.add(setEquivalencePredicate);
 					if (DEBUG) debug("Adding derived predicate "+setEquivalencePredicate+" for "+originalPredicate);
+				} else {
+					if (DEBUG) debug("Could not type check derived predicate "+setEquivalencePredicate);
+					PPCore.log("Could not type check generated predicate "+setEquivalencePredicate);
 				}
 			}
 //			if (setEquivalencePredicate == null /* || !isGoal */) {

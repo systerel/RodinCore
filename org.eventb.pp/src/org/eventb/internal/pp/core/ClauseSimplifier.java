@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core;
 
 import java.util.ArrayList;
@@ -13,7 +21,7 @@ public class ClauseSimplifier {
 	/**
 	 * Debug flag for <code>PROVER_SIMPLIFIER_TRACE</code>
 	 */
-	public static boolean DEBUG;
+	public static boolean DEBUG = false;
 	public static void debug(String message){
 		System.out.println(message);
 	}
@@ -25,15 +33,14 @@ public class ClauseSimplifier {
 	}
 	
 	public Clause run(Clause clause) {
-//		debug("Launching simplifiers");
-		Clause originalClause = clause;
+		Clause tmp = clause;
 		for (ISimplifier simplifier : simplifiers) {
 			if (simplifier.canSimplify(clause)) {
-				clause = clause.simplify(simplifier);
+				tmp = tmp.simplify(simplifier);
 			}
 		}
-		if (DEBUG) debug("Simplified: "+originalClause.toString()+" -> "+clause.toString());
-		return clause;
+		if (DEBUG) debug("Simplified: "+clause.toString()+" -> "+tmp.toString());
+		return tmp;
 	}
 
 	public void run(Set<Clause> clauses) {

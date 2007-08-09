@@ -17,8 +17,6 @@ import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral.AType;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
-import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.ArithmeticDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
@@ -61,21 +59,21 @@ public class ArithmeticFormula extends AbstractSingleFormula<ArithmeticDescripto
 	}
 
 	@Override
-	Literal<?,?> getLiteral(List<TermSignature> termList, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
+	Literal<?,?> getLabelPredicate(List<TermSignature> termList, ClauseContext context) {
 		List<TermSignature> newTerms = transform(termList);
-		List<Term> terms = getTermsFromTermSignature(newTerms, flags, table);
+		List<Term> terms = getTermsFromTermSignature(newTerms, context);
 		// normalize terms here
 		Term left = terms.get(0);
 		Term right = terms.get(1);
 		if (type == Type.EQUAL) {
 			if (left instanceof SimpleTerm && right instanceof SimpleTerm) {
-				return new EqualityLiteral((SimpleTerm)left,(SimpleTerm)right,flags.isPositive);
+				return new EqualityLiteral((SimpleTerm)left,(SimpleTerm)right,context.isPositive());
 			}
 			else {
-				return new ArithmeticLiteral(left,right,flags.isPositive?AType.EQUAL:AType.UNEQUAL);
+				return new ArithmeticLiteral(left,right,context.isPositive()?AType.EQUAL:AType.UNEQUAL);
 			}
 		}
-		if (flags.isPositive) {
+		if (context.isPositive()) {
 			return new ArithmeticLiteral(left,right,type == Type.LESS?AType.LESS:AType.LESS_EQUAL);
 		} else {
 			left = terms.get(1);

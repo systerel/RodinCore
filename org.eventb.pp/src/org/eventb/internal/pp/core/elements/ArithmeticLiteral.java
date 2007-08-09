@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core.elements;
 
 import java.util.Arrays;
@@ -101,6 +109,7 @@ public class ArithmeticLiteral extends Literal<ArithmeticLiteral,Term> {
 			break;
 		default:
 			assert false;
+			break;
 		}
 		List<Term> newterms = getInverseHelper(terms);
 		if (inverse) return new ArithmeticLiteral(newterms.get(1),newterms.get(0),newtype);

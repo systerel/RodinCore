@@ -23,10 +23,10 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public abstract class Clause {
 
-	final protected List<ArithmeticLiteral> arithmetic;
-	final protected List<EqualityLiteral> equalities;
-	final protected List<PredicateLiteral> predicates;
-	final protected List<EqualityLiteral> conditions;
+	final protected List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
+	final protected List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
+	final protected List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
+	final protected List<EqualityLiteral> conditions = new ArrayList<EqualityLiteral>();
 	
 	final protected IOrigin origin;
 	
@@ -34,10 +34,10 @@ public abstract class Clause {
 	
 	public Clause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, List<EqualityLiteral> conditions, int hashCode) {
 		this.origin = origin;
-		this.predicates = predicates;
-		this.equalities = equalities;
-		this.arithmetic = arithmetic;
-		this.conditions = conditions;
+		this.predicates.addAll(predicates);
+		this.equalities.addAll(equalities);
+		this.arithmetic.addAll(arithmetic);
+		this.conditions.addAll(conditions);
 		
 		computeBitSets();
 		computeHashCode(hashCode);
@@ -45,10 +45,9 @@ public abstract class Clause {
 
 	public Clause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, int hashCode) {
 		this.origin = origin;
-		this.predicates = predicates;
-		this.equalities = equalities;
-		this.arithmetic = arithmetic;
-		this.conditions = new ArrayList<EqualityLiteral>();
+		this.predicates.addAll(predicates);
+		this.equalities.addAll(equalities);
+		this.arithmetic.addAll(arithmetic);
 		
 		computeBitSets();
 		computeHashCode(hashCode);
@@ -107,23 +106,6 @@ public abstract class Clause {
 		return conditions.size() > 0;
 	}
 
-	public boolean checkIsBlockedOnInstantiationsAndUnblock() {
-		boolean result = false;
-		if (checkIsBlockedOnInstantiationsAndUnblock(predicates)) result = true;
-		else if (checkIsBlockedOnInstantiationsAndUnblock(arithmetic)) result = true;
-		else if (checkIsBlockedOnInstantiationsAndUnblock(equalities)) result = true;
-		else if (checkIsBlockedOnInstantiationsAndUnblock(conditions)) result = true;
-		return result;
-	}
-	
-	private <T extends Literal<T,?>> boolean checkIsBlockedOnInstantiationsAndUnblock(List<T> list) {
-		boolean result = false;
-		for (T t : list) {
-			if (t.checkIsBlockedOnInstantiationsAndUnblock()) result = true;
-		}
-		return result;
-	}
-	
 	@Override
 	public String toString() {
 		HashMap<Variable, String> variableMap = new HashMap<Variable, String>();
@@ -182,31 +164,23 @@ public abstract class Clause {
 	
 	protected boolean hasPredicateOfSign(PredicateDescriptor predicate, boolean opposite) {
 		if (predicate.isPositive()) return opposite?negativeLiterals.get(predicate.getIndex()):positiveLiterals.get(predicate.getIndex());
-		else return (!opposite)?negativeLiterals.get(predicate.getIndex()):positiveLiterals.get(predicate.getIndex());
+		else return opposite?positiveLiterals.get(predicate.getIndex()):negativeLiterals.get(predicate.getIndex());
 	}
 
 	public List<EqualityLiteral> getEqualityLiterals() {
-		List<EqualityLiteral> result = new ArrayList<EqualityLiteral>();
-		result.addAll(equalities);
-		return result;
+		return equalities;
 	}
 
 	public List<PredicateLiteral> getPredicateLiterals() {
-		List<PredicateLiteral> result = new ArrayList<PredicateLiteral>();
-		result.addAll(predicates);
-		return result;
+		return predicates;
 	}
 
 	public List<ArithmeticLiteral> getArithmeticLiterals() {
-		List<ArithmeticLiteral> result = new ArrayList<ArithmeticLiteral>();
-		result.addAll(arithmetic);
-		return result;
+		return arithmetic;
 	}
 	
 	public List<EqualityLiteral> getConditions() {
-		List<EqualityLiteral> result = new ArrayList<EqualityLiteral>();
-		result.addAll(conditions);
-		return result;
+		return conditions;
 	}
 	
 	protected <T extends Literal<T,?>> List<T> getListCopy(List<T> list,

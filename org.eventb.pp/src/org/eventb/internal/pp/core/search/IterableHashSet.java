@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core.search;
 
 import java.util.ArrayList;
@@ -19,14 +27,6 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 	private HashMap<T,LinkableClause> list = new HashMap<T,LinkableClause>();
 	LinkableClause first,last;
 	List<NiceIterator> iterators = new ArrayList<NiceIterator>();
-	
-//	private boolean initialized = false;
-	
-//	public IterableHashSet(List<T> list) {
-//		for (T t : list) {
-//			appends(t);
-//		}
-//	}
 	
 	public IterableHashSet() {
 		// nothing
@@ -73,34 +73,6 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 	public int size() {
 		return list.size();
 	}
-	
-//	public void resetIterator() {
-//		current = null;
-//		canRemove = false;
-//		initialized = true;
-//	}
-	
-//	public void remove() {
-//		if (!canRemove) throw new IllegalStateException();
-//		canRemove = false;
-//		internalRemove(current.clause);
-//		if (current == first) current = null;
-//	}
-//	
-//	
-//	public boolean hasNext() {
-//		if (!initialized) throw new IllegalStateException();
-//		return current != last;
-//	}
-//
-//	public T next() {
-//		if (!initialized) throw new IllegalStateException();
-//		if (current == last) throw new NoSuchElementException();
-//		canRemove = true;
-//		if (current == null) current = first;
-//		else current = current.next;
-//		return current.clause;
-//	}
 	
 	public ResetIterator<T> iterator() {
 		NiceIterator it = new NiceIterator();
@@ -171,7 +143,6 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 		public T current() {
 			return current==null?null:current.clause;
 		}
-		
 	}
 	
 	private class LinkableClause  {
@@ -208,9 +179,5 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 		builder.append("]");
 		return builder.toString();
 	}
-
-	
-
-
 
 }

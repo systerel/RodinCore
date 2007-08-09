@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core.inferrers;
 
 import java.util.ArrayList;
@@ -6,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
@@ -18,7 +25,6 @@ import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
@@ -30,7 +36,6 @@ public class ResolutionInferrer extends AbstractInferrer {
 	private int position;
 	
 	private Clause result;
-//	private boolean blocked;
 	private Clause subsumedClause;
 	private boolean hasInstantiations;
 	
@@ -56,7 +61,7 @@ public class ResolutionInferrer extends AbstractInferrer {
 	
 	@Override
 	protected void initialize(Clause clause) throws IllegalStateException {
-		assert clause.getPredicateLiterals().size() > 0;
+		assert predicates.size() > 0;
 		
 		if (position<0 || unitClause==null || predicate==null 
 				|| !clause.matchesAtPosition(predicate.getDescriptor(), position)) {
@@ -72,6 +77,7 @@ public class ResolutionInferrer extends AbstractInferrer {
 		position = -1;
 		unitClause = null;
 		predicate = null;
+		super.reset();
 	}
 	
 	public InferrenceResult getResult() {
@@ -104,30 +110,30 @@ public class ResolutionInferrer extends AbstractInferrer {
 		}
 	}
 	
-	private void updateInstantiationCount(PredicateLiteral matchingPredicate) {
-		for (int i = 0; i < matchingPredicate.getTerms().size(); i++) {
-			SimpleTerm matchingTerm = matchingPredicate.getTerms().get(i);
-			SimpleTerm matcherTerm = predicate.getTerms().get(i);
-			
-			Set<SimpleTerm> alreadyIncremented = new HashSet<SimpleTerm>();
-			if (matcherTerm.isConstant()) {
-				// we have to increment the instantiation count of the variable
-				if (!matchingTerm.isConstant() && !alreadyIncremented.contains(matchingTerm)) {
-					Variable variable = getOriginalVariable((Variable)matchingTerm);
-					variable.incrementInstantiationCount();
-					alreadyIncremented.add(matchingTerm);
-				}
-			}
-		}
-	}
+//	private void updateInstantiationCount(PredicateLiteral matchingPredicate) {
+//		for (int i = 0; i < matchingPredicate.getTerms().size(); i++) {
+//			SimpleTerm matchingTerm = matchingPredicate.getTerms().get(i);
+//			SimpleTerm matcherTerm = predicate.getTerms().get(i);
+//			
+//			Set<SimpleTerm> alreadyIncremented = new HashSet<SimpleTerm>();
+//			if (matcherTerm.isConstant()) {
+//				// we have to increment the instantiation count of the variable
+//				if (!matchingTerm.isConstant() && !alreadyIncremented.contains(matchingTerm)) {
+//					Variable variable = getOriginalVariable((Variable)matchingTerm);
+//					variable.incrementInstantiationCount();
+//					alreadyIncremented.add(matchingTerm);
+//				}
+//			}
+//		}
+//	}
 	
-	private Variable getOriginalVariable(Variable variable) {
-		for (Entry<SimpleTerm, SimpleTerm> map : substitutionsMap.entrySet()) {
-			// this cast works since there are pair of the same kind
-			if (map.getValue() == variable) return (Variable)map.getKey();
-		}
-		return null;
-	}
+//	private Variable getOriginalVariable(Variable variable) {
+//		for (Entry<SimpleTerm, SimpleTerm> map : substitutionsMap.entrySet()) {
+//			// this cast works since there are pair of the same kind
+//			if (map.getValue() == variable) return (Variable)map.getKey();
+//		}
+//		return null;
+//	}
 	
 	// MUST BE called on a unit-clause
 	private List<EqualityLiteral> getConditions(PredicateLiteral matchingPredicate) {
@@ -153,7 +159,7 @@ public class ResolutionInferrer extends AbstractInferrer {
 		PredicateLiteral matchingPredicate = predicates.remove(position);
 		
 		// TODO check
-		updateInstantiationCount(matchingPredicate);
+//		updateInstantiationCount(matchingPredicate);
 		preparePredicate(matchingPredicate);
 		
 		conditions.addAll(getConditions(matchingPredicate));
@@ -170,7 +176,7 @@ public class ResolutionInferrer extends AbstractInferrer {
 		boolean sameSign = sameSign(matchingPredicate, predicate);
 		if (!sameSign) EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
 		
-		updateInstantiationCount(matchingPredicate);
+//		updateInstantiationCount(matchingPredicate);
 		
 		if (matchingPredicate.isQuantified()) matchingPredicate = transformVariables(matchingPredicate);
 		

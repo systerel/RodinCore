@@ -133,11 +133,11 @@ public abstract class AbstractPPTest extends TestCase {
 //		ClauseBuilder.DEBUG = true;
 		
 		PPProof.DEBUG = true;
-//		ClauseDispatcher.DEBUG = true;
+		ClauseDispatcher.DEBUG = true;
 //		SeedSearchProver.DEBUG = true;
 //		PredicateProver.DEBUG = true;
 //		ClauseSimplifier.DEBUG = true;
 //		CaseSplitter.DEBUG = true;
-//		Dumper.DEBUG = true;
+		Dumper.DEBUG = true;
 	}
 }

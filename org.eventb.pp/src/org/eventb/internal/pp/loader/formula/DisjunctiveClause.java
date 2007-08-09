@@ -1,13 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.loader.formula;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
-import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.clause.LabelManager;
-import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.DisjunctiveClauseDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
@@ -19,51 +22,29 @@ public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescripto
 		super(children,terms,descriptor);
 	}
 	
-	
-	private List<List<Literal<?,?>>> copyClauseList(List<List<Literal<?,?>>> original, VariableTable table) {
-		List<List<Literal<?,?>>> result = new ArrayList<List<Literal<?,?>>>();
-		for (List<Literal<?,?>> list : original) {
-			result.add(new ArrayList<Literal<?,?>>(list));
-		}
-		return result;
-	}
-
 	@Override
-	List<List<Literal<?,?>>> getDefinitionClauses(List<TermSignature> terms,
-			LabelManager manager, List<List<Literal<?,?>>> prefix,
-			TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
-		List<List<Literal<?,?>>> result = new ArrayList<List<Literal<?,?>>>();
+	ClauseResult getDefinitionClauses(List<TermSignature> terms,
+			LabelManager manager, ClauseResult prefix,
+			ClauseContext context) {
+		ClauseResult result;
 		int start = 0;
-		if (flags.isPositive) {
+		if (context.isPositive()) {
 			for (SignedFormula<?> child : children) {
 				List<TermSignature> subIndex = terms.subList(start, start + child.getIndexSize());
-				prefix = child.getClauses(subIndex, manager, prefix, table, flags, bool);
+				prefix = child.getClauses(subIndex, manager, prefix, context);
 				start += child.getIndexSize();
 			}
 			result = prefix;
 		} else {
+			result = new ClauseResult();
 			// we split because it is a conjunction
 			for (SignedFormula<?> child : children) {
 				List<TermSignature> subIndex = terms.subList(start, start + child.getIndexSize());
-				List<List<Literal<?,?>>> copy = copyClauseList(prefix,table);
-				result.addAll(child.getClauses(subIndex, manager, copy, table, flags, bool));
+				result.addAll(child.getClauses(subIndex, manager, prefix.getCopy(), context));
 				start += child.getIndexSize();
 			}
 		}
 		return result;
-	}
-	
-	@Override
-	public ClauseResult getFinalClauses(LabelManager manager, BooleanEqualityTable bool, VariableTable table, boolean positive, boolean equivalence) {
-		if (positive) {
-			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("----------------");
-			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Positive definition:");
-			return getFinalClausesHelper(manager, false, true, equivalence, bool, table);
-		} else {
-			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("----------------");
-			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Negative definition:");
-			return getFinalClausesHelper(manager, true, false, equivalence, bool, table);
-		}
 	}
 	
 	@Override
@@ -71,53 +52,67 @@ public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescripto
 		return new DisjunctiveClauseDescriptor(descriptor.getContext(), result, index);
 	}
 
-	private boolean isLabelizable(LabelVisitor context) {
-		if (context.isQuantified) {
-			if (context.isPositiveLabel || context.isNegativeLabel) return true;
-			else if (!context.isForall) return true;
+	private boolean isLabelizable(LabelContext context) {
+		if (context.isQuantified()) {
+			if (context.isPositiveLabel() || context.isNegativeLabel()) return true;
+			else if (!context.isForall()) return true;
 		}
-		if (context.equivalenceCount > 0) return true;
+		if (context.isEquivalence()) return true;
 		return false;
 	}
+	
+	private void addLabels(LabelManager manager, AbstractContext context) {
+//		if (context.isPositiveLabel || context.equivalenceCount > 0) manager.addLabel(this, context.isPositive);
+//		if (context.isNegativeLabel || context.equivalenceCount > 0) manager.addLabel(this, !context.isPositive);
+//		if (!context.isPositiveLabel && !context.isNegativeLabel && context.equivalenceCount == 0) manager.addLabel(this, context.isPositive);
+		manager.addLabel(this, true);
+		manager.addLabel(this, false);
+	}
 
-	@Override
-	boolean getContextAndSetLabels(LabelVisitor context, LabelManager manager) {
-		LabelVisitor newContext = new LabelVisitor();
-		if (isLabelizable(context)) {
-//			if (context.isPositiveLabel || context.equivalenceCount > 0) manager.addLabel(this, context.isPositive);
-//			if (context.isNegativeLabel || context.equivalenceCount > 0) manager.addLabel(this, !context.isPositive);
-//			if (!context.isPositiveLabel && !context.isNegativeLabel && context.equivalenceCount == 0) manager.addLabel(this, context.isPositive);
-			manager.addLabel(this, true);
-			manager.addLabel(this, false);
-			
-			// this becomes a label
-			// we construct labels below
-			if (context.equivalenceCount > 0) {
-				newContext.isNegativeLabel = true;
-				newContext.isPositiveLabel = true;
+	private void setFlagsForLabels(LabelContext context, LabelContext newContext) {
+		if (context.isEquivalence()) {
+			newContext.setNegativeLabel(true);
+			newContext.setPositiveLabel(true);
+		}
+		else {
+			if (context.isPositive()) {
+				newContext.setPositiveLabel(true);
+				newContext.setNegativeLabel(context.isNegativeLabel());
 			}
 			else {
-				if (context.isPositive) {
-					newContext.isPositiveLabel = true;
-					newContext.isNegativeLabel = context.isNegativeLabel;
-				}
-				else {
-					newContext.isNegativeLabel = true;
-					newContext.isPositiveLabel = context.isNegativeLabel;
-				}
+				newContext.setNegativeLabel(true);
+				newContext.setPositiveLabel(context.isNegativeLabel());
 			}
 		}
-		newContext.isPositive = context.isPositive;
-		newContext.isDisjunction = true;
-		newContext.isQuantified = false;
-		
-		// we continue
-		boolean isPositive = newContext.isPositive;
+	}
+
+	private boolean getChildContextAndSetLabels(LabelContext context, LabelManager manager) {
+		boolean isPositive = context.isPositive();
 		for (SignedFormula<?> formula : children) {
-			newContext.isPositive = isPositive;
-			formula.getContextAndSetLabels(newContext, manager);
+			context.setPositive(isPositive);
+			formula.getContextAndSetLabels(context, manager);
 		}
 		return false;
+	}
+	
+	@Override
+	boolean getContextAndSetLabels(LabelContext context, LabelManager manager) {
+		LabelContext newContext = new LabelContext();
+		if (isLabelizable(context)) {
+			addLabels(manager, context);
+			setFlagsForLabels(context, newContext);
+		}
+		setContextProperties(context, newContext);
+		return getChildContextAndSetLabels(newContext, manager);
+	}
+	
+	@Override
+	void setContextProperties(AbstractContext context, AbstractContext newContext) {
+		newContext.setEquivalenceCount(context.getEquivalenceCount());
+		newContext.setForall(context.isForall());
+		newContext.setPositive(context.isPositive());
+		newContext.setDisjunction(true);
+		newContext.setQuantified(false);
 	}
 	
 }

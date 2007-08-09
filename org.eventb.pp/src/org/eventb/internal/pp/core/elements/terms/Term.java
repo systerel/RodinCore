@@ -90,23 +90,4 @@ public abstract class Term extends Hashable implements Comparable<Term> {
 	
 	public abstract boolean equalsWithDifferentVariables(Term term, HashMap<SimpleTerm, SimpleTerm> map);
 
-	public boolean checkIfBlockedAndUnblock() {
-		if (numberOfInferences < 0) {
-			numberOfInferences = Term.MAX_NUMBER_OF_INFERENCES;
-			return true;
-		}
-		return false;
-	}
-	private static final int MAX_NUMBER_OF_INFERENCES = 30;
-	protected int numberOfInferences = Term.MAX_NUMBER_OF_INFERENCES;
-	public void incrementInstantiationCount() {
-		this.numberOfInferences--;
-	}
-	public void setInstantiationCount(int instantiationCount) {
-		this.numberOfInferences = instantiationCount;
-	}
-	public int getInstantiationCount() {
-		return numberOfInferences;
-	}
-	
 }

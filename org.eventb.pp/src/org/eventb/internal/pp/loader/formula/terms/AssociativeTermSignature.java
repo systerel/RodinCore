@@ -13,8 +13,7 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.loader.clause.VariableTable;
-import org.eventb.internal.pp.loader.formula.TermVisitorContext;
+import org.eventb.internal.pp.loader.formula.ClauseContext;
 
 /**
  * This class represents an arithmetic term signature. It is the abstract base
@@ -104,10 +103,10 @@ public abstract class AssociativeTermSignature extends TermSignature {
 		}
 	}
 	
-	public List<Term> getTermHelper(VariableTable table, TermVisitorContext flags) {
+	public List<Term> getTermHelper(ClauseContext context) {
 		List<Term> result = new ArrayList<Term>();
 		for (TermSignature term : terms) {
-			result.add(term.getTerm(table, flags));
+			result.add(term.getTerm(context));
 		}
 		return result;
 	}

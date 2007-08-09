@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core.provers.equality;
 
 import java.util.HashMap;
@@ -244,8 +252,9 @@ public class EquivalenceManager implements IEquivalenceManager {
 			Entry<EqualityLiteral, Instantiation> entry = iter.next();
 			QuerySource source = entry.getValue().getSource();
 			source.backtrack(level);
-			if (!source.isValid()) iter.remove();
-			else entry.getValue().backtrack(level);
+			if (source.isValid())
+				entry.getValue().backtrack(level);
+			else iter.remove();
 		}
 
 		// 2 backtrack nodes

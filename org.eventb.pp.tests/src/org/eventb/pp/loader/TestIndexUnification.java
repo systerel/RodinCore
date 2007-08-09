@@ -5,6 +5,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
@@ -200,7 +201,7 @@ public class TestIndexUnification extends TestCase {
 	};
 	
 	public void doTest(IIntermediateResult source, IIntermediateResult target, IIntermediateResult expected) {
-		PredicateDescriptor desc = new PredicateDescriptor(new AbstractContext(),0);
+		PredicateDescriptor desc = new PredicateDescriptor(new AbstractContext(),0,Util.INTEGER());
 		desc.addResult(source);
 		desc.addResult(target);
 		List<TermSignature> list = desc.getUnifiedResults();

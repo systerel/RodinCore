@@ -32,11 +32,9 @@ public class TestEqualitySimplifier extends AbstractPPTest {
 		}
 	}
 	
-	
 	private static Variable var0 = Util.cVar(0);
 	private static Variable var00 = Util.cVar(1);
 	private static Variable var1 = Util.cVar(2);
-	
 	
 	TestPair[] tests = new TestPair[] {
 			new TestPair(

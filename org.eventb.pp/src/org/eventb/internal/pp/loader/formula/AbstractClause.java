@@ -1,12 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.loader.formula;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
-import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.IndexedDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
@@ -37,11 +42,6 @@ public abstract class AbstractClause<T extends IndexedDescriptor> extends Abstra
 	
 	public List<SignedFormula<?>> getChildren() {
 		return children;
-	}
-	
-	@Override
-	Literal<?,?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
-		return getLiteral(descriptor.getIndex(), terms, context, table);
 	}
 	
 	@Override
@@ -81,15 +81,11 @@ public abstract class AbstractClause<T extends IndexedDescriptor> extends Abstra
 		return str.toString();
 	}
 	
+	abstract void setContextProperties(AbstractContext context, AbstractContext newContext);		
+	
 	@Override
-	TermVisitorContext getNewContext(TermVisitorContext context) {
-		TermVisitorContext newContext = new TermVisitorContext(context.isEquivalence);
-		
-		newContext.isQuantified = false;
-		newContext.isPositive = context.isPositive;
-		
-		return newContext;
+	void setClauseContextProperties(AbstractContext context, ClauseContext newContext) {
+		setContextProperties(context, newContext);
 	}
-
-
+	
 }

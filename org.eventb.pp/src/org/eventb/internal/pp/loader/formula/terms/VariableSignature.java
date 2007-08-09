@@ -12,8 +12,7 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.loader.clause.VariableTable;
-import org.eventb.internal.pp.loader.formula.TermVisitorContext;
+import org.eventb.internal.pp.loader.formula.ClauseContext;
 
 /**
  * This class represents a variable signature.
@@ -94,19 +93,19 @@ public class VariableSignature extends TermSignature {
 	}
 	
 	@Override
-	public Term getTerm(VariableTable table, TermVisitorContext context) {
+	public Term getTerm(ClauseContext context) {
 		Term var;
-		if (!context.isQuantified || !isQuantified(context.startOffset, context.endOffset)) {
-			var = table.getVariable(uniqueIndex, sort);
+		if (!context.isQuantified() || !isQuantified(context.getStartOffset(), context.getEndOffset())) {
+			var = context.getVariableTable().getVariable(uniqueIndex, sort);
 		}
-		else if (context.isEquivalence) {
-			var = table.getLocalVariable(uniqueIndex, context.isForall, sort);
+		else if (context.isEquivalence()) {
+			var = context.getVariableTable().getLocalVariable(uniqueIndex, context.isForall(), sort);
 		}
 		else {
-			if (context.isForall) {
-				var = table.getVariable(uniqueIndex, sort);
+			if (context.isForall()) {
+				var = context.getVariableTable().getVariable(uniqueIndex, sort);
 			} else {
-				var = table.getLocalVariable(uniqueIndex, false, sort);
+				var = context.getVariableTable().getLocalVariable(uniqueIndex, false, sort);
 			}
 		}
 		return var;

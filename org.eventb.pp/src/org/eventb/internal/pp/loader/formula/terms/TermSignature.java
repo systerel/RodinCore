@@ -12,8 +12,7 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.loader.clause.VariableTable;
-import org.eventb.internal.pp.loader.formula.TermVisitorContext;
+import org.eventb.internal.pp.loader.formula.ClauseContext;
 
 /**
  * This class represents a term signature. It is the abstract base class
@@ -104,11 +103,10 @@ public abstract class TermSignature {
 
 	/**
 	 * Returns the instance of {@link Term} corresponding to this signature.
-	 * @param table TODO
 	 * @param flags TODO
 	 * @return the instance of {@link Term} corresponding to this signature
 	 */
-	public abstract Term getTerm(VariableTable table, TermVisitorContext context);
+	public abstract Term getTerm(ClauseContext context);
 	
 	/**
 	 * Returns a unchanged deep copy of this signature, where the whole returned

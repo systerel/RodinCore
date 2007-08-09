@@ -11,11 +11,7 @@ package org.eventb.internal.pp.loader.formula;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
-import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.clause.LabelManager;
-import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.QuantifiedDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
@@ -73,76 +69,57 @@ public class QuantifiedFormula extends AbstractLabelizableFormula<QuantifiedDesc
 	}
 
 	@Override
-	List<List<Literal<?,?>>> getDefinitionClauses(List<TermSignature> termList, LabelManager manager, List<List<Literal<?,?>>> prefix, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
+	ClauseResult getDefinitionClauses(List<TermSignature> termList, LabelManager manager, ClauseResult prefix, ClauseContext context) {
 		List<TermSignature> quantifiedTermList = transform(termList);
-		return child.getClauses(quantifiedTermList, manager, prefix, table, context, bool);
+		return child.getClauses(quantifiedTermList, manager, prefix, context);
 	}
 	
-	@Override
-	Literal<?,?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
-		Literal<?,?> result = getLiteral(descriptor.getIndex(), terms, context, table);
-		return result;
-	}
-	
-	@Override
-	public ClauseResult getFinalClauses(LabelManager manager, BooleanEqualityTable bool, VariableTable table, boolean positive, boolean equivalence) {
-		if (positive) {
-			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("----------------");
-			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Positive definition:");
-			return getFinalClausesHelper(manager, false, true, equivalence, bool, table);
-		} else {
-			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("----------------");
-			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Negative definition:");
-			return getFinalClausesHelper(manager, true, false, equivalence, bool, table);
-		}
-	}
-
 	@Override
 	void split() {
 		child.split();
 	}
 
-	private boolean isLabelizable(LabelVisitor context) {
-		if (context.isQuantified) {
-			if (!context.isForall) return true;
-			else if (context.isNegativeLabel || context.isPositiveLabel) return true;
+	private boolean isLabelizable(LabelContext context) {
+		if (context.isQuantified()) {
+			if (!context.isForall()) return true;
+			else if (context.isNegativeLabel() || context.isPositiveLabel()) return true;
 		}
 		return false;
 	}
 	
-	@Override
-	boolean getContextAndSetLabels(LabelVisitor context, LabelManager manager) {
-		LabelVisitor newContext = new LabelVisitor();
-		if (isLabelizable(context)) {
-			if (context.isPositiveLabel || context.equivalenceCount > 0) manager.addLabel(this, context.isPositive);
-			if (context.isNegativeLabel || context.equivalenceCount > 0) manager.addLabel(this, !context.isPositive);
-			if (!context.isPositiveLabel && !context.isNegativeLabel && context.equivalenceCount == 0) manager.addLabel(this, context.isPositive);
-//			manager.addLabel(this, true);
-//			manager.addLabel(this, false);
-			
-			// this becomes a label
-			// we construct labels below
-			if (context.equivalenceCount > 0) {
-				newContext.isNegativeLabel = true;
-				newContext.isPositiveLabel = true;
+	private void addLabels(LabelManager manager, LabelContext context) {
+		if (context.isPositiveLabel() || context.getEquivalenceCount() > 0) manager.addLabel(this, context.isPositive());
+		if (context.isNegativeLabel() || context.getEquivalenceCount() > 0) manager.addLabel(this, !context.isPositive());
+		if (!context.isPositiveLabel() && !context.isNegativeLabel() && context.getEquivalenceCount() == 0) manager.addLabel(this, context.isPositive());
+//		manager.addLabel(this, true);
+//		manager.addLabel(this, false);
+	}
+	
+	private void setFlagsForLabels(LabelContext context, LabelContext newContext) {
+		if (context.getEquivalenceCount() > 0) {
+			newContext.setNegativeLabel(true);
+			newContext.setPositiveLabel(true);
+		}
+		else {
+			if (context.isPositive()) {
+				newContext.setPositiveLabel(true);
+				newContext.setNegativeLabel(context.isNegativeLabel());
 			}
 			else {
-				if (context.isPositive) {
-					newContext.isPositiveLabel = true;
-					newContext.isNegativeLabel = context.isNegativeLabel;
-				}
-				else {
-					newContext.isNegativeLabel = true;
-					newContext.isPositiveLabel = context.isNegativeLabel;
-				}
+				newContext.setNegativeLabel(true);
+				newContext.setPositiveLabel(context.isNegativeLabel());
 			}
 		}
-		newContext.isPositive = context.isPositive;
-		
-		newContext.isDisjunction = context.isDisjunction;
-		newContext.isQuantified = true;
-		newContext.equivalenceCount = context.equivalenceCount;
-		newContext.isForall = context.isPositive?isForall:!isForall;
+	}
+	
+	@Override
+	boolean getContextAndSetLabels(LabelContext context, LabelManager manager) {
+		LabelContext newContext = new LabelContext();
+		if (isLabelizable(context)) {
+			addLabels(manager, context);
+			setFlagsForLabels(context, newContext);
+		}
+		setContextProperties(context, newContext);
 		return child.getContextAndSetLabels(newContext, manager);
 	}
 	
@@ -159,17 +136,20 @@ public class QuantifiedFormula extends AbstractLabelizableFormula<QuantifiedDesc
 		child.switchSign();
 	}
 	
-	@Override
-	TermVisitorContext getNewContext(TermVisitorContext context) {
-		TermVisitorContext newContext = new TermVisitorContext(context.isEquivalence);
-		
-		newContext.isForall = context.isPositive?isForall:!isForall;
-		newContext.isPositive = context.isPositive;
-		newContext.startOffset = startOffset;
-		newContext.endOffset = endOffset;
-		newContext.isQuantified = true;
-		
-		return newContext;
+	void setContextProperties(AbstractContext context, AbstractContext newContext) {
+		newContext.setPositive(context.isPositive());
+		newContext.setDisjunction(context.isDisjunction());
+		newContext.setQuantified(true);
+		newContext.setEquivalenceCount(context.getEquivalenceCount());
+		newContext.setForall(context.isPositive()?isForall:!isForall);
 	}
 
+	@Override
+	void setClauseContextProperties(AbstractContext context, ClauseContext newContext) {
+		setContextProperties(context, newContext);
+		
+		newContext.setStartOffset(startOffset);
+		newContext.setEndOffset(endOffset);
+	}
+	
 }

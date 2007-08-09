@@ -5,6 +5,8 @@ import org.eventb.internal.pp.core.search.ResetIterator;
 
 public interface IObservable {
 
+	// TODO delete this class
+	
 	public void addChangeListener(IChangeListener listener);
 	
 	// TODO remove this from interface

@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core.provers.casesplit;
 
 import java.util.ArrayList;
@@ -24,7 +32,7 @@ public class CaseSplitter implements IProver {
 	/**
 	 * Debug flag for <code>PROVER_CASESPLIT_TRACE</code>
 	 */
-	public static boolean DEBUG;
+	public static boolean DEBUG = false;
 	public static void debug(String message){
 			String prefix = "";
 //			for (int i = 0; i < currentLevel.getHeight(); i++) {

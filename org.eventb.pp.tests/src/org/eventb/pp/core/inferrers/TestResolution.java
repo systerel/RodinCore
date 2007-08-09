@@ -476,8 +476,8 @@ public class TestResolution extends AbstractInferrerTests {
 	}
 
 	public void doTest(Clause nonUnit, Clause unit, Clause... result) {
-		nonUnit.checkIsBlockedOnInstantiationsAndUnblock();
-		unit.checkIsBlockedOnInstantiationsAndUnblock();
+//		nonUnit.checkIsBlockedOnInstantiationsAndUnblock();
+//		unit.checkIsBlockedOnInstantiationsAndUnblock();
 		
 		IVariableContext context = new VariableContext();
 		ResolutionInferrer inferrer = new ResolutionInferrer(context);

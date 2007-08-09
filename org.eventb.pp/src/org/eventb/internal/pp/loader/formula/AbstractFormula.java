@@ -11,16 +11,9 @@ package org.eventb.internal.pp.loader.formula;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.elements.AtomicPredicateLiteral;
-import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
 import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.core.elements.PredicateDescriptor;
-import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
-import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.clause.LabelManager;
-import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
@@ -51,58 +44,24 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> {
 		return terms;
 	}
 	
-	abstract boolean getContextAndSetLabels(LabelVisitor context, LabelManager manager);
+	abstract boolean getContextAndSetLabels(LabelContext context, LabelManager manager);
 	
-	final Literal<?, ?> getLiteral(int index, List<TermSignature> terms,
-			TermVisitorContext context, VariableTable table) {
-		List<TermSignature> newList = descriptor.getSimplifiedList(terms);
-		if (ClauseBuilder.DEBUG)
-			ClauseBuilder.debug("Simplified term list for " + this + " is: " + newList);
-		Literal<?, ?> result;
-		if (newList.size() == 0) {
-			result = new AtomicPredicateLiteral(new PredicateDescriptor(index, 
-					context.isPositive));
-		} else {
-			List<Term> newTerms = getTermsFromTermSignature(newList, context, table);
-			result = new ComplexPredicateLiteral(new PredicateDescriptor(index, 
-					context.isPositive), getSimpleTermsFromTerms(newTerms));
-		}
-		if (ClauseBuilder.DEBUG)
-			ClauseBuilder.debug("Creating literal from " + this + ": " + result);
-		return result;
-	}
+	abstract ClauseResult getClauses(List<TermSignature> termList, LabelManager manager, ClauseResult prefix, ClauseContext context);
 
-	final List<SimpleTerm> getSimpleTermsFromTerms(List<Term> terms) {
-		// TODO find how to remove this ugly code
-		List<SimpleTerm> result = new ArrayList<SimpleTerm>();
-		for (Term term : terms) {
-			result.add((SimpleTerm) term);
-		}
-		return result;
-	}
+	abstract Literal<?, ?> getLabelPredicate(List<TermSignature> terms, ClauseContext context);
 
-	final List<Term> getTermsFromTermSignature(
-			List<TermSignature> termList, TermVisitorContext context,
-			VariableTable table) {
+	abstract void split();
+	
+	
+	static final List<Term> getTermsFromTermSignature(List<TermSignature> termList, ClauseContext context) {
 		// transform the terms
 		List<Term> terms = new ArrayList<Term>();
 		for (TermSignature term : termList) {
-			terms.add(term.getTerm(table, context));
+			terms.add(term.getTerm(context));
 		}
 		return terms;
 	}
-
-	abstract List<List<Literal<?, ?>>> getClauses(
-			List<TermSignature> termList, LabelManager manager,
-			List<List<Literal<?, ?>>> prefix, TermVisitorContext flags,
-			VariableTable table, BooleanEqualityTable bool);
-
-	abstract Literal<?, ?> getLiteral(List<TermSignature> terms,
-			TermVisitorContext flags, VariableTable table /* , context */,
-			BooleanEqualityTable bool);
-
-	abstract void split();
-
+	
 	/**
 	 * Returns the string representation of the dependencies of this signature.
 	 * Used by the {@link Object#toString()} method.

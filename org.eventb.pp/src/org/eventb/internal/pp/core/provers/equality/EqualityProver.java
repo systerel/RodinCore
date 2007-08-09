@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core.provers.equality;
 
 import java.util.ArrayList;
@@ -32,7 +40,7 @@ public class EqualityProver implements IProver {
 	/**
 	 * Debug flag for <code>PROVER_EQUALITY_TRACE</code>
 	 */
-	public static boolean DEBUG;
+	public static boolean DEBUG = false;
 	public static void debug(String message){
 		if (DEBUG)
 			System.out.println(message);
@@ -189,14 +197,14 @@ public class EqualityProver implements IProver {
 	private void handleFactResult(IFactResult result,
 			Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
 		if (result == null) return;
-		if (!result.hasContradiction()) {
-			if (result.getSolvedQueries() != null) handleQueryResult(result.getSolvedQueries(), generatedClauses, subsumedClauses);
-			if (result.getSolvedInstantiations() != null) handleInstantiationResult(result.getSolvedInstantiations(), equalityInstantiations);
-		}
-		else {
+		if (result.hasContradiction()) {
 			List<Clause> contradictionOrigin = result.getContradictionOrigin();
 			IOrigin origin = new ClauseOrigin(contradictionOrigin);
 			generatedClauses.add(new FalseClause(origin));
+		}
+		else {
+			if (result.getSolvedQueries() != null) handleQueryResult(result.getSolvedQueries(), generatedClauses, subsumedClauses);
+			if (result.getSolvedInstantiations() != null) handleInstantiationResult(result.getSolvedInstantiations(), equalityInstantiations);
 		}
 	}
 	

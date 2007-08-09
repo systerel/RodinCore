@@ -13,8 +13,7 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.elements.terms.Expn;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.loader.clause.VariableTable;
-import org.eventb.internal.pp.loader.formula.TermVisitorContext;
+import org.eventb.internal.pp.loader.formula.ClauseContext;
 
 /**
  * This class represents a signature for the ^ operation.
@@ -82,7 +81,7 @@ public class ExpnSignature extends BinaryTermSignature {
 	}
 	
 	@Override
-	public Term getTerm(VariableTable table, TermVisitorContext context) {
-		return new Expn(super.getTermHelper(table, context));
+	public Term getTerm(ClauseContext context) {
+		return new Expn(super.getTermHelper(context));
 	}
 }

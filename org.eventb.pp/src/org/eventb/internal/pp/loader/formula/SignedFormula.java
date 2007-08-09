@@ -8,10 +8,9 @@
 
 package org.eventb.internal.pp.loader.formula;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.LabelManager;
 import org.eventb.internal.pp.loader.clause.VariableTable;
@@ -56,16 +55,12 @@ public class SignedFormula<T extends LiteralDescriptor> {
 		return isPositive;
 	}
 
-	List<List<Literal<?, ?>>> getClauses(List<TermSignature> termList,
-			LabelManager manager, List<List<Literal<?, ?>>> prefix,
-			VariableTable table, TermVisitorContext flags,
-			BooleanEqualityTable bool) {
-		if (!isPositive)
-			flags.isPositive = !flags.isPositive;
-		List<List<Literal<?, ?>>> result = child.getClauses(termList, manager,
-				prefix, flags, table, bool);
-		if (!isPositive)
-			flags.isPositive = !flags.isPositive;
+	ClauseResult getClauses(List<TermSignature> termList,
+			LabelManager manager, ClauseResult prefix,
+			ClauseContext context) {
+		if (!isPositive) context.setPositive(!context.isPositive());
+		ClauseResult result = child.getClauses(termList, manager, prefix, context);
+		if (!isPositive) context.setPositive(!context.isPositive());
 		return result;
 	}
 
@@ -86,23 +81,20 @@ public class SignedFormula<T extends LiteralDescriptor> {
 	}
 
 	public ClauseResult getFinalClauses(LabelManager manager, BooleanEqualityTable bool,
-			VariableTable table) {
+			VariableTable table, PredicateTable predicateTable) {
 		// 1 we first split the formula
 		child.split();
 		// 2 we then set the labels
-		LabelVisitor visitor = new LabelVisitor();
-		visitor.isPositive = isPositive;
-		boolean isEquivalence = child.getContextAndSetLabels(visitor, manager);
-		
+		LabelContext visitor = new LabelContext();
+		boolean isEquivalence = getContextAndSetLabels(visitor, manager);
 		// 3 we get the literals
-		TermVisitorContext flags = new TermVisitorContext(isEquivalence);
-		List<List<Literal<?, ?>>> literalLists = new ArrayList<List<Literal<?, ?>>>();
-		literalLists.add(new ArrayList<Literal<?, ?>>());
-		List<List<Literal<?, ?>>> result = getClauses(child.getTerms(), manager, literalLists, table, flags, bool);
-		
-		return new ClauseResult(isEquivalence, result);
+		ClauseContext flags = new ClauseContext(table,bool,predicateTable);
+		if (isEquivalence) flags.incrementEquivalenceCount();
+		ClauseResult result = getClauses(child.getTerms(), manager, new ClauseResult(), flags);
+		result.setEquivalence(isEquivalence);
+		return result;
 	}
-
+	
 	void split() {
 		child.split();
 	}
@@ -112,9 +104,9 @@ public class SignedFormula<T extends LiteralDescriptor> {
 		return (isPositive ? "" : "not ") + child.toString();
 	}
 
-	boolean getContextAndSetLabels(LabelVisitor context, LabelManager manager) {
+	boolean getContextAndSetLabels(LabelContext context, LabelManager manager) {
 		if (!isPositive) {
-			context.isPositive = !context.isPositive;
+			context.setPositive(!context.isPositive());
 		}
 		return child.getContextAndSetLabels(context, manager);
 	}

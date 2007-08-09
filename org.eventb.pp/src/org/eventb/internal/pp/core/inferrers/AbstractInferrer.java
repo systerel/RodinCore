@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core.inferrers;
 
 import java.util.ArrayList;
@@ -16,10 +24,10 @@ import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 
 public abstract class AbstractInferrer implements IInferrer {
 
-	protected List<EqualityLiteral> equalities;
-	protected List<PredicateLiteral> predicates;
-	protected List<ArithmeticLiteral> arithmetic;
-	protected List<EqualityLiteral> conditions;
+	protected List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
+	protected List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
+	protected List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
+	protected List<EqualityLiteral> conditions = new ArrayList<EqualityLiteral>();
 	
 	protected IVariableContext context;
 	
@@ -30,17 +38,17 @@ public abstract class AbstractInferrer implements IInferrer {
 	}
 	
 	protected void init(Clause clause, HashMap<SimpleTerm, SimpleTerm> map) {
-		equalities = clause.getEqualityLiterals();
-		predicates = clause.getPredicateLiterals();
-		arithmetic = clause.getArithmeticLiterals();
-		conditions = clause.getConditions();
+		equalities.addAll(clause.getEqualityLiterals());
+		predicates.addAll(clause.getPredicateLiterals());
+		arithmetic.addAll(clause.getArithmeticLiterals());
+		conditions.addAll(clause.getConditions());
 		
 		initialize(clause);
 		
-		equalities = getListCopy(equalities,map,context);
-		predicates = getListCopy(predicates,map,context);
-		arithmetic = getListCopy(arithmetic,map,context);
-		conditions = getListCopy(conditions,map,context);
+		getListCopy(equalities,map,context);
+		getListCopy(predicates,map,context);
+		getListCopy(arithmetic,map,context);
+		getListCopy(conditions,map,context);
 	}
 	
 	protected void init(DisjunctiveClause clause) {
@@ -53,18 +61,24 @@ public abstract class AbstractInferrer implements IInferrer {
 		init(clause,substitutionsMap);
 	}
 	
-	protected <T extends Literal<?,?>> List<T> getListCopy(List<T> list,
+	protected <T extends Literal<?,?>> void getListCopy(List<T> list,
 			HashMap<SimpleTerm, SimpleTerm> substitutionsMap, IVariableContext context) {
 		List<T> result = new ArrayList<T>();
 		for (T pred : list) {
 			result.add((T)pred.getCopyWithNewVariables(context, substitutionsMap));
 		}
-		return result;
+		list.clear();
+		list.addAll(result);
 	}
 	
 	protected abstract void initialize(Clause clause) throws IllegalStateException;
 	
-	protected abstract void reset();
+	protected void reset() {
+		equalities.clear();
+		predicates.clear();
+		arithmetic.clear();
+		conditions.clear();
+	}
 
 	protected abstract void inferFromDisjunctiveClauseHelper(Clause clause);
 

@@ -12,8 +12,7 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.loader.clause.VariableTable;
-import org.eventb.internal.pp.loader.formula.TermVisitorContext;
+import org.eventb.internal.pp.loader.formula.ClauseContext;
 
 public class VariableHolder extends TermSignature {
 
@@ -73,7 +72,7 @@ public class VariableHolder extends TermSignature {
 
 	
 	@Override
-	public Term getTerm(VariableTable table, TermVisitorContext context) {
+	public Term getTerm(ClauseContext context) {
 		assert false;
 		return null;
 	}

@@ -70,7 +70,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	/**
 	 * Debug flag for <code>LOADER_PHASE1_TRACE</code>
 	 */
-	public static boolean DEBUG;
+	public static boolean DEBUG = false;
 	
 	public static void debug(String message){
 		System.out.println(message);

@@ -13,8 +13,7 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.elements.terms.Mod;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.loader.clause.VariableTable;
-import org.eventb.internal.pp.loader.formula.TermVisitorContext;
+import org.eventb.internal.pp.loader.formula.ClauseContext;
 
 public class ModSignature extends BinaryTermSignature {
 
@@ -76,7 +75,7 @@ public class ModSignature extends BinaryTermSignature {
 	}
 	
 	@Override
-	public Term getTerm(VariableTable table, TermVisitorContext context) {
-		return new Mod(super.getTermHelper(table, context));
+	public Term getTerm(ClauseContext context) {
+		return new Mod(super.getTermHelper(context));
 	}
 }

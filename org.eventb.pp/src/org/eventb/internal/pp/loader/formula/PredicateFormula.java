@@ -11,8 +11,6 @@ package org.eventb.internal.pp.loader.formula;
 import java.util.List;
 
 import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
-import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
@@ -23,11 +21,17 @@ public class PredicateFormula extends AbstractSingleFormula<PredicateDescriptor>
 	}
 	 
 	@Override
-	Literal<?,?> getLiteral(List<TermSignature> terms, TermVisitorContext context, VariableTable table, BooleanEqualityTable bool) {
-		Literal<?,?> result = getLiteral(descriptor.getIndex(), terms, context, table);
-        return result;
+	Literal<?, ?> getLabelPredicate(List<TermSignature> terms, ClauseContext context) {
+		List<TermSignature> newList = descriptor.getSimplifiedList(terms);
+		if (	terms.size() == newList.size()
+				&& newList.size() > 0
+				&& !context.getPredicateTable().hasPredicateForSort(descriptor.getSort())) {
+			context.getPredicateTable().addCompletePredicate(descriptor.getSort(), descriptor.getIndex());
+		}
+			
+		return AbstractLabelizableFormula.getLabelPredicateHelper(descriptor, newList, context);
 	}
-
+	
 	@Override
 	void split() {
 		return;

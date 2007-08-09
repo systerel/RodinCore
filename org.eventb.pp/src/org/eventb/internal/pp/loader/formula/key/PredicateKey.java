@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.loader.formula.key;
 
 import org.eventb.internal.pp.core.elements.Sort;
@@ -34,6 +42,6 @@ public class PredicateKey extends SymbolKey<PredicateDescriptor> {
 
 	@Override
 	public PredicateDescriptor newDescriptor(IContext context) {
-		return new PredicateDescriptor(context, context.getNextLiteralIdentifier());
+		return new PredicateDescriptor(context, context.getNextLiteralIdentifier(), sort);
 	}
 }

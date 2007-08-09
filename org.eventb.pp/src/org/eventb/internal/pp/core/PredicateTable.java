@@ -6,24 +6,30 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.internal.pp.loader.formula.terms;
+package org.eventb.internal.pp.core;
+
+import java.util.HashMap;
 
 import org.eventb.internal.pp.core.elements.Sort;
 
-public class TrueConstantSignature extends ConstantSignature {
+public class PredicateTable {
 
-	public TrueConstantSignature(Sort sort) {
-		super("TRUE", sort);
+	private HashMap<Sort, Integer> map = new HashMap<Sort, Integer>();
+	
+	public PredicateTable() {
+		// nothing for now
 	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) return true;
-		if (obj instanceof TrueConstantSignature) {
-			TrueConstantSignature temp = (TrueConstantSignature) obj;
-			return super.equals(temp);
-		}
-		return false;
+	public void addCompletePredicate(Sort sort, Integer index) {
+		map.put(sort, index);
 	}
 
+	public boolean hasPredicateForSort(Sort sort) {
+		return map.containsKey(sort);
+	}
+	
+	public int getIndexForSort(Sort sort) {
+		return map.get(sort);
+	}
+	
 }

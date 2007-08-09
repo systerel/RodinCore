@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core.inferrers;
 
 import java.util.ArrayList;
@@ -121,9 +129,19 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 		splitLeftCase();
 		left.add(EquivalenceClause.newClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic,new ArrayList<EqualityLiteral>(),context));
 		HashMap<SimpleTerm, SimpleTerm> map = new HashMap<SimpleTerm, SimpleTerm>();
-		List<PredicateLiteral> predicates = getListCopy(this.predicates, map, context);	
-		List<EqualityLiteral> equalities = getListCopy(this.equalities, map, context);
-		List<ArithmeticLiteral> arithmetic = getListCopy(this.arithmetic, map, context);
+		
+		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
+		predicates.addAll(this.predicates);
+		getListCopy(predicates, map, context);
+		
+		List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
+		equalities.addAll(this.equalities);
+		getListCopy(equalities, map, context);
+		
+		List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
+		arithmetic.addAll(this.arithmetic);
+		getListCopy(arithmetic, map, context);
+		
 		left.add(EquivalenceClause.newClause(getOrigin(clause, parent.getLeftBranch()), predicates, equalities, arithmetic, new ArrayList<EqualityLiteral>(), context));
 		
 		// right case
@@ -140,18 +158,18 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 
 		left = new HashSet<Clause>();
 		right = new HashSet<Clause>();
-		leftArithmetic = new ArrayList<ArithmeticLiteral>();
-		leftEqualities = new ArrayList<EqualityLiteral>();
-		leftPredicates = new ArrayList<PredicateLiteral>();
-		rightArithmetic = new ArrayList<ArithmeticLiteral>();
-		rightEqualities = new ArrayList<EqualityLiteral>();
-		rightPredicates = new ArrayList<PredicateLiteral>();
+		leftArithmetic.clear();
+		leftEqualities.clear();
+		leftPredicates.clear();
+		rightArithmetic.clear();
+		rightEqualities.clear();
+		rightPredicates.clear();
 	}
 
 	@Override
 	protected void reset() {
 		parent = null;
-		
+		super.reset();
 	}
 
 	protected IOrigin getOrigin(Clause clause, Level level) {

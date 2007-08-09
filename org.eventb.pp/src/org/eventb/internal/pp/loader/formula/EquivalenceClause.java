@@ -1,13 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.loader.formula;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
-import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.clause.LabelManager;
-import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.EquivalenceClauseDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
@@ -20,14 +23,14 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 	}
 
 	@Override
-	List<List<Literal<?,?>>> getDefinitionClauses(List<TermSignature> termList,
-			LabelManager manager, List<List<Literal<?,?>>> prefix, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
-		List<List<Literal<?,?>>> result = new ArrayList<List<Literal<?,?>>>();
+	ClauseResult getDefinitionClauses(List<TermSignature> termList,
+			LabelManager manager, ClauseResult prefix, ClauseContext context) {
+		ClauseResult result;
 		int start = 0;
-		if (flags.isPositive) {
+		if (context.isPositive()) {
 			for (SignedFormula<?> child : children) {
 				List<TermSignature> subIndex = termList.subList(start, start + child.getIndexSize());
-				prefix = child.getClauses(subIndex, manager, prefix, table, flags, bool);
+				prefix = child.getClauses(subIndex, manager, prefix, context);
 				start += child.getIndexSize();
 			}
 			result = prefix;
@@ -35,63 +38,79 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 		else {
 			boolean first = true;
 			for (SignedFormula<?> child : children) {
-				if (!first) flags.isPositive = true;
+				if (!first) context.setPositive(true);
 				List<TermSignature> subIndex = termList.subList(start, start + child.getIndexSize());
-				prefix = child.getClauses(subIndex, manager, prefix, table, flags, bool);
+				prefix = child.getClauses(subIndex, manager, prefix, context);
 				start += child.getIndexSize();
 				first = false;
 			}
-			flags.isPositive = false;
+			context.setPositive(false);
 			result = prefix;
 		}
 		return result;
 	}
 
 	@Override
-	public ClauseResult getFinalClauses(LabelManager manager, BooleanEqualityTable bool, VariableTable table, boolean positive, boolean equivalence) {
-		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("----------------");
-		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Equivalence definition:");
-		return getFinalClausesHelper(manager, true, true, equivalence, bool, table);
+	boolean isEquivalence() {
+		return true;
 	}
 	
 	@Override
 	EquivalenceClauseDescriptor getNewDescriptor(List<IIntermediateResult> result, int index) {
 		return new EquivalenceClauseDescriptor(descriptor.getContext(), result, index);
 	}
-
 	
-	private boolean isLabelizable(LabelVisitor context) {
-		if (context.isQuantified) {
-			if (context.isPositiveLabel || context.isNegativeLabel) return true;
-			else if (context.equivalenceCount > 0) return true;
-			else if (!context.isForall) return true;
+	private boolean isLabelizable(LabelContext context) {
+		if (context.isQuantified()) {
+			if (context.isPositiveLabel() || context.isNegativeLabel()) return true;
+			else if (context.getEquivalenceCount() > 0) return true;
+			else if (!context.isForall()) return true;
 		}
-		if (context.isDisjunction) return true;
+		if (context.isDisjunction()) return true;
 		return false;
 	}
 
-	@Override
-	boolean getContextAndSetLabels(LabelVisitor context, LabelManager manager) {
-		LabelVisitor newContext = new LabelVisitor();
-		if (isLabelizable(context)) {
-			manager.addEquivalenceLabel(this);
-
-			// this becomes a label
-			// we construct labels below
-			newContext.isNegativeLabel = true;
-			newContext.isPositiveLabel = true;
-		}
-		newContext.equivalenceCount++;
-		newContext.isQuantified = false;
+	private void addLabels(LabelManager manager, AbstractContext context) {
+		manager.addLabel(this,true);
+	}
+	
+	private void setFlagsForLabels(AbstractContext context, LabelContext newContext) {
+		newContext.setNegativeLabel(true);
+		newContext.setPositiveLabel(true);
+	}
+	
+	private boolean getChildContextAndSetLabels(LabelContext context, LabelManager manager) {
 		// we continue
 		boolean first = true;
 		for (SignedFormula<?> child : children) {
-			if (first && !context.isPositive) newContext.isPositive = false;
-			else newContext.isPositive = true;
-			child.getContextAndSetLabels(newContext, manager);
+			if (first && !context.isPositive()) context.setPositive(false);
+			else context.setPositive(true);
+			child.getContextAndSetLabels(context, manager);
 			first = false;
 		}
 		return true;
+	}
+	
+	@Override
+	boolean getContextAndSetLabels(LabelContext context, LabelManager manager) {
+		LabelContext newContext = new LabelContext();
+		if (isLabelizable(context)) {
+			addLabels(manager, context);
+			setFlagsForLabels(context, newContext);
+		}
+		setContextProperties(context, newContext);
+		return getChildContextAndSetLabels(newContext, manager);
+	}
+	
+	@Override
+	void setContextProperties(AbstractContext context, AbstractContext newContext) {
+		newContext.setEquivalenceCount(context.getEquivalenceCount());
+		newContext.setForall(context.isForall());
+		newContext.setPositive(context.isPositive());
+		newContext.setDisjunction(context.isDisjunction());
+		newContext.setQuantified(false);
+		
+		newContext.incrementEquivalenceCount();
 	}
 	
 }

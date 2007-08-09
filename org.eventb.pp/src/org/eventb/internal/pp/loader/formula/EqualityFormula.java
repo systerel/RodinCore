@@ -15,9 +15,7 @@ import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
-import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.EqualityDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
@@ -41,14 +39,13 @@ public class EqualityFormula extends AbstractSingleFormula<EqualityDescriptor> {
 	}
 
 	@Override
-	Literal<?,?> getLiteral(List<TermSignature> termList, TermVisitorContext flags, VariableTable table, BooleanEqualityTable bool) {
+	Literal<?,?> getLabelPredicate(List<TermSignature> termList, ClauseContext context) {
 		assert termList.size() == 2;
-		// TODO check those casts - eventually issue an exception
-		List<Term> terms = getTermsFromTermSignature(termList, flags, table);
+		List<Term> terms = getTermsFromTermSignature(termList, context);
 		SimpleTerm term1 = (SimpleTerm)terms.get(0);
 		SimpleTerm term2 = (SimpleTerm)terms.get(1);
 		
-		Literal<?,?> result = new EqualityLiteral(term1,term2,flags.isPositive);
+		Literal<?,?> result = new EqualityLiteral(term1,term2,context.isPositive());
 		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Creating literal from "+this+": "+result);
 		return result;
 	}

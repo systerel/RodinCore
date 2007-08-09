@@ -11,7 +11,8 @@ import org.eventb.internal.pp.core.search.IterableHashSet;
 import org.eventb.internal.pp.core.search.ResetIterator;
 
 public class DataStructureWrapper implements IObservable, Iterable<Clause> {
-
+	// TODO delete this class
+	
 	private IterableHashSet<Clause> clauses;
 	private ResetIterator<Clause> clausesIterator;
 	

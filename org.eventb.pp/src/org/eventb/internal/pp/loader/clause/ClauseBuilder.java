@@ -12,13 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
+import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
 import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
-import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Constant;
@@ -43,8 +42,7 @@ import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
  * is the context filled in by the {@link PredicateBuilder}, which handles the
  * first part of the loading process.
  * 
- * At the end of this phase, no simplifications have been applied. It means
- * that, for instance.
+ * At the end of this phase, no simplifications have been applied.
  *
  * @author François Terrier
  *
@@ -54,7 +52,7 @@ public class ClauseBuilder {
 	/**
 	 * Debug flag for <code>LOADER_PHASE2_TRACE</code>
 	 */
-	public static boolean DEBUG;
+	public static boolean DEBUG = false;
 	
 	public static void debug(String message){
 		System.out.println(prefix+message);
@@ -72,9 +70,8 @@ public class ClauseBuilder {
 	private List<Clause> clauses;
 	private VariableContext variableContext;
 	
-	private ClauseFactory cf = ClauseFactory.getDefault();
-	
 	private BooleanEqualityTable bool;
+	private PredicateTable predicateTable;
 	private LabelManager manager;
 	
 	private VariableTable variableTable;
@@ -93,6 +90,7 @@ public class ClauseBuilder {
 		
 		variableContext = new VariableContext();
 		variableTable = new VariableTable(variableContext);
+		predicateTable = new PredicateTable();
 		bool = new BooleanEqualityTable(context.getNextLiteralIdentifier());
 
 		clauses = new ArrayList<Clause>();
@@ -101,15 +99,9 @@ public class ClauseBuilder {
 		for (INormalizedFormula signature : context.getResults()) {
 			if (DEBUG) debug("========================================");
 			if (DEBUG) debug("Getting clauses for original formula: " + signature);
-//			manager.setForceLabelize(false);
 			buildNormalizedFormulas(signature);
 		}
-		
 		getDefinitions();
-
-		// get type informations
-//		buildPredicateTypeInformation(context.getAllPredicateDescriptors());
-		
 		if (DEBUG) debug("========================================");
 		if (DEBUG) debug("End of loading phase, clauses:");
 		for (Clause clause : clauses) {
@@ -123,27 +115,18 @@ public class ClauseBuilder {
 		while (formula != null) {
 			if (DEBUG) debug("========================================");
 			if (DEBUG) debug("Getting definition clauses for label: " + formula + ": " + formula.getStringDeps());
-//			manager.setForceLabelize(false);
 			
-			if (manager.isNextEquivalence()) {
-				getClause(formula.getFinalClauses(manager, bool, variableTable, false, true), new DefinitionOrigin());
-			}
-			else if (manager.isNextPositive()) {
-				getClause(formula.getFinalClauses(manager, bool, variableTable, false, false), new DefinitionOrigin());
+			ClauseResult result;
+			if (manager.isNextPositive()) {
+				result = formula.getFinalClauses(manager, bool, variableTable, predicateTable, true);
 			}
 			else {
-				getClause(formula.getFinalClauses(manager, bool, variableTable, true, false), new DefinitionOrigin());
+				result = formula.getFinalClauses(manager, bool, variableTable, predicateTable, false);
 			}
+			clauses.addAll(result.getClauses(new DefinitionOrigin(), variableContext));
 			
 			manager.nextLabelizableFormula();
 			formula = manager.getNextFormula();
-		}
-	}
-	
-	private void getClause(ClauseResult result, IOrigin origin) {
-		for (List<Literal<?,?>> literalList : result.getLiteralLists()) {
-			if (result.isEquivalence() && literalList.size() > 1) clauses.add(cf.newEqClauseWithCopy(origin, literalList, variableContext));
-			else clauses.add(cf.newDisjClauseWithCopy(origin, literalList, variableContext));
 		}
 	}
 	
@@ -168,7 +151,9 @@ public class ClauseBuilder {
 	 */
 	private void buildNormalizedFormulas(INormalizedFormula result) {
 		SignedFormula<?> sig = result.getSignature();
-		getClause(sig.getFinalClauses(manager, bool, variableTable), new PredicateOrigin(result.getOriginalPredicate(),result.isGoal()));
+		ClauseResult clauseResult = sig.getFinalClauses(manager, bool, variableTable, predicateTable);
+		IOrigin origin = new PredicateOrigin(result.getOriginalPredicate(),result.isGoal());
+		clauses.addAll(clauseResult.getClauses(origin,variableContext));
 	}
 	
 	@SuppressWarnings("unused")
@@ -203,4 +188,7 @@ public class ClauseBuilder {
 		return variableContext;
 	}
 	
+	public PredicateTable getPredicateTable() {
+		return predicateTable;
+	}
 }

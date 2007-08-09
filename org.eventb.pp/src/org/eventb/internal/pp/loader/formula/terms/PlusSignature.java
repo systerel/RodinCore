@@ -13,8 +13,7 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.elements.terms.Plus;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.loader.clause.VariableTable;
-import org.eventb.internal.pp.loader.formula.TermVisitorContext;
+import org.eventb.internal.pp.loader.formula.ClauseContext;
 
 public class PlusSignature extends AssociativeTermSignature {
 
@@ -71,8 +70,8 @@ public class PlusSignature extends AssociativeTermSignature {
 	}
 	
 	@Override
-	public Term getTerm(VariableTable table, TermVisitorContext context) {
-		return new Plus(super.getTermHelper(table, context));
+	public Term getTerm(ClauseContext context) {
+		return new Plus(super.getTermHelper(context));
 	}
 	
 }

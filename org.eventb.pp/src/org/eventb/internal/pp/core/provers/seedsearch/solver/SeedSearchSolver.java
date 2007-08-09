@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core.provers.seedsearch.solver;
 
 import java.util.ArrayList;
@@ -91,10 +99,7 @@ public class SeedSearchSolver {
 	private void deleteInstantiable(Instantiable instantiable, LiteralSignature signature, VariableLink link) {
 		LiteralSignature matchingSignature = signature.getMatchingLiteral();
 		InstantiableContainer container = matchingSignature.getInstantiableContainer(instantiable);
-		if (container == null) {
-			// we are done
-		}
-		else {
+		if (container != null) {
 			if (link == null) assert !container.isTransmitted();
 			if (link != null && !container.hasTransmitorLink(link)) return; //we are done
 			if (link != null && container.hasTransmitorLink(link)) {

@@ -13,8 +13,7 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.elements.terms.Divide;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.loader.clause.VariableTable;
-import org.eventb.internal.pp.loader.formula.TermVisitorContext;
+import org.eventb.internal.pp.loader.formula.ClauseContext;
 
 
 /**
@@ -84,8 +83,8 @@ public class DivideSignature extends BinaryTermSignature {
 	}
 
 	@Override
-	public Term getTerm(VariableTable table, TermVisitorContext context) {
-		return new Divide(super.getTermHelper(table, context));
+	public Term getTerm(ClauseContext context) {
+		return new Divide(super.getTermHelper(context));
 	}
 
 }

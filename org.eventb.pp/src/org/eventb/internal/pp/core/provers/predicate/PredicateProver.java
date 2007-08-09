@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core.provers.predicate;
 
 
@@ -24,7 +32,7 @@ public class PredicateProver implements IProver {
 	/**
 	 * Debug flag for <code>PROVER_CASESPLIT_TRACE</code>
 	 */
-	public static boolean DEBUG;
+	public static boolean DEBUG = false;
 	public static void debug(String message){
 		System.out.println(message);
 	}
@@ -63,12 +71,6 @@ public class PredicateProver implements IProver {
 		this.simplifier = simplifier;
 	}
 	
-//	private Clause blockedClause = null;
-	
-//	public boolean isBlocked() {
-//		return blockedClause != null;
-//	}
-	
 	private int counter = 0;
 	private boolean isNextAvailable() {
 		if (counter > 0) {
@@ -85,41 +87,29 @@ public class PredicateProver implements IProver {
 		// TODO refactor this 
 		
 		if (simplifier == null) throw new IllegalStateException();
-		
+
 		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT; 
-		
+
 		ProverResult result = null;
-//		if (isBlocked()) {
-//			if (DEBUG) debug("Unblocking clause: "+blockedClause);
-//			result = new ProverResult(blockedClause);
-//			blockedClause = null;
-//		}
-//		else {
-			if (!nonUnitResolver.isInitialized()) {
-				Clause unit = nextUnit();
-				if (unit == null) return ProverResult.EMPTY_RESULT;
-				nonUnitResolver.initialize(unit);
-			}
-			InferrenceResult nextClause = nonUnitResolver.next(force);
-			while (nextClause == null) {
-				Clause unit = nextUnit();
-				if (unit == null) return ProverResult.EMPTY_RESULT;
-				else newClause(unit, unitResolver);
-				nonUnitResolver.initialize(unit);
-				nextClause = nonUnitResolver.next(force);
-			}
-			if (nextClause != null) {
-				if (nextClause.isBlocked()) return ProverResult.EMPTY_RESULT;
-				
-				Clause clause = nextClause.getClause();
-				clause = simplifier.run(clause);
-//				if (clause.isFalse()) {
-//					result = new ProverResult(clause.getOrigin());
-//				}
-//				else if (clause.checkIsBlockedOnInstantiationsAndUnblock()) blockedClause = clause;
-				result = new ProverResult(clause, nextClause.getSubsumedClauses());
-			}
-//		}
+		if (!nonUnitResolver.isInitialized()) {
+			Clause unit = nextUnit();
+			if (unit == null) return ProverResult.EMPTY_RESULT;
+			nonUnitResolver.initialize(unit);
+		}
+		InferrenceResult nextClause = nonUnitResolver.next(force);
+		while (nextClause == null) {
+			Clause unit = nextUnit();
+			if (unit == null) return ProverResult.EMPTY_RESULT;
+			else newClause(unit, unitResolver);
+			nonUnitResolver.initialize(unit);
+			nextClause = nonUnitResolver.next(force);
+		}
+		if (nextClause != null) {
+			Clause clause = nextClause.getClause();
+			clause = simplifier.run(clause);
+
+			result = new ProverResult(clause, nextClause.getSubsumedClauses());
+		}
 		if (DEBUG) debug("PredicateProver, next clause: "+result);
 		return result;
 	}
@@ -136,19 +126,11 @@ public class PredicateProver implements IProver {
 		resolver.initialize(clause);
 		InferrenceResult result = resolver.next(true);
 		while (result != null) {
-			assert !result.isBlocked();
-			
 			subsumedClauses.addAll(result.getSubsumedClauses());
 			
 			Clause inferredClause = result.getClause();
 			inferredClause = simplifier.run(inferredClause);
-//			if (inferredClause.isFalse()) {
-//				// we can stop here because all subsequent clauses will be lost
-//				return new ProverResult(inferredClause.getOrigin(), subsumedClauses);
-//			}
-//			if (!inferredClause.isTrue()) {
-				generatedClauses.add(inferredClause);
-//			}
+			generatedClauses.add(inferredClause);
 			
 			result = resolver.next(true);
 		}
@@ -220,18 +202,7 @@ public class PredicateProver implements IProver {
 	}
 
 	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
-		// the blocked clauses are not in the search space of the main prover, so
-		// it is important to verify here that they can still exist
-//		if (blockedClause != null && newLevel.isAncestorOf(blockedClause.getLevel())) {
-//			blockedClause = null;
-//		}
-		
-//		// TODO check if necessary
-//		backtrackIterator.reset();
-//		while (backtrackIterator.hasNext()) {
-//			Clause clause = backtrackIterator.next();
-//			if (dispatcher.getLevel().isAncestorOf(clause.getLevel())) generatedClauses.remove(clause);
-//		}
+		// do nothing
 	}
 
 	public void registerDumper(Dumper dumper) {

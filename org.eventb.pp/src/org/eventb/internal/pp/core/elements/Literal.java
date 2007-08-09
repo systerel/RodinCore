@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.core.elements;
 
 import java.util.ArrayList;
@@ -61,7 +69,6 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 		}
 		for (Variable variable : variables) {
 			Variable copy = context.getNextVariable(variable.getSort());
-			copy.setInstantiationCount(variable.getInstantiationCount());
 			if (!substitutionsMap.containsKey(variable)) substitutionsMap.put(variable, copy);
 		}
 		for (LocalVariable variable : localVariables) {
@@ -129,12 +136,4 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 		return str.toString();
 	}
 	
-	
-	public boolean checkIsBlockedOnInstantiationsAndUnblock() {
-		boolean result = false;
-		for (Term term : terms) {
-			if (term.checkIfBlockedAndUnblock()) result = true;
-		}
-		return result;
-	}
 }

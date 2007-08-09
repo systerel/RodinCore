@@ -13,8 +13,7 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.UnaryMinus;
-import org.eventb.internal.pp.loader.clause.VariableTable;
-import org.eventb.internal.pp.loader.formula.TermVisitorContext;
+import org.eventb.internal.pp.loader.formula.ClauseContext;
 
 public class UnaryMinusSignature extends AssociativeTermSignature {
 
@@ -77,7 +76,7 @@ public class UnaryMinusSignature extends AssociativeTermSignature {
 	}
 
 	@Override
-	public Term getTerm(VariableTable table, TermVisitorContext context) {
-		return new UnaryMinus(super.getTermHelper(table, context));
+	public Term getTerm(ClauseContext context) {
+		return new UnaryMinus(super.getTermHelper(context));
 	}
 }

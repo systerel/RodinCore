@@ -447,21 +447,21 @@ public class Util {
 		return desc;
 	}
 //	
-	public static PredicateDescriptor P(IContext context, int index, IIntermediateResult... ir) {
-		PredicateDescriptor desc = new PredicateDescriptor(context, index);
-		for (IIntermediateResult list : ir) {
-			desc.addResult(list);
-		}
-		return desc;
-	}
-	
-	public static DisjunctiveClauseDescriptor L(IContext context, int index, List<String> literals, IIntermediateResult... ir) {
-		DisjunctiveClauseDescriptor desc = new DisjunctiveClauseDescriptor(context, index);
-		for (IIntermediateResult list : ir) {
-			desc.addResult(list);
-		}
-		return desc;
-	}
+//	public static PredicateDescriptor P(IContext context, int index, IIntermediateResult... ir) {
+//		PredicateDescriptor desc = new PredicateDescriptor(context, index);
+//		for (IIntermediateResult list : ir) {
+//			desc.addResult(list);
+//		}
+//		return desc;
+//	}
+//	
+//	public static DisjunctiveClauseDescriptor L(IContext context, int index, List<String> literals, IIntermediateResult... ir) {
+//		DisjunctiveClauseDescriptor desc = new DisjunctiveClauseDescriptor(context, index);
+//		for (IIntermediateResult list : ir) {
+//			desc.addResult(list);
+//		}
+//		return desc;
+//	}
 	
 	public static EqualityDescriptor E(IContext context, Sort sort, IIntermediateResult... ir) {
 		EqualityDescriptor desc = new EqualityDescriptor(context, sort);
