@@ -4,13 +4,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ICommentedElement;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
-public class CommentEditComposite extends DefaultAttributeEditor implements IAttributeEditor {
+public class CommentAttributeFactory implements IAttributeFactory {
 
-	@Override
-	public String getAttribute(IAttributedElement element,
+	public String getValue(IAttributedElement element,
 			IProgressMonitor monitor) {
 		assert element instanceof ICommentedElement;
 		final ICommentedElement cElement = (ICommentedElement) element;
@@ -22,35 +22,32 @@ public class CommentEditComposite extends DefaultAttributeEditor implements IAtt
 		}
 	}
 
-	@Override
-	public void setAttribute(IAttributedElement element, String newValue,
+	public void setValue(IAttributedElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof ICommentedElement;
 		final ICommentedElement cElement = (ICommentedElement) element;
 
-		String value = getAttribute(element, monitor);
+		String value = getValue(element, monitor);
 		if (!value.equals(newValue)) {
 			cElement.setComment(newValue, monitor);
 		}
 	}
 
-	@Override
-	public void setDefaultAttribute(IAttributedElement element,
+	public void setDefaultValue(IEventBEditor<?> editor, IAttributedElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		final ICommentedElement cElement = (ICommentedElement) element;
 		cElement.setComment("", new NullProgressMonitor());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeEditor#removeAttribute(org.rodinp.core.IAttributedElement,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
 	public void removeAttribute(IAttributedElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.COMMENT_ATTRIBUTE, monitor);
+	}
+
+	public String[] getPossibleValues(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		// Not applicable for Commented Element.
+		return null; 
 	}
 
 }

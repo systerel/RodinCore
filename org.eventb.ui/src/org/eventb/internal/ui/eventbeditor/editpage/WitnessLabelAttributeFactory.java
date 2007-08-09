@@ -1,11 +1,11 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-public class GuardLabelAttributeFactory extends LabelAttributeFactory implements
+public class WitnessLabelAttributeFactory extends LabelAttributeFactory implements
 		IAttributeFactory {
 
 	@Override
 	protected String getPrefix() {
-		return "grd";
+		return "wit";
 	}
 
 }

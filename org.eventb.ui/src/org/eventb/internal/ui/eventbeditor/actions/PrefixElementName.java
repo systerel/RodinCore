@@ -9,13 +9,12 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.EditSectionRegistry;
+import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 
-public abstract class PrefixElementName<T extends IInternalElement> implements IEditorActionDelegate {
+public abstract class PrefixElementName implements IEditorActionDelegate {
 
 	IEventBEditor<?> editor;
 
@@ -23,8 +22,9 @@ public abstract class PrefixElementName<T extends IInternalElement> implements I
 		editor = (IEventBEditor<?>) targetEditor;
 	}
 
-	public void setPrefix(IInternalElementType<T> type, String attributeID,
-			String dialogTitle, String message) {
+	public void setPrefix(String attributeID, String dialogTitle, String message) {
+		IInternalElementType<?> type = AttributeRelUISpecRegistry.getDefault()
+				.getType(attributeID);
 		QualifiedName qualifiedName = UIUtils.getQualifiedName(type);
 		IRodinFile inputFile = editor.getRodinInput();
 		String prefix = null;
@@ -36,7 +36,7 @@ public abstract class PrefixElementName<T extends IInternalElement> implements I
 		}
 
 		if (prefix == null)
-			prefix = EditSectionRegistry.getDefault().getDefaultPrefix(type,
+			prefix = AttributeRelUISpecRegistry.getDefault().getDefaultPrefix(
 					attributeID);
 		InputDialog dialog = new InputDialog(editor.getSite().getShell(),
 				dialogTitle, message, prefix, null);

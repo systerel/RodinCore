@@ -1,11 +1,12 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+
 public class InvariantLabelAttributeFactory extends
-		LabelAttributeFactory implements IAttributeFactory {
+		LabelAttributeFactory {
 
 	@Override
-	protected void setPrefix() {
-		defaultPrefix = "inv";
+	protected String getPrefix() {
+		return "inv";
 	}
 
 }

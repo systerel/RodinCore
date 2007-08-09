@@ -37,7 +37,7 @@ public class ButtonComposite {
 
 	public void createContents(FormToolkit toolkit, Composite parent, int level) {
 		composite = toolkit.createComposite(parent);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		if (EventBEditorUtils.DEBUG) {
 			composite.setBackground(composite.getDisplay().getSystemColor(
 					SWT.COLOR_CYAN));
@@ -125,11 +125,11 @@ public class ButtonComposite {
 	}
 
 	public void updateLinks() {
-		EditSectionRegistry editSectionRegistry = EditSectionRegistry
+		IElementRelUISpecRegistry registry = ElementRelUISpecRegistry
 				.getDefault();
 		IRodinElement element = elementComp.getElement();
 
-		if (editSectionRegistry.getChildrenTypes(element.getElementType()).length != 0) {
+		if (registry.getElementRelationships(element.getElementType()).size() != 0) {
 			foldingHyperlink.setVisible(true);
 		} else
 			foldingHyperlink.setVisible(false);

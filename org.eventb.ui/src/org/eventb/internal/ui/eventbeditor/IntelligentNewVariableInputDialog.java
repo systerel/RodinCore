@@ -34,7 +34,7 @@ import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixVarName;
+import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -191,9 +191,11 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		Text nameTextWidget = identifierText.getTextWidget();
 		String varName = "var";
 		try {
+			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+					.getDefaultPrefix("org.eventb.core.variableIdentifier");
 			varName = UIUtils.getFreeElementIdentifier(editor,
 					editor.getRodinInput(), IVariable.ELEMENT_TYPE,
-					PrefixVarName.DEFAULT_PREFIX);
+					defaultPrefix);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -311,9 +313,11 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		Text nameTextWidget = identifierText.getTextWidget();
 		String varName = "var";
 		try {
+			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+					.getDefaultPrefix("org.eventb.core.variableIdentifier");
 			varName = UIUtils.getFreeElementIdentifier(editor,
 					editor.getRodinInput(), IVariable.ELEMENT_TYPE,
-					PrefixVarName.DEFAULT_PREFIX);
+					defaultPrefix);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

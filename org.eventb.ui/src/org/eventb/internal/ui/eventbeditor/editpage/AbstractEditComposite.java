@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.swt.SWT;
@@ -11,27 +23,30 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
 
-public abstract class DefaultEditComposite implements IEditComposite {
+public abstract class AbstractEditComposite implements IEditComposite {
 
+	IEventBEditor<?> fEditor;
+	
 	ScrolledForm form;
 
 	IAttributedElement element;
 
 	Composite composite;
 	
-	String prefix;
-	
-	String postfix;
-
 	Label prefixLabel;
 	
 	Label postfixLabel;
-	
-	boolean fillHorizontal = false;
 
 	private FormToolkit toolkit;
+	
+	protected IAttributeUISpec uiSpec;
+	
+	public AbstractEditComposite(IAttributeUISpec uiSpec) {
+		this.uiSpec = uiSpec;
+	}
 	
 	public void setForm(ScrolledForm form) {
 		this.form = form;
@@ -46,29 +61,20 @@ public abstract class DefaultEditComposite implements IEditComposite {
 		internalPack();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setElement(org.rodinp.core.IRodinElement)
-	 */
 	public void setElement(IAttributedElement element) {
 		this.element = element;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#createComposite(org.eclipse.ui.forms.widgets.FormToolkit,
-	 *      org.eclipse.swt.widgets.Composite)
-	 */
-	public void createComposite(FormToolkit tk, Composite parent) {
+	public void createComposite(IEventBEditor<?> editor, FormToolkit tk, Composite parent) {
+		this.fEditor = editor;
 		this.toolkit = tk;
 		
+		String prefix = uiSpec.getPrefix();
 		if (prefix == null)
 			prefix = "";
 		prefixLabel = toolkit.createLabel(parent, prefix);
 		GridData gridData = new GridData();
-		gridData.verticalAlignment = SWT.TOP;
+		gridData.verticalAlignment = SWT.CENTER;
 		if (prefix == null)
 			gridData.widthHint = 0;
 		
@@ -78,16 +84,17 @@ public abstract class DefaultEditComposite implements IEditComposite {
 					SWT.COLOR_CYAN));
 
 		composite = toolkit.createComposite(parent);
-		gridData = new GridData(SWT.FILL, SWT.TOP, fillHorizontal, false);
+		
+		gridData = new GridData(SWT.FILL, SWT.CENTER, uiSpec.isFillHorizontal(), false);
 		gridData.minimumWidth = 200;
 		composite.setLayoutData(gridData);
 		composite.setLayout(new FillLayout());
 		
 		initialise();
-
+		String postfix = uiSpec.getPostfix();
 		postfixLabel = toolkit.createLabel(parent, " " + postfix + " ");
 		gridData = new GridData();
-		gridData.verticalAlignment = SWT.TOP;
+		gridData.verticalAlignment = SWT.CENTER;
 		if (postfix == null)
 			gridData.widthHint = 0;
 		postfixLabel.setLayoutData(gridData);
@@ -97,15 +104,6 @@ public abstract class DefaultEditComposite implements IEditComposite {
 	}
 
 	public abstract void initialise();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setFillHorizontal(boolean)
-	 */
-	public void setFillHorizontal(boolean fillHorizontal) {
-		this.fillHorizontal = fillHorizontal;
-	}
 
 	void internalPack() {
 		internalPack(composite);
@@ -154,14 +152,6 @@ public abstract class DefaultEditComposite implements IEditComposite {
 			((Composite) c).layout(true);
 			c.setBounds(bounds);
 		}
-	}
-
-	public void setPostfix(String postfix) {
-		this.postfix = postfix;
-	}
-
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
 	}
 
 }

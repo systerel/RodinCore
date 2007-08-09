@@ -12,24 +12,23 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.TimerStyledText;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
-public class TextEditComposite extends DefaultEditComposite {
-	
+public class TextEditComposite extends AbstractEditComposite {
+
 	protected StyledText text;
 	private Button undefinedButton;
 	protected int style = SWT.MULTI | SWT.BORDER;
 
-	IAttributeEditor attributeEditor;
-	
-	public TextEditComposite(IAttributeEditor attributeEditor) {
-		this.attributeEditor = attributeEditor;
+	public TextEditComposite(IAttributeUISpec uiSpec) {
+		super(uiSpec);
 	}
 
 	@Override
 	public void initialise() {
 		try {
-			String value = attributeEditor.getAttribute(element,
+			String value = uiSpec.getAttributeFactory().getValue(element,
 					new NullProgressMonitor());
 			displayValue(value);
 		} catch (RodinDBException e) {
@@ -49,8 +48,8 @@ public class TextEditComposite extends DefaultEditComposite {
 				@Override
 				protected void commit() {
 					try {
-						attributeEditor.setAttribute(element, text.getText(),
-								new NullProgressMonitor());
+						uiSpec.getAttributeFactory().setValue(element,
+								text.getText(), new NullProgressMonitor());
 					} catch (RodinDBException e) {
 						EventBUIExceptionHandler.handleSetAttributeException(e);
 					}
@@ -65,10 +64,11 @@ public class TextEditComposite extends DefaultEditComposite {
 				protected void response() {
 					if (text.isFocusControl())
 						try {
-							attributeEditor.setAttribute(element, text
-									.getText(), new NullProgressMonitor());
+							uiSpec.getAttributeFactory().setValue(element,
+									text.getText(), new NullProgressMonitor());
 						} catch (RodinDBException e) {
-							EventBUIExceptionHandler.handleSetAttributeException(e);
+							EventBUIExceptionHandler
+									.handleSetAttributeException(e);
 						}
 				}
 
@@ -83,11 +83,12 @@ public class TextEditComposite extends DefaultEditComposite {
 		FormToolkit toolkit = this.getFormToolkit();
 		if (undefinedButton != null)
 			return;
-		
+
 		if (text != null)
 			text.dispose();
-		
-		undefinedButton = toolkit.createButton(composite, "UNDEFINED", SWT.PUSH);
+
+		undefinedButton = toolkit
+				.createButton(composite, "UNDEFINED", SWT.PUSH);
 		undefinedButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -95,9 +96,9 @@ public class TextEditComposite extends DefaultEditComposite {
 			}
 
 			public void widgetSelected(SelectionEvent e) {
-				setDefaultValue();
+				setDefaultValue(fEditor);
 			}
-			
+
 		});
 	}
 
@@ -105,18 +106,19 @@ public class TextEditComposite extends DefaultEditComposite {
 	public void setSelected(boolean selection) {
 		Control control = text == null ? undefinedButton : text;
 		if (selection)
-			control
-					.setBackground(control.getDisplay().getSystemColor(
-							SWT.COLOR_GRAY));
+			control.setBackground(control.getDisplay().getSystemColor(
+					SWT.COLOR_GRAY));
 		else {
-			control.setBackground(control .getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			control.setBackground(control.getDisplay().getSystemColor(
+					SWT.COLOR_WHITE));
 		}
 		super.setSelected(selection);
 	}
 
-	public void setDefaultValue() {
+	public void setDefaultValue(IEventBEditor<?> editor) {
 		try {
-			attributeEditor.setDefaultAttribute(element, new NullProgressMonitor());
+			uiSpec.getAttributeFactory().setDefaultValue(editor, element,
+					new NullProgressMonitor());
 			if (text != null)
 				text.setFocus();
 		} catch (RodinDBException e) {

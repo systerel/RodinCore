@@ -46,16 +46,10 @@ import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixActName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixAxmName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixCstName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixGrdName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixInvName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixSetName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixThmName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixVarName;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixWitName;
+import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
@@ -214,12 +208,15 @@ public class EventBEditorUtils {
 
 							public void run(IProgressMonitor monitor)
 									throws RodinDBException {
+								String defaultPrefix = AttributeRelUISpecRegistry
+										.getDefault().getDefaultPrefix(
+												"org.eventb.core.actionLabel");
 								String name = UIUtils.getFreeElementName(
 										editor, event, IAction.ELEMENT_TYPE,
-										PrefixActName.DEFAULT_PREFIX);
+										defaultPrefix);
 								String label = UIUtils.getFreeElementLabel(
 										editor, event, IAction.ELEMENT_TYPE,
-										PrefixActName.DEFAULT_PREFIX);
+										defaultPrefix);
 								newAct = event.getInternalElement(
 										IAction.ELEMENT_TYPE, name);
 								assert !newAct.exists();
@@ -319,12 +316,15 @@ public class EventBEditorUtils {
 
 							public void run(IProgressMonitor monitor)
 									throws RodinDBException {
+								String defaultPrefix = AttributeRelUISpecRegistry
+										.getDefault().getDefaultPrefix(
+												"org.eventb.core.witnessLabel");
 								String name = UIUtils.getFreeElementName(
 										editor, event, IWitness.ELEMENT_TYPE,
-										PrefixWitName.DEFAULT_PREFIX);
+										defaultPrefix);
 								String label = UIUtils.getFreeElementLabel(
 										editor, event, IWitness.ELEMENT_TYPE,
-										PrefixWitName.DEFAULT_PREFIX);
+										defaultPrefix);
 								newWit = event.getInternalElement(
 										IWitness.ELEMENT_TYPE, name);
 								assert !newWit.exists();
@@ -372,12 +372,15 @@ public class EventBEditorUtils {
 
 							public void run(IProgressMonitor monitor)
 									throws RodinDBException {
+								String defaultPrefix = AttributeRelUISpecRegistry
+										.getDefault().getDefaultPrefix(
+												"org.eventb.core.guardLabel");
 								String label = UIUtils.getFreeElementLabel(
 										editor, event, IGuard.ELEMENT_TYPE,
-										PrefixGrdName.DEFAULT_PREFIX);
+										defaultPrefix);
 								String name = UIUtils.getFreeElementName(
 										editor, event, IGuard.ELEMENT_TYPE,
-										PrefixGrdName.DEFAULT_PREFIX);
+										defaultPrefix);
 								newGrd = event.getInternalElement(
 										IGuard.ELEMENT_TYPE, name);
 								assert !newGrd.exists();
@@ -425,13 +428,17 @@ public class EventBEditorUtils {
 
 							public void run(IProgressMonitor monitor)
 									throws RodinDBException {
+								String defaultPrefix = AttributeRelUISpecRegistry
+										.getDefault()
+										.getDefaultPrefix(
+												"org.eventb.core.variableIdentifier");
 								String identifier = UIUtils
 										.getFreeElementIdentifier(editor,
 												event, IVariable.ELEMENT_TYPE,
-												PrefixVarName.DEFAULT_PREFIX);
+												defaultPrefix);
 								String name = UIUtils.getFreeElementName(
 										editor, event, IVariable.ELEMENT_TYPE,
-										PrefixVarName.DEFAULT_PREFIX);
+										defaultPrefix);
 								newVar = event.getInternalElement(
 										IVariable.ELEMENT_TYPE, name);
 								assert !newVar.exists();
@@ -472,13 +479,18 @@ public class EventBEditorUtils {
 
 						public void run(IProgressMonitor monitor)
 								throws RodinDBException {
+							String defaultPrefix = AttributeRelUISpecRegistry
+									.getDefault()
+									.getDefaultPrefix(
+											"org.eventb.core.variableIdentifier");
+
 							String name = UIUtils.getFreeElementName(editor,
 									rodinFile, IVariable.ELEMENT_TYPE,
-									PrefixVarName.DEFAULT_PREFIX);
+									defaultPrefix);
 							String identifier = UIUtils
 									.getFreeElementIdentifier(editor,
 											rodinFile, IVariable.ELEMENT_TYPE,
-											PrefixVarName.DEFAULT_PREFIX);
+											defaultPrefix);
 							newVar = rodinFile.getInternalElement(
 									IVariable.ELEMENT_TYPE, name);
 							assert !newVar.exists();
@@ -561,12 +573,15 @@ public class EventBEditorUtils {
 
 						public void run(IProgressMonitor monitor)
 								throws RodinDBException {
+							String defaultPrefix = AttributeRelUISpecRegistry
+									.getDefault().getDefaultPrefix(
+											"org.eventb.core.theoremLabel");
 							String label = UIUtils.getFreeElementLabel(editor,
 									rodinFile, ITheorem.ELEMENT_TYPE,
-									PrefixThmName.DEFAULT_PREFIX);
+									defaultPrefix);
 							String name = UIUtils.getFreeElementName(editor,
 									rodinFile, ITheorem.ELEMENT_TYPE,
-									PrefixThmName.DEFAULT_PREFIX);
+									defaultPrefix);
 							newThm = rodinFile.getInternalElement(
 									ITheorem.ELEMENT_TYPE, name);
 							assert !newThm.exists();
@@ -625,16 +640,18 @@ public class EventBEditorUtils {
 									monitor);
 							newEvt.setInherited(false, monitor);
 
+							String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+									.getDefaultPrefix("org.eventb.core.variableIdentifier");
 							String namePrefix = UIUtils.getNamePrefix(editor,
 									IVariable.ELEMENT_TYPE,
-									PrefixVarName.DEFAULT_PREFIX);
+									defaultPrefix);
 							int nameIndex = UIUtils.getFreeElementNameIndex(
 									editor, newEvt, IVariable.ELEMENT_TYPE,
 									namePrefix);
 
 							String prefix = UIUtils.getFreeElementIdentifier(
 									editor, newEvt, IVariable.ELEMENT_TYPE,
-									PrefixVarName.DEFAULT_PREFIX);
+									defaultPrefix);
 
 							int index = UIUtils.getFreeElementIdentifierIndex(
 									editor, newEvt, IVariable.ELEMENT_TYPE,
@@ -658,14 +675,15 @@ public class EventBEditorUtils {
 								editor.addNewElement(newVar);
 							}
 
+							defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+									.getDefaultPrefix("org.eventb.core.guardLabel");
 							namePrefix = UIUtils.getNamePrefix(editor,
-									IGuard.ELEMENT_TYPE,
-									PrefixGrdName.DEFAULT_PREFIX);
+									IGuard.ELEMENT_TYPE, defaultPrefix);
 							nameIndex = UIUtils.getFreeElementNameIndex(editor,
 									newEvt, IGuard.ELEMENT_TYPE, namePrefix);
 							prefix = UIUtils.getFreeElementLabel(editor,
 									newEvt, IGuard.ELEMENT_TYPE,
-									PrefixGrdName.DEFAULT_PREFIX);
+									defaultPrefix);
 
 							index = UIUtils.getFreeElementLabelIndex(editor,
 									newEvt, IGuard.ELEMENT_TYPE, prefix);
@@ -687,14 +705,16 @@ public class EventBEditorUtils {
 								editor.addNewElement(newGrd);
 							}
 
+							defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+									.getDefaultPrefix("org.eventb.core.actionLabel");
 							namePrefix = UIUtils.getNamePrefix(editor,
 									IAction.ELEMENT_TYPE,
-									PrefixActName.DEFAULT_PREFIX);
+									defaultPrefix);
 							nameIndex = UIUtils.getFreeElementNameIndex(editor,
 									newEvt, IAction.ELEMENT_TYPE, namePrefix);
 							prefix = UIUtils.getFreeElementLabel(editor,
 									newEvt, IAction.ELEMENT_TYPE,
-									PrefixActName.DEFAULT_PREFIX);
+									defaultPrefix);
 
 							index = UIUtils.getFreeElementLabelIndex(editor,
 									newEvt, IAction.ELEMENT_TYPE, prefix);
@@ -747,12 +767,14 @@ public class EventBEditorUtils {
 
 						public void run(IProgressMonitor monitor)
 								throws RodinDBException {
+							String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+									.getDefaultPrefix("org.eventb.core.axiomLabel");
 							String label = UIUtils.getFreeElementLabel(editor,
 									rodinFile, IAxiom.ELEMENT_TYPE,
-									PrefixAxmName.DEFAULT_PREFIX);
+									defaultPrefix);
 							String name = UIUtils.getFreeElementName(editor,
 									rodinFile, IAxiom.ELEMENT_TYPE,
-									PrefixAxmName.DEFAULT_PREFIX);
+									defaultPrefix);
 							newAxm = rodinFile.getInternalElement(
 									IAxiom.ELEMENT_TYPE, name);
 							assert !newAxm.exists();
@@ -835,14 +857,18 @@ public class EventBEditorUtils {
 
 						public void run(IProgressMonitor monitor)
 								throws RodinDBException {
+							String defaultPrefix = AttributeRelUISpecRegistry
+									.getDefault()
+									.getDefaultPrefix(
+											"org.eventb.core.carrierSetIdentifier");
 							String name = UIUtils.getFreeElementName(editor,
 									rodinFile, ICarrierSet.ELEMENT_TYPE,
-									PrefixSetName.DEFAULT_PREFIX);
+									defaultPrefix);
 							String identifier = UIUtils
 									.getFreeElementIdentifier(editor,
 											rodinFile,
 											ICarrierSet.ELEMENT_TYPE,
-											PrefixSetName.DEFAULT_PREFIX);
+											defaultPrefix);
 							newSet = rodinFile
 									.getInternalElement(
 											ICarrierSet.ELEMENT_TYPE, name);
@@ -947,9 +973,11 @@ public class EventBEditorUtils {
 						if (element.getLabel().equals("INITIALISATION")) {
 							newInit = false;
 
+							String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+									.getDefaultPrefix("org.eventb.core.actionLabel");
 							String actName = UIUtils.getFreeElementName(editor,
 									element, IAction.ELEMENT_TYPE,
-									PrefixActName.DEFAULT_PREFIX);
+									defaultPrefix);
 							newAct = element.getInternalElement(
 									IAction.ELEMENT_TYPE, actName);
 							assert !newAct.exists();
@@ -969,9 +997,11 @@ public class EventBEditorUtils {
 												PrefixEvtName.DEFAULT_PREFIX));
 						assert !newEvt.exists();
 						newEvt.setLabel("INITIALISATION", m);
+						String defaultPrefix = AttributeRelUISpecRegistry
+								.getDefault().getDefaultPrefix(
+										"org.eventb.core.actionLabel");
 						String actName = UIUtils.getFreeElementName(editor,
-								newEvt, IAction.ELEMENT_TYPE,
-								PrefixActName.DEFAULT_PREFIX);
+								newEvt, IAction.ELEMENT_TYPE, defaultPrefix);
 						newAct = newEvt.getInternalElement(
 								IAction.ELEMENT_TYPE, actName);
 						assert !newAct.exists();
@@ -1023,10 +1053,13 @@ public class EventBEditorUtils {
 
 			public void run(IProgressMonitor m) throws RodinDBException {
 				IRodinFile rodinFile = editor.getRodinInput();
+				String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+						.getDefaultPrefix("org.eventb.core.variableIdentifier");
+
 				newVar = rodinFile.getInternalElement(
 						IVariable.ELEMENT_TYPE, UIUtils.getFreeElementName(
 								editor, rodinFile, IVariable.ELEMENT_TYPE,
-								PrefixVarName.DEFAULT_PREFIX));
+								defaultPrefix));
 				assert !newVar.exists();
 				newVar.create(null, m);
 
@@ -1087,8 +1120,11 @@ public class EventBEditorUtils {
 
 			public void run(IProgressMonitor pm) throws RodinDBException {
 				IRodinFile rodinFile = editor.getRodinInput();
+				String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+						.getDefaultPrefix("org.eventb.core.axiomLabel");
+
 				String axmName = UIUtils.getNamePrefix(editor,
-						IAxiom.ELEMENT_TYPE, PrefixAxmName.DEFAULT_PREFIX);
+						IAxiom.ELEMENT_TYPE, defaultPrefix);
 				int axmIndex = UIUtils.getFreeElementNameIndex(editor,
 						rodinFile, IAxiom.ELEMENT_TYPE, axmName);
 				for (int i = 0; i < axmNames.length; ++i) {
@@ -1254,8 +1290,10 @@ public class EventBEditorUtils {
 	public static void newTheorems(final IEventBEditor<?> editor,
 			final IRodinFile rodinFile) {
 		try {
+			final String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+					.getDefaultPrefix("org.eventb.core.theoremLabel");
 			String thmPrefix = UIUtils.getPrefix(editor,
-					ITheorem.ELEMENT_TYPE, PrefixThmName.DEFAULT_PREFIX);
+					ITheorem.ELEMENT_TYPE, defaultPrefix);
 			int thmIndex = UIUtils.getFreeElementLabelIndex(editor, editor
 					.getRodinInput(), ITheorem.ELEMENT_TYPE, thmPrefix);
 			final ElementNameContentInputDialog<ITheorem> dialog =
@@ -1272,7 +1310,7 @@ public class EventBEditorUtils {
 				public void run(IProgressMonitor monitor) throws RodinDBException {
 					String prefix = UIUtils.getNamePrefix(editor,
 							ITheorem.ELEMENT_TYPE,
-							PrefixThmName.DEFAULT_PREFIX);
+							defaultPrefix);
 					int index = UIUtils.getFreeElementNameIndex(editor,
 							rodinFile, ITheorem.ELEMENT_TYPE, prefix);
 					String[] names = dialog.getNewNames();
@@ -1346,8 +1384,10 @@ public class EventBEditorUtils {
 	protected static void createNewActions(IEventBEditor<IMachineFile> editor,
 			IEvent evt, String[] actNames, String[] actSubstitutions,
 			IProgressMonitor pm) throws RodinDBException {
+		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+				.getDefaultPrefix("org.eventb.core.actionLabel");
 		String actPrefix = UIUtils.getNamePrefix(editor, IAction.ELEMENT_TYPE,
-				PrefixActName.DEFAULT_PREFIX);
+				defaultPrefix);
 		int actIndex = UIUtils.getFreeElementNameIndex(editor, evt,
 				IAction.ELEMENT_TYPE, actPrefix);
 		for (int i = 0; i < actNames.length; i++) {
@@ -1364,8 +1404,10 @@ public class EventBEditorUtils {
 	protected static void createNewGuards(IEventBEditor<IMachineFile> editor,
 			IEvent evt, String[] grdNames, String[] grdPredicates,
 			IProgressMonitor pm) throws RodinDBException {
+		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+				.getDefaultPrefix("org.eventb.core.guardLabel");
 		String grdPrefix = UIUtils.getNamePrefix(editor, IGuard.ELEMENT_TYPE,
-				PrefixGrdName.DEFAULT_PREFIX);
+				defaultPrefix);
 		int grdIndex = UIUtils.getFreeElementNameIndex(editor, evt,
 				IGuard.ELEMENT_TYPE, grdPrefix);
 		for (int i = 0; i < grdNames.length; i++) {
@@ -1382,9 +1424,11 @@ public class EventBEditorUtils {
 	protected static void createNewParameters(IEventBEditor<IMachineFile> editor,
 			IEvent evt, String[] identifiers, IProgressMonitor pm)
 			throws RodinDBException {
+		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+				.getDefaultPrefix("org.eventb.core.variableIdentifier");
 		String varPrefix = UIUtils.getNamePrefix(editor,
 				IVariable.ELEMENT_TYPE,
-				PrefixVarName.DEFAULT_PREFIX);
+				defaultPrefix);
 
 		int varIndex = UIUtils.getFreeElementNameIndex(editor, evt,
 				IVariable.ELEMENT_TYPE, varPrefix);
@@ -1412,8 +1456,11 @@ public class EventBEditorUtils {
 
 		final IContextFile ctxFile = editor.getRodinInput();
 		try {
+			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+			.getDefaultPrefix("org.eventb.core.carrierSetIdentifier");
+
 			String identifier = UIUtils.getFreeElementIdentifier(editor, ctxFile,
-					ICarrierSet.ELEMENT_TYPE, PrefixSetName.DEFAULT_PREFIX);
+					ICarrierSet.ELEMENT_TYPE, defaultPrefix);
 			final ElementAttributeInputDialog dialog = new ElementAttributeInputDialog(
 					Display.getCurrent().getActiveShell(), "New Carrier Sets",
 					"Identifier", identifier);
@@ -1462,8 +1509,10 @@ public class EventBEditorUtils {
 
 		final IContextFile ctxFile = editor.getRodinInput();
 		try {
-			String identifier = UIUtils.getFreeElementIdentifier(editor, ctxFile,
-					ICarrierSet.ELEMENT_TYPE, PrefixSetName.DEFAULT_PREFIX);
+			final String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+					.getDefaultPrefix("org.eventb.core.carrierSetIdentifier");
+			String identifier = UIUtils.getFreeElementIdentifier(editor,
+					ctxFile, ICarrierSet.ELEMENT_TYPE, defaultPrefix);
 			final NewEnumeratedSetInputDialog dialog = new NewEnumeratedSetInputDialog(
 					Display.getCurrent().getActiveShell(),
 					"New Enumerated Set", identifier);
@@ -1480,7 +1529,7 @@ public class EventBEditorUtils {
 
 					final String setName = UIUtils.getFreeElementName(editor, ctxFile,
 							ICarrierSet.ELEMENT_TYPE,
-							PrefixSetName.DEFAULT_PREFIX);
+							defaultPrefix);
 					final ICarrierSet set = ctxFile.getCarrierSet(setName);
 					set.create(null, pm);
 					set.setIdentifierString(name, pm);
@@ -1490,13 +1539,15 @@ public class EventBEditorUtils {
 					if (nbElements == 0)
 						return;
 
+					String defaultAxmPrefix = AttributeRelUISpecRegistry.getDefault()
+							.getDefaultPrefix("org.eventb.core.axiomLabel");
 					String namePrefix = UIUtils.getNamePrefix(editor,
-							IAxiom.ELEMENT_TYPE, PrefixAxmName.DEFAULT_PREFIX);
+							IAxiom.ELEMENT_TYPE, defaultAxmPrefix);
 					int nameIndex = UIUtils.getFreeElementNameIndex(editor,
 							ctxFile, IAxiom.ELEMENT_TYPE, namePrefix);
 
 					String labelPrefix = UIUtils.getPrefix(editor,
-							IAxiom.ELEMENT_TYPE, PrefixAxmName.DEFAULT_PREFIX);
+							IAxiom.ELEMENT_TYPE, defaultAxmPrefix);
 					int labelIndex = UIUtils.getFreeElementLabelIndex(editor,
 							ctxFile, IAxiom.ELEMENT_TYPE, labelPrefix);
 					// String axmName = namePrefix + nameIndex;
@@ -1569,8 +1620,11 @@ public class EventBEditorUtils {
 	public static void newAxioms(final IEventBEditor<IContextFile> editor,
 			final IRodinFile rodinFile) {
 		try {
+			final String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+					.getDefaultPrefix("org.eventb.core.axiomLabel");
+
 			String axmPrefix = UIUtils.getPrefix(editor,
-					IAxiom.ELEMENT_TYPE, PrefixAxmName.DEFAULT_PREFIX);
+					IAxiom.ELEMENT_TYPE, defaultPrefix);
 			int axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor
 					.getRodinInput(), IAxiom.ELEMENT_TYPE, axmPrefix);
 			final ElementNameContentInputDialog<IAxiom> dialog =
@@ -1587,7 +1641,7 @@ public class EventBEditorUtils {
 				public void run(IProgressMonitor monitor) throws RodinDBException {
 					String prefix = UIUtils.getNamePrefix(editor,
 							IAxiom.ELEMENT_TYPE,
-							PrefixAxmName.DEFAULT_PREFIX);
+							defaultPrefix);
 					String[] names = dialog.getNewNames();
 					String[] contents = dialog.getNewContents();
 
@@ -1698,12 +1752,14 @@ public class EventBEditorUtils {
 
 		IInternalElement initialisation = getInitialisation(rodinFile);
 
+		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+				.getDefaultPrefix("org.eventb.core.actionLabel");
 		if (initialisation == null)
 			return UIUtils.getPrefix(editor, IAction.ELEMENT_TYPE,
-					PrefixActName.DEFAULT_PREFIX) + 1;
+			defaultPrefix) + 1;
 		else {
 			return UIUtils.getFreeElementLabel(editor, initialisation,
-					IAction.ELEMENT_TYPE, PrefixActName.DEFAULT_PREFIX);
+					IAction.ELEMENT_TYPE, defaultPrefix);
 		}
 	}
 

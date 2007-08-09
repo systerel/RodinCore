@@ -10,28 +10,39 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
-public class RefinesEventEditComposite extends DefaultAttributeEditor implements
-		IAttributeEditor {
+public class RefinesEventAbstractEventLabelAttributeFactory implements
+		IAttributeFactory {
 
-	@Override
-	public String getAttribute(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void createDefaulAttribute(IEventBEditor<?> editor,
+			IInternalElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		if (!(element instanceof IRefinesEvent)) {
+			return;
+		}
+		IRefinesEvent rElement = (IRefinesEvent) element;
+		IEvent event = (IEvent) rElement.getParent();
+		rElement.setAbstractEventLabel(event.getLabel(), monitor);
+	}
+
+	public String getValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
 		assert element instanceof IRefinesEvent;
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
 		return refinesEvent.getAbstractEventLabel();
 	}
 
-	@Override
-	public void setAttribute(IAttributedElement element, String newValue,
+	public void setValue(IAttributedElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IRefinesEvent;
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
 		String value;
 		try {
-			value = getAttribute(element, monitor);
+			value = getValue(element, monitor);
 		} catch (RodinDBException e) {
 			value = null;
 		}
@@ -41,9 +52,9 @@ public class RefinesEventEditComposite extends DefaultAttributeEditor implements
 		}
 	}
 
-	@Override
-	public void setDefaultAttribute(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void setDefaultValue(IEventBEditor<?> editor,
+			IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
 		IEvent event = (IEvent) refinesEvent.getParent();
 		String label = "abstract_event";
@@ -56,35 +67,27 @@ public class RefinesEventEditComposite extends DefaultAttributeEditor implements
 		refinesEvent.setAbstractEventLabel(label, monitor);
 	}
 
-	@Override
 	public String[] getPossibleValues(IAttributedElement element,
-			IProgressMonitor monitor) {
+			IProgressMonitor monitor) throws RodinDBException {
 		List<String> results = new ArrayList<String>();
 
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
 		IEvent event = (IEvent) refinesEvent.getParent();
 		IMachineFile file = (IMachineFile) event.getParent();
-		try {
-			IRefinesMachine[] refinesClauses = file.getRefinesClauses();
-			if (refinesClauses.length == 1) {
-				IRefinesMachine refinesMachine = refinesClauses[0];
-				IMachineFile abstractMachine = refinesMachine
-						.getAbstractMachine();
-				if (abstractMachine.exists()) {
-					IEvent[] events = abstractMachine.getEvents();
-					for (IEvent absEvent : events) {
-						results.add(absEvent.getLabel());
-					}
+		IRefinesMachine[] refinesClauses = file.getRefinesClauses();
+		if (refinesClauses.length == 1) {
+			IRefinesMachine refinesMachine = refinesClauses[0];
+			IMachineFile abstractMachine = refinesMachine.getAbstractMachine();
+			if (abstractMachine.exists()) {
+				IEvent[] events = abstractMachine.getEvents();
+				for (IEvent absEvent : events) {
+					results.add(absEvent.getLabel());
 				}
 			}
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return results.toArray(new String[results.size()]);
 	}
 
-	@Override
 	public void removeAttribute(IAttributedElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);

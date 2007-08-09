@@ -11,7 +11,6 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.IEventBSharedImages;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 
@@ -25,14 +24,14 @@ public abstract class AbstractHyperlinkComposite {
 
 	boolean initialised;
 	
-	IInternalElementType<? extends IInternalElement> type;
+	IInternalElementType<?> type;
 
 	ImageHyperlink upHyperlink;
 	
 	ImageHyperlink downHyperlink;
 	
 	public AbstractHyperlinkComposite(EditPage page, IInternalParent parent,
-			IInternalElementType<? extends IInternalElement> type,
+			IInternalElementType<?> type,
 			FormToolkit toolkit, Composite compParent) {
 		this.page = page;
 		this.parent = parent;

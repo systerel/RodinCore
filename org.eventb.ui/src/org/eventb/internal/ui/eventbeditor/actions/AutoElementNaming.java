@@ -13,7 +13,7 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.EditSectionRegistry;
+import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -21,8 +21,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public abstract class AutoElementNaming<T extends IInternalElement>
-		implements IEditorActionDelegate {
+public abstract class AutoElementNaming implements IEditorActionDelegate {
 
 	IEventBEditor<?> editor;
 
@@ -31,21 +30,23 @@ public abstract class AutoElementNaming<T extends IInternalElement>
 			editor = (IEventBEditor<?>) targetEditor;
 	}
 
-	public void rename(final IInternalElementType<T> type, final String prefix,
-			final String attributeID) {
+	public abstract String getAttributeID();
+	
+	private void rename(final String prefix, final String attributeID) {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor monitor) throws RodinDBException {
+				public void run(IProgressMonitor monitor)
+						throws RodinDBException {
 					IRodinFile file = editor.getRodinInput();
-					T[] elements = file.getChildrenOfType(type);
+					IInternalElementType<?> type = AttributeRelUISpecRegistry
+							.getDefault().getType(attributeID);
+					IInternalElement[] elements = file.getChildrenOfType(type);
 
 					// Rename to the real desired naming convention
 					for (int counter = 1; counter <= elements.length; counter++) {
-						T element = elements[counter - 1];
-						if (element instanceof IIdentifierElement
-								&& attributeID
-										.equals(EditSectionRegistry.IDENTIFIER_ATTRIBUTE_ID)) {
+						IInternalElement element = elements[counter - 1];
+						if (isIdentifierAttribute(attributeID)) {
 							if (EventBEditorUtils.DEBUG)
 								EventBEditorUtils.debug("Rename: "
 										+ ((IIdentifierElement) element)
@@ -54,9 +55,7 @@ public abstract class AutoElementNaming<T extends IInternalElement>
 							((IIdentifierElement) element)
 									.setIdentifierString(prefix + counter,
 											new NullProgressMonitor());
-						} else if (element instanceof ILabeledElement
-								&& attributeID
-										.equals(EditSectionRegistry.LABEL_ATTRIBUTE_ID)) {
+						} else if (isLabelAttribute(attributeID)) {
 							if (EventBEditorUtils.DEBUG)
 								EventBEditorUtils.debug("Rename: "
 										+ ((ILabeledElement) element)
@@ -72,14 +71,47 @@ public abstract class AutoElementNaming<T extends IInternalElement>
 		} catch (RodinDBException e) {
 			EventBUIExceptionHandler.handleSetAttributeException(e);
 		}
-
 	}
 
+	boolean isLabelAttribute(String attributeID) {
+		return isBelongToList(labelAttributes, attributeID);
+	}
+
+	boolean isIdentifierAttribute(String attributeID) {
+		return isBelongToList(identifierAttributes, attributeID);
+	}
+
+	private boolean isBelongToList(String[] attributes,
+			String attributeID) {
+		for (String attribute : attributes)
+			if (attribute.equals(attributeID))
+				return true;
+		return false;
+	}
+
+	protected String[] identifierAttributes = new String []{
+			"org.eventb.core.variableIdentifier",
+			"org.eventb.core.carrierSetIdentifier",
+			"org.eventb.core.constantIdentifier",
+	};
+	
+	protected String[] labelAttributes = new String []{
+			"org.eventb.core.invariantLabel",
+			"org.eventb.core.axiomLabel",
+			"org.eventb.core.theoremLabel",
+			"org.eventb.core.guardLabel",
+			"org.eventb.core.eventLabel",
+			"org.eventb.core.actionLabel",
+	};
+	
 	public void selectionChanged(IAction action, ISelection selection) {
 		return; // Do nothing
 	}
 
-	public void run(IInternalElementType<T> type, String attributeID) {
+	public void run(IAction action) {
+		String attributeID = getAttributeID();
+		IInternalElementType<?> type = AttributeRelUISpecRegistry.getDefault()
+				.getType(attributeID);
 		IRodinFile inputFile = editor.getRodinInput();
 		String prefix = null;
 		try {
@@ -90,9 +122,9 @@ public abstract class AutoElementNaming<T extends IInternalElement>
 		}
 
 		if (prefix == null)
-			prefix = EditSectionRegistry.getDefault().getDefaultPrefix(type,
+			prefix = AttributeRelUISpecRegistry.getDefault().getDefaultPrefix(
 					attributeID);
 
-		rename(type, prefix, attributeID);
+		rename(prefix, attributeID);
 	}
 }

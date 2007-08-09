@@ -1,6 +1,7 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -8,10 +9,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IElementType;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -30,7 +31,7 @@ public class ElementComposite implements IElementComposite {
 	Composite composite;
 
 	Composite mainSectionComposite;
-	
+
 	ArrayList<ISectionComposite> sectionComps;
 
 	EditPage page;
@@ -65,16 +66,18 @@ public class ElementComposite implements IElementComposite {
 		composite.setLayout(gridLayout);
 
 		row = new EditRow(this, form, toolkit);
-		row.createContents(toolkit, composite, null, level);
-		
+		row.createContents((IEventBEditor<?>) page.getEditor(), toolkit,
+				composite, null, level);
+
 		mainSectionComposite = toolkit.createComposite(composite);
-		mainSectionComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		mainSectionComposite.setLayoutData(new GridData(
+				GridData.FILL_HORIZONTAL));
 		gridLayout = new GridLayout();
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
 		gridLayout.verticalSpacing = 0;
 		mainSectionComposite.setLayout(gridLayout);
-		
+
 		setExpand(false);
 	}
 
@@ -83,7 +86,7 @@ public class ElementComposite implements IElementComposite {
 	}
 
 	public void setExpand(boolean isExpanded) {
-		long beforeTime = 0; 
+		long beforeTime = 0;
 		if (EventBEditorUtils.DEBUG)
 			beforeTime = System.currentTimeMillis();
 		form.setRedraw(false);
@@ -97,8 +100,7 @@ public class ElementComposite implements IElementComposite {
 			} else {
 				gridData.heightHint = SWT.DEFAULT;
 			}
-		}
-		else {
+		} else {
 			GridData gridData = (GridData) mainSectionComposite.getLayoutData();
 			gridData.heightHint = 0;
 		}
@@ -113,18 +115,17 @@ public class ElementComposite implements IElementComposite {
 	}
 
 	protected void createSectionComposites() {
-		EditSectionRegistry editSectionRegistry = EditSectionRegistry
+		IElementRelUISpecRegistry registry = ElementRelUISpecRegistry
 				.getDefault();
 
-		IInternalElementType<? extends IInternalElement>[] types = editSectionRegistry
-				.getChildrenTypes(rElement.getElementType());
-		sectionComps = new ArrayList<ISectionComposite>(types.length);
-		for (IInternalElementType<? extends IInternalElement> type : types) {
-
+		List<IElementRelationship> rels = registry
+				.getElementRelationships(rElement.getElementType());
+		sectionComps = new ArrayList<ISectionComposite>(rels.size());
+		for (IElementRelationship rel : rels) {
 			// Create the section composite
 			sectionComps.add(new SectionComposite(page, toolkit, form,
-					mainSectionComposite, (IInternalParent) rElement, type, level + 1));
-
+					mainSectionComposite, (IInternalParent) rElement, rel,
+					level + 1));
 		}
 	}
 
@@ -141,19 +142,17 @@ public class ElementComposite implements IElementComposite {
 				return;
 
 			// Refresh sub section composite as well?
-			EditSectionRegistry editSectionRegistry = EditSectionRegistry
+			IElementRelUISpecRegistry registry = ElementRelUISpecRegistry
 					.getDefault();
-			IElementType<? extends IRodinElement>[] childrenTypes = editSectionRegistry
-					.getChildrenTypes(element.getElementType());
-			
-			
+			List<IElementRelationship> rels = registry
+					.getElementRelationships(element.getElementType());
+
 			boolean recreate = false;
-			if (childrenTypes.length != sectionComps.size()) {
+			if (rels.size() != sectionComps.size()) {
 				recreate = true;
-			}
-			else {
-				for (int i = 0; i < childrenTypes.length; ++i) {
-					if (sectionComps.get(i).getElementType() != childrenTypes[i]) {
+			} else {
+				for (int i = 0; i < rels.size(); ++i) {
+					if (sectionComps.get(i).getElementType() != rels.get(i)) {
 						recreate = true;
 						break;
 					}
@@ -180,8 +179,10 @@ public class ElementComposite implements IElementComposite {
 			return;
 		assert (!rElement.equals(element));
 		if (rElement.isAncestorOf(element)) {
-			for (ISectionComposite sectionComp : sectionComps) {
-				sectionComp.elementRemoved(element);
+			if (sectionComps != null) {
+				for (ISectionComposite sectionComp : sectionComps) {
+					sectionComp.elementRemoved(element);
+				}
 			}
 		}
 	}
@@ -210,7 +211,8 @@ public class ElementComposite implements IElementComposite {
 		return isExpanded;
 	}
 
-	public void childrenChanged(IRodinElement element, IElementType<?> childrenType) {
+	public void childrenChanged(IRodinElement element,
+			IElementType<?> childrenType) {
 		if (!rElement.exists())
 			return;
 
@@ -238,7 +240,7 @@ public class ElementComposite implements IElementComposite {
 	public void select(IRodinElement element, boolean select) {
 		if (!rElement.exists())
 			return;
-		
+
 		if (rElement.equals(element)) {
 			row.setSelected(select);
 		}
@@ -253,7 +255,7 @@ public class ElementComposite implements IElementComposite {
 	public void recursiveExpand(IRodinElement element) {
 		if (!rElement.exists())
 			return;
-		
+
 		if (rElement.equals(element) || rElement.isAncestorOf(element)
 				|| element.isAncestorOf(rElement)) {
 			setExpand(true);

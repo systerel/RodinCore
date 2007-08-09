@@ -1,31 +1,64 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinDBException;
 
 public abstract class IdentifierAttributeFactory implements IAttributeFactory {
 
-	protected String defaultPrefix = "prefix";
+	public abstract String getPrefix();
 
-	public abstract void setPrefix();
-
-	public void createDefaulAttribute(IEventBEditor<?> editor,
-			IInternalElement element, IProgressMonitor monitor)
+	public void setDefaultValue(IEventBEditor<?> editor,
+			IAttributedElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		if (!(element instanceof IIdentifierElement)) {
 			return;
 		}
-		setPrefix();
+		String prefix = getPrefix();
 		IIdentifierElement iElement = (IIdentifierElement) element;
 		String identifier = UIUtils.getFreeElementIdentifier(editor,
 				(IInternalParent) element.getParent(), iElement
-						.getElementType(), defaultPrefix);
+						.getElementType(), prefix);
 		iElement.setIdentifierString(identifier, monitor);
+	}
+
+	public void setValue(IAttributedElement element, String newValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		assert element instanceof IIdentifierElement;
+		final IIdentifierElement iElement = (IIdentifierElement) element;
+		String value;
+		try {
+			value = getValue(element, monitor);
+		} catch (RodinDBException e) {
+			value = null;
+		}
+		if (value == null || !value.equals(newValue)) {
+			iElement.setIdentifierString(newValue, new NullProgressMonitor());
+		}
+	}
+
+	public String getValue(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		assert element instanceof IIdentifierElement;
+		final IIdentifierElement iElement = (IIdentifierElement) element;
+		return iElement.getIdentifierString();
+	}
+
+	public void removeAttribute(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		element.removeAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE, monitor);
+	}
+
+	public String[] getPossibleValues(IAttributedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		// Not applicable to Identifier Elements
+		return null;
 	}
 
 }

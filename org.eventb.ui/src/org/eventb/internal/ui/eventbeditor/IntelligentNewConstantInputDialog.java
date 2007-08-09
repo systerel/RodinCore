@@ -35,8 +35,8 @@ import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixAxmName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixCstName;
+import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -140,8 +140,10 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		label = toolkit.createLabel(composite, "Axiom");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
+		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+				.getDefaultPrefix("org.eventb.core.axiomLabel");
 		String axmPrefix = UIUtils.getPrefix(editor,
-				IAxiom.ELEMENT_TYPE, PrefixAxmName.DEFAULT_PREFIX);
+				IAxiom.ELEMENT_TYPE, defaultPrefix);
 		try {
 			axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor.getRodinInput(),
 					IAxiom.ELEMENT_TYPE, axmPrefix);
@@ -202,9 +204,10 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 			Label label = toolkit.createLabel(composite, "Axiom");
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 			label.setLayoutData(gd);
-			String axmPrefix = UIUtils.getPrefix(editor,
-					IAxiom.ELEMENT_TYPE,
-					PrefixAxmName.DEFAULT_PREFIX);
+			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+					.getDefaultPrefix("org.eventb.core.axiomLabel");
+			String axmPrefix = UIUtils.getPrefix(editor, IAxiom.ELEMENT_TYPE,
+					defaultPrefix);
 
 			try {
 				axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor

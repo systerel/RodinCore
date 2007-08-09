@@ -10,7 +10,7 @@
       name="%point.elementUIName" 
       schema="schema/elementui.exsd"/>
    <extension-point id="proofTactics" name="%point.proofTacticsName" schema="schema/proofTactics.exsd"/>
-   <extension-point id="editSections" name="%point.editSectionsName" schema="schema/editSections.exsd"/>
+   <extension-point id="elementUISpecs" name="%point.elementUISpecsName" schema="schema/elementUISpecs.exsd"/>
   
    <extension
          point="org.eclipse.ui.views">
@@ -179,7 +179,7 @@
          <target
                id="org.eventb.ui.editors.context"/>
       </page>
-<!--      <page
+      <page
             class="org.eventb.internal.ui.eventbeditor.editpage.EditPage"
             id="org.eventb.ui.Edit"
             name="%editorPage.edit"
@@ -199,7 +199,6 @@
          <target
          		id="org.eventb.ui.editors.context"/>
       </page>
-   -->
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -2122,321 +2121,363 @@
             tooltip="%proofTactic.cardUpToGoal.tooltip"/>
    </extension>
    <extension
-         point="org.eventb.ui.editSections">
-      <section
-            id="org.event.ui.sections.refinesMachine"
-            name="Refines Machine"
-            parentType="org.eventb.core.machineFile"
+         point="org.eventb.ui.elementUISpecs">
+      <elementRel
+            id="org.eventb.core.refinesMachine"
             prefix="REFINES"
-            priority="1"
-            type="org.eventb.core.refinesMachine"/>
-      <section
-            id="org.event.ui.sections.seesContext"
-            name="Sees Context"
-            parentType="org.eventb.core.machineFile"
+            priority="1"/>
+      <elementRel
+      		id="org.eventb.core.seesContext"
             prefix="SEES"
-            priority="2"
-            type="org.eventb.core.seesContext"/>
-      <section
-            id="org.event.ui.sections.variable"
-            name="Variables"
-            parentType="org.eventb.core.machineFile"
+            priority="2"/>
+      <elementRel
+            id="org.eventb.core.variable"
             prefix="VARIABLES"
-            priority="3"
-            type="org.eventb.core.variable">
-      </section>
-      <section
-            id="org.event.ui.sections.invariant"
-            name="Invariants"
-            parentType="org.eventb.core.machineFile"
+            priority="3"/>
+      <elementRel
+            id="org.eventb.core.invariant"
             prefix="INVARIANTS"
-            priority="4"
-            type="org.eventb.core.invariant">
-      </section>
-      <section
-            id="org.event.ui.sections.machineTheorem"
-            name="Theorems"
-            parentType="org.eventb.core.machineFile"
+            priority="4"/>
+      <elementRel
+            id="org.eventb.core.machineTheorem"
             prefix="THEOREMS"
-            priority="5"
-            type="org.eventb.core.theorem">
-      </section>
-      <section
-            id="org.event.ui.sections.variant"
-            name="Variant"
-            parentType="org.eventb.core.machineFile"
+            priority="5"/>
+      <elementRel
+            id="org.eventb.core.variant"
             prefix="VARIANT"
-            priority="8"
-            type="org.eventb.core.variant"/>
-      <section
-            id="org.event.ui.sections.event"
-            name="Events"
-            parentType="org.eventb.core.machineFile"
-            postfix="END"
+            priority="8"/>
+      <elementRel
+            id="org.eventb.core.event"
             prefix="EVENTS"
-            priority="9"
-            type="org.eventb.core.event">
-      </section>
-      <section
-            id="org.event.ui.sections.refinesEvent"
-            name="Refines Event"
-            parentType="org.eventb.core.event"
-            prefix="REFINES"
-            priority="1"
-            type="org.eventb.core.refinesEvent"/>
-      <section
-            id="org.event.ui.sections.parameter"
-            name="Parameters"
-            parentType="org.eventb.core.event"
-            prefix="ANY"
-            priority="2"
-            type="org.eventb.core.variable"/>
-      <section
-            id="org.event.ui.sections.guard"
-            name="Guards"
-            parentType="org.eventb.core.event"
-            prefix="WHERE"
-            priority="3"
-            type="org.eventb.core.guard"/>
-      <section
-            id="org.event.ui.sections.witness"
-            name="Witnesses"
-            parentType="org.eventb.core.event"
-            prefix="WITNESS"
-            priority="4"
-            type="org.eventb.core.witness"/>
-      <section
-            id="org.event.ui.sections.action"
-            name="Actions"
-            parentType="org.eventb.core.event"
             postfix="END"
+            priority="9"/>
+      <elementRel
+            id="org.eventb.core.refinesEvent"
+            prefix="REFINES"
+            priority="1"/>
+      <elementRel
+            id="org.eventb.core.parameter"
+            prefix="ANY"
+            priority="2"/>
+      <elementRel
+            id="org.eventb.core.guard"
+            prefix="WHERE"
+            priority="3"/>
+      <elementRel
+            id="org.eventb.core.witness"
+            prefix="WITH "
+            priority="4"/>
+      <elementRel
+            id="org.eventb.core.action"
             prefix="THEN"
-            priority="9"
-            type="org.eventb.core.action"/>
-      <section
-            id="org.event.ui.sections.extendsContext"
-            name="Extends Context"
-            parentType="org.eventb.core.contextFile"
+            postfix="END"
+            priority="9"/>
+      <elementRel
+            id="org.eventb.core.extendsContext"
             prefix="EXTENDS"
-            priority="1"
-            type="org.eventb.core.extendsContext"/>
-      <section
-            id="org.event.ui.section.carrierSet"
-            name="Carrier Set"
-            parentType="org.eventb.core.contextFile"
+            priority="1"/>
+      <elementRel
+            id="org.eventb.core.carrierSet"
             prefix="SETS"
-            priority="2"
-            type="org.eventb.core.carrierSet">
-      </section>
-      <section
-            id="org.eventb.ui.section.constant"
-            name="Constants"
-            parentType="org.eventb.core.contextFile"
+            priority="2"/>
+      <elementRel
+            id="org.eventb.core.constant"
             prefix="CONSTANTS"
-            priority="3"
-            type="org.eventb.core.constant">
-      </section>
-      <section
-            id="org.event.ui.sections.axiom"
-            name="Axioms"
-            parentType="org.eventb.core.contextFile"
+            priority="3"/>
+      <elementRel
+            id="org.eventb.core.axiom"
             prefix="AXIOMS"
-            priority="4"
-            type="org.eventb.core.axiom"/>
-      <section
-            id="org.event.ui.sections.contextTheorem"
-            name="Theorems"
-            parentType="org.eventb.core.contextFile"
+            priority="4"/>
+      <elementRel
+            id="org.eventb.core.contextTheorem"
+            postfix="END"
             prefix="THEOREMS"
-            priority="5"
-            type="org.eventb.core.theorem"/>
+            priority="5"/>
    </extension>
    <extension
-         point="org.eventb.ui.editSections">
-      <attribute
-            class="org.eventb.internal.ui.eventbeditor.editpage.IdentifierEditComposite"
+         point="org.eventb.ui.elementUISpecs">
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory"
             horizontalExpand="false"
-            id="org.eventb.ui.identifier"
-            name="Identifier"
+            id="org.eventb.core.refinesMachineAbstractMachineName"
+            priority="1"
+            widget="combo">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.SeesContextNameAttributeFactory"
+            horizontalExpand="false"
+            id="org.eventb.core.seesContextName"
+            priority="2"
+            widget="combo">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.VariableIdentifierAttributeFactory"
+			defaultValue="var"
+            horizontalExpand="false"
+            id="org.eventb.core.variableIdentifier"
             priority="1"
             style="single"
-            widget="text">
-         <type
-               defaultPrefix="var"
-               id="org.eventb.core.variable"/>
-         <type
-               id="org.eventb.core.carrierSet">
-         </type>
-         <type
-               id="org.eventb.core.constant">
-         </type>
-      </attribute>
-      <attribute
-            class="org.eventb.internal.ui.eventbeditor.editpage.LabelEditComposite"
-            horizontalExpand="false"
-            id="org.eventb.ui.label"
-            name="Label"
-            postfix=":"
-            priority="1"
-            style="multi"
-            widget="text">
-         <type
-               defaultPrefix="inv"
-               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.InvariantLabelAttributeFactory"
-               id="org.eventb.core.invariant"/>
-         <type
-               defaultPrefix="thm"
-               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.TheoremLabelAttributeFactory"
-               id="org.eventb.core.theorem"/>
-         <type
-               defaultPrefix="evt"
-               id="org.eventb.core.event"/>
-         <type
-               defaultPrefix="grd"
-               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.GuardLabelAttributeFactory"
-               id="org.eventb.core.guard"/>
-         <type
-               defaultPrefix="act"
-               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.ActionLabelAttributeFactory"
-               id="org.eventb.core.action"/>
-         <type
-               defaultPrefix="axm"
-               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.AxiomLabelAttributeFactory"
-               id="org.eventb.core.axiom"/>
-         <type id="org.eventb.core.witness"/>
-      </attribute>
-      <attribute
-            class="org.eventb.internal.ui.eventbeditor.editpage.PredicateEditComposite"
-            horizontalExpand="false"
-            id="org.eventb.ui.predicate"
-            name="Predicate"
-            priority="2"
-            style="multi"
-            widget="text">
-         <type id="org.eventb.core.invariant"/>
-         <type id="org.eventb.core.theorem"/>
-         <type id="org.eventb.core.guard"/>
-         <type id="org.eventb.core.witness"/>
-         <type
-               id="org.eventb.core.axiom">
-         </type>
-      </attribute>
-      <attribute
-            class="org.eventb.internal.ui.eventbeditor.editpage.InheritedEditComposite"
-            horizontalExpand="false"
-            id="org.eventb.ui.inherited"
-            name="Inherited"
-            priority="2"
-            widget="combo">
-         <type
-               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.InheritedAttributeFactory"
-               id="org.eventb.core.event"/>
-      </attribute>
-      <attribute
-            class="org.eventb.internal.ui.eventbeditor.editpage.ConvergenceEditComposite"
-            horizontalExpand="false"
-            id="org.eventb.ui.convergence"
-            name="Convergence"
-            priority="3"
-            widget="combo">
-         <type
-               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.ConvergenceAttributeFactory"
-               id="org.eventb.core.event"/>
-      </attribute>
-      <attribute
-            class="org.eventb.internal.ui.eventbeditor.editpage.AssignmentEditComposite"
-            horizontalExpand="false"
-            id="org.eventb.ui.assignment"
-            name="Assignment"
-            priority="2"
-            style="multi"
-            widget="text">
-         <type id="org.eventb.core.action"/>
-      </attribute>
-      <attribute
-            class="org.eventb.internal.ui.eventbeditor.editpage.RefinesEventEditComposite"
-            horizontalExpand="false"
-            id="org.eventb.ui.refinesEvent"
-            name="Refines Event"
-            priority="1"
-            widget="combo">
-         <type
-               defaultValue="org.eventb.internal.ui.eventbeditor.editpage.RefinesEventAttributeFactory"
-               id="org.eventb.core.refinesEvent"/>
-      </attribute>
-      <attribute
-            class="org.eventb.internal.ui.eventbeditor.editpage.CommentEditComposite"
+            widget="text"/>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
             horizontalExpand="true"
-            id="org.eventb.ui.comment"
-            name="Comment"
+            id="org.eventb.core.variableComment"
             prefix="//"
             priority="9"
             style="multi"
             widget="text">
-         <type id="org.eventb.core.variable"/>
-         <type id="org.eventb.core.invariant"/>
-         <type id="org.eventb.core.theorem"/>
-         <type id="org.eventb.core.event"/>
-         <type id="org.eventb.core.guard"/>
-         <type id="org.eventb.core.action"/>
-         <type
-               id="org.eventb.core.carrierSet">
-         </type>
-         <type
-               id="org.eventb.core.constant">
-         </type>
-         <type
-               id="org.eventb.core.axiom">
-         </type>
-      </attribute>
-      <attribute
-            class="org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineEditComposite"
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.InvariantLabelAttributeFactory"
+            defaultValue="inv"
             horizontalExpand="false"
-            id="org.eventb.ui.refinesMachine"
-            name="Refines Machine"
+            id="org.eventb.core.invariantLabel"
+            postfix=":"
             priority="1"
-            widget="combo">
-         <type id="org.eventb.core.refinesMachine"/>
-      </attribute>
-      <attribute
-            class="org.eventb.internal.ui.eventbeditor.editpage.SeesContextEditor"
+            style="single"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.PredicateAttributeFactory"
             horizontalExpand="false"
-            id="org.eventb.ui.seesContext"
-            name="Sees Context"
+            id="org.eventb.core.invariantPredicate"
+            priority="2"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
+            horizontalExpand="true"
+            id="org.eventb.core.invariantComment"
+            prefix="//"
+            priority="9"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.TheoremLabelAttributeFactory"
+            defaultValue="thm"
+            horizontalExpand="false"
+            id="org.eventb.core.theoremLabel"
+            postfix=":"
+            priority="1"
+            style="single"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.PredicateAttributeFactory"
+            horizontalExpand="false"
+            id="org.eventb.core.theoremPredicate"
+            priority="2"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
+            horizontalExpand="true"
+            id="org.eventb.core.theoremComment"
+            prefix="//"
+            priority="9"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory"
+            defaultValue="evt"
+            horizontalExpand="false"
+            id="org.eventb.core.eventLabel"
+            priority="1"
+            style="single"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.InheritedAttributeFactory"
+            defaultValue="true"
+            horizontalExpand="false"
+            id="org.eventb.core.eventInherited"
             priority="2"
             widget="combo">
-         <type id="org.eventb.core.seesContext"/>
-      </attribute>
-      <attribute
-            class="org.eventb.internal.ui.eventbeditor.editpage.ExpressionEditor"
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.ConvergenceAttributeFactory"
+            horizontalExpand="false"
+            id="org.eventb.core.eventConvergence"
+            priority="3"
+            widget="combo">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
             horizontalExpand="true"
-            id="org.eventb.ui.expression"
-            name="Expressions"
+            id="org.eventb.core.eventComment"
+            prefix="//"
+            priority="9"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.RefinesEventAbstractEventLabelAttributeFactory"
+            horizontalExpand="false"
+            id="org.eventb.core.refinesEventAbstractEventLabel"
+            priority="1"
+            widget="combo">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.GuardLabelAttributeFactory"
+			defaultValue="grd"
+            horizontalExpand="false"
+            id="org.eventb.core.guardLabel"
+            postfix=":"
+            priority="1"
+            style="single"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.PredicateAttributeFactory"
+            horizontalExpand="false"
+            id="org.eventb.core.guardPredicate"
+            priority="2"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
+            horizontalExpand="true"
+            id="org.eventb.core.guardComment"
+            prefix="//"
+            priority="9"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.WitnessLabelAttributeFactory"
+			defaultValue="wit"
+            horizontalExpand="false"
+            id="org.eventb.core.witnessLabel"
+            postfix=":"
+            priority="1"
+            style="single"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.PredicateAttributeFactory"
+            horizontalExpand="false"
+            id="org.eventb.core.witnessPredicate"
+            priority="2"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
+            horizontalExpand="true"
+            id="org.eventb.core.witnessComment"
+            prefix="//"
+            priority="9"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.ActionLabelAttributeFactory"
+            defaultValue="act"
+            horizontalExpand="false"
+            id="org.eventb.core.actionLabel"
+            postfix=":"
+            priority="1"
+            style="single"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.AssignmentAttributeFactory"
+            horizontalExpand="false"
+            id="org.eventb.core.actionAssignment"
+            priority="2"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
+            horizontalExpand="true"
+            id="org.eventb.core.actionComment"
+            prefix="//"
+            priority="9"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.ExpressionAttributeFactory"
+            horizontalExpand="true"
+            id="org.eventb.core.variantExpression"
             priority="1"
             style="multi"
             widget="text">
-         <type id="org.eventb.core.variant"/>
-      </attribute>
-      <attribute
-            class="org.eventb.internal.ui.eventbeditor.editpage.ExtendsContextEditComposite"
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.ExtendsContextAbstractContextNameAttributeFactory"
             horizontalExpand="false"
-            id="org.eventb.ui.extendsContext"
-            name="Extends Context"
+            id="org.eventb.core.extendsContextAbstractContextName"
             priority="1"
             widget="combo">
-         <type id="org.eventb.core.extendsContext"/>
-      </attribute>
-   </extension>
-   <extension
-         point="org.eventb.ui.editSections">
-      <action
-            class="org.eventb.internal.ui.eventbeditor.editpage.Up"
-            icon="icons/applied.gif"
-            id="org.eventb.ui.variable.up"
-            name="Up"
-            tooltip="Move variable up">
-         <type id="org.eventb.core.variable"/>
-      </action>
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CarrierSetIdentifierAttributeFactory"
+            defaultValue="set"
+            horizontalExpand="false"
+            id="org.eventb.core.carrierSetIdentifier"
+            priority="1"
+            style="single"
+            widget="text"/>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
+            horizontalExpand="true"
+            id="org.eventb.core.carrierSetComment"
+            prefix="//"
+            priority="9"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.ConstantIdentifierAttributeFactory"
+            defaultValue="cst"
+            horizontalExpand="false"
+            id="org.eventb.core.constantIdentifier"
+            priority="1"
+            style="single"
+            widget="text"/>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
+            horizontalExpand="true"
+            id="org.eventb.core.constantComment"
+            prefix="//"
+            priority="9"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.AxiomLabelAttributeFactory"
+            defaultValue="axm"
+            horizontalExpand="false"
+            id="org.eventb.core.axiomLabel"
+            postfix=":"
+            priority="1"
+            style="single"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.PredicateAttributeFactory"
+            horizontalExpand="false"
+            id="org.eventb.core.axiomPredicate"
+            priority="2"
+            style="multi"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
+            horizontalExpand="true"
+            id="org.eventb.core.axiomComment"
+            prefix="//"
+            priority="9"
+            style="multi"
+            widget="text">
+      </attributeRel>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

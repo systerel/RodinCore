@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
@@ -20,17 +21,17 @@ public class EditRow {
 	IEditComposite[] editComposites;
 
 	IElementComposite elementComp;
-	
+
 	ButtonComposite buttonComp;
-	
+
 	public EditRow(IElementComposite elementComp, ScrolledForm form,
 			FormToolkit toolkit) {
 		this.elementComp = elementComp;
 		this.form = form;
 	}
 
-	public void createContents(FormToolkit toolkit, Composite parent,
-			Composite sibling, int level) {
+	public void createContents(IEventBEditor<?> editor, FormToolkit toolkit,
+			Composite parent, Composite sibling, int level) {
 		composite = toolkit.createComposite(parent);
 		if (EventBEditorUtils.DEBUG) {
 			composite.setBackground(composite.getDisplay().getSystemColor(
@@ -40,21 +41,23 @@ public class EditRow {
 			assert sibling.getParent() == parent;
 			composite.moveAbove(sibling);
 		}
-		IRodinElement element = elementComp.getElement(); 
+		IRodinElement element = elementComp.getElement();
 		IElementType<? extends IRodinElement> type = element.getElementType();
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		EditSectionRegistry sectionRegistry = EditSectionRegistry.getDefault();
-		int numColumns = 1 + 3 * sectionRegistry.getNumAttributes(type);
+		IAttributeRelUISpecRegistry attributeRegistry = AttributeRelUISpecRegistry
+				.getDefault();
+		int numColumns = 1 + 3 * attributeRegistry.getNumberOfAttributes(type);
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = numColumns + 1;
 		composite.setLayout(gridLayout);
 
 		createButtons(toolkit, level);
-		editComposites = sectionRegistry.createAttributeComposites(element.getElementType());
+		editComposites = attributeRegistry.getEditComposites(element
+				.getElementType());
 		for (IEditComposite editComposite : editComposites) {
 			editComposite.setForm(form);
 			editComposite.setElement((IAttributedElement) element);
-			editComposite.createComposite(toolkit, composite);
+			editComposite.createComposite(editor, toolkit, composite);
 		}
 		toolkit.paintBordersFor(composite);
 	}
@@ -65,7 +68,7 @@ public class EditRow {
 	}
 
 	public void refresh() {
-		IRodinElement element = elementComp.getElement(); 
+		IRodinElement element = elementComp.getElement();
 		for (IEditComposite editComposite : editComposites) {
 			editComposite.setElement((IAttributedElement) element);
 			editComposite.refresh();
@@ -92,15 +95,13 @@ public class EditRow {
 		if (select) {
 			composite.setBackground(composite.getDisplay().getSystemColor(
 					SWT.COLOR_GRAY));
-		}
-		else {
+		} else {
 			if (EventBEditorUtils.DEBUG) {
 				composite.setBackground(composite.getDisplay().getSystemColor(
 						SWT.COLOR_RED));
-			}
-			else {
+			} else {
 				composite.setBackground(composite.getDisplay().getSystemColor(
-						SWT.COLOR_WHITE));				
+						SWT.COLOR_WHITE));
 			}
 		}
 		buttonComp.setSelected(select);

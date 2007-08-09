@@ -47,6 +47,7 @@ import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.TimerText;
+import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.utils.Messages;
@@ -86,6 +87,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	
 	IContextActivation activateContext;
 	
+	// Comment at file level
 	IEventBInputText commentText;
 
 	/**
@@ -285,21 +287,21 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		toolkit.paintBordersFor(comp);
 	}
 
-	public void createSections(final Composite parent) {
+	private void createSections(final Composite parent) {
 		EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
 		IRodinFile rodinInput = editor.getRodinInput();
-		EditSectionRegistry editSectionRegistry = EditSectionRegistry
+		IElementRelUISpecRegistry editSectionRegistry = ElementRelUISpecRegistry
 				.getDefault();
 		FormToolkit toolkit = this.getManagedForm().getToolkit();
 
-		IInternalElementType<? extends IInternalElement>[] types = editSectionRegistry
-				.getChildrenTypes(rodinInput.getElementType());
+		List<IElementRelationship> rels = editSectionRegistry
+				.getElementRelationships(rodinInput.getElementType());
 
-		sectionComps = new ArrayList<ISectionComposite>(types.length);
-		for (IInternalElementType<? extends IInternalElement> type : types) {
+		sectionComps = new ArrayList<ISectionComposite>(rels.size());
+		for (IElementRelationship rel : rels) {
 
 			SectionComposite sectionComp = new SectionComposite(this, toolkit,
-					form, parent, rodinInput, type, 0);
+					form, parent, rodinInput, rel, 0);
 			// Create the section composite
 			sectionComps.add(sectionComp);
 		}

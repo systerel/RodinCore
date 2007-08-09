@@ -18,57 +18,119 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IElementType;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 public class SectionComposite implements ISectionComposite {
 
+	// The Form Toolkit used to create different Widget
 	FormToolkit toolkit;
 
+	// The top level scrolled form
 	ScrolledForm form;
 
+	// The composite parent for the section
 	Composite compParent;
 
+	// The Rodin parent of this section
 	IInternalParent parent;
 
-	IInternalElementType<? extends IInternalElement> type;
+	// The element relationship associated with this section composite
+	IElementRelationship rel;
 
+	// The level of this section composite: 0 is the top level
 	int level;
 
-	Composite composite;
-
+	// The Edit Page
 	EditPage page;
 
+	// The main composite
+	Composite composite;
+
+	// The folding image hyperlink
 	ImageHyperlink folding;
 
-	LinkedList<IElementComposite> elementComps;
-
-	Composite elementComposite;
-	
-	AbstractHyperlinkComposite beforeHyperlinkComposite;
-
-	AbstractHyperlinkComposite afterHyperlinkComposite;
-
+	// expanding status
 	boolean isExpanded;
 
+	// Before hyperlink composite
+	AbstractHyperlinkComposite beforeHyperlinkComposite;
+
+	// The element composite
+	Composite elementComposite;
+	
+	// List of contained element composite
+	LinkedList<IElementComposite> elementComps;
+
+	// After hyperlink composite
+	AbstractHyperlinkComposite afterHyperlinkComposite;
+
+	
 	public SectionComposite(EditPage page, FormToolkit toolkit,
 			ScrolledForm form, Composite compParent, IInternalParent parent,
-			IInternalElementType<? extends IInternalElement> type, int level) {
+			IElementRelationship rel, int level) {
 		this.page = page;
 		this.toolkit = toolkit;
 		this.form = form;
 		this.compParent = compParent;
 		this.parent = parent;
-		this.type = type;
+		this.rel = rel;
 		this.level = level;
 		createContents();
+	}
+
+	private void createContents() {
+		composite = toolkit.createComposite(compParent);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.verticalSpacing = 0;
+		gridLayout.marginWidth = 0;
+		composite.setLayout(gridLayout);
+		if (EventBEditorUtils.DEBUG) {
+			composite.setBackground(composite.getDisplay().getSystemColor(
+					SWT.COLOR_DARK_CYAN));
+		}
+		
+		IElementRelUISpecRegistry registry = ElementRelUISpecRegistry.getDefault();
+
+		String prefix = registry.getPrefix(rel);
+		if (prefix != null)
+			createPrefixLabel(prefix);
+
+		gridLayout = new GridLayout();
+		gridLayout.verticalSpacing = 0;
+		gridLayout.marginWidth = 0;
+		beforeHyperlinkComposite = new BeforeHyperlinkComposite(page, parent,
+				rel.getChildType(), toolkit, composite);
+		
+		gridLayout = new GridLayout();
+		gridLayout.verticalSpacing = 0;
+		gridLayout.marginWidth = 0;
+		elementComposite = toolkit.createComposite(composite);
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		elementComposite.setLayoutData(gridData);
+		elementComposite.setLayout(gridLayout);
+		if (EventBEditorUtils.DEBUG) {
+			elementComposite.setBackground(composite.getDisplay().getSystemColor(
+					SWT.COLOR_GREEN));
+		}
+
+		afterHyperlinkComposite = new AfterHyperlinkComposite(page, parent, rel
+				.getChildType(), toolkit, composite);
+
+		String postfix = registry.getPostfix(rel);
+
+		if (postfix != null)
+			createPostfixLabel(postfix);
+
+		setExpand(false);
+		return;
 	}
 
 	private void createPostfixLabel(String str) {
@@ -199,61 +261,10 @@ public class SectionComposite implements ISectionComposite {
 		}
 	}
 
-	public void createContents() {
-		composite = toolkit.createComposite(compParent);
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.verticalSpacing = 0;
-		gridLayout.marginWidth = 0;
-		composite.setLayout(gridLayout);
-		if (EventBEditorUtils.DEBUG) {
-			composite.setBackground(composite.getDisplay().getSystemColor(
-					SWT.COLOR_DARK_CYAN));
-		}
-		
-		EditSectionRegistry editSectionRegistry = EditSectionRegistry
-				.getDefault();
-
-		String prefix = editSectionRegistry.getPrefix(parent.getElementType(),
-				type);
-		if (prefix != null)
-			createPrefixLabel(prefix);
-
-		gridLayout = new GridLayout();
-		gridLayout.verticalSpacing = 0;
-		gridLayout.marginWidth = 0;
-		beforeHyperlinkComposite = new BeforeHyperlinkComposite(page, parent,
-				type, toolkit, composite);
-		
-		gridLayout = new GridLayout();
-		gridLayout.verticalSpacing = 0;
-		gridLayout.marginWidth = 0;
-		elementComposite = toolkit.createComposite(composite);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		elementComposite.setLayoutData(gridData);
-		elementComposite.setLayout(gridLayout);
-		if (EventBEditorUtils.DEBUG) {
-			elementComposite.setBackground(composite.getDisplay().getSystemColor(
-					SWT.COLOR_GREEN));
-		}
-		
-		afterHyperlinkComposite = new AfterHyperlinkComposite(page, parent, type,
-				toolkit, composite);
-
-		String postfix = editSectionRegistry.getPostfix(
-				parent.getElementType(), type);
-
-		if (postfix != null)
-			createPostfixLabel(postfix);
-
-		setExpand(false);
-		return;
-	}
-
 	private void createElementComposites() {
 
 		try {
-			IRodinElement[] children = parent.getChildrenOfType(type);
+			IRodinElement[] children = parent.getChildrenOfType(rel.getChildType());
 			if (!beforeHyperlinkComposite.isInitialised())
 				beforeHyperlinkComposite.createHyperlinks(toolkit, level);
 			
@@ -297,7 +308,7 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	public IElementType<?> getElementType() {
-		return type;
+		return rel.getChildType();
 	}
 
 	public void elementRemoved(IRodinElement element) {
@@ -334,7 +345,7 @@ public class SectionComposite implements ISectionComposite {
 
 	public void elementAdded(IRodinElement element) {
 		if (element.getParent().equals(parent)
-				&& element.getElementType() == type) {
+				&& element.getElementType() == rel.getChildType()) {
 			if (elementComps != null) {
 				// Create a new Element composite added to the end of the list
 				elementComps.add(new ElementComposite(page, toolkit, form,
@@ -358,11 +369,11 @@ public class SectionComposite implements ISectionComposite {
 		if (elementComps == null)
 			return;
 
-		if (parent.equals(element) && childrenType == type) {
+		if (parent.equals(element) && childrenType == rel.getChildType()) {
 			// Sorting the section
 			try {
 				Rectangle bounds = elementComposite.getBounds();
-				IRodinElement[] children = parent.getChildrenOfType(type);
+				IRodinElement[] children = parent.getChildrenOfType(rel.getChildType());
 				assert children.length == elementComps.size();
 				for (int i = 0; i < children.length; ++i) {
 					IRodinElement child = children[i];
@@ -426,7 +437,7 @@ public class SectionComposite implements ISectionComposite {
 
 	public void recursiveExpand(IRodinElement element) {
 		if (parent.equals(element)
-				|| (parent.isAncestorOf(element) && type.equals(element
+				|| (parent.isAncestorOf(element) && rel.equals(element
 						.getElementType())) || element.isAncestorOf(parent)) {
 			setExpand(true);
 			for (IElementComposite elementComp : elementComps) {

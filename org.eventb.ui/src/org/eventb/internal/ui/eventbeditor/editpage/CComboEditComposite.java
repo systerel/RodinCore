@@ -8,26 +8,25 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
+import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
-public class CComboEditComposite extends DefaultEditComposite implements
-		IEditComposite {
+public class CComboEditComposite extends AbstractEditComposite {
 
 	protected final String UNDEFINED = "--undef--";
 	
 	protected CCombo combo;
 	protected Button undefinedButton;
 
-	IAttributeEditor attributeEditor;
-	
-	public CComboEditComposite(IAttributeEditor attributeEditor) {
-		this.attributeEditor = attributeEditor;
+	public CComboEditComposite(IAttributeUISpec uiSpec) {
+		super(uiSpec);
 	}
-
+	
 	@Override
 	public void initialise() {
 		try {
-			String value = attributeEditor.getAttribute(element,
+			String value = uiSpec.getAttributeFactory().getValue(element,
 					new NullProgressMonitor());
 			createCombo();
 			combo.setText(value);
@@ -70,14 +69,14 @@ public class CComboEditComposite extends DefaultEditComposite implements
 				public void widgetSelected(SelectionEvent e) {
 					if (combo.getText().equals(UNDEFINED)) {
 						try {
-							attributeEditor.removeAttribute(element,
+							uiSpec.getAttributeFactory().removeAttribute(element,
 									new NullProgressMonitor());
 						} catch (RodinDBException e1) {
 							EventBUIExceptionHandler.handleRemoveAttribteException(e1);
 						}
 					} else {
 						try {
-							attributeEditor.setAttribute(element, combo
+							uiSpec.getAttributeFactory().setValue(element, combo
 									.getText(), new NullProgressMonitor());
 						} catch (RodinDBException exception) {
 							EventBUIExceptionHandler
@@ -90,16 +89,23 @@ public class CComboEditComposite extends DefaultEditComposite implements
 		}
 		
 		combo.add(UNDEFINED);
-		String[] values = attributeEditor.getPossibleValues(element,
-				new NullProgressMonitor());
-		for (String value : values) {
-			combo.add(value);
+		try {
+			String[] values;
+			values = uiSpec.getAttributeFactory().getPossibleValues(element,
+					new NullProgressMonitor());
+			for (String value : values) {
+				combo.add(value);
+			}
+		} catch (RodinDBException e) {
+			EventBUIExceptionHandler.handleRodinException(e,
+					UserAwareness.IGNORE);
 		}
 	}
 
-	public void setDefaultValue() {
+	public void setDefaultValue(IEventBEditor<?> editor) {
 		try {
-			attributeEditor.setDefaultAttribute(element, new NullProgressMonitor());
+			uiSpec.getAttributeFactory().setDefaultValue(editor, element,
+					new NullProgressMonitor());
 			if (combo != null)
 				combo.setFocus();
 		} catch (RodinDBException e) {

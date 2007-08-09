@@ -9,30 +9,29 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
-public class ExtendsContextEditComposite extends DefaultAttributeEditor
-		implements IAttributeEditor {
+public class ExtendsContextAbstractContextNameAttributeFactory implements
+		IAttributeFactory {
 
-	@Override
-	public void setDefaultAttribute(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void setDefaultValue(IEventBEditor<?> editor,
+			IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
 		IRefinesMachine refinesEvent = (IRefinesMachine) element;
 		String name = "abstract_context";
 		refinesEvent.setAbstractMachineName(name, new NullProgressMonitor());
 	}
 
-	@Override
-	public String getAttribute(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+	public String getValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
 		IExtendsContext extendsContext = (IExtendsContext) element;
 		return extendsContext.getAbstractContextName();
 	}
 
-	@Override
-	public void setAttribute(IAttributedElement element, String str,
+	public void setValue(IAttributedElement element, String str,
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IExtendsContext;
 
@@ -40,7 +39,7 @@ public class ExtendsContextEditComposite extends DefaultAttributeEditor
 
 		String value;
 		try {
-			value = getAttribute(element, monitor);
+			value = getValue(element, monitor);
 		} catch (RodinDBException e) {
 			value = null;
 		}
@@ -50,31 +49,24 @@ public class ExtendsContextEditComposite extends DefaultAttributeEditor
 		}
 	}
 
-	@Override
 	public String[] getPossibleValues(IAttributedElement element,
-			IProgressMonitor monitor) {
+			IProgressMonitor monitor) throws RodinDBException {
 		List<String> results = new ArrayList<String>();
 		IExtendsContext extendsContext = (IExtendsContext) element;
 		IRodinProject rodinProject = extendsContext.getRodinProject();
-		try {
-			IContextFile[] contextFiles = rodinProject
-					.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-			IContextFile context = (IContextFile) extendsContext.getParent();
-			String contextName = context.getBareName();
+		IContextFile[] contextFiles = rodinProject
+				.getChildrenOfType(IContextFile.ELEMENT_TYPE);
+		IContextFile context = (IContextFile) extendsContext.getParent();
+		String contextName = context.getBareName();
 
-			for (IContextFile contextFile : contextFiles) {
-				String bareName = contextFile.getBareName();
-				if (!contextName.equals(bareName))
-					results.add(bareName);
-			}
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		for (IContextFile contextFile : contextFiles) {
+			String bareName = contextFile.getBareName();
+			if (!contextName.equals(bareName))
+				results.add(bareName);
 		}
 		return results.toArray(new String[results.size()]);
 	}
 
-	@Override
 	public void removeAttribute(IAttributedElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);

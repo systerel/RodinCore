@@ -1,5 +1,6 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -14,7 +15,6 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
@@ -45,12 +45,16 @@ public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 			public void linkActivated(HyperlinkEvent e) {
 				IEventBEditor<?> editor = (IEventBEditor<?>) page.getEditor();
 				try {
-					IRodinElement element = EditSectionRegistry.getDefault()
-							.createElement(editor, parent, type, null);
+					IInternalElement element = AttributeRelUISpecRegistry
+							.getDefault().createElement(editor, parent, type,
+									null);
 					page.recursiveExpand(element);
-				} catch (RodinDBException re) {
+				} catch (RodinDBException exception) {
 					EventBUIExceptionHandler
-							.handleCreateElementException(re);
+							.handleCreateElementException(exception);
+				} catch (CoreException exception) {
+					EventBUIExceptionHandler
+						.handleCreateElementException(exception);
 				}
 			}
 

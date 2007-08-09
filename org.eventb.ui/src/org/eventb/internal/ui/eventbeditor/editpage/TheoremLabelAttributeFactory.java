@@ -1,11 +1,11 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 public class TheoremLabelAttributeFactory extends
-		LabelAttributeFactory implements IAttributeFactory {
+		LabelAttributeFactory {
 
 	@Override
-	protected void setPrefix() {
-		defaultPrefix = "thm";
+	protected String getPrefix() {
+		return "thm";
 	}
 
 }

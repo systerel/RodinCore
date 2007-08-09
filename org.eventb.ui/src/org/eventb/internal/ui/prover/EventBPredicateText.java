@@ -99,20 +99,24 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 			@Override
 			protected void disableListeners() {
-				text.removeListener(SWT.MouseDown, mouseDownListener);
-				text.removeListener(SWT.MouseMove, mouseMoveListener);
-				text.removeListener(SWT.MouseHover, mouseHoverListener);
-				text.removeListener(SWT.MouseExit, mouseExitListener);
-				text.removeListener(SWT.MouseEnter, mouseEnterListener);
+				if (!text.isDisposed()) {
+					text.removeListener(SWT.MouseDown, mouseDownListener);
+					text.removeListener(SWT.MouseMove, mouseMoveListener);
+					text.removeListener(SWT.MouseHover, mouseHoverListener);
+					text.removeListener(SWT.MouseExit, mouseExitListener);
+					text.removeListener(SWT.MouseEnter, mouseEnterListener);
+				}
 			}
 
 			@Override
 			protected void enableListeners() {
-				text.addListener(SWT.MouseDown, mouseDownListener);
-				text.addListener(SWT.MouseMove, mouseMoveListener);
-				text.addListener(SWT.MouseHover, mouseHoverListener);
-				text.addListener(SWT.MouseExit, mouseExitListener);
-				text.addListener(SWT.MouseEnter, mouseEnterListener);
+				if (!text.isDisposed()) {
+					text.addListener(SWT.MouseDown, mouseDownListener);
+					text.addListener(SWT.MouseMove, mouseMoveListener);
+					text.addListener(SWT.MouseHover, mouseHoverListener);
+					text.addListener(SWT.MouseExit, mouseExitListener);
+					text.addListener(SWT.MouseEnter, mouseEnterListener);
+				}
 			}
 			
 		};
