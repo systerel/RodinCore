@@ -17,7 +17,6 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.BuilderTest;
 import org.eventb.internal.core.PSWrapper;
-import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -112,7 +111,7 @@ public class AutoPOMTest extends BuilderTest {
 		IPSFile psFile = poFile.getPSFile();
 		IPRFile prFile = poFile.getPRFile();
 		
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		
 		// Checks that status in PS file corresponds POs in PO file.

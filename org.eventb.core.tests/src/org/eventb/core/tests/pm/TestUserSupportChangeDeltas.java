@@ -11,7 +11,6 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
 import org.eventb.internal.core.pm.UserSupport;
-import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -85,7 +84,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 
@@ -110,7 +109,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 
@@ -135,7 +134,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		startDeltas();
@@ -159,7 +158,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		startDeltas();
@@ -183,7 +182,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, new NullProgressMonitor());
 		startDeltas();
@@ -213,7 +212,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		POUtil.addSequent(poFile, dischargedPO, "1 = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, new NullProgressMonitor());
 
@@ -253,7 +252,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 				.addSequent(poFile, reusablePO, "1 = 2", hyp1,
 						mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		// Modified current PO
@@ -294,7 +293,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 				.addSequent(poFile, reusablePO, "1 = 2", hyp1,
 						mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		// Modified current PO

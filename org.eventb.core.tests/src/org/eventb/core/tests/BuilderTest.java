@@ -26,7 +26,6 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -105,6 +104,14 @@ public abstract class BuilderTest extends TestCase {
 		}
 	}
 
+	protected static void enableAutoProver() {
+		EventBPlugin.getPOMTacticPreference().setEnabled(true);
+	}
+	
+	protected static void disableAutoProver() {
+		EventBPlugin.getPOMTacticPreference().setEnabled(false);
+	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -124,8 +131,7 @@ public abstract class BuilderTest extends TestCase {
 		project.setDescription(pDescription, null);
 		rodinProject = RodinCore.valueOf(project);
 		
-		// Turn off automatic provers
-		AutoProver.disable();
+		disableAutoProver();
 	}
 	
 	protected void tearDown() throws Exception {

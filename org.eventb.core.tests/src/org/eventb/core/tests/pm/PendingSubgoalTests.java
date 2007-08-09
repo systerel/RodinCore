@@ -28,7 +28,6 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
 import org.eventb.internal.core.pm.UserSupport;
-import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -132,7 +131,7 @@ public class PendingSubgoalTests extends TestPM {
 		prFile = poFile.getPRFile();
 		psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		userSupport = new UserSupport();

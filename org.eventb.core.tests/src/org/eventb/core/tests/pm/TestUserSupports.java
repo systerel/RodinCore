@@ -21,7 +21,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.pm.UserSupport;
-import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -52,7 +51,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -77,7 +76,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -101,7 +100,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -139,7 +138,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -188,7 +187,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -224,7 +223,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -278,7 +277,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -311,7 +310,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -331,7 +330,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -371,7 +370,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -435,7 +434,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -490,7 +489,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -517,7 +516,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -560,7 +559,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -606,7 +605,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -631,7 +630,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
@@ -665,7 +664,7 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();

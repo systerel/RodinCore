@@ -9,7 +9,6 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
-import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -27,7 +26,7 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 		IPOFile poFile2 = createPOFile("y");
 		IPSFile psFile2 = poFile2.getPSFile();
 
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 
 		startDeltas();

@@ -18,7 +18,6 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
 import org.eventb.internal.core.pm.UserSupport;
-import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -94,7 +93,7 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 
@@ -133,7 +132,7 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		PSWrapperUtil.removePO(poFile, psFile, prFile, dischargedPO);
@@ -175,7 +174,7 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		PSWrapperUtil
@@ -230,7 +229,7 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		String original = userSupport.toString();
@@ -254,7 +253,7 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		PSWrapperUtil.copyPO(poFile, psFile, prFile, dischargedPO, originalPO);
@@ -302,7 +301,7 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		// Modified current PO
@@ -360,7 +359,7 @@ public class TestUserSupportChanges extends TestPM {
 				.addSequent(poFile, reusablePO, "x = 2", hyp1,
 						mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		// Modified current PO
@@ -429,7 +428,7 @@ public class TestUserSupportChanges extends TestPM {
 				.addSequent(poFile, reusablePO, "x = 2", hyp1,
 						mTypeEnvironment());
 		poFile.save(null, true);
-		AutoProver.enable();
+		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		// Modified current PO
