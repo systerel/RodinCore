@@ -37,24 +37,34 @@ public class AllDTests extends AbstractReasonerTests {
 						new AllD.Input(TestLib.genPred("∀x· x=0"), Lib.makeTypeEnvironment(),new String[]{"0"}),
 						"[{}[][][∀x·x=0] |- ⊤," +
 						" {}[][][∀x·x=0, 0=0] |- ⊥]"
-						),
+				),
 				// without WD condition
 				new SuccessfullReasonerApplication(
 						seq,
 						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0","1"})
-						),
+				),
 				// with WD condition
 				new SuccessfullReasonerApplication(
 						seq,
 						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0","1÷0"}),
 						"[{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P] |- 0≠0," +
 						" {P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P, 0≠0, 0∈ℤ⇒0∈P∧1 ÷ 0∈P] |- ⊥]"
-						),
+				),
 				// not all bound idents instantiated
 				new SuccessfullReasonerApplication(
 						seq,
 						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0"})
-						)
+				),
+				// only first bound ident instantiated
+				new SuccessfullReasonerApplication(
+						seq,
+						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0", null})
+				),
+				// only second bound ident instantiated
+				new SuccessfullReasonerApplication(
+						seq,
+						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{null, "0"})
+				),
 		};
 	}
 
