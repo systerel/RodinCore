@@ -48,7 +48,10 @@ public class CComboEditComposite extends AbstractEditComposite {
 		super.setSelected(selection);
 	}
 
-	public void setUndefinedValue() {
+	/**
+	 * Set undefined value for the element.
+	 */
+	private void setUndefinedValue() {
 		if (combo == null)
 			createCombo();
 		

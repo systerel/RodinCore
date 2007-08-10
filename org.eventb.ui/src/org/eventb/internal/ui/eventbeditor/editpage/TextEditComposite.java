@@ -79,7 +79,10 @@ public class TextEditComposite extends AbstractEditComposite {
 			text.setText(value);
 	}
 
-	public void setUndefinedValue() {
+	/**
+	 * Set undefined value for the element.
+	 */
+	private void setUndefinedValue() {
 		FormToolkit toolkit = this.getFormToolkit();
 		if (undefinedButton != null)
 			return;

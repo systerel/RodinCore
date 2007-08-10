@@ -26,28 +26,58 @@ import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
 
+/**
+ * @author htson
+ *         <p>
+ *         Abstract implmentation for edit composite which is used to edit an
+ *         attribute of a particular element.
+ *         </p>
+ */
 public abstract class AbstractEditComposite implements IEditComposite {
 
+	// The Event-B Editor.
 	IEventBEditor<?> fEditor;
 	
-	ScrolledForm form;
-
+	// The attributed element to edit.
 	IAttributedElement element;
 
-	Composite composite;
-	
-	Label prefixLabel;
-	
-	Label postfixLabel;
-
-	private FormToolkit toolkit;
-	
+	// The UI information on how this attribute is displayed and/or edited.
 	protected IAttributeUISpec uiSpec;
 	
+	// The main scrolled form of the edit page.
+	ScrolledForm form;
+
+	// The form toolkit used to create the widgets
+	private FormToolkit toolkit;
+	
+	// The layout of the widgets are as follow (without the separator "|") :
+	// prefixLabel | composite | postfixLabel
+	
+	// The main composite of this edit composite 
+	Composite composite;
+	
+	// The prefix label widget. This is created lazily.
+	Label prefixLabel;
+	
+	// The postfix label widget. This is created lazily.
+	Label postfixLabel;
+
+	
+	/**
+	 * Constructor. No actual widgets are created at the moment. Client has to
+	 * call {@link #createComposite(IEventBEditor, FormToolkit, Composite)} to
+	 * create the widgets themshelves.
+	 * 
+	 * @param uiSpec
+	 *            a UI Spec for an attribute.
+	 */
 	public AbstractEditComposite(IAttributeUISpec uiSpec) {
 		this.uiSpec = uiSpec;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setForm(org.eclipse.ui.forms.widgets.ScrolledForm)
+	 */
 	public void setForm(ScrolledForm form) {
 		this.form = form;
 	}
@@ -65,7 +95,8 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		this.element = element;
 	}
 
-	public void createComposite(IEventBEditor<?> editor, FormToolkit tk, Composite parent) {
+	public void createComposite(IEventBEditor<?> editor, FormToolkit tk,
+			Composite parent) {
 		this.fEditor = editor;
 		this.toolkit = tk;
 		

@@ -1,12 +1,38 @@
+/*******************************************************************************
+ * Copyright (c) 2007 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 
+/**
+ * @author htson
+ *         <p>
+ *         The interface for Attribute relationship UI specification registry.
+ *         This registry stores information how element's attributes are
+ *         displayed and/or edited.
+ *         </p>
+ *         <p>
+ *         This interface is NOT intended to be implemented by clients. Instead,
+ *         clients should get the default instance of this through
+ *         {@link EventBUIPlugin}.
+ *         </p>
+ */
 public interface IAttributeRelUISpecRegistry {
 
 	/**

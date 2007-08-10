@@ -205,33 +205,30 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 
 			public String[] getPossibleValues(IAttributedElement element,
 					IProgressMonitor monitor) throws RodinDBException {
-				// TODO Auto-generated method stub
+				// Not applicable to dummy factory
 				return null;
 			}
 
 			public String getValue(IAttributedElement element,
 					IProgressMonitor monitor) throws RodinDBException {
-				// TODO Auto-generated method stub
-				return null;
+				// Return the empty string.
+				return "";
 			}
 
 			public void removeAttribute(IAttributedElement element,
 					IProgressMonitor monitor) throws RodinDBException {
-				// TODO Auto-generated method stub
-				
+				// Do nothing
 			}
 
 			public void setDefaultValue(IEventBEditor<?> editor,
 					IAttributedElement element, IProgressMonitor monitor)
 					throws RodinDBException {
-				// TODO Auto-generated method stub
-				
+				// Do nothing
 			}
 
 			public void setValue(IAttributedElement element, String value,
 					IProgressMonitor monitor) throws RodinDBException {
-				// TODO Auto-generated method stub
-				
+				// Do nothing
 			}
 
 		}
@@ -283,13 +280,11 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 
 			@Override
 			public void initialise() {
-				// TODO Auto-generated method stub
-				
+				// Do nothing
 			}
 
 			public void setUndefinedValue() {
-				// TODO Auto-generated method stub
-				
+				// Do nothing
 			}
 			
 		}
@@ -445,6 +440,9 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeRelUISpecRegistry#getDefaultPrefix(java.lang.String)
+	 */
 	public synchronized String getDefaultPrefix(String attributeID) {
 		if (attributeRelationships == null)
 			loadRegistry();
@@ -457,6 +455,9 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeRelUISpecRegistry#getType(java.lang.String)
+	 */
 	public synchronized IInternalElementType<?> getType(String attributeID) {
 		if (attributeRelationships == null)
 			loadRegistry();

@@ -88,8 +88,9 @@ public interface IAttributeFactory {
 			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Get the possible values of the attribute of a given element. This mostly
-	 * used for combo dropdown list.
+	 * Get the possible values of the attribute of a given element. This is used
+	 * for setting up the possible values of combo dropdown list. Return null if
+	 * the attribute is not intended to be edited by a combo widget.
 	 * 
 	 * @param element
 	 *            an internal element
