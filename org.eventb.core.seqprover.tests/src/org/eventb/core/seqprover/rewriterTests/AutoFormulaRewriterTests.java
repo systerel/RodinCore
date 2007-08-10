@@ -1044,6 +1044,20 @@ public class AutoFormulaRewriterTests {
 		expectedPred.typeCheck(ff.makeTypeEnvironment());
 		assertRelationalPredicate("A ∖ B ⊆ S == A ⊆ S ∪ B", expectedPred, input, Predicate.SUBSETEQ, S);
 
+		// bool(false) == FALSE
+		input = Lib.parseExpression("bool(⊥)");
+		input.typeCheck(ff.makeTypeEnvironment());
+		resultExp = Lib.parseExpression("FALSE");
+		resultExp.typeCheck(ff.makeTypeEnvironment());
+		assertEquals("bool(⊥) = FALSE", resultExp, input.rewrite(r));
+		
+		// bool(true) == TRUE
+		input = Lib.parseExpression("bool(⊤)");
+		input.typeCheck(ff.makeTypeEnvironment());
+		resultExp = Lib.parseExpression("TRUE");
+		resultExp.typeCheck(ff.makeTypeEnvironment());
+		assertEquals("bool(⊤) = TRUE", resultExp, input.rewrite(r));
+		
 	}
 
 	private void assertSetExtension(String message, Expression expected,

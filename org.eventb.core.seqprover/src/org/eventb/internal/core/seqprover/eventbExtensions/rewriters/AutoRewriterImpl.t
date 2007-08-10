@@ -1176,9 +1176,30 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		}
 	    		return result;
 	    	}
+
 	    }
 	    return expression;
 	}
+
+    @Override
+	public Expression rewrite(BoolExpression expression) {
+	    %match (Expression expression) {
+	   		/**
+	    	 * Set Theory:	bool(⊥) = FALSE
+	    	 */
+	    	Bool(BFALSE()) -> {
+				return ff.makeAtomicExpression(Expression.FALSE, null);
+			}
+
+	   		/**
+	    	 * Set Theory:	bool(⊤) = TRUE  
+	    	 */
+	    	Bool(BTRUE()) -> {
+				return ff.makeAtomicExpression(Expression.TRUE, null);
+			}
+    	}
+	    return expression;
+    }
 
 	private List<List<Expression>> getExpressions(Expression [] array, int from, int size) {
 		List<List<Expression>> result = new ArrayList<List<Expression>>();
