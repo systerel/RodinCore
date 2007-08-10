@@ -1044,20 +1044,6 @@ public class AutoFormulaRewriterTests {
 		expectedPred.typeCheck(ff.makeTypeEnvironment());
 		assertRelationalPredicate("A ∖ B ⊆ S == A ⊆ S ∪ B", expectedPred, input, Predicate.SUBSETEQ, S);
 
-		// bool(false) == FALSE
-		input = Lib.parseExpression("bool(⊥)");
-		input.typeCheck(ff.makeTypeEnvironment());
-		resultExp = Lib.parseExpression("FALSE");
-		resultExp.typeCheck(ff.makeTypeEnvironment());
-		assertEquals("bool(⊥) = FALSE", resultExp, input.rewrite(r));
-		
-		// bool(true) == TRUE
-		input = Lib.parseExpression("bool(⊤)");
-		input.typeCheck(ff.makeTypeEnvironment());
-		resultExp = Lib.parseExpression("TRUE");
-		resultExp.typeCheck(ff.makeTypeEnvironment());
-		assertEquals("bool(⊤) = TRUE", resultExp, input.rewrite(r));
-		
 	}
 
 	private void assertSetExtension(String message, Expression expected,
@@ -1494,5 +1480,50 @@ public class AutoFormulaRewriterTests {
 						+ " − (card(S ∩ T) + card(S ∩ R) + card(S ∩ U) + card(T ∩ R) + card(T ∩ U)+ card(R ∩ U)) + " +
 								"(card(S ∩ T ∩ R) + card(S ∩ T ∩ U) + card(S ∩ R ∩ U) + card(T ∩ R ∩ U)) − card(S ∩ T ∩ R ∩ U)",
 				expectedExp, Expression.KCARD, input);
+	}
+
+	@Test
+	public void testBoolean() {
+		// bool(false) == FALSE
+		Expression input = Lib.parseExpression("bool(⊥)");
+		input.typeCheck(ff.makeTypeEnvironment());
+		Expression resultExp = Lib.parseExpression("FALSE");
+		resultExp.typeCheck(ff.makeTypeEnvironment());
+		assertEquals("bool(⊥) = FALSE", resultExp, input.rewrite(r));
+		
+		// bool(true) == TRUE
+		input = Lib.parseExpression("bool(⊤)");
+		input.typeCheck(ff.makeTypeEnvironment());
+		resultExp = Lib.parseExpression("TRUE");
+		resultExp.typeCheck(ff.makeTypeEnvironment());
+		assertEquals("bool(⊤) = TRUE", resultExp, input.rewrite(r));
+		
+		// TRUE = bool(P) == P
+		Predicate inputPred = Lib.parsePredicate("TRUE = bool(x > 2)");
+		inputPred.typeCheck(ff.makeTypeEnvironment());
+		Predicate resultPred = Lib.parsePredicate("x > 2");
+		resultPred.typeCheck(ff.makeTypeEnvironment());
+		assertEquals("TRUE = bool(P) == P", resultPred, inputPred.rewrite(r));
+		
+		// bool(P) = TRUE == P
+		inputPred = Lib.parsePredicate("bool(x > 2) = TRUE");
+		inputPred.typeCheck(ff.makeTypeEnvironment());
+		resultPred = Lib.parsePredicate("x > 2");
+		resultPred.typeCheck(ff.makeTypeEnvironment());
+		assertEquals("bool(P) = TRUE == P", resultPred, inputPred.rewrite(r));
+		
+		// FALSE = bool(P) == not(P)
+		inputPred = Lib.parsePredicate("FALSE = bool(x > 2)");
+		inputPred.typeCheck(ff.makeTypeEnvironment());
+		resultPred = Lib.parsePredicate("¬x > 2");
+		resultPred.typeCheck(ff.makeTypeEnvironment());
+		assertEquals("FALSE = bool(P) == ¬P", resultPred, inputPred.rewrite(r));
+		
+		// bool(P) = FALSE == not(P)
+		inputPred = Lib.parsePredicate("bool(x > 2) = FALSE");
+		inputPred.typeCheck(ff.makeTypeEnvironment());
+		resultPred = Lib.parsePredicate("¬x > 2");
+		resultPred.typeCheck(ff.makeTypeEnvironment());
+		assertEquals("bool(P) = FALSE == ¬P", resultPred, inputPred.rewrite(r));
 	}
 }

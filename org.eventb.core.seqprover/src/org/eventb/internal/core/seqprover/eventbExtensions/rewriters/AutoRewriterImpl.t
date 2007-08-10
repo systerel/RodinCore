@@ -756,6 +756,33 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		}
 	    	}
 
+	    	/**
+	    	 * Boolean: TRUE = bool(P) == P  
+	    	 */
+	    	Equal(TRUE(), Bool(P)) -> {
+	    		return `P;
+	    	}
+
+	    	/**
+	    	 * Boolean: bool(P) = TRUE == P  
+	    	 */
+	    	Equal(Bool(P), TRUE()) -> {
+	    		return `P;
+	    	}
+
+	    	/**
+	    	 * Boolean: FALSE = bool(P) == ¬P  
+	    	 */
+	    	Equal(FALSE(), Bool(P)) -> {
+	    		return makeUnaryPredicate(Predicate.NOT, `P);
+	    	}
+
+	    	/**
+	    	 * Boolean: bool(P) = FALSE == ¬P  
+	    	 */
+	    	Equal(Bool(P), FALSE()) -> {
+	    		return makeUnaryPredicate(Predicate.NOT, `P);
+	    	}
 	    }
 	    return predicate;
 	}
