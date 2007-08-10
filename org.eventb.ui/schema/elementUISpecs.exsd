@@ -10,11 +10,18 @@
 The Event-B Editor provides a special editing page (Edit page).  This is used for editing all elements and is extensible in the sense that new elements and/or new attributes can be added to the page.
 &lt;/p&gt;
 
-&lt;p&gt;This extension point allows plug-in writers to register new editing facility for elements and/or attribute to the Event-B Editor&apos;s Edit Page.&lt;/p&gt;
+&lt;p&gt;This extension point allows plug-in writers to register new editing facilities for elements and/or attributes to the Event-B Editor&apos;s Edit Page.&lt;/p&gt;
+
+&lt;p&gt;Currently, this extension point is not stable. The interface expected to be changed accordingly with the Element Spec. from &lt;code&gt;org.rodinp.core&lt;/code&gt; project. Currently the Element Spec. is a fake implementation within the &lt;code&gt;org.eventb.ui&lt;/code&gt; project.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            Plug-in writers register new editing features to the Event-B Editor&apos;s Edit Page by extending this extension point. This is the root element.  This contains a sequence of either &lt;samp&gt;elementRel&lt;/samp&gt; and/or &lt;samp&gt;attributeRel&lt;/samp&gt; elements.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <choice minOccurs="0" maxOccurs="unbounded">
@@ -54,33 +61,36 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
          <appInfo>
             <meta.element labelAttribute="type"/>
          </appInfo>
+         <documentation>
+            This element is used for declaring how to display/edit a new element relationship in the Edit Page.
+         </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  an element relationship ID to identify the relationship. This should be a valid relationship ID which has been declared by extending the extension point from &lt;samp&gt;org.rodinp.core&lt;/samp&gt; plug-in.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="prefix" type="string">
             <annotation>
                <documentation>
-                  
+                  The prefix for the section corresponding to the relationship. For example, the prefix for the &lt;samp&gt;org.eventb.core.invariant&lt;/samp&gt; relationship (i.e. the relationship between machine files and invariants) is &quot;INVARIANTS&quot;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="postfix" type="string">
             <annotation>
                <documentation>
-                  
+                  The postfix for the section corresponding to the relationship. For example, the postfix for the &lt;samp&gt;org.eventb.core.event&lt;/samp&gt; relationship (i.e. the relationship between machine files and events) is &quot;END&quot;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="priority" use="required">
             <annotation>
                <documentation>
-                  
+                  The priority for sorting the sections. The sections are sorted in ascending order.
                </documentation>
             </annotation>
             <simpleType>
@@ -119,28 +129,28 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  an attribute relationship ID to identify the relationship. This should be a valid relationship ID which has been declared by extending the extension point from &lt;samp&gt;org.rodinp.core&lt;/samp&gt; plug-in.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="prefix" type="string">
             <annotation>
                <documentation>
-                  
+                  The prefix for the editing area corresponding to the relationship. For example, the prefix for the &lt;samp&gt;org.eventb.core.invariantComment&lt;/samp&gt; relationship (i.e. the relationship for invariant&apos;s comments) is &quot;//&quot;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="postfix" type="string">
             <annotation>
                <documentation>
-                  
+                  The postfix for the editing area corresponding to the relationship. For example, the post for the &lt;samp&gt;org.eventb.core.invariantLabel&lt;/samp&gt; relationship (i.e. the relationship for invariant&apos;s labels) is &quot;:&quot;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="priority" use="required">
             <annotation>
                <documentation>
-                  
+                  The priority for sorting the editing area. The areas are sorted in ascending order.
                </documentation>
             </annotation>
             <simpleType>
@@ -169,14 +179,14 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
          <attribute name="horizontalExpand" type="boolean" use="required">
             <annotation>
                <documentation>
-                  
+                  &lt;code&gt;true&lt;/code&gt; if the editing area should expand horizontally.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="widget">
             <annotation>
                <documentation>
-                  
+                  Specify the widget to be used. There are two possible choices. &lt;samp&gt;text&lt;/samp&gt; to use a text widget and &lt;samp&gt;combo&lt;/samp&gt; to use a dropdown combo widget.
                </documentation>
             </annotation>
             <simpleType>
@@ -191,7 +201,7 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
          <attribute name="style">
             <annotation>
                <documentation>
-                  
+                  this is apply to &lt;samp&gt;text&lt;/samp&gt; widget only. Either &lt;samp&gt;single&lt;/samp&gt; ore &lt;samp&gt;multi&lt;/samp&gt; lines.
                </documentation>
             </annotation>
             <simpleType>
@@ -206,7 +216,7 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
          <attribute name="factory" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the name of a class which will be used for creating/editing the attribute. The class must implement &lt;samp&gt;org.eventb.ui.eventbeditor.editpage.IAttributeFactory&lt;/samp&gt; and also must have a default contructor.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory"/>
@@ -216,7 +226,7 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
          <attribute name="defaultValue" type="string">
             <annotation>
                <documentation>
-                  
+                  this specify the default value or prefix of the attribute. For example, default prefix for invariant is &quot;inv&quot; or the default value for inherited attribute is &quot;false&quot;.
                </documentation>
             </annotation>
          </attribute>
@@ -228,7 +238,7 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         0.7.6
       </documentation>
    </annotation>
 
@@ -237,7 +247,90 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         &lt;p&gt;
+The following is an example of Event-B Editor&apos;s Edit Page extension definition.
+&lt;/p&gt;
+&lt;p&gt;
+Firstly, the client declares how to display elements within the Edit Page.  The following example specifies how to display the relationship between Event element and Machine File element. The relationship itself is supposed to be declared by extending the ElementSpec extension point from &lt;code&gt;org.rodinp.core&lt;/code&gt; package. Here, we used the id of the relationship (&lt;code&gt;org.eventb.core.event&lt;/code&gt;) directly.
+&lt;/p&gt;
+&lt;pre&gt;
+ &lt;extension
+         point=&quot;org.eventb.ui.elementUISpecs&quot;&gt;
+  &lt;elementRel
+            id=&quot;org.eventb.core.event&quot;
+            prefix=&quot;EVENTS&quot;
+            postfix=&quot;END&quot;
+            priority=&quot;9&quot;/&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;p&gt;
+This specify that the section for events in Edit Page should start with &quot;EVENTS&quot; and end with &quot;END&quot;. The priority is used to sort the sections in the Edit Page. Sections are sorted in ascending order.
+&lt;/p&gt;
+Similarly, the relationship of events with their child elements can be declared as follows:
+&lt;pre&gt;
+	&lt;extension
+      point=&quot;org.eventb.ui.elementUISpecs&quot;&gt;
+      &lt;elementRel
+            id=&quot;org.eventb.core.parameter&quot;
+            prefix=&quot;ANY&quot;
+            priority=&quot;2&quot;/&gt;
+      &lt;elementRel
+            id=&quot;org.eventb.core.guard&quot;
+            prefix=&quot;WHERE&quot;
+            priority=&quot;3&quot;/&gt;
+      &lt;elementRel
+            id=&quot;org.eventb.core.witness&quot;
+            prefix=&quot;WITH&quot;
+            priority=&quot;4&quot;/&gt;
+      &lt;elementRel
+            id=&quot;org.eventb.core.action&quot;
+            prefix=&quot;THEN&quot;
+            postfix=&quot;END&quot;
+            priority=&quot;9&quot;/&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;p&gt;
+Secondly, the client declares how to display attributes for certain elements within the Edit Page. Similarly to element relationships, the attribute relationships are supposed to be declared by extending the Element Spec. extension point from &lt;code&gt;org.rodinp.core&lt;/code&gt; project. We refer to their ids to declare how to display them within the Edit Page. The following example declare the attributes of event elements.
+&lt;/p&gt;
+&lt;pre&gt;
+&lt;extension
+         point=&quot;org.eventb.ui.elementUISpecs&quot;&gt;
+      &lt;attributeRel
+           factory=&quot;org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory&quot;
+            defaultValue=&quot;evt&quot;
+            horizontalExpand=&quot;false&quot;
+            id=&quot;org.eventb.core.eventLabel&quot;
+            priority=&quot;1&quot;
+            style=&quot;single&quot;
+            widget=&quot;text&quot;&gt;
+      &lt;/attributeRel&gt;
+      &lt;attributeRel
+            factory=&quot;org.eventb.internal.ui.eventbeditor.editpage.InheritedAttributeFactory&quot;
+            defaultValue=&quot;true&quot;
+            horizontalExpand=&quot;false&quot;
+            id=&quot;org.eventb.core.eventInherited&quot;
+            priority=&quot;2&quot;
+            widget=&quot;combo&quot;&gt;
+      &lt;/attributeRel&gt;
+      &lt;attributeRel
+		factory=&quot;org.eventb.internal.ui.eventbeditor.editpage.ConvergenceAttributeFactory&quot;
+            horizontalExpand=&quot;false&quot;
+            id=&quot;org.eventb.core.eventConvergence&quot;
+            priority=&quot;3&quot;
+            widget=&quot;combo&quot;&gt;
+      &lt;/attributeRel&gt;
+      &lt;attributeRel
+            factory=&quot;org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory&quot;
+            horizontalExpand=&quot;true&quot;
+            id=&quot;org.eventb.core.eventComment&quot;
+            prefix=&quot;//&quot;
+            priority=&quot;9&quot;
+            style=&quot;multi&quot;
+            widget=&quot;text&quot;&gt;
+      &lt;/attributeRel&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;p&gt;These declares that event elements has the following attributes: Label, Inherited, Convergence and Comment. More information can be found in the documentation for &lt;samp&gt;attributeRel&lt;/samp&gt; attribute of the extension point.&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -246,7 +339,9 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         &lt;p&gt;
+The value of the &lt;samp&gt;factory&lt;/samp&gt; attribute of &lt;samp&gt;attributeRel&lt;/samp&gt; element must be a fully qualified name of the class that implements &lt;samp&gt;org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory&lt;/samp&gt;. Moreover, the Edit Page will use the default constructor to create the factory, so the implementation of the factory must also provide the default contructor. Typically, this is done by omitting the constructor all together.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -255,7 +350,15 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         &lt;p&gt;
+This &lt;samp&gt;org.eventb.ui&lt;/samp&gt; plug-in provides a number of exensions for the Edit Page. In particular, clients are suggested to look at the extensions for Event Element&apos;s attributes and their implementations.
+&lt;ul&gt;
+&lt;li&gt;&lt;samp&gt;org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory&lt;/samp&gt;
+&lt;li&gt;&lt;samp&gt;org.eventb.internal.ui.eventbeditor.editpage.InheritedAttributeFactory&lt;/samp&gt;
+&lt;li&gt;&lt;samp&gt;org.eventb.internal.ui.eventbeditor.editpage.ConvergenceAttributeFactory&lt;/samp&gt;
+&lt;li&gt;&lt;samp&gt;org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory&lt;/samp&gt;
+&lt;/ul&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -264,7 +367,7 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005-2006 ETH Zurich.&lt;br&gt;
+         Copyright (c) 2007 ETH Zurich.&lt;br&gt;
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at
