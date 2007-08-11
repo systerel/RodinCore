@@ -252,6 +252,8 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		final Text commentWidget = toolkit.createText(comp, "", SWT.MULTI);
 		commentWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				false));
+		commentWidget.setForeground(commentWidget.getDisplay().getSystemColor(
+				SWT.COLOR_DARK_GREEN));
 		commentText = new EventBText(commentWidget);
 		new TimerText(commentWidget, 1000) {
 
