@@ -1,25 +1,102 @@
+/*******************************************************************************
+ * Copyright (c) 2007 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 
+/**
+ * @author htson
+ *         <p>
+ *         Interface for composite for editing children of the same type of an
+ *         element. Each section composite contains a list of Element Composite
+ *         {@link IElementComposite}, each Element Composite corresponds to a
+ *         child.
+ *         </p>
+ *         <p>
+ *         This interface is NOT intended for clients to implement.
+ *         </p>
+ */
 public interface ISectionComposite {
 
+	/**
+	 * Dispose this section composite. This is done recursively, i.e. the
+	 * Element Composite children is disposed first, then this Section Composite
+	 * parent itself.
+	 */
 	void dispose();
 
-	void refresh(IRodinElement element);
-
+	/**
+	 * Get the element type (the type of the children) of this section
+	 * composite.
+	 * 
+	 * @return the element type for the children elements.
+	 */
 	IElementType<?> getElementType();
 
+	/**
+	 * Refresh the information display in the composite.
+	 * 
+	 * @param element a Rodin element
+	 */
+	// TODO Check if the element is really necessary.
+	void refresh(IRodinElement element);
+
+	/**
+	 * Refresh the edit composite recursively when the input element is removed.
+	 * 
+	 * @param element
+	 *            a Rodin element.
+	 */
 	void elementRemoved(IRodinElement element);
 
+	/**
+	 * Refresh the edit composite recursively when the input element is added.
+	 * 
+	 * @param element
+	 *            a Rodin element.
+	 */
 	void elementAdded(IRodinElement element);
 
+	/**
+	 * Refresh the edit composite recursively when there are some changes for
+	 * children of input type of the input element.
+	 * 
+	 * @param element
+	 *            a Rodin element.
+	 * @param type
+	 *            a Rodin element type.
+	 */
 	void childrenChanged(IRodinElement element,
 			IElementType<?> type);
 
-	void select(IRodinElement element, boolean select);
+	/**
+	 * Select / Deselect an Rodin element.
+	 * 
+	 * @param element
+	 *            a Rodin element
+	 * @param selected
+	 *            <code>true</code> if the element is selected.
+	 *            <code>false</code> if the element is deselected.
+	 */
+	void select(IRodinElement element, boolean selected);
 
+	/**
+	 * Recursively expand the editing composite for the input element
+	 * 
+	 * @param element
+	 *            a Rodin element.
+	 */
 	void recursiveExpand(IRodinElement element);
 
 }

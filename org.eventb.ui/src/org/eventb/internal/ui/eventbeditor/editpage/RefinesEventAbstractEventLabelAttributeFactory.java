@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.ArrayList;
@@ -12,14 +24,13 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 public class RefinesEventAbstractEventLabelAttributeFactory implements
 		IAttributeFactory {
 
-	public void createDefaulAttribute(IEventBEditor<?> editor,
-			IInternalElement element, IProgressMonitor monitor)
+	public void setDefaultValue(IEventBEditor<?> editor,
+			IAttributedElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		if (!(element instanceof IRefinesEvent)) {
 			return;
@@ -50,21 +61,6 @@ public class RefinesEventAbstractEventLabelAttributeFactory implements
 			refinesEvent.setAbstractEventLabel(newValue,
 					new NullProgressMonitor());
 		}
-	}
-
-	public void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
-			throws RodinDBException {
-		IRefinesEvent refinesEvent = (IRefinesEvent) element;
-		IEvent event = (IEvent) refinesEvent.getParent();
-		String label = "abstract_event";
-		try {
-			label = event.getLabel();
-		} catch (RodinDBException e1) {
-			// Do nothing
-		}
-
-		refinesEvent.setAbstractEventLabel(label, monitor);
 	}
 
 	public String[] getPossibleValues(IAttributedElement element,

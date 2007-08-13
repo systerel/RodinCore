@@ -427,10 +427,10 @@ public class SectionComposite implements ISectionComposite {
 		return -1;
 	}
 
-	public void select(IRodinElement element, boolean select) {
+	public void select(IRodinElement element, boolean selected) {
 		if (parent.isAncestorOf(element) && elementComps != null) {
 			for (IElementComposite elementComp : elementComps) {
-				elementComp.select(element, select);
+				elementComp.select(element, selected);
 			}
 		}
 	}

@@ -19,9 +19,13 @@ import org.rodinp.core.IRodinElement;
 /**
  * @author htson
  *         <p>
- *         Interface for composite for editing an element. Each element composite
- *         contains a Edit Row {@link EditRow} for the element and a list of
- *         Edit Sections {@link ISectionComposite} for children of this element.
+ *         Interface for composite for editing an element. Each element
+ *         composite contains a Edit Row {@link EditRow} for the element and a
+ *         list of Edit Sections {@link ISectionComposite} for children of this
+ *         element.
+ *         </p>
+ *         <p>
+ *         This interface is NOT intended for clients to implement.
  *         </p>
  */
 public interface IElementComposite {
@@ -71,15 +75,17 @@ public interface IElementComposite {
 	 * 
 	 * @param element
 	 *            a Rodin element
-	 * @param select
+	 * @param selected
 	 *            <code>true</code> if the element is selected.
 	 *            <code>false</code> if the element is deselected.
 	 */
-	public void select(IRodinElement element, boolean select);
+	public void select(IRodinElement element, boolean selected);
 
 	/**
 	 * Recursively expand the editing composite for the input element
-	 * @param element a Rodin element.
+	 * 
+	 * @param element
+	 *            a Rodin element.
 	 */
 	public void recursiveExpand(IRodinElement element);
 

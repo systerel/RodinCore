@@ -237,17 +237,17 @@ public class ElementComposite implements IElementComposite {
 		return composite;
 	}
 
-	public void select(IRodinElement element, boolean select) {
+	public void select(IRodinElement element, boolean selected) {
 		if (!rElement.exists())
 			return;
 
 		if (rElement.equals(element)) {
-			row.setSelected(select);
+			row.setSelected(selected);
 		}
 
 		if (rElement.isAncestorOf(element) && sectionComps != null) {
 			for (ISectionComposite sectionComp : sectionComps) {
-				sectionComp.select(element, select);
+				sectionComp.select(element, selected);
 			}
 		}
 	}
