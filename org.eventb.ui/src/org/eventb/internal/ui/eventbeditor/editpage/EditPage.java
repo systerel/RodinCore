@@ -13,11 +13,9 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -88,18 +86,22 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 	public static final String PAGE_TAB_TITLE = Messages.editorPage_edit_tabTitle;
 
+	// A list of section composites. The list or its element must not be
+	// <code>null</code>.
 	List<ISectionComposite> sectionComps;
 
-	// The scrolled form
+	// The main scrolled form
 	ScrolledForm form;
 	
+	// Different handler activation for moving up and down with keyboard
 	private IHandlerActivation moveUpHandlerActivation;
 
 	private IHandlerActivation moveDownHandlerActivation;
 	
+	// The Context activation 
 	IContextActivation activateContext;
 	
-	// Comment at file level
+	// Comment text widget at file level
 	IEventBInputText commentText;
 
 	/**
@@ -129,37 +131,57 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
+
+		// Store the reference to the main scrolled form.
 		form = managedForm.getForm();
+		
+		// The body of the main scrolled form has a grid layout (by default has
+		// only one column).
 		Composite body = form.getBody();
 		GridLayout gLayout = new GridLayout();
 		gLayout.marginWidth = 0;
 		gLayout.marginHeight = 0;
 		body.setLayout(gLayout);
 
+		// Try to set the background color if in debug mode.
 		if (EventBEditorUtils.DEBUG) {
 			body.setBackground(form.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		}
 		
+		// Create the top declaration. 
 		createDeclaration(body);
 
+		// Create the different section composites.
 		createSections(body);
+		
+		// Refresh the main scrolled form.
 		form.reflow(true);
 
+		// Activate the context for Edit Page.
+		// TODO: Should this be for Event-B Editor instead of just Edit Page.
 		IContextService contextService = (IContextService) getSite()
 				.getService(IContextService.class);
 		activateContext = contextService
 				.activateContext("org.eventb.ui.keybindings.contexts.editpage");
 
+		// Activate different handlers for keyboard action.
 		activateHandlers();
 	}
 
+	/**
+	 * Utility method for activate different handlers, e.g. Move Up/Down.
+	 */
 	private void activateHandlers() {
-		IHandlerService handlerService = (IHandlerService) EventBUIPlugin.getDefault()
-				.getWorkbench().getAdapter(IHandlerService.class);
+
+		// Get the workbench handler service.
+		IHandlerService handlerService = (IHandlerService) EventBUIPlugin
+				.getDefault().getWorkbench().getAdapter(IHandlerService.class);
+		
+		// Do nothing if the workbench does not have a handler service.
 		if (handlerService == null)
 			return;
 		
-		// Move Up Handler
+		// Creat the Move Up Handler
 		IHandler moveUpHandler= new AbstractHandler() {
 			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -170,7 +192,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		moveUpHandlerActivation = handlerService.activateHandler(
 				"org.eventb.ui.keybindings.moveUp", moveUpHandler);
 
-		// Move Down Handler
+		// Create the Move Down Handler
 		IHandler moveDownHandler= new AbstractHandler() {
 			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -182,6 +204,13 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 				"org.eventb.ui.keybindings.moveDown", moveDownHandler);
 	}
 
+	/**
+	 * Utility method for moving elements up and down.
+	 * 
+	 * @param up
+	 *            <code>true</code> for moving up, <code>false</code> for
+	 *            moving down.
+	 */
 	protected void move(boolean up) {
 		// Assume that the global selection contain the list of element of the
 		// same type and has the same parent
@@ -230,6 +259,11 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		}
 	}
 
+	/**
+	 * Utility method for creating the declaration part of this Edit page.
+	 * 
+	 * @param parent the composite parent.
+	 */
 	private void createDeclaration(Composite parent) {
 		FormToolkit toolkit = this.getManagedForm().getToolkit();
 		EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
@@ -301,6 +335,14 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		toolkit.paintBordersFor(comp);
 	}
 
+	/**
+	 * Utility method for creating different sections composite. The information
+	 * about the section composites is read from the element relationship UI
+	 * Spec. registry.
+	 * 
+	 * @param parent
+	 *            the composite parent of the section composites.
+	 */
 	private void createSections(final Composite parent) {
 		EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
 		IRodinFile rodinInput = editor.getRodinInput();
@@ -308,37 +350,35 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 				.getDefault();
 		FormToolkit toolkit = this.getManagedForm().getToolkit();
 
+		// Get the list of element relationships depending on the type (e.g.
+		// IMachineFile or IContextFile) of the input file.
 		List<IElementRelationship> rels = editSectionRegistry
 				.getElementRelationships(rodinInput.getElementType());
 
+		// Create the section composite corresponding with each relationship.
 		sectionComps = new ArrayList<ISectionComposite>(rels.size());
 		for (IElementRelationship rel : rels) {
-
+			// Create the section composite
 			SectionComposite sectionComp = new SectionComposite(this, toolkit,
 					form, parent, rodinInput, rel, 0);
-			// Create the section composite
 			sectionComps.add(sectionComp);
 		}
+
 	}
 
-	public static Map<IRodinElement, Collection<IEditComposite>> addToMap(
-			Map<IRodinElement, Collection<IEditComposite>> map,
-			IRodinElement element, IEditComposite editComposite) {
-		Collection<IEditComposite> editComposites = map.get(element);
-		if (editComposites == null) {
-			editComposites = new ArrayList<IEditComposite>();
-			map.put(element, editComposites);
-		}
-		editComposites.add(editComposite);
-		return map;
-	}
-
+	// This is related to how the page is refreshed.
+	
+	// The set of elements that has changed.
 	Set<IRodinElement> isChanged;
 
+	// The set of elements that has been removed.
 	Set<IRodinElement> isRemoved;
 
+	// The set of elements that has been added.
 	Set<IRodinElement> isAdded;
 
+	// The set of pairs between element and the type of the children that has
+	// changed.
 	Set<Pair<IRodinElement, IElementType<?>>> childrenHasChanged;
 
 	/*
@@ -347,20 +387,37 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
+		// Record the starting time.
 		long beforeTime = System.currentTimeMillis();
+		
+		// Reset the information collected for the changed event.
+		// TODO: What about concurrency?
 		isChanged = new HashSet<IRodinElement>();
 		isRemoved = new HashSet<IRodinElement>();
 		isAdded = new HashSet<IRodinElement>();
 		childrenHasChanged = new HashSet<Pair<IRodinElement, IElementType<?>>>();
+		
+		// Process the input changed event.
 		processDelta(event.getDelta());
+		
+		// Refresh the page according to the collected information.
 		postRefresh();
+
+		// Update the comment of the file.
+		updateComment();
+
+		// Record the end time.
 		long afterTime = System.currentTimeMillis();
+		
+		// Measure the duration for refreshing the page. 
 		if (EventBEditorUtils.DEBUG)
 			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
 					+ " ms");
-		updateComment();
 	}
 
+	/**
+	 * Utility method for updating comment of the file. 
+	 */
 	private void updateComment() {
 		final Text commentWidget = commentText.getTextWidget();
 		String text = commentWidget.getText();
@@ -374,11 +431,9 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 						Display display = commentWidget.getDisplay();
 						if (!display.isDisposed()) {
 							display.asyncExec(new Runnable() {
-
 								public void run() {
 									commentWidget.setText(comment);
 								}
-
 							});
 						}
 					}
@@ -391,6 +446,33 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		}
 	}
 
+	/**
+	 * Utility method for packing the composite to the preferred size.
+	 * 
+	 * @param c
+	 *            the composite to be packed.
+	 */
+	void internalPack(Composite c) {
+		if (c.equals(form.getBody())) {
+			if (EventBEditorUtils.DEBUG)
+				EventBEditorUtils.debug("Full resize");
+			form.reflow(true);			
+		}
+		Rectangle bounds = c.getBounds();
+		Point preferredSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+		if (preferredSize.x > bounds.width || preferredSize.y > bounds.height) {
+			internalPack(c.getParent());
+		} else {
+			c.layout(true);
+			c.setBounds(bounds);
+		}
+	}
+
+	/**
+	 * Utility method for refreshing the page according to a collected
+	 * information from the delta.
+	 */
 	private void postRefresh() {
 		if (form == null || form.isDisposed())
 			return;
@@ -399,8 +481,10 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		display.syncExec(new Runnable() {
 
 			public void run() {
+				// Do not redraw the page.
 				form.getBody().setRedraw(false);
 
+				// Process the removed element first.
 				for (IRodinElement element : isRemoved) {
 					for (ISectionComposite sectionComp : sectionComps) {
 						sectionComp.elementRemoved(element);
@@ -411,19 +495,21 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 					}
 				}
 
-				
+				// Process the added element second.
 				for (IRodinElement element : isAdded) {
 					for (ISectionComposite sectionComp : sectionComps) {
 						sectionComp.elementAdded(element);
 					}
 				}
 
+				// Process the changed element third.
 				for (IRodinElement element : isChanged) {
 					for (ISectionComposite sectionComp : sectionComps) {
 						sectionComp.refresh(element);
 					}
 				}
 			
+				// Process the elements that changed order last.
 				for (Pair<IRodinElement, IElementType<?>> pair : childrenHasChanged) {
 					for (ISectionComposite sectionComp : sectionComps) {
 						sectionComp.childrenChanged(pair.getFirst(), pair
@@ -431,12 +517,22 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 					}
 				}
 
+				// Redraw the page.
 				form.getBody().setRedraw(true);
 			}
 
 		});
 	}
 
+	/**
+	 * Utility method to check if an element is currently selected within the
+	 * page.
+	 * 
+	 * @param element
+	 *            a Rodin element.
+	 * @return <code>true</code> if the element is selected. Return
+	 *         <code>false<code> otherwise.
+	 */
 	protected boolean isSelected(IRodinElement element) {
 		if (globalSelection instanceof StructuredSelection) {
 			StructuredSelection ssel = (StructuredSelection) globalSelection;
@@ -448,6 +544,12 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		return false;
 	}
 
+	/**
+	 * Process the delta to collect the information about changes.
+	 * 
+	 * @param delta
+	 *            a Rodin Element Delta.
+	 */
 	void processDelta(IRodinElementDelta delta) {
 		IRodinElement element = delta.getElement();
 		int kind = delta.getKind();
@@ -491,6 +593,9 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormPage#dispose()
+	 */
 	@Override
 	public void dispose() {
 		IEventBEditor<?> editor = this.getEventBEditor();
@@ -504,6 +609,9 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		super.dispose();
 	}
 
+	/**
+	 * Utility method to de-activate the handlers. 
+	 */
 	private void deactivateHandlers() {
 		IHandlerService handlerService = (IHandlerService) EventBUIPlugin
 				.getDefault().getWorkbench().getAdapter(IHandlerService.class);
@@ -518,23 +626,48 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		moveDownHandlerActivation = null;
 	}
 
+	// This part to make this page to be a selection provider.
+	// TODO Make this as a separate class?
+
+	// A list of listener.
 	private ListenerList listenerList;
 
+	// The global selection.
+	ISelection globalSelection;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		listenerList.add(listener);
 	}
 
-	ISelection globalSelection;
-
-	public ISelection getSelection() {
-		return globalSelection;
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
 		listenerList.remove(listener);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
+	 */
+	public ISelection getSelection() {
+		return globalSelection;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
+	 */
 	public void setSelection(ISelection selection) {
 		this.globalSelection = selection;
 		fireSelectionChanged(new SelectionChangedEvent(this, globalSelection));
@@ -552,7 +685,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	 * @param event
 	 *            the selection changed event
 	 */
-	public void fireSelectionChanged(final SelectionChangedEvent event) {
+	private void fireSelectionChanged(final SelectionChangedEvent event) {
 		Object[] listeners = this.listenerList.getListeners();
 		for (int i = 0; i < listeners.length; ++i) {
 			final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
@@ -655,23 +788,6 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	public void recursiveExpand(IRodinElement element) {
 		for (ISectionComposite sectionComp : sectionComps) {
 			sectionComp.recursiveExpand(element);
-		}
-	}
-
-	void internalPack(Composite c) {
-		if (c.equals(form.getBody())) {
-			if (EventBEditorUtils.DEBUG)
-				EventBEditorUtils.debug("Full resize");
-			form.reflow(true);			
-		}
-		Rectangle bounds = c.getBounds();
-		Point preferredSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-
-		if (preferredSize.x > bounds.width || preferredSize.y > bounds.height) {
-			internalPack(c.getParent());
-		} else {
-			c.layout(true);
-			c.setBounds(bounds);
 		}
 	}
 
