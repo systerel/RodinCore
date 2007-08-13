@@ -42,10 +42,6 @@ public class ProofStatusToolTip {
 
 	Shell helpShell;
 
-	private final static int MAX_WIDTH = 300;
-
-	private final static int MAX_HEIGHT = 150;
-
 	Display display;
 
 	Listener labelListener;
@@ -81,17 +77,7 @@ public class ProofStatusToolTip {
 	protected String getToolTipText(IPSFile psFile) {
 		ProofStatus proofStatus = new ProofStatus(psFile, true);
 		return proofStatus.toString();
-	} // protected Image getToolTipImage(Object object) {
-
-	// if (object instanceof Control) {
-	// return (Image) ((Control) object).getData("TIP_IMAGE");
-	// }
-	// return null;
-	// }
-
-	// protected String getToolTipHelp(Object object) {
-	// return "Long help for " + object.toString();
-	// }
+	}
 
 	/**
 	 * Enables customized hover help for a specified control
@@ -221,9 +207,9 @@ public class ProofStatusToolTip {
 				tipPosition = control.toDisplay(widgetPosition);
 				Point shellSize = tipShell
 						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				int width = MAX_WIDTH < shellSize.x ? MAX_WIDTH : shellSize.x;
+				int width = shellSize.x;
 				Point pt = tipShell.computeSize(width, SWT.DEFAULT);
-				int height = MAX_HEIGHT < pt.y ? MAX_HEIGHT : pt.y;
+				int height = pt.y;
 				tipLabel.setSize(width, height);
 				tipShell.setSize(width, height);
 				// tipLabel.setSize(200, 40);
@@ -252,48 +238,5 @@ public class ProofStatusToolTip {
 				- shellBounds.height), 0);
 		shell.setBounds(shellBounds);
 	}
-
-//	public void openEditing() {
-//		ICommentedElement element = null;
-//		if (tipWidget == null)
-//			return;
-//		if (tipWidget instanceof TreeItem) {
-//			Object obj = tipWidget.getData();
-//			if (obj instanceof ICommentedElement) {
-//				element = (ICommentedElement) obj;
-//			}
-//		}
-//		if (tipShell != null) {
-//			tipShell.setVisible(false);
-//
-//			if (helpShell != null)
-//				helpShell.dispose();
-//
-//			helpShell = new Shell(parentShell, SWT.NONE);
-//			helpShell.setLayout(new FillLayout());
-//			helpShell.setSize(400, 200);
-//			Text text = new Text(helpShell, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-//
-//			try {
-//				if (element.hasComment()) {
-//					text.setText(element.getComment());
-//				} else {
-//					text.setText("");
-//				}
-//			} catch (RodinDBException e1) {
-//				text.setText("");
-//			}
-//			text.setSize(400, 200);
-//			text.setForeground(display
-//					.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-//			text.setBackground(display
-//					.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-//			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
-//					| GridData.VERTICAL_ALIGN_CENTER));
-//
-//			setHoverLocation(helpShell, tipPosition);
-//			helpShell.open();
-//		}
-//	}
 
 }
