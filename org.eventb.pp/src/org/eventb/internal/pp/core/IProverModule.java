@@ -12,7 +12,7 @@ import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Clause;
 
-public interface IProver {
+public interface IProverModule {
 	
 	// can return true/false or a clause or null
 	// if it cannot infer a new clause

@@ -31,6 +31,13 @@ public class ProverResult {
 		generatedClauses.add(clause);
 	}
 	
+	public ProverResult(Clause clause, Clause subsumedClause) {
+		this.generatedClauses = new HashSet<Clause>();
+		this.subsumedClauses = new HashSet<Clause>();
+		generatedClauses.add(clause);
+		subsumedClauses.add(subsumedClause);
+	}
+	
 	public ProverResult(Clause clause) {
 		this.generatedClauses = new HashSet<Clause>();
 		this.subsumedClauses = new HashSet<Clause>();

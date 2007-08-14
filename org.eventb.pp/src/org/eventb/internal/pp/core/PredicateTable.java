@@ -10,25 +10,35 @@ package org.eventb.internal.pp.core;
 
 import java.util.HashMap;
 
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.Sort;
 
 public class PredicateTable {
 
-	private HashMap<Sort, Integer> map = new HashMap<Sort, Integer>();
+	private HashMap<Sort, PredicateLiteralDescriptor> map = new HashMap<Sort, PredicateLiteralDescriptor>();
+	private HashMap<Integer, PredicateLiteralDescriptor> integerMap = new HashMap<Integer, PredicateLiteralDescriptor>();
 	
 	public PredicateTable() {
 		// nothing for now
 	}
 	
-	public void addCompletePredicate(Sort sort, Integer index) {
-		map.put(sort, index);
-	}
-
-	public boolean hasPredicateForSort(Sort sort) {
-		return map.containsKey(sort);
+	public boolean hasDescriptor(int index) {
+		return integerMap.containsKey(index);
 	}
 	
-	public int getIndexForSort(Sort sort) {
+	public PredicateLiteralDescriptor getDescriptor(int index) {
+		return integerMap.get(index);
+	}
+	
+	public void addDescriptor(int index, PredicateLiteralDescriptor descriptor) {
+		integerMap.put(index, descriptor);
+	}
+	
+	public void addSort(Sort sort, PredicateLiteralDescriptor descriptor) {
+		map.put(sort, descriptor);
+	}
+	
+	public PredicateLiteralDescriptor getDescriptor(Sort sort) {
 		return map.get(sort);
 	}
 	

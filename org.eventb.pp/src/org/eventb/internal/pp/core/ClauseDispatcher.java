@@ -37,23 +37,25 @@ public class ClauseDispatcher implements IDispatcher {
 		System.out.println(message);
 	}
 	
-	// the tracer
+	private IterableHashSet<Clause> alreadyDispatchedClauses;
+	private ResetIterator<Clause> alreadyDispatchedBacktrackClausesIterator;
+	
+	private IterableHashSet<Clause> nonDispatchedClauses;
+	private ResetIterator<Clause> nonDispatchedClausesIterator;
+	private ResetIterator<Clause> nonDispatchedBacktrackClausesIterator;
+	
+	private Collection<Clause> originalClauses;
+	private List<IProverModule> provers;
 	private Tracer tracer;
-	// the dumper
 	private Dumper dumper;
-	
-	// the provers
-	private IProver casesplitter;
-	private IProver predicateprover;
-	private IProver seedsearch;
-	private IProver equality;
-	
 	private ClauseSimplifier simplifier;
+	
+	private int counter = 0;
+	private boolean canceled = false;
 	
 	public ClauseDispatcher() {
 		level = Level.base;
 		
-//		dsWrapper = new DataStructureWrapper(new IterableHashSet<Clause>());
 		alreadyDispatchedClauses = new IterableHashSet<Clause>();
 		alreadyDispatchedBacktrackClausesIterator = alreadyDispatchedClauses.iterator();
 		nonDispatchedClauses = new IterableHashSet<Clause>();
@@ -62,35 +64,15 @@ public class ClauseDispatcher implements IDispatcher {
 		
 		dumper = new Dumper();
 		tracer = new Tracer();
-//		dumper.addDataStructure("Non unit clauses", clauses.iterator());
 		
 		simplifier = new ClauseSimplifier();
+		provers = new ArrayList<IProverModule>();
 	}
 	
-	private Collection<Clause> originalClauses;
-
-	public void setPredicateProver(IProver predicateprover) {
-		predicateprover.initialize(simplifier);
-		predicateprover.registerDumper(dumper);
-		this.predicateprover = predicateprover;
-	}
-	
-	public void setCaseSplitter(IProver casesplitter) {
-		casesplitter.initialize(simplifier);
-		casesplitter.registerDumper(dumper);
-		this.casesplitter = casesplitter;
-	}
-	
-	public void setSeedSearch(IProver seedsearch) {
-		seedsearch.initialize(simplifier);
-		seedsearch.registerDumper(dumper);
-		this.seedsearch = seedsearch;
-	}
-	
-	public void setEqualityProver(IProver equality) {
-		equality.initialize(simplifier);
-		equality.registerDumper(dumper);
-		this.equality = equality;
+	public void addProver(IProverModule prover) {
+		prover.initialize(simplifier);
+		prover.registerDumper(dumper);
+		provers.add(prover);
 	}
 	
 	public void setClauses(Collection<Clause> clauses) {
@@ -105,38 +87,28 @@ public class ClauseDispatcher implements IDispatcher {
 		return tracer;
 	}
 	
-	private List<IProver> provers;
+	public void cancel() {
+		this.canceled = true;
+	}
 	
-	private IterableHashSet<Clause> alreadyDispatchedClauses;
-	private ResetIterator<Clause> alreadyDispatchedBacktrackClausesIterator;
+	private void dumpOriginalClauses() {
+		debug("= Clauses =");
+		ResetIterator<Clause> iterator = nonDispatchedClauses.iterator();
+		while (iterator.hasNext()) {
+			debug(iterator.next().toString());
+		}
+		iterator.delete();
+	}
 	
-	private IterableHashSet<Clause> nonDispatchedClauses;
-	private ResetIterator<Clause> nonDispatchedClausesIterator;
-	private ResetIterator<Clause> nonDispatchedBacktrackClausesIterator;
-	
-	public void mainLoop(long nofSteps) throws InterruptedException {
-		boolean force = false;
-		provers = new ArrayList<IProver>();
-		provers.add(predicateprover);
-		provers.add(casesplitter);
-		provers.add(seedsearch);
-		provers.add(equality);
-		counter = 0;
-		
+	public void mainLoop(long nofSteps) {
 		if (DEBUG) debug("=== ClauseDispatcher. Starting ===");
 		addOriginalClauses();
-		if (DEBUG) debug("= Clauses =");
-		if (DEBUG) {
-			ResetIterator<Clause> iterator = nonDispatchedClauses.iterator();
-			while (iterator.hasNext()) {
-				debug(iterator.next().toString());
-			}
-			iterator.delete();
-		}
+		if (DEBUG) dumpOriginalClauses();
 		
+		boolean force = false;
 		while (!terminated) {
-			if (Thread.interrupted()) throw new InterruptedException();
-			if (!updateCounterAndCheckTermination(nofSteps)) {
+			if (canceled) noProofFound(Result.cancel);
+			else if (!updateCounterAndCheckTermination(nofSteps)) {
 				// first phase, treat non dispatched clauses
 				if (!treatNondispatchedClausesAndCheckContradiction()) {
 					// second phase, all clauses have been treated
@@ -157,7 +129,7 @@ public class ClauseDispatcher implements IDispatcher {
 	private boolean getNextClauseFromProvers(boolean force) {
 		if (DEBUG) debug("== Getting next clause from provers ==");
 		ProverResult nextResult = null;
-		for (IProver prover : provers) {
+		for (IProverModule prover : provers) {
 			nextResult = prover.next(force);
 			if (!nextResult.isEmpty()) {
 				if (DEBUG) debug("= Got result from "+prover.toString()+": "+nextResult.toString()+" =");
@@ -167,7 +139,7 @@ public class ClauseDispatcher implements IDispatcher {
 		if (nextResult.isEmpty()) {
 			if (DEBUG) debug("= Got no result this time =");
 			// proof done
-			if (force) noProofFound();
+			if (force) noProofFound(Result.invalid);
 			return true;
 		}
 		else {
@@ -188,7 +160,7 @@ public class ClauseDispatcher implements IDispatcher {
 			assert getLevel().compareTo(clause.getLevel()) >= 0;
 
 			Set<IOrigin> contradictions = new HashSet<IOrigin>();
-			for (IProver prover : provers) {
+			for (IProverModule prover : provers) {
 				ProverResult result = prover.addClauseAndDetectContradiction(clause);
 				if (DEBUG) debug("= Got result from "+prover.toString()+": "+result.toString()+" =");
 				treatProverResultAndCheckContradiction(result, contradictions);
@@ -207,7 +179,7 @@ public class ClauseDispatcher implements IDispatcher {
 	private boolean updateCounterAndCheckTermination(long nofSteps) {
 		counter++;
 		if (nofSteps > 0 && counter >= nofSteps) {
-			noProofFound();
+			noProofFound(Result.timeout);
 			return true;
 		}
 		if (DEBUG) debug("=== ClauseDispatcher. Step "+counter+". Level "+level+" ===");
@@ -319,7 +291,7 @@ public class ClauseDispatcher implements IDispatcher {
 		if (DEBUG) debug("= Closing level: "+tracer.getLastClosedLevel()+", old level was: "+oldLevel+", new level is: "+level+" =");
 		
 		if (DEBUG) debug("= Dispatching contradiction to subprovers =");
-		for (IProver prover : provers) {
+		for (IProverModule prover : provers) {
 			prover.contradiction(oldLevel, level, dependencies);
 		}	
 		
@@ -350,12 +322,10 @@ public class ClauseDispatcher implements IDispatcher {
 	}
 	
 	private void removeClauseFromProvers(Clause clause) {
-		for (IProver prover : provers) {
+		for (IProverModule prover : provers) {
 			prover.removeClause(clause);
 		}
 	}
-	
-	private int counter;
 	
 	public Level getLevel() {
 		return level;
@@ -386,8 +356,8 @@ public class ClauseDispatcher implements IDispatcher {
 		return result;
 	}
 
-	private void noProofFound() {
-		result = new PPResult(Result.invalid, null);
+	private void noProofFound(Result result1) {
+		result = new PPResult(result1, null);
 		terminated = true;
 	}
 	
