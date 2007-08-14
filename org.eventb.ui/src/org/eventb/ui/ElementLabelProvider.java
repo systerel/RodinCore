@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -23,7 +24,8 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -34,16 +36,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eventb.core.IAxiom;
-import org.eventb.core.ICarrierSet;
-import org.eventb.core.IConstant;
-import org.eventb.core.IEvent;
-import org.eventb.core.IInvariant;
-import org.eventb.core.ITheorem;
-import org.eventb.core.IVariable;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
@@ -103,25 +99,31 @@ public class ElementLabelProvider extends LabelProvider implements
 	 * to the tree node
 	 */
 	private Image getTreeNodeImage(TreeNode<?> node) {
+		int F_ERROR = 0x00002;
+		int F_WARNING = 0x00004;
+		int F_INFO = 0x00008;
+		int overlay = 0;
+		
+		ImageDescriptor descriptor = EventBImage.getImageDescriptor(node
+				.getType());
+		
+		try {
+			int severity = MarkerUIRegistry.getDefault().getMaxMarkerSeverity(node);
+			if (severity == IMarker.SEVERITY_ERROR) {
+				overlay = overlay | F_ERROR;
+			}
+			else if (severity == IMarker.SEVERITY_WARNING) {
+				overlay = overlay | F_WARNING;
+			}
+			if (severity == IMarker.SEVERITY_INFO) {
+				overlay = overlay | F_INFO;
+			}
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-
-		if (node.isType(IVariable.ELEMENT_TYPE))
-			return registry.get(IEventBSharedImages.IMG_VARIABLES);
-		if (node.isType(IInvariant.ELEMENT_TYPE))
-			return registry.get(IEventBSharedImages.IMG_INVARIANTS);
-		if (node.isType(ITheorem.ELEMENT_TYPE))
-			return registry.get(IEventBSharedImages.IMG_THEOREMS);
-		if (node.isType(IEvent.ELEMENT_TYPE))
-			return registry.get(IEventBSharedImages.IMG_EVENTS);
-		if (node.isType(ICarrierSet.ELEMENT_TYPE))
-			return registry.get(IEventBSharedImages.IMG_CARRIER_SETS);
-		if (node.isType(IConstant.ELEMENT_TYPE))
-			return registry.get(IEventBSharedImages.IMG_CONSTANTS);
-		if (node.isType(IAxiom.ELEMENT_TYPE))
-			return registry.get(IEventBSharedImages.IMG_AXIOMS);
-
-		return null;
+		return EventBImage.getImage(descriptor, overlay);
 	}
 
 	public Font getFont(Object element) {
