@@ -7,137 +7,153 @@ import static org.eventb.pp.Util.cVar;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Type;
-import org.eventb.internal.pp.core.ClauseDispatcher;
-import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
-import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 
 public abstract class AbstractPPTest extends TestCase {
 
-	protected List<EqualityLiteral> EMPTY = new ArrayList<EqualityLiteral>(); 
+	public List<EqualityLiteral> EMPTY = new ArrayList<EqualityLiteral>(); 
 
-	protected static FormulaFactory ff = FormulaFactory.getDefault();
+	public static FormulaFactory ff = FormulaFactory.getDefault();
 	// Types used in these tests
-	protected static IntegerType INT = ff.makeIntegerType();
-	protected static BooleanType BOOL = ff.makeBooleanType();
+	public static IntegerType INT = ff.makeIntegerType();
 
-	protected static Clause TRUE = Util.TRUE(Level.base);
-	protected static Clause FALSE = Util.FALSE(Level.base);
-	
-	protected static GivenType ty_S = ff.makeGivenType("S");
-	protected static GivenType ty_T = ff.makeGivenType("T");
-	protected static GivenType ty_U = ff.makeGivenType("U");
-	protected static GivenType ty_V = ff.makeGivenType("V");
-	protected static GivenType ty_M = ff.makeGivenType("M");
+	public static GivenType ty_A = ff.makeGivenType("A");
+	public static GivenType ty_B = ff.makeGivenType("B");
+	public static GivenType ty_C = ff.makeGivenType("C");
+	public static GivenType ty_D = ff.makeGivenType("D");
+	public static GivenType ty_S = ff.makeGivenType("S");
+	public static GivenType ty_T = ff.makeGivenType("T");
+	public static GivenType ty_U = ff.makeGivenType("U");
+	public static GivenType ty_V = ff.makeGivenType("V");
+	public static GivenType ty_M = ff.makeGivenType("M");
 
-	protected static Type POW(Type base) {
+	public static Type POW(Type base) {
 		return ff.makePowerSetType(base);
 	}
 
-	protected static Type CPROD(Type left, Type right) {
+	public static Type CPROD(Type left, Type right) {
 		return ff.makeProductType(left, right);
 	}
 	
-	protected static Type REL(Type left, Type right) {
+	public static Type REL(Type left, Type right) {
 		return ff.makeRelationalType(left, right);
 	}
 	
-	protected static Level BASE = Level.base;
-	protected static Level ONE = new Level(BigInteger.ONE);
-	protected static Level TWO = new Level(BigInteger.valueOf(2));
-	protected static Level THREE = new Level(BigInteger.valueOf(3));
-	protected static Level FOUR = new Level(BigInteger.valueOf(4));
-	protected static Level FIVE = new Level(BigInteger.valueOf(5));
-	protected static Level SIX = new Level(BigInteger.valueOf(6));
-	protected static Level SEVEN = new Level(BigInteger.valueOf(7));
-	protected static Level EIGHT = new Level(BigInteger.valueOf(8));
-	protected static Level NINE = new Level(BigInteger.valueOf(9));
-	protected static Level TEN = new Level(BigInteger.valueOf(10));
-	protected static Level ELEVEN = new Level(BigInteger.valueOf(11));
-	protected static Level NINETEEN = new Level(BigInteger.valueOf(19));
-	protected static Level TWENTY = new Level(BigInteger.valueOf(20));
+	public static Level BASE = Level.base;
+	public static Level ONE = new Level(BigInteger.ONE);
+	public static Level TWO = new Level(BigInteger.valueOf(2));
+	public static Level THREE = new Level(BigInteger.valueOf(3));
+	public static Level FOUR = new Level(BigInteger.valueOf(4));
+	public static Level FIVE = new Level(BigInteger.valueOf(5));
+	public static Level SIX = new Level(BigInteger.valueOf(6));
+	public static Level SEVEN = new Level(BigInteger.valueOf(7));
+	public static Level EIGHT = new Level(BigInteger.valueOf(8));
+	public static Level NINE = new Level(BigInteger.valueOf(9));
+	public static Level TEN = new Level(BigInteger.valueOf(10));
+	public static Level ELEVEN = new Level(BigInteger.valueOf(11));
+	public static Level NINETEEN = new Level(BigInteger.valueOf(19));
+	public static Level TWENTY = new Level(BigInteger.valueOf(20));
 	
-	protected static Variable x = cVar(1);
-	protected static Variable y = cVar(2);
-	protected static Variable z = cVar(3);
-	protected static Constant a = cCons("a");
-	protected static Constant b = cCons("b");
-	protected static Constant c = cCons("c");
-	protected static Constant d = cCons("d");
-	protected static Constant e = cCons("e");
-	protected static Constant f = cCons("f");
+	public static Variable x = cVar(1);
+	public static Variable y = cVar(2);
+	public static Variable z = cVar(3);
+	public static Constant a = cCons("a");
+	public static Constant b = cCons("b");
+	public static Constant c = cCons("c");
+	public static Constant d = cCons("d");
+	public static Constant e = cCons("e");
+	public static Constant f = cCons("f");
 	
-	protected static Variable var0 = Util.cVar(4);
-	protected static Variable var1 = Util.cVar(5);
-	protected static Variable var2 = Util.cVar(6);
-	protected static Variable var3 = Util.cVar(7);
-	protected static Variable var4 = Util.cVar(8);
+	public static Variable var00 = Util.cVar(2);
+	public static Variable var11 = Util.cVar(3);
+	public static Variable var0 = Util.cVar(4);
+	public static Variable var1 = Util.cVar(5);
+	public static Variable var2 = Util.cVar(6);
+	public static Variable var3 = Util.cVar(7);
+	public static Variable var4 = Util.cVar(8);
 	
-	protected static LocalVariable evar0 = cELocVar(0);
-	protected static LocalVariable evar1 = cELocVar(1);
-	protected static LocalVariable fvar0 = cFLocVar(0);
-	protected static LocalVariable fvar1 = cFLocVar(1);
+	public static LocalVariable evar0 = cELocVar(0);
+	public static LocalVariable evar1 = cELocVar(1);
+	public static LocalVariable evar2 = cELocVar(2);
+	public static LocalVariable fvar0 = cFLocVar(0);
+	public static LocalVariable fvar1 = cFLocVar(1);
+	public static LocalVariable fvar2 = cFLocVar(2);
 	
-	protected static EqualityLiteral ab = Util.cEqual(a, b);
-	protected static EqualityLiteral ac = Util.cEqual(a, c);
-	protected static EqualityLiteral nab = Util.cNEqual(a, b);
-	protected static EqualityLiteral bc = Util.cEqual(b, c);
-	protected static EqualityLiteral nbc = Util.cNEqual(b, c);
-	protected static EqualityLiteral cd = Util.cEqual(c, d);
-	protected static EqualityLiteral ncd = Util.cNEqual(c, d);
-	protected static EqualityLiteral nbd = Util.cNEqual(b, d);
-	protected static EqualityLiteral nac = Util.cNEqual(a, c);
+	public static EqualityLiteral ab = Util.cEqual(a,b);
+	public static EqualityLiteral ac = Util.cEqual(a,c);
+	public static EqualityLiteral nab = Util.cNEqual(a,b);
+	public static EqualityLiteral bc = Util.cEqual(b,c);
+	public static EqualityLiteral nbc = Util.cNEqual(b,c);
+	public static EqualityLiteral cd = Util.cEqual(c,d);
+	public static EqualityLiteral ncd = Util.cNEqual(c,d);
+	public static EqualityLiteral nbd = Util.cNEqual(b,d);
+	public static EqualityLiteral nac = Util.cNEqual(a,c);
 	
-	protected static EqualityLiteral xa = Util.cEqual(x, a);
-	protected static EqualityLiteral xb = Util.cEqual(x, b);
-	protected static EqualityLiteral yb = Util.cEqual(y, b);
-	protected static EqualityLiteral nxa = Util.cNEqual(x, a);
-	protected static EqualityLiteral nxb = Util.cNEqual(x, b);
-	protected static EqualityLiteral xc = Util.cEqual(x, c);
-	protected static EqualityLiteral xd = Util.cEqual(x, d);
+	public static EqualityLiteral xa = Util.cEqual(x, a);
+	public static EqualityLiteral xb = Util.cEqual(x, b);
+	public static EqualityLiteral yb = Util.cEqual(y, b);
+	public static EqualityLiteral nxa = Util.cNEqual(x, a);
+	public static EqualityLiteral nxb = Util.cNEqual(x, b);
+	public static EqualityLiteral xc = Util.cEqual(x, c);
+	public static EqualityLiteral xd = Util.cEqual(x, d);
 	
-	protected static void assertFalse(ProverResult result) {
+	public static Sort A = Util.A;
+	public static Sort B = Util.mSort(ty_B);
+	public static Sort C = Util.mSort(ty_C);
+	public static Sort D = Util.mSort(ty_D);
+	public static Sort S = Util.mSort(ty_S);
+	public static Sort T = Util.mSort(ty_T);
+	public static Sort U = Util.mSort(ty_U);
+	public static Sort PA = Util.mSort(POW(ty_A));
+	public static Sort PB = Util.mSort(POW(ty_B));
+	public static Sort PC = Util.mSort(POW(ty_C));
+	public static Sort PD = Util.mSort(POW(ty_D));
+	public static Sort PS = Util.mSort(POW(ty_S));
+	public static Sort PAB = Util.mSort(REL(ty_A,ty_B));
+	public static Sort PAC = Util.mSort(REL(ty_A,ty_C));
+	public static Sort PBC = Util.mSort(REL(ty_B,ty_C));
+	public static Sort NAT = Sort.NATURAL;
+	public static Sort BOOL = Sort.BOOLEAN;
+	
+	public static Clause TRUE = Util.TRUE(Level.base);
+	public static Clause FALSE = Util.FALSE(Level.base);
+	
+	public static void assertFalse(ProverResult result) {
 		assertEquals(result.getGeneratedClauses().size(), 1);
 		assertTrue(result.getGeneratedClauses().iterator().next().isFalse());
 	}
 	
-	protected static void assertTrue(ProverResult result) {
+	public static void assertTrue(ProverResult result) {
 		assertEquals(result.getGeneratedClauses().size(), 1);
 		assertTrue(result.getGeneratedClauses().iterator().next().isTrue());
 	}
-	
-	protected static <T> Set<T> mSet(T... elements) {
-		return new LinkedHashSet<T>(Arrays.asList(elements));
-	}
+
 	
 	public void initDebug() {
 //		PredicateBuilder.DEBUG = true;
 //		ClauseBuilder.DEBUG = true;
 		
 		PPProof.DEBUG = true;
-		ClauseDispatcher.DEBUG = true;
+//		ClauseDispatcher.DEBUG = true;
 //		SeedSearchProver.DEBUG = true;
 //		PredicateProver.DEBUG = true;
 //		ClauseSimplifier.DEBUG = true;
 //		CaseSplitter.DEBUG = true;
-		Dumper.DEBUG = true;
+//		Dumper.DEBUG = true;
 	}
 }

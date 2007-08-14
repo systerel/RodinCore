@@ -1,7 +1,9 @@
 package org.eventb.pp;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -26,12 +28,14 @@ import org.eventb.internal.pp.core.elements.EquivalenceClause;
 import org.eventb.internal.pp.core.elements.FalseClause;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.TrueClause;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral.AType;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Divide;
 import org.eventb.internal.pp.core.elements.terms.Expn;
+import org.eventb.internal.pp.core.elements.terms.IntegerConstant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Minus;
 import org.eventb.internal.pp.core.elements.terms.Mod;
@@ -44,14 +48,11 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.core.tracing.Tracer;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
-import org.eventb.internal.pp.loader.clause.LoaderResult;
-import org.eventb.internal.pp.loader.formula.descriptor.DisjunctiveClauseDescriptor;
-import org.eventb.internal.pp.loader.formula.descriptor.EqualityDescriptor;
-import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
-import org.eventb.internal.pp.loader.formula.descriptor.QuantifiedDescriptor;
+import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.terms.ConstantSignature;
 import org.eventb.internal.pp.loader.formula.terms.DivideSignature;
 import org.eventb.internal.pp.loader.formula.terms.ExpnSignature;
+import org.eventb.internal.pp.loader.formula.terms.IntegerSignature;
 import org.eventb.internal.pp.loader.formula.terms.MinusSignature;
 import org.eventb.internal.pp.loader.formula.terms.ModSignature;
 import org.eventb.internal.pp.loader.formula.terms.PlusSignature;
@@ -60,7 +61,6 @@ import org.eventb.internal.pp.loader.formula.terms.TimesSignature;
 import org.eventb.internal.pp.loader.formula.terms.UnaryMinusSignature;
 import org.eventb.internal.pp.loader.formula.terms.VariableHolder;
 import org.eventb.internal.pp.loader.formula.terms.VariableSignature;
-import org.eventb.internal.pp.loader.predicate.IContext;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 import org.eventb.internal.pp.loader.predicate.IntermediateResult;
 import org.eventb.internal.pp.loader.predicate.IntermediateResultList;
@@ -90,75 +90,24 @@ public class Util {
 
 	
 	///////////////////////////
-	public static LoaderResult doPhaseOneAndTwo(String predicate, ITypeEnvironment environment) {
+	public static ClauseBuilder doPhaseOneAndTwo(String predicate, ITypeEnvironment environment,
+			VariableTable table) {
 		Predicate pred = parsePredicate(predicate, environment);
 		PredicateBuilder pBuilder = new PredicateBuilder();
 		pBuilder.build(pred,false);
 		ClauseBuilder cBuilder = new ClauseBuilder();
-		cBuilder.buildClauses(pBuilder.getContext());
-		return cBuilder.getResult();
+		cBuilder.loadClausesFromContext(pBuilder.getContext(),table);
+		return cBuilder;
 	}
 	
-	public static LoaderResult doPhaseOneAndTwo(String predicate) {
+	public static ClauseBuilder doPhaseOneAndTwo(String predicate) {
 		Predicate pred = parsePredicate(predicate);
 		PredicateBuilder pBuilder = new PredicateBuilder();
 		pBuilder.build(pred,false);
 		ClauseBuilder cBuilder = new ClauseBuilder();
-		cBuilder.buildClauses(pBuilder.getContext());
-		return cBuilder.getResult();
+		cBuilder.loadClausesFromContext(pBuilder.getContext());
+		return cBuilder;
 	}
-	
-	
-	/////////////
-	// PHASE 1 //
-	/////////////
-	public static Constant mConstant(String name, Sort sort) {
-		return new Constant(name, sort);
-	}
-	
-	public static Sort mSort(Type type) {
-		return new Sort(type);
-	}
-	
-	public static Sort INTEGER() {
-		return Sort.ARITHMETIC;
-	}
-	
-	public static Literal<?,?>[] mArr(Literal<?,?>... literals) {
-		return literals;
-	}
-	
-	public static Literal<?,?>[][] mArr(Literal<?,?>[]... literals) {
-		return literals;
-	}
-	
-	public static <T> List<T> mList(T... elements) {
-		return new ArrayList<T>(Arrays.asList(elements));
-	}
-	
-	public static <S extends Literal<?,?>> List<S> mLiteralList(S... literals) {
-		return new ArrayList<S>(Arrays.asList(literals));
-	}
-	
-//	public static PredicateFormula mPredicate() {
-//		return new PredicateFormula(0);
-//	}
-//
-//	public static QuantifiedFormula mQPredicate(QuantifiedLiteralKey sig) {
-//		return new QuantifiedFormula(0, sig.isForall(),sig.getSignature(),sig.getTerms());
-//	}
-//	
-//	public static PredicateFormula mPredicate(int index) {
-//		return new PredicateFormula(index);
-//	}
-//	
-//	public static EqualityFormula mEqualitySig(Sort sort) {
-//		return new EqualityFormula(sort);
-//	}
-//	
-//	public static DisjunctiveClause mSet(List<ISignedFormula> signatures) {
-//		return new DisjunctiveClause(0, signatures);
-//	}
 	
 	public static VariableSignature mVariable(int uniqueIndex, int index) {
 		return new VariableSignature(uniqueIndex, index, new Sort(ff.makeGivenType("A")));
@@ -168,6 +117,9 @@ public class Util {
 		return new ConstantSignature(name, new Sort(ff.makeGivenType("A")));
 	}
 	
+	public static IntegerSignature mInteger(int value) {
+		return new IntegerSignature(BigInteger.valueOf(value));
+	}
 	
 	public static PlusSignature mPlus(TermSignature... children) {
 		return new PlusSignature(Arrays.asList(children)); 
@@ -200,12 +152,38 @@ public class Util {
 	public static VariableHolder mVHolder() {
 		return new VariableHolder(null);
 	}
+
+	public static IIntermediateResult mIR(TermSignature... elements) {
+		IntermediateResult result = new IntermediateResult(Arrays.asList(elements));
+		return result;
+	}
+	
+	public static IIntermediateResult mIR(IIntermediateResult... elements) {
+		IIntermediateResult result = new IntermediateResultList(Arrays.asList(elements));
+		return result;
+	}
+
+	public static BoundIdentifier mBoundIdentifier(int index) {
+		return ff.makeBoundIdentifier(index, null);
+	}
+
+	public static BoundIdentifier mBoundIdentifier(int index, Type type) {
+		return ff.makeBoundIdentifier(index, null, type);
+	}
+
+	public static FreeIdentifier mFreeIdentifier(String name) {
+		return ff.makeFreeIdentifier(name, null);
+	}
+
+	public static FreeIdentifier mFreeIdentifier(String name, Type type) {
+		return ff.makeFreeIdentifier(name, null, type);
+	}
+	
+	public static RelationalPredicate mIn(Expression left, Expression right) {
+		return ff.makeRelationalPredicate(Formula.IN, left, right, null);
+	}
 	
 	
-	
-	/////////////
-	// PHASE 2 //
-	/////////////
 	private static class DummyOrigin implements IOrigin {
 		private Level level;
 		
@@ -241,9 +219,145 @@ public class Util {
 			// TODO Auto-generated method stub
 			return 0;
 		}
-		
+	}
+
+	public static Sort mSort(Type type) {
+		return new Sort(type);
 	}
 	
+	static Sort A = Util.mSort(ff.makeGivenType("A"));
+	
+	public static Constant cCons(String name, Sort sort) {
+		return new Constant(name, sort);
+	}
+	
+	public static IntegerConstant cIntCons(int value) {
+		return new IntegerConstant(BigInteger.valueOf(value));
+	}
+	
+	static Constant cCons(String name) {
+		return new Constant(name, A);
+	}
+	
+	public static Variable cVar(int index, Sort sort) {
+		return new Variable(index, sort);
+	}
+	
+	static Variable cVar(Sort sort) {
+		return new Variable(1,sort);
+	}
+	
+	static Variable cVar(int index) {
+		return new Variable(index, A);
+	}
+	
+	static Variable cVar() {
+		return new Variable(1,A);
+	}
+	
+	public static LocalVariable cFLocVar(int index, Sort sort) {
+		return new LocalVariable(index, true, sort);
+	}
+	
+	public static LocalVariable cELocVar(int index, Sort sort) {
+		return new LocalVariable(index, false, sort);
+	}
+	
+	static LocalVariable cFLocVar(int index) {
+		return new LocalVariable(index, true, A);
+	}
+	
+	static LocalVariable cELocVar(int index) {
+		return new LocalVariable(index, false, A);
+	}
+	
+	public static Plus cPlus(Term... terms) {
+		return new Plus(Arrays.asList(terms));
+	}
+	
+	public static Times cTimes(Term... terms) {
+		return new Times(Arrays.asList(terms));
+	}
+	
+	public static Minus cMinus(Term... terms) {
+		return new Minus(Arrays.asList(terms));
+	}
+	
+	public static Divide cDiv(Term... terms) {
+		return new Divide(Arrays.asList(terms));
+	}
+	
+	public static UnaryMinus cUnMin(Term... terms) {
+		return new UnaryMinus(Arrays.asList(terms));
+	}
+	
+	public static Mod cMod(Term... terms) {
+		return new Mod(Arrays.asList(terms));
+	}
+	
+	public static Expn cExpn(Term... terms) {
+		return new Expn(Arrays.asList(terms));
+	}
+	
+	private static PredicateLiteralDescriptor descriptor(int index) {
+		return new PredicateLiteralDescriptor(index, 0, 0, false, new ArrayList<Sort>());
+	}
+	
+	public static ComplexPredicateLiteral cPred(int index, SimpleTerm... terms) {
+		return new ComplexPredicateLiteral(descriptor(index), true, Arrays.asList(terms));
+	}
+	
+	public static ComplexPredicateLiteral cNotPred(int index, SimpleTerm... terms) {
+		return new ComplexPredicateLiteral(descriptor(index), false, Arrays.asList(terms));
+	}
+	
+	public static ComplexPredicateLiteral cPred(PredicateLiteralDescriptor descriptor, SimpleTerm... terms) {
+		return new ComplexPredicateLiteral(descriptor, true, Arrays.asList(terms));
+	}
+	
+	public static ComplexPredicateLiteral cNotPred(PredicateLiteralDescriptor descriptor, SimpleTerm... terms) {
+		return new ComplexPredicateLiteral(descriptor, false, Arrays.asList(terms));
+	}
+	
+	public static PredicateLiteral cProp(int index) {
+		return new AtomicPredicateLiteral(descriptor(index), true);
+	}
+	
+	public static PredicateLiteral cNotProp(int index) {
+		return new AtomicPredicateLiteral(descriptor(index), false);
+	}
+	
+	public static EqualityLiteral cEqual(SimpleTerm term1, SimpleTerm term2) {
+		return new EqualityLiteral(term1, term2, true);
+	}
+	
+	public static EqualityLiteral cNEqual(SimpleTerm term1, SimpleTerm term2) {
+		return new EqualityLiteral(term1, term2, false);
+	}
+	
+	public static ArithmeticLiteral cAEqual(Term term1, Term term2) {
+		return new ArithmeticLiteral(term1,term2,AType.EQUAL);
+	}
+	
+	public static ArithmeticLiteral cANEqual(Term term1, Term term2) {
+		return new ArithmeticLiteral(term1,term2,AType.UNEQUAL);
+	}
+	
+	public static ArithmeticLiteral cLess(Term term1, Term term2) {
+		return new ArithmeticLiteral(term1,term2,AType.LESS);
+	}
+	
+	public static ArithmeticLiteral cLE(Term term1, Term term2) {
+		return new ArithmeticLiteral(term1,term2,AType.LESS_EQUAL);
+	}
+	
+	protected static Clause TRUE(Level level) {
+		return new TrueClause(new DummyOrigin(level));
+	}
+	
+	protected static Clause FALSE(Level level) {
+		return new FalseClause(new DummyOrigin(level));
+	}
 	
 	public static Clause newDisjClause(IOrigin origin, List<Literal<?,?>> literals) {
 		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
@@ -271,21 +385,10 @@ public class Util {
 		return new EquivalenceClause(origin,predicates,equalities,arithmetic);
 	}
 	
-	
 	public static Clause cClause(Literal<?,?>... literals) {
 		Clause clause = newDisjClause(new DummyOrigin(Level.base), mList(literals));
 		return clause;
 	}
-	
-	
-	public static Clause TRUE(Level level) {
-		return new TrueClause(new DummyOrigin(level));
-	}
-	
-	public static Clause FALSE(Level level) {
-		return new FalseClause(new DummyOrigin(level));
-	}
-	
 	
 	public static Clause cClause(Level level, Literal<?,?>... literals) {
 		Clause clause = newDisjClause(new DummyOrigin(level), mList(literals));
@@ -326,186 +429,13 @@ public class Util {
 		return new EquivalenceClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,mList(conditions));
 	}
 	
-	public static ComplexPredicateLiteral cPred(int index, SimpleTerm... terms) {
-		return new ComplexPredicateLiteral(new org.eventb.internal.pp.core.elements.PredicateDescriptor(index, true), Arrays.asList(terms));
-	}
-	
-	public static ComplexPredicateLiteral cNotPred(int index, SimpleTerm... terms) {
-		return new ComplexPredicateLiteral(new org.eventb.internal.pp.core.elements.PredicateDescriptor(index, false), Arrays.asList(terms));
-	}
-	
-	public static PredicateLiteral cProp(int index) {
-		return new AtomicPredicateLiteral(new org.eventb.internal.pp.core.elements.PredicateDescriptor(index, true));
-	}
-	
-	public static PredicateLiteral cNotProp(int index) {
-		return new AtomicPredicateLiteral(new org.eventb.internal.pp.core.elements.PredicateDescriptor(index, false));
-	}
-	
-	public static EqualityLiteral cEqual(SimpleTerm term1, SimpleTerm term2) {
-		return new EqualityLiteral(term1, term2, true);
-	}
-	
-	public static EqualityLiteral cNEqual(SimpleTerm term1, SimpleTerm term2) {
-		return new EqualityLiteral(term1, term2, false);
-	}
-	
-	
-	public static ArithmeticLiteral cAEqual(Term term1, Term term2) {
-		return new ArithmeticLiteral(term1,term2,AType.EQUAL);
-	}
-	
-	public static ArithmeticLiteral cANEqual(Term term1, Term term2) {
-		return new ArithmeticLiteral(term1,term2,AType.UNEQUAL);
-	}
-	
-	public static ArithmeticLiteral cLess(Term term1, Term term2) {
-		return new ArithmeticLiteral(term1,term2,AType.LESS);
-	}
-	
-	public static ArithmeticLiteral cLE(Term term1, Term term2) {
-		return new ArithmeticLiteral(term1,term2,AType.LESS_EQUAL);
-	}
-	
-	public static Constant cCons(String name, Sort sort) {
-		return new Constant(name, sort);
-	}
-	
-	public static Constant cCons(String name) {
-		return new Constant(name, A);
-	}
-	
-	public static Variable cVar(Sort sort) {
-		return new Variable(1,sort);
-	}
-	
-	public static LocalVariable cFLocVar(int index, Sort sort) {
-		return new LocalVariable(index, true, sort);
-	}
-	
-	public static LocalVariable cELocVar(int index, Sort sort) {
-		return new LocalVariable(index, false, sort);
-	}
-	
-	
-	private static Sort A = new Sort(ff.makeGivenType("A"));
-	public static Variable cVar(int index) {
-		return new Variable(index, A);
-	}
-	
-	public static LocalVariable cFLocVar(int index) {
-		return new LocalVariable(index, true, A);
-	}
-	
-	public static LocalVariable cELocVar(int index) {
-		return new LocalVariable(index, false, A);
-	}
-	
-	public static Plus cPlus(Term... terms) {
-		return new Plus(Arrays.asList(terms));
-	}
-	
-	public static Times cTimes(Term... terms) {
-		return new Times(Arrays.asList(terms));
-	}
-	
-	public static Minus cMinus(Term... terms) {
-		return new Minus(Arrays.asList(terms));
-	}
-	
-	public static Divide cDiv(Term... terms) {
-		return new Divide(Arrays.asList(terms));
-	}
-	
-	public static UnaryMinus cUnMin(Term... terms) {
-		return new UnaryMinus(Arrays.asList(terms));
-	}
-	
-	public static Mod cMod(Term... terms) {
-		return new Mod(Arrays.asList(terms));
-	}
-	
-	public static Expn cExpn(Term... terms) {
-		return new Expn(Arrays.asList(terms));
-	}
-	
-	public static IIntermediateResult mIR(TermSignature... elements) {
-		IntermediateResult result = new IntermediateResult(Arrays.asList(elements));
-		return result;
-	}
-	
-	public static IIntermediateResult mIR(IIntermediateResult... elements) {
-		IIntermediateResult result = new IntermediateResultList(Arrays.asList(elements));
-		return result;
-	}
-	
-	public static QuantifiedDescriptor Q(IContext context, int index, String literal, List<TermSignature> terms, IIntermediateResult... ir) {
-		QuantifiedDescriptor desc = new QuantifiedDescriptor(context,index);
-		for (IIntermediateResult list : ir) {
-			desc.addResult(list);
-		}
-		return desc;
-	}
-//	
-//	public static PredicateDescriptor P(IContext context, int index, IIntermediateResult... ir) {
-//		PredicateDescriptor desc = new PredicateDescriptor(context, index);
-//		for (IIntermediateResult list : ir) {
-//			desc.addResult(list);
-//		}
-//		return desc;
-//	}
-//	
-//	public static DisjunctiveClauseDescriptor L(IContext context, int index, List<String> literals, IIntermediateResult... ir) {
-//		DisjunctiveClauseDescriptor desc = new DisjunctiveClauseDescriptor(context, index);
-//		for (IIntermediateResult list : ir) {
-//			desc.addResult(list);
-//		}
-//		return desc;
-//	}
-	
-	public static EqualityDescriptor E(IContext context, Sort sort, IIntermediateResult... ir) {
-		EqualityDescriptor desc = new EqualityDescriptor(context, sort);
-		for (IIntermediateResult list : ir) {
-			desc.addResult(list);
-		}
-		return desc;
-	}
-	
-//	///////////////////
-//	public static VariableSignature V(int index) {
-//		return new VariableSignature(index,null);
-//	}
-//	
-//	public static ConstantIndex C(TermSignature term) {
-//		return new ConstantIndex(term);
-//	}
-//	
-//	public static List<Index> L(Index... indexes) {
-//		return Arrays.asList(indexes);
-//	}
-	
-	///////////// copy pasted from org.eventb.core.ast.tests
-	public static BoundIdentifier mBoundIdentifier(int index) {
-		return ff.makeBoundIdentifier(index, null);
+	public static <T> Set<T> mSet(T... elements) {
+		return new LinkedHashSet<T>(Arrays.asList(elements));
 	}
 
-	public static BoundIdentifier mBoundIdentifier(int index, Type type) {
-		return ff.makeBoundIdentifier(index, null, type);
-	}
-
-	public static FreeIdentifier mFreeIdentifier(String name) {
-		return ff.makeFreeIdentifier(name, null);
-	}
-
-	public static FreeIdentifier mFreeIdentifier(String name, Type type) {
-		return ff.makeFreeIdentifier(name, null, type);
+	public static <T> List<T> mList(T... elements) {
+		return new ArrayList<T>(Arrays.asList(elements));
 	}
 	
-	public static RelationalPredicate mIn(Expression left, Expression right) {
-		return ff.makeRelationalPredicate(Formula.IN, left, right, null);
-	}
-	////////////////////////////////////////////////////////
-	
-
 	
 }
