@@ -17,7 +17,4 @@ public interface IInferrer {
 	
 	public void inferFromDisjunctiveClause(DisjunctiveClause clause);
 	
-	// TODO see what this exactly does, is it useful ?
-//	public boolean canInfer(Clause clause);
-	
 }

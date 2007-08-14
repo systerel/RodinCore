@@ -14,13 +14,14 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.elements.PredicateDescriptor;
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 
 public class LiteralSignature {
 	// immutable once the matching literal is set
 	// one instance per descriptor
 	
-	private final PredicateDescriptor literal;
+	private final PredicateLiteralDescriptor literal;
+	private final boolean isPositive;
 	private final int position;
 	private LiteralSignature matchingLiteral;
 	
@@ -28,8 +29,9 @@ public class LiteralSignature {
 	private final Set<InstantiationValue> instantiationValues;
 	private final Map<Instantiable, InstantiableContainer> instantiables;
 	
-	public LiteralSignature(PredicateDescriptor literal, int position) {
+	public LiteralSignature(PredicateLiteralDescriptor literal, boolean isPositive, int position) {
 		this.literal = literal;
+		this.isPositive = isPositive;
 		this.position = position;
 		this.instantiationValues = new LinkedHashSet<InstantiationValue>();
 		this.variableLinks = new LinkedHashSet<VariableLink>();
@@ -38,6 +40,7 @@ public class LiteralSignature {
 	
 	protected LiteralSignature() {
 		this.literal = null;
+		this.isPositive = false;
 		this.position = 0;
 		this.instantiationValues = new LinkedHashSet<InstantiationValue>();
 		this.variableLinks = new LinkedHashSet<VariableLink>();
@@ -113,14 +116,14 @@ public class LiteralSignature {
 	public boolean equals(Object obj) {
 		if (obj instanceof LiteralSignature) {
 			LiteralSignature temp = (LiteralSignature) obj;
-			return literal.equals(temp.literal) && position == temp.position;
+			return literal.equals(temp.literal) && isPositive == temp.isPositive && position == temp.position;
 		}
 		return false;
 	}
 	
 	@Override
 	public int hashCode() {
-		return literal.hashCode() * 37 + position;
+		return literal.hashCode() * 37 + position + (isPositive?0:1);
 	}
 	
 	public String dump() {

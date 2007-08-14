@@ -14,21 +14,17 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.internal.pp.PPCore;
 import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.IVariableContext;
+import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.provers.equality.EqualityProver;
+import org.eventb.internal.pp.core.provers.extensionality.ExtensionalityProver;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
 import org.eventb.internal.pp.core.provers.seedsearch.SeedSearchProver;
 import org.eventb.internal.pp.core.simplifiers.EqualitySimplifier;
@@ -36,8 +32,6 @@ import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
 import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
-import org.eventb.internal.pp.loader.clause.LoaderResult;
-import org.eventb.internal.pp.loader.clause.VariableContext;
 import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
 import org.eventb.pp.PPResult.Result;
 import org.eventb.pptrans.Translator;
@@ -57,6 +51,7 @@ public class PPProof {
 	private InputPredicate goal;
 	
 	private IVariableContext context;
+	private PredicateTable table;
 	private List<Clause> clauses;
 	
 	private PPResult result;
@@ -84,9 +79,9 @@ public class PPProof {
 		}
 	}
 	
-	public PPProof(List<Clause> clauses) {
-		this.clauses = clauses;
-	}
+//	public PPProof(List<Clause> clauses) {
+//		this.clauses = clauses;
+//	}
 		
 	public PPResult getResult() {
 		return result;
@@ -125,33 +120,28 @@ public class PPProof {
 	}
 	
 	public void load() {
-		if (clauses == null) {
-			PredicateBuilder pBuilder = new PredicateBuilder();
-			ClauseBuilder cBuilder = new ClauseBuilder();
-		
-			for (InputPredicate predicate : hypotheses) {
-				if (predicate.loadPhaseOne(pBuilder)) {
-					proofFound(predicate);
-					debugResult();
-					return;
-				}
-			}
-			if (goal.loadPhaseOne(pBuilder)) {
-				proofFound(goal);
+		PredicateBuilder pBuilder = new PredicateBuilder();
+		ClauseBuilder cBuilder = new ClauseBuilder();
+
+		for (InputPredicate predicate : hypotheses) {
+			if (predicate.loadPhaseOne(pBuilder)) {
+				proofFound(predicate);
 				debugResult();
 				return;
 			}
+		}
+		if (goal.loadPhaseOne(pBuilder)) {
+			proofFound(goal);
+			debugResult();
+			return;
+		}
 
-			cBuilder.buildClauses(pBuilder.getContext());
-			cBuilder.buildPredicateTypeInformation(pBuilder.getContext());
-			LoaderResult loaderResult = cBuilder.getResult();
-			
-			clauses = loaderResult.getClauses();
-			context = cBuilder.getVariableContext();
-		}
-		else {
-			context = new VariableContext();
-		}
+		cBuilder.loadClausesFromContext(pBuilder.getContext());
+		cBuilder.buildPredicateTypeInformation(pBuilder.getContext());
+
+		clauses = cBuilder.getClauses();
+		context = cBuilder.getVariableContext();
+		table = cBuilder.getPredicateTable();
 	}
 	
 	// sequent must be type-checked
@@ -159,21 +149,21 @@ public class PPProof {
 		if (result != null) return;
 		if (context == null) throw new IllegalStateException("Loader must be preliminary invoked");
 		
-		initProver(context);
+		initProver();
 		if (DEBUG) debug("==== Original clauses ====");
 		for (Clause clause : clauses) {
 			if (DEBUG) debug(clause.toString());
 		}
 
 		proofStrategy.setClauses(clauses);
-		try {
-			proofStrategy.mainLoop(timeout);
-			result = proofStrategy.getResult();
-		}
-		catch (InterruptedException e) {
-			result = new PPResult(Result.cancel,null);
-		}
+		proofStrategy.mainLoop(timeout);
+		result = proofStrategy.getResult();
+		
 		debugResult();
+	}
+	
+	public void cancel() {
+		proofStrategy.cancel();
 	}
 	
 	private void debugResult() {
@@ -253,66 +243,66 @@ public class PPProof {
 			}
 		}
 		
-		private boolean typeCheck(Predicate predicate) {
-			ITypeEnvironment env = ff.makeTypeEnvironment();
-			for (FreeIdentifier ident : originalPredicate.getFreeIdentifiers()) {
-				env.add(ident);
-			}
-			ITypeCheckResult result = predicate.typeCheck(env);
-			if (!result.isSuccess()) {
-//				System.out.println(result);
-				return false;
-			}
-			return true;
-		}
+//		private boolean typeCheck(Predicate predicate) {
+//			ITypeEnvironment env = ff.makeTypeEnvironment();
+//			for (FreeIdentifier ident : originalPredicate.getFreeIdentifiers()) {
+//				env.add(ident);
+//			}
+//			ITypeCheckResult result = predicate.typeCheck(env);
+//			if (!result.isSuccess()) {
+////				System.out.println(result);
+//				return false;
+//			}
+//			return true;
+//		}
 	
 		public void deriveUsefulPredicates() {
 			this.derivedPredicates = new ArrayList<Predicate>();
-			Predicate setEquivalencePredicate = getSetMembershipEquivalenceForEquality();
-			if (setEquivalencePredicate != null) {
-				if (typeCheck(setEquivalencePredicate)) {
-					derivedPredicates.add(setEquivalencePredicate);
-					if (DEBUG) debug("Adding derived predicate "+setEquivalencePredicate+" for "+originalPredicate);
-				} else {
-					if (DEBUG) debug("Could not type check derived predicate "+setEquivalencePredicate);
-					PPCore.log("Could not type check generated predicate "+setEquivalencePredicate);
-				}
-			}
-//			if (setEquivalencePredicate == null /* || !isGoal */) {
-				if (DEBUG) debug("Keeping original predicate "+originalPredicate);
-				derivedPredicates.add(originalPredicate);
+			
+//			Predicate setEquivalencePredicate = getSetMembershipEquivalenceForEquality();
+//			if (setEquivalencePredicate != null) {
+//				if (typeCheck(setEquivalencePredicate)) {
+//					derivedPredicates.add(setEquivalencePredicate);
+//					if (DEBUG) debug("Adding derived predicate "+setEquivalencePredicate+" for "+originalPredicate);
+//				} else {
+//					if (DEBUG) debug("Could not type check derived predicate "+setEquivalencePredicate);
+//					PPCore.log("Could not type check generated predicate "+setEquivalencePredicate);
+//				}
 //			}
+
+			if (DEBUG) debug("Keeping original predicate "+originalPredicate);
+			derivedPredicates.add(originalPredicate);
 		}
 		
-		private Predicate getSetMembershipEquivalenceForEquality() {
-			if (isSetEquality(originalPredicate)) {
-				Expression left = getEquality(originalPredicate).getLeft();
-				Expression right = getEquality(originalPredicate).getRight();
-				
-				return 
-				ff.makeQuantifiedPredicate(Formula.FORALL, new BoundIdentDecl[]{ff.makeBoundIdentDecl("x", null)},
-					ff.makeBinaryPredicate(Formula.LEQV, 
-						ff.makeRelationalPredicate(Formula.IN, ff.makeBoundIdentifier(0, null), left, null), 
-						ff.makeRelationalPredicate(Formula.IN, ff.makeBoundIdentifier(0, null), right, null), 
-					null),
-				null);
-			}
-			return null;
-		}
+//		private Predicate getSetMembershipEquivalenceForEquality() {
+//			if (isSetEquality(originalPredicate)) {
+//				Expression left = getEquality(originalPredicate).getLeft();
+//				Expression right = getEquality(originalPredicate).getRight();
+//				
+//				return 
+//				ff.makeQuantifiedPredicate(Formula.FORALL, new BoundIdentDecl[]{ff.makeBoundIdentDecl("x", null)},
+//					ff.makeBinaryPredicate(Formula.LEQV, 
+//						ff.makeRelationalPredicate(Formula.IN, ff.makeBoundIdentifier(0, null), left, null), 
+//						ff.makeRelationalPredicate(Formula.IN, ff.makeBoundIdentifier(0, null), right, null), 
+//					null),
+//				null);
+//			}
+//			return null;
+//		}
 		
-		private RelationalPredicate getEquality(Predicate predicate) {
-			return (RelationalPredicate)predicate;
-		}
+//		private RelationalPredicate getEquality(Predicate predicate) {
+//			return (RelationalPredicate)predicate;
+//		}
 		
-		private boolean isSetEquality(Predicate predicate) {
-			if (predicate.getTag() == Formula.EQUAL) {
-				RelationalPredicate equality = getEquality(predicate);
-				if (((equality.getLeft()).getType().toExpression(ff).getTag() == Formula.POW)) {
-					return true;
-				}
-			}
-			return false;
-		}
+//		private boolean isSetEquality(Predicate predicate) {
+//			if (predicate.getTag() == Formula.EQUAL) {
+//				RelationalPredicate equality = getEquality(predicate);
+//				if (((equality.getLeft()).getType().toExpression(ff).getTag() == Formula.POW)) {
+//					return true;
+//				}
+//			}
+//			return false;
+//		}
 	}
 	
 	private static class Tracer implements ITracer {
@@ -337,24 +327,24 @@ public class PPProof {
 		}
 	}
 	
-	
-	private void initProver(IVariableContext context) {
+	private void initProver() {
 		proofStrategy = new ClauseDispatcher();
 		
 		PredicateProver prover = new PredicateProver(context);
 		CaseSplitter casesplitter = new CaseSplitter(context, proofStrategy);
 		SeedSearchProver seedsearch = new SeedSearchProver(context);
 		EqualityProver equalityprover = new EqualityProver(context);
-		proofStrategy.setPredicateProver(prover);
-		proofStrategy.setCaseSplitter(casesplitter);
-		proofStrategy.setSeedSearch(seedsearch);
-		proofStrategy.setEqualityProver(equalityprover);
+		ExtensionalityProver extensionalityProver = new ExtensionalityProver(table, context);
+		proofStrategy.addProver(prover);
+		proofStrategy.addProver(casesplitter);
+		proofStrategy.addProver(seedsearch);
+		proofStrategy.addProver(equalityprover);
+		proofStrategy.addProver(extensionalityProver);
 		
 		OnePointRule onepoint = new OnePointRule();
 		ExistentialSimplifier existential = new ExistentialSimplifier(context);
 		LiteralSimplifier literal = new LiteralSimplifier(context);
 		EqualitySimplifier equality = new EqualitySimplifier(context);
-		
 		proofStrategy.addSimplifier(onepoint);
 		proofStrategy.addSimplifier(equality);
 		proofStrategy.addSimplifier(existential);

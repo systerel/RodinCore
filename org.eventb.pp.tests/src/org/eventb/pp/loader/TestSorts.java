@@ -1,11 +1,8 @@
 package org.eventb.pp.loader;
 
-import static org.eventb.pp.Util.INTEGER;
 import static org.eventb.pp.Util.mSort;
 
 import java.util.Stack;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
@@ -18,6 +15,7 @@ import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.NormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.TermBuilder;
+import org.eventb.pp.AbstractPPTest;
 import org.eventb.pp.Util;
 
 /**
@@ -34,7 +32,7 @@ import org.eventb.pp.Util;
  * @author François Terrier
  *
  */
-public class TestSorts extends TestCase {
+public class TestSorts extends AbstractPPTest {
 
 	static FormulaFactory ff = FormulaFactory.getDefault();
 	
@@ -91,31 +89,31 @@ public class TestSorts extends TestCase {
 		),
 		new TestPair(
 			k,
-			INTEGER()
+			NAT
 		),
 		new TestPair(
 			"k + 1",
-			INTEGER()
+			NAT
 		),
 		new TestPair(
 			"k ∗ 1",
-			INTEGER()
+			NAT
 		),
 		new TestPair(
 			"k ÷ 1",
-			INTEGER()
+			NAT
 		),
 		new TestPair(
 			"k mod 1",
-			INTEGER()
+			NAT
 		),
 		new TestPair(
 			"k ^ 1",
-			INTEGER()
+			NAT
 		),
 		new TestPair(
 			"k − 1",
-			INTEGER()
+			NAT
 		),
 //		new TestPair(
 //			b0,

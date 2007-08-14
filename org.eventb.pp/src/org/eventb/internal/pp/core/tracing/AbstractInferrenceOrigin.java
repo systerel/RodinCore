@@ -8,6 +8,7 @@
 
 package org.eventb.internal.pp.core.tracing;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -22,14 +23,23 @@ public abstract class AbstractInferrenceOrigin implements IOrigin {
 	
 	public AbstractInferrenceOrigin(List<Clause> parents) {
 		this.parents = parents;
-		
+		init();
+	}
+	
+	protected AbstractInferrenceOrigin(Clause clause) {
+		this.parents = new ArrayList<Clause>();
+		parents.add(clause);
+		init();
+	}
+	
+	private void init() {
 		for (Clause clause : parents) {
 			if (clause.getOrigin().getDepth() > depth) depth = clause.getOrigin().getDepth();
 			if (clause.getOrigin().dependsOnGoal()) dependsOnGoal = true;
 		}
 		this.depth++;
 	}
-	
+
 	public List<Clause> getClauses() {
 		return parents;
 	}

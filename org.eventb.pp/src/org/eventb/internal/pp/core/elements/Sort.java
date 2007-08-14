@@ -13,7 +13,7 @@ import org.eventb.core.ast.Type;
 
 public class Sort implements Comparable<Sort> {
 	
-	public static Sort ARITHMETIC = new Sort(FormulaFactory.getDefault().makeIntegerType());
+	public static Sort NATURAL = new Sort(FormulaFactory.getDefault().makeIntegerType());
 	public static Sort BOOLEAN = new Sort(FormulaFactory.getDefault().makeBooleanType());
 
 	final private Type type;
@@ -31,6 +31,10 @@ public class Sort implements Comparable<Sort> {
 		return type.hashCode();
 	}
 
+	public boolean isSetSort() {
+		return type.getBaseType() != null;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;

@@ -8,9 +8,12 @@
 
 package org.eventb.internal.pp.loader.clause;
 
+import java.math.BigInteger;
 import java.util.Hashtable;
 
 import org.eventb.internal.pp.core.elements.Sort;
+import org.eventb.internal.pp.core.elements.terms.Constant;
+import org.eventb.internal.pp.core.elements.terms.IntegerConstant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
@@ -20,10 +23,12 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
  * @author François Terrier
  *
  */
-public final class VariableTable {
+public class VariableTable {
 
-	private final Hashtable<Integer, Variable> variableTable = new Hashtable<Integer, Variable>();
-	private final Hashtable<Integer, LocalVariable> localVariableTable = new Hashtable<Integer, LocalVariable>();
+	protected final Hashtable<Integer, Variable> variableTable = new Hashtable<Integer, Variable>();
+	protected final Hashtable<Integer, LocalVariable> localVariableTable = new Hashtable<Integer, LocalVariable>();
+	protected final Hashtable<BigInteger, IntegerConstant> integerTable = new Hashtable<BigInteger, IntegerConstant>();
+	protected final Hashtable<String, Constant> constantTable = new Hashtable<String, Constant>();
 	
 	private final VariableContext context;
 	
@@ -47,6 +52,24 @@ public final class VariableTable {
 			localVariableTable.put(index, var);
 		}
 		return var;
+	}
+	
+	public Constant getConstant(String name, Sort sort) {
+		Constant constant = constantTable.get(name);
+		if (constant == null) {
+			constant = new Constant(name, sort);
+			constantTable.put(name, constant);
+		}
+		return constant;
+	}
+	
+	public IntegerConstant getInteger(BigInteger value) {
+		IntegerConstant constant = integerTable.get(value);
+		if (constant == null) {
+			constant = new IntegerConstant(value);
+			integerTable.put(value, constant);
+		}
+		return constant;
 	}
 	
 }

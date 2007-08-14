@@ -19,13 +19,13 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
 
 public final class AtomicPredicateLiteral extends PredicateLiteral {
 
-	public AtomicPredicateLiteral(PredicateDescriptor descriptor) {
-		super(descriptor, new ArrayList<SimpleTerm>());
+	public AtomicPredicateLiteral(PredicateLiteralDescriptor descriptor, boolean isPositive) {
+		super(descriptor, isPositive, new ArrayList<SimpleTerm>());
 	}
 
 	@Override
 	public AtomicPredicateLiteral getInverse() {
-		return new AtomicPredicateLiteral(descriptor.getInverse());
+		return new AtomicPredicateLiteral(descriptor, !isPositive());
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public final class AtomicPredicateLiteral extends PredicateLiteral {
 	@Override
 	public String toString(HashMap<Variable, String> variableMap) {
 		StringBuffer str = new StringBuffer();
-		str.append(descriptor.isPositive()?"":"¬");
+		str.append(isPositive()?"":"¬");
 		str.append("R" + descriptor.getIndex());
 		return str.toString();
 	}

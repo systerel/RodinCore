@@ -20,7 +20,7 @@ import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
-import org.eventb.internal.pp.core.IProver;
+import org.eventb.internal.pp.core.IProverModule;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
@@ -35,7 +35,7 @@ import org.eventb.internal.pp.core.tracing.ClauseOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
 
-public class EqualityProver implements IProver {
+public class EqualityProver implements IProverModule {
 
 	/**
 	 * Debug flag for <code>PROVER_EQUALITY_TRACE</code>

@@ -87,14 +87,12 @@ public abstract class AbstractInferrer implements IInferrer {
 	public void inferFromDisjunctiveClause(DisjunctiveClause clause) {
 		init(clause);
 		inferFromDisjunctiveClauseHelper(clause);
-//		setParents(clause);
 		reset();
 	}
 
 	public void inferFromEquivalenceClause(EquivalenceClause clause) {
 		init(clause);
 		inferFromEquivalenceClauseHelper(clause);
-//		setParents(clause);
 		reset();
 	}
 

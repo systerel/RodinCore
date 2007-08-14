@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Sort;
 
-public final class Constant extends SimpleTerm {
+public class Constant extends SimpleTerm {
 
 	private static final int PRIORITY = 2;
 	
@@ -34,14 +34,9 @@ public final class Constant extends SimpleTerm {
 		return equals(term);
 	}
 	
-	// TODO eventually same object ! -> not important for now
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof Constant) {
-			Constant temp = (Constant) obj;
-			return name.equals(temp.name);
-		}
-		return false;
+		return super.equals(obj);
 	}
 
 	@Override
@@ -53,11 +48,6 @@ public final class Constant extends SimpleTerm {
 	public boolean isConstant() {
 		return true;
 	}
-
-//	@Override
-//	public Term substitute(Map<AbstractVariable, ? extends Term> map) {
-//		return this;
-//	}
 
 	@Override
 	public boolean isQuantified() {

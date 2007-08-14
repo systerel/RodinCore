@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.internal.pp.core.provers.predicate;
+package org.eventb.internal.pp.core.provers.predicate.iterators;
 
 import java.util.Iterator;
 
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.PredicateDescriptor;
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.search.ConditionIterator;
 import org.eventb.internal.pp.core.search.ResetIterator;
 
@@ -25,23 +25,25 @@ public class IteratorMatchIterator implements IMatchIterator {
 	}
 
 	// returns the same instance all the time
-	public Iterator<Clause> iterator(PredicateDescriptor predicate) {
+	public Iterator<Clause> iterator(PredicateLiteralDescriptor predicate, boolean isPositive) {
 		nonUnitClausesIterator.reset();
-		return new NiceIterator(predicate, nonUnitClausesIterator);
+		return new NiceIterator(predicate, isPositive, nonUnitClausesIterator);
 	}
 
 	private static class NiceIterator extends ConditionIterator<Clause> {
-		private PredicateDescriptor unit;
+		private PredicateLiteralDescriptor unit;
+		private boolean isPositive;
 		
-		NiceIterator(PredicateDescriptor unit, Iterator<Clause> iterator) {
+		NiceIterator(PredicateLiteralDescriptor unit, boolean isPositive, Iterator<Clause> iterator) {
 			super(iterator);
 
+			this.isPositive = isPositive;
 			this.unit = unit;
 		}
 
 		@Override
 		public boolean isSelected(Clause element) {
-			return element.matches(unit);
+			return element.matches(unit,isPositive);
 		}
 	}
 }

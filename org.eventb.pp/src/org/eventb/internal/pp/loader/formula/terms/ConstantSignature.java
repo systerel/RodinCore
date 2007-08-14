@@ -9,7 +9,6 @@
 package org.eventb.internal.pp.loader.formula.terms;
 
 import org.eventb.internal.pp.core.elements.Sort;
-import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.formula.ClauseContext;
 
@@ -56,7 +55,7 @@ public class ConstantSignature extends AbstractConstantSignature {
 
 	@Override
 	public Term getTerm(ClauseContext context) {
-		return new Constant(name, sort);
+		return context.getVariableTable().getConstant(name, sort);
 	}
 
 }

@@ -158,13 +158,13 @@ public abstract class Clause {
 
 //	public abstract boolean contains(PredicateDescriptor predicate);
 
-	public abstract boolean matches(PredicateDescriptor predicate);
+	public abstract boolean matches(PredicateLiteralDescriptor predicate, boolean isPositive);
 	
-	public abstract boolean matchesAtPosition(PredicateDescriptor predicate, int position);
+	public abstract boolean matchesAtPosition(PredicateLiteralDescriptor predicate, boolean isPositive, int position);
 	
-	protected boolean hasPredicateOfSign(PredicateDescriptor predicate, boolean opposite) {
-		if (predicate.isPositive()) return opposite?negativeLiterals.get(predicate.getIndex()):positiveLiterals.get(predicate.getIndex());
-		else return opposite?positiveLiterals.get(predicate.getIndex()):negativeLiterals.get(predicate.getIndex());
+	protected boolean hasPredicateOfSign(PredicateLiteralDescriptor predicate, boolean isPositive) {
+		if (isPositive) return positiveLiterals.get(predicate.getIndex());
+		else return negativeLiterals.get(predicate.getIndex());
 	}
 
 	public List<EqualityLiteral> getEqualityLiterals() {

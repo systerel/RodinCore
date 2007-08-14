@@ -3,6 +3,7 @@ package org.eventb.pp.loader;
 import static org.eventb.pp.Util.mConstant;
 import static org.eventb.pp.Util.mDivide;
 import static org.eventb.pp.Util.mExpn;
+import static org.eventb.pp.Util.mInteger;
 import static org.eventb.pp.Util.mMinus;
 import static org.eventb.pp.Util.mMod;
 import static org.eventb.pp.Util.mPlus;
@@ -45,7 +46,7 @@ public class TestTermBuilder extends TestCase {
 	private static TermSignature a = mConstant("a");
 	private static TermSignature b = mConstant("b");
 	private static TermSignature c = mConstant("c");
-	private static TermSignature one = mConstant("1");
+	private static TermSignature one = mInteger(1);
 	
 //	private static TermSignature var0 = mVariable(0,0);
 	

@@ -14,7 +14,7 @@ import java.util.List;
 import org.eventb.internal.pp.core.elements.AtomicPredicateLiteral;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.core.elements.PredicateDescriptor;
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
@@ -65,7 +65,10 @@ public class BooleanEqualityFormula extends EqualityFormula {
 				i = context.getBooleanTable().getNextLiteralIdentifier();
 				context.getBooleanTable().put(sig, i);
 			}
-			result = new AtomicPredicateLiteral(new PredicateDescriptor(i, context.isPositive()));
+			PredicateLiteralDescriptor predicateDescriptor =
+				getPredicateDescriptor(context.getPredicateTable(),
+				i, 0, terms.size(), false, new ArrayList<Sort>(), null);
+			result = new AtomicPredicateLiteral(predicateDescriptor, context.isPositive());
 		} else {
 			List<Term> newTerms = getTermsFromTermSignature(termList, context);
 			SimpleTerm term1 = (SimpleTerm)newTerms.get(0);

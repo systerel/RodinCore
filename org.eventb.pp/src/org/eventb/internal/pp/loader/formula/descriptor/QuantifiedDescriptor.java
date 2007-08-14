@@ -15,7 +15,6 @@ public class QuantifiedDescriptor extends IndexedDescriptor {
 
 	public QuantifiedDescriptor(IContext context, int index /* , List<TermSignature> definingTerms */) {
 		super(context, index);
-//		this.definingTerms = definingTerms;
 	}
 	
 	@Override

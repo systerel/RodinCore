@@ -81,6 +81,7 @@ public class ArithmeticFormula extends AbstractSingleFormula<ArithmeticDescripto
 			return new ArithmeticLiteral(left,right,type == Type.LESS?AType.LESS_EQUAL:AType.LESS);
 		}
 	}
+	
 
 	@Override
 	void split() {

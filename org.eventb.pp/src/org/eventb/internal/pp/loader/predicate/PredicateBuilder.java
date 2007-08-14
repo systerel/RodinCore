@@ -162,17 +162,6 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	public IContext getContext() {
 		return context;
 	}
-	
-//	/**
-//	 * Returns the list of terms on the current level. Each term occurs
-//	 * uniquely in this list, according to the equals method, if two terms are
-//	 * equal in the current level, it appears only once in this list.
-//	 * 
-//	 * @return the list of terms processed in the current level
-//	 */
-//	public List<TermSignature> getCurrentTerms() {
-//		return inRes.getTerms();
-//	}
 
 	@Override
 	public boolean enterNOT(UnaryPredicate pred) {

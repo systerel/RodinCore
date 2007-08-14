@@ -18,7 +18,7 @@ import org.eventb.internal.pp.loader.formula.ClauseContext;
 /**
  * This class represents an arithmetic term signature. It is the abstract base
  * class for complex term signatures. The sort is always the same and is given
- * by {@link Sort#ARITHMETIC}.
+ * by {@link Sort#NATURAL}.
  *
  * @author François Terrier
  *
@@ -28,13 +28,13 @@ public abstract class AssociativeTermSignature extends TermSignature {
 	protected List<TermSignature> terms;
 	
 	public AssociativeTermSignature(List<TermSignature> terms) {
-		super(Sort.ARITHMETIC);
+		super(Sort.NATURAL);
 		
 		this.terms = terms;
 	}
 	
 	public AssociativeTermSignature(TermSignature term) {
-		super(Sort.ARITHMETIC);
+		super(Sort.NATURAL);
 		
 		this.terms = new ArrayList<TermSignature>();
 		this.terms.add(term);

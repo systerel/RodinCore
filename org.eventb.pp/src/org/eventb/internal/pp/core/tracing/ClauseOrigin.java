@@ -18,6 +18,10 @@ public class ClauseOrigin extends AbstractInferrenceOrigin {
 	public ClauseOrigin(List<Clause> parents) {
 		super(parents);
 	}
+	
+	public ClauseOrigin(Clause parent) {
+		super(parent);
+	}
 
 	Level level = null;
 	public Level getLevel() {

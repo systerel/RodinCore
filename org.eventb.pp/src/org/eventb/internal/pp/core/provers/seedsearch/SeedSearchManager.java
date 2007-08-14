@@ -17,7 +17,7 @@ import java.util.Set;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.PredicateDescriptor;
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
@@ -91,7 +91,7 @@ public class SeedSearchManager {
 	}
 	
 	
-	public List<SeedSearchResult> addInstantiable(PredicateDescriptor descriptor, int predicatePosition,
+	public List<SeedSearchResult> addInstantiable(PredicateLiteralDescriptor descriptor, boolean isPositive, int predicatePosition,
 			List<SimpleTerm> terms, int termPosition, Clause clause) {
 		List<SolverResult> result = new ArrayList<SolverResult>();
 		// if this clause exists in the instantiablesCache map, it is with the same level
@@ -103,7 +103,7 @@ public class SeedSearchManager {
 			existingInstantiables = new HashSet<Instantiable>();
 			instantiablesCache.put(clause, existingInstantiables);
 		}
-		LiteralSignature signature = getAndAddLiteralSignature(descriptor, termPosition);
+		LiteralSignature signature = getAndAddLiteralSignature(descriptor, isPositive, termPosition);
 		Instantiable instantiable = new Instantiable(signature,clause,predicatePosition);
 		if (!existingInstantiables.contains(instantiable)) {
 			existingInstantiables.add(instantiable);
@@ -114,12 +114,12 @@ public class SeedSearchManager {
 		return compileResults(result);
 	}
 	
-	public List<SeedSearchResult> addConstant(PredicateDescriptor descriptor, List<SimpleTerm> terms, Clause clause) {
+	public List<SeedSearchResult> addConstant(PredicateLiteralDescriptor descriptor, boolean isPositive, List<SimpleTerm> terms, Clause clause) {
 		List<SolverResult> result = new ArrayList<SolverResult>();
 		for (int i = 0; i < terms.size(); i++) {
 			SimpleTerm term = terms.get(i);
 			if (term.isConstant() && !term.isQuantified()) {
-				LiteralSignature signature = getAndAddLiteralSignature(descriptor, i);
+				LiteralSignature signature = getAndAddLiteralSignature(descriptor, isPositive, i);
 				InstantiationValue value = getAndAddInstantiationValue(signature, (Constant)term, clause);
 				value.addClause(clause);
 				List<SolverResult> valueResult = solver.addInstantiationValue(value);
@@ -129,7 +129,8 @@ public class SeedSearchManager {
 		return compileResults(result);
 	}
 	
-	public List<SeedSearchResult> addVariableLink(PredicateDescriptor descriptor1, PredicateDescriptor descriptor2,
+	public List<SeedSearchResult> addVariableLink(PredicateLiteralDescriptor descriptor1, boolean isPositive1,
+			PredicateLiteralDescriptor descriptor2, boolean isPositive2,
 			List<SimpleTerm> terms1, List<SimpleTerm> terms2, Clause clause) {
 		List<SolverResult> result = new ArrayList<SolverResult>();
 		for (int i = 0; i < terms1.size(); i++) {
@@ -139,8 +140,8 @@ public class SeedSearchManager {
 					SimpleTerm term2 = terms2.get(j);
 					if (term1 == term2) {
 						// add a link
-						LiteralSignature signature1 = getAndAddLiteralSignature(descriptor1, i);
-						LiteralSignature signature2 = getAndAddLiteralSignature(descriptor2, j);
+						LiteralSignature signature1 = getAndAddLiteralSignature(descriptor1, isPositive1, i);
+						LiteralSignature signature2 = getAndAddLiteralSignature(descriptor2, isPositive2, j);
 						VariableLink link = getAndAddVariableLink(signature1, signature2, i, j, clause);
 						link.addClause(clause);
 						List<SolverResult> linkResult = solver.addVariableLink(link);
@@ -163,17 +164,16 @@ public class SeedSearchManager {
 		return result;
 	}
 	
-	private LiteralSignature getAndAddLiteralSignature(PredicateDescriptor literalDescriptor, int position) {
-		SignatureDescriptor descriptor = new SignatureDescriptor(literalDescriptor,position);
+	private LiteralSignature getAndAddLiteralSignature(PredicateLiteralDescriptor literalDescriptor, boolean isPositive, int position) {
+		SignatureDescriptor descriptor = new SignatureDescriptor(literalDescriptor,isPositive,position);
 		LiteralSignature result = signatures.get(descriptor);
 		if (result == null) {
-			result = new LiteralSignature(literalDescriptor,position);
-			PredicateDescriptor inverseDescriptor = literalDescriptor.getInverse();
-			LiteralSignature inverse = new LiteralSignature(inverseDescriptor,position);
+			result = new LiteralSignature(literalDescriptor,isPositive,position);
+			LiteralSignature inverse = new LiteralSignature(literalDescriptor,!isPositive,position);
 			result.setMatchingLiteral(inverse);
 			inverse.setMatchingLiteral(result);
 			signatures.put(descriptor, result);
-			signatures.put(new SignatureDescriptor(inverseDescriptor,position), inverse);
+			signatures.put(new SignatureDescriptor(literalDescriptor,!isPositive,position), inverse);
 		}
 		return result;
 	}
@@ -301,23 +301,25 @@ public class SeedSearchManager {
 //	}
 	
 	private static class SignatureDescriptor {
-		PredicateDescriptor descriptor;
+		PredicateLiteralDescriptor descriptor;
+		boolean isPositive;
 		int position;
-		SignatureDescriptor(PredicateDescriptor descriptor, int position) {
+		SignatureDescriptor(PredicateLiteralDescriptor descriptor, boolean isPositive, int position) {
 			this.position = position;
 			this.descriptor = descriptor;
+			this.isPositive = isPositive;
 		}
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof SignatureDescriptor) {
 				SignatureDescriptor tmp = (SignatureDescriptor) obj;
-				return position == tmp.position && descriptor.equals(tmp.descriptor);
+				return position == tmp.position && isPositive == tmp.isPositive && descriptor.equals(tmp.descriptor);
 			}
 			return false;
 		}
 		@Override
 		public int hashCode() {
-			return descriptor.hashCode() * 37 + position;
+			return descriptor.hashCode() * 37 + position + (isPositive?0:1);
 		}
 		@Override
 		public String toString() {

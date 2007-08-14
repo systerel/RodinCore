@@ -28,17 +28,4 @@ public class DisjunctiveClauseDescriptor extends IndexedDescriptor {
 		return "Ld"+index;
 	}
 
-//	@Override
-//	public int hashCode() {
-//		return super.hashCode();
-//	}
-//	
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (obj instanceof DisjunctiveClauseDescriptor) {
-//			DisjunctiveClauseDescriptor temp = (DisjunctiveClauseDescriptor) obj;
-//			return super.equals(temp);
-//		}
-//		return false;
-//	}
 }

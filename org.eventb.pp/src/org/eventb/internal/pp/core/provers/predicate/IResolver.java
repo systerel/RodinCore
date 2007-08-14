@@ -9,11 +9,16 @@
 package org.eventb.internal.pp.core.provers.predicate;
 
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.inferrers.InferrenceResult;
 
 public interface IResolver {
 
-	public InferrenceResult next(boolean force);	
+	/**
+	 * Returns the result of this resolution step or <code>null</code>
+	 * if no more resolution can be applied.
+	 * 
+	 * @return
+	 */
+	public ResolutionResult next();	
 
 	public boolean isInitialized();
 	

@@ -18,11 +18,6 @@ public final class DisjunctiveClause extends Clause {
 
 	private static final int BASE_HASHCODE = 3;
 	
-//	@Deprecated
-//	public DisjunctiveClause(int level, List<PredicateFormula> predicates, List<Literal> others) {
-//		super(level, predicates, others);
-//	}
-
 	public DisjunctiveClause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, List<EqualityLiteral> conditions) {
 		super(origin, predicates, equalities, arithmetic, conditions, BASE_HASHCODE);
 		
@@ -43,7 +38,7 @@ public final class DisjunctiveClause extends Clause {
 	@Override
 	protected void computeBitSets() {
 		for (PredicateLiteral literal : predicates) {
-			if (literal.getDescriptor().isPositive()) {
+			if (literal.isPositive()) {
 				literal.setBit(positiveLiterals);
 			}
 			else {
@@ -72,20 +67,16 @@ public final class DisjunctiveClause extends Clause {
 		inferrer.inferFromDisjunctiveClause(this);
 	}
 	
-//	public boolean contains(PredicateDescriptor predicate) {
-//		return hasPredicateOfSign(predicate, false);
-//	}
-
 	@Override
-	public boolean matches(PredicateDescriptor predicate) {
-		return hasPredicateOfSign(predicate, true);
+	public boolean matches(PredicateLiteralDescriptor predicate, boolean isPositive) {
+		return hasPredicateOfSign(predicate, !isPositive);
 	}
 	
 	@Override
-	public boolean matchesAtPosition(PredicateDescriptor predicate, int position) {
-		PredicateDescriptor matched = predicates.get(position).getDescriptor();
-		return predicate.getIndex() == matched.getIndex() 
-			&& predicate.isPositive() == !matched.isPositive();
+	public boolean matchesAtPosition(PredicateLiteralDescriptor predicate, boolean isPositive, int position) {
+		PredicateLiteral matched = predicates.get(position);
+		return predicate.equals(matched.getDescriptor())
+			&& isPositive == !matched.isPositive();
 	}
 
 	@Override

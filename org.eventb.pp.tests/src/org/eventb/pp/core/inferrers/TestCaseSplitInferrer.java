@@ -3,11 +3,11 @@ package org.eventb.pp.core.inferrers;
 import static org.eventb.pp.Util.cClause;
 import static org.eventb.pp.Util.cEqClause;
 import static org.eventb.pp.Util.cEqual;
-import static org.eventb.pp.Util.cNEqual;
 import static org.eventb.pp.Util.cNotPred;
 import static org.eventb.pp.Util.cNotProp;
 import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.cProp;
+import static org.eventb.pp.Util.mSet;
 
 import java.util.Set;
 

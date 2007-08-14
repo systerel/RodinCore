@@ -51,15 +51,14 @@ public class PPProverCall extends XProverCall {
 
 	@Override
 	public void run() {
-		final Thread thread = Thread.currentThread();
+		final PPProof prover = this.prover;
 		
 		Timer timer = new Timer(true);
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				if (isCancelled()) {
-					thread.interrupt();
-					cancel();
+					prover.cancel();
 				}
 			}
 		}, DEFAULT_PERIOD, DEFAULT_PERIOD);

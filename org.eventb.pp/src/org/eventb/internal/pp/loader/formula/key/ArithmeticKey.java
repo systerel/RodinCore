@@ -17,18 +17,10 @@ import org.eventb.internal.pp.loader.predicate.IContext;
 
 public class ArithmeticKey extends SymbolKey<ArithmeticDescriptor> {
 
-//	private static int UniqueIndex = 0;
 	private List<TermSignature> definingTerms;
 	private Type type;
 	
-//	public static void resetCounter() {
-//		UniqueIndex = 0;
-//	}
-	
-//	private int index;
-	
 	public ArithmeticKey(List<TermSignature> definingTerms, Type type) {
-//		index = UniqueIndex++;
 		this.definingTerms = definingTerms;
 		this.type = type;
 	}

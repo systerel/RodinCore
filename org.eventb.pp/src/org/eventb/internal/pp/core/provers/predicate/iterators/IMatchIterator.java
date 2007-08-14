@@ -6,38 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.internal.pp.loader.clause;
+package org.eventb.internal.pp.core.provers.predicate.iterators;
 
-import java.util.List;
+import java.util.Iterator;
 
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 
-/**
- * TODO comment
- *
- * @author François Terrier
- *
- */
-public class LoaderResult {
+public interface IMatchIterator {
 
-	private List<Clause> clauses;
-	
-	protected LoaderResult(List<Clause> clauses) {
-		this.clauses = clauses;
-	}
-	
-	/**
-	 * Returns the non-unit clauses.
-	 * 
-	 * @return the non-unit clauses
-	 */
-	public List<Clause> getClauses() {
-		return clauses;
-	}
-	
-	@Override
-	public String toString() {
-		return clauses.toString();
-	}
+	public Iterator<Clause> iterator(PredicateLiteralDescriptor predicate, boolean isPositive);
 	
 }

@@ -14,7 +14,7 @@ import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.elements.AtomicPredicateLiteral;
 import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
 import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.core.elements.PredicateDescriptor;
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
@@ -74,29 +74,32 @@ public abstract class AbstractLabelizableFormula<T extends IndexedDescriptor>
 	@Override
 	final Literal<?, ?> getLabelPredicate(List<TermSignature> terms, ClauseContext context) {
 		List<TermSignature> newList = descriptor.getSimplifiedList(terms);
-		return AbstractLabelizableFormula.getLabelPredicateHelper(descriptor, newList, context);
+		PredicateLiteralDescriptor predicateDescriptor =
+			getPredicateDescriptor(context.getPredicateTable(),
+			descriptor.getIndex(), newList.size(), terms.size(), true, getSortList(newList), null);
+		return AbstractLabelizableFormula.getLabelPredicateHelper(predicateDescriptor, newList, context);
 	}
 	
 	boolean isEquivalence() {
 		return false;
 	}
 	
-	protected static Literal<?, ?> getLabelPredicateHelper(IndexedDescriptor descriptor, List<TermSignature> terms, ClauseContext context) {
+	protected static Literal<?, ?> getLabelPredicateHelper(PredicateLiteralDescriptor descriptor, List<TermSignature> terms, ClauseContext context) {
 		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Simplified term list for " + descriptor + " is: " + terms);
-		Literal<?, ?> result = getPredicateLiteral(descriptor.getIndex(), context, terms);
+		Literal<?, ?> result = getPredicateLiteral(descriptor, context, terms);
 		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Creating literal from " + descriptor + ": " + result);
 		return result;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Literal<?, ?> getPredicateLiteral(int index, ClauseContext context, List<TermSignature> newList) {
+	private static Literal<?, ?> getPredicateLiteral(PredicateLiteralDescriptor descriptor, ClauseContext context, List<TermSignature> newList) {
 		Literal<?, ?> result;
 		if (newList.size() == 0) {
-			result = new AtomicPredicateLiteral(new PredicateDescriptor(index, context.isPositive()));
+			result = new AtomicPredicateLiteral(descriptor, context.isPositive());
 		} 
 		else {
 			List<Term> newTerms = getTermsFromTermSignature(newList, context);
-			result = new ComplexPredicateLiteral(new PredicateDescriptor(index, context.isPositive()), (List)newTerms);
+			result = new ComplexPredicateLiteral(descriptor, context.isPositive(), (List)newTerms);
 		}
 		return result;
 	}

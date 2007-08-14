@@ -1,5 +1,7 @@
 package org.eventb.pp.core.tracing;
 
+import static org.eventb.pp.Util.mSet;
+
 import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;

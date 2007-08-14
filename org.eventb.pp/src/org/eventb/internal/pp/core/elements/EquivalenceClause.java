@@ -134,20 +134,16 @@ public final class EquivalenceClause extends Clause {
 			arithmetic.add(0, toInverse.getInverse());
 		}
 	}
-	
-//	public boolean contains(PredicateDescriptor predicate) {
-//		return hasPredicateOfSign(predicate, false);
-//	}
 
 	@Override
-	public boolean matches(PredicateDescriptor predicate) {
-		return hasPredicateOfSign(predicate, true) || hasPredicateOfSign(predicate, false);
+	public boolean matches(PredicateLiteralDescriptor predicate, boolean isPositive) {
+		return hasPredicateOfSign(predicate, isPositive) || hasPredicateOfSign(predicate, !isPositive);
 	}
 	
 	@Override
-	public boolean matchesAtPosition(PredicateDescriptor predicate, int position) {
-		PredicateDescriptor matched = predicates.get(position).getDescriptor();
-		return predicate.getIndex() == matched.getIndex();
+	public boolean matchesAtPosition(PredicateLiteralDescriptor predicate, boolean isPositive, int position) {
+		PredicateLiteral matched = predicates.get(position);
+		return predicate.equals(matched.getDescriptor());
 	}
 
 	@Override

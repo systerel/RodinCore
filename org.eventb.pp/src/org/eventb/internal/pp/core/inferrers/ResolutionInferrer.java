@@ -54,9 +54,6 @@ public class ResolutionInferrer extends AbstractInferrer {
 		unitClause = clause;
 		// we save a copy of the original predicate
 		predicate = clause.getPredicateLiterals().get(0).getCopyWithNewVariables(context, new HashMap<SimpleTerm, SimpleTerm>());
-		
-//		// we do not accept existential unit clause
-//		assert !predicate.isQuantified();
 	}
 	
 	@Override
@@ -64,7 +61,7 @@ public class ResolutionInferrer extends AbstractInferrer {
 		assert predicates.size() > 0;
 		
 		if (position<0 || unitClause==null || predicate==null 
-				|| !clause.matchesAtPosition(predicate.getDescriptor(), position)) {
+				|| !clause.matchesAtPosition(predicate.getDescriptor(), predicate.isPositive(), position)) {
 			throw new IllegalStateException();
 		}
 		result = null;
@@ -80,10 +77,12 @@ public class ResolutionInferrer extends AbstractInferrer {
 		super.reset();
 	}
 	
-	public InferrenceResult getResult() {
-		InferrenceResult infResult = new InferrenceResult(result);
-		if (subsumedClause != null) infResult.addSubsumedClause(subsumedClause);
-		return infResult;
+	public Clause getDerivedClause() {
+		return result;
+	}
+	
+	public Clause getSubsumedClause() {
+		return subsumedClause;
 	}
 	
 	private boolean isSubsumed(Clause clause) {
@@ -109,31 +108,6 @@ public class ResolutionInferrer extends AbstractInferrer {
 			}
 		}
 	}
-	
-//	private void updateInstantiationCount(PredicateLiteral matchingPredicate) {
-//		for (int i = 0; i < matchingPredicate.getTerms().size(); i++) {
-//			SimpleTerm matchingTerm = matchingPredicate.getTerms().get(i);
-//			SimpleTerm matcherTerm = predicate.getTerms().get(i);
-//			
-//			Set<SimpleTerm> alreadyIncremented = new HashSet<SimpleTerm>();
-//			if (matcherTerm.isConstant()) {
-//				// we have to increment the instantiation count of the variable
-//				if (!matchingTerm.isConstant() && !alreadyIncremented.contains(matchingTerm)) {
-//					Variable variable = getOriginalVariable((Variable)matchingTerm);
-//					variable.incrementInstantiationCount();
-//					alreadyIncremented.add(matchingTerm);
-//				}
-//			}
-//		}
-//	}
-	
-//	private Variable getOriginalVariable(Variable variable) {
-//		for (Entry<SimpleTerm, SimpleTerm> map : substitutionsMap.entrySet()) {
-//			// this cast works since there are pair of the same kind
-//			if (map.getValue() == variable) return (Variable)map.getKey();
-//		}
-//		return null;
-//	}
 	
 	// MUST BE called on a unit-clause
 	private List<EqualityLiteral> getConditions(PredicateLiteral matchingPredicate) {
@@ -229,7 +203,7 @@ public class ResolutionInferrer extends AbstractInferrer {
 	}
 	
 	private boolean sameSign(PredicateLiteral literal1, PredicateLiteral literal2) {
-		return literal1.getDescriptor().isPositive() == literal2.getDescriptor().isPositive();
+		return literal1.isPositive() == literal2.isPositive();
 	}
 
 	protected IOrigin getOrigin(Clause clause) {

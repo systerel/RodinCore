@@ -23,28 +23,28 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
  */
 public class ComplexPredicateLiteral extends PredicateLiteral {
 
-	public ComplexPredicateLiteral (PredicateDescriptor descriptor, List<SimpleTerm> terms) {
-		super(descriptor, terms);
+	public ComplexPredicateLiteral (PredicateLiteralDescriptor descriptor, boolean isPositive, List<SimpleTerm> terms) {
+		super(descriptor, isPositive, terms);
 		assert terms != null;
 	}
 
 	@Override
 	public String toString(HashMap<Variable, String> variableMap) {
 		StringBuffer str = new StringBuffer();
-		str.append(descriptor.isPositive()?"":"¬");
-		str.append("P" + descriptor.getIndex());
+		str.append(isPositive?"":"¬");
+		str.append(descriptor.toString());
 		str.append(super.toString(variableMap));
 		return str.toString();
 	}
 
 	@Override
 	public ComplexPredicateLiteral getInverse() {
-		return new ComplexPredicateLiteral(descriptor.getInverse(), getInverseHelper(terms));
+		return new ComplexPredicateLiteral(descriptor, !isPositive, getInverseHelper(terms));
 	}
 	
 	@Override
 	public ComplexPredicateLiteral substitute(Map<SimpleTerm, SimpleTerm> map) {
-		return new ComplexPredicateLiteral(descriptor, substituteHelper(map,terms));
+		return new ComplexPredicateLiteral(descriptor, isPositive, substituteHelper(map,terms));
 	}
 	
 	@Override

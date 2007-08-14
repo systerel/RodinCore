@@ -11,7 +11,10 @@ package org.eventb.internal.pp.loader.formula;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
+import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.clause.LabelManager;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
@@ -60,6 +63,28 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> {
 			terms.add(term.getTerm(context));
 		}
 		return terms;
+	}
+	
+
+	static final PredicateLiteralDescriptor getPredicateDescriptor(PredicateTable table, int index, int arity, int realArity, boolean isLabel, List<Sort> sortList, Sort sort) {
+		PredicateLiteralDescriptor predicateDescriptor;
+		if (table.hasDescriptor(index)) {
+			predicateDescriptor = table.getDescriptor(index);
+		}
+		else {
+			predicateDescriptor = new PredicateLiteralDescriptor(index,arity,realArity,isLabel,sortList);
+			table.addDescriptor(index, predicateDescriptor);
+			if (sort != null) table.addSort(sort, predicateDescriptor);
+		}
+		return predicateDescriptor;
+	}
+	
+	static final List<Sort> getSortList(List<TermSignature> signatures) {
+		List<Sort> result = new ArrayList<Sort>();
+		for (TermSignature termSignature : signatures) {
+			result.add(termSignature.getSort());
+		}
+		return result;
 	}
 	
 	/**

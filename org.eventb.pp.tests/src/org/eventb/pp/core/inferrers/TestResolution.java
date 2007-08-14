@@ -15,14 +15,11 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.PredicateDescriptor;
-import org.eventb.internal.pp.core.elements.terms.LocalVariable;
-import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
-import org.eventb.internal.pp.core.provers.predicate.IMatchIterator;
 import org.eventb.internal.pp.core.provers.predicate.ResolutionResolver;
+import org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterator;
 import org.eventb.internal.pp.loader.clause.VariableContext;
-import org.eventb.pp.Util;
 
 /**
  * This class tests the one point rule. There are several tests :
@@ -37,19 +34,6 @@ import org.eventb.pp.Util;
  */
 public class TestResolution extends AbstractInferrerTests {
 
-	private static Variable var0 = Util.cVar(0);
-	private static Variable var1 = Util.cVar(1);
-	private static Variable var2 = Util.cVar(2);
-
-	private static Variable var00 = Util.cVar(3);
-	private static Variable var11 = Util.cVar(4);
-
-	private static LocalVariable fvar0 = Util.cFLocVar(0);
-//	private static LocalVariable fvar1 = Util.cFLocVar(1,A);
-	private static LocalVariable fvar2 = Util.cFLocVar(2);
-	private static LocalVariable evar0 = Util.cELocVar(0);
-	private static LocalVariable evar1 = Util.cELocVar(1);
-	private static LocalVariable evar2 = Util.cELocVar(2);
 
 
 //	private Clause[] noClause() {
@@ -469,7 +453,7 @@ public class TestResolution extends AbstractInferrerTests {
 			this.list.add(clause);
 		}
 		
-		public Iterator<Clause> iterator(PredicateDescriptor predicate) {
+		public Iterator<Clause> iterator(PredicateLiteralDescriptor predicate, boolean isPositive) {
 			return list.iterator();
 		}
 		
@@ -486,12 +470,12 @@ public class TestResolution extends AbstractInferrerTests {
 //		cleanVariables();
 
 		for (Clause clause : result) {
-			Clause inferredClause = resolution.next(false).getClause();
+			Clause inferredClause = resolution.next().getDerivedClause();
 			assertEquals(clause, inferredClause);
 			disjointVariables(inferredClause, unit);
 			disjointVariables(inferredClause, nonUnit);
 		}
-		assertNull("\nUnit: " + unit + "NonUnit: " + nonUnit, resolution.next(false));
+		assertNull("\nUnit: " + unit + "NonUnit: " + nonUnit, resolution.next());
 	}
 	
 	public void testSubsumption() {
@@ -500,7 +484,7 @@ public class TestResolution extends AbstractInferrerTests {
 		inferrer.setPosition(0);
 		Clause clause = cClause(cNotProp(0), cProp(1));
 		clause.infer(inferrer);
-		assertTrue(inferrer.getResult().getSubsumedClauses().contains(cClause(cNotProp(0), cProp(1))));
+		assertTrue(inferrer.getSubsumedClause().equals(cClause(cNotProp(0), cProp(1))));
 	}
 
 	public void testNoSubsumptionWithConstants() {
@@ -509,7 +493,7 @@ public class TestResolution extends AbstractInferrerTests {
 		inferrer.setPosition(0);
 		Clause clause = cClause(cNotPred(0,b), cProp(1));
 		clause.infer(inferrer);
-		assertTrue(inferrer.getResult().getSubsumedClauses().isEmpty());
+		assertTrue(inferrer.getSubsumedClause()==null);
 	}
 	
 	public void testSubsumptionWithConstants() {
@@ -518,7 +502,7 @@ public class TestResolution extends AbstractInferrerTests {
 		inferrer.setPosition(0);
 		Clause clause = cClause(cNotPred(0,a), cProp(1));
 		clause.infer(inferrer);
-		assertTrue(inferrer.getResult().getSubsumedClauses().contains(cClause(cNotPred(0,a), cProp(1))));
+		assertTrue(inferrer.getSubsumedClause().equals(cClause(cNotPred(0,a), cProp(1))));
 	}
 	
 	public void testNoSubsumptionWithVariables() {
@@ -527,7 +511,7 @@ public class TestResolution extends AbstractInferrerTests {
 		inferrer.setPosition(0);
 		Clause clause = cClause(cNotPred(0,x), cProp(1));
 		clause.infer(inferrer);
-		assertTrue(inferrer.getResult().getSubsumedClauses().isEmpty());
+		assertTrue(inferrer.getSubsumedClause()==null);
 	}
 	
 	public void testSubsumptionWithVariables() {
@@ -536,7 +520,7 @@ public class TestResolution extends AbstractInferrerTests {
 		inferrer.setPosition(0);
 		Clause clause = cClause(cNotPred(0,a), cProp(1));
 		clause.infer(inferrer);
-		assertTrue(inferrer.getResult().getSubsumedClauses().contains(cClause(cNotPred(0,a), cProp(1))));
+		assertTrue(inferrer.getSubsumedClause().equals(cClause(cNotPred(0,a), cProp(1))));
 	}
 	
 	public void testSubsumptionWithVariables2() {
@@ -545,7 +529,7 @@ public class TestResolution extends AbstractInferrerTests {
 		inferrer.setPosition(0);
 		Clause clause = cClause(cNotPred(0,x), cPred(1,x,y));
 		clause.infer(inferrer);
-		assertTrue(inferrer.getResult().getSubsumedClauses().contains( cClause(cNotPred(0,x), cPred(1,x,y))));
+		assertTrue(inferrer.getSubsumedClause().equals( cClause(cNotPred(0,x), cPred(1,x,y))));
 	}
 	
 	
@@ -555,7 +539,7 @@ public class TestResolution extends AbstractInferrerTests {
 		inferrer.setPosition(0);
 		Clause clause = cClause(ONE,cNotProp(0), cProp(1));
 		clause.infer(inferrer);
-		assertTrue(inferrer.getResult().getSubsumedClauses().contains(cClause(ONE,cNotProp(0), cProp(1))));
+		assertTrue(inferrer.getSubsumedClause().equals(cClause(ONE,cNotProp(0), cProp(1))));
 	}
 
 	public void testNoSubsumptionWithLevels() {
@@ -564,7 +548,7 @@ public class TestResolution extends AbstractInferrerTests {
 		inferrer.setPosition(0);
 		Clause clause = cClause(BASE,cNotProp(0), cProp(1));
 		clause.infer(inferrer);
-		assertTrue(inferrer.getResult().getSubsumedClauses().isEmpty());
+		assertTrue(inferrer.getSubsumedClause()==null);
 	}
 	
 }

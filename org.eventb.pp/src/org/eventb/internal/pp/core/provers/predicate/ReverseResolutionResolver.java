@@ -12,8 +12,8 @@ import java.util.Iterator;
 
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
-import org.eventb.internal.pp.core.inferrers.InferrenceResult;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
+import org.eventb.internal.pp.core.provers.predicate.iterators.UnitMatchIterator;
 
 public class ReverseResolutionResolver implements IResolver {
 
@@ -26,12 +26,11 @@ public class ReverseResolutionResolver implements IResolver {
 	}
 	
 	private int currentPosition;
-//	private boolean currentMatch = true;
 	private Clause currentNonUnit;
 	private Clause currentUnit;
 	private Iterator<Clause> currentMatchIterator;
 	
-	public InferrenceResult next(boolean force) {
+	public ResolutionResult next() {
 		if (setUnit()) return doMatch();
 		while (setNonUnit()) {
 			initMatchIterator();
@@ -44,7 +43,6 @@ public class ReverseResolutionResolver implements IResolver {
 	
 	public void initialize(Clause nonUnitClause) {
 		this.currentNonUnit = nonUnitClause;
-//		currentMatch = false;
 		currentPosition = -1;
 		currentMatchIterator = null;
 	}
@@ -57,42 +55,34 @@ public class ReverseResolutionResolver implements IResolver {
 		if (currentMatchIterator == null) return false;
 		while (currentMatchIterator.hasNext()) {
 			currentUnit = currentMatchIterator.next();
-			if (currentNonUnit.matchesAtPosition(currentUnit.getPredicateLiterals().get(0).getDescriptor(), currentPosition)) {
+			PredicateLiteral literal = currentUnit.getPredicateLiterals().get(0);
+			if (currentNonUnit.matchesAtPosition(literal.getDescriptor(), literal.isPositive(), currentPosition)) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	private InferrenceResult doMatch() {
+	private ResolutionResult doMatch() {
 		inferrer.setPosition(currentPosition);
 		inferrer.setUnitClause(currentUnit);
 		currentNonUnit.infer(inferrer);
-		InferrenceResult result = inferrer.getResult();
-		if (PredicateProver.DEBUG) PredicateProver.debug("Inferred clause: "+currentUnit+" + "+currentNonUnit+" -> "+result.getClause());
+		ResolutionResult result = new ResolutionResult(inferrer.getDerivedClause(), inferrer.getSubsumedClause());
+		if (PredicateProver.DEBUG) PredicateProver.debug("Inferred clause: "+currentUnit+" + "+currentNonUnit+" -> "+result.getDerivedClause());
 		return result;
 	}
 
 	private void initMatchIterator() {
 		PredicateLiteral predicate = currentNonUnit.getPredicateLiterals().get(currentPosition);
-		currentMatchIterator = nonUnitProver.iterator(predicate.getDescriptor());
+		currentMatchIterator = nonUnitProver.iterator(predicate.getDescriptor(), predicate.isPositive());
 	}
 
 	private boolean setNonUnit() {
-//		if (nextMatch()) return true;
 		if (nextPosition()) return true;
 		return false;
 	}
 	
-//	private boolean nextMatch() {
-//		if (currentMatch == false) return false;
-//		if (!currentNonUnit.isEquivalence()) return false;
-//		else currentMatch = false;
-//		return true;
-//	}
-	
 	private boolean nextPosition() {
-//		currentMatch = true;
 		if (currentPosition + 1 >= currentNonUnit.getPredicateLiterals().size()) return false;
 		else currentPosition = currentPosition + 1;
 		return true;

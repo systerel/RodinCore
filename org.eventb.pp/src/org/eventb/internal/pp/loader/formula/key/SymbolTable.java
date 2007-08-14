@@ -34,7 +34,6 @@ public class SymbolTable<T extends LiteralDescriptor> {
 		assert !table.contains(source);
 		
 		table.put(source, target);
-		// TODO put the reverse ?? equality?
 		return target;
 	}
 	

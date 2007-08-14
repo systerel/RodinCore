@@ -3,17 +3,15 @@ package org.eventb.pp.loader;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 import org.eventb.internal.pp.loader.predicate.IntermediateResult;
+import org.eventb.pp.AbstractPPTest;
 import org.eventb.pp.Util;
 
-public class TestIndexUnification extends TestCase {
+public class TestIndexUnification extends AbstractPPTest {
 
 	class TestPair {
 		IIntermediateResult source;
@@ -201,7 +199,7 @@ public class TestIndexUnification extends TestCase {
 	};
 	
 	public void doTest(IIntermediateResult source, IIntermediateResult target, IIntermediateResult expected) {
-		PredicateDescriptor desc = new PredicateDescriptor(new AbstractContext(),0,Util.INTEGER());
+		PredicateDescriptor desc = new PredicateDescriptor(new AbstractContext(),0, NAT);
 		desc.addResult(source);
 		desc.addResult(target);
 		List<TermSignature> list = desc.getUnifiedResults();

@@ -1,5 +1,7 @@
 package org.eventb.pp.core.search;
 
+import static org.eventb.pp.Util.mSet;
+
 import org.eventb.internal.pp.core.Level;
 import org.eventb.pp.AbstractPPTest;
 

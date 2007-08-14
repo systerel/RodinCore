@@ -4,6 +4,7 @@ import static org.eventb.pp.Util.cClause;
 import static org.eventb.pp.Util.cEqual;
 import static org.eventb.pp.Util.cNEqual;
 import static org.eventb.pp.Util.cProp;
+import static org.eventb.pp.Util.mSet;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.ProverResult;

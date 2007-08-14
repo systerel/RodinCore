@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
-import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
 public class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
@@ -25,7 +24,7 @@ public class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
 	
 	public EqualityLiteral (SimpleTerm term1, SimpleTerm term2, boolean isPositive) {
 //		super(Arrays.asList(new Term[]{term1,term2}));
-		super(Arrays.asList(term1.compareTo(term2)<0?new SimpleTerm[]{term1,term2}:new SimpleTerm[]{term2,term1}), BASE_HASHCODE);
+		super(Arrays.asList(term1.compareTo(term2)<0?new SimpleTerm[]{term1,term2}:new SimpleTerm[]{term2,term1}), BASE_HASHCODE+(isPositive?0:1));
 		// TODO term must be ordered
 		
 		if (term1.getSort() != null && term2.getSort()!=null) {
@@ -36,16 +35,16 @@ public class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
 	}
 	
 	private EqualityLiteral(List<SimpleTerm> terms, boolean isPositive) {
-		super(Arrays.asList(terms.get(0).compareTo(terms.get(1))<0?new SimpleTerm[]{terms.get(0),terms.get(1)}:new SimpleTerm[]{terms.get(1),terms.get(0)}), BASE_HASHCODE);
+		super(Arrays.asList(terms.get(0).compareTo(terms.get(1))<0?new SimpleTerm[]{terms.get(0),terms.get(1)}:new SimpleTerm[]{terms.get(1),terms.get(0)}), BASE_HASHCODE+(isPositive?0:1));
 		
 		this.isPositive = isPositive;
 	}
 	
-	public Term getTerm1() {
+	public SimpleTerm getTerm1() {
 		return terms.get(0);
 	}
 	
-	public Term getTerm2() {
+	public SimpleTerm getTerm2() {
 		return terms.get(1);
 	}
 	
@@ -53,19 +52,6 @@ public class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
 		return terms.get(0).getSort();
 	}
 
-//	public String toString() {
-//		StringBuffer str = new StringBuffer();
-//		str.append(isPositive?"":"¬");
-//		str.append("E" + getSort() + "(");
-//		for (Term term : getTerms()) {
-//			str.append(term.toString());
-//			str.append(",");
-//		}
-//		str.deleteCharAt(str.length()-1);
-//		str.append(")");
-//		return str.toString();
-//	}
-	
 	@Override
 	public String toString(HashMap<Variable, String> variableMap) {
 		StringBuffer str = new StringBuffer();
@@ -98,24 +84,6 @@ public class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
 		return false;
 	}
 
-//	@Override
-//	public boolean equalsWithDifferentVariables(EqualityFormula literal, HashMap<AbstractVariable, AbstractVariable> map) {
-//		if (literal instanceof EqualityFormula) {
-//			EqualityFormula temp = (EqualityFormula) literal;
-//			if (isPositive != temp.isPositive) return false;
-//			else {
-//				HashMap<AbstractVariable, AbstractVariable> copy = new HashMap<AbstractVariable, AbstractVariable>(map);
-//				if (term1.equalsWithDifferentVariables(temp.term1, copy)
-//				 && term2.equalsWithDifferentVariables(temp.term2, copy))
-//					return true;
-//				copy = new HashMap<AbstractVariable, AbstractVariable>(map);
-//				return term1.equalsWithDifferentVariables(temp.term2, copy)
-//					&& term2.equalsWithDifferentVariables(temp.term1, copy);
-//			}
-//		}
-//		return false;
-//	}
-	
 	@Override
 	public boolean equalsWithDifferentVariables(EqualityLiteral literal, HashMap<SimpleTerm, SimpleTerm> map) {
 		return (isPositive == literal.isPositive) && super.equalsWithDifferentVariables(literal, map);

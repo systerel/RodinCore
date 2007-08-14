@@ -18,7 +18,7 @@ import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
-public final class VariableContext implements IVariableContext {
+public class VariableContext implements IVariableContext {
 
 	private int currentLocalVariableID = 0;
 	private int currentGlobalVariableID = 0;

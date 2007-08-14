@@ -47,7 +47,7 @@ import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
  * @author François Terrier
  *
  */
-public class ClauseBuilder {
+public final class ClauseBuilder {
 
 	/**
 	 * Debug flag for <code>LOADER_PHASE2_TRACE</code>
@@ -69,32 +69,18 @@ public class ClauseBuilder {
 	
 	private List<Clause> clauses;
 	private VariableContext variableContext;
-	
+	private LabelManager manager;
 	private BooleanEqualityTable bool;
 	private PredicateTable predicateTable;
-	private LabelManager manager;
-	
 	private VariableTable variableTable;
 
-	public LoaderResult getResult() {
-		return new LoaderResult(clauses);
+	public void loadClausesFromContext(IContext context) {
+		loadClausesFromContext(context, null);
 	}
 	
-	/**
-	 * Returns the result of this phase.
-	 * 
-	 * @return the result of this phase
-	 */
-	public void buildClauses(IContext context) {
+	public void loadClausesFromContext(IContext context, VariableTable table) {
 		debugContext(context);
-		
-		variableContext = new VariableContext();
-		variableTable = new VariableTable(variableContext);
-		predicateTable = new PredicateTable();
-		bool = new BooleanEqualityTable(context.getNextLiteralIdentifier());
-
-		clauses = new ArrayList<Clause>();
-		manager = new LabelManager();
+		initialize(context, table);
 		
 		for (INormalizedFormula signature : context.getResults()) {
 			if (DEBUG) debug("========================================");
@@ -108,6 +94,16 @@ public class ClauseBuilder {
 			if (DEBUG) debug(clause.toString());
 		}
 	}
+	
+	private void initialize(IContext context, VariableTable variableTable) {
+		variableContext = new VariableContext();
+		if (variableTable == null) this.variableTable = new VariableTable(variableContext);
+		else this.variableTable = variableTable;
+		predicateTable = new PredicateTable();
+		bool = new BooleanEqualityTable(context.getNextLiteralIdentifier());
+		clauses = new ArrayList<Clause>();
+		manager = new LabelManager();
+	}	
 	
 	private void getDefinitions() {
 		manager.nextLabelizableFormula();
@@ -146,9 +142,6 @@ public class ClauseBuilder {
 		}
 	}
 	
-	/**
-	 * @param result
-	 */
 	private void buildNormalizedFormulas(INormalizedFormula result) {
 		SignedFormula<?> sig = result.getSignature();
 		ClauseResult clauseResult = sig.getFinalClauses(manager, bool, variableTable, predicateTable);
@@ -156,7 +149,6 @@ public class ClauseBuilder {
 		clauses.addAll(clauseResult.getClauses(origin,variableContext));
 	}
 	
-	@SuppressWarnings("unused")
 	public void buildPredicateTypeInformation(IContext context) {
 		for (PredicateDescriptor descriptor : context.getAllPredicateDescriptors()) {
 			List<TermSignature> unifiedTerms = descriptor.getUnifiedResults();
@@ -175,7 +167,7 @@ public class ClauseBuilder {
 		List<SimpleTerm> terms = new ArrayList<SimpleTerm>();
 		terms.add(term1);
 		terms.add(term2);
-		PredicateLiteral literal = new ComplexPredicateLiteral(new org.eventb.internal.pp.core.elements.PredicateDescriptor(index, true), terms);
+		PredicateLiteral literal = new ComplexPredicateLiteral(predicateTable.getDescriptor(index),true, terms);
 		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
 		predicates.add(literal);
 		Clause clause = new DisjunctiveClause(new TypingOrigin(), predicates, 
@@ -190,5 +182,9 @@ public class ClauseBuilder {
 	
 	public PredicateTable getPredicateTable() {
 		return predicateTable;
+	}
+	
+	public List<Clause> getClauses() {
+		return clauses;
 	}
 }

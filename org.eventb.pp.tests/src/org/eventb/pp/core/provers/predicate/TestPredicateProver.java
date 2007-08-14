@@ -1,8 +1,6 @@
 package org.eventb.pp.core.provers.predicate;
 
 import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cCons;
-import static org.eventb.pp.Util.cELocVar;
 import static org.eventb.pp.Util.cEqClause;
 import static org.eventb.pp.Util.cNEqual;
 import static org.eventb.pp.Util.cNotPred;
@@ -15,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
-import org.eventb.internal.pp.core.IProver;
+import org.eventb.internal.pp.core.IProverModule;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
@@ -278,14 +276,14 @@ public class TestPredicateProver extends AbstractPPTest {
 	
 	
 	public void testHiddenInferrence() {
-		doTest(new TestPair(mList(cClause(cPred(0,cELocVar(1)),cProp(1)),cClause(cPred(0,cCons("a")),cProp(1))),
-				mList(cClause(cNotPred(0,cCons("a")))),
-				cClause(mList(cProp(1)),cNEqual(cELocVar(1), cCons("a"))),
-				cClause(mList(cProp(1)),cNEqual(cCons("a"), cCons("a")))));
+		doTest(new TestPair(mList(cClause(cPred(0,evar1),cProp(1)),cClause(cPred(0,a),cProp(1))),
+				mList(cClause(cNotPred(0,a))),
+				cClause(mList(cProp(1)),cNEqual(evar1, a)),
+				cClause(mList(cProp(1)),cNEqual(a, a))));
 	}
 	
 	public void doTest(TestPair test) {
-			IProver prover = getProver();
+			IProverModule prover = getProver();
 			
 			for (Clause clause : test.nonUnit) {
 				prover.addClauseAndDetectContradiction(clause);
@@ -306,7 +304,7 @@ public class TestPredicateProver extends AbstractPPTest {
 	}
 	
 	public void testInitialization() {
-		IProver predicateProver = new PredicateProver(new VariableContext());
+		IProverModule predicateProver = new PredicateProver(new VariableContext());
 		try {
 			predicateProver.next(false);
 			fail();
@@ -324,20 +322,20 @@ public class TestPredicateProver extends AbstractPPTest {
 	}
 	
 	public void testEmptyResult() {
-		IProver predicateProver = getProver();
+		IProverModule predicateProver = getProver();
 		
 		assertEquals(predicateProver.next(false), ProverResult.EMPTY_RESULT);
 	}
 	
 	public void testEmptyResultWithClauses() {
-		IProver predicateProver = getProver();
+		IProverModule predicateProver = getProver();
 		
 		assertEquals(predicateProver.addClauseAndDetectContradiction(cClause(cProp(0))),ProverResult.EMPTY_RESULT);
 		assertEquals(predicateProver.next(false), ProverResult.EMPTY_RESULT);
 	}
 	
 	public void testContradictionResult() {
-		IProver prover = getProver();
+		IProverModule prover = getProver();
 		
 		prover.addClauseAndDetectContradiction(cClause(cProp(0)));
 		ProverResult result = prover.addClauseAndDetectContradiction(cClause(cNotProp(0)));
@@ -346,8 +344,8 @@ public class TestPredicateProver extends AbstractPPTest {
 	}
 
 	
-	private IProver getProver() {
-		IProver predicateProver = new PredicateProver(new VariableContext());
+	private IProverModule getProver() {
+		IProverModule predicateProver = new PredicateProver(new VariableContext());
 		predicateProver.initialize(new ClauseSimplifier());
 		return predicateProver;
 	}

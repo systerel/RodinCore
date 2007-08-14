@@ -1,6 +1,5 @@
 package org.eventb.pp.core.elements.terms;
 
-import static org.eventb.pp.Util.cCons;
 import static org.eventb.pp.Util.cDiv;
 import static org.eventb.pp.Util.cELocVar;
 import static org.eventb.pp.Util.cExpn;
@@ -16,21 +15,12 @@ import java.util.HashMap;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.pp.core.elements.Sort;
-import org.eventb.internal.pp.core.elements.terms.Constant;
-import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.pp.AbstractPPTest;
 
 public class TestTermEquality extends AbstractPPTest {
 
-	
-	private static Constant a = cCons("a");
-	private static Constant b = cCons("b");
-	private static LocalVariable evar0 = cELocVar(0);
-//	private static LocalVariable evar1 = cELocVar(1);
-	private static LocalVariable fvar0 = cFLocVar(0);
-//	private static LocalVariable fvar1 = cFLocVar(1);
 	
 	
 	Term[][] equalTerms = new Term[][]{
@@ -41,10 +31,10 @@ public class TestTermEquality extends AbstractPPTest {
 					y,y
 			},
 			new Term[]{
-					cELocVar(0),cELocVar(1),cELocVar(2)
+					cELocVar(0,A),cELocVar(1,A),cELocVar(2,A)
 			},
 			new Term[]{
-					cFLocVar(0),cFLocVar(1),cFLocVar(2)
+					cFLocVar(0,A),cFLocVar(1,A),cFLocVar(2,A)
 			},
 			new Term[]{
 					a,a
@@ -109,25 +99,25 @@ public class TestTermEquality extends AbstractPPTest {
 			},
 			
 			new Term[]{
-					cPlus(cELocVar(0),cELocVar(0)),cPlus(cELocVar(0),cELocVar(0))
+					cPlus(cELocVar(0,A),cELocVar(0,A)),cPlus(cELocVar(0,A),cELocVar(0,A))
 			},
 			new Term[]{
-					cMinus(cELocVar(0),cELocVar(0)),cMinus(cELocVar(0),cELocVar(0))
+					cMinus(cELocVar(0,A),cELocVar(0,A)),cMinus(cELocVar(0,A),cELocVar(0,A))
 			},
 			new Term[]{
-					cTimes(cELocVar(0),cELocVar(0)),cTimes(cELocVar(0),cELocVar(0))
+					cTimes(cELocVar(0,A),cELocVar(0,A)),cTimes(cELocVar(0,A),cELocVar(0,A))
 			},
 			new Term[]{
-					cExpn(cELocVar(0),cELocVar(0)),cExpn(cELocVar(0),cELocVar(0))
+					cExpn(cELocVar(0,A),cELocVar(0,A)),cExpn(cELocVar(0,A),cELocVar(0,A))
 			},
 			new Term[]{
-					cMod(cELocVar(0),cELocVar(0)),cMod(cELocVar(0),cELocVar(0))
+					cMod(cELocVar(0,A),cELocVar(0,A)),cMod(cELocVar(0,A),cELocVar(0,A))
 			},
 			new Term[]{
-					cUnMin(cELocVar(0)),cUnMin(cELocVar(0))
+					cUnMin(cELocVar(0,A)),cUnMin(cELocVar(0,A))
 			},
 			new Term[]{
-					cDiv(cELocVar(0),cELocVar(0)),cDiv(cELocVar(0),cELocVar(0))
+					cDiv(cELocVar(0,A),cELocVar(0,A)),cDiv(cELocVar(0,A),cELocVar(0,A))
 			},
 			
 			
@@ -178,10 +168,10 @@ public class TestTermEquality extends AbstractPPTest {
 					cPlus(z,x,y),cPlus(x,z)
 			},
 			new Term[]{
-					cPlus(cELocVar(0),cELocVar(0)),cPlus(cELocVar(1),cELocVar(2))
+					cPlus(cELocVar(0,A),cELocVar(0,A)),cPlus(cELocVar(1,A),cELocVar(2,A))
 			},
 			new Term[]{
-					cPlus(cFLocVar(0),cFLocVar(0)),cPlus(cFLocVar(1),cFLocVar(2))
+					cPlus(cFLocVar(0,A),cFLocVar(0,A)),cPlus(cFLocVar(1,A),cFLocVar(2,A))
 			},
 			new Term[]{
 					cPlus(a,b),cPlus(b,a)
@@ -273,48 +263,48 @@ public class TestTermEquality extends AbstractPPTest {
 			},
 
 			new Term[]{
-					cFLocVar(0),cUnMin(a)
+					fvar0,cUnMin(a)
 			},
 			new Term[]{
-					cFLocVar(0),cPlus(a,b)
+					fvar0,cPlus(a,b)
 			},
 			new Term[]{
-					cFLocVar(0),cMinus(a,b)
+					fvar0,cMinus(a,b)
 			},
 			new Term[]{
-					cFLocVar(0),cTimes(a,b)
+					fvar0,cTimes(a,b)
 			},
 			new Term[]{
-					cFLocVar(0),cMod(a,b)
+					fvar0,cMod(a,b)
 			},
 			new Term[]{
-					cFLocVar(0),cMinus(a,b)
+					fvar0,cMinus(a,b)
 			},
 			new Term[]{
-					cFLocVar(0),cExpn(a,b)
+					fvar0,cExpn(a,b)
 			},
 
 			
 			new Term[]{
-					cELocVar(0),cUnMin(a)
+					evar0,cUnMin(a)
 			},
 			new Term[]{
-					cELocVar(0),cPlus(a,b)
+					evar0,cPlus(a,b)
 			},
 			new Term[]{
-					cELocVar(0),cMinus(a,b)
+					evar0,cMinus(a,b)
 			},
 			new Term[]{
-					cELocVar(0),cTimes(a,b)
+					evar0,cTimes(a,b)
 			},
 			new Term[]{
-					cELocVar(0),cMod(a,b)
+					evar0,cMod(a,b)
 			},
 			new Term[]{
-					cELocVar(0),cMinus(a,b)
+					evar0,cMinus(a,b)
 			},
 			new Term[]{
-					cELocVar(0),cExpn(a,b)
+					evar0,cExpn(a,b)
 			},
 
 			
@@ -354,7 +344,7 @@ public class TestTermEquality extends AbstractPPTest {
 		assertEquals(fvar0,fvar0);
 		assertEquals(fvar0.hashCode(),fvar0.hashCode());
 		assertEquals(evar0, evar0);
-		assertEquals(cELocVar(0).hashCodeWithDifferentVariables(),cELocVar(0).hashCodeWithDifferentVariables());
+		assertEquals(cELocVar(0,A).hashCodeWithDifferentVariables(),cELocVar(0,A).hashCodeWithDifferentVariables());
 		assertTrue(evar0.equalsWithDifferentVariables(evar1, new HashMap<SimpleTerm, SimpleTerm>()));
 		assertTrue(fvar0.equalsWithDifferentVariables(fvar1, new HashMap<SimpleTerm, SimpleTerm>()));
 		assertTrue(x.equalsWithDifferentVariables(y, new HashMap<SimpleTerm, SimpleTerm>()));
@@ -366,7 +356,7 @@ public class TestTermEquality extends AbstractPPTest {
 		assertFalse(evar0.equals(fvar0));
 		assertFalse(fvar0.equals(evar0));
 		
-		assertFalse(cVar(0).equals(cVar(0)));
+		assertFalse(cVar(0,A).equals(cVar(0,A)));
 		assertFalse(x.equals(y));
 		assertFalse(y.equals(x));
 		assertFalse(a.equals(b));
@@ -379,8 +369,8 @@ public class TestTermEquality extends AbstractPPTest {
 	private static Sort B = new Sort(FormulaFactory.getDefault().makeGivenType("B"));
 	
 	public void testEqualSort() {
-		assertTrue(cVar(A).equalsWithDifferentVariables(cVar(A),new HashMap<SimpleTerm, SimpleTerm>()));
-		assertFalse(cVar(A).equalsWithDifferentVariables(cVar(B),new HashMap<SimpleTerm, SimpleTerm>()));
+		assertTrue(cVar(1,A).equalsWithDifferentVariables(cVar(1,A),new HashMap<SimpleTerm, SimpleTerm>()));
+		assertFalse(cVar(1,A).equalsWithDifferentVariables(cVar(1,B),new HashMap<SimpleTerm, SimpleTerm>()));
 		assertTrue(cELocVar(0,A).equalsWithDifferentVariables(cELocVar(0,A),new HashMap<SimpleTerm, SimpleTerm>()));
 		assertFalse(cELocVar(0,A).equalsWithDifferentVariables(cELocVar(0,B),new HashMap<SimpleTerm, SimpleTerm>()));
 		

@@ -143,12 +143,4 @@ public abstract class LiteralDescriptor {
     }
 	
 	
-//	@Override
-//	public String toString() {
-//		StringBuilder str = new StringBuilder();
-//		for (IIntermediateResult indexList : termList) {
-//			str.append("\t" + indexList.toString()+"\n");
-//		}
-//		return str.toString();
-//    }
 }

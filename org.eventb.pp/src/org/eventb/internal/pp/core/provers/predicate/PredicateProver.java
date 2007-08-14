@@ -14,20 +14,21 @@ import java.util.Set;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
-import org.eventb.internal.pp.core.IProver;
+import org.eventb.internal.pp.core.IProverModule;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
-import org.eventb.internal.pp.core.datastructure.DataStructureWrapper;
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.inferrers.InferrenceResult;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
+import org.eventb.internal.pp.core.provers.predicate.iterators.IteratorMatchIterator;
+import org.eventb.internal.pp.core.provers.predicate.iterators.UnitMatchIterator;
+import org.eventb.internal.pp.core.provers.predicate.iterators.UnitMatcher;
 import org.eventb.internal.pp.core.search.IterableHashSet;
 import org.eventb.internal.pp.core.search.ResetIterator;
 import org.eventb.internal.pp.core.tracing.AbstractInferrenceOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
-public class PredicateProver implements IProver {
+public class PredicateProver implements IProverModule {
 
 	/**
 	 * Debug flag for <code>PROVER_CASESPLIT_TRACE</code>
@@ -37,7 +38,6 @@ public class PredicateProver implements IProver {
 		System.out.println(message);
 	}
 	
-	private DataStructureWrapper unitClausesWrapper;
 	private IterableHashSet<Clause> unitClauses;
 	private ResetIterator<Clause> unitClausesIterator;
 	private IterableHashSet<Clause> nonUnitClauses;
@@ -54,11 +54,9 @@ public class PredicateProver implements IProver {
 		this.inferrer = new ResolutionInferrer(context);
 		
 		unitClauses = new IterableHashSet<Clause>();
-		// TODO remove
-		unitClausesWrapper = new DataStructureWrapper(unitClauses);
 		nonUnitClauses = new IterableHashSet<Clause>();
 		
-		unitMatcher = new UnitMatcher(unitClausesWrapper);
+		unitMatcher = new UnitMatcher();
 		
 		nonUnitResolver = new ResolutionResolver(inferrer, new IteratorMatchIterator(nonUnitClauses.iterator()));
 		unitResolver = new ResolutionResolver(inferrer, new UnitMatchIterator(unitMatcher));
@@ -78,37 +76,44 @@ public class PredicateProver implements IProver {
 			return true;
 		}
 		else {
-			counter = unitClauses.size()*10;
+			counter = unitClauses.size()*5;
 			return false;
 		}
 	}
 	
-	public ProverResult next(boolean force) {
-		// TODO refactor this 
-		
-		if (simplifier == null) throw new IllegalStateException();
-
-		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT; 
-
-		ProverResult result = null;
+	private boolean initializeNonUnitResolver() {
 		if (!nonUnitResolver.isInitialized()) {
 			Clause unit = nextUnit();
-			if (unit == null) return ProverResult.EMPTY_RESULT;
+			if (unit == null) return false;
 			nonUnitResolver.initialize(unit);
 		}
-		InferrenceResult nextClause = nonUnitResolver.next(force);
+		return true;
+	}
+	
+	private ResolutionResult getNextNonUnitResolverResult() {
+		ResolutionResult nextClause = nonUnitResolver.next();
 		while (nextClause == null) {
 			Clause unit = nextUnit();
-			if (unit == null) return ProverResult.EMPTY_RESULT;
+			if (unit == null) return null;
 			else newClause(unit, unitResolver);
 			nonUnitResolver.initialize(unit);
-			nextClause = nonUnitResolver.next(force);
+			nextClause = nonUnitResolver.next();
 		}
+		return nextClause;
+	}
+	
+	public ProverResult next(boolean force) {
+		// TODO refactor this 
+		if (simplifier == null) throw new IllegalStateException();
+		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT; 
+		if (!initializeNonUnitResolver()) return ProverResult.EMPTY_RESULT;
+		ResolutionResult nextClause = getNextNonUnitResolverResult();
+		ProverResult result = ProverResult.EMPTY_RESULT;
 		if (nextClause != null) {
-			Clause clause = nextClause.getClause();
+			Clause clause = nextClause.getDerivedClause();
 			clause = simplifier.run(clause);
-
-			result = new ProverResult(clause, nextClause.getSubsumedClauses());
+			if (nextClause.getSubsumedClause() != null) result = new ProverResult(clause, nextClause.getSubsumedClause());
+			else result = new ProverResult(clause);
 		}
 		if (DEBUG) debug("PredicateProver, next clause: "+result);
 		return result;
@@ -124,15 +129,15 @@ public class PredicateProver implements IProver {
 		Set<Clause> subsumedClauses = new HashSet<Clause>();
 		
 		resolver.initialize(clause);
-		InferrenceResult result = resolver.next(true);
+		ResolutionResult result = resolver.next();
 		while (result != null) {
-			subsumedClauses.addAll(result.getSubsumedClauses());
+			if (result.getSubsumedClause() != null) subsumedClauses.add(result.getSubsumedClause());
 			
-			Clause inferredClause = result.getClause();
+			Clause inferredClause = result.getDerivedClause();
 			inferredClause = simplifier.run(inferredClause);
 			generatedClauses.add(inferredClause);
 			
-			result = resolver.next(true);
+			result = resolver.next();
 		}
 		return new ProverResult(generatedClauses, subsumedClauses);
 	}
@@ -141,22 +146,20 @@ public class PredicateProver implements IProver {
 	private boolean isAcceptedUnitClause(Clause clause) {
 		return 	clause.isUnit() 
 				&& clause.getPredicateLiterals().size() > 0;
-//				&& !clause.hasQuantifiedLiteral();
 	}
 	
 	private boolean isAcceptedNonUnitClause(Clause clause) {
 		 return	clause.getPredicateLiterals().size()>0 
 				&& !clause.isUnit()
 				&& !clause.isBlockedOnConditions();
-//				&& !clause.hasQuantifiedLiteral();
 	}
-	
 	
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
 		if (simplifier == null) throw new IllegalStateException();
 		
 		if (isAcceptedUnitClause(clause)) {
-			unitClausesWrapper.add(clause);
+			unitClauses.appends(clause);
+			unitMatcher.newClause(clause);
 			// we generate the clauses
 			if (!clause.hasQuantifiedLiteral()) return newClause(clause, unitResolver);
 		}
@@ -169,7 +172,8 @@ public class PredicateProver implements IProver {
 
 	public void removeClause(Clause clause) {
 		if (isAcceptedUnitClause(clause)) {
-			unitClausesWrapper.remove(clause);
+			unitClauses.remove(clause);
+			unitMatcher.removeClause(clause);
 		}
 		else if (isAcceptedNonUnitClause(clause)) {
 			nonUnitClauses.remove(clause);
@@ -208,8 +212,8 @@ public class PredicateProver implements IProver {
 	public void registerDumper(Dumper dumper) {
 		dumper.addDataStructure("PredicateFormula unit clauses", unitClauses.iterator());
 		dumper.addObject("Current unit clause", new Object(){
-			@SuppressWarnings("synthetic-access")
 			@Override
+			@SuppressWarnings("synthetic-access")
 			public String toString() {
 				return unitClausesIterator.current()==null?"no current unit clause":unitClausesIterator.current().toString();
 			}
@@ -221,7 +225,6 @@ public class PredicateProver implements IProver {
 	public String toString() {
 		return "PredicateProver";
 	}
-	
 	
 }
 

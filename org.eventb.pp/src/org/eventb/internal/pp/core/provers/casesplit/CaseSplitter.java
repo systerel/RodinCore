@@ -20,14 +20,14 @@ import java.util.Vector;
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.IDispatcher;
-import org.eventb.internal.pp.core.IProver;
+import org.eventb.internal.pp.core.IProverModule;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.inferrers.CaseSplitNegationInferrer;
 
-public class CaseSplitter implements IProver {
+public class CaseSplitter implements IProverModule {
 	
 	/**
 	 * Debug flag for <code>PROVER_CASESPLIT_TRACE</code>

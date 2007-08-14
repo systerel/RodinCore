@@ -6,13 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.internal.pp.core.provers.predicate;
+package org.eventb.internal.pp.core.provers.predicate.iterators;
 
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.PredicateDescriptor;
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.search.IterableHashSet;
 import org.eventb.internal.pp.core.search.ResetIterator;
 
@@ -25,8 +25,8 @@ public class UnitMatchIterator implements IMatchIterator {
 		this.unitMatcher = unitMatcher;
 	}
 	
-	private ResetIterator<Clause> getMatchingUnitIterator(PredicateDescriptor predicate) {
-		IterableHashSet<Clause> set = unitMatcher.getMatchingClauses(predicate);
+	private ResetIterator<Clause> getMatchingUnitIterator(PredicateLiteralDescriptor predicate, boolean isPositive) {
+		IterableHashSet<Clause> set = unitMatcher.getMatchingClauses(predicate, isPositive);
 		return getIterator(set);
 	}
 	
@@ -45,10 +45,10 @@ public class UnitMatchIterator implements IMatchIterator {
 	 * 
 	 * @param predicate 
 	 * @return 
-	 * @see org.eventb.internal.pp.core.provers.predicate.IMatchIterator#iterator(org.eventb.internal.pp.core.elements.PredicateDescriptor)
+	 * @see org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterator#iterator(org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor)
 	 */
-	public Iterator<Clause> iterator(PredicateDescriptor predicate) {
-		ResetIterator<Clause> iterator = getMatchingUnitIterator(predicate);
+	public Iterator<Clause> iterator(PredicateLiteralDescriptor predicate, boolean isPositive) {
+		ResetIterator<Clause> iterator = getMatchingUnitIterator(predicate, isPositive);
 		iterator.reset();
 		return iterator;
 	}

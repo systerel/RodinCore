@@ -1,7 +1,6 @@
 package org.eventb.pp.core.provers.seedsearch;
 
 import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cELocVar;
 import static org.eventb.pp.Util.cEqClause;
 import static org.eventb.pp.Util.cNotPred;
 import static org.eventb.pp.Util.cPred;
@@ -37,47 +36,47 @@ public class TestSeedSearch extends AbstractPPTest {
 	TestPair[] tests = new TestPair[]{
 			new TestPair(
 					mList(cClause(cNotPred(0,x,a),cPred(2,x))),
-					cClause(cPred(0,cELocVar(0),x)),
-					mList(cClause(cPred(0,cELocVar(0),a)))
+					cClause(cPred(0,evar0,x)),
+					mList(cClause(cPred(0,evar0,a)))
 			),
 			new TestPair(
 					mList(cClause(cNotPred(0,x,b),cPred(2,x))),
-					cClause(cPred(0,cELocVar(0),x)),
-					mList(cClause(cPred(0,cELocVar(0),b)))
+					cClause(cPred(0,evar0,x)),
+					mList(cClause(cPred(0,evar0,b)))
 			),
 			new TestPair(
 					mList(	cClause(cNotPred(0,x,y),cPred(1,x,y)),
 							cClause(cNotPred(1,x,a),cPred(2,x))),
-					cClause(cPred(0,cELocVar(0),x)),
-					mList(cClause(cPred(0,cELocVar(0),a)))
+					cClause(cPred(0,evar0,x)),
+					mList(cClause(cPred(0,evar0,a)))
 			),
 			
 			new TestPair(
 					mList(	cClause(cNotPred(0,x,b),cPred(2,x)),
 							cClause(cNotPred(0,x,c),cPred(2,x))
 					),
-					cClause(cPred(0,cELocVar(0),x)),
-					mList(	cClause(cPred(0,cELocVar(0),c)),
-							cClause(cPred(0,cELocVar(0),b)))					
+					cClause(cPred(0,evar0,x)),
+					mList(	cClause(cPred(0,evar0,c)),
+							cClause(cPred(0,evar0,b)))					
 			),
 			
 			new TestPair(
 					mList(cClause(cNotPred(0,x,a),cPred(2,x))),
-					cClause(cPred(0,cELocVar(0),x)),
-					mList(cClause(cPred(0,cELocVar(0),a)))
+					cClause(cPred(0,evar0,x)),
+					mList(cClause(cPred(0,evar0,a)))
 			),
 			
 			new TestPair(
 					mList(cEqClause(cPred(0,x,a),cPred(2,x))),
-					cClause(cPred(0,cELocVar(0),x)),
-					mList(cClause(cPred(0,cELocVar(0),a)))
+					cClause(cPred(0,evar0,x)),
+					mList(cClause(cPred(0,evar0,a)))
 			),
 			
 			new TestPair(
 					mList(	cClause(cNotPred(0,x,y,a),cPred(2,y)),
 							cClause(cNotPred(2,b),cPred(1,a,b))),
-					cClause(cPred(0,cELocVar(0),x,y)),
-					mList(cClause(cPred(0,cELocVar(0),b,x)))
+					cClause(cPred(0,evar0,x,y)),
+					mList(cClause(cPred(0,evar0,b,x)))
 			),
 			
 	};

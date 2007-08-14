@@ -21,7 +21,7 @@ public abstract class AssociativeTerm extends Term {
 	final protected List<Term> children;
 
 	public AssociativeTerm(List<Term> children, int priority) {
-		super(Sort.ARITHMETIC, priority, combineHashCodesWithSameVariables(children),
+		super(Sort.NATURAL, priority, combineHashCodesWithSameVariables(children),
 				combineHashCodesWithDifferentVariables(children));
 
 		this.children = children;

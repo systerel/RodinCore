@@ -1,28 +1,29 @@
 package org.eventb.internal.pp.loader.formula.terms;
 
+import java.math.BigInteger;
+
 import org.eventb.internal.pp.core.elements.Sort;
-import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.formula.ClauseContext;
 
 public class IntegerSignature extends AbstractConstantSignature {
 
-	private int literal;
+	private BigInteger literal;
 	
-	public IntegerSignature(int literal, Sort sort) {
-		super(sort);
+	public IntegerSignature(BigInteger literal) {
+		super(Sort.NATURAL);
 		
 		this.literal = literal;
 	}
 
 	@Override
 	public Term getTerm(ClauseContext context) {
-		return new Constant(literal+"",sort);
+		return context.getVariableTable().getInteger(literal);
 	}
 
 	@Override
 	protected TermSignature deepCopy() {
-		return new IntegerSignature(literal, sort);
+		return new IntegerSignature(literal);
 	}
 
 	@Override
@@ -34,14 +35,14 @@ public class IntegerSignature extends AbstractConstantSignature {
 	public boolean equals(Object obj) {
 		if (obj instanceof IntegerSignature) {
 			IntegerSignature temp = (IntegerSignature) obj;
-			return temp.literal == literal;
+			return literal.equals(temp.literal);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return literal;
+		return literal.hashCode();
 	}
 
 	

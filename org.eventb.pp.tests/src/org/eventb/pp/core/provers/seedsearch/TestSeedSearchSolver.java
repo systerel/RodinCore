@@ -1,5 +1,7 @@
 package org.eventb.pp.core.provers.seedsearch;
 
+import static org.eventb.pp.Util.mSet;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -69,17 +71,17 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 	private Instantiable Pex;
 	private Instantiable nSex;
 	private Instantiable nPex;
-	private Instantiable Pxe;
-	private Instantiable nPxe;
+//	private Instantiable Pxe;
+//	private Instantiable nPxe;
 	private Instantiable Qex;
 	private Instantiable nQex;
 	private Instantiable nRex;
-	private Instantiable Qxe;
-	private Instantiable nQxe;
-	private Instantiable Rexx;
-	private Instantiable nRexx;
-	private Instantiable Rxex;
-	private Instantiable nRxex;
+//	private Instantiable Qxe;
+//	private Instantiable nQxe;
+//	private Instantiable Rexx;
+//	private Instantiable nRexx;
+//	private Instantiable Rxex;
+//	private Instantiable nRxex;
 	
 	private LiteralSignature Pcx;
 	private LiteralSignature nPcx;
@@ -100,18 +102,18 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 	private LiteralSignature Rxcx;
 	private LiteralSignature nRxcx;
 	
-	private VariableLink PQcx;
+//	private VariableLink PQcx;
 	private VariableLink PQxc;
 	private VariableLink PnQxc;
 	private VariableLink SnPxc;
-	private VariableLink nPnQcx;
+//	private VariableLink nPnQcx;
 	private VariableLink nPnQxc;
 	private VariableLink nQnRxc;
 	private VariableLink RnPxc;
-	private VariableLink PRcx;
+//	private VariableLink PRcx;
 	private VariableLink PRxc;
-	private VariableLink QRcx;
-	private VariableLink QRxc;
+//	private VariableLink QRcx;
+//	private VariableLink QRxc;
 	private VariableLink RSxc;
 	
 	private InstantiationValue Ia;
@@ -169,29 +171,29 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		
 		Pex = I("Pex",Pxc);
 		nPex = I("¬Pex",nPxc);
-		Pxe = I("Pxe",Pcx);
-		nPxe = I("¬Pxe",nPcx);
+//		Pxe = I("Pxe",Pcx);
+//		nPxe = I("¬Pxe",nPcx);
 		Qex = I("Qex",Qxc);
 		nQex = I("¬Qex",nQxc);
 		nRex = I("¬Rex",nRxc);
-		Qxe = I("Qxe",Qcx);
-		nQxe = I("¬Qxe",nQcx);
-		Rexx = I("Rexx",Rxcx);
-		nRexx = I("¬Rexx",nRxcx);
-		Rxex = I("Rxex",Rcxx);
-		nRxex = I("¬Rxex",nRcxx);
+//		Qxe = I("Qxe",Qcx);
+//		nQxe = I("¬Qxe",nQcx);
+//		Rexx = I("Rexx",Rxcx);
+//		nRexx = I("¬Rexx",nRxcx);
+//		Rxex = I("Rxex",Rcxx);
+//		nRxex = I("¬Rxex",nRcxx);
 		nSex = I("¬Sex",nSxc);
 		
-		PQcx = new VariableLink(Pcx,Qcx);
+//		PQcx = new VariableLink(Pcx,Qcx);
 		PQxc = new VariableLink(Pxc,Qxc);
 		PnQxc = new VariableLink(Pxc,nQxc);
-		nPnQcx = new VariableLink(nPcx,nQcx);
+//		nPnQcx = new VariableLink(nPcx,nQcx);
 		nPnQxc = new VariableLink(nPxc,nQxc);
 		nQnRxc = new VariableLink(nQxc,nRxc);
 		RnPxc = new VariableLink(Rxc,nPxc);
 		PRxc = new VariableLink(Rxc,Pxc);
-		QRcx = new VariableLink(Qcx,Rcx);
-		QRxc = new VariableLink(Qxc,Rxc);
+//		QRcx = new VariableLink(Qcx,Rcx);
+//		QRxc = new VariableLink(Qxc,Rxc);
 		RSxc = new VariableLink(Rxc,Sxc);
 		SnPxc = new VariableLink(Sxc,nPxc);
 		

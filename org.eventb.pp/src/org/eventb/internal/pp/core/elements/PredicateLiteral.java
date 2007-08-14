@@ -16,46 +16,40 @@ import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 
 public abstract class PredicateLiteral extends Literal<PredicateLiteral,SimpleTerm> {
 
-	final protected PredicateDescriptor descriptor;
+	final protected PredicateLiteralDescriptor descriptor;
+	final protected boolean isPositive;
 	
-	public PredicateLiteral(PredicateDescriptor descriptor, List<SimpleTerm> terms) {
-		super(terms, descriptor.hashCode());
+	public PredicateLiteral(PredicateLiteralDescriptor descriptor, boolean isPositive, List<SimpleTerm> terms) {
+		super(terms, 37*descriptor.hashCode()+(isPositive?0:1));
 		
 		this.descriptor = descriptor;
+		this.isPositive = isPositive;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof PredicateLiteral) {
 			PredicateLiteral temp = (PredicateLiteral) obj;
-			return descriptor.equals(temp.descriptor) && super.equals(obj);
+			return descriptor.equals(temp.descriptor) && isPositive == temp.isPositive && super.equals(obj);
 		}
 		return false;
 	}
 	
 	@Override
 	public boolean equalsWithDifferentVariables(PredicateLiteral literal, HashMap<SimpleTerm, SimpleTerm> map) {
-		return descriptor.equals(literal.descriptor) && super.equalsWithDifferentVariables(literal, map);
+		return descriptor.equals(literal.descriptor) && isPositive == literal.isPositive && super.equalsWithDifferentVariables(literal, map);
 	}
 	
-//	public boolean isPositive() {
-//		return isPositive;
-//	}
+	public boolean isPositive() {
+		return isPositive;
+	}
 
 	public void setBit(BitSet set) {
 		set.set(descriptor.getIndex());
 	}
 
-	public PredicateDescriptor getDescriptor() {
+	public PredicateLiteralDescriptor getDescriptor() {
 		return descriptor;
 	}
 	
-//	public boolean contains(PredicateFormula predicate) {
-//		return getIndex() == predicate.getIndex() && isPositive()==predicate.isPositive();
-//	}
-
-//	public boolean matches(PredicateFormula predicate) {
-//		return getIndex() == predicate.getIndex() && isPositive()!=predicate.isPositive();
-//	}
-
 }

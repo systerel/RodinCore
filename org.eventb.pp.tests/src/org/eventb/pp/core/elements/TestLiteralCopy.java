@@ -16,7 +16,6 @@ public class TestLiteralCopy extends AbstractPPTest {
 	public void testSimplePredicate() {
 		TestLiteralCopy.<PredicateLiteral>doTest(cPred(1, evar0, evar0));
 		TestLiteralCopy.<PredicateLiteral>doTest(cPred(1, evar1, evar0));
-		
 	}
 	
 	

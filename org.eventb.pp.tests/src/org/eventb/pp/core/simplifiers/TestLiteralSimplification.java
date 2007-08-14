@@ -1,7 +1,6 @@
 package org.eventb.pp.core.simplifiers;
 
 import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cCons;
 import static org.eventb.pp.Util.cEqClause;
 import static org.eventb.pp.Util.cEqual;
 import static org.eventb.pp.Util.cNEqual;
@@ -16,11 +15,9 @@ import java.util.ArrayList;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
 import org.eventb.internal.pp.loader.clause.VariableContext;
 import org.eventb.pp.AbstractPPTest;
-import org.eventb.pp.Util;
 
 public class TestLiteralSimplification extends AbstractPPTest {
 	private class TestPair {
@@ -32,10 +29,6 @@ public class TestLiteralSimplification extends AbstractPPTest {
 		}
 	}
 	
-	
-	private static Variable var0 = Util.cVar(0);
-	private static Variable var00 = Util.cVar(1);
-	private static Variable var1 = Util.cVar(2);
 	
 	
 	TestPair[] tests = new TestPair[] {
@@ -187,7 +180,7 @@ public class TestLiteralSimplification extends AbstractPPTest {
 				cClause(cNEqual(a,b))
 		),
 		new TestPair(
-				cClause(cNEqual(a,b),cNEqual(cCons("b"),cCons("a"))),
+				cClause(cNEqual(a,b),cNEqual(b,a)),
 				cClause(cNEqual(a,b))
 		),
 		

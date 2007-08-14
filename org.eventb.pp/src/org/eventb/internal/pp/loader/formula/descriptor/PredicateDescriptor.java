@@ -13,14 +13,11 @@ import org.eventb.internal.pp.loader.predicate.IContext;
 
 public class PredicateDescriptor extends IndexedDescriptor {
 
-//	public ComplexPredicateDescriptor(IContext context, List<IIntermediateResult> termList, int index) {
-//		super(context, termList, index);
-//	}
-	
 	private Sort sort;
 
 	public PredicateDescriptor(IContext context, int index, Sort sort) {
 		super(context, index);
+		this.sort = sort;
 	}
 
 	@Override
@@ -32,18 +29,4 @@ public class PredicateDescriptor extends IndexedDescriptor {
 		return sort;
 	}
 
-//	@Override
-//	public int hashCode() {
-//		return super.hashCode();
-//	}
-//	
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (obj instanceof ComplexPredicateDescriptor) {
-//			ComplexPredicateDescriptor temp = (ComplexPredicateDescriptor) obj;
-//			return super.equals(temp);
-//		}
-//		return false;
-//	}
-	
 }

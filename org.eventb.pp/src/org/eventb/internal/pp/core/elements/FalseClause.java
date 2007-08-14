@@ -58,12 +58,12 @@ public final class FalseClause extends Clause {
 	}
 
 	@Override
-	public boolean matches(PredicateDescriptor predicate) {
+	public boolean matches(PredicateLiteralDescriptor predicate, boolean isPositive) {
 		return false;
 	}
 
 	@Override
-	public boolean matchesAtPosition(PredicateDescriptor predicate, int position) {
+	public boolean matchesAtPosition(PredicateLiteralDescriptor predicate, boolean isPositive, int position) {
 		return false;
 	}
 	

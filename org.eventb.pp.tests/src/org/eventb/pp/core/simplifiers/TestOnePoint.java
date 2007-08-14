@@ -8,10 +8,8 @@ import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.mList;
 
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 import org.eventb.pp.AbstractPPTest;
-import org.eventb.pp.Util;
 
 /**
  * This class tests the one point rule. There are several tests :
@@ -26,12 +24,6 @@ import org.eventb.pp.Util;
  */
 public class TestOnePoint extends AbstractPPTest {
 
-	private static Variable var0 = Util.cVar(0);
-	private static Variable var00 = Util.cVar(1);
-	private static Variable var1 = Util.cVar(2);
-	private static Variable var2 = Util.cVar(3);
-	private static Variable var3 = Util.cVar(4);
-	
 	
 	public void testOnePoint() {
 		// standard test

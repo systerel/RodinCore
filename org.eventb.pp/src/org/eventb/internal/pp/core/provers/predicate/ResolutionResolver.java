@@ -13,8 +13,8 @@ import java.util.Iterator;
 import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
-import org.eventb.internal.pp.core.inferrers.InferrenceResult;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
+import org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterator;
 
 /**
  * This class is responsible for applying the resolution rule between one
@@ -40,9 +40,8 @@ public class ResolutionResolver implements IResolver {
 	private Iterator<Clause> currentMatchedIterator;
 	private int currentPosition;
 
-	public InferrenceResult next(boolean force) {
+	public ResolutionResult next() {
 		if (!isInitialized()) throw new IllegalStateException();
-		
 		
 		if (nextPosition()) return doMatch();
 		while (nextMatchedClause()) {
@@ -68,7 +67,7 @@ public class ResolutionResolver implements IResolver {
 	
 	private void initMatchedIterator() {
 		PredicateLiteral predicate = currentMatcher.getPredicateLiterals().get(0);
-		currentMatchedIterator = matchedClauses.iterator(predicate.getDescriptor());
+		currentMatchedIterator = matchedClauses.iterator(predicate.getDescriptor(), predicate.isPositive());
 	}
 	
 	public void remove(Clause clause) {
@@ -84,12 +83,12 @@ public class ResolutionResolver implements IResolver {
 		}
 	}
 	
-	private InferrenceResult doMatch() {
+	private ResolutionResult doMatch() {
 		inferrer.setPosition(currentPosition);
 		inferrer.setUnitClause(currentMatcher);
 		currentMatched.infer(inferrer);
-		InferrenceResult result = inferrer.getResult();
-		if (PredicateProver.DEBUG) PredicateProver.debug("Inferred clause: "+currentMatcher+" + "+currentMatched+" -> "+result.getClause());
+		ResolutionResult result = new ResolutionResult(inferrer.getDerivedClause(), inferrer.getSubsumedClause());
+		if (PredicateProver.DEBUG) PredicateProver.debug("Inferred clause: "+currentMatcher+" + "+currentMatched+" -> "+result.getDerivedClause());
 		return result;
 	}
 	
@@ -104,7 +103,7 @@ public class ResolutionResolver implements IResolver {
 		if (currentMatched == null) return false;
 		for (int i = currentPosition+1; i < currentMatched.getPredicateLiterals().size(); i++) {
 			PredicateLiteral matcherPredicate = currentMatcher.getPredicateLiterals().get(0);
-			if (currentMatched.matchesAtPosition(matcherPredicate.getDescriptor(), i)) {
+			if (currentMatched.matchesAtPosition(matcherPredicate.getDescriptor(), matcherPredicate.isPositive(), i)) {
 				currentPosition = i;
 				return true;
 			}

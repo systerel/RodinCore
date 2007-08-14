@@ -7,8 +7,11 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Sort;
+import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Variable;
-import org.eventb.internal.pp.loader.clause.LoaderResult;
+import org.eventb.internal.pp.loader.clause.ClauseBuilder;
+import org.eventb.internal.pp.loader.clause.VariableContext;
+import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.pp.AbstractPPTest;
 import org.eventb.pp.Util;
 
@@ -24,8 +27,8 @@ public class TestSameObjects extends AbstractPPTest {
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 	
 
-	private static Variable var0 = Util.cVar(new Sort(ff.makeGivenType("S")));
-	private static Variable var1 = Util.cVar(new Sort(ff.makeGivenType("T")));
+	private static Variable var0 = Util.cVar(1,S);
+	private static Variable var1 = Util.cVar(2,T);
 	
 	private static ITypeEnvironment env = ff.makeTypeEnvironment();
 	static {
@@ -36,14 +39,28 @@ public class TestSameObjects extends AbstractPPTest {
 	public void testSimpleConstant () {
 		String formula = "∀x,y·a ∈ S ∨ b ∈ T ∨ x ∈ S ∨ y ∈ T";
 		
-		LoaderResult result = Util.doPhaseOneAndTwo(formula, env);
+		ClauseBuilder result = Util.doPhaseOneAndTwo(formula, env, new MyVariableTable());
 		
 		// the expected result is a non-unit clause Sa ∨ Ta ∨ Sx ∨ Tx
-		// let us assert this
 		assertEquals(result.getClauses().size(), 1);
 		Clause clause = result.getClauses().iterator().next();
 		assertEquals(cClause(cPred(0, a),cPred(0, var0),cPred(1, b),cPred(1, var1)), clause);
 		
+	}
+	
+	static class MyVariableTable extends VariableTable {
+
+		public MyVariableTable() {
+			super(new VariableContext());
+		}
+		
+		@Override
+		public Constant getConstant(String name, Sort sort) {
+			if (name.equals("a")) return a;
+			if (name.equals("b")) return b;
+			return super.getConstant(name, sort);
+		}
+
 	}
 	
 }

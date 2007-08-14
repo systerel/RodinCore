@@ -6,11 +6,13 @@ import static org.eventb.pp.Util.cEqual;
 import static org.eventb.pp.Util.cPred;
 import static org.eventb.pp.Util.cProp;
 
+import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Constant;
+import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
-import org.eventb.internal.pp.loader.clause.VariableContext;
 import org.eventb.pp.AbstractPPTest;
 import org.eventb.pp.Util;
 
@@ -26,10 +28,9 @@ public class TestExistentialSimplification extends AbstractPPTest {
 	}
 	
 	
-	private static Constant newCons0 = Util.cCons("0");
-	private static Constant newCons1 = Util.cCons("1");
+	static Constant newCons0 = Util.cCons("0",A);
+	static Constant newCons1 = Util.cCons("1",A);
 	
-	private static Variable var0 = Util.cVar(0);
 	
 	
 	TestPair[] tests = new TestPair[] {
@@ -96,12 +97,29 @@ public class TestExistentialSimplification extends AbstractPPTest {
 			
 	};
 	
-	
 	public void testExistential() {
 		for (TestPair test : tests) {
-			ExistentialSimplifier rule = new ExistentialSimplifier(new VariableContext());
+			ExistentialSimplifier rule = new ExistentialSimplifier(new MyVariableContext());
 			Clause actual = test.input.simplify(rule);
 			assertEquals(test.output,actual);
+		}
+	}
+	
+	static class MyVariableContext implements IVariableContext {
+		int i=0;
+		
+		public Constant getNextFreshConstant(Sort sort) {
+			if (i==0) {i++; return newCons0;}
+			if (i==1) {i++; return newCons1;}
+			return null;
+		}
+
+		public LocalVariable getNextLocalVariable(boolean isForall, Sort sort) {
+			return null;
+		}
+
+		public Variable getNextVariable(Sort sort) {
+			return null;
 		}
 	}
 	

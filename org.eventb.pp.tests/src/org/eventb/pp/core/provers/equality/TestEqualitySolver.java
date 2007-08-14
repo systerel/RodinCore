@@ -1,5 +1,7 @@
 package org.eventb.pp.core.provers.equality;
 
+import static org.eventb.pp.Util.mSet;
+
 import java.util.List;
 
 import org.eventb.internal.pp.core.Level;
@@ -16,6 +18,7 @@ import org.eventb.internal.pp.core.provers.equality.unionfind.SourceTable;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
 import org.eventb.pp.AbstractPPTest;
+import org.eventb.pp.Util;
 
 @SuppressWarnings("unused")
 public class TestEqualitySolver extends AbstractPPTest {

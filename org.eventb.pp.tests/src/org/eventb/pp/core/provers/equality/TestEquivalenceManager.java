@@ -2,6 +2,7 @@ package org.eventb.pp.core.provers.equality;
 
 import static org.eventb.pp.Util.cClause;
 import static org.eventb.pp.Util.cProp;
+import static org.eventb.pp.Util.mSet;
 
 import java.util.List;
 

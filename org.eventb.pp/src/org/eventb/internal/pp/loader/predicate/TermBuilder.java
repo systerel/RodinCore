@@ -25,6 +25,7 @@ import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.loader.formula.terms.ConstantSignature;
 import org.eventb.internal.pp.loader.formula.terms.DivideSignature;
 import org.eventb.internal.pp.loader.formula.terms.ExpnSignature;
+import org.eventb.internal.pp.loader.formula.terms.IntegerSignature;
 import org.eventb.internal.pp.loader.formula.terms.MinusSignature;
 import org.eventb.internal.pp.loader.formula.terms.ModSignature;
 import org.eventb.internal.pp.loader.formula.terms.PlusSignature;
@@ -158,8 +159,8 @@ public class TermBuilder extends DefaultVisitor {
 
 	@Override
 	public boolean visitINTLIT(IntegerLiteral lit) {
-		// TODO change?
-		TermSignature intlit = new ConstantSignature(lit.getValue().toString(), new Sort(lit.getType()));
+		assert new Sort(lit.getType()).equals(Sort.NATURAL);
+		TermSignature intlit = new IntegerSignature(lit.getValue());
 		terms.push(intlit);
 		return true;
 	}

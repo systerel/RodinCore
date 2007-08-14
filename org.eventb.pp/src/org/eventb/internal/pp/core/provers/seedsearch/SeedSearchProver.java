@@ -20,7 +20,7 @@ import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
-import org.eventb.internal.pp.core.IProver;
+import org.eventb.internal.pp.core.IProverModule;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
@@ -32,7 +32,7 @@ import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.InstantiationInferrer;
 
-public class SeedSearchProver implements IProver {
+public class SeedSearchProver implements IProverModule {
 
 	/**
 	 * Debug flag for <code>PROVER_SEEDSEARCH_TRACE</code>
@@ -123,11 +123,12 @@ public class SeedSearchProver implements IProver {
 		
 		// equivalence clauses for constants
 		if (clause.isEquivalence()) { 
-			result.addAll(manager.addConstant(literal1.getInverse().getDescriptor(), literal1.getInverse().getTerms(), clause));
-			result.addAll(manager.addConstant(literal1.getDescriptor(), literal1.getTerms(), clause));
+			PredicateLiteral inverse = literal1.getInverse();
+			result.addAll(manager.addConstant(inverse.getDescriptor(), inverse.isPositive(), inverse.getTerms(), clause));
+			result.addAll(manager.addConstant(literal1.getDescriptor(), literal1.isPositive(), literal1.getTerms(), clause));
 		}
 		else {
-			result.addAll(manager.addConstant(literal1.getDescriptor(), literal1.getTerms(), clause));
+			result.addAll(manager.addConstant(literal1.getDescriptor(), literal1.isPositive(), literal1.getTerms(), clause));
 		}
 	}
 	
@@ -141,11 +142,12 @@ public class SeedSearchProver implements IProver {
 				SimpleTerm term = literal1.getTerms().get(i);
 				if (!term.isConstant()) {
 					if (clause.isEquivalence()) {
-						result.addAll(manager.addInstantiable(literal1.getDescriptor(), position, literal1.getTerms(), i, clause));
-						result.addAll(manager.addInstantiable(literal1.getInverse().getDescriptor(), position, literal1.getInverse().getTerms(), i, clause));
+						result.addAll(manager.addInstantiable(literal1.getDescriptor(), literal1.isPositive(), position, literal1.getTerms(), i, clause));
+						PredicateLiteral inverse = literal1.getInverse();
+						result.addAll(manager.addInstantiable(inverse.getDescriptor(), inverse.isPositive(), position, inverse.getTerms(), i, clause));
 					}
 					else {
-						result.addAll(manager.addInstantiable(literal1.getDescriptor(), position, literal1.getTerms(), i, clause));
+						result.addAll(manager.addInstantiable(literal1.getDescriptor(), literal1.isPositive(), position, literal1.getTerms(), i, clause));
 					}
 				}
 			}
@@ -153,24 +155,34 @@ public class SeedSearchProver implements IProver {
 	}
 	
 	private void addVariableLink(Clause clause, PredicateLiteral literal1, PredicateLiteral literal2, List<SeedSearchResult> result) {
+		PredicateLiteral inverse1 = literal1.getInverse();
+		PredicateLiteral inverse2 = literal2.getInverse();
 		if (clause.isEquivalence() && clause.sizeWithoutConditions()==2) {
-			result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getInverse().getDescriptor(), 
-					literal1.getTerms(), literal2.getInverse().getTerms(), clause));
-			result.addAll(manager.addVariableLink(literal1.getInverse().getDescriptor(), literal2.getDescriptor(),
-					literal1.getInverse().getTerms(), literal2.getTerms(), clause));
+			result.addAll(manager.addVariableLink(
+					literal1.getDescriptor(), literal1.isPositive(),
+					inverse2.getDescriptor(), inverse2.isPositive(), 
+					literal1.getTerms(), inverse2.getTerms(), clause));
+			result.addAll(manager.addVariableLink(inverse1.getDescriptor(), inverse1.isPositive(), 
+					literal2.getDescriptor(), literal2.isPositive(),
+					inverse1.getTerms(), literal2.getTerms(), clause));
 		}
 		else if (clause.isEquivalence()) {
-			result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getInverse().getDescriptor(), 
-					literal1.getTerms(), literal2.getInverse().getTerms(), clause));
-			result.addAll(manager.addVariableLink(literal1.getInverse().getDescriptor(), literal2.getDescriptor(),
+			result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal1.isPositive(),
+					inverse2.getDescriptor(), inverse2.isPositive(),
+					literal1.getTerms(), inverse2.getTerms(), clause));
+			result.addAll(manager.addVariableLink(inverse1.getDescriptor(), inverse1.isPositive(), 
+					literal2.getDescriptor(), literal2.isPositive(),
 					literal1.getInverse().getTerms(), literal2.getTerms(), clause));
-			result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getDescriptor(),
+			result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal1.isPositive(), 
+					literal2.getDescriptor(), literal2.isPositive(),
 					literal1.getTerms(), literal2.getTerms(), clause));
-			result.addAll(manager.addVariableLink(literal1.getInverse().getDescriptor(), literal2.getInverse().getDescriptor(),
-					literal1.getInverse().getTerms(), literal2.getInverse().getTerms(), clause));
+			result.addAll(manager.addVariableLink(inverse1.getDescriptor(), inverse1.isPositive(), 
+					inverse2.getDescriptor(), inverse2.isPositive(), 
+					inverse1.getTerms(), inverse2.getTerms(), clause));
 		}
 		else {
-			result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal2.getDescriptor(),
+			result.addAll(manager.addVariableLink(literal1.getDescriptor(), literal1.isPositive(), 
+					literal2.getDescriptor(), literal2.isPositive(),
 					literal1.getTerms(), literal2.getTerms(), clause));
 		}
 	}
@@ -206,7 +218,7 @@ public class SeedSearchProver implements IProver {
 						for (int j = 0; j < predicate.getTerms().size(); j++) {
 							SimpleTerm term = predicate.getTerms().get(j);
 							if (term == variable1 || term == variable2) {
-								result.addAll(manager.addInstantiable(predicate.getDescriptor(), i, predicate.getTerms(), j, clause));
+								result.addAll(manager.addInstantiable(predicate.getDescriptor(), predicate.isPositive(), i, predicate.getTerms(), j, clause));
 							}
 						}
 					}
