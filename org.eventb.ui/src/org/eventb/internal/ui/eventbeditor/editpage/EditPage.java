@@ -66,6 +66,7 @@ import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
@@ -789,6 +790,14 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		for (ISectionComposite sectionComp : sectionComps) {
 			sectionComp.recursiveExpand(element);
 		}
+	}
+
+	public void edit(IInternalElement element, IAttributeType attributeType,
+			int charStart, int charEnd) {
+		for (ISectionComposite sectionComp : sectionComps) {
+			sectionComp.edit(element, attributeType, charStart, charEnd);
+		}
+		
 	}
 
 }

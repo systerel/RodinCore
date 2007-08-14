@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 
 /**
@@ -83,5 +84,22 @@ public interface IEditComposite {
 	// TODO To see if this should be set as part of the constructor and since
 	// the form should not be changed after initialising.
 	public abstract void setForm(ScrolledForm form);
+
+	/**
+	 * Return the corresponding attribute type for this edit composite.
+	 * 
+	 * @return the corresponding attribute type {@link IAttributeType}.
+	 */
+	public abstract IAttributeType getAttributeType();
+
+	/**
+	 * Edit the attribute given the start and end positions.
+	 * 
+	 * @param charStart
+	 *            start position.
+	 * @param charEnd
+	 *            end position.
+	 */
+	public abstract void edit(int charStart, int charEnd);
 
 }

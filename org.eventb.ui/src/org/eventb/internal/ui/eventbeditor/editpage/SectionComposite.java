@@ -22,7 +22,9 @@ import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.IEventBSharedImages;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -442,6 +444,18 @@ public class SectionComposite implements ISectionComposite {
 			setExpand(true);
 			for (IElementComposite elementComp : elementComps) {
 				elementComp.recursiveExpand(element);
+			}
+		}
+	}
+
+	public void edit(IInternalElement element, IAttributeType attributeType,
+			int charStart, int charEnd) {
+		if (parent.isAncestorOf(element)) {
+			if (!isExpanded())
+				setExpand(true);
+			assert elementComps != null;
+			for (IElementComposite elementComp : elementComps) {
+				elementComp.edit(element, attributeType, charStart, charEnd);
 			}
 		}
 	}

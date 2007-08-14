@@ -236,7 +236,7 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 	AttributeRelationship axiomLabel;
 	AttributeRelationship axiomPredicate;
 	AttributeRelationship axiomComment;
-	
+
 	public IAttributeRelationship getAttributeRelationship(String id) {
 
 		// Refines Machine's abstract machine name
@@ -244,7 +244,8 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 				+ ".refinesMachineAbstractMachineName")) {
 			if (refinesMachineAbstractMachineName == null)
 				refinesMachineAbstractMachineName = new AttributeRelationship(
-						id, IRefinesMachine.ELEMENT_TYPE);
+						id, IRefinesMachine.ELEMENT_TYPE,
+						"org.eventb.core.target");
 			return refinesMachineAbstractMachineName;
 		}
 
@@ -252,91 +253,103 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".seesContextName")) {
 			if (seesContextName == null)
 				seesContextName = new AttributeRelationship(id,
-						ISeesContext.ELEMENT_TYPE);
+						ISeesContext.ELEMENT_TYPE, "org.eventb.core.target");
 			return seesContextName;
 		}
 
 		// Variable's identifier
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".variableIdentifier")) {
 			if (variableIdentifier == null)
-				variableIdentifier = new AttributeRelationship(id, IVariable.ELEMENT_TYPE);
+				variableIdentifier = new AttributeRelationship(id,
+						IVariable.ELEMENT_TYPE, "org.eventb.core.identifier");
 			return variableIdentifier;
 		}
 
 		// Variable's comment
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".variableComment")) {
 			if (variableComment == null)
-				variableComment = new AttributeRelationship(id, IVariable.ELEMENT_TYPE);
+				variableComment = new AttributeRelationship(id,
+						IVariable.ELEMENT_TYPE, "org.eventb.core.comment");
 			return variableComment;
 		}
 
 		// Invariant's label
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".invariantLabel")) {
 			if (invariantLabel == null)
-				invariantLabel = new AttributeRelationship(id, IInvariant.ELEMENT_TYPE);
+				invariantLabel = new AttributeRelationship(id,
+						IInvariant.ELEMENT_TYPE, "org.eventb.core.label");
 			return invariantLabel;
 		}
 
 		// Invariant's predicate
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".invariantPredicate")) {
 			if (invariantPredicate == null)
-				invariantPredicate = new AttributeRelationship(id, IInvariant.ELEMENT_TYPE);
+				invariantPredicate = new AttributeRelationship(id,
+						IInvariant.ELEMENT_TYPE, "org.eventb.core.predicate");
 			return invariantPredicate;
 		}
 
 		// Invariant's comment
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".invariantComment")) {
 			if (invariantComment == null)
-				invariantComment = new AttributeRelationship(id, IInvariant.ELEMENT_TYPE);
+				invariantComment = new AttributeRelationship(id,
+						IInvariant.ELEMENT_TYPE, "org.eventb.core.comment");
 			return invariantComment;
 		}
 
 		// Theorem's label
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".theoremLabel")) {
 			if (theoremLabel == null)
-				theoremLabel = new AttributeRelationship(id, ITheorem.ELEMENT_TYPE);
+				theoremLabel = new AttributeRelationship(id,
+						ITheorem.ELEMENT_TYPE, "org.eventb.core.label");
 			return theoremLabel;
 		}
 
 		// Theorem's predicate
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".theoremPredicate")) {
 			if (theoremPredicate == null)
-				theoremPredicate = new AttributeRelationship(id, ITheorem.ELEMENT_TYPE);
+				theoremPredicate = new AttributeRelationship(id,
+						ITheorem.ELEMENT_TYPE, "org.eventb.core.predicate");
 			return theoremPredicate;
 		}
 
 		// Theorem's comment
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".theoremComment")) {
 			if (theoremComment == null)
-				theoremComment = new AttributeRelationship(id, ITheorem.ELEMENT_TYPE);
+				theoremComment = new AttributeRelationship(id,
+						ITheorem.ELEMENT_TYPE, "org.eventb.core.comment");
 			return theoremComment;
 		}
 
 		// Event's label
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".eventLabel")) {
 			if (eventLabel == null)
-				eventLabel = new AttributeRelationship(id, IEvent.ELEMENT_TYPE);
+				eventLabel = new AttributeRelationship(id, IEvent.ELEMENT_TYPE,
+						"org.eventb.core.label");
 			return eventLabel;
 		}
 
 		// Event's inherited
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".eventInherited")) {
 			if (eventInherited == null)
-				eventInherited = new AttributeRelationship(id, IEvent.ELEMENT_TYPE);
+				eventInherited = new AttributeRelationship(id,
+						IEvent.ELEMENT_TYPE, "org.eventb.core.inherited");
 			return eventInherited;
 		}
 
 		// Event's convergence
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".eventConvergence")) {
 			if (eventConvergence == null)
-				eventConvergence = new AttributeRelationship(id, IEvent.ELEMENT_TYPE);
+				eventConvergence = new AttributeRelationship(id,
+						IEvent.ELEMENT_TYPE, "org.eventb.core.convergence");
 			return eventConvergence;
 		}
 
 		// Event's comment
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".eventComment")) {
 			if (eventComment == null)
-				eventComment = new AttributeRelationship(id, IEvent.ELEMENT_TYPE);
+				eventComment = new AttributeRelationship(id,
+						IEvent.ELEMENT_TYPE, "org.eventb.core.comment");
 			return eventComment;
 		}
 
@@ -344,77 +357,88 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 		if (id.equals(EventBPlugin.PLUGIN_ID
 				+ ".refinesEventAbstractEventLabel")) {
 			if (refinesEventAbstractEventLabel == null)
-				refinesEventAbstractEventLabel = new AttributeRelationship(id, IRefinesEvent.ELEMENT_TYPE);
+				refinesEventAbstractEventLabel = new AttributeRelationship(id,
+						IRefinesEvent.ELEMENT_TYPE, "org.eventb.core.target");
 			return refinesEventAbstractEventLabel;
 		}
 
 		// Guard's label
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".guardLabel")) {
 			if (guardLabel == null)
-				guardLabel = new AttributeRelationship(id, IGuard.ELEMENT_TYPE);
+				guardLabel = new AttributeRelationship(id, IGuard.ELEMENT_TYPE,
+						"org.eventb.core.label");
 			return guardLabel;
 		}
 
 		// Guard's predicate
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".guardPredicate")) {
 			if (guardPredicate == null)
-				guardPredicate = new AttributeRelationship(id, IGuard.ELEMENT_TYPE);
+				guardPredicate = new AttributeRelationship(id,
+						IGuard.ELEMENT_TYPE, "org.eventb.core.predicate");
 			return guardPredicate;
 		}
 
 		// Guard's comment
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".guardComment")) {
 			if (guardComment == null)
-				guardComment = new AttributeRelationship(id, IGuard.ELEMENT_TYPE);
+				guardComment = new AttributeRelationship(id,
+						IGuard.ELEMENT_TYPE, "org.eventb.core.comment");
 			return guardComment;
 		}
 
 		// Witness's label
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".witnessLabel")) {
 			if (witnessLabel == null)
-				witnessLabel = new AttributeRelationship(id, IWitness.ELEMENT_TYPE);
+				witnessLabel = new AttributeRelationship(id,
+						IWitness.ELEMENT_TYPE, "org.eventb.core.label");
 			return witnessLabel;
 		}
 
 		// Witness's predicate
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".witnessPredicate")) {
 			if (witnessPredicate == null)
-				witnessPredicate = new AttributeRelationship(id, IWitness.ELEMENT_TYPE);
+				witnessPredicate = new AttributeRelationship(id,
+						IWitness.ELEMENT_TYPE, "org.eventb.core.predicate");
 			return witnessPredicate;
 		}
 
 		// Witness's comment
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".witnessComment")) {
 			if (witnessComment == null)
-				witnessComment = new AttributeRelationship(id, IWitness.ELEMENT_TYPE);
+				witnessComment = new AttributeRelationship(id,
+						IWitness.ELEMENT_TYPE, "org.eventb.core.comment");
 			return witnessComment;
 		}
 
 		// Action's label
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".actionLabel")) {
 			if (actionLabel == null)
-				actionLabel = new AttributeRelationship(id, IAction.ELEMENT_TYPE);
+				actionLabel = new AttributeRelationship(id,
+						IAction.ELEMENT_TYPE, "org.eventb.core.label");
 			return actionLabel;
 		}
 
 		// Action's assignment
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".actionAssignment")) {
 			if (actionAssignment == null)
-				actionAssignment = new AttributeRelationship(id, IAction.ELEMENT_TYPE);
+				actionAssignment = new AttributeRelationship(id,
+						IAction.ELEMENT_TYPE, "org.eventb.core.assignment");
 			return actionAssignment;
 		}
 
 		// Action's comment
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".actionComment")) {
 			if (actionComment == null)
-				actionComment = new AttributeRelationship(id, IAction.ELEMENT_TYPE);
+				actionComment = new AttributeRelationship(id,
+						IAction.ELEMENT_TYPE, "org.eventb.core.comment");
 			return actionComment;
 		}
 
 		// Variant's expression
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".variantExpression")) {
 			if (variantExpression == null)
-				variantExpression = new AttributeRelationship(id, IVariant.ELEMENT_TYPE);
+				variantExpression = new AttributeRelationship(id,
+						IVariant.ELEMENT_TYPE, "org.eventb.core.expression");
 			return variantExpression;
 		}
 
@@ -422,56 +446,65 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 		if (id.equals(EventBPlugin.PLUGIN_ID
 				+ ".extendsContextAbstractContextName")) {
 			if (extendsContextAbstractContextName == null)
-				extendsContextAbstractContextName = new AttributeRelationship(id, IExtendsContext.ELEMENT_TYPE);
+				extendsContextAbstractContextName = new AttributeRelationship(
+						id, IExtendsContext.ELEMENT_TYPE,
+						"org.eventb.core.target");
 			return extendsContextAbstractContextName;
 		}
 
 		// Carrier Set's identifier
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".carrierSetIdentifier")) {
 			if (carrierSetIdentifier == null)
-				carrierSetIdentifier = new AttributeRelationship(id, ICarrierSet.ELEMENT_TYPE);
+				carrierSetIdentifier = new AttributeRelationship(id,
+						ICarrierSet.ELEMENT_TYPE, "org.eventb.core.identifier");
 			return carrierSetIdentifier;
 		}
 
 		// Carrier Set's comment
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".carrierSetComment")) {
 			if (carrierSetComment == null)
-				carrierSetComment = new AttributeRelationship(id, ICarrierSet.ELEMENT_TYPE);
+				carrierSetComment = new AttributeRelationship(id,
+						ICarrierSet.ELEMENT_TYPE, "org.eventb.core.comment");
 			return carrierSetComment;
 		}
 
 		// Constant's identifier
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".constantIdentifier")) {
 			if (constantIdentifier == null)
-				constantIdentifier = new AttributeRelationship(id, IConstant.ELEMENT_TYPE);
+				constantIdentifier = new AttributeRelationship(id,
+						IConstant.ELEMENT_TYPE, "org.eventb.core.identifier");
 			return constantIdentifier;
 		}
 
 		// Constant's comment
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".constantComment")) {
 			if (constantComment == null)
-				constantComment = new AttributeRelationship(id, IConstant.ELEMENT_TYPE);
+				constantComment = new AttributeRelationship(id,
+						IConstant.ELEMENT_TYPE, "org.eventb.core.comment");
 			return constantComment;
 		}
 
 		// Axiom's label
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".axiomLabel")) {
 			if (axiomLabel == null)
-				axiomLabel = new AttributeRelationship(id, IAxiom.ELEMENT_TYPE);
+				axiomLabel = new AttributeRelationship(id, IAxiom.ELEMENT_TYPE,
+						"org.eventb.core.label");
 			return axiomLabel;
 		}
 
 		// Axiom's predicate
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".axiomPredicate")) {
 			if (axiomPredicate == null)
-				axiomPredicate = new AttributeRelationship(id, IAxiom.ELEMENT_TYPE);
+				axiomPredicate = new AttributeRelationship(id,
+						IAxiom.ELEMENT_TYPE, "org.eventb.core.predicate");
 			return axiomPredicate;
 		}
 
 		// Axiom's comment
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".axiomComment")) {
 			if (axiomComment == null)
-				axiomComment = new AttributeRelationship(id, IAxiom.ELEMENT_TYPE);
+				axiomComment = new AttributeRelationship(id,
+						IAxiom.ELEMENT_TYPE, "org.eventb.core.comment");
 			return axiomComment;
 		}
 

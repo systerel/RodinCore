@@ -12,7 +12,9 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -264,6 +266,26 @@ public class ElementComposite implements IElementComposite {
 			}
 		}
 
+	}
+
+	public void edit(IInternalElement element, IAttributeType attributeType,
+			int charStart, int charEnd) {
+		if (!rElement.exists())
+			return;
+
+		if (rElement.equals(element)) {
+			row.edit(attributeType, charStart, charEnd);
+		}
+
+		if (rElement.isAncestorOf(element)) {
+			if (!isExpanded())
+				setExpand(true);
+			assert sectionComps != null;
+			for (ISectionComposite sectionComp : sectionComps) {
+				sectionComp.edit(element, attributeType, charStart, charEnd);
+			}
+		}
+		
 	}
 
 }

@@ -386,24 +386,21 @@ public class ElementUIRegistry {
 	}
 
 	/**
-	 * Getting a image descriptor corresponding to an object
+	 * Getting a image descriptor corresponding to an element type.
 	 * <p>
 	 * 
-	 * @param obj
-	 *            any object
-	 * @return the image descriptor correspoinding to the input object
+	 * @param type
+	 *            a Rodin element type.
+	 * @return the image descriptor corresponding to the input element type.
 	 */
-	public synchronized ImageDescriptor getImageDescriptor(Object obj) {
+	public synchronized ImageDescriptor getImageDescriptor(IElementType<?> type) {
 		if (registry == null)
 			loadRegistry();
 
-		if (obj instanceof IRodinElement) {
-			ElementUIInfo info = registry.get(((IRodinElement) obj)
-					.getElementType());
-			if (info != null)
-				return info.getImageDescriptor();
-		}
-
+		ElementUIInfo info = registry.get(type);
+		if (info != null)
+			return info.getImageDescriptor();
+		
 		return null;
 	}
 

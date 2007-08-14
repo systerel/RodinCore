@@ -129,4 +129,15 @@ public class TextEditComposite extends AbstractEditComposite {
 		}
 	}
 
+	public void edit(int charStart, int charEnd) {
+		if (charStart != -1 && charEnd != -1)
+			text.setSelection(charStart, charEnd);
+		else 
+			text.selectAll(); // Select all
+		text.setFocus();
+		FormToolkit.ensureVisible(text);
+	}
+
+	
+
 }

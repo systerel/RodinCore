@@ -12,7 +12,9 @@
 
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -98,5 +100,21 @@ public interface ISectionComposite {
 	 *            a Rodin element.
 	 */
 	void recursiveExpand(IRodinElement element);
+
+	/**
+	 * Edit the element for a certain attribute given the attributeType, the
+	 * start and end positions.
+	 * 
+	 * @param element
+	 *            an internal element.
+	 * @param attributeType
+	 *            an attribute type {@link IAttributeType}.
+	 * @param charStart
+	 *            start position.
+	 * @param charEnd
+	 *            end position.
+	 */
+	void edit(IInternalElement element, IAttributeType attributeType,
+			int charStart, int charEnd);
 
 }

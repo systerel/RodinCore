@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -55,10 +56,12 @@ import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
+import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
@@ -779,70 +782,63 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#setSelection(org.rodinp.core.IInternalElement)
 	 */
 	public void setSelection(IInternalElement element) {
-		elementSelect(element);
-	}
-
-	private void elementSelect(IRodinElement element) {
-		if (element instanceof IMachineFile)
-			return;
-
-		if (element instanceof IContextFile)
-			return;
-
-		if (element instanceof ISeesContext) {
-			this.setActivePage(DependenciesPage.PAGE_ID);
-			return;
-		}
-
-		if (element instanceof IAxiom) {
-			this.setActivePage(AxiomPage.PAGE_ID);
-		}
-
-		else if (element instanceof ITheorem) {
-			this.setActivePage(TheoremPage.PAGE_ID);
-		}
-
-		else if (element instanceof ICarrierSet) {
-			this.setActivePage(CarrierSetPage.PAGE_ID);
-		}
-
-		else if (element instanceof IConstant)
-			this.setActivePage(ConstantPage.PAGE_ID);
-
-		else if (element instanceof IInvariant)
-			this.setActivePage(InvariantPage.PAGE_ID);
-
-		else if (element instanceof IEvent)
-			this.setActivePage(EventPage.PAGE_ID);
-
-		else if (element instanceof IVariable) {
-			if (element.getParent() instanceof IMachineFile)
-				this.setActivePage(VariablePage.PAGE_ID);
-			else
-				this.setActivePage(EventPage.PAGE_ID);
-		}
-
-		else if (element instanceof IGuard) {
-			this.setActivePage(EventPage.PAGE_ID);
-		}
-
-		else if (element instanceof IAction) {
-			this.setActivePage(EventPage.PAGE_ID);
-		}
-
-		else if (element instanceof IRefinesEvent) {
-			this.setActivePage(EventPage.PAGE_ID);
-		}
-
-		else if (element instanceof IWitness) {
-			this.setActivePage(EventPage.PAGE_ID);
-		}
-
+		this.setActivePage(EditPage.PAGE_ID);
 		// select the element within the page
 		IFormPage page = this.getActivePageInstance();
-		if (page instanceof EventBFormPage) {
-			((EventBFormPage) page).selectElement(element);
+		if (page instanceof EditPage) {
+			((EditPage) page).setSelection(new StructuredSelection(element));
 		}
+		
+//		
+//		if (element instanceof ISeesContext) {
+//			this.setActivePage(DependenciesPage.PAGE_ID);
+//			return;
+//		}
+//
+//		if (element instanceof IAxiom) {
+//			this.setActivePage(AxiomPage.PAGE_ID);
+//		}
+//
+//		else if (element instanceof ITheorem) {
+//			this.setActivePage(TheoremPage.PAGE_ID);
+//		}
+//
+//		else if (element instanceof ICarrierSet) {
+//			this.setActivePage(CarrierSetPage.PAGE_ID);
+//		}
+//
+//		else if (element instanceof IConstant)
+//			this.setActivePage(ConstantPage.PAGE_ID);
+//
+//		else if (element instanceof IInvariant)
+//			this.setActivePage(InvariantPage.PAGE_ID);
+//
+//		else if (element instanceof IEvent)
+//			this.setActivePage(EventPage.PAGE_ID);
+//
+//		else if (element instanceof IVariable) {
+//			if (element.getParent() instanceof IMachineFile)
+//				this.setActivePage(VariablePage.PAGE_ID);
+//			else
+//				this.setActivePage(EventPage.PAGE_ID);
+//		}
+//
+//		else if (element instanceof IGuard) {
+//			this.setActivePage(EventPage.PAGE_ID);
+//		}
+//
+//		else if (element instanceof IAction) {
+//			this.setActivePage(EventPage.PAGE_ID);
+//		}
+//
+//		else if (element instanceof IRefinesEvent) {
+//			this.setActivePage(EventPage.PAGE_ID);
+//		}
+//
+//		else if (element instanceof IWitness) {
+//			this.setActivePage(EventPage.PAGE_ID);
+//		}
+
 
 	}
 
@@ -858,7 +854,22 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 			return;
 		}
 		if (element != null) {
-			this.edit(element);
+			IAttributeType attributeType = RodinMarkerUtil
+					.getAttributeType(marker);
+			int charStart = RodinMarkerUtil.getCharStart(marker);
+			int charEnd = RodinMarkerUtil.getCharEnd(marker);
+			this.edit(element, attributeType, charStart, charEnd);
+		}
+		
+	}
+
+	private void edit(IInternalElement element, IAttributeType attributeType,
+			int charStart, int charEnd) {
+		this.setActivePage(EditPage.PAGE_ID);
+		// select the element within the page
+		IFormPage page = this.getActivePageInstance();
+		if (page instanceof EditPage) {
+			((EditPage) page).edit(element, attributeType, charStart, charEnd);
 		}
 	}
 

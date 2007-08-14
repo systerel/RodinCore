@@ -12,6 +12,8 @@
 
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import org.rodinp.core.IAttributeType;
+
 /**
  * @author htson
  *         <p>
@@ -54,5 +56,12 @@ public interface IAttributeUISpec {
 	 * @return an attribute factory {@link IAttributeFactory}.
 	 */
 	public IAttributeFactory getAttributeFactory();
+
+	/**
+	 * Get the corresponding attribute type.
+	 * 
+	 * @return an attribute type, this must not be <code>null</code>.
+	 */
+	public IAttributeType getAttributeType();
 
 }

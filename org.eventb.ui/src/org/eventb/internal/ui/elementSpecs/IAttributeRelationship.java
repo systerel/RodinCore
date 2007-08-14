@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.elementSpecs;
 
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 
 /**
@@ -43,5 +44,12 @@ public interface IAttributeRelationship {
 	 * @return an element type
 	 */
 	public abstract IInternalElementType<?> getElementType();
+
+	/**
+	 * Get the corresponding attribute type.
+	 * 
+	 * @return an attribute type.
+	 */
+	public abstract IAttributeType getAttributeType();
 
 }

@@ -1,6 +1,8 @@
 package org.eventb.internal.ui.elementSpecs;
 
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.internal.core.ElementTypeManager;
 
 public class AttributeRelationship implements IAttributeRelationship {
 
@@ -8,10 +10,14 @@ public class AttributeRelationship implements IAttributeRelationship {
 
 	private IInternalElementType<?> elementType;
 
+	private IAttributeType attributeType;
+	
 	public AttributeRelationship(String id,
-			IInternalElementType<?> elementType) {
+			IInternalElementType<?> elementType, String attributeName) {
 		this.id = id;
 		this.elementType = elementType;
+		attributeType = ElementTypeManager.getInstance().getAttributeType(
+				attributeName);
 	}
 
 	public String getID() {
@@ -35,6 +41,10 @@ public class AttributeRelationship implements IAttributeRelationship {
 		AttributeRelationship rel = (AttributeRelationship) obj;
 		return id.equals(rel.getID())
 				&& elementType.equals(rel.getElementType());
+	}
+
+	public IAttributeType getAttributeType() {
+		return attributeType;
 	}
 	
 }

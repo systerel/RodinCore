@@ -17,8 +17,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -126,6 +128,18 @@ public class CComboEditComposite extends AbstractEditComposite {
 		} catch (RodinDBException e) {
 			EventBUIExceptionHandler.handleSetAttributeException(e);
 		}
+	}
+
+	public void edit(int charStart, int charEnd) {
+		combo.setFocus();
+		if (charStart != -1 && charEnd != -1)
+			combo.setSelection(new Point(charStart, charEnd));
+		else {
+			String text = combo.getText();
+			combo.setSelection(new Point(0, text.length()));
+		}
+			
+		FormToolkit.ensureVisible(combo);
 	}
 
 }

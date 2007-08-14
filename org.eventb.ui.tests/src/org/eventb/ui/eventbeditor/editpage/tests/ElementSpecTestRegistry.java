@@ -187,44 +187,52 @@ public class ElementSpecTestRegistry implements IElementSpecRegistry {
 
 		// Variable's identifier
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".variableIdentifier")) {
-			return new AttributeRelationship(id, IVariable.ELEMENT_TYPE);
+			return new AttributeRelationship(id, IVariable.ELEMENT_TYPE,
+					"org.eventb.core.identifier");
 		}
 
 		// Invariant's label
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".invariantLabel")) {
-			return new AttributeRelationship(id, IInvariant.ELEMENT_TYPE);
+			return new AttributeRelationship(id, IInvariant.ELEMENT_TYPE,
+					"org.eventb.core.label");
 		}
-		
+
 		// Invariant's predicate
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".invariantPredicate")) {
-			return new AttributeRelationship(id, IInvariant.ELEMENT_TYPE);
+			return new AttributeRelationship(id, IInvariant.ELEMENT_TYPE,
+					"org.eventb.core.predicate");
 		}
-		
+
 		// Event's label
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".eventLabel")) {
-			return new AttributeRelationship(id, IEvent.ELEMENT_TYPE);
+			return new AttributeRelationship(id, IEvent.ELEMENT_TYPE,
+					"org.eventb.core.label");
 		}
 
 		// Event's inherited
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".eventInherited")) {
-			return new AttributeRelationship(id, IEvent.ELEMENT_TYPE);
+			return new AttributeRelationship(id, IEvent.ELEMENT_TYPE,
+					"org.eventb.core.inherited");
 		}
-		
+
 		// Event's convergence
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".eventConvergence")) {
-			return new AttributeRelationship(id, IEvent.ELEMENT_TYPE);
+			return new AttributeRelationship(id, IEvent.ELEMENT_TYPE,
+					"org.eventb.core.convergence");
 		}
-		
+
 		// Guard's label
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".guardLabel")) {
-			return new AttributeRelationship(id, IGuard.ELEMENT_TYPE);
+			return new AttributeRelationship(id, IGuard.ELEMENT_TYPE,
+					"org.eventb.core.label");
 		}
 
 		// Action's label
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".actionLabel")) {
-			return new AttributeRelationship(id, IAction.ELEMENT_TYPE);
+			return new AttributeRelationship(id, IAction.ELEMENT_TYPE,
+					"org.eventb.core.label");
 		}
-		
+
 		return null;
 	}
 

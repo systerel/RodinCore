@@ -13,7 +13,9 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.swt.widgets.Composite;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -123,5 +125,21 @@ public interface IElementComposite {
 	 *            a Rodin element type.
 	 */
 	public void childrenChanged(IRodinElement element, IElementType<?> type);
+
+	/**
+	 * Edit the element for a certain attribute given the attributeType, the
+	 * start and end positions.
+	 * 
+	 * @param element
+	 *            an internal element.
+	 * @param attributeType
+	 *            an attribute type {@link IAttributeType}.
+	 * @param charStart
+	 *            start position.
+	 * @param charEnd
+	 *            end position.
+	 */
+	public void edit(IInternalElement element, IAttributeType attributeType,
+			int charStart, int charEnd);
 
 }

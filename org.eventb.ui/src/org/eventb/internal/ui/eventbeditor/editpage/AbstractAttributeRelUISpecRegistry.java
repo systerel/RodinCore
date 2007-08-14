@@ -30,6 +30,7 @@ import org.eventb.internal.ui.elementSpecs.IElementSpecRegistry;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
@@ -248,9 +249,13 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 			
 			boolean fillHorizontal = config.getAttribute(
 				"horizontalExpand").equalsIgnoreCase("true");
+			IAttributeRelationship attributeRelationship = specRegistry
+					.getAttributeRelationship(config.getAttribute("id"));
 			
-			IAttributeUISpec uiSpec = new AttributeUISpec(factory, prefix,
-					postfix, fillHorizontal);
+			IAttributeType attributeType = attributeRelationship
+					.getAttributeType();
+			IAttributeUISpec uiSpec = new AttributeUISpec(factory,
+					attributeType, prefix, postfix, fillHorizontal);
 			
 			String widget = config.getAttribute("widget");
 			IEditComposite editComposite;
@@ -284,6 +289,10 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 			}
 
 			public void setUndefinedValue() {
+				// Do nothing
+			}
+
+			public void edit(int charStart, int charEnd) {
 				// Do nothing
 			}
 			

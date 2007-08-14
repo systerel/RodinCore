@@ -24,6 +24,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 
 /**
@@ -185,4 +186,10 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#getAttributeType()
+	 */
+	public IAttributeType getAttributeType() {
+		return uiSpec.getAttributeType();
+	}
 }

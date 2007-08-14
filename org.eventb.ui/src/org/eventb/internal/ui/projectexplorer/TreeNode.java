@@ -127,4 +127,8 @@ public class TreeNode<T extends IInternalElement> {
 		return childrenType == type;
 	}
 
+	public IInternalElementType<?> getType() {
+		return childrenType;
+	}
+
 }

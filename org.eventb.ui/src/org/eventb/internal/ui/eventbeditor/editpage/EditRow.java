@@ -20,6 +20,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
@@ -125,6 +126,20 @@ public class EditRow {
 
 	public void updateExpandStatus() {
 		buttonComp.updateExpandStatus();
+	}
+
+	public void edit(IAttributeType attributeType, int charStart, int charEnd) {
+		if (attributeType == null) {
+			this.setSelected(true);
+			return;
+		}
+		for (IEditComposite editComposite : editComposites) {
+			IAttributeType type = editComposite.getAttributeType();
+			if (attributeType.equals(type)) {
+				editComposite.edit(charStart, charEnd);
+			}
+		}
+
 	}
 
 }
