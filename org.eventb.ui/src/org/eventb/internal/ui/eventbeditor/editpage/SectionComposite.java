@@ -460,4 +460,11 @@ public class SectionComposite implements ISectionComposite {
 		}
 	}
 
+	public void refresh(IRodinElement element, IAttributeType attributeType) {
+		if (elementComps != null)
+			for (IElementComposite elementComp : elementComps) {
+				elementComp.refresh(element, attributeType);
+			}
+	}
+
 }

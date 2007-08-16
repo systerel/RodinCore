@@ -288,4 +288,45 @@ public class ElementComposite implements IElementComposite {
 		
 	}
 
+	public void refresh(IRodinElement element, IAttributeType attributeType) {
+		if (!rElement.exists())
+			return;
+		if (element.equals(rElement)) {
+			row.refresh(attributeType);
+			if (sectionComps == null)
+				return;
+
+			// Refresh sub section composite as well?
+			IElementRelUISpecRegistry registry = ElementRelUISpecRegistry
+					.getDefault();
+			List<IElementRelationship> rels = registry
+					.getElementRelationships(element.getElementType());
+
+			boolean recreate = false;
+			if (rels.size() != sectionComps.size()) {
+				recreate = true;
+			} else {
+				for (int i = 0; i < rels.size(); ++i) {
+					if (sectionComps.get(i).getElementType() != rels.get(i)) {
+						recreate = true;
+						break;
+					}
+				}
+			}
+
+			if (recreate) {
+				for (ISectionComposite sectionComp : sectionComps) {
+					sectionComp.dispose();
+				}
+				createSectionComposites();
+			}
+		} else {
+			if (rElement.isAncestorOf(element)) {
+				for (ISectionComposite sectionComp : sectionComps) {
+					sectionComp.refresh(element, attributeType);
+				}
+			}
+		}
+	}
+
 }

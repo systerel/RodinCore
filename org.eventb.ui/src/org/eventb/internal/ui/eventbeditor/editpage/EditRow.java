@@ -84,7 +84,7 @@ public class EditRow {
 		IRodinElement element = elementComp.getElement();
 		for (IEditComposite editComposite : editComposites) {
 			editComposite.setElement((IAttributedElement) element);
-			editComposite.refresh();
+			editComposite.refresh(false);
 		}
 		buttonComp.updateLinks();
 	}
@@ -140,6 +140,15 @@ public class EditRow {
 			}
 		}
 
+	}
+
+	public void refresh(IAttributeType attributeType) {
+		IRodinElement element = elementComp.getElement();
+		for (IEditComposite editComposite : editComposites) {
+			editComposite.setElement((IAttributedElement) element);
+			editComposite.refresh(attributeType);
+		}
+		buttonComp.updateLinks();		
 	}
 
 }

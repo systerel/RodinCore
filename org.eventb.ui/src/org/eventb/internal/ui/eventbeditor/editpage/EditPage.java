@@ -22,6 +22,13 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
@@ -76,9 +83,10 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.RodinMarkerUtil;
 
 public class EditPage extends EventBEditorPage implements ISelectionProvider,
-		IElementChangedListener {
+		IElementChangedListener, IResourceChangeListener {
 
 	// Title, tab title and ID of the page.
 	public static final String PAGE_ID = EventBUIPlugin.PLUGIN_ID + ".edit"; //$NON-NLS-1$
@@ -122,6 +130,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	public void initialize(FormEditor editor) {
 		super.initialize(editor);
 		((IEventBEditor<?>) editor).addElementChangedListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 
 	/*
@@ -607,6 +616,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		if (commentText != null) {
 			commentText.dispose();
 		}
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
 	}
 
@@ -797,7 +807,49 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		for (ISectionComposite sectionComp : sectionComps) {
 			sectionComp.edit(element, attributeType, charStart, charEnd);
 		}
+	}
+	
+	public void resourceChanged(IResourceChangeEvent event) {
+		List<IMarker> markers = new ArrayList<IMarker>();
+		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
+		IFile rodinInput = editor.getRodinInput().getResource();
+		IMarkerDelta[] rodinProblemMakerDeltas = event.findMarkerDeltas(
+			RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
+		for (IMarkerDelta delta : rodinProblemMakerDeltas) {
+			IResource resource = delta.getResource();
+			if (rodinInput.equals(resource)) {
+				markers.add(delta.getMarker());
+			}
+		}
+		resourceChangedRefresh(markers);
 		
 	}
+
+	private void resourceChangedRefresh(final List<IMarker> markers) {
+		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
+		final IRodinFile rodinInput = editor.getRodinInput();
+		Display display = this.getSite().getShell().getDisplay();
+		display.syncExec(new Runnable() {
+
+			public void run() {
+				for (IMarker marker : markers) {
+					IInternalElement element = RodinMarkerUtil
+							.getInternalElement(marker);
+					if (element == null)
+						continue;
+					IAttributeType attributeType = RodinMarkerUtil
+							.getAttributeType(marker);
+					if (rodinInput.equals(element)
+							|| rodinInput.isAncestorOf(element)) {
+						for (ISectionComposite sectionComposite : sectionComps) {
+							sectionComposite.refresh(element, attributeType);
+						}
+					}
+				}
+			}
+			
+		});
+	}
+
 
 }

@@ -27,6 +27,7 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -49,7 +50,8 @@ public class ButtonComposite {
 
 	public void createContents(FormToolkit toolkit, Composite parent, int level) {
 		composite = toolkit.createComposite(parent);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		composite
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		if (EventBEditorUtils.DEBUG) {
 			composite.setBackground(composite.getDisplay().getSystemColor(
 					SWT.COLOR_CYAN));
@@ -110,10 +112,16 @@ public class ButtonComposite {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				int stateMask = e.getStateMask();
-				elementComp.getPage().selectionChanges(element, (stateMask & SWT.SHIFT) != 0);
+				elementComp.getPage().selectionChanges(element,
+						(stateMask & SWT.SHIFT) != 0);
 			}
 
 		});
+		selectHyperlink.setData(element);
+		ImageHyperlinkMarkerToolTip handler = new ImageHyperlinkMarkerToolTip(
+				(IEventBEditor<?>) elementComp.getPage().getEditor(),
+				selectHyperlink.getShell());
+		handler.activateHoverHelp(selectHyperlink);
 
 		removeHyperlink = toolkit.createImageHyperlink(composite, SWT.TOP);
 		removeHyperlink.setImage(EventBImage

@@ -117,4 +117,17 @@ public interface ISectionComposite {
 	void edit(IInternalElement element, IAttributeType attributeType,
 			int charStart, int charEnd);
 
+	/**
+	 * Refresh the information display in the composite if there are some
+	 * changes for attribute of input type within the input element.
+	 * 
+	 * @param element
+	 *            a Rodin element.
+	 * @param attributeType
+	 *            an attribute type, possibly <code>null</code>. When this is
+	 *            <code>null</code>, this is the same as
+	 *            {@link #refresh(IRodinElement)}
+	 */
+	void refresh(IRodinElement element, IAttributeType attributeType);
+
 }

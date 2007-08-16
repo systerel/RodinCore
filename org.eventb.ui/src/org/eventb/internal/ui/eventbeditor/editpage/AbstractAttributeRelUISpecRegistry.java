@@ -284,7 +284,7 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 			}
 
 			@Override
-			public void initialise() {
+			public void initialise(boolean refreshMarker) {
 				// Do nothing
 			}
 

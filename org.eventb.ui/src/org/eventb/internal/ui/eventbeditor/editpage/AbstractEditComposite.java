@@ -87,8 +87,8 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		return toolkit;
 	}
 	
-	public void refresh() {
-		initialise();
+	public void refresh(boolean refreshMarker) {
+		initialise(refreshMarker);
 		internalPack();
 	}
 
@@ -122,7 +122,7 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		composite.setLayoutData(gridData);
 		composite.setLayout(new FillLayout());
 		
-		initialise();
+		initialise(true);
 		String postfix = uiSpec.getPostfix();
 		postfixLabel = toolkit.createLabel(parent, " " + postfix + " ");
 		gridData = new GridData();
@@ -135,7 +135,7 @@ public abstract class AbstractEditComposite implements IEditComposite {
 					.getSystemColor(SWT.COLOR_CYAN));
 	}
 
-	public abstract void initialise();
+	public abstract void initialise(boolean refreshMarker);
 
 	void internalPack() {
 		internalPack(composite);
@@ -192,4 +192,12 @@ public abstract class AbstractEditComposite implements IEditComposite {
 	public IAttributeType getAttributeType() {
 		return uiSpec.getAttributeType();
 	}
+
+	public void refresh(IAttributeType attributeType) {
+		if (attributeType == null
+				|| uiSpec.getAttributeType().equals(attributeType)) {
+			refresh(true);
+		}
+	}
+
 }

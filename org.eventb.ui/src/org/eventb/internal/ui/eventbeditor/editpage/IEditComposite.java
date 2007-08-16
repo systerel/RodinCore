@@ -35,7 +35,7 @@ public interface IEditComposite {
 	/**
 	 * Refresh the information display within this edit composite.
 	 */
-	public abstract void refresh();
+	public abstract void refresh(boolean refreshMarker);
 
 	/**
 	 * Select/Deselect the attribute.
@@ -101,5 +101,11 @@ public interface IEditComposite {
 	 *            end position.
 	 */
 	public abstract void edit(int charStart, int charEnd);
+
+	/**
+	 * Refresh the information display within this edit with the information
+	 * that an attribute has been changed.
+	 */
+	public abstract void refresh(IAttributeType attributeType);
 
 }

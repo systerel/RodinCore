@@ -1,10 +1,16 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -12,8 +18,10 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.TimerStyledText;
+import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.RodinMarkerUtil;
 
 public class TextEditComposite extends AbstractEditComposite {
 
@@ -26,11 +34,13 @@ public class TextEditComposite extends AbstractEditComposite {
 	}
 
 	@Override
-	public void initialise() {
+	public void initialise(boolean refreshMarker) {
 		try {
 			String value = uiSpec.getAttributeFactory().getValue(element,
 					new NullProgressMonitor());
 			displayValue(value);
+			if (refreshMarker)
+				displayMarkers();			
 		} catch (RodinDBException e) {
 			setUndefinedValue();
 		}
@@ -43,6 +53,13 @@ public class TextEditComposite extends AbstractEditComposite {
 				undefinedButton = null;
 			}
 			text = new StyledText(composite, style);
+			text.addModifyListener(new ModifyListener() {
+
+				public void modifyText(ModifyEvent e) {
+					text.setStyleRange(null);
+				}
+				
+			});
 			new EventBStyledText(text) {
 
 				@Override
@@ -77,6 +94,54 @@ public class TextEditComposite extends AbstractEditComposite {
 		}
 		if (!text.getText().equals(value))
 			text.setText(value);
+	}
+
+	private void displayMarkers() {
+		// Clear the old style ranges
+		text.setStyleRange(null);
+		
+		try {
+			Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
+			Color YELLOW = Display.getDefault()
+					.getSystemColor(SWT.COLOR_YELLOW);
+			Color DARK_BLUE = Display.getDefault().getSystemColor(
+					SWT.COLOR_DARK_BLUE);
+			Color DARK_YELLOW = Display.getDefault().getSystemColor(
+					SWT.COLOR_DARK_YELLOW);
+			IMarker[] markers = MarkerUIRegistry.getDefault()
+					.getAttributeMarkers(element, uiSpec.getAttributeType());
+			for (IMarker marker : markers) {
+				int charStart = RodinMarkerUtil.getCharStart(marker);
+				int charEnd = RodinMarkerUtil.getCharEnd(marker);
+				StyleRange styleRange = new StyleRange();
+				int length = text.getText().length();
+				if (charStart != -1 && charEnd != -1) {
+					int start = charStart < length ? charStart : length;
+					styleRange.start = start;
+					int end = charEnd < length ? charEnd : length;
+					styleRange.length = end - start;
+				} else {
+					styleRange.start = 0;
+					styleRange.length = length;
+				}
+				int severityAttribute = marker.getAttribute(IMarker.SEVERITY,
+						-1);
+				if (severityAttribute == IMarker.SEVERITY_ERROR) {
+					styleRange.background = RED;
+					styleRange.foreground = YELLOW;
+				} else if (severityAttribute == IMarker.SEVERITY_WARNING) {
+					styleRange.background = DARK_YELLOW;
+					styleRange.foreground = DARK_BLUE;
+				}
+				styleRange.fontStyle = SWT.ITALIC;
+				styleRange.underline = true;
+				text.setStyleRange(styleRange);
+			}
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		text.redraw();
 	}
 
 	/**
@@ -137,7 +202,5 @@ public class TextEditComposite extends AbstractEditComposite {
 		text.setFocus();
 		FormToolkit.ensureVisible(text);
 	}
-
-	
 
 }

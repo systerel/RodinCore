@@ -12,17 +12,22 @@
 
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
+import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
@@ -38,17 +43,44 @@ public class CComboEditComposite extends AbstractEditComposite {
 	}
 	
 	@Override
-	public void initialise() {
+	public void initialise(boolean refreshMarkers) {
 		try {
 			String value = uiSpec.getAttributeFactory().getValue(element,
 					new NullProgressMonitor());
 			createCombo();
 			combo.setText(value);
+			if (refreshMarkers) 
+				displayMarkers();
 		} catch (RodinDBException e) {
 			setUndefinedValue();
 		}
 	}
 
+	private void displayMarkers() {
+		Color WHITE = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
+		Color BLACK = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
+		Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
+		Color YELLOW = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
+		try {
+			int maxSeverity = MarkerUIRegistry.getDefault()
+				.getMaxMarkerSeverity(element, uiSpec.getAttributeType());
+			if (maxSeverity == IMarker.SEVERITY_ERROR) {
+				combo.setBackground(RED);
+				combo.setForeground(YELLOW);
+				return;
+			}
+			else if (maxSeverity == IMarker.SEVERITY_WARNING) {
+				combo.setBackground(YELLOW);
+				combo.setForeground(RED);
+				return;
+			}
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		combo.setBackground(WHITE);
+		combo.setForeground(BLACK);
+	}
 	@Override
 	public void setSelected(boolean selection) {
 		Control control = combo == null ? undefinedButton : combo;
