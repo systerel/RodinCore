@@ -3,6 +3,7 @@ package org.eventb.internal.ui.markers;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 
 public class MarkerUIRegistry implements IMarkerUIRegistry {
@@ -40,6 +41,18 @@ public class MarkerUIRegistry implements IMarkerUIRegistry {
 
 	public int getMaxMarkerSeverity(IRodinElement element) throws CoreException {
 		return MarkerRegistry.getDefault().getMaxMarkerSeverity(element);
+	}
+
+	public int getMaxMarkerSeverity(IRodinElement element,
+			IAttributeType attributeType) throws CoreException {
+		return MarkerRegistry.getDefault().getMaxMarkerSeverity(element,
+				attributeType);
+	}
+
+	public IMarker[] getAttributeMarkers(IRodinElement element,
+			IAttributeType attributeType) throws CoreException {
+		return MarkerRegistry.getDefault().getAttributeMarkers(element,
+				attributeType);
 	}
 
 }
