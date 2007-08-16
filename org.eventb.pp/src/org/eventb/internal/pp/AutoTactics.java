@@ -31,7 +31,7 @@ public class AutoTactics {
 		
 	/**
 	 * Tries to discharge a sequent using PP, using only the selected hypotheses
-	 * (timeout = 2 seconds)
+	 * (timeout = .5 seconds)
 	 * (maxSteps = 2000)
 	 * 
 	 * @author Farhad Mehta
@@ -41,7 +41,7 @@ public class AutoTactics {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return PPCore.pp(true, 2000, 2000);
+			return PPCore.pp(true, 500, 2000);
 		}
 	}
 	
