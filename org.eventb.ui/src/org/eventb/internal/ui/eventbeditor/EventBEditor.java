@@ -37,7 +37,6 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
@@ -79,7 +78,7 @@ import org.rodinp.core.RodinMarkerUtil;
  *         Abstract Event-B specific form editor for machines, contexts.
  */
 public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
-		implements IElementChangedListener, IGotoMarker, IEventBEditor<F>,
+		implements IElementChangedListener, IEventBEditor<F>,
 		ITabbedPropertySheetPageContributor {
 
 	private String lastActivePageID = null;

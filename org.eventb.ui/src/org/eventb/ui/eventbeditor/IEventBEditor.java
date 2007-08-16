@@ -13,6 +13,7 @@
 package org.eventb.ui.eventbeditor;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eventb.internal.ui.eventbeditor.IStatusChangedListener;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -27,7 +28,8 @@ import org.rodinp.core.IRodinFile;
  *            This specifies the "input type" of the editor, e.g. IMachineFile
  *            or IContextFile.
  */
-public interface IEventBEditor<F extends IRodinFile> extends IEditorPart {
+public interface IEventBEditor<F extends IRodinFile> extends IEditorPart,
+		IGotoMarker {
 
 	/**
 	 * Add an element to be new.
