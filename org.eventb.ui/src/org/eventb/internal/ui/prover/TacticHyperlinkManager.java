@@ -18,7 +18,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.ast.IPosition;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.TacticPositionUI;
@@ -184,24 +183,6 @@ public abstract class TacticHyperlinkManager {
 	protected abstract void disableListeners();
 	
 	protected abstract void enableListeners();
-	
-	/**
-	 * Sets the location for a hovering shell
-	 * 
-	 * @param shell
-	 *            the object that is to hover
-	 * @param position
-	 *            the position of a widget to hover over
-	 */
-	void setHoverLocation(Shell shell, Point position) {
-		Rectangle displayBounds = shell.getDisplay().getBounds();
-		Rectangle shellBounds = shell.getBounds();
-		shellBounds.x = Math.max(Math.min(position.x, displayBounds.width
-				- shellBounds.width), 0);
-		shellBounds.y = Math.max(Math.min(position.y + 16, displayBounds.height
-				- shellBounds.height), 0);
-		shell.setBounds(shellBounds);
-	}
 
 	/**
 	 * Sets the location for a hovering shell
@@ -261,8 +242,6 @@ public abstract class TacticHyperlinkManager {
 					setCurrentLink(null);
 				}
 			}
-			// if (ProverUIUtils.DEBUG)
-			// ProverUIUtils.debug("Move Offset " + offset);
 		} catch (IllegalArgumentException exception) {
 			// if (ProverUIUtils.DEBUG)
 			// ProverUIUtils.debug("Invalid");
