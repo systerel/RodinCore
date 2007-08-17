@@ -2,6 +2,7 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -288,11 +289,11 @@ public class ElementComposite implements IElementComposite {
 		
 	}
 
-	public void refresh(IRodinElement element, IAttributeType attributeType) {
+	public void refresh(IRodinElement element, Set<IAttributeType> set) {
 		if (!rElement.exists())
 			return;
 		if (element.equals(rElement)) {
-			row.refresh(attributeType);
+			row.refresh(set);
 			if (sectionComps == null)
 				return;
 
@@ -323,7 +324,7 @@ public class ElementComposite implements IElementComposite {
 		} else {
 			if (rElement.isAncestorOf(element)) {
 				for (ISectionComposite sectionComp : sectionComps) {
-					sectionComp.refresh(element, attributeType);
+					sectionComp.refresh(element, set);
 				}
 			}
 		}

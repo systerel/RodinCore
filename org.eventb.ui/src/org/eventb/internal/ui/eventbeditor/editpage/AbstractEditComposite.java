@@ -12,6 +12,8 @@
 
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import java.util.Set;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -193,9 +195,9 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		return uiSpec.getAttributeType();
 	}
 
-	public void refresh(IAttributeType attributeType) {
-		if (attributeType == null
-				|| uiSpec.getAttributeType().equals(attributeType)) {
+	public void refresh(Set<IAttributeType> set) {
+		if (set.size() == 0
+				|| set.contains(uiSpec.getAttributeType())) {
 			refresh(true);
 		}
 	}

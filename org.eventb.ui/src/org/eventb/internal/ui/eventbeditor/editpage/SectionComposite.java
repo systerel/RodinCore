@@ -3,6 +3,7 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -460,10 +461,10 @@ public class SectionComposite implements ISectionComposite {
 		}
 	}
 
-	public void refresh(IRodinElement element, IAttributeType attributeType) {
+	public void refresh(IRodinElement element, Set<IAttributeType> set) {
 		if (elementComps != null)
 			for (IElementComposite elementComp : elementComps) {
-				elementComp.refresh(element, attributeType);
+				elementComp.refresh(element, set);
 			}
 	}
 

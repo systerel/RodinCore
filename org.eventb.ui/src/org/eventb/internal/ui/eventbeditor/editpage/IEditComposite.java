@@ -12,6 +12,8 @@
 
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import java.util.Set;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -106,6 +108,6 @@ public interface IEditComposite {
 	 * Refresh the information display within this edit with the information
 	 * that an attribute has been changed.
 	 */
-	public abstract void refresh(IAttributeType attributeType);
+	public abstract void refresh(Set<IAttributeType> set);
 
 }

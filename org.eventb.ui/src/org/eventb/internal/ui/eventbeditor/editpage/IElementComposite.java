@@ -12,6 +12,8 @@
 
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import java.util.Set;
+
 import org.eclipse.swt.widgets.Composite;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
@@ -148,11 +150,11 @@ public interface IElementComposite {
 	 * 
 	 * @param element
 	 *            a Rodin element.
-	 * @param attributeType
-	 *            an attribute type, possibly <code>null</code>. When this is
-	 *            <code>null</code>, this is the same as
+	 * @param set
+	 *            a set of attribute types, must not be <code>null</code>.
+	 *            When this is an empty set, the operation is the same as
 	 *            {@link #refresh(IRodinElement)}
 	 */
-	public void refresh(IRodinElement element, IAttributeType attributeType);
+	public void refresh(IRodinElement element, Set<IAttributeType> set);
 
 }

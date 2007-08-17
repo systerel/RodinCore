@@ -98,7 +98,7 @@ public class ImageHyperlinkMarkerToolTip {
 		control.addMouseTrackListener(new MouseTrackAdapter() {
 			@Override
 			public void mouseExit(MouseEvent e) {
-				if (tipMenu.isVisible())
+				if (tipMenu != null && tipMenu.isVisible())
 					tipMenu.setVisible(false);
 				tipWidget = null;
 			}

@@ -12,6 +12,8 @@
 
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import java.util.Set;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -142,11 +144,11 @@ public class EditRow {
 
 	}
 
-	public void refresh(IAttributeType attributeType) {
+	public void refresh(Set<IAttributeType> set) {
 		IRodinElement element = elementComp.getElement();
 		for (IEditComposite editComposite : editComposites) {
 			editComposite.setElement((IAttributedElement) element);
-			editComposite.refresh(attributeType);
+			editComposite.refresh(set);
 		}
 		buttonComp.updateLinks();		
 	}

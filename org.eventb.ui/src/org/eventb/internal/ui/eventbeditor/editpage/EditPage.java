@@ -13,9 +13,11 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -23,11 +25,11 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -810,39 +812,85 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	}
 	
 	public void resourceChanged(IResourceChangeEvent event) {
-		List<IMarker> markers = new ArrayList<IMarker>();
+		Map<IRodinElement, Set<IAttributeType>> map = new HashMap<IRodinElement, Set<IAttributeType>>();
 		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
 		IFile rodinInput = editor.getRodinInput().getResource();
-		IMarkerDelta[] rodinProblemMakerDeltas = event.findMarkerDeltas(
+		IMarkerDelta[] rodinProblemMarkerDeltas = event.findMarkerDeltas(
 			RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
-		for (IMarkerDelta delta : rodinProblemMakerDeltas) {
+		for (IMarkerDelta delta : rodinProblemMarkerDeltas) {
 			IResource resource = delta.getResource();
 			if (rodinInput.equals(resource)) {
-				markers.add(delta.getMarker());
+				if (EventBEditorUtils.DEBUG) {
+					printRodinMarkerDelta(delta);
+				}
+				IRodinElement element = RodinMarkerUtil
+						.getElement(delta);
+				if (element == null)
+					continue;
+				IAttributeType attributeType = RodinMarkerUtil
+						.getAttributeType(delta);
+				map = addMap(map, element, attributeType);
 			}
 		}
-		resourceChangedRefresh(markers);
+		if (EventBEditorUtils.DEBUG) {
+			printMarkers(map);
+		}
+		resourceChangedRefresh(map);
 		
 	}
 
-	private void resourceChangedRefresh(final List<IMarker> markers) {
+	private void printMarkers(Map<IRodinElement, Set<IAttributeType>> markers) {
+		EventBEditorUtils.debug(markers.toString());
+	}
+
+	private Map<IRodinElement, Set<IAttributeType>> addMap(
+			Map<IRodinElement, Set<IAttributeType>> markers,
+			IRodinElement element, IAttributeType attributeType) {
+		Set<IAttributeType> list = markers.get(element);
+		if (list == null) {
+			list = new HashSet<IAttributeType>();
+			if (attributeType != null)
+				list.add(attributeType);
+			markers.put(element, list);
+		}
+		else if (list.size() != 0 && attributeType != null) {
+			list.add(attributeType);
+		}
+		return markers;
+	}
+
+	private void printRodinMarkerDelta(IMarkerDelta delta) {
+		EventBEditorUtils.debug("******");
+		int kind = delta.getKind();
+		if (kind == IResourceDelta.ADDED) {
+			EventBEditorUtils.debug("Marker added");
+		} else if (kind == IResourceDelta.REMOVED) {
+			EventBEditorUtils.debug("Marker removed");
+		} else if (kind == IResourceDelta.CHANGED) {
+			EventBEditorUtils.debug("Marker changed");
+		}
+		Map<?,?> attributes = delta.getAttributes();
+		Set<?> keySet = attributes.keySet();
+		for (Object key : keySet) {
+			EventBEditorUtils.debug(key.toString() + " --> "
+					+ attributes.get(key).toString());
+		}
+	}
+
+ private void resourceChangedRefresh(final Map<IRodinElement, Set<IAttributeType>> map) {
 		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
 		final IRodinFile rodinInput = editor.getRodinInput();
 		Display display = this.getSite().getShell().getDisplay();
 		display.syncExec(new Runnable() {
 
 			public void run() {
-				for (IMarker marker : markers) {
-					IInternalElement element = RodinMarkerUtil
-							.getInternalElement(marker);
-					if (element == null)
-						continue;
-					IAttributeType attributeType = RodinMarkerUtil
-							.getAttributeType(marker);
-					if (rodinInput.equals(element)
-							|| rodinInput.isAncestorOf(element)) {
+				Set<IRodinElement> keySet = map.keySet();
+				for (IRodinElement key : keySet) {
+					Set<IAttributeType> set = map.get(key);
+					if (rodinInput.equals(key)
+							|| rodinInput.isAncestorOf(key)) {
 						for (ISectionComposite sectionComposite : sectionComps) {
-							sectionComposite.refresh(element, attributeType);
+							sectionComposite.refresh(key, set);
 						}
 					}
 				}
