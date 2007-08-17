@@ -13,6 +13,7 @@ package org.rodinp.core;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.internal.core.ElementTypeManager;
@@ -348,6 +349,111 @@ public final class RodinMarkerUtil {
 	public static int getCharEnd(IMarker marker) {
 		checkRodinProblemMarker(marker);
 		return marker.getAttribute(CHAR_END, -1);
+	}
+
+	/**
+	 * Returns the smallest element marked by the given marker delta. Returns
+	 * <code>null</code> if the marker delta does not relate to a Rodin
+	 * element.
+	 * <p>
+	 * If the given marker delta carries an internal element, this internal
+	 * element is returned. Otherwise, if the resource to which this marker
+	 * delta is attached corresponds to a Rodin element, this element is
+	 * returned. Otherwise, <code>null</code> is returned.
+	 * </p>
+	 * 
+	 * @param delta
+	 *            marker delta to read
+	 * @return the smallest element corresponding to the given marker delta or
+	 *         <code>null</code> if there is no corresponding Rodin element
+	 * @throws IllegalArgumentException
+	 *             if the given marker is not a Rodin problem marker delta
+	 * @see #ELEMENT
+	 * @see #getElement(IMarker)
+	 * @author htson
+	 */
+	public static IRodinElement getElement(IMarkerDelta delta) {
+		final IRodinElement ie = getInternalElement(delta);
+		if (ie != null) {
+			return ie;
+		}
+		return RodinCore.valueOf(delta.getResource());
+	}
+
+	/**
+	 * Returns the internal element of the given marker. Returns
+	 * <code>null</code> if the marker does not exist or does not carry an
+	 * internal element.
+	 * 
+	 * @param delta
+	 *            marker to read
+	 * @return the internal element of the given marker or <code>null</code>
+	 *         in case of error
+	 * @throws IllegalArgumentException
+	 *             if the given marker is not a Rodin problem marker
+	 * @see #ELEMENT
+	 * @see #getInternalElement(IMarker)
+	 * @author htson
+	 */
+	public static IInternalElement getInternalElement(IMarkerDelta delta) {
+		checkRodinProblemMarker(delta.getMarker());
+		final String handleId = delta.getAttribute(ELEMENT, null);
+		final IResource resource = delta.getResource();
+		return getInternalElement(resource, handleId);
+	}
+
+	/**
+	 * Extracted method in order to share between
+	 * {@link #getInternalElement(IMarker)} and
+	 * {@link #getInternalElement(IMarkerDelta)}
+	 * 
+	 * @param resource
+	 *            the resource
+	 * @param handleId
+	 *            the handle ID of the internal element.
+	 * @return the internal element corresponding to the resource.
+	 * @author htson
+	 */
+	private static IInternalElement getInternalElement(IResource resource,
+			String handleId) {
+		if (handleId == null) {
+			return null;
+		}
+		final IRodinElement elem = RodinCore.valueOf(handleId);
+		if (!(elem instanceof IInternalElement)) {
+			return null;
+		}
+		final IInternalElement ie = (IInternalElement) elem;
+		if (resource.equals(ie.getUnderlyingResource())) {
+			return ie;
+		}
+		// Transpose element to correct file (marker has moved)
+		final IRodinElement dest = RodinCore.valueOf(resource);
+		if (dest instanceof IRodinFile) {
+			return (IInternalElement) ie.getSimilarElement((IRodinFile) dest);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the attribute type of the given marker delta. Returns
+	 * <code>null</code> if the marker delta does not carry an attribute type.
+	 * 
+	 * @param delta
+	 *            marker delta to read
+	 * @return the attribute type of the given marker delta or <code>null</code>
+	 *         in case of error
+	 * @throws IllegalArgumentException
+	 *             if the given marker delta is not a Rodin problem marker delta
+	 * @see #ATTRIBUTE_ID
+	 * @see #getAttributeType(IMarker)
+	 * @author htson
+	 */
+	public static IAttributeType getAttributeType(IMarkerDelta delta) {
+		checkRodinProblemMarker(delta.getMarker());
+		final String attrId = delta.getAttribute(ATTRIBUTE_ID, null);
+		final ElementTypeManager manager = ElementTypeManager.getInstance();
+		return manager.getAttributeType(attrId);
 	}
 
 }
