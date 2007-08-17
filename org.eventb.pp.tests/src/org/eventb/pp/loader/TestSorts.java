@@ -1,6 +1,6 @@
 package org.eventb.pp.loader;
 
-import static org.eventb.pp.Util.mSort;
+import static org.eventb.internal.pp.core.elements.terms.Util.mSort;
 
 import java.util.Stack;
 
@@ -12,11 +12,11 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.elements.Sort;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.NormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.TermBuilder;
-import org.eventb.pp.AbstractPPTest;
-import org.eventb.pp.Util;
 
 /**
  * This class tests that the sorts created by the term builder are

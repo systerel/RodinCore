@@ -1,16 +1,16 @@
 package org.eventb.pp.core.elements;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cEqClause;
-import static org.eventb.pp.Util.cEqual;
-import static org.eventb.pp.Util.cNEqual;
-import static org.eventb.pp.Util.cNotPred;
-import static org.eventb.pp.Util.cNotProp;
-import static org.eventb.pp.Util.cPred;
-import static org.eventb.pp.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
 
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.pp.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 
 public class TestClauseEquality extends AbstractPPTest {
 	

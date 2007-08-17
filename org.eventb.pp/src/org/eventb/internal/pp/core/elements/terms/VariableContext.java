@@ -6,18 +6,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.internal.pp.loader.clause;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
+package org.eventb.internal.pp.core.elements.terms;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Sort;
-import org.eventb.internal.pp.core.elements.terms.Constant;
-import org.eventb.internal.pp.core.elements.terms.LocalVariable;
-import org.eventb.internal.pp.core.elements.terms.Variable;
 
+/**
+ * This class is used to get new instances of {@link Variable},
+ * {@link Constant}, {@link LocalVariable} and {@link IntegerConstant}. It
+ * plays the role of a factory for all subclasses of {@link SimpleTerm}. 
+ *
+ * @author François Terrier
+ *
+ */
 public class VariableContext implements IVariableContext {
 
 	private int currentLocalVariableID = 0;
@@ -28,56 +29,27 @@ public class VariableContext implements IVariableContext {
 		// do nothing
 	}
 	
-	int getAndIncrementGlobalVariableID() {
-		return currentGlobalVariableID++;
-	}
-	
-	int getAndIncrementLocalVariableID() {
-		return currentLocalVariableID++;
-	}
-	
-	private Hashtable<Sort,List<Variable>> variableCache = new Hashtable<Sort, List<Variable>>();
-	
-	public void putInCache(List<Variable> variables) {
-		for (Variable variable : variables) {
-			putInCache(variable);
-		}
-	}
-	
-	public void putInCache(Variable variable) {
-		if (!variableCache.containsKey(variable.getSort())) {
-			variableCache.put(variable.getSort(), new ArrayList<Variable>());
-		}
-		variableCache.get(variable.getSort()).add(variable);
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.pp.core.elements.IVariableContext#getNextVariable(org.eventb.internal.pp.core.elements.Sort)
 	 */
 	public Variable getNextVariable(Sort sort) {
 		assert sort != null;
-		
-		if (!variableCache.containsKey(sort)) return newVariable(sort);
-		List<Variable> variables = variableCache.get(sort);
-		if (variables.isEmpty()) return newVariable(sort);
-		return variables.remove(0);
-	}
-	
-	private Variable newVariable(Sort sort) {
-		assert sort != null;
-		
 		return new Variable(currentGlobalVariableID++,sort);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.pp.core.IVariableContext#getNextLocalVariable(boolean, org.eventb.internal.pp.core.elements.Sort)
+	 */
 	public LocalVariable getNextLocalVariable(boolean isForall, Sort sort) {
 		assert sort != null;
-		
 		return new LocalVariable(currentLocalVariableID++, isForall, sort);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.pp.core.IVariableContext#getNextFreshConstant(org.eventb.internal.pp.core.elements.Sort)
+	 */
 	public Constant getNextFreshConstant(Sort sort) {
 		assert sort != null;
-		
 		return new Constant(Integer.toString(currentConstantID++),sort);
 	}
 	

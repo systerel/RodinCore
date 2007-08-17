@@ -8,31 +8,36 @@
 
 package org.eventb.internal.pp.core.simplifiers;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
-import org.eventb.internal.pp.core.elements.FalseClause;
 import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.core.elements.PredicateLiteral;
-import org.eventb.internal.pp.core.elements.TrueClause;
 
 /**
- * This simplifier removes all duplicate predicate, arithmetic or equality literals in a clause.
- * If the clause is disjunctive, conditions that are duplicate of existing inequalities are removed.
+ * This simplifier removes all duplicate predicate, arithmetic or equality literals
+ * in a clause.
+ * <p>
+ * The following rules are handled by this simplifier:
+ * <ul>
+ * <li> <tt>P ∨ ¬ P ∨ C to ⊤</tt> </li>
+ * <li> <tt>P ∨ P ∨ C to P ∨ C</tt> </li>
+ * <li> <tt>P ⇔ ¬P ⇔ C to ¬C</tt> </li>
+ * <li> <tt>P ⇔ P ⇔ C to C</tt> </li>
+ * </ul>
+ * Conditions are also simplified in the same way. If the clause is disjunctive,
+ * conditions can be simplified with the equalities.
  *
  * @author François Terrier
  *
  */
-public class LiteralSimplifier implements ISimplifier {
+public class LiteralSimplifier extends AbstractSimplifier {
 	
-	private IVariableContext context;
+	private final IVariableContext context;
 	
 	public LiteralSimplifier(IVariableContext context) {
 		this.context = context;
@@ -42,128 +47,102 @@ public class LiteralSimplifier implements ISimplifier {
 		if (!clause.isUnit()) return true;
 		return false;
 	}
-
+	
 	public Clause simplifyDisjunctiveClause(DisjunctiveClause clause) {
-		List<PredicateLiteral> predicateLiterals = getDisjSimplifiedList(clause.getPredicateLiterals());
-		if (predicateLiterals == null) return new TrueClause(clause.getOrigin());
-		List<EqualityLiteral> equalityLiterals = getDisjSimplifiedList(clause.getEqualityLiterals());
-		if (equalityLiterals == null) return new TrueClause(clause.getOrigin());
-		List<ArithmeticLiteral> arithmeticLiterals = getDisjSimplifiedList(clause.getArithmeticLiterals());
-		if (arithmeticLiterals == null) return new TrueClause(clause.getOrigin());
-		List<EqualityLiteral> conditions = getDisjSimplifiedList(clause.getConditions());
+		init(clause);
 		
+		if (getDisjSimplifiedList(predicates)) return cf.makeTRUE(clause.getOrigin());
+		if (getDisjSimplifiedList(equalities)) return cf.makeTRUE(clause.getOrigin());
+		if (getDisjSimplifiedList(arithmetic)) return cf.makeTRUE(clause.getOrigin());
+		if (getDisjSimplifiedList(conditions)) assert false;
+
 		// we look for conditions that are in the equalities
-		conditions = getDisjSimplifiedConditions(equalityLiterals, conditions);
-		if (conditions == null) return new TrueClause(clause.getOrigin());
+		if (getDisjSimplifiedConditions(equalities, conditions)) return cf.makeTRUE(clause.getOrigin());
 		
-		if (predicateLiterals.size() + equalityLiterals.size() + arithmeticLiterals.size() + conditions.size() == 0) return new FalseClause(clause.getOrigin());
-		else return new DisjunctiveClause(clause.getOrigin(),predicateLiterals,equalityLiterals,arithmeticLiterals,conditions);
+		if (isEmptyWithoutConditions() && conditions.isEmpty()) return cf.makeFALSE(clause.getOrigin());
+		else return cf.makeDisjunctiveClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 	}
 
 	public Clause simplifyEquivalenceClause(EquivalenceClause clause) {
-		List<EqualityLiteral> conditions = getDisjSimplifiedList(clause.getConditions());
-		
-		List<PredicateLiteral> predicateLiterals = getEqSimplifiedList(clause.getPredicateLiterals());
-		List<EqualityLiteral> equalityLiterals = getEqSimplifiedList(clause.getEqualityLiterals());
-		List<ArithmeticLiteral> arithmeticLiterals = getEqSimplifiedList(clause.getArithmeticLiterals());
+		init(clause);
 		
 		int numberOfFalse = 0;
-		if (predicateLiterals == null) {
-			numberOfFalse++;
-			predicateLiterals = new ArrayList<PredicateLiteral>();
+		if (getEqSimplifiedList(predicates)) numberOfFalse++;
+		if (getEqSimplifiedList(equalities)) numberOfFalse++;
+		if (getEqSimplifiedList(arithmetic)) numberOfFalse++;
+		if (getDisjSimplifiedList(conditions)) assert false;
+
+		if (even(numberOfFalse) && isEmptyWithoutConditions()) {
+			return cf.makeTRUE(clause.getOrigin());
 		}
-		if (equalityLiterals == null) {
-			numberOfFalse++;
-			equalityLiterals = new ArrayList<EqualityLiteral>();
+		if (!even(numberOfFalse) && isEmptyWithConditions()) {
+			return cf.makeFALSE(clause.getOrigin());
 		}
-		if (arithmeticLiterals == null) {
-			numberOfFalse++;
-			arithmeticLiterals = new ArrayList<ArithmeticLiteral>();
+		else if (!even(numberOfFalse)) {
+			EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
 		}
-		
-		if ((numberOfFalse == 0 || numberOfFalse == 2) && predicateLiterals.isEmpty() && equalityLiterals.isEmpty() && arithmeticLiterals.isEmpty()) {
-			return new TrueClause(clause.getOrigin());
-		}
-		
-		if (numberOfFalse == 1) {
-			// we inverse one
-			if (predicateLiterals.size() > 0) {
-				PredicateLiteral literal = predicateLiterals.remove(0);
-				predicateLiterals.add(0,literal.getInverse());
-			}
-			else if (equalityLiterals.size() > 0) {
-				EqualityLiteral literal = equalityLiterals.remove(0);
-				equalityLiterals.add(0,literal.getInverse());
-			}
-			else if (arithmeticLiterals.size() > 0) {
-				ArithmeticLiteral literal = arithmeticLiterals.remove(0);
-				arithmeticLiterals.add(0,literal.getInverse());
-			}
-		}
-		
-		if (predicateLiterals.size() + equalityLiterals.size() + arithmeticLiterals.size() + conditions.size() == 0) return new FalseClause(clause.getOrigin());
-		return EquivalenceClause.newClause(clause.getOrigin(), predicateLiterals, equalityLiterals, arithmeticLiterals,
-					conditions, context);
+		return cf.makeClauseFromEquivalenceClause(clause.getOrigin(), predicates, 
+				equalities, arithmetic, conditions, context);
 	}
 	
-	private List<EqualityLiteral> getDisjSimplifiedConditions(List<EqualityLiteral> equalities, List<EqualityLiteral> conditions) {
-		List<EqualityLiteral> result = new ArrayList<EqualityLiteral>();
-		condloop: for (EqualityLiteral condition : conditions) {
-			for (EqualityLiteral equality : equalities) {
-				if (condition.getInverse().equals(equality)) return null;
-				if (condition.equals(equality)) continue condloop;
-			}
-			result.add(condition);
-		}
-		return result;
+	private static boolean even(int value) {
+		return value%2==0;
 	}
 	
-	private <T extends Literal<?,?>> List<T> getDisjSimplifiedList(List<T> literals) {
+	private static boolean getDisjSimplifiedConditions(List<EqualityLiteral> equalities, List<EqualityLiteral> conditions) {
+		int i = 0;
+		while (i < conditions.size()) {
+			EqualityLiteral condition = conditions.get(i);
+			for (int j = 0; j < equalities.size(); j++) {
+				EqualityLiteral equality = equalities.get(j);
+				if (condition.getInverse().equals(equality)) return true;
+				if (condition.equals(equality)) conditions.remove(condition);
+			}
+			if (conditions.contains(condition)) i++;
+		}
+		return false;
+	}
+	
+	private static <T extends Literal<?,?>> boolean getDisjSimplifiedList(List<T> literals) {
 		LinkedHashSet<T> set = new LinkedHashSet<T>();
 		for (int i = 0; i < literals.size(); i++) {
 			T literal1 = literals.get(i);
 			for (int j = i+1; j < literals.size(); j++) {
 				T literal2 = literals.get(j);
 				if (literal1.getInverse().equals(literal2)) {
-					return null;
+					return true;
 				}
 			}
 			set.add(literal1);
 		}
-		List<T> result = new ArrayList<T>();
-		result.addAll(set);
-		return result;
+		literals.clear();
+		literals.addAll(set);
+		return false;
 	}
 	
-	// a return value of null, means there was a contradiction
-	private <T extends Literal<T,?>> List<T> getEqSimplifiedList(List<T> literals) {
-		for (int i = 0; i < literals.size(); i++) {
+	private static <T extends Literal<T,?>> boolean getEqSimplifiedList(List<T> literals) {
+		int inverse = 0;
+		for (int i = 0; i < literals.size();) {
 			T literal1 = literals.get(i);
+			boolean removeLiteral1 = false;
 			for (int j = i+1; j < literals.size(); j++) {
 				T literal2 = literals.get(j);
-				if (literal1.getInverse().equals(literal2)) {
-					// take the inverse of a literal
-					List<T> list = new ArrayList<T>();
-					list.addAll(literals);
-					list.remove(literal1);
-					list.remove(literal2);
-					if (list.size() == 0) return null;
-					else {
-						T toInverse = list.remove(0);
-						list.add(0, toInverse.getInverse());
-						return getEqSimplifiedList(list);
-					}
+				if (literal1.equals(literal2)) {
+					removeLiteral1 = true;  
+					literals.remove(j);
+					j = literals.size();
 				}
-				else if (literal1.equals(literal2)) {
-					List<T> list = new ArrayList<T>();
-					list.addAll(literals);
-					list.remove(literal1);
-					list.remove(literal2);
-					return getEqSimplifiedList(list);
+				else if (literal1.equals(literal2.getInverse())) {
+					removeLiteral1 = true;
+					literals.remove(j);
+					j = literals.size();
+					inverse++;
 				}
 			}
+			if (removeLiteral1) literals.remove(i);
+			else i++;
 		}
-		return literals;
+		return !even(inverse);
 	}
 	
 }

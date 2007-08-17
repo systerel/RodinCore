@@ -13,14 +13,31 @@ import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Sort;
 
+/**
+ * In all clauses derived during a proof, a particular constant is denoted
+ * by the same instance of this class. New constants can be created using
+ * {@link VariableContext#getNextFreshConstant(Sort)}.
+ * <p>
+ * As for the index of a variable, the name of a constant is only used for
+ * the {@link #compareTo(Term)} method.
+ *
+ * @author François Terrier
+ *
+ */
 public class Constant extends SimpleTerm {
 
 	private static final int PRIORITY = 2;
 	
 	private String name;
 	
-	public Constant(String name, Sort type) {
+	Constant(String name, Sort type) {
 		super(type, PRIORITY, name.hashCode(), name.hashCode());
+		
+		this.name = name;
+	}
+	
+	protected Constant(String name, int priority, Sort type) {
+		super(type, priority, name.hashCode(), name.hashCode());
 		
 		this.name = name;
 	}
@@ -61,7 +78,7 @@ public class Constant extends SimpleTerm {
 
 	public int compareTo(Term o) {
 		if (equals(o)) return 0;
-		else if (o instanceof Constant) return name.compareTo(((Constant)o).name);
+		else if (o.getClass().equals(Constant.class)) return name.compareTo(((Constant)o).name);
 		else return getPriority() - o.getPriority();
 	}
 

@@ -12,6 +12,12 @@ import java.util.Map;
 
 import org.eventb.internal.pp.core.elements.Sort;
 
+/**
+ * Abstract base class for simple terms.
+ *
+ * @author François Terrier
+ *
+ */
 public abstract class SimpleTerm extends Term {
 
 	protected SimpleTerm(Sort sort, int priority, int hashCode, int hashCodeWithDifferentVariables) {

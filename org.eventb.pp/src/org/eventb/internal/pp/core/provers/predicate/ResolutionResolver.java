@@ -66,7 +66,7 @@ public class ResolutionResolver implements IResolver {
 	}
 	
 	private void initMatchedIterator() {
-		PredicateLiteral predicate = currentMatcher.getPredicateLiterals().get(0);
+		PredicateLiteral predicate = currentMatcher.getPredicateLiteral(0);
 		currentMatchedIterator = matchedClauses.iterator(predicate.getDescriptor(), predicate.isPositive());
 	}
 	
@@ -101,8 +101,8 @@ public class ResolutionResolver implements IResolver {
 	
 	private boolean nextPosition() {
 		if (currentMatched == null) return false;
-		for (int i = currentPosition+1; i < currentMatched.getPredicateLiterals().size(); i++) {
-			PredicateLiteral matcherPredicate = currentMatcher.getPredicateLiterals().get(0);
+		for (int i = currentPosition+1; i < currentMatched.getPredicateLiteralsSize(); i++) {
+			PredicateLiteral matcherPredicate = currentMatcher.getPredicateLiteral(0);
 			if (currentMatched.matchesAtPosition(matcherPredicate.getDescriptor(), matcherPredicate.isPositive(), i)) {
 				currentPosition = i;
 				return true;

@@ -1,13 +1,13 @@
 package org.eventb.pp.core.provers.extensionality;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cEqClause;
-import static org.eventb.pp.Util.cEqual;
-import static org.eventb.pp.Util.cNEqual;
-import static org.eventb.pp.Util.cNotPred;
-import static org.eventb.pp.Util.cPred;
-import static org.eventb.pp.Util.cProp;
-import static org.eventb.pp.Util.mList;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,12 +23,12 @@ import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.Sort;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Constant;
+import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.provers.extensionality.ExtensionalityProver;
-import org.eventb.internal.pp.loader.clause.VariableContext;
-import org.eventb.pp.AbstractPPTest;
-import org.eventb.pp.Util;
 
 public class TestExtensionality extends AbstractPPTest {
 

@@ -13,6 +13,13 @@ import java.util.List;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.Clause;
 
+/**
+ * Implementation of {@link IOrigin} for clauses coming from
+ * a case-split.
+ *
+ * @author François Terrier
+ *
+ */
 public class SplitOrigin extends AbstractInferrenceOrigin {
 
 	private Level level;
@@ -21,6 +28,7 @@ public class SplitOrigin extends AbstractInferrenceOrigin {
 		super(parents);
 		
 		this.level = level;
+		if (depth>0) depth--;
 	}
 
 	public Level getLevel() {

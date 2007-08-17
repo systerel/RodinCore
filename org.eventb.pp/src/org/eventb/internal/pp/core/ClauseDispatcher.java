@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.search.IterableHashSet;
+import org.eventb.internal.pp.core.search.RandomAccessList;
 import org.eventb.internal.pp.core.search.ResetIterator;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 import org.eventb.internal.pp.core.tracing.IOrigin;
@@ -37,10 +37,10 @@ public class ClauseDispatcher implements IDispatcher {
 		System.out.println(message);
 	}
 	
-	private IterableHashSet<Clause> alreadyDispatchedClauses;
+	private RandomAccessList<Clause> alreadyDispatchedClauses;
 	private ResetIterator<Clause> alreadyDispatchedBacktrackClausesIterator;
 	
-	private IterableHashSet<Clause> nonDispatchedClauses;
+	private RandomAccessList<Clause> nonDispatchedClauses;
 	private ResetIterator<Clause> nonDispatchedClausesIterator;
 	private ResetIterator<Clause> nonDispatchedBacktrackClausesIterator;
 	
@@ -56,9 +56,9 @@ public class ClauseDispatcher implements IDispatcher {
 	public ClauseDispatcher() {
 		level = Level.base;
 		
-		alreadyDispatchedClauses = new IterableHashSet<Clause>();
+		alreadyDispatchedClauses = new RandomAccessList<Clause>();
 		alreadyDispatchedBacktrackClausesIterator = alreadyDispatchedClauses.iterator();
-		nonDispatchedClauses = new IterableHashSet<Clause>();
+		nonDispatchedClauses = new RandomAccessList<Clause>();
 		nonDispatchedClausesIterator = nonDispatchedClauses.iterator();
 		nonDispatchedBacktrackClausesIterator = nonDispatchedClauses.iterator();
 		
@@ -97,7 +97,7 @@ public class ClauseDispatcher implements IDispatcher {
 		while (iterator.hasNext()) {
 			debug(iterator.next().toString());
 		}
-		iterator.delete();
+		iterator.invalidate();
 	}
 	
 	public void mainLoop(long nofSteps) {
@@ -165,7 +165,7 @@ public class ClauseDispatcher implements IDispatcher {
 				if (DEBUG) debug("= Got result from "+prover.toString()+": "+result.toString()+" =");
 				treatProverResultAndCheckContradiction(result, contradictions);
 			}
-			alreadyDispatchedClauses.appends(clause);
+			alreadyDispatchedClauses.add(clause);
 			nonDispatchedClauses.remove(clause);
 			
 			if (!contradictions.isEmpty()) {
@@ -252,7 +252,7 @@ public class ClauseDispatcher implements IDispatcher {
 				else return; // clause had a lower level, we forget the new clause
 			}
 			assert !nonDispatchedClauses.contains(clause);
-			nonDispatchedClauses.appends(clause);
+			nonDispatchedClauses.add(clause);
 		}
 	}
 	
@@ -291,9 +291,12 @@ public class ClauseDispatcher implements IDispatcher {
 		if (DEBUG) debug("= Closing level: "+tracer.getLastClosedLevel()+", old level was: "+oldLevel+", new level is: "+level+" =");
 		
 		if (DEBUG) debug("= Dispatching contradiction to subprovers =");
+		Set<IOrigin> contradictions = new HashSet<IOrigin>();
 		for (IProverModule prover : provers) {
-			prover.contradiction(oldLevel, level, dependencies);
+			ProverResult result = prover.contradiction(oldLevel, level, dependencies);
+			treatProverResultAndCheckContradiction(result, contradictions);
 		}	
+		assert contradictions.isEmpty();
 		
 		// we backtrack our own datastructure
 		if (DEBUG) debug("= Done dispatching, backtracking datastructures =");
@@ -303,7 +306,7 @@ public class ClauseDispatcher implements IDispatcher {
 	}
 	
 	private void backtrack(Level level, ResetIterator<Clause> iterator, 
-			IterableHashSet<Clause> iterable) {
+			RandomAccessList<Clause> iterable) {
 		iterator.reset();
 		while (iterator.hasNext()) {
 			Clause clause = iterator.next();
@@ -337,7 +340,7 @@ public class ClauseDispatcher implements IDispatcher {
 	}
 	
 	private void adjustLevel(IOrigin origin) {
-		tracer.addClosingClause(origin);
+		tracer.addClosingClauseAndUpdateLevel(origin);
 		if ( tracer.getLastClosedLevel().equals(Level.base)) {
 			// proof is done !
 			proofFound();

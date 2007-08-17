@@ -14,7 +14,7 @@ import java.util.Map;
 
 public final class Mod extends BinaryTerm {
 
-	private static final int PRIORITY = 8;
+	private static final int PRIORITY = 9;
 	
 	
 	public Mod(Term left, Term right) {

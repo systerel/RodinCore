@@ -19,14 +19,12 @@ import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
-import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.core.tracing.SplitOrigin;
@@ -40,11 +38,11 @@ import org.eventb.internal.pp.core.tracing.SplitOrigin;
  * @author François Terrier
  *
  */
-public class CaseSplitNegationInferrer extends AbstractInferrer {
+public class CaseSplitInferrer extends AbstractInferrer {
 
 	private Level parent;
 	
-	public CaseSplitNegationInferrer(IVariableContext context) {
+	public CaseSplitInferrer(IVariableContext context) {
 		super(context);
 	}
 	
@@ -105,9 +103,7 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 	private <T extends Literal<T,?>> T inverseLiteral(T literal) {
 		Literal<T,?> result = literal.getInverse();
 		Set<LocalVariable> variables = new HashSet<LocalVariable>();
-		for (Term term : result.getTerms()) {
-			term.collectLocalVariables(variables);
-		}
+		result.collectLocalVariables(variables);
 		Map<SimpleTerm, SimpleTerm> map = new HashMap<SimpleTerm, SimpleTerm>();
 		for (LocalVariable variable : variables) {
 			if (variable.isForall()) map.put(variable, variable.getVariable(context));
@@ -118,16 +114,15 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 	@Override
 	protected void inferFromDisjunctiveClauseHelper(Clause clause) {
 		splitLeftCase();
-		left.add(new DisjunctiveClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic));
+		left.add(cf.makeDisjunctiveClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic,new ArrayList<EqualityLiteral>()));
 		// right case
-//		right.add(new DisjunctiveClause(getOrigin(clause, parent.getRightBranch()),rightPredicates,rightEqualities,rightArithmetic));
-		right.add(new DisjunctiveClause(getOrigin(clause, parent.getRightBranch()),predicates,equalities,arithmetic));
+		right.add(cf.makeDisjunctiveClause(getOrigin(clause, parent.getRightBranch()),predicates,equalities,arithmetic,new ArrayList<EqualityLiteral>()));
 	}
 
 	@Override
 	protected void inferFromEquivalenceClauseHelper(Clause clause) {
 		splitLeftCase();
-		left.add(EquivalenceClause.newClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic,new ArrayList<EqualityLiteral>(),context));
+		left.add(cf.makeClauseFromEquivalenceClause(getOrigin(clause, parent.getLeftBranch()),leftPredicates,leftEqualities,leftArithmetic,new ArrayList<EqualityLiteral>(),context));
 		HashMap<SimpleTerm, SimpleTerm> map = new HashMap<SimpleTerm, SimpleTerm>();
 		
 		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
@@ -142,12 +137,12 @@ public class CaseSplitNegationInferrer extends AbstractInferrer {
 		arithmetic.addAll(this.arithmetic);
 		getListCopy(arithmetic, map, context);
 		
-		left.add(EquivalenceClause.newClause(getOrigin(clause, parent.getLeftBranch()), predicates, equalities, arithmetic, new ArrayList<EqualityLiteral>(), context));
+		left.add(cf.makeClauseFromEquivalenceClause(getOrigin(clause, parent.getLeftBranch()), predicates, equalities, arithmetic, new ArrayList<EqualityLiteral>(), context));
 		
 		// right case
-		right.add(EquivalenceClause.newClause(getOrigin(clause, parent.getRightBranch()), rightPredicates, rightEqualities, rightArithmetic,new ArrayList<EqualityLiteral>(),context));
+		right.add(cf.makeClauseFromEquivalenceClause(getOrigin(clause, parent.getRightBranch()), rightPredicates, rightEqualities, rightArithmetic,new ArrayList<EqualityLiteral>(),context));
 		EquivalenceClause.inverseOneliteral(this.predicates, this.equalities, this.arithmetic);
-		right.add(EquivalenceClause.newClause(getOrigin(clause, parent.getRightBranch()), this.predicates, this.equalities, this.arithmetic, new ArrayList<EqualityLiteral>(), context));
+		right.add(cf.makeClauseFromEquivalenceClause(getOrigin(clause, parent.getRightBranch()), this.predicates, this.equalities, this.arithmetic, new ArrayList<EqualityLiteral>(), context));
 	}
 
 	@Override

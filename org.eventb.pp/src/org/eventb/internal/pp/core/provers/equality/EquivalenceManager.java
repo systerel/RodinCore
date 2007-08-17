@@ -97,27 +97,17 @@ public class EquivalenceManager implements IEquivalenceManager {
 		}
 	}
 	
-	private void removeQuery(EqualityLiteral equality) {
-		// not for fact equalities
-		Equality<QuerySource> nodeEquality = queryEqualityTable.remove(equality);
-		removeEqualityFromNodes(nodeEquality, equality.isPositive());
-	}
+//	private void removeQuery(EqualityLiteral equality) {
+//		// not for fact equalities
+//		Equality<QuerySource> nodeEquality = queryEqualityTable.remove(equality);
+//		removeEqualityFromNodes(nodeEquality, equality.isPositive());
+//	}
 	
 	public FactResult addFactEquality(EqualityLiteral equality, Clause clause) {
-		assert equality.getTerms().get(0) instanceof Constant && equality.getTerms().get(1) instanceof Constant;
+		assert equality.getTerm(0) instanceof Constant && equality.getTerm(1) instanceof Constant;
 		
-		Node left = getNodeAndAddConstant((Constant)equality.getTerms().get(0));
-		Node right = getNodeAndAddConstant((Constant)equality.getTerms().get(1));
-		
-		Node node1, node2;
-		if (left.compareTo(right) < 0) {
-			node1 = left;
-			node2 = right;
-		}
-		else {
-			node1 = right;
-			node2 = left;
-		}
+		Node node1 = getNodeAndAddConstant((Constant)equality.getTerm1());
+		Node node2 = getNodeAndAddConstant((Constant)equality.getTerm2());
 		
 		Equality<FactSource> nodeEquality = factEqualityTable.get(equality);
 		boolean alreadyExists = true;
@@ -143,30 +133,20 @@ public class EquivalenceManager implements IEquivalenceManager {
 		
 		FactResult result = equality.isPositive()?solver.addFactEquality(nodeEquality):
 			solver.addFactInequality(nodeEquality);
-		if (result != null && result.getSolvedQueries() != null) {
-			for (QueryResult queryResult : result.getSolvedQueries()) {
-				removeQuery(queryResult.getEquality());
-			}
-		}
+//		if (result != null && result.getSolvedQueries() != null) {
+//			for (QueryResult queryResult : result.getSolvedQueries()) {
+//				removeQuery(queryResult.getEquality());
+//			}
+//		}
 			
 		return result;
 	}
 	
 	public QueryResult addQueryEquality(EqualityLiteral equality, Clause clause) {
-		assert equality.getTerms().get(0) instanceof Constant && equality.getTerms().get(1) instanceof Constant;
+		assert equality.getTerm(0) instanceof Constant && equality.getTerm(1) instanceof Constant;
 		
-		Node left = getNodeAndAddConstant((Constant)equality.getTerms().get(0));
-		Node right = getNodeAndAddConstant((Constant)equality.getTerms().get(1));
-		
-		Node node1, node2;
-		if (left.compareTo(right) < 0) {
-			node1 = left;
-			node2 = right;
-		}
-		else {
-			node1 = right;
-			node2 = left;
-		}
+		Node node1 = getNodeAndAddConstant((Constant)equality.getTerm1());
+		Node node2 = getNodeAndAddConstant((Constant)equality.getTerm2());
 		
 		Equality<QuerySource> nodeEquality = queryEqualityTable.get(equality);
 		boolean alreadyExists = true;
@@ -189,7 +169,7 @@ public class EquivalenceManager implements IEquivalenceManager {
 		}
 		
 		QueryResult result = solver.addQuery(nodeEquality, equality.isPositive());
-		if (result!=null) removeQuery(result.getEquality());
+//		if (result!=null) removeQuery(result.getEquality());
 		
 		return result;
 	}
@@ -198,15 +178,15 @@ public class EquivalenceManager implements IEquivalenceManager {
 	public List<InstantiationResult> addInstantiationEquality(EqualityLiteral equality, Clause clause) {
 		assert !equality.isPositive()?clause.isEquivalence():true;
 		assert !clause.isUnit();
-		assert (equality.getTerms().get(0) instanceof Variable || equality.getTerms().get(1) instanceof Variable);
-		assert (equality.getTerms().get(0) instanceof Constant || equality.getTerms().get(1) instanceof Constant);
+		assert (equality.getTerm(0) instanceof Variable || equality.getTerm(1) instanceof Variable);
+		assert (equality.getTerm(0) instanceof Constant || equality.getTerm(1) instanceof Constant);
 		
 		Node node = null;
-		if (equality.getTerms().get(0) instanceof Constant) {
-			node = getNodeAndAddConstant((Constant)equality.getTerms().get(0));
+		if (equality.getTerm(0) instanceof Constant) {
+			node = getNodeAndAddConstant((Constant)equality.getTerm(0));
 		}
-		else if (equality.getTerms().get(1) instanceof Constant) {
-			node = getNodeAndAddConstant((Constant)equality.getTerms().get(1));
+		else if (equality.getTerm(1) instanceof Constant) {
+			node = getNodeAndAddConstant((Constant)equality.getTerm(1));
 		}
 		else assert false;
 		
@@ -268,8 +248,7 @@ public class EquivalenceManager implements IEquivalenceManager {
 		// 5 add equalities
 		for (Equality<FactSource> equality : equalities) {
 			if (equality.getSource().isValid()) {
-				IFactResult result = solver.addFactEquality(equality);
-				assert result == null;
+				solver.addFactEquality(equality);
 			}
 		}
 	}

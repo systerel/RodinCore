@@ -16,36 +16,24 @@ import org.eventb.internal.pp.core.elements.Sort;
 
 /**
  * The same instance of one variable exists for the same variable in the scope
- * of one predicate. In two different predicates, variable instances are always disjoint.
- * This means {@link #equals(Object)} always return false for variables that are in
+ * of one literal. In two different literal, variable instances are always disjoint.
+ * This means that {@link #equals(Object)} always return false for variables that are in
  * two different predicates.
- *
+ * <p>
+ * As for variables, the index is only used for {@link #compareTo(Term)}.
+ * 
  * @author François Terrier
- *
- * IMPORTANT : in 2 different literals of the same clause, existential
- * varibles MUST be different objects ! 
- * To avoid situations like this: 
- * 	Py <=> Qy or #x.x\=y
- * after one point:
- * 	#x.Px <=> #x.Qx
- * if both x are the same variable and there is a match with Px and Qx ...
- * 
- * 
- * INVARIANT :
- * 	- no equal local variables in different literals
- *  + invariant of AbstractVariable : no equal variable in different clauses
  * 
  */
 public final class LocalVariable extends SimpleTerm {
+	
 	private static final int PRIORITY = 1;
 	
-	// used only for toString(), does not enter into account for other calculations
 	private int index;
-	
-	
+
 	private boolean isForall;
 	
-	public LocalVariable(int index, boolean isForall, Sort sort) {
+	LocalVariable(int index, boolean isForall, Sort sort) {
 		super(sort, PRIORITY, index+(isForall?1:0), 2+(isForall?1:0));
 		
 		this.index = index;
@@ -111,7 +99,12 @@ public final class LocalVariable extends SimpleTerm {
 	
 	public int compareTo(Term o) {
 		if (equals(0)) return 0;
-		else if (getPriority() == o.getPriority()) return hashCode() - o.hashCode();
+		else if (getPriority() == o.getPriority()) {
+			LocalVariable tmp = (LocalVariable)o;
+			if (tmp.isForall==isForall) return index-tmp.index;
+			else if (isForall) return 1;
+			else return -1;
+		}
 		else return getPriority() - o.getPriority();
 	}
 	

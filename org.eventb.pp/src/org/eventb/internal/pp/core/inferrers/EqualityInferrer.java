@@ -15,11 +15,8 @@ import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
-import org.eventb.internal.pp.core.elements.FalseClause;
-import org.eventb.internal.pp.core.elements.TrueClause;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
@@ -42,7 +39,7 @@ public class EqualityInferrer extends AbstractInferrer {
 		
 		if (hasTrueEquality) {
 			// we have a true equality -> result = TRUE
-			result = new TrueClause(getOrigin(clause));
+			result = cf.makeTRUE(getOrigin(clause));
 			return;
 		}
 		for (EqualityLiteral equality : equalityMap.keySet()) {
@@ -51,8 +48,8 @@ public class EqualityInferrer extends AbstractInferrer {
 			conditions.remove(equality);
 		}
 		
-		if (isEmpty()) result = new FalseClause(getOrigin(clause));
-		else result = new DisjunctiveClause(getOrigin(clause), predicates, equalities, arithmetic, conditions);
+		if (isEmptyWithConditions()) result = cf.makeFALSE(getOrigin(clause));
+		else result = cf.makeDisjunctiveClause(getOrigin(clause), predicates, equalities, arithmetic, conditions);
 	}
 
 	@Override
@@ -64,7 +61,7 @@ public class EqualityInferrer extends AbstractInferrer {
 			if (conditions.contains(entry.getKey())) {
 				if (entry.getValue()) { 
 					// one of the conditions is false -> result = TRUE
-					result = new TrueClause(getOrigin(clause));
+					result = cf.makeTRUE(getOrigin(clause));
 					return;
 				}
 				else conditions.remove(entry.getKey());					
@@ -76,8 +73,8 @@ public class EqualityInferrer extends AbstractInferrer {
 		}
 		if (inverse) EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
 		
-		if (isEmpty()) result = new FalseClause(getOrigin(clause));
-		else result = EquivalenceClause.newClause(getOrigin(clause), predicates, equalities, arithmetic, conditions, context);
+		if (isEmptyWithConditions()) result = cf.makeFALSE(getOrigin(clause));
+		else result = cf.makeClauseFromEquivalenceClause(getOrigin(clause), predicates, equalities, arithmetic, conditions, context);
 	}
 
 	private void assertContainsEqualities(Clause clause) {

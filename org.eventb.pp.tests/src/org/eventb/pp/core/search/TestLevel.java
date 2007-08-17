@@ -1,9 +1,7 @@
 package org.eventb.pp.core.search;
 
-import static org.eventb.pp.Util.mSet;
-
 import org.eventb.internal.pp.core.Level;
-import org.eventb.pp.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 
 
 public class TestLevel extends AbstractPPTest {
@@ -43,6 +41,7 @@ public class TestLevel extends AbstractPPTest {
 	}
 	
 	public void testIsLeftBranch() {
+		assertFalse(BASE.isLeftBranch());
 		assertTrue(ONE.isLeftBranch());
 		assertTrue(THREE.isLeftBranch());
 		assertTrue(FIVE.isLeftBranch());
@@ -52,6 +51,7 @@ public class TestLevel extends AbstractPPTest {
 	}
 	
 	public void testIsRightBranch() {
+		assertFalse(BASE.isRightBranch());
 		assertFalse(ONE.isRightBranch());
 		assertFalse(THREE.isRightBranch());
 		assertFalse(FIVE.isRightBranch());
@@ -85,14 +85,6 @@ public class TestLevel extends AbstractPPTest {
 		assertEquals(Level.getHighest(ONE, BASE), ONE);
 	}
 	
-	public void testHighestOdd() {
-		assertEquals(THREE, Level.getHighestOdd(mSet(BASE,ONE,THREE)));
-		assertEquals(THREE, Level.getHighestOdd(mSet(ONE,BASE,THREE)));
-		assertEquals(THREE, Level.getHighestOdd(mSet(BASE,ONE,THREE)));
-		assertEquals(ONE, Level.getHighestOdd(mSet(BASE,ONE,FOUR)));
-		assertEquals(ONE, Level.getHighestOdd(mSet(ONE,BASE,FOUR)));
-		assertEquals(ONE, Level.getHighestOdd(mSet(BASE,ONE,FOUR)));
-	}
 	
 	public void testAncestorInSameTree() {
 		assertTrue(BASE.isAncestorInSameTree(ONE));

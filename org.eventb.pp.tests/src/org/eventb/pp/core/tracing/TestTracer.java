@@ -1,13 +1,13 @@
 package org.eventb.pp.core.tracing;
 
-import static org.eventb.pp.Util.mSet;
+import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
 import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.core.tracing.Tracer;
-import org.eventb.pp.AbstractPPTest;
 
 public class TestTracer extends AbstractPPTest {
 
@@ -99,7 +99,7 @@ public class TestTracer extends AbstractPPTest {
 	
 	private void assertAddClosingClauseFails(IOrigin origin) {
 		try {
-			tracer.addClosingClause(origin);
+			tracer.addClosingClauseAndUpdateLevel(origin);
 			fail();
 		}
 		catch (Throwable e) {
@@ -108,68 +108,68 @@ public class TestTracer extends AbstractPPTest {
 	}
 	
 	public void testSimpleTracer() {
-		tracer.addClosingClause(o0);
+		tracer.addClosingClauseAndUpdateLevel(o0);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o0), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtZeroWithUselessClosings() {
-		tracer.addClosingClause(o1);
+		tracer.addClosingClauseAndUpdateLevel(o1);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o0);
+		tracer.addClosingClauseAndUpdateLevel(o0);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o0), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtZeroWithUselessClosings1() {
-		tracer.addClosingClause(o31);
+		tracer.addClosingClauseAndUpdateLevel(o31);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o4);
+		tracer.addClosingClauseAndUpdateLevel(o4);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o31,o4,o2), tracer.getClosingOrigins());
 	}
 
 	public void testProofAtOneWithUselessClosings() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o1);
+		tracer.addClosingClauseAndUpdateLevel(o1);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);		
+		tracer.addClosingClauseAndUpdateLevel(o2);		
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o1, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelRight() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o94);
+		tracer.addClosingClauseAndUpdateLevel(o94);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o10_4);
+		tracer.addClosingClauseAndUpdateLevel(o10_4);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o3, o94, o10_4), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelRight2() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o94);
+		tracer.addClosingClauseAndUpdateLevel(o94);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o10_1);
+		tracer.addClosingClauseAndUpdateLevel(o10_1);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);		
+		tracer.addClosingClauseAndUpdateLevel(o2);		
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o2, o3, o94, o10_1), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelRight3() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o94);
+		tracer.addClosingClauseAndUpdateLevel(o94);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o10);
+		tracer.addClosingClauseAndUpdateLevel(o10);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o3, o94, o10), tracer.getClosingOrigins());
@@ -177,342 +177,342 @@ public class TestTracer extends AbstractPPTest {
 	
 	//
 	public void testProofAtOneClosingAtLowerLevelRight4() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o91);
+		tracer.addClosingClauseAndUpdateLevel(o91);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o10_4);
+		tracer.addClosingClauseAndUpdateLevel(o10_4);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o2, o3, o91, o10_4), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelRight5() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o91);
+		tracer.addClosingClauseAndUpdateLevel(o91);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o10_1);
+		tracer.addClosingClauseAndUpdateLevel(o10_1);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o2, o91, o10_1), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelRight6() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o91);
+		tracer.addClosingClauseAndUpdateLevel(o91);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o10);
+		tracer.addClosingClauseAndUpdateLevel(o10);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);		
+		tracer.addClosingClauseAndUpdateLevel(o2);		
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o2, o91, o10), tracer.getClosingOrigins());
 	}
 	
 	//
 	public void testProofAtZeroClosingAtLowerLevelRight1() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o9);
+		tracer.addClosingClauseAndUpdateLevel(o9);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o10_4);
+		tracer.addClosingClauseAndUpdateLevel(o10_4);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o3, o9, o10_4), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtZeroClosingAtLowerLevelRight2() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o9);
+		tracer.addClosingClauseAndUpdateLevel(o9);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o10_1);
+		tracer.addClosingClauseAndUpdateLevel(o10_1);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);		
+		tracer.addClosingClauseAndUpdateLevel(o2);		
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o2, o9, o10_1), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtZeroClosingAtLowerLevelRight3() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o9);
+		tracer.addClosingClauseAndUpdateLevel(o9);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o10);
+		tracer.addClosingClauseAndUpdateLevel(o10);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o9, o10), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtFourClosingAtLowerLevelRight() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o9);
+		tracer.addClosingClauseAndUpdateLevel(o9);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o4);
+		tracer.addClosingClauseAndUpdateLevel(o4);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o3, o4), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtFourClosingAtLowerLevelRight2() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o941);
+		tracer.addClosingClauseAndUpdateLevel(o941);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o4);
+		tracer.addClosingClauseAndUpdateLevel(o4);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o3, o4), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtFourClosingAtLowerLevelRight3() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o9);
+		tracer.addClosingClauseAndUpdateLevel(o9);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o41);
+		tracer.addClosingClauseAndUpdateLevel(o41);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);		
+		tracer.addClosingClauseAndUpdateLevel(o2);		
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o2, o3, o41), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtFourClosingAtLowerLevelRight4() {
-		tracer.addClosingClause(o3);
+		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o9);
+		tracer.addClosingClauseAndUpdateLevel(o9);
 		assertEquals(tracer.getLastClosedLevel(), NINE);
-		tracer.addClosingClause(o1);
+		tracer.addClosingClauseAndUpdateLevel(o1);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);		
+		tracer.addClosingClauseAndUpdateLevel(o2);		
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o1, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelLeft() {
-		tracer.addClosingClause(o731);
+		tracer.addClosingClauseAndUpdateLevel(o731);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o831);
+		tracer.addClosingClauseAndUpdateLevel(o831);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o41);
+		tracer.addClosingClauseAndUpdateLevel(o41);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o731, o831, o41, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelLeft2() {
-		tracer.addClosingClause(o731);
+		tracer.addClosingClauseAndUpdateLevel(o731);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o83);
+		tracer.addClosingClauseAndUpdateLevel(o83);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o41);
+		tracer.addClosingClauseAndUpdateLevel(o41);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o731, o83, o41, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelLeft3() {
-		tracer.addClosingClause(o731);
+		tracer.addClosingClauseAndUpdateLevel(o731);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o81);
+		tracer.addClosingClauseAndUpdateLevel(o81);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o41);
+		tracer.addClosingClauseAndUpdateLevel(o41);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o731, o81, o41, o2), tracer.getClosingOrigins());
 	}
 	
 	
 	public void testProofAtOneClosingAtLowerLevelLeft4() {
-		tracer.addClosingClause(o73);
+		tracer.addClosingClauseAndUpdateLevel(o73);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o831);
+		tracer.addClosingClauseAndUpdateLevel(o831);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o41);
+		tracer.addClosingClauseAndUpdateLevel(o41);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o73, o831, o41, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelLeft5() {
-		tracer.addClosingClause(o73);
+		tracer.addClosingClauseAndUpdateLevel(o73);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o83);
+		tracer.addClosingClauseAndUpdateLevel(o83);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o41);
+		tracer.addClosingClauseAndUpdateLevel(o41);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o73, o83, o41, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelLeft6() {
-		tracer.addClosingClause(o73);
+		tracer.addClosingClauseAndUpdateLevel(o73);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o81);
+		tracer.addClosingClauseAndUpdateLevel(o81);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o41);
+		tracer.addClosingClauseAndUpdateLevel(o41);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o73, o81, o41, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelLeft7() {
-		tracer.addClosingClause(o71);
+		tracer.addClosingClauseAndUpdateLevel(o71);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o831);
+		tracer.addClosingClauseAndUpdateLevel(o831);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o41);
+		tracer.addClosingClauseAndUpdateLevel(o41);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o71, o831, o41, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelLeft8() {
-		tracer.addClosingClause(o71);
+		tracer.addClosingClauseAndUpdateLevel(o71);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o83);
+		tracer.addClosingClauseAndUpdateLevel(o83);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o41);
+		tracer.addClosingClauseAndUpdateLevel(o41);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o71, o83, o41, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtOneClosingAtLowerLevelLeft9() {
-		tracer.addClosingClause(o71);
+		tracer.addClosingClauseAndUpdateLevel(o71);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o81);
+		tracer.addClosingClauseAndUpdateLevel(o81);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
 		assertAddClosingClauseFails(o41);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o71, o81, o2), tracer.getClosingOrigins());
 	}
 	
 	
 	public void testProofAtZeroClosingAtLowerLevelLeft() {
-		tracer.addClosingClause(o731);
+		tracer.addClosingClauseAndUpdateLevel(o731);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o831);
+		tracer.addClosingClauseAndUpdateLevel(o831);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o4);
+		tracer.addClosingClauseAndUpdateLevel(o4);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o731, o831, o4, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtZeroClosingAtLowerLevelLeft2() {
-		tracer.addClosingClause(o731);
+		tracer.addClosingClauseAndUpdateLevel(o731);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o83);
+		tracer.addClosingClauseAndUpdateLevel(o83);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o4);
+		tracer.addClosingClauseAndUpdateLevel(o4);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o731, o83, o4, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtZeroClosingAtLowerLevelLeft3() {
-		tracer.addClosingClause(o731);
+		tracer.addClosingClauseAndUpdateLevel(o731);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o81);
+		tracer.addClosingClauseAndUpdateLevel(o81);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o4);
+		tracer.addClosingClauseAndUpdateLevel(o4);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o731, o81, o4, o2), tracer.getClosingOrigins());
 	}
 	
 	
 	public void testProofAtZeroClosingAtLowerLevelLeft4() {
-		tracer.addClosingClause(o73);
+		tracer.addClosingClauseAndUpdateLevel(o73);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o831);
+		tracer.addClosingClauseAndUpdateLevel(o831);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o4);
+		tracer.addClosingClauseAndUpdateLevel(o4);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o73, o831, o4, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtZeroClosingAtLowerLevelLeft5() {
-		tracer.addClosingClause(o73);
+		tracer.addClosingClauseAndUpdateLevel(o73);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o83);
+		tracer.addClosingClauseAndUpdateLevel(o83);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o4);
+		tracer.addClosingClauseAndUpdateLevel(o4);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertAddClosingClauseFails(o2);
 		assertEquals(mSet(o73, o83, o4), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtZeroClosingAtLowerLevelLeft6() {
-		tracer.addClosingClause(o73);
+		tracer.addClosingClauseAndUpdateLevel(o73);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o81);
+		tracer.addClosingClauseAndUpdateLevel(o81);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o4);
+		tracer.addClosingClauseAndUpdateLevel(o4);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o73, o81, o4, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtZeroClosingAtLowerLevelLeft7() {
-		tracer.addClosingClause(o71);
+		tracer.addClosingClauseAndUpdateLevel(o71);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o831);
+		tracer.addClosingClauseAndUpdateLevel(o831);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o4);
+		tracer.addClosingClauseAndUpdateLevel(o4);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o71, o831, o4, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtZeroClosingAtLowerLevelLeft8() {
-		tracer.addClosingClause(o71);
+		tracer.addClosingClauseAndUpdateLevel(o71);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o83);
+		tracer.addClosingClauseAndUpdateLevel(o83);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o4);
+		tracer.addClosingClauseAndUpdateLevel(o4);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o71, o83, o4, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAtZeroClosingAtLowerLevelLeft9() {
-		tracer.addClosingClause(o71);
+		tracer.addClosingClauseAndUpdateLevel(o71);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o81);
+		tracer.addClosingClauseAndUpdateLevel(o81);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
 		assertAddClosingClauseFails(o4);
-		tracer.addClosingClause(o2);
+		tracer.addClosingClauseAndUpdateLevel(o2);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o71, o81, o2), tracer.getClosingOrigins());
 	}
 	
 	public void testProofAlreadyExistant1() {
-		tracer.addClosingClause(o7);
+		tracer.addClosingClauseAndUpdateLevel(o7);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
-		tracer.addClosingClause(o8);
+		tracer.addClosingClauseAndUpdateLevel(o8);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		// here
 		assertAddClosingClauseFails(o4);
@@ -521,9 +521,9 @@ public class TestTracer extends AbstractPPTest {
 	}
 
 	public void testSameSplitTwice() {
-		tracer.addClosingClause(o31);
+		tracer.addClosingClauseAndUpdateLevel(o31);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o41);
+		tracer.addClosingClauseAndUpdateLevel(o41);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
 		assertAddClosingClauseFails(o7);
 		assertAddClosingClauseFails(o8);
@@ -531,11 +531,11 @@ public class TestTracer extends AbstractPPTest {
 	}
 	
 	public void testClosingGetBackOnLeftBranch() {
-		tracer.addClosingClause(o31);
+		tracer.addClosingClauseAndUpdateLevel(o31);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
-		tracer.addClosingClause(o19);
+		tracer.addClosingClauseAndUpdateLevel(o19);
 		assertEquals(tracer.getLastClosedLevel(), NINETEEN);
-		tracer.addClosingClause(o20_4);
+		tracer.addClosingClauseAndUpdateLevel(o20_4);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
 	}
 }

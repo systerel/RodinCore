@@ -16,6 +16,12 @@ import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Sort;
 
+/**
+ * Abstract base class for associative terms.
+ *
+ * @author François Terrier
+ * 
+ */
 public abstract class AssociativeTerm extends Term {
 
 	final protected List<Term> children;

@@ -25,7 +25,7 @@ import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.inferrers.CaseSplitNegationInferrer;
+import org.eventb.internal.pp.core.inferrers.CaseSplitInferrer;
 
 public class CaseSplitter implements IProverModule {
 	
@@ -46,13 +46,13 @@ public class CaseSplitter implements IProverModule {
 	private SplitPair nextCase;
 	
 	private Vector<Clause> candidates;
-	private CaseSplitNegationInferrer inferrer;
+	private CaseSplitInferrer inferrer;
 	
 	private IDispatcher dispatcher;
 	private ClauseSimplifier simplifier;
 	
 	public CaseSplitter(IVariableContext context, IDispatcher dispatcher) {
-		this.inferrer = new CaseSplitNegationInferrer(context);
+		this.inferrer = new CaseSplitInferrer(context);
 		this.dispatcher = dispatcher;
 	}
 	
@@ -61,10 +61,20 @@ public class CaseSplitter implements IProverModule {
 		candidates = new Stack<Clause>();
 	}
 	
-	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
-		// contradiction has been found, backtrack
-		// main loop on the next case
-		backtrack(oldLevel, newLevel, dependencies);
+	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
+		return backtrack(oldLevel, newLevel, dependencies);
+	}
+	
+	private int counter = 0;
+	private boolean isNextAvailable() {
+		if (counter > 0) {
+			counter--;
+			return true;
+		}
+		else {
+			counter = candidates.size()*50;
+			return false;
+		}
 	}
 	
 	// this returns the next clause produced by a case split.
@@ -72,20 +82,19 @@ public class CaseSplitter implements IProverModule {
 	// it it is not the case it does a new case split
 	public ProverResult next(boolean force) {
 //		assert splits.size() == dispatcher.getLevel().getHeight();
+		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT;
+		
 		Set<Clause> result;
 		Set<Clause> subsumedClauses = new HashSet<Clause>();
 		if (nextCase == null) {
 			if (candidates.isEmpty()) return ProverResult.EMPTY_RESULT;
 			dispatcher.nextLevel();
 			result = newCaseSplit();
-//			subsumedClauses.add(splits.peek().original);
 		}
 		else {
 			dispatcher.nextLevel();
 			result = nextCase();
 		}
-//		if (DEBUG) debug("CaseSplitter, next clause: "+result);
-		
 		simplifier.run(result);
 		
 //		assert splits.size() == dispatcher.getLevel().getHeight();
@@ -125,7 +134,6 @@ public class CaseSplitter implements IProverModule {
 		return currentClause;
 	}
 	
-	
 	private List<Clause> getCandidatesDependingOnGoal() {
 		List<Clause> result = new ArrayList<Clause>();
 		for (Clause clause : candidates) {
@@ -145,7 +153,7 @@ public class CaseSplitter implements IProverModule {
 	 * 
 	 * @param oldLevel the level which must be backtracked
 	 */
-	private void backtrack(Level oldLevel, Level newLevel, Set<Level> dependencies) {
+	private ProverResult backtrack(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		if (DEBUG) debug("CaseSplitter: Backtracking datastructures, size of split stack: "+splits.size());
 		
 		Set<Clause> putBackList = new LinkedHashSet<Clause>();
@@ -172,14 +180,8 @@ public class CaseSplitter implements IProverModule {
 		if (DEBUG) debug("CaseSplitter: Backtracking done, size of split stack: "+splits.size());
 		nextCase = splits.pop();
 		
-		List<Clause> reversePutBackList = new ArrayList<Clause>(putBackList);
-//		Collections.reverse(reversePutBackList);
-		for (Clause clause : reversePutBackList) {
-			if (dispatcher.contains(clause)) {
-				candidates.add(clause);
-			}
-		}
 //		assert splits.size() == dispatcher.getLevel().getHeight() : "Splits: "+splits.size();
+		return new ProverResult(putBackList, new HashSet<Clause>());
 	}
 	
 	public void registerDumper(Dumper dumper) {

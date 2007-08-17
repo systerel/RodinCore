@@ -21,10 +21,9 @@ import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
-import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
-import org.eventb.internal.pp.core.elements.EquivalenceClause;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.Sort;
@@ -39,6 +38,7 @@ public class ExtensionalityProver implements IProverModule {
 	private PredicateTable predicateTable;
 	private IVariableContext variableContext;
 	private ClauseSimplifier simplifier;
+	private ClauseFactory cf = ClauseFactory.getDefault();
 	
 	public ExtensionalityProver(PredicateTable predicateTable,
 			IVariableContext variableContext) {
@@ -54,8 +54,8 @@ public class ExtensionalityProver implements IProverModule {
 			derivedClause = getEquivalence(clause, getUnitEqualityLiteral(clause));
 		}
 		else if (isEquivalenceCandidate(clause)) {
-			PredicateLiteral literal1 = clause.getPredicateLiterals().get(0);
-			PredicateLiteral literal2 = clause.getPredicateLiterals().get(1);
+			PredicateLiteral literal1 = clause.getPredicateLiteral(0);
+			PredicateLiteral literal2 = clause.getPredicateLiteral(1);
 			boolean sameSign = haveSameSign(literal1, literal2);
 			if (	(sameSign && haveSameVariables(literal1, literal2))
 				|| 	(!sameSign && haveSameConstants(literal1, literal2))) {
@@ -82,18 +82,18 @@ public class ExtensionalityProver implements IProverModule {
 		EqualityLiteral equality = new EqualityLiteral(term1, term2, isPositive);
 		List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
 		equalities.add(equality);
-		return new DisjunctiveClause(new ExtensionalityOrigin(clause), new ArrayList<PredicateLiteral>(),
+		return cf.makeDisjunctiveClause(new ExtensionalityOrigin(clause), new ArrayList<PredicateLiteral>(),
 				equalities, new ArrayList<ArithmeticLiteral>(), new ArrayList<EqualityLiteral>());
 	}
 	
 	private SimpleTerm getLastTerm(PredicateLiteral literal) {
-		return literal.getTerms().get(literal.getDescriptor().getArity()-1);
+		return literal.getTerm(literal.getDescriptor().getArity()-1);
 	}
 	
 	private boolean haveSameConstants(PredicateLiteral literal1, PredicateLiteral literal2) {
 		for (int i = 0;i<literal1.getDescriptor().getArity()-1;i++) {
-			Term term1 = literal1.getTerms().get(i);
-			Term term2 = literal2.getTerms().get(i);
+			Term term1 = literal1.getTerm(i);
+			Term term2 = literal2.getTerm(i);
 			if (!term1.isConstant()) return false;
 			if (!term1.equals(term2)) return false;
 		}
@@ -111,8 +111,8 @@ public class ExtensionalityProver implements IProverModule {
 	 */
 	private boolean haveSameVariables(PredicateLiteral literal1, PredicateLiteral literal2) {
 		for (int i = 0;i<literal1.getDescriptor().getArity()-1;i++) {
-			Term term1 = literal1.getTerms().get(i);
-			Term term2 = literal2.getTerms().get(i);
+			Term term1 = literal1.getTerm(i);
+			Term term2 = literal2.getTerm(i);
 			if (term1.isConstant() || term1 != term2) return false;
 		}
 		return true;
@@ -125,9 +125,9 @@ public class ExtensionalityProver implements IProverModule {
 	private boolean isCandidate(Clause clause) {
 		if (clause.isBlockedOnConditions()) return false;
 		if (clause.sizeWithoutConditions() != 2) return false;
-		if (clause.getPredicateLiterals().size() != 2) return false;
-		PredicateLiteral literal1 = clause.getPredicateLiterals().get(0);
-		PredicateLiteral literal2 = clause.getPredicateLiterals().get(1);
+		if (clause.getPredicateLiteralsSize() != 2) return false;
+		PredicateLiteral literal1 = clause.getPredicateLiteral(0);
+		PredicateLiteral literal2 = clause.getPredicateLiteral(1);
 		if (!literal1.getDescriptor().equals(literal2.getDescriptor())) return false;
 		if (!literal1.getDescriptor().isCompletePredicate()) return false;
 		return true;
@@ -176,7 +176,7 @@ public class ExtensionalityProver implements IProverModule {
 		assert terms1.size() == terms2.size() && terms1.size() == descriptor.getArity();
 		literal1 = new ComplexPredicateLiteral(descriptor,equality.isPositive(),terms1);
 		literal2 = new ComplexPredicateLiteral(descriptor,true,terms2);
-		return new EquivalenceClause(new ExtensionalityOrigin(clause), getPredicateLiterals(literal1, literal2),
+		return cf.makeEquivalenceClause(new ExtensionalityOrigin(clause), getPredicateLiterals(literal1, literal2),
 				new ArrayList<EqualityLiteral>(), new ArrayList<ArithmeticLiteral>(),
 				new ArrayList<EqualityLiteral>());
 	}
@@ -190,8 +190,8 @@ public class ExtensionalityProver implements IProverModule {
 	
 	private boolean isUnitSetEqualityLiteral(Clause clause) {
 		if (!clause.isUnit()) return false;
-		if (clause.getEqualityLiterals().size() == 1) {
-			if (isSetEquality(clause.getEqualityLiterals().get(0))) return true;
+		if (clause.getEqualityLiteralsSize() == 1) {
+			if (isSetEquality(clause.getEqualityLiteral(0))) return true;
 		}
 		return false;
 	}
@@ -205,11 +205,12 @@ public class ExtensionalityProver implements IProverModule {
 	}
 	
 	private EqualityLiteral getUnitEqualityLiteral(Clause clause) {
-		return clause.getEqualityLiterals().get(0);
+		return clause.getEqualityLiteral(0);
 	}
 
-	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
+	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		// do nothing
+		return ProverResult.EMPTY_RESULT;
 	}
 
 	public void initialize(ClauseSimplifier simplifier) {
@@ -227,5 +228,11 @@ public class ExtensionalityProver implements IProverModule {
 	public void removeClause(Clause clause) {
 		// do nothing
 	}
+	
+	@Override
+	public String toString() {
+		return "ExtensionalityProver";
+	}
+
 
 }

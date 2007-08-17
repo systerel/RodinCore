@@ -12,6 +12,12 @@ import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
 
+/**
+ * Implementation of {@link IOrigin} for definition clauses.
+ *
+ * @author François Terrier
+ *
+ */
 public class DefinitionOrigin implements IOrigin {
 
 	public void getDependencies(Set<Level> dependencies) {

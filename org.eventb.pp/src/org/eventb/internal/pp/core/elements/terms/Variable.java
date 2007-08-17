@@ -8,6 +8,7 @@
 
 package org.eventb.internal.pp.core.elements.terms;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,6 +21,12 @@ import org.eventb.internal.pp.core.elements.Sort;
  * of one clause. In two different clauses, variable instances are always disjoint.
  * This means {@link #equals(Object)} always return false for variables that are in
  * two different clauses.
+ * <p>
+ * The index field of a variable is used only for comparing two distinct variables.
+ * TODO see if index should not be implemented using {@link BigInteger}. Using an int,
+ * the contract of {@link Comparable} stating that (o1.compareTo(o2)==0) == 
+ * o1.equals(o2) might be broken when {@link Integer#MAX_VALUE} is reached. This
+ * is also valid for {@link LocalVariable} and {@link Constant}. 
  * 
  * @author François Terrier
  *
@@ -27,12 +34,10 @@ import org.eventb.internal.pp.core.elements.Sort;
 public final class Variable extends SimpleTerm {
 
 	private static final int PRIORITY = 0;
-	
-	// only for toString, does not
-	@SuppressWarnings("unused")
+	private Set<Constant> instantiationValues = new HashSet<Constant>();
 	private final int index;
 	
-	public Variable(int index, Sort sort) {
+	Variable(int index, Sort sort) {
 		super(sort, PRIORITY, index, 1);
 		
 		this.index = index;
@@ -71,12 +76,6 @@ public final class Variable extends SimpleTerm {
 		return false;
 	}
 
-	public int compareTo(Term o) {
-		if (equals(o)) return 0;
-		else if (getPriority() == o.getPriority()) return hashCode()-o.hashCode();
-		else return getPriority() - o.getPriority();
-	}
-
 	@Override
 	protected <S extends Term> Term substitute(Map<SimpleTerm, S> map) {
 		return map.containsKey(this)?map.get(this):this;
@@ -92,6 +91,11 @@ public final class Variable extends SimpleTerm {
 		return;
 	}
 	
+	public int compareTo(Term o) {
+		if (equals(0)) return 0;
+		else if (getPriority() == o.getPriority()) return index - ((Variable)o).index;
+		else return getPriority() - o.getPriority();
+	}
 	
 	@Override
 	public String toString(HashMap<Variable, String> variableMap) {
@@ -101,9 +105,6 @@ public final class Variable extends SimpleTerm {
 		return variableMap.get(this);
 	}
 
-
-	private Set<Constant> instantiationValues = new HashSet<Constant>();
-	
 	public void addInstantiationValue(Constant constant) {
 		instantiationValues.add(constant);
 	}

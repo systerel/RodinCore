@@ -59,12 +59,7 @@ public class BooleanEqualityFormula extends EqualityFormula {
 		Literal<?,?> result;
 		if (newList.get(1) instanceof TrueConstantSignature) {
 			TermSignature sig = termList.get(0);
-			Integer i;
-			if (context.getBooleanTable().containsKey(sig)) i = context.getBooleanTable().get(sig);
-			else {
-				i = context.getBooleanTable().getNextLiteralIdentifier();
-				context.getBooleanTable().put(sig, i);
-			}
+			int i = context.getBooleanTable().getIntegerForTermSignature(sig);
 			PredicateLiteralDescriptor predicateDescriptor =
 				getPredicateDescriptor(context.getPredicateTable(),
 				i, 0, terms.size(), false, new ArrayList<Sort>(), null);

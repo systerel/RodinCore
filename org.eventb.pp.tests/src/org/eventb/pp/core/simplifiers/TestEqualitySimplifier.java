@@ -1,21 +1,21 @@
 package org.eventb.pp.core.simplifiers;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cEqClause;
-import static org.eventb.pp.Util.cEqual;
-import static org.eventb.pp.Util.cNEqual;
-import static org.eventb.pp.Util.cNotPred;
-import static org.eventb.pp.Util.cPred;
-import static org.eventb.pp.Util.mList;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.ArrayList;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.simplifiers.EqualitySimplifier;
-import org.eventb.internal.pp.loader.clause.VariableContext;
-import org.eventb.pp.AbstractPPTest;
 
 @SuppressWarnings("unchecked")
 public class TestEqualitySimplifier extends AbstractPPTest {
@@ -151,10 +151,9 @@ public class TestEqualitySimplifier extends AbstractPPTest {
 	};
 	
 	private IVariableContext variableContext() {
-		VariableContext context = new VariableContext();
-		context.putInCache(var00);
-		return context;
+		return new VariableContext();
 	}
+	
 	
 	public void testEquality() {
 		for (TestPair test : tests) {

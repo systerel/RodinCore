@@ -13,6 +13,15 @@ import java.util.Set;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.Level;
 
+/**
+ * Implementation of {@link IOrigin} for original clauses.
+ * <p>
+ * Original clauses are clauses that are not definition clauses but
+ * are the clauses that have been created by the loader.  
+ *
+ * @author François Terrier
+ *
+ */
 public class PredicateOrigin implements IOrigin {
 
 	private Predicate predicate;

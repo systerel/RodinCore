@@ -12,9 +12,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class represents division.
+ *
+ * @author François Terrier
+ *
+ */
 public final class Divide extends BinaryTerm {
 
-	private static final int PRIORITY = 5;
+	private static final int PRIORITY = 6;
 	
 	public Divide(Term left, Term right) {
 		super(left, right, PRIORITY);

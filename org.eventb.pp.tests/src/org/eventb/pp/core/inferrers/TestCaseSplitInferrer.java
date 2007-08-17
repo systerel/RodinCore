@@ -1,20 +1,20 @@
 package org.eventb.pp.core.inferrers;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cEqClause;
-import static org.eventb.pp.Util.cEqual;
-import static org.eventb.pp.Util.cNotPred;
-import static org.eventb.pp.Util.cNotProp;
-import static org.eventb.pp.Util.cPred;
-import static org.eventb.pp.Util.cProp;
-import static org.eventb.pp.Util.mSet;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
 import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.inferrers.CaseSplitNegationInferrer;
-import org.eventb.internal.pp.loader.clause.VariableContext;
-import org.eventb.pp.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
+import org.eventb.internal.pp.core.inferrers.CaseSplitInferrer;
 
 /**
  * This class tests the case split inferrer. Case split inferrer behaves
@@ -73,7 +73,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 	}
 
 	public void doTest(Clause original, Set<Clause> left, Set<Clause> right) {
-		CaseSplitNegationInferrer inferrer = new CaseSplitNegationInferrer(new VariableContext());
+		CaseSplitInferrer inferrer = new CaseSplitInferrer(new VariableContext());
 
 		inferrer.setLevel(original.getLevel());
 		original.infer(inferrer);
@@ -82,7 +82,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 	}
 	
 	public void testIllegal() {
-		CaseSplitNegationInferrer inferrer = new CaseSplitNegationInferrer(new VariableContext());
+		CaseSplitInferrer inferrer = new CaseSplitInferrer(new VariableContext());
 
 		Clause clause = cClause(cProp(0),cProp(1));
 		try {
@@ -95,7 +95,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 	}	
 	
 	public void testCanInfer() {
-		CaseSplitNegationInferrer inferrer = new CaseSplitNegationInferrer(new VariableContext());
+		CaseSplitInferrer inferrer = new CaseSplitInferrer(new VariableContext());
 		
 		Clause[] canInfer = new Clause[]{
 				cClause(cProp(0),cProp(1)),
@@ -116,7 +116,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 	}
 	
 	public void testCannotInfer() {
-		CaseSplitNegationInferrer inferrer = new CaseSplitNegationInferrer(new VariableContext());
+		CaseSplitInferrer inferrer = new CaseSplitInferrer(new VariableContext());
 		
 		Clause[] cannotInfer = new Clause[]{
 				cClause(cProp(0)),

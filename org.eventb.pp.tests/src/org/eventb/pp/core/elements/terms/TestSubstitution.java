@@ -1,12 +1,12 @@
 package org.eventb.pp.core.elements.terms;
 
-import static org.eventb.pp.Util.cPlus;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPlus;
 
 import java.util.HashMap;
 
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.pp.AbstractPPTest;
 
 public class TestSubstitution extends AbstractPPTest {
 	

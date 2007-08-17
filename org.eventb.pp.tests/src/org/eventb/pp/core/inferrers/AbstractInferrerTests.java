@@ -6,9 +6,8 @@ import java.util.Set;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
-import org.eventb.internal.pp.core.elements.terms.Term;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Variable;
-import org.eventb.pp.AbstractPPTest;
 
 public abstract class AbstractInferrerTests extends AbstractPPTest {
 
@@ -28,14 +27,10 @@ public abstract class AbstractInferrerTests extends AbstractPPTest {
 	private Set<Variable> collectVariables(Clause clause) {
 		Set<Variable> vars = new HashSet<Variable>();
 		for (PredicateLiteral literal : clause.getPredicateLiterals()) {
-			for (Term term : literal.getTerms()) {
-				term.collectVariables(vars);
-			}
+			literal.collectVariables(vars);
 		}
 		for (EqualityLiteral equality : clause.getEqualityLiterals()) {
-			for (Term term : equality.getTerms()) {
-				term.collectVariables(vars);
-			}
+			equality.collectVariables(vars);
 		}
 		return vars;
 	}

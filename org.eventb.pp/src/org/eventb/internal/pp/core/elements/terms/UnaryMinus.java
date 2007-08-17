@@ -15,7 +15,7 @@ import java.util.Map;
 
 public final class UnaryMinus extends AssociativeTerm {
 
-	private static final int PRIORITY = 3;
+	private static final int PRIORITY = 4;
 	
 	public UnaryMinus(Term child) {
 		super(Arrays.asList(new Term[]{child}), PRIORITY);

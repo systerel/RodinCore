@@ -12,19 +12,65 @@ import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
 
+/**
+ * The interface for the origin of a clause.
+ * <p>
+ * Each clause has an origin, defining its level, its level dependencies
+ * and whether it depends on the goal or not.
+ *
+ * @author François Terrier
+ *
+ */
 public interface IOrigin {
 
-	public void trace(Tracer tracer);
+	/**
+	 * Traces this origin. Adds to the tracer the original hypotheses
+	 * needed to get this origin, and whether it depends on the goal. 
+	 * 
+	 * @param tracer the tracer
+	 */
+	void trace(Tracer tracer);
 	
-	// helper
-	public void getDependencies(Set<Level> dependencies);
+	/**
+	 * Puts in <code>dependencies</code> every level that contributes
+	 * to this origin.
+	 * 
+	 * @param dependencies the set of dependencies to be populated
+	 */
+	void getDependencies(Set<Level> dependencies);
 	
-	public boolean dependsOnGoal();
+	/**
+	 * Returns <code>true</code> if this origin depends
+	 * on the goal, <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if this origin depends
+	 * on the goal, <code>false</code> otherwise.
+	 */
+	boolean dependsOnGoal();
 	
-	public boolean isDefinition();
+	/**
+	 * Returns <code>true</code> if this is a definition, <code>false</code>
+	 * otherwise.
+	 * 
+	 * @return <code>true</code> if this is a definition, <code>false</code>
+	 * otherwise
+	 */
+	boolean isDefinition();
 	
-	public Level getLevel();
+	/**
+	 * Returns the level of this origin.
+	 * 
+	 * @return the level of this origin
+	 */
+	Level getLevel();
 	
-	
-	public int getDepth();
+	/**
+	 * Returns the depth of this origin.
+	 * <p>
+	 * Corresponds to the number of inferrence steps needed to get
+	 * to this origin.
+	 * 
+	 * @return the depth of this origin
+	 */
+	int getDepth();
 }

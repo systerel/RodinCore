@@ -1,19 +1,19 @@
 package org.eventb.pp.loader;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Sort;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Constant;
+import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
+import org.eventb.internal.pp.core.elements.terms.VariableTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
-import org.eventb.internal.pp.loader.clause.VariableContext;
-import org.eventb.internal.pp.loader.clause.VariableTable;
-import org.eventb.pp.AbstractPPTest;
-import org.eventb.pp.Util;
 
 /**
  * This class verifies that the variables, constants, ...

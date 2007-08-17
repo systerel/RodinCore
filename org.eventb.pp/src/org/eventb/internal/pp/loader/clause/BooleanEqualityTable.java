@@ -9,12 +9,13 @@
 package org.eventb.internal.pp.loader.clause;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
-public class BooleanEqualityTable extends HashMap<TermSignature, Integer> {
-	private static final long serialVersionUID = 2139618668777947328L;
+public class BooleanEqualityTable {
 	
+	private final Map<TermSignature, Integer> map = new HashMap<TermSignature, Integer>();
 	private int nextIdentifier;
 	
 	public BooleanEqualityTable(int nextIdentifier) {
@@ -22,8 +23,13 @@ public class BooleanEqualityTable extends HashMap<TermSignature, Integer> {
 		this.nextIdentifier = nextIdentifier;
 	}
 	
-	public int getNextLiteralIdentifier() {
-		return nextIdentifier++;
+	public int getIntegerForTermSignature(TermSignature sig) {
+		int result;
+		if (map.containsKey(sig)) result = map.get(sig);
+		else {
+			result = nextIdentifier++;
+			map.put(sig, result);
+		}
+		return result;
 	}
-	
 }

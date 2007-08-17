@@ -13,7 +13,6 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
@@ -21,6 +20,15 @@ import org.eventb.internal.pp.core.inferrers.IInferrer;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
+/**
+ * Abstract base class for clauses.
+ * <p>
+ * There is two type of clause, {@link EquivalenceClause} and {@link DisjunctiveClause}.
+ * 
+ *
+ * @author François Terrier
+ *
+ */
 public abstract class Clause {
 
 	final protected List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
@@ -58,7 +66,6 @@ public abstract class Clause {
 		return listEquals(predicates, clause.predicates, map) && listEquals(equalities, clause.equalities, map)
 			&& listEquals(arithmetic, clause.arithmetic, map) && listEquals(conditions, clause.conditions, map);
 	}
-	
 	
 	private void computeHashCode(int hashCode) {
 		hashCode = 37*hashCode + hashCode(predicates);
@@ -145,18 +152,11 @@ public abstract class Clause {
 	public Level getLevel() {
 		return origin.getLevel();
 	}
-//
-//	public Stack<IClauseContext> getContexts() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
 
 	protected BitSet negativeLiterals = new BitSet();
 	protected BitSet positiveLiterals = new BitSet();
 
 	protected abstract void computeBitSets();
-
-//	public abstract boolean contains(PredicateDescriptor predicate);
 
 	public abstract boolean matches(PredicateLiteralDescriptor predicate, boolean isPositive);
 	
@@ -167,29 +167,52 @@ public abstract class Clause {
 		else return negativeLiterals.get(predicate.getIndex());
 	}
 
-	public List<EqualityLiteral> getEqualityLiterals() {
-		return equalities;
-	}
-
-	public List<PredicateLiteral> getPredicateLiterals() {
-		return predicates;
-	}
-
-	public List<ArithmeticLiteral> getArithmeticLiterals() {
-		return arithmetic;
+	public final List<EqualityLiteral> getEqualityLiterals() {
+		return new ArrayList<EqualityLiteral>(equalities);
 	}
 	
-	public List<EqualityLiteral> getConditions() {
-		return conditions;
+	public final EqualityLiteral getEqualityLiteral(int index) {
+		return equalities.get(index);
 	}
 	
-	protected <T extends Literal<T,?>> List<T> getListCopy(List<T> list,
-			HashMap<SimpleTerm, SimpleTerm> substitutionsMap, IVariableContext context) {
-		List<T> result = new ArrayList<T>();
-		for (T pred : list) {
-			result.add(pred.getCopyWithNewVariables(context, substitutionsMap));
-		}
-		return result;
+	public final int getEqualityLiteralsSize() {
+		return equalities.size();
+	}
+
+	public final List<PredicateLiteral> getPredicateLiterals() {
+		return new ArrayList<PredicateLiteral>(predicates);
+	}
+	
+	public final PredicateLiteral getPredicateLiteral(int index) {
+		return predicates.get(index);
+	}
+	
+	public final int getPredicateLiteralsSize() {
+		return predicates.size();
+	}
+
+	public final List<ArithmeticLiteral> getArithmeticLiterals() {
+		return new ArrayList<ArithmeticLiteral>(arithmetic);
+	}
+	
+	public final ArithmeticLiteral getArithmeticLiteral(int index) {
+		return arithmetic.get(index);
+	}
+	
+	public final int getArithmeticLiteralsSize() {
+		return arithmetic.size();
+	}
+	
+	public final List<EqualityLiteral> getConditions() {
+		return new ArrayList<EqualityLiteral>(conditions);
+	}
+	
+	public final EqualityLiteral getCondition(int index) {
+		return conditions.get(index);
+	}
+	
+	public final int getConditionsSize() {
+		return conditions.size();
 	}
 	
 	public boolean isUnit() {
@@ -197,11 +220,6 @@ public abstract class Clause {
 		return false;
 	}
 
-//	public boolean isEmpty() {
-//		if (equalities.size() + predicates.size() + arithmetic.size() + conditions.size() == 0) return true;
-//		return false;
-//	}
-	
 	public int sizeWithoutConditions() {
 		return equalities.size() + predicates.size() + arithmetic.size();
 	}

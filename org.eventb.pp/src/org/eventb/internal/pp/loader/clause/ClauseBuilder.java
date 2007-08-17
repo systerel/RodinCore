@@ -15,13 +15,14 @@ import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
-import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.Sort;
-import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
+import org.eventb.internal.pp.core.elements.terms.VariableTable;
 import org.eventb.internal.pp.core.tracing.DefinitionOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.core.tracing.PredicateOrigin;
@@ -163,18 +164,17 @@ public final class ClauseBuilder {
 	
 	private Clause createTypeClause(int index, Sort sort1, Sort sort2) {
 		SimpleTerm term1 = variableContext.getNextVariable(sort1);
-		SimpleTerm term2 = new Constant(sort1.getName(), sort2);
+		SimpleTerm term2 = variableTable.getConstant(sort1.getName(), sort2);
 		List<SimpleTerm> terms = new ArrayList<SimpleTerm>();
 		terms.add(term1);
 		terms.add(term2);
 		PredicateLiteral literal = new ComplexPredicateLiteral(predicateTable.getDescriptor(index),true, terms);
 		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
 		predicates.add(literal);
-		Clause clause = new DisjunctiveClause(new TypingOrigin(), predicates, 
+		Clause clause = ClauseFactory.getDefault().makeDisjunctiveClause(new TypingOrigin(), predicates, 
 				new ArrayList<EqualityLiteral>(), new ArrayList<ArithmeticLiteral>(), new ArrayList<EqualityLiteral>());
 		return clause;
 	}
-	
 	
 	public IVariableContext getVariableContext() {
 		return variableContext;

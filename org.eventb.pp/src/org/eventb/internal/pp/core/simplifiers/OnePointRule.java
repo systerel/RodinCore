@@ -13,49 +13,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
-import org.eventb.internal.pp.core.elements.FalseClause;
 import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.core.elements.PredicateLiteral;
-import org.eventb.internal.pp.core.elements.TrueClause;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
-public class OnePointRule implements ISimplifier {
+/**
+ * This simplifier applies the one-point rule to a clause.
+ *
+ * @author François Terrier
+ *
+ */
+public class OnePointRule extends AbstractSimplifier {
 
-	private List<PredicateLiteral> predicates;
-	private List<EqualityLiteral> equalities;
-	private List<ArithmeticLiteral> arithmetic;
-	private List<EqualityLiteral> conditions;
-	
-	private void init(Clause clause) {
-		predicates = clause.getPredicateLiterals();
-		equalities = clause.getEqualityLiterals();
-		arithmetic = clause.getArithmeticLiterals();
-		conditions = clause.getConditions();
-	}
-	
-	private boolean isEmpty() {
-		return conditions.size() + predicates.size() + arithmetic.size() + equalities.size() == 0;
-	}
-	
 	public Clause simplifyDisjunctiveClause(DisjunctiveClause clause) {
 		init(clause);
 		
 		for (EqualityLiteral equality : equalities) {
-			if (isAlwaysTrue(equality)) return new TrueClause(clause.getOrigin());
+			if (isAlwaysTrue(equality)) return cf.makeTRUE(clause.getOrigin());
 		}
 		
 		onePointLoop(equalities);
 		onePointLoop(conditions);
-		if (isEmpty()) return new FalseClause(clause.getOrigin());
-		else return new DisjunctiveClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
+		if (isEmptyWithConditions()) return cf.makeFALSE(clause.getOrigin());
+		else return cf.makeDisjunctiveClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 	}
 
 	public Clause simplifyEquivalenceClause(EquivalenceClause clause) {
@@ -63,16 +49,16 @@ public class OnePointRule implements ISimplifier {
 		onePointLoop(conditions);
 		
 		// never empty
-		return new EquivalenceClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
+		return cf.makeEquivalenceClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 	}
 	
-	private void onePointLoop(List<EqualityLiteral> candidateList) {
+	private void onePointLoop(List<EqualityLiteral> candidates) {
 		// choose a candidate
 		int i = 0;
-		while (candidateList.size() > i) {
-			EqualityLiteral equality = candidateList.get(i);
+		while (candidates.size() > i) {
+			EqualityLiteral equality = candidates.get(i);
 			if (isOnePointCandidate(equality)) {
-				candidateList.remove(equality);
+				candidates.remove(equality);
 				doOnePoint(equality);
 			}
 			else {
@@ -106,8 +92,8 @@ public class OnePointRule implements ISimplifier {
 	private SimpleTerm getOnePointTerm(EqualityLiteral equality, Variable variable) {
 		assert isOnePointCandidate(equality);
 		SimpleTerm result;
-		SimpleTerm term1 = equality.getTerms().get(0);
-		SimpleTerm term2 = equality.getTerms().get(1);
+		SimpleTerm term1 = equality.getTerm(0);
+		SimpleTerm term2 = equality.getTerm(1);
 		
 		if (term1 == variable) result = term2;
 		else result = term1;
@@ -117,8 +103,8 @@ public class OnePointRule implements ISimplifier {
 
 	private Variable getOnePointVariable(EqualityLiteral equality) {
 		assert isOnePointCandidate(equality);
-		Term term1 = equality.getTerms().get(0);
-		Term term2 = equality.getTerms().get(1);
+		Term term1 = equality.getTerm(0);
+		Term term2 = equality.getTerm(1);
 		if (term1 instanceof Variable) return (Variable)term1;
 		if (term2 instanceof Variable) return (Variable)term2;
 		assert false;
@@ -127,8 +113,8 @@ public class OnePointRule implements ISimplifier {
 
 	private boolean isAlwaysTrue(EqualityLiteral equality) {
 		if (equality.isPositive()) {
-			Term term1 = equality.getTerms().get(0);
-			Term term2 = equality.getTerms().get(1);
+			Term term1 = equality.getTerm(0);
+			Term term2 = equality.getTerm(1);
 			if (!term1.isQuantified() && !term2.isQuantified()) return false;
 			if (term1 instanceof LocalVariable) {
 				return !term2.contains((SimpleTerm)term1);
@@ -143,8 +129,8 @@ public class OnePointRule implements ISimplifier {
 	
 	private boolean isOnePointCandidate(EqualityLiteral equality) {
 		if (!equality.isPositive()) {
-			Term term1 = equality.getTerms().get(0);
-			Term term2 = equality.getTerms().get(1);
+			Term term1 = equality.getTerm(0);
+			Term term2 = equality.getTerm(1);
 			if (term1.isQuantified()) return false;
 			if (term2.isQuantified()) return false;
 			if (term1 instanceof Variable) {

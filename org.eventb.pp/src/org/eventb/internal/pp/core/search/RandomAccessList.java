@@ -9,38 +9,36 @@
 package org.eventb.internal.pp.core.search;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * This set allows multiple iterator to be defined on it and to be modified without throwing a
- * {@link ConcurrentModificationException}.
+ * Implementation of {@link RandomAccessList}
  *
  * @author François Terrier
  *
  * @param <T>
  */
-public class IterableHashSet<T extends Object> implements IRandomAccessIterable<T> {
+public final class RandomAccessList<T extends Object> implements IRandomAccessList<T> {
 
-	private HashMap<T,LinkableClause> list = new HashMap<T,LinkableClause>();
-	LinkableClause first,last;
-	List<NiceIterator> iterators = new ArrayList<NiceIterator>();
+	private final HashMap<T,LinkableObject> list = new HashMap<T,LinkableObject>();
+	protected final List<NiceIterator> iterators = new ArrayList<NiceIterator>();
+	protected LinkableObject first,last;
 	
-	public IterableHashSet() {
+	public RandomAccessList() {
 		// nothing
 	}
 	
-	public T remove(T clause) {
-		updateIterators(clause);
-		return internalRemove(clause);
+	public T remove(T object) {
+		updateIterators(object);
+		return internalRemove(object);
 	}
 
-	public void appends(T clause) {
-		if (list.containsKey(clause)) return;
+	public void add(T object) {
+		if (list.containsKey(object)) return;
 		
-		LinkableClause link = new LinkableClause(clause);
+		LinkableObject link = new LinkableObject(object);
 		
 		if (list.isEmpty()) {
 			first = link;
@@ -50,25 +48,25 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 			last.next = link;
 			last = link;
 		}
-		list.put(clause, link);
+		list.put(object, link);
 	}
 	
-	public boolean contains(T clause) {
-		return list.containsKey(clause);
+	public boolean contains(T object) {
+		return list.containsKey(object);
 	}
 	
-	public T get(T clause) {
-		return list.get(clause).clause;
+	public T get(T object) {
+		return list.get(object).object;
 	}
 	
-	public void clear() {
-		for (NiceIterator iterator : iterators) {
-			iterator.reset();
-		}
-		list.clear();
-		first = null;
-		last = null;
-	}
+//	public void clear() {
+//		for (NiceIterator iterator : iterators) {
+//			iterator.reset();
+//		}
+//		list.clear();
+//		first = null;
+//		last = null;
+//	}
 	
 	public int size() {
 		return list.size();
@@ -80,37 +78,43 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 		return it;
 	}
 	
-	private void updateIterators(T clause) {
+	private void updateIterators(T object) {
 		for (NiceIterator it : iterators) {
-			it.remove(clause);
+			it.remove(object);
 		}
 	}
 	
-	private T internalRemove(T clause) {
-		LinkableClause r = list.remove(clause);
+	private T internalRemove(T object) {
+		LinkableObject r = list.remove(object);
 		if (r == null) return null;
-		if (r.previous != null)
+		if (r.previous != null) {
 			r.previous.next = r.next;
-		else 
+		}
+		else { 
 			// r is the first node
 			first = r.next;
-		if (r.next != null)
+		}
+		if (r.next != null) {
 			r.next.previous = r.previous;
-		else
+		}
+		else {
 			// r is the last node
 			last = r.previous;
-		
-		return r.clause;
+		}
+		return r.object;
 	}
 	
 	private class NiceIterator implements ResetIterator<T> {
-		private LinkableClause current;
+		private LinkableObject current;
+		private boolean invalid = false;
+		
 		NiceIterator(){
 			// nothing
 		}
 		
-		public void delete() {
+		public void invalidate() {
 			iterators.remove(this);
+			invalid = true;
 		}
 		
 		public void remove() {
@@ -118,47 +122,45 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 		}
 		
 		public boolean hasNext() {
+			if (invalid) throw new IllegalStateException("Iterator has been invalidated");
 			boolean hasNext = current != last;
 			return hasNext;
 		}
 
 		public T next() {
+			if (invalid) throw new IllegalStateException("Iterator has been invalidated");
 			if (current == last) throw new NoSuchElementException();
 			if (current == null) current = first;
 			else current = current.next;
-			return current.clause;
+			return current.object;
 		}
 		
-		void remove(T clause) {
-			if (current != null && current.clause.equals(clause)) {
+		void remove(T object) {
+			if (current != null && current.object.equals(object)) {
 				if (current.previous != null) current = current.previous;
 				else current = null;
 			}
 		}
 
 		public void reset() {
+			if (invalid) throw new IllegalStateException("Iterator has been invalidated");
 			current = null;
-		}
-
-		public T current() {
-			return current==null?null:current.clause;
 		}
 	}
 	
-	private class LinkableClause  {
-		T clause;
-		LinkableClause next;
-		LinkableClause previous;
+	private class LinkableObject  {
+		T object;
+		LinkableObject next;
+		LinkableObject previous;
 		
-		LinkableClause(T clause) {
-			assert clause != null;
-			
-			this.clause = clause;
+		LinkableObject(T object) {
+			assert object != null;
+			this.object = object;
 		}
 		
 		@Override
 		public String toString() {
-			return clause.toString();
+			return object.toString();
 		}
 	}
 
@@ -171,7 +173,7 @@ public class IterableHashSet<T extends Object> implements IRandomAccessIterable<
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[");
-		LinkableClause tmp = first;
+		LinkableObject tmp = first;
 		while (tmp != null) {
 			builder.append(tmp.toString()+", ");
 			tmp = tmp.next;

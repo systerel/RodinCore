@@ -1,15 +1,15 @@
 package org.eventb.pp.core.simplifiers;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cEqClause;
-import static org.eventb.pp.Util.cEqual;
-import static org.eventb.pp.Util.cNEqual;
-import static org.eventb.pp.Util.cPred;
-import static org.eventb.pp.Util.mList;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
-import org.eventb.pp.AbstractPPTest;
 
 /**
  * This class tests the one point rule. There are several tests :

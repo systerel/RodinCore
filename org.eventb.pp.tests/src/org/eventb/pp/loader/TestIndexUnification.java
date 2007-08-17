@@ -3,13 +3,13 @@ package org.eventb.pp.loader;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 import org.eventb.internal.pp.loader.predicate.IntermediateResult;
-import org.eventb.pp.AbstractPPTest;
-import org.eventb.pp.Util;
 
 public class TestIndexUnification extends AbstractPPTest {
 

@@ -1,23 +1,23 @@
 package org.eventb.pp.core.elements.terms;
 
-import static org.eventb.pp.Util.cDiv;
-import static org.eventb.pp.Util.cELocVar;
-import static org.eventb.pp.Util.cExpn;
-import static org.eventb.pp.Util.cFLocVar;
-import static org.eventb.pp.Util.cMinus;
-import static org.eventb.pp.Util.cMod;
-import static org.eventb.pp.Util.cPlus;
-import static org.eventb.pp.Util.cTimes;
-import static org.eventb.pp.Util.cUnMin;
-import static org.eventb.pp.Util.cVar;
+import static org.eventb.internal.pp.core.elements.terms.Util.cDiv;
+import static org.eventb.internal.pp.core.elements.terms.Util.cELocVar;
+import static org.eventb.internal.pp.core.elements.terms.Util.cExpn;
+import static org.eventb.internal.pp.core.elements.terms.Util.cFLocVar;
+import static org.eventb.internal.pp.core.elements.terms.Util.cMinus;
+import static org.eventb.internal.pp.core.elements.terms.Util.cMod;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPlus;
+import static org.eventb.internal.pp.core.elements.terms.Util.cTimes;
+import static org.eventb.internal.pp.core.elements.terms.Util.cUnMin;
+import static org.eventb.internal.pp.core.elements.terms.Util.cVar;
 
 import java.util.HashMap;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.pp.core.elements.Sort;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.pp.AbstractPPTest;
 
 public class TestTermEquality extends AbstractPPTest {
 

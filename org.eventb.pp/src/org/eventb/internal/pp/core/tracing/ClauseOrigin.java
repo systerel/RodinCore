@@ -13,6 +13,13 @@ import java.util.List;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.Clause;
 
+/**
+ * Implementation of {@link IOrigin} for clauses that are derived from
+ * several other clauses. This implementation computes the level lazily.
+ *
+ * @author François Terrier
+ *
+ */
 public class ClauseOrigin extends AbstractInferrenceOrigin {
 
 	public ClauseOrigin(List<Clause> parents) {
@@ -24,6 +31,7 @@ public class ClauseOrigin extends AbstractInferrenceOrigin {
 	}
 
 	Level level = null;
+	
 	public Level getLevel() {
 		if (level != null) return level;
 		
@@ -36,6 +44,5 @@ public class ClauseOrigin extends AbstractInferrenceOrigin {
 		level = result;
 		return result;
 	}
-	
 	
 }

@@ -1,14 +1,14 @@
 package org.eventb.pp.core.elements;
 
-import static org.eventb.pp.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 
 import java.util.HashMap;
 
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
-import org.eventb.internal.pp.loader.clause.VariableContext;
-import org.eventb.pp.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 
 public class TestLiteralCopy extends AbstractPPTest {
 

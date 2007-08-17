@@ -1,14 +1,14 @@
 package org.eventb.pp.loader;
 
-import static org.eventb.pp.Util.mConstant;
-import static org.eventb.pp.Util.mDivide;
-import static org.eventb.pp.Util.mExpn;
-import static org.eventb.pp.Util.mInteger;
-import static org.eventb.pp.Util.mMinus;
-import static org.eventb.pp.Util.mMod;
-import static org.eventb.pp.Util.mPlus;
-import static org.eventb.pp.Util.mTimes;
-import static org.eventb.pp.Util.mUnaryMinus;
+import static org.eventb.internal.pp.core.elements.terms.Util.mConstant;
+import static org.eventb.internal.pp.core.elements.terms.Util.mDivide;
+import static org.eventb.internal.pp.core.elements.terms.Util.mExpn;
+import static org.eventb.internal.pp.core.elements.terms.Util.mInteger;
+import static org.eventb.internal.pp.core.elements.terms.Util.mMinus;
+import static org.eventb.internal.pp.core.elements.terms.Util.mMod;
+import static org.eventb.internal.pp.core.elements.terms.Util.mPlus;
+import static org.eventb.internal.pp.core.elements.terms.Util.mTimes;
+import static org.eventb.internal.pp.core.elements.terms.Util.mUnaryMinus;
 
 import java.util.Stack;
 
@@ -16,10 +16,10 @@ import junit.framework.TestCase;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.NormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.TermBuilder;
-import org.eventb.pp.Util;
 
 
 public class TestTermBuilder extends TestCase {

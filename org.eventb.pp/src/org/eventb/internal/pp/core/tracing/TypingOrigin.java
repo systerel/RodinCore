@@ -12,6 +12,14 @@ import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
 
+/**
+ * Implementation of {@link IOrigin} for typing clauses.
+ * <p>
+ * TODO rethink about this
+ *
+ * @author François Terrier
+ *
+ */
 public class TypingOrigin implements IOrigin {
 	
 	public boolean dependsOnGoal() {

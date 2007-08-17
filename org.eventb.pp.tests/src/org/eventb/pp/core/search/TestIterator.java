@@ -36,17 +36,6 @@ public class TestIterator extends TestCase {
 		return new NiceIterator(objects.iterator());
 	}
 	
-//	private Iterator<Object> createTwoIterableIteratorTwoElements() {
-//		List<Iterator<Object>> list = new ArrayList<Iterator<Object>>();
-//		List<Object> objects1 = new ArrayList<Object>();
-//		objects1.add(new Object());
-//		List<Object> objects2 = new ArrayList<Object>();
-//		objects2.add(new Object());
-//		list.add(objects1.iterator());
-//		list.add(objects2.iterator());
-//		return new NiceIterator(list.iterator());
-//	}
-	
 	public void testEmptyIterator1() {
 		Iterator<Object> it = createEmptyIterator();
 		assertFalse(it.hasNext());
@@ -119,6 +108,5 @@ public class TestIterator extends TestCase {
 		assertNotNull(it.next());
 		assertFalse(it.hasNext());
 	}
-	
 	
 }

@@ -1,15 +1,15 @@
 package org.eventb.pp.core.inferrers;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cEqClause;
-import static org.eventb.pp.Util.cPred;
-import static org.eventb.pp.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
 
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.InstantiationInferrer;
-import org.eventb.internal.pp.loader.clause.VariableContext;
 
 public class TestInstantiationInferrer extends AbstractInferrerTests {
 

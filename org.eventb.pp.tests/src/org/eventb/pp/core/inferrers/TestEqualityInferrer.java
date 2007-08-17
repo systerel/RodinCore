@@ -1,18 +1,18 @@
 package org.eventb.pp.core.inferrers;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cEqClause;
-import static org.eventb.pp.Util.cNotProp;
-import static org.eventb.pp.Util.cPred;
-import static org.eventb.pp.Util.cProp;
-import static org.eventb.pp.Util.mList;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.List;
 
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.EqualityInferrer;
-import org.eventb.internal.pp.loader.clause.VariableContext;
 
 public class TestEqualityInferrer extends AbstractInferrerTests {
 

@@ -94,8 +94,8 @@ public class EqualitySolver {
 				// contradiction
 				Set<FactSource> contradictionSource = source(equality.getLeft(),equality.getRight());
 				result.add(new QueryResult(equality.getSource(),contradictionSource,isEquality));
-				if (isEquality) root.removeRootQueryEquality(equality);
-				else root.removeRootQueryInequality(equality);
+//				if (isEquality) root.removeRootQueryEquality(equality);
+//				else root.removeRootQueryInequality(equality);
 			}
 		}
 		return result;
@@ -206,14 +206,14 @@ public class EqualitySolver {
 				Set<FactSource> contradictionSource = getContradictionSourceInTwoTrees(node1, node2, left, right);
 				contradictionSource.add(source);
 				resultList.add(new QueryResult(equality.getSource(),contradictionSource,isPositive));
-				if (isPositive) {
-					root.removeRootQueryInequality(equality);
-					infoNode.removeRootQueryInequality(equality);
-				}
-				else {
-					root.removeRootQueryEquality(equality);
-					infoNode.removeRootQueryEquality(equality);
-				}
+//				if (isPositive) {
+//					root.removeRootQueryInequality(equality);
+//					infoNode.removeRootQueryInequality(equality);
+//				}
+//				else {
+//					root.removeRootQueryEquality(equality);
+//					infoNode.removeRootQueryEquality(equality);
+//				}
 			}
 		}
 		return resultList;

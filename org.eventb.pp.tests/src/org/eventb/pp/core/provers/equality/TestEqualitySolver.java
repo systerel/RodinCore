@@ -1,10 +1,11 @@
 package org.eventb.pp.core.provers.equality;
 
-import static org.eventb.pp.Util.mSet;
+import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
 import java.util.List;
 
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.provers.equality.IFactResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Equality;
 import org.eventb.internal.pp.core.provers.equality.unionfind.EqualitySolver;
@@ -17,8 +18,6 @@ import org.eventb.internal.pp.core.provers.equality.unionfind.Source;
 import org.eventb.internal.pp.core.provers.equality.unionfind.SourceTable;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
-import org.eventb.pp.AbstractPPTest;
-import org.eventb.pp.Util;
 
 @SuppressWarnings("unused")
 public class TestEqualitySolver extends AbstractPPTest {
@@ -659,15 +658,15 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertFalse(queries.get(1).getValue());
 	}
 	
-	public void testSimpleQuerySuppressed1() {
-		assertNull(solver.addQuery(E(a, d, R3L0q), true));
-		assertNull(solver.addQuery(E(a, d, R5L0q), false));
-		
-		assertNull(solver.addFactEquality(E(a, b, R1L0)));
-		assertNotNull(solver.addFactInequality(E(a, d, R4L0)));
-		// query should not be there after being solved
-		assertNull(solver.addFactInequality(E(b, d, R2L0)));
-	}
+//	public void testSimpleQuerySuppressed1() {
+//		assertNull(solver.addQuery(E(a, d, R3L0q), true));
+//		assertNull(solver.addQuery(E(a, d, R5L0q), false));
+//		
+//		assertNull(solver.addFactEquality(E(a, b, R1L0)));
+//		assertNotNull(solver.addFactInequality(E(a, d, R4L0)));
+//		// query should not be there after being solved
+//		assertNull(solver.addFactInequality(E(b, d, R2L0)));
+//	}
 	
 	// origin with different levels
 //	 sources without levels

@@ -1,17 +1,17 @@
 package org.eventb.pp.core.provers.seedsearch;
 
-import static org.eventb.pp.Util.mSet;
+import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.provers.seedsearch.solver.Instantiable;
 import org.eventb.internal.pp.core.provers.seedsearch.solver.InstantiationValue;
 import org.eventb.internal.pp.core.provers.seedsearch.solver.LiteralSignature;
 import org.eventb.internal.pp.core.provers.seedsearch.solver.SeedSearchSolver;
 import org.eventb.internal.pp.core.provers.seedsearch.solver.VariableLink;
-import org.eventb.pp.AbstractPPTest;
 
 public class TestSeedSearchSolver extends AbstractPPTest {
 

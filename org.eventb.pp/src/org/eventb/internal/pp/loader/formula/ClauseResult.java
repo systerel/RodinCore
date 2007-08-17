@@ -14,8 +14,8 @@ import java.util.List;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.tracing.IOrigin;
-import org.eventb.internal.pp.loader.clause.VariableContext;
 
 public class ClauseResult {
 
@@ -68,8 +68,8 @@ public class ClauseResult {
 	public List<Clause> getClauses(IOrigin origin, VariableContext context) {
 		List<Clause> result = new ArrayList<Clause>();
 		for (List<Literal<?,?>> literalList : literalLists) {
-			if (isEquivalence && literalList.size() > 1) result.add(cf.newEqClauseWithCopy(origin, literalList, context));
-			else result.add(cf.newDisjClauseWithCopy(origin, literalList, context));
+			if (isEquivalence && literalList.size() > 1) result.add(cf.makeEquivalenceClauseWithNewVariables(origin, literalList, context));
+			else result.add(cf.makeDisjunctiveClauseWithNewVariables(origin, literalList, context));
 		}
 		return result;
 	}

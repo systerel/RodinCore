@@ -75,7 +75,7 @@ public class PPProverCall extends XProverCall {
 
 	@Override
 	public Set<Predicate> neededHypotheses() {
-		return new HashSet<Predicate>(prover.getResult().getTracer().getOriginalPredicates());
+		return new HashSet<Predicate>(prover.getResult().getTracer().getNeededHypotheses());
 	}
 
 }

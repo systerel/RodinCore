@@ -11,7 +11,12 @@ package org.eventb.internal.pp.core.elements.terms;
 import java.util.Arrays;
 import java.util.List;
 
-
+/**
+ * Abstract base class for binary terms.
+ *
+ * @author François Terrier
+ *
+ */
 public abstract class BinaryTerm extends AssociativeTerm {
 	
 	public BinaryTerm(Term left, Term right, int priority) {

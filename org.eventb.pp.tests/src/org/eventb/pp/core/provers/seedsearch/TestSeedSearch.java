@@ -1,11 +1,11 @@
 package org.eventb.pp.core.provers.seedsearch;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cEqClause;
-import static org.eventb.pp.Util.cNotPred;
-import static org.eventb.pp.Util.cPred;
-import static org.eventb.pp.Util.cProp;
-import static org.eventb.pp.Util.mList;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.List;
 
@@ -13,10 +13,10 @@ import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.provers.seedsearch.SeedSearchProver;
-import org.eventb.internal.pp.core.search.IterableHashSet;
-import org.eventb.internal.pp.loader.clause.VariableContext;
-import org.eventb.pp.AbstractPPTest;
+import org.eventb.internal.pp.core.search.RandomAccessList;
 
 public class TestSeedSearch extends AbstractPPTest {
 
@@ -86,9 +86,9 @@ public class TestSeedSearch extends AbstractPPTest {
 		
 		SeedSearchProver prover = getProver();
 		
-		IterableHashSet<Clause> clauses = new IterableHashSet<Clause>();
+		RandomAccessList<Clause> clauses = new RandomAccessList<Clause>();
 		for (Clause clause : pair.originalClauses) {
-			clauses.appends(clause);
+			clauses.add(clause);
 		}
 
 		prover.addClauseAndDetectContradiction(pair.unitClause);

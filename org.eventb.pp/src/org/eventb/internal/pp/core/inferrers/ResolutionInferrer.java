@@ -17,14 +17,11 @@ import java.util.Set;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
-import org.eventb.internal.pp.core.elements.FalseClause;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
-import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
@@ -48,12 +45,12 @@ public class ResolutionInferrer extends AbstractInferrer {
 	}
 	
 	public void setUnitClause(Clause clause) {
-		assert clause.isUnit() && clause.getPredicateLiterals().size() == 1;
+		assert clause.isUnit() && clause.getPredicateLiteralsSize() == 1;
 		
 		// we keep the original unit clause
 		unitClause = clause;
 		// we save a copy of the original predicate
-		predicate = clause.getPredicateLiterals().get(0).getCopyWithNewVariables(context, new HashMap<SimpleTerm, SimpleTerm>());
+		predicate = clause.getPredicateLiteral(0).getCopyWithNewVariables(context, new HashMap<SimpleTerm, SimpleTerm>());
 	}
 	
 	@Override
@@ -96,9 +93,9 @@ public class ResolutionInferrer extends AbstractInferrer {
 	}
 	
 	private void preparePredicate(PredicateLiteral matchingPredicate) {
-		for (int i = 0; i < matchingPredicate.getTerms().size(); i++) {
-			SimpleTerm matchingTerm = matchingPredicate.getTerms().get(i);
-			SimpleTerm matcherTerm = predicate.getTerms().get(i);
+		for (int i = 0; i < matchingPredicate.getTermsSize(); i++) {
+			SimpleTerm matchingTerm = matchingPredicate.getTerm(i);
+			SimpleTerm matcherTerm = predicate.getTerm(i);
 			
 			if (!matcherTerm.isConstant()) {
 				// for now only variables
@@ -118,9 +115,9 @@ public class ResolutionInferrer extends AbstractInferrer {
 		// in 2 different clauses and no equal local variables in 2 different
 		// literals.
 		List<EqualityLiteral> result = new ArrayList<EqualityLiteral>();
-		for (int i = 0; i < matchingPredicate.getTerms().size(); i++) {
-			SimpleTerm term1 = matchingPredicate.getTerms().get(i);
-			SimpleTerm term2 = predicate.getTerms().get(i);
+		for (int i = 0; i < matchingPredicate.getTermsSize(); i++) {
+			SimpleTerm term1 = matchingPredicate.getTerm(i);
+			SimpleTerm term2 = predicate.getTerm(i);
 			// we set the instantiation flag for subsumption checking
 			if (!term1.equals(term2)) hasInstantiations = true;
 			result.add(new EqualityLiteral(term1,term2,false));
@@ -138,8 +135,8 @@ public class ResolutionInferrer extends AbstractInferrer {
 		
 		conditions.addAll(getConditions(matchingPredicate));
 		
-		if (isEmpty()) result = new FalseClause(getOrigin(clause));
-		else result = new DisjunctiveClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
+		if (isEmptyWithConditions()) result = cf.makeFALSE(getOrigin(clause));
+		else result = cf.makeDisjunctiveClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
 		
 		if (isSubsumed(clause)) subsumedClause = clause;
 	}
@@ -150,8 +147,6 @@ public class ResolutionInferrer extends AbstractInferrer {
 		boolean sameSign = sameSign(matchingPredicate, predicate);
 		if (!sameSign) EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
 		
-//		updateInstantiationCount(matchingPredicate);
-		
 		if (matchingPredicate.isQuantified()) matchingPredicate = transformVariables(matchingPredicate);
 		
 		// TODO check
@@ -159,8 +154,8 @@ public class ResolutionInferrer extends AbstractInferrer {
 		
 		conditions.addAll(getConditions(matchingPredicate));
 		
-		if (isEmpty()) result = new FalseClause(getOrigin(clause));
-		else result = EquivalenceClause.newClause(getOrigin(clause), predicates, equalities, arithmetic, conditions, context);
+		if (isEmptyWithConditions()) result = cf.makeFALSE(getOrigin(clause));
+		else result = cf.makeClauseFromEquivalenceClause(getOrigin(clause), predicates, equalities, arithmetic, conditions, context);
 		
 		if (isSubsumed(clause)) subsumedClause = clause;
 	}
@@ -171,9 +166,7 @@ public class ResolutionInferrer extends AbstractInferrer {
 		
 		PredicateLiteral result;
 		Set<LocalVariable> pseudoConstants = new HashSet<LocalVariable>();
-		for (Term term : matchingPredicate.getTerms()) {
-			term.collectLocalVariables(pseudoConstants);
-		}
+		matchingPredicate.collectLocalVariables(pseudoConstants);
 		if (pseudoConstants.isEmpty()) result = matchingPredicate;
 		else {
 			boolean forall = pseudoConstants.iterator().next().isForall();

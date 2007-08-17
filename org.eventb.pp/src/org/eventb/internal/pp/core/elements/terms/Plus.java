@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public final class Plus extends AssociativeTerm {
 
-	private static final int PRIORITY = 6;
+	private static final int PRIORITY = 7;
 	
 	
 	public Plus (List<Term> children) {

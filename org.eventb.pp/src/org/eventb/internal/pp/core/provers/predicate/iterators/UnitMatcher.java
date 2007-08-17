@@ -12,12 +12,12 @@ import java.util.HashMap;
 
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
-import org.eventb.internal.pp.core.search.IterableHashSet;
+import org.eventb.internal.pp.core.search.RandomAccessList;
 
 public class UnitMatcher {
 	// this class has a state
-	private HashMap<PredicateLiteralDescriptor, IterableHashSet<Clause>> positiveUnitClauseMap = new HashMap<PredicateLiteralDescriptor, IterableHashSet<Clause>>();
-	private HashMap<PredicateLiteralDescriptor, IterableHashSet<Clause>> negativeUnitClauseMap = new HashMap<PredicateLiteralDescriptor, IterableHashSet<Clause>>();
+	private HashMap<PredicateLiteralDescriptor, RandomAccessList<Clause>> positiveUnitClauseMap = new HashMap<PredicateLiteralDescriptor, RandomAccessList<Clause>>();
+	private HashMap<PredicateLiteralDescriptor, RandomAccessList<Clause>> negativeUnitClauseMap = new HashMap<PredicateLiteralDescriptor, RandomAccessList<Clause>>();
 	
 //	public UnitMatcher(IObservable unitClauses) {
 //		unitClauses.addChangeListener(this);
@@ -51,36 +51,36 @@ public class UnitMatcher {
 		removeFromIndex(clause);
 	}
 
-	public IterableHashSet<Clause> getMatchingClauses(PredicateLiteralDescriptor predicate, boolean isPositive) {
-		HashMap<PredicateLiteralDescriptor, IterableHashSet<Clause>> map = !isPositive?positiveUnitClauseMap:negativeUnitClauseMap;
-		IterableHashSet<Clause> result;
+	public RandomAccessList<Clause> getMatchingClauses(PredicateLiteralDescriptor predicate, boolean isPositive) {
+		HashMap<PredicateLiteralDescriptor, RandomAccessList<Clause>> map = !isPositive?positiveUnitClauseMap:negativeUnitClauseMap;
+		RandomAccessList<Clause> result;
 		result = map.get(predicate);
 		if (result == null) {
-			result = new IterableHashSet<Clause>();
+			result = new RandomAccessList<Clause>();
 			map.put(predicate, result);
 		}
 		return result;
 	}
 
 	private void addToIndex(Clause clause) {
-		PredicateLiteralDescriptor desc = clause.getPredicateLiterals().get(0).getDescriptor();
-		boolean isPositive = clause.getPredicateLiterals().get(0).isPositive();
-		HashMap<PredicateLiteralDescriptor, IterableHashSet<Clause>> map = isPositive?positiveUnitClauseMap:negativeUnitClauseMap;
+		PredicateLiteralDescriptor desc = clause.getPredicateLiteral(0).getDescriptor();
+		boolean isPositive = clause.getPredicateLiteral(0).isPositive();
+		HashMap<PredicateLiteralDescriptor, RandomAccessList<Clause>> map = isPositive?positiveUnitClauseMap:negativeUnitClauseMap;
 		
-		IterableHashSet<Clause> list = map.get(desc);
+		RandomAccessList<Clause> list = map.get(desc);
 		if (list == null) {
-			list = new IterableHashSet<Clause>();
+			list = new RandomAccessList<Clause>();
 			map.put(desc, list);
 		}
-		list.appends(clause);
+		list.add(clause);
 	}
 
 	private void removeFromIndex(Clause clause) {
-		PredicateLiteralDescriptor desc = clause.getPredicateLiterals().get(0).getDescriptor();
-		boolean isPositive = clause.getPredicateLiterals().get(0).isPositive();
-		HashMap<PredicateLiteralDescriptor, IterableHashSet<Clause>> map = isPositive?positiveUnitClauseMap:negativeUnitClauseMap;
+		PredicateLiteralDescriptor desc = clause.getPredicateLiteral(0).getDescriptor();
+		boolean isPositive = clause.getPredicateLiteral(0).isPositive();
+		HashMap<PredicateLiteralDescriptor, RandomAccessList<Clause>> map = isPositive?positiveUnitClauseMap:negativeUnitClauseMap;
 		
-		IterableHashSet<Clause> list = map.get(desc);
+		RandomAccessList<Clause> list = map.get(desc);
 		if (list != null) list.remove(clause);
 	}
 }

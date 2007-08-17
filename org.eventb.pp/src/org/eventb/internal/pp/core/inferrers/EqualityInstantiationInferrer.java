@@ -13,11 +13,8 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
-import org.eventb.internal.pp.core.elements.FalseClause;
-import org.eventb.internal.pp.core.elements.TrueClause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
@@ -53,8 +50,8 @@ public class EqualityInstantiationInferrer extends InstantiationInferrer {
 		instantiationEqualities.add(equality);
 		
 		Variable variable = null;
-		if (equality.getTerms().get(0) instanceof Variable) variable = (Variable)equality.getTerms().get(0);
-		else if (equality.getTerms().get(1) instanceof Variable) variable = (Variable)equality.getTerms().get(1);
+		if (equality.getTerm(0) instanceof Variable) variable = (Variable)equality.getTerm(0);
+		else if (equality.getTerm(1) instanceof Variable) variable = (Variable)equality.getTerm(1);
 		else assert false;
 		
 		super.addInstantiation(variable, constant);
@@ -75,20 +72,20 @@ public class EqualityInstantiationInferrer extends InstantiationInferrer {
 	@Override
 	protected void inferFromEquivalenceClauseHelper(Clause clause) {
 		substitute();
-		if (isEmpty() && !inverse) result = new TrueClause(getOrigin(clause));
-		else if (isEmpty() && inverse) result = new FalseClause(getOrigin(clause));
+		if (isEmptyWithConditions() && !inverse) result = cf.makeTRUE(getOrigin(clause));
+		else if (isEmptyWithConditions() && inverse) result = cf.makeFALSE(getOrigin(clause));
 		else {
 			if (inverse) EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
-			result = EquivalenceClause.newClause(getOrigin(clause),predicates,equalities,arithmetic,conditions, context);
+			result = cf.makeClauseFromEquivalenceClause(getOrigin(clause),predicates,equalities,arithmetic,conditions, context);
 		}
 	}
 
 	@Override
 	protected void inferFromDisjunctiveClauseHelper(Clause clause) {
 		substitute();
-		if (hasTrueLiterals) result = new TrueClause(getOrigin(clause));
-		if (isEmpty()) result = new FalseClause(getOrigin(clause));
-		result = new DisjunctiveClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
+		if (hasTrueLiterals) result = cf.makeTRUE(getOrigin(clause));
+		if (isEmptyWithConditions()) result = cf.makeFALSE(getOrigin(clause));
+		result = cf.makeDisjunctiveClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
 	}
 	
 	public void addParentClauses(List<Clause> clauses) {

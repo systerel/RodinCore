@@ -14,7 +14,7 @@ import java.util.Map;
 
 public final class Minus extends BinaryTerm {
 
-	private static final int PRIORITY = 7;
+	private static final int PRIORITY = 8;
 	
 	
 	public Minus(Term left, Term right) {

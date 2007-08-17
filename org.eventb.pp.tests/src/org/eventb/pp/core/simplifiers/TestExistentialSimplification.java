@@ -1,20 +1,20 @@
 package org.eventb.pp.core.simplifiers;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cEqClause;
-import static org.eventb.pp.Util.cEqual;
-import static org.eventb.pp.Util.cPred;
-import static org.eventb.pp.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Sort;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
+import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
-import org.eventb.pp.AbstractPPTest;
-import org.eventb.pp.Util;
 
 public class TestExistentialSimplification extends AbstractPPTest {
 	

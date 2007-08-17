@@ -1,23 +1,25 @@
 package org.eventb.pp.core.simplifiers;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cEqClause;
-import static org.eventb.pp.Util.cEqual;
-import static org.eventb.pp.Util.cNEqual;
-import static org.eventb.pp.Util.cNotPred;
-import static org.eventb.pp.Util.cNotProp;
-import static org.eventb.pp.Util.cPred;
-import static org.eventb.pp.Util.cProp;
-import static org.eventb.pp.Util.mList;
+import static org.eventb.internal.pp.core.elements.terms.Util.cAEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cANEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.ArrayList;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
-import org.eventb.internal.pp.loader.clause.VariableContext;
-import org.eventb.pp.AbstractPPTest;
 
 public class TestLiteralSimplification extends AbstractPPTest {
 	private class TestPair {
@@ -28,7 +30,6 @@ public class TestLiteralSimplification extends AbstractPPTest {
 			this.output = output;
 		}
 	}
-	
 	
 	
 	TestPair[] tests = new TestPair[] {
@@ -266,10 +267,10 @@ public class TestLiteralSimplification extends AbstractPPTest {
 				cEqClause(cPred(0,fvar0),cPred(0,fvar1)),
 				cEqClause(cPred(0,fvar0),cPred(0,fvar1))
 		),
-		new TestPair(
-				cEqClause(cPred(0,evar0),cNotPred(0,fvar0)),
-				FALSE
-		),
+//		new TestPair(
+//				cEqClause(cPred(0,evar0),cNotPred(0,fvar0)),
+//				FALSE
+//		),
 		new TestPair(
 				cEqClause(cPred(0,evar0),cPred(0,var0)),
 				cEqClause(cPred(0,evar0),cPred(0,var0))
@@ -336,12 +337,51 @@ public class TestLiteralSimplification extends AbstractPPTest {
 				TRUE
 		),
 		
+		// other
+		new TestPair(
+				cEqClause(cProp(0),cProp(0),cProp(0)),
+				cClause(cProp(0))
+		),
+		new TestPair(
+				cEqClause(cProp(0),cProp(0),cNotProp(0)),
+				cClause(cNotProp(0))
+		),
+		new TestPair(
+				cEqClause(cProp(0),cNotProp(0),cNotProp(0)),
+				cClause(cProp(0))
+		),
+		new TestPair(
+				cEqClause(cProp(0),cProp(0),cProp(0),cProp(0)),
+				TRUE
+		),
+		new TestPair(
+				cEqClause(cProp(0),cProp(0),cNotProp(0),cProp(0)),
+				FALSE
+		),
+		new TestPair(
+				cEqClause(cProp(0),cNotProp(0),cNotProp(0),cProp(0)),
+				TRUE
+		),
+		new TestPair(
+				cEqClause(cProp(0),cNotProp(0),cEqual(a,b),cNEqual(a,b)),
+				TRUE
+		),
+		new TestPair(
+				cEqClause(cProp(0),cProp(0),cNotProp(0),cEqual(a,b),cNEqual(a,b)),
+				cClause(cProp(0))
+		),
+		new TestPair(
+				cEqClause(cProp(0),cNotProp(0),cEqual(a,b),cNEqual(a,b),cAEqual(zero, one),cANEqual(zero, one)),
+				FALSE
+		),
+		new TestPair(
+				cEqClause(cProp(0),cNotProp(0),cProp(0),cEqual(a,b),cNEqual(a,b),cAEqual(zero, one),cANEqual(zero, one)),
+				cClause(cNotProp(0))
+		),
 	};
 
 	private IVariableContext variableContext() {
-		VariableContext context = new VariableContext();
-		context.putInCache(var00);
-		return context;
+		return new VariableContext();
 	}
 	
 	public void testSimplifier() {

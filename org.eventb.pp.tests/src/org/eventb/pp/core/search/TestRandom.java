@@ -5,8 +5,9 @@ import java.util.NoSuchElementException;
 
 import junit.framework.TestCase;
 
-import org.eventb.internal.pp.core.search.IRandomAccessIterable;
-import org.eventb.internal.pp.core.search.IterableHashSet;
+import org.eventb.internal.pp.core.search.IRandomAccessList;
+import org.eventb.internal.pp.core.search.RandomAccessList;
+import org.eventb.internal.pp.core.search.ResetIterator;
 
 public class TestRandom extends TestCase {
 
@@ -24,14 +25,14 @@ public class TestRandom extends TestCase {
 	
 	
 	public void testConstruction() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
-		set.appends(e);
-		set.appends(f);
-		set.appends(g);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
+		set.add(e);
+		set.add(f);
+		set.add(g);
 		
 		for (int i=0;i<2;i++) {
 			Iterator<Object> it = set.iterator();
@@ -46,11 +47,11 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testNoSuchElement() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		Iterator<Object> it = set.iterator();
 		it.next();
@@ -59,37 +60,18 @@ public class TestRandom extends TestCase {
 		it.next();
 		try {
 			it.next();
+			fail();
 		} catch (NoSuchElementException e) {
-			assertTrue(true);
+			// nothing
 		}
 	}
 	
-//	public void testNextNotInitialized() {
-//		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-//		set.appends(a);
-//		try {
-//			it.next();
-//		} catch (IllegalStateException e) {
-//			assertTrue(true);
-//		}
-//	}
-	
-//	public void testHasNextNotInitialized() {
-//		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-//		set.appends(a);
-//		try {
-//			set.hasNext();
-//		} catch (IllegalStateException e) {
-//			assertTrue(true);
-//		}
-//	}
-	
 	public void testHasNext() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		Iterator<Object> it = set.iterator();
 		assertEquals(it.hasNext(), true);
@@ -105,12 +87,12 @@ public class TestRandom extends TestCase {
 	
 
 	public void testRemoveFirstNoIt() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		set.remove(a);
 		Iterator<Object> it = set.iterator();
@@ -122,11 +104,11 @@ public class TestRandom extends TestCase {
 	
 	
 	public void testRemoveLastNoIt() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		set.remove(d);
 		Iterator<Object> it = set.iterator();
@@ -136,11 +118,11 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testRemoveMidNoIt() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		set.remove(b);
 		Iterator<Object> it = set.iterator();
@@ -150,11 +132,11 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testRemoveInexistantNoIt() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		assertNull(set.remove(e));
 		Iterator<Object> it = set.iterator();
@@ -165,11 +147,11 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testRemoveFirstIt() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		Iterator<Object> it = set.iterator();
 		set.remove(a);
@@ -179,67 +161,68 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testRemoveFirstItOneElement() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
 		
 		Iterator<Object> it = set.iterator();
 		assertEquals(it.next(), a);
 		set.remove(a);
 		try {
 			it.next();
+			fail();
 		} catch (NoSuchElementException	e) {
-			assertTrue(true);
+			// nothing
 		}
 	}
 	
 	public void testAddAfterEnd1() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		
 		Iterator<Object> it = set.iterator();
 		assertFalse(it.hasNext());
-		set.appends(a);
+		set.add(a);
 		assertTrue(it.hasNext());
 		assertEquals(it.next(), a);
 	}
 	
 
 	public void testAddAfterEnd2() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
 		
 		Iterator<Object> it = set.iterator();
 		assertEquals(it.next(), a);
 		assertFalse(it.hasNext());
 		set.remove(a);
-		set.appends(b);
+		set.add(b);
 		assertTrue(it.hasNext());
 		assertEquals(it.next(), b);
 	}
 	
 	public void testAddAfterEnd3() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		
 		Iterator<Object> it = set.iterator();
 		assertFalse(it.hasNext());
-		set.appends(a);
-		set.appends(b);
+		set.add(a);
+		set.add(b);
 		
 		assertEquals(it.next(), a);
 		assertEquals(it.next(), b);
 		set.remove(b);
-		set.appends(d);
+		set.add(d);
 		assertEquals(it.next(), d);
 	}
 	
 	public void testAddAfterEnd4() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		Iterator<Object> it = set.iterator();
 		assertFalse(it.hasNext());
 		
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		assertEquals(it.next(), a);
 		assertEquals(it.next(), b);
@@ -250,11 +233,11 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testRemoveFirstItAfter() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		Iterator<Object> it = set.iterator();
 		assertEquals(it.next(), a);
@@ -285,11 +268,11 @@ public class TestRandom extends TestCase {
 //	}
 	
 	public void testRemoveLastIt() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		Iterator<Object> it = set.iterator();
 		assertEquals(it.next(), a);
@@ -298,17 +281,30 @@ public class TestRandom extends TestCase {
 		set.remove(d);
 		try {
 			it.next();
+			fail();
 		} catch (NoSuchElementException	e) {
-			assertTrue(true);
+			// nothing
+		}
+	}
+	
+	public void testRemoveIterator() {
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		ResetIterator<Object> it = set.iterator();
+		try {
+			it.remove();
+			fail();
+		}
+		catch (UnsupportedOperationException e) {
+			// nothing
 		}
 	}
 	
 	public void testRemoveMidIt1() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		Iterator<Object> it = set.iterator();
 		set.remove(b);
@@ -323,11 +319,11 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testRemoveMidIt2() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		Iterator<Object> it = set.iterator();
 		assertEquals(it.next(), a);
@@ -342,11 +338,11 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testRemoveMidIt3() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		Iterator<Object> it = set.iterator();
 		assertEquals(it.next(), a);
@@ -362,11 +358,11 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testRemoveMidIt4() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		Iterator<Object> it = set.iterator();
 		assertEquals(it.next(), a);
@@ -382,11 +378,11 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testRemoveMidIt5() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		Iterator<Object> it = set.iterator();
 		assertEquals(it.next(), a);
@@ -398,11 +394,11 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testRemoveInexistantIt() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		Iterator<Object> it = set.iterator();
 		assertNull(set.remove(e));
@@ -413,9 +409,9 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testAppendsSame() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(a);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(a);
 		
 		Iterator<Object> it = set.iterator();
 		assertEquals(set.remove(a), a);
@@ -492,11 +488,11 @@ public class TestRandom extends TestCase {
 //	}
 	
 	public void testremoveLast() {
-		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();
-		set.appends(a);
-		set.appends(b);
-		set.appends(c);
-		set.appends(d);
+		IRandomAccessList<Object> set = new RandomAccessList<Object>();
+		set.add(a);
+		set.add(b);
+		set.add(c);
+		set.add(d);
 		
 		Iterator<Object> it = set.iterator();
 		assertEquals(it.next(), a);
@@ -515,11 +511,11 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testRemoveSameObject() {
-		IRandomAccessIterable<MyObject> set = new IterableHashSet<MyObject>();
+		IRandomAccessList<MyObject> set = new RandomAccessList<MyObject>();
 		MyObject a1 = new MyObject("a");
 		MyObject a2 = new MyObject("a");
 		
-		set.appends(a1);
+		set.add(a1);
 		assertTrue(set.contains(a2));
 		set.remove(a2);
 		
@@ -538,13 +534,13 @@ public class TestRandom extends TestCase {
 	}
 	
 	public void testRemoveSameObjectWithIterator() {
-		IRandomAccessIterable<MyObject> set = new IterableHashSet<MyObject>();
+		IRandomAccessList<MyObject> set = new RandomAccessList<MyObject>();
 		MyObject b = new MyObject("b");
 		MyObject a1 = new MyObject("a");
 		MyObject a2 = new MyObject("a");
 		
-		set.appends(b);
-		set.appends(a1);
+		set.add(b);
+		set.add(a1);
 		assertTrue(set.contains(a2));
 		
 		Iterator<MyObject> it = set.iterator();
@@ -565,6 +561,44 @@ public class TestRandom extends TestCase {
 		}
 	}
 	
+	public void testInvalidateNext() {
+		IRandomAccessList<MyObject> set = new RandomAccessList<MyObject>();
+		ResetIterator<MyObject> it = set.iterator();
+		it.invalidate();
+		try {
+			it.next();
+			fail();
+		}
+		catch (IllegalStateException e) {
+			// nothing
+		}
+	}
+	
+	public void testInvalidateHasNext() {
+		IRandomAccessList<MyObject> set = new RandomAccessList<MyObject>();
+		ResetIterator<MyObject> it = set.iterator();
+		it.invalidate();
+		try {
+			it.hasNext();
+			fail();
+		}
+		catch (IllegalStateException e) {
+			// nothing
+		}
+	}
+	
+	public void testInvalidateReset() {
+		IRandomAccessList<MyObject> set = new RandomAccessList<MyObject>();
+		ResetIterator<MyObject> it = set.iterator();
+		it.invalidate();
+		try {
+			it.reset();
+			fail();
+		}
+		catch (IllegalStateException e) {
+			// nothing
+		}
+	}
 	
 	private static class MyObject {
 		private String str;
@@ -588,6 +622,7 @@ public class TestRandom extends TestCase {
 		}
 		
 	}
+	
 	
 //	public void testremoveMid1() {
 //		IRandomAccessIterable<Object> set = new IterableHashSet<Object>();

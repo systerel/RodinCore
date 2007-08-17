@@ -35,7 +35,15 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 	}
 
 	public List<T> getTerms() {
-		return terms;
+		return new ArrayList<T>(terms);
+	}
+	
+	public T getTerm(int index) {
+		return terms.get(index);
+	}
+	
+	public int getTermsSize() {
+		return terms.size();
 	}
 	
 	public boolean isQuantified() {
@@ -77,6 +85,18 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 		return substitute(substitutionsMap);
 	}
 	
+	public void collectLocalVariables(Set<LocalVariable> variables) {
+		for (Term term : terms) {
+			term.collectLocalVariables(variables);
+		}
+	}
+	
+	public void collectVariables(Set<Variable> variables) {
+		for (Term term : terms) {
+			term.collectVariables(variables);
+		}
+	}
+	
 	public abstract S substitute(Map<SimpleTerm, SimpleTerm> map);
 	
 	@Override
@@ -87,7 +107,6 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 		}
 		return false;
 	}
-	
 	
 	public boolean equalsWithDifferentVariables(S literal, HashMap<SimpleTerm, SimpleTerm> map) {
 		if (terms.size() != literal.terms.size()) return false;

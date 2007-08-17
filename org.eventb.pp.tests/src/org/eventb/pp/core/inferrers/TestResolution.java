@@ -1,13 +1,13 @@
 package org.eventb.pp.core.inferrers;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cEqClause;
-import static org.eventb.pp.Util.cNEqual;
-import static org.eventb.pp.Util.cNotPred;
-import static org.eventb.pp.Util.cNotProp;
-import static org.eventb.pp.Util.cPred;
-import static org.eventb.pp.Util.cProp;
-import static org.eventb.pp.Util.mList;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNEqual;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,10 +16,10 @@ import java.util.List;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
 import org.eventb.internal.pp.core.provers.predicate.ResolutionResolver;
 import org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterator;
-import org.eventb.internal.pp.loader.clause.VariableContext;
 
 /**
  * This class tests the one point rule. There are several tests :

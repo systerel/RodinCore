@@ -16,7 +16,7 @@ import org.eventb.internal.pp.core.elements.Sort;
 
 public final class Expn extends BinaryTerm {
 
-	private static final int PRIORITY = 9;
+	private static final int PRIORITY = 10;
 	
 	public Expn(Term left, Term right, Sort type) {
 		super(left, right, PRIORITY);

@@ -16,8 +16,6 @@ import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
-import org.eventb.internal.pp.core.elements.DisjunctiveClause;
-import org.eventb.internal.pp.core.elements.EquivalenceClause;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
@@ -69,13 +67,13 @@ public class InstantiationInferrer extends AbstractInferrer {
 	@Override
 	protected void inferFromDisjunctiveClauseHelper(Clause clause) {
 		substitute();
-		result = new DisjunctiveClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
+		result = cf.makeDisjunctiveClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
 	}
 
 	@Override
 	protected void inferFromEquivalenceClauseHelper(Clause clause) {
 		substitute();
-		result = new EquivalenceClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
+		result = cf.makeEquivalenceClause(getOrigin(clause),predicates,equalities,arithmetic,conditions);
 	}
 
 	@Override

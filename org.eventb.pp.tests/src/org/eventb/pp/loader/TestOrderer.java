@@ -7,9 +7,9 @@ import junit.framework.TestCase;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
-import org.eventb.pp.Util;
 
 
 public class TestOrderer extends TestCase {

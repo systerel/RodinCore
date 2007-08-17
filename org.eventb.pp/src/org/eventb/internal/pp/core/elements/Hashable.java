@@ -10,6 +10,14 @@ package org.eventb.internal.pp.core.elements;
 
 import java.util.Collection;
 
+/**
+ * Abstract base class for hashable literals.
+ * <p>
+ * This class holds two different hashcodes. A literal has two hashcode.
+ *
+ * @author François Terrier
+ *
+ */
 public abstract class Hashable {
 
 	final protected int hashCode;
@@ -19,8 +27,6 @@ public abstract class Hashable {
 		this.hashCode = hashCode;
 		this.hashCodeWithDifferentVariables = hashCodeWithDifferentVariables;
 	}
-	
-	
 	
 	public final int hashCodeWithDifferentVariables() {
 		return hashCodeWithDifferentVariables;

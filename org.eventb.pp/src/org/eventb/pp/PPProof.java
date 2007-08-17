@@ -172,7 +172,7 @@ public class PPProof {
 //			if (DEBUG) debug(getResult().getTracer().getClauses().toString());
 			if (DEBUG) debug("** proof found **");
 			if (result.getTracer() instanceof org.eventb.internal.pp.core.tracing.Tracer) if (DEBUG) debug("closing clauses: "+((org.eventb.internal.pp.core.tracing.Tracer)result.getTracer()).getClosingOrigins());
-			if (DEBUG) debug("original hypotheses: "+result.getTracer().getOriginalPredicates().toString());
+			if (DEBUG) debug("original hypotheses: "+result.getTracer().getNeededHypotheses().toString());
 			if (DEBUG) debug("goal needed: "+result.getTracer().isGoalNeeded());
 		}
 		else {
@@ -318,7 +318,7 @@ public class PPProof {
 			this.goalNeeded = goalNeeded;
 		}
 
-		public List<Predicate> getOriginalPredicates() {
+		public List<Predicate> getNeededHypotheses() {
 			return originalPredicates;
 		}
 

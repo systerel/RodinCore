@@ -11,54 +11,52 @@ package org.eventb.internal.pp.core.search;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * Iterator that wraps around any {@link Iterator} and returns only elements
+ * that have certain properties, defined in {@link #isSelected(Object)}. It is
+ * as if the iterator was an iterator over the subset of this list that have
+ * those properties. Objects for which {@link #isSelected(Object)} returns <code>
+ * false</code> are not returned by the iterator.
+ * <p>
+ * When used with a {@link ResetIterator}, a call to {@link #hasNext()} must be 
+ * immediately followed by a call to {@link #next()}. Otherwise, if the underlying
+ * {@link IRandomAccessList} is modified in between, the result of a call to
+ * {@link #next()} might be inconsistent (because of the fact that a {@link ResetIterator}
+ * allows the list to be modified).
+ * 
+ * @author François Terrier
+ *
+ * @param <T>
+ */
 public abstract class ConditionIterator<T extends Object> implements Iterator<T> {
 
-//	private Iterator<Iterator<T>> iterables;
+	private final Iterator<T> iterator;
+	private T cache = null;
 	
-	private Iterator<T> iterator;
-	
-//	// assumes that the Iterables are not modified during 
-//	// the iteration. If it is the case, a ConcurrentModificationException
-//	// should be thrown -> we assume that the iterables are not modified
-//	// during the iteration
-//	// TODO add a mechanism that throws a ConcurrentModificationException
-//	// in case an iterable (which are IterableHashSet) is modified
-//	public ConditionIterator(Iterator<Iterator<T>> iterables) {
-//		assert iterables.hasNext();
-//		
-//		this.iterables = iterables;
-//
-//		this.current = this.iterables.next();
-//	}
-//	
-//	public ConditionIterator(Iterator<T>... iterables) {
-//		List<Iterator<T>> list = new ArrayList<Iterator<T>>();
-//		for (Iterator<T> iterator : iterables) {
-//			list.add(iterator);
-//		}
-// 		
-//		this.iterables = list.iterator();
-//
-//		this.current = this.iterables.next();
-//	}
-	
+	/**
+	 * Creates a new {@link ConditionIterator} with the specified underlying
+	 * iterator.
+	 * 
+	 * @param iterable
+	 */
 	public ConditionIterator(Iterator<T> iterable) {
-//		List<Iterator<T>> list = new ArrayList<Iterator<T>>();
-//		list.add(iterable);
-//		
-//		this.iterables = list.iterator();
-//
-//		this.current = this.iterables.next();
 		this.iterator = iterable;
 	}
 	
+	/**
+	 * Returns <code>true</code> if the element should occur
+	 * in this iterator and <code>false</code> otherwise.
+	 * 
+	 * @param element the element for which we want to test the presence 
+	 * in the iterator
+	 * @return <code>true</code> if the element should occur in this iterator
+	 *  and <code>false</code> otherwise
+	 */
 	public abstract boolean isSelected(T element);
-	
-	private T cache = null;
-	
+
 	public boolean hasNext() {
 		if (cache == null) {
-			nextClause();
+			nextObject();
 		}
 		return cache != null;
 	}
@@ -66,7 +64,7 @@ public abstract class ConditionIterator<T extends Object> implements Iterator<T>
 	public T next() {
 		T result;
 		if (cache == null) {
-			nextClause();
+			nextObject();
 		}
 		if (cache == null) {
 			throw new NoSuchElementException();
@@ -78,9 +76,7 @@ public abstract class ConditionIterator<T extends Object> implements Iterator<T>
 		}
 	}
 
-//	private Iterator<T> current;
-	
-	public void nextClause() {
+	private void nextObject() {
 		assert cache == null;
 		
 		if (!iterator.hasNext()) cache = null;
@@ -93,13 +89,6 @@ public abstract class ConditionIterator<T extends Object> implements Iterator<T>
 		}
 	}
 	
-//	private void nextIterator() {
-//		if (iterables.hasNext()) {
-//			current = iterables.next();
-//		}
-//		else current = null;
-//	}
-
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}

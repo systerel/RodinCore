@@ -1,17 +1,17 @@
 package org.eventb.pp.core.provers.equality;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cProp;
-import static org.eventb.pp.Util.mSet;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
 import java.util.List;
 
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.provers.equality.EquivalenceManager;
 import org.eventb.internal.pp.core.provers.equality.IInstantiationResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.FactResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.InstantiationResult;
-import org.eventb.pp.AbstractPPTest;
 
 public class TestEquivalenceManager extends AbstractPPTest {
 	
@@ -337,10 +337,13 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(mSet(cClause(bc),cClause(nbd)), result1.getSolvedValueOrigin());
 	}	
 	
-//	public void testRemoveQueryEqualityWithLevels() {
-//		manager.addQueryEquality(ab, cClause(ONE,ab));
-//		manager.addFactEquality(nab, cClause(THREE,nab));
-//		
-//	}
+	public void testRemoveQueryEqualityWithLevels() {
+		manager.addQueryEquality(nab, cClause(BASE,ab));
+		
+		assertNotNull(manager.addFactEquality(ab, cClause(ONE,ab)));
+		manager.backtrack(BASE);
+		assertNotNull(manager.addFactEquality(ab, cClause(TWO,nab)));
+		
+	}
 	
 }

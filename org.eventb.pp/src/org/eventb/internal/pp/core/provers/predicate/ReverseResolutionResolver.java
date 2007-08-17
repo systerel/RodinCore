@@ -55,7 +55,7 @@ public class ReverseResolutionResolver implements IResolver {
 		if (currentMatchIterator == null) return false;
 		while (currentMatchIterator.hasNext()) {
 			currentUnit = currentMatchIterator.next();
-			PredicateLiteral literal = currentUnit.getPredicateLiterals().get(0);
+			PredicateLiteral literal = currentUnit.getPredicateLiteral(0);
 			if (currentNonUnit.matchesAtPosition(literal.getDescriptor(), literal.isPositive(), currentPosition)) {
 				return true;
 			}
@@ -73,7 +73,7 @@ public class ReverseResolutionResolver implements IResolver {
 	}
 
 	private void initMatchIterator() {
-		PredicateLiteral predicate = currentNonUnit.getPredicateLiterals().get(currentPosition);
+		PredicateLiteral predicate = currentNonUnit.getPredicateLiteral(currentPosition);
 		currentMatchIterator = nonUnitProver.iterator(predicate.getDescriptor(), predicate.isPositive());
 	}
 
@@ -83,7 +83,7 @@ public class ReverseResolutionResolver implements IResolver {
 	}
 	
 	private boolean nextPosition() {
-		if (currentPosition + 1 >= currentNonUnit.getPredicateLiterals().size()) return false;
+		if (currentPosition + 1 >= currentNonUnit.getPredicateLiteralsSize()) return false;
 		else currentPosition = currentPosition + 1;
 		return true;
 	}

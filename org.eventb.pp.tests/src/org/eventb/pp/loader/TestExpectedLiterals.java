@@ -13,11 +13,11 @@ import junit.framework.TestCase;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.ArithmeticFormula;
 import org.eventb.internal.pp.loader.formula.EqualityFormula;
 import org.eventb.internal.pp.loader.formula.PredicateFormula;
 import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
-import org.eventb.pp.Util;
 
 
 /**

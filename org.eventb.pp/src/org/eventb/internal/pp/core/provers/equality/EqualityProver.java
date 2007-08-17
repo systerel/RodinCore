@@ -25,8 +25,8 @@ import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
-import org.eventb.internal.pp.core.elements.FalseClause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.EqualityInferrer;
@@ -60,10 +60,12 @@ public class EqualityProver implements IProverModule {
 		this.equalityInstantiations = new LinkedHashSet<Clause>();
 	}
 	
-	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
+	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		manager.backtrack(newLevel);
 		
 		backtrackInstantiations(newLevel);
+		
+		return ProverResult.EMPTY_RESULT;
 	}
 
 	private void backtrackInstantiations(Level level) {
@@ -94,11 +96,7 @@ public class EqualityProver implements IProverModule {
 		Set<Clause> subsumedClauses = new HashSet<Clause>();
 		
 		addClause(clause, generatedClauses, subsumedClauses);
-//		if (origin != null) return new ProverResult(origin);
-//		else {
-//			if (generatedClauses.isEmpty() && subsumedClauses.isEmpty()) return null;
 		return new ProverResult(generatedClauses, subsumedClauses);
-//		}
 	}
 	
 	public void removeClause(Clause clause) {
@@ -115,17 +113,17 @@ public class EqualityProver implements IProverModule {
 	}
 	
 	private boolean isInstantiationCandidate(EqualityLiteral equality) {
-		if ((equality.getTerms().get(0) instanceof Variable && equality.getTerms().get(1) instanceof Constant)
-				||	(equality.getTerms().get(1) instanceof Variable && equality.getTerms().get(0) instanceof Constant))
+		if ((equality.getTerm(0) instanceof Variable && equality.getTerm(1) instanceof Constant)
+				||	(equality.getTerm(1) instanceof Variable && equality.getTerm(0) instanceof Constant))
 			return true;
 		return false;
 	}
 	
 	private void addClause(Clause clause, Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
-		if (clause.isUnit() && (clause.getEqualityLiterals().size()>0 || clause.getConditions().size()>0)) {
+		if (clause.isUnit() && (clause.getEqualityLiteralsSize()>0 || clause.getConditionsSize()>0)) {
 			EqualityLiteral equality = null;
-			if (clause.getConditions().size()==1) equality = clause.getConditions().get(0);
-			else equality = clause.getEqualityLiterals().get(0);
+			if (clause.getConditionsSize()==1) equality = clause.getCondition(0);
+			else equality = clause.getEqualityLiteral(0);
 			
 			if (!equality.isConstant()) {
 				// TODO handle this case, x = a or x = y
@@ -135,7 +133,7 @@ public class EqualityProver implements IProverModule {
 			IFactResult result = manager.addFactEquality(equality, clause);
 			handleFactResult(result, generatedClauses, subsumedClauses);
 		}
-		else if (clause.getEqualityLiterals().size()>0 || clause.getConditions().size()>0) {
+		else if (clause.getEqualityLiteralsSize()>0 || clause.getConditionsSize()>0) {
 			ArrayList<IQueryResult> queryResult = new ArrayList<IQueryResult>();
 			ArrayList<IInstantiationResult> instantiationResult = new ArrayList<IInstantiationResult>();
 
@@ -177,18 +175,14 @@ public class EqualityProver implements IProverModule {
 		for (EqualityLiteral equality : clause.getEqualityLiterals()) {
 			if (isInstantiationCandidate(equality)) {
 				Constant constant = null;
-				if (equality.getTerms().get(0) instanceof Constant) constant = (Constant)equality.getTerms().get(0);
-				else if (equality.getTerms().get(1) instanceof Constant) constant = (Constant)equality.getTerms().get(1);
+				if (equality.getTerm(0) instanceof Constant) constant = (Constant)equality.getTerm(0);
+				else if (equality.getTerm(1) instanceof Constant) constant = (Constant)equality.getTerm(1);
 				instantiationInferrer.addEqualityEqual(equality, constant);
 				
 				clause.infer(instantiationInferrer);
 				Clause inferredClause = instantiationInferrer.getResult();
 				
 				inferredClause = simplifier.run(inferredClause);
-//				if (inferredClause.isFalse()) {
-//					return inferredClause.getOrigin();
-//				}
-//				if (!inferredClause.isTrue()) 
 				generatedClauses.add(inferredClause);
 			}
 		}
@@ -200,7 +194,7 @@ public class EqualityProver implements IProverModule {
 		if (result.hasContradiction()) {
 			List<Clause> contradictionOrigin = result.getContradictionOrigin();
 			IOrigin origin = new ClauseOrigin(contradictionOrigin);
-			generatedClauses.add(new FalseClause(origin));
+			generatedClauses.add(ClauseFactory.getDefault().makeFALSE(origin));
 		}
 		else {
 			if (result.getSolvedQueries() != null) handleQueryResult(result.getSolvedQueries(), generatedClauses, subsumedClauses);
@@ -227,10 +221,6 @@ public class EqualityProver implements IProverModule {
 				Clause inferredClause = instantiationInferrer.getResult();
 				
 				inferredClause = simplifier.run(inferredClause);
-//				if (inferredClause.isFalse()) {
-//					return inferredClause.getOrigin();
-//				}
-//				if (!inferredClause.isTrue()) 
 				generatedClauses.add(inferredClause);
 			}
 		}
@@ -306,10 +296,6 @@ public class EqualityProver implements IProverModule {
 			entry.getKey().infer(inferrer);
 			Clause inferredClause = inferrer.getResult();
 			inferredClause = simplifier.run(inferredClause);
-//			if (inferredClause.isFalse()) {
-//				return inferredClause.getOrigin();
-//			}
-//			if (!inferredClause.isTrue()) 
 			generatedClauses.add(inferredClause);
 			if (inferredClause.getLevel().compareTo(entry.getKey().getLevel()) <= 0) 
 				subsumedClauses.add(entry.getKey());

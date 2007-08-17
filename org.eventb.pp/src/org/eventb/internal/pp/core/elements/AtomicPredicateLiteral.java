@@ -47,10 +47,6 @@ public final class AtomicPredicateLiteral extends PredicateLiteral {
 		return literal instanceof AtomicPredicateLiteral && super.equalsWithDifferentVariables(literal, map);
 	}
 
-	public void resetInstantiationCount() {
-		//do nothing
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;

@@ -21,25 +21,41 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.pp.ITracer;
 
-public class Tracer implements ITracer {
+/**
+ * The tracer is responsible for keeping track of what formulas of a sequent
+ * are needed to get to a proof. On top of the functionality of {@link ITracer},
+ * this class takes care of proof tree. Whenever a contradiction is detected, 
+ * this class is responsible for computing the level on which the prover needs to 
+ * continue.
+ *
+ * @author François Terrier
+ */
+public final class Tracer implements ITracer {
 
-	private static class Pair {
-		IOrigin origin;
-		Set<Level> dependencies;
-		Pair(IOrigin origin, Set<Level> dependencies) {
-			this.origin = origin;
-			this.dependencies = dependencies;
-		}
-	}
-	
-	private Map<Level, Pair> origins = new HashMap<Level, Pair>(); 
+	private final Map<Level, Pair> origins = new HashMap<Level, Pair>(); 
 	private Level level = null;
 	
+	/**
+	 * Returns the last closed level.
+	 * 
+	 * @return the last closed level
+	 */
 	public Level getLastClosedLevel() {
 		return level;
 	}
 	
-	public void addClosingClause(IOrigin origin) throws IllegalStateException {
+	/**
+	 * Adds the origin as a closing clause of its level.
+	 * <p>
+	 * This method has several effects. It records the origin as a closing origin
+	 * for its level, and it computes the level that has been closed. After this method returns,
+	 * the level on which the prover needs to continue can be retrieved using
+	 * getLastClosedLevel().getParent().
+	 * 
+	 * @param origin the origin that closes a branch
+	 * @throws IllegalStateException in case there is an inconsistency in the proof tree
+	 */
+	public void addClosingClauseAndUpdateLevel(IOrigin origin) throws IllegalStateException {
 		if (level!=null && level.isAncestorInSameTree(origin.getLevel())) {
 			throw new IllegalStateException();
 		}
@@ -99,10 +115,19 @@ public class Tracer implements ITracer {
 		return result;
 	}
 	
+	private static final class Pair {
+		IOrigin origin;
+		Set<Level> dependencies;
+		Pair(IOrigin origin, Set<Level> dependencies) {
+			this.origin = origin;
+			this.dependencies = dependencies;
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.pp.core.tracing.ITracer#getOriginalPredicates()
 	 */
-	public List<Predicate> getOriginalPredicates() {
+	public List<Predicate> getNeededHypotheses() {
 		if (originalPredicates==null) calculateOriginalPredicates();
 		return new ArrayList<Predicate>(originalPredicates);
 	}
@@ -115,7 +140,7 @@ public class Tracer implements ITracer {
 	}
 	
 	private HashSet<Predicate> originalPredicates;
-	protected void addNeededHypothesis(Predicate predicate) {
+	void addNeededHypothesis(Predicate predicate) {
 		originalPredicates.add(predicate);
 	}
 
@@ -125,7 +150,7 @@ public class Tracer implements ITracer {
 		return goalNeeded;
 	}
 	
-	protected void setGoalNeeded(boolean goalNeeded) {
+	void setGoalNeeded(boolean goalNeeded) {
 		this.goalNeeded = goalNeeded;
 	}
 }

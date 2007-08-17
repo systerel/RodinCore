@@ -18,7 +18,7 @@ public final class TrueClause extends Clause {
 
 	private static final int BASE_HASHCODE = 13;
 	
-	public TrueClause(IOrigin origin) {
+	TrueClause(IOrigin origin) {
 		super(origin, new ArrayList<PredicateLiteral>(), new ArrayList<EqualityLiteral>(), new ArrayList<ArithmeticLiteral>(), BASE_HASHCODE);
 	}
 
@@ -66,7 +66,6 @@ public final class TrueClause extends Clause {
 	public boolean matchesAtPosition(PredicateLiteralDescriptor predicate, boolean isPositive, int position) {
 		return false;
 	}
-	
 	
 	@Override
 	public boolean equals(Object obj) {

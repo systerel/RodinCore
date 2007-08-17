@@ -15,11 +15,22 @@ import java.util.Set;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.Clause;
 
+/**
+ * Abstract implementation of {@link IOrigin} for clauses that have been
+ * inferred by the prover.
+ * <p>
+ * All inferred clauses share the characteristic that they have parent clauses
+ * from which they were derived. This class provides the necessary mechanisms
+ * for handling parent clauses.
+ *
+ * @author François Terrier
+ *
+ */
 public abstract class AbstractInferrenceOrigin implements IOrigin {
 
 	protected List<Clause> parents;
 	protected boolean dependsOnGoal;
-	private int depth;
+	protected int depth;
 	
 	public AbstractInferrenceOrigin(List<Clause> parents) {
 		this.parents = parents;

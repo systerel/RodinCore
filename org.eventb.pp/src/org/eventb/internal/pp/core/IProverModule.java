@@ -29,7 +29,15 @@ public interface IProverModule {
 	
 	public void initialize(ClauseSimplifier simplifier);
 	
-	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies);
+	/**
+	 * Cannot contain TRUE or FALSE clauses.
+	 * 
+	 * @param oldLevel
+	 * @param newLevel
+	 * @param dependencies
+	 * @return
+	 */
+	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies);
 	
 	public void registerDumper(Dumper dumper);
 	

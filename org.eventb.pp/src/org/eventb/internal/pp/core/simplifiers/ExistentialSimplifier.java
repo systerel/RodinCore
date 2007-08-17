@@ -16,35 +16,26 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.DisjunctiveClause;
-import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
 import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
-import org.eventb.internal.pp.core.elements.terms.Term;
 
-public class ExistentialSimplifier implements ISimplifier {
+/**
+ * This simplifier removes the existential variables appearing in literals
+ * without variables and replaces them by fresh constants.
+ *
+ * @author François Terrier
+ *
+ */
+public class ExistentialSimplifier extends AbstractSimplifier {
 
-	private List<PredicateLiteral> predicates;
-	private List<EqualityLiteral> equalities;
-	private List<ArithmeticLiteral> arithmetic;
-	private List<EqualityLiteral> conditions;
-	
 	private final IVariableContext context;
 	
 	public ExistentialSimplifier(IVariableContext context) {
 		this.context = context;
-	}
-	
-	private void init(Clause clause) {
-		predicates = clause.getPredicateLiterals();
-		equalities = clause.getEqualityLiterals();
-		arithmetic = clause.getArithmeticLiterals();
-		conditions = clause.getConditions();
 	}
 	
 	public Clause simplifyDisjunctiveClause(DisjunctiveClause clause) {
@@ -53,25 +44,20 @@ public class ExistentialSimplifier implements ISimplifier {
 		simplifyExistentialHelper(equalities);
 		simplifyExistentialHelper(arithmetic);
 		simplifyExistentialHelper(conditions);
-		Clause result = new DisjunctiveClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
+		Clause result = cf.makeDisjunctiveClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 		return result;
 	}
 
-	
-	// TODO test !
 	public Clause simplifyEquivalenceClause(EquivalenceClause clause) {
 		init(clause);
 		simplifyExistentialHelper(conditions);
-		Clause result = new EquivalenceClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
+		Clause result = cf.makeEquivalenceClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 		return result;
 	}
 
-	
 	public <T extends Literal<T,?>> T simplifyExistential(Literal<T,?> literal) {
 		Set<LocalVariable> existentials = new HashSet<LocalVariable>();
-		for (Term term : literal.getTerms()) {
-			term.collectLocalVariables(existentials);
-		}
+		literal.collectLocalVariables(existentials);
 		Map<SimpleTerm, SimpleTerm> map = new HashMap<SimpleTerm, SimpleTerm>();
 		for (SimpleTerm variable : existentials) {
 			map.put(variable, context.getNextFreshConstant(variable.getSort()));

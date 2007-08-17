@@ -1,4 +1,4 @@
-package org.eventb.pp;
+package org.eventb.internal.pp.core.elements.terms;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -21,34 +21,17 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.AtomicPredicateLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
-import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
-import org.eventb.internal.pp.core.elements.EquivalenceClause;
-import org.eventb.internal.pp.core.elements.FalseClause;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.Sort;
-import org.eventb.internal.pp.core.elements.TrueClause;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral.AType;
-import org.eventb.internal.pp.core.elements.terms.Constant;
-import org.eventb.internal.pp.core.elements.terms.Divide;
-import org.eventb.internal.pp.core.elements.terms.Expn;
-import org.eventb.internal.pp.core.elements.terms.IntegerConstant;
-import org.eventb.internal.pp.core.elements.terms.LocalVariable;
-import org.eventb.internal.pp.core.elements.terms.Minus;
-import org.eventb.internal.pp.core.elements.terms.Mod;
-import org.eventb.internal.pp.core.elements.terms.Plus;
-import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
-import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.core.elements.terms.Times;
-import org.eventb.internal.pp.core.elements.terms.UnaryMinus;
-import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.core.tracing.Tracer;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
-import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.terms.ConstantSignature;
 import org.eventb.internal.pp.loader.formula.terms.DivideSignature;
 import org.eventb.internal.pp.loader.formula.terms.ExpnSignature;
@@ -70,6 +53,7 @@ import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
 public class Util {
 
 	private static FormulaFactory ff = FormulaFactory.getDefault();
+	private static ClauseFactory cf = ClauseFactory.getDefault();
 	
 	///////////////
 	// AST Rodin //
@@ -352,11 +336,11 @@ public class Util {
 	}
 	
 	protected static Clause TRUE(Level level) {
-		return new TrueClause(new DummyOrigin(level));
+		return cf.makeTRUE(new DummyOrigin(level));
 	}
 	
 	protected static Clause FALSE(Level level) {
-		return new FalseClause(new DummyOrigin(level));
+		return cf.makeFALSE(new DummyOrigin(level));
 	}
 	
 	public static Clause newDisjClause(IOrigin origin, List<Literal<?,?>> literals) {
@@ -368,7 +352,7 @@ public class Util {
 			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
 			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
 		}
-		return new DisjunctiveClause(origin,predicates,equalities,arithmetic);
+		return cf.makeDisjunctiveClause(origin,predicates,equalities,arithmetic,new ArrayList<EqualityLiteral>());
 	}
 	
 	public static Clause newEqClause(IOrigin origin, List<Literal<?,?>> literals) {
@@ -382,7 +366,7 @@ public class Util {
 			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
 			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
 		}
-		return new EquivalenceClause(origin,predicates,equalities,arithmetic);
+		return cf.makeEquivalenceClause(origin,predicates,equalities,arithmetic,new ArrayList<EqualityLiteral>());
 	}
 	
 	public static Clause cClause(Literal<?,?>... literals) {
@@ -404,7 +388,7 @@ public class Util {
 			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
 			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
 		}
-		return new DisjunctiveClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,mList(conditions));
+		return cf.makeDisjunctiveClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,mList(conditions));
 	}
 	
 	public static Clause cEqClause(Literal<?,?>... literals) {
@@ -426,7 +410,7 @@ public class Util {
 			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
 			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
 		}
-		return new EquivalenceClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,mList(conditions));
+		return cf.makeEquivalenceClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,mList(conditions));
 	}
 	
 	public static <T> Set<T> mSet(T... elements) {

@@ -13,24 +13,24 @@ import java.util.Iterator;
 
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
-import org.eventb.internal.pp.core.search.IterableHashSet;
+import org.eventb.internal.pp.core.search.RandomAccessList;
 import org.eventb.internal.pp.core.search.ResetIterator;
 
 public class UnitMatchIterator implements IMatchIterator {
 
 	private UnitMatcher unitMatcher;
-	private HashMap<IterableHashSet<Clause>, ResetIterator<Clause>> setIteratorMap = new HashMap<IterableHashSet<Clause>, ResetIterator<Clause>>(); 
+	private HashMap<RandomAccessList<Clause>, ResetIterator<Clause>> setIteratorMap = new HashMap<RandomAccessList<Clause>, ResetIterator<Clause>>(); 
 
 	public UnitMatchIterator(UnitMatcher unitMatcher) {
 		this.unitMatcher = unitMatcher;
 	}
 	
 	private ResetIterator<Clause> getMatchingUnitIterator(PredicateLiteralDescriptor predicate, boolean isPositive) {
-		IterableHashSet<Clause> set = unitMatcher.getMatchingClauses(predicate, isPositive);
+		RandomAccessList<Clause> set = unitMatcher.getMatchingClauses(predicate, isPositive);
 		return getIterator(set);
 	}
 	
-	private ResetIterator<Clause> getIterator(IterableHashSet<Clause> set) {
+	private ResetIterator<Clause> getIterator(RandomAccessList<Clause> set) {
 		if (!setIteratorMap.containsKey(set)) {
 			ResetIterator<Clause> iterator = set.iterator();
 			setIteratorMap.put(set, iterator);

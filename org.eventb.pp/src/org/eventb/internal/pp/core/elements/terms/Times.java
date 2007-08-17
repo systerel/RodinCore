@@ -14,7 +14,7 @@ import java.util.Map;
 
 public final class Times extends AssociativeTerm {
 
-	private static final int PRIORITY = 4;
+	private static final int PRIORITY = 5;
 	
 	public Times (List<Term> children) {
 		super(children, PRIORITY);

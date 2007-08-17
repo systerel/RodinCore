@@ -1,9 +1,9 @@
-package org.eventb.pp;
+package org.eventb.internal.pp.core.elements.terms;
 
-import static org.eventb.pp.Util.cCons;
-import static org.eventb.pp.Util.cELocVar;
-import static org.eventb.pp.Util.cFLocVar;
-import static org.eventb.pp.Util.cVar;
+import static org.eventb.internal.pp.core.elements.terms.Util.cCons;
+import static org.eventb.internal.pp.core.elements.terms.Util.cELocVar;
+import static org.eventb.internal.pp.core.elements.terms.Util.cFLocVar;
+import static org.eventb.internal.pp.core.elements.terms.Util.cVar;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -20,9 +20,7 @@ import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.Sort;
-import org.eventb.internal.pp.core.elements.terms.Constant;
-import org.eventb.internal.pp.core.elements.terms.LocalVariable;
-import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.pp.PPProof;
 
 public abstract class AbstractPPTest extends TestCase {
 
@@ -72,6 +70,10 @@ public abstract class AbstractPPTest extends TestCase {
 	public static Variable x = cVar(1);
 	public static Variable y = cVar(2);
 	public static Variable z = cVar(3);
+	
+	public static IntegerConstant zero = Util.cIntCons(0);
+	public static IntegerConstant one = Util.cIntCons(1);
+	
 	public static Constant a = cCons("a");
 	public static Constant b = cCons("b");
 	public static Constant c = cCons("c");

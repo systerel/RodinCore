@@ -6,19 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.internal.pp.loader.clause;
+package org.eventb.internal.pp.core.elements.terms;
 
 import java.math.BigInteger;
 import java.util.Hashtable;
 
 import org.eventb.internal.pp.core.elements.Sort;
-import org.eventb.internal.pp.core.elements.terms.Constant;
-import org.eventb.internal.pp.core.elements.terms.IntegerConstant;
-import org.eventb.internal.pp.core.elements.terms.LocalVariable;
-import org.eventb.internal.pp.core.elements.terms.Variable;
 
 /**
- * After the construction, all variables have different indexes;
+ * After the construction, all variables have different indexes.
  *
  * @author François Terrier
  *
@@ -39,7 +35,7 @@ public class VariableTable {
 	public Variable getVariable(int index, Sort sort) {
 		Variable var = variableTable.get(index);
 		if (var == null) {
-			var = new Variable(context.getAndIncrementGlobalVariableID(), sort);
+			var = context.getNextVariable(sort);
 			variableTable.put(index, var);
 		}
 		return var;
@@ -48,7 +44,7 @@ public class VariableTable {
 	public LocalVariable getLocalVariable(int index, boolean isForall, Sort sort) {
 		LocalVariable var = localVariableTable.get(index);
 		if (var == null) {
-			var = new LocalVariable(context.getAndIncrementLocalVariableID(),isForall,sort);
+			var = context.getNextLocalVariable(isForall, sort);
 			localVariableTable.put(index, var);
 		}
 		return var;

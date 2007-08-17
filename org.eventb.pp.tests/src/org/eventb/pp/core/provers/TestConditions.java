@@ -1,11 +1,11 @@
 package org.eventb.pp.core.provers;
 
-import static org.eventb.pp.Util.cClause;
-import static org.eventb.pp.Util.cNotPred;
-import static org.eventb.pp.Util.cNotProp;
-import static org.eventb.pp.Util.cPred;
-import static org.eventb.pp.Util.cProp;
-import static org.eventb.pp.Util.mList;
+import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.List;
 
@@ -13,6 +13,9 @@ import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.Util;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.provers.equality.EqualityProver;
 import org.eventb.internal.pp.core.provers.extensionality.ExtensionalityProver;
@@ -22,10 +25,7 @@ import org.eventb.internal.pp.core.simplifiers.EqualitySimplifier;
 import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
 import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
-import org.eventb.internal.pp.loader.clause.VariableContext;
-import org.eventb.pp.AbstractPPTest;
 import org.eventb.pp.PPResult;
-import org.eventb.pp.Util;
 import org.eventb.pp.PPResult.Result;
 
 public class TestConditions extends AbstractPPTest {

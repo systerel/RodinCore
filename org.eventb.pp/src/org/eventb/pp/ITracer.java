@@ -12,12 +12,29 @@ import java.util.List;
 
 import org.eventb.core.ast.Predicate;
 
+/**
+ * A tracer that keeps track of what formulas are needed to get 
+ * to the proof.
+ *
+ * @author François Terrier
+ *
+ */
 public interface ITracer {
 
-//	public abstract List<Clause> getClauses();
+	/**
+	 * Returns the hypotheses that where needed for the proof.
+	 * 
+	 * @return the hypotheses that where needed for the proof
+	 */
+	public List<Predicate> getNeededHypotheses();
 
-	public List<Predicate> getOriginalPredicates();
-
+	/**
+	 * Returns <code>true</code> if the goal was needed to get 
+	 * to the proof, <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if the goal was needed to get 
+	 * to the proof, <code>false</code> otherwise
+	 */
 	public boolean isGoalNeeded();
 	
 }

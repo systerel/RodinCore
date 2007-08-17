@@ -18,6 +18,7 @@ public class PredicateTable {
 	private HashMap<Sort, PredicateLiteralDescriptor> map = new HashMap<Sort, PredicateLiteralDescriptor>();
 	private HashMap<Integer, PredicateLiteralDescriptor> integerMap = new HashMap<Integer, PredicateLiteralDescriptor>();
 	
+	
 	public PredicateTable() {
 		// nothing for now
 	}

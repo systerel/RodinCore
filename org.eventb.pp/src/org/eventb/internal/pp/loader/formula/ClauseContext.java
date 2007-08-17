@@ -9,8 +9,8 @@
 package org.eventb.internal.pp.loader.formula;
 
 import org.eventb.internal.pp.core.PredicateTable;
+import org.eventb.internal.pp.core.elements.terms.VariableTable;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
-import org.eventb.internal.pp.loader.clause.VariableTable;
 
 public class ClauseContext extends AbstractContext {
 	private int startOffset;

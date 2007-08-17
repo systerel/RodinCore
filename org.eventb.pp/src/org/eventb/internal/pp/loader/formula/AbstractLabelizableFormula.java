@@ -16,10 +16,10 @@ import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.terms.Term;
+import org.eventb.internal.pp.core.elements.terms.VariableTable;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.clause.LabelManager;
-import org.eventb.internal.pp.loader.clause.VariableTable;
 import org.eventb.internal.pp.loader.formula.descriptor.IndexedDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 

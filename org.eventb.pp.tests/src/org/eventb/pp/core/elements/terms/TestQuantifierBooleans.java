@@ -1,8 +1,8 @@
 package org.eventb.pp.core.elements.terms;
 
-import static org.eventb.pp.Util.cPlus;
+import static org.eventb.internal.pp.core.elements.terms.Util.cPlus;
 
-import org.eventb.pp.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 
 
 public class TestQuantifierBooleans extends AbstractPPTest {

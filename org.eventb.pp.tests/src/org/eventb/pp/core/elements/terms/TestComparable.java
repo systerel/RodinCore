@@ -1,7 +1,7 @@
 package org.eventb.pp.core.elements.terms;
 
+import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.pp.AbstractPPTest;
 
 public class TestComparable extends AbstractPPTest {
 
@@ -14,6 +14,18 @@ public class TestComparable extends AbstractPPTest {
 			this.term2 = term2;
 			this.result = result;
 		}
+	}
+	
+	public void testIntegerConstants() {
+		doTest(new TestPair(
+				zero,one,-1
+		));
+		doTest(new TestPair(
+				one,zero,1
+		));
+		doTest(new TestPair(
+				zero,zero,0
+		));
 	}
 
 	public void testConstants() {
@@ -78,6 +90,35 @@ public class TestComparable extends AbstractPPTest {
 				a,evar0,1	
 		));
 	}
+	
+	public void testConstantWithIntegerConstants() {
+		doTest(new TestPair(
+				a,zero,-1
+		));
+		doTest(new TestPair(
+				zero,a,1
+		));
+	}
+	
+	
+	public void testVariableWithIntegerConstant() {
+		doTest(new TestPair(
+				x,zero,-1
+		));
+		doTest(new TestPair(
+				zero,x,1
+		));
+	}
+	
+	public void testLocalVariableWithIntegerConstant() {
+		doTest(new TestPair(
+				evar0,zero,-1
+		));
+		doTest(new TestPair(
+				zero,evar0,1
+		));
+	}
+	
 	
 //	public void testArithmeticWithConstants() {
 //		

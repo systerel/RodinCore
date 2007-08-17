@@ -42,11 +42,6 @@ public class SeedSearchProver implements IProverModule {
 		System.out.println(message);
 	}
 
-//	private static final int ARBITRARY_SEARCH = 2;
-	
-//	private double currentNumberOfArbitrary = 0;
-//	private double currentCounter = ARBITRARY_SEARCH;
-
 	private SeedSearchManager manager = new SeedSearchManager();
 	private ClauseSimplifier simplifier;
 	private InstantiationInferrer inferrer;
@@ -111,8 +106,8 @@ public class SeedSearchProver implements IProverModule {
 	}
 
 	private Clause doInstantiation(SeedSearchResult result) {
-		PredicateLiteral literal = result.getInstantiableClause().getPredicateLiterals().get(result.getPredicatePosition());
-		Variable variable = (Variable)literal.getTerms().get(result.getPosition());
+		PredicateLiteral literal = result.getInstantiableClause().getPredicateLiteral(result.getPredicatePosition());
+		Variable variable = (Variable)literal.getTerm(result.getPosition());
 		if (checkAndAddInstantiation(result.getInstantiableClause(), variable, result.getConstant())) return null;
 		inferrer.addInstantiation(variable, result.getConstant());
 		result.getInstantiableClause().infer(inferrer);
@@ -138,8 +133,8 @@ public class SeedSearchProver implements IProverModule {
 		if (clause.getOrigin().isDefinition()) return;
 		
 		if (literal1.isQuantified()/* && clause.isUnit() */) { 
-			for (int i = 0; i < literal1.getTerms().size(); i++) {
-				SimpleTerm term = literal1.getTerms().get(i);
+			for (int i = 0; i < literal1.getTermsSize(); i++) {
+				SimpleTerm term = literal1.getTerm(i);
 				if (!term.isConstant()) {
 					if (clause.isEquivalence()) {
 						result.addAll(manager.addInstantiable(literal1.getDescriptor(), literal1.isPositive(), position, literal1.getTerms(), i, clause));
@@ -191,14 +186,14 @@ public class SeedSearchProver implements IProverModule {
 		// TODO optimize
 		List<SeedSearchResult> result = new ArrayList<SeedSearchResult>();
 		if (clause.isBlockedOnConditions()) return result;
-		for (int i = 0; i < clause.getPredicateLiterals().size(); i++) {
-			PredicateLiteral literal1 = clause.getPredicateLiterals().get(i);
+		for (int i = 0; i < clause.getPredicateLiteralsSize(); i++) {
+			PredicateLiteral literal1 = clause.getPredicateLiteral(i);
 
 			addConstants(clause, literal1, result);
 			addInstantiable(clause, literal1, i, result);
 			
-			for (int j = i+1; j < clause.getPredicateLiterals().size(); j++) {
-				PredicateLiteral literal2 = clause.getPredicateLiterals().get(j);
+			for (int j = i+1; j < clause.getPredicateLiteralsSize(); j++) {
+				PredicateLiteral literal2 = clause.getPredicateLiteral(j);
 				addVariableLink(clause, literal1, literal2, result);
 			}
 		}
@@ -212,11 +207,11 @@ public class SeedSearchProver implements IProverModule {
 			if (!equality.getTerm1().isConstant() && !equality.getTerm2().isConstant()) {
 				Variable variable1 = (Variable)equality.getTerm1();
 				Variable variable2 = (Variable)equality.getTerm2();
-				for (int i = 0; i<clause.getPredicateLiterals().size();i++) {
-					PredicateLiteral predicate = clause.getPredicateLiterals().get(i);
+				for (int i = 0; i<clause.getPredicateLiteralsSize();i++) {
+					PredicateLiteral predicate = clause.getPredicateLiteral(i);
 					if (predicate.getTerms().contains(variable1) || predicate.getTerms().contains(variable2)) {
-						for (int j = 0; j < predicate.getTerms().size(); j++) {
-							SimpleTerm term = predicate.getTerms().get(j);
+						for (int j = 0; j < predicate.getTermsSize(); j++) {
+							SimpleTerm term = predicate.getTerm(j);
 							if (term == variable1 || term == variable2) {
 								result.addAll(manager.addInstantiable(predicate.getDescriptor(), predicate.isPositive(), i, predicate.getTerms(), j, clause));
 							}
@@ -228,7 +223,7 @@ public class SeedSearchProver implements IProverModule {
 		return result;
 	}
 	
-	public void contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
+	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		// do nothing, we let the removeClause() do the job
 		for (Iterator<Set<Clause>> iter = generatedClausesStack.iterator(); iter.hasNext();) {
 			Set<Clause> clauses = iter.next();
@@ -245,36 +240,39 @@ public class SeedSearchProver implements IProverModule {
 			Entry<Clause,?> element = iter.next();
 			if (newLevel.isAncestorOf(element.getKey().getLevel())) iter.remove();
 		}
+		
+		return ProverResult.EMPTY_RESULT;
 	}
 
 	public void initialize(ClauseSimplifier simplifier) {
 		this.simplifier = simplifier;
 	}
 
-//	private void resetCounter() {
-//		this.currentCounter = ARBITRARY_SEARCH * Math.pow(2, currentNumberOfArbitrary);
-//	}
+	private static final int ARBITRARY_SEARCH = 5;
+	private double currentNumberOfArbitrary = 0;
+	private double currentCounter = ARBITRARY_SEARCH;
 	
-//	private boolean checkAndUpdateCounter() {
-//		currentCounter--;
-//		if (currentCounter == 0) {
-//			currentNumberOfArbitrary++;
-//			resetCounter();
-//			return true;
-//		}
-//		return false;
-//	}
+	private void resetCounter() {
+		this.currentCounter = ARBITRARY_SEARCH * Math.pow(2, currentNumberOfArbitrary);
+	}
+	
+	private boolean checkAndUpdateCounter() {
+		currentCounter--;
+		if (currentCounter == 0) {
+			currentNumberOfArbitrary++;
+			resetCounter();
+			return true;
+		}
+		return false;
+	}
 	
 	private List<Clause> nextArbitraryInstantiation() {
 		List<Clause> result = new ArrayList<Clause>();
-//		if (force || checkAndUpdateCounter()) {
-			List<SeedSearchResult> seedSearchResults = manager.getArbitraryInstantiation(context);
-//			if (result == null) return null;
-			for (SeedSearchResult seedSearchResult : seedSearchResults) {
-				Clause nextClause = doInstantiation(seedSearchResult);
-				result.add(nextClause);
-			}
-//		}
+		List<SeedSearchResult> seedSearchResults = manager.getArbitraryInstantiation(context);
+		for (SeedSearchResult seedSearchResult : seedSearchResults) {
+			Clause nextClause = doInstantiation(seedSearchResult);
+			result.add(nextClause);
+		}
 		return result;
 	}
 	
@@ -306,7 +304,7 @@ public class SeedSearchProver implements IProverModule {
 //		}
 		
 		if (!generatedClausesStack.isEmpty()) nextClauses.addAll(generatedClausesStack.remove(0));
-		if (force) nextClauses.addAll(nextArbitraryInstantiation());
+		if (checkAndUpdateCounter()) nextClauses.addAll(nextArbitraryInstantiation());
 		
 		ProverResult result = new ProverResult(nextClauses,new HashSet<Clause>());
 		if (DEBUG) debug("SeedSearchProver, next clauses: "+nextClauses+", remaining clauses: "+generatedClausesStack.size());

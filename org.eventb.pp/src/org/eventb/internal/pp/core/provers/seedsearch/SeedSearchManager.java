@@ -82,9 +82,9 @@ public class SeedSearchManager {
 		for (Instantiable currentInstantiable : instantiables) {
 			currentInstantiable.incrementInstantiationCount();
 			// TODO change !
-			Sort sort = currentInstantiable.getClause().getPredicateLiterals()
-					.get(currentInstantiable.getPredicatePosition()).getTerms()
-					.get(currentInstantiable.getPosition()).getSort();
+			Sort sort = currentInstantiable.getClause().getPredicateLiteral(
+					currentInstantiable.getPredicatePosition()).getTerm(
+							currentInstantiable.getPosition()).getSort();
 			result.add(new SeedSearchResult(context.getNextFreshConstant(sort), currentInstantiable.getPosition(), currentInstantiable.getPredicatePosition(), currentInstantiable.getClause(), new HashSet<Clause>()));
 		}
 		return result;
