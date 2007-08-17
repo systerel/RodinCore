@@ -322,6 +322,7 @@ public class ElementComposite implements IElementComposite {
 				createSectionComposites();
 			}
 		} else {
+			row.updateLinks();
 			if (rElement.isAncestorOf(element)) {
 				for (ISectionComposite sectionComp : sectionComps) {
 					sectionComp.refresh(element, set);

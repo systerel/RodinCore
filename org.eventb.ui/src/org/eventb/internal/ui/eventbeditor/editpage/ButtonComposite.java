@@ -153,6 +153,8 @@ public class ButtonComposite {
 			foldingHyperlink.setVisible(true);
 		} else
 			foldingHyperlink.setVisible(false);
+		selectHyperlink.setImage(EventBImage.getRodinImage(element));
+		selectHyperlink.redraw();
 	}
 
 	public boolean isSelected() {
