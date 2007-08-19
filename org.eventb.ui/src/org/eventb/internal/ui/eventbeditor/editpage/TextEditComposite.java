@@ -104,10 +104,6 @@ public class TextEditComposite extends AbstractEditComposite {
 			Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
 			Color YELLOW = Display.getDefault()
 					.getSystemColor(SWT.COLOR_YELLOW);
-			Color DARK_BLUE = Display.getDefault().getSystemColor(
-					SWT.COLOR_DARK_BLUE);
-			Color DARK_YELLOW = Display.getDefault().getSystemColor(
-					SWT.COLOR_DARK_YELLOW);
 			IMarker[] markers = MarkerUIRegistry.getDefault()
 					.getAttributeMarkers(element, uiSpec.getAttributeType());
 			for (IMarker marker : markers) {
@@ -130,8 +126,8 @@ public class TextEditComposite extends AbstractEditComposite {
 					styleRange.background = RED;
 					styleRange.foreground = YELLOW;
 				} else if (severityAttribute == IMarker.SEVERITY_WARNING) {
-					styleRange.background = DARK_YELLOW;
-					styleRange.foreground = DARK_BLUE;
+					styleRange.background = YELLOW;
+					styleRange.foreground = RED;
 				}
 				styleRange.fontStyle = SWT.ITALIC;
 				styleRange.underline = true;
