@@ -70,6 +70,8 @@ public class Ast2HtmlConverter extends AstConverter {
 		END_EVENT_LABEL = "</td>";
 		BEGIN_INHERITED = "<td class=\"inherited\" align=\"left\" valign=\"center\">";
 		END_INHERITED = "</td>";
+		BEGIN_CONVERGENCE = "<td class=\"convergence\" align=\"left\" valign=\"center\">";
+		END_CONVERGENCE = "</td>";
 		BEGIN_ABSTRACT_EVENT_LABEL = "<td class=\"abstractEventLabel\" align=\"left\" valign=\"center\">";
 		END_ABSTRACT_EVENT_LABEL = "</td>";
 		BEGIN_PARAMETER_IDENTIFIER = "<td class=\"parameterIdentifier\" align=\"left\" valign=\"center\">";

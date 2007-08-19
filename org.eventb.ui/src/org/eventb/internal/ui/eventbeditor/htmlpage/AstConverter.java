@@ -33,6 +33,7 @@ import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
+import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.basis.SeesContext;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
@@ -109,6 +110,10 @@ public abstract class AstConverter {
 	protected String END_INHERITED = "";
 	protected String BEGIN_INHERITED_SEPARATOR = null;
 	protected String END_INHERITED_SEPARATOR = null;
+	protected String BEGIN_CONVERGENCE = "";
+	protected String END_CONVERGENCE = "";
+	protected String BEGIN_CONVERGENCE_SEPARATOR = null;
+	protected String END_CONVERGENCE_SEPARATOR = null;
 	protected String BEGIN_PARAMETER_IDENTIFIER = "";
 	protected String END_PARAMETER_IDENTIFIER = "";
 	protected String BEGIN_PARAMETER_IDENTIFIER_SEPARATOR = null;
@@ -602,6 +607,17 @@ public abstract class AstConverter {
 					continue;
 				}
 
+				try {
+					Convergence convergence = evt.getConvergence();
+					keyword("WHICH IS", 1);
+					beginLevel3();
+					appendConvergence(convergence);
+					endLevel3();
+				}
+				catch (RodinDBException e) {
+					// Do nothing
+				}
+				
 				if (refinesEvents.length != 0) {
 					keyword("REFINES", 1);
 					for (IRefinesEvent refinesEvent: refinesEvents) {
@@ -717,8 +733,6 @@ public abstract class AstConverter {
 			}
 		}
 	}
-
-
 
 	/**
 	 * This private helper method adds component's information about variants to
@@ -959,6 +973,22 @@ public abstract class AstConverter {
 	private void appendInherited() {
 		append("inherited", BEGIN_INHERITED, END_INHERITED,
 				BEGIN_INHERITED_SEPARATOR, END_INHERITED_SEPARATOR);
+	}
+
+	private void appendConvergence(Convergence convergence) {
+		String string = "ordinary";
+		if (convergence == Convergence.ORDINARY) {
+			string = "ordinary";
+		}
+		else if (convergence == Convergence.ANTICIPATED) {
+			string = "anticipated";
+		}
+		else if (convergence == Convergence.CONVERGENT) {
+			string = "convergent";
+		}
+		append(string, BEGIN_CONVERGENCE, END_CONVERGENCE,
+				BEGIN_CONVERGENCE_SEPARATOR, END_CONVERGENCE_SEPARATOR);
+		
 	}
 
 	private void append(String s, String begin, String end,

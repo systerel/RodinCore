@@ -22,6 +22,7 @@
 .theoremPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
 .eventLabel {font-size:16px; color:green; font-weight:bold;font-family:"Brave Sans Mono";}
 .inherited  {font-size:16px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}
+.convergence  {font-size:16px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}
 .abstractEventLabel {font-size:16px; color:black;font-family:"Brave Sans Mono";}
 .parameterIdentifier {font-size:16px; color:black;font-family:"Brave Sans Mono";}
 .guardLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
