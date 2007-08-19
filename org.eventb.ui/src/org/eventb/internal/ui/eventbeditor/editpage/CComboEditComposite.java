@@ -61,6 +61,7 @@ public class CComboEditComposite extends AbstractEditComposite {
 		Color BLACK = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 		Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
 		Color YELLOW = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
+		Color CYAN = Display.getDefault().getSystemColor(SWT.COLOR_CYAN);
 		try {
 			int maxSeverity = MarkerUIRegistry.getDefault()
 				.getMaxMarkerSeverity(element, uiSpec.getAttributeType());
@@ -70,8 +71,8 @@ public class CComboEditComposite extends AbstractEditComposite {
 				return;
 			}
 			else if (maxSeverity == IMarker.SEVERITY_WARNING) {
-				combo.setBackground(YELLOW);
-				combo.setForeground(RED);
+				combo.setBackground(CYAN);
+				combo.setForeground(BLACK);
 				return;
 			}
 		} catch (CoreException e) {
