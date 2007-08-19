@@ -10,13 +10,11 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.ui;
+package org.eventb.internal.ui;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
@@ -27,19 +25,12 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.internal.ui.ElementUIRegistry;
-import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.RodinElementTableLabelProvider;
-import org.eventb.internal.ui.RodinElementTreeLabelProvider;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
@@ -50,19 +41,14 @@ import org.rodinp.core.RodinMarkerUtil;
  *         <p>
  *         This class extends
  *         <code>org.eclipse.jface.viewers.LabelProvider</code> and provides
- *         labels for different elements appeared in the UI.
- *         </p>
- * @deprecated use {@link RodinElementTreeLabelProvider} or
- *             {@link RodinElementTableLabelProvider} instead.
- * 
+ *         labels for different elements appeared in the UI
  */
-@Deprecated
-public class ElementLabelProvider extends LabelProvider implements
+public abstract class RodinElementStructuredLabelProvider extends LabelProvider implements
 		IFontProvider, IPropertyChangeListener, IResourceChangeListener {
 
-	Viewer viewer;
+	StructuredViewer viewer;
 
-	public ElementLabelProvider(Viewer viewer) {
+	public RodinElementStructuredLabelProvider(StructuredViewer viewer) {
 		this.viewer = viewer;
 		JFaceResources.getFontRegistry().addListener(this);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -154,56 +140,24 @@ public class ElementLabelProvider extends LabelProvider implements
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
-		IMarkerDelta[] rodinProblemMakerDeltas = event.findMarkerDeltas(
-				RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
-		
-		final Set<Object> elements = new HashSet<Object>();
-		for (IMarkerDelta delta : rodinProblemMakerDeltas) {
-			Object element = RodinMarkerUtil.getElement(delta);
-			if (element != null && !elements.contains(element)) { 
-				elements.add(element);
-				if (viewer instanceof TreeViewer) {
-					element = ((ITreeContentProvider) ((TreeViewer) viewer)
-							.getContentProvider()).getParent(element);
-				}
-				while (element != null) {
-					elements.add(element);
-					if (viewer instanceof TreeViewer) {
-						element = ((ITreeContentProvider) ((TreeViewer) viewer)
-								.getContentProvider()).getParent(element);
-					}
-				}
-				
-			}
-		}
+		final Set<Object> elements = getRefreshElements(event);
+
 		if (elements.size() != 0) {
-			if (viewer instanceof StructuredViewer) {
-				Display display = viewer.getControl().getDisplay();
-				display.syncExec(new Runnable() {
+			final String[] properties = new String[] { RodinMarkerUtil.RODIN_PROBLEM_MARKER };
+			Display display = viewer.getControl().getDisplay();
+			display.syncExec(new Runnable() {
 
-					public void run() {
-						for (Object element : elements) {
-							((StructuredViewer) viewer)
-									.update(
-											element,
-											new String[] { RodinMarkerUtil.RODIN_PROBLEM_MARKER });
-						}
+				public void run() {
+					for (Object element : elements) {
+						viewer.update(element, properties);
 					}
+				}
 
-				});
-			}
-			else {
-				Display display = viewer.getControl().getDisplay();
-				display.syncExec(new Runnable() {
-
-					public void run() {
-						viewer.refresh();
-					}
-					
-				});
-			}
+			});
 		}
 	}
+
+	protected abstract Set<Object> getRefreshElements(IResourceChangeEvent event);
 
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
@@ -211,6 +165,5 @@ public class ElementLabelProvider extends LabelProvider implements
 			return true;
 		return super.isLabelProperty(element, property);
 	}
-
 	
 }

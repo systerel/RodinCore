@@ -214,12 +214,24 @@ public class ProjectExplorerContentProvider implements
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object child) {
-		// TODO need to get the right parent for internal elements
-
 		if (child instanceof TreeNode)
 			return ((TreeNode<?>) child).getParent();
-		if (child instanceof IRodinElement)
-			return ((IRodinElement) child).getParent();
+		if (child instanceof IRodinElement) {
+			IRodinElement element = (IRodinElement) child;
+			IRodinElement parent = (element).getParent();
+			Object[] objects = elementsMap.get(parent);
+			if (objects == null)
+				return parent;
+			for (Object obj : objects) {
+				if (obj instanceof TreeNode<?>) {
+					TreeNode<?> node = (TreeNode<?>) obj;
+					if (node.getType().equals(element.getElementType())) {
+						return node;
+					}
+				}
+			}
+			return parent;
+		}
 		return null;
 	}
 

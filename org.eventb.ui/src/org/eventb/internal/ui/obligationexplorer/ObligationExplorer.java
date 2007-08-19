@@ -13,17 +13,7 @@
 package org.eventb.internal.ui.obligationexplorer;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -31,18 +21,11 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -51,9 +34,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -67,7 +47,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -87,8 +66,6 @@ import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
@@ -97,12 +74,8 @@ import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.RodinMarkerUtil;
 
 /**
  * @author htson
@@ -304,241 +277,6 @@ public class ObligationExplorer extends ViewPart implements
 		return fViewer;
 	}
 
-	/**
-	 * @author htson
-	 *         <p>
-	 *         This class provides the label for object in the tree.
-	 */
-	private class ObligationLabelProvider extends LabelProvider
-			implements IFontProvider, IColorProvider, IPropertyChangeListener,
-			IResourceChangeListener {
-
-		private final Color yellow =
-			Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW);
-		
-		public ObligationLabelProvider() {
-			JFaceResources.getFontRegistry().addListener(this);
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			workspace.addResourceChangeListener(this,
-					IResourceChangeEvent.POST_BUILD
-							| IResourceChangeEvent.POST_CHANGE);
-		}
-
-		@Override
-		public Image getImage(Object element) {
-			ImageRegistry registry = EventBUIPlugin.getDefault()
-					.getImageRegistry();
-			if (element instanceof IPSStatus) {
-				IPSStatus status = (IPSStatus) element;
-				try {
-
-					// Try to synchronize with the proof tree in memory
-					Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
-							.getUserSupports();
-					for (IUserSupport userSupport : userSupports) {
-						// UIUtils.debugObligationExplorer("Get US: "
-						// + userSupport);
-						IProofState [] proofStates = userSupport
-								.getPOs();
-						for (IProofState proofState : proofStates) {
-							if (proofState.getPSStatus().equals(element)) {
-								IProofTree tree = proofState.getProofTree();
-
-								if (tree != null && proofState.isDirty()) {
-									if (!tree.proofAttempted())
-										return registry
-												.get(IEventBSharedImages.IMG_UNATTEMPTED);
-
-									int confidence = tree.getConfidence();
-
-									final boolean proofBroken = status.isBroken();
-									if (confidence == IConfidence.PENDING) {
-										if (false && proofBroken)
-											return registry
-													.get(IEventBSharedImages.IMG_PENDING_BROKEN);
-										else
-											return registry
-													.get(IEventBSharedImages.IMG_PENDING);
-									}
-									if (confidence <= IConfidence.REVIEWED_MAX) {
-										if (false && proofBroken)
-											return registry
-													.get(IEventBSharedImages.IMG_REVIEWED_BROKEN);
-										else
-											return registry
-													.get(IEventBSharedImages.IMG_REVIEWED);
-									}
-									if (confidence <= IConfidence.DISCHARGED_MAX) {
-										if (false && proofBroken)
-											return registry
-													.get(IEventBSharedImages.IMG_DISCHARGED_BROKEN);
-										else
-											return registry
-													.get(IEventBSharedImages.IMG_DISCHARGED);
-									}
-									return registry
-											.get(IEventBSharedImages.IMG_DEFAULT);
-								}
-							}
-						}
-					}
-
-					// Otherwise, setting the label accordingly.
-					return EventBImage.getPRSequentImage(status);
-				} catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-			}
-			if (element instanceof IRodinElement)
-				return EventBImage.getRodinImage((IRodinElement) element);
-			return null;
-		}
-
-		@Override
-		public String getText(Object obj) {
-			if (ObligationExplorerUtils.DEBUG)
-				ObligationExplorerUtils.debug("Label for: " + obj);
-			if (obj instanceof IRodinProject) {
-				if (ObligationExplorerUtils.DEBUG)
-					ObligationExplorerUtils.debug("Project: "
-							+ ((IRodinProject) obj).getElementName());
-				return ((IRodinProject) obj).getElementName();
-			} else if (obj instanceof IMachineFile) {
-				IPSFile psFile = ((IMachineFile) obj).getPSFile();
-				String bareName = psFile.getBareName();
-				ProofStatus proofStatus = new ProofStatus(psFile, false);
-				return bareName + proofStatus;
-			} else if (obj instanceof IContextFile) {
-				IPSFile psFile = ((IContextFile) obj).getPSFile();
-				String bareName = psFile.getBareName();
-				ProofStatus proofStatus = new ProofStatus(psFile, false);
-				return bareName + proofStatus;
-			} else if (obj instanceof IPSStatus) {
-				final IPSStatus psStatus = (IPSStatus) obj;
-				final String poName = psStatus.getElementName();
-
-				// Find the label in the list of UserSupport.
-				Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
-						.getUserSupports();
-				for (IUserSupport userSupport : userSupports) {
-					// UIUtils.debugObligationExplorer("Get US: " +
-					// userSupport);
-					IProofState [] proofStates = userSupport.getPOs();
-					for (IProofState proofState : proofStates) {
-						if (proofState.getPSStatus().equals(psStatus)) {
-							if (proofState.isDirty())
-								return "* " + poName;
-							else
-								return poName;
-						}
-					}
-				}
-				return poName;
-			}
-
-			return obj.toString();
-		}
-
-		@Override
-		public void dispose() {
-			JFaceResources.getFontRegistry().removeListener(this);
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-			super.dispose();
-		}
-
-		public Font getFont(Object element) {
-			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-		}
-
-		public Color getForeground(Object element) {
-			return null;
-		}
-
-		public Color getBackground(Object element) {
-			if (element instanceof IPSStatus) {
-				Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
-						.getUserSupports();
-				for (IUserSupport userSupport : userSupports) {
-					IProofState [] proofStates = userSupport.getPOs();
-					for (IProofState proofState : proofStates) {
-						if (proofState.getPSStatus().equals(element)) {
-							if (proofState.isDirty())
-								return yellow;
-							else
-								return null;
-						}
-					}
-				}
-			}
-			return null;
-		}
-
-		// If the font changed, all labels should be refreshed
-		public void propertyChange(PropertyChangeEvent event) {
-			final String property = event.getProperty();
-			if (property.equals(PreferenceConstants.EVENTB_MATH_FONT)) {
-				fireLabelProviderChanged(new LabelProviderChangedEvent(this));
-			}
-		}
-
-		public void resourceChanged(IResourceChangeEvent event) {
-			IMarkerDelta[] rodinProblemMakerDeltas = event.findMarkerDeltas(
-					RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
-			
-			final Set<IResource> resources = new HashSet<IResource>();
-			for (IMarkerDelta delta : rodinProblemMakerDeltas) {
-				IResource resource = delta.getResource();
-				resources.add(resource);
-				if (resource instanceof IFile) {
-					resources.add(resource.getParent());
-				}
-			}
-			if (resources.size() != 0) {
-				Display display = fViewer.getControl().getDisplay();
-				display.syncExec(new Runnable() {
-
-					public void run() {
-						for (IResource resource : resources) {
-							if (resource instanceof IProject) {
-								fViewer
-										.update(
-												RodinCore
-														.valueOf((IProject) resource),
-												new String[] { RodinMarkerUtil.RODIN_PROBLEM_MARKER });
-							} else {
-								IRodinFile file = RodinCore
-										.valueOf((IFile) resource);
-								IPSFile psFile = null;
-								if (file instanceof IMachineFile) {
-									IMachineFile machineFile = (IMachineFile) file;
-									psFile = machineFile.getPSFile();
-								}
-								else if (file instanceof IContextFile) {
-									IContextFile contextFile = (IContextFile) file;
-									psFile = contextFile.getPSFile();
-								}
-								if (psFile != null)
-								fViewer
-											.update(
-													psFile,
-													new String[] { RodinMarkerUtil.RODIN_PROBLEM_MARKER });
-							}
-						}
-					}
-
-				});
-			}
-		}
-
-		@Override
-		public boolean isLabelProperty(Object element, String property) {
-			if (property.equals(RodinMarkerUtil.RODIN_PROBLEM_MARKER))
-				return true;
-			return super.isLabelProperty(element, property);
-		}
-		
-	}
-
 	CoolItem createToolItem(CoolBar coolBar) {
 		ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
 		discharge = new ToolItem(toolBar, SWT.CHECK);
@@ -631,7 +369,7 @@ public class ObligationExplorer extends ViewPart implements
 		fViewer = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		fViewer.setContentProvider(new ObligationExplorerContentProvider(this));
-		fViewer.setLabelProvider(new ObligationLabelProvider());
+		fViewer.setLabelProvider(new ObligationExplorerLabelProvider(fViewer));
 		fViewer.setSorter(new ElementSorter());
 		fViewer.addFilter(new ObligationTextFilter());
 		fViewer.addFilter(new DischargedFilter());
@@ -641,12 +379,7 @@ public class ObligationExplorer extends ViewPart implements
 		textData.top = new FormAttachment(coolBar);
 		textData.bottom = new FormAttachment(100);
 		fViewer.getControl().setLayoutData(textData);
-		Tree tree = fViewer.getTree();
-		tree.setHeaderVisible(false);
-//		column = new TreeColumn(tree, SWT.LEFT);
 		fViewer.setInput(EventBUIPlugin.getRodinDatabase());
-//		column.pack();
-//		column.setWidth(MAX_WIDTH);
 
 		// Sync with the current active ProverUI
 		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();

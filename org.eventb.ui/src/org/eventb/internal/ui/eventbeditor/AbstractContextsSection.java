@@ -42,8 +42,8 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.IContextFile;
+import org.eventb.internal.ui.RodinElementTableLabelProvider;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.ElementLabelProvider;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -155,7 +155,7 @@ public abstract class AbstractContextsSection<F extends IRodinFile> extends
 				// TODO Empty default
 			}
 		});
-		viewer.setLabelProvider(new ElementLabelProvider(viewer));
+		viewer.setLabelProvider(new RodinElementTableLabelProvider(viewer));
 		viewer.setInput(rodinFile);
 		viewer.addSelectionChangedListener(this);
 

@@ -36,8 +36,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
+import org.eventb.internal.ui.RodinElementTreeLabelProvider;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.ElementLabelProvider;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
@@ -98,7 +98,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ProjectExplorerContentProvider(this));
-		viewer.setLabelProvider(new ElementLabelProvider(viewer));
+		viewer.setLabelProvider(new RodinElementTreeLabelProvider(viewer));
 		viewer.setSorter(new ElementSorter());
 		viewer.setInput(EventBUIPlugin.getRodinDatabase());
 		makeActions();
