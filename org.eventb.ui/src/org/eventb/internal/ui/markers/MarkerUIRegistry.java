@@ -4,6 +4,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IElementType;
+import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 
 public class MarkerUIRegistry implements IMarkerUIRegistry {
@@ -21,18 +23,9 @@ public class MarkerUIRegistry implements IMarkerUIRegistry {
 		return instance;
 	}
 	
-	public int getMaxMarkerSeverity(TreeNode<?> node)
-			throws CoreException {
+	public int getMaxMarkerSeverity(TreeNode<?> node) throws CoreException {
 		assert node != null;
-		IRodinElement[] elements = node.getChildren();
-		int severity = -1;
-		for (IRodinElement element : elements) {
-			int newSeverity = MarkerRegistry.getDefault().getMaxMarkerSeverity(
-					element);
-			if (severity < newSeverity)
-				severity = newSeverity;
-		}
-		return severity;
+		return getMaxMarkerSeverity(node.getParent(), node.getType());
 	}
 
 	public IMarker[] getMarkers(IRodinElement element) throws CoreException {
@@ -53,6 +46,19 @@ public class MarkerUIRegistry implements IMarkerUIRegistry {
 			IAttributeType attributeType) throws CoreException {
 		return MarkerRegistry.getDefault().getAttributeMarkers(element,
 				attributeType);
+	}
+
+	public int getMaxMarkerSeverity(IParent parent, IElementType<?> childType)
+			throws CoreException {
+		IRodinElement[] elements = parent.getChildrenOfType(childType);
+		int severity = -1;
+		for (IRodinElement element : elements) {
+			int newSeverity = MarkerRegistry.getDefault().getMaxMarkerSeverity(
+					element);
+			if (severity < newSeverity)
+				severity = newSeverity;
+		}
+		return severity;
 	}
 
 }
