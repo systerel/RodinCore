@@ -5,9 +5,12 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -21,6 +24,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IAttributeType;
@@ -61,7 +65,9 @@ public class SectionComposite implements ISectionComposite {
 
 	// expanding status
 	boolean isExpanded;
-
+	
+	FormText prefixFormText;
+	
 	// Before hyperlink composite
 	AbstractHyperlinkComposite beforeHyperlinkComposite;
 
@@ -212,15 +218,16 @@ public class SectionComposite implements ISectionComposite {
 
 		});
 
-		FormText widget = toolkit.createFormText(comp, true);
+		prefixFormText = toolkit.createFormText(comp, true);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		widget.setLayoutData(gd);
-		new EventBFormText(widget);
+		prefixFormText.setLayoutData(gd);
+		new EventBFormText(prefixFormText);
 		int space = -20;
 		String text = "<form><li style=\"text\" bindent = \"" + space
 				+ "\"><b>" + str + "</b></li></form>";
-		widget.setText(text, true, true);
+		prefixFormText.setText(text, true, true);
+		updatePrefixFormText();
 	}
 
 	protected boolean isExpanded() {
@@ -245,6 +252,7 @@ public class SectionComposite implements ISectionComposite {
 			afterHyperlinkComposite.setHeightHint(0);
 		}
 		updateExpandStatus();
+		updatePrefixFormText();
 		form.reflow(true);
 		form.setRedraw(true);
 		long afterTime = System.currentTimeMillis();
@@ -462,10 +470,43 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	public void refresh(IRodinElement element, Set<IAttributeType> set) {
-		if (elementComps != null)
-			for (IElementComposite elementComp : elementComps) {
-				elementComp.refresh(element, set);
+		if (parent.equals(element) || parent.isAncestorOf(element)) {
+			updatePrefixFormText();
+			if (elementComps != null)
+				for (IElementComposite elementComp : elementComps) {
+					elementComp.refresh(element, set);
+				}
+		}
+	}
+
+	private void updatePrefixFormText() {
+		Color RED = prefixFormText.getDisplay().getSystemColor(SWT.COLOR_RED);
+		Color YELLOW = prefixFormText.getDisplay().getSystemColor(SWT.COLOR_YELLOW);
+		Color WHITE = prefixFormText.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+		Color BLACK = prefixFormText.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+		if (isExpanded()) {
+			prefixFormText.setBackground(WHITE);
+			prefixFormText.setForeground(BLACK);
+			return;
+		}
+		try {
+			int severity = MarkerUIRegistry.getDefault().getMaxMarkerSeverity(
+					parent, rel.getChildType());
+			if (severity == IMarker.SEVERITY_ERROR) {
+				prefixFormText.setBackground(RED);
+				prefixFormText.setForeground(YELLOW);
 			}
+			else if (severity == IMarker.SEVERITY_WARNING) {
+				prefixFormText.setBackground(YELLOW);
+				prefixFormText.setForeground(RED);
+			}
+			else {
+				prefixFormText.setBackground(WHITE);
+				prefixFormText.setForeground(BLACK);
+			} 
+		} catch (CoreException e) {
+			return;
+		}
 	}
 
 }
