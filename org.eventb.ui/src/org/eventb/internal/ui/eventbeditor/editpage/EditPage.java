@@ -428,9 +428,11 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	}
 
 	/**
-	 * Utility method for updating comment of the file. 
+	 * Utility method for updating comment of the file.
 	 */
 	private void updateComment() {
+		if (commentText == null)
+			return;
 		final Text commentWidget = commentText.getTextWidget();
 		String text = commentWidget.getText();
 		IRodinFile rodinInput = this.getEventBEditor().getRodinInput();
@@ -889,9 +891,10 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 					Set<IAttributeType> set = map.get(key);
 					if (rodinInput.equals(key)
 							|| rodinInput.isAncestorOf(key)) {
-						for (ISectionComposite sectionComposite : sectionComps) {
-							sectionComposite.refresh(key, set);
-						}
+						if (sectionComps != null)
+							for (ISectionComposite sectionComposite : sectionComps) {
+								sectionComposite.refresh(key, set);
+							}
 					}
 				}
 			}
