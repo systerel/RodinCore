@@ -15,13 +15,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSStatus;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.seqprover.IProofDependencies;
-import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.IPSWrapper;
+import org.eventb.internal.core.PSWrapper;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -37,92 +33,54 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 
 	public static boolean DEBUG = false;
 	
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+	public boolean run(IFile source, IFile target, IProgressMonitor pm)
+			throws RodinDBException {
+		
+		final IPSFile psFile = (IPSFile) RodinCore.valueOf(target);
+		final IPOFile poFile = (IPOFile) psFile.getPOFile().getSnapshot();
+		final IPRFile prFile = psFile.getPRFile();
 
-	public boolean run(IFile source, IFile file, IProgressMonitor monitor) throws RodinDBException {
+		final String componentName = psFile.getComponentName();
 		
-		IPSFile psFile = (IPSFile) RodinCore.valueOf(file).getMutableCopy();
-		IPRFile prFile = (IPRFile) psFile.getPRFile().getMutableCopy();
-		IPOFile poFile = (IPOFile) psFile.getPOFile().getSnapshot();
-		
-		final String componentName = prFile.getComponentName();
-		
-		final IPOSequent[] pos = poFile.getSequents();
-		final int noOfPOs = pos.length;
-		final int workUnits = 3 + 2 + noOfPOs * 2;
-		// 3 : creating fresh PR file
-		// 1x : updating eash proof status
+		final IPOSequent[] poSequents = poFile.getSequents();
+		final int nbOfPOs = poSequents.length;
+		final int workUnits = 1 + 2 + nbOfPOs * 2;
+		// 1 : creating fresh PR file
+		// 1x : updating each proof status
 		// 2 : saving PR file
-		// 1x : autoproving each proof obligation
+		// 1x : auto-proving each proof obligation
 		
 		try {
-			monitor.beginTask("Proving " + componentName, workUnits);
+			pm.beginTask("Proving " + componentName, workUnits);
 			
-			// remove old proof status
-			monitor.subTask("cleaning up");
-			makeFresh(prFile,psFile,null);
-			monitor.worked(3);
-			checkCancellation(monitor, prFile, psFile);
+			createFreshProofFile(prFile, new SubProgressMonitor(pm, 1));
+			checkCancellation(pm, prFile, psFile);
 			
-			// create new proof status
-			for (int i = 0; i < pos.length; i++) {
-				
-				final IPOSequent poSequent = pos[i];
-				final String name = poSequent.getElementName();
-				monitor.subTask("updating status for " + name);
-				
-				final IPRProof prProof = prFile.getProof(name);
-				
-				if (! prProof.exists()) {
-					prProof.create(null, null);
-					// prProof.initialize(null);
-				}
-				
-				
-				final IPSStatus status = psFile.getStatus(name);
-				final IPSStatus oldStatus = (IPSStatus) status.getSnapshot();
-				if (oldStatus.exists()) {
-					oldStatus.copy(psFile, null, null, true, null);
-				} else {
-					status.create(null, monitor);
-				}
-				try {
-					if (!hasSameStampAsPo(status)) {
-						updateStatus(status, monitor);
-					}
-				} catch (Exception e) {
-					Util.log(e, "Exception thrown while updating status for "
-							+ status);
-				}
-				
-				monitor.worked(1);
-				checkCancellation(monitor, prFile, psFile);
+			// update proof statuses
+			final IPSWrapper psWrapper = new PSWrapper(psFile);
+			final PSUpdater updater = new PSUpdater(psWrapper);
+			for (final IPOSequent poSequent : poSequents) {
+				final IProgressMonitor spm = new SubProgressMonitor(pm, 1);
+				updater.updatePO(poSequent, spm);
+				checkCancellation(pm, prFile, psFile);
 			}
 			
-			monitor.subTask("saving");
-			prFile.save(new SubProgressMonitor(monitor, 1), true, true);
-			psFile.save(new SubProgressMonitor(monitor, 1), true, false);
+			updater.cleanup(new SubProgressMonitor(pm, 1));
 			
-			checkCancellation(monitor, prFile, psFile);
+			pm.subTask("saving");
+			prFile.save(new SubProgressMonitor(pm, 1), true, true);
+			psFile.save(new SubProgressMonitor(pm, 1), true, false);
+			
+			checkCancellation(pm, prFile, psFile);
 
-			SubProgressMonitor spm = new SubProgressMonitor(monitor, noOfPOs,
+			SubProgressMonitor spm = new SubProgressMonitor(pm, nbOfPOs,
 					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK					
 			);
 			AutoProver.run(prFile, psFile, spm);
 			return true;
 		} finally {
-			monitor.done();
+			pm.done();
 		}
-	}
-
-	// Returns true if the both the status and the corresponding PO sequent
-	// carry the same stamp.
-	private boolean hasSameStampAsPo(IPSStatus psStatus) throws RodinDBException {
-		final IPOSequent poSequent = psStatus.getPOSequent();
-		if (poSequent.hasPOStamp() && psStatus.hasPOStamp()) {
-			return poSequent.getPOStamp() == psStatus.getPOStamp();
-		}
-		return false;
 	}
 
 	private void checkCancellation(IProgressMonitor monitor, IPRFile prFile, IPSFile psFile) {
@@ -140,81 +98,36 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 	
-	public void clean(IFile source, IFile file, IProgressMonitor monitor) throws RodinDBException {
-		
-		IPSFile psFile = (IPSFile) RodinCore.valueOf(file);
+	public void clean(IFile source, IFile target, IProgressMonitor monitor)
+			throws RodinDBException {
+		final IPSFile psFile = (IPSFile) RodinCore.valueOf(target);
 		if (psFile.exists()) {
-			psFile.delete(true, null);
+			psFile.delete(true, monitor);
 		}
-
 		// Don't delete the PR file, it contains user proofs.
 	}
 
-	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {	
-		
+	public void extract(IFile source, IGraph graph, IProgressMonitor monitor)
+			throws CoreException {
 		try {
-			
-			monitor.beginTask("Extracting " + file.getName(), 1);
-		
-			IPOFile source = (IPOFile) RodinCore.valueOf(file);
-			// IPRFile target = source.getPRFile();
-			IPSFile target = source.getPSFile();
-		
-			graph.addTarget(target.getResource());
-			graph.addToolDependency(
-					source.getResource(), 
-					target.getResource(), true);
-			
+			monitor.beginTask("Extracting " + source.getName(), 1);
+			final IFile target = getPSResource(source);
+			graph.addTarget(target);
+			graph.addToolDependency(source, target, true);
 		} finally {
 			monitor.done();
 		}
 	}
 
-	private void makeFresh(IPRFile prFile, IPSFile psFile,
-			IProgressMonitor monitor) throws RodinDBException {
-		
-		// IRodinProject project = prFile.getRodinProject();
-
-		// Create a new PR file if none exists
-		if (! prFile.exists())
-			prFile.create(true, monitor);
-			//project.createRodinFile(prFile.getElementName(), true, monitor);
-		
-		// Create a fresh PS file
-		// TODO : modify once signatures are implemented
-		if (! psFile.exists()) 
-			psFile.create(true, monitor);
-		else
-		{
-			IPSStatus[] statuses = psFile.getStatuses();
-			for (IPSStatus status : statuses) {
-				status.delete(true, monitor);
-			}
-		}
+	private static IFile getPSResource(IFile poResource) {
+		final IPOFile poFile = (IPOFile) RodinCore.valueOf(poResource);
+		final IPSFile psFile = poFile.getPSFile();
+		return psFile.getResource();
 	}
-	
-	
-//	 lock po & pr files before calling this method
-// TODO : a version with Proof tree from seqProver
-	public static void updateStatus(IPSStatus status, IProgressMonitor monitor)
-			throws RodinDBException {
 
-		final IPOSequent poSequent = status.getPOSequent();
-		final IProverSequent seq =  POLoader.readPO(poSequent);
-		final IPRProof prProof = status.getProof();
-		final boolean broken;
-		if (prProof.exists()) {
-			IProofDependencies deps = prProof.getProofDependencies(ff, monitor);
-			broken = ! ProverLib.proofReusable(deps,seq);
-		} else {
-			broken = false;
-		}
-		// status.setProofConfidence(null);
-		status.copyProofInfo(null);
-		if (poSequent.hasPOStamp()) {
-			status.setPOStamp(poSequent.getPOStamp(), null);
-		}
-		status.setBroken(broken, null);
+	private void createFreshProofFile(IPRFile prFile, IProgressMonitor pm) throws RodinDBException {
+		if (!prFile.exists())
+			prFile.create(true, pm);
 	}
 	
 }

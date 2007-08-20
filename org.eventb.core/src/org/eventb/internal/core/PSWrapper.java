@@ -1,6 +1,10 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2007 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.internal.core;
 
 import java.util.HashMap;
@@ -8,6 +12,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
@@ -24,26 +29,27 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
-import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author htson
- * 
+ * @author Thai Son Hoang
+ * @author Laurent Voisin
  */
 public class PSWrapper implements IPSWrapper {
 	
 	private static class StampedProofTree {
-		long poStamp;
-		IProofTree tree;
+		final long poStamp;
+		final IProofTree tree;
 
 		StampedProofTree(long poStamp, IProofTree tree) {
 			this.poStamp = poStamp;
 			this.tree = tree;
 		}
 	}
+
+	private static FormulaFactory ff = FormulaFactory.getDefault();
 
 	final IPSFile psFile;
 
@@ -65,27 +71,19 @@ public class PSWrapper implements IPSWrapper {
 		return psFile.getStatuses();
 	}
 
-	private void createFreshProofTree(IPSStatus psStatus)
+	private IProofTree createFreshProofTree(IPSStatus psStatus)
 			throws RodinDBException {
 		final IPOSequent poSequent = psStatus.getPOSequent();
-		final long poStamp = poSequent.getPOStamp(); 
 		final IProverSequent rootSeq = POLoader.readPO(poSequent);
 		final IProofTree pt = ProverFactory.makeProofTree(rootSeq, poSequent);
+		final long poStamp = poSequent.getPOStamp(); 
 		loadedTrees.put(psStatus, new StampedProofTree(poStamp, pt));
+		return pt;
 	}
 	
-	public IProofTree getProofTree(IPSStatus psStatus) {
-		StampedProofTree ps = loadedTrees.get(psStatus);
-		if (ps == null) {
-			return null;
-		}
-		return ps.tree;
-	}
-
 	public IProofTree getFreshProofTree(IPSStatus psStatus)
 			throws RodinDBException {
-		createFreshProofTree(psStatus);
-		return getProofTree(psStatus);
+		return createFreshProofTree(psStatus);
 	}
 
 	public IProofSkeleton getProofSkeleton(IPSStatus status,
@@ -117,6 +115,7 @@ public class PSWrapper implements IPSWrapper {
 		updateStatus(status, hasManualProof, monitor);
 	}
 	
+	// TODO apparently unused
 	public void makeFresh(IProgressMonitor monitor) throws RodinDBException {
 
 		if (!prFile.exists())
@@ -135,6 +134,7 @@ public class PSWrapper implements IPSWrapper {
 		}
 	}
 
+	// TODO apparently unused
 	public void makeConsistent() throws RodinDBException {
 		prFile.makeConsistent(null);
 		psFile.makeConsistent(null);
@@ -142,42 +142,20 @@ public class PSWrapper implements IPSWrapper {
 
 	public void save(IProgressMonitor monitor, boolean force)
 			throws RodinDBException {
-		psFile.save(monitor, force, false);
-		prFile.save(monitor, force, true);
-	}
-
-	public void clean() throws RodinDBException {
-		if (psFile.exists()) {
-			psFile.delete(true, null);
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
 		}
-
-		// Don't delete the PR file, it contains user proofs.
-	}
-
-	public IPRProof getPRProof(String name) {
-		return prFile.getProof(name);
+		try {
+			monitor.beginTask("Saving proof files", 2);
+			prFile.save(new SubProgressMonitor(monitor, 1), force, true);
+			psFile.save(new SubProgressMonitor(monitor, 1), force, false);
+		} finally {
+			monitor.done();
+		}
 	}
 
 	public IPSStatus getPSStatus(String name) {
 		return psFile.getStatus(name);
-	}
-
-	public void updateStatus(IPSStatus status, IProgressMonitor monitor)
-			throws RodinDBException {
-		FormulaFactory ff = FormulaFactory.getDefault();
-
-		IProverSequent seq = POLoader.readPO(status.getPOSequent());
-		final IPRProof prProof = status.getProof();
-		final boolean broken;
-		if (prProof.exists()) {
-			IProofDependencies deps = prProof.getProofDependencies(ff, monitor);
-			broken = !ProverLib.proofReusable(deps, seq);
-		} else {
-			broken = false;
-		}
-		// status.setProofConfidence(null);
-		status.copyProofInfo(null);
-		status.setBroken(broken, null);
 	}
 
 	public void updateStatus(final IPSStatus psStatus,
@@ -186,7 +164,7 @@ public class PSWrapper implements IPSWrapper {
 
 		final StampedProofTree spt = loadedTrees.get(psStatus);
 		if (spt == null) {
-			return;
+			throw new IllegalStateException("Unknown proof tree");
 		}
 
 		final IPSStatus psHandle = (IPSStatus) psStatus.getMutableCopy();
@@ -195,11 +173,11 @@ public class PSWrapper implements IPSWrapper {
 			public void run(IProgressMonitor pm) throws RodinDBException {
 				try {
 					pm.beginTask("Saving Proof", 4);
+					// TODO create Proof file if needed.
 					proof.setProofTree(spt.tree, new SubProgressMonitor(pm, 1));
 					proof.setHasManualProof(hasManualProof,
 							new SubProgressMonitor(pm, 1));
-					AutoPOM.updateStatus(psHandle,
-							new SubProgressMonitor(pm, 1));
+					updateStatus(psHandle, new SubProgressMonitor(pm, 1));
 					psHandle.setPOStamp(spt.poStamp, new SubProgressMonitor(pm,
 							1));
 				} finally {
@@ -209,8 +187,28 @@ public class PSWrapper implements IPSWrapper {
 		};
 		final ISchedulingRule rule = MultiRule.combine(psFile
 				.getSchedulingRule(), prFile.getSchedulingRule());
-
 		RodinCore.run(runnable, rule, monitor);	
+	}
+
+	//	 lock po & pr files before calling this method
+	public static void updateStatus(IPSStatus status, IProgressMonitor pm)
+			throws RodinDBException {
+
+		final IPOSequent poSequent = status.getPOSequent();
+		final IProverSequent seq =  POLoader.readPO(poSequent);
+		final IPRProof prProof = status.getProof();
+		final boolean broken;
+		if (prProof.exists()) {
+			IProofDependencies deps = prProof.getProofDependencies(ff, pm);
+			broken = ! ProverLib.proofReusable(deps,seq);
+		} else {
+			broken = false;
+		}
+		status.copyProofInfo(null);
+		if (poSequent.hasPOStamp()) {
+			status.setPOStamp(poSequent.getPOStamp(), null);
+		}
+		status.setBroken(broken, null);
 	}
 
 }

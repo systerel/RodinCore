@@ -20,18 +20,11 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.internal.core.PSWrapper;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
 
-public class AutoProver {
-	
-	public static void disable() {
-		EventBPlugin.getPOMTacticPreference().setEnabled(false);
-	}
-	
-	public static void enable() {
-		EventBPlugin.getPOMTacticPreference().setEnabled(true);
-	}
+final class AutoProver {
 
 	public static boolean isEnabled() {
 		return EventBPlugin.getPOMTacticPreference().isEnabled();
@@ -102,7 +95,7 @@ public class AutoProver {
 			// Update the tree if it was discharged
 			if (autoProofTree.isClosed()) {
 				prProof.setProofTree(autoProofTree, null);
-				AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
+				PSWrapper.updateStatus(status,new SubProgressMonitor(pm,1));
 				status.setHasManualProof(false,null);
 				prFile.save(null, false, true);
 				return true;
@@ -117,7 +110,7 @@ public class AutoProver {
 
 			{
 				prProof.setProofTree(autoProofTree, null);
-				AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
+				PSWrapper.updateStatus(status,new SubProgressMonitor(pm,1));
 				status.setHasManualProof(false,null);
 				// in this case no need to save immediately.
 				return true;

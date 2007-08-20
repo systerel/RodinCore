@@ -34,13 +34,23 @@ public interface IPSWrapper {
 	public IPSFile getPSFile();
 
 	/**
+	 * Returns the status of the proof obligation with the given name.
+	 * 
+	 * @param name
+	 *            of a proof obligation
+	 * @return the status of the given PO in the wrapped-up PS file
+	 * @throws RodinDBException
+	 *             if an error occurs accessing the Rodin database
+	 */
+	public IPSStatus getPSStatus(String name) throws RodinDBException;
+
+	/**
 	 * Returns all PS statuses of the wrapped-up PS file.
 	 * 
 	 * @return all PS statuses of the wrapped-up PS file
 	 * @throws RodinDBException
 	 *             if an error occurs accessing the Rodin database
 	 */
-	// TODO split into two methods: createFreshProofTree() and getProofTree()
 	public IPSStatus[] getPSStatuses() throws RodinDBException;
 
 	/**
@@ -55,6 +65,7 @@ public interface IPSWrapper {
 	 * @see #updateStatus(IPSStatus, boolean, IProgressMonitor)
 	 */
 	// TODO add progress monitor as this is a long-running operation
+	// TODO split into two methods: createFreshProofTree() and getProofTree()
 	public IProofTree getFreshProofTree(IPSStatus psStatus)
 			throws RodinDBException;
 
@@ -113,6 +124,11 @@ public interface IPSWrapper {
 	 * was returned by {@link #getFreshProofTree(IPSStatus)}. Also, the
 	 * associated proof is extracted from the same tree and stored in the
 	 * corresponding PR file.
+	 * </p>
+	 * <p>
+	 * Note that the changes to the PS and PR files are not saved by this
+	 * method. One needs to explicitly call
+	 * {@link #save(IProgressMonitor, boolean)}.
 	 * </p>
 	 * 
 	 * @param psStatus
