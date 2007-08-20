@@ -2,7 +2,7 @@
 <feature
       id="org.rodinp.platform"
       label="%featureName"
-      version="0.7.5"
+      version="0.7.6"
       provider-name="%providerName"
       os="linux,win32,macosx"
       ws="gtk,win32,carbon"
