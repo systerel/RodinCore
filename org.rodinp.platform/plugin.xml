@@ -20,6 +20,10 @@
          <property
                name="windowImages"
                value="icons/rodin16.gif,icons/rodin32.gif"/>
+         <property
+               name="appName"
+               value="%productName">
+         </property>
       </product>
    </extension>
    <extension
