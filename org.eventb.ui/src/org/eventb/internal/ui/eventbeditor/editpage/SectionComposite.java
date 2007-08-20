@@ -80,6 +80,7 @@ public class SectionComposite implements ISectionComposite {
 	// After hyperlink composite
 	AbstractHyperlinkComposite afterHyperlinkComposite;
 
+	int severity = IMarker.SEVERITY_INFO;
 	
 	public SectionComposite(EditPage page, FormToolkit toolkit,
 			ScrolledForm form, Composite compParent, IInternalParent parent,
@@ -484,14 +485,12 @@ public class SectionComposite implements ISectionComposite {
 		Color YELLOW = prefixFormText.getDisplay().getSystemColor(SWT.COLOR_YELLOW);
 		Color WHITE = prefixFormText.getDisplay().getSystemColor(SWT.COLOR_WHITE);
 		Color BLACK = prefixFormText.getDisplay().getSystemColor(SWT.COLOR_BLACK);
-		if (isExpanded()) {
-			prefixFormText.setBackground(WHITE);
-			prefixFormText.setForeground(BLACK);
-			return;
-		}
 		try {
-			int severity = MarkerUIRegistry.getDefault().getMaxMarkerSeverity(
+			int currentSeverity = MarkerUIRegistry.getDefault().getMaxMarkerSeverity(
 					parent, rel.getChildType());
+			if (currentSeverity == severity)
+				return;
+			severity = currentSeverity; 
 			if (severity == IMarker.SEVERITY_ERROR) {
 				prefixFormText.setBackground(RED);
 				prefixFormText.setForeground(YELLOW);
