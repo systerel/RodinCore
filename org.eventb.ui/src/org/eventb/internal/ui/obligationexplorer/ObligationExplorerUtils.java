@@ -1,7 +1,5 @@
 package org.eventb.internal.ui.obligationexplorer;
 
-import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-
 public class ObligationExplorerUtils {
 
 	// Debug flag
@@ -10,7 +8,7 @@ public class ObligationExplorerUtils {
 	public final static String DEBUG_PREFIX = "*** ObligationExplorer *** ";
 
 	public static void debug(String message) {
-		System.out.println(EventBEditorUtils.DEBUG_PREFIX + message);
+		System.out.println(DEBUG_PREFIX + message);
 	}
 
 }
