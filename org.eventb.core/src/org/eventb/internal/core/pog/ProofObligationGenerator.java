@@ -92,14 +92,14 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		assert oldFile != null;
 		assert newFile != null;
 		
-		long freshStamp;
-		boolean oldExists = oldFile.exists();
+		final long freshStamp;
+		final boolean oldExists = oldFile.exists();
 		if (oldExists) {
-			freshStamp = oldFile.getPOStamp();
-			freshStamp++;
-		} else
+			freshStamp = oldFile.getPOStamp() + 1;
+		} else {
 			freshStamp = IPOStampedElement.INIT_STAMP;
-		
+		}
+
 		IPOPredicateSet[] predSets = newFile.getPredicateSets();
 		Set<IPOPredicateSet> chPrdSets = comparePredicateSets(oldFile, predSets, freshStamp, null);
 		
@@ -144,7 +144,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		for (IPOSequent sequent : sequents) {
 			
 			IPOPredicateSet hyp = sequent.getHypotheses()[0];
-			if (chPrdSets.contains(hyp)) {
+			if (chPrdSets.contains(hyp.getParentPredicateSet())) {
 				sequent.setPOStamp(freshStamp, monitor);
 				changed = true;
 			} else {

@@ -8,8 +8,12 @@
 package org.eventb.core.tests.pog;
 
 import org.eventb.core.IContextFile;
+import org.eventb.core.IEvent;
+import org.eventb.core.IGuard;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOStampedElement;
 
 /**
@@ -365,5 +369,37 @@ public class DeltaCheckingTest extends EventBPOTest {
 		runBuilderNotChanged(po);
 	}
 
+	/**
+	 * Ensures that modifying the guard of an event changes the stamp for the
+	 * invariant preservation POs associated to the event.
+	 */
+	public void testEvents_00() throws Exception {
+		final IMachineFile mac = createMachine("mac");
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I1"), makeSList("x∈0‥4"));
+		addEvent(mac, "evt", 
+				makeSList(), 
+				makeSList("G1"), makeSList("1 < x"), 
+				makeSList("A1"), makeSList("x≔x+1"));
+		mac.save(null, true);
+		
+		runBuilder();
+		final IPOFile po = mac.getPOFile();
+		final IPOSequent sequent = getSequent(po, "evt/I1/INV");
+		hasStamp(po, IPOStampedElement.INIT_STAMP);
+		hasStamp(sequent, IPOStampedElement.INIT_STAMP);
+
+		final IEvent evt = mac.getEvents()[0];
+		final IGuard g1 = evt.getGuards()[0];
+		g1.setPredicateString("x < 4", null);
+		mac.save(null, true);
+		
+		runBuilder();
+		final IPOPredicateSet hyps = sequent.getHypotheses()[0];
+		final IPOPredicateSet parent = hyps.getParentPredicateSet();
+		hasStamp(parent, IPOStampedElement.INIT_STAMP+1);
+		hasStamp(sequent, IPOStampedElement.INIT_STAMP+1);
+		hasStamp(po, IPOStampedElement.INIT_STAMP+1);
+	}
 
 }
