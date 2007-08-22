@@ -208,7 +208,7 @@ public class NewComponentWizardPage extends WizardPage {
 		machineButton.setSelection(true);
 		contextButton.setSelection(false);
 
-		final IRodinProject project;
+		IRodinProject project = null;
 		if (selection != null && selection.isEmpty() == false
 				&& selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -232,7 +232,8 @@ public class NewComponentWizardPage extends WizardPage {
 				System.out.println("From Project Explorer: ");
 			ProjectExplorer explorer = (ProjectExplorer) EventBUIPlugin
 					.getActivePage().findView(ProjectExplorer.VIEW_ID);
-			project = explorer.getCurrentProject();
+			if (explorer != null)
+				project = explorer.getCurrentProject();
 		}
 
 		if (UIUtils.DEBUG)
