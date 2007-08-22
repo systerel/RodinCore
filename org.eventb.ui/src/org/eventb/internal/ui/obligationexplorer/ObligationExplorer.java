@@ -368,7 +368,8 @@ public class ObligationExplorer extends ViewPart implements
 
 		fViewer = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL
 				| SWT.V_SCROLL);
-		fViewer.setContentProvider(new ObligationExplorerContentProvider(this));
+		fViewer.setContentProvider(new ObligationExplorerContentProvider(
+				fViewer));
 		fViewer.setLabelProvider(new ObligationExplorerLabelProvider(fViewer));
 		fViewer.setSorter(new ElementSorter());
 		fViewer.addFilter(new ObligationTextFilter());

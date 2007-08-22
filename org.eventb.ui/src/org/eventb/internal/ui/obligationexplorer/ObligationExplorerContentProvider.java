@@ -13,7 +13,8 @@
 package org.eventb.internal.ui.obligationexplorer;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -24,8 +25,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
+import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorerActionGroup;
 import org.eventb.ui.EventBUIPlugin;
@@ -35,9 +36,11 @@ import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.RodinDB;
 
 /**
  * @author htson
@@ -52,20 +55,17 @@ public class ObligationExplorerContentProvider implements
 	// The invisible root of the tree viewer.
 	private IRodinElement invisibleRoot = null;
 
-	// The Project Explorer.
-	ObligationExplorer explorer;
-
-	// List of elements need to be refresh (when processing Delta of changes).
-	private List<IRodinElement> toRefresh;
+	// The tree viewer of the Obligation Explorer.
+	TreeViewer viewer;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param explorer
-	 *            The Project Explorer
+	 * @param viewer
+	 *            The tree viewer of the Obligation Explorer.
 	 */
-	public ObligationExplorerContentProvider(ObligationExplorer explorer) {
-		this.explorer = explorer;
+	public ObligationExplorerContentProvider(TreeViewer viewer) {
+		this.viewer = viewer;
 	}
 
 	/**
@@ -75,9 +75,63 @@ public class ObligationExplorerContentProvider implements
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		toRefresh = new ArrayList<IRodinElement>();
-		processDelta(event.getDelta());
-		postRefresh(toRefresh, true);
+		final ArrayList<Runnable> runnables = new ArrayList<Runnable>();
+		IRodinElementDelta delta = event.getDelta();
+		if (ObligationExplorerUtils.DEBUG)
+			ObligationExplorerUtils.debug(delta.toString());
+		processDelta(delta, runnables);
+		executeRunnables(runnables);
+	}
+
+	void executeRunnables(final Collection<Runnable> runnables) {
+
+		// now post all collected runnables
+		Control ctrl= viewer.getControl();
+		if (ctrl != null && !ctrl.isDisposed()) {
+			//Are we in the UIThread? If so spin it until we are done
+			if (ctrl.getDisplay().getThread() == Thread.currentThread()) {
+				runUpdates(runnables);
+			} else {
+				synchronized (this) {
+					if (fPendingUpdates == null) {
+						fPendingUpdates = runnables;
+					} else {
+						fPendingUpdates.addAll(runnables);
+					}
+				}
+				ctrl.getDisplay().asyncExec(new Runnable(){
+					public void run() {
+						runPendingUpdates();
+					}
+				});
+			}
+		}
+	}
+	
+	private Collection<Runnable> fPendingUpdates;
+
+	private void runUpdates(Collection<Runnable> runnables) {
+		Iterator<Runnable> runnableIterator = runnables.iterator();
+		while (runnableIterator.hasNext()){
+			runnableIterator.next().run();
+		}
+	}
+
+	/**
+	 * Run all of the runnables that are the widget updates. Must be called in the display thread.
+	 */
+	public void runPendingUpdates() {
+		Collection<Runnable> pendingUpdates;
+		synchronized (this) {
+			pendingUpdates= fPendingUpdates;
+			fPendingUpdates= null;
+		}
+		if (pendingUpdates != null && viewer != null) {
+			Control control = viewer.getControl();
+			if (control != null && !control.isDisposed()) {
+				runUpdates(pendingUpdates);
+			}
+		}
 	}
 
 	/**
@@ -85,97 +139,158 @@ public class ObligationExplorerContentProvider implements
 	 * <p>
 	 * 
 	 * @param delta
-	 *            The Delta from the Rodin Database
+	 *            The Delta from the Rodin Database.
+	 * @param runnables
+	 *            the resulting view changes as runnables ({@link Runnable}.
 	 */
-	private void processDelta(IRodinElementDelta delta) {
+	private boolean processDelta(IRodinElementDelta delta,
+			Collection<Runnable> runnables) {
 		int kind = delta.getKind();
 		IRodinElement element = delta.getElement();
+		
 		if (kind == IRodinElementDelta.ADDED) {
-			IRodinElement parent;
-			if (element instanceof IRodinProject) {
-				parent = invisibleRoot;
-			} else {
-				parent = element.getParent();
+			// Convert from IPSFile to IMachineFile or IContextFile the add to
+			// the view.
+			if (element instanceof IPSFile) {
+				IPSFile psFile = (IPSFile) element;
+				// ASSUMPTION: psFile must correspond to either machineFile or
+				// contextFile
+				IMachineFile machineFile = psFile.getMachineFile();
+				if (machineFile.exists())
+					element = machineFile;
+				else
+					element = psFile.getContextFile();
+				Object parent = psFile.getRodinProject();
+				postAdd(parent, element, runnables);
+				return false;
 			}
-			toRefresh.add(parent);
-			return;
+			
+			if (element instanceof IPSStatus
+					|| element instanceof IRodinProject) {
+				Object parent = getParent(element);
+				if (parent != null) {
+					postAdd(parent, element, runnables);
+					if (parent instanceof IRodinFile)
+						postUpdateLabel(parent, runnables);
+				}
+				return false;
+			}
+			return false;
 		}
 
 		if (kind == IRodinElementDelta.REMOVED) {
-			IRodinElement parent;
-			if (element instanceof IRodinProject) {
-				parent = invisibleRoot;
-			} else {
-				parent = element.getParent();
+			if (element instanceof IRodinProject || element instanceof IPSStatus) {
+				postRemove(new Object [] {element}, runnables);
+				Object parent = getParent(element);
+				if (parent != null && parent instanceof IRodinFile) {
+					postUpdateLabel(parent, runnables);
+				}
 			}
-			toRefresh.add(parent);
-			return;
+			if (element instanceof IPSFile) {
+				IPSFile psFile = (IPSFile) element;
+				// ASSUMPTION: psFile must correspond to either machineFile or
+				// contextFile
+				IMachineFile machineFile = psFile.getMachineFile();
+				IContextFile contextFile = psFile.getContextFile();
+				postRemove(new Object[] { machineFile, contextFile }, runnables);
+			}
+			return false;
 		}
 
 		if (kind == IRodinElementDelta.CHANGED) {
+
+			// The label for IMachineFile or IContextFile might change, refresh
+			// the label only.
+			if (element instanceof IMachineFile
+					|| element instanceof IContextFile) {
+				postUpdateLabel(element, runnables);
+				return false;
+			}
+
+			// Ignore changes to irrelevant elements.
+			if (!(element instanceof RodinDB
+					|| element instanceof IRodinProject
+					|| element instanceof IPSFile || element instanceof IPSStatus)) {
+				return false;
+			}
+			
 			int flags = delta.getFlags();
 
 			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
 				IRodinElementDelta[] deltas = delta.getAffectedChildren();
 				for (int i = 0; i < deltas.length; i++) {
-					processDelta(deltas[i]);
+					if (processDelta(deltas[i], runnables))
+						return false;
 				}
-				return;
 			}
 
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				IRodinElement rElement = element.getParent();
-				if (rElement instanceof IPSFile) {
-					IPSFile psFile = (IPSFile) rElement;
-					IMachineFile machineFile = psFile.getMachineFile();
-					if (machineFile.exists()) {
-						toRefresh.add(machineFile);
-						return;
-					}
-					IContextFile contextFile = psFile.getContextFile();
-					if (contextFile.exists()) {
-						toRefresh.add(contextFile);
-						return;
-					}
+				Object parent = this.getParent(element);
+				if (parent != null) {
+					postRefresh(parent, runnables);
+					return true;
 				}
-				toRefresh.add(rElement);
-				return;
 			}
 
-			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
-				if (element instanceof IPRProof) {
-					toRefresh.add(element.getParent());
-				} else
-					toRefresh.add(element);
-				return;
+			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
+				postRefresh(element, runnables);
+				Object parent = this.getParent(element);
+				if (parent != null && parent instanceof IRodinFile)
+					postUpdateLabel(parent, runnables);
+				return false;
 			}
 		}
 
+		return false; 
 	}
 
-	/**
-	 * Refresh the nodes.
-	 * <p>
-	 * 
-	 * @param refreshes
-	 *            List of node to refresh
-	 * @param updateLabels
-	 *            <code>true</code> if the label need to be updated as well
-	 */
-	private void postRefresh(final List<IRodinElement> refreshes, final boolean updateLabels) {
-		UIUtils.syncPostRunnable(new Runnable() {
+	private void postUpdateLabel(final Object element,
+			Collection<Runnable> runnables) {
+		if (ObligationExplorerUtils.DEBUG)
+			ObligationExplorerUtils.debug("Update label: " + element);
+		runnables.add(new Runnable() {
 			public void run() {
-				TreeViewer viewer = explorer.getTreeViewer();
-				Control ctrl = viewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					Object[] objects = viewer.getExpandedElements();
-					for (IRodinElement elem : refreshes) {
-						viewer.refresh(elem, updateLabels);
-					}
-					viewer.setExpandedElements(objects);
-				}
+				viewer.update(element, new String[] {"content"});
 			}
-		}, explorer.getTreeViewer().getControl());
+		});
+	}
+
+	private void postRefresh(final Object element,
+			Collection<Runnable> runnables) {
+		if (ObligationExplorerUtils.DEBUG)
+			ObligationExplorerUtils.debug("Refresh: " + element);
+		runnables.add(new Runnable() {
+			public void run() {
+				viewer.refresh(element, true);
+			}
+		});
+	}
+
+	private void postRemove(final Object [] elements,
+			Collection<Runnable> runnables) {
+		if (ObligationExplorerUtils.DEBUG) {
+			for (Object obj : elements)
+				ObligationExplorerUtils.debug("Remove: " + obj);
+		}
+		runnables.add(new Runnable() {
+			public void run() {
+				viewer.remove(elements);
+			}
+		});
+	}
+
+	private void postAdd(final Object parent,
+			final IRodinElement element, Collection<Runnable> runnables) {
+		if (ObligationExplorerUtils.DEBUG)
+			ObligationExplorerUtils.debug("Add: " + element + " to "
+					+ parent);
+
+		runnables.add(new Runnable() {
+			public void run() {
+				if (viewer.testFindItem(element) == null)
+					viewer.add(parent, element);
+			}
+		});
 	}
 
 	/**
@@ -211,9 +326,25 @@ public class ObligationExplorerContentProvider implements
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object child) {
-		if (child instanceof IRodinElement)
-			return ((IRodinElement) child).getParent();
-		return null;
+		if (!(child instanceof IRodinElement))
+			return null;
+		if (child instanceof IRodinProject)
+			return invisibleRoot;
+		
+		IRodinElement element = (IRodinElement) child;
+		IRodinElement parent = element.getParent();
+		if (parent instanceof IPSFile) {
+			IPSFile psFile = (IPSFile) parent;
+			IMachineFile machineFile = psFile.getMachineFile();
+			if (machineFile.exists()) {
+				return machineFile;
+			}
+			IContextFile contextFile = psFile.getContextFile();
+			if (contextFile.exists()) {
+				return contextFile;
+			}
+		}
+		return parent;
 	}
 
 	/* (non-Javadoc)

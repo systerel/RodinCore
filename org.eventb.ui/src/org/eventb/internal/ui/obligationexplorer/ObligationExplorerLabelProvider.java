@@ -136,8 +136,8 @@ public class ObligationExplorerLabelProvider extends LabelProvider implements
 
 	@Override
 	public String getText(Object obj) {
-		if (ObligationExplorerUtils.DEBUG)
-			ObligationExplorerUtils.debug("Label for: " + obj);
+//		if (ObligationExplorerUtils.DEBUG)
+//			ObligationExplorerUtils.debug("Label for: " + obj);
 		if (obj instanceof IRodinProject) {
 			if (ObligationExplorerUtils.DEBUG)
 				ObligationExplorerUtils.debug("Project: "
@@ -260,6 +260,8 @@ public class ObligationExplorerLabelProvider extends LabelProvider implements
 
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
+		if (property.equals("content"))
+			return true;
 		if (property.equals(RodinMarkerUtil.RODIN_PROBLEM_MARKER))
 			return true;
 		return super.isLabelProperty(element, property);
