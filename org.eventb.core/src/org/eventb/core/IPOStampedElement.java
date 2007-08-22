@@ -45,7 +45,7 @@ public interface IPOStampedElement {
 	 * setStamp(INIT_STAMP, monitor);
 	 * </pre>
 	 */
-	static long INIT_STAMP = Long.MIN_VALUE;
+	static long INIT_STAMP = 0L;
 	
 	/**
 	 * Sets the stamp of this element.
