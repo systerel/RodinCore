@@ -96,10 +96,39 @@
    <extension
          point="org.eventb.ui.editorPages">
       <page
+            class="org.eventb.internal.ui.eventbeditor.htmlpage.HTMLPage"
+            id="org.eventb.ui.prettyPrint"
+            name="%editorPage.prettyPrint"
+            priority="0">
+         <target
+         		id="org.eventb.ui.editors.machine"/>
+         <target
+         		id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.editpage.EditPage"
+            id="org.eventb.ui.Edit"
+            name="%editorPage.edit"
+            priority="1">
+         <target
+         		id="org.eventb.ui.editors.machine"/>
+         <target
+         		id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"
+            id="org.eventb.ui.synthetic"
+            name="%editorPage.synthetic"
+            priority="2">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+         <target id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
             class="org.eventb.internal.ui.eventbeditor.DependenciesPage"
             id="org.eventb.ui.dependencies"
             name="%editorPage.dependencies"
-            priority="0">
+            priority="3">
          <target
                id="org.eventb.ui.editors.machine"/>
          <target
@@ -109,7 +138,7 @@
             class="org.eventb.internal.ui.eventbeditor.VariablePage"
             id="org.eventb.ui.variables"
             name="%editorPage.variables"
-            priority="1">
+            priority="4">
          <target
                id="org.eventb.ui.editors.machine"/>
       </page>
@@ -117,7 +146,7 @@
             class="org.eventb.internal.ui.eventbeditor.InvariantPage"
             id="org.eventb.ui.invariants"
             name="%editorPage.invariants"
-            priority="2">
+            priority="5">
          <target
                id="org.eventb.ui.editors.machine"/>
       </page>
@@ -125,21 +154,28 @@
             class="org.eventb.internal.ui.eventbeditor.CarrierSetPage"
             id="org.eventb.ui.carriersets"
             name="%editorPage.carrierSets"
-            priority="2">
+            priority="4">
+         <target id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.ConstantPage"
+            id="org.eventb.ui.constants"
+            name="%editorPage.constants"
+            priority="5">
          <target id="org.eventb.ui.editors.context"/>
       </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.AxiomPage"
             id="org.eventb.ui.axioms"
             name="%editorPage.axioms"
-            priority="4">
+            priority="6">
          <target id="org.eventb.ui.editors.context"/>
       </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.TheoremPage"
             id="org.eventb.ui.theorems"
             name="%editorPage.theorems"
-            priority="5">
+            priority="7">
          <target
                id="org.eventb.ui.editors.machine"/>
          <target
@@ -149,55 +185,9 @@
             class="org.eventb.internal.ui.eventbeditor.EventPage"
             id="org.eventb.ui.events"
             name="%editorPage.events"
-            priority="6">
-         <target
-               id="org.eventb.ui.editors.machine"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"
-            id="org.eventb.ui.synthetic"
-            name="%editorPage.synthetic"
-            priority="7">
-         <target
-               id="org.eventb.ui.editors.machine"/>
-         <target id="org.eventb.ui.editors.context"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.ConstantPage"
-            id="org.eventb.ui.constants"
-            name="%editorPage.constants"
-            priority="3">
-         <target id="org.eventb.ui.editors.context"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.prettyprint.PrettyPrintPage"
-            id="org.eventb.ui.prettyprint"
-            name="%editorPage.prettyprint"
             priority="8">
          <target
                id="org.eventb.ui.editors.machine"/>
-         <target
-               id="org.eventb.ui.editors.context"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.editpage.EditPage"
-            id="org.eventb.ui.Edit"
-            name="%editorPage.edit"
-            priority="9">
-         <target
-         		id="org.eventb.ui.editors.machine"/>
-         <target
-         		id="org.eventb.ui.editors.context"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.htmlpage.HTMLPage"
-            id="org.eventb.ui.html"
-            name="%editorPage.html"
-            priority="7">
-         <target
-         		id="org.eventb.ui.editors.machine"/>
-         <target
-         		id="org.eventb.ui.editors.context"/>
       </page>
    </extension>
    <extension
