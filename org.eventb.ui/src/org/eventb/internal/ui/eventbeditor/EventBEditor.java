@@ -35,6 +35,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -83,6 +85,8 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 
 	private String lastActivePageID = null;
 
+	IContextActivation contextActivation; 
+	
 	/**
 	 * @author htson
 	 *         <p>
@@ -330,7 +334,15 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		RodinCore.addElementChangedListener(this);
 		rodinFile = getRodinFile(input);
 		setPartName(rodinFile.getBareName());
+		
+		// Activate Event-B Editor Context
+		IContextService contextService = (IContextService) getSite()
+				.getService(IContextService.class);
+		contextActivation = contextService
+				.activateContext(EventBUIPlugin.PLUGIN_ID
+						+ ".contexts.eventBEditorScope");
 	}
+	
 
 	protected abstract F getRodinFile(IEditorInput input);
 
@@ -360,6 +372,12 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 			EventBEditorUtils.debug("Dispose");
 		if (fOutlinePage != null)
 			fOutlinePage.setInput(null);
+		// De-activate the Event-B Editor context
+		if (contextActivation != null) {
+			IContextService contextService = (IContextService) getSite()
+					.getService(IContextService.class);
+			contextService.deactivateContext(contextActivation);
+		}
 
 		saveDefaultPage();
 

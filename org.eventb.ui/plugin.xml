@@ -2525,9 +2525,9 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
-            description="%commands.categoryEditPageDescription"
-            id="org.eventb.ui.keybindings.editPageCategory"
-            name="%commands.categoryEditPageName"/>
+            description="%categories.EditDescription"
+            id="org.eventb.ui.categories.edit"
+            name="%categories.EditName"/>
       <command
             categoryId="org.eventb.ui.keybindings.editPageCategory"
             description="%commands.moveUpDescription"
@@ -2538,14 +2538,26 @@
             description="%commands.moveDownDescription"
             id="org.eventb.ui.keybindings.moveDown"
             name="%commands.moveDownName"/>
+      <command
+            categoryId="org.eventb.ui.categories.edit"
+            description="%commands.edit.copyDescription"
+            id="org.eventb.ui.edit.copy"
+            name="%commands.edit.copyName">
+      </command>
+      <command
+            categoryId="org.eventb.ui.categories.edit"
+            description="%commands.edit.pasteDescription"
+            id="org.eventb.ui.edit.paste"
+            name="%commands.edit.pasteName">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
       <context
-            description="%contexts.editpageDescription"
-            id="org.eventb.ui.keybindings.contexts.editpage"
-            name="%contexts.editpageName"
-            parentId="org.eclipse.ui.contexts.window"/>
+            description="%contexts.eventBEditorScopeDescription"
+            id="org.eventb.ui.contexts.eventBEditorScope"
+            name="%contexts.eventBEditorScopeName"
+            parentId="org.eclipse.ui.textEditorScope"/>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -2559,6 +2571,51 @@
             contextId="org.eventb.ui.keybindings.contexts.editpage"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+ARROW_DOWN"/>
+      <key
+            commandId="org.eventb.ui.edit.copy"
+            contextId="org.eventb.ui.contexts.eventBEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+C">
+      </key>
+      <key
+            commandId="org.eventb.ui.edit.paste"
+            contextId="org.eventb.ui.contexts.eventBEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+V">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eventb.ui.eventbeditor.handlers.CopyHandler"
+            commandId="org.eventb.ui.edit.copy">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="org.eventb.ui.contexts.eventBEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eventb.ui.eventbeditor.handlers.PasteHandler"
+            commandId="org.eventb.ui.edit.paste">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="org.eventb.ui.contexts.eventBEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
    </extension>
 
 </plugin>
