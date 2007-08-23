@@ -15,7 +15,10 @@ import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author Markus Gaisbauer
+ * @deprecated replaced by
+ *             {@link org.eventb.internal.ui.eventbeditor.htmlpage.Ast2HtmlConverter}
  */
+@Deprecated
 public class Ast2HtmlConverter extends AstConverter {
 	
 	public Ast2HtmlConverter() {

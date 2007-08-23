@@ -45,7 +45,10 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author htson
  * @author Markus Gaisbauer
+ * @deprecated replaced by
+ *             {@link org.eventb.internal.ui.eventbeditor.htmlpage.AstConverter}
  */
+@Deprecated
 public abstract class AstConverter {
 	
 	private static final String SPACE = " ";

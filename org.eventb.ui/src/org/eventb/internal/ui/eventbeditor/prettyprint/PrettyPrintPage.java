@@ -24,6 +24,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.htmlpage.HTMLPage;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.EventBUIPlugin;
@@ -42,7 +43,9 @@ import org.rodinp.core.RodinCore;
  *         This class extends the
  *         <code>org.eventbui.eventbeditor.EventBEditorPage</code> class and
  *         provides a pretty print page for Event-B Editor
+ *         @deprecated replaced by {@link HTMLPage}
  */
+@Deprecated
 public class PrettyPrintPage extends EventBEditorPage implements
 		IElementChangedListener {
 
