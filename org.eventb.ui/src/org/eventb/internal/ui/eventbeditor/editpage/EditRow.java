@@ -110,6 +110,7 @@ public class EditRow {
 		if (select) {
 			composite.setBackground(composite.getDisplay().getSystemColor(
 					SWT.COLOR_GRAY));
+			FormToolkit.ensureVisible(composite);
 		} else {
 			if (EventBEditorUtils.DEBUG) {
 				composite.setBackground(composite.getDisplay().getSystemColor(

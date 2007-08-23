@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -183,12 +184,12 @@ public class UIUtils {
 				}
 				IEventBEditor<?> editor = (IEventBEditor<?>) EventBUIPlugin
 						.getActivePage().openEditor(fileInput, editorId);
-				editor.edit(obj);
+				editor.getSite().getSelectionProvider().setSelection(
+						new StructuredSelection(obj));
 			} catch (PartInitException e) {
 				MessageDialog.openError(null, null,
 						"Error open the Event-B Editor");
 				e.printStackTrace();
-				// TODO EventBUIPlugin.logException(e);
 			}
 		}
 		return;

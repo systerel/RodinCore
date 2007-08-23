@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -58,7 +57,6 @@ import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
-import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -121,16 +119,8 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		public ISelection getSelection() {
 			IFormPage activePage = formEditor.getActivePageInstance();
 			if (activePage != null) {
-				if (activePage instanceof EventBFormPage) {
-					EventBPartWithButtons part = ((EventBFormPage) activePage)
-							.getPart();
-					if (part != null) {
-						ISelectionProvider selectionProvider = part.getViewer();
-						if (selectionProvider != null)
-							if (selectionProvider != this)
-								return selectionProvider.getSelection();
-					}
-				}
+				if (activePage instanceof ISelectionProvider)
+					return ((ISelectionProvider) activePage).getSelection();
 			}
 			return globalSelection;
 		}
@@ -141,19 +131,15 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 		 */
 		public void setSelection(ISelection selection) {
-//			IFormPage activePage = formEditor.getActivePageInstance();
-//			if (activePage != null) {
-//				ISelectionProvider selectionProvider = activePage.getSite()
-//						.getSelectionProvider();
-//				if (selectionProvider != null) {
-//					if (selectionProvider != this)
-//						selectionProvider.setSelection(selection);
-//				}
-//			} else {
-				this.globalSelection = selection;
-				fireSelectionChanged(new SelectionChangedEvent(this,
-						globalSelection));
-//			}
+			// Pass the selection to Edit Page
+			formEditor.setActivePage(EditPage.PAGE_ID);
+			IFormPage page = formEditor.getActivePageInstance();
+			if (page instanceof EditPage) {
+				((EditPage) page).setSelection(selection);
+			}
+			this.globalSelection = selection;
+			fireSelectionChanged(new SelectionChangedEvent(this,
+					globalSelection));
 		}
 
 		/**
@@ -553,97 +539,18 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		editorDirtyStateChanged(); // Refresh the dirty state of the editor
 	}
 
-	// /**
-	// * Checking if a Rodin element is "original" (created automatically, but
-	// is
-	// * not modified).
-	// * <p>
-	// *
-	// * @param element
-	// * a Rodin element
-	// * @return <code>true</code> if the element has default created values.
-	// * <code>false</code> otherwise.
-	// */
-	// private boolean isOriginal(IRodinElement element) {
-	// if (element instanceof IGuard) {
-	// try {
-	// if (((IGuard) element).getContents().equals(
-	// EventBUIPlugin.GRD_DEFAULT)) {
-	// return true;
-	// }
-	// } catch (RodinDBException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// }
-	//
-	// if (element instanceof IAction) {
-	// try {
-	// if (((IAction) element).getContents().equals(
-	// EventBUIPlugin.SUB_DEFAULT)) {
-	// return true;
-	// }
-	// } catch (RodinDBException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// }
-	// return false;
-	// }
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#edit(java.lang.Object)
 	 */
+	@Deprecated
 	public void edit(Object ssel) {
 		if (ssel instanceof IRodinElement) {
 			elementEdit((IRodinElement) ssel);
 			return;
 		}
 
-		if (ssel instanceof TreeNode) { // For tree node, just select the node.
-			setTreeNodeSelection((TreeNode<?>) ssel);
-			return;
-		}
-		return;
-	}
-
-	/**
-	 * Set the selection in the editor if the input is a TreeNode.
-	 * <p>
-	 * 
-	 * @param node
-	 *            instance of TreeNode
-	 */
-	private void setTreeNodeSelection(TreeNode<?> node) {
-		if (node.isType(IVariable.ELEMENT_TYPE)) {
-			this.setActivePage(VariablePage.PAGE_ID);
-			return;
-		}
-		if (node.isType(IInvariant.ELEMENT_TYPE)) {
-			this.setActivePage(InvariantPage.PAGE_ID);
-			return;
-		}
-		if (node.isType(ITheorem.ELEMENT_TYPE)) {
-			this.setActivePage(TheoremPage.PAGE_ID);
-			return;
-		}
-		if (node.isType(IEvent.ELEMENT_TYPE)) {
-			this.setActivePage(EventPage.PAGE_ID);
-			return;
-		}
-		if (node.isType(ICarrierSet.ELEMENT_TYPE)) {
-			this.setActivePage(CarrierSetPage.PAGE_ID);
-			return;
-		}
-		if (node.isType(IConstant.ELEMENT_TYPE)) {
-			this.setActivePage(ConstantPage.PAGE_ID);
-			return;
-		}
-		if (node.isType(IAxiom.ELEMENT_TYPE)) {
-			this.setActivePage(AxiomPage.PAGE_ID);
-			return;
-		}
 		return;
 	}
 
@@ -798,65 +705,14 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#setSelection(org.rodinp.core.IInternalElement)
 	 */
+	@Deprecated
 	public void setSelection(IInternalElement element) {
 		this.setActivePage(EditPage.PAGE_ID);
 		// select the element within the page
 		IFormPage page = this.getActivePageInstance();
 		if (page instanceof EditPage) {
-			((EditPage) page).setSelection(new StructuredSelection(element));
+			((EditPage) page).select(element, true);
 		}
-		
-//		
-//		if (element instanceof ISeesContext) {
-//			this.setActivePage(DependenciesPage.PAGE_ID);
-//			return;
-//		}
-//
-//		if (element instanceof IAxiom) {
-//			this.setActivePage(AxiomPage.PAGE_ID);
-//		}
-//
-//		else if (element instanceof ITheorem) {
-//			this.setActivePage(TheoremPage.PAGE_ID);
-//		}
-//
-//		else if (element instanceof ICarrierSet) {
-//			this.setActivePage(CarrierSetPage.PAGE_ID);
-//		}
-//
-//		else if (element instanceof IConstant)
-//			this.setActivePage(ConstantPage.PAGE_ID);
-//
-//		else if (element instanceof IInvariant)
-//			this.setActivePage(InvariantPage.PAGE_ID);
-//
-//		else if (element instanceof IEvent)
-//			this.setActivePage(EventPage.PAGE_ID);
-//
-//		else if (element instanceof IVariable) {
-//			if (element.getParent() instanceof IMachineFile)
-//				this.setActivePage(VariablePage.PAGE_ID);
-//			else
-//				this.setActivePage(EventPage.PAGE_ID);
-//		}
-//
-//		else if (element instanceof IGuard) {
-//			this.setActivePage(EventPage.PAGE_ID);
-//		}
-//
-//		else if (element instanceof IAction) {
-//			this.setActivePage(EventPage.PAGE_ID);
-//		}
-//
-//		else if (element instanceof IRefinesEvent) {
-//			this.setActivePage(EventPage.PAGE_ID);
-//		}
-//
-//		else if (element instanceof IWitness) {
-//			this.setActivePage(EventPage.PAGE_ID);
-//		}
-
-
 	}
 
 	public void gotoMarker(IMarker marker) {

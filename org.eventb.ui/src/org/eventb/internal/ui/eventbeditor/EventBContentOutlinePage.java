@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
@@ -230,7 +231,8 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		ISelection selection = event.getSelection();
 		if (!(selection.isEmpty())) {
 			Object ssel = ((IStructuredSelection) selection).getFirstElement();
-			fEditor.edit(ssel);
+			fEditor.getSite().getSelectionProvider().setSelection(
+					new StructuredSelection(ssel));
 		}
 
 		super.selectionChanged(event);

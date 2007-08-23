@@ -248,7 +248,9 @@ public class ElementComposite implements IElementComposite {
 			row.setSelected(selected);
 		}
 
-		if (rElement.isAncestorOf(element) && sectionComps != null) {
+		if (rElement.isAncestorOf(element)) {
+			if (selected)
+				setExpand(true);
 			for (ISectionComposite sectionComp : sectionComps) {
 				sectionComp.select(element, selected);
 			}

@@ -95,7 +95,9 @@ public interface IEventBEditor<F extends IRodinFile> extends IEditorPart,
 	 * @param ssel
 	 *            the current selecting element. It can be an IRodinElement or a
 	 *            TreeNode (from the ProjectExplorer).
+	 * @deprecated use {@link #setSelection(IInternalElement)} instead.
 	 */
+	@Deprecated
 	public abstract void edit(Object ssel);
 
 	/**
@@ -105,6 +107,7 @@ public interface IEventBEditor<F extends IRodinFile> extends IEditorPart,
 	 * @param element
 	 *            the internal element which will be selected.
 	 */
+	@Deprecated
 	public abstract void setSelection(IInternalElement element);
 
 	/**

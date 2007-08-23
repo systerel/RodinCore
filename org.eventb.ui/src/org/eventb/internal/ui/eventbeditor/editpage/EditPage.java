@@ -442,8 +442,9 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 						sectionComp.elementRemoved(element);
 					}
 					if (isSelected(element)) {
-						deselect(globalSelection);
-						setSelection(new StructuredSelection());
+//						deselect(globalSelection);
+//						setSelection(new StructuredSelection());
+						setEditorSelection(new StructuredSelection());
 					}
 				}
 
@@ -601,13 +602,13 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
+	// This should be called from Event-B Editor only.
 	public void setSelection(ISelection selection) {
+		select(globalSelection, false);
 		this.globalSelection = selection;
+		if (!globalSelection.isEmpty())
+			select(globalSelection, true);
 		fireSelectionChanged(new SelectionChangedEvent(this, globalSelection));
-		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
-		ISelectionProvider selectionProvider = editor.getSite()
-				.getSelectionProvider();
-		selectionProvider.setSelection(selection);
 	}
 
 	/**
@@ -638,12 +639,13 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 				&& ((StructuredSelection) globalSelection).size() == 1
 				&& ((StructuredSelection) globalSelection).getFirstElement()
 						.equals(element)) {
-			select(element, false);
-			setSelection(new StructuredSelection());
+			setEditorSelection(new StructuredSelection());
+//			select(element, false);
+//			setSelection(new StructuredSelection());
 			return;
 
 		} else {
-			deselect(globalSelection);
+//			deselect(globalSelection);
 			if (shiftPressed
 					&& lastSelectedElement != null
 					&& element.getParent().equals(
@@ -652,9 +654,10 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 							lastSelectedElement.getElementType())) {
 				selectRange(lastSelectedElement, element);
 			} else {
-				select(element, true);
-				setSelection(new StructuredSelection(element));
+//				select(element, true);
+//				setSelection(new StructuredSelection(element));
 				lastSelectedElement = element;
+				setEditorSelection(new StructuredSelection(element));
 			}
 		}
 		long afterTime = System.currentTimeMillis();
@@ -662,6 +665,11 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 			EventBEditorUtils.debug("Duration " + (afterTime - beginTime)
 					+ " ms");
 		}
+	}
+
+	void setEditorSelection(ISelection selection) {
+		IEventBEditor<?> eventBEditor = this.getEventBEditor();
+		eventBEditor.getSite().getSelectionProvider().setSelection(selection);
 	}
 
 	private void selectRange(IRodinElement firstElement,
@@ -680,7 +688,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 			List<IRodinElement> selected = new ArrayList<IRodinElement>();
 			for (IRodinElement child : children) {
 				if (child.equals(firstElement) || child.equals(secondElement)) {
-					select(child, true);
+//					select(child, true);
 					selected.add(child);
 					if (found)
 						break;
@@ -688,31 +696,32 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 						found = true;
 				} else {
 					if (found) {
-						select(child, true);
+//						select(child, true);
 						selected.add(child);
 					}
 				}
 			}
-			setSelection(new StructuredSelection(selected));
+//			setSelection(new StructuredSelection(selected));
+			setEditorSelection(new StructuredSelection(selected));
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	void deselect(ISelection ssel) {
+	void select(ISelection ssel, boolean select) {
 		if (ssel instanceof StructuredSelection) {
 			for (Iterator<?> it = ((StructuredSelection) ssel).iterator(); it
 					.hasNext();) {
 				Object obj = it.next();
 				if (obj instanceof IRodinElement) {
-					select((IRodinElement) obj, false);
+					select((IRodinElement) obj, select);
 				}
 			}
 		}
 	}
 
-	private void select(IRodinElement element, boolean select) {
+	public void select(IRodinElement element, boolean select) {
 		for (ISectionComposite sectionComp : sectionComps) {
 			sectionComp.select(element, select);
 		}

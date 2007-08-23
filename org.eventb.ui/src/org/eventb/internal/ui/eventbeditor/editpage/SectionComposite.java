@@ -440,11 +440,28 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	public void select(IRodinElement element, boolean selected) {
-		if (parent.isAncestorOf(element) && elementComps != null) {
+		if (contain(element)) {
+			if (selected)
+				setExpand(true);
 			for (IElementComposite elementComp : elementComps) {
 				elementComp.select(element, selected);
 			}
 		}
+	}
+
+	private boolean contain(IRodinElement element) {
+		try {
+			IRodinElement[] children = parent.getChildrenOfType(rel
+					.getChildType());
+			for (IRodinElement child : children) {
+				if (child.equals(element) || child.isAncestorOf(element))
+					return true;
+			}
+		} catch (RodinDBException e) {
+			// Do nothing, return false
+			return false;
+		}
+		return false;
 	}
 
 	public void recursiveExpand(IRodinElement element) {
