@@ -14,7 +14,6 @@ package org.eventb.ui.eventbeditor;
 
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * @author htson
@@ -27,9 +26,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  */
 public abstract class EventBEditorPage extends FormPage {
 
-	// Private field for the page title.
-	private String pageTitle;
-	
 	/**
 	 * The constructor.
 	 * <p>
@@ -44,15 +40,11 @@ public abstract class EventBEditorPage extends FormPage {
 	public EventBEditorPage(String id, String tabTitle,
 			String pageTitle) {
 		super(id, tabTitle);
-		this.pageTitle = pageTitle;
 	}
 
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
-		ScrolledForm form = managedForm.getForm();
-
-		form.setText(pageTitle);
 	}
 
 	/**
