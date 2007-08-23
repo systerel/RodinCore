@@ -414,26 +414,20 @@ public class Translator extends IdentityTranslator {
 	         * RULE IR3: 	e ∈ f
 	         *	  			c∃ (e*) ∈f
 	         */
-			_ -> {
-
-				if(!GoalChecker.isMapletExpression(e)) {
-					
+			Identifier() -> {
+				if (!GoalChecker.isMapletExpression(e)) {
 					final ConditionalQuant exists = new ConditionalQuant(ff);
 					exists.condSubstitute(`e);					
 					exists.startPhase2();
 					final Expression x = exists.condSubstitute(`e);					
-
 					return exists.conditionalQuantify(
 						Formula.EXISTS,
 						translateIn(x, exists.push(right), loc),
 						this);
+				} else {
+					return ff.makeRelationalPredicate(Formula.IN, e, right, loc);
 				}
 			}
-						 
-			Identifier() -> {
-				return ff.makeRelationalPredicate(Formula.IN, e, right, loc);
-			}
-			
 			/**
 	         * RULE IR4: 	e ∈ ℕ 
 	         *	  			0 ≤ e
@@ -896,7 +890,7 @@ public class Translator extends IdentityTranslator {
 							loc),
 						func(e),
 						loc);	
-			}	
+			}
 			_ -> {
 				return null;
 			}
@@ -964,34 +958,20 @@ public class Translator extends IdentityTranslator {
 			Ovr(children) -> {
 			
 				LinkedList<Predicate> preds = new LinkedList<Predicate>();
-				final ConditionalQuant condQuant = new ConditionalQuant(ff);
-
-				for(int i = 1; i < `children.length; i++) {
-					condQuant.condSubstitute(`children[i]);
-				}
-				condQuant.startPhase2();
-				for(int i = 1; i < `children.length; i++) {
-					`children[i] = condQuant.condSubstitute(`children[i]);
-				}
-				
-				expr = condQuant.push(expr);
-				for(int i = 0; i < `children.length; i++) {
-					`children[i] = condQuant.push(`children[i]);
-				}				
-								
-				for(int i = 0; i < `children.length; i++) {
+				for (int i = 0; i < `children.length; i++) {
 					LinkedList<Expression> exprs = new LinkedList<Expression>();
-					
-					for(int j = i + 1; j < `children.length; j++) {
+					for (int j = i + 1; j < `children.length; j++) {
 						exprs.add(ff.makeUnaryExpression(Formula.KDOM, `children[j], loc));
 					}	
 					
-					if(exprs.size() > 0) {
-						Expression sub;
+					if (exprs.size() > 0) {
+						final Expression sub;
 
-						if(exprs.size() > 1) sub = 
-							ff.makeAssociativeExpression(Formula.BUNION, exprs, loc);
-						else sub = exprs.get(0);
+						if (exprs.size() > 1) {
+							sub = ff.makeAssociativeExpression(Formula.BUNION, exprs, loc);
+						} else {
+							sub = exprs.get(0);
+						}
 		
 						preds.add(
 							translateIn(
@@ -999,14 +979,12 @@ public class Translator extends IdentityTranslator {
 								ff.makeBinaryExpression(Formula.DOMSUB, sub, `children[i], loc),
 								loc));
 					}
-					else 
-						preds.add(translateIn(expr, `children[i], loc));		
+					else {
+						preds.add(translateIn(expr, `children[i], loc));
+					}		
 				}
 				
-				return  condQuant.conditionalQuantify(
-					Formula.FORALL,
-					ff.makeAssociativePredicate(Formula.LOR, preds, loc),
-					this);
+				return FormulaConstructor.makeLorPredicate(ff, preds, loc);
 			}
 	        /**
 	         * RULE IR35:	e↦f ∈ r ⩥ t	
