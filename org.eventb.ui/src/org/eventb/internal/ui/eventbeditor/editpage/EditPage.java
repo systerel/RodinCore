@@ -20,10 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
@@ -49,15 +45,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.contexts.IContextActivation;
-import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.handlers.IHandlerActivation;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IContextFile;
@@ -103,14 +95,6 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 	// The main scrolled form
 	ScrolledForm form;
-	
-	// Different handler activation for moving up and down with keyboard
-	private IHandlerActivation moveUpHandlerActivation;
-
-	private IHandlerActivation moveDownHandlerActivation;
-	
-	// The Context activation 
-	IContextActivation activateContext;
 	
 	// Comment text widget at file level
 	IEventBInputText commentText;
@@ -168,52 +152,6 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		
 		// Refresh the main scrolled form.
 		form.reflow(true);
-
-		// Activate the context for Edit Page.
-		// TODO: Should this be for Event-B Editor instead of just Edit Page.
-		IContextService contextService = (IContextService) getSite()
-				.getService(IContextService.class);
-		activateContext = contextService
-				.activateContext("org.eventb.ui.keybindings.contexts.editpage");
-
-		// Activate different handlers for keyboard action.
-		activateHandlers();
-	}
-
-	/**
-	 * Utility method for activate different handlers, e.g. Move Up/Down.
-	 */
-	private void activateHandlers() {
-
-		// Get the workbench handler service.
-		IHandlerService handlerService = (IHandlerService) EventBUIPlugin
-				.getDefault().getWorkbench().getAdapter(IHandlerService.class);
-		
-		// Do nothing if the workbench does not have a handler service.
-		if (handlerService == null)
-			return;
-		
-		// Creat the Move Up Handler
-		IHandler moveUpHandler= new AbstractHandler() {
-			@Override
-			public Object execute(ExecutionEvent event) throws ExecutionException {
-				move(true);
-				return null;
-			}
-		};
-		moveUpHandlerActivation = handlerService.activateHandler(
-				"org.eventb.ui.keybindings.moveUp", moveUpHandler);
-
-		// Create the Move Down Handler
-		IHandler moveDownHandler= new AbstractHandler() {
-			@Override
-			public Object execute(ExecutionEvent event) throws ExecutionException {
-				move(false);
-				return null;
-			}
-		};
-		moveDownHandlerActivation = handlerService.activateHandler(
-				"org.eventb.ui.keybindings.moveDown", moveDownHandler);
 	}
 
 	/**
@@ -614,31 +552,11 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	public void dispose() {
 		IEventBEditor<?> editor = this.getEventBEditor();
 		editor.removeElementChangedListener(this);
-		if (activateContext != null)
-			activateContext.getContextService().deactivateContext(activateContext);
-		deactivateHandlers();
 		if (commentText != null) {
 			commentText.dispose();
 		}
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
-	}
-
-	/**
-	 * Utility method to de-activate the handlers. 
-	 */
-	private void deactivateHandlers() {
-		IHandlerService handlerService = (IHandlerService) EventBUIPlugin
-				.getDefault().getWorkbench().getAdapter(IHandlerService.class);
-
-		if (handlerService != null) {
-			if (moveUpHandlerActivation != null)
-				handlerService.deactivateHandler(moveUpHandlerActivation);
-			if (moveDownHandlerActivation != null)
-				handlerService.deactivateHandler(moveDownHandlerActivation);
-		}
-		moveUpHandlerActivation = null;
-		moveDownHandlerActivation = null;
 	}
 
 	// This part to make this page to be a selection provider.
