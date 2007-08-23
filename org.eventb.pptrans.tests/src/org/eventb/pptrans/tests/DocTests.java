@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
-import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
@@ -138,6 +137,15 @@ public class DocTests extends AbstractTranslationTests {
 		final ITypeEnvironment te = mTypeEnvironment("r", "S↔T");
 		doTransTest("rs ∈ A↔B",
 				"∀x,y·(x↦y ∈ r ∧ ¬(∃z·x↦z ∈ s)) ∨ x↦y ∈ s ⇒ x ∈ A ∧ y ∈ B",
+				false, 
+				te);
+	}
+
+	public void testIR34_full3() {
+		final ITypeEnvironment te = mTypeEnvironment("r", "S↔T");
+		doTransTest("r{a ↦ b} ∈ A↔B",
+				"∀x,y·(x↦y ∈ r ∧ ¬(∃z·x = a ∧ z = b)) ∨ (x = a ∧ y = b)" +
+				"     ⇒ x ∈ A ∧ y ∈ B",
 				false, 
 				te);
 	}

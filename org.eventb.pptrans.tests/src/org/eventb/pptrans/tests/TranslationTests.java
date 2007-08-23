@@ -527,8 +527,8 @@ public class TranslationTests extends AbstractTranslationTests {
 	
 	public void testIR3_recursive() {
 
-		doTest( "s∪t ∈ v∪w",
-				"∃x·x=s∪t ∧ x∈v∪w", 
+		doTest( "s∪t ∈ v",
+				"∃x·x=s∪t ∧ x∈v", 
 				true, 
 				mTypeEnvironment(mList("s"), mList(POW(S))));
 		
@@ -536,8 +536,8 @@ public class TranslationTests extends AbstractTranslationTests {
 
 	public void testIR3_complex() {
 
-		doTest( "∀t,w·s∪t ∈ v∪w",
-				"∀t,w·∃x·x=s∪t ∧ x∈v∪w", 
+		doTest( "∀t,w·s∪t ∈ w",
+				"∀t,w·∃x·x=s∪t ∧ x∈w", 
 				true, 
 				mTypeEnvironment(mList("s"), mList(POW(S))));
 		
@@ -1270,7 +1270,7 @@ public class TranslationTests extends AbstractTranslationTests {
 
 	public void testIR34_recursive() {
 		doTest( "e↦f ∈ (q∪v)(r∪w)", 
-				"∀x·x=r∪w ⇒ e↦f∈dom(x)⩤(q∪v) ∨ e↦f∈x", 
+				"e↦f∈dom(r∪w)⩤(q∪v) ∨ e↦f∈r∪w", 
 				true, 
 				te_irEF);
 	}
